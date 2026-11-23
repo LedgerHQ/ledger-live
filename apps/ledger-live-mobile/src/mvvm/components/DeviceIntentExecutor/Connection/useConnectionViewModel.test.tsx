@@ -232,6 +232,7 @@ describe("useConnectionViewModel", () => {
     const discoveringState: ConnectDeviceUIState = {
       type: ConnectDeviceUIStateTypes.Discovering,
       devices: [],
+      addNewDevice: null,
     };
 
     // WHEN
@@ -440,12 +441,14 @@ describe("useConnectionViewModel", () => {
           connectDeviceObserver?.next({
             type: ConnectDeviceUIStateTypes.Discovering,
             devices: [],
+            addNewDevice: null,
           }),
         );
         act(() =>
           connectDeviceObserver?.next({
             type: ConnectDeviceUIStateTypes.Discovering,
             devices: [],
+            addNewDevice: null,
           }),
         );
 
@@ -472,6 +475,8 @@ describe("useConnectionViewModel", () => {
           connectDeviceObserver?.next({
             type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,
             device: knownDevice,
+            showDeviceNotFound: false,
+            addNewDevice: null,
           }),
         );
 

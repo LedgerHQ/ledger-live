@@ -8,6 +8,7 @@ import { DefaultConnectDeviceStateMachine } from "./ConnectDeviceStateMachine";
 import {
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
+  type ConnectDeviceConnectNewDeviceInput,
   type ConnectDeviceMapConnectionError,
   type ConnectDeviceMatchDiscoveredDevices,
   type KnownDevice,
@@ -35,6 +36,8 @@ export type ConnectDeviceUseCaseInput<
   mapConnectionError: ConnectDeviceMapConnectionError<TConnectionError>;
   onConnected: (result: DeviceConnectionResult) => void;
   buildCompatDeviceId?: (device: DeviceConnectionResult["connectedDevice"]) => string;
+  /** `null` turns the add flow off. */
+  connectNewDevice: ConnectDeviceConnectNewDeviceInput | null;
 };
 
 export function connectDeviceUseCase<

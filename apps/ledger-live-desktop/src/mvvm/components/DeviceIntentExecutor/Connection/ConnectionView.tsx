@@ -54,6 +54,10 @@ export function ConnectionView({
     case ConnectDeviceUIStateTypes.UnknownError:
       return <UnknownErrorState state={state} />;
 
+    // Desktop gives `connectNewDevice: null`: the add flow never opens.
+    case ConnectDeviceUIStateTypes.ConnectNewDevice:
+      return null;
+
     default:
       return assertNever(state);
   }

@@ -78,7 +78,16 @@ export const buildDisplayedDevices = <
 >(
   knownDevices: Array<KnownDevice>,
   matchedDevices: Array<MatchedDevice>,
-  send: (event: ConnectDeviceStateMachineEvent<TDiscoveryError>) => void,
+  send: (
+    event: Extract<
+      ConnectDeviceStateMachineEvent<TDiscoveryError>,
+      {
+        type:
+          | ConnectDeviceStateMachineEventTypes.UserTapsAvailableDevice
+          | ConnectDeviceStateMachineEventTypes.UserTapsUnavailableDevice;
+      }
+    >,
+  ) => void,
 ): Array<DisplayedDevice> =>
   knownDevices.map(knownDevice => {
     const matchedDevice = findMatchedDevice(knownDevice, matchedDevices);

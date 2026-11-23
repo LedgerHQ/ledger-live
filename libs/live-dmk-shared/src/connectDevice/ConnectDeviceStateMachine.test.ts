@@ -12,6 +12,7 @@ import { DefaultConnectDeviceStateMachine } from "./ConnectDeviceStateMachine";
 import {
   ConnectDeviceUIStateTypes,
   DisplayedDevice,
+  type ConnectDeviceConnectNewDeviceInput,
   type ConnectDeviceMapConnectionError,
   type ConnectDeviceMatchDiscoveredDevices,
   type ConnectDeviceUIState,
@@ -19,6 +20,9 @@ import {
   type MatchedDevice,
 } from "./types";
 import { dmkToLedgerDeviceIdMap } from "../config/dmkToLedgerDeviceIdMap";
+import { DEFAULT_DEVICE_NOT_FOUND_DELAY } from "../connectKnownOrNewDevice/constants";
+import { DEFAULT_SUCCESS_DELAY } from "../connectNewDevice/constants";
+import { ConnectNewDeviceUIStateTypes, type SelectableDevice } from "../connectNewDevice/types";
 import {
   BaseConnectionErrorTypes,
   BaseDiscoveryErrorTypes,
@@ -109,6 +113,31 @@ const makeConnectedDevice = (overrides: Partial<ConnectedDevice> = {}): Connecte
     ...overrides,
   }) as ConnectedDevice;
 
+const addFlowInput: ConnectDeviceConnectNewDeviceInput = {
+  getDiscoveredDeviceKey: ({ transport, id }) => `${transport}:${id}`,
+  filterListedDevices: listedDevices => listedDevices,
+};
+
+const lastState = <TType extends ConnectDeviceUIState["type"]>(
+  states: Array<ConnectDeviceUIState>,
+  type: TType,
+) => {
+  const state = states[states.length - 1];
+  expect(state?.type).toBe(type);
+  return state as Extract<ConnectDeviceUIState, { type: TType }>;
+};
+
+const lastEmbeddedState = (states: Array<ConnectDeviceUIState>) =>
+  lastState(states, ConnectDeviceUIStateTypes.ConnectNewDevice).connectNewDeviceUIState;
+
+const listedDeviceIds = (states: Array<ConnectDeviceUIState>) => {
+  const embeddedState = lastEmbeddedState(states);
+  expect(embeddedState.type).toBe(ConnectNewDeviceUIStateTypes.Discovering);
+  return (embeddedState as { devices: Array<SelectableDevice> }).devices.map(
+    ({ device }) => device.id,
+  );
+};
+
 const makeDiscoveryError = (
   overrides: Partial<Omit<UnknownDiscoveryError, "type">> = {},
 ): UnknownDiscoveryError => ({
@@ -126,6 +155,8 @@ type SetupTestOptions = {
   readonly matchDiscoveredDevices?: ConnectDeviceMatchDiscoveredDevices;
   readonly onConnected?: jest.Mock;
   readonly buildCompatDeviceId?: (device: ConnectedDevice) => string;
+  readonly connectNewDevice?: ConnectDeviceConnectNewDeviceInput | null;
+  readonly acceptedDeviceModelIds?: Array<DeviceModelId>;
 };
 
 const defaultMatchDiscoveredDevices: ConnectDeviceMatchDiscoveredDevices = (
@@ -161,6 +192,8 @@ const setupTest = (options: SetupTestOptions = {}) => {
     matchDiscoveredDevices = defaultMatchDiscoveredDevices,
     onConnected = jest.fn(),
     buildCompatDeviceId,
+    connectNewDevice = null,
+    acceptedDeviceModelIds,
   } = options;
   const discoveredDevices = new Subject<Array<DiscoveredDevice>>();
   const errors = new Subject<UnknownDiscoveryError>();
@@ -194,7 +227,9 @@ const setupTest = (options: SetupTestOptions = {}) => {
     mapConnectionError,
     matchDiscoveredDevices,
     onConnected,
+    connectNewDevice,
     ...(buildCompatDeviceId ? { buildCompatDeviceId } : {}),
+    ...(acceptedDeviceModelIds ? { acceptedDeviceModelIds } : {}),
   });
 
   const discoverDevices = (devices: Array<DiscoveredDevice>) => discoveredDevices.next(devices);
@@ -227,7 +262,9 @@ describe("ConnectDeviceStateMachine", () => {
       machine.start();
 
       // Assert
-      expect(states).toEqual([{ type: ConnectDeviceUIStateTypes.NoKnownDevice }]);
+      expect(states).toEqual([
+        { type: ConnectDeviceUIStateTypes.NoKnownDevice, addNewDevice: null },
+      ]);
       expect(deviceDiscoveryService.start).not.toHaveBeenCalled();
     });
 
@@ -257,7 +294,12 @@ describe("ConnectDeviceStateMachine", () => {
 
       // Assert
       expect(states).toEqual([
-        { type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice, device: knownDeviceA },
+        {
+          type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,
+          device: knownDeviceA,
+          showDeviceNotFound: false,
+          addNewDevice: null,
+        },
       ]);
       expect(deviceDiscoveryService.start).toHaveBeenCalledWith({ ignoreTransportIdentifiers: [] });
     });
@@ -1180,6 +1222,194 @@ describe("ConnectDeviceStateMachine", () => {
         type: BaseConnectionErrorTypes.Unknown,
         error: expect.any(Error),
       });
+    });
+  });
+
+  describe("Add flow", () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    it("GIVEN connectNewDevice is null, WHEN the device not found delay elapses, THEN it should not show the hint", () => {
+      // GIVEN
+      const { machine, states } = setupTest({ knownDevices: [knownDeviceA] });
+      machine.start();
+
+      // WHEN
+      jest.advanceTimersByTime(DEFAULT_DEVICE_NOT_FOUND_DELAY);
+
+      // THEN
+      expect(lastState(states, ConnectDeviceUIStateTypes.WaitingForSelectedDevice)).toEqual(
+        expect.objectContaining({ showDeviceNotFound: false, addNewDevice: null }),
+      );
+    });
+
+    it("GIVEN no known device, WHEN the user taps add, THEN it should start the embedded flow and its discovery", () => {
+      // GIVEN
+      const { deviceDiscoveryService, machine, states } = setupTest({
+        knownDevices: [],
+        connectNewDevice: addFlowInput,
+      });
+      machine.start();
+
+      // WHEN
+      lastState(states, ConnectDeviceUIStateTypes.NoKnownDevice).addNewDevice!();
+
+      // THEN
+      expect(lastEmbeddedState(states).type).toBe(ConnectNewDeviceUIStateTypes.Discovering);
+      expect(deviceDiscoveryService.start).toHaveBeenCalled();
+    });
+
+    it("GIVEN the add flow opened from no known device, WHEN the user taps back, THEN it should go back to no known device and stop discovery", () => {
+      // GIVEN
+      const { deviceDiscoveryService, machine, states } = setupTest({
+        knownDevices: [],
+        connectNewDevice: addFlowInput,
+      });
+      machine.start();
+      lastState(states, ConnectDeviceUIStateTypes.NoKnownDevice).addNewDevice!();
+
+      // WHEN
+      lastState(states, ConnectDeviceUIStateTypes.ConnectNewDevice).back();
+
+      // THEN
+      lastState(states, ConnectDeviceUIStateTypes.NoKnownDevice);
+      expect(deviceDiscoveryService.isRunning).toBe(false);
+    });
+
+    it("GIVEN several known devices, WHEN the user taps add then back, THEN it should go back to the list", () => {
+      // GIVEN
+      const { machine, states } = setupTest({
+        knownDevices: [knownDeviceA, knownDeviceB],
+        connectNewDevice: addFlowInput,
+      });
+      machine.start();
+
+      // WHEN
+      lastState(states, ConnectDeviceUIStateTypes.Discovering).addNewDevice!();
+
+      // THEN
+      expect(states[states.length - 1].type).toBe(ConnectDeviceUIStateTypes.ConnectNewDevice);
+
+      // WHEN
+      lastState(states, ConnectDeviceUIStateTypes.ConnectNewDevice).back();
+
+      // THEN
+      expect(states[states.length - 1].type).toBe(ConnectDeviceUIStateTypes.Discovering);
+    });
+
+    it("GIVEN one known device, WHEN the device not found delay elapses, THEN it should show the hint", () => {
+      // GIVEN
+      const { machine, states } = setupTest({
+        knownDevices: [knownDeviceA],
+        connectNewDevice: addFlowInput,
+      });
+      machine.start();
+
+      // WHEN
+      jest.advanceTimersByTime(DEFAULT_DEVICE_NOT_FOUND_DELAY - 1);
+
+      // THEN
+      expect(
+        lastState(states, ConnectDeviceUIStateTypes.WaitingForSelectedDevice).showDeviceNotFound,
+      ).toBe(false);
+
+      // WHEN
+      jest.advanceTimersByTime(1);
+
+      // THEN
+      expect(
+        lastState(states, ConnectDeviceUIStateTypes.WaitingForSelectedDevice).showDeviceNotFound,
+      ).toBe(true);
+    });
+
+    it("GIVEN the add flow opened from the waiting state, WHEN the user taps back, THEN it should wait for the same device again", () => {
+      // GIVEN
+      const { machine, states } = setupTest({
+        knownDevices: [knownDeviceA],
+        connectNewDevice: addFlowInput,
+      });
+      machine.start();
+      jest.advanceTimersByTime(DEFAULT_DEVICE_NOT_FOUND_DELAY);
+      lastState(states, ConnectDeviceUIStateTypes.WaitingForSelectedDevice).addNewDevice!();
+
+      // WHEN
+      lastState(states, ConnectDeviceUIStateTypes.ConnectNewDevice).back();
+
+      // THEN
+      expect(lastState(states, ConnectDeviceUIStateTypes.WaitingForSelectedDevice)).toEqual(
+        expect.objectContaining({ device: knownDeviceA, showDeviceNotFound: false }),
+      );
+    });
+
+    it("GIVEN the add flow, WHEN discovery finds a known device, THEN it should not connect to it", () => {
+      // GIVEN
+      const { connect, discoverDevices, machine, states } = setupTest({
+        knownDevices: [knownDeviceA, knownDeviceB],
+        connectNewDevice: addFlowInput,
+      });
+      machine.start();
+      lastState(states, ConnectDeviceUIStateTypes.Discovering).addNewDevice!();
+
+      // WHEN
+      discoverDevices([makeDiscoveredDeviceFromKnownDevice(knownDeviceA)]);
+
+      // THEN
+      expect(listedDeviceIds(states)).toEqual([knownDeviceA.id]);
+      expect(connect).not.toHaveBeenCalled();
+    });
+
+    it("GIVEN accepted device models, WHEN the add flow discovers other models, THEN it should list only the accepted models", () => {
+      // GIVEN
+      const { discoverDevices, machine, states } = setupTest({
+        knownDevices: [],
+        connectNewDevice: addFlowInput,
+        acceptedDeviceModelIds: [DeviceModelId.stax],
+      });
+      machine.start();
+      lastState(states, ConnectDeviceUIStateTypes.NoKnownDevice).addNewDevice!();
+
+      // WHEN
+      discoverDevices([
+        makeDiscoveredDeviceFromKnownDevice(knownDeviceA),
+        makeDiscoveredDeviceFromKnownDevice(knownDeviceC),
+      ]);
+
+      // THEN
+      expect(listedDeviceIds(states)).toEqual([knownDeviceC.id]);
+    });
+
+    it("GIVEN the add flow, WHEN the user connects a new device, THEN it should show the embedded success, then emit connected and call onConnected with the new session", async () => {
+      // GIVEN
+      const { connect, discoverDevices, machine, onConnected, states } = setupTest({
+        knownDevices: [],
+        connectNewDevice: addFlowInput,
+        connect: jest.fn().mockResolvedValue("new-session-id"),
+      });
+      machine.start();
+      lastState(states, ConnectDeviceUIStateTypes.NoKnownDevice).addNewDevice!();
+      discoverDevices([makeDiscoveredDeviceFromKnownDevice(knownDeviceA)]);
+
+      // WHEN
+      const embeddedState = lastEmbeddedState(states) as { devices: Array<SelectableDevice> };
+      const selectableDevice = embeddedState.devices[0];
+      if (!selectableDevice.isAvailable) throw new Error("the device is not available");
+      selectableDevice.onSelect();
+      await jest.advanceTimersByTimeAsync(0);
+
+      // THEN
+      expect(connect).toHaveBeenCalled();
+      expect(lastEmbeddedState(states).type).toBe(ConnectNewDeviceUIStateTypes.Connected);
+      expect(onConnected).not.toHaveBeenCalled();
+
+      // WHEN
+      await jest.advanceTimersByTimeAsync(DEFAULT_SUCCESS_DELAY);
+
+      // THEN
+      lastState(states, ConnectDeviceUIStateTypes.Connected);
+      expect(onConnected).toHaveBeenCalledWith(
+        expect.objectContaining({ sessionId: "new-session-id" }),
+      );
     });
   });
 });

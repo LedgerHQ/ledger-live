@@ -4,7 +4,11 @@
 `connectDeviceUseCase`. It starts from the known-device list and an optional
 existing session, filters DMK discoveries against those known devices, then
 emits UI states for discovery, selection, connection, errors, and successful
-connection.
+connection. With the `connectNewDevice` input, it also embeds the
+`ConnectNewDeviceStateMachine` to add a new device without leaving the flow.
+
+The diagram of reference is the
+[connectDevice v2 (DIE, add flow) page in Lucid](https://lucid.app/lucidchart/2536447a-30cc-48ca-8607-643edd84d1f4/edit?page=pGiPqSY-WiEr).
 
 ## State Diagram
 
@@ -41,6 +45,16 @@ stateDiagram-v2
 
   ConnectionError --> Connecting: Retry
   ConnectionError --> Terminated: Ignore
+
+  NoKnownDevice --> ConnectNewDevice: UserTapsAddNewDevice, with the connectNewDevice input
+  Discovering --> ConnectNewDevice: UserTapsAddNewDevice, with the connectNewDevice input
+  WaitingForSelectedDevice --> WaitingForSelectedDevice: device not found delay elapsed, shows the hint
+  WaitingForSelectedDevice --> ConnectNewDevice: UserTapsAddNewDevice, with the connectNewDevice input
+
+  ConnectNewDevice --> Connected: the embedded flow connects
+  ConnectNewDevice --> NoKnownDevice: UserTapsBack, from NoKnownDevice, stops discovery
+  ConnectNewDevice --> Discovering: UserTapsBack, from Discovering
+  ConnectNewDevice --> WaitingForSelectedDevice: UserTapsBack, from WaitingForSelectedDevice
 
   Connected --> [*]
   Terminated --> [*]
@@ -87,3 +101,30 @@ stateDiagram-v2
 - When an action fails, the machine sends the error to `observer.error`. The use
   case then emits the unknown error. This also applies when discovery fails to
   start in the initial state.
+
+## Add flow
+
+- The required `connectNewDevice` input turns the add flow on (an object with
+  `getDiscoveredDeviceKey` and `filterListedDevices`) or off (`null`). When it
+  is `null`, every state emits `addNewDevice: null`, `showDeviceNotFound` stays
+  `false`, and `ConnectNewDevice` is never reached.
+- With the input, `NoKnownDevice`, `Discovering` and `WaitingForSelectedDevice`
+  emit `addNewDevice`, which opens `ConnectNewDevice`.
+- `WaitingForSelectedDevice` emits `showDeviceNotFound: true` after the device
+  not found delay (`DEFAULT_DEVICE_NOT_FOUND_DELAY` of connectKnownOrNewDevice,
+  8 s). The hint calls `addNewDevice`. Each entry hides the hint again.
+- `ConnectNewDevice` starts the `ConnectNewDeviceStateMachine` in embedded mode,
+  with the same discovery service, `acceptedDeviceModelIds` and
+  `buildCompatDeviceId`, and stops it when it leaves. It emits
+  `connect-new-device` with the embedded UI state and `back`.
+- The embedded machine handles discovery and its errors. `ConnectNewDevice`
+  ignores `DISCOVERED_*` and `DISCOVERY_ERROR`, so a known device found during
+  the add flow does not connect on its own.
+- The embedded machine shows its success screen, then its `onConnected` moves
+  to `Connected` with its session, and `Connected` calls `onConnected`.
+- `back` returns to the state that opened the add flow. Going back to
+  `NoKnownDevice` stops discovery, because the embedded `stop()` leaves it
+  running. Going back to `WaitingForSelectedDevice` waits for the same device.
+- `stop()` also stops the embedded machine. A session that the embedded machine
+  opens after `stop()` stays open.
+- When the embedded machine fails, the error goes to `observer.error`.

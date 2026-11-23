@@ -44,5 +44,6 @@ export function connectDevice(input: ConnectDeviceInput): Observable<DesktopConn
     ),
     matchDiscoveredDevices: filterMatchedDevices,
     mapConnectionError: createConnectionError,
+    connectNewDevice: null,
   });
 }

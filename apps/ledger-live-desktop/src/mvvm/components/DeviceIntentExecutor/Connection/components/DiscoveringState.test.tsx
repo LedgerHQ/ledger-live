@@ -30,6 +30,7 @@ function renderState(state: Partial<DiscoveringUIState> = {}) {
             knownDevice: makeKnownDevice({ name: "Unavailable Ledger" }),
           }),
         ],
+        addNewDevice: null,
         ...state,
       }}
     />,

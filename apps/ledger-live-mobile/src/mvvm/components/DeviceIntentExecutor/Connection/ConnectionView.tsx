@@ -54,6 +54,9 @@ export function ConnectionView({
     case ConnectDeviceUIStateTypes.UnknownError:
       return <UnknownErrorState state={state} />;
 
+    case ConnectDeviceUIStateTypes.ConnectNewDevice:
+      return null;
+
     default:
       return assertNever(state);
   }

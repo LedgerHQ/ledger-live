@@ -25,6 +25,8 @@ function renderState(device: WaitingForSelectedDeviceUIState["device"]) {
       state={{
         type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,
         device,
+        showDeviceNotFound: false,
+        addNewDevice: null,
       }}
     />,
     { wrapper: DeviceIntentTrackingTestWrapper },

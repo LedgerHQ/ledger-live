@@ -330,6 +330,12 @@ function renderConnectDeviceState(state: ConnectDeviceUIState): React.ReactNode 
           Connected. The onConnected callback should have received the connection result.
         </Text>
       );
+    case ConnectDeviceUIStateTypes.ConnectNewDevice:
+      return (
+        <Text variant="body" color="neutral.c70">
+          Adding a new device: {state.connectNewDeviceUIState.type}.
+        </Text>
+      );
     case ConnectDeviceUIStateTypes.UnknownError:
       return (
         <Flex p={3} backgroundColor="error.c10" borderRadius={8}>
@@ -364,6 +370,8 @@ function formatStateDetails(state: ConnectDeviceUIState): string {
       return `Connection error: ${state.error.type}.`;
     case ConnectDeviceUIStateTypes.Connected:
       return "Connected.";
+    case ConnectDeviceUIStateTypes.ConnectNewDevice:
+      return `Adding a new device: ${state.connectNewDeviceUIState.type}.`;
     case ConnectDeviceUIStateTypes.UnknownError:
       return "Unknown error escaped the connect-device state machine.";
     default:
@@ -410,6 +418,12 @@ function toSerializableState(state: ConnectDeviceUIState): unknown {
         error: state.error,
         retry: "[Function]",
         ignore: "[Function]",
+      };
+    case ConnectDeviceUIStateTypes.ConnectNewDevice:
+      return {
+        type: state.type,
+        connectNewDeviceUIState: { type: state.connectNewDeviceUIState.type },
+        back: "[Function]",
       };
     case ConnectDeviceUIStateTypes.UnknownError:
       return {

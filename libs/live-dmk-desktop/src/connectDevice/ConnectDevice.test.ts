@@ -88,6 +88,7 @@ describe("desktop connectDevice", () => {
       deviceDiscoveryService: expect.any(DefaultDeviceDiscoveryService),
       matchDiscoveredDevices: filterMatchedDevices,
       mapConnectionError: createConnectionError,
+      connectNewDevice: null,
     });
   });
 

@@ -3,8 +3,14 @@ import type {
   DeviceManagementKit,
   DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Observer } from "rxjs";
 
+import type {
+  ConnectNewDeviceFilterListedDevices,
+  ConnectNewDeviceGetDiscoveredDeviceKey,
+  EmbeddedConnectNewDeviceUIState,
+} from "../connectNewDevice/types";
 import {
   ConnectivityUIStateTypes,
   type BaseConnectionError,
@@ -51,6 +57,21 @@ export type ConnectDeviceMapConnectionError<
   TConnectionError extends BaseConnectionError = BaseConnectionError,
 > = (error: unknown) => TConnectionError;
 
+/**
+ * What the embedded connectNewDevice state machine of the add flow needs. `null` turns the add flow
+ * off: no state offers `addNewDevice`.
+ */
+export type ConnectDeviceConnectNewDeviceInput = {
+  getDiscoveredDeviceKey: ConnectNewDeviceGetDiscoveredDeviceKey;
+  filterListedDevices: ConnectNewDeviceFilterListedDevices;
+};
+
+/** The states that open the add flow, and that its back action returns to. */
+export type ConnectDeviceAddNewDeviceOrigin =
+  | "NoKnownDevice"
+  | "Discovering"
+  | "WaitingForSelectedDevice";
+
 export type ConnectDeviceStateMachineInput<
   TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,
   TConnectionError extends BaseConnectionError = BaseConnectionError,
@@ -64,6 +85,9 @@ export type ConnectDeviceStateMachineInput<
   buildCompatDeviceId?: (device: ConnectedDevice) => string;
   matchDiscoveredDevices: ConnectDeviceMatchDiscoveredDevices;
   mapConnectionError: ConnectDeviceMapConnectionError<TConnectionError>;
+  /** Given to the embedded machine of the add flow, which lists only these device models. */
+  acceptedDeviceModelIds?: Array<DeviceModelId>;
+  connectNewDevice: ConnectDeviceConnectNewDeviceInput | null;
 };
 
 export type ConnectDeviceStateMachineContext<
@@ -75,6 +99,12 @@ export type ConnectDeviceStateMachineContext<
   selectedMatchedDevice: MatchedDevice | null;
   discoveryError: TDiscoveryError | null;
   connectionError: TConnectionError | null;
+  showDeviceNotFound: boolean;
+  addNewDeviceOrigin: ConnectDeviceAddNewDeviceOrigin | null;
+  connectNewDeviceUIState: EmbeddedConnectNewDeviceUIState<
+    TDiscoveryError,
+    TConnectionError
+  > | null;
 };
 
 export enum ConnectDeviceStateMachineEventTypes {
@@ -88,10 +118,16 @@ export enum ConnectDeviceStateMachineEventTypes {
   UserTapsDiscoveryIgnore = "user-taps-discovery-ignore",
   UserTapsConnectionRetry = "user-taps-connection-retry",
   UserTapsConnectionIgnore = "user-taps-connection-ignore",
+  UserTapsAddNewDevice = "user-taps-add-new-device",
+  UserTapsBack = "user-taps-back",
+  ConnectNewDeviceUIStateChanged = "connect-new-device-ui-state-changed",
+  NewDeviceConnected = "new-device-connected",
+  ConnectNewDeviceFailed = "connect-new-device-failed",
 }
 
 export type ConnectDeviceStateMachineEvent<
   TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,
+  TConnectionError extends BaseConnectionError = BaseConnectionError,
 > =
   | {
       type: ConnectDeviceStateMachineEventTypes.DiscoveryError;
@@ -127,6 +163,24 @@ export type ConnectDeviceStateMachineEvent<
     }
   | {
       type: ConnectDeviceStateMachineEventTypes.UserTapsConnectionIgnore;
+    }
+  | {
+      type: ConnectDeviceStateMachineEventTypes.UserTapsAddNewDevice;
+    }
+  | {
+      type: ConnectDeviceStateMachineEventTypes.UserTapsBack;
+    }
+  | {
+      type: ConnectDeviceStateMachineEventTypes.ConnectNewDeviceUIStateChanged;
+      uiState: EmbeddedConnectNewDeviceUIState<TDiscoveryError, TConnectionError>;
+    }
+  | {
+      type: ConnectDeviceStateMachineEventTypes.NewDeviceConnected;
+      result: DeviceConnectionResult;
+    }
+  | {
+      type: ConnectDeviceStateMachineEventTypes.ConnectNewDeviceFailed;
+      error: unknown;
     };
 
 /**
@@ -141,6 +195,7 @@ export const ConnectDeviceUIStateTypes = {
   WaitingForSelectedDevice: "waiting-for-selected-device",
   Connecting: "connecting",
   Connected: "connected",
+  ConnectNewDevice: "connect-new-device",
 } as const;
 
 export type ConnectDeviceUIStateType =
@@ -155,14 +210,28 @@ export type ConnectDeviceUIState<
     }
   | {
       type: typeof ConnectDeviceUIStateTypes.NoKnownDevice;
+      /** `null` when the add flow is off. */
+      addNewDevice: (() => void) | null;
     }
   | {
       type: typeof ConnectDeviceUIStateTypes.Discovering;
       devices: Array<DisplayedDevice>;
+      /** `null` when the add flow is off. */
+      addNewDevice: (() => void) | null;
     }
   | {
       type: typeof ConnectDeviceUIStateTypes.WaitingForSelectedDevice;
       device: KnownDevice;
+      /** Set after a delay, only when the add flow is on. The hint calls `addNewDevice`. */
+      showDeviceNotFound: boolean;
+      /** `null` when the add flow is off. */
+      addNewDevice: (() => void) | null;
+    }
+  | {
+      type: typeof ConnectDeviceUIStateTypes.ConnectNewDevice;
+      connectNewDeviceUIState: EmbeddedConnectNewDeviceUIState<TDiscoveryError, TConnectionError>;
+      /** Goes back to the state that opened the add flow. */
+      back: () => void;
     }
   | {
       type: typeof ConnectDeviceUIStateTypes.Connecting;

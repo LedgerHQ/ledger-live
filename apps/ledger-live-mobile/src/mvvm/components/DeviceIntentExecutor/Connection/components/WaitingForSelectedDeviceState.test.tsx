@@ -30,6 +30,8 @@ function renderState(device: KnownDevice) {
   const state: WaitingForSelectedDeviceUIState = {
     type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,
     device,
+    showDeviceNotFound: false,
+    addNewDevice: null,
   };
 
   return render(

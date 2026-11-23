@@ -42,6 +42,7 @@ function renderState(devices: DisplayedDevice[]) {
   const state: DiscoveringUIState = {
     type: ConnectDeviceUIStateTypes.Discovering,
     devices,
+    addNewDevice: null,
   };
 
   return render(

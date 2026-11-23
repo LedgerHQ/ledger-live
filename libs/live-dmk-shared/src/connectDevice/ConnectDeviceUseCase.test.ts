@@ -37,6 +37,7 @@ const setupTest = ({
   input.matchDiscoveredDevices = jest.fn(() => []);
   input.mapConnectionError = jest.fn(error => ({ type: BaseConnectionErrorTypes.Unknown, error }));
   input.onConnected = jest.fn();
+  input.connectNewDevice = null;
 
   return {
     deviceDiscoveryService,
@@ -70,6 +71,8 @@ describe("connectDeviceUseCase", () => {
     expect(states[0]).toEqual({
       type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,
       device: knownDevice,
+      showDeviceNotFound: false,
+      addNewDevice: null,
     });
 
     subscription.unsubscribe();
@@ -84,7 +87,7 @@ describe("connectDeviceUseCase", () => {
     const subscription = connectDeviceUseCase(input).subscribe(state => states.push(state));
 
     //Assert
-    expect(states).toEqual([{ type: ConnectDeviceUIStateTypes.NoKnownDevice }]);
+    expect(states).toEqual([{ type: ConnectDeviceUIStateTypes.NoKnownDevice, addNewDevice: null }]);
 
     subscription.unsubscribe();
   });
@@ -196,6 +199,8 @@ describe("connectDeviceUseCase", () => {
     expect(states[0]).toEqual({
       type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,
       device: knownDevice,
+      showDeviceNotFound: false,
+      addNewDevice: null,
     });
 
     subscription.unsubscribe();

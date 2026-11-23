@@ -92,6 +92,7 @@ describe("mobile connectDevice", () => {
       matchDiscoveredDevices: filterMatchedDevices,
       mapConnectionError: createConnectionError,
       buildCompatDeviceId: buildMobileCompatDeviceId,
+      connectNewDevice: null,
     });
     expect(mockedSharedConnectDeviceUseCase.mock.calls[0][0]).not.toHaveProperty(
       "mapUnexpectedDiscoveryError",

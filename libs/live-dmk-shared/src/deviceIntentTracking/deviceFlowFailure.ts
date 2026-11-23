@@ -132,6 +132,7 @@ export function getConnectDeviceFailure(
     case ConnectDeviceUIStateTypes.WaitingForSelectedDevice:
     case ConnectDeviceUIStateTypes.Connecting:
     case ConnectDeviceUIStateTypes.Connected:
+    case ConnectDeviceUIStateTypes.ConnectNewDevice:
       return null;
     default:
       return assertNever(state);

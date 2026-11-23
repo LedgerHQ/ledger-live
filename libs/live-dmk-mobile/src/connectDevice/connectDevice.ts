@@ -38,5 +38,6 @@ export function connectDevice(input: ConnectDeviceInput): Observable<MobileConne
     matchDiscoveredDevices: filterMatchedDevices,
     mapConnectionError: createConnectionError,
     buildCompatDeviceId: buildMobileCompatDeviceId,
+    connectNewDevice: null,
   });
 }

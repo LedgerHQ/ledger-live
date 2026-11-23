@@ -1,15 +1,24 @@
 import type { Unsubscribable } from "rxjs";
-import { assign, createActor, fromPromise, setup } from "xstate";
+import { type AnyEventObject, assign, createActor, fromCallback, fromPromise, setup } from "xstate";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import {
   ConnectDeviceStateMachineEventTypes,
   ConnectDeviceUIStateTypes,
+  type ConnectDeviceAddNewDeviceOrigin,
   type ConnectDeviceStateMachineContext,
   type ConnectDeviceStateMachineEvent,
   type ConnectDeviceStateMachineInput,
   type KnownDevice,
   type MatchedDevice,
 } from "./types";
+import { DEFAULT_DEVICE_NOT_FOUND_DELAY } from "../connectKnownOrNewDevice/constants";
+import { DefaultConnectNewDeviceStateMachine } from "../connectNewDevice/ConnectNewDeviceStateMachine";
+import {
+  ConnectNewDeviceUIStateTypes,
+  type ConnectNewDeviceStateMachineInput,
+  type ConnectNewDeviceUIState,
+  type EmbeddedConnectNewDeviceUIState,
+} from "../connectNewDevice/types";
 import {
   getSelectedMatchedDeviceFromDiscoveryEvent,
   getMatchedDevicesFromDiscoveryEvent,
@@ -31,6 +40,35 @@ type ConnectDeviceStateMachineDiscoveryError<TDiscoveryError extends BaseDiscove
   | TDiscoveryError
   | UnknownDiscoveryError;
 
+type EmbeddedMachineInput<
+  TDiscoveryError extends BaseDiscoveryError,
+  TConnectionError extends BaseConnectionError,
+> = Omit<
+  ConnectNewDeviceStateMachineInput<
+    ConnectDeviceStateMachineDiscoveryError<TDiscoveryError>,
+    TConnectionError
+  >,
+  "observer" | "onConnected" | "onClose" | "embedded"
+>;
+
+const isEmbeddedUIState = <
+  TDiscoveryError extends BaseDiscoveryError,
+  TConnectionError extends BaseConnectionError,
+>(
+  uiState: ConnectNewDeviceUIState<TDiscoveryError, TConnectionError>,
+): uiState is EmbeddedConnectNewDeviceUIState<TDiscoveryError, TConnectionError> =>
+  uiState.type !== ConnectNewDeviceUIStateTypes.Done &&
+  uiState.type !== ConnectNewDeviceUIStateTypes.Terminated &&
+  uiState.type !== ConnectNewDeviceUIStateTypes.UnknownError;
+
+const buildAddNewDevice = (
+  canAddNewDevice: boolean,
+  send: (event: { type: ConnectDeviceStateMachineEventTypes.UserTapsAddNewDevice }) => void,
+): (() => void) | null =>
+  canAddNewDevice
+    ? () => send({ type: ConnectDeviceStateMachineEventTypes.UserTapsAddNewDevice })
+    : null;
+
 const createConnectDeviceStateMachine = <
   TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,
   TConnectionError extends BaseConnectionError = BaseConnectionError,
@@ -42,7 +80,8 @@ const createConnectDeviceStateMachine = <
         TConnectionError
       >,
       events: {} as ConnectDeviceStateMachineEvent<
-        ConnectDeviceStateMachineDiscoveryError<TDiscoveryError>
+        ConnectDeviceStateMachineDiscoveryError<TDiscoveryError>,
+        TConnectionError
       >,
       input: {} as ConnectDeviceStateMachineInput<
         ConnectDeviceStateMachineDiscoveryError<TDiscoveryError>,
@@ -81,6 +120,36 @@ const createConnectDeviceStateMachine = <
           return await input.resolution!.retry();
         },
       ),
+      connectNewDevice: fromCallback<
+        AnyEventObject,
+        EmbeddedMachineInput<TDiscoveryError, TConnectionError>
+      >(({ input, sendBack }) => {
+        const embeddedMachine = new DefaultConnectNewDeviceStateMachine<
+          TDiscoveryError,
+          TConnectionError
+        >({
+          ...input,
+          embedded: true,
+          observer: {
+            next: uiState => {
+              if (isEmbeddedUIState(uiState)) {
+                sendBack({
+                  type: ConnectDeviceStateMachineEventTypes.ConnectNewDeviceUIStateChanged,
+                  uiState,
+                });
+              }
+            },
+            error: error =>
+              sendBack({ type: ConnectDeviceStateMachineEventTypes.ConnectNewDeviceFailed, error }),
+            complete: () => undefined,
+          },
+          onConnected: result =>
+            sendBack({ type: ConnectDeviceStateMachineEventTypes.NewDeviceConnected, result }),
+          onClose: () => undefined,
+        });
+        embeddedMachine.start();
+        return () => embeddedMachine.stop();
+      }),
     },
     guards: {
       hasNoKnownDevice: ({ context }) => context.knownDevices.length === 0,
@@ -91,6 +160,9 @@ const createConnectDeviceStateMachine = <
         getSelectedMatchedDeviceFromDiscoveryEvent(event, context.selectedKnownDevice) !== null,
       retryOutputIsTrue: (_, params: { output: true | BaseDiscoveryError }) =>
         params.output === true,
+      canAddNewDevice: ({ context }) => context.connectNewDevice !== null,
+      cameFrom: ({ context }, params: { origin: ConnectDeviceAddNewDeviceOrigin }) =>
+        context.addNewDeviceOrigin === params.origin,
     },
     actions: {
       assignDiscoveryError: assign({
@@ -152,6 +224,33 @@ const createConnectDeviceStateMachine = <
         selectedKnownDevice: () => null,
         selectedMatchedDevice: () => null,
       }),
+      showDeviceNotFound: assign({
+        showDeviceNotFound: () => true,
+      }),
+      hideDeviceNotFound: assign({
+        showDeviceNotFound: () => false,
+      }),
+      assignAddNewDeviceOrigin: assign({
+        addNewDeviceOrigin: (_, params: { origin: ConnectDeviceAddNewDeviceOrigin }) =>
+          params.origin,
+      }),
+      assignConnectNewDeviceUIState: assign({
+        connectNewDeviceUIState: (
+          _,
+          params: {
+            uiState: EmbeddedConnectNewDeviceUIState<
+              ConnectDeviceStateMachineDiscoveryError<TDiscoveryError>,
+              TConnectionError
+            >;
+          },
+        ) => params.uiState,
+      }),
+      clearConnectNewDeviceUIState: assign({
+        connectNewDeviceUIState: () => null,
+      }),
+      failWithConnectNewDeviceError: (_, params: { error: unknown }) => {
+        throw params.error;
+      },
       ignoreDiscoveryError: ({ context }) => {
         const { ignoredTransportIds } = context.deviceDiscoveryService;
         const transportId = context.discoveryError!.transportId;
@@ -174,19 +273,32 @@ const createConnectDeviceStateMachine = <
           context.deviceDiscoveryService.stop();
         }
       },
-      emitNoKnownDevice: ({ context }) => {
-        context.observer.next({ type: ConnectDeviceUIStateTypes.NoKnownDevice });
+      emitNoKnownDevice: ({ context, self }) => {
+        context.observer.next({
+          type: ConnectDeviceUIStateTypes.NoKnownDevice,
+          addNewDevice: buildAddNewDevice(context.connectNewDevice !== null, self.send),
+        });
       },
       emitDiscovering: ({ context, self }) => {
         context.observer.next({
           type: ConnectDeviceUIStateTypes.Discovering,
           devices: buildDisplayedDevices(context.knownDevices, context.matchedDevices, self.send),
+          addNewDevice: buildAddNewDevice(context.connectNewDevice !== null, self.send),
         });
       },
-      emitWaitingForSelectedDevice: ({ context }) => {
+      emitWaitingForSelectedDevice: ({ context, self }) => {
         context.observer.next({
           type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,
           device: context.selectedKnownDevice!,
+          showDeviceNotFound: context.showDeviceNotFound,
+          addNewDevice: buildAddNewDevice(context.connectNewDevice !== null, self.send),
+        });
+      },
+      emitConnectNewDevice: ({ context, self }) => {
+        context.observer.next({
+          type: ConnectDeviceUIStateTypes.ConnectNewDevice,
+          connectNewDeviceUIState: context.connectNewDeviceUIState!,
+          back: () => self.send({ type: ConnectDeviceStateMachineEventTypes.UserTapsBack }),
         });
       },
       emitDiscoveryError: ({ context, self }) => {
@@ -246,6 +358,9 @@ const createConnectDeviceStateMachine = <
       selectedMatchedDevice: null,
       discoveryError: null,
       connectionError: null,
+      showDeviceNotFound: false,
+      addNewDeviceOrigin: null,
+      connectNewDeviceUIState: null,
     }),
     states: {
       Startup: {
@@ -270,6 +385,13 @@ const createConnectDeviceStateMachine = <
       },
       NoKnownDevice: {
         entry: "emitNoKnownDevice",
+        on: {
+          [ConnectDeviceStateMachineEventTypes.UserTapsAddNewDevice]: {
+            guard: "canAddNewDevice",
+            target: "ConnectNewDevice",
+            actions: { type: "assignAddNewDeviceOrigin", params: { origin: "NoKnownDevice" } },
+          },
+        },
       },
       Discovering: {
         entry: [
@@ -302,11 +424,20 @@ const createConnectDeviceStateMachine = <
             target: "WaitingForSelectedDevice",
             actions: "assignSelectedKnownDevice",
           },
+          [ConnectDeviceStateMachineEventTypes.UserTapsAddNewDevice]: {
+            guard: "canAddNewDevice",
+            target: "ConnectNewDevice",
+            actions: { type: "assignAddNewDeviceOrigin", params: { origin: "Discovering" } },
+          },
         },
       },
       WaitingForSelectedDevice: {
-        entry: ["startDiscovery", "emitWaitingForSelectedDevice"],
+        entry: ["hideDeviceNotFound", "startDiscovery", "emitWaitingForSelectedDevice"],
         after: {
+          [DEFAULT_DEVICE_NOT_FOUND_DELAY]: {
+            guard: "canAddNewDevice",
+            actions: ["showDeviceNotFound", "emitWaitingForSelectedDevice"],
+          },
           [WAITING_FOR_SELECTED_DEVICE_TIMEOUT]: {
             guard: "hasMoreThanOneKnownDevice",
             target: "Discovering",
@@ -340,6 +471,70 @@ const createConnectDeviceStateMachine = <
             target: "DiscoveryError",
             actions: "assignDiscoveryError",
           },
+          [ConnectDeviceStateMachineEventTypes.UserTapsAddNewDevice]: {
+            guard: "canAddNewDevice",
+            target: "ConnectNewDevice",
+            actions: {
+              type: "assignAddNewDeviceOrigin",
+              params: { origin: "WaitingForSelectedDevice" },
+            },
+          },
+        },
+      },
+      ConnectNewDevice: {
+        invoke: {
+          src: "connectNewDevice",
+          input: ({ context }) => ({
+            dmk: context.dmk,
+            deviceDiscoveryService: context.deviceDiscoveryService,
+            mapConnectionError: context.mapConnectionError,
+            getDiscoveredDeviceKey: context.connectNewDevice!.getDiscoveredDeviceKey,
+            filterListedDevices: context.connectNewDevice!.filterListedDevices,
+            ...(context.acceptedDeviceModelIds
+              ? { acceptedDeviceModelIds: context.acceptedDeviceModelIds }
+              : {}),
+            ...(context.buildCompatDeviceId
+              ? { buildCompatDeviceId: context.buildCompatDeviceId }
+              : {}),
+          }),
+        },
+        exit: "clearConnectNewDeviceUIState",
+        on: {
+          [ConnectDeviceStateMachineEventTypes.ConnectNewDeviceUIStateChanged]: {
+            actions: [
+              {
+                type: "assignConnectNewDeviceUIState",
+                params: ({ event }) => ({ uiState: event.uiState }),
+              },
+              "emitConnectNewDevice",
+            ],
+          },
+          [ConnectDeviceStateMachineEventTypes.NewDeviceConnected]: {
+            target: "Connected",
+            actions: {
+              type: "assignSessionId",
+              params: ({ event }) => ({ sessionId: event.result.sessionId }),
+            },
+          },
+          [ConnectDeviceStateMachineEventTypes.ConnectNewDeviceFailed]: {
+            actions: {
+              type: "failWithConnectNewDeviceError",
+              params: ({ event }) => ({ error: event.error }),
+            },
+          },
+          [ConnectDeviceStateMachineEventTypes.UserTapsBack]: [
+            {
+              guard: { type: "cameFrom", params: { origin: "NoKnownDevice" } },
+              target: "NoKnownDevice",
+              // The embedded machine leaves discovery running when it stops.
+              actions: "stopDiscovery",
+            },
+            {
+              guard: { type: "cameFrom", params: { origin: "WaitingForSelectedDevice" } },
+              target: "WaitingForSelectedDevice",
+            },
+            { target: "Discovering" },
+          ],
         },
       },
       DiscoveryError: {

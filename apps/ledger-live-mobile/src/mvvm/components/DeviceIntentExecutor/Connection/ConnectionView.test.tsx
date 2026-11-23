@@ -62,7 +62,7 @@ describe("ConnectionView", () => {
     const onConnectLedgerDevice = jest.fn();
     const onBuyLedgerDevice = jest.fn();
     const { user } = renderView(
-      { type: ConnectDeviceUIStateTypes.NoKnownDevice },
+      { type: ConnectDeviceUIStateTypes.NoKnownDevice, addNewDevice: null },
       { onConnectLedgerDevice, onBuyLedgerDevice },
     );
 
@@ -84,6 +84,7 @@ describe("ConnectionView", () => {
           onSelect: jest.fn(),
         },
       ],
+      addNewDevice: null,
     });
 
     expect(screen.getByText("Select a device")).toBeVisible();
@@ -94,6 +95,8 @@ describe("ConnectionView", () => {
     renderView({
       type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,
       device: makeKnownDevice(),
+      showDeviceNotFound: false,
+      addNewDevice: null,
     });
 
     expect(screen.getByText("Power on and unlock your Ledger Nano X")).toBeVisible();
