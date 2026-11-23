@@ -149,17 +149,6 @@ const getMADAttributes = () => {
   };
 };
 
-const getAddAccountAttributes = () => {
-  if (!analyticsFeatureFlagMethod) return {};
-  const addAccount = analyticsFeatureFlagMethod("lldNetworkBasedAddAccount");
-
-  const isEnabled = addAccount?.enabled ?? false;
-
-  return {
-    feature_add_account_desktop: isEnabled,
-  };
-};
-
 const getBackupHubAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const backupHub = analyticsFeatureFlagMethod("lwdBackupHub");
@@ -315,7 +304,6 @@ const extraProperties = (store: ReduxStore) => {
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
   const madAttributes = getMADAttributes();
-  const addAccountAttributes = getAddAccountAttributes();
   const backupHubAttributes = getBackupHubAttributes();
   const productTourAttributes = getProductTourAttributes();
   const largeScreenUpsellAttributes = getLargeScreenUpsellAttributes();
@@ -400,7 +388,6 @@ const extraProperties = (store: ReduxStore) => {
     ...deviceInfo,
     ...ledgerSyncAttributes,
     ...mevProtectionAttributes,
-    ...addAccountAttributes,
     ...backupHubAttributes,
     ...productTourAttributes,
     largeScreenUpsellAttributes,
