@@ -71,6 +71,10 @@ Review before merging.
 // Cairn has no timeout on shell tasks: a stalled command would hang the run.
 const fetchBase = `GIT_TERMINAL_PROMPT=0 timeout 300 git fetch --quiet origin ${repo.baseBranch}`;
 
+// Paths that are not package code: lockfiles, the catalog, release notes, Koda's own files.
+const unlinted =
+  "':!**/pnpm-lock.yaml' ':!**/yarn.lock' ':!**/package-lock.json' ':!pnpm-workspace.yaml' ':!**/Podfile.lock' ':!.changeset' ':!.koda'";
+
 // Lints only the packages whose files differ from the base branch, lockfiles aside: the bump and the migrations.
 // Typecheck and dependents build most of the repo first, so they are left to the PR's CI.
 const verifyCommand = [
@@ -79,7 +83,8 @@ const verifyCommand = [
   // The root is a package to lint in a single-package repo, or when the workspace lists it ("."). Otherwise it holds no source.
   `root=.; if grep -qsE '^packages:' pnpm-workspace.yaml || grep -qs '"workspaces"' package.json; then root=; fi`,
   "if grep -qsE '^ *- *.?[.].? *$' pnpm-workspace.yaml; then root=.; fi",
-  "packages=$(git diff --name-only FETCH_HEAD -- . ':!**/pnpm-lock.yaml' ':!**/yarn.lock' ':!**/package-lock.json' ':!pnpm-workspace.yaml' ':!**/Podfile.lock' ':!.changeset' ':!.koda' | while read -r file; do",
+  // Untracked files count too: the check runs before the commit, and a migration can add a file.
+  `packages=$({ git diff --name-only FETCH_HEAD -- . ${unlinted}; git ls-files --others --exclude-standard -- . ${unlinted}; } | while read -r file; do`,
   '  dir=$(dirname "$file")',
   '  while [ "$dir" != . ] && [ ! -f "$dir/package.json" ]; do dir=$(dirname "$dir"); done',
   '  if [ -f "$dir/package.json" ] && { [ "$dir" != . ] || [ "$root" = . ]; }; then node -p "require(\'./$dir/package.json\').name"; fi',
@@ -150,6 +155,14 @@ const recorder = agent("recorder")
 // Koda opens PRs as its GitHub app, but its commits are authored by this account.
 const kodaCommitters = ["ldg-github-ci"];
 
+// Prints "bot" when the bot opened the PR and only the bot committed to it, "human" otherwise. The bot's own login
+// (with or without `app/` and `[bot]`) and the accounts Koda commits as aren't people. An author with no GitHub login
+// (an email not linked to an account) is counted as a person: it can't be told apart from one.
+const ownerJq = `(.author.login | ltrimstr("app/") | rtrimstr("[bot]")) as $bot | ([.commits[].authors[] | (.login // "") | rtrimstr("[bot]") | select(. != $bot) | ${kodaCommitters.map(login => `select(. != "${login}")`).join(" | ")}] | unique | length) as $humans | if .author.is_bot and $humans == 0 then "bot" else "human" end`;
+
+// The bot PR this run replaces, as "<number> <head commit>", kept in .git so it is never committed.
+const oldPrFile = ".git/lumen-old-upgrade-pr";
+
 // One upgrade PR at a time: `createBranch` adds a unique suffix, so without this each run opens another PR.
 const openPrExitCode = variable("openPrExitCode", z.number());
 const openPr = variable("openPr", z.string(), {
@@ -165,10 +178,8 @@ const checkOpenPrTask = task("check-open-pr")
       `n=$(gh pr list --state open --limit 1000 --json number,headRefName --jq '[.[] | select(.headRefName | startswith("${repo.branchPrefix}"))][0].number // empty') || exit 2`,
       '[ -z "$n" ] && exit 0',
       'gh pr view "$n" --json url,headRefName || exit 2',
-      // Empty logins (unlinked co-authors), the bot's own login (with or without `app/` and `[bot]`) and the accounts
-      // Koda commits as aren't people.
-      `owner=$(gh pr view "$n" --json author,commits --jq '(.author.login | ltrimstr("app/") | rtrimstr("[bot]")) as $bot | ([.commits[].authors[].login | select(. != null and . != "") | rtrimstr("[bot]") | select(. != $bot) | ${kodaCommitters.map(login => `select(. != "${login}")`).join(" | ")}] | unique | length) as $humans | if .author.is_bot and $humans == 0 then "bot" else "human" end') || exit 2`,
-      '[ "$owner" = bot ] && exit 1',
+      `owner=$(gh pr view "$n" --json author,commits --jq '${ownerJq}') || exit 2`,
+      `[ "$owner" = bot ] && { gh pr view "$n" --json number,headRefOid --jq '"\\(.number) \\(.headRefOid)"' > ${oldPrFile} || exit 2; exit 1; }`,
       'gh pr comment "$n" --body "A newer Lumen release is out. People have committed to this branch, so the automated upgrade left it unchanged: the next release after this PR merges picks up the rest." || exit 2',
       "exit 3",
     ].join("\n"),
@@ -177,13 +188,22 @@ const checkOpenPrTask = task("check-open-pr")
   .writes({ exit_code: openPrExitCode, stdout: openPr });
 
 // Replacing the bot's PR instead of updating it keeps every run a full upgrade from the base branch:
-// code merged since then gets every migration in range.
+// code merged since then gets every migration in range. Someone may have pushed to it during the run, so it is closed
+// and its branch deleted only if it is still open, still the bot's alone and still at the commit checked at the start.
 const closeOldPrTask = task("close-old-pr")
-  .uses(upgrader)
-  .message(
-    'Close the previous upgrade PR in openPr with `gh pr close <url> --delete-branch --comment "Superseded by <prUrl>."`.',
+  .runs(
+    [
+      `read -r n sha < ${oldPrFile}`,
+      "new=$(gh pr view --json url --jq .url)",
+      `now=$(gh pr view "$n" --json state,headRefOid,author,commits --jq '.state + " " + .headRefOid + " " + (${ownerJq})')`,
+      'if [ "$now" = "OPEN $sha bot" ]; then',
+      '  gh pr close "$n" --delete-branch --comment "Superseded by $new."',
+      'elif [ "${now%% *}" = OPEN ]; then',
+      '  gh pr comment "$n" --body "Superseded by $new. This branch changed during the upgrade run, so it was left open: close it once its changes are handled."',
+      "fi",
+    ].join("\n"),
   )
-  .with({ openPr, prUrl });
+  .continueOnError();
 
 const createBranchTask = task("create-branch")
   .uses(upgrader)
