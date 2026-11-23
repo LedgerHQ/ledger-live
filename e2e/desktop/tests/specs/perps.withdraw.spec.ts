@@ -18,6 +18,7 @@ test.describe("Perps withdraw", () => {
   // Remove once the Perps feature flags are on PRD.
   test.skip(!IS_PERPS_LIVE_APP_STAGING, "Perps feature flags are not on PRD yet");
 
+  // Forces broadcast off, overriding any host DISABLE_TRANSACTION_BROADCAST value.
   setupEnv(true);
 
   test.use({
