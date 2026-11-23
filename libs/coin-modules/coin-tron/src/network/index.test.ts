@@ -17,6 +17,7 @@ import {
   fetchTronAccountTxs,
   fetchTronAccountTxsPage,
   fetchTronContract,
+  findBlock,
   freezeTronTransaction,
   getAccountName,
   getBlock,
@@ -43,6 +44,16 @@ import {
 } from ".";
 
 jest.mock("@ledgerhq/live-network/network");
+
+jest.mock("@ledgerhq/coin-module-framework/promises", () => {
+  const actual = jest.requireActual("@ledgerhq/coin-module-framework/promises");
+  return {
+    ...actual,
+    retry: function retryWithoutBackoffDelay(f: () => Promise<unknown>, options: object) {
+      return actual.retry(f, { ...options, interval: 0 });
+    },
+  };
+});
 
 jest.mock("tronweb", () => {
   const extendExpiration = jest.fn((tx, extension: number) => ({
@@ -110,6 +121,110 @@ describe("post / fetch error handling", () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: { message: "get-boom" } }));
     await expect(fetchTronAccount(mockLogger, mockConfig, senderBase58)).rejects.toThrow(
       /get-boom/,
+    );
+  });
+});
+
+describe("post timeout and retry", () => {
+  const timeoutError = Object.assign(new Error("timeout of 60000ms exceeded"), {
+    code: "ECONNABORTED",
+  });
+  const httpError = (status: number) => Object.assign(new Error(`API HTTP ${status}`), { status });
+
+  it("passes live-network's GET timeout to every POST", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({}));
+    await post(mockLogger, mockConfig, "/wallet/getblock", {});
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({ method: "POST", timeout: 60_000 }),
+    );
+  });
+
+  it("fails a getblock POST that never answers after the timeout and retries", async () => {
+    mockedNetwork.mockRejectedValue(timeoutError);
+    await expect(getBlock(mockLogger, mockConfig, 1)).rejects.toThrow(timeoutError.message);
+    expect(mockedNetwork).toHaveBeenCalledTimes(3);
+  });
+
+  it.each([408, 429, 500, 503])(
+    "retries a non-broadcast POST failing with %s, then returns the answer",
+    async status => {
+      mockedNetwork
+        .mockRejectedValueOnce(httpError(status))
+        .mockResolvedValueOnce(mockResponse({ ok: true }));
+      await expect(post(mockLogger, mockConfig, "/wallet/getcontract", {})).resolves.toEqual({
+        ok: true,
+      });
+      expect(mockedNetwork).toHaveBeenCalledTimes(2);
+    },
+  );
+
+  it("reports a transient failure that persists through every retry", async () => {
+    mockedNetwork.mockRejectedValue(httpError(502));
+    await expect(post(mockLogger, mockConfig, "/wallet/getcontract", {})).rejects.toThrow(
+      "API HTTP 502",
+    );
+    expect(mockedNetwork).toHaveBeenCalledTimes(3);
+  });
+
+  it("does not retry a non-retryable client error", async () => {
+    mockedNetwork.mockRejectedValue(httpError(400));
+    await expect(post(mockLogger, mockConfig, "/wallet/getcontract", {})).rejects.toThrow(
+      "API HTTP 400",
+    );
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not retry a 200 answer carrying a TronGrid Error", async () => {
+    mockedNetwork.mockResolvedValue(mockResponse({ Error: "boom" }));
+    await expect(post(mockLogger, mockConfig, "/wallet/getcontract", {})).rejects.toThrow("boom");
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(["/wallet/broadcasttransaction", "/wallet/broadcasthex"])(
+    "sends %s once, with the timeout, even when it times out",
+    async endPoint => {
+      mockedNetwork.mockRejectedValue(timeoutError);
+      await expect(post(mockLogger, mockConfig, endPoint, {})).rejects.toThrow(
+        timeoutError.message,
+      );
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+      expect(mockedNetwork).toHaveBeenCalledWith(expect.objectContaining({ timeout: 60_000 }));
+    },
+  );
+
+  it("sends broadcastTron and broadcastHexTron once on a 5xx", async () => {
+    mockedNetwork.mockRejectedValue(httpError(503));
+    await expect(
+      broadcastTron(mockLogger, mockConfig, { raw_data: {}, signature: [] } as never),
+    ).rejects.toThrow("API HTTP 503");
+    await expect(broadcastHexTron(mockLogger, mockConfig, "0a")).rejects.toThrow("API HTTP 503");
+    expect(mockedNetwork).toHaveBeenCalledTimes(2);
+    expect(mockedNetwork).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ url: `${TRON_BASE_URL}/wallet/broadcasttransaction` }),
+    );
+    expect(mockedNetwork).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ url: `${TRON_BASE_URL}/wallet/broadcasthex` }),
+    );
+  });
+});
+
+describe("findBlock", () => {
+  it("returns null when TronGrid answers {} for a block not produced yet", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({}));
+    await expect(findBlock(mockLogger, mockConfig, 999_999_999)).resolves.toBeNull();
+  });
+
+  it("propagates a transport failure", async () => {
+    mockedNetwork.mockRejectedValue(new Error("network down"));
+    await expect(findBlock(mockLogger, mockConfig, 1)).rejects.toThrow("network down");
+  });
+
+  it("getBlock rejects with a clear error on a block not produced yet", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({}));
+    await expect(getBlock(mockLogger, mockConfig, 999_999_999)).rejects.toThrow(
+      "Block 999999999 not found",
     );
   });
 });
@@ -978,7 +1093,7 @@ describe("fetchTronContract / getContractUserEnergyRatioConsumption", () => {
   });
 
   it("propagates errors instead of reporting no contract", async () => {
-    mockedNetwork.mockRejectedValueOnce(new Error("nope"));
+    mockedNetwork.mockRejectedValue(new Error("nope"));
     await expect(fetchTronContract(mockLogger, mockConfig, senderBase58)).rejects.toThrow("nope");
   });
 
