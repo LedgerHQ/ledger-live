@@ -114,13 +114,10 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
         osCheck,
       })
     : null;
-  const waitsForUpdatedDevice =
-    updateAfterSetup &&
-    input.seeded === true &&
-    machineState !== null &&
-    statesAfterHeldBackUpdate.has(machineState);
   const holdsPrevious =
-    unseeded && (waitsForUpdatedDevice || holdsPreviousStage(machineState, input.currentStep));
+    unseeded &&
+    (waitsForUpdatedDevice(machineState, input.seeded === true, updateAfterSetup) ||
+      holdsPreviousStage(machineState, input.currentStep));
 
   const visibleStage = useHeldStage(stage, holdsPrevious);
   const connection = useSessionReconnect({
@@ -183,6 +180,15 @@ function useLatched(value: boolean): boolean {
   const [latched, setLatched] = useState(value);
   if (value && !latched) setLatched(true);
   return latched || value;
+}
+
+function waitsForUpdatedDevice(
+  machineState: string | null,
+  seeded: boolean,
+  updateAfterSetup: boolean,
+): boolean {
+  if (!updateAfterSetup || !seeded || machineState === null) return false;
+  return statesAfterHeldBackUpdate.has(machineState);
 }
 
 function holdsPreviousStage(machineState: string | null, currentStep: string | null): boolean {
