@@ -3,6 +3,7 @@ import { useSelector, useStore } from "LLD/hooks/redux";
 import { EnvName, getEnv } from "@shared/env";
 import {
   FEATURE_FLAGS_DEFAULTS,
+  selectCachedFlagsSettled,
   type Feature,
   type FeatureId,
   type Features,
@@ -17,6 +18,8 @@ import {
   setDatadogActionsEnabled,
 } from "~/datadog/renderer";
 import { initDatadogLogs } from "~/datadog/logs";
+import { readCachedFlags, subscribeToRemoteFlags } from "~/firebase/remoteConfig";
+import { db } from "~/renderer/bridge";
 
 const MAX_KEYLEN = 32;
 
@@ -43,6 +46,9 @@ export const ConnectEnvsToDatadog = () => {
   const featureFlags = useFeatureFlags();
   const rawLldDatadog = useFeature("lldDatadog");
   const crashReporting = useSelector(crashReportingSelector);
+  const [remoteFlagsFetched, setRemoteFlagsFetched] = useState(false);
+  const [flagCached, setFlagCached] = useState(false);
+  const cachedFlagsSettled = useSelector(selectCachedFlagsSettled);
   const lldDatadog = isLldDatadogFeature(rawLldDatadog) ? rawLldDatadog : null;
   const [datadogInitialized, setDatadogInitialized] = useState(false);
   const initInFlightRef = useRef(false);
@@ -50,6 +56,42 @@ export const ConnectEnvsToDatadog = () => {
   useEffect(() => {
     setDatadogActionsEnabled(!!lldDatadog?.enabled);
   }, [lldDatadog?.enabled]);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let cancelled = false;
+    // A flag cached from an earlier fetch is a real value too, for when the fetch keeps failing.
+    void readCachedFlags().then(cached => !cancelled && setFlagCached(!!cached.lldDatadog));
+    // Deferred a task: subscribers run before the middleware writes the fetched flags to the store.
+    const unsubscribe = subscribeToRemoteFlags(() => {
+      clearTimeout(timer);
+      timer = setTimeout(setRemoteFlagsFetched, 0, true);
+    });
+    return () => {
+      cancelled = true;
+      unsubscribe();
+      clearTimeout(timer);
+    };
+  }, []);
+  const remoteFlagsKnown = remoteFlagsFetched || (flagCached && cachedFlagsSettled);
+
+  const enabled = !!lldDatadog?.enabled;
+  const sessionSampleRate = lldDatadog?.params?.sessionSamplingRate ?? 100;
+  useEffect(() => {
+    // Not on the compiled default, which would turn main's reporting off.
+    if (!remoteFlagsKnown) return;
+    // Main inits before the renderer, so it boots on the last flag; written past storage.ts's debounce.
+    db.setKey("app", "lldDatadog", { enabled, sessionSampleRate }).catch(e =>
+      console.warn("Datadog: could not persist lldDatadog for main", e),
+    );
+  }, [remoteFlagsKnown, enabled, sessionSampleRate]);
+
+  useEffect(() => {
+    // Past storage.ts's 1s debounce, so main applies an opt-out at once.
+    db.setKey("app", "settings.crashReporting", !!crashReporting).catch(e =>
+      console.warn("Datadog: could not persist crashReporting for main", e),
+    );
+  }, [crashReporting]);
 
   useEffect(() => {
     if (!lldDatadog?.enabled || !crashReporting || !isDatadogAvailable() || datadogInitialized)

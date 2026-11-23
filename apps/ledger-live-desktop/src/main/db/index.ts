@@ -126,6 +126,7 @@ const APP_NAMESPACE_ALLOWED_KEY_PATHS: ReadonlySet<string> = new Set([
   "knownDevices",
   "cryptoAssets",
   "identities",
+  "lldDatadog",
   "featureFlags",
   "coinConfigOverrides",
   "discover",

@@ -1,5 +1,6 @@
 import React from "react";
-import { render, withFlagOverrides } from "tests/testSetup";
+import { db } from "~/renderer/bridge";
+import { render, waitFor, withFlagOverrides } from "tests/testSetup";
 import { ConnectEnvsToDatadog } from "./ConnectEnvsToDatadog";
 
 jest.mock("~/datadog/renderer", () => ({
@@ -20,10 +21,27 @@ const setDatadogActionsEnabled = jest.mocked(
 );
 const initDatadogLogs = jest.mocked(jest.requireMock("~/datadog/logs").initDatadogLogs);
 
+let remoteFlagsFetched = true;
+let cachedFlags: Record<string, unknown> = {};
+jest.mock("~/firebase/remoteConfig", () => ({
+  readCachedFlags: () => Promise.resolve(cachedFlags),
+  subscribeToRemoteFlags: (callback: () => void) => {
+    if (remoteFlagsFetched) callback();
+    return () => {};
+  },
+}));
+
+const withCachedFlagsSettled = (...args: Parameters<typeof withFlagOverrides>) => {
+  const state = withFlagOverrides(...args);
+  return { ...state, featureFlags: { ...state.featureFlags, cachedFlagsSettled: true } };
+};
+
 describe("ConnectEnvsToDatadog", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     isDatadogAvailable.mockReturnValue(true);
+    remoteFlagsFetched = true;
+    cachedFlags = {};
   });
 
   it("should render nothing (null)", () => {
@@ -101,5 +119,68 @@ describe("ConnectEnvsToDatadog", () => {
     expect(shouldSend()).toBe(true);
     store.dispatch({ type: "SAVE_SETTINGS", payload: { crashReporting: false } });
     expect(shouldSend()).toBe(false);
+  });
+
+  it("mirrors nothing to main until a remote fetch succeeded, as the default would revoke consent", async () => {
+    remoteFlagsFetched = false;
+    render(<ConnectEnvsToDatadog />, {
+      initialState: withFlagOverrides({ lldDatadog: { enabled: true, params: {} } }),
+    });
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(db.setKey).not.toHaveBeenCalledWith("app", "lldDatadog", expect.anything());
+  });
+
+  it("mirrors a flag cached from an earlier fetch when the fetch keeps failing", async () => {
+    remoteFlagsFetched = false;
+    cachedFlags = { lldDatadog: { enabled: true } };
+    render(<ConnectEnvsToDatadog />, {
+      initialState: withCachedFlagsSettled({ lldDatadog: { enabled: true, params: {} } }),
+    });
+    await waitFor(() =>
+      expect(db.setKey).toHaveBeenCalledWith(
+        "app",
+        "lldDatadog",
+        expect.objectContaining({ enabled: true }),
+      ),
+    );
+  });
+
+  it("persists the resolved lldDatadog flag and session sampling (bypassing the debounce) for main's next boot", async () => {
+    render(<ConnectEnvsToDatadog />, {
+      initialState: {
+        ...withFlagOverrides({
+          lldDatadog: {
+            enabled: true,
+            params: { sessionSamplingRate: 10 },
+          },
+        }),
+        settings: { crashReporting: false },
+      },
+    });
+    await waitFor(() =>
+      expect(db.setKey).toHaveBeenCalledWith(
+        "app",
+        "lldDatadog",
+        expect.objectContaining({ enabled: true }),
+      ),
+    );
+    expect(db.setKey).toHaveBeenCalledWith("app", "lldDatadog", {
+      enabled: true,
+      sessionSampleRate: 10,
+    });
+  });
+
+  it("mirrors crashReporting to main immediately, bypassing the settings persistence debounce", async () => {
+    const { store } = render(<ConnectEnvsToDatadog />, {
+      initialState: {
+        ...withFlagOverrides({ lldDatadog: { enabled: true, params: {} } }),
+        settings: { crashReporting: true },
+      },
+    });
+    expect(db.setKey).toHaveBeenCalledWith("app", "settings.crashReporting", true);
+    jest.mocked(db.setKey).mockClear();
+    store.dispatch({ type: "SAVE_SETTINGS", payload: { crashReporting: false } });
+    await new Promise(r => setImmediate(r));
+    expect(db.setKey).toHaveBeenCalledWith("app", "settings.crashReporting", false);
   });
 });
