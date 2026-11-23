@@ -3,8 +3,8 @@
 > [!CAUTION]
 > **Status: UNSTABLE** — New package: the operation API may change while the first flows adopt it.
 
-Tracks named operations (a user journey from its start to a success or a failure) and sends their
-events to a sink the app registers. React-free and vendor-agnostic: the app maps the sink to its
+Tracks named operations (a step the app performs, from its start to a success or a failure) and
+sends their events to a sink the app registers. React-free and vendor-agnostic: the app maps the sink to its
 monitoring tool, for example Datadog RUM feature operations. The React hook lives in
 [`@shared/observability-operations-react`](../observability-operations-react/README.md).
 
@@ -23,8 +23,9 @@ failOperation("checkout", "ERROR", { attributes: { error_name: error.name } });
 - **Stop** (`succeedOperation`, `failOperation`) sends only when its start was sent, once, to the
   sink of that start. Its attributes are merged over the start attributes. `expectedId` stops the
   operation only if it is still the one that id started.
-- **Failure reasons**: `ERROR` (the operation failed), `ABANDONED` (the user left it), `OTHER` (an
-  expected dead end).
+- **Failure reasons**: `ERROR` (a technical failure), `ABANDONED` (the user left it), `OTHER` (any
+  other failure). Monitoring counts `OTHER` against availability like `ERROR`, so an expected dead
+  end, such as nothing to add, succeeds with an `outcome` attribute instead.
 - **Keys**: `operationKey` tells apart concurrent instances of one name.
 - **Names** match `^[\w.@$-]+$`; any other name makes every call a no-op.
 - **Attributes**: `undefined` values are dropped. Use snake_case keys, and never send addresses,
