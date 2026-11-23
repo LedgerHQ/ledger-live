@@ -1,17 +1,95 @@
-// Upgrades Lumen to latest and opens a draft PR (Lumen ADR 027). Owned by the Lumen team.
+// Upgrades Lumen to latest and opens a PR (Lumen ADR 027). Owned by the Lumen team.
 // @ts-nocheck: @cairn/plan is provided by Cairn at run time, not installed here
-import { agent, allTools, inputsOf, literal, plan, task, variable } from "@cairn/plan";
+import {
+  agent,
+  allTools,
+  inputsOf,
+  literal,
+  plan,
+  retryShellSlot,
+  task,
+  variable,
+} from "@cairn/plan";
 import { z } from "zod";
 
-// Lumen versions live in the pnpm catalog.
-const lumenPackages = [
-  "@ledgerhq/lumen-design-core",
-  "@ledgerhq/lumen-lint-plugin",
-  "@ledgerhq/lumen-ui-react",
-  "@ledgerhq/lumen-ui-rnative",
-  "@ledgerhq/lumen-utils-shared",
-];
-// No check in the plan for now, to confirm the verify step caused the 2-hour timeout: the PR's CI checks the upgrade.
+// Repo settings: the only part that differs between the repos that run this plan.
+const repo = {
+  name: "ledger-live",
+  baseBranch: "develop",
+  // `createBranch` appends a unique suffix.
+  branchPrefix: "chore/lumen-upgrade",
+  prTitle: "chore(deps): upgrade Lumen",
+  bumpCommitMessage: "chore(lumen): upgrade Lumen to latest",
+  changesetCommitMessage: "chore(lumen): add the Lumen upgrade changeset",
+  agentGuidance: "Follow AGENTS.md and the skills it points to.",
+  installCommand: "pnpm install --frozen-lockfile",
+  // Updates the lockfile after the bump.
+  relockCommand: "pnpm install --no-frozen-lockfile",
+  // Runs after the relock, before the migrations. Empty to skip.
+  // Same steps as .github/workflows/renovate-sync-reusable.yml. React Native's Podfile only reads
+  // `xcodebuild -version`, so a stub is enough: nothing is compiled.
+  afterBumpCommand: [
+    "set -e",
+    "mise install ruby@3.3",
+    'export PATH="$(mise where ruby@3.3)/bin:$PATH"',
+    "cd apps/ledger-live-mobile",
+    "bundle install --jobs 4",
+    "mkdir -p /tmp/xcode-stub",
+    'printf \'#!/bin/sh\\necho "Xcode 16.4"\\necho "Build version 16F6"\\n\' > /tmp/xcode-stub/xcodebuild',
+    "chmod +x /tmp/xcode-stub/xcodebuild",
+    'PATH="/tmp/xcode-stub:$PATH" bundle exec ruby scripts/pod-lockfile.rb',
+  ].join("\n"),
+  // Lints the packages in $packages (package.json names, one per line). One command, run under `timeout`.
+  // `lint` has no dependsOn here, so it builds nothing first.
+  lintCommand:
+    'env NX_DAEMON=false pnpm nx run-many -t lint --projects="$(echo $packages | tr " " ,)" --skip-nx-cache',
+  // Runs after the bump commit. Empty to skip. The repo's Renovate script lists every package whose
+  // resolved dependencies changed, from the lockfile diff.
+  changesetCommand:
+    'node tools/scripts/renovate-changeset.mjs origin/develop lumen-upgrade "Upgrade Lumen to latest"',
+  // Empty when the repo has no changesets.
+  changesetInstructions:
+    ".changeset/lumen-upgrade.md lists the packages whose dependencies changed. Add every other package whose source files the migrations or fixes changed (git diff origin/develop --stat), following .agents/skills/create-changeset/SKILL.md.",
+  prBodyTemplate: `### 📝 Description
+
+Automated Lumen upgrade to the latest versions, run by Koda from \`.koda/plans/lumen-upgrade.ts\`: bumps Lumen and applies the Lumen migrations in range. Koda only linted the packages the upgrade changed: typecheck and tests run in this PR's CI.
+
+Review before merging.
+
+### 👀 Needs a human
+
+<humanReview>
+
+### 🔗 Context
+
+- **JIRA / GitHub issue**: DLS-1166
+- **ADR** (if any): [ADR 027: Automated Lumen upgrades in consumer repos](https://ledgerhq.atlassian.net/wiki/spaces/DLS/pages/7689666642)`,
+};
+
+// The rest of the plan is the same in every repo.
+
+// Cairn has no timeout on shell tasks: a stalled command would hang the run.
+const fetchBase = `GIT_TERMINAL_PROMPT=0 timeout 300 git fetch --quiet origin ${repo.baseBranch}`;
+
+// Exact Lumen pins in package.json files, and Lumen entries in the pnpm catalog.
+const lumenPins = `grep -rlE --include=package.json --exclude-dir=node_modules --exclude-dir=.git '"@ledgerhq/lumen-[a-z-]+": "[0-9]' .`;
+const lumenCatalog = "pnpm-workspace.yaml";
+
+// Lints only the packages whose files differ from the base branch, lockfiles aside: the bump and the migrations.
+// Typecheck and dependents build most of the repo first, so they are left to the PR's CI.
+const verifyCommand = [
+  "set -eo pipefail",
+  fetchBase,
+  // The root is a package to lint only in a single-package repo: in a monorepo it holds no source.
+  `if [ -f pnpm-workspace.yaml ] || grep -q '"workspaces"' package.json; then root=; else root=.; fi`,
+  "packages=$(git diff --name-only FETCH_HEAD -- . ':!**/pnpm-lock.yaml' ':!**/yarn.lock' ':!**/package-lock.json' ':!pnpm-workspace.yaml' ':!**/Podfile.lock' ':!.changeset' ':!.koda' | while read -r file; do",
+  '  dir=$(dirname "$file")',
+  '  while [ "$dir" != . ] && [ ! -f "$dir/package.json" ]; do dir=$(dirname "$dir"); done',
+  '  if [ "$dir" != . ] || [ "$root" = . ]; then node -p "require(\'./$dir/package.json\').name"; fi',
+  "done | sort -u)",
+  'if [ -z "$packages" ]; then echo "No package changed besides the lockfiles."; exit 0; fi',
+  `timeout 1200 ${repo.lintCommand}`,
+].join("\n");
 
 // What the Lumen workflow sends. The plan bumps to latest and doesn't read targetVersions yet.
 const planInput = z.object({
@@ -31,8 +109,8 @@ const humanReview = variable("humanReview", z.array(z.string()), {
     "What the migrations leave for a human to decide, one item per entry, with the file paths. Empty when nothing.",
 });
 
-const prBody = variable("prBody", z.object({ title: z.string(), body: z.string() }), {
-  description: "The pull request title and body, in Markdown.",
+const prBody = variable("prBody", z.object({ body: z.string() }), {
+  description: "The pull request body, in Markdown.",
 });
 
 const result = variable(
@@ -55,11 +133,13 @@ const result = variable(
   { description: "Terminal result returned by run-plan." },
 );
 
+const verify = retryShellSlot("verify");
+
 const upgrader = agent("upgrader")
   .prompt(
-    `You upgrade the @ledgerhq/lumen-* packages in ledger-live.
-Follow AGENTS.md and the skills it points to. Fix only what the migrations or failing checks require. Keep behavior and unrelated code unchanged.
-Never edit pnpm-lock.yaml or pnpm-workspace.yaml by hand and never downgrade a Lumen package.`,
+    `You upgrade the @ledgerhq/lumen-* packages in ${repo.name}.
+${repo.agentGuidance} Fix only what the migrations or failing checks require. Keep behavior and unrelated code unchanged.
+Never edit lockfiles by hand and never downgrade a Lumen package. Keep peerDependencies ranges unless the new version falls outside them.`,
   )
   .tools(allTools())
   .limits({ maxTurns: 40, timeoutMinutes: 30 });
@@ -76,12 +156,12 @@ const openPr = variable("openPr", z.string(), {
     "The open upgrade PR as JSON, with its url and headRefName. Empty when none is open.",
 });
 
-// Exit 0: no open upgrade PR. Exit 1: the bot's PR is open (stdout is its JSON). Exit 2: `gh` failed.
-// Exit 3: a person opened it or committed to it, so it gets a comment and is left alone.
+// Exit 0: no open upgrade PR. Exit 1: the bot's PR is open (stdout is its JSON), so the new PR replaces it.
+// Exit 2: `gh` failed. Exit 3: a person opened it or committed to it, so it gets a comment and is left alone.
 const checkOpenPrTask = task("check-open-pr")
   .runs(
     [
-      `n=$(gh pr list --state open --limit 1000 --json number,headRefName --jq '[.[] | select(.headRefName | startswith("chore/lumen-upgrade"))][0].number // empty') || exit 2`,
+      `n=$(gh pr list --state open --limit 1000 --json number,headRefName --jq '[.[] | select(.headRefName | startswith("${repo.branchPrefix}"))][0].number // empty') || exit 2`,
       '[ -z "$n" ] && exit 0',
       'gh pr view "$n" --json url,headRefName || exit 2',
       // Empty logins (unlinked co-authors) and the bot's own login, with or without `app/` and `[bot]`, aren't people.
@@ -94,120 +174,87 @@ const checkOpenPrTask = task("check-open-pr")
   .continueOnError()
   .writes({ exit_code: openPrExitCode, stdout: openPr });
 
-const reuseBranchTask = task("reuse-branch")
+// Replacing the bot's PR instead of updating it keeps every run a full upgrade from the base branch:
+// code merged since then gets every migration in range.
+const closeOldPrTask = task("close-old-pr")
   .uses(upgrader)
   .message(
-    `An upgrade PR is already open: its url and branch (headRefName) are in openPr. Update that PR instead of opening a new one.
-Run git fetch, check out that branch, and merge origin/develop into it.
-Then restore both pnpm-workspace.yaml and pnpm-lock.yaml from origin/develop (git checkout origin/develop -- pnpm-workspace.yaml pnpm-lock.yaml), whatever the conflicts: the frozen install needs them consistent, and the next steps redo the bump.`,
+    'Close the previous upgrade PR in openPr with `gh pr close <url> --delete-branch --comment "Superseded by <prUrl>."`.',
   )
-  .with({ openPr });
+  .with({ openPr, prUrl });
 
 const createBranchTask = task("create-branch")
   .uses(upgrader)
-  .createBranch({ name: "chore/lumen-upgrade" });
+  .createBranch({ name: repo.branchPrefix });
 
-// Cairn has no timeout on shell tasks: a stalled fetch would hang the run, so it gives up after 5 minutes.
-const fetchDevelop = "GIT_TERMINAL_PROMPT=0 timeout 300 git fetch --quiet origin develop";
+// The sandbox image can ship a checkout whose base branch is as old as the image, and Cairn fetches the branch by URL,
+// which leaves it there: the migration range and the changesets read the base branch, so refresh it first.
+const installTask = task("install").runs(`${fetchBase} && ${repo.installCommand}`);
 
-// The sandbox image ships a checkout whose origin/develop is as old as the image, and Cairn fetches the branch by URL,
-// which leaves it there: the migration range and the changeset read origin/develop, so refresh it first.
-const installTask = task("install").runs(`${fetchDevelop} && pnpm install --frozen-lockfile`);
-
-// Sets each catalog entry to the latest published version, then updates the lockfile.
+// Sets each exact Lumen pin and pnpm catalog entry to the latest published version, then updates the lockfile.
+// Caret ranges (peerDependencies) are left alone, and so is a version newer than `latest` (dist-tag rollback, prerelease).
 const bumpTask = task("bump").runs(
   [
     "set -e",
-    `for pkg in ${lumenPackages.join(" ")}; do`,
+    `files=$(${lumenPins} || true)`,
+    `if [ -f ${lumenCatalog} ] && grep -qE '^ +"?@ledgerhq/lumen-[a-z-]+"?: *[0-9]' ${lumenCatalog}; then files="$files ${lumenCatalog}"; fi`,
+    'if [ -z "$files" ]; then echo "No Lumen pin found."; exit 0; fi',
+    `for pkg in $(grep -hoE '"?@ledgerhq/lumen-[a-z-]+"?: *"?[0-9]' $files | grep -oE '@ledgerhq/lumen-[a-z-]+' | sort -u); do`,
     '  version=$(npm view "$pkg" version)',
-    '  sed -i.bak -E "s|^(  \\"$pkg\\": ).*|\\1$version|" pnpm-workspace.yaml',
+    "  for f in $files; do",
+    '    current=$(sed -nE "s|.*\\"?$pkg\\"?: *\\"?([0-9][^\\" ]*)\\"?.*|\\1|p" "$f" | head -1)',
+    '    [ -n "$current" ] || continue',
+    '    [ "$(printf \'%s\\n%s\\n\' "$current" "$version" | sort -V | tail -1)" = "$version" ] || continue',
+    '    sed -i.bak -E "s|(\\"?$pkg\\"?: *\\"?)[0-9][^\\" ]*|\\1$version|" "$f" && rm "$f.bak"',
+    "  done",
     "done",
-    "rm pnpm-workspace.yaml.bak",
-    "pnpm install --no-frozen-lockfile",
+    repo.relockCommand,
   ].join("\n"),
 );
+
+const afterBumpTask = task("after-bump").runs(repo.afterBumpCommand);
 
 // Always `@latest`: the index only knows the releases published before the CLI version.
 const migrationsCli = "npx --yes @ledgerhq/lumen-migrations@latest";
 
-// The range starts at the versions the open upgrade PR already migrated to, or at develop's when there is none.
 const migrateTask = task("migrate")
   .uses(upgrader)
   .message(
     `Apply the Lumen migrations for the upgrade range with the migrations CLI.
-1. Get the previous version of each bumped @ledgerhq/lumen-* package: if openPr is set, from the open PR's branch (\`git show origin/<headRefName>:pnpm-workspace.yaml\`), as its migrations are already applied; otherwise from \`git show origin/develop:pnpm-workspace.yaml\`. The new version is in the working tree's pnpm-workspace.yaml.
+1. Get the previous version of each bumped @ledgerhq/lumen-* package from origin/${repo.baseBranch}: from the package.json files that pin it, or from the pnpm catalog in pnpm-workspace.yaml (\`git show origin/${repo.baseBranch}:<path>\`). The new version is in the working tree. When files pin different previous versions, use the lowest.
 2. For each of them, run \`${migrationsCli} list --package <name> --from <previous> --to <new> --json\`.
 3. For each migration listed, run \`${migrationsCli} show <id>\` and follow it (Before → after, Decide).
 4. For each package, run \`${migrationsCli} check --package <name> --from <previous> --to <new>\` from the repo root, so every package using Lumen is scanned. Exit code 1 means \`expect: none\` patterns still have hits: fix them and run it again. Hits listed as review are for a human: do not edit them.
 5. Write what you cannot decide, and every review hit, as humanReview.`,
   )
-  .with({ openPr })
   .writes(humanReview);
 
-// Same steps as .github/workflows/renovate-sync-reusable.yml, which only covers Renovate branches.
-// React Native's Podfile only reads `xcodebuild -version`, so a stub is enough: nothing is compiled.
-const podLockfileTask = task("pod-lockfile").runs(
-  [
-    "set -e",
-    "mise install ruby@3.3",
-    'export PATH="$(mise where ruby@3.3)/bin:$PATH"',
-    "cd apps/ledger-live-mobile",
-    "bundle install --jobs 4",
-    "mkdir -p /tmp/xcode-stub",
-    'printf \'#!/bin/sh\\necho "Xcode 16.4"\\necho "Build version 16F6"\\n\' > /tmp/xcode-stub/xcodebuild',
-    "chmod +x /tmp/xcode-stub/xcodebuild",
-    'PATH="/tmp/xcode-stub:$PATH" bundle exec ruby scripts/pod-lockfile.rb',
-  ].join("\n"),
-);
+const commitTask = task("commit").uses(upgrader).commit({ message: repo.bumpCommitMessage });
 
-const commitTask = task("commit")
-  .uses(upgrader)
-  .commit({ message: "chore(lumen): upgrade Lumen to latest" });
-
-// The repo's Renovate script lists every package whose resolved dependencies changed, from the
-// lockfile diff against develop. It reads committed files, so it runs after the commit.
-const changesetScriptTask = task("changeset-script").runs(
-  'node tools/scripts/renovate-changeset.mjs origin/develop lumen-upgrade "Upgrade Lumen to latest"',
-);
+// Reads committed files, so it runs after the commit.
+const changesetScriptTask = task("changeset-script").runs(repo.changesetCommand);
 
 const changesetTask = task("changeset")
   .uses(upgrader)
-  .message(
-    `.changeset/lumen-upgrade.md lists the packages whose dependencies changed. Add every other package whose source files the migrations or fixes changed (git diff origin/develop --stat), following .agents/skills/create-changeset/SKILL.md. Do not commit.`,
-  );
+  .message(`${repo.changesetInstructions} Do not commit.`);
 
 const commitChangesetTask = task("commit-changeset")
   .uses(upgrader)
-  .commit({ message: "chore(lumen): add the Lumen upgrade changeset" });
+  .commit({ message: repo.changesetCommitMessage });
 
 const pushTask = task("push").uses(upgrader).push();
-
-const prBodyTemplate = `### 📝 Description
-
-Automated Lumen upgrade to the latest versions, run by Koda from \`.koda/plans/lumen-upgrade.ts\`: bumps the pnpm catalog and applies the Lumen migrations in range. Koda ran no checks: this PR's CI checks the upgrade.
-
-Review before merging.
-
-### 👀 Needs a human
-
-<humanReview>
-
-### 🔗 Context
-
-- **JIRA / GitHub issue**: DLS-1166
-- **ADR** (if any): [ADR 027: Automated Lumen upgrades in consumer repos](https://ledgerhq.atlassian.net/wiki/spaces/DLS/pages/7689666642)`;
 
 const prBodyTask = task("pr-body")
   .uses(recorder)
   .message(
-    "Write prBody: title is pr.title, and body is the template with <humanReview> replaced by humanReview as a Markdown list, or by `Nothing.` when it is empty. Change nothing else.",
+    "Write prBody: the template with <humanReview> replaced by humanReview as a Markdown list, or by `Nothing.` when it is empty. Change nothing else.",
   )
-  .with({ template: literal(prBodyTemplate), humanReview, pr: inputs.pr })
+  .with({ template: literal(repo.prBodyTemplate), humanReview })
   .writes(prBody);
 
 const createPrTask = task("create-pr")
   .uses(upgrader)
-  .createPr({ title: prBody.field("title"), body: prBody.field("body") })
+  .createPr({ title: repo.prTitle, body: prBody.field("body") })
   .writes({ url: prUrl });
 
 // `createPr` has no labels option.
@@ -218,28 +265,12 @@ const labelsTask = task("labels")
   )
   .with({ prUrl, pr: inputs.pr });
 
-// An updated PR keeps its title and labels, but its body must reflect this run's migrations.
-const updatePrBodyTask = task("update-pr-body")
-  .uses(upgrader)
-  .message(
-    "Replace the body of the PR in openPr with prBody.body: write it to a file and run `gh pr edit <url> --body-file <file>`.",
-  )
-  .with({ openPr, prBody });
-
 const recordPrCreatedTask = task("record-pr-created")
   .uses(recorder)
   .message(
     "Write the terminal result as pr-created, with a one-sentence summary and the pull request URL as prUrl.",
   )
-  .with({ prUrl })
-  .writes(result);
-
-const recordPrUpdatedTask = task("record-pr-updated")
-  .uses(recorder)
-  .message(
-    "Write the terminal result as pr-created: the open PR in openPr was updated. Give a one-sentence summary and its url as prUrl.",
-  )
-  .with({ openPr })
+  .with({ prUrl, verify })
   .writes(result);
 
 const recordHumanCommitsTask = task("record-human-commits")
@@ -270,30 +301,57 @@ const recordUpToDateTask = task("record-up-to-date")
   )
   .writes(result);
 
+const recordFailureTask = task("record-failure")
+  .uses(recorder)
+  .message(
+    "Write the terminal result as failed. Give the failing check from the verify output as the reason.",
+  )
+  .with({ verify })
+  .writes(result);
+
+const fixTask = shellOutput =>
+  task("fix")
+    .uses(upgrader)
+    .message("Checks failed after the Lumen upgrade. Fix them.")
+    .with({ stdout: shellOutput.field("stdout"), stderr: shellOutput.field("stderr") });
+
+// Steps whose setting is empty are left out of the plan.
+const migrate = b => {
+  const bumped = repo.afterBumpCommand ? b.do(afterBumpTask) : b;
+  return bumped
+    .do(migrateTask)
+    .retryShell("verify", { max: 3, command: verifyCommand, fixer: fixTask });
+};
+
+const commit = b => {
+  const committed = b.do(commitTask);
+  const listed = repo.changesetCommand ? committed.do(changesetScriptTask) : committed;
+  return repo.changesetInstructions ? listed.do(changesetTask).do(commitChangesetTask) : listed;
+};
+
+const openPrSteps = b =>
+  b
+    .do(pushTask)
+    .do(prBodyTask)
+    .do(createPrTask)
+    .do(labelsTask)
+    .do(closeOldPrTask, { when: openPrExitCode.eq(1) })
+    .do(recordPrCreatedTask);
+
 const upgrade = b =>
   b
-    .do(reuseBranchTask, { when: openPrExitCode.eq(1) })
-    .do(createBranchTask, { when: openPrExitCode.eq(0) })
+    .do(createBranchTask)
     .do(installTask)
     .do(bumpTask)
     .do(checkChangesTask)
     .if(
       changesExitCode.eq(0),
       c =>
-        c
-          .do(migrateTask)
-          .do(podLockfileTask)
-          .do(commitTask)
-          .do(changesetScriptTask)
-          .do(changesetTask)
-          .do(commitChangesetTask)
-          .do(pushTask)
-          .do(prBodyTask)
-          .if(
-            openPrExitCode.eq(1),
-            d => d.do(updatePrBodyTask).do(recordPrUpdatedTask),
-            d => d.do(createPrTask).do(labelsTask).do(recordPrCreatedTask),
-          ),
+        migrate(c).if(
+          verify.field("exit_code").eq(0),
+          d => openPrSteps(commit(d)),
+          d => d.do(recordFailureTask),
+        ),
       c => c.do(recordUpToDateTask),
     );
 
