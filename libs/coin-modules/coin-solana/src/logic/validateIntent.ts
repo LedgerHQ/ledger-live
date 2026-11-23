@@ -25,7 +25,8 @@ import {
 } from "../logic";
 import { MAX_MEMO_LENGTH, validateMemo } from "./validateMemo";
 import {
-  NotEnoughGas,
+  SolanaNotEnoughSolForRecipientTokenAccount,
+  SolanaNotEnoughSolForTokenTransfer,
   SolanaStakeAccountAmountTooLow,
   SolanaAccountNotFunded,
   SolanaRecipientAccountNotFunded,
@@ -61,8 +62,11 @@ import {
   getMaybeTokenMint,
   getMaybeVoteAccount,
   getStakeAccountMinimumBalanceForRentExemption,
+  type ParsedOnChainMintWithInfo,
 } from "../network/chain/web3";
+import { getAtaDataLengthForMint } from "../helpers/token";
 import { unstakeReserve } from "./estimateFees";
+import { computeUnstakeReserve } from "./getStakes";
 import type {
   SolanaTokenAccount,
   SolanaTokenProgram,
@@ -144,6 +148,7 @@ export async function validateIntent(
   if (isTokenTransfer && transactionIntent.recipient && !errors.recipient) {
     await validateTokenTransfer(
       api,
+      config,
       transactionIntent,
       balances,
       estimatedFees,
@@ -206,6 +211,7 @@ function validateTransactionMemo(
 
 async function validateTokenTransfer(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   intent: TransactionIntent<StringMemo | MemoNotSupported>,
   balances: Balance[],
   estimatedFees: bigint,
@@ -262,21 +268,33 @@ async function validateTokenTransfer(
   if (spendable < requiredSol || spendable === 0n) {
     const recipientHasNoTokenAccount = descriptor.shouldCreateAsAssociatedTokenAccount;
     // The estimation sums the deposit into the fee; it is split back out so it is not shown as one.
-    const deposit = recipientHasNoTokenAccount
-      ? minBigInt(tokenAccountDepositOf(customFees), requiredSol)
-      : 0n;
-    errors.gasPrice = new NotEnoughGas(undefined, {
-      ...lamportBreakdown({
-        fee: requiredSol - deposit,
-        deposit,
-        balances,
-        required: requiredSol,
-      }),
+    const [tokenAccountDeposit, reserve] = await Promise.all([
+      recipientHasNoTokenAccount
+        ? recipientTokenAccountDeposit(api, mintOrError, customFees)
+        : Promise.resolve(0n),
+      senderReserve(api, config, intent.sender, balances),
+    ]);
+    const deposit = minBigInt(tokenAccountDeposit, requiredSol);
+    const breakdown = lamportBreakdown({
+      fee: requiredSol - deposit,
+      deposit,
+      balances,
+      required: requiredSol,
+      reserve,
+    });
+    const InsufficientSolError = recipientHasNoTokenAccount
+      ? SolanaNotEnoughSolForRecipientTokenAccount
+      : SolanaNotEnoughSolForTokenTransfer;
+    errors.gasPrice = new InsufficientSolError(undefined, {
+      ...breakdown,
+      networkFee: formatAPIValue(breakdown.fee),
+      accountDeposit: formatAPIValue(breakdown.deposit),
+      lockedReserve: formatAPIValue(breakdown.locked),
+      missingAmount: formatAPIValue(breakdown.missing),
       recipientHasNoTokenAccount,
       fees: formatAPIValue(requiredSol),
       ticker: solanaUnit.code,
       cryptoName: solanaUnit.name,
-      links: ["ledgerlive://buy?"],
     });
   }
 }
@@ -721,24 +739,67 @@ function tokenAccountDepositOf(customFees?: FeeEstimation): bigint {
   return 0n;
 }
 
+async function recipientTokenAccountDeposit(
+  api: ChainAPI,
+  mint: ParsedOnChainMintWithInfo,
+  customFees?: FeeEstimation,
+): Promise<bigint> {
+  const reportedDeposit = tokenAccountDepositOf(customFees);
+  if (reportedDeposit > 0n) return reportedDeposit;
+  try {
+    return BigInt(await api.getMinimumBalanceForRentExemption(getAtaDataLengthForMint(mint)));
+  } catch {
+    return 0n;
+  }
+}
+
+/** `locked` is capped at the balance, so an account below its reserve understates it. */
+async function senderReserve(
+  api: ChainAPI,
+  config: SolanaCoinConfig,
+  sender: string,
+  balances: Balance[],
+): Promise<bigint> {
+  const native = balances.find(b => b.asset.type === "native" && !b.stake);
+  const locked = native?.locked ?? 0n;
+  const isLockedCappedAtBalance = locked >= (native?.value ?? 0n);
+  if (!isLockedCappedAtBalance) return locked;
+  const stakeActivations = balances.flatMap(b =>
+    b.stake ? [{ activation: { state: b.stake.state } }] : [],
+  );
+  try {
+    const [rentExemptMinimum, stakesUnstakeReserve] = await Promise.all([
+      api.getMinimumBalanceForRentExemption(0),
+      computeUnstakeReserve(api, config, sender, stakeActivations),
+    ]);
+    const fullReserve = BigInt(rentExemptMinimum) + BigInt(stakesUnstakeReserve);
+    return locked > fullReserve ? locked : fullReserve;
+  } catch {
+    return locked;
+  }
+}
+
 /** Lamport strings: an error crosses the IPC bridge as JSON, which a bigint does not survive. */
 function lamportBreakdown({
   fee,
   deposit,
   balances,
   required,
+  reserve,
 }: {
   fee: bigint;
   deposit: bigint;
   balances: Balance[];
   required: bigint;
+  reserve?: bigint;
 }): { fee: string; deposit: string; locked: string; missing: string } {
   const native = balances.find(b => b.asset.type === "native");
+  const locked = reserve ?? native?.locked ?? 0n;
   return {
     fee: fee.toString(),
     deposit: deposit.toString(),
-    locked: (native?.locked ?? 0n).toString(),
-    missing: clampPositive(required - spendableBalance(balances)).toString(),
+    locked: locked.toString(),
+    missing: clampPositive(required - ((native?.value ?? 0n) - locked)).toString(),
   };
 }
 
