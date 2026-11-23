@@ -19,7 +19,9 @@ import type { AccountLike, Operation, Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useSelector } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { updateAccountWithUpdater } from "~/actions/accounts";
 import {
   useCallback,
   useEffect,
@@ -662,6 +664,7 @@ export function useUiHook({
   onAccountRequestSuccess,
 }: Props): UiHook {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   // The device of an exchange belongs to the session that started it: the next origin never gets it.
   const [exchangeDevice, setExchangeDevice] = useState<{
     device: Device;
@@ -863,7 +866,13 @@ export function useUiHook({
           onError,
         });
       },
-      "transaction.broadcast": () => {
+      "transaction.broadcast": (_account, _parentAccount, mainAccount, optimisticOperation) => {
+        dispatch(
+          updateAccountWithUpdater({
+            accountId: mainAccount.id,
+            updater: account => addPendingOperation(account, optimisticOperation),
+          }),
+        );
         onTransactionBroadcast?.();
       },
       "device.transport": ({ appName, onSuccess, onCancel }) => {
@@ -948,6 +957,7 @@ export function useUiHook({
       navigation,
       exchangeDevice,
       createDrawerConfiguration,
+      dispatch,
       onTransactionBroadcast,
       deviceIntentSignEnabled,
       requestDeviceIntentSign,
