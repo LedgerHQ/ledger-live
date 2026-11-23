@@ -11,7 +11,12 @@ import {
   type ConnectNewDeviceStateMachineEvent,
   type ConnectNewDeviceStateMachineInput,
 } from "./types";
-import { buildSelectableDevices, getScanningTransports, toDevice } from "./utils";
+import {
+  buildSelectableDevices,
+  filterListedDevicesByAcceptedModels,
+  getScanningTransports,
+  toDevice,
+} from "./utils";
 import {
   type BaseConnectionError,
   type BaseDiscoveryError,
@@ -160,10 +165,14 @@ const createConnectNewDeviceStateMachine = <
         }
       },
       emitDiscovering: ({ context, self }) => {
+        const acceptedDevices = filterListedDevicesByAcceptedModels(
+          context.listedDevices,
+          context.acceptedDeviceModelIds,
+        );
         context.observer.next({
           type: ConnectNewDeviceUIStateTypes.Discovering,
           devices: buildSelectableDevices(
-            context.filterListedDevices?.(context.listedDevices) ?? context.listedDevices,
+            context.filterListedDevices?.(acceptedDevices) ?? acceptedDevices,
             self.send,
           ),
           scanningTransports: getScanningTransports(

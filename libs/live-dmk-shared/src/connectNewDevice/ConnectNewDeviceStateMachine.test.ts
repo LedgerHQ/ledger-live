@@ -91,6 +91,7 @@ type SetupTestOptions = {
   readonly mapConnectionError?: ConnectNewDeviceMapConnectionError;
   readonly getDiscoveredDeviceKey?: ConnectNewDeviceGetDiscoveredDeviceKey;
   readonly filterListedDevices?: ConnectNewDeviceFilterListedDevices;
+  readonly acceptedDeviceModelIds?: Array<DeviceModelId>;
   readonly buildCompatDeviceId?: (device: ConnectedDevice) => string;
   readonly deviceNotFoundDelay?: number;
   readonly successDelay?: number;
@@ -109,6 +110,7 @@ const setupTest = ({
   mapConnectionError = jest.fn(error => ({ type: BaseConnectionErrorTypes.Unknown, error })),
   getDiscoveredDeviceKey = getDeviceKeyById,
   filterListedDevices,
+  acceptedDeviceModelIds,
   buildCompatDeviceId,
   deviceNotFoundDelay,
   successDelay,
@@ -151,6 +153,7 @@ const setupTest = ({
     mapConnectionError,
     getDiscoveredDeviceKey,
     ...(filterListedDevices ? { filterListedDevices } : {}),
+    ...(acceptedDeviceModelIds ? { acceptedDeviceModelIds } : {}),
     ...(buildCompatDeviceId ? { buildCompatDeviceId } : {}),
     ...(deviceNotFoundDelay === undefined ? {} : { deviceNotFoundDelay }),
     ...(successDelay === undefined ? {} : { successDelay }),
@@ -315,6 +318,57 @@ describe("ConnectNewDeviceStateMachine", () => {
 
       discoverDevices([stax, nanoX]);
       expect(listedIds()).toEqual(["nano-x-id", "stax-id"]);
+    });
+
+    it("GIVEN accepted device models, WHEN devices of other models are discovered, THEN it should list only the accepted models", () => {
+      // GIVEN
+      const { discoverDevices, lastState, machine } = setupTest({
+        acceptedDeviceModelIds: [DeviceModelId.stax],
+      });
+      machine.start();
+
+      // WHEN
+      discoverDevices([nanoX, stax]);
+
+      // THEN
+      expect(
+        lastState(ConnectNewDeviceUIStateTypes.Discovering).devices.map(({ device }) => device.id),
+      ).toEqual(["stax-id"]);
+    });
+
+    it("GIVEN accepted device models and an injected filter, WHEN devices are discovered, THEN it should give the filter only the accepted models", () => {
+      // GIVEN
+      const filterListedDevices = jest.fn<
+        ReturnType<ConnectNewDeviceFilterListedDevices>,
+        Parameters<ConnectNewDeviceFilterListedDevices>
+      >(listedDevices => listedDevices);
+      const { discoverDevices, machine } = setupTest({
+        acceptedDeviceModelIds: [DeviceModelId.stax],
+        filterListedDevices,
+      });
+      machine.start();
+
+      // WHEN
+      discoverDevices([nanoX, stax]);
+
+      // THEN
+      expect(filterListedDevices).toHaveBeenLastCalledWith([
+        expect.objectContaining({ discoveredDevice: stax }),
+      ]);
+    });
+
+    it("GIVEN an empty list of accepted device models, WHEN devices are discovered, THEN it should list every model", () => {
+      // GIVEN
+      const { discoverDevices, lastState, machine } = setupTest({ acceptedDeviceModelIds: [] });
+      machine.start();
+
+      // WHEN
+      discoverDevices([nanoX, stax]);
+
+      // THEN
+      expect(
+        lastState(ConnectNewDeviceUIStateTypes.Discovering).devices.map(({ device }) => device.id),
+      ).toEqual(["nano-x-id", "stax-id"]);
     });
   });
 

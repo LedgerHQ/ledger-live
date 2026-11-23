@@ -1,4 +1,5 @@
 import type { DiscoveredDevice, TransportIdentifier } from "@ledgerhq/device-management-kit";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 
 import {
   ConnectNewDeviceStateMachineEventTypes,
@@ -15,6 +16,20 @@ export const toDevice = (discoveredDevice: DiscoveredDevice): Device => ({
   id: discoveredDevice.id,
   name: discoveredDevice.name,
 });
+
+export const filterListedDevicesByAcceptedModels = (
+  listedDevices: Array<ListedDevice>,
+  acceptedDeviceModelIds: Array<DeviceModelId> = [],
+): Array<ListedDevice> => {
+  if (acceptedDeviceModelIds.length === 0) {
+    return listedDevices;
+  }
+
+  const acceptedModels = new Set(acceptedDeviceModelIds);
+  return listedDevices.filter(({ discoveredDevice }) =>
+    acceptedModels.has(dmkToLedgerDeviceIdMap[discoveredDevice.deviceModel.model]),
+  );
+};
 
 export const getScanningTransports = (
   transportIds: Array<TransportIdentifier>,

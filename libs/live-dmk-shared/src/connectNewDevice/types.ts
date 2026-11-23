@@ -4,6 +4,7 @@ import type {
   DiscoveredDevice,
   TransportIdentifier,
 } from "@ledgerhq/device-management-kit";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Observer } from "rxjs";
 
 import {
@@ -55,6 +56,11 @@ export type ConnectNewDeviceStateMachineInput<
   mapConnectionError: ConnectNewDeviceMapConnectionError<TConnectionError>;
   getDiscoveredDeviceKey: ConnectNewDeviceGetDiscoveredDeviceKey;
   filterListedDevices?: ConnectNewDeviceFilterListedDevices;
+  /**
+   * Hides the listed devices of the other device models, before `filterListedDevices`. An empty list
+   * accepts every model.
+   */
+  acceptedDeviceModelIds?: Array<DeviceModelId>;
   buildCompatDeviceId?: (device: ConnectedDevice) => string;
   deviceNotFoundDelay?: number;
   successDelay?: number;
