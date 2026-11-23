@@ -263,7 +263,7 @@ const DOCKER_OUTPUT_TIMEOUT_MS = 10_000;
 
 // yaci-cli writes the container output; the node and the store log to files inside it. These show
 // which side is stuck: the node's tip and forge traces against the store's latest block and sync log.
-// Paths are those of the yaci-cli 0.10.6 image.
+// Paths are those of the yaci-cli 0.12.0 image.
 const IN_CONTAINER_DIAGNOSTICS = `
 exec 2>&1
 cd /clusters/nodes/default/node
