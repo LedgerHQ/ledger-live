@@ -3,9 +3,13 @@ import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { Account } from "@ledgerhq/types-live";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
-import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
-import { HttpResponse, http, server } from "@tests/server";
-import { render, screen } from "@tests/test-renderer";
+import { xrpApi } from "@ledgerhq/live-common/families/xrp/state-manager/api";
+import {
+  MAX_TRUST_LIMIT,
+  getNetworkReservesForCurrency,
+} from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { HttpResponse, delay, http, server } from "@tests/server";
+import { act, render, screen } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import ManageToken from "../ManageToken";
 import type { XrpManageTokenFlowParamList } from "../types";
@@ -26,6 +30,16 @@ jest.mock("@ledgerhq/live-common/families/xrp/config", () => {
   };
 });
 
+// coin-xrp caches a fetched server_info: a test sets the reserves here instead of on the node
+jest.mock("@ledgerhq/live-common/families/xrp/logicPublic", () => {
+  const actual = jest.requireActual("@ledgerhq/live-common/families/xrp/logicPublic");
+
+  return {
+    ...actual,
+    getNetworkReservesForCurrency: jest.fn(actual.getNetworkReservesForCurrency),
+  };
+});
+
 const EDIT_BUTTON = `xrp-manage-asset-edit-${xrpIouToken.id}`;
 const DELETE_BUTTON = `xrp-manage-asset-delete-${xrpIouToken.id}`;
 
@@ -38,8 +52,9 @@ const endpoints = { node: jest.fn<Response, [{ request: Request }]>() };
 function mockTransferRate(transferRate?: number) {
   endpoints.node.mockImplementation(() => {
     const node = { LedgerEntryType: "AccountRoot", Flags: 0, TransferRate: transferRate };
+    const info = { validated_ledger: { reserve_base_xrp: 1, reserve_inc_xrp: 0.3 } };
 
-    return HttpResponse.json({ result: { node, account_data: node, status: "success" } });
+    return HttpResponse.json({ result: { node, account_data: node, info, status: "success" } });
   });
 }
 
@@ -97,14 +112,63 @@ describe("XRP Manage assets", () => {
     const transferFee = await screen.findByText("0.5%");
 
     expect(transferFee).toBeVisible();
-    expect(screen.getByText(/0\.2 XRP/)).toBeVisible();
+    expect(await screen.findByText(/0\.3 XRP/)).toBeVisible();
   });
 
-  it("shows the transfer fee as not available when it can't be fetched", async () => {
+  it("shows a skeleton until the transfer fee loads", async () => {
+    server.use(http.post(XRPL_TESTNET_NODE, () => delay("infinite")));
+    renderManageToken(makeAccountWithIssuer("rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe"));
+
+    const skeleton = await screen.findByTestId("xrp-manage-asset-transfer-fee-loading");
+
+    expect(skeleton).toBeVisible();
+  });
+
+  it("shows a skeleton until the locked amount loads", async () => {
+    jest.mocked(getNetworkReservesForCurrency).mockReturnValueOnce(new Promise(() => {}));
+    renderManageToken(XRP_ACCOUNT_WITH_TOKEN);
+
+    const skeleton = await screen.findByTestId("xrp-manage-asset-locked-amount-loading");
+
+    expect(skeleton).toBeVisible();
+  });
+
+  it("shows an error for the locked amount when the reserves can't be fetched", async () => {
+    jest.mocked(getNetworkReservesForCurrency).mockRejectedValueOnce(new Error("timeout"));
+    renderManageToken(makeAccountWithIssuer("rDMRUxGcahf3YYZUd4BDHukwFRaRR3F8Tp"));
+
+    const lockedAmount = await screen.findByText("Couldn't load");
+
+    expect(lockedAmount).toBeVisible();
+  });
+
+  it("shows an error instead of the last locked amount when a refetch fails", async () => {
+    const { store } = renderManageToken(makeAccountWithIssuer("rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"));
+    expect(await screen.findByText(/0\.3 XRP/)).toBeVisible();
+
+    jest.mocked(getNetworkReservesForCurrency).mockRejectedValueOnce(new Error("timeout"));
+    await act(async () => {
+      await store.dispatch(
+        xrpApi.endpoints.getNetworkReserves.initiate(XRP_ACCOUNT.currency.id, {
+          forceRefetch: true,
+        }),
+      );
+    });
+
+    const lockedAmount = await screen.findByText("Couldn't load");
+
+    expect(lockedAmount).toBeVisible();
+    expect(screen.queryByText(/0\.3 XRP/)).toBeNull();
+  });
+
+  it("shows an error for the transfer fee when it can't be fetched", async () => {
+    jest
+      .mocked(getNetworkReservesForCurrency)
+      .mockResolvedValueOnce({ base: "1000000", increment: "300000" });
     endpoints.node.mockImplementation(() => HttpResponse.error());
     renderManageToken(makeAccountWithIssuer("rGWrZyQqhTp9Xu7G5Pkayo7bXjH4k4QYpf"));
 
-    const feeError = await screen.findByText("Not available");
+    const feeError = await screen.findByText("Couldn't load");
 
     expect(feeError).toBeVisible();
   });

@@ -21,9 +21,6 @@ import BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Unit } from "@domain/entity-currency-unit";
 
-// The XRPL owner reserve per held token, in drops: https://xrpl.org/docs/concepts/accounts/reserves
-export const OWNER_RESERVE = new BigNumber(200_000);
-
 export const hasTokenStandardEnabled = (account: Account): boolean => {
   return getXrpEnabledTokenStandards(account.currency.id).length > 0;
 };
