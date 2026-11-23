@@ -49,4 +49,14 @@ describe("startSandbox", () => {
     expect(sandbox.endpoints).toEqual({ rpc: "http://localhost:8545" });
     await sandbox.down();
   });
+
+  it("should fail when the sandbox instance is being stopped", async () => {
+    monitor.mockReturnValueOnce(HttpResponse.json({ ...instance, status: "stopping" }));
+
+    await expect(
+      startSandbox({ family: "ethereum", network: "sepolia" }, {}, { intervalMs: 0 }),
+    ).rejects.toThrow("instance-id is being stopped");
+
+    expect(monitor).toHaveBeenCalledTimes(1);
+  });
 });
