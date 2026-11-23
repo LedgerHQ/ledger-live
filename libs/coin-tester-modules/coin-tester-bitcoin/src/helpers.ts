@@ -410,6 +410,14 @@ export async function getMinedTxids(): Promise<Set<string>> {
  */
 export async function keepOutOfBlocks(txid: string): Promise<void> {
   await client.command("prioritisetransaction", txid, 0, -1_0000_0000);
+  // The node's miner selects by the modified fee: unless it is negative, nothing keeps the
+  // transaction out of the next block.
+  const entry = await client.command("getmempoolentry", txid);
+  if (!(entry.fees.modified < 0)) {
+    throw new Error(
+      `keepOutOfBlocks: ${txid} still has a modified fee of ${entry.fees.modified} BTC (base ${entry.fees.base})`,
+    );
+  }
 }
 
 /** Fee (satoshis) and virtual size of a transaction waiting in the mempool. */

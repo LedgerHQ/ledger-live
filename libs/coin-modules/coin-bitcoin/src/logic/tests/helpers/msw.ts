@@ -178,3 +178,13 @@ export const txHandler = (txid: string, spends: string[], explorerId?: string) =
     }),
   );
 };
+
+/** `address/{address}/txs/pending`: the unconfirmed transactions of an address, unpaginated. */
+export const pendingTxsHandler = (address: string, txs: ExplorerTx[], explorerId?: string) =>
+  http.get(`${explorerUrl(explorerId)}/address/${address}/txs/pending`, () =>
+    HttpResponse.json(txs),
+  );
+
+/** `tx/{txid}/hex`: the serialized transaction. */
+export const txHexHandler = (txid: string, hex: string, explorerId?: string) =>
+  http.get(`${explorerUrl(explorerId)}/tx/${txid}/hex`, () => HttpResponse.json({ hex }));
