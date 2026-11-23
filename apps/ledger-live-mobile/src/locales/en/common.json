@@ -6279,7 +6279,7 @@
   },
   "connectKnownOrNewDevice": {
     "title": "Devices",
-    "add": "Add",
+    "add": "Add new",
     "addDevice": "Add a Ledger device",
     "showAll": "Show all {{count}} devices",
     "showLess": "Show less",

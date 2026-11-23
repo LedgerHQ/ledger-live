@@ -17,7 +17,7 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
-import { Plus, PlusCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Plus } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
 import { DeviceMenuSheet } from "./DeviceMenuSheet";
 import { DeviceRow, hasMenuActions, type DeviceRowItem } from "./DeviceRow";
@@ -104,9 +104,8 @@ export function DeviceSection({
         {!isEmpty && (onAddNewDevice || disabled) && (
           <Link
             appearance={disabled ? "gray" : "accent"}
-            size="md"
+            size="sm"
             underline={false}
-            icon={PlusCircleFill}
             onPress={onAddNewDevice}
           >
             {t("connectKnownOrNewDevice.add")}
