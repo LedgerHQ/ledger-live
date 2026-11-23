@@ -6,11 +6,7 @@ import { getDefaultAccountName } from "@domain/entity-account-name";
 import { contactsInitialState } from "@domain/entity-contact";
 import { getKey } from "~/renderer/storage";
 import accountsReducer, { type AccountsState } from "~/renderer/reducers/accounts";
-import {
-  accountNameSelector,
-  accountUserDataExportSelector,
-  isStarredAccountSelector,
-} from "~/renderer/reducers/wallet";
+import { accountNameSelector, accountUserDataExportSelector } from "~/renderer/reducers/wallet";
 import {
   exportWalletState,
   initialState as walletInitialState,
@@ -40,12 +36,8 @@ function fakeTuple(
   return [account, userData];
 }
 
-/** An account the user starred but never renamed: its name is the default one. */
-function starredTupleWithDefaultName(
-  id: string,
-  currencyId: string,
-  index = 0,
-): [Account, AccountUserData] {
+/** An account the user never renamed: its name is the default one. */
+function defaultNamedTuple(id: string, currencyId: string, index = 0): [Account, AccountUserData] {
   const currency = getCryptoCurrencyById(currencyId);
   const account = {
     id,
@@ -58,16 +50,9 @@ function starredTupleWithDefaultName(
   const userData = {
     id,
     name: getDefaultAccountName(account),
-    starredIds: [id],
+    starredIds: [],
   } as unknown as AccountUserData;
   return [account, userData];
-}
-
-function starredIdsPayload(tuples: [Account, AccountUserData][]): string[] {
-  const action = runInitAccounts(tuples).find(
-    a => a.type === "starredAccounts/initStarredFromIds",
-  ) as unknown as { payload: string[] };
-  return action.payload;
 }
 
 function runInitAccounts(tuples: [Account, AccountUserData][]): UnknownAction[] {
@@ -117,33 +102,14 @@ describe("initAccounts", () => {
     expect(action.payload.accounts.map(a => a.id)).toEqual(["btc-segwit"]);
   });
 
-  it("keeps starred ids of accounts that kept their default name", () => {
-    expect(starredIdsPayload([starredTupleWithDefaultName("btc-default", "bitcoin")])).toEqual([
-      "btc-default",
-    ]);
-  });
-
-  it("collects starred ids from both renamed and default-named accounts", () => {
-    const renamed = fakeTuple("btc-renamed", "bitcoin");
-    renamed[1].starredIds = ["btc-renamed"];
-
-    expect(
-      starredIdsPayload([renamed, starredTupleWithDefaultName("eth-default", "ethereum")]).sort(),
-    ).toEqual(["btc-renamed", "eth-default"]);
-  });
-
   it("does not leak default names into the account names payload", () => {
-    const action = initAction([starredTupleWithDefaultName("btc-default", "bitcoin")]);
+    const action = initAction([defaultNamedTuple("btc-default", "bitcoin")]);
     expect(action.payload.accountsUserData.map(u => u.id)).toEqual([]);
   });
 
-  it("initializes account names and stars before INIT_ACCOUNTS", () => {
+  it("initializes account names before INIT_ACCOUNTS", () => {
     const types = runInitAccounts([fakeTuple("btc-1", "bitcoin")]).map(a => a.type);
-    expect(types).toEqual([
-      "accountNames/initFromUserData",
-      "starredAccounts/initStarredFromIds",
-      "INIT_ACCOUNTS",
-    ]);
+    expect(types).toEqual(["accountNames/initFromUserData", "INIT_ACCOUNTS"]);
   });
 });
 
@@ -152,7 +118,7 @@ describe("initAccounts with the persisted wallet state (LIVE-41517)", () => {
 
   /** app.accounts holds the default name; app.wallet holds the name the user chose. */
   function staleAccountsAndWallet() {
-    const [account] = starredTupleWithDefaultName("btc-1", "bitcoin");
+    const [account] = defaultNamedTuple("btc-1", "bitcoin");
     const staleUserData = {
       id: account.id,
       name: getDefaultAccountName(account),
@@ -160,7 +126,7 @@ describe("initAccounts with the persisted wallet state (LIVE-41517)", () => {
     } as unknown as AccountUserData;
     const walletState: ExportedWalletState = {
       ...exportWalletState({ wallet: walletInitialState, contacts: contactsInitialState }),
-      accountsData: { accountNames: [[account.id, renamedName]], starredAccountIds: [account.id] },
+      accountsData: { accountNames: [[account.id, renamedName]] },
     };
     return {
       account,
@@ -201,7 +167,6 @@ describe("initAccounts with the persisted wallet state (LIVE-41517)", () => {
     const { wallet } = runOnReducers(initAccounts(data, walletState));
 
     expect(accountNameSelector(wallet, { accountId: account.id })).toBe(renamedName);
-    expect(isStarredAccountSelector(wallet, { accountId: account.id })).toBe(true);
     expect(
       exportWalletState({ wallet, contacts: contactsInitialState }).accountsData.accountNames,
     ).toEqual([[account.id, renamedName]]);
@@ -239,7 +204,7 @@ describe("fetchAccounts", () => {
     const renamed = fakeTuple("btc-1", "bitcoin");
     const walletState: ExportedWalletState = {
       ...exportWalletState({ wallet: walletInitialState, contacts: contactsInitialState }),
-      accountsData: { accountNames: [["btc-1", "From wallet"]], starredAccountIds: [] },
+      accountsData: { accountNames: [["btc-1", "From wallet"]] },
     };
     mockedGetKey.mockImplementation(async (_ns, keyPath) =>
       keyPath === "wallet" ? walletState : [renamed],
