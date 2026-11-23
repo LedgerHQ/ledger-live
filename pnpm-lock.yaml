@@ -21768,11 +21768,11 @@ importers:
         specifier: ^2.2.2
         version: 2.2.4
       protobufjs:
-        specifier: 8.4.1
-        version: 8.4.1
+        specifier: 8.4.2
+        version: 8.4.2
       protobufjs-cli:
         specifier: 2.4.1
-        version: 2.4.1(protobufjs@8.4.1)
+        version: 2.4.1(protobufjs@8.4.2)
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
@@ -41073,6 +41073,10 @@ packages:
 
   protobufjs@8.4.1:
     resolution: {integrity: sha512-oXf2UgIty8jnwfN4yvL1x79VLhL5uiKjZJbSGXGCIUmHmItTP4eS/UIlWDCeNx3seg+ujfn9vDlPMSrsh7wO+Q==}
+    engines: {node: '>=12.0.0'}
+
+  protobufjs@8.4.2:
+    resolution: {integrity: sha512-64rfNzkWOZAIazXzpBFPWq6F9up6gMvTzjE2oWIzApx2N/dqVUEE7+bCn2+40780dFVtKOUab8QfxJ6KJDWbqA==}
     engines: {node: '>=12.0.0'}
 
   protobufjs@8.6.6:
@@ -61932,7 +61936,7 @@ snapshots:
 
   properties@1.2.1: {}
 
-  protobufjs-cli@2.4.1(protobufjs@8.4.1):
+  protobufjs-cli@2.4.1(protobufjs@8.4.2):
     dependencies:
       chalk: 4.1.2
       escodegen: 1.14.3
@@ -61941,7 +61945,7 @@ snapshots:
       glob: 8.1.0
       jsdoc: 4.0.3
       minimist: 1.2.8
-      protobufjs: 8.4.1
+      protobufjs: 8.4.2
       semver: 7.8.5
       tmp: 0.2.7
       uglify-js: 3.19.3
@@ -61976,6 +61980,10 @@ snapshots:
       long: 5.3.2
 
   protobufjs@8.4.1:
+    dependencies:
+      long: 5.3.2
+
+  protobufjs@8.4.2:
     dependencies:
       long: 5.3.2
 
