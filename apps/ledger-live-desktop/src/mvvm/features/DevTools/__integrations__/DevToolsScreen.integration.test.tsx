@@ -25,6 +25,7 @@ jest.mock("@devtools/shell", () => ({
 }));
 
 jest.mock("@devtools/bindings", () => ({
+  AccountRedactionProvider: ({ children }: { children: React.ReactNode }) => children,
   useFeatureFlagsToolProps: () => ({ marker: "ff-props" }),
   usePayCardToolProps: () => ({ marker: "pay-card-props" }),
   useEnvDevToolProps: () => ({ marker: "env-props" }),
