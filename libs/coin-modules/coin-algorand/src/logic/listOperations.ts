@@ -8,7 +8,8 @@ import {
   AlgoPaymentInfo,
   AlgoAssetTransferInfo,
 } from "../network";
-import type { ListOperationsOptions, AlgorandMemo } from "../types";
+import type { ListOperationsOptions } from "../types";
+import { toNoteMemo } from "./common";
 
 const SECONDS_TO_MILLISECONDS = 1000;
 
@@ -92,8 +93,10 @@ function createRewardOperation(
   address: string,
   reward: bigint,
 ): Operation {
+  // Only the memo carries over: the other details (OPT fields) describe the primary operation
+  const { details, ...primary } = operation;
   return {
-    ...operation,
+    ...primary,
     id: `${tx.id}-reward-${address}`,
     type: "REWARD",
     value: reward,
@@ -101,7 +104,7 @@ function createRewardOperation(
     senders: [],
     recipients: [address],
     tx: { ...operation.tx, fees: 0n },
-    ...(operation.details?.memo ? { details: { memo: operation.details.memo } } : {}),
+    ...(details?.memo ? { details: { memo: details.memo } } : {}),
   };
 }
 
@@ -117,9 +120,12 @@ function convertToOperation(tx: AlgoTransaction, address: string, feesOnly = fal
     : { senders: [], recipients: [] };
   const asset = isTransferOperation ? getOperationAsset(tx) : { type: "native" };
   const date = new Date(Number.parseInt(tx.timestamp) * SECONDS_TO_MILLISECONDS);
-  const memo: AlgorandMemo | undefined = tx.note
-    ? { type: "string", kind: "note", value: tx.note }
-    : undefined;
+  const memo = toNoteMemo(tx.note);
+  const details = {
+    ...(memo ? { memo } : {}),
+    // The fields of the getBlock OPT operation, so that both sync paths give the same OPT event
+    ...(type === "OPT_IN" || type === "OPT_OUT" ? { asset, ledgerOpType: type } : {}),
+  };
 
   return {
     id: tx.id,
@@ -140,7 +146,7 @@ function convertToOperation(tx: AlgoTransaction, address: string, feesOnly = fal
       date,
       failed: false,
     },
-    ...(memo ? { details: { memo } } : {}),
+    ...(Object.keys(details).length > 0 ? { details } : {}),
   };
 }
 
