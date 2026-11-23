@@ -32,9 +32,10 @@ The devnet runs `bloxbean/yaci-cli:0.12.0` (cardano-node 11.0.1, yaci-store 2.0.
 
 - Protocol version 11.0, yaci-cli's default and the version mainnet, preprod and preview ran when it was pinned ([LIVE-38485](https://ledgerhq.atlassian.net/browse/LIVE-38485)).
 - Network magic 42 and network id 0, so addresses are `addr_test1…`.
-- `src/devnet.test.ts` fails when the protocol version or the network magic changes.
+- Node mode `companion`: in the image's default `haskell-only` mode the faucet cannot build transactions on protocol 11 ([yaci-devkit#184](https://github.com/bloxbean/yaci-devkit/issues/184)).
+- `src/devnet.test.ts` fails when the protocol version, the network magic or the node mode changes.
 
-To move to a newer protocol version, change the image tag and its digest in `docker-compose.yml`, then update the expected version in `src/devnet.test.ts`.
+To move to a newer protocol version, change the image tag and its digest in `docker-compose.yml`, then update the expected version in `src/devnet.test.ts`. Drop `nodeMode: companion` once the new image fixes yaci-devkit#184.
 
 Staking (delegate, undelegate) runs on the mock only.
 

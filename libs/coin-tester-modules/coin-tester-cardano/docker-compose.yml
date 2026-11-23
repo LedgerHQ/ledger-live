@@ -12,6 +12,9 @@ services:
       ogmios_enabled: "false"
       kupo_enabled: "false"
       IS_DOCKER: "true"
+      # Until yaci-devkit#184 is fixed, the image's default haskell-only mode cannot build faucet txs on
+      # protocol 11: https://github.com/bloxbean/yaci-devkit/issues/184
+      nodeMode: companion
     # Host loopback only: the admin API is unauthenticated.
     ports:
       - "127.0.0.1:8080:8080" # yaci-store (reads)

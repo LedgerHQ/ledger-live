@@ -11,9 +11,9 @@ describe("Yaci devnet", () => {
     expect(params).toMatchObject({ protocol_major_ver: 11, protocol_minor_ver: 0 });
   });
 
-  it("runs network magic 42", async () => {
-    const devnet = await adminGet<{ protocolMagic: number }>("/admin/devnet");
+  it("runs network magic 42 in companion node mode", async () => {
+    const devnet = await adminGet<{ protocolMagic: number; nodeMode: string }>("/admin/devnet");
 
-    expect(devnet.protocolMagic).toBe(42);
+    expect(devnet).toMatchObject({ protocolMagic: 42, nodeMode: "companion" });
   });
 });

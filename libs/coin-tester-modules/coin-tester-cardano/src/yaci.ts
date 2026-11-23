@@ -78,8 +78,8 @@ export async function killYaci(): Promise<void> {
   await compose.down({ ...composeOpts(), commandOptions: ["--remove-orphans", "--volumes"] });
 }
 
-// The faucet can 5xx right after boot or a reset (the reset's unconfirmed cost-model vote spends its
-// genesis UTXO). Retry 5xx and network errors; fail fast on 4xx.
+// The faucet/admin API can transiently 5xx right after boot. Retry transient failures (5xx / network);
+// fail fast on 4xx.
 const ADMIN_RETRY_LIMIT = 5;
 const ADMIN_RETRY_DELAY_MS = 1_000;
 const ADMIN_TIMEOUT_MS = 10_000;
