@@ -60,6 +60,7 @@ function OfferGlow() {
 }
 
 function OfferLayout({
+  showGlow,
   title,
   closeLabel,
   onQuit,
@@ -69,6 +70,7 @@ function OfferLayout({
   footer,
   trailing,
 }: Readonly<{
+  showGlow: boolean;
   title: string;
   closeLabel: string;
   onQuit: () => void;
@@ -83,7 +85,7 @@ function OfferLayout({
 
   return (
     <Box testID={syncOfferTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
-      <OfferGlow />
+      {showGlow ? <OfferGlow /> : null}
       <Box lx={{ flex: 1, gap: "s24" }}>
         <DeviceOnboardingCloseBar
           label={closeLabel}
@@ -119,6 +121,7 @@ function OfferLayout({
 }
 
 function SyncOfferSuccess({
+  showGlow,
   screenTracking,
   title,
   continueLabel,
@@ -128,6 +131,7 @@ function SyncOfferSuccess({
 }: Extract<SyncOfferViewProps, { phase: "success" }>) {
   return (
     <OfferLayout
+      showGlow={showGlow}
       title={title}
       closeLabel={closeLabel}
       onQuit={onQuit}
@@ -150,12 +154,14 @@ function SyncOfferSuccess({
 }
 
 function SyncOfferSynchronizing({
+  showGlow,
   title,
   closeLabel,
   onQuit,
 }: Extract<SyncOfferViewProps, { phase: "synchronizing" }>) {
   return (
     <OfferLayout
+      showGlow={showGlow}
       title={title}
       closeLabel={closeLabel}
       onQuit={onQuit}
@@ -166,6 +172,7 @@ function SyncOfferSynchronizing({
 }
 
 function SyncOfferPrompt({
+  showGlow,
   screenTracking,
   title,
   description,
@@ -181,6 +188,7 @@ function SyncOfferPrompt({
 }: Extract<SyncOfferViewProps, { phase: "offer" }>) {
   return (
     <OfferLayout
+      showGlow={showGlow}
       title={title}
       closeLabel={closeLabel}
       onQuit={onQuit}
