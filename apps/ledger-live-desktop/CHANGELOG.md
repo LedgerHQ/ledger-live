@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.30.0-next.1
+
+### Minor Changes
+
+- [#25336](https://github.com/LedgerHQ/ledger-live/pull/25336) [`bbd329b`](https://github.com/LedgerHQ/ledger-live/commit/bbd329b9fd0f63766fcb7c3c9f6fbea3c45d0286) Thanks [@ben778899](https://github.com/ben778899)! - Add release notes for Ledger Wallet Desktop 4.30.0.
+
 ## 4.30.0-next.0
 
 ### Minor Changes
