@@ -325,10 +325,13 @@ async function mockSeiOperationsApi(page: Page) {
   await page.route(`${SEI_OPERATIONS_ORIGIN}/**`, async route => {
     const request = route.request();
     const url = new URL(request.url());
-    const isExpectedRequest =
-      request.method() === "GET" &&
+    const isAccountActionRequest =
       url.searchParams.get("module") === "account" &&
       SEI_OPERATIONS_ACTIONS.has(url.searchParams.get("action") ?? "");
+    const isWrapperEventsRequest =
+      url.searchParams.get("module") === "logs" && url.searchParams.get("action") === "getLogs";
+    const isExpectedRequest =
+      request.method() === "GET" && (isAccountActionRequest || isWrapperEventsRequest);
 
     if (!isExpectedRequest) {
       throw new Error(`Unexpected SEI operations request: ${request.method()} ${url.toString()}`);
