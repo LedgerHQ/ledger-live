@@ -37,7 +37,11 @@ const RIPPLE_SCALE = 0.4;
 // Center to a corner, in fractions of the side.
 const RIPPLE_REACH = Math.SQRT1_2;
 
-/** Seconds after a press when nothing moves any more: the ripple and the pop have ended. */
+/**
+ * Seconds after a press when nothing moves any more: the ripple and the pop have ended.
+ * Kept for the web canvas, its only reader, and part of the timeline mirrored in Swift and Kotlin.
+ * @public
+ */
 export const PRESS_END = Math.max(RIPPLE_DELAY + RIPPLE_SWEEP, CENTER_POP);
 
 function clamp01(x: number): number {
