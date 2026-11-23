@@ -19,7 +19,8 @@ type Params = Readonly<{
   assetId: CryptoOrTokenCurrencyId;
   /** Absent until the address is shown. */
   selected: ReceiveAddressOption | undefined;
-  familyConfig: ReceiveFamilyConfig;
+  /** Absent until the family's config is known: Verify stays disabled meanwhile. */
+  familyConfig: ReceiveFamilyConfig | undefined;
   copy: ReceiveAddressCopy;
   hasVerifyExecutor: boolean;
   onCopyAddress?: (address: string) => Promise<boolean>;
@@ -54,7 +55,7 @@ export function useReceiveAddressActions({
 
   const address = selected?.address;
   const verification = selected?.verification;
-  const canVerify = canVerifyOnDevice(verification);
+  const canVerify = familyConfig !== undefined && canVerifyOnDevice(verification);
   const hasCopied = address !== undefined && copied?.address === address;
 
   useEffect(() => {
@@ -76,11 +77,11 @@ export function useReceiveAddressActions({
   }, [address, onShareAddress]);
 
   const verifyAddress = useCallback(() => {
-    if (!canVerifyOnDevice(verification)) return;
+    if (!familyConfig || !canVerifyOnDevice(verification)) return;
     trackReceiveAddressButton("verify address");
     dispatch(markReceiveVerifyHintSeen());
     verifyFlow.start({ accountUUID, assetId, verification });
-  }, [verification, dispatch, verifyFlow, accountUUID, assetId]);
+  }, [familyConfig, verification, dispatch, verifyFlow, accountUUID, assetId]);
 
   const dismissVerifyHint = useCallback(() => {
     trackReceiveAddressButton("dismiss verify popover");
@@ -118,7 +119,7 @@ export function useReceiveAddressActions({
         : {
             selection: verifyFlow.selection,
             onExit: verifyFlow.onExit,
-            unsupportedDeviceModelIds: familyConfig.unsupportedDeviceModelIds,
+            unsupportedDeviceModelIds: familyConfig?.unsupportedDeviceModelIds,
           },
   };
 }

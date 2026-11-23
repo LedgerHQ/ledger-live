@@ -14,16 +14,20 @@ type Params = Readonly<{
   accountStatus: AccountStatus | undefined;
 }>;
 
-/** The family's config over the defaults, read again as the account data arrives. */
+/**
+ * The family's config over the defaults, read again as the account data arrives; `undefined`
+ * until the family can be asked, so Verify does not start without its device exclusions.
+ */
 export function useReceiveFamilyConfig({
   getFamilyConfig,
   descriptor,
   asset,
   receive,
   accountStatus,
-}: Params): ReceiveFamilyConfig {
+}: Params): ReceiveFamilyConfig | undefined {
   return useMemo(() => {
-    if (!getFamilyConfig || !descriptor || !asset) return DEFAULT_RECEIVE_FAMILY_CONFIG;
+    if (!getFamilyConfig) return DEFAULT_RECEIVE_FAMILY_CONFIG;
+    if (!descriptor || !asset) return undefined;
     return {
       ...DEFAULT_RECEIVE_FAMILY_CONFIG,
       ...getFamilyConfig({ descriptor, asset, receive, accountStatus }),

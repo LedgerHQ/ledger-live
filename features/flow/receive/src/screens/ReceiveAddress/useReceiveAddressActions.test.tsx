@@ -130,6 +130,16 @@ describe("useReceiveAddressActions", () => {
     expect(result.current.verification).toBeUndefined();
   });
 
+  it("should disable Verify, with no hint, until the family config is known", () => {
+    const { result } = setup({ familyConfig: undefined });
+
+    expect(result.current.actions.copy).toBeDefined();
+    expect(result.current.actions.verify?.disabled).toBe(true);
+    expect(result.current.actions.verifyHint).toBeUndefined();
+    act(() => result.current.actions.verify!.onPress());
+    expect(result.current.verification).toBeUndefined();
+  });
+
   it("should invite the user to verify until they dismiss the hint once", () => {
     const { result, store } = setup();
 
