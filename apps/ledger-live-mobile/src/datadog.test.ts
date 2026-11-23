@@ -9,7 +9,9 @@ import {
 import {
   broadcastLogger,
   coinModuleCallLogger,
+  customActionEventMapper,
   customErrorEventMapper,
+  customLogEventMapper,
   initializeDatadogProvider,
   isDatadogRecording,
   stopDatadogRecording,
@@ -152,6 +154,79 @@ describe("customErrorEventMapper", () => {
         context: { account: { descriptors: ["[redacted]"] }, count: 1, featureFlags: {} },
       }),
     );
+  });
+});
+
+describe("account descriptor redaction", () => {
+  const descriptor =
+    "account:2:address:ethereum:0x71C7656EC7ab88b098defB751B7401B5f6d8976F:m/44h/60h/0h/0/0";
+  const mapError = customErrorEventMapper(false);
+
+  it("drops an error event whose context cannot be read, rather than sending it as is", () => {
+    const context = {
+      get broken(): string {
+        throw new Error(descriptor);
+      },
+    };
+    const event = { message: descriptor, stacktrace: "", context } as Parameters<
+      typeof mapError
+    >[0];
+    expect(mapError(event)).toBeNull();
+  });
+
+  it("redacts a cyclic context and an event without a stack", () => {
+    const context: Record<string, unknown> = { descriptor };
+    context.self = context;
+    const event = { message: descriptor, context } as Parameters<typeof mapError>[0];
+    const mapped = mapError(event);
+    expect(mapped).toEqual(
+      expect.objectContaining({
+        message: "[redacted]",
+        stacktrace: undefined,
+        context: { descriptor: "[redacted]", self: "[circular]", featureFlags: {} },
+      }),
+    );
+  });
+
+  it("keeps errors, dates and maps in the context", () => {
+    const at = new Date(0);
+    const map = new Map([["k", "v"]]);
+    const event = {
+      message: "m",
+      stacktrace: "",
+      context: { cause: new Error(`timeout for ${descriptor}`), at, map },
+    } as Parameters<typeof mapError>[0];
+    const mapped = mapError(event);
+    expect(mapped?.context).toEqual(
+      expect.objectContaining({
+        cause: expect.objectContaining({ name: "Error", message: "timeout for [redacted]" }),
+        at,
+        map,
+      }),
+    );
+  });
+
+  it("redacts log events: message, error fields and context", () => {
+    const event = {
+      message: `sync ${descriptor}`,
+      errorMessage: descriptor,
+      stacktrace: `Error: ${descriptor}`,
+      context: { descriptor },
+      status: "error",
+    } as Parameters<typeof customLogEventMapper>[0];
+    const mapped = customLogEventMapper(event);
+    expect(JSON.stringify(mapped)).not.toContain("0x71C7");
+  });
+
+  it("redacts action event contexts", () => {
+    const event = {
+      type: "tap",
+      name: "Add",
+      context: { descriptor },
+      timestampMs: 0,
+    } as Parameters<typeof customActionEventMapper>[0];
+    const mapped = customActionEventMapper(event);
+    expect(JSON.stringify(mapped)).not.toContain("0x71C7");
   });
 });
 

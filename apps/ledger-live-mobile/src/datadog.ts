@@ -180,16 +180,49 @@ const isExcludedErrorDescription = (errorDescription: string): boolean => {
   });
 };
 
-const redactValue = (value: unknown): unknown => {
+const isPlainObject = (value: object): boolean => {
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+};
+
+function redactText(value: string): string;
+function redactText(value: string | undefined): string | undefined;
+function redactText(value: string | undefined): string | undefined {
+  return typeof value === "string" ? redactAccountDescriptors(value) : value;
+}
+
+const redactValue = (value: unknown, seen: WeakSet<object>): unknown => {
   if (typeof value === "string") return redactAccountDescriptors(value);
-  if (Array.isArray(value)) return value.map(redactValue);
-  if (value && typeof value === "object") return redactContext(value);
-  return value;
+  if (value === null || typeof value !== "object") return value;
+  if (seen.has(value)) return "[circular]";
+  seen.add(value);
+  if (Array.isArray(value)) return value.map(item => redactValue(item, seen));
+  if (value instanceof Error)
+    return { name: value.name, message: redactText(value.message), stack: redactText(value.stack) };
+  if (!isPlainObject(value)) return value;
+  return Object.fromEntries(
+    Object.entries(value).map(([key, item]) => [key, redactValue(item, seen)]),
+  );
 };
 
 /** A copy of an event context with every account descriptor string redacted. */
-export const redactContext = (context: object): Record<string, unknown> =>
-  Object.fromEntries(Object.entries(context).map(([key, value]) => [key, redactValue(value)]));
+export const redactContext = (context: object): Record<string, unknown> => {
+  const seen = new WeakSet<object>([context]);
+  return Object.fromEntries(
+    Object.entries(context).map(([key, value]) => [key, redactValue(value, seen)]),
+  );
+};
+
+/** The SDK sends the unmapped event when a mapper throws, so a failed redaction drops the event. */
+const dropOnFailure =
+  <E>(mapper: (event: E) => E | null) =>
+  (event: E): E | null => {
+    try {
+      return mapper(event);
+    } catch {
+      return null;
+    }
+  };
 
 /**
  * The custom errorEventMapper function for Datadog RUM.
@@ -197,8 +230,10 @@ export const redactContext = (context: object): Record<string, unknown> =>
  * @param event The RUMErrorEvent object.
  * @returns The modified RUMErrorEvent object, or null if the event should be dropped.
  */
-export const customErrorEventMapper: (disableErrorTracking: boolean) => ErrorEventMapper =
-  disableErrorTracking => event => {
+export const customErrorEventMapper: (
+  disableErrorTracking: boolean,
+) => ErrorEventMapper = disableErrorTracking =>
+  dropOnFailure(event => {
     if (
       disableErrorTracking ||
       isExcludedErrorName(event.stacktrace) ||
@@ -207,49 +242,51 @@ export const customErrorEventMapper: (disableErrorTracking: boolean) => ErrorEve
       return null; // Return null to drop the event
     }
 
-    // Account descriptors carry the account key: redact them from the message, stack and context.
     return {
       ...event,
-      message: redactAccountDescriptors(event.message),
-      stacktrace: redactAccountDescriptors(event.stacktrace),
+      message: redactText(event.message),
+      stacktrace: redactText(event.stacktrace),
       context: {
         ...redactContext(event.context),
         featureFlags: buildFeatureFlagTags(),
       },
     };
-  };
+  });
 
 /**
  * Custom event mapper for action events.
  * @param event The ActionEvent object to map.
  * @returns The mapped ActionEvent object.
  */
-export const customActionEventMapper: ActionEventMapper = event => {
+export const customActionEventMapper: ActionEventMapper = dropOnFailure(event => {
   if (!event) return null;
   return {
     ...event,
     context: {
-      ...event.context,
+      ...redactContext(event.context),
       featureFlags: buildFeatureFlagTags(),
     },
   };
-};
+});
 
 /**
  * Custom event mapper for log events.
  * @param event The LogEvent object to map.
  * @returns The mapped LogEvent object.
  */
-export const customLogEventMapper: LogEventMapper = event => {
+export const customLogEventMapper: LogEventMapper = dropOnFailure(event => {
   if (!event) return null;
   return {
     ...event,
+    message: redactText(event.message),
+    errorMessage: redactText(event.errorMessage),
+    stacktrace: redactText(event.stacktrace),
     context: {
-      ...event.context,
+      ...redactContext(event.context),
       featureFlags: buildFeatureFlagTags(),
     },
   };
-};
+});
 
 export function broadcastLogger(event: LogEvent): void {
   if (!isDatadogEnabled) return;

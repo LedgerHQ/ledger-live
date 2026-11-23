@@ -23,6 +23,25 @@ describe("redactAccountDescriptors", () => {
     );
   });
 
+  it("redacts a key with punctuation and a descriptor glued to a word", () => {
+    const text = "failed_account:2:address:ethereum:acct#alice:m/44h/60h/0h/0/0 done";
+    expect(redactAccountDescriptors(text)).toBe("failed_[redacted] done");
+  });
+
+  it("redacts a descriptor without a valid path: legacy, missing or cut off", () => {
+    const legacy = redactAccountDescriptors("bad account:2:address:ethereum:0xABC:44'/60'/0'/0/0");
+    expect(legacy).toMatch(/^bad \[redacted\]/);
+    expect(legacy).not.toContain("0xABC");
+    expect(redactAccountDescriptors(`cut: account:2:utxo:bitcoin:${XPUB.slice(0, 20)}`)).toBe(
+      "cut: [redacted]",
+    );
+  });
+
+  it("does not span two JSON values", () => {
+    const json = JSON.stringify({ a: "account:2:address:ethereum:0xabc", b: ADDRESS });
+    expect(redactAccountDescriptors(json)).toBe('{"a":"[redacted]","b":"[redacted]"}');
+  });
+
   it("leaves other text alone", () => {
     const text = "account 2 of utxo; js:2:ethereum:0xabc: legacy ids are another matter";
     expect(redactAccountDescriptors(text)).toBe(text);
