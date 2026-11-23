@@ -74,21 +74,23 @@ function setupSeededFunnel(options: SeededFunnelOptions): void {
   });
 }
 
-// iOS never goes idle while the funnel listens to the mock server device.
-const describeSeededFunnel = (...args: Parameters<typeof describe>) =>
-  process.env.DETOX_CONFIGURATION?.startsWith("ios")
-    ? describe.skip("[Android only] " + args[0], args[1])
-    : describeIfNotNanoS(...args);
+const describeSeededFunnel = describeIfNotNanoS;
 
 function tagSeededFunnelScenario(tmsLinks: string[], tags: string[]) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
 }
 
+/** The Connect screen never goes idle on iOS, so the tap that opens it would never return. */
+async function openConnectScreen() {
+  await app.common.disableSynchronizationForiOS();
+  await app.onboarding.selectStartingOption("accessWallet");
+}
+
 async function connectDevice() {
-  await app.deviceOnboarding.expectConnectScreen();
-  await app.deviceOnboarding.selectDevice();
-  await app.deviceOnboarding.expectChecksIdle();
+  await app.deviceOnboarding.connect.expectDeviceListed();
+  await app.deviceOnboarding.connect.selectDevice();
+  await app.deviceOnboarding.checks.expectIdle();
 }
 
 async function enterFunnelFromReadOnlyPortfolio() {
@@ -98,22 +100,27 @@ async function enterFunnelFromReadOnlyPortfolio() {
   await app.onboarding.acceptAnalytics();
   await app.portfolio.expectReadOnlyPortfolioVisible();
   await app.portfolio.tapConnectButton();
-  await app.onboarding.selectStartingOption("accessWallet");
+  await openConnectScreen();
   await connectDevice();
 }
 
 async function enterFunnelFromMyLedger() {
   await app.mainNavigation.waitForWallet40Ready();
   await app.mainNavigation.openMyWallet();
-  await app.deviceOnboarding.tapAddDevice();
-  await app.onboarding.selectStartingOption("accessWallet");
+  await app.myWallet.tapAddDevice();
+  await openConnectScreen();
   await connectDevice();
 }
 
 async function passChecks() {
-  await app.deviceOnboarding.startChecks();
-  await app.deviceOnboarding.expectChecksSucceeded();
-  await app.deviceOnboarding.continueAfterChecks();
+  await app.deviceOnboarding.checks.start();
+  await app.deviceOnboarding.checks.expectSucceeded();
+  await app.deviceOnboarding.checks.continueAfterSuccess();
+}
+
+async function skipLedgerSync() {
+  await app.deviceOnboarding.syncOffer.skip();
+  await app.deviceOnboarding.skipSyncDrawer.confirm();
 }
 
 async function expectOnboardedFromReadOnly() {
@@ -131,8 +138,8 @@ export function runSkipSyncAtFirstLaunchTest(tmsLinks: string[], tags: string[])
     it("Connects a seeded device, skips Ledger Sync and lands on the post-onboarding", async () => {
       await enterFunnelFromReadOnlyPortfolio();
       await passChecks();
-      await app.deviceOnboarding.expectSyncOffer();
-      await app.deviceOnboarding.skipSync();
+      await app.deviceOnboarding.syncOffer.expectVisible();
+      await skipLedgerSync();
       await expectOnboardedFromReadOnly();
     });
   });
@@ -149,10 +156,10 @@ export function runSkipSyncFromOnboardedInstanceTest(tmsLinks: string[], tags: s
       it("Adds a seeded device from My Ledger and goes back to the wallet", async () => {
         await enterFunnelFromMyLedger();
         await passChecks();
-        await app.deviceOnboarding.expectSyncOffer();
-        await app.deviceOnboarding.skipSync();
-        await app.deviceOnboarding.expectSyncOfferClosed();
-        await app.myWallet.expectScreenVisible();
+        await app.deviceOnboarding.syncOffer.expectVisible();
+        await skipLedgerSync();
+        await app.deviceOnboarding.syncOffer.expectClosed();
+        await app.mainNavigation.waitForWallet40Ready();
         await app.postOnboardingHub.expectHubNotOpen();
       });
     },
@@ -168,6 +175,8 @@ export function runNoSyncOfferTest(tmsLinks: string[], tags: string[]) {
     it("Completes the onboarding right after the checks", async () => {
       await enterFunnelFromReadOnlyPortfolio();
       await passChecks();
+      await app.postOnboardingHub.expectHubOpen();
+      await app.deviceOnboarding.syncOffer.expectNotShown();
       await expectOnboardedFromReadOnly();
     });
   });
@@ -181,9 +190,9 @@ export function runQuitBeforeChecksTest(tmsLinks: string[], tags: string[]) {
 
     it("Leaves the funnel without completing the onboarding", async () => {
       await enterFunnelFromReadOnlyPortfolio();
-      await app.deviceOnboarding.quitChecks();
-      await app.deviceOnboarding.leaveFromQuitConfirmation();
-      await app.deviceOnboarding.expectChecksClosed();
+      await app.deviceOnboarding.checks.quit();
+      await app.deviceOnboarding.quitConfirmationDrawer.leave();
+      await app.deviceOnboarding.checks.expectClosed();
       await app.onboarding.expectStartingOptionsVisible();
     });
   });
@@ -198,8 +207,8 @@ export function runQuitSyncOfferTest(tmsLinks: string[], tags: string[]) {
     it("Completes the onboarding when the offer is closed", async () => {
       await enterFunnelFromReadOnlyPortfolio();
       await passChecks();
-      await app.deviceOnboarding.expectSyncOffer();
-      await app.deviceOnboarding.quitSyncOffer();
+      await app.deviceOnboarding.syncOffer.expectVisible();
+      await app.deviceOnboarding.syncOffer.quit();
       await expectOnboardedFromReadOnly();
     });
   });
@@ -213,14 +222,14 @@ export function runSkipOsUpdateTest(tmsLinks: string[], tags: string[]) {
 
     it("Skips the offered OS update and completes the onboarding", async () => {
       await enterFunnelFromReadOnlyPortfolio();
-      await app.deviceOnboarding.startChecks();
-      await app.deviceOnboarding.expectFirmwareUpdateOffer();
-      await app.deviceOnboarding.dismissFirmwareUpdateOffer();
-      await app.deviceOnboarding.skipFirmwareUpdate();
-      await app.deviceOnboarding.expectChecksSucceeded();
-      await app.deviceOnboarding.continueAfterChecks();
-      await app.deviceOnboarding.expectSyncOffer();
-      await app.deviceOnboarding.skipSync();
+      await app.deviceOnboarding.checks.start();
+      await app.deviceOnboarding.firmwareUpdateOfferDrawer.expectVisible();
+      await app.deviceOnboarding.firmwareUpdateOfferDrawer.dismiss();
+      await app.deviceOnboarding.checks.skipFirmwareUpdate();
+      await app.deviceOnboarding.checks.expectSucceeded();
+      await app.deviceOnboarding.checks.continueAfterSuccess();
+      await app.deviceOnboarding.syncOffer.expectVisible();
+      await skipLedgerSync();
       await expectOnboardedFromReadOnly();
     });
   });
@@ -234,10 +243,10 @@ export function runAcceptOsUpdateTest(tmsLinks: string[], tags: string[]) {
 
     it("Hands the offered OS update over to the firmware update screen", async () => {
       await enterFunnelFromReadOnlyPortfolio();
-      await app.deviceOnboarding.startChecks();
-      await app.deviceOnboarding.expectFirmwareUpdateOffer();
-      await app.deviceOnboarding.acceptFirmwareUpdate();
-      await app.deviceOnboarding.expectFirmwareUpdateScreen();
+      await app.deviceOnboarding.checks.start();
+      await app.deviceOnboarding.firmwareUpdateOfferDrawer.expectVisible();
+      await app.deviceOnboarding.firmwareUpdateOfferDrawer.accept();
+      await app.deviceOnboarding.firmwareUpdate.expectVisible();
     });
   });
 }

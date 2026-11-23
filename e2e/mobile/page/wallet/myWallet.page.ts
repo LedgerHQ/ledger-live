@@ -2,6 +2,7 @@ import { Step } from "jest-allure2-reporter/api";
 import { byId } from "@e2e/helpers/elements/native";
 
 export default class MyWalletPage {
+  private readonly addDeviceEntry = byId(/^(select-device-add-new|connect-with-bluetooth)$/);
   private readonly contactsButton = byId("my-wallet-contacts-button");
   private readonly quickActionHelp = byId("my-wallet-quick-action-help");
   private readonly headerSettingsButton = byId("my-wallet-header-settings-button");
@@ -13,6 +14,12 @@ export default class MyWalletPage {
   @Step("Expect My Wallet screen visible")
   async expectScreenVisible() {
     await this.headerSettingsButton.waitVisible();
+  }
+
+  /** My Ledger shows a different add CTA depending on whether it already lists a device. */
+  @Step("Tap the add a device entry")
+  async tapAddDevice() {
+    await this.addDeviceEntry.tap();
   }
 
   // Composes the Contacts page's own arrival assertion rather than duplicating its locator.

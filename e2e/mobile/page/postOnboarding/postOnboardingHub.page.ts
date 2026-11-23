@@ -1,4 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
+import { waitForIosTransitionEnd } from "@e2e/helpers/commonHelpers";
 import { byId } from "@e2e/helpers/elements/native";
 
 type ActionCompletedOptions = {
@@ -45,6 +46,7 @@ export default class PostOnboardingHubPage {
   @Step("Close post-onboarding hub")
   async closeHub(): Promise<void> {
     await this.hubClose.waitFullyVisible();
+    await waitForIosTransitionEnd();
     await this.hubClose.tap();
     await this.hubContainer.waitNotVisible();
   }
