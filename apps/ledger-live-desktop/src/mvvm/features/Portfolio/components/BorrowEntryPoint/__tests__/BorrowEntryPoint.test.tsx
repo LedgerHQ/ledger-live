@@ -20,7 +20,7 @@ describe("BorrowEntryPoint", () => {
     render(<BorrowEntryPoint />);
 
     expect(screen.getByTestId("portfolio-borrow-entry-point")).toBeVisible();
-    expect(screen.getByText(t("portfolio.borrowEntry.title"))).toBeVisible();
+    expect(screen.getByText("Crypto Loan")).toBeVisible();
     expect(screen.getByText(t("portfolio.borrowEntry.cardTitle"))).toBeVisible();
     expect(screen.getByText(t("portfolio.borrowEntry.cardDescription"))).toBeVisible();
   });
