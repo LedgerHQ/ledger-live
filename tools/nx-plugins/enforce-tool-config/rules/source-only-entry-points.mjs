@@ -17,6 +17,7 @@ export const SOURCE_ONLY_ENTRY_POINTS = {
   "libs/coin-tester-modules/coin-tester-casper": COIN_TESTER,
   "libs/coin-tester-modules/coin-tester-cosmos": COIN_TESTER,
   "libs/coin-tester-modules/coin-tester-evm": COIN_TESTER,
+  "libs/coin-tester-modules/coin-tester-filecoin": COIN_TESTER,
   "libs/coin-tester-modules/coin-tester-internet_computer": COIN_TESTER,
   "libs/coin-tester-modules/coin-tester-kaspa": COIN_TESTER,
   "libs/coin-tester-modules/coin-tester-multiversx": COIN_TESTER,
