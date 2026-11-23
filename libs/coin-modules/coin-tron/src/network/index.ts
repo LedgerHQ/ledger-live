@@ -89,7 +89,7 @@ export async function post<T, U extends object = any>(
 ): Promise<U> {
   const { getCallsTimeout, getCallsRetry } = getNetworkState();
   const { data } = await retry(
-    async () =>
+    () =>
       network<U, T>({
         method: "POST",
         url: `${getBaseApiUrl(config)}${endPoint}`,
@@ -406,7 +406,7 @@ export async function craftStandardTransaction(
 /** Default expiration of 10 minutes (in seconds) after crafting time. */
 export const DEFAULT_EXPIRATION = 600;
 
-async function extendExpiration(
+function extendExpiration(
   logger: Logger,
   config: TronCoinConfig,
   preparedTransaction: any,
@@ -640,15 +640,17 @@ export async function getTransactionInfoById(
  * token unambiguously therefore keeps no token address, and the operation is dropped downstream
  * rather than mislabelled.
  */
-async function resolveMissingTokenAddresses(
+function resolveMissingTokenAddresses(
   logger: Logger,
   config: TronCoinConfig,
   txs: TrongridTxInfo[],
 ): Promise<TrongridTxInfo[]> {
-  if (!txs.some(isMissingTokenAddress)) return txs;
+  if (!txs.some(isMissingTokenAddress)) return Promise.resolve(txs);
 
-  return promiseAllBatched(3, txs, async tx =>
-    isMissingTokenAddress(tx) ? withTokenAddressFromReceipt(logger, config, tx) : tx,
+  return promiseAllBatched(3, txs, tx =>
+    isMissingTokenAddress(tx)
+      ? withTokenAddressFromReceipt(logger, config, tx)
+      : Promise.resolve(tx),
   );
 }
 

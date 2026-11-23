@@ -151,7 +151,7 @@ export function createApi() {
     },
     // Tron uses (timestamp + ref_block_hash) for replay protection rather than
     // a per-account nonce, so getNextSequence has no meaningful value here.
-    getNextSequence: async (_context: TronContext, _address: string) => 0n,
+    getNextSequence: (_context: TronContext, _address: string) => Promise.resolve(0n),
     validateAddress: async (
       _context: TronContext,
       address: string,
