@@ -78,8 +78,8 @@ export async function killYaci(): Promise<void> {
   await compose.down({ ...composeOpts(), commandOptions: ["--remove-orphans", "--volumes"] });
 }
 
-// The faucet/admin API can transiently 5xx right after boot. Retry transient failures (5xx / network);
-// fail fast on 4xx.
+// The faucet can 5xx right after boot or a reset (the reset's unconfirmed cost-model vote spends its
+// genesis UTXO). Retry 5xx and network errors; fail fast on 4xx.
 const ADMIN_RETRY_LIMIT = 5;
 const ADMIN_RETRY_DELAY_MS = 1_000;
 const ADMIN_TIMEOUT_MS = 10_000;
@@ -156,6 +156,17 @@ async function adminPost(endpoint: string, body: unknown): Promise<void> {
   }
 }
 
+export async function adminGet<T>(endpoint: string): Promise<T> {
+  return withDeadline(`Yaci admin GET ${endpoint}`, ADMIN_TIMEOUT_MS, async signal => {
+    const res = await fetch(`${YACI_ADMIN_API}${endpoint}`, { signal });
+    if (!res.ok) {
+      await res.body?.cancel();
+      throw new Error(`Yaci admin GET ${endpoint} failed: ${res.status} ${res.statusText}`);
+    }
+    return (await res.json()) as T;
+  });
+}
+
 const STORE_TIMEOUT_MS = 2_000;
 const STORE_POLL_INTERVAL_MS = 500;
 
@@ -202,14 +213,11 @@ type StoreUtxo = {
 
 const utxoRef = (u: StoreUtxo) => `${u.tx_hash}#${u.output_index}`;
 
-// Suites call resetDevnet() then topup() inside one hook bounded by jest's 900 s ceiling, which also has
-// to fit their own sync (negativeCases allows 310 s). Worst cases that go on to top-up and sync, with
-// ~2.5 s poll overshoot per wait: reset ≈ 2×150 (POSTs) + 2×22.5 (block waits) + 10 (logs) ≈ 355 s,
-// topup ≈ 15 + 54 (adminPost: 5×10 s + 4×1 s) + 45 ≈ 120 s. Measured needs are a fraction of that:
-// reset 7-15 s, first block ~2 s later, top-up confirmed in ~1 s.
+// Each devnet suite resets and tops up in one jest hook or test next to its syncs. Worst cases (reset
+// ≈ 355 s, topup ≈ 120 s) fit the 900 s jest timeout the devnet suites share.
 const TOPUP_SNAPSHOT_TIMEOUT_MS = 15_000;
 // The faucet answers "Topup successful" once the node accepts the tx, without waiting for it to land in
-// a block (yaci-devkit 0.10.6 `LocalNodeService.topUp` ignores its own `waitForTx` result). Confirm the
+// a block (yaci-devkit 0.12.0 `LocalNodeService.topUp` ignores its own `waitForTx` result). Confirm the
 // funding UTXO here so a lost top-up fails at its source rather than as a later sync/poll timeout.
 const TOPUP_CONFIRM_TIMEOUT_MS = 45_000;
 
@@ -241,17 +249,15 @@ export async function topup(address: string, adaAmount: number): Promise<void> {
   );
 }
 
-// Reset stops the node and store, drops their data and starts a new chain from genesis. It answers in
-// 7-15 s, past ADMIN_TIMEOUT_MS, so it gets its own bound; a CI reset once ran past 45 s.
+// Reset re-runs the companion bootstrap and the store sync: 22-24 s measured on yaci-devkit 0.12.0. A
+// stalled store adds the full 60 s of yaci-devkit's own wait for it, so a CI reset ran past 90 s.
 const RESET_TIMEOUT_MS = 150_000;
 // Reset POSTs per resetDevnet call, shared between a 5xx retry and a re-reset of a stuck chain.
 const RESET_ATTEMPTS = 2;
-// yaci-devkit 0.10.6 answers the reset without waiting for a block (`ClusterCommands.startLocalCluster`
-// skips `waitForNextBlocks` on a first run), so the store reports height -1 until the node forges. The
-// Cardano bridge rejects a non-positive tip (`lastBlock`), and a top-up sent before forging may not
-// land, so reset waits for a produced block. The first block normally lands ~2 s after the reset
-// answers. The store can stall at -1 while the node keeps forging (see `recoverFailedBoot`), so a stuck store
-// gets one fresh reset.
+// yaci-devkit's own waits only warn when they lapse, so a reset can answer while the store reports height
+// -1. The Cardano bridge rejects a non-positive tip (`lastBlock`), and a top-up sent before forging may not
+// land, so reset waits for a produced block. The store can stall at -1 while the node keeps forging (see
+// `recoverFailedBoot`), so a stuck store gets one fresh reset.
 const BLOCK_WAIT_TIMEOUT_MS = 20_000;
 const DOCKER_OUTPUT_TIMEOUT_MS = 10_000;
 

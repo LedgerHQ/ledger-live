@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { resetDevnet, spawnYaci, topup, YACI_STORE_API } from "./yaci";
+import { adminGet, resetDevnet, spawnYaci, topup, YACI_STORE_API } from "./yaci";
 
 const mockUpOne = jest.fn();
 const mockDown = jest.fn();
@@ -247,6 +247,14 @@ describe("deadlines", () => {
     expect(calls("/admin/devnet/reset")).toHaveLength(1);
   });
 
+  it("fails an admin GET that never answers", async () => {
+    fetchMock.mockImplementation(never);
+
+    const assertion = expect(adminGet("/admin/devnet")).rejects.toThrow("timed out");
+    await jest.advanceTimersByTimeAsync(10_000);
+    await assertion;
+  });
+
   it("moves past a store response whose body never completes", async () => {
     const stalled = () => new Response(new ReadableStream({ start() {} }));
     const blocks = [stalled(), json({ height: 1 })];
@@ -259,6 +267,22 @@ describe("deadlines", () => {
     await expect(done).resolves.toBeUndefined();
 
     expect(calls("/blocks/latest")).toHaveLength(2);
+  });
+});
+
+describe("adminGet", () => {
+  it("returns the parsed body", async () => {
+    fetchMock.mockResolvedValue(json({ protocolMagic: 42 }));
+
+    await expect(adminGet("/admin/devnet")).resolves.toEqual({ protocolMagic: 42 });
+  });
+
+  it("throws with the status on a non-2xx answer", async () => {
+    fetchMock.mockResolvedValue(json({}, 500));
+
+    await expect(adminGet("/admin/devnet")).rejects.toThrow(
+      "Yaci admin GET /admin/devnet failed: 500",
+    );
   });
 });
 
@@ -349,6 +373,10 @@ describe("spawnYaci", () => {
 });
 
 describe("topup", () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it("resolves once the new funding UTXO is in the store", async () => {
     const snapshots = [[], [], [utxo("funding", "100000000")]];
     fetchMock.mockImplementation(async (url: string) =>
@@ -371,6 +399,22 @@ describe("topup", () => {
     await topup(ADDRESS, 100);
 
     expect(calls(`/addresses/${ADDRESS}/utxos`)).toHaveLength(3);
+  });
+
+  it("retries a faucet that answers 5xx", async () => {
+    jest.useFakeTimers();
+    const faucet = [json({ status: false, message: "Topup failed" }, 500), json({ status: true })];
+    const snapshots = [[], [utxo("funding", "100000000")]];
+    fetchMock.mockImplementation(async (url: string) =>
+      url.endsWith("/addresses/topup") ? faucet.shift() : json(snapshots.shift() ?? []),
+    );
+
+    const done = topup(ADDRESS, 100);
+    await jest.advanceTimersByTimeAsync(5_000);
+    await expect(done).resolves.toBeUndefined();
+
+    expect(calls("/addresses/topup")).toHaveLength(2);
+    expect(warnings()).toEqual([expect.stringContaining("/addresses/topup attempt 1 failed")]);
   });
 
   it("reads an unknown address as having no UTXOs", async () => {

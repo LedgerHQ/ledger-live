@@ -44,6 +44,7 @@ const config: Config = {
       displayName: "devnet",
       // Add new devnet-backed suites here so they share the one globalSetup-booted devnet.
       testMatch: [
+        "<rootDir>/src/devnet.test.ts",
         "<rootDir>/src/mintToken.test.ts",
         "<rootDir>/src/negativeCases.test.ts",
         "<rootDir>/src/scenarii.test.ts",
