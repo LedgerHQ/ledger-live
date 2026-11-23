@@ -21,6 +21,7 @@ export function ReceiveAddressView({
   address,
   closeLabel,
   backLabel,
+  actionsPlaceholderLabel,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -85,7 +86,7 @@ export function ReceiveAddressView({
                 ) : (
                   <AddressSummary address={address} />
                 )}
-                <ZonePlaceholder zone="actions" />
+                <ZonePlaceholder zone="actions" label={actionsPlaceholderLabel} />
                 <ZonePlaceholder zone="notices" />
               </>
             )}

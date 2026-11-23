@@ -1,6 +1,7 @@
 import { track } from "@shared/analytics";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -22,10 +23,14 @@ type MyWalletDeviceListLegacyProps = {
 };
 
 /** The `SelectDevice2` device section of My Wallet, shown while `lwmMyWalletDeviceList` is off. */
-export function MyWalletDeviceListLegacy({ onPairingStateChanged }: MyWalletDeviceListLegacyProps) {
+export function MyWalletDeviceListLegacy({
+  onPairingStateChanged,
+}: Readonly<MyWalletDeviceListLegacyProps>) {
   const action = useManagerDeviceAction({ resolveOsUpdates: true });
   const [device, setDevice] = useState<Device>();
   const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const pairingFlowBottomInset = isHeaderOverridden ? bottomInset : 0;
 
   useEffect(() => {
     onPairingStateChanged?.(isHeaderOverridden);
@@ -123,7 +128,7 @@ export function MyWalletDeviceListLegacy({ onPairingStateChanged }: MyWalletDevi
 
   return (
     <>
-      <Box style={{ flex: 1 }}>
+      <Box style={{ flex: 1, paddingBottom: pairingFlowBottomInset }}>
         <SelectDevice2
           onSelect={onSelectDevice}
           stopBleScanning={!!device}

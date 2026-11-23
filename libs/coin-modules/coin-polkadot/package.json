@@ -171,7 +171,6 @@
     "@typescript/native": "catalog:",
     "dotenv": "16.4.7",
     "jest": "catalog:",
-    "jest-expect-message": "1.1.3",
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

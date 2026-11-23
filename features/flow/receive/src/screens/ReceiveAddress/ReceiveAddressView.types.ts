@@ -27,6 +27,20 @@ export type ReceiveAddressShown = Readonly<{
   assetIcon?: ReceiveIcon;
 }>;
 
+type ReceiveAddressAction = Readonly<{ label: string; onPress: () => void }>;
+
+/** Copy, Share (where the app can share) and Verify, under the address. */
+export type ReceiveAddressActionsView = Readonly<{
+  /** No address shown yet: the actions are there, but do nothing. */
+  disabled: boolean;
+  copy?: ReceiveAddressAction & Readonly<{ hasCopied: boolean }>;
+  share?: ReceiveAddressAction;
+  /** `disabled` when the device cannot show this address. */
+  verify?: ReceiveAddressAction & Readonly<{ disabled: boolean }>;
+  /** Invites the user to verify, until they verify or dismiss it once. */
+  verifyHint?: Readonly<{ message: string; gotItLabel: string; onGotIt: () => void }>;
+}>;
+
 export type ReceiveAddressViewProps = Readonly<{
   /** The address is not known yet: skeletons hold the place of the QR card and the address. */
   isLoading: boolean;
@@ -34,6 +48,9 @@ export type ReceiveAddressViewProps = Readonly<{
   addressSelection?: ReceiveAddressSelectionView;
   /** Absent until the address is read, and while the user picks one. */
   address?: ReceiveAddressShown;
+  actions: ReceiveAddressActionsView;
+  /** "Copy · Share · Verify": the actions' labels, shown in their zone until the buttons land. */
+  actionsPlaceholderLabel: string;
   /** "Receive USDC" */
   title: string;
   /** "Ethereum network" */

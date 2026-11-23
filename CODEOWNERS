@@ -208,7 +208,6 @@ apps/ledger-live-mobile/src/mvvm/contexts/__integrations__/WaitForAppReady.integ
 .github/workflows/coin-monitoring-*.yml                             @ledgerhq/coin-integration
 .github/workflows/test-coin-tester.yml                              @ledgerhq/coin-integration
 .github/workflows/test-coin-modules-integ.yml                       @ledgerhq/coin-integration
-.github/workflows/test-bridge-pr.yml                                @ledgerhq/coin-integration @ledgerhq/platform
 .github/workflows/notify-e2e-required-reusable.yml                  @ledgerhq/coin-integration @ledgerhq/platform
 apps/**/families/                                                   @ledgerhq/coin-integration
 apps/ledger-live-mobile/src/components/DelegationDrawer.tsx         @ledgerhq/coin-integration
@@ -329,6 +328,7 @@ libs/transaction-observability/                                           @ledge
 features/flow/pay-card-auth/                                             @ledgerhq/ptx
 features/flow/predictions/                                               @ledgerhq/ptx
 features/platform/card/                                                  @ledgerhq/ptx
+features/platform/intent-hyperliquid-sign/                               @ledgerhq/ptx
 features/platform/predictions/                                           @ledgerhq/ptx
 domain/entity/predictions/                                               @ledgerhq/ptx
 devtools/predictions/                                                    @ledgerhq/ptx

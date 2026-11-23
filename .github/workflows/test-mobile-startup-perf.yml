@@ -464,7 +464,7 @@ jobs:
             --platform android \
             --devices emulator-5554,emulator-5556 \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
-            --scenarios "$SCENARIO" --pairs "$PAIRS" \
+            --scenarios "$SCENARIO" --pairs "$PAIRS" --warmups 6 \
             --read "$READ" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
             --out-dir "$RESULTS_DIR/android"

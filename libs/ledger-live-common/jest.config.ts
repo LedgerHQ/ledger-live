@@ -2,7 +2,6 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 
 const testPathIgnorePatterns = [
-  "benchmark/",
   "tools/",
   "mobile-test-app/",
   "lib/",
@@ -48,13 +47,6 @@ if (process.env.ONLY_WEEKLY_INTEGRATION_TESTS) {
   testRegex = weeklyIntegrationTestsRegex;
 }
 
-if (process.env.USE_BACKEND_MOCKS) {
-  testRegex = [
-    "algorand/bridge.integration.test.ts",
-    // $ to not match with test.snap files
-  ];
-}
-
 const reporters = [
   "default",
   [
@@ -92,7 +84,6 @@ const defaultConfig = {
   modulePathIgnorePatterns: [
     "__tests__/fixtures",
     "__tests__/migration",
-    "<rootDir>/benchmark/.*",
     "<rootDir>/cli/.yalc/.*",
     "<rootDir>/lib-es",
     "<rootDir>/lib",
@@ -128,16 +119,6 @@ const defaultConfig = {
 };
 
 export default {
-  globalSetup: process.env.UPDATE_BACKEND_MOCKS
-    ? "<rootDir>/src/__tests__/test-helpers/bridgeSetupUpdateMocks.ts"
-    : process.env.USE_BACKEND_MOCKS
-      ? "<rootDir>/src/__tests__/test-helpers/bridgeSetupUseMocks.ts"
-      : undefined,
-  globalTeardown: process.env.UPDATE_BACKEND_MOCKS
-    ? "<rootDir>/src/__tests__/test-helpers/bridgeTeardownUpdateMocks.ts"
-    : process.env.USE_BACKEND_MOCKS
-      ? "<rootDir>/src/__tests__/test-helpers/bridgeTeardownUseMocks.ts"
-      : undefined,
   collectCoverage: true,
   collectCoverageFrom: ["src/**/*.{ts,tsx}"],
   reporters: defaultConfig.reporters,

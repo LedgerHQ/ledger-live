@@ -27,7 +27,6 @@ import { useDeviceIntentExecutorViewModel } from "./useDeviceIntentExecutorViewM
 export { buildDeviceInitializationInput } from "./ContextInitializer/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
 export { ContinueOnDevice } from "./components/DeviceGenericStates/ContinueOnDevice";
-export { UserRefusedOnDevice } from "./components/DeviceGenericStates/UserRefusedOnDevice";
 export type { SourceFlow } from "@ledgerhq/live-dmk-shared";
 
 type Props<JobState, Input, ExtraProps, Result = undefined> = Omit<

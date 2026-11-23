@@ -83,18 +83,18 @@ export function runDelegateTest(
         delegation.account.currency.name === Currency.OSMO.name ||
         delegation.account.currency.name === Currency.BABY.name
       ) {
-        await app.stake.setAmount(currencyId, delegation.amount);
+        await app.stake.setAmount({ currencyId, amount: delegation.amount });
         await app.stake.validateAmount(currencyId);
-        await app.stake.selectValidator(currencyId, delegation.provider);
+        await app.stake.selectValidator({ currencyId, provider: delegation.provider });
       } else if (delegation.account.currency.name !== Currency.ADA.name) {
-        await app.stake.setAmount(currencyId, delegation.amount);
+        await app.stake.setAmount({ currencyId, amount: delegation.amount });
         await app.stake.validateAmount(currencyId);
       } else {
-        await app.stake.selectValidator(currencyId, delegation.provider);
+        await app.stake.selectValidator({ currencyId, provider: delegation.provider });
         await app.stake.verifyFeesVisible(currencyId);
         fees = await app.stake.getDisplayedFees(currencyId);
       }
-      await app.stake.expectProvider(currencyId, delegation.provider);
+      await app.stake.expectProvider({ currencyId, provider: delegation.provider });
       await app.stake.summaryContinue(currencyId);
 
       await verifyAppValidationStakeInfo({ delegation, amountWithCode, fees });
@@ -125,7 +125,7 @@ export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[],
       await app.account.tapEarn();
 
       await app.stake.dismissDelegationStart(currencyId);
-      await app.stake.setAmount(currencyId, delegation.amount);
+      await app.stake.setAmount({ currencyId, amount: delegation.amount });
       await app.stake.validateAmount(currencyId);
       await app.stake.summaryContinue(currencyId);
 
@@ -156,7 +156,7 @@ export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[
 
       await app.undelegate.tapStakingRow(currencyId, 0);
       await app.undelegate.tapUnstakeAction(currencyId);
-      await app.undelegate.enterAmount(currencyId, delegation.amount);
+      await app.undelegate.enterAmount({ currencyId, amount: delegation.amount });
       await app.undelegate.continueFromAmount(currencyId);
 
       await app.speculos.signDelegationTransaction(delegation);
@@ -222,7 +222,7 @@ export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
         // Mina delegates the whole balance, so the flow opens on the validator list and has no
         // amount step.
         await app.stake.selectValidatorFromList(delegation.provider);
-        await app.stake.expectProvider(currencyId, delegation.provider);
+        await app.stake.expectProvider({ currencyId, provider: delegation.provider });
         await app.stake.summaryContinue(currencyId);
 
         await verifyAppValidationStakeInfo({ delegation, amountWithCode });
@@ -256,7 +256,7 @@ export function runMinaRedelegateTest(tmsLinks: string[], tags: string[]) {
         await app.undelegate.tapStakingRow(currencyId);
         await app.undelegate.tapRedelegateAction(currencyId);
         await app.stake.selectValidatorFromList(delegation.provider);
-        await app.stake.expectProvider(currencyId, delegation.provider);
+        await app.stake.expectProvider({ currencyId, provider: delegation.provider });
         await app.stake.summaryContinue(currencyId);
 
         await app.speculos.signDelegationTransaction(delegation);

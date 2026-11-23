@@ -12,6 +12,18 @@ import {
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
+type AuthorizeStepOptions = {
+  button: WebHandle;
+  doneIds: string | string[];
+  sign: () => Promise<void>;
+  screen?: WebHandle;
+};
+
+type StepStateIdsOptions = {
+  doneId: string;
+  ctaId: string;
+};
+
 const MODAL_DISMISS_TIMEOUT_MS = TIMEOUT.xlarge;
 const CONTINUE_READY_TIMEOUT_MS = TIMEOUT.xlarge;
 const EXECUTION_STEP_TIMEOUT_MS = 240_000;
@@ -128,7 +140,10 @@ export default class BorrowPage {
   @Step("Click Simulate my loan on the intro modal")
   async clickSimulateMyLoan() {
     await this.simulateMyLoanButton.scrollToAndTap();
-    await retryUntilTimeout(() => this.introModal.expectNotExist(), MODAL_DISMISS_TIMEOUT_MS);
+    await retryUntilTimeout({
+      fn: () => this.introModal.expectNotExist(),
+      timeout: MODAL_DISMISS_TIMEOUT_MS,
+    });
   }
 
   @Step("Expect the simulate-loan screen")
@@ -184,32 +199,36 @@ export default class BorrowPage {
   async completeApprovalStep() {
     await this.loanExecutionScreen.waitVisible();
     if (
-      await this.isStepAlreadyDoneOnceRendered(
-        this.step1AccessApprovedId,
-        this.giveApprovalButtonId,
-      )
+      await this.isStepAlreadyDoneOnceRendered({
+        doneId: this.step1AccessApprovedId,
+        ctaId: this.giveApprovalButtonId,
+      })
     )
       return;
-    await this.authorizeStep(this.giveApprovalButton, this.step1AccessApprovedId, () =>
-      this.signContractTransaction(),
-    );
+    await this.authorizeStep({
+      button: this.giveApprovalButton,
+      doneIds: this.step1AccessApprovedId,
+      sign: () => this.signContractTransaction(),
+    });
   }
 
   @Step("Authorize depositing and sign on device")
   async authorizeDeposit() {
-    await this.authorizeStep(this.authorizeDepositingButton, this.step2DepositDoneId, () =>
-      this.signContractTransaction(),
-    );
+    await this.authorizeStep({
+      button: this.authorizeDepositingButton,
+      doneIds: this.step2DepositDoneId,
+      sign: () => this.signContractTransaction(),
+    });
   }
 
   /** Completing the last step leaves the execution screen, so the terminal card counts too. */
   @Step("Authorize borrowing and sign on device")
   async authorizeBorrow() {
-    await this.authorizeStep(
-      this.authorizeBorrowingButton,
-      [this.step3BorrowDoneId, this.loanCompletionCardId, this.viewMyLoanButtonId],
-      () => this.signContractTransaction(),
-    );
+    await this.authorizeStep({
+      button: this.authorizeBorrowingButton,
+      doneIds: [this.step3BorrowDoneId, this.loanCompletionCardId, this.viewMyLoanButtonId],
+      sign: () => this.signContractTransaction(),
+    });
     await this.viewMyLoanButton.waitVisible();
   }
 
@@ -268,22 +287,22 @@ export default class BorrowPage {
   /** The spec zeroes the debt-token allowance beforehand, so this step is always required. */
   @Step("Give repay approval and sign on device")
   async completeRepayApprovalStep() {
-    await this.authorizeStep(
-      this.giveApprovalButton,
-      this.repayStep1ApprovedId,
-      () => this.signContractTransaction(),
-      this.repayExecutionScreen,
-    );
+    await this.authorizeStep({
+      button: this.giveApprovalButton,
+      doneIds: this.repayStep1ApprovedId,
+      sign: () => this.signContractTransaction(),
+      screen: this.repayExecutionScreen,
+    });
   }
 
   @Step("Authorize repay and sign on device")
   async authorizeRepay() {
-    await this.authorizeStep(
-      this.authorizeRepayButton,
-      [this.repayStep2DoneId, this.repayCompletionCardId, this.viewMyLoanButtonId],
-      () => this.signContractTransaction(),
-      this.repayExecutionScreen,
-    );
+    await this.authorizeStep({
+      button: this.authorizeRepayButton,
+      doneIds: [this.repayStep2DoneId, this.repayCompletionCardId, this.viewMyLoanButtonId],
+      sign: () => this.signContractTransaction(),
+      screen: this.repayExecutionScreen,
+    });
   }
 
   @Step("Expect the repay completion card")
@@ -311,27 +330,27 @@ export default class BorrowPage {
 
   @Step("Authorize withdraw and sign on device")
   async authorizeWithdraw() {
-    await this.authorizeStep(
-      this.authorizeWithdrawButton,
-      this.withdrawStepDoneId,
-      () => this.signContractTransaction(),
-      this.withdrawExecutionScreen,
-    );
+    await this.authorizeStep({
+      button: this.authorizeWithdrawButton,
+      doneIds: this.withdrawStepDoneId,
+      sign: () => this.signContractTransaction(),
+      screen: this.withdrawExecutionScreen,
+    });
   }
 
   /** Withdrawing the last loan's collateral also revokes Morpho's borrowing authorization. */
   @Step("Deauthorize borrowing and sign on device")
   async deauthorizeBorrowing() {
-    await this.authorizeStep(
-      this.deauthorizeBorrowingButton,
-      [
+    await this.authorizeStep({
+      button: this.deauthorizeBorrowingButton,
+      doneIds: [
         this.deauthorizeBorrowingStepDoneId,
         this.withdrawCompletionCardId,
         this.backToMyLoansButtonId,
       ],
-      () => this.signContractTransaction(),
-      this.withdrawExecutionScreen,
-    );
+      sign: () => this.signContractTransaction(),
+      screen: this.withdrawExecutionScreen,
+    });
   }
 
   @Step("Expect the withdraw completion card")
@@ -349,12 +368,8 @@ export default class BorrowPage {
   }
 
   /** Asserting the marker is absent first makes the wait afterwards proof that the step ran. */
-  private async authorizeStep(
-    button: WebHandle,
-    doneIds: string | string[],
-    sign: () => Promise<void>,
-    screen = this.loanExecutionScreen,
-  ) {
+  private async authorizeStep(options: AuthorizeStepOptions) {
+    const { button, doneIds, sign, screen = this.loanExecutionScreen } = options;
     const markers = Array.isArray(doneIds) ? doneIds : [doneIds];
     await screen.waitVisible();
     await this.executionElement(markers[0]).expectNotExist();
@@ -417,11 +432,15 @@ export default class BorrowPage {
     }
   }
 
-  private async isStepAlreadyDoneOnceRendered(doneId: string, ctaId: string): Promise<boolean> {
-    return retryUntilTimeout(async () => {
-      if (await this.executionElement(doneId).isVisible(TIMEOUT.xxxsmall)) return true;
-      if (await this.executionElement(ctaId).isVisible(TIMEOUT.xxxsmall)) return false;
-      throw new Error(`neither '${doneId}' nor '${ctaId}' rendered on the execution screen`);
-    }, STEP_STATE_TIMEOUT_MS);
+  private async isStepAlreadyDoneOnceRendered(options: StepStateIdsOptions): Promise<boolean> {
+    const { doneId, ctaId } = options;
+    return retryUntilTimeout({
+      fn: async () => {
+        if (await this.executionElement(doneId).isVisible(TIMEOUT.xxxsmall)) return true;
+        if (await this.executionElement(ctaId).isVisible(TIMEOUT.xxxsmall)) return false;
+        throw new Error(`neither '${doneId}' nor '${ctaId}' rendered on the execution screen`);
+      },
+      timeout: STEP_STATE_TIMEOUT_MS,
+    });
   }
 }

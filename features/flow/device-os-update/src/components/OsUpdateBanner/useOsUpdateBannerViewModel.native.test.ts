@@ -10,7 +10,7 @@ jest.mock("@shared/analytics", () => ({
 }));
 
 const osUpdate = {
-  finalFirmware: { version: "1.8.0" },
+  finalFirmware: { name: "1.8.0-il3", version: "1.8.0" },
   osuFirmware: { notes: "notes" },
 } as OsUpdate;
 
@@ -41,11 +41,14 @@ describe("useOsUpdateBannerViewModel", () => {
     jest.clearAllMocks();
   });
 
-  it("shows the portfolio banner with the version of the last resolved update", () => {
-    const { result } = setup({}, [{ finalFirmware: { version: "1.7.0" } } as OsUpdate, osUpdate]);
+  it("shows the portfolio banner with the version name of the last resolved update", () => {
+    const { result } = setup({}, [
+      { finalFirmware: { name: "1.7.0", version: "1.7.0" } } as OsUpdate,
+      osUpdate,
+    ]);
 
     expect(result.current.variant).toBe("portfolio");
-    expect(result.current.version).toBe("1.8.0");
+    expect(result.current.version).toBe("1.8.0-il3");
     expect(result.current.DeviceIcon).toBe(DeviceIcon);
   });
 
