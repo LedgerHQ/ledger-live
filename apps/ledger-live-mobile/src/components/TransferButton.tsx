@@ -1,4 +1,4 @@
-import { track } from "@shared/analytics";
+import { track, type Props as EventProps } from "@shared/analytics";
 import React, { useCallback } from "react";
 import { BoxedIcon, Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { TouchableOpacity, StyleProp, ViewStyle } from "react-native";
@@ -14,7 +14,7 @@ type Props = {
   onDisabledPress?: () => void;
   disabled?: boolean;
   event?: string;
-  eventProperties?: Parameters<typeof track>[1];
+  eventProperties?: EventProps;
   style?: StyleProp<ViewStyle>;
   rightArrow?: boolean;
   testID?: string;
@@ -40,7 +40,7 @@ export default function TransferButton({
       return;
     }
     if (onPress) onPress();
-    if (event) track(event, eventProperties ?? null);
+    if (event) track(event, eventProperties);
   }, [onPress, event, eventProperties, disabled, onDisabledPress]);
 
   return (

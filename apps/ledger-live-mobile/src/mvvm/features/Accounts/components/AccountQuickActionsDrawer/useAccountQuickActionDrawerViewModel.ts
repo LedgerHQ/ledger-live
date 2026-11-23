@@ -1,4 +1,4 @@
-import { track } from "@shared/analytics";
+import { track, type Props as EventProps } from "@shared/analytics";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 
 import useQuickActions from "~/hooks/useQuickActions";
@@ -23,7 +23,7 @@ type ActionItem = {
   onDisabledPress?: () => void;
   disabled?: boolean;
   event?: string;
-  eventProperties?: Parameters<typeof track>[1];
+  eventProperties?: EventProps;
   style?: StyleProp<ViewStyle>;
   testID?: string;
 };

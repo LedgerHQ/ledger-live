@@ -62,7 +62,7 @@ export function resolveWalletSyncEntryFlow(fallback?: WalletSyncFlow): WalletSyn
 
 export function walletSyncEntryFlowProperties(
   fallback?: WalletSyncFlow,
-): Readonly<{ flow: WalletSyncFlow }> | Record<string, never> {
+): Readonly<{ flow?: WalletSyncFlow }> {
   const flow = resolveWalletSyncEntryFlow(fallback);
   return flow ? { flow } : {};
 }

@@ -5,7 +5,9 @@ jest.mock("./internals/trackEvent", () => ({
 import { setEnabledFn } from "./registry";
 import { resetTrackingPages, setTrackingSource } from "./screenRefs";
 import { trackEvent } from "./internals/trackEvent";
+import { z } from "zod";
 import { track } from "./track";
+import { trackPage } from "./trackPage";
 
 const register = () => {
   setEnabledFn(() => true);
@@ -113,5 +115,43 @@ describe("track", () => {
       props: { page: "Page from event", event: "props" },
       mandatory: false,
     });
+  });
+});
+
+describe("track props types", () => {
+  const Secret = z.string().brand<"AccountKey">().brand<"Sensitive">();
+  const key = Secret.parse("xpub");
+
+  it("accepts props, an error and no props", async () => {
+    await track("event", { network: "bitcoin", count: 1 });
+    await track("event", new Error("down"));
+    await track("event", null);
+    await track("event");
+    expect(trackEvent).toHaveBeenCalledTimes(4);
+  });
+
+  it("refuses a Sensitive value, at any depth", async () => {
+    // @ts-expect-error an account key in the props
+    await track("event", { key });
+    // @ts-expect-error an account key nested in the props
+    await track("event", { account: { keys: [key] } });
+    // @ts-expect-error an account key in page props
+    await trackPage({ category: "Receive", props: { key } });
+    expect(trackEvent).toHaveBeenCalled();
+  });
+
+  it("takes a union of props through an explicit type argument", async () => {
+    const pick = (flow?: string): Readonly<{ count: number }> | Readonly<{ flow: string }> =>
+      flow ? { flow } : { count: 0 };
+    const props = pick("sync");
+    type SyncProps = ReturnType<typeof pick>;
+    await track<SyncProps>("event", props);
+    await trackPage<SyncProps>({ category: "Sync", props });
+    expect(trackEvent).toHaveBeenCalled();
+  });
+
+  it("keeps the parameters of the generic signatures readable", () => {
+    const calls: Parameters<typeof trackPage>[] = [[{ category: "Receive" }]];
+    expect(calls.map(([page]) => page.category)).toEqual(["Receive"]);
   });
 });

@@ -1,4 +1,4 @@
-import { track } from "@shared/analytics";
+import { track, type Props as EventProps } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo, useCallback } from "react";
 import { Text, Flex, IconsLegacy, Box } from "@ledgerhq/native-ui";
@@ -60,7 +60,7 @@ type ButtonItem = {
   onPress?: (() => void) | null;
   disabled?: boolean;
   event?: string;
-  eventProperties?: Parameters<typeof track>[1];
+  eventProperties?: EventProps;
   style?: StyleProp<ViewStyle>;
   rightArrow: boolean;
 };

@@ -48,6 +48,7 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /shared/analytics-react/                                 @ledgerhq/platform
 /shared/feature-flags                                    @ledgerhq/platform
 /shared/schema-primitives                                @ledgerhq/platform
+/shared/sensitive/                                       @ledgerhq/platform
 /shared/api-services/                                    @ledgerhq/platform
 /shared/auth/                                            @ledgerhq/platform
 /shared/cloud-sync/                                      @ledgerhq/platform

@@ -27,10 +27,11 @@ import {
   setLastPageEventName,
   shouldSkipDuplicatePageEvent,
 } from "./internals/trackPage.internals";
-import type { TrackPageOptions, TrackPagePayload } from "./types";
+import type { EventProps, TrackPageOptions, TrackPagePayload } from "./types";
 
-export function trackPage(
-  { category, name, props }: TrackPagePayload,
+/** Props holding a `Sensitive` value do not compile: pass the AccountUUID instead. */
+export function trackPage<P extends EventProps>(
+  { category, name, props }: TrackPagePayload<P>,
   {
     mandatory = false,
     updateRoutes = false,

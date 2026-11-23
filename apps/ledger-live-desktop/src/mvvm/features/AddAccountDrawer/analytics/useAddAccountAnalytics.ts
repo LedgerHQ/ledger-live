@@ -9,7 +9,7 @@ type TrackAddAccountEvent = <T extends AddAccountEventName>(
 
 const useAddAccountAnalytics = () => {
   const trackAddAccountEvent = useCallback<TrackAddAccountEvent>((eventName, params) => {
-    track(eventName, params);
+    track<AddAccountEventParams[AddAccountEventName]>(eventName, params);
   }, []);
 
   return { trackAddAccountEvent };

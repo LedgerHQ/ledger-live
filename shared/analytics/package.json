@@ -21,10 +21,12 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
+    "@shared/sensitive": "workspace:*",
     "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
@@ -34,6 +36,6 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:",
-    "@support/jest": "workspace:*"
+    "zod": "catalog:"
   }
 }

@@ -26,19 +26,12 @@ export function useAccountPageTracking(account: Account): void {
     const hasTokens = (account.subAccounts?.length ?? 0) > 0;
     const source = getCurrentTrackingPage();
 
-    trackPage(
-      {
-        category: ACCOUNT_DETAIL_PAGES.account,
-        props: source
-          ? accountPageViewProps({
-              ...facts,
-              source,
-              operationsCount,
-              hasTokens,
-              hasAnalyticsBanner,
-            })
-          : { ...accountTrackingProps(facts), operationsCount, hasTokens, hasAnalyticsBanner },
-      },
+    const props = source
+      ? accountPageViewProps({ ...facts, source, operationsCount, hasTokens, hasAnalyticsBanner })
+      : { ...accountTrackingProps(facts), operationsCount, hasTokens, hasAnalyticsBanner };
+    // A union of props is inferred member by member: name it so the sensitive check sees it whole.
+    trackPage<typeof props>(
+      { category: ACCOUNT_DETAIL_PAGES.account, props },
       { updateRoutes: true, refreshSource: true },
     );
   }, [account, hasAnalyticsBanner]);

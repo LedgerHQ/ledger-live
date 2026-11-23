@@ -10,20 +10,23 @@ import { mapContactsPageEventToScreenCategory } from "./mapContactsPageEventToSc
 export function createContactsAnalyticsAdapter(): ContactsAnalyticsAdapter {
   return {
     track<T extends ContactsTrackEventPayload["name"]>(payload: ContactsTrackEventPayload<T>) {
+      // Every event's properties, not the generic one: track checks them for sensitive values.
+      const props: ContactsTrackEventPayload["properties"] = payload.properties;
       track(payload.name, {
-        ...payload.properties,
+        ...props,
         platform: CONTACTS_ANALYTICS_PLATFORM,
       });
     },
     trackPage<T extends ContactsPageEventPayload["page"]>(payload: ContactsPageEventPayload<T>) {
       const { category, name } = mapContactsPageEventToScreenCategory(payload.page);
+      const pageProps: ContactsPageEventPayload["properties"] = payload.properties;
 
       trackPage(
         {
           category,
           name,
           props: {
-            ...payload.properties,
+            ...pageProps,
             platform: CONTACTS_ANALYTICS_PLATFORM,
           },
         },

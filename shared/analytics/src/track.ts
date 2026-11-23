@@ -20,11 +20,12 @@ import { normalizeProps } from "./internals/normalizeProps";
 import { isEnabled } from "./registry";
 import { getCurrentTrackingPage } from "./screenRefs";
 import { trackEvent } from "./internals/trackEvent";
-import type { Props, TrackOptions } from "./types";
+import type { EventProps, SafeProps, TrackOptions } from "./types";
 
-export async function track(
+/** Props holding a `Sensitive` value do not compile: pass the AccountUUID instead. */
+export async function track<P extends EventProps>(
   event: string,
-  props?: Error | Props | null,
+  props?: SafeProps<P>,
   { mandatory = false }: TrackOptions = {},
 ): Promise<void> {
   if (mandatory || isEnabled()) {

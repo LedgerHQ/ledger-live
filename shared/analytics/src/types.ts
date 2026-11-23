@@ -1,4 +1,12 @@
+import type { NoSensitive } from "@shared/sensitive";
+
 export type Props = Record<string, unknown>;
+
+/** What `track` and `trackPage` take as props. */
+export type EventProps = Error | Props | null | undefined;
+
+/** Event props: a type error when they hold a `Sensitive` value (an account key, an address). */
+export type SafeProps<P extends EventProps> = P & NoSensitive<P>;
 
 export type EventType = "track" | "page";
 
@@ -50,8 +58,8 @@ export type TrackPageOptions = {
   updateRoutes?: boolean;
 };
 
-export type TrackPagePayload = {
+export type TrackPagePayload<P extends EventProps> = {
   category?: string;
   name?: string | null;
-  props?: Error | Props | null;
+  props?: SafeProps<P>;
 };
