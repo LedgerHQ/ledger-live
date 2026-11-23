@@ -71,7 +71,7 @@ export function runSwapTest(
       const approvalRequired = await isTokenApprovalExpected({
         fromAccount: accountToDebit,
         provider,
-        amount: swapAmount,
+        minAmount: swapAmount,
       });
       await app.swapLiveApp.checkQuoteCardCtaPresence(provider.uiName);
       if (approvalRequired) {

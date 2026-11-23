@@ -97,8 +97,10 @@ export default class SwapLiveAppPage {
       `${this.baseProviderCssSelector(provider)} [data-testid="${this.incompatibilityBannerPartnerId}"]`,
     );
   /** A part of the provider's quote card, by the end of its testid, e.g. `-amount-label`. */
-  private readonly quoteCardPartCss = ({ provider, suffix }: QuoteCardPartOptions) =>
-    `${this.baseProviderCssSelector(provider)}[data-testid$="${suffix}"]`;
+  private readonly quoteCardPartCss = (options: QuoteCardPartOptions) => {
+    const { provider, suffix } = options;
+    return `${this.baseProviderCssSelector(provider)}[data-testid$="${suffix}"]`;
+  };
 
   private readonly providerExecuteButton = (provider: string) =>
     webByCss(this.providerExecuteButtonCss(provider));

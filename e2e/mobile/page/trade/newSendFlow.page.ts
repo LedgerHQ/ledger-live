@@ -60,8 +60,10 @@ export default class NewSendFlowPage {
   private readonly feePaymentOption = (optionId: string) =>
     byId(`send-fee-payment-option-${optionId}`);
   // A string matches the whole text, so "0.85 USDT" doesn't match "10.85 USDT".
-  private readonly feePaymentOptionFeeShowing = ({ optionId, fee }: FeePaymentOptionFeeOptions) =>
-    byIdWithDescendantText({ id: `send-fee-payment-option-${optionId}-fee`, text: fee });
+  private readonly feePaymentOptionFeeShowing = (options: FeePaymentOptionFeeOptions) => {
+    const { optionId, fee } = options;
+    return byIdWithDescendantText({ id: `send-fee-payment-option-${optionId}-fee`, text: fee });
+  };
   private readonly sponsoredRentSignaturePrompt = byId("send-sponsored-rent-signature-prompt");
   private readonly sponsoredPolling = byId("send-sponsored-polling");
   private readonly sponsoredFailure = byId("send-sponsored-failure");

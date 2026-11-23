@@ -8,9 +8,8 @@ type SetRecipientOptions = {
   memoTag?: string;
 };
 
-type SetRecipientAndContinueOptions = {
+type SetRecipientAndContinueOptions = Omit<SetRecipientOptions, "address"> & {
   address: string | undefined;
-  memoTag?: string;
 };
 
 export default class SendPage {

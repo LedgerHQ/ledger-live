@@ -24,7 +24,7 @@ type PerformSwapUntilQuoteSelectionStepOptions = {
 type TokenApprovalOptions = {
   fromAccount: Account | TokenAccount;
   provider: SwapProvider;
-  amount: string;
+  minAmount: string;
 };
 
 /**
@@ -71,7 +71,7 @@ export async function performSwapUntilQuoteSelectionStep(
   }
 }
 export async function ensureTokenApproval(options: TokenApprovalOptions) {
-  const { fromAccount, provider, amount } = options;
+  const { fromAccount, provider, minAmount } = options;
   if (!needsTokenAllowance(fromAccount, provider)) return;
   const approvalNeeded = await isTokenApprovalExpected(options);
   if (!approvalNeeded) return;
@@ -82,7 +82,7 @@ export async function ensureTokenApproval(options: TokenApprovalOptions) {
     const result = await approveTokenCommand(
       fromAccount,
       provider.contractAddress,
-      new BigNumber(amount).times(12).div(10).toFixed(),
+      new BigNumber(minAmount).times(12).div(10).toFixed(),
     );
     allure.descriptionHtml(
       `<p>Token approval result for ${escapeHtml(provider.uiName)}:</p><pre>${escapeHtml(result)}</pre>`,
@@ -91,13 +91,13 @@ export async function ensureTokenApproval(options: TokenApprovalOptions) {
 }
 
 export async function isTokenApprovalExpected(options: TokenApprovalOptions): Promise<boolean> {
-  const { fromAccount, provider, amount } = options;
+  const { fromAccount, provider, minAmount } = options;
   if (!needsTokenAllowance(fromAccount, provider)) return false;
 
   const sufficientAllowance = await isTokenAllowanceSufficientCommand(
     fromAccount,
     provider.contractAddress,
-    amount,
+    minAmount,
   );
   return !sufficientAllowance;
 }

@@ -32,11 +32,13 @@ export default class MarketPage {
     byId(`market-screen-assets-category-switcher-${value}`);
   private readonly marketItem = (marketId: string) => byId(`marketItem-${marketId}`);
   // Matches the title anywhere in a descendant, ignoring case.
-  private readonly marketItemWithTitle = ({ marketId, title }: MarketItemOptions) =>
-    byIdWithDescendantText({
+  private readonly marketItemWithTitle = (options: MarketItemOptions) => {
+    const { marketId, title } = options;
+    return byIdWithDescendantText({
       id: `marketItem-${marketId}`,
       text: new RegExp(`.*${escapeRegExp(title)}.*`, "i"),
     });
+  };
   // New MarketScreen keys rows by CoinGecko market.id; ERC20s differ from their ledger currency.id.
   private readonly marketScreenRow = (currency: CurrencyType) =>
     this.marketItem(currency.market?.id ?? currency.id);
