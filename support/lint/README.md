@@ -177,4 +177,72 @@ TypeScript parser, loaded only for these two files. `base` turns it on as an err
 inherits it. The [`@domain/entity-derivation` README](../../domain/entity/derivation/README.md#a-mirror-of-derivationts)
 says why both copies exist and how to change them.
 
+### `coin-families/no-coin-specific-import`
+
+[`src/coin-families.js`](src/coin-families.js) keeps generic Desktop and Mobile code from reaching
+coin code other than through the families contract, which is what stops a new import from pulling
+coin code into an eager chunk. It checks `import` and `export ... from` (type-only included),
+`import()`, `import type`, `import x = require()`, `require` and the `jest.mock` family, with a
+string or a template literal that has no substitution. A specifier built at run time
+(``require(`@ledgerhq/coin-${name}`)``) cannot be checked. It reports three kinds of
+specifier, each with its own message:
+
+- **`coin-package`**: a coin module or a live-signer, `@ledgerhq/coin-*` and `@ledgerhq/live-signer-*`, and their
+  subpaths. The exclusion is by full package name (`coin-module-framework`, `coin-framework`,
+  `coin-modules-monitoring`, `coin-module-boilerplate`, `coin-tester*`), because the prefix alone
+  would also take them.
+- **`live-common-family`**: a live-common family, `@ledgerhq/live-common/(lib/|lib-es/)?families/<x>`.
+- **`app-family`**: the app's own families folder, reached by a relative path, `~/` (which both apps map to
+  `src/`) or a bare `src/` specifier.
+
+Files inside the families folder are not checked at all: importing the coin is what they are for.
+
+An app turns the rule on with `coinFamiliesLint` from `@support/lint/coin-families`. App configs do
+not extend `base`, so each key goes into the config's own:
+
+```ts
+const coinFamilies = coinFamiliesLint({
+  familiesDir: "src/renderer/families",
+  barrel: "contract",
+  allow: ["modals-loaders"],
+});
+// jsPlugins: [SUFFIX_IMPORTS_PLUGIN, ...coinFamilies.jsPlugins],
+// rules: { ..., ...coinFamilies.rules },
+```
+
+`familiesDir` is relative to the app root, found from the linted file as the nearest folder with a
+`package.json`. `barrel` says what the folder's entry point is: `contract` (Desktop) is the lazy
+contract, so importing it stays legal, as does each entry named in `allow`; `forbidden` (Mobile) is
+eager, so importing it is reported like importing a family, `require("~/families")` included. Every
+other file of the folder is reported unless it is in `allow`. Without `familiesDir` only
+`coin-package` and `live-common-family` are checked.
+
+**Baseline.** An app starts from today's leaks with oxlint's own suppressions, from the app folder
+and with the paths `lint:ci` uses: `oxlint --suppress-all` writes `oxlint-suppressions.json`, one
+count per file and per rule. These behaviours are covered by the rule's tests (oxlint 1.93.0):
+
+- A file at its count passes. With one violation more it fails and oxlint lists every violation of
+  the file, since it cannot tell which is new.
+- With one violation less it fails with "There are suppressions that do not occur anymore",
+  including under `--quiet`; `oxlint --prune-suppressions` rewrites the file and the run passes. The
+  `unix` format prints that error with no message, so read it in the default format.
+- A baselined file that was deleted does not fail the command; its entry stays until the next
+  prune. How the editor's language server treats it was not tested.
+
+The count is per rule, not per category: replacing a `coin-package` leak by an `app-family` leak in
+the same file keeps the count and passes.
+
+**Inline disables.** A baselined violation is never silenced in the code. The plugin reports an
+`oxlint-disable` or `eslint-disable` comment that names a `coin-families/` rule, but a directive
+for the whole file hides that report with the rule's own. The check that cannot be hidden is
+[`src/check-coin-families-disables.js`](src/check-coin-families-disables.js), run by
+`pnpm lint:coin-families-disables` and part of `pnpm lint:arch`. It reads the files' real comments:
+a directive spread over several lines counts, and the same text inside a string does not. A
+directive is a comment that starts with `oxlint-disable` or `eslint-disable` and names the rule
+before any `-- explanation`, which is what oxlint 1.93.0 honours; prose that only mentions one is
+not.
+
+The skill [`coin-families-contract`](../../.agents/skills/coin-families-contract/SKILL.md) says
+where coin-specific behaviour goes instead, and every message links it.
+
 Run the rules' tests with `nx run @support/lint:test`.
