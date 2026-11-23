@@ -1,7 +1,8 @@
 name: "Prepare Android AVD"
 description: "Use the runner image's AVD when it is the configured one, else download it from R2, else create it or fail"
 # Needs the AVD configuration in the job environment: setup-android-avd with config_only.
-# Composite steps take no timeout: set timeout-minutes on the step that calls this action.
+# Composite steps take no timeout: set timeout-minutes on the step that calls this action, above
+# download_timeout_minutes and, with create_if_missing, the time to create the AVD.
 inputs:
   cache_key:
     description: "R2 key of the AVD; the configuration's AVD_CACHE_KEY when empty"
@@ -20,6 +21,10 @@ inputs:
     description: "Create the AVD when R2 has none, instead of failing"
     required: false
     default: "false"
+  download_timeout_minutes:
+    description: "Minutes the R2 download may take before it counts as failed"
+    required: false
+    default: "10"
 outputs:
   source:
     description: "Where the AVD comes from: runner image, R2 or created in this job"
@@ -64,6 +69,7 @@ runs:
         endpoint: ${{ inputs.r2_endpoint }}
         region: auto
         destination: /
+        timeout-minutes: ${{ inputs.download_timeout_minutes }}
 
     - name: Fail without the AVD
       if: steps.preinstalled.outputs.found != 'true' && steps.download.outcome != 'success' && inputs.create_if_missing != 'true'
