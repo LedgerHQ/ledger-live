@@ -4,7 +4,7 @@ const MAX_CAUSE_DEPTH = 8;
 const REQUEST_LINES_IN_MESSAGE = /\b(?:GET|POST|PUT|PATCH|DELETE) (https?:\/\/[^\s"'<>]+)/g;
 const STATUS_IN_MESSAGE = /\bstatus code (\d{3})\b/;
 const LEDGER_HOST = /(?:^|\.)ledger\.com$/;
-const STATUSES_A_PROXY_DENIAL_CAN_HAVE = new Set([403, 407]);
+const SANDBOX_DENIAL_STATUS = 403;
 
 function propertyOf(value: unknown, key: string): unknown {
   return typeof value === "object" && value !== null ? Reflect.get(value, key) : undefined;
@@ -39,12 +39,14 @@ function requestFromFields(error: unknown): FailedRequest | undefined {
   // Bun puts the url of a fetch that got no answer on `path`.
   const fieldHost = hostOf(propertyOf(error, "url")) ?? hostOf(propertyOf(error, "path"));
   return fieldHost
-    ? { host: fieldHost, status: numberOrUndefined(propertyOf(error, "status")) }
+    ? {
+        host: fieldHost,
+        status: numberOrUndefined(propertyOf(error, "httpStatus") ?? propertyOf(error, "status")),
+      }
     : undefined;
 }
 
-// A message can quote what a server sent, so only a Ledger host is read from it: the hint asks
-// the human to allow that host.
+// A message can quote a server, so only a Ledger host is read from it: the hint asks to allow it.
 function requestFromMessage(error: unknown): FailedRequest | undefined {
   const message = propertyOf(error, "message");
   if (typeof message !== "string") return undefined;
@@ -78,8 +80,10 @@ export function findFailedRequest(error: unknown): FailedRequest | undefined {
 }
 
 export function failedRequestHint({ host, status }: FailedRequest): string {
-  const mayBeSandboxDenial = status === undefined || STATUSES_A_PROXY_DENIAL_CAN_HAVE.has(status);
-  return mayBeSandboxDenial
-    ? `Could not reach ${host}. If wallet-cli runs in a sandbox, allow ${host} in its network allowlist.`
-    : `Request to ${host} failed with HTTP ${status}.`;
+  const allowHost = `If wallet-cli runs in a sandbox, allow ${host} in its network allowlist.`;
+  if (status === undefined) return `Could not reach ${host}. ${allowHost}`;
+  if (status === SANDBOX_DENIAL_STATUS) {
+    return `The request to ${host} was refused (HTTP ${status}). ${allowHost}`;
+  }
+  return `Request to ${host} failed with HTTP ${status}.`;
 }

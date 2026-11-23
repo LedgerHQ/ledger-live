@@ -4,8 +4,7 @@ import type { CryptoAssetsStore } from "@features/platform-currencies/legacy";
 
 export const calApiConfig = { calServiceUrl: getEnv("CAL_SERVICE_URL"), ledgerClientVersion };
 
-// Errors of a request that got no answer or an HTTP error, as remapRtkQueryError names them. A
-// schema or parsing error of a 2xx answer is the payload's fault, not the network's.
+// remapRtkQueryError's names for no answer or an HTTP error; a bad 2xx payload is not the network.
 const REQUEST_FAILURE_NAMES = new Set(["NetworkDown", "LedgerAPI4xx", "LedgerAPI5xx"]);
 
 export function withCalServiceUrlOnFailure(

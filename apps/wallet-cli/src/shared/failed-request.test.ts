@@ -122,6 +122,23 @@ describe("findFailedRequest", () => {
     expect(failedRequest?.host).toBe("solana.coin.ledger.com");
   });
 
+  it("reads the status ky writes first, not one the server's reason phrase quotes after it", () => {
+    const failedRequest = findFailedRequest(
+      new Error(
+        "HTTPError: Request failed with status code 502 Upstream status code 403: POST https://solana.coin.ledger.com/",
+      ),
+    );
+    expect(failedRequest).toEqual({ host: "solana.coin.ledger.com", status: 502 });
+  });
+
+  it("reads the status of an error that names it httpStatus", () => {
+    const earnError = Object.assign(new Error("Earn API GET /v1/yields failed"), {
+      url: "https://earn.api.live.ledger.com/v1/yields",
+      httpStatus: 503,
+    });
+    expect(findFailedRequest(earnError)).toEqual({ host: "earn.api.live.ledger.com", status: 503 });
+  });
+
   it("ignores a URL in a message that does not describe a request", () => {
     expect(
       findFailedRequest(new Error("Open https://app.agents.ledger.com/ to review the intent")),
@@ -147,18 +164,21 @@ describe("findFailedRequest", () => {
 });
 
 describe("failedRequestHint", () => {
-  it.each([undefined, 403, 407])(
-    "tells a sandboxed agent to allow the host when the status is %p",
-    status => {
-      expect(failedRequestHint({ host: "explorers.api.live.ledger.com", status })).toBe(
-        "Could not reach explorers.api.live.ledger.com. If wallet-cli runs in a sandbox, allow explorers.api.live.ledger.com in its network allowlist.",
-      );
-    },
-  );
+  it("tells a sandboxed agent to allow a host that never answered", () => {
+    expect(failedRequestHint({ host: "explorers.api.live.ledger.com", status: undefined })).toBe(
+      "Could not reach explorers.api.live.ledger.com. If wallet-cli runs in a sandbox, allow explorers.api.live.ledger.com in its network allowlist.",
+    );
+  });
 
-  it("only names the host when the server answered with another status", () => {
-    expect(failedRequestHint({ host: "earn.api.live.ledger.com", status: 500 })).toBe(
-      "Request to earn.api.live.ledger.com failed with HTTP 500.",
+  it("tells a sandboxed agent to allow a host whose request was refused", () => {
+    expect(failedRequestHint({ host: "explorers.api.live.ledger.com", status: 403 })).toBe(
+      "The request to explorers.api.live.ledger.com was refused (HTTP 403). If wallet-cli runs in a sandbox, allow explorers.api.live.ledger.com in its network allowlist.",
+    );
+  });
+
+  it.each([407, 500])("only names the host and the status %p", status => {
+    expect(failedRequestHint({ host: "earn.api.live.ledger.com", status })).toBe(
+      `Request to earn.api.live.ledger.com failed with HTTP ${status}.`,
     );
   });
 });

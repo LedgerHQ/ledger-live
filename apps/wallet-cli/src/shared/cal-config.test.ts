@@ -38,7 +38,7 @@ describe("withCalServiceUrlOnFailure", () => {
     [
       "a proxy denial",
       remapRtkQueryError({ status: 403, data: {} }),
-      "Could not reach global.api.prd.ledger.com. If wallet-cli runs in a sandbox, allow global.api.prd.ledger.com in its network allowlist.",
+      "The request to global.api.prd.ledger.com was refused (HTTP 403). If wallet-cli runs in a sandbox, allow global.api.prd.ledger.com in its network allowlist.",
     ],
     [
       "an unknown currency",
