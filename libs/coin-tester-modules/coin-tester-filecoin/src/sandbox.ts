@@ -39,13 +39,21 @@ export function indexerUrl(sandbox: Sandbox): string {
   return indexer;
 }
 
+// The longest call is `StateWaitMsg`, which returns a few tipsets (4 s each) after a broadcast: a node
+// that stops producing them fails here, with the method's name, instead of at the jest timeout
+const RPC_TIMEOUT_MS = 2 * 60 * 1000;
+
 /** A read-only JSON-RPC call to the node. */
 export async function lotus<T>(method: string, params: unknown[]): Promise<T> {
   const res = await fetch(getNodeUrl(), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+    signal: AbortSignal.timeout(RPC_TIMEOUT_MS),
+  }).catch((e: unknown) => {
+    throw new Error(`${method}: ${e instanceof Error ? e.message : String(e)}`);
   });
+  if (!res.ok) throw new Error(`${method}: HTTP ${res.status} ${await res.text()}`);
   const body = (await res.json()) as RpcResponse<T>;
   if (body.error) throw new Error(`${method}: ${body.error.message}`);
   if (body.result === undefined) throw new Error(`${method}: the node answered with no result`);

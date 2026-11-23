@@ -7,6 +7,12 @@ Deterministic integration tester for the Filecoin family. Asks coin-sandbox for 
 node and its Filecoin API stub (the indexer coin-filecoin reads), then runs the same send
 scenario through the legacy bridge and the generic-adapter bridge.
 
+> [!WARNING]
+> The generic-adapter run is skipped (`src/scenarii.test.ts`): coin-filecoin's `craftTransaction`
+> reads the fee parameters the generic `signOperation` always passes as custom fees with zero gas,
+> so Lotus refuses the broadcast ("gas fee cap too low"). Only the legacy column below runs until
+> the coin module reads a gas fee cap only when one is given.
+
 ## Run
 
 ```sh
@@ -26,6 +32,8 @@ the device: this proves the bridge and coin-filecoin, not what the Filecoin app 
 
 ## Coverage
 
+`both` is what the scenario is written for; the generic-adapter run is skipped for now (see above).
+
 | # | Step | Asserts | Strategies |
 | --- | --- | --- | --- |
 | before | Sync after the airdrops | balance is the FIL airdropped; one `IN`, no `OUT`; the USDFC sub-account holds the token airdrop with one `IN` | both (token part: legacy) |
@@ -40,6 +48,9 @@ The two `FEES` rows are the zero-value InvokeEVM messages of the token sends.
 
 ## Notes
 
+- The account is funded by coin-sandbox's airdrop, which is a real message on the chain: the first
+  sync lists it as one `IN`. That is why the `before` step expects one `IN` and no `OUT`, rather
+  than no operation at all.
 - The ERC-20 steps are legacy only: the generic-adapter's `getBalance` returns FIL only
   (`logic/account/getBalance.ts` in coin-filecoin), so tokens never reach the generic sync. This is
   also why `localApiServesAccountData` is `false` for the family.
