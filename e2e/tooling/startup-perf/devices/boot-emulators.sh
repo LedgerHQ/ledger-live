@@ -38,7 +38,8 @@ prepare() {
   adb -s "$serial" shell settings put system screen_off_timeout 2147483647
   # Their background jobs fire a few minutes after boot and take the CPUs during some launches.
   for package in com.google.android.apps.messaging com.google.android.googlequicksearchbox; do
-    adb -s "$serial" shell pm disable-user --user 0 "$package" || true
+    adb -s "$serial" shell pm disable-user --user 0 "$package" \
+      || echo "::warning title=Package not disabled::$package on $serial"
   done
   echo "$serial booted, $(adb -s "$serial" shell nproc | tr -d '\r') CPUs"
 }
