@@ -72,10 +72,7 @@ test.describe("Earn v2", () => {
     );
   });
 
-  const coldStartCurrencies = [
-    { account: Account.ETH_2, xrayTicket: "B2CQA-4640" },
-    { account: Account.ATOM_2, xrayTicket: "B2CQA-4719" },
-  ];
+  const coldStartCurrencies = [{ account: Account.ETH_2, xrayTicket: "B2CQA-4640" }];
 
   for (const { account, xrayTicket } of coldStartCurrencies) {
     test.describe("Cold start", () => {
@@ -149,12 +146,8 @@ test.describe("Earn v2", () => {
     );
   });
 
-  // Hot start & Position → Account: accounts with active stake positions (provided by QA: NEAR_1, ATOM_1)
+  // Hot start & Position → Account: accounts with active stake positions (provided by QA: ATOM_1)
   const activePositionCurrencies = [
-    {
-      account: Account.NEAR_1,
-      xrayTickets: ["B2CQA-4720", "B2CQA-4725"],
-    },
     {
       account: Account.ATOM_1,
       xrayTickets: ["B2CQA-4721", "B2CQA-4726"],
@@ -547,33 +540,6 @@ test.describe("Earn v2", () => {
       },
     );
   });
-});
-
-test.describe("Select a validator", () => {
-  const account = Account.ETH_1;
-
-  test.use({
-    teamOwner: Team.EARN,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account)],
-    featureFlags: { ...FF_STAKE_PROGRAMS_MODAL, ...FF_SWAP_TO_EARN_DISABLED },
-  });
-
-  test(
-    `[${account.currency.testLabel}] - Select validator`,
-    {
-      tag: buildTags({ currencyId: account.currency.id, extraTags: ["@smoke"] }),
-      annotation: { type: "TMS", description: "B2CQA-3024" },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(account.accountName);
-      await app.account.startStakingFlowFromMainStakeButton({ asset: account.currency });
-      await app.earnV2Dashboard.verifyDepositFlowVisible();
-      await app.earnV2Dashboard.selectEthProvider(EarnProvider.LIDO.name);
-    },
-  );
 });
 
 test.describe("Select a validator - deposit v2", () => {

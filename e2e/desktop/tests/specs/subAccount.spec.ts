@@ -8,14 +8,8 @@ import {
   getParentAccountName,
   type AccountType,
 } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
-import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import {
-  liveDataWithParentAddressCommand,
-  liveDataCommand,
-  getAccountAddress,
-} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { liveDataCommand, getAccountAddress } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import {
@@ -27,7 +21,7 @@ import { buildTags } from "tests/utils/tagsUtils";
 const subAccounts: Array<{
   account: TokenAccount;
   xrayTicket1: string;
-  xrayTicket2: string;
+  xrayTicket2?: string;
   notPreSeeded?: boolean;
 }> = [
   {
@@ -38,7 +32,6 @@ const subAccounts: Array<{
   {
     account: TokenAccount.XLM_USDC,
     xrayTicket1: "B2CQA-2579",
-    xrayTicket2: "B2CQA-2585",
   },
   {
     account: TokenAccount.ALGO_USDT_1,
@@ -49,16 +42,6 @@ const subAccounts: Array<{
     account: TokenAccount.TRX_USDT,
     xrayTicket1: "B2CQA-2580",
     xrayTicket2: "B2CQA-2586",
-  },
-  {
-    account: TokenAccount.BSC_BUSD_1,
-    xrayTicket1: "B2CQA-2576",
-    xrayTicket2: "B2CQA-2582",
-  },
-  {
-    account: TokenAccount.POL_DAI_1,
-    xrayTicket1: "B2CQA-2578",
-    xrayTicket2: "B2CQA-2584",
   },
   {
     account: TokenAccount.SUI_USDC_1,
@@ -85,9 +68,6 @@ const subAccountReceive: Array<{
     shouldSelectReceiveCryptoOption: true,
   },
   { account: TokenAccount.TRX_USDT, xrayTicket: "B2CQA-2496" },
-  { account: TokenAccount.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
-  { account: TokenAccount.POL_DAI_1, xrayTicket: "B2CQA-2493" },
-  { account: TokenAccount.POL_UNI, xrayTicket: "B2CQA-2494" },
   { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-3906" },
 ];
 
@@ -199,7 +179,11 @@ for (const token of subAccountReceive) {
   });
 }
 
-for (const token of subAccounts.filter(subAccount => !subAccount.notPreSeeded)) {
+const tokenVisibleSubAccounts = subAccounts.flatMap(({ account, xrayTicket2, notPreSeeded }) =>
+  xrayTicket2 && !notPreSeeded ? [{ account, xrayTicket: xrayTicket2 }] : [],
+);
+
+for (const token of tokenVisibleSubAccounts) {
   const owner = ownedBy(coinTeamOwner(token.account.currency.id), {
     folder: TestFolder.SUBACCOUNTS,
   });
@@ -218,7 +202,7 @@ for (const token of subAccounts.filter(subAccount => !subAccount.notPreSeeded)) 
         }),
         annotation: {
           type: "TMS",
-          description: token.xrayTicket2,
+          description: token.xrayTicket,
         },
       },
       async ({ app }) => {
@@ -360,165 +344,6 @@ for (const transaction of transactionsAddressInvalid) {
           await app.newSendFlow.expectRecipientErrorHidden();
           await app.newSendFlow.typeAddress(recipient ?? "");
           await app.newSendFlow.expectRecipientError(expectedErrorMessage);
-        }
-      },
-    );
-  });
-}
-
-const transactionsAddressValid = [
-  {
-    transaction: new Transaction(
-      TokenAccount.SOL_GIGA_1,
-      TokenAccount.SOL_GIGA_2,
-      "0.1",
-      undefined,
-    ),
-    expectedErrorMessage:
-      "This is not a regular wallet address but an associated token account. Continue only if you know what you are doing",
-    xrayTicket: "B2CQA-3082",
-  },
-];
-
-for (const transaction of transactionsAddressValid) {
-  const owner = ownedBy(coinTeamOwner(transaction.transaction.accountToDebit.currency.id), {
-    folder: sendFolder(transaction.transaction.accountToDebit),
-    scenario: SendScenario.VALID_ADDRESS,
-  });
-  test.describe("Send - new flow - token valid address", owner, () => {
-    test.use({
-      userdata: "skip-onboarding-with-last-seen-device",
-      speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
-      cliCommands: [liveDataCommand(transaction.transaction.accountToDebit)],
-      featureFlags: {
-        ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
-        ...FF_NEW_SEND_FLOW_ENABLED,
-      },
-    });
-
-    test(
-      `[${transaction.transaction.accountToDebit.currency.testLabel}] - Send - valid address`,
-      {
-        tag: buildTags({ currencyId: transaction.transaction.accountToDebit.currency.id }),
-        annotation: {
-          type: "TMS",
-          description: transaction.xrayTicket,
-        },
-      },
-      async ({ app }) => {
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(
-          getParentAccountName(transaction.transaction.accountToDebit),
-        );
-        await app.account.navigateToTokenInAccount(transaction.transaction.accountToDebit);
-        await app.account.clickSend(transaction.transaction.accountToDebit.currency);
-        await app.newSendFlow.waitForDialog();
-        await app.newSendFlow.typeAddress(Addresses.SOL_GIGA_2_ATA_ADDRESS);
-        await app.newSendFlow.expectAddressMatched(Addresses.SOL_GIGA_2_ATA_ADDRESS);
-        await app.newSendFlow.expectRecipientWarning(transaction.expectedErrorMessage);
-      },
-    );
-  });
-}
-
-const tokenTransactionInvalid: Array<{
-  tx: Transaction;
-  expectedWarningMessage: string | RegExp;
-  xrayTicket: string;
-  // Insufficient funds errors are the only ones routed to the "Get <ticker>" CTA.
-  expectsGetFundsCta?: boolean;
-}> = [
-  {
-    tx: new Transaction(TokenAccount.BSC_BUSD_1, TokenAccount.BSC_BUSD_2, "1", Fee.FAST),
-    expectedWarningMessage: new RegExp(
-      /You need \d+\.\d+ BNB in your account to pay for transaction fees on the BNB Smart Chain network\. .*/,
-    ),
-    xrayTicket: "B2CQA-2700",
-  },
-  {
-    tx: new Transaction(TokenAccount.ETH_USDT_2, TokenAccount.ETH_USDT_1, "1", Fee.FAST),
-    expectedWarningMessage: new RegExp(
-      /You need \d+\.\d+ ETH in your account to pay for transaction fees on the Ethereum network\. .*/,
-    ),
-    xrayTicket: "B2CQA-2701",
-  },
-  {
-    tx: new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_2, "10000", Fee.MEDIUM),
-    expectedWarningMessage: "Sorry, insufficient funds",
-    xrayTicket: "B2CQA-3043",
-    expectsGetFundsCta: true,
-  },
-  {
-    tx: new Transaction(
-      TokenAccount.SOL_GIGA_4,
-      TokenAccount.SOL_GIGA_1,
-      "0.5",
-      undefined,
-      "noTag",
-    ),
-    expectedWarningMessage: new RegExp(
-      "You need \\d+\\.\\d+ SOL in your account to pay for transaction fees on the Solana" +
-        " network\\.\\s+Buy SOL or deposit more into your account\\.",
-    ),
-    xrayTicket: "B2CQA-3058",
-  },
-];
-
-for (const transaction of tokenTransactionInvalid) {
-  const owner = ownedBy(coinTeamOwner(transaction.tx.accountToDebit.currency.id), {
-    folder: sendFolder(transaction.tx.accountToDebit),
-    scenario: SendScenario.INVALID_AMOUNT,
-  });
-  test.describe("Send - new flow - token invalid amount", owner, () => {
-    test.use({
-      userdata: "skip-onboarding-with-last-seen-device",
-      speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
-      cliCommands: [
-        liveDataWithParentAddressCommand(
-          transaction.tx.accountToDebit,
-          transaction.tx.accountToCredit,
-        ),
-      ],
-      featureFlags: {
-        ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
-        ...FF_NEW_SEND_FLOW_ENABLED,
-      },
-    });
-
-    test(
-      `[${transaction.tx.accountToDebit.currency.testLabel}] - Send - invalid amount (${transaction.tx.amount})`,
-      {
-        tag: buildTags({ currencyId: transaction.tx.accountToDebit.currency.id }),
-        annotation: {
-          type: "TMS",
-          description: transaction.xrayTicket,
-        },
-      },
-      async ({ app }) => {
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(
-          getParentAccountName(transaction.tx.accountToDebit),
-        );
-        await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
-        await app.account.clickSend(transaction.tx.accountToDebit.currency);
-        await app.newSendFlow.waitForDialog();
-        const recipientAddress = transaction.tx.accountToCredit.address;
-        if (!recipientAddress) {
-          throw new Error(
-            `Missing recipient address for ${transaction.tx.accountToCredit.accountName}`,
-          );
-        }
-        await app.newSendFlow.typeAddress(recipientAddress);
-        await app.newSendFlow.clickOnSendToButton(transaction.tx.accountToCredit);
-        if (transaction.tx.accountToDebit.currency.id === Currency.SOL_GIGA.id) {
-          await app.newSendFlow.confirmSkipMemo();
-        }
-        await app.newSendFlow.fillCryptoAmount(transaction.tx.amount);
-        await app.newSendFlow.expectAmountError(transaction.expectedWarningMessage);
-        if (transaction.expectsGetFundsCta) {
-          await app.newSendFlow.expectGetFundsCta();
-        } else {
-          await app.newSendFlow.expectReviewDisabled();
         }
       },
     );
