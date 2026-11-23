@@ -162,6 +162,7 @@
     "@features/platform-feature-flags": "workspace:^",
     "@features/platform-feature-flags-firebase": "workspace:^",
     "@features/platform-market-countervalues": "workspace:^",
+    "@features/platform-observability-redaction": "workspace:^",
     "@features/platform-pay-analytics": "workspace:^",
     "@features/platform-predictions": "workspace:^",
     "@features/platform-quick-actions": "workspace:^",
