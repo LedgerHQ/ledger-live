@@ -28,7 +28,7 @@ export function isDeviceOffDuringChecks({
   onboardedOnEntry: boolean | null;
   hasLiveDevice: boolean;
   returningFromFirmwareUpdate: boolean;
-  /** A device set up in this run, whose held-back update now shows on the checks screen. */
+  /** A device set up in this run, whose held-back update now shows as the last setup step. */
   heldBackUpdatePending?: boolean;
 }>): boolean {
   const holdsChecks =

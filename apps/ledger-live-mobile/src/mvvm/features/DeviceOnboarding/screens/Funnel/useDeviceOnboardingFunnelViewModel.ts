@@ -106,7 +106,13 @@ export type DeviceOnboardingFunnelModel = (
       powerOnSheet: PowerOnSheetModel | null;
       reconnectSheet: ReconnectSheetProps | null;
     }
-  | { status: "setup"; setup: SetupScreenProps; unlockSheet: DeviceUnlockSheetProps | null }
+  | {
+      status: "setup";
+      setup: SetupScreenProps;
+      unlockSheet: DeviceUnlockSheetProps | null;
+      powerOnSheet: PowerOnSheetModel | null;
+      reconnectSheet: ReconnectSheetProps | null;
+    }
   | {
       status: "recoverRestore";
       recoverRestore: RecoverRestoreScreenProps;
@@ -374,6 +380,29 @@ function checksQuit(actions: ScreenActions): () => void {
   return actions.leaveFromHeader;
 }
 
+/**
+ * Mid-setup, leaving asks first. Once only the held-back update is left, it leaves like the checks
+ * screen: the update handover and the wait for the updated device each have their own way out.
+ */
+function setupQuit(
+  actions: Readonly<{
+    confirmsQuit: boolean;
+    liveState: string | null;
+    state: string | null;
+    requestQuit: () => void;
+    leaveFirmwareReconnect: () => void;
+    closeFirmwareHandover: () => void;
+    quitMachine: () => void;
+  }>,
+): () => void {
+  if (actions.confirmsQuit) return actions.requestQuit;
+  if (actions.liveState === awaitingSessionAfterFirmwareUpdateState) {
+    return actions.leaveFirmwareReconnect;
+  }
+  if (isFirmwareUpdateDelegated(actions.state)) return actions.closeFirmwareHandover;
+  return actions.quitMachine;
+}
+
 function genuineCheckCompleted(context: DeviceOnboardingSession["context"]): boolean {
   return context?.verdictMatchesSession === true;
 }
@@ -448,7 +477,8 @@ function checksWhileDeviceOff(
   built: DeviceOnboardingFunnelModel,
   { active, device, quitConfirmationOpen, onQuit, onRetry }: DeviceOffOverlay,
 ): DeviceOnboardingFunnelModel {
-  if (!active || built.status !== "checks") return built;
+  // The OS check held back until setup shows on Setup: it recovers like the checks screen.
+  if (!active || (built.status !== "checks" && built.status !== "setup")) return built;
   if (onRetry) {
     return {
       ...built,
@@ -977,8 +1007,15 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     suspendSheets,
     reconnect: reconnectToLiveDevice,
     send,
-    // Mid-setup this asks first; once only the held-back update is left, it ends the setup.
-    onQuit: leaveFromHeader,
+    onQuit: setupQuit({
+      confirmsQuit,
+      liveState: machineState,
+      state: onboarding.state,
+      requestQuit,
+      leaveFirmwareReconnect,
+      closeFirmwareHandover,
+      quitMachine,
+    }),
   });
   dismissRestoreRef.current = restoreDismiss(unseededSetup);
 
@@ -1104,6 +1141,8 @@ function screenForUnseeded(
       setup: flow.setup,
       quitConfirmation: actions.quitConfirmation,
       unlockSheet: null,
+      powerOnSheet: null,
+      reconnectSheet: null,
     };
   }
   if (flow?.status === "recoverNewSeed") {

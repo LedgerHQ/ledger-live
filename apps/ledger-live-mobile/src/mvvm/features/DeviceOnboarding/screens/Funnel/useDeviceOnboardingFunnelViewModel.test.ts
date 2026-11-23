@@ -485,6 +485,50 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(result.current.quitConfirmation?.isOpen).toBe(true);
   });
 
+  it("should close the update handover from Setup once only the held-back update is left", () => {
+    send.mockClear();
+    closeFirmwareHandover.mockClear();
+    useSession.mockReturnValue({
+      ...seededDuringSetupSession(true),
+      state: "postSetupFirmware.firmwareUpdateDelegated",
+    });
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => quitOf(result.current)?.());
+
+    expect(closeFirmwareHandover).toHaveBeenCalledTimes(1);
+    expect(send).not.toHaveBeenCalledWith({ type: "QUIT" });
+  });
+
+  it("should ask to power on over the last setup step, then offer a retry, when the device switches off", () => {
+    const connect = jest.fn();
+    useSession.mockReturnValue(heldBackUpdateSession("postSetupFirmware.firmwareCheck", true));
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    useSession.mockReturnValue({
+      ...heldBackUpdateSession("awaitingSession", true),
+      status: "connecting",
+      connect,
+    });
+    rerender(undefined);
+
+    const poweredOff = result.current;
+    if (poweredOff.status !== "setup") throw new Error(poweredOff.status);
+    expect(poweredOff.setup.stage).toMatchObject({ kind: "osCheck", index: 4, total: 5 });
+    expect(poweredOff.setup.suspendSheets).toBe(true);
+    expect(poweredOff.powerOnSheet).toMatchObject({ deviceModelId: DeviceModelId.nanoX });
+
+    act(() => jest.advanceTimersByTime(giveUpAfterPowerOnMs));
+
+    const gaveUp = result.current;
+    if (gaveUp.status !== "setup") throw new Error(gaveUp.status);
+    expect(gaveUp.powerOnSheet).toBeNull();
+    expect(gaveUp.reconnectSheet?.connection?.state).toBe("failed");
+
+    connect.mockClear();
+    act(() => gaveUp.reconnectSheet?.connection?.retry());
+    expect(connect).toHaveBeenCalledWith("device-id");
+  });
+
   it("should still ask before leaving an unseeded device without a held-back update", () => {
     send.mockClear();
     useSession.mockReturnValue(seededDuringSetupSession(false));
