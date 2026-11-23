@@ -89,6 +89,7 @@ export function useOsUpdateGalleryViewModel() {
     onBack: () => navigation.goBack(),
     step: preview?.kind === "step" ? buildStep(preview) : undefined,
     whatsNewProps: {
+      name: previewTargetVersion,
       version: previewTargetVersion,
       notes: previewReleaseNotes,
       onOpenReleaseNotes: noop,

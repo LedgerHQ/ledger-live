@@ -366,6 +366,7 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
     const lastOsUpdate = pendingRun?.osUpdates.at(-1);
     return lastOsUpdate
       ? {
+          name: lastOsUpdate.finalFirmware.name,
           version: lastOsUpdate.finalFirmware.version,
           notes: lastOsUpdate.osuFirmware.notes,
         }
