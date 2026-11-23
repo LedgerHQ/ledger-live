@@ -22,12 +22,14 @@ stateDiagram-v2
   Discovering --> Connecting: UserTapsDevice on an available device
   Discovering --> WaitingForDevice: UserTapsDevice on an unavailable device
   Discovering --> ConnectNewDevice: UserTapsAddNewDevice
+  Discovering --> Discovering: UserTapsAddNewDevice with onAddNewDevice
   Discovering --> DiscoveryError: DiscoveryError
 
   WaitingForDevice --> Connecting: discovery finds the device
   WaitingForDevice --> Discovering: the device gets a session, onConnected with its session
   WaitingForDevice --> WaitingForDevice: device not found delay elapsed, shows the hint
   WaitingForDevice --> ConnectNewDevice: the hint is tapped
+  WaitingForDevice --> Discovering: the hint is tapped with onAddNewDevice
   WaitingForDevice --> Discovering: Close
   WaitingForDevice --> DiscoveryError: DiscoveryError
 
@@ -108,6 +110,10 @@ stateDiagram-v2
   Discovery does not stop at these transitions. The embedded machine shows the
   discovery errors, and the parent ignores them. Its `Done` calls
   `onConnected`. The embedded delays come from `delays.connectNewDevice`.
+- With the optional `onAddNewDevice` input, Add does not open the Add mode: in
+  `Discovering` and in `WaitingForDevice`, it calls `onAddNewDevice` with
+  `hasDevices`, `false` when the list is empty. `WaitingForDevice` then goes
+  back to `Discovering`.
 - `onConnected` does not pause the machine. After it, `Discovering` starts
   discovery again, unless the machine is paused. A caller that uses the device
   after `onConnected` calls `pause()`.

@@ -4,10 +4,12 @@ import { useIsFocused } from "@react-navigation/native";
 import { log } from "@ledgerhq/logs";
 import { useMockServerDevices } from "@features/platform-device-mock-server";
 import {
+  buildUsbCompatDeviceId,
   connectKnownOrNewDevice,
   ConnectKnownOrNewDeviceUIStateTypes,
   ConnectNewDeviceUIStateTypes,
   mockserverIdentifier,
+  rnHidTransportIdentifier,
   useDeviceManagementKit,
   type ConnectKnownOrNewDevice,
   type ConnectKnownOrNewDeviceUIState,
@@ -114,7 +116,9 @@ function toLibraryDelays(delays: ConnectKnownOrNewDeviceDelays | undefined) {
 }
 
 function getLastConnectedDeviceId({ transport, id }: KnownDevice): string {
-  return transport === mockserverIdentifier ? buildMockServerCompatDeviceId(id) : id;
+  if (transport === mockserverIdentifier) return buildMockServerCompatDeviceId(id);
+  if (transport === rnHidTransportIdentifier) return buildUsbCompatDeviceId(id);
+  return id;
 }
 
 export function useConnectKnownOrNewDeviceViewModel({
@@ -122,7 +126,9 @@ export function useConnectKnownOrNewDeviceViewModel({
   onAddModeChange,
   isPaused,
   onDeviceNotFound,
+  onAddDevice,
   delays,
+  listFooter,
   children,
 }: ConnectKnownOrNewDeviceProps): ConnectKnownOrNewDeviceViewProps {
   const platform = Platform.OS === "ios" ? "ios" : "android";
@@ -148,6 +154,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   const latestRef = useRef({
     onConnected,
     onAddModeChange,
+    onAddDevice,
     mockServerDevices,
     lastConnectedDevice,
     shouldPause,
@@ -156,6 +163,7 @@ export function useConnectKnownOrNewDeviceViewModel({
     latestRef.current = {
       onConnected,
       onAddModeChange,
+      onAddDevice,
       mockServerDevices,
       lastConnectedDevice,
       shouldPause,
@@ -184,6 +192,7 @@ export function useConnectKnownOrNewDeviceViewModel({
     throw new Error("Device Management Kit is not available");
   }
 
+  const hasOnAddDevice = onAddDevice !== undefined;
   useEffect(() => {
     log(LOG_TYPE, "start", { restartCount });
     const flow = connectKnownOrNewDevice({
@@ -195,6 +204,9 @@ export function useConnectKnownOrNewDeviceViewModel({
         dispatch(setReadOnlyMode(false));
         latestRef.current.onConnected(result);
       },
+      onAddNewDevice: hasOnAddDevice
+        ? hasDevices => latestRef.current.onAddDevice?.(hasDevices)
+        : undefined,
       isMockServerEnabled,
       getMockServerDevices: () => latestRef.current.mockServerDevices,
       isPaused: latestRef.current.shouldPause,
@@ -212,6 +224,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   }, [
     dispatch,
     dmk,
+    hasOnAddDevice,
     isMockServerEnabled,
     knownDevices$,
     removeDevice,
@@ -303,6 +316,7 @@ export function useConnectKnownOrNewDeviceViewModel({
     onDeviceNotFound,
     onCloseErrorSheet,
     onCloseAddModeErrorSheet,
+    listFooter,
     children,
   };
 }
