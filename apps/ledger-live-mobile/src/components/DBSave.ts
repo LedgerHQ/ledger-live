@@ -70,15 +70,18 @@ type Props<Data, Stats> = {
   getChangesStats: (next: State, prev: State) => Stats;
   save: (data: Data, changedStats: Stats) => Promise<void>;
   saveAtStart?: boolean;
+  /** The key of the record that replaces this save: the hook never saves once persistence owns it. */
+  recordKey?: string;
 };
 
-function useDBSaveEffect<D, S>({
+export function useDBSaveEffect<D, S>({
   stateSelector,
   lense,
   throttle = 500,
   save,
   getChangesStats,
   saveAtStart = false,
+  recordKey,
 }: Props<D, S>) {
   const store = useStore();
   const storeRef = useRef(store);
@@ -102,6 +105,7 @@ function useDBSaveEffect<D, S>({
       }
       const { lense, save, getChangesStats } = latestProps.current;
       const state = storeRef.current.getState() as State;
+      if (recordKey !== undefined && selectUsesPersistence(state, recordKey)) return;
       const prev = lastSavedState.current;
       if (prev !== undefined && prev !== null) {
         const changedStats = getChangesStats(prev, state); // we compare last saved with latest state
@@ -120,7 +124,7 @@ function useDBSaveEffect<D, S>({
     // throttle allow to not spam lense and save too much because they are costly
     // nb it does not prevent race condition here. save must be idempotent and atomic
     return throttleFn(run, throttle);
-  }, [throttle]);
+  }, [throttle, recordKey]);
   useFlushMechanism(checkForSave);
   // each time the selected slice or props change, we will checkForSave
   useEffect(() => {
@@ -179,7 +183,6 @@ const getAccountsChanged = (
     }
   | null
   | undefined => {
-  if (selectUsesPersistence(newState, "accounts")) return null;
   if (oldState.accounts !== newState.accounts) {
     const oldById = new Map(oldState.accounts.active.map(a => [a.id, a] as const));
     return {
@@ -258,8 +261,7 @@ export const featureFlagsLense = (state: State) => ({
 });
 const liveConfigOverridesNotEquals = (a: State, b: State) =>
   a.liveConfigOverrides.overrides !== b.liveConfigOverrides.overrides;
-const historyNotEquals = (a: State, b: State) =>
-  a.history !== b.history && !selectUsesPersistence(b, "history");
+const historyNotEquals = (a: State, b: State) => a.history !== b.history;
 const identitiesNotEquals = (a: State, b: State) => a.identities !== b.identities;
 
 const extractIdentitiesForPersistence = (state: State) =>
@@ -299,6 +301,7 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: getAccountsChanged,
     lense: accountsExportSelector,
+    recordKey: "accounts",
   });
   useDBSaveEffect({
     stateSelector: (state: State) => state.ble,
@@ -425,6 +428,7 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: historyNotEquals,
     lense: (state: State) => state.history,
+    recordKey: "history",
   });
 
   useDBSaveEffect({

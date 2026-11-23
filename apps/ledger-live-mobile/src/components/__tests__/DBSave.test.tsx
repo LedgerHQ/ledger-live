@@ -11,7 +11,8 @@ import storage from "LLM/storage";
 import { addOneAccount } from "~/actions/accounts";
 import { persistence } from "~/persistence/composition";
 import { markOperationsAsSeen } from "~/reducers/history";
-import { ConfigureDBSaveEffects, flushAll } from "../DBSave";
+import type { State } from "~/reducers/types";
+import { ConfigureDBSaveEffects, flushAll, useDBSaveEffect } from "../DBSave";
 
 jest.mock("~/persistence/composition", () => ({
   persistence: { flush: jest.fn(() => Promise.resolve()) },
@@ -19,6 +20,40 @@ jest.mock("~/persistence/composition", () => ({
 
 const account = genAccount("dbsave-accounts", { currency: getCryptoCurrencyById("bitcoin") });
 const accountKey = `accounts.active.${account.id}`;
+
+describe("useDBSaveEffect with a record key", () => {
+  const save = jest.fn(() => Promise.resolve());
+  const saveAtStartEffect = {
+    stateSelector: (state: State) => state.history,
+    throttle: 500,
+    getChangesStats: () => false,
+    lense: (state: State) => state.history,
+    save,
+    saveAtStart: true,
+    recordKey: "history",
+  };
+
+  beforeEach(() => save.mockClear());
+
+  it("saves at start while persistence does not own the record", async () => {
+    renderHook(() => useDBSaveEffect(saveAtStartEffect));
+    await act(flushAll);
+
+    expect(save).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not save at start once persistence owns the record, even when it failed", async () => {
+    renderHook(() => useDBSaveEffect(saveAtStartEffect), {
+      overrideInitialState: state => ({
+        ...state,
+        persistence: { records: { history: "failed" } },
+      }),
+    });
+    await act(flushAll);
+
+    expect(save).not.toHaveBeenCalled();
+  });
+});
 
 describe("ConfigureDBSaveEffects", () => {
   beforeEach(async () => {
