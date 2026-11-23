@@ -237,8 +237,8 @@ describe("usePerpsSignViewModel", () => {
 
     expect(onCancel).not.toHaveBeenCalled();
     expect(onError).not.toHaveBeenCalled();
-    expect(navigation.replace).toHaveBeenCalledWith("MyLedger", {
-      screen: "MyLedgerChooseDevice",
+    expect(navigation.replace).toHaveBeenCalledWith("MyWalletNavigator", {
+      screen: "MyWallet",
       params: { searchQuery: "Hyperliquid" },
     });
   });

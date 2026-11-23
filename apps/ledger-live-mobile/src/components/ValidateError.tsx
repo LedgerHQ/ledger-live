@@ -34,16 +34,13 @@ function ValidateError({ error, onClose, onRetry, primaryButton }: Props) {
   const onPress = useCallback(() => {
     if (managerAppName && navigation) {
       navigation.navigate(NavigatorName.Base, {
-        screen: NavigatorName.Main,
+        screen: NavigatorName.MyWallet,
         params: {
-          screen: NavigatorName.MyLedger,
+          screen: ScreenName.MyWallet,
           params: {
-            screen: ScreenName.MyLedgerChooseDevice,
-            params: {
-              tab: MANAGER_TABS.INSTALLED_APPS,
-              updateModalOpened: true,
-              device: lastConnectedDevice,
-            },
+            tab: MANAGER_TABS.INSTALLED_APPS,
+            updateModalOpened: true,
+            device: lastConnectedDevice ?? undefined,
           },
         },
       });

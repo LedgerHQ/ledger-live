@@ -64,6 +64,8 @@ export function MyWalletDeviceListLegacy({ onPairingStateChanged }: MyWalletDevi
           ...result,
           firmwareUpdate: params?.firmwareUpdate,
           searchQuery: params?.searchQuery || params?.installApp,
+          tab: params?.tab,
+          updateModalOpened: params?.updateModalOpened,
         },
       });
     }

@@ -502,20 +502,6 @@ export const DeeplinksProvider = ({
                               },
                             },
                           }),
-                          [NavigatorName.MyLedger]: {
-                            screens: {
-                              /**
-                               * ie: "ledgerlive://myledger" will open MyLedger page
-                               *
-                               * @params ?installApp: string
-                               * ie: "ledgerlive://myledger?installApp=bitcoin" will open myledger with "bitcoin" prefilled in the search input
-                               *
-                               * * @params ?searchQuery: string
-                               * ie: "ledgerlive://myledger?searchQuery=bitcoin" will open myledger with "bitcoin" prefilled in the search input
-                               */
-                              [ScreenName.MyLedgerChooseDevice]: "myledger",
-                            },
-                          },
                         },
                       },
                       [NavigatorName.Accounts]: {
