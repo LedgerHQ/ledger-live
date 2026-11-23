@@ -4044,7 +4044,7 @@ DEPENDENCIES:
   - "react-native-config (from `../../../node_modules/.pnpm/react-native-config@1.7.2_react-native@0.86.3_p_44e0bb5760c8c24357efae447f179cc0/node_modules/react-native-config`)"
   - "react-native-fast-crypto (from `../../../node_modules/.pnpm/react-native-fast-crypto@3.0.0_react-native@0.8_518aaa68e9748de548428372b94d59cf/node_modules/react-native-fast-crypto`)"
   - "react-native-fast-pbkdf2 (from `../../../node_modules/.pnpm/react-native-fast-pbkdf2@0.3.1_patch_hash=9b199_3b03e5f9233d41109a11e4c78420f7d5/node_modules/react-native-fast-pbkdf2`)"
-  - "react-native-image-crop-tools (from `../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.4_patch_hash=_beaf592002f0d6a3579b6950e15fc3f6/node_modules/react-native-image-crop-tools`)"
+  - "react-native-image-crop-tools (from `../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.4_patch_hash=_248dc828f0ba38f1870ce76a3bb3dc3f/node_modules/react-native-image-crop-tools`)"
   - "react-native-launch-arguments (from `../../../node_modules/.pnpm/react-native-launch-arguments@4.1.1_react-nativ_6ceb32b3f69b19b39d1ad646cb644482/node_modules/react-native-launch-arguments`)"
   - "react-native-restart (from `../../../node_modules/.pnpm/react-native-restart@0.0.29_react-native@0.86.3_61a7c8e854c5b75d9a20062e7f55c080/node_modules/react-native-restart`)"
   - "react-native-safe-area-context (from `../../../node_modules/.pnpm/react-native-safe-area-context@5.7.0_react-nati_914b351159deac933cdf2376590623bd/node_modules/react-native-safe-area-context`)"
@@ -4313,7 +4313,7 @@ EXTERNAL SOURCES:
   react-native-fast-pbkdf2:
     :path: "../../../node_modules/.pnpm/react-native-fast-pbkdf2@0.3.1_patch_hash=9b199_3b03e5f9233d41109a11e4c78420f7d5/node_modules/react-native-fast-pbkdf2"
   react-native-image-crop-tools:
-    :path: "../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.4_patch_hash=_beaf592002f0d6a3579b6950e15fc3f6/node_modules/react-native-image-crop-tools"
+    :path: "../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.4_patch_hash=_248dc828f0ba38f1870ce76a3bb3dc3f/node_modules/react-native-image-crop-tools"
   react-native-launch-arguments:
     :path: "../../../node_modules/.pnpm/react-native-launch-arguments@4.1.1_react-nativ_6ceb32b3f69b19b39d1ad646cb644482/node_modules/react-native-launch-arguments"
   react-native-restart:
