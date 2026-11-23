@@ -71,6 +71,9 @@ function validateOptions(): void {
   if (!Number.isInteger(PAIRS) || PAIRS < 2 || PAIRS % 2) {
     throw new Error("--pairs must be an even number ≥ 2");
   }
+  if (!Number.isInteger(WARMUPS) || WARMUPS < 0) {
+    throw new Error("--warmups must be a whole number ≥ 0");
+  }
   if (!["log", "screen", "both"].includes(READ)) {
     throw new Error("--read must be log, screen or both");
   }
