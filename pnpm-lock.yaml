@@ -880,7 +880,7 @@ patchedDependencies:
   detox@20.51.3: 8190e283c5424261bca63aa233e6dd2d2fc76b75a40e5b33290c14e3eba0c89b
   expo@57.0.31: 62f975e2ca3b0c350e037a7e7669b062419a9af43768a42dcc6f234368ea58ff
   react-native-fast-pbkdf2@0.3.1: 9b199e9f649c144e6edf3cf2db68b2900f64612817b8bb70c972cb0e1c727170
-  react-native-image-crop-tools@1.6.4: 8dc28ff513f78de4133eb71abe17699348337c4354a1e7fa23aeb5083009e0b2
+  react-native-image-crop-tools@1.6.4: ae4dff85a8076cdb6243d795c891f6e1a5903e2d6f2d7b948c741d4cb310f19c
   react-native-reanimated@4.5.1: a160184346a1ab617cbd096e94a8e11f9ce5c1347343726ecd052705f126cadb
   react-native-webview@13.16.1: a146323144a9d19c5db1e0869477abc1386e1e81527e954761d6602330c3478a
   react-native@0.86.3: 5b8cb5bb5aee68d1c870a74aff8dac82599e0605af066d2279f485581115416c
@@ -2882,7 +2882,7 @@ importers:
         version: 2.32.0(react-native@0.86.3(patch_hash=5b8cb5bb5aee68d1c870a74aff8dac82599e0605af066d2279f485581115416c)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@react-native/jest-preset@0.86.3(@babel/core@7.28.5)(react@19.2.3))(@types/react@19.2.17)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6))(react@19.2.3)
       react-native-image-crop-tools:
         specifier: 1.6.4
-        version: 1.6.4(patch_hash=8dc28ff513f78de4133eb71abe17699348337c4354a1e7fa23aeb5083009e0b2)(react-native@0.86.3(patch_hash=5b8cb5bb5aee68d1c870a74aff8dac82599e0605af066d2279f485581115416c)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@react-native/jest-preset@0.86.3(@babel/core@7.28.5)(react@19.2.3))(@types/react@19.2.17)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6))(react@19.2.3)
+        version: 1.6.4(patch_hash=ae4dff85a8076cdb6243d795c891f6e1a5903e2d6f2d7b948c741d4cb310f19c)(react-native@0.86.3(patch_hash=5b8cb5bb5aee68d1c870a74aff8dac82599e0605af066d2279f485581115416c)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@react-native/jest-preset@0.86.3(@babel/core@7.28.5)(react@19.2.3))(@types/react@19.2.17)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6))(react@19.2.3)
       react-native-keychain:
         specifier: 'catalog:'
         version: 10.0.0
@@ -64342,7 +64342,7 @@ snapshots:
       fast-base64-decode: 1.0.0
       react-native: 0.86.3(patch_hash=5b8cb5bb5aee68d1c870a74aff8dac82599e0605af066d2279f485581115416c)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@react-native/jest-preset@0.86.3(@babel/core@7.28.5)(react@19.2.3))(@types/react@19.2.17)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6)
 
-  react-native-image-crop-tools@1.6.4(patch_hash=8dc28ff513f78de4133eb71abe17699348337c4354a1e7fa23aeb5083009e0b2)(react-native@0.86.3(patch_hash=5b8cb5bb5aee68d1c870a74aff8dac82599e0605af066d2279f485581115416c)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@react-native/jest-preset@0.86.3(@babel/core@7.28.5)(react@19.2.3))(@types/react@19.2.17)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6))(react@19.2.3):
+  react-native-image-crop-tools@1.6.4(patch_hash=ae4dff85a8076cdb6243d795c891f6e1a5903e2d6f2d7b948c741d4cb310f19c)(react-native@0.86.3(patch_hash=5b8cb5bb5aee68d1c870a74aff8dac82599e0605af066d2279f485581115416c)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@react-native/jest-preset@0.86.3(@babel/core@7.28.5)(react@19.2.3))(@types/react@19.2.17)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6))(react@19.2.3):
     dependencies:
       react: 19.2.3
       react-native: 0.86.3(patch_hash=5b8cb5bb5aee68d1c870a74aff8dac82599e0605af066d2279f485581115416c)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@react-native/jest-preset@0.86.3(@babel/core@7.28.5)(react@19.2.3))(@types/react@19.2.17)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6)
