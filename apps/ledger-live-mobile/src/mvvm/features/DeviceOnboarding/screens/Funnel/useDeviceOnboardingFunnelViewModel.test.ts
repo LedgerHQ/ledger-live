@@ -2653,6 +2653,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       total: 4,
       kind: "pin",
       indicator: "none",
+      infoCard: "pin",
     });
   });
 
