@@ -11,7 +11,7 @@ import { initYaciIndexer, registerAddress, resetRegisteredAddresses } from "./ya
 // Validation/craft errors the real node + coin-cardano enforce but the in-memory mock could not.
 // Uses the Yaci backend for a real synced balance; asserts getTransactionStatus errors directly
 // (executeScenario is happy-path only — it throws on any status error, so these can't be scenarios).
-jest.setTimeout(600_000);
+jest.setTimeout(900_000);
 
 // A mainnet (network tag 1) address — wrong network for the testnet account.
 const MAINNET_RECIPIENT =

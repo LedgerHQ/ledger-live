@@ -240,8 +240,8 @@ describe("deadlines", () => {
   it("fails a reset that never answers, without re-sending it", async () => {
     fetchMock.mockImplementation(never);
 
-    const assertion = expect(resetDevnet()).rejects.toThrow("timed out");
-    await jest.advanceTimersByTimeAsync(60_000);
+    const assertion = expect(resetDevnet()).rejects.toThrow(/timed out[\s\S]*Container logs:/);
+    await jest.advanceTimersByTimeAsync(160_000);
     await assertion;
 
     expect(calls("/admin/devnet/reset")).toHaveLength(1);

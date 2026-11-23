@@ -202,9 +202,9 @@ type StoreUtxo = {
 
 const utxoRef = (u: StoreUtxo) => `${u.tx_hash}#${u.output_index}`;
 
-// Suites call resetDevnet() then topup() inside one hook bounded by jest's 600 s ceiling, which also has
+// Suites call resetDevnet() then topup() inside one hook bounded by jest's 900 s ceiling, which also has
 // to fit their own sync (negativeCases allows 310 s). Worst cases that go on to top-up and sync, with
-// ~2.5 s poll overshoot per wait: reset ≈ 2×45 (POSTs) + 2×22.5 (block waits) + 10 (logs) ≈ 145 s,
+// ~2.5 s poll overshoot per wait: reset ≈ 2×150 (POSTs) + 2×22.5 (block waits) + 10 (logs) ≈ 355 s,
 // topup ≈ 15 + 54 (adminPost: 5×10 s + 4×1 s) + 45 ≈ 120 s. Measured needs are a fraction of that:
 // reset 7-15 s, first block ~2 s later, top-up confirmed in ~1 s.
 const TOPUP_SNAPSHOT_TIMEOUT_MS = 15_000;
@@ -242,8 +242,8 @@ export async function topup(address: string, adaAmount: number): Promise<void> {
 }
 
 // Reset stops the node and store, drops their data and starts a new chain from genesis. It answers in
-// 7-15 s, past ADMIN_TIMEOUT_MS, so it gets its own bound.
-const RESET_TIMEOUT_MS = 45_000;
+// 7-15 s, past ADMIN_TIMEOUT_MS, so it gets its own bound; a CI reset once ran past 45 s.
+const RESET_TIMEOUT_MS = 150_000;
 // Reset POSTs per resetDevnet call, shared between a 5xx retry and a re-reset of a stuck chain.
 const RESET_ATTEMPTS = 2;
 // yaci-devkit 0.10.6 answers the reset without waiting for a block (`ClusterCommands.startLocalCluster`
@@ -338,7 +338,11 @@ export async function resetDevnet(): Promise<void> {
     // can take a fresh one.
     const failure = await adminPostOnce(resetPath, undefined, RESET_TIMEOUT_MS, false);
     if (failure) {
-      if (!failure.retryable || last) throw failure.error;
+      if (!failure.retryable || last) {
+        throw new Error(`${failure.error.message}\nContainer logs:\n${await yaciLogs()}`, {
+          cause: failure.error,
+        });
+      }
       console.warn(
         `Yaci admin POST ${resetPath} attempt ${attempt} failed (${failure.error.message}); retrying`,
       );
