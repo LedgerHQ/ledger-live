@@ -6,6 +6,7 @@ import type { AccountDescriptorV0 } from "./v0";
 import type { AccountDescriptorV1, UtxoAccountDescriptorV1, AccountBasedDescriptorV1 } from "./v1";
 import { XPUB, ETH_ADDR } from "./test-fixtures";
 import { NetworkIdSchema } from "./network";
+import { InvalidAccountDescriptorError } from "@domain/entity-account-descriptor";
 
 const BTC_V0: AccountDescriptorV0 = {
   id: `js:2:bitcoin:${XPUB}:native_segwit`,
@@ -70,6 +71,12 @@ describe("toV1 (V0 → V1)", () => {
         `Invalid derivation path "44'/60'/0'/2147483648": Path index must be below 2^31`,
       ),
     );
+  });
+
+  it("rejects an empty or whitespace key with a typed error that does not echo it", () => {
+    for (const seedIdentifier of ["", "0xab cd"]) {
+      expect(() => toV1({ ...ETH_V0, seedIdentifier })).toThrow(InvalidAccountDescriptorError);
+    }
   });
 });
 

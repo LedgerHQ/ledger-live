@@ -34,10 +34,7 @@ export type UseAccountDataResult = {
   loadMore: () => Promise<void>;
 };
 
-/**
- * Keeps one kind of data of one account read while mounted; the data is read with the entity's
- * selectors. The account's descriptor is read from the accounts slice and never handed out.
- */
+/** Keeps one kind of data of one account read while mounted; the descriptor never leaves the hook. */
 export function useAccountData<K extends AccountDataKind>(
   kind: K,
   accountUUID: AccountUUID | undefined,

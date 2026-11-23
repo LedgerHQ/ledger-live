@@ -12,6 +12,7 @@
 
 import {
   fromDescriptorPath,
+  InvalidAccountDescriptorError,
   LegacyDerivationPathSchema,
   type DerivationPath,
 } from "@domain/entity-account-descriptor";
@@ -142,14 +143,21 @@ function matchSchemeToPath(
 /**
  * Convert a V0 (WalletSync / live-common) account descriptor to the V1 ADR format.
  * Throws UnsupportedFamilyError if the derivation scheme cannot be determined, and
- * InvalidDerivationPathError if the built path is no BIP32 path (an index of 2^31 or more).
+ * InvalidDerivationPathError if the built path is no BIP32 path (an index of 2^31 or more),
+ * and InvalidAccountDescriptorError if seedIdentifier is empty or holds whitespace.
  */
 export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
   const network = networkOfV0(v0);
   const currency = getCryptoCurrencyById(v0.currencyId);
   const derivationMode = asDerivationMode(v0.derivationMode);
   const scheme = getDerivationScheme({ derivationMode, currency });
-  const key = AccountKeySchema.parse(v0.seedIdentifier);
+  const parsedKey = AccountKeySchema.safeParse(v0.seedIdentifier);
+  if (!parsedKey.success) {
+    throw new InvalidAccountDescriptorError(
+      "Invalid AccountDescriptor: seedIdentifier must be non-empty, without whitespace",
+    );
+  }
+  const key = parsedKey.data;
 
   if (isXpub(v0.seedIdentifier)) {
     const path = toV1Path(runAccountDerivationScheme(scheme, currency, { account: v0.index }));
