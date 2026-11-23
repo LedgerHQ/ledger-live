@@ -540,5 +540,28 @@ describe("ConnectKnownOrNewDeviceView", () => {
         },
       ]);
     });
+    it("GIVEN the Add mode, WHEN its close bar is pressed, THEN it should send Close and close the Add mode", async () => {
+      // GIVEN
+      const close = jest.fn();
+      const { user } = renderView({
+        type: ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice,
+        connectNewDeviceUIState: {
+          type: ConnectNewDeviceUIStateTypes.Discovering,
+          devices: [],
+          scanningTransports: [rnBleTransportIdentifier],
+          showDeviceNotFound: false,
+        },
+        close,
+      });
+
+      // WHEN
+      await user.press(screen.getByTestId("connect-known-or-new-device-add-mode-close"));
+
+      // THEN
+      expect(trackedEvents("button_clicked")).toEqual([
+        { sourceFlow: "my_wallet", deviceUxV2: true, button: "Close" },
+      ]);
+      expect(close).toHaveBeenCalledTimes(1);
+    });
   });
 });

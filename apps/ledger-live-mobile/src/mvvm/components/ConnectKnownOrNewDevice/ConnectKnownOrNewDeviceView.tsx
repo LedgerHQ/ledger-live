@@ -117,22 +117,7 @@ export function ConnectKnownOrNewDeviceView({
 }: Readonly<ConnectKnownOrNewDeviceViewProps>): React.JSX.Element {
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
 
-  const trackCloseClicked = (subError?: string) =>
-    trackConnectDeviceButtonClicked({
-      sourceFlow,
-      button: CONNECT_DEVICE_BUTTON.Close,
-      subError,
-      extraProperties: analyticsProperties,
-    });
-
   if (state.type === ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice) {
-    const { close } = state;
-    // The Add mode sends its own outcome when it unmounts.
-    const onCloseAddMode = () => {
-      trackCloseClicked();
-      close();
-    };
-
     return (
       <AddMode
         state={state.connectNewDeviceUIState}
@@ -140,19 +125,27 @@ export function ConnectKnownOrNewDeviceView({
         platform={platform}
         onDeviceNotFound={onDeviceNotFound}
         onCloseErrorSheet={onCloseAddModeErrorSheet}
-        onClose={onCloseAddMode}
+        onClose={state.close}
       />
     );
   }
 
   const { deviceState, errorState, ...listProps } = getListLayout(state, devices);
 
+  const onCloseButtonPressed = () => {
+    if (!errorState || errorState.type === ConnectKnownOrNewDeviceUIStateTypes.UnknownError) return;
+    trackConnectDeviceButtonClicked({
+      sourceFlow,
+      button: CONNECT_DEVICE_BUTTON.Close,
+      subError: getConnectDeviceSubError(errorState.error),
+      extraProperties: analyticsProperties,
+    });
+  };
+
+  // Every close, also when the screen loses focus: the outcome of the attempt.
   const onCloseSheet = () => {
-    // The sheet also reports a close once the state has left the error: no click then.
+    // The sheet also reports a close once the state has left the error: no outcome then.
     if (errorState) {
-      if (errorState.type !== ConnectKnownOrNewDeviceUIStateTypes.UnknownError) {
-        trackCloseClicked(getConnectDeviceSubError(errorState.error));
-      }
       trackDeviceflowCanceled({
         sourceFlow,
         extraProperties: analyticsProperties,
@@ -171,6 +164,7 @@ export function ConnectKnownOrNewDeviceView({
       <ErrorBottomSheet
         isOpen={errorState !== null}
         onClose={onCloseSheet}
+        onHeaderClosePressed={onCloseButtonPressed}
         testID="connect-known-or-new-device-error-sheet"
       >
         {errorState && <ErrorStateView state={errorState} platform={platform} />}
