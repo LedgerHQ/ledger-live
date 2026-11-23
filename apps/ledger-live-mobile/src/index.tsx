@@ -101,6 +101,7 @@ import {
   customActionEventMapper,
   customErrorEventMapper,
   customLogEventMapper,
+  customResourceEventMapper,
   initializeDatadogProvider,
   stopDatadogRecording,
 } from "./datadog";
@@ -196,6 +197,7 @@ function App() {
         trackResources: datadogFF?.params?.trackResources ?? false,
         errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
         actionEventMapper: customActionEventMapper,
+        resourceEventMapper: customResourceEventMapper,
         firstPartyHosts: [
           {
             match: FIRST_PARTY_MAIN_HOST_DOMAIN,
