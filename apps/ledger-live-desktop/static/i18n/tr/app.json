@@ -323,7 +323,7 @@
       "title" : "Kapsamlı log'lar",
       "derivationTip" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdana aktarırken aynı türev modunu seçin.",
       "synchronised" : "{{date}} senkronize edildi",
-      "copy" : "Log kopyala",
+      "copy" : "Log'ları kopyala",
       "copied" : "Kopyalandı"
     },
     "remove" : {
@@ -2774,10 +2774,36 @@
     }
   },
   "receiveAddress" : {
+    "title" : "{{asset}} al",
+    "networkLabel" : "{{network}} ağı",
     "addressDisplayed" : {
       "title" : "Adres güvenli bir şekilde görüntüleniyor",
-      "description" : "Yapıştırdığınız veya paylaştığınız adresin Ledger cihazınızda görünen adresle aynı olduğunu doğrulayın.",
-      "gotItCta" : "Anladım"
+      "description" : "Yapıştırdığınız veya paylaştığınız adresin Ledger cihazınızda görünen adresle aynı olduğunu doğrulayın."
+    },
+    "addressVerified" : {
+      "title" : "Adres doğrulandı",
+      "description" : "Ledger Wallet’taki adres, Ledger cihazınızdaki adresle eşleşiyor.",
+      "doneCta" : "Tamam"
+    },
+    "addressMismatch" : {
+      "title" : "Bu adres Ledger cihazınızdaki adresle eşleşmiyor",
+      "description" : "Bu adresi kullanmayın. Bu hesabın kurulu olmadığı bir Ledger cihazı kullanıyor olabilirsiniz. Doğru cihazı bağlayın ve adresi yeniden doğrulayın. Adres hâlâ eşleşmiyorsa Ledger Destek ekibiyle iletişime geçin.",
+      "contactSupportCta" : "Ledger Destek ile iletişime geçin",
+      "closeCta" : "Kapat"
+    },
+    "selectAddress" : {
+      "title" : "Adres seçin"
+    },
+    "addressOptions" : {
+      "transparent" : "Açık adres",
+      "shielded" : "Gizli adres"
+    },
+    "close" : "Kapat",
+    "back" : "Geri",
+    "error" : {
+      "title" : "We couldn't load this address",
+      "description" : "Check your internet connection, then try again.",
+      "retry" : "Retry"
     }
   },
   "send" : {
@@ -3061,7 +3087,7 @@
     },
     "sponsoredPolling" : {
       "title" : "Enerjiniz teslim ediliyor",
-      "waiting" : "Bu işlem genellikle 30 saniyeye kadar sürer.",
+      "waiting" : "Bu, 2 dakika kadar sürebilir...",
       "elapsed" : "Geçen süre: {{time}}"
     },
     "sponsoredFailure" : {
@@ -4308,7 +4334,7 @@
         "token" : {
           "title" : "Token",
           "selectLabel" : "Bir token seçin",
-          "allAdded" : "Kullanılabilir tüm token'ları bu hesaba zaten eklediniz.",
+          "empty" : "Bu hesaba eklemek için kullanılabilir token bulunmuyor.",
           "loadError" : "Token listesi yüklenemedi.",
           "info" : "Token eklemek, ağ ücreti ödenen bir işlem gönderir ve token’ı elinizde tuttuğunuz sürece bir miktar XRP’yi rezerv olarak ayırır. Bu işlem, işlem geçmişinizde görünür."
         },
@@ -4316,12 +4342,18 @@
           "title" : "Ayarlar",
           "limit" : "Güven limiti",
           "max" : "Maks.",
-          "limitInfo" : "Güven limiti, hesabınızın tutmayı kabul ettiği en yüksek {{token}} miktarıdır."
+          "limitInfo" : "Güven limiti, hesabınızın tutmayı kabul ettiği en yüksek {{token}} miktarıdır. XRP Ledger'ın izin verdiği en yüksek limiti kullanmak için Maksimum seçeneğini etkinleştirin.",
+          "maximum" : "Maksimum"
         },
         "review" : {
           "title" : "İncele",
           "token" : "Token",
-          "issuer" : "İhraççı"
+          "issuer" : "İhraççı",
+          "issuerFee" : "İhraççı ücreti",
+          "issuerFeeTooltip" : "Token sahipleri arasındaki her transferden ihraççının aldığı pay.",
+          "issuerFeeError" : "İhraççı ücreti bilgileri alınamadı.",
+          "notEnoughReserve" : "Bu token’ı eklemek için kullanılabilir bakiyenizin en az {{minimumAmount}} olması gerekir.",
+          "receive" : "Al"
         },
         "connectDevice" : {
           "title" : "Cihaz"
@@ -4329,8 +4361,8 @@
         "confirmation" : {
           "title" : "Onaylayın",
           "success" : {
-            "title" : "{{token}} token'ı başarıyla eklendi",
-            "text" : "Artık XRP hesabınıza <0>{{token}}</0> alabilirsiniz.",
+            "title" : "{{token}} ekleme talebi gönderildi",
+            "text" : "Ağ işlemi onayladığında geçerli olur.",
             "cta" : "Ayrıntıları gör"
           },
           "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
@@ -4344,14 +4376,59 @@
       "steps" : {
         "confirmation" : {
           "success" : {
-            "title" : "{{token}} güven limiti güncellendi",
-            "text" : "XRP hesabınız artık yeni limite kadar <0>{{token}}</0> kabul ediyor."
+            "title" : "{{token}} güncelleme talebi gönderildi"
+          }
+        }
+      }
+    },
+    "manageAssets" : {
+      "cta" : "Yönet",
+      "title" : "Varlıkları yönetin",
+      "tokenType" : "Token türü",
+      "tokenTypeTooltip" : "Güven hattının (IOU) bir bakiye limiti ve bir rippling ayarı vardır. Multi Purpose Token’ın (MPT) ise herhangi bir ayarı yoktur.",
+      "iou" : "Güven Hattı (IOU)",
+      "mpt" : "Çok Amaçlı Token",
+      "transferFee" : "Transfer ücreti",
+      "lockedAmount" : "Kilitli tutar",
+      "balanceLimit" : "Bakiye limiti",
+      "ripplingTooltip" : "Rippling, diğer kullanıcıların ödemelerinin bakiyenizi aynı para birimi koduna sahip token’lar arasında aktarmasına olanak tanır.",
+      "activated" : "Etkin",
+      "deactivated" : "Devre dışı",
+      "edit" : "Düzenle",
+      "delete" : "Sil"
+    },
+    "manageToken" : {
+      "title" : "Token'ı yönet",
+      "settings" : {
+        "title" : "Gelişmiş ayarlar",
+        "description" : "Güven limitini veya rippling ayarını değiştirin."
+      },
+      "remove" : {
+        "description" : "Bu güven hattını kapatın ve XRP rezervini geri alın."
+      }
+    },
+    "removeToken" : {
+      "title" : "Token'ı kaldır",
+      "pending" : "Kaldırılması bekleniyor",
+      "frozen" : "Bu token donduruldu",
+      "steps" : {
+        "review" : {
+          "unlocked" : "{{amount}} serbest bırakılacak ve tekrar kullanılabilir hale gelecek.",
+          "info" : "Bu token’ı artık alamayacaksınız. Token’ı daha sonra tekrar ekleyebilirsiniz ({{amount}} yeniden kilitlenir).",
+          "balanceLeft" : "Hesabınızda hâlâ {{balance}} bulunuyor. Bu token’ı kaldırmadan önce bakiyenizi gönderin.",
+          "send" : "Gönder"
+        },
+        "connectDevice" : {
+          "limitZero" : "Cihazınızda güven limiti 0 olarak görünecek. XRP Ledger, token’ları bu şekilde kaldırır."
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "{{token}} kaldırma talebi gönderildi"
           }
         }
       }
     },
     "tokenAccount" : {
-      "editSettings" : "Ayarları düzenle",
       "trustLimit" : "Güven limiti",
       "trustLimitTooltip" : "Hesabınızın bu token’dan tutmayı kabul ettiği en yüksek miktar."
     },
@@ -4360,6 +4437,9 @@
       "on" : "Açık",
       "off" : "Kapalı",
       "warning" : "Bu ayarı açmak, diğer kullanıcıların ödemelerinin bakiyenizi aynı para birimi koduna sahip token’lar arasında aktarmasına izin verir. Bu ayarı yalnızca ne yaptığınızdan eminseniz açın."
+    },
+    "send" : {
+      "issuerFee" : "İhraççı ücreti"
     },
     "receive" : {
       "addToken" : "Token ekle",
@@ -5615,7 +5695,14 @@
       },
       "devTools" : {
         "rowTitle" : "DevTools",
-        "rowDesc" : "DevTools konsolunu (özellik bayrakları ve geliştirici araçları paneli) açın."
+        "rowDesc" : "DevTools konsolunu (özellik bayrakları ve geliştirici araçları paneli) açın.",
+        "appToggles" : {
+          "hideNightlyLayer" : {
+            "label" : "Ön sürüm katmanını gizle",
+            "description" : "Nightly derlemelerinde görünen PRERELEASE filigranını gizleyin (ör. temiz ekran görüntüleri almak için).",
+            "lockedReason" : "Bu katman yalnızca Nightly derlemelerinde görünür."
+          }
+        }
       },
       "brazeTools" : {
         "title" : "Braze Araçları",
@@ -7156,6 +7243,9 @@
         "expiresAt" : "Süresinin dolacağı zaman:",
         "expiresIn" : "Süresinin dolmasına kalan süre:",
         "amount" : "Miktar",
+        "unknownToken" : "Bilinmeyen token",
+        "instrumentId" : "Varlık Kimliği",
+        "instrumentAdmin" : "Yönetici",
         "transaction" : "İşlem",
         "viewTransaction" : "İşlemi görüntüle",
         "action" : "Eylem",
@@ -8091,7 +8181,8 @@
       "description" : "Bir hata oluştu, lütfen tekrar deneyin veya şüpheniz varsa Ledger Destek ile iletişime geçin."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Ethereum uygulamasında Kör İmzalamayı veya Sözleşme Verilerini etkinleştirin"
+      "title" : "Ethereum uygulamasında Kör İmzalamayı veya Sözleşme Verilerini etkinleştirin",
+      "description" : "Cihazınızda Ethereum uygulama ayarlarını açın, Kör İmzalamayı etkinleştirin ve ardından tekrar deneyin."
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "Celo uygulaması ayarlarında Sözleşme Verilerini lütfen etkinleştirin"
@@ -8114,11 +8205,11 @@
       "description" : "Bu token’ı artık tutmak istemiyorsanız onu kaldırın."
     },
     "XrpTokenFrozen" : {
-      "title" : "Bu token’ı gönderemezsiniz",
+      "title" : "Token donduruldu",
       "description" : "İhraççısı bu token'ı dondurdu."
     },
     "XrpTokenNotAuthorized" : {
-      "title" : "Bu token’ı gönderemezsiniz",
+      "title" : "Hesabınız onaylanmadı",
       "description" : "Token’ın ihraççısı, hesabınızın bu token’ı tutmasını onaylamadı."
     },
     "XrpTokenCannotReceive" : {
@@ -8143,6 +8234,54 @@
     "XrpReserveIncrease" : {
       "title" : "Bu token hesabınızda ekli olduğu sürece {{amount}} kilitli kalacaktır.",
       "description" : "Token’ı kaldırdığınızda bu tutarı geri alırsınız."
+    },
+    "XrpAccountNotActivated" : {
+      "title" : "Hesabınız henüz etkinleştirilmedi",
+      "description" : "Hesabınızı etkinleştirmek ve bu token’ı eklemek için en az {{amount}} alın. Bu tutar, hesabın etkinleştirilmesi için gereken miktarı ve token için kilitlenen XRP’yi karşılar."
+    },
+    "XrpTrustLimitTooHigh" : {
+      "title" : "Limit, maksimum değerin üzerinde",
+      "description" : "En yüksek limiti belirlemek için Maks. butonunu kullanın."
+    },
+    "XrpTrustSetUnchanged" : {
+      "title" : "Bu ayarlar zaten uygulanmış durumda",
+      "description" : "Bu token’ı güncellemek için limiti veya rippling ayarını değiştirin."
+    },
+    "XrpRecipientNotActivated" : {
+      "title" : "Bu hesap etkinleştirilmemiş",
+      "description" : "Token alamaz."
+    },
+    "XrpRecipientTokenNotAdded" : {
+      "title" : "Bu alıcı bu token’ı henüz alamaz",
+      "description" : "Öncelikle token'ı eklemesini isteyin."
+    },
+    "XrpRecipientLimitTooLow" : {
+      "title" : "Alıcı limiti çok düşük",
+      "description" : "Alıcı, bu token’dan en fazla {{maxAmount}} alabilir."
+    },
+    "XrpSendToIssuer" : {
+      "title" : "Token ihraççısına gönderiliyor",
+      "description" : "Bu token'lar imha edilecek ve hiç kimseye aktarılmayacaktır."
+    },
+    "XrpOptOutBalanceNotZero" : {
+      "title" : "Bu token'daki bakiyeniz 0 olmalıdır",
+      "description" : "Token'ı kaldırmadan önce tamamını gönderin."
+    },
+    "XrpOptOutTokenInEscrow" : {
+      "title" : "Bu token'ın bir kısmı emanet hesabında",
+      "description" : "Emanet işlemi tamamlandıktan veya iptal edildikten sonra token’ı kaldırın."
+    },
+    "XrpOptOutTokenFrozen" : {
+      "title" : "{{assetCode}} kaldırılamıyor",
+      "description" : "İhraççısı bu token'ı hesabınızda dondurdu."
+    },
+    "XrpOptOutIncomplete" : {
+      "title" : "Bu token kaldırılamıyor",
+      "description" : "XRP Ledger bu token’ı, kilitli XRP’siyle birlikte hesabınızda tutmaya devam eder."
+    },
+    "XrpReserveRelease" : {
+      "title" : "Bu token için kilitlenen {{amount}} serbest bırakılacak.",
+      "description" : "Token kaldırıldıktan sonra bu tutarı harcayabilirsiniz."
     },
     "InvalidExplorerResponse" : {
       "title" : "{{currencyName}} tarayıcısından geçersiz yanıt"
@@ -8274,6 +8413,10 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+    },
+    "SolanaTxBlockhashExpired" : {
+      "title" : "İşlemin süresi doldu",
+      "description" : "Ağ bu işlemi artık kabul etmiyor. Lütfen yeni bir işlem oluşturmak için tekrar deneyin."
     },
     "SolanaRecipientMemoIsRequired" : {
       "title" : "Alıcı adresi için memo gereklidir"
@@ -8674,6 +8817,22 @@
     "SuiAddressBalanceAppUpdateRequired" : {
       "title" : "Sui uygulamanızı güncelleyin",
       "description" : "Ledger Sui uygulamanız, SUI adres bakiyenizden bir transferi imzalayamıyor. Ledger cihazınızdaki Sui uygulamasını güncelleyin ve tekrar deneyin."
+    },
+    "SuiRawTransactionInvalid" : {
+      "title" : "Okunamayan Sui işlemi",
+      "description" : "Uygulama, Ledger Wallet’ın okuyamadığı bir Sui işlemi gönderdi. Uygulama üzerinden tekrar deneyin veya uygulamanın destek ekibiyle iletişime geçin."
+    },
+    "SuiRawTransactionSenderMismatch" : {
+      "title" : "Yanlış Sui hesabı",
+      "description" : "Bu işlem başka bir Sui hesabı için hazırlanmış. Uygulamaya bağlı hesabı seçip tekrar deneyin."
+    },
+    "SuiRawTransactionResolutionFailed" : {
+      "title" : "Sui işlemi hazırlanamadı",
+      "description" : "İşlemde kullanılan varlıkların hâlâ mevcut olduğundan ve hesabın ağ ücretlerini karşılayabildiğinden emin olun, ardından uygulama üzerinden tekrar deneyin."
+    },
+    "SuiSponsoredTransactionBroadcastUnsupported" : {
+      "title" : "Sponsorlu Sui işlemi",
+      "description" : "Bu işlemin ağ ücretleri bir sponsor tarafından ödendiğinden Ledger Wallet işlemi ağa gönderemez. İşlemi uygulamanın kendisi göndermelidir. Sorun devam ederse uygulamanın destek ekibiyle iletişime geçin."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Kullanılabilir (stake edilmemiş) bakiyeniz şu anda {{currentBalance}} ve {{assetName}} varlığınızın stake'ini durdurmak için gereken ağ ücretini karşılamıyor.",

@@ -1135,6 +1135,22 @@
       "title" : "Suiアプリをアップデートしてください。",
       "description" : "お使いのLedgerのSuiアプリでは、SUIアドレスの残高からの送金に署名できません。LedgerデバイスのSuiアプリをアップデートして、再度お試しください。"
     },
+    "SuiRawTransactionInvalid" : {
+      "title" : "読み取り不可能なSuiトランザクション",
+      "description" : "アプリがLedger Walletで読み取れないSuiトランザクションを送信しました。アプリからもう一度試すか、サポートにお問い合わせください。"
+    },
+    "SuiRawTransactionSenderMismatch" : {
+      "title" : "誤ったSuiアカウント",
+      "description" : "このトランザクションは、別のSuiアカウント用に準備されました。アプリに接続されているアカウントを選択し、もう一度お試しください。"
+    },
+    "SuiRawTransactionResolutionFailed" : {
+      "title" : "Suiトランザクションを準備できませんでした",
+      "description" : "使用する資産がまだ存在すること、およびアカウントがネットワーク手数料を支払えることを確認し、アプリからもう一度お試しください。"
+    },
+    "SuiSponsoredTransactionBroadcastUnsupported" : {
+      "title" : "スポンサー付きSuiトランザクション",
+      "description" : "このトランザクションのネットワーク手数料はスポンサーによって支払われるため、Ledger Wallet™はネットワークに送信できません。アプリ自体が送信する必要があります。この状態が続く場合は、アプリのサポートにお問い合わせください。"
+    },
     "PasswordIncorrect" : {
       "title" : "パスワードが間違っています。",
       "description" : "もう一度お試しください。"
@@ -1441,6 +1457,10 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
     },
+    "SolanaTxBlockhashExpired" : {
+      "title" : "トランザクションが期限切れです。",
+      "description" : "ネットワークはこのトランザクションを受け入れなくなりました。もう一度、新しく作成してください。"
+    },
     "SolanaRecipientMemoIsRequired" : {
       "title" : "受取人アドレスにはメモが必要です"
     },
@@ -1620,11 +1640,11 @@
       "description" : "このトークンの保有を停止するには、代わりに削除してください。"
     },
     "XrpTokenFrozen" : {
-      "title" : "このトークンは送信できません",
+      "title" : "トークンは凍結されています。",
       "description" : "発行元が凍結しました。"
     },
     "XrpTokenNotAuthorized" : {
-      "title" : "このトークンは送信できません",
+      "title" : "アカウントが承認されていません。",
       "description" : "発行元がアカウントによる保有を承認していません。"
     },
     "XrpTokenCannotReceive" : {
@@ -1649,6 +1669,54 @@
     "XrpReserveIncrease" : {
       "title" : "このトークンが追加されている間、アカウントの{{amount}}がロックされます。",
       "description" : "トークンを削除すると戻ります。"
+    },
+    "XrpAccountNotActivated" : {
+      "title" : "アカウントがまだ有効化されていません",
+      "description" : "有効化してこのトークンを追加するには、少なくとも{{amount}}を受け取る必要があります。これには、アカウントの有効化とトークン用にロックされるXRPが含まれます。"
+    },
+    "XrpTrustLimitTooHigh" : {
+      "title" : "制限が最大値を超えています",
+      "description" : "最も高い制限を設定するには「最大」を使用します。"
+    },
+    "XrpTrustSetUnchanged" : {
+      "title" : "これらの設定はすでに適用されています",
+      "description" : "このトークンを更新するには、制限またはリップリングを変更してください。"
+    },
+    "XrpRecipientNotActivated" : {
+      "title" : "このアカウントは有効化されていません。",
+      "description" : "トークンを受け取ることはできません。"
+    },
+    "XrpRecipientTokenNotAdded" : {
+      "title" : "この受取人はこのトークンを受け取ることができません。",
+      "description" : "まずは追加するよう依頼してください。"
+    },
+    "XrpRecipientLimitTooLow" : {
+      "title" : "受取人の限度額が低すぎます。",
+      "description" : "このトークンは最大{{maxAmount}}までしか受け取ることができません。"
+    },
+    "XrpSendToIssuer" : {
+      "title" : "トークンの発行元へ送信しています。",
+      "description" : "これらのトークンは破棄され、誰にも付与されません。"
+    },
+    "XrpOptOutBalanceNotZero" : {
+      "title" : "このトークンの残高は0である必要があります。",
+      "description" : "トークンを削除する前に、すべて送信してください。"
+    },
+    "XrpOptOutTokenInEscrow" : {
+      "title" : "このトークンの一部はエスクロー内にあります",
+      "description" : "エスクローが終了またはキャンセルされたら、トークンを削除してください。"
+    },
+    "XrpOptOutTokenFrozen" : {
+      "title" : "{{assetCode}}は削除できません",
+      "description" : "発行元がアカウントでそれを凍結しました。"
+    },
+    "XrpOptOutIncomplete" : {
+      "title" : "このトークンは削除できません。",
+      "description" : "XRP Ledgerは、ロックされたXRPとともに、それをアカウントに保持します。"
+    },
+    "XrpReserveRelease" : {
+      "title" : "このトークン用にロックされている{{amount}}が解放されます。",
+      "description" : "トークンが削除されると、それを使用できるようになります。"
     },
     "HederaMemoExceededSizeError" : {
       "title" : "メモの文字数が制限を超えています。最大100文字までです。"
@@ -2346,10 +2414,36 @@
     }
   },
   "receiveAddress" : {
+    "title" : "{{asset}}を受け取る",
+    "networkLabel" : "{{network}}ネットワーク",
+    "close" : "閉じる",
+    "back" : "戻る",
     "addressDisplayed" : {
       "title" : "アドレスが安全に表示されています",
-      "description" : "貼り付けまたは共有したアドレスが、お使いのLedgerデバイスのアドレスとマッチしていることを認証してください。",
-      "gotItCta" : "了解"
+      "description" : "貼り付けまたは共有したアドレスが、お使いのLedgerデバイスのアドレスとマッチしていることを認証してください。"
+    },
+    "addressVerified" : {
+      "title" : "認証済みアドレス",
+      "description" : "Ledger Wallet™のアドレスが、Ledgerデバイスのアドレスと一致しています。",
+      "doneCta" : "完了"
+    },
+    "addressMismatch" : {
+      "title" : "このアドレスは、お使いのLedgerと一致しません",
+      "description" : "このアドレスは使用しないでください。このアカウントで設定されていないLedgerを使用している可能性があります。正しいデバイスを接続し、再度認証してください。それでも一致しない場合は、Ledgerサポートにお問い合わせください。",
+      "contactSupportCta" : "Ledgerサポートへお問い合わせ",
+      "closeCta" : "閉じる"
+    },
+    "selectAddress" : {
+      "title" : "アドレスを選択"
+    },
+    "addressOptions" : {
+      "transparent" : "パブリックアドレス",
+      "shielded" : "プライベートアドレス"
+    },
+    "error" : {
+      "title" : "このアドレスを読み込めませんでした。",
+      "description" : "インターネット接続を確認して、もう一度お試しください。",
+      "retry" : "再試行"
     }
   },
   "ratings" : {
@@ -2637,6 +2731,49 @@
         "nothingMoves" : "お客様の承認なしに、資産が動くことはありません。",
         "setUp" : "さっそく設定しましょう。",
         "cta" : "デバイスを確認してください"
+      },
+      "recover" : {
+        "tooManyBackups" : "バックアップは、いくらあっても多すぎるということはありません。",
+        "encryptedBackup" : "特に暗号化されたデジタルバックアップ。",
+        "thereWhenYouNeedIt" : "必要な時にいつでも使えるデジタルバックアップ。",
+        "title" : "Ledger Recover™でウォレットへのアクセスを保護しましょう。",
+        "description" : "物理的なリカバリーシートは、紛失や破損の恐れがあります。Ledger Recover™は、お客様のIDと紐付いた暗号化されたバックアップを保管します。",
+        "price" : "最初の1ヶ月は無料、その後は月額$9.99から。いつでもキャンセルできます！利用規約が適用されます",
+        "protect" : "ウォレットを保護する",
+        "skip" : "今はしない",
+        "sheet" : {
+          "title" : "Ledger Recover™の仕組みとは？",
+          "identity" : {
+            "title" : "アイデンティティにより保護",
+            "description" : "顔と身分証明書が、復元をアンロックするための鍵となります。"
+          },
+          "security" : {
+            "title" : "デジタルセキュリティの強化",
+            "description" : "暗号化および断片化され、1カ所にまとめて保存されることはありません。"
+          },
+          "legacy" : {
+            "title" : "デジタルレガシーの将来に備える*",
+            "description" : "バックアップの安全性を高めるため、信頼できる人を追加してください。"
+          },
+          "start" : "今すぐ開始できます（約10分）",
+          "remindLater" : "後で通知"
+        }
+      },
+      "success" : {
+        "allSet" : "これで準備完了です。",
+        "timeToExplore" : "探索を始めましょう",
+        "cta" : "今すぐチェック",
+        "ready" : "これで準備完了です。",
+        "walletReady" : "ウォレットの準備が整いました。"
+      }
+    },
+    "recover" : {
+      "restore" : {
+        "title" : "Continuing with Ledger Recover",
+        "description" : "You’ll sign in with your Ledger Recover credentials to complete your restore.",
+        "identity" : "Ledger Recover will verify your identity to unlock your recovery",
+        "phrase" : "Once verified, your Secret Recovery Phrase will be securely restored to your device",
+        "cta" : "Continue to Ledger Recover"
       }
     },
     "checks" : {
@@ -2695,6 +2832,105 @@
       "success" : {
         "title" : "同期完了",
         "cta" : "続行"
+      }
+    },
+    "setup" : {
+      "title" : "Continue on your Ledger device",
+      "checks" : {
+        "title" : "Genuine & OS check",
+        "description" : "Verifying your device",
+        "successDescription" : "Your device is genuine and safe to use",
+        "notUpToDateDescription" : "お使いのデバイスは最新の状態ではありません。"
+      },
+      "naming" : {
+        "title" : "デバイス名",
+        "description" : "Give your {{productName}} a unique name"
+      },
+      "pin" : {
+        "title" : "PIN creation",
+        "description" : "It prevents unwanted access"
+      },
+      "setupChoice" : {
+        "title" : "設定の選択"
+      },
+      "security" : {
+        "title" : "セキュリティ設定",
+        "description" : "Secret Recovery Phrase",
+        "recoveryKeyDescription" : "Recovery Key"
+      },
+      "restore" : {
+        "title" : "アクセスを復元",
+        "recoveryPhraseDescription" : "Secret Recovery Phrase"
+      },
+      "info" : {
+        "cards" : {
+          "setupChoice" : "どの設定方法にしますか？",
+          "recoveryPhrase" : "シークレットリカバリーフレーズとは？",
+          "restoreChoice" : "復元に使用するバックアップを選択してください",
+          "recoveryKey" : "リカバリーキーとは？",
+          "restoreRecoveryKey" : "シークレットリカバリーキーとは？"
+        },
+        "faq" : "すべてのFAQを見る",
+        "setupChoice" : {
+          "title" : "セットアップまたは復元？",
+          "newDevice" : {
+            "title" : "新しいLedgerデバイスとしてセットアップする",
+            "description" : "これにより、シークレットリカバリーフレーズが生成されます。まだお持ちでない場合は、こちらを選択してください。"
+          },
+          "restore" : {
+            "title" : "バックアップから復元",
+            "description" : "既存のバックアップ（シークレットリカバリーフレーズ、リカバリーキー、またはLedger Recover™）を使用して復元。",
+            "descriptionWithoutRecoveryKey" : "既存のバックアップを使用して復元：シークレットリカバリーフレーズまたはLedger Recover。"
+          }
+        },
+        "recoveryPhrase" : {
+          "title" : "シークレットリカバリーフレーズ",
+          "description" : "シークレットリカバリーフレーズは、12単語、18単語、または24単語からなる固有のリストです。これはウォレットのマスターバックアップであり、デバイスの紛失、破損、または交換時にアカウントへのアクセスを復元できます。"
+        },
+        "restoreChoice" : {
+          "recoveryPhrase" : {
+            "title" : "シークレットリカバリーフレーズ",
+            "description" : "ウォレットの初期設定時に保存した12単語、18単語、または24単語を使用してください。"
+          },
+          "recoveryKey" : {
+            "title" : "Ledger Recovery Key",
+            "description" : "オフラインのPINコードで保護されたカードをタップして復元します。"
+          },
+          "recover" : {
+            "title" : "Ledger Recoverサブスクリプション",
+            "description" : "有効なサブスクリプションを通じて本人認証を行い、アクセスを復元します。"
+          }
+        },
+        "recoveryKey" : {
+          "title" : "リカバリーキー",
+          "description" : "ウォレットのプライベートなスペアキーを保管しましょう。シークレットリカバリーフレーズは暗号化され、PINコードで保護されたカードに完全にオフラインでバックアップされるため、Ledgerデバイスを紛失または交換した場合でも、タップするだけでアクセスを復元できます。",
+          "inTheBox" : "Recovery Keyはデバイスの箱に同梱されています。",
+          "learnHowToUse" : "使い方を学ぶ"
+        }
+      },
+      "connection" : {
+        "reconnecting" : {
+          "title" : "{{productName}}に再接続しています",
+          "description" : "{{productName}}の電源をオンにし、ロックを解除した状態で、スマートフォンの近くに置いてください。"
+        },
+        "failed" : {
+          "title" : "{{productName}}に接続できませんでした",
+          "description" : "{{productName}}の電源がオンになっており、ロックが解除され、スマートフォンの近くにあることを確認してから、再度お試しください。",
+          "retryCta" : "再試行",
+          "helpCta" : "ヘルプ"
+        }
+      },
+      "updateOffer" : {
+        "title" : "すべての機能をご利用いただくには、OS™をアップデートしてください。",
+        "versions" : "OS {{current}} → OS {{available}}",
+        "description" : "トランザクションの確認と、最新のデバイス機能をご利用いただけます。",
+        "updateCta" : "Ledger OSをアップデートする",
+        "skip" : {
+          "title" : "このアップデートをスキップしますか？",
+          "description" : "お使いのLedgerデバイスの最新の修正や機能を利用できなくなります。",
+          "updateCta" : "今すぐアップデート",
+          "skipCta" : "スキップする"
+        }
       }
     },
     "connection" : {
@@ -3877,6 +4113,20 @@
       "crypto" : "暗号資産",
       "card" : "カード",
       "accessibilityLabel" : "トランザクション履歴のタイプ"
+    },
+    "exportDialog" : {
+      "title" : "トランザクション履歴をエクスポート",
+      "disclaimer" : "推定値のみ。カウンターバリューは、情報提供の目的でKaikoによって提供されます。このデータを税務、法務、または会計の目的に使用しないでください。",
+      "accountsToInclude" : "含まれるアカウント",
+      "selectAll" : "すべてを選択 ({{count}})",
+      "deselectAll" : "全ての選択解除 ({{count}})",
+      "export" : "エクスポート履歴",
+      "successTitle" : "取引履歴が正常に保存されました。",
+      "successDescription" : "取引履歴のCSVファイルは、選択したフォルダに正常に保存されました。",
+      "done" : "完了",
+      "errorTitle" : "問題が発生しました。",
+      "errorDescription" : "トランザクション履歴のエクスポート中にエラーが発生しました。もう一度お試しください。",
+      "tryAgain" : "再試行"
     }
   },
   "operationsList" : {
@@ -3888,7 +4138,11 @@
       "hideDustTransactions" : "ダストトランザクションを非表示にする",
       "showDustTransactions" : "ダストトランザクションを表示する",
       "dustTransactionsHiddenDescription" : "{{threshold}}未満のトランザクションは非表示になります。",
-      "dustTransactionsDisplayedDescription" : "{{threshold}}未満のトランザクションは表示されます。"
+      "dustTransactionsDisplayedDescription" : "{{threshold}}未満のトランザクションは表示されます。",
+      "exportCsv" : {
+        "title" : "トランザクション履歴をエクスポート",
+        "description" : "アカウントのトランザクションをCSVファイルとして保存します。"
+      }
     }
   },
   "operationDetails" : {
@@ -5578,7 +5832,7 @@
       },
       "sponsoredPolling" : {
         "title" : "エネルギーを提供中です。",
-        "waiting" : "これには通常、最大30秒かかります。",
+        "waiting" : "最大2分ほどかかる場合があります。",
         "elapsed" : "経過時間：{{time}}"
       },
       "sponsoredFailure" : {
@@ -6025,6 +6279,26 @@
       }
     }
   },
+  "connectKnownOrNewDevice" : {
+    "title" : "デバイス",
+    "add" : "追加",
+    "addDevice" : "Add a Ledger device",
+    "showAll" : "Show all {{count}} devices",
+    "showLess" : "Show less",
+    "status" : {
+      "unavailable" : "Not connected",
+      "available" : "Available",
+      "connected" : "Connected"
+    },
+    "menu" : {
+      "accessibilityLabel" : "{{deviceName}} options",
+      "disconnect" : "Disconnect",
+      "remove" : "Remove"
+    },
+    "waitingHint" : {
+      "title" : "Can't see your Ledger device?"
+    }
+  },
   "osUpdates" : {
     "backupBanner" : {
       "title" : "保存された設定が見つかりました",
@@ -6036,6 +6310,11 @@
       "title" : "デバイスはBootloaderモードです。",
       "description" : "「続行」をクリックしてアップデートします。",
       "continue" : "続行"
+    },
+    "updateOnDesktop" : {
+      "title" : "パソコンでアップデートしてください",
+      "description" : "お使いの{{productName}}には、デスクトップ版のLedger Wallet™からのみインストール可能な、1回限りのアップデートが必要です。",
+      "gotIt" : "了解"
     },
     "banner" : {
       "wallet40" : {
@@ -8384,18 +8663,60 @@
         "limitZero" : "トラストリミットは、0より大きくする必要があります。"
       },
       "success" : {
-        "title" : "{{token}}が追加されました",
-        "text" : "次回の同期後、残高0としてアカウントに表示されます。"
+        "title" : "{{token}}を追加するリクエストが送信されました。",
+        "text" : "ネットワークによるトランザクションの承認後に適用されます。"
+      }
+    },
+    "manageAssets" : {
+      "cta" : "管理",
+      "title" : "資産管理",
+      "empty" : "このアカウントにはまだトークンがありません。",
+      "tokenType" : "トークンタイプ",
+      "tokenTypeInfo" : "Trust Line (IOU) には、残高上限とリップリング設定があります。Multi Purpose Token (MPT) には設定はありません。",
+      "iou" : "Trust Line (IOU)",
+      "mpt" : "Multi Purpose Token",
+      "issuer" : "発行者",
+      "transferFee" : "転送手数料",
+      "transferFeeInfo" : "ホルダー間の各送金から、発行者が受け取る割合。",
+      "transferFeeUnavailable" : "利用不可",
+      "lockedAmount" : "ロックされた数量",
+      "ripplingInfo" : "リップリングにより、他のユーザーによる支払いで、同一の通貨コードを持つトークン間での残高移動が可能になります。",
+      "edit" : "編集",
+      "delete" : "削除",
+      "removalPending" : "削除保留中",
+      "frozen" : "このトークンは凍結されています。",
+      "deleteBlocked" : {
+        "title" : "削除するには、{{ticker}}の残高を空にしてください。",
+        "description" : "この資産を削除するには、残りの{{ticker}}の残高を送信してください。"
+      },
+      "deleteConfirm" : {
+        "title" : "{{ticker}}を削除してもよろしいですか？",
+        "description" : "この資産はポートフォリオから削除され、今後は受け取ることができなくなります。ロックされた数量は、{{accountName}}アカウントに返還されます。",
+        "descriptionIou" : "この資産はポートフォリオから削除され、今後は受け取ることができなくなります。ロックされた数量は、{{accountName}}アカウントに返還されます。デバイスに0のトラスト制限が表示されます。これが、XRP Ledgerがトークンを削除する仕組みです。"
+      },
+      "deleteSuccess" : {
+        "title" : "{{ticker}}がアカウントから正常に削除されました",
+        "description" : "この資産はいつでも再度追加できます。"
+      },
+      "deleteError" : {
+        "title" : "資産の削除に失敗しました",
+        "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
       }
     },
     "tokenSettings" : {
       "limit" : "信用限度",
+      "balanceLimit" : "残高上限",
       "maxLimit" : "トラストラインの最大限度額",
       "maxLimitInfo" : "トラストリミットは、アカウントが保有を受け入れる最大の{{token}}量です。許容されるトラストラインの最大限度額は<amount/>です。",
       "maximum" : "最大"
     },
+    "send" : {
+      "issuerFee" : "発行者手数料"
+    },
     "rippling" : {
       "label" : "リップリング",
+      "activated" : "有効化されました",
+      "deactivated" : "無効化されました",
       "on" : "オン",
       "off" : "オフ",
       "warning" : "これをオンにすると、他のユーザーによる支払いで、同一の通貨コードを持つトークン間での残高移動が許可されます。自分が何をしているのか理解している場合にのみ、オンにしてください。"
@@ -11337,6 +11658,9 @@
         "outgoingTitle" : "送金の詳細"
       },
       "amount" : "数量",
+      "unknownToken" : "不明なトークン",
+      "instrumentId" : "インストルメントID",
+      "instrumentAdmin" : "インストルメント管理者",
       "from" : "送付元",
       "to" : "送付先",
       "memo" : "メモ",

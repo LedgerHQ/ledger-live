@@ -1135,6 +1135,22 @@
       "title" : "Sui uygulamanızı güncelleyin",
       "description" : "Ledger Sui uygulamanız, SUI adres bakiyenizden bir transferi imzalayamıyor. Ledger cihazınızdaki Sui uygulamasını güncelleyin ve tekrar deneyin."
     },
+    "SuiRawTransactionInvalid" : {
+      "title" : "Okunamayan Sui işlemi",
+      "description" : "Uygulama, Ledger Wallet’ın okuyamadığı bir Sui işlemi gönderdi. Uygulama üzerinden tekrar deneyin veya uygulamanın destek ekibiyle iletişime geçin."
+    },
+    "SuiRawTransactionSenderMismatch" : {
+      "title" : "Yanlış Sui hesabı",
+      "description" : "Bu işlem başka bir Sui hesabı için hazırlanmış. Uygulamaya bağlı hesabı seçip tekrar deneyin."
+    },
+    "SuiRawTransactionResolutionFailed" : {
+      "title" : "Sui işlemi hazırlanamadı",
+      "description" : "İşlemde kullanılan varlıkların hâlâ mevcut olduğundan ve hesabın ağ ücretlerini karşılayabildiğinden emin olun, ardından uygulama üzerinden tekrar deneyin."
+    },
+    "SuiSponsoredTransactionBroadcastUnsupported" : {
+      "title" : "Sponsorlu Sui işlemi",
+      "description" : "Bu işlemin ağ ücretleri bir sponsor tarafından ödendiğinden Ledger Wallet işlemi ağa gönderemez. İşlemi uygulamanın kendisi göndermelidir. Sorun devam ederse uygulamanın destek ekibiyle iletişime geçin."
+    },
     "PasswordIncorrect" : {
       "title" : "Yanlış parola",
       "description" : "Lütfen tekrar deneyin."
@@ -1441,6 +1457,10 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
     },
+    "SolanaTxBlockhashExpired" : {
+      "title" : "İşlemin süresi doldu",
+      "description" : "Ağ bu işlemi artık kabul etmiyor. Lütfen yeni bir işlem oluşturmak için tekrar deneyin."
+    },
     "SolanaRecipientMemoIsRequired" : {
       "title" : "Alıcı adresi için memo gereklidir"
     },
@@ -1620,11 +1640,11 @@
       "description" : "Bu token’ı artık tutmak istemiyorsanız onu kaldırın."
     },
     "XrpTokenFrozen" : {
-      "title" : "Bu token’ı gönderemezsiniz",
+      "title" : "Token donduruldu",
       "description" : "İhraççısı bu token'ı dondurdu."
     },
     "XrpTokenNotAuthorized" : {
-      "title" : "Bu token’ı gönderemezsiniz",
+      "title" : "Hesabınız onaylanmadı",
       "description" : "Token’ın ihraççısı, hesabınızın bu token’ı tutmasını onaylamadı."
     },
     "XrpTokenCannotReceive" : {
@@ -1649,6 +1669,54 @@
     "XrpReserveIncrease" : {
       "title" : "Bu token hesabınızda ekli olduğu sürece {{amount}} kilitli kalacaktır.",
       "description" : "Token’ı kaldırdığınızda bu tutarı geri alırsınız."
+    },
+    "XrpAccountNotActivated" : {
+      "title" : "Hesabınız henüz etkinleştirilmedi",
+      "description" : "Hesabınızı etkinleştirmek ve bu token’ı eklemek için en az {{amount}} alın. Bu tutar, hesabın etkinleştirilmesi için gereken miktarı ve token için kilitlenen XRP’yi karşılar."
+    },
+    "XrpTrustLimitTooHigh" : {
+      "title" : "Limit, maksimum değerin üzerinde",
+      "description" : "En yüksek limiti belirlemek için Maks. butonunu kullanın."
+    },
+    "XrpTrustSetUnchanged" : {
+      "title" : "Bu ayarlar zaten uygulanmış durumda",
+      "description" : "Bu token’ı güncellemek için limiti veya rippling ayarını değiştirin."
+    },
+    "XrpRecipientNotActivated" : {
+      "title" : "Bu hesap etkinleştirilmemiş",
+      "description" : "Token alamaz."
+    },
+    "XrpRecipientTokenNotAdded" : {
+      "title" : "Bu alıcı bu token’ı henüz alamaz",
+      "description" : "Öncelikle token'ı eklemesini isteyin."
+    },
+    "XrpRecipientLimitTooLow" : {
+      "title" : "Alıcı limiti çok düşük",
+      "description" : "Alıcı, bu token’dan en fazla {{maxAmount}} alabilir."
+    },
+    "XrpSendToIssuer" : {
+      "title" : "Token ihraççısına gönderiliyor",
+      "description" : "Bu token'lar imha edilecek ve hiç kimseye aktarılmayacaktır."
+    },
+    "XrpOptOutBalanceNotZero" : {
+      "title" : "Bu token'daki bakiyeniz 0 olmalıdır",
+      "description" : "Token'ı kaldırmadan önce tamamını gönderin."
+    },
+    "XrpOptOutTokenInEscrow" : {
+      "title" : "Bu token'ın bir kısmı emanet hesabında",
+      "description" : "Emanet işlemi tamamlandıktan veya iptal edildikten sonra token’ı kaldırın."
+    },
+    "XrpOptOutTokenFrozen" : {
+      "title" : "{{assetCode}} kaldırılamıyor",
+      "description" : "İhraççısı bu token'ı hesabınızda dondurdu."
+    },
+    "XrpOptOutIncomplete" : {
+      "title" : "Bu token kaldırılamıyor",
+      "description" : "XRP Ledger bu token’ı, kilitli XRP’siyle birlikte hesabınızda tutmaya devam eder."
+    },
+    "XrpReserveRelease" : {
+      "title" : "Bu token için kilitlenen {{amount}} serbest bırakılacak.",
+      "description" : "Token kaldırıldıktan sonra bu tutarı harcayabilirsiniz."
     },
     "HederaMemoExceededSizeError" : {
       "title" : "Geçersiz memo boyutu, en fazla 100 karaktere izin verilir"
@@ -1938,7 +2006,7 @@
       "title" : "Kapsamlı log'lar",
       "derivationTip" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdana aktarırken aynı türev modunu seçin.",
       "synchronised" : "{{date}} senkronize edildi",
-      "copy" : "Log kopyala",
+      "copy" : "Log'ları kopyala",
       "copied" : "Kopyalandı"
     },
     "remove" : {
@@ -2346,10 +2414,36 @@
     }
   },
   "receiveAddress" : {
+    "title" : "{{asset}} al",
+    "networkLabel" : "{{network}} ağı",
+    "close" : "Kapat",
+    "back" : "Geri",
     "addressDisplayed" : {
       "title" : "Adres güvenli bir şekilde görüntüleniyor",
-      "description" : "Yapıştırdığınız veya paylaştığınız adresin Ledger cihazınızda görünen adresle aynı olduğunu doğrulayın.",
-      "gotItCta" : "Anladım"
+      "description" : "Yapıştırdığınız veya paylaştığınız adresin Ledger cihazınızda görünen adresle aynı olduğunu doğrulayın."
+    },
+    "addressVerified" : {
+      "title" : "Adres doğrulandı",
+      "description" : "Ledger Wallet’taki adres, Ledger cihazınızdaki adresle eşleşiyor.",
+      "doneCta" : "Tamam"
+    },
+    "addressMismatch" : {
+      "title" : "Bu adres Ledger cihazınızdaki adresle eşleşmiyor",
+      "description" : "Bu adresi kullanmayın. Bu hesabın kurulu olmadığı bir Ledger cihazı kullanıyor olabilirsiniz. Doğru cihazı bağlayın ve adresi yeniden doğrulayın. Adres hâlâ eşleşmiyorsa Ledger Destek ekibiyle iletişime geçin.",
+      "contactSupportCta" : "Ledger Destek ile iletişime geçin",
+      "closeCta" : "Kapat"
+    },
+    "selectAddress" : {
+      "title" : "Adres seçin"
+    },
+    "addressOptions" : {
+      "transparent" : "Açık adres",
+      "shielded" : "Gizli adres"
+    },
+    "error" : {
+      "title" : "We couldn't load this address",
+      "description" : "Check your internet connection, then try again.",
+      "retry" : "Retry"
     }
   },
   "ratings" : {
@@ -2637,6 +2731,49 @@
         "nothingMoves" : "Sizin onayınız olmadan hiçbir şey hareket etmez.",
         "setUp" : "Şimdi birlikte kuralım.",
         "cta" : "Cihazı kontrol et"
+      },
+      "recover" : {
+        "tooManyBackups" : "Yedeklemenin fazlası olmaz.",
+        "encryptedBackup" : "Özellikle de şifrelenmiş bir dijital yedeklemenin.",
+        "thereWhenYouNeedIt" : "İhtiyaç duyduğunuzda elinizin altında olan dijital bir yedekleme.",
+        "title" : "Ledger Recover™ ile cüzdanınıza erişiminizi koruyun.",
+        "description" : "Fiziksel kurtarma kâğıtları kaybolabilir veya zarar görebilir. Ledger Recover, kimliğinize bağlı şifreli bir yedekleme oluşturur.",
+        "price" : "İlk ay ücretsiz, ardından ayda $9,99'dan başlayan fiyatlarla. Dilediğiniz zaman iptal edin. Hüküm ve Koşullar geçerlidir",
+        "protect" : "Cüzdanı yedekle",
+        "skip" : "Şimdilik atla",
+        "sheet" : {
+          "title" : "Ledger Recover nasıl çalışır?",
+          "identity" : {
+            "title" : "Kimliğinizle koruma altında",
+            "description" : "Geri yükleme işleminin anahtarı yüzünüz ve kimlik belgenizdir."
+          },
+          "security" : {
+            "title" : "Gelişmiş dijital güvenlik",
+            "description" : "Şifrelenir, parçalara bölünür ve asla tek bir yerde saklanmaz."
+          },
+          "legacy" : {
+            "title" : "Dijital servetinizi geleceğe hazırlayın",
+            "description" : "Yedeklemenizi korumanıza yardımcı olması için güvendiğiniz birini ekleyin."
+          },
+          "start" : "Hemen başlayın (~10 dk.)",
+          "remindLater" : "Daha sonra hatırlat"
+        }
+      },
+      "success" : {
+        "allSet" : "İşte bu kadar!",
+        "timeToExplore" : "Keşfetme zamanı",
+        "cta" : "Hemen keşfet",
+        "ready" : "İşte bu kadar.",
+        "walletReady" : "Cüzdanınız hazır."
+      }
+    },
+    "recover" : {
+      "restore" : {
+        "title" : "Continuing with Ledger Recover",
+        "description" : "You’ll sign in with your Ledger Recover credentials to complete your restore.",
+        "identity" : "Ledger Recover will verify your identity to unlock your recovery",
+        "phrase" : "Once verified, your Secret Recovery Phrase will be securely restored to your device",
+        "cta" : "Continue to Ledger Recover"
       }
     },
     "checks" : {
@@ -2695,6 +2832,105 @@
       "success" : {
         "title" : "Senkronizasyon tamamlandı",
         "cta" : "Devam"
+      }
+    },
+    "setup" : {
+      "title" : "Ledger cihazınızda devam edin",
+      "checks" : {
+        "title" : "Orijinallik ve İşletim Sistemi Denetimi",
+        "description" : "Cihazınız denetleniyor",
+        "successDescription" : "Cihazınız orijinal ve kullanımı güvenli",
+        "notUpToDateDescription" : "Cihazınız güncel değil"
+      },
+      "naming" : {
+        "title" : "Cihaz adı",
+        "description" : "{{productName}} cihazınıza benzersiz bir isim verin"
+      },
+      "pin" : {
+        "title" : "PIN oluşturun",
+        "description" : "İstenmeyen erişimi engeller"
+      },
+      "setupChoice" : {
+        "title" : "Kurulum seçimi"
+      },
+      "security" : {
+        "title" : "Güvenlik kurulumu",
+        "description" : "Gizli Kurtarma İfadesi",
+        "recoveryKeyDescription" : "Recovery Key"
+      },
+      "restore" : {
+        "title" : "Erişimi geri yükleyin",
+        "recoveryPhraseDescription" : "Gizli Kurtarma İfadesi"
+      },
+      "info" : {
+        "cards" : {
+          "setupChoice" : "Hangi kurulum yöntemi?",
+          "recoveryPhrase" : "Gizli Kurtarma İfadesi nedir?",
+          "restoreChoice" : "Geri yüklemek için bir yedekleme seçin",
+          "recoveryKey" : "Recovery Key nedir?",
+          "restoreRecoveryKey" : "Gizli Kurtarma İfadesi nedir?"
+        },
+        "faq" : "Tüm SSS'leri görüntüle",
+        "setupChoice" : {
+          "title" : "Kurulum mu yoksa geri yükleme mi?",
+          "newDevice" : {
+            "title" : "Yeni bir Ledger cihazı olarak kur",
+            "description" : "Gizli Kurtarma İfadenizi oluşturur. Henüz bir ifadeniz yoksa bunu seçin."
+          },
+          "restore" : {
+            "title" : "Yedeklemeyi geri yükle",
+            "description" : "Mevcut bir yedeklemeyi kullanarak geri yükleyin: Gizli Kurtarma İfadesi, Recovery Key veya Ledger Recover.",
+            "descriptionWithoutRecoveryKey" : "Mevcut bir yedeklemeyi kullanarak geri yükleyin: Gizli Kurtarma İfadesi veya Ledger Recover."
+          }
+        },
+        "recoveryPhrase" : {
+          "title" : "Gizli Kurtarma İfadesi",
+          "description" : "Gizli Kurtarma İfadeniz 12, 18 veya 24 kelimeden oluşan benzersiz bir listedir. Cüzdanınızın ana yedeğidir ve cihazınız kaybolur, hasar görür ya da değiştirilirse hesaplarınıza yeniden erişmenizi sağlar."
+        },
+        "restoreChoice" : {
+          "recoveryPhrase" : {
+            "title" : "Gizli Kurtarma İfadesi",
+            "description" : "Cüzdanınızı kurarken kaydettiğiniz 12, 18 veya 24 kelimeyi kullanın."
+          },
+          "recoveryKey" : {
+            "title" : "Ledger Recovery Key",
+            "description" : "Çevrim dışı ve PIN korumalı kartınızla tek dokunuşta geri yükleyin."
+          },
+          "recover" : {
+            "title" : "Ledger Recover aboneliği",
+            "description" : "Erişimi geri yüklemek için aktif aboneliğiniz üzerinden kimliğinizi doğrulayın."
+          }
+        },
+        "recoveryKey" : {
+          "title" : "Recovery Key",
+          "description" : "Cüzdanınız için size özel bir yedek anahtar bulundurun. Gizli Kurtarma İfadeniz şifrelenir ve PIN korumalı bir kartta tamamen çevrim dışı olarak yedeklenir. Ledger cihazınız kaybolursa veya değiştirilirse tek dokunuşla erişiminizi geri kazanabilirsiniz.",
+          "inTheBox" : "Cihazınızın kutusunda bir Recovery Key bulunur.",
+          "learnHowToUse" : "Nasıl kullanacağınızı öğrenin"
+        }
+      },
+      "connection" : {
+        "reconnecting" : {
+          "title" : "{{productName}} cihazınıza yeniden bağlanılıyor",
+          "description" : "{{productName}} cihazınızı çalışır durumda, kilidini açık ve telefonunuza yakın tutun."
+        },
+        "failed" : {
+          "title" : "{{productName}} cihazına bağlanılamadı",
+          "description" : "{{productName}} cihazınızın çalışır durumda, kilidinin açık ve telefonunuza yakın olduğundan emin olun, ardından tekrar deneyin.",
+          "retryCta" : "Tekrar dene",
+          "helpCta" : "Yardım"
+        }
+      },
+      "updateOffer" : {
+        "title" : "Tüm işlevlerin kilidini açmak için Ledger OS™'i güncelleyin",
+        "versions" : "İşletim Sistemi {{current}} → İşletim Sistemi {{available}}",
+        "description" : "İşlem denetimine ve en yeni cihaz özelliklerine erişim sağlayın.",
+        "updateCta" : "Ledger OS™'i güncelleyin",
+        "skip" : {
+          "title" : "Bu güncellemeyi atlamak istiyor musunuz?",
+          "description" : "Ledger cihazınız için en son düzeltmeleri ve özellikleri kaçıracaksınız.",
+          "updateCta" : "Şimdi güncelle",
+          "skipCta" : "Yine de atla"
+        }
       }
     },
     "connection" : {
@@ -3877,6 +4113,20 @@
       "crypto" : "Kripto",
       "card" : "Kart",
       "accessibilityLabel" : "İşlem geçmişi türü"
+    },
+    "exportDialog" : {
+      "title" : "İşlem geçmişini dışa aktarın",
+      "disclaimer" : "Yalnızca tahmini değerler. Karşı değerler, Kaiko tarafından yalnızca bilgi amaçlı sağlanmaktadır. Bu verileri vergi, hukuk veya muhasebe amaçlarıyla kullanmayın.",
+      "accountsToInclude" : "Dahil edilecek hesaplar",
+      "selectAll" : "Tümünü seç ({{count}})",
+      "deselectAll" : "Tüm seçimleri kaldır ({{count}})",
+      "export" : "Geçmişi dışa aktar",
+      "successTitle" : "İşlem geçmişi başarıyla kaydedildi",
+      "successDescription" : "İşlem geçmişinizi içeren CSV dosyası, seçilen klasöre başarıyla kaydedildi.",
+      "done" : "Tamam",
+      "errorTitle" : "Bir hata oluştu",
+      "errorDescription" : "İşlem geçmişinizi dışa aktarırken bir hata oluştu. Lütfen tekrar deneyin.",
+      "tryAgain" : "Tekrar deneyin"
     }
   },
   "operationsList" : {
@@ -3888,7 +4138,11 @@
       "hideDustTransactions" : "Toz işlemleri gizle",
       "showDustTransactions" : "Toz işlemleri göster",
       "dustTransactionsHiddenDescription" : "{{threshold}} tutarının altındaki işlemler gizlenecektir.",
-      "dustTransactionsDisplayedDescription" : "{{threshold}} tutarının altındaki işlemler görüntülenecektir."
+      "dustTransactionsDisplayedDescription" : "{{threshold}} tutarının altındaki işlemler görüntülenecektir.",
+      "exportCsv" : {
+        "title" : "İşlem geçmişini dışa aktarın",
+        "description" : "Hesaplarınızın işlemlerini bir CSV dosyası olarak kaydedin."
+      }
     }
   },
   "operationDetails" : {
@@ -5578,7 +5832,7 @@
       },
       "sponsoredPolling" : {
         "title" : "Enerjiniz teslim ediliyor",
-        "waiting" : "Bu işlem genellikle 30 saniyeye kadar sürer.",
+        "waiting" : "Bu, 2 dakika kadar sürebilir...",
         "elapsed" : "Geçen süre: {{time}}"
       },
       "sponsoredFailure" : {
@@ -6025,6 +6279,26 @@
       }
     }
   },
+  "connectKnownOrNewDevice" : {
+    "title" : "Cihazlar",
+    "add" : "Ekle",
+    "addDevice" : "Add a Ledger device",
+    "showAll" : "Show all {{count}} devices",
+    "showLess" : "Show less",
+    "status" : {
+      "unavailable" : "Not connected",
+      "available" : "Available",
+      "connected" : "Connected"
+    },
+    "menu" : {
+      "accessibilityLabel" : "{{deviceName}} options",
+      "disconnect" : "Disconnect",
+      "remove" : "Remove"
+    },
+    "waitingHint" : {
+      "title" : "Can't see your Ledger device?"
+    }
+  },
   "osUpdates" : {
     "backupBanner" : {
       "title" : "Kayıtlı ayarlar bulundu",
@@ -6036,6 +6310,11 @@
       "title" : "Cihaz Bootloader (önyükleyici) modunda.",
       "description" : "Güncellemek için \"Devam\" butonuna tıklayın.",
       "continue" : "Devam"
+    },
+    "updateOnDesktop" : {
+      "title" : "Bilgisayarınızda güncelleyin",
+      "description" : "{{productName}} cihazınız için yalnızca masaüstü Ledger Wallet uygulamasından yüklenebilen tek seferlik bir güncelleme gerekiyor.",
+      "gotIt" : "Anladım"
     },
     "banner" : {
       "wallet40" : {
@@ -8384,18 +8663,60 @@
         "limitZero" : "Güven limiti 0'ın üzerinde olmalıdır."
       },
       "success" : {
-        "title" : "{{token}} eklendi",
-        "text" : "Bir sonraki senkronizasyondan sonra token, hesabınızda 0 bakiyeyle görünür."
+        "title" : "{{token}} ekleme talebi gönderildi",
+        "text" : "Ağ işlemi onayladığında geçerli olur."
+      }
+    },
+    "manageAssets" : {
+      "cta" : "Yönet",
+      "title" : "Varlıkları yönetin",
+      "empty" : "Bu hesapta henüz token bulunmuyor.",
+      "tokenType" : "Token türü",
+      "tokenTypeInfo" : "Güven hattının (IOU) bir bakiye limiti ve bir rippling ayarı vardır. Multi Purpose Token’ın (MPT) ise herhangi bir ayarı yoktur.",
+      "iou" : "Güven Hattı (IOU)",
+      "mpt" : "Çok Amaçlı Token",
+      "issuer" : "İhraççı",
+      "transferFee" : "Transfer ücreti",
+      "transferFeeInfo" : "Token sahipleri arasındaki her transferden ihraççının aldığı pay.",
+      "transferFeeUnavailable" : "Mevcut değil",
+      "lockedAmount" : "Kilitli tutar",
+      "ripplingInfo" : "Rippling, diğer kullanıcıların ödemelerinin bakiyenizi aynı para birimi koduna sahip token’lar arasında aktarmasına olanak tanır.",
+      "edit" : "Düzenle",
+      "delete" : "Sil",
+      "removalPending" : "Kaldırılması bekleniyor",
+      "frozen" : "Bu token donduruldu",
+      "deleteBlocked" : {
+        "title" : "Kaldırmak için {{ticker}} bakiyenizi boşaltın",
+        "description" : "Bu varlığı kaldırmak için kalan {{ticker}} bakiyenizi gönderin."
+      },
+      "deleteConfirm" : {
+        "title" : "{{ticker}} varlığını silmek istediğinizden emin misiniz?",
+        "description" : "Bu varlık portföyünüzden kaldırılacak ve artık bu varlığı alamayacaksınız. Kilitli tutar {{accountName}} hesabınıza aktarılacak.",
+        "descriptionIou" : "Bu varlık portföyünüzden kaldırılacak ve artık bu varlığı alamayacaksınız. Kilitli tutar {{accountName}} hesabınıza aktarılacak. Cihazınızda güven limiti 0 olarak görünecek. XRP Ledger, token’ları bu şekilde kaldırır."
+      },
+      "deleteSuccess" : {
+        "title" : "{{ticker}} hesabınızdan başarıyla kaldırıldı",
+        "description" : "Bu varlığı istediğiniz zaman tekrar ekleyebilirsiniz."
+      },
+      "deleteError" : {
+        "title" : "Varlık kaldırılamadı",
+        "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
       }
     },
     "tokenSettings" : {
       "limit" : "Güven limiti",
+      "balanceLimit" : "Bakiye limiti",
       "maxLimit" : "Maksimum güven limiti",
       "maxLimitInfo" : "Güven limiti, hesabınızın tutmayı kabul ettiği en yüksek {{token}} miktarıdır. İzin verilen maksimum güven limiti: <amount/>.",
       "maximum" : "Maksimum"
     },
+    "send" : {
+      "issuerFee" : "İhraççı ücreti"
+    },
     "rippling" : {
       "label" : "Rippling",
+      "activated" : "Etkin",
+      "deactivated" : "Devre dışı",
       "on" : "Açık",
       "off" : "Kapalı",
       "warning" : "Bu ayarı açmak, diğer kullanıcıların ödemelerinin bakiyenizi aynı para birimi koduna sahip token’lar arasında aktarmasına izin verir. Bu ayarı yalnızca ne yaptığınızdan eminseniz açın."
@@ -11337,6 +11658,9 @@
         "outgoingTitle" : "Giden transfer bilgileri"
       },
       "amount" : "Miktar",
+      "unknownToken" : "Bilinmeyen token",
+      "instrumentId" : "Varlık Kimliği",
+      "instrumentAdmin" : "Yönetici",
       "from" : "Gönderici",
       "to" : "Alıcı",
       "memo" : "Memo",
