@@ -47,7 +47,6 @@
     "@domain/api-currency-token": "workspace:*",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
@@ -80,7 +79,6 @@
   "peerDependencies": {
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
@@ -103,9 +101,6 @@
       "optional": true
     },
     "@ledgerhq/crypto-icons": {
-      "optional": true
-    },
-    "@ledgerhq/lumen-design-core": {
       "optional": true
     },
     "react-native-reanimated": {
