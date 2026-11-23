@@ -1,14 +1,35 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import { ContextModuleBuilder } from "@ledgerhq/context-module";
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
+import { SignerXrpBuilder } from "@ledgerhq/device-signer-kit-xrp";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import { of, throwError } from "rxjs";
 import { DmkSignerXrp } from "../src/DmkSignerXrp";
 
+jest.mock("@ledgerhq/context-module", () => {
+  class MockContextModuleBuilder {
+    setAppSource() {
+      return this;
+    }
+    setChain() {
+      return this;
+    }
+    build() {
+      return "contextModule";
+    }
+  }
+  return {
+    ContextModuleBuilder: MockContextModuleBuilder,
+    ContextModuleChainID: { Xrp: "xrp" },
+  };
+});
+
 jest.mock("@ledgerhq/device-signer-kit-xrp", () => ({
-  SignerXrpBuilder: jest.fn().mockImplementation(() => ({
-    build: () => ({}),
-  })),
+  SignerXrpBuilder: jest.fn().mockImplementation(() => {
+    const builder = { withContextModule: jest.fn(() => builder), build: () => ({}) };
+    return builder;
+  }),
 }));
 
 const PATH = "44'/144'/0'/0/0";
@@ -32,6 +53,32 @@ describe("DmkSignerXrp", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     signer = new DmkSignerXrp({} as any, "sessionId");
+  });
+
+  describe("constructor", () => {
+    let setChainSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      setChainSpy = jest.spyOn(ContextModuleBuilder.prototype, "setChain");
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("gives the kit an XRP context module and the origin token, to load MPT descriptors", () => {
+      new DmkSignerXrp({} as any, "sessionId");
+
+      const builder = jest.mocked(SignerXrpBuilder).mock.results.at(-1)?.value;
+      expect(setChainSpy).toHaveBeenCalledWith("xrp");
+      expect(setChainSpy).toHaveBeenCalledTimes(1);
+      expect(builder.withContextModule).toHaveBeenCalledWith("contextModule");
+      expect(builder.withContextModule).toHaveBeenCalledTimes(1);
+
+      expect(SignerXrpBuilder).toHaveBeenLastCalledWith(
+        expect.objectContaining({ originToken: expect.any(String) }),
+      );
+    });
   });
 
   describe("getAddress", () => {

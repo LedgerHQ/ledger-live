@@ -15,6 +15,10 @@ Both `DmkSignerXrp` and `LegacySignerXrp` implement the same `XrpSigner` interfa
 `families/xrp/setup.ts` can pick one or the other from the feature flag without the coin
 framework knowing which is in use.
 
+### MPT clear signing
+
+`DmkSignerXrp` gives the kit a context module that reads MPT descriptors from the production CAL. XRP app 2.9.0 or later then shows the token ticker and amount. Without a descriptor, the app shows the payment without the ticker, or blind-signs it.
+
 ### Curve support
 
 The XRP application can sign on secp256k1 or ed25519, selected through the APDU's `p2`. The

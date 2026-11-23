@@ -1,4 +1,5 @@
 import { lastValueFrom } from "rxjs";
+import { ContextModuleBuilder, ContextModuleChainID } from "@ledgerhq/context-module";
 import {
   DeviceActionState,
   DeviceActionStatus,
@@ -19,7 +20,15 @@ export class DmkSignerXrp implements XrpSigner {
   private readonly signer: SignerXrp;
 
   constructor(dmk: DeviceManagementKit, sessionId: string) {
-    this.signer = new SignerXrpBuilder({ dmk, sessionId }).build();
+    const originToken = "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5"; // gitleaks:allow
+    const contextModule = new ContextModuleBuilder({ originToken })
+      .setAppSource("ledger-wallet")
+      .setChain(ContextModuleChainID.Xrp)
+      .build();
+
+    this.signer = new SignerXrpBuilder({ dmk, sessionId, originToken })
+      .withContextModule(contextModule)
+      .build();
   }
 
   private _mapError<E extends DAError>(error: E): Error {
