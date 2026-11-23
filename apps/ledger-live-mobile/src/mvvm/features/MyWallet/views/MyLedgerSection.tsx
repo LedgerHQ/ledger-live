@@ -1,6 +1,8 @@
 import React from "react";
 import { useIsFocused } from "@react-navigation/native";
+import { useFeature } from "@features/platform-feature-flags";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
+import { MyWalletDeviceList } from "./MyWalletDeviceList";
 import { MyWalletDeviceListLegacy } from "./MyWalletDeviceListLegacy";
 
 type MyLedgerSectionProps = {
@@ -15,11 +17,14 @@ function PostOnboardingRedirect() {
 
 export function MyLedgerSection({ onPairingStateChanged }: MyLedgerSectionProps) {
   const isFocused = useIsFocused();
-  if (!isFocused) return null;
+  const isDeviceListEnabled = useFeature("lwmMyWalletDeviceList")?.enabled ?? false;
   return (
     <>
-      <PostOnboardingRedirect />
-      <MyWalletDeviceListLegacy onPairingStateChanged={onPairingStateChanged} />
+      {isFocused && <PostOnboardingRedirect />}
+      {isDeviceListEnabled && <MyWalletDeviceList onAddModeChange={onPairingStateChanged} />}
+      {!isDeviceListEnabled && isFocused && (
+        <MyWalletDeviceListLegacy onPairingStateChanged={onPairingStateChanged} />
+      )}
     </>
   );
 }
