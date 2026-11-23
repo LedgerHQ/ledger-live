@@ -5,9 +5,9 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/live-dmk-mobile";
-import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
-import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
-import { WaitingForSelectedDeviceState } from "./WaitingForSelectedDeviceState";
+import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
+import { PAGE_CONNECT_DEVICE } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
+import { TrackedWaitingForSelectedDeviceState } from "./TrackedWaitingForSelectedDeviceState";
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
 
@@ -34,7 +34,7 @@ function renderState(device: KnownDevice) {
 
   return render(
     <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
-      <WaitingForSelectedDeviceState state={state} />
+      <TrackedWaitingForSelectedDeviceState device={state.device} />
     </DeviceIntentTrackingProvider>,
   );
 }
