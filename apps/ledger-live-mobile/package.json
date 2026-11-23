@@ -115,7 +115,6 @@
     "@domain/entity-market-index-altcoin-season": "workspace:^",
     "@domain/entity-predictions": "workspace:^",
     "@domain/entity-recent-addresses": "workspace:^",
-    "@domain/entity-starred-account": "workspace:^",
     "@domain/entity-wallet-sync": "workspace:^",
     "@features/flow-account-analytics": "workspace:^",
     "@features/flow-account-detail": "workspace:^",

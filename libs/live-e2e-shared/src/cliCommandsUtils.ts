@@ -193,7 +193,6 @@ export const addEmptyAccountCommand = (account: Account, options?: LiveDataComma
       id,
       seedIdentifier,
       name: account.accountName,
-      starred: false,
       used: false,
       derivationMode,
       index: account.index,

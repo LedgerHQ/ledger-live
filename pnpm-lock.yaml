@@ -2138,9 +2138,6 @@ importers:
       '@domain/entity-recent-addresses':
         specifier: workspace:^
         version: link:../../domain/entity/recent-addresses
-      '@domain/entity-starred-account':
-        specifier: workspace:^
-        version: link:../../domain/entity/starred-account
       '@domain/entity-wallet-sync':
         specifier: workspace:^
         version: link:../../domain/entity/wallet-sync
@@ -8403,46 +8400,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.4
-      '@typescript/native':
-        specifier: 'catalog:'
-        version: typescript@7.0.2
-      jest:
-        specifier: 'catalog:'
-        version: 30.5.2(@types/node@24.12.4)(babel-plugin-macros@3.1.0)
-      oxfmt:
-        specifier: 'catalog:'
-        version: 0.79.0
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.94.0
-      typescript:
-        specifier: 'catalog:'
-        version: '@typescript/typescript6@6.0.2'
-
-  domain/entity/starred-account:
-    dependencies:
-      '@domain/entity-account':
-        specifier: workspace:^
-        version: link:../account
-      '@reduxjs/toolkit':
-        specifier: 'catalog:'
-        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
-      immer:
-        specifier: ^11.0.0
-        version: 11.1.3
-    devDependencies:
-      '@ledgerhq/test-quarantine':
-        specifier: workspace:*
-        version: link:../../../support/test-quarantine
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11(@swc/helpers@0.5.23)
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2

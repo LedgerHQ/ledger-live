@@ -39,7 +39,6 @@ export const accountUserDataExportSelector = (
   return {
     id: account.id,
     name: accountNameWithDefaultSelector(state, account),
-    starredIds: [],
   };
 };
 

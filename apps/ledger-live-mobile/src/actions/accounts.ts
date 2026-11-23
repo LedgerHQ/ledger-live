@@ -11,7 +11,6 @@ import { AccountsActionTypes } from "./types";
 import logger from "../logger";
 import { getDefaultAccountName, initFromUserData } from "@domain/entity-account-name";
 import { checkAccountSupported } from "@ledgerhq/live-common/account/index";
-import { initStarredFromIds } from "@domain/entity-starred-account";
 import type { Dispatch } from "redux";
 
 type StoredAccount = { data: AccountRaw; version?: number };
@@ -62,7 +61,6 @@ export const importStore = async (rawAccounts: { active: StoredAccount[] }) => {
       payload: { accounts, accountsUserData },
     });
     dispatch(initFromUserData(accountsUserData.map(({ id, name }) => ({ id, name }))));
-    dispatch(initStarredFromIds(supported.flatMap(([, userData]) => userData.starredIds)));
   };
 };
 export const reorderAccounts = createAction<AccountsReorderPayload>(

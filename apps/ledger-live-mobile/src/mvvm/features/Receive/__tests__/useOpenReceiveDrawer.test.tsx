@@ -382,7 +382,6 @@ describe("useOpenReceiveDrawer", () => {
         operationsCount: 0,
         operations: [],
         pendingOperations: [],
-        starred: false,
         balanceHistoryCache: {
           HOUR: { latestDate: null, balances: [] },
           DAY: { latestDate: null, balances: [] },
