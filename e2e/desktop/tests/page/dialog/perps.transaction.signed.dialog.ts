@@ -12,7 +12,7 @@ export class PerpsTransactionSignedDialog extends Dialog {
   private readonly signedDescription = this.signedDialog.getByText(
     /^You'll receive your .+ once confirmed/,
   );
-  private readonly signedCloseButton = this.signedDialog.locator('[aria-label="Close"]');
+  private readonly signedCloseButton = this.signedDialog.getByRole("button", { name: "Close" });
 
   @step("Verify the Perps transaction signed dialog")
   async expectTransactionSigned(receiverAccount: Account) {

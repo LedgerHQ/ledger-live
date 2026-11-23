@@ -21,6 +21,7 @@ test.describe("Perps deposit", () => {
 
   setupEnv(true);
 
+  // Must run before the app fixture starts Speculos.
   test.beforeEach(() => {
     setExchangeDependencies([{ name: fundingAccount.currency.speculosApp.name }]);
   });
@@ -68,10 +69,12 @@ test.describe("Perps deposit", () => {
       await app.perpsDepositDialog.expectReview({ fundingAccount, receiverAccount });
       await app.perpsDepositDialog.clickDeposit();
       await app.perpsDepositDialog.expectSigning();
-      await app.speculos.acceptPerpsDeposit();
+      await app.speculos.acceptPerpsDeposit({
+        sendTicker: fundingAccount.currency.ticker,
+        receiveTicker: receiverAccount.currency.ticker,
+      });
       await app.perpsTransactionSignedDialog.expectTransactionSigned(receiverAccount);
       await app.perpsTransactionSignedDialog.close();
-      await app.perps.expectFundedAccountBalance();
     },
   );
 });

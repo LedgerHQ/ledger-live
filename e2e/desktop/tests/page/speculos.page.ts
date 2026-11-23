@@ -112,8 +112,8 @@ export class SpeculosPage extends AppPage {
   }
 
   @step("Accept the Perps deposit on the device")
-  async acceptPerpsDeposit() {
-    await acceptPerpsDeposit();
+  async acceptPerpsDeposit(params: { sendTicker: string; receiveTicker: string }) {
+    await acceptPerpsDeposit(params);
   }
 
   @step("Verify amounts and accept swap for different seed")

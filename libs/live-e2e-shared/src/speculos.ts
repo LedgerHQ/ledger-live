@@ -1471,15 +1471,29 @@ export const verifyAmountsAndAcceptSwap = withDeviceController(
     },
 );
 
-export const acceptPerpsDeposit = withDeviceController(({ getButtonsController }) => async () => {
-  await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
-  await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
-  if (isTouchDevice()) {
-    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
-  } else {
-    await getButtonsController().both();
-  }
-});
+export const acceptPerpsDeposit = withDeviceController(
+  ({ getButtonsController }) =>
+    async ({ sendTicker, receiveTicker }: { sendTicker: string; receiveTicker: string }) => {
+      await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
+      const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+      const swapPair = `swap ${sendTicker} to ${receiveTicker}`;
+      expectSpeculosEventsContainExactly(
+        swapPair,
+        events,
+        `Swap pair "${swapPair}" not found on the device screen`,
+      );
+      expectSpeculosEventsContainExactly(
+        "SwapKit",
+        events,
+        "Provider SwapKit not found on the device screen",
+      );
+      if (isTouchDevice()) {
+        await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+      } else {
+        await getButtonsController().both();
+      }
+    },
+);
 
 export const verifyAmountsAndAcceptSwapForDifferentSeed = withDeviceController(
   ({ getButtonsController }) =>
