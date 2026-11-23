@@ -514,6 +514,8 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     const poweredOff = result.current;
     if (poweredOff.status !== "setup") throw new Error(poweredOff.status);
     expect(poweredOff.setup.stage).toMatchObject({ kind: "osCheck", index: 4, total: 5 });
+    expect(connect).toHaveBeenCalledTimes(1);
+    expect(poweredOff.setup.connection).toBeNull();
     expect(poweredOff.setup.suspendSheets).toBe(true);
     expect(poweredOff.powerOnSheet).toMatchObject({ deviceModelId: DeviceModelId.nanoX });
 

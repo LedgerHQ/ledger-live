@@ -985,6 +985,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     onboardedOnEntry,
     updateAfterSetup: holdsUpdateUntilSetup(onboarding.snapshot?.context),
     seeded: onboarding.snapshot?.context.isOnboarded === true,
+    funnelRecoversDrop: deviceOffDuringChecks,
     currentStep: onboarding.context?.currentOnboardingStep ?? null,
     seedPath,
     pastRecover,

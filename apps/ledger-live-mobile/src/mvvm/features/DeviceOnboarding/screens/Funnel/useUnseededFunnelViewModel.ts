@@ -67,6 +67,8 @@ export type UnseededFunnelInput = {
   updateAfterSetup?: boolean;
   /** The device is seeded: a check now is the OS check held back until setup. */
   seeded?: boolean;
+  /** The funnel already reconnects a switched-off device: Setup must not start a second attempt. */
+  funnelRecoversDrop?: boolean;
   currentStep: string | null;
   seedPath: string | null;
   /** The user already left the Recover pitch (skip, remind later, or back from Recover). */
@@ -121,7 +123,7 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
 
   const visibleStage = useHeldStage(stage, holdsPrevious);
   const connection = useSessionReconnect({
-    dropped: unseeded && liveMachineState === droppedState && visibleStage !== null,
+    dropped: unseeded && visibleStage !== null && setupRecoversDrop(liveMachineState, input),
     error: input.connectionError,
     connect: input.reconnect,
   });
@@ -180,6 +182,14 @@ function useLatched(value: boolean): boolean {
   const [latched, setLatched] = useState(value);
   if (value && !latched) setLatched(true);
   return latched || value;
+}
+
+/** Setup reconnects a dropped session itself, unless the funnel already recovers the device. */
+function setupRecoversDrop(
+  liveMachineState: string | null,
+  input: Pick<UnseededFunnelInput, "funnelRecoversDrop">,
+): boolean {
+  return liveMachineState === droppedState && input.funnelRecoversDrop !== true;
 }
 
 function waitsForUpdatedDevice(
