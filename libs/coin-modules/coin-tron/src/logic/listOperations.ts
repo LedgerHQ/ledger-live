@@ -1,6 +1,7 @@
 import { Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
+import uniqBy from "lodash/uniqBy";
 import type { TronCoinConfig } from "../config";
 import {
   fetchTronAccountTxsEndpointPage,
@@ -20,7 +21,6 @@ import {
   Order,
   pageBoundary,
   parseCursor,
-  serializeCursor,
   stepPast,
   walksBefore,
 } from "./cursor";
@@ -44,12 +44,16 @@ export async function listOperations(
   const { limit, order, cursor } = options;
   const start = parseCursor(cursor);
 
-  const { native, trc20 } = await fetchTronAccountTxsPage(logger, config, address, {
+  const firstPages = await fetchTronAccountTxsPage(logger, config, address, {
     limit,
     minTimestamp: order === "asc" ? (start ?? options.minTimestamp) : options.minTimestamp,
     maxTimestamp: order === "asc" ? undefined : (start ?? undefined),
     order,
   });
+  const [native, trc20] = await Promise.all([
+    skipEmptyLinkedPages(logger, config, "native", firstPages.native, new Set()),
+    skipEmptyLinkedPages(logger, config, "trc20", firstPages.trc20, new Set()),
+  ]);
 
   const cursorPageIsEmpty =
     start !== null && native.rawTimestamps.length === 0 && trc20.rawTimestamps.length === 0;
@@ -82,7 +86,7 @@ async function cutPage(
     const before = (txs: TrongridTxInfo[]) => txs.filter(tx => isBeforeBoundary(tx.date.getTime()));
     return {
       txs: mergeEndpoints(order, before(pages.native.txs), before(pages.trc20.txs)),
-      next: serializeCursor(boundary),
+      next: String(boundary),
     };
   }
 
@@ -92,10 +96,7 @@ async function cutPage(
   ]);
   return {
     txs: mergeEndpoints(order, nativeGroup.txs, trc20Group.txs),
-    next:
-      nativeGroup.hasMore || trc20Group.hasMore
-        ? serializeCursor(stepPast(order, boundary))
-        : undefined,
+    next: nativeGroup.hasMore || trc20Group.hasMore ? String(stepPast(order, boundary)) : undefined,
   };
 }
 
@@ -105,20 +106,48 @@ async function readWholeTimestampGroup(
   endpoint: TxEndpoint,
   firstPage: TxEndpointPage,
   timestamp: number,
+  followed: Set<string> = new Set(),
 ): Promise<{ txs: TrongridTxInfo[]; hasMore: boolean }> {
-  const txs: TrongridTxInfo[] = [];
-  const followed = new Set<string>();
-  let page = firstPage;
-  for (;;) {
-    txs.push(...page.txs.filter(tx => tx.date.getTime() === timestamp));
-    if (page.rawTimestamps.some(ts => ts !== timestamp)) return { txs, hasMore: true };
-    if (page.next === undefined || page.rawTimestamps.length === 0) return { txs, hasMore: false };
-    if (followed.has(page.next)) {
-      throw new TronPageServedTwice(`TronGrid served the ${endpoint} page ${page.next} twice`);
-    }
-    followed.add(page.next);
-    page = await fetchTronAccountTxsEndpointPage(logger, config, endpoint, page.next);
+  const txs = firstPage.txs.filter(tx => tx.date.getTime() === timestamp);
+  if (firstPage.rawTimestamps.some(ts => ts !== timestamp)) return { txs, hasMore: true };
+  if (firstPage.next === undefined) return { txs, hasMore: false };
+
+  const nextPage = await followNext(logger, config, endpoint, firstPage.next, followed);
+  const rest = await readWholeTimestampGroup(
+    logger,
+    config,
+    endpoint,
+    nextPage,
+    timestamp,
+    followed,
+  );
+  return { txs: [...txs, ...rest.txs], hasMore: rest.hasMore };
+}
+
+async function skipEmptyLinkedPages(
+  logger: Logger,
+  config: TronCoinConfig,
+  endpoint: TxEndpoint,
+  page: TxEndpointPage,
+  followed: Set<string>,
+): Promise<TxEndpointPage> {
+  if (page.rawTimestamps.length > 0 || page.next === undefined) return page;
+  const nextPage = await followNext(logger, config, endpoint, page.next, followed);
+  return skipEmptyLinkedPages(logger, config, endpoint, nextPage, followed);
+}
+
+function followNext(
+  logger: Logger,
+  config: TronCoinConfig,
+  endpoint: TxEndpoint,
+  next: string,
+  followed: Set<string>,
+): Promise<TxEndpointPage> {
+  if (followed.has(next)) {
+    throw new TronPageServedTwice(`TronGrid served the ${endpoint} page ${next} twice`);
   }
+  followed.add(next);
+  return fetchTronAccountTxsEndpointPage(logger, config, endpoint, next);
 }
 
 function mergeEndpoints(
@@ -126,9 +155,12 @@ function mergeEndpoints(
   nativeTxs: TrongridTxInfo[],
   trc20Txs: TrongridTxInfo[],
 ): TrongridTxInfo[] {
-  const trc20TxIds = new Set(trc20Txs.map(tx => tx.txID));
+  const oneTrc20RecordPerTx = uniqBy(trc20Txs, tx => tx.txID);
+  const trc20TxIds = new Set(oneTrc20RecordPerTx.map(tx => tx.txID));
   const nativeTxsWithoutTrc20Record = nativeTxs.filter(tx => !trc20TxIds.has(tx.txID));
-  return [...nativeTxsWithoutTrc20Record, ...trc20Txs].sort(compareTxsByTimestamp(order));
+  return [...nativeTxsWithoutTrc20Record, ...oneTrc20RecordPerTx].sort(
+    compareTxsByTimestamp(order),
+  );
 }
 
 async function toOperations(

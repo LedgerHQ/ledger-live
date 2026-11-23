@@ -3,10 +3,6 @@ import { TrongridTxInfo } from "../types";
 
 export type Order = "asc" | "desc";
 
-export function serializeCursor(timestamp: number): string {
-  return String(timestamp);
-}
-
 export function parseCursor(cursor: string | undefined): number | null {
   if (!cursor) return null;
   const timestamp = Number(cursor);
@@ -37,10 +33,14 @@ export function pageBoundary(order: Order, pages: TxEndpointPage[]): number | un
   const lastTimestampsOfUnfinishedEndpoints = pages
     .filter(page => page.next !== undefined && page.rawTimestamps.length > 0)
     .map(page =>
-      page.rawTimestamps.reduce((last, ts) => (walksBefore(order, last, ts) ? ts : last)),
+      page.rawTimestamps.reduce(
+        (last, ts) => (walksBefore(order, last, ts) ? ts : last),
+        page.rawTimestamps[0],
+      ),
     );
   if (lastTimestampsOfUnfinishedEndpoints.length === 0) return undefined;
-  return lastTimestampsOfUnfinishedEndpoints.reduce((boundary, ts) =>
-    walksBefore(order, ts, boundary) ? ts : boundary,
+  return lastTimestampsOfUnfinishedEndpoints.reduce(
+    (boundary, ts) => (walksBefore(order, ts, boundary) ? ts : boundary),
+    lastTimestampsOfUnfinishedEndpoints[0],
   );
 }

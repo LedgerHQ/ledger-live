@@ -1,13 +1,6 @@
 import type { TxEndpointPage } from "../network";
 import { TrongridTxInfo } from "../types";
-import {
-  compareTxsByTimestamp,
-  pageBoundary,
-  parseCursor,
-  serializeCursor,
-  stepPast,
-  walksBefore,
-} from "./cursor";
+import { compareTxsByTimestamp, pageBoundary, parseCursor, stepPast, walksBefore } from "./cursor";
 
 const page = (rawTimestamps: number[], next?: string): TxEndpointPage => ({
   rawTimestamps,
@@ -16,9 +9,9 @@ const page = (rawTimestamps: number[], next?: string): TxEndpointPage => ({
 });
 
 describe("cursor", () => {
-  describe("serializeCursor / parseCursor", () => {
+  describe("parseCursor", () => {
     it("round-trips a timestamp", () => {
-      expect(parseCursor(serializeCursor(1717419792000))).toBe(1717419792000);
+      expect(parseCursor(String(1717419792000))).toBe(1717419792000);
     });
 
     it("reads no cursor as null", () => {

@@ -316,7 +316,7 @@ describe("listOperations", () => {
       expect(ids[9]).toBe("t1:trc20");
     });
 
-    it("emits every TRC20 record of one transaction on the same page", async () => {
+    it("emits one operation for the TRC20 records of one transaction, on one page", async () => {
       fakeTronGrid([
         trc20("t9", 9000),
         trc20("multi", 5000),
@@ -339,7 +339,7 @@ describe("listOperations", () => {
       } while (cursor);
 
       const multiPages = pages.filter(page => page.includes("multi:trc20"));
-      expect(multiPages).toEqual([["multi:trc20", "multi:trc20", "multi:trc20"]]);
+      expect(multiPages).toEqual([["multi:trc20"]]);
     });
   });
 
@@ -394,6 +394,54 @@ describe("listOperations", () => {
     await expect(
       listOperations(logger, config, address, { limit: 1, minTimestamp: 0, order: "desc" }),
     ).rejects.toThrow(TronPageServedTwice);
+  });
+
+  it("follows an empty page that still links to more records", async () => {
+    const pages: Record<string, TxEndpointPage> = {
+      "native-2": { rawTimestamps: [2000], txs: [toTxInfo(native("n2", 2000))] },
+    };
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      native: { rawTimestamps: [], txs: [], next: "native-2" },
+      trc20: { rawTimestamps: [3000], txs: [toTxInfo(trc20("t3", 3000))] },
+    });
+    (fetchTronAccountTxsEndpointPage as jest.Mock).mockImplementation(
+      async (_logger, _config, _endpoint, url: string) => pages[url],
+    );
+
+    const result = await listOperations(logger, config, address, {
+      limit: 1,
+      minTimestamp: 0,
+      order: "desc",
+    });
+
+    expect(result.items.map(op => op.id)).toEqual(["t3:trc20", "n2"]);
+    expect(result.next).toBeUndefined();
+  });
+
+  it("reads a timestamp group across an empty page in the middle of it", async () => {
+    const pages: Record<string, TxEndpointPage> = {
+      "native-2": { rawTimestamps: [], txs: [], next: "native-3" },
+      "native-3": {
+        rawTimestamps: [5000, 1000],
+        txs: [toTxInfo(native("b", 5000)), toTxInfo(native("n1", 1000))],
+      },
+    };
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      native: { rawTimestamps: [5000], txs: [toTxInfo(native("a", 5000))], next: "native-2" },
+      trc20: { rawTimestamps: [], txs: [] },
+    });
+    (fetchTronAccountTxsEndpointPage as jest.Mock).mockImplementation(
+      async (_logger, _config, _endpoint, url: string) => pages[url],
+    );
+
+    const result = await listOperations(logger, config, address, {
+      limit: 1,
+      minTimestamp: 0,
+      order: "desc",
+    });
+
+    expect(result.items.map(op => op.id)).toEqual(["a", "b"]);
+    expect(result.next).toBe("4999");
   });
 
   it("throws on an invalid cursor", async () => {
