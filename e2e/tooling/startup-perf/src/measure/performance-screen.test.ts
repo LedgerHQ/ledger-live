@@ -146,6 +146,8 @@ describe("createPerformanceReader", () => {
       stop: unused,
       stopDriver: async () => {},
       launch: unused,
+      writeStorage: unused,
+      readStorage: unused,
       ensureScreenOn: unused,
       blockingDialog: async () => null,
       clearDialogs: unused,

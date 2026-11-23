@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-# Creates and boots two simulators of the newest "iPhone N Pro", saves their ids as SIM_1 and SIM_2
-# in GITHUB_ENV, and waits until the host is idle.
+# Creates and boots two simulators of the newest "iPhone N Pro", or one (count 1, the accounts
+# snapshot), saves their ids as SIM_1 and SIM_2 in GITHUB_ENV, and waits until the host is idle.
 #
-#   boot-simulators.sh
+#   boot-simulators.sh [count]
 set -euo pipefail
 : "${GITHUB_ENV:?}"
 
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+count="${1:-2}"
 BOOT_TIMEOUT_S=300
 IDLE_WAIT_MAX_S=600
 
@@ -34,7 +35,7 @@ echo "Runtime $runtime, device type $device_type"
 
 # The Measure step reads the ids from GITHUB_ENV.
 udids=()
-for n in 1 2; do
+for n in $(seq "$count"); do
   udid=$(xcrun simctl create "Startup Perf $n" "$device_type" "$runtime")
   echo "SIM_$n=$udid" >> "$GITHUB_ENV"
   udids+=("$udid")
