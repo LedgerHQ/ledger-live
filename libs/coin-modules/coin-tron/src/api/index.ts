@@ -57,7 +57,7 @@ import type {
   EnergyRentSignedTransaction,
   EnergyRentUnsignedTransaction,
 } from "../logic/energyRent";
-import { defaultFetchParams, getBlock as getBlockNetwork } from "../network";
+import { defaultFetchParams, findBlock, getLastBlock } from "../network";
 import type { TronMemo, TronTxData } from "../types";
 
 const MAX_TRONGRID_LIMIT = 200;
@@ -228,6 +228,38 @@ function craftTransactionData(intent: TransactionIntent<TronMemo, TronTxData>): 
   return intent.data ?? { type: "tron" };
 }
 
+function timestampOf(block: { height: number; time?: Date }): number {
+  if (!block.time) {
+    throw new Error(`Block ${block.height} has no timestamp`);
+  }
+  return block.time.getTime();
+}
+
+async function minTimestampOf(
+  context: TronContext,
+  config: TronCoinConfig,
+  minHeight: number,
+): Promise<number> {
+  if (minHeight <= 0) {
+    return defaultFetchParams.minTimestamp;
+  }
+  const blockAtMinHeight = await findBlock(context.logger, config, minHeight);
+  if (blockAtMinHeight) {
+    return timestampOf(blockAtMinHeight);
+  }
+  const tip = await getLastBlock(context.logger, config);
+  const minHeightStillAfterTip = tip.height < minHeight;
+  if (minHeightStillAfterTip) {
+    const justAfterTip = timestampOf(tip) + 1;
+    return justAfterTip;
+  }
+  const produced = await findBlock(context.logger, config, minHeight);
+  if (!produced) {
+    throw new Error(`Block ${minHeight} not found although the tip is at ${tip.height}`);
+  }
+  return timestampOf(produced);
+}
+
 async function listOperations(
   context: TronContext,
   address: string,
@@ -240,13 +272,7 @@ async function listOperations(
   const effectiveLimit = limit ?? MAX_TRONGRID_LIMIT;
   const effectiveOrder = order ?? "asc";
 
-  let minTimestamp = defaultFetchParams.minTimestamp;
-  if (minHeight > 0) {
-    // getBlock rejects when minHeight points just past the chain tip (block not yet
-    // produced); fall back to the default bound instead of failing the whole listing.
-    const block = await getBlockNetwork(context.logger, config, minHeight).catch(() => null);
-    minTimestamp = block?.time?.getTime() ?? defaultFetchParams.minTimestamp;
-  }
+  const minTimestamp = await minTimestampOf(context, config, minHeight);
 
   return listOperationsLogic(context.logger, config, address, {
     limit: effectiveLimit,
