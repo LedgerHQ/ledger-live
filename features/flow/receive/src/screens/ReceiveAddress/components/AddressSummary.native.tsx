@@ -12,7 +12,7 @@ const QR_CENTER_ICON_SIZE = 48;
 // The code appears with a short fade once the address is read.
 const QR_FADE_IN_MS = 400;
 
-export function AddressSummary({ address }: AddressSummaryProps) {
+export function AddressSummary({ address, onCopy, copyLabel, copyKey }: AddressSummaryProps) {
   const { start, middle, end } = address.parts;
   const [middleFirstLine, middleSecondLine] = splitMiddleForTwoLines(address.parts);
 
@@ -37,6 +37,9 @@ export function AddressSummary({ address }: AddressSummaryProps) {
             value={address.value}
             size={QR_SIZE}
             animation="ripple"
+            onPress={onCopy}
+            accessibilityLabel={copyLabel}
+            triggerKey={copyKey}
             testID="receive-address-qr-code"
             centerContent={
               address.assetIcon ? (

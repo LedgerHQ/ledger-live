@@ -16,10 +16,25 @@ jest.mock("@ledgerhq/crypto-icons/native", () => {
 });
 
 jest.mock("@shared/ui-animated-qr-code/native", () => {
-  const { Text } = jest.requireActual("react-native");
+  const { Pressable, Text } = jest.requireActual("react-native");
   return {
-    AnimatedQrCode: ({ value, testID }: { value: string; testID?: string }) => (
-      <Text testID={testID}>{`qr:${value}`}</Text>
+    AnimatedQrCode: ({
+      value,
+      animation,
+      onPress,
+      triggerKey,
+      testID,
+    }: {
+      value: string;
+      animation: string;
+      onPress?: () => void;
+      triggerKey?: number;
+      testID?: string;
+    }) => (
+      <Pressable onPress={onPress} testID={testID ?? `qr-code-${animation}`}>
+        <Text>{`qr:${value}`}</Text>
+        <Text>{`${animation}:${triggerKey ?? 0}`}</Text>
+      </Pressable>
     ),
   };
 });
@@ -65,6 +80,7 @@ describe("ReceiveAddress (Native)", () => {
     renderScreen();
 
     expect(screen.getByTestId("receive-address-skeleton")).toBeTruthy();
+    expect(screen.getByTestId("qr-code-loading")).toBeTruthy();
     expect(await screen.findByTestId("receive-address-summary")).toBeTruthy();
     expect(screen.getByText(`qr:${mockAccountReceive().address}`)).toBeTruthy();
   });
@@ -115,6 +131,19 @@ describe("ReceiveAddress (Native)", () => {
     expect(onShareAddress).toHaveBeenCalledWith(testReceive.address);
     expect(onCopyAddress).toHaveBeenCalledWith(testReceive.address);
     expect(await screen.findByText("Copied")).toBeTruthy();
+  });
+
+  it("copies from a press on the QR code, and replays its animation from the Copy button", async () => {
+    const onCopyAddress = jest.fn(async () => true);
+    renderScreen(jest.fn(), makeReceiveTestStore(), { onCopyAddress });
+
+    fireEvent.press(await screen.findByTestId("receive-address-qr-code"));
+    expect(onCopyAddress).toHaveBeenCalledWith(testReceive.address);
+    expect(screen.getByText("ripple:0")).toBeTruthy();
+
+    fireEvent.press(screen.getByTestId("receive-address-copy"));
+    expect(await screen.findByText("ripple:1")).toBeTruthy();
+    expect(onCopyAddress).toHaveBeenCalledTimes(2);
   });
 
   it("points at Verify, hiding the rest from screen readers, until the hint is dismissed, then verifies", async () => {

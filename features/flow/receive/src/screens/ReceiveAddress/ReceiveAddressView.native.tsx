@@ -93,7 +93,12 @@ export function ReceiveAddressView({
                   {isLoading || !address ? (
                     <AddressSummarySkeleton />
                   ) : (
-                    <AddressSummary address={address} />
+                    <AddressSummary
+                      address={address}
+                      onCopy={actions.copy?.onPressCode}
+                      copyLabel={actions.copy?.label}
+                      copyKey={actions.copy?.buttonPresses}
+                    />
                   )}
                 </Dimmed>
                 <AddressActions actions={actions} />
