@@ -61,10 +61,12 @@ export type VerifyAddressSelection = Readonly<{
 }>;
 
 /**
- * How the device verification ended. `mismatch` closes the receive flow. `failed`: it could not
- * start, or an error ended it.
+ * How the device verification ended. `displayed`: the device showed the address and the user went
+ * back to it, to compare it once pasted. `mismatch`: the device returned another address, and the
+ * user closed the warning. `failed`: it could not start, or an error ended it.
  */
 export type VerifyAddressOutcome =
+  | "displayed"
   | "verified"
   | "cancelled"
   | "mismatch"
@@ -118,9 +120,11 @@ export type VerifyAddressExecutorPorts<Account, Token, Options, InitInput> = Ver
   Readonly<{
     getAccount: (accountUUID: AccountUUID) => Account | undefined;
     findToken: (assetId: CryptoOrTokenCurrencyId) => Promise<Token | undefined>;
+    /** Checks before the device shows anything that it derives `verification.address`. */
     buildInitializationInput: (request: {
       account: Account;
       tokenCurrency: Token | undefined;
+      verification: DeviceShownVerification;
     }) => Promise<InitInput>;
     intentComponent: ComponentType<VerifyAddressIntentComponentProps>;
   }>;

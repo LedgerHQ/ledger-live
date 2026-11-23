@@ -12,16 +12,14 @@ type ResultOutcome = Extract<
   "verified" | "cancelled" | "mismatch" | "unsupported"
 >;
 
-type TrackedOutcome = ResultOutcome | "dismissed";
+/** The device's other answers come after the user could already go back: they are not tracked. */
+type TrackedOutcome = "unsupported" | "dismissed";
 
 type EarlyOutcome = Extract<VerifyAddressOutcome, "unsupported" | "failed">;
 
 const VERIFICATION_PAGE = { page: "Receive Address Verification", flow: "receive" } as const;
 
 const OUTCOME_EVENT: Record<TrackedOutcome, string> = {
-  verified: "receive_verification_complete",
-  cancelled: "receive_verification_cancelled",
-  mismatch: "receive_verification_mismatch",
   unsupported: "receive_verification_unsupported",
   dismissed: "receive_verification_dismiss",
 };
@@ -44,6 +42,8 @@ export type VerifyAddressSession = Readonly<{
   exitEarly: (outcome: EarlyOutcome, tracking?: VerifyAddressTracking) => void;
   /** Each device request of the job, retries included: forgets the refusal and the job error. */
   onAttemptStart: () => void;
+  /** The device shows the address: leaving now goes back to it, whatever the device answers. */
+  onAddressDisplayed: () => void;
   onResult: (result: VerifyAddressIntentResult) => void;
   onJobError: () => void;
   /** The executor's `onUserCancel`, with the error screen the user closed, if any. */
@@ -57,6 +57,7 @@ export function useVerifyAddressSession({
 }: UseVerifyAddressSessionParams): VerifyAddressSession {
   const resultOutcomeRef = useRef<ResultOutcome | undefined>(undefined);
   const jobFailedRef = useRef(false);
+  const addressDisplayedRef = useRef(false);
   const exitedRef = useRef(false);
   const onExitRef = useRef(onExit);
   const trackingRef = useRef(tracking);
@@ -94,7 +95,7 @@ export function useVerifyAddressSession({
       if (exitedRef.current || (previousOutcome && previousOutcome !== "cancelled")) return;
       const outcome = RESULT_OUTCOME[result.type];
       resultOutcomeRef.current = outcome;
-      trackOutcome(outcome);
+      if (outcome === "unsupported") trackOutcome(outcome);
     },
     [trackOutcome],
   );
@@ -102,6 +103,11 @@ export function useVerifyAddressSession({
   const onAttemptStart = useCallback(() => {
     if (resultOutcomeRef.current === "cancelled") resultOutcomeRef.current = undefined;
     jobFailedRef.current = false;
+    addressDisplayedRef.current = false;
+  }, []);
+
+  const onAddressDisplayed = useCallback(() => {
+    addressDisplayedRef.current = true;
   }, []);
 
   const onJobError = useCallback(() => {
@@ -111,8 +117,11 @@ export function useVerifyAddressSession({
   const outcomeOnLeave = useCallback(
     (failure: VerifyAddressDeviceFlowFailure | null | undefined): VerifyAddressOutcome => {
       const resultOutcome = resultOutcomeRef.current;
-      if (resultOutcome && resultOutcome !== "cancelled") return resultOutcome;
+      if (resultOutcome === "mismatch" || resultOutcome === "unsupported") return resultOutcome;
+      if (resultOutcome === "verified")
+        return addressDisplayedRef.current ? "displayed" : resultOutcome;
       if (failure?.countsAsFailure || jobFailedRef.current) return "failed";
+      if (addressDisplayedRef.current) return "displayed";
       if (resultOutcome) return resultOutcome;
       trackOutcome("dismissed");
       return "dismissed";
@@ -129,7 +138,7 @@ export function useVerifyAddressSession({
   );
 
   return useMemo(
-    () => ({ exitEarly, onAttemptStart, onResult, onJobError, onUserCancel }),
-    [exitEarly, onAttemptStart, onResult, onJobError, onUserCancel],
+    () => ({ exitEarly, onAttemptStart, onAddressDisplayed, onResult, onJobError, onUserCancel }),
+    [exitEarly, onAttemptStart, onAddressDisplayed, onResult, onJobError, onUserCancel],
   );
 }
