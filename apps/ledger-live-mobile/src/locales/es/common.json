@@ -1135,6 +1135,22 @@
       "title" : "Actualiza tu app de Sui",
       "description" : "Tu app de Sui de Ledger no puede firmar una transferencia desde el saldo de tu dirección de SUI. Actualiza la app de Sui en tu dispositivo Ledger y vuelve a intentarlo."
     },
+    "SuiRawTransactionInvalid" : {
+      "title" : "Transacción de Sui ilegible",
+      "description" : "La app ha enviado una transacción de Sui que Ledger Wallet no puede leer. Vuelve a intentarlo desde la app o ponte en contacto con el servicio de Soporte."
+    },
+    "SuiRawTransactionSenderMismatch" : {
+      "title" : "Cuenta de Sui incorrecta",
+      "description" : "Esta transacción se preparó para otra cuenta de Sui. Selecciona la cuenta conectada a la app y vuelve a intentarlo."
+    },
+    "SuiRawTransactionResolutionFailed" : {
+      "title" : "No fue posible preparar la transacción de Sui",
+      "description" : "Comprueba que los activos aún existen y que la cuenta puede pagar la tarifa de red; después, vuelve a intentarlo desde la app."
+    },
+    "SuiSponsoredTransactionBroadcastUnsupported" : {
+      "title" : "Transacción de Sui patrocinada",
+      "description" : "La tarifa de red de esta transacción la paga un patrocinador, por lo que Ledger Wallet™ no puede enviarla a la red. La app debe enviarla por sí misma. Ponte en contacto con el soporte de la app si esto sigue ocurriendo."
+    },
     "PasswordIncorrect" : {
       "title" : "Contraseña incorrecta",
       "description" : "Inténtalo de nuevo."
@@ -1441,6 +1457,10 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
     },
+    "SolanaTxBlockhashExpired" : {
+      "title" : "La transacción ha expirado",
+      "description" : "La red ya no acepta esta transacción. Vuelve a intentarlo para crear una nueva."
+    },
     "SolanaRecipientMemoIsRequired" : {
       "title" : "Se requiere una memo para la dirección del destinatario"
     },
@@ -1620,11 +1640,11 @@
       "description" : "Para dejar de holdear este token, elimínalo."
     },
     "XrpTokenFrozen" : {
-      "title" : "No es posible enviar este token",
+      "title" : "El token está inmovilizado",
       "description" : "Su emisor lo inmovilizó."
     },
     "XrpTokenNotAuthorized" : {
-      "title" : "No es posible enviar este token",
+      "title" : "Tu cuenta no está aprobada",
       "description" : "El emisor no ha aprobado que tu cuenta lo custodie."
     },
     "XrpTokenCannotReceive" : {
@@ -1649,6 +1669,54 @@
     "XrpReserveIncrease" : {
       "title" : "Se bloqueará {{amount}} en tu cuenta mientras se añade este token.",
       "description" : "Lo recuperarás al eliminar el token."
+    },
+    "XrpAccountNotActivated" : {
+      "title" : "Tu cuenta aún no está activada",
+      "description" : "Recibe al menos {{amount}} para activarla y añadir este token. Esto cubre la activación de la cuenta y los XRP bloqueados para el token."
+    },
+    "XrpTrustLimitTooHigh" : {
+      "title" : "El límite supera el máximo",
+      "description" : "Utiliza Max para establecer el límite más alto."
+    },
+    "XrpTrustSetUnchanged" : {
+      "title" : "Estos ajustes ya están aplicados",
+      "description" : "Modifica el límite o el rippling para actualizar este token."
+    },
+    "XrpRecipientNotActivated" : {
+      "title" : "Esta cuenta no está activada",
+      "description" : "No puede recibir tokens."
+    },
+    "XrpRecipientTokenNotAdded" : {
+      "title" : "Este receptor aún no puede recibir este token.",
+      "description" : "Pídele que lo añada primero."
+    },
+    "XrpRecipientLimitTooLow" : {
+      "title" : "El límite del receptor es demasiado bajo",
+      "description" : "Solo puede recibir hasta {{maxAmount}} de este token."
+    },
+    "XrpSendToIssuer" : {
+      "title" : "Enviando al emisor del token",
+      "description" : "Estos tokens se destruirán y no se acreditarán a nadie."
+    },
+    "XrpOptOutBalanceNotZero" : {
+      "title" : "Tu saldo de este token debe ser 0",
+      "description" : "Envíalo todo antes de eliminar el token."
+    },
+    "XrpOptOutTokenInEscrow" : {
+      "title" : "Parte de este token está en depósito de garantía",
+      "description" : "Elimina el token una vez que el depósito en garantía haya finalizado o se haya cancelado."
+    },
+    "XrpOptOutTokenFrozen" : {
+      "title" : "No es posible eliminar {{assetCode}}",
+      "description" : "El emisor lo inmovilizó en su cuenta."
+    },
+    "XrpOptOutIncomplete" : {
+      "title" : "Este token no se puede eliminar",
+      "description" : "El registro de XRP lo mantendría en tu cuenta, con tus XRP bloqueados."
+    },
+    "XrpReserveRelease" : {
+      "title" : "Se liberarán los {{amount}} bloqueados para este token.",
+      "description" : "Puedes gastarlo una vez eliminado el token."
     },
     "HederaMemoExceededSizeError" : {
       "title" : "Tamaño de memo no válido; el límite máximo permitido es de 100 caracteres."
@@ -2346,10 +2414,36 @@
     }
   },
   "receiveAddress" : {
+    "title" : "Recibir {{asset}}",
+    "networkLabel" : "Red {{network}}",
+    "close" : "Cerrar",
+    "back" : "Atrás",
     "addressDisplayed" : {
       "title" : "Dirección mostrada de forma segura",
-      "description" : "Verifica que la dirección, una vez pegada o compartida, coincida con la del dispositivo Ledger.",
-      "gotItCta" : "Entendido"
+      "description" : "Verifica que la dirección, una vez pegada o compartida, coincida con la del dispositivo Ledger."
+    },
+    "addressVerified" : {
+      "title" : "Dirección verificada",
+      "description" : "La dirección en Ledger Wallet™ coincide con la de tu dispositivo Ledger.",
+      "doneCta" : "Listo"
+    },
+    "addressMismatch" : {
+      "title" : "Esta dirección no coincide con tu Ledger",
+      "description" : "No utilices esta dirección. Es posible que estés utilizando un Ledger que no esté configurado con esta cuenta: Conecta el correcto y vuelve a verificar. Si sigue sin coincidir, ponte en contacto con el Soporte de Ledger.",
+      "contactSupportCta" : "Ponte en contacto con el Soporte de Ledger",
+      "closeCta" : "Cerrar"
+    },
+    "selectAddress" : {
+      "title" : "Seleccionar dirección"
+    },
+    "addressOptions" : {
+      "transparent" : "Dirección pública",
+      "shielded" : "Dirección privada"
+    },
+    "error" : {
+      "title" : "No se pudo cargar esta dirección",
+      "description" : "Comprueba la conexión a Internet y, a continuación, vuelve a intentarlo.",
+      "retry" : "Reintentar"
     }
   },
   "ratings" : {
@@ -2637,6 +2731,49 @@
         "nothingMoves" : "Nada se mueve sin tu consentimiento.",
         "setUp" : "Vamos a configurarlo.",
         "cta" : "Verifica tu dispositivo"
+      },
+      "recover" : {
+        "tooManyBackups" : "Nunca tienes demasiadas copias de respaldo.",
+        "encryptedBackup" : "Especialmente una copia de respaldo digital cifrada.",
+        "thereWhenYouNeedIt" : "Una copia de respaldo digital que estará disponible cuando la necesites.",
+        "title" : "Protege el acceso a tu wallet con Ledger Recover.",
+        "description" : "Las Hojas de Recuperación físicas se pierden o se dañan. Ledger Recover mantiene una copia de respaldo cifrada vinculada a tu identidad.",
+        "price" : "Primer mes gratis, y luego $9,99/mes. Cancela cuando quieras. Se aplican términos y condiciones",
+        "protect" : "Proteger mi wallet",
+        "skip" : "Omitir por el momento",
+        "sheet" : {
+          "title" : "¿Cómo funciona Ledger Recover?",
+          "identity" : {
+            "title" : "Protegido por tu identidad",
+            "description" : "Tu rostro y documento de identidad son la clave para desbloquear la opción de restaurar."
+          },
+          "security" : {
+            "title" : "Seguridad digital mejorada",
+            "description" : "Cifrada, fragmentada y nunca almacenada en un solo lugar."
+          },
+          "legacy" : {
+            "title" : "Prepara tu legado digital para el futuro",
+            "description" : "Añade a alguien de confianza para ayudar a proteger la copia de respaldo."
+          },
+          "start" : "Comienza ahora (~10 min)",
+          "remindLater" : "Recordarme más adelante"
+        }
+      },
+      "success" : {
+        "allSet" : "Todo listo.",
+        "timeToExplore" : "Hora de explorar",
+        "cta" : "Explorar ahora",
+        "ready" : "Todo listo.",
+        "walletReady" : "Tu wallet está lista."
+      }
+    },
+    "recover" : {
+      "restore" : {
+        "title" : "Continuando con Ledger Recover",
+        "description" : "Iniciarás sesión con tus credenciales de Ledger Recover™ para completar el proceso de restauración.",
+        "identity" : "Ledger Recover™ verificará tu identidad para desbloquear tu recuperación",
+        "phrase" : "Una vez verificada, la Frase de Recuperación Secreta se restaurará de forma segura en tu dispositivo",
+        "cta" : "Continuar a Ledger Recover"
       }
     },
     "checks" : {
@@ -2695,6 +2832,105 @@
       "success" : {
         "title" : "Sincronización finalizada",
         "cta" : "Continuar"
+      }
+    },
+    "setup" : {
+      "title" : "Continue on your Ledger device",
+      "checks" : {
+        "title" : "Genuine & OS check",
+        "description" : "Verifying your device",
+        "successDescription" : "Your device is genuine and safe to use",
+        "notUpToDateDescription" : "Tu dispositivo no está actualizado"
+      },
+      "naming" : {
+        "title" : "Nombre del dispositivo",
+        "description" : "Give your {{productName}} a unique name"
+      },
+      "pin" : {
+        "title" : "PIN creation",
+        "description" : "It prevents unwanted access"
+      },
+      "setupChoice" : {
+        "title" : "Elección de configuración"
+      },
+      "security" : {
+        "title" : "Configuración de seguridad",
+        "description" : "Secret Recovery Phrase",
+        "recoveryKeyDescription" : "Recovery Key"
+      },
+      "restore" : {
+        "title" : "Restaurar el acceso",
+        "recoveryPhraseDescription" : "Secret Recovery Phrase"
+      },
+      "info" : {
+        "cards" : {
+          "setupChoice" : "¿Qué método de configuración?",
+          "recoveryPhrase" : "¿Qué es una Frase de Recuperación Secreta?",
+          "restoreChoice" : "Elige una copia de respaldo desde la que restaurar",
+          "recoveryKey" : "¿Qué es una Recovery Key?",
+          "restoreRecoveryKey" : "¿Qué es una Recovery Key secreta?"
+        },
+        "faq" : "Ver las Preguntas Frecuentes completas",
+        "setupChoice" : {
+          "title" : "¿Configurar o restaurar?",
+          "newDevice" : {
+            "title" : "Configurar como nuevo dispositivo Ledger",
+            "description" : "Genera tu Frase de Recuperación Secreta. Elige esta opción si aún no tienes una."
+          },
+          "restore" : {
+            "title" : "Restaurar desde una copia de respaldo",
+            "description" : "Restaura utilizando una copia de respaldo existente: Frase de Recuperación Secreta, Recovery Key o Ledger Recover.",
+            "descriptionWithoutRecoveryKey" : "Restaura mediante una copia de respaldo existente: Frase de Recuperación Secreta o Ledger Recover."
+          }
+        },
+        "recoveryPhrase" : {
+          "title" : "Frase de Recuperación Secreta",
+          "description" : "Tu Frase de Recuperación Secreta es una lista única de 12, 18 o 24 palabras. Es la copia de respaldo maestra de tu wallet y puede restaurar el acceso a tus cuentas si pierdes, dañas o reemplazas tu dispositivo."
+        },
+        "restoreChoice" : {
+          "recoveryPhrase" : {
+            "title" : "Frase de Recuperación Secreta",
+            "description" : "Utiliza las 12, 18 o 24 palabras que guardaste al configurar la wallet."
+          },
+          "recoveryKey" : {
+            "title" : "Ledger Recovery Key",
+            "description" : "Utiliza la tarjeta sin conexión protegida por PIN para restaurar con un toque."
+          },
+          "recover" : {
+            "title" : "Suscripción a Ledger Recover",
+            "description" : "Verifica tu identidad a través de tu suscripción activa para restaurar el acceso."
+          }
+        },
+        "recoveryKey" : {
+          "title" : "Recovery Key",
+          "description" : "Conserva una llave de repuesto privada de tu wallet. Tu Frase de Recuperación Secreta está cifrada, y se realiza una copia de respaldo completamente sin conexión en una tarjeta protegida por PIN, de modo que puedas restaurar el acceso con un toque si pierdes o reemplazas tu dispositivo Ledger.",
+          "inTheBox" : "Se incluye una Recovery Key en la caja de tu dispositivo.",
+          "learnHowToUse" : "Aprende a usarlo"
+        }
+      },
+      "connection" : {
+        "reconnecting" : {
+          "title" : "Reconectando con tu {{productName}}",
+          "description" : "Mantén tu {{productName}} encendido, desbloqueado y cerca de tu teléfono."
+        },
+        "failed" : {
+          "title" : "No fue posible conectar con tu {{productName}}",
+          "description" : "Asegúrate de que tu {{productName}} esté encendido, desbloqueado y cerca de tu teléfono, e inténtalo de nuevo.",
+          "retryCta" : "Intenta de nuevo",
+          "helpCta" : "Obtener ayuda"
+        }
+      },
+      "updateOffer" : {
+        "title" : "Actualiza el OS™ para desbloquear todas las funciones",
+        "versions" : "SO {{current}} → SO {{available}}",
+        "description" : "Accede a la verificación de transacciones y a las funciones del dispositivo más recientes.",
+        "updateCta" : "Actualizar el Ledger OS™",
+        "skip" : {
+          "title" : "¿Omitir esta actualización?",
+          "description" : "Te perderás las últimas correcciones y funciones para tu dispositivo Ledger.",
+          "updateCta" : "Actualizar ahora",
+          "skipCta" : "Omitir de todos modos"
+        }
       }
     },
     "connection" : {
@@ -3877,6 +4113,20 @@
       "crypto" : "Cripto",
       "card" : "Tarjeta",
       "accessibilityLabel" : "Tipo de historial de transacciones"
+    },
+    "exportDialog" : {
+      "title" : "Exportar historial de transacciones",
+      "disclaimer" : "Solo valores estimados. Los contravalores son ofrecidos por Kaiko a título informativo. No utilices estos datos con fines fiscales, legales o contables.",
+      "accountsToInclude" : "Cuentas a incluir",
+      "selectAll" : "Seleccionar todas ({{count}})",
+      "deselectAll" : "Desmarcar todas ({{count}})",
+      "export" : "Exportar historial",
+      "successTitle" : "Historial de transacciones guardado con éxito",
+      "successDescription" : "El archivo CSV de tu historial de operaciones se guardó en la carpeta seleccionada",
+      "done" : "Listo",
+      "errorTitle" : "Algo ha salido mal",
+      "errorDescription" : "Se produjo un error al exportar tu historial de transacciones. Inténtalo de nuevo.",
+      "tryAgain" : "Intentar de nuevo"
     }
   },
   "operationsList" : {
@@ -3888,7 +4138,11 @@
       "hideDustTransactions" : "Ocultar transacciones de remanente",
       "showDustTransactions" : "Mostrar transacciones de remanente",
       "dustTransactionsHiddenDescription" : "Se ocultarán las transacciones menores a {{threshold}}.",
-      "dustTransactionsDisplayedDescription" : "Se mostrarán las transacciones menores a {{threshold}}."
+      "dustTransactionsDisplayedDescription" : "Se mostrarán las transacciones menores a {{threshold}}.",
+      "exportCsv" : {
+        "title" : "Exportar historial de transacciones",
+        "description" : "Guarda las transacciones de tus cuentas como archivo CSV."
+      }
     }
   },
   "operationDetails" : {
@@ -5578,7 +5832,7 @@
       },
       "sponsoredPolling" : {
         "title" : "La energía se está entregando",
-        "waiting" : "Esto suele tardar hasta 30 segundos.",
+        "waiting" : "Este proceso puede llevar hasta 2 minutos.",
         "elapsed" : "Tiempo transcurrido: {{time}}"
       },
       "sponsoredFailure" : {
@@ -6025,6 +6279,26 @@
       }
     }
   },
+  "connectKnownOrNewDevice" : {
+    "title" : "Dispositivos",
+    "add" : "Agregar",
+    "addDevice" : "Agregar un dispositivo Ledger",
+    "showAll" : "Mostrar todos los {{count}} dispositivos",
+    "showLess" : "Mostrar menos",
+    "status" : {
+      "unavailable" : "No conectado",
+      "available" : "Disponible",
+      "connected" : "Conectado"
+    },
+    "menu" : {
+      "accessibilityLabel" : "Opciones del {{deviceName}} ",
+      "disconnect" : "Desconectar",
+      "remove" : "Eliminar"
+    },
+    "waitingHint" : {
+      "title" : "¿No ves tu dispositivo Ledger?"
+    }
+  },
   "osUpdates" : {
     "backupBanner" : {
       "title" : "Se han encontrado ajustes guardados",
@@ -6036,6 +6310,11 @@
       "title" : "Tu dispositivo está en modo Bootloader.",
       "description" : "Haz clic en \"Continuar\" para actualizarlo.",
       "continue" : "Continuar"
+    },
+    "updateOnDesktop" : {
+      "title" : "Actualice en tu PC",
+      "description" : "Tu {{productName}} necesita una actualización por única vez que sólo se puede instalar desde Ledger Wallet Desktop.",
+      "gotIt" : "Entendido"
     },
     "banner" : {
       "wallet40" : {
@@ -8384,18 +8663,60 @@
         "limitZero" : "El límite de confianza debe ser superior a 0."
       },
       "success" : {
-        "title" : "{{token}} añadido",
-        "text" : "Aparecerá en tu cuenta con un saldo de 0 después de la siguiente sincronización."
+        "title" : "Solicitud para añadir {{token}} enviada",
+        "text" : "Se aplica una vez que la red confirme la transacción."
+      }
+    },
+    "manageAssets" : {
+      "cta" : "Administrar",
+      "title" : "Administrar activos",
+      "empty" : "Esta cuenta aún no tiene tokens.",
+      "tokenType" : "Tipo de token",
+      "tokenTypeInfo" : "Una Línea de Confianza (IOU) tiene un límite de saldo y una configuración de rippling. Un Token Multipropósito (MPT) no tiene ajustes.",
+      "iou" : "Línea de Confianza (IOU)",
+      "mpt" : "Token Multipropósito",
+      "issuer" : "Emisor",
+      "transferFee" : "Tarifa de transferencia",
+      "transferFeeInfo" : "La parte de cada transferencia entre titulares que cobra el emisor.",
+      "transferFeeUnavailable" : "No disponible",
+      "lockedAmount" : "Cantidad bloqueada",
+      "ripplingInfo" : "El Rippling permite que los pagos de otros usuarios muevan el saldo entre tokens con el mismo código de divisa.",
+      "edit" : "Editar",
+      "delete" : "Borrar",
+      "removalPending" : "Eliminación pendiente",
+      "frozen" : "Este token está inmovilizado",
+      "deleteBlocked" : {
+        "title" : "Vacía el saldo de {{ticker}} para eliminarlo",
+        "description" : "Envía el saldo restante de {{ticker}} para eliminar este activo."
+      },
+      "deleteConfirm" : {
+        "title" : "¿Seguro que quieres eliminar {{ticker}}?",
+        "description" : "Este activo se eliminará de tu Portfolio y ya no podrás recibir más. La cantidad bloqueada se enviará a tu cuenta {{accountName}}.",
+        "descriptionIou" : "Este activo se eliminará de tu Portfolio y ya no podrás recibir más. La cantidad bloqueada se enviará a tu cuenta {{accountName}}. Tu dispositivo mostrará un límite de confianza de 0. Así es como el registro de XRP elimina un token."
+      },
+      "deleteSuccess" : {
+        "title" : "{{ticker}} se ha eliminado correctamente de tu cuenta",
+        "description" : "Puedes volver a añadir este activo en cualquier momento."
+      },
+      "deleteError" : {
+        "title" : "Error al eliminar el activo",
+        "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y revisa el historial de transacciones antes de intentarlo de nuevo."
       }
     },
     "tokenSettings" : {
       "limit" : "Límite de confianza",
+      "balanceLimit" : "Límite de saldo",
       "maxLimit" : "Límite de confianza máximo",
       "maxLimitInfo" : "El límite de confianza es la cantidad máxima de {{token}} que tu cuenta acepta mantener. El límite de confianza máximo permitido es <amount/>.",
       "maximum" : "Máximo"
     },
+    "send" : {
+      "issuerFee" : "Tarifa del emisor"
+    },
     "rippling" : {
       "label" : "Rippling",
+      "activated" : "Activado",
+      "deactivated" : "Desactivado",
       "on" : "Activado",
       "off" : "Desactivado",
       "warning" : "Activar esto permite que los pagos de otros usuarios muevan el saldo entre tokens con el mismo código de divisa. Actívalo solo si sabes lo que estás haciendo."
@@ -11337,6 +11658,9 @@
         "outgoingTitle" : "Detalles de la transferencia saliente"
       },
       "amount" : "Importe",
+      "unknownToken" : "Token desconocido",
+      "instrumentId" : "ID del instrumento",
+      "instrumentAdmin" : "Administrador del instrumento",
       "from" : "De",
       "to" : "A",
       "memo" : "Memo",
