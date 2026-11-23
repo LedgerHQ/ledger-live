@@ -20,6 +20,7 @@ import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq
 import { calApiConfig, withCalServiceUrlOnFailure } from "./shared/cal-config";
 import { ledgerClientVersion } from "./shared/client-version";
 import { withDefaultUserAgent } from "./shared/default-user-agent";
+import { withRefusedTunnelAsResponse } from "./shared/refused-tunnel";
 import { applySwapApiBaseOverride } from "./shared/swap-api-base";
 
 /**
@@ -32,7 +33,9 @@ if (!process.env.USER_ID) {
 setEnv("LEDGER_CLIENT_VERSION", ledgerClientVersion);
 process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
 applySwapApiBaseOverride(process.env);
-globalThis.fetch = withDefaultUserAgent(globalThis.fetch, ledgerClientVersion);
+globalThis.fetch = withRefusedTunnelAsResponse(
+  withDefaultUserAgent(globalThis.fetch, ledgerClientVersion),
+);
 bridgeEnvToNetworkState();
 
 setCurrenciesResolver({
