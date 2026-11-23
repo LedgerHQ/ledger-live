@@ -1,11 +1,13 @@
 import { isGenericCoinFrameworkFamily } from "../bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import type { CoinModuleLoader, FamilySetup } from "./types";
+import { aleoAccountKey } from "../families/aleo/accountKey";
 
 export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "aleo",
     supportedCoins: ["aleo", "aleo_testnet"],
     accountDescriptorType: "address",
+    accountKey: aleoAccountKey,
     loadSetup: () => import("../families/aleo/setup"),
     loadTransaction: () => import("@ledgerhq/coin-aleo/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>

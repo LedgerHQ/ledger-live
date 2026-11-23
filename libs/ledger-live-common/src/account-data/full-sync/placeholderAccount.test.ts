@@ -1,5 +1,6 @@
 import { AccountDescriptorSchema, toNetworkId } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { fromLegacyAccount } from "../../account/accountDescriptor";
 import { genScannedMockAccount } from "../../bridge/mockHelpers";
 import { placeholderAccount } from "./placeholderAccount";
@@ -24,6 +25,19 @@ const EXTENDED_KEY = `${"35".repeat(32)}${"47".repeat(32)}`;
 beforeEach(() => mockUsesMockBridges.mockReturnValue(false));
 
 describe("placeholderAccount", () => {
+  it("is an Aleo account at its address, its legacy id keeping the view key of its key", async () => {
+    const aleoAddress = "aleo1uhf67fhy46jvv5hadf586pkdarax6ppuzq8xtpk7jdk9hhujku8sfa39ml";
+    const viewKey = "AViewKey1jyaKC65RhaGN3b6h79hLdwTBk3YAMbRL1MMeCArLDJ6E";
+    const account = await placeholderAccount(
+      address("aleo", `${aleoAddress}.${viewKey}`, "m/44h/683h/0h/0h"),
+    );
+    expect(account.freshAddress).toBe(aleoAddress);
+    expect(decodeAccountId(account.id)).toMatchObject({
+      xpubOrAddress: aleoAddress,
+      customData: viewKey,
+    });
+  });
+
   it("is an empty account of the descriptor's currency, mode and index", async () => {
     const account = await placeholderAccount(
       address("ethereum", "0x0000000000000000000000000000000000000001", "m/44h/60h/1h/0/0"),
