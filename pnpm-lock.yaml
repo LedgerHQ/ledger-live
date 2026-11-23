@@ -20944,7 +20944,7 @@ importers:
         specifier: 2.0.5
         version: 2.0.5
       '@types/qs':
-        specifier: ^6.9.7
+        specifier: 6.9.14
         version: 6.9.14
       '@types/react':
         specifier: 19.0.14

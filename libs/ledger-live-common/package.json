@@ -312,7 +312,7 @@
     "@types/minimatch": "5.1.2",
     "@types/node": "catalog:",
     "@types/numeral": "2.0.5",
-    "@types/qs": "^6.9.7",
+    "@types/qs": "6.9.14",
     "@types/react": "catalog:",
     "@types/semver": "catalog:",
     "@typescript/native": "catalog:",
