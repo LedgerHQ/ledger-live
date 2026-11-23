@@ -25,10 +25,8 @@ const swcOptions = { inputSourceMap: false, jsc: { target: "esnext" } };
 // Excluded from the per-PR and daily integration runs; executed weekly instead
 // (see .github/workflows/test-integration-weekly.yml).
 const weeklyIntegrationTests = [
-  "src/families/cosmos/lastBlock.integration.test.ts",
-  "src/families/cosmos/datasets/cosmos.integration.test.ts",
-  "src/families/cosmos/datasets/persistence.integration.test.ts",
-  "src/families/cosmos/datasets/xion.integration.test.ts",
+  "src/families/cosmos/scanAccounts.weekly.integration.test.ts",
+  "src/families/cosmos/accountBridge.weekly.integration.test.ts",
 ];
 
 const weeklyIntegrationTestsRegex = weeklyIntegrationTests.map(
