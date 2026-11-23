@@ -34,4 +34,19 @@ describe("useReceiveAddressViewModel", () => {
     await waitFor(() => expect(result.current.address?.value).toBe(testReceive.address));
     expect(result.current.address?.assetIcon).toBeUndefined();
   });
+
+  it("should list the labels of the actions the app gives", () => {
+    const { result } = renderHook(
+      () =>
+        useReceiveAddressViewModel({
+          accountUUID: testAccountUUID,
+          assetId: ETH,
+          onClose: jest.fn(),
+          onCopyAddress: jest.fn(),
+        }),
+      { wrapper: receiveTestWrapper() },
+    );
+
+    expect(result.current.actionsPlaceholderLabel).toBe("Copy");
+  });
 });
