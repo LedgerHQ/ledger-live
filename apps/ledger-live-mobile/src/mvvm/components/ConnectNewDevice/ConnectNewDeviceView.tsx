@@ -31,19 +31,27 @@ function assertNever(value: never): never {
 
 function NonErrorStateView({
   state,
+  isPageTracked,
   onDeviceNotFound,
 }: Readonly<{
   state: ConnectNewDeviceNonErrorUIState;
+  isPageTracked: boolean;
   onDeviceNotFound?: () => void;
 }>): React.ReactNode {
   switch (state.type) {
     case ConnectNewDeviceUIStateTypes.Discovering:
-      return <DiscoveringView state={state} onDeviceNotFound={onDeviceNotFound} />;
+      return (
+        <DiscoveringView
+          state={state}
+          isPageTracked={isPageTracked}
+          onDeviceNotFound={onDeviceNotFound}
+        />
+      );
     case ConnectNewDeviceUIStateTypes.Connecting:
-      return <ConnectingView state={state} />;
+      return <ConnectingView state={state} isPageTracked={isPageTracked} />;
     case ConnectNewDeviceUIStateTypes.Connected:
     case ConnectNewDeviceUIStateTypes.Done:
-      return <ConnectedView state={state} />;
+      return <ConnectedView state={state} isPageTracked={isPageTracked} />;
     case ConnectNewDeviceUIStateTypes.Terminated:
       return null;
     default:
@@ -78,33 +86,37 @@ export function ConnectNewDeviceView({
   platform,
   onDeviceNotFound,
   onCloseErrorSheet,
+  isEmbedded = false,
 }: Readonly<ConnectNewDeviceViewProps>) {
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
-  useConnectNewDeviceTracking(state);
+  useConnectNewDeviceTracking(state, { reportsOutcome: !isEmbedded });
 
   // An error shows in the sheet, over the last view before it.
   const nonErrorState = isErrorState(state) ? lastNonErrorState : state;
   const errorState = isErrorState(state) ? state : null;
 
-  const onCloseSheet = () => {
-    // The sheet also reports a close once the state has left the error: no click then.
-    if (errorState && errorState.type !== ConnectNewDeviceUIStateTypes.UnknownError) {
-      trackConnectDeviceButtonClicked({
-        sourceFlow,
-        button: CONNECT_DEVICE_BUTTON.Close,
-        subError: getConnectDeviceSubError(errorState.error),
-        extraProperties: analyticsProperties,
-      });
-    }
-    onCloseErrorSheet();
+  const onCloseButtonPressed = () => {
+    if (!errorState || errorState.type === ConnectNewDeviceUIStateTypes.UnknownError) return;
+    trackConnectDeviceButtonClicked({
+      sourceFlow,
+      button: CONNECT_DEVICE_BUTTON.Close,
+      subError: getConnectDeviceSubError(errorState.error),
+      extraProperties: analyticsProperties,
+    });
   };
 
   return (
     <Box lx={{ flex: 1, backgroundColor: "canvas" }}>
-      <NonErrorStateView state={nonErrorState} onDeviceNotFound={onDeviceNotFound} />
+      {/* The view under the error sheet sends its page again once the sheet closes. */}
+      <NonErrorStateView
+        state={nonErrorState}
+        isPageTracked={errorState === null}
+        onDeviceNotFound={onDeviceNotFound}
+      />
       <ErrorBottomSheet
         isOpen={errorState !== null}
-        onClose={onCloseSheet}
+        onClose={onCloseErrorSheet}
+        onHeaderClosePressed={onCloseButtonPressed}
         testID="connect-new-device-error-sheet"
       >
         {errorState && <ErrorStateView state={errorState} platform={platform} />}

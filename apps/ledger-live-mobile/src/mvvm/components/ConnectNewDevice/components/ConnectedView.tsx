@@ -20,6 +20,8 @@ type ConnectedViewProps = {
         | typeof ConnectNewDeviceUIStateTypes.Done;
     }
   >;
+  /** False while an error sheet shows over the view: its page is sent again once it closes. */
+  isPageTracked: boolean;
 };
 
 const titleKeys = {
@@ -27,20 +29,25 @@ const titleKeys = {
   usb: "connectNewDevice.connected.usb.title",
 } as const satisfies Record<DeviceTransport, string>;
 
-export function ConnectedView({ state }: Readonly<ConnectedViewProps>): React.ReactNode {
+export function ConnectedView({
+  state,
+  isPageTracked,
+}: Readonly<ConnectedViewProps>): React.ReactNode {
   const { t } = useTranslation();
   const isNewDevice = useIsNewDevice();
   const { device } = state;
 
   return (
     <>
-      <TrackDIEScreen
-        category={PAGE_CONNECT_DEVICE.Connected}
-        modelId={device.deviceModelId}
-        transport={getTrackingTransport(device.transport)}
-        isNewDevice={isNewDevice(device)}
-        refreshSource
-      />
+      {isPageTracked && (
+        <TrackDIEScreen
+          category={PAGE_CONNECT_DEVICE.Connected}
+          modelId={device.deviceModelId}
+          transport={getTrackingTransport(device.transport)}
+          isNewDevice={isNewDevice(device)}
+          refreshSource
+        />
+      )}
       <StateLayout
         animation="success"
         loopAnimation={false}

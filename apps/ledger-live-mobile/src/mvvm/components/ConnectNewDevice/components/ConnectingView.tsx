@@ -17,6 +17,8 @@ type ConnectingViewProps = {
     ConnectNewDeviceNonErrorUIState,
     { type: typeof ConnectNewDeviceUIStateTypes.Connecting }
   >;
+  /** False while an error sheet shows over the view: its page is sent again once it closes. */
+  isPageTracked: boolean;
 };
 
 const titleKeys = {
@@ -24,7 +26,10 @@ const titleKeys = {
   usb: "connectNewDevice.connecting.usb.title",
 } as const satisfies Record<DeviceTransport, string>;
 
-export function ConnectingView({ state }: Readonly<ConnectingViewProps>): React.ReactNode {
+export function ConnectingView({
+  state,
+  isPageTracked,
+}: Readonly<ConnectingViewProps>): React.ReactNode {
   const { t } = useTranslation();
   const { device } = state;
   const deviceName = device.name ?? t("deviceIntentExecutor.connectDevice.common.ledgerDevice");
@@ -33,13 +38,15 @@ export function ConnectingView({ state }: Readonly<ConnectingViewProps>): React.
 
   return (
     <>
-      <TrackDIEScreen
-        category={PAGE_CONNECT_DEVICE.Connecting}
-        modelId={device.deviceModelId}
-        transport={getTrackingTransport(device.transport)}
-        isNewDevice={isNewDevice(device)}
-        refreshSource
-      />
+      {isPageTracked && (
+        <TrackDIEScreen
+          category={PAGE_CONNECT_DEVICE.Connecting}
+          modelId={device.deviceModelId}
+          transport={getTrackingTransport(device.transport)}
+          isNewDevice={isNewDevice(device)}
+          refreshSource
+        />
+      )}
       <StateLayout
         animation="loading"
         loopAnimation

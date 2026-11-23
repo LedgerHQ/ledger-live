@@ -23,6 +23,8 @@ type DiscoveringViewProps = {
     { type: typeof ConnectNewDeviceUIStateTypes.Discovering }
   >;
   onDeviceNotFound?: () => void;
+  /** False while an error sheet shows over the view: its page is sent again once it closes. */
+  isPageTracked: boolean;
 };
 
 const descriptionKeys = {
@@ -34,6 +36,7 @@ const descriptionKeys = {
 export function DiscoveringView({
   state,
   onDeviceNotFound,
+  isPageTracked,
 }: Readonly<DiscoveringViewProps>): React.ReactNode {
   const { t } = useTranslation();
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
@@ -86,7 +89,7 @@ export function DiscoveringView({
       }
       testID={`connect-new-device-discovering-${scanningMode}`}
     >
-      {isScanning && (
+      {isScanning && isPageTracked && (
         <TrackDIEScreen
           category={PAGE_CONNECT_DEVICE.Discovering}
           scanningMode={scanningMode}

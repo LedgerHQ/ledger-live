@@ -41,13 +41,14 @@ const withKnownNanoX = (state: State): State => ({
   knownDevices: { ...state.knownDevices, knownDevices: [device] },
 });
 
-const element = (viewState: ConnectNewDeviceUIState) => (
+const element = (viewState: ConnectNewDeviceUIState, isEmbedded: boolean) => (
   <DeviceIntentTrackingProvider value={{ sourceFlow: "onboarding" }}>
     <ConnectNewDeviceView
       state={viewState}
       lastNonErrorState={discoveringState}
       platform="android"
       onCloseErrorSheet={jest.fn()}
+      isEmbedded={isEmbedded}
     />
   </DeviceIntentTrackingProvider>
 );
@@ -55,14 +56,29 @@ const element = (viewState: ConnectNewDeviceUIState) => (
 function renderView(
   state: ConnectNewDeviceUIState,
   overrideInitialState: (state: State) => State = initialState => initialState,
+  { isEmbedded = false }: { isEmbedded?: boolean } = {},
 ) {
-  const view = render(element(state), { overrideInitialState });
+  const view = render(element(state, isEmbedded), { overrideInitialState });
 
   return {
     ...view,
-    rerenderState: (viewState: ConnectNewDeviceUIState) => view.rerender(element(viewState)),
+    rerenderState: (viewState: ConnectNewDeviceUIState) =>
+      view.rerender(element(viewState, isEmbedded)),
   };
 }
+
+const unknownDiscoveryError: ConnectNewDeviceUIState = {
+  type: ConnectNewDeviceUIStateTypes.DiscoveryError,
+  error: { type: BaseDiscoveryErrorTypes.Unknown },
+  retry: jest.fn(),
+  ignore: jest.fn(),
+  close: jest.fn(),
+};
+
+const discoveringPageCalls = () =>
+  mockedTrackScreen.mock.calls.filter(
+    ([props]) => props.category === "Connect Device - Discovering",
+  );
 
 const trackedEvents = (eventName: string) =>
   mockedTrack.mock.calls.filter(([name]) => name === eventName).map(([, properties]) => properties);
@@ -181,5 +197,41 @@ describe("ConnectNewDeviceView tracking", () => {
     // THEN
     expect(trackedEvents("deviceflow_aborted")).toEqual([]);
     expect(trackedEvents("deviceflow_failed")).toEqual([]);
+  });
+
+  it("GIVEN an error sheet over the list, WHEN the error is fixed, THEN it should send the Discovering page again", () => {
+    // GIVEN
+    const { rerenderState } = renderView(unknownDiscoveryError);
+    expect(discoveringPageCalls()).toEqual([]);
+
+    // WHEN
+    rerenderState(discoveringState);
+
+    // THEN
+    expect(discoveringPageCalls()).not.toEqual([]);
+  });
+
+  it("GIVEN a discovery error, WHEN the user presses Close, THEN it should send Close with the error", async () => {
+    // GIVEN
+    const { user } = renderView(unknownDiscoveryError);
+
+    // WHEN
+    await user.press(screen.getByRole("button", { name: "Close" }));
+
+    // THEN
+    expect(trackedEvents("button_clicked")).toEqual([
+      { sourceFlow: "onboarding", deviceUxV2: true, button: "Close", subError: "Unknown" },
+    ]);
+  });
+
+  it("GIVEN the Add mode of the device list, WHEN the flow unmounts before a connection, THEN it should send no outcome", () => {
+    // GIVEN
+    const { unmount } = renderView(discoveringState, undefined, { isEmbedded: true });
+
+    // WHEN
+    unmount();
+
+    // THEN
+    expect(trackedEvents("deviceflow_aborted")).toEqual([]);
   });
 });

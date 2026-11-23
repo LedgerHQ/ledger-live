@@ -51,4 +51,6 @@ export type ConnectNewDeviceViewProps = {
   onDeviceNotFound?: () => void;
   /** Called on every close of the error sheet, also when `state` leaves an error. */
   onCloseErrorSheet: () => void;
+  /** Set by the Add mode of the device list, which sends the outcome of the flow itself. */
+  isEmbedded?: boolean;
 };

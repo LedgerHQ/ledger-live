@@ -17,16 +17,20 @@ import { getScanningMode } from "./utils/getScanningMode";
 
 /**
  * Sends the flow events of Connect New Device, alone or in the Add mode of the device list:
- * `device_prompted` once discovery runs, `device_connecting` at each connection, and
- * `deviceflow_aborted` or `deviceflow_failed` when the flow unmounts before a connection.
+ * `device_prompted` once discovery runs, `device_connecting` at each connection and, alone,
+ * `deviceflow_aborted` or `deviceflow_failed` when the flow unmounts before a connection. In the
+ * Add mode, the device list sends the outcome.
  */
-export function useConnectNewDeviceTracking(state: ConnectNewDeviceUIState): void {
+export function useConnectNewDeviceTracking(
+  state: ConnectNewDeviceUIState,
+  { reportsOutcome }: { reportsOutcome: boolean },
+): void {
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const isNewDevice = useIsNewDevice();
 
-  const latestRef = useRef({ sourceFlow, analyticsProperties });
+  const latestRef = useRef({ sourceFlow, analyticsProperties, reportsOutcome });
   useLayoutEffect(() => {
-    latestRef.current = { sourceFlow, analyticsProperties };
+    latestRef.current = { sourceFlow, analyticsProperties, reportsOutcome };
   });
 
   const isPromptedRef = useRef(false);
@@ -81,7 +85,7 @@ export function useConnectNewDeviceTracking(state: ConnectNewDeviceUIState): voi
     const isConnected = isConnectedRef;
 
     return () => {
-      if (isConnected.current) return;
+      if (isConnected.current || !latest.current.reportsOutcome) return;
       trackDeviceflowCanceled({
         sourceFlow: latest.current.sourceFlow,
         extraProperties: latest.current.analyticsProperties,

@@ -8,6 +8,8 @@ type ErrorBottomSheetProps = {
   isOpen: boolean;
   /** Called on every close, also when `isOpen` becomes false. */
   onClose: () => void;
+  /** Called only when the user presses the close button of the header, before `onClose`. */
+  onHeaderClosePressed?: () => void;
   children: React.ReactNode;
   testID: string;
 };
@@ -15,6 +17,7 @@ type ErrorBottomSheetProps = {
 export function ErrorBottomSheet({
   isOpen,
   onClose,
+  onHeaderClosePressed,
   children,
   testID,
 }: Readonly<ErrorBottomSheetProps>): React.JSX.Element {
@@ -27,6 +30,7 @@ export function ErrorBottomSheet({
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
+      onHeaderClosePressed={onHeaderClosePressed}
       enableDynamicSizing
       maxDynamicContentSize={maxDynamicContentSize}
       contentHasBottomSpace
