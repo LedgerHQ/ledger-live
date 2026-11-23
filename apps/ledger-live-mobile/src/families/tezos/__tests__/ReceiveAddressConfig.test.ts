@@ -1,4 +1,3 @@
-import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockReceiveFamilyConfigInput } from "@features/flow-receive/types.mock";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -22,7 +21,7 @@ const tezosAccount = (history: ReadonlyArray<[OperationType, string]>): Account 
 
 const tezosInput = (legacyAccount?: Account) =>
   mockReceiveFamilyConfigInput<Account>({
-    descriptor: mockAddressAccountDescriptor({ network: "tezos", path: "m/44h/1729h/0h/0h" }),
+    account: { network: "tezos", path: "m/44h/1729h/0h/0h" },
     asset: { id: "tezos" },
     legacyAccount,
   });

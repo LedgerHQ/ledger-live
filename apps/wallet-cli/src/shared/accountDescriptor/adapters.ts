@@ -12,9 +12,11 @@
 
 import {
   fromDescriptorPath,
+  InvalidAccountDescriptorError,
   LegacyDerivationPathSchema,
   type DerivationPath,
 } from "@domain/entity-account-descriptor";
+import { AccountKeySchema } from "@domain/entity-account-descriptor/descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   getDerivationScheme,
@@ -141,13 +143,21 @@ function matchSchemeToPath(
 /**
  * Convert a V0 (WalletSync / live-common) account descriptor to the V1 ADR format.
  * Throws UnsupportedFamilyError if the derivation scheme cannot be determined, and
- * InvalidDerivationPathError if the built path is no BIP32 path (an index of 2^31 or more).
+ * InvalidDerivationPathError if the built path is no BIP32 path (an index of 2^31 or more),
+ * and InvalidAccountDescriptorError if seedIdentifier is empty or holds whitespace.
  */
 export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
   const network = networkOfV0(v0);
   const currency = getCryptoCurrencyById(v0.currencyId);
   const derivationMode = asDerivationMode(v0.derivationMode);
   const scheme = getDerivationScheme({ derivationMode, currency });
+  const parsedKey = AccountKeySchema.safeParse(v0.seedIdentifier);
+  if (!parsedKey.success) {
+    throw new InvalidAccountDescriptorError(
+      "Invalid AccountDescriptor: seedIdentifier must be non-empty, without whitespace",
+    );
+  }
+  const key = parsedKey.data;
 
   if (isXpub(v0.seedIdentifier)) {
     const path = toV1Path(runAccountDerivationScheme(scheme, currency, { account: v0.index }));
@@ -156,7 +166,7 @@ export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
       version: "2",
       type: "utxo",
       network,
-      key: v0.seedIdentifier,
+      key,
       path,
     } satisfies UtxoAccountDescriptorV1;
   }
@@ -169,7 +179,7 @@ export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
     version: "2",
     type: "address",
     network,
-    key: v0.seedIdentifier,
+    key,
     path,
   } satisfies AccountBasedDescriptorV1;
 }

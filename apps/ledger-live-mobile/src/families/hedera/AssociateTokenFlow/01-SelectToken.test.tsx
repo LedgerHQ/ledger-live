@@ -1,12 +1,7 @@
 import React from "react";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
-import {
-  AccountIdSchema,
-  LegacyAccountEntrySchema,
-  accountsSlice,
-  legacyAccountsSynced,
-} from "@domain/entity-account";
-import { mockAccountEntry } from "@domain/entity-account/schema.mock";
+import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
+import { mockLegacyAccountEntry } from "@domain/entity-account/schema.mock";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { useTokensData } from "@features/platform-currencies";
 import { NavigatorName, ScreenName } from "~/const";
@@ -120,15 +115,13 @@ describe("AssociateTokenFlow - select token", () => {
   });
 
   it("should open the new receive screen when tapping an ERC-20 token with the new receive flow on", async () => {
-    const entry = LegacyAccountEntrySchema.parse(
-      mockAccountEntry({
-        descriptor: mockAddressAccountDescriptor({
-          network: "hedera",
-          path: "m/44h/3030h/0h/0h/0h",
-        }),
-        legacyId: AccountIdSchema.parse(HEDERA_ACCOUNT_1.id),
+    const entry = mockLegacyAccountEntry({
+      descriptor: mockAddressAccountDescriptor({
+        network: "hedera",
+        path: "m/44h/3030h/0h/0h/0h",
       }),
-    );
+      legacyId: AccountIdSchema.parse(HEDERA_ACCOUNT_1.id),
+    });
     const { user } = render(<SelectToken navigation={mockNavigation} route={mockRoute} />, {
       overrideInitialState: withFlagOverrides(
         { newReceiveFlow: { enabled: true, params: { excludedFamilies: [] } } },

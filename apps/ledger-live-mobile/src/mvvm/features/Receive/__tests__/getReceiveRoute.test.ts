@@ -1,13 +1,8 @@
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import {
-  AccountIdSchema,
-  LegacyAccountEntrySchema,
-  accountsSlice,
-  legacyAccountsSynced,
-} from "@domain/entity-account";
-import { mockAccountEntry } from "@domain/entity-account/schema.mock";
+import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
+import { mockLegacyAccountEntry } from "@domain/entity-account/schema.mock";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
@@ -18,7 +13,7 @@ jest.mock("~/generated/ReceiveAddressConfig", () => ({
   default: { tron: () => ({ isSupported: false }) },
 }));
 
-const entry = LegacyAccountEntrySchema.parse(mockAccountEntry());
+const entry = mockLegacyAccountEntry();
 const ethereum = getCryptoCurrencyById("ethereum");
 const usdc = { type: "TokenCurrency", id: "ethereum/erc20/usd__coin", parentCurrency: ethereum };
 const usdcAccount = {
@@ -120,12 +115,10 @@ describe("getReceiveRoute", () => {
     });
 
     it("when the family config does not support the account", () => {
-      const tronEntry = LegacyAccountEntrySchema.parse(
-        mockAccountEntry({
-          descriptor: mockAddressAccountDescriptor({ network: "tron" }),
-          legacyId: AccountIdSchema.parse(tronAccount.id),
-        }),
-      );
+      const tronEntry = mockLegacyAccountEntry({
+        descriptor: mockAddressAccountDescriptor({ network: "tron" }),
+        legacyId: AccountIdSchema.parse(tronAccount.id),
+      });
       const state = makeState();
       const withTron = {
         ...state,

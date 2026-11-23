@@ -22,7 +22,9 @@ import { accountsSelector } from "~/reducers/accounts";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 
-const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountLegacyId } = accountsSlice.getSelectors(
+  (state: State) => state.accountEntries,
+);
 
 /** The app's account data sources, in rank order: for each account, the first that serves it answers. */
 export function accountDataSources(
@@ -38,7 +40,7 @@ export function accountDataSources(
   const fullSyncHost: FullSyncHost = {
     findAccount: accountUUID => {
       const state = getState();
-      const legacyId = selectAccountEntry(state, accountUUID)?.legacyId;
+      const legacyId = selectAccountLegacyId(state, accountUUID);
       return legacyId === undefined
         ? undefined
         : accountsSelector(state).find(account => account.id === legacyId);

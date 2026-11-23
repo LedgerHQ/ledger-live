@@ -3,7 +3,7 @@
 > [!WARNING]
 > **Status: UNSTABLE** — first implementation, its API may change.
 
-Account discovery as a stream: `discoverAccounts(host, { currencyId })` is an `Observable<DiscoveredAccount>`, in the order of the legacy `scanAccounts`. It answers "which accounts does this seed have on this currency", and nothing else: no `Account`, no sync, no store.
+Account discovery as a stream: `discoverAccounts(host, { currencyId })`, from `@features/platform-account-discovery/descriptor` since each result carries a descriptor (edges only, see `docs/account-models`), is an `Observable<DiscoveredAccount>`, in the order of the legacy `scanAccounts`. It answers "which accounts does this seed have on this currency", and nothing else: no `Account`, no sync, no store.
 
 ```mermaid
 flowchart LR

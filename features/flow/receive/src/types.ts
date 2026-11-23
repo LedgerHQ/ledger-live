@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
 import type { DeviceModelId } from "@ledgerhq/device-management-kit";
-import type { AccountDescriptor, AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountUUID, DerivationPath, NetworkId } from "@domain/entity-account-descriptor";
 import type { AccountReceive, ReceiveVerification } from "@domain/entity-account-receive";
 import type { AccountStatus } from "@domain/entity-account-status";
 import type { CryptoOrTokenCurrency, CryptoOrTokenCurrencyId } from "@domain/entity-currency";
@@ -26,12 +26,18 @@ export type ReceiveFamilyConfig = Readonly<{
   unsupportedDeviceModelIds?: readonly DeviceModelId[];
 }>;
 
+/** What the receive flow knows of an account besides its AccountUUID: never its key. */
+export type ReceiveAccountView = Readonly<{
+  network: NetworkId;
+  path: DerivationPath;
+}>;
+
 /**
  * What a family reads to build its config. `legacyAccount` is the legacy main account, read only
  * for what no account data kind serves yet.
  */
 export type ReceiveFamilyConfigInput<A = unknown> = Readonly<{
-  descriptor: AccountDescriptor;
+  account: ReceiveAccountView;
   asset: Pick<CryptoOrTokenCurrency, "id" | "type">;
   featureFlags: PartialFeatures;
   /** The account's `receive` data, absent until it is read. */
@@ -57,7 +63,7 @@ export type ReceiveFamilyConfigPort = (
 /** The account and the asset a receive flow shows the address of. */
 export type ReceiveTarget = Readonly<{
   accountUUID: AccountUUID;
-  descriptor: AccountDescriptor;
+  account: ReceiveAccountView;
   assetId: CryptoOrTokenCurrencyId;
 }>;
 

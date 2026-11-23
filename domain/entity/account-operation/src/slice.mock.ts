@@ -1,6 +1,9 @@
 import { accountDataQueryKey } from "@domain/entity-account-data";
-import { computeAccountUUID, type AccountUUID } from "@domain/entity-account-descriptor";
-import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import type { AccountUUID } from "@domain/entity-account-descriptor";
+import {
+  computeAccountUUID,
+  mockAddressAccountDescriptor,
+} from "@domain/entity-account-descriptor/schema.mock";
 import type {
   AccountOperation,
   AccountOperationsEntry,

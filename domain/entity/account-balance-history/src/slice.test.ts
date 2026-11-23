@@ -3,8 +3,10 @@ import {
   accountDataQueryKey,
   accountDataReceived,
 } from "@domain/entity-account-data";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
-import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import {
+  computeAccountUUID,
+  mockAddressAccountDescriptor,
+} from "@domain/entity-account-descriptor/schema.mock";
 import { mockAssetBalanceHistory } from "./schema.mock";
 import {
   initialAccountBalanceHistoriesState,

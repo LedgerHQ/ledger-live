@@ -1,8 +1,5 @@
-import {
-  currencyIdFromNetwork,
-  toNetworkId,
-  type AccountDescriptor,
-} from "@domain/entity-account-descriptor";
+import { currencyIdFromNetwork, toNetworkId } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { familyOf } from "./families";
 import { seededRandom } from "./random";

@@ -1,5 +1,5 @@
 import type { PortfolioRegistration } from "@domain/api-account-portfolio";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { bitcoinRegistration } from "./bitcoin";
 import { evmRegistration } from "./evm";
 import type { PortfolioRegistrationStrategy } from "./types";

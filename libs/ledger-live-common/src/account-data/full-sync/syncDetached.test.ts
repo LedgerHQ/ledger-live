@@ -1,6 +1,7 @@
 import { Observable, of } from "rxjs";
 import type { Account } from "@ledgerhq/types-live";
-import { AccountDescriptorSchema, toNetworkId } from "@domain/entity-account-descriptor";
+import { toNetworkId } from "@domain/entity-account-descriptor";
+import { AccountDescriptorSchema } from "@domain/entity-account-descriptor/descriptor";
 import { placeholderAccount } from "./placeholderAccount";
 import { syncDetached } from "./syncDetached";
 

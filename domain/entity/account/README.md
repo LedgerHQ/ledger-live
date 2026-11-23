@@ -14,7 +14,8 @@ The `accounts` slice is meant to become the source of truth of the account list.
 - `byLegacyId` — the reverse index `legacyId → AccountUUID`, kept by the same reducer.
 
 - `accountsSlice` — its reducer, `legacyAccountsSynced`, and its selectors.
-- its selectors: `selectAccountEntries` / `selectAccountUUIDs` / `selectAccountEntry` — every account in order, their ids, or one by `AccountUUID`; `selectAccountUUIDByLegacyId` — the `AccountUUID` behind a legacy account id, from `byLegacyId`.
+- its selectors: `selectAccountUUIDs` — every account in order; `selectAccountLegacyId` / `selectAccountNetwork` / `selectAccountPath` — what code may know of one account besides its `AccountUUID`; `selectAccountUUIDByLegacyId` — the `AccountUUID` behind a legacy account id, from `byLegacyId`.
+- `getAccountEntrySelectors` (`./descriptor`) — `selectAccountEntries`, `selectAccountEntry` and `selectAccountDescriptor`, bound to where the app mounts the slice. They hand out the descriptor, whose key is sensitive: only the edges import this entry (lint restricts it, see `ACCOUNT_DESCRIPTOR` in `support/lint`).
 - `mockAccountEntry` (`./schema.mock`) — a valid entry, with overrides.
 
 While the legacy store holds `accounts`, each app mounts the slice under another key and binds its selectors there with `accountsSlice.getSelectors`.
@@ -34,11 +35,11 @@ What an account *has* — a name, a balance, a history, a star — lives in its 
 ```ts
 import { AccountIdSchema, accountsSlice } from "@domain/entity-account";
 
-const { selectAccountEntry, selectAccountUUIDByLegacyId } = accountsSlice.getSelectors(
+const { selectAccountNetwork, selectAccountUUIDByLegacyId } = accountsSlice.getSelectors(
   (state: State) => state.accountEntries,
 );
 
-const entry = selectAccountEntry(state, accountUUID); // { accountUUID, descriptor, legacyId? }
+const network = selectAccountNetwork(state, accountUUID);
 // Only at the boundary with a legacy screen:
 const uuid = selectAccountUUIDByLegacyId(state, AccountIdSchema.parse(legacyAccount.id));
 ```

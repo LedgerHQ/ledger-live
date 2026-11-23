@@ -7,7 +7,7 @@ import {
   type OperationId,
   type OperationType,
 } from "@domain/entity-account-operation";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { countervaluesOf, type Fiat } from "../fiat";
 
 /** `unmapped`: token changes with no CAL id, left out. `unreadable`: updates that could not be read. */

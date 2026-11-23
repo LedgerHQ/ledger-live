@@ -32,7 +32,12 @@ import {
   toDatadogBroadcastLog,
   type LogEvent as TransactionLogEvent,
 } from "@ledgerhq/transaction-observability";
-import { containsIdentifiers, scrubResourceUrl } from "@features/platform-observability-redaction";
+import {
+  containsIdentifiers,
+  scrubResourceUrl,
+  scrubAccountDescriptors,
+  scrubAccountDescriptorsFromRecord,
+} from "@features/platform-observability-redaction";
 
 type DatadogRemoteParams = NonNullable<Features["llmDatadog"]["params"]>;
 type ErrorEventMapper = NonNullable<RumConfigurationOptions["errorEventMapper"]>;
@@ -181,6 +186,21 @@ const isExcludedErrorDescription = (errorDescription: string): boolean => {
   });
 };
 
+function redactText(value: string): string;
+function redactText(value: string | undefined): string | undefined;
+function redactText(value: string | undefined): string | undefined {
+  return typeof value === "string" ? scrubAccountDescriptors(value) : value;
+}
+
+/** The SDK sends the unmapped event when a mapper throws, so a failed redaction yields null: drop it. */
+const redactOrNull = <T>(redact: () => T): T | null => {
+  try {
+    return redact();
+  } catch {
+    return null;
+  }
+};
+
 /**
  * The custom errorEventMapper function for Datadog RUM.
  * This function is called for every RUM error event before it is sent to Datadog.
@@ -197,12 +217,16 @@ export const customErrorEventMapper: (disableErrorTracking: boolean) => ErrorEve
       return null; // Return null to drop the event
     }
 
+    const redacted = redactOrNull(() => ({
+      message: redactText(event.message),
+      stacktrace: redactText(event.stacktrace),
+      context: scrubAccountDescriptorsFromRecord(event.context),
+    }));
+    if (!redacted) return null;
     return {
       ...event,
-      context: {
-        ...event.context,
-        featureFlags: buildFeatureFlagTags(),
-      },
+      ...redacted,
+      context: { ...redacted.context, featureFlags: buildFeatureFlagTags() },
     };
   };
 
@@ -213,12 +237,15 @@ export const customErrorEventMapper: (disableErrorTracking: boolean) => ErrorEve
  */
 export const customActionEventMapper: ActionEventMapper = event => {
   if (!event) return null;
+  const redacted = redactOrNull(() => ({
+    name: scrubAccountDescriptors(event.name),
+    context: scrubAccountDescriptorsFromRecord(event.context),
+  }));
+  if (!redacted) return null;
   return {
     ...event,
-    context: {
-      ...event.context,
-      featureFlags: buildFeatureFlagTags(),
-    },
+    ...redacted,
+    context: { ...redacted.context, featureFlags: buildFeatureFlagTags() },
   };
 };
 
@@ -229,12 +256,18 @@ export const customActionEventMapper: ActionEventMapper = event => {
  */
 export const customLogEventMapper: LogEventMapper = event => {
   if (!event) return null;
+  const redacted = redactOrNull(() => ({
+    message: redactText(event.message),
+    errorMessage: redactText(event.errorMessage),
+    stacktrace: redactText(event.stacktrace),
+    context: scrubAccountDescriptorsFromRecord(event.context),
+    attributes: event.attributes && scrubAccountDescriptorsFromRecord(event.attributes),
+  }));
+  if (!redacted) return null;
   return {
     ...event,
-    context: {
-      ...event.context,
-      featureFlags: buildFeatureFlagTags(),
-    },
+    ...redacted,
+    context: { ...redacted.context, featureFlags: buildFeatureFlagTags() },
   };
 };
 

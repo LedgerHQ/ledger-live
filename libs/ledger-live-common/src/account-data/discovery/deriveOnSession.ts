@@ -2,8 +2,12 @@ import { defer, lastValueFrom, type Observable } from "rxjs";
 import { abortReason } from "@domain/api-account-data";
 import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
-import type { DeriveAccount, LookedUpAccount } from "@features/platform-account-discovery";
+import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
+import type {
+  DeriveAccount,
+  LookedUpAccount,
+} from "@features/platform-account-discovery/descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { getAccountDescriptorType, loadSetupForFamily } from "../../coin-modules/registry";
 import type Transport from "@ledgerhq/hw-transport";

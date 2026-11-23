@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { computeAccountUUID, serializeAccountDescriptor } from "@domain/entity-account-descriptor";
+import {
+  computeAccountUUID,
+  serializeAccountDescriptor,
+} from "@domain/entity-account-descriptor/descriptor";
 import { CRYPTO_CURRENCIES_IDS } from "@domain/entity-currency-crypto";
 import { mockDescriptors } from "../generate";
 import { mockSource } from "../mockSource";

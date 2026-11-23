@@ -1,31 +1,20 @@
 import { z } from "zod";
 import { NetworkIdSchema } from "./network";
-import { canonicalPath } from "./path";
-
-/** BIP32 indices are below 2^31, without leading zeros so that one path has one spelling. */
-const withinBip32Range = (path: string) =>
-  path
-    .split("/")
-    .slice(1)
-    .every(segment => Number.parseInt(segment, 10) < 2 ** 31);
-
-/** A full BIP32 path, e.g. "m/44h/60h/0h/0/0"; "'" and "H" are read as "h". */
-export const DerivationPathSchema = z
-  .string()
-  .regex(/^m(\/(0|[1-9]\d*)[hH']?)+$/, "Path must look like m/44h/60h/0h/0/0")
-  .transform(canonicalPath)
-  .refine(withinBip32Range, { message: "Path index must be below 2^31" })
-  .brand<"DerivationPath">();
-
-export type DerivationPath = z.infer<typeof DerivationPathSchema>;
+import { DerivationPathSchema } from "./derivationPath";
 
 /** `account` names a real account; `mock` a generated one, served by the mock source only. */
 export const AccountPurposeSchema = z.enum(["account", "mock"]);
 
 export type AccountPurpose = z.infer<typeof AccountPurposeSchema>;
 
-/** The public value the account is found and read from on its network. */
-const AccountKeySchema = z.string().min(1).regex(/^\S+$/, "key must not contain whitespace");
+/** The value the account is found and read from on its network; branded so an address cannot pass for it. */
+export const AccountKeySchema = z
+  .string()
+  .min(1)
+  .regex(/^\S+$/, "key must not contain whitespace")
+  .brand<"AccountKey">();
+
+export type AccountKey = z.infer<typeof AccountKeySchema>;
 
 export const UtxoAccountDescriptorSchema = z.object({
   purpose: AccountPurposeSchema,

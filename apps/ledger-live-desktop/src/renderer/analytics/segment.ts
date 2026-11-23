@@ -21,6 +21,7 @@ import {
   setMandatoryExtraPropsFn,
   setPropsFilter,
 } from "@shared/analytics";
+import { scrubAccountDescriptorsFromRecord } from "@features/platform-observability-redaction";
 import type { EventType } from "@shared/analytics";
 import { getDefaultAccountName } from "@domain/entity-account-name";
 import { selectContacts } from "@domain/entity-contact";
@@ -470,7 +471,7 @@ export const startAnalytics = async (store: ReduxStore) => {
   setEnabledFn(() => trackingEnabledSelector(store.getState()));
   setExtraPropsFn(() => extraProperties(store));
   setMandatoryExtraPropsFn(() => getMandatoryProperties(store));
-  setPropsFilter(confidentialityFilter);
+  setPropsFilter(props => scrubAccountDescriptorsFromRecord(confidentialityFilter(props)));
 
   const canBeTracked = trackingEnabledSelector(store.getState());
   if (!canBeTracked) return;

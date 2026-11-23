@@ -3,7 +3,7 @@
 How Ledger Wallet represents an account in the new architecture, and how we get there from the legacy `Account` type of [`@ledgerhq/types-live`](../../libs/types-live/README.md).
 
 > [!IMPORTANT]
-> The legacy `Account`, `TokenAccount` and `AccountLike` types are being retired. New code in `shared/`, `domain/` and `features/` never takes them: it takes an `AccountDescriptor` and reads `account-*` entities. See [migration.md](./migration.md) for what is left.
+> The legacy `Account`, `TokenAccount` and `AccountLike` types are being retired. New code in `shared/`, `domain/` and `features/` never takes them: it holds an `AccountUUID` and reads `account-*` entities. See [migration.md](./migration.md) for what is left.
 
 | Read | When |
 | --- | --- |
@@ -13,7 +13,7 @@ How Ledger Wallet represents an account in the new architecture, and how we get 
 
 ## The paradigms
 
-**1. One universal identity.** An account is an [`AccountDescriptor`](../../domain/entity/account-descriptor): its type (`utxo` with an xpub, or `address`), CAL network, key (xpub, address or public key), and derivation path. That is all any source needs to read it. Its `AccountUUID`, a uuid v5 of the canonical key, keys the `accounts` list and every account data kind: the same on every device, and it holds no account key, unlike the legacy `account.id` (`js:2:ethereum:0x…`).
+**1. One universal identity.** An account is an [`AccountDescriptor`](../../domain/entity/account-descriptor): its type (`utxo` with an xpub, or `address`), CAL network, key (xpub, address or public key), and derivation path. That is all any source needs to read it. Its key is sensitive (an xpub reveals the whole history, an address is personal data), so code holds the `AccountUUID` and the descriptor stays at the edges: the account data router and sources, discovery, the legacy bridge, wallet-cli and devtools. The `AccountUUID`, a uuid v5 of the canonical key, keys the `accounts` list and every account data kind: the same on every device, and it holds no account key, unlike the legacy `account.id` (`js:2:ethereum:0x…`).
 
 ```text
 account:2:utxo:bitcoin:xpub6Bosf…NzH:m/84h/0h/0h
@@ -22,7 +22,7 @@ account:2:address:ethereum:0x71C7…976F:m/44h/60h/0h/0/0
 
 **2. One entity per UI concept.** The monolithic `Account` is split into small entities, each a `domain/entity/account-<kind>` package: a Zod schema, one `AccountDataRegistry` line, a slice keyed by `AccountUUID`, selectors and a mock. An entity exists only for a concept a screen shows. Tokens are rows of each entity (one balance row, one operation row per asset), not sub-accounts. Sync state (`blockHeight`, `lastSyncDate`, `syncHash`) is not a UI concept and is not carried over.
 
-**3. Read on demand, not synced ahead.** A screen asks for the kind it shows, when it shows it, with `useAccountData(kind, descriptor, { query })`, or `useAccountDataBatch(kind, descriptors, { query })` for a figure over many accounts. Nothing refreshes every account in the background to fill a monolith. A read younger than 30 s is not repeated, a read in flight is joined, and the latest one wins.
+**3. Read on demand, not synced ahead.** A screen asks for the kind it shows, when it shows it, with `useAccountData(kind, accountUUID, { query })`, or `useAccountDataBatch(kind, accountUUIDs, { query })` for a figure over many accounts. Nothing refreshes every account in the background to fill a monolith. A read younger than 30 s is not repeated, a read in flight is joined, and the latest one wins.
 
 **4. Layers that decouple the UI from the implementations.**
 

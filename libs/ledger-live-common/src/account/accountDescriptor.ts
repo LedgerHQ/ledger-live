@@ -2,13 +2,16 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import {
   currencyIdFromNetwork,
   fromDescriptorPath,
-  AccountDescriptorSchema,
   AddressSchema,
   type Address,
   networkFromCurrencyId,
   toDescriptorPath,
-  type AccountDescriptor,
 } from "@domain/entity-account-descriptor";
+import {
+  AccountDescriptorSchema,
+  AccountKeySchema,
+  type AccountDescriptor,
+} from "@domain/entity-account-descriptor/descriptor";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import {
@@ -171,7 +174,7 @@ function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
       version: "2",
       type: "utxo",
       network,
-      key: account.xpub,
+      key: AccountKeySchema.parse(account.xpub),
       path: toDescriptorPath(
         runAccountDerivationScheme(scheme, currency, { account: account.index }),
       ),
@@ -182,9 +185,11 @@ function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
     version: "2",
     type: "address",
     network,
-    key: PUBLIC_KEY_FAMILIES.has(family)
-      ? publicKeyOf(account, family, currency.id)
-      : account.freshAddress,
+    key: AccountKeySchema.parse(
+      PUBLIC_KEY_FAMILIES.has(family)
+        ? publicKeyOf(account, family, currency.id)
+        : account.freshAddress,
+    ),
     path: toDescriptorPath(
       runDerivationScheme(scheme, { coinType: currency.coinType }, { account: account.index }),
     ),

@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@domain/api-account-data": "workspace:*",
+    "@domain/entity-account": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
     "@reduxjs/toolkit": "catalog:"

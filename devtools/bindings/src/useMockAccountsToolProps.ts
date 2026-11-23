@@ -4,16 +4,16 @@ import type { Store, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
 import { addAccountDataSource, type AccountDataSource } from "@domain/api-account-data";
 import {
-  accountsSlice,
   remoteAccountsAdded,
   remoteAccountsRemoved,
   type AccountsState,
 } from "@domain/entity-account";
+import { getAccountEntrySelectors } from "@domain/entity-account/descriptor";
+import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
 import {
-  AccountUUIDSchema,
   computeAccountUUID,
   type AccountDescriptor,
-} from "@domain/entity-account-descriptor";
+} from "@domain/entity-account-descriptor/descriptor";
 import type { AccountDataRecorder } from "./accountDataRecorder";
 
 type MockAccountsToolProps = Extract<DevToolsConfig[number], { id: "mock-accounts" }>["config"];
@@ -21,7 +21,7 @@ type MockAccountsToolProps = Extract<DevToolsConfig[number], { id: "mock-account
 /** Both apps mount the accounts slice at `accountEntries`. */
 type State = { accountEntries: AccountsState };
 
-const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountEntries } = getAccountEntrySelectors((state: State) => state.accountEntries);
 
 /** The tool's source stays added after it unmounts (the Balance tool reads it); a remount replaces it. */
 const removers = new WeakMap<Store, () => void>();

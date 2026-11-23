@@ -1,6 +1,6 @@
 import type { UpdatesPage } from "@domain/api-account-portfolio";
 import type { AccountOperationsPage } from "@domain/entity-account-operation";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { toAccountOperations, type MapOptions } from "./map";
 
 export type Verdict =

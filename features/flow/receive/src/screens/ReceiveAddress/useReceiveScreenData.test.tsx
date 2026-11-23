@@ -1,6 +1,8 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
-import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import {
+  computeAccountUUID,
+  mockAddressAccountDescriptor,
+} from "@domain/entity-account-descriptor/schema.mock";
 import { mockAccountStatus, mockAssetStatus } from "@domain/entity-account-status/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
@@ -28,7 +30,7 @@ describe("useReceiveScreenData", () => {
 
     expect(result.current.data).toEqual({ type: "loading" });
     await waitFor(() => expect(result.current.data).toEqual({ type: "ready", receive }));
-    expect(result.current.descriptor).toEqual(descriptor);
+    expect(result.current.account).toEqual({ network: descriptor.network, path: descriptor.path });
   });
 
   it("should read no asset status for the native coin", async () => {
@@ -90,6 +92,6 @@ describe("useReceiveScreenData", () => {
     const { result } = renderHook(() => useReceiveScreenData(unknownUUID, ETH), { wrapper });
 
     expect(result.current.data.type).toBe("error");
-    expect(result.current.descriptor).toBeUndefined();
+    expect(result.current.account).toBeUndefined();
   });
 });

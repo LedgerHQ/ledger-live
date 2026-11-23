@@ -2,7 +2,7 @@
 
 A screen asks for one kind of data of one account (a balance, a page of operations) when it needs it, instead of reading a monolithic `Account` filled by the background sync. The router picks, per account, the first source able to serve it; the answer lands in that kind's entity slice, and how the read went in the framework's `accountData` slice.
 
-Accounts are identified by an `AccountDescriptor` and keyed by its `AccountUUID`, both from [`@domain/entity-account-descriptor`](../../domain/entity/account-descriptor). The accounts of the app live in the `accounts` slice of [`@domain/entity-account`](../../domain/entity/account), by `AccountUUID` (each app mounts it at `accountEntries` while the legacy store holds `accounts`, and binds its selectors there), kept in step with the legacy accounts by `connectAccountsStore` (wired in each app's `account-data-setup.ts`), so a screen holding a legacy account finds its descriptor with `selectAccountUUIDByLegacyId`.
+Accounts are identified by an `AccountDescriptor` and keyed by its `AccountUUID`, both from [`@domain/entity-account-descriptor`](../../domain/entity/account-descriptor). The accounts of the app live in the `accounts` slice of [`@domain/entity-account`](../../domain/entity/account), by `AccountUUID` (each app mounts it at `accountEntries` while the legacy store holds `accounts`, and binds its selectors there), kept in step with the legacy accounts by `connectAccountsStore` (wired in each app's `account-data-setup.ts`), so a screen holding a legacy account finds its `AccountUUID` with `selectAccountUUIDByLegacyId`. The hooks resolve the descriptor from that slice: a screen never holds it.
 
 ## Packages
 
@@ -28,8 +28,8 @@ sequenceDiagram
     participant X as source
     participant A as accountData slice
     participant E as entity slice
-    S->>H: (kind, descriptor, { query })
-    H->>T: dispatch
+    S->>H: (kind, accountUUID, { query })
+    H->>T: dispatch with the descriptor from the accounts slice
     T->>A: fresh or in flight? else requested
     T->>R: read(kind, descriptor, { query })
     R->>X: first ranked source with a reader for kind and supports(descriptor, kind)

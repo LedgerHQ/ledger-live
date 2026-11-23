@@ -1,5 +1,5 @@
 import type { PortfolioRegistration } from "@domain/api-account-portfolio";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 
 /** How the service tracks one of our accounts. */
 export type PortfolioAccountRef = {

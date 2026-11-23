@@ -7,7 +7,8 @@ import {
   extractTokensFromState,
   type WithCryptoAssetsApi,
 } from "@domain/api-currency-token";
-import { accountsSlice, type AccountsState } from "@domain/entity-account";
+import { type AccountsState } from "@domain/entity-account";
+import { getAccountEntrySelectors } from "@domain/entity-account/descriptor";
 import type { WithAccountBalances } from "@domain/entity-account-balance";
 import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
 import { selectAccountNameByUUID, type AccountNamesState } from "@domain/entity-account-name";
@@ -28,7 +29,7 @@ type State = WithAccountBalances &
     wallet: { accountNames: AccountNamesState };
   };
 
-const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountEntries } = getAccountEntrySelectors((state: State) => state.accountEntries);
 
 /** The tokens CAL already resolved, by id or by address, without requesting the others. */
 const selectCachedTokens = createSelector(

@@ -6,8 +6,9 @@ import { USDT_TOKEN_INFO, USDT_TOKEN_JSON } from "./testing/cal-fixtures";
 import { SwapBackendError } from "./commands/swap/swap-backend-error";
 import { AddressSchema } from "@domain/entity-account-descriptor";
 import { DerivationPathSchema, NetworkIdSchema } from "./shared/accountDescriptor";
+import { AccountKeySchema } from "@domain/entity-account-descriptor/descriptor";
 
-const XPUB = "xpub6BosfCnifzxcA";
+const XPUB = AccountKeySchema.parse("xpub6BosfCnifzxcA");
 
 const { createCommandOutput } = await import("./output");
 

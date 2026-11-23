@@ -272,12 +272,7 @@ function convertSyncedAccount(
       : { status: "invalid", id: descriptor.id, reason: errMessage(e) };
   }
 
-  // toV1() copies the raw source's seedIdentifier/address verbatim and only validates the path of its
-  // output — a synced entry with a schema-valid-but-empty seedIdentifier (accountDescriptorSchema's
-  // `seedIdentifier` has no `.min(1)`) silently produced a structurally invalid V1 descriptor (e.g.
-  // an empty `address`) that looked fine in `session view` but threw on the next `parseV1()`.
-  // Validate here, once, so that class of entry is isolated as `invalid` instead of corrupting the
-  // session.
+  // toV1() rejects an empty key; this still catches any other structurally invalid output once.
   const validated = AccountDescriptorV1Schema.safeParse(v1);
   if (!validated.success) {
     return { status: "invalid", id: descriptor.id, reason: issues(validated.error) };

@@ -3,8 +3,8 @@
 > [!CAUTION]
 > **Status: UNSTABLE**. New package, in active development.
 
-Removes identifiers from URLs before an app reports them to an observability tool, such as the
-resources of a RUM session. It knows the URL shapes of the Ledger and blockchain APIs the wallets
+Removes identifiers from what an app reports to an observability or analytics tool: URLs, such as
+the resources of a RUM session, and account descriptors anywhere in an event. It knows the URL shapes of the Ledger and blockchain APIs the wallets
 call, and has no dependency on a vendor SDK: each app applies it in its own SDK wiring.
 
 ## Main exports
@@ -24,8 +24,17 @@ call, and has no dependency on a vendor SDK: each app applies it in its own SDK 
   The origin and the other parts are kept as they are, and scrubbing a scrubbed URL changes
   nothing.
 - `containsIdentifiers(url)` tells whether `scrubResourceUrl` would change the URL.
+- `scrubAccountDescriptors(text)` replaces each account descriptor string
+  (`account:2:<type>:<network>:<key>:<path>`) with `[redacted]`.
+- `scrubAccountDescriptorsFromRecord(record)` returns a plain copy without descriptors, in its
+  strings, its property names, or as a descriptor-shaped object (`key` + `network` + `path`, whose
+  `key` is redacted), as JSON would send it: `toJSON` is honored, functions are dropped, errors keep
+  their name, message and fields. `scrubAccountDescriptorsInPlace(value)` edits plain objects and
+  arrays in place, swaps any other value for that scrubbed copy, and throws when a field cannot change.
 
 ## Consumers
 
-- Ledger Wallet Desktop: `resource.url` in the Datadog `beforeSend`.
-- Ledger Wallet Mobile: the RUM resources reported by the Datadog SDK.
+- Ledger Wallet Desktop: `resource.url` and every event (descriptors, in place) in the Datadog
+  `beforeSend`; descriptors in the analytics props filter.
+- Ledger Wallet Mobile: the RUM resources reported by the Datadog SDK; descriptors in the error,
+  log and action mappers, and in the analytics props filter. An event whose scrub throws is dropped.

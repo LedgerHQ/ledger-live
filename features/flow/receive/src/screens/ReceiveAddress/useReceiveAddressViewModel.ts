@@ -24,13 +24,13 @@ export function useReceiveAddressViewModel({
   VerifyAddressExecutor,
   getFamilyConfig,
 }: ReceiveAddressProps): ReceiveAddressViewModel {
-  const { descriptor, data, accountStatus } = useReceiveScreenData(accountUUID, assetId);
-  const header = useReceiveAddressHeader(descriptor, assetId);
+  const { account, data, accountStatus } = useReceiveScreenData(accountUUID, assetId);
+  const header = useReceiveAddressHeader(account?.network, assetId);
   const receive = data.type === "ready" ? data.receive : undefined;
   const selection = useReceiveAddressSelection(receive);
   const familyConfig = useReceiveFamilyConfig({
     getFamilyConfig,
-    descriptor,
+    account,
     asset: header.asset,
     receive,
     accountStatus,

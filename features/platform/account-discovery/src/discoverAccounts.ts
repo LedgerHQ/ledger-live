@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import type { AccountStatus } from "@domain/entity-account-status";
 import { findCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
 import {

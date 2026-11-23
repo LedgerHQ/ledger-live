@@ -1,4 +1,8 @@
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
+import {
+  computeAccountUUID,
+  mockUtxoAccountDescriptor,
+} from "@domain/entity-account-descriptor/schema.mock";
 import { AccountDataNotServedError, NoAccountDataSourceError } from "./errors";
 import {
   createAccountDataRouter,
@@ -119,6 +123,23 @@ describe("createAccountDataRouter", () => {
       await expect(router.read("counter", descriptor)).rejects.toBeInstanceOf(
         NoAccountDataSourceError,
       );
+    });
+
+    it("names the account by its AccountUUID only in its errors, never by its key", async () => {
+      const xpub = mockUtxoAccountDescriptor();
+      const router = createAccountDataRouter([{ id: sourceIdOf("a"), supports: () => false }]);
+      const [none] = await Promise.allSettled([router.read("counter", xpub)]);
+      const pinned = await Promise.allSettled([
+        router.read("counter", xpub, { sourceId: sourceIdOf("a") }),
+      ]);
+      for (const settled of [none, ...pinned]) {
+        if (settled.status !== "rejected") throw new Error("expected a rejection");
+        const error = settled.reason;
+        expect(error).toBeInstanceOf(NoAccountDataSourceError);
+        expect(error.accountUUID).toBe(computeAccountUUID(xpub));
+        expect(`${error.message}\n${error.stack}`).not.toContain(xpub.key);
+        expect(JSON.stringify(error)).not.toContain(xpub.key);
+      }
     });
 
     it("never prefers a lower-ranked source because it can batch", async () => {

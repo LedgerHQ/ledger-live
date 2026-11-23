@@ -1,5 +1,5 @@
 import type { AccountDataRouter } from "@domain/api-account-data";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import type { AccountStatus } from "@domain/entity-account-status";
 import type { AccountCandidate } from "@domain/entity-derivation";
 

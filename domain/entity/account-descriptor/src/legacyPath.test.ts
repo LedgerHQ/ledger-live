@@ -1,4 +1,4 @@
-import { DerivationPathSchema } from "./schema";
+import { DerivationPathSchema } from "./derivationPath";
 import { fromDescriptorPath, LegacyDerivationPathSchema, toDescriptorPath } from "./legacyPath";
 
 describe("legacy path bridges", () => {

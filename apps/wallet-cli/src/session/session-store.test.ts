@@ -17,12 +17,13 @@ import {
   NetworkIdSchema,
   type AccountDescriptorV1,
 } from "../shared/accountDescriptor";
+import { AccountKeySchema } from "@domain/entity-account-descriptor/descriptor";
 import { pointStateHomeAt } from "../testing/state-home";
 
-const XPUB_A = "xpub6BosfCnifzxcA";
-const XPUB_B = "xpub6BosfCnifzxcB";
-const XPUB_C = "xpub6BosfCnifzxcC";
-const ETH_ADDRESS = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
+const XPUB_A = AccountKeySchema.parse("xpub6BosfCnifzxcA");
+const XPUB_B = AccountKeySchema.parse("xpub6BosfCnifzxcB");
+const XPUB_C = AccountKeySchema.parse("xpub6BosfCnifzxcC");
+const ETH_ADDRESS = AccountKeySchema.parse("0x71C7656EC7ab88b098defB751B7401B5f6d8976F");
 
 const btcNative: AccountDescriptorV1 = {
   purpose: "account",
@@ -56,7 +57,7 @@ const btcSegwit: AccountDescriptorV1 = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  key: "xpubSEGWIT",
+  key: AccountKeySchema.parse("xpubSEGWIT"),
   path: DerivationPathSchema.parse("m/49h/0h/0h"),
 };
 
@@ -65,7 +66,7 @@ const btcTaproot: AccountDescriptorV1 = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  key: "xpubTAPROOT",
+  key: AccountKeySchema.parse("xpubTAPROOT"),
   path: DerivationPathSchema.parse("m/86h/0h/0h"),
 };
 
@@ -74,7 +75,7 @@ const btcTestnet: AccountDescriptorV1 = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin_testnet"),
-  key: "tpub1234",
+  key: AccountKeySchema.parse("tpub1234"),
   path: DerivationPathSchema.parse("m/84h/1h/0h"),
 };
 
@@ -92,7 +93,7 @@ const ethGoerli: AccountDescriptorV1 = {
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse("ethereum_goerli"),
-  key: "0xabc",
+  key: AccountKeySchema.parse("0xabc"),
   path: DerivationPathSchema.parse("m/44h/60h/0h/0/0"),
 };
 

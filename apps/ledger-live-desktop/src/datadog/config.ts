@@ -1,4 +1,7 @@
-import { scrubResourceUrl } from "@features/platform-observability-redaction";
+import {
+  scrubAccountDescriptorsInPlace,
+  scrubResourceUrl,
+} from "@features/platform-observability-redaction";
 import anonymizer from "~/datadog/anonymizer";
 import { scrubViewUrlHash, scrubActionTargetName } from "./scrubRum";
 import { shouldIgnoreErrorMessage } from "./ignoreErrors";
@@ -27,15 +30,15 @@ export function rewriteAsarUrls(text: string): string {
     .replace(ASAR_RAW_PATH, "$1https://app.asar/");
 }
 
-function rewriteAsarUrlsRecursive(value: unknown, seen: Set<object>): void {
+function mapStringsRecursive(value: unknown, map: (text: string) => string, seen: Set<object>) {
   if (value === null || typeof value !== "object" || seen.has(value)) return;
   seen.add(value);
   const obj = value as Record<string, unknown>;
   for (const k in obj) {
     if (!Object.hasOwn(obj, k)) continue;
     const v = obj[k];
-    if (typeof v === "string") obj[k] = rewriteAsarUrls(v);
-    else rewriteAsarUrlsRecursive(v, seen);
+    if (typeof v === "string") obj[k] = map(v);
+    else mapStringsRecursive(v, map, seen);
   }
 }
 
@@ -63,8 +66,15 @@ export function buildBeforeSend(shouldSend: ShouldSendCallback) {
       return false;
     }
 
+    // Account descriptors carry the account key: redact them from the message, stack and context.
     try {
-      rewriteAsarUrlsRecursive(ev, new Set());
+      scrubAccountDescriptorsInPlace(ev);
+    } catch {
+      return false;
+    }
+
+    try {
+      mapStringsRecursive(ev, rewriteAsarUrls, new Set());
     } catch (e) {
       console.warn("Datadog: asar URL rewrite failed (best-effort):", e);
     }

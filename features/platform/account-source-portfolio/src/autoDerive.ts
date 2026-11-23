@@ -1,6 +1,6 @@
 import { sha256 } from "@noble/hashes/sha2";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import type { PortfolioFamily } from "./family";
 import { base58CheckPayload } from "./internals/base58check";
 import { bech32 } from "./internals/bech32";

@@ -3,10 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData } from "@domain/api-account-data";
-import { accountsSlice, type AccountsState } from "@domain/entity-account";
+import { type AccountsState } from "@domain/entity-account";
+import { getAccountEntrySelectors } from "@domain/entity-account/descriptor";
 import { type AccountAssetBalance, type WithAccountBalances } from "@domain/entity-account-balance";
 import { accountDataQueryKey, type AccountDataRootState } from "@domain/entity-account-data";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { formatAmount, useAssetUnits } from "./useAssetUnits";
 
@@ -17,7 +18,7 @@ type State = AccountDataRootState & WithAccountBalances & { accountEntries: Acco
 
 type Dispatch = ThunkDispatch<State, unknown, UnknownAction>;
 
-const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountEntries } = getAccountEntrySelectors((state: State) => state.accountEntries);
 
 export function useAccountBalanceToolProps(): AccountBalanceToolProps {
   const dispatch = useDispatch<Dispatch>();

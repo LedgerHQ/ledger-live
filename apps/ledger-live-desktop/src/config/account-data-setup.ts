@@ -23,7 +23,9 @@ import { accountsSelector, type AccountsState } from "~/renderer/reducers/accoun
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import type { State } from "~/renderer/reducers";
 
-const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountLegacyId } = accountsSlice.getSelectors(
+  (state: State) => state.accountEntries,
+);
 
 /** What can observe the account data layer. `AccountDataRecorder` matches it structurally. */
 export type AccountDataObserver = {
@@ -82,7 +84,7 @@ export function accountDataSources(
   const fullSyncHost: FullSyncHost = {
     findAccount: accountUUID => {
       const state = getState();
-      const legacyId = selectAccountEntry(state, accountUUID)?.legacyId;
+      const legacyId = selectAccountLegacyId(state, accountUUID);
       return legacyId === undefined
         ? undefined
         : accountsSelector(state).find(account => account.id === legacyId);

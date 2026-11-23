@@ -1,7 +1,8 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { computeAccountUUID, serializeAccountDescriptor } from "@domain/entity-account-descriptor";
+import { serializeAccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
+import { computeAccountUUID } from "@domain/entity-account-descriptor/schema.mock";
 import { mockDescriptors } from "../generate";
 import { mockSource } from "../mockSource";
 import type { MockAccountsToolAccount } from "../types";

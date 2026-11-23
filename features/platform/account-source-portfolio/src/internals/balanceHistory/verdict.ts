@@ -3,7 +3,7 @@ import type {
   BalanceHistoryRange,
 } from "@domain/entity-account-balance-history";
 import type { BalanceHistoryPoint } from "@domain/api-account-portfolio";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import type { Fiat } from "../fiat";
 import { toAssetHistories } from "./map";
 import type { HistoryRead } from "./read";

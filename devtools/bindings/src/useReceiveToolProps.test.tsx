@@ -7,8 +7,8 @@ import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/en
 import { accountBalancesSlice } from "@domain/entity-account-balance";
 import { mockAccountAssetBalance } from "@domain/entity-account-balance/schema.mock";
 import { accountNamesSlice, setAccountName } from "@domain/entity-account-name";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import {
+  computeAccountUUID,
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
 } from "@domain/entity-account-descriptor/schema.mock";

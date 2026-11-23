@@ -10,11 +10,11 @@ import {
   type AccountDataQuery,
   type AccountDataRootState,
 } from "@domain/entity-account-data";
+import type { AccountUUID } from "@domain/entity-account-descriptor";
 import {
   computeAccountUUID,
   type AccountDescriptor,
-  type AccountUUID,
-} from "@domain/entity-account-descriptor";
+} from "@domain/entity-account-descriptor/descriptor";
 import { getAccountDataRuntime, type AccountDataRuntime } from "./extra";
 import type { AccountDataReadOptions } from "./router";
 

@@ -8,10 +8,13 @@ import {
 import {
   DerivationPathSchema,
   NetworkIdSchema,
-  computeAccountUUID,
-  type AccountDescriptor,
   type AccountUUID,
 } from "@domain/entity-account-descriptor";
+import {
+  AccountKeySchema,
+  type AccountDescriptor,
+} from "@domain/entity-account-descriptor/descriptor";
+import { computeAccountUUID } from "@domain/entity-account-descriptor/schema.mock";
 import { accountDataExtra } from "./extra";
 import type { AccountDataSource } from "./source";
 
@@ -75,7 +78,7 @@ export const descriptorOf = (index: number, network = "ethereum"): AccountDescri
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse(network),
-  key: `0x${index}`,
+  key: AccountKeySchema.parse(`0x${index}`),
   path: DerivationPathSchema.parse(`m/44h/60h/${index}h/0/0`),
 });
 
@@ -87,7 +90,8 @@ export const descriptor = descriptorOf(0);
 
 export const accountUUID: AccountUUID = computeAccountUUID(descriptor);
 
-const toyReducer = {
+/** The reducers of `makeStore`, for a test store that mounts more slices. */
+export const toyReducer = {
   accountData: accountDataSlice.reducer,
   counter: counterSlice.reducer,
   feed: feedSlice.reducer,
