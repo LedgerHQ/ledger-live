@@ -100,6 +100,13 @@ export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<s
   return firmware;
 }
 
+/** The newest provider OS, so one the Manager API offers no update from, whatever its app catalog. */
+export async function getLatestFirmwareVersion(device: DeviceModelId): Promise<string> {
+  const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), liveCommonVersion);
+  const { firmwares } = await newestProviderFirmwares(repository, device);
+  return firmwares[0].version;
+}
+
 /**
  * The newest provider OS the Manager API still offers an update from, so n-1 once the latest
  * is published. Each version is looked up by name, as Ledger Wallet looks up the connected

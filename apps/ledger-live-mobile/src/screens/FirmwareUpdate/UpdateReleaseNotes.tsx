@@ -17,7 +17,12 @@ const UpdateReleaseNotes: React.FC<UpdateReleaseNotesProps> = ({ onContinue, fir
   const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaViewFixed isFlex edges={["bottom"]} style={{ marginHorizontal: 16 }}>
+    <SafeAreaViewFixed
+      isFlex
+      edges={["bottom"]}
+      style={{ marginHorizontal: 16 }}
+      testID="firmware-update-release-notes"
+    >
       <ScrollView persistentScrollbar>
         <Flex px={6}>
           <Text variant="h4" fontWeight="semiBold" my={3}>
