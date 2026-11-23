@@ -46,24 +46,6 @@ function Row({ label, value }: Readonly<{ label: React.ReactNode; value: React.R
   );
 }
 
-function TokenIcon({ account, tokenAccount }: Props) {
-  const { token } = tokenAccount;
-
-  return (
-    <div className="relative">
-      <CryptoIcon ledgerId={token.id} ticker={token.ticker} size={48} />
-      <div className="absolute -bottom-[3px] -right-[3px] z-10 box-content size-20 overflow-hidden rounded-[6px] border border-base-inverted bg-muted">
-        <CryptoIcon
-          ledgerId={account.currency.isTestnetFor ?? account.currency.id}
-          ticker={account.currency.ticker}
-          size={20}
-          shape="square"
-        />
-      </div>
-    </div>
-  );
-}
-
 export function AssetCard({ account, tokenAccount }: Props) {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
@@ -88,7 +70,12 @@ export function AssetCard({ account, tokenAccount }: Props) {
     <Card type="info" data-testid={`xrp-manage-assets-card-${token.id}`}>
       <CardHeader>
         <CardLeading>
-          <TokenIcon account={account} tokenAccount={tokenAccount} />
+          <CryptoIcon
+            ledgerId={token.id}
+            ticker={token.ticker}
+            network={account.currency.isTestnetFor ?? account.currency.id}
+            size={48}
+          />
           <CardContent>
             <CardContentTitle>{token.name}</CardContentTitle>
             <CardContentDescription>{formatAddress(account.freshAddress)}</CardContentDescription>
