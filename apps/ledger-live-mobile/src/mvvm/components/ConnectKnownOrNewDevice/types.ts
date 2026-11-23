@@ -27,6 +27,8 @@ export type ConnectKnownOrNewDeviceProps = {
   isPaused: boolean;
   /** Called by the "I don't see my device" button of the Add mode, which shows only with it. */
   onDeviceNotFound?: () => void;
+  /** Replaces the Add mode: the Add buttons call it instead. `hasDevices` is `false` with an empty list. */
+  onAddDevice?: (hasDevices: boolean) => void;
   /** Read on mount only. */
   delays?: ConnectKnownOrNewDeviceDelays;
   /** Shown under the device list. */

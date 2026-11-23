@@ -122,6 +122,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   onAddModeChange,
   isPaused,
   onDeviceNotFound,
+  onAddDevice,
   delays,
   children,
 }: ConnectKnownOrNewDeviceProps): ConnectKnownOrNewDeviceViewProps {
@@ -148,6 +149,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   const latestRef = useRef({
     onConnected,
     onAddModeChange,
+    onAddDevice,
     mockServerDevices,
     lastConnectedDevice,
     shouldPause,
@@ -156,6 +158,7 @@ export function useConnectKnownOrNewDeviceViewModel({
     latestRef.current = {
       onConnected,
       onAddModeChange,
+      onAddDevice,
       mockServerDevices,
       lastConnectedDevice,
       shouldPause,
@@ -184,6 +187,7 @@ export function useConnectKnownOrNewDeviceViewModel({
     throw new Error("Device Management Kit is not available");
   }
 
+  const hasOnAddDevice = onAddDevice !== undefined;
   useEffect(() => {
     log(LOG_TYPE, "start", { restartCount });
     const flow = connectKnownOrNewDevice({
@@ -195,6 +199,9 @@ export function useConnectKnownOrNewDeviceViewModel({
         dispatch(setReadOnlyMode(false));
         latestRef.current.onConnected(result);
       },
+      onAddNewDevice: hasOnAddDevice
+        ? hasDevices => latestRef.current.onAddDevice?.(hasDevices)
+        : undefined,
       isMockServerEnabled,
       getMockServerDevices: () => latestRef.current.mockServerDevices,
       isPaused: latestRef.current.shouldPause,
@@ -212,6 +219,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   }, [
     dispatch,
     dmk,
+    hasOnAddDevice,
     isMockServerEnabled,
     knownDevices$,
     removeDevice,

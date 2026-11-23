@@ -75,7 +75,7 @@ const connectionResult: DeviceConnectionResult = {
   } as DeviceConnectionResult["connectedDevice"],
 };
 
-function renderComponent() {
+function renderComponent(onAddDevice?: (hasDevices: boolean) => void) {
   const onConnected = jest.fn();
   const onAddModeChange = jest.fn();
   const view = render(
@@ -83,6 +83,7 @@ function renderComponent() {
       onConnected={onConnected}
       onAddModeChange={onAddModeChange}
       isPaused={false}
+      onAddDevice={onAddDevice}
     >
       <Text>Explore all Ledger devices</Text>
     </ConnectKnownOrNewDevice>,
@@ -181,6 +182,26 @@ describe("ConnectKnownOrNewDevice", () => {
 
     // THEN
     expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  it("GIVEN a caller Add handler, WHEN the flow replaces the Add mode, THEN it should call the handler", () => {
+    // GIVEN
+    const onAddDevice = jest.fn();
+    renderComponent(onAddDevice);
+
+    // WHEN
+    act(() => useCaseInput().onAddNewDevice?.(false));
+
+    // THEN
+    expect(onAddDevice).toHaveBeenCalledWith(false);
+  });
+
+  it("GIVEN no caller Add handler, WHEN the flow starts, THEN it should keep the Add mode", () => {
+    // GIVEN / WHEN
+    renderComponent();
+
+    // THEN
+    expect(useCaseInput().onAddNewDevice).toBeUndefined();
   });
 
   it("GIVEN a discovery error shown over the list, WHEN its retry button is pressed, THEN it should retry", async () => {

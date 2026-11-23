@@ -12,6 +12,7 @@ The component runs `connectKnownOrNewDevice` from `@ledgerhq/live-dmk-mobile`. T
 | `onAddModeChange(isAdding)`         | Called when the Add mode starts and stops. The caller hides the rest of its screen during the Add mode.                                                                             |
 | `isPaused`                          | Stops discovery while the caller uses the device.                                                                                                                                   |
 | `onDeviceNotFound()`                | Optional. Called by the "I don't see my device" button of the Add mode. This button shows only when the caller gives this prop. The component stays in the Add mode.                 |
+| `onAddDevice(hasDevices)`           | Optional. Replaces the Add mode: the Add buttons call it instead. `hasDevices` is `false` when the list is empty. See [Add mode](#add-mode).                                         |
 | `delays`                            | Optional. The delay of the waiting hint (`deviceNotFound`) and the delays of the Add mode (`connectNewDevice`), in ms. The component reads them on mount only.                      |
 | `children`                          | Optional. Shown under the list, for example the Explore row of My Wallet.                                                                                                            |
 
@@ -43,6 +44,8 @@ Removing a known device removes it from the known devices and from the legacy BL
 ## Add mode
 
 The Add mode shows the `ConnectNewDevice` views with the UI state of the embedded flow, under a close bar. The close button and the Android back button go back to the list.
+
+With `onAddDevice`, the component does not open the Add mode. The Add link, the "Add a Ledger device" row and the hint of the waiting sheet call `onAddDevice` instead. The hint closes the waiting sheet first.
 
 ## Errors
 
