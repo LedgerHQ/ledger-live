@@ -10,7 +10,6 @@ import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 
 const walletStateWithAccountName = (accountId: string, name: string): WalletState => ({
   accountNames: new Map([[parseAnyAccountId(accountId), name]]),
-  starredAccountIds: new Set(),
   walletSync: { walletSyncState: { data: null, version: 0 } },
   nonImportedAccountInfos: [],
   recentAddresses: {},

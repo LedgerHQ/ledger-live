@@ -1200,9 +1200,6 @@ importers:
       '@domain/entity-recent-addresses':
         specifier: workspace:^
         version: link:../../domain/entity/recent-addresses
-      '@domain/entity-starred-account':
-        specifier: workspace:^
-        version: link:../../domain/entity/starred-account
       '@domain/entity-wallet-sync':
         specifier: workspace:^
         version: link:../../domain/entity/wallet-sync

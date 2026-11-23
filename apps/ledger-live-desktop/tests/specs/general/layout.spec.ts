@@ -55,13 +55,6 @@ test("Layout @smoke", async ({ page }) => {
     await expect.soft(page).toHaveScreenshot("experimental-features.png");
   });
 
-  await test.step("shows a starred account, and can access the page", async () => {
-    // FIXME: LL-8899
-    // expect(await layout.bookmarkedAccounts.count()).toBe(1);
-    // await layout.bookmarkedAccounts.first().click();
-    // await expect(page).toHaveURL(/.*\/account\/.*/);
-  });
-
   await test.step("can toggle discreet mode", async () => {
     await layout.goToPortfolio(); // FIXME: remove this line when LL-8899 is fixed
     await page.getByTestId("portfolio-container").waitFor({ state: "visible" });
