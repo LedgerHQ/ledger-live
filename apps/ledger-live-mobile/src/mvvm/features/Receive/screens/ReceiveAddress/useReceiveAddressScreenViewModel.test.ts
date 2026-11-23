@@ -10,12 +10,12 @@ import { mockAccountEntry } from "@domain/entity-account/schema.mock";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { mockAccountStatus } from "@domain/entity-account-status/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
-import { renderHook, waitFor } from "@tests/test-renderer";
-import Share from "react-native-share";
-import { captureRef } from "react-native-view-shot";
+import { renderHook } from "@tests/test-renderer";
+import { openShareSheet } from "@shared/share-sheet";
 import { VerifyAddressExecutorLWM } from "../../verifyAddressIntent/VerifyAddressExecutorLWM";
 import { useReceiveAddressScreenViewModel } from "./useReceiveAddressScreenViewModel";
 
+jest.mock("@shared/share-sheet", () => ({ openShareSheet: jest.fn(async () => undefined) }));
 jest.mock("LLM/features/AppLock/adapters/appVisibility", () => ({
   leaveAppFor: (task: () => Promise<unknown>) => task(),
 }));
@@ -60,34 +60,15 @@ describe("useReceiveAddressScreenViewModel", () => {
     );
   });
 
-  it("shares the card as an image and the address as text", async () => {
+  it("shares the card as an image with the address", () => {
     const { result } = renderViewModel();
 
     result.current.onShareAddress?.("TXYZ");
 
-    await waitFor(() =>
-      expect(Share.open).toHaveBeenCalledWith({
-        url: "file://mock.png",
-        message: "TXYZ",
-        failOnCancel: false,
-      }),
-    );
-    expect(captureRef).toHaveBeenCalledWith(result.current.cardRef, { format: "png" });
-  });
-
-  it("shares the address alone when the card cannot be captured", async () => {
-    jest.mocked(captureRef).mockRejectedValueOnce(new Error("capture failed"));
-    const { result } = renderViewModel();
-
-    result.current.onShareAddress?.("TXYZ");
-
-    await waitFor(() =>
-      expect(Share.open).toHaveBeenCalledWith({
-        url: undefined,
-        message: "TXYZ",
-        failOnCancel: false,
-      }),
-    );
+    expect(openShareSheet).toHaveBeenCalledWith({
+      message: "TXYZ",
+      capture: result.current.cardRef,
+    });
   });
 
   it("reads the account's family config", () => {

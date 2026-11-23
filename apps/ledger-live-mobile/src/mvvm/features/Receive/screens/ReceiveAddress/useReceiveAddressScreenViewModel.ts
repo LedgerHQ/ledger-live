@@ -1,7 +1,5 @@
 import { useCallback, useMemo, useRef } from "react";
 import type { View } from "react-native";
-import Share from "react-native-share";
-import { captureRef } from "react-native-view-shot";
 import { accountsSlice } from "@domain/entity-account";
 import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
@@ -13,6 +11,7 @@ import type {
 import { useFeatureFlags } from "@features/platform-feature-flags";
 import type { Account } from "@ledgerhq/types-live";
 import { copyToClipboard } from "@shared/clipboard";
+import { openShareSheet } from "@shared/share-sheet";
 import { useSelector } from "~/context/hooks";
 import receiveAddressConfigs from "~/generated/ReceiveAddressConfig";
 import { accountSelector } from "~/reducers/accounts";
@@ -51,12 +50,8 @@ export function useReceiveAddressScreenViewModel({
   );
   const onCopyAddress = useCallback((address: string) => copyToClipboard(address), []);
   const cardRef = useRef<View>(null);
-  // The card as an image, and the address as text; the text alone when the capture fails.
-  const onShareAddress = useCallback((address: string) => {
-    void (async () => {
-      const url = await captureRef(cardRef, { format: "png" }).catch(() => undefined);
-      await leaveAppFor(() => Share.open({ url, message: address, failOnCancel: false }));
-    })();
+  const onShareAddress = useCallback(async (address: string) => {
+    await leaveAppFor(() => openShareSheet({ message: address, capture: cardRef }));
   }, []);
 
   return {
