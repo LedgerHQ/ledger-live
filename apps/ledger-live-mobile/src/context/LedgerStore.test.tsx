@@ -17,6 +17,7 @@ import storage from "LLM/storage";
 import { STORAGE_TYPE } from "LLM/storage/constants";
 import type { StorageType } from "LLM/storage/types";
 import settingsReducer from "~/reducers/settings";
+import { marketBannerReducer } from "~/reducers/marketBanner";
 import { persistence } from "~/persistence/composition";
 import LedgerStoreProvider from "./LedgerStore";
 
@@ -34,6 +35,7 @@ const mockGetReceiveVerifyHintState = jest.fn<Promise<unknown>, []>(() =>
   Promise.resolve(undefined),
 );
 const mockMigrateAccountsIfNecessary = jest.fn(() => Promise.resolve());
+const mockGetMarketBannerState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
 
 jest.mock("../db", () => {
   const empty = () => Promise.resolve(undefined);
@@ -56,7 +58,7 @@ jest.mock("../db", () => {
     getProtect: empty,
     getMarketState: () => mockGetMarketState(),
     getMarketListConfig: empty,
-    getMarketBannerState: empty,
+    getMarketBannerState: () => mockGetMarketBannerState(),
     getPayCardState: () => mockGetPayCardState(),
     getReceiveVerifyHintState: () => mockGetReceiveVerifyHintState(),
     getAccountAnalyticsIntroductionState: empty,
@@ -453,6 +455,52 @@ describe("LedgerStoreProvider", () => {
       expect(mockGetAccounts).toHaveBeenCalledTimes(1);
       expect(mockMigrateAccountsIfNecessary).not.toHaveBeenCalled();
       expect(selectUsesPersistence(store.getState(), "accounts")).toBe(false);
+      expect(screen.getByText("ready")).toBeOnTheScreen();
+    });
+  });
+
+  describe("market banner", () => {
+    const createStoreWithMarketBanner = () =>
+      configureStore({
+        reducer: {
+          featureFlags: featureFlagsReducer,
+          marketBanner: marketBannerReducer,
+          persistence: persistenceSlice.reducer,
+        },
+      });
+
+    beforeEach(() => {
+      mockGetMarketBannerState.mockResolvedValue({ ranking: "losers" });
+    });
+
+    afterEach(() => {
+      mockGetMarketBannerState.mockResolvedValue(undefined);
+      jest.restoreAllMocks();
+    });
+
+    it("should leave the market banner to persistence on MMKV", async () => {
+      onStorage(STORAGE_TYPE.MMKV);
+      const store = createStoreWithMarketBanner();
+      store.dispatch(setCachedFlagsSettled());
+
+      renderProvider(store);
+      await act(() => jest.runAllTimersAsync());
+
+      expect(selectRecordStatus(store.getState(), "marketBanner")).toBe("empty");
+      expect(store.getState().marketBanner.ranking).toBe("trending");
+      expect(screen.getByText("ready")).toBeOnTheScreen();
+    });
+
+    it("should keep the legacy market banner import on AsyncStorage", async () => {
+      onStorage(STORAGE_TYPE.ASYNC_STORAGE);
+      const store = createStoreWithMarketBanner();
+      store.dispatch(setCachedFlagsSettled());
+
+      renderProvider(store);
+      await act(() => jest.runAllTimersAsync());
+
+      expect(selectUsesPersistence(store.getState(), "marketBanner")).toBe(false);
+      expect(store.getState().marketBanner.ranking).toBe("losers");
       expect(screen.getByText("ready")).toBeOnTheScreen();
     });
   });

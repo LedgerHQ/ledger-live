@@ -11,6 +11,7 @@ import storage from "LLM/storage";
 import { addOneAccount } from "~/actions/accounts";
 import { persistence } from "~/persistence/composition";
 import { markOperationsAsSeen } from "~/reducers/history";
+import { setMarketBannerRanking } from "~/reducers/marketBanner";
 import type { State } from "~/reducers/types";
 import { ConfigureDBSaveEffects, flushAll, useDBSaveEffect } from "../DBSave";
 
@@ -150,6 +151,36 @@ describe("ConfigureDBSaveEffects", () => {
     await act(flushAll);
 
     expect(await storage.get("history")).toBeUndefined();
+  });
+
+  it("saves the market banner when the market banner does not use persistence", async () => {
+    await storage.delete("marketBanner");
+    const { store } = renderHook(() => ConfigureDBSaveEffects());
+
+    act(() => {
+      store.dispatch(setMarketBannerRanking("losers"));
+    });
+
+    await waitFor(async () =>
+      expect(await storage.get("marketBanner")).toEqual({ ranking: "losers" }),
+    );
+  });
+
+  it("leaves the market banner to persistence when the market banner uses persistence", async () => {
+    await storage.delete("marketBanner");
+    const { store } = renderHook(() => ConfigureDBSaveEffects(), {
+      overrideInitialState: state => ({
+        ...state,
+        persistence: { records: { marketBanner: "loaded" } },
+      }),
+    });
+
+    act(() => {
+      store.dispatch(setMarketBannerRanking("losers"));
+    });
+    await act(flushAll);
+
+    expect(await storage.get("marketBanner")).toBeUndefined();
   });
 
   it("saves the accounts when the accounts do not use persistence", async () => {

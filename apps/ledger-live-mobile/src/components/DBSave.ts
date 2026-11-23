@@ -362,6 +362,7 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: marketBannerNotEquals,
     lense: marketBannerStoreSelector,
+    recordKey: "marketBanner",
   });
 
   useDBSaveEffect({

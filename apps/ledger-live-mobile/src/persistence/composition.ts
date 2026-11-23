@@ -11,6 +11,7 @@ import { createMmkvStorage } from "@shared/storage-mmkv";
 import type { State } from "~/reducers/types";
 import { accountsRecord } from "./records/accounts";
 import { historyRecord } from "./records/history";
+import { marketBannerRecord } from "./records/marketBanner";
 import { withReadRetry } from "./withReadRetry";
 
 /** The throttle of the legacy `useDBSaveEffect`. */
@@ -18,6 +19,7 @@ const LEGACY_WRITE_STRATEGY: WriteStrategy = { throttleMs: 500 };
 
 const BINDINGS: ReadonlyArray<PersistenceBinding<State>> = [
   { record: historyRecord, strategy: LEGACY_WRITE_STRATEGY },
+  { record: marketBannerRecord, strategy: LEGACY_WRITE_STRATEGY },
   {
     record: accountsRecord,
     keyScheme: keyPerEntry({ prefix: "accounts.active.", orderKey: "accounts.sort" }),

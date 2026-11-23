@@ -299,7 +299,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(importMarketListConfig(marketListConfigState));
       }
 
-      if (marketBannerState) {
+      if (marketBannerState && !selectUsesPersistence(store.getState(), "marketBanner")) {
         store.dispatch(importMarketBannerState(marketBannerState));
       }
 
