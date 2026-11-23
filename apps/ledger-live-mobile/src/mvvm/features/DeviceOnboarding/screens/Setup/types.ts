@@ -1,7 +1,11 @@
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { ChecksScreenState, GenuineErrorKind } from "LLM/features/DeviceOnboarding/types";
 import type { SessionReconnect } from "@features/flow-device-onboarding-reconnect";
-import type { SetupStage } from "./toSetupStage";
+import type { SetupStage } from "@features/flow-device-onboarding-setup-stage";
+import type { SetupInfoCard } from "@features/flow-device-onboarding-setup-info";
+
+/** A stepper stage, with the info card the screen shows above it. */
+export type SetupScreenStage = SetupStage & { infoCard?: SetupInfoCard };
 
 export type SetupChecksProps = {
   state: ChecksScreenState;
@@ -22,7 +26,7 @@ export type SetupChecksProps = {
 
 export type SetupScreenProps = {
   device: Device;
-  stage: SetupStage;
+  stage: SetupScreenStage;
   checks: SetupChecksProps | null;
   onQuit: () => void;
   suspendSheets?: boolean;

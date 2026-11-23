@@ -466,6 +466,7 @@ libs/ledger-live-common/src/deviceSDK/                             @ledgerhq/liv
 libs/device-core/                                                  @ledgerhq/live-devices
 features/platform/device-onboarding/                               @ledgerhq/engagement
 features/flow/device-onboarding-setup-info/                        @ledgerhq/engagement
+features/flow/device-onboarding-setup-stage/                       @ledgerhq/engagement
 features/platform/device-onboarding-analytics/                     @ledgerhq/engagement
 features/platform/device-intent/                                   @ledgerhq/live-devices
 features/platform/device-action-content/                           @ledgerhq/live-devices

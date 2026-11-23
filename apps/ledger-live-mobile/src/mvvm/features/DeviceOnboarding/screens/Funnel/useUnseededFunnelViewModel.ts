@@ -15,8 +15,9 @@ import {
 import { useSessionReconnect } from "@features/flow-device-onboarding-reconnect";
 import { useConfirmSkipAfterUpdateScreen } from "@features/flow-device-onboarding-update-offer";
 import { deviceLockedState } from "LLM/features/DeviceOnboarding/utils/deviceLocked";
-import { toSetupStage, type SetupStage } from "../Setup/toSetupStage";
-import type { SetupChecksProps, SetupScreenProps } from "../Setup/types";
+import { toSetupStage } from "@features/flow-device-onboarding-setup-stage";
+import { toSetupInfoCard } from "@features/flow-device-onboarding-setup-info";
+import type { SetupChecksProps, SetupScreenProps, SetupScreenStage } from "../Setup/types";
 
 const checksSucceededState = "checks.checksSucceeded";
 const waitingState = "deviceSetup.waiting";
@@ -155,9 +156,18 @@ function toUnseededStage(
     updateAfterSetup: boolean;
     osCheck: boolean;
   }>,
-): SetupStage | null {
+): SetupScreenStage | null {
   if (!device || !machineState) return null;
-  return toSetupStage({ machineState, modelId: device.modelId, ...options });
+  const stage = toSetupStage({
+    machineState,
+    modelId: device.modelId,
+    currentStep: options.currentStep,
+    updateAfterSetup: options.updateAfterSetup,
+    osCheck: options.osCheck,
+  });
+  if (!stage) return null;
+  const infoCard = toSetupInfoCard(machineState, options.reportsRecoveryKey);
+  return infoCard ? { ...stage, infoCard } : stage;
 }
 
 /** Stays true once set: the OS version changes after the update, the step layout must not. */
@@ -179,8 +189,11 @@ function holdsPreviousStage(machineState: string | null, currentStep: string | n
 }
 
 /** Keeps the last stage on screen while the machine passes through a transient state. */
-function useHeldStage(stage: SetupStage | null, holdsPrevious: boolean): SetupStage | null {
-  const [heldStage, setHeldStage] = useState<SetupStage | null>(null);
+function useHeldStage(
+  stage: SetupScreenStage | null,
+  holdsPrevious: boolean,
+): SetupScreenStage | null {
+  const [heldStage, setHeldStage] = useState<SetupScreenStage | null>(null);
 
   if (stage && !sameStage(stage, heldStage)) setHeldStage(stage);
   else if (!stage && !holdsPrevious && heldStage) setHeldStage(null);
@@ -245,7 +258,7 @@ function toChecks(
   };
 }
 
-function sameStage(next: SetupStage, held: SetupStage | null) {
+function sameStage(next: SetupScreenStage, held: SetupScreenStage | null) {
   return (
     held !== null &&
     held.kind === next.kind &&

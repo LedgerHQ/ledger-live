@@ -1,11 +1,10 @@
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { asChecksState, OnboardingStep } from "@features/platform-device-onboarding";
-import { toSetupInfoCard, type SetupInfoCard } from "@features/flow-device-onboarding-setup-info";
 
-const modelsWithoutNaming = new Set<DeviceModelId>([
-  DeviceModelId.nanoS,
-  DeviceModelId.nanoSP,
-  DeviceModelId.nanoX,
+const modelsWithoutNaming = new Set<string>([
+  DeviceModelId.NANO_S,
+  DeviceModelId.NANO_SP,
+  DeviceModelId.NANO_X,
 ]);
 
 export const SetupStageKind = {
@@ -31,7 +30,6 @@ export type SetupStage = {
   kind: SetupStageKind;
   indicator: SetupIndicator;
   detail?: SetupStageDetail;
-  infoCard?: SetupInfoCard;
 };
 
 const touchOrder = [
@@ -85,7 +83,7 @@ const checkKinds = new Set<SetupStageKind>([
   SetupStageKind.OsCheck,
 ]);
 
-function stageOrder(modelId: DeviceModelId, updateAfterSetup: boolean) {
+function stageOrder(modelId: string, updateAfterSetup: boolean) {
   if (!modelsWithoutNaming.has(modelId)) return touchOrder;
   return updateAfterSetup ? nanoUpdateAfterSetupOrder : nanoOrder;
 }
@@ -122,8 +120,8 @@ function checksIndicator(machineState: string): SetupIndicator {
 export function toSetupStage(input: {
   machineState: string;
   currentStep: string | null;
-  modelId: DeviceModelId;
-  reportsRecoveryKey: boolean;
+  /** The device model id, such as `nanoX`: the Nanos ask no device name. */
+  modelId: string;
   /** The Nano holds its OS update until it is seeded. */
   updateAfterSetup?: boolean;
   /** The device is seeded and checks the OS update it held back. */
@@ -144,7 +142,6 @@ export function toSetupStage(input: {
 
   const indicator = checkKinds.has(kind) ? checksIndicator(input.machineState) : "none";
   const detail = detailByState.get(input.machineState);
-  const infoCard = toSetupInfoCard(input.machineState, input.reportsRecoveryKey);
 
   return {
     index,
@@ -152,6 +149,5 @@ export function toSetupStage(input: {
     kind,
     indicator,
     ...(detail ? { detail } : {}),
-    ...(infoCard ? { infoCard } : {}),
   };
 }
