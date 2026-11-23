@@ -1,6 +1,6 @@
 import { once } from "events";
-import { execa } from "execa";
 import { setTimeout as sleep } from "timers/promises";
+import { findFreePort, requestQuit } from "./utils/appInspector.mts";
 import { feedBinaryName, platformBuild } from "./utils/builds.mts";
 import { parseAutoUpgradeOptions, startAutoUpgrade } from "./utils/startAutoUpgrade.mts";
 
@@ -28,10 +28,13 @@ const startedAt = Date.now();
 const served = new Set<string>();
 const sentInFull = new Set<string>();
 
-const { base, update, app } = await startAutoUpgrade(options, {
+const { base, update, openInstalledApp } = await startAutoUpgrade(options, {
   onServe: file => served.add(file),
   onSent: file => sentInFull.add(file),
 });
+// quitApp quits the app through the inspector of its main process.
+const inspectPort = await findFreePort();
+const app = openInstalledApp([`--inspect=127.0.0.1:${inspectPort}`]);
 // A run stopped by Ctrl+C or an error must not leave the app running for the next one.
 process.on("exit", () => app.kill("SIGKILL"));
 
@@ -146,19 +149,13 @@ async function quitApp() {
   if (hasExited()) return;
   const exited = once(app, "exit", { signal: AbortSignal.timeout(quitTimeout) });
   try {
-    if (process.platform === "win32") {
-      // Without /F, taskkill asks the app windows to close, and the app quits once they are closed.
-      await execa("taskkill", ["/PID", String(app.pid)]);
-    } else {
-      app.kill("SIGTERM");
-    }
+    await requestQuit(inspectPort);
     await exited;
   } catch (error) {
     app.kill("SIGKILL");
     throw new Error("Could not quit the app, killed it", { cause: error });
   }
-  // The bundled signal-exit re-raises the SIGTERM sent above, so the app ends by that signal.
-  if (app.exitCode !== 0 && app.signalCode !== "SIGTERM") {
+  if (app.exitCode !== 0) {
     const exitReason = app.signalCode ?? `exit code ${app.exitCode}`;
     throw new Error(`The app quit abnormally, with ${exitReason}`);
   }

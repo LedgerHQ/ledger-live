@@ -102,9 +102,9 @@ export function feedBinaryName(version: string) {
   return path.basename(platformBuild().feedBinary(version));
 }
 
-export function openApp(appPath: string, env: Record<string, string> = {}) {
+export function openApp(appPath: string, env: Record<string, string> = {}, args: string[] = []) {
   if (!fs.existsSync(appPath)) throw new Error(`No app at ${appPath}`);
-  const app = spawn(platformBuild().executable(appPath), {
+  const app = spawn(platformBuild().executable(appPath), args, {
     detached: true,
     stdio: "ignore",
     env: { ...process.env, ...env },

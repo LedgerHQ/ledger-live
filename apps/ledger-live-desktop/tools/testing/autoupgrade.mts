@@ -3,9 +3,9 @@ import { once } from "events";
 import readline from "readline";
 import { parseAutoUpgradeOptions, startAutoUpgrade } from "./utils/startAutoUpgrade.mts";
 
-const { app, openInstalledApp } = await startAutoUpgrade(parseAutoUpgradeOptions());
+const { openInstalledApp } = await startAutoUpgrade(parseAutoUpgradeOptions());
 console.log("Press Ctrl+C to stop serving the feed");
-await reopenOnReturn(app, openInstalledApp);
+await reopenOnReturn(openInstalledApp(), openInstalledApp);
 
 async function reopenOnReturn(firstApp: ChildProcess, openApp: () => ChildProcess) {
   // Outside terminal mode, Ctrl+C still sends SIGINT instead of being read as input.
