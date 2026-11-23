@@ -15,7 +15,7 @@ export function ReceiveAddressView({
   error,
   addressSelection,
   address,
-  actions,
+  actionsPlaceholderLabel,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -77,13 +77,7 @@ export function ReceiveAddressView({
                     ) : (
                       <AddressSummary address={address} />
                     )}
-                    <ZonePlaceholder
-                      zone="actions"
-                      label={[actions.copy, actions.share, actions.verify]
-                        .map(action => action?.label)
-                        .filter(Boolean)
-                        .join(" · ")}
-                    />
+                    <ZonePlaceholder zone="actions" label={actionsPlaceholderLabel} />
                     <ZonePlaceholder zone="notices" />
                   </>
                 )}

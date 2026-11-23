@@ -81,6 +81,10 @@ export function useReceiveAddressViewModel({
       : undefined,
     address,
     actions,
+    actionsPlaceholderLabel: [actions.copy, actions.share, actions.verify]
+      .map(action => action?.label)
+      .filter(Boolean)
+      .join(" · "),
     verification,
     title: header.title,
     networkLabel: header.networkLabel,

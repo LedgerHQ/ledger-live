@@ -49,6 +49,8 @@ export type ReceiveAddressViewProps = Readonly<{
   /** Absent until the address is read, and while the user picks one. */
   address?: ReceiveAddressShown;
   actions: ReceiveAddressActionsView;
+  /** "Copy · Share · Verify": the actions' labels, shown in their zone until the buttons land. */
+  actionsPlaceholderLabel: string;
   /** "Receive USDC" */
   title: string;
   /** "Ethereum network" */
