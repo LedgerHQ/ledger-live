@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Link, Text } from "@ledgerhq/lumen-ui-rnative";
 import {
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
@@ -26,9 +26,16 @@ export function DiscoveringState({ state }: Readonly<DiscoveringStateProps>): Re
   return (
     <Box lx={{ width: "full", gap: "s16", paddingHorizontal: "s8" }}>
       <TrackDIEScreen category={PAGE_CONNECT_DEVICE.Discovering} refreshSource />
-      <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "left" }}>
-        {t("deviceIntentExecutor.connectDevice.states.discovering.title")}
-      </Text>
+      <Box lx={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+        <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "left" }}>
+          {t("deviceIntentExecutor.connectDevice.states.discovering.title")}
+        </Text>
+        {state.addNewDevice && (
+          <Link appearance="accent" size="sm" underline={false} onPress={state.addNewDevice}>
+            {t("connectKnownOrNewDevice.add")}
+          </Link>
+        )}
+      </Box>
       <Box>
         {state.devices.map((device, index) => (
           <DeviceListItem key={getDeviceKey(device, index)} device={device} />

@@ -1,6 +1,9 @@
 import React from "react";
 import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/live-dmk-mobile";
-import { WaitingForSelectedDeviceState as WaitingForSelectedDeviceStateView } from "LLM/components/DeviceConnection";
+import {
+  DeviceNotFoundHint,
+  WaitingForSelectedDeviceState as WaitingForSelectedDeviceStateView,
+} from "LLM/components/DeviceConnection";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 
@@ -22,6 +25,9 @@ export function WaitingForSelectedDeviceState({
         refreshSource
       />
       <WaitingForSelectedDeviceStateView device={state.device} />
+      {state.showDeviceNotFound && state.addNewDevice && (
+        <DeviceNotFoundHint onAddNewDevice={state.addNewDevice} />
+      )}
     </>
   );
 }

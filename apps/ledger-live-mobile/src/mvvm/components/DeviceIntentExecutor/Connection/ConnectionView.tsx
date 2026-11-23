@@ -9,6 +9,7 @@ import { ConnectingState } from "./components/ConnectingState";
 import { ConnectedState } from "./components/ConnectedState";
 import { ConnectionErrorState } from "./components/ConnectionErrorState";
 import { UnknownErrorState } from "./components/UnknownErrorState";
+import { AddNewDeviceState } from "./components/AddNewDeviceState";
 import type { ConnectionViewModel } from "./useConnectionViewModel";
 
 function assertNever(value: never): never {
@@ -20,6 +21,7 @@ export function ConnectionView({
   platform,
   onConnectLedgerDevice,
   onBuyLedgerDevice,
+  onDeviceNotFound,
 }: Readonly<ConnectionViewModel>) {
   switch (state.type) {
     case ConnectDeviceUIStateTypes.Loading:
@@ -28,7 +30,7 @@ export function ConnectionView({
     case ConnectDeviceUIStateTypes.NoKnownDevice:
       return (
         <NoKnownDeviceState
-          onConnectLedgerDevice={onConnectLedgerDevice}
+          onConnectLedgerDevice={state.addNewDevice ?? onConnectLedgerDevice}
           onBuyLedgerDevice={onBuyLedgerDevice}
         />
       );
@@ -55,7 +57,9 @@ export function ConnectionView({
       return <UnknownErrorState state={state} />;
 
     case ConnectDeviceUIStateTypes.ConnectNewDevice:
-      return null;
+      return (
+        <AddNewDeviceState state={state} platform={platform} onDeviceNotFound={onDeviceNotFound} />
+      );
 
     default:
       return assertNever(state);

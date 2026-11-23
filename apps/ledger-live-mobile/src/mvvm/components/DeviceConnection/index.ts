@@ -1,5 +1,6 @@
 export { ConnectingState } from "./ConnectingState";
 export { ConnectionErrorState } from "./ConnectionErrorState";
+export { DeviceNotFoundHint } from "./DeviceNotFoundHint";
 export { DiscoveryErrorState } from "./DiscoveryErrorState";
 export { ErrorBottomSheet } from "./ErrorBottomSheet";
 export { UnknownErrorState } from "./UnknownErrorState";

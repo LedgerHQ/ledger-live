@@ -82,6 +82,7 @@ export default function DebugConnectDeviceScreen() {
       dmk,
       onConnected: handleConnected,
       isMockServerEnabled,
+      isAddNewDeviceEnabled: false,
     }).subscribe({
       next: appendState,
       error: error => {

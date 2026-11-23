@@ -13,6 +13,8 @@ import { MockServerDeviceDiscoverySource } from "../deviceConnectivity/discovery
 import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnBleDeviceDiscoverySource";
 import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
 import { buildMobileCompatDeviceId, createConnectionError, filterMatchedDevices } from "./utils";
+import { filterListedDevices } from "../connectNewDevice/filterListedDevices";
+import { getDiscoveredDeviceKey } from "../connectNewDevice/getDiscoveredDeviceKey";
 
 jest.mock("@ledgerhq/live-dmk-shared", () => {
   const actual = jest.requireActual("@ledgerhq/live-dmk-shared");
@@ -76,6 +78,7 @@ describe("mobile connectDevice", () => {
       knownDevices: [knownDevice],
       onConnected,
       isMockServerEnabled: false,
+      isAddNewDeviceEnabled: false,
     });
 
     // THEN
@@ -88,6 +91,7 @@ describe("mobile connectDevice", () => {
       knownDevices: [knownDevice],
       onConnected,
       isMockServerEnabled: false,
+      isAddNewDeviceEnabled: false,
       deviceDiscoveryService: expect.any(DefaultDeviceDiscoveryService),
       matchDiscoveredDevices: filterMatchedDevices,
       mapConnectionError: createConnectionError,
@@ -111,11 +115,34 @@ describe("mobile connectDevice", () => {
       knownDevices: [knownDevice],
       onConnected: jest.fn(),
       isMockServerEnabled: false,
+      isAddNewDeviceEnabled: false,
     });
 
     // THEN
     expect(RnBleDeviceDiscoverySource).toHaveBeenCalledWith(dmk);
     expect(RnHidDeviceDiscoverySource).not.toHaveBeenCalled();
+  });
+
+  it("GIVEN the add flow is enabled, WHEN connectDevice starts, THEN it should give the connectNewDevice dependencies", () => {
+    // GIVEN
+    setPlatformOS("android");
+    const dmk = {} as DeviceManagementKit;
+
+    // WHEN
+    connectDevice({
+      dmk,
+      knownDevices: [knownDevice],
+      onConnected: jest.fn(),
+      isMockServerEnabled: false,
+      isAddNewDeviceEnabled: true,
+    });
+
+    // THEN
+    expect(mockedSharedConnectDeviceUseCase).toHaveBeenCalledWith(
+      expect.objectContaining({
+        connectNewDevice: { getDiscoveredDeviceKey, filterListedDevices },
+      }),
+    );
   });
 
   it("should register the mock server source when that transport is enabled", () => {
@@ -126,6 +153,7 @@ describe("mobile connectDevice", () => {
       knownDevices: [knownDevice],
       onConnected: jest.fn(),
       isMockServerEnabled: true,
+      isAddNewDeviceEnabled: false,
     });
 
     expect(MockServerDeviceDiscoverySource).toHaveBeenCalledWith(dmk);

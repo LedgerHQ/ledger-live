@@ -22,6 +22,7 @@ import {
 } from "./utils/DeviceIntentTrackingContext";
 import type { InitializationInput } from "./types";
 import { useDeviceIntentExecutorViewModel } from "./useDeviceIntentExecutorViewModel";
+import { ConnectionStepProvider } from "./utils/ConnectionStepContext";
 
 export { buildDeviceInitializationInput } from "./ContextInitializer/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
@@ -44,6 +45,11 @@ type Props<JobState, Input, ExtraProps, Result = undefined> = Omit<
    * flow.
    */
   analyticsProperties?: DeviceIntentTrackingProperties;
+  /**
+   * Lets the user add a new device in the connection step even when `lwmDieConnectNewDevice` is
+   * off, for the flows that cannot work without it.
+   */
+  forceEnableAddNewDevice?: boolean;
   /**
    * Sheet open request when it must differ from `enabled`. A caller that stays mounted
    * while the sheet closes sets this to false and unmounts from `onDeviceSheetDismissed`.
@@ -77,6 +83,8 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, Result = undef
     hasHeaderOverride,
     headerContextValue,
     trackingContextValue,
+    connectionStepContextValue,
+    onBack,
     onHeaderClosePressed,
     onBackdropPress,
   } = useDeviceIntentExecutorViewModel(executorProps);
@@ -88,26 +96,30 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, Result = undef
       onModalHide={onDeviceSheetDismissed}
       onHeaderClosePressed={onHeaderClosePressed}
       onBackdropPress={onBackdropPress}
+      onBack={onBack}
+      hasBackButton={onBack !== undefined}
       hideHandle
       enableDynamicSizing
       maxDynamicContentSize={maxDynamicContentSize}
     >
       <DeviceIntentTrackingProvider value={trackingContextValue}>
-        <DeviceIntentExecutorHeaderContext.Provider value={headerContextValue}>
-          <BottomSheetScrollView
-            contentContainerStyle={{ paddingBottom: bottomInset + 16 }}
-            stickyHeaderIndices={hasHeaderOverride ? undefined : [0]}
-            bounces={false}
-            showsVerticalScrollIndicator={false}
-          >
-            {!hasHeaderOverride && <BottomSheetHeader density="expanded" />}
-            <BaseDeviceIntentExecutor
-              {...wrappedProps}
-              platformConfig={platformConfig}
-              initializerConfig={wrappedProps.initializerConfig}
-            />
-          </BottomSheetScrollView>
-        </DeviceIntentExecutorHeaderContext.Provider>
+        <ConnectionStepProvider value={connectionStepContextValue}>
+          <DeviceIntentExecutorHeaderContext.Provider value={headerContextValue}>
+            <BottomSheetScrollView
+              contentContainerStyle={{ paddingBottom: bottomInset + 16 }}
+              stickyHeaderIndices={hasHeaderOverride ? undefined : [0]}
+              bounces={false}
+              showsVerticalScrollIndicator={false}
+            >
+              {!hasHeaderOverride && <BottomSheetHeader density="expanded" />}
+              <BaseDeviceIntentExecutor
+                {...wrappedProps}
+                platformConfig={platformConfig}
+                initializerConfig={wrappedProps.initializerConfig}
+              />
+            </BottomSheetScrollView>
+          </DeviceIntentExecutorHeaderContext.Provider>
+        </ConnectionStepProvider>
       </DeviceIntentTrackingProvider>
     </QueuedBottomSheet>
   );

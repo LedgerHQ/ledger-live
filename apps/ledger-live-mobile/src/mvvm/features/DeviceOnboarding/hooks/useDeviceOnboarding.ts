@@ -402,6 +402,7 @@ export function useDeviceOnboarding({
           ? selectKnownDevicesToReconnect(knownDevices, expectedDeviceRef.current)
           : selectPairedKnownDevices(knownDevices, pairedDeviceId),
         isMockServerEnabled,
+        isAddNewDeviceEnabled: false,
         onConnected: result => {
           void adoptConnection(result);
         },

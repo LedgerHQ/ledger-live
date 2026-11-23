@@ -25,6 +25,7 @@ import {
   DeviceIntentTrackingProvider,
   type SourceFlow,
 } from "../utils/DeviceIntentTrackingContext";
+import { ConnectionStepProvider } from "../utils/ConnectionStepContext";
 import { useConnectionViewModel } from "./useConnectionViewModel";
 
 const mockedTrack = jest.mocked(track);
@@ -64,6 +65,7 @@ type ViewModelStateParams = {
   bleKnownDevices?: DeviceLike[];
   buyDeviceFromLiveEnabled?: boolean;
   mockServerEnabled?: boolean;
+  dieConnectNewDeviceEnabled?: boolean;
 };
 
 function mockConnectDeviceSubscription() {
@@ -82,11 +84,15 @@ function withViewModelState({
   bleKnownDevices = [],
   buyDeviceFromLiveEnabled,
   mockServerEnabled = false,
+  dieConnectNewDeviceEnabled,
 }: ViewModelStateParams = {}) {
   const featureFlagOverrides: Parameters<typeof withFlagOverrides>[0] = {
     ...(buyDeviceFromLiveEnabled === undefined
       ? {}
       : { buyDeviceFromLive: { enabled: buyDeviceFromLiveEnabled } }),
+    ...(dieConnectNewDeviceEnabled === undefined
+      ? {}
+      : { lwmDieConnectNewDevice: { enabled: dieConnectNewDeviceEnabled } }),
   };
 
   return {
@@ -119,6 +125,16 @@ function SourceFlowWrapper({ children }: { children?: React.ReactNode }) {
     <DeviceIntentTrackingProvider value={{ sourceFlow, reportFailure: mockReportFailure }}>
       {children}
     </DeviceIntentTrackingProvider>
+  );
+}
+
+function ForcedEnableAddNewDeviceWrapper({ children }: { children?: React.ReactNode }) {
+  return (
+    <SourceFlowWrapper>
+      <ConnectionStepProvider value={{ forceEnableAddNewDevice: true, setBack: jest.fn() }}>
+        {children}
+      </ConnectionStepProvider>
+    </SourceFlowWrapper>
   );
 }
 
@@ -196,7 +212,38 @@ describe("useConnectionViewModel", () => {
       dmk: mockDmk,
       onConnected: expect.any(Function),
       isMockServerEnabled: false,
+      isAddNewDeviceEnabled: false,
     });
+  });
+
+  it("GIVEN lwmDieConnectNewDevice is on, WHEN the view model starts, THEN it should turn the add flow on", () => {
+    // GIVEN / WHEN
+    renderViewModel({}, { dieConnectNewDeviceEnabled: true });
+
+    // THEN
+    expect(mockedConnectDevice).toHaveBeenCalledWith(
+      expect.objectContaining({ isAddNewDeviceEnabled: true }),
+    );
+  });
+
+  it("GIVEN lwmDieConnectNewDevice is off and the DIE call forces the add flow, WHEN the view model starts, THEN it should turn the add flow on", () => {
+    // GIVEN / WHEN
+    renderHook(
+      () =>
+        useConnectionViewModel({
+          deviceConnectionParams: defaultDeviceConnectionParams,
+          onConnected: jest.fn(),
+        }),
+      {
+        ...withViewModelState({ dieConnectNewDeviceEnabled: false }),
+        innerWrapper: ForcedEnableAddNewDeviceWrapper,
+      },
+    );
+
+    // THEN
+    expect(mockedConnectDevice).toHaveBeenCalledWith(
+      expect.objectContaining({ isAddNewDeviceEnabled: true }),
+    );
   });
 
   it("should restrict the connect device flow to the mock server when it is on in settings", () => {

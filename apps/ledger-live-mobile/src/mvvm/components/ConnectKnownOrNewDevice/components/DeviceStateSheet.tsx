@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Banner,
-  BottomSheetHeader,
-  BottomSheetScrollView,
-  Box,
-  Button,
-} from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetHeader, BottomSheetScrollView, Box } from "@ledgerhq/lumen-ui-rnative";
 import {
   ConnectKnownOrNewDeviceUIStateTypes,
   type ConnectKnownOrNewDeviceUIState,
@@ -13,8 +7,11 @@ import {
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Platform, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ConnectingState, WaitingForSelectedDeviceState } from "LLM/components/DeviceConnection";
-import { useTranslation } from "~/context/Locale";
+import {
+  ConnectingState,
+  DeviceNotFoundHint,
+  WaitingForSelectedDeviceState,
+} from "LLM/components/DeviceConnection";
 import { assertNever } from "../utils/assertNever";
 
 export type DeviceStateSheetState = Extract<
@@ -31,28 +28,6 @@ type DeviceStateSheetProps = {
   state: DeviceStateSheetState | null;
 };
 
-function WaitingHint({ onAddNewDevice }: Readonly<{ onAddNewDevice?: () => void }>) {
-  const { t } = useTranslation();
-
-  return (
-    <Banner
-      appearance="info"
-      title={t("connectKnownOrNewDevice.waitingHint.title")}
-      primaryAction={
-        <Button
-          appearance="gray"
-          size="sm"
-          disabled={!onAddNewDevice}
-          onPress={onAddNewDevice}
-          lx={{ flexShrink: 1 }}
-        >
-          {t("connectKnownOrNewDevice.addDevice")}
-        </Button>
-      }
-    />
-  );
-}
-
 function DeviceStateContent({
   state,
 }: Readonly<{ state: DeviceStateSheetState }>): React.ReactNode {
@@ -61,7 +36,7 @@ function DeviceStateContent({
       return (
         <>
           <WaitingForSelectedDeviceState device={state.device} />
-          {state.showDeviceNotFound && <WaitingHint onAddNewDevice={state.addNewDevice} />}
+          {state.showDeviceNotFound && <DeviceNotFoundHint onAddNewDevice={state.addNewDevice} />}
         </>
       );
     case ConnectKnownOrNewDeviceUIStateTypes.Connecting:

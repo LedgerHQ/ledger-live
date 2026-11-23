@@ -13,6 +13,8 @@ import type { Observable } from "rxjs";
 import type { MobileDiscoveryError } from "../deviceConnectivity/types";
 import type { MobileConnectDeviceUIState } from "./types";
 import { buildDiscoverySources } from "../connectNewDevice/buildDiscoverySources";
+import { filterListedDevices } from "../connectNewDevice/filterListedDevices";
+import { getDiscoveredDeviceKey } from "../connectNewDevice/getDiscoveredDeviceKey";
 import { buildMobileCompatDeviceId, createConnectionError, filterMatchedDevices } from "./utils";
 
 export type ConnectDeviceInput = {
@@ -21,6 +23,8 @@ export type ConnectDeviceInput = {
   dmk: DeviceManagementKit;
   onConnected: (result: DeviceConnectionResult) => void;
   isMockServerEnabled: boolean;
+  /** Lets the user add a new device inside the flow, with the mobile connectNewDevice rules. */
+  isAddNewDeviceEnabled: boolean;
 };
 
 export function connectDevice(input: ConnectDeviceInput): Observable<MobileConnectDeviceUIState> {
@@ -38,6 +42,8 @@ export function connectDevice(input: ConnectDeviceInput): Observable<MobileConne
     matchDiscoveredDevices: filterMatchedDevices,
     mapConnectionError: createConnectionError,
     buildCompatDeviceId: buildMobileCompatDeviceId,
-    connectNewDevice: null,
+    connectNewDevice: input.isAddNewDeviceEnabled
+      ? { getDiscoveredDeviceKey, filterListedDevices }
+      : null,
   });
 }

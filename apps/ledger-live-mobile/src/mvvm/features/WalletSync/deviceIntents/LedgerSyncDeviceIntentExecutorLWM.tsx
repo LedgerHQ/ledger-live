@@ -51,6 +51,8 @@ export function LedgerSyncDeviceIntentExecutorLWM<Input, Result>({
     <DeviceIntentExecutor<LedgerSyncJobState, Input, undefined, Result>
       enabled
       sourceFlow="ledger_sync"
+      // Ledger Sync often runs before any device is known, so it always offers the add flow.
+      forceEnableAddNewDevice
       deviceConnectionParams={CONNECTION_PARAMS}
       deviceInitializationInput={initializationInput}
       intent={intent}

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Linking, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type {
   DeviceConnectionParams,
   DeviceConnectionResult,
@@ -20,7 +19,7 @@ import { useSelector } from "~/context/hooks";
 import { knownDevicesSelector } from "~/reducers/knownDevices";
 import { isMockServerEnabledSelector } from "~/reducers/settings";
 import { NavigatorName, ScreenName } from "~/const";
-import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { urls } from "~/utils/urls";
 import { dmkToLedgerDeviceIdMap, getConnectDeviceFailure } from "@ledgerhq/live-dmk-shared";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
@@ -31,6 +30,7 @@ import {
   trackDevicePrompted,
 } from "../utils/trackDeviceIntent";
 import { useDeviceIntentTracking } from "../utils/DeviceIntentTrackingContext";
+import { useConnectionStep } from "../utils/ConnectionStepContext";
 
 const LOG_TYPE = "DeviceConnectionComponentLWM";
 
@@ -42,8 +42,11 @@ type UseConnectionViewModelParams = {
 export type ConnectionViewModel = {
   state: ConnectDeviceUIState;
   platform: Exclude<AppPlatform, "desktop">;
+  /** Opens My Ledger, when the add flow is off. */
   onConnectLedgerDevice: () => void;
   onBuyLedgerDevice: () => void;
+  /** "I don't see my device" of the add flow: opens the device selection of the onboarding. */
+  onDeviceNotFound: () => void;
 };
 
 export function useConnectionViewModel({
@@ -51,10 +54,13 @@ export function useConnectionViewModel({
   onConnected,
 }: UseConnectionViewModelParams): ConnectionViewModel {
   const platform = Platform.OS === "ios" ? "ios" : "android";
-  const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation<BaseNavigation>();
   const saveConnectedDevice = useSaveConnectedDevice();
   const dmk = useDeviceManagementKit();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
+  const dieConnectNewDevice = useFeature("lwmDieConnectNewDevice");
+  const { forceEnableAddNewDevice } = useConnectionStep();
+  const isAddNewDeviceEnabled = forceEnableAddNewDevice || dieConnectNewDevice?.enabled === true;
   const knownDevices = useSelector(knownDevicesSelector);
   const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
   const { sourceFlow, analyticsProperties, reportFailure } = useDeviceIntentTracking();
@@ -107,6 +113,13 @@ export function useConnectionViewModel({
     });
   }, [navigation]);
 
+  const onDeviceNotFound = useCallback(() => {
+    navigation.navigate(NavigatorName.BaseOnboarding, {
+      screen: NavigatorName.Onboarding,
+      params: { screen: ScreenName.OnboardingDeviceSelection, params: { missingDevice: true } },
+    });
+  }, [navigation]);
+
   const onBuyLedgerDevice = useCallback(() => {
     if (buyDeviceFromLive?.enabled) {
       navigation.navigate(NavigatorName.BuyDevice, {
@@ -150,6 +163,7 @@ export function useConnectionViewModel({
       dmk,
       onConnected: wrappedOnConnected,
       isMockServerEnabled,
+      isAddNewDeviceEnabled,
     }).subscribe({ next: handleState });
 
     return () => subscription.unsubscribe();
@@ -158,6 +172,7 @@ export function useConnectionViewModel({
     dmk,
     knownDevices,
     isMockServerEnabled,
+    isAddNewDeviceEnabled,
     reportFailure,
     wrappedOnConnected,
   ]);
@@ -167,5 +182,6 @@ export function useConnectionViewModel({
     platform,
     onConnectLedgerDevice,
     onBuyLedgerDevice,
+    onDeviceNotFound,
   };
 }

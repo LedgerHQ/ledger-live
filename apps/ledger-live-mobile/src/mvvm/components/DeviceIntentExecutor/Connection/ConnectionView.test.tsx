@@ -6,6 +6,7 @@ import {
   BaseConnectionErrorTypes,
   BaseDiscoveryErrorTypes,
   ConnectDeviceUIStateTypes,
+  ConnectNewDeviceUIStateTypes,
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
@@ -41,6 +42,7 @@ function renderView(
         platform={callbacks.platform ?? "android"}
         onConnectLedgerDevice={callbacks.onConnectLedgerDevice ?? jest.fn()}
         onBuyLedgerDevice={callbacks.onBuyLedgerDevice ?? jest.fn()}
+        onDeviceNotFound={callbacks.onDeviceNotFound ?? jest.fn()}
       />
     </DeviceIntentTrackingProvider>,
   );
@@ -140,5 +142,82 @@ describe("ConnectionView", () => {
     expect(() => renderView({ type: "unsupported" } as unknown as ConnectDeviceUIState)).toThrow(
       'Unhandled connect device state: {"type":"unsupported"}',
     );
+  });
+
+  describe("Add flow", () => {
+    it("GIVEN the add flow is on and no device is known, WHEN the user presses Connect Ledger device, THEN it should open the add flow instead of My Ledger", async () => {
+      // GIVEN
+      const addNewDevice = jest.fn();
+      const onConnectLedgerDevice = jest.fn();
+      const { user } = renderView(
+        { type: ConnectDeviceUIStateTypes.NoKnownDevice, addNewDevice },
+        { onConnectLedgerDevice },
+      );
+
+      // WHEN
+      await user.press(screen.getByText("Connect Ledger device"));
+
+      // THEN
+      expect(addNewDevice).toHaveBeenCalledTimes(1);
+      expect(onConnectLedgerDevice).not.toHaveBeenCalled();
+    });
+
+    it("GIVEN the add flow is on, WHEN the user presses Add new in the device list, THEN it should open the add flow", async () => {
+      // GIVEN
+      const addNewDevice = jest.fn();
+      const { user } = renderView({
+        type: ConnectDeviceUIStateTypes.Discovering,
+        devices: [],
+        addNewDevice,
+      });
+
+      // WHEN
+      await user.press(screen.getByText("Add new"));
+
+      // THEN
+      expect(addNewDevice).toHaveBeenCalledTimes(1);
+    });
+
+    it("GIVEN the add flow is off, WHEN the device list shows, THEN it should not show Add new", () => {
+      // GIVEN / WHEN
+      renderView({ type: ConnectDeviceUIStateTypes.Discovering, devices: [], addNewDevice: null });
+
+      // THEN
+      expect(screen.queryByText("Add new")).toBeNull();
+    });
+
+    it("GIVEN the device not found hint shows, WHEN the user presses it, THEN it should open the add flow", async () => {
+      // GIVEN
+      const addNewDevice = jest.fn();
+      const { user } = renderView({
+        type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,
+        device: makeKnownDevice(),
+        showDeviceNotFound: true,
+        addNewDevice,
+      });
+
+      // WHEN
+      await user.press(screen.getByText("Add a Ledger device"));
+
+      // THEN
+      expect(addNewDevice).toHaveBeenCalledTimes(1);
+    });
+
+    it("GIVEN the add flow discovers, WHEN it renders, THEN it should show the connectNewDevice discovering state", () => {
+      // GIVEN / WHEN
+      renderView({
+        type: ConnectDeviceUIStateTypes.ConnectNewDevice,
+        connectNewDeviceUIState: {
+          type: ConnectNewDeviceUIStateTypes.Discovering,
+          devices: [],
+          scanningTransports: [],
+          showDeviceNotFound: false,
+        },
+        back: jest.fn(),
+      });
+
+      // THEN
+      expect(screen.getByText("Looking for your Ledger devices")).toBeVisible();
+    });
   });
 });

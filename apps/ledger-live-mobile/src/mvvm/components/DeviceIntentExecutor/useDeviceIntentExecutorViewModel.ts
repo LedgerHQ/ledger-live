@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
   DeviceConnectionResult,
   DeviceIntentExecutorProps,
@@ -23,6 +23,7 @@ import {
 import type { InitializerConfig } from "./ContextInitializer";
 import type { InitializationInput } from "./types";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
+import type { ConnectionStepContextValue } from "./utils/ConnectionStepContext";
 import type {
   DeviceIntentTrackingContextValue,
   DeviceIntentTrackingProperties,
@@ -38,6 +39,7 @@ type Props<JobState, Input, ExtraProps, Result = undefined> = Omit<
   initializerConfig?: InitializerConfig;
   sourceFlow: SourceFlow;
   analyticsProperties?: DeviceIntentTrackingProperties;
+  forceEnableAddNewDevice?: boolean;
 };
 
 export type DeviceIntentExecutorViewModel<JobState, Input, ExtraProps, Result = undefined> = {
@@ -49,6 +51,9 @@ export type DeviceIntentExecutorViewModel<JobState, Input, ExtraProps, Result = 
   hasHeaderOverride: boolean;
   headerContextValue: DeviceIntentExecutorHeaderContextValue;
   trackingContextValue: DeviceIntentTrackingContextValue;
+  connectionStepContextValue: ConnectionStepContextValue;
+  /** Set while a step shows a back arrow in the sheet header. */
+  onBack: (() => void) | undefined;
   /**
    * Tracks the "Close" `button_clicked` event when the drawer header close button is pressed.
    * Wired to the drawer's `onHeaderClosePressed` so tracking reflects real user intent, unlike
@@ -80,13 +85,14 @@ function mapConnectionResult(result: DeviceConnectionResult): ConnectionTracking
 export function useDeviceIntentExecutorViewModel<JobState, Input, ExtraProps, Result = undefined>(
   props: Props<JobState, Input, ExtraProps, Result>,
 ): DeviceIntentExecutorViewModel<JobState, Input, ExtraProps, Result> {
+  const { forceEnableAddNewDevice = false, ...executorProps } = props;
   const {
     enabled,
     sourceFlow,
     analyticsProperties = emptyAnalyticsProperties,
     onExecutorStateChanged,
     onUserCancel,
-  } = props;
+  } = executorProps;
 
   const flowStartedRef = useRef(false);
   const initializationCompletedRef = useRef(false);
@@ -94,6 +100,20 @@ export function useDeviceIntentExecutorViewModel<JobState, Input, ExtraProps, Re
   const failureRef = useRef<DeviceFlowFailure | null>(null);
   const acceptsScreenFailureReportsRef = useRef(true);
   const { hasHeaderOverride, headerContextValue } = useDeviceIntentExecutorHeaderOverrideRequests();
+  const backRef = useRef<(() => void) | null>(null);
+  const [hasBack, setHasBack] = useState(false);
+
+  const setBack = useCallback((back: (() => void) | null) => {
+    backRef.current = back;
+    setHasBack(back !== null);
+  }, []);
+
+  const onBack = useCallback(() => backRef.current?.(), []);
+
+  const connectionStepContextValue = useMemo<ConnectionStepContextValue>(
+    () => ({ forceEnableAddNewDevice, setBack }),
+    [forceEnableAddNewDevice, setBack],
+  );
 
   useKeepScreenAwake(enabled);
 
@@ -164,10 +184,12 @@ export function useDeviceIntentExecutorViewModel<JobState, Input, ExtraProps, Re
     hasHeaderOverride,
     headerContextValue,
     trackingContextValue,
+    connectionStepContextValue,
+    onBack: hasBack ? onBack : undefined,
     onHeaderClosePressed: trackClose,
     onBackdropPress: trackClose,
     wrappedProps: {
-      ...props,
+      ...executorProps,
       onExecutorStateChanged: wrappedOnExecutorStateChanged,
       onUserCancel: wrappedOnUserCancel,
     },
