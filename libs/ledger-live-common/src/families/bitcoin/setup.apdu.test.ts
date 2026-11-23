@@ -121,12 +121,6 @@ const XPUBS: Array<[string, string, string, string]> = [
     "44'/2'/0'",
     "Ltub2YRPRjnvZVoBBbfDrEV3jJdGQCTMHgKg1V1mnAZuQbbSY6XPhufcRTpoGB4595dUuW1GSDy6CApUYmCfwA4YjG5JWrAFd4GBR1WRJ8Jm6cM",
   ],
-  [
-    "zencash",
-    "legacy",
-    "44'/121'/0'",
-    "xpub6D5t3ggLE75WLn8cMhJ6V5tdZsT5ixJDjoYrERnYgkjXe5f2qqBBsjCLJ4ktGeorZBrSwQZ6tRqmmu9CM5fpi6S7n1T6VMxitE4LnXBStue",
-  ],
 ];
 
 const ADDRESSES: Array<[string, string, string, string]> = [
@@ -142,7 +136,6 @@ const ADDRESSES: Array<[string, string, string, string]> = [
   ["litecoin", "native_segwit", "84'/2'/0'", "ltc1qpx9fcj5qht64vymj469cfyun73tllcch7qeuwq"],
   ["litecoin", "segwit", "49'/2'/0'", "MQ1AaPQHsEVxxxQ93MGfqh8XQDEH1QGBwy"],
   ["litecoin", "legacy", "44'/2'/0'", "LNE2XB6RhTLWGwCax8ct6swZtjpHkfKX84"],
-  ["zencash", "legacy", "44'/121'/0'", "zngqsiJy3a3BufQvUGuvjSupeWmo9fvaANd"],
 ];
 
 const DERIVATION_MODES: Record<string, DerivationMode> = {
