@@ -13,8 +13,12 @@ jest.mock("@features/platform-env", () => jest.fn());
 jest.mock("../../../modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => () => true,
 }));
+const mockUnpriced = new Set<string>();
 jest.mock("@features/platform-market-countervalues", () => ({
-  useCalculateCountervalueCallback: () => (_currency: unknown, value: BigNumber) => value,
+  useCalculateCountervalueCallback:
+    () =>
+    ({ id }: { id: string }, value: BigNumber) =>
+      mockUnpriced.has(id) ? null : value,
 }));
 
 const mockUseEnv = jest.mocked(useEnv);
@@ -46,6 +50,34 @@ describe("useDefaultDepositAccount", () => {
   it("offers test networks in developer mode", () => {
     mockUseEnv.mockReturnValue(true);
     expect(renderDefault([sepolia])).toBe(sepolia);
+  });
+
+  it("skips tokens on a test network outside developer mode", () => {
+    mockUseEnv.mockReturnValue(false);
+    const sepoliaToken = {
+      type: "TokenAccount",
+      id: "sepolia-usdc",
+      token: {
+        type: "TokenCurrency",
+        id: "ethereum_sepolia/erc20/usdc",
+        ticker: "USDC",
+        parentCurrencyId: "ethereum_sepolia",
+        units: [{ magnitude: 6 }],
+      },
+      spendableBalance: new BigNumber(1_000_000),
+    } as unknown as AccountLike;
+
+    expect(renderDefault([sepoliaToken])).toBeUndefined();
+  });
+
+  it("ranks by fiat balance and treats an unpriced account as zero", () => {
+    mockUseEnv.mockReturnValue(false);
+    mockUnpriced.add("bitcoin");
+    const btc = account("btc-1", "bitcoin", "100000000");
+    const eth = account("eth-1", "ethereum", "1000");
+
+    expect(renderDefault([btc, eth])).toBe(eth);
+    mockUnpriced.clear();
   });
 
   it("never picks the receiving account", () => {

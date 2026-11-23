@@ -1,13 +1,8 @@
 import BigNumber from "bignumber.js";
-import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "../../../account";
 
 const PREFERRED_STABLECOIN_TICKERS: ReadonlySet<string> = new Set(["USDC", "USDT"]);
-
-export function isPreferredDepositStablecoin(currency: CryptoOrTokenCurrency): boolean {
-  return PREFERRED_STABLECOIN_TICKERS.has(currency.ticker.toUpperCase());
-}
 
 type Candidate = Readonly<{ account: AccountLike; value: BigNumber | undefined }>;
 
@@ -39,7 +34,7 @@ export function pickDefaultDepositAccount({
 
   const stablecoins = funded.flatMap(account => {
     const currency = getAccountCurrency(account);
-    if (!isPreferredDepositStablecoin(currency)) return [];
+    if (!PREFERRED_STABLECOIN_TICKERS.has(currency.ticker.toUpperCase())) return [];
     const magnitude = currency.units[0]?.magnitude ?? 0;
     return [{ account, value: account.spendableBalance.shiftedBy(-magnitude) }];
   });
