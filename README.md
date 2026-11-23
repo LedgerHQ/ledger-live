@@ -43,7 +43,7 @@ The repo uses:
 - [Nx](https://nx.dev/) for task orchestration and repo management
 - [Changesets](https://github.com/changesets/changesets) for changelogs and publishing
 
-To install everything run:
+To install all dependencies, run:
 
 ```bash
 mise install
