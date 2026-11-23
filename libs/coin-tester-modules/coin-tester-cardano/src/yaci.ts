@@ -230,15 +230,36 @@ const RESET_ATTEMPTS = 2;
 const BLOCK_WAIT_TIMEOUT_MS = 20_000;
 const LOGS_TIMEOUT_MS = 10_000;
 
-/**
- * Tail of the devnet container's output; never rejects. Uses `execFile` rather than `docker-compose`,
- * which cannot cancel its child: the timeout kills a hung `docker compose logs` instead of leaking it.
- */
-function yaciLogs(): Promise<string> {
+// yaci-cli writes the container output; the node and the store log to files inside it. These show
+// which side is stuck: the node's tip and forge traces against the store's latest block and sync log.
+const IN_CONTAINER_DIAGNOSTICS = `
+cd /clusters/nodes/default/node
+echo "== node tip"
+CARDANO_NODE_SOCKET_PATH=node.sock /app/cardano-bin/cardano-cli query tip --testnet-magic 42 2>&1
+echo "== store latest block"
+curl -s -m 5 http://127.0.0.1:8080/api/v1/blocks/latest 2>&1; echo
+echo "== node forge traces (last 3000 lines)"
+tail -n 3000 node.log | grep -oE "Trace(Forged|Adopted|NodeIsLeader|NodeNotLeader|NodeCannotForge|ForgeStateUpdateError|SlotIsImmutable|BlockFromFuture|DidntAdoptBlock|ForgedInvalidBlock|NoLedgerState|NoLedgerView)[A-Za-z]*" | sort | uniq -c
+echo "== node log"
+grep -vE "Debug|InboundGovernor|ConnectionManager|PublicRootPeers|LocalRootPeers|PeerSelection|Mempool" node.log | tail -n 40
+for f in /app/store/logs/*.log; do
+  echo "== store log $f"
+  grep -vE " DEBUG |ClassPathScanner|RootClass|Hibernate" "$f" | tail -n 60
+done
+echo "== yaci-cli log"
+tail -n 40 /app/logs/yaci-cli.log 2>&1
+echo "== resources"
+uptime; free -m; df -h /
+`;
+
+/** `docker <args>` in the package folder; resolves to its output (or why it is missing), never rejects. */
+function dockerOutput(label: string, args: string[]): Promise<string> {
   return new Promise(resolve => {
+    // `execFile` rather than `docker-compose`, which cannot cancel its child: the timeout kills a hung
+    // docker command instead of leaking it.
     execFile(
       "docker",
-      ["compose", "logs", "--no-color", "--tail", "200", "yaci"],
+      args,
       {
         cwd: PACKAGE_ROOT,
         env: process.env,
@@ -248,10 +269,35 @@ function yaciLogs(): Promise<string> {
       },
       (error, stdout, stderr) => {
         const streams = composeStreams({ out: String(stdout), err: String(stderr) });
-        resolve(error ? `(container logs unavailable: ${error.message})\n${streams}` : streams);
+        resolve(error ? `(${label} unavailable: ${error.message})\n${streams}` : streams);
       },
     );
   });
+}
+
+/** The devnet container's output, then its node and store logs; never rejects. */
+async function yaciLogs(): Promise<string> {
+  const [output, internals] = await Promise.all([
+    dockerOutput("container logs", [
+      "compose",
+      "logs",
+      "--no-color",
+      "--timestamps",
+      "--tail",
+      "200",
+      "yaci",
+    ]),
+    dockerOutput("container internals", [
+      "compose",
+      "exec",
+      "-T",
+      "yaci",
+      "sh",
+      "-c",
+      IN_CONTAINER_DIAGNOSTICS,
+    ]),
+  ]);
+  return `${output}\n${internals}`;
 }
 
 /** Reset the devnet ledger to a clean state; resolves once the reset chain produces blocks again. */
