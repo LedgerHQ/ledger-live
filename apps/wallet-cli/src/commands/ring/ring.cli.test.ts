@@ -4,7 +4,7 @@ import type { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { existsSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { Readable } from "node:stream";
+import { PassThrough, Readable } from "node:stream";
 import { YAML } from "bun";
 import { deriveWrappingKey } from "../../key-ring/crypto";
 import { loadMemberCredentials, savePrivateKey } from "../../key-ring/keychain";
@@ -31,16 +31,41 @@ function runCliWithStdinText(
   args: string[],
   env: Record<string, string>,
   text: string,
-  { isTTY = false } = {},
 ): Promise<RunResult> {
   const origDesc = Object.getOwnPropertyDescriptor(process, "stdin");
-  const fakeStdin = Object.assign(new Readable({ read() {} }), { isTTY });
+  const fakeStdin = new Readable({ read() {} });
   if (text) fakeStdin.push(text);
   fakeStdin.push(null);
   Object.defineProperty(process, "stdin", { get: () => fakeStdin, configurable: true });
   return runCli(args, env).finally(() => {
     if (origDesc) Object.defineProperty(process, "stdin", origDesc);
   });
+}
+
+async function runCliPressingKeyAtTerminal(
+  args: string[],
+  env: Record<string, string>,
+  key: string,
+): Promise<RunResult> {
+  const stdinDesc = Object.getOwnPropertyDescriptor(process, "stdin");
+  const stderrIsTTYDesc = Object.getOwnPropertyDescriptor(process.stderr, "isTTY");
+  const stderrWrite = process.stderr.write;
+  const terminalStdin = Object.assign(new PassThrough(), { isTTY: true });
+  Object.defineProperty(process, "stdin", { get: () => terminalStdin, configurable: true });
+  // readline only parses key presses when its output is a terminal.
+  Object.defineProperty(process.stderr, "isTTY", { value: true, configurable: true });
+  process.stderr.write = (() => true) as typeof process.stderr.write;
+  try {
+    const result = runCli(args, env);
+    terminalStdin.write(key);
+    return await result;
+  } finally {
+    terminalStdin.end();
+    process.stderr.write = stderrWrite;
+    if (stderrIsTTYDesc) Object.defineProperty(process.stderr, "isTTY", stderrIsTTYDesc);
+    else delete (process.stderr as { isTTY?: boolean }).isTTY;
+    if (stdinDesc) Object.defineProperty(process, "stdin", stdinDesc);
+  }
 }
 
 // Fake OS keychain so tests never touch macOS Keychain / libsecret.
@@ -834,13 +859,14 @@ describe("ring destroy — confirmation prompt", () => {
     expect([..._store.values()]).toHaveLength(0);
   });
 
-  it("cancels on Ctrl-C or Ctrl-D at a terminal", async () => {
+  it.each([
+    ["Ctrl-C", "\x03"],
+    ["Ctrl-D", "\x04"],
+  ])("cancels on %s at a terminal", async (keyName, key) => {
     await seedInitializedRing(dir);
 
-    const r = await runCliWithStdinText(["ring", "destroy", "--output", "json"], env, "", {
-      isTTY: true,
-    });
-    expect(r.exitCode, r.stdout).toBe(0);
+    const r = await runCliPressingKeyAtTerminal(["ring", "destroy", "--output", "json"], env, key);
+    expect(r.exitCode, `${keyName}: ${r.stdout}`).toBe(0);
     expect(JSON.parse(r.stdout)).toMatchObject({ cancelled: true });
     expect([..._store.values()]).toHaveLength(1);
   });
