@@ -50,7 +50,7 @@ const commentsProbe = {
     return {
       Program(node) {
         const all = context.sourceCode.getAllComments();
-        const dirs = all.filter((c) => DIRECTIVE.test(c.value));
+        const dirs = all.filter(c => DIRECTIVE.test(c.value));
         say(context, `[comments] total=${all.length} directives=${dirs.length}`, node);
         for (const c of dirs) {
           if (/coin-families\//.test(c.value)) {
