@@ -10,10 +10,14 @@ type Props = Readonly<{ isDimmed: boolean; children: ReactNode }>;
 /**
  * Steps a section back behind a veil of the screen's color, which also takes its touches. A veil
  * dims native views evenly, where an opacity on the section would fade each child on its own.
+ * Screen readers skip the section too.
  */
 export function Dimmed({ isDimmed, children }: Props) {
   return (
-    <Box>
+    <Box
+      accessibilityElementsHidden={isDimmed}
+      importantForAccessibility={isDimmed ? "no-hide-descendants" : "auto"}
+    >
       {children}
       {isDimmed ? (
         <Box

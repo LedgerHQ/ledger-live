@@ -117,12 +117,14 @@ describe("ReceiveAddress (Native)", () => {
     expect(await screen.findByText("Copied")).toBeTruthy();
   });
 
-  it("points at Verify until the hint is dismissed, then verifies on the device", async () => {
+  it("points at Verify, hiding the rest from screen readers, until the hint is dismissed, then verifies", async () => {
     renderScreen(jest.fn(), makeReceiveTestStore(), { VerifyAddressExecutor });
 
     expect(await screen.findByTestId("receive-address-verify-hint")).toBeTruthy();
+    expect(screen.queryByTestId("receive-address-close")).toBeNull();
     fireEvent.press(screen.getByText("Got it"));
     expect(screen.queryByTestId("receive-address-verify-hint")).toBeNull();
+    expect(screen.getByTestId("receive-address-close")).toBeTruthy();
 
     fireEvent.press(screen.getByTestId("receive-address-verify"));
     expect(screen.getByTestId("verify-executor")).toBeTruthy();
