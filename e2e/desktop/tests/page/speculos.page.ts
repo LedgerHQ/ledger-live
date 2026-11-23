@@ -24,6 +24,7 @@ import {
   enableBlindSigningOnNanoS,
   resetSpeculosEvents,
   waitForSendReviewTransaction,
+  type PerpsDepositReview,
 } from "@ledgerhq/live-e2e-shared/speculos";
 import { signTronRentPayment } from "@ledgerhq/live-e2e-shared/families/tronSponsored";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -112,8 +113,8 @@ export class SpeculosPage extends AppPage {
   }
 
   @step("Accept the Perps deposit on the device")
-  async acceptPerpsDeposit(params: { sendTicker: string; receiveTicker: string }) {
-    await acceptPerpsDeposit(params);
+  async acceptPerpsDeposit(review: PerpsDepositReview) {
+    await acceptPerpsDeposit(review);
   }
 
   @step("Verify amounts and accept swap for different seed")

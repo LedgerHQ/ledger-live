@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Dialog } from "tests/component/dialog.component";
 import { step } from "tests/misc/reporters/step";
+import { extractAmountText } from "@ledgerhq/live-e2e-shared/amountText";
 
 export class PerpsDepositDialog extends Dialog {
   private readonly title = this.page.getByRole("heading", { name: "Deposit", exact: true });
@@ -35,9 +36,7 @@ export class PerpsDepositDialog extends Dialog {
     await expect(this.amountInput).toBeVisible();
     await expect(this.selectCurrency).toBeVisible();
     await expect(this.reviewCta).toBeDisabled();
-    for (const ratioButton of this.ratioButtons) {
-      await expect(ratioButton).toBeVisible();
-    }
+    await Promise.all(this.ratioButtons.map(ratioButton => expect(ratioButton).toBeVisible()));
   }
 
   @step("Open the Perps deposit funding account picker")
@@ -87,6 +86,12 @@ export class PerpsDepositDialog extends Dialog {
     await expect(this.depositedAmount).toContainText(receiverAccount.currency.ticker);
     await expect(this.receiverAccount).toContainText(receiverAccount.accountName);
     await expect(this.depositCta).toBeEnabled();
+  }
+
+  @step("Read the Perps deposit review send amount")
+  async getReviewSendAmount(fundingAccount: Account) {
+    const ticker = fundingAccount.currency.ticker;
+    return { ticker, amount: extractAmountText(await this.amountSent.innerText(), ticker) };
   }
 
   @step("Confirm the Perps deposit")

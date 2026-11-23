@@ -67,10 +67,11 @@ test.describe("Perps deposit", () => {
       await app.perpsDepositDialog.enterAmount(depositAmount);
       await app.perpsDepositDialog.clickReview();
       await app.perpsDepositDialog.expectReview({ fundingAccount, receiverAccount });
+      const send = await app.perpsDepositDialog.getReviewSendAmount(fundingAccount);
       await app.perpsDepositDialog.clickDeposit();
       await app.perpsDepositDialog.expectSigning();
       await app.speculos.acceptPerpsDeposit({
-        sendTicker: fundingAccount.currency.ticker,
+        send,
         receiveTicker: receiverAccount.currency.ticker,
       });
       await app.perpsTransactionSignedDialog.expectTransactionSigned(receiverAccount);

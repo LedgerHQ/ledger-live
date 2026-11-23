@@ -66,6 +66,7 @@ import { sendInternetComputer } from "./families/internet_computer";
 import { sleep } from "./index";
 import { delegateMina, sendMina } from "./families/mina";
 import { sendAleo } from "./families/aleo";
+import { expectDeviceAmount, type DeviceAmount } from "./deviceAmount";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 const SCREEN_POLL_INTERVAL_MS = 500;
@@ -1471,12 +1472,14 @@ export const verifyAmountsAndAcceptSwap = withDeviceController(
     },
 );
 
+export type PerpsDepositReview = { send: DeviceAmount; receiveTicker: string };
+
 export const acceptPerpsDeposit = withDeviceController(
   ({ getButtonsController }) =>
-    async ({ sendTicker, receiveTicker }: { sendTicker: string; receiveTicker: string }) => {
+    async ({ send, receiveTicker }: PerpsDepositReview) => {
       await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
       const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
-      const swapPair = `swap ${sendTicker} to ${receiveTicker}`;
+      const swapPair = `swap ${send.ticker} to ${receiveTicker}`;
       expectSpeculosEventsContainExactly(
         swapPair,
         events,
@@ -1487,6 +1490,7 @@ export const acceptPerpsDeposit = withDeviceController(
         events,
         "Provider SwapKit not found on the device screen",
       );
+      expectDeviceAmount({ events, label: "Send", expected: send });
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
       } else {
