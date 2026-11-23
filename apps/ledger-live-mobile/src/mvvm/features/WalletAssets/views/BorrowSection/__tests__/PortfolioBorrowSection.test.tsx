@@ -9,6 +9,12 @@ describe("PortfolioBorrowSection", () => {
     jest.clearAllMocks();
   });
 
+  it("should render the Crypto Loan product name", () => {
+    render(<PortfolioBorrowSection onPress={onPress} />);
+
+    expect(screen.getByText("Crypto Loan")).toBeVisible();
+  });
+
   it("should render the borrow entry point card", () => {
     render(<PortfolioBorrowSection onPress={onPress} />);
     expect(screen.getByTestId("portfolio-borrow-entry-point")).toBeVisible();
