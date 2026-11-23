@@ -707,6 +707,7 @@ mise.toml                                             @ledgerhq/platform
 
 # Monitoring
 apps/ledger-live-desktop/src/datadog/                 @ledgerhq/platform
+features/platform/observability-redaction/            @ledgerhq/platform
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 libs/types-live/src/feature.ts

@@ -150,7 +150,7 @@ describe("datadog config", () => {
       const url = (event.resource as Record<string, unknown>).url as string;
       expect(url).not.toContain(address);
       expect(url).toContain("/accounts/[redacted]/addresses");
-      expect(url).toContain("account=%5Bredacted%5D");
+      expect(url).toContain("account=[redacted]");
       expect(url).toContain("currency=usd");
     });
 
