@@ -417,7 +417,7 @@
     "@testing-library/react-native": "13.3.3",
     "@types/d3-array": "3.2.2",
     "@types/d3-scale": "4.0.9",
-    "@types/d3-shape": "3.1.6",
+    "@types/d3-shape": "3.1.8",
     "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",

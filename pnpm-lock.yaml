@@ -3039,8 +3039,8 @@ importers:
         specifier: 4.0.9
         version: 4.0.9
       '@types/d3-shape':
-        specifier: 3.1.6
-        version: 3.1.6
+        specifier: 3.1.8
+        version: 3.1.8
       '@types/invariant':
         specifier: 2.2.37
         version: 2.2.37
@@ -34352,8 +34352,8 @@ packages:
   '@types/d3-scale@4.0.9':
     resolution: {integrity: sha512-dLmtwB8zkAeO/juAMfnV+sItKjlsw2lKdZVVy6LRr0cBmegxSABiLEpGVmSJJ8O08i4+sGR6qQtb6WtuwJdvVw==}
 
-  '@types/d3-shape@3.1.6':
-    resolution: {integrity: sha512-5KKk5aKGu2I+O6SONMYSNflgiP0WfZIQvVUMan50wHsLG1G94JlxEVnCpQARfTtzytuY0p/9PXXZb3I7giofIA==}
+  '@types/d3-shape@3.1.8':
+    resolution: {integrity: sha512-lae0iWfcDeR7qt7rA88BNiqdvPS5pFVPpo5OfjElwNaT2yyekbM0C9vK+yqBqEmHr6lDkRnYNoTBYlAgJa7a4w==}
 
   '@types/d3-shape@3.2.0':
     resolution: {integrity: sha512-kVd74ta9eof3eJOvbNd1vGKS/XERRyQbT26Og63hIsvDO84cjD5gEOhsXf26w3FSoNlPVz84DOFcKv/oou+fMw==}
@@ -53900,7 +53900,7 @@ snapshots:
     dependencies:
       '@types/d3-time': 2.1.4
 
-  '@types/d3-shape@3.1.6':
+  '@types/d3-shape@3.1.8':
     dependencies:
       '@types/d3-path': 3.1.0
 
