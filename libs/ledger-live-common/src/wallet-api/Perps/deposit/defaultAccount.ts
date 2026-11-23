@@ -6,10 +6,7 @@ import { getAccountCurrency } from "../../../account";
 const PREFERRED_STABLECOIN_TICKERS: ReadonlySet<string> = new Set(["USDC", "USDT"]);
 
 export function isPreferredDepositStablecoin(currency: CryptoOrTokenCurrency): boolean {
-  return (
-    currency.type === "TokenCurrency" &&
-    PREFERRED_STABLECOIN_TICKERS.has(currency.ticker.toUpperCase())
-  );
+  return PREFERRED_STABLECOIN_TICKERS.has(currency.ticker.toUpperCase());
 }
 
 type Candidate = Readonly<{ account: AccountLike; value: BigNumber | undefined }>;
@@ -26,11 +23,7 @@ function pickHighest(candidates: Candidate[]): AccountLike | undefined {
   return best?.account;
 }
 
-/**
- * The account a perps deposit is funded from by default: the USDC or USDT account with the
- * highest balance, else the account with the highest fiat balance. USD stablecoins are compared
- * in whole units so the pick does not wait for countervalues; unpriced accounts count as zero.
- */
+/** Largest USDC/USDT balance (in whole units), else highest fiat balance. */
 export function pickDefaultDepositAccount({
   accounts,
   isEligible,

@@ -118,7 +118,7 @@ function renderViewModel(
   accounts: Account[] = [fundingAccount, fundedAccount],
   maxConstants?: Record<string, string>,
 ) {
-  // Arbitrum is behind a flag, and the funding picker only offers enabled currencies.
+  // The funding picker hides Arbitrum unless its flag is on.
   const flags = {
     currencyArbitrum: { enabled: true },
     ...(maxConstants && {
@@ -469,8 +469,7 @@ describe("usePerpsDepositViewModel", () => {
       ),
     );
 
-    // The 20_000-atomic account wins over the larger ETH balance; priced 1:1 into USD (2
-    // decimals) that is a $200 ceiling.
+    // Beats the larger ETH balance: 20_000 atomic USDC priced 1:1 is $200.
     expect(result.current.maxAmount).toBe(200);
     expect(result.current.depositCurrencyTicker).toBe("USDC");
     expect(result.current.depositAccountName).not.toBeNull();

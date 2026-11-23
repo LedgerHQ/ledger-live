@@ -69,6 +69,16 @@ describe("pickDefaultDepositAccount", () => {
     );
   });
 
+  it("counts a network whose native coin is USDC", () => {
+    const arc = { type: "CryptoCurrency", id: "arc", ticker: "USDC", units: [{ magnitude: 18 }] };
+    const nativeUsdc = account("arc-1", arc, "1000000000000000000000"); // 1,000 USDC
+    const tokenUsdc = tokenAccount("eth-usdc", ethereumUsdc, "10000000"); // 10 USDC
+
+    expect(
+      pickDefaultDepositAccount({ accounts: [tokenUsdc, nativeUsdc], isEligible, getFiatBalance }),
+    ).toBe(nativeUsdc);
+  });
+
   it("prefers a USDC or USDT account over a larger non-stablecoin balance", () => {
     const usdt = tokenAccount("bsc-usdt", bscUsdt, "10000000000000000000"); // 10 USDT
     const btc = account("btc-1", bitcoin, "100000000");

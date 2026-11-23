@@ -1,5 +1,7 @@
 import { useCallback, useMemo } from "react";
-import type { Currency } from "@domain/entity-currency";
+import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import useEnv from "@features/platform-env";
 import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "../../../account";
@@ -7,7 +9,7 @@ import { useAcceptedCurrency } from "../../../modularDrawer/hooks/useAcceptedCur
 import { PERPS_UI_USE_CASE } from "../../ModularDrawer/uiUseCase";
 import { pickDefaultDepositAccount } from "./defaultAccount";
 
-/** The funding account preselected in the perps deposit form, among those its picker offers. */
+/** Default perps deposit funding account, among those the funding picker offers. */
 export function useDefaultDepositAccount({
   accounts,
   receiverAccount,
@@ -18,12 +20,17 @@ export function useDefaultDepositAccount({
   counterValueCurrency: Currency;
 }): AccountLike | undefined {
   const isAcceptedCurrency = useAcceptedCurrency({ flow: PERPS_UI_USE_CASE.fund });
+  const devMode = useEnv("MANAGER_DEV_MODE");
   const calculateCountervalue = useCalculateCountervalueCallback({ to: counterValueCurrency });
 
   const isEligible = useCallback(
-    (account: AccountLike) =>
-      account.id !== receiverAccount.id && isAcceptedCurrency(getAccountCurrency(account)),
-    [isAcceptedCurrency, receiverAccount.id],
+    (account: AccountLike) => {
+      if (account.id === receiverAccount.id) return false;
+      const currency = getAccountCurrency(account);
+      if (!devMode && isTestNetwork(currency)) return false;
+      return isAcceptedCurrency(currency);
+    },
+    [devMode, isAcceptedCurrency, receiverAccount.id],
   );
 
   const getFiatBalance = useCallback(
@@ -36,4 +43,10 @@ export function useDefaultDepositAccount({
     () => pickDefaultDepositAccount({ accounts, isEligible, getFiatBalance }),
     [accounts, getFiatBalance, isEligible],
   );
+}
+
+function isTestNetwork(currency: CryptoOrTokenCurrency): boolean {
+  const network =
+    currency.type === "TokenCurrency" ? getCryptoCurrencyById(currency.parentCurrencyId) : currency;
+  return Boolean(network.isTestnetFor);
 }
