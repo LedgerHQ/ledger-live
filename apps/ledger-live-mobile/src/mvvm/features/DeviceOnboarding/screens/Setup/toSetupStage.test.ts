@@ -15,6 +15,17 @@ function stage(machineState: string, modelId: DeviceModelId = stax, reportsRecov
   return toSetupStage({ machineState, currentStep: null, modelId, reportsRecoveryKey });
 }
 
+function heldUpdateStage(machineState: string, osCheck = false) {
+  return toSetupStage({
+    machineState,
+    currentStep: null,
+    modelId: nanoX,
+    reportsRecoveryKey: true,
+    updateAfterSetup: true,
+    osCheck,
+  });
+}
+
 function expectedStage(
   kind: SetupStageKind,
   index: number,
@@ -47,14 +58,55 @@ describe("toSetupStage", () => {
     expect(stage("deviceSetup.pin")).toEqual(expectedStage("pin", 2, 5, "none"));
   });
 
-  it("should skip the device name on a Nano", () => {
-    expect(stage("deviceSetup.pin", nanoX)).toEqual(expectedStage("pin", 1, 4, "none"));
+  it("should skip the device name on a Nano and ask the setup choice before the PIN", () => {
+    expect(stage("checks.firmwareCheck", nanoX)).toEqual(expectedStage("checks", 0, 4, "loading"));
     expect(stage("deviceSetup.setupChoice", nanoX)).toEqual(
-      expectedStage("setupChoice", 2, 4, "none", { infoCard: "setupChoice" }),
+      expectedStage("setupChoice", 1, 4, "none", { infoCard: "setupChoice" }),
     );
+    expect(stage("deviceSetup.pin", nanoX)).toEqual(expectedStage("pin", 2, 4, "none"));
     expect(stage("deviceSetup.newSeed", nanoX)).toEqual(
       expectedStage("security", 3, 4, "none", { infoCard: "recoveryPhrase" }),
     );
+  });
+
+  describe("on a Nano that updates its OS after setup", () => {
+    it.each([
+      ["checks.genuineCheck.running", "loading"],
+      ["checks.checksDone", "success"],
+    ] as const)("should show %s as the genuine check alone (%s)", (machineState, indicator) => {
+      expect(heldUpdateStage(machineState)).toEqual(expectedStage("genuine", 0, 5, indicator));
+    });
+
+    it("should keep the setup steps in the device order", () => {
+      expect(heldUpdateStage("deviceSetup.setupChoice")?.index).toBe(1);
+      expect(heldUpdateStage("deviceSetup.pin")?.index).toBe(2);
+      expect(heldUpdateStage("deviceSetup.newSeed")?.index).toBe(3);
+      expect(heldUpdateStage("deviceSetup.restoreWords")?.index).toBe(3);
+    });
+
+    it.each([
+      ["postSetupFirmware.firmwareCheck", "loading"],
+      ["postSetupFirmware.firmwareUpdateOffered", "loading"],
+      ["checks.genuineCheck.running", "loading"],
+      ["checks.checksSucceeded", "success"],
+      ["setupExit", "success"],
+    ] as const)("should show %s as the last OS check (%s)", (machineState, indicator) => {
+      expect(heldUpdateStage(machineState, true)).toEqual(
+        expectedStage("osCheck", 4, 5, indicator),
+      );
+    });
+
+    it("should not show the OS check on a device that checked its OS before setup", () => {
+      expect(
+        toSetupStage({
+          machineState: "setupExit",
+          currentStep: null,
+          modelId: nanoX,
+          reportsRecoveryKey: true,
+          osCheck: true,
+        }),
+      ).toBeNull();
+    });
   });
 
   it("should show the setup choice before the security or restore step", () => {

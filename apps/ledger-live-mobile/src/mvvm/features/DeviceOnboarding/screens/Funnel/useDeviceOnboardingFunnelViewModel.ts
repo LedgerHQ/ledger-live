@@ -20,6 +20,7 @@ import {
   isFirmwareUpdateDelegated,
   isHeldBackUpdatePending,
   SeedPath,
+  updateWaitsForSeed,
   type DeviceOnboardingContext,
   type DeviceOnboardingExitReason,
 } from "@features/platform-device-onboarding";
@@ -377,7 +378,7 @@ function genuineCheckCompleted(context: DeviceOnboardingSession["context"]): boo
   return context?.verdictMatchesSession === true;
 }
 
-/** When leaving asks first, and whether the held-back update still keeps the checks screen. */
+/** When leaving asks first, and whether the held-back update still waits for an answer. */
 function leaveRules(
   flat: DeviceOnboardingSession["context"],
   machine: NonNullable<DeviceOnboardingSession["snapshot"]>["context"] | undefined,
@@ -952,7 +953,8 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     machineState: shownState,
     liveMachineState: machineState,
     onboardedOnEntry,
-    heldBackUpdatePending,
+    updateAfterSetup: holdsUpdateUntilSetup(onboarding.snapshot?.context),
+    seeded: onboarding.snapshot?.context.isOnboarded === true,
     currentStep: onboarding.context?.currentOnboardingStep ?? null,
     seedPath,
     pastRecover,
@@ -975,7 +977,8 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     suspendSheets,
     reconnect: reconnectToLiveDevice,
     send,
-    onQuit: requestQuit,
+    // Mid-setup this asks first; once only the held-back update is left, it ends the setup.
+    onQuit: leaveFromHeader,
   });
   dismissRestoreRef.current = restoreDismiss(unseededSetup);
 
@@ -1127,6 +1130,20 @@ function screenForUnseeded(
     };
   }
   return null;
+}
+
+/** An unseeded Nano whose OS can only update once it is seeded. */
+function holdsUpdateUntilSetup(
+  context: NonNullable<DeviceOnboardingSession["snapshot"]>["context"] | undefined,
+): boolean {
+  if (!context) return false;
+  if (context.updateAfterSetup) return true;
+  if (context.firmwareVersion === null || context.onboardedOnEntry !== false) return false;
+  return updateWaitsForSeed({
+    currentVersion: context.firmwareVersion,
+    deviceModelId: context.deviceModelId,
+    isOnboarded: false,
+  });
 }
 
 function readString(value: unknown): string | null {

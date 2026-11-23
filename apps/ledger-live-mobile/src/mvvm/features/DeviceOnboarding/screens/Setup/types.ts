@@ -16,6 +16,8 @@ export type SetupChecksProps = {
   onCloseSheet: () => void;
   onAcceptUpdate: () => void;
   onDeclineUpdate: () => void;
+  /** Ends the OS check after setup when it fails: the device is set up and usable without it. */
+  onSkipFirmwareCheck?: () => void;
 };
 
 export type SetupScreenProps = {

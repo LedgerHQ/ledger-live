@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
+  asChecksState,
+  isFirmwareCheckFailed,
   OnboardingStep,
   SeedPath,
   type HostOnboardingEvent,
@@ -29,7 +31,8 @@ const statesThatAnswerTheUpdate = new Set([
   checksSucceededState,
 ]);
 
-function rechecksTheUpdate(liveMachineState: string | null) {
+function rechecksTheUpdate(rawLiveMachineState: string | null) {
+  const liveMachineState = asChecksState(rawLiveMachineState);
   if (liveMachineState === null || statesThatAnswerTheUpdate.has(liveMachineState)) return false;
   return (
     liveMachineState.startsWith("checks.") ||
@@ -39,13 +42,28 @@ function rechecksTheUpdate(liveMachineState: string | null) {
 }
 
 const doneState = "done";
+const setupExitState = "setupExit";
+
+/** The seeded Nano checks the OS update it held back: the setup screen shows it as the last step. */
+function isOsCheckAfterSetup(
+  machineState: string | null,
+  seeded: boolean,
+  updateAfterSetup: boolean,
+) {
+  if (!updateAfterSetup || !seeded || machineState === null) return false;
+  return (
+    asChecksState(machineState)?.startsWith("checks.") === true || machineState === setupExitState
+  );
+}
 
 export type UnseededFunnelInput = {
   machineState: string | null;
   liveMachineState: string | null;
   onboardedOnEntry: boolean | null;
-  /** Setup is done and only the held-back update is left: the checks screen shows it, not Setup. */
-  heldBackUpdatePending?: boolean;
+  /** The Nano holds its OS update until it is seeded, so it shows the OS check as its last step. */
+  updateAfterSetup?: boolean;
+  /** The device is seeded: a check now is the OS check held back until setup. */
+  seeded?: boolean;
   currentStep: string | null;
   seedPath: string | null;
   /** The user already left the Recover pitch (skip, remind later, or back from Recover). */
@@ -80,15 +98,18 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
   const dismissRestore = useCallback(() => setRestoreDismissed(true), []);
   if (restoreDismissed && machineState !== restoreRecoverState) setRestoreDismissed(false);
 
-  const unseeded =
-    input.onboardedOnEntry === false &&
-    input.heldBackUpdatePending !== true &&
-    device !== null &&
-    machineState !== null;
+  const unseeded = input.onboardedOnEntry === false && device !== null && machineState !== null;
+  const updateAfterSetup = useLatched(unseeded && input.updateAfterSetup === true);
+  const osCheck = isOsCheckAfterSetup(machineState, input.seeded === true, updateAfterSetup);
   const stageState =
     machineState === restoreRecoverState && restoreDismissed ? restoreChoiceState : machineState;
   const stage = unseeded
-    ? toUnseededStage(device, stageState, input.currentStep, input.reportsRecoveryKey)
+    ? toUnseededStage(device, stageState, {
+        currentStep: input.currentStep,
+        reportsRecoveryKey: input.reportsRecoveryKey,
+        updateAfterSetup,
+        osCheck,
+      })
     : null;
   const holdsPrevious = unseeded && holdsPreviousStage(machineState, input.currentStep);
 
@@ -119,7 +140,7 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
       reportsRecoveryKey: input.reportsRecoveryKey,
       connection,
       firmwareDeclined: input.firmwareDeclined,
-      checks: toChecks(input, machineState, confirmSkipUpdate),
+      checks: toChecks(input, machineState, confirmSkipUpdate, osCheck),
       onQuit: input.onQuit,
     },
   };
@@ -128,11 +149,22 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
 function toUnseededStage(
   device: Device | null,
   machineState: string | null,
-  currentStep: string | null,
-  reportsRecoveryKey: boolean,
+  options: Readonly<{
+    currentStep: string | null;
+    reportsRecoveryKey: boolean;
+    updateAfterSetup: boolean;
+    osCheck: boolean;
+  }>,
 ): SetupStage | null {
   if (!device || !machineState) return null;
-  return toSetupStage({ machineState, currentStep, modelId: device.modelId, reportsRecoveryKey });
+  return toSetupStage({ machineState, modelId: device.modelId, ...options });
+}
+
+/** Stays true once set: the OS version changes after the update, the step layout must not. */
+function useLatched(value: boolean): boolean {
+  const [latched, setLatched] = useState(value);
+  if (value && !latched) setLatched(true);
+  return latched || value;
 }
 
 function holdsPreviousStage(machineState: string | null, currentStep: string | null): boolean {
@@ -186,9 +218,11 @@ function toDoneModel(
 
 function toChecks(
   input: UnseededFunnelInput,
-  machineState: string,
+  rawMachineState: string,
   confirmSkipUpdate: boolean,
+  osCheck: boolean,
 ): SetupChecksProps | null {
+  const machineState = asChecksState(rawMachineState) ?? rawMachineState;
   if (!machineState.startsWith("checks.")) return null;
   const state = toChecksScreenState(machineState, input.checksPaused, false);
   if (!state) return null;
@@ -205,6 +239,9 @@ function toChecks(
     onCloseSheet: () => send({ type: "CLOSE" }),
     onAcceptUpdate: () => send({ type: "USER_ACCEPT" }),
     onDeclineUpdate: () => send({ type: "USER_DECLINE" }),
+    ...(osCheck && isFirmwareCheckFailed(machineState)
+      ? { onSkipFirmwareCheck: () => send({ type: "SKIP" }) }
+      : {}),
   };
 }
 

@@ -42,6 +42,8 @@ export type SetupViewProps = Omit<ChecksDrawerProps, "allowSheet" | "firmwareUpd
 
 const stageTitleKeys = {
   checks: "deviceOnboarding.setup.checks.title",
+  genuine: "deviceOnboarding.setup.genuine.title",
+  osCheck: "deviceOnboarding.setup.osCheck.title",
   naming: "deviceOnboarding.setup.naming.title",
   pin: "deviceOnboarding.setup.pin.title",
   setupChoice: "deviceOnboarding.setup.setupChoice.title",
@@ -61,6 +63,17 @@ function checksDescriptionKey(status: SetupStageStatus, firmwareDeclined: boolea
     : "deviceOnboarding.setup.checks.successDescription";
 }
 
+function genuineDescriptionKey(status: SetupStageStatus) {
+  return status === "success"
+    ? "deviceOnboarding.setup.genuine.successDescription"
+    : "deviceOnboarding.setup.genuine.description";
+}
+
+function osCheckDescriptionKey(status: SetupStageStatus, firmwareDeclined: boolean) {
+  if (status !== "success") return "deviceOnboarding.setup.osCheck.description";
+  return firmwareDeclined ? "deviceOnboarding.setup.checks.notUpToDateDescription" : null;
+}
+
 function stageDescriptionKey(
   stage: SetupStage,
   status: SetupStageStatus,
@@ -69,6 +82,10 @@ function stageDescriptionKey(
   switch (stage.kind) {
     case "checks":
       return checksDescriptionKey(status, firmwareDeclined);
+    case "genuine":
+      return genuineDescriptionKey(status);
+    case "osCheck":
+      return osCheckDescriptionKey(status, firmwareDeclined);
     case "naming":
       return "deviceOnboarding.setup.naming.description";
     case "pin":
@@ -117,6 +134,7 @@ export function useSetupScreenViewModel({
     onRetry: () => checks?.onRetry(),
     onCloseSheet: closeSheet,
     onErrorCancel: quitAfterClosingError,
+    onSkipFirmwareCheck: checks?.onSkipFirmwareCheck,
     onAllowDismiss: onQuit,
     onNotGenuineClose: closeSheet,
     suspendSheets,
@@ -127,6 +145,7 @@ export function useSetupScreenViewModel({
     update: offeredUpdate,
     onAcceptUpdate: () => checks?.onAcceptUpdate(),
     suspendSheets,
+    updateAfterSetup: stage.kind === "osCheck",
   });
 
   return {

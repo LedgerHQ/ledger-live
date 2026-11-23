@@ -2842,6 +2842,15 @@
         "successDescription": "Your device is genuine and safe to use",
         "notUpToDateDescription": "Your device is not up-to-date"
       },
+      "genuine": {
+        "title": "Ledger Genuine Check",
+        "description": "Confirming Ledger OS is safe to use.",
+        "successDescription": "Ledger OS is genuine and safe to use."
+      },
+      "osCheck": {
+        "title": "Ledger OS version check",
+        "description": "Checking..."
+      },
       "naming": {
         "title": "Device name",
         "description": "Give your {{productName}} a unique name"
