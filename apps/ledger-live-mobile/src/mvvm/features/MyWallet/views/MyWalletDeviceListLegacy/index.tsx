@@ -23,7 +23,9 @@ type MyWalletDeviceListLegacyProps = {
 };
 
 /** The `SelectDevice2` device section of My Wallet, shown while `lwmMyWalletDeviceList` is off. */
-export function MyWalletDeviceListLegacy({ onPairingStateChanged }: MyWalletDeviceListLegacyProps) {
+export function MyWalletDeviceListLegacy({
+  onPairingStateChanged,
+}: Readonly<MyWalletDeviceListLegacyProps>) {
   const action = useManagerDeviceAction({ resolveOsUpdates: true });
   const [device, setDevice] = useState<Device>();
   const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
