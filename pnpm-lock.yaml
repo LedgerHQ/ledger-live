@@ -695,6 +695,9 @@ catalogs:
     playwright:
       specifier: 1.63.0
       version: 1.63.0
+    protobufjs:
+      specifier: 8.6.6
+      version: 8.6.6
     qrcode:
       specifier: 1.5.4
       version: 1.5.4
@@ -17530,7 +17533,7 @@ importers:
         version: link:../../types-live
       '@multiversx/sdk-core':
         specifier: ^13.7.0
-        version: 13.17.1(bignumber.js@9.1.2)(debug@4.4.3)(protobufjs@8.4.1)
+        version: 13.17.1(bignumber.js@9.1.2)(debug@4.4.3)(protobufjs@8.6.6)
       axios:
         specifier: 'catalog:'
         version: 1.21.1(debug@4.4.3)
@@ -17544,8 +17547,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.4
       protobufjs:
-        specifier: ^8.4.1
-        version: 8.4.1
+        specifier: 'catalog:'
+        version: 8.6.6
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -19109,7 +19112,7 @@ importers:
         version: link:../../types-live
       '@multiversx/sdk-core':
         specifier: ^13.7.0
-        version: 13.17.1(bignumber.js@9.1.2)(debug@4.4.3)(protobufjs@7.5.4)
+        version: 13.17.1(bignumber.js@9.1.2)(debug@4.4.3)(protobufjs@7.6.6)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -21515,7 +21518,7 @@ importers:
         specifier: ^0.4.2
         version: 0.4.2
       protobufjs:
-        specifier: 8.6.6
+        specifier: 'catalog:'
         version: 8.6.6
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
@@ -21774,11 +21777,11 @@ importers:
         specifier: ^2.2.2
         version: 2.2.4
       protobufjs:
-        specifier: 8.4.1
-        version: 8.4.1
+        specifier: 'catalog:'
+        version: 8.6.6
       protobufjs-cli:
         specifier: 2.4.1
-        version: 2.4.1(protobufjs@8.4.1)
+        version: 2.4.1(protobufjs@8.6.6)
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
@@ -21980,7 +21983,7 @@ importers:
         version: 6.37.0
       '@multiversx/sdk-core':
         specifier: ^13.7.0
-        version: 13.17.1(bignumber.js@9.1.2)(debug@4.4.3)(protobufjs@8.4.1)
+        version: 13.17.1(bignumber.js@9.1.2)(debug@4.4.3)(protobufjs@8.6.6)
       axios:
         specifier: 'catalog:'
         version: 1.21.1(debug@4.4.3)
@@ -21991,8 +21994,8 @@ importers:
         specifier: ^0.4.2
         version: 0.4.2
       protobufjs:
-        specifier: ^8.4.1
-        version: 8.4.1
+        specifier: 'catalog:'
+        version: 8.6.6
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
@@ -31363,20 +31366,17 @@ packages:
   '@protobufjs/base64@1.1.2':
     resolution: {integrity: sha512-AZkcAA5vnN/v4PDqKyMR5lx7hZttPDgClv83E//FMNhR2TMcLUhfRUBHCmSl0oi9zMgDDqRUJkSxO3wm85+XLg==}
 
-  '@protobufjs/codegen@2.0.4':
-    resolution: {integrity: sha512-YyFaikqM5sH0ziFZCN3xDC7zeGaB/d0IUb9CATugHWbd1FRFwWwt4ld4OYMPWu5a3Xe01mGAULCdqhMlPl29Jg==}
+  '@protobufjs/codegen@2.0.5':
+    resolution: {integrity: sha512-zgXFLzW3Ap33e6d0Wlj4MGIm6Ce8O89n/apUaGNB/jx+hw+ruWEp7EwGUshdLKVRCxZW12fp9r40E1mQrf/34g==}
 
-  '@protobufjs/eventemitter@1.1.0':
-    resolution: {integrity: sha512-j9ednRT81vYJ9OfVuXG6ERSTdEL1xVsNgqpkxMsbIabzSo3goCjDIveeGv5d03om39ML71RdmrGNjG5SReBP/Q==}
+  '@protobufjs/eventemitter@1.1.1':
+    resolution: {integrity: sha512-vW1GmwMZNnL+gMRaovlh9yZX74kc+TTU3FObkkurpMaRtBfLP3ldjS9KQWlwZgraRE0+dheEEoAxdzcJQ8eXZg==}
 
-  '@protobufjs/fetch@1.1.0':
-    resolution: {integrity: sha512-lljVXpqXebpsijW71PZaCYeIcE5on1w5DlQy5WH6GLbFryLUrBD4932W/E2BSpfRJWseIL4v/KPgBFxDOIdKpQ==}
+  '@protobufjs/fetch@1.1.1':
+    resolution: {integrity: sha512-GpptLrs57adMSuHi3VNj0mAF8dwh36LMaYF6XyJ6JMWlVsc+t42tm1HSEDmOs3A8fC9yyeisgLhsTVQokOZ0zw==}
 
   '@protobufjs/float@1.0.2':
     resolution: {integrity: sha512-Ddb+kVXlXst9d+R9PfTIxh1EdNkgoRe5tOX6t01f1lYWOvJnSPDBlG241QLzcyPdoNTsblLUdujGSE4RzrTZGQ==}
-
-  '@protobufjs/inquire@1.1.0':
-    resolution: {integrity: sha512-kdSefcPdruJiFMVSbn801t4vFK7KB/5gd2fYvrxhuJYg8ILrmn9SKSX2tZdV6V+ksulWqS7aXjBcRXl3wHoD9Q==}
 
   '@protobufjs/path@1.1.2':
     resolution: {integrity: sha512-6JOcJ5Tm08dOHAbdR3GrvP+yUUfkjG5ePsHYczMFLq3ZmMkAD98cDgcT2iA1lJ9NVwFd4tH/iSSoe44YWkltEA==}
@@ -31384,8 +31384,8 @@ packages:
   '@protobufjs/pool@1.1.0':
     resolution: {integrity: sha512-0kELaGSIDBKvcgS4zkjz1PeddatrjYcmMWOlAuAPwAeccUrPHdUqo/J6LiymHHEiJT5NrF1UVwxY14f+fy4WQw==}
 
-  '@protobufjs/utf8@1.1.0':
-    resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
+  '@protobufjs/utf8@1.1.2':
+    resolution: {integrity: sha512-b1UQwcEZ4yCnMCD8DAL1VlbvBJE9/IX4FTIp7BG1xYpf29SLazLSrqUkj4w7Y5y7cCVP6E5tcqqcI0xemPkHug==}
 
   '@provablehq/sdk@0.10.2':
     resolution: {integrity: sha512-ZDJsWPSZOZKNRyKGsHMyX0Zxr2RJYwidCwCgIZrvyvk/AewCKv1pOU6ARCM4Hx3eaQVfzEo2h/IJQxWzltubuQ==}
@@ -41028,12 +41028,8 @@ packages:
     peerDependencies:
       protobufjs: ^8.4.1
 
-  protobufjs@7.5.4:
-    resolution: {integrity: sha512-CvexbZtbov6jW2eXAvLukXjXUW1TzFaivC46BpWc/3BpcCysb5Vffu+B3XHMm8lVEuy2Mm4XGex8hBSg1yapPg==}
-    engines: {node: '>=12.0.0'}
-
-  protobufjs@8.4.1:
-    resolution: {integrity: sha512-oXf2UgIty8jnwfN4yvL1x79VLhL5uiKjZJbSGXGCIUmHmItTP4eS/UIlWDCeNx3seg+ujfn9vDlPMSrsh7wO+Q==}
+  protobufjs@7.6.6:
+    resolution: {integrity: sha512-dYDWdjSl5RNb7SgPxGQcRU+GtvP7s2fpkrY0r432PcOIaZ0/rBcxEZnQN67iJhFuQiVw754JDoPruPCNdGsbjg==}
     engines: {node: '>=12.0.0'}
 
   protobufjs@8.6.6:
@@ -47655,7 +47651,7 @@ snapshots:
     dependencies:
       lodash.camelcase: 4.3.0
       long: 5.3.2
-      protobufjs: 7.5.4
+      protobufjs: 7.6.6
       yargs: 17.7.2
 
   '@gwhitney/detect-indent@7.0.1': {}
@@ -48903,7 +48899,7 @@ snapshots:
   '@multiversx/sdk-bls-wasm@0.3.5':
     optional: true
 
-  '@multiversx/sdk-core@13.17.1(bignumber.js@9.1.2)(debug@4.4.3)(protobufjs@7.5.4)':
+  '@multiversx/sdk-core@13.17.1(bignumber.js@9.1.2)(debug@4.4.3)(protobufjs@7.6.6)':
     dependencies:
       '@multiversx/sdk-transaction-decoder': 1.0.2
       '@noble/ed25519': 1.7.3
@@ -48916,7 +48912,7 @@ snapshots:
       ed2curve: 0.3.0
       json-bigint: 1.0.0
       keccak: 3.0.2
-      protobufjs: 7.5.4
+      protobufjs: 7.6.6
       scryptsy: 2.1.0
       tweetnacl: 1.0.3
       uuid: 8.3.2
@@ -48927,7 +48923,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@multiversx/sdk-core@13.17.1(bignumber.js@9.1.2)(debug@4.4.3)(protobufjs@8.4.1)':
+  '@multiversx/sdk-core@13.17.1(bignumber.js@9.1.2)(debug@4.4.3)(protobufjs@8.6.6)':
     dependencies:
       '@multiversx/sdk-transaction-decoder': 1.0.2
       '@noble/ed25519': 1.7.3
@@ -48940,7 +48936,7 @@ snapshots:
       ed2curve: 0.3.0
       json-bigint: 1.0.0
       keccak: 3.0.2
-      protobufjs: 8.4.1
+      protobufjs: 8.6.6
       scryptsy: 2.1.0
       tweetnacl: 1.0.3
       uuid: 8.3.2
@@ -50147,24 +50143,21 @@ snapshots:
 
   '@protobufjs/base64@1.1.2': {}
 
-  '@protobufjs/codegen@2.0.4': {}
+  '@protobufjs/codegen@2.0.5': {}
 
-  '@protobufjs/eventemitter@1.1.0': {}
+  '@protobufjs/eventemitter@1.1.1': {}
 
-  '@protobufjs/fetch@1.1.0':
+  '@protobufjs/fetch@1.1.1':
     dependencies:
       '@protobufjs/aspromise': 1.1.2
-      '@protobufjs/inquire': 1.1.0
 
   '@protobufjs/float@1.0.2': {}
-
-  '@protobufjs/inquire@1.1.0': {}
 
   '@protobufjs/path@1.1.2': {}
 
   '@protobufjs/pool@1.1.0': {}
 
-  '@protobufjs/utf8@1.1.0': {}
+  '@protobufjs/utf8@1.1.2': {}
 
   '@provablehq/sdk@0.10.2':
     dependencies:
@@ -61893,20 +61886,6 @@ snapshots:
 
   properties@1.2.1: {}
 
-  protobufjs-cli@2.4.1(protobufjs@8.4.1):
-    dependencies:
-      chalk: 4.1.2
-      escodegen: 1.14.3
-      espree: 9.6.1
-      estraverse: 5.3.0
-      glob: 8.1.0
-      jsdoc: 4.0.3
-      minimist: 1.2.8
-      protobufjs: 8.4.1
-      semver: 7.8.5
-      tmp: 0.2.7
-      uglify-js: 3.19.3
-
   protobufjs-cli@2.4.1(protobufjs@8.6.6):
     dependencies:
       chalk: 4.1.2
@@ -61921,23 +61900,18 @@ snapshots:
       tmp: 0.2.7
       uglify-js: 3.19.3
 
-  protobufjs@7.5.4:
+  protobufjs@7.6.6:
     dependencies:
       '@protobufjs/aspromise': 1.1.2
       '@protobufjs/base64': 1.1.2
-      '@protobufjs/codegen': 2.0.4
-      '@protobufjs/eventemitter': 1.1.0
-      '@protobufjs/fetch': 1.1.0
+      '@protobufjs/codegen': 2.0.5
+      '@protobufjs/eventemitter': 1.1.1
+      '@protobufjs/fetch': 1.1.1
       '@protobufjs/float': 1.0.2
-      '@protobufjs/inquire': 1.1.0
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
-      '@protobufjs/utf8': 1.1.0
+      '@protobufjs/utf8': 1.1.2
       '@types/node': 24.12.4
-      long: 5.3.2
-
-  protobufjs@8.4.1:
-    dependencies:
       long: 5.3.2
 
   protobufjs@8.6.6:
