@@ -14,7 +14,7 @@ import type {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import type { AccountReceive } from "@domain/entity-account-receive";
 import type { AccountStatus, AssetStatus } from "@domain/entity-account-status";
 import type { TokenCurrency } from "@domain/entity-currency-token";

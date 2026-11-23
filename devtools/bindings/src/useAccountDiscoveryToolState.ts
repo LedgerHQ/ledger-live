@@ -10,7 +10,7 @@ import { getAccountDataRuntime } from "@domain/api-account-data";
 import {
   accountDescriptorKey,
   serializeAccountDescriptor,
-} from "@domain/entity-account-descriptor";
+} from "@domain/entity-account-descriptor/descriptor";
 import type { CryptoCurrencyId } from "@domain/entity-currency-crypto";
 import type { ScanRules } from "@domain/entity-derivation";
 import {

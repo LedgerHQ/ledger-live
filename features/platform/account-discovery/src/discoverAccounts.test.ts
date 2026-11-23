@@ -1,5 +1,8 @@
 import { lastValueFrom, take, toArray } from "rxjs";
-import { AccountDescriptorSchema, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import {
+  AccountDescriptorSchema,
+  type AccountDescriptor,
+} from "@domain/entity-account-descriptor/descriptor";
 import type { AccountCandidate } from "@domain/entity-derivation";
 import { discoverAccounts, type DiscoveredAccount, type DiscoverOptions } from "./discoverAccounts";
 import { UnknownDiscoveryCurrencyError } from "./errors";

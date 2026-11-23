@@ -1,9 +1,11 @@
 import { configureStore, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import {
+  computeAccountUUID,
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
 } from "@domain/entity-account-descriptor/schema.mock";
+import { getAccountEntrySelectors } from "../descriptor";
 import { connectAccountsStore } from "./connectStore";
 import { AccountIdSchema } from "./schema";
 import { initialAccountsState, type AccountsState } from "../schema";
@@ -26,12 +28,12 @@ const legacy = createSlice({
 });
 const { replaceAccounts } = legacy.actions;
 
-const {
-  selectAccountEntries,
-  selectAccountEntry,
-  selectAccountUUIDByLegacyId,
-  selectAccountUUIDs,
-} = accountsSlice.getSelectors((state: { accountEntries: AccountsState }) => state.accountEntries);
+const { selectAccountUUIDByLegacyId, selectAccountUUIDs } = accountsSlice.getSelectors(
+  (state: { accountEntries: AccountsState }) => state.accountEntries,
+);
+const { selectAccountEntries, selectAccountEntry } = getAccountEntrySelectors(
+  (state: { accountEntries: AccountsState }) => state.accountEntries,
+);
 
 const eth = mockAddressAccountDescriptor();
 const btc = mockUtxoAccountDescriptor();

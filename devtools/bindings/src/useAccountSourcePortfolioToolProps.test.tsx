@@ -14,8 +14,8 @@ import {
   accountDataSlice,
   selectAccountDataStatus,
 } from "@domain/entity-account-data";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import {
+  computeAccountUUID,
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
 } from "@domain/entity-account-descriptor/schema.mock";

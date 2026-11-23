@@ -1,4 +1,5 @@
-import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
+import { computeAccountUUID } from "@domain/entity-account-descriptor/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { BalanceHistoryRange } from "@domain/entity-account-balance-history";
 import type { AccountOperation, AccountOperationsPage } from "@domain/entity-account-operation";

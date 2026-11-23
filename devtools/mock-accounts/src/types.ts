@@ -1,5 +1,5 @@
 import type { AccountDataSource } from "@domain/api-account-data";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 
 /** A mock account of the accounts slice. */
 export interface MockAccountsToolAccount {

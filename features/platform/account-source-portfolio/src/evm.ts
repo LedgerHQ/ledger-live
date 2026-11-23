@@ -1,8 +1,8 @@
-import {
-  currencyIdFromNetwork,
-  type AccountDescriptor,
-  type AddressAccountDescriptor,
-} from "@domain/entity-account-descriptor";
+import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
+import type {
+  AccountDescriptor,
+  AddressAccountDescriptor,
+} from "@domain/entity-account-descriptor/descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { PortfolioFamily } from "./family";
 

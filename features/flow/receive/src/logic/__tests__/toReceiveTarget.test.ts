@@ -19,7 +19,7 @@ describe("toReceiveTarget", () => {
   it("targets the account and the given asset", () => {
     expect(toReceiveTarget(accounts, ETH_ACCOUNT_ID, ETHEREUM)).toEqual({
       accountUUID: ethEntry.accountUUID,
-      descriptor: ethEntry.descriptor,
+      account: { network: ethEntry.descriptor.network, path: ethEntry.descriptor.path },
       assetId: ETHEREUM,
     });
   });

@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData } from "@domain/api-account-data";
-import { accountsSlice, type AccountsState } from "@domain/entity-account";
+import { type AccountsState } from "@domain/entity-account";
+import { getAccountEntrySelectors } from "@domain/entity-account/descriptor";
 import { accountDataQueryKey, type AccountDataRootState } from "@domain/entity-account-data";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import type {
   ReceiveAddress,
   ReceiveVerification,
@@ -19,7 +20,7 @@ type State = AccountDataRootState & WithAccountReceives & { accountEntries: Acco
 
 type Dispatch = ThunkDispatch<State, unknown, UnknownAction>;
 
-const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountEntries } = getAccountEntrySelectors((state: State) => state.accountEntries);
 
 function describeVerification(verification: ReceiveVerification): string {
   const confirmed =

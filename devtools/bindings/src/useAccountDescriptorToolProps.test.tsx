@@ -3,8 +3,8 @@ import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import {
+  computeAccountUUID,
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
 } from "@domain/entity-account-descriptor/schema.mock";

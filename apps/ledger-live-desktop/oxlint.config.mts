@@ -2,6 +2,7 @@ import { defineConfig } from "oxlint";
 import {
   ACCOUNT_DATA_SETUP_FILES,
   ACCOUNT_DATA_SOURCES,
+  ACCOUNT_DESCRIPTOR,
   BIGNUMBER_NAMED_IMPORT,
   ELECTRON_CLIPBOARD,
   EXPO_CLIPBOARD,
@@ -103,6 +104,7 @@ export default defineConfig({
           LIVE_COMMON_FEATURE_FLAGS,
           LIVE_COMMON_CURRENCY_ACCESSORS,
           ACCOUNT_DATA_SOURCES,
+          ACCOUNT_DESCRIPTOR,
         ],
       },
     ],

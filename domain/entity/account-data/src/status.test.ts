@@ -1,8 +1,7 @@
 import {
-  DerivationPathSchema,
-  NetworkIdSchema,
   computeAccountUUID,
-} from "@domain/entity-account-descriptor";
+  mockAddressAccountDescriptor,
+} from "@domain/entity-account-descriptor/schema.mock";
 import { AccountDataSourceIdSchema } from "./sourceId";
 import {
   accountDataFailed,
@@ -21,14 +20,7 @@ declare module "./registry" {
   }
 }
 
-const uuid = computeAccountUUID({
-  purpose: "account",
-  version: "2",
-  type: "address",
-  network: NetworkIdSchema.parse("ethereum"),
-  key: "0x0",
-  path: DerivationPathSchema.parse("m/44h/60h/0h/0/0"),
-});
+const uuid = computeAccountUUID(mockAddressAccountDescriptor({ key: "0x0" }));
 
 const sourceId = AccountDataSourceIdSchema.parse("s");
 

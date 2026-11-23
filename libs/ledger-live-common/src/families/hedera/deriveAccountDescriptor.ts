@@ -1,5 +1,6 @@
 import { defer, from, map, of, switchMap, tap } from "rxjs";
-import { AccountDescriptorSchema, fromDescriptorPath } from "@domain/entity-account-descriptor";
+import { fromDescriptorPath } from "@domain/entity-account-descriptor";
+import { AccountDescriptorSchema } from "@domain/entity-account-descriptor/descriptor";
 import type { DeriveAccountDescriptor, RunOnTransport } from "../../coin-modules/types";
 import { getAddressesForPublicKey } from "./bridge/api";
 import { createSigner as createFrameworkSigner } from "./signer";

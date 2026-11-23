@@ -14,7 +14,9 @@ import type { State } from "~/renderer/reducers";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import { VerifyAddressIntentComponentLWD } from "./VerifyAddressIntentComponentLWD";
 
-const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountLegacyId } = accountsSlice.getSelectors(
+  (state: State) => state.accountEntries,
+);
 
 /** Gives the shared verification what only the legacy code has. */
 export function useVerifyAddressExecutorViewModel(params: UseVerifyAddressExecutorViewModelParams) {
@@ -23,7 +25,7 @@ export function useVerifyAddressExecutorViewModel(params: UseVerifyAddressExecut
   return useVerifyAddressExecutorWithPorts(params, {
     getAccount: accountUUID => {
       const state = store.getState();
-      const accountId = selectAccountEntry(state, accountUUID)?.legacyId;
+      const accountId = selectAccountLegacyId(state, accountUUID);
       return accountId === undefined ? undefined : accountSelector(state, { accountId });
     },
     findToken: assetId => getCryptoAssetsStore().findTokenById(assetId),

@@ -11,8 +11,8 @@ export function useReceiveAddressViewModel({
   assetId,
   onClose,
 }: ReceiveAddressProps): ReceiveAddressViewProps {
-  const { descriptor, data } = useReceiveScreenData(accountUUID, assetId);
-  const header = useReceiveAddressHeader(descriptor, assetId);
+  const { network, data } = useReceiveScreenData(accountUUID, assetId);
+  const header = useReceiveAddressHeader(network, assetId);
   const selection = useReceiveAddressSelection(data.type === "ready" ? data.receive : undefined);
   const { copy } = header;
   const { selected } = selection;

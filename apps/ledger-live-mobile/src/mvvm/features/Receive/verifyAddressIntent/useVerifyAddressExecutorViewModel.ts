@@ -14,7 +14,9 @@ import type { State } from "~/reducers/types";
 import { useStore } from "~/context/hooks";
 import { VerifyAddressIntentComponentLWM } from "./VerifyAddressIntentComponentLWM";
 
-const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountLegacyId } = accountsSlice.getSelectors(
+  (state: State) => state.accountEntries,
+);
 
 /** Gives the shared verification what only the legacy code has. */
 export function useVerifyAddressExecutorViewModel(params: UseVerifyAddressExecutorViewModelParams) {
@@ -24,7 +26,7 @@ export function useVerifyAddressExecutorViewModel(params: UseVerifyAddressExecut
     getAccount: accountUUID => {
       const state = store.getState();
       return accountSelector(state, {
-        accountId: selectAccountEntry(state, accountUUID)?.legacyId,
+        accountId: selectAccountLegacyId(state, accountUUID),
       });
     },
     findToken: assetId => getCryptoAssetsStore().findTokenById(assetId),

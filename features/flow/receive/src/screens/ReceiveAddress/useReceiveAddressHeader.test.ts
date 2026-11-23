@@ -7,7 +7,7 @@ const ETH = CryptoOrTokenCurrencyIdSchema.parse("ethereum");
 
 describe("useReceiveAddressHeader", () => {
   it("should name the coin and its network when receiving the native coin", () => {
-    const { result } = renderHook(() => useReceiveAddressHeader(testDescriptor, ETH), {
+    const { result } = renderHook(() => useReceiveAddressHeader(testDescriptor.network, ETH), {
       wrapper: receiveTestWrapper(),
     });
 

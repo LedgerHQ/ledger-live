@@ -1,5 +1,7 @@
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
-import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import {
+  computeAccountUUID,
+  mockAddressAccountDescriptor,
+} from "@domain/entity-account-descriptor/schema.mock";
 import {
   AccountBalanceHistoriesStateSchema,
   AccountBalanceHistorySchema,

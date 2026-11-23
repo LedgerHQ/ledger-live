@@ -4,7 +4,7 @@ import type {
   AccountDataResult,
   AccountDataSourceId,
 } from "@domain/entity-account-data";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { throwIfAborted, untilAborted } from "./internals/abort";
 import { addSource, coalesce, createRouterContext, sourcesFor } from "./internals/router";
 import type { AccountDataSource } from "./source";

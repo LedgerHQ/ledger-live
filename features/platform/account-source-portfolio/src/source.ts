@@ -1,6 +1,6 @@
 import type { AccountDataSource } from "@domain/api-account-data";
 import { AccountDataSourceIdSchema, type AccountDataKind } from "@domain/entity-account-data";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import type { PortfolioId } from "@domain/entity-client-identity";
 import { portfolioClientOf, type PortfolioClient, type PortfolioDispatch } from "./client";
 import { balanceReader } from "./internals/balance/reader";

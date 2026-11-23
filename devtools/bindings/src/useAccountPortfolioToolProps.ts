@@ -1,7 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { accountsSlice, type AccountsState } from "@domain/entity-account";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { type AccountsState } from "@domain/entity-account";
+import { getAccountEntrySelectors } from "@domain/entity-account/descriptor";
+import { maskAccountKey } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { bodyOf, describeSent } from "./portfolioActions/requests";
 import { RUNNERS, type PortfolioDispatch } from "./portfolioActions/runners";
 import type {
@@ -14,7 +16,7 @@ import { registrationOf } from "./portfolioRegistration";
 /** Both apps mount the accounts slice at `accountEntries`. */
 type State = { accountEntries: AccountsState };
 
-const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountEntries } = getAccountEntrySelectors((state: State) => state.accountEntries);
 
 const PORTFOLIO_ID_KEY = "ledger-live.devtools.account-portfolio-id";
 
@@ -32,9 +34,7 @@ function sessionPortfolioId(): string {
 }
 
 const labelOf = (descriptor: AccountDescriptor) =>
-  `${descriptor.network} ${
-    descriptor.type === "utxo" ? `${descriptor.key.slice(0, 12)}…` : descriptor.key
-  }`;
+  `${descriptor.network} ${maskAccountKey(descriptor.key)}`;
 
 /** `JSON.stringify(new Error())` is `{}`, so errors are turned into plain objects to be shown. */
 const toDisplayable = (error: unknown): unknown =>

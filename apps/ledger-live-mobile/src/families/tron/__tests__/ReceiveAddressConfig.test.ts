@@ -1,4 +1,3 @@
-import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { mockAccountStatus } from "@domain/entity-account-status/schema.mock";
 import { mockReceiveFamilyConfigInput } from "@features/flow-receive/types.mock";
 import receiveAddressConfig from "../ReceiveAddressConfig";
@@ -7,7 +6,7 @@ const USDT_TRC20 = "tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t";
 
 const tronInput = (used: boolean | undefined, asset = { id: "tron" }) =>
   mockReceiveFamilyConfigInput({
-    descriptor: mockAddressAccountDescriptor({ network: "tron", path: "m/44h/195h/0h/0/0" }),
+    account: { network: "tron", path: "m/44h/195h/0h/0/0" },
     asset,
     accountStatus: used === undefined ? undefined : mockAccountStatus({ used }),
   });

@@ -1,6 +1,12 @@
 import { mockUtxoAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import { getAccountEntrySelectors } from "./descriptor";
 import { AccountIdSchema } from "./legacy/schema";
-import { AccountsStateSchema, LegacyAccountEntrySchema, initialAccountsState } from "./schema";
+import {
+  AccountsStateSchema,
+  LegacyAccountEntrySchema,
+  initialAccountsState,
+  type AccountsState,
+} from "./schema";
 import { mockAccountEntry } from "./schema.mock";
 import {
   accountsSlice,
@@ -11,11 +17,14 @@ import {
 
 const { reducer } = accountsSlice;
 const {
-  selectAccountEntries,
-  selectAccountEntry,
+  selectAccountLegacyId,
+  selectAccountNetwork,
+  selectAccountPath,
   selectAccountUUIDByLegacyId,
   selectAccountUUIDs,
 } = accountsSlice.getSelectors();
+const { selectAccountEntries, selectAccountEntry, selectAccountDescriptor } =
+  getAccountEntrySelectors((state: AccountsState) => state);
 
 const ethId = AccountIdSchema.parse("js:2:ethereum:0x71:");
 const btcId = AccountIdSchema.parse("js:2:bitcoin:xpub:native_segwit");
@@ -82,5 +91,14 @@ describe("accountsSlice", () => {
     );
     expect(selectAccountEntries(state)).toEqual([eth]);
     expect(selectAccountUUIDByLegacyId(state, ethId)).toBe(eth.accountUUID);
+  });
+
+  it("hands out view data by AccountUUID, the descriptor only through the descriptor entry", () => {
+    const state = reducer(initialAccountsState, legacyAccountsSynced([btc, eth]));
+    expect(selectAccountLegacyId(state, btc.accountUUID)).toBe(btcId);
+    expect(selectAccountNetwork(state, btc.accountUUID)).toBe(btc.descriptor.network);
+    expect(selectAccountPath(state, btc.accountUUID)).toBe(btc.descriptor.path);
+    expect(selectAccountDescriptor(state, btc.accountUUID)).toEqual(btc.descriptor);
+    expect(selectAccountNetwork(state, remote.accountUUID)).toBeUndefined();
   });
 });

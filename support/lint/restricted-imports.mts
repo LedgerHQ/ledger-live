@@ -121,6 +121,26 @@ export const ACCOUNT_DATA_SETUP_FILES = [
   "src/config/account-data-setup.test.ts",
 ];
 
+// The account descriptor carries the account key: an xpub reveals the whole history, an address is
+// personal data. Code holds the AccountUUID; only the edges listed in ACCOUNT_DESCRIPTOR_EDGES read it.
+export const ACCOUNT_DESCRIPTOR = {
+  group: ["@domain/entity-account-descriptor/descriptor", "@domain/entity-account/descriptor"],
+  message:
+    "Hold the AccountUUID; the descriptor stays at the edges (account data router and sources, " +
+    "discovery, the legacy bridge, wallet-cli, devtools). Read view data (network, path) from " +
+    "@domain/entity-account selectors, or show a key with maskAccountKey. See docs/account-models.",
+};
+
+// The packages allowed to read the descriptor, from the repo root: the base preset turns them into
+// overrides of the layer they live in. devtools/, apps/wallet-cli and live-common do not restrict it.
+export const ACCOUNT_DESCRIPTOR_EDGES = [
+  "domain/api/account-data",
+  "domain/entity/account",
+  "features/platform/account-data",
+  "features/platform/account-discovery",
+  "features/platform/account-source-*",
+];
+
 export const COIN_MODULE_CREATE_API = {
   group: ["@ledgerhq/coin-*/api", "@ledgerhq/coin-*/api/*"],
   importNamePattern: "^createApi$",

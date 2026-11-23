@@ -3,10 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData, fetchMoreAccountData } from "@domain/api-account-data";
-import { accountsSlice, type AccountsState } from "@domain/entity-account";
+import { type AccountsState } from "@domain/entity-account";
+import { getAccountEntrySelectors } from "@domain/entity-account/descriptor";
 import type { AccountDataRootState } from "@domain/entity-account-data";
 import { type WithAccountBalances } from "@domain/entity-account-balance";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import {
   selectAccountOperations,
   type AccountOperation,
@@ -31,7 +32,7 @@ type State = AccountDataRootState &
 
 type Dispatch = ThunkDispatch<State, unknown, UnknownAction>;
 
-const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountEntries } = getAccountEntrySelectors((state: State) => state.accountEntries);
 
 /** The tool's options as a query, the invalid ones left out. */
 function toQuery(options: AccountOperationToolQuery, fiat: string): AccountOperationsQuery {

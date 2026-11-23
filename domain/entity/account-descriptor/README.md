@@ -7,6 +7,15 @@
 
 The account descriptor (see the [ADR](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7599489111/ADR+Account+descriptor+as+the+common+account+identity)) is the common identity of an account. This package holds it as a shared entity.
 
+## Hold the AccountUUID; the descriptor stays at the edges
+
+The `key` is sensitive: an xpub reveals the whole history of an account, an address is personal data, and some networks put more in it. Code holds the `AccountUUID`; only the edges read the descriptor: the account data router (`domain/api/account-data`) and hooks (`features/platform/account-data`), the data sources (`features/platform/account-source-*`), discovery, the legacy bridge in live-common, `apps/wallet-cli` and `devtools/`.
+
+- The root entry exports what anyone may use: `AccountUUID`, `NetworkId`, `DerivationPath`, `Address`, the bridges, the errors, `maskAccountKey` and `redactAccountDescriptors`.
+- `@domain/entity-account-descriptor/descriptor` exports the descriptor itself: its schemas and types, `AccountKeySchema`, `parseAccountDescriptor` / `serializeAccountDescriptor`, `accountDescriptorKey` and `computeAccountUUID`. The `eslint/no-restricted-imports` entry `ACCOUNT_DESCRIPTOR` of `support/lint` allows it in the edges only.
+- The key (`AccountKeySchema`) and `AddressSchema` carry the `Sensitive` brand: `track` refuses props holding one (`NoSensitive` of `@shared/sensitive`).
+- Show a key with `maskAccountKey` (`xpub6B…WNzh`), never in full. Errors thrown here never hold their input.
+
 ## Format (version 2)
 
 `<purpose>:2:<type>:<network_id>:<key>:<path>`
@@ -30,12 +39,15 @@ mock:2:address:ethereum:0x0000000000000000000000000000000000000001:m/44h/60h/0h/
 
 | Export | Role |
 | --- | --- |
-| `AccountDescriptorSchema` | zod union of `utxo` (xpub, hardened-only path) and `address` descriptors; `'` and `H` hardened markers are read as `h` |
-| `serializeAccountDescriptor` / `parseAccountDescriptor` | `<purpose>:2:<type>:<network_id>:<key>:<path>`; a parsed descriptor always has `h` markers |
-| `accountDescriptorKey` | canonical key: the serialized descriptor, normalized (see `key.ts`): `h` markers, lowercase network, lowercase `0x` address or hex public key |
-| `computeAccountUUID` | uuid v5 of the canonical key; same on every device, carries no account key |
+| `AccountDescriptorSchema` (`./descriptor`) | zod union of `utxo` (xpub, hardened-only path) and `address` descriptors; `'` and `H` hardened markers are read as `h` |
+| `serializeAccountDescriptor` / `parseAccountDescriptor` (`./descriptor`) | `<purpose>:2:<type>:<network_id>:<key>:<path>`; a parsed descriptor always has `h` markers |
+| `accountDescriptorKey` (`./descriptor`) | canonical key: the serialized descriptor, normalized (see `key.ts`): `h` markers, lowercase network, lowercase `0x` address or hex public key |
+| `computeAccountUUID` (`./descriptor`, re-exported by `./schema.mock` for tests) | uuid v5 of the canonical key; same on every device, carries no account key |
+| `AccountKeySchema` (`./descriptor`) | the key, branded `AccountKey` and `Sensitive` |
+| `maskAccountKey` | the one display form of a key or an address: `xpub6B…WNzh` |
+| `redactAccountDescriptors` | replaces every v2 descriptor string of a text with `[redacted]`; the apps run it on the Datadog error events |
 | `NetworkIdSchema` / `NetworkId` | branded network id; parsed and deserialized descriptors carry it |
-| `AddressSchema` / `Address` | an address on a network, branded so analytics can refuse it |
+| `AddressSchema` / `Address` | an address on a network, branded `Sensitive` so analytics refuses it |
 | `DerivationPathSchema` | branded `DerivationPath`: a full BIP32 path, read with `h` hardened markers; a utxo descriptor path is one too, hardened only |
 | `toDescriptorPath` / `fromDescriptorPath` / `LegacyDerivationPathSchema` | the only bridges from and to the legacy path spelling (`44'/60'/0'/0/0`) that ledgerjs signers and derivation schemes read |
 | `toNetworkId` | a `NetworkId` from a string; throws `UnknownNetworkError` for an empty or malformed id |

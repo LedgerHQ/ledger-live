@@ -1,12 +1,19 @@
+import type { AccountUUID } from "./accountUUID";
+import { computeAccountUUID as computeUUID } from "./key";
 import {
   AddressAccountDescriptorSchema,
   UtxoAccountDescriptorSchema,
+  type AccountDescriptor,
   type AddressAccountDescriptor,
   type UtxoAccountDescriptor,
 } from "./schema";
 import { ETH_ADDR, XPUB } from "./test-fixtures";
 
-type MockOverrides<T> = Partial<Omit<T, "network" | "path">> & { network?: string; path?: string };
+type MockOverrides<T> = Partial<Omit<T, "network" | "path" | "key">> & {
+  network?: string;
+  path?: string;
+  key?: string;
+};
 
 export function mockUtxoAccountDescriptor(
   overrides?: MockOverrides<UtxoAccountDescriptor>,
@@ -34,4 +41,9 @@ export function mockAddressAccountDescriptor(
     path: "m/44h/60h/0h/0/0",
     ...overrides,
   });
+}
+
+/** Tests build an AccountUUID from a mock descriptor; production code receives it. */
+export function computeAccountUUID(descriptor: AccountDescriptor): AccountUUID {
+  return computeUUID(descriptor);
 }

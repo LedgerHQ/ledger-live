@@ -1,5 +1,5 @@
 import type { Portfolio } from "@domain/api-account-portfolio";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { portfolioAccountOf } from "../registration";
 
 export type Readiness =

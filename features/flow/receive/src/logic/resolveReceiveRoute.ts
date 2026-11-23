@@ -41,7 +41,7 @@ export function resolveReceiveRoute<A>({
   const { isSupported } = resolveReceiveFamilyConfig({
     family,
     familyConfig: familyConfig?.({
-      descriptor: target.descriptor,
+      account: target.account,
       asset,
       featureFlags,
       legacyAccount,

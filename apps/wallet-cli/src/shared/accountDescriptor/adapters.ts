@@ -15,6 +15,7 @@ import {
   LegacyDerivationPathSchema,
   type DerivationPath,
 } from "@domain/entity-account-descriptor";
+import { AccountKeySchema } from "@domain/entity-account-descriptor/descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   getDerivationScheme,
@@ -148,6 +149,7 @@ export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
   const currency = getCryptoCurrencyById(v0.currencyId);
   const derivationMode = asDerivationMode(v0.derivationMode);
   const scheme = getDerivationScheme({ derivationMode, currency });
+  const key = AccountKeySchema.parse(v0.seedIdentifier);
 
   if (isXpub(v0.seedIdentifier)) {
     const path = toV1Path(runAccountDerivationScheme(scheme, currency, { account: v0.index }));
@@ -156,7 +158,7 @@ export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
       version: "2",
       type: "utxo",
       network,
-      key: v0.seedIdentifier,
+      key,
       path,
     } satisfies UtxoAccountDescriptorV1;
   }
@@ -169,7 +171,7 @@ export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
     version: "2",
     type: "address",
     network,
-    key: v0.seedIdentifier,
+    key,
     path,
   } satisfies AccountBasedDescriptorV1;
 }

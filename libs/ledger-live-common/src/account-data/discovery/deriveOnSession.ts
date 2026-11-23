@@ -2,12 +2,11 @@ import { defer, from, lastValueFrom, map, type Observable } from "rxjs";
 import { abortReason } from "@domain/api-account-data";
 import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import { currencyIdFromNetwork, fromDescriptorPath } from "@domain/entity-account-descriptor";
 import {
   AccountDescriptorSchema,
-  currencyIdFromNetwork,
   type AccountDescriptor,
-  fromDescriptorPath,
-} from "@domain/entity-account-descriptor";
+} from "@domain/entity-account-descriptor/descriptor";
 import type { AccountCandidate } from "@domain/entity-derivation";
 import type { DeriveAccount, LookedUpAccount } from "@features/platform-account-discovery";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";

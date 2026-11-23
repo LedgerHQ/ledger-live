@@ -1,7 +1,7 @@
 import { fromDescriptorPath } from "@domain/entity-account-descriptor";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import {
   emptyHistoryCache,

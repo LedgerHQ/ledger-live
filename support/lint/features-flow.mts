@@ -3,6 +3,7 @@ import lumen from "@ledgerhq/lumen-lint-plugin/oxlint";
 import { defineConfig } from "oxlint";
 import base from "./base.mts";
 import {
+  ACCOUNT_DESCRIPTOR,
   BIGNUMBER_NAMED_IMPORT,
   EXPO_CLIPBOARD,
   LIVE_COMMON_LIB,
@@ -60,7 +61,7 @@ export default defineConfig({
       "error",
       {
         paths: [LODASH, EXPO_CLIPBOARD, BIGNUMBER_NAMED_IMPORT],
-        patterns: [LIVE_COMMON_LIB],
+        patterns: [LIVE_COMMON_LIB, ACCOUNT_DESCRIPTOR],
       },
     ],
     "eslint/no-restricted-properties": ["error", NAVIGATOR_CLIPBOARD],

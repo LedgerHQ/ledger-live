@@ -2,7 +2,8 @@ import {
   AccountAssetBalanceSchema,
   type AccountAssetBalance,
 } from "@domain/entity-account-balance";
-import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { toAccountBalances } from "./map";
 import type { BalanceRead } from "./read";
 
