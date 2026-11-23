@@ -31,11 +31,17 @@ function VerifyHintPopover({
   );
 }
 
-/** Copy and Verify tiles side by side; the verify hint points at Verify. */
-export function AddressActions({ actions }: AddressActionsProps) {
-  const { disabled, copy, verify, verifyHint } = actions;
-
-  const verifyTile = verify ? (
+function VerifyAction({
+  verify,
+  verifyHint,
+  disabled,
+}: Readonly<{
+  verify: AddressActionsProps["actions"]["verify"];
+  verifyHint: VerifyHint | undefined;
+  disabled: boolean;
+}>) {
+  if (!verify) return null;
+  const tile = (
     <TileButton
       icon={ShieldCheck}
       isFull
@@ -45,7 +51,17 @@ export function AddressActions({ actions }: AddressActionsProps) {
     >
       {verify.label}
     </TileButton>
-  ) : null;
+  );
+  return verifyHint ? (
+    <VerifyHintPopover hint={verifyHint}>{tile}</VerifyHintPopover>
+  ) : (
+    <div className="flex-1">{tile}</div>
+  );
+}
+
+/** Copy and Verify tiles side by side; the verify hint points at Verify. */
+export function AddressActions({ actions }: AddressActionsProps) {
+  const { disabled, copy, verify, verifyHint } = actions;
 
   return (
     <div className="flex w-full flex-row gap-8">
@@ -62,11 +78,7 @@ export function AddressActions({ actions }: AddressActionsProps) {
           </TileButton>
         </div>
       ) : null}
-      {verifyTile && verifyHint ? (
-        <VerifyHintPopover hint={verifyHint}>{verifyTile}</VerifyHintPopover>
-      ) : verifyTile ? (
-        <div className="flex-1">{verifyTile}</div>
-      ) : null}
+      <VerifyAction verify={verify} verifyHint={verifyHint} disabled={disabled} />
     </div>
   );
 }
