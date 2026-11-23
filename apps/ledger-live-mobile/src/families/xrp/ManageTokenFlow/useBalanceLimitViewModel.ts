@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { MAX_TRUST_LIMIT, isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
@@ -14,17 +14,21 @@ type Props = BaseComposite<
   StackNavigatorProps<XrpManageTokenFlowParamList, ScreenName.XrpManageTokenBalanceLimit>
 >;
 
+// Typing after the label keeps what follows it, deleting into the label clears it,
+// and a replacement of the whole text keeps all of it
 function removeMaximumText(text: string, maximumText: string) {
-  return text.startsWith(maximumText) ? text.slice(maximumText.length) : "";
+  if (text.startsWith(maximumText)) return text.slice(maximumText.length);
+
+  return maximumText.startsWith(text) ? "" : text;
 }
 
 // The decimal-pad keyboard follows the phone region: either "," or "." is the decimal point.
-// Several separators mean a grouped number such as "1,234,567", which has no safe reading.
+// Several separators mean a grouped number such as "1,234,567", and any other character a
+// notation such as "1e3" or "-5": neither has a safe reading.
 function toLimitText(text: string, magnitude: number) {
-  const parts = text
-    .replaceAll(",", ".")
-    .replace(/[^\d.]/g, "")
-    .split(".");
+  if (/[^\d.,]/.test(text)) return undefined;
+
+  const parts = text.replaceAll(",", ".").split(".");
   if (parts.length > 2) return undefined;
 
   const [integer = "", fraction] = parts;
@@ -46,11 +50,11 @@ export function useBalanceLimitViewModel() {
   const unit = token.units[0];
   const maximumText = t("xrp.tokenSettings.maximum");
 
-  const [isMaximum, setIsMaximum] = useState(balanceLimit.isMaximum);
-  const [limitText, setLimitText] = useState(
-    balanceLimit.isMaximum
-      ? ""
-      : new BigNumber(balanceLimit.limit).shiftedBy(-unit.magnitude).toFixed(),
+  const [isMaximum, setIsMaximum] = useState(() =>
+    isMaxTrustLimit(new BigNumber(balanceLimit.limit)),
+  );
+  const [limitText, setLimitText] = useState(() =>
+    isMaximum ? "" : new BigNumber(balanceLimit.limit).shiftedBy(-unit.magnitude).toFixed(),
   );
 
   const typedLimit = parseCurrencyUnit(unit, limitText);
@@ -80,11 +84,11 @@ export function useBalanceLimitViewModel() {
       {
         accountId,
         parentId,
-        balanceLimit: { limit: limit.toFixed(), isMaximum },
+        balanceLimit: { limit: limit.toFixed() },
       },
       { merge: true },
     );
-  }, [accountId, isMaximum, limit, navigation, parentId]);
+  }, [accountId, limit, navigation, parentId]);
 
   const isLimitZero = hasTypedLimit && typedLimit.isZero();
   const isLimitPositive = limit.gt(0);

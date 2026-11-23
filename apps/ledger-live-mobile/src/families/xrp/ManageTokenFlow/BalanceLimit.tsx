@@ -4,9 +4,10 @@ import { Box, Button, Text, TextInput } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "@shared/analytics-react";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
+import TokenAccountGate from "./TokenAccountGate";
 import { useBalanceLimitViewModel } from "./useBalanceLimitViewModel";
 
-export default function BalanceLimit() {
+function BalanceLimitContent() {
   const { t } = useTranslation();
   const viewModel = useBalanceLimitViewModel();
   const balanceLimitLabel = t("xrp.tokenSettings.balanceLimit");
@@ -68,5 +69,13 @@ export default function BalanceLimit() {
         </Button>
       </Box>
     </SafeAreaView>
+  );
+}
+
+export default function BalanceLimit() {
+  return (
+    <TokenAccountGate>
+      <BalanceLimitContent />
+    </TokenAccountGate>
   );
 }

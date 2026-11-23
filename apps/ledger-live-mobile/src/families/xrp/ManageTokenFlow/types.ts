@@ -1,12 +1,12 @@
 import { ScreenName } from "~/const";
 
-type TokenAccountParams = {
+export type TokenAccountParams = {
   accountId: string;
   parentId: string;
 };
 
 // The limit is a base-units string: route params must stay serializable, a BigNumber is not
-type BalanceLimit = Readonly<{ limit: string; isMaximum: boolean }>;
+type BalanceLimit = Readonly<{ limit: string }>;
 
 export type XrpManageTokenFlowParamList = {
   [ScreenName.XrpManageTokenList]: { accountId: string };

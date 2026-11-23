@@ -10,7 +10,7 @@ import { BridgeSyncContext } from "@ledgerhq/live-common/bridge/react/index";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
 import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import { HttpResponse, http, server } from "@tests/server";
-import { act, render, screen, waitFor } from "@tests/test-renderer";
+import { act, fireEvent, render, screen, waitFor } from "@tests/test-renderer";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { updateAccount } from "~/actions/accounts";
 import { NavigatorName, ScreenName } from "~/const";
@@ -224,6 +224,23 @@ async function chooseRippling(user: UserEvents, option: "activated" | "deactivat
 
   const ripplingOption = await screen.findByTestId(`xrp-rippling-option-${option}`);
   await user.press(ripplingOption);
+}
+
+async function syncTokenResources(
+  store: ReturnType<typeof render>["store"],
+  xrpResources: XrpTokenAccount["xrpResources"],
+) {
+  const { subAccounts } = makeAccountWithToken({ xrpResources });
+
+  await act(async () => {
+    store.dispatch(updateAccount({ id: XRP_ACCOUNT.id, subAccounts }));
+  });
+}
+
+async function syncTokenRemoval(store: ReturnType<typeof render>["store"]) {
+  await act(async () => {
+    store.dispatch(updateAccount({ id: XRP_ACCOUNT.id, subAccounts: [] }));
+  });
 }
 
 async function waitForBridgeToSettle(limit: string) {
@@ -472,6 +489,73 @@ describe("XRP edit token flow (integration)", () => {
         expect(lastCall?.[0].balance).toEqual(syncedBalance);
       });
     });
+
+    it("follows the synced values when nothing was edited, and keeps Continue disabled", async () => {
+      const { store } = await renderEditDetails();
+
+      await syncTokenResources(store, {
+        isLocked: false,
+        isRippling: true,
+        limit: new BigNumber(2000),
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("xrp-settings-limit-value")).toHaveTextContent(/2\D?000 RLUSD/);
+      });
+      expect(screen.getByTestId("xrp-settings-rippling-value")).toHaveTextContent("Activated");
+      expect(getContinueButton()).toBeDisabled();
+    });
+
+    it("keeps the edited rippling and follows the synced limit, which was not edited", async () => {
+      const { user, store } = await renderEditDetails();
+      await chooseRippling(user, "activated");
+
+      await syncTokenResources(store, {
+        isLocked: false,
+        isRippling: false,
+        limit: new BigNumber(2000),
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("xrp-settings-limit-value")).toHaveTextContent(/2\D?000 RLUSD/);
+      });
+      expect(screen.getByTestId("xrp-settings-rippling-value")).toHaveTextContent("Activated");
+      expect(getContinueButton()).toBeEnabled();
+    });
+
+    it("keeps the edited limit and follows the synced rippling, which was not edited", async () => {
+      const { user, store } = await renderEditDetails();
+      await replaceLimit(user, "3000");
+
+      await syncTokenResources(store, {
+        isLocked: false,
+        isRippling: true,
+        limit: new BigNumber(1000),
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("xrp-settings-rippling-value")).toHaveTextContent("Activated");
+      });
+      expect(screen.getByTestId("xrp-settings-limit-value")).toHaveTextContent(/3\D?000 RLUSD/);
+    });
+
+    it("returns to Manage assets when a sync leaves the token without its trust line state", async () => {
+      const { store } = await renderEditDetails();
+
+      await syncTokenResources(store, undefined);
+
+      expect(await screen.findByText("This account has no tokens yet.")).toBeVisible();
+      expect(screen.queryByTestId("xrp-settings-continue")).toBeNull();
+    });
+
+    it("returns to Manage assets when a sync removes the trust line being edited", async () => {
+      const { store } = await renderEditDetails();
+
+      await syncTokenRemoval(store);
+
+      expect(await screen.findByText("This account has no tokens yet.")).toBeVisible();
+      expect(screen.queryByTestId("xrp-settings-continue")).toBeNull();
+    });
   });
 
   describe("Balance limit", () => {
@@ -482,6 +566,26 @@ describe("XRP edit token flow (integration)", () => {
 
       expect(getLimitInput()).toHaveDisplayValue("1000");
       expect(screen.getByText("RLUSD")).toBeVisible();
+    });
+
+    it("returns to Manage assets when a sync leaves the token without its trust line state while its limit is edited", async () => {
+      const { user, store } = await renderEditDetails();
+      await openBalanceLimit(user);
+
+      await syncTokenResources(store, undefined);
+
+      expect(await screen.findByText("This account has no tokens yet.")).toBeVisible();
+      expect(screen.queryByTestId("xrp-limit-input")).toBeNull();
+    });
+
+    it("returns to Manage assets when a sync removes the trust line while its limit is edited", async () => {
+      const { user, store } = await renderEditDetails();
+      await openBalanceLimit(user);
+
+      await syncTokenRemoval(store);
+
+      expect(await screen.findByText("This account has no tokens yet.")).toBeVisible();
+      expect(screen.queryByTestId("xrp-limit-input")).toBeNull();
     });
 
     it("reads a comma typed as the decimal point in an English app", async () => {
@@ -525,6 +629,31 @@ describe("XRP edit token flow (integration)", () => {
       await user.clear(getLimitInput());
       await user.type(getLimitInput(), "1.5");
       await user.paste(getLimitInput(), "1,234,567");
+
+      expect(getLimitInput()).toHaveDisplayValue("1.5");
+    });
+
+    it.each(["1e3", "1e-3", "-5", "5a"])(
+      "ignores a pasted %s instead of reading its digits",
+      async pasted => {
+        const { user } = await renderEditDetails();
+        await openBalanceLimit(user);
+
+        await user.clear(getLimitInput());
+        fireEvent.changeText(getLimitInput(), pasted);
+
+        expect(getLimitInput()).toHaveDisplayValue("");
+        expect(screen.getByTestId("xrp-limit-confirm")).toBeDisabled();
+      },
+    );
+
+    it("keeps the limit already typed when text with other characters replaces it", async () => {
+      const { user } = await renderEditDetails({ token: TWO_DECIMALS_TOKEN });
+      await openBalanceLimit(user);
+
+      await user.clear(getLimitInput());
+      await user.type(getLimitInput(), "1.5");
+      fireEvent.changeText(getLimitInput(), "1.5e3");
 
       expect(getLimitInput()).toHaveDisplayValue("1.5");
     });
@@ -622,6 +751,29 @@ describe("XRP edit token flow (integration)", () => {
       await user.type(getLimitInput(), "5");
 
       expect(getLimitInput()).toHaveDisplayValue("5");
+      expect(screen.getByTestId("xrp-limit-set-maximum")).toBeEnabled();
+    });
+
+    it("replaces the maximum when the whole text is replaced at once", async () => {
+      const { user } = await renderEditDetails();
+      await openBalanceLimit(user);
+      await user.press(screen.getByTestId("xrp-limit-set-maximum"));
+
+      fireEvent.changeText(getLimitInput(), "5");
+
+      expect(getLimitInput()).toHaveDisplayValue("5");
+      expect(screen.getByTestId("xrp-limit-confirm")).toBeEnabled();
+    });
+
+    it("leaves an empty field when the label of the maximum is partly deleted", async () => {
+      const { user } = await renderEditDetails();
+      await openBalanceLimit(user);
+      await user.press(screen.getByTestId("xrp-limit-set-maximum"));
+
+      fireEvent.changeText(getLimitInput(), "Maximu");
+
+      expect(getLimitInput()).toHaveDisplayValue("");
+      expect(screen.getByTestId("xrp-limit-confirm")).toBeDisabled();
       expect(screen.getByTestId("xrp-limit-set-maximum")).toBeEnabled();
     });
   });
@@ -852,6 +1004,38 @@ describe("XRP edit token flow (integration)", () => {
       await user.press(retryButton);
 
       expect(await screen.findByTestId("device-intent-executor")).toBeVisible();
+    });
+
+    it("closes the sheet instead of signing on Retry when a sync made the transaction invalid", async () => {
+      jest.mocked(buildDeviceInitializationInput).mockRejectedValueOnce(new Error("No device"));
+      const { user, store } = await renderEditDetails();
+      await replaceLimit(user, "2000");
+      await waitFor(() => expect(getContinueButton()).toBeEnabled());
+      await user.press(getContinueButton());
+      const retryButton = await screen.findByTestId(
+        "xrp-edit-token-retry",
+        {},
+        { timeout: SHEET_TIMEOUT },
+      );
+      const syncedBalance = new BigNumber(1);
+      mockTransactionStatus(mockAccountBridge, {
+        limit: makeNamedError("XrpTrustLimitTooHigh"),
+      });
+      await act(async () => {
+        store.dispatch(updateAccount({ id: XRP_ACCOUNT.id, balance: syncedBalance }));
+      });
+      await waitFor(() => {
+        const lastCall = mockAccountBridge.getTransactionStatus.mock.calls.at(-1);
+        expect(lastCall?.[0].balance).toEqual(syncedBalance);
+      });
+      jest.mocked(buildDeviceInitializationInput).mockClear();
+
+      await user.press(retryButton);
+
+      expect(await screen.findByText("The limit is above the maximum")).toBeVisible();
+      expect(buildDeviceInitializationInput).not.toHaveBeenCalled();
+      expect(screen.queryByTestId("device-intent-executor")).toBeNull();
+      expect(getContinueButton()).toBeDisabled();
     });
 
     it("builds one device intent when Retry is pressed twice", async () => {

@@ -19,6 +19,7 @@ import { FullTextBanner } from "../components/FullTextBanner";
 import { InfoTooltip } from "../components/InfoTooltip";
 import { RipplingSheet } from "./RipplingSheet";
 import SignTokenEditSheets from "./SignTokenEditSheets";
+import TokenAccountGate from "./TokenAccountGate";
 import { useTokenSettingsViewModel } from "./useTokenSettingsViewModel";
 
 function ValueTrailing({ value, testID }: Readonly<{ value: string; testID: string }>) {
@@ -32,7 +33,7 @@ function ValueTrailing({ value, testID }: Readonly<{ value: string; testID: stri
   );
 }
 
-export default function TokenSettings() {
+function TokenSettingsContent() {
   const { t } = useTranslation();
   const viewModel = useTokenSettingsViewModel();
   const ripplingLabel = t("xrp.rippling.label");
@@ -106,5 +107,13 @@ export default function TokenSettings() {
       </Box>
       <SignTokenEditSheets viewModel={viewModel.signTokenEdit} accountId={viewModel.accountId} />
     </SafeAreaView>
+  );
+}
+
+export default function TokenSettings() {
+  return (
+    <TokenAccountGate>
+      <TokenSettingsContent />
+    </TokenAccountGate>
   );
 }
