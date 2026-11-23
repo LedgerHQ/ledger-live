@@ -1135,6 +1135,22 @@
       "title" : "SUI 앱을 업데이트하세요",
       "description" : "현재 Ledger Sui 앱으로는 SUI 송금 트랜잭션에 서명할 수 없습니다. Ledger 장치에서 SUI 앱을 업데이트하고 다시 시도하세요."
     },
+    "SuiRawTransactionInvalid" : {
+      "title" : "읽을 수 없는 SUI 트랜잭션",
+      "description" : "앱에서 Ledger Wallet™이 읽을 수 없는 SUI 트랜잭션을 전송했습니다. 앱에서 다시 시도하거나 해당 앱의 고객 지원 센터로 문의하세요."
+    },
+    "SuiRawTransactionSenderMismatch" : {
+      "title" : "잘못된 SUI 계정",
+      "description" : "이 트랜잭션은 다른 Sui 계정용으로 생성되었습니다. 앱에 연결된 계정을 선택한 후 다시 시도해 주세요."
+    },
+    "SuiRawTransactionResolutionFailed" : {
+      "title" : "SUI 트랜잭션을 생성할 수 없음",
+      "description" : "트랜잭션에 필요한 자산이 남아 있는지, 계정에 네트워크 수수료를 지불할 잔액이 충분한지 확인한 후 앱에서 다시 시도하세요."
+    },
+    "SuiSponsoredTransactionBroadcastUnsupported" : {
+      "title" : "스폰서 SUI 트랜잭션",
+      "description" : "이 트랜잭션은 네트워크 수수료가 대납(스폰서)되는 방식이므로 Ledger Wallet에서 직접 전송할 수 없습니다. 연결된 앱 자체에서 트랜잭션을 전송해야 합니다. 문제가 계속되면 해당 앱의 고객 지원팀에 문의해 주세요."
+    },
     "PasswordIncorrect" : {
       "title" : "잘못된 패스워드",
       "description" : "다시 시도해 주세요."
@@ -1441,6 +1457,10 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
+    "SolanaTxBlockhashExpired" : {
+      "title" : "트랜잭션이 만료되었습니다.",
+      "description" : "네트워크에서 이 트랜잭션을 더 이상 수락하지 않습니다. 다시 시도하여 새로 생성해 주세요."
+    },
     "SolanaRecipientMemoIsRequired" : {
       "title" : "수령인 주소에 메모가 필요합니다"
     },
@@ -1620,11 +1640,11 @@
       "description" : "토큰 홀딩을 중단하려면 삭제해 주세요."
     },
     "XrpTokenFrozen" : {
-      "title" : "이 토큰을 보낼 수 없습니다.",
+      "title" : "토큰이 동결되었습니다",
       "description" : "발행자가 해당 토큰을 동결했습니다."
     },
     "XrpTokenNotAuthorized" : {
-      "title" : "이 토큰을 보낼 수 없습니다.",
+      "title" : "계정이 승인되지 않았습니다",
       "description" : "발행자가 사용자 계정의 토큰 홀딩을 승인하지 않았습니다."
     },
     "XrpTokenCannotReceive" : {
@@ -1649,6 +1669,54 @@
     "XrpReserveIncrease" : {
       "title" : "이 토큰이 추가되어 있는 동안 계정에 {{amount}}의 자산이 잠금 처리됩니다.",
       "description" : "토큰을 삭제하면 예치된 자산을 다시 돌려받습니다."
+    },
+    "XrpAccountNotActivated" : {
+      "title" : "계정이 아직 활성화되지 않았습니다",
+      "description" : "계정을 활성화하고 이 토큰을 추가하려면 최소 {{amount}} 이상 수신해야 합니다. 여기에는 계정 활성화 및 토큰 추가 시 묶이는 XRP 예치금이 포함되어 있습니다."
+    },
+    "XrpTrustLimitTooHigh" : {
+      "title" : "한도가 최대 수량을 초과했습니다",
+      "description" : "최고 한도로 설정하려면 '최대(Max)'를 선택하세요."
+    },
+    "XrpTrustSetUnchanged" : {
+      "title" : "이미 적용된 설정입니다",
+      "description" : "이 토큰을 업데이트하려면 한도 또는 리플링을 변경하세요."
+    },
+    "XrpRecipientNotActivated" : {
+      "title" : "이 계정이 활성화되지 않았습니다",
+      "description" : "토큰을 받을 수 없습니다."
+    },
+    "XrpRecipientTokenNotAdded" : {
+      "title" : "해당 수신자는 아직 이 토큰을 받을 수 없습니다.",
+      "description" : "수신자에게 먼저 토큰을 추가하도록 요청하세요."
+    },
+    "XrpRecipientLimitTooLow" : {
+      "title" : "수신 한도가 너무 낮습니다",
+      "description" : "수신자가 받을 수 있는 이 토큰의 최대 수량은 {{maxAmount}}입니다."
+    },
+    "XrpSendToIssuer" : {
+      "title" : "토큰 발행자에게 전송 중",
+      "description" : "전송된 토큰은 소각되며 누구의 계정에도 입금되지 않습니다."
+    },
+    "XrpOptOutBalanceNotZero" : {
+      "title" : "이 토큰의 수량이 0이어야 합니다",
+      "description" : "토큰을 삭제하려면 남은 잔액을 모두 전송하세요."
+    },
+    "XrpOptOutTokenInEscrow" : {
+      "title" : "이 토큰 중 일부가 에스크로에 묶여 있습니다.",
+      "description" : "에스크로가 완료되거나 취소되면 토큰을 삭제하세요."
+    },
+    "XrpOptOutTokenFrozen" : {
+      "title" : "{{assetCode}} 삭제가 불가능합니다.",
+      "description" : "발행자가 귀하의 계정에서 해당 자산을 동결했습니다."
+    },
+    "XrpOptOutIncomplete" : {
+      "title" : "이 토큰은 삭제할 수 없습니다.",
+      "description" : "XRP Ledger 정책상 해당 토큰은 삭제되지 않으며, 잠금 처리된 XRP와 함께 계정에 유지됩니다."
+    },
+    "XrpReserveRelease" : {
+      "title" : "이 토큰을 위해 묶여 있던 {{amount}} 잠금이 해제됩니다.",
+      "description" : "토큰 삭제 후 해당 금액을 사용할 수 있습니다."
     },
     "HederaMemoExceededSizeError" : {
       "title" : "메모 길이 초과. 최대 100자까지 지원됩니다"
@@ -2346,10 +2414,36 @@
     }
   },
   "receiveAddress" : {
+    "title" : "{{asset}} 받기",
+    "networkLabel" : "{{network}} 네트워크",
+    "close" : "닫기",
+    "back" : "뒤로",
     "addressDisplayed" : {
       "title" : "주소가 안전하게 표시됩니다.",
-      "description" : "붙여넣거나 공유한 주소가 Ledger 장치에 표시된 주소와 일치하는지 확인하세요.",
-      "gotItCta" : "확인"
+      "description" : "붙여넣거나 공유한 주소가 Ledger 장치에 표시된 주소와 일치하는지 확인하세요."
+    },
+    "addressVerified" : {
+      "title" : "주소 확인 완료",
+      "description" : "Ledger Wallet에 표시되는 주소가 Ledger 장치의 주소와 일치합니다.",
+      "doneCta" : "완료"
+    },
+    "addressMismatch" : {
+      "title" : "이 주소는 Ledger 장치 주소와 일치하지 않습니다",
+      "description" : "이 주소를 사용하지 마세요. 해당 계정으로 설정되지 않은 Ledger 장치를 사용 중일 수 있습니다. 올바른 장치를 연결하고 다시 확인해 주세요. 여전히 일치하지 않는다면 Ledger 고객지원에 문의하시기 바랍니다.",
+      "contactSupportCta" : "Ledger 지원팀으로 문의하기",
+      "closeCta" : "닫기"
+    },
+    "selectAddress" : {
+      "title" : "주소 선택"
+    },
+    "addressOptions" : {
+      "transparent" : "공개 주소",
+      "shielded" : "비공개 주소"
+    },
+    "error" : {
+      "title" : "이 주소를 불러올 수 없습니다.",
+      "description" : "인터넷 연결을 확인하고 다시 시도하세요.",
+      "retry" : "다시 시도"
     }
   },
   "ratings" : {
@@ -2637,6 +2731,49 @@
         "nothingMoves" : "사용자 승인 없는 어떤 자산 거래도 불가능합니다",
         "setUp" : "이제 설정을 시작합니다",
         "cta" : "장치 상태를 확인하세요"
+      },
+      "recover" : {
+        "tooManyBackups" : "백업은 많을수록 든든합니다.",
+        "encryptedBackup" : "특히 암호화된 디지털 백업은 더욱 중요합니다.",
+        "thereWhenYouNeedIt" : "필요한 순간, 바로 사용할 수 있는 디지털 백업.",
+        "title" : "Ledger Recover로 지갑 액세스를 보호하세요",
+        "description" : "실물 복구 시트는 분실이나 훼손의 위험이 있습니다. Ledger Recover는 사용자 신원과 연결된 암호화된 백업을 안전하게 보관합니다.",
+        "price" : "첫 달은 무료이며, 이후 월 $9.99의 요금이 적용됩니다. 언제든지 해지 가능하며 이용 약관이 적용됩니다",
+        "protect" : "지갑 보호하기",
+        "skip" : "나중에 하기",
+        "sheet" : {
+          "title" : "Ledger Recover는 어떤 서비스인가요?",
+          "identity" : {
+            "title" : "본인 인증으로 안전하게 보호",
+            "description" : "사용자의 얼굴과 신분증이 복구를 위한 열쇠가 됩니다."
+          },
+          "security" : {
+            "title" : "강력한 디지털 보안",
+            "description" : "암호화 및 분할 처리되며, 절대 한 곳에 저장되지 않습니다."
+          },
+          "legacy" : {
+            "title" : "흔들림 없는 디지털 레거시",
+            "description" : "신뢰할 수 있는 인물을 지정하여 백업을 더 안전하게 보호하세요."
+          },
+          "start" : "지금 바로 시작하기(~10분)",
+          "remindLater" : "나중에 알림"
+        }
+      },
+      "success" : {
+        "allSet" : "모든 준비가 완료되었습니다!",
+        "timeToExplore" : "이제 모든 기능을 살펴보세요",
+        "cta" : "지금 살펴보기",
+        "ready" : "모든 준비가 완료되었습니다!",
+        "walletReady" : "지갑 설정이 완료되었습니다."
+      }
+    },
+    "recover" : {
+      "restore" : {
+        "title" : "Ledger Recover로 계속",
+        "description" : "복구 절차를 완료하려면 Ledger Recover 로그인 정보로 로그인하세요.",
+        "identity" : "Ledger Recover에서 본인 인증을 통해 복구를 잠금 해제합니다",
+        "phrase" : "인증이 완료되면 비밀 복구 문구가 장치에 안전하게 복원됩니다",
+        "cta" : "Ledger Recover로 계속"
       }
     },
     "checks" : {
@@ -2695,6 +2832,105 @@
       "success" : {
         "title" : "동기화 완료",
         "cta" : "계속"
+      }
+    },
+    "setup" : {
+      "title" : "Continue on your Ledger device",
+      "checks" : {
+        "title" : "Genuine & OS check",
+        "description" : "Verifying your device",
+        "successDescription" : "Your device is genuine and safe to use",
+        "notUpToDateDescription" : "장치가 최신 상태가 아닙니다"
+      },
+      "naming" : {
+        "title" : "장치 이름",
+        "description" : "Give your {{productName}} a unique name"
+      },
+      "pin" : {
+        "title" : "PIN creation",
+        "description" : "It prevents unwanted access"
+      },
+      "setupChoice" : {
+        "title" : "설정 옵션"
+      },
+      "security" : {
+        "title" : "보안 설정",
+        "description" : "Secret Recovery Phrase",
+        "recoveryKeyDescription" : "Recovery Key"
+      },
+      "restore" : {
+        "title" : "액세스 복구",
+        "recoveryPhraseDescription" : "Secret Recovery Phrase"
+      },
+      "info" : {
+        "cards" : {
+          "setupChoice" : "어떤 설정 방식을 사용해야 하나요?",
+          "recoveryPhrase" : "비밀 복구 문구는 무엇인가요?",
+          "restoreChoice" : "복구에 사용할 백업을 선택하세요.",
+          "recoveryKey" : "Recovery Key란 무엇인가요?",
+          "restoreRecoveryKey" : "Recovery Key란 무엇인가요?"
+        },
+        "faq" : "전체 FAQ 보기",
+        "setupChoice" : {
+          "title" : "장치 설정이나 복구가 필요하신가요?",
+          "newDevice" : {
+            "title" : "새 Ledger 장치로 설정",
+            "description" : "비밀 복구 문구가 생성됩니다. 아직 비밀 복구 문구가 없는 경우 선택하세요."
+          },
+          "restore" : {
+            "title" : "백업에서 복구",
+            "description" : "기존 백업을 사용하여 복구(비밀 복구 문구, Recovery Key 또는 Ledger Recover 사용)",
+            "descriptionWithoutRecoveryKey" : "기존 백업을 사용하여 복구: 비밀 복구 문구 또는 Ledger Recover."
+          }
+        },
+        "recoveryPhrase" : {
+          "title" : "비밀 복구 문구",
+          "description" : "비밀 복구 문구는 12개, 18개 또는 24개의 단어로 구성된 고유한 목록입니다. 지갑의 마스터 백업 역할을 하며, 장치를 분실하거나 파손 및 교체했을 때 계정에 대한 접근 권한을 복구할 수 있습니다."
+        },
+        "restoreChoice" : {
+          "recoveryPhrase" : {
+            "title" : "비밀 복구 문구",
+            "description" : "지갑 초기 설정 시 보관해 둔 12, 18 또는 24개의 단어를 사용하세요."
+          },
+          "recoveryKey" : {
+            "title" : "Ledger Recovery Key",
+            "description" : "PIN으로 보호되는 오프라인 카드를 사용하여 탭 한 번으로 간편하게 복구할 수 있습니다."
+          },
+          "recover" : {
+            "title" : "Ledger Recover 구독",
+            "description" : "구독 서비스를 통해 신원을 인증하고 액세스 권한을 되찾아올 수 있습니다."
+          }
+        },
+        "recoveryKey" : {
+          "title" : "Recovery Key",
+          "description" : "내 지갑의 프라이빗 스페어 키를 안전하게 보호하세요. 비밀 복구 문구는 PIN으로 보호되는 카드에 완전히 오프라인 상태로 암호화 및 백업되므로, Ledger 장치를 분실하거나 교체하더라도 탭 한 번으로 액세스 권한을 복구할 수 있습니다.",
+          "inTheBox" : "복구 키는 장치 패키지에 동봉되어 있습니다.",
+          "learnHowToUse" : "사용 방법 알아보기"
+        }
+      },
+      "connection" : {
+        "reconnecting" : {
+          "title" : "{{productName}} 재연결 중",
+          "description" : "{{productName}}의 전원을 켜고 잠금을 해제한 상태로 스마트폰 가까이에 두세요."
+        },
+        "failed" : {
+          "title" : "{{productName}}에 연결할 수 없음",
+          "description" : "{{productName}}의 전원이 켜져 있고 잠금이 해제되어 있으며 스마트폰과 충분히 가까이 있는지 확인한 후 다시 시도하세요.",
+          "retryCta" : "다시 시도하세요",
+          "helpCta" : "도움 받기"
+        }
+      },
+      "updateOffer" : {
+        "title" : "모든 기능을 사용하려면 OS™를 업데이트하세요",
+        "versions" : "OS {{current}} → OS {{available}}",
+        "description" : "트랜잭션 점검 기능을 비롯한 다양한 최신 기능을 이용해 보세요.",
+        "updateCta" : "Ledger OS 업데이트",
+        "skip" : {
+          "title" : "업데이트를 건너뛰시겠습니까?",
+          "description" : "Ledger 장치에서 최신 수정 사항과 기능 이용이 불가능할 수 있습니다.",
+          "updateCta" : "지금 업데이트",
+          "skipCta" : "건너뛰기"
+        }
       }
     },
     "connection" : {
@@ -3877,6 +4113,20 @@
       "crypto" : "암호화폐",
       "card" : "카드",
       "accessibilityLabel" : "트랜잭션 내역 유형"
+    },
+    "exportDialog" : {
+      "title" : "트랜잭션 내역 내보내기",
+      "disclaimer" : "표시된 값은 추정치에 불과합니다. 환산 금액은 Kaiko가 정보 제공 목적으로 제공하며, 세무, 법률 또는 회계 목적으로 사용할 수 없습니다.",
+      "accountsToInclude" : "포함할 계정",
+      "selectAll" : "모든 ({{count}}) 선택",
+      "deselectAll" : "모든 ({{count}}) 선택 해제",
+      "export" : "내역 내보내기",
+      "successTitle" : "트랜잭션 내역이 성공적으로 저장되었습니다",
+      "successDescription" : "트랜잭션 내역 CSV 파일이 선택된 폴더에 저장되었습니다",
+      "done" : "완료",
+      "errorTitle" : "문제가 발생했습니다",
+      "errorDescription" : "트랜잭션 내역 내보내기 중 오류가 발생했습니다. 다시 시도해 주세요.",
+      "tryAgain" : "다시 시도하세요"
     }
   },
   "operationsList" : {
@@ -3888,7 +4138,11 @@
       "hideDustTransactions" : "더스트 트랜잭션 숨기기",
       "showDustTransactions" : "더스트 트랜잭션 표시",
       "dustTransactionsHiddenDescription" : "{{threshold}} 미만의 소액 트랜잭션을 숨깁니다.",
-      "dustTransactionsDisplayedDescription" : "{{threshold}} 미만의 소액 트랜잭션을 표시합니다."
+      "dustTransactionsDisplayedDescription" : "{{threshold}} 미만의 소액 트랜잭션을 표시합니다.",
+      "exportCsv" : {
+        "title" : "트랜잭션 내역 내보내기",
+        "description" : "계정의 트랜잭션 내역을 CSV 파일로 저장합니다."
+      }
     }
   },
   "operationDetails" : {
@@ -5578,7 +5832,7 @@
       },
       "sponsoredPolling" : {
         "title" : "에너지 전송 중",
-        "waiting" : "일반적으로 최대 30초가 소요됩니다.",
+        "waiting" : "최대 1 분 정도 소요될 수 있습니다.",
         "elapsed" : "경과 시간: {{time}}"
       },
       "sponsoredFailure" : {
@@ -6025,6 +6279,26 @@
       }
     }
   },
+  "connectKnownOrNewDevice" : {
+    "title" : "장치",
+    "add" : "추가",
+    "addDevice" : "Ledger 장치 추가",
+    "showAll" : "{{count}}개의 장치 모두 보기",
+    "showLess" : "간단히 표시",
+    "status" : {
+      "unavailable" : "연결되지 않음",
+      "available" : "이용 가능",
+      "connected" : "연결됨"
+    },
+    "menu" : {
+      "accessibilityLabel" : "{{deviceName}} 설정",
+      "disconnect" : "연결 해제",
+      "remove" : "제거"
+    },
+    "waitingHint" : {
+      "title" : "내 Ledger 장치가 보이지 않나요?"
+    }
+  },
   "osUpdates" : {
     "backupBanner" : {
       "title" : "저장된 설정을 찾았습니다",
@@ -6036,6 +6310,11 @@
       "title" : "장치가 부트로더 모드에 있습니다.",
       "description" : "\"계속\"을 클릭하여 업데이트하세요.",
       "continue" : "계속"
+    },
+    "updateOnDesktop" : {
+      "title" : "컴퓨터에서 업데이트",
+      "description" : "{{productName}} 장치에 일회성 업데이트가 필요합니다. 이 업데이트는 데스크탑 버전 Ledger Wallet에서만 설치할 수 있습니다.",
+      "gotIt" : "확인"
     },
     "banner" : {
       "wallet40" : {
@@ -8384,18 +8663,60 @@
         "limitZero" : "보유 한도는 0보다 커야 합니다."
       },
       "success" : {
-        "title" : "{{token}} 추가됨",
-        "text" : "다음 동기화 후에 계정에 수량이 0으로 표시됩니다."
+        "title" : "{{token}} 추가 요청이 전송되었습니다",
+        "text" : "네트워크에서 트랜잭션 확인이 완료되면 적용됩니다."
+      }
+    },
+    "manageAssets" : {
+      "cta" : "관리",
+      "title" : "자산 관리",
+      "empty" : "이 계정에는 아직 토큰이 없습니다.",
+      "tokenType" : "토큰 유형",
+      "tokenTypeInfo" : "트러스트라인(IOU)에는 잔액 한도 및 리플링(rippling) 설정이 존재합니다. 반면, 다목적 토큰(MPT)에는 별도의 설정이 없습니다.",
+      "iou" : "트러스트 라인(IOU)",
+      "mpt" : "다목적 토큰(MPT)",
+      "issuer" : "발행자",
+      "transferFee" : "전송 수수료",
+      "transferFeeInfo" : "보유자 간 이체 시 발행자가 가져가는 수수료 비율입니다.",
+      "transferFeeUnavailable" : "이용 불가",
+      "lockedAmount" : "잠긴 수량",
+      "ripplingInfo" : "리플링(Rippling) 기능을 활성화하면, 다른 사용자의 결제(송금) 트랜잭션 과정에서 내 지갑에 있는 같은 종류의 토큰끼리 잔액이 바뀔 수 있습니다.",
+      "edit" : "편집",
+      "delete" : "삭제",
+      "removalPending" : "삭제 대기 중",
+      "frozen" : "이 토큰은 동결되었습니다",
+      "deleteBlocked" : {
+        "title" : "삭제하려면 {{ticker}} 잔액을 모두 비워주세요",
+        "description" : "이 자산을 삭제하려면 남은 {{ticker}} 수량을 모두 전송하세요."
+      },
+      "deleteConfirm" : {
+        "title" : "정말 {{ticker}} 삭제를 진행하시겠습니까?",
+        "description" : "삭제 시 해당 자산이 포트폴리오에서 제거되어 더 이상 수신이 불가능하게 됩니다. 잠긴 수량은 {{accountName}} 계정으로 반환됩니다.",
+        "descriptionIou" : "삭제 시 해당 자산이 포트폴리오에서 제거되어 더 이상 수신이 불가능하게 됩니다. 잠긴 수량은 {{accountName}} 계정으로 반환됩니다. 장치 화면에 보유 한도가 0으로 표시됩니다. 이는 XRP Ledger에서 토큰을 삭제하는 정상적인 방식입니다."
+      },
+      "deleteSuccess" : {
+        "title" : "{{ticker}} 자산이 계정에서 성공적으로 삭제되었습니다",
+        "description" : "언제든지 이 자산을 다시 추가할 수 있습니다."
+      },
+      "deleteError" : {
+        "title" : "자산을 제거하지 못했습니다",
+        "broadcastError" : "트랜잭션이 실패했을 수 있습니다. 잠시 후 트랜잭션 내역을 확인한 뒤 다시 시도하세요."
       }
     },
     "tokenSettings" : {
       "limit" : "보유 한도",
+      "balanceLimit" : "보유 한도",
       "maxLimit" : "최대 보유 한도",
       "maxLimitInfo" : "보유 한도는 계정에서 보유할 수 있는 {{token}}의 최대 수량입니다. 허용되는 최대 보유 한도는 <amount/>입니다.",
       "maximum" : "최대"
     },
+    "send" : {
+      "issuerFee" : "발행자 수수료"
+    },
     "rippling" : {
       "label" : "리플링",
+      "activated" : "활성화",
+      "deactivated" : "비활성화",
       "on" : "켜짐",
       "off" : "꺼짐",
       "warning" : "이 기능을 켜면 다른 사용자의 결제 트랜잭션 과정에서 내 지갑에 있는 같은 종류의 토큰끼리 잔액이 바뀔 수 있습니다. 기능의 의미를 확실히 아는 경우에만 켜두세요."
@@ -11337,6 +11658,9 @@
         "outgoingTitle" : "발신 이체 세부 내역"
       },
       "amount" : "수량",
+      "unknownToken" : "알 수 없는 토큰",
+      "instrumentId" : "인스트루먼트 ID",
+      "instrumentAdmin" : "인스트루먼트 관리자",
       "from" : "출금 주소",
       "to" : "입금 주소",
       "memo" : "메모",
