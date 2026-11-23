@@ -1135,6 +1135,22 @@
       "title" : "更新您的 Sui 应用程序",
       "description" : "您的 Ledger Sui 应用程序无法签署来自您 SUI 地址余额的转账。在您的 Ledger 设备上更新 Sui 应用程序并重试。"
     },
+    "SuiRawTransactionInvalid" : {
+      "title" : "无法读取的 Sui 交易",
+      "description" : "该应用程序发送了 Ledger Wallet 无法读取的 Sui 交易。请在应用程序中重试，或联系其支持团队。"
+    },
+    "SuiRawTransactionSenderMismatch" : {
+      "title" : "Sui 账户错误",
+      "description" : "此交易是为另一个 Sui 账户准备的。请选择连接到该应用程序的账户并重试。"
+    },
+    "SuiRawTransactionResolutionFailed" : {
+      "title" : "无法准备 Sui 交易",
+      "description" : "请检查交易使用的资产是否依然存在，且账户能够支付网络费用，然后在应用程序中重试。"
+    },
+    "SuiSponsoredTransactionBroadcastUnsupported" : {
+      "title" : "Sui 赞助交易",
+      "description" : "此交易的网络费用由赞助商支付，因此 Ledger Wallet 无法将其发送至网络。该应用程序需要自行发送该交易。如果此情况持续发生，请联系该应用程序的支持团队。"
+    },
     "PasswordIncorrect" : {
       "title" : "密码错误",
       "description" : "请再次尝试。"
@@ -1441,6 +1457,10 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
     },
+    "SolanaTxBlockhashExpired" : {
+      "title" : "交易已过期",
+      "description" : "网络不再接受此交易。请重试以创建新交易。"
+    },
     "SolanaRecipientMemoIsRequired" : {
       "title" : "接收方地址需附加备忘标签"
     },
@@ -1620,11 +1640,11 @@
       "description" : "如要停止持有该代币，请改为将其移除。"
     },
     "XrpTokenFrozen" : {
-      "title" : "您无法发送此代币",
+      "title" : "代币已被冻结",
       "description" : "该代币的发行方已将其冻结。"
     },
     "XrpTokenNotAuthorized" : {
-      "title" : "您无法发送此代币",
+      "title" : "您的账户未获批准",
       "description" : "该代币的发行方尚未批准您的账户持有该代币。"
     },
     "XrpTokenCannotReceive" : {
@@ -1649,6 +1669,54 @@
     "XrpReserveIncrease" : {
       "title" : "在添加此代币时，您的账户中的 {{amount}} 将被锁定。",
       "description" : "您将在移除该代币时将其取回。"
+    },
+    "XrpAccountNotActivated" : {
+      "title" : "您的账户尚未激活",
+      "description" : "接收至少 {{amount}} 以激活该账户并添加此代币。此金额涵盖账户激活以及为该代币锁定的瑞波币 (XRP)。"
+    },
+    "XrpTrustLimitTooHigh" : {
+      "title" : "该限额已超出最大值",
+      "description" : "使用 Max 设置最高限额。"
+    },
+    "XrpTrustSetUnchanged" : {
+      "title" : "这些设置已生效",
+      "description" : "修改限额或余额流转设置，即可更新此代币。"
+    },
+    "XrpRecipientNotActivated" : {
+      "title" : "该账户尚未激活",
+      "description" : "无法接收代币。"
+    },
+    "XrpRecipientTokenNotAdded" : {
+      "title" : "此接收者目前还无法接收此代币",
+      "description" : "请让对方先添加该代币。"
+    },
+    "XrpRecipientLimitTooLow" : {
+      "title" : "接收方限额过低",
+      "description" : "其最多只能接收 {{maxAmount}} 个此代币。"
+    },
+    "XrpSendToIssuer" : {
+      "title" : "发送至代币发行方",
+      "description" : "这些代币将被销毁，且不会记入任何人的账户。"
+    },
+    "XrpOptOutBalanceNotZero" : {
+      "title" : "您的该代币余额必须为 0",
+      "description" : "在您移除该代币之前，请将其全部发送。"
+    },
+    "XrpOptOutTokenInEscrow" : {
+      "title" : "此代币的一部分处于托管状态。",
+      "description" : "一旦托管结束或取消，请移除该代币。"
+    },
+    "XrpOptOutTokenFrozen" : {
+      "title" : "您无法移除 {{assetCode}}",
+      "description" : "该代币的发行方已在您的账户中将其冻结。"
+    },
+    "XrpOptOutIncomplete" : {
+      "title" : "此代币无法移除。",
+      "description" : "XRP Ledger 会将其连同该账户锁定的瑞波币 (XRP) 一起保留在您的账户中。"
+    },
+    "XrpReserveRelease" : {
+      "title" : "为此代币锁定的 {{amount}} 将被释放。",
+      "description" : "一旦移除该代币，您即可将其花费。"
     },
     "HederaMemoExceededSizeError" : {
       "title" : "备忘标签长度无效，最大允许 100 个字符"
@@ -2346,10 +2414,36 @@
     }
   },
   "receiveAddress" : {
+    "title" : "接收 {{asset}}",
+    "networkLabel" : "{{network}} 网络",
+    "close" : "关闭",
+    "back" : "返回",
     "addressDisplayed" : {
       "title" : "地址已安全显示",
-      "description" : "请验证粘贴或分享后的地址与您的 Ledger 设备上的地址一致。",
-      "gotItCta" : "知道了"
+      "description" : "请验证粘贴或分享后的地址与您的 Ledger 设备上的地址一致。"
+    },
+    "addressVerified" : {
+      "title" : "Address verified",
+      "description" : "The address in Ledger Wallet matches the one on your Ledger device.",
+      "doneCta" : "Done"
+    },
+    "addressMismatch" : {
+      "title" : "This address doesn't match your Ledger",
+      "description" : "Don't use this address. You may be using a Ledger that isn't set up with this account: connect the right one and verify again. If it still doesn't match, contact Ledger Support.",
+      "contactSupportCta" : "Contact Ledger Support",
+      "closeCta" : "Close"
+    },
+    "selectAddress" : {
+      "title" : "选择地址"
+    },
+    "addressOptions" : {
+      "transparent" : "公开地址",
+      "shielded" : "私密地址"
+    },
+    "error" : {
+      "title" : "无法加载此地址",
+      "description" : "请检查您的互联网连接，然后重试。",
+      "retry" : "重试"
     }
   },
   "ratings" : {
@@ -2637,6 +2731,49 @@
         "nothingMoves" : "未经您的许可，任何资产都无法转移。",
         "setUp" : "开始设置。",
         "cta" : "检查您的设备"
+      },
+      "recover" : {
+        "tooManyBackups" : "备份再多几份也不为过。",
+        "encryptedBackup" : "加密数字备份更要备妥。",
+        "thereWhenYouNeedIt" : "在您需要时随时可得的数字备份。",
+        "title" : "使用 Ledger Recover 保护您的钱包访问权限",
+        "description" : "实体恢复表可能会丢失或损坏。Ledger Recover 保存与您的身份相关联的加密备份。",
+        "price" : "第一个月免费，此后 9.99美元每月起。随时取消。条款与条件适用",
+        "protect" : "保护我的钱包",
+        "skip" : "暂时跳过",
+        "sheet" : {
+          "title" : "Ledger Recover 的原理如何？",
+          "identity" : {
+            "title" : "受您的身份保护",
+            "description" : "您的面容和身份证件是解锁恢复的关键。"
+          },
+          "security" : {
+            "title" : "增强数字安全保护",
+            "description" : "加密、分片，且绝不存储在单一地点。"
+          },
+          "legacy" : {
+            "title" : "数字传承长久安心",
+            "description" : "添加您信任的人来协助保护您的备份。"
+          },
+          "start" : "立即开始（约 10 分钟）",
+          "remindLater" : "稍后提醒我"
+        }
+      },
+      "success" : {
+        "allSet" : "一切准备就绪！",
+        "timeToExplore" : "开启探索之旅",
+        "cta" : "立即探索",
+        "ready" : "操作完成。",
+        "walletReady" : "您的钱包已准备就绪。"
+      }
+    },
+    "recover" : {
+      "restore" : {
+        "title" : "Continuing with Ledger Recover",
+        "description" : "You’ll sign in with your Ledger Recover credentials to complete your restore.",
+        "identity" : "Ledger Recover will verify your identity to unlock your recovery",
+        "phrase" : "Once verified, your Secret Recovery Phrase will be securely restored to your device",
+        "cta" : "Continue to Ledger Recover"
       }
     },
     "checks" : {
@@ -2695,6 +2832,105 @@
       "success" : {
         "title" : "同步完成",
         "cta" : "继续"
+      }
+    },
+    "setup" : {
+      "title" : "Continue on your Ledger device",
+      "checks" : {
+        "title" : "Genuine & OS check",
+        "description" : "Verifying your device",
+        "successDescription" : "Your device is genuine and safe to use",
+        "notUpToDateDescription" : "您的设备未更新至最新版本"
+      },
+      "naming" : {
+        "title" : "设备名称",
+        "description" : "Give your {{productName}} a unique name"
+      },
+      "pin" : {
+        "title" : "PIN creation",
+        "description" : "It prevents unwanted access"
+      },
+      "setupChoice" : {
+        "title" : "设置选项"
+      },
+      "security" : {
+        "title" : "安全设置",
+        "description" : "Secret Recovery Phrase",
+        "recoveryKeyDescription" : "Recovery Key"
+      },
+      "restore" : {
+        "title" : "恢复访问权限",
+        "recoveryPhraseDescription" : "Secret Recovery Phrase"
+      },
+      "info" : {
+        "cards" : {
+          "setupChoice" : "选择哪种设置方法？",
+          "recoveryPhrase" : "什么是秘密恢复短语？",
+          "restoreChoice" : "选择要用于恢复的备份",
+          "recoveryKey" : "什么是 Recovery Key 恢复钥匙？",
+          "restoreRecoveryKey" : "什么是 Secret Recovery Key 秘密恢复钥匙？"
+        },
+        "faq" : "查看完整的常见问题解答",
+        "setupChoice" : {
+          "title" : "设置还是恢复？",
+          "newDevice" : {
+            "title" : "设置为新的 Ledger 设备",
+            "description" : "这会生成您的秘密恢复短语。如果您尚未拥有，请选择此选项。"
+          },
+          "restore" : {
+            "title" : "从备份恢复",
+            "description" : "使用现有备份进行恢复：秘密恢复短语、Recovery Key 恢复钥匙或 Ledger Recover。",
+            "descriptionWithoutRecoveryKey" : "使用现有备份进行恢复：秘密恢复短语或 Ledger Recover。"
+          }
+        },
+        "recoveryPhrase" : {
+          "title" : "秘密恢复短语",
+          "description" : "您的秘密恢复短语是由 12、18 或 24 个助记词组成的唯一列表。这是您钱包的主备份，如果您的设备丢失、损坏或更换，可用于恢复对账户的访问权限。"
+        },
+        "restoreChoice" : {
+          "recoveryPhrase" : {
+            "title" : "秘密恢复短语",
+            "description" : "请使用您在设置钱包时保存的 12、18 或 24 个助记词。"
+          },
+          "recoveryKey" : {
+            "title" : "Ledger Recovery Key 恢复钥匙",
+            "description" : "使用您的离线、受 PIN 识别码保护的卡，轻触即可恢复。"
+          },
+          "recover" : {
+            "title" : "Ledger Recover 订阅",
+            "description" : "通过您的有效订阅验证身份以恢复访问权限。"
+          }
+        },
+        "recoveryKey" : {
+          "title" : "Recovery Key 恢复钥匙",
+          "description" : "保留一份钱包的私密备用密钥。您的秘密恢复短语已加密并完全离线备份在受 PIN 识别码保护的卡上，因此如果您的 Ledger 设备丢失或更换，您只需轻触即可恢复访问权限。",
+          "inTheBox" : "您的设备包装盒中附带一个 Recovery Key 恢复钥匙。",
+          "learnHowToUse" : "了解如何使用"
+        }
+      },
+      "connection" : {
+        "reconnecting" : {
+          "title" : "正在重新连接您的 {{productName}}",
+          "description" : "请保持您的 {{productName}} 处于开启和解锁状态，并靠近您的手机。"
+        },
+        "failed" : {
+          "title" : "无法连接到 {{productName}}",
+          "description" : "确保您的 {{productName}} 处于开启和解锁状态，并靠近您的手机，然后重试。",
+          "retryCta" : "重试",
+          "helpCta" : "获得帮助"
+        }
+      },
+      "updateOffer" : {
+        "title" : "更新 OS™ 操作系统以解锁完整功能",
+        "versions" : "OS {{current}} → OS {{available}}",
+        "description" : "获取交易检查和最新的设备功能。",
+        "updateCta" : "更新 Ledger OS™",
+        "skip" : {
+          "title" : "跳过此更新？",
+          "description" : "您将错过适用于您的 Ledger 设备的最新修复和功能。",
+          "updateCta" : "立即更新",
+          "skipCta" : "仍要跳过"
+        }
       }
     },
     "connection" : {
@@ -3877,6 +4113,20 @@
       "crypto" : "加密货币",
       "card" : "卡",
       "accessibilityLabel" : "交易历史类型"
+    },
+    "exportDialog" : {
+      "title" : "导出交易历史",
+      "disclaimer" : "仅为估值。Kaiko 提供的对值仅供参考。请勿将这些数据用于税务、法律或会计目的。",
+      "accountsToInclude" : "要包括的账户",
+      "selectAll" : "全选 ({{count}})",
+      "deselectAll" : "取消全选 ({{count}})",
+      "export" : "导出历史记录",
+      "successTitle" : "交易历史已成功保存",
+      "successDescription" : "包含用户交易历史记录的 CSV 文件已经成功保存在所选文件夹中",
+      "done" : "完成",
+      "errorTitle" : "出错了",
+      "errorDescription" : "导出您的交易历史记录时出错。请重试。",
+      "tryAgain" : "请重试"
     }
   },
   "operationsList" : {
@@ -3888,7 +4138,11 @@
       "hideDustTransactions" : "隐藏尘埃代币交易",
       "showDustTransactions" : "显示尘埃代币交易",
       "dustTransactionsHiddenDescription" : "低于 {{threshold}} 的交易将被隐藏。",
-      "dustTransactionsDisplayedDescription" : "低于 {{threshold}} 的交易将被显示。"
+      "dustTransactionsDisplayedDescription" : "低于 {{threshold}} 的交易将被显示。",
+      "exportCsv" : {
+        "title" : "导出交易历史",
+        "description" : "将您账户的交易记录保存为 CSV 文件。"
+      }
     }
   },
   "operationDetails" : {
@@ -5578,7 +5832,7 @@
       },
       "sponsoredPolling" : {
         "title" : "您的能量正在交付中",
-        "waiting" : "通常最多需要 30 秒。",
+        "waiting" : "此过程最多可能需要 2 分钟。",
         "elapsed" : "已用时间：{{time}}"
       },
       "sponsoredFailure" : {
@@ -6025,6 +6279,26 @@
       }
     }
   },
+  "connectKnownOrNewDevice" : {
+    "title" : "设备",
+    "add" : "添加",
+    "addDevice" : "Add a Ledger device",
+    "showAll" : "Show all {{count}} devices",
+    "showLess" : "Show less",
+    "status" : {
+      "unavailable" : "Not connected",
+      "available" : "Available",
+      "connected" : "Connected"
+    },
+    "menu" : {
+      "accessibilityLabel" : "{{deviceName}} options",
+      "disconnect" : "Disconnect",
+      "remove" : "Remove"
+    },
+    "waitingHint" : {
+      "title" : "Can't see your Ledger device?"
+    }
+  },
   "osUpdates" : {
     "backupBanner" : {
       "title" : "已找到保存的设置",
@@ -6036,6 +6310,11 @@
       "title" : "设备处于 Bootloader（引导加载程序）模式。",
       "description" : "点击“Continue”（继续）进行更新。",
       "continue" : "继续"
+    },
+    "updateOnDesktop" : {
+      "title" : "在您的计算机上更新",
+      "description" : "您的 {{productName}} 需要一次性更新，此更新只能通过桌面版 Ledger Wallet 安装。",
+      "gotIt" : "知道了"
     },
     "banner" : {
       "wallet40" : {
@@ -8384,18 +8663,60 @@
         "limitZero" : "信任额度必须大于 0。"
       },
       "success" : {
-        "title" : "{{token}} 已添加",
-        "text" : "在下次同步后，其将显示在您的账户中，余额为 0。"
+        "title" : "已发送添加 {{token}} 的请求",
+        "text" : "交易一经网络确认，即会生效。"
+      }
+    },
+    "manageAssets" : {
+      "cta" : "管理",
+      "title" : "管理资产",
+      "empty" : "该账户目前尚无任何代币。",
+      "tokenType" : "代币类型",
+      "tokenTypeInfo" : "信任线 (IOU) 设有余额上限和余额流转设置。多用途代币 (MPT) 没有任何设置。",
+      "iou" : "信任线 (IOU)",
+      "mpt" : "多用途代币",
+      "issuer" : "发行方",
+      "transferFee" : "转账费用",
+      "transferFeeInfo" : "发行方从持有人之间每笔转账中收取的比例。",
+      "transferFeeUnavailable" : "不可用",
+      "lockedAmount" : "锁定数额",
+      "ripplingInfo" : "余额流转功能允许其他用户的付款在货币代码相同的代币之间转移您的余额。",
+      "edit" : "编辑",
+      "delete" : "删除",
+      "removalPending" : "等待移除",
+      "frozen" : "该代币已被冻结",
+      "deleteBlocked" : {
+        "title" : "清空您的 {{ticker}} 余额以将其移除",
+        "description" : "发送您剩余的 {{ticker}} 余额以移除该资产。"
+      },
+      "deleteConfirm" : {
+        "title" : "您确定要删除 {{ticker}} 吗？",
+        "description" : "该资产将从您的资产组合中移除，您将无法再接收。锁定的数额将释放至您的 {{accountName}} 账户。",
+        "descriptionIou" : "该资产将从您的资产组合中移除，您将无法再接收。锁定的数额将释放至您的 {{accountName}} 账户。您的设备将显示信任额度为 0。这就是 XRP Ledger 移除代币的方式。"
+      },
+      "deleteSuccess" : {
+        "title" : "{{ticker}} 已成功从您的账户中移除",
+        "description" : "您可以随时重新添加该资产。"
+      },
+      "deleteError" : {
+        "title" : "移除资产失败",
+        "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
       }
     },
     "tokenSettings" : {
       "limit" : "信任额度",
+      "balanceLimit" : "余额上限",
       "maxLimit" : "最大信任额度",
       "maxLimitInfo" : "信任额度是您的账户所能接受持有的最大 {{token}} 数量。允许的最大信任额度为 <amount/>。",
       "maximum" : "最大"
     },
+    "send" : {
+      "issuerFee" : "发行方费用"
+    },
     "rippling" : {
       "label" : "余额流转",
+      "activated" : "已激活",
+      "deactivated" : "已停用",
       "on" : "开启",
       "off" : "关闭",
       "warning" : "开启此功能将允许其他用户的付款在具有相同货币代码的代币之间转移您的余额。仅在充分了解其作用和风险时开启此功能。"
@@ -11337,6 +11658,9 @@
         "outgoingTitle" : "转账转出详情"
       },
       "amount" : "数额",
+      "unknownToken" : "未知代币",
+      "instrumentId" : "资产 ID",
+      "instrumentAdmin" : "资产管理员",
       "from" : "从",
       "to" : "到",
       "memo" : "备注",
