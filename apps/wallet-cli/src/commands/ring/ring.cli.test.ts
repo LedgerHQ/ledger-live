@@ -24,9 +24,18 @@ function runCliWithStdin(
   env: Record<string, string>,
   stdinLines: string[],
 ): Promise<RunResult> {
+  return runCliWithStdinText(args, env, stdinLines.map(line => `${line}\n`).join(""));
+}
+
+function runCliWithStdinText(
+  args: string[],
+  env: Record<string, string>,
+  text: string,
+  { isTTY = false } = {},
+): Promise<RunResult> {
   const origDesc = Object.getOwnPropertyDescriptor(process, "stdin");
-  const fakeStdin = new Readable({ read() {} });
-  for (const line of stdinLines) fakeStdin.push(`${line}\n`);
+  const fakeStdin = Object.assign(new Readable({ read() {} }), { isTTY });
+  if (text) fakeStdin.push(text);
   fakeStdin.push(null);
   Object.defineProperty(process, "stdin", { get: () => fakeStdin, configurable: true });
   return runCli(args, env).finally(() => {
@@ -519,12 +528,7 @@ describe("ring destroy — stray key with no trustchain (local-only recovery)", 
 
   it("wipes the stray local key and unblocks a fresh init", async () => {
     _store.clear();
-    const restoreStateHome = pointStateHomeAt(dir); // pin the keychain account to this temp dir
-    try {
-      await savePrivateKey("aa".repeat(32), "bb".repeat(33)); // stray key, no trustchain on disk
-    } finally {
-      restoreStateHome();
-    }
+    await saveMemberKeyIn(dir); // stray key, no trustchain on disk
     expect([..._store.values()]).toHaveLength(1);
 
     const r = await runCliWithStdin(["ring", "destroy"], env, ["destroy"]);
@@ -638,11 +642,16 @@ describe("ring destroy — transient remote failure keeps the local key", () => 
 
 // Seeds the initialized ring state (session + keychain) without `ring init`, so a test fakes only
 // the LKRP SDK method under test.
-async function seedInitializedRing(dir: string): Promise<void> {
-  writeSessionIn(dir, {
+async function seedInitializedRing(dir: string): Promise<string> {
+  const sessionPath = writeSessionIn(dir, {
     accounts: [],
     trustchain: { rootId: "seed-root", applicationPath: "m/0'/17'/0'" },
   });
+  await saveMemberKeyIn(dir);
+  return sessionPath;
+}
+
+async function saveMemberKeyIn(dir: string): Promise<void> {
   // savePrivateKey hashes the account name from the state dir, so pin it to this temp dir (matching
   // the env passed to runCli) before saving.
   const restoreStateHome = pointStateHomeAt(dir);
@@ -773,5 +782,75 @@ describe("ring destroy — non-destructive deactivation keeps the ring but wipes
     // at the lib level) would run instead of hitting the "already initialized" guard.
     const keys = await runCli(["ring", "keys"], env);
     expect(keys.exitCode).toBe(1); // not initialized → init guard is clear
+  });
+});
+
+describe("ring destroy — confirmation prompt", () => {
+  let dir: string;
+  let env: Record<string, string>;
+
+  beforeEach(() => {
+    _store.clear();
+    ({ dir, env } = makeTmpDir());
+  });
+
+  afterEach(() => rmSync(dir, { recursive: true, force: true }));
+
+  it("fails without touching the ring or the remote when stdin is empty", async () => {
+    const sessionPath = await seedInitializedRing(dir);
+    const sessionBefore = await Bun.file(sessionPath).text();
+    const keysBefore = [..._store.values()];
+    let remoteCalled = false;
+    useLkrpSdk({
+      destroyApplication: async () => {
+        remoteCalled = true;
+        return { trustchainDestroyed: true };
+      },
+    });
+
+    const r = await runCliWithStdin(["ring", "destroy", "--output", "json"], env, []);
+    expect(r.exitCode).toBe(1);
+    expect(r.stdout).toMatch(/no confirmation received/i);
+    expect(remoteCalled).toBe(false);
+    expect([..._store.values()]).toEqual(keysBefore);
+    expect(await Bun.file(sessionPath).text()).toBe(sessionBefore);
+  });
+
+  it("fails without wiping a stray local key when stdin is empty", async () => {
+    await saveMemberKeyIn(dir);
+
+    const r = await runCliWithStdin(["ring", "destroy", "--output", "json"], env, []);
+    expect(r.exitCode).toBe(1);
+    expect(r.stdout).toMatch(/no confirmation received/i);
+    expect([..._store.values()]).toHaveLength(1);
+  });
+
+  it('accepts "destroy" without a trailing newline', async () => {
+    await seedInitializedRing(dir);
+    useLkrpSdk({ destroyApplication: async () => ({ trustchainDestroyed: true }) });
+
+    const r = await runCliWithStdinText(["ring", "destroy", "--output", "json"], env, "destroy");
+    expect(r.exitCode, r.stdout).toBe(0);
+    expect([..._store.values()]).toHaveLength(0);
+  });
+
+  it("cancels on Ctrl-C or Ctrl-D at a terminal", async () => {
+    await seedInitializedRing(dir);
+
+    const r = await runCliWithStdinText(["ring", "destroy", "--output", "json"], env, "", {
+      isTTY: true,
+    });
+    expect(r.exitCode, r.stdout).toBe(0);
+    expect(JSON.parse(r.stdout)).toMatchObject({ cancelled: true });
+    expect([..._store.values()]).toHaveLength(1);
+  });
+
+  it("cancels on a wrong answer", async () => {
+    await seedInitializedRing(dir);
+
+    const r = await runCliWithStdin(["ring", "destroy", "--output", "json"], env, ["nope"]);
+    expect(r.exitCode, r.stderr).toBe(0);
+    expect(JSON.parse(r.stdout)).toMatchObject({ cancelled: true });
+    expect([..._store.values()]).toHaveLength(1);
   });
 });

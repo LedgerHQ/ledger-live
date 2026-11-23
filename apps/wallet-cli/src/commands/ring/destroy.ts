@@ -28,13 +28,24 @@ import {
 
 async function confirmDestroy(): Promise<boolean> {
   const rl = createInterface({ input: process.stdin, output: process.stderr });
-  const answer = await new Promise<string>(resolve => {
-    rl.question('Type "destroy" to confirm: ', ans => {
+  const answer = await new Promise<string | null>(resolve => {
+    rl.on("close", () => resolve(null));
+    rl.once("line", line => {
+      resolve(line.trim());
       rl.close();
-      resolve(ans.trim());
     });
+    rl.setPrompt('Type "destroy" to confirm: ');
+    rl.prompt();
   });
-  return answer === "destroy";
+  if (answer !== null) return answer === "destroy";
+
+  process.stderr.write("\n");
+  const declinedAtTerminal = process.stdin.isTTY === true;
+  if (declinedAtTerminal) return false;
+  throw new Error(
+    'No confirmation received: stdin ended before "destroy" was typed. Nothing was changed. ' +
+      'Run `wallet-cli ring destroy` in a terminal and type "destroy" at the prompt.',
+  );
 }
 
 const errMessage = (e: unknown): string => (e instanceof Error ? e.message : String(e));
