@@ -8,6 +8,7 @@ export * from "./ldmkSolanaSignerIsTxcActive";
 export * from "./ldmkTronSigner";
 export * from "./ldmkXrpSigner";
 export * from "./llmNanoSDeprecation";
+export * from "./lwmDieConnectNewDevice";
 export * from "./lwmMyWalletDeviceList";
 export * from "./myLedgerDisplayAppDeveloperName";
 export * from "./onboardingIgnoredOsUpdates";
