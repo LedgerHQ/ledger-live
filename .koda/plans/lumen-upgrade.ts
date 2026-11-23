@@ -85,6 +85,7 @@ const verifyCommand = [
   '  if [ -f "$dir/package.json" ] && { [ "$dir" != . ] || [ "$root" = . ]; }; then node -p "require(\'./$dir/package.json\').name"; fi',
   "done | sort -u)",
   'if [ -z "$packages" ]; then echo "No package changed besides the lockfiles."; exit 0; fi',
+  // `timeout` runs lintCommand as a program: a leading `cd` or `VAR=value` needs `sh -c '...'` or `env`.
   `timeout 1200 ${repo.lintCommand}`,
 ].join("\n");
 
@@ -146,6 +147,9 @@ const recorder = agent("recorder")
   .tools("read")
   .limits({ maxTurns: 4, timeoutMinutes: 5 });
 
+// Koda opens PRs as its GitHub app, but its commits are authored by this account.
+const kodaCommitters = ["ldg-github-ci"];
+
 // One upgrade PR at a time: `createBranch` adds a unique suffix, so without this each run opens another PR.
 const openPrExitCode = variable("openPrExitCode", z.number());
 const openPr = variable("openPr", z.string(), {
@@ -161,8 +165,9 @@ const checkOpenPrTask = task("check-open-pr")
       `n=$(gh pr list --state open --limit 1000 --json number,headRefName --jq '[.[] | select(.headRefName | startswith("${repo.branchPrefix}"))][0].number // empty') || exit 2`,
       '[ -z "$n" ] && exit 0',
       'gh pr view "$n" --json url,headRefName || exit 2',
-      // Empty logins (unlinked co-authors) and the bot's own login, with or without `app/` and `[bot]`, aren't people.
-      `owner=$(gh pr view "$n" --json author,commits --jq '(.author.login | ltrimstr("app/") | rtrimstr("[bot]")) as $bot | ([.commits[].authors[].login | select(. != null and . != "") | rtrimstr("[bot]") | select(. != $bot)] | unique | length) as $humans | if .author.is_bot and $humans == 0 then "bot" else "human" end') || exit 2`,
+      // Empty logins (unlinked co-authors), the bot's own login (with or without `app/` and `[bot]`) and the accounts
+      // Koda commits as aren't people.
+      `owner=$(gh pr view "$n" --json author,commits --jq '(.author.login | ltrimstr("app/") | rtrimstr("[bot]")) as $bot | ([.commits[].authors[].login | select(. != null and . != "") | rtrimstr("[bot]") | select(. != $bot) | ${kodaCommitters.map(login => `select(. != "${login}")`).join(" | ")}] | unique | length) as $humans | if .author.is_bot and $humans == 0 then "bot" else "human" end') || exit 2`,
       '[ "$owner" = bot ] && exit 1',
       'gh pr comment "$n" --body "A newer Lumen release is out. People have committed to this branch, so the automated upgrade left it unchanged: the next release after this PR merges picks up the rest." || exit 2',
       "exit 3",
@@ -284,6 +289,13 @@ const changesetTask = task("changeset")
   .uses(upgrader)
   .message(`${repo.changesetInstructions} Do not commit.`);
 
+// The changeset step can have nothing to add, and a commit with nothing staged would fail.
+const changesetExitCode = variable("changesetExitCode", z.number());
+const checkChangesetTask = task("check-changeset")
+  .runs('test -n "$(git status --porcelain)"')
+  .continueOnError()
+  .writes({ exit_code: changesetExitCode });
+
 const commitChangesetTask = task("commit-changeset")
   .uses(upgrader)
   .commit({ message: repo.changesetCommitMessage });
@@ -372,7 +384,12 @@ const migrate = b => {
 const commit = b => {
   const committed = b.do(commitTask);
   const listed = repo.changesetCommand ? committed.do(changesetScriptTask) : committed;
-  return repo.changesetInstructions ? listed.do(changesetTask).do(commitChangesetTask) : listed;
+  return repo.changesetInstructions
+    ? listed
+        .do(changesetTask)
+        .do(checkChangesetTask)
+        .do(commitChangesetTask, { when: changesetExitCode.eq(0) })
+    : listed;
 };
 
 const openPrSteps = b =>
