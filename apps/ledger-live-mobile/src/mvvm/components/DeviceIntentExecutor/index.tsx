@@ -101,9 +101,7 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, Result = undef
             bounces={false}
             showsVerticalScrollIndicator={false}
           >
-            {!hasHeaderOverride && (
-              <BottomSheetHeader density="expanded" lx={{ backgroundColor: "canvasSheet" }} />
-            )}
+            {!hasHeaderOverride && <BottomSheetHeader density="expanded" />}
             <BaseDeviceIntentExecutor
               {...wrappedProps}
               platformConfig={platformConfig}
