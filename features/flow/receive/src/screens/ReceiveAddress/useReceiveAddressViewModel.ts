@@ -46,7 +46,6 @@ export function useReceiveAddressViewModel({
     hasVerifyExecutor: !!VerifyAddressExecutor,
     onCopyAddress,
     onShareAddress,
-    onClose,
   });
 
   const address = useMemo(

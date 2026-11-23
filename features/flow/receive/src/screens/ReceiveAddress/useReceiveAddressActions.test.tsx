@@ -38,7 +38,6 @@ function setup(overrides: Partial<Parameters<typeof useReceiveAddressActions>[0]
         hasVerifyExecutor: true,
         onCopyAddress,
         onShareAddress,
-        onClose: jest.fn(),
         ...overrides,
       }),
     { wrapper: receiveTestWrapper(store) },

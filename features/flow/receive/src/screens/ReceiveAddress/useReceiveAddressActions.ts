@@ -24,7 +24,6 @@ type Params = Readonly<{
   hasVerifyExecutor: boolean;
   onCopyAddress?: (address: string) => Promise<boolean>;
   onShareAddress?: (address: string) => void;
-  onClose: () => void;
 }>;
 
 export type ReceiveAddressActions = Readonly<{
@@ -46,11 +45,10 @@ export function useReceiveAddressActions({
   hasVerifyExecutor,
   onCopyAddress,
   onShareAddress,
-  onClose,
 }: Params): ReceiveAddressActions {
   const dispatch = useDispatch();
   const hasSeenVerifyHint = useSelector(selectHasSeenReceiveVerifyHint);
-  const verifyFlow = useVerifyAddressFlow({ onCloseFlow: onClose });
+  const verifyFlow = useVerifyAddressFlow();
   // An object, not the address: copying the same address again must restart the feedback.
   const [copied, setCopied] = useState<Readonly<{ address: string }>>();
 
