@@ -166,6 +166,52 @@ export async function fetchTxHex(config: ExplorerConfig, txid: string): Promise<
   return data.hex;
 }
 
+/** True for an explorer answer saying the resource does not exist. */
+function isNotFound(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    error.name === "LedgerAPI4xx" &&
+    "status" in error &&
+    error.status === 404
+  );
+}
+
+/**
+ * A transaction, or `undefined` when the explorer does not know it (it never saw it, or dropped
+ * it): a 404, or an empty answer from an explorer version that answers with an array. Any other
+ * failure is rethrown.
+ */
+export async function fetchPendingTx(
+  config: ExplorerConfig,
+  txid: string,
+): Promise<ExplorerTx | undefined> {
+  try {
+    // As `fetchTx` reads it, but an empty answer is an unknown transaction too.
+    const data = await get<ExplorerTx | ExplorerTx[]>(`${explorerBaseUrl(config)}/tx/${txid}`);
+    return Array.isArray(data) ? data[0] : data;
+  } catch (error) {
+    if (isNotFound(error)) return undefined;
+    throw error;
+  }
+}
+
+/**
+ * A transaction's raw hex, or `undefined` when the explorer no longer has it: a dropped or replaced
+ * transaction can still be described by `/tx/{hash}` while its hex is gone. Any other failure is
+ * rethrown.
+ */
+export async function fetchPendingTxHex(
+  config: ExplorerConfig,
+  txid: string,
+): Promise<string | undefined> {
+  try {
+    return await fetchTxHex(config, txid);
+  } catch (error) {
+    if (isNotFound(error)) return undefined;
+    throw error;
+  }
+}
+
 /** Outputs of an address created and spent by mempool transactions. */
 export async function fetchPendingUtxos(
   config: ExplorerConfig,
