@@ -556,7 +556,7 @@ catalogs:
       version: 7.7.1
     '@types/ws':
       specifier: ^8.5.10
-      version: 8.5.10
+      version: 8.5.14
     '@typescript-eslint/parser':
       specifier: 8.72.1
       version: 8.72.1
@@ -6061,7 +6061,7 @@ importers:
         version: 0.12.2
       '@types/ws':
         specifier: 'catalog:'
-        version: 8.5.10
+        version: 8.5.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -8699,7 +8699,7 @@ importers:
         version: 24.12.0
       '@types/ws':
         specifier: 'catalog:'
-        version: 8.5.10
+        version: 8.5.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -25220,7 +25220,7 @@ importers:
         version: 2.0.3
       '@types/ws':
         specifier: 'catalog:'
-        version: 8.5.10
+        version: 8.5.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -34559,8 +34559,8 @@ packages:
   '@types/ws@7.4.7':
     resolution: {integrity: sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww==}
 
-  '@types/ws@8.5.10':
-    resolution: {integrity: sha512-vmQSUcfalpIq0R9q7uTo2lXs6eGIpt9wtnLdMv9LVpIjCA/+ufZRozlVoVelIYixx1ugCBKDhn89vnsEGOCx9A==}
+  '@types/ws@8.5.14':
+    resolution: {integrity: sha512-bd/YFLW+URhBzMXurx7lWByOu+xzU9+kb3RboOteXYDfW+tr+JZa99OyNmPINEGB/ahzKrEuc8rcv4gnpJmxTw==}
 
   '@types/yargs-parser@21.0.3':
     resolution: {integrity: sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==}
@@ -54099,7 +54099,7 @@ snapshots:
     dependencies:
       '@types/node': 24.12.0
 
-  '@types/ws@8.5.10':
+  '@types/ws@8.5.14':
     dependencies:
       '@types/node': 24.12.0
 
@@ -62955,7 +62955,7 @@ snapshots:
     dependencies:
       '@swc/helpers': 0.5.23
       '@types/uuid': 8.3.4
-      '@types/ws': 8.5.10
+      '@types/ws': 8.5.14
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       eventemitter3: 5.0.1
       uuid: 8.3.2
