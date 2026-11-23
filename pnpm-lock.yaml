@@ -693,8 +693,8 @@ catalogs:
       specifier: 9.5.1
       version: 9.5.1
     oxfmt:
-      specifier: 0.75.0
-      version: 0.75.0
+      specifier: 0.79.0
+      version: 0.79.0
     oxlint:
       specifier: 1.93.0
       version: 1.93.0
@@ -956,7 +956,7 @@ importers:
         version: 18.0.0
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -1059,7 +1059,7 @@ importers:
         version: 1.21.1(debug@4.4.3)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -1976,7 +1976,7 @@ importers:
         version: 24.0.6(@swc/core@1.15.11(@swc/helpers@0.5.23))
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -3127,7 +3127,7 @@ importers:
         version: 24.0.6(@swc/core@1.15.11(@swc/helpers@0.5.23))
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -3319,7 +3319,7 @@ importers:
         version: 3.2.0
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -3692,7 +3692,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       postcss:
         specifier: ^8.5.6
         version: 8.5.6
@@ -3740,7 +3740,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -3794,7 +3794,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -3848,7 +3848,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -3902,7 +3902,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -3983,7 +3983,7 @@ importers:
         version: 0.2.16
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -4050,7 +4050,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -4104,7 +4104,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -4158,7 +4158,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -4236,7 +4236,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -4290,7 +4290,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -4356,7 +4356,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -4410,7 +4410,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -4519,7 +4519,7 @@ importers:
         version: 0.2.16
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -4597,7 +4597,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -4805,7 +4805,7 @@ importers:
         version: 0.2.16
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -4914,7 +4914,7 @@ importers:
         version: 0.2.16
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -5037,7 +5037,7 @@ importers:
         version: 0.2.16
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -5164,7 +5164,7 @@ importers:
         version: 0.2.16
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -5263,7 +5263,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -5384,7 +5384,7 @@ importers:
         version: 0.2.16
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -5484,7 +5484,7 @@ importers:
         version: 0.2.16
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -5578,7 +5578,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -5683,7 +5683,7 @@ importers:
         version: 0.2.16
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -5779,7 +5779,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -5825,7 +5825,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -5903,7 +5903,7 @@ importers:
         version: 0.2.16
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -6015,7 +6015,7 @@ importers:
         version: 24.0.6(@swc/core@1.15.11(@swc/helpers@0.5.23))
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -6070,7 +6070,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -6185,7 +6185,7 @@ importers:
         version: 0.2.16
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -6242,7 +6242,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -6339,7 +6339,7 @@ importers:
         version: 0.2.16
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -6465,7 +6465,7 @@ importers:
         version: 0.2.16
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -6526,7 +6526,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -6566,7 +6566,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -6615,7 +6615,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -6682,7 +6682,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -6740,7 +6740,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -6795,7 +6795,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -6865,7 +6865,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -6953,7 +6953,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7011,7 +7011,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7066,7 +7066,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7118,7 +7118,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7170,7 +7170,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7228,7 +7228,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7271,7 +7271,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7314,7 +7314,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7363,7 +7363,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7418,7 +7418,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7458,7 +7458,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7498,7 +7498,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7547,7 +7547,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7602,7 +7602,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7648,7 +7648,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7697,7 +7697,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7734,7 +7734,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7771,7 +7771,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7804,7 +7804,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7847,7 +7847,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7893,7 +7893,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7936,7 +7936,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -7976,7 +7976,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8019,7 +8019,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8062,7 +8062,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8099,7 +8099,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8139,7 +8139,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8179,7 +8179,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8216,7 +8216,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8265,7 +8265,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8302,7 +8302,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8339,7 +8339,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8376,7 +8376,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8419,7 +8419,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8459,7 +8459,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8496,7 +8496,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8587,7 +8587,7 @@ importers:
         version: 45.3.4
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8741,7 +8741,7 @@ importers:
         version: 24.0.6(@swc/core@1.15.11(@swc/helpers@0.5.23))
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8790,7 +8790,7 @@ importers:
         version: 0.2.16
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8805,7 +8805,7 @@ importers:
     devDependencies:
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8820,7 +8820,7 @@ importers:
         version: typescript@7.0.2
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -8920,7 +8920,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -9014,7 +9014,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -9102,7 +9102,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -9187,7 +9187,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -9275,7 +9275,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -9372,7 +9372,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -9463,7 +9463,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -9572,7 +9572,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -9672,7 +9672,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -9730,7 +9730,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -9803,7 +9803,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -9888,7 +9888,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -9961,7 +9961,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -10028,7 +10028,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -10107,7 +10107,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -10177,7 +10177,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -10292,7 +10292,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -10386,7 +10386,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -10462,7 +10462,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -10526,7 +10526,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -10593,7 +10593,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -10696,7 +10696,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -10796,7 +10796,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -10905,7 +10905,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -10996,7 +10996,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -11081,7 +11081,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -11166,7 +11166,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -11284,7 +11284,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -11378,7 +11378,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -11466,7 +11466,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -11551,7 +11551,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -11642,7 +11642,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -11748,7 +11748,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -11824,7 +11824,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -11878,7 +11878,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -11956,7 +11956,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -12068,7 +12068,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -12162,7 +12162,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -12265,7 +12265,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -12389,7 +12389,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -12528,7 +12528,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -12667,7 +12667,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -12782,7 +12782,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -12864,7 +12864,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -12958,7 +12958,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -13070,7 +13070,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -13173,7 +13173,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -13273,7 +13273,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -13382,7 +13382,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -13488,7 +13488,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -13594,7 +13594,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -13745,7 +13745,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -13799,7 +13799,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -13854,7 +13854,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -13918,7 +13918,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -13979,7 +13979,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -14070,7 +14070,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -14143,7 +14143,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -14225,7 +14225,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -14280,7 +14280,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -14365,7 +14365,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -14429,7 +14429,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -14459,7 +14459,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -14580,7 +14580,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -14635,7 +14635,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -14702,7 +14702,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -14778,7 +14778,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -14848,7 +14848,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -14906,7 +14906,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -14958,7 +14958,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15025,7 +15025,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15080,7 +15080,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15153,7 +15153,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15187,7 +15187,7 @@ importers:
         version: typescript@7.0.2
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15242,7 +15242,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15291,7 +15291,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15331,7 +15331,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15365,7 +15365,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15414,7 +15414,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15487,7 +15487,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15539,7 +15539,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15585,7 +15585,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15618,7 +15618,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15676,7 +15676,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15731,7 +15731,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15795,7 +15795,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -15865,7 +15865,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -16041,7 +16041,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -16126,7 +16126,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -16220,7 +16220,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -16338,7 +16338,7 @@ importers:
         version: 2.2.0
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -16414,7 +16414,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -16511,7 +16511,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -16596,7 +16596,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -16690,7 +16690,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -16784,7 +16784,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -16890,7 +16890,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -16984,7 +16984,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -17072,7 +17072,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -17145,7 +17145,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -17230,7 +17230,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -17315,7 +17315,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -17400,7 +17400,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -17467,7 +17467,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -17555,7 +17555,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -17634,7 +17634,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -17737,7 +17737,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -17849,7 +17849,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -17943,7 +17943,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -18043,7 +18043,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -18134,7 +18134,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -18207,7 +18207,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -18286,7 +18286,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -18383,7 +18383,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -18435,7 +18435,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -18505,7 +18505,7 @@ importers:
         version: 0.8.4
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -18593,7 +18593,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -18675,7 +18675,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -18748,7 +18748,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -18821,7 +18821,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -18900,7 +18900,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -18961,7 +18961,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -19043,7 +19043,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -19116,7 +19116,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -19183,7 +19183,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -19253,7 +19253,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -19323,7 +19323,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -19390,7 +19390,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -19466,7 +19466,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -19545,7 +19545,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -19621,7 +19621,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -19694,7 +19694,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -19764,7 +19764,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -19831,7 +19831,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -19925,7 +19925,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -19965,7 +19965,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -19993,7 +19993,7 @@ importers:
         version: typescript@7.0.2
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -20066,7 +20066,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -20118,7 +20118,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -20218,7 +20218,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -20261,7 +20261,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -20289,7 +20289,7 @@ importers:
         version: typescript@7.0.2
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -20996,7 +20996,7 @@ importers:
         version: 13.5.4
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -21081,7 +21081,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -21136,7 +21136,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -21254,7 +21254,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -21343,7 +21343,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -21480,7 +21480,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -21599,7 +21599,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -21651,7 +21651,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -21742,7 +21742,7 @@ importers:
         version: 13.5.4
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -21818,7 +21818,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -21916,7 +21916,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -21971,7 +21971,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -22078,7 +22078,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -22133,7 +22133,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -22188,7 +22188,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -22353,7 +22353,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -22402,7 +22402,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -22506,7 +22506,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -22843,7 +22843,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -23049,7 +23049,7 @@ importers:
         version: typescript@7.0.2
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -23135,7 +23135,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -23422,7 +23422,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -23660,7 +23660,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -24026,7 +24026,7 @@ importers:
         version: typescript@7.0.2
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -24103,7 +24103,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -24399,7 +24399,7 @@ importers:
         version: 5.1.6
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -24535,7 +24535,7 @@ importers:
         version: 10.1.0
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -24638,7 +24638,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -24756,7 +24756,7 @@ importers:
         version: 0.7.0
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -24848,7 +24848,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -24897,7 +24897,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -24961,7 +24961,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25025,7 +25025,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25074,7 +25074,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25120,7 +25120,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25165,7 +25165,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25232,7 +25232,7 @@ importers:
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25272,7 +25272,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25312,7 +25312,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25361,7 +25361,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25419,7 +25419,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25470,7 +25470,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25513,7 +25513,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25574,7 +25574,7 @@ importers:
         version: 7.3.8(@lottiefiles/dotlottie-react@0.20.0(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25622,7 +25622,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25679,7 +25679,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25724,7 +25724,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25764,7 +25764,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25803,7 +25803,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25839,7 +25839,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25906,7 +25906,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -25981,7 +25981,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26035,7 +26035,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26114,7 +26114,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26172,7 +26172,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26235,7 +26235,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26299,7 +26299,7 @@ importers:
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26366,7 +26366,7 @@ importers:
         version: 30.5.2(@types/node@24.12.0)(babel-plugin-macros@3.1.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26390,7 +26390,7 @@ importers:
     devDependencies:
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26439,7 +26439,7 @@ importers:
         version: typescript@7.0.2
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26483,7 +26483,7 @@ importers:
         version: typescript@7.0.2
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26610,7 +26610,7 @@ importers:
         version: 19.0.0
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26634,7 +26634,7 @@ importers:
         version: 1.0.7(@typescript/typescript6@6.0.2)(core-js@3.47.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26652,7 +26652,7 @@ importers:
         version: 1.0.7(@typescript/typescript6@6.0.2)(core-js@3.47.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26673,7 +26673,7 @@ importers:
         version: 1.0.7(@typescript/typescript6@6.0.2)(core-js@3.47.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26694,7 +26694,7 @@ importers:
         version: 1.0.7(@typescript/typescript6@6.0.2)(core-js@3.47.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26715,7 +26715,7 @@ importers:
         version: 3.3.2
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -26736,7 +26736,7 @@ importers:
         version: 1.0.7(@typescript/typescript6@6.0.2)(core-js@3.47.0)
       oxfmt:
         specifier: 'catalog:'
-        version: 0.75.0
+        version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.93.0
@@ -30839,124 +30839,124 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@oxfmt/binding-android-arm-eabi@0.75.0':
-    resolution: {integrity: sha512-zHJ7LcTN46/5mtoLxsUu14pdF9ixFwDURtmxZ0CeNwqom5qB5NRVqU6o2GRZ7QPdNBW8G6j9UTJzQ+EDevMH0w==}
+  '@oxfmt/binding-android-arm-eabi@0.79.0':
+    resolution: {integrity: sha512-xOCQ/rvokUXs8SxOQY5Wy2ukPaZJZ0PmdJovN0ryB1c8DVEtbcvliLdYtINUYh8QOTpmBOctIisSJk9tvh+J6w==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm]
     os: [android]
 
-  '@oxfmt/binding-android-arm64@0.75.0':
-    resolution: {integrity: sha512-IdxsKZJvHZUvI7q6kLmzXdEFpFiBEDQw/WJtSp1QlzNXBw1JlLN3tY50WwWd4doPnq86XW4P+7BsQwu6meCW+w==}
+  '@oxfmt/binding-android-arm64@0.79.0':
+    resolution: {integrity: sha512-WMLDvCjjchUYtI6zXKOdzTDGm72BaYZiz1/VhB1rrxdakUZRlJh1aMr3CT6ui51uHcWVBycULIXSZHpw6u2pTQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [android]
 
-  '@oxfmt/binding-darwin-arm64@0.75.0':
-    resolution: {integrity: sha512-vyiqZilO5jal/nXZ0143NyKcP6TkzjaQdVEWU/kwgyWqugAgIRgAbrnO3MOF+e6LkQu3CrtrkPoc3mrsZZY6cA==}
+  '@oxfmt/binding-darwin-arm64@0.79.0':
+    resolution: {integrity: sha512-+LzSN7w7tULz96ntS1Uqe5oI00XZ0o/m/t3+eSfiQp3aTPnj2eGUafqEWryMLk84j7x9NiF+GEP2YT4/BfClgA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [darwin]
 
-  '@oxfmt/binding-darwin-x64@0.75.0':
-    resolution: {integrity: sha512-oua7eVqVe769mDam6ORcavygxTzG3ovo5QRQ1kJCPaEbnWXPYhtAiYDj8pajVmFjO7j8Elf3gInnWpTX0LLYtg==}
+  '@oxfmt/binding-darwin-x64@0.79.0':
+    resolution: {integrity: sha512-KFiMRhKeiiooaS1dKc4r8AZgOrfOhwVe1yf/aRef+8BajJwtVjMtlsQl/BNRxtkFbq13GjEo/4Q+9YhFGU4o6g==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [darwin]
 
-  '@oxfmt/binding-freebsd-x64@0.75.0':
-    resolution: {integrity: sha512-NWkbezhg7mx2Ep94g/TysR3c1bsISsU4lQ6t5xI4841PAk0Kqcn1+UEe+BoFH2/UK2YegPXq+OF+0bUcSvUalA==}
+  '@oxfmt/binding-freebsd-x64@0.79.0':
+    resolution: {integrity: sha512-lHVIp0g8ZOFKiqVscvttp+3HJkkRH6XkGgfAA0lVexIlE1mMFVp4V7RBdxz/P9p7T8pSNsYdapFWvdT21Mib9w==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [freebsd]
 
-  '@oxfmt/binding-linux-arm-gnueabihf@0.75.0':
-    resolution: {integrity: sha512-CAHX87kJplTq2E0OWP7opG8gEVlHc7CeLEi4nMJOyx3psuqBKf84HZ3UIkX2guWEJ5UljU2zJF0o46XylywVVA==}
+  '@oxfmt/binding-linux-arm-gnueabihf@0.79.0':
+    resolution: {integrity: sha512-Pt35GoxiMUfnr+23cuzk07XQVvISDFxxPcp/aFVB87+RQvJoQaBo/XN7Re9XxgElvbELdyxTLnV9XM2aTfJeUA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm]
     os: [linux]
 
-  '@oxfmt/binding-linux-arm-musleabihf@0.75.0':
-    resolution: {integrity: sha512-jmxYOiQzx2fp+OwQb7717K1zI8AMKEykw04sfr95/mU8SIL/oKgQq8nXH42sEznEquBL2RU7nLY36eBnYFT+vg==}
+  '@oxfmt/binding-linux-arm-musleabihf@0.79.0':
+    resolution: {integrity: sha512-zPi9Dni58VKp3r1QUcFvnbJNfBr49qyecq0vlM4SaX/MSjmguq77VngirghDua5tyhIDfqdUMTCK2KRlnZFp/g==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm]
     os: [linux]
 
-  '@oxfmt/binding-linux-arm64-gnu@0.75.0':
-    resolution: {integrity: sha512-eimaiAhx08dbOg12Fj3PYhymXY8vRbaiJB505vDXMy6ohne3Y1qTS0e5KEwFMq3LmDjEO+16BX38c/oXFI/SAQ==}
+  '@oxfmt/binding-linux-arm64-gnu@0.79.0':
+    resolution: {integrity: sha512-XhRehATEWjwX7VVEgDUD+7pfHYncQIJaEU0qsHvEKtu9XX0QYzcKvXhU9+URfiGX9WRh3wy2Ow+YCc3EeHtImg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@oxfmt/binding-linux-arm64-musl@0.75.0':
-    resolution: {integrity: sha512-bjSONIG1ba2xugr9oHQau0E6oPFYOMjPaa5hK/wpVC/Q1pcgf2BZMKwbuA8/cWzhWX5QV/UdPzD+rw1kQHpikQ==}
+  '@oxfmt/binding-linux-arm64-musl@0.79.0':
+    resolution: {integrity: sha512-gbVjFZYug0MEyqvuTAzXGNxFJmBqBO32o1Fud1lG8bGs6oVz48ZtNQyEcAzqrOwaaG+Sxtv4gVzcsfht9aqmkg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@oxfmt/binding-linux-ppc64-gnu@0.75.0':
-    resolution: {integrity: sha512-wDksWQXC/KZucISyqlhBtvpW+pyHh8z0Cjm6Qxiv22XlllM2Bx5gJGDnPYjV+H0lL+o1iqLlEli8jmBuRCLcjw==}
+  '@oxfmt/binding-linux-ppc64-gnu@0.79.0':
+    resolution: {integrity: sha512-0N0sD3vnllyuiNh1r6zKvNXWE/CakcPKJAespg7XE2+sfvxpz5Q1iFah8sF5aedsOmVvbZaOPZcSHVmMosT1fA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [ppc64]
     os: [linux]
     libc: [glibc]
 
-  '@oxfmt/binding-linux-riscv64-gnu@0.75.0':
-    resolution: {integrity: sha512-5JkNwViqaVuk4I+9+zgVrEYiHOAPXFxgDgP6iDnpdOBjm7XAHAOjSvolHZZAokWPx7CGOw8tKteXmn4WPIInaQ==}
+  '@oxfmt/binding-linux-riscv64-gnu@0.79.0':
+    resolution: {integrity: sha512-YtjqUHolcX6cv0ZMZuKQCM4H0ae/okcowy0wGcPHJk4O+8zjy3TvNhzDQ1/KGCkMJO8Fwulm1JcPJsraVJ3p+w==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [riscv64]
     os: [linux]
     libc: [glibc]
 
-  '@oxfmt/binding-linux-riscv64-musl@0.75.0':
-    resolution: {integrity: sha512-1EVqRIE0eZLB08j3ZCVN47Ors7LCXGmOI+3xJYgyoFUKUerD3Glxb+Q1Bp3lK8NeT5R3ZdS9uhX/wobNBYZ6jw==}
+  '@oxfmt/binding-linux-riscv64-musl@0.79.0':
+    resolution: {integrity: sha512-H2gb9bEBr5tcdP5FU8JYTfgOavXDorWcAAlwci/zEKF2jzgh/oEr/SAw6aHB9n3FLEvnKvOh0A1fjku+vgYoUA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [riscv64]
     os: [linux]
     libc: [musl]
 
-  '@oxfmt/binding-linux-s390x-gnu@0.75.0':
-    resolution: {integrity: sha512-UJWRVNT6Yuw4ssLv2BwaBUWU1GWtByE+EnoHu8I+P1t8Kn+WozYU5WYOqb5aj8gbXJJ8gGZt+w40Hi/7L6iVLw==}
+  '@oxfmt/binding-linux-s390x-gnu@0.79.0':
+    resolution: {integrity: sha512-aZUbyWW5dSOxT/u6suWc4S9GVDt7YPPNMKQon+z79M8dpXmosadcFHAb7jBhpU7Hdsd2GN6/y3nd0JFTsGddZw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [s390x]
     os: [linux]
     libc: [glibc]
 
-  '@oxfmt/binding-linux-x64-gnu@0.75.0':
-    resolution: {integrity: sha512-FHdvHhyz8ChBctBUvVGti49kSEwANd1PZQwlXUEoF9Ed4plxXxk/wWc0mfZmrze2lRgmME7ytDmVIOixYauQhg==}
+  '@oxfmt/binding-linux-x64-gnu@0.79.0':
+    resolution: {integrity: sha512-5pW/ZHYfjjQ71gQR+EKzDz8ZzWIDHlTUtWtxVFNgZbKxVZnRxiSXVrllbjpJtx1q8VtSPZ+Lyg9BLny3yw+PTA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@oxfmt/binding-linux-x64-musl@0.75.0':
-    resolution: {integrity: sha512-6MjtsF96s9mSBV0GEwUe4pOFPP2Mz7ahcHPAit0DSKL5fM6oMM7RG1zvYxwB7+SBkIxsWBRhhxuqmy7pibNwsA==}
+  '@oxfmt/binding-linux-x64-musl@0.79.0':
+    resolution: {integrity: sha512-3IVUerTDB7Dvd90c1EurAzlVnlE9Azl7Wn8e33qX3wL/IqnslF+P7HvwkD+VeMbHxRtuw0EEBGSArZFXpUAZrQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@oxfmt/binding-openharmony-arm64@0.75.0':
-    resolution: {integrity: sha512-1D6T6aL1Pj+U5GLxqwV1fKjUJ5+FFm+bn7UrqNDMveZmWs0jo/3vc+dzzuV/jF/FdVo12gowODk3SnAO2YOwLg==}
+  '@oxfmt/binding-openharmony-arm64@0.79.0':
+    resolution: {integrity: sha512-C5QDgJBtu9+/2BQScoP7ynv54PLOqfoSqhRWwI0D0RPOwYD4tYj0TUdJbXMO1fNegL/5zJiSOxkq6II2xvttWg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [openharmony]
 
-  '@oxfmt/binding-win32-arm64-msvc@0.75.0':
-    resolution: {integrity: sha512-RX2eUmy7J/nM8+tnM3nzR8t1eqkwj1q8Kgo7beA+4DVgKYYHHyrEa3qEmthxw7Z+HqpCCEOWuoqa+jelo9/w2Q==}
+  '@oxfmt/binding-win32-arm64-msvc@0.79.0':
+    resolution: {integrity: sha512-zlW1m8M49vNGgqQF/ze80KW8pZMicnW2XDZGBHuYtXTRYn4ewvgpqN9wwoqb6uLZZfb1R1zaQWKEB8cs7KYjwA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [win32]
 
-  '@oxfmt/binding-win32-ia32-msvc@0.75.0':
-    resolution: {integrity: sha512-UpKta0iSZmPLII0dYXYdbzdBTsGREUbSHLqgLdtKcqBvs40qjmUz+cgUcaU1smPx13DfbEG4XqnaSn5MoFN0og==}
+  '@oxfmt/binding-win32-ia32-msvc@0.79.0':
+    resolution: {integrity: sha512-wbb7hFv2wK3SCTfu8dl1ydNsXM5dmH+PJMU3sojCkfKcG29VDpITL5/AtouCzXjkOc90QRkcAZcg36gP0KqoHA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [ia32]
     os: [win32]
 
-  '@oxfmt/binding-win32-x64-msvc@0.75.0':
-    resolution: {integrity: sha512-pjiLiCk0QMCWxs0n5XiNU85YLAKA+wJxPjxlDVygmr4bP4glcfTU2nOpso5nR4Rdi2Pxv5YwakD4UE+eh7M0BQ==}
+  '@oxfmt/binding-win32-x64-msvc@0.79.0':
+    resolution: {integrity: sha512-JLaeaQ+4LkQiVXY06JIV1dBFEDJzssvDieK/3Poi6CsY+c4UxghZVrrsfcKGJ5R/0F2Sw3C5Lf5Hu0sM5qJfPw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [win32]
@@ -40566,8 +40566,8 @@ packages:
   oxc-resolver@11.24.2:
     resolution: {integrity: sha512-FY91FiDBj7ls5MsFS9jN3tjz2o0/zsdSsymlakySaBwVJZorHhkWyICLZMKxlu1R9vYo+sd3z1jwb4J8x7bNDw==}
 
-  oxfmt@0.75.0:
-    resolution: {integrity: sha512-/ZKvY5asfsVi9hdkOmRIumqOPu6kxlTgiJSZf54uq29kKew+Gu1FFAnEkGePyvLVW+MAYu41D6XggnzoElQzPw==}
+  oxfmt@0.79.0:
+    resolution: {integrity: sha512-92iLHGxAgtYk6jLp/1ZBnEeABveNduHZgMDQj7tyqO9iafuJG3q+YHJq0R5Aa4YT+E6xswMQXdmPZYMwynS8ig==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
@@ -41952,10 +41952,6 @@ packages:
   ripemd160@2.0.2:
     resolution: {integrity: sha512-ii4iagi25WusVoiC4B4lq7pbXfAp3D9v5CwfkY33vffw2+pkDjY1D8GaN7spsxvCSx8dkPqOZCEZyfxcmJG2IA==}
 
-  ripple-address-codec@4.3.1:
-    resolution: {integrity: sha512-Qa3+9wKVvpL/xYtT6+wANsn0A1QcC5CT6IMZbRJZ/1lGt7gmwIfsrCuz1X0+LCEO7zgb+3UT1I1dc0k/5dwKQQ==}
-    engines: {node: '>= 10'}
-
   ripple-address-codec@5.0.0:
     resolution: {integrity: sha512-de7osLRH/pt5HX2xw2TRJtbdLLWHu0RXirpQaEeCnWKY5DYHykh3ETSkofvm0aX0LJiV7kwkegJxQkmbO94gWw==}
     engines: {node: '>= 16'}
@@ -41963,10 +41959,6 @@ packages:
   ripple-address-codec@5.0.1:
     resolution: {integrity: sha512-JQHLKuVJV8lv9Qobmn4aUM2Dpv9WRRLKnNWfM8tN02fAbUtG8mUPsu9q9UYX8P76G4qzytEc5ZKMp/3JggNYmw==}
     engines: {node: '>= 18'}
-
-  ripple-binary-codec@1.11.0:
-    resolution: {integrity: sha512-g7+gs3T+NfoeW6vIq5dcN0CkIT4t/zwRzFxz8X2RzfbrWRnewPUKqQbmBgs05tXLX5NuWPaneiaAVpFpYBcdfw==}
-    engines: {node: '>= 10'}
 
   ripple-binary-codec@2.11.0:
     resolution: {integrity: sha512-qad61CYAqIi8H7DuPnuDpj40wrXY8wYrc1YbuDcA9G/NZG0Uu8unHNbTC6Itz8SlOSL0P/nF/8HTFW/1caVlTg==}
@@ -49647,61 +49639,61 @@ snapshots:
   '@oxc-resolver/binding-win32-x64-msvc@11.24.2':
     optional: true
 
-  '@oxfmt/binding-android-arm-eabi@0.75.0':
+  '@oxfmt/binding-android-arm-eabi@0.79.0':
     optional: true
 
-  '@oxfmt/binding-android-arm64@0.75.0':
+  '@oxfmt/binding-android-arm64@0.79.0':
     optional: true
 
-  '@oxfmt/binding-darwin-arm64@0.75.0':
+  '@oxfmt/binding-darwin-arm64@0.79.0':
     optional: true
 
-  '@oxfmt/binding-darwin-x64@0.75.0':
+  '@oxfmt/binding-darwin-x64@0.79.0':
     optional: true
 
-  '@oxfmt/binding-freebsd-x64@0.75.0':
+  '@oxfmt/binding-freebsd-x64@0.79.0':
     optional: true
 
-  '@oxfmt/binding-linux-arm-gnueabihf@0.75.0':
+  '@oxfmt/binding-linux-arm-gnueabihf@0.79.0':
     optional: true
 
-  '@oxfmt/binding-linux-arm-musleabihf@0.75.0':
+  '@oxfmt/binding-linux-arm-musleabihf@0.79.0':
     optional: true
 
-  '@oxfmt/binding-linux-arm64-gnu@0.75.0':
+  '@oxfmt/binding-linux-arm64-gnu@0.79.0':
     optional: true
 
-  '@oxfmt/binding-linux-arm64-musl@0.75.0':
+  '@oxfmt/binding-linux-arm64-musl@0.79.0':
     optional: true
 
-  '@oxfmt/binding-linux-ppc64-gnu@0.75.0':
+  '@oxfmt/binding-linux-ppc64-gnu@0.79.0':
     optional: true
 
-  '@oxfmt/binding-linux-riscv64-gnu@0.75.0':
+  '@oxfmt/binding-linux-riscv64-gnu@0.79.0':
     optional: true
 
-  '@oxfmt/binding-linux-riscv64-musl@0.75.0':
+  '@oxfmt/binding-linux-riscv64-musl@0.79.0':
     optional: true
 
-  '@oxfmt/binding-linux-s390x-gnu@0.75.0':
+  '@oxfmt/binding-linux-s390x-gnu@0.79.0':
     optional: true
 
-  '@oxfmt/binding-linux-x64-gnu@0.75.0':
+  '@oxfmt/binding-linux-x64-gnu@0.79.0':
     optional: true
 
-  '@oxfmt/binding-linux-x64-musl@0.75.0':
+  '@oxfmt/binding-linux-x64-musl@0.79.0':
     optional: true
 
-  '@oxfmt/binding-openharmony-arm64@0.75.0':
+  '@oxfmt/binding-openharmony-arm64@0.79.0':
     optional: true
 
-  '@oxfmt/binding-win32-arm64-msvc@0.75.0':
+  '@oxfmt/binding-win32-arm64-msvc@0.79.0':
     optional: true
 
-  '@oxfmt/binding-win32-ia32-msvc@0.75.0':
+  '@oxfmt/binding-win32-ia32-msvc@0.79.0':
     optional: true
 
-  '@oxfmt/binding-win32-x64-msvc@0.75.0':
+  '@oxfmt/binding-win32-x64-msvc@0.79.0':
     optional: true
 
   '@oxlint/binding-android-arm-eabi@1.93.0':
@@ -61452,29 +61444,29 @@ snapshots:
       '@oxc-resolver/binding-win32-arm64-msvc': 11.24.2
       '@oxc-resolver/binding-win32-x64-msvc': 11.24.2
 
-  oxfmt@0.75.0:
+  oxfmt@0.79.0:
     dependencies:
       tinypool: 2.2.0
     optionalDependencies:
-      '@oxfmt/binding-android-arm-eabi': 0.75.0
-      '@oxfmt/binding-android-arm64': 0.75.0
-      '@oxfmt/binding-darwin-arm64': 0.75.0
-      '@oxfmt/binding-darwin-x64': 0.75.0
-      '@oxfmt/binding-freebsd-x64': 0.75.0
-      '@oxfmt/binding-linux-arm-gnueabihf': 0.75.0
-      '@oxfmt/binding-linux-arm-musleabihf': 0.75.0
-      '@oxfmt/binding-linux-arm64-gnu': 0.75.0
-      '@oxfmt/binding-linux-arm64-musl': 0.75.0
-      '@oxfmt/binding-linux-ppc64-gnu': 0.75.0
-      '@oxfmt/binding-linux-riscv64-gnu': 0.75.0
-      '@oxfmt/binding-linux-riscv64-musl': 0.75.0
-      '@oxfmt/binding-linux-s390x-gnu': 0.75.0
-      '@oxfmt/binding-linux-x64-gnu': 0.75.0
-      '@oxfmt/binding-linux-x64-musl': 0.75.0
-      '@oxfmt/binding-openharmony-arm64': 0.75.0
-      '@oxfmt/binding-win32-arm64-msvc': 0.75.0
-      '@oxfmt/binding-win32-ia32-msvc': 0.75.0
-      '@oxfmt/binding-win32-x64-msvc': 0.75.0
+      '@oxfmt/binding-android-arm-eabi': 0.79.0
+      '@oxfmt/binding-android-arm64': 0.79.0
+      '@oxfmt/binding-darwin-arm64': 0.79.0
+      '@oxfmt/binding-darwin-x64': 0.79.0
+      '@oxfmt/binding-freebsd-x64': 0.79.0
+      '@oxfmt/binding-linux-arm-gnueabihf': 0.79.0
+      '@oxfmt/binding-linux-arm-musleabihf': 0.79.0
+      '@oxfmt/binding-linux-arm64-gnu': 0.79.0
+      '@oxfmt/binding-linux-arm64-musl': 0.79.0
+      '@oxfmt/binding-linux-ppc64-gnu': 0.79.0
+      '@oxfmt/binding-linux-riscv64-gnu': 0.79.0
+      '@oxfmt/binding-linux-riscv64-musl': 0.79.0
+      '@oxfmt/binding-linux-s390x-gnu': 0.79.0
+      '@oxfmt/binding-linux-x64-gnu': 0.79.0
+      '@oxfmt/binding-linux-x64-musl': 0.79.0
+      '@oxfmt/binding-openharmony-arm64': 0.79.0
+      '@oxfmt/binding-win32-arm64-msvc': 0.79.0
+      '@oxfmt/binding-win32-ia32-msvc': 0.79.0
+      '@oxfmt/binding-win32-x64-msvc': 0.79.0
 
   oxlint@1.93.0:
     optionalDependencies:
@@ -62905,11 +62897,6 @@ snapshots:
       hash-base: 3.0.4
       inherits: 2.0.4
 
-  ripple-address-codec@4.3.1:
-    dependencies:
-      base-x: 3.0.9
-      create-hash: 1.2.0
-
   ripple-address-codec@5.0.0(bufferutil@4.1.0)(utf-8-validate@6.0.6):
     dependencies:
       '@scure/base': 1.2.6
@@ -62925,15 +62912,6 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
-
-  ripple-binary-codec@1.11.0:
-    dependencies:
-      assert: 2.1.0
-      big-integer: 1.6.52
-      buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
-      create-hash: 1.2.0
-      decimal.js: 10.6.0
-      ripple-address-codec: 4.3.1
 
   ripple-binary-codec@2.11.0(bufferutil@4.1.0)(utf-8-validate@6.0.6):
     dependencies:
