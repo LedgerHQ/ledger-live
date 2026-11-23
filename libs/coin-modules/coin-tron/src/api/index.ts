@@ -13,6 +13,7 @@ import {
   Block,
   AddressValidationCurrencyParameters,
 } from "@ledgerhq/coin-module-framework/api/index";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronContext, TronCoinConfig } from "../config";
 import {
   broadcast,
@@ -236,24 +237,24 @@ function timestampOf(block: { height: number; time?: Date }): number {
 }
 
 async function minTimestampOf(
-  context: TronContext,
+  logger: Logger,
   config: TronCoinConfig,
   minHeight: number,
 ): Promise<number> {
   if (minHeight <= 0) {
     return defaultFetchParams.minTimestamp;
   }
-  const blockAtMinHeight = await findBlock(context.logger, config, minHeight);
+  const blockAtMinHeight = await findBlock(logger, config, minHeight);
   if (blockAtMinHeight) {
     return timestampOf(blockAtMinHeight);
   }
-  const tip = await getLastBlock(context.logger, config);
+  const tip = await getLastBlock(logger, config);
   const minHeightStillAfterTip = tip.height < minHeight;
   if (minHeightStillAfterTip) {
     const justAfterTip = timestampOf(tip) + 1;
     return justAfterTip;
   }
-  const produced = await findBlock(context.logger, config, minHeight);
+  const produced = await findBlock(logger, config, minHeight);
   if (!produced) {
     throw new Error(`Block ${minHeight} not found although the tip is at ${tip.height}`);
   }
@@ -272,7 +273,7 @@ async function listOperations(
   const effectiveLimit = limit ?? MAX_TRONGRID_LIMIT;
   const effectiveOrder = order ?? "asc";
 
-  const minTimestamp = await minTimestampOf(context, config, minHeight);
+  const minTimestamp = await minTimestampOf(context.logger, config, minHeight);
 
   return listOperationsLogic(context.logger, config, address, {
     limit: effectiveLimit,
