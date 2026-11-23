@@ -6,11 +6,7 @@ import {
   ConnectNewDeviceUIStateTypes,
   useDeviceManagementKit,
 } from "@ledgerhq/live-dmk-mobile";
-import {
-  mapConnectedDeviceToKnownDevice,
-  useIsNewDevice,
-  useSaveConnectedDevice,
-} from "LLM/components/DeviceConnection";
+import { useIsNewConnectedDevice, useSaveConnectedDevice } from "LLM/components/DeviceConnection";
 import {
   getConnectedDeviceTrackingProperties,
   trackDeviceConnected,
@@ -47,17 +43,17 @@ export function useConnectNewDeviceViewModel({
   const dmk = useDeviceManagementKit();
   const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
   const saveConnectedDevice = useSaveConnectedDevice();
-  const isNewDevice = useIsNewDevice();
+  const isNewConnectedDevice = useIsNewConnectedDevice();
   const [viewState, setViewState] = useState<ViewState>({
     state: INITIAL_STATE,
     lastNonErrorState: INITIAL_STATE,
   });
 
   // The flow starts once per mount: callers can pass new callbacks without restarting it.
-  const callbacksRef = useRef({ onConnected, onClose, sourceFlow, isNewDevice });
+  const callbacksRef = useRef({ onConnected, onClose, sourceFlow, isNewConnectedDevice });
   useEffect(() => {
-    callbacksRef.current = { onConnected, onClose, sourceFlow, isNewDevice };
-  }, [onConnected, onClose, sourceFlow, isNewDevice]);
+    callbacksRef.current = { onConnected, onClose, sourceFlow, isNewConnectedDevice };
+  }, [onConnected, onClose, sourceFlow, isNewConnectedDevice]);
   const initialDelaysRef = useRef(delays);
 
   if (!dmk) {
@@ -75,9 +71,7 @@ export function useConnectNewDeviceViewModel({
           sourceFlow: callbacksRef.current.sourceFlow,
           ...getConnectedDeviceTrackingProperties(connectedDevice),
           extraProperties: {
-            isNewDevice: callbacksRef.current.isNewDevice(
-              mapConnectedDeviceToKnownDevice(connectedDevice),
-            ),
+            isNewDevice: callbacksRef.current.isNewConnectedDevice(connectedDevice),
           },
         });
         saveConnectedDevice(connectedDevice);

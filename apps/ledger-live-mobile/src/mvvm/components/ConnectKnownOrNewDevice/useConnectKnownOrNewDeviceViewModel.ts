@@ -17,11 +17,7 @@ import {
 import { buildMockServerCompatDeviceId, type KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { BehaviorSubject } from "rxjs";
 import { isErrorState } from "LLM/components/ConnectNewDevice";
-import {
-  mapConnectedDeviceToKnownDevice,
-  useIsNewDevice,
-  useSaveConnectedDevice,
-} from "LLM/components/DeviceConnection";
+import { useIsNewConnectedDevice, useSaveConnectedDevice } from "LLM/components/DeviceConnection";
 import {
   getConnectedDeviceTrackingProperties,
   trackDeviceConnected,
@@ -149,7 +145,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   const knownDevices = useSelector(knownDevicesSelector);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const saveConnectedDevice = useSaveConnectedDevice();
-  const isNewDevice = useIsNewDevice();
+  const isNewConnectedDevice = useIsNewConnectedDevice();
   const isFocused = useIsFocused();
   const isAppInBackground = useIsAppInBackground({ includeInactive: false });
   const shouldPause = isPaused || !isFocused || isAppInBackground;
@@ -169,7 +165,7 @@ export function useConnectKnownOrNewDeviceViewModel({
     mockServerDevices,
     lastConnectedDevice,
     shouldPause,
-    isNewDevice,
+    isNewConnectedDevice,
   });
   useLayoutEffect(() => {
     latestRef.current = {
@@ -180,7 +176,7 @@ export function useConnectKnownOrNewDeviceViewModel({
       mockServerDevices,
       lastConnectedDevice,
       shouldPause,
-      isNewDevice,
+      isNewConnectedDevice,
     };
   });
   // The flow calls onConnected before it emits the state that follows the connection.
@@ -223,9 +219,7 @@ export function useConnectKnownOrNewDeviceViewModel({
             sourceFlow: latestRef.current.sourceFlow,
             ...getConnectedDeviceTrackingProperties(connectedDevice),
             extraProperties: {
-              isNewDevice: latestRef.current.isNewDevice(
-                mapConnectedDeviceToKnownDevice(connectedDevice),
-              ),
+              isNewDevice: latestRef.current.isNewConnectedDevice(connectedDevice),
             },
           });
         }
