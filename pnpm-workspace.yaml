@@ -159,7 +159,7 @@ catalog:
   "@typescript-eslint/parser": 8.72.1
   typescript: "npm:@typescript/typescript6@^6.0.2"
   "@typescript/native": "npm:typescript@^7.0.2"
-  "@types/node": 24.12.0
+  "@types/node": 24.12.4
   "@gorhom/bottom-sheet": 5.2.7
   axios: 1.21.1
   babel-jest: 30.5.2
