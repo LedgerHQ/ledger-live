@@ -61,30 +61,34 @@ export function useReceiveAddressViewModel({
     [selected, header.data, selection.options.length, copy.addressOptionLabels],
   );
 
+  const error =
+    data.type === "error"
+      ? {
+          title: copy.errorTitle,
+          description: copy.errorDescription,
+          retryLabel: copy.retryLabel,
+          onRetry: data.retry,
+        }
+      : undefined;
+  const addressSelection = selection.isSelecting
+    ? {
+        title: copy.selectAddressTitle,
+        options: selection.options.map(({ id }) => ({ id, label: copy.addressOptionLabels[id] })),
+        onSelect: selection.select,
+      }
+    : undefined;
+  const actionsPlaceholderLabel = [actions.copy, actions.share, actions.verify]
+    .map(action => action?.label)
+    .filter(Boolean)
+    .join(" · ");
+
   return {
     isLoading: data.type === "loading",
-    error:
-      data.type === "error"
-        ? {
-            title: copy.errorTitle,
-            description: copy.errorDescription,
-            retryLabel: copy.retryLabel,
-            onRetry: data.retry,
-          }
-        : undefined,
-    addressSelection: selection.isSelecting
-      ? {
-          title: copy.selectAddressTitle,
-          options: selection.options.map(({ id }) => ({ id, label: copy.addressOptionLabels[id] })),
-          onSelect: selection.select,
-        }
-      : undefined,
+    error,
+    addressSelection,
     address,
     actions,
-    actionsPlaceholderLabel: [actions.copy, actions.share, actions.verify]
-      .map(action => action?.label)
-      .filter(Boolean)
-      .join(" · "),
+    actionsPlaceholderLabel,
     verification,
     title: header.title,
     networkLabel: header.networkLabel,
