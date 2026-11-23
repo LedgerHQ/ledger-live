@@ -270,19 +270,69 @@ describe("deadlines", () => {
   });
 });
 
-describe("adminGet", () => {
-  it("returns the parsed body", async () => {
-    fetchMock.mockResolvedValue(json({ protocolMagic: 42 }));
+// Error and POST answers carry no body: yaci.ts cancels a body it does not read, and that cancel never
+// settles on an MSW response.
+describe("admin API over HTTP", () => {
+  const ADMIN_API = "http://localhost:10000/local-cluster/api";
+  const server = setupServer();
+  const devnetEndpoint = jest.fn<Response, []>();
+  const topupEndpoint = jest.fn<Response, []>();
+  const utxosEndpoint = jest.fn<Response, []>();
+  let interceptedFetch: typeof fetch;
 
-    await expect(adminGet("/admin/devnet")).resolves.toEqual({ protocolMagic: 42 });
+  beforeAll(() => {
+    server.listen({ onUnhandledRequest: "error" });
+    interceptedFetch = global.fetch;
+  });
+  afterAll(() => server.close());
+
+  beforeEach(() => {
+    global.fetch = interceptedFetch;
+    devnetEndpoint.mockReset();
+    topupEndpoint.mockReset();
+    utxosEndpoint.mockReset();
+    server.use(
+      http.get(`${ADMIN_API}/admin/devnet`, () => devnetEndpoint()),
+      http.post(`${ADMIN_API}/addresses/topup`, () => topupEndpoint()),
+      http.get(`${YACI_STORE_API}/addresses/${ADDRESS}/utxos`, () => utxosEndpoint()),
+    );
   });
 
-  it("throws with the status on a non-2xx answer", async () => {
-    fetchMock.mockResolvedValue(json({}, 500));
+  afterEach(() => {
+    server.resetHandlers();
+    jest.useRealTimers();
+  });
+
+  it("returns the parsed body of an admin GET", async () => {
+    devnetEndpoint.mockReturnValue(HttpResponse.json({ protocolMagic: 42 }));
+
+    await expect(adminGet("/admin/devnet")).resolves.toEqual({ protocolMagic: 42 });
+    expect(devnetEndpoint).toHaveBeenCalledTimes(1);
+  });
+
+  it("throws with the status on a non-2xx admin GET", async () => {
+    devnetEndpoint.mockReturnValue(new HttpResponse(null, { status: 500 }));
 
     await expect(adminGet("/admin/devnet")).rejects.toThrow(
       "Yaci admin GET /admin/devnet failed: 500",
     );
+  });
+
+  it("retries a faucet that answers 5xx", async () => {
+    jest.useFakeTimers();
+    topupEndpoint
+      .mockReturnValueOnce(new HttpResponse(null, { status: 500 }))
+      .mockReturnValueOnce(new HttpResponse(null));
+    utxosEndpoint
+      .mockReturnValueOnce(HttpResponse.json([]))
+      .mockImplementation(() => HttpResponse.json([utxo("funding", "100000000")]));
+
+    const done = topup(ADDRESS, 100);
+    await jest.advanceTimersByTimeAsync(5_000);
+    await expect(done).resolves.toBeUndefined();
+
+    expect(topupEndpoint).toHaveBeenCalledTimes(2);
+    expect(warnings()).toEqual([expect.stringContaining("/addresses/topup attempt 1 failed")]);
   });
 });
 
@@ -399,22 +449,6 @@ describe("topup", () => {
     await topup(ADDRESS, 100);
 
     expect(calls(`/addresses/${ADDRESS}/utxos`)).toHaveLength(3);
-  });
-
-  it("retries a faucet that answers 5xx", async () => {
-    jest.useFakeTimers();
-    const faucet = [json({ status: false, message: "Topup failed" }, 500), json({ status: true })];
-    const snapshots = [[], [utxo("funding", "100000000")]];
-    fetchMock.mockImplementation(async (url: string) =>
-      url.endsWith("/addresses/topup") ? faucet.shift() : json(snapshots.shift() ?? []),
-    );
-
-    const done = topup(ADDRESS, 100);
-    await jest.advanceTimersByTimeAsync(5_000);
-    await expect(done).resolves.toBeUndefined();
-
-    expect(calls("/addresses/topup")).toHaveLength(2);
-    expect(warnings()).toEqual([expect.stringContaining("/addresses/topup attempt 1 failed")]);
   });
 
   it("reads an unknown address as having no UTXOs", async () => {
