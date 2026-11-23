@@ -1,4 +1,7 @@
 import { createDynamicMiddleware, type Middleware } from "@reduxjs/toolkit";
+import { from, lastValueFrom, mergeMap, toArray } from "rxjs";
+import type { Account } from "@ledgerhq/types-live";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { AccountDataSource } from "@domain/api-account-data";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { withCountervalues, type CountervaluesHost } from "@domain/api-market-countervalues";
@@ -12,6 +15,8 @@ import { countervaluesStateSelector } from "@features/platform-market-counterval
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
 import { createCoinModuleHost } from "@ledgerhq/live-common/account-data/coin-module/createCoinModuleHost";
+import { syncDetached } from "@ledgerhq/live-common/account-data/full-sync/syncDetached";
+import { heldAccountMatcher } from "@ledgerhq/live-common/account-data/discovery/heldAccounts";
 import {
   createFullSyncSource,
   type FullSyncHost,
@@ -113,3 +118,47 @@ export function connectAccounts(store: AccountsReduxStore<{ accounts: AccountsSt
 /** Account discovery on the Device Intent session, with the legacy scan rules: UI reaches account data only through this file. */
 export { deriveOnSession } from "@ledgerhq/live-common/account-data/discovery/deriveOnSession";
 export { legacyScanRules } from "@ledgerhq/live-common/account-data/discovery/legacyScanRules";
+export {
+  completeOnSession,
+  needsCompletion,
+} from "@ledgerhq/live-common/account-data/discovery/completeOnSession";
+export { heldAccountMatcher };
+export { placeholderUnsupportedReason } from "@ledgerhq/live-common/account-data/full-sync/placeholderAccount";
+
+const DISCOVERED_SYNC_CONCURRENCY = 4;
+
+/** Syncs discovered accounts the store does not hold, a few at once, so each carries its family resources. */
+export function syncDiscoveredAccounts(
+  descriptors: readonly AccountDescriptor[],
+  getState: () => State,
+): Promise<PromiseSettledResult<Account>[]> {
+  const options = { prepareCurrency, blacklistedTokenIds: blacklistedTokenIdsSelector(getState()) };
+  return lastValueFrom(
+    from(descriptors).pipe(
+      mergeMap(
+        descriptor =>
+          syncDetached(descriptor, options, undefined).then(
+            (value): PromiseSettledResult<Account> => ({ status: "fulfilled", value }),
+            (reason: unknown): PromiseSettledResult<Account> => ({ status: "rejected", reason }),
+          ),
+        DISCOVERED_SYNC_CONCURRENCY,
+      ),
+      toArray(),
+    ),
+  );
+}
+
+/** The synced accounts the store does not hold yet, matched as discovery matches them (an EVM address in any case). */
+export function notHeldAccounts(
+  existing: readonly Account[],
+  synced: readonly Account[],
+): Account[] {
+  const isHeld = heldAccountMatcher(existing);
+  return synced.filter(account => {
+    try {
+      return !isHeld(fromLegacyAccount(account));
+    } catch {
+      return true;
+    }
+  });
+}

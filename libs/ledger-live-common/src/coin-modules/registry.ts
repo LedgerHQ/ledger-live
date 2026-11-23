@@ -89,6 +89,14 @@ export function getAccountKeyCodec(family: string): AccountKeyCodec | undefined 
   return loaders.get(family)?.accountKey;
 }
 
+export function hasAddressFromKey(family: string): boolean {
+  return loaders.get(family)?.loadAddressFromKey !== undefined;
+}
+
+export function getPlaceholderUnsupportedReason(family: string): string | undefined {
+  return loaders.get(family)?.placeholderUnsupportedReason;
+}
+
 export function getAccountCompletion(family: string): AccountCompletionMeta | undefined {
   return loaders.get(family)?.accountCompletion;
 }

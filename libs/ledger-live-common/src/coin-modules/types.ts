@@ -199,6 +199,8 @@ export type CoinModuleLoader<
   accountKey?: AccountKeyCodec;
   /** Set when the family's setup has `completeAccountDescriptors`. */
   accountCompletion?: AccountCompletionMeta;
+  /** Why a descriptor alone cannot rebuild the family's account (Hedera: its device public key). */
+  placeholderUnsupportedReason?: string;
   loadSetup: () => Promise<FamilySetup<T, A, U, O, R>>;
   loadTransaction: () => Promise<TransactionModule<T, U, A, TRaw, URaw>>;
   loadDeviceTxConfig?: () => Promise<DeviceTransactionConfigFn<T, any, A>>;
