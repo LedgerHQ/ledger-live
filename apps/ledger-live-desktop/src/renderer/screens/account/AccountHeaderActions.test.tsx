@@ -26,6 +26,7 @@ jest.mock("@ledgerhq/live-common/account/index", () => {
     ),
     canReceive: (account: unknown, parentAccount: unknown) =>
       allowsTransfer(account, parentAccount),
+    isSwapDisabledForFamily: (family: string) => family === "hypercore",
     getMainAccount: framework.getMainAccount,
     getAccountCurrency: framework.getAccountCurrency,
     flattenAccounts: framework.flattenAccounts,
@@ -43,8 +44,9 @@ jest.mock("@ledgerhq/live-common/exchange/swap/index", () => ({
   getAvailableProviders: () => [],
 }));
 
+const mockSwappableIds: string[] = [];
 jest.mock("@ledgerhq/live-common/exchange/swap/hooks/index", () => ({
-  useFetchCurrencyAll: () => ({ data: [] }),
+  useFetchCurrencyAll: () => ({ data: mockSwappableIds }),
 }));
 
 jest.mock("@ledgerhq/live-common/walletConnect/index", () => ({
@@ -80,6 +82,7 @@ const account = genAccount("test-btc-account", { currency: btc }) as Account;
 
 beforeEach(() => {
   jest.clearAllMocks();
+  mockSwappableIds.length = 0;
 });
 
 describe("AccountHeaderSettingsButton", () => {
@@ -129,5 +132,29 @@ describe("AccountHeaderActions — family slot / fallback logic", () => {
     expect(screen.queryByTestId("send-button")).not.toBeInTheDocument();
     // The whole row is gone, not just its buttons: an empty wrapper would still carry its spacing.
     expect(screen.queryByTestId("account-buttons-group")).not.toBeInTheDocument();
+  });
+
+  it("shows swap for a swappable currency", async () => {
+    mockFamily.mockReturnValue({} as never);
+    mockSwappableIds.push("bitcoin");
+
+    render(<AccountHeaderActions account={account} parentAccount={undefined} />);
+
+    await waitFor(() => expect(screen.getByTestId("swap-account-action-button")).toBeVisible());
+  });
+
+  it("hides swap for hypercore even when the swap backend lists it", async () => {
+    mockFamily.mockReturnValue({} as never);
+    mockSwappableIds.push("hypercore");
+    const hypercoreAccount = genAccount("test-hypercore-account", {
+      currency: getCryptoCurrencyById("hypercore"),
+    }) as Account;
+
+    render(<AccountHeaderActions account={hypercoreAccount} parentAccount={undefined} />);
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("account-buttons-group")).not.toBeInTheDocument(),
+    );
+    expect(screen.queryByTestId("swap-account-action-button")).not.toBeInTheDocument();
   });
 });
