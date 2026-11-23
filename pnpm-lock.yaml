@@ -665,9 +665,6 @@ catalogs:
     i18next:
       specifier: 25.7.3
       version: 25.7.3
-    isomorphic-ws:
-      specifier: 5.0.0
-      version: 5.0.0
     jest:
       specifier: 30.5.2
       version: 30.5.2
@@ -20813,9 +20810,6 @@ importers:
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
-      isomorphic-ws:
-        specifier: 'catalog:'
-        version: 5.0.0(ws@8.23.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))
       jotai:
         specifier: 2.17.0
         version: 2.17.0(@babel/core@7.28.5)(@babel/template@7.29.7)(@types/react@19.0.14)(react@19.1.4)
@@ -21033,9 +21027,6 @@ importers:
       uuid:
         specifier: 'catalog:'
         version: 11.1.0
-      ws:
-        specifier: 'catalog:'
-        version: 8.23.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/ledger-services/cal:
     dependencies:
@@ -25178,18 +25169,12 @@ importers:
       base64-js:
         specifier: '1'
         version: 1.5.1
-      isomorphic-ws:
-        specifier: 'catalog:'
-        version: 5.0.0(ws@8.23.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))
       pako:
         specifier: ^2.0.4
         version: 2.1.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
-      ws:
-        specifier: 'catalog:'
-        version: 8.23.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -25239,6 +25224,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
+      ws:
+        specifier: 'catalog:'
+        version: 8.23.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   shared/cloud-sync-module:
     dependencies:

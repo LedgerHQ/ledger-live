@@ -1,6 +1,6 @@
 import "LLM/utils/logStartup/beforeJSImports";
 import "LLM/utils/logStartup/claimProcessStartTime";
-// Must run before any module that keeps a reference to the global WebSocket (e.g. isomorphic-ws)
+// Must run before any module that keeps a reference to the global WebSocket (e.g. DMK)
 import "./iosWebsocketFix";
 require("./promise-polyfill");
 import "./polyfill";
