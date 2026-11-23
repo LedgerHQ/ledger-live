@@ -244,6 +244,7 @@ catalog:
   "@tanstack/react-table": 8.21.3
   "@playwright/test": 1.63.0
   playwright: 1.63.0
+  protobufjs: 8.6.6
   allure-playwright: 3.13.0
   allure-js-commons: 3.13.0
   nx: 24.0.6
