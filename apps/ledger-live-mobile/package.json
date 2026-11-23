@@ -279,6 +279,7 @@
     "@shared/lottie": "workspace:*",
     "@shared/native-performance": "workspace:*",
     "@shared/network-status": "workspace:*",
+    "@shared/observability-operations": "workspace:*",
     "@shared/share-sheet": "workspace:*",
     "@shared/system-bars": "workspace:*",
     "@shared/ui-animated-qr-code": "workspace:*",
