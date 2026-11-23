@@ -165,6 +165,7 @@ const getFeatureFlagProperties = () => {
       "lwmAnalyticsConsentOnboarding",
     );
     const lwmNotificationsOptInFlag = analyticsFeatureFlagMethod("lwmNotificationsOptIn");
+    const lwmMyWalletDeviceListFlag = analyticsFeatureFlagMethod("lwmMyWalletDeviceList");
     const deviceOnboardingFlag = analyticsFeatureFlagMethod("deviceOnboarding");
 
     const isBatch1Enabled =
@@ -183,6 +184,7 @@ const getFeatureFlagProperties = () => {
     const ptxEarnCtaOnMobile = Boolean(ptxEarnCtaOnMobileFlag?.enabled);
     const lwmAnalyticsConsentOnboarding = Boolean(lwmAnalyticsConsentOnboardingFlag?.enabled);
     const lwmNotificationsOptIn = Boolean(lwmNotificationsOptInFlag?.enabled);
+    const lwmMyWalletDeviceList = Boolean(lwmMyWalletDeviceListFlag?.enabled);
 
     // Apply versioned redirects logic to the stakePrograms feature flag
     const appVersion = LiveConfig.instance.appVersion || "0.0.0";
@@ -221,6 +223,7 @@ const getFeatureFlagProperties = () => {
       ptxEarnCtaOnMobile,
       lwmAnalyticsConsentOnboarding,
       lwmNotificationsOptIn,
+      lwmMyWalletDeviceList,
       ...deviceOnboardingTraits(deviceOnboardingFlag),
     });
   })();

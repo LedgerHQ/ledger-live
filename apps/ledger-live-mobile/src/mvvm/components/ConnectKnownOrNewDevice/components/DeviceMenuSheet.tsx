@@ -11,7 +11,14 @@ import { Trash, Unlink } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { DeviceListItemStatuses, type SelectableDeviceListItem } from "@ledgerhq/live-dmk-mobile";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { TrackDIEScreen } from "LLM/components/DeviceIntentExecutor/components/TrackDIEScreen";
+import { useDeviceIntentTracking } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
+import {
+  getTrackingTransport,
+  trackDeviceActionButtonClicked,
+} from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { useTranslation } from "~/context/Locale";
+import { DEVICE_LIST_BUTTON, PAGE_DEVICE_MENU } from "../utils/tracking";
 
 /** The space under the last action in the design, the safe area included. */
 const BOTTOM_PADDING = 24;
@@ -28,11 +35,20 @@ export function DeviceMenuSheet({
 }: Readonly<DeviceMenuSheetProps>): React.JSX.Element {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const disconnect =
     item?.status === DeviceListItemStatuses.Connected ? item.disconnect : undefined;
   const remove = item?.remove;
 
-  const runAndClose = (action: () => void) => () => {
+  const runAndClose = (button: string, action: () => void) => () => {
+    if (item) {
+      trackDeviceActionButtonClicked({
+        sourceFlow,
+        button,
+        modelId: item.device.deviceModelId,
+        extraProperties: { ...analyticsProperties, deviceStatus: item.status },
+      });
+    }
     action();
     onClose();
   };
@@ -47,9 +63,18 @@ export function DeviceMenuSheet({
     >
       <BottomSheetView style={{ paddingBottom: Math.max(bottomInset, BOTTOM_PADDING) }}>
         <BottomSheetHeader />
+        {item && (
+          <TrackDIEScreen
+            category={PAGE_DEVICE_MENU}
+            modelId={item.device.deviceModelId}
+            transport={getTrackingTransport(item.device.transport)}
+            deviceStatus={item.status}
+            refreshSource
+          />
+        )}
         {disconnect && (
           <ListItem
-            onPress={runAndClose(disconnect)}
+            onPress={runAndClose(DEVICE_LIST_BUTTON.Disconnect, disconnect)}
             testID="connect-known-or-new-device-disconnect"
           >
             <ListItemLeading>
@@ -61,7 +86,10 @@ export function DeviceMenuSheet({
           </ListItem>
         )}
         {remove && (
-          <ListItem onPress={runAndClose(remove)} testID="connect-known-or-new-device-remove">
+          <ListItem
+            onPress={runAndClose(DEVICE_LIST_BUTTON.Remove, remove)}
+            testID="connect-known-or-new-device-remove"
+          >
             <ListItemLeading>
               <Trash size={24} color="error" />
               <ListItemContent>

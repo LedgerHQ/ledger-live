@@ -4,12 +4,21 @@ import {
   type ConnectKnownOrNewDeviceUIState,
   type DeviceListItem,
 } from "@ledgerhq/live-dmk-mobile";
+import { getConnectDeviceSubError, getConnectivityErrorFailure } from "@ledgerhq/live-dmk-shared";
 import {
-  ConnectionErrorState,
-  DiscoveryErrorState,
   ErrorBottomSheet,
-  UnknownErrorState,
+  TrackedConnectionErrorState,
+  TrackedDiscoveryErrorState,
+  TrackedUnknownErrorState,
+  useIsNewDevice,
 } from "LLM/components/DeviceConnection";
+import { useDeviceIntentTracking } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
+import {
+  CONNECT_DEVICE_BUTTON,
+  getTrackingTransport,
+  trackConnectDeviceButtonClicked,
+  trackDeviceflowCanceled,
+} from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { AddMode } from "./components/AddMode";
 import type { DeviceRowItem } from "./components/DeviceRow";
 import { DeviceSection } from "./components/DeviceSection";
@@ -81,13 +90,15 @@ function ErrorStateView({
   state: ConnectKnownOrNewDeviceErrorUIState;
   platform: ConnectKnownOrNewDeviceViewProps["platform"];
 }>): React.ReactNode {
+  const isNewDevice = useIsNewDevice();
+
   switch (state.type) {
     case ConnectKnownOrNewDeviceUIStateTypes.DiscoveryError:
-      return <DiscoveryErrorState state={state} platform={platform} />;
+      return <TrackedDiscoveryErrorState state={state} platform={platform} />;
     case ConnectKnownOrNewDeviceUIStateTypes.ConnectionError:
-      return <ConnectionErrorState state={state} />;
+      return <TrackedConnectionErrorState state={state} isNewDevice={isNewDevice(state.device)} />;
     case ConnectKnownOrNewDeviceUIStateTypes.UnknownError:
-      return <UnknownErrorState />;
+      return <TrackedUnknownErrorState state={state} />;
     default:
       return assertNever(state);
   }
@@ -104,7 +115,24 @@ export function ConnectKnownOrNewDeviceView({
   listFooter,
   children,
 }: Readonly<ConnectKnownOrNewDeviceViewProps>): React.JSX.Element {
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
+
+  const trackCloseClicked = (subError?: string) =>
+    trackConnectDeviceButtonClicked({
+      sourceFlow,
+      button: CONNECT_DEVICE_BUTTON.Close,
+      subError,
+      extraProperties: analyticsProperties,
+    });
+
   if (state.type === ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice) {
+    const { close } = state;
+    // The Add mode sends its own outcome when it unmounts.
+    const onCloseAddMode = () => {
+      trackCloseClicked();
+      close();
+    };
+
     return (
       <AddMode
         state={state.connectNewDeviceUIState}
@@ -112,12 +140,27 @@ export function ConnectKnownOrNewDeviceView({
         platform={platform}
         onDeviceNotFound={onDeviceNotFound}
         onCloseErrorSheet={onCloseAddModeErrorSheet}
-        onClose={state.close}
+        onClose={onCloseAddMode}
       />
     );
   }
 
   const { deviceState, errorState, ...listProps } = getListLayout(state, devices);
+
+  const onCloseSheet = () => {
+    // The sheet also reports a close once the state has left the error: no click then.
+    if (errorState) {
+      if (errorState.type !== ConnectKnownOrNewDeviceUIStateTypes.UnknownError) {
+        trackCloseClicked(getConnectDeviceSubError(errorState.error));
+      }
+      trackDeviceflowCanceled({
+        sourceFlow,
+        extraProperties: analyticsProperties,
+        failure: getConnectivityErrorFailure(errorState, getTrackingTransport),
+      });
+    }
+    onCloseErrorSheet();
+  };
 
   return (
     <>
@@ -127,7 +170,7 @@ export function ConnectKnownOrNewDeviceView({
       <DeviceStateSheet state={deviceState} />
       <ErrorBottomSheet
         isOpen={errorState !== null}
-        onClose={onCloseErrorSheet}
+        onClose={onCloseSheet}
         testID="connect-known-or-new-device-error-sheet"
       >
         {errorState && <ErrorStateView state={errorState} platform={platform} />}

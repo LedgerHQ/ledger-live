@@ -345,6 +345,26 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
       );
     });
 
+    it("GIVEN a known device connecting from the list, WHEN the flow connects it, THEN it should send device_connected with isNewDevice false", () => {
+      // GIVEN
+      setup({}, withKnownNanoX("nano-x-id"));
+      emit({
+        type: ConnectKnownOrNewDeviceUIStateTypes.Connecting,
+        devices: [],
+        device: knownNanoX,
+        close: jest.fn(),
+      });
+
+      // WHEN
+      act(() => lastInput().onConnected(makeConnectionResult()));
+
+      // THEN
+      expect(jest.mocked(track)).toHaveBeenCalledWith(
+        "device_connected",
+        expect.objectContaining({ sourceFlow: "my_wallet", isNewDevice: false }),
+      );
+    });
+
     it("GIVEN the device list, WHEN the user connects a connected device, THEN it should send no device_connected", () => {
       // GIVEN
       setup();

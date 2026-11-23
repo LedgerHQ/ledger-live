@@ -18,9 +18,16 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Plus } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useIsNewDevice } from "LLM/components/DeviceConnection";
+import { useDeviceIntentTracking } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
+import {
+  trackConnectDeviceButtonClicked,
+  trackDeviceSelected,
+} from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { useTranslation } from "~/context/Locale";
+import { DEVICE_LIST_BUTTON } from "../utils/tracking";
 import { DeviceMenuSheet } from "./DeviceMenuSheet";
-import { DeviceRow, hasMenuActions, type DeviceRowItem } from "./DeviceRow";
+import { DeviceRow, hasMenuActions, isSelectable, type DeviceRowItem } from "./DeviceRow";
 
 const COLLAPSED_DEVICE_COUNT = 3;
 const ANIMATION_DURATION_MS = 200;
@@ -71,8 +78,45 @@ export function DeviceSection({
   children,
 }: Readonly<DeviceSectionProps>): React.JSX.Element {
   const { t } = useTranslation();
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
+  const isNewDevice = useIsNewDevice();
   const [isExpanded, setIsExpanded] = useState(false);
   const [menuDeviceKey, setMenuDeviceKey] = useState<string | null>(null);
+
+  const trackButtonClicked = (button: string) =>
+    trackConnectDeviceButtonClicked({ sourceFlow, button, extraProperties: analyticsProperties });
+
+  const withButtonTracking = (button: string, action: (() => void) | undefined) =>
+    action
+      ? () => {
+          trackButtonClicked(button);
+          action();
+        }
+      : undefined;
+
+  const withSelectionTracking = (item: DeviceRowItem): DeviceRowItem =>
+    isSelectable(item)
+      ? {
+          ...item,
+          connect: () => {
+            trackDeviceSelected({
+              sourceFlow,
+              device: item.device,
+              extraProperties: {
+                ...analyticsProperties,
+                isNewDevice: isNewDevice(item.device),
+                deviceStatus: item.status,
+              },
+            });
+            item.connect();
+          },
+        }
+      : item;
+
+  const onToggleExpanded = () => {
+    trackButtonClicked(isExpanded ? DEVICE_LIST_BUTTON.ShowLess : DEVICE_LIST_BUTTON.ShowAll);
+    setIsExpanded(expanded => !expanded);
+  };
   const styles = useStyleSheet(
     theme => ({
       card: {
@@ -106,7 +150,7 @@ export function DeviceSection({
             appearance={disabled ? "gray" : "accent"}
             size="sm"
             underline={false}
-            onPress={onAddNewDevice}
+            onPress={withButtonTracking(DEVICE_LIST_BUTTON.Add, onAddNewDevice)}
           >
             {t("connectKnownOrNewDevice.add")}
           </Link>
@@ -115,7 +159,10 @@ export function DeviceSection({
       <LayoutAnimationConfig skipEntering skipExiting>
         <Animated.View layout={layoutTransition} style={styles.card}>
           {isEmpty ? (
-            <AddDeviceRow onAddNewDevice={onAddNewDevice} disabled={disabled} />
+            <AddDeviceRow
+              onAddNewDevice={withButtonTracking(DEVICE_LIST_BUTTON.AddDevice, onAddNewDevice)}
+              disabled={disabled}
+            />
           ) : (
             shownDevices.map(item => (
               <Animated.View
@@ -125,7 +172,7 @@ export function DeviceSection({
                 layout={layoutTransition}
               >
                 <DeviceRow
-                  item={item}
+                  item={withSelectionTracking(item)}
                   disabled={disabled}
                   onOpenMenu={() => setMenuDeviceKey(item.key)}
                 />
@@ -134,12 +181,7 @@ export function DeviceSection({
           )}
           {isCollapsible && (
             <Animated.View layout={layoutTransition} style={styles.showAll}>
-              <Button
-                appearance="transparent"
-                size="sm"
-                isFull
-                onPress={() => setIsExpanded(expanded => !expanded)}
-              >
+              <Button appearance="transparent" size="sm" isFull onPress={onToggleExpanded}>
                 {isExpanded
                   ? t("connectKnownOrNewDevice.showLess")
                   : t("connectKnownOrNewDevice.showAll", { count: devices.length })}

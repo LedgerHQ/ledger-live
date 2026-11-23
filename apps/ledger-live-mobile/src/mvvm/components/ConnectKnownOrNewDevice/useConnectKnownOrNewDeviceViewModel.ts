@@ -217,7 +217,11 @@ export function useConnectKnownOrNewDeviceViewModel({
       removeKnownDevice: removeDevice,
       onConnected: result => {
         const { connectedDevice } = result;
-        if (lastStateTypeRef.current === ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice) {
+        // A tap on a connected device reuses its session: no new connection then.
+        const isNewConnection =
+          lastStateTypeRef.current === ConnectKnownOrNewDeviceUIStateTypes.Connecting ||
+          lastStateTypeRef.current === ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice;
+        if (isNewConnection) {
           // Before the save, which makes every device known.
           trackDeviceConnected({
             sourceFlow: latestRef.current.sourceFlow,

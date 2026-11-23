@@ -93,6 +93,7 @@ export {
   getConnectDeviceFailure,
   getConnectDeviceSubError,
   getConnectNewDeviceFailure,
+  getConnectivityErrorFailure,
   getDeviceDisconnectedFailure,
   getDeviceFlowFailureProperties,
   getDeviceflowCancelEventName,
