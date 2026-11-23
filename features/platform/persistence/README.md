@@ -47,7 +47,8 @@ status of each record, also in `state.persistence.records`.
   each entry, no write removes its key. When the state gets an entry with the same id, the state
   entry replaces it. This is ADR rule 5: a failed read never becomes a write.
 - `selectUsesPersistence(state, key)` is true once `hydrate` started for the record, whatever its
-  status. The legacy save code of an app uses it to leave the record to persistence.
+  status. The legacy save code of an app uses it to leave the record to persistence: see
+  [legacy-coexistence.md](docs/legacy-coexistence.md).
 
 ## Writes
 
