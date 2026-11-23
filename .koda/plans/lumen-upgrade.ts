@@ -71,21 +71,18 @@ Review before merging.
 // Cairn has no timeout on shell tasks: a stalled command would hang the run.
 const fetchBase = `GIT_TERMINAL_PROMPT=0 timeout 300 git fetch --quiet origin ${repo.baseBranch}`;
 
-// Exact Lumen pins in package.json files, and Lumen entries in the pnpm catalog.
-const lumenPins = `grep -rlE --include=package.json --exclude-dir=node_modules --exclude-dir=.git '"@ledgerhq/lumen-[a-z-]+": "[0-9]' .`;
-const lumenCatalog = "pnpm-workspace.yaml";
-
 // Lints only the packages whose files differ from the base branch, lockfiles aside: the bump and the migrations.
 // Typecheck and dependents build most of the repo first, so they are left to the PR's CI.
 const verifyCommand = [
   "set -eo pipefail",
   fetchBase,
-  // The root is a package to lint only in a single-package repo: in a monorepo it holds no source.
-  `if [ -f pnpm-workspace.yaml ] || grep -q '"workspaces"' package.json; then root=; else root=.; fi`,
+  // The root is a package to lint in a single-package repo, or when the workspace lists it ("."). Otherwise it holds no source.
+  `root=.; if grep -qsE '^packages:' pnpm-workspace.yaml || grep -qs '"workspaces"' package.json; then root=; fi`,
+  "if grep -qsE '^ *- *.?[.].? *$' pnpm-workspace.yaml; then root=.; fi",
   "packages=$(git diff --name-only FETCH_HEAD -- . ':!**/pnpm-lock.yaml' ':!**/yarn.lock' ':!**/package-lock.json' ':!pnpm-workspace.yaml' ':!**/Podfile.lock' ':!.changeset' ':!.koda' | while read -r file; do",
   '  dir=$(dirname "$file")',
   '  while [ "$dir" != . ] && [ ! -f "$dir/package.json" ]; do dir=$(dirname "$dir"); done',
-  '  if [ "$dir" != . ] || [ "$root" = . ]; then node -p "require(\'./$dir/package.json\').name"; fi',
+  '  if [ -f "$dir/package.json" ] && { [ "$dir" != . ] || [ "$root" = . ]; }; then node -p "require(\'./$dir/package.json\').name"; fi',
   "done | sort -u)",
   'if [ -z "$packages" ]; then echo "No package changed besides the lockfiles."; exit 0; fi',
   `timeout 1200 ${repo.lintCommand}`,
@@ -191,25 +188,74 @@ const createBranchTask = task("create-branch")
 // which leaves it there: the migration range and the changesets read the base branch, so refresh it first.
 const installTask = task("install").runs(`${fetchBase} && ${repo.installCommand}`);
 
-// Sets each exact Lumen pin and pnpm catalog entry to the latest published version, then updates the lockfile.
-// Caret ranges (peerDependencies) are left alone, and so is a version newer than `latest` (dist-tag rollback, prerelease).
+// Moves every Lumen version to the latest published one, keeping its `^` or `~`: exact versions and ranges
+// in dependencies, devDependencies and optionalDependencies of each package.json, and pnpm catalog entries in
+// pnpm-workspace.yaml (quoted or not). A range's floor is the installed version, so moving it moves the install.
+// peerDependencies are left alone (they say what a library accepts), and so is a version newer than `latest`
+// (dist-tag rollback, prerelease). Edits the text in place, so the files keep their formatting.
+const bumpScript = String.raw`
+const fs = require("fs");
+const path = require("path");
+const { execSync } = require("child_process");
+const version = /^([\^~]?)(\d+)\.(\d+)\.(\d+)(\S*)$/;
+const isNewer = (next, current) => {
+  const a = next.match(version);
+  const b = current.match(version);
+  if (!a || !b || a[5] || b[5]) return false;
+  for (let i = 2; i <= 4; i++) if (Number(a[i]) !== Number(b[i])) return Number(a[i]) > Number(b[i]);
+  return false;
+};
+const latest = {};
+const latestOf = name => (latest[name] ??= execSync("npm view " + name + " version").toString().trim());
+const bumped = (name, spec) => {
+  const m = spec.match(version);
+  if (!m) return spec;
+  const next = latestOf(name);
+  return isNewer(next, spec.slice(m[1].length)) ? m[1] + next : spec;
+};
+const changes = [];
+const manifests = [];
+const walk = dir => {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name === "node_modules" || entry.name === ".git") continue;
+    const file = path.join(dir, entry.name);
+    if (entry.isDirectory()) walk(file);
+    else if (entry.name === "package.json") manifests.push(file);
+  }
+};
+walk(".");
+for (const file of manifests) {
+  let text = fs.readFileSync(file, "utf8");
+  for (const field of ["dependencies", "devDependencies", "optionalDependencies"]) {
+    const open = text.match(new RegExp('"' + field + '"\\s*:\\s*\\{'));
+    if (!open) continue;
+    const from = open.index + open[0].length;
+    const to = text.indexOf("}", from);
+    const block = text.slice(from, to).replace(/("(@ledgerhq\/lumen-[a-z-]+)"\s*:\s*")([^"]+)"/g, (all, head, name, spec) => {
+      const next = bumped(name, spec);
+      if (next !== spec) changes.push(file + " " + name + " " + spec + " -> " + next);
+      return head + next + '"';
+    });
+    text = text.slice(0, from) + block + text.slice(to);
+  }
+  fs.writeFileSync(file, text);
+}
+if (fs.existsSync("pnpm-workspace.yaml")) {
+  const entry = /^(\s+["']?(@ledgerhq\/lumen-[a-z-]+)["']?\s*:\s*["']?)([^"'\s#]+)(.*)$/;
+  const lines = fs.readFileSync("pnpm-workspace.yaml", "utf8").split("\n").map(line => {
+    const m = line.match(entry);
+    if (!m) return line;
+    const next = bumped(m[2], m[3]);
+    if (next !== m[3]) changes.push("pnpm-workspace.yaml " + m[2] + " " + m[3] + " -> " + next);
+    return m[1] + next + m[4];
+  });
+  fs.writeFileSync("pnpm-workspace.yaml", lines.join("\n"));
+}
+console.log(changes.length ? changes.join("\n") : "No Lumen version to move.");
+`;
+
 const bumpTask = task("bump").runs(
-  [
-    "set -e",
-    `files=$(${lumenPins} || true)`,
-    `if [ -f ${lumenCatalog} ] && grep -qE '^ +"?@ledgerhq/lumen-[a-z-]+"?: *[0-9]' ${lumenCatalog}; then files="$files ${lumenCatalog}"; fi`,
-    'if [ -z "$files" ]; then echo "No Lumen pin found."; exit 0; fi',
-    `for pkg in $(grep -hoE '"?@ledgerhq/lumen-[a-z-]+"?: *"?[0-9]' $files | grep -oE '@ledgerhq/lumen-[a-z-]+' | sort -u); do`,
-    '  version=$(npm view "$pkg" version)',
-    "  for f in $files; do",
-    '    current=$(sed -nE "s|.*\\"?$pkg\\"?: *\\"?([0-9][^\\" ]*)\\"?.*|\\1|p" "$f" | head -1)',
-    '    [ -n "$current" ] || continue',
-    '    [ "$(printf \'%s\\n%s\\n\' "$current" "$version" | sort -V | tail -1)" = "$version" ] || continue',
-    '    sed -i.bak -E "s|(\\"?$pkg\\"?: *\\"?)[0-9][^\\" ]*|\\1$version|" "$f" && rm "$f.bak"',
-    "  done",
-    "done",
-    repo.relockCommand,
-  ].join("\n"),
+  ["set -e", `node - <<'NODE'\n${bumpScript}\nNODE`, repo.relockCommand].join("\n"),
 );
 
 const afterBumpTask = task("after-bump").runs(repo.afterBumpCommand);
@@ -221,7 +267,7 @@ const migrateTask = task("migrate")
   .uses(upgrader)
   .message(
     `Apply the Lumen migrations for the upgrade range with the migrations CLI.
-1. Get the previous version of each bumped @ledgerhq/lumen-* package from origin/${repo.baseBranch}: from the package.json files that pin it, or from the pnpm catalog in pnpm-workspace.yaml (\`git show origin/${repo.baseBranch}:<path>\`). The new version is in the working tree. When files pin different previous versions, use the lowest.
+1. Get the previous version of each bumped @ledgerhq/lumen-* package from origin/${repo.baseBranch}: from the package.json files that declare it, or from the pnpm catalog in pnpm-workspace.yaml (\`git show origin/${repo.baseBranch}:<path>\`), without a leading ^ or ~. The new version is in the working tree, the same way. When files declare different previous versions, use the lowest.
 2. For each of them, run \`${migrationsCli} list --package <name> --from <previous> --to <new> --json\`.
 3. For each migration listed, run \`${migrationsCli} show <id>\` and follow it (Before → after, Decide).
 4. For each package, run \`${migrationsCli} check --package <name> --from <previous> --to <new>\` from the repo root, so every package using Lumen is scanned. Exit code 1 means \`expect: none\` patterns still have hits: fix them and run it again. Hits listed as review are for a human: do not edit them.
