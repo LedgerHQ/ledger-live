@@ -104,12 +104,13 @@ export function useMyWalletDeviceListViewModel({
     clearModalResultRef.current = clearResult;
   }, []);
 
+  const hasRedirectParams = redirectedDevice !== undefined || params?.firmwareUpdate !== undefined;
   const resetDevice = useCallback(() => {
     setDevice(undefined);
     clearModalResultRef.current?.();
-    // Consumes the redirect, so that a next redirect with the same device opens the drawer again.
-    if (redirectedDevice) navigation.setParams({ device: undefined });
-  }, [navigation, redirectedDevice]);
+    // One-shot redirect params: consumed when the drawer closes.
+    if (hasRedirectParams) navigation.setParams({ device: undefined, firmwareUpdate: undefined });
+  }, [navigation, hasRedirectParams]);
 
   const onResult = useCallback(
     ({ device: resultDevice, deviceInfo, result: appsResult }: Result) => {
