@@ -79,6 +79,53 @@ describe("updateAccountSwapStatus", () => {
     expect(updated?.swapHistory[0].operationId).toBe(TX_HASH);
   });
 
+  it("finishes a 1inch Fusion swap saved under the oneinch provider", async () => {
+    const orderHash = "0xorderhash";
+    mockedGetMultipleStatus
+      .mockResolvedValueOnce([{ provider: "oneinch", swapId: orderHash, status: "unknown" }])
+      .mockResolvedValueOnce([
+        { provider: "oneinchfusion", swapId: orderHash, status: "finished" },
+      ]);
+    const entry = withdrawEntry({
+      provider: "oneinch",
+      swapId: orderHash,
+      operationId: "receiver-0xfill-OUT",
+    });
+
+    const account = accountWith(entry);
+
+    const updated = await updateAccountSwapStatus(account);
+
+    expect(mockedGetMultipleStatus).toHaveBeenLastCalledWith([
+      { provider: "oneinchfusion", swapId: orderHash, network: account.currency.id },
+    ]);
+    expect(updated?.swapHistory[0]).toMatchObject({ provider: "oneinch", status: "finished" });
+  });
+
+  it("asks for a oneinchfusion swap status on the account's network", async () => {
+    const orderHash = "0xorderhash";
+    mockedGetMultipleStatus.mockResolvedValue([
+      { provider: "oneinchfusion", swapId: orderHash, status: "finished" },
+    ]);
+    const entry = withdrawEntry({
+      provider: "oneinchfusion",
+      swapId: orderHash,
+      operationId: "receiver-0xfill-OUT",
+    });
+    const account = accountWith(entry);
+
+    const updated = await updateAccountSwapStatus(account);
+
+    expect(mockedGetMultipleStatus).toHaveBeenCalledWith([
+      expect.objectContaining({
+        provider: "oneinchfusion",
+        swapId: orderHash,
+        network: account.currency.id,
+      }),
+    ]);
+    expect(updated?.swapHistory[0].status).toBe("finished");
+  });
+
   describe("isSwapAwaitingPayoutHash", () => {
     it("is true for a pending or finished entry not anchored to an operation yet", () => {
       expect(isSwapAwaitingPayoutHash(withdrawEntry())).toBe(true);
