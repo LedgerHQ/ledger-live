@@ -11,6 +11,7 @@ import {
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex } from "@ledgerhq/native-ui";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
@@ -45,7 +46,10 @@ export default function ConnectDevice({
   const { account, parentAccount } = useAccountScreen(route);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
+  const [isPairingFlowShown, setIsPairingFlowShown] = useState(false);
   const action = useAppDeviceAction();
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const pairingFlowBottomInset = isPairingFlowShown ? bottomInset : 0;
 
   // Animated height to prevent layout shift during device discovery
   const animatedHeight = useSharedValue(0);
@@ -125,11 +129,13 @@ export default function ConnectDevice({
           headerLeft: request.options.headerLeft,
           headerRight: request.options.headerRight,
         });
+        setIsPairingFlowShown(true);
       } else {
         // Sets back the header to its initial values set for this screen
         navigation.setOptions({
           ...connectDeviceHeaderOptions(onHeaderBackButtonPress),
         });
+        setIsPairingFlowShown(false);
       }
     },
     [navigation, onHeaderBackButtonPress],
@@ -170,12 +176,14 @@ export default function ConnectDevice({
       <TrackScreen category="Deposit" name="Device Selection" />
       <Animated.View style={[{ flex: 1 }, animatedStyle]}>
         <Flex onLayout={onLayout} px={16} py={5} flex={1}>
-          <SelectDevice2
-            onSelect={setDevice}
-            stopBleScanning={!!device}
-            requestToSetHeaderOptions={requestToSetHeaderOptions}
-            autoSelectLastConnectedDevice={!forceSelectDevice}
-          />
+          <Flex flex={1} style={{ paddingBottom: pairingFlowBottomInset }}>
+            <SelectDevice2
+              onSelect={setDevice}
+              stopBleScanning={!!device}
+              requestToSetHeaderOptions={requestToSetHeaderOptions}
+              autoSelectLastConnectedDevice={!forceSelectDevice}
+            />
+          </Flex>
         </Flex>
       </Animated.View>
       <DeviceActionModal
