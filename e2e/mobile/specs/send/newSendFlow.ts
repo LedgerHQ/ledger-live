@@ -30,12 +30,14 @@ export const beforeAllTokenFunction = async (
   await app.mainNavigation.waitForWallet40Ready();
 };
 
-export function runNewSendFlowTokenTest(
-  transaction: TransactionType,
-  tmsLinks: string[],
-  tags: string[],
-  options?: SendTestOptions,
-) {
+type RunNewSendFlowTestOptions = SendTestOptions & {
+  transaction: TransactionType;
+  tmsLinks: string[];
+  tags: string[];
+};
+
+export function runNewSendFlowTokenTest(options: RunNewSendFlowTestOptions) {
+  const { transaction, tmsLinks, tags, ...sendOptions } = options;
   declareBroadcastAccounts(transaction.accountToDebit);
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: sendFolder(transaction.accountToDebit),
@@ -45,7 +47,7 @@ export function runNewSendFlowTokenTest(
   tags.forEach(tag => $Tag(tag));
   describe("New Send Flow - Token Send", () => {
     beforeAll(async () => {
-      await beforeAllTokenFunction(transaction, options);
+      await beforeAllTokenFunction(transaction, sendOptions);
     });
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send`, async () => {
@@ -69,12 +71,8 @@ export function runNewSendFlowTokenTest(
   });
 }
 
-export function runNewSendFlowTest(
-  transaction: TransactionType,
-  tmsLinks: string[],
-  tags: string[],
-  options?: SendTestOptions,
-) {
+export function runNewSendFlowTest(options: RunNewSendFlowTestOptions) {
+  const { transaction, tmsLinks, tags, ...sendOptions } = options;
   declareBroadcastAccounts(transaction.accountToDebit);
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: sendFolder(transaction.accountToDebit),
@@ -84,7 +82,7 @@ export function runNewSendFlowTest(
   tags.forEach(tag => $Tag(tag));
   describe("Send - new flow", () => {
     beforeAll(async () => {
-      await beforeAllFunction(transaction, options);
+      await beforeAllFunction(transaction, sendOptions);
     });
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send`, async () => {
@@ -135,14 +133,18 @@ export type NewSendMemoTestOptions = {
  *  - the transaction completes successfully with a memo, and without a memo (skip) unless
  *    `broadcastWithoutMemo` is false.
  */
-export function runNewSendMemoTest(
-  transaction: TransactionType,
-  tmsLinks: string[],
-  tags: string[],
-  options?: SendTestOptions,
-  memoOptions: NewSendMemoTestOptions = {},
-) {
-  const { invalidMemoInput, broadcastWithoutMemo = true, memoTypeOptions } = memoOptions;
+type RunNewSendMemoTestOptions = RunNewSendFlowTestOptions & NewSendMemoTestOptions;
+
+export function runNewSendMemoTest(options: RunNewSendMemoTestOptions) {
+  const {
+    transaction,
+    tmsLinks,
+    tags,
+    invalidMemoInput,
+    broadcastWithoutMemo = true,
+    memoTypeOptions,
+    ...sendOptions
+  } = options;
   declareBroadcastAccounts(transaction.accountToDebit);
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: sendFolder(transaction.accountToDebit),
@@ -163,7 +165,7 @@ export function runNewSendMemoTest(
 
   describe("Send - new flow - Memo", () => {
     beforeAll(async () => {
-      await beforeAllFunction(transaction, options);
+      await beforeAllFunction(transaction, sendOptions);
     });
 
     if (invalidMemoInput !== undefined) {

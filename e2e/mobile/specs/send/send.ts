@@ -117,27 +117,29 @@ export async function verifySendAndOperationDetails(
   await app.operationDetails.checkTransactionType("OUT");
 }
 
-export function runSendTest(
-  transaction: TransactionType,
-  tmsLinks: string[],
-  tags: string[],
-  options?: SendTestOptions,
-) {
+type RunSendTestOptions = SendTestOptions & {
+  transaction: TransactionType;
+  tmsLinks: string[];
+  tags: string[];
+};
+
+export function runSendTest(options: RunSendTestOptions) {
+  const { transaction, tmsLinks, tags, ...sendOptions } = options;
   declareBroadcastAccounts(transaction.accountToDebit);
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: TestFolder.LEGACY_TESTS,
   });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
-  const flow = options?.sharedAccountFlow;
-  const describeOnDevice = options?.skipLNS
+  const flow = sendOptions.sharedAccountFlow;
+  const describeOnDevice = sendOptions.skipLNS
     ? describeIfNotNanoS
     : describeIfNanoSSupports(transaction.accountToDebit.currency.id);
   const describeFlow =
     flow === undefined || shouldRunSharedAccountFlow(flow) ? describeOnDevice : describe.skip;
   describeFlow("Send from 1 account to another", () => {
     beforeAll(async () => {
-      await beforeAllLegacyFunction(transaction, options);
+      await beforeAllLegacyFunction(transaction, sendOptions);
     });
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send`, async () => {
@@ -185,14 +187,18 @@ export function runSendInvalidAddressTest(options: RunSendInvalidAddressTestOpti
   });
 }
 
-export function runSendValidAddressTest(
-  transaction: TransactionType,
-  tmsLinks: string[],
-  scenario: string,
-  tags: string[],
-  accountName?: string,
-  expectedWarningMessage?: string,
-) {
+type RunSendValidAddressTestOptions = {
+  transaction: TransactionType;
+  tmsLinks: string[];
+  /** What the valid recipient is, for the test name: e.g. "lower case". */
+  scenario: string;
+  tags: string[];
+  accountName?: string;
+  expectedWarningMessage?: string;
+};
+
+export function runSendValidAddressTest(options: RunSendValidAddressTestOptions) {
+  const { transaction, tmsLinks, scenario, tags, accountName, expectedWarningMessage } = options;
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: TestFolder.LEGACY_TESTS,
   });
@@ -228,12 +234,15 @@ export function runSendValidAddressTest(
   });
 }
 
-export function runSendInvalidAmountTest(
-  transaction: TransactionType,
-  expectedErrorMessage: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+type RunSendInvalidAmountTestOptions = {
+  transaction: TransactionType;
+  expectedErrorMessage: string;
+  tmsLinks: string[];
+  tags: string[];
+};
+
+export function runSendInvalidAmountTest(options: RunSendInvalidAmountTestOptions) {
+  const { transaction, expectedErrorMessage, tmsLinks, tags } = options;
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: TestFolder.LEGACY_TESTS,
   });
@@ -257,12 +266,16 @@ export function runSendInvalidAmountTest(
   });
 }
 
-export function runSendInvalidTokenAmountTest(
-  transaction: TransactionType,
-  expectedErrorMessage: RegExp | string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+type RunSendInvalidTokenAmountTestOptions = {
+  transaction: TransactionType;
+  /** A RegExp is a summary-step error; a string is an amount-step error. */
+  expectedErrorMessage: RegExp | string;
+  tmsLinks: string[];
+  tags: string[];
+};
+
+export function runSendInvalidTokenAmountTest(options: RunSendInvalidTokenAmountTestOptions) {
+  const { transaction, expectedErrorMessage, tmsLinks, tags } = options;
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: TestFolder.LEGACY_TESTS,
   });
@@ -298,7 +311,14 @@ export function runSendInvalidTokenAmountTest(
   });
 }
 
-export function runSendMaxTest(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
+type RunSendTestBaseOptions = {
+  transaction: TransactionType;
+  tmsLinks: string[];
+  tags: string[];
+};
+
+export function runSendMaxTest(options: RunSendTestBaseOptions) {
+  const { transaction, tmsLinks, tags } = options;
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
@@ -326,7 +346,8 @@ export function runSendMaxTest(transaction: TransactionType, tmsLinks: string[],
   });
 }
 
-export function runSendENSTest(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
+export function runSendENSTest(options: RunSendTestBaseOptions) {
+  const { transaction, tmsLinks, tags } = options;
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {

@@ -8,8 +8,8 @@ const transaction = new Transaction(
   undefined,
   "noTag",
 );
-runSendTest(
+runSendTest({
   transaction,
-  ["B2CQA-4285"],
-  ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@hedera", "@family-hedera"],
-);
+  tmsLinks: ["B2CQA-4285"],
+  tags: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@hedera", "@family-hedera"],
+});

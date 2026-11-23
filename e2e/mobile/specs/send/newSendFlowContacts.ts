@@ -84,13 +84,16 @@ async function initApp(
   return contacts;
 }
 
-export function runNewSendFlowContactsTest(
-  transaction: TransactionType,
-  spareAddress: string,
-  retrievalAccount: Account | TokenAccount,
-  tmsLinks: string[],
-  tags: string[],
-) {
+type RunNewSendFlowContactsTestOptions = {
+  transaction: TransactionType;
+  spareAddress: string;
+  retrievalAccount: Account | TokenAccount;
+  tmsLinks: string[];
+  tags: string[];
+};
+
+export function runNewSendFlowContactsTest(options: RunNewSendFlowContactsTestOptions) {
+  const { transaction, spareAddress, retrievalAccount, tmsLinks, tags } = options;
   declareBroadcastAccounts(transaction.accountToDebit);
   setTeamOwner(Team.COIN_INTEGRATION, {
     folder: sendFolder(transaction.accountToDebit),

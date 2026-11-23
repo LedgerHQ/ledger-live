@@ -8,12 +8,12 @@ const transaction = new Transaction(
   undefined,
   "noTag",
 );
-runSendInvalidTokenAmountTest(
+runSendInvalidTokenAmountTest({
   transaction,
-  new RegExp(
+  expectedErrorMessage: new RegExp(
     String.raw`You need \d+\.\d+ SOL in your account to pay for transaction fees on the Solana` +
       String.raw` network\.\s+Buy SOL or deposit more into your account\.`,
   ),
-  ["B2CQA-3058"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@solana", "@family-solana"],
-);
+  tmsLinks: ["B2CQA-3058"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@solana", "@family-solana"],
+});

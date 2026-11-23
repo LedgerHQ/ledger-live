@@ -40,7 +40,14 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
   await app.mainNavigation.waitForWallet40Ready();
 };
 
-export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
+type RunSendSPLOptions = {
+  transaction: TransactionType;
+  tmsLinks: string[];
+  tags: string[];
+};
+
+export function runSendSPL(options: RunSendSPLOptions) {
+  const { transaction, tmsLinks, tags } = options;
   declareBroadcastAccounts(transaction.accountToDebit);
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: TestFolder.LEGACY_TESTS,
@@ -86,12 +93,12 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
   });
 }
 
-export function runSendSPLAddressValid(
-  transaction: TransactionType,
-  expectedWarningMessage: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+type RunSendSPLAddressValidOptions = RunSendSPLOptions & {
+  expectedWarningMessage: string;
+};
+
+export function runSendSPLAddressValid(options: RunSendSPLAddressValidOptions) {
+  const { transaction, expectedWarningMessage, tmsLinks, tags } = options;
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: TestFolder.LEGACY_TESTS,
   });
@@ -113,14 +120,15 @@ export function runSendSPLAddressValid(
   });
 }
 
-export function runSendSPLAddressInvalid(
-  transaction: TransactionType,
-  recipientContractAddress: string | undefined,
-  expectedErrorMessage: string,
-  scenario: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+type RunSendSPLAddressInvalidOptions = RunSendSPLOptions & {
+  recipientContractAddress: string | undefined;
+  expectedErrorMessage: string;
+  scenario: string;
+};
+
+export function runSendSPLAddressInvalid(options: RunSendSPLAddressInvalidOptions) {
+  const { transaction, recipientContractAddress, expectedErrorMessage, scenario, tmsLinks, tags } =
+    options;
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: TestFolder.LEGACY_TESTS,
   });

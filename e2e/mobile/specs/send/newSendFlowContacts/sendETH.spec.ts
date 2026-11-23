@@ -4,10 +4,10 @@ import { runNewSendFlowContactsTest } from "@e2e/specs/send/newSendFlowContacts"
 
 const transaction = new Transaction(Account.ETH_1, Account.ETH_3, "0.00001");
 
-runNewSendFlowContactsTest(
+runNewSendFlowContactsTest({
   transaction,
-  Addresses.EVM_SPARE,
-  Account.ETH_2_WITH_ENS,
-  ["B2CQA-6548", "B2CQA-6549", "B2CQA-6550"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
-);
+  spareAddress: Addresses.EVM_SPARE,
+  retrievalAccount: Account.ETH_2_WITH_ENS,
+  tmsLinks: ["B2CQA-6548", "B2CQA-6549", "B2CQA-6550"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+});
