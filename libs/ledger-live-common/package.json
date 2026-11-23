@@ -79,8 +79,6 @@
     "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests",
     "ci-test-integration:debug": "env-cmd -f .ci.integration.env node --inspect-wait ./node_modules/jest/bin/jest.js --runInBand --ci --updateSnapshot --passWithNoTests",
     "ci-test-integration-weekly": "env-cmd -f .ci.integration.weekly.env pnpm jest --ci --updateSnapshot --passWithNoTests",
-    "test-bridge": "env-cmd -f .ci.bridge.env pnpm jest --ci --updateSnapshot --passWithNoTests --runInBand",
-    "test-bridge-update": "UPDATE_BACKEND_MOCKS=1 env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests",
     "test-account-migration": "tsx src/__tests__/migration/account-migration.ts",
     "coverage": "env-cmd -f .ci.unit.env pnpm jest --coverage --ci"
   },
@@ -326,7 +324,6 @@
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "msw": "catalog:",
-    "nock": "13.5.4",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "react": "catalog:",
