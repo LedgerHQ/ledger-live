@@ -16,17 +16,17 @@ wallet-cli calls the hosts below over HTTPS. In a sandbox that allows only liste
 
 `session`, `skill`, `ring keys` and `agent-intent list`, `show` and `wait` call no host but `api.segment.io`. The Agent Intent review links open on `app.agents.ledger.com` in the human's browser; wallet-cli itself never calls it. Resolving an ENS name (SKILL.md) calls the Ethereum RPC host of the tool you resolve it with, not a wallet-cli host.
 
-Staging and test networks call other hosts: `agent-intent --environment staging` uses `global.api.stg.ledger-test.com`, `trustchain-backend.api.aws.stg.ldg-tech.com` and `cloud-sync-backend.api.aws.stg.ldg-tech.com`; Solana devnet and testnet use `api.devnet.solana.com` and `api.testnet.solana.com`. `SWAP_API_BASE` and `EARN_API_BASE_URL` replace `swap.ledger.com` and `earn.api.live.ledger.com`.
+Staging and test networks call other hosts: `agent-intent --environment staging` uses `global.api.stg.ledger-test.com`, `trustchain-backend.api.aws.stg.ldg-tech.com` and `cloud-sync-backend.api.aws.stg.ldg-tech.com`; Solana devnet and testnet use `api.devnet.solana.com` and `api.testnet.solana.com`. `SWAP_API_BASE` and `EARN_API_BASE_URL` replace `swap.ledger.com` and `earn.api.live.ledger.com`; the Solana validator lists of `earn` stay on `earn.api.live.ledger.com` unless `SOLANA_VALIDATORS_URL` and `SOLANA_VALIDATOR_APY_URL` replace them.
 
 ## A blocked host
 
 A request that does not get through names its host:
 
-- human output, on stderr: `Could not reach <host>. If wallet-cli runs in a sandbox, allow <host> in its network allowlist.`
+- human output, on stderr: `Could not reach <host>. If wallet-cli runs in a sandbox, allow <host> in its network allowlist.` when the host never answered, or `The request to <host> was refused (HTTP 403). If wallet-cli runs in a sandbox, allow <host> in its network allowlist.` when the sandbox refused it.
 - `--output json`: `error.host` and `error.hint`, next to the usual `message`.
 
-Three failures name no host yet: `agent-intent` errors name the Agent Intent service, not its host; `swap quote` says `No quotes available: noQuotes` when `swap.ledger.com` is blocked; `swap execute` with a token (`--from` or `--to` such as `ethereum/erc20/usd__coin`) fails without a hint when `global.api.prd.ledger.com` is blocked. In a sandbox, check the hosts of that command in the table above.
+Four failures name no host yet: `agent-intent` errors name the Agent Intent service, not its host; `swap quote` says `No quotes available: noQuotes` when `swap.ledger.com` is blocked; `swap execute` with a token (`--from` or `--to` such as `ethereum/erc20/usd__coin`) fails without a hint when `global.api.prd.ledger.com` is blocked; a token list request (`/cal`) that gets no answer ends in `Timed out after 30000 ms`. In a sandbox, check the hosts of that command in the table above.
 
 Tell the human which host to allow and in which sandbox setting, and re-run once they have; a blocked host fails the same way every time. The exception is a failure after the human approved on the device: follow [errors.md](errors.md) before any re-run.
 
-A 403 can come from the host itself, too: when the human says the host is already allowed, handle it as the command's own error. `Request to <host> failed with HTTP <status>.` usually means the host answered: the sandbox let it through. Handle it as the command's own error ([errors.md](errors.md)).
+A 403 can come from the host itself, too: when the human says the host is already allowed, handle it as the command's own error. `Request to <host> failed with HTTP <status>.` usually means the host answered: the sandbox let it through. Handle it as the command's own error ([errors.md](errors.md)). For HTTP 407, a proxy asks for credentials: tell the human the proxy needs credentials that wallet-cli cannot supply, and do not retry.
