@@ -1,3 +1,4 @@
+import { useAccountRedaction } from "./accountRedaction";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
@@ -28,6 +29,7 @@ function describeVerification(verification: ReceiveVerification): string {
 }
 
 export function useAccountReceiveToolProps(): AccountReceiveToolProps {
+  const redaction = useAccountRedaction();
   const dispatch = useDispatch<Dispatch>();
   const entries = useSelector(selectAccountEntries);
   const receives = useSelector((state: State) => state.accountReceives);
@@ -65,7 +67,7 @@ export function useAccountReceiveToolProps(): AccountReceiveToolProps {
         const receive = receives[accountUUID]?.receive;
         return {
           accountUUID,
-          descriptor: JSON.stringify(descriptor, null, 2),
+          descriptor: JSON.stringify(redaction.descriptor(descriptor), null, 2),
           reading: status?.request !== undefined,
           error: status?.error && `${status.error.name}: ${status.error.message}`,
           sourceId: status?.sourceId,
@@ -74,7 +76,7 @@ export function useAccountReceiveToolProps(): AccountReceiveToolProps {
           shielded: receive?.shielded && toToolAddress(receive.shielded),
         };
       }),
-    [entries, statuses, receives],
+    [entries, statuses, receives, redaction],
   );
 
   return { accounts, onRead, onReadAll };

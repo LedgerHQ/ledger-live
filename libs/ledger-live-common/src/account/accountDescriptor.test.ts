@@ -18,6 +18,7 @@ import {
   MissingAccountXpubError,
   UnsupportedDescriptorPathError,
   fromLegacyAccount,
+  redactAccountId,
   toLegacyAccount,
   type LegacyAccountIdentity,
 } from "./accountDescriptor";
@@ -481,6 +482,63 @@ describe("fromLegacyAccount of a family identified by its public key", () => {
     ],
   ])("rejects %s", (_, legacy) => {
     expect(() => fromLegacyAccount(legacy)).toThrow(MissingAccountPublicKeyError);
+  });
+});
+
+describe("redactAccountId", () => {
+  // The coin-aleo testnet fixture account.
+  const address = "aleo1uhf67fhy46jvv5hadf586pkdarax6ppuzq8xtpk7jdk9hhujku8sfa39ml";
+  const viewKey = "AViewKey1jyaKC65RhaGN3b6h79hLdwTBk3YAMbRL1MMeCArLDJ6E";
+
+  it("hides the view key an Aleo legacy id carries as its custom data", () => {
+    const id = encodeAccountId({
+      type: "js",
+      version: "2",
+      currencyId: "aleo",
+      xpubOrAddress: address,
+      derivationMode: "aleo",
+      customData: viewKey,
+    });
+    expect(redactAccountId(id)).toBe("js:2:aleo:" + address + ":aleo:[redacted]");
+    expect(redactAccountId(id)).not.toContain(viewKey);
+  });
+
+  it("leaves an id with no custom data as it is", () => {
+    expect(redactAccountId("js:2:ethereum:0x01:")).toBe("js:2:ethereum:0x01:");
+  });
+
+  it("hides custom data that starts with a colon", () => {
+    const id = encodeAccountId({
+      type: "js",
+      version: "2",
+      currencyId: "aleo",
+      xpubOrAddress: address,
+      derivationMode: "aleo",
+      customData: `:${viewKey}`,
+    });
+    expect(redactAccountId(id)).toBe("js:2:aleo:" + address + ":aleo:[redacted]");
+  });
+
+  it("hides custom data holding a +, and the token suffix it cannot be told apart from", () => {
+    expect(redactAccountId(`js:2:aleo:${address}:aleo:${viewKey}+sensitive+tokenId`)).toBe(
+      `js:2:aleo:${address}:aleo:[redacted]`,
+    );
+    expect(redactAccountId(`js:2:aleo:${address}:aleo:${viewKey}+aleo~!underscore!~token`)).toBe(
+      `js:2:aleo:${address}:aleo:[redacted]`,
+    );
+  });
+
+  it("keeps the token suffix of an id with no custom data", () => {
+    expect(redactAccountId("js:2:ethereum:0x01:+ethereum%2Ferc20%2Fusdc")).toBe(
+      "js:2:ethereum:0x01:+ethereum%2Ferc20%2Fusdc",
+    );
+  });
+
+  it("does not throw on an opaque id or an unknown derivation mode", () => {
+    expect(redactAccountId("eth")).toBe("eth");
+    expect(redactAccountId(`js:2:aleo:${address}:unknownmode:${viewKey}`)).toBe(
+      `js:2:aleo:${address}:unknownmode:[redacted]`,
+    );
   });
 });
 

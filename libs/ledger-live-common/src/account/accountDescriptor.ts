@@ -222,3 +222,16 @@ export function toLegacyAccount(input: AccountDescriptor): LegacyAccountFields {
     `No derivation mode of ${currencyId} matches path "${descriptor.path}"`,
   );
 }
+
+const REDACTED = "[redacted]";
+
+/** Fields of a legacy account id before its custom data: type, version, currency, address, derivation mode. */
+const LEGACY_ID_FIELDS = 5;
+
+/** The legacy account id with its custom data hidden (Aleo: the view key), for display only. */
+export function redactAccountId(accountId: string): string {
+  const fields = accountId.split(":");
+  if (fields.length <= LEGACY_ID_FIELDS) return accountId;
+  // Custom data may hold an unescaped "+": a token suffix after it cannot be told apart, so it goes too.
+  return [...fields.slice(0, LEGACY_ID_FIELDS), REDACTED].join(":");
+}

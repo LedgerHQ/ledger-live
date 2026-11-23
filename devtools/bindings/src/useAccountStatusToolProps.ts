@@ -1,3 +1,4 @@
+import { useAccountRedaction } from "./accountRedaction";
 import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
@@ -46,6 +47,7 @@ const describeRead = (status: AccountDataStatus | undefined) => ({
 });
 
 export function useAccountStatusToolProps(): AccountStatusToolProps {
+  const redaction = useAccountRedaction();
   const dispatch = useDispatch<Dispatch>();
   const entries = useSelector(selectAccountEntries);
   const statuses = useSelector(accountStatusSlice.selectSlice);
@@ -59,8 +61,14 @@ export function useAccountStatusToolProps(): AccountStatusToolProps {
     [entries],
   );
   const descriptorsJson = useMemo(
-    () => new Map(entries.map(e => [e.accountUUID, JSON.stringify(e.descriptor, null, 2)])),
-    [entries],
+    () =>
+      new Map(
+        entries.map(e => [
+          e.accountUUID,
+          JSON.stringify(redaction.descriptor(e.descriptor), null, 2),
+        ]),
+      ),
+    [entries, redaction],
   );
 
   const read = useCallback(
