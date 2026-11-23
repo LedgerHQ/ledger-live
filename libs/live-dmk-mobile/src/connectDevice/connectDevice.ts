@@ -1,21 +1,18 @@
-import type { DeviceManagementKit, TransportIdentifier } from "@ledgerhq/device-management-kit";
+import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
 import {
   connectDeviceUseCase,
   DefaultDeviceDiscoveryService,
-  type DeviceDiscoverySource,
   type DeviceConnectionResult,
   type KnownDevice,
 } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { Platform } from "react-native";
 import type { Observable } from "rxjs";
 
 import type { MobileDiscoveryError } from "../deviceConnectivity/types";
 import type { MobileConnectDeviceUIState } from "./types";
-import { MockServerDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/MockServerDeviceDiscoverySource";
-import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnBleDeviceDiscoverySource";
-import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
-import { SpeculosDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/SpeculosDeviceDiscoverySource";
+import { buildDiscoverySources } from "../connectNewDevice/buildDiscoverySources";
 import { buildMobileCompatDeviceId, createConnectionError, filterMatchedDevices } from "./utils";
 
 export type ConnectDeviceInput = {
@@ -27,25 +24,6 @@ export type ConnectDeviceInput = {
 };
 
 export function connectDevice(input: ConnectDeviceInput): Observable<MobileConnectDeviceUIState> {
-  const discoverySources: Map<
-    TransportIdentifier,
-    DeviceDiscoverySource<MobileDiscoveryError>
-  > = new Map();
-
-  // A Bluetooth error stops every source. The iOS simulator has no Bluetooth, so the
-  // mock-server session must be the only source or the test stops on that error.
-  if (input.isMockServerEnabled) {
-    const mockServerSource = new MockServerDeviceDiscoverySource(input.dmk);
-    discoverySources.set(mockServerSource.transportId, mockServerSource);
-  } else {
-    const rnHidSource = new RnHidDeviceDiscoverySource(input.dmk);
-    const rnBleSource = new RnBleDeviceDiscoverySource(input.dmk);
-    const speculosSource = new SpeculosDeviceDiscoverySource(input.dmk);
-    discoverySources.set(rnHidSource.transportId, rnHidSource);
-    discoverySources.set(rnBleSource.transportId, rnBleSource);
-    discoverySources.set(speculosSource.transportId, speculosSource);
-  }
-
   // Only mock devices can be discovered in mock mode: a physical known device would never match.
   const knownDevices = input.isMockServerEnabled
     ? input.knownDevices.filter(device => device.transport === mockserverIdentifier)
@@ -55,7 +33,7 @@ export function connectDevice(input: ConnectDeviceInput): Observable<MobileConne
     ...input,
     knownDevices,
     deviceDiscoveryService: new DefaultDeviceDiscoveryService<MobileDiscoveryError>(
-      discoverySources,
+      buildDiscoverySources(input.dmk, Platform.OS, input.isMockServerEnabled),
     ),
     matchDiscoveredDevices: filterMatchedDevices,
     mapConnectionError: createConnectionError,

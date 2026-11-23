@@ -5,6 +5,7 @@ import {
   type KnownDevice,
 } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { Platform } from "react-native";
 import { EMPTY } from "rxjs";
 
 import { connectDevice } from "./connectDevice";
@@ -45,6 +46,10 @@ jest.mock("../deviceConnectivity/discoveryService/sources/MockServerDeviceDiscov
 
 const mockedSharedConnectDeviceUseCase = jest.mocked(sharedConnectDeviceUseCase);
 
+const setPlatformOS = (platformOS: typeof Platform.OS) => {
+  Object.assign(Platform, { OS: platformOS });
+};
+
 const knownDevice: KnownDevice = {
   transport: "RN_BLE",
   deviceModelId: DeviceModelId.nanoX,
@@ -59,6 +64,7 @@ describe("mobile connectDevice", () => {
 
   it("should delegate to the shared use case with mobile discovery and mapping dependencies", () => {
     // GIVEN
+    setPlatformOS("android");
     const dmk = {} as DeviceManagementKit;
     const onConnected = jest.fn();
     const acceptedDeviceModelIds = [DeviceModelId.nanoX];
@@ -91,6 +97,24 @@ describe("mobile connectDevice", () => {
       "mapUnexpectedDiscoveryError",
     );
     expect(MockServerDeviceDiscoverySource).not.toHaveBeenCalled();
+  });
+
+  it("GIVEN iOS, WHEN connectDevice starts, THEN it should not register the USB source", () => {
+    // GIVEN
+    setPlatformOS("ios");
+    const dmk = {} as DeviceManagementKit;
+
+    // WHEN
+    connectDevice({
+      dmk,
+      knownDevices: [knownDevice],
+      onConnected: jest.fn(),
+      isMockServerEnabled: false,
+    });
+
+    // THEN
+    expect(RnBleDeviceDiscoverySource).toHaveBeenCalledWith(dmk);
+    expect(RnHidDeviceDiscoverySource).not.toHaveBeenCalled();
   });
 
   it("should register the mock server source when that transport is enabled", () => {
