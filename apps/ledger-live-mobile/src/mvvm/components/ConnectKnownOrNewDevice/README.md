@@ -14,7 +14,8 @@ The component runs `connectKnownOrNewDevice` from `@ledgerhq/live-dmk-mobile`. T
 | `onDeviceNotFound()`                | Optional. Called by the "I don't see my device" button of the Add mode. This button shows only when the caller gives this prop. The component stays in the Add mode.                 |
 | `onAddDevice(hasDevices)`           | Optional. Replaces the Add mode: the Add buttons call it instead. `hasDevices` is `false` when the list is empty. See [Add mode](#add-mode).                                         |
 | `delays`                            | Optional. The delay of the waiting hint (`deviceNotFound`) and the delays of the Add mode (`connectNewDevice`), in ms. The component reads them on mount only.                      |
-| `children`                          | Optional. Shown under the list, for example the Explore row of My Wallet.                                                                                                            |
+| `listFooter`                        | Optional. Shown right under the list, only when the list has devices, for example the Explore row of My Wallet.                                                                      |
+| `children`                          | Optional. Shown under the list, also when it is empty.                                                                                                                               |
 
 ## Device list
 

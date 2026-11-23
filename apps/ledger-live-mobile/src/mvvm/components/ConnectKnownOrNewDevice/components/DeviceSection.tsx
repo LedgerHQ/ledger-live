@@ -35,6 +35,8 @@ type DeviceSectionProps = {
   onAddNewDevice?: () => void;
   /** Set while discovery is paused: the rows and the Add button show greyed out. */
   disabled?: boolean;
+  /** Shown right under the list, only when the list has devices. */
+  listFooter?: React.ReactNode;
   children?: React.ReactNode;
 };
 
@@ -65,6 +67,7 @@ export function DeviceSection({
   devices,
   onAddNewDevice,
   disabled,
+  listFooter,
   children,
 }: Readonly<DeviceSectionProps>): React.JSX.Element {
   const { t } = useTranslation();
@@ -146,6 +149,7 @@ export function DeviceSection({
           )}
         </Animated.View>
       </LayoutAnimationConfig>
+      {!isEmpty && listFooter}
       {children}
       <DeviceMenuSheet item={menuDevice} onClose={() => setMenuDeviceKey(null)} />
     </Box>

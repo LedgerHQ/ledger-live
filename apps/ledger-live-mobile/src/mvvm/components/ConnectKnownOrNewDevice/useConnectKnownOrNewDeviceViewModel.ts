@@ -124,6 +124,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   onDeviceNotFound,
   onAddDevice,
   delays,
+  listFooter,
   children,
 }: ConnectKnownOrNewDeviceProps): ConnectKnownOrNewDeviceViewProps {
   const platform = Platform.OS === "ios" ? "ios" : "android";
@@ -311,6 +312,7 @@ export function useConnectKnownOrNewDeviceViewModel({
     onDeviceNotFound,
     onCloseErrorSheet,
     onCloseAddModeErrorSheet,
+    listFooter,
     children,
   };
 }

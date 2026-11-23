@@ -31,6 +31,8 @@ export type ConnectKnownOrNewDeviceProps = {
   onAddDevice?: (hasDevices: boolean) => void;
   /** Read on mount only. */
   delays?: ConnectKnownOrNewDeviceDelays;
+  /** Shown right under the device list, only when the list has devices. */
+  listFooter?: ReactNode;
   /** Shown under the device list. */
   children?: ReactNode;
 };
@@ -57,5 +59,6 @@ export type ConnectKnownOrNewDeviceViewProps = {
   onCloseErrorSheet: () => void;
   /** Called on every close of the error sheet of the Add mode. */
   onCloseAddModeErrorSheet: () => void;
+  listFooter?: ReactNode;
   children?: ReactNode;
 };
