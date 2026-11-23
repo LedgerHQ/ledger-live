@@ -2,7 +2,6 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 
 const testPathIgnorePatterns = [
-  "benchmark/",
   "tools/",
   "mobile-test-app/",
   "lib/",
@@ -94,7 +93,6 @@ const defaultConfig = {
   modulePathIgnorePatterns: [
     "__tests__/fixtures",
     "__tests__/migration",
-    "<rootDir>/benchmark/.*",
     "<rootDir>/cli/.yalc/.*",
     "<rootDir>/lib-es",
     "<rootDir>/lib",
