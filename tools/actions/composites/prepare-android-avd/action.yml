@@ -66,17 +66,17 @@ runs:
         destination: /
 
     - name: Fail without the AVD
-      if: steps.preinstalled.outputs.found != 'true' && steps.download.outputs.cache-hit != 'true' && inputs.create_if_missing != 'true'
+      if: steps.preinstalled.outputs.found != 'true' && steps.download.outcome != 'success' && inputs.create_if_missing != 'true'
       shell: bash
       env:
         KEY: ${{ inputs.cache_key || env.AVD_CACHE_KEY }}
       run: |
-        echo "::error title=No Android AVD::Neither the runner image nor R2 has the AVD ${KEY}."
+        echo "::error title=No Android AVD::The runner image has no AVD ${KEY}, and its R2 download failed."
         exit 1
 
     # Not uploaded: the setup-android-avd jobs that hold R2 write credentials do that.
     - name: Create the AVD (not on the image nor in R2)
-      if: steps.preinstalled.outputs.found != 'true' && steps.download.outputs.cache-hit != 'true' && inputs.create_if_missing == 'true'
+      if: steps.preinstalled.outputs.found != 'true' && steps.download.outcome != 'success' && inputs.create_if_missing == 'true'
       uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
 
     - name: Report the AVD in use
@@ -84,7 +84,7 @@ runs:
       continue-on-error: true
       shell: bash
       env:
-        SOURCE: ${{ steps.preinstalled.outputs.found == 'true' && 'runner image' || steps.download.outputs.cache-hit == 'true' && 'R2' || 'created in this job' }}
+        SOURCE: ${{ steps.preinstalled.outputs.found == 'true' && 'runner image' || steps.download.outcome == 'success' && 'R2' || 'created in this job' }}
         KEY: ${{ inputs.cache_key || env.AVD_CACHE_KEY }}
       run: |
         echo "source=${SOURCE}" >> "$GITHUB_OUTPUT"
