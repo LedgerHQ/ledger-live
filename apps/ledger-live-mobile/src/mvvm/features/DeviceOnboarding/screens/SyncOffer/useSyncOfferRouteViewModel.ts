@@ -145,6 +145,7 @@ export function useSyncOfferRouteViewModel(): SyncOfferRouteViewModel {
     onLearnMore,
     onContinue: finishOnboarding,
     phase,
+    showGlow: unseeded,
     seededDeviceType: seededResult?.deviceType ?? null,
     deviceIntentStepElement: deviceIntentStep.element,
   };

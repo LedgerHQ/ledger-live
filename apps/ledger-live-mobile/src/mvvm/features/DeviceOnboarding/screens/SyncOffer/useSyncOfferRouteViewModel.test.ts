@@ -381,6 +381,16 @@ describe("useSyncOfferRouteViewModel", () => {
     );
   });
 
+  it("should hide the glow for a seeded device and show it for an unseeded device", () => {
+    const seeded = renderOffer(false);
+    expect(seeded.result.current.showGlow).toBe(false);
+
+    mockOfferParams.unseeded = true;
+    mockOfferParams.seededResult = null;
+    const unseeded = renderOffer(false);
+    expect(unseeded.result.current.showGlow).toBe(true);
+  });
+
   it("should complete without sync when the offer is skipped", () => {
     const { result } = renderOffer(false);
 

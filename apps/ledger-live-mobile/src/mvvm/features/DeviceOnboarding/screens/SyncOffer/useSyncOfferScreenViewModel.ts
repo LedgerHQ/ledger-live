@@ -26,6 +26,7 @@ export type SyncOfferPhase = "offer" | "synchronizing" | "success";
 
 type SyncOfferSuccessViewProps = Readonly<{
   phase: "success";
+  showGlow: boolean;
   screenTracking: ScreenTracking | null;
   title: string;
   continueLabel: string;
@@ -36,6 +37,7 @@ type SyncOfferSuccessViewProps = Readonly<{
 
 type SyncOfferSynchronizingViewProps = Readonly<{
   phase: "synchronizing";
+  showGlow: boolean;
   title: string;
   closeLabel: string;
   onQuit: () => void;
@@ -43,6 +45,7 @@ type SyncOfferSynchronizingViewProps = Readonly<{
 
 type SyncOfferPromptViewProps = Readonly<{
   phase: "offer";
+  showGlow: boolean;
   screenTracking: ScreenTracking | null;
   title: string;
   description: string;
@@ -69,6 +72,7 @@ export type SyncOfferScreenProps = Readonly<{
   onQuit: () => void;
   onContinue: () => void;
   phase: SyncOfferPhase;
+  showGlow?: boolean;
   seededDeviceType?: DeviceModelId | null;
 }>;
 
@@ -79,6 +83,7 @@ export function useSyncOfferScreenViewModel({
   onQuit,
   onContinue,
   phase,
+  showGlow = false,
   seededDeviceType,
 }: SyncOfferScreenProps): SyncOfferViewProps {
   const { t } = useTranslation();
@@ -98,6 +103,7 @@ export function useSyncOfferScreenViewModel({
   if (phase === "success") {
     return {
       phase,
+      showGlow,
       screenTracking: screenTracking(seededPages.ledgerSyncSuccess),
       title: t("deviceOnboarding.syncOffer.success.title"),
       continueLabel: t("deviceOnboarding.syncOffer.success.cta"),
@@ -113,6 +119,7 @@ export function useSyncOfferScreenViewModel({
   if (phase === "synchronizing") {
     return {
       phase,
+      showGlow,
       title: t("deviceOnboarding.checks.synchronizing.title"),
       closeLabel: t("deviceOnboarding.checks.close"),
       onQuit: quit,
@@ -121,6 +128,7 @@ export function useSyncOfferScreenViewModel({
 
   return {
     phase,
+    showGlow,
     screenTracking: screenTracking(seededPages.ledgerSync),
     title: t("deviceOnboarding.syncOffer.title"),
     description: t("deviceOnboarding.syncOffer.description"),
