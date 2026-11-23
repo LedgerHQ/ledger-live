@@ -30,6 +30,8 @@ describe("NoSensitive", () => {
     accept({ keys: [secret] });
     // @ts-expect-error an optional Sensitive field
     accept<{ key?: Secret }>({});
+    // @ts-expect-error a union with one sensitive member
+    accept<{ key: Secret } | { count: number }>({ count: 1 });
     expect(true).toBe(true);
   });
 });

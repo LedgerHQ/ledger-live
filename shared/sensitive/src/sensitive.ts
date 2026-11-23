@@ -22,8 +22,8 @@ type HasSensitive<T, Depth extends unknown[] = []> = Depth["length"] extends Max
             : false
           : false;
 
-/** `unknown` when `T` holds no `Sensitive` brand, down to 6 levels; else a type no value matches. */
+/** `unknown` when `T` holds no `Sensitive` brand, down to 6 levels, in any union member; else a type no value matches. */
 export type NoSensitive<T> =
-  HasSensitive<T> extends true
+  true extends HasSensitive<T>
     ? { "Sensitive value: pass its AccountUUID instead": never }
     : unknown;
