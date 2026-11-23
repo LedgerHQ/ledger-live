@@ -106,6 +106,7 @@ export class BuyAndSellPage extends WebViewAppPage {
     if (await this.isCorrectAssetAlreadySelected(account)) return;
     await this.clickElement(this.cryptoCurrencySelector);
     await this.selectAssetInDrawer(account);
+    await this.verifyElementText(this.cryptoCurrencySelector, account.currency.ticker);
   }
 
   /**
@@ -195,6 +196,7 @@ export class BuyAndSellPage extends WebViewAppPage {
     await this.setRegion(fiat.locale);
     await this.setCurrency(fiat.currencyTicker);
     await this.clickElement(this.saveRegionFiatOptionsSelector);
+    await this.verifyElementText(this.fiatOptionSelector, fiat.currencyTicker);
   }
 
   @step("Select region $0")
@@ -214,8 +216,20 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Expect asset selected to be displayed")
   async verifySelectedAssetIsDisplayed(account: AccountType) {
-    await this.verifyElementText(this.cryptoCurrencySelector, account.currency.ticker);
-    await this.verifyElementText(this.cryptoCurrencySelectorLabel, getParentAccountName(account));
+    const webview = await this.getWebView();
+    const selector = webview.getByTestId(this.cryptoCurrencySelector);
+    await expect(selector).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await Promise.all([
+          soft(selector).toContainText(account.currency.ticker),
+          soft(webview.getByTestId(this.cryptoCurrencySelectorLabel)).toContainText(
+            getParentAccountName(account),
+          ),
+        ]);
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Verify buy sell screen is visible with $1 selected and the crypto asset selected")
@@ -227,25 +241,46 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Verify fiat asset selected as $0")
   async verifyFiatAssetSelector(fiatCurrencyTicker: string) {
-    await this.verifyElementText(this.fiatOptionSelector, fiatCurrencyTicker);
+    const webview = await this.getWebView();
+    const selector = webview.getByTestId(this.fiatOptionSelector);
+    await expect(selector).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(selector).toContainText(fiatCurrencyTicker);
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Verify provider info is not visible")
   async verifyProviderInfoIsNotVisible() {
-    await this.verifyElementIsNotVisible(this.paymentSelector);
-    await this.verifyElementIsNotVisible(this.providersList);
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.amountInputSection)).toBeVisible();
+    await this.softExpect(async soft => {
+      await Promise.all([
+        soft(webview.getByTestId(this.paymentSelector)).not.toBeVisible(),
+        soft(webview.getByTestId(this.providersList)).not.toBeVisible(),
+      ]);
+    });
   }
 
   @step("Verify buy info box")
   async verifyBuyInfoBox() {
-    await this.verifyElementIsVisible(this.infoBox);
-    await this.verifyElementText(this.infoBox, "Buy securely with Ledger");
+    await this.verifyInfoBoxText("Buy securely with Ledger");
   }
 
   @step("Verify sell info box")
   async verifySellInfoBox() {
-    await this.verifyElementIsVisible(this.infoBox);
-    await this.verifyElementText(this.infoBox, "Sell securely with Ledger");
+    await this.verifyInfoBoxText("Sell securely with Ledger");
+  }
+
+  private async verifyInfoBoxText(expected: string) {
+    const webview = await this.getWebView();
+    const infoBox = webview.getByTestId(this.infoBox);
+    await expect(infoBox).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(infoBox).toContainText(expected);
+    });
   }
 
   // Falls back to the max sellable balance if the requested amount exceeds it.
@@ -253,11 +288,20 @@ export class BuyAndSellPage extends WebViewAppPage {
   async setAmountToPay(amount: string, operation: string): Promise<string> {
     await this.setValue(this.amountInputSection, amount);
 
-    await this.verifyElementText(
-      this.formCta,
-      operation === OperationType.Buy ? "Select quote to continue" : "Set an amount to get quotes",
+    const formCta = (await this.getWebView()).getByTestId(this.formCta);
+    await this.softExpect(
+      async soft => {
+        await Promise.all([
+          soft(formCta).toContainText(
+            operation === OperationType.Buy
+              ? "Select quote to continue"
+              : "Set an amount to get quotes",
+          ),
+          soft(formCta).not.toBeEnabled(),
+        ]);
+      },
+      { timeout: TIMEOUT.large },
     );
-    await this.verifyElementIsNotEnabled(this.formCta);
 
     let balanceTooLow = false;
     if (operation === OperationType.Sell) {
