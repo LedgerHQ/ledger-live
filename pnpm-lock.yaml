@@ -3291,8 +3291,8 @@ importers:
         specifier: workspace:^
         version: link:../../shared/schema-primitives
       '@types/debug':
-        specifier: 4.1.12
-        version: 4.1.12
+        specifier: 4.1.13
+        version: 4.1.13
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -34361,8 +34361,8 @@ packages:
   '@types/d3-time@2.1.4':
     resolution: {integrity: sha512-BTfLsxTeo7yFxI/haOOf1ZwJ6xKgQLT9dCp+EcmQv87Gox6X+oKl4mLKfO6fnWm3P22+A6DknMNEZany8ql2Rw==}
 
-  '@types/debug@4.1.12':
-    resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
+  '@types/debug@4.1.13':
+    resolution: {integrity: sha512-KSVgmQmzMwPlmtljOomayoR89W4FynCAi3E8PPs7vmDVPe84hT+vGPKkJfThkmXs0x0jAaa9U8uW8bbfyS2fWw==}
 
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
@@ -53910,7 +53910,7 @@ snapshots:
 
   '@types/d3-time@2.1.4': {}
 
-  '@types/debug@4.1.12':
+  '@types/debug@4.1.13':
     dependencies:
       '@types/ms': 0.7.34
 
@@ -55735,7 +55735,7 @@ snapshots:
 
   builder-util@26.15.3:
     dependencies:
-      '@types/debug': 4.1.12
+      '@types/debug': 4.1.13
       builder-util-runtime: 9.7.0
       chalk: 4.1.2
       cross-spawn: 7.0.6
