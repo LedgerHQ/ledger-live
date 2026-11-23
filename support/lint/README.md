@@ -49,6 +49,13 @@ The `no-restricted-imports` entries that several configs share live in `restrict
 which the presets and the `.mts` configs import and which writes the JSON fragments in
 `restricted-imports/` that the JSON configs extend.
 
+`ACCOUNT_DESCRIPTOR` restricts `@domain/entity-account-descriptor/descriptor` and
+`@domain/entity-account/descriptor`, the entries that hand out an account descriptor and its
+sensitive key. `base` and `features-flow` set it, and an override of `base` lifts it in the packages
+of `ACCOUNT_DESCRIPTOR_EDGES` (the account data router and hooks, the sources, discovery, the
+accounts entity); `devtools` does not set it, and the app configs set it too. Code holds the
+`AccountUUID` instead.
+
 `plugins.mts` (`@support/lint/plugins`) exports `SUFFIX_IMPORTS_PLUGIN`, `REDUX_SLICES_PLUGIN` and
 `DERIVATION_MIRROR_PLUGIN`, the absolute paths of the `suffix-imports`, `redux-slices` and
 `derivation-mirror` JS plugins. `base` puts them in
@@ -176,5 +183,26 @@ being linted, so either side fails on its own. It reads the other file from disk
 TypeScript parser, loaded only for these two files. `base` turns it on as an error and `libs`
 inherits it. The [`@domain/entity-derivation` README](../../domain/entity/derivation/README.md#a-mirror-of-derivationts)
 says why both copies exist and how to change them.
+
+### `sensitive/no-sensitive-in-text`
+
+[`src/no-sensitive-in-text.js`](src/no-sensitive-in-text.js) reports a value whose type carries the
+zod `Sensitive` brand (`z.string().brand<"AccountKey">().brand<"Sensitive">()`), directly, in a
+union or nested in an object property or array element, where it becomes text: a template literal,
+a `+` operand, `String()`, `JSON.stringify()`, `log()`, `console.*()`, `invariant()` or
+`new XxxError()`. Pass the account's `AccountUUID` instead, or `maskAccountKey()` for display.
+
+It needs type information, which oxlint's JS plugins do not get, so it runs on ESLint 8 with
+`@typescript-eslint/parser` and its project service, from
+[`eslint.sensitive.config.js`](eslint.sensitive.config.js), on `domain/`, `features/` and `shared/`,
+test files excluded:
+
+```sh
+pnpm --filter @support/lint lint:sensitive
+```
+
+The whole scope (about 3,100 files) takes about 4 minutes and up to 16 GB of heap. It is not in
+CI nor in the `lint` target yet. Inline `eslint-disable` comments are ignored there, as they name
+rules this config does not load.
 
 Run the rules' tests with `nx run @support/lint:test`.

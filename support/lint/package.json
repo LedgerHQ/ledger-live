@@ -21,18 +21,22 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "oxfmt *.mts src",
-    "format:check": "oxfmt *.mts src --check",
+    "format": "oxfmt *.mts *.js src",
+    "format:check": "oxfmt *.mts *.js src --check",
     "generate:restricted-imports": "node src/restricted-imports-fragments.js",
-    "lint": "oxlint *.mts src",
+    "lint": "oxlint *.mts *.js src",
+    "lint:sensitive": "cd ../.. && ESLINT_USE_FLAT_CONFIG=true NODE_OPTIONS=--max-old-space-size=16384 support/lint/node_modules/.bin/eslint -c support/lint/eslint.sensitive.config.js --no-inline-config domain features shared",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@ledgerhq/lumen-lint-plugin": "catalog:",
     "@types/node": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
     "@typescript/native": "catalog:",
+    "eslint": "8.57.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "zod": "catalog:"
   }
 }

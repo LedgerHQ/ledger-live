@@ -3,5 +3,5 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": ["*.mts", "src/**/*.js"]
+  "include": ["*.mts", "*.js", "src/**/*.js"]
 }
