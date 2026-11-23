@@ -342,46 +342,19 @@ jobs:
           # adb, build-tools and the emulator are on the image.
           install_sdk: "false"
 
-      - name: Check for a preinstalled AVD
-        id: preinstalled-avd
-        run: |
-          stamp="${HOME}/.android/avd-cache-key"
-          if [ "$(cat "$stamp" 2>/dev/null)" = "${AVD_CACHE_KEY}" ]; then
-            echo "Preinstalled AVD matches ${AVD_CACHE_KEY}"
-            echo "found=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          if [ -f "$stamp" ]; then
-            echo "::warning title=Runner image AVD is out of date::Image has $(cat "$stamp"), need ${AVD_CACHE_KEY}; using R2."
-            rm -rf "${HOME}/.android/avd" "$stamp" \
-              /usr/local/lib/android/sdk/emulator \
-              "/usr/local/lib/android/sdk/system-images/android-${AVD_API}/${AVD_TARGET}/${AVD_ARCH}"
-          fi
-          echo "found=false" >> "$GITHUB_OUTPUT"
-
-      - name: Download android emulator
-        if: steps.preinstalled-avd.outputs.found != 'true'
-        timeout-minutes: 10
-        continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+      - name: Prepare the AVD
         id: avd
+        timeout-minutes: 40
+        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@develop
         with:
-          key: ${{ env.AVD_CACHE_KEY }}
-          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
-          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
-          bucket: ledger-live-cache
-          endpoint: ${{ secrets.R2_ENDPOINT }}
-          region: auto
-          destination: /
-
-      # No R2 credentials: this workflow never writes E2E's AVD cache.
-      - name: Create the AVD (not on the image nor in R2)
-        if: steps.preinstalled-avd.outputs.found != 'true' && steps.avd.outputs.cache-hit != 'true'
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+          r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2_endpoint: ${{ secrets.R2_ENDPOINT }}
+          create_if_missing: "true"
 
       - name: Report the AVD in use
         env:
-          AVD_SOURCE: ${{ steps.preinstalled-avd.outputs.found == 'true' && 'runner image' || steps.avd.outputs.cache-hit == 'true' && 'R2' || 'created in this job' }}
+          AVD_SOURCE: ${{ steps.avd.outputs.source }}
           SCENARIO: ${{ matrix.scenario }}
         run: |
           {
