@@ -371,11 +371,11 @@ export function runInlineAddAccountTest(
       await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
       await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
-      await app.addAccount.addAccountAtIndex(
-        `${account.currency.name} ${account.index + 1}`,
-        account.currency.id,
-        0,
-      );
+      await app.addAccount.addAccountAtIndex({
+        currencyName: `${account.currency.name} ${account.index + 1}`,
+        currencyId: account.currency.id,
+        index: 0,
+      });
 
       if (depositScreen === "v2") {
         await app.earnV2Dashboard.verifyV2DepositFlowVisible();
@@ -429,10 +429,10 @@ export function runSwapRedirectTest(
       }
       await app.earnV2Dashboard.verifyV2DepositFlowVisible();
       await app.earnV2Dashboard.selectAnotherFundingAccount(fundingAccount);
-      await app.earnV2Dashboard.verifySwapToEarnDescription(
-        fundingAccount.currency.ticker,
-        earnAccount.currency.ticker,
-      );
+      await app.earnV2Dashboard.verifySwapToEarnDescription({
+        fromTicker: fundingAccount.currency.ticker,
+        toTicker: earnAccount.currency.ticker,
+      });
       await app.earnV2Dashboard.selectAmountPresetV2("50");
       await app.earnV2Dashboard.continueToSwap();
       await app.swapLiveApp.checkAssetFromMatchesAccount(fundingAccount);

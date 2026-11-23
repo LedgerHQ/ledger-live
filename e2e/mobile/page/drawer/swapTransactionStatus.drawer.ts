@@ -13,6 +13,12 @@ export type SwapTransactionStatusDetails = {
   providerUrl?: string;
 };
 
+type ExpectSwapTransactionStatusDrawerInfosOptions = {
+  swapIdPrefix: string;
+  provider: SwapProvider;
+  details: SwapTransactionStatusDetails;
+};
+
 export default class SwapTransactionStatusDrawer {
   private readonly scrollView = byId("swap-transaction-status-scroll-view");
   private readonly title = byId("swap-transaction-title");
@@ -28,12 +34,11 @@ export default class SwapTransactionStatusDrawer {
   private readonly swapId = byId("swap-transaction-details-swap-id");
   private readonly viewInExplorerButton = byId("swap-transaction-view-explorer-btn");
 
-  @Step("Verify swap transaction status drawer information {{{0}}}")
+  @Step("Verify swap transaction status drawer information {{{0.swapIdPrefix}}}")
   async expectSwapTransactionStatusDrawerInfos(
-    swapIdPrefix: string,
-    provider: SwapProvider,
-    details: SwapTransactionStatusDetails,
+    options: ExpectSwapTransactionStatusDrawerInfosOptions,
   ) {
+    const { swapIdPrefix, provider, details } = options;
     // Every value here only mounts its testID once resolved (a Skeleton renders otherwise), so
     // the wait inside getText already guarantees the text is final once found.
     await this.title.waitVisible();

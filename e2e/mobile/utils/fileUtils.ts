@@ -4,17 +4,6 @@ import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 
 export class FileUtils {
-  @Step("get app.json size {{{0}}}")
-  static async getAppJsonSize(userdataFile: string) {
-    const fileStats = await fs.stat(userdataFile);
-    return fileStats.size;
-  }
-
-  @Step("Compare 2 app.json files ({{{0}}} vs {{{1}}})")
-  static async compareAppJsonSize(appJson1: number, appJson2: number) {
-    jestExpect(appJson1).not.toEqual(appJson2);
-  }
-
   @Step("Wait for file to exist after clicking download {{{0}}}")
   static async waitForFileToExist(
     filePath: string,
