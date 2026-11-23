@@ -6,6 +6,7 @@ import { CliProcessExitError } from "./cli-process-exit-error";
 import { USDT_TOKEN_INFO, USDT_TOKEN_JSON } from "./testing/cal-fixtures";
 import { SwapBackendError } from "./commands/swap/swap-backend-error";
 import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
+import { EarnApiHttpError } from "./wallet/earn/api";
 import { DerivationPathSchema, NetworkIdSchema } from "./shared/accountDescriptor";
 
 const XPUB = "xpub6BosfCnifzxcA";
@@ -734,6 +735,26 @@ describe("JsonCommandOutput", () => {
           code: "SwapBackendError",
           message: "The swap provider rejected the request.",
           http_status: 401,
+        },
+      });
+    });
+
+    it("adds http_status and the host for Earn API failures", () => {
+      const earnError = new EarnApiHttpError(
+        "Earn API GET /v0/grow failed: 503 Service Unavailable",
+        "https://earn.api.live.ledger.com/v0/grow",
+        503,
+      );
+
+      expect(failWith(earnError)).toEqual({
+        ok: false,
+        error: {
+          command: "swap execute",
+          code: "EarnApiHttpError",
+          message: "Earn API GET /v0/grow failed: 503 Service Unavailable",
+          http_status: 503,
+          host: "earn.api.live.ledger.com",
+          hint: "Request to earn.api.live.ledger.com failed with HTTP 503.",
         },
       });
     });

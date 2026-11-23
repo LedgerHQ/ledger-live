@@ -66,16 +66,17 @@ export class EarnApiError extends Error {
 export class EarnApiHttpError extends Error {
   override name = "EarnApiHttpError";
   readonly url: string;
-  readonly status: number;
-  constructor(message: string, url: string, status: number) {
+  readonly httpStatus: number;
+  constructor(message: string, url: string, httpStatus: number) {
     super(message);
     this.url = url;
-    this.status = status;
+    this.httpStatus = httpStatus;
   }
 }
 
 function httpFailureDetail(status: number, statusText: string, body: string): string {
-  return `${status} ${statusText}${body ? ` — ${body.slice(0, 500)}` : ""}`;
+  const detail = `${status} ${statusText}`;
+  return body ? `${detail} — ${body.slice(0, 500)}` : detail;
 }
 
 function buildUrl(path: string, query?: RequestOptions["query"]): string {
