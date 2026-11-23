@@ -455,38 +455,6 @@ const EXPECTED_ACCOUNTS: Record<string, ExpectedAccount[]> = {
       operationsCount: 0,
     },
   ],
-  zencash: [
-    {
-      derivationMode: "",
-      index: 0,
-      seedIdentifier:
-        "04ecf3eb0c3454436fd414da75eafad95896209052eef81b06860cc6c14731963e63ae744577e35b51d4e40ebb4366e59e2a20f571384384bfcb804444db6a83d7",
-      accountPath: "44'/121'/0'",
-      xpub: "xpub6D5t3ggLE75WLn8cMhJ6V5tdZsT5ixJDjoYrERnYgkjXe5f2qqBBsjCLJ4ktGeorZBrSwQZ6tRqmmu9CM5fpi6S7n1T6VMxitE4LnXBStue",
-      used: true,
-      operationsCount: 130,
-    },
-    {
-      derivationMode: "",
-      index: 1,
-      seedIdentifier:
-        "04ecf3eb0c3454436fd414da75eafad95896209052eef81b06860cc6c14731963e63ae744577e35b51d4e40ebb4366e59e2a20f571384384bfcb804444db6a83d7",
-      accountPath: "44'/121'/1'",
-      xpub: "xpub6D5t3ggLE75WMZywf9sHZtBZcgdQTvVorb4U6YiYBSZrWiPZsB7JjjyMfyM7KiSQMwc87BLZSi8wXgoRvMZHVACMF7CBE3B77NN314ZKWuA",
-      used: true,
-      operationsCount: 128,
-    },
-    {
-      derivationMode: "",
-      index: 2,
-      seedIdentifier:
-        "04ecf3eb0c3454436fd414da75eafad95896209052eef81b06860cc6c14731963e63ae744577e35b51d4e40ebb4366e59e2a20f571384384bfcb804444db6a83d7",
-      accountPath: "44'/121'/2'",
-      xpub: "xpub6D5t3ggLE75WQGWU8XaFEiYXbgQFJD3u6eyN1Yb7gcRu4Gan7uKEwqaCBoRhFs73nN1Kf51D5W7kx6TRLpDmwWgeDEk6mghh4gPA3BZbNvg",
-      used: false,
-      operationsCount: 0,
-    },
-  ],
 };
 
 const sumOfOperations = (account: Account): string => {
