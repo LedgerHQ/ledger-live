@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
@@ -97,6 +98,7 @@ function useCaseInput() {
 
 function renderViewModel(props: Partial<ConnectNewDeviceProps> = {}) {
   const allProps: ConnectNewDeviceProps = {
+    sourceFlow: "onboarding",
     onConnected: jest.fn(),
     onDeviceNotFound: jest.fn(),
     onClose: jest.fn(),
@@ -146,6 +148,7 @@ describe("useConnectNewDeviceViewModel", () => {
     // GIVEN
     const onClose = jest.fn();
     let props: ConnectNewDeviceProps = {
+      sourceFlow: "onboarding",
       onConnected: jest.fn(),
       onDeviceNotFound: jest.fn(),
       onClose: jest.fn(),
@@ -195,6 +198,24 @@ describe("useConnectNewDeviceViewModel", () => {
       { id: "device-id", name: "Ledger Nano X", modelId: DeviceModelId.nanoX },
     ]);
     expect(props.onConnected).toHaveBeenCalledWith(connectionResult);
+  });
+
+  it("GIVEN a device the app does not know, WHEN the flow connects it, THEN it should send device_connected with isNewDevice true", () => {
+    // GIVEN
+    renderViewModel();
+
+    // WHEN
+    act(() => useCaseInput().onConnected(makeConnectionResult()));
+
+    // THEN
+    expect(jest.mocked(track)).toHaveBeenCalledWith("device_connected", {
+      sourceFlow: "onboarding",
+      deviceUxV2: true,
+      modelId: DeviceModelId.nanoX,
+      transport: "ble",
+      matchedDevice: DeviceModelId.nanoX,
+      isNewDevice: true,
+    });
   });
 
   it("should call onClose when the use case closes", () => {

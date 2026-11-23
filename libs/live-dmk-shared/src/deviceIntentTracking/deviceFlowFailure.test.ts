@@ -5,6 +5,10 @@ import {
   type KnownDevice,
 } from "../connectDevice/types";
 import {
+  ConnectNewDeviceUIStateTypes,
+  type ConnectNewDeviceUIState,
+} from "../connectNewDevice/types";
+import {
   AppInteractionRequiredStateType,
   BlockingStateType,
   FinalStateType,
@@ -16,6 +20,7 @@ import {
   DeviceFlowFailureType,
   getConnectDeviceFailure,
   getConnectDeviceSubError,
+  getConnectNewDeviceFailure,
   getDeviceDisconnectedFailure,
   getDeviceFlowFailureProperties,
   getDeviceflowCancelEventName,
@@ -181,6 +186,96 @@ describe("getConnectDeviceFailure", () => {
   ])("should return null for the non-error state $type", state => {
     expect(getConnectDeviceFailure(state, getTransport)).toBeNull();
   });
+});
+
+describe("getConnectNewDeviceFailure", () => {
+  type SharedConnectNewDeviceUIState = ConnectNewDeviceUIState<
+    BaseDiscoveryError,
+    BaseConnectionError
+  >;
+
+  it("GIVEN a discovery error with retry, WHEN getting its failure, THEN it should not count as a failure", () => {
+    // GIVEN
+    const state: SharedConnectNewDeviceUIState = {
+      type: ConnectNewDeviceUIStateTypes.DiscoveryError,
+      error: { type: "bluetooth-disabled-promptable", transportId: "RN_BLE" },
+      retry: jest.fn(),
+      ignore: jest.fn(),
+      close: jest.fn(),
+    };
+
+    // WHEN
+    const failure = getConnectNewDeviceFailure(state, getTransport);
+
+    // THEN
+    expect(failure).toEqual({
+      failureType: DeviceFlowFailureType.DiscoveryError,
+      countsAsFailure: false,
+      subError: "bluetooth-disabled-promptable",
+      transport: "ble",
+    });
+  });
+
+  it("GIVEN a connection error, WHEN getting its failure, THEN it should report the device", () => {
+    // GIVEN
+    const state: SharedConnectNewDeviceUIState = {
+      type: ConnectNewDeviceUIStateTypes.ConnectionError,
+      error: { type: "ble-pairing-refused" },
+      device: knownDevice,
+      retry: jest.fn(),
+      ignore: jest.fn(),
+      close: jest.fn(),
+    };
+
+    // WHEN
+    const failure = getConnectNewDeviceFailure(state, getTransport);
+
+    // THEN
+    expect(failure).toEqual({
+      failureType: DeviceFlowFailureType.ConnectionError,
+      countsAsFailure: false,
+      subError: "ble-pairing-refused",
+      modelId: DeviceModelId.europa,
+      transport: "ble",
+    });
+  });
+
+  it("GIVEN the unknown error state, WHEN getting its failure, THEN it should count as a failure", () => {
+    // GIVEN
+    const state: SharedConnectNewDeviceUIState = {
+      type: ConnectNewDeviceUIStateTypes.UnknownError,
+      error: new SyntaxError("boom"),
+    };
+
+    // WHEN
+    const failure = getConnectNewDeviceFailure(state, getTransport);
+
+    // THEN
+    expect(failure).toEqual({
+      failureType: DeviceFlowFailureType.ConnectDeviceUnknownError,
+      countsAsFailure: true,
+      subError: "SyntaxError",
+    });
+  });
+
+  it.each<SharedConnectNewDeviceUIState>([
+    {
+      type: ConnectNewDeviceUIStateTypes.Discovering,
+      devices: [],
+      scanningTransports: [],
+      showDeviceNotFound: false,
+    },
+    { type: ConnectNewDeviceUIStateTypes.Connecting, device: knownDevice },
+    { type: ConnectNewDeviceUIStateTypes.Connected, device: knownDevice },
+    { type: ConnectNewDeviceUIStateTypes.Done, device: knownDevice },
+    { type: ConnectNewDeviceUIStateTypes.Terminated },
+  ])(
+    "GIVEN the non-error state $type, WHEN getting its failure, THEN it should return null",
+    state => {
+      // GIVEN / WHEN / THEN
+      expect(getConnectNewDeviceFailure(state, getTransport)).toBeNull();
+    },
+  );
 });
 
 describe("getEnsureAppReadyFailure", () => {

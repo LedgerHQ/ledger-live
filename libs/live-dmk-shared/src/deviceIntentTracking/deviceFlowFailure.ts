@@ -15,10 +15,18 @@ import {
   type EnsureAppReadyState,
 } from "../device-action/EnsureAppReady/state";
 import {
+  ConnectNewDeviceUIStateTypes,
+  type ConnectNewDeviceUIState,
+} from "../connectNewDevice/types";
+import {
   type BaseConnectionError,
   BaseConnectionErrorTypes,
   type BaseDiscoveryError,
   BaseDiscoveryErrorTypes,
+  type ConnectionErrorUIState,
+  ConnectivityUIStateTypes,
+  type DiscoveryErrorUIState,
+  type UnknownErrorUIState,
 } from "../deviceConnectivity/types";
 
 export type DeviceFlowTransport = "ble" | "usb";
@@ -97,21 +105,28 @@ export function getConnectDeviceSubError(error: BaseDiscoveryError | BaseConnect
   return error.error === undefined ? UNKNOWN_ERROR_NAME : getErrorName(error.error);
 }
 
-export function getConnectDeviceFailure(
-  state: ConnectDeviceUIState<BaseDiscoveryError, BaseConnectionError>,
-  getTransport: (
-    transportId: KnownDevice["transport"] | undefined,
-  ) => DeviceFlowTransport | undefined,
-): DeviceFlowFailure | null {
+type GetDeviceFlowTransport = (
+  transportId: KnownDevice["transport"] | undefined,
+) => DeviceFlowTransport | undefined;
+
+type ConnectivityErrorUIState =
+  | DiscoveryErrorUIState<BaseDiscoveryError>
+  | ConnectionErrorUIState<BaseConnectionError>
+  | UnknownErrorUIState;
+
+function getConnectivityErrorFailure(
+  state: ConnectivityErrorUIState,
+  getTransport: GetDeviceFlowTransport,
+): DeviceFlowFailure {
   switch (state.type) {
-    case ConnectDeviceUIStateTypes.DiscoveryError:
+    case ConnectivityUIStateTypes.DiscoveryError:
       return {
         failureType: DeviceFlowFailureType.DiscoveryError,
         countsAsFailure: state.retry === undefined,
         subError: getConnectDeviceSubError(state.error),
         transport: getTransport(state.error.transportId),
       };
-    case ConnectDeviceUIStateTypes.ConnectionError:
+    case ConnectivityUIStateTypes.ConnectionError:
       return {
         failureType: DeviceFlowFailureType.ConnectionError,
         // Known pairing errors are user-fixable; an unknown one counts as failed even with Retry.
@@ -120,18 +135,53 @@ export function getConnectDeviceFailure(
         modelId: state.device.deviceModelId,
         transport: getTransport(state.device.transport),
       };
-    case ConnectDeviceUIStateTypes.UnknownError:
+    case ConnectivityUIStateTypes.UnknownError:
       return {
         failureType: DeviceFlowFailureType.ConnectDeviceUnknownError,
         countsAsFailure: true,
         subError: getErrorName(state.error),
       };
+    default:
+      return assertNever(state);
+  }
+}
+
+export function getConnectDeviceFailure(
+  state: ConnectDeviceUIState<BaseDiscoveryError, BaseConnectionError>,
+  getTransport: GetDeviceFlowTransport,
+): DeviceFlowFailure | null {
+  switch (state.type) {
+    case ConnectDeviceUIStateTypes.DiscoveryError:
+    case ConnectDeviceUIStateTypes.ConnectionError:
+    case ConnectDeviceUIStateTypes.UnknownError:
+      return getConnectivityErrorFailure(state, getTransport);
     case ConnectDeviceUIStateTypes.Loading:
     case ConnectDeviceUIStateTypes.NoKnownDevice:
     case ConnectDeviceUIStateTypes.Discovering:
     case ConnectDeviceUIStateTypes.WaitingForSelectedDevice:
     case ConnectDeviceUIStateTypes.Connecting:
     case ConnectDeviceUIStateTypes.Connected:
+      return null;
+    default:
+      return assertNever(state);
+  }
+}
+
+/** The error screen of a Connect New Device state, with the same rules as Connect Device. */
+export function getConnectNewDeviceFailure(
+  state: ConnectNewDeviceUIState<BaseDiscoveryError, BaseConnectionError>,
+  getTransport: GetDeviceFlowTransport,
+): DeviceFlowFailure | null {
+  switch (state.type) {
+    case ConnectNewDeviceUIStateTypes.DiscoveryError:
+    case ConnectNewDeviceUIStateTypes.ConnectionError:
+    case ConnectNewDeviceUIStateTypes.UnknownError:
+      return getConnectivityErrorFailure(state, getTransport);
+    case ConnectNewDeviceUIStateTypes.Discovering:
+    case ConnectNewDeviceUIStateTypes.Connecting:
+    case ConnectNewDeviceUIStateTypes.Connected:
+    case ConnectNewDeviceUIStateTypes.Done:
+    case ConnectNewDeviceUIStateTypes.Terminated:
       return null;
     default:
       return assertNever(state);

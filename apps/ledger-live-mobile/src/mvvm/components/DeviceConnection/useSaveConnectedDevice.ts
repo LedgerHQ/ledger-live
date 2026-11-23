@@ -1,25 +1,30 @@
 import { useCallback } from "react";
 import type { ConnectedDevice } from "@ledgerhq/device-management-kit";
 import { buildMobileCompatDeviceId } from "@ledgerhq/live-dmk-mobile";
-import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import { dmkToLedgerDeviceIdMap, type KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { type SavedDevice, useSaveDevice } from "./useSaveDevice";
 
+/** The known device that a DMK connection saves. */
+export function mapConnectedDeviceToKnownDevice(connectedDevice: ConnectedDevice): KnownDevice {
+  return {
+    id: connectedDevice.id,
+    name: connectedDevice.name,
+    deviceModelId: dmkToLedgerDeviceIdMap[connectedDevice.modelId],
+    transport: connectedDevice.transport,
+  };
+}
+
 function mapConnectedDeviceToSavedDevice(connectedDevice: ConnectedDevice): SavedDevice {
-  const deviceModelId = dmkToLedgerDeviceIdMap[connectedDevice.modelId];
+  const knownDevice = mapConnectedDeviceToKnownDevice(connectedDevice);
 
   return {
     lastConnectedDevice: {
       deviceId: buildMobileCompatDeviceId(connectedDevice),
       deviceName: connectedDevice.name,
-      modelId: deviceModelId,
+      modelId: knownDevice.deviceModelId,
       wired: connectedDevice.type === "USB",
     },
-    knownDevice: {
-      id: connectedDevice.id,
-      name: connectedDevice.name,
-      deviceModelId,
-      transport: connectedDevice.transport,
-    },
+    knownDevice,
   };
 }
 

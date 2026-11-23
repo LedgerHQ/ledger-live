@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import { AppState, BackHandler, type AppStateStatus } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -123,6 +124,7 @@ function setup(
   overrideInitialState: (state: State) => State = state => state,
 ) {
   const initialProps: ConnectKnownOrNewDeviceProps = {
+    sourceFlow: "my_wallet",
     onConnected: jest.fn(),
     onAddModeChange: jest.fn(),
     isPaused: false,
@@ -309,6 +311,40 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
       expect(state.knownDevices.knownDevices).toEqual([
         expect.objectContaining({ id: "nano-x-id", lastUsedAt: expect.any(Number) }),
       ]);
+    });
+
+    it("GIVEN the Add mode, WHEN the flow connects a new device, THEN it should send device_connected with isNewDevice true", () => {
+      // GIVEN
+      setup();
+      emit({
+        type: ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice,
+        connectNewDeviceUIState: {
+          type: ConnectNewDeviceUIStateTypes.Connected,
+          device: knownNanoX,
+        },
+        close: jest.fn(),
+      });
+
+      // WHEN
+      act(() => lastInput().onConnected(makeConnectionResult()));
+
+      // THEN
+      expect(jest.mocked(track)).toHaveBeenCalledWith(
+        "device_connected",
+        expect.objectContaining({ sourceFlow: "my_wallet", deviceUxV2: true, isNewDevice: true }),
+      );
+    });
+
+    it("GIVEN the device list, WHEN the user connects a connected device, THEN it should send no device_connected", () => {
+      // GIVEN
+      setup();
+      emit(discoveringState);
+
+      // WHEN
+      act(() => lastInput().onConnected(makeConnectionResult()));
+
+      // THEN
+      expect(jest.mocked(track)).not.toHaveBeenCalledWith("device_connected", expect.anything());
     });
 
     it("GIVEN a running flow, WHEN the flow connects a device, THEN it should turn off the read-only mode", () => {

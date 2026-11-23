@@ -6,7 +6,15 @@ import {
   ConnectNewDeviceUIStateTypes,
   useDeviceManagementKit,
 } from "@ledgerhq/live-dmk-mobile";
-import { useSaveConnectedDevice } from "LLM/components/DeviceConnection";
+import {
+  mapConnectedDeviceToKnownDevice,
+  useIsNewDevice,
+  useSaveConnectedDevice,
+} from "LLM/components/DeviceConnection";
+import {
+  getConnectedDeviceTrackingProperties,
+  trackDeviceConnected,
+} from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { useSelector } from "~/context/hooks";
 import { isMockServerEnabledSelector } from "~/reducers/settings";
 import type {
@@ -29,6 +37,7 @@ const INITIAL_STATE: ConnectNewDeviceNonErrorUIState = {
 type ViewState = Pick<ConnectNewDeviceViewProps, "state" | "lastNonErrorState">;
 
 export function useConnectNewDeviceViewModel({
+  sourceFlow,
   onConnected,
   onDeviceNotFound,
   onClose,
@@ -38,16 +47,17 @@ export function useConnectNewDeviceViewModel({
   const dmk = useDeviceManagementKit();
   const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
   const saveConnectedDevice = useSaveConnectedDevice();
+  const isNewDevice = useIsNewDevice();
   const [viewState, setViewState] = useState<ViewState>({
     state: INITIAL_STATE,
     lastNonErrorState: INITIAL_STATE,
   });
 
   // The flow starts once per mount: callers can pass new callbacks without restarting it.
-  const callbacksRef = useRef({ onConnected, onClose });
+  const callbacksRef = useRef({ onConnected, onClose, sourceFlow, isNewDevice });
   useEffect(() => {
-    callbacksRef.current = { onConnected, onClose };
-  }, [onConnected, onClose]);
+    callbacksRef.current = { onConnected, onClose, sourceFlow, isNewDevice };
+  }, [onConnected, onClose, sourceFlow, isNewDevice]);
   const initialDelaysRef = useRef(delays);
 
   if (!dmk) {
@@ -59,7 +69,18 @@ export function useConnectNewDeviceViewModel({
     const subscription = connectNewDevice({
       dmk,
       onConnected: result => {
-        saveConnectedDevice(result.connectedDevice);
+        const { connectedDevice } = result;
+        // Before the save, which makes every device known.
+        trackDeviceConnected({
+          sourceFlow: callbacksRef.current.sourceFlow,
+          ...getConnectedDeviceTrackingProperties(connectedDevice),
+          extraProperties: {
+            isNewDevice: callbacksRef.current.isNewDevice(
+              mapConnectedDeviceToKnownDevice(connectedDevice),
+            ),
+          },
+        });
+        saveConnectedDevice(connectedDevice);
         callbacksRef.current.onConnected(result);
       },
       onClose: () => callbacksRef.current.onClose(),

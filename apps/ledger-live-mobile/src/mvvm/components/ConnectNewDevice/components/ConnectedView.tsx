@@ -1,5 +1,11 @@
 import React from "react";
 import type { ConnectNewDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
+import { useIsNewDevice } from "LLM/components/DeviceConnection";
+import { TrackDIEScreen } from "LLM/components/DeviceIntentExecutor/components/TrackDIEScreen";
+import {
+  getTrackingTransport,
+  PAGE_CONNECT_DEVICE,
+} from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { useTranslation } from "~/context/Locale";
 import type { ConnectNewDeviceNonErrorUIState } from "../types";
 import { getDeviceTransport, type DeviceTransport } from "../utils/getDeviceTransport";
@@ -23,13 +29,24 @@ const titleKeys = {
 
 export function ConnectedView({ state }: Readonly<ConnectedViewProps>): React.ReactNode {
   const { t } = useTranslation();
+  const isNewDevice = useIsNewDevice();
+  const { device } = state;
 
   return (
-    <StateLayout
-      animation="success"
-      loopAnimation={false}
-      title={t(titleKeys[getDeviceTransport(state.device.transport)])}
-      testID="connect-new-device-connected"
-    />
+    <>
+      <TrackDIEScreen
+        category={PAGE_CONNECT_DEVICE.Connected}
+        modelId={device.deviceModelId}
+        transport={getTrackingTransport(device.transport)}
+        isNewDevice={isNewDevice(device)}
+        refreshSource
+      />
+      <StateLayout
+        animation="success"
+        loopAnimation={false}
+        title={t(titleKeys[getDeviceTransport(device.transport)])}
+        testID="connect-new-device-connected"
+      />
+    </>
   );
 }

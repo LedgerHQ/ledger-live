@@ -91,6 +91,7 @@ export {
   DeviceFlowFailureType,
   getConnectDeviceFailure,
   getConnectDeviceSubError,
+  getConnectNewDeviceFailure,
   getDeviceDisconnectedFailure,
   getDeviceFlowFailureProperties,
   getDeviceflowCancelEventName,

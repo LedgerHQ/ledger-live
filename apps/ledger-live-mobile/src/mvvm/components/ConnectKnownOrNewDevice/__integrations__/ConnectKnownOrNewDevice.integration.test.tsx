@@ -80,6 +80,7 @@ function renderComponent(onAddDevice?: (hasDevices: boolean) => void) {
   const onAddModeChange = jest.fn();
   const view = render(
     <ConnectKnownOrNewDevice
+      sourceFlow="my_wallet"
       onConnected={onConnected}
       onAddModeChange={onAddModeChange}
       isPaused={false}
@@ -208,6 +209,7 @@ describe("ConnectKnownOrNewDevice", () => {
     // GIVEN
     render(
       <ConnectKnownOrNewDevice
+        sourceFlow="my_wallet"
         onConnected={jest.fn()}
         onAddModeChange={jest.fn()}
         isPaused={false}
