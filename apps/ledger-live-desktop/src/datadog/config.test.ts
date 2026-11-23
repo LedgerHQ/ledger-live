@@ -72,7 +72,7 @@ describe("datadog config", () => {
       expect(beforeSend({ foo: "bar" }, undefined)).toBe(true);
     });
 
-    it("should return true when asar url rewrite throws (continues silently)", () => {
+    it("should return false when an event cannot be walked (fails closed before redaction)", () => {
       const beforeSend = buildBeforeSend(() => true);
       const event: Record<string, unknown> = {};
       Object.defineProperty(event, "boom", {
@@ -81,7 +81,22 @@ describe("datadog config", () => {
           throw new Error("getter boom");
         },
       });
+      expect(beforeSend(event, undefined)).toBe(false);
+    });
+
+    it("redacts account descriptors from the error message, stack and context", () => {
+      const descriptor = "account:2:utxo:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkC:m/84h/0h/0h";
+      const beforeSend = buildBeforeSend(() => true);
+      const event: Record<string, unknown> = {
+        error: { message: `Read failed for ${descriptor}`, stack: `Error: ${descriptor}\n  at x` },
+        context: { account: { descriptor } },
+      };
       expect(beforeSend(event, undefined)).toBe(true);
+      expect(JSON.stringify(event)).not.toContain("xpub6Bos");
+      expect(event.error).toEqual({
+        message: "Read failed for [redacted]",
+        stack: "Error: [redacted]\n  at x",
+      });
     });
 
     it("should call anonymizer and return true for sendable event", () => {

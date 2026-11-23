@@ -133,6 +133,26 @@ describe("customErrorEventMapper", () => {
       }),
     );
   });
+
+  it("redacts account descriptors from the message, stack and context", () => {
+    const descriptor =
+      "account:2:address:ethereum:0x71C7656EC7ab88b098defB751B7401B5f6d8976F:m/44h/60h/0h/0/0";
+    const event = {
+      message: `Read failed for ${descriptor}`,
+      stacktrace: `Error: ${descriptor}`,
+      context: { account: { descriptors: [descriptor] }, count: 1 },
+    } as Parameters<typeof mapError>[0];
+
+    const mapped = mapError(event);
+    expect(JSON.stringify(mapped)).not.toContain("0x71C7");
+    expect(mapped).toEqual(
+      expect.objectContaining({
+        message: "Read failed for [redacted]",
+        stacktrace: "Error: [redacted]",
+        context: { account: { descriptors: ["[redacted]"] }, count: 1, featureFlags: {} },
+      }),
+    );
+  });
 });
 
 describe("broadcastLogger", () => {

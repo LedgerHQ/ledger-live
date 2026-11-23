@@ -14,6 +14,7 @@ import type {
   LogsConfigurationOptions,
 } from "@datadog/mobile-react-native";
 import type { LogEvent } from "@ledgerhq/live-common/hooks/useBroadcast";
+import { redactAccountDescriptors } from "@domain/entity-account-descriptor";
 import type { Features } from "@shared/feature-flags";
 import { ScreenName } from "./const";
 import type { ViewNamePredicate } from "@datadog/mobile-react-navigation";
@@ -179,6 +180,17 @@ const isExcludedErrorDescription = (errorDescription: string): boolean => {
   });
 };
 
+const redactValue = (value: unknown): unknown => {
+  if (typeof value === "string") return redactAccountDescriptors(value);
+  if (Array.isArray(value)) return value.map(redactValue);
+  if (value && typeof value === "object") return redactContext(value);
+  return value;
+};
+
+/** A copy of an event context with every account descriptor string redacted. */
+export const redactContext = (context: object): Record<string, unknown> =>
+  Object.fromEntries(Object.entries(context).map(([key, value]) => [key, redactValue(value)]));
+
 /**
  * The custom errorEventMapper function for Datadog RUM.
  * This function is called for every RUM error event before it is sent to Datadog.
@@ -195,10 +207,13 @@ export const customErrorEventMapper: (disableErrorTracking: boolean) => ErrorEve
       return null; // Return null to drop the event
     }
 
+    // Account descriptors carry the account key: redact them from the message, stack and context.
     return {
       ...event,
+      message: redactAccountDescriptors(event.message),
+      stacktrace: redactAccountDescriptors(event.stacktrace),
       context: {
-        ...event.context,
+        ...redactContext(event.context),
         featureFlags: buildFeatureFlagTags(),
       },
     };
