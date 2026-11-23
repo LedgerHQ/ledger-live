@@ -10,8 +10,9 @@ import { mockAccountEntry } from "@domain/entity-account/schema.mock";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { mockAccountStatus } from "@domain/entity-account-status/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, waitFor } from "@tests/test-renderer";
 import Share from "react-native-share";
+import { captureRef } from "react-native-view-shot";
 import { VerifyAddressExecutorLWM } from "../../verifyAddressIntent/VerifyAddressExecutorLWM";
 import { useReceiveAddressScreenViewModel } from "./useReceiveAddressScreenViewModel";
 
@@ -59,12 +60,34 @@ describe("useReceiveAddressScreenViewModel", () => {
     );
   });
 
-  it("shares the address through the system share sheet", () => {
+  it("shares the card as an image and the address as text", async () => {
     const { result } = renderViewModel();
 
     result.current.onShareAddress?.("TXYZ");
 
-    expect(Share.open).toHaveBeenCalledWith({ message: "TXYZ", failOnCancel: false });
+    await waitFor(() =>
+      expect(Share.open).toHaveBeenCalledWith({
+        url: "file://mock.png",
+        message: "TXYZ",
+        failOnCancel: false,
+      }),
+    );
+    expect(captureRef).toHaveBeenCalledWith(result.current.cardRef, { format: "png" });
+  });
+
+  it("shares the address alone when the card cannot be captured", async () => {
+    jest.mocked(captureRef).mockRejectedValueOnce(new Error("capture failed"));
+    const { result } = renderViewModel();
+
+    result.current.onShareAddress?.("TXYZ");
+
+    await waitFor(() =>
+      expect(Share.open).toHaveBeenCalledWith({
+        url: undefined,
+        message: "TXYZ",
+        failOnCancel: false,
+      }),
+    );
   });
 
   it("reads the account's family config", () => {

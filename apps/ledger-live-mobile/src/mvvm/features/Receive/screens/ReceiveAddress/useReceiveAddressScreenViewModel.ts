@@ -1,5 +1,7 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
+import type { View } from "react-native";
 import Share from "react-native-share";
+import { captureRef } from "react-native-view-shot";
 import { accountsSlice } from "@domain/entity-account";
 import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
@@ -25,9 +27,6 @@ const familyConfigs = receiveAddressConfigs as Partial<
 
 const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
-const shareAddress = (address: string) =>
-  void leaveAppFor(() => Share.open({ message: address, failOnCancel: false }));
-
 type Params = Pick<ReceiveAddressProps, "accountUUID" | "assetId" | "onClose">;
 
 /** What only the mobile app gives the receive address screen. */
@@ -51,13 +50,22 @@ export function useReceiveAddressScreenViewModel({
     [familyConfig, featureFlags, legacyAccount],
   );
   const onCopyAddress = useCallback((address: string) => copyToClipboard(address), []);
+  const cardRef = useRef<View>(null);
+  // The card as an image, and the address as text; the text alone when the capture fails.
+  const onShareAddress = useCallback((address: string) => {
+    void (async () => {
+      const url = await captureRef(cardRef, { format: "png" }).catch(() => undefined);
+      await leaveAppFor(() => Share.open({ url, message: address, failOnCancel: false }));
+    })();
+  }, []);
 
   return {
     accountUUID,
     assetId,
     onClose,
     onCopyAddress,
-    onShareAddress: shareAddress,
+    onShareAddress,
+    cardRef,
     VerifyAddressExecutor: VerifyAddressExecutorLWM,
     getFamilyConfig,
   };

@@ -1,5 +1,5 @@
-import React from "react";
-import { ScrollView } from "react-native";
+import React, { type RefObject } from "react";
+import { ScrollView, type View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, IconButton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ArrowLeft, Close } from "@ledgerhq/lumen-ui-rnative/symbols";
@@ -26,6 +26,7 @@ export function ReceiveAddressView({
   actions,
   onBack,
   onClose,
+  cardRef,
 }: ReceiveAddressViewProps) {
   const { top, bottom } = useSafeAreaInsets();
   // While the verify hint is open, everything but the hint and the action tiles steps back.
@@ -67,13 +68,35 @@ export function ReceiveAddressView({
           contentContainerStyle={{ flexGrow: 1, paddingBottom: bottom }}
         >
           <Box lx={{ flexGrow: 1, gap: "s24", paddingHorizontal: "s16", paddingBottom: "s16" }}>
-            <Dimmed isDimmed={isHintOpen}>
-              <ReceiveAddressTitle
-                title={title}
-                networkLabel={networkLabel}
-                networkIcon={networkIcon}
-              />
-            </Dimmed>
+            <Box
+              ref={cardRef as RefObject<View | null>}
+              // Kept as a native view, for Share to capture it.
+              collapsable={false}
+              lx={{ gap: "s24", backgroundColor: "canvas" }}
+              testID="receive-address-card"
+            >
+              <Dimmed isDimmed={isHintOpen}>
+                <ReceiveAddressTitle
+                  title={title}
+                  networkLabel={networkLabel}
+                  networkIcon={networkIcon}
+                />
+              </Dimmed>
+              {error ? null : (
+                <Dimmed isDimmed={isHintOpen}>
+                  {isLoading || !address ? (
+                    <AddressSummarySkeleton />
+                  ) : (
+                    <AddressSummary
+                      address={address}
+                      onCopy={actions.copy?.onPressCode}
+                      copyLabel={actions.copy?.label}
+                      copyKey={actions.copy?.buttonPresses}
+                    />
+                  )}
+                </Dimmed>
+              )}
+            </Box>
             {error ? (
               <InfoState
                 preset="error"
@@ -89,18 +112,6 @@ export function ReceiveAddressView({
               />
             ) : (
               <>
-                <Dimmed isDimmed={isHintOpen}>
-                  {isLoading || !address ? (
-                    <AddressSummarySkeleton />
-                  ) : (
-                    <AddressSummary
-                      address={address}
-                      onCopy={actions.copy?.onPressCode}
-                      copyLabel={actions.copy?.label}
-                      copyKey={actions.copy?.buttonPresses}
-                    />
-                  )}
-                </Dimmed>
                 <AddressActions actions={actions} />
                 <Dimmed isDimmed={isHintOpen}>
                   <ZonePlaceholder zone="notices" />

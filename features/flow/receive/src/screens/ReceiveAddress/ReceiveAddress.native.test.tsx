@@ -1,5 +1,5 @@
 import React, { type ComponentProps } from "react";
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import { fireEvent, render, screen, within } from "@testing-library/react-native";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
@@ -165,6 +165,14 @@ describe("ReceiveAddress (Native)", () => {
 
     expect((await screen.findByTestId("receive-address-verify")).props.disabled).toBe(true);
     expect(screen.queryByTestId("receive-address-verify-hint")).toBeNull();
+  });
+
+  it("puts the title and the address in the card Share captures", async () => {
+    renderScreen();
+
+    const card = await screen.findByTestId("receive-address-card");
+    expect(within(card).getByTestId("receive-address-summary")).toBeTruthy();
+    expect(within(card).getByText("Receive ETH")).toBeTruthy();
   });
 
   it("lays the zones out in screen order", async () => {

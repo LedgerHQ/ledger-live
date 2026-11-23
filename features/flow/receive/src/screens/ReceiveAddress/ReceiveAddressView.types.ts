@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import type { AddressParts } from "../../logic/splitAddress";
 import type { ReceiveIcon } from "../../logic/toReceiveAddressData";
 import type { ReceiveAddressOptionId } from "../../logic/toReceiveAddressOptions";
@@ -69,4 +70,6 @@ export type ReceiveAddressViewProps = Readonly<{
   closeLabel: string;
   backLabel: string;
   onClose: () => void;
+  /** Set on the card Share captures as an image, on mobile. */
+  cardRef?: RefObject<unknown>;
 }>;
