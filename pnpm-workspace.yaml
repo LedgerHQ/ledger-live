@@ -197,7 +197,6 @@ catalog:
   jest-docblock: 30.5.0
   jest-environment-jsdom: 30.5.2
   jest-environment-node: 30.5.2
-  jest-file-snapshot: 0.7.0
   jest-util: 30.5.1
   react: 19.1.4
   react-dom: 19.1.4

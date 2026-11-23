@@ -326,7 +326,6 @@
     "glob": "^7.2.0",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "jest-file-snapshot": "catalog:",
     "msw": "catalog:",
     "nock": "13.5.4",
     "oxfmt": "catalog:",
