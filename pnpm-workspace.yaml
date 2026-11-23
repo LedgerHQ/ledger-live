@@ -304,8 +304,6 @@ overrides:
   "stellar-base>sodium-native": "^3.2.1"
   "ed25519-hd-key>bip39": "catalog:"
   "near-hd-key>bip39": "catalog:"
-  "remove-flow-types-loader>flow-remove-types": "^2"
-  "remove-flow-types-loader>loader-utils": "*"
   "@ledgerhq/devices": "catalog:"
   "@ledgerhq/hw-transport": "catalog:"
   "@ledgerhq/context-module": "catalog:"

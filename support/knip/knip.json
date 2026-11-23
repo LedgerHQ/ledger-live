@@ -138,7 +138,6 @@
         "src/errors.ts"
       ],
       "ignoreDependencies": [
-        "prop-types",
         "ws",
         "@electron/fuses",
         "embla-carousel-autoplay",
@@ -168,7 +167,6 @@
         "expo-image-loader",
         "expo-modules-autolinking",
         "expo-modules-core",
-        "prop-types",
         "react-is",
         "react-native-fast-pbkdf2",
         "stylis"
