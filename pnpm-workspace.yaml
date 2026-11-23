@@ -252,7 +252,7 @@ catalog:
   "@nx/devkit": 24.0.6
   detox: 20.51.3
   "@nx/s3-cache": 5.0.7
-  oxlint: 1.93.0
+  oxlint: 1.94.0
   oxfmt: 0.79.0
   rimraf: 4.4.1
   zx: 8.8.5
