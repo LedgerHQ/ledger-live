@@ -20,8 +20,8 @@ import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Karaoke } from "@shared/ui-karaoke/native";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { recoverNewSeedTestIds } from "LLM/features/DeviceOnboarding/testIds";
-import recoverShieldDark from "../../../Debug/assets/recoverShieldDark.webp";
-import recoverShieldLight from "../../../Debug/assets/recoverShieldLight.webp";
+import recoverShieldDark from "LLM/features/DeviceOnboarding/Debug/assets/recoverShieldDark.webp";
+import recoverShieldLight from "LLM/features/DeviceOnboarding/Debug/assets/recoverShieldLight.webp";
 import type { RecoverNewSeedViewProps, RecoverSheetPoint } from "./useRecoverNewSeedViewModel";
 
 const pointIcons = {
