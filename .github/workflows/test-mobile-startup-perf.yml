@@ -628,17 +628,13 @@ jobs:
         with:
           config_only: "true"
 
+      # No cache role: this job runs an app another job of the run uploaded.
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-          nx-key: ${{ secrets.NX_KEY }}
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
+          skip-nx-cache: "true"
 
       - name: Setup Android Environment
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
@@ -701,7 +697,7 @@ jobs:
           name: startup-perf-snapshot-android
           path: ${{ env.SNAPSHOT_DIR }}/
           retention-days: 7
-
+          overwrite: true
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ always() }}
@@ -710,6 +706,7 @@ jobs:
           path: ${{ env.SNAPSHOT_DEBUG_DIR }}
           retention-days: 14
           include-hidden-files: true
+          overwrite: true
 
   snapshot-ios:
     name: "iOS accounts snapshot"
@@ -736,18 +733,14 @@ jobs:
         with:
           persist-credentials: false
 
+      # No cache role: this job runs an app another job of the run uploaded.
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           use-mise: true
           skip-pod-cache: "true"
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
-          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
-          nx-key: ${{ secrets.NX_KEY }}
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
+          skip-nx-cache: "true"
 
       - name: JFrog npm auth
         uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
@@ -800,7 +793,7 @@ jobs:
           name: startup-perf-snapshot-ios
           path: ${{ env.SNAPSHOT_DIR }}/
           retention-days: 7
-
+          overwrite: true
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ always() }}
@@ -809,6 +802,7 @@ jobs:
           path: ${{ env.SNAPSHOT_DEBUG_DIR }}
           retention-days: 14
           include-hidden-files: true
+          overwrite: true
 
   measure-android:
     name: "Android startup (2 emulators, ${{ matrix.scenario }})"
