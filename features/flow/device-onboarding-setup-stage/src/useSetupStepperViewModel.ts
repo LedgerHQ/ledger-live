@@ -11,17 +11,6 @@ export type SetupStepperViewProps = Readonly<{
   status: SetupIndicator;
 }>;
 
-const stageTitleKeys = {
-  checks: "deviceOnboarding.setup.checks.title",
-  genuine: "deviceOnboarding.setup.genuine.title",
-  naming: "deviceOnboarding.setup.naming.title",
-  pin: "deviceOnboarding.setup.pin.title",
-  setupChoice: "deviceOnboarding.setup.setupChoice.title",
-  security: "deviceOnboarding.setup.security.title",
-  restore: "deviceOnboarding.setup.restore.title",
-  osCheck: "deviceOnboarding.setup.osCheck.title",
-} as const satisfies Record<SetupStage["kind"], `deviceOnboarding.setup.${string}`>;
-
 function checksDescriptionKey(status: SetupIndicator, firmwareDeclined: boolean) {
   if (status !== "success") return "deviceOnboarding.setup.checks.description";
   return firmwareDeclined
@@ -83,7 +72,7 @@ export function useSetupStepperViewModel({
     label: `${stage.index + 1}/${stage.total}`,
     completedSteps: stage.index,
     totalSteps: stage.total,
-    title: t(stageTitleKeys[stage.kind]),
+    title: t(`deviceOnboarding.setup.${stage.kind}.title`),
     ...(descriptionKey ? { description: t(descriptionKey, { productName }) } : {}),
     status,
   };
