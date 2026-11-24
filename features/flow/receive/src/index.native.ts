@@ -7,7 +7,6 @@ export * from "./logic/showsReceiveOptions";
 export * from "./logic/toReceiveTarget";
 export * from "./screens/AddressDisplayed";
 export * from "./screens/AddressMismatch";
-export * from "./screens/AddressVerified";
 export * from "./screens/ReceiveAddress";
 export * from "./state";
 export * from "./types";

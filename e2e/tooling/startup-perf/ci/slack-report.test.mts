@@ -276,7 +276,7 @@ describe("messageOf", () => {
     const { outcome, lines, footer } = messageOf(dispatch);
     assert.equal(outcome, "passed");
     assert.ok(lines.every(line => line.includes(" : ✅ ")));
-    assert.match(footer, /^aa-noise · fails only on too few pairs · /);
+    assert.match(footer, /^aa-noise · fails on too few pairs · /);
   });
 
   it("keeps the plain-text header verbatim and escapes the mrkdwn lines", () => {

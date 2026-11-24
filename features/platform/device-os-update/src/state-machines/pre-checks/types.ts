@@ -28,6 +28,8 @@ export type PreChecksStateMachineInput = {
 export type PreChecksStateMachineContext = PreChecksStateMachineInput & {
   lastSentState: PreChecksState | null;
   lastAction: PreChecksStateMachineLastAction | null;
+  /** An unexplained recovery happened since the last successful action. */
+  hasUnexplainedRecovery: boolean;
   batteryPercentage: number;
   osVersion: GetOsVersionResponse | null;
   error: unknown;

@@ -36,6 +36,8 @@ Discovery, connection and unknown errors show in a bottom sheet, over the last v
 - `onCloseErrorSheet`: called when the user closes the error sheet, and also when `state` leaves an error.
 - `onDeviceNotFound` (optional): as in the props above.
 
+`ConnectNewDeviceView` has no horizontal padding: the parent sets it. `ConnectNewDevice` gives it a padding of 16.
+
 ## Try it
 
 Settings > Debug > Features > Device Intent Executor > Connect New Device renders the component and logs each callback call.

@@ -14,7 +14,6 @@ import Balance from "./Balance";
 import Countervalue from "./Countervalue";
 import Delta from "./Delta";
 import Header from "./Header";
-import Star from "~/renderer/components/Stars/Star";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import Button from "~/renderer/components/Button";
 import { useLLDCoinFamily } from "~/renderer/families";
@@ -233,7 +232,6 @@ const AccountRowItem = (props: Props) => {
             <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
             <Countervalue account={account} currency={currency} range={range} />
             <Delta account={account} range={range} />
-            <Star accountId={account.id} />
           </RowContent>
           {showTokensIndicator && expanded ? (
             <TokenContentWrapper>

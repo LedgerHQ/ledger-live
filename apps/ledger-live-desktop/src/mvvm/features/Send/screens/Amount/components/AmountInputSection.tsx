@@ -35,7 +35,7 @@ export function AmountInputSection({
   onMessageLinkPress,
 }: AmountInputSectionProps) {
   return (
-    <section className="relative flex flex-col items-center pt-56 text-center">
+    <section className="relative flex shrink-0 flex-col items-center text-center">
       <div className="relative flex w-full items-center justify-center">
         <AmountInput
           id="send-amount-input"

@@ -6,15 +6,24 @@ import {
   type LogEvent,
 } from "./logEvent";
 import {
+  earnLifecycleProduct,
+  setTxLifecycleBaseUrl,
+  startDappTxLifecycle,
+} from "./earnLifecycleHost";
+import {
   abandonPendingDappTxLifecycle,
   clearPendingDappTxLifecycle,
   clearPendingTxLifecycle,
-  sendTxLifecycle,
-  setTxLifecycleBaseUrl,
-  startDappTxLifecycle,
-  toTxLifecyclePayload,
+  resolveTxLifecycleProduct,
+  sendTxLifecycle as sendForProduct,
   type TxLifecyclePayload,
+  type TxLifecycleProduct,
 } from "./txLifecycle";
+import { listenToTxLifecycle } from "./txLifecycleEndpoint.mock";
+import { toTxLifecyclePayload } from "./txLifecycleProducts";
+
+const sendTxLifecycle = (payload: TxLifecyclePayload, manifestId?: string) =>
+  sendForProduct(earnLifecycleProduct, payload, manifestId);
 
 const common = {
   appVersion: "lld/2.0.0",
@@ -392,5 +401,138 @@ describe("sendTxLifecycle", () => {
       network: "ethereum",
       failure_class: "abandoned",
     });
+  });
+});
+
+describe("lifecycle products", () => {
+  const lifecycle = listenToTxLifecycle();
+
+  const product = (
+    overrides: Partial<TxLifecycleProduct> & { id: string },
+  ): TxLifecycleProduct => ({
+    pathOf: () => undefined,
+    isEnabled: () => true,
+    baseUrl: () => `https://${overrides.id}.example.test`,
+    ...overrides,
+  });
+
+  const payload: TxLifecyclePayload = {
+    schema_version: 1,
+    event: "tx_intent",
+    path: "dapp",
+    platform: "desktop",
+    currency_family: "tezos",
+  };
+
+  const receivedUrls = async () => (await lifecycle.received()).map(({ url }) => url);
+
+  beforeEach(() => {
+    clearPendingTxLifecycle("desktop");
+  });
+
+  afterEach(() => {
+    clearPendingTxLifecycle("desktop");
+  });
+
+  it("gives a manifest two products claim to the first one listed", () => {
+    const event = { status: "intent", stage: TransactionStage.Sign, ...common } as LogEvent;
+    const claims = product({ id: "a", pathOf: () => "dapp" });
+    const alsoClaims = product({ id: "b", pathOf: () => "dapp" });
+
+    expect(resolveTxLifecycleProduct([claims, product({ id: "b" })], event)?.product).toBe(claims);
+    expect(resolveTxLifecycleProduct([claims, alsoClaims], event)?.product).toBe(claims);
+    expect(resolveTxLifecycleProduct([alsoClaims, claims], event)?.product).toBe(alsoClaims);
+    expect(resolveTxLifecycleProduct([product({ id: "c" })], event)).toBeUndefined();
+  });
+
+  it("clears one product's attempts and keeps the other's", async () => {
+    const a = product({ id: "a" });
+    const b = product({ id: "b" });
+    sendForProduct(a, payload, "app-a");
+    sendForProduct(b, payload, "app-b");
+    await lifecycle.forget();
+
+    clearPendingTxLifecycle("desktop", "a");
+    abandonPendingDappTxLifecycle("desktop", "app-a");
+    abandonPendingDappTxLifecycle("desktop", "app-b");
+
+    expect(await receivedUrls()).toEqual(["https://b.example.test/v1/tx/lifecycle"]);
+  });
+
+  it("moves the pending state for payloads the product does not report", async () => {
+    const quiet = product({ id: "quiet", reports: () => false });
+    sendForProduct(quiet, payload, "app");
+    sendForProduct(quiet, { ...payload, event: "tx_terminal", outcome: "success" }, "app");
+    abandonPendingDappTxLifecycle("desktop", "app");
+
+    expect(await lifecycle.received()).toEqual([]);
+  });
+
+  it("posts a superseded attempt to the sink of the product that opened it", async () => {
+    sendForProduct(product({ id: "a" }), payload, "app");
+    sendForProduct(product({ id: "b" }), { ...payload, currency_family: "solana" }, "app");
+
+    const received = await lifecycle.received();
+    expect(received.map(({ url }) => url)).toEqual([
+      "https://a.example.test/v1/tx/lifecycle",
+      "https://a.example.test/v1/tx/lifecycle",
+      "https://b.example.test/v1/tx/lifecycle",
+    ]);
+    expect(received[1].body).toMatchObject({
+      failure_class: "abandoned",
+      currency_family: "tezos",
+    });
+  });
+
+  it("posts a terminal through the product that opened the attempt, not the latest claimant", async () => {
+    const quiet = product({ id: "quiet", reports: () => false });
+    sendForProduct(product({ id: "a" }), payload, "app");
+    sendForProduct(
+      product({ id: "b" }),
+      { ...payload, event: "tx_terminal", outcome: "success" },
+      "app",
+    );
+    sendForProduct(quiet, payload, "other");
+    sendForProduct(
+      product({ id: "b" }),
+      { ...payload, event: "tx_terminal", outcome: "success" },
+      "other",
+    );
+
+    expect(await receivedUrls()).toEqual([
+      "https://a.example.test/v1/tx/lifecycle",
+      "https://a.example.test/v1/tx/lifecycle",
+    ]);
+  });
+
+  it("keeps the intent's path on a terminal claimed by a product with another path", async () => {
+    sendForProduct(product({ id: "earn" }), payload, "app");
+    sendForProduct(
+      product({ id: "borrow" }),
+      { ...payload, path: "borrow", event: "tx_terminal", outcome: "success" },
+      "app",
+    );
+
+    const received = await lifecycle.received();
+    expect(received.map(({ url }) => url)).toEqual([
+      "https://earn.example.test/v1/tx/lifecycle",
+      "https://earn.example.test/v1/tx/lifecycle",
+    ]);
+    expect(received.map(({ body }) => body)).toEqual([
+      expect.objectContaining({ event: "tx_intent", path: "dapp" }),
+      expect.objectContaining({ event: "tx_terminal", outcome: "success", path: "dapp" }),
+    ]);
+  });
+
+  it("only clears or abandons a dApp attempt the named product owns", async () => {
+    sendForProduct(product({ id: "a" }), payload, "app");
+    await lifecycle.forget();
+
+    clearPendingDappTxLifecycle("desktop", "app", "b");
+    abandonPendingDappTxLifecycle("desktop", "app", "b");
+    expect(await lifecycle.received()).toEqual([]);
+
+    abandonPendingDappTxLifecycle("desktop", "app", "a");
+    expect(await receivedUrls()).toEqual(["https://a.example.test/v1/tx/lifecycle"]);
   });
 });

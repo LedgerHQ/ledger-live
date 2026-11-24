@@ -12,18 +12,30 @@ const getUserdata = async (userdataFile: string) => {
 /** An amount in the currency's smallest unit, with the magnitude of its main unit. */
 export type SavedBalance = { amount: BigNumber; magnitude: number };
 
-type SavedAccount = { data?: { currencyId?: string; index?: number; spendableBalance?: string } };
+type SavedAccount = {
+  data?: { id?: string; currencyId?: string; index?: number; spendableBalance?: string };
+};
+
+function findSavedAccount(userdata: { data?: { accounts?: unknown } }, account: Account) {
+  const savedAccounts = userdata.data?.accounts;
+  const accounts: SavedAccount[] = Array.isArray(savedAccounts) ? savedAccounts : [];
+  return accounts.find(
+    ({ data }) => data?.currencyId === account.currency.id && data?.index === account.index,
+  );
+}
+
+export async function getSavedAccountId(userdataFile: string, account: Account): Promise<string> {
+  const id = findSavedAccount(await getUserdata(userdataFile), account)?.data?.id;
+  if (!id) throw new Error(`No ${account.accountName} saved in ${userdataFile}`);
+  return id;
+}
 
 export async function getSavedSpendableBalance(
   userdataFile: string,
   account: Account,
 ): Promise<SavedBalance> {
-  const userdata: { data?: { accounts?: unknown } } = await getUserdata(userdataFile);
-  const savedAccounts = userdata.data?.accounts;
-  const accounts: SavedAccount[] = Array.isArray(savedAccounts) ? savedAccounts : [];
-  const spendableBalance = accounts.find(
-    ({ data }) => data?.currencyId === account.currency.id && data?.index === account.index,
-  )?.data?.spendableBalance;
+  const spendableBalance = findSavedAccount(await getUserdata(userdataFile), account)?.data
+    ?.spendableBalance;
   const unit = specs[account.currency.speculosApp.name.replace(/ /g, "_")]?.currency?.units[0];
   if (!spendableBalance || !unit) {
     throw new Error(`No spendable balance saved for ${account.accountName} in ${userdataFile}`);

@@ -2,7 +2,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import { AddressSchema, DerivationPathSchema } from "@domain/entity-account-descriptor";
 import { genAccount } from "../mock/account";
 import { registerAllCoins } from "../coin-modules/load-all-coins";
-import { toReceiveVerifyAddressOptions } from "./receiveVerifyAddress";
+import { toReceiveVerifyAccount, toReceiveVerifyAddressOptions } from "./receiveVerifyAddress";
 
 registerAllCoins();
 
@@ -48,5 +48,16 @@ describe("toReceiveVerifyAddressOptions", () => {
     await expect(
       toReceiveVerifyAddressOptions(ethereum, { type: "publicKey", path, publicKey: "302a" }),
     ).resolves.toBeUndefined();
+  });
+});
+
+describe("toReceiveVerifyAccount", () => {
+  it("should make the wrong device check derive the address shown, at its path", () => {
+    expect(toReceiveVerifyAccount(ethereum, shown)).toEqual({
+      ...ethereum,
+      freshAddress: address,
+      freshAddressPath: "44'/60'/0'/0/0",
+      seedIdentifier: address,
+    });
   });
 });

@@ -103,6 +103,8 @@ export type ConnectKnownOrNewDeviceStateMachineInput<
   removeKnownDevice: (knownDevice: KnownDevice) => void;
   mapConnectionError: ConnectNewDeviceMapConnectionError<TConnectionError>;
   onConnected: ConnectKnownOrNewDeviceOnConnected;
+  /** Replaces the Add mode: Add calls it, and the waiting state goes back to the list. */
+  onAddNewDevice?: (hasDevices: boolean) => void;
   getDiscoveredDeviceKey: ConnectNewDeviceGetDiscoveredDeviceKey;
   filterListedDevices?: ConnectNewDeviceFilterListedDevices;
   buildCompatDeviceId?: (device: ConnectedDevice) => string;

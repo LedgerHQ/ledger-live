@@ -65,12 +65,12 @@ export function runSwapTokenApprovalFlow(
           throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
         }
         const swap = new Swap(fromAccount, toAccount, amountToSwap.toString(), provider);
-        await performSwapUntilQuoteSelectionStep(
-          swap.accountToDebit,
-          swap.accountToCredit,
-          amountToSwap.toString(),
-          true,
-        );
+        await performSwapUntilQuoteSelectionStep({
+          accountToDebit: swap.accountToDebit,
+          accountToCredit: swap.accountToCredit,
+          amount: amountToSwap.toString(),
+          continueToQuotes: true,
+        });
         await app.swapLiveApp.selectSpecificProvider(provider.uiName);
         await app.swapLiveApp.checkQuoteCardCtaPresence(provider.uiName);
         await app.swapLiveApp.tapExecuteSwap(provider.uiName);

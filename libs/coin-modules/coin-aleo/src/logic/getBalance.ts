@@ -83,27 +83,31 @@ export async function getBalance(context: AleoContext, address: string): Promise
     const type = tokenTypeByProgramName.get(programId);
     invariant(typeof type === "string", "aleo: guard for token type");
 
-    return {
-      value: BigInt(publicPart.plus(privatePart).toFixed(0)),
-      asset: { type, assetReference: programId },
-    };
-  });
+    const asset = { type, assetReference: programId };
+    const rows: Balance[] = [{ value: BigInt(publicPart.toFixed(0)), asset }];
+    if (privatePart.gt(0)) {
+      rows.push({ value: BigInt(privatePart.toFixed(0)), asset, private: true });
+    }
+    return rows;
+  }).then(rows => rows.flat());
 
   const publicNativeValue = publicBalance[0]?.value ?? 0n;
-  const liquidNativeValue = publicNativeValue + BigInt(privateNativeSum.toFixed(0));
-
-  const totalStaked = stakes.reduce((sum, stake) => sum + stake.amount, 0n);
   const stakeBalances: Balance[] = stakes.map(stake => ({
     value: stake.amount,
     asset: { type: "native" },
+    locked: stake.amount,
     stake,
   }));
 
-  const native: Balance = {
-    value: liquidNativeValue + totalStaked,
-    asset: { type: "native" },
-    ...(totalStaked > 0n && { locked: totalStaked }),
-  };
+  // The public and private rows partition the liquid balance; the stake rows are apart from them.
+  const native: Balance[] = [{ value: publicNativeValue, asset: { type: "native" } }];
+  if (privateNativeSum.gt(0)) {
+    native.push({
+      value: BigInt(privateNativeSum.toFixed(0)),
+      asset: { type: "native" },
+      private: true,
+    });
+  }
 
-  return [native, ...stakeBalances, ...tokenBalances];
+  return [...native, ...stakeBalances, ...tokenBalances];
 }

@@ -124,17 +124,20 @@ describe("PredictionsSheet (web)", () => {
       CONSENT_STEP,
     );
 
+    expect(screen.getByTestId("predictions-sheet-intro")).toBeVisible();
     await user.click(screen.getByRole("button", { name: PREDICTIONS_COPY.intro.discover }));
 
     expect(onStepAccept).toHaveBeenLastCalledWith(INTRO_STEP);
     expect(queryHeading(PREDICTIONS_COPY.intro.title)).not.toBeInTheDocument();
     expect(queryHeading(PREDICTIONS_COPY.terms.title)).toBeVisible();
+    expect(screen.getByTestId("predictions-sheet-terms")).toBeVisible();
 
     await user.click(screen.getByLabelText(PREDICTIONS_COPY.terms.checkbox));
     await user.click(screen.getByRole("button", { name: PREDICTIONS_COPY.terms.cta }));
 
     expect(onStepAccept).toHaveBeenLastCalledWith(TERMS_STEP);
     expect(queryHeading(PREDICTIONS_COPY.consent.title)).toBeVisible();
+    expect(screen.getByTestId("predictions-sheet-consent")).toBeVisible();
     expect(screen.getByRole("button", { name: PREDICTIONS_COPY.consent.cta })).toBeDisabled();
     expect(onComplete).not.toHaveBeenCalled();
 

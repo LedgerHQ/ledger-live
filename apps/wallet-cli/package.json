@@ -91,7 +91,7 @@
     "@shared/cloud-sync": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/schema-primitives": "workspace:^",
-    "@types/debug": "4.1.12",
+    "@types/debug": "4.1.13",
     "@types/node": "catalog:",
     "@types/w3c-web-usb": "1.0.10",
     "axios": "catalog:",

@@ -15,8 +15,10 @@ import {
   fetchTronAccountOrEmpty,
   fetchTronAccountOrFail,
   fetchTronAccountTxs,
+  fetchTronAccountTxsEndpointPage,
   fetchTronAccountTxsPage,
   fetchTronContract,
+  findBlock,
   freezeTronTransaction,
   getAccountName,
   getBlock,
@@ -43,6 +45,16 @@ import {
 } from ".";
 
 jest.mock("@ledgerhq/live-network/network");
+
+jest.mock("@ledgerhq/coin-module-framework/promises", () => {
+  const actual = jest.requireActual("@ledgerhq/coin-module-framework/promises");
+  return {
+    ...actual,
+    retry: function retryWithoutBackoffDelay(f: () => Promise<unknown>, options: object) {
+      return actual.retry(f, { ...options, interval: 0 });
+    },
+  };
+});
 
 jest.mock("tronweb", () => {
   const extendExpiration = jest.fn((tx, extension: number) => ({
@@ -110,6 +122,110 @@ describe("post / fetch error handling", () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: { message: "get-boom" } }));
     await expect(fetchTronAccount(mockLogger, mockConfig, senderBase58)).rejects.toThrow(
       /get-boom/,
+    );
+  });
+});
+
+describe("post timeout and retry", () => {
+  const timeoutError = Object.assign(new Error("timeout of 60000ms exceeded"), {
+    code: "ECONNABORTED",
+  });
+  const httpError = (status: number) => Object.assign(new Error(`API HTTP ${status}`), { status });
+
+  it("passes live-network's GET timeout to every POST", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({}));
+    await post(mockLogger, mockConfig, "/wallet/getblock", {});
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({ method: "POST", timeout: 60_000 }),
+    );
+  });
+
+  it("fails a getblock POST that never answers after the timeout and retries", async () => {
+    mockedNetwork.mockRejectedValue(timeoutError);
+    await expect(getBlock(mockLogger, mockConfig, 1)).rejects.toThrow(timeoutError.message);
+    expect(mockedNetwork).toHaveBeenCalledTimes(3);
+  });
+
+  it.each([408, 429, 500, 503])(
+    "retries a non-broadcast POST failing with %s, then returns the answer",
+    async status => {
+      mockedNetwork
+        .mockRejectedValueOnce(httpError(status))
+        .mockResolvedValueOnce(mockResponse({ ok: true }));
+      await expect(post(mockLogger, mockConfig, "/wallet/getcontract", {})).resolves.toEqual({
+        ok: true,
+      });
+      expect(mockedNetwork).toHaveBeenCalledTimes(2);
+    },
+  );
+
+  it("reports a transient failure that persists through every retry", async () => {
+    mockedNetwork.mockRejectedValue(httpError(502));
+    await expect(post(mockLogger, mockConfig, "/wallet/getcontract", {})).rejects.toThrow(
+      "API HTTP 502",
+    );
+    expect(mockedNetwork).toHaveBeenCalledTimes(3);
+  });
+
+  it("does not retry a non-retryable client error", async () => {
+    mockedNetwork.mockRejectedValue(httpError(400));
+    await expect(post(mockLogger, mockConfig, "/wallet/getcontract", {})).rejects.toThrow(
+      "API HTTP 400",
+    );
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not retry a 200 answer carrying a TronGrid Error", async () => {
+    mockedNetwork.mockResolvedValue(mockResponse({ Error: "boom" }));
+    await expect(post(mockLogger, mockConfig, "/wallet/getcontract", {})).rejects.toThrow("boom");
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(["/wallet/broadcasttransaction", "/wallet/broadcasthex"])(
+    "sends %s once, with the timeout, even when it times out",
+    async endPoint => {
+      mockedNetwork.mockRejectedValue(timeoutError);
+      await expect(post(mockLogger, mockConfig, endPoint, {})).rejects.toThrow(
+        timeoutError.message,
+      );
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+      expect(mockedNetwork).toHaveBeenCalledWith(expect.objectContaining({ timeout: 60_000 }));
+    },
+  );
+
+  it("sends broadcastTron and broadcastHexTron once on a 5xx", async () => {
+    mockedNetwork.mockRejectedValue(httpError(503));
+    await expect(
+      broadcastTron(mockLogger, mockConfig, { raw_data: {}, signature: [] } as never),
+    ).rejects.toThrow("API HTTP 503");
+    await expect(broadcastHexTron(mockLogger, mockConfig, "0a")).rejects.toThrow("API HTTP 503");
+    expect(mockedNetwork).toHaveBeenCalledTimes(2);
+    expect(mockedNetwork).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ url: `${TRON_BASE_URL}/wallet/broadcasttransaction` }),
+    );
+    expect(mockedNetwork).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ url: `${TRON_BASE_URL}/wallet/broadcasthex` }),
+    );
+  });
+});
+
+describe("findBlock", () => {
+  it("returns null when TronGrid answers {} for a block not produced yet", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({}));
+    await expect(findBlock(mockLogger, mockConfig, 999_999_999)).resolves.toBeNull();
+  });
+
+  it("propagates a transport failure", async () => {
+    mockedNetwork.mockRejectedValue(new Error("network down"));
+    await expect(findBlock(mockLogger, mockConfig, 1)).rejects.toThrow("network down");
+  });
+
+  it("getBlock rejects with a clear error on a block not produced yet", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({}));
+    await expect(getBlock(mockLogger, mockConfig, 999_999_999)).rejects.toThrow(
+      "Block 999999999 not found",
     );
   });
 });
@@ -642,7 +758,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       order: "desc",
     });
 
-    expect(result.nativeTxs.txs.map(t => t.txID)).toEqual(["tx-smart-failed"]);
+    expect(result.native.txs.map(t => t.txID)).toEqual(["tx-smart-failed"]);
   });
 
   it("fetchTronAccountTxsPage falls back to [] when data field is missing on native page", async () => {
@@ -654,10 +770,10 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       minTimestamp: 0,
       order: "desc",
     });
-    expect(result.nativeTxs.txs).toEqual([]);
+    expect(result.native.txs).toEqual([]);
   });
 
-  it("fetchTronAccountTxsPage returns native + trc20 results, dedupes successful smart contract", async () => {
+  it("fetchTronAccountTxsPage drops malformed and successful smart contract native records", async () => {
     mockedNetwork
       .mockResolvedValueOnce(
         mockResponse({ data: [validNativeTx, malformedTx, successfulSmartContract], meta: {} }),
@@ -675,9 +791,11 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       order: "desc",
     });
 
-    expect(result.nativeTxs.txs.map(t => t.txID)).toEqual(["tx-native"]);
-    expect(result.trc20Txs.txs.map(t => t.txID)).toEqual(["tx-smart-success"]);
-    expect(result.trc20Txs.hasNextPage).toBe(true);
+    expect(result.native.txs.map(t => t.txID)).toEqual(["tx-native"]);
+    expect(result.native.rawTimestamps).toHaveLength(3);
+    expect(result.native.next).toBeUndefined();
+    expect(result.trc20.txs.map(t => t.txID)).toEqual(["tx-smart-success"]);
+    expect(result.trc20.next).toBe(`${TRON_BASE_URL}/next`);
   });
 
   // Regression — tx 4d8f740330ec0c2158cd29db807c98b2c8ba11f7217e645d5c4421106138a399, a TRC20
@@ -756,8 +874,8 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         order: "asc",
       });
 
-      expect(result.trc20Txs.txs).toHaveLength(1);
-      expect(result.trc20Txs.txs[0]).toMatchObject({
+      expect(result.trc20.txs).toHaveLength(1);
+      expect(result.trc20.txs[0]).toMatchObject({
         txID,
         tokenType: "trc20",
         tokenAddress: trc20Base58,
@@ -798,7 +916,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         order: "asc",
       });
 
-      expect(result.trc20Txs.txs[0].tokenAddress).toBe(trc20Base58);
+      expect(result.trc20.txs[0].tokenAddress).toBe(trc20Base58);
     });
 
     it("leaves the token address unset when only an Approval names a token", async () => {
@@ -817,7 +935,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         order: "asc",
       });
 
-      expect(result.trc20Txs.txs[0].tokenAddress).toBeUndefined();
+      expect(result.trc20.txs[0].tokenAddress).toBeUndefined();
     });
 
     it("leaves the token address unset when the logs do not name one token", async () => {
@@ -833,7 +951,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         order: "asc",
       });
 
-      expect(result.trc20Txs.txs[0].tokenAddress).toBeUndefined();
+      expect(result.trc20.txs[0].tokenAddress).toBeUndefined();
     });
 
     it("does not fall back to the created contract address when the receipt has no logs", async () => {
@@ -845,7 +963,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         order: "asc",
       });
 
-      expect(result.trc20Txs.txs[0].tokenAddress).toBeUndefined();
+      expect(result.trc20.txs[0].tokenAddress).toBeUndefined();
     });
 
     it("leaves the token address unset when the receipt cannot be read", async () => {
@@ -860,7 +978,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         order: "asc",
       });
 
-      expect(result.trc20Txs.txs[0].tokenAddress).toBeUndefined();
+      expect(result.trc20.txs[0].tokenAddress).toBeUndefined();
     });
 
     it("does not look up a receipt when the token address is already known", async () => {
@@ -893,6 +1011,41 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         url: expect.stringMatching(/max_timestamp=999/),
       }),
     );
+  });
+
+  it("fetchTronAccountTxsEndpointPage reads the page a next link points to, per endpoint", async () => {
+    mockedNetwork
+      .mockResolvedValueOnce(
+        mockResponse({
+          data: [validTrc20Tx],
+          meta: { links: { next: "https://api.trongrid.io/v1/page-3" } },
+        }),
+      )
+      .mockResolvedValueOnce(mockResponse({ data: [validNativeTx], meta: {} }));
+
+    const trc20 = await fetchTronAccountTxsEndpointPage(
+      mockLogger,
+      mockConfig,
+      "trc20",
+      `${TRON_BASE_URL}/v1/page-2`,
+    );
+    const native = await fetchTronAccountTxsEndpointPage(
+      mockLogger,
+      mockConfig,
+      "native",
+      `${TRON_BASE_URL}/v1/page-2`,
+    );
+
+    expect(trc20).toMatchObject({
+      rawTimestamps: [validTrc20Tx.block_timestamp],
+      txs: [{ txID: "tx-trc20", tokenType: "trc20" }],
+      next: `${TRON_BASE_URL}/v1/page-3`,
+    });
+    expect(native).toMatchObject({
+      rawTimestamps: [validNativeTx.block_timestamp],
+      txs: [{ txID: "tx-native" }],
+      next: undefined,
+    });
   });
 
   it("fetchTronAccountTxs follows native pagination via meta.links.next", async () => {
@@ -978,7 +1131,7 @@ describe("fetchTronContract / getContractUserEnergyRatioConsumption", () => {
   });
 
   it("propagates errors instead of reporting no contract", async () => {
-    mockedNetwork.mockRejectedValueOnce(new Error("nope"));
+    mockedNetwork.mockRejectedValue(new Error("nope"));
     await expect(fetchTronContract(mockLogger, mockConfig, senderBase58)).rejects.toThrow("nope");
   });
 

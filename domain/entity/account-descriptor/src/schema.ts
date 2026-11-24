@@ -14,7 +14,8 @@ export const DerivationPathSchema = z
   .string()
   .regex(/^m(\/(0|[1-9]\d*)[hH']?)+$/, "Path must look like m/44h/60h/0h/0/0")
   .transform(canonicalPath)
-  .refine(withinBip32Range, { message: "Path index must be below 2^31" });
+  .refine(withinBip32Range, { message: "Path index must be below 2^31" })
+  .brand<"DerivationPath">();
 
 export type DerivationPath = z.infer<typeof DerivationPathSchema>;
 
@@ -42,8 +43,7 @@ export const UtxoAccountDescriptorSchema = z.object({
       /^m(\/(0|[1-9]\d*)[hH'])+$/,
       "UTXO path must only contain hardened segments, e.g. m/84h/0h/0h",
     )
-    .transform(canonicalPath)
-    .refine(withinBip32Range, { message: "Path index must be below 2^31" }),
+    .pipe(DerivationPathSchema),
 });
 
 export const AddressAccountDescriptorSchema = z.object({

@@ -11,6 +11,7 @@ import {
   DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
+import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
 import type { Subscription as TransportSubscription } from "@ledgerhq/hw-transport";
 
 describe("DeviceManagementKitBLETransport", () => {
@@ -169,68 +170,6 @@ describe("DeviceManagementKitBLETransport", () => {
       jest.clearAllMocks();
       jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue(null);
     });
-    it("should return the active transport", async () => {
-      // given
-      const staticTransport = DeviceManagementKitBLETransport;
-      const dmk = getDeviceManagementKit();
-      jest.spyOn(dmk, "getDeviceSessionState").mockReturnValue(
-        new Observable(subscriber => {
-          subscriber.next({ deviceStatus: DeviceStatus.CONNECTED } as DeviceSessionState);
-        }),
-      );
-      const activeTransport = new DeviceManagementKitBLETransport(dmk, "sessionId");
-      jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
-        sessionId: "sessionId",
-        transport: activeTransport,
-      });
-      jest.spyOn(dmk, "getConnectedDevice").mockReturnValue({
-        id: "deviceId",
-        type: "BLE",
-      } as ConnectedDevice);
-
-      // when
-      const transport = await staticTransport.open("deviceId");
-
-      // then
-      expect(transport).toEqual(activeTransport);
-    });
-    it("should scan and connect if get dmk device session state throws", async () => {
-      // given
-      const staticTransport = DeviceManagementKitBLETransport;
-      const dmk = getDeviceManagementKit();
-      jest.spyOn(dmk, "getDeviceSessionState").mockReturnValue(
-        new Observable(subscriber => {
-          subscriber.next({ deviceStatus: DeviceStatus.CONNECTED } as DeviceSessionState);
-        }),
-      );
-      const activeTransport = new DeviceManagementKitBLETransport(dmk, "sessionId");
-      jest.spyOn(dmk, "getDeviceSessionState").mockReturnValue(
-        new Observable(subscriber => {
-          subscriber.error(new Error("get device session state error"));
-        }),
-      );
-      jest.spyOn(dmk, "connect").mockResolvedValue("sessionId");
-      jest.spyOn(dmk, "getConnectedDevice").mockReturnValue({} as ConnectedDevice);
-      jest
-        .spyOn(dmk, "listenToAvailableDevices")
-        .mockReturnValue(
-          new Observable(subscriber => subscriber.next([{ id: "deviceId" }] as DiscoveredDevice[])),
-        );
-      jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
-        sessionId: "sessionId",
-        transport: activeTransport,
-      });
-      jest.spyOn(activeDeviceSessionSubject, "next");
-
-      // when
-      const transport = await staticTransport.open("deviceId");
-
-      // then
-      expect(activeDeviceSessionSubject.next).toHaveBeenCalledWith({
-        sessionId: "sessionId",
-        transport: transport,
-      });
-    });
     it("should return a new transport after dmk scanning and connect", async () => {
       // given
       const staticTransport = DeviceManagementKitBLETransport;
@@ -264,6 +203,143 @@ describe("DeviceManagementKitBLETransport", () => {
       const transport = await staticTransport.open(device);
       // then
       expect(transport.sessionId).toEqual("sessionId");
+    });
+
+    describe("with a connected device", () => {
+      const connectedDevice = {
+        id: "deviceId",
+        name: "Ledger Flex ABCD",
+        sessionId: "connectedSessionId",
+        transport: rnBleTransportIdentifier,
+        type: "BLE",
+      } as ConnectedDevice;
+
+      beforeEach(() => {
+        jest
+          .spyOn(getDeviceManagementKit(), "getDeviceSessionState")
+          .mockReturnValue(new Observable());
+        jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue(null);
+        jest.spyOn(activeDeviceSessionSubject, "next");
+      });
+
+      afterEach(() => {
+        jest.spyOn(getDeviceManagementKit(), "listConnectedDevices").mockReturnValue([]);
+      });
+
+      it("GIVEN the published session is the session of the connected device, WHEN opening its id, THEN it should return the published transport", async () => {
+        // GIVEN
+        const dmk = getDeviceManagementKit();
+        jest.spyOn(dmk, "listConnectedDevices").mockReturnValue([connectedDevice]);
+        const publishedTransport = new DeviceManagementKitBLETransport(dmk, "connectedSessionId");
+        jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
+          sessionId: "connectedSessionId",
+          transport: publishedTransport,
+        });
+
+        // WHEN
+        const transport = await DeviceManagementKitBLETransport.open("deviceId");
+
+        // THEN
+        expect(transport).toBe(publishedTransport);
+        expect(activeDeviceSessionSubject.next).not.toHaveBeenCalled();
+      });
+
+      it("GIVEN a published session that is no longer connected, WHEN opening a device id, THEN it should scan and connect", async () => {
+        // GIVEN
+        const dmk = getDeviceManagementKit();
+        jest.spyOn(dmk, "listConnectedDevices").mockReturnValue([]);
+        jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
+          sessionId: "staleSessionId",
+          transport: new DeviceManagementKitBLETransport(dmk, "staleSessionId"),
+        });
+        jest
+          .spyOn(dmk, "listenToAvailableDevices")
+          .mockReturnValue(
+            new Observable(subscriber => subscriber.next([{ id: "deviceId" } as DiscoveredDevice])),
+          );
+        jest.spyOn(dmk, "connect").mockResolvedValue("newSessionId");
+
+        // WHEN
+        const transport = await DeviceManagementKitBLETransport.open("deviceId");
+
+        // THEN
+        expect(transport.sessionId).toEqual("newSessionId");
+        expect(activeDeviceSessionSubject.next).toHaveBeenCalledWith({
+          sessionId: "newSessionId",
+          transport,
+        });
+      });
+
+      it("GIVEN a connected device with the same id, WHEN opening its id, THEN it should reuse its session without scanning", async () => {
+        // GIVEN
+        const dmk = getDeviceManagementKit();
+        jest.spyOn(dmk, "listConnectedDevices").mockReturnValue([connectedDevice]);
+        jest.spyOn(dmk, "listenToAvailableDevices");
+        jest.spyOn(dmk, "connect");
+
+        // WHEN
+        const transport = await DeviceManagementKitBLETransport.open("deviceId");
+
+        // THEN
+        expect(transport.sessionId).toEqual("connectedSessionId");
+        expect(activeDeviceSessionSubject.next).toHaveBeenCalledWith({
+          sessionId: "connectedSessionId",
+          transport,
+        });
+        expect(dmk.listenToAvailableDevices).not.toHaveBeenCalled();
+        expect(dmk.connect).not.toHaveBeenCalled();
+      });
+
+      it("GIVEN a connected device with another id and the new default name, WHEN opening the old id and name, THEN it should scan instead of reusing its session", async () => {
+        // GIVEN
+        const dmk = getDeviceManagementKit();
+        jest
+          .spyOn(dmk, "listConnectedDevices")
+          .mockReturnValue([{ ...connectedDevice, id: "newDeviceId", name: "ABCD" }]);
+        jest
+          .spyOn(dmk, "listenToAvailableDevices")
+          .mockReturnValue(
+            new Observable(subscriber =>
+              subscriber.next([{ id: "newDeviceId", name: "ABCD" } as DiscoveredDevice]),
+            ),
+          );
+        jest.spyOn(dmk, "connect").mockResolvedValue("newSessionId");
+
+        // WHEN
+        const transport = await DeviceManagementKitBLETransport.open(
+          "deviceId",
+          undefined,
+          undefined,
+          {
+            matchDeviceByName: "Ledger Flex ABCD",
+          },
+        );
+
+        // THEN
+        expect(dmk.listenToAvailableDevices).toHaveBeenCalled();
+        expect(transport.sessionId).toEqual("newSessionId");
+      });
+
+      it("GIVEN a connected device that does not match, WHEN opening another id, THEN it should scan and connect", async () => {
+        // GIVEN
+        const dmk = getDeviceManagementKit();
+        jest
+          .spyOn(dmk, "listConnectedDevices")
+          .mockReturnValue([{ ...connectedDevice, id: "otherDeviceId", name: "Other" }]);
+        jest
+          .spyOn(dmk, "listenToAvailableDevices")
+          .mockReturnValue(
+            new Observable(subscriber => subscriber.next([{ id: "deviceId" } as DiscoveredDevice])),
+          );
+        jest.spyOn(dmk, "connect").mockResolvedValue("newSessionId");
+
+        // WHEN
+        const transport = await DeviceManagementKitBLETransport.open("deviceId");
+
+        // THEN
+        expect(transport.sessionId).toEqual("newSessionId");
+        expect(dmk.connect).toHaveBeenCalledTimes(1);
+      });
     });
   });
 

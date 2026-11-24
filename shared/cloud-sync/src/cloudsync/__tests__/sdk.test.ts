@@ -191,6 +191,7 @@ describe("CloudSyncSDK", () => {
   });
 
   it("listenNotifications requests a refreshed jwt for the websocket handshake", async () => {
+    server.close();
     const { server: wsServer, port: wsPort, close: closeWsServer } = createWsServer();
     const sdkWithWs = new CloudSyncSDK({
       apiBaseUrl: `http://localhost:${wsPort}`,
@@ -218,6 +219,7 @@ describe("CloudSyncSDK", () => {
       sub.unsubscribe();
     } finally {
       await closeWsServer();
+      server.listen();
     }
   });
 });

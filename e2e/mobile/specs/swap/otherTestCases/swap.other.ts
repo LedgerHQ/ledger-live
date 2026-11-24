@@ -29,7 +29,11 @@ async function handleAssetSwap(asset: Account, hasAccount: boolean) {
     await app.modularDrawer.selectFirstAccount();
   } else {
     await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
-    await app.addAccount.addAccountAtIndex(`${asset.currency.name} 1`, asset.currency.id, 0);
+    await app.addAccount.addAccountAtIndex({
+      currencyName: `${asset.currency.name} 1`,
+      currencyId: asset.currency.id,
+      index: 0,
+    });
   }
 }
 
@@ -110,16 +114,16 @@ export function runSwapWithDifferentSeedTest(
     it(`[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Swap using a different seed`, async () => {
       swap.accountToDebit.address = addressFrom;
       swap.accountToCredit.address = addressTo;
-      const minAmount = await app.swapLiveApp.getMinimumAmount(
-        swap.accountToDebit,
-        swap.accountToCredit,
-      );
+      const minAmount = await app.swapLiveApp.getMinimumAmount({
+        fromAccount: swap.accountToDebit,
+        toAccount: swap.accountToCredit,
+      });
       const swapAmount = minAmount ? truncateSwapAmount(minAmount) : minAmount;
-      await performSwapUntilQuoteSelectionStep(
-        swap.accountToDebit,
-        swap.accountToCredit,
-        swapAmount,
-      );
+      await performSwapUntilQuoteSelectionStep({
+        accountToDebit: swap.accountToDebit,
+        accountToCredit: swap.accountToCredit,
+        amount: swapAmount,
+      });
       const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.checkQuoteCardCtaPresence(provider.uiName);
       await app.common.disableSynchronizationForiOS();
@@ -127,7 +131,11 @@ export function runSwapWithDifferentSeedTest(
       if (expectedErrorMessage) {
         await app.swapLiveApp.checkErrorMessage(expectedErrorMessage);
       } else {
-        await app.swap.verifyAmountsAndAcceptSwapForDifferentSeed(swap, swapAmount, errorMessage);
+        await app.swap.verifyAmountsAndAcceptSwapForDifferentSeed({
+          swap,
+          amount: swapAmount,
+          errorMessage,
+        });
         await app.swap.waitForSuccessAndContinue();
       }
     });
@@ -163,14 +171,14 @@ export function runSwapLandingPageTest(
     tmsLinks.landingPage.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer`, async () => {
-      const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
+      const minAmount = await app.swapLiveApp.getMinimumAmount({ fromAccount, toAccount });
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(
-        swap.accountToDebit,
-        swap.accountToCredit,
-        minAmount,
-      );
+      await performSwapUntilQuoteSelectionStep({
+        accountToDebit: swap.accountToDebit,
+        accountToCredit: swap.accountToCredit,
+        amount: minAmount,
+      });
       const providerList = await app.swapLiveApp.getProviderList();
       await app.swapLiveApp.checkFirstQuoteContainerInfos(providerList);
       await app.swapLiveApp.checkBestOffer(providerList);
@@ -195,8 +203,13 @@ export function runSwapLandingPageTest(
       await app.swapLiveApp.expectSwapLiveApp();
 
       const separators = getExpectedSeparators("fr");
-      const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
-      await performSwapUntilQuoteSelectionStep(fromAccount, toAccount, minAmount, false);
+      const minAmount = await app.swapLiveApp.getMinimumAmount({ fromAccount, toAccount });
+      await performSwapUntilQuoteSelectionStep({
+        accountToDebit: fromAccount,
+        accountToCredit: toAccount,
+        amount: minAmount,
+        continueToQuotes: false,
+      });
       await app.swapLiveApp.clickSwapMax(buildFormattedAmountPattern(separators), TIMEOUT.large);
       await app.swapLiveApp.tapGetQuotesButton();
       await app.swapLiveApp.waitForQuotes();
@@ -245,11 +258,17 @@ export function runSwapLnsNotSupportedBannerTest(
       tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
       tags.forEach(tag => $Tag(tag));
       it(`Swap LNS not supported banner for ${unsupportedProvider.uiName}`, async () => {
-        const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount, [
-          unsupportedProvider.name,
-        ]);
+        const minAmount = await app.swapLiveApp.getMinimumAmount({
+          fromAccount,
+          toAccount,
+          providersWhitelist: [unsupportedProvider.name],
+        });
 
-        await performSwapUntilQuoteSelectionStep(fromAccount, toAccount, minAmount);
+        await performSwapUntilQuoteSelectionStep({
+          accountToDebit: fromAccount,
+          accountToCredit: toAccount,
+          amount: minAmount,
+        });
         await app.swapLiveApp.selectSpecificProvider(unsupportedProvider.uiName);
         await app.swapLiveApp.checkLnsNotSupportedBanner(unsupportedProvider.uiName);
       });
@@ -288,19 +307,19 @@ export function runTooLowAmountForQuoteSwapsTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Swap too low quote amount (${swap.amount}): ${errorMessage}`, async () => {
-      const minAmount = await app.swapLiveApp.getMinimumAmount(
-        swap.accountToDebit,
-        swap.accountToCredit,
-      );
+      const minAmount = await app.swapLiveApp.getMinimumAmount({
+        fromAccount: swap.accountToDebit,
+        toAccount: swap.accountToCredit,
+      });
 
       const actualAmount = swap.amount === "USE_MIN_AMOUNT" ? minAmount : swap.amount;
 
-      await performSwapUntilQuoteSelectionStep(
-        swap.accountToDebit,
-        swap.accountToCredit,
-        actualAmount,
-        quotesVisible,
-      );
+      await performSwapUntilQuoteSelectionStep({
+        accountToDebit: swap.accountToDebit,
+        accountToCredit: swap.accountToCredit,
+        amount: actualAmount,
+        continueToQuotes: quotesVisible,
+      });
       if (quotesVisible) {
         await app.swapLiveApp.checkQuotes();
         await app.swapLiveApp.selectExchange();
@@ -342,15 +361,15 @@ export function runUserRefusesTransactionTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap refused on device`, async () => {
-      const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
+      const minAmount = await app.swapLiveApp.getMinimumAmount({ fromAccount, toAccount });
       const rejectAmount = minAmount ? truncateSwapAmount(minAmount) : minAmount;
       const rejectedSwap = new Swap(fromAccount, toAccount, rejectAmount);
 
-      await performSwapUntilQuoteSelectionStep(
-        rejectedSwap.accountToDebit,
-        rejectedSwap.accountToCredit,
-        rejectAmount,
-      );
+      await performSwapUntilQuoteSelectionStep({
+        accountToDebit: rejectedSwap.accountToDebit,
+        accountToCredit: rejectedSwap.accountToCredit,
+        amount: rejectAmount,
+      });
       const provider = await app.swapLiveApp.selectExchange();
       await app.common.disableSynchronizationForiOS();
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
@@ -384,11 +403,11 @@ export function runSwapHistoryOperationsTest(
       await app.swap.goToSwapHistory();
       await app.swap.checkSwapOperation(swapId, swap);
       await app.swap.openSelectedOperation(swapId);
-      await app.swapTransactionStatusDrawer.expectSwapTransactionStatusDrawerInfos(
-        swapId.slice(0, 8),
+      await app.swapTransactionStatusDrawer.expectSwapTransactionStatusDrawerInfos({
+        swapIdPrefix: swapId.slice(0, 8),
         provider,
         details,
-      );
+      });
     });
   });
 }
@@ -419,7 +438,7 @@ export function runExportSwapHistoryOperationsTest(
       swap.accountToCredit.address = addressTo;
       await app.swap.goToSwapHistory();
       await app.swap.clickExportOperations();
-      await app.swap.checkExportedFileContents(swap, provider, swapId);
+      await app.swap.checkExportedFileContents({ swap, provider, id: swapId });
     });
   });
 }
@@ -509,8 +528,8 @@ export function runSwapWithSendMaxTest(
 
 async function validateSwapAssetsPage(accountFrom: string, accountTo: string) {
   await app.swapLiveApp.expectSwapLiveApp();
-  await app.swapLiveApp.checkAssetFrom(accountFrom, "");
-  await app.swapLiveApp.checkAssetTo(accountTo, "0");
+  await app.swapLiveApp.checkAssetFrom({ currency: accountFrom, amount: "" });
+  await app.swapLiveApp.checkAssetTo({ currency: accountTo, amount: "0" });
 }
 
 async function openSwapFromPortfolioEntryPoint() {
@@ -577,18 +596,18 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
     tags.forEach(tag => $Tag(tag));
 
     it(`[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Swap network fees above account balance`, async () => {
-      const minAmount = await app.swapLiveApp.getMinimumAmount(
-        swap.accountToDebit,
-        swap.accountToCredit,
-      );
+      const minAmount = await app.swapLiveApp.getMinimumAmount({
+        fromAccount: swap.accountToDebit,
+        toAccount: swap.accountToCredit,
+      });
 
       const actualAmount = swap.amount === "USE_MIN_AMOUNT" ? minAmount : swap.amount;
 
-      await performSwapUntilQuoteSelectionStep(
-        swap.accountToDebit,
-        swap.accountToCredit,
-        actualAmount,
-      );
+      await performSwapUntilQuoteSelectionStep({
+        accountToDebit: swap.accountToDebit,
+        accountToCredit: swap.accountToCredit,
+        amount: actualAmount,
+      });
       await app.swapLiveApp.checkQuotes();
       await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);

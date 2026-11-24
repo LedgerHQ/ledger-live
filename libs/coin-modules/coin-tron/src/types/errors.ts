@@ -134,6 +134,14 @@ export class TronEmptyPage extends Error {
   }
 }
 
+export class TronPageServedTwice extends Error {
+  override name = "TronPageServedTwice";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "TronPageServedTwice");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 export class TronEmptyAccount extends Error {
   override name = "TronEmptyAccount";
   constructor(message?: string, fields?: Record<string, unknown>) {

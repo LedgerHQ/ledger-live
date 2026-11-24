@@ -1,3 +1,4 @@
+import { fromDescriptorPath } from "@domain/entity-account-descriptor";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
@@ -6,7 +7,7 @@ import {
   emptyHistoryCache,
   encodeAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { addressFromKey, toLegacyAccount, toLegacyPath } from "../../account/accountDescriptor";
+import { addressFromKey, toLegacyAccount } from "../../account/accountDescriptor";
 import { usesMockBridges } from "../../bridge/mockMode";
 
 /** An account the store does not hold, from its descriptor (the mock scan's own in mock mode). */
@@ -37,7 +38,7 @@ export async function placeholderAccount(descriptor: AccountDescriptor): Promise
     index,
     xpub,
     freshAddress: address,
-    freshAddressPath: descriptor.type === "address" ? toLegacyPath(descriptor.path) : "",
+    freshAddressPath: descriptor.type === "address" ? fromDescriptorPath(descriptor.path) : "",
     used: false,
     currency,
     swapHistory: [],

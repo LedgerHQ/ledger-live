@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { render, waitFor, act } from "@tests/test-renderer";
 import TransactionSignatureDrawer from "../components/TransactionSignatureDrawer";
 import MessageSignatureDrawer from "../components/MessageSignatureDrawer";
 import type { WalletApiDeviceIntentSignRequest } from "../components/TransactionSignatureDrawer";
 import type { WalletApiDeviceIntentSignMessageRequest } from "../components/MessageSignatureDrawer";
+import { useWalletApiSignatureQueue } from "../hooks/useWalletApiSignatureQueue";
 
 // The Device Intent Executor drives a real device connection + bottom sheet, which cannot
 // run in jest. We mock it to a marker view and capture its props, so this test focuses on
@@ -15,6 +16,7 @@ type ExecutorProps = {
   intent: unknown;
   intentComponentExtraProps?: Record<string, unknown>;
   onIntentJobStateChanged: (state: { type: string; [key: string]: unknown }) => void;
+  onIntentJobError: (error: unknown) => void;
   onUserCancel: () => void;
 };
 
@@ -65,6 +67,52 @@ jest.mock("../components/MessageSignatureDrawer/intentDefinition", () => ({
 }));
 
 const account = { id: "js:2:ethereum:0xabc:", type: "Account", currency: { name: "Ethereum" } };
+
+function buildTransactionRequest(recipient: string) {
+  const onSuccess = jest.fn();
+  const onError = jest.fn();
+  const request = {
+    account,
+    parentAccount: undefined,
+    transaction: { family: "ethereum", recipient },
+    appName: undefined,
+    dependencies: undefined,
+    manifestId: "ledger-wallet-connect",
+    manifestName: "WalletConnect",
+    onSuccess,
+    onError,
+  } as unknown as WalletApiDeviceIntentSignRequest;
+  return { request, onSuccess, onError };
+}
+
+type SignatureQueue = ReturnType<typeof useWalletApiSignatureQueue>;
+
+/** Renders the queued drawers the way the Wallet API webview does. */
+function SignatureQueueHost({ onQueue }: { onQueue: (queue: SignatureQueue) => void }) {
+  const queue = useWalletApiSignatureQueue();
+  useEffect(() => {
+    onQueue(queue);
+  }, [onQueue, queue]);
+  const { currentSignature, closeCurrentSignature } = queue;
+  return (
+    <>
+      {currentSignature?.type === "transaction" && (
+        <TransactionSignatureDrawer
+          key={currentSignature.id}
+          request={currentSignature.request}
+          onClose={closeCurrentSignature}
+        />
+      )}
+      {currentSignature?.type === "message" && (
+        <MessageSignatureDrawer
+          key={currentSignature.id}
+          request={currentSignature.request}
+          onClose={closeCurrentSignature}
+        />
+      )}
+    </>
+  );
+}
 
 describe("WalletApiSignature feature", () => {
   beforeEach(() => {
@@ -150,5 +198,41 @@ describe("WalletApiSignature feature", () => {
     // Dismissing after a successful signature must not additionally reject via onCancel.
     act(() => mockExecutorProps!.onUserCancel());
     expect(onCancel).not.toHaveBeenCalled();
+  });
+
+  it("signs concurrent requests one after the other and rejects with the real signing error", async () => {
+    const first = buildTransactionRequest("0xfirst");
+    const second = buildTransactionRequest("0xsecond");
+    let queue: SignatureQueue | undefined;
+    const { getByTestId } = render(
+      <SignatureQueueHost
+        onQueue={latest => {
+          queue = latest;
+        }}
+      />,
+    );
+
+    act(() => {
+      queue!.enqueueTransactionSignature(first.request);
+      queue!.enqueueTransactionSignature(second.request);
+    });
+    await waitFor(() => expect(getByTestId("device-intent-executor")).toBeTruthy());
+    expect(mockExecutorProps?.intentComponentExtraProps?.recipient).toBe("0xfirst");
+
+    const signedOperation = { operation: { id: "op-1" } };
+    act(() => mockExecutorProps!.onIntentJobStateChanged({ type: "signed", signedOperation }));
+    expect(first.onSuccess).toHaveBeenCalledWith(signedOperation);
+
+    await waitFor(() =>
+      expect(mockExecutorProps?.intentComponentExtraProps?.recipient).toBe("0xsecond"),
+    );
+    const signingError = new Error("Not enough gas");
+    act(() => mockExecutorProps!.onIntentJobError(signingError));
+    act(() => mockExecutorProps!.onUserCancel());
+
+    expect(second.onError).toHaveBeenCalledWith(signingError);
+    expect(second.onSuccess).not.toHaveBeenCalled();
+    expect(first.onError).not.toHaveBeenCalled();
+    expect(queue!.currentSignature).toBeNull();
   });
 });

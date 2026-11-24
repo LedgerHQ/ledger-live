@@ -48,10 +48,10 @@ describe("Receive - read-only flows", () => {
       await app.modularDrawer.selectCurrencyByTicker(Currency.XRP.ticker);
       await app.modularDrawer.selectAccount(Account.XRP_2.accountName);
       await app.receive.doNotVerifyAddress();
-      await app.receive.expectReceivePageIsDisplayed(
-        Currency.XRP.ticker,
-        Account.XRP_2.accountName,
-      );
+      await app.receive.expectReceivePageIsDisplayed({
+        tickerName: Currency.XRP.ticker,
+        accountName: Account.XRP_2.accountName,
+      });
     },
   );
 
@@ -63,10 +63,10 @@ describe("Receive - read-only flows", () => {
     await app.modularDrawer.selectNetwork(Account.ETH_1.currency.name);
     await app.modularDrawer.selectAccount(Account.ETH_1.accountName);
     await app.receive.doNotVerifyAddress();
-    await app.receive.expectReceivePageIsDisplayed(
-      Account.ETH_1.currency.ticker,
-      Account.ETH_1.accountName,
-    );
+    await app.receive.expectReceivePageIsDisplayed({
+      tickerName: Account.ETH_1.currency.ticker,
+      accountName: Account.ETH_1.accountName,
+    });
     const address = await getAccountAddress(Account.ETH_1);
     await app.receive.verifyAddress(address);
   });

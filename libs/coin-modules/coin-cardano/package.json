@@ -70,7 +70,6 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@domain/entity-currency-crypto": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",

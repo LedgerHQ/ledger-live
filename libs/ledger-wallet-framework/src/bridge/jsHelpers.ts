@@ -37,6 +37,7 @@ import {
   generateHistoryFromOperations,
   recalculateAccountBalanceHistories,
 } from "../account/balanceHistoryCache";
+import { type AccountBalancesResult, withAccountBalances } from "../account/balances";
 import { shouldRetainPendingOperation } from "../account/pending";
 import { shouldShowNewAccount } from "../account/support";
 import getAddressWrapper, { GetAddressFn } from "./getAddressWrapper";
@@ -140,6 +141,8 @@ export const sameOp = (a: Operation, b: Operation): boolean =>
     sameDate(a.date, b.date) &&
     a.blockHeight === b.blockHeight &&
     sameSequenceNumber(a, b) &&
+    // A status the indexer recorded after a first read replaces the stored one.
+    !!a.hasFailed === !!b.hasFailed &&
     isEqual(a.senders, b.senders) &&
     isEqual(a.recipients, b.recipients));
 
@@ -189,6 +192,21 @@ Operation[] {
   }
 
   return all;
+}
+
+/**
+ * `mergeOps`, keeping the fetched operations older than every existing one, which `mergeOps`
+ * drops: for a sync that reads again a range below its newest stored operation, where the indexer
+ * may list a transaction late.
+ */
+export function mergeOpsKeepingOlder(existing: Operation[], newFetched: Operation[]): Operation[] {
+  const merged = mergeOps(existing, newFetched);
+  const kept = new Set(merged.map(({ id }) => id));
+  const older = [
+    ...new Map(newFetched.filter(({ id }) => !kept.has(id)).map(o => [o.id, o])).values(),
+  ];
+  if (older.length === 0) return merged;
+  return [...merged, ...older.sort((a, b) => b.date.valueOf() - a.date.valueOf())];
 }
 
 export const mergeNfts = (oldNfts: ProtoNFT[], newNfts: ProtoNFT[]): ProtoNFT[] => {
@@ -247,10 +265,13 @@ export const makeSync =
     getAccountShape,
     postSync = (_, a) => a,
     shouldMergeOps = true,
+    getAccountBalances,
   }: {
     getAccountShape: GetAccountShape<A> | GetAccountShapeStream<A>;
     postSync?: (initial: A, synced: A) => A;
     shouldMergeOps?: boolean | ((account: A) => Promise<boolean>);
+    /** Family rows of the balance breakdown for the synced account, read after `postSync`. */
+    getAccountBalances?: (account: A) => AccountBalancesResult;
   }): AccountBridge<T, A, U, O, R>["sync"] =>
   (initial: A, syncConfig: SyncConfig): Observable<AccountUpdater<A>> =>
     new Observable((o: Observer<AccountUpdater<A>>) => {
@@ -326,6 +347,8 @@ export const makeSync =
                   shouldRetainPendingOperation(a, op),
                 ),
               });
+
+              a = withAccountBalances(a, getAccountBalances?.(a));
 
               a = recalculateAccountBalanceHistories(a, acc);
 
@@ -422,12 +445,15 @@ export const makeScanAccounts =
     getAddressLookup,
     getAddressFn,
     postSync = (_, a) => a,
+    getAccountBalances,
   }: {
     getAccountShape: GetAccountShape<A> | GetAccountShapeStream<A>;
     buildIterateResult?: IterateResultBuilder;
     getAddressLookup?: (currency: CryptoCurrency) => Promise<AddressLookup | undefined>;
     getAddressFn: GetAddressFn;
     postSync?: (initial: A, synced: A) => A;
+    /** Family rows of the balance breakdown for the scanned account, read after `postSync`. */
+    getAccountBalances?: (account: A) => AccountBalancesResult;
   }): CurrencyBridge["scanAccounts"] =>
   ({ currency, deviceId, syncConfig, scheme }): Observable<ScanAccountEvent> =>
     new Observable((outerObs: Observer<{ type: "discovered"; account: Account }>) => {
@@ -520,7 +546,8 @@ export const makeScanAccounts =
           // Temporary: we're going to remove transformations in postSync that should be done in getAccountShape
           // Using the generic doesn't resolve correctly
           // oxlint-disable-next-line typescript/consistent-type-assertions
-          account = postSync(initialAccount as unknown as A, account as unknown as A);
+          const synced = postSync(initialAccount as unknown as A, account as unknown as A);
+          account = withAccountBalances(synced, getAccountBalances?.(synced));
 
           log("scanAccounts", "derivationsCache", res);
 

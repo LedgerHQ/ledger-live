@@ -23,3 +23,13 @@ export function heldXrpTokenIds(account: Account): ReadonlySet<string> {
       .map(sub => sub.token.id),
   );
 }
+
+export function hasPendingXrpTokenRemoval(account: Account, token: TokenCurrency): boolean {
+  return account.pendingOperations.some(operation => {
+    const raw = operation.transactionRaw;
+    if (operation.type !== "OPT_OUT" || !raw) return false;
+    if (!("assetReference" in raw) || !("assetOwner" in raw)) return false;
+
+    return raw.assetReference === token.tokenIdentifier && raw.assetOwner === token.contractAddress;
+  });
+}

@@ -53,7 +53,10 @@ export function runPostOnboardingHubFlowTest(tmsLinks: string[], tags: string[])
         await app.postOnboardingHub.expectActionPending(actionId);
         await app.postOnboardingHub.tapAction(actionId);
         await app.postOnboardingHub.completeMockActionAndReturnToHub();
-        await app.postOnboardingHub.expectActionCompleted(actionId, ACTION_COMPLETED_LABEL);
+        await app.postOnboardingHub.expectActionCompleted({
+          actionId,
+          completedLabel: ACTION_COMPLETED_LABEL,
+        });
       }
 
       await app.postOnboardingHub.expectAllActionsCompleted();

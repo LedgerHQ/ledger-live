@@ -6,7 +6,8 @@ import {
   computeShieldedSpendFee,
   estimateMaxSpendableTransparent,
 } from "../logic/coin-selection";
-import type { BitcoinOutput, Transaction, ZcashAccount } from "../types/bridge";
+import type { BitcoinOutput, Transaction, ZcashAccount, ZcashTransferType } from "../types/bridge";
+import { UnsupportedMaxSpendableFilter } from "@ledgerhq/ledger-wallet-framework/errors";
 import {
   ZCASH_MAX_TRANSPARENT_INPUTS,
   ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS,
@@ -343,5 +344,241 @@ describe("estimateMaxSpendable, zip2009 coin config", () => {
       new BigNumber(100_000 - 2 * LEGACY_MARGINAL_FEE),
     );
     expect(await max(acc)).toEqual(new BigNumber(100_000 - 2 * ZIP2009_MARGINAL_FEE));
+  });
+});
+
+describe("estimateMaxSpendable, pool filters", () => {
+  const asc = (count: number) => Array.from({ length: count }, (_, i) => (i + 1) * 1_000);
+  const bounded = (values: number[]) =>
+    [...values].sort((a, b) => b - a).slice(0, ZCASH_MAX_TRANSPARENT_INPUTS);
+  const transparentMaxAs = (values: number[], transferType: ZcashTransferType) =>
+    estimateMaxSpendableTransparent(
+      values.map(v => new BigNumber(v)),
+      transferType,
+      LEGACY_MARGINAL_FEE,
+    );
+  // Without a known destination, the max holds for a transparent send and a shielding alike.
+  const transparentMax = (values: number[]) =>
+    BigNumber.min(
+      transparentMaxAs(values, "transparent"),
+      transparentMaxAs(values, "transparent-to-shielded"),
+    );
+  const withPending = (acc: ZcashAccount, extra: Record<string, unknown>): ZcashAccount =>
+    ({ ...acc, pendingOperations: [{ extra }] }) as unknown as ZcashAccount;
+
+  describe("transparent pool", () => {
+    it.each([
+      ["pools: transparent", { pools: ["transparent"] }],
+      ["private: false", { private: false }],
+      ["both", { pools: ["transparent"], private: false }],
+    ])("is the transparent max for %s", async (_label, filters) => {
+      const acc = accountWithUtxos([100_000, 200_000]);
+
+      expect(await estimateMaxSpendable({ account: acc, filters } as never)).toEqual(
+        transparentMax([100_000, 200_000]),
+      );
+    });
+
+    it("does not let the transaction pick the pool", async () => {
+      const acc = accountWithUtxos([100_000, 200_000]);
+
+      expect(
+        await estimateMaxSpendable({
+          account: acc,
+          transaction: shieldedTransaction,
+          filters: { pools: ["transparent"] },
+        } as never),
+      ).toEqual(transparentMax([100_000, 200_000]));
+    });
+
+    it("prices the given transaction's destination when the pool funds it", async () => {
+      const acc = accountWithUtxos([100_000]);
+
+      for (const transferType of ["transparent", "transparent-to-shielded"] as const) {
+        expect(
+          await estimateMaxSpendable({
+            account: acc,
+            transaction: { ...shieldedTransaction, transferType },
+            filters: { pools: ["transparent"] },
+          } as never),
+        ).toEqual(transparentMaxAs([100_000], transferType));
+      }
+    });
+
+    it("prices the costlier destination when none is known", async () => {
+      expect(
+        transparentMaxAs([100_000], "transparent-to-shielded").lt(
+          transparentMaxAs([100_000], "transparent"),
+        ),
+      ).toBe(true);
+      expect(
+        await estimateMaxSpendable({
+          account: accountWithUtxos([100_000]),
+          filters: { pools: ["transparent"] },
+        } as never),
+      ).toEqual(transparentMaxAs([100_000], "transparent-to-shielded"));
+    });
+
+    it("is capped at the largest 32 inputs", async () => {
+      const values = asc(ZCASH_MAX_TRANSPARENT_INPUTS + 8);
+
+      expect(
+        await estimateMaxSpendable({
+          account: accountWithUtxos(values),
+          filters: { pools: ["transparent"] },
+        } as never),
+      ).toEqual(transparentMax(bounded(values)));
+    });
+
+    it("is zero without any UTXO", async () => {
+      expect(
+        await estimateMaxSpendable({
+          account: accountWithUtxos([]),
+          filters: { pools: ["transparent"] },
+        } as never),
+      ).toEqual(new BigNumber(0));
+    });
+
+    it("leaves out the UTXOs a pending operation spends", async () => {
+      const acc = withPending(accountWithUtxos([100_000, 200_000, 400_000]), {
+        inputRefs: [{ hash: "aa".repeat(32), outputIndex: 2, address: T_ADDRESS }],
+      });
+
+      expect(
+        await estimateMaxSpendable({ account: acc, filters: { pools: ["transparent"] } } as never),
+      ).toEqual(transparentMax([100_000, 200_000]));
+      // Without filters the figure is what it always was.
+      expect(await estimateMaxSpendable({ account: acc } as never)).toEqual(
+        new BigNumber(700_000 - 15_000),
+      );
+    });
+
+    it("leaves out the UTXOs a legacy pending operation lists in inputs", async () => {
+      const acc = withPending(accountWithUtxos([100_000, 200_000, 400_000]), {
+        inputs: [`${"aa".repeat(32)}-0`],
+      });
+
+      expect(
+        await estimateMaxSpendable({ account: acc, filters: { private: false } } as never),
+      ).toEqual(transparentMax([200_000, 400_000]));
+    });
+
+    it("excludes pending inputs before applying the 32-input cap", async () => {
+      const values = asc(ZCASH_MAX_TRANSPARENT_INPUTS + 1);
+      // The largest UTXO is spent by a pending operation: the cap then keeps the next 32.
+      const acc = withPending(accountWithUtxos(values), {
+        inputRefs: [{ hash: "aa".repeat(32), outputIndex: values.length - 1, address: T_ADDRESS }],
+      });
+
+      expect(
+        await estimateMaxSpendable({ account: acc, filters: { pools: ["transparent"] } } as never),
+      ).toEqual(transparentMax(values.slice(0, ZCASH_MAX_TRANSPARENT_INPUTS)));
+    });
+  });
+
+  describe("ironwood pool", () => {
+    const acc = accountWithIronwoodNotes([
+      { amount: 30_000, blockHeight: MATURE_BLOCK },
+      { amount: 20_000, blockHeight: MATURE_BLOCK },
+      { amount: 50_000, blockHeight: IMMATURE_BLOCK },
+    ]);
+    const expected = new BigNumber(50_000).minus(
+      computeShieldedSpendFee(2, false, "shielded-to-transparent", LEGACY_MARGINAL_FEE),
+    );
+
+    it.each([
+      ["pools: ironwood", { pools: ["ironwood"] }],
+      ["private: true", { private: true }],
+      ["both", { pools: ["ironwood"], private: true }],
+    ])(
+      "is the shielded max for %s, priced as a shielded-to-transparent spend",
+      async (_l, filters) => {
+        expect(await estimateMaxSpendable({ account: acc, filters } as never)).toEqual(expected);
+      },
+    );
+
+    it("prices a spend to a transparent address, not a shielded one", () => {
+      const toShielded = new BigNumber(50_000).minus(
+        computeShieldedSpendFee(2, false, "shielded", LEGACY_MARGINAL_FEE),
+      );
+
+      expect(expected.eq(toShielded)).toBe(false);
+    });
+
+    it("prices a shielded destination when the given transaction pays one", async () => {
+      expect(
+        await estimateMaxSpendable({
+          account: acc,
+          transaction: { ...shieldedTransaction, transferType: "shielded" },
+          filters: { pools: ["ironwood"] },
+        } as never),
+      ).toEqual(
+        new BigNumber(50_000).minus(
+          computeShieldedSpendFee(2, false, "shielded", LEGACY_MARGINAL_FEE),
+        ),
+      );
+    });
+
+    it("prices a transparent destination when the transaction's type spends another pool", async () => {
+      expect(
+        await estimateMaxSpendable({
+          account: acc,
+          transaction: { ...shieldedTransaction, transferType: "transparent" },
+          filters: { pools: ["ironwood"] },
+        } as never),
+      ).toEqual(expected);
+    });
+
+    it("excludes the notes a pending shielded spend reserves", async () => {
+      const pending = withPending(acc, { shieldedNullifiers: [nullifierAt(0)] });
+
+      // Only the 20k note stays: 20k minus the 1-spend fee.
+      expect(
+        await estimateMaxSpendable({ account: pending, filters: { private: true } } as never),
+      ).toEqual(
+        new BigNumber(20_000).minus(
+          computeShieldedSpendFee(1, false, "shielded-to-transparent", LEGACY_MARGINAL_FEE),
+        ),
+      );
+    });
+
+    it("is zero when every note is immature", async () => {
+      const immature = accountWithIronwoodNotes([{ amount: 50_000, blockHeight: IMMATURE_BLOCK }]);
+
+      expect(
+        await estimateMaxSpendable({ account: immature, filters: { private: true } } as never),
+      ).toEqual(new BigNumber(0));
+    });
+  });
+
+  describe("unsupported filters", () => {
+    it.each([
+      ["several pools", { pools: ["transparent", "ironwood"] }],
+      ["no pool", { pools: [] }],
+      ["an unknown pool", { pools: ["sapling"] }],
+      ["a private flag on the transparent pool", { pools: ["transparent"], private: true }],
+      ["a public flag on the ironwood pool", { pools: ["ironwood"], private: false }],
+    ])("throws for %s", async (_label, filters) => {
+      await expect(
+        estimateMaxSpendable({ account: accountWithUtxos([100_000]), filters } as never),
+      ).rejects.toBeInstanceOf(UnsupportedMaxSpendableFilter);
+    });
+  });
+
+  it("leaves the unfiltered result unchanged", async () => {
+    const values = asc(5);
+    const acc = accountWithUtxos(values);
+
+    expect(await estimateMaxSpendable({ account: acc } as never)).toEqual(transparentMax(values));
+    expect(await estimateMaxSpendable({ account: acc, filters: {} } as never)).toEqual(
+      transparentMax(values),
+    );
+    expect(
+      await max(accountWithIronwoodNotes([{ amount: 30_000, blockHeight: MATURE_BLOCK }])),
+    ).toEqual(
+      new BigNumber(30_000).minus(
+        computeShieldedSpendFee(1, false, "shielded", LEGACY_MARGINAL_FEE),
+      ),
+    );
   });
 });

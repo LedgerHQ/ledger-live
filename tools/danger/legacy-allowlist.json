@@ -1,0 +1,128 @@
+[
+  {
+    "path": "libs/ledger-live-common/src/account-data/full-sync/",
+    "reason": "Transitional until every dependency on the former Account type is released",
+    "target": "domain/entity/account-* and features/platform/account-*",
+    "ticket": "LIVE-38772"
+  },
+  {
+    "path": "libs/ledger-live-common/src/account-data/coin-module/",
+    "reason": "Transitional until every dependency on the former Account type is released",
+    "target": "domain/entity/account-* and features/platform/account-*",
+    "ticket": "LIVE-38772"
+  },
+  {
+    "path": "libs/ledger-live-common/src/account-data/discovery/",
+    "reason": "Transitional until each family derives its descriptor with a DMK signer kit",
+    "target": "features/platform/account-discovery",
+    "ticket": "LIVE-38772"
+  },
+  {
+    "path": "libs/ledger-live-common/src/bridge/generic-coin-framework/",
+    "reason": "Adapter between coin modules and the legacy bridge until the coin family contract exists on the new side",
+    "target": "@features/platform-coin-modules",
+    "ticket": "LIVE-40903"
+  },
+  {
+    "path": "libs/ledger-live-common/src/families/",
+    "reason": "Coin families stay in live-common until each one moves out",
+    "target": "@features/platform-coin-family-*",
+    "ticket": "LIVE-40905"
+  },
+  {
+    "path": "libs/ledger-live-common/src/flows/send/",
+    "reason": "Shared send logic waits for the send capability on the account data sources",
+    "target": "@features/flow-send",
+    "ticket": "LIVE-40907"
+  },
+  {
+    "path": "apps/ledger-live-desktop/src/mvvm/features/Send/",
+    "reason": "Desktop send view-models until @features/flow-send replaces them",
+    "target": "@features/flow-send",
+    "ticket": "LIVE-40907"
+  },
+  {
+    "path": "apps/ledger-live-mobile/src/mvvm/features/Send/",
+    "reason": "Mobile send view-models until @features/flow-send replaces them",
+    "target": "@features/flow-send",
+    "ticket": "LIVE-40907"
+  },
+  {
+    "path": "libs/ledger-wallet-framework/",
+    "reason": "Bridge contract, account shape and helpers that the coin family contract moves out",
+    "target": "@features/platform-coin-modules",
+    "ticket": "LIVE-40903"
+  },
+  {
+    "path": "libs/ledger-live-common/src/wallet-api/Exchange/",
+    "reason": "Exchange live-app handlers until they are defined once in the feature platform",
+    "target": "@features/platform-exchange-handlers",
+    "ticket": "LIVE-40925"
+  },
+  {
+    "path": "libs/ledger-live-common/src/wallet-api/Perps/",
+    "reason": "Perps live-app handlers until the exchange handlers package exists",
+    "target": "@features/platform-exchange-handlers, @features/flow-perps-deposit",
+    "ticket": "LIVE-40925"
+  },
+  {
+    "path": "libs/ledger-live-common/src/wallet-api/converters.ts",
+    "reason": "Wallet API server core until it moves to the feature platform",
+    "target": "@features/platform-wallet-api-server",
+    "ticket": "LIVE-40913"
+  },
+  {
+    "path": "libs/ledger-live-common/src/wallet-api/react.ts",
+    "reason": "Wallet API React hooks until react.ts is split into logic, handlers and react layers",
+    "target": "@features/platform-wallet-api-server",
+    "ticket": "LIVE-40913"
+  },
+  {
+    "path": "apps/ledger-live-mobile/src/mvvm/features/WalletApiExchange/",
+    "reason": "Mobile exchange handler wiring until handlers are defined once for both apps",
+    "target": "@features/platform-exchange-handlers",
+    "ticket": "LIVE-40925"
+  },
+  {
+    "path": "libs/ledger-live-common/src/braze/",
+    "reason": "Braze dynamic content until it moves to the feature platform",
+    "target": "@features/platform-dynamic-content",
+    "ticket": "LIVE-40928"
+  },
+  {
+    "path": "libs/ledger-live-common/src/exchange/swap/",
+    "reason": "Swap API and operation logic until @domain/api-swap exists",
+    "target": "@domain/api-swap",
+    "ticket": "LIVE-40922"
+  },
+  {
+    "path": "libs/ledger-live-common/src/exchange/intents/",
+    "reason": "Exchange intents until headless swap lands in the feature platform",
+    "target": "@features/platform-swap-*",
+    "ticket": "LIVE-40923"
+  },
+  {
+    "path": "libs/transaction-observability/",
+    "reason": "Transaction observability until it moves out of libs with the earn migration",
+    "target": "@features/platform-earn",
+    "ticket": "LIVE-40927"
+  },
+  {
+    "path": "libs/ledger-live-common/src/account/",
+    "reason": "Legacy account serialization and persistence until apps store account descriptors",
+    "target": "@domain/entity-account-*",
+    "ticket": "LIVE-40895"
+  },
+  {
+    "path": "libs/types-live/",
+    "reason": "Legacy Account and bridge types until every dependency on the former Account type is released",
+    "target": "domain/entity/account-*",
+    "ticket": "LIVE-38772"
+  },
+  {
+    "path": "libs/ledger-live-common/src/market/",
+    "reason": "Market client until CVS becomes the single market data source",
+    "target": "@domain/entity-market, @domain/api-market",
+    "ticket": "LIVE-40896"
+  }
+]

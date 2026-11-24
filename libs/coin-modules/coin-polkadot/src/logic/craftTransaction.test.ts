@@ -213,6 +213,32 @@ describe("craftTransaction", () => {
     expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(true);
   });
 
+  it("crafts a bondExtra with the additional amount when the stash is already bonded", async () => {
+    const { freshAddress: address } = createFixtureAccount();
+    const expectExtrinsicMethodHex = "0x6666666666666666";
+    const mockBondExtra = jest.fn().mockReturnValue({
+      toHex: () => expectExtrinsicMethodHex,
+    });
+    (mockBondExtra as any).meta = {
+      args: [{ name: "maxAdditional" }],
+    };
+    mockExtrinsics.mockReturnValue({
+      staking: {
+        bondExtra: mockBondExtra,
+      },
+    });
+
+    const extrinsicArg = {
+      ...defaultExtrinsicArg(BigInt(10_000_000_000), "WHATEVER"),
+      mode: "bond" as const,
+      isFirstBond: false,
+    };
+    const result = await craftTransaction(config, address, 0, extrinsicArg);
+
+    expect(mockBondExtra.mock.calls).toEqual([["10000000000"]]);
+    expect(result.unsigned.method).toEqual(expectExtrinsicMethodHex);
+  });
+
   it('returns an unsigned with first validator when transaction has mode "chill"', async () => {
     // GIVEN
     const { freshAddress: address } = createFixtureAccount();
