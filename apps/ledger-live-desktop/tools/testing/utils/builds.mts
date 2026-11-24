@@ -90,8 +90,11 @@ export async function build(
 }
 
 export async function installFromFeed(version: string) {
-  const { feedBinary, installedApp, install } = platformBuild();
-  const binaryPath = feedBinary(version);
+  return installBinary(platformBuild().feedBinary(version));
+}
+
+export async function installBinary(binaryPath: string) {
+  const { installedApp, install } = platformBuild();
   fs.mkdirSync(installDir, { recursive: true });
   await install(binaryPath);
   console.log(`Installed ${path.basename(binaryPath)} as ${installedApp}`);
@@ -278,7 +281,7 @@ async function registeredVersion() {
 }
 
 // electron-builder writes the top-level path and sha512 as copies of files[0].
-function readTopLevelYamlValue(yaml: string, key: string) {
+export function readTopLevelYamlValue(yaml: string, key: string) {
   return new RegExp(`^${key}: (.*)$`, "m").exec(yaml)?.[1];
 }
 

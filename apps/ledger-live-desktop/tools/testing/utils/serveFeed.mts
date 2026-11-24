@@ -15,6 +15,7 @@ export type FeedListeners = {
 };
 
 type ServeFeedOptions = FeedListeners & {
+  dir?: string;
   downloadSpeed?: number;
   // Feed paths served with their middle byte flipped, like a download altered on its way.
   corrupted?: ReadonlySet<string>;
@@ -28,17 +29,17 @@ export async function serveFeed(options: ServeFeedOptions = {}) {
   await once(server, "listening");
   const url = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
   const speed = options.downloadSpeed ? ` at ${options.downloadSpeed} MB/s` : "";
-  console.log(`Serving ${feedDir} at ${url}${speed}`);
+  console.log(`Serving ${options.dir ?? feedDir} at ${url}${speed}`);
   return url;
 }
 
 function serveFeedFile(
   request: http.IncomingMessage,
   response: http.ServerResponse,
-  { onServe, onSent, downloadSpeed, corrupted }: ServeFeedOptions,
+  { dir = feedDir, onServe, onSent, downloadSpeed, corrupted }: ServeFeedOptions,
 ) {
   const feedPath = path.basename(new URL(request.url ?? "/", "http://feed").pathname);
-  const file = path.join(feedDir, feedPath);
+  const file = path.join(dir, feedPath);
   const stats = fs.statSync(file, { throwIfNoEntry: false });
   const isCorrupted = corrupted?.has(feedPath) ?? false;
   const corruptedNote = isCorrupted ? " (corrupted)" : "";
