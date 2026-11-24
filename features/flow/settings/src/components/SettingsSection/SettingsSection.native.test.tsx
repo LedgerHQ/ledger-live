@@ -11,7 +11,18 @@ describe("SettingsSection", () => {
       </SettingsSection>,
     );
 
-    expect(screen.getByText("Connect with us")).toBeTruthy();
-    expect(screen.getByText("Follow us on X")).toBeTruthy();
+    expect(screen.getByText("Connect with us")).toBeVisible();
+    expect(screen.getByText("Follow us on X")).toBeVisible();
+  });
+
+  it("renders its rows without a title", () => {
+    render(
+      <SettingsSection testID="settings-section">
+        <Text>Theme</Text>
+      </SettingsSection>,
+    );
+
+    expect(screen.getByTestId("settings-section")).toBeVisible();
+    expect(screen.getByText("Theme")).toBeVisible();
   });
 });

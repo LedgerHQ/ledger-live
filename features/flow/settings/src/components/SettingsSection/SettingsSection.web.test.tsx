@@ -10,8 +10,8 @@ describe("SettingsSection", () => {
       </SettingsSection>,
     );
 
-    expect(screen.getByText("Connect with us")).toBeInTheDocument();
-    expect(screen.getByText("Follow us on X")).toBeInTheDocument();
+    expect(screen.getByText("Connect with us")).toBeVisible();
+    expect(screen.getByText("Follow us on X")).toBeVisible();
   });
 
   it("renders without a title", () => {
@@ -21,6 +21,7 @@ describe("SettingsSection", () => {
       </SettingsSection>,
     );
 
-    expect(screen.getByTestId("settings-section")).toBeInTheDocument();
+    expect(screen.getByTestId("settings-section")).toBeVisible();
+    expect(screen.getByText("Theme")).toBeVisible();
   });
 });
