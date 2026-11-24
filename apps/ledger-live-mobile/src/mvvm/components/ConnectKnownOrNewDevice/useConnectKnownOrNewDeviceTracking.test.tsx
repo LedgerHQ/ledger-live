@@ -129,7 +129,7 @@ describe("useConnectKnownOrNewDeviceTracking", () => {
     expect(outcomes()).toEqual([]);
   });
 
-  it("GIVEN the Add mode, WHEN a fatal error shows the unknown error of the list, THEN it should send no outcome", () => {
+  it("GIVEN the Add mode, WHEN a fatal error shows the unknown error of the list, THEN it should leave the outcome to that error sheet", () => {
     // GIVEN
     const { showState } = renderTracking(addModeDiscovering);
 
