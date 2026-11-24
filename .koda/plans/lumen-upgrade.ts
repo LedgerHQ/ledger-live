@@ -25,7 +25,7 @@ const repo = {
   installCommand: "pnpm install --frozen-lockfile",
   // Updates the lockfile after the bump.
   relockCommand: "pnpm install --no-frozen-lockfile",
-  // Runs after the relock, before the migrations. Empty to skip.
+  // Runs once the migrations pass lint, before the commit. Empty to skip.
   // Same steps as .github/workflows/renovate-sync-reusable.yml. React Native's Podfile only reads
   // `xcodebuild -version`, so a stub is enough: nothing is compiled.
   afterBumpCommand: [
@@ -233,7 +233,8 @@ const installTask = task("install").runs(`${fetchBase} && ${repo.installCommand}
 // in dependencies, devDependencies and optionalDependencies of each package.json, and pnpm catalog entries in
 // pnpm-workspace.yaml (quoted or not). A range's floor is the installed version, so moving it moves the install.
 // peerDependencies are left alone (they say what a library accepts), and so is a version newer than `latest`
-// (dist-tag rollback, prerelease). Edits the text in place, so the files keep their formatting.
+// (dist-tag rollback). A prerelease moves to the stable release of the same or a higher version; a prerelease
+// is never the target. Edits the text in place, so the files keep their formatting.
 const bumpScript = String.raw`
 const fs = require("fs");
 const path = require("path");
@@ -242,9 +243,9 @@ const version = /^([\^~]?)(\d+)\.(\d+)\.(\d+)(\S*)$/;
 const isNewer = (next, current) => {
   const a = next.match(version);
   const b = current.match(version);
-  if (!a || !b || a[5] || b[5]) return false;
+  if (!a || !b || a[5]) return false;
   for (let i = 2; i <= 4; i++) if (Number(a[i]) !== Number(b[i])) return Number(a[i]) > Number(b[i]);
-  return false;
+  return b[5].startsWith("-");
 };
 const latest = {};
 const latestOf = name => (latest[name] ??= execSync("npm view " + name + " version").toString().trim());
@@ -411,10 +412,10 @@ const fixTask = shellOutput =>
 
 // Steps whose setting is empty are left out of the plan.
 const migrate = b => {
-  const bumped = repo.afterBumpCommand ? b.do(afterBumpTask) : b;
-  return bumped
+  const verified = b
     .do(migrateTask)
     .retryShell("verify", { max: 3, command: verifyCommand, fixer: fixTask });
+  return repo.afterBumpCommand ? verified.do(afterBumpTask) : verified;
 };
 
 const commit = b => {
