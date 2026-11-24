@@ -15,14 +15,15 @@ const buttonByAnswer = {
 
 /** Sends the OS update sheet events of the setup screen as the funnel's pages and clicks. */
 export function trackUpdateOfferEvent(event: UpdateOfferEvent, funnelProps: FunnelProps): void {
+  const page =
+    event.sheet === "offer" ? onboardingPages.osUpdateRequired : onboardingPages.osUpdateRefusal;
   if (event.type === "shown") {
-    const page =
-      event.sheet === "offer" ? onboardingPages.osUpdateRequired : onboardingPages.osUpdateRefusal;
     trackOnboardingPage(page, funnelProps);
     return;
   }
   const buttons: Partial<Record<typeof event.button, OnboardingButton>> =
     buttonByAnswer[event.sheet];
   const button = buttons[event.button];
-  if (button) trackOnboardingClick(button, funnelProps);
+  // A sheet that comes back after another sheet is not the current page: name it.
+  if (button) trackOnboardingClick(button, funnelProps, { page });
 }

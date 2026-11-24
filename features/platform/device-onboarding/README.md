@@ -130,6 +130,8 @@ The session stays open after the exit, so the app can keep using it.
 - `postSetupFirmware.ts` — how the machine and the apps read that held-back update: its states
   (`asChecksState`, `isFirmwareCheckFailed`, `isFirmwareUpdateDelegated`) and when leaving finishes
   the setup instead of quitting it (`isHeldBackUpdatePending`, `finishesSetupOnQuit`)
+- `deviceReady.ts` — when the device reports its setup done, Recovery Key backup included
+  (`reportsSetupDone`): the machine's rule to leave the setup, shared with the apps' analytics
 - `internals/` — what only the package uses: the machine's actions, `isTouchscreen` and
   `firmwareSettled`. The barrel never re-exports it
 - `host/` — what the apps and the devtool use around the machine: the session events

@@ -30,4 +30,14 @@ describe("trackUpdateOfferEvent", () => {
         .mock.calls.map(([, props]) => (props as Record<string, unknown> | undefined)?.button),
     ).toEqual(["Continue", "close", "Install Ledger OS update", "Skip Ledger OS update"]);
   });
+
+  it("should name the sheet a click comes from, as it may not be the current page", () => {
+    jest.mocked(track).mockClear();
+    trackUpdateOfferEvent({ type: "pressed", sheet: "offer", button: "update" }, funnelProps);
+    trackUpdateOfferEvent({ type: "pressed", sheet: "confirmSkip", button: "skip" }, funnelProps);
+
+    expect(
+      jest.mocked(track).mock.calls.map(([, props]) => (props as { page?: string }).page),
+    ).toEqual(["OS update required", "OS update required refusal screen"]);
+  });
 });

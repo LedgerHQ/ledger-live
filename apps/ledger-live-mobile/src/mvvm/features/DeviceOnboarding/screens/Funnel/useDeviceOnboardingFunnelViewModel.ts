@@ -660,8 +660,10 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     firmwareUpdateStarted,
   });
   const { trackClick, trackAbort, trackExit } = seededTracking;
+  const focused = useIsFocused();
   const restoreDismissal = useRestoreDismissal(shownState);
   const unseededFunnel = useUnseededFunnelTracking({
+    focused,
     machineState: restoreDismissal.visibleState,
     machineContext: onboarding.snapshot?.context ?? null,
   });
@@ -907,7 +909,6 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const recoverFeature = useFeature("protectServicesMobile");
   const recoverAvailable = recoverFeature?.enabled === true;
   const protectId = recoverFeature?.params?.protectId ?? defaultProtectId;
-  const focused = useIsFocused();
   const [pastRecover, setPastRecover] = useState(false);
   const awaitingRecoverReturn = useRef(false);
 

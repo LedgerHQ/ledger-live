@@ -15,7 +15,11 @@ jest.mock("@shared/analytics", () => ({
   getPreviousTrackingPage: jest.fn(() => "Previous page"),
 }));
 
-type Step = Readonly<{ state: string; context?: Partial<DeviceOnboardingContext> }>;
+type Step = Readonly<{
+  state: string;
+  context?: Partial<DeviceOnboardingContext>;
+  focused?: boolean;
+}>;
 
 function context(overrides: Partial<DeviceOnboardingContext> = {}): DeviceOnboardingContext {
   return {
@@ -42,7 +46,11 @@ function walk(steps: readonly Step[]): string[] {
   });
   let step = steps[0];
   const { rerender } = renderHook(() =>
-    useUnseededFunnelTracking({ machineState: step.state, machineContext: context(step.context) }),
+    useUnseededFunnelTracking({
+      machineState: step.state,
+      machineContext: context(step.context),
+      focused: step.focused ?? true,
+    }),
   );
   for (step of steps.slice(1)) rerender(undefined as never);
   return sent;
@@ -271,6 +279,38 @@ describe("useUnseededFunnelTracking", () => {
     const pages = jest.mocked(trackPage).mock.calls.map(([page]) => page.category);
     expect(pages).not.toContain("Ledger Recovery key - Rejected");
     expect(pages).not.toContain("Ledger Recovery key - Success");
+  });
+
+  it("should finish the setup when the deferred update sends a ready device back to the checks", () => {
+    const ready = {
+      ...newSeed,
+      lastDeviceState: { isOnboarded: true, currentOnboardingStep: "device-is-ready" },
+    } as Partial<DeviceOnboardingContext>;
+    const sent = walk([
+      { state: "deviceSetup.newSeed", context: newSeed },
+      { state: "readingState", context: ready },
+      { state: "checks.firmwareUpdateOffered", context: ready },
+    ]);
+
+    expect(sent.slice(-3)).toEqual([
+      "Page Secret Recovery Phrase - Success",
+      "onboarding_device_setup_finished",
+      "Page Genuine Check success",
+    ]);
+  });
+
+  it("should hold the pages while another screen is in front, and send the current one after", () => {
+    const sent = walk([
+      { state: "deviceSetup.restoreChoice", context: upToDate },
+      { state: "deviceLocked", context: upToDate, focused: false },
+      { state: "deviceSetup.restoreRecover", context: upToDate, focused: false },
+      { state: "deviceSetup.restoreRecover", context: upToDate, focused: true },
+    ]);
+
+    expect(sent.filter(event => event.startsWith("Page"))).toEqual([
+      "Page Restore - choice of setup",
+      "Page Restore - Ledger Recover",
+    ]);
   });
 
   it("should send nothing for a device seeded on entry", () => {

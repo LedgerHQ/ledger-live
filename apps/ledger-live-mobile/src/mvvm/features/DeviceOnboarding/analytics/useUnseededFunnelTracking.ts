@@ -1,5 +1,6 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
+  reportsSetupDone,
   SeedPath,
   type DeviceOnboardingContext,
   type FirmwareCheck,
@@ -25,6 +26,8 @@ type Input = Readonly<{
   /** The state the screen shows, so a held screen (device locked or off) sends no page again. */
   machineState: string | null;
   machineContext: DeviceOnboardingContext | null;
+  /** False while another screen (the Recover Live App) is in front: its pages wait until then. */
+  focused: boolean;
 }>;
 
 export type UnseededFunnel = Readonly<{ props: FunnelProps; status: UnseededStatus }>;
@@ -85,12 +88,16 @@ function isFunnelState(machineState: string): boolean {
   );
 }
 
-/** Not `isOnboarded`: a reconnect during the Recovery Key backup already reads a seeded device. */
-function setupFinished(machineState: string): boolean {
+/**
+ * A setup exit, or a device that reports its setup done: after a session change the deferred
+ * update goes back to the checks. Not `isOnboarded`, which a Recovery Key backup already reports.
+ */
+function setupFinished(machineState: string, context: DeviceOnboardingContext): boolean {
   return (
     machineState === "setupExit" ||
     machineState === "done" ||
-    machineState.startsWith("postSetupFirmware.")
+    machineState.startsWith("postSetupFirmware.") ||
+    reportsSetupDone(context.lastDeviceState, context.recoveryKeyBackupOpen)
   );
 }
 
@@ -140,6 +147,7 @@ function useStableFunnel(context: DeviceOnboardingContext | null): UnseededFunne
 export function useUnseededFunnelTracking({
   machineState,
   machineContext,
+  focused,
 }: Input): UnseededFunnel | null {
   const funnel = useStableFunnel(machineContext);
   const started = useRef(false);
@@ -169,14 +177,14 @@ export function useUnseededFunnelTracking({
     }
 
     const shown = unseededShownPage(machineState, machineContext, status);
-    if (shown && shown.page !== lastPage.current) {
+    if (focused && shown && shown.page !== lastPage.current) {
       lastPage.current = shown.page;
       if (!pagesSentElsewhere.has(shown.page)) {
         trackOnboardingPage(shown.page, props, shown.extraProps);
       }
     }
 
-    if (started.current && !finished.current && setupFinished(machineState)) {
+    if (started.current && !finished.current && setupFinished(machineState, machineContext)) {
       finished.current = true;
       setupSuccessPages(
         machineContext.seedPath,
@@ -184,7 +192,7 @@ export function useUnseededFunnelTracking({
       ).forEach(sendOnce);
       trackUnseededSetupFinished(props, status);
     }
-  }, [funnel, machineState, machineContext]);
+  }, [funnel, machineState, machineContext, focused]);
 
   return funnel;
 }
