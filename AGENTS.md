@@ -50,6 +50,10 @@ Runner images bake the mise toolchain and the Android AVD. Before changing a ver
 
 The legacy `Account` type is being retired. Before reading or showing account data, read [/docs/account-models](/docs/account-models/README.md).
 
+## Stored data
+
+Before changing what an app stores (a record schema or codec, an account model, a boot-time fix of stored data), read the [record-versions-and-migrations](./.agents/skills/record-versions-and-migrations/SKILL.md) skill.
+
 ## Configuration and environment variables
 
 Before adding any configuration value — an environment variable, a URL, a partner key — read [/docs/configuration.md](/docs/configuration.md) to pick its home. `@shared/env` is deprecated and takes no new definitions.
