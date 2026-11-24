@@ -114,6 +114,7 @@
     "@domain/api-account-data": "workspace:^",
     "@domain/api-aggregated-assets": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
+    "@domain/api-market-chart": "workspace:*",
     "@domain/api-market-countervalues": "workspace:*",
     "@domain/api-market-currency": "workspace:*",
     "@domain/api-market-index-global": "workspace:*",

@@ -1,4 +1,4 @@
-import { useGetAssetChartDataQuery } from "../state-manager/api";
+import { useGetAssetChartDataQuery } from "@domain/api-market-chart";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
 import type { MarketAssetChartDataRequestParams } from "../utils/types";
 
