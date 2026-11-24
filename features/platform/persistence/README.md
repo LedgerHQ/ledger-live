@@ -44,11 +44,11 @@ status of each record, also in `state.persistence.records`.
 - `loaded` otherwise. In a collection, each entry reads and decodes alone, and an entry that fails
   is reported with its index. **Every stored entry that does not reach the state stays stored as
   it is**: a read or decode failure, or an entry that `toHydrationActions` drops (an account of an
-  unsupported currency). With 1 key, each write adds it after the state entries; with 1 key for
-  each entry, no write removes its key. When the state gets an entry with the same id, the state
-  entry replaces it, except for an entry from a newer app: it is reported as `newer`, kept and
-  hidden, and a state entry with its id never replaces or removes it. This is ADR rule 5: a failed
-  read never becomes a write.
+  unsupported currency). Each write keeps it at its stored position, in the list with 1 key or in
+  the order key with 1 key for each entry, and no write removes its key. When the state gets an
+  entry with the same id, the state entry replaces it, except for an entry from a newer app: it is
+  reported as `newer`, kept and hidden, and a state entry with its id never replaces or removes it.
+  This is ADR rule 5: a failed read never becomes a write.
 - Each report has an `operation`: `read`, `decode`, `newer` (a value or an entry from a newer
   app) or `write`. `describePersistenceFailure` gives 1 log line for it, with no value.
 - `selectUsesPersistence(state, key)` is true once `hydrate` started for the record, whatever its

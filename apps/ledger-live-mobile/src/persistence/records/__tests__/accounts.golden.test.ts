@@ -302,7 +302,7 @@ describe("mobile accounts on persistence", () => {
     );
     await expect(storage.get(`${PREFIX}broken`)).resolves.toEqual(broken);
     await expect(storage.get(PREFIX + orphan.id)).resolves.toEqual(newer);
-    await expect(storage.get(ORDER_KEY)).resolves.toEqual([first.id]);
+    await expect(storage.get(ORDER_KEY)).resolves.toEqual([first.id, "broken", orphan.id]);
   });
 
   it("does not write a change that the legacy save ignores", async () => {

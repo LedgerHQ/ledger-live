@@ -219,7 +219,7 @@ describe("bad stored accounts", () => {
     );
   });
 
-  it("keeps the bad accounts stored at the next write; the legacy code removed them", async () => {
+  it("keeps the bad accounts stored in place at the next write; the legacy code removed them", async () => {
     const bad = storedAccountsOf(BAD);
     const good = storedAccountsOf(ETH_FIXTURE);
     const { store, storage } = await hydrateStored([...bad, ...good]);
@@ -235,9 +235,9 @@ describe("bad stored accounts", () => {
 
     const written = (await storage.get("accounts")) as StoredEntry[];
     expect(written.map(entry => entry.data.id)).toEqual(
-      [...good, ...bad].map(entry => entry.data.id),
+      [...bad, ...good].map(entry => entry.data.id),
     );
-    expect(written.slice(good.length)).toEqual(bad);
+    expect(written.slice(0, bad.length)).toEqual(bad);
   });
 });
 

@@ -10,14 +10,16 @@ import type { KeyPerEntryScheme, PersistenceBinding } from "../bindings";
 type CollectionRecord<State> = CollectionRecordDefinition<State, UnknownAction>;
 
 /**
- * 1 stored entry and its id, when it has one: its value, or the error of its read. A `newer` entry
- * comes from a newer app: it stays stored and hidden, and a state entry with its id never replaces
- * it.
+ * 1 stored entry and its id, when it has one: its value, or the error of its read. `position` is
+ * its index in the stored list at the hydration. A `newer` entry comes from a newer app: it stays
+ * stored and hidden, and a state entry with its id never replaces it.
  */
-export type StoredEntry = { id: string | undefined; key?: string; newer?: true } & (
-  | { value: unknown }
-  | { readError: unknown }
-);
+export type StoredEntry = {
+  id: string | undefined;
+  position: number;
+  key?: string;
+  newer?: true;
+} & ({ value: unknown } | { readError: unknown });
 
 /** The ids and the entries of the last write: the next write compares the state with them. */
 export type WrittenEntries = { ids: string[]; byId: Map<string, unknown> };
@@ -94,18 +96,18 @@ export async function readEntries<State>(
     const stored = await storage.get(record.key);
     if (stored === undefined || stored === null) return undefined;
     if (!Array.isArray(stored)) throw new NotAListError();
-    return stored.map(value => ({ id: record.storedEntryId(value), value }));
+    return stored.map((value, position) => ({ id: record.storedEntryId(value), position, value }));
   }
   const entryStorage = listable(storage);
   const keys = await entryStorage.keys(keyScheme.prefix);
   if (keys.length === 0) return undefined;
   const order = await entryStorage.get(keyScheme.orderKey).catch(() => undefined);
   return Promise.all(
-    orderEntryKeys(keys, keyScheme.prefix, order).map(key => {
+    orderEntryKeys(keys, keyScheme.prefix, order).map((key, position) => {
       const id = key.slice(keyScheme.prefix.length);
       return entryStorage.get(key).then(
-        (value): StoredEntry => ({ id, key, value }),
-        (readError: unknown): StoredEntry => ({ id, key, readError }),
+        (value): StoredEntry => ({ id, position, key, value }),
+        (readError: unknown): StoredEntry => ({ id, position, key, readError }),
       );
     }),
   );
@@ -155,10 +157,22 @@ async function settleAll(operations: ReadonlyArray<Promise<unknown>>): Promise<v
 const sameIds = (a: ReadonlyArray<string>, b: ReadonlyArray<string>) =>
   a.length === b.length && a.every((id, index) => id === b[index]);
 
+/** Inserts each kept item at its stored position, or at the end when the list is shorter. */
+function withKeptAtStoredPositions<T>(
+  written: ReadonlyArray<T>,
+  kept: ReadonlyArray<{ position: number; item: T }>,
+): T[] {
+  const list = [...written];
+  [...kept]
+    .sort((a, b) => a.position - b.position)
+    .forEach(({ position, item }) => list.splice(position, 0, item));
+  return list;
+}
+
 /**
- * Writes what changed since `previous`. The kept entries stay stored, unless the state has an
- * entry with the same id. A newer kept entry always stays, and the state entry with its id is
- * never written. Returns `undefined` when nothing changed.
+ * Writes what changed since `previous`. The kept entries stay stored at their stored position,
+ * unless the state has an entry with the same id. A newer kept entry always stays, and the state
+ * entry with its id is never written. Returns `undefined` when nothing changed.
  */
 export async function writeEntries<State>(
   storage: StoragePort,
@@ -186,11 +200,11 @@ export async function writeEntries<State>(
   );
   const isWritable = (entry: (typeof entries)[number]) => !pinnedIds.has(record.entryId(entry));
   if (!keyScheme) {
-    const keptValues = stillKept.flatMap(entry => ("value" in entry ? [entry.value] : []));
-    await storage.set(record.key, [
-      ...(await encodeEntries(record.codec, entries.filter(isWritable), state)),
-      ...keptValues,
-    ]);
+    const keptValues = stillKept.flatMap(entry =>
+      "value" in entry ? [{ position: entry.position, item: entry.value }] : [],
+    );
+    const encoded = await encodeEntries(record.codec, entries.filter(isWritable), state);
+    await storage.set(record.key, withKeptAtStoredPositions(encoded, keptValues));
     return { written: current, kept: stillKept };
   }
 
@@ -211,6 +225,11 @@ export async function writeEntries<State>(
     key => !currentIds.has(key.slice(keyScheme.prefix.length)) && !keptKeys.has(key),
   );
   await settleAll(staleKeys.map(key => entryStorage.remove(key)));
-  await entryStorage.set(keyScheme.orderKey, current.ids);
+  const keptIds = stillKept.flatMap(entry =>
+    entry.id !== undefined && !currentIds.has(entry.id)
+      ? [{ position: entry.position, item: entry.id }]
+      : [],
+  );
+  await entryStorage.set(keyScheme.orderKey, withKeptAtStoredPositions(current.ids, keptIds));
   return { written: current, kept: stillKept };
 }

@@ -98,6 +98,13 @@ async function readStoredIds(keyScheme: KeyScheme, storage: ListableStoragePort)
     .sort((a, b) => a.localeCompare(b));
 }
 
+/** The ids in their stored order: the list order with 1 key, the order key with 1 key per entry. */
+async function readStoredOrder(keyScheme: KeyScheme, storage: ListableStoragePort) {
+  if (keyScheme === "keyPerEntry") return storage.get(ORDER_KEY);
+  const stored = await storage.get("items");
+  return (Array.isArray(stored) ? stored : []).map(idOf);
+}
+
 const settle = async () => {
   for (let tick = 0; tick < 20; tick++) await Promise.resolve();
 };
@@ -184,13 +191,27 @@ describe.each(["singleKey", "keyPerEntry"] as const)(
           expect.objectContaining({ key: "items", operation: "decode", entry: 1 }),
         ]);
         expect(JSON.stringify(failures)).not.toContain("secret");
-        await expect(readStored(keyScheme, storage)).resolves.toEqual(
-          keyScheme === "singleKey"
-            ? [entry("a", 5), entry("c", 3), unreadable]
-            : [entry("a", 5), unreadable, entry("c", 3)],
-        );
+        await expect(readStored(keyScheme, storage)).resolves.toEqual([
+          entry("a", 5),
+          unreadable,
+          entry("c", 3),
+        ]);
       },
     );
+
+    it("should keep a kept entry at its stored position when a write changes the state", async () => {
+      const newer = { $v: 1, data: entry("b", 2) };
+      const { store, storage, hydrate } = setup({
+        keyScheme,
+        stored: storeEntries(keyScheme, [entry("a", 1), newer, entry("c", 3)], ["a", "b", "c"]),
+      });
+      await hydrate();
+
+      store.dispatch(items.actions.setValue({ id: "a", value: 5 }));
+      await settle();
+
+      await expect(readStoredOrder(keyScheme, storage)).resolves.toEqual(["a", "b", "c"]);
+    });
 
     it("keeps an entry that decodes but that the app drops", async () => {
       const { store, storage, hydrate } = setup({
