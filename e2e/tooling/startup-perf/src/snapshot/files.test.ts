@@ -24,7 +24,7 @@ function stored(entries: Array<[string, string | Buffer]>): Map<string, Buffer> 
 const asText = (entries: Array<[string, string | Buffer]>) =>
   entries.map(([key, value]) => [key, typeof value === "string" ? value : stringValue(value)]);
 
-test("drops the device and the trustchain of the install, and keeps the rest as saved", () => {
+test("drops the device, client ids and trustchain of the install, and keeps the rest as saved", () => {
   const entries = withoutInstallState(
     stored([
       ["migration-status", "completed"],
@@ -32,6 +32,8 @@ test("drops the device and the trustchain of the install, and keeps the rest as 
       ["ble", JSON.stringify({ knownDevices: [{ id: "speculos" }] })],
       ["knownDevices", JSON.stringify({ devices: [] })],
       ["trustchain", JSON.stringify({ memberCredentials: { pubkey: "02ab" } })],
+      ["identities", JSON.stringify({ userId: "u", datadogId: "d", deviceIds: ["x"] })],
+      ["user", JSON.stringify({ id: "u" })],
       [BTC, JSON.stringify({ data: { id: "btc" }, version: 1 })],
     ]),
   );

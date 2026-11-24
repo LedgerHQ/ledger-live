@@ -151,17 +151,32 @@ describe("savedState", () => {
       : value;
 
   it("counts the account records and those the app saved again, and sees the accepted terms", () => {
-    assert.deepEqual(saved(written), { accounts: 2, resaved: 0, termsAccepted: true });
+    assert.deepEqual(saved(written), {
+      accounts: 2,
+      resaved: 0,
+      termsAccepted: true,
+      idsSaved: false,
+    });
     const oneSynced = written.map(([key, value]): [string, string] => [
       key,
       key === "accounts.active.js:2:solana:B:" ? synced(key, value) : value,
     ]);
-    assert.deepEqual(saved(oneSynced), { accounts: 2, resaved: 1, termsAccepted: true });
+    assert.deepEqual(saved(oneSynced), {
+      accounts: 2,
+      resaved: 1,
+      termsAccepted: true,
+      idsSaved: false,
+    });
   });
 
   it("counts the account records the app loads, not the ids of the order", () => {
     const entries = written.filter(([key]) => key !== "accounts.active.js:2:solana:B:");
-    assert.deepEqual(saved(entries), { accounts: 1, resaved: 0, termsAccepted: true });
+    assert.deepEqual(saved(entries), {
+      accounts: 1,
+      resaved: 0,
+      termsAccepted: true,
+      idsSaved: false,
+    });
   });
 
   it("compares written values given as bytes, as a snapshot holds them, byte for byte", () => {
@@ -172,7 +187,15 @@ describe("savedState", () => {
       accounts: 2,
       resaved: 0,
       termsAccepted: true,
+      idsSaved: false,
     });
+  });
+
+  it("sees the client ids the app saved, which no written entry holds", () => {
+    const ids: [string, string] = ["identities", JSON.stringify({ userId: "u", deviceIds: [] })];
+    assert.equal(saved([...written, ids]).idsSaved, true);
+    const { data, meta } = encodeStorage([...written, ids]);
+    assert.equal(savedState(decodeStorage(data, meta), [...written, ids]).idsSaved, false);
   });
 
   it("finds neither in the storage of an app that dropped the file", () => {
@@ -181,7 +204,7 @@ describe("savedState", () => {
         ["migration-status", "completed"],
         ["settings", "{}"],
       ]),
-      { accounts: 0, resaved: 0, termsAccepted: false },
+      { accounts: 0, resaved: 0, termsAccepted: false, idsSaved: false },
     );
   });
 });

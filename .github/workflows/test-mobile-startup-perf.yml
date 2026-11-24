@@ -99,12 +99,17 @@ jobs:
         with:
           sparse-checkout: |
             /e2e/tooling/startup-perf/ci/
+            /e2e/tooling/startup-perf/src/types.ts
             /e2e/tooling/startup-perf/src/snapshot/
             /e2e/tooling/startup-perf/src/measure/storage.ts
             /e2e/tooling/startup-perf/src/measure/inject.ts
+            /e2e/tooling/startup-perf/src/measure/exec.ts
+            /e2e/tooling/startup-perf/src/measure/maestro.ts
+            /e2e/tooling/startup-perf/src/measure/types.ts
             /e2e/tooling/startup-perf/src/measure/platforms/
             /e2e/tooling/startup-perf/flows/add-accounts.yaml
             /e2e/mobile/userdata/skip-onboarding.json
+            /libs/live-e2e-shared/src/cli/e2e-cli.ts
             /libs/live-e2e-shared/src/cli/speculosSession.ts
             /libs/live-e2e-shared/src/speculosAddress.ts
           sparse-checkout-cone-mode: false
@@ -129,17 +134,22 @@ jobs:
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
         run: node e2e/tooling/startup-perf/ci/resolve-refs.mts
 
-      # One snapshot per release and per version of the code that makes it.
+      # One snapshot per release and per version of the code that makes it: every module
+      # src/snapshot/run.ts imports, and the e2e-cli speculos command's own files. Not the E2E
+      # suites' Speculos settings it reuses (libs/live-e2e-shared/src/speculos*.ts), which change
+      # every few days and do not change the accounts the scan finds.
       - name: Name the accounts snapshot
         id: snapshot-key
         if: ${{ steps.plan.outputs.snapshot_release != '' }}
         env:
           RELEASE: ${{ steps.plan.outputs.snapshot_release }}
-          CODE_HASH: ${{ hashFiles('e2e/tooling/startup-perf/src/snapshot/**', 'e2e/tooling/startup-perf/src/measure/storage.ts', 'e2e/tooling/startup-perf/src/measure/inject.ts', 'e2e/tooling/startup-perf/src/measure/platforms/**', '!e2e/tooling/startup-perf/src/**/*.test.ts', 'e2e/tooling/startup-perf/flows/add-accounts.yaml', 'e2e/mobile/userdata/skip-onboarding.json', 'libs/live-e2e-shared/src/cli/speculosSession.ts', 'libs/live-e2e-shared/src/speculosAddress.ts') }}
+          CODE_HASH: ${{ hashFiles('e2e/tooling/startup-perf/src/types.ts', 'e2e/tooling/startup-perf/src/snapshot/**', 'e2e/tooling/startup-perf/src/measure/storage.ts', 'e2e/tooling/startup-perf/src/measure/inject.ts', 'e2e/tooling/startup-perf/src/measure/exec.ts', 'e2e/tooling/startup-perf/src/measure/maestro.ts', 'e2e/tooling/startup-perf/src/measure/types.ts', 'e2e/tooling/startup-perf/src/measure/platforms/**', 'e2e/tooling/startup-perf/ci/step.mts', '!e2e/tooling/startup-perf/src/**/*.test.ts', 'e2e/tooling/startup-perf/flows/add-accounts.yaml', 'e2e/mobile/userdata/skip-onboarding.json', 'libs/live-e2e-shared/src/cli/e2e-cli.ts', 'libs/live-e2e-shared/src/cli/speculosSession.ts', 'libs/live-e2e-shared/src/speculosAddress.ts') }}
         run: echo "key=develop/mobile-startup-perf-accounts-${RELEASE}-${CODE_HASH:0:16}" >> "$GITHUB_OUTPUT"
 
+      # The cache is an optimization: without it, both platforms make their snapshot.
       - name: Configure AWS credentials
         if: ${{ steps.plan.outputs.snapshot_release != '' }}
+        continue-on-error: true
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
         with:
           role-to-assume: ${{ github.ref == 'refs/heads/develop' && secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP || secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -537,9 +547,11 @@ jobs:
           path: ${{ env.SNAPSHOT_DIR }}/
           retention-days: 7
 
-      # Credentials of their own: setup-caches' may have expired by now.
+      # Credentials of their own: setup-caches' may have expired by now. Saving can fail without
+      # failing the job: the snapshot is uploaded, so this run measures with it all the same.
       - name: Configure AWS credentials
         if: ${{ github.ref == 'refs/heads/develop' }}
+        continue-on-error: true
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
         with:
           role-to-assume: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -547,6 +559,7 @@ jobs:
 
       - name: Save the accounts snapshot
         if: ${{ github.ref == 'refs/heads/develop' }}
+        continue-on-error: true
         uses: tespkg/actions-cache/save@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
           path: ${{ env.SNAPSHOT_DIR }}
@@ -653,9 +666,11 @@ jobs:
           path: ${{ env.SNAPSHOT_DIR }}/
           retention-days: 7
 
-      # Credentials of their own: setup-caches' may have expired by now.
+      # Credentials of their own: setup-caches' may have expired by now. Saving can fail without
+      # failing the job: the snapshot is uploaded, so this run measures with it all the same.
       - name: Configure AWS credentials
         if: ${{ github.ref == 'refs/heads/develop' }}
+        continue-on-error: true
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
         with:
           role-to-assume: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -663,6 +678,7 @@ jobs:
 
       - name: Save the accounts snapshot
         if: ${{ github.ref == 'refs/heads/develop' }}
+        continue-on-error: true
         uses: tespkg/actions-cache/save@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
           path: ${{ env.SNAPSHOT_DIR }}

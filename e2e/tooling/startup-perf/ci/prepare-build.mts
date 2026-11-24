@@ -90,8 +90,35 @@ export function readdLive36190(dbSave: string): string {
   return textOf(lines.filter((_, i) => !savesTrustchainAtStart(lines, i)));
 }
 
+export const BRIDGE_IMPORT = 'import { init } from "~/e2e/bridge/client";';
+// The E2E bridge's only start: the prod-like env file has no DETOX, so measured launches run none
+// of it. Each measured ref is checked, as the checkout's app-contract test covers only its own.
+export const DETOX_BRIDGE_BLOCK = [
+  "  onInitFinished = () => {",
+  "    if (Config.DETOX) {",
+  "      init();",
+  "    }",
+  "  };",
+];
+// A bare init() call: not Sentry.init() or another object's.
+const callsBridgeInit = (line: string) => /(^|[^.\w])init\(\)/.test(line);
+
+/** Whether the app starts the E2E bridge only in onInitFinished, and only with DETOX. */
+export function startsBridgeOnlyWithDetox(index: string): boolean {
+  const lines = linesOf(index);
+  const blocks = indexesOf(lines, i =>
+    DETOX_BRIDGE_BLOCK.every((line, k) => lines[i + k] === line),
+  );
+  return (
+    countLines(lines, line => line === BRIDGE_IMPORT) === 1 &&
+    blocks.length === 1 &&
+    countLines(lines, callsBridgeInit) === 1
+  );
+}
+
 interface AppFiles {
   env: string;
+  index: string;
   rspack: string;
   packageJson: string;
   jsStart: string;
@@ -100,6 +127,7 @@ interface AppFiles {
 
 const appFiles = (app: string): AppFiles => ({
   env: path.join(app, ".env.mock.prerelease"),
+  index: path.join(app, "src/index.tsx"),
   rspack: path.join(app, "rspack.config.mjs"),
   packageJson: path.join(app, "package.json"),
   jsStart: path.join(app, "src/mvvm/utils/logStartup/beforeJSImports.ts"),
@@ -115,7 +143,7 @@ function requireOne(file: string, line: string, anchor: string): void {
 
 /** Every anchor, before any file is edited. */
 function checkApp(files: AppFiles, regression: string): void {
-  for (const file of [files.env, files.rspack, files.packageJson, files.jsStart]) {
+  for (const file of [files.env, files.index, files.rspack, files.packageJson, files.jsStart]) {
     if (!existsSync(file)) throw new StepFailure(`${file} not found`);
   }
   if (read(files.packageJson).includes('"react-native-startup-time"')) {
@@ -128,6 +156,11 @@ function checkApp(files: AppFiles, regression: string): void {
   }
   requireOne(files.rspack, RSPACK_LINE, "isDetoxBuild");
   requireOne(files.jsStart, JS_START_LINE, "JS start");
+  if (!startsBridgeOnlyWithDetox(read(files.index))) {
+    throw new StepFailure(
+      `${files.index} must start the E2E bridge (init()) only in onInitFinished's Config.DETOX block, or measured launches may run it`,
+    );
+  }
   if (regression) checkLive36190(files.dbSave);
   for (const line of ["MOCK=1", "DETOX=1", "FORCE_DEBUG_VISIBLE=1"]) {
     if (exactly(files.env, line) !== 1) {

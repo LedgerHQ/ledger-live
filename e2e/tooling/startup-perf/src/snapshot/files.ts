@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
   ACCOUNT_KEY_PREFIX,
+  IDENTITIES_KEY,
   STORAGE_FILE,
   isAccountKey,
   isStringValue,
@@ -15,10 +16,12 @@ import {
 
 export const MANIFEST_FILE = "snapshot.json";
 // What belongs to the install the accounts were added on. A prod build has no Speculos transport,
-// so the app would look for the device it was paired with. And each install makes its own
+// so the app would look for the device it was paired with. Each install makes its own client ids
+// (`identities`, formerly `user`), as the no-accounts installs do, and saves them at every start,
+// which inject.ts checks to know the app read the storage. And each install makes its own
 // trustchain member keypair at its first launch, which known-regression's B (LIVE-36190) makes
 // again at every launch: a stored one would hide that regression.
-const INSTALL_KEYS = new Set(["ble", "knownDevices", "trustchain"]);
+const INSTALL_KEYS = new Set(["ble", "knownDevices", IDENTITIES_KEY, "user", "trustchain"]);
 const INSTALL_SETTINGS = ["lastConnectedDevice"];
 
 export interface SnapshotManifest {

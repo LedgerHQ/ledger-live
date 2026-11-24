@@ -1,13 +1,16 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  BRIDGE_IMPORT,
   bundleWithoutDetox,
+  DETOX_BRIDGE_BLOCK,
   JS_START_LINE,
   logJsStartEpoch,
   prodLikeEnv,
   readdLive36190,
   realBlur,
   RSPACK_LINE,
+  startsBridgeOnlyWithDetox,
 } from "./prepare-build.mts";
 import { linesOf, textOf } from "./step.mts";
 
@@ -90,5 +93,24 @@ describe("readdLive36190", () => {
       "    lense: walletStoreSelector,",
       "    saveAtStart: true,",
     ]);
+  });
+});
+
+describe("startsBridgeOnlyWithDetox", () => {
+  const index = (body: string[], imports = [BRIDGE_IMPORT]) =>
+    textOf([...imports, "export default class Root {", ...body, "}"]);
+
+  it("accepts the bridge started in onInitFinished's DETOX block, whatever other inits run", () => {
+    assert.equal(startsBridgeOnlyWithDetox(index(DETOX_BRIDGE_BLOCK)), true);
+    const sentry = "  componentDidMount() { Sentry.init(); }";
+    assert.equal(startsBridgeOnlyWithDetox(index([...DETOX_BRIDGE_BLOCK, sentry])), true);
+  });
+
+  it("refuses a bridge started without DETOX, twice, or not imported", () => {
+    const unguarded = ["  onInitFinished = () => {", "    init();", "  };"];
+    assert.equal(startsBridgeOnlyWithDetox(index(unguarded)), false);
+    const again = "  componentDidMount() { init(); }";
+    assert.equal(startsBridgeOnlyWithDetox(index([...DETOX_BRIDGE_BLOCK, again])), false);
+    assert.equal(startsBridgeOnlyWithDetox(index(DETOX_BRIDGE_BLOCK, [])), false);
   });
 });

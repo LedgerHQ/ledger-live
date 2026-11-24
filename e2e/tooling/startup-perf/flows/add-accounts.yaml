@@ -1,5 +1,5 @@
 # Adds the accounts the scan finds for one coin on the Speculos the app has registered, as
-# e2e/mobile's add-account steps do: TICKER, and NETWORK for a coin that asks for one.
+# e2e/mobile's add-account steps do: TICKER, and NETWORK, picked when the drawer asks for one.
 # src/snapshot/run.ts runs it once per coin.
 appId: com.ledger.live
 ---
@@ -35,11 +35,19 @@ appId: com.ledger.live
 - inputText: ${TICKER}
 - tapOn:
     id: "asset-item-${TICKER}"
+# A coin on several networks shows the drawer's network step, as selectNetworkIfAsked in
+# e2e/mobile/page/drawer/modular.drawer.ts expects: the network may need a scroll.
+- waitForAnimationToEnd:
+    timeout: 5000
 - runFlow:
     when:
-      # Maestro applies a flow's env defaults over the CLI's -e: NETWORK has none.
-      true: ${typeof NETWORK !== 'undefined' && NETWORK !== ''}
+      visible:
+        id: "Network-screen"
     commands:
+      - scrollUntilVisible:
+          element:
+            id: "network-item-${NETWORK}"
+          direction: DOWN
       - tapOn:
           id: "network-item-${NETWORK}"
 # The scan of every derivation path, on Speculinho.
