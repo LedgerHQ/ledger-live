@@ -2,6 +2,7 @@ import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { PerpsProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { FF_PERPS_DESKTOP, IS_PERPS_LIVE_APP_STAGING } from "tests/utils/featureFlagUtils";
@@ -11,6 +12,7 @@ import { setupEnv } from "tests/utils/swapUtils";
 
 const receiverAccount = Account.HYPERCORE_1;
 const fundingAccount = Account.ETH_1;
+const provider = PerpsProvider.SWAPKIT;
 const depositAmount = "10";
 
 const xrayTicket = "B2CQA-6895";
@@ -73,6 +75,7 @@ test.describe("Perps deposit", () => {
       await app.speculos.acceptPerpsDeposit({
         send,
         receiveTicker: receiverAccount.currency.ticker,
+        provider,
       });
       await app.perpsTransactionSignedDialog.expectTransactionSigned(receiverAccount);
       await app.perpsTransactionSignedDialog.close();

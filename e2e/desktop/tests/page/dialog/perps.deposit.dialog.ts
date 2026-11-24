@@ -15,8 +15,8 @@ export class PerpsDepositDialog extends Dialog {
   private readonly selectCurrency = this.page.getByTestId("perps-deposit-select-currency");
   private readonly reviewCta = this.page.getByTestId("perps-deposit-review-cta");
 
-  private readonly reviewTitle = this.page.getByRole("heading", { name: "Deposit via SwapKit" });
-  private readonly reviewDialog = this.page.getByRole("dialog", { name: "Deposit via SwapKit" });
+  private readonly reviewTitle = this.page.getByRole("heading", { name: /^Deposit via / });
+  private readonly reviewDialog = this.page.getByRole("dialog", { name: /^Deposit via / });
   private readonly reviewBackButton = this.page.getByRole("button", { name: "Back" });
   private readonly swapDetailsTitle = this.page.getByText("Swap details", { exact: true });
   private readonly depositDetailsTitle = this.page.getByText("Deposit details", { exact: true });
@@ -26,9 +26,7 @@ export class PerpsDepositDialog extends Dialog {
   private readonly receiverAccount = this.page.getByTestId("perps-deposit-receiver-account");
   private readonly depositCta = this.page.getByTestId("perps-deposit-cta");
 
-  private readonly signTerms = this.page.getByText(
-    /^By signing this transaction, I accept SwapKit/,
-  );
+  private readonly signTerms = this.page.getByText(/^By signing this transaction, I accept /);
 
   @step("Verify the Perps deposit form")
   async expectDepositForm() {
@@ -73,7 +71,7 @@ export class PerpsDepositDialog extends Dialog {
     await expect(this.reviewTitle).toBeVisible();
     await this.softExpect(async soft => {
       await soft(this.reviewDialog).toHaveAccessibleDescription(
-        /^Our partner SwapKit manages your swap/,
+        /^Our partner .+ manages your swap/,
       );
       await soft(this.swapDetailsTitle).toBeVisible();
       await soft(this.depositDetailsTitle).toBeVisible();

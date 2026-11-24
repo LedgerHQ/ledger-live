@@ -42,6 +42,7 @@ import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
 import { delegateOsmosis, sendOsmosis } from "./families/osmosis";
 import { AppInfos } from "./enum/AppInfos";
+import type { PerpsProvider } from "./enum/Provider";
 import { DEVICE_LABELS_CONFIG } from "./data/deviceLabelsData";
 import { sendSui, delegateSui } from "./families/sui";
 import { sendConcordium } from "./families/concordium";
@@ -1472,11 +1473,15 @@ export const verifyAmountsAndAcceptSwap = withDeviceController(
     },
 );
 
-export type PerpsDepositReview = { send: DeviceAmount; receiveTicker: string };
+export type PerpsDepositReview = {
+  send: DeviceAmount;
+  receiveTicker: string;
+  provider: PerpsProvider;
+};
 
 export const acceptPerpsDeposit = withDeviceController(
   ({ getButtonsController }) =>
-    async ({ send, receiveTicker }: PerpsDepositReview) => {
+    async ({ send, receiveTicker, provider }: PerpsDepositReview) => {
       await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
       const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
       const swapPair = `swap ${send.ticker} to ${receiveTicker}`;
@@ -1486,9 +1491,9 @@ export const acceptPerpsDeposit = withDeviceController(
         `Swap pair "${swapPair}" not found on the device screen`,
       );
       expectSpeculosEventsContainExactly(
-        "SwapKit",
+        provider.uiName,
         events,
-        "Provider SwapKit not found on the device screen",
+        `Provider ${provider.uiName} not found on the device screen`,
       );
       expectDeviceAmount({ events, label: "Send", expected: send });
       if (isTouchDevice()) {
