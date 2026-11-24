@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { HiddenSettingsProvider } from "../HiddenSettingsProvider/HiddenSettingsProvider";
-import { SettingsRow } from "./SettingsRow";
+import { HiddenSettingsProvider } from "../../HiddenSettingsProvider/HiddenSettingsProvider";
+import { SettingsRow } from "../SettingsRow";
 
 describe("SettingsRow", () => {
   it("shows the title and the description", () => {

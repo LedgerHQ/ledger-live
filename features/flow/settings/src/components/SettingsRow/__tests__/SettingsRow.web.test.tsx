@@ -1,8 +1,8 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { HiddenSettingsProvider } from "../HiddenSettingsProvider/HiddenSettingsProvider";
-import { SettingsRow } from "./SettingsRow";
+import { HiddenSettingsProvider } from "../../HiddenSettingsProvider/HiddenSettingsProvider";
+import { SettingsRow } from "../SettingsRow";
 
 describe("SettingsRow", () => {
   it("shows the title, the description and the description link", async () => {
