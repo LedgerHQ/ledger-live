@@ -4,11 +4,13 @@ import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, it } from "node:test";
+import { startsBridgeOnlyWithDetox } from "../ci/prepare-build.mts";
 import { isPrepared } from "../ci/verify-build.mts";
 import {
   ACCOUNT_KEY_PREFIX,
   ACCOUNT_ORDER_KEY,
   GENERAL_TERMS_VERSION,
+  IDENTITIES_KEY,
   MIGRATION_DONE,
   STORAGE_FILE,
 } from "./measure/storage.ts";
@@ -18,6 +20,7 @@ import {
 const APP = path.join(import.meta.dirname, "../../../../apps/ledger-live-mobile");
 const PREPARED_FILES = [
   ".env.mock.prerelease",
+  "src/index.tsx",
   "package.json",
   "rspack.config.mjs",
   "src/mvvm/utils/logStartup/beforeJSImports.ts",
@@ -92,10 +95,15 @@ describe("the mobile app of this checkout", () => {
   });
 
   it("starts the E2E bridge only with DETOX, which the prepared env file no longer sets", () => {
+    assert.ok(startsBridgeOnlyWithDetox(read(APP, "src/index.tsx")));
+  });
+
+  it("saves its client ids at every start, which inject.ts takes as the sign it read the storage", () => {
     assert.match(
-      read(APP, "src/index.tsx"),
-      /onInitFinished = \(\) => \{\n\s*if \(Config\.DETOX\) \{\n\s*init\(\);\n\s*\}\n\s*\};/,
+      read(APP, "src/components/DBSave.ts"),
+      /stateSelector: \(state: State\) => state\.identities,\n(\s*\w+: [^\n]*\n)*?\s*saveAtStart: true,/,
     );
+    assert.match(read(APP, "src/db.ts"), new RegExp(`storage\\.save\\("${IDENTITIES_KEY}"`));
   });
 
   it("reads the keys storage.ts writes before the first launch", () => {

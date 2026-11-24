@@ -9,6 +9,8 @@ export const STORAGE_META_FILE = `${STORAGE_FILE}.crc`;
 export const GENERAL_TERMS_VERSION = "2022-05-10";
 export const ACCOUNT_KEY_PREFIX = "accounts.active.";
 export const ACCOUNT_ORDER_KEY = "accounts.sort";
+// The client ids, which the app saves at every start (DBSave's saveAtStart): never written here.
+export const IDENTITIES_KEY = "identities";
 // Set, the app reads MMKV and skips its AsyncStorage migration, as on a fresh install.
 export const MIGRATION_DONE: [string, string] = ["migration-status", "completed"];
 
@@ -186,6 +188,8 @@ export interface SavedState {
   /** Account records the app saved again, so differing from the ones written. */
   resaved: number;
   termsAccepted: boolean;
+  /** The app saved its client ids, which no written entry holds: it opened this storage. */
+  idsSaved: boolean;
 }
 
 /**
@@ -212,5 +216,6 @@ export function savedState(
       return saved !== undefined && !(before && saved.equals(before));
     }).length,
     termsAccepted: settings?.generalTermsVersionAccepted === GENERAL_TERMS_VERSION,
+    idsSaved: values.has(IDENTITIES_KEY) && !writtenValues.has(IDENTITIES_KEY),
   };
 }

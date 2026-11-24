@@ -19,16 +19,16 @@ export interface Coin {
   /** The Speculos spec of libs/live-e2e-shared/src/speculos.ts. */
   app: string;
   ticker: string;
-  /** The network to pick when the coin asks for one. */
-  network?: string;
+  /** The network to pick when the drawer asks for one: its name, as network-item-<name> shows. */
+  network: string;
   currency: string;
 }
 
 // The coins of the accounts scenario's former userdata (speculos-x-other-account, swap-history).
 export const COINS: Coin[] = [
-  { app: "Bitcoin", ticker: "BTC", currency: "bitcoin" },
+  { app: "Bitcoin", ticker: "BTC", network: "Bitcoin", currency: "bitcoin" },
   { app: "Ethereum", ticker: "ETH", network: "Ethereum", currency: "ethereum" },
-  { app: "Solana", ticker: "SOL", currency: "solana" },
+  { app: "Solana", ticker: "SOL", network: "Solana", currency: "solana" },
 ];
 
 // A user who adds accounts has seen the release's tours, whose sheets would cover the deep link.
@@ -104,7 +104,8 @@ async function addAccounts(
       args: [
         "-e",
         `TICKER=${coin.ticker}`,
-        ...(coin.network ? ["-e", `NETWORK=${coin.network}`] : []),
+        "-e",
+        `NETWORK=${coin.network}`,
         "--debug-output",
         debugDir,
         ADD_ACCOUNTS_FLOW,
