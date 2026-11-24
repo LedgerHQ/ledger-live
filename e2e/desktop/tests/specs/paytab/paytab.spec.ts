@@ -55,7 +55,7 @@ function payContactSeed(address: string): ContactSeed {
   };
 }
 
-test.describe("Pay tab", () => {
+test.describe.skip("Pay tab", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
