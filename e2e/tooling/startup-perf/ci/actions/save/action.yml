@@ -1,0 +1,37 @@
+name: "Save to the startup-perf cache"
+description: "Downloads an artifact this run made and uploads it to the mobile E2E builds' S3 cache"
+# Needs the cache credentials in the job's environment (aws-actions/configure-aws-credentials),
+# and must run in a job that runs none of the measured code (README.md, "The cache").
+# Best-effort: give the calling step continue-on-error and a timeout.
+inputs:
+  key:
+    description: "The cache key"
+    required: true
+  path:
+    description: "The directory to cache, relative to the workspace: the restore action's path"
+    required: true
+  artifact:
+    description: "The artifact this run made"
+    required: true
+  region:
+    description: "The cache bucket's region"
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Download the artifact
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      with:
+        name: ${{ inputs.artifact }}
+        path: ${{ inputs.path }}
+
+    - name: Upload it to the cache
+      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+      with:
+        key: ${{ inputs.key }}
+        path: ${{ inputs.path }}
+        accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+        secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+        bucket: ll-nx-cache
+        region: ${{ inputs.region }}

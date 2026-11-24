@@ -44,13 +44,19 @@ interface Builds {
   warnings: string[];
   /** Build A is a release tag's: it only changes on a release, so the cache keeps it. */
   cacheA: boolean;
-  /** B builds only reviewed code, so B's build job cannot have replaced A's artifact. */
+  /** B builds only reviewed code, so B's build job cannot have replaced another job's artifact. */
   reviewedB: boolean;
 }
 
 export interface Plan extends Builds {
-  /** `save-builds` caches build A: a release tag's, next to a reviewed B, in a run from develop. */
-  saveA: boolean;
+  /** `restore-cache` looks the cache up: for build A, when it is a release tag's. */
+  restore: boolean;
+  /**
+   * `save-cache` caches what this run made, in a run from develop whose B builds only reviewed
+   * code: B's build job runs B's code, which could replace another job's artifact before it is
+   * cached. Build A also needs `cacheA`.
+   */
+  save: boolean;
   scenarios: string[];
   /** The run's settings, which the build and measure jobs read from the plan's outputs. */
   settings: Pick<
@@ -220,8 +226,9 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
     ...builds,
     labelA: withSha(builds.labelA, builds.shaA),
     labelB: builds.sides.includes("b") ? withSha(builds.labelB, builds.shaB) : builds.labelB,
+    restore: builds.cacheA,
     // Every run restores from develop/, which only develop's role writes.
-    saveA: builds.cacheA && builds.reviewedB && inputs.branchName === "develop",
+    save: builds.reviewedB && inputs.branchName === "develop",
     scenarios: inputs.scenarios.split(","),
     settings: {
       preset: inputs.preset,
@@ -243,7 +250,8 @@ export function outputsOf(plan: Plan): string {
     label_a: plan.labelA,
     label_b: plan.labelB,
     cache_a: String(plan.cacheA),
-    save_a: String(plan.saveA),
+    restore: String(plan.restore),
+    save: String(plan.save),
     preset: plan.settings.preset,
     platforms: plan.settings.platforms,
     pairs: plan.settings.pairs,
@@ -272,7 +280,9 @@ export function summaryOf(plan: Plan, inputs: PlanInputs, avdCores: string): str
     `- B: \`${plan.labelB}\` → \`${plan.shaB}\``,
     `- ${inputs.pairs} pairs per scenario`,
     `- Android: one job (runner) per scenario, two emulators with ${avdCores} cores each, cellular network like E2E`,
-    ...(plan.cacheA && !plan.saveA ? [`- Build A is not saved to the cache: ${notSaved}`] : []),
+    ...(plan.restore && !plan.save
+      ? [`- Nothing this run makes is saved to the cache: ${notSaved}`]
+      : []),
     "",
   ].join("\n");
 }

@@ -8,8 +8,8 @@ jobs check out `ci/` alone, so the measured ref's Nx never sees a second copy of
 measure jobs check out this folder, `e2e/mobile/userdata` and, on Android, `tools/scripts` and the
 signing keystore.
 
-`ci/` holds what the plan, build and Slack jobs run, from a checkout of `ci/` alone and, in the
-build jobs, with the measured ref's Node (24.14 or later from `live-mobile@4.26.0` on): it never
+`ci/` holds what the plan, cache, build and Slack jobs run, from a checkout of `ci/` alone and, in
+the build jobs, with the measured ref's Node (24.14 or later from `live-mobile@4.26.0` on): it never
 imports from `src/` (`src/` may import from `ci/`), and its scripts are `.mts` so Node runs them as
 ES modules without the `package.json`. `devices/` holds the shell the measure jobs run to get the
 emulators or simulators and Maestro ready, `src/` the two programs (`measure/` writes
@@ -24,6 +24,9 @@ module.
 | `ci/slack-report.mts`               | The Slack job: the run's result from the jobs and each `summary.json`                       |
 | `ci/step.mts`                       | What those share: workspace paths, error annotations, job summary, failing verdicts         |
 | `ci/toolchain.sh`                   | Records a build's toolchain beside its `sha.txt`; warns when A's and B's differ             |
+| `ci/sides.mts`                      | The restore job's last step: the sides each build matrix still builds                       |
+| `ci/actions/restore/`               | The restore job's composite: looks an entry up, checks it, publishes it as the artifact     |
+| `ci/actions/save/`                  | The save job's composite: caches an artifact the run made                                   |
 | `devices/boot-emulators.sh`         | Boots the two Android emulators: 4 cores, animations on, cellular, idle                     |
 | `devices/boot-simulators.sh`        | Creates and boots the two simulators, then waits for an idle host                           |
 | `devices/install-maestro.sh`        | Installs the pinned Maestro, checked against its SHA-256                                    |
@@ -101,27 +104,32 @@ write no remote Nx, pnpm, Gradle or AVD cache: they run with develop's role whil
 Gradle downloads its dependencies through JFrog (`jfrog-maven-auth`), like develop's Android builds:
 straight from Maven Central, the shared runner IP can get a 429 (run 42829119387).
 
-### Build A cache
+### The cache
 
-Build A of a `live-mobile@X.Y.Z` tag only changes on a release, so the mobile E2E builds' S3 cache
-keeps it:
+The mobile E2E builds' S3 cache (`ll-nx-cache`) keeps what a run would otherwise make again: build
+A of a `live-mobile@X.Y.Z` tag, which only changes on a release. Two jobs read and write it, through
+this folder's composites, referenced by path so a branch runs its own: `restore-cache` looks each
+entry up (`ci/actions/restore`) and publishes a whole one as the artifact its job would have
+uploaded, then `ci/sides.mts` leaves that side out of the build matrices; `save-cache` caches what
+the run made (`ci/actions/save`). The plan says whether to look the cache up (`restore`) and whether
+this run may write it (`save`).
 
-- **Key:** `develop/startup-perf-<platform>-<commit A>-<hash>-<ISO week>-<version>`. The hash
-  covers the workflow, `prepare-build.mts`, `verify-build.mts`, `step.mts` and `toolchain.sh`. Bump
-  the version by hand when something else the build depends on changes.
+- **Build A's key:** `develop/startup-perf-<platform>-<commit A>-<hash>-<ISO week>-<version>`. The
+  hash covers the workflow, `prepare-build.mts`, `verify-build.mts`, `step.mts` and `toolchain.sh`.
+  Bump the version by hand when something else the build depends on changes.
 - **Toolchain:** B is built on the day's runners, whose Xcode, JDK or `@develop` composites can
   change without changing the key. The week in the key rebuilds A at least weekly, and each build
   writes `toolchain.txt` beside `sha.txt` (`ci/toolchain.sh`): the measure jobs warn when A's and
   B's differ, as a startup difference may then come from the toolchain.
-- **Restore (`restore-builds`):** every run reads `develop/`, which only develop's role writes, so
-  no run restores a build a branch run made. A cached build counts once its download succeeded and
-  its commit and binary match: the job publishes it as the run's artifact, and the build matrices
-  leave that side out.
-- **Save (`save-builds`):** only in a run from develop, and only when B is develop, release or main
+- **Restore (`restore-cache`):** every run reads `develop/`, which only develop's role writes, so
+  no run restores a build a branch run made. An entry counts once its download succeeded and its
+  check holds (build A: its commit and binary match): the job publishes it as the run's artifact,
+  and the build matrices leave that side out.
+- **Save (`save-cache`):** only in a run from develop, and only when B is develop, release or main
   (the branches only a pull request changes), or in a single-commit preset (`aa-noise`,
   `known-regression`), whose B is built from A's commit. A `custom` run with the same tag on both
-  sides is not saved. B's build job runs B's code, which could replace A's artifact before it is
-  cached.
+  sides is not saved. B's build job runs B's code, which could replace another job's artifact
+  before it is cached. Build A is saved only when it is a release tag's.
 - **Isolation:** neither cache job runs the measured code, and the build jobs are given no cache
   credentials. They keep `id-token: write` for JFrog's OIDC login, though, so the code they build
   could request an OIDC token for the run's ref. Whether that token can assume the develop cache
