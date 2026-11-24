@@ -25,6 +25,7 @@ export function ReceiveAddressView({
   closeLabel,
   backLabel,
   actions,
+  noticesPlaceholderLabel,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -125,7 +126,7 @@ export function ReceiveAddressView({
               <>
                 <AddressActions actions={actionsWithCard} />
                 <Dimmed isDimmed={isHintOpen}>
-                  <ZonePlaceholder zone="notices" />
+                  <ZonePlaceholder zone="notices" label={noticesPlaceholderLabel} />
                 </Dimmed>
               </>
             )}

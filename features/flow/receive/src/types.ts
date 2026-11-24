@@ -54,6 +54,11 @@ export type ReceiveFamilyConfigPort = (
   input: Omit<ReceiveFamilyConfigInput, "featureFlags" | "legacyAccount">,
 ) => Partial<ReceiveFamilyConfig>;
 
+export type ReceiveServiceIncident = Readonly<{
+  title: string;
+  description?: string;
+}>;
+
 /** The account and the asset a receive flow shows the address of. */
 export type ReceiveTarget = Readonly<{
   accountUUID: AccountUUID;
