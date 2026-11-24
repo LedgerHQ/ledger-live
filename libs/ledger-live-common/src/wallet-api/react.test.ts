@@ -638,6 +638,48 @@ describe("account.request handler", () => {
   });
 });
 
+describe("Wallet API tracking", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("should track start exchange failure when the user cancels", async () => {
+    const cancelError = new Error("User cancelled");
+    const uiExchangeStart = jest.fn(({ onCancel }) => {
+      onCancel(cancelError);
+    });
+    const options = createDefaultOptions({ uiHook: { "exchange.start": uiExchangeStart } });
+    renderHook(() => useWalletAPIServer(options));
+
+    await expect(getRegisteredHandler("exchange.start")({ exchangeType: "SWAP" })).rejects.toThrow(
+      cancelError,
+    );
+
+    expect(options.tracking.startExchangeFail).toHaveBeenCalledWith(options.manifest);
+    expect(options.tracking.completeExchangeFail).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["device.transport", "deviceTransportSuccess"],
+    ["device.select", "deviceSelectSuccess"],
+  ] as const)(
+    "should not track %s success when device validation fails",
+    async (method, successEvent) => {
+      const uiHook = jest.fn(({ onSuccess }) => {
+        onSuccess({ device: { deviceId: "device", modelId: "nanoX" } });
+      });
+      const options = createDefaultOptions({ uiHook: { [method]: uiHook } });
+      renderHook(() => useWalletAPIServer(options));
+
+      await expect(
+        getRegisteredHandler(method)({ appName: "Ethereum", devices: ["stax"] }),
+      ).rejects.toThrow("Device not in the devices list");
+
+      expect(options.tracking[successEvent]).not.toHaveBeenCalled();
+    },
+  );
+});
+
 describe("UI flows of a closed bridge session", () => {
   beforeEach(() => {
     jest.clearAllMocks();

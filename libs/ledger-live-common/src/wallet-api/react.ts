@@ -1237,7 +1237,6 @@ export function useWalletAPIServer({
             onSuccess: ({ device: deviceParam, appAndVersion }) => {
               if (done) return;
               done = true;
-              tracking.deviceTransportSuccess(manifest);
 
               if (!deviceParam) {
                 reject(new Error("No device"));
@@ -1256,6 +1255,7 @@ export function useWalletAPIServer({
                 return;
               }
               // TODO handle appFirmwareRange & seeded params
+              tracking.deviceTransportSuccess(manifest);
               device.subscribe(deviceParam.deviceId);
               resolve("1");
             },
@@ -1289,7 +1289,6 @@ export function useWalletAPIServer({
             onSuccess: ({ device: deviceParam, appAndVersion }) => {
               if (done) return;
               done = true;
-              tracking.deviceSelectSuccess(manifest);
 
               if (!deviceParam) {
                 reject(new Error("No device"));
@@ -1307,6 +1306,7 @@ export function useWalletAPIServer({
                 reject(new Error("App version doesn't satisfies the range"));
                 return;
               }
+              tracking.deviceSelectSuccess(manifest);
               resolve(deviceParam.deviceId);
             },
             onCancel: () => {
@@ -1485,7 +1485,7 @@ export function useWalletAPIServer({
               onCancel: error => {
                 if (done) return;
                 done = true;
-                tracking.completeExchangeFail(manifest);
+                tracking.startExchangeFail(manifest);
                 reject(error);
               },
             });
