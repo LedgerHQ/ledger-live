@@ -1,7 +1,7 @@
 import React from "react";
+import { getManagedTokenAccounts } from "@ledgerhq/live-common/families/xrp/tokens";
 import ManageAssetsDialog from "./ManageAssetsDialog";
 import type { XrpFamily } from "./types";
-import { getManagedTokenAccounts } from "./utils";
 import { isXrpDialogParams } from "./xrpDialog";
 
 const AccountDialogs: NonNullable<XrpFamily["AccountDialog"]> = ({ account, params, onClose }) => {

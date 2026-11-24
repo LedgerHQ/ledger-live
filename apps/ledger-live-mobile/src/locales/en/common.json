@@ -8655,9 +8655,6 @@
       "steps": {
         "token": {
           "title": "Choose a token",
-          "alreadyAddedTag": "Already added",
-          "alreadyAdded": "You've already added this token. Open its page to see or edit its settings.",
-          "openTokenPage": "Open token page",
           "empty": "No token is available for this account.",
           "loadError": "The token list couldn't load."
         },

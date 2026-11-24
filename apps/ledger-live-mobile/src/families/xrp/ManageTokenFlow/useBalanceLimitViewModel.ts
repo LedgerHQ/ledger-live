@@ -4,6 +4,7 @@ import invariant from "invariant";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { MAX_TRUST_LIMIT, isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { isLimitBelowBalance } from "@ledgerhq/live-common/families/xrp/tokens";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
@@ -92,8 +93,7 @@ export function useBalanceLimitViewModel() {
 
   const isLimitZero = hasTypedLimit && typedLimit.isZero();
   const isLimitPositive = limit.gt(0);
-  const isCustomLimit = !isMaximum && isLimitPositive;
-  const isBelowBalance = isCustomLimit && limit.lt(tokenAccount.balance);
+  const isBelowBalance = isLimitBelowBalance(limit, tokenAccount.balance);
 
   const errorText = (() => {
     if (isLimitZero) return t("errors.XrpTrustLimitZero.title");

@@ -1,11 +1,14 @@
 import BigNumber from "bignumber.js";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import {
+  makeChangeTrustTransaction,
+  toTrustLineFields,
+} from "@ledgerhq/live-common/families/xrp/tokens";
 import type { Transaction, XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
 import type { Account } from "@ledgerhq/types-live";
 import { useSignatureSteps } from "../../components/Signature/useSignatureSteps";
 import { useTrustSettings } from "../../components/TrustSettings/useTrustSettings";
-import { makeChangeTrustTransaction } from "../../utils";
 
 export function useEditAssetViewModel(account: Account, tokenAccount: XrpTokenAccount) {
   const currentLimit = tokenAccount.xrpResources?.limit ?? new BigNumber(0);
@@ -16,7 +19,7 @@ export function useEditAssetViewModel(account: Account, tokenAccount: XrpTokenAc
     return {
       account,
       parentAccount: undefined,
-      transaction: makeChangeTrustTransaction(bridge, account, tokenAccount),
+      transaction: makeChangeTrustTransaction(bridge, account, toTrustLineFields(tokenAccount)),
     };
   });
   const { transaction, updateTransaction, status, bridgePending, bridgeError } = bridgeTransaction;

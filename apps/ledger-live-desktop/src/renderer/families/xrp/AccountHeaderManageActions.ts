@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { AccountIdSchema } from "@domain/entity-account";
+import { getManagedTokenAccounts } from "@ledgerhq/live-common/families/xrp/tokens";
 import { useDispatch } from "LLD/hooks/redux";
 import IconAccountSettings from "~/renderer/icons/AccountSettings";
 import type { XrpFamily } from "./types";
-import { getManagedTokenAccounts } from "./utils";
 import { openXrpDialog } from "./xrpDialog";
 
 const AccountHeaderManageActions: XrpFamily["accountHeaderManageActions"] = ({ account }) => {

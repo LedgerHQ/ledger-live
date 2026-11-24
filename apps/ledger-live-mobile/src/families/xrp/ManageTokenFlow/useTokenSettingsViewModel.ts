@@ -6,12 +6,12 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { makeChangeTrustTransaction } from "@ledgerhq/live-common/families/xrp/tokens";
 import type { Transaction, XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { useLocale, useTranslation } from "~/context/Locale";
-import { makeChangeTrustTransaction } from "../utils";
 import { useSignTokenEdit } from "./useSignTokenEdit";
 import type { XrpManageTokenFlowParamList } from "./types";
 
@@ -42,13 +42,11 @@ export function useTokenSettingsViewModel() {
   const bridgeTransaction = useBridgeTransaction<Transaction>(bridge, () => {
     return {
       account: parentAccount,
-      transaction: makeChangeTrustTransaction(
-        bridge,
-        parentAccount,
+      transaction: makeChangeTrustTransaction(bridge, parentAccount, {
         token,
-        storedLimit ?? ZERO_LIMIT,
-        !storedIsRippling,
-      ),
+        limit: storedLimit ?? ZERO_LIMIT,
+        noRipple: !storedIsRippling,
+      }),
     };
   });
   const { transaction, updateAccount, updateTransaction, status, bridgePending, bridgeError } =

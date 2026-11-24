@@ -1,13 +1,13 @@
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import type { AccountLike } from "@ledgerhq/types-live";
+import { getManagedTokenAccounts } from "@ledgerhq/live-common/families/xrp/tokens";
 import type { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { NavigatorName, ScreenName } from "~/const";
 import { i18n } from "~/context/Locale";
-import { getManageableTokenAccounts } from "./utils";
 
 function getMainActions({ account }: { account: AccountLike }): ActionButtonEvent[] {
   if (account.type !== "Account") return [];
-  if (getManageableTokenAccounts(account).length === 0) return [];
+  if (getManagedTokenAccounts(account).length === 0) return [];
 
   return [
     {
