@@ -7,8 +7,8 @@ describe("SettingsRow", () => {
   it("shows the title and the description", () => {
     render(<SettingsRow title="Hide balance" description="Hide amounts" testID="settings-row" />);
 
-    expect(screen.getByText("Hide balance")).toBeTruthy();
-    expect(screen.getByText("Hide amounts")).toBeTruthy();
+    expect(screen.getByText("Hide balance")).toBeVisible();
+    expect(screen.getByText("Hide amounts")).toBeVisible();
   });
 
   it("selects the row when it leads somewhere", async () => {
@@ -77,5 +77,74 @@ describe("SettingsRow", () => {
     await user.press(screen.getByText("Learn more"));
 
     expect(onSelectLink).not.toHaveBeenCalled();
+  });
+
+  it("opens the description link of an enabled row", async () => {
+    const user = userEvent.setup();
+    const onSelectLink = jest.fn();
+    render(
+      <SettingsRow
+        title="Analytics"
+        descriptionLink={{ label: "Learn more", onSelect: onSelectLink }}
+      />,
+    );
+
+    await user.press(screen.getByText("Learn more"));
+
+    expect(onSelectLink).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows a value", () => {
+    render(<SettingsRow title="Version" trailing={{ type: "value", text: "4.2.0" }} />);
+
+    expect(screen.getByText("4.2.0")).toBeVisible();
+  });
+
+  it("shows the label of the selected option", () => {
+    render(
+      <SettingsRow
+        title="Theme"
+        trailing={{
+          type: "select",
+          value: "dark",
+          options: [
+            { value: "light", label: "Light" },
+            { value: "dark", label: "Dark" },
+          ],
+          onSelectOption: jest.fn(),
+        }}
+      />,
+    );
+
+    expect(screen.getByText("Dark")).toBeVisible();
+    expect(screen.queryByText("Light")).toBeNull();
+  });
+
+  it("runs the button action", async () => {
+    const user = userEvent.setup();
+    const onSelect = jest.fn();
+    render(
+      <SettingsRow title="Ledger Sync" trailing={{ type: "button", label: "Manage", onSelect }} />,
+    );
+
+    await user.press(screen.getByText("Manage"));
+
+    expect(onSelect).toHaveBeenCalledTimes(1);
+  });
+
+  it("opens an external link from the whole row", async () => {
+    const user = userEvent.setup();
+    const onSelect = jest.fn();
+    render(
+      <SettingsRow
+        title="Support"
+        trailing={{ type: "externalLink", onSelect }}
+        testID="support"
+      />,
+    );
+
+    await user.press(screen.getByTestId("support"));
+
+    expect(onSelect).toHaveBeenCalledTimes(1);
   });
 });
