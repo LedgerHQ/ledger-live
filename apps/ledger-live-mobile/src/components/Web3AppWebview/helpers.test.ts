@@ -357,6 +357,7 @@ describe("useUiHook - transaction.sign device-intent branching", () => {
           manifest: mockManifest,
           requestDeviceIntentSign: mockRequestDeviceIntentSign,
           requestDeviceIntentSignMessage: jest.fn(),
+          requestDeviceIntentSignRaw: jest.fn(),
         }),
       {
         overrideInitialState: withFlagOverrides({
@@ -436,26 +437,46 @@ describe("useUiHook - transaction.sign device-intent branching", () => {
   });
 });
 
-describe("useUiHook - transaction.signRaw attribution", () => {
-  it("forwards the manifest through the raw-sign navigator", () => {
-    const { result } = renderHook(() =>
-      useUiHook({
-        manifest: mockManifest,
-        requestDeviceIntentSign: jest.fn(),
-        requestDeviceIntentSignMessage: jest.fn(),
-      }),
-    );
+describe("useUiHook - transaction.signRaw device-intent branching", () => {
+  const mockRequestDeviceIntentSignRaw = jest.fn();
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const account = { id: "js:2:cosmos:cosmos1:", type: "Account" } as unknown as AccountLike;
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  function invokeSignRaw(deviceIntentSignFlag: DeviceIntentSignFlagOverride) {
+    const onSuccess = jest.fn();
+    const onError = jest.fn();
+    const { result } = renderHook(
+      () =>
+        useUiHook({
+          manifest: mockManifest,
+          requestDeviceIntentSign: jest.fn(),
+          requestDeviceIntentSignMessage: jest.fn(),
+          requestDeviceIntentSignRaw: mockRequestDeviceIntentSignRaw,
+        }),
+      {
+        overrideInitialState: withFlagOverrides({
+          llmWalletApiDeviceIntentSign: deviceIntentSignFlag,
+        }),
+      },
+    );
     result.current["transaction.signRaw"]!({
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      account: { id: "js:2:cosmos:cosmos1:", type: "Account" } as unknown as AccountLike,
+      account,
       parentAccount: undefined,
       transaction: "{}",
       broadcast: true,
-      options: { hwAppId: "Cosmos", dependencies: [] },
-      onSuccess: jest.fn(),
-      onError: jest.fn(),
+      options: { hwAppId: "Cosmos", dependencies: ["Ethereum"] },
+      onSuccess,
+      onError,
     });
+    return { onSuccess, onError };
+  }
+
+  it("forwards the manifest through the raw-sign navigator when the flag is disabled", () => {
+    invokeSignRaw({ enabled: false });
 
     expect(mockNavigate).toHaveBeenCalledWith(
       NavigatorName.SignRawTransaction,
@@ -467,6 +488,28 @@ describe("useUiHook - transaction.signRaw attribution", () => {
         }),
       }),
     );
+    expect(mockRequestDeviceIntentSignRaw).not.toHaveBeenCalled();
+  });
+
+  it("requests the device-intent raw drawer when the flag is enabled", () => {
+    const { onSuccess, onError } = invokeSignRaw({
+      enabled: true,
+      params: { enabledManifestIds: ["test-app"] },
+    });
+
+    expect(mockRequestDeviceIntentSignRaw).toHaveBeenCalledWith({
+      account,
+      parentAccount: undefined,
+      transaction: "{}",
+      broadcast: true,
+      appName: "Cosmos",
+      dependencies: ["Ethereum"],
+      manifestId: mockManifest.id,
+      manifestName: mockManifest.name,
+      onSuccess,
+      onError,
+    });
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });
 
@@ -491,6 +534,7 @@ describe("useUiHook - message.sign device-intent branching", () => {
           manifest: mockManifest,
           requestDeviceIntentSign: jest.fn(),
           requestDeviceIntentSignMessage: mockRequestDeviceIntentSignMessage,
+          requestDeviceIntentSignRaw: jest.fn(),
         }),
       {
         overrideInitialState: withFlagOverrides({
@@ -548,6 +592,7 @@ describe("useUiHook - account.request cancel navigation", () => {
         manifest: mockManifest,
         requestDeviceIntentSign: jest.fn(),
         requestDeviceIntentSignMessage: jest.fn(),
+        requestDeviceIntentSignRaw: jest.fn(),
         ...opts,
       }),
     );
@@ -599,6 +644,7 @@ describe("useUiHook - account.request of a closed session", () => {
         bridgeSessionRef: { current: session },
         requestDeviceIntentSign: jest.fn(),
         requestDeviceIntentSignMessage: jest.fn(),
+        requestDeviceIntentSignRaw: jest.fn(),
         onAccountRequestCancel,
         onAccountRequestSuccess,
       }),
@@ -675,6 +721,7 @@ describe("useUiHook - exchange device of a bridge session", () => {
         bridgeSessionRef,
         requestDeviceIntentSign: jest.fn(),
         requestDeviceIntentSignMessage: jest.fn(),
+        requestDeviceIntentSignRaw: jest.fn(),
       }),
     );
     return { result, bridgeSessionRef };
@@ -850,6 +897,7 @@ describe("useUiHook - transaction.broadcast", () => {
           manifest: mockManifest,
           requestDeviceIntentSign: jest.fn(),
           requestDeviceIntentSignMessage: jest.fn(),
+          requestDeviceIntentSignRaw: jest.fn(),
           onTransactionBroadcast,
         }),
       {

@@ -19,7 +19,7 @@ import { useRawTransactionDeviceAction } from "~/hooks/deviceActions";
 import logger from "~/logger";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { getConnectAppDependencies } from "./connectAppDependencies";
+import { getConnectAppDependencies } from "LLM/features/WalletApiSignature/utils/connectAppDependencies";
 
 export type SignRawTransactionConnectDeviceProps = StackNavigatorProps<
   SignRawTransactionNavigatorParamList,

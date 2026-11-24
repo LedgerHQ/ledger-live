@@ -1,9 +1,11 @@
 import { useCallback, useRef, useState } from "react";
 import type { WalletApiDeviceIntentSignRequest } from "../components/TransactionSignatureDrawer/types";
 import type { WalletApiDeviceIntentSignMessageRequest } from "../components/MessageSignatureDrawer/types";
+import type { WalletApiDeviceIntentSignRawRequest } from "../components/RawTransactionSignatureDrawer/types";
 
 export type WalletApiSignatureQueueItem =
   | Readonly<{ id: number; type: "transaction"; request: WalletApiDeviceIntentSignRequest }>
+  | Readonly<{ id: number; type: "rawTransaction"; request: WalletApiDeviceIntentSignRawRequest }>
   | Readonly<{ id: number; type: "message"; request: WalletApiDeviceIntentSignMessageRequest }>;
 
 /**
@@ -19,6 +21,14 @@ export function useWalletApiSignatureQueue() {
     const id = nextIdRef.current++;
     setQueue(items => [...items, { id, type: "transaction", request }]);
   }, []);
+
+  const enqueueRawTransactionSignature = useCallback(
+    (request: WalletApiDeviceIntentSignRawRequest) => {
+      const id = nextIdRef.current++;
+      setQueue(items => [...items, { id, type: "rawTransaction", request }]);
+    },
+    [],
+  );
 
   const enqueueMessageSignature = useCallback(
     (request: WalletApiDeviceIntentSignMessageRequest) => {
@@ -42,6 +52,7 @@ export function useWalletApiSignatureQueue() {
   return {
     currentSignature,
     enqueueTransactionSignature,
+    enqueueRawTransactionSignature,
     enqueueMessageSignature,
     closeCurrentSignature,
     clearSignatures,
