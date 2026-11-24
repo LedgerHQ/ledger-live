@@ -58,7 +58,9 @@ export function TrackedDiscoveryErrorState({
 
   return (
     <>
+      {/* A failed retry shows its error without an unmount: the key sends the page again. */}
       <TrackDIEScreen
+        key={`${subError}:${trackingTransport ?? ""}`}
         category={PAGE_CONNECT_DEVICE.DiscoveryError}
         {...(trackingTransport ? { transport: trackingTransport } : {})}
         subError={subError}
