@@ -1,5 +1,19 @@
 # @devtools/device-onboarding
 
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [[`d1f10fb`](https://github.com/LedgerHQ/ledger-live/commit/d1f10fbe2b9a1c9a90d28e0b79a7113932437bdc), [`f04c3ec`](https://github.com/LedgerHQ/ledger-live/commit/f04c3ec7af3bfec56b14facc2a103d5d496492e2), [`bda46c4`](https://github.com/LedgerHQ/ledger-live/commit/bda46c496fdacc801de3264d2854e00eb38b8499), [`7c824f3`](https://github.com/LedgerHQ/ledger-live/commit/7c824f377ec4a7bcc86f3edb71a198d7ea6ca9a5), [`c20c157`](https://github.com/LedgerHQ/ledger-live/commit/c20c157c991dbfcd47f9300b997f74fac0f6d303)]:
+  - @features/platform-device-onboarding@0.7.0
+
+## 0.6.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`d1f10fb`](https://github.com/LedgerHQ/ledger-live/commit/d1f10fbe2b9a1c9a90d28e0b79a7113932437bdc), [`f04c3ec`](https://github.com/LedgerHQ/ledger-live/commit/f04c3ec7af3bfec56b14facc2a103d5d496492e2), [`bda46c4`](https://github.com/LedgerHQ/ledger-live/commit/bda46c496fdacc801de3264d2854e00eb38b8499), [`7c824f3`](https://github.com/LedgerHQ/ledger-live/commit/7c824f377ec4a7bcc86f3edb71a198d7ea6ca9a5), [`c20c157`](https://github.com/LedgerHQ/ledger-live/commit/c20c157c991dbfcd47f9300b997f74fac0f6d303)]:
+  - @features/platform-device-onboarding@0.7.0-next.0
+
 ## 0.6.1
 
 ### Patch Changes

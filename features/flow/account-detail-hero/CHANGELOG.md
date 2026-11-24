@@ -1,5 +1,17 @@
 # @features/flow-account-detail-hero
 
+## 0.5.0
+
+### Minor Changes
+
+- [#24792](https://github.com/LedgerHQ/ledger-live/pull/24792) [`15c9095`](https://github.com/LedgerHQ/ledger-live/commit/15c9095eb614c8bda7b5c47f18031667b3047a4a) Thanks [@ysitbon](https://github.com/ysitbon)! - Import platform files without their `.web` / `.native` suffix and let module resolution pick the twin.
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#24792](https://github.com/LedgerHQ/ledger-live/pull/24792) [`15c9095`](https://github.com/LedgerHQ/ledger-live/commit/15c9095eb614c8bda7b5c47f18031667b3047a4a) Thanks [@ysitbon](https://github.com/ysitbon)! - Import platform files without their `.web` / `.native` suffix and let module resolution pick the twin.
+
 ## 0.4.0
 
 ### Minor Changes

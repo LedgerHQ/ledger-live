@@ -1,5 +1,19 @@
 # @domain/entity-contact
 
+## 0.13.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-currency@0.5.1
+
+## 0.13.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-currency@0.5.1-next.0
+
 ## 0.13.0
 
 ### Minor Changes

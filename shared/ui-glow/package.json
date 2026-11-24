@@ -1,6 +1,6 @@
 {
   "name": "@shared/ui-glow",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Animated GPU glow background with grain: a native shader view (Metal on iOS, OpenGL ES on Android)",
   "exports": {

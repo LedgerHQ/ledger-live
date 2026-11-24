@@ -2774,10 +2774,36 @@
     }
   },
   "receiveAddress" : {
+    "title" : "Erhalte {{asset}}",
+    "networkLabel" : "{{network}}-Netzwerk",
     "addressDisplayed" : {
       "title" : "Adresse wird sicher angezeigt",
-      "description" : "Bestätigen, ob die Adresse nach dem Einfügen oder Teilen mit der auf deinem Ledger-Gerät übereinstimmt.",
-      "gotItCta" : "Verstanden"
+      "description" : "Bestätigen, ob die Adresse nach dem Einfügen oder Teilen mit der auf deinem Ledger-Gerät übereinstimmt."
+    },
+    "addressVerified" : {
+      "title" : "Adresse verifizieren",
+      "description" : "Die Adresse in Ledger Wallet™ passt zu der auf deinem Ledger-Gerät.",
+      "doneCta" : "Fertig"
+    },
+    "addressMismatch" : {
+      "title" : "Diese Adresse passt nicht zu deinem Ledger",
+      "description" : "Verwende diese Adresse nicht. Vielleicht verwendest du einen Ledger, der nicht mit diesem Konto eingerichtet ist: Verbinde den richtigen und bestätige erneut. Wenn sie immer noch nicht passt, wende dich an den Ledger-Kundenservice.",
+      "contactSupportCta" : "Ledger-Kundenservice kontaktieren",
+      "closeCta" : "Schließen"
+    },
+    "selectAddress" : {
+      "title" : "Adresse auswählen"
+    },
+    "addressOptions" : {
+      "transparent" : "Öffentliche Adressen",
+      "shielded" : "Private Adresse"
+    },
+    "close" : "Schließen",
+    "back" : "Zurück",
+    "error" : {
+      "title" : "Diese Adresse konnte nicht geladen werden",
+      "description" : "Prüfe deine Internetverbindung und versuche es dann noch einmal.",
+      "retry" : "Wiederholen"
     }
   },
   "send" : {
@@ -3061,7 +3087,7 @@
     },
     "sponsoredPolling" : {
       "title" : "Deine Energie wird geliefert",
-      "waiting" : "Das dauert normalerweise bis zu 30 Sekunden.",
+      "waiting" : "Dieser Vorgang kann bis zu 1 Minute dauern …",
       "elapsed" : "Verstrichen: {{time}}"
     },
     "sponsoredFailure" : {
@@ -4308,7 +4334,7 @@
         "token" : {
           "title" : "Token",
           "selectLabel" : "Wähle ein Token aus",
-          "allAdded" : "Du hast bereits alle verfügbaren Token zu diesem Konto hinzugefügt.",
+          "empty" : "Es ist kein Token verfügbar, das diesem Konto hinzugefügt werden kann.",
           "loadError" : "Die Token-Liste konnte nicht geladen werden.",
           "info" : "Das Hinzufügen eines Tokens sendet eine Transaktion, die eine Netzwerkgebühr kostet und XRP reserviert, solange du das Token hältst. Es wird in deinem Transaktionsverlauf angezeigt."
         },
@@ -4316,12 +4342,18 @@
           "title" : "Einstellungen",
           "limit" : "Vertrauenslimit",
           "max" : "Max.",
-          "limitInfo" : "Das Vertrauenslimit ist der Höchstbetrag an {{token}}, den dein Konto zu halten akzeptiert."
+          "limitInfo" : "Das Vertrauenslimit ist der Höchstbetrag an {{token}}, den dein Konto zu halten akzeptiert. Aktiviere Max, um das höchste Limit zu nutzen, das das XRP Ledger erlaubt.",
+          "maximum" : "Maximum"
         },
         "review" : {
           "title" : "Prüfen",
           "token" : "Token",
-          "issuer" : "Herausgeber"
+          "issuer" : "Herausgeber",
+          "issuerFee" : "Herausgebergebühr",
+          "issuerFeeTooltip" : "Der Anteil an jeder Übertragung zwischen Eigentümern, den der Herausgeber einbehält.",
+          "issuerFeeError" : "Datenabruf der Details zu den Emittentengebühren fehlgeschlagen.",
+          "notEnoughReserve" : "Du benötigst mindestens {{minimumAmount}} zur Verfügung, um dieses Token hinzuzufügen.",
+          "receive" : "Empfangen"
         },
         "connectDevice" : {
           "title" : "Gerät"
@@ -4329,8 +4361,8 @@
         "confirmation" : {
           "title" : "Bestätigung",
           "success" : {
-            "title" : "{{token}}-Token erfolgreich hinzugefügt",
-            "text" : "Du kannst jetzt <0>{{token}}</0> auf deinem XRP-Konto empfangen.",
+            "title" : "Anfrage zum Hinzufügen von {{token}} gesendet",
+            "text" : "Es wird angewendet, sobald das Netzwerk die Transaktion bestätigt.",
             "cta" : "Details anzeigen"
           },
           "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
@@ -4344,14 +4376,59 @@
       "steps" : {
         "confirmation" : {
           "success" : {
-            "title" : "{{token}}-Vertrauenslimit aktualisiert",
-            "text" : "Dein XRP-Konto akzeptiert jetzt <0>{{token}}</0> bis zum neuen Limit."
+            "title" : "Anfrage zum Aktualisieren von {{token}} gesendet"
+          }
+        }
+      }
+    },
+    "manageAssets" : {
+      "cta" : "Verwalten",
+      "title" : "Assets verwalten",
+      "tokenType" : "Tokenart",
+      "tokenTypeTooltip" : "Eine Vertrauenslinie (IOU) hat ein Kontostand-Limit und eine Rippling-Einstellung. Ein Multi-Purpose-Token (MPT) hat keine Einstellungen.",
+      "iou" : "Trustline (IOU)",
+      "mpt" : "Mehrzweck-Token",
+      "transferFee" : "Überweisungsgebühr",
+      "lockedAmount" : "Gesperrter Betrag",
+      "balanceLimit" : "Kontostand-Limit",
+      "ripplingTooltip" : "Rippling ermöglicht es Zahlungen anderer Benutzer, deinen Kontostand zwischen Token mit demselben Währungscode zu verschieben.",
+      "activated" : "Aktiviert",
+      "deactivated" : "Deaktivieren",
+      "edit" : "Bearbeiten",
+      "delete" : "Löschen"
+    },
+    "manageToken" : {
+      "title" : "Token verwalten",
+      "settings" : {
+        "title" : "Advanced Einstellungen",
+        "description" : "Ändere das Vertrauenslimit oder das Rippling."
+      },
+      "remove" : {
+        "description" : "Schließe diese Trustline und erhalte ihre XRP-Reserve zurück."
+      }
+    },
+    "removeToken" : {
+      "title" : "Token entfernen",
+      "pending" : "Entfernung ausstehend",
+      "frozen" : "Dieses Token ist eingefroren",
+      "steps" : {
+        "review" : {
+          "unlocked" : "{{amount}} wird entsperrt und ist wieder verfügbar.",
+          "info" : "Du wirst dieses Token nicht mehr empfangen können. Du kannst es später wieder hinzufügen ({{amount}} wird wieder gesperrt).",
+          "balanceLeft" : "Du besitzt noch {{balance}}. Sende deinen Kontostand, bevor du diesen Token entfernst.",
+          "send" : "Senden"
+        },
+        "connectDevice" : {
+          "limitZero" : "Dein Gerät zeigt ein Trust-Limit von 0 an. So entfernt das XRP Ledger einen Token."
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "Anfrage zum Entfernen von {{token}} gesendet"
           }
         }
       }
     },
     "tokenAccount" : {
-      "editSettings" : "Einstellungen bearbeiten",
       "trustLimit" : "Vertrauenslimit",
       "trustLimitTooltip" : "Der Höchstbetrag dieses Tokens, den dein Konto aufnehmen kann."
     },
@@ -4360,6 +4437,9 @@
       "on" : "Ein",
       "off" : "Aus",
       "warning" : "Das Aktivieren dieser Option ermöglicht es Zahlungen anderer Benutzer, deinen Kontostand zwischen Token mit demselben Währungscode zu verschieben. Schalte es nur ein, wenn du weißt, was du tust."
+    },
+    "send" : {
+      "issuerFee" : "Herausgebergebühr"
     },
     "receive" : {
       "addToken" : "Token hinzufügen",
@@ -5615,7 +5695,14 @@
       },
       "devTools" : {
         "rowTitle" : "Entwicklertools",
-        "rowDesc" : "Öffne die DevTools-Shell (Feature Flag und DevTools-Panel)."
+        "rowDesc" : "Öffne die DevTools-Shell (Feature Flag und DevTools-Panel).",
+        "appToggles" : {
+          "hideNightlyLayer" : {
+            "label" : "Pre-Release-Overlay ausblenden",
+            "description" : "Blendet das PRERELEASE-Wasserzeichen aus, das bei Nightly-Builds angezeigt wird, um beispielsweise saubere Screenshots aufzunehmen.",
+            "lockedReason" : "Das Overlay wird nur bei Nightly-Builds angezeigt."
+          }
+        }
       },
       "brazeTools" : {
         "title" : "Braze-Tools",
@@ -7156,6 +7243,9 @@
         "expiresAt" : "Läuft ab am",
         "expiresIn" : "Läuft ab in",
         "amount" : "Betrag",
+        "unknownToken" : "Unbekannter Token",
+        "instrumentId" : "Instrument-ID",
+        "instrumentAdmin" : "Instrument-Admin",
         "transaction" : "Transaktion",
         "viewTransaction" : "Transaktion anzeigen",
         "action" : "Aktion",
@@ -8091,7 +8181,8 @@
       "description" : "Ein Problem ist aufgetreten. Bitte versuche es noch einmal oder wende dich im Zweifelsfall an den Ledger-Kundenservice."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Blindsignaturen oder Vertragsdaten in der Ethereum-App aktivieren"
+      "title" : "Blindsignaturen oder Vertragsdaten in der Ethereum-App aktivieren",
+      "description" : "Öffne auf deinem Gerät die Einstellungen der Ethereum-App, aktiviere Blindsignaturen und versuche es dann erneut."
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "Bitte Vertragsdaten in den Einstellungen der Celo-App aktivieren"
@@ -8114,11 +8205,11 @@
       "description" : "Um dieses Token nicht mehr zu halten, entferne es stattdessen."
     },
     "XrpTokenFrozen" : {
-      "title" : "Du kannst dieses Token nicht senden",
+      "title" : "Token ist eingefroren",
       "description" : "Der Herausgeber hat es eingefroren."
     },
     "XrpTokenNotAuthorized" : {
-      "title" : "Du kannst dieses Token nicht senden",
+      "title" : "Dein Konto ist nicht freigegeben",
       "description" : "Der Herausgeber hat dein Konto nicht für das Halten freigegeben."
     },
     "XrpTokenCannotReceive" : {
@@ -8143,6 +8234,54 @@
     "XrpReserveIncrease" : {
       "title" : "{{amount}} wird auf deinem Konto gesperrt, während dieses Token hinzugefügt wird.",
       "description" : "Du erhältst es zurück, wenn du das Token entfernst."
+    },
+    "XrpAccountNotActivated" : {
+      "title" : "Dein Konto ist noch nicht aktiviert",
+      "description" : "Empfange mindestens {{amount}}, um es zu aktivieren und dieses Token hinzuzufügen. Dies deckt die Aktivierung des Kontos und die für das Token gesperrten XRP ab."
+    },
+    "XrpTrustLimitTooHigh" : {
+      "title" : "Das Limit liegt über dem Maximum",
+      "description" : "Verwende Max, um das höchste Limit einzurichten."
+    },
+    "XrpTrustSetUnchanged" : {
+      "title" : "Diese Einstellungen sind bereits eingerichtet",
+      "description" : "Ändere das Limit oder das Rippling, um dieses Token zu aktualisieren."
+    },
+    "XrpRecipientNotActivated" : {
+      "title" : "Dieses Konto ist nicht aktiviert",
+      "description" : "Es kann keine Token empfangen."
+    },
+    "XrpRecipientTokenNotAdded" : {
+      "title" : "Dieser Empfänger kann dieses Token nicht empfangen",
+      "description" : "Bitte sie, es zuerst hinzuzufügen."
+    },
+    "XrpRecipientLimitTooLow" : {
+      "title" : "Empfängerlimit ist zu niedrig",
+      "description" : "Sie können nur bis zu {{maxAmount}} dieses Tokens empfangen."
+    },
+    "XrpSendToIssuer" : {
+      "title" : "Senden an den Herausgeber des Tokens",
+      "description" : "Diese Token werden vernichtet und niemandem gutgeschrieben."
+    },
+    "XrpOptOutBalanceNotZero" : {
+      "title" : "Dein Kontostand für diesen Token muss 0 sein",
+      "description" : "Sende alles davon, bevor du das Token entfernst."
+    },
+    "XrpOptOutTokenInEscrow" : {
+      "title" : "Ein Teil dieses Tokens befindet sich in Treuhand",
+      "description" : "Entferne das Token, sobald das Escrow abgeschlossen oder abgebrochen ist."
+    },
+    "XrpOptOutTokenFrozen" : {
+      "title" : "Du kannst {{assetCode}} nicht entfernen",
+      "description" : "Der Herausgeber hat es auf deinem Konto eingefroren."
+    },
+    "XrpOptOutIncomplete" : {
+      "title" : "Dieses Token kann nicht entfernt werden",
+      "description" : "Das XRP Ledger würde es auf deinem Konto behalten, zusammen mit seinen gesperrten XRP."
+    },
+    "XrpReserveRelease" : {
+      "title" : "Die für dieses Token gesperrten {{amount}} werden freigegeben.",
+      "description" : "Du kannst es ausgeben, sobald der Token entfernt wurde."
     },
     "InvalidExplorerResponse" : {
       "title" : "Ungültige Antwort vom {{currencyName}}-Explorer"
@@ -8274,6 +8413,10 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+    },
+    "SolanaTxBlockhashExpired" : {
+      "title" : "Die Transaktion ist abgelaufen",
+      "description" : "Das Netzwerk akzeptiert diese Transaktion nicht mehr. Bitte versuche erneut, eine neue zu erstellen."
     },
     "SolanaRecipientMemoIsRequired" : {
       "title" : "Für die Empfängeradresse ist ein Memo erforderlich."
@@ -8674,6 +8817,22 @@
     "SuiAddressBalanceAppUpdateRequired" : {
       "title" : "Aktualisiere deine Sui-App",
       "description" : "Deine Ledger-Sui-App kann keine Überweisung vom Kontostand deiner SUI-Adresse signieren. Aktualisiere die Sui-App auf deinem Ledger-Gerät und versuche es erneut."
+    },
+    "SuiRawTransactionInvalid" : {
+      "title" : "Unlesbare Sui-Transaktion",
+      "description" : "Die App hat eine Sui-Transaktion gesendet, die Ledger Wallet™ nicht lesen kann. Versuche es von der App aus erneut oder kontaktiere den Support."
+    },
+    "SuiRawTransactionSenderMismatch" : {
+      "title" : "Falsches Sui-Konto",
+      "description" : "Diese Transaktion wurde für ein anderes Sui-Konto vorbereitet. Wähle das mit der App verbundene Konto aus und versuche es erneut."
+    },
+    "SuiRawTransactionResolutionFailed" : {
+      "title" : "Sui-Transaktion konnte nicht vorbereitet werden",
+      "description" : "Prüfe, ob die verwendeten Assets noch existieren und das Konto die Netzwerkgebühren bezahlen kann, und versuche es dann von der App aus erneut."
+    },
+    "SuiSponsoredTransactionBroadcastUnsupported" : {
+      "title" : "Gesponserte Sui-Transaktion",
+      "description" : "Die Netzwerkgebühr dieser Transaktion wird von einem Sponsor bezahlt, sodass Ledger Wallet™ sie nicht an das Netzwerk senden kann. Die App muss sie selbst senden. Kontaktiere den Support der App, wenn dies weiterhin auftritt."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Dein verfügbares (nicht gestaketes) Guthaben beläuft sich derzeit auf {{currentBalance}}. Dies reicht nicht aus, um die Netzwerkgebühren für das Beenden des Stakings deiner {{assetName}} zu bezahlen.",
