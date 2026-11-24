@@ -118,6 +118,55 @@ describe("ContactAddressDetailDialog", () => {
     );
   });
 
+  it("should run the address actions the host allows", () => {
+    const onSend = jest.fn();
+    const onEdit = jest.fn();
+    const onDelete = jest.fn();
+    render(
+      <ContactAddressDetailDialog
+        {...createProps({
+          onSend,
+          onEdit,
+          onDelete,
+          canSend: true,
+          canEdit: true,
+          canDelete: true,
+        })}
+      />,
+      { wrapper: I18nTestProvider },
+    );
+
+    fireEvent.click(screen.getByTestId("contacts-address-detail-send"));
+    fireEvent.click(screen.getByTestId("contacts-address-detail-edit"));
+    fireEvent.click(screen.getByTestId("contacts-address-detail-delete"));
+
+    expect(onSend).toHaveBeenCalledTimes(1);
+    expect(onEdit).toHaveBeenCalledTimes(1);
+    expect(onDelete).toHaveBeenCalledTimes(1);
+  });
+
+  it("should disable the address actions the host does not allow", () => {
+    const onSend = jest.fn();
+    const onEdit = jest.fn();
+    const onDelete = jest.fn();
+    render(<ContactAddressDetailDialog {...createProps({ onSend, onEdit, onDelete })} />, {
+      wrapper: I18nTestProvider,
+    });
+
+    for (const testId of [
+      "contacts-address-detail-send",
+      "contacts-address-detail-edit",
+      "contacts-address-detail-delete",
+    ]) {
+      expect(screen.getByTestId(testId)).toBeDisabled();
+      fireEvent.click(screen.getByTestId(testId));
+    }
+
+    expect(onSend).not.toHaveBeenCalled();
+    expect(onEdit).not.toHaveBeenCalled();
+    expect(onDelete).not.toHaveBeenCalled();
+  });
+
   it("should hide the share action when the host cannot share", () => {
     render(<ContactAddressDetailDialog {...createProps()} />, { wrapper: I18nTestProvider });
 
