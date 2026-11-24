@@ -93,12 +93,12 @@ describe("useReceiveAddressActions", () => {
     expect(result.current.actions.copy?.buttonPresses).toBe(1);
   });
 
-  it("should share the address", () => {
+  it("should share the address with the image of its card", () => {
     const { result, onShareAddress } = setup();
 
-    act(() => result.current.actions.share!.onPress());
+    act(() => result.current.actions.share!.onPress("file://card.png"));
 
-    expect(onShareAddress).toHaveBeenCalledWith(shown.address);
+    expect(onShareAddress).toHaveBeenCalledWith(shown.address, "file://card.png");
     expect(track).toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({ button: "share address" }),

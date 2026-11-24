@@ -10,8 +10,8 @@ export type ReceiveAddressProps = Readonly<{
   onClose: () => void;
   /** Copies the address; resolves `false` when the clipboard refused it. Without it, no Copy. */
   onCopyAddress?: (address: string) => Promise<boolean>;
-  /** Opens the system share sheet with the address. Without it, no Share. */
-  onShareAddress?: (address: string) => void;
+  /** Shares the address, with the card's image when captured. Without it, no Share. */
+  onShareAddress?: (address: string, cardImageUrl?: string) => void;
   /** The app's device verification, mounted while one runs. Without it, no Verify. */
   VerifyAddressExecutor?: ComponentType<UseVerifyAddressExecutorViewModelParams>;
   /** What the account's coin family adds: notices and the device models that cannot verify. */

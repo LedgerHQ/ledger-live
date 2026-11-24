@@ -41,7 +41,7 @@ export type ReceiveAddressActionsView = Readonly<{
       /** How many times the Copy button was pressed: the QR code replays its animation on each. */
       buttonPresses: number;
     }>;
-  share?: ReceiveAddressAction;
+  share?: Readonly<{ label: string; onPress: (cardImageUrl?: string) => void }>;
   /** `disabled` when the device cannot show this address. */
   verify?: ReceiveAddressAction & Readonly<{ disabled: boolean }>;
   /** Invites the user to verify, until they verify or dismiss it once. */
@@ -56,8 +56,6 @@ export type ReceiveAddressViewProps = Readonly<{
   /** Absent until the address is read, and while the user picks one. */
   address?: ReceiveAddressShown;
   actions: ReceiveAddressActionsView;
-  /** "Copy · Share · Verify": the actions' labels, shown in their zone until the buttons land. */
-  actionsPlaceholderLabel: string;
   /** A device verification runs: on desktop, its own dialog takes the place of this one. */
   isVerifying: boolean;
   /** "Receive USDC" */

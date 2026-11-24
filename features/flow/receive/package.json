@@ -39,6 +39,7 @@
     "@shared/analytics": "workspace:*",
     "@shared/feature-flags": "workspace:*",
     "@shared/i18n": "workspace:*",
+    "@shared/share-sheet": "workspace:*",
     "@shared/ui-animated-qr-code": "workspace:*",
     "@shared/ui-info-state": "workspace:*"
   },
