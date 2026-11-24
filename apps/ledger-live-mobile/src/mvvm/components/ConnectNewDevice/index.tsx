@@ -24,7 +24,7 @@ export function ConnectNewDevice(props: Readonly<ConnectNewDeviceProps>) {
   return (
     <DeviceIntentTrackingProvider value={{ sourceFlow: props.sourceFlow }}>
       <Box lx={{ flex: 1, paddingHorizontal: "s16", backgroundColor: "canvas" }}>
-        <ConnectNewDeviceView {...viewModel} />
+        <ConnectNewDeviceView {...viewModel} reportsOutcome />
       </Box>
     </DeviceIntentTrackingProvider>
   );

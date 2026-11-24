@@ -30,28 +30,28 @@ const discoveringState: ConnectNewDeviceNonErrorUIState = {
   showDeviceNotFound: false,
 };
 
-const element = (viewState: ConnectNewDeviceUIState, isEmbedded: boolean) => (
+const element = (viewState: ConnectNewDeviceUIState, reportsOutcome: boolean) => (
   <DeviceIntentTrackingProvider value={{ sourceFlow: "onboarding" }}>
     <ConnectNewDeviceView
       state={viewState}
       lastNonErrorState={discoveringState}
       platform="android"
       onCloseErrorSheet={jest.fn()}
-      isEmbedded={isEmbedded}
+      reportsOutcome={reportsOutcome}
     />
   </DeviceIntentTrackingProvider>
 );
 
 function renderView(
   state: ConnectNewDeviceUIState,
-  { isEmbedded = false }: { isEmbedded?: boolean } = {},
+  { reportsOutcome = true }: { reportsOutcome?: boolean } = {},
 ) {
-  const view = render(element(state, isEmbedded));
+  const view = render(element(state, reportsOutcome));
 
   return {
     ...view,
     rerenderState: (viewState: ConnectNewDeviceUIState) =>
-      view.rerender(element(viewState, isEmbedded)),
+      view.rerender(element(viewState, reportsOutcome)),
   };
 }
 
@@ -136,7 +136,7 @@ describe("ConnectNewDeviceView tracking", () => {
 
   it("GIVEN the Add mode of the device list, WHEN the flow unmounts before a connection, THEN it should send no outcome", () => {
     // GIVEN
-    const { unmount } = renderView(discoveringState, { isEmbedded: true });
+    const { unmount } = renderView(discoveringState, { reportsOutcome: false });
 
     // WHEN
     unmount();

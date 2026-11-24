@@ -20,8 +20,8 @@ type ConnectedViewProps = {
         | typeof ConnectNewDeviceUIStateTypes.Done;
     }
   >;
-  /** False while an error sheet shows over the view: its page is sent again once it closes. */
-  isPageTracked: boolean;
+  /** True while an error sheet shows over the view: its page is sent again once the sheet closes. */
+  isBehindErrorSheet: boolean;
 };
 
 const titleKeys = {
@@ -31,7 +31,7 @@ const titleKeys = {
 
 export function ConnectedView({
   state,
-  isPageTracked,
+  isBehindErrorSheet,
 }: Readonly<ConnectedViewProps>): React.ReactNode {
   const { t } = useTranslation();
   const isNewDevice = useIsNewDevice();
@@ -39,7 +39,7 @@ export function ConnectedView({
 
   return (
     <>
-      {isPageTracked && (
+      {!isBehindErrorSheet && (
         <TrackDIEScreen
           category={PAGE_CONNECT_DEVICE.Connected}
           modelId={device.deviceModelId}

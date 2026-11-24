@@ -17,8 +17,8 @@ type ConnectingViewProps = {
     ConnectNewDeviceNonErrorUIState,
     { type: typeof ConnectNewDeviceUIStateTypes.Connecting }
   >;
-  /** False while an error sheet shows over the view: its page is sent again once it closes. */
-  isPageTracked: boolean;
+  /** True while an error sheet shows over the view: its page is sent again once the sheet closes. */
+  isBehindErrorSheet: boolean;
 };
 
 const titleKeys = {
@@ -28,7 +28,7 @@ const titleKeys = {
 
 export function ConnectingView({
   state,
-  isPageTracked,
+  isBehindErrorSheet,
 }: Readonly<ConnectingViewProps>): React.ReactNode {
   const { t } = useTranslation();
   const { device } = state;
@@ -38,7 +38,7 @@ export function ConnectingView({
 
   return (
     <>
-      {isPageTracked && (
+      {!isBehindErrorSheet && (
         <TrackDIEScreen
           category={PAGE_CONNECT_DEVICE.Connecting}
           modelId={device.deviceModelId}

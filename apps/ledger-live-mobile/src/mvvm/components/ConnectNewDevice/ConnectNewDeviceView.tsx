@@ -31,11 +31,11 @@ function assertNever(value: never): never {
 
 function NonErrorStateView({
   state,
-  isPageTracked,
+  isBehindErrorSheet,
   onDeviceNotFound,
 }: Readonly<{
   state: ConnectNewDeviceNonErrorUIState;
-  isPageTracked: boolean;
+  isBehindErrorSheet: boolean;
   onDeviceNotFound?: () => void;
 }>): React.ReactNode {
   switch (state.type) {
@@ -43,15 +43,15 @@ function NonErrorStateView({
       return (
         <DiscoveringView
           state={state}
-          isPageTracked={isPageTracked}
+          isBehindErrorSheet={isBehindErrorSheet}
           onDeviceNotFound={onDeviceNotFound}
         />
       );
     case ConnectNewDeviceUIStateTypes.Connecting:
-      return <ConnectingView state={state} isPageTracked={isPageTracked} />;
+      return <ConnectingView state={state} isBehindErrorSheet={isBehindErrorSheet} />;
     case ConnectNewDeviceUIStateTypes.Connected:
     case ConnectNewDeviceUIStateTypes.Done:
-      return <ConnectedView state={state} isPageTracked={isPageTracked} />;
+      return <ConnectedView state={state} isBehindErrorSheet={isBehindErrorSheet} />;
     case ConnectNewDeviceUIStateTypes.Terminated:
       return null;
     default:
@@ -86,10 +86,10 @@ export function ConnectNewDeviceView({
   platform,
   onDeviceNotFound,
   onCloseErrorSheet,
-  isEmbedded = false,
+  reportsOutcome,
 }: Readonly<ConnectNewDeviceViewProps>) {
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
-  useConnectNewDeviceTracking(state, { reportsOutcome: !isEmbedded });
+  useConnectNewDeviceTracking(state, { reportsOutcome });
 
   // An error shows in the sheet, over the last view before it.
   const nonErrorState = isErrorState(state) ? lastNonErrorState : state;
@@ -110,7 +110,7 @@ export function ConnectNewDeviceView({
       {/* The view under the error sheet sends its page again once the sheet closes. */}
       <NonErrorStateView
         state={nonErrorState}
-        isPageTracked={errorState === null}
+        isBehindErrorSheet={errorState !== null}
         onDeviceNotFound={onDeviceNotFound}
       />
       <ErrorBottomSheet

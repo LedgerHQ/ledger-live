@@ -38,7 +38,7 @@ export function useConnectNewDeviceViewModel({
   onDeviceNotFound,
   onClose,
   delays,
-}: ConnectNewDeviceProps): ConnectNewDeviceViewProps {
+}: ConnectNewDeviceProps): Omit<ConnectNewDeviceViewProps, "reportsOutcome"> {
   const platform = Platform.OS === "ios" ? "ios" : "android";
   const dmk = useDeviceManagementKit();
   const isMockServerEnabled = useSelector(isMockServerEnabledSelector);

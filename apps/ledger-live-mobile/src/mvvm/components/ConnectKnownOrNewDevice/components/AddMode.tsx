@@ -7,7 +7,7 @@ import {
 } from "LLM/components/ConnectNewDevice";
 import { useTranslation } from "~/context/Locale";
 
-type AddModeProps = ConnectNewDeviceViewProps & {
+type AddModeProps = Omit<ConnectNewDeviceViewProps, "reportsOutcome"> & {
   onClose: () => void;
 };
 
@@ -26,7 +26,7 @@ export function AddMode({ onClose, ...viewProps }: Readonly<AddModeProps>): Reac
           testID="connect-known-or-new-device-add-mode-close"
         />
       </Box>
-      <ConnectNewDeviceView {...viewProps} isEmbedded />
+      <ConnectNewDeviceView {...viewProps} reportsOutcome={false} />
     </Box>
   );
 }
