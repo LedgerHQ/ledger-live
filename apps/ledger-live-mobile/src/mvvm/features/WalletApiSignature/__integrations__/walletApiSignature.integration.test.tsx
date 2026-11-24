@@ -151,4 +151,47 @@ describe("WalletApiSignature feature", () => {
     act(() => mockExecutorProps!.onUserCancel());
     expect(onCancel).not.toHaveBeenCalled();
   });
+
+  it("tracks Wallet Connect transaction requests as the wallet_connect flow", async () => {
+    const request = {
+      account,
+      parentAccount: undefined,
+      transaction: { family: "ethereum", recipient: "0x111111125421ca6dc452d289314280a0f8842a65" },
+      appName: undefined,
+      dependencies: undefined,
+      manifestId: "ledger-wallet-connect",
+      manifestName: "WalletConnect",
+      onSuccess: jest.fn(),
+      onError: jest.fn(),
+    } as unknown as WalletApiDeviceIntentSignRequest;
+
+    const { getByTestId } = render(
+      <TransactionSignatureDrawer request={request} onClose={jest.fn()} />,
+    );
+
+    await waitFor(() => expect(getByTestId("device-intent-executor")).toBeTruthy());
+    expect(mockExecutorProps?.sourceFlow).toBe("wallet_connect");
+  });
+
+  it("tracks Wallet Connect message requests as the wallet_connect flow", async () => {
+    const request = {
+      account,
+      parentAccount: undefined,
+      message: { message: "hello" },
+      appName: undefined,
+      dependencies: undefined,
+      manifestId: "ledger-wallet-connect",
+      manifestName: "WalletConnect",
+      onSuccess: jest.fn(),
+      onError: jest.fn(),
+      onCancel: jest.fn(),
+    } as unknown as WalletApiDeviceIntentSignMessageRequest;
+
+    const { getByTestId } = render(
+      <MessageSignatureDrawer request={request} onClose={jest.fn()} />,
+    );
+
+    await waitFor(() => expect(getByTestId("device-intent-executor")).toBeTruthy());
+    expect(mockExecutorProps?.sourceFlow).toBe("wallet_connect");
+  });
 });

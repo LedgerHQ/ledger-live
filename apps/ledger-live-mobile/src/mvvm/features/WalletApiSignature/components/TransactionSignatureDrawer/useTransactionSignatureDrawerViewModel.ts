@@ -13,6 +13,7 @@ import {
 } from "LLM/components/DeviceIntentExecutor";
 import { signTransactionIntentPlatformDefinition } from "./intentDefinition";
 import type { WalletApiDeviceIntentSignRequest } from "./types";
+import { getSignatureSourceFlow } from "../../utils/getSignatureSourceFlow";
 
 type Props = {
   request: WalletApiDeviceIntentSignRequest;
@@ -125,6 +126,7 @@ export function useTransactionSignatureDrawerViewModel({ request, onClose }: Pro
   }, [onError, onClose]);
 
   return {
+    sourceFlow: getSignatureSourceFlow(request.manifestId),
     deviceInitializationInput,
     signatureIntent,
     onIntentJobStateChanged,
