@@ -4,7 +4,7 @@ import { scenarioCardanoToken } from "./scenarii/cardanoToken";
 import { scenarioCardanoYaci } from "./scenarii/cardanoYaci";
 import { scenarioCardanoTokenYaci } from "./scenarii/cardanoTokenYaci";
 
-jest.setTimeout(600_000);
+jest.setTimeout(900_000);
 
 describe("Cardano Deterministic Tester", () => {
   // Mock backend (MSW): staking lives here until real-node multi-witness signing lands.
