@@ -130,6 +130,11 @@ const trackedEvents = (eventName: string) =>
     .mock.calls.filter(([name]) => name === eventName)
     .map(([, properties]) => properties);
 
+const outcomes = () =>
+  jest
+    .mocked(track)
+    .mock.calls.filter(([name]) => name === "deviceflow_aborted" || name === "deviceflow_failed");
+
 describe("ConnectKnownOrNewDeviceView", () => {
   describe("Rows", () => {
     it("GIVEN connected, available and unavailable devices, WHEN the list renders, THEN it should show the status of each device", () => {
@@ -580,6 +585,42 @@ describe("ConnectKnownOrNewDeviceView", () => {
         { sourceFlow: "my_wallet", deviceUxV2: true, button: "Close" },
       ]);
       expect(close).toHaveBeenCalledTimes(1);
+    });
+
+    it("GIVEN the Add mode, WHEN a fatal error shows the unknown error sheet and the user closes it, THEN it should send one outcome, deviceflow_failed with the error", async () => {
+      // GIVEN
+      const { user, showState } = renderView({
+        type: ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice,
+        connectNewDeviceUIState: {
+          type: ConnectNewDeviceUIStateTypes.Discovering,
+          devices: [],
+          scanningTransports: [rnBleTransportIdentifier],
+          showDeviceNotFound: false,
+        },
+        close: jest.fn(),
+      });
+
+      // WHEN
+      showState({
+        type: ConnectKnownOrNewDeviceUIStateTypes.UnknownError,
+        error: new Error("boom"),
+      });
+      const closeButton = screen.getAllByRole("button", { name: "Close" }).at(-1);
+      if (!closeButton) throw new Error("Missing Close button");
+      await user.press(closeButton);
+
+      // THEN
+      expect(outcomes()).toEqual([
+        [
+          "deviceflow_failed",
+          {
+            sourceFlow: "my_wallet",
+            deviceUxV2: true,
+            failureType: "ConnectDeviceUnknownError",
+            subError: "Error",
+          },
+        ],
+      ]);
     });
   });
 });
