@@ -217,6 +217,10 @@ eager, so importing it is reported like importing a family, `require("~/families
 other file of the folder is reported unless it is in `allow`. Without `familiesDir` only
 `coin-package` and `live-common-family` are checked.
 
+`coinFamilies.rules` holds the three rules of the plugin: `no-coin-specific-import`,
+`no-family-branch` and `no-currency-id-branch`. The two branch rules receive only `familiesDir`: their
+schema rejects `barrel` and `allow`.
+
 **Baseline.** An app starts from today's leaks with oxlint's own suppressions, from the app folder
 and with the paths `lint:ci` uses: `oxlint --suppress-all` writes `oxlint-suppressions.json`, one
 count per file and per rule. These behaviours are covered by the rule's tests (oxlint 1.93.0):
@@ -261,8 +265,8 @@ name, which keeps coin behaviour inside `families/`. A family name is a director
   shadowing variable of the same name is not told apart.
 
 Files inside the app's families folder are not checked, since narrowing on the family is what they are
-for. The option is the one of `no-coin-specific-import`: `["error", { familiesDir: "src/renderer/families" }]`.
-Without it every file is checked.
+for. The option is the `familiesDir` of `no-coin-specific-import`, which `coinFamiliesLint` passes on:
+`["error", { familiesDir: "src/renderer/families" }]`. Without it every file is checked.
 
 It does not report a comparison of two family expressions (`a.family === b.family`), a `typeof`
 check, a name that is not a family, or a lookup in an object keyed by family.

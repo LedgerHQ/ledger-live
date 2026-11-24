@@ -106,8 +106,6 @@ export default defineConfig({
     "import/no-duplicates": "error",
     "suffix-imports/no-platform-suffix": "error",
     ...coinFamilies.rules,
-    "coin-families/no-family-branch": ["error", { familiesDir: "src/families" }],
-    "coin-families/no-currency-id-branch": ["error", { familiesDir: "src/families" }],
     "import/no-named-as-default": "off",
     "typescript/no-explicit-any": "error",
     "typescript/no-non-null-assertion": "off",
