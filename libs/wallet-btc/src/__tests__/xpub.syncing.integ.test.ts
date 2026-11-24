@@ -100,14 +100,6 @@ describe("xpub integration sync", () => {
       currencyId: "dash",
     },
     {
-      xpub: "xpub6BkvrczwoUfLGaNPQFdWXaNFCLzojvw7jFqmKPffS3up21H9uWvo6PcBsQn151ZaffZnyMSZahKfHJSGu7bUViQYDGw3YaEHTM7AjqPhqXC",
-      derivationMode: DerivationModes.LEGACY,
-      addresses: 1,
-      balance: 9336036,
-      network: coininfo.zcash.main.toBitcoinJS(),
-      currencyId: "zencash",
-    },
-    {
       xpub: "xpub6DFFkxo83nYyF7ZHsZYRhDLa6GSK2rtaAZHR66H2YTzBkgBPy6yK5VCD4YVCSUjd1sFe18d17rGveeuSJ2Prn7k9wcwn3BWuZpSE48yThEE",
       derivationMode: DerivationModes.LEGACY,
       addresses: 1,

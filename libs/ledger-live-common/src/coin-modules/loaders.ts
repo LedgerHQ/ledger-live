@@ -47,7 +47,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "qtum",
       "bitcoin_gold",
       "komodo",
-      "zencash",
       "bitcoin_testnet",
       "bitcoin_regtest",
       "bitcoin_signet",
