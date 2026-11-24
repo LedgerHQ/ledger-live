@@ -15,7 +15,7 @@ export const outpoint = (hash: string, outputIndex: number) =>
   `${hash.toLowerCase()}:${outputIndex}`;
 
 /** Unconfirmed transactions fetched at once, so many pending transactions do not flood the explorer. */
-const PENDING_TX_CONCURRENCY = 8;
+export const PENDING_TX_CONCURRENCY = 8;
 
 /**
  * The transaction while the explorer still holds it unmined, else `undefined`. The explorer keeps
