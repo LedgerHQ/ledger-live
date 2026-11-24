@@ -71,12 +71,16 @@ function checksResultPage(
   return page ? { page } : null;
 }
 
+/** The OS update an unseeded Nano held back until setup: its sheets and drawers send their own pages. */
+const postSetupFirmwareCheck = "postSetupFirmware.firmwareCheck";
+
 export function unseededShownPage(
   machineState: string,
   context: DeviceOnboardingContext,
   status: UnseededStatus,
 ): ShownPage | null {
   if (machineState.startsWith("checks.")) return checksResultPage(machineState, context, status);
+  if (machineState === postSetupFirmwareCheck) return { page: onboardingPages.checkOsVersion };
   const page = setupPage(machineState);
   return page ? { page } : null;
 }
@@ -152,6 +156,14 @@ export function useUnseededFunnelTracking({
       sentOnce.current.add(page);
       trackOnboardingPage(page, props);
     };
+
+    // The device restarted its setup: the abandoned attempt must not decide the new one's pages.
+    const setupForgotten =
+      machineContext.seedPath === null && machineContext.currentSetupStep === null;
+    if (setupForgotten && !finished.current) {
+      recoveryKeyOffered.current = false;
+      sentOnce.current.clear();
+    }
 
     if (!started.current && isFunnelState(machineState)) {
       started.current = true;

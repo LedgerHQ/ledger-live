@@ -48,10 +48,11 @@ import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
 import { useReconnectWhileDeviceOff } from "LLM/features/DeviceOnboarding/hooks/useReconnectWhileDeviceOff";
 import type { SetupScreenProps } from "LLM/features/DeviceOnboarding/screens/Setup/types";
 import { onboardingButtons } from "@features/platform-device-onboarding-analytics";
+import { useSeededFunnelTracking } from "LLM/features/DeviceOnboarding/analytics/useSeededFunnelTracking";
 import {
-  useSeededFunnelTracking,
-  type SeededFunnelTracking,
-} from "LLM/features/DeviceOnboarding/analytics/useSeededFunnelTracking";
+  unseededChecksTracking,
+  type ChecksTracking,
+} from "LLM/features/DeviceOnboarding/analytics/checksTracking";
 import {
   useUnseededFunnelTracking,
   type UnseededFunnel,
@@ -249,8 +250,6 @@ type ScreenActions = {
   withCloseClick: (quit: () => void) => () => void;
   updateAfterSetup: boolean;
 };
-
-type ChecksTracking = Pick<SeededFunnelTracking, "funnelProps" | "trackClick" | "screensFor">;
 
 function failedScreen(
   copy: ScreenCopy,
@@ -661,6 +660,17 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     machineState: shownState,
     machineContext: onboarding.snapshot?.context ?? null,
   });
+  const checksTracking = useMemo<ChecksTracking>(
+    () =>
+      unseededFunnel
+        ? unseededChecksTracking(unseededFunnel.props)
+        : {
+            funnelProps: seededTracking.funnelProps,
+            trackClick,
+            screensFor: seededTracking.screensFor,
+          },
+    [unseededFunnel, seededTracking.funnelProps, seededTracking.screensFor, trackClick],
+  );
   const onLeave = useCallback(
     (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => {
       allowLeave.current = true;
@@ -1030,15 +1040,11 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     availableFirmwareVersion: readString(onboarding.context?.availableFirmwareVersion),
     firmwareUpToDate: onboarding.context?.firmwareUpToDate === true,
     genuineFailureKind: readString(onboarding.context?.genuineFailureKind),
-    tracking: {
-      funnelProps: seededTracking.funnelProps,
-      trackClick,
-      screensFor: seededTracking.screensFor,
-    },
+    tracking: checksTracking,
     unseededFunnel,
     markUpdateAccepted: () => setFirmwareUpdateStarted(true),
     withCloseClick: (quit: () => void) => () => {
-      trackClick(onboardingButtons.close);
+      checksTracking.trackClick(onboardingButtons.close);
       quit();
     },
     updateAfterSetup,

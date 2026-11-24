@@ -190,6 +190,48 @@ describe("useUnseededFunnelTracking", () => {
     ]);
   });
 
+  it("should forget the Recovery Key of an attempt the device restarted", () => {
+    const step = { currentSetupStep: "new-device" } as Partial<DeviceOnboardingContext>;
+    const forgotten = {
+      ...upToDate,
+      seedPath: null,
+      currentSetupStep: null,
+    } as Partial<DeviceOnboardingContext>;
+    walk([
+      { state: "deviceSetup.newSeed", context: { ...newSeed, ...step } },
+      { state: "deviceSetup.backupRecoveryKey", context: { ...newSeed, ...step } },
+      { state: "routing", context: forgotten },
+      { state: "deviceSetup.newSeed", context: { ...newSeed, ...step } },
+      {
+        state: "done",
+        context: {
+          ...newSeed,
+          ...step,
+          lastDeviceState: { isOnboarded: true, recoveryKeyStatus: null },
+        } as Partial<DeviceOnboardingContext>,
+      },
+    ]);
+
+    const pages = jest.mocked(trackPage).mock.calls.map(([page]) => page.category);
+    expect(pages.slice(-2)).toEqual([
+      "Secret Recovery Phrase - Start",
+      "Secret Recovery Phrase - Success",
+    ]);
+    expect(pages).not.toContain("Ledger Recovery key - Rejected");
+  });
+
+  it("should show the OS check of the update an unseeded Nano held back until setup", () => {
+    walk([
+      { state: "deviceSetup.pin", context: upToDate },
+      { state: "postSetupFirmware.firmwareCheck", context: upToDate },
+    ]);
+
+    expect(jest.mocked(trackPage).mock.calls.map(([page]) => page.category)).toEqual([
+      "Pin setup",
+      "Check OS version",
+    ]);
+  });
+
   it("should send nothing for a device seeded on entry", () => {
     walk([
       { state: "checks.genuineCheck.running", context: { onboardedOnEntry: true } },

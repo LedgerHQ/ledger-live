@@ -70,6 +70,19 @@ describe("setupSuccessPages", () => {
     ]);
   });
 
+  it.each([
+    [RecoveryKeyStatus.Ready, onboardingPages.recoveryKeySuccess],
+    [RecoveryKeyStatus.Rejected, onboardingPages.recoveryKeyRejected],
+  ])(
+    "should send the %s Recovery Key result even when polling missed the backup step",
+    (status, page) => {
+      expect(setupSuccessPages(SeedPath.NewSeed, status, false)).toEqual([
+        onboardingPages.newSeedSuccess,
+        page,
+      ]);
+    },
+  );
+
   it("should close a new seed alone when the device offers no Recovery Key", () => {
     expect(setupSuccessPages(SeedPath.NewSeed, null, false)).toEqual([
       onboardingPages.newSeedSuccess,

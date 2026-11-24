@@ -120,7 +120,11 @@ export function setupSuccessPages(
 ): OnboardingPage[] {
   switch (seedPath) {
     case SeedPath.NewSeed: {
-      if (!recoveryKeyOffered) return [onboardingPages.newSeedSuccess];
+      // Polling can miss the backup step: a final status still says the key was offered.
+      const recoveryKeyAnswered =
+        recoveryKeyStatus === RecoveryKeyStatus.Ready ||
+        recoveryKeyStatus === RecoveryKeyStatus.Rejected;
+      if (!recoveryKeyOffered && !recoveryKeyAnswered) return [onboardingPages.newSeedSuccess];
       const recoveryKeyResult =
         recoveryKeyStatus === RecoveryKeyStatus.Ready
           ? onboardingPages.recoveryKeySuccess

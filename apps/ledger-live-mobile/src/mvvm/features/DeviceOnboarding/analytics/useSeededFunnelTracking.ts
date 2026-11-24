@@ -21,6 +21,7 @@ import {
 import type { TrackedScreen, UpdateStep } from "../types";
 import { exitOutcome } from "../utils/exitActions";
 import { checksPage } from "./checksPage";
+import { trackedScreen as tracked, updateStepScreen } from "./checksTracking";
 
 type Input = Readonly<{
   /** The state the screen shows, so a held screen (device locked or off) sends no page again. */
@@ -134,26 +135,4 @@ export function useSeededFunnelTracking({
   }, [result, trackStarted]);
 
   return { funnelProps, trackClick, screensFor, trackExit, trackAbort };
-}
-
-function updateStepScreen(step: UpdateStep, funnelProps: FunnelProps): ScreenTracking {
-  switch (step) {
-    case "offerSheet":
-      return onboardingScreen(onboardingPages.osUpdateRequired, funnelProps);
-    case "decisionScreen":
-      return onboardingScreen(onboardingPages.osUpdateRefusal, funnelProps);
-    case "unsupportedUsbDrawer":
-      return onboardingScreen(onboardingPages.osUpdateUnsupported, funnelProps, {
-        reason: "usb_required",
-      });
-    case "unsupportedNotEligibleDrawer":
-      return onboardingScreen(onboardingPages.osUpdateUnsupported, funnelProps, {
-        reason: "not_eligible",
-      });
-  }
-}
-
-function tracked(slot: string, tracking: ScreenTracking): TrackedScreen {
-  const reason = typeof tracking.reason === "string" ? `:${tracking.reason}` : "";
-  return { key: `${slot}:${tracking.category}${reason}`, tracking };
 }
