@@ -1,5 +1,4 @@
 import { z } from "zod";
-import type { MarketChartRange } from "@domain/entity-market-chart";
 import { MarketChartResponseSchema } from "./schema";
 
 /** The raw countervalues `/v3/markets/chart/{range}/{id}` response. */
@@ -10,5 +9,6 @@ export type AssetChartDataArgs = {
   id?: string;
   /** Fiat or crypto id the values are expressed in. */
   counterCurrency?: string;
-  range?: MarketChartRange;
+  /** A UI range such as `24h` or `7d`. Unknown ranges are fetched as one day, as before. */
+  range?: string;
 };

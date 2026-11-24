@@ -1,10 +1,8 @@
-import type { MarketChartRange } from "@domain/entity-market-chart";
-
 /** The segment the chart path expects: `/v3/markets/chart/{segment}/{id}`. */
 export type ChartRangeSegment = "1h" | "1d" | "1w" | "1m" | "6m" | "1y" | "5y" | "all";
 
-/** Maps a UI range to the URL segment. Unknown values fall back to one day. */
-export function getChartRangeSegment(range: MarketChartRange): ChartRangeSegment {
+/** Maps a UI range to the URL segment. Unknown values fall back to one day, as the legacy client did. */
+export function getChartRangeSegment(range: string): ChartRangeSegment {
   switch (range) {
     case "1h":
       return "1h";
