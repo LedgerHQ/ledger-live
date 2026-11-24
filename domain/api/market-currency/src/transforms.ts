@@ -1,9 +1,5 @@
 import { KeysPriceChange, type MarketCurrency } from "@domain/entity-market-currency";
 import type { MarketItemResponse } from "./types";
-import { distributedCopy, toSparklineSvgData } from "./internals/sparkline";
-
-/** Sparklines keep 6 points per day of the week. */
-const SPARKLINE_POINTS_IN_7D = 6 * 7;
 
 /** Maps one raw `/v3/markets` item to the app-facing {@link MarketCurrency}. */
 export function formatMarketCurrency(currency: MarketItemResponse): MarketCurrency {
@@ -35,9 +31,6 @@ export function formatMarketCurrency(currency: MarketItemResponse): MarketCurren
     athDate: new Date(currency.allTimeHighDate),
     atl: currency.allTimeLow,
     atlDate: new Date(currency.allTimeLowDate),
-    sparklineIn7d: currency.sparkline
-      ? toSparklineSvgData(distributedCopy(currency.sparkline, SPARKLINE_POINTS_IN_7D))
-      : undefined,
     chartData: {},
   };
 }

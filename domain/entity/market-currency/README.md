@@ -8,7 +8,7 @@ the list.
 
 - `types.ts` — `MarketCurrency` (the currency as the market list and the market detail read it),
   `MarketListQueryArg`, the `Order` and `KeysPriceChange` enums, `MARKET_LIST_PAGE_SIZES`,
-  `MARKET_LIST_MIN_SEARCH_LENGTH`, and `SparklineSvgData`.
+  `MARKET_LIST_MIN_SEARCH_LENGTH`.
 - `pairing.ts` — `pairMarketsWithRequestedLedgerIds`: pairs each requested ledger id with its market,
   in request order.
 

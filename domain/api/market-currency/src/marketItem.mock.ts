@@ -31,7 +31,6 @@ export function mockMarketItemResponse(
     priceChangePercentage7d: 1.9,
     priceChangePercentage6m: 12.4,
     priceChangePercentage1y: 48.2,
-    sparkline: [61_000, 62_000, 63_000, 63_250],
     ticker: "BTC",
     totalSupply: 21_000_000,
     totalVolume: 28_000_000_000,

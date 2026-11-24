@@ -20,7 +20,6 @@ dependency.
   and the pagination rule.
 - `sort.ts` — `getSortParam` and `getRange`: the `sort` param of an order over a price-change range.
 - `types.ts` — `MarketItemResponse`, the raw `/v3/markets` item, and the request params of the lookups.
-- `internals/` — private: ledger id chunking and page sizing, and the sparkline maths.
 - `marketItem.mock.ts` — a raw market item mock for app MSW handlers, exposed via the `./mock` subpath.
 
 ## The endpoints are injected, not created

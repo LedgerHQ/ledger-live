@@ -41,17 +41,6 @@ describe("formatMarketCurrency", () => {
     expect(currency.athDate).toEqual(new Date("2021-11-10T14:24:11.000Z"));
     expect(currency.atlDate).toEqual(new Date("2013-07-06T00:00:00.000Z"));
   });
-
-  it("builds the 7-day sparkline, and leaves it out when the item has none", () => {
-    const withSparkline = formatMarketCurrency(mockMarketItemResponse());
-    const withoutSparkline = formatMarketCurrency(
-      mockMarketItemResponse({ sparkline: undefined as unknown as number[] }),
-    );
-
-    expect(withSparkline.sparklineIn7d?.isPositive).toBe(true);
-    expect(withSparkline.sparklineIn7d?.viewBox).toBe("0 0 20 53");
-    expect(withoutSparkline.sparklineIn7d).toBeUndefined();
-  });
 });
 
 describe("formatMarketCurrencies", () => {

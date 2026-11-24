@@ -41,12 +41,6 @@ export type MarketListQueryArg = {
   categories?: string;
 };
 
-export type SparklineSvgData = {
-  path: string;
-  viewBox: string;
-  isPositive: boolean;
-};
-
 /** Chart series keyed by range, as the market currency carries them. */
 export type MarketCurrencyChartData = Record<string, Array<[number, number]>>;
 
@@ -72,6 +66,5 @@ export type MarketCurrency = {
   athDate: Date;
   atl: number;
   atlDate: Date;
-  sparklineIn7d?: SparklineSvgData;
   chartData: MarketCurrencyChartData;
 };
