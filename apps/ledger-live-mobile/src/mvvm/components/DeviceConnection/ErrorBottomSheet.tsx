@@ -3,6 +3,10 @@ import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rna
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Platform, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  DeviceIntentTrackingProvider,
+  useDeviceIntentTracking,
+} from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 
 type ErrorBottomSheetProps = {
   isOpen: boolean;
@@ -21,6 +25,7 @@ export function ErrorBottomSheet({
   children,
   testID,
 }: Readonly<ErrorBottomSheetProps>): React.JSX.Element {
+  const trackingContext = useDeviceIntentTracking();
   const { height: windowHeight } = useWindowDimensions();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
   // Lumen's static preset can force Android dynamic sheets full height, so use the live window cap.
@@ -42,7 +47,10 @@ export function ErrorBottomSheet({
         showsVerticalScrollIndicator={false}
       >
         <BottomSheetHeader />
-        {children}
+        {/* The sheet renders its content through a portal, outside the provider of the caller. */}
+        <DeviceIntentTrackingProvider value={trackingContext}>
+          {children}
+        </DeviceIntentTrackingProvider>
       </BottomSheetScrollView>
     </QueuedBottomSheet>
   );
