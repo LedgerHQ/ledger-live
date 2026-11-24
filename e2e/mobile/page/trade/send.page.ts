@@ -88,16 +88,12 @@ export default class SendPage {
   }
 
   @Step("Expect recipient warning message {{{0}}}")
-  async expectSendRecipientWarning(expectedWarningMessage: string | null) {
+  async expectSendRecipientWarning(expectedWarningMessage: string) {
     await this.expectRecipientMessage(expectedWarningMessage, true);
   }
 
-  private async expectRecipientMessage(message: string | null, continueButtonVisible = false) {
-    if (message) {
-      await this.recipientError.expectText(message);
-    } else {
-      await this.recipientError.expectNotVisible();
-    }
+  private async expectRecipientMessage(message: string, continueButtonVisible = false) {
+    await this.recipientError.expectText(message);
 
     if (continueButtonVisible) {
       await this.recipientContinueEnabledButton.expectVisible();

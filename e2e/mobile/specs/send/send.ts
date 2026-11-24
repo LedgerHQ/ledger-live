@@ -156,7 +156,7 @@ export function runSendTest(options: RunSendTestOptions) {
 
 type RunSendInvalidAddressTestOptions = RunSendTestBaseOptions & {
   expectedErrorMessage: string;
-  /** What the invalid recipient is, for the test name: e.g. "same as sender", "empty". */
+  /** What the invalid recipient is, for the test name: e.g. "incorrect format". */
   scenario: string;
   address?: string;
   accountName?: string;
