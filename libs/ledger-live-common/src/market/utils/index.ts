@@ -1,5 +1,5 @@
 import { PortfolioRange } from "@ledgerhq/types-live";
-import { MarketItemPerformer, Order } from "./types";
+import { MarketItemPerformer } from "./types";
 
 // Export all types from types.ts
 export * from "./types";
@@ -74,26 +74,6 @@ export function getChangePercentage(data: MarketItemPerformer, range: PortfolioR
   }
 }
 
-export function getRange(range: PortfolioRange | string) {
-  switch (range) {
-    case "day":
-    case "24h":
-      return "1d";
-    case "7d":
-    case "week":
-      return "1w";
-    case "30d":
-    case "month":
-      return "1m";
-    case "6m":
-      return "6m";
-    case "1y":
-    case "year":
-    case "all":
-      return "1y";
-  }
-}
-
 export type ChartRangeSegment = "1h" | "1d" | "1w" | "1m" | "6m" | "1y" | "5y" | "all";
 
 export function getChartRangeSegment(range: PortfolioRange | string): ChartRangeSegment {
@@ -126,20 +106,4 @@ export function getChartRangeSegment(range: PortfolioRange | string): ChartRange
   }
 }
 
-export const getSortParam = (order: Order, range: PortfolioRange | string) => {
-  switch (order) {
-    default:
-    case Order.MarketCapDesc:
-      return "market-cap-rank";
-    case Order.MarketCapAsc:
-      return "market-cap-rank-desc";
-    case Order.topLosers:
-      return `negative-price-change-${getRange(range)}`;
-    case Order.topGainers:
-      return `positive-price-change-${getRange(range)}`;
-    case Order.VolumeDesc:
-      return "total-volume-desc";
-    case Order.VolumeAsc:
-      return "total-volume";
-  }
-};
+export { getRange, getSortParam } from "@domain/api-market-currency";

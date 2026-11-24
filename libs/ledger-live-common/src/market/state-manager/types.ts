@@ -1,9 +1,5 @@
 import { z } from "zod";
-import type {
-  MarketListRequestParams,
-  MarketPerformersParams,
-  TrendingPerformersParams,
-} from "../utils/types";
+import type { MarketPerformersParams, TrendingPerformersParams } from "../utils/types";
 
 export enum MarketDataTags {
   Performers = "Performers",
@@ -16,26 +12,18 @@ export enum MarketDataTags {
   MarketList = "MarketList",
 }
 
-export const MARKET_LIST_PAGE_SIZES = [1, 5, 20, 50] as const;
-
-export const MARKET_LIST_MIN_SEARCH_LENGTH = 2;
-
-export type MarketListPageSize = (typeof MARKET_LIST_PAGE_SIZES)[number];
-
-export type MarketListQueryArg = Omit<MarketListRequestParams, "limit"> & {
-  pageSize: MarketListPageSize;
-  /** Max number of results across pages. A page size stays on `pageSize`. */
-  limit?: number;
-};
+export {
+  MARKET_LIST_MIN_SEARCH_LENGTH,
+  MARKET_LIST_PAGE_SIZES,
+  type MarketListPageSize,
+  type MarketListQueryArg,
+} from "@domain/entity-market-currency";
 
 export type MarketPerformersQueryParams = Omit<MarketPerformersParams, "refreshRate">;
 
 export type TrendingPerformersQueryParams = Omit<TrendingPerformersParams, "refreshRate">;
 
-export interface MarketsByLedgerIdsQueryParams {
-  ledgerIds: string[];
-  counterCurrency: string;
-}
+export type { MarketsByLedgerIdsQueryParams } from "@domain/api-market-currency";
 
 export const MarketChartApiResponseSchema = z.object({
   values: z.array(z.tuple([z.number(), z.number()])),

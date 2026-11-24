@@ -270,6 +270,8 @@ domain/entity/market-index-fear-and-greed/               @ledgerhq/wallet-xp
 domain/entity/market-index-altcoin-season/               @ledgerhq/wallet-xp
 domain/api/market-index-fear-and-greed/                  @ledgerhq/wallet-xp
 domain/api/market-index-altcoin-season/                  @ledgerhq/wallet-xp
+domain/entity/market-currency/                           @ledgerhq/wallet-xp
+domain/api/market-currency/                              @ledgerhq/wallet-xp
 features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
 
 ### ... portfolio service => @ledgerhq/wallet-xp ... ###

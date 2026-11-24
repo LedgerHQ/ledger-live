@@ -4,8 +4,9 @@ import {
   type MarketListPageSize,
   type MarketListQueryArg,
 } from "../state-manager/types";
-import { getSortParam } from "./index";
-import { type MarketCurrencyData, type MarketListRequestParams, Order } from "./types";
+import { Order, type MarketListRequestParams } from "./types";
+
+export { buildMarketListParams, getNextMarketListPage } from "@domain/api-market-currency";
 
 const DEFAULT_MARKET_LIST_PAGE_SIZE: MarketListPageSize = 50;
 
@@ -46,51 +47,4 @@ export function toMarketListQueryArg({
     ...(liveCompatible && { liveCompatible }),
     ...(categories && { categories }),
   };
-}
-
-export function buildMarketListParams({
-  queryArg,
-  page,
-}: {
-  queryArg: MarketListQueryArg;
-  page: number;
-}) {
-  const {
-    counterCurrency,
-    pageSize,
-    limit,
-    order = Order.MarketCapDesc,
-    range = "24",
-    search,
-    filter,
-    starred,
-    liveCompatible,
-    categories,
-  } = queryArg;
-
-  return {
-    page,
-    pageSize,
-    to: counterCurrency,
-    sort: getSortParam(order, range),
-    limit,
-    filter: filter ?? search,
-    ids: starred?.join(","),
-    supported: liveCompatible,
-    categories,
-  };
-}
-
-export function getNextMarketListPage(
-  lastPage: MarketCurrencyData[],
-  allPages: MarketCurrencyData[][],
-  lastPageParam: number,
-  queryArg: MarketListQueryArg,
-): number | undefined {
-  if (lastPage.length < queryArg.pageSize) return undefined;
-
-  const loadedCount = allPages.reduce((count, page) => count + page.length, 0);
-  if (queryArg.limit !== undefined && loadedCount >= queryArg.limit) return undefined;
-
-  return lastPageParam + 1;
 }

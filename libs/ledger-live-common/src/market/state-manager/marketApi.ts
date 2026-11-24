@@ -28,76 +28,18 @@ import {
   TrendingPerformersQueryParams,
 } from "./types";
 import { currencyFormatter, format, formatPerformer } from "../utils/currencyFormatter";
+import { pairMarketsWithRequestedLedgerIds } from "@domain/entity-market-currency";
+import {
+  chunkLedgerIds,
+  marketPageSize,
+  marketsFromPages,
+  MAX_MARKETS_PAGE_SIZE,
+} from "@domain/api-market-currency";
+
+export { pairMarketsWithRequestedLedgerIds } from "@domain/entity-market-currency";
+export type { RequestedLedgerMarket } from "@domain/entity-market-currency";
 
 const MAX_TRENDING_CATEGORIES = 5;
-
-// /v3/markets only accepts these pageSize values.
-const ALLOWED_MARKET_PAGE_SIZES = [1, 5, 20, 50] as const;
-const MAX_MARKETS_PAGE_SIZE = ALLOWED_MARKET_PAGE_SIZES.at(-1) ?? 50;
-
-function marketPageSize(count: number): (typeof ALLOWED_MARKET_PAGE_SIZES)[number] {
-  return ALLOWED_MARKET_PAGE_SIZES.find(size => size >= count) ?? MAX_MARKETS_PAGE_SIZE;
-}
-
-function chunkLedgerIds(ledgerIds: string[]): string[][] {
-  const chunks: string[][] = [];
-  for (let start = 0; start < ledgerIds.length; start += MAX_MARKETS_PAGE_SIZE) {
-    chunks.push(ledgerIds.slice(start, start + MAX_MARKETS_PAGE_SIZE));
-  }
-  return chunks;
-}
-
-function isMarketItemList(data: unknown): data is MarketItemResponse[] {
-  return Array.isArray(data);
-}
-
-function marketsFromPages(
-  pages: readonly { error?: unknown; data?: unknown }[],
-): MarketItemResponse[] | undefined {
-  const markets: MarketItemResponse[] = [];
-  let succeeded = false;
-  for (const page of pages) {
-    if (page.error || !isMarketItemList(page.data)) continue;
-    succeeded = true;
-    markets.push(...page.data);
-  }
-  return succeeded ? markets : undefined;
-}
-
-export type RequestedLedgerMarket = {
-  ledgerId: string;
-  market: MarketItemResponse;
-};
-
-function marketForRequestedLedgerId(
-  markets: MarketItemResponse[],
-  ledgerId: string,
-): MarketItemResponse | undefined {
-  let fallback: MarketItemResponse | undefined;
-  for (const market of markets) {
-    if (!market.ledgerIds.includes(ledgerId)) continue;
-    if (market.id === ledgerId) return market;
-    fallback ??= market;
-  }
-  return fallback;
-}
-
-export function pairMarketsWithRequestedLedgerIds(
-  markets: MarketItemResponse[],
-  ledgerIds: string[],
-): RequestedLedgerMarket[] {
-  return ledgerIds.flatMap(ledgerId => {
-    const market = marketForRequestedLedgerId(markets, ledgerId);
-    return market ? [{ ledgerId, market }] : [];
-  });
-}
-
-function orderMarketsByLedgerIds(
-  markets: MarketItemResponse[],
-  ledgerIds: string[],
-): MarketItemResponse[] {
-  return pairMarketsWithRequestedLedgerIds(markets, ledgerIds).map(({ market }) => market);
-}
 
 export const marketApi = createApi({
   reducerPath: "marketApi",
@@ -173,7 +115,9 @@ export const marketApi = createApi({
           };
         }
 
-        return { data: orderMarketsByLedgerIds(markets, ledgerIds) };
+        return {
+          data: pairMarketsWithRequestedLedgerIds(markets, ledgerIds).map(({ market }) => market),
+        };
       },
       providesTags: [MarketDataTags.CurrencyData],
       keepUnusedDataFor: (REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH) / 1000,

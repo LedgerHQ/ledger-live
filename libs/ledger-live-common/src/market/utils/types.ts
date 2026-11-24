@@ -1,16 +1,13 @@
 import { PortfolioRange } from "@ledgerhq/types-live";
+import type { MarketItemResponse } from "@domain/api-market-currency";
+import type { MarketCurrency } from "@domain/entity-market-currency";
 
 export type ChartDataPoint = [number, number];
 export type MarketCoinDataChart = Record<string, Array<ChartDataPoint>>;
 
-export enum Order {
-  MarketCapDesc = "desc",
-  MarketCapAsc = "asc",
-  topLosers = "topLosers",
-  topGainers = "topGainers",
-  VolumeDesc = "volume-desc",
-  VolumeAsc = "volume-asc",
-}
+import { Order } from "@domain/entity-market-currency";
+
+export { Order };
 
 export type MarketListRequestParams = {
   counterCurrency?: string;
@@ -43,47 +40,15 @@ type MarketCounterValueParams = {
   counterCurrency?: string;
 };
 
-export type MarketCurrencyRequestParams = MarketCounterValueParams & {
-  /** Ledger currency ids to resolve via the /v3/markets `ledgerIds` filter. */
-  ledgerIds?: string[];
-};
+export type { MarketCurrencyRequestParams } from "@domain/api-market-currency";
 
 export type MarketAssetChartDataRequestParams = MarketCounterValueParams & {
   range?: string;
 };
 
-export enum KeysPriceChange {
-  hour = "1h",
-  day = "24h",
-  week = "7d",
-  month = "30d",
-  sixMonths = "6m",
-  year = "1y",
-}
+export { KeysPriceChange } from "@domain/entity-market-currency";
 
-export type MarketCurrencyData = {
-  id: string;
-  ledgerIds: string[];
-  name: string;
-  image?: string;
-  marketcap?: number;
-  marketcapRank: number;
-  totalVolume: number;
-  high24h: number;
-  low24h: number;
-  ticker: string;
-  price: number;
-  priceChangePercentage: Record<KeysPriceChange, number>;
-  marketCapChangePercentage24h: number;
-  circulatingSupply: number;
-  totalSupply?: number;
-  maxSupply?: number;
-  ath: number;
-  athDate: Date;
-  atl: number;
-  atlDate: Date;
-  chartData: MarketCoinDataChart;
-};
+export type MarketCurrencyData = MarketCurrency;
 
 export type MarketPerformersParams = {
   limit: number;
@@ -100,38 +65,7 @@ export type TrendingPerformersParams = {
   refreshRate?: number;
 };
 
-export type MarketItemResponse = {
-  allTimeHigh: number;
-  allTimeHighDate: string;
-  allTimeLow: number;
-  allTimeLowDate: string;
-  circulatingSupply: number;
-  fullyDilutedValuation: number;
-  high24h: number;
-  currencyId: string;
-  id: string;
-  image: string;
-  ledgerIds: string[];
-  low24h: number;
-  marketCap: number;
-  marketCapChange24h: number;
-  marketCapChangePercentage24h: number;
-  marketCapRank: number;
-  maxSupply: number;
-  name: string;
-  price: number;
-  priceChange24h: number;
-  priceChangePercentage1h: number;
-  priceChangePercentage24h: number;
-  priceChangePercentage30d: number;
-  priceChangePercentage7d: number;
-  priceChangePercentage6m?: number;
-  priceChangePercentage1y: number;
-  ticker: string;
-  totalSupply: number;
-  totalVolume: number;
-  updatedAt: string;
-};
+export type { MarketItemResponse };
 
 export type PartialMarketItemResponse = Partial<MarketItemResponse>;
 
