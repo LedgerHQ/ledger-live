@@ -1,7 +1,13 @@
 import React from "react";
 import { Text } from "react-native";
-import { render, screen, userEvent } from "@testing-library/react-native";
+import { act, render, screen, userEvent } from "@testing-library/react-native";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { SettingsSheet } from "./SettingsSheet";
+
+jest.mock("@shared/ui-queued-bottom-sheet", () => {
+  const actual = jest.requireActual("@shared/ui-queued-bottom-sheet");
+  return { ...actual, QueuedBottomSheet: jest.fn(actual.QueuedBottomSheet) };
+});
 
 describe("SettingsSheet", () => {
   it("shows the title, the description and the content when open", () => {
@@ -75,9 +81,29 @@ describe("SettingsSheet", () => {
     expect(screen.getByText("Dark")).toBeVisible();
   });
 
+  it("does not report a close when the caller closes it", () => {
+    const onClose = jest.fn();
+    const sheet = (isOpen: boolean) => (
+      <SettingsSheet isOpen={isOpen} title="Theme" onClose={onClose} testID="theme-sheet" />
+    );
+    const { rerender } = render(sheet(true));
+
+    rerender(sheet(false));
+    const sheetOnClose = jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].onClose;
+    act(() => sheetOnClose?.());
+
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
   it("offers no way to dismiss it while it cannot close", () => {
     render(
-      <SettingsSheet isOpen title="Theme" onClose={jest.fn()} canClose={false} testID="theme-sheet" />,
+      <SettingsSheet
+        isOpen
+        title="Theme"
+        onClose={jest.fn()}
+        canClose={false}
+        testID="theme-sheet"
+      />,
     );
 
     expect(screen.queryByTestId("theme-sheet-dismiss")).toBeNull();

@@ -44,11 +44,12 @@ export function SettingsSheet({
   const onModalHide = useCallback(() => {
     if (!isOpen) setIsContentShown(false);
   }, [isOpen]);
+  const canUserClose = isOpen && canClose;
 
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
-      onClose={canClose ? onClose : undefined}
+      onClose={canUserClose ? onClose : undefined}
       onModalHide={onModalHide}
       noCloseButton={!canClose}
       preventBackdropClick={!canClose}

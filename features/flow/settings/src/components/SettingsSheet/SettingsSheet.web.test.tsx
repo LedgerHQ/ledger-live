@@ -17,10 +17,10 @@ describe("SettingsSheet", () => {
       </SettingsSheet>,
     );
 
-    expect(screen.getByTestId("region-sheet")).toBeInTheDocument();
-    expect(screen.getByText("Select your region")).toBeInTheDocument();
-    expect(screen.getByText("Updates date and number formats")).toBeInTheDocument();
-    expect(screen.getByText("Algeria")).toBeInTheDocument();
+    expect(screen.getByTestId("region-sheet")).toBeVisible();
+    expect(screen.getByText("Select your region")).toBeVisible();
+    expect(screen.getByText("Updates date and number formats")).toBeVisible();
+    expect(screen.getByText("Algeria")).toBeVisible();
   });
 
   it("renders nothing when closed", () => {

@@ -33,8 +33,8 @@ describe("SettingsConfirmSheet", () => {
   it("shows the question and both actions", () => {
     renderSheet();
 
-    expect(screen.getByText("Clear cache?")).toBeInTheDocument();
-    expect(screen.getByText("Your accounts will sync again.")).toBeInTheDocument();
+    expect(screen.getByText("Clear cache?")).toBeVisible();
+    expect(screen.getByText("Your accounts will sync again.")).toBeVisible();
     expect(screen.getByTestId("confirm")).toHaveTextContent("Clear");
     expect(screen.getByTestId("cancel")).toHaveTextContent("Cancel");
   });
