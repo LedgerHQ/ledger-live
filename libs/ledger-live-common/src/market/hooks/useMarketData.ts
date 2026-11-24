@@ -1,12 +1,14 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
-import { marketApi, useGetMarketListInfiniteQuery } from "../state-manager/api";
+import { marketCurrencyApi, useGetMarketListInfiniteQuery } from "@domain/api-market-currency";
 import { toMarketListQueryArg } from "../utils/marketListQueryArg";
 import type { MarketListRequestParams, MarketListRequestResult } from "../utils/types";
 import type { MarketListQueryArg } from "../state-manager/types";
 
-type MarketApiState = { [marketApi.reducerPath]: ReturnType<typeof marketApi.reducer> };
+type MarketApiState = {
+  [marketCurrencyApi.reducerPath]: ReturnType<typeof marketCurrencyApi.reducer>;
+};
 type MarketThunkDispatch = ThunkDispatch<MarketApiState, unknown, UnknownAction>;
 
 function useMarketListQueryArg({
@@ -56,7 +58,7 @@ export function useMarketData(
 
   const resetToFirstPage = useCallback(() => {
     dispatch(
-      marketApi.util.updateQueryData("getMarketList", queryArg, draft => {
+      marketCurrencyApi.util.updateQueryData("getMarketList", queryArg, draft => {
         draft.pages.splice(1);
         draft.pageParams.splice(1);
       }),

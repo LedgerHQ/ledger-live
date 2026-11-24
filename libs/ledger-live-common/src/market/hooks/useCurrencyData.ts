@@ -1,4 +1,4 @@
-import { useGetCurrencyDataQuery } from "../state-manager/api";
+import { useGetCurrencyDataQuery } from "@domain/api-market-currency";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
 import type { MarketCurrencyRequestParams } from "../utils/types";
 

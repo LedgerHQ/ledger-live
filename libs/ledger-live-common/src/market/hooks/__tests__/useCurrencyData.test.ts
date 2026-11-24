@@ -6,9 +6,12 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { useCurrencyData } from "../useCurrencyData";
-import { marketApi } from "../../state-manager/marketApi";
+import { marketCurrencyApi } from "@domain/api-market-currency";
 import { server } from "@tests/server";
 import { createTestStore, createWrapper } from "@tests/test-helpers/testUtils";
+import { cvsApiExtra } from "@shared/api-services";
+
+const CVS_URL = "https://cvs.test";
 
 jest.mock("../../utils/timers", () => ({
   ...jest.requireActual("../../utils/timers"),
@@ -27,13 +30,16 @@ describe("useCurrencyData", () => {
   afterEach(() => {
     server.events.removeListener("request:start", requestListener);
     server.resetHandlers();
-    store.dispatch(marketApi.util.resetApiState());
+    store.dispatch(marketCurrencyApi.util.resetApiState());
   });
 
   afterAll(() => server.close());
 
   beforeEach(() => {
-    store = createTestStore([marketApi], { disableSerializableCheck: true });
+    store = createTestStore([marketCurrencyApi], {
+      disableSerializableCheck: true,
+      extra: cvsApiExtra({ getCountervaluesServiceUrl: () => CVS_URL }),
+    });
     requestCount = 0;
     lastRequestUrl = null;
     requestListener = ({ request }: { request: Request }) => {

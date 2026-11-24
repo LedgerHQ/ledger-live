@@ -4,10 +4,13 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { useMarketData } from "../useMarketData";
-import { marketApi } from "../../state-manager/marketApi";
+import { marketCurrencyApi } from "@domain/api-market-currency";
 import { server } from "@tests/server";
 import { createTestStore, createWrapper } from "@tests/test-helpers/testUtils";
+import { cvsApiExtra } from "@shared/api-services";
 import { createMockMarketItemResponse } from "../../utils/fixtures";
+
+const CVS_URL = "https://cvs.test";
 
 const REFRESH_RATE = 200;
 
@@ -27,13 +30,16 @@ describe("useMarketData", () => {
   afterEach(() => {
     server.events.removeListener("request:start", requestListener);
     server.resetHandlers();
-    store.dispatch(marketApi.util.resetApiState());
+    store.dispatch(marketCurrencyApi.util.resetApiState());
   });
 
   afterAll(() => server.close());
 
   beforeEach(() => {
-    store = createTestStore([marketApi], { disableSerializableCheck: true });
+    store = createTestStore([marketCurrencyApi], {
+      disableSerializableCheck: true,
+      extra: cvsApiExtra({ getCountervaluesServiceUrl: () => CVS_URL }),
+    });
     requests = [];
     requestListener = ({ request }: { request: Request }) => {
       if (request.url.includes("/v3/markets")) requests.push(new URL(request.url));
