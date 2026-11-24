@@ -176,14 +176,7 @@ export function useUnseededFunnelTracking({
       sendOnce(onboardingPages.newSeedSuccess);
     }
 
-    const shown = unseededShownPage(machineState, machineContext, status);
-    if (focused && shown && shown.page !== lastPage.current) {
-      lastPage.current = shown.page;
-      if (!pagesSentElsewhere.has(shown.page)) {
-        trackOnboardingPage(shown.page, props, shown.extraProps);
-      }
-    }
-
+    // The setup outcome goes before the page of the step that follows it.
     if (started.current && !finished.current && setupFinished(machineState, machineContext)) {
       finished.current = true;
       setupSuccessPages(
@@ -191,6 +184,14 @@ export function useUnseededFunnelTracking({
         machineContext.lastDeviceState?.recoveryKeyStatus ?? null,
       ).forEach(sendOnce);
       trackUnseededSetupFinished(props, status);
+    }
+
+    const shown = unseededShownPage(machineState, machineContext, status);
+    if (focused && shown && shown.page !== lastPage.current) {
+      lastPage.current = shown.page;
+      if (!pagesSentElsewhere.has(shown.page)) {
+        trackOnboardingPage(shown.page, props, shown.extraProps);
+      }
     }
   }, [funnel, machineState, machineContext, focused]);
 

@@ -299,6 +299,23 @@ describe("useUnseededFunnelTracking", () => {
     ]);
   });
 
+  it("should send the setup outcome before the OS check of the update held back until setup", () => {
+    const ready = {
+      ...newSeed,
+      lastDeviceState: { isOnboarded: true, currentOnboardingStep: "device-is-ready" },
+    } as Partial<DeviceOnboardingContext>;
+    const sent = walk([
+      { state: "deviceSetup.newSeed", context: newSeed },
+      { state: "postSetupFirmware.firmwareCheck", context: ready },
+    ]);
+
+    expect(sent.slice(-3)).toEqual([
+      "Page Secret Recovery Phrase - Success",
+      "onboarding_device_setup_finished",
+      "Page Check OS version",
+    ]);
+  });
+
   it("should hold the pages while another screen is in front, and send the current one after", () => {
     const sent = walk([
       { state: "deviceSetup.restoreChoice", context: upToDate },
