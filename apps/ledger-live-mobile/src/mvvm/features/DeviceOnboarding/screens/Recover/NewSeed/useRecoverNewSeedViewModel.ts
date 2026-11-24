@@ -1,8 +1,23 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFeature } from "@features/platform-feature-flags";
+import {
+  karaokes,
+  onboardingButtons,
+  onboardingPages,
+  trackKaraokeAdvanced,
+  trackKaraokePage,
+  trackOnboardingClick,
+  trackOnboardingPage,
+  trackRecoverOffered,
+  type OnboardingButton,
+  type OnboardingPage,
+} from "@features/platform-device-onboarding-analytics";
+import type { UnseededFunnel } from "LLM/features/DeviceOnboarding/analytics/useUnseededFunnelTracking";
 import { useTranslation } from "~/context/Locale";
 
 export type RecoverNewSeedScreenProps = Readonly<{
+  /** Set for a tracked funnel: the pitch then sends its events. */
+  funnel?: UnseededFunnel | null;
   suspendSheets?: boolean;
   onSkip: () => void;
   onRemindLater: () => void;
@@ -35,6 +50,7 @@ export type RecoverNewSeedViewProps = Readonly<{
   price: string;
   protectLabel: string;
   skipLabel: string;
+  onAdvance: (shownIndex: number) => void;
   onProtect: () => void;
   onSkip: () => void;
   onClose: () => void;
@@ -42,6 +58,7 @@ export type RecoverNewSeedViewProps = Readonly<{
 }>;
 
 export function useRecoverNewSeedViewModel({
+  funnel = null,
   suspendSheets = false,
   onSkip,
   onRemindLater,
@@ -52,13 +69,24 @@ export function useRecoverNewSeedViewModel({
   const detailFlag = useFeature("recoverDetailedDrawerOnboarding");
   const showsDetail = detailFlag?.enabled === true;
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const funnelProps = funnel?.props ?? null;
+  const phrases = [
+    t("deviceOnboarding.karaoke.recover.tooManyBackups"),
+    t("deviceOnboarding.karaoke.recover.encryptedBackup"),
+    t("deviceOnboarding.karaoke.recover.thereWhenYouNeedIt"),
+  ];
+  useRecoverOffered(funnel, phrases.length);
+  const clickOnPitch = (button: OnboardingButton) => {
+    if (funnelProps) {
+      trackOnboardingClick(button, funnelProps, { page: onboardingPages.recoverOnboarding });
+    }
+  };
+  const showPage = (page: OnboardingPage) => {
+    if (funnelProps) trackOnboardingPage(page, funnelProps);
+  };
 
   return {
-    phrases: [
-      t("deviceOnboarding.karaoke.recover.tooManyBackups"),
-      t("deviceOnboarding.karaoke.recover.encryptedBackup"),
-      t("deviceOnboarding.karaoke.recover.thereWhenYouNeedIt"),
-    ],
+    phrases,
     tapLabel: t("deviceOnboarding.karaoke.tapToContinue"),
     closeLabel: t("deviceOnboarding.checks.close"),
     title: t("deviceOnboarding.karaoke.recover.title"),
@@ -66,11 +94,26 @@ export function useRecoverNewSeedViewModel({
     price: t("deviceOnboarding.karaoke.recover.price"),
     protectLabel: t("deviceOnboarding.karaoke.recover.protect"),
     skipLabel: t("deviceOnboarding.karaoke.recover.skip"),
-    onProtect: () => {
-      if (showsDetail) setIsSheetOpen(true);
-      else onOpenLiveApp();
+    onAdvance: shownIndex => {
+      const pitchShown = shownIndex === phrases.length;
+      if (pitchShown) showPage(onboardingPages.recoverOnboarding);
+      else if (funnelProps) {
+        trackKaraokeAdvanced(karaokes.recover, funnelProps, shownIndex, phrases.length);
+      }
     },
-    onSkip,
+    onProtect: () => {
+      clickOnPitch(onboardingButtons.protectWithRecover);
+      if (!showsDetail) {
+        onOpenLiveApp();
+        return;
+      }
+      setIsSheetOpen(true);
+      showPage(onboardingPages.recoverSheet);
+    },
+    onSkip: () => {
+      clickOnPitch(onboardingButtons.skipRecover);
+      onSkip();
+    },
     onClose,
     sheet:
       showsDetail && isSheetOpen && !suspendSheets
@@ -101,4 +144,15 @@ export function useRecoverNewSeedViewModel({
           }
         : null,
   };
+}
+
+/** Not `TrackScreen`: coming back from the Recover Live App would send the pages again. */
+function useRecoverOffered(funnel: UnseededFunnel | null, phraseCount: number) {
+  const sent = useRef(false);
+  useEffect(() => {
+    if (!funnel || sent.current) return;
+    sent.current = true;
+    trackRecoverOffered(funnel.props, funnel.status);
+    trackKaraokePage(karaokes.recover, funnel.props, phraseCount);
+  }, [funnel, phraseCount]);
 }

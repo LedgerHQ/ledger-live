@@ -37,13 +37,19 @@ export function RecoverNewSeedView({
   price,
   protectLabel,
   skipLabel,
+  onAdvance,
   onProtect,
   onSkip,
   onClose,
   sheet,
 }: RecoverNewSeedViewProps) {
   return (
-    <Karaoke.Root phrases={phrases} tapLabel={tapLabel} testID={recoverNewSeedTestIds.screen}>
+    <Karaoke.Root
+      phrases={phrases}
+      tapLabel={tapLabel}
+      onAdvance={onAdvance}
+      testID={recoverNewSeedTestIds.screen}
+    >
       <Karaoke.Sequence />
       <Karaoke.Final>
         <Explanation

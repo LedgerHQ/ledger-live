@@ -1,6 +1,7 @@
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { ChecksScreenState, GenuineErrorKind } from "LLM/features/DeviceOnboarding/types";
 import type { SessionReconnect } from "@features/flow-device-onboarding-reconnect";
+import type { FunnelProps } from "@features/platform-device-onboarding-analytics";
 import type { SetupStage } from "./toSetupStage";
 
 export type SetupChecksProps = {
@@ -27,4 +28,6 @@ export type SetupScreenProps = {
   reportsRecoveryKey?: boolean;
   connection?: SessionReconnect | null;
   firmwareDeclined?: boolean;
+  /** Set for a tracked funnel: the checks and update sheets send their events with these. */
+  funnelProps?: FunnelProps | null;
 };

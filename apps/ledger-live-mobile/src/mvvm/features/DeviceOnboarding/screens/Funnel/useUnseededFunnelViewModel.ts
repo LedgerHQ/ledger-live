@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { FunnelProps } from "@features/platform-device-onboarding-analytics";
 import {
   OnboardingStep,
   SeedPath,
@@ -61,6 +62,8 @@ export type UnseededFunnelInput = {
   returnsWithoutUpdate: number;
   reportsRecoveryKey: boolean;
   device: Device | null;
+  /** Set for a tracked unseeded funnel: the setup screen sends its sheet events with these. */
+  funnelProps?: FunnelProps | null;
   connectionError: string | null;
   suspendSheets: boolean;
   reconnect: () => void;
@@ -120,6 +123,7 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
       connection,
       firmwareDeclined: input.firmwareDeclined,
       checks: toChecks(input, machineState, confirmSkipUpdate),
+      funnelProps: input.funnelProps ?? null,
       onQuit: input.onQuit,
     },
   };

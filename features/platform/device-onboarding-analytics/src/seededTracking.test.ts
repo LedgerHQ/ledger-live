@@ -2,13 +2,16 @@ import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { track, trackPage } from "@shared/analytics";
 import type { DeviceOnboardingContext } from "@features/platform-device-onboarding";
 import {
-  seededPages,
+  onboardingPages,
+  seededProps,
+  trackOnboardingClick,
+  trackOnboardingPage,
+} from "./funnelTracking";
+import {
   toFirmwareUpdateAvailability,
   toSeededResult,
   trackSeededAborted,
-  trackSeededClick,
   trackSeededDone,
-  trackSeededPage,
   trackSeededStarted,
   type SeededResult,
 } from "./seededTracking";
@@ -23,7 +26,7 @@ const shared = {
   sourceFlow: "onboarding",
   "onboarding type": "seeded device",
   seedConfiguration: "already_seeded",
-  deviceType: "stax",
+  deviceModelId: "stax",
 };
 
 const seeded: SeededResult = {
@@ -100,7 +103,7 @@ describe("toSeededResult", () => {
 
 describe("events", () => {
   it("should send a page with the shared properties", () => {
-    trackSeededPage(seededPages.ledgerSync, DeviceModelId.STAX);
+    trackOnboardingPage(onboardingPages.ledgerSync, seededProps(DeviceModelId.STAX));
 
     expect(trackPage).toHaveBeenCalledWith(
       { category: "Ledger Sync", props: shared },
@@ -109,7 +112,7 @@ describe("events", () => {
   });
 
   it("should send a click with the previous page as source", () => {
-    trackSeededClick("Skip", DeviceModelId.STAX);
+    trackOnboardingClick("Skip", seededProps(DeviceModelId.STAX));
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
       source: "Pairing",

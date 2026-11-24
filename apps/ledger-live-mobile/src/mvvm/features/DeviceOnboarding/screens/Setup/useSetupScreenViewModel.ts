@@ -1,4 +1,13 @@
+import { useEffect } from "react";
 import { getDeviceModel } from "@ledgerhq/devices";
+import {
+  onboardingButtons,
+  onboardingPages,
+  trackOnboardingClick,
+  trackOnboardingPage,
+  type FunnelProps,
+} from "@features/platform-device-onboarding-analytics";
+import { trackUpdateOfferEvent } from "LLM/features/DeviceOnboarding/analytics/updateOfferTracking";
 import { useTranslation } from "~/context/Locale";
 import type { SessionReconnect } from "@features/flow-device-onboarding-reconnect";
 import type { UpdateOfferSheetsProps } from "@features/flow-device-onboarding-update-offer";
@@ -95,6 +104,7 @@ export function useSetupScreenViewModel({
   reportsRecoveryKey = false,
   connection = null,
   firmwareDeclined = false,
+  funnelProps = null,
 }: SetupScreenProps): SetupViewProps {
   const { t } = useTranslation();
 
@@ -119,6 +129,7 @@ export function useSetupScreenViewModel({
     onErrorCancel: quitAfterClosingError,
     onAllowDismiss: onQuit,
     onNotGenuineClose: closeSheet,
+    funnelProps,
     suspendSheets,
   });
   const offeredUpdate = checks?.state === "updating" ? checks.update : null;
@@ -126,8 +137,12 @@ export function useSetupScreenViewModel({
     device,
     update: offeredUpdate,
     onAcceptUpdate: () => checks?.onAcceptUpdate(),
+    onUnsupportedClosePressed: () => {
+      if (funnelProps) trackOnboardingClick(onboardingButtons.close, funnelProps);
+    },
     suspendSheets,
   });
+  useUnsupportedUpdatePage(unsupportedUpdate.isOpen, unsupportedUpdate.isUsbRequired, funnelProps);
 
   return {
     infoCard: stage.infoCard,
@@ -140,6 +155,7 @@ export function useSetupScreenViewModel({
       suspendSheets: suspendSheets || connection !== null || unsupportedUpdate.mounted,
       onUpdate: requestUpdate,
       onSkip: () => checks?.onDeclineUpdate(),
+      ...(funnelProps ? { onTrack: event => trackUpdateOfferEvent(event, funnelProps) } : {}),
     },
     productName,
     suspendSheets,
@@ -155,7 +171,15 @@ export function useSetupScreenViewModel({
     closeLabel: t("deviceOnboarding.checks.close"),
     onAskLeave: onQuit,
     ...(checksIdle && !pausedNotGenuine
-      ? { startLabel: t("deviceOnboarding.checks.idle.cta"), onStart: checks.onStart }
+      ? {
+          startLabel: t("deviceOnboarding.checks.idle.cta"),
+          onStart: () => {
+            if (funnelProps) {
+              trackOnboardingClick(onboardingButtons.initiateGenuineCheck, funnelProps);
+            }
+            checks.onStart();
+          },
+        }
       : {}),
     ...(pausedNotGenuine
       ? {
@@ -166,4 +190,17 @@ export function useSetupScreenViewModel({
     ...errorDrawers,
     unsupportedUpdate,
   };
+}
+
+function useUnsupportedUpdatePage(
+  isOpen: boolean,
+  isUsbRequired: boolean,
+  funnelProps: FunnelProps | null,
+) {
+  useEffect(() => {
+    if (!isOpen || !funnelProps) return;
+    trackOnboardingPage(onboardingPages.osUpdateUnsupported, funnelProps, {
+      reason: isUsbRequired ? "usb_required" : "not_eligible",
+    });
+  }, [isOpen, isUsbRequired, funnelProps]);
 }

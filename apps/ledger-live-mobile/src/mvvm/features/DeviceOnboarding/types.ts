@@ -1,5 +1,5 @@
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { DeviceModelId, ScreenTracking } from "@features/platform-device-onboarding-analytics";
+import type { FunnelProps, ScreenTracking } from "@features/platform-device-onboarding-analytics";
 
 export type TrackedScreen = Readonly<{ key: string; tracking: ScreenTracking }>;
 
@@ -40,8 +40,8 @@ export type ChecksScreenProps = {
   onInstallUpdate?: () => void;
   onUpdateSheetClosed?: () => void;
   screensFor?: (step: UpdateStep | null) => readonly TrackedScreen[];
-  /** Set only in the seeded funnel: the drawers then send the seeded page names. */
-  seededDeviceType?: DeviceModelId | null;
+  /** Set in a tracked funnel: the drawers then send the funnel page names with these props. */
+  funnelProps?: FunnelProps | null;
   onCloseSheet: () => void;
   /** Missing while the success screen is shown but the machine is not waiting on it yet. */
   onContinue?: () => void;
