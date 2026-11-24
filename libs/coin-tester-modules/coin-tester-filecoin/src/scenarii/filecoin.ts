@@ -8,6 +8,7 @@ import {
   FILECOIN,
   FIL_AIRDROP,
   RECIPIENT_ETH,
+  RECIPIENT_ETH_F410,
   RECIPIENT_F1,
   RECIPIENT_F1_FRESH,
   SEND_FIL,
@@ -62,8 +63,8 @@ function makeTransactions(strategy: string): FilecoinScenarioTransaction[] {
       expect(current.operations.length).toBe(previous.operations.length + 1);
       expect(latest.type).toBe("OUT");
       // The node records the delegated (f410) form of the address the bridge was given
-      expect(latest.recipients).toHaveLength(1);
-      expect(latest.recipients[0]).toMatch(/^f410f[a-z2-7]+$/);
+      expect(latest.recipients).toStrictEqual([RECIPIENT_ETH_F410]);
+      expect(latest.value).toStrictEqual(SEND_FIL.plus(latest.fee));
       expect(current.balance).toStrictEqual(previous.balance.minus(latest.value));
     },
   };

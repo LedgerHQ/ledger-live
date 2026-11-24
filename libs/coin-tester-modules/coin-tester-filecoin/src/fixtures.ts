@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { fromEthAddress } from "iso-filecoin/address";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
@@ -34,6 +35,9 @@ export const RECIPIENT_F1_FRESH = deriveAccount(
 
 /** An Ethereum-style address no genesis account uses. */
 export const RECIPIENT_ETH = "0x1111111111111111111111111111111111111111";
+
+/** Its delegated `f410` form, the recipient the node records for a send to it. */
+export const RECIPIENT_ETH_F410 = fromEthAddress(RECIPIENT_ETH, "mainnet").toString();
 
 export const USDFC: TokenCurrency = {
   type: "TokenCurrency",

@@ -22,8 +22,13 @@ export async function startFilecoinSandbox(): Promise<Sandbox> {
     sandboxVersions("filecoin"),
   );
   const { node, indexer } = sandbox.endpoints;
-  if (node === undefined) throw new Error("the sandbox instance has no node endpoint");
-  if (indexer === undefined) throw new Error("the sandbox instance has no indexer endpoint");
+  // The caller never gets the handle when this throws, so the instance is removed here
+  if (node === undefined || indexer === undefined) {
+    await sandbox.down();
+    throw new Error(
+      `the sandbox instance has no ${node === undefined ? "node" : "indexer"} endpoint`,
+    );
+  }
 
   nodeUrl = node;
   // coin-filecoin appends the API version to this base itself
