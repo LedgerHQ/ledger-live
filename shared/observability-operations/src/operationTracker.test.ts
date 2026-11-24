@@ -251,6 +251,19 @@ describe("createOperationTracker", () => {
       expect(tracker.fail("checkout", "ABANDONED")).toBe(false);
       expect(sink.fail).not.toHaveBeenCalled();
     });
+
+    it("should forget the stale operations of every name and key when an operation starts", () => {
+      const leakedAt = clock;
+      tracker.start("checkout", { operationKey: "one-off" });
+      clock += FOUR_HOURS_MS;
+
+      tracker.start("send", { operationKey: "next" });
+      clock = leakedAt;
+
+      expect(tracker.isActive("checkout", { operationKey: "one-off" })).toBe(false);
+      expect(tracker.fail("checkout", "ABANDONED", { operationKey: "one-off" })).toBe(false);
+      expect(sink.fail).not.toHaveBeenCalled();
+    });
   });
 });
 

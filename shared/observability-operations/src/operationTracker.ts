@@ -59,14 +59,24 @@ export function createOperationTracker({
     if (byKey?.size === 0) activeByName.delete(name);
   };
 
+  const outlivedItsSession = (operation: ActiveOperation): boolean =>
+    now() - operation.startedAt >= MAX_MONITORING_SESSION_MS;
+
+  const dropStaleOperations = (): void => {
+    for (const [name, byKey] of activeByName) {
+      for (const [slot, operation] of byKey) {
+        if (outlivedItsSession(operation)) byKey.delete(slot);
+      }
+      if (byKey.size === 0) activeByName.delete(name);
+    }
+  };
+
   const getActive = (
     name: string,
     operationKey: string | undefined,
   ): ActiveOperation | undefined => {
     const operation = activeByName.get(name)?.get(toSlot(operationKey));
-    const outlivedItsSession =
-      operation !== undefined && now() - operation.startedAt >= MAX_MONITORING_SESSION_MS;
-    if (outlivedItsSession) {
+    if (operation && outlivedItsSession(operation)) {
       remove(name, operationKey);
       return undefined;
     }
@@ -92,6 +102,7 @@ export function createOperationTracker({
 
     start(name, { operationKey, attributes } = {}) {
       if (!VALID_OPERATION_NAME.test(name)) return null;
+      dropStaleOperations();
       if (getActive(name, operationKey) || !isRecording(sink)) return null;
 
       const recordingSink = sink;

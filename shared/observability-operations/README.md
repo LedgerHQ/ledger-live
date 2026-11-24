@@ -31,7 +31,8 @@ failOperation("checkout", "ERROR", { attributes: { error_name: error.name } });
 - **Attributes**: `undefined` values are dropped. Use snake_case keys, and never send addresses,
   amounts or account ids.
 - **Stale operations**: an operation started more than 4 hours ago (the longest monitoring session)
-  is dropped without a stop, so a leaked one never blocks its name.
+  is dropped without a stop, so a leaked one never blocks its name. Each start drops the stale
+  operations of every name and key, so a leaked one-off key is not kept either.
 - **Safety**: a throwing sink never reaches the caller.
 
 `isOperationActive(name, { operationKey, expectedId })` tells whether an operation is active, and
