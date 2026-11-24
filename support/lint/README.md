@@ -245,4 +245,33 @@ not.
 The skill [`coin-families-contract`](../../.agents/skills/coin-families-contract/SKILL.md) says
 where coin-specific behaviour goes instead, and every message links it.
 
+### `coin-families/no-family-branch`
+
+[`src/branch-rules.js`](src/branch-rules.js) keeps generic code from branching on a coin family
+name, which keeps coin behaviour inside `families/`. A family name is a directory of
+`libs/ledger-live-common/src/families`, read once when the plugin loads. A family expression is
+`.family` (through optional chains, `as`, `!` and parentheses) or an identifier named `family`,
+`currencyFamily` or ending in `CurrencyFamily`. `fontFamily` and `deviceFamily` are not matched.
+
+- **Equality**: `===`, `!==`, `==` or `!=` between a family expression and a family name, on either side.
+- **`switch`**: each `case` of a `switch` on a family expression that holds a family name.
+- **Membership**: `.includes`, `.has` or `.indexOf` of a family expression on an array literal, a
+  `new Set([...])` or a `const` of the same file that holds one with a family name. The `const` is
+  matched by name once the file is read, so it can sit below the function that uses it, and a
+  shadowing variable of the same name is not told apart.
+
+Files inside the app's families folder are not checked, since narrowing on the family is what they are
+for. The option is the one of `no-coin-specific-import`: `["error", { familiesDir: "src/renderer/families" }]`.
+Without it every file is checked.
+
+It does not report a comparison of two family expressions (`a.family === b.family`), a `typeof`
+check, a name that is not a family, or a lookup in an object keyed by family.
+
+Blind spots, none of which the rule can see: a family-keyed object literal, a list imported from
+another module (it cannot be told from a list of currency ids), and duck typing
+(`"raw" in transaction`).
+
+The baseline and the inline disables work as for `no-coin-specific-import`, including its
+directive report. A config that turns on both rules gets the comment reported once per rule.
+
 Run the rules' tests with `nx run @support/lint:test`.

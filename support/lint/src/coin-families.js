@@ -1,8 +1,9 @@
 // Rationale and reported shapes: support/lint/README.md#coin-familiesno-coin-specific-import.
 
-import fs from "node:fs";
 import path from "node:path";
 
+import { noFamilyBranch } from "./branch-rules.js";
+import { appRoot, isInFamilies } from "./families-folder.js";
 import { isSpecifierCall } from "./specifier-calls.js";
 
 const SKILL = ".agents/skills/coin-families-contract/SKILL.md";
@@ -63,29 +64,6 @@ const SCHEMA = [
   },
 ];
 
-const appRootCache = new Map();
-
-/**
- * The app that owns `dir`: its nearest ancestor holding a package.json. `cwd` is not available to
- * a plugin's `createOnce`, so the folder is found from the file being linted.
- *
- * @param {string} dir
- * @returns {string | null}
- */
-function appRoot(dir) {
-  if (appRootCache.has(dir)) return appRootCache.get(dir);
-
-  let root = null;
-  if (fs.existsSync(path.join(dir, "package.json"))) root = dir;
-  else {
-    const parent = path.dirname(dir);
-    if (parent !== dir) root = appRoot(parent);
-  }
-
-  appRootCache.set(dir, root);
-  return root;
-}
-
 /**
  * @param {string} specifier
  * @returns {boolean} whether it names a coin module or a live-signer package, or one of their subpaths
@@ -131,18 +109,6 @@ function familiesEntry(specifier, filename, root, familiesDir) {
   const segments = below.split(path.sep).filter(Boolean);
   const entry = (segments[0] ?? "").replace(SOURCE_EXTENSION, "");
   return { entry: segments.length <= 1 && entry === "index" ? "" : entry };
-}
-
-/**
- * @param {string} filename
- * @param {string | undefined} familiesDir
- * @returns {boolean} whether the file is part of the families folder, where coin imports are the point
- */
-function isInFamilies(filename, familiesDir) {
-  const root = appRoot(path.dirname(filename));
-  if (!root || !familiesDir) return false;
-  const below = path.relative(path.join(root, familiesDir), filename);
-  return !below.startsWith("..") && !path.isAbsolute(below);
 }
 
 /**
@@ -200,6 +166,15 @@ function isCoinFamiliesDisable(commentValue) {
   return RULE_PREFIX.test(directive[1].split(EXPLANATION)[0]);
 }
 
+/** @param {{ sourceCode: { getAllComments(): { value: string }[] }, report(descriptor: object): void }} context */
+function reportDirectives(context) {
+  for (const comment of context.sourceCode.getAllComments()) {
+    if (isCoinFamiliesDisable(comment.value)) {
+      context.report({ message: MESSAGES.directive, node: comment });
+    }
+  }
+}
+
 const noCoinSpecificImport = {
   meta: { schema: SCHEMA },
   createOnce(context) {
@@ -239,15 +214,31 @@ const noCoinSpecificImport = {
       // A directive that names the reporting rule hides that rule's own report, so this is the
       // visible half: the script next to `lint:arch` is the one that cannot be silenced.
       Program() {
-        for (const comment of context.sourceCode.getAllComments()) {
-          if (isCoinFamiliesDisable(comment.value)) {
-            context.report({ message: MESSAGES.directive, node: comment });
-          }
-        }
+        reportDirectives(context);
       },
     };
   },
 };
+
+/**
+ * @param {{ meta: object, createOnce(context: any): Record<string, Function> }} rule
+ * @returns {typeof rule} the rule, also reporting an inline disable of a coin-families rule
+ */
+function withDirectiveReport(rule) {
+  return {
+    ...rule,
+    createOnce(context) {
+      const visitors = rule.createOnce(context);
+      return {
+        ...visitors,
+        Program(node) {
+          visitors.Program?.(node);
+          reportDirectives(context);
+        },
+      };
+    },
+  };
+}
 
 export { classifyImport, isCoinFamiliesDisable };
 
@@ -257,5 +248,6 @@ export default {
   },
   rules: {
     "no-coin-specific-import": noCoinSpecificImport,
+    "no-family-branch": withDirectiveReport(noFamilyBranch),
   },
 };
