@@ -318,6 +318,89 @@ describe("legacy getAccountShape", () => {
     expect(second.nearResources?.historyRecheckSince).toBe(NOW);
   });
 
+  it("accepts a rise of the amount alone as the gas refund of a recent transaction of the account", async () => {
+    // amount|locked|storage|code|nonces: the refund moves the amount only.
+    const before = "1000|0|182|11111111111111111111111111111111|5";
+    const after = "1500|0|182|11111111111111111111111111111111|5";
+    (getAccountStateFingerprint as jest.Mock).mockResolvedValue(after);
+    const sent = { ...operation("sent"), senders: [ADDRESS], date: new Date(NOW - 60_000) };
+    const initial = storedAccount({ resources: { accountStateFingerprint: before } });
+    initial.operations = [sent as Operation];
+
+    const shape = await runSync(initial);
+
+    expect(fetchLegacyHistory).toHaveBeenCalledTimes(1);
+    expect(shape.nearResources?.accountStateFingerprint).toBe(after);
+    expect(shape.nearResources).not.toHaveProperty("historyRecheckSince");
+  });
+
+  it("keeps a recheck window already open when a gas refund lands", async () => {
+    const before = "1000|0|182|11111111111111111111111111111111|5";
+    const after = "1500|0|182|11111111111111111111111111111111|5";
+    (getAccountStateFingerprint as jest.Mock).mockResolvedValue(after);
+    const sent = { ...operation("sent"), senders: [ADDRESS], date: new Date(NOW - 60_000) };
+    const since = NOW - 5 * 60_000;
+    const initial = storedAccount({
+      resources: {
+        accountStateFingerprint: before,
+        historyRecheckSince: since,
+        historyRecheckFingerprint: "1200|0|182|11111111111111111111111111111111|5",
+      },
+    });
+    initial.operations = [sent as Operation];
+
+    const shape = await runSync(initial);
+
+    expect(shape.nearResources?.accountStateFingerprint).toBe(before);
+    expect(shape.nearResources?.historyRecheckSince).toBe(NOW);
+  });
+
+  it("does not take a rise for a refund after a failed read that kept the stored state", async () => {
+    const before = "1000|0|182|11111111111111111111111111111111|5";
+    const after = "1500|0|182|11111111111111111111111111111111|5";
+    (getAccountStateFingerprint as jest.Mock).mockResolvedValue(after);
+    const sent = { ...operation("sent"), senders: [ADDRESS], date: new Date(NOW - 60_000) };
+    const initial = storedAccount({
+      resources: { accountStateFingerprint: before, historyFailedSince: NOW - 60_000 },
+    });
+    initial.operations = [sent as Operation];
+
+    const shape = await runSync(initial);
+
+    expect(shape.nearResources?.accountStateFingerprint).toBe(before);
+    expect(shape.nearResources?.historyRecheckSince).toBe(NOW);
+  });
+
+  it("does not take a rise for a refund after a switch from the generic sync with a window open", async () => {
+    const before = "1000|0|182|11111111111111111111111111111111|5";
+    const after = "1500|0|182|11111111111111111111111111111111|5";
+    (getAccountStateFingerprint as jest.Mock).mockResolvedValue(after);
+    const sent = { ...operation("sent"), senders: [ADDRESS], date: new Date(NOW - 60_000) };
+    const switched = {
+      ...storedAccount({ resources: { accountStateFingerprint: before } }),
+      syncHash: "0xgeneric",
+      historyRecheck: { reason: "unexplained", since: NOW - 5 * 60_000 },
+    } as unknown as NearAccount;
+    switched.operations = [sent as Operation];
+
+    const shape = await runSync(switched);
+
+    expect(shape.nearResources?.accountStateFingerprint).toBe(before);
+    expect(shape.nearResources?.historyRecheckSince).toBe(NOW);
+  });
+
+  it("keeps the recheck window for a rise with no recent transaction of the account", async () => {
+    const before = "1000|0|182|11111111111111111111111111111111|5";
+    const after = "1500|0|182|11111111111111111111111111111111|5";
+    (getAccountStateFingerprint as jest.Mock).mockResolvedValue(after);
+    const initial = storedAccount({ resources: { accountStateFingerprint: before } });
+
+    const shape = await runSync(initial);
+
+    expect(shape.nearResources?.accountStateFingerprint).toBe(before);
+    expect(shape.nearResources?.historyRecheckSince).toBe(NOW);
+  });
+
   it("accepts the new fingerprint once the recheck window has passed", async () => {
     (getAccountStateFingerprint as jest.Mock).mockResolvedValue(NEW_FP);
     jest.spyOn(Date, "now").mockReturnValue(NOW + HISTORY_RECHECK_WINDOW_MS);

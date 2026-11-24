@@ -253,6 +253,30 @@ function unexplainedHistoryRecheck(
 }
 
 /**
+ * The mark after a rise that is the gas refund of the account's own recent transactions. A window
+ * still open for an earlier, unexplained change stays open, on the new balance: the refund explains
+ * its own rise, not the one the window waits for. A failed read keeps the window it interrupted, so a
+ * `failed` mark with a start carries it too.
+ */
+function refundHistoryRecheck(
+  mark: HistoryRecheck | undefined,
+  now: number,
+  seenOn: object,
+): HistoryRecheck | undefined {
+  const since =
+    mark?.reason === "unexplained" || mark?.reason === "failed" ? mark.since : undefined;
+  if (since === undefined) return undefined;
+  // A window that ends here still owes its last pool listing, which this sync skipped.
+  if (now - since >= HISTORY_RECHECK_WINDOW_MS) return { reason: "pools", listing: true };
+  return {
+    reason: "unexplained",
+    since,
+    ...seenOn,
+    ...(mark?.minHeight !== undefined && { minHeight: mark.minHeight }),
+  };
+}
+
+/**
  * The history read the next sync owes, for a family that syncs its history on a state change.
  * `unseen` is true when this read returned an operation that is not stored yet.
  */
@@ -266,6 +290,7 @@ function baseHistoryRecheck({
   unsettled,
   unsettledUnseen,
   spendableChanged,
+  refunded,
   spendable,
   balance,
   readFromHeight,
@@ -282,6 +307,8 @@ function baseHistoryRecheck({
   /** One of those operations was not stored yet: it gets a full window of its own. */
   unsettledUnseen: boolean;
   spendableChanged: boolean;
+  /** The change is the gas refund of the account's own recent transactions: nothing to read. */
+  refunded: boolean;
   spendable: string;
   /** The total, when the spendable balance is zero: a change of it counts as a state change. */
   balance: string | undefined;
@@ -306,6 +333,7 @@ function baseHistoryRecheck({
   });
   if (syncFromScratch) return readOperations ? confirm() : undefined;
   if (unseen || settling) return confirm();
+  if (spendableChanged && refunded) return refundHistoryRecheck(mark, now, seenOn);
   return unexplainedHistoryRecheck(mark, carried, { now, spendableChanged, seenOn });
 }
 
@@ -1139,6 +1167,17 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // A stored account read again from scratch, after another bridge synced it or after a restart
     // while it held nothing, names its validators even when it has none: a failed listing then
     // reads no pool instead of failing the sync. An account discovered here keeps a strict listing.
+    // A rise of the spendable balance that the family takes for the gas refund of the account's own
+    // recent transactions (see `BridgeApi.isGasRefund`).
+    const isRefund = (
+      spendable: bigint,
+      operations = initialAccount?.operations ?? [],
+    ): boolean => {
+      const stored = initialAccount?.spendableBalance;
+      if (!bridgeApi.isGasRefund || stored === undefined) return false;
+      const increase = spendable - BigInt(stored.toFixed());
+      return bridgeApi.isGasRefund(increase, operations, address, Date.now());
+    };
     const storedOps = initialAccount?.operations?.length ?? 0;
     const recoversStoredAccount =
       syncFromScratch &&
@@ -1201,8 +1240,12 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         // call it makes names its pool through the history, read on the node as a candidate, and
         // a call that needs the listing marks it.
         const ownOperationPending = (initialAccount?.pendingOperations?.length ?? 0) > 0;
+        // Once that operation is read, its gas refund lands in a later block: the balance rises
+        // with nothing new to read, and names no position either.
+        const refunded = isRefund(firstSpendable);
         const listsValidators =
           (!ownOperationPending &&
+            !refunded &&
             (firstSpendable.toString() !== initialAccount?.spendableBalance?.toFixed() ||
               totalMayHaveMoved)) ||
           initialAccount?.historyRecheck?.reason === "failed" ||
@@ -1764,6 +1807,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           unsettledUnseen:
             !!bridgeApi.isOperationSettled &&
             unseenOps.some(op => !bridgeApi.isOperationSettled?.(op)),
+          refunded: isRefund(spendableBalance, operations),
           // With a zero spendable balance, the total tells a change, as for the reads above.
           spendableChanged:
             spendableBalance.toString() !== initialAccount?.spendableBalance?.toFixed() ||

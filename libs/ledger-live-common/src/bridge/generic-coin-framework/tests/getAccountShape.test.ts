@@ -5861,6 +5861,78 @@ describe("genericGetAccountShape", () => {
       expect(result.operations?.map(op => op.hash)).toEqual(["h2", "h1"]);
     });
 
+    it("takes a rise the family names a gas refund as explained, listing nothing and owing no read", async () => {
+      // The refund of the account's own transaction lands in a later block than the transaction.
+      getBalanceMock.mockResolvedValue(nativeBalance(105n));
+      const isGasRefund = jest.fn().mockReturnValue(true);
+
+      useBridge({ isGasRefund });
+      const result = await sync(storedAccount());
+
+      expect(isGasRefund).toHaveBeenCalledWith(5n, expect.any(Array), "addr1", expect.any(Number));
+      expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      expect(getBalanceMock.mock.calls[0][2].listValidators).toBe(false);
+      expect(result.historyRecheck).toBeUndefined();
+    });
+
+    it("keeps the unexplained window for a rise the family does not name a refund", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(105n));
+
+      useBridge({ isGasRefund: () => false });
+      const result = await sync(storedAccount());
+
+      expect(result.historyRecheck?.reason).toBe("unexplained");
+    });
+
+    it("keeps an unexplained window already open when a gas refund lands", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(105n));
+      useBridge({ isGasRefund: () => true });
+      const since = NOW - 5 * MINUTE;
+      const open = { reason: "unexplained", since, spendableBalance: "100", minHeight: 43 };
+
+      const result = await sync(storedAccount({ historyRecheck: open }));
+
+      expect(result.historyRecheck).toEqual({
+        reason: "unexplained",
+        since,
+        spendableBalance: "105",
+        minHeight: 43,
+      });
+    });
+
+    it("owes the last pool listing when a gas refund lands as an unexplained window expires", async () => {
+      getBalanceMock.mockResolvedValue(nativeBalance(105n));
+      useBridge({ isGasRefund: () => true });
+      const open = { reason: "unexplained", since: NOW - 61 * MINUTE, spendableBalance: "100" };
+
+      const result = await sync(storedAccount({ historyRecheck: open }));
+
+      expect(result.historyRecheck).toEqual({ reason: "pools", listing: true });
+    });
+
+    it("keeps the window a failed read interrupted when a gas refund lands on the retry", async () => {
+      // unexplained, then a failed read that kept the window's start, then a refund on the retry.
+      getBalanceMock.mockResolvedValue(nativeBalance(105n));
+      useBridge({ isGasRefund: () => true });
+      const since = NOW - 5 * MINUTE;
+      const failed = {
+        reason: "failed",
+        since,
+        spendableBalance: "100",
+        failedSince: NOW - MINUTE,
+        minHeight: 43,
+      };
+
+      const result = await sync(storedAccount({ historyRecheck: failed }));
+
+      expect(result.historyRecheck).toEqual({
+        reason: "unexplained",
+        since,
+        spendableBalance: "105",
+        minHeight: 43,
+      });
+    });
+
     it("reads the history when the spendable balance is zero and the stored total is unknown", async () => {
       getBalanceMock.mockResolvedValue(nativeBalance(0n));
 
