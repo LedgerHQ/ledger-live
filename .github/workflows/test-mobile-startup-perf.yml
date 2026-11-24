@@ -144,8 +144,9 @@ jobs:
         env:
           RELEASE: ${{ steps.plan.outputs.snapshot_release }}
           CODE_HASH: ${{ hashFiles('e2e/tooling/startup-perf/src/types.ts', 'e2e/tooling/startup-perf/src/snapshot/**', 'e2e/tooling/startup-perf/src/measure/storage.ts', 'e2e/tooling/startup-perf/src/measure/inject.ts', 'e2e/tooling/startup-perf/src/measure/exec.ts', 'e2e/tooling/startup-perf/src/measure/maestro.ts', 'e2e/tooling/startup-perf/src/measure/types.ts', 'e2e/tooling/startup-perf/src/measure/platforms/**', 'e2e/tooling/startup-perf/ci/step.mts', '!e2e/tooling/startup-perf/src/**/*.test.ts', 'e2e/tooling/startup-perf/flows/add-accounts.yaml', 'e2e/mobile/userdata/skip-onboarding.json', 'libs/live-e2e-shared/src/cli/e2e-cli.ts', 'libs/live-e2e-shared/src/cli/speculosSession.ts', 'libs/live-e2e-shared/src/speculosAddress.ts') }}
-        run: echo "key=develop/mobile-startup-perf-accounts-${RELEASE}-${CODE_HASH:0:16}" >> "$GITHUB_OUTPUT"
+        run: echo "key=branch/mobile-startup-perf-accounts-${RELEASE}-${CODE_HASH:0:16}" >> "$GITHUB_OUTPUT"
 
+      # TEST BRANCH ONLY (cache-hit check of #25342): saves under branch/ with the branch role.
       # The cache is an optimization: without it, both platforms make their snapshot.
       - name: Configure AWS credentials
         if: ${{ steps.plan.outputs.snapshot_release != '' }}
@@ -550,15 +551,13 @@ jobs:
       # Credentials of their own: setup-caches' may have expired by now. Saving can fail without
       # failing the job: the snapshot is uploaded, so this run measures with it all the same.
       - name: Configure AWS credentials
-        if: ${{ github.ref == 'refs/heads/develop' }}
         continue-on-error: true
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
         with:
-          role-to-assume: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          role-to-assume: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Save the accounts snapshot
-        if: ${{ github.ref == 'refs/heads/develop' }}
         continue-on-error: true
         uses: tespkg/actions-cache/save@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
@@ -669,15 +668,13 @@ jobs:
       # Credentials of their own: setup-caches' may have expired by now. Saving can fail without
       # failing the job: the snapshot is uploaded, so this run measures with it all the same.
       - name: Configure AWS credentials
-        if: ${{ github.ref == 'refs/heads/develop' }}
         continue-on-error: true
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
         with:
-          role-to-assume: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          role-to-assume: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Save the accounts snapshot
-        if: ${{ github.ref == 'refs/heads/develop' }}
         continue-on-error: true
         uses: tespkg/actions-cache/save@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
