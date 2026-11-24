@@ -137,15 +137,6 @@ export function startEarnAppLifecycleMonitoring(
   return monitorManifestTeardown(platform, earnLifecycleProduct, manifestId, enabled);
 }
 
-/**
- * Drops the Earn live app attempt a dismissed sign drawer ended. The drawer rejects the app's
- * request, so the app reports that cancel itself and a later teardown must not count it again.
- */
-export function clearDismissedEarnAppSign(platform: TxLifecyclePlatform, manifestId: string): void {
-  if (!isEarnApp(manifestId)) return;
-  clearPendingDappTxLifecycle(platform, manifestId, earnLifecycleProduct.id);
-}
-
 /** The part of the `stakePrograms` feature this package needs; hosts pass their own richer type. */
 type StakeProgramsFeature = {
   enabled: boolean;

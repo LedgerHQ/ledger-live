@@ -1,6 +1,4 @@
-import React, { useEffect } from "react";
 import {
-  clearDismissedEarnAppSign,
   clearPendingTxLifecycle,
   emitTransactionEvent,
   registerTxLifecycleObserver,
@@ -13,7 +11,7 @@ import {
   type LogEvent,
 } from "@ledgerhq/transaction-observability";
 import { server, http, HttpResponse } from "@tests/server";
-import { act, render, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { useEarnAppLifecycleMonitoring } from "./useEarnAppLifecycleMonitoring";
 
 const intent: LogEvent = {
@@ -45,17 +43,6 @@ const settleRequests = () =>
   act(async () => {
     await jest.advanceTimersByTimeAsync(100);
   });
-
-function EarnWebviewHost({ children }: Readonly<{ children?: React.ReactNode }>) {
-  useEarnAppLifecycleMonitoring("earn");
-  return <>{children}</>;
-}
-
-/** Stands for the sign drawer inside the webview, whose sheet reports a close when it unmounts. */
-function SignDrawerClosingOnUnmount() {
-  useEffect(() => () => clearDismissedEarnAppSign("mobile", "earn"), []);
-  return null;
-}
 
 describe("useEarnAppLifecycleMonitoring", () => {
   const posted: unknown[] = [];
@@ -97,33 +84,5 @@ describe("useEarnAppLifecycleMonitoring", () => {
     await settleRequests();
 
     expect(posted).toEqual([]);
-  });
-
-  it("should post nothing when the sign drawer closes before the webview unmounts", async () => {
-    const { rerender, unmount } = render(
-      <EarnWebviewHost>
-        <SignDrawerClosingOnUnmount />
-      </EarnWebviewHost>,
-      { overrideInitialState: monitoringOn },
-    );
-    emitTransactionEvent(intent);
-    rerender(<EarnWebviewHost />);
-    unmount();
-    await settleRequests();
-
-    expect(posted).toEqual([]);
-  });
-
-  it("should keep the teardown abandon when the sign drawer inside the webview closes on unmount", async () => {
-    const { unmount } = render(
-      <EarnWebviewHost>
-        <SignDrawerClosingOnUnmount />
-      </EarnWebviewHost>,
-      { overrideInitialState: monitoringOn },
-    );
-    emitTransactionEvent(intent);
-    unmount();
-
-    await waitFor(() => expect(posted).toEqual([teardownAbandon]));
   });
 });

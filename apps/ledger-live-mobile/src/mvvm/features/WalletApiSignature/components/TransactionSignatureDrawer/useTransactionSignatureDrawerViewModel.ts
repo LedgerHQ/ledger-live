@@ -7,7 +7,6 @@ import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
 import type { SignTransactionIntentJobState } from "@ledgerhq/live-common/intents/signTransactionIntent";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { clearDismissedEarnAppSign } from "@ledgerhq/transaction-observability";
 import {
   buildDeviceInitializationInput,
   type InitializationInput,
@@ -141,10 +140,9 @@ export function useTransactionSignatureDrawerViewModel({ request, onClose }: Pro
   const onUserCancel = useCallback(() => {
     if (isSettledRef.current) return;
     isSettledRef.current = true;
-    clearDismissedEarnAppSign("mobile", request.manifestId);
     onError(lastJobErrorRef.current ?? new UserRefusedOnDevice());
     onClose();
-  }, [onError, onClose, request.manifestId]);
+  }, [onError, onClose]);
 
   return {
     sourceFlow: getSignatureSourceFlow(request.manifestId),

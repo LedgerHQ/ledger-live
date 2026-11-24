@@ -6,7 +6,6 @@ import {
 } from "./borrowLifecycleHost";
 import { isEarnApp, setEarnManifestIdReader } from "./earnApps";
 import {
-  clearDismissedEarnAppSign,
   installEarnLifecycleHost,
   isEarnTxLifecycleMonitoringEnabled,
   setEarnTxLifecycleFlagReader,
@@ -245,43 +244,6 @@ describe("earn live app lifecycle", () => {
     close?.();
 
     expect(await lifecycle.received()).toEqual([]);
-  });
-
-  it("does not post a dismissed sign drawer, which the live app reports as a cancel", async () => {
-    const close = startEarnApp();
-    emitTransactionEvent(intent);
-    clearDismissedEarnAppSign("desktop", "earn");
-    close?.();
-
-    expect(await lifecycle.received()).toEqual([]);
-  });
-
-  it("keeps a partner dApp attempt when a sign drawer on it is dismissed", async () => {
-    const closeDapp = startDappLifecycleMonitoring("desktop", "stakekit", true, true);
-    await lifecycle.forget();
-    clearDismissedEarnAppSign("desktop", "stakekit");
-    closeDapp?.();
-
-    expect(await lifecycle.received()).toEqual([
-      {
-        url: "https://earn.example.test/v1/tx/lifecycle",
-        body: expect.objectContaining({ failure_class: "abandoned", path: "dapp" }),
-      },
-    ]);
-  });
-
-  it("keeps a Borrow attempt when a sign drawer on it is dismissed", async () => {
-    const close = startBorrowLifecycleMonitoring("desktop", "borrow", true);
-    emitTransactionEvent({ ...intent, manifestId: "borrow" });
-    clearDismissedEarnAppSign("desktop", "borrow");
-    close?.();
-
-    expect(await lifecycle.received()).toEqual([
-      {
-        url: "https://borrow.example.test/v1/tx/lifecycle",
-        body: expect.objectContaining({ failure_class: "abandoned", path: "borrow" }),
-      },
-    ]);
   });
 
   it("does not post a superseded attempt, then posts the new one at teardown", async () => {

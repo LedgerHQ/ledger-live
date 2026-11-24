@@ -44,7 +44,6 @@ export {
 } from "./observer";
 
 export {
-  clearDismissedEarnAppSign,
   installEarnLifecycleHost,
   isEarnTxLifecycleMonitoringEnabled,
   setEarnTxLifecycleFlagReader,

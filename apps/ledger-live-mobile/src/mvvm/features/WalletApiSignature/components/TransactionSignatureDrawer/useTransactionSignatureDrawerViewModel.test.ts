@@ -1,18 +1,5 @@
 import { act, renderHook, waitFor } from "@tests/test-renderer";
-import { server, http, HttpResponse } from "@tests/server";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import {
-  clearPendingTxLifecycle,
-  emitTransactionEvent,
-  registerTxLifecycleObserver,
-  resetTransactionObservers,
-  setEarnTxLifecycleFlagReader,
-  setTxLifecycleBaseUrl,
-  startEarnAppLifecycleMonitoring,
-  TransactionDataSource,
-  TransactionPathway,
-  TransactionStage,
-} from "@ledgerhq/transaction-observability";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import { createIntent } from "@features/platform-device-intent";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
@@ -56,12 +43,7 @@ const account = {
 };
 const signedOperation = { operation: { id: "op-1" } } as unknown as SignedOperation;
 
-function setup(overrides?: {
-  onSuccess?: jest.Mock;
-  onError?: jest.Mock;
-  onClose?: jest.Mock;
-  manifestId?: string;
-}) {
+function setup(overrides?: { onSuccess?: jest.Mock; onError?: jest.Mock; onClose?: jest.Mock }) {
   const onSuccess = overrides?.onSuccess ?? jest.fn();
   const onError = overrides?.onError ?? jest.fn();
   const onClose = overrides?.onClose ?? jest.fn();
@@ -72,7 +54,7 @@ function setup(overrides?: {
     transaction: { family: "ethereum" },
     appName: undefined,
     dependencies: undefined,
-    manifestId: overrides?.manifestId ?? "swap-live-app",
+    manifestId: "swap-live-app",
     manifestName: "Swap",
     onSuccess,
     onError,
@@ -252,83 +234,5 @@ describe("useTransactionSignatureDrawerViewModel", () => {
     });
 
     expect(onError).toHaveBeenCalledWith(signingError);
-  });
-
-  describe("Earn live app lifecycle", () => {
-    const posted: unknown[] = [];
-    let closeEarnWebview: (() => void) | undefined;
-
-    const settleRequests = () =>
-      act(async () => {
-        await jest.advanceTimersByTimeAsync(100);
-      });
-
-    beforeEach(() => {
-      posted.length = 0;
-      server.use(
-        http.post("https://earn.example.test/v1/tx/lifecycle", async ({ request }) => {
-          posted.push(await request.json());
-          return HttpResponse.json({});
-        }),
-      );
-      setTxLifecycleBaseUrl("https://earn.example.test");
-      setEarnTxLifecycleFlagReader(() => true);
-      registerTxLifecycleObserver("mobile");
-      closeEarnWebview = startEarnAppLifecycleMonitoring("mobile", "earn", true);
-      emitTransactionEvent({
-        status: "intent",
-        stage: TransactionStage.Sign,
-        appVersion: "llm/2.0.0",
-        pathway: TransactionPathway.WalletApiSignAndBroadcast,
-        manifestId: "earn",
-        currencyId: "ethereum",
-        family: "evm",
-        currencyTicker: "ETH",
-        isTestnet: false,
-        isSendMax: false,
-        dataSource: TransactionDataSource.Sign,
-        rawTransactionType: "contract",
-      });
-    });
-
-    afterEach(() => {
-      closeEarnWebview?.();
-      resetTransactionObservers();
-      clearPendingTxLifecycle("mobile");
-      setEarnTxLifecycleFlagReader(null);
-      setTxLifecycleBaseUrl(undefined);
-    });
-
-    it("should leave a dismissed sign to the Earn live app, so the webview teardown posts nothing", async () => {
-      const { result } = setup({ manifestId: "earn" });
-      await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
-
-      act(() => {
-        result.current.onUserCancel();
-      });
-      closeEarnWebview?.();
-      await settleRequests();
-
-      expect(posted).toEqual([]);
-    });
-
-    it("should keep the attempt when the drawer closes after signing", async () => {
-      const { result } = setup({ manifestId: "earn" });
-      await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
-
-      act(() => {
-        result.current.onIntentJobStateChanged({ type: "signed", signedOperation });
-      });
-      act(() => {
-        result.current.onUserCancel();
-      });
-      closeEarnWebview?.();
-
-      await waitFor(() =>
-        expect(posted).toEqual([
-          expect.objectContaining({ failure_class: "abandoned", path: "earn" }),
-        ]),
-      );
-    });
   });
 });

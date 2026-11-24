@@ -163,12 +163,6 @@ The mobile Earn tab stays mounted once visited, so an attempt started there is o
 the tab unmounts. This under-reports, it never over-reports: leaving the tab for another tab or
 backgrounding the app is not a teardown.
 
-The mobile device-intent sign drawer rejects the app's request when it is dismissed, so the app
-reports that cancel itself. Its view model calls `clearDismissedEarnAppSign`, which drops the
-Earn live app attempt without posting. The sheet also reports a close when it unmounts with the
-webview, but React runs a removed tree's effect cleanups parent first, so the container's
-teardown abandon is posted before the drawer clears anything.
-
 `segmentEvent.ts` keeps its own hard-coded Earn ids, so a manifest only `ptxEarnLiveApp`
 configures still emits Segment `earn_transaction_*` events.
 
