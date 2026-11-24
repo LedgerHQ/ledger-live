@@ -10,7 +10,7 @@ describe("getVoteDelegationTransactionStatus", () => {
     const account = getCardanoAccountFixture({ delegation: undefined });
     account.cardanoResources.protocolParams = {
       ...getProtocolParamsFixture(),
-      stakeKeyDeposit: 3_000_000,
+      stakeKeyDeposit: "3000000",
     };
     const protocolParams = getProtocolParamsFixture();
 

@@ -46,7 +46,9 @@ export const prepareTransaction: AccountBridge<
     // send (amount > 0) keeps getFee() so a legitimately dust-folded fee is still disclosed.
     // See LIVE-33176.
     const transactionFees =
-      !transaction.subAccountId && transactionAmount.isZero()
+      !transaction.subAccountId &&
+      transaction.mode !== "voteDelegation" &&
+      transactionAmount.isZero()
         ? cardanoTransaction.calculateFee()
         : cardanoTransaction.getFee();
 

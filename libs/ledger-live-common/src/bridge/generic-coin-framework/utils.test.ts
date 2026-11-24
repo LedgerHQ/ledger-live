@@ -1681,7 +1681,7 @@ describe("coin-framework utils", () => {
       });
     });
 
-    it.each([["FEES"], ["DELEGATE"], ["UNDELEGATE"], ["REDELEGATE"]])(
+    it.each([["FEES"], ["DELEGATE"], ["VOTE_DELEGATION"], ["UNDELEGATE"], ["REDELEGATE"]])(
       "handles %s operation where value = value + fees",
       operationType => {
         const op = {

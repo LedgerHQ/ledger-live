@@ -831,6 +831,7 @@ function computeOperationValue(
       "OUT",
       "FEES",
       "DELEGATE",
+      "VOTE_DELEGATION",
       "UNDELEGATE",
       "REDELEGATE",
       "CONTRACT_CALL",
