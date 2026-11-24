@@ -18,6 +18,7 @@ import type {
   ConnectKnownOrNewDeviceErrorUIState,
   ConnectKnownOrNewDeviceViewProps,
 } from "./types";
+import { useConnectKnownOrNewDeviceTracking } from "./useConnectKnownOrNewDeviceTracking";
 import { assertNever } from "./utils/assertNever";
 
 const withoutActions = ({ key, device, connectivity, status }: DeviceListItem): DeviceListItem => ({
@@ -104,6 +105,8 @@ export function ConnectKnownOrNewDeviceView({
   listFooter,
   children,
 }: Readonly<ConnectKnownOrNewDeviceViewProps>): React.JSX.Element {
+  useConnectKnownOrNewDeviceTracking(state);
+
   if (state.type === ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice) {
     return (
       <AddMode

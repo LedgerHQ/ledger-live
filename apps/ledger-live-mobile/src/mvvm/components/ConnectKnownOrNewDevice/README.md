@@ -55,7 +55,7 @@ Discovery, connection and unknown errors show in a bottom sheet over the list, w
 
 ## Analytics
 
-The component gives `sourceFlow` to `DeviceIntentTrackingProvider`. In the Add mode, `ConnectNewDeviceView` sends the events of the connectivity screen with this `sourceFlow` (see the [ConnectNewDevice README](../ConnectNewDevice/README.md#analytics)). The view model sends `device_connected` for a device connected in the Add mode, before it saves the device. The close bar of the Add mode sends `deviceflow_aborted`: the embedded flow sends no outcome. The events are in the [tracking plan](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7620034573).
+The component gives `sourceFlow` to `DeviceIntentTrackingProvider`. In the Add mode, `ConnectNewDeviceView` sends the events of the connectivity screen with this `sourceFlow` (see the [ConnectNewDevice README](../ConnectNewDevice/README.md#analytics)). The view model sends `device_connected` for a device connected in the Add mode, before it saves the device. The embedded flow sends no outcome: `useConnectKnownOrNewDeviceTracking` sends it when the Add mode ends before a connection, with Close, Android Back or an unmount of the list. It sends `deviceflow_aborted`, or `deviceflow_failed` with the error that shows. It sends nothing when a fatal error shows the unknown error of the list. The events are in the [tracking plan](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7620034573).
 
 ## Try it
 

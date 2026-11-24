@@ -5,8 +5,6 @@ import {
   ConnectNewDeviceView,
   type ConnectNewDeviceViewProps,
 } from "LLM/components/ConnectNewDevice";
-import { useDeviceIntentTracking } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
-import { trackDeviceflowCanceled } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { useTranslation } from "~/context/Locale";
 
 type AddModeProps = ConnectNewDeviceViewProps & {
@@ -15,13 +13,6 @@ type AddModeProps = ConnectNewDeviceViewProps & {
 
 export function AddMode({ onClose, ...viewProps }: Readonly<AddModeProps>): React.JSX.Element {
   const { t } = useTranslation();
-  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
-
-  // The embedded flow sends no outcome: the device list sends it.
-  const onPressClose = () => {
-    trackDeviceflowCanceled({ sourceFlow, extraProperties: analyticsProperties, failure: null });
-    onClose();
-  };
 
   return (
     <Box lx={{ flex: 1 }}>
@@ -31,7 +22,7 @@ export function AddMode({ onClose, ...viewProps }: Readonly<AddModeProps>): Reac
           size="md"
           icon={Close}
           accessibilityLabel={t("common.close")}
-          onPress={onPressClose}
+          onPress={onClose}
           testID="connect-known-or-new-device-add-mode-close"
         />
       </Box>
