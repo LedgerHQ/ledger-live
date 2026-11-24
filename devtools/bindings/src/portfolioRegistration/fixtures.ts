@@ -1,8 +1,5 @@
-import {
-  DerivationPathSchema,
-  NetworkIdSchema,
-  type AccountDescriptor,
-} from "@domain/entity-account-descriptor";
+import { DerivationPathSchema, NetworkIdSchema } from "@domain/entity-account-descriptor";
+import { type AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 
 export const address = (network: string, addr: string, path: string): AccountDescriptor => ({
   purpose: "account",

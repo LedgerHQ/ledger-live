@@ -1,16 +1,11 @@
 import { v5 as uuidv5 } from "uuid";
-import { z } from "zod";
 import type { AccountDescriptor } from "./schema";
 import { canonicalPath } from "./path";
 import { formatDescriptorFields } from "./serialization.internals";
+import { AccountUUIDSchema, type AccountUUID } from "./accountUUID";
 
 /** Build-time namespace of AccountUUID. Not a secret; changing it changes every AccountUUID. */
 const ACCOUNT_UUID_NAMESPACE = "b4a1d3a8-6c0e-4f0e-9a52-7d1f3c5e8a21";
-
-export const AccountUUIDSchema = z.uuid({ version: "v5" }).brand<"AccountUUID">();
-
-/** Deterministic identity of an account, the same on every device; carries no account key. */
-export type AccountUUID = z.infer<typeof AccountUUIDSchema>;
 
 /** A public key in hex: at least 32 bytes, so that no base58 or bech32 key matches. */
 const HEX_PUBLIC_KEY = /^([0-9a-f]{2}){32,}$/i;

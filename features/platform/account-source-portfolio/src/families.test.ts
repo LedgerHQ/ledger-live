@@ -1,5 +1,7 @@
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
-import { mockUtxoAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import {
+  mockUtxoAccountDescriptor,
+  computeAccountUUID,
+} from "@domain/entity-account-descriptor/schema.mock";
 import {
   ADA,
   BITCOIN,

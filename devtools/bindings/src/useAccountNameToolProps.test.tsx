@@ -4,8 +4,10 @@ import { Provider } from "react-redux";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
 import { accountNamesSlice, setAccountName } from "@domain/entity-account-name";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
-import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import {
+  mockAddressAccountDescriptor,
+  computeAccountUUID,
+} from "@domain/entity-account-descriptor/schema.mock";
 import { useAccountNameToolProps } from "./useAccountNameToolProps";
 
 function setup() {

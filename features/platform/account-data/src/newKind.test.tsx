@@ -11,9 +11,9 @@ import {
 import {
   DerivationPathSchema,
   NetworkIdSchema,
-  type AccountDescriptor,
   type AccountUUID,
 } from "@domain/entity-account-descriptor";
+import { type AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { useAccountData } from "./useAccountData";
 
 // Everything a new `@domain/entity-account-*` package adds; no framework file changes for it.

@@ -10,12 +10,12 @@ import {
   type AccountDataQuery,
   type AccountDataRootState,
 } from "@domain/entity-account-data";
+import { type AccountUUID } from "@domain/entity-account-descriptor";
 import {
   accountDescriptorKey,
   computeAccountUUID,
   type AccountDescriptor,
-  type AccountUUID,
-} from "@domain/entity-account-descriptor";
+} from "@domain/entity-account-descriptor/descriptor";
 import { useHeldByKey } from "./internals/useHeldByKey";
 
 export type UseAccountDataOptions<K extends AccountDataKind> = {

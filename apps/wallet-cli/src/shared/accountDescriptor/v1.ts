@@ -3,23 +3,23 @@
  *
  * ADR: https://ledgerhq.atlassian.net/wiki/spaces/TA/pages/6975946770/ADR+-+Account+descriptor
  */
+import { InvalidAccountDescriptorError } from "@domain/entity-account-descriptor";
 import {
-  InvalidAccountDescriptorError,
   parseAccountDescriptor,
   type AccountDescriptor,
-} from "@domain/entity-account-descriptor";
+} from "@domain/entity-account-descriptor/descriptor";
 
+export { DerivationPathSchema } from "@domain/entity-account-descriptor";
 export {
   AccountDescriptorSchema as AccountDescriptorV1Schema,
-  DerivationPathSchema,
   AddressAccountDescriptorSchema as AccountBasedDescriptorV1Schema,
   UtxoAccountDescriptorSchema as UtxoAccountDescriptorV1Schema,
   serializeAccountDescriptor as serializeV1,
-} from "@domain/entity-account-descriptor";
+} from "@domain/entity-account-descriptor/descriptor";
 export type {
   AddressAccountDescriptor as AccountBasedDescriptorV1,
   UtxoAccountDescriptor as UtxoAccountDescriptorV1,
-} from "@domain/entity-account-descriptor";
+} from "@domain/entity-account-descriptor/descriptor";
 
 /** ADR version 1 `<name>:<env>` network -> network id: `bitcoin:main` -> `bitcoin`, `bitcoin:testnet` -> `bitcoin_testnet`. */
 export const networkFromLegacy = (name: string, env: string): string =>

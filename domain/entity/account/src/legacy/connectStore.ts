@@ -1,4 +1,7 @@
-import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import {
+  computeAccountUUID,
+  type AccountDescriptor,
+} from "@domain/entity-account-descriptor/descriptor";
 import type { LegacyAccountEntry } from "../schema";
 import { legacyAccountsSynced } from "../slice";
 import { AccountIdSchema } from "./schema";

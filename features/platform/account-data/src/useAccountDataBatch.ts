@@ -8,11 +8,11 @@ import {
   type AccountDataKind,
   type AccountDataRootState,
 } from "@domain/entity-account-data";
+import { type AccountUUID } from "@domain/entity-account-descriptor";
 import {
   computeAccountUUID,
   type AccountDescriptor,
-  type AccountUUID,
-} from "@domain/entity-account-descriptor";
+} from "@domain/entity-account-descriptor/descriptor";
 import { accountsToRead, type ReadRecord } from "./internals/accountsToRead";
 import { summarizeStatuses } from "./internals/summarizeStatuses";
 import { uniqueByKey } from "./internals/uniqueByKey";

@@ -1,5 +1,5 @@
 import { legacyAccountsSynced, AccountIdSchema, accountsSlice } from "@domain/entity-account";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account-descriptor/schema.mock";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";

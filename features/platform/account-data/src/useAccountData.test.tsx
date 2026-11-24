@@ -12,7 +12,7 @@ import {
   selectFeed,
   sourceIdOf,
 } from "@domain/api-account-data/testing";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { useAccountData } from "./useAccountData";
 
 function setup(read: AccountDataSource["read"]) {

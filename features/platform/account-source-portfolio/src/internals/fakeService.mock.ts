@@ -10,10 +10,11 @@ import type {
   UpdateView,
 } from "@domain/api-account-portfolio";
 import type { AccountTarget } from "@domain/api-account-data";
-import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import { type AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import {
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
+  computeAccountUUID,
 } from "@domain/entity-account-descriptor/schema.mock";
 import { PortfolioId } from "@domain/entity-client-identity";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";

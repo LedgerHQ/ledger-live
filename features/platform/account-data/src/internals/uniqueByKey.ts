@@ -1,4 +1,7 @@
-import { accountDescriptorKey, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import {
+  accountDescriptorKey,
+  type AccountDescriptor,
+} from "@domain/entity-account-descriptor/descriptor";
 
 /** The descriptors by key, the first of each account only, in the order given. */
 export function uniqueByKey(

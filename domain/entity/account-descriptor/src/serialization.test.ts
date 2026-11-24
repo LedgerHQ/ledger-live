@@ -1,6 +1,7 @@
 import { InvalidAccountDescriptorError } from "./errors";
 import { ETH_ADDR, SOL_ADDR, XPUB } from "./test-fixtures";
-import { AccountDescriptorSchema, DerivationPathSchema, type AccountDescriptor } from "./schema";
+import { AccountDescriptorSchema, type AccountDescriptor } from "./schema";
+import { DerivationPathSchema } from "./derivationPath";
 import { parseAccountDescriptor, serializeAccountDescriptor } from "./serialization";
 import { NetworkIdSchema } from "./network";
 

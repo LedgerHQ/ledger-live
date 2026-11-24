@@ -1,8 +1,5 @@
-import {
-  DerivationPathSchema,
-  NetworkIdSchema,
-  computeAccountUUID,
-} from "@domain/entity-account-descriptor";
+import { DerivationPathSchema, NetworkIdSchema } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account-descriptor/schema.mock";
 import { AccountDataSourceIdSchema } from "./sourceId";
 import {
   accountDataFailed,

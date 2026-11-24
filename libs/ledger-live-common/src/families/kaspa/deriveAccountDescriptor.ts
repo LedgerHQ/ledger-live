@@ -1,5 +1,6 @@
 import { from, map } from "rxjs";
-import { AccountDescriptorSchema, fromDescriptorPath } from "@domain/entity-account-descriptor";
+import { fromDescriptorPath } from "@domain/entity-account-descriptor";
+import { AccountDescriptorSchema } from "@domain/entity-account-descriptor/descriptor";
 import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { Resolver } from "../../hw/getAddress/types";
 import type { DeriveAccountDescriptor } from "../../coin-modules/types";

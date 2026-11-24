@@ -3,7 +3,8 @@ import {
   AccountAssetBalanceSchema,
   type AccountAssetBalance,
 } from "@domain/entity-account-balance";
-import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
+import { type AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 
 /** `unmapped`: tokens with no CAL id, left out. `unreadable`: assets whose amount could not be read. */
 export type MappedBalances = { rows: AccountAssetBalance[]; unmapped: number; unreadable: number };

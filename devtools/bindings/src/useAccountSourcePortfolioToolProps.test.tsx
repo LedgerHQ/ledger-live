@@ -14,10 +14,10 @@ import {
   accountDataSlice,
   selectAccountDataStatus,
 } from "@domain/entity-account-data";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import {
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
+  computeAccountUUID,
 } from "@domain/entity-account-descriptor/schema.mock";
 import { identitiesSlice } from "@domain/entity-client-identity";
 import type { PortfolioClient } from "@features/platform-account-source-portfolio";

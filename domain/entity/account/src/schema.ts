@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { AccountDescriptorSchema, AccountUUIDSchema } from "@domain/entity-account-descriptor";
+import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
+import { AccountDescriptorSchema } from "@domain/entity-account-descriptor/descriptor";
 import { AccountIdSchema } from "./legacy/schema";
 
 export const AccountEntrySchema = z.object({

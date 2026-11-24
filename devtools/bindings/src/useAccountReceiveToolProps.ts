@@ -5,7 +5,7 @@ import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData } from "@domain/api-account-data";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
 import { accountDataQueryKey, type AccountDataRootState } from "@domain/entity-account-data";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import type {
   ReceiveAddress,
   ReceiveVerification,

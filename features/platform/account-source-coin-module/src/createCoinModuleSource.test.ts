@@ -1,12 +1,9 @@
 import { createAccountDataRouter, type AccountDataSource } from "@domain/api-account-data";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
-import {
-  DerivationPathSchema,
-  NetworkIdSchema,
-  computeAccountUUID,
-  type AccountDescriptor,
-} from "@domain/entity-account-descriptor";
+import { DerivationPathSchema, NetworkIdSchema } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account-descriptor/schema.mock";
+import { type AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import type {
   CoinModuleBalanceApi,

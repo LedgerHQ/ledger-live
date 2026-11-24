@@ -4,7 +4,8 @@ import type {
   AccountDataQuery,
   AccountDataResult,
 } from "@domain/entity-account-data";
-import type { AccountDescriptor, NetworkId } from "@domain/entity-account-descriptor";
+import type { NetworkId } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Random } from "../random";
 

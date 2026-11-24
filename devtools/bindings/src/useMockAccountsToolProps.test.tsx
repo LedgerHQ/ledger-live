@@ -5,8 +5,10 @@ import { configureStore } from "@reduxjs/toolkit";
 import { accountDataExtra, getAccountDataRuntime } from "@domain/api-account-data";
 import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
 import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
-import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import {
+  mockAddressAccountDescriptor,
+  computeAccountUUID,
+} from "@domain/entity-account-descriptor/schema.mock";
 import { createAccountDataRecorder } from "./accountDataRecorder";
 import { useMockAccountsToolProps } from "./useMockAccountsToolProps";
 

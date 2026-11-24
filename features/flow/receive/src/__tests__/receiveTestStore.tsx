@@ -5,8 +5,10 @@ import { accountDataExtra, type AccountDataSource } from "@domain/api-account-da
 import { cryptoAssetsApi } from "@domain/api-currency-token";
 import { accountsSlice, remoteAccountsAdded } from "@domain/entity-account";
 import { AccountDataSourceIdSchema, accountDataSlice } from "@domain/entity-account-data";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
-import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import {
+  mockAddressAccountDescriptor,
+  computeAccountUUID,
+} from "@domain/entity-account-descriptor/schema.mock";
 import { accountReceivesSlice } from "@domain/entity-account-receive";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { accountStatusSlice } from "@domain/entity-account-status";

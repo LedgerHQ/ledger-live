@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import type { AccountReceive } from "@domain/entity-account-receive";
 import type { AccountStatus } from "@domain/entity-account-status";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";

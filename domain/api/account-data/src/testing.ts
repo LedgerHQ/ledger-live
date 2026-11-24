@@ -8,10 +8,10 @@ import {
 import {
   DerivationPathSchema,
   NetworkIdSchema,
-  computeAccountUUID,
-  type AccountDescriptor,
   type AccountUUID,
 } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
+import { computeAccountUUID } from "@domain/entity-account-descriptor/schema.mock";
 import { accountDataExtra } from "./extra";
 import type { AccountDataSource } from "./source";
 

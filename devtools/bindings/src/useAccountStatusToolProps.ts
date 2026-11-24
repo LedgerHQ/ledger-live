@@ -9,7 +9,7 @@ import {
   type AccountDataRootState,
   type AccountDataStatus,
 } from "@domain/entity-account-data";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import {
   accountStatusSlice,
   receiveGate,

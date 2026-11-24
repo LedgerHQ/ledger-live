@@ -13,7 +13,7 @@ How Ledger Wallet represents an account in the new architecture, and how we get 
 
 ## The paradigms
 
-**1. One universal identity.** An account is an [`AccountDescriptor`](../../domain/entity/account-descriptor): its type (`utxo` with an xpub, or `address`), CAL network, key (xpub, address or public key), and derivation path. That is all any source needs to read it. Its `AccountUUID`, a uuid v5 of the canonical key, keys the `accounts` list and every account data kind: the same on every device, and it holds no account key, unlike the legacy `account.id` (`js:2:ethereum:0x…`).
+**1. One universal identity.** An account is an [`AccountDescriptor`](../../domain/entity/account-descriptor): its type (`utxo` with an xpub, or `address`), CAL network, key (xpub, address or public key), and derivation path. That is all any source needs to read it. Its key is sensitive (an xpub reveals the whole history, an address is personal data), so code holds the `AccountUUID` and the descriptor stays at the edges: the account data router and sources, discovery, the legacy bridge, wallet-cli and devtools. The `AccountUUID`, a uuid v5 of the canonical key, keys the `accounts` list and every account data kind: the same on every device, and it holds no account key, unlike the legacy `account.id` (`js:2:ethereum:0x…`).
 
 ```text
 account:2:utxo:bitcoin:xpub6Bosf…NzH:m/84h/0h/0h

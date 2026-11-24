@@ -4,7 +4,8 @@ import type { Store, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
 import { addAccountDataSource } from "@domain/api-account-data";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { maskAccountKey } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { portfolioIdSelector, type IdentitiesState } from "@domain/entity-client-identity";
 import {
   createPortfolioSource,
@@ -55,9 +56,7 @@ function createHandle(portfolio: PortfolioSource): Handle {
 }
 
 const labelOf = (descriptor: AccountDescriptor) =>
-  `${descriptor.network} ${
-    descriptor.type === "utxo" ? `${descriptor.key.slice(0, 12)}…` : descriptor.key
-  }`;
+  `${descriptor.network} ${maskAccountKey(descriptor.key)}`;
 
 /** Errors land in the source's activity log. */
 const ignore = () => undefined;

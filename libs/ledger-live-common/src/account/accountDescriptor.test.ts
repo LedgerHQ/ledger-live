@@ -2,11 +2,11 @@ import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
 import {
   DerivationPathSchema,
   NetworkIdSchema,
-  computeAccountUUID,
   networkFromCurrencyId,
   toDescriptorPath,
-  type AccountDescriptor,
 } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account-descriptor/schema.mock";
+import { type AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";

@@ -1,8 +1,9 @@
 import { configureStore, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import { type AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import {
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
+  computeAccountUUID,
 } from "@domain/entity-account-descriptor/schema.mock";
 import { connectAccountsStore } from "./connectStore";
 import { AccountIdSchema } from "./schema";

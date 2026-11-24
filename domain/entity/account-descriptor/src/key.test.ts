@@ -1,9 +1,11 @@
 import { ETH_ADDR, SOL_ADDR, XPUB } from "./test-fixtures";
 
 const TON_PUBKEY = "86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060";
-import { AccountUUIDSchema, accountDescriptorKey, computeAccountUUID } from "./key";
+import { accountDescriptorKey, computeAccountUUID } from "./key";
+import { AccountUUIDSchema } from "./accountUUID";
+import { DerivationPathSchema } from "./derivationPath";
 import { mockAddressAccountDescriptor } from "./schema.mock";
-import { DerivationPathSchema, type AccountDescriptor } from "./schema";
+import type { AccountDescriptor } from "./schema";
 import { NetworkIdSchema } from "./network";
 
 const utxo = (path: string, network = "bitcoin"): AccountDescriptor => ({

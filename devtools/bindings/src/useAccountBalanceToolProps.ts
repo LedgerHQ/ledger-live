@@ -6,7 +6,7 @@ import { fetchAccountData } from "@domain/api-account-data";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
 import { type AccountAssetBalance, type WithAccountBalances } from "@domain/entity-account-balance";
 import { accountDataQueryKey, type AccountDataRootState } from "@domain/entity-account-data";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { formatAmount, useAssetUnits } from "./useAssetUnits";
 

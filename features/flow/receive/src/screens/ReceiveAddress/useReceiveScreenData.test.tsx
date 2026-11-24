@@ -1,6 +1,8 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
-import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import {
+  mockAddressAccountDescriptor,
+  computeAccountUUID,
+} from "@domain/entity-account-descriptor/schema.mock";
 import { mockAccountStatus, mockAssetStatus } from "@domain/entity-account-status/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {

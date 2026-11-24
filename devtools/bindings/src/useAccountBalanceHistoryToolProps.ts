@@ -14,7 +14,7 @@ import {
   type WithAccountBalanceHistories,
 } from "@domain/entity-account-balance-history";
 import { accountDataQueryKey, type AccountDataRootState } from "@domain/entity-account-data";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import {
   FiatCurrencyTickerSchema,
   findFiatCurrencyByTicker,

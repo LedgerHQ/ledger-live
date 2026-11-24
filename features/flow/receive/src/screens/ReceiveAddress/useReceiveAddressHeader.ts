@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
+import { type AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import type { CryptoOrTokenCurrency, CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import { useCryptoCurrencyById, useCurrencyById } from "@features/platform-currencies";
 import { useReceiveAddressCopy, type ReceiveAddressCopy } from "../../copy/useReceiveAddressCopy";

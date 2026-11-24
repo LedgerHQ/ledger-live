@@ -1,5 +1,5 @@
 import type { Portfolio, PortfolioRegistration } from "@domain/api-account-portfolio";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { addressAccountFamily } from "./addressAccount";
 import { autoDeriveFamily } from "./autoDerive";
 import { evmFamily } from "./evm";

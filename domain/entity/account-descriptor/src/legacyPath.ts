@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DerivationPathSchema, type DerivationPath } from "./schema";
+import { DerivationPathSchema, type DerivationPath } from "./derivationPath";
 
 /** A legacy derivation path ("44'/60'/0'/0/0", with or without "m/") read as a descriptor path. */
 export const LegacyDerivationPathSchema = z

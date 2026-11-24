@@ -1,11 +1,8 @@
 import { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
-import {
-  currencyIdFromNetwork,
-  type AccountDescriptor,
-  type AccountUUID,
-} from "@domain/entity-account-descriptor";
+import { currencyIdFromNetwork, type AccountUUID } from "@domain/entity-account-descriptor";
+import { type AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { selectAccountReceive, type WithAccountReceives } from "@domain/entity-account-receive";
 import {
   accountStatusSlice,

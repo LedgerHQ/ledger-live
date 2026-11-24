@@ -9,10 +9,10 @@ import {
   accountDataQueryKey,
   accountDataSlice,
 } from "@domain/entity-account-data";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import {
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
+  computeAccountUUID,
 } from "@domain/entity-account-descriptor/schema.mock";
 import {
   accountOperationsSlice,

@@ -1,4 +1,4 @@
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account-descriptor/schema.mock";
 import { descriptorOf } from "@domain/api-account-data/testing";
 import { summarizeStatuses } from "./summarizeStatuses";
 

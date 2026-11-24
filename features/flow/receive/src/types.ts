@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import type { DeviceModelId } from "@ledgerhq/device-management-kit";
-import type { AccountDescriptor, AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import type { AccountReceive, ReceiveVerification } from "@domain/entity-account-receive";
 import type { AccountStatus } from "@domain/entity-account-status";
 import type { CryptoOrTokenCurrency, CryptoOrTokenCurrencyId } from "@domain/entity-currency";

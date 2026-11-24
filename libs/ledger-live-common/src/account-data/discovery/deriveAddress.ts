@@ -1,10 +1,9 @@
 import { from, map, type Observable } from "rxjs";
+import { currencyIdFromNetwork, fromDescriptorPath } from "@domain/entity-account-descriptor";
 import {
   AccountDescriptorSchema,
-  currencyIdFromNetwork,
   type AccountDescriptor,
-  fromDescriptorPath,
-} from "@domain/entity-account-descriptor";
+} from "@domain/entity-account-descriptor/descriptor";
 import type { AccountCandidate } from "@domain/entity-derivation";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";

@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account-descriptor/schema.mock";
 import { AccountIdSchema, accountsSlice } from "@domain/entity-account";
 import reducers from "~/reducers";
 import { addOneAccount, deleteAccount, replaceAccounts } from "~/actions/accounts";

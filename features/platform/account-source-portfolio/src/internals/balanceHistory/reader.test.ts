@@ -1,6 +1,6 @@
 import type { AccountTarget } from "@domain/api-account-data";
 import type { AccountBalanceHistoryQuery } from "@domain/entity-account-balance-history";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account-descriptor/schema.mock";
 import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import {
   ETH,

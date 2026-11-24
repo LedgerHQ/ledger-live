@@ -6,7 +6,7 @@ import { fetchAccountData, fetchMoreAccountData } from "@domain/api-account-data
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
 import type { AccountDataRootState } from "@domain/entity-account-data";
 import { type WithAccountBalances } from "@domain/entity-account-balance";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import {
   selectAccountOperations,
   type AccountOperation,

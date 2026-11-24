@@ -11,7 +11,7 @@ import {
 } from "rxjs";
 import type { Account } from "@ledgerhq/types-live";
 import { abortReason } from "@domain/api-account-data";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { getAccountBridge } from "../../bridge";
 import { legacySyncConfig } from "../../bridge/syncConfig";
 import { placeholderAccount } from "./placeholderAccount";

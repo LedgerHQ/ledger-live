@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { maskAccountKey } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { bodyOf, describeSent } from "./portfolioActions/requests";
 import { RUNNERS, type PortfolioDispatch } from "./portfolioActions/runners";
 import type {
@@ -32,9 +33,7 @@ function sessionPortfolioId(): string {
 }
 
 const labelOf = (descriptor: AccountDescriptor) =>
-  `${descriptor.network} ${
-    descriptor.type === "utxo" ? `${descriptor.key.slice(0, 12)}…` : descriptor.key
-  }`;
+  `${descriptor.network} ${maskAccountKey(descriptor.key)}`;
 
 /** `JSON.stringify(new Error())` is `{}`, so errors are turned into plain objects to be shown. */
 const toDisplayable = (error: unknown): unknown =>

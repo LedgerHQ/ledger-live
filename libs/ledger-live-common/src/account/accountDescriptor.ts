@@ -2,13 +2,15 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import {
   currencyIdFromNetwork,
   fromDescriptorPath,
-  AccountDescriptorSchema,
   AddressSchema,
   type Address,
   networkFromCurrencyId,
   toDescriptorPath,
-  type AccountDescriptor,
 } from "@domain/entity-account-descriptor";
+import {
+  AccountDescriptorSchema,
+  type AccountDescriptor,
+} from "@domain/entity-account-descriptor/descriptor";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import {

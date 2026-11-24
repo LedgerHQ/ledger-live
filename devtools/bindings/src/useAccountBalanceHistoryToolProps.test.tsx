@@ -7,10 +7,10 @@ import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/en
 import { accountBalanceHistoriesSlice } from "@domain/entity-account-balance-history";
 import { mockAssetBalanceHistory } from "@domain/entity-account-balance-history/schema.mock";
 import { AccountDataSourceIdSchema, accountDataSlice } from "@domain/entity-account-data";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import {
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
+  computeAccountUUID,
 } from "@domain/entity-account-descriptor/schema.mock";
 import { useAccountBalanceHistoryToolProps } from "./useAccountBalanceHistoryToolProps";
 

@@ -1,4 +1,4 @@
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import { AccountDataNotServedError, NoAccountDataSourceError } from "./errors";
 import {
   createAccountDataRouter,

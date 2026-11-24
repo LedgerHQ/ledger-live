@@ -5,7 +5,8 @@ import {
   type AccountDataSource,
 } from "@domain/api-account-data";
 import { AccountDataSourceIdSchema, type AccountDataKind } from "@domain/entity-account-data";
-import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
+import { type AccountDescriptor } from "@domain/entity-account-descriptor/descriptor";
 import type { AccountStatus } from "@domain/entity-account-status";
 import type { CoinModuleHost } from "./host";
 import { toAccountBalances } from "./internals/toAccountBalances";
