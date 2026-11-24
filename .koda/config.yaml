@@ -1,7 +1,7 @@
 sandbox:
   image: jfrog.ledgerlabs.net/ledgerlive-oci-prod-runners-green/ledger-wallet-cde:latest
   cpu: 4
-  memory: 8
+  memory: 12
   disk: 30
 setup: |
   mise install
