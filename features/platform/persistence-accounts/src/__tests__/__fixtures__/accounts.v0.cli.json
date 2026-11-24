@@ -1,0 +1,65 @@
+{
+  "data": {
+    "id": "mock:1:bitcoin:true_bitcoin_1:",
+    "seedIdentifier": "mock",
+    "name": "Bitcoin 2 (legacy)",
+    "starred": false,
+    "derivationMode": "",
+    "index": 1,
+    "freshAddress": "19qAJ5F2eH7CRPFfj5c94x22zFcXpa8rZ77",
+    "freshAddressPath": "44'/0'/0'/0/0",
+    "blockHeight": 123828,
+    "creationDate": "2020-03-01T04:26:49.397Z",
+    "operationsCount": 100,
+    "operations": [
+      {
+        "id": "mock_op_0_mock:1:bitcoin:true_bitcoin_1:",
+        "hash": "F3A759DFE66732E3FEAE19F0D9D027285FFC3F75B65D9E633F88532632A4E863",
+        "type": "IN",
+        "senders": [
+          "1zVxuANsNfYjwZgPymqBU5A8JCQ"
+        ],
+        "recipients": [
+          "1n3Wpp7oRKcivozFrmMervp82p3SvaGg9"
+        ],
+        "blockHash": "F7339B79C04C0BBFDDA94F34F24DA9107C10466C86F6225F1C2B68CD14AAD4F7",
+        "blockHeight": 123814,
+        "accountId": "mock:1:bitcoin:true_bitcoin_1:",
+        "extra": {},
+        "date": "2019-03-14T13:51:10.542Z",
+        "value": "559000",
+        "fee": "5590"
+      },
+      {
+        "id": "mock_op_1_mock:1:bitcoin:true_bitcoin_1:",
+        "hash": "B7616FDC511F820DED2FD30C4C06CA5A7DC0FA622CEC6618347AA92A4A7C4BC9",
+        "type": "IN",
+        "senders": [
+          "1DF3oAe8QSeVnkFRvsQZWR7LAnT2z9V2So"
+        ],
+        "recipients": [
+          "1zRQsS4w1Z1DfvXBCp45wYTybyLK"
+        ],
+        "blockHash": "72BE1B81006E9D43E064DA3F28429B6941A589E0258406BBCA77D1E9F48DFBAE",
+        "blockHeight": 123790,
+        "accountId": "mock:1:bitcoin:true_bitcoin_1:",
+        "extra": {},
+        "date": "2019-03-14T08:00:32.392Z",
+        "value": "246649",
+        "fee": "2466"
+      }
+    ],
+    "pendingOperations": [],
+    "currencyId": "bitcoin",
+    "unitMagnitude": 8,
+    "lastSyncDate": "2020-03-14T17:34:42.000Z",
+    "balance": "128092473",
+    "spendableBalance": "128092473",
+    "xpub": "D2C2B76D346B6EA64EB4F8C6E9995F81C39E0A2449CA1B3D87AF9D720ABD35C2",
+    "bitcoinResources": {
+      "utxos": []
+    },
+    "swapHistory": []
+  },
+  "version": 1
+}

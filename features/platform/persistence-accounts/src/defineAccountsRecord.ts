@@ -6,13 +6,9 @@ import {
   type CollectionRecordDefinition,
   type CollectionStateMapping,
 } from "@shared/persistence";
-import {
-  ACCOUNTS_RECORD_KEY,
-  ACCOUNTS_RECORD_VERSION,
-  accountEnvelopeSchema,
-  storedAccountId,
-  type StoredAccount,
-} from "./envelope";
+import { accountsVersions } from "./accountsVersions";
+import { ACCOUNTS_RECORD_KEY, type StoredAccount } from "./envelope";
+import { accountIdOfPayload } from "./envelope.internals";
 
 /** The stored account and back. Each app reads and writes the stored `version` as before. */
 export type AccountsCodec<State, Account, Decoded> = CollectionCodec<
@@ -37,13 +33,9 @@ export type AccountsRecord<State, Account, Decoded, Action> = CollectionRecordDe
   Decoded
 >;
 
-const accountsRecordShape = {
-  key: ACCOUNTS_RECORD_KEY,
-  version: ACCOUNTS_RECORD_VERSION,
-  entrySchema: accountEnvelopeSchema,
-};
+const accountsRecordShape = { key: ACCOUNTS_RECORD_KEY, versions: accountsVersions };
 
-/** The `accounts` record, v0: the stored shape of today, with each app's key scheme. */
+/** The `accounts` record, with each app's key scheme. */
 export function defineAccountsRecord<State, Account extends { id: string }, Decoded, Action>({
   codec,
   state,
@@ -54,7 +46,7 @@ export function defineAccountsRecord<State, Account extends { id: string }, Deco
   return defineCollectionRecord({
     ...accountsRecordShape,
     entryId: account => account.id,
-    storedEntryId: storedAccountId,
+    storedEntryId: accountIdOfPayload,
     codec,
     state,
   });

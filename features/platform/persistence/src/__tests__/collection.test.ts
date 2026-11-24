@@ -1,5 +1,5 @@
 import { combineReducers, configureStore, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { defineCollectionRecord } from "@shared/persistence";
+import { defineCollectionRecord, recordVersions } from "@shared/persistence";
 import { createMemoryStorage, StorageLockedError, type ListableStoragePort } from "@shared/storage";
 import { keyPerEntry, type PersistenceBinding, type WriteStrategy } from "../bindings";
 import { createPersistence } from "../createPersistence";
@@ -34,19 +34,19 @@ const rootReducer = combineReducers({
 });
 type State = ReturnType<typeof rootReducer>;
 
-const idOf = (stored: unknown) => (stored as { data?: { id?: unknown } })?.data?.id;
+const payloadIdOf = (payload: unknown) => (payload as { data?: { id?: unknown } })?.data?.id;
 
 const itemsRecord = defineCollectionRecord({
   key: "items",
-  version: 0,
-  entrySchema: z =>
+  versions: recordVersions(z =>
     z.strictObject({
       data: z.looseObject({ id: z.string(), value: z.number() }),
       version: z.number().int().min(0).max(3),
     }),
+  ),
   entryId: (item: Item) => item.id,
-  storedEntryId: stored => {
-    const id = idOf(stored);
+  storedEntryId: payload => {
+    const id = payloadIdOf(payload);
     return typeof id === "string" ? id : undefined;
   },
   codec: {
@@ -67,6 +67,8 @@ const itemsRecord = defineCollectionRecord({
 });
 
 const entry = (id: string, value: number, version = 3) => ({ data: { id, value }, version });
+
+const idOf = (stored: unknown) => itemsRecord.storedEntryId(stored);
 
 const PREFIX = "items.active.";
 const ORDER_KEY = "items.sort";

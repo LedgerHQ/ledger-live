@@ -23,16 +23,19 @@ for all of them. Each app injects its own account model.
   Mobile has no `idFormat2018` step, so a mobile version counts 1 step less than the line. All
   the mobile data stored before LIVE-40516 has version 1, so a stored 1 runs the 2 mobile steps.
 
-- `defineAccountsRecord({ codec, state })`: the collection record, v0 (the stored shape of
-  today). The app gives 2 groups:
+- The record versions, `accountsVersions`: v0 is the stored shape of today,
+  `accountEnvelopeSchema`. A new version of the record is a `.next` here.
+- `defineAccountsRecord({ codec, state })`: the collection record, with `accountsVersions`. The
+  app gives 2 groups:
   - `codec`, the stored account and back: `decode(stored)`, `decodedId(decoded)` and
     `encode(account, state)`.
   - `state`, its Redux state: `select(state)`, `changed(previous, next)` and
     `toHydrationActions(decoded)`, which runs only at hydration.
 - For the tools: `defineAccountsCodec(codec)`, the same codec with no Redux state, and
   `appendAccounts`, `parseStoredAccount`, `storedAccountId` and `wrapRaw(raw)`.
-- 2 versions: the `version` of each stored account counts the steps of the line, as today. The
-  record `version` (`ACCOUNTS_RECORD_VERSION`, 0) labels the reports and the schema snapshot.
+- 2 versions: the legacy `version` of each stored account counts the steps of the line, as
+  today. The record version, `$v`, comes from `accountsVersions` (latest: v0, with no `$v`).
+  `parseStoredAccount` upgrades a stored account to the latest record version.
 
 ## Rules
 
@@ -50,7 +53,7 @@ for all of them. Each app injects its own account model.
    that its model fits the line.
 2. Add the step name at the end of `ACCOUNTS_VERSION_LINE`. The schema then accepts the new
    version.
-3. Update the schema snapshot: its maximum version changes. `ACCOUNTS_RECORD_VERSION` stays 0
-   until the envelope itself changes.
+3. Update the v0 schema snapshot: its maximum legacy version changes. The record stays v0 until
+   the envelope itself changes.
 4. Set the minimum app version: an older app keeps the new accounts stored and does not show them
    until the user updates.

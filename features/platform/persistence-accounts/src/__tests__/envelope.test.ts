@@ -1,5 +1,11 @@
-import { RecordDecodeError } from "@shared/persistence";
-import { appendAccounts, CLI_WRITTEN_VERSION, parseStoredAccount, wrapRaw } from "../envelope";
+import { NewerRecordVersionError, RecordDecodeError } from "@shared/persistence";
+import {
+  appendAccounts,
+  CLI_WRITTEN_VERSION,
+  parseStoredAccount,
+  storedAccountId,
+  wrapRaw,
+} from "../envelope";
 import { ACCOUNTS_VERSION_LINE } from "../versionLine";
 
 const raw = { id: "js:2:ethereum:0xabc:", currencyId: "ethereum", operations: [] };
@@ -35,9 +41,16 @@ describe("parseStoredAccount", () => {
     ["a version above the line", { data: raw, version: 4 }],
     ["a null version", { data: raw, version: null }],
     ["a string version", { data: raw, version: "1" }],
-    ["an unknown envelope key", { data: raw, version: 3, $v: 1 }],
+    ["an unknown envelope key", { data: raw, version: 3, checksum: 1 }],
+    ["an invalid $v", { $v: "1", data: { data: raw, version: 3 } }],
   ])("refuses %s", (_label, stored) => {
     expect(() => parseStoredAccount(stored)).toThrow(RecordDecodeError);
+  });
+
+  it("refuses a $v above the latest version as an account of a newer app", () => {
+    expect(() => parseStoredAccount({ $v: 1, data: { data: raw, version: 3 } })).toThrow(
+      NewerRecordVersionError,
+    );
   });
 
   it("keeps the account out of the error", () => {
@@ -49,6 +62,14 @@ describe("parseStoredAccount", () => {
       }
     })();
     expect(String(error)).not.toContain("secret-xpub");
+  });
+});
+
+describe("storedAccountId", () => {
+  it("reads the id of a stored account of any version", () => {
+    expect(storedAccountId({ data: raw, version: 3 })).toBe(raw.id);
+    expect(storedAccountId({ $v: 1, data: { data: raw, version: 3 } })).toBe(raw.id);
+    expect(storedAccountId({ data: { id: 42 } })).toBeUndefined();
   });
 });
 

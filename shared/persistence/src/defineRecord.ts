@@ -1,10 +1,10 @@
-import { z } from "zod";
-import { toRecordDecodeError } from "./toRecordDecodeError";
+import type { z } from "zod";
+import type { RecordVersions } from "./recordVersions";
 
 /** The stored value and back. */
 export type ValueCodec<Slice, Stored> = {
   encode(slice: Slice): Stored;
-  /** Gives the slice of a stored value that the schema accepted. A migration of an older shape goes here. */
+  /** Gives the slice of the latest version. The versions upgrade an older stored value first. */
   decode(stored: Stored): Slice;
 };
 
@@ -18,9 +18,7 @@ export type ValueStateMapping<State, Slice, Action> = {
 
 export type ValueRecordInput<State, Slice, Stored, Action> = {
   key: string;
-  /** A label for the reports and the schema snapshot. Persistence does not store it. */
-  version: number;
-  schema: (zod: typeof z) => z.ZodType<Stored>;
+  versions: RecordVersions<Stored>;
   codec: ValueCodec<Slice, Stored>;
   state: ValueStateMapping<State, Slice, Action>;
 };
@@ -28,9 +26,14 @@ export type ValueRecordInput<State, Slice, Stored, Action> = {
 export type ValueRecordDefinition<State, Action = unknown, Slice = unknown> = Readonly<{
   kind: "value";
   key: string;
+  /** The latest version. */
   version: number;
-  schema: z.ZodType;
-  /** `decode` checks the stored value with the schema first, and throws `RecordDecodeError`. */
+  /** The stored schema of each version, from v0. */
+  storedSchemas: ReadonlyArray<z.ZodType>;
+  /**
+   * `decode` upgrades the stored value to the latest version first, and throws
+   * `RecordDecodeError`, or `NewerRecordVersionError` for a value of a newer app.
+   */
   codec: Readonly<{ encode(slice: Slice): unknown; decode(stored: unknown): Slice }>;
   state: Readonly<ValueStateMapping<State, Slice, Action>>;
 }>;
@@ -39,21 +42,16 @@ export type ValueRecordDefinition<State, Action = unknown, Slice = unknown> = Re
 export function defineRecord<State, Slice, Stored, Action>(
   input: ValueRecordInput<State, Slice, Stored, Action>,
 ): ValueRecordDefinition<State, Action, Slice> {
-  const { key, version, codec, state } = input;
-  const schema = input.schema(z);
+  const { key, versions, codec, state } = input;
 
   return Object.freeze({
     kind: "value",
     key,
-    version,
-    schema,
+    version: versions.latest,
+    storedSchemas: versions.storedSchemas,
     codec: Object.freeze({
-      encode: codec.encode,
-      decode: (stored: unknown) => {
-        const result = schema.safeParse(stored);
-        if (!result.success) throw toRecordDecodeError(key, version, result.error.issues);
-        return codec.decode(result.data);
-      },
+      encode: (slice: Slice) => versions.encode(codec.encode(slice)),
+      decode: (stored: unknown) => codec.decode(versions.decode(stored, key)),
     }),
     state: Object.freeze({ select: state.select, toHydrationAction: state.toHydrationAction }),
   });

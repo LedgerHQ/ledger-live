@@ -1,17 +1,17 @@
 import { z } from "zod";
 import type { RecordDefinition } from "../RecordDefinition";
 
-export function storedSchemaSnapshot<State, Action>(definition: RecordDefinition<State, Action>) {
-  if (definition.kind === "collection") {
-    return {
-      key: definition.key,
-      version: definition.version,
-      entrySchema: z.toJSONSchema(definition.entrySchema),
-    };
+/** The stored JSON schema of 1 version of a record, for a snapshot test. */
+export function storedSchemaSnapshot<State, Action>(
+  definition: RecordDefinition<State, Action>,
+  version: number,
+) {
+  const schema = definition.storedSchemas[version];
+  if (schema === undefined) {
+    throw new RangeError(`Record "${definition.key}" has no version ${version}`);
   }
-  return {
-    key: definition.key,
-    version: definition.version,
-    schema: z.toJSONSchema(definition.schema),
-  };
+  const jsonSchema = z.toJSONSchema(schema);
+  return definition.kind === "collection"
+    ? { key: definition.key, version, entrySchema: jsonSchema }
+    : { key: definition.key, version, schema: jsonSchema };
 }

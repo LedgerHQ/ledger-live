@@ -1,13 +1,13 @@
 import { defineRecord } from "../defineRecord";
-import { RecordDecodeError } from "../errors";
+import { NewerRecordVersionError, RecordDecodeError } from "../errors";
+import { recordVersions } from "../recordVersions";
 import { storedSchemaSnapshot } from "../testing";
 
 type State = { counter: { value: number; transient: string } };
 
 const counterRecord = defineRecord({
   key: "counter",
-  version: 0,
-  schema: z => z.object({ value: z.number() }),
+  versions: recordVersions(z => z.object({ value: z.number() })),
   codec: {
     encode: (counter: State["counter"]) => ({ value: counter.value }),
     decode: stored => ({ value: stored.value, transient: "" }),
@@ -45,6 +45,12 @@ describe("defineRecord", () => {
     expect(() => counterRecord.codec.decode({ value: "4" })).toThrow(RecordDecodeError);
   });
 
+  it("throws a NewerRecordVersionError for a value of a newer version", () => {
+    expect(() => counterRecord.codec.decode({ $v: 1, data: { value: 4 } })).toThrow(
+      NewerRecordVersionError,
+    );
+  });
+
   it("keeps the stored value out of the error message", () => {
     const secret = "do-not-log-this";
     const decodeSecret = () => counterRecord.codec.decode({ value: secret });
@@ -55,7 +61,7 @@ describe("defineRecord", () => {
 
 describe("storedSchemaSnapshot", () => {
   it("returns the key, the version and the JSON schema", () => {
-    expect(storedSchemaSnapshot(counterRecord)).toMatchInlineSnapshot(`
+    expect(storedSchemaSnapshot(counterRecord, 0)).toMatchInlineSnapshot(`
       {
         "key": "counter",
         "schema": {
@@ -74,5 +80,9 @@ describe("storedSchemaSnapshot", () => {
         "version": 0,
       }
     `);
+  });
+
+  it("throws a RangeError for a version that the record does not have", () => {
+    expect(() => storedSchemaSnapshot(counterRecord, 1)).toThrow(RangeError);
   });
 });

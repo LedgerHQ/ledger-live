@@ -1,9 +1,11 @@
 import { storedSchemaSnapshot } from "@shared/persistence/testing";
-import { historyRecord } from "../history";
+import { historyRecord, historyVersions } from "../history";
+import storedDate from "./__fixtures__/history.date.json";
+import storedNull from "./__fixtures__/history.null.json";
 
 describe("history record", () => {
   it("keeps the stored schema", () => {
-    expect(storedSchemaSnapshot(historyRecord)).toMatchInlineSnapshot(`
+    expect(storedSchemaSnapshot(historyRecord, 0)).toMatchInlineSnapshot(`
       {
         "key": "history",
         "schema": {
@@ -25,5 +27,12 @@ describe("history record", () => {
         "version": 0,
       }
     `);
+  });
+
+  it.each([
+    ["date", storedDate],
+    ["null", storedNull],
+  ])("upgrades the %s sample to the latest version", (_label, sample) => {
+    expect(historyVersions.decode(sample, "history")).toEqual(sample);
   });
 });

@@ -1,4 +1,9 @@
-import { decodeEntries, encodeEntries } from "@shared/persistence";
+import {
+  decodeEntries,
+  encodeEntries,
+  NewerRecordVersionError,
+  RecordDecodeError,
+} from "@shared/persistence";
 import { storedSchemaSnapshot } from "@shared/persistence/testing";
 import { defineAccountsCodec, defineAccountsRecord } from "../defineAccountsRecord";
 
@@ -48,12 +53,21 @@ describe("defineAccountsRecord", () => {
   });
 
   it.each([
-    ["a version above the line", stored("b", 4)],
-    ["an unknown envelope key", { ...stored("b", 3), $v: 1 }],
-  ])("does not decode an account with %s: a newer app wrote it", async (_label, newer) => {
-    const { decoded, failures } = await decodeEntries(record.codec, [stored("a", 3), newer]);
+    ["a legacy version above the line", stored("b", 4)],
+    ["an unknown envelope key", { ...stored("b", 3), checksum: 1 }],
+  ])("does not decode an account with %s", async (_label, unreadable) => {
+    const { decoded, failures } = await decodeEntries(record.codec, [stored("a", 3), unreadable]);
     expect(decoded).toEqual([{ id: "a", version: 3 }]);
-    expect(failures.map(failure => failure.index)).toEqual([1]);
+    expect(failures).toEqual([{ index: 1, error: expect.any(RecordDecodeError) }]);
+  });
+
+  it("does not decode an account with a $v above the latest version: a newer app wrote it", async () => {
+    const { decoded, failures } = await decodeEntries(record.codec, [
+      stored("a", 3),
+      { $v: 1, data: stored("b", 3) },
+    ]);
+    expect(decoded).toEqual([{ id: "a", version: 3 }]);
+    expect(failures).toEqual([{ index: 1, error: expect.any(NewerRecordVersionError) }]);
   });
 
   it("encodes each account with the state", async () => {
@@ -77,12 +91,13 @@ describe("defineAccountsRecord", () => {
 
   it("reads the id of a stored account without a decode", () => {
     expect(record.storedEntryId(stored("a", 9))).toBe("a");
+    expect(record.storedEntryId({ $v: 1, data: stored("a", 3) })).toBe("a");
     expect(record.storedEntryId({ data: { id: 42 } })).toBeUndefined();
     expect(record.storedEntryId("garbage")).toBeUndefined();
   });
 
   it("keeps the stored entry schema", () => {
-    expect(storedSchemaSnapshot(record)).toMatchInlineSnapshot(`
+    expect(storedSchemaSnapshot(record, 0)).toMatchInlineSnapshot(`
       {
         "entrySchema": {
           "$schema": "https://json-schema.org/draft/2020-12/schema",

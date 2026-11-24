@@ -1,5 +1,5 @@
 import { combineReducers, configureStore, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { defineRecord } from "@shared/persistence";
+import { defineRecord, recordVersions } from "@shared/persistence";
 import { createMemoryStorage, type StoragePort } from "@shared/storage";
 import { createPersistence } from "../createPersistence";
 import { persistenceSlice, selectUsesPersistence, selectRecordStatus } from "../persistenceSlice";
@@ -29,18 +29,18 @@ const rootReducer = combineReducers({
 });
 type State = ReturnType<typeof rootReducer>;
 
+const counterVersions = recordVersions(z => z.object({ value: z.number() }));
+
 const firstRecord = defineRecord({
   key: "first",
-  version: 0,
-  schema: z => z.object({ value: z.number() }),
+  versions: counterVersions,
   codec: { encode: (counter: Counter) => counter, decode: stored => stored },
   state: { select: (state: State) => state.first, toHydrationAction: first.actions.init },
 });
 
 const secondRecord = defineRecord({
   key: "second",
-  version: 0,
-  schema: z => z.object({ value: z.number() }),
+  versions: counterVersions,
   codec: { encode: (counter: Counter) => counter, decode: stored => stored },
   state: { select: (state: State) => state.second, toHydrationAction: second.actions.init },
 });

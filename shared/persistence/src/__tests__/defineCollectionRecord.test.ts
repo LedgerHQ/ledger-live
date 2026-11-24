@@ -1,6 +1,7 @@
 import { appendEntries, decodeEntries, encodeEntries } from "../collectionEntries";
 import { defineCollectionRecord } from "../defineCollectionRecord";
-import { RecordDecodeError } from "../errors";
+import { NewerRecordVersionError, RecordDecodeError } from "../errors";
+import { recordVersions } from "../recordVersions";
 import { storedSchemaSnapshot } from "../testing";
 
 type Item = { id: string; value: number; transient?: string };
@@ -15,12 +16,12 @@ const storedIdOf = (stored: unknown): string | undefined => {
 
 const itemsRecord = defineCollectionRecord({
   key: "items",
-  version: 0,
-  entrySchema: z =>
+  versions: recordVersions(z =>
     z.strictObject({
       data: z.looseObject({ id: z.string() }),
       version: z.number().int().min(0).max(2),
     }),
+  ),
   entryId: (item: Item) => item.id,
   storedEntryId: storedIdOf,
   codec: {
@@ -58,8 +59,21 @@ describe("defineCollectionRecord", () => {
       itemsRecord.codec.decode({ data: { id: "a", value: 1 }, version: 3 }),
     ).rejects.toThrow(RecordDecodeError);
     await expect(
-      itemsRecord.codec.decode({ data: { id: "a", value: 1 }, version: 2, $v: 1 }),
+      itemsRecord.codec.decode({ data: { id: "a", value: 1 }, version: 2, extra: 1 }),
     ).rejects.toThrow(RecordDecodeError);
+  });
+
+  it("rejects with a NewerRecordVersionError an entry of a newer record version", async () => {
+    await expect(
+      itemsRecord.codec.decode({ $v: 1, data: { data: { id: "a", value: 1 }, version: 2 } }),
+    ).rejects.toThrow(NewerRecordVersionError);
+  });
+
+  it("reads the id in the payload of a stored entry of any version", () => {
+    const entry = { data: { id: "a", value: 1 }, version: 2 };
+    expect(itemsRecord.storedEntryId(entry)).toBe("a");
+    expect(itemsRecord.storedEntryId({ $v: 1, data: entry })).toBe("a");
+    expect(itemsRecord.storedEntryId("garbage")).toBeUndefined();
   });
 
   it("keeps the stored value out of the decode error", async () => {
@@ -124,7 +138,7 @@ describe("appendEntries", () => {
 
 describe("storedSchemaSnapshot of a collection", () => {
   it("returns the key, the version and the entry JSON schema", () => {
-    expect(storedSchemaSnapshot(itemsRecord)).toMatchInlineSnapshot(`
+    expect(storedSchemaSnapshot(itemsRecord, 0)).toMatchInlineSnapshot(`
       {
         "entrySchema": {
           "$schema": "https://json-schema.org/draft/2020-12/schema",

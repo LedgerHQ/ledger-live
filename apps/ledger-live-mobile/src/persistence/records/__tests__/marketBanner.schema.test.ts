@@ -1,9 +1,10 @@
 import { storedSchemaSnapshot } from "@shared/persistence/testing";
-import { marketBannerRecord } from "../marketBanner";
+import { marketBannerRecord, marketBannerVersions } from "../marketBanner";
+import storedFavorites from "./__fixtures__/marketBanner.favorites.json";
 
 describe("marketBanner record", () => {
   it("keeps the stored schema", () => {
-    expect(storedSchemaSnapshot(marketBannerRecord)).toMatchInlineSnapshot(`
+    expect(storedSchemaSnapshot(marketBannerRecord, 0)).toMatchInlineSnapshot(`
       {
         "key": "marketBanner",
         "schema": {
@@ -28,5 +29,9 @@ describe("marketBanner record", () => {
         "version": 0,
       }
     `);
+  });
+
+  it("upgrades the favorites sample to the latest version", () => {
+    expect(marketBannerVersions.decode(storedFavorites, "marketBanner")).toEqual(storedFavorites);
   });
 });
