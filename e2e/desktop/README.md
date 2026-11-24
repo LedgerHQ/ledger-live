@@ -108,27 +108,30 @@ the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed 
 
 ## App upgrade
 
-`tests/specs/app.upgrade.spec.ts` downloads a published nightly from `download.live.ledger.com`,
-checks it against its published SHA-512, and caches it under `tests/artifacts/nightly-builds/`. It
-adds an account and changes the counter value and theme on that nightly, then opens the same profile
-with the build under test and checks all three are kept. Each time it launches a nightly, it checks
-that the app reports that version. It runs on Linux and macOS.
+`tests/specs/app.upgrade.spec.ts` upgrades between two published nightlies: from the previous one
+(n-1) to the latest one (n). It adds an account and changes the counter value and theme on n-1, then
+opens the same profile with n and checks all three are kept. It runs on Linux and macOS.
 
-The desktop E2E workflow reads the latest nightly when the run starts, before it builds the app, and
-passes it to the test as `E2E_UPGRADE_FROM_VERSION`. The scheduled run starts at 01:00 UTC, before
-that night's nightly (02:00 UTC), so it upgrades from the previous nightly (n-1) to the code that
-becomes the next one. A manual run starts from the latest nightly, which can be newer than your
-branch: rebase on develop, or pick an older nightly with the `upgrade_from_version` input. The run
-summary shows the version.
+It reads the latest nightly from the `download.live.ledger.com` update manifest. That manifest names
+no earlier nightly, so it finds n-1 from the public runs of the nightly workflow
+(`release-final-nightly.yml`): each run stamps its version with the time its `snapshot versioning`
+step runs, and the first earlier version with a published checksum is n-1. Nights without a nightly
+(Sunday and Monday) and runs whose desktop build was not published are skipped.
 
-Two environment variables pick the versions, as an exact version (`4.30.0-nightly.20261121020412`)
-or `latest`:
+Each nightly is checked against its published SHA-512 and cached under
+`tests/artifacts/nightly-builds/`. After each launch, the test checks the app reports the expected
+version. The report shows both versions in its step names.
 
-- `E2E_UPGRADE_FROM_VERSION`: the version the profile is created with. Defaults to `latest`, read when the test starts.
-- `E2E_UPGRADE_TO_VERSION`: the version to upgrade to. Defaults to the local build.
+Two environment variables, or the `upgrade_from_version` and `upgrade_to_version` inputs of the
+desktop E2E workflow, pick other versions:
+
+- `E2E_UPGRADE_TO_VERSION`: `latest` (default), an exact version (`4.30.0-nightly.20261124020210`),
+  or `local` for the build under test.
+- `E2E_UPGRADE_FROM_VERSION`: `previous` (default: the nightly before the one it upgrades to, or the
+  latest one when it upgrades to `local`), `latest`, or an exact version.
 
 ```bash
-E2E_UPGRADE_FROM_VERSION=4.30.0-nightly.20261121020412 E2E_UPGRADE_TO_VERSION=latest pnpm e2e:desktop test:playwright app.upgrade
+E2E_UPGRADE_TO_VERSION=local pnpm e2e:desktop test:playwright app.upgrade
 ```
 
 ## Feature Flags

@@ -9,6 +9,7 @@ import { closeApp, launchApp, waitForAppReady } from "tests/utils/electronUtils"
 import { getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
 import { safeAppendFile } from "tests/utils/fileUtils";
 import {
+  findPreviousNightlyVersion,
   installNightlyBuild,
   resolveNightlyVersion,
   type NightlyBuild,
@@ -113,29 +114,40 @@ export class AppUpgrade {
   }
 }
 
+/**
+ * `previous` is the nightly before `to` (n-1 for n), or the latest nightly when `to` is the local
+ * build. Anything else is resolved as `latest` or an exact version.
+ */
+async function resolveUpgradeFromVersion(requested: string, to: NightlyBuild | undefined) {
+  if (requested !== "previous") return resolveNightlyVersion(requested);
+  return to ? findPreviousNightlyVersion(to.version) : resolveNightlyVersion("latest");
+}
+
 type AppUpgradeFixtures = {
-  /** `E2E_UPGRADE_FROM_VERSION`, or the latest published nightly. */
-  upgradeFrom: NightlyBuild;
-  /** `E2E_UPGRADE_TO_VERSION` when set, otherwise the local build under test. */
+  /** `E2E_UPGRADE_TO_VERSION`: the latest nightly by default, or the local build for `local`. */
   upgradeTo: NightlyBuild | undefined;
+  /** `E2E_UPGRADE_FROM_VERSION`: the nightly before `upgradeTo` by default. */
+  upgradeFrom: NightlyBuild;
   appUpgrade: AppUpgrade;
 };
 
 export const test = base.extend<AppUpgradeFixtures>({
-  upgradeFrom: [
+  upgradeTo: [
     async ({}, use) => {
-      const version = await resolveNightlyVersion(process.env.E2E_UPGRADE_FROM_VERSION);
-      await use(await installNightlyBuild(version));
+      const requested = process.env.E2E_UPGRADE_TO_VERSION || "latest";
+      await use(
+        requested === "local"
+          ? undefined
+          : await installNightlyBuild(await resolveNightlyVersion(requested)),
+      );
     },
     { timeout: TIMEOUT.xxxxlarge },
   ],
 
-  upgradeTo: [
-    async ({}, use) => {
-      const requested = process.env.E2E_UPGRADE_TO_VERSION;
-      await use(
-        requested ? await installNightlyBuild(await resolveNightlyVersion(requested)) : undefined,
-      );
+  upgradeFrom: [
+    async ({ upgradeTo }, use) => {
+      const requested = process.env.E2E_UPGRADE_FROM_VERSION || "previous";
+      await use(await installNightlyBuild(await resolveUpgradeFromVersion(requested, upgradeTo)));
     },
     { timeout: TIMEOUT.xxxxlarge },
   ],

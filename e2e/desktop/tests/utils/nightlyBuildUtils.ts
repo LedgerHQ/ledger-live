@@ -5,7 +5,7 @@ import { access, chmod, mkdir, mkdtemp, readdir, rename, rm } from "fs/promises"
 import * as path from "path";
 import type { Readable } from "stream";
 import { pipeline } from "stream/promises";
-import axios from "axios";
+import axios, { type AxiosRequestConfig } from "axios";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 /** Where electron-builder publishes the nightlies, with one update manifest per platform. */
@@ -14,7 +14,21 @@ const NIGHTLY_DOWNLOAD_URL = "https://download.live.ledger.com";
 const NIGHTLY_CHECKSUMS_URL = "https://lw-prerelease-sigs.s3.eu-west-1.amazonaws.com";
 const NIGHTLY_BUILDS_DIR = path.join(__dirname, "../artifacts/nightly-builds");
 /** `<next version>-nightly.<build time, UTC, YYYYMMDDHHMMSS>`: it ends up in URLs and cache paths. */
-const NIGHTLY_VERSION = /^\d+\.\d+\.\d+-nightly\.\d{14}$/;
+const NIGHTLY_VERSION = /^(\d+\.\d+\.\d+)-nightly\.(\d{14})$/;
+
+/**
+ * The manifest only names the latest nightly and neither bucket can be listed, so earlier nightlies
+ * are found from the public runs of the workflow that versions them (`release-final-nightly.yml`).
+ */
+const GITHUB_ACTIONS_API_URL = "https://api.github.com/repos/LedgerHQ/ledger-live/actions";
+const NIGHTLY_RUNS_URL = `${GITHUB_ACTIONS_API_URL}/workflows/release-final-nightly.yml/runs?status=success&per_page=10`;
+/** The step that stamps the nightly version with the time it runs, about a second after it starts. */
+const NIGHTLY_VERSIONING_STEP = "snapshot versioning";
+const NIGHTLY_STAMP_WINDOW_SECONDS = 15;
+const GITHUB_REQUEST: AxiosRequestConfig = { headers: { Accept: "application/vnd.github+json" } };
+
+type WorkflowRuns = { workflow_runs: { id: number; run_started_at: string }[] };
+type WorkflowJobs = { jobs: { steps?: { name: string; started_at: string | null }[] }[] };
 
 /** A published nightly, unpacked and ready to launch. */
 export type NightlyBuild = { version: string; executablePath: string };
@@ -90,18 +104,19 @@ async function exists(filePath: string): Promise<boolean> {
   }
 }
 
-async function fetchText(url: string): Promise<string> {
+async function fetchData<T>(url: string, config: AxiosRequestConfig = {}): Promise<T> {
   try {
-    const { data } = await axios.get<string>(url, {
-      responseType: "text",
-      timeout: TIMEOUT.xlarge,
-    });
+    const { data } = await axios.get<T>(url, { timeout: TIMEOUT.xlarge, ...config });
     return data;
   } catch (error) {
     throw new Error(`Could not fetch ${url}: ${error instanceof Error ? error.message : error}`, {
       cause: error,
     });
   }
+}
+
+function fetchText(url: string): Promise<string> {
+  return fetchData<string>(url, { responseType: "text" });
 }
 
 /**
@@ -118,23 +133,85 @@ export async function resolveNightlyVersion(requested?: string): Promise<string>
   return checkNightlyVersion(version, manifestUrl);
 }
 
-function checkNightlyVersion(version: string, source: string): string {
-  if (!NIGHTLY_VERSION.test(version)) {
+function parseNightlyVersion(version: string, source: string): { base: string; stamp: string } {
+  const [, base, stamp] = NIGHTLY_VERSION.exec(version) ?? [];
+  if (!base || !stamp) {
     throw new Error(
       `${source}: "${version}" is not a nightly version, e.g. 4.30.0-nightly.20261121020412`,
     );
   }
+  return { base, stamp };
+}
+
+function checkNightlyVersion(version: string, source: string): string {
+  parseNightlyVersion(version, source);
   return version;
 }
 
+/** `YYYYMMDDHHMMSS` in UTC, as a nightly version ends. */
+function toStamp(time: number): string {
+  return new Date(time).toISOString().replace(/\D/g, "").slice(0, 14);
+}
+
+/** The nightly before a release cut has the previous minor version. */
+function candidateBases(base: string): string[] {
+  const [major, minor] = base.split(".").map(Number);
+  return minor > 0 ? [base, `${major}.${minor - 1}.0`] : [base];
+}
+
+function checksumsUrl(version: string): string {
+  return `${NIGHTLY_CHECKSUMS_URL}/ledger-live-desktop-${version}.sha512sum`;
+}
+
+async function isPublishedNightly(version: string): Promise<boolean> {
+  // The bucket answers 403, not 404, for a version that was never published.
+  const { status } = await axios.head(checksumsUrl(version), {
+    timeout: TIMEOUT.xlarge,
+    validateStatus: () => true,
+  });
+  return status === 200;
+}
+
+/**
+ * Finds the published nightly just before `version` (n-1 for n). For each earlier nightly run,
+ * newest first, it tries the versions stamped in the seconds after its versioning step started,
+ * against the published checksums. A run whose desktop build was not published is skipped.
+ */
+export async function findPreviousNightlyVersion(version: string): Promise<string> {
+  const { base, stamp } = parseNightlyVersion(version, "Version to upgrade to");
+  const { workflow_runs: runs } = await fetchData<WorkflowRuns>(NIGHTLY_RUNS_URL, GITHUB_REQUEST);
+  for (const nightlyRun of runs) {
+    if (toStamp(Date.parse(nightlyRun.run_started_at)) >= stamp) continue;
+    const { jobs } = await fetchData<WorkflowJobs>(
+      `${GITHUB_ACTIONS_API_URL}/runs/${nightlyRun.id}/jobs`,
+      GITHUB_REQUEST,
+    );
+    const startedAt = jobs
+      .flatMap(job => job.steps ?? [])
+      .find(step => step.name === NIGHTLY_VERSIONING_STEP)?.started_at;
+    if (!startedAt) continue;
+    for (let second = 0; second <= NIGHTLY_STAMP_WINDOW_SECONDS; second++) {
+      const candidateStamp = toStamp(Date.parse(startedAt) + second * 1000);
+      if (candidateStamp >= stamp) break;
+      for (const candidateBase of candidateBases(base)) {
+        const candidate = `${candidateBase}-nightly.${candidateStamp}`;
+        if (await isPublishedNightly(candidate)) return candidate;
+      }
+    }
+  }
+  throw new Error(
+    `No published nightly before ${version} in the last ${runs.length} nightly runs: set E2E_UPGRADE_FROM_VERSION`,
+  );
+}
+
 async function fetchExpectedChecksum(version: string, artifactName: string): Promise<string> {
-  const checksumsUrl = `${NIGHTLY_CHECKSUMS_URL}/ledger-live-desktop-${version}.sha512sum`;
-  const checksums = await fetchText(checksumsUrl);
+  const url = checksumsUrl(version);
+  const checksums = await fetchText(url);
   const entry = checksums
     .split("\n")
     .map(line => line.trim().split(/\s+/))
     .find(([, fileName]) => fileName === artifactName);
-  if (!entry) throw new Error(`${artifactName} is not listed in ${checksumsUrl}`);
+  if (!entry) throw new Error(`${artifactName} is not listed in ${url}`);
   return entry[0];
 }
 
