@@ -4,3 +4,4 @@ export * from "./RecordDefinition";
 export * from "./collectionEntries";
 export * from "./errors";
 export * from "./toRecordDecodeError";
+export * from "./recordVersions";
