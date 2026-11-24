@@ -12743,5 +12743,15 @@
         "footer": "Crypto transaction services are provided by third-party provider MoonPay. Ledger provides no advice or recommendations."
       }
     }
+  },
+  "newSettings": {
+    "title": "Settings",
+    "sections": {
+      "general": "General",
+      "assetManagement": "Asset management",
+      "security": "Security",
+      "privacy": "Privacy",
+      "about": "About"
+    }
   }
 }
