@@ -12,14 +12,14 @@ Use-case packages in `domain/api/*` add their endpoints with
 and their cache tags with `enhanceEndpoints({ addTagTypes })`. Both mutate and return the _same_ api
 object, so one reducer, one middleware and one cache serve every use case on a given backend.
 
-| Service                  | Reducer path       | Injectors                                                                            |
-| ------------------------ | ------------------ | ------------------------------------------------------------------------------------ |
-| `services/cal`           | `calApi`           | `@domain/api-currency-token`                                                         |
-| `services/card`          | `cardApi`          | `@domain/api-card-management`                                                        |
-| `services/coinmarketcap` | `coinMarketCapApi` | `@domain/api-market-index-altcoin-season`, `@domain/api-market-index-fear-and-greed` |
-| `services/countervalues` | `countervaluesApi` | `@domain/api-currency-fiat`, `@domain/api-market-countervalues`, `@domain/api-ofac`   |
-| `services/portfolio`     | `portfolioApi`     | `@domain/api-account-portfolio`                                                      |
-| `services/push-devices`  | `pushDevicesApi`   | `@domain/api-push-devices`                                                           |
+| Service                  | Reducer path       | Injectors                                                                                                                                                                                                                                                    |
+| ------------------------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `services/cal`           | `calApi`           | `@domain/api-currency-token`                                                                                                                                                                                                                                 |
+| `services/card`          | `cardApi`          | `@domain/api-card-management`                                                                                                                                                                                                                                |
+| `services/coinmarketcap` | `coinMarketCapApi` | `@domain/api-market-index-altcoin-season`, `@domain/api-market-index-fear-and-greed`                                                                                                                                                                         |
+| `services/countervalues` | `countervaluesApi` | `@domain/api-currency-fiat`, `@domain/api-market-chart`, `@domain/api-market-countervalues`, `@domain/api-market-currency`, `@domain/api-market-index-global`, `@domain/api-market-performers`, `@domain/api-market-trending-categories`, `@domain/api-ofac` |
+| `services/portfolio`     | `portfolioApi`     | `@domain/api-account-portfolio`                                                                                                                                                                                                                              |
+| `services/push-devices`  | `pushDevicesApi`   | `@domain/api-push-devices`                                                                                                                                                                                                                                   |
 
 ## What lives here, and what does not
 
