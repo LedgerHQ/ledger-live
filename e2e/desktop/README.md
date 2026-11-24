@@ -108,17 +108,23 @@ the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed 
 
 ## App upgrade
 
-`tests/specs/app.upgrade.spec.ts` downloads the latest published nightly from `download.live.ledger.com`,
+`tests/specs/app.upgrade.spec.ts` downloads a published nightly from `download.live.ledger.com`,
 checks it against its published SHA-512, and caches it under `tests/artifacts/nightly-builds/`. It
 adds an account and changes the counter value and theme on that nightly, then opens the same profile
-with the build under test and checks all three are kept. The scheduled desktop run starts before
-that night's nightly is published, so it upgrades from the previous nightly (n-1) to the code that
-becomes the next one. It runs on Linux and macOS.
+with the build under test and checks all three are kept. Each time it launches a nightly, it checks
+that the app reports that version. It runs on Linux and macOS.
 
-Two environment variables pick other versions, as an exact version (`4.30.0-nightly.20261121020412`)
+The desktop E2E workflow reads the latest nightly when the run starts, before it builds the app, and
+passes it to the test as `E2E_UPGRADE_FROM_VERSION`. The scheduled run starts at 01:00 UTC, before
+that night's nightly (02:00 UTC), so it upgrades from the previous nightly (n-1) to the code that
+becomes the next one. A manual run starts from the latest nightly, which can be newer than your
+branch: rebase on develop, or pick an older nightly with the `upgrade_from_version` input. The run
+summary shows the version.
+
+Two environment variables pick the versions, as an exact version (`4.30.0-nightly.20261121020412`)
 or `latest`:
 
-- `E2E_UPGRADE_FROM_VERSION`: the version the profile is created with. Defaults to `latest`.
+- `E2E_UPGRADE_FROM_VERSION`: the version the profile is created with. Defaults to `latest`, read when the test starts.
 - `E2E_UPGRADE_TO_VERSION`: the version to upgrade to. Defaults to the local build.
 
 ```bash

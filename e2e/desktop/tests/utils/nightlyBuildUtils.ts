@@ -13,6 +13,8 @@ const NIGHTLY_DOWNLOAD_URL = "https://download.live.ledger.com";
 /** The checksums the in-app updater verifies a nightly against (`src/main/updater/init.ts`). */
 const NIGHTLY_CHECKSUMS_URL = "https://lw-prerelease-sigs.s3.eu-west-1.amazonaws.com";
 const NIGHTLY_BUILDS_DIR = path.join(__dirname, "../artifacts/nightly-builds");
+/** `<next version>-nightly.<build time, UTC, YYYYMMDDHHMMSS>`: it ends up in URLs and cache paths. */
+const NIGHTLY_VERSION = /^\d+\.\d+\.\d+-nightly\.\d{14}$/;
 
 /** A published nightly, unpacked and ready to launch. */
 export type NightlyBuild = { version: string; executablePath: string };
@@ -108,10 +110,20 @@ async function fetchText(url: string): Promise<string> {
  * (e.g. `4.30.0-nightly.20261121020412`).
  */
 export async function resolveNightlyVersion(requested?: string): Promise<string> {
-  if (requested && requested !== "latest") return requested;
+  if (requested && requested !== "latest")
+    return checkNightlyVersion(requested, "Requested version");
   const manifestUrl = `${NIGHTLY_DOWNLOAD_URL}/${nightlyPlatform().manifest}`;
   const version = /^version:\s*(\S+)\s*$/m.exec(await fetchText(manifestUrl))?.[1];
   if (!version) throw new Error(`No version in ${manifestUrl}`);
+  return checkNightlyVersion(version, manifestUrl);
+}
+
+function checkNightlyVersion(version: string, source: string): string {
+  if (!NIGHTLY_VERSION.test(version)) {
+    throw new Error(
+      `${source}: "${version}" is not a nightly version, e.g. 4.30.0-nightly.20261121020412`,
+    );
+  }
   return version;
 }
 

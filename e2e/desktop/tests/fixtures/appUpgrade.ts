@@ -1,4 +1,4 @@
-import type { ElectronApplication, Page, TestInfo } from "@playwright/test";
+import { expect, type ElectronApplication, type Page, type TestInfo } from "@playwright/test";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { test as base } from "tests/fixtures/common";
 import { step } from "tests/misc/reporters/step";
@@ -101,7 +101,15 @@ export class AppUpgrade {
     const logFile = this.testInfo.outputPath(`logs-${logName}.log`);
     page.on("console", msg => safeAppendFile(logFile, `${msg.text()}\n`));
     await waitForAppReady(page);
+    if (build) await this.expectRunningVersion(build.version, electronApp);
     return new Application({ page, electronApp });
+  }
+
+  /** Proves the report's version is the one that ran, not a build the cache or the updater swapped in. */
+  @step("Check the running app is $0")
+  private async expectRunningVersion(version: string, electronApp: ElectronApplication) {
+    const runningVersion = await electronApp.evaluate(({ app }) => app.getVersion());
+    expect(runningVersion, "Version the launched app reports").toBe(version);
   }
 }
 
