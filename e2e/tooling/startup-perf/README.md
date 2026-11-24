@@ -25,9 +25,11 @@ Each test sits next to its module.
 | `ci/slack-report.mts`               | The Slack job: the run's result from the jobs and each `summary.json`                       |
 | `ci/step.mts`                       | What those share: workspace paths, error annotations, job summary, failing verdicts         |
 | `ci/toolchain.sh`                   | Records a build's toolchain beside its `sha.txt`; warns when A's and B's differ             |
-| `ci/sides.mts`                      | The restore job's last step: the sides each build matrix still builds                       |
+| `ci/sides.mts`                      | The restore job's last step: the builds each platform still makes, and its snapshot         |
 | `ci/actions/restore/`               | The restore job's composite: looks an entry up, checks it, publishes it as the artifact     |
 | `ci/actions/save/`                  | The save job's composite: caches an artifact the run made                                   |
+| `ci/actions/build-android/`         | The Android build jobs' composite: the APK, prod-like or not, uploaded                      |
+| `ci/actions/build-ios/`             | The iOS build jobs' composite: the simulator app, prod-like or not, uploaded                |
 | `devices/boot-emulators.sh`         | Boots the two Android emulators (one for the snapshot): 4 cores, animations on, cellular    |
 | `devices/boot-simulators.sh`        | Creates and boots the two simulators (one for the snapshot), then waits for an idle host    |
 | `devices/install-maestro.sh`        | Installs the pinned Maestro, checked against its SHA-256                                    |
@@ -114,7 +116,7 @@ what only changes on a release: build A of a `live-mobile@X.Y.Z` tag, and that r
 snapshot (see "The accounts snapshot" for its key). Two jobs read and write it, through
 this folder's composites, referenced by path so a branch runs its own: `restore-cache` looks each
 entry up (`ci/actions/restore`) and publishes a whole one as the artifact its job would have
-uploaded, then `ci/sides.mts` leaves that side out of the build matrices; `save-cache` caches what
+uploaded, then `ci/sides.mts` leaves it out of what the run makes; `save-cache` caches what
 the run made (`ci/actions/save`). The plan says whether to look the cache up (`restore`) and whether
 this run may write it (`save`).
 
@@ -129,8 +131,8 @@ this run may write it (`save`).
 - **Restore (`restore-cache`):** every run reads `develop/`, which only develop's role writes, so
   no run restores what a branch run made. An entry counts once its download succeeded and its
   check holds (build A: its commit and binary match; the snapshot: its release matches and its
-  storage file is not empty): the job publishes it as the run's artifact, and the build matrices
-  leave that side out.
+  storage file is not empty): the job publishes it as the run's artifact, and the job that would
+  make it skips it.
 - **Save (`save-cache`):** only in a run from develop, and only when B is develop, release or main
   (the branches only a pull request changes), or in a single-commit preset (`aa-noise`,
   `known-regression`), whose B is built from A's commit, when that commit is reviewed: the run's
@@ -171,13 +173,13 @@ The accounts scenario starts from accounts added through the app's UI, as a user
   userdata and the `e2e-cli speculos` command's own files: a new release or a change to them makes a
   new snapshot. Not the E2E suites' Speculos settings the command reuses
   (`libs/live-e2e-shared/src/speculos*.ts`): they change every few days and do not change the
-  accounts the scan finds. Bump the version by hand when one of them must make a new snapshot. The
-  plan lists the side `snapshot` with A and B, and `restore-cache` leaves it out once it restores
-  the snapshot. Otherwise the platform also builds the release's E2E build, and its snapshot job
-  makes the snapshot on one emulator (the 8-CPU runner) or simulator (the performance pool, in the
-  iOS measurement queue); `save-cache` then caches it, under the cache's rules. A snapshot that
-  fails skips that platform's measurement; failing to read or write the cache fails nothing, as the
-  snapshot is then made, or used without being saved.
+  accounts the scan finds. Bump the version by hand when one of them must make a new snapshot. When
+  `restore-cache` does not restore it, `build-snapshot-<platform>` builds the release's E2E build in
+  its own job, so a failed one cancels neither A nor B, and `snapshot-<platform>` makes the snapshot
+  on one emulator (the 8-CPU runner) or simulator (the performance pool, in the iOS measurement
+  queue); `save-cache` then caches it, under the cache's rules. A snapshot that fails skips that
+  platform's measurement; failing to read or write the cache fails nothing, as the snapshot is then
+  made, or used without being saved.
 - **Measured**: `run.ts --accounts-snapshot <dir>` writes it into each install in place of the
   accounts userdata (`--accounts-userdata` stays for local runs).
 
