@@ -9,6 +9,7 @@ import {
   getPreviousFirmwareVersion,
 } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { device } from "detox";
+import { overrideUserId } from "@e2e/bridge/server";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNotNanoS, launchApp } from "@e2e/helpers/commonHelpers";
 import type { PartialFeatures } from "@shared/feature-flags";
@@ -62,6 +63,7 @@ function setupSeededFunnel(options: SeededFunnelOptions): void {
     });
     await device.reverseTcpPort(port);
     await app.init({ userdata: options.userdata, featureFlags: seededFunnelFlags(options) });
+    if (options.osUpdateAvailable) await overrideUserId(FIXED_ROLLOUT_USER_ID);
   });
 
   afterAll(async () => {

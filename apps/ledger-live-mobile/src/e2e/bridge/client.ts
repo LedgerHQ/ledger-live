@@ -12,6 +12,7 @@ import {
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { setContacts } from "@domain/entity-contact";
+import { identitiesSlice } from "@domain/entity-client-identity";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
@@ -271,6 +272,10 @@ async function onMessage(event: WebSocketMessageEvent) {
       case "overrideFeatureFlag": {
         const { id, value } = msg.payload as { id: FeatureId; value: Feature | undefined };
         store.dispatch(setOverride({ key: id, value }));
+        break;
+      }
+      case "overrideUserId": {
+        store.dispatch(identitiesSlice.actions.importFromLegacy({ userId: msg.payload }));
         break;
       }
       case "overrideLiveConfig": {
