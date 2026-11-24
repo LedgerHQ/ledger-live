@@ -4,6 +4,7 @@ import { IconsLegacy, Link } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
 import Page from "LLD/components/Page";
 import Settings from ".";
+import { NewSettingsRoute } from "LLD/features/NewSettings";
 
 const WelcomeScreenSettings: React.FC = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const WelcomeScreenSettings: React.FC = () => {
         >
           Back
         </Link>
-        <Settings />
+        <NewSettingsRoute legacySettings={<Settings />} />
       </Page>
     </Box>
   );
