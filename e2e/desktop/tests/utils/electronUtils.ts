@@ -1,4 +1,5 @@
-import { ElectronApplication, _electron as electron } from "@playwright/test";
+import { ElectronApplication, Page, _electron as electron } from "@playwright/test";
+import { execFileSync } from "node:child_process";
 import * as path from "path";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { withoutExclusiveLockEnv } from "tests/utils/exclusiveLock";
@@ -67,4 +68,40 @@ export async function launchApp({
     executablePath: require("electron/index.js"),
     timeout: TIMEOUT.xxxlarge,
   });
+}
+
+/** Waits for the app to finish starting: on a slow CI runner, start-up takes longer than 30s. */
+export async function waitForAppReady(page: Page): Promise<void> {
+  await page.waitForLoadState("domcontentloaded", { timeout: TIMEOUT.xxxlarge });
+  await page.waitForSelector("#loader-container", { state: "hidden", timeout: TIMEOUT.xxxlarge });
+}
+
+/** Quits the app and kills any process still running on its user data directory. */
+export async function closeApp(
+  electronApp: ElectronApplication,
+  userdataDestinationPath: string,
+): Promise<void> {
+  try {
+    await electronApp.close();
+  } catch {
+    // App may already be closed when capturing failure video
+  }
+
+  try {
+    if (process.platform === "win32") {
+      const powershell = path.win32.join(
+        process.env.SystemRoot ?? "C:/Windows",
+        "System32/WindowsPowerShell/v1.0/powershell.exe",
+      );
+      execFileSync(powershell, [
+        "-NoProfile",
+        "-Command",
+        `Get-CimInstance Win32_Process | Where-Object { $_.ProcessId -ne $PID -and $_.CommandLine -like '*${path.basename(userdataDestinationPath)}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }`,
+      ]);
+    } else {
+      execFileSync("pkill", ["-f", userdataDestinationPath]);
+    }
+  } catch {
+    // No lingering process (only Reset App reboots the main process into a new instance)
+  }
 }

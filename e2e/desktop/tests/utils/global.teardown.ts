@@ -1,7 +1,7 @@
 import { formatFlagsData, formatEnvData } from "@ledgerhq/live-e2e-shared/index";
 import { writeFileSync } from "fs";
 import { ElectronApplication, expect } from "@playwright/test";
-import { launchApp } from "tests/utils/electronUtils";
+import { launchApp, waitForAppReady } from "tests/utils/electronUtils";
 import { getFeatureFlags, getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
 import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
@@ -24,9 +24,7 @@ export default async function globalTeardown() {
     const page = await electronApp.firstWindow();
     page.setDefaultTimeout(TIMEOUT.xlarge);
 
-    // app is loaded: on a slow CI runner, start-up takes longer than 30s
-    await page.waitForLoadState("domcontentloaded", { timeout: TIMEOUT.xxxlarge });
-    await page.waitForSelector("#loader-container", { state: "hidden", timeout: TIMEOUT.xxxlarge });
+    await waitForAppReady(page);
 
     // wait for app envs to be available
     let appEnvsString = "";

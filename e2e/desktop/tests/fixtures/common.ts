@@ -1,5 +1,4 @@
 import { test as base, Page, ElectronApplication, ChromiumBrowserContext } from "@playwright/test";
-import { execFileSync } from "node:child_process";
 import { mkdir, readFile, writeFile } from "fs/promises";
 import cloneDeep from "lodash/cloneDeep";
 import merge from "lodash/merge";
@@ -9,7 +8,8 @@ import { setEnv } from "@shared/env";
 
 import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
-import { launchApp } from "tests/utils/electronUtils";
+import { closeApp, launchApp, waitForAppReady } from "tests/utils/electronUtils";
+import { buildAppEnv } from "tests/utils/appEnvUtils";
 import {
   captureArtifacts,
   addTeamOwner,
@@ -285,30 +285,12 @@ export const test = base.extend<TestFixtures>({
       testFlags: featureFlags,
     });
 
-    // default environment variables
-    env = Object.assign(
-      {
-        ...process.env,
-        VERBOSE: true,
-        MOCK: undefined,
-        MOCK_COUNTERVALUES: undefined,
-        HIDE_DEBUG_MOCK: true,
-        CI: process.env.CI || undefined,
-        PLAYWRIGHT_RUN: true,
-        // Make CSV export filename unique per test (parallel-safe + traceable to a test id).
-        PLAYWRIGHT_EXPORT_CSV_PATH: `./ledgerwallet-operations-${testInfo.testId}.csv`,
-        LEDGER_MIN_HEIGHT: 768,
-        FEATURE_FLAGS: JSON.stringify(mergedFeatureFlags),
-        MANAGER_DEV_MODE: true,
-        SPECULOS_API_PORT: speculos.device ? String(speculos.device.port) : undefined,
-        SPECULOS_ADDRESS: speculos.device ? getSpeculosAddress() : undefined,
-        SPECULOS_SESSION_TOKEN: speculos.device ? process.env.SPECULOS_SESSION_TOKEN : undefined,
-        DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1",
-        ...(process.env.DEV_TOOLS && { DEV_TOOLS_MODE: process.env.DEV_TOOLS_MODE || "detach" }),
-      },
+    env = buildAppEnv({
       env,
-    );
-    delete env[CARD_SESSION_BOOTSTRAP_ENV];
+      mergedFeatureFlags,
+      speculosDevice: speculos.device,
+      testId: testInfo.testId,
+    });
 
     if (isPaytabTest(testInfo)) {
       const { BAANX_TEST_API_URL, BAANX_TEST_CLIENT_KEY } = process.env;
@@ -339,29 +321,7 @@ export const test = base.extend<TestFixtures>({
       await attachMergedFeatureFlags(testInfo, mergedFeatureFlags);
     }
 
-    try {
-      await electronApp.close();
-    } catch {
-      // App may already be closed when capturing failure video
-    }
-
-    try {
-      if (process.platform === "win32") {
-        const powershell = path.win32.join(
-          process.env.SystemRoot ?? "C:/Windows",
-          "System32/WindowsPowerShell/v1.0/powershell.exe",
-        );
-        execFileSync(powershell, [
-          "-NoProfile",
-          "-Command",
-          `Get-CimInstance Win32_Process | Where-Object { $_.ProcessId -ne $PID -and $_.CommandLine -like '*${path.basename(userdataDestinationPath)}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }`,
-        ]);
-      } else {
-        execFileSync("pkill", ["-f", userdataDestinationPath]);
-      }
-    } catch {
-      // No lingering process (only Reset App reboots the main process into a new instance)
-    }
+    await closeApp(electronApp, userdataDestinationPath);
   },
   webviewCollector: async ({ electronApp }, use) => {
     const webviewCollector = new PageLogCollector();
@@ -422,9 +382,7 @@ export const test = base.extend<TestFixtures>({
       safeAppendFile(logFile, `${txt}\n`);
     });
 
-    // app is loaded: on a slow CI runner, start-up takes longer than 30s
-    await page.waitForLoadState("domcontentloaded", { timeout: TIMEOUT.xxxlarge });
-    await page.waitForSelector("#loader-container", { state: "hidden", timeout: TIMEOUT.xxxlarge });
+    await waitForAppReady(page);
 
     // A relaunched remote Speculos is a new session, on its own URL and token.
     // A local one keeps its port, so the app needs no update.
