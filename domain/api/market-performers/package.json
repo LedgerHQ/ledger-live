@@ -1,0 +1,49 @@
+{
+  "name": "@domain/api-market-performers",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Domain API client for the market performers lists: RTK Query endpoints injected into the shared Countervalues service api, typed on @domain/entity-market-performers",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "lint": "oxlint ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@domain/api-market-currency": "workspace:*",
+    "@domain/entity-market-performers": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/api-services": "workspace:*",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-redux": ">=9.0.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "msw": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-redux": "catalog:",
+    "typescript": "catalog:"
+  }
+}
