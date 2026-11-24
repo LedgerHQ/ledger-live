@@ -356,6 +356,7 @@ const extraProperties = (store: ReduxStore) => {
   const accountDetailFeature = analyticsFeatureFlagMethod?.("accountDetail");
   const accountDetail = accountDetailFeature?.enabled ?? false;
   const accountDetailAnalyticsBanner = isAccountDetailAnalyticsBannerEnabled(accountDetailFeature);
+  const newSettings = analyticsFeatureFlagMethod?.("newSettings")?.enabled ?? false;
   const remoteABTestingAttributes = getRemoteABTestingAttributes(analyticsFeatureFlagMethod);
   const payAttributes = getPayAttributes(
     state,
@@ -418,6 +419,7 @@ const extraProperties = (store: ReduxStore) => {
     agentIntent,
     accountDetail,
     accountDetailAnalyticsBanner,
+    newSettings,
     ...remoteABTestingAttributes,
   };
 };
