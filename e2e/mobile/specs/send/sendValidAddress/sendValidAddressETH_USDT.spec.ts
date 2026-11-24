@@ -6,10 +6,10 @@ const transaction = new Transaction(
   "1",
   Fee.MEDIUM,
 );
-runSendValidAddressTest(
+runSendValidAddressTest({
   transaction,
-  ["B2CQA-2703"],
-  "recipient and amount",
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
-  transaction.accountToDebit.currency.name,
-);
+  tmsLinks: ["B2CQA-2703"],
+  scenario: "recipient and amount",
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+  accountName: transaction.accountToDebit.currency.name,
+});

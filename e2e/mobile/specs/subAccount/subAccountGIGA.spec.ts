@@ -15,5 +15,9 @@ const transactionE2E = [
 ];
 
 for (const transaction of transactionE2E) {
-  runSendSPL(transaction.tx, transaction.xrayTicket, transaction.tag);
+  runSendSPL({
+    transaction: transaction.tx,
+    tmsLinks: transaction.xrayTicket,
+    tags: transaction.tag,
+  });
 }

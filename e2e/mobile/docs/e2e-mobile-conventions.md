@@ -178,7 +178,7 @@ import { $KnownFailure } from "@e2e/helpers/knownFailure";
 
 // Whole spec: right before the test function call, like $TmsLink / $Tag.
 $KnownFailure("LIVE-12345");
-runSendTest(transaction, ["B2CQA-4225"], ["@NanoX", "@family-evm"]);
+runSendTest({ transaction, tmsLinks: ["B2CQA-4225"], tags: ["@NanoX", "@family-evm"] });
 
 // One test: right before its it(), inside the describe.
 $KnownFailure("LIVE-12345");

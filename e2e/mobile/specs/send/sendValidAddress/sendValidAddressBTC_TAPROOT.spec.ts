@@ -7,13 +7,9 @@ const transaction = new Transaction(
   "0.00001",
   Fee.MEDIUM,
 );
-runSendValidAddressTest(transaction, ["B2CQA-2725"], "taproot", [
-  "@NanoSP",
-  "@LNS",
-  "@NanoX",
-  "@Stax",
-  "@Flex",
-  "@NanoGen5",
-  "@bitcoin",
-  "@family-bitcoin",
-]);
+runSendValidAddressTest({
+  transaction,
+  tmsLinks: ["B2CQA-2725"],
+  scenario: "taproot",
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@bitcoin", "@family-bitcoin"],
+});

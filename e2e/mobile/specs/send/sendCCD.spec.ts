@@ -7,14 +7,12 @@ const transaction = new Transaction(
   "0.000005",
   undefined,
 );
-runSendTest(
+runSendTest({
   transaction,
-  ["B2CQA-6118"],
-  ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@concordium", "@family-concordium"],
-  {
-    featureFlags: { currencyConcordiumTestnet: { enabled: true } },
-    userdata: "concordium-account",
-    liveDataOptions: { currency: Account.CCD_TESTNET_1.currency.id },
-    skipLNS: true,
-  },
-);
+  tmsLinks: ["B2CQA-6118"],
+  tags: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@concordium", "@family-concordium"],
+  featureFlags: { currencyConcordiumTestnet: { enabled: true } },
+  userdata: "concordium-account",
+  liveDataOptions: { currency: Account.CCD_TESTNET_1.currency.id },
+  skipLNS: true,
+});
