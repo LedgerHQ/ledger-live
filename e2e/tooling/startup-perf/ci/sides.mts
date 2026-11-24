@@ -1,8 +1,10 @@
 #!/usr/bin/env node
-// What each platform's build matrix still builds once restore-cache has restored what it could:
-// the last step of restore-cache, run from the repo root. See README.md, "The cache".
+// What each platform still makes once restore-cache has restored what it could: the entries of its
+// build matrix, and whether it makes the accounts snapshot. The last step of restore-cache, run from
+// the repo root. See README.md, "The cache".
 import { appendFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
+import type { BuildEntry } from "./resolve-refs.mts";
 import { appendSummary, runStep, StepFailure } from "./step.mts";
 
 export const PLATFORMS = [
@@ -16,32 +18,30 @@ export type PlatformId = (typeof PLATFORMS)[number]["id"];
 export interface Restored {
   /** Build A, which the build matrix then leaves out. */
   a: boolean;
-  /** The accounts snapshot: the build matrix leaves out the release's E2E build (`snapshot`). */
+  /** The accounts snapshot, which build-snapshot-<platform> and snapshot-<platform> then skip. */
   snapshot: boolean;
 }
 
-/** The plan's sides that a platform's build job still makes. */
-export function sidesLeft(sides: string[], restored: Restored): string[] {
-  return sides.filter(
-    side => !(side === "a" && restored.a) && !(side === "snapshot" && restored.snapshot),
-  );
+/** The plan's build matrix entries that a platform's build job still makes. */
+export function buildsLeft(builds: BuildEntry[], restored: Restored): BuildEntry[] {
+  return builds.filter(entry => !(entry.side === "a" && restored.a));
 }
 
 /**
- * `<platform>`: the sides its build matrix makes, [] when nothing is left. `<platform>_save_a`:
- * whether save-cache caches the build A it makes, a release tag's (`cacheA`) the cache lacked.
- * `<platform>_save_snapshot`: whether it caches the accounts snapshot its snapshot job makes.
+ * `<platform>_builds`: the entries its build matrix makes, [] when nothing is left.
+ * `<platform>_save_a`: whether save-cache caches the build A it makes, a release tag's (`cacheA`).
+ * `<platform>_snapshot`: whether it makes the accounts snapshot, which save-cache then caches.
  */
 export function outputsOf(
-  sides: string[],
+  builds: BuildEntry[],
   restored: Record<PlatformId, Restored>,
-  cacheA: boolean,
+  { cacheA, snapshot }: { cacheA: boolean; snapshot: boolean },
 ): string {
   return PLATFORMS.map(({ id }) => {
-    const left = sidesLeft(sides, restored[id]);
-    const saveA = cacheA && left.includes("a");
-    const saveSnapshot = left.includes("snapshot");
-    return `${id}=${JSON.stringify(left)}\n${id}_save_a=${saveA}\n${id}_save_snapshot=${saveSnapshot}\n`;
+    const left = buildsLeft(builds, restored[id]);
+    const saveA = cacheA && left.some(entry => entry.side === "a");
+    const makesSnapshot = snapshot && !restored[id].snapshot;
+    return `${id}_builds=${JSON.stringify(left)}\n${id}_save_a=${saveA}\n${id}_snapshot=${makesSnapshot}\n`;
   }).join("");
 }
 
@@ -54,17 +54,25 @@ export function summaryOf(restored: Record<PlatformId, Restored>, snapshotReleas
   ]).join("");
 }
 
-export function sidesOf(json: string | undefined): string[] {
-  const sides: unknown = JSON.parse(json || "null");
-  if (!Array.isArray(sides) || !sides.every(side => typeof side === "string")) {
-    throw new StepFailure(`SIDES must be a JSON array of sides, not ${json}`);
+const isEntry = (entry: unknown): entry is BuildEntry => {
+  const { side, ref, regression } = (entry ?? {}) as Partial<BuildEntry>;
+  return (
+    (side === "a" || side === "b") && typeof ref === "string" && typeof regression === "string"
+  );
+};
+
+/** The plan's `builds` output. */
+export function buildsOf(json: string | undefined): BuildEntry[] {
+  const builds: unknown = JSON.parse(json || "null");
+  if (!Array.isArray(builds) || !builds.every(isEntry)) {
+    throw new StepFailure(`BUILDS must be the plan's build matrix entries, not ${json}`);
   }
-  return sides;
+  return builds;
 }
 
 function main(): void {
   const env = process.env;
-  const sides = sidesOf(env.SIDES);
+  const builds = buildsOf(env.BUILDS);
   const restored: Record<PlatformId, Restored> = {
     android: {
       a: env.RESTORED_A_ANDROID === "true",
@@ -72,7 +80,10 @@ function main(): void {
     },
     ios: { a: env.RESTORED_A_IOS === "true", snapshot: env.RESTORED_SNAPSHOT_IOS === "true" },
   };
-  const outputs = outputsOf(sides, restored, env.CACHE_A === "true");
+  const outputs = outputsOf(builds, restored, {
+    cacheA: env.CACHE_A === "true",
+    snapshot: env.SNAPSHOT === "true",
+  });
   if (env.GITHUB_OUTPUT) appendFileSync(env.GITHUB_OUTPUT, outputs);
   else process.stdout.write(outputs);
   appendSummary(summaryOf(restored, env.SNAPSHOT_RELEASE));

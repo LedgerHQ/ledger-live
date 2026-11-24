@@ -46,13 +46,21 @@ interface Builds {
   reviewedB: boolean;
 }
 
-export interface Plan extends Omit<Builds, "sides"> {
-  /**
-   * What the build matrices make before the cache: A, B unless the preset measures A's binary
-   * twice, and the release's E2E build for the accounts snapshot (`snapshot`). restore-cache leaves
-   * out what it restores.
-   */
-  sides: Array<"a" | "b" | "snapshot">;
+/** An entry of the build matrices: a side, the commit it builds, the regression B re-adds. */
+export interface BuildEntry {
+  side: "a" | "b";
+  ref: string;
+  regression: string;
+}
+
+export interface Plan extends Builds {
+  /** The build matrices before the cache: one entry per side. restore-cache leaves out A it restored. */
+  builds: BuildEntry[];
+  /** The accounts scenario needs the snapshot: made unless restore-cache restored it. */
+  snapshot: boolean;
+  /** The platforms the run measures. */
+  android: boolean;
+  ios: boolean;
   /** `restore-cache` looks the cache up: for build A of a release tag, and the accounts snapshot. */
   restore: boolean;
   /**
@@ -237,7 +245,14 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
     ...builds,
     labelA: withSha(builds.labelA, builds.shaA),
     labelB: builds.sides.includes("b") ? withSha(builds.labelB, builds.shaB) : builds.labelB,
-    sides: snapshotRelease ? [...builds.sides, "snapshot"] : builds.sides,
+    builds: builds.sides.map(side => ({
+      side,
+      ref: side === "a" ? builds.shaA : builds.shaB,
+      regression: side === "b" && inputs.preset === "known-regression" ? "LIVE-36190" : "",
+    })),
+    snapshot: snapshotRelease !== "",
+    android: inputs.platforms !== "iOS Only",
+    ios: inputs.platforms !== "Android Only",
     restore: builds.cacheA || snapshotRelease !== "",
     // Every run restores from develop/, which only develop's role writes.
     save: builds.reviewedB && inputs.branchName === "develop",
@@ -257,6 +272,10 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
 export function outputsOf(plan: Plan): string {
   const outputs = {
     sides: JSON.stringify(plan.sides),
+    builds: JSON.stringify(plan.builds),
+    snapshot: String(plan.snapshot),
+    android: String(plan.android),
+    ios: String(plan.ios),
     scenarios: JSON.stringify(plan.scenarios),
     ref_a: plan.shaA,
     ref_b: plan.shaB,

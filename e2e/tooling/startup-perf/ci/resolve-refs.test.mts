@@ -95,7 +95,7 @@ describe("planBuilds", () => {
     );
     assert.equal(plan.labelA, `live-mobile@4.27.1 (${SHA(5).slice(0, 10)})`);
     assert.equal(plan.labelB, `release (${SHA(2).slice(0, 10)})`);
-    assert.deepEqual(plan.sides, ["a", "b", "snapshot"]);
+    assert.deepEqual(plan.sides, ["a", "b"]);
   });
 
   it("needs a release branch when ref_b is blank", () => {
@@ -123,7 +123,7 @@ describe("planBuilds", () => {
       { ...INPUTS, preset: "prod-vs-develop", refA: "", refB: "" },
       fakeLsRemote(),
     );
-    assert.deepEqual([plan.sides, plan.shaA, plan.shaB], [["a", "b", "snapshot"], SHA(5), SHA(1)]);
+    assert.deepEqual([plan.sides, plan.shaA, plan.shaB], [["a", "b"], SHA(5), SHA(1)]);
     assert.equal(plan.labelA, `live-mobile@4.27.1 (${SHA(5).slice(0, 10)})`);
     assert.equal(plan.labelB, `develop (${SHA(1).slice(0, 10)})`);
     assert.deepEqual(plan.warnings, []);
@@ -152,7 +152,7 @@ describe("planBuilds", () => {
 
   it("builds one binary for aa-noise, from this branch by default", () => {
     const plan = planBuilds({ ...INPUTS, preset: "aa-noise", refA: "" }, fakeLsRemote());
-    assert.deepEqual([plan.sides, plan.shaA, plan.shaB], [["a", "snapshot"], SHA(9), SHA(9)]);
+    assert.deepEqual([plan.sides, plan.shaA, plan.shaB], [["a"], SHA(9), SHA(9)]);
     assert.equal(plan.labelB, "the same binary");
   });
 
@@ -161,7 +161,7 @@ describe("planBuilds", () => {
       { ...INPUTS, preset: "known-regression", refA: "develop" },
       fakeLsRemote(),
     );
-    assert.deepEqual([plan.sides, plan.shaA, plan.shaB], [["a", "b", "snapshot"], SHA(1), SHA(1)]);
+    assert.deepEqual([plan.sides, plan.shaA, plan.shaB], [["a", "b"], SHA(1), SHA(1)]);
     assert.equal(plan.labelB, `develop with LIVE-36190 re-added (${SHA(1).slice(0, 10)})`);
   });
 
@@ -222,13 +222,39 @@ describe("planBuilds", () => {
     const plan = (scenarios: string) =>
       planBuilds({ ...INPUTS, refA: "develop", refB: "develop", scenarios }, fakeLsRemote());
     const withAccounts = plan("no-accounts,accounts");
-    assert.deepEqual([withAccounts.sides, withAccounts.restore], [["a", "b", "snapshot"], true]);
+    assert.deepEqual([withAccounts.snapshot, withAccounts.restore], [true, true]);
     assert.equal(withAccounts.snapshotRelease, "live-mobile@4.27.1");
     const withoutAccounts = plan("no-accounts");
     assert.deepEqual(
-      [withoutAccounts.sides, withoutAccounts.restore, withoutAccounts.snapshotRelease],
-      [["a", "b"], false, ""],
+      [withoutAccounts.snapshot, withoutAccounts.restore, withoutAccounts.snapshotRelease],
+      [false, false, ""],
     );
+  });
+
+  it("gives each build matrix entry its commit, and B of known-regression its regression", () => {
+    const builds = (inputs: Partial<PlanInputs>) =>
+      planBuilds({ ...INPUTS, ...inputs }, fakeLsRemote()).builds;
+    assert.deepEqual(builds({}), [
+      { side: "a", ref: SHA(6), regression: "" },
+      { side: "b", ref: SHA(1), regression: "" },
+    ]);
+    assert.deepEqual(builds({ preset: "known-regression", refA: "develop" }), [
+      { side: "a", ref: SHA(1), regression: "" },
+      { side: "b", ref: SHA(1), regression: "LIVE-36190" },
+    ]);
+    assert.deepEqual(builds({ preset: "aa-noise", refA: "develop" }), [
+      { side: "a", ref: SHA(1), regression: "" },
+    ]);
+  });
+
+  it("says which platforms the run measures", () => {
+    const flags = (platforms: string) => {
+      const plan = planBuilds({ ...INPUTS, platforms }, fakeLsRemote());
+      return [plan.android, plan.ios];
+    };
+    assert.deepEqual(flags("Android & iOS"), [true, true]);
+    assert.deepEqual(flags("Android Only"), [true, false]);
+    assert.deepEqual(flags("iOS Only"), [false, true]);
   });
 
   for (const pairs of ["4", "7", "x", ""]) {
@@ -293,7 +319,11 @@ describe("outputsOf and summaryOf", () => {
     assert.equal(
       outputsOf(plan),
       [
-        'sides=["a","b","snapshot"]',
+        'sides=["a","b"]',
+        `builds=[{"side":"a","ref":"${SHA(6)}","regression":""},{"side":"b","ref":"${SHA(1)}","regression":""}]`,
+        "snapshot=true",
+        "android=true",
+        "ios=true",
         'scenarios=["no-accounts","accounts"]',
         `ref_a=${SHA(6)}`,
         `ref_b=${SHA(1)}`,
