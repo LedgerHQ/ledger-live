@@ -169,7 +169,7 @@
     "oxfmt": "catalog:",
     "fs-extra": "10.1.0",
     "glob": "^7.2.0",
-    "minimatch": "^5.1.0",
+    "minimatch": "^5.1.8",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-is": "19.0.0",
