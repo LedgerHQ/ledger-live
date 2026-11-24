@@ -4,7 +4,7 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { firstValueFrom, toArray } from "rxjs";
-import type { IcpCurrencyConfig } from "../config";
+import { type IcpContext, type IcpCurrencyConfig, internet_computerDefaults } from "../config";
 import { deriveAddressFromPubkey } from "../logic/crypto";
 import { getCanisterIdlFunc, indexIdlFactory, ledgerIdlFactory } from "../network/candid";
 import type { ICPAccount } from "../types";
@@ -26,6 +26,11 @@ const localConfig = {
   unit: { name: "ICP", code: "ICP", magnitude: 8 },
   node: { url: LOCAL_NODE },
 } satisfies IcpCurrencyConfig;
+
+const contextWith = (config: () => IcpCurrencyConfig): IcpContext => ({
+  config: async () => config(),
+  logger: () => {},
+});
 
 // Synced up to the tip already, so the sync reads the tip and the balance but no history.
 const account = {
@@ -102,8 +107,14 @@ const sync = (bridges: ReturnType<typeof createBridges>) =>
 
 describe("createBridges node", () => {
   it("syncs each bridge pair against its own node", async () => {
-    const local = createBridges(signerContext, () => localConfig);
-    const mainnet = createBridges(signerContext);
+    const local = createBridges(
+      signerContext,
+      contextWith(() => localConfig),
+    );
+    const mainnet = createBridges(
+      signerContext,
+      contextWith(() => internet_computerDefaults.internet_computer),
+    );
 
     await sync(local);
     expect(queried).toEqual([LOCAL_NODE, LOCAL_NODE]);
@@ -118,10 +129,10 @@ describe("createBridges node", () => {
   it("reads the config once per sync", async () => {
     const urls = ["http://127.0.0.1:1111", "http://127.0.0.1:2222"];
     let reads = 0;
-    const bridges = createBridges(signerContext, () => ({
-      ...localConfig,
-      node: { url: urls[reads++] },
-    }));
+    const bridges = createBridges(
+      signerContext,
+      contextWith(() => ({ ...localConfig, node: { url: urls[reads++] } })),
+    );
 
     await sync(bridges);
     expect(reads).toBe(1);
@@ -143,7 +154,10 @@ describe("createBridges node", () => {
         }),
       }),
     );
-    const { currencyBridge } = createBridges(device as never, () => localConfig);
+    const { currencyBridge } = createBridges(
+      device as never,
+      contextWith(() => localConfig),
+    );
 
     const event = await firstValueFrom(
       currencyBridge.scanAccounts({
@@ -157,10 +171,13 @@ describe("createBridges node", () => {
     expect(new Set(queried)).toEqual(new Set([LOCAL_NODE]));
   });
 
-  it("fails the sync when the config provider throws", async () => {
-    const broken = createBridges(signerContext, () => {
-      throw new Error("no coin config");
-    });
+  it("fails the sync when the config cannot be read", async () => {
+    const broken = createBridges(
+      signerContext,
+      contextWith(() => {
+        throw new Error("no coin config");
+      }),
+    );
 
     await expect(sync(broken)).rejects.toThrow("no coin config");
     expect(queried).toEqual([]);
