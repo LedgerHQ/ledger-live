@@ -413,6 +413,7 @@
     "@rozenite/repack": "2.4.0",
     "@rozenite/storage-plugin": "2.4.0",
     "@rspack/core": "catalog:",
+    "@support/lint": "workspace:*",
     "@swc/helpers": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",

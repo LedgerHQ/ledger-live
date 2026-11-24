@@ -3051,6 +3051,9 @@ importers:
       '@rspack/core':
         specifier: 'catalog:'
         version: 2.3.2(@swc/helpers@0.5.23)
+      '@support/lint':
+        specifier: workspace:*
+        version: link:../../support/lint
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
