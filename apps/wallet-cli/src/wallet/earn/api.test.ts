@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { AddressSchema } from "@domain/entity-account-descriptor";
+import { AddressSchema } from "@domain/entity-network";
 import {
   EarnApiError,
   getCurrencyProviders,

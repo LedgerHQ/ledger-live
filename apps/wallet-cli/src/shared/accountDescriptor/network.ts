@@ -1,15 +1,15 @@
 import {
+  CryptoCurrencyIdSchema,
+  getCryptoCurrencyById,
+  type CryptoCurrencyId,
+} from "@domain/entity-currency-crypto";
+import {
   UnknownNetworkError,
   currencyIdFromNetwork as currencyIdFromKnownNetwork,
   networkFromCurrencyId,
   toNetworkId,
   type NetworkId,
-} from "@domain/entity-account-descriptor";
-import {
-  CryptoCurrencyIdSchema,
-  getCryptoCurrencyById,
-  type CryptoCurrencyId,
-} from "@domain/entity-currency-crypto";
+} from "@domain/entity-network";
 import {
   isWalletCliSupportedCurrency,
   listWalletCliSupportedCurrencyIds,
@@ -22,8 +22,8 @@ export {
   UnknownNetworkError,
   networkFromCurrencyId,
   toNetworkId,
-} from "@domain/entity-account-descriptor";
-export type { NetworkId } from "@domain/entity-account-descriptor";
+  type NetworkId,
+} from "@domain/entity-network";
 
 /** The network of a V0 descriptor; throws UnknownNetworkError for an empty or unknown currency id. */
 export function networkOfV0(descriptor: Pick<AccountDescriptorV0, "currencyId">): NetworkId {

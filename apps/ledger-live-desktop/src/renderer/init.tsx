@@ -97,7 +97,10 @@ import { installLiveConfigProvider } from "~/firebase/remoteConfig";
 import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import { initHistory } from "~/renderer/reducers/history";
-import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
+import {
+  installBorrowLifecycleHost,
+  installEarnLifecycleHost,
+} from "@ledgerhq/transaction-observability";
 import {
   coinObservabilityConfigFor,
   setCoinObservabilityConfigReader,
@@ -204,6 +207,17 @@ async function init() {
       resolveVersionedRedirects: getVersionedRedirects,
       readAppVersion: () => LiveConfig.instance.appVersion || "0.0.0",
       apiBaseUrl: process.env.EARN_API_BASE_URL,
+    }),
+  );
+  store.subscribe(
+    installBorrowLifecycleHost({
+      platform: "desktop",
+      readEnabled: () =>
+        selectFeature(store.getState(), "borrowTxLifecycleMonitoring")?.enabled ?? false,
+      readManifestId: () =>
+        selectFeature(store.getState(), "ptxBorrowLiveApp")?.params?.manifest_id ||
+        process.env.DEFAULT_BORROW_MANIFEST_ID,
+      apiBaseUrl: process.env.BORROW_API_BASE_URL,
     }),
   );
   setCoinObservabilityConfigReader(() => {
@@ -408,10 +422,14 @@ async function init() {
     store.dispatch,
     hasOnboardedWithDeviceSelector(store.getState()),
   );
+  const receiveVerifyHintState = await getKey("app", "receiveVerifyHint");
+  if (receiveVerifyHintState !== undefined) {
+    store.dispatch(restoreReceiveVerifyHint(receiveVerifyHintState));
+  }
+
   const payCardState = await getKey("app", "payCard");
   if (payCardState !== undefined) {
     store.dispatch(restorePayCardFeatureTour(payCardState));
-    store.dispatch(restoreReceiveVerifyHint(payCardState));
     store.dispatch(restorePayCardBalanceFilter(payCardState));
     store.dispatch(restorePayCardLoginIntro(payCardState));
     store.dispatch(restorePayCardOnboardingWidget(payCardState));

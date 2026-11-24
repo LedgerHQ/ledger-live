@@ -8,6 +8,7 @@ import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalL
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useBorrowLiveConfig } from "LLM/features/Borrow/hooks/useBorrowLiveConfig";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
+import { useBorrowLifecycleMonitoring } from "~/analytics/useBorrowLifecycleMonitoring";
 import { useBorrowLiveAppViewModel } from "../useBorrowLiveAppViewModel";
 
 jest.mock("~/components/Web3AppWebview/helpers", () => ({
@@ -35,6 +36,10 @@ jest.mock("LLM/features/Borrow/hooks/useBorrowLiveConfig", () => ({
 
 jest.mock("~/helpers/getStakeLabelLocaleBased", () => ({
   getCountryLocale: jest.fn(),
+}));
+
+jest.mock("~/analytics/useBorrowLifecycleMonitoring", () => ({
+  useBorrowLifecycleMonitoring: jest.fn(),
 }));
 
 const mockManifest = {
@@ -97,6 +102,26 @@ describe("useBorrowLiveAppViewModel", () => {
 
     const { result } = renderHook(() => useBorrowLiveAppViewModel());
     expect(result.current.error).toBeInstanceOf(Error);
+  });
+
+  it("should monitor the Borrow lifecycle while the webview is rendered", () => {
+    renderHook(() => useBorrowLiveAppViewModel());
+    expect(jest.mocked(useBorrowLifecycleMonitoring)).toHaveBeenLastCalledWith("borrow");
+  });
+
+  it("should stop monitoring when connectivity loss replaces the webview", () => {
+    const { rerender } = renderHook(() => useBorrowLiveAppViewModel());
+    setNetworkState({ isConnected: false });
+    rerender({});
+
+    expect(jest.mocked(useBorrowLifecycleMonitoring)).toHaveBeenLastCalledWith(undefined);
+  });
+
+  it("should not monitor when no manifest is found", () => {
+    setManifests({});
+
+    renderHook(() => useBorrowLiveAppViewModel());
+    expect(jest.mocked(useBorrowLifecycleMonitoring)).toHaveBeenLastCalledWith(undefined);
   });
 
   it("should expose isLoading from remote live app state", () => {

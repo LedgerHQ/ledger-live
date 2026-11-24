@@ -10,9 +10,11 @@ The account aggregate root: the list of the app's accounts, keyed by `AccountUUI
 The `accounts` slice is meant to become the source of truth of the account list. It is an entity adapter keyed by `AccountUUID`, described by zod schemas in `schema.ts`:
 
 - `ids` — the accounts, in the user's order; it will replace the order of the legacy store.
-- `entities` — one `{ accountUUID, descriptor, legacyId? }` per account (`AccountUUID` and `AccountDescriptor` from [`@domain/entity-account-descriptor`](../account-descriptor)); `legacyId` is absent for an account that only exists remotely.
+- `entities` — one `{ accountUUID, descriptor, legacyId? }` per account (`AccountDescriptor` from [`@domain/entity-account-descriptor`](../account-descriptor)); `legacyId` is absent for an account that only exists remotely.
 - `byLegacyId` — the reverse index `legacyId → AccountUUID`, kept by the same reducer.
 
+- `AccountUUIDSchema` / `AccountUUID` — the identity code holds: a uuid v5 of the descriptor's canonical key, the same on every device, carrying no account key.
+- `computeAccountUUID` (`./descriptor`) — the `AccountUUID` of a descriptor; only the edges call it, tests take the wrapper of `./schema.mock`.
 - `accountsSlice` — its reducer, `legacyAccountsSynced`, and its selectors.
 - its selectors: `selectAccountEntries` / `selectAccountUUIDs` / `selectAccountEntry` — every account in order, their ids, or one by `AccountUUID`; `selectAccountUUIDByLegacyId` — the `AccountUUID` behind a legacy account id, from `byLegacyId`.
 - `mockAccountEntry` (`./schema.mock`) — a valid entry, with overrides.

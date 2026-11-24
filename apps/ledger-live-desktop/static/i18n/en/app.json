@@ -351,9 +351,6 @@
       "description": "Let AI agents manage your assets."
     }
   },
-  "stars": {
-    "tooltip": "Star account"
-  },
   "bridge": {
     "modalTitle": "Device Bridge",
     "openHeader": "Device bridge is no longer available",
@@ -1544,7 +1541,6 @@
       "ledgerSync": "Sync accounts"
     },
     "contextMenu": {
-      "star": "Star",
       "receive": "Receive",
       "send": "Send",
       "swap": "Swap",
@@ -2778,12 +2774,8 @@
     "networkLabel": "{{network}} network",
     "addressDisplayed": {
       "title": "Address securely displayed",
-      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device."
-    },
-    "addressVerified": {
-      "title": "Address verified",
-      "description": "The address in Ledger Wallet matches the one on your Ledger device.",
-      "doneCta": "Done"
+      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta": "Got it"
     },
     "addressMismatch": {
       "title": "This address doesn't match your Ledger",
@@ -2804,7 +2796,32 @@
       "title": "We couldn't load this address",
       "description": "Check your internet connection, then try again.",
       "retry": "Retry"
-    }
+    },
+    "actions": {
+      "copy": "Copy",
+      "copied": "Copied",
+      "share": "Share",
+      "verify": "Verify"
+    },
+    "verifyHint": {
+      "message": "Verify your address on\nyour Ledger device\nbefore sharing",
+      "gotIt": "Got it"
+    },
+    "notices": {
+      "utxo": "For privacy reasons, a new address is generated after each transaction. The previous ones remain valid.",
+      "taproot": "Make sure the sender supports Taproot addresses before sending.",
+      "dashStaking": "Don't use this address to receive staking rewards.",
+      "tronInactiveAccount": "Send at least 0.1 TRX to this address first to activate it.",
+      "tezosDelegation": "Funds received on a delegated account are added to the staked amount. Choose another account if you want to avoid this.",
+      "zcashPrivateNotEnabled": "Private (shielded) receiving isn't enabled on this account yet. Enable it from the account page to get a private address.",
+      "unverifiableAddress": "Your Ledger device can't display this address. Check it on the explorer before sharing it.",
+      "learnMore": "Learn more"
+    },
+    "serviceStatus": {
+      "cta": "See details",
+      "title": "Service incident"
+    },
+    "gotIt": "Got it"
   },
   "send": {
     "title": "Send",
@@ -4408,13 +4425,42 @@
       "iou": "Trust Line (IOU)",
       "mpt": "Multi Purpose Token",
       "transferFee": "Transfer fee",
+      "transferFeeUnavailable": "Couldn't load",
       "lockedAmount": "Locked amount",
+      "lockedAmountUnavailable": "Couldn't load",
       "balanceLimit": "Balance limit",
       "ripplingTooltip": "Rippling lets other users' payments move your balance between tokens with the same currency code.",
       "activated": "Activated",
       "deactivated": "Deactivated",
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "editAsset": {
+        "title": "Edit details",
+        "limitDescription": "Select the maximum balance you can hold for this asset.",
+        "setMax": "Set to maximum",
+        "success": "Token settings updated",
+        "gotIt": "Got it"
+      },
+      "deleteBlocked": {
+        "title": "Empty your {{ticker}} balance to remove it",
+        "description": "Send your remaining {{ticker}} balance to remove this asset."
+      },
+      "deleteConfirm": {
+        "title": "Are you sure you want to delete {{ticker}}?",
+        "description": "This asset will be removed from your portfolio, and you won't be able to receive anymore. The locked amount will be released to your {{accountName}} account."
+      },
+      "deleteSuccess": {
+        "title": "{{ticker}} was successfully removed from your account",
+        "description": "You can add this asset again anytime."
+      },
+      "deleteError": {
+        "title": "Failed to remove asset"
+      },
+      "deleteFeeError": {
+        "title": "Not enough balance",
+        "description": "You need at least {{minimumAmount}} to cover for the network fee.",
+        "swap": "Go to swap"
+      }
     },
     "manageToken": {
       "title": "Manage token",
@@ -5644,6 +5690,13 @@
   },
   "settings": {
     "title": "Settings",
+    "sections": {
+      "general": "General",
+      "assetManagement": "Asset management",
+      "security": "Security",
+      "privacy": "Privacy",
+      "about": "About"
+    },
     "discreet": "Toggle discreet mode",
     "tabs": {
       "display": "General",
@@ -9992,6 +10045,39 @@
         "unavailable": "MoonPay couldn't be reached.",
         "unknown": "Something went wrong while setting it up."
       }
+    },
+    "order": {
+      "preparing": "Preparing the signature",
+      "title": "Continue on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "mismatch": {
+        "title": "This signature doesn't match the account",
+        "description": "Connect the Ledger that holds this account, with the same passphrase if you use one, then try again."
+      },
+      "placing": "Placing your order",
+      "filled": {
+        "title": "Order complete",
+        "fill_one": "You bought {{shares}} share for {{amount}}",
+        "fill_other": "You bought {{shares}} shares for {{amount}}",
+        "paid": "You paid {{amount}}"
+      },
+      "notFilled": {
+        "title": "Order not filled",
+        "description": "The price moved. No funds left your balance."
+      },
+      "rejected": {
+        "title": "Order not placed",
+        "expired-signature": "The order's authorization expired before it was sent.",
+        "insufficient-balance": "Your trading balance is too low for this order.",
+        "invalid-tick-size": "The market's price increments changed.",
+        "market-closed": "This market is closed.",
+        "not-accepted": "MoonPay couldn't place the order."
+      },
+      "unconfirmed": {
+        "title": "We couldn't confirm your order",
+        "description": "Check your positions before trying again."
+      },
+      "tryAgain": "Try again"
     },
     "onboarding": {
       "intro": {

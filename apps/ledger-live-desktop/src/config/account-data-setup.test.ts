@@ -2,7 +2,6 @@ import { configureStore, isAction, type Middleware } from "@reduxjs/toolkit";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { AccountIdSchema, accountsSlice } from "@domain/entity-account";
 import {
   accountDataExtra,
@@ -13,6 +12,7 @@ import { accountUUID, descriptor, sourceIdOf } from "@domain/api-account-data/te
 import { accountDataRequested } from "@domain/entity-account-data";
 import reducers from "~/renderer/reducers";
 import { removeAccount, replaceAccounts } from "~/renderer/actions/accounts";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { connectAccounts, type AccountDataObserver } from "./account-data-setup";
 import type * as SetupModule from "./account-data-setup";
 

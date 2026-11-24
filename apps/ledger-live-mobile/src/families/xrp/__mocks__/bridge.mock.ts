@@ -25,8 +25,19 @@ const mockSignedOperation = {
   expirationDate: undefined,
 };
 
-export function makeNamedError(name: string, fields: Record<string, string> = {}) {
-  return Object.assign(new Error(name), { name, ...fields });
+function makeTransactionStatus(
+  errors: Record<string, Error> = {},
+  warnings: Record<string, Error> = {},
+): TransactionStatus {
+  const estimatedFees = new BigNumber(12);
+
+  return {
+    errors,
+    warnings,
+    estimatedFees,
+    amount: new BigNumber(0),
+    totalSpent: estimatedFees,
+  };
 }
 
 export function makeMockAccountBridge() {
@@ -42,13 +53,11 @@ export function makeMockAccountBridge() {
     })),
     updateTransaction: jest.fn((tx: object, patch: object) => ({ ...tx, ...patch })),
     prepareTransaction: async (_account: AccountLike, tx: unknown) => tx,
-    getTransactionStatus: jest.fn(async (): Promise<TransactionStatus> => ({
-      errors: {},
-      warnings: {},
-      estimatedFees: new BigNumber(12),
-      amount: new BigNumber(0),
-      totalSpent: new BigNumber(12),
-    })),
+    getTransactionStatus: jest.fn(
+      async (_account: AccountLike, _transaction: { amount: BigNumber }) => {
+        return makeTransactionStatus();
+      },
+    ),
     estimateMaxSpendable: async () => new BigNumber(100_000_000),
     getStuckAccountAndOperation: () => null,
     signOperation: jest.fn(
@@ -60,9 +69,24 @@ export function makeMockAccountBridge() {
           subscriber.complete();
         }),
     ),
-    broadcast: async ({ signedOperation }: { signedOperation: typeof mockSignedOperation }) =>
-      signedOperation.operation,
+    broadcast: jest.fn(
+      async ({ signedOperation }: { signedOperation: typeof mockSignedOperation }) => {
+        return signedOperation.operation;
+      },
+    ),
   };
+}
+
+export function makeNamedError(name: string, fields: Record<string, string> = {}) {
+  return Object.assign(new Error(name), { name, ...fields });
+}
+
+export function mockTransactionStatus(
+  accountBridge: { getTransactionStatus: jest.Mock<Promise<TransactionStatus>> },
+  errors: Record<string, Error>,
+  warnings: Record<string, Error> = {},
+) {
+  accountBridge.getTransactionStatus.mockResolvedValue(makeTransactionStatus(errors, warnings));
 }
 
 const currencyBridge = { preload: () => Promise.resolve(true), hydrate: () => true };

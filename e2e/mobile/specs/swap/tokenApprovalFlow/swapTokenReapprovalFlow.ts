@@ -65,16 +65,16 @@ export function runSwapTokenReapprovalFlow(
         await app.swap.logSelectedProvider(provider.uiName);
         await app.speculos.enableBlindSigningOnNanoS();
         await revokeTokenApproval(fromAccount, provider);
-        const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
+        const minAmount = await app.swapLiveApp.getMinimumAmount({ fromAccount, toAccount });
         const smallAmount = new BigNumber(minAmount).div(4).toFixed(6, BigNumber.ROUND_DOWN);
-        await ensureTokenApproval(fromAccount, provider, smallAmount);
+        await ensureTokenApproval({ fromAccount, provider, minAmount: smallAmount });
         const swap = new Swap(fromAccount, toAccount, minAmount, provider);
-        await performSwapUntilQuoteSelectionStep(
-          swap.accountToDebit,
-          swap.accountToCredit,
-          minAmount,
-          true,
-        );
+        await performSwapUntilQuoteSelectionStep({
+          accountToDebit: swap.accountToDebit,
+          accountToCredit: swap.accountToCredit,
+          amount: minAmount,
+          continueToQuotes: true,
+        });
         await app.swapLiveApp.selectSpecificProvider(provider.uiName);
         await app.swapLiveApp.checkQuoteCardCtaPresence(provider.uiName);
         await app.swapLiveApp.tapExecuteSwap(provider.uiName);

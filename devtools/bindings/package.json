@@ -44,6 +44,7 @@
     "@domain/entity-currency-fiat": "workspace:*",
     "@domain/entity-derivation": "workspace:*",
     "@domain/entity-currency-unit": "workspace:*",
+    "@domain/entity-network": "workspace:*",
     "@domain/entity-predictions": "workspace:*",
     "@features/flow-account-detail-analytics-notice": "workspace:*",
     "@features/flow-pay-card-auth": "workspace:*",

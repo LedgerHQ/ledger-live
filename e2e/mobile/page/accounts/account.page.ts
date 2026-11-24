@@ -267,18 +267,30 @@ export default class AccountPage {
 
   @Step("Tap on earn button")
   async tapEarn() {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.tapEarn();
+      return;
+    }
     await this.earnButton.scrollTo(this.accountScreenScrollView);
     await this.earnButton.tap();
   }
 
   @Step("Tap on swap button")
   async tapSwap() {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.tapSwap();
+      return;
+    }
     await this.swapButton.scrollTo(this.accountScreenScrollView);
     await this.swapButton.tap();
   }
 
   @Step("Tap on buy button")
   async tapBuy() {
+    if (isAccountDetailEnabled()) {
+      await this.accountDetail.tapBuy();
+      return;
+    }
     await this.buyButton.scrollTo(this.accountScreenScrollView);
     await this.buyButton.tap();
   }

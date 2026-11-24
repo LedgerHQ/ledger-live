@@ -1,7 +1,7 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import { InvalidTransactionError } from "@ledgerhq/coin-module-framework/errors";
-import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
-import network from "@ledgerhq/live-network";
+import { promiseAllBatched, retry } from "@ledgerhq/coin-module-framework/promises";
+import network, { getNetworkState } from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import BigNumber from "bignumber.js";
 import compact from "lodash/compact";
@@ -67,17 +67,40 @@ function isSuccessfulTriggerSmartContract(tx: TrongridTxInfo): boolean {
   return tx.type === "TriggerSmartContract" && !tx.hasFailed;
 }
 
+const BROADCAST_ENDPOINTS_NEVER_RESENT = new Set([
+  "/wallet/broadcasttransaction",
+  "/wallet/broadcasthex",
+]);
+
+function isRetryablePostError(error: unknown): boolean {
+  const status = (error as { status?: unknown } | null | undefined)?.status;
+  const isTimeoutOrDroppedConnection = typeof status !== "number";
+  if (isTimeoutOrDroppedConnection) {
+    return true;
+  }
+  return status === 408 || status === 429 || status >= 500;
+}
+
 export async function post<T, U extends object = any>(
   logger: Logger,
   config: TronCoinConfig,
   endPoint: string,
   body: T,
 ): Promise<U> {
-  const { data } = await network<U, T>({
-    method: "POST",
-    url: `${getBaseApiUrl(config)}${endPoint}`,
-    data: body,
-  });
+  const { getCallsTimeout, getCallsRetry } = getNetworkState();
+  const { data } = await retry(
+    () =>
+      network<U, T>({
+        method: "POST",
+        url: `${getBaseApiUrl(config)}${endPoint}`,
+        data: body,
+        timeout: getCallsTimeout,
+      }),
+    {
+      maxRetry: BROADCAST_ENDPOINTS_NEVER_RESENT.has(endPoint) ? 0 : getCallsRetry,
+      retryCondition: isRetryablePostError,
+    },
+  );
 
   // Ugly but trongrid send a 200 status event if there are errors
   if ("Error" in data) {
@@ -383,7 +406,7 @@ export async function craftStandardTransaction(
 /** Default expiration of 10 minutes (in seconds) after crafting time. */
 export const DEFAULT_EXPIRATION = 600;
 
-async function extendExpiration(
+function extendExpiration(
   logger: Logger,
   config: TronCoinConfig,
   preparedTransaction: any,
@@ -521,16 +544,31 @@ export async function getLastBlock(logger: Logger, config: TronCoinConfig): Prom
   return toBlock(data);
 }
 
+export async function findBlock(
+  logger: Logger,
+  config: TronCoinConfig,
+  blockNumber: number,
+): Promise<Block | null> {
+  const data = await post<unknown, BlockWithTransactionsAPI | { block_header?: undefined }>(
+    logger,
+    config,
+    `/wallet/getblock`,
+    { id_or_num: String(blockNumber), detail: false },
+  );
+  const blockNotProducedYet = !data.block_header;
+  return blockNotProducedYet ? null : toBlock(data);
+}
+
 export async function getBlock(
   logger: Logger,
   config: TronCoinConfig,
   blockNumber: number,
 ): Promise<Block> {
-  const data: BlockWithTransactionsAPI = await post(logger, config, `/wallet/getblock`, {
-    id_or_num: String(blockNumber),
-    detail: false,
-  });
-  return toBlock(data);
+  const block = await findBlock(logger, config, blockNumber);
+  if (!block) {
+    throw new Error(`Block ${blockNumber} not found`);
+  }
+  return block;
 }
 
 export async function getBlockWithTransactions(
@@ -602,15 +640,17 @@ export async function getTransactionInfoById(
  * token unambiguously therefore keeps no token address, and the operation is dropped downstream
  * rather than mislabelled.
  */
-async function resolveMissingTokenAddresses(
+function resolveMissingTokenAddresses(
   logger: Logger,
   config: TronCoinConfig,
   txs: TrongridTxInfo[],
 ): Promise<TrongridTxInfo[]> {
-  if (!txs.some(isMissingTokenAddress)) return txs;
+  if (!txs.some(isMissingTokenAddress)) return Promise.resolve(txs);
 
-  return promiseAllBatched(3, txs, async tx =>
-    isMissingTokenAddress(tx) ? withTokenAddressFromReceipt(logger, config, tx) : tx,
+  return promiseAllBatched(3, txs, tx =>
+    isMissingTokenAddress(tx)
+      ? withTokenAddressFromReceipt(logger, config, tx)
+      : Promise.resolve(tx),
   );
 }
 
@@ -732,9 +772,12 @@ export const defaultFetchParams: FetchParams = {
   order: "desc",
 } as const;
 
-export type TxPageResult = {
+export type TxEndpoint = "native" | "trc20";
+
+export type TxEndpointPage = {
+  rawTimestamps: number[];
   txs: TrongridTxInfo[];
-  hasNextPage: boolean;
+  next?: string;
 };
 
 export type FetchTxsPageParams = {
@@ -744,23 +787,44 @@ export type FetchTxsPageParams = {
   order: "asc" | "desc";
 };
 
-export type FetchTxsPageResult = {
-  nativeTxs: TxPageResult;
-  trc20Txs: TxPageResult;
-};
+export type FetchTxsPageResult = Record<TxEndpoint, TxEndpointPage>;
 
-async function fetchSinglePage<T>(
+async function toNativePage(
   logger: Logger,
   config: TronCoinConfig,
-  url: string,
-  getTxs: (
-    logger: Logger,
-    config: TronCoinConfig,
-    url: string,
-  ) => Promise<{ results: Array<T>; nextUrl?: string }>,
-): Promise<{ results: Array<T>; hasNextPage: boolean }> {
-  const { results, nextUrl } = await getTxs(logger, config, url);
-  return { results, hasNextPage: !!nextUrl };
+  results: Array<TransactionTronAPI | MalformedTransactionTronAPI>,
+  next: string | undefined,
+): Promise<TxEndpointPage> {
+  const formatted = await Promise.all(
+    results
+      .filter(isTransactionTronAPI)
+      .filter(isValidNativeTx)
+      .map(tx =>
+        formatTrongridTxResponse(logger, tx, addr => accountNamesCache(logger, config, addr)),
+      ),
+  );
+  return {
+    rawTimestamps: results.map(tx => tx.block_timestamp),
+    txs: compact(formatted).filter(tx => !isSuccessfulTriggerSmartContract(tx)),
+    next,
+  };
+}
+
+async function toTrc20Page(
+  logger: Logger,
+  config: TronCoinConfig,
+  results: Trc20API[],
+  next: string | undefined,
+): Promise<TxEndpointPage> {
+  return {
+    rawTimestamps: results.map(tx => tx.block_timestamp),
+    txs: await resolveMissingTokenAddresses(
+      logger,
+      config,
+      compact(results.map(tx => formatTrongridTrc20TxResponse(logger, tx))),
+    ),
+    next,
+  };
 }
 
 export async function fetchTronAccountTxsPage(
@@ -773,44 +837,35 @@ export async function fetchTronAccountTxsPage(
     params.maxTimestamp !== undefined ? `&max_timestamp=${params.maxTimestamp}` : "";
   const queryParams = `limit=${params.limit}&min_timestamp=${params.minTimestamp}${maxTimestampParam}&order_by=block_timestamp,${params.order}`;
 
-  const [nativeResult, trc20Result] = await Promise.all([
-    fetchSinglePage<TransactionTronAPI | MalformedTransactionTronAPI>(
+  const [native, trc20] = await Promise.all([
+    fetchTronAccountTxsEndpointPage(
       logger,
       config,
+      "native",
       `${getBaseApiUrl(config)}/v1/accounts/${addr}/transactions?${queryParams}`,
-      getTransactions,
     ),
-    fetchSinglePage<Trc20API>(
+    fetchTronAccountTxsEndpointPage(
       logger,
       config,
+      "trc20",
       `${getBaseApiUrl(config)}/v1/accounts/${addr}/transactions/trc20?${queryParams}&get_detail=true`,
-      getTrc20,
     ),
   ]);
+  return { native, trc20 };
+}
 
-  const nativeTxsFormatted = await Promise.all(
-    nativeResult.results
-      .filter(isTransactionTronAPI)
-      .filter(isValidNativeTx)
-      .map(tx =>
-        formatTrongridTxResponse(logger, tx, addr => accountNamesCache(logger, config, addr)),
-      ),
-  );
-
-  const trc20TxsFormatted = await resolveMissingTokenAddresses(
-    logger,
-    config,
-    compact(trc20Result.results.map(tx => formatTrongridTrc20TxResponse(logger, tx))),
-  );
-  const trc20TxIds = new Set(trc20TxsFormatted.map(t => t.txID));
-  const nativeDeduped = compact(nativeTxsFormatted)
-    .filter(tx => !trc20TxIds.has(tx.txID))
-    .filter(tx => !isSuccessfulTriggerSmartContract(tx));
-
-  return {
-    nativeTxs: { txs: nativeDeduped, hasNextPage: nativeResult.hasNextPage },
-    trc20Txs: { txs: trc20TxsFormatted, hasNextPage: trc20Result.hasNextPage },
-  };
+export async function fetchTronAccountTxsEndpointPage(
+  logger: Logger,
+  config: TronCoinConfig,
+  endpoint: TxEndpoint,
+  url: string,
+): Promise<TxEndpointPage> {
+  if (endpoint === "native") {
+    const { results, nextUrl } = await getTransactions(logger, config, url);
+    return toNativePage(logger, config, results, nextUrl);
+  }
+  const { results, nextUrl } = await getTrc20(logger, config, url);
+  return toTrc20Page(logger, config, results, nextUrl);
 }
 
 export async function fetchTronAccountTxs(

@@ -19,6 +19,18 @@ import { webByCss, webById, webByXPath } from "@e2e/helpers/elements/web";
 // 60s flakes on that alone. Latency is tracked separately, not fixed here.
 const CRYPTO_CURRENCY_SELECTOR_TIMEOUT = TIMEOUT.xxxlarge;
 
+type HandleBuyFlowOptions = {
+  buySell: BuySell;
+  paymentMethod: string;
+  skipQuickAmountVerify?: boolean;
+};
+
+type HandleSellFlowOptions = {
+  buySell: Omit<BuySell, "amount">;
+  paymentMethod: string;
+  provider: BuySellProvider;
+};
+
 export default class BuySellPage {
   private readonly appContainer = webByCss("#app-container");
   private readonly providerTitleCssSelector =
@@ -214,11 +226,14 @@ export default class BuySellPage {
    */
   @Step("Verify provider handoff URL and query parameters {{{0.uiName}}}")
   async verifyProviderHandoff(provider: BuySellProvider, buySell: BuySell) {
-    const rawHandoffUrl = await retryUntilTimeout(async () => {
-      const url = await getPtxHandoff();
-      if (!url) throw new Error("No Buy/Sell handoff URL recorded by the app yet");
-      return url;
-    }, TIMEOUT.xlarge);
+    const rawHandoffUrl = await retryUntilTimeout({
+      fn: async () => {
+        const url = await getPtxHandoff();
+        if (!url) throw new Error("No Buy/Sell handoff URL recorded by the app yet");
+        return url;
+      },
+      timeout: TIMEOUT.xlarge,
+    });
 
     const partnerUrl = new URL(extractGoToUrl(rawHandoffUrl));
 
@@ -240,8 +255,9 @@ export default class BuySellPage {
     }
   }
 
-  @Step("Handle buy flow with {{{1}}}")
-  async handleBuyFlow(buySell: BuySell, paymentMethod: string, skipQuickAmountVerify?: boolean) {
+  @Step("Handle buy flow with {{{0.paymentMethod}}}")
+  async handleBuyFlow(options: HandleBuyFlowOptions) {
+    const { buySell, paymentMethod, skipQuickAmountVerify } = options;
     await this.expectBuyScreenToBeVisible();
     await this.chooseAssetIfNotSelected(buySell.crypto);
     if (!skipQuickAmountVerify) {
@@ -261,12 +277,9 @@ export default class BuySellPage {
    * figure handed to the partner is whatever the UI resolved. Passing one in would only
    * invite a caller to believe it was typed.
    */
-  @Step("Handle sell flow {{{1}}}")
-  async handleSellFlow(
-    buySell: Omit<BuySell, "amount">,
-    paymentMethod: string,
-    provider: BuySellProvider,
-  ) {
+  @Step("Handle sell flow {{{0.paymentMethod}}}")
+  async handleSellFlow(options: HandleSellFlowOptions) {
+    const { buySell, paymentMethod, provider } = options;
     await this.expectSellScreenToBeVisible();
     await this.chooseAssetIfNotSelected(buySell.crypto);
     await this.tapSellPercentageButton("75%");

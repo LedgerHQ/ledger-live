@@ -2420,12 +2420,8 @@
     "back": "Back",
     "addressDisplayed": {
       "title": "Address securely displayed",
-      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device."
-    },
-    "addressVerified": {
-      "title": "Address verified",
-      "description": "The address in Ledger Wallet matches the one on your Ledger device.",
-      "doneCta": "Done"
+      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta": "Got it"
     },
     "addressMismatch": {
       "title": "This address doesn't match your Ledger",
@@ -2444,7 +2440,32 @@
       "title": "We couldn't load this address",
       "description": "Check your internet connection, then try again.",
       "retry": "Retry"
-    }
+    },
+    "actions": {
+      "copy": "Copy",
+      "copied": "Copied",
+      "share": "Share",
+      "verify": "Verify"
+    },
+    "verifyHint": {
+      "message": "Verify your address on\nyour Ledger device\nbefore sharing",
+      "gotIt": "Got it"
+    },
+    "notices": {
+      "utxo": "For privacy reasons, a new address is generated after each transaction. The previous ones remain valid.",
+      "taproot": "Make sure the sender supports Taproot addresses before sending.",
+      "dashStaking": "Don't use this address to receive staking rewards.",
+      "tronInactiveAccount": "Send at least 0.1 TRX to this address first to activate it.",
+      "tezosDelegation": "Funds received on a delegated account are added to the staked amount. Choose another account if you want to avoid this.",
+      "zcashPrivateNotEnabled": "Private (shielded) receiving isn't enabled on this account yet. Enable it from the account page to get a private address.",
+      "unverifiableAddress": "Your Ledger device can't display this address. Check it on the explorer before sharing it.",
+      "learnMore": "Learn more"
+    },
+    "serviceStatus": {
+      "cta": "See details",
+      "title": "Service incident"
+    },
+    "gotIt": "Got it"
   },
   "ratings": {
     "init": {
@@ -4524,6 +4545,14 @@
     }
   },
   "settings": {
+    "title": "Settings",
+    "sections": {
+      "general": "General",
+      "assetManagement": "Asset management",
+      "security": "Security",
+      "privacy": "Privacy",
+      "about": "About"
+    },
     "header": "Settings",
     "resources": "Ledger resources",
     "display": {
@@ -6279,7 +6308,7 @@
   },
   "connectKnownOrNewDevice": {
     "title": "Devices",
-    "add": "Add",
+    "add": "Add new",
     "addDevice": "Add a Ledger device",
     "showAll": "Show all {{count}} devices",
     "showLess": "Show less",
@@ -8671,13 +8700,14 @@
       "empty": "This account has no tokens yet.",
       "tokenType": "Token type",
       "tokenTypeInfo": "A trust line (IOU) has a balance limit and a rippling setting. A Multi Purpose Token (MPT) has no settings.",
-      "iou": "Trust Line (IOU)",
+      "iou": "Trust Line",
       "mpt": "Multi Purpose Token",
       "issuer": "Issuer",
       "transferFee": "Transfer fee",
       "transferFeeInfo": "The share of each transfer between holders that the issuer takes.",
-      "transferFeeUnavailable": "Not available",
+      "transferFeeUnavailable": "Couldn't load",
       "lockedAmount": "Locked amount",
+      "lockedAmountUnavailable": "Couldn't load",
       "ripplingInfo": "Rippling lets other users' payments move your balance between tokens with the same currency code.",
       "edit": "Edit",
       "delete": "Delete",
@@ -8706,7 +8736,20 @@
       "balanceLimit": "Balance limit",
       "maxLimit": "Max trust limit",
       "maxLimitInfo": "The trust limit is the most {{token}} your account accepts to hold. The maximum permitted trust limit is <amount/>.",
-      "maximum": "Maximum"
+      "maximum": "Maximum",
+      "editTitle": "Edit details",
+      "balanceLimitDescription": "Select the maximum balance you can hold for this asset.",
+      "setToMaximum": "Set to maximum",
+      "currentLimitZero": "Your limit is 0: you can't receive this token.",
+      "limitBelowBalance": "Your balance ({{balance}}) is above this limit. You won't be able to receive this token.",
+      "success": {
+        "title": "Token settings updated",
+        "description": "Your new settings apply once the transaction is confirmed."
+      },
+      "error": {
+        "title": "Failed to update token settings",
+        "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+      }
     },
     "send": {
       "issuerFee": "Issuer fee"
@@ -11153,7 +11196,7 @@
       "error": "Unable to load price performance"
     },
     "transactions": {
-      "title": "Transactions"
+      "title": "Transaction history"
     },
     "fallbackBanner": {
       "title": "Swap and Buy are not supported for this asset."
@@ -12780,6 +12823,39 @@
         "unavailable": "MoonPay couldn't be reached.",
         "unknown": "Something went wrong while setting it up."
       }
+    },
+    "order": {
+      "preparing": "Preparing the signature",
+      "title": "Continue on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "mismatch": {
+        "title": "This signature doesn't match the account",
+        "description": "Connect the Ledger that holds this account, with the same passphrase if you use one, then try again."
+      },
+      "placing": "Placing your order",
+      "filled": {
+        "title": "Order complete",
+        "fill_one": "You bought {{shares}} share for {{amount}}",
+        "fill_other": "You bought {{shares}} shares for {{amount}}",
+        "paid": "You paid {{amount}}"
+      },
+      "notFilled": {
+        "title": "Order not filled",
+        "description": "The price moved. No funds left your balance."
+      },
+      "rejected": {
+        "title": "Order not placed",
+        "expired-signature": "The order's authorization expired before it was sent.",
+        "insufficient-balance": "Your trading balance is too low for this order.",
+        "invalid-tick-size": "The market's price increments changed.",
+        "market-closed": "This market is closed.",
+        "not-accepted": "MoonPay couldn't place the order."
+      },
+      "unconfirmed": {
+        "title": "We couldn't confirm your order",
+        "description": "Check your positions before trying again."
+      },
+      "tryAgain": "Try again"
     },
     "onboarding": {
       "intro": {

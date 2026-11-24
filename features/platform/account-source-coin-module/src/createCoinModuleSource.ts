@@ -5,8 +5,9 @@ import {
   type AccountDataSource,
 } from "@domain/api-account-data";
 import { AccountDataSourceIdSchema, type AccountDataKind } from "@domain/entity-account-data";
-import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { AccountStatus } from "@domain/entity-account-status";
+import { currencyIdFromNetwork } from "@domain/entity-network";
 import type { CoinModuleHost } from "./host";
 import { toAccountBalances } from "./internals/toAccountBalances";
 import { readOperationsPage } from "./internals/readOperationsPage";
@@ -70,9 +71,12 @@ export function createCoinModuleSource(host: CoinModuleHost): AccountDataSource 
     if (!api) {
       throw new AccountDataNotServedError(`No account status in the ${currencyId} coin module`);
     }
-    const { used, isOnboarded } = await api.getAccountStatus(descriptor.key, signal);
+    const { activated, used } = await api.getAccountStatus(descriptor.key, signal);
     if (signal?.aborted) throw abortReason(signal);
-    return { used, gate: isOnboarded === false ? { type: "onboarding" } : null };
+    if (used === undefined) {
+      throw new AccountDataNotServedError(`No used flag in the ${currencyId} account status`);
+    }
+    return { used, gate: activated === false ? { type: "onboarding" } : null };
   };
 
   return {

@@ -1,5 +1,5 @@
-import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import React, { type ComponentProps } from "react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react-native";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
@@ -10,29 +10,58 @@ import {
 } from "../../__tests__/receiveTestStore";
 import { ReceiveAddress } from "./ReceiveAddress";
 
+jest.mock("@shared/share-sheet", () => ({
+  captureView: jest.fn(async () => "file://card.png"),
+}));
+
 jest.mock("@ledgerhq/crypto-icons/native", () => {
   const { Text } = jest.requireActual("react-native");
   return ({ ledgerId }: { ledgerId: string }) => <Text>{`icon:${ledgerId}`}</Text>;
 });
 
 jest.mock("@shared/ui-animated-qr-code/native", () => {
-  const { Text } = jest.requireActual("react-native");
+  const { Pressable, Text } = jest.requireActual("react-native");
   return {
-    AnimatedQrCode: ({ value, testID }: { value: string; testID?: string }) => (
-      <Text testID={testID}>{`qr:${value}`}</Text>
+    AnimatedQrCode: ({
+      value,
+      animation,
+      onPress,
+      triggerKey,
+      testID,
+    }: {
+      value: string;
+      animation: string;
+      onPress?: () => void;
+      triggerKey?: number;
+      testID?: string;
+    }) => (
+      <Pressable onPress={onPress} testID={testID ?? `qr-code-${animation}`}>
+        <Text>{`qr:${value}`}</Text>
+        <Text>{`${animation}:${triggerKey ?? 0}`}</Text>
+      </Pressable>
     ),
   };
 });
 
-const renderScreen = (onClose = jest.fn(), store = makeReceiveTestStore()) =>
+const renderScreen = (
+  onClose = jest.fn(),
+  store = makeReceiveTestStore(),
+  ports: Partial<ComponentProps<typeof ReceiveAddress>> = {},
+) =>
   render(
     <ReceiveAddress
       accountUUID={testAccountUUID}
       assetId={CryptoOrTokenCurrencyIdSchema.parse("ethereum")}
       onClose={onClose}
+      {...ports}
     />,
     { wrapper: receiveTestWrapper(store) },
   );
+
+const VerifyAddressExecutor = () => {
+  const { Text } = jest.requireActual("react-native");
+  return <Text testID="verify-executor">verifying</Text>;
+};
 
 describe("ReceiveAddress (Native)", () => {
   it("names the asset and its network, with the network icon", () => {
@@ -55,6 +84,7 @@ describe("ReceiveAddress (Native)", () => {
     renderScreen();
 
     expect(screen.getByTestId("receive-address-skeleton")).toBeTruthy();
+    expect(screen.getByTestId("qr-code-loading")).toBeTruthy();
     expect(await screen.findByTestId("receive-address-summary")).toBeTruthy();
     expect(screen.getByText(`qr:${mockAccountReceive().address}`)).toBeTruthy();
   });
@@ -93,12 +123,69 @@ describe("ReceiveAddress (Native)", () => {
     expect(screen.getByTestId("receive-address-options")).toBeTruthy();
   });
 
+  it("copies the address, and shares it with the image of its card", async () => {
+    const onCopyAddress = jest.fn(async () => true);
+    const onShareAddress = jest.fn();
+    renderScreen(jest.fn(), makeReceiveTestStore(), { onCopyAddress, onShareAddress });
+
+    await screen.findByTestId("receive-address-summary");
+    fireEvent.press(screen.getByTestId("receive-address-share"));
+    fireEvent.press(screen.getByTestId("receive-address-copy"));
+
+    await waitFor(() =>
+      expect(onShareAddress).toHaveBeenCalledWith(testReceive.address, "file://card.png"),
+    );
+    expect(onCopyAddress).toHaveBeenCalledWith(testReceive.address);
+    expect(await screen.findByText("Copied")).toBeTruthy();
+  });
+
+  it("copies from a press on the QR code, and replays its animation from the Copy button", async () => {
+    const onCopyAddress = jest.fn(async () => true);
+    renderScreen(jest.fn(), makeReceiveTestStore(), { onCopyAddress });
+
+    fireEvent.press(await screen.findByTestId("receive-address-qr-code"));
+    expect(onCopyAddress).toHaveBeenCalledWith(testReceive.address);
+    expect(screen.getByText("ripple:0")).toBeTruthy();
+
+    fireEvent.press(screen.getByTestId("receive-address-copy"));
+    expect(await screen.findByText("ripple:1")).toBeTruthy();
+    expect(onCopyAddress).toHaveBeenCalledTimes(2);
+  });
+
+  it("points at Verify, hiding the rest from screen readers, until the hint is dismissed, then verifies", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), { VerifyAddressExecutor });
+
+    expect(await screen.findByTestId("receive-address-verify-hint")).toBeTruthy();
+    expect(screen.queryByTestId("receive-address-close")).toBeNull();
+    fireEvent.press(screen.getByText("Got it"));
+    expect(screen.queryByTestId("receive-address-verify-hint")).toBeNull();
+    expect(screen.getByTestId("receive-address-close")).toBeTruthy();
+
+    fireEvent.press(screen.getByTestId("receive-address-verify"));
+    expect(screen.getByTestId("verify-executor")).toBeTruthy();
+  });
+
+  it("disables Verify for an address the device cannot show", async () => {
+    const receive = jest.fn(async () => mockAccountReceive({ verification: undefined }));
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }), { VerifyAddressExecutor });
+
+    expect((await screen.findByTestId("receive-address-verify")).props.disabled).toBe(true);
+    expect(screen.queryByTestId("receive-address-verify-hint")).toBeNull();
+  });
+
+  it("puts the title and the address in the card Share captures", async () => {
+    renderScreen();
+
+    const card = await screen.findByTestId("receive-address-card");
+    expect(within(card).getByTestId("receive-address-summary")).toBeTruthy();
+    expect(within(card).getByText("Receive ETH")).toBeTruthy();
+  });
+
   it("lays the zones out in screen order", async () => {
     renderScreen();
     await screen.findByTestId("receive-address-summary");
 
     expect(screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.props.testID)).toEqual([
-      "receive-address-zone-actions",
       "receive-address-zone-notices",
       "receive-address-zone-extras",
     ]);

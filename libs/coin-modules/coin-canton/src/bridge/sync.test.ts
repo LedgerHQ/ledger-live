@@ -7,7 +7,7 @@ import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHel
 import type { Account, AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonContext } from "../config";
-import * as instrumentBalances from "./instrumentBalances";
+import * as instrumentBalances from "../logic/instrumentBalances";
 import * as gateway from "../network/gateway";
 import { OperationInfo } from "../network/gateway";
 import resolver from "../signer";
@@ -32,7 +32,7 @@ jest.mock("../network/gateway", () => ({
 }));
 jest.mock("../signer");
 jest.mock("./onboard");
-jest.mock("./instrumentBalances");
+jest.mock("../logic/instrumentBalances");
 const mockFindTokenByAddressInCurrency = jest.fn().mockResolvedValue(undefined);
 const mockFindTokenById = jest.fn().mockResolvedValue(undefined);
 
@@ -68,6 +68,7 @@ type CantonBalance = {
   locked: bigint;
   asset: { type: "Amulet" } | { type: "token"; assetReference: string };
   utxoCount: number;
+  isLocked: boolean;
   instrumentId: string;
   adminId: string;
 };
@@ -77,6 +78,7 @@ const createMockNativeBalance = (amount: string, locked = false): CantonBalance 
   locked: locked ? BigInt(amount) : BigInt(0),
   asset: { type: "Amulet" },
   utxoCount: 1,
+  isLocked: locked,
   instrumentId: "Amulet",
   adminId: "native-admin",
 });
@@ -394,6 +396,18 @@ describe("makeGetAccountShape", () => {
       balance: BigNumber(1010),
       spendableBalance: BigNumber(10),
     });
+  });
+
+  it("should not count the UTXOs of a locked zero-amount row", async () => {
+    mockedGetBalance.mockResolvedValue([
+      createMockNativeBalance("10"),
+      { ...createMockNativeBalance("0", true), utxoCount: 5 },
+    ]);
+
+    const getAccountShape = makeGetAccountShape(fakeSignerContext, fakeContext);
+    const shape = await getAccountShape(defaultInfo, { paginationConfig: {} });
+
+    expect(shape.cantonResources?.instrumentUtxoCounts).toEqual({ Amulet: 1 });
   });
 
   it("should handle empty balances correctly", async () => {
@@ -808,6 +822,7 @@ describe("makeGetAccountShape", () => {
         locked: BigInt(0),
         asset: { type: "token", assetReference: sbcInstrumentId },
         utxoCount: 1,
+        isLocked: false,
         instrumentId: sbcInstrumentId,
         adminId: sharedAdminId,
       },
@@ -857,6 +872,7 @@ describe("makeGetAccountShape", () => {
       locked: 0n,
       asset: { type: "token", assetReference: id },
       utxoCount: 1,
+      isLocked: false,
       instrumentId: id,
       adminId,
     });
@@ -888,7 +904,7 @@ describe("makeGetAccountShape", () => {
         createMockNativeBalance("1000"),
         tokenBalance(otherAdmin, "900"),
         tokenBalance(calAdmin, "500"),
-        { ...tokenBalance(calAdmin, "200"), locked: 200n },
+        { ...tokenBalance(calAdmin, "200"), locked: 200n, isLocked: true },
       ]);
       mockedGetOperations.mockResolvedValue({
         operations: [
@@ -913,7 +929,7 @@ describe("makeGetAccountShape", () => {
       ]);
       expect(shape.cantonResources?.instrumentUtxoCounts).toEqual({
         Amulet: 1,
-        [`${instrumentId}____${calAdmin}`]: 2,
+        [`${instrumentId}____${calAdmin}`]: 1,
         [`${instrumentId}____${otherAdmin}`]: 1,
       });
     });
@@ -1762,7 +1778,7 @@ describe("makeGetAccountShape", () => {
         subAccounts: [],
       });
       expect(shape.cantonResources?.instrumentUtxoCounts).toEqual({
-        Amulet: 2,
+        Amulet: 1,
         "Amulet____impostor::1220dddd": 1,
       });
     });

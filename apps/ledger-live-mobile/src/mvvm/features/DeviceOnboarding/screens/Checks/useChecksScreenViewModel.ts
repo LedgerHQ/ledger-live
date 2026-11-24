@@ -3,7 +3,11 @@ import {
   useChecksDrawers,
   type ChecksDrawerProps,
 } from "LLM/features/DeviceOnboarding/components/ChecksDrawers/useChecksDrawers";
-import type { ChecksScreenProps, ChecksScreenState } from "LLM/features/DeviceOnboarding/types";
+import type {
+  ChecksScreenProps,
+  ChecksScreenState,
+  TrackedScreen,
+} from "LLM/features/DeviceOnboarding/types";
 import { checksTestIds } from "LLM/features/DeviceOnboarding/testIds";
 
 export type ChecksIllustration = "loading" | "scan" | "success";
@@ -26,11 +30,15 @@ export type ChecksViewProps = ChecksDrawerProps &
     secondary?: SecondaryAction;
     onQuit?: () => void;
     closeLabel: string;
+    screenTracking: readonly TrackedScreen[];
   }>;
 
 type ChecksLayout = Exclude<ChecksScreenState, "awaitingAllow">;
 
-type LayoutProps = Omit<ChecksViewProps, keyof ChecksDrawerProps | "onQuit" | "closeLabel">;
+type LayoutProps = Omit<
+  ChecksViewProps,
+  keyof ChecksDrawerProps | "onQuit" | "closeLabel" | "screenTracking"
+>;
 
 function checksLayout(state: ChecksScreenState, hasUpdate: boolean): ChecksLayout {
   if (state === "awaitingAllow") return "checking";
@@ -103,16 +111,28 @@ export function useChecksScreenViewModel({
   firmwareUpToDate,
   onStart,
   onRetry,
+  onSkipFirmwareCheck,
   onCloseSheet,
   onContinue,
   onQuit,
+  onClosePressed,
   onAcceptUpdate,
   onDeclineUpdate,
+  onUpdatePressed,
+  onInstallUpdate,
+  onUpdateSheetClosed,
+  screensFor,
+  seededDeviceType,
   suspendSheets = false,
+  updateAfterSetup = false,
 }: ChecksScreenProps): ChecksViewProps {
   const { t } = useTranslation();
   const quit = () => onQuit?.();
-  const { headerQuitHidden, reopenFirmwareOffer, ...drawers } = useChecksDrawers({
+  const closeAndQuit = () => {
+    onClosePressed?.();
+    quit();
+  };
+  const { headerQuitHidden, reopenFirmwareOffer, updateStep, ...drawers } = useChecksDrawers({
     device,
     state,
     error,
@@ -120,24 +140,29 @@ export function useChecksScreenViewModel({
     onRetry,
     onCloseSheet,
     onErrorCancel: quit,
+    onSkipFirmwareCheck,
     onAcceptUpdate,
-    onAllowDismiss: quit,
+    onAllowDismiss: closeAndQuit,
     onNotGenuineClose: quit,
+    onUpdatePressed,
+    onUpdateSheetClosed,
+    seededDeviceType,
     suspendSheets,
+    updateAfterSetup,
   });
+  const installUpdate = () => {
+    onInstallUpdate?.();
+    reopenFirmwareOffer();
+  };
   const layout = checksLayout(state, update !== null);
 
   return {
-    ...checksLayouts(
-      t,
-      firmwareUpToDate,
-      onContinue,
-      onStart,
-      reopenFirmwareOffer,
-      onDeclineUpdate,
-    )[layout],
+    ...checksLayouts(t, firmwareUpToDate, onContinue, onStart, installUpdate, onDeclineUpdate)[
+      layout
+    ],
     closeLabel: t("deviceOnboarding.checks.close"),
-    onQuit: headerQuitHidden && !suspendSheets ? undefined : onQuit,
+    screenTracking: screensFor?.(updateStep) ?? [],
+    onQuit: !onQuit || (headerQuitHidden && !suspendSheets) ? undefined : closeAndQuit,
     ...drawers,
   };
 }

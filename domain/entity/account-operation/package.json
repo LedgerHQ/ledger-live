@@ -22,11 +22,13 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
+    "@domain/entity-account": "workspace:*",
     "@domain/entity-account-balance": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-currency": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
+    "@domain/entity-network": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/schema-primitives": "workspace:*",
     "zod": "catalog:"

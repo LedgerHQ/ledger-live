@@ -3,7 +3,7 @@ import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
 import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
-import { beforeAllFunction, SendTestOptions } from "@e2e/specs/send/send";
+import { beforeAllFunction, RunSendTestBaseOptions, SendTestOptions } from "@e2e/specs/send/send";
 
 export const beforeAllTokenFunction = async (
   transaction: TransactionType,
@@ -30,12 +30,10 @@ export const beforeAllTokenFunction = async (
   await app.mainNavigation.waitForWallet40Ready();
 };
 
-export function runNewSendFlowTokenTest(
-  transaction: TransactionType,
-  tmsLinks: string[],
-  tags: string[],
-  options?: SendTestOptions,
-) {
+type RunNewSendFlowTestOptions = SendTestOptions & RunSendTestBaseOptions;
+
+export function runNewSendFlowTokenTest(options: RunNewSendFlowTestOptions) {
+  const { transaction, tmsLinks, tags, ...sendOptions } = options;
   declareBroadcastAccounts(transaction.accountToDebit);
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: sendFolder(transaction.accountToDebit),
@@ -45,7 +43,7 @@ export function runNewSendFlowTokenTest(
   tags.forEach(tag => $Tag(tag));
   describe("New Send Flow - Token Send", () => {
     beforeAll(async () => {
-      await beforeAllTokenFunction(transaction, options);
+      await beforeAllTokenFunction(transaction, sendOptions);
     });
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send`, async () => {
@@ -53,10 +51,10 @@ export function runNewSendFlowTokenTest(
         transaction.accountToDebit.parentAccount!.accountName,
         transaction.accountToDebit,
       );
-      await app.newSend.setRecipientAndContinueNewFlow(
-        transaction.accountToCredit.address,
-        transaction.memoTag,
-      );
+      await app.newSend.setRecipientAndContinueNewFlow({
+        address: transaction.accountToCredit.address,
+        memoTag: transaction.memoTag,
+      });
       await app.newSend.setAmountAndReviewNewFlow(transaction.amount);
       await app.newSend.waitForSignature();
       await app.speculos.signSendTransaction(transaction);
@@ -69,12 +67,8 @@ export function runNewSendFlowTokenTest(
   });
 }
 
-export function runNewSendFlowTest(
-  transaction: TransactionType,
-  tmsLinks: string[],
-  tags: string[],
-  options?: SendTestOptions,
-) {
+export function runNewSendFlowTest(options: RunNewSendFlowTestOptions) {
+  const { transaction, tmsLinks, tags, ...sendOptions } = options;
   declareBroadcastAccounts(transaction.accountToDebit);
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: sendFolder(transaction.accountToDebit),
@@ -84,15 +78,15 @@ export function runNewSendFlowTest(
   tags.forEach(tag => $Tag(tag));
   describe("Send - new flow", () => {
     beforeAll(async () => {
-      await beforeAllFunction(transaction, options);
+      await beforeAllFunction(transaction, sendOptions);
     });
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send`, async () => {
       await app.send.navigateToSendScreen(transaction.accountToDebit);
-      await app.newSend.setRecipientAndContinueNewFlow(
-        transaction.accountToCredit.address,
-        transaction.memoTag,
-      );
+      await app.newSend.setRecipientAndContinueNewFlow({
+        address: transaction.accountToCredit.address,
+        memoTag: transaction.memoTag,
+      });
       await app.newSend.setAmountAndReviewNewFlow(transaction.amount);
       await app.newSend.waitForSignature();
       await app.speculos.signSendTransaction(transaction);
@@ -135,14 +129,18 @@ export type NewSendMemoTestOptions = {
  *  - the transaction completes successfully with a memo, and without a memo (skip) unless
  *    `broadcastWithoutMemo` is false.
  */
-export function runNewSendMemoTest(
-  transaction: TransactionType,
-  tmsLinks: string[],
-  tags: string[],
-  options?: SendTestOptions,
-  memoOptions: NewSendMemoTestOptions = {},
-) {
-  const { invalidMemoInput, broadcastWithoutMemo = true, memoTypeOptions } = memoOptions;
+type RunNewSendMemoTestOptions = RunNewSendFlowTestOptions & NewSendMemoTestOptions;
+
+export function runNewSendMemoTest(options: RunNewSendMemoTestOptions) {
+  const {
+    transaction,
+    tmsLinks,
+    tags,
+    invalidMemoInput,
+    broadcastWithoutMemo = true,
+    memoTypeOptions,
+    ...sendOptions
+  } = options;
   declareBroadcastAccounts(transaction.accountToDebit);
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: sendFolder(transaction.accountToDebit),
@@ -163,14 +161,14 @@ export function runNewSendMemoTest(
 
   describe("Send - new flow - Memo", () => {
     beforeAll(async () => {
-      await beforeAllFunction(transaction, options);
+      await beforeAllFunction(transaction, sendOptions);
     });
 
     if (invalidMemoInput !== undefined) {
       it(`[${label}] - Send - numeric memo only (${invalidMemoInput})`, async () => {
         await app.send.navigateToSendScreen(transaction.accountToDebit);
         await app.newSend.typeRecipientNewFlow(transaction.accountToCredit.address);
-        await app.newSend.expectMemoRejectsNonNumericInput(invalidMemoInput);
+        await app.newSend.expectMemoRejectsNonNumericInput({ rawInput: invalidMemoInput });
         if (transaction.memoTag) {
           await app.newSend.expectMemoRetainsNumericInput(transaction.memoTag);
         }
@@ -187,10 +185,10 @@ export function runNewSendMemoTest(
 
     it(`[${label}] - Send - with memo`, async () => {
       await app.send.navigateToSendScreen(transaction.accountToDebit);
-      await app.newSend.setRecipientAndContinueNewFlow(
-        transaction.accountToCredit.address,
-        transaction.memoTag,
-      );
+      await app.newSend.setRecipientAndContinueNewFlow({
+        address: transaction.accountToCredit.address,
+        memoTag: transaction.memoTag,
+      });
       await app.newSend.setAmountAndReviewNewFlow(transaction.amount);
       await app.newSend.waitForSignature();
       // Speculos asserts the memo is displayed on the device review screen.
@@ -205,10 +203,10 @@ export function runNewSendMemoTest(
     if (broadcastWithoutMemo) {
       it(`[${label}] - Send - without memo`, async () => {
         await app.send.navigateToSendScreen(noMemoTransaction.accountToDebit);
-        await app.newSend.setRecipientAndContinueNewFlow(
-          noMemoTransaction.accountToCredit.address,
-          noMemoTransaction.memoTag,
-        );
+        await app.newSend.setRecipientAndContinueNewFlow({
+          address: noMemoTransaction.accountToCredit.address,
+          memoTag: noMemoTransaction.memoTag,
+        });
         await app.newSend.setAmountAndReviewNewFlow(noMemoTransaction.amount);
         await app.newSend.waitForSignature();
         await app.speculos.signSendTransaction(noMemoTransaction);

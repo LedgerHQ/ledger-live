@@ -1,8 +1,7 @@
 import React from "react";
 import Animated, { FadeIn } from "react-native-reanimated";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
-import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
-import { Box, Text, ThemeProvider } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { AnimatedQrCode } from "@shared/ui-animated-qr-code/native";
 import { splitMiddleForTwoLines } from "../../../logic/splitMiddleForTwoLines";
 import type { AddressSummaryProps } from "./AddressSummary.types";
@@ -13,7 +12,7 @@ const QR_CENTER_ICON_SIZE = 48;
 // The code appears with a short fade once the address is read.
 const QR_FADE_IN_MS = 400;
 
-export function AddressSummary({ address }: AddressSummaryProps) {
+export function AddressSummary({ address, onCopy, copyLabel, copyKey }: AddressSummaryProps) {
   const { start, middle, end } = address.parts;
   const [middleFirstLine, middleSecondLine] = splitMiddleForTwoLines(address.parts);
 
@@ -38,19 +37,18 @@ export function AddressSummary({ address }: AddressSummaryProps) {
             value={address.value}
             size={QR_SIZE}
             animation="ripple"
+            onPress={onCopy}
+            accessibilityLabel={copyLabel}
+            triggerKey={copyKey}
             testID="receive-address-qr-code"
             centerContent={
               address.assetIcon ? (
-                // The card is white in both themes: the network badge border stays light too.
-                <ThemeProvider themes={ledgerLiveThemes} colorScheme="light">
-                  <CryptoIcon
-                    ledgerId={address.assetIcon.ledgerId}
-                    ticker={address.assetIcon.ticker}
-                    network={address.assetIcon.network}
-                    size={QR_CENTER_ICON_SIZE}
-                    shape="circle"
-                  />
-                </ThemeProvider>
+                <CryptoIcon
+                  ledgerId={address.assetIcon.ledgerId}
+                  ticker={address.assetIcon.ticker}
+                  size={QR_CENTER_ICON_SIZE}
+                  shape="circle"
+                />
               ) : undefined
             }
           />

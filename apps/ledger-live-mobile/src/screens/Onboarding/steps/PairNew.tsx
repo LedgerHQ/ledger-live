@@ -64,7 +64,11 @@ const ImageHeader = ({ showSlideIndicator }: { showSlideIndicator: boolean }) =>
       width="100%"
       height={48}
     >
-      <Button Icon={renderArrowLeft} onPress={() => navigation.goBack()} />
+      <Button
+        Icon={renderArrowLeft}
+        onPress={() => navigation.goBack()}
+        testID="onboarding-pair-new-back"
+      />
       {showSlideIndicator && <SlideIndicator slidesLength={10} activeIndex={8} />}
       <Flex width={48}>
         <Button
@@ -83,8 +87,14 @@ export default memo(function () {
   const dispatch = useDispatch();
   const { notifyFlowCompleted } = useNotificationsPrompt();
 
-  const { deviceModelId, showSeedWarning, isProtectFlow, fromAccessExistingWallet, isRestoreSeed } =
-    route.params;
+  const {
+    deviceModelId,
+    showSeedWarning,
+    isProtectFlow,
+    fromAccessExistingWallet,
+    resetPostOnboardingRedirect,
+    isRestoreSeed,
+  } = route.params;
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const onboardingType = useSelector(onboardingTypeSelector);
 
@@ -137,7 +147,7 @@ export default memo(function () {
     }
 
     dispatch(setHasBeenUpsoldProtect(false));
-    if (!fromAccessExistingWallet) {
+    if (!fromAccessExistingWallet || resetPostOnboardingRedirect) {
       dispatch(setHasBeenRedirectedToPostOnboarding(false));
     }
 
@@ -149,6 +159,7 @@ export default memo(function () {
     hasCompletedOnboarding,
     navigation,
     fromAccessExistingWallet,
+    resetPostOnboardingRedirect,
     notifyFlowCompleted,
     isFundWalletNewSetup,
     seedConfiguration,

@@ -4,7 +4,10 @@ import {
   type UseVerifyAddressExecutorViewModelParams,
 } from "@features/flow-receive";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { toReceiveVerifyAddressOptions } from "@ledgerhq/live-common/account/receiveVerifyAddress";
+import {
+  toReceiveVerifyAccount,
+  toReceiveVerifyAddressOptions,
+} from "@ledgerhq/live-common/account/receiveVerifyAddress";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import getAddress from "@ledgerhq/live-common/hw/getAddress/index";
 import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
@@ -31,11 +34,10 @@ export function useVerifyAddressExecutorViewModel(params: UseVerifyAddressExecut
       toReceiveVerifyAddressOptions(account, verification),
     getAddress: ({ dmk, sessionId }, options) =>
       getAddress(new DmkCompatTransport(dmk, sessionId), options),
-    buildInitializationInput: ({ account, tokenCurrency }) =>
+    buildInitializationInput: ({ account, tokenCurrency, verification }) =>
       buildDeviceInitializationInput({
-        appRequest: { account, tokenCurrency },
+        appRequest: { account: toReceiveVerifyAccount(account, verification), tokenCurrency },
         flow: FlowName.receive,
-        skipWrongDeviceCheck: true,
       }),
     intentComponent: VerifyAddressIntentComponentLWD,
   });

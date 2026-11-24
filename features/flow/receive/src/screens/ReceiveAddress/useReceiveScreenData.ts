@@ -1,15 +1,16 @@
 import { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { accountsSlice, type AccountsState } from "@domain/entity-account";
-import {
-  currencyIdFromNetwork,
-  type AccountDescriptor,
-  type AccountUUID,
-} from "@domain/entity-account-descriptor";
+import { accountsSlice, type AccountsState, type AccountUUID } from "@domain/entity-account";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { selectAccountReceive, type WithAccountReceives } from "@domain/entity-account-receive";
-import { accountStatusSlice, type AccountStatusState } from "@domain/entity-account-status";
+import {
+  accountStatusSlice,
+  type AccountStatus,
+  type AccountStatusState,
+} from "@domain/entity-account-status";
 import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import { useAccountData, type UseAccountDataResult } from "@features/platform-account-data";
+import { currencyIdFromNetwork } from "@domain/entity-network";
 import {
   toReceiveScreenState,
   type ReceiveKindRead,
@@ -29,6 +30,8 @@ export type ReceiveScreenData =
 export type UseReceiveScreenDataResult = Readonly<{
   descriptor: AccountDescriptor | undefined;
   data: ReceiveScreenData;
+  /** Absent until it is read. */
+  accountStatus: AccountStatus | undefined;
 }>;
 
 const { selectAccountEntry } = accountsSlice.getSelectors(
@@ -94,5 +97,9 @@ export function useReceiveScreenData(
     refreshAssetStatus,
   ]);
 
-  return { descriptor, data: state.type === "error" ? { type: "error", retry } : state };
+  return {
+    descriptor,
+    data: state.type === "error" ? { type: "error", retry } : state,
+    accountStatus,
+  };
 }

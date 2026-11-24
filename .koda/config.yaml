@@ -1,9 +1,8 @@
-snapshot: ledger-live-desktop-agent-cde
 sandbox:
-  image: jfrog.ledgerlabs.net/daytona-oci-internal-green/ledger-live-desktop-agent-cde:main
+  image: jfrog.ledgerlabs.net/ledgerlive-oci-prod-runners-green/ledger-wallet-cde:latest
   cpu: 4
-  memory: 8
-  disk: 10
+  memory: 12
+  disk: 30
 setup: |
   mise install
   pnpm i --frozen-lockfile

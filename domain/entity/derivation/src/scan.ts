@@ -1,4 +1,4 @@
-import { networkFromCurrencyId } from "@domain/entity-account-descriptor";
+import { networkFromCurrencyId } from "@domain/entity-network";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import {
   CREATABLE_MODES_BY_FAMILY,

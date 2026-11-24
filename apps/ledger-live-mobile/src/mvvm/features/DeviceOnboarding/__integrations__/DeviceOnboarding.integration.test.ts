@@ -124,6 +124,7 @@ describe("useDeviceOnboarding", () => {
     expect(leaveOnboarding).toHaveBeenCalledWith(
       "userQuit",
       expect.objectContaining({ sessionId: "session-2", isOnboarded: false }),
+      null,
     );
     expect(leaveHook).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -193,7 +194,7 @@ describe("useDeviceOnboarding", () => {
       modelId: DeviceModelId.STAX,
     });
     expect(leaveOnboarding.mock.calls).toEqual([
-      ["userQuit", expect.objectContaining({ sessionId: device.sessionId })],
+      ["userQuit", expect.objectContaining({ sessionId: device.sessionId }), null],
     ]);
     expect(leaveHook).toHaveBeenLastCalledWith({
       navigateOnExit: true,

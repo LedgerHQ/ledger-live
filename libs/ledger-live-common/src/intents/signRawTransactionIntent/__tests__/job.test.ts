@@ -71,13 +71,13 @@ function mockBridge(events$: Observable<SignOperationEvent>) {
   return bridge;
 }
 
-function collectStates() {
+function collectStates(jobInput: SignRawTransactionIntentInput = input) {
   const states: SignRawTransactionIntentJobState[] = [];
   let error: unknown = null;
   const subscription = signRawTransactionIntentJob({
     deviceConnectionResult,
     deviceExtractedContext,
-    input,
+    input: jobInput,
     onResult: jest.fn(),
   }).subscribe({
     next: state => states.push(state),
@@ -111,12 +111,22 @@ describe("signRawTransactionIntentJob", () => {
       transaction: "0a02abcd",
       deviceId: "device-1",
       deviceModelId,
+      broadcast: undefined,
     });
     expect(bridge.signOperation).not.toHaveBeenCalled();
     expect(states).toEqual([
       { type: "pending", deviceModelId },
       { type: "signed", signedOperation },
     ]);
+  });
+
+  it.each([true, false])("passes broadcast=%s to the bridge", async broadcast => {
+    const bridge = mockBridge(of({ type: "signed", signedOperation }));
+
+    collectStates({ ...input, broadcast });
+    await flushPromises();
+
+    expect(bridge.signRawOperation).toHaveBeenCalledWith(expect.objectContaining({ broadcast }));
   });
 
   it("turns a refusal into a cancelled state whose retry signs again", async () => {

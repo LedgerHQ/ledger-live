@@ -9,11 +9,11 @@ const transactionE2E = {
   tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@solana", "@family-solana"],
 };
 
-runSendSPLAddressInvalid(
-  transactionE2E.tx,
-  transactionE2E.recipient,
-  transactionE2E.expectedErrorMessage,
-  transactionE2E.scenario,
-  transactionE2E.xrayTicket,
-  transactionE2E.tag,
-);
+runSendSPLAddressInvalid({
+  transaction: transactionE2E.tx,
+  recipientContractAddress: transactionE2E.recipient,
+  expectedErrorMessage: transactionE2E.expectedErrorMessage,
+  scenario: transactionE2E.scenario,
+  tmsLinks: transactionE2E.xrayTicket,
+  tags: transactionE2E.tag,
+});

@@ -1,15 +1,11 @@
 import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
-import {
-  DerivationPathSchema,
-  NetworkIdSchema,
-  computeAccountUUID,
-  networkFromCurrencyId,
-  toDescriptorPath,
-  type AccountDescriptor,
-} from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { DerivationPathSchema, toDescriptorPath } from "@domain/entity-derivation";
+import { NetworkIdSchema, networkFromCurrencyId } from "@domain/entity-network";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import {
   InvalidAccountKeyError,
   MissingAccountPublicKeyError,

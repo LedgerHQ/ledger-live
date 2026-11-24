@@ -1,9 +1,9 @@
 import React from "react";
 import { act, render, screen } from "@testing-library/react";
 import { I18nWrapper, SETUP_COPY } from "../../__tests__/i18nWrapper";
+import { MIN_LOADING_DISPLAY_MS } from "../../pendingResultStore.internals";
 import {
   dismissPredictionsSetup,
-  MIN_SETUP_DISPLAY_MS,
   reportPredictionsSetup,
   startPredictionsSetup,
 } from "../../predictionsSetupStore.internals";
@@ -46,9 +46,18 @@ describe("PredictionsSetupSheet (web)", () => {
 
     act(() => {
       void reportPredictionsSetup(setupId, { outcome: "found" });
-      jest.advanceTimersByTime(MIN_SETUP_DISPLAY_MS);
+      jest.advanceTimersByTime(MIN_LOADING_DISPLAY_MS);
     });
 
     expect(screen.getByLabelText(SETUP_COPY.setUp.found)).toBeVisible();
+  });
+
+  it("can be found by its test id", () => {
+    render(<PredictionsSetupSheet />, { wrapper: I18nWrapper });
+    act(() => {
+      startPredictionsSetup();
+    });
+
+    expect(screen.getByTestId("predictions-setup-sheet")).toBeVisible();
   });
 });

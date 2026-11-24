@@ -8,9 +8,9 @@ const transaction = new Transaction(
   undefined,
   "noTag",
 );
-runSendInvalidAmountTest(
+runSendInvalidAmountTest({
   transaction,
-  "Sorry, insufficient funds",
-  ["B2CQA-4287"],
-  ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@hedera", "@family-hedera"],
-);
+  expectedErrorMessage: "Sorry, insufficient funds",
+  tmsLinks: ["B2CQA-4287"],
+  tags: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@hedera", "@family-hedera"],
+});

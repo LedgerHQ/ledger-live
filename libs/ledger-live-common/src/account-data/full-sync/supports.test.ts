@@ -1,8 +1,8 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { NetworkIdSchema } from "@domain/entity-network";
 import { genAccount } from "../../mock/account";
 import { fromLegacyAccount } from "../../account/accountDescriptor";
 import { isFullSyncSupported } from "./supports";
-import { NetworkIdSchema } from "@domain/entity-account-descriptor";
 
 const descriptor = fromLegacyAccount(
   genAccount("supports", { currency: getCryptoCurrencyById("ethereum") }),

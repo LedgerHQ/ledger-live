@@ -26,6 +26,22 @@ const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\
 // Net value of a quote as shown on screen: amount received minus network fees (both in fiat).
 const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
 
+type GetMinimumAmountOptions = {
+  fromAccount: Account;
+  toAccount: Account;
+  providersWhitelist?: string[];
+};
+
+type QuoteCardPartOptions = {
+  provider: string;
+  suffix: string;
+};
+
+type SwapAssetOptions = {
+  currency: string;
+  amount: string;
+};
+
 export default class SwapLiveAppPage {
   // `ptxLumenQuoteCard` is on for everyone with `ptxLumenQuoteSameCtaCopy`: lumen card, old CTA copy.
   private static readonly PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
@@ -81,13 +97,15 @@ export default class SwapLiveAppPage {
       `${this.baseProviderCssSelector(provider)} [data-testid="${this.incompatibilityBannerPartnerId}"]`,
     );
   /** A part of the provider's quote card, by the end of its testid, e.g. `-amount-label`. */
-  private readonly quoteCardPartCss = (provider: string, suffix: string) =>
-    `${this.baseProviderCssSelector(provider)}[data-testid$="${suffix}"]`;
+  private readonly quoteCardPartCss = (options: QuoteCardPartOptions) => {
+    const { provider, suffix } = options;
+    return `${this.baseProviderCssSelector(provider)}[data-testid$="${suffix}"]`;
+  };
 
   private readonly providerExecuteButton = (provider: string) =>
     webByCss(this.providerExecuteButtonCss(provider));
-  private readonly quoteCardPart = (provider: string, suffix: string) =>
-    webByCss(this.quoteCardPartCss(provider, suffix));
+  private readonly quoteCardPart = (options: QuoteCardPartOptions) =>
+    webByCss(this.quoteCardPartCss(options));
   // Prefix match: the testid ends with the quote's provider id, which can extend the e2e name
   // (1inch renders as `oneinchfusion` when its Fusion quote wins).
   private readonly providerNameButton = (providerName: string) =>
@@ -185,19 +203,22 @@ export default class SwapLiveAppPage {
 
   @Step("Wait for quotes countdown to be stable")
   async waitForQuotesStable(timeout: number = COUNTDOWN_STABLE_TIMEOUT) {
-    await retryUntilTimeout(async () => {
-      const countdownText = await this.quotesCountDown.getText();
-      const currentSeconds = Number.parseInt(countdownText.replaceAll(/\D/g, ""), 10);
+    await retryUntilTimeout({
+      fn: async () => {
+        const countdownText = await this.quotesCountDown.getText();
+        const currentSeconds = Number.parseInt(countdownText.replaceAll(/\D/g, ""), 10);
 
-      if (Number.isNaN(currentSeconds)) {
-        throw new TypeError(`Could not parse countdown value: ${countdownText}`);
-      }
-      if (currentSeconds < 2 || currentSeconds > 19) {
-        throw new Error(`Countdown is ${currentSeconds}s, needs to be between 2 and 19`);
-      }
+        if (Number.isNaN(currentSeconds)) {
+          throw new TypeError(`Could not parse countdown value: ${countdownText}`);
+        }
+        if (currentSeconds < 2 || currentSeconds > 19) {
+          throw new Error(`Countdown is ${currentSeconds}s, needs to be between 2 and 19`);
+        }
 
-      return currentSeconds;
-    }, timeout);
+        return currentSeconds;
+      },
+      timeout,
+    });
   }
 
   @Step("Tap execute swap button {{{0}}}")
@@ -223,7 +244,8 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Get minimum amount for swap")
-  async getMinimumAmount(fromAccount: Account, toAccount: Account, providersWhitelist?: string[]) {
+  async getMinimumAmount(options: GetMinimumAmountOptions) {
+    const { fromAccount, toAccount, providersWhitelist } = options;
     return (
       (await getMinimumSwapAmount(fromAccount, toAccount, providersWhitelist))?.toString() ?? ""
     );
@@ -236,8 +258,8 @@ export default class SwapLiveAppPage {
 
     let previousCount = -1;
 
-    const providerList = await retryUntilTimeout(
-      async () => {
+    const providerList = await retryUntilTimeout({
+      fn: async () => {
         const names = await this.mainContainer.getChildTexts(SwapLiveAppPage.PROVIDER_NAME_CSS);
 
         if (names.length === 0) {
@@ -252,9 +274,9 @@ export default class SwapLiveAppPage {
 
         return names;
       },
-      PROVIDER_LIST_SETTLE_TIMEOUT,
-      INTERVAL.medium,
-    );
+      timeout: PROVIDER_LIST_SETTLE_TIMEOUT,
+      interval: INTERVAL.medium,
+    });
 
     return providerList;
   }
@@ -273,15 +295,15 @@ export default class SwapLiveAppPage {
   async checkFirstQuoteContainerInfos(providerList: string[]) {
     const uiName = providerList[0];
     const provider: string = SwapProvider.getNameByUiName(uiName);
-    const amountLabel = this.quoteCardPart(uiName, "-amount-label");
+    const amountLabel = this.quoteCardPart({ provider: uiName, suffix: "-amount-label" });
     await amountLabel.waitVisible();
     await amountLabel.tap();
 
     await amountLabel.expectExist();
-    await this.quoteCardPart(uiName, "-fiatAmount-label").expectExist();
-    await this.quoteCardPart(uiName, "-networkFees-heading").expectExist();
-    await this.quoteCardPart(uiName, "extraFeesContainer").expectExist();
-    await this.quoteCardPart(uiName, "-rate-infoIcon").expectExist();
+    await this.quoteCardPart({ provider: uiName, suffix: "-fiatAmount-label" }).expectExist();
+    await this.quoteCardPart({ provider: uiName, suffix: "-networkFees-heading" }).expectExist();
+    await this.quoteCardPart({ provider: uiName, suffix: "extraFeesContainer" }).expectExist();
+    await this.quoteCardPart({ provider: uiName, suffix: "-rate-infoIcon" }).expectExist();
 
     if (
       provider === SwapProvider.ONE_INCH.name ||
@@ -289,7 +311,7 @@ export default class SwapLiveAppPage {
       provider === SwapProvider.UNISWAP.name ||
       provider === SwapProvider.LIFI.name
     ) {
-      await this.quoteCardPart(uiName, "-slippage-infoIcon").expectExist();
+      await this.quoteCardPart({ provider: uiName, suffix: "-slippage-infoIcon" }).expectExist();
     }
     await this.checkQuoteCardCtaLabel(uiName);
   }
@@ -323,19 +345,21 @@ export default class SwapLiveAppPage {
     // nets can therefore differ by up to 0.02 from rounding alone.
     const NET_ROUNDING_TOLERANCE = 0.02;
 
-    await retryUntilTimeout(async () => {
-      const quotes: Awaited<ReturnType<typeof this.getProviderQuote>>[] = [];
-      for (const provider of providerList) {
-        quotes.push(await this.getProviderQuote(provider));
-      }
+    await retryUntilTimeout({
+      fn: async () => {
+        const quotes: Awaited<ReturnType<typeof this.getProviderQuote>>[] = [];
+        for (const provider of providerList) {
+          quotes.push(await this.getProviderQuote(provider));
+        }
 
-      const firstQuote = quotes[0];
-      const bestNetValue = Math.max(...quotes.map(quoteNetValue));
-      expectWithinTolerance({
-        actual: quoteNetValue(firstQuote),
-        expected: bestNetValue,
-        tolerance: NET_ROUNDING_TOLERANCE,
-      });
+        const firstQuote = quotes[0];
+        const bestNetValue = Math.max(...quotes.map(quoteNetValue));
+        expectWithinTolerance({
+          actual: quoteNetValue(firstQuote),
+          expected: bestNetValue,
+          tolerance: NET_ROUNDING_TOLERANCE,
+        });
+      },
     });
   }
 
@@ -424,11 +448,15 @@ export default class SwapLiveAppPage {
   async getQuoteCardRawText(provider: string) {
     const amount =
       (
-        await this.mainContainer.getChildTexts(this.quoteCardPartCss(provider, "-amount-label"))
+        await this.mainContainer.getChildTexts(
+          this.quoteCardPartCss({ provider, suffix: "-amount-label" }),
+        )
       )[0] ?? "";
     const fiatAmount =
       (
-        await this.mainContainer.getChildTexts(this.quoteCardPartCss(provider, "-fiatAmount-label"))
+        await this.mainContainer.getChildTexts(
+          this.quoteCardPartCss({ provider, suffix: "-fiatAmount-label" }),
+        )
       )[0] ?? "";
     return { amount, fiatAmount };
   }
@@ -436,27 +464,40 @@ export default class SwapLiveAppPage {
   @Step("Check swap amounts are formatted with the language separators")
   async checkAmountsFormatting(separators: NumberSeparators) {
     // The send-amount input always groups with plain whitespace.
-    expectFormattedAmount(
-      await this.getAmountToSend(),
-      { decimal: separators.decimal, thousands: " " },
-      "send amount input",
-    );
-    expectFormattedAmount(
-      await this.getSendCountervalueText(),
+    expectFormattedAmount({
+      text: await this.getAmountToSend(),
+      separators: { decimal: separators.decimal, thousands: " " },
+      context: "send amount input",
+    });
+    expectFormattedAmount({
+      text: await this.getSendCountervalueText(),
       separators,
-      "send amount countervalue",
-    );
-    expectFormattedAmount(await this.getAmountToReceive(), separators, "receive amount");
+      context: "send amount countervalue",
+    });
+    expectFormattedAmount({
+      text: await this.getAmountToReceive(),
+      separators,
+      context: "receive amount",
+    });
 
     // Provider list is sorted best-first, so the first entry is the best offer.
     const [bestProvider] = await this.getProviderList();
     const { amount, fiatAmount } = await this.getQuoteCardRawText(bestProvider);
-    expectFormattedAmount(amount, separators, `best quote (${bestProvider}) amount`);
-    expectFormattedAmount(fiatAmount, separators, `best quote (${bestProvider}) fiat amount`);
+    expectFormattedAmount({
+      text: amount,
+      separators,
+      context: `best quote (${bestProvider}) amount`,
+    });
+    expectFormattedAmount({
+      text: fiatAmount,
+      separators,
+      context: `best quote (${bestProvider}) fiat amount`,
+    });
   }
 
-  @Step("Check currency to swap from is {{{0}}} with amount {{{1}}}")
-  async checkAssetFrom(currency: string, amount: string) {
+  @Step("Check currency to swap from is {{{0.currency}}} with amount {{{0.amount}}}")
+  async checkAssetFrom(options: SwapAssetOptions) {
+    const { currency, amount } = options;
     await this.fromSelector.expectText(currency, { containing: true });
     await this.fromAmountInput.expectValue(amount);
   }
@@ -481,8 +522,9 @@ export default class SwapLiveAppPage {
     await this.fromAccountAccountNameTag.expectText(expectedAccountName, { containing: true });
   }
 
-  @Step("Check currency to swap to is {{{0}}} with amount {{{1}}}")
-  async checkAssetTo(currency: string, amount: string) {
+  @Step("Check currency to swap to is {{{0.currency}}} with amount {{{0.amount}}}")
+  async checkAssetTo(options: SwapAssetOptions) {
+    const { currency, amount } = options;
     await this.checkAssetToContains(currency);
     await this.toAmountInput.expectText(amount);
   }

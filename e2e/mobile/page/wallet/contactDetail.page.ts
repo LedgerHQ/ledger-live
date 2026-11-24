@@ -4,6 +4,16 @@ import { TIMEOUT } from "@e2e/utils/timeouts";
 import type { ContactAddressTestData } from "@ledgerhq/live-e2e-shared/contacts";
 import ContactNameDrawer from "@e2e/page/drawer/contactName.drawer";
 
+type AddressSavedOptions = {
+  address: string;
+  networkId: string;
+};
+
+type AddressLabelOptions = {
+  address: string;
+  expectedLabel: string;
+};
+
 // i18n contacts.addAddressEntry.validAddress. Lumen renders the helper text without a testID.
 const VALID_ADDRESS_HELPER_TEXT = "Valid address";
 
@@ -146,16 +156,18 @@ export default class ContactDetailPage {
     await this.tapAddressNameContinue();
   }
 
-  @Step("Expect {{{0}}} saved under {{1}}")
-  async expectAddressSaved(address: string, networkId: string) {
+  @Step("Expect {{{0.address}}} saved under {{0.networkId}}")
+  async expectAddressSaved(options: AddressSavedOptions) {
+    const { address, networkId } = options;
     await this.networkGroup(networkId).waitVisible();
     await this.addressValue(address).waitVisible();
     await this.networkGroup(networkId).expectVisible();
     await this.addressValue(address).expectVisible();
   }
 
-  @Step("Expect {{{0}}} to be labelled {{1}}")
-  async expectAddressLabel(address: string, expectedLabel: string) {
+  @Step("Expect {{{0.address}}} to be labelled {{0.expectedLabel}}")
+  async expectAddressLabel(options: AddressLabelOptions) {
+    const { address, expectedLabel } = options;
     const addressId = await this.getAddressId(address);
 
     await this.addressLabel(addressId).expectText(expectedLabel);

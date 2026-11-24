@@ -3,6 +3,15 @@ import { currencyParam, openDeeplink } from "@e2e/helpers/commonHelpers";
 import type { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { byId, byText } from "@e2e/helpers/elements/native";
 
+type SetRecipientOptions = {
+  address: string;
+  memoTag?: string;
+};
+
+type SetRecipientAndContinueOptions = Omit<SetRecipientOptions, "address"> & {
+  address: string | undefined;
+};
+
 export default class SendPage {
   private readonly baseLink = "send";
 
@@ -55,8 +64,9 @@ export default class SendPage {
     await this.step1HeaderTitle.expectVisible();
   }
 
-  @Step("Set recipient {{{0}}} and memo tag {{{1}}}")
-  async setRecipient(address: string, memoTag?: string) {
+  @Step("Set recipient {{{0.address}}} and memo tag {{{0.memoTag}}}")
+  async setRecipient(options: SetRecipientOptions) {
+    const { address, memoTag } = options;
     await this.recipientInput.replaceText(address); // Issue with RN75 : QAA-370
     if (memoTag && memoTag !== "noTag") {
       await this.memoTagInput.replaceText(memoTag);
@@ -108,12 +118,13 @@ export default class SendPage {
     await this.recipientContinueEnabledButton.expectVisible();
   }
 
-  @Step("Set recipient {{{0}}} and continue")
-  async setRecipientAndContinue(address: string | undefined, memoTag?: string) {
+  @Step("Set recipient {{{0.address}}} and continue")
+  async setRecipientAndContinue(options: SetRecipientAndContinueOptions) {
+    const { address, memoTag } = options;
     if (!address) {
       throw new Error("Recipient address is not set");
     }
-    await this.setRecipient(address, memoTag);
+    await this.setRecipient({ address, memoTag });
     await this.recipientContinue(memoTag);
   }
 

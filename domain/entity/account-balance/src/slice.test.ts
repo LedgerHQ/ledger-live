@@ -1,6 +1,6 @@
 import { AccountDataSourceIdSchema, accountDataReceived } from "@domain/entity-account-data";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { mockAccountAssetBalance } from "./schema.mock";
 import { initialAccountBalancesState, type AccountBalancesState } from "./schema";
 import { accountBalancesSlice } from "./slice";

@@ -59,7 +59,7 @@
         "!{workspaceRoot}/shared/**/lib-es/**",
         "!{workspaceRoot}/shared/**/dist/**",
         "{workspaceRoot}/support/tsconfig/*.json",
-        { "externalDependencies": ["typescript"] }
+        { "externalDependencies": ["typescript", "zod"] }
       ],
       "options": {
         "cwd": "{workspaceRoot}",

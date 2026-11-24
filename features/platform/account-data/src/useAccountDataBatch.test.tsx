@@ -14,7 +14,8 @@ import {
   makeStore,
   sourceIdOf,
 } from "@domain/api-account-data/testing";
-import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { useAccountDataBatch } from "./useAccountDataBatch";
 
 function setup(source: Omit<AccountDataSource, "id" | "supports">) {

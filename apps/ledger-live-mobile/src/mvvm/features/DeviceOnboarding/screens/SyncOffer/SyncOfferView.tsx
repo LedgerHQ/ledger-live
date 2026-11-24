@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import { TrackScreen } from "@shared/analytics-react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glow } from "@shared/ui-glow/native";
 import { KARAOKE_GLOW_SIZE, KaraokeGlow } from "@shared/ui-karaoke/native";
@@ -59,6 +60,7 @@ function OfferGlow() {
 }
 
 function OfferLayout({
+  showGlow,
   title,
   closeLabel,
   onQuit,
@@ -68,6 +70,7 @@ function OfferLayout({
   footer,
   trailing,
 }: Readonly<{
+  showGlow: boolean;
   title: string;
   closeLabel: string;
   onQuit: () => void;
@@ -82,7 +85,7 @@ function OfferLayout({
 
   return (
     <Box testID={syncOfferTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
-      <OfferGlow />
+      {showGlow ? <OfferGlow /> : null}
       <Box lx={{ flex: 1, gap: "s24" }}>
         <DeviceOnboardingCloseBar
           label={closeLabel}
@@ -118,6 +121,8 @@ function OfferLayout({
 }
 
 function SyncOfferSuccess({
+  showGlow,
+  screenTracking,
   title,
   continueLabel,
   closeLabel,
@@ -126,11 +131,13 @@ function SyncOfferSuccess({
 }: Extract<SyncOfferViewProps, { phase: "success" }>) {
   return (
     <OfferLayout
+      showGlow={showGlow}
       title={title}
       closeLabel={closeLabel}
       onQuit={onQuit}
       sources={successSources}
       loop={false}
+      trailing={screenTracking ? <TrackScreen {...screenTracking} /> : null}
       footer={
         <Button
           appearance="base"
@@ -147,12 +154,14 @@ function SyncOfferSuccess({
 }
 
 function SyncOfferSynchronizing({
+  showGlow,
   title,
   closeLabel,
   onQuit,
 }: Extract<SyncOfferViewProps, { phase: "synchronizing" }>) {
   return (
     <OfferLayout
+      showGlow={showGlow}
       title={title}
       closeLabel={closeLabel}
       onQuit={onQuit}
@@ -163,6 +172,8 @@ function SyncOfferSynchronizing({
 }
 
 function SyncOfferPrompt({
+  showGlow,
+  screenTracking,
   title,
   description,
   learnMoreLabel,
@@ -177,6 +188,7 @@ function SyncOfferPrompt({
 }: Extract<SyncOfferViewProps, { phase: "offer" }>) {
   return (
     <OfferLayout
+      showGlow={showGlow}
       title={title}
       closeLabel={closeLabel}
       onQuit={onQuit}
@@ -220,12 +232,17 @@ function SyncOfferPrompt({
         </Box>
       }
       trailing={
-        <SkipLedgerSyncDrawer
-          isOpen={skipDrawer.isOpen}
-          handleClose={skipDrawer.onClose}
-          openSync={skipDrawer.onActivate}
-          skipSync={skipDrawer.onSkip}
-        />
+        <>
+          {screenTracking ? <TrackScreen {...screenTracking} /> : null}
+          <SkipLedgerSyncDrawer
+            isOpen={skipDrawer.isOpen}
+            handleClose={skipDrawer.onClose}
+            onClosePressed={skipDrawer.onClosePressed}
+            openSync={skipDrawer.onActivate}
+            skipSync={skipDrawer.onSkip}
+            trackingProps={skipDrawer.trackingProps}
+          />
+        </>
       }
     />
   );

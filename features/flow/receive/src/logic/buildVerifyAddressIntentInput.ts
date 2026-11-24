@@ -9,15 +9,41 @@ import { canVerifyOnDevice } from "./canVerifyOnDevice";
 
 const CANCELLED_BEFORE_DEVICE_REQUEST = "Address verification cancelled before the device request";
 
+export type VerifyAddressDeviceListeners = Readonly<{
+  /** Each time the job asks the device: on its first run and on every retry. */
+  onAttemptStart?: () => void;
+  /** The request reached the device, which shows the address. */
+  onAddressDisplayed?: () => void;
+}>;
+
 /**
- * No input when the device cannot show the address for the user to compare. `onAttemptStart` runs
- * each time the job asks the device: on its first run and on every retry.
+ * Cancelling stops the signer only until its first request reaches the device. From then on it
+ * finishes its sequence, so the device still shows the address when the user went back early, as
+ * when Bitcoin's signer is still on its silent requests.
  */
+function stopBeforeDeviceRequest(signal: AbortSignal) {
+  const controller = new AbortController();
+  let hasRequested = false;
+  const stop = () => {
+    if (!hasRequested) controller.abort();
+  };
+  if (signal.aborted) stop();
+  else signal.addEventListener("abort", stop, { once: true });
+
+  return {
+    signal: controller.signal,
+    onRequest: () => {
+      hasRequested = true;
+    },
+  };
+}
+
+/** No input when the device cannot show the address for the user to compare. */
 export function buildVerifyAddressIntentInput<Account, Options>(
   account: Account,
   verification: ReceiveVerification | undefined,
   ports: VerifyOnDevicePorts<Account, Options>,
-  onAttemptStart?: () => void,
+  { onAttemptStart, onAddressDisplayed }: VerifyAddressDeviceListeners = {},
 ): VerifyAddressIntentInput | undefined {
   if (!canVerifyOnDevice(verification)) return undefined;
 
@@ -29,7 +55,16 @@ export function buildVerifyAddressIntentInput<Account, Options>(
         const options = await ports.getAddressOptions(account, verification);
         if (signal.aborted) throw new Error(CANCELLED_BEFORE_DEVICE_REQUEST);
 
-        const device = { dmk: notifyOnDeviceRequest(dmk, onDeviceRequest, signal), sessionId };
+        const untilRequest = stopBeforeDeviceRequest(signal);
+        const onRequest = () => {
+          untilRequest.onRequest();
+          onDeviceRequest();
+          onAddressDisplayed?.();
+        };
+        const device = {
+          dmk: notifyOnDeviceRequest(dmk, onRequest, untilRequest.signal),
+          sessionId,
+        };
         return ports.getAddress(device, options);
       });
     },

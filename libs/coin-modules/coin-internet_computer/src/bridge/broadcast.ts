@@ -131,11 +131,11 @@ const claimSettledTransfer = async (
 
 /** The account bridge's broadcast, reaching the node `resolveHost` names; it is resolved once per call. */
 export const buildBroadcast =
-  (resolveHost: () => string): AccountBridge<Transaction>["broadcast"] =>
+  (resolveHost: () => Promise<string>): AccountBridge<Transaction>["broadcast"] =>
   async ({ account, signedOperation: { operation, rawData } }) => {
     log("debug", "[broadcast] Internet Computer transaction broadcast initiated");
     invariant(operation.extra, "[ICP](broadcast) Missing operation extra");
-    const host = resolveHost();
+    const host = await resolveHost();
 
     // Ledger-canister transfer (plain send, neuron creation, neuron top-up).
     if (isTransferRawData(rawData)) {

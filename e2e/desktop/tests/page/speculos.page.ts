@@ -8,6 +8,7 @@ import {
   expectValidAddressDevice,
   signSendTransaction,
   signDelegationTransaction,
+  acceptPerpsDeposit,
   verifyAmountsAndAcceptSwap,
   verifyAmountsAndAcceptSwapForDifferentSeed,
   verifyAmountsAndRejectSwap,
@@ -23,6 +24,7 @@ import {
   enableBlindSigningOnNanoS,
   resetSpeculosEvents,
   waitForSendReviewTransaction,
+  type PerpsDepositReview,
 } from "@ledgerhq/live-e2e-shared/speculos";
 import { signTronRentPayment } from "@ledgerhq/live-e2e-shared/families/tronSponsored";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -108,6 +110,11 @@ export class SpeculosPage extends AppPage {
       if (error instanceof Error) error.message += `\n↳ Swap scenario: ${scenario}`;
       throw error;
     }
+  }
+
+  @step("Accept the Perps deposit on the device")
+  async acceptPerpsDeposit(review: PerpsDepositReview) {
+    await acceptPerpsDeposit(review);
   }
 
   @step("Verify amounts and accept swap for different seed")

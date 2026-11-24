@@ -37,7 +37,7 @@ describe("applyUsdRateToMarketItem", () => {
     expect(applyUsdRateToMarketItem(item, 1)).toBe(item);
   });
 
-  it("scales USD amounts and the sparkline, and keeps every other field", () => {
+  it("scales USD amounts and keeps every other field", () => {
     const item = createMockMarketItemResponse();
     const rate = 0.5;
 
@@ -53,7 +53,6 @@ describe("applyUsdRateToMarketItem", () => {
       allTimeHigh: scale(item.allTimeHigh, rate),
       allTimeLow: scale(item.allTimeLow, rate),
       priceChange24h: scale(item.priceChange24h, rate),
-      sparkline: item.sparkline.map(value => scale(value, rate)),
     });
   });
 });

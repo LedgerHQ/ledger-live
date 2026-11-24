@@ -97,8 +97,6 @@ Inside `<name>`, namespace first, then the qualifier, so related packages sort t
 
 Known deviations, renamed when someone touches them, never copied:
 
-- `domain/entity/starred-account` (`@domain/entity-starred-account`): qualifier first; the namespace-first
-  name is `account-starred`.
 - `features/flow/flow-contacts-*` (for example `features/flow/flow-contacts-list`, published as
   `@features/flow-contacts-list`): the folder repeats the `flow-` prefix; the folder that gives this
   name is `features/flow/contacts-list`.

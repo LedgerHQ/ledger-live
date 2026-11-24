@@ -82,7 +82,6 @@
     "bip39": "catalog:",
     "ecpair": "3.0.2",
     "jest": "catalog:",
-    "jest-file-snapshot": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "rimraf": "catalog:",

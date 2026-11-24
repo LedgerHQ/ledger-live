@@ -3,7 +3,7 @@ import type { MarketCurrencyData, MarketItemResponse } from "./types";
 /**
  * Convert the USD-denominated fields of a {@link MarketCurrencyData} into the
  * user's fiat by multiplying by `rate` (e.g., USD→EUR rate). Non-USD fields
- * (percentages, dates, supplies, sparkline, chartData) are preserved unchanged.
+ * (percentages, dates, supplies, chartData) are preserved unchanged.
  */
 export function applyUsdRateToMarket(data: MarketCurrencyData, rate: number): MarketCurrencyData {
   if (rate === 1) return data;
@@ -43,6 +43,5 @@ export function applyUsdRateToMarketItem(
     allTimeHigh: scale(item.allTimeHigh),
     allTimeLow: scale(item.allTimeLow),
     priceChange24h: scale(item.priceChange24h),
-    sparkline: item.sparkline.map(scale),
   };
 }

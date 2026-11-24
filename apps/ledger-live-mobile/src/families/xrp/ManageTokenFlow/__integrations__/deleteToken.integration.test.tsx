@@ -6,6 +6,7 @@ import { GlobalTooltipBottomSheet } from "@ledgerhq/lumen-ui-rnative";
 import { track, trackPage } from "@shared/analytics";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { Account, Operation } from "@ledgerhq/types-live";
+import { BridgeSyncContext } from "@ledgerhq/live-common/bridge/react/index";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
 import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
 import { act, render, screen, waitFor } from "@tests/test-renderer";
@@ -85,6 +86,8 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => {
 
 const OuterStack = createNativeStackNavigator();
 
+const mockSync = jest.fn();
+
 const DELETE_BUTTON = `xrp-manage-asset-delete-${xrpIouToken.id}`;
 
 // useBroadcast waits at least 3 seconds
@@ -111,13 +114,13 @@ function AccountScreen() {
 
 function renderManageAssets(account: Account) {
   return render(
-    <>
+    <BridgeSyncContext.Provider value={mockSync}>
       <OuterStack.Navigator screenOptions={{ headerShown: false }}>
         <OuterStack.Screen name={ScreenName.Account} component={AccountScreen} />
         <OuterStack.Screen name={NavigatorName.XrpManageTokenFlow} component={component} />
       </OuterStack.Navigator>
       <GlobalTooltipBottomSheet />
-    </>,
+    </BridgeSyncContext.Provider>,
     {
       navigationInitialState: {
         index: 1,
@@ -338,6 +341,28 @@ describe("XRP delete token (integration)", () => {
 
     const accountScreen = await screen.findByText("XRP account screen");
     expect(accountScreen).toBeVisible();
+  });
+
+  it("syncs the account once the removal is broadcast, not before", async () => {
+    const { user } = renderManageAssets(accountWithEmptyToken);
+    await confirmDelete(user);
+
+    expect(mockSync).not.toHaveBeenCalled();
+
+    signOnDevice();
+    await screen.findByText(
+      "RLUSD was successfully removed from your account",
+      {},
+      BROADCAST_TIMEOUT,
+    );
+
+    expect(mockSync).toHaveBeenCalledTimes(1);
+    expect(mockSync).toHaveBeenCalledWith({
+      type: "SYNC_ONE_ACCOUNT",
+      priority: 10,
+      accountId: XRP_ACCOUNT.id,
+      reason: "transaction-flow-confirmation",
+    });
   });
 
   it("closes the device sheet and shows the broadcast in progress, so the removal cannot be signed again", async () => {

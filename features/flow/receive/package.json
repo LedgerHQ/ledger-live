@@ -31,6 +31,7 @@
     "@domain/entity-account-receive": "workspace:*",
     "@domain/entity-account-status": "workspace:*",
     "@domain/entity-currency": "workspace:*",
+    "@domain/entity-network": "workspace:*",
     "@features/platform-account-data": "workspace:*",
     "@features/platform-currencies": "workspace:*",
     "@features/platform-device-intent": "workspace:*",
@@ -39,6 +40,7 @@
     "@shared/analytics": "workspace:*",
     "@shared/feature-flags": "workspace:*",
     "@shared/i18n": "workspace:*",
+    "@shared/share-sheet": "workspace:*",
     "@shared/ui-animated-qr-code": "workspace:*",
     "@shared/ui-info-state": "workspace:*"
   },
@@ -47,7 +49,6 @@
     "@domain/api-currency-token": "workspace:*",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
@@ -80,7 +81,6 @@
   "peerDependencies": {
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
@@ -103,9 +103,6 @@
       "optional": true
     },
     "@ledgerhq/crypto-icons": {
-      "optional": true
-    },
-    "@ledgerhq/lumen-design-core": {
       "optional": true
     },
     "react-native-reanimated": {

@@ -46,7 +46,10 @@ export function runUserClearApplicationCacheTest(
       await app.mainNavigation.waitForWallet40Ready();
       await app.portfolio.openCryptoAddresses();
       const countAfterClearingCache = await app.portfolio.countAccounts();
-      await app.portfolio.compareAccountsCount(countBeforeClearingCache, countAfterClearingCache);
+      await app.portfolio.compareAccountsCount({
+        actual: countAfterClearingCache,
+        expected: countBeforeClearingCache,
+      });
     });
   });
 }
@@ -111,7 +114,10 @@ export function runUserCanSelectCounterValueToDisplayAmountInLedgerLive(
       await app.settingsGeneral.expectCounterValue("EUR");
       await app.mainNavigation.openPortfolioViaDeeplink();
       await app.portfolio.expectTotalBalanceCounterValue("€");
-      await app.portfolio.expectAssetRowCounterValue(account.currency.name, "€");
+      await app.portfolio.expectAssetRowCounterValue({
+        asset: account.currency.name,
+        counterValue: "€",
+      });
       await app.portfolio.expectOperationCounterValue("€");
     });
   });

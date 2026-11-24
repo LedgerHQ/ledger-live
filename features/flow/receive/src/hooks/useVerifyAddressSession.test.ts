@@ -39,19 +39,25 @@ describe("useVerifyAddressSession", () => {
     jest.clearAllMocks();
   });
 
-  it.each([
-    { result: RESULTS.verified, event: "receive_verification_complete" },
-    { result: RESULTS.refused, event: "receive_verification_cancelled" },
-    { result: RESULTS.mismatch, event: "receive_verification_mismatch" },
-    { result: RESULTS.unsupported, event: "receive_verification_unsupported" },
-  ])("should send $event when the job reports $result.type", ({ result: jobResult, event }) => {
+  it("should send the unsupported event when the job reports the device cannot show the address", () => {
     const { onExit, result } = renderSession();
 
-    act(() => result.current.onResult(jobResult));
+    act(() => result.current.onResult(RESULTS.unsupported));
 
-    expect(mockTrack).toHaveBeenCalledWith(event, EVENT_PROPERTIES);
+    expect(mockTrack).toHaveBeenCalledWith("receive_verification_unsupported", EVENT_PROPERTIES);
     expect(onExit).not.toHaveBeenCalled();
   });
+
+  it.each([RESULTS.verified, RESULTS.refused, RESULTS.mismatch])(
+    "should not track the device's $type answer, which comes after the user could go back",
+    jobResult => {
+      const { result } = renderSession();
+
+      act(() => result.current.onResult(jobResult));
+
+      expect(mockTrack).not.toHaveBeenCalled();
+    },
+  );
 
   it.each([
     { result: RESULTS.verified, outcome: "verified" },
@@ -103,7 +109,7 @@ describe("useVerifyAddressSession", () => {
     expect(onExit).toHaveBeenCalledWith("dismissed");
   });
 
-  it("should send the cancelled event on each refusal", () => {
+  it("should exit as cancelled after a refusal on each attempt", () => {
     const { onExit, result } = renderSession();
     act(() => result.current.onResult(RESULTS.refused));
     act(() => result.current.onAttemptStart());
@@ -112,8 +118,6 @@ describe("useVerifyAddressSession", () => {
     act(() => result.current.onUserCancel(null));
 
     expect(onExit).toHaveBeenCalledWith("cancelled");
-    expect(mockTrack).toHaveBeenCalledTimes(2);
-    expect(mockTrack).toHaveBeenCalledWith("receive_verification_cancelled", EVENT_PROPERTIES);
   });
 
   it.each([
@@ -215,6 +219,68 @@ describe("useVerifyAddressSession", () => {
     act(() => result.current.onUserCancel(null));
 
     expect(onExit).toHaveBeenCalledWith("failed");
+  });
+
+  describe("once the device shows the address", () => {
+    it("should go back to the address on Got it, with no dismiss event", () => {
+      const { onExit, result } = renderSession();
+      act(() => result.current.onAddressDisplayed());
+
+      act(() => result.current.onUserCancel(null));
+
+      expect(onExit).toHaveBeenCalledWith("displayed");
+      expect(mockTrack).not.toHaveBeenCalled();
+    });
+
+    it("should go back to the address when the device approved", () => {
+      const { onExit, result } = renderSession();
+      act(() => result.current.onAddressDisplayed());
+      act(() => result.current.onResult(RESULTS.verified));
+
+      act(() => result.current.onUserCancel(null));
+
+      expect(onExit).toHaveBeenCalledWith("displayed");
+      expect(mockTrack).not.toHaveBeenCalled();
+    });
+
+    it("should end as unsupported when the device cannot show the address after the request", () => {
+      const { onExit, result } = renderSession();
+      act(() => result.current.onAddressDisplayed());
+      act(() => result.current.onResult(RESULTS.unsupported));
+
+      act(() => result.current.onUserCancel(null));
+
+      expect(onExit).toHaveBeenCalledWith("unsupported");
+    });
+
+    it("should end as mismatch when the user closes the mismatch screen", () => {
+      const { onExit, result } = renderSession();
+      act(() => result.current.onAddressDisplayed());
+      act(() => result.current.onResult(RESULTS.mismatch));
+
+      act(() => result.current.onUserCancel(null));
+
+      expect(onExit).toHaveBeenCalledWith("mismatch");
+    });
+
+    it("should report a failure when an error ended the request before any answer", () => {
+      const { onExit, result } = renderSession();
+      act(() => result.current.onAddressDisplayed());
+
+      act(() => result.current.onUserCancel(BLOCKING_FAILURE));
+
+      expect(onExit).toHaveBeenCalledWith("failed");
+    });
+
+    it("should forget the shown address when a new attempt starts", () => {
+      const { onExit, result } = renderSession();
+      act(() => result.current.onAddressDisplayed());
+      act(() => result.current.onAttemptStart());
+
+      act(() => result.current.onUserCancel(null));
+
+      expect(onExit).toHaveBeenCalledWith("dismissed");
+    });
   });
 
   it("should keep the verified result when the device disconnects afterwards", () => {

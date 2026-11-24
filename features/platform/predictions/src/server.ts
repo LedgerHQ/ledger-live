@@ -1,6 +1,16 @@
 import { customWrapper } from "@ledgerhq/wallet-api-server";
 import { z } from "zod";
 import type { PredictionsBindingAnswer } from "./binding";
+import { isAllowedMarketImageUrl } from "./marketImageUrl";
+import {
+  PREDICTIONS_ORDER_REJECTION_REASONS,
+  type PredictionsOrderAction,
+  type PredictionsOrderAnswer,
+  type PredictionsOrderDisplay,
+  type PredictionsOrderReport,
+} from "./order";
+import { placeOrderTypedDataJsonSchema } from "./placeOrderTypedData";
+import type { PredictionsTypedData } from "./typedData";
 import { PREDICTIONS_SETUP_FAILURE_REASONS, type PredictionsSetupOutcome } from "./setup";
 import { UnsupportedOnboardingVersion } from "./errors";
 
@@ -76,6 +86,23 @@ export type PredictionsUiHooks = {
   "binding.sign": (accountId: string) => Promise<PredictionsBindingAnswer>;
   /** Resolves once the user closes the setup, or right away when none is open. */
   "binding.reportSetup": (setup: PredictionsSetupOutcome) => Promise<void>;
+  /**
+   * Signs a checked place order authorization with the account. Rejects with `UserRefusedOnDevice`
+   * when the prompt closes unsigned. Once signed, the order shows as placing until `order.report`.
+   */
+  "order.sign": (
+    accountId: string,
+    typedData: PredictionsTypedData,
+    display: PredictionsOrderDisplay,
+  ) => Promise<PredictionsOrderAnswer>;
+  /**
+   * Resolves with the user's pick once they close or retry, or `close` right away when `walletOrderId`
+   * isn't the open order, e.g. one that timed out or that a newer order replaced.
+   */
+  "order.report": (
+    walletOrderId: string,
+    report: PredictionsOrderReport,
+  ) => Promise<PredictionsOrderAction>;
 };
 
 function toSupportedVersion<T extends string>(
@@ -127,6 +154,55 @@ const reportSetupSchema = z.discriminatedUnion("outcome", [
   }),
 ]) satisfies z.ZodType<PredictionsSetupOutcome>;
 
+// Trimmed, on one line, without invisible or direction characters: a live app mustn't add lines
+// or reorder text so that it reads like Ledger Wallet's own copy.
+const displayText = (maxLength: number) =>
+  z
+    .string()
+    .trim()
+    .min(1)
+    .max(maxLength)
+    .regex(/^[^\p{Cc}\p{Cf}\p{Zl}\p{Zp}]+$/u);
+
+const orderDisplaySchema = z.strictObject({
+  eventTitle: displayText(200).optional(),
+  marketTitle: displayText(200),
+  outcomeLabel: displayText(60),
+  outcomeSide: z.enum(["yes", "no"]).optional(),
+  // Dropped rather than refused: a missing image mustn't stop the order.
+  imageUrl: z
+    .string()
+    .optional()
+    .transform(imageUrl =>
+      imageUrl !== undefined && isAllowedMarketImageUrl(imageUrl) ? imageUrl : undefined,
+    ),
+}) satisfies z.ZodType<PredictionsOrderDisplay, unknown>;
+
+const signOrderSchema = z.strictObject({
+  accountId: z.string().min(1),
+  typedData: placeOrderTypedDataJsonSchema,
+  display: orderDisplaySchema,
+});
+
+const walletOrderId = z.string().min(1);
+
+const reportOrderSchema = z.union([
+  z.strictObject({
+    walletOrderId,
+    status: z.literal("filled"),
+    shares: z.number().positive(),
+    price: z.number().positive(),
+  }),
+  z.strictObject({ walletOrderId, status: z.literal("filled") }),
+  z.strictObject({ walletOrderId, status: z.literal("not-filled") }),
+  z.strictObject({
+    walletOrderId,
+    status: z.literal("rejected"),
+    reason: z.enum(PREDICTIONS_ORDER_REJECTION_REASONS),
+  }),
+  z.strictObject({ walletOrderId, status: z.literal("unconfirmed") }),
+]) satisfies z.ZodType<PredictionsOrderReport & { walletOrderId: string }>;
+
 export const handlers = ({ uiHooks }: { uiHooks: PredictionsUiHooks }) => ({
   "custom.predictions.onboard": customWrapper<
     z.input<typeof onboardingSchema>,
@@ -173,6 +249,20 @@ export const handlers = ({ uiHooks }: { uiHooks: PredictionsUiHooks }) => ({
   >(async rawParams => {
     await uiHooks["binding.reportSetup"](reportSetupSchema.parse(rawParams));
     return {};
+  }),
+  "custom.predictions.signOrder": customWrapper<
+    z.input<typeof signOrderSchema>,
+    PredictionsOrderAnswer
+  >(async rawParams => {
+    const { accountId, typedData, display } = signOrderSchema.parse(rawParams);
+    return uiHooks["order.sign"](accountId, typedData, display);
+  }),
+  "custom.predictions.reportOrder": customWrapper<
+    z.input<typeof reportOrderSchema>,
+    { action: PredictionsOrderAction }
+  >(async rawParams => {
+    const { walletOrderId, ...report } = reportOrderSchema.parse(rawParams);
+    return { action: await uiHooks["order.report"](walletOrderId, report) };
   }),
   "custom.predictions.close": customWrapper<Record<string, never>, Record<string, never>>(
     async () => {

@@ -44,6 +44,8 @@ export type UnseededFunnelInput = {
   machineState: string | null;
   liveMachineState: string | null;
   onboardedOnEntry: boolean | null;
+  /** Setup is done and only the held-back update is left: the checks screen shows it, not Setup. */
+  heldBackUpdatePending?: boolean;
   currentStep: string | null;
   seedPath: string | null;
   /** The user already left the Recover pitch (skip, remind later, or back from Recover). */
@@ -78,7 +80,11 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
   const dismissRestore = useCallback(() => setRestoreDismissed(true), []);
   if (restoreDismissed && machineState !== restoreRecoverState) setRestoreDismissed(false);
 
-  const unseeded = input.onboardedOnEntry === false && device !== null && machineState !== null;
+  const unseeded =
+    input.onboardedOnEntry === false &&
+    input.heldBackUpdatePending !== true &&
+    device !== null &&
+    machineState !== null;
   const stageState =
     machineState === restoreRecoverState && restoreDismissed ? restoreChoiceState : machineState;
   const stage = unseeded

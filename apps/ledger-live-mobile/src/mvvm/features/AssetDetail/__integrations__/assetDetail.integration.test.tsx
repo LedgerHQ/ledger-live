@@ -302,7 +302,7 @@ describe("AssetDetail screen layout", () => {
     await waitFor(() =>
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeVisible(),
     );
-    expect(screen.getByText("Transactions")).toBeVisible();
+    expect(screen.getByText("Transaction history")).toBeVisible();
   });
 
   describe("floating bar CTAs", () => {

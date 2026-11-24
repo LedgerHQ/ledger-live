@@ -10,8 +10,8 @@
 
 import type { Spinner } from "yocto-spinner";
 import { z } from "zod";
-import type { Address } from "@domain/entity-account-descriptor";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import type { Address } from "@domain/entity-network";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { type DeviceState, isTerminalDeviceState, renderDeviceState } from "./device/device-state";
 import { type UsbAccessEvidence, usbAccessHint } from "./device/usb-access-evidence";
