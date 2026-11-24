@@ -19,6 +19,9 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage"
   },
+  "dependencies": {
+    "zod": "catalog:"
+  },
   "devDependencies": {
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",

@@ -1,3 +1,10 @@
+import type { z } from "zod";
+import type {
+  MarketCurrencyChartDataSchema,
+  MarketCurrencySchema,
+  MarketListQueryArgSchema,
+} from "./schema";
+
 /** Price variation windows, keyed as the UI and the market list read them. */
 export enum KeysPriceChange {
   hour = "1h",
@@ -26,45 +33,11 @@ export type MarketListPageSize = (typeof MARKET_LIST_PAGE_SIZES)[number];
 /** A search shorter than this is not sent to the market list. */
 export const MARKET_LIST_MIN_SEARCH_LENGTH = 2;
 
-/** Arguments of the market list, paginated by `pageSize`. `limit` caps the total across pages. */
-export type MarketListQueryArg = {
-  counterCurrency?: string;
-  pageSize: MarketListPageSize;
-  /** Max number of results across pages. A page size stays on `pageSize`. */
-  limit?: number;
-  order?: Order;
-  range?: string;
-  search?: string;
-  filter?: string;
-  starred?: string[];
-  liveCompatible?: boolean;
-  categories?: string;
-};
+/** Arguments of the market list, inferred from {@link MarketListQueryArgSchema}. */
+export type MarketListQueryArg = z.infer<typeof MarketListQueryArgSchema>;
 
-/** Chart series keyed by range, as the market currency carries them. */
-export type MarketCurrencyChartData = Record<string, Array<[number, number]>>;
+/** Chart series keyed by range, inferred from {@link MarketCurrencyChartDataSchema}. */
+export type MarketCurrencyChartData = z.infer<typeof MarketCurrencyChartDataSchema>;
 
-/** A currency as the market list and the market detail read it. */
-export type MarketCurrency = {
-  id: string;
-  ledgerIds: string[];
-  name: string;
-  image?: string;
-  marketcap?: number;
-  marketcapRank: number;
-  totalVolume: number;
-  high24h: number;
-  low24h: number;
-  ticker: string;
-  price: number;
-  priceChangePercentage: Record<KeysPriceChange, number>;
-  marketCapChangePercentage24h: number;
-  circulatingSupply: number;
-  totalSupply?: number;
-  maxSupply?: number;
-  ath: number;
-  athDate: Date;
-  atl: number;
-  atlDate: Date;
-  chartData: MarketCurrencyChartData;
-};
+/** A currency as the market list and the market detail read it, inferred from {@link MarketCurrencySchema}. */
+export type MarketCurrency = z.infer<typeof MarketCurrencySchema>;

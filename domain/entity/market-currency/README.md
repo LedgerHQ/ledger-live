@@ -6,9 +6,12 @@
 Domain entity for the **market currency list**: the app-facing model and the constants that describe
 the list.
 
-- `types.ts` — `MarketCurrency` (the currency as the market list and the market detail read it),
-  `MarketListQueryArg`, the `Order` and `KeysPriceChange` enums, `MARKET_LIST_PAGE_SIZES`,
-  `MARKET_LIST_MIN_SEARCH_LENGTH`.
+- `schema.ts` — Zod schemas: `MarketCurrencySchema` (the currency as the market list and the market
+  detail read it), `MarketListQueryArgSchema`, `MarketCurrencyChartDataSchema`, and the enum schemas
+  of `Order` and `KeysPriceChange`.
+- `types.ts` — the `Order` and `KeysPriceChange` enums, `MARKET_LIST_PAGE_SIZES`,
+  `MARKET_LIST_MIN_SEARCH_LENGTH`, and the `MarketCurrency`, `MarketListQueryArg` and
+  `MarketCurrencyChartData` types inferred from `schema.ts`.
 - `pairing.ts` — `pairMarketsWithRequestedLedgerIds`: pairs each requested ledger id with its market,
   in request order.
 
