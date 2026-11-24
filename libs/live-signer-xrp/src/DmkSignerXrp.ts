@@ -12,6 +12,7 @@ import {
   type SignerXrp,
 } from "@ledgerhq/device-signer-kit-xrp";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
+import { getEnv } from "@ledgerhq/live-env";
 import type { XrpAddress, XrpSignature, XrpSigner } from "./types";
 
 type DAError = GetAddressDAError | SignTransactionDAError;
@@ -21,9 +22,12 @@ export class DmkSignerXrp implements XrpSigner {
 
   constructor(dmk: DeviceManagementKit, sessionId: string) {
     const originToken = "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5"; // gitleaks:allow
+    const calUrl = getEnv("CAL_SERVICE_URL");
+    const calMode = calUrl.includes("ledger-test") || calUrl.includes(".stg.") ? "test" : "prod";
     const contextModule = new ContextModuleBuilder({ originToken })
       .setAppSource("ledger-wallet")
       .setChain(ContextModuleChainID.Xrp)
+      .setCalConfig({ url: `${calUrl}/v1`, mode: calMode, branch: "main" })
       .build();
 
     this.signer = new SignerXrpBuilder({ dmk, sessionId, originToken })

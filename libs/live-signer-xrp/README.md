@@ -17,7 +17,7 @@ framework knowing which is in use.
 
 ### MPT clear signing
 
-`DmkSignerXrp` gives the kit a context module that reads MPT descriptors from the production CAL. XRP app 2.9.0 or later then shows the token ticker and amount. Without a descriptor, the app shows the payment without the ticker, or blind-signs it.
+`DmkSignerXrp` gives the kit a context module that reads MPT descriptors from the CAL at `CAL_SERVICE_URL`, like the EVM and Solana signers. A staging URL switches to test-signed descriptors. XRP app 2.9.0 or later then shows the token ticker and amount. Without a descriptor, the app shows the payment without the ticker, or blind-signs it.
 
 ### Curve support
 

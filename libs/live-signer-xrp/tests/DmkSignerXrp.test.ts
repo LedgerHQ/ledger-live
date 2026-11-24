@@ -4,6 +4,7 @@ import { ContextModuleBuilder } from "@ledgerhq/context-module";
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
 import { SignerXrpBuilder } from "@ledgerhq/device-signer-kit-xrp";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
+import { getEnv } from "@ledgerhq/live-env";
 import { of, throwError } from "rxjs";
 import { DmkSignerXrp } from "../src/DmkSignerXrp";
 
@@ -15,6 +16,9 @@ jest.mock("@ledgerhq/context-module", () => {
     setChain() {
       return this;
     }
+    setCalConfig() {
+      return this;
+    }
     build() {
       return "contextModule";
     }
@@ -24,6 +28,8 @@ jest.mock("@ledgerhq/context-module", () => {
     ContextModuleChainID: { Xrp: "xrp" },
   };
 });
+
+jest.mock("@ledgerhq/live-env", () => ({ getEnv: jest.fn() }));
 
 jest.mock("@ledgerhq/device-signer-kit-xrp", () => ({
   SignerXrpBuilder: jest.fn().mockImplementation(() => {
@@ -52,6 +58,7 @@ describe("DmkSignerXrp", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.mocked(getEnv).mockReturnValue("https://global.api.prd.ledger.com/cal" as never);
     signer = new DmkSignerXrp({} as any, "sessionId");
   });
 
@@ -78,6 +85,20 @@ describe("DmkSignerXrp", () => {
       expect(SignerXrpBuilder).toHaveBeenLastCalledWith(
         expect.objectContaining({ originToken: expect.any(String) }),
       );
+    });
+
+    it.each([
+      ["prod", "https://global.api.prd.ledger.com/cal"],
+      ["test", "https://global.api.stg.ledger-test.com/cal"],
+      ["test", "https://global.api.stg.example.com/cal"],
+    ])("reads descriptors from CAL_SERVICE_URL in %s mode for %s", (mode, url) => {
+      const setCalConfigSpy = jest.spyOn(ContextModuleBuilder.prototype, "setCalConfig");
+      jest.mocked(getEnv).mockReturnValue(url as never);
+
+      new DmkSignerXrp({} as any, "sessionId");
+
+      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode, branch: "main" });
+      expect(setCalConfigSpy).toHaveBeenCalledTimes(1);
     });
   });
 

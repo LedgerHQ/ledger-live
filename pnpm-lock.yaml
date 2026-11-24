@@ -23891,6 +23891,9 @@ importers:
       '@ledgerhq/hw-transport':
         specifier: 6.37.0
         version: 6.37.0
+      '@ledgerhq/live-env':
+        specifier: 'catalog:'
+        version: 4.2.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
