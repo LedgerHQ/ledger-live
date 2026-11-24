@@ -47,6 +47,8 @@ const NATIVE_ONLY = /\.native\.(ts|tsx)$/;
 const MAX_COMBINATIONS = 500;
 const TRANSLATE_NAMES = new Set(["t", "translate"]);
 const I18N_OWNERS = new Set(["i18n", "i18next"]);
+// Third-party packages whose types can yield key unions (z.infer of a z.enum), resolved from node_modules.
+const EXTERNAL_TYPES = new Set(["zod"]);
 
 function flatten(node, prefix, out) {
   for (const [k, v] of Object.entries(node)) {
@@ -424,7 +426,7 @@ function platformOptionsResolver(fallback) {
   };
 }
 
-// Only relative imports and workspace packages are followed: deterministic, no built libs needed.
+// Only relative imports, workspace packages and EXTERNAL_TYPES are followed: no built libs needed.
 function createProgram(files) {
   const options = {
     noEmit: true,
@@ -441,7 +443,7 @@ function createProgram(files) {
   const entries = workspaceEntries();
   const platformOptions = platformOptionsResolver(options);
   const resolveOne = (name, containingFile) => {
-    if (name.startsWith("."))
+    if (name.startsWith(".") || EXTERNAL_TYPES.has(name))
       return ts.resolveModuleName(name, containingFile, platformOptions(containingFile), host)
         .resolvedModule;
     const entry = entries.get(name);
