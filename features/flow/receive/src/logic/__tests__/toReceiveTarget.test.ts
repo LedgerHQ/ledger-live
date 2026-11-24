@@ -1,9 +1,5 @@
-import {
-  LegacyAccountEntrySchema,
-  accountsSlice,
-  legacyAccountsSynced,
-} from "@domain/entity-account";
-import { mockAccountEntry } from "@domain/entity-account/schema.mock";
+import { accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
+import { mockLegacyAccountEntry } from "@domain/entity-account/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { toReceiveTarget } from "../toReceiveTarget";
 
@@ -12,14 +8,14 @@ const USDC_ACCOUNT_ID = `${ETH_ACCOUNT_ID}+ethereum%2Ferc20%2Fusd__coin`;
 const ETHEREUM = CryptoOrTokenCurrencyIdSchema.parse("ethereum");
 const USDC = CryptoOrTokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin");
 
-const ethEntry = LegacyAccountEntrySchema.parse(mockAccountEntry());
+const ethEntry = mockLegacyAccountEntry();
 const accounts = accountsSlice.reducer(undefined, legacyAccountsSynced([ethEntry]));
 
 describe("toReceiveTarget", () => {
   it("targets the account and the given asset", () => {
     expect(toReceiveTarget(accounts, ETH_ACCOUNT_ID, ETHEREUM)).toEqual({
       accountUUID: ethEntry.accountUUID,
-      descriptor: ethEntry.descriptor,
+      account: { network: ethEntry.descriptor.network, path: ethEntry.descriptor.path },
       assetId: ETHEREUM,
     });
   });

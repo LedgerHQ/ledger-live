@@ -1,10 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import {
-  accountsSlice,
-  legacyAccountsSynced,
-  LegacyAccountEntrySchema,
-} from "@domain/entity-account";
-import { mockAccountEntry } from "@domain/entity-account/schema.mock";
+import { accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
+import { mockAccountEntry, mockLegacyAccountEntry } from "@domain/entity-account/schema.mock";
 import { accountNamesSlice, accountNameWithDefaultSelector, setAccountName } from "../slice";
 import { selectAccountNameByUUID } from "../selectors";
 
@@ -35,7 +31,7 @@ describe("accountNameWithDefaultSelector", () => {
 });
 
 describe("selectAccountNameByUUID", () => {
-  const entry = LegacyAccountEntrySchema.parse(mockAccountEntry());
+  const entry = mockLegacyAccountEntry();
 
   function makeStores() {
     const store = configureStore({

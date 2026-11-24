@@ -1,11 +1,9 @@
-import { accountsSlice, type AccountsState, type AccountUUID } from "@domain/entity-account";
+import type { AccountsState } from "@domain/entity-account";
+import { getAccountEntrySelectors } from "@domain/entity-account/descriptor";
 
 /** Both apps mount the accounts slice at `accountEntries`. */
 export type WithAccountEntries = { accountEntries: AccountsState };
 
-const { selectAccountEntry } = accountsSlice.getSelectors(
+export const { selectAccountDescriptor } = getAccountEntrySelectors(
   (state: WithAccountEntries) => state.accountEntries,
 );
-
-export const selectAccountDescriptor = (state: WithAccountEntries, accountUUID: AccountUUID) =>
-  selectAccountEntry(state, accountUUID)?.descriptor;

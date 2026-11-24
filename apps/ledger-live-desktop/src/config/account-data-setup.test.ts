@@ -36,7 +36,7 @@ jest.mock("@ledgerhq/live-common/account-data/full-sync/createFullSyncSource", (
 const eth = genAccount("eth", { currency: getCryptoCurrencyById("ethereum") });
 const polygon = genAccount("polygon", { currency: getCryptoCurrencyById("polygon") });
 
-const { selectAccountEntries, selectAccountUUIDByLegacyId } = accountsSlice.getSelectors(
+const { selectAccountUUIDs, selectAccountUUIDByLegacyId } = accountsSlice.getSelectors(
   (state: ReturnType<typeof reducers>) => state.accountEntries,
 );
 
@@ -59,7 +59,7 @@ describe("connectAccounts", () => {
     );
 
     store.dispatch(replaceAccounts([eth, polygon]));
-    expect(selectAccountEntries(store.getState())).toHaveLength(2);
+    expect(selectAccountUUIDs(store.getState())).toHaveLength(2);
 
     store.dispatch(removeAccount(eth));
     expect(

@@ -1,17 +1,11 @@
-import { createEntityAdapter, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { AccountId } from "./legacy/schema";
-import {
-  initialAccountsState,
-  type AccountEntry,
-  type AccountsState,
-  type LegacyAccountEntry,
-  type RemoteAccountEntry,
-} from "./schema";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { DerivationPath } from "@domain/entity-derivation";
+import type { NetworkId } from "@domain/entity-network";
+import { accountsAdapter } from "./adapter";
 import type { AccountUUID } from "./accountUUID";
-
-const accountsAdapter = createEntityAdapter({
-  selectId: (entry: AccountEntry) => entry.accountUUID,
-});
+import type { LegacyAccountEntry, RemoteAccountEntry } from "./entry";
+import type { AccountId } from "./legacy/schema";
+import { initialAccountsState, type AccountsState } from "./schema";
 
 const adapterSelectors = accountsAdapter.getSelectors();
 
@@ -42,12 +36,19 @@ export const accountsSlice = createSlice({
       );
     },
   },
+  // None hands out the descriptor: the edges read it through `@domain/entity-account/descriptor`.
   selectors: {
     /** Every account, in the user's order. */
-    selectAccountEntries: (state): AccountEntry[] => adapterSelectors.selectAll(state),
     selectAccountUUIDs: (state): AccountUUID[] => state.ids,
-    selectAccountEntry: (state, accountUUID: AccountUUID): AccountEntry | undefined =>
-      adapterSelectors.selectById(state, accountUUID),
+    /** Absent for an account the slice does not hold or that only exists remotely. */
+    selectAccountLegacyId: (state, accountUUID: AccountUUID): AccountId | undefined =>
+      adapterSelectors.selectById(state, accountUUID)?.legacyId,
+    /** Absent for an account the slice does not hold. */
+    selectAccountNetwork: (state, accountUUID: AccountUUID): NetworkId | undefined =>
+      adapterSelectors.selectById(state, accountUUID)?.descriptor.network,
+    /** The account's derivation path; absent for an account the slice does not hold. */
+    selectAccountPath: (state, accountUUID: AccountUUID): DerivationPath | undefined =>
+      adapterSelectors.selectById(state, accountUUID)?.descriptor.path,
     /** The account behind a legacy account id, for the boundary with legacy screens. */
     selectAccountUUIDByLegacyId: (state, legacyId: AccountId): AccountUUID | undefined =>
       state.byLegacyId[legacyId],

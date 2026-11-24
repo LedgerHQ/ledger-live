@@ -28,7 +28,7 @@ describe("useReceiveScreenData", () => {
 
     expect(result.current.data).toEqual({ type: "loading" });
     await waitFor(() => expect(result.current.data).toEqual({ type: "ready", receive }));
-    expect(result.current.descriptor).toEqual(descriptor);
+    expect(result.current.account).toEqual({ network: descriptor.network, path: descriptor.path });
   });
 
   it("should read no asset status for the native coin", async () => {
@@ -88,6 +88,6 @@ describe("useReceiveScreenData", () => {
     const { result } = renderHook(() => useReceiveScreenData(unknownUUID, ETH), { wrapper });
 
     expect(result.current.data.type).toBe("error");
-    expect(result.current.descriptor).toBeUndefined();
+    expect(result.current.account).toBeUndefined();
   });
 });

@@ -40,9 +40,9 @@ Each screen follows MVVM: `useXViewModel.ts` plus `XView.web.tsx` and `XView.nat
   `GetReceiveFamilyConfig` only where it differs from the defaults (notices, support, device models
   that cannot verify), and `resolveReceiveFamilyConfig` merges it and applies the
   `newReceiveFlow` excluded families.
-- `toReceiveTarget(accounts, legacyAccountId, assetId)`: the `ReceiveTarget` (`accountUUID`,
-  `descriptor`, `assetId`) behind the legacy id of a main account, from the `accounts` slice state,
-  for the entry points that still hold a legacy account. The caller gives the asset to receive.
+- `toReceiveTarget(accounts, legacyAccountId, assetId)`: the `ReceiveTarget` behind the legacy id
+  of a main account, from the `accounts` slice state: its `accountUUID`, its `account` (network and
+  path only, never its key) and the `assetId`. For the entry points that still hold a legacy account. The caller gives the asset to receive.
 - `@features/flow-receive/types.mock`: `mockReceiveFamilyConfigInput`, for the families' tests.
 - Device verification, around the apps' verify-address intent glue:
   - `canVerifyOnDevice(verification)`: whether **Verify** can be offered, only for an `address`

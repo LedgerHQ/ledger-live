@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { accountsSlice, type AccountsState } from "@domain/entity-account";
+import type { AccountsState } from "@domain/entity-account";
+import { getAccountEntrySelectors } from "@domain/entity-account/descriptor";
 import { maskAccountKey, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import { bodyOf, describeSent } from "./portfolioActions/requests";
 import { RUNNERS, type PortfolioDispatch } from "./portfolioActions/runners";
@@ -14,7 +15,7 @@ import { registrationOf } from "./portfolioRegistration";
 /** Both apps mount the accounts slice at `accountEntries`. */
 type State = { accountEntries: AccountsState };
 
-const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountEntries } = getAccountEntrySelectors((state: State) => state.accountEntries);
 
 const PORTFOLIO_ID_KEY = "ledger-live.devtools.account-portfolio-id";
 

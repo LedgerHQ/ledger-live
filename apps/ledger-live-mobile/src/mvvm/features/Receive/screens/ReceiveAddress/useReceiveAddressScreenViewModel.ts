@@ -34,7 +34,9 @@ const toIncidentTextPart = (segment: HtmlLinkSegment) =>
 const toIncidentTextParts = (html: string | undefined) =>
   html === undefined ? undefined : buildHtmlDisplaySegments(html).map(toIncidentTextPart);
 
-const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountLegacyId, selectAccountNetwork } = accountsSlice.getSelectors(
+  (state: State) => state.accountEntries,
+);
 
 type Params = Pick<ReceiveAddressProps, "accountUUID" | "assetId" | "onClose">;
 
@@ -43,17 +45,16 @@ export function useReceiveAddressScreenViewModel({
   assetId,
   onClose,
 }: Params): ReceiveAddressProps {
-  const entry = useSelector(state => selectAccountEntry(state, accountUUID));
+  const legacyId = useSelector(state => selectAccountLegacyId(state, accountUUID));
+  const network = useSelector(state => selectAccountNetwork(state, accountUUID));
   const legacyAccount = useSelector(state =>
-    entry?.legacyId ? accountSelector(state, { accountId: entry.legacyId }) : undefined,
+    legacyId ? accountSelector(state, { accountId: legacyId }) : undefined,
   );
   const featureFlags = useFeatureFlags();
-  const network = entry
-    ? CRYPTO_CURRENCIES_REGISTRY[currencyIdFromNetwork(entry.descriptor.network)]
-    : undefined;
-  const familyConfig = network ? familyConfigs[network.family] : undefined;
+  const currency = network ? CRYPTO_CURRENCIES_REGISTRY[currencyIdFromNetwork(network)] : undefined;
+  const familyConfig = currency ? familyConfigs[currency.family] : undefined;
   const { incidents } = useFilteredServiceStatus({
-    tickers: network ? [network.ticker] : [],
+    tickers: currency ? [currency.ticker] : [],
     entryPoint: "flow",
   });
   const serviceIncidents = useMemo(

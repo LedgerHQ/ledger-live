@@ -1,13 +1,14 @@
 import type { ComponentType } from "react";
 import type { DeviceModelId } from "@ledgerhq/device-management-kit";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account";
+import type { DerivationPath } from "@domain/entity-derivation";
+import type { NetworkId } from "@domain/entity-network";
 import type { AccountReceive, ReceiveVerification } from "@domain/entity-account-receive";
 import type { AccountStatus } from "@domain/entity-account-status";
 import type { CryptoOrTokenCurrency, CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import type { VerifyAddressIntentJobState } from "@features/platform-intent-verify-address";
 import type { PartialFeatures } from "@shared/feature-flags";
-import type { AccountUUID } from "@domain/entity-account";
 import type { DeviceShownVerification } from "./logic/canVerifyOnDevice";
 
 export type ReceiveNoticeId =
@@ -27,12 +28,18 @@ export type ReceiveFamilyConfig = Readonly<{
   unsupportedDeviceModelIds?: readonly DeviceModelId[];
 }>;
 
+/** What the receive flow knows of an account besides its AccountUUID: never its key. */
+export type ReceiveAccountView = Readonly<{
+  network: NetworkId;
+  path: DerivationPath;
+}>;
+
 /**
  * What a family reads to build its config. `legacyAccount` is the legacy main account, read only
  * for what no account data kind serves yet.
  */
 export type ReceiveFamilyConfigInput<A = unknown> = Readonly<{
-  descriptor: AccountDescriptor;
+  account: ReceiveAccountView;
   asset: Pick<CryptoOrTokenCurrency, "id" | "type">;
   featureFlags: PartialFeatures;
   /** The account's `receive` data, absent until it is read. */
@@ -66,7 +73,7 @@ export type ReceiveServiceIncident = Readonly<{
 /** The account and the asset a receive flow shows the address of. */
 export type ReceiveTarget = Readonly<{
   accountUUID: AccountUUID;
-  descriptor: AccountDescriptor;
+  account: ReceiveAccountView;
   assetId: CryptoOrTokenCurrencyId;
 }>;
 

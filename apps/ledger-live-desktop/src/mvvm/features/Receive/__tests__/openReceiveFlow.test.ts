@@ -1,12 +1,8 @@
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import {
-  LegacyAccountEntrySchema,
-  accountsSlice,
-  legacyAccountsSynced,
-} from "@domain/entity-account";
-import { mockAccountEntry } from "@domain/entity-account/schema.mock";
+import { accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
+import { mockLegacyAccountEntry } from "@domain/entity-account/schema.mock";
 import { importLLDCoinFamily } from "~/renderer/families";
 import type { State } from "~/renderer/reducers";
 import { openReceiveAddressDialog } from "@features/flow-receive/state";
@@ -18,7 +14,7 @@ jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetAndAccount", () => ({
   openAssetAndAccountDialog: jest.fn(),
 }));
 
-const entry = LegacyAccountEntrySchema.parse(mockAccountEntry());
+const entry = mockLegacyAccountEntry();
 const ethereum = getCryptoCurrencyById("ethereum");
 const ethAccount: Account = { ...genAccount("eth", { currency: ethereum }), id: entry.legacyId };
 const usdcAccount = {

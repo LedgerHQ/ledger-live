@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { accountsSlice, type AccountsState, type AccountUUID } from "@domain/entity-account";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { selectAccountReceive, type WithAccountReceives } from "@domain/entity-account-receive";
 import {
   accountStatusSlice,
@@ -9,6 +8,7 @@ import {
   type AccountStatusState,
 } from "@domain/entity-account-status";
 import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
+import type { ReceiveAccountView } from "../../types";
 import { useAccountData, type UseAccountDataResult } from "@features/platform-account-data";
 import { currencyIdFromNetwork } from "@domain/entity-network";
 import {
@@ -28,13 +28,14 @@ export type ReceiveScreenData =
   | Readonly<{ type: "error"; retry: () => void }>;
 
 export type UseReceiveScreenDataResult = Readonly<{
-  descriptor: AccountDescriptor | undefined;
+  /** Absent until the accounts slice holds the account. */
+  account: ReceiveAccountView | undefined;
   data: ReceiveScreenData;
   /** Absent until it is read. */
   accountStatus: AccountStatus | undefined;
 }>;
 
-const { selectAccountEntry } = accountsSlice.getSelectors(
+const { selectAccountNetwork, selectAccountPath } = accountsSlice.getSelectors(
   (state: ReceiveScreenRootState) => state.accountEntries,
 );
 const { selectAccountStatus, selectAssetStatus } = accountStatusSlice.selectors;
@@ -49,10 +50,14 @@ export function useReceiveScreenData(
   accountUUID: AccountUUID,
   assetId: CryptoOrTokenCurrencyId,
 ): UseReceiveScreenDataResult {
-  const descriptor = useSelector(
-    (state: ReceiveScreenRootState) => selectAccountEntry(state, accountUUID)?.descriptor,
+  const network = useSelector((state: ReceiveScreenRootState) =>
+    selectAccountNetwork(state, accountUUID),
   );
-  const isToken = !!descriptor && assetId !== currencyIdFromNetwork(descriptor.network);
+  const path = useSelector((state: ReceiveScreenRootState) =>
+    selectAccountPath(state, accountUUID),
+  );
+  const account = useMemo(() => (network && path ? { network, path } : undefined), [network, path]);
+  const isToken = !!network && assetId !== currencyIdFromNetwork(network);
   const assetQuery = useMemo(() => ({ assetId }), [assetId]);
 
   const receiveRead = useAccountData("receive", accountUUID);
@@ -76,7 +81,7 @@ export function useReceiveScreenData(
     accountStatus: kindRead(accountStatus, accountStatusRead),
     assetStatus: isToken ? kindRead(assetStatus, assetStatusRead) : undefined,
   };
-  const state = descriptor ? toReceiveScreenState(reads) : ({ type: "error" } as const);
+  const state = account ? toReceiveScreenState(reads) : ({ type: "error" } as const);
 
   const isReceiveFailed = reads.receive.failed;
   const isAccountStatusFailed = reads.accountStatus.failed;
@@ -98,7 +103,7 @@ export function useReceiveScreenData(
   ]);
 
   return {
-    descriptor,
+    account,
     data: state.type === "error" ? { type: "error", retry } : state,
     accountStatus,
   };

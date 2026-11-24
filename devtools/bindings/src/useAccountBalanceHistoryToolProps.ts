@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData } from "@domain/api-account-data";
-import { accountsSlice, type AccountsState } from "@domain/entity-account";
+import { type AccountsState } from "@domain/entity-account";
+import { getAccountEntrySelectors } from "@domain/entity-account/descriptor";
 import {
   BALANCE_HISTORY_RANGES,
   BalanceHistoryRangeSchema,
@@ -32,7 +33,7 @@ type State = AccountDataRootState & WithAccountBalanceHistories & { accountEntri
 
 type Dispatch = ThunkDispatch<State, unknown, UnknownAction>;
 
-const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountEntries } = getAccountEntrySelectors((state: State) => state.accountEntries);
 
 /** The points valued in `ticker`, and the last one formatted in it. */
 function countervaluesOf(points: AssetBalanceHistory["points"], ticker: FiatCurrencyTicker) {

@@ -1,10 +1,6 @@
 import { mockUtxoAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
-import {
-  AccountEntrySchema,
-  AccountsStateSchema,
-  LegacyAccountEntrySchema,
-  initialAccountsState,
-} from "./schema";
+import { AccountEntrySchema, LegacyAccountEntrySchema } from "./entry";
+import { AccountsStateSchema, initialAccountsState } from "./schema";
 import { mockAccountEntry } from "./schema.mock";
 
 describe("AccountEntrySchema", () => {

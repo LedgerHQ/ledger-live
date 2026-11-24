@@ -2,7 +2,8 @@ import { useMemo, useSyncExternalStore } from "react";
 import { useSelector } from "react-redux";
 import type { DevToolsConfig } from "@devtools/registry";
 import { DEFAULT_ACCOUNT_DATA_MAX_AGE } from "@domain/api-account-data";
-import { accountsSlice, type AccountsState } from "@domain/entity-account";
+import { type AccountsState } from "@domain/entity-account";
+import { getAccountEntrySelectors } from "@domain/entity-account/descriptor";
 import type { AccountDataRootState } from "@domain/entity-account-data";
 import type { AccountDataRecorder } from "./accountDataRecorder";
 
@@ -11,7 +12,7 @@ type AccountDataToolProps = Extract<DevToolsConfig[number], { id: "account-data"
 /** Both apps mount the accounts slice at `accountEntries`. */
 type State = AccountDataRootState & { accountEntries: AccountsState };
 
-const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountEntries } = getAccountEntrySelectors((state: State) => state.accountEntries);
 
 export function useAccountDataToolProps(recorder: AccountDataRecorder): AccountDataToolProps {
   const events = useSyncExternalStore(recorder.subscribe, recorder.getEvents);

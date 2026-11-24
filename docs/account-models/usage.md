@@ -10,12 +10,13 @@ The snippets type the store as `State`, the app's root state. Each app mounts th
 
 ## Hold the AccountUUID
 
-A screen holds the `AccountUUID`, for example from a route parameter, and passes it to the hooks: they read the descriptor from the `accounts` slice, so the descriptor stays at the edges (the account data router and sources, discovery, the legacy bridge, wallet-cli, devtools), since its key is sensitive. An account the slice does not hold is not read.
+A screen holds the `AccountUUID`, for example from a route parameter; the descriptor stays at the edges (the account data router and sources, discovery, the legacy bridge, wallet-cli, devtools), since its key is sensitive. Read what a screen shows of the account itself from the `accounts` slice:
 
 ```ts
-const { selectAccountUUIDByLegacyId } = accountsSlice.getSelectors(
-  (state: State) => state.accountEntries,
-);
+const { selectAccountNetwork, selectAccountPath, selectAccountUUIDByLegacyId } =
+  accountsSlice.getSelectors((state: State) => state.accountEntries);
+
+const network = useSelector((state: State) => selectAccountNetwork(state, accountUUID));
 ```
 
 Only at the boundary with a legacy screen that still holds an `Account`, get its `AccountUUID` first:

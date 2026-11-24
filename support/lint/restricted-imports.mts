@@ -141,8 +141,6 @@ export const ACCOUNT_DESCRIPTOR_EDGES = [
   "features/platform/account-data",
   "features/platform/account-discovery",
   "features/platform/account-source-*",
-  // LIVE-42227: the receive flow selects accounts by AccountUUID.
-  "features/flow/receive",
 ];
 
 export const COIN_MODULE_CREATE_API = {

@@ -1,12 +1,8 @@
 import type { Account } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import {
-  LegacyAccountEntrySchema,
-  accountsSlice,
-  legacyAccountsSynced,
-} from "@domain/entity-account";
-import { mockAccountEntry } from "@domain/entity-account/schema.mock";
+import { accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
+import { mockLegacyAccountEntry } from "@domain/entity-account/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { mockReceiveFamilyConfigInput } from "@features/flow-receive/types.mock";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
@@ -20,7 +16,7 @@ jest.mock("@ledgerhq/live-common/notifications/ServiceStatusProvider/index", () 
   useFilteredServiceStatus: jest.fn(() => ({ incidents: [] })),
 }));
 
-const entry = LegacyAccountEntrySchema.parse(mockAccountEntry());
+const entry = mockLegacyAccountEntry();
 const ethAccount: Account = {
   ...genAccount("eth", { currency: getCryptoCurrencyById("ethereum") }),
   id: entry.legacyId,
@@ -58,12 +54,12 @@ describe("useReceiveAddressDialogViewModel", () => {
     const receiveAddressConfig = jest.fn(() => ({ notices: ["utxo" as const] }));
     jest.mocked(useLLDCoinFamily).mockReturnValue({ receiveAddressConfig });
     const { result } = renderViewModel();
-    const { descriptor, asset } = mockReceiveFamilyConfigInput();
+    const { account, asset } = mockReceiveFamilyConfigInput();
 
-    expect(result.current.getFamilyConfig?.({ descriptor, asset })).toEqual({ notices: ["utxo"] });
+    expect(result.current.getFamilyConfig?.({ account, asset })).toEqual({ notices: ["utxo"] });
     expect(useLLDCoinFamily).toHaveBeenCalledWith("evm");
     expect(receiveAddressConfig).toHaveBeenCalledWith(
-      expect.objectContaining({ descriptor, asset, legacyAccount: ethAccount }),
+      expect.objectContaining({ account, asset, legacyAccount: ethAccount }),
     );
   });
 

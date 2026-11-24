@@ -2,12 +2,8 @@ import React, { type ComponentType, type ReactNode } from "react";
 import type { Account } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import {
-  LegacyAccountEntrySchema,
-  accountsSlice,
-  legacyAccountsSynced,
-} from "@domain/entity-account";
-import { mockAccountEntry } from "@domain/entity-account/schema.mock";
+import { accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
+import { mockLegacyAccountEntry } from "@domain/entity-account/schema.mock";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { mockAccountStatus } from "@domain/entity-account-status/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
@@ -24,11 +20,9 @@ jest.mock("LLM/features/AppLock/adapters/appVisibility", () => ({
   leaveAppFor: jest.fn((task: () => Promise<unknown>) => task()),
 }));
 
-const tronEntry = LegacyAccountEntrySchema.parse(
-  mockAccountEntry({
-    descriptor: mockAddressAccountDescriptor({ network: "tron", path: "m/44h/195h/0h/0/0" }),
-  }),
-);
+const tronEntry = mockLegacyAccountEntry({
+  descriptor: mockAddressAccountDescriptor({ network: "tron", path: "m/44h/195h/0h/0/0" }),
+});
 const tronAccount: Account = {
   ...genAccount("tron", { currency: getCryptoCurrencyById("tron") }),
   id: tronEntry.legacyId,
@@ -91,7 +85,7 @@ describe("useReceiveAddressScreenViewModel", () => {
 
     expect(
       result.current.getFamilyConfig?.({
-        descriptor: tronEntry.descriptor,
+        account: { network: tronEntry.descriptor.network, path: tronEntry.descriptor.path },
         asset: { id: CryptoOrTokenCurrencyIdSchema.parse("tron"), type: "CryptoCurrency" },
         accountStatus: mockAccountStatus({ used: false }),
       }),

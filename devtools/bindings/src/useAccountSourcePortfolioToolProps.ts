@@ -3,7 +3,8 @@ import { useDispatch, useSelector, useStore } from "react-redux";
 import type { Store, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
 import { addAccountDataSource } from "@domain/api-account-data";
-import { accountsSlice, type AccountsState } from "@domain/entity-account";
+import type { AccountsState } from "@domain/entity-account";
+import { getAccountEntrySelectors } from "@domain/entity-account/descriptor";
 import { maskAccountKey, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import { portfolioIdSelector, type IdentitiesState } from "@domain/entity-client-identity";
 import {
@@ -24,7 +25,7 @@ type PortfolioSourceToolProps = Extract<
 /** Both apps mount the accounts slice at `accountEntries`. */
 type State = { accountEntries: AccountsState; identities: IdentitiesState };
 
-const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountEntries } = getAccountEntrySelectors((state: State) => state.accountEntries);
 
 /** Outlives the tool and is shared by every panel on the store: the source stays injected while DevTools is closed. */
 type Handle = {

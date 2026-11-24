@@ -27,7 +27,9 @@ const toIncidentTextPart = (segment: HtmlLinkSegment) =>
 const toIncidentTextParts = (html: string | undefined) =>
   html === undefined ? undefined : buildHtmlDisplaySegments(html).map(toIncidentTextPart);
 
-const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountLegacyId, selectAccountNetwork } = accountsSlice.getSelectors(
+  (state: State) => state.accountEntries,
+);
 
 /** What only the desktop app gives the receive address screen. */
 export function useReceiveAddressDialogViewModel({
@@ -38,16 +40,15 @@ export function useReceiveAddressDialogViewModel({
   const onClose = useCallback(() => dispatch(closeReceiveAddressDialog()), [dispatch]);
   const onCopyAddress = useCopyToClipboard();
 
-  const entry = useSelector(state => selectAccountEntry(state, accountUUID));
+  const legacyId = useSelector(state => selectAccountLegacyId(state, accountUUID));
+  const network = useSelector(state => selectAccountNetwork(state, accountUUID));
   const legacyAccount = useSelector(state =>
-    entry?.legacyId ? accountSelector(state, { accountId: entry.legacyId }) : undefined,
+    legacyId ? accountSelector(state, { accountId: legacyId }) : undefined,
   );
-  const network = entry
-    ? CRYPTO_CURRENCIES_REGISTRY[currencyIdFromNetwork(entry.descriptor.network)]
-    : undefined;
-  const { receiveAddressConfig } = useLLDCoinFamily(network?.family);
+  const currency = network ? CRYPTO_CURRENCIES_REGISTRY[currencyIdFromNetwork(network)] : undefined;
+  const { receiveAddressConfig } = useLLDCoinFamily(currency?.family);
   const { incidents } = useFilteredServiceStatus({
-    tickers: network ? [network.ticker] : [],
+    tickers: currency ? [currency.ticker] : [],
     entryPoint: "flow",
   });
   const serviceIncidents = useMemo(

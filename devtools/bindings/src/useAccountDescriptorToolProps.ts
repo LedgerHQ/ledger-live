@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import type { DevToolsConfig } from "@devtools/registry";
-import { accountsSlice, type AccountsState } from "@domain/entity-account";
+import { type AccountsState } from "@domain/entity-account";
+import { getAccountEntrySelectors } from "@domain/entity-account/descriptor";
 
 type AccountDescriptorToolProps = Extract<
   DevToolsConfig[number],
@@ -11,7 +12,7 @@ type AccountDescriptorToolProps = Extract<
 /** Both apps mount the accounts slice at `accountEntries`. */
 type State = { accountEntries: AccountsState };
 
-const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountEntries } = getAccountEntrySelectors((state: State) => state.accountEntries);
 
 export function useAccountDescriptorToolProps(): AccountDescriptorToolProps {
   const entries = useSelector(selectAccountEntries);

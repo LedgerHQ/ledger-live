@@ -7542,6 +7542,12 @@ importers:
       '@domain/entity-account-descriptor':
         specifier: workspace:*
         version: link:../account-descriptor
+      '@domain/entity-derivation':
+        specifier: workspace:*
+        version: link:../derivation
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../network
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -14195,9 +14201,6 @@ importers:
       '@domain/entity-account-data':
         specifier: workspace:*
         version: link:../../../domain/entity/account-data
-      '@domain/entity-account-descriptor':
-        specifier: workspace:*
-        version: link:../../../domain/entity/account-descriptor
       '@domain/entity-account-receive':
         specifier: workspace:*
         version: link:../../../domain/entity/account-receive
@@ -14207,6 +14210,9 @@ importers:
       '@domain/entity-currency':
         specifier: workspace:*
         version: link:../../../domain/entity/currency
+      '@domain/entity-derivation':
+        specifier: workspace:*
+        version: link:../../../domain/entity/derivation
       '@domain/entity-network':
         specifier: workspace:*
         version: link:../../../domain/entity/network
@@ -14256,6 +14262,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:*
         version: link:../../../domain/api/currency-token
+      '@domain/entity-account-descriptor':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-descriptor
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.8(6da37fefb9657e71628e80b8512b44d0)

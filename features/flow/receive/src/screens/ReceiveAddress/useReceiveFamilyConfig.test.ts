@@ -1,11 +1,11 @@
 import { renderHook } from "@testing-library/react";
-import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { DEFAULT_RECEIVE_FAMILY_CONFIG } from "../../logic/resolveReceiveFamilyConfig";
+import { mockReceiveFamilyConfigInput } from "../../types.mock";
 import { useReceiveFamilyConfig } from "./useReceiveFamilyConfig";
 
-const descriptor = mockAddressAccountDescriptor();
+const account = mockReceiveFamilyConfigInput().account;
 const asset = {
   id: CryptoOrTokenCurrencyIdSchema.parse("ethereum"),
   type: "CryptoCurrency" as const,
@@ -17,7 +17,7 @@ describe("useReceiveFamilyConfig", () => {
     const { result } = renderHook(() =>
       useReceiveFamilyConfig({
         getFamilyConfig: undefined,
-        descriptor: undefined,
+        account: undefined,
         asset: undefined,
         receive: undefined,
         accountStatus: undefined,
@@ -32,7 +32,7 @@ describe("useReceiveFamilyConfig", () => {
       ({ loadedAsset }: { loadedAsset?: typeof asset }) =>
         useReceiveFamilyConfig({
           getFamilyConfig,
-          descriptor,
+          account,
           asset: loadedAsset,
           receive: undefined,
           accountStatus: undefined,

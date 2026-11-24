@@ -47,7 +47,9 @@ owner rebinds the same selectors with `slice.getSelectors(selectState)`, at modu
 
 ```ts
 // apps/ledger-live-desktop/src/config/account-data-setup.ts: accountsSlice is mounted at accountEntries
-const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountLegacyId } = accountsSlice.getSelectors(
+  (state: State) => state.accountEntries,
+);
 ```
 
 `countervaluesSyncSlice` is mounted under `countervalues.sync` by the `combineReducers` in

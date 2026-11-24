@@ -1,10 +1,5 @@
-import {
-  AccountIdSchema,
-  LegacyAccountEntrySchema,
-  accountsSlice,
-  legacyAccountsSynced,
-} from "@domain/entity-account";
-import { mockAccountEntry } from "@domain/entity-account/schema.mock";
+import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
+import { mockLegacyAccountEntry } from "@domain/entity-account/schema.mock";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { makeStacksAccount } from "~/families/stacks/__mocks__/account.mock";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -41,12 +36,10 @@ jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampC
 }));
 
 const account = makeStacksAccount({}, []);
-const entry = LegacyAccountEntrySchema.parse(
-  mockAccountEntry({
-    descriptor: mockAddressAccountDescriptor({ network: "stacks", path: "m/44h/5757h/0h/0/0" }),
-    legacyId: AccountIdSchema.parse(account.id),
-  }),
-);
+const entry = mockLegacyAccountEntry({
+  descriptor: mockAddressAccountDescriptor({ network: "stacks", path: "m/44h/5757h/0h/0/0" }),
+  legacyId: AccountIdSchema.parse(account.id),
+});
 
 function renderReceiveAction(
   isNewReceiveFlowOn: boolean,

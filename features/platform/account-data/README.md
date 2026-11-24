@@ -18,6 +18,6 @@ const { pending } = useAccountDataBatch("balance", accountUUIDs);
 const total = useSelector(state => selectTotal(state, accountUUIDs));
 ```
 
-Both hooks take `AccountUUID`s and read each descriptor from the `accounts` slice (`state.accountEntries`, from `@domain/entity-account`): the descriptor never leaves this package, and an account the slice does not hold is not read.
+Both hooks take `AccountUUID`s and read each descriptor from the `accounts` slice (`state.accountEntries`, from `@domain/entity-account/descriptor`): the descriptor never leaves this package, and an account the slice does not hold is not read.
 
 See [the account data layer](../../../docs/account-models/data-layer.md).

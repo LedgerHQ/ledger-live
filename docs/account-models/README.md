@@ -3,7 +3,7 @@
 How Ledger Wallet represents an account in the new architecture, and how we get there from the legacy `Account` type of [`@ledgerhq/types-live`](../../libs/types-live/README.md).
 
 > [!IMPORTANT]
-> The legacy `Account`, `TokenAccount` and `AccountLike` types are being retired. New code in `shared/`, `domain/` and `features/` never takes them: it takes an `AccountDescriptor` and reads `account-*` entities. See [migration.md](./migration.md) for what is left.
+> The legacy `Account`, `TokenAccount` and `AccountLike` types are being retired. New code in `shared/`, `domain/` and `features/` never takes them: it holds an `AccountUUID` and reads `account-*` entities. See [migration.md](./migration.md) for what is left.
 
 | Read | When |
 | --- | --- |

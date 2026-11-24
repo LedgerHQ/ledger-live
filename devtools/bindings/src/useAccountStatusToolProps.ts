@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData } from "@domain/api-account-data";
-import { accountsSlice, type AccountsState } from "@domain/entity-account";
+import { type AccountsState } from "@domain/entity-account";
+import { getAccountEntrySelectors } from "@domain/entity-account/descriptor";
 import {
   accountDataQueryKey,
   type AccountDataRootState,
@@ -30,7 +31,7 @@ type State = AccountDataRootState & {
 
 type Dispatch = ThunkDispatch<State, unknown, UnknownAction>;
 
-const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountEntries } = getAccountEntrySelectors((state: State) => state.accountEntries);
 
 function describeGate(gate: AccountGate | AssetGate | null): string {
   return gate === null ? "none" : gate.type;

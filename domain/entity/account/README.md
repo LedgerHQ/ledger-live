@@ -7,7 +7,7 @@ The account aggregate root: the list of the app's accounts, keyed by `AccountUUI
 
 ## Accounts
 
-The `accounts` slice is meant to become the source of truth of the account list. It is an entity adapter keyed by `AccountUUID`, described by zod schemas in `schema.ts`:
+The `accounts` slice is meant to become the source of truth of the account list. It is an entity adapter keyed by `AccountUUID`, described by zod schemas in `schema.ts` (the state) and `entry.ts` (`AccountEntrySchema`, `LegacyAccountEntrySchema`, exported by `./descriptor`):
 
 - `ids` — the accounts, in the user's order; it will replace the order of the legacy store.
 - `entities` — one `{ accountUUID, descriptor, legacyId? }` per account (`AccountDescriptor` from [`@domain/entity-account-descriptor`](../account-descriptor)); `legacyId` is absent for an account that only exists remotely.
@@ -16,8 +16,9 @@ The `accounts` slice is meant to become the source of truth of the account list.
 - `AccountUUIDSchema` / `AccountUUID` — the identity code holds: a uuid v5 of the descriptor's canonical key, the same on every device, carrying no account key.
 - `computeAccountUUID` (`./descriptor`) — the `AccountUUID` of a descriptor; only the edges call it, tests take the wrapper of `./schema.mock`.
 - `accountsSlice` — its reducer, `legacyAccountsSynced`, and its selectors.
-- its selectors: `selectAccountEntries` / `selectAccountUUIDs` / `selectAccountEntry` — every account in order, their ids, or one by `AccountUUID`; `selectAccountUUIDByLegacyId` — the `AccountUUID` behind a legacy account id, from `byLegacyId`.
-- `mockAccountEntry` (`./schema.mock`) — a valid entry, with overrides.
+- its selectors: `selectAccountUUIDs` — every account in order; `selectAccountLegacyId` / `selectAccountNetwork` / `selectAccountPath` — what code may know of one account besides its `AccountUUID`; `selectAccountUUIDByLegacyId` — the `AccountUUID` behind a legacy account id, from `byLegacyId`.
+- `getAccountEntrySelectors` (`./descriptor`) — `selectAccountEntries`, `selectAccountEntry` and `selectAccountDescriptor`, bound to where the app mounts the slice. They hand out the descriptor, whose key is sensitive: only the edges import this entry (lint restricts it, see `ACCOUNT_DESCRIPTOR` in `support/lint`).
+- `mockAccountEntry` / `mockLegacyAccountEntry` (`./schema.mock`) — a valid entry, or one a legacy account backs, with overrides.
 
 While the legacy store holds `accounts`, each app mounts the slice under another key and binds its selectors there with `accountsSlice.getSelectors`.
 
@@ -36,11 +37,11 @@ What an account *has* — a name, a balance, a history, a star — lives in its 
 ```ts
 import { AccountIdSchema, accountsSlice } from "@domain/entity-account";
 
-const { selectAccountEntry, selectAccountUUIDByLegacyId } = accountsSlice.getSelectors(
+const { selectAccountNetwork, selectAccountUUIDByLegacyId } = accountsSlice.getSelectors(
   (state: State) => state.accountEntries,
 );
 
-const entry = selectAccountEntry(state, accountUUID); // { accountUUID, descriptor, legacyId? }
+const network = selectAccountNetwork(state, accountUUID);
 // Only at the boundary with a legacy screen:
 const uuid = selectAccountUUIDByLegacyId(state, AccountIdSchema.parse(legacyAccount.id));
 ```

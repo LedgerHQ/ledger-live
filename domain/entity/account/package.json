@@ -23,6 +23,8 @@
   },
   "dependencies": {
     "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-derivation": "workspace:*",
+    "@domain/entity-network": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "uuid": "catalog:",
     "zod": "catalog:"
