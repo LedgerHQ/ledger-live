@@ -41,12 +41,18 @@ import type {
   AleoTransactionIntentData,
 } from "../types";
 import { listOperations } from "../logic/listOperations";
+import { getAccountStatus } from "../logic/getAccountStatus";
 
 type AleoCoinModuleImpl = CoinModuleImpl<
   AleoCoinConfig,
   MemoNotSupported,
   AleoTransactionIntentData
 >;
+
+// Not in `CoinModuleApi` yet.
+type AccountStatusCapability = {
+  getAccountStatus: (context: AleoContext, key: string) => Promise<{ used: boolean }>;
+};
 
 function requireViewKey(context: AleoContext, action: string): string {
   const { viewKey } = context;
@@ -168,13 +174,12 @@ export function createApi(currencyId: string) {
       const config = await context.config();
       return getAccountInfo(config, provableId);
     },
-    getBalance: async (
+    getAccountStatus: (context: AleoContext, key: string) => getAccountStatus(context, key),
+    getBalance: (
       context: AleoContext,
       address: string,
       options?: BalanceOptions,
-    ): Promise<Balance[]> => {
-      return rejectBalanceOptions(() => getBalance(context, address), options);
-    },
+    ): Promise<Balance[]> => rejectBalanceOptions(() => getBalance(context, address), options),
     getStakes: async (context: AleoContext, address: string, _options?): Promise<Page<Stake>> => {
       const config = await context.config();
       return getStakes(config, address);
@@ -215,5 +220,5 @@ export function createApi(currencyId: string) {
       const config = await context.config();
       return register(config, viewKey);
     },
-  } satisfies AleoCoinModuleImpl;
+  } satisfies AleoCoinModuleImpl & AccountStatusCapability;
 }
