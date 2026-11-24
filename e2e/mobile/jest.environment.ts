@@ -145,69 +145,81 @@ async function captureFailureDiagnostics(
   const hangCaptures: Promise<unknown>[] = [];
   if (isHardTimeout(failure) || isJestTimeout(failure)) {
     hangCaptures.push(
-      withTimeout(attachAppThreadStacks(), THREAD_STACKS_TIMEOUT_MS, "attachAppThreadStacks"),
+      withTimeout({
+        operation: attachAppThreadStacks(),
+        timeoutMs: THREAD_STACKS_TIMEOUT_MS,
+        label: "attachAppThreadStacks",
+      }),
     );
   }
   // Launch and terminate hangs time out a hook, so a slow test cannot spend this capture.
   if (isJestHookTimeout(failure)) {
     hangCaptures.push(
-      withTimeout(
-        saveSimulatorDiagnostics(),
-        SIMULATOR_DIAGNOSTICS_TIMEOUT_MS,
-        "saveSimulatorDiagnostics",
-      ),
+      withTimeout({
+        operation: saveSimulatorDiagnostics(),
+        timeoutMs: SIMULATOR_DIAGNOSTICS_TIMEOUT_MS,
+        label: "saveSimulatorDiagnostics",
+      }),
     );
   }
   await Promise.all(hangCaptures);
-  await withTimeout(takeSpeculosScreenshot(), FAST_DIAGNOSTIC_TIMEOUT_MS, "takeSpeculosScreenshot");
-  await withTimeout(
-    attachSpeculinhoLogsToAllure(),
-    SLOW_DIAGNOSTIC_TIMEOUT_MS,
-    "attachSpeculinhoLogsToAllure",
-  );
-  await withTimeout(
-    takeAppScreenshot("Test Failure"),
-    FAST_DIAGNOSTIC_TIMEOUT_MS,
-    "takeAppScreenshot",
-  );
-  await withTimeout(
-    attachTestExecutionConsoleToAllure(),
-    FAST_DIAGNOSTIC_TIMEOUT_MS,
-    "attachTestExecutionConsoleToAllure",
-  );
-  await withTimeout(
-    attachSpeculosStartupErrorToAllure(),
-    FAST_DIAGNOSTIC_TIMEOUT_MS,
-    "attachSpeculosStartupErrorToAllure",
-  );
+  await withTimeout({
+    operation: takeSpeculosScreenshot(),
+    timeoutMs: FAST_DIAGNOSTIC_TIMEOUT_MS,
+    label: "takeSpeculosScreenshot",
+  });
+  await withTimeout({
+    operation: attachSpeculinhoLogsToAllure(),
+    timeoutMs: SLOW_DIAGNOSTIC_TIMEOUT_MS,
+    label: "attachSpeculinhoLogsToAllure",
+  });
+  await withTimeout({
+    operation: takeAppScreenshot("Test Failure"),
+    timeoutMs: FAST_DIAGNOSTIC_TIMEOUT_MS,
+    label: "takeAppScreenshot",
+  });
+  await withTimeout({
+    operation: attachTestExecutionConsoleToAllure(),
+    timeoutMs: FAST_DIAGNOSTIC_TIMEOUT_MS,
+    label: "attachTestExecutionConsoleToAllure",
+  });
+  await withTimeout({
+    operation: attachSpeculosStartupErrorToAllure(),
+    timeoutMs: FAST_DIAGNOSTIC_TIMEOUT_MS,
+    label: "attachSpeculosStartupErrorToAllure",
+  });
   if (mergedFeatureFlags) {
-    await withTimeout(
-      allure.attachment(
+    await withTimeout({
+      operation: allure.attachment(
         "Merged Feature Flags",
         JSON.stringify(mergedFeatureFlags, null, 2),
         "application/json",
       ),
-      FAST_DIAGNOSTIC_TIMEOUT_MS,
-      "attachMergedFeatureFlags",
-    );
+      timeoutMs: FAST_DIAGNOSTIC_TIMEOUT_MS,
+      label: "attachMergedFeatureFlags",
+    });
   }
-  let logs = await withTimeout(getLogs(), GET_LOGS_TIMEOUT_MS, "getLogs");
+  let logs = await withTimeout({
+    operation: getLogs(),
+    timeoutMs: GET_LOGS_TIMEOUT_MS,
+    label: "getLogs",
+  });
   if (logs)
-    await withTimeout(
-      attachFailureLogsToAllure(logs),
-      SLOW_DIAGNOSTIC_TIMEOUT_MS,
-      "attachFailureLogsToAllure",
-    );
+    await withTimeout({
+      operation: attachFailureLogsToAllure(logs),
+      timeoutMs: SLOW_DIAGNOSTIC_TIMEOUT_MS,
+      label: "attachFailureLogsToAllure",
+    });
   logs = "";
 
   if (failureLeavesDetoxBusy(failure)) {
     console.info("Skipping native view hierarchy capture: Detox may still be busy with the test");
   } else {
-    await withTimeout(
-      captureNativeViewHierarchy(),
-      SLOW_DIAGNOSTIC_TIMEOUT_MS,
-      "captureNativeViewHierarchy",
-    );
+    await withTimeout({
+      operation: captureNativeViewHierarchy(),
+      timeoutMs: SLOW_DIAGNOSTIC_TIMEOUT_MS,
+      label: "captureNativeViewHierarchy",
+    });
   }
   console.info("Failure diagnostics capture completed");
 }
@@ -224,11 +236,11 @@ function installSpeculosTerminationHandlers() {
     if (cleaning) return;
     cleaning = true;
     try {
-      await withTimeout(
-        cleanupAllSpeculos(),
-        SLOW_DIAGNOSTIC_TIMEOUT_MS,
-        `cleanupAllSpeculos(${reason})`,
-      );
+      await withTimeout({
+        operation: cleanupAllSpeculos(),
+        timeoutMs: SLOW_DIAGNOSTIC_TIMEOUT_MS,
+        label: `cleanupAllSpeculos(${reason})`,
+      });
     } catch (error) {
       console.info(`Speculos cleanup on ${reason} failed:`, sanitizeError(error));
     } finally {
@@ -330,7 +342,11 @@ export default class TestEnvironment extends DetoxEnvironment {
     setWatchdogState({ phase: "teardown" });
 
     try {
-      await withTimeout(cleanupAllSpeculos(), SLOW_DIAGNOSTIC_TIMEOUT_MS, "cleanupAllSpeculos");
+      await withTimeout({
+        operation: cleanupAllSpeculos(),
+        timeoutMs: SLOW_DIAGNOSTIC_TIMEOUT_MS,
+        label: "cleanupAllSpeculos",
+      });
     } catch (error) {
       console.info("Speculos cleanup on teardown failed:", sanitizeError(error));
     }

@@ -27,6 +27,7 @@ function MessageSignatureDrawer({ request, onClose }: Props) {
     signatureIntent,
     onIntentJobStateChanged,
     onIntentJobError,
+    onExecutorStateChanged,
     onUserCancel,
   } = useMessageSignatureDrawerViewModel({ request, onClose });
 
@@ -53,7 +54,7 @@ function MessageSignatureDrawer({ request, onClose }: Props) {
         deviceInitializationInput={deviceInitializationInput}
         intent={signatureIntent}
         intentComponentExtraProps={undefined}
-        onExecutorStateChanged={noop}
+        onExecutorStateChanged={onExecutorStateChanged}
         onIntentJobStateChanged={onIntentJobStateChanged}
         onIntentJobComplete={noop}
         onIntentJobError={onIntentJobError}

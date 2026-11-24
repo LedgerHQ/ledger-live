@@ -8,7 +8,7 @@ import { setTrackingSource } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import { useFlattenSortAccounts } from "~/renderer/actions/general";
-import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import { accountsViewModeSelector, selectedTimeRangeSelector } from "~/renderer/reducers/settings";
 import { useFeature } from "@features/platform-feature-flags";
 import AccountList from "./AccountList";
@@ -21,7 +21,6 @@ export default function AccountsPage() {
   const mode = useSelector(accountsViewModeSelector);
   const range = useSelector(selectedTimeRangeSelector);
   const rawAccounts = useSelector(accountsSelector);
-  const starredAccounts = useSelector(starredAccountsSelector);
   const ledgerSyncOptimisationFlag = useFeature("lwdLedgerSyncOptimisation");
   const flattenedAccounts = useFlattenSortAccounts({
     enforceHideEmptySubAccounts: true,
@@ -45,12 +44,7 @@ export default function AccountsPage() {
   }
   return (
     <>
-      <TrackScreen
-        category="Accounts"
-        accountsLength={accounts.length}
-        starredAccountsLength={starredAccounts.length}
-        mode={mode}
-      />
+      <TrackScreen category="Accounts" accountsLength={accounts.length} mode={mode} />
       <AccountsHeader />
       {ledgerSyncOptimisationFlag?.enabled && (
         <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} />

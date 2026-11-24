@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import invariant from "invariant";
-import { createIntent } from "@features/platform-device-intent";
+import { createIntent, type ExecutorState } from "@features/platform-device-intent";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
@@ -19,6 +19,13 @@ type Props = {
   onClose: () => void;
 };
 
+// A retry reconnects or restarts the job, which can take a while before the next job state.
+const RETRY_STARTED_STATE_TYPES = new Set<ExecutorState["type"]>([
+  "connectingDevice",
+  "initializingDeviceContext",
+  "executingIntent",
+]);
+
 function normalizeError(error: unknown): Error {
   return error instanceof Error ? error : new Error(String(error));
 }
@@ -29,13 +36,16 @@ export function useMessageSignatureDrawerViewModel({ request, onClose }: Props) 
 
   const [deviceInitializationInput, setDeviceInitializationInput] =
     useState<InitializationInput | null>(null);
-  // Guards the dismiss handler so a successful signing (which also closes the drawer)
-  // does not additionally reject the wallet-api promise via onCancel.
-  const isSigningCompletedRef = useRef(false);
+  // The wallet-api promise is settled once: success, failure and dismiss race each other.
+  const isSettledRef = useRef(false);
+  // The failure of the last signing attempt, returned to the dApp when the user closes its
+  // error screen. A retry starts a new attempt, whose job states clear it.
+  const lastJobErrorRef = useRef<Error | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    isSigningCompletedRef.current = false;
+    isSettledRef.current = false;
+    lastJobErrorRef.current = null;
     setDeviceInitializationInput(null);
 
     // Unlike a transaction, the wallet-api message is already prepared upstream
@@ -63,7 +73,8 @@ export function useMessageSignatureDrawerViewModel({ request, onClose }: Props) 
         setDeviceInitializationInput(input);
       })
       .catch(error => {
-        if (cancelled) return;
+        if (cancelled || isSettledRef.current) return;
+        isSettledRef.current = true;
         onError(normalizeError(error));
         onClose();
       });
@@ -85,29 +96,40 @@ export function useMessageSignatureDrawerViewModel({ request, onClose }: Props) 
 
   const onIntentJobStateChanged = useCallback(
     (jobState: SignMessageIntentJobState) => {
-      if (jobState.type === "signed") {
-        isSigningCompletedRef.current = true;
-        onSuccess(jobState.signature);
-        onClose();
-      }
+      lastJobErrorRef.current = null;
+      if (jobState.type !== "signed" || isSettledRef.current) return;
+      isSettledRef.current = true;
+      onSuccess(jobState.signature);
+      onClose();
     },
     [onSuccess, onClose],
   );
 
-  // Dismiss semantics mirror the Send flow's DIE integration (Send's useSignatureViewModel):
-  // a dismiss is intentionally treated as a user cancellation. onIntentJobError is a
-  // deliberate no-op so a non-refusal signing failure keeps the executor's generic
-  // IntentError screen open (Retry / Close) with the real, translated error visible to the
-  // user — exactly what Send does. Send can simply close the overlay on dismiss, but a
-  // wallet-api request must settle its promise; message.sign exposes a dedicated cancel
-  // channel, so we report onCancel().
-  const onIntentJobError = useCallback(() => {}, []);
+  // A signing failure keeps the executor's error screen open (Retry / Close), like Send does.
+  // A refusal is a `cancelled` job state, not a job error.
+  const onIntentJobError = useCallback((error: unknown) => {
+    lastJobErrorRef.current = normalizeError(error);
+  }, []);
 
+  // A retry that reconnects the device emits no job state before it is closed: the failure
+  // it replaces must not be returned for a close made during the reconnection.
+  const onExecutorStateChanged = useCallback((executorState: ExecutorState) => {
+    if (RETRY_STARTED_STATE_TYPES.has(executorState.type)) {
+      lastJobErrorRef.current = null;
+    }
+  }, []);
+
+  // message.sign has a cancel channel: a dismiss without a failure is reported through it.
   const onUserCancel = useCallback(() => {
-    if (isSigningCompletedRef.current) return;
-    onCancel();
+    if (isSettledRef.current) return;
+    isSettledRef.current = true;
+    if (lastJobErrorRef.current) {
+      onError(lastJobErrorRef.current);
+    } else {
+      onCancel();
+    }
     onClose();
-  }, [onCancel, onClose]);
+  }, [onError, onCancel, onClose]);
 
   return {
     sourceFlow: getSignatureSourceFlow(request.manifestId),
@@ -115,6 +137,7 @@ export function useMessageSignatureDrawerViewModel({ request, onClose }: Props) 
     signatureIntent,
     onIntentJobStateChanged,
     onIntentJobError,
+    onExecutorStateChanged,
     onUserCancel,
   };
 }

@@ -8,6 +8,13 @@ import * as path from "path";
 import { FileUtils } from "@e2e/utils/fileUtils";
 import { getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { TIMEOUT } from "@e2e/utils/timeouts";
+import type { AcceptSwapForDifferentSeedOptions } from "@e2e/page/speculos.page";
+
+type CheckExportedFileContentsOptions = {
+  swap: SwapType;
+  provider: SwapProvider;
+  id: string;
+};
 
 const EXPORTED_HISTORY_PATH = path.resolve(
   __dirname,
@@ -90,8 +97,9 @@ export default class SwapPage {
     await this.swapHistoryFeedbackLink.expectAccessibilityValue(expectedUrl, { containing: true });
   }
 
-  @Step("Check contents of exported operations file {{{2}}}")
-  async checkExportedFileContents(swap: SwapType, provider: SwapProvider, id: string) {
+  @Step("Check contents of exported operations file {{{0.id}}}")
+  async checkExportedFileContents(options: CheckExportedFileContentsOptions) {
+    const { swap, provider, id } = options;
     const fileContents = await fs.readFile(EXPORTED_HISTORY_PATH, "utf-8");
 
     jestExpect(fileContents).toContain(provider.name);
@@ -110,13 +118,9 @@ export default class SwapPage {
     await app.speculos.verifyAmountsAndAcceptSwap(swap, amount);
   }
 
-  @Step("Verify amounts {{{1}}} and accept swap for different seed")
-  async verifyAmountsAndAcceptSwapForDifferentSeed(
-    swap: SwapType,
-    amount: string,
-    errorMessage: string | null,
-  ) {
-    await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage);
+  @Step("Verify amounts {{{0.amount}}} and accept swap for different seed")
+  async verifyAmountsAndAcceptSwapForDifferentSeed(options: AcceptSwapForDifferentSeedOptions) {
+    await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(options);
   }
 
   @Step("Verify the amounts and reject swap {{{1}}}")

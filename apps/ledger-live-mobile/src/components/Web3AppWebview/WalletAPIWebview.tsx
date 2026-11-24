@@ -56,10 +56,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewCacheOptions,
       noAccounts,
       isLoadingAccounts,
-      deviceIntentSignRequest,
-      clearDeviceIntentSignRequest,
-      deviceIntentSignMessageRequest,
-      clearDeviceIntentSignMessageRequest,
+      currentSignature,
+      closeCurrentSignature,
       publicKeyUnavailableError,
       clearPublicKeyUnavailableError,
     } = useWebView(
@@ -156,16 +154,18 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           {...webviewProps}
           {...webviewCacheOptions}
         />
-        {deviceIntentSignRequest && (
+        {currentSignature?.type === "transaction" && (
           <TransactionSignatureDrawer
-            request={deviceIntentSignRequest}
-            onClose={clearDeviceIntentSignRequest}
+            key={currentSignature.id}
+            request={currentSignature.request}
+            onClose={closeCurrentSignature}
           />
         )}
-        {deviceIntentSignMessageRequest && (
+        {currentSignature?.type === "message" && (
           <MessageSignatureDrawer
-            request={deviceIntentSignMessageRequest}
-            onClose={clearDeviceIntentSignMessageRequest}
+            key={currentSignature.id}
+            request={currentSignature.request}
+            onClose={closeCurrentSignature}
           />
         )}
         {deviceIntentExchangeEnabled && <ExchangeDeviceDrawer manifestId={manifest.id} />}

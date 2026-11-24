@@ -25,7 +25,6 @@ import {
 import { Information } from "@ledgerhq/lumen-ui-rnative/symbols";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
-import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account } from "@ledgerhq/types-live";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
 import { isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
@@ -80,41 +79,6 @@ function Row(
         <DescriptionItemValue>{props.children}</DescriptionItemValue>
       </DescriptionItemTrailing>
     </DescriptionItem>
-  );
-}
-
-// CryptoIcon only draws a round network badge: Figma wants Lumen's square DotSymbol
-function TokenIcon(
-  props: Readonly<{ token: TokenCurrency; networkId: string; networkTicker: string }>,
-) {
-  const styles = useStyleSheet(
-    theme => ({
-      badge: {
-        position: "absolute",
-        right: -3,
-        bottom: -3,
-        borderRadius: 5,
-        borderWidth: 1,
-        overflow: "hidden",
-        borderColor: theme.colors.border.baseInverted,
-        backgroundColor: theme.colors.bg.muted,
-      },
-    }),
-    [],
-  );
-
-  return (
-    <Box lx={{ position: "relative" }}>
-      <CryptoIcon ledgerId={props.token.id} ticker={props.token.ticker} size={40} />
-      <Box style={styles.badge}>
-        <CryptoIcon
-          ledgerId={props.networkId}
-          ticker={props.networkTicker}
-          size={16}
-          shape="square"
-        />
-      </Box>
-    </Box>
   );
 }
 
@@ -192,7 +156,7 @@ function TokenCard(
     <Card type="info" testID={`xrp-manage-asset-${token.id}`}>
       <CardHeader>
         <CardLeading>
-          <TokenIcon token={token} networkId={networkId} networkTicker={currency.ticker} />
+          <CryptoIcon ledgerId={token.id} ticker={token.ticker} network={networkId} size={40} />
           <CardContent>
             <CardContentTitle>{token.name}</CardContentTitle>
             <CardContentDescription>
