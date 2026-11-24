@@ -72,46 +72,37 @@ test.describe("Earn v2", () => {
     );
   });
 
-  const coldStartCurrencies = [{ account: Account.ETH_2, xrayTicket: "B2CQA-4640" }];
+  test.describe("Cold start", () => {
+    const account = Account.ETH_2;
 
-  for (const { account, xrayTicket } of coldStartCurrencies) {
-    test.describe("Cold start", () => {
-      test.use({
-        userdata: "skip-onboarding",
-        speculosApp: account.currency.speculosApp,
-        featureFlags: {
-          ...FF_EARN_V2_DESKTOP,
-          ...FF_ANALYTICS_OPTIN_DISABLED,
-          ...FF_STAKE_PROGRAMS_MODAL,
-          ...FF_SWAP_TO_EARN_DISABLED,
-        },
-        cliCommands: [liveDataCommand(account)],
-        speculosForSetupOnly: true,
-      });
-
-      test(
-        `[${account.currency.testLabel}] - Earn v2 cold start page shows account ready to earn`,
-        {
-          tag: buildTags({ currencyId: account.currency.id }),
-          annotation: { type: "TMS", description: xrayTicket },
-        },
-        async ({ app }) => {
-          await navigateToEarn(app);
-          await app.earnV2Dashboard.verifyColdStartPage();
-          await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
-          await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-
-          if (account === Account.ETH_2) {
-            // ETH redirects to the earn deposit webview (stakePrograms redirect) rather than
-            // opening a native staking modal.
-            await app.earnV2Dashboard.verifyDepositFlowVisible();
-          } else {
-            await app.earnV2Dashboard.verifyModalContainerVisible();
-          }
-        },
-      );
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: account.currency.speculosApp,
+      featureFlags: {
+        ...FF_EARN_V2_DESKTOP,
+        ...FF_ANALYTICS_OPTIN_DISABLED,
+        ...FF_STAKE_PROGRAMS_MODAL,
+        ...FF_SWAP_TO_EARN_DISABLED,
+      },
+      cliCommands: [liveDataCommand(account)],
+      speculosForSetupOnly: true,
     });
-  }
+
+    test(
+      `[${account.currency.testLabel}] - Earn v2 cold start page shows account ready to earn`,
+      {
+        tag: buildTags({ currencyId: account.currency.id }),
+        annotation: { type: "TMS", description: "B2CQA-4640" },
+      },
+      async ({ app }) => {
+        await navigateToEarn(app);
+        await app.earnV2Dashboard.verifyColdStartPage();
+        await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
+        await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
+        await app.earnV2Dashboard.verifyDepositFlowVisible();
+      },
+    );
+  });
 
   test.describe("Cold start - deposit v2", () => {
     const account = Account.ETH_2;

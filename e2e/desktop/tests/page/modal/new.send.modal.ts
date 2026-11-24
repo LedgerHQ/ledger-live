@@ -282,11 +282,6 @@ export class NewSendModal extends Modal {
     await expect(this.matchedAddressButtons).toHaveCount(0);
   }
 
-  @step("Verify that no recipient is accepted")
-  async expectNoAddressMatched() {
-    await expect(this.matchedAddressButtons).toHaveCount(0);
-  }
-
   @step("Type memo: $0")
   async typeMemo(memo: string) {
     await this.memoInput.waitFor({ state: "visible" });

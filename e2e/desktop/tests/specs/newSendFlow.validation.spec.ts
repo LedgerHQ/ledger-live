@@ -7,7 +7,6 @@ import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFol
 import { ownedBy } from "tests/utils/allureUtils";
 import {
   accountAddressCommand,
-  getAccountAddress,
   liveDataCommand,
   liveDataWithRecipientAddressCommand,
 } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
@@ -33,7 +32,7 @@ const newSendFlowFeatureFlags = {
 
 const invalidAmounts: Array<{
   transaction: Transaction;
-  expectedErrorMessage: string | null;
+  expectedErrorMessage: string;
   xrayTicket: string;
   // Insufficient funds errors are the only ones routed to the "Get <ticker>" CTA.
   expectsGetFundsCta?: boolean;
@@ -70,7 +69,7 @@ for (const entry of invalidAmounts) {
     });
 
     test(
-      `[${tx.accountToDebit.currency.testLabel}] - Send - invalid amount (${tx.amount || "empty"})`,
+      `[${tx.accountToDebit.currency.testLabel}] - Send - invalid amount (${tx.amount})`,
       {
         tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
         annotation: { type: "TMS", description: entry.xrayTicket },
@@ -78,9 +77,7 @@ for (const entry of invalidAmounts) {
       async ({ app }) => {
         await reachAmountStep(app, tx);
         await app.newSendFlow.fillCryptoAmount(tx.amount);
-        if (entry.expectedErrorMessage) {
-          await app.newSendFlow.expectAmountError(entry.expectedErrorMessage);
-        }
+        await app.newSendFlow.expectAmountError(entry.expectedErrorMessage);
         if (entry.expectsGetFundsCta) {
           await app.newSendFlow.expectGetFundsCta();
         } else {
@@ -255,71 +252,33 @@ test.describe(
   },
 );
 
-const invalidAddresses: Array<{
-  transaction: Transaction;
-  address?: string;
-  expectedErrorMessage: string | null;
-  scenario: string;
-  xrayTicket: string;
-}> = [
-  {
-    transaction: new Transaction(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.00001", Fee.MEDIUM),
-    address: Addresses.BTC_NATIVE_SEGWIT_1,
-    expectedErrorMessage: null,
-    scenario: "incorrect format",
-    xrayTicket: "B2CQA-2709",
-  },
-];
+test.describe(
+  "Send - new flow - invalid address",
+  ethSendFlow(SendScenario.INVALID_ADDRESS),
+  () => {
+    const tx = new Transaction(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.00001", Fee.MEDIUM);
 
-for (const entry of invalidAddresses) {
-  const tx = entry.transaction;
-  let recipientAddress = entry.address;
-
-  const owner = ownedBy(coinTeamOwner(tx.accountToDebit.currency.id), {
-    folder: sendFolder(tx.accountToDebit),
-    scenario: SendScenario.INVALID_ADDRESS,
-  });
-
-  test.describe("Send - new flow - invalid address", owner, () => {
     test.use({
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: tx.accountToDebit.currency.speculosApp,
-      cliCommands: [
-        async (userdataPath?: string) => {
-          await liveDataCommand(tx.accountToDebit)(userdataPath);
-          if (
-            tx.accountToCredit !== Account.EMPTY &&
-            tx.accountToCredit !== Account.BTC_NATIVE_SEGWIT_1
-          ) {
-            recipientAddress = await getAccountAddress(tx.accountToCredit);
-          }
-          return recipientAddress;
-        },
-      ],
+      cliCommands: [liveDataCommand(tx.accountToDebit)],
       featureFlags: newSendFlowFeatureFlags,
     });
 
     test(
-      `[${tx.accountToDebit.currency.testLabel}] - Send - invalid address - ${entry.scenario}`,
+      `[${tx.accountToDebit.currency.testLabel}] - Send - invalid address - incorrect format`,
       {
         tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
-        annotation: { type: "TMS", description: entry.xrayTicket },
+        annotation: { type: "TMS", description: "B2CQA-2709" },
       },
       async ({ app }) => {
         await openNewSendFromAccount(app, tx);
-        await app.newSendFlow.typeAddress(recipientAddress ?? "");
-
-        if (entry.expectedErrorMessage) {
-          await app.newSendFlow.expectRecipientError(entry.expectedErrorMessage);
-        } else if (recipientAddress?.trim()) {
-          await app.newSendFlow.expectInvalidAddress();
-        } else {
-          await app.newSendFlow.expectNoAddressMatched();
-        }
+        await app.newSendFlow.typeAddress(Addresses.BTC_NATIVE_SEGWIT_1);
+        await app.newSendFlow.expectInvalidAddress();
       },
     );
-  });
-}
+  },
+);
 
 test.describe("Send - new flow - ENS address", ethSendFlow(SendScenario.ENS_ADDRESS), () => {
   const tx = new Transaction(Account.ETH_1, Account.ETH_2_WITH_ENS, "0.0001", Fee.MEDIUM);
