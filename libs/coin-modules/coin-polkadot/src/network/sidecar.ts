@@ -619,10 +619,10 @@ type SubmitExtrinsicDryRunResponse = {
  */
 export const submitExtrinsicDryRun = async (
   config: PolkadotCoinConfig,
+  registry: TypeRegistry,
   extrinsic: string,
   currencyId?: string,
 ): Promise<SubmitExtrinsicDryRunResponse> => {
-  const { registry } = await getRegistry(config, currencyId);
   const decoded = registry.createType("Extrinsic", extrinsic);
   const callHex = decoded.method.toHex();
   const senderAddress = decoded.signer.toString();

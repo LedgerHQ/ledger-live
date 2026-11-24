@@ -14,6 +14,17 @@ describe("useReceiveAddressCopy", () => {
       networkLabel: "Ethereum network",
       closeLabel: "Close",
       backLabel: "Back",
+      selectAddressTitle: "Select address",
+      addressOptionLabels: { transparent: "Public address", shielded: "Private address" },
+      errorTitle: "We couldn't load this address",
+      errorDescription: "Check your internet connection, then try again.",
+      retryLabel: "Retry",
+      copyLabel: "Copy",
+      copiedLabel: "Copied",
+      shareLabel: "Share",
+      verifyLabel: "Verify",
+      verifyHintMessage: "Verify your address on your Ledger device before sharing",
+      verifyHintGotIt: "Got it",
     });
   });
 });

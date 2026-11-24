@@ -61,19 +61,19 @@ describe("buildWithdrawalPath", () => {
 });
 
 describe("buildAddAssetPath", () => {
-  it("addresses the hosted crypto accounts dashboard", () => {
-    expect(buildAddAssetPath()).toBe("/dashboard/accounts/crypto");
+  it("addresses the hosted manage assets page", () => {
+    expect(buildAddAssetPath()).toBe("/manage-assets");
   });
 
   it("names the US app when the holder belongs to it", () => {
-    expect(buildAddAssetPath("LEDGERUS")).toBe("/dashboard/accounts/crypto?app_id=LEDGERUS");
+    expect(buildAddAssetPath("LEDGERUS")).toBe("/manage-assets?app_id=LEDGERUS");
   });
 
   it.each([
     ["null", null],
     ["an empty value", ""],
   ])("names no app when the US app id is %s", (_case, usAppId) => {
-    expect(buildAddAssetPath(usAppId)).toBe("/dashboard/accounts/crypto");
+    expect(buildAddAssetPath(usAppId)).toBe("/manage-assets");
   });
 });
 

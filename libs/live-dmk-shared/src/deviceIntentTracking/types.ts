@@ -15,6 +15,7 @@ export type SourceFlow =
   | "wallet_api"
   | "onboarding"
   | "contacts"
+  | "manage_assets"
   | "ledger_sync"
   | "debug";
 

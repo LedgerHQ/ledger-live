@@ -7,6 +7,7 @@ export enum FlowName {
   swap = "swap",
   staking = "staking",
   addAccount = "addAccount",
+  manageAssets = "manageAssets",
   unknown = "unknown",
 }
 

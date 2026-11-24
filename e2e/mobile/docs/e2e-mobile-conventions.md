@@ -22,7 +22,7 @@ A spec MUST declare only test metadata and invoke the sibling test function. The
 
 ### State MUST be arranged in fixtures and flags
 
-See [E2E conventions](../../docs/e2e-conventions.md#setup-must-be-deterministic). Entry-point flags MUST belong in the test function file, combined with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports `data.settings`, `data.accounts`, `data.trustchain`, `data.postOnboarding`, and `data.payCard` when present. Other domain entities cannot be seeded this way.
+See [E2E conventions](../../docs/e2e-conventions.md#setup-must-be-deterministic). Entry-point flags MUST belong in the test function file, combined with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports `data.settings`, `data.accounts`, `data.trustchain`, `data.postOnboarding`, `data.payCard`, and `data.receiveVerifyHint` when present. Other domain entities cannot be seeded this way.
 
 ### State MUST NOT be arranged in UI steps
 
@@ -32,7 +32,7 @@ A setup MUST NOT open screens or tap controls to reach the state under test.
 
 A step MUST NOT branch on a condition and run only when that condition is met. The branch costs time on every run and hides the regression when the expected path stops happening. The cause MUST be removed in the fixture or the flags.
 
-A conditional step MAY stay when the test documents why the branch is required.
+A conditional step MAY stay when explicit fixture or input state decides its outcome, not a visibility probe, and reachable callers need each outcome. A branch no caller reaches MUST be removed.
 
 ### The test function MUST decide which assertions run
 
@@ -85,7 +85,7 @@ private readonly contactCompactRow = (contactId: string) => byId(`contacts-compa
 
 ### Every public method MUST use @Step
 
-Parameters MUST be Handlebars placeholders: `{{0}}`, `{{1}}` by index, or named `@Step("Rename to {{name}}", ["name"])`. `$0` renders literally. Values are HTML-escaped, so use `{{{0}}}` for one containing `&`, `<`, or `'`. Arguments appear as Allure parameters even without a placeholder.
+Parameters MUST be Handlebars placeholders: `{{0}}`, `{{1}}` by index, `{{{0.address}}}` for a field of an options object, or named `@Step("Rename to {{name}}", ["name"])`. `$0` renders literally. Values are HTML-escaped, so use `{{{0}}}` for one containing `&`, `<`, or `'`. Arguments appear as Allure parameters even without a placeholder.
 
 ### The test function MUST call $TmsLink
 

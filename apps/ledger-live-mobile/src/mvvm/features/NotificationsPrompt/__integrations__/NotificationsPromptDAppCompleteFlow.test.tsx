@@ -1,5 +1,9 @@
 import { track } from "@shared/analytics";
+import BigNumber from "bignumber.js";
 import React from "react";
+import type { Account, Operation } from "@ledgerhq/types-live";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Pressable, Text, View } from "react-native";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -37,6 +41,32 @@ jest.mock("react-native-webview", () => {
   };
 });
 
+type TransactionBroadcast = (
+  account: Account,
+  parentAccount: Account | undefined,
+  mainAccount: Account,
+  optimisticOperation: Operation,
+) => void;
+
+const broadcastAccount = genAccount("dapp-broadcast", {
+  currency: getCryptoCurrencyById("ethereum"),
+  operationsSize: 0,
+});
+const broadcastOperation: Operation = {
+  id: `${broadcastAccount.id}-0xdapphash-OUT`,
+  hash: "0xdapphash",
+  type: "OUT",
+  value: new BigNumber(1),
+  fee: new BigNumber(1),
+  senders: [],
+  recipients: [],
+  blockHash: null,
+  blockHeight: null,
+  accountId: broadcastAccount.id,
+  date: new Date(),
+  extra: {},
+};
+
 let callTransactionBroadcast: (() => void) | undefined;
 // Capture WalletAPI transaction.broadcast so the test can trigger dApp completion directly.
 jest.mock("@ledgerhq/live-common/wallet-api/react", () => {
@@ -45,8 +75,14 @@ jest.mock("@ledgerhq/live-common/wallet-api/react", () => {
   return {
     ...actual,
     useWalletAPIServer: jest.fn(
-      ({ uiHook }: { uiHook: { "transaction.broadcast": () => void } }) => {
-        callTransactionBroadcast = uiHook["transaction.broadcast"];
+      ({ uiHook }: { uiHook: { "transaction.broadcast": TransactionBroadcast } }) => {
+        callTransactionBroadcast = () =>
+          uiHook["transaction.broadcast"](
+            broadcastAccount,
+            undefined,
+            broadcastAccount,
+            broadcastOperation,
+          );
 
         return {
           onMessage: jest.fn(),

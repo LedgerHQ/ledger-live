@@ -180,7 +180,7 @@ export class NativeHandle implements ElementHandle {
   async getAttributes(timeout = TIMEOUT.xxlarge): Promise<ElementAttributes> {
     await this.waitVisible(timeout);
     const attributes = await withHardTimeout(
-      retryUntilTimeout(() => this.raw.getAttributes(), timeout),
+      retryUntilTimeout({ fn: () => this.raw.getAttributes(), timeout }),
       waitHardTimeout(timeout),
     );
     return "elements" in attributes ? attributes.elements[0] : attributes;
@@ -437,16 +437,16 @@ export class NativeHandle implements ElementHandle {
   private async waitUnlessError(options: WaitUnlessErrorOptions): Promise<void> {
     const { isFound, errorElement, timeout, state } = options;
     const errorShown = await withHardTimeout(
-      retryUntilTimeout<boolean>(
-        async () => {
+      retryUntilTimeout<boolean>({
+        fn: async () => {
           if (await isFound()) return false;
           if (await errorElement.isVisible(TIMEOUT.xxxsmall)) return true;
           throw new Error(`${this.description} is not ${state} yet`);
         },
         timeout,
-        INTERVAL.short,
-        { messageOnError: `${this.description} did not become ${state} within ${timeout}ms` },
-      ),
+        interval: INTERVAL.short,
+        messageOnError: `${this.description} did not become ${state} within ${timeout}ms`,
+      }),
       waitHardTimeout(timeout),
     );
     if (errorShown) {

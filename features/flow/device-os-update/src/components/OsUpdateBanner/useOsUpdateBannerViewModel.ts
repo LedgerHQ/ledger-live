@@ -53,7 +53,7 @@ export function useOsUpdateBannerViewModel({
 
   return {
     variant,
-    version: latestOsUpdate?.finalFirmware.version ?? "",
+    version: latestOsUpdate?.finalFirmware.name ?? "",
     DeviceIcon,
     onClickUpdate,
   };

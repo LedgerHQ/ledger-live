@@ -46,6 +46,14 @@ export type GetReceiveFamilyConfig<A = unknown> = (
   input: ReceiveFamilyConfigInput<A>,
 ) => Partial<ReceiveFamilyConfig>;
 
+/**
+ * The account's coin family slot, as the app resolves it for the address screen: the app adds the
+ * feature flags and, where a family still needs it, the legacy account.
+ */
+export type ReceiveFamilyConfigPort = (
+  input: Omit<ReceiveFamilyConfigInput, "featureFlags" | "legacyAccount">,
+) => Partial<ReceiveFamilyConfig>;
+
 /** The account and the asset a receive flow shows the address of. */
 export type ReceiveTarget = Readonly<{
   accountUUID: AccountUUID;
@@ -61,10 +69,12 @@ export type VerifyAddressSelection = Readonly<{
 }>;
 
 /**
- * How the device verification ended. `mismatch` closes the receive flow. `failed`: it could not
- * start, or an error ended it.
+ * How the device verification ended. `displayed`: the device showed the address and the user went
+ * back to it, to compare it once pasted. `mismatch`: the device returned another address, and the
+ * user closed the warning. `failed`: it could not start, or an error ended it.
  */
 export type VerifyAddressOutcome =
+  | "displayed"
   | "verified"
   | "cancelled"
   | "mismatch"
@@ -118,9 +128,11 @@ export type VerifyAddressExecutorPorts<Account, Token, Options, InitInput> = Ver
   Readonly<{
     getAccount: (accountUUID: AccountUUID) => Account | undefined;
     findToken: (assetId: CryptoOrTokenCurrencyId) => Promise<Token | undefined>;
+    /** Checks before the device shows anything that it derives `verification.address`. */
     buildInitializationInput: (request: {
       account: Account;
       tokenCurrency: Token | undefined;
+      verification: DeviceShownVerification;
     }) => Promise<InitInput>;
     intentComponent: ComponentType<VerifyAddressIntentComponentProps>;
   }>;

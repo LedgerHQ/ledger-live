@@ -5,7 +5,6 @@ module.exports = createLibsCoinJestConfig({
   collectCoverageFrom: [
     ...libsCoinDefaults.collectCoverageFrom,
     "!src/logic/tests/**/*.ts",
-    "!src/datasets/**/*.ts",
     "!src/wallet-btc/__tests__/**/*.ts",
   ],
   moduleNameMapper: {

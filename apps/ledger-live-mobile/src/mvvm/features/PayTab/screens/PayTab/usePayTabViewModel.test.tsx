@@ -378,22 +378,22 @@ describe("usePayTabViewModel", () => {
     await expectSecureBrowser("https://hosted.test/?app_id=LEDGERUS");
   });
 
-  it("should open the add asset hosted crypto dashboard in the secure browser", async () => {
+  it("should open the hosted manage assets page in the secure browser", async () => {
     const { user } = renderViewModel();
 
     await user.press(screen.getByTestId("press-add-asset"));
 
-    await expectSecureBrowser("https://hosted.test/dashboard/accounts/crypto");
+    await expectSecureBrowser("https://hosted.test/manage-assets");
   });
 
-  it("should name the US app on the add asset hosted crypto dashboard", async () => {
+  it("should name the US app on the hosted manage assets page", async () => {
     setEnv("CARD_BAANX_US_APP_ID", "LEDGERUS");
     mockedReadCardUsEnv.mockResolvedValue(true);
     const { user } = renderViewModel();
 
     await user.press(screen.getByTestId("press-add-asset"));
 
-    await expectSecureBrowser("https://hosted.test/dashboard/accounts/crypto?app_id=LEDGERUS");
+    await expectSecureBrowser("https://hosted.test/manage-assets?app_id=LEDGERUS");
   });
 
   it("should report a warning instead of throwing when the top up page fails to open", async () => {

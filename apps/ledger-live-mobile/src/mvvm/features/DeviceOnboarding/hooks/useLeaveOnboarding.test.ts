@@ -52,6 +52,33 @@ describe("useLeaveOnboarding", () => {
     },
   );
 
+  it("should give the host's seeded result to the sync offer", () => {
+    const seededResult = {
+      deviceType: DmkDeviceModelId.STAX,
+      ledgerSyncEligible: true,
+      firmwareUpdateAvailability: "yes",
+      firmwareUpdateStarted: true,
+      firmwareUpdateDone: false,
+    } as const;
+    const { result } = renderHook(() =>
+      useLeaveOnboarding({ device, navigateOnExit: true, wasReadOnlyAtEntry: false }),
+    );
+
+    act(() =>
+      result.current(
+        "offerLedgerSync",
+        machineContext({ genuine: true, seeded: true }),
+        seededResult,
+      ),
+    );
+
+    expect(mockNavigate).toHaveBeenCalledWith(expect.any(String), {
+      device,
+      wasReadOnlyAtEntry: false,
+      seededResult,
+    });
+  });
+
   it("should leave without the notifications prompt when the device is not genuine", () => {
     leave("userQuit", false);
 
@@ -110,6 +137,31 @@ describe("useLeaveOnboarding", () => {
     expect(mockNotifyFlowCompleted).not.toHaveBeenCalled();
     expect(mockGoBack).toHaveBeenCalledTimes(1);
     expect(mockReset).not.toHaveBeenCalled();
+  });
+
+  it("should open the old seeded checks when a seeded nano s leaves through the legacy path", () => {
+    const { result } = renderHook(() =>
+      useLeaveOnboarding({
+        device,
+        navigateOnExit: true,
+        wasReadOnlyAtEntry: false,
+      }),
+    );
+
+    act(() =>
+      result.current(
+        "legacyFallback",
+        machineContext({
+          seeded: true,
+          genuine: null,
+          firmwareVersion: "2.1.0",
+          deviceModelId: DmkDeviceModelId.NANO_S,
+        }),
+      ),
+    );
+
+    expect(mockGoBack).not.toHaveBeenCalled();
+    expect(mockReset).toHaveBeenCalledTimes(1);
   });
 
   it("should ask for the notifications prompt when a genuine seeded device leaves through the legacy path", () => {

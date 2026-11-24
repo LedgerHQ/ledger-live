@@ -76,7 +76,6 @@ function renderFromPreviousPage(accounts: Account[] = [ethAccount], initialRoute
         syncRefresh: { hasCompletedInitialSync: true, lastUserSyncClickTimestamp: 0 },
         wallet: {
           accountNames: new Map([[parseAnyAccountId(ethAccount.id), "Ethereum 1"]]),
-          starredAccountIds: new Set(),
           walletSync: { walletSyncState: { data: null, version: 0 } },
         },
       },
@@ -108,7 +107,6 @@ function renderFromHashHistory(accounts: Account[] = [ethAccount]) {
         syncRefresh: { hasCompletedInitialSync: true, lastUserSyncClickTimestamp: 0 },
         wallet: {
           accountNames: new Map([[parseAnyAccountId(ethAccount.id), "Ethereum 1"]]),
-          starredAccountIds: new Set(),
           walletSync: { walletSyncState: { data: null, version: 0 } },
         },
       },

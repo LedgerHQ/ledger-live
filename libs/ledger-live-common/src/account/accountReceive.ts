@@ -1,18 +1,17 @@
 import type { Account } from "@ledgerhq/types-live";
-import { DerivationPathSchema, type DerivationPath } from "@domain/entity-account-descriptor";
+import { LegacyDerivationPathSchema, type DerivationPath } from "@domain/entity-account-descriptor";
 import {
   AccountReceiveSchema,
   ReceiveAddressUnknownError,
   ReceivePathUnknownError,
   type AccountReceive,
 } from "@domain/entity-account-receive";
-import { toDescriptorPath } from "./accountDescriptor";
 
 /** The path the device is asked at: throws rather than leave the address unverified. */
 export function freshAddressDevicePath(
   account: Pick<Account, "id" | "freshAddressPath">,
 ): DerivationPath {
-  const parsed = DerivationPathSchema.safeParse(toDescriptorPath(account.freshAddressPath));
+  const parsed = LegacyDerivationPathSchema.safeParse(account.freshAddressPath);
   if (!account.freshAddressPath || !parsed.success) {
     throw new ReceivePathUnknownError(`${account.id} has no device path to verify it at`);
   }

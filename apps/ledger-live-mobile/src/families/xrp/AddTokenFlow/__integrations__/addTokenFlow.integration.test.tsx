@@ -12,7 +12,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { component } from "../index";
 import { XRP_ACCOUNT, overrideWithAccounts } from "../../__mocks__/account.mock";
 import { xrpIouToken, xrpMptToken } from "../../__mocks__/currency.mock";
-import { makeMockAccountBridge } from "../../__mocks__/bridge.mock";
+import { makeMockAccountBridge, makeNamedError, mockStatus } from "../../__mocks__/bridge.mock";
 
 jest.mock(
   "@ledgerhq/live-common/hw/actions/app",
@@ -63,20 +63,6 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => {
 });
 
 const OuterStack = createNativeStackNavigator();
-
-function makeNamedError(name: string, fields: Record<string, string> = {}) {
-  return Object.assign(new Error(name), { name, ...fields });
-}
-
-function mockStatus(errors: Record<string, Error>, warnings: Record<string, Error> = {}) {
-  mockAccountBridge.getTransactionStatus.mockResolvedValue({
-    errors,
-    warnings,
-    estimatedFees: new BigNumber(12),
-    amount: new BigNumber(0),
-    totalSpent: new BigNumber(12),
-  });
-}
 
 function AddTokenFlowHarness() {
   return (
@@ -148,7 +134,7 @@ describe("XRP AddTokenFlow (integration)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.mocked(getXrpEnabledTokenStandards).mockReturnValue(["iou", "mpt"]);
-    mockStatus({});
+    mockStatus(mockAccountBridge, {});
   });
 
   it("signs an IOU opt-in at the max trust limit and shows the success screen", async () => {
@@ -225,7 +211,7 @@ describe("XRP AddTokenFlow (integration)", () => {
   });
 
   it("blocks a limit of 0 with its own message", async () => {
-    mockStatus({ amount: makeNamedError("XrpTrustLimitZero") });
+    mockStatus(mockAccountBridge, { amount: makeNamedError("XrpTrustLimitZero") });
     const { user } = renderSettings(xrpIouToken);
 
     await user.type(await screen.findByTestId("xrp-limit-input"), "0");
@@ -235,7 +221,7 @@ describe("XRP AddTokenFlow (integration)", () => {
   });
 
   it("blocks when the account lacks XRP and offers to receive", async () => {
-    mockStatus({
+    mockStatus(mockAccountBridge, {
       amount: makeNamedError("NotEnoughSpendableBalance", { minimumAmount: "1.2 XRP" }),
     });
     renderReview(xrpMptToken);
@@ -248,13 +234,13 @@ describe("XRP AddTokenFlow (integration)", () => {
   });
 
   it("unblocks once the account gets funded", async () => {
-    mockStatus({
+    mockStatus(mockAccountBridge, {
       amount: makeNamedError("NotEnoughSpendableBalance", { minimumAmount: "1.2 XRP" }),
     });
     const { store } = renderReview(xrpMptToken);
     await screen.findByText("You need at least 1.2 XRP available to add this token.");
 
-    mockStatus({});
+    mockStatus(mockAccountBridge, {});
     await act(async () => {
       store.dispatch(updateAccount({ id: XRP_ACCOUNT.id, balance: new BigNumber(100_000_000) }));
     });
@@ -263,7 +249,7 @@ describe("XRP AddTokenFlow (integration)", () => {
   });
 
   it("blocks on any other coin-xrp error and shows its string", async () => {
-    mockStatus({ transaction: makeNamedError("XrpTokenOptInRefused") });
+    mockStatus(mockAccountBridge, { transaction: makeNamedError("XrpTokenOptInRefused") });
     renderReview(xrpMptToken);
 
     expect(await screen.findByText("The issuer refused this request")).toBeVisible();
@@ -271,7 +257,11 @@ describe("XRP AddTokenFlow (integration)", () => {
   });
 
   it("shows the locked amount warning", async () => {
-    mockStatus({}, { reserve: makeNamedError("XrpReserveIncrease", { amount: "0.2 XRP" }) });
+    mockStatus(
+      mockAccountBridge,
+      {},
+      { reserve: makeNamedError("XrpReserveIncrease", { amount: "0.2 XRP" }) },
+    );
     renderReview(xrpMptToken);
 
     expect(

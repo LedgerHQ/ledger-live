@@ -7,6 +7,7 @@ import { payCardAuthSlice, selectCardAuthStatus } from "@features/flow-pay-card-
 import { getCardSessionToken } from "@features/platform-card";
 import { featureFlagsReducer, setCachedFlagsSettled } from "@shared/feature-flags";
 import { liveConfigOverridesReducer } from "@shared/live-config-overrides";
+import { receiveVerifyHintSlice } from "@features/flow-receive/state";
 import settingsReducer from "~/reducers/settings";
 import LedgerStoreProvider from "./LedgerStore";
 
@@ -19,6 +20,10 @@ const mockSaveAccounts = jest.fn(() => Promise.resolve());
 const mockGetPostOnboardingState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
 const mockGetFeatureFlagsState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
 const mockSaveFeatureFlagsState = jest.fn(() => Promise.resolve());
+const mockGetPayCardState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
+const mockGetReceiveVerifyHintState = jest.fn<Promise<unknown>, []>(() =>
+  Promise.resolve(undefined),
+);
 
 jest.mock("../db", () => {
   const empty = () => Promise.resolve(undefined);
@@ -41,7 +46,8 @@ jest.mock("../db", () => {
     getMarketState: () => mockGetMarketState(),
     getMarketListConfig: empty,
     getMarketBannerState: empty,
-    getPayCardState: empty,
+    getPayCardState: () => mockGetPayCardState(),
+    getReceiveVerifyHintState: () => mockGetReceiveVerifyHintState(),
     getAccountAnalyticsIntroductionState: empty,
     getTrustchainState: empty,
     getWalletExportState: empty,
@@ -73,6 +79,14 @@ const createStore = () => configureStore({ reducer: { featureFlags: featureFlags
 const createStoreWithOverrides = () =>
   configureStore({
     reducer: { featureFlags: featureFlagsReducer, liveConfigOverrides: liveConfigOverridesReducer },
+  });
+
+const createStoreWithReceiveVerifyHint = () =>
+  configureStore({
+    reducer: {
+      featureFlags: featureFlagsReducer,
+      receiveVerifyHint: receiveVerifyHintSlice.reducer,
+    },
   });
 
 const renderProvider = (store: Store) =>
@@ -313,5 +327,36 @@ describe("LedgerStoreProvider", () => {
 
     expect(screen.getByText("ready")).toBeOnTheScreen();
     expect(mockBackfillOnboardingDate).not.toHaveBeenCalled();
+  });
+
+  describe("receive verify hint", () => {
+    afterEach(() => {
+      mockGetPayCardState.mockReset();
+      mockGetPayCardState.mockResolvedValue(undefined);
+      mockGetReceiveVerifyHintState.mockReset();
+      mockGetReceiveVerifyHintState.mockResolvedValue(undefined);
+    });
+
+    it("should restore the flag from its own receiveVerifyHint entry", async () => {
+      mockGetReceiveVerifyHintState.mockResolvedValue({ hasSeenReceiveVerifyHint: true });
+      const store = createStoreWithReceiveVerifyHint();
+      store.dispatch(setCachedFlagsSettled());
+
+      renderProvider(store);
+      await act(() => jest.runAllTimersAsync());
+
+      expect(store.getState().receiveVerifyHint.hasSeenReceiveVerifyHint).toBe(true);
+    });
+
+    it("should not read the flag from the payCard blob", async () => {
+      mockGetPayCardState.mockResolvedValue({ hasSeenReceiveVerifyHint: true });
+      const store = createStoreWithReceiveVerifyHint();
+      store.dispatch(setCachedFlagsSettled());
+
+      renderProvider(store);
+      await act(() => jest.runAllTimersAsync());
+
+      expect(store.getState().receiveVerifyHint.hasSeenReceiveVerifyHint).toBe(false);
+    });
   });
 });

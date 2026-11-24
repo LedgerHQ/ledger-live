@@ -1,4 +1,8 @@
-import { NetworkIdSchema, computeAccountUUID } from "@domain/entity-account-descriptor";
+import {
+  DerivationPathSchema,
+  NetworkIdSchema,
+  computeAccountUUID,
+} from "@domain/entity-account-descriptor";
 import { AccountDataSourceIdSchema } from "./sourceId";
 import {
   accountDataFailed,
@@ -23,7 +27,7 @@ const uuid = computeAccountUUID({
   type: "address",
   network: NetworkIdSchema.parse("ethereum"),
   key: "0x0",
-  path: "m/44h/60h/0h/0/0",
+  path: DerivationPathSchema.parse("m/44h/60h/0h/0/0"),
 });
 
 const sourceId = AccountDataSourceIdSchema.parse("s");

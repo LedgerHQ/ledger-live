@@ -39,7 +39,7 @@ export function runNavigateToBuyFromPortfolioPageTest(
     tags.forEach(tag => $Tag(tag));
     test(`[${buySell.crypto.currency.testLabel}] - Buy from portfolio page`, async () => {
       await app.portfolio.pressQuickActionBuyButton();
-      await app.buySell.handleBuyFlow(buySell, paymentMethod);
+      await app.buySell.handleBuyFlow({ buySell, paymentMethod });
     });
   });
 }
@@ -69,7 +69,7 @@ export function runNavigateToBuyFromAccountPageTest(
         await app.account.navigateToTokenInAccount(buySell.crypto);
       }
       await app.account.tapBuy();
-      await app.buySell.handleBuyFlow(buySell, paymentMethod);
+      await app.buySell.handleBuyFlow({ buySell, paymentMethod });
     });
   });
 }
@@ -102,7 +102,7 @@ export function runNavigateToBuyFromMarketPageTest(
         app.modularDrawer.getNetworkNameForAccount(buySell.crypto),
       );
       await app.modularDrawer.selectFirstAccountIfAsked();
-      await app.buySell.handleBuyFlow(buySell, paymentMethod);
+      await app.buySell.handleBuyFlow({ buySell, paymentMethod });
     });
   });
 }
@@ -127,16 +127,16 @@ export function runNavigateToBuyFromAssetPageTest(
     tags.forEach(tag => $Tag(tag));
     test(`[${buySell.crypto.currency.testLabel}] - Buy entry point from asset page`, async () => {
       await app.portfolio.goToSpecificAsset(buySell.crypto.currency.name);
-      await app.assetAccountsPage.waitForAccountPageToLoad(
-        buySell.crypto.currency.name,
-        buySell.crypto.currency.id,
-      );
+      await app.assetAccountsPage.waitForAccountPageToLoad({
+        assetName: buySell.crypto.currency.name,
+        currencyId: buySell.crypto.currency.id,
+      });
       await app.assetAccountsPage.tapOnAssetQuickActionButton("buy");
       await app.modularDrawer.selectNetworkIfAsked(
         app.modularDrawer.getNetworkNameForAccount(buySell.crypto),
       );
       await app.modularDrawer.selectFirstAccountIfAsked();
-      await app.buySell.handleBuyFlow(buySell, paymentMethod);
+      await app.buySell.handleBuyFlow({ buySell, paymentMethod });
     });
   });
 }
@@ -162,7 +162,7 @@ export function runSellFlowTest(
     tags.forEach(tag => $Tag(tag));
     test(`[${buySell.crypto.currency.testLabel}] - Sell`, async () => {
       await app.buySell.openViaDeeplink(buySell.operation);
-      await app.buySell.handleSellFlow(buySell, paymentMethod, provider);
+      await app.buySell.handleSellFlow({ buySell, paymentMethod, provider });
     });
   });
 }
@@ -187,7 +187,7 @@ export function runQueryParametersTest(
     tags.forEach(tag => $Tag(tag));
     test(`[${buySell.crypto.currency.testLabel}] - Buy and sell query parameters`, async () => {
       await app.buySell.openViaDeeplink(buySell.operation);
-      await app.buySell.handleBuyFlow(buySell, paymentMethod, true);
+      await app.buySell.handleBuyFlow({ buySell, paymentMethod, skipQuickAmountVerify: true });
     });
   });
 }

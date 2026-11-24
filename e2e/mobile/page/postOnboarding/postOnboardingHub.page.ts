@@ -1,6 +1,11 @@
 import { Step } from "jest-allure2-reporter/api";
 import { byId } from "@e2e/helpers/elements/native";
 
+type ActionCompletedOptions = {
+  actionId: string;
+  completedLabel: string;
+};
+
 export default class PostOnboardingHubPage {
   private readonly onboardingWidget = byId("onboarding-widget");
   private readonly hubContainer = byId("post-onboarding-hub-container");
@@ -42,8 +47,9 @@ export default class PostOnboardingHubPage {
     await this.hubContainer.waitFullyVisible();
   }
 
-  @Step("Expect hub action {{0}} to be completed")
-  async expectActionCompleted(actionId: string, completedLabel: string): Promise<void> {
+  @Step("Expect hub action {{0.actionId}} to be completed")
+  async expectActionCompleted(options: ActionCompletedOptions): Promise<void> {
+    const { actionId, completedLabel } = options;
     await this.hubAction(actionId).waitFullyVisible();
     await this.hubActionDescription(actionId).expectText(completedLabel);
   }

@@ -1,7 +1,29 @@
 import assert from "node:assert/strict";
+import { execSync } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, it } from "node:test";
-import { classify, computeLegacyScore, formatReport, scoreEmoji } from "../legacy-score.ts";
+import {
+  classify,
+  computeLegacyScore,
+  formatReport,
+  isScoredAuthor,
+  legacyFolder,
+  legacyGrowthRows,
+  parseAllowlist,
+  scoreEmoji,
+  type AllowlistEntry,
+} from "../legacy-score.ts";
 import { legacyHeavyPr } from "./legacy-score-fixtures.ts";
+
+const allowlist: AllowlistEntry[] = [
+  {
+    path: "libs/ledger-live-common/src/account-data/full-sync/",
+    reason: "transitional",
+    target: "features/platform/account-sync",
+    ticket: "LIVE-38772",
+  },
+];
 
 describe("classify", () => {
   it("counts the new layers per package", () => {
@@ -38,7 +60,7 @@ describe("classify", () => {
     );
   });
 
-  it("ignores app composition, coin modules, tooling and the allowlist", () => {
+  it("ignores app composition, coin modules, tooling and developer features", () => {
     for (const path of [
       "apps/ledger-live-mobile/src/navigation/Root.tsx",
       "apps/ledger-live-mobile/src/families/evm/a.tsx",
@@ -46,20 +68,49 @@ describe("classify", () => {
       "apps/ledger-live-mobile/src/state-manager/configureStore.ts",
       "libs/live-e2e-shared/src/speculos.ts",
       "libs/coin-tester-modules/coin-tester-evm/src/a.ts",
-      "libs/ledger-live-common/src/account-data/coin-module/createCoinModuleHost.ts",
+      "apps/ledger-live-desktop/src/mvvm/features/DevTools/a.tsx",
+      "apps/ledger-live-mobile/src/mvvm/features/DevTools/a.tsx",
+      "apps/ledger-live-desktop/src/mvvm/features/GlobalDialogs/a.tsx",
       "apps/ledger-live-desktop/src/main/index.ts",
       "apps/ledger-live-desktop/src/renderer/init.tsx",
       "apps/ledger-live-desktop/src/renderer/live-common-setup-renderer.ts",
       "apps/ledger-live-desktop/src/renderer/families/evm/a.tsx",
       "apps/wallet-cli/src/a.ts",
       "libs/coin-modules/coin-evm/src/a.ts",
-      "libs/ledger-live-common/src/account-data/full-sync/balance.ts",
       "tools/danger/legacy-score.ts",
       "support/jest/index.ts",
       "devtools/shell/src/a.tsx",
     ]) {
       assert.equal(classify(path), null, path);
     }
+  });
+
+  it("keeps counting a dialogs mount point outside desktop", () => {
+    assert.equal(
+      classify("apps/ledger-live-mobile/src/mvvm/features/GlobalDialogs/a.tsx")?.area,
+      "legacy",
+    );
+  });
+
+  it("sets aside the injected allowlist", () => {
+    const path = "libs/ledger-live-common/src/account-data/full-sync/balance.ts";
+    assert.equal(classify(path)?.area, "legacy");
+    assert.deepEqual(classify(path, allowlist), {
+      area: "allowlisted",
+      label: "libs/ledger-live-common/src/account-data/full-sync/",
+      ticket: "LIVE-38772",
+    });
+  });
+
+  it("matches allowlist files exactly and folders at a slash boundary", () => {
+    const entries: AllowlistEntry[] = [
+      { ...allowlist[0], path: "libs/example/src/view.ts" },
+      { ...allowlist[0], path: "libs/example/src/feature" },
+    ];
+    assert.equal(classify("libs/example/src/view.ts", entries)?.area, "allowlisted");
+    assert.equal(classify("libs/example/src/view.tsx", entries)?.area, "legacy");
+    assert.equal(classify("libs/example/src/feature/a.ts", entries)?.area, "allowlisted");
+    assert.equal(classify("libs/example/src/feature-other/a.ts", entries)?.area, "legacy");
   });
 
   it("ignores tests, declarations and non TypeScript files", () => {
@@ -75,7 +126,6 @@ describe("classify", () => {
       "features/flow/pay-card-details/src/components/More/fixtures.ts",
       "domain/entity/account-descriptor/src/test-fixtures.ts",
       "domain/api/account-data/src/testing.ts",
-      "libs/ledger-wallet-framework/src/test-helpers/bridge-integration-suite.ts",
       "apps/ledger-live-desktop/src/mvvm/features/X/hooks/testHelpers/renderHookWithStore.tsx",
       "apps/ledger-live-mobile/src/mvvm/features/Portfolio/utils/recoverTestHelpers.ts",
       "libs/live-dmk-desktop/tests.setup.ts",
@@ -187,6 +237,25 @@ describe("computeLegacyScore", () => {
     assert.equal(computeLegacyScore(files, () => undefined).newLines, 10);
   });
 
+  it("lists allowlisted lines without counting them", () => {
+    const files = [
+      { filename: "features/flow/a/src/a.ts", additions: 60, deletions: 0 },
+      {
+        filename: "libs/ledger-live-common/src/account-data/full-sync/a.ts",
+        additions: 500,
+        deletions: 0,
+      },
+    ];
+    const report = computeLegacyScore(files, undefined, allowlist);
+    assert.equal(report.legacyGrowth, 0);
+    assert.equal(report.score, 1);
+    assert.match(
+      formatReport(report),
+      /allowlisted \| `libs\/ledger-live-common\/src\/account-data\/full-sync\/` \(\[LIVE-38772\]\(https:\/\/ledgerhq\.atlassian\.net\/browse\/LIVE-38772\)\) \| \+500/,
+    );
+    assert.equal(computeLegacyScore(files).score, 60 / 560);
+  });
+
   it("thanks only net removals from legacy areas", () => {
     const rewrite = [{ filename: "libs/live-wallet/src/a.ts", additions: 1200, deletions: 1100 }];
     assert.equal(computeLegacyScore(rewrite).legacyRemoved, 0);
@@ -209,11 +278,120 @@ describe("computeLegacyScore", () => {
   });
 });
 
+describe("legacyFolder", () => {
+  it("suggests the narrowest folder holding the added legacy files", () => {
+    const files = [
+      { filename: "libs/ledger-live-common/src/exchange/swap/a.ts", additions: 10, deletions: 0 },
+      { filename: "libs/ledger-live-common/src/exchange/sell/b.ts", additions: 5, deletions: 0 },
+      { filename: "libs/ledger-live-common/src/other/c.ts", additions: 0, deletions: 9 },
+      { filename: "features/flow/a/src/a.ts", additions: 50, deletions: 0 },
+    ];
+    assert.equal(legacyFolder(files), "libs/ledger-live-common/src/exchange/");
+  });
+
+  it("ignores legacy areas that shrank", () => {
+    const files = [
+      { filename: "libs/a/src/x/a.ts", additions: 300, deletions: 0 },
+      { filename: "libs/b/src/b.ts", additions: 100, deletions: 200 },
+    ];
+    assert.equal(legacyFolder(files), "libs/a/src/x/");
+  });
+
+  it("has no suggestion without added legacy files", () => {
+    assert.equal(
+      legacyFolder([{ filename: "features/flow/a/src/a.ts", additions: 5, deletions: 0 }]),
+      undefined,
+    );
+  });
+
+  it("suggests the destination folder of a file moved into legacy", () => {
+    const files = [
+      {
+        filename: "libs/example/src/feature/a.ts",
+        previous_filename: "shared/example/src/a.ts",
+        additions: 0,
+        deletions: 0,
+      },
+    ];
+    const report = computeLegacyScore(files, () => 100);
+    assert.equal(report.legacyGrowth, 100);
+    assert.equal(report.suggestedFolder, "libs/example/src/feature/");
+  });
+});
+
+describe("legacyGrowthRows", () => {
+  it("lists only the legacy areas that grew, by their net growth", () => {
+    const report = computeLegacyScore([
+      { filename: "libs/A/src/a.ts", additions: 300, deletions: 0 },
+      { filename: "libs/B/src/b.ts", additions: 100, deletions: 200 },
+    ]);
+    assert.equal(legacyGrowthRows(report), "`libs/A` +300");
+  });
+});
+
 describe("scoreEmoji", () => {
   it("uses the 20% and 80% thresholds", () => {
     assert.equal(scoreEmoji(0.19), "🔴");
     assert.equal(scoreEmoji(0.2), "🟡");
     assert.equal(scoreEmoji(0.8), "🟡");
     assert.equal(scoreEmoji(0.81), "🟢");
+  });
+});
+
+describe("parseAllowlist", () => {
+  const exists = (path: string) => path !== "libs/gone/";
+  const entry = {
+    path: "libs/ledger-live-common/src/account-data/full-sync/",
+    reason: "transitional",
+    target: "features/platform/account-sync",
+    ticket: "LIVE-38772",
+  };
+
+  it("accepts a complete entry", () => {
+    assert.deepEqual(parseAllowlist([entry], exists), { entries: [entry], errors: [] });
+  });
+
+  it("rejects an entry with a missing or empty field", () => {
+    const { entries, errors } = parseAllowlist(
+      [{ ...entry, reason: " ", target: undefined }],
+      exists,
+    );
+    assert.deepEqual(entries, []);
+    assert.deepEqual(errors, [
+      "`libs/ledger-live-common/src/account-data/full-sync/` has no `reason`",
+      "`libs/ledger-live-common/src/account-data/full-sync/` has no `target`",
+    ]);
+  });
+
+  it("rejects a ticket that is not a LIVE key", () => {
+    const { errors } = parseAllowlist([{ ...entry, ticket: "JIRA-1" }], exists);
+    assert.match(errors[0], /ticket `JIRA-1` that is not a LIVE-<number> key/);
+  });
+
+  it("rejects a path missing from the repository", () => {
+    const { errors } = parseAllowlist([{ ...entry, path: "libs/gone/" }], exists);
+    assert.deepEqual(errors, ["`libs/gone/` does not exist in the repository"]);
+  });
+
+  it("rejects a file that is not an array", () => {
+    assert.equal(parseAllowlist({}, exists).errors.length, 1);
+  });
+
+  it("keeps the committed allowlist valid", () => {
+    const root = execSync("git rev-parse --show-toplevel", { encoding: "utf8" }).trim();
+    const raw = JSON.parse(readFileSync(join(root, "tools/danger/legacy-allowlist.json"), "utf8"));
+    const { entries, errors } = parseAllowlist(raw, path => existsSync(join(root, path)));
+    assert.deepEqual(errors, []);
+    assert.ok(entries.length > 0);
+  });
+});
+
+describe("isScoredAuthor", () => {
+  it("scores AI agent bots", () => {
+    assert.equal(isScoredAuthor("koda-apps[bot]"), true);
+  });
+
+  it("skips dependency bumps", () => {
+    assert.equal(isScoredAuthor("live-github-bot[bot]"), false);
   });
 });

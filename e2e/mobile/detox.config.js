@@ -13,6 +13,9 @@ const parseRetries = value => {
   return raw && Number.isInteger(parsed) && parsed >= 0 ? parsed : DEFAULT_RETRIES;
 };
 
+// DetoxSync deadlocks when polled for status mid-action: https://github.com/wix/Detox/issues/4966
+const iosSession = { debugSynchronization: 0 };
+
 /** @type {Detox.DetoxConfig} */
 module.exports = {
   testRunner: {
@@ -131,19 +134,23 @@ module.exports = {
     "ios.sim.debug": {
       device: "simulator",
       app: "ios.debug",
+      session: iosSession,
       // artifacts: { https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#artifacts-configuration },
     },
     "ios.sim.staging": {
       device: "simulator",
       app: "ios.staging",
+      session: iosSession,
     },
     "ios.sim.release": {
       device: "simulator",
       app: "ios.release",
+      session: iosSession,
     },
     "ios.sim.prerelease": {
       device: "simulator",
       app: "ios.prerelease",
+      session: iosSession,
     },
     "android.emu.debug": {
       device: "emulator",

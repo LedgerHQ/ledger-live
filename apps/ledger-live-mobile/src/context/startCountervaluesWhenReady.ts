@@ -1,17 +1,19 @@
 import type { Store } from "redux";
 import type { CounterValuesStateRaw } from "@domain/entity-market-countervalues";
+import { selectAppAvailabilitySettled } from "@features/flow-app-availability";
 import { startCountervaluesSync } from "@features/platform-market-countervalues";
 import { selectRemoteFlagsReady, type WithFeatureFlags } from "@shared/feature-flags";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 
 /**
- * Starts the countervalues loop when the app is let through `WaitForAppReady`: currencies hydrated
- * and remote flags ready, or after a second at most. The settings read the flags and LiveConfig, so
- * they are first computed once those are in place. The OFAC check that gate also waits on plays no
- * part in countervalues.
+ * Starts the countervalues loop when the app is let through `WaitForAppReady`: currencies hydrated,
+ * remote flags ready and the OFAC check settled, or after a second at most. The settings read the
+ * flags and LiveConfig, so they are first computed once those are in place. Waiting for the OFAC
+ * check keeps the loop's first response from delaying the OFAC answer, and so the gate, on the JS
+ * thread.
  *
  * @param store
- * The app store: read for the remote flags, then dispatched the start to.
+ * The app store: read for the remote flags and the OFAC check, then dispatched the start to.
  * @param savedState
  * The countervalues restored from disk, handed to the loop's first start.
  * @param currenciesHydrated
@@ -29,12 +31,12 @@ export function startCountervaluesWhenReady(
 }
 
 /**
- * Resolves once the currencies are hydrated and the remote flags ready, or after `MAX_WAIT_MS`,
- * whichever comes first. The one wait owns its timer and its store subscription, and releases both
- * as soon as it settles.
+ * Resolves once the currencies are hydrated, the remote flags ready and the OFAC check settled, or
+ * after `MAX_WAIT_MS`, whichever comes first. The one wait owns its timer and its store
+ * subscription, and releases both as soon as it settles.
  *
  * @param store
- * The app store, read for the remote flags.
+ * The app store, read for the remote flags and the OFAC check.
  * @param currenciesHydrated
  * Settles once the currencies are hydrated. A rejection counts as settled.
  */
@@ -51,7 +53,14 @@ function whenAppReady(
       resolve();
     };
     const check = () => {
-      if (areCurrenciesHydrated && selectRemoteFlagsReady(store.getState())) settle();
+      const state = store.getState();
+      if (
+        areCurrenciesHydrated &&
+        selectRemoteFlagsReady(state) &&
+        selectAppAvailabilitySettled(state)
+      ) {
+        settle();
+      }
     };
     const onCurrenciesHydrated = () => {
       areCurrenciesHydrated = true;

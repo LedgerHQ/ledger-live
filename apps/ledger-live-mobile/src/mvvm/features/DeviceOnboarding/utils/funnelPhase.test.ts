@@ -37,6 +37,10 @@ describe("phaseOf", () => {
     expect(phaseOf("deviceSetup.pin")).toBe("synchronizing");
   });
 
+  it("should show the firmware update held back until setup on the checks screen", () => {
+    expect(phaseOf("postSetupFirmware.firmwareUpdateOffered", false)).toBe("checks");
+  });
+
   it("should keep a seeded sync exit on the checks screen", () => {
     expect(phaseOf("syncOffer", true)).toBe("checks");
     expect(phaseOf("done", true)).toBe("checks");
@@ -57,6 +61,13 @@ describe("phaseOf", () => {
     expect(phaseOf("readingState", false, true)).toBe("synchronizing");
     expect(phaseOf("readingState", null, true)).toBe("synchronizing");
   });
+
+  it.each(["awaitingSessionAfterFirmwareUpdate", "readingState", "routing"])(
+    "should resume the checks of a device set up in this run returning from its held-back update in %s",
+    state => {
+      expect(phaseOf(state, false, true, true)).toBe("resumingChecks");
+    },
+  );
 
   it("should not resume the checks outside the waiting states", () => {
     expect(phaseOf("deviceLocked", true, true)).toBe("synchronizing");

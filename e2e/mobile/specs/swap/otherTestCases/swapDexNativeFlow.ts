@@ -49,14 +49,14 @@ export function runSwapDexNativeFlow(
       }
       const swap = new Swap(fromAccount, toAccount, amountToSwap.toString(), provider);
       await app.speculos.enableBlindSigningOnNanoS();
-      await ensureTokenApproval(fromAccount, provider, amountToSwap.toString());
+      await ensureTokenApproval({ fromAccount, provider, minAmount: amountToSwap.toString() });
 
-      await performSwapUntilQuoteSelectionStep(
-        swap.accountToDebit,
-        swap.accountToCredit,
-        amountToSwap.toString(),
-        true,
-      );
+      await performSwapUntilQuoteSelectionStep({
+        accountToDebit: swap.accountToDebit,
+        accountToCredit: swap.accountToCredit,
+        amount: amountToSwap.toString(),
+        continueToQuotes: true,
+      });
 
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
       await app.swapLiveApp.checkQuoteCardCtaPresence(provider.uiName);

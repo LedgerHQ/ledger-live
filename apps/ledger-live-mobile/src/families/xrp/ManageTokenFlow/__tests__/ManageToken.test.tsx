@@ -120,13 +120,13 @@ describe("XRP Manage assets", () => {
     expect(screen.getByText("Activated")).toBeVisible();
   });
 
-  it("shows Edit and Delete disabled on an IOU card", async () => {
+  it("shows Edit disabled and Delete enabled on an IOU card", async () => {
     renderManageToken(XRP_ACCOUNT_WITH_TOKEN);
 
     const editButton = await screen.findByTestId(EDIT_BUTTON);
 
     expect(editButton).toBeDisabled();
-    expect(screen.getByTestId(DELETE_BUTTON)).toBeDisabled();
+    expect(screen.getByTestId(DELETE_BUTTON)).toBeEnabled();
   });
 
   it("lists an MPT token with Delete only, without limit, rippling or Edit", async () => {
@@ -137,7 +137,7 @@ describe("XRP Manage assets", () => {
     expect(tokenType).toBeVisible();
     expect(screen.queryByText("Rippling")).toBeNull();
     expect(screen.queryByTestId(`xrp-manage-asset-edit-${xrpMptToken.id}`)).toBeNull();
-    expect(screen.getByTestId(`xrp-manage-asset-delete-${xrpMptToken.id}`)).toBeDisabled();
+    expect(screen.getByTestId(`xrp-manage-asset-delete-${xrpMptToken.id}`)).toBeEnabled();
   });
 
   it("leaves out a removed token and shows the empty state", async () => {

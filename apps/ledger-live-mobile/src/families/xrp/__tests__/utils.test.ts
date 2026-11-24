@@ -1,12 +1,22 @@
+import type { AccountBridge } from "@ledgerhq/types-live";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
+import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import {
   XRP_ACCOUNT,
   XRP_ACCOUNT_WITH_TOKEN,
+  XRP_IOU_REMOVAL,
   XRP_IOU_TOKEN_ACCOUNT,
   XRP_MPT_TOKEN_ACCOUNT,
   XRP_REMOVED_TOKEN_ACCOUNT,
 } from "../__mocks__/account.mock";
-import { formatIssuerFee, getManageableTokenAccounts } from "../utils";
+import { makeMockAccountBridge } from "../__mocks__/bridge.mock";
+import { xrpIouAsset, xrpIouToken } from "../__mocks__/currency.mock";
+import {
+  formatIssuerFee,
+  getDeleteBlocker,
+  getManageableTokenAccounts,
+  makeOptOutTransaction,
+} from "../utils";
 
 jest.mock("@ledgerhq/live-common/families/xrp/config", () => {
   return {
@@ -62,5 +72,37 @@ describe("formatIssuerFee", () => {
 
   it("keeps the 7 decimals of an IOU fee", () => {
     expect(formatIssuerFee("0.0000001", "en")).toBe("0.0000001%");
+  });
+});
+
+describe("getDeleteBlocker", () => {
+  it("allows the delete of a held token", () => {
+    expect(getDeleteBlocker(XRP_ACCOUNT_WITH_TOKEN, XRP_IOU_TOKEN_ACCOUNT)).toBeUndefined();
+  });
+
+  it("blocks the delete while a removal of the token is pending", () => {
+    const account = { ...XRP_ACCOUNT_WITH_TOKEN, pendingOperations: [XRP_IOU_REMOVAL] };
+
+    expect(getDeleteBlocker(account, XRP_IOU_TOKEN_ACCOUNT)).toBe("pending");
+  });
+
+  it("blocks the delete of a frozen token", () => {
+    const frozen = {
+      ...XRP_IOU_TOKEN_ACCOUNT,
+      xrpResources: { ...XRP_IOU_TOKEN_ACCOUNT.xrpResources, isLocked: true },
+    };
+
+    expect(getDeleteBlocker(XRP_ACCOUNT_WITH_TOKEN, frozen)).toBe("frozen");
+  });
+});
+
+describe("makeOptOutTransaction", () => {
+  it("builds an opt-out of the token", () => {
+    const bridge = makeMockAccountBridge() as unknown as AccountBridge<Transaction>;
+
+    expect(makeOptOutTransaction(bridge, XRP_ACCOUNT, xrpIouToken)).toMatchObject({
+      mode: "optOut",
+      ...xrpIouAsset,
+    });
   });
 });

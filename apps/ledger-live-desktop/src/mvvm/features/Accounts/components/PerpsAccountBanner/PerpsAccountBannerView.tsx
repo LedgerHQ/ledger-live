@@ -14,7 +14,7 @@ export function PerpsAccountBannerView({ isVisible, onOpenPerps }: Props) {
 
   return (
     <Banner
-      className="mb-24 mt-24"
+      className="mb-24"
       appearance="info"
       title={t("perpsAccountBanner.title")}
       description={t("perpsAccountBanner.description")}

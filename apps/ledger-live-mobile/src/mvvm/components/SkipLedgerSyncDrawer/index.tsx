@@ -12,28 +12,36 @@ import { InformationFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { useTranslation } from "~/context/Locale";
 import { SeedOriginType } from "@ledgerhq/types-live";
+import type { TrackingProps } from "@features/platform-device-onboarding-analytics";
 
 const CONTENT_BOTTOM_SPACING = 24;
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
+  /** The user closed it (header or backdrop), not code. */
+  onClosePressed?: () => void;
   openSync: () => void;
   skipSync: () => void;
   seedConfiguration?: React.RefObject<SeedOriginType | undefined>;
+  trackingProps?: TrackingProps;
 };
 
 function SkipLedgerSyncDrawer({
   isOpen,
   handleClose,
+  onClosePressed,
   openSync,
   skipSync,
   seedConfiguration,
+  trackingProps,
 }: Props) {
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={handleClose}
+      onHeaderClosePressed={onClosePressed}
+      onBackdropPress={onClosePressed}
       enableDynamicSizing
       contentHasBottomSpace
       testID="sync-onboarding-drawer-skip"
@@ -42,6 +50,7 @@ function SkipLedgerSyncDrawer({
         openSync={openSync}
         skipSync={skipSync}
         seedConfiguration={seedConfiguration}
+        trackingProps={trackingProps}
       />
     </QueuedBottomSheet>
   );
@@ -51,7 +60,8 @@ function SkipLedgerSyncDrawerContent({
   openSync,
   skipSync,
   seedConfiguration,
-}: Readonly<Omit<Props, "isOpen" | "handleClose">>) {
+  trackingProps,
+}: Readonly<Omit<Props, "isOpen" | "handleClose" | "onClosePressed">>) {
   const { t } = useTranslation();
   const bottomInset = useBottomSheetBottomInset();
 
@@ -62,6 +72,7 @@ function SkipLedgerSyncDrawerContent({
         category="Drawer : Skip Ledger sync confirmation"
         flow="onboarding"
         seedConfiguration={seedConfiguration?.current}
+        {...trackingProps}
       />
       <Box
         lx={{

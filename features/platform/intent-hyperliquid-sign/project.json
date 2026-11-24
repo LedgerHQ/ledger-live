@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-intent-hyperliquid-sign",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

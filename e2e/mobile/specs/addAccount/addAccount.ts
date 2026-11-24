@@ -31,18 +31,22 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
       await app.modularDrawer.selectCurrencyByTicker(currency.ticker);
       await app.modularDrawer.selectNetworkIfAsked(currency.name);
 
-      const accountId = await app.addAccount.addAccountAtIndex(
-        `${currency.name} 1`,
-        currency.id,
-        0,
-      );
+      const accountId = await app.addAccount.addAccountAtIndex({
+        currencyName: `${currency.name} 1`,
+        currencyId: currency.id,
+        index: 0,
+      });
 
       await app.addAccount.tapCloseAddAccountCta();
 
       await app.portfolio.goToAccounts(currency.id);
 
-      await app.assetAccountsPage.waitForAccountPageToLoad(currency.name, currency.id, true);
-      await app.common.goToAccount(accountId, currency.id);
+      await app.assetAccountsPage.waitForAccountPageToLoad({
+        assetName: currency.name,
+        currencyId: currency.id,
+        inCryptoAddressesList: true,
+      });
+      await app.common.goToAccount({ accountId, currencyId: currency.id });
       await app.account.expectAccountBalanceVisible(accountId);
       if (!PRUNED_HISTORY_CURRENCIES.has(currency.id)) {
         await app.account.expectOperationHistoryVisible(accountId);

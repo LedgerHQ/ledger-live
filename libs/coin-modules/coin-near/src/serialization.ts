@@ -13,9 +13,15 @@ export function toNearResourcesRaw(r: NearResources): NearResourcesRaw {
     historyRecheckSince,
     historyRecheckFingerprint,
     historyConfirmPending,
+    historyConfirmBoundary,
     poolListingPending,
     pendingCandidatePools,
     historyEmpty,
+    pendingCandidatesSince,
+    historyFailedSince,
+    historyUnsettledSince,
+    historyUnsettledHashes,
+    historyEmptySince,
   } = r;
   return {
     stakedBalance: stakedBalance.toString(),
@@ -32,11 +38,19 @@ export function toNearResourcesRaw(r: NearResources): NearResourcesRaw {
     ...(historyRecheckSince !== undefined && { historyRecheckSince }),
     ...(historyRecheckFingerprint !== undefined && { historyRecheckFingerprint }),
     ...(historyConfirmPending !== undefined && { historyConfirmPending }),
+    ...(historyConfirmBoundary !== undefined && { historyConfirmBoundary }),
     ...(poolListingPending !== undefined && { poolListingPending }),
     ...(pendingCandidatePools !== undefined && {
       pendingCandidatePools: [...pendingCandidatePools],
     }),
     ...(historyEmpty !== undefined && { historyEmpty }),
+    ...(pendingCandidatesSince !== undefined && { pendingCandidatesSince }),
+    ...(historyFailedSince !== undefined && { historyFailedSince }),
+    ...(historyUnsettledSince !== undefined && { historyUnsettledSince }),
+    ...(historyUnsettledHashes !== undefined && {
+      historyUnsettledHashes: [...historyUnsettledHashes],
+    }),
+    ...(historyEmptySince !== undefined && { historyEmptySince }),
   };
 }
 
@@ -51,9 +65,15 @@ export function fromNearResourcesRaw(r: NearResourcesRaw): NearResources {
     historyRecheckSince,
     historyRecheckFingerprint,
     historyConfirmPending,
+    historyConfirmBoundary,
     poolListingPending,
     pendingCandidatePools,
     historyEmpty,
+    pendingCandidatesSince,
+    historyFailedSince,
+    historyUnsettledSince,
+    historyUnsettledHashes,
+    historyEmptySince,
   } = r;
   return {
     stakedBalance: new BigNumber(stakedBalance),
@@ -70,11 +90,19 @@ export function fromNearResourcesRaw(r: NearResourcesRaw): NearResources {
     ...(historyRecheckSince !== undefined && { historyRecheckSince }),
     ...(historyRecheckFingerprint !== undefined && { historyRecheckFingerprint }),
     ...(historyConfirmPending !== undefined && { historyConfirmPending }),
+    ...(historyConfirmBoundary !== undefined && { historyConfirmBoundary }),
     ...(poolListingPending !== undefined && { poolListingPending }),
     ...(pendingCandidatePools !== undefined && {
       pendingCandidatePools: [...pendingCandidatePools],
     }),
     ...(historyEmpty !== undefined && { historyEmpty }),
+    ...(pendingCandidatesSince !== undefined && { pendingCandidatesSince }),
+    ...(historyFailedSince !== undefined && { historyFailedSince }),
+    ...(historyUnsettledSince !== undefined && { historyUnsettledSince }),
+    ...(historyUnsettledHashes !== undefined && {
+      historyUnsettledHashes: [...historyUnsettledHashes],
+    }),
+    ...(historyEmptySince !== undefined && { historyEmptySince }),
   };
 }
 

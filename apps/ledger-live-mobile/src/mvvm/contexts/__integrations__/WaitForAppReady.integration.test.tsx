@@ -2,28 +2,21 @@ import React from "react";
 import { Text } from "react-native";
 import { AppAvailability } from "@features/flow-app-availability";
 import { act, render, screen, waitFor } from "@tests/test-renderer";
-import { HttpResponse, http, server } from "@tests/server";
+import { http, server } from "@tests/server";
+import {
+  GEO_BLOCK_CHECK_URL,
+  blockedCheck,
+  failedCheck,
+  heldCheck,
+} from "@tests/handlers/geoBlockCheck";
 import { WaitForAppReady } from "../WaitForAppReady";
 
-const GEO_BLOCK_CHECK_URL = "https://countervalues.live.ledger.com/v3/markets";
 // WaitForAppReady lets the app through after this long, whatever the check.
 const GATE_CAP_MS = 1_000;
 
 const endpoints = {
   geoBlockCheck: jest.fn<Response | Promise<Response>, [{ request: Request }]>(),
 };
-
-const failedCheck = () => HttpResponse.text("", { status: 500 });
-const blockedCheck = () => HttpResponse.text("", { status: 451 });
-
-/** A check that answers with `respond` only once the test calls `answer`. */
-function heldCheck(respond: () => Response = failedCheck) {
-  let resolveResponse!: (response: Response) => void;
-  const response = new Promise<Response>(resolve => {
-    resolveResponse = resolve;
-  });
-  return { respond: () => response, answer: () => resolveResponse(respond()) };
-}
 
 // As in src/index.tsx: AppAvailability mounts only once WaitForAppReady lets the app through.
 function renderApp() {

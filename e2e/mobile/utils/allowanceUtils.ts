@@ -3,12 +3,19 @@ import { allure } from "jest-allure2-reporter/api";
 import { withTemporarySpeculos } from "@e2e/utils/speculosUtils";
 import { escapeHtml } from "@e2e/helpers/allure/allure-helper";
 
+type RevokeAllowanceOptions = {
+  account: TokenAccount;
+  spender: string;
+  label: string;
+};
+
 /**
  * Revokes `account`'s ERC-20 allowance for `spender`, then asserts it settled at zero.
  *
  * `label` names the spender in the failure message and the Allure entry.
  */
-export async function revokeAllowance(account: TokenAccount, spender: string, label: string) {
+export async function revokeAllowance(options: RevokeAllowanceOptions) {
+  const { account, spender, label } = options;
   if ((await getTokenAllowanceCommand(account, spender)) === "0") return;
 
   await withTemporarySpeculos(account.currency.speculosApp.name, async () => {

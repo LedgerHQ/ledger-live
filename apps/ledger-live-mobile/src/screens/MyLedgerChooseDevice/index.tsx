@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
@@ -31,9 +31,13 @@ type ChooseDeviceProps = Props & {
   isFocused: boolean;
 };
 
+const DEVICE_LIST_EDGES = ["left", "right"] as const;
+const PAIRING_FLOW_EDGES = ["left", "right", "bottom"] as const;
+
 const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   const action = useManagerDeviceAction({ resolveOsUpdates: true });
   const [device, setDevice] = useState<Device | null>();
+  const [isPairingFlowShown, setIsPairingFlowShown] = useState(false);
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const onAddDevice = useUnifiedAddDevice();
@@ -59,7 +63,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   const onSelect = (result: Result) => {
     setDevice(undefined);
 
-    if (result && "result" in result) {
+    if (result?.result) {
       // FIXME: nullable stuff not taken into account here?
       // `result` overrides values from `params` (prop `device` for ex)
       // @ts-expect-error Result has nullable fields
@@ -71,8 +75,15 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
     }
   };
 
+  // The modal stays closed while it holds the result of its last device action: clear it on hide.
+  const clearModalResultRef = useRef<(() => void) | undefined>(undefined);
+  const registerDeviceSelection = (clearResult: () => void) => {
+    clearModalResultRef.current = clearResult;
+  };
+
   const onModalHide = () => {
     setDevice(undefined);
+    clearModalResultRef.current?.();
   };
 
   const onError = (error: Error) => {
@@ -99,15 +110,23 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           headerRight: request.options.headerRight,
           title: "",
         });
+        setIsPairingFlowShown(true);
       } else {
         navigation.setOptions({ ...wallet40HeaderOptions, headerRight: () => null });
+        setIsPairingFlowShown(false);
       }
     },
     [navigation],
   );
 
   const Container = SafeAreaView;
-  const containerProps = useMemo(() => ({ isFlex: true, edges: ["left", "right"] as const }), []);
+  const containerProps = useMemo(
+    () => ({
+      isFlex: true,
+      edges: isPairingFlowShown ? PAIRING_FLOW_EDGES : DEVICE_LIST_EDGES,
+    }),
+    [isPairingFlowShown],
+  );
 
   if (!isFocused) return null;
 
@@ -134,6 +153,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         device={device}
         onResult={onSelect}
         onModalHide={onModalHide}
+        registerDeviceSelection={registerDeviceSelection}
         action={action}
         request={null}
         onError={onError}

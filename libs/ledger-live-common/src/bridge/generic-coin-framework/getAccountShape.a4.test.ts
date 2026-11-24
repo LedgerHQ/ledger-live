@@ -20,6 +20,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
 const mergeOpsMock = jest.fn();
 jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers", () => ({
   mergeOps: (...args: any[]) => mergeOpsMock(...args),
+  mergeOpsKeepingOlder: (...args: any[]) => mergeOpsMock(...args),
 }));
 
 const listOperationsMock = jest.fn();

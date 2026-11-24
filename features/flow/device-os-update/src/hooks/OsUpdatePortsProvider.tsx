@@ -1,7 +1,6 @@
-import React, { createContext, useContext, type ReactNode } from "react";
+import React, { useContext, type ReactNode } from "react";
 import type { OsUpdatePorts } from "../types/OsUpdatePorts";
-
-const OsUpdatePortsContext = createContext<OsUpdatePorts | null>(null);
+import { OsUpdatePortsContext } from "./OsUpdatePortsContext";
 
 export function OsUpdatePortsProvider({
   ports,

@@ -1,12 +1,21 @@
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 
-export async function retryUntilTimeout<T>(
-  fn: (signal: AbortSignal) => Promise<T>,
-  timeout = TIMEOUT.xxlarge,
-  interval = INTERVAL.short,
-  options: { cancellable?: boolean; messageOnError?: string } = {},
-): Promise<T> {
-  const cancellable = options.cancellable ?? false;
+type RetryUntilTimeoutOptions<T> = {
+  fn: (signal: AbortSignal) => Promise<T>;
+  timeout?: number;
+  interval?: number;
+  cancellable?: boolean;
+  messageOnError?: string;
+};
+
+export async function retryUntilTimeout<T>(options: RetryUntilTimeoutOptions<T>): Promise<T> {
+  const {
+    fn,
+    timeout = TIMEOUT.xxlarge,
+    interval = INTERVAL.short,
+    cancellable = false,
+    messageOnError,
+  } = options;
   const start = Date.now();
   const deadline = start + timeout;
   let lastError: unknown;
@@ -35,7 +44,7 @@ export async function retryUntilTimeout<T>(
         ? lastError
         : JSON.stringify(lastError);
 
-  const headline = options.messageOnError ?? `[retryUntilTimeout] Timed out after ${timeout}ms`;
+  const headline = messageOnError ?? `[retryUntilTimeout] Timed out after ${timeout}ms`;
   throw new Error([`❌ ${headline}`, `🧪 ${errMsg}`].join("\n"));
 }
 

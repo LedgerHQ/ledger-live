@@ -33,10 +33,10 @@ export function runVerifyAddressWarningTest(
       await app.account.goToAccountByName(account.accountName);
       await app.account.tapReceive();
       await app.receive.doNotVerifyAddress();
-      await app.receive.expectReceiveWarningPageIsDisplayed(
-        account.currency.ticker,
-        account.accountName,
-      );
+      await app.receive.expectReceiveWarningPageIsDisplayed({
+        tickerName: account.currency.ticker,
+        accountName: account.accountName,
+      });
       await app.receive.expectSendCurrencyTokensWarningMessage(expectedWarningMessage);
     });
   });
