@@ -123,6 +123,8 @@ jobs:
   # credentials never share a job with the code being built (README.md, "The cache"). Outputs
   # <platform>_sides: the sides each build matrix still builds, [] when nothing is left, empty when
   # this job did not run (then: every side).
+  # TEST BRANCH ONLY (checks #25342 in #25045's cache): keys under branch/, saved from this
+  # branch with the branch role, and #25344's AVD composite pinned until it is on develop.
   restore-cache:
     name: "Restore from the cache"
     needs: [plan]
@@ -203,7 +205,7 @@ jobs:
         id: keys
         if: ${{ needs.plan.outputs.cache_a == 'true' }}
         env:
-          PREFIX: develop/
+          PREFIX: branch/
           HARNESS: ${{ hashFiles('.github/workflows/test-mobile-startup-perf.yml', 'e2e/tooling/startup-perf/ci/*-build.mts', 'e2e/tooling/startup-perf/ci/step.mts', 'e2e/tooling/startup-perf/ci/toolchain.sh') }}
         run: |
           week=$(date -u +%G-W%V)
@@ -246,7 +248,7 @@ jobs:
         id: snapshot-keys
         if: ${{ needs.plan.outputs.snapshot_release != '' }}
         env:
-          PREFIX: develop/
+          PREFIX: branch/
           CODE_HASH: ${{ hashFiles('e2e/tooling/startup-perf/src/types.ts', 'e2e/tooling/startup-perf/src/snapshot/**', 'e2e/tooling/startup-perf/src/measure/storage.ts', 'e2e/tooling/startup-perf/src/measure/inject.ts', 'e2e/tooling/startup-perf/src/measure/exec.ts', 'e2e/tooling/startup-perf/src/measure/maestro.ts', 'e2e/tooling/startup-perf/src/measure/types.ts', 'e2e/tooling/startup-perf/src/measure/platforms/**', 'e2e/tooling/startup-perf/ci/step.mts', '!e2e/tooling/startup-perf/src/**/*.test.ts', 'e2e/tooling/startup-perf/flows/add-accounts.yaml', 'e2e/mobile/userdata/skip-onboarding.json', 'libs/live-e2e-shared/src/cli/e2e-cli.ts', 'libs/live-e2e-shared/src/cli/speculosSession.ts', 'libs/live-e2e-shared/src/speculosAddress.ts') }}
         run: |
           for platform in android ios; do
@@ -516,7 +518,7 @@ jobs:
     # Best-effort: what is not cached is made again by the next run.
     continue-on-error: true
     if: >-
-      !cancelled() && needs.plan.outputs.save == 'true' &&
+      !cancelled() &&
       (needs.restore-cache.outputs.android_save_a == 'true' && needs.build-android.result == 'success' ||
       needs.restore-cache.outputs.ios_save_a == 'true' && needs.build-ios.result == 'success' ||
       needs.restore-cache.outputs.android_save_snapshot == 'true' && needs.snapshot-android.result == 'success' ||
@@ -560,7 +562,7 @@ jobs:
 
       # Only develop's role writes develop/: on another run, the plan's save is false anyway.
       - name: Cache Android build A
-        if: ${{ needs.restore-cache.outputs.android_save_a == 'true' && needs.build-android.result == 'success' && steps.profile.outputs.cache-profile == 'develop' }}
+        if: ${{ needs.restore-cache.outputs.android_save_a == 'true' && needs.build-android.result == 'success' && steps.profile.outputs.cache-profile == 'branch' }}
         continue-on-error: true
         timeout-minutes: 25
         uses: ./e2e/tooling/startup-perf/ci/actions/save
@@ -571,7 +573,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Cache iOS build A
-        if: ${{ needs.restore-cache.outputs.ios_save_a == 'true' && needs.build-ios.result == 'success' && steps.profile.outputs.cache-profile == 'develop' }}
+        if: ${{ needs.restore-cache.outputs.ios_save_a == 'true' && needs.build-ios.result == 'success' && steps.profile.outputs.cache-profile == 'branch' }}
         continue-on-error: true
         timeout-minutes: 25
         uses: ./e2e/tooling/startup-perf/ci/actions/save
@@ -582,7 +584,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Cache the Android snapshot
-        if: ${{ needs.restore-cache.outputs.android_save_snapshot == 'true' && needs.snapshot-android.result == 'success' && steps.profile.outputs.cache-profile == 'develop' }}
+        if: ${{ needs.restore-cache.outputs.android_save_snapshot == 'true' && needs.snapshot-android.result == 'success' && steps.profile.outputs.cache-profile == 'branch' }}
         continue-on-error: true
         timeout-minutes: 10
         uses: ./e2e/tooling/startup-perf/ci/actions/save
@@ -593,7 +595,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Cache the iOS snapshot
-        if: ${{ needs.restore-cache.outputs.ios_save_snapshot == 'true' && needs.snapshot-ios.result == 'success' && steps.profile.outputs.cache-profile == 'develop' }}
+        if: ${{ needs.restore-cache.outputs.ios_save_snapshot == 'true' && needs.snapshot-ios.result == 'success' && steps.profile.outputs.cache-profile == 'branch' }}
         continue-on-error: true
         timeout-minutes: 10
         uses: ./e2e/tooling/startup-perf/ci/actions/save
@@ -659,7 +661,7 @@ jobs:
 
       - name: Prepare the AVD
         timeout-minutes: 40
-        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@4ec6885a30db21556edda855e40d5d9a3c811db7 # TEST BRANCH ONLY: #25344
         with:
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
@@ -852,7 +854,7 @@ jobs:
       - name: Prepare the AVD
         id: avd
         timeout-minutes: 40
-        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@4ec6885a30db21556edda855e40d5d9a3c811db7 # TEST BRANCH ONLY: #25344
         with:
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
