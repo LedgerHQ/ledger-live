@@ -10,8 +10,12 @@ scenario through the legacy bridge and the generic-adapter bridge.
 ## Run
 
 ```sh
+pnpm nx build @ledgerhq/coin-tester-filecoin
 COIN_SANDBOX_FILECOIN='--node lotus@1.39.1 --indexer filecoin-api-stub' pnpm coin:tester:filecoin start
 ```
+
+The tester reads coin-filecoin and the other published packages built, as CI does: the build step
+rebuilds them, so a run tests the current source rather than an older build.
 
 Requires coin-sandbox's server running (`deno task server` in its repository, port 8000;
 `COIN_SANDBOX_URL` points elsewhere) and a Docker daemon. `COIN_SANDBOX_FILECOIN` gives the
