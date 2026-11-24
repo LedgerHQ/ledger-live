@@ -2,6 +2,7 @@ import { cryptoAssetsApi } from "@domain/api-currency-token";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { calApi } from "@shared/api-services";
 import { dismissAccountAnalyticsIntroduction } from "@features/flow-account-detail-analytics-notice/state";
+import { markReceiveVerifyHintSeen } from "@features/flow-receive/state";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import storage from "LLM/storage";
 import { ConfigureDBSaveEffects, flushAll } from "../DBSave";
@@ -55,6 +56,19 @@ describe("ConfigureDBSaveEffects", () => {
         hasDismissed: true,
         isEligible: null,
       }),
+    );
+  });
+
+  it("persists the receive verify hint as seen so it survives a restart", async () => {
+    await storage.delete("receiveVerifyHint");
+    const { store } = renderHook(() => ConfigureDBSaveEffects());
+
+    act(() => {
+      store.dispatch(markReceiveVerifyHintSeen());
+    });
+
+    await waitFor(async () =>
+      expect(await storage.get("receiveVerifyHint")).toEqual({ hasSeenReceiveVerifyHint: true }),
     );
   });
 });

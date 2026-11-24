@@ -1,5 +1,5 @@
 // The job summary: B − A per platform, scenario and measure, and what the rows mean.
-import type { DebugBase, GateOptions, Row } from "./analyze.ts";
+import type { DebugBase, GateOptions, Reads, Row } from "./analyze.ts";
 import type { Side } from "../types.ts";
 
 export interface ReportOptions extends GateOptions {
@@ -36,6 +36,56 @@ function offBaseNote(r: Row, side: Side): string {
   return `**${r.platform} ${r.scenario}: ${launches} counted from another start than ${start} (e.g. the app found no process start) and ${fate}.**`;
 }
 
+export const screenMismatchText = ({ screenMismatches, screenChecks }: Reads): string =>
+  `the Debug screen showed another App startup time than the device log on ${screenMismatches} of the ${screenChecks} launches read both ways`;
+
+function readNotes({ platform, scenario, reads }: Row): string[] {
+  const where = `${platform} ${scenario}`;
+  const notes: string[] = [];
+  if (reads.noLogLine.length) {
+    notes.push(
+      `**${where}: build ${reads.noLogLine.join(" and ")} wrote no startup lines to the device log (built before #24576?), so from then on both builds were read from the Debug screen.**`,
+    );
+  }
+  const fallbacks = reads.fallbacks.A + reads.fallbacks.B;
+  if (fallbacks) {
+    const unreadable = reads.unreadable.A + reads.unreadable.B;
+    const missing = {
+      A: reads.fallbacks.A - reads.unreadable.A,
+      B: reads.fallbacks.B - reads.unreadable.B,
+    };
+    const causes = [
+      fallbacks > unreadable ? `missing (A: ${missing.A}, B: ${missing.B})` : "",
+      unreadable ? `unreadable (A: ${reads.unreadable.A}, B: ${reads.unreadable.B})` : "",
+    ];
+    notes.push(
+      `**${where}: ${fallbacks} of the ${reads.fromLog + fallbacks} launches read from the Debug screen, their device log lines ${causes.filter(Boolean).join(" or ")}.**`,
+    );
+  }
+  if (reads.unevenPairs) {
+    notes.push(
+      `**${where}: ${reads.unevenPairs} pair(s) left out, as only one of their launches followed a read of the Debug screen (on iOS, ~280 ms slower).**`,
+    );
+  }
+  if (reads.screenMismatches) {
+    notes.push(`**${where}: ${screenMismatchText(reads)}.**`);
+  } else if (reads.screenChecks) {
+    notes.push(
+      `${where}: the Debug screen showed the device log's App startup time on the ${reads.screenChecks} launches read both ways.`,
+    );
+  } else if (reads.fromLog) {
+    notes.push(
+      `**${where}: no launch was read both from the device log and on the Debug screen, so the device log was not checked against it.**`,
+    );
+  }
+  if (reads.screenChecks && reads.uncheckedBuilds.length) {
+    notes.push(
+      `**${where}: no launch of build ${reads.uncheckedBuilds.join(" and ")} was read both from the device log and on the Debug screen, so its device log was not checked against it.**`,
+    );
+  }
+  return notes;
+}
+
 const fmt = (v: number | null | undefined) =>
   typeof v === "number" && Number.isFinite(v) ? String(Math.round(v)) : "–";
 const signed = (v: number | null | undefined) => {
@@ -69,7 +119,7 @@ export function toMarkdown(
   }
   lines.push(
     "",
-    "- **Debug screen**: Settings > Debug > Performance > App startup time. Builds count it from the first JS import (4.26–4.27) or from the app process start (LIVE-40286 on).",
+    "- **Debug screen**: Settings > Debug > Performance > App startup time, which the app also writes to the device log as soon as the startup is over: the measurement reads it there, and on the screen when its lines are missing or unreadable. Builds count it from the first JS import (4.26–4.27) or from the app process start (LIVE-40286 on).",
     "- **With native start**: the same end, counted from the start of the app process (the emulator's or the host's kernel) whatever the build's Debug value counts from, so builds of every version compare. It equals the Debug value of builds that count from the process start (within about 20 ms).",
     "",
     "B − A is the Hodges–Lehmann median of the paired differences, after removing the device bias: how much slower the second emulator or simulator is than the first, measured thanks to the halfway swap.",
@@ -85,6 +135,7 @@ export function toMarkdown(
       .flatMap(r =>
         SIDES.filter(side => r.offBaseLaunches[side] > 0).map(side => offBaseNote(r, side)),
       ),
+    ...rows.filter(r => r.measure.startsWith("Debug screen")).flatMap(readNotes),
     "",
   );
   return lines.filter((l, i) => l !== "" || lines[i - 1] !== "").join("\n");

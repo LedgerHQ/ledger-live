@@ -30,7 +30,10 @@ export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], t
       await app.receive.selectVerifyAddress();
       const displayedAddress = await app.receive.getFreshAddressDisplayed();
       await app.speculos.expectValidAddressDevice(account, displayedAddress);
-      await app.receive.expectReceivePageIsDisplayed(account.currency.ticker, account.accountName);
+      await app.receive.expectReceivePageIsDisplayed({
+        tickerName: account.currency.ticker,
+        accountName: account.accountName,
+      });
       await app.receive.expectAddressIsCorrect(displayedAddress);
     });
   });

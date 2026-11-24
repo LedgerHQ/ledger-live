@@ -59,6 +59,32 @@ export const FF_BORROW_DESKTOP = {
   },
 } satisfies PartialFeatures;
 
+const PERPS_LIVE_APP_STG_MANIFEST_ID = "perps-live-app-stg";
+const PERPS_LIVE_APP_MANIFEST_ID =
+  process.env.PERPS_LIVE_APP_MANIFEST_ID || PERPS_LIVE_APP_STG_MANIFEST_ID;
+export const IS_PERPS_LIVE_APP_STAGING =
+  PERPS_LIVE_APP_MANIFEST_ID === PERPS_LIVE_APP_STG_MANIFEST_ID;
+
+export const FF_PERPS_DESKTOP = {
+  ptxPerpsLiveApp: {
+    enabled: true,
+    params: { manifest_id: PERPS_LIVE_APP_MANIFEST_ID },
+  },
+  currencyHypercore: { enabled: true },
+} satisfies PartialFeatures;
+
+// TODO: staging only; pick manifest by build type in setup-e2e-env.
+const PREDICTIONS_LIVE_APP_MANIFEST_ID =
+  process.env.PREDICTIONS_LIVE_APP_MANIFEST_ID || "predictions-live-app-stg";
+
+export const FF_PREDICTIONS_DESKTOP = {
+  entryPointsServices: { enabled: true, params: { services: ["predictions"] } },
+  ptxPredictionsLiveAppDesktop: {
+    enabled: true,
+    params: { manifest_id: PREDICTIONS_LIVE_APP_MANIFEST_ID },
+  },
+} satisfies PartialFeatures;
+
 export const FF_EARN_V2_DESKTOP = {
   ...(useLocalEarnManifest && {
     ptxEarnLiveApp: {

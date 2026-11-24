@@ -1,7 +1,26 @@
-import { resetDevnet, topup } from "./yaci";
+import { resetDevnet, spawnYaci, topup } from "./yaci";
+
+const mockUpOne = jest.fn();
 
 // yaci.ts tears the devnet down on process exit; keep that from touching a real container.
-jest.mock("docker-compose", () => ({ down: jest.fn().mockResolvedValue({}) }));
+jest.mock("docker-compose", () => ({
+  down: jest.fn().mockResolvedValue({}),
+  upOne: (...args: unknown[]) => mockUpOne(...args),
+}));
+
+type ExecFileCallback = (error: Error | null, stdout: string, stderr: string) => void;
+const mockExecFile = jest.fn();
+jest.mock("child_process", () => ({
+  ...jest.requireActual("child_process"),
+  execFile: (...args: unknown[]) => mockExecFile(...args),
+}));
+// Answers `docker compose logs` through execFile's trailing callback.
+const logsAnswer =
+  (error: Error | null, stdout: string, stderr = "") =>
+  (...args: unknown[]) =>
+    (args[args.length - 1] as ExecFileCallback)(error, stdout, stderr);
+
+const CONTAINER_LOGS = "Waiting for node socket file to be created ...";
 
 const ADDRESS = "addr_test1qrdevnet";
 const fetchMock = jest.fn();
@@ -20,9 +39,12 @@ const calls = (pathFragment: string) =>
 
 const realFetch = global.fetch;
 
+const warnings = () => jest.mocked(console.warn).mock.calls.map(([message]) => String(message));
+
 beforeEach(() => {
   fetchMock.mockReset();
   global.fetch = fetchMock;
+  mockExecFile.mockReset().mockImplementation(logsAnswer(null, CONTAINER_LOGS));
   jest.spyOn(console, "warn").mockImplementation(() => {});
 });
 
@@ -78,6 +100,119 @@ describe("resetDevnet", () => {
 
     expect(calls("/admin/devnet/reset")).toHaveLength(2);
   });
+
+  it("does not retry a reset the server rejected with 4xx", async () => {
+    fetchMock.mockResolvedValue(new Response("bad", { status: 400 }));
+
+    await expect(resetDevnet()).rejects.toThrow("400");
+    expect(calls("/admin/devnet/reset")).toHaveLength(1);
+    expect(calls("/blocks/latest")).toHaveLength(0);
+  });
+});
+
+// A reset can leave the new chain at height -1 for good; the block wait then needs fake time.
+describe("resetDevnet on a stuck chain", () => {
+  let resets = 0;
+
+  // The chain produces blocks from the `healthyFrom`-th reset on; the store always answers.
+  const chainHealthyFromReset = (healthyFrom: number, resetResponses: (() => Response)[] = []) =>
+    fetchMock.mockImplementation(async (url: string) => {
+      if (url.endsWith("/admin/devnet/reset")) {
+        resets++;
+        return resetResponses.shift()?.() ?? new Response("done");
+      }
+      return json({ height: resets >= healthyFrom ? 1 : -1 });
+    });
+
+  beforeEach(() => {
+    resets = 0;
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("resets again and logs the container output", async () => {
+    chainHealthyFromReset(2);
+
+    const done = resetDevnet();
+    await jest.advanceTimersByTimeAsync(30_000);
+    await expect(done).resolves.toBeUndefined();
+
+    expect(calls("/admin/devnet/reset")).toHaveLength(2);
+    expect(warnings()).toEqual([
+      expect.stringMatching(/produced no block[\s\S]*resetting again[\s\S]*node socket file/),
+    ]);
+  });
+
+  it("gives up after the second stuck reset, with the container logs", async () => {
+    chainHealthyFromReset(Infinity);
+
+    const assertion = expect(resetDevnet()).rejects.toThrow(
+      /produced no block .* reset attempt 2 \(last height: -1\)[\s\S]*node socket file/,
+    );
+    await jest.advanceTimersByTimeAsync(60_000);
+    await assertion;
+
+    expect(calls("/admin/devnet/reset")).toHaveLength(2);
+  });
+
+  it("does not reset a third time when a 5xx used the retry", async () => {
+    chainHealthyFromReset(Infinity, [() => new Response("boom", { status: 500 })]);
+
+    const assertion = expect(resetDevnet()).rejects.toThrow("produced no block");
+    await jest.advanceTimersByTimeAsync(60_000);
+    await assertion;
+
+    expect(calls("/admin/devnet/reset")).toHaveLength(2);
+  });
+
+  it("does not re-send the second reset after a transport error", async () => {
+    chainHealthyFromReset(Infinity, [
+      () => new Response("done"),
+      () => {
+        throw new TypeError("fetch failed");
+      },
+    ]);
+
+    const assertion = expect(resetDevnet()).rejects.toThrow("fetch failed");
+    await jest.advanceTimersByTimeAsync(60_000);
+    await assertion;
+
+    expect(calls("/admin/devnet/reset")).toHaveLength(2);
+  });
+
+  it("resets again when the container logs cannot be read", async () => {
+    mockExecFile.mockImplementation(
+      logsAnswer(new Error("Command failed: docker compose logs"), "", "no such service: yaci"),
+    );
+    chainHealthyFromReset(2);
+
+    const done = resetDevnet();
+    await jest.advanceTimersByTimeAsync(30_000);
+    await expect(done).resolves.toBeUndefined();
+
+    expect(calls("/admin/devnet/reset")).toHaveLength(2);
+    expect(warnings()).toEqual([
+      expect.stringMatching(/container logs unavailable: Command failed[\s\S]*no such service/),
+    ]);
+  });
+
+  it("bounds the logs command with a kill timeout", async () => {
+    chainHealthyFromReset(2);
+
+    const done = resetDevnet();
+    await jest.advanceTimersByTimeAsync(30_000);
+    await done;
+
+    expect(mockExecFile).toHaveBeenCalledWith(
+      "docker",
+      expect.arrayContaining(["compose", "logs", "yaci"]),
+      expect.objectContaining({ timeout: 10_000, killSignal: "SIGKILL" }),
+      expect.any(Function),
+    );
+  });
 });
 
 // The wall-clock bound is what releases a request whose AbortSignal is dropped (MSW passthrough), so
@@ -116,15 +251,17 @@ describe("deadlines", () => {
 
     expect(calls("/blocks/latest")).toHaveLength(2);
   });
+});
 
-  it("gives up when the reset chain never produces a block", async () => {
-    fetchMock.mockImplementation(async (url: string) =>
-      url.endsWith("/admin/devnet/reset") ? new Response("done") : json({ height: -1 }),
+describe("spawnYaci", () => {
+  it("reports both log streams of a devnet that does not become healthy", async () => {
+    jest.spyOn(console, "log").mockImplementation(() => {});
+    mockUpOne.mockRejectedValue({ exitCode: 1, out: "", err: "container yaci is unhealthy" });
+    mockExecFile.mockImplementation(logsAnswer(null, CONTAINER_LOGS, "store failed to start"));
+
+    await expect(spawnYaci()).rejects.toThrow(
+      /did not become healthy: exit code 1\ncontainer yaci is unhealthy\nstore failed to start\nWaiting for node socket/,
     );
-
-    const assertion = expect(resetDevnet()).rejects.toThrow("produced no block");
-    await jest.advanceTimersByTimeAsync(40_000);
-    await assertion;
   });
 });
 

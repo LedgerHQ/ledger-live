@@ -2,6 +2,11 @@ import { Step } from "jest-allure2-reporter/api";
 import { byId } from "@e2e/helpers/elements/native";
 import { currencyParam, openDeeplink } from "@e2e/helpers/commonHelpers";
 
+type ReceivePageHeaderOptions = {
+  tickerName: string;
+  accountName: string;
+};
+
 const TRON_NEW_ADDRESS_WARNING =
   "You first need to send at least 0.1 TRX to this address to activate it.";
 
@@ -75,29 +80,29 @@ export default class ReceivePage {
     await this.confirmDontVerifyButton.tap();
   }
 
-  @Step("Expect receive page header {{{0}}} for {{{1}}}")
-  private async expectReceivePageHeader(tickerName: string, accountName: string): Promise<void> {
+  @Step("Expect receive page header {{{0.tickerName}}} for {{{0.accountName}}}")
+  private async expectReceivePageHeader(options: ReceivePageHeaderOptions): Promise<void> {
+    const { tickerName, accountName } = options;
     await this.accountAddress.waitVisible();
     await this.confirmationTitle(tickerName).waitVisible();
     await this.confirmationTitle(tickerName).expectVisible();
     await this.accountName(accountName).expectVisible();
   }
 
-  @Step("Expect account receive page is displayed for {{{1}}} ({{{0}}})")
-  async expectReceivePageIsDisplayed(tickerName: string, accountName: string): Promise<void> {
+  @Step("Expect account receive page is displayed for {{{0.accountName}}} ({{{0.tickerName}}})")
+  async expectReceivePageIsDisplayed(options: ReceivePageHeaderOptions): Promise<void> {
+    const { tickerName, accountName } = options;
     const qrCodeContainer = this.qrCodeContainer(accountName);
 
-    await this.expectReceivePageHeader(tickerName, accountName);
+    await this.expectReceivePageHeader({ tickerName, accountName });
     await qrCodeContainer.scrollTo(this.scrollView);
     await qrCodeContainer.expectVisible();
   }
 
-  @Step("Expect receive warning page is displayed for {{{1}}} ({{{0}}})")
-  async expectReceiveWarningPageIsDisplayed(
-    tickerName: string,
-    accountName: string,
-  ): Promise<void> {
-    await this.expectReceivePageHeader(tickerName, accountName);
+  @Step("Expect receive warning page is displayed for {{{0.accountName}}} ({{{0.tickerName}}})")
+  async expectReceiveWarningPageIsDisplayed(options: ReceivePageHeaderOptions): Promise<void> {
+    const { tickerName, accountName } = options;
+    await this.expectReceivePageHeader({ tickerName, accountName });
   }
 
   @Step("Verify address {{{0}}}")

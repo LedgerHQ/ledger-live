@@ -1,5 +1,6 @@
 import React from "react";
 import { Text } from "react-native";
+import type { InitialState } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -76,13 +77,21 @@ type TestStackParamList = OnboardingNavigatorParamList & {
 
 const Stack = createNativeStackNavigator<TestStackParamList>();
 
-function renderPairNew(readOnlyModeEnabled = false) {
+function renderPairNew(
+  readOnlyModeEnabled = false,
+  params: Partial<OnboardingNavigatorParamList[ScreenName.OnboardingPairNew]> = {},
+  navigationInitialState?: InitialState,
+) {
   return render(
     <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
       <Stack.Screen
         name={ScreenName.OnboardingPairNew}
         component={PairNew}
-        initialParams={{ deviceModelId: DeviceModelId.stax, fromAccessExistingWallet: true }}
+        initialParams={{
+          deviceModelId: DeviceModelId.stax,
+          fromAccessExistingWallet: true,
+          ...params,
+        }}
       />
       <Stack.Screen name={ScreenName.OnboardingBluetoothInformation}>
         {() => <Placeholder label="bluetooth" />}
@@ -90,11 +99,19 @@ function renderPairNew(readOnlyModeEnabled = false) {
       <Stack.Screen name={NavigatorName.Base}>
         {() => <Placeholder label="portfolio" />}
       </Stack.Screen>
+      <Stack.Screen name={ScreenName.OnboardingWelcome}>
+        {() => <Placeholder label="welcome" />}
+      </Stack.Screen>
     </Stack.Navigator>,
     {
+      navigationInitialState,
       overrideInitialState: (state: State) => ({
         ...state,
-        settings: { ...state.settings, readOnlyModeEnabled },
+        settings: {
+          ...state.settings,
+          readOnlyModeEnabled,
+          hasBeenRedirectedToPostOnboarding: true,
+        },
       }),
     },
   );
@@ -116,6 +133,45 @@ describe("PairNew", () => {
     await user.press(screen.getByLabelText("select device"));
 
     expect(store.getState().settings.readOnlyModeEnabled).toBe(false);
+  });
+
+  it("should go back to the welcome screen it was opened on", async () => {
+    const { user } = renderPairNew(
+      false,
+      {},
+      {
+        index: 1,
+        routes: [
+          { name: ScreenName.OnboardingWelcome },
+          {
+            name: ScreenName.OnboardingPairNew,
+            params: { deviceModelId: DeviceModelId.nanoS, fromAccessExistingWallet: true },
+          },
+        ],
+      },
+    );
+
+    await user.press(screen.getByTestId("onboarding-pair-new-back"));
+
+    expect(await screen.findByText("welcome")).toBeVisible();
+  });
+
+  it("should keep the post-onboarding redirect of an existing wallet as it was", async () => {
+    const { user, store } = renderPairNew();
+
+    await pair(user);
+
+    expect(await screen.findByText("portfolio")).toBeVisible();
+    expect(store.getState().settings.hasBeenRedirectedToPostOnboarding).toBe(true);
+  });
+
+  it("should send a read-only user to post-onboarding after pairing", async () => {
+    const { user, store } = renderPairNew(true, { resetPostOnboardingRedirect: true });
+
+    await pair(user);
+
+    expect(await screen.findByText("portfolio")).toBeVisible();
+    expect(store.getState().settings.hasBeenRedirectedToPostOnboarding).toBe(false);
   });
 });
 

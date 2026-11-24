@@ -877,7 +877,7 @@ export class SwapPage extends WebViewAppPage {
 
   @step("Expect TwoStepApproval screen to be displayed")
   async expectTwoStepApprovalScreen() {
-    await this.verifyElementIsVisible(this.giveApprovalButton);
+    await this.verifyElementIsVisible(this.giveApprovalButton, APPROVAL_PROCESSING_TIMEOUT);
   }
 
   @step("Click Give Approval button")

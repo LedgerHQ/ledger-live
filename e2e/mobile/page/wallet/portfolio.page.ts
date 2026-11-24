@@ -11,9 +11,25 @@ const ASSET_ITEM_PREFIX = "assetItem-";
 const CRYPTOS_SECTION_ID = "PortfolioCryptosList";
 const STABLECOINS_SECTION_ID = "PortfolioStablecoinsList";
 
+type CheckSectionVisibleOptions = {
+  sectionId: string;
+  itemCount: number;
+  isEmptyPortfolio: boolean;
+};
+
 type AssetRowOptions = {
   /** Scroll the full stablecoin list to the row first. */
   inStablecoinList?: boolean;
+};
+
+type AssetRowCounterValueOptions = {
+  asset: string;
+  counterValue: string;
+};
+
+type CompareAccountsCountOptions = {
+  actual: number;
+  expected: number;
 };
 
 export default class PortfolioPage {
@@ -92,8 +108,9 @@ export default class PortfolioPage {
     await this.portfolioList.waitVisible(timeout);
   }
 
-  @Step("Expect asset row {{{0}}} to have the correct counter value {{{1}}}")
-  async expectAssetRowCounterValue(asset: string, counterValue: string) {
+  @Step("Expect asset row {{{0.asset}}} to have the correct counter value {{{0.counterValue}}}")
+  async expectAssetRowCounterValue(options: AssetRowCounterValueOptions) {
+    const { asset, counterValue } = options;
     await this.assetItemCountervalue(asset).scrollTo(this.accountsList);
     await this.assetItemCountervalue(asset).expectText(counterValue, { containing: true });
   }
@@ -190,9 +207,10 @@ export default class PortfolioPage {
     jestExpect(count).toBeGreaterThan(0);
   }
 
-  @Step("Compare Accounts Count {{{0}}} and {{{1}}}")
-  async compareAccountsCount(count1: number, count2: number) {
-    jestExpect(count1).toBe(count2);
+  @Step("Compare Accounts Count {{{0.actual}}} and {{{0.expected}}}")
+  async compareAccountsCount(options: CompareAccountsCountOptions) {
+    const { actual, expected } = options;
+    jestExpect(actual).toBe(expected);
   }
 
   @Step("Navigate asset Page {{{0}}}")
@@ -393,11 +411,8 @@ export default class PortfolioPage {
     await app.transferDrawer.tapBankTransfer();
   }
 
-  private async checkSectionVisible(
-    sectionId: string,
-    itemCount: number,
-    isEmptyPortfolio: boolean,
-  ) {
+  private async checkSectionVisible(options: CheckSectionVisibleOptions) {
+    const { sectionId, itemCount, isEmptyPortfolio } = options;
     const scrollView = isEmptyPortfolio ? this.emptyPortfolioList : this.accountsList;
     const lastItem = this.sectionAssetItem(sectionId, itemCount - 1);
     await lastItem.scrollTo(scrollView);
@@ -406,12 +421,20 @@ export default class PortfolioPage {
 
   @Step("Check cryptos list section is visible {{{0}}}")
   async checkCryptosListSectionVisible(itemCount: number, isEmptyPortfolio = false) {
-    await this.checkSectionVisible(CRYPTOS_SECTION_ID, itemCount, isEmptyPortfolio);
+    await this.checkSectionVisible({
+      sectionId: CRYPTOS_SECTION_ID,
+      itemCount,
+      isEmptyPortfolio,
+    });
   }
 
   @Step("Check stablecoins list section is visible {{{0}}}")
   async checkStablecoinsListSectionVisible(itemCount: number, isEmptyPortfolio = false) {
-    await this.checkSectionVisible(STABLECOINS_SECTION_ID, itemCount, isEmptyPortfolio);
+    await this.checkSectionVisible({
+      sectionId: STABLECOINS_SECTION_ID,
+      itemCount,
+      isEmptyPortfolio,
+    });
   }
 
   @Step("Check add account CTA is visible")

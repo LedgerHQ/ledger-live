@@ -9,6 +9,8 @@ export type SetupChecksProps = {
   /** The device failed the genuine check in this session: no retry can pass it. */
   deviceNotGenuine: boolean;
   update: { current: string; available: string } | null;
+  /** The user left the update screen without updating: the re-offered update asks to confirm the skip. */
+  confirmSkipUpdate: boolean;
   onStart: () => void;
   onRetry: () => void;
   onCloseSheet: () => void;
@@ -24,4 +26,5 @@ export type SetupScreenProps = {
   suspendSheets?: boolean;
   reportsRecoveryKey?: boolean;
   connection?: SessionReconnect | null;
+  firmwareDeclined?: boolean;
 };

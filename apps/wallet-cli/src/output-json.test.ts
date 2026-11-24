@@ -5,7 +5,7 @@ import { CliProcessExitError } from "./cli-process-exit-error";
 import { USDT_TOKEN_INFO, USDT_TOKEN_JSON } from "./testing/cal-fixtures";
 import { SwapBackendError } from "./commands/swap/swap-backend-error";
 import { AddressSchema } from "@domain/entity-account-descriptor";
-import { NetworkIdSchema } from "./shared/accountDescriptor";
+import { DerivationPathSchema, NetworkIdSchema } from "./shared/accountDescriptor";
 
 const XPUB = "xpub6BosfCnifzxcA";
 
@@ -661,7 +661,7 @@ describe("JsonCommandOutput", () => {
       type: "utxo",
       network: NetworkIdSchema.parse("bitcoin"),
       key: XPUB,
-      path: "m/84h/0h/0h",
+      path: DerivationPathSchema.parse("m/84h/0h/0h"),
     } as const;
     const out = createCommandOutput("json", {
       command: "account discover",

@@ -9,6 +9,7 @@ const DAI_TICKER = Currency.POL_DAI.ticker;
 const USDT_TICKER = Currency.ETH_USDT.ticker;
 const USDT_ASSET_NAME = Currency.ETH_USDT.name;
 const POLYGON_DAI_ASSET_NAME = Currency.POL_DAI.name;
+const POLYGON_ACCOUNT_NAME = "Polygon 1";
 
 const DAI_ASSET_NAME = Currency.POL_DAI.aggregatedName!;
 const USDT_MARKET_ID = Currency.ETH_USDT.market!.id;
@@ -20,13 +21,19 @@ const POLYGON_DAI_TOKEN_ID = "polygon/erc20/(pos)_dai_stablecoin";
 
 // Read from the loaded userdata fixture so the ids always match the app's real
 // account ids, without hardcoding seed-derived addresses.
-const ETHEREUM_ACCOUNT_ID = getFixtureAccountId(WALLET_40_STABLECOINS_FIXTURE, Currency.ETH.id);
-const POLYGON_ACCOUNT_ID = getFixtureAccountId(WALLET_40_STABLECOINS_FIXTURE, Currency.POL.id);
-const POLYGON_DAI_ACCOUNT_ID = getFixtureTokenAccountId(
-  WALLET_40_STABLECOINS_FIXTURE,
-  Currency.POL.id,
-  POLYGON_DAI_TOKEN_ID,
-);
+const ETHEREUM_ACCOUNT_ID = getFixtureAccountId({
+  fixture: WALLET_40_STABLECOINS_FIXTURE,
+  currencyId: Currency.ETH.id,
+});
+const POLYGON_ACCOUNT_ID = getFixtureAccountId({
+  fixture: WALLET_40_STABLECOINS_FIXTURE,
+  currencyId: Currency.POL.id,
+});
+const POLYGON_DAI_ACCOUNT_ID = getFixtureTokenAccountId({
+  fixture: WALLET_40_STABLECOINS_FIXTURE,
+  parentCurrencyId: Currency.POL.id,
+  tokenId: POLYGON_DAI_TOKEN_ID,
+});
 
 // lazyOnboarding is forced off: leaving it on opened onboarding modals at startup that
 // broke this flow.
@@ -154,8 +161,7 @@ describe("Asset aggregation", () => {
     await ensureDaiAssetDetail();
     await app.assetDetail.openHoldingAddress(POLYGON_ACCOUNT_ID);
 
-    await app.account.waitAndVerifyAccountName(POLYGON_DAI_ASSET_NAME);
-    await app.account.expectAccountTitleVisible("POLYGON 1");
+    await app.account.waitAndVerifyTokenAccountName(POLYGON_DAI_ASSET_NAME, POLYGON_ACCOUNT_NAME);
     await app.account.expectAccountAddressLabel({
       accountId: POLYGON_DAI_ACCOUNT_ID,
       address: getAddressFromAccountId(POLYGON_DAI_ACCOUNT_ID),
@@ -175,10 +181,10 @@ describe("Asset aggregation", () => {
     await app.market.openViaDeeplink();
     await app.market.expectMarketScreenVisible();
     await app.market.filterStarredAssetsOnMarketScreen();
-    const isStarredAssetListed = await app.market.isMarketScreenItemVisible(
-      USDT_MARKET_ID,
-      USDT_MARKET_NAME,
-    );
+    const isStarredAssetListed = await app.market.isMarketScreenItemVisible({
+      marketId: USDT_MARKET_ID,
+      title: USDT_MARKET_NAME,
+    });
     expect(isStarredAssetListed).toBe(true);
   });
 });

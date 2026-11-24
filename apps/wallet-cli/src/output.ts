@@ -1333,7 +1333,7 @@ class JsonCommandOutput implements CommandOutput {
 
   async operations(items: Operation[], currencyId: string, nextCursor?: string): Promise<void> {
     const operations = await this._jsonFmt.operations(items, currencyId, this._ctx.account ?? "");
-    this._writeNdjson(this._envelope({ operations, nextCursor }));
+    this._writeNdjson(this._envelope({ operations, nextCursor: nextCursor ?? null }));
   }
 
   address(addr: Address, verified: boolean): void {

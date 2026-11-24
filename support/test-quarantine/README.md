@@ -67,7 +67,7 @@ frame before retrying, which is where the actual cause shows up.
 third-party nodes turns a real outage green. `coin-bitcoin` is safe keyed off `CI` alone
 because its integration tests live in a separate config (`jest.integ.config.js`) and are
 excluded from the unit one. Where a single config serves several suites — as
-`ledger-live-common` does for its unit, integration, weekly and bridge runs — gate on a flag
+`ledger-live-common` does for its unit, integration and weekly runs — gate on a flag
 that only the unit run sets (an entry in its `.ci.unit.env`) instead of on `CI`.
 
 Enabling retries is a real change to CI semantics: a flaky test starts passing the build and

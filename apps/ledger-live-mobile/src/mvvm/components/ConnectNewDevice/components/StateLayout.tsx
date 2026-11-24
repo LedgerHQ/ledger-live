@@ -42,7 +42,7 @@ export function StateLayout({
           testID={testID ? `${testID}-animation` : undefined}
         />
       </Box>
-      <Box lx={{ alignItems: "center", gap: "s8", paddingHorizontal: "s16" }}>
+      <Box lx={{ alignItems: "center", gap: "s8" }}>
         <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
           {title}
         </Text>
@@ -52,10 +52,14 @@ export function StateLayout({
           </Text>
         ) : null}
       </Box>
-      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={styles.contentContainer}
+        alwaysBounceVertical={false}
+      >
         {children}
       </ScrollView>
-      {footer ? <Box lx={{ paddingHorizontal: "s16", paddingBottom: "s24" }}>{footer}</Box> : null}
+      {footer ? <Box lx={{ paddingBottom: "s24" }}>{footer}</Box> : null}
     </Box>
   );
 }
@@ -64,5 +68,5 @@ const styles = StyleSheet.create({
   // 200 comes from Figma: no size token matches it.
   illustration: { height: 200 },
   content: { flex: 1 },
-  contentContainer: { paddingHorizontal: 16, paddingBottom: 16 },
+  contentContainer: { paddingBottom: 16 },
 });

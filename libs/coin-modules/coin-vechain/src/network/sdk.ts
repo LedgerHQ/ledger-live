@@ -13,6 +13,7 @@ import {
   mapTokenTransfersToOperations,
   padAddress,
   VIP180_TRANSFER_TOPIC,
+  type ReadFees,
 } from "../common-logic";
 import { getNodeUrl, type VechainCurrencyConfig } from "../config";
 
@@ -56,6 +57,7 @@ const fetchRangeOfOperations = async (
   addr: string,
   startAt: number,
   stopAt: number,
+  readFees?: ReadFees,
 ): Promise<Operation[]> => {
   const query: VetTxsQuery = {
     range: {
@@ -73,7 +75,7 @@ const fetchRangeOfOperations = async (
     data: JSON.stringify(query),
   });
 
-  return mapVetTransfersToOperations(config, data, accountId, addr);
+  return mapVetTransfersToOperations(config, data, accountId, addr, readFees);
 };
 
 /**
@@ -91,6 +93,7 @@ const fetchRangeOfTokenOperations = async (
   tokenAddr: string,
   startAt: number,
   stopAt: number,
+  readFees?: ReadFees,
 ): Promise<Operation[]> => {
   const paddedAddress = padAddress(addr);
 
@@ -121,7 +124,7 @@ const fetchRangeOfTokenOperations = async (
     data: JSON.stringify(query),
   });
 
-  return mapTokenTransfersToOperations(config, data, accountId, addr);
+  return mapTokenTransfersToOperations(config, data, accountId, addr, readFees);
 };
 
 /**
@@ -212,7 +215,7 @@ const getLogsWithPagination = async (
  * @param addr - The VET address
  * @param startAt
  * @param stopAt
- * @param fetchRangeOfLogs
+ * @param readFees - reads the fee of each transaction, one receipt request per log row by default
  * @returns an array of operations
  */
 export const getOperations = async (
@@ -221,9 +224,10 @@ export const getOperations = async (
   addr: string,
   startAt: number,
   stopAt: number,
+  readFees?: ReadFees,
 ): Promise<Operation[]> => {
   const fetchRange = async (from: number, to: number) =>
-    fetchRangeOfOperations(config, accountId, addr, from, to);
+    fetchRangeOfOperations(config, accountId, addr, from, to, readFees);
   return getLogsWithPagination(startAt, stopAt, fetchRange);
 };
 
@@ -235,6 +239,7 @@ export const getOperations = async (
  * @param tokenAddr - The token address (The VTHO token address is available from constants.ts)
  * @param startAt
  * @param stopAt
+ * @param readFees - reads the fee of each transaction, one receipt request per log row by default
  * @returns an array of operations
  */
 export const getTokenOperations = async (
@@ -244,9 +249,10 @@ export const getTokenOperations = async (
   tokenAddr: string,
   startAt: number,
   stopAt: number,
+  readFees?: ReadFees,
 ): Promise<Operation[]> => {
   const fetchRange = async (from: number, to: number) =>
-    fetchRangeOfTokenOperations(config, accountId, addr, tokenAddr, from, to);
+    fetchRangeOfTokenOperations(config, accountId, addr, tokenAddr, from, to, readFees);
   return getLogsWithPagination(startAt, stopAt, fetchRange);
 };
 

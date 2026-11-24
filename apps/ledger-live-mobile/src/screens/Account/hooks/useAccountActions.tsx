@@ -6,6 +6,7 @@ import {
   getAccountSpendableBalance,
   isSendDisabledForFamily,
   isReceiveDisabledForFamily,
+  isSwapDisabledForFamily,
 } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useSelector } from "~/context/hooks";
@@ -96,7 +97,10 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   const canBeSold = !!currency && isCurrencyAvailable(currency.id, "offRamp");
 
   const { data: currenciesAll } = useFetchCurrencyAll();
-  const availableOnSwap = currency && currenciesAll.includes(currency.id);
+  const availableOnSwap =
+    !!currency &&
+    !isSwapDisabledForFamily(mainAccount.currency.family) &&
+    currenciesAll.includes(currency.id);
   const { handleOpenSwap } = useOpenSwap({
     currency,
     sourceScreenName: route.name,

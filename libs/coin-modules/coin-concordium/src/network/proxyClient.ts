@@ -68,14 +68,18 @@ function getClient(config: ConcordiumCoinConfig, currencyId: string): ProxyClien
  * @param config - The Concordium coin configuration
  * @param currencyId - The Concordium currency ID
  * @param execute - Function to execute with the client
- * @param retries - Number of retries (default: 2)
+ * @param options.retries - Number of retries (default: 2)
+ * @param options.signal - Stops retrying and rejects with its reason once aborted
  * @returns Result of the execute function
  */
 export async function withClient<T>(
   config: ConcordiumCoinConfig,
   currencyId: string,
   execute: (client: ProxyClient) => Promise<T>,
-  retries = DEFAULT_RETRIES,
+  {
+    retries = DEFAULT_RETRIES,
+    signal,
+  }: { retries?: number; signal?: AbortSignal | undefined } = {},
 ): Promise<T> {
   const client = getClient(config, currencyId);
 
@@ -83,6 +87,7 @@ export async function withClient<T>(
     maxRetry: retries,
     interval: RETRY_DELAY,
     intervalMultiplicator: 1,
+    signal,
   });
 }
 
@@ -162,12 +167,17 @@ export function getAccountsByPublicKey(
   config: ConcordiumCoinConfig,
   currencyId: string,
   publicKey: string,
+  signal?: AbortSignal,
 ): Promise<PublicKeyAccountsResponse> {
-  return withClient(config, currencyId, async client =>
-    client.request<PublicKeyAccountsResponse>({
-      method: "GET",
-      url: `/v0/keyAccounts/${publicKey}`,
-    }),
+  return withClient(
+    config,
+    currencyId,
+    async client =>
+      client.request<PublicKeyAccountsResponse>({
+        method: "GET",
+        url: `/v0/keyAccounts/${publicKey}`,
+      }),
+    { signal },
   );
 }
 

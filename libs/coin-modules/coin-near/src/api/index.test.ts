@@ -1,4 +1,5 @@
 import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
+import { InvalidParameterError } from "@ledgerhq/coin-module-framework/errors";
 import { withDefaults } from "@ledgerhq/coin-module-framework/api/index";
 import { getBalance } from "../logic/getBalance";
 import { getBlock } from "../logic/getBlock";
@@ -99,15 +100,28 @@ describe("createApi", () => {
       expect(getValidators).toHaveBeenCalledWith(context, "cursor");
     });
 
-    it("forwards getBalance and rejects unsupported balance options", async () => {
+    it("forwards getBalance and its validator options", async () => {
       (getBalance as jest.Mock).mockResolvedValue([]);
 
       await api.getBalance(context, "sender.near");
-      expect(getBalance).toHaveBeenCalledWith(context, "sender.near");
+      expect(getBalance).toHaveBeenLastCalledWith(context, "sender.near", undefined);
 
-      await expect(
-        api.getBalance(context, "sender.near", { includeAssets: async () => true }),
-      ).rejects.toThrow("getBalance does not support the options parameter");
+      const options = { knownValidatorIds: ["pool.near"], listValidators: false };
+      await api.getBalance(context, "sender.near", options);
+      expect(getBalance).toHaveBeenLastCalledWith(context, "sender.near", options);
+    });
+
+    it.each([
+      ["includeAssets", { includeAssets: async () => true }],
+      ["knownAssets", { knownAssets: [] }],
+      ["scanAssetsMinHeight", { scanAssetsMinHeight: 0 }],
+    ])("rejects the %s balance option", async (_name, options) => {
+      (getBalance as jest.Mock).mockClear();
+
+      await expect(api.getBalance(context, "sender.near", options)).rejects.toThrow(
+        InvalidParameterError,
+      );
+      expect(getBalance).not.toHaveBeenCalled();
     });
 
     it("forwards the transaction lifecycle methods", async () => {

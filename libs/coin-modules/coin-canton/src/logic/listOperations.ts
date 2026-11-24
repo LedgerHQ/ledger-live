@@ -35,7 +35,7 @@ function assertInteger(name: string, value: number, min: number): void {
 }
 
 // The gateway's `next` is one past the first transaction it did not serve, so resuming at it skips that transaction.
-function resumeOffset(start: number, rows: OperationView[], next: number): number {
+export function resumeOffset(start: number, rows: OperationView[], next: number): number {
   if (next <= start) {
     throw new Error(`canton: gateway operations cursor ${next} does not advance past ${start}`);
   }

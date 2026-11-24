@@ -210,6 +210,40 @@ export type BridgeApi = {
   getHeldNativeAmount?: (position: StakingDelegation | StakingUnbonding) => BigNumber;
   balanceOptions?: BalanceOptions;
   /**
+   * When true, a sync that does not start from scratch reads the history only when the spendable
+   * balance changed, is zero, an operation is pending, or a previous read left a
+   * `account.historyRecheck`. Otherwise `getBalance` alone tells the account has not moved.
+   * Only for a family whose balance has a single native asset: a balance holding another asset
+   * falls back to the regular sync. The module's `getBalance` must accept `knownValidatorIds` and
+   * `listValidators` (both hints): the sync reads once without listing the validators, and again
+   * with the listing when the spendable balance changed or is zero, or the last history read failed.
+   */
+  syncsHistoryOnStateChange?: boolean;
+  /**
+   * The validators the account is known to hold positions with, for a family that also keeps them
+   * outside `account.stakingPositions` (for instance from another sync). Defaults to the delegates of
+   * the stored staking positions. Read only with `syncsHistoryOnStateChange`.
+   */
+  getKnownValidatorIds?: (account: Account) => string[];
+  /**
+   * The validator a synced operation called to open or fund a position, whatever its type. Defaults
+   * to the first recipient of a `STAKE` or `DELEGATE` operation. Read only with
+   * `syncsHistoryOnStateChange`: such a validator, when the positions lack it, is read on the next sync.
+   */
+  getStakingCallValidatorId?: (operation: LiveOperation) => string | undefined;
+  /**
+   * False for an operation the indexer returned before it recorded the transaction's outcome (so its
+   * fee and status are not final). The range is read again, for up to an hour, until none is left.
+   * Read only with `syncsHistoryOnStateChange`.
+   */
+  isOperationSettled?: (operation: LiveOperation) => boolean;
+  /**
+   * True for a new operation that may have moved funds into a pool the sync cannot name from it (a
+   * call relayed by another account): the next sync lists the pools once. Read only with
+   * `syncsHistoryOnStateChange`.
+   */
+  needsValidatorListing?: (operation: LiveOperation) => boolean;
+  /**
    * Optional hook called after operations are merged, allowing a chain bridge to
    * enrich the staking resources built from `getBalance` data (e.g. by fetching
    * redelegations from a REST API or reconstructing them from on-chain tx history

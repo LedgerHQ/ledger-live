@@ -34,6 +34,7 @@ export function OsUpdateFlowView({
     if (whatsNew) {
       return (
         <WhatsNewScreen
+          name={whatsNew.name}
           version={whatsNew.version}
           notes={whatsNew.notes}
           onOpenReleaseNotes={onOpenReleaseNotes}

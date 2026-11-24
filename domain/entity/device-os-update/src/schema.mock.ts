@@ -21,6 +21,7 @@ export function mockOsUpdate(overrides?: Partial<OsUpdate>): OsUpdate {
       id: 2,
       perso: "perso_11",
       hash: null,
+      name: "2.0.0",
       version: "2.0.0",
       bytes: null,
       firmware: "final-firmware",

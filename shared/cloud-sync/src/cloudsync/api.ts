@@ -1,6 +1,4 @@
 import { z } from "zod";
-import WS from "isomorphic-ws";
-import type { WebSocket } from "ws";
 import { Observable } from "rxjs";
 import { JWT, Trustchain } from "../trustchain-types";
 
@@ -160,7 +158,7 @@ export function getCloudSyncApi(apiBaseURL: string) {
     datatype: string,
   ): Observable<number> {
     const url = `${apiBaseURL.replace(/^http/, "ws")}/atomic/v1/${datatype}/notifications`;
-    const ws: WebSocket = new WS(url);
+    const ws = new WebSocket(url);
     return new Observable(observer => {
       function sendJwt() {
         getFreshJwt()

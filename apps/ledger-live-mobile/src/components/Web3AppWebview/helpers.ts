@@ -19,7 +19,9 @@ import type { AccountLike, Operation, Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useSelector } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { updateAccountWithUpdater } from "~/actions/accounts";
 import {
   useCallback,
   useEffect,
@@ -71,6 +73,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { WalletApiDeviceIntentSignRequest } from "LLM/features/WalletApiSignature/components/TransactionSignatureDrawer";
 import type { WalletApiDeviceIntentSignMessageRequest } from "LLM/features/WalletApiSignature/components/MessageSignatureDrawer";
 import { useDeviceIntentSignEnabled } from "LLM/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
+import { useWalletApiSignatureQueue } from "LLM/features/WalletApiSignature/hooks/useWalletApiSignatureQueue";
 import { AccountPublicKeyUnavailable } from "@ledgerhq/live-common/errors";
 import type { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSession";
 import {
@@ -145,22 +148,16 @@ export function useWebView(
   const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
 
-  // When the device-intent sign flow is enabled, `transaction.sign` surfaces the request
-  // here instead of navigating, so the Device Intent Executor can be mounted as a
-  // bottom-sheet drawer floating over the live app (see TransactionSignatureDrawer).
-  const [deviceIntentSignRequest, setDeviceIntentSignRequest] =
-    useState<WalletApiDeviceIntentSignRequest | null>(null);
-  const clearDeviceIntentSignRequest = useCallback(() => setDeviceIntentSignRequest(null), []);
-
-  // Same drawer treatment as `transaction.sign`, but for `message.sign`: the request is
-  // surfaced here so the Device Intent Executor can be mounted as a bottom-sheet drawer
-  // (see MessageSignatureDrawer) instead of navigating to the SignMessage stack.
-  const [deviceIntentSignMessageRequest, setDeviceIntentSignMessageRequest] =
-    useState<WalletApiDeviceIntentSignMessageRequest | null>(null);
-  const clearDeviceIntentSignMessageRequest = useCallback(
-    () => setDeviceIntentSignMessageRequest(null),
-    [],
-  );
+  // When the device-intent sign flow is enabled, `transaction.sign` and `message.sign` queue
+  // their request here instead of navigating, so the Device Intent Executor is mounted as a
+  // bottom-sheet drawer floating over the live app, one request at a time.
+  const {
+    currentSignature,
+    enqueueTransactionSignature,
+    enqueueMessageSignature,
+    closeCurrentSignature,
+    clearSignatures,
+  } = useWalletApiSignatureQueue();
   // Set on getPublicKey failure; the consuming component renders it as a native bottom modal.
   const [publicKeyUnavailableError, setPublicKeyUnavailableError] = useState<Error | null>(null);
   const clearPublicKeyUnavailableError = useCallback(() => setPublicKeyUnavailableError(null), []);
@@ -171,8 +168,8 @@ export function useWebView(
     manifest,
     bridgeSessionRef,
     onTransactionBroadcast: onWalletApiTransactionBroadcast,
-    requestDeviceIntentSign: setDeviceIntentSignRequest,
-    requestDeviceIntentSignMessage: setDeviceIntentSignMessageRequest,
+    requestDeviceIntentSign: enqueueTransactionSignature,
+    requestDeviceIntentSignMessage: enqueueMessageSignature,
     onPublicKeyUnavailable: setPublicKeyUnavailableError,
     onAccountRequestCancel,
     onAccountRequestSuccess,
@@ -201,13 +198,12 @@ export function useWebView(
   const { closeDrawer: closeModularDrawer, isOpen: isModularDrawerOpen } =
     useModularDrawerController();
   const closeLiveAppDrawers = useCallback(() => {
-    setDeviceIntentSignRequest(null);
-    setDeviceIntentSignMessageRequest(null);
+    clearSignatures();
     setPublicKeyUnavailableError(null);
     if (isModularDrawerOpen) {
       closeModularDrawer();
     }
-  }, [closeModularDrawer, isModularDrawerOpen]);
+  }, [clearSignatures, closeModularDrawer, isModularDrawerOpen]);
 
   const bridge = useWebviewBridgeSession(webviewRef, mainFrameUrl, closeLiveAppDrawers);
   useLayoutEffect(() => {
@@ -365,10 +361,8 @@ export function useWebView(
     webviewRef,
     noAccounts,
     isLoadingAccounts,
-    deviceIntentSignRequest,
-    clearDeviceIntentSignRequest,
-    deviceIntentSignMessageRequest,
-    clearDeviceIntentSignMessageRequest,
+    currentSignature,
+    closeCurrentSignature,
     publicKeyUnavailableError,
     clearPublicKeyUnavailableError,
   };
@@ -662,6 +656,7 @@ export function useUiHook({
   onAccountRequestSuccess,
 }: Props): UiHook {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   // The device of an exchange belongs to the session that started it: the next origin never gets it.
   const [exchangeDevice, setExchangeDevice] = useState<{
     device: Device;
@@ -863,7 +858,13 @@ export function useUiHook({
           onError,
         });
       },
-      "transaction.broadcast": () => {
+      "transaction.broadcast": (_account, _parentAccount, mainAccount, optimisticOperation) => {
+        dispatch(
+          updateAccountWithUpdater({
+            accountId: mainAccount.id,
+            updater: account => addPendingOperation(account, optimisticOperation),
+          }),
+        );
         onTransactionBroadcast?.();
       },
       "device.transport": ({ appName, onSuccess, onCancel }) => {
@@ -948,6 +949,7 @@ export function useUiHook({
       navigation,
       exchangeDevice,
       createDrawerConfiguration,
+      dispatch,
       onTransactionBroadcast,
       deviceIntentSignEnabled,
       requestDeviceIntentSign,

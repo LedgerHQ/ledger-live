@@ -1,0 +1,17 @@
+{
+  "name": "@ledgerhq/e2e-test-filter",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Resolves the E2E workflows' test_filter input into Playwright/Detox selections and shard counts",
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "node --test",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "lint": "oxlint ."
+  },
+  "devDependencies": {
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:"
+  }
+}

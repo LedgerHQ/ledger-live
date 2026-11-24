@@ -44,7 +44,6 @@
       "firstTimeLend": false,
       "swapProviders": [],
       "showClearCacheBanner": false,
-      "starredAccountIds": [],
       "hasPassword": false
     },
     "accounts": [
@@ -224,7 +223,7 @@
     "wallet": {
       "walletSyncState": { "data": null, "version": 0 },
       "nonImportedAccountInfos": [],
-      "accountsData": { "accountNames": [], "starredAccountIds": [] },
+      "accountsData": { "accountNames": [] },
       "recentAddresses": {
         "ethereum": [
           {

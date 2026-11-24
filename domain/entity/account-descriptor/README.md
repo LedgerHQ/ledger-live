@@ -36,7 +36,8 @@ mock:2:address:ethereum:0x0000000000000000000000000000000000000001:m/44h/60h/0h/
 | `computeAccountUUID` | uuid v5 of the canonical key; same on every device, carries no account key |
 | `NetworkIdSchema` / `NetworkId` | branded network id; parsed and deserialized descriptors carry it |
 | `AddressSchema` / `Address` | an address on a network, branded so analytics can refuse it |
-| `DerivationPathSchema` | a full BIP32 path, read with `h` hardened markers |
+| `DerivationPathSchema` | branded `DerivationPath`: a full BIP32 path, read with `h` hardened markers; a utxo descriptor path is one too, hardened only |
+| `toDescriptorPath` / `fromDescriptorPath` / `LegacyDerivationPathSchema` | the only bridges from and to the legacy path spelling (`44'/60'/0'/0/0`) that ledgerjs signers and derivation schemes read |
 | `toNetworkId` | a `NetworkId` from a string; throws `UnknownNetworkError` for an empty or malformed id |
 | `networkFromCurrencyId` / `currencyIdFromNetwork` | the only bridge between `NetworkId` and `CryptoCurrencyId` |
 
