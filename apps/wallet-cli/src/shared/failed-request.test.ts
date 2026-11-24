@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { DeviceSocketFail, WebsocketConnectionError } from "@ledgerhq/live-common/errors";
 import { failedRequestHint, findFailedRequest } from "./failed-request";
 
 const BALANCE_URL =
@@ -151,7 +152,86 @@ describe("findFailedRequest", () => {
     expect(findFailedRequest(undefined)).toBeUndefined();
   });
 
-  it("ignores a url field that is not an absolute http(s) URL", () => {
+  it("names the host of a WebSocket that could not connect, as the genuine check's scriptrunner", () => {
+    const socketError = new WebsocketConnectionError("connect failed", {
+      url: "wss://scriptrunner.api.live.ledger.com/update/genuine",
+    });
+    expect(findFailedRequest(socketError)).toEqual({
+      host: "scriptrunner.api.live.ledger.com",
+      status: undefined,
+    });
+  });
+
+  it("names no host for an HSM error on a WebSocket that did connect", () => {
+    const hsmError = new DeviceSocketFail("Invalid certificate", {
+      url: "wss://scriptrunner.api.live.ledger.com/update/genuine",
+    });
+    expect(findFailedRequest(hsmError)).toBeUndefined();
+  });
+
+  it("tells an axios timeout apart from a request that got no answer", () => {
+    const timeout = Object.assign(axiosErrorWithoutResponse(BALANCE_URL), {
+      code: "ECONNABORTED",
+    });
+    expect(findFailedRequest(timeout)).toEqual({
+      host: "explorers.api.live.ledger.com",
+      status: undefined,
+      noAnswerCause: { kind: "timeout", code: "ECONNABORTED" },
+    });
+  });
+
+  it("finds a timeout in the cause of an error that carries the url", () => {
+    const lookup = Object.assign(
+      new Error("CAL didn't answer the USDC ticker lookup: The operation timed out.", {
+        cause: new DOMException("The operation timed out.", "TimeoutError"),
+      }),
+      { url: "https://global.api.prd.ledger.com/v1/tokens" },
+    );
+    expect(findFailedRequest(lookup)?.noAnswerCause).toEqual({
+      kind: "timeout",
+      code: "TimeoutError",
+    });
+  });
+
+  it.each<[string, "timeout" | "untrusted-certificate" | undefined]>([
+    ["ETIMEDOUT", "timeout"],
+    ["ERR_TLS_HANDSHAKE_TIMEOUT", "timeout"],
+    ["CERT_HAS_EXPIRED", "untrusted-certificate"],
+    ["UNABLE_TO_VERIFY_LEAF_SIGNATURE", "untrusted-certificate"],
+    ["SELF_SIGNED_CERT_IN_CHAIN", "untrusted-certificate"],
+    ["ERR_TLS_CERT_ALTNAME_INVALID", "untrusted-certificate"],
+    ["ERR_TLS_INVALID_PROTOCOL_VERSION", undefined],
+    ["ECONNREFUSED", undefined],
+  ])("reads %s as a no-answer cause of %p", (code, kind) => {
+    const error = Object.assign(new Error(code), { code, url: BALANCE_URL });
+    expect(findFailedRequest(error)?.noAnswerCause?.kind).toBe(kind);
+  });
+
+  it("tells an untrusted certificate apart from a request that got no answer", () => {
+    const tlsError = Object.assign(new Error("self signed certificate"), {
+      code: "DEPTH_ZERO_SELF_SIGNED_CERT",
+      path: "https://earn.api.live.ledger.com/v1/yields",
+    });
+    expect(findFailedRequest(tlsError)).toEqual({
+      host: "earn.api.live.ledger.com",
+      status: undefined,
+      noAnswerCause: { kind: "untrusted-certificate", code: "DEPTH_ZERO_SELF_SIGNED_CERT" },
+    });
+  });
+
+  it("keeps the status of a host that answered, whatever code the error has", () => {
+    const answered = Object.assign(new Error("Gateway Timeout"), {
+      code: "ETIMEDOUT",
+      url: BALANCE_URL,
+      status: 504,
+    });
+    expect(findFailedRequest(answered)).toEqual({
+      host: "explorers.api.live.ledger.com",
+      status: 504,
+    });
+  });
+
+  it("ignores a url field that is not an absolute request URL", () => {
     expect(findFailedRequest(Object.assign(new Error("x"), { url: "/relative" }))).toBeUndefined();
   });
 
@@ -173,6 +253,28 @@ describe("failedRequestHint", () => {
   it("tells a sandboxed agent to allow a host whose request was refused", () => {
     expect(failedRequestHint({ host: "explorers.api.live.ledger.com", status: 403 })).toBe(
       "The request to explorers.api.live.ledger.com was refused (HTTP 403). If wallet-cli runs in a sandbox, allow explorers.api.live.ledger.com in its network allowlist.",
+    );
+  });
+
+  it("says a host did not answer in time, without asking to allow it", () => {
+    expect(
+      failedRequestHint({
+        host: "explorers.api.live.ledger.com",
+        status: undefined,
+        noAnswerCause: { kind: "timeout", code: "ECONNABORTED" },
+      }),
+    ).toBe("explorers.api.live.ledger.com did not answer in time (ECONNABORTED).");
+  });
+
+  it("says a host's certificate is not trusted, without asking to allow it", () => {
+    expect(
+      failedRequestHint({
+        host: "earn.api.live.ledger.com",
+        status: undefined,
+        noAnswerCause: { kind: "untrusted-certificate", code: "DEPTH_ZERO_SELF_SIGNED_CERT" },
+      }),
+    ).toBe(
+      "The TLS certificate of earn.api.live.ledger.com is not trusted (DEPTH_ZERO_SELF_SIGNED_CERT).",
     );
   });
 

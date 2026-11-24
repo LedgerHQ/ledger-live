@@ -264,15 +264,18 @@ describe("findTokensByTicker", () => {
     expect(findFailedRequest(error)).toEqual({ host: "global.api.prd.ledger.com", status });
   });
 
-  it("names no host when CAL is only slow, so the error asks for no allowlist change", async () => {
+  it("says a slow CAL did not answer in time instead of asking to allow it", async () => {
     respond = (): Response => {
       throw new DOMException("The operation timed out.", "TimeoutError");
     };
 
     const error = await findTokensByTicker("ethereum", "USDC").catch((e: unknown) => e);
 
-    expect(error).toBeInstanceOf(Error);
-    expect(findFailedRequest(error)).toBeUndefined();
+    expect(findFailedRequest(error)).toEqual({
+      host: "global.api.prd.ledger.com",
+      status: undefined,
+      noAnswerCause: { kind: "timeout", code: "TimeoutError" },
+    });
   });
 });
 
