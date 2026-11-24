@@ -42,7 +42,7 @@ export const ContentOverlay: ComponentType<HTMLAttributes<HTMLDivElement>> = sty
   position: "relative",
 })`
   z-index: 1;
-  background: rgba(0, 0, 0, 0.3);
+  background: linear-gradient(180deg, rgba(8, 27, 70, 0.62) 0%, rgba(5, 15, 43, 0.5) 100%);
 `;
 
 export const TopSection: ComponentType<HTMLAttributes<HTMLDivElement>> = styled(Flex).attrs({
