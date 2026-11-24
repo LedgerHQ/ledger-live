@@ -7,7 +7,6 @@ export * from "./lldChatbotSupport";
 export * from "./llCounterValueGranularitiesRates";
 export * from "./llNftEntryPoint";
 export * from "./lldModularDrawer";
-export * from "./lldNetworkBasedAddAccount";
 export * from "./lldRefreshMarketData";
 export * from "./llmChatbotSupport";
 export * from "./llmModularDrawer";

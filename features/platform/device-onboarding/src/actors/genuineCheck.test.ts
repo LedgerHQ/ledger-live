@@ -11,7 +11,7 @@ import {
 import { DeviceActionStoppedError } from "../device/deviceAction";
 import { isCatalogueUnreachable } from "../device/errors";
 import { createRetryPolicy } from "../retry";
-import { runActor, settle } from "../tests/actorHarness";
+import { runActor, settle } from "../__tests__/actorHarness";
 import { createFakeDeviceActionDmk, type FakeDeviceActionDmk } from "../tests/fakeDmk";
 import { genuineCheck, mapGenuineCheckFailure, type GenuineCheckEvent } from "./genuineCheck";
 

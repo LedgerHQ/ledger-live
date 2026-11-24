@@ -2,10 +2,11 @@ import {
   installEarnLifecycleHost,
   isEarnTxLifecycleMonitoringEnabled,
   setEarnTxLifecycleFlagReader,
+  setTxLifecycleBaseUrl,
   startDappLifecycleMonitoring,
 } from "./earnLifecycleHost";
 import { setStakeProgramAppsReader } from "./stakingApps";
-import { clearPendingTxLifecycle, setTxLifecycleBaseUrl } from "./txLifecycle";
+import { clearPendingTxLifecycle } from "./txLifecycle";
 
 describe("earn lifecycle host wiring", () => {
   let fetchSpy: jest.SpiedFunction<typeof fetch>;

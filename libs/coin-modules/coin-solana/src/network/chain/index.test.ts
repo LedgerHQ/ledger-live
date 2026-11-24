@@ -1,5 +1,7 @@
 import { NetworkError } from "../../errors";
 import { Config, getChainAPI } from ".";
+import { clearSharedTokenAccounts } from "./sharedTokenAccounts";
+import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import {
   ComputeBudgetInstruction,
   ComputeBudgetProgram,
@@ -245,6 +247,66 @@ describe("index", () => {
         )
         .map(ix => ComputeBudgetInstruction.decodeSetComputeUnitPrice(ix).microLamports);
       expect(prices).toEqual([0n]);
+    });
+
+    describe("token accounts by owner", () => {
+      const OWNER = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
+      const getParsedTokenAccountsByOwner = jest.fn();
+
+      beforeEach(() => {
+        clearSharedTokenAccounts();
+        getParsedTokenAccountsByOwner.mockResolvedValue({ context: { slot: 1 }, value: [] });
+        jest.mocked(Connection).mockImplementation(
+          () =>
+            ({
+              getParsedTokenAccountsByOwner,
+              sendRawTransaction: jest.fn().mockResolvedValue("sig"),
+              confirmTransaction: jest.fn().mockResolvedValue({ value: { err: null } }),
+            }) as unknown as Connection,
+        );
+      });
+
+      const programsRead = () =>
+        getParsedTokenAccountsByOwner.mock.calls.map(([, { programId }]) => programId.toBase58());
+
+      it("reads each token program once per sync, across ChainAPI instances", async () => {
+        // getBalance, the token account shapes and listOperations each build their own instance.
+        for (let i = 0; i < 3; i++) {
+          const api = getChainAPI(FAKE_CONFIG);
+          await Promise.all([
+            api.getParsedTokenAccountsByOwner(OWNER),
+            api.getParsedToken2022AccountsByOwner(OWNER),
+          ]);
+        }
+
+        expect(programsRead()).toEqual([
+          TOKEN_PROGRAM_ID.toBase58(),
+          TOKEN_2022_PROGRAM_ID.toBase58(),
+        ]);
+      });
+
+      it.each([
+        ["lands", jest.fn().mockResolvedValue("sig")],
+        ["fails", jest.fn().mockRejectedValue(new Error("rpc down"))],
+      ])("reads them again after a broadcast that %s", async (_outcome, sendRawTransaction) => {
+        jest.mocked(Connection).mockImplementation(
+          () =>
+            ({
+              getParsedTokenAccountsByOwner,
+              sendRawTransaction,
+              confirmTransaction: jest.fn().mockResolvedValue({ value: { err: null } }),
+            }) as unknown as Connection,
+        );
+        const api = getChainAPI(FAKE_CONFIG);
+        await api.getParsedTokenAccountsByOwner(OWNER);
+
+        await api
+          .sendRawTransaction(Buffer.alloc(0), { blockhash: "b", lastValidBlockHeight: 1 })
+          .catch(() => undefined);
+        await api.getParsedTokenAccountsByOwner(OWNER);
+
+        expect(getParsedTokenAccountsByOwner).toHaveBeenCalledTimes(2);
+      });
     });
 
     describe("getSignaturesForAddressBatch", () => {

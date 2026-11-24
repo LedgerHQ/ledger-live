@@ -55,7 +55,6 @@ const colors = {
   sliderGrey: "#F0EFF1",
   lightGraphite: "#fafafa",
   lightGrey: "#f9f9f9",
-  starYellow: "#FFD24A",
   orange: "#ffa726",
   positiveGreen: "rgba(102, 190, 84, 1)",
   greenPill: "#41ccb4",

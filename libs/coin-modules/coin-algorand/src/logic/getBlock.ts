@@ -11,6 +11,7 @@ import type {
   ExplorerInnerTransaction,
   ExplorerTransaction,
 } from "../network/types";
+import { toNoteMemo } from "./common";
 import { getBlockInfo } from "./getBlockInfo";
 
 const NATIVE_ASSET: AssetInfo = { type: "native" };
@@ -72,12 +73,24 @@ function toTransferOperations(tx: ExplorerInnerTransaction<ExplorerAmount>): Blo
     const source = assetTransfer.sender ?? tx.sender;
     const closeTo = assetTransfer["close-to"];
     const ledgerOpType = getOptInOutType(tx.sender, source, assetTransfer);
+    // Same memo as the listOperations OPT row of this transaction
+    const memo = toNoteMemo(tx.note);
     return [
       ...transfer(source, assetTransfer.receiver, asset, BigInt(assetTransfer.amount)),
       ...(closeTo
         ? transfer(source, closeTo, asset, BigInt(assetTransfer["close-amount"] ?? 0))
         : []),
-      ...(ledgerOpType ? [{ type: "other" as const, address: source, asset, ledgerOpType }] : []),
+      ...(ledgerOpType
+        ? [
+            {
+              type: "other" as const,
+              address: source,
+              asset,
+              ledgerOpType,
+              ...(memo ? { memo } : {}),
+            },
+          ]
+        : []),
     ];
   }
 
@@ -116,8 +129,8 @@ function toRewardOperations(tx: ExplorerInnerTransaction<ExplorerAmount>): Block
   const payment = tx["payment-transaction"];
   const assetTransfer = tx["asset-transfer-transaction"];
   const rewards: [string | undefined, ExplorerAmount][] = [
-    [tx.sender, tx["sender-rewards"]],
-    [payment?.receiver ?? assetTransfer?.receiver, tx["receiver-rewards"]],
+    [tx.sender, tx["sender-rewards"] ?? 0],
+    [payment?.receiver ?? assetTransfer?.receiver, tx["receiver-rewards"] ?? 0],
     [payment?.["close-remainder-to"] ?? assetTransfer?.["close-to"], tx["close-rewards"]],
   ];
 

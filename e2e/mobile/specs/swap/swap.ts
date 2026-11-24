@@ -54,14 +54,25 @@ export function runSwapTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`[${accountToDebit.currency.testLabel}-${accountToCredit.currency.testLabel}] - Swap`, async () => {
-      const minAmount = await app.swapLiveApp.getMinimumAmount(accountToDebit, accountToCredit);
+      const minAmount = await app.swapLiveApp.getMinimumAmount({
+        fromAccount: accountToDebit,
+        toAccount: accountToCredit,
+      });
       const swapAmount = minAmount ? truncateSwapAmount(minAmount) : minAmount;
       swap.amount = swapAmount;
 
-      await performSwapUntilQuoteSelectionStep(accountToDebit, accountToCredit, swapAmount);
+      await performSwapUntilQuoteSelectionStep({
+        accountToDebit,
+        accountToCredit,
+        amount: swapAmount,
+      });
 
       const provider = await app.swapLiveApp.selectExchange();
-      const approvalRequired = await isTokenApprovalExpected(accountToDebit, provider, swapAmount);
+      const approvalRequired = await isTokenApprovalExpected({
+        fromAccount: accountToDebit,
+        provider,
+        minAmount: swapAmount,
+      });
       await app.swapLiveApp.checkQuoteCardCtaPresence(provider.uiName);
       if (approvalRequired) {
         console.warn(

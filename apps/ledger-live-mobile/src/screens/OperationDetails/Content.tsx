@@ -10,13 +10,17 @@ import {
   useTheme,
 } from "@react-navigation/native";
 import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
-import { getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";
+import { getFeesUnit } from "@ledgerhq/live-common/account/index";
 import {
   getOperationAmountNumber,
   isConfirmedOperation,
   getOperationConfirmationDisplayableNumber,
 } from "@ledgerhq/live-common/operation";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import {
+  resolveFeeDisplay,
+  useOperationFeeCurrency,
+} from "@ledgerhq/live-common/bridge/generic-coin-framework/operationFee";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { NavigatorName, ScreenName } from "~/const";
@@ -159,17 +163,23 @@ export default function Content({
       ? specificOperationDetails.useFeesCurrency
       : undefined;
   const customFeesCurrency = useFeesCurrencyOverride?.(operation, mainAccount);
-  // null: the fee is in a currency not resolved yet, so it is not shown in another unit
-  const isFeeCurrencyUnresolved = customFeesCurrency === null;
-  const feeCurrency = customFeesCurrency ?? getFeesCurrency(mainAccount);
-  const feeUnit = getFeesUnit(feeCurrency);
+  const tokenFee = useOperationFeeCurrency(operation, mainAccount);
   const getDisplayFeeOverride =
     specificOperationDetails && "getDisplayFee" in specificOperationDetails
       ? specificOperationDetails.getDisplayFee
       : undefined;
-  const displayFee = operation.fee
-    ? (getDisplayFeeOverride?.(operation, mainAccount, feeCurrency) ?? operation.fee)
-    : operation.fee;
+  const {
+    currency: feeCurrency,
+    amount: displayFee,
+    isUnresolved: isFeeCurrencyUnresolved,
+  } = resolveFeeDisplay({
+    operation,
+    account: mainAccount,
+    familyCurrency: customFeesCurrency,
+    tokenFee,
+    getDisplayFee: getDisplayFeeOverride,
+  });
+  const feeUnit = getFeesUnit(feeCurrency);
 
   const { EditOperationPanel: SpecificEditOperationPanel = undefined } =
     byFamiliesEditOperationPanel[

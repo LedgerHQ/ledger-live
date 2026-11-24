@@ -1,6 +1,11 @@
 import { setCoinModuleCallObserver } from "@features/platform-coin-observability";
 import { setTransactionObserver } from "@ledgerhq/transaction-observability";
-import { coinModuleCallLogger, transactionBroadcastLogger } from "./datadog";
+import {
+  coinModuleCallLogger,
+  isDatadogEnabled,
+  scrubTrackedRequestUrls,
+  transactionBroadcastLogger,
+} from "./datadog";
 
 /**
  * Forwards coin-module calls and bridge-seam broadcast outcomes to Datadog logs. Registered at
@@ -9,3 +14,5 @@ import { coinModuleCallLogger, transactionBroadcastLogger } from "./datadog";
  */
 setCoinModuleCallObserver(coinModuleCallLogger);
 setTransactionObserver(transactionBroadcastLogger);
+
+if (isDatadogEnabled) scrubTrackedRequestUrls();

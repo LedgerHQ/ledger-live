@@ -4,6 +4,10 @@ import { useVerifyAddressExecutorViewModel } from "./useVerifyAddressExecutorVie
 
 type Props = Parameters<typeof useVerifyAddressExecutorViewModel>[0];
 
+/**
+ * Kept for the receive verify-address step, not wired yet (PayTab has its own copy).
+ * @public
+ */
 export function VerifyAddressExecutorLWM(props: Props): React.ReactElement | null {
   const executor = useVerifyAddressExecutorViewModel(props);
 

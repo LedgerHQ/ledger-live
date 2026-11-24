@@ -4,6 +4,11 @@ import { delay, escapeRegExp, isAndroid } from "@e2e/helpers/commonHelpers";
 import { byId, byIdWithDescendantText, byText } from "@e2e/helpers/elements/native";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 
+type TranslatedRowOptions = {
+  testId: string;
+  expectedText: string;
+};
+
 const REVAMPED_LOCK_GRACE_MS = INTERVAL.long;
 
 export default class SettingsGeneralPage {
@@ -76,8 +81,9 @@ export default class SettingsGeneralPage {
     await this.rowContaining(testId, pattern).expectVisible();
   }
 
-  @Step("Expect translated row {{{0}}} to be {{{1}}}")
-  async expectTranslatedRow(testId: string, expectedText: string) {
+  @Step("Expect translated row {{{0.testId}}} to be {{{0.expectedText}}}")
+  async expectTranslatedRow(options: TranslatedRowOptions) {
+    const { testId, expectedText } = options;
     await this.rowContaining(testId, new RegExp(escapeRegExp(expectedText), "i")).expectVisible();
   }
 

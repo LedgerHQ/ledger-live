@@ -103,13 +103,12 @@
       "seenDevices": [],
       "swapAcceptedProviderIds": [],
       "swapProviders": [],
-      "starredAccountIds": [],
       "hasPassword": false
     },
     "wallet": {
       "walletSyncState": { "data": null, "version": 0 },
       "nonImportedAccountInfos": [],
-      "accountsData": { "accountNames": [], "starredAccountIds": [] },
+      "accountsData": { "accountNames": [] },
       "recentAddresses": {}
     },
     "accounts": [

@@ -1,8 +1,10 @@
 import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
 import {
+  DerivationPathSchema,
   NetworkIdSchema,
   computeAccountUUID,
   networkFromCurrencyId,
+  toDescriptorPath,
   type AccountDescriptor,
 } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
@@ -17,7 +19,6 @@ import {
   UnsupportedDescriptorPathError,
   fromLegacyAccount,
   toLegacyAccount,
-  toLegacyPath,
   type LegacyAccountIdentity,
 } from "./accountDescriptor";
 import {
@@ -267,8 +268,6 @@ describe("round trip over every currency, derivation mode and index", () => {
   });
 });
 
-const toPath = (scheme: string) => `m/${scheme.replaceAll("'", "h")}`;
-
 describe("descriptor -> legacy -> descriptor over generated descriptors", () => {
   it.each(ACCOUNT_CURRENCY_IDS)("%s", currencyId => {
     const currency = getCryptoCurrencyById(currencyId);
@@ -286,7 +285,7 @@ describe("descriptor -> legacy -> descriptor over generated descriptors", () => 
           [1, 7],
         ]) {
           const pathOf = (opts: { node?: number; address?: number }) =>
-            toPath(runDerivationScheme(scheme, currency, { account: index, ...opts }));
+            toDescriptorPath(runDerivationScheme(scheme, currency, { account: index, ...opts }));
           const descriptor: AccountDescriptor = isUtxo
             ? {
                 purpose: "account",
@@ -294,7 +293,9 @@ describe("descriptor -> legacy -> descriptor over generated descriptors", () => 
                 type: "utxo",
                 network,
                 key: XPUB,
-                path: toPath(runAccountDerivationScheme(scheme, currency, { account: index })),
+                path: toDescriptorPath(
+                  runAccountDerivationScheme(scheme, currency, { account: index }),
+                ),
               }
             : {
                 purpose: "account",
@@ -492,7 +493,7 @@ describe("a descriptor of a public-key family keyed on its address", () => {
     type: "address",
     network: NetworkIdSchema.parse("ton"),
     key: address,
-    path: "m/44h/607h/0h/0h/0h/0h",
+    path: DerivationPathSchema.parse("m/44h/607h/0h/0h/0h/0h"),
   };
 
   it("is rejected, not read as a public key", async () => {
@@ -516,7 +517,7 @@ describe("toLegacyAccount", () => {
       type: "address",
       network: NetworkIdSchema.parse("ethereum"),
       key: ETH_ADDR,
-      path: "m/44H/60H/2H/0/0",
+      path: DerivationPathSchema.parse("m/44H/60H/2H/0/0"),
     });
     expect(back).toMatchObject({ derivationMode: "", index: 2 });
   });
@@ -529,7 +530,7 @@ describe("toLegacyAccount", () => {
         type: "address",
         network: NetworkIdSchema.parse("bitcoin"),
         key: BTC_ADDR,
-        path: "m/84h/0h/0h/0/0",
+        path: DerivationPathSchema.parse("m/84h/0h/0h/0/0"),
       }),
     ).toThrow(UnsupportedDescriptorPathError);
   });
@@ -542,7 +543,7 @@ describe("toLegacyAccount", () => {
         type: "utxo",
         network: NetworkIdSchema.parse("tezos"),
         key: XPUB,
-        path: "m/44h/1729h/0h",
+        path: DerivationPathSchema.parse("m/44h/1729h/0h"),
       }),
     ).toThrow(UnsupportedDescriptorPathError);
   });
@@ -555,7 +556,7 @@ describe("toLegacyAccount", () => {
         type: "address",
         network: NetworkIdSchema.parse("ethereum"),
         key: ETH_ADDR,
-        path: "m/44h/60h/0h",
+        path: DerivationPathSchema.parse("m/44h/60h/0h"),
       }),
     ).toThrow(UnsupportedDescriptorPathError);
   });
@@ -571,7 +572,7 @@ describe("toLegacyAccount", () => {
         type: "utxo",
         network: NetworkIdSchema.parse("bitcoin"),
         key: XPUB,
-        path,
+        path: DerivationPathSchema.parse(path),
       }),
     ).toThrow(UnsupportedDescriptorPathError);
   });
@@ -587,14 +588,8 @@ describe("toLegacyAccount", () => {
         type: "utxo",
         network: NetworkIdSchema.parse("bitcoin"),
         key: XPUB,
-        path,
+        path: DerivationPathSchema.parse(path),
       }),
     ).toThrow("hardened segments");
-  });
-});
-
-describe("toLegacyPath", () => {
-  it("spells a descriptor path the legacy way", () => {
-    expect(toLegacyPath("m/84h/0h/2h")).toBe("84'/0'/2'");
   });
 });

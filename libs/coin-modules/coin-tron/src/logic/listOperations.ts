@@ -3,36 +3,35 @@ import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import uniqBy from "lodash/uniqBy";
 import type { TronCoinConfig } from "../config";
-import { fetchTronAccountTxsPage, getBlock } from "../network";
+import {
+  fetchTronAccountTxsEndpointPage,
+  fetchTronAccountTxsPage,
+  getBlock,
+  TxEndpoint,
+  TxEndpointPage,
+} from "../network";
 import {
   fromTrongridTxInfoToOperation,
   hasUnresolvedTokenReference,
 } from "../network/trongrid/trongrid-adapters";
 import { Block } from "../network/types";
+import { TrongridTxInfo } from "../types";
 import {
   compareTxsByTimestamp,
-  dropTxsAfterNextCursor,
-  dropTxsBeforeCursor,
+  Order,
+  pageBoundary,
   parseCursor,
+  stepPast,
+  walksBefore,
 } from "./cursor";
-import { TronEmptyPage } from "../types/errors";
+import { TronEmptyPage, TronPageServedTwice } from "../types/errors";
 
-// Pagination uses a SUI-style cursor approach to handle two separate endpoints
-// (native transactions and TRC20 transactions) while maintaining chronological order.
-//
-// The cursor format is "{timestamp}:{txHash}" which identifies the last transaction
-// returned. On the next page, we fetch from both endpoints starting at that timestamp,
-// then filter out transactions at or before the cursor position.
-//
-// To ensure no transactions are skipped when endpoints have different page boundaries,
-// we find the "boundary transaction" - the earliest (for asc) or latest (for desc) of
-// the last transactions from each endpoint - and only return transactions up to that
-// boundary. The next cursor points to this boundary transaction.
+// A page is cut only between block timestamps, so a transaction is never split across pages.
 
 export type ListOperationsOptions = {
   limit: number;
   minTimestamp: number;
-  order: "asc" | "desc";
+  order: Order;
   cursor?: string;
 };
 
@@ -43,59 +42,134 @@ export async function listOperations(
   options: ListOperationsOptions,
 ): Promise<Page<Operation>> {
   const { limit, order, cursor } = options;
-  const parsedCursor = parseCursor(cursor);
+  const start = parseCursor(cursor);
 
-  // For asc: cursor timestamp is the new lower bound (we're moving forward in time)
-  // For desc: cursor timestamp is the new upper bound (we're moving backward in time)
-  //           minTimestamp remains the lower bound (the stopping point)
-  let fetchMinTimestamp: number;
-  let fetchMaxTimestamp: number | undefined;
-  if (order === "asc") {
-    fetchMinTimestamp = parsedCursor ? parsedCursor.timestamp : options.minTimestamp;
-    fetchMaxTimestamp = undefined;
-  } else {
-    fetchMinTimestamp = options.minTimestamp;
-    fetchMaxTimestamp = parsedCursor?.timestamp;
-  }
-
-  // Fetch native and TRC20 transactions in parallel from TronGrid.
-  // Both endpoints are queried with the same timestamp bounds to ensure
-  // we can properly merge and sort them chronologically.
-  const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(logger, config, address, {
+  const firstPages = await fetchTronAccountTxsPage(logger, config, address, {
     limit,
-    minTimestamp: fetchMinTimestamp,
-    maxTimestamp: fetchMaxTimestamp,
+    minTimestamp: order === "asc" ? (start ?? options.minTimestamp) : options.minTimestamp,
+    maxTimestamp: order === "asc" ? undefined : (start ?? undefined),
     order,
   });
+  const [native, trc20] = await Promise.all([
+    skipEmptyLinkedPages(logger, config, "native", firstPages.native, new Set()),
+    skipEmptyLinkedPages(logger, config, "trc20", firstPages.trc20, new Set()),
+  ]);
 
-  // TronGrid occasionally returns an empty page for a valid cursor (transient API failure).
-  // A cursor is only issued when TronGrid indicated hasNextPage=true, so 0 results here
-  // is never a legitimate end-of-stream — throw so the client can retry with the same cursor.
-  if (parsedCursor && nativeTxs.txs.length === 0 && trc20Txs.txs.length === 0) {
+  const cursorPageIsEmpty =
+    start !== null && native.rawTimestamps.length === 0 && trc20.rawTimestamps.length === 0;
+  if (cursorPageIsEmpty) {
     throw new TronEmptyPage(
       `TronGrid returned empty page for cursor ${cursor} — transient failure, retry required`,
     );
   }
 
-  // Merge and dedupe: some transactions appear in both native and TRC20 results
-  const mergedTxs = uniqBy([...nativeTxs.txs, ...trc20Txs.txs], tx => tx.txID);
-  const sortedTxs = [...mergedTxs].sort(compareTxsByTimestamp(order));
-  const afterCursorTxs = dropTxsBeforeCursor({ txs: sortedTxs, order, cursor: parsedCursor });
+  const { txs, next } = await cutPage(logger, config, order, { native, trc20 });
+  return { items: await toOperations(logger, config, address, txs), next };
+}
 
-  const { txs: pageTxs, nextCursor } = dropTxsAfterNextCursor({
-    order,
-    cursor,
-    pageTxs: afterCursorTxs,
-    nativeResult: nativeTxs,
-    trc20Result: trc20Txs,
-  });
+async function cutPage(
+  logger: Logger,
+  config: TronCoinConfig,
+  order: Order,
+  pages: Record<TxEndpoint, TxEndpointPage>,
+): Promise<{ txs: TrongridTxInfo[]; next: string | undefined }> {
+  const boundary = pageBoundary(order, [pages.native, pages.trc20]);
+  if (boundary === undefined) {
+    return { txs: mergeEndpoints(order, pages.native.txs, pages.trc20.txs), next: undefined };
+  }
 
-  // A token operation whose contract address could not be resolved is dropped: an asset with a
-  // `trc10`/`trc20` type and no `assetReference` is unidentifiable for consumers (and fatal for
-  // some), and re-typing it as native would report a token amount as TRX. Dropping happens after
-  // the cursor is computed, so pagination still advances over the transaction, but before the
-  // blocks are fetched, so a page of only-unresolvable transactions costs no block request.
-  const emittableTxs = pageTxs.filter(tx => {
+  const isBeforeBoundary = (ts: number) => walksBefore(order, ts, boundary);
+  if (
+    pages.native.rawTimestamps.some(isBeforeBoundary) ||
+    pages.trc20.rawTimestamps.some(isBeforeBoundary)
+  ) {
+    const before = (txs: TrongridTxInfo[]) => txs.filter(tx => isBeforeBoundary(tx.date.getTime()));
+    return {
+      txs: mergeEndpoints(order, before(pages.native.txs), before(pages.trc20.txs)),
+      next: String(boundary),
+    };
+  }
+
+  const [nativeGroup, trc20Group] = await Promise.all([
+    readWholeTimestampGroup(logger, config, "native", pages.native, boundary),
+    readWholeTimestampGroup(logger, config, "trc20", pages.trc20, boundary),
+  ]);
+  return {
+    txs: mergeEndpoints(order, nativeGroup.txs, trc20Group.txs),
+    next: nativeGroup.hasMore || trc20Group.hasMore ? String(stepPast(order, boundary)) : undefined,
+  };
+}
+
+async function readWholeTimestampGroup(
+  logger: Logger,
+  config: TronCoinConfig,
+  endpoint: TxEndpoint,
+  firstPage: TxEndpointPage,
+  timestamp: number,
+  followed: Set<string> = new Set(),
+): Promise<{ txs: TrongridTxInfo[]; hasMore: boolean }> {
+  const txs = firstPage.txs.filter(tx => tx.date.getTime() === timestamp);
+  if (firstPage.rawTimestamps.some(ts => ts !== timestamp)) return { txs, hasMore: true };
+  if (firstPage.next === undefined) return { txs, hasMore: false };
+
+  const nextPage = await followNext(logger, config, endpoint, firstPage.next, followed);
+  const rest = await readWholeTimestampGroup(
+    logger,
+    config,
+    endpoint,
+    nextPage,
+    timestamp,
+    followed,
+  );
+  return { txs: [...txs, ...rest.txs], hasMore: rest.hasMore };
+}
+
+async function skipEmptyLinkedPages(
+  logger: Logger,
+  config: TronCoinConfig,
+  endpoint: TxEndpoint,
+  page: TxEndpointPage,
+  followed: Set<string>,
+): Promise<TxEndpointPage> {
+  if (page.rawTimestamps.length > 0 || page.next === undefined) return page;
+  const nextPage = await followNext(logger, config, endpoint, page.next, followed);
+  return skipEmptyLinkedPages(logger, config, endpoint, nextPage, followed);
+}
+
+function followNext(
+  logger: Logger,
+  config: TronCoinConfig,
+  endpoint: TxEndpoint,
+  next: string,
+  followed: Set<string>,
+): Promise<TxEndpointPage> {
+  if (followed.has(next)) {
+    throw new TronPageServedTwice(`TronGrid served the ${endpoint} page ${next} twice`);
+  }
+  followed.add(next);
+  return fetchTronAccountTxsEndpointPage(logger, config, endpoint, next);
+}
+
+function mergeEndpoints(
+  order: Order,
+  nativeTxs: TrongridTxInfo[],
+  trc20Txs: TrongridTxInfo[],
+): TrongridTxInfo[] {
+  const oneTrc20RecordPerTx = uniqBy(trc20Txs, tx => tx.txID);
+  const trc20TxIds = new Set(oneTrc20RecordPerTx.map(tx => tx.txID));
+  const nativeTxsWithoutTrc20Record = nativeTxs.filter(tx => !trc20TxIds.has(tx.txID));
+  return [...nativeTxsWithoutTrc20Record, ...oneTrc20RecordPerTx].sort(
+    compareTxsByTimestamp(order),
+  );
+}
+
+async function toOperations(
+  logger: Logger,
+  config: TronCoinConfig,
+  address: string,
+  txs: TrongridTxInfo[],
+): Promise<Operation[]> {
+  const emittableTxs = txs.filter(tx => {
     if (!hasUnresolvedTokenReference(tx)) return true;
     logger("tron-error", `dropping ${tx.tokenType} operation without asset reference`, {
       txID: tx.txID,
@@ -115,7 +189,7 @@ export async function listOperations(
     blocksByHeight.set(height, fetchedBlock);
   });
 
-  const operations = emittableTxs.map(tx => {
+  return emittableTxs.map(tx => {
     const height = tx.blockHeight;
     if (typeof height !== "number") {
       throw new Error(`Transaction ${tx.txID} has no block height`);
@@ -126,6 +200,4 @@ export async function listOperations(
     }
     return fromTrongridTxInfoToOperation(tx, txBlock, address);
   });
-
-  return { items: operations, next: nextCursor };
 }

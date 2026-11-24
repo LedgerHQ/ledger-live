@@ -1,7 +1,8 @@
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import * as nearBridge from "./api";
 
 const { computeIntentType, describeOptimisticOperation } = nearBridge;
-const bridgeApi = nearBridge.default;
+const bridgeApi = nearBridge.default();
 
 describe("generic-coin-framework NEAR bridge api", () => {
   describe("computeIntentType", () => {
@@ -48,6 +49,79 @@ describe("generic-coin-framework NEAR bridge api", () => {
     });
   });
 
+  describe("getKnownValidatorIds", () => {
+    it("joins the pools of the generic positions and of the legacy NEAR resources", () => {
+      const account = {
+        stakingPositions: [{ delegate: "a.poolv1.near" }, { delegate: "b.poolv1.near" }, {}],
+        nearResources: {
+          stakingPositions: [{ validatorId: "b.poolv1.near" }, { validatorId: "c.poolv1.near" }],
+        },
+      };
+      expect(nearBridge.getKnownValidatorIds(account as never)).toEqual([
+        "a.poolv1.near",
+        "b.poolv1.near",
+        "c.poolv1.near",
+      ]);
+    });
+
+    it("returns no pool for an account without positions", () => {
+      expect(nearBridge.getKnownValidatorIds({} as never)).toEqual([]);
+    });
+
+    it("is part of the bridge", () => {
+      expect(nearBridge.default().getKnownValidatorIds).toBe(nearBridge.getKnownValidatorIds);
+    });
+  });
+
+  describe("getStakingCallValidatorId", () => {
+    it("reads the pool coin-near found in the actions, whatever the operation type", () => {
+      const operation = { type: "OUT", extra: { stakingPool: "a.poolv1.near" } };
+      expect(nearBridge.getStakingCallValidatorId(operation as never)).toBe("a.poolv1.near");
+    });
+
+    it("names no pool for an operation without one", () => {
+      expect(nearBridge.getStakingCallValidatorId({ extra: {} } as never)).toBeUndefined();
+    });
+
+    it("is part of the bridge", () => {
+      expect(nearBridge.default().getStakingCallValidatorId).toBe(
+        nearBridge.getStakingCallValidatorId,
+      );
+    });
+  });
+
+  describe("isOperationSettled", () => {
+    it("is false for an operation read before its outcome was indexed", () => {
+      expect(nearBridge.isOperationSettled({ extra: { outcomePending: true } } as never)).toBe(
+        false,
+      );
+    });
+
+    it("is true for any other operation", () => {
+      expect(nearBridge.isOperationSettled({ extra: {} } as never)).toBe(true);
+    });
+
+    it("is part of the bridge", () => {
+      expect(nearBridge.default().isOperationSettled).toBe(nearBridge.isOperationSettled);
+    });
+  });
+
+  describe("needsValidatorListing", () => {
+    it("is true for a call another account relayed", () => {
+      expect(nearBridge.needsValidatorListing({ extra: { relayedCall: true } } as never)).toBe(
+        true,
+      );
+    });
+
+    it("is false for any other operation", () => {
+      expect(nearBridge.needsValidatorListing({ extra: {} } as never)).toBe(false);
+    });
+
+    it("is part of the bridge", () => {
+      expect(nearBridge.default().needsValidatorListing).toBe(nearBridge.needsValidatorListing);
+    });
+  });
+
   describe("default export", () => {
     it("declares staking support", () => {
       expect(bridgeApi.stakingSupported).toBe(true);
@@ -64,6 +138,30 @@ describe("generic-coin-framework NEAR bridge api", () => {
 
     it("wires describeOptimisticOperation so the pending withdraw row keeps its type", () => {
       expect(bridgeApi.describeOptimisticOperation).toBe(describeOptimisticOperation);
+    });
+
+    describe("syncsHistoryOnStateChange", () => {
+      const configure = (sync?: Record<string, unknown>) =>
+        LiveConfig.setConfig({
+          config_currency_near: { type: "object", default: { ...(sync ? { sync } : {}) } },
+        } as never);
+
+      it("is on by default", () => {
+        configure();
+        expect(nearBridge.default().syncsHistoryOnStateChange).toBe(true);
+      });
+
+      it("is off when the NEAR config sets sync.stateDriven to false, read at each call", () => {
+        configure({ stateDriven: false });
+        expect(nearBridge.default().syncsHistoryOnStateChange).toBe(false);
+        configure({ stateDriven: true });
+        expect(nearBridge.default().syncsHistoryOnStateChange).toBe(true);
+      });
+
+      it("keeps the module default when the config cannot be read", () => {
+        LiveConfig.setConfig({} as never);
+        expect(nearBridge.default().syncsHistoryOnStateChange).toBe(true);
+      });
     });
   });
 });

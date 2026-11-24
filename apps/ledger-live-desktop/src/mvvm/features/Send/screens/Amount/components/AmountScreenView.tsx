@@ -39,7 +39,8 @@ export function AmountScreenView({
   return (
     <>
       <DialogBody className="py-16 mb-16" data-testid="send-amount-step">
-        <div className="flex flex-col gap-16">
+        <div className="flex min-h-0 flex-col gap-16">
+          <div aria-hidden className="h-40 shrink" />
           <AmountInputSection
             amountValue={amountValue}
             amountInputMaxDecimalLength={amountInputMaxDecimalLength}

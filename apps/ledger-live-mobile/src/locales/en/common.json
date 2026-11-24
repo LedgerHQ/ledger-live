@@ -2420,18 +2420,36 @@
     "back": "Back",
     "addressDisplayed": {
       "title": "Address securely displayed",
-      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device."
-    },
-    "addressVerified": {
-      "title": "Address verified",
-      "description": "The address in Ledger Wallet matches the one on your Ledger device.",
-      "doneCta": "Done"
+      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta": "Got it"
     },
     "addressMismatch": {
       "title": "This address doesn't match your Ledger",
       "description": "Don't use this address. You may be using a Ledger that isn't set up with this account: connect the right one and verify again. If it still doesn't match, contact Ledger Support.",
       "contactSupportCta": "Contact Ledger Support",
       "closeCta": "Close"
+    },
+    "selectAddress": {
+      "title": "Select address"
+    },
+    "addressOptions": {
+      "transparent": "Public address",
+      "shielded": "Private address"
+    },
+    "error": {
+      "title": "We couldn't load this address",
+      "description": "Check your internet connection, then try again.",
+      "retry": "Retry"
+    },
+    "actions": {
+      "copy": "Copy",
+      "copied": "Copied",
+      "share": "Share",
+      "verify": "Verify"
+    },
+    "verifyHint": {
+      "message": "Verify your address on\nyour Ledger device\nbefore sharing",
+      "gotIt": "Got it"
     }
   },
   "ratings": {
@@ -2755,6 +2773,15 @@
         "walletReady": "Your wallet is ready."
       }
     },
+    "recover": {
+      "restore": {
+        "title": "Continuing with Ledger Recover",
+        "description": "You’ll sign in with your Ledger Recover credentials to complete your restore.",
+        "identity": "Ledger Recover will verify your identity to unlock your recovery",
+        "phrase": "Once verified, your Secret Recovery Phrase will be securely restored to your device",
+        "cta": "Continue to Ledger Recover"
+      }
+    },
     "checks": {
       "close": "Close",
       "synchronizing": {
@@ -2818,7 +2845,8 @@
       "checks": {
         "title": "Genuine & OS check",
         "description": "Verifying your device",
-        "successDescription": "Your device is genuine and safe to use"
+        "successDescription": "Your device is genuine and safe to use",
+        "notUpToDateDescription": "Your device is not up-to-date"
       },
       "naming": {
         "title": "Device name",
@@ -2896,6 +2924,18 @@
           "description": "Make sure your {{productName}} is on, unlocked and close to your phone, then try again.",
           "retryCta": "Try again",
           "helpCta": "Get help"
+        }
+      },
+      "updateOffer": {
+        "title": "Update OS™ to unlock full functionality",
+        "versions": "OS {{current}} → OS {{available}}",
+        "description": "Get access to transaction check and the latest device features.",
+        "updateCta": "Update Ledger OS™",
+        "skip": {
+          "title": "Skip this update?",
+          "description": "You’ll miss the latest fixes and features for your Ledger device.",
+          "updateCta": "Update now",
+          "skipCta": "Skip anyway"
         }
       }
     },
@@ -6243,6 +6283,26 @@
       }
     }
   },
+  "connectKnownOrNewDevice": {
+    "title": "Devices",
+    "add": "Add new",
+    "addDevice": "Add a Ledger device",
+    "showAll": "Show all {{count}} devices",
+    "showLess": "Show less",
+    "status": {
+      "unavailable": "Not connected",
+      "available": "Available",
+      "connected": "Connected"
+    },
+    "menu": {
+      "accessibilityLabel": "{{deviceName}} options",
+      "disconnect": "Disconnect",
+      "remove": "Remove"
+    },
+    "waitingHint": {
+      "title": "Can't see your Ledger device?"
+    }
+  },
   "osUpdates": {
     "backupBanner": {
       "title": "Saved settings found",
@@ -6254,6 +6314,11 @@
       "title": "Device in Bootloader mode.",
       "description": "Click on \"Continue\" to update it.",
       "continue": "Continue"
+    },
+    "updateOnDesktop": {
+      "title": "Update on your computer",
+      "description": "Your {{productName}} needs a one-time update that can only be installed from Ledger Wallet on desktop.",
+      "gotIt": "Got it"
     },
     "banner": {
       "wallet40": {
@@ -8621,7 +8686,26 @@
       "lockedAmount": "Locked amount",
       "ripplingInfo": "Rippling lets other users' payments move your balance between tokens with the same currency code.",
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "removalPending": "Removal pending",
+      "frozen": "This token is frozen",
+      "deleteBlocked": {
+        "title": "Empty your {{ticker}} balance to remove it",
+        "description": "Send your remaining {{ticker}} balance to remove this asset."
+      },
+      "deleteConfirm": {
+        "title": "Are you sure you want to delete {{ticker}}?",
+        "description": "This asset will be removed from your portfolio, and you won't be able to receive anymore. The locked amount will be released to your {{accountName}} account.",
+        "descriptionIou": "This asset will be removed from your portfolio, and you won't be able to receive anymore. The locked amount will be released to your {{accountName}} account. Your device will show a trust limit of 0. That's how the XRP Ledger removes a token."
+      },
+      "deleteSuccess": {
+        "title": "{{ticker}} was successfully removed from your account",
+        "description": "You can add this asset again anytime."
+      },
+      "deleteError": {
+        "title": "Failed to remove asset",
+        "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+      }
     },
     "tokenSettings": {
       "limit": "Trust limit",

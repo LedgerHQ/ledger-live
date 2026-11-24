@@ -351,9 +351,6 @@
       "description": "Let AI agents manage your assets."
     }
   },
-  "stars": {
-    "tooltip": "Star account"
-  },
   "bridge": {
     "modalTitle": "Device Bridge",
     "openHeader": "Device bridge is no longer available",
@@ -1544,7 +1541,6 @@
       "ledgerSync": "Sync accounts"
     },
     "contextMenu": {
-      "star": "Star",
       "receive": "Receive",
       "send": "Send",
       "swap": "Swap",
@@ -2778,12 +2774,8 @@
     "networkLabel": "{{network}} network",
     "addressDisplayed": {
       "title": "Address securely displayed",
-      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device."
-    },
-    "addressVerified": {
-      "title": "Address verified",
-      "description": "The address in Ledger Wallet matches the one on your Ledger device.",
-      "doneCta": "Done"
+      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta": "Got it"
     },
     "addressMismatch": {
       "title": "This address doesn't match your Ledger",
@@ -2791,8 +2783,30 @@
       "contactSupportCta": "Contact Ledger Support",
       "closeCta": "Close"
     },
+    "selectAddress": {
+      "title": "Select address"
+    },
+    "addressOptions": {
+      "transparent": "Public address",
+      "shielded": "Private address"
+    },
     "close": "Close",
-    "back": "Back"
+    "back": "Back",
+    "error": {
+      "title": "We couldn't load this address",
+      "description": "Check your internet connection, then try again.",
+      "retry": "Retry"
+    },
+    "actions": {
+      "copy": "Copy",
+      "copied": "Copied",
+      "share": "Share",
+      "verify": "Verify"
+    },
+    "verifyHint": {
+      "message": "Verify your address on\nyour Ledger device\nbefore sharing",
+      "gotIt": "Got it"
+    }
   },
   "send": {
     "title": "Send",
@@ -4386,6 +4400,29 @@
             "title": "Request to update {{token}} sent"
           }
         }
+      }
+    },
+    "manageAssets": {
+      "cta": "Manage",
+      "title": "Manage assets",
+      "tokenType": "Token type",
+      "tokenTypeTooltip": "A trust line (IOU) has a balance limit and a rippling setting. A Multi Purpose Token (MPT) has no settings.",
+      "iou": "Trust Line (IOU)",
+      "mpt": "Multi Purpose Token",
+      "transferFee": "Transfer fee",
+      "lockedAmount": "Locked amount",
+      "balanceLimit": "Balance limit",
+      "ripplingTooltip": "Rippling lets other users' payments move your balance between tokens with the same currency code.",
+      "activated": "Activated",
+      "deactivated": "Deactivated",
+      "edit": "Edit",
+      "delete": "Delete",
+      "editAsset": {
+        "title": "Edit details",
+        "limitDescription": "Select the maximum balance you can hold for this asset.",
+        "setMax": "Set to maximum",
+        "success": "Token settings updated",
+        "gotIt": "Got it"
       }
     },
     "manageToken": {
@@ -8187,7 +8224,8 @@
       "description": "Something went wrong, please try again or contact Ledger Support if in doubt."
     },
     "EthAppPleaseEnableContractData": {
-      "title": "Enable Blind signing or Contract data in Ethereum app"
+      "title": "Enable Blind signing or Contract data in Ethereum app",
+      "description": "On your device, open the Ethereum app's settings, turn on Blind signing, then retry."
     },
     "CeloAppPleaseEnableContractData": {
       "title": "Please enable Contract data in the Celo app Settings"

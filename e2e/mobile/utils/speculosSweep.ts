@@ -30,7 +30,13 @@ async function releaseSpeculos(deviceId: string): Promise<void> {
   }
 }
 
-async function releaseTrackingFile(fullPath: string, ownerPid: string): Promise<void> {
+type ReleaseTrackingFileOptions = {
+  fullPath: string;
+  ownerPid: string;
+};
+
+async function releaseTrackingFile(options: ReleaseTrackingFileOptions): Promise<void> {
+  const { fullPath, ownerPid } = options;
   const content = await fs.readFile(fullPath, "utf-8").catch(() => null);
   if (content === null) return;
 
@@ -81,7 +87,7 @@ export async function releaseTrackedSpeculos({
     });
 
     await Promise.all(
-      trackingFiles.map(({ fullPath, ownerPid }) => releaseTrackingFile(fullPath, ownerPid)),
+      trackingFiles.map(({ fullPath, ownerPid }) => releaseTrackingFile({ fullPath, ownerPid })),
     );
   } catch (error) {
     log.error("Speculos cleanup failed:", sanitizeError(error));

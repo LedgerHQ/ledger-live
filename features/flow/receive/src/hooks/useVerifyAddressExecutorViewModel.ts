@@ -50,12 +50,11 @@ export function useVerifyAddressExecutorViewModel<
   const [initialUnsupportedDeviceModelIds] = useState(unsupportedDeviceModelIds);
   const [prepared, setPrepared] = useState<PreparedVerifyAddress<InitInput> | null>(null);
   const portsRef = useRef(ports);
-  const { exitEarly, onAttemptStart, onResult, onJobError, onUserCancel } = useVerifyAddressSession(
-    {
+  const { exitEarly, onAttemptStart, onAddressDisplayed, onResult, onJobError, onUserCancel } =
+    useVerifyAddressSession({
       tracking: prepared?.tracking,
       onExit,
-    },
-  );
+    });
 
   useEffect(() => {
     portsRef.current = ports;
@@ -74,7 +73,7 @@ export function useVerifyAddressExecutorViewModel<
       account,
       selection,
       initialUnsupportedDeviceModelIds,
-      { onResult, onAttemptStart },
+      { onResult, onAttemptStart, onAddressDisplayed },
       currentPorts,
     ).then(
       preparation => {
@@ -89,7 +88,14 @@ export function useVerifyAddressExecutorViewModel<
     return () => {
       unmounted = true;
     };
-  }, [selection, initialUnsupportedDeviceModelIds, exitEarly, onAttemptStart, onResult]);
+  }, [
+    selection,
+    initialUnsupportedDeviceModelIds,
+    exitEarly,
+    onAttemptStart,
+    onAddressDisplayed,
+    onResult,
+  ]);
 
   if (!prepared) return null;
 

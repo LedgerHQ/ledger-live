@@ -20,7 +20,6 @@ describe("synced xpub utilites functions", () => {
   describe("xpub xpub6BvNdfGcyMB9Usq88ibXUt3KhbaEJVLFMbhTSNNfTm8Qf1sX9inTv3xL6pA6KofW4WF9GpdxwGDoYRwRDjHEir3Av23m2wHb7AqhxJ9ohE8 Legacy", () => {
     const xpubraw =
       "xpub6BvNdfGcyMB9Usq88ibXUt3KhbaEJVLFMbhTSNNfTm8Qf1sX9inTv3xL6pA6KofW4WF9GpdxwGDoYRwRDjHEir3Av23m2wHb7AqhxJ9ohE8";
-    // const truthDump = path.join(__dirname, 'data', 'sync', `${xpubraw}.json`);
     const storage = new BitcoinLikeStorage();
     const xpub = new Xpub({
       storage,

@@ -32,6 +32,23 @@ const cantonNativeInstrumentAdmin = (account: Account): unknown =>
     : undefined;
 
 /**
+ * As many operations, one replaced or re-read with a new fee or outcome: the counts do not tell, so
+ * the id and the two fields a re-read can change are compared by index. The same list, unchanged,
+ * is not walked.
+ */
+function operationsChanged(prev: Account, next: Account): boolean {
+  if (prev.operations === next.operations) return false;
+  return prev.operations.some((op, index) => {
+    const other = next.operations[index];
+    return (
+      op.id !== other?.id ||
+      op.hasFailed !== other.hasFailed ||
+      (op.fee !== other.fee && !op.fee?.eq(other.fee))
+    );
+  });
+}
+
+/**
  * Returns true when something that is persisted and user-visible (or structurally
  * relevant) changed between prev and next. Used to decide if an account is worth
  * re-saving to app.json / mmkv. Ignores lastSyncDate and other in-memory-only fields.
@@ -54,6 +71,8 @@ export function accountPersistedStateChanged(prev: Account, next: Account): bool
   ) {
     return true;
   }
+
+  if (operationsChanged(prev, next)) return true;
 
   // swap history
   if (swapHistoryChanged(prev.swapHistory, next.swapHistory)) return true;

@@ -181,6 +181,26 @@ describe("getBlock", () => {
       ledgerOpType: "OPT_IN",
     });
   });
+
+  it("adds the transaction note as memo to its OPT_IN operation", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        note: "b3B0LWlu",
+        "tx-type": "axfer",
+        "asset-transfer-transaction": assetTransfer({ amount: 0, receiver: ALICE }),
+      }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    expect(transactions[0].operations).toContainEqual({
+      type: "other",
+      address: ALICE,
+      asset: USDC,
+      ledgerOpType: "OPT_IN",
+      memo: { type: "string", kind: "note", value: "b3B0LWlu" },
+    });
+  });
   it("does not add an OPT_IN operation to a zero clawback self-transfer", async () => {
     mockGetBlockTransactions.mockResolvedValue([
       transaction({
@@ -359,14 +379,27 @@ describe("getBlock", () => {
           "close-to": CAROL,
         }),
       }),
+      transaction({
+        id: "APPL",
+        "tx-type": "appl",
+        "inner-txns": [
+          innerTransaction({
+            sender: "APP",
+            "tx-type": "pay",
+            "payment-transaction": payment(50, ALICE),
+          }),
+        ],
+      }),
     ]);
     mockGetAccountTransactions.mockResolvedValue({
       nextToken: undefined,
       transactions: [
         {
           id: "PAY",
+          rootId: "PAY",
           type: "pay",
           senderAddress: ALICE,
+          feesPayer: ALICE,
           senderRewards: new BigNumber(0),
           recipientRewards: new BigNumber(0),
           closeRewards: undefined,
@@ -384,8 +417,10 @@ describe("getBlock", () => {
         },
         {
           id: "ASA",
+          rootId: "ASA",
           type: "axfer",
           senderAddress: ALICE,
+          feesPayer: ALICE,
           senderRewards: new BigNumber(0),
           recipientRewards: new BigNumber(0),
           closeRewards: undefined,
@@ -401,6 +436,27 @@ describe("getBlock", () => {
             assetId: "31566704",
             assetRecipientAddress: BOB,
             assetSenderAddress: undefined,
+          },
+        },
+        {
+          id: "APPL-inner-0",
+          rootId: "APPL",
+          type: "pay",
+          senderAddress: "APP",
+          feesPayer: ALICE,
+          senderRewards: new BigNumber(0),
+          recipientRewards: new BigNumber(0),
+          closeRewards: undefined,
+          closeAmount: undefined,
+          fee: new BigNumber(1000),
+          timestamp: "1793724956",
+          round: HEIGHT,
+          note: "",
+          details: {
+            amount: new BigNumber(50),
+            closeAmount: undefined,
+            closeToAddress: undefined,
+            recipientAddress: ALICE,
           },
         },
       ],
@@ -428,6 +484,90 @@ describe("getBlock", () => {
     }, new Map<string, bigint>());
 
     expect(listAmounts).toEqual(blockAmounts);
+  });
+
+  it("gives an OPT list operation the details of the block OPT operation without its type and address", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        id: "OPTIN",
+        note: "b3B0LWlu",
+        "tx-type": "axfer",
+        "asset-transfer-transaction": assetTransfer({ amount: 0, receiver: ALICE }),
+      }),
+      transaction({
+        id: "OPTOUT",
+        note: "b3B0LW91dA==",
+        "tx-type": "axfer",
+        "asset-transfer-transaction": assetTransfer({
+          amount: 250,
+          "close-amount": 750,
+          "close-to": CAROL,
+        }),
+      }),
+    ]);
+    const listTransaction = {
+      type: "axfer",
+      senderAddress: ALICE,
+      feesPayer: ALICE,
+      senderRewards: new BigNumber(0),
+      recipientRewards: new BigNumber(0),
+      closeRewards: undefined,
+      closeAmount: undefined,
+      fee: new BigNumber(1000),
+      timestamp: "1793724956",
+      round: HEIGHT,
+    };
+    mockGetAccountTransactions.mockResolvedValue({
+      nextToken: undefined,
+      transactions: [
+        {
+          ...listTransaction,
+          id: "OPTIN",
+          rootId: "OPTIN",
+          note: "b3B0LWlu",
+          details: {
+            assetAmount: new BigNumber(0),
+            assetCloseAmount: undefined,
+            assetCloseToAddress: undefined,
+            assetId: "31566704",
+            assetRecipientAddress: ALICE,
+            assetSenderAddress: undefined,
+          },
+        },
+        {
+          ...listTransaction,
+          id: "OPTOUT",
+          rootId: "OPTOUT",
+          note: "b3B0LW91dA==",
+          details: {
+            assetAmount: new BigNumber(250),
+            assetCloseAmount: new BigNumber(750),
+            assetCloseToAddress: CAROL,
+            assetId: "31566704",
+            assetRecipientAddress: BOB,
+            assetSenderAddress: undefined,
+          },
+        },
+      ],
+    });
+
+    const [block, { items }] = await Promise.all([
+      getBlock(mockAlgorandContext, HEIGHT),
+      listOperations(mockAlgorandContext, ALICE, { order: "asc" }),
+    ]);
+    const blockOptEvents = block.transactions.map(blockTransaction =>
+      blockTransaction.operations
+        .filter(operation => operation.type === "other")
+        .map(({ type: _type, address: _address, ...event }) => event),
+    );
+    const listOptEvents = ["OPTIN", "OPTOUT"].map(hash =>
+      items
+        .filter(item => item.tx.hash === hash && item.type.startsWith("OPT_"))
+        .map(item => item.details),
+    );
+
+    expect(listOptEvents).toEqual(blockOptEvents);
+    expect(listOptEvents.flat()).toHaveLength(2);
   });
   it("does not query the indexer for a round the node does not know", async () => {
     mockGetBlockHash.mockRejectedValue(new Error("failed to retrieve information from the ledger"));
