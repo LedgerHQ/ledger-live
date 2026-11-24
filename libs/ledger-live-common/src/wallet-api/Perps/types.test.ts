@@ -148,6 +148,21 @@ const cases: Array<[string, ActionWithNonce, object]> = [
       nonce: 5,
     },
   ],
+  [
+    "setReferrer",
+    {
+      nonce: 6,
+      action: {
+        type: "setReferrer",
+        code: "LEDGER",
+      },
+    },
+    {
+      type: "setReferrer",
+      code: "LEDGER",
+      nonce: 6,
+    },
+  ],
 ];
 
 describe("convertAction", () => {
