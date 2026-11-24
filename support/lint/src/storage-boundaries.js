@@ -7,7 +7,8 @@ const ENGINE_PACKAGES = new Set([
 ]);
 const WEB_STORAGE_GLOBALS = new Set(["localStorage", "sessionStorage"]);
 const GLOBAL_OBJECTS = new Set(["window", "globalThis", "self"]);
-const PORT_PACKAGE = /^@shared\/storage(?:\/|$)/;
+/** The storage port, `@shared/storage`, and its adapters, `@shared/storage-*`, with their subpaths. */
+const PORT_PACKAGE = /^@shared\/storage(?:-[^/]+)?(?:\/|$)/;
 
 const ADAPTER_PACKAGE = /(?:^|[/\\])shared[/\\]storage-[^/\\]+[/\\]/;
 const PORT_USERS = [
@@ -22,7 +23,7 @@ const PORT_USERS = [
 const MESSAGES = {
   engine:
     "Only a storage adapter (shared/storage-*) talks to a storage engine. Define a record for @features/platform-persistence instead",
-  port: "Only persistence, the storage adapters and the app composition roots (apps/*/src/persistence/) import @shared/storage",
+  port: "Only persistence, the storage adapters and the app composition roots (apps/*/src/persistence/) import @shared/storage or a storage adapter (@shared/storage-*)",
 };
 
 /**

@@ -308,10 +308,11 @@ outside it must not talk to a storage engine or to the storage port.
 - `storage/no-engine-import` reports `react-native-mmkv`, `@react-native-async-storage/async-storage`
   and `electron-store` imports, and `localStorage` or `sessionStorage` reads, also through
   `window`, `globalThis` or `self`. Only a storage adapter (`shared/storage-*`) may use them.
-- `storage/no-port-import` reports `@shared/storage` imports outside `shared/storage`,
-  `shared/storage-*`, `features/platform/persistence`, the app composition roots
-  (`apps/*/src/persistence/`) and the composition root of the e2e seeds
-  (`libs/live-e2e-shared/src/userdataAccounts.ts`).
+- `storage/no-port-import` reports imports of `@shared/storage` and of the storage adapters
+  (`@shared/storage-*`) outside `shared/storage`, `shared/storage-*`,
+  `features/platform/persistence`, the app composition roots (`apps/*/src/persistence/`) and the
+  composition root of the e2e seeds (`libs/live-e2e-shared/src/userdataAccounts.ts`). The Nx tag
+  constraints let a feature depend on an adapter, so this rule is the only check on that import.
 
 Both check `import`, `export`, `import()`, type-level `import()`, `require()` and `jest.mock`.
 `base` registers them off. `domain`, `features-flow`, `features-platform` and `shared` turn them

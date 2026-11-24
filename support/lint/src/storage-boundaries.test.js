@@ -36,10 +36,13 @@ test("matches the storage engine packages and their subpaths", () => {
   assert.equal(isEnginePackage("@shared/storage-mmkv"), false);
 });
 
-test("matches the storage port and its subpaths only", () => {
+test("matches the storage port, its adapters and their subpaths only", () => {
   assert.equal(isPortPackage("@shared/storage"), true);
   assert.equal(isPortPackage("@shared/storage/testing"), true);
-  assert.equal(isPortPackage("@shared/storage-mmkv"), false);
+  assert.equal(isPortPackage("@shared/storage-mmkv"), true);
+  assert.equal(isPortPackage("@shared/storage-electron/src/index"), true);
+  assert.equal(isPortPackage("@shared/storage-"), false);
+  assert.equal(isPortPackage("@shared/storagex"), false);
   assert.equal(isPortPackage("@shared/persistence"), false);
 });
 
@@ -110,6 +113,7 @@ test("oxlint runs both rules end to end", () => {
     "apps/ledger-live-mobile/src/persistence/a.ts:7 engine",
     "apps/ledger-live-mobile/src/persistence/a.ts:8 engine",
     "features/platform/contacts/src/a.ts:1 engine",
+    "features/platform/contacts/src/a.ts:10 port",
     "features/platform/contacts/src/a.ts:2 engine",
     "features/platform/contacts/src/a.ts:3 engine",
     "features/platform/contacts/src/a.ts:4 port",

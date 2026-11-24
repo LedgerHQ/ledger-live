@@ -19,5 +19,6 @@ The storage port of persistence (ADR in Confluence, epic LIVE-35368).
   `describeListableStorageContract` and `describeLockedStorageContract`. Each adapter runs the
   contracts that apply to it, so all adapters behave the same.
 
-Only persistence, the adapters and the app composition roots import this package. The lint rule
-`storage/no-port-import` flags any other import; the apps run it as a warning for now.
+Only persistence, the adapters and the app composition roots import this package or an adapter
+(`@shared/storage-*`). The lint rule `storage/no-port-import` flags any other import; the apps run
+it as a warning for now.
