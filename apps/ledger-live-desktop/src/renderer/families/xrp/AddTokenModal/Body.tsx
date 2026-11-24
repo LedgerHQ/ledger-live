@@ -3,12 +3,11 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { Account, AccountBridge, Operation, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAssetFromToken } from "@ledgerhq/live-common/families/xrp/bridge/api";
 import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { Track } from "@shared/analytics-react";
@@ -18,7 +17,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Stepper from "~/renderer/components/Stepper";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import logger from "~/renderer/logger";
-import { getXrpResources } from "../utils";
+import { makeChangeTrustTransaction, makeOptOutTransaction, toAssetFields } from "../utils";
 import StepToken, { StepTokenFooter } from "./steps/StepToken";
 import StepSettings, { StepSettingsFooter } from "./steps/StepSettings";
 import StepReview, { StepReviewFooter } from "./steps/StepReview";
@@ -110,43 +109,6 @@ export function getSteps(action: TokenAction, token: TokenCurrency | undefined):
     connectDeviceStep,
     confirmationStep,
   ];
-}
-
-function toAssetFields(token: TokenCurrency) {
-  const asset = getAssetFromToken(token);
-  if (!asset || !("assetReference" in asset)) return {};
-
-  return { assetReference: asset.assetReference, assetOwner: asset.assetOwner };
-}
-
-export function makeChangeTrustTransaction(
-  bridge: AccountBridge<Transaction>,
-  account: Account,
-  tokenAccount: TokenAccount | undefined,
-): Transaction {
-  const xrpResources = getXrpResources(tokenAccount);
-
-  // An edit resends the line's rippling state: a TrustSet without it blocks rippling
-  return bridge.updateTransaction(bridge.createTransaction(account), {
-    mode: "changeTrust",
-    ...(tokenAccount && {
-      ...toAssetFields(tokenAccount.token),
-      amount: xrpResources?.limit,
-      noRipple: !xrpResources?.isRippling,
-    }),
-  });
-}
-
-export function makeOptOutTransaction(
-  bridge: AccountBridge<Transaction>,
-  account: Account,
-  tokenAccount: TokenAccount,
-): Transaction {
-  return bridge.updateTransaction(bridge.createTransaction(account), {
-    mode: "optOut",
-    ...toAssetFields(tokenAccount.token),
-    amount: new BigNumber(0),
-  });
 }
 
 export function getTokenAction({ tokenAccount, remove }: Data): TokenAction {

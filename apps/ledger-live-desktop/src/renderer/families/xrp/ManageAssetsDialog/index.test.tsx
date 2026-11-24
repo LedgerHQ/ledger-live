@@ -5,6 +5,7 @@ import { HttpResponse, http, server } from "tests/server";
 import type { Account } from "@ledgerhq/types-live";
 import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
+import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import AccountDialogs from "../AccountDialogs";
 import {
   XRP_ACCOUNT,
@@ -74,7 +75,7 @@ describe("xrp ManageAssetsDialog", () => {
     ]);
   });
 
-  it("shows an IOU with its rows, and Edit and Delete disabled", async () => {
+  it("shows an IOU with its rows, Edit enabled and Delete disabled", async () => {
     renderDialog();
     const card = getCard(xrpRlusdToken.id);
 
@@ -85,8 +86,50 @@ describe("xrp ManageAssetsDialog", () => {
     expect(card.getByText("0.2 XRP")).toBeVisible();
     expect(card.getByText("1,000 RLUSD")).toBeVisible();
     expect(card.getByText("Activated")).toBeVisible();
-    expect(card.getByTestId("xrp-manage-assets-edit")).toBeDisabled();
+    expect(card.getByTestId("xrp-manage-assets-edit")).toBeEnabled();
     expect(card.getByTestId("xrp-manage-assets-delete")).toBeDisabled();
+  });
+
+  it("keeps Edit enabled on a frozen IOU", () => {
+    const frozenAccount = makeXrpTokenAccount({ limit: new BigNumber(1), isLocked: true });
+    renderDialog({ ...XRP_ACCOUNT, subAccounts: [frozenAccount] });
+
+    expect(getCard(xrpRlusdToken.id).getByTestId("xrp-manage-assets-edit")).toBeEnabled();
+  });
+
+  it("opens Edit details of the IOU, and goes back to the list", async () => {
+    const { user } = renderDialog();
+
+    await user.click(getCard(xrpRlusdToken.id).getByTestId("xrp-manage-assets-edit"));
+
+    expect(screen.getByRole("dialog", { name: "Edit details" })).toBeVisible();
+    expect(screen.getByTestId("xrp-trust-limit-row")).toHaveTextContent("1,000 RLUSD");
+    expect(screen.getByTestId("xrp-trust-rippling-row")).toHaveTextContent("Activated");
+
+    await user.click(screen.getByRole("button", { name: /back/i }));
+
+    expect(screen.getByRole("dialog", { name: "Manage assets" })).toBeVisible();
+  });
+
+  it("keeps Edit details in step with the synced token", async () => {
+    const { user, rerender } = renderDialog();
+    await user.click(getCard(xrpRlusdToken.id).getByTestId("xrp-manage-assets-edit"));
+    expect(screen.queryByText("Your limit is 0: you can't receive this token.")).toBeNull();
+
+    const syncedAccount: Account = {
+      ...account,
+      subAccounts: [makeXrpTokenAccount({ limit: new BigNumber(0), isRippling: true })],
+    };
+    rerender(
+      <AccountDialogs
+        account={syncedAccount}
+        parentAccount={null}
+        params={{ screen: "manageAssets" }}
+        onClose={onClose}
+      />,
+    );
+
+    expect(screen.getByText("Your limit is 0: you can't receive this token.")).toBeVisible();
   });
 
   it("shows an MPT without IOU settings, and Delete only, disabled", () => {
@@ -125,6 +168,16 @@ describe("xrp ManageAssetsDialog", () => {
     await user.keyboard("{Escape}");
 
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("stays open while the device is busy", async () => {
+    const { user } = renderDialog();
+    render(<DeviceBlocker />);
+
+    await user.keyboard("{Escape}");
+    await user.click(screen.getByRole("button", { name: /close/i }));
+
+    expect(onClose).not.toHaveBeenCalled();
   });
 
   it("renders nothing on a token account page", () => {

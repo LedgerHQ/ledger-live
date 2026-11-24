@@ -33,6 +33,8 @@ type Props = Readonly<{
   tokenAccount: XrpTokenAccount;
 }>;
 
+type AssetCardProps = Props & Readonly<{ onEdit: (tokenAccount: XrpTokenAccount) => void }>;
+
 function Row({ label, value }: Readonly<{ label: React.ReactNode; value: React.ReactNode }>) {
   return (
     <DescriptionItem size="sm" className="h-[20px] justify-center items-center">
@@ -46,7 +48,7 @@ function Row({ label, value }: Readonly<{ label: React.ReactNode; value: React.R
   );
 }
 
-export function AssetCard({ account, tokenAccount }: Props) {
+export function AssetCard({ account, tokenAccount, onEdit }: AssetCardProps) {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const discreet = useDiscreetMode();
@@ -155,7 +157,7 @@ export function AssetCard({ account, tokenAccount }: Props) {
               appearance="transparent"
               size="md"
               isFull
-              disabled
+              onClick={() => onEdit(tokenAccount)}
               data-testid="xrp-manage-assets-edit"
             >
               {t("xrp.manageAssets.edit")}

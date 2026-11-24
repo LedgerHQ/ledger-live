@@ -4416,7 +4416,14 @@
       "activated": "Activated",
       "deactivated": "Deactivated",
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "editAsset": {
+        "title": "Edit details",
+        "limitDescription": "Select the maximum balance you can hold for this asset.",
+        "setMax": "Set to maximum",
+        "success": "Token settings updated",
+        "gotIt": "Got it"
+      }
     },
     "manageToken": {
       "title": "Manage token",

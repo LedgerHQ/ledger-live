@@ -1,6 +1,7 @@
 import type { TFunction } from "i18next";
-import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { getSeparators } from "@ledgerhq/live-currency-format";
+import { getAssetFromToken } from "@ledgerhq/live-common/families/xrp/bridge/api";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { IOU_DIGITS, isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
@@ -11,11 +12,13 @@ import {
   hasPendingXrpTokenRemoval,
 } from "@ledgerhq/live-common/families/xrp/tokenHolding";
 import type {
+  Transaction,
   TransactionStatus,
   XrpTokenAccount,
   XrpTokenResources,
 } from "@ledgerhq/live-common/families/xrp/types";
 import BigNumber from "bignumber.js";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Unit } from "@domain/entity-currency-unit";
 
 // The XRPL owner reserve per held token, in drops: https://xrpl.org/docs/concepts/accounts/reserves
@@ -40,6 +43,56 @@ export const getXrpResources = (
 
   return (account as XrpTokenAccount).xrpResources;
 };
+
+export function toAssetFields(token: TokenCurrency) {
+  const asset = getAssetFromToken(token);
+  if (!asset || !("assetReference" in asset)) return {};
+
+  return { assetReference: asset.assetReference, assetOwner: asset.assetOwner };
+}
+
+export function makeChangeTrustTransaction(
+  bridge: AccountBridge<Transaction>,
+  account: Account,
+  tokenAccount: TokenAccount | undefined,
+): Transaction {
+  const xrpResources = getXrpResources(tokenAccount);
+
+  // An edit resends the line's rippling state: a TrustSet without it blocks rippling
+  return bridge.updateTransaction(bridge.createTransaction(account), {
+    mode: "changeTrust",
+    ...(tokenAccount && {
+      ...toAssetFields(tokenAccount.token),
+      amount: xrpResources?.limit,
+      noRipple: !xrpResources?.isRippling,
+    }),
+  });
+}
+
+export function makeOptOutTransaction(
+  bridge: AccountBridge<Transaction>,
+  account: Account,
+  tokenAccount: TokenAccount,
+): Transaction {
+  return bridge.updateTransaction(bridge.createTransaction(account), {
+    mode: "optOut",
+    ...toAssetFields(tokenAccount.token),
+    amount: new BigNumber(0),
+  });
+}
+
+const LIMIT_ERRORS = new Set([
+  "XrpTrustLimitZero",
+  "XrpTrustLimitTooHigh",
+  "XrpAmountPrecisionExceeded",
+]);
+
+// Other amount errors, like missing XRP, show outside the limit field
+export function getLimitError(status: TransactionStatus): Error | undefined {
+  const amountError = status.errors.amount;
+
+  return amountError && LIMIT_ERRORS.has(amountError.name) ? amountError : undefined;
+}
 
 export function getManagedTokenAccounts(account: Account): XrpTokenAccount[] {
   const standards = enabledXrpTokenStandards(account.currency.id);
