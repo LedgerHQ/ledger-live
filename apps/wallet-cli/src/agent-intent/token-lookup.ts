@@ -124,10 +124,12 @@ async function fetchCalTokens(
     signal: AbortSignal.timeout(CAL_TIMEOUT_MS),
   }).catch((error: unknown) => {
     const reason = error instanceof Error ? error.message : String(error);
-    throw Object.assign(
-      new Error(`CAL didn't answer the ${ticker} ticker lookup: ${reason}`, { cause: error }),
-      { url: url.toString() },
-    );
+    const failure = new Error(`CAL didn't answer the ${ticker} ticker lookup: ${reason}`, {
+      cause: error,
+    });
+    // A slow CAL is not a blocked one: without a url the error gets no allowlist hint.
+    const timedOut = error instanceof Error && error.name === "TimeoutError";
+    throw timedOut ? failure : Object.assign(failure, { url: url.toString() });
   });
   if (!response.ok) {
     throw Object.assign(
