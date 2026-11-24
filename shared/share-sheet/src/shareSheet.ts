@@ -5,7 +5,6 @@ import { captureRef } from "react-native-view-shot";
 
 export type ShareSheetContent = Readonly<{
   message: string;
-  /** An image to share with the message, as `captureView` returns it. */
   imageUrl?: string;
 }>;
 

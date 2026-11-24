@@ -27,7 +27,6 @@ const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => stat
 
 type Params = Pick<ReceiveAddressProps, "accountUUID" | "assetId" | "onClose">;
 
-/** What only the mobile app gives the receive address screen. */
 export function useReceiveAddressScreenViewModel({
   accountUUID,
   assetId,

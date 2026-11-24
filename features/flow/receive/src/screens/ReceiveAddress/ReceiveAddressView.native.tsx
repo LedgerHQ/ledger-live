@@ -29,11 +29,10 @@ export function ReceiveAddressView({
   onClose,
 }: ReceiveAddressViewProps) {
   const { top, bottom } = useSafeAreaInsets();
-  // While the verify hint is open, everything but the hint and the action tiles steps back.
   const isHintOpen = !!actions.verifyHint;
   const cardRef = useRef<View>(null);
   const { share } = actions;
-  // Share sends the card as an image too: only this view holds it.
+  // Only this view holds the card: it captures it for Share.
   const actionsWithCard = share
     ? {
         ...actions,

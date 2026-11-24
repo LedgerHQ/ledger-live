@@ -6,7 +6,6 @@ import type { AddressActionsProps } from "./AddressActions.types";
 
 const HINT_ENTER_MS = 220;
 const HINT_WIDTH = 256;
-// Over the dimmed screen: the hint and the Verify tile.
 const FRONT_LAYER = 2;
 
 type Tile = Readonly<{
@@ -17,7 +16,6 @@ type Tile = Readonly<{
   disabled: boolean;
 }>;
 
-/** Share, Copy and Verify tiles; the verify hint points at Verify and dims the other tiles. */
 export function AddressActions({ actions }: AddressActionsProps) {
   const { disabled, share, copy, verify, verifyHint } = actions;
   const isHintOpen = !!verifyHint;

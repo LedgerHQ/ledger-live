@@ -41,7 +41,6 @@ export type ReceiveAddressActionsView = Readonly<{
       /** How many times the Copy button was pressed: the QR code replays its animation on each. */
       buttonPresses: number;
     }>;
-  /** Takes the image of the address card, where the screen could capture it. */
   share?: Readonly<{ label: string; onPress: (cardImageUrl?: string) => void }>;
   /** `disabled` when the device cannot show this address. */
   verify?: ReceiveAddressAction & Readonly<{ disabled: boolean }>;
