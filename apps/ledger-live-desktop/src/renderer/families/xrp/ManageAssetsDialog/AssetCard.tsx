@@ -16,6 +16,9 @@ import {
   DescriptionItemTrailing,
   DescriptionItemValue,
   Skeleton,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@ledgerhq/lumen-ui-react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -33,14 +36,18 @@ import { useSelector } from "LLD/hooks/redux";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { LabelWithInfo } from "../components/LabelWithInfo";
-import { formatIssuerFee, formatTrustLimit } from "../utils";
+import { formatIssuerFee, formatTrustLimit, getRemoveAvailability } from "../utils";
 
 type Props = Readonly<{
   account: Account;
   tokenAccount: XrpTokenAccount;
 }>;
 
-type AssetCardProps = Props & Readonly<{ onEdit: (tokenAccount: XrpTokenAccount) => void }>;
+type AssetCardProps = Props &
+  Readonly<{
+    onEdit: (tokenAccount: XrpTokenAccount) => void;
+    onDelete: (tokenAccount: XrpTokenAccount) => void;
+  }>;
 
 function Row({ label, value }: Readonly<{ label: React.ReactNode; value: React.ReactNode }>) {
   return (
@@ -118,13 +125,27 @@ function LockedAmount({ currency }: Readonly<{ currency: CryptoCurrency }>) {
   );
 }
 
-export function AssetCard({ account, tokenAccount, onEdit }: AssetCardProps) {
+export function AssetCard({ account, tokenAccount, onEdit, onDelete }: AssetCardProps) {
   const { t } = useTranslation();
+  const removeAvailability = getRemoveAvailability(tokenAccount, account, t);
   const locale = useSelector(localeSelector);
   const discreet = useDiscreetMode();
   const { token, xrpResources } = tokenAccount;
   const isIou = token.tokenType === "iou";
   const limit = xrpResources?.limit;
+
+  const deleteButton = (
+    <Button
+      appearance="base"
+      size="md"
+      isFull
+      disabled={removeAvailability.disabled}
+      onClick={() => onDelete(tokenAccount)}
+      data-testid="xrp-manage-assets-delete"
+    >
+      {t("xrp.manageAssets.delete")}
+    </Button>
+  );
 
   return (
     <Card type="info" data-testid={`xrp-manage-assets-card-${token.id}`}>
@@ -208,15 +229,16 @@ export function AssetCard({ account, tokenAccount, onEdit }: AssetCardProps) {
               {t("xrp.manageAssets.edit")}
             </Button>
           ) : null}
-          <Button
-            appearance="base"
-            size="md"
-            isFull
-            disabled
-            data-testid="xrp-manage-assets-delete"
-          >
-            {t("xrp.manageAssets.delete")}
-          </Button>
+          {removeAvailability.tooltip ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="flex flex-1">{deleteButton}</span>
+              </TooltipTrigger>
+              <TooltipContent>{removeAvailability.tooltip}</TooltipContent>
+            </Tooltip>
+          ) : (
+            deleteButton
+          )}
         </div>
       </CardFooter>
     </Card>

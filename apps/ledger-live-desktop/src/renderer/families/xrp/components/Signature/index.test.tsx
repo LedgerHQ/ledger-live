@@ -47,14 +47,19 @@ jest.mock("LLD/components/DeviceIntentExecutor", () => ({
 const transaction = { family: "xrp" } as Transaction;
 const status = { errors: {}, warnings: {} } as TransactionStatus;
 
-function Signing() {
+function Signing({ errorTitle }: Readonly<{ errorTitle?: string }>) {
   const signature = useSignatureSteps(XRP_ACCOUNT, transaction, status);
 
   return (
     <Dialog open>
       <DialogContent>
         <button onClick={signature.onStart}>Start</button>
-        <SignatureSteps signature={signature} successTitle="Done" onClose={() => {}} />
+        <SignatureSteps
+          signature={signature}
+          successTitle="Done"
+          errorTitle={errorTitle}
+          onClose={() => {}}
+        />
       </DialogContent>
     </Dialog>
   );
@@ -116,5 +121,15 @@ describe("xrp SignatureSteps", () => {
 
     expect(await screen.findByTestId("xrp-signature-error")).toBeVisible();
     expect(screen.queryByText(/Your transaction may have failed/)).not.toBeInTheDocument();
+  });
+
+  it("shows a given error title over an unsigned failure, without the broadcast notice", async () => {
+    jest.mocked(buildDeviceInitializationInput).mockRejectedValueOnce(new Error("no device"));
+    const { user } = render(<Signing errorTitle="Failed to remove asset" />);
+
+    await user.click(screen.getByRole("button", { name: "Start" }));
+
+    expect(await screen.findByText("Failed to remove asset")).toBeVisible();
+    expect(screen.queryByTestId("xrp-signature-broadcast-error")).not.toBeInTheDocument();
   });
 });
