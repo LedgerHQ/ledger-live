@@ -29,14 +29,25 @@ describe("withRefusedTunnelAsResponse", () => {
     });
 
     expect(response.status).toBe(403);
+    expect(response.statusText).toBe("Forbidden");
+    expect(await response.text()).toContain("Proxy refused");
   });
 
-  it("rethrows any other fetch failure unchanged", async () => {
-    const refused = Object.assign(new Error("Unable to connect"), { code: "ECONNREFUSED" });
-    const failingFetch = Object.assign(() => Promise.reject(refused), fetch);
+  it.each([
+    Object.assign(new Error("Unable to connect"), { code: "ECONNREFUSED" }),
+    Object.assign(new Error("Proxy refused to open a tunnel: 600 X"), {
+      code: "ERR_PROXY_TUNNEL",
+      status: 600,
+    }),
+    Object.assign(new Error("Proxy refused to open a tunnel: 101 Switching Protocols"), {
+      code: "ERR_PROXY_TUNNEL",
+      status: 101,
+    }),
+  ])("rethrows a failure that is no HTTP answer unchanged (%#)", async failure => {
+    const failingFetch = Object.assign(() => Promise.reject(failure), fetch);
 
     await expect(withRefusedTunnelAsResponse(failingFetch)("https://x.ledger.com")).rejects.toBe(
-      refused,
+      failure,
     );
   });
 });
