@@ -144,6 +144,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       // must resolve flags from the Firebase cache rather than from the compiled defaults.
       const cachedFlagsSettled = whenCachedFlagsSettled(store);
       // Persistence reads MMKV only, so an install still on AsyncStorage stays on the legacy code.
+      // The storage type is known only once the storage initializer settles.
+      await storage.whenReady();
       const isOnMmkv = storage.getState().storageType === STORAGE_TYPE.MMKV;
       const readStorageStart = Date.now();
       mmkvStorageWrapper.monitor(true);

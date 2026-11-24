@@ -27,6 +27,10 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
       return { ...state };
     },
 
+    whenReady() {
+      return ready;
+    },
+
     incrementNumberOfErrorsDebug,
 
     async keys() {

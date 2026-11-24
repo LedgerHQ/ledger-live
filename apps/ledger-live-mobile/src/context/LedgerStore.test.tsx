@@ -109,8 +109,10 @@ const createStoreWithReceiveVerifyHint = () =>
     },
   });
 
-const onStorage = (storageType: StorageType) =>
-  jest.spyOn(storage, "getState").mockReturnValue({ ...storage.getState(), storageType });
+const onStorage = (storageType: StorageType) => {
+  jest.spyOn(storage, "whenReady").mockResolvedValue();
+  return jest.spyOn(storage, "getState").mockReturnValue({ ...storage.getState(), storageType });
+};
 
 const renderProvider = (store: Store) =>
   render(
@@ -455,6 +457,33 @@ describe("LedgerStoreProvider", () => {
       expect(mockGetAccounts).toHaveBeenCalledTimes(1);
       expect(mockMigrateAccountsIfNecessary).not.toHaveBeenCalled();
       expect(selectUsesPersistence(store.getState(), "accounts")).toBe(false);
+      expect(screen.getByText("ready")).toBeOnTheScreen();
+    });
+
+    it("should wait for the storage initializer before the accounts read", async () => {
+      let selectMMKV: (() => void) | undefined;
+      const initialState = storage.getState();
+      let storageType: StorageType = STORAGE_TYPE.ASYNC_STORAGE;
+      jest.spyOn(storage, "getState").mockImplementation(() => ({ ...initialState, storageType }));
+      jest.spyOn(storage, "whenReady").mockReturnValue(
+        new Promise<void>(resolve => {
+          selectMMKV = () => {
+            storageType = STORAGE_TYPE.MMKV;
+            resolve();
+          };
+        }),
+      );
+      const store = createStore();
+      store.dispatch(setCachedFlagsSettled());
+
+      renderProvider(store);
+      await act(() => jest.runAllTimersAsync());
+      selectMMKV?.();
+      await act(() => jest.runAllTimersAsync());
+
+      expect(mockGetAccounts).not.toHaveBeenCalled();
+      expect(mockMigrateAccountsIfNecessary).toHaveBeenCalledTimes(1);
+      expect(selectUsesPersistence(store.getState(), "accounts")).toBe(true);
       expect(screen.getByText("ready")).toBeOnTheScreen();
     });
   });
