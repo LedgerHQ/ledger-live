@@ -2,9 +2,10 @@ import { NewerRecordVersionError, RecordDecodeError } from "@shared/persistence"
 import {
   appendAccounts,
   CLI_WRITTEN_VERSION,
+  encodeRawAccount,
+  encodeStoredAccount,
   parseStoredAccount,
   storedAccountId,
-  wrapRaw,
 } from "../envelope";
 import { ACCOUNTS_VERSION_LINE } from "../versionLine";
 
@@ -73,24 +74,41 @@ describe("storedAccountId", () => {
   });
 });
 
-describe("wrapRaw", () => {
-  it("wraps a raw account at the version that apps/cli writes", () => {
-    expect(wrapRaw(raw)).toEqual({ data: raw, version: CLI_WRITTEN_VERSION });
+describe("encodeRawAccount", () => {
+  it("should encode a raw account at the version that apps/cli writes", () => {
+    expect(encodeRawAccount(raw)).toEqual({ data: raw, version: CLI_WRITTEN_VERSION });
     expect(CLI_WRITTEN_VERSION).toBe(1);
   });
 
-  it("refuses a raw account with no currency", () => {
-    expect(() => wrapRaw({ id: "x" } as never)).toThrow(RecordDecodeError);
+  it("should keep the key order of the raw account", () => {
+    const unordered = { operations: [], currencyId: "ethereum", id: "a" };
+    expect(JSON.stringify(encodeRawAccount(unordered))).toBe(
+      JSON.stringify({ data: unordered, version: CLI_WRITTEN_VERSION }),
+    );
+  });
+
+  it("should refuse a raw account with no currency", () => {
+    expect(() => encodeRawAccount({ id: "x" } as never)).toThrow(RecordDecodeError);
+  });
+});
+
+describe("encodeStoredAccount", () => {
+  it("should encode a stored account that parseStoredAccount reads back", () => {
+    const account = { data: { ...raw, privateInfo: { key: 1 } }, version: 3 };
+    expect(parseStoredAccount(encodeStoredAccount(account))).toEqual(account);
   });
 });
 
 describe("appendAccounts", () => {
   it("keeps the stored accounts as they are and adds only the new ids", () => {
     const unreadable = { data: { id: "b", currencyId: "x" }, version: 9 };
-    const stored = [wrapRaw({ ...raw, id: "a" }), unreadable];
+    const stored = [encodeRawAccount({ ...raw, id: "a" }), unreadable];
 
     expect(
-      appendAccounts(stored, [wrapRaw({ ...raw, id: "b" }), wrapRaw({ ...raw, id: "c" })]),
-    ).toEqual([...stored, wrapRaw({ ...raw, id: "c" })]);
+      appendAccounts(stored, [
+        encodeRawAccount({ ...raw, id: "b" }),
+        encodeRawAccount({ ...raw, id: "c" }),
+      ]),
+    ).toEqual([...stored, encodeRawAccount({ ...raw, id: "c" })]);
   });
 });

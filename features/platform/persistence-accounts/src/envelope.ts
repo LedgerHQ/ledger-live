@@ -24,12 +24,19 @@ export function storedAccountId(stored: unknown): string | undefined {
   return accountIdOfPayload(accountsVersions.payloadOf(stored));
 }
 
-/** Wraps a raw account as apps/cli writes it. For the e2e seeds, which cannot decode accounts. */
-export function wrapRaw<Raw extends StoredAccountData>(raw: Raw): { data: Raw; version: number } {
-  const envelope = { data: raw, version: CLI_WRITTEN_VERSION };
-  parseStoredAccount(envelope);
-  return envelope;
+/**
+ * Encodes a raw account at the legacy version that apps/cli writes, for the e2e seeds, which cannot
+ * decode accounts. It keeps the raw object, so the bytes stay the same.
+ */
+export function encodeRawAccount(raw: StoredAccountData): unknown {
+  const account: StoredAccount = { data: raw, version: CLI_WRITTEN_VERSION };
+  parseStoredAccount(account);
+  return accountsVersions.encode(account);
 }
+
+/** Encodes a stored account at the latest record version, after a seed changes it. */
+export const encodeStoredAccount = (account: StoredAccount): unknown =>
+  accountsVersions.encode(account);
 
 /**
  * Keeps the stored accounts as they are, also those that do not decode, and adds each new account

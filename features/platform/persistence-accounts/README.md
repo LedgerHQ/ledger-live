@@ -24,36 +24,39 @@ for all of them. Each app injects its own account model.
   the mobile data stored before LIVE-40516 has version 1, so a stored 1 runs the 2 mobile steps.
 
 - The record versions, `accountsVersions`: v0 is the stored shape of today,
-  `accountEnvelopeSchema`. A new version of the record is a `.next` here.
+  `accountEnvelopeSchema`, with no `$v`. A new version of the record is a `.next` here.
 - `defineAccountsRecord({ codec, state })`: the collection record, with `accountsVersions`. The
   app gives 2 groups:
   - `codec`, the stored account and back: `decode(stored)`, `decodedId(decoded)` and
     `encode(account, state)`.
   - `state`, its Redux state: `select(state)`, `changed(previous, next)` and
     `toHydrationActions(decoded)`, which runs only at hydration.
-- For the tools: `defineAccountsCodec(codec)`, the same codec with no Redux state, and
-  `appendAccounts`, `parseStoredAccount`, `storedAccountId` and `wrapRaw(raw)`.
-- 2 versions: the legacy `version` of each stored account counts the steps of the line, as
-  today. The record version, `$v`, comes from `accountsVersions` (latest: v0, with no `$v`).
-  `parseStoredAccount` upgrades a stored account to the latest record version.
+- For the tools (`apps/cli`, e2e seeds):
+  - `defineAccountsCodec(codec)`: the same codec with no Redux state.
+  - `parseStoredAccount(stored)`: upgrades 1 stored account to the latest record version.
+  - `encodeRawAccount(raw)`: a raw account at `CLI_WRITTEN_VERSION`, encoded at the latest record
+    version.
+  - `encodeStoredAccount(account)`: a stored account, encoded at the latest record version.
+  - `appendAccounts(stored, added)` and `storedAccountId(stored)`: the id of an account of any
+    record version, newer included.
 
 ## Rules
 
-- An account above version 3, or with an envelope key that this app does not know, comes from a
-  newer app: it does not decode. Persistence reports it (no value, no account id) and keeps it
-  stored as it is, as any account that does not reach the state: a read or decode failure, or an
-  account of a currency that this app does not support.
+- 2 versions: the legacy `version` of each account counts the steps of the line. The record
+  version, `$v`, comes from `accountsVersions`. Never use the legacy `version` for a new version.
+- An account above legacy version 3, or with an envelope key that this app does not know, does not
+  decode. Persistence reports it (no value, no account id) and keeps it stored as it is, as any
+  account that does not reach the state: a read or decode failure, or an account of a currency
+  that this app does not support.
+- An account with a `$v` above the latest version comes from a newer app: a "newer" report. It
+  stays stored and hidden. An account with the same id in the state does not replace it.
+- Each writer encodes through this package, never with a fixed `$v`.
 - The account name and the starred flag have 2 owners: the account `data` and the `wallet` record.
   The record writes them from the wallet state, as today. At start, the desktop imports the wallet
   state after the accounts, so its names win (LIVE-41517).
 
-## Add a step
+## Add a version
 
-1. Add the step code to the account model of each app that writes accounts. Each app has a test
-   that its model fits the line.
-2. Add the step name at the end of `ACCOUNTS_VERSION_LINE`. The schema then accepts the new
-   version.
-3. Update the v0 schema snapshot: its maximum legacy version changes. The record stays v0 until
-   the envelope itself changes.
-4. Set the minimum app version: an older app keeps the new accounts stored and does not show them
-   until the user updates.
+- The legacy `ACCOUNTS_VERSION_LINE` is frozen. Do not add a step to it.
+- A new version is `accountsVersions.next(schema, step)`. Follow the
+  [record-versions-and-migrations skill](../../../.agents/skills/record-versions-and-migrations/SKILL.md).

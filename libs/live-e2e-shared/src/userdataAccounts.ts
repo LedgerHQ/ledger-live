@@ -2,7 +2,7 @@ import { access } from "node:fs/promises";
 import {
   ACCOUNTS_RECORD_KEY,
   appendAccounts,
-  wrapRaw,
+  encodeRawAccount,
   type StoredAccountData,
 } from "@features/platform-persistence-accounts";
 import { StorageLockedError, type StoragePort } from "@shared/storage";
@@ -48,13 +48,6 @@ export async function updateUserdataCryptoAssets(
   if (next !== undefined) await storage.set(CRYPTO_ASSETS_KEY, next);
 }
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-/** The `data` object of a stored account itself, not a copy, so a seed can change it. */
-export const storedAccountData = (entry: unknown): Record<string, unknown> | undefined =>
-  isRecord(entry) && isRecord(entry.data) ? entry.data : undefined;
-
 /** Validates a stored account before a seed adds it or changes it. */
 export { parseStoredAccount as validateStoredAccount } from "@features/platform-persistence-accounts";
 
@@ -71,6 +64,6 @@ export async function addRawAccountIfMissing(
   const accounts = await readStoredAccounts(storage).catch((error: unknown) => {
     throw isEncryptedUserdataError(error) ? new Error(ENCRYPTED_USERDATA_MESSAGE) : error;
   });
-  const all = appendAccounts(accounts, [wrapRaw(raw)]);
+  const all = appendAccounts(accounts, [encodeRawAccount(raw)]);
   if (all.length > accounts.length) await storage.set(ACCOUNTS_RECORD_KEY, all);
 }

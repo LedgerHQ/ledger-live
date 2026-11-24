@@ -93,6 +93,21 @@ test("seedZcashPrivateInfo adds the private info to the matching account only", 
   assert.deepEqual(Object.keys(seeded.data), ["id", "currencyId", "index", "privateInfo"]);
 });
 
+test("seedZcashPrivateInfo keeps an unreadable entry as it is", async () => {
+  const unreadable = {
+    data: { id: "js:2:zcash:t0:", currencyId: "zcash", index: 1, secret: "s" },
+    version: 9,
+  };
+  const zcash = { data: { id: "js:2:zcash:t1:", currencyId: "zcash", index: 1 }, version: 1 };
+  const filePath = userdataFile({ data: { accounts: [unreadable, zcash] } });
+
+  await seedZcashPrivateInfo(fakeAccount("zcash", 1), "zs1shielded")(filePath);
+
+  const [kept, seeded] = JSON.parse(readFileSync(filePath, "utf-8")).data.accounts;
+  assert.deepEqual(kept, unreadable);
+  assert.equal(seeded.data.privateInfo.shieldedAddress, "zs1shielded");
+});
+
 test("seedZcashPrivateInfo refuses an encrypted file", async () => {
   const filePath = userdataFile({ data: { accounts: "ciphertext" } });
   await assert.rejects(seedZcashPrivateInfo(fakeAccount("zcash", 1), "zs1")(filePath), TypeError);

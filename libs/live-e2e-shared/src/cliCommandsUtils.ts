@@ -22,13 +22,16 @@ import { approveToken } from "./families/evm";
 import { enableBlindSigningOnNanoS } from "./speculos";
 import { ZCASH_TEST_PRIVATE_INFO } from "./families/zcash";
 import { access } from "node:fs/promises";
-import type { StoredAccountData } from "@features/platform-persistence-accounts";
+import {
+  encodeStoredAccount,
+  type StoredAccount,
+  type StoredAccountData,
+} from "@features/platform-persistence-accounts";
 import {
   addRawAccountIfMissing,
   ENCRYPTED_USERDATA_MESSAGE,
   isEncryptedUserdataError,
   readUserdataAccounts,
-  storedAccountData,
   validateStoredAccount,
   writeUserdataAccounts,
 } from "./userdataAccounts";
@@ -227,6 +230,14 @@ export const addEmptyAccountCommand = (account: Account, options?: LiveDataComma
     await addRawAccountIfMissing(userdataPath, stub);
   });
 
+function readableStoredAccount(entry: unknown): StoredAccount | undefined {
+  try {
+    return validateStoredAccount(entry);
+  } catch {
+    return undefined;
+  }
+}
+
 /**
  * Seeds an already-activated Zcash private balance onto the account
  * liveDataCommand just added. Pass as a postSeedHook:
@@ -245,19 +256,20 @@ export function seedZcashPrivateInfo(account: Account, shieldedAddress: string) 
     const stored = await readUserdataAccounts(userdataPath).catch((error: unknown) => {
       throw isEncryptedUserdataError(error) ? new TypeError(ENCRYPTED_USERDATA_MESSAGE) : error;
     });
-    const entry = stored.find(candidate => {
-      const data = storedAccountData(candidate);
-      return data?.currencyId === account.currency.id && data?.index === account.index;
-    });
-    const data = storedAccountData(entry);
-    if (!data) {
+    const readable = stored.map(readableStoredAccount);
+    const index = readable.findIndex(
+      candidate =>
+        candidate?.data.currencyId === account.currency.id &&
+        candidate?.data.index === account.index,
+    );
+    const found = readable[index];
+    if (!found) {
       throw new Error(
         `seedZcashPrivateInfo: no account matching currencyId "${account.currency.id}" and index ${account.index} in ${userdataPath}. Did liveDataCommand run first?`,
       );
     }
-    validateStoredAccount(entry);
     const privateInfo: ZcashPrivateInfoRaw = { ...ZCASH_TEST_PRIVATE_INFO, shieldedAddress };
-    data.privateInfo = privateInfo;
+    stored[index] = encodeStoredAccount({ ...found, data: { ...found.data, privateInfo } });
     await writeUserdataAccounts(userdataPath, stored);
   };
 }
