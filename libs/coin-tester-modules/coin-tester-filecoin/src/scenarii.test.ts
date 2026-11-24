@@ -1,5 +1,4 @@
 import { executeScenario } from "@ledgerhq/coin-tester/main";
-import type { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 import { scenarioFilecoin } from "./scenarii/filecoin";
 
 global.console = require("console");
@@ -7,16 +6,8 @@ global.console = require("console");
 // transactions that wait for a tipset each.
 jest.setTimeout(20 * 60 * 1000);
 
-// The generic-adapter run is skipped: coin-filecoin's `craftTransaction` takes the fee parameters
-// `signOperation` passes as custom fees and reads their gas fields as 0, so the broadcast is
-// refused with "gas fee cap too low". Run it again once the coin module reads only a given gas fee cap.
-const strategies: [BridgeStrategy, boolean][] = [
-  ["legacy", true],
-  ["generic-adapter", false],
-];
-
-describe.each(strategies)("Filecoin (%s strategy)", (strategy, enabled) => {
-  (enabled ? it : it.skip)("scenario filecoin", async () => {
+describe.each([["legacy"], ["generic-adapter"]] as const)("Filecoin (%s strategy)", strategy => {
+  it("scenario filecoin", async () => {
     try {
       await executeScenario(
         { ...scenarioFilecoin, name: `${scenarioFilecoin.name} [${strategy} strategy]` },

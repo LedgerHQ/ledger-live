@@ -7,12 +7,6 @@ Deterministic integration tester for the Filecoin family. Asks coin-sandbox for 
 node and its Filecoin API stub (the indexer coin-filecoin reads), then runs the same send
 scenario through the legacy bridge and the generic-adapter bridge.
 
-> [!WARNING]
-> The generic-adapter run is skipped (`src/scenarii.test.ts`): coin-filecoin's `craftTransaction`
-> reads the fee parameters the generic `signOperation` always passes as custom fees with zero gas,
-> so Lotus refuses the broadcast ("gas fee cap too low"). Only the legacy column below runs until
-> the coin module reads a gas fee cap only when one is given.
-
 ## Run
 
 ```sh
@@ -31,8 +25,6 @@ Ledger Live signs with a software signer (`iso-filecoin`, glif path `44'/461'/0'
 the device: this proves the bridge and coin-filecoin, not what the Filecoin app accepts or shows.
 
 ## Coverage
-
-`both` is what the scenario is written for; the generic-adapter run is skipped for now (see above).
 
 | # | Step | Asserts | Strategies |
 | --- | --- | --- | --- |
