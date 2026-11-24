@@ -85,6 +85,7 @@ for (const asset of assets) {
         );
         await app.account.clickBuy(crypto);
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
+        await app.buyAndSell.verifyLiveAppOpenedWithAsset(crypto);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
       },
     );

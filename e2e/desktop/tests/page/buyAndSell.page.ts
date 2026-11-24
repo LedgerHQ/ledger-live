@@ -239,6 +239,15 @@ export class BuyAndSellPage extends WebViewAppPage {
     await this.verifySelectedAssetIsDisplayed(account);
   }
 
+  @step("Verify the live app was opened with the account's asset")
+  async verifyLiveAppOpenedWithAsset(account: AccountType) {
+    const params = new URL((await this.getWebView()).url()).searchParams;
+    await this.softExpect(soft => {
+      soft(params.get("currency"), "currency param").toBe(account.currency.id);
+      soft(params.get("account"), "account param").toBeTruthy();
+    });
+  }
+
   @step("Verify fiat asset selected as $0")
   async verifyFiatAssetSelector(fiatCurrencyTicker: string) {
     const webview = await this.getWebView();
