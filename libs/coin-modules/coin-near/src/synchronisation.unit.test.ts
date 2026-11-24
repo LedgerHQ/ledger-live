@@ -147,6 +147,19 @@ describe("legacy getAccountShape", () => {
     expect(shape.nearResources).not.toHaveProperty("historyRecheckSince");
   });
 
+  it("replaces a stored operation whose transaction is read again under another id", async () => {
+    (getAccountStateFingerprint as jest.Mock).mockResolvedValue(NEW_FP);
+    (fetchLegacyHistory as jest.Mock).mockResolvedValue(history(["new", "call"]));
+    // As the generic sync stores a call with no deposit: typed FEES, so its id differs.
+    const storedByGeneric = { ...operation("call"), id: "id-call-FEES", type: "FEES" } as Operation;
+    const initial = storedAccount();
+    initial.operations = [storedByGeneric, operation("old")];
+
+    const shape = await runSync(initial);
+
+    expect(shape.operations?.map(({ id }) => id)).toEqual(["id-new", "id-call", "id-old"]);
+  });
+
   it("lists the pools for an unseen staking call to an unknown pool, naming it as a candidate", async () => {
     (getAccountStateFingerprint as jest.Mock).mockResolvedValue(NEW_FP);
     (fetchLegacyHistory as jest.Mock).mockResolvedValue(

@@ -381,6 +381,17 @@ const legacyShapeClears = (initialAccount: NearAccount | undefined): Partial<Nea
   } as Partial<NearAccount>;
 };
 
+/**
+ * The stored operations, less those whose transaction was read again under another id: the generic
+ * sync types a call with no deposit `FEES` where this one types it `OUT`, and the id carries the
+ * type. This sync makes one operation per transaction, so the one read again replaces it.
+ */
+const withoutRereadTransactions = (stored: Operation[], read: Operation[]): Operation[] => {
+  const readIds = new Set(read.map(({ id }) => id));
+  const readHashes = new Set(read.map(({ hash }) => hash));
+  return stored.filter(({ id, hash }) => !readHashes.has(hash) || readIds.has(id));
+};
+
 export const getAccountShape: GetAccountShape<NearAccount> = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
@@ -566,7 +577,7 @@ export const getAccountShape: GetAccountShape<NearAccount> = async info => {
 
   // The confirmation read may list a transaction indexed late below every stored one.
   const operations = mergeOpsKeepingOlder(
-    history?.gap ? [] : oldOperations,
+    history?.gap ? [] : withoutRereadTransactions(oldOperations, history?.operations ?? []),
     history?.operations ?? [],
   );
   if (operations.length === 0) {
