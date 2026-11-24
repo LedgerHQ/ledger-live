@@ -531,6 +531,39 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(connect).toHaveBeenCalledWith("device-id");
   });
 
+  it("should stop waiting for the updated Nano from Setup's close button without asking", () => {
+    const abortFirmwareReconnect = jest.fn();
+    send.mockClear();
+    useSession.mockReturnValue({
+      ...seededDuringSetupSession(true),
+      state: "postSetupFirmware.firmwareUpdateDelegated",
+    });
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    // The update reboots the device: the machine forgets this session's genuine verdict.
+    useSession.mockReturnValue({
+      ...seededDuringSetupSession(true),
+      state: "awaitingSessionAfterFirmwareUpdate",
+      abortFirmwareReconnect,
+      snapshot: {
+        context: {
+          updateAfterSetup: true,
+          isOnboarded: true,
+          firmware: null,
+          sessionId: "session",
+          genuineVerdict: null,
+          returningFromFirmwareUpdate: true,
+        },
+      } as DeviceOnboardingSession["snapshot"],
+    });
+    rerender(undefined);
+
+    expect(setupOf(result.current).stage).toMatchObject({ kind: "osCheck", index: 4 });
+    act(() => quitOf(result.current)?.());
+
+    expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
+    expect(result.current.quitConfirmation?.isOpen).not.toBe(true);
+  });
+
   it("should still ask before leaving an unseeded device without a held-back update", () => {
     send.mockClear();
     useSession.mockReturnValue(seededDuringSetupSession(false));

@@ -381,8 +381,9 @@ function checksQuit(actions: ScreenActions): () => void {
 }
 
 /**
- * Mid-setup, leaving asks first. Once only the held-back update is left, it leaves like the checks
- * screen: the update handover and the wait for the updated device each have their own way out.
+ * Leaving the wait for the updated device stops the reconnect, as on the checks screen. Otherwise,
+ * mid-setup, leaving asks first; once only the held-back update is left, the update handover has its
+ * own way out.
  */
 function setupQuit(
   actions: Readonly<{
@@ -395,10 +396,11 @@ function setupQuit(
     quitMachine: () => void;
   }>,
 ): () => void {
-  if (actions.confirmsQuit) return actions.requestQuit;
+  // The update reboots the device and drops its genuine verdict: the wait still has its own way out.
   if (actions.liveState === awaitingSessionAfterFirmwareUpdateState) {
     return actions.leaveFirmwareReconnect;
   }
+  if (actions.confirmsQuit) return actions.requestQuit;
   if (isFirmwareUpdateDelegated(actions.state)) return actions.closeFirmwareHandover;
   return actions.quitMachine;
 }
