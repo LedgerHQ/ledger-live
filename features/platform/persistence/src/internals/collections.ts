@@ -1,12 +1,20 @@
 import type { UnknownAction } from "@reduxjs/toolkit";
-import { encodeEntries, type CollectionRecordDefinition } from "@shared/persistence";
+import {
+  encodeEntries,
+  NewerRecordVersionError,
+  type CollectionRecordDefinition,
+} from "@shared/persistence";
 import type { ListableStoragePort, StoragePort } from "@shared/storage";
 import type { KeyPerEntryScheme, PersistenceBinding } from "../bindings";
 
 type CollectionRecord<State> = CollectionRecordDefinition<State, UnknownAction>;
 
-/** 1 stored entry and its id, when it has one: its value, or the error of its read. */
-export type StoredEntry = { id: string | undefined; key?: string } & (
+/**
+ * 1 stored entry and its id, when it has one: its value, or the error of its read. A `newer` entry
+ * comes from a newer app: it stays stored and hidden, and a state entry with its id never replaces
+ * it.
+ */
+export type StoredEntry = { id: string | undefined; key?: string; newer?: true } & (
   | { value: unknown }
   | { readError: unknown }
 );
@@ -21,7 +29,7 @@ export class NotAListError extends Error {
 /** 1 stored entry after its decode: the decoded entry, or why it failed. */
 export type DecodedStoredEntry<Decoded> = { entry: StoredEntry } & (
   | { decoded: Decoded }
-  | { failure: { operation: "read" | "decode"; error: unknown } }
+  | { failure: { operation: "read" | "decode" | "newer"; error: unknown } }
 );
 
 export async function decodeStoredEntry<State, Decoded>(
@@ -33,6 +41,9 @@ export async function decodeStoredEntry<State, Decoded>(
   try {
     return { entry, decoded: await record.codec.decode(entry.value) };
   } catch (error) {
+    if (error instanceof NewerRecordVersionError) {
+      return { entry: { ...entry, newer: true }, failure: { operation: "newer", error } };
+    }
     return { entry, failure: { operation: "decode", error } };
   }
 }
@@ -146,7 +157,8 @@ const sameIds = (a: ReadonlyArray<string>, b: ReadonlyArray<string>) =>
 
 /**
  * Writes what changed since `previous`. The kept entries stay stored, unless the state has an
- * entry with the same id. Returns `undefined` when nothing changed.
+ * entry with the same id. A newer kept entry always stays, and the state entry with its id is
+ * never written. Returns `undefined` when nothing changed.
  */
 export async function writeEntries<State>(
   storage: StoragePort,
@@ -166,11 +178,17 @@ export async function writeEntries<State>(
   const removed = previous.ids.some(id => !currentIds.has(id));
   if (changed.length === 0 && !removed && sameIds(previous.ids, current.ids)) return undefined;
 
-  const stillKept = kept.filter(entry => entry.id === undefined || !currentIds.has(entry.id));
+  const stillKept = kept.filter(
+    entry => entry.newer || entry.id === undefined || !currentIds.has(entry.id),
+  );
+  const pinnedIds = new Set(
+    kept.flatMap(entry => (entry.newer && entry.id !== undefined ? [entry.id] : [])),
+  );
+  const isWritable = (entry: (typeof entries)[number]) => !pinnedIds.has(record.entryId(entry));
   if (!keyScheme) {
     const keptValues = stillKept.flatMap(entry => ("value" in entry ? [entry.value] : []));
     await storage.set(record.key, [
-      ...(await encodeEntries(record.codec, entries, state)),
+      ...(await encodeEntries(record.codec, entries.filter(isWritable), state)),
       ...keptValues,
     ]);
     return { written: current, kept: stillKept };
@@ -179,12 +197,14 @@ export async function writeEntries<State>(
   // MMKV cannot write several keys atomically: entries first, stale keys next, the order last.
   const entryStorage = listable(storage);
   await settleAll(
-    changed.map(async entry =>
-      entryStorage.set(
-        keyScheme.prefix + record.entryId(entry),
-        await record.codec.encode(entry, state),
+    changed
+      .filter(isWritable)
+      .map(async entry =>
+        entryStorage.set(
+          keyScheme.prefix + record.entryId(entry),
+          await record.codec.encode(entry, state),
+        ),
       ),
-    ),
   );
   const keptKeys = new Set(stillKept.map(entry => entry.key));
   const staleKeys = (await entryStorage.keys(keyScheme.prefix)).filter(

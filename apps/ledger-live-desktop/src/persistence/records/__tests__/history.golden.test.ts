@@ -67,9 +67,9 @@ describe("history write", () => {
 });
 
 describe("history stored with a key that this app does not know", () => {
-  it("fails the record and never writes over the newer value", async () => {
-    const newer = { lastSeenOperationDate: null, $v: 1 };
-    const { store, storage, hydrate, report } = setup({ history: newer });
+  it("fails the record and never writes over the unknown value", async () => {
+    const unknown = { lastSeenOperationDate: null, pinned: true };
+    const { store, storage, hydrate, report } = setup({ history: unknown });
     await hydrate();
 
     store.dispatch(markOperationsAsSeen());
@@ -78,6 +78,23 @@ describe("history stored with a key that this app does not know", () => {
     expect(selectRecordStatus(store.getState(), "history")).toBe("failed");
     expect(report).toHaveBeenCalledWith(
       expect.objectContaining({ key: "history", operation: "decode" }),
+    );
+    await expect(storage.get("history")).resolves.toEqual(unknown);
+  });
+});
+
+describe("history stored by a newer version", () => {
+  it("fails the record with a newer report and never writes over the newer value", async () => {
+    const newer = { $v: 1, data: { lastSeenOperationDate: null } };
+    const { store, storage, hydrate, report } = setup({ history: newer });
+    await hydrate();
+
+    store.dispatch(markOperationsAsSeen());
+    await flushWrites();
+
+    expect(selectRecordStatus(store.getState(), "history")).toBe("failed");
+    expect(report).toHaveBeenCalledWith(
+      expect.objectContaining({ key: "history", operation: "newer" }),
     );
     await expect(storage.get("history")).resolves.toEqual(newer);
   });

@@ -4,7 +4,7 @@ import { storedSchemaSnapshot } from "@shared/persistence/testing";
 import { createMemoryStorage, type StoragePort } from "@shared/storage";
 import { createPersistence } from "../createPersistence";
 import { persistenceSlice } from "../persistenceSlice";
-import type { PersistenceFailure } from "../reportFailure";
+import { describePersistenceFailure, type PersistenceFailure } from "../reportFailure";
 import prefsV0Sample from "./__fixtures__/prefs.v0.json";
 import prefsV1Sample from "./__fixtures__/prefs.v1.json";
 
@@ -164,16 +164,30 @@ describe("a record that moves from v0 to v1", () => {
     });
   });
 
-  it("should leave a v1 value to an older app, which never writes over it", async () => {
+  it("should leave a v1 value to an older app, which shows the default and never writes over it", async () => {
     const v1Value = { $v: 1, data: { theme: "blue", fontSize: 16 } };
     const storage = createMemoryStorage({ prefs: v1Value });
 
     const { store, statuses, failures } = await startApp(olderApp, storage);
+    expect(store.getState().prefs).toEqual({ theme: "light", fontSize: 12 });
     store.dispatch(prefs.actions.setTheme("green"));
     await settle();
 
     expect(statuses).toEqual({ prefs: "failed" });
-    expect(failures).toEqual([expect.objectContaining({ key: "prefs", operation: "decode" })]);
+    expect(failures).toEqual([
+      { key: "prefs", version: 0, operation: "newer", reason: expect.any(String) },
+    ]);
     await expect(storage.get("prefs")).resolves.toEqual(v1Value);
+  });
+
+  it("should describe a newer value with its stored version and no value", async () => {
+    const { failures } = await startApp(
+      olderApp,
+      createMemoryStorage({ prefs: { $v: 1, data: { theme: "secret-theme", fontSize: 16 } } }),
+    );
+
+    expect(failures.map(describePersistenceFailure)).toEqual([
+      'Persistence found a newer version of record "prefs" v0: Stored value of record "prefs" is v1, newer than the known v0',
+    ]);
   });
 });

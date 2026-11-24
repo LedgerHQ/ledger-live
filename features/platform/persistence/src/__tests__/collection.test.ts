@@ -136,7 +136,7 @@ function setup({
 
 const UNREADABLE_ENTRIES: Array<[string, unknown]> = [
   ["a wrong shape", { data: { id: "b", value: "secret" }, version: 3 }],
-  ["a newer version", entry("b", 2, 4)],
+  ["a version above the schema", entry("b", 2, 4)],
   ["an unknown envelope key", { ...entry("b", 2), checksum: "secret" }],
 ];
 
@@ -226,6 +226,27 @@ describe.each(["singleKey", "keyPerEntry"] as const)(
       store.dispatch(items.actions.remove("b"));
       await settle();
       await expect(readStored(keyScheme, storage)).resolves.toEqual([entry("a", 1)]);
+    });
+
+    it("should keep a newer entry stored and hidden when the state adds and removes an entry with its id", async () => {
+      const newer = { $v: 1, data: entry("b", 2) };
+      const { store, storage, failures, hydrate } = setup({
+        keyScheme,
+        stored: storeEntries(keyScheme, [entry("a", 1), newer], ["a", "b"]),
+      });
+      await hydrate();
+      expect(store.getState().items).toEqual([{ id: "a", value: 1 }]);
+      expect(failures).toEqual([
+        expect.objectContaining({ key: "items", operation: "newer", entry: 1 }),
+      ]);
+
+      store.dispatch(items.actions.add({ id: "b", value: 20 }));
+      await settle();
+      await expect(readStored(keyScheme, storage)).resolves.toEqual([entry("a", 1), newer]);
+
+      store.dispatch(items.actions.remove("b"));
+      await settle();
+      await expect(readStored(keyScheme, storage)).resolves.toEqual([entry("a", 1), newer]);
     });
 
     it("replaces an entry that a migration gives a new id, then removes it for good", async () => {

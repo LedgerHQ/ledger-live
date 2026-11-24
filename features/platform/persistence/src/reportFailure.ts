@@ -1,7 +1,7 @@
 export type PersistenceFailure = {
   key: string;
   version: number;
-  operation: "read" | "decode" | "write";
+  operation: "read" | "decode" | "newer" | "write";
   reason: string;
   entry?: number;
 };
@@ -17,5 +17,8 @@ export const describePersistenceFailure = ({
   entry,
 }: PersistenceFailure): string => {
   const where = entry === undefined ? "" : ` entry ${entry}`;
+  if (operation === "newer") {
+    return `Persistence found a newer version of record "${key}" v${version}${where}: ${reason}`;
+  }
   return `Persistence ${operation} failed for record "${key}" v${version}${where}: ${reason}`;
 };

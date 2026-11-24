@@ -1,8 +1,9 @@
 import type { Middleware, UnknownAction } from "@reduxjs/toolkit";
-import type {
-  CollectionRecordDefinition,
-  RecordDefinition,
-  ValueRecordDefinition,
+import {
+  NewerRecordVersionError,
+  type CollectionRecordDefinition,
+  type RecordDefinition,
+  type ValueRecordDefinition,
 } from "@shared/persistence";
 import { StorageLockedError, type StoragePort } from "@shared/storage";
 import type { PersistenceBinding } from "./bindings";
@@ -63,7 +64,7 @@ type Runtime<State> = {
   scheduler: WriteScheduler;
   /** The reference of the last change, and the entries of the last collection write. */
   baseline: { selected: unknown; written?: WrittenEntries } | undefined;
-  /** The stored entries that did not reach the state: they stay stored. */
+  /** The stored entries that did not reach the state: they stay stored. A newer one stays for good. */
   kept: StoredEntry[];
   /** The stored ids at the hydration. A state entry with another id is not stored yet. */
   storedIds: ReadonlySet<string>;
@@ -84,6 +85,16 @@ class HydrationFailure extends Error {
   }
 }
 
+function failedOperation(
+  operation: PersistenceFailure["operation"],
+  error: unknown,
+): PersistenceFailure["operation"] {
+  if (error instanceof NewerRecordVersionError) return "newer";
+  // A stored value that is not a list read fine: its shape is wrong.
+  if (error instanceof NotAListError) return "decode";
+  return operation;
+}
+
 async function attempt<T>(
   operation: PersistenceFailure["operation"],
   run: () => T | Promise<T>,
@@ -92,8 +103,7 @@ async function attempt<T>(
     return await run();
   } catch (error) {
     if (error instanceof HydrationFailure) throw error;
-    // A stored value that is not a list read fine: its shape is wrong.
-    throw new HydrationFailure(error instanceof NotAListError ? "decode" : operation, error);
+    throw new HydrationFailure(failedOperation(operation, error), error);
   }
 }
 
@@ -182,7 +192,7 @@ export function createPersistence<State extends PersistenceRootState>({
     runtime.kept = results
       .filter(result => !reachedState(result))
       .map(result => result.entry)
-      .filter(entry => entry.id === undefined || !loaded.has(entry.id));
+      .filter(entry => entry.newer || entry.id === undefined || !loaded.has(entry.id));
     return "loaded";
   }
 
