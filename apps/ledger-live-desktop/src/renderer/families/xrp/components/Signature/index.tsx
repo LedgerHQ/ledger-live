@@ -25,6 +25,37 @@ type Props = Readonly<{
   onClose: () => void;
 }>;
 
+function getErrorContent(
+  failure: NonNullable<SignatureStepsViewModel["failure"]>,
+  broadcastError: string,
+  errorTitle?: string,
+) {
+  const errorMessage = <TranslatedError error={failure.error} field="title" />;
+
+  if (errorTitle) {
+    return {
+      title: errorTitle,
+      description: errorMessage,
+      banner: failure.isSigned
+        ? {
+            appearance: "warning" as const,
+            description: broadcastError,
+            testID: "xrp-signature-broadcast-error",
+          }
+        : undefined,
+    };
+  }
+
+  return {
+    title: errorMessage,
+    description: failure.isSigned ? (
+      broadcastError
+    ) : (
+      <TranslatedError error={failure.error} field="description" />
+    ),
+  };
+}
+
 export function SignatureSteps({
   signature,
   successTitle,
@@ -104,28 +135,6 @@ export function SignatureSteps({
 
   if (phase === "error" && failure) {
     const broadcastError = t("xrp.addToken.steps.confirmation.broadcastError");
-    const errorMessage = <TranslatedError error={failure.error} field="title" />;
-
-    const errorContent = errorTitle
-      ? {
-          title: errorTitle,
-          description: errorMessage,
-          banner: failure.isSigned
-            ? {
-                appearance: "warning" as const,
-                description: broadcastError,
-                testID: "xrp-signature-broadcast-error",
-              }
-            : undefined,
-        }
-      : {
-          title: errorMessage,
-          description: failure.isSigned ? (
-            broadcastError
-          ) : (
-            <TranslatedError error={failure.error} field="description" />
-          ),
-        };
 
     return (
       <StepScreen onClose={onClose}>
@@ -133,7 +142,7 @@ export function SignatureSteps({
           preset="error"
           size="hug"
           testID="xrp-signature-error"
-          {...errorContent}
+          {...getErrorContent(failure, broadcastError, errorTitle)}
           primaryCta={{
             label: t("common.tryAgain"),
             onPress: signature.onReset,

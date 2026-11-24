@@ -235,6 +235,26 @@ describe("xrp ManageAssetsDialog", () => {
     expect(screen.getByText("Empty your TMPT balance to remove it")).toBeVisible();
   });
 
+  it("shows the Delete screen of the synced balance", async () => {
+    const emptyMptAccount = { ...XRP_MPT_TOKEN_ACCOUNT, balance: new BigNumber(0) };
+    const { user, rerender } = renderDialog({ ...XRP_ACCOUNT, subAccounts: [emptyMptAccount] });
+    await user.click(getCard(xrpMptToken.id).getByTestId("xrp-manage-assets-delete"));
+
+    rerender(
+      <AccountDialogs
+        account={{
+          ...XRP_ACCOUNT,
+          subAccounts: [{ ...emptyMptAccount, balance: new BigNumber(5) }],
+        }}
+        parentAccount={null}
+        params={{ screen: "manageAssets" }}
+        onClose={onClose}
+      />,
+    );
+
+    expect(screen.getByText("Empty your TMPT balance to remove it")).toBeVisible();
+  });
+
   it("shows a skeleton until the transfer fee loads", async () => {
     renderDialog();
     const card = getCard(xrpRlusdToken.id);

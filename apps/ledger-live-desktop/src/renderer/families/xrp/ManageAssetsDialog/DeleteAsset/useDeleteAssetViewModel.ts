@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -31,7 +31,16 @@ export function useDeleteAssetViewModel(
       transaction: makeOptOutTransaction(bridge, account, tokenAccount),
     };
   });
-  const { transaction, status, bridgePending, bridgeError } = bridgeTransaction;
+  const { transaction, status, bridgePending, bridgeError, updateAccount, updateTransaction } =
+    bridgeTransaction;
+  const bridgeAccount = bridgeTransaction.account;
+
+  useEffect(() => {
+    if (bridgeAccount === account) return;
+
+    updateAccount(account);
+    updateTransaction(tx => ({ ...tx }));
+  }, [account, bridgeAccount, updateAccount, updateTransaction]);
 
   const signature = useSignatureSteps(account, transaction, status);
 

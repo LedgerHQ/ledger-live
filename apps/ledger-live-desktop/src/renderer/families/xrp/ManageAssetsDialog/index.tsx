@@ -21,44 +21,58 @@ export default function ManageAssetsDialog({ account, tokenAccounts, onClose }: 
   const [editedTokenId, setEditedTokenId] = useState<string>();
   const editedTokenAccount = tokenAccounts.find(tokenAccount => tokenAccount.id === editedTokenId);
   const [deletedTokenAccount, setDeletedTokenAccount] = useState<XrpTokenAccount>();
+  const latestDeletedTokenAccount =
+    deletedTokenAccount &&
+    (tokenAccounts.find(tokenAccount => tokenAccount.id === deletedTokenAccount.id) ??
+      deletedTokenAccount);
   const isDeviceBlocked = useDeviceBlocked();
 
   const close = () => {
     if (!isDeviceBlocked) onClose();
   };
 
+  const renderScreen = () => {
+    if (latestDeletedTokenAccount) {
+      return (
+        <DeleteAsset
+          account={account}
+          tokenAccount={latestDeletedTokenAccount}
+          onBack={() => setDeletedTokenAccount(undefined)}
+          onClose={close}
+        />
+      );
+    }
+
+    if (editedTokenAccount) {
+      return (
+        <EditAsset
+          account={account}
+          tokenAccount={editedTokenAccount}
+          onBack={() => setEditedTokenId(undefined)}
+          onClose={close}
+        />
+      );
+    }
+
+    return (
+      <StepScreen title={t("xrp.manageAssets.title")} onBack={close} onClose={close}>
+        {tokenAccounts.map(tokenAccount => (
+          <AssetCard
+            key={tokenAccount.id}
+            account={account}
+            tokenAccount={tokenAccount}
+            onEdit={({ id }) => setEditedTokenId(id)}
+            onDelete={setDeletedTokenAccount}
+          />
+        ))}
+      </StepScreen>
+    );
+  };
+
   return (
     <Dialog animated open onOpenChange={open => !open && close()}>
       <DialogContent>
-        <DialogBackgroundToneProvider>
-          {deletedTokenAccount ? (
-            <DeleteAsset
-              account={account}
-              tokenAccount={deletedTokenAccount}
-              onBack={() => setDeletedTokenAccount(undefined)}
-              onClose={close}
-            />
-          ) : editedTokenAccount ? (
-            <EditAsset
-              account={account}
-              tokenAccount={editedTokenAccount}
-              onBack={() => setEditedTokenId(undefined)}
-              onClose={close}
-            />
-          ) : (
-            <StepScreen title={t("xrp.manageAssets.title")} onBack={close} onClose={close}>
-              {tokenAccounts.map(tokenAccount => (
-                <AssetCard
-                  key={tokenAccount.id}
-                  account={account}
-                  tokenAccount={tokenAccount}
-                  onEdit={({ id }) => setEditedTokenId(id)}
-                  onDelete={setDeletedTokenAccount}
-                />
-              ))}
-            </StepScreen>
-          )}
-        </DialogBackgroundToneProvider>
+        <DialogBackgroundToneProvider>{renderScreen()}</DialogBackgroundToneProvider>
       </DialogContent>
     </Dialog>
   );
