@@ -90,8 +90,11 @@ export async function build(
 }
 
 export async function installFromFeed(version: string) {
-  const { feedBinary, installedApp, install } = platformBuild();
-  const binaryPath = feedBinary(version);
+  return installBinary(platformBuild().feedBinary(version));
+}
+
+export async function installBinary(binaryPath: string) {
+  const { installedApp, install } = platformBuild();
   fs.mkdirSync(installDir, { recursive: true });
   await install(binaryPath);
   console.log(`Installed ${path.basename(binaryPath)} as ${installedApp}`);
@@ -204,8 +207,18 @@ export function platformBuild(): PlatformBuild {
 }
 
 async function unzipApp(zip: string, app: string) {
-  fs.rmSync(app, { recursive: true, force: true });
+  await removeApp(app);
   await execa("ditto", ["-x", "-k", zip, path.dirname(app)]);
+}
+
+// An update that asked for an admin password leaves the app owned by root.
+async function removeApp(app: string) {
+  try {
+    fs.rmSync(app, { recursive: true, force: true });
+  } catch {
+    console.log(`Deleting ${app} as root, an update installed it with admin rights`);
+    await execa("sudo", ["rm", "-rf", app], { stdio: "inherit" });
+  }
 }
 
 function replaceFile(source: string, destination: string) {
@@ -278,7 +291,7 @@ async function registeredVersion() {
 }
 
 // electron-builder writes the top-level path and sha512 as copies of files[0].
-function readTopLevelYamlValue(yaml: string, key: string) {
+export function readTopLevelYamlValue(yaml: string, key: string) {
   return new RegExp(`^${key}: (.*)$`, "m").exec(yaml)?.[1];
 }
 

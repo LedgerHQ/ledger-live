@@ -39,10 +39,32 @@ node tools/testing/autoupgrade.mts --from-feed --corrupted-update
 node tools/testing/autoupgrade.mts --from-feed --download-speed 2
 ```
 
+## Prerelease builds
+
+`preprod-auto-upgrade.mts` downloads a build from https://download.live.ledger.com, installs it
+like the local builds and opens it. The build updates from the real feed to the version the
+platform's `next` yml announces. Its hash file and signature come from a local copy of the
+prerelease signature feed, served as the app's `UPDATE_CHECK_FEED`. Nothing checks the result:
+watch the app.
+
+```bash
+node tools/testing/preprod-auto-upgrade.mts ledger-live-desktop-4.30.0-next.0-mac.zip
+node tools/testing/preprod-auto-upgrade.mts ledger-live-desktop-4.30.0-next.0-mac.zip --bad-signature
+```
+
+Pass the `-mac.zip` build on macOS, the `.AppImage` on Linux and the `-win-x64.exe` on Windows. It
+must be a prerelease older than the update: a release ignores `UPDATE_CHECK_FEED`, and the latest
+prerelease has no update.
+
+With `--bad-signature`, the local feed replaces the signature with one from an ephemeral key. The
+app must show an update error and not download the update.
+
 ## Before running
 
 - Quit any running Ledger Wallet.
 - macOS: the builds are signed with the code signing identity found in your keychain.
+- macOS: an update that asks for your password leaves the app owned by root. The next run deletes it
+  with `sudo`, which asks for your password too.
 - Each run deletes the updater's pending download, in `ledger-live-desktop-updater/pending` under
   the user cache folder, so the app downloads the update again. An installed Ledger Wallet uses the
   same folder.
