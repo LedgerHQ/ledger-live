@@ -24,7 +24,7 @@ function mockTool(overrides: Partial<toolMeta> = {}): toolMeta {
 describe("createImportsString", () => {
   it("produces a namespace import for a single team", () => {
     const result = createImportsString([mockTool()]);
-    expect(result).toBe(`import * as platform from "./metadata/platform";\n`);
+    expect(result).toBe(`import * as platform from "./metadata/team-platform";\n`);
   });
 
   it("produces the same single import regardless of whether tools have props", () => {
@@ -40,7 +40,7 @@ describe("createImportsString", () => {
     ];
     const result = createImportsString(tools);
     expect(result.split("\n").filter(Boolean)).toHaveLength(1);
-    expect(result).toContain(`from "./metadata/platform"`);
+    expect(result).toContain(`from "./metadata/team-platform"`);
   });
 
   it("produces one import per team for tools in different teams", () => {
@@ -50,13 +50,13 @@ describe("createImportsString", () => {
     ];
     const result = createImportsString(tools);
     expect(result.split("\n").filter(Boolean)).toHaveLength(2);
-    expect(result).toContain(`from "./metadata/platform"`);
-    expect(result).toContain(`from "./metadata/ptx"`);
+    expect(result).toContain(`from "./metadata/team-platform"`);
+    expect(result).toContain(`from "./metadata/team-ptx"`);
   });
 
   it("camelCases hyphenated team names into a valid identifier", () => {
     const result = createImportsString([mockTool({ team: "wallet-xp" })]);
-    expect(result).toContain("import * as walletXp");
+    expect(result).toContain(`import * as walletXp from "./metadata/team-wallet-xp"`);
   });
 
   it("returns an empty string for an empty list", () => {
@@ -124,7 +124,7 @@ describe("scanRegistry", () => {
 
   it("returns a tool without props when types.ts is absent", () => {
     tree.write(`${DEVTOOLS_ROOT}/feature-flags/src/index.ts`, "");
-    tree.write(`${REGISTRY_META}/platform/feature-flags.ts`, "");
+    tree.write(`${REGISTRY_META}/team-platform/feature-flags.ts`, "");
 
     const { tools, orphans } = scanRegistry(tree);
 
@@ -134,7 +134,7 @@ describe("scanRegistry", () => {
 
   it("marks hasProps true when types.ts exists", () => {
     tree.write(`${DEVTOOLS_ROOT}/feature-flags/src/types.ts`, "");
-    tree.write(`${REGISTRY_META}/platform/feature-flags.ts`, "");
+    tree.write(`${REGISTRY_META}/team-platform/feature-flags.ts`, "");
 
     const { tools } = scanRegistry(tree);
 
@@ -142,7 +142,7 @@ describe("scanRegistry", () => {
   });
 
   it("marks a tool as orphan when the package folder is missing", () => {
-    tree.write(`${REGISTRY_META}/platform/gone-tool.ts`, "");
+    tree.write(`${REGISTRY_META}/team-platform/gone-tool.ts`, "");
 
     const { orphans, tools } = scanRegistry(tree);
 
@@ -150,14 +150,14 @@ describe("scanRegistry", () => {
       {
         toolName: "gone-tool",
         team: "platform",
-        filePath: `${REGISTRY_META}/platform/gone-tool.ts`,
+        filePath: `${REGISTRY_META}/team-platform/gone-tool.ts`,
       },
     ]);
     expect(tools).toHaveLength(0);
   });
 
   it("skips index files", () => {
-    tree.write(`${REGISTRY_META}/platform/index.ts`, "export * from './feature-flags';");
+    tree.write(`${REGISTRY_META}/team-platform/index.ts`, "export * from './feature-flags';");
 
     const { tools, orphans } = scanRegistry(tree);
 
@@ -168,8 +168,8 @@ describe("scanRegistry", () => {
   it("scans tools across multiple teams", () => {
     tree.write(`${DEVTOOLS_ROOT}/feature-flags/src/index.ts`, "");
     tree.write(`${DEVTOOLS_ROOT}/pay-card/src/index.ts`, "");
-    tree.write(`${REGISTRY_META}/platform/feature-flags.ts`, "");
-    tree.write(`${REGISTRY_META}/ptx/pay-card.ts`, "");
+    tree.write(`${REGISTRY_META}/team-platform/feature-flags.ts`, "");
+    tree.write(`${REGISTRY_META}/team-ptx/pay-card.ts`, "");
 
     const { tools } = scanRegistry(tree);
 
@@ -189,7 +189,7 @@ describe("rewriteIndexRegistry", () => {
   it("writes a team index", () => {
     rewriteIndexRegistry(tree, [mockTool()]);
 
-    expect(tree.read(`${REGISTRY_META}/platform/index.ts`, "utf-8")).toContain(
+    expect(tree.read(`${REGISTRY_META}/team-platform/index.ts`, "utf-8")).toContain(
       `export * from "./feature-flags"`,
     );
   });
@@ -201,19 +201,19 @@ describe("rewriteIndexRegistry", () => {
   });
 
   it("removes a stale team index when that team has no remaining tools", () => {
-    tree.write(`${REGISTRY_META}/empty-team/index.ts`, "export * from './gone';");
+    tree.write(`${REGISTRY_META}/team-empty/index.ts`, "export * from './gone';");
 
     rewriteIndexRegistry(tree, [mockTool()]);
 
-    expect(tree.exists(`${REGISTRY_META}/empty-team/index.ts`)).toBe(false);
+    expect(tree.exists(`${REGISTRY_META}/team-empty/index.ts`)).toBe(false);
   });
 
   it("rebuilds a team index from scratch, removing stale exports", () => {
-    tree.write(`${REGISTRY_META}/platform/index.ts`, "export * from './stale-tool';");
+    tree.write(`${REGISTRY_META}/team-platform/index.ts`, "export * from './stale-tool';");
 
     rewriteIndexRegistry(tree, [mockTool()]);
 
-    const content = tree.read(`${REGISTRY_META}/platform/index.ts`, "utf-8")!;
+    const content = tree.read(`${REGISTRY_META}/team-platform/index.ts`, "utf-8")!;
     expect(content).not.toContain("stale-tool");
     expect(content).toContain("feature-flags");
   });
@@ -225,10 +225,10 @@ describe("rewriteIndexRegistry", () => {
     ];
     rewriteIndexRegistry(tree, tools);
 
-    expect(tree.read(`${REGISTRY_META}/platform/index.ts`, "utf-8")).toContain(
+    expect(tree.read(`${REGISTRY_META}/team-platform/index.ts`, "utf-8")).toContain(
       `export * from "./feature-flags"`,
     );
-    expect(tree.read(`${REGISTRY_META}/ptx/index.ts`, "utf-8")).toContain(
+    expect(tree.read(`${REGISTRY_META}/team-ptx/index.ts`, "utf-8")).toContain(
       `export * from "./pay-card"`,
     );
   });

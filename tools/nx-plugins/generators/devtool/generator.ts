@@ -21,6 +21,11 @@ const REGISTRY_PACKAGE_JSON = `${REGISTRY_ROOT}/package.json`;
 const REGISTRY_SRC = `${REGISTRY_ROOT}/src`;
 const REGISTRY_FILE = `${REGISTRY_SRC}/registry.ts`;
 const REGISTRY_META = `${REGISTRY_SRC}/metadata`;
+const TEAM_FOLDER_PREFIX = "team-";
+
+const teamFolder = (team: string) => `${TEAM_FOLDER_PREFIX}${team}`;
+const teamFromFolder = (folder: string) =>
+  folder.startsWith(TEAM_FOLDER_PREFIX) ? folder.slice(TEAM_FOLDER_PREFIX.length) : folder;
 
 export type toolMeta = {
   toolName: string;
@@ -44,7 +49,7 @@ export function scanRegistry(tree: Tree): scanResults {
   const orphans: orphanTool[] = [];
   visitNotIgnoredFiles(tree, REGISTRY_META, filePath => {
     if (tree.isFile(filePath)) {
-      const team = basename(dirname(filePath));
+      const team = teamFromFolder(basename(dirname(filePath)));
       const toolName = basename(filePath).split(".")[0];
       if (toolName !== "index") {
         const { fileName } = names(toolName);
@@ -65,7 +70,7 @@ export function createImportsString(tools: toolMeta[]) {
   const teams = [...new Set(tools.map(t => t.team))];
   return (
     teams
-      .map(team => `import * as ${names(team).propertyName} from "./metadata/${team}";`)
+      .map(team => `import * as ${names(team).propertyName} from "./metadata/${teamFolder(team)}";`)
       .join("\n") + (teams.length ? "\n" : "")
   );
 }
@@ -158,7 +163,7 @@ export function rewriteIndexRegistry(tree: Tree, tools: toolMeta[]) {
   for (const [team, tools] of Object.entries(teamTools)) {
     const content =
       tools!.map(t => `export * from "./${names(t.toolName).fileName}";`).join("\n") + "\n";
-    tree.write(`${REGISTRY_META}/${team}/index.ts`, content);
+    tree.write(`${REGISTRY_META}/${teamFolder(team)}/index.ts`, content);
   }
 }
 
@@ -205,7 +210,7 @@ export default async function devtoolGenerator(tree: Tree, options: devtoolGener
     });
   }
 
-  const registryTeamPath = `${REGISTRY_META}/${options.owner}`;
+  const registryTeamPath = `${REGISTRY_META}/${teamFolder(options.owner)}`;
 
   function appendContent(path: string, content: string) {
     const existing = tree.read(path, "utf-8") ?? "";
@@ -252,7 +257,7 @@ export const ${propertyName}: ToolMetadata = {
     .filter(name => !tree.isFile(`${REGISTRY_META}/${name}`));
 
   for (const team of allTeams) {
-    if (team !== options.owner) {
+    if (team !== teamFolder(options.owner)) {
       const stale = `${REGISTRY_META}/${team}/${fileName}.ts`;
       if (tree.exists(stale)) tree.delete(stale);
     }

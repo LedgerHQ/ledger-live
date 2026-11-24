@@ -14,7 +14,7 @@ import {
   computeAccountUUID,
   type AccountDescriptor,
 } from "@domain/entity-account-descriptor";
-import type { AccountDataRecorder } from "./accountDataRecorder";
+import type { AccountDataRecorder } from "../accountDataRecorder";
 
 type MockAccountsToolProps = Extract<DevToolsConfig[number], { id: "mock-accounts" }>["config"];
 

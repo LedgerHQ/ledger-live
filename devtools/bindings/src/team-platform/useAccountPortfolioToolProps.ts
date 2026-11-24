@@ -2,14 +2,14 @@ import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
-import { bodyOf, describeSent } from "./portfolioActions/requests";
-import { RUNNERS, type PortfolioDispatch } from "./portfolioActions/runners";
+import { bodyOf, describeSent } from "../portfolioActions/requests";
+import { RUNNERS, type PortfolioDispatch } from "../portfolioActions/runners";
 import type {
   AccountPortfolioToolProps,
   PortfolioRequest,
   PortfolioResult,
-} from "./portfolioActions/types";
-import { registrationOf } from "./portfolioRegistration";
+} from "../portfolioActions/types";
+import { registrationOf } from "../portfolioRegistration";
 
 /** Both apps mount the accounts slice at `accountEntries`. */
 type State = { accountEntries: AccountsState };

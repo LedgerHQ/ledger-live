@@ -14,7 +14,7 @@ import {
   type PortfolioClient,
   type PortfolioSource,
 } from "@features/platform-account-source-portfolio";
-import type { AccountDataRecorder } from "./accountDataRecorder";
+import type { AccountDataRecorder } from "../accountDataRecorder";
 
 type PortfolioSourceToolProps = Extract<
   DevToolsConfig[number],

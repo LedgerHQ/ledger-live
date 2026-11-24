@@ -4,9 +4,9 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { accountsSlice } from "@domain/entity-account";
 import { useAccountPortfolioToolProps } from "./useAccountPortfolioToolProps";
-import { RUNNERS } from "./portfolioActions/runners";
+import { RUNNERS } from "../portfolioActions/runners";
 
-jest.mock("./portfolioActions/runners", () => ({ RUNNERS: { getPortfolio: jest.fn() } }));
+jest.mock("../portfolioActions/runners", () => ({ RUNNERS: { getPortfolio: jest.fn() } }));
 
 const runner = RUNNERS.getPortfolio as unknown as jest.Mock;
 
