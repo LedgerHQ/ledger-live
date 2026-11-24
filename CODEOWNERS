@@ -298,6 +298,9 @@ libs/coin-modules/coin-cosmos/                                           @ledger
 libs/coin-modules/coin-polkadot/                                         @ledgerhq/coin-integration
 libs/coin-modules/coin-solana/                                           @ledgerhq/coin-integration
 libs/coin-modules/coin-tron/                                             @ledgerhq/coin-integration
+libs/live-signer-cosmos/                                                 @ledgerhq/coin-integration
+libs/live-signer-polkadot/                                               @ledgerhq/coin-integration
+libs/live-signer-tron/                                                   @ledgerhq/coin-integration
 
 ## Blockchain support 1
 libs/coin-modules/coin-aptos/                                            @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
@@ -308,6 +311,7 @@ libs/coin-modules/coin-mina/                                             @ledger
 libs/coin-modules/coin-stacks/                                           @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-kaspa/                                            @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-zcash/                                            @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
+libs/live-signer-zcash/                                                  @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
 
 ## Blockchain support 2
 libs/coin-modules/coin-hedera/                                           @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
@@ -316,6 +320,7 @@ libs/coin-modules/coin-algorand/                                         @ledger
 libs/coin-modules/coin-icon/                                             @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-multiversx/                                       @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-casper/                                           @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
+libs/live-signer-aleo/                                                   @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
 
 ## Blockchain support 3
 libs/coin-modules/coin-sui/                                              @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
@@ -326,6 +331,10 @@ libs/coin-modules/coin-celo/                                             @ledger
 libs/coin-modules/coin-internet_computer/                                @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-ton/                                              @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
 libs/concordium-core/                                                    @ledgerhq/ledger-partner-hoodies
+libs/live-signer-canton/                                                 @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
+libs/live-signer-celo/                                                   @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
+libs/live-signer-concordium/                                             @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
+libs/live-signer-icp/                                                    @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
 
 # PTX team
 libs/transaction-observability/                                           @ledgerhq/ptx
@@ -333,6 +342,7 @@ features/flow/pay-card-auth/                                             @ledger
 features/flow/predictions/                                               @ledgerhq/ptx
 features/platform/card/                                                  @ledgerhq/ptx
 features/platform/intent-hyperliquid-sign/                               @ledgerhq/ptx
+libs/live-signer-hyperliquid/                                            @ledgerhq/ptx
 features/platform/predictions/                                           @ledgerhq/ptx
 domain/entity/predictions/                                               @ledgerhq/ptx
 devtools/predictions/                                                    @ledgerhq/ptx
@@ -487,17 +497,7 @@ libs/live-dmk-desktop/                                             @ledgerhq/liv
 libs/live-dmk-shared/                                              @ledgerhq/live-devices
 libs/live-signer-evm/                                              @ledgerhq/live-devices
 libs/live-signer-solana/                                           @ledgerhq/live-devices
-libs/live-signer-aleo/                                             @ledgerhq/live-devices
-libs/live-signer-canton/                                           @ledgerhq/live-devices
-libs/live-signer-concordium/                                       @ledgerhq/live-devices
-libs/live-signer-zcash/                                            @ledgerhq/live-devices
-libs/live-signer-celo/                                             @ledgerhq/live-devices
-libs/live-signer-cosmos/                                           @ledgerhq/live-devices
-libs/live-signer-hyperliquid/                                      @ledgerhq/live-devices
-libs/live-signer-polkadot/                                         @ledgerhq/live-devices
 libs/live-signer-xrp/                                              @ledgerhq/live-devices
-libs/live-signer-icp/                                              @ledgerhq/live-devices
-libs/live-signer-tron/                                             @ledgerhq/live-devices
 libs/live-dmk-speculos/                                            @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/manager.handler.ts  @ledgerhq/live-devices
 apps/ledger-live-desktop/src/mvvm/components/MockServerDeviceWindow/ @ledgerhq/live-devices
