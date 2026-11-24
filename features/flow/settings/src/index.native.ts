@@ -7,3 +7,5 @@ export * from "./components/SettingsSheet/SettingsSheet";
 export type * from "./components/SettingsSheet/SettingsSheet.types";
 export * from "./components/SettingsConfirmSheet/SettingsConfirmSheet";
 export type * from "./components/SettingsConfirmSheet/SettingsConfirmSheet.types";
+export * from "./components/SettingsOptionList/SettingsOptionList";
+export type * from "./components/SettingsOptionList/SettingsOptionList.types";

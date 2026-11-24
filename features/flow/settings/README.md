@@ -33,6 +33,11 @@ A sheet opens on top of the Settings: a bottom sheet on mobile, a dialog on desk
 | `SettingsSheet`        | `.`   | Title, optional description, close button and any content               |
 | `SettingsConfirmSheet` | `.`   | Confirm or cancel an action, `destructive` or `neutral`, disabled while it runs |
 
+| `SettingsOptionList`   | `.`   | Options with an optional icon and code, a check on the current one, optional search |
+
+The search of `SettingsOptionList` matches the label and the code, ignoring case and accents. Put
+the list in a `SettingsSheet` for Theme, Language, Region or Currency.
+
 On mobile, `SettingsSheet` goes through `QueuedBottomSheet`, so the app must render it under
 `QueuedBottomSheetsProvider` like any queued sheet.
 
