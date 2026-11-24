@@ -54,9 +54,12 @@ export type ReceiveFamilyConfigPort = (
   input: Omit<ReceiveFamilyConfigInput, "featureFlags" | "legacyAccount">,
 ) => Partial<ReceiveFamilyConfig>;
 
+/** A piece of an incident's text: a link when it has a `url`. */
+export type ReceiveIncidentTextPart = Readonly<{ text: string; url?: string }>;
+
 export type ReceiveServiceIncident = Readonly<{
   title: string;
-  description?: string;
+  description?: readonly ReceiveIncidentTextPart[];
 }>;
 
 /** The account and the asset a receive flow shows the address of. */

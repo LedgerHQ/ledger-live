@@ -2462,10 +2462,8 @@
       "learnMore": "Learn more"
     },
     "serviceStatus": {
-      "cta": "See details",
-      "title": "Service incident"
-    },
-    "gotIt": "Got it"
+      "continue": "Continue"
+    }
   },
   "ratings": {
     "init": {

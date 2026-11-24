@@ -38,9 +38,7 @@ describe("useReceiveAddressCopy", () => {
           "Your Ledger device can't display this address. Check it on the explorer before sharing it.",
       },
       learnMoreLabel: "Learn more",
-      serviceWarningCta: "See details",
-      serviceStatusTitle: "Service incident",
-      gotItLabel: "Got it",
+      continueLabel: "Continue",
     });
   });
 });

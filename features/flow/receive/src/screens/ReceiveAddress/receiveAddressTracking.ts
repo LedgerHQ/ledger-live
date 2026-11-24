@@ -11,8 +11,7 @@ export type ReceiveAddressButton =
   | "verify address"
   | "dismiss verify popover"
   | "public address"
-  | "private address"
-  | "service incident details";
+  | "private address";
 
 export function trackReceiveAddressButton(button: ReceiveAddressButton) {
   track("button_clicked", { button, ...RECEIVE_ADDRESS_PAGE });

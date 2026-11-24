@@ -21,9 +21,7 @@ export type ReceiveAddressCopy = Readonly<{
   verifyHintGotIt: string;
   noticeTexts: Readonly<Record<ReceiveNoticeKind, string>>;
   learnMoreLabel: string;
-  serviceWarningCta: string;
-  serviceStatusTitle: string;
-  gotItLabel: string;
+  continueLabel: string;
 }>;
 
 /** The labels of the address screen, under the `receiveAddress` namespace. */
@@ -63,9 +61,7 @@ export function useReceiveAddressCopy({
         unverifiableAddress: t("receiveAddress.notices.unverifiableAddress"),
       },
       learnMoreLabel: t("receiveAddress.notices.learnMore"),
-      serviceWarningCta: t("receiveAddress.serviceStatus.cta"),
-      serviceStatusTitle: t("receiveAddress.serviceStatus.title"),
-      gotItLabel: t("receiveAddress.gotIt"),
+      continueLabel: t("receiveAddress.serviceStatus.continue"),
     }),
     [t, assetTicker, networkName],
   );

@@ -97,8 +97,7 @@ const receiveTestResources = {
             "Your Ledger device can't display this address. Check it on the explorer before sharing it.",
           learnMore: "Learn more",
         },
-        serviceStatus: { cta: "See details", title: "Service incident" },
-        gotIt: "Got it",
+        serviceStatus: { continue: "Continue" },
         verifyHint: {
           message: "Verify your address on your Ledger device before sharing",
           gotIt: "Got it",
