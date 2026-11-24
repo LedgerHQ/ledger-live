@@ -1,4 +1,4 @@
-import React, { useCallback, type MouseEvent } from "react";
+import React, { useCallback, type KeyboardEvent, type MouseEvent } from "react";
 import { Link, ListItemDescription } from "@ledgerhq/lumen-ui-react";
 import type { SettingsRowDescriptionProps } from "./SettingsRowDescription.types";
 
@@ -14,6 +14,10 @@ export function SettingsRowDescription({
     },
     [link],
   );
+  // The row handles Enter and Space itself and would take the link's activation.
+  const onLinkKeyDown = useCallback((event: KeyboardEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+  }, []);
 
   return (
     <>
@@ -22,7 +26,7 @@ export function SettingsRowDescription({
       ) : null}
       {link ? (
         <Link asChild size="sm" underline disabled={disabled}>
-          <button type="button" onClick={onLinkClick} disabled={disabled}>
+          <button type="button" onClick={onLinkClick} onKeyDown={onLinkKeyDown} disabled={disabled}>
             {link.label}
           </button>
         </Link>

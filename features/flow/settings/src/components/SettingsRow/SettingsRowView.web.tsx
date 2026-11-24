@@ -38,6 +38,7 @@ export function SettingsRowView({
         <ListItemTrailing>
           <SettingsRowTrailing
             trailing={trailing}
+            rowTitle={title}
             disabled={disabled}
             toggleTestID={toggleTestID}
           />
