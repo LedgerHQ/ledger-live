@@ -1,5 +1,11 @@
 import React, { type ReactNode } from "react";
-import { SegmentedControl, SegmentedControlButton } from "@ledgerhq/lumen-ui-react";
+import {
+  NavBar,
+  NavBarLeading,
+  NavBarTitle,
+  SegmentedControl,
+  SegmentedControlButton,
+} from "@ledgerhq/lumen-ui-react";
 import type { SettingsPageViewModel } from "./useSettingsPageViewModel";
 
 type SettingsPageViewProps = SettingsPageViewModel &
@@ -15,7 +21,11 @@ export function SettingsPageView({
 }: SettingsPageViewProps) {
   return (
     <div className="flex flex-col gap-24" data-testid={testID}>
-      <h1 className="heading-3">{title}</h1>
+      <NavBar>
+        <NavBarLeading>
+          <NavBarTitle>{title}</NavBarTitle>
+        </NavBarLeading>
+      </NavBar>
       <SegmentedControl
         selectedValue={selectedSection}
         onSelectedChange={onSelectTab}

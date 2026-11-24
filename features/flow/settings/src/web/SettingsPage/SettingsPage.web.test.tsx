@@ -12,7 +12,7 @@ describe("SettingsPage", () => {
       { wrapper: I18nWrapper },
     );
 
-    expect(screen.getByRole("heading", { name: "Settings" })).toBeVisible();
+    expect(screen.getByText("Settings")).toBeVisible();
     for (const [id, label] of [
       ["general", "General"],
       ["assetManagement", "Asset management"],
