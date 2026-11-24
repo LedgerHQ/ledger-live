@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useRef } from "react";
-import type { PredictionsUiHooks } from "@features/platform-predictions";
+import {
+  placeOrderAmountUsd,
+  type PredictionsOrderDisplay,
+  type PredictionsTypedData,
+  type PredictionsUiHooks,
+} from "@features/platform-predictions";
 import {
   dismissPredictionsOrderIfShown,
   reportPredictionsOrder,
@@ -13,7 +18,7 @@ export class PredictionsOrderPlayerClosed extends Error {
 
 /** Per player, so a report or an unmount only reaches the order this player started last. */
 export function usePredictionsOrderHooks(): Pick<PredictionsUiHooks, "order.report"> & {
-  startOrder: () => string;
+  startOrder: (typedData: PredictionsTypedData, display: PredictionsOrderDisplay) => string;
   ownsOrder: (orderId: number) => boolean;
 } {
   const walletOrderIdRef = useRef<number | null>(null);
@@ -31,9 +36,12 @@ export function usePredictionsOrderHooks(): Pick<PredictionsUiHooks, "order.repo
 
   return useMemo(
     () => ({
-      startOrder: () => {
+      startOrder: (typedData, display) => {
         if (!isMountedRef.current) throw new PredictionsOrderPlayerClosed();
-        const startedId = startPredictionsOrder();
+        const startedId = startPredictionsOrder({
+          display,
+          amountPaid: placeOrderAmountUsd(typedData),
+        });
         walletOrderIdRef.current = startedId;
         return String(startedId);
       },

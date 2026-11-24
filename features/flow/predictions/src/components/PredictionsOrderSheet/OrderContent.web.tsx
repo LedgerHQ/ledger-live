@@ -11,7 +11,7 @@ function OrderResult(props: OrderContentProps & Readonly<{ report: PredictionsOr
   return <InfoState {...useOrderResult(props)} size="hug" />;
 }
 
-export function OrderContent({ report, onClose, onRetry }: OrderContentProps) {
+export function OrderContent({ order, report, onClose, onRetry }: OrderContentProps) {
   const { t } = useTranslation();
 
   if (report === null) {
@@ -26,5 +26,5 @@ export function OrderContent({ report, onClose, onRetry }: OrderContentProps) {
       </div>
     );
   }
-  return <OrderResult report={report} onClose={onClose} onRetry={onRetry} />;
+  return <OrderResult order={order} report={report} onClose={onClose} onRetry={onRetry} />;
 }

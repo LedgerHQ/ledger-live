@@ -8,7 +8,6 @@ import type {
   PredictionsOrderAnswer,
   PredictionsOrderReport,
 } from "../order";
-import type { PredictionsTypedData } from "../typedData";
 import { handlers, type PredictionsSheet, type PredictionsUiHooks } from "../server";
 
 jest.mock("@ledgerhq/wallet-api-server", () => ({
@@ -43,9 +42,10 @@ function setup({ hasSeenIntro = false } = {}) {
       Promise.resolve(BINDING_ANSWER),
     ),
     "binding.reportSetup": jest.fn(),
-    "order.sign": jest.fn<Promise<PredictionsOrderAnswer>, [string, PredictionsTypedData]>(() =>
-      Promise.resolve({ signature: "0x5678", walletOrderId: "7" }),
-    ),
+    "order.sign": jest.fn<
+      Promise<PredictionsOrderAnswer>,
+      Parameters<PredictionsUiHooks["order.sign"]>
+    >(() => Promise.resolve({ signature: "0x5678", walletOrderId: "7" })),
     "order.report": jest.fn<Promise<PredictionsOrderAction>, [string, PredictionsOrderReport]>(() =>
       Promise.resolve("retry"),
     ),
@@ -273,18 +273,92 @@ describe("Predictions Wallet API handlers", () => {
     beforeEach(() => jest.spyOn(Date, "now").mockReturnValue(PLACE_ORDER_SIGNED_AT_MS));
     afterEach(() => jest.restoreAllMocks());
 
+    const imageUrl = "https://polymarket-upload.s3.us-east-2.amazonaws.com/fed.png";
+    const display = { marketTitle: "Fed decision in December?", outcomeLabel: "Yes", imageUrl };
     const params = {
       accountId: "wallet-account-id",
       typedData: JSON.stringify(PLACE_ORDER_TYPED_DATA),
+      display,
     };
 
-    it("signs the order with the account and answers its signature", async () => {
+    it("signs the order with the account, with the market to show, and answers its signature", async () => {
       const { signOrder, uiHooks } = setup();
 
       await expect(signOrder(params)).resolves.toEqual({ signature: "0x5678", walletOrderId: "7" });
-      expect(uiHooks["order.sign"]).toHaveBeenCalledWith("wallet-account-id", {
-        ...PLACE_ORDER_TYPED_DATA,
-        domain: { ...PLACE_ORDER_TYPED_DATA.domain, chainId: 137 },
+      expect(uiHooks["order.sign"]).toHaveBeenCalledWith(
+        "wallet-account-id",
+        { ...PLACE_ORDER_TYPED_DATA, domain: { ...PLACE_ORDER_TYPED_DATA.domain, chainId: 137 } },
+        display,
+      );
+    });
+
+    it("keeps the event of a market that is one of several", async () => {
+      const { signOrder, uiHooks } = setup();
+      const marketOfEvent = {
+        eventTitle: "Will Anthropic's valuation hit __ by December 31?",
+        marketTitle: "↑$4.0T",
+        outcomeLabel: "Yes",
+      };
+
+      await signOrder({ ...params, display: marketOfEvent });
+
+      expect(uiHooks["order.sign"]).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.anything(),
+        marketOfEvent,
+      );
+    });
+
+    it.each(["yes", "no"] as const)("keeps the %s side of a binary outcome", async outcomeSide => {
+      const { signOrder, uiHooks } = setup();
+
+      await signOrder({ ...params, display: { ...display, outcomeSide } });
+
+      expect(uiHooks["order.sign"]).toHaveBeenCalledWith(expect.any(String), expect.anything(), {
+        ...display,
+        outcomeSide,
+      });
+    });
+
+    it("trims the texts it shows", async () => {
+      const { signOrder, uiHooks } = setup();
+
+      await signOrder({ ...params, display: { marketTitle: " Fed ", outcomeLabel: "No " } });
+
+      expect(uiHooks["order.sign"]).toHaveBeenCalledWith(expect.any(String), expect.anything(), {
+        marketTitle: "Fed",
+        outcomeLabel: "No",
+      });
+    });
+
+    it("keeps a market without an image", async () => {
+      const { signOrder, uiHooks } = setup();
+
+      await signOrder({ ...params, display: { marketTitle: "Fed", outcomeLabel: "No" } });
+
+      expect(uiHooks["order.sign"]).toHaveBeenCalledWith(expect.any(String), expect.anything(), {
+        marketTitle: "Fed",
+        outcomeLabel: "No",
+      });
+    });
+
+    it.each([
+      "http://polymarket-upload.s3.us-east-2.amazonaws.com/fed.png",
+      "https://example.com/fed.png",
+      "https://polymarket-upload.s3.us-east-2.amazonaws.com@example.com/fed.png",
+      "https://user@polymarket-upload.s3.us-east-2.amazonaws.com/fed.png",
+      "https://polymarket-upload.s3.us-east-2.amazonaws.com:8443/fed.png",
+      "https://polymarket-upload.s3.us-east-2.amazonaws.com.example.com/fed.png",
+      "not a url",
+    ])("signs the order but drops an image Ledger Wallet doesn't load (%s)", async url => {
+      const { signOrder, uiHooks } = setup();
+
+      await signOrder({ ...params, display: { ...display, imageUrl: url } });
+
+      expect(uiHooks["order.sign"]).toHaveBeenCalledWith(expect.any(String), expect.anything(), {
+        marketTitle: display.marketTitle,
+        outcomeLabel: display.outcomeLabel,
+        imageUrl: undefined,
       });
     });
 
@@ -307,6 +381,21 @@ describe("Predictions Wallet API handlers", () => {
         typedData: JSON.stringify({ ...PLACE_ORDER_TYPED_DATA, primaryType: "Withdraw" }),
       },
       { ...params, extra: true },
+      { accountId: params.accountId, typedData: params.typedData },
+      { ...params, display: { ...display, marketTitle: "" } },
+      { ...params, display: { ...display, eventTitle: "" } },
+      { ...params, display: { ...display, outcomeSide: "maybe" } },
+      { ...params, display: { ...display, outcomeSide: "YES" } },
+      { ...params, display: { ...display, eventTitle: "a".repeat(201) } },
+      { ...params, display: { ...display, marketTitle: "a".repeat(201) } },
+      { ...params, display: { ...display, outcomeLabel: "" } },
+      { ...params, display: { ...display, outcomeLabel: "a".repeat(61) } },
+      { ...params, display: { ...display, side: "sell" } },
+      { ...params, display: { ...display, marketTitle: "   " } },
+      { ...params, display: { ...display, marketTitle: "Fed?\nYou bought 1000 shares" } },
+      { ...params, display: { ...display, eventTitle: "Fed\rdecision" } },
+      { ...params, display: { ...display, marketTitle: "\u202EFed decision" } },
+      { ...params, display: { ...display, outcomeLabel: "Y\u200Bes" } },
     ])("rejects invalid params without showing the prompt (%p)", async invalidParams => {
       const { signOrder, uiHooks } = setup();
 

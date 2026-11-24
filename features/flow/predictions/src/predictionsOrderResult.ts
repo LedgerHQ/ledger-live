@@ -7,9 +7,13 @@ import {
   closePredictionsOrderIfShown,
   useIsPredictionsOrderSheetOnScreen,
   usePredictionsOrder,
+  type PredictionsOrderDetails,
 } from "./predictionsOrderStore.internals";
 
-export type PredictionsOrderResult = Readonly<{ report: PredictionsOrderReport }>;
+export type PredictionsOrderResult = Readonly<{
+  order: PredictionsOrderDetails;
+  report: PredictionsOrderReport;
+}>;
 
 /** The order whose result waits for its page: reported, with its placing sheet gone. */
 export function usePredictionsOrderAwaitingResultPage(): number | null {
@@ -24,14 +28,14 @@ export function usePredictionsOrderResult(orderId: number): PredictionsOrderResu
   const { shownOrder } = usePredictionsOrder();
   const current =
     shownOrder?.id === orderId && shownOrder.result !== null
-      ? { key: shownOrder.key, report: shownOrder.result }
+      ? { key: shownOrder.key, order: shownOrder.context, report: shownOrder.result }
       : null;
   const [last, setLast] = useState(current);
 
   if (current !== null && current.key !== last?.key) setLast(current);
 
   const shown = current ?? last;
-  return shown && { report: shown.report };
+  return shown && { order: shown.order, report: shown.report };
 }
 
 export function answerPredictionsOrder(orderId: number, answer: PredictionsOrderAction) {

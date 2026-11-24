@@ -1,12 +1,39 @@
+import React from "react";
 import type { PredictionsOrderReport } from "@features/platform-predictions";
 import { useTranslation } from "@shared/i18n";
 import type { InfoStateCta, InfoStateProps } from "@shared/ui-info-state";
 import type { OrderContentProps } from "./PredictionsOrderSheet.types";
-import { canRetryOrder, formatFill, orderTitleKey } from "./orderCopy";
+import {
+  canRetryOrder,
+  displayedShares,
+  formatShares,
+  formatUsd,
+  orderTitleKey,
+} from "./orderCopy";
+import { OrderSummary } from "./OrderSummary";
 
 type OrderResult = Extract<InfoStateProps, { preset: "success" | "error" | "info" }>;
 
+type FilledReport = Extract<PredictionsOrderReport, { status: "filled" }>;
+type Translate = ReturnType<typeof useTranslation>["t"];
+
+function fillDescription(
+  t: Translate,
+  language: string,
+  amountPaid: number,
+  report: FilledReport,
+): string {
+  const amount = formatUsd(language, amountPaid);
+  if (!("shares" in report)) return t("predictions.order.filled.paid", { amount });
+  return t("predictions.order.filled.fill", {
+    count: displayedShares(report.shares),
+    shares: formatShares(language, report.shares),
+    amount,
+  });
+}
+
 export function useOrderResult({
+  order,
   report,
   onClose,
   onRetry,
@@ -24,18 +51,9 @@ export function useOrderResult({
       return {
         preset: "success",
         title,
-        description:
-          "shares" in report
-            ? t("predictions.order.filled.fill", {
-                count: report.shares,
-                ...formatFill(i18n.language, report),
-              })
-            : t("predictions.order.filled.description"),
-        primaryCta: {
-          label: t("predictions.order.filled.return"),
-          onPress: onClose,
-          testID: "predictions-order-return",
-        },
+        description: fillDescription(t, i18n.language, order.amountPaid, report),
+        content: <OrderSummary display={order.display} />,
+        primaryCta: closeCta,
         testID: "predictions-order-filled",
       };
     case "unconfirmed":

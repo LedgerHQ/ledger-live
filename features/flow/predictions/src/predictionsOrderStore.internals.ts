@@ -1,16 +1,27 @@
 import { useSyncExternalStore } from "react";
 import type {
   PredictionsOrderAction,
+  PredictionsOrderDisplay,
   PredictionsOrderReport,
 } from "@features/platform-predictions";
 import { createPendingResultStore, type ShownResult } from "./pendingResultStore.internals";
 
-export type ShownOrder = ShownResult<PredictionsOrderReport>;
+export type PredictionsOrderDetails = Readonly<{
+  display: PredictionsOrderDisplay;
+  /** In USD, from the signed order. */
+  amountPaid: number;
+}>;
+
+export type ShownOrder = ShownResult<PredictionsOrderReport, PredictionsOrderDetails>;
 
 // Longer than the live app waits for MoonPay, so an order it never reports doesn't place forever.
 export const ORDER_REPORT_TIMEOUT_MS = 3 * 60 * 1000;
 
-const orderStore = createPendingResultStore<PredictionsOrderReport, PredictionsOrderAction>({
+const orderStore = createPendingResultStore<
+  PredictionsOrderReport,
+  PredictionsOrderAction,
+  PredictionsOrderDetails
+>({
   dismissedAnswer: "close",
   timeout: { ms: ORDER_REPORT_TIMEOUT_MS, result: { status: "unconfirmed" } },
 });

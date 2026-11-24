@@ -5,8 +5,9 @@ export const MIN_LOADING_DISPLAY_MS = 1000;
 
 const noop = () => undefined;
 
-type ResultRequest<Result, Answer> = {
+type ResultRequest<Result, Answer, Context> = {
   id: number;
+  context: Context;
   /** When the sheet came on screen. Null while it waits, e.g. behind the signing sheet. */
   presentedAt: number | null;
   /** The first result reported, held until the loading has been on screen long enough. */
@@ -20,11 +21,16 @@ type ResultRequest<Result, Answer> = {
 };
 
 /** What the sheet shows. `key` changes with every request and result. */
-export type ShownResult<Result> = Readonly<{ id: number; key: string; result: Result | null }>;
+export type ShownResult<Result, Context = void> = Readonly<{
+  id: number;
+  key: string;
+  context: Context;
+  result: Result | null;
+}>;
 
-export type PendingResultStore<Result, Answer> = Readonly<{
+export type PendingResultStore<Result, Answer, Context> = Readonly<{
   /** Replaces any open request, so whoever waits for it can go on. Returns the request's id. */
-  start: () => number;
+  start: (context: Context) => number;
   /**
    * Resolves once the user closes the sheet, or right away when `id` isn't open or timed out. Only
    * the first result shows, once the loading has been on screen long enough.
@@ -39,7 +45,10 @@ export type PendingResultStore<Result, Answer> = Readonly<{
   closeIfShown: (id: number, answer: Answer) => void;
   dismissIfShown: (id: number) => void;
   /** Once closed, the last state stays rendered so the sheet doesn't animate out empty. */
-  useShownResult: () => Readonly<{ isOpen: boolean; shownResult: ShownResult<Result> | null }>;
+  useShownResult: () => Readonly<{
+    isOpen: boolean;
+    shownResult: ShownResult<Result, Context> | null;
+  }>;
 }>;
 
 /**
@@ -47,18 +56,18 @@ export type PendingResultStore<Result, Answer> = Readonly<{
  * Module-level instances let the Wallet API handlers of any live app player drive the one globally
  * mounted sheet.
  */
-export function createPendingResultStore<Result, Answer>({
+export function createPendingResultStore<Result, Answer, Context = void>({
   dismissedAnswer,
   timeout,
 }: Readonly<{
   dismissedAnswer: Answer;
   timeout?: Readonly<{ ms: number; result: Result }>;
-}>): PendingResultStore<Result, Answer> {
-  let currentRequest: ResultRequest<Result, Answer> | null = null;
+}>): PendingResultStore<Result, Answer, Context> {
+  let currentRequest: ResultRequest<Result, Answer, Context> | null = null;
   let lastRequestId = 0;
   const listeners = new Set<() => void>();
 
-  const setCurrentRequest = (request: ResultRequest<Result, Answer> | null) => {
+  const setCurrentRequest = (request: ResultRequest<Result, Answer, Context> | null) => {
     currentRequest = request;
     listeners.forEach(listener => listener());
   };
@@ -76,7 +85,7 @@ export function createPendingResultStore<Result, Answer>({
     id,
     presentedAt,
     reportedResult,
-  }: ResultRequest<Result, Answer>) => {
+  }: ResultRequest<Result, Answer, Context>) => {
     if (presentedAt === null || reportedResult === null) return;
 
     const remainingMs = Math.max(0, presentedAt + MIN_LOADING_DISPLAY_MS - Date.now());
@@ -107,7 +116,7 @@ export function createPendingResultStore<Result, Answer>({
   const dismiss = () => close(dismissedAnswer);
 
   return {
-    start: () => {
+    start: context => {
       const displacedRequest = currentRequest;
       let resolveClosed: (answer: Answer) => void = noop;
       const closed = new Promise<Answer>(resolve => {
@@ -117,6 +126,7 @@ export function createPendingResultStore<Result, Answer>({
       const id = lastRequestId;
       setCurrentRequest({
         id,
+        context,
         presentedAt: null,
         reportedResult: null,
         result: null,
@@ -166,6 +176,7 @@ export function createPendingResultStore<Result, Answer>({
           : {
               id: request.id,
               key: `${request.id}-${request.result === null ? "loading" : "result"}`,
+              context: request.context,
               result: request.result,
             };
       const [lastShownResult, setLastShownResult] = useState(currentResult);

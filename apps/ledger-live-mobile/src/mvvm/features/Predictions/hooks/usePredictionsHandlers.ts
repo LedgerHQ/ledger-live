@@ -68,9 +68,9 @@ export function usePredictionsHandlers(): WalletAPICustomHandlers {
               getBindingTypedData(account.freshAddress),
             ),
           "binding.reportSetup": setupHooks["binding.reportSetup"],
-          "order.sign": async (walletAccountId, typedData) => {
+          "order.sign": async (walletAccountId, typedData, display) => {
             const { signature } = await orderSigner.sign(walletAccountId, () => typedData);
-            return { signature, walletOrderId: orderHooks.startOrder() };
+            return { signature, walletOrderId: orderHooks.startOrder(typedData, display) };
           },
           "order.report": orderHooks["order.report"],
         },

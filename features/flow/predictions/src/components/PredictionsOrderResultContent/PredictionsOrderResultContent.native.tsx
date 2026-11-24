@@ -3,11 +3,13 @@ import { ScrollView } from "react-native";
 import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import { InfoState, type InfoStateCta } from "@shared/ui-info-state";
 import type { PredictionsOrderReport } from "@features/platform-predictions";
+import type { PredictionsOrderDetails } from "../../predictionsOrderStore.internals";
 import { useOrderResult } from "../PredictionsOrderSheet/useOrderResult";
 
 const CENTRED_WHEN_IT_FITS = { flexGrow: 1, justifyContent: "center" } as const;
 
 export type PredictionsOrderResultContentProps = Readonly<{
+  order: PredictionsOrderDetails;
   report: PredictionsOrderReport;
   onClose: () => void;
   onRetry: () => void;

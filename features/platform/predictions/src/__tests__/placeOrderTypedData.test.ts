@@ -3,8 +3,9 @@ import {
   PLACE_ORDER_SIGNED_AT_MS,
   PLACE_ORDER_TYPED_DATA,
 } from "../__fixtures__/placeOrderTypedData";
+import { placeOrderAmountUsd } from "../order";
 import { placeOrderTypedDataJsonSchema } from "../placeOrderTypedData";
-import { isTypedDataSigner } from "../typedData";
+import { isTypedDataSigner, type PredictionsTypedData } from "../typedData";
 
 type PlaceOrderTypedData = typeof PLACE_ORDER_TYPED_DATA;
 
@@ -135,5 +136,18 @@ describe("placeOrderTypedDataJsonSchema", () => {
     ["an expiration past 2^53", withMessage({ expiration: "9".repeat(78) })],
   ])("refuses %s", (_case, typedData) => {
     expect(parse(typedData).success).toBe(false);
+  });
+});
+
+const orderOf = (amount: string): PredictionsTypedData => ({
+  ...PLACE_ORDER_TYPED_DATA,
+  domain: { ...PLACE_ORDER_TYPED_DATA.domain, chainId: 137 },
+  message: { ...PLACE_ORDER_TYPED_DATA.message, amount },
+});
+
+describe("placeOrderAmountUsd", () => {
+  it("reads the USD amount the user signed, scaled down from 6 decimals", () => {
+    expect(placeOrderAmountUsd(orderOf("2000000"))).toBe(2);
+    expect(placeOrderAmountUsd(orderOf("5010000"))).toBe(5.01);
   });
 });
