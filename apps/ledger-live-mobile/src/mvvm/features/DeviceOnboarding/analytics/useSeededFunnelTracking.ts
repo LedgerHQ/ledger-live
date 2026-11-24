@@ -13,7 +13,6 @@ import {
   trackSeededDone,
   trackSeededStarted,
   type FunnelProps,
-  type ScreenTracking,
   type OnboardingButton,
   type OnboardingPage,
   type SeededResult,

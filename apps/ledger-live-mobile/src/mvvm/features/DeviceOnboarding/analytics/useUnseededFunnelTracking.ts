@@ -107,6 +107,15 @@ function useKnownFirmwareAvailability(
   return best;
 }
 
+/** The device restarted its setup: the abandoned attempt must not decide the new one's pages. */
+function isSetupForgotten(context: DeviceOnboardingContext): boolean {
+  return context.seedPath === null && context.currentSetupStep === null;
+}
+
+function isRecoveryKeyAfterNewSeed(machineState: string, context: DeviceOnboardingContext) {
+  return machineState === "deviceSetup.backupRecoveryKey" && context.seedPath === SeedPath.NewSeed;
+}
+
 /** Rebuilt only when a field it reads changes, so the props keep their identity between polls. */
 function useStableFunnel(context: DeviceOnboardingContext | null): UnseededFunnel | null {
   const unseeded = context?.onboardedOnEntry === false;
@@ -148,20 +157,16 @@ export function useUnseededFunnelTracking({
       trackOnboardingPage(page, props);
     };
 
-    // The device restarted its setup: the abandoned attempt must not decide the new one's pages.
-    const setupForgotten =
-      machineContext.seedPath === null && machineContext.currentSetupStep === null;
-    if (setupForgotten && !finished.current) sentOnce.current.clear();
+    if (isSetupForgotten(machineContext) && !finished.current) sentOnce.current.clear();
 
     if (!started.current && isFunnelState(machineState)) {
       started.current = true;
       trackUnseededStarted(props, status);
     }
 
-    const recoveryKeyAfterNewSeed =
-      machineState === "deviceSetup.backupRecoveryKey" &&
-      machineContext.seedPath === SeedPath.NewSeed;
-    if (recoveryKeyAfterNewSeed) sendOnce(onboardingPages.newSeedSuccess);
+    if (isRecoveryKeyAfterNewSeed(machineState, machineContext)) {
+      sendOnce(onboardingPages.newSeedSuccess);
+    }
 
     const shown = unseededShownPage(machineState, machineContext, status);
     if (shown && shown.page !== lastPage.current) {
