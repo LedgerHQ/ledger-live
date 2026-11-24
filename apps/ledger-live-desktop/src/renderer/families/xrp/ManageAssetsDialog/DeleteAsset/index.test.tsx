@@ -6,40 +6,26 @@ import {
   XrpOptOutTokenInEscrow,
   type XrpTokenAccount,
 } from "@ledgerhq/live-common/families/xrp/types";
-import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { DeleteAsset } from "./index";
 import {
   XRP_ACCOUNT,
   XRP_MPT_TOKEN_ACCOUNT,
   makeXrpTokenAccount,
 } from "../../__mocks__/account.mock";
+import { mockBroadcast, mockSignedInput, signedOperation } from "../../__mocks__/signing.mock";
 
-const mockBroadcast = jest.fn<Promise<Operation>, [SignedOperation]>();
-const mockSignedInput = jest.fn();
 const mockNavigate = jest.fn();
 const mockUseBridgeTransaction = jest.fn();
 const mockStatus = { errors: {} as Record<string, Error>, warnings: {} };
 const mockBridge: { pending: boolean; error: Error | null } = { pending: false, error: null };
-const signedOperation = {
-  signature: "signature",
-  operation: {
-    id: "op-remove",
-    accountId: XRP_ACCOUNT.id,
-    hash: "",
-    type: "OPT_OUT",
-  },
-} as unknown as SignedOperation;
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: () => mockNavigate,
 }));
-jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
-  useAccountBridge: () => ({
-    createTransaction: () => ({ family: "xrp" }),
-    updateTransaction: (tx: object, patch: object) => ({ ...tx, ...patch }),
-  }),
-}));
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () =>
+  require("../../__mocks__/signing.mock"),
+);
 jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
   __esModule: true,
   default: (_: unknown, init: () => { transaction: object }) => {
@@ -52,36 +38,14 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
     };
   },
 }));
-jest.mock("@ledgerhq/live-common/hooks/useBroadcast", () => ({
-  useBroadcast: () => mockBroadcast,
-}));
+jest.mock("@ledgerhq/live-common/hooks/useBroadcast", () =>
+  require("../../__mocks__/signing.mock"),
+);
 jest.mock("@features/platform-device-intent", () => ({
   ...jest.requireActual("@features/platform-device-intent"),
-  createIntent: (_: unknown, input: unknown, callbacks: unknown) => {
-    mockSignedInput(input);
-    return { input, callbacks };
-  },
+  createIntent: require("../../__mocks__/signing.mock").createIntent,
 }));
-jest.mock("LLD/components/DeviceIntentExecutor", () => ({
-  buildDeviceInitializationInput: async () => ({}),
-  DeviceIntentExecutor: (props: {
-    intent: { callbacks: { onResult: (result: SignedOperation) => void } };
-    onIntentJobComplete: () => void;
-    onUserCancel: () => void;
-  }) => (
-    <>
-      <button
-        onClick={() => {
-          props.intent.callbacks.onResult(signedOperation);
-          props.onIntentJobComplete();
-        }}
-      >
-        Sign on device
-      </button>
-      <button onClick={props.onUserCancel}>Cancel on device</button>
-    </>
-  ),
-}));
+jest.mock("LLD/components/DeviceIntentExecutor", () => require("../../__mocks__/signing.mock"));
 
 const emptyIouAccount: XrpTokenAccount = { ...makeXrpTokenAccount(), balance: new BigNumber(0) };
 const emptyMptAccount: XrpTokenAccount = { ...XRP_MPT_TOKEN_ACCOUNT, balance: new BigNumber(0) };
@@ -234,7 +198,9 @@ describe("xrp DeleteAsset", () => {
     expect(mockBroadcast).toHaveBeenCalledTimes(1);
     expect(mockBroadcast).toHaveBeenCalledWith(signedOperation);
     const [storedAccount] = store.getState().accounts;
-    expect(storedAccount.pendingOperations).toEqual([expect.objectContaining({ id: "op-remove" })]);
+    expect(storedAccount.pendingOperations).toEqual([
+      expect.objectContaining({ id: signedOperation.operation.id }),
+    ]);
 
     await user.click(screen.getByRole("button", { name: "Got it" }));
 

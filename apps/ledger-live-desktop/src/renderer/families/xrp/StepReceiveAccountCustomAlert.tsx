@@ -1,12 +1,13 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import type { AccountLike } from "@ledgerhq/types-live";
+import { AccountIdSchema } from "@domain/entity-account";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useDispatch } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
 import type { StepProps } from "~/renderer/modals/Receive/Body";
 import { getXrpResources, hasTokenStandardEnabled } from "./utils";
+import { openXrpDialog } from "./xrpDialog";
 
 type Props = StepProps & { account: AccountLike };
 
@@ -22,8 +23,8 @@ const StepReceiveAccountCustomAlert = ({ account, parentAccount, closeModal }: P
   const onAddToken = () => {
     closeModal();
     dispatch(
-      openModal("MODAL_XRP_ADD_TOKEN", {
-        account: mainAccount,
+      openXrpDialog(AccountIdSchema.parse(mainAccount.id), {
+        screen: "addAsset",
         ...(isTokenAccount && { token: account.token }),
       }),
     );

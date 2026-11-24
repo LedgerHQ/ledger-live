@@ -123,6 +123,7 @@ export function useTrustSettings({
     onLimitBack,
     onLimitConfirm,
     onChangeRippling,
+    bridgePending,
     unitCode: unit.code,
     limitErrorText: getLimitErrorText(),
     isLimitConfirmDisabled: isLimitEmpty || Boolean(limitError) || isBelowBalance || bridgePending,
