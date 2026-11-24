@@ -18,7 +18,11 @@ const FAMILY_OPERATION_TYPES: Record<
   string,
   Partial<Record<OperationType, EarnTransactionType>>
 > = {
-  cardano: { DELEGATE: "delegate", UNDELEGATE: "undelegate" },
+  cardano: {
+    DELEGATE: "delegate",
+    UNDELEGATE: "undelegate",
+    VOTE_DELEGATION: "delegate",
+  },
   celo: {
     LOCK: "deposit",
     VOTE: "delegate",

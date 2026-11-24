@@ -117,14 +117,11 @@ export const buildOptimisticOperation = (
         c.cert.stakeCredential.hash.toString("hex") === stakeCredential.key,
     );
     if (walletRegistration) {
-      extra.deposit = formatCurrencyUnit(
-        account.currency.units[0],
-        new BigNumber(walletRegistration.cert.deposit),
-        {
-          showCode: true,
-          disableRounding: true,
-        },
-      );
+      const deposit = new BigNumber(protocolParams.stakeKeyDeposit);
+      extra.deposit = formatCurrencyUnit(account.currency.units[0], deposit, {
+        showCode: true,
+        disableRounding: true,
+      });
     }
   }
 
@@ -186,15 +183,17 @@ export const buildOptimisticOperation = (
   }
 
   const opType: OperationType = txCertificates.find(
-    c => c.type === TyphonTypes.CertificateType.STAKE_DELEGATION,
+    c => c.type === TyphonTypes.CertificateType.VOTE_DELEGATION,
   )
-    ? "DELEGATE"
-    : txCertificates.find(c => c.type === TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION)
-      ? "UNDELEGATE"
-      : getOperationType({
-          valueChange: operationValue,
-          fees: unsignedTransaction.getFee(),
-        });
+    ? "VOTE_DELEGATION"
+    : txCertificates.find(c => c.type === TyphonTypes.CertificateType.STAKE_DELEGATION)
+      ? "DELEGATE"
+      : txCertificates.find(c => c.type === TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION)
+        ? "UNDELEGATE"
+        : getOperationType({
+            valueChange: operationValue,
+            fees: unsignedTransaction.getFee(),
+          });
 
   const op: CardanoOperation = {
     id: encodeOperationId(account.id, transactionHash, opType),

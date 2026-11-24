@@ -323,6 +323,37 @@ describe("buildTransaction", () => {
     });
   });
 
+  describe("vote delegation transaction", () => {
+    it.each([
+      {
+        type: "drep" as const,
+        drepId: "drep1ygqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq7vlc9n",
+      },
+      { type: "alwaysAbstain" as const },
+      { type: "alwaysNoConfidence" as const },
+    ])("should build a vote delegation transaction for $type", async voteDelegationTarget => {
+      const account = getCardanoAccountFixture({ delegation: undefined });
+      account.cardanoResources.protocolParams = getProtocolParamsFixture();
+
+      const transaction = await buildTransaction(account, {
+        family: "cardano",
+        recipient: "",
+        amount: new BigNumber(0),
+        mode: "voteDelegation",
+        poolId: undefined,
+        protocolParams: getProtocolParamsFixture(),
+        voteDelegationTarget,
+      });
+
+      expect(transaction.getCertificates()).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ type: TyphonTypes.CertificateType.STAKE_KEY_REGISTRATION }),
+          expect.objectContaining({ type: TyphonTypes.CertificateType.VOTE_DELEGATION }),
+        ]),
+      );
+    });
+  });
+
   describe("frozen account state — UTXO selection must not sort in place", () => {
     const deepFreeze = <T>(value: T): T => {
       if (value && typeof value === "object" && !Object.isFrozen(value)) {

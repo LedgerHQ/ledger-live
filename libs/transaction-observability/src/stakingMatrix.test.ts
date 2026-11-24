@@ -30,6 +30,7 @@ const MATRIX: Record<string, Row[]> = {
   cardano: [
     { mode: "delegate", operationType: "DELEGATE", expected: "delegate" },
     { mode: "undelegate", operationType: "UNDELEGATE", expected: "undelegate" },
+    { mode: "voteDelegation", operationType: "VOTE_DELEGATION", expected: "delegate" },
   ],
   celo: [
     { mode: "lock", operationType: "LOCK", expected: "deposit" },

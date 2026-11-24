@@ -82,6 +82,13 @@ export class AccountAwaitingSendPendingOperations extends Error {
   }
 }
 
+export class CardanoInvalidDRepId extends Error {
+  override name = "CardanoInvalidDRepId";
+  constructor(message?: string) {
+    super(message ?? "Invalid Cardano CIP-129 DRep ID");
+  }
+}
+
 export class ValAddressRequired extends Error {
   override name = "ValAddressRequired";
   constructor(message?: string, fields?: Record<string, unknown>) {

@@ -514,6 +514,7 @@ const OPERATION_TYPES: ReadonlySet<string> = new Set<OperationType>([
   "UNDELEGATE_RESOURCE",
   "LEGACY_UNFREEZE",
   "VOTE",
+  "VOTE_DELEGATION",
   "REWARD_PAYOUT",
   "BOND",
   "UNBOND",
