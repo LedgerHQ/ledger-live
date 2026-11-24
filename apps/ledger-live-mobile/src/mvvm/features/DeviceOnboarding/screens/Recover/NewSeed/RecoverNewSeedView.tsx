@@ -1,4 +1,5 @@
 import React from "react";
+import { Image, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   BottomSheetHeader,
@@ -12,14 +13,15 @@ import {
   ListItemTitle,
   Spot,
   Text,
+  useTheme,
 } from "@ledgerhq/lumen-ui-rnative";
 import { IdCard, ShieldCheck, Wallet } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { Lottie } from "@shared/lottie/native";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Karaoke } from "@shared/ui-karaoke/native";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { recoverNewSeedTestIds } from "LLM/features/DeviceOnboarding/testIds";
-import securityAnimation from "../../../../ProductTour/Drawer/animations/security.lottie";
+import recoverShieldDark from "../../../Debug/assets/recoverShieldDark.webp";
+import recoverShieldLight from "../../../Debug/assets/recoverShieldLight.webp";
 import type { RecoverNewSeedViewProps, RecoverSheetPoint } from "./useRecoverNewSeedViewModel";
 
 const pointIcons = {
@@ -85,12 +87,7 @@ function Explanation({
   return (
     <Box lx={{ flex: 1, paddingHorizontal: "s16" }} style={{ paddingBottom: bottom + 16 }}>
       <Box lx={{ flex: 1, alignItems: "center", justifyContent: "center", gap: "s16" }}>
-        <Lottie
-          autoPlay
-          loop={false}
-          style={{ width: 240, height: 240 }}
-          source={securityAnimation as unknown as string}
-        />
+        <RecoverIllustration />
         <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
           {title}
         </Text>
@@ -124,6 +121,16 @@ function Explanation({
     </Box>
   );
 }
+
+function RecoverIllustration() {
+  const { colorScheme } = useTheme();
+  const source = colorScheme === "light" ? recoverShieldLight : recoverShieldDark;
+  return <Image source={source} resizeMode="contain" style={styles.illustration} />;
+}
+
+const styles = StyleSheet.create({
+  illustration: { width: 240, height: 240 },
+});
 
 function DetailSheet({
   title,
