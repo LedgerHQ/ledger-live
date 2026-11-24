@@ -83,8 +83,8 @@ screen instead of reaching the user.
 
 - `@features/flow-receive/state`: the `receiveVerifyHint` slice, whether the user has already
   seen the hint pointing at **Verify**. The apps register its reducer under `receiveVerifyHint`
-  and persist `hasSeenReceiveVerifyHint` in the `payCard` storage blob, restored with
-  `restoreReceiveVerifyHint`.
+  and persist `receiveVerifyHintPersistedSelector` under their own `receiveVerifyHint` storage
+  key, restored with `restoreReceiveVerifyHint`.
 
 The barrels hold `export *` lines only, per the
 [package-public-api skill](../../../.agents/skills/package-public-api/SKILL.md).
