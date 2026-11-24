@@ -15,7 +15,7 @@ device OS is out of date.
   - **Skip anyway**, the close button and a swipe down call `onSkip`.
   - `confirmSkip` opens the confirmation first. `suspendSheets` hides both sheets while another
     sheet takes the screen.
-  - The optional `onTrack` gets an `UpdateOfferEvent` when a sheet shows and each time the user
+  - The optional `onTrack` gets an `UpdateOfferEvent` when a sheet has opened and each time the user
     answers it, so the consumer can send its own analytics. A sheet that shows again after
     `suspendSheets` hid it is not reported again.
 - `useConfirmSkipAfterUpdateScreen({ returnsWithoutUpdate, recheckingUpdate })`: true once the

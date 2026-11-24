@@ -11,6 +11,7 @@ type UpdateSheetProps = Readonly<{
   testID: string;
   onHeaderClosePressed?: () => void;
   onDismiss?: () => void;
+  onOpened: () => void;
   canSwipeToClose: boolean;
   children: ReactNode;
 }>;
@@ -20,6 +21,7 @@ function UpdateSheet({
   testID,
   onHeaderClosePressed,
   onDismiss,
+  onOpened,
   canSwipeToClose,
   children,
 }: UpdateSheetProps) {
@@ -30,6 +32,7 @@ function UpdateSheet({
       isRequestingToBeOpened={isOpen}
       onHeaderClosePressed={onHeaderClosePressed}
       onClose={onDismiss}
+      onOpened={onOpened}
       preventBackdropClick
       enablePanDownToClose={canSwipeToClose}
       enableDynamicSizing
@@ -51,6 +54,7 @@ export function UpdateOfferSheetsView({ offer, skip }: UpdateOfferSheetsViewProp
         isOpen={offer.isOpen}
         testID={updateOfferTestIds.offerSheet}
         onHeaderClosePressed={offer.onClose}
+        onOpened={offer.onOpened}
         canSwipeToClose={false}
       >
         <InfoState
@@ -69,6 +73,7 @@ export function UpdateOfferSheetsView({ offer, skip }: UpdateOfferSheetsViewProp
         isOpen={skip.isOpen}
         testID={updateOfferTestIds.skipSheet}
         onDismiss={skip.onDismiss}
+        onOpened={skip.onOpened}
         canSwipeToClose
       >
         <InfoState

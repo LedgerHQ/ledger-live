@@ -17,6 +17,7 @@ export type OfferSheetViewProps = Readonly<{
   updateLabel: string;
   onUpdate: () => void;
   onClose: () => void;
+  onOpened: () => void;
 }>;
 
 export type SkipSheetViewProps = Readonly<{
@@ -28,6 +29,7 @@ export type SkipSheetViewProps = Readonly<{
   onUpdate: () => void;
   onSkip: () => void;
   onDismiss: () => void;
+  onOpened: () => void;
 }>;
 
 export type UpdateOfferSheetsViewProps = Readonly<{
@@ -64,20 +66,19 @@ export function useUpdateOfferSheetsViewModel({
   const visible = key !== null && !suspendSheets;
   const shownSheet = visibleSheet(visible, phase);
   const offeredSheet = visibleSheet(key !== null, phase);
-  const trackRef = useRef(onTrack);
   const trackedSheet = useRef<UpdateOfferSheet | null>(null);
 
   useEffect(() => {
-    trackRef.current = onTrack;
-  });
-
-  useEffect(() => {
     if (!offeredSheet) trackedSheet.current = null;
-    const showsAgainAfterSuspend = shownSheet !== null && shownSheet === trackedSheet.current;
-    if (!shownSheet || showsAgainAfterSuspend) return;
-    trackedSheet.current = shownSheet;
-    trackRef.current?.({ type: "shown", sheet: shownSheet });
-  }, [offeredSheet, shownSheet]);
+  }, [offeredSheet]);
+
+  // On open, not on request: the sheet queue can hold a sheet back or drop it before it shows.
+  const reportOpened = (sheet: UpdateOfferSheet) => {
+    const showsAgainAfterSuspend = trackedSheet.current === sheet;
+    if (showsAgainAfterSuspend) return;
+    trackedSheet.current = sheet;
+    onTrack?.({ type: "shown", sheet });
+  };
 
   const answerWith = (next: OfferPhase) => {
     if (key !== null) setAnswer({ key, phase: next });
@@ -112,6 +113,7 @@ export function useUpdateOfferSheetsViewModel({
         if (shownSheet === "offer") onTrack?.({ type: "pressed", sheet: "offer", button: "close" });
         answerWith("confirmSkip");
       },
+      onOpened: () => reportOpened("offer"),
     },
     skip: {
       isOpen: visible && phase === "confirmSkip",
@@ -124,6 +126,7 @@ export function useUpdateOfferSheetsViewModel({
       onDismiss: () => {
         if (visible) skip();
       },
+      onOpened: () => reportOpened("confirmSkip"),
     },
   };
 }
