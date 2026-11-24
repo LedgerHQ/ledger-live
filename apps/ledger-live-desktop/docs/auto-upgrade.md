@@ -63,6 +63,8 @@ app must show an update error and not download the update.
 
 - Quit any running Ledger Wallet.
 - macOS: the builds are signed with the code signing identity found in your keychain.
+- macOS: an update that asks for your password leaves the app owned by root. The next run deletes it
+  with `sudo`, which asks for your password too.
 - Each run deletes the updater's pending download, in `ledger-live-desktop-updater/pending` under
   the user cache folder, so the app downloads the update again. An installed Ledger Wallet uses the
   same folder.

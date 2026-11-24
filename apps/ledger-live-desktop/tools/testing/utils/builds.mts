@@ -207,8 +207,18 @@ export function platformBuild(): PlatformBuild {
 }
 
 async function unzipApp(zip: string, app: string) {
-  fs.rmSync(app, { recursive: true, force: true });
+  await removeApp(app);
   await execa("ditto", ["-x", "-k", zip, path.dirname(app)]);
+}
+
+// An update that asked for an admin password leaves the app owned by root.
+async function removeApp(app: string) {
+  try {
+    fs.rmSync(app, { recursive: true, force: true });
+  } catch {
+    console.log(`Deleting ${app} as root, an update installed it with admin rights`);
+    await execa("sudo", ["rm", "-rf", app], { stdio: "inherit" });
+  }
 }
 
 function replaceFile(source: string, destination: string) {
