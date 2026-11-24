@@ -4,8 +4,9 @@ import type {
   AccountDataQuery,
   AccountDataResult,
 } from "@domain/entity-account-data";
-import type { AccountDescriptor, NetworkId } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { NetworkId } from "@domain/entity-network";
 import type { Random } from "../random";
 
 /** What a mock reader answers from: the account, its currency and family, and draws seeded by the account and the kind. */

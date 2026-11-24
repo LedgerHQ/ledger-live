@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
-import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
 import { AmountStrSchema } from "@domain/entity-account-balance";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { FiatCurrencyTickerSchema, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
+import { AccountUUIDSchema } from "@domain/entity-account";
 
 /** The periods of the balance graph, as the portfolio offers them. */
 export const BALANCE_HISTORY_RANGES = ["day", "week", "month", "year", "all"] as const;

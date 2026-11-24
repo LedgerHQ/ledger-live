@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
 import { accountsSlice } from "@domain/entity-account";
-import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import {
   closeReceiveAddressDialog,
@@ -14,6 +13,7 @@ import { useCopyToClipboard } from "LLD/hooks/useCopyToClipboard";
 import { useLLDCoinFamily } from "~/renderer/families";
 import type { State } from "~/renderer/reducers";
 import { accountSelector } from "~/renderer/reducers/accounts";
+import { currencyIdFromNetwork } from "@domain/entity-network";
 import { VerifyAddressExecutorLWD } from "../../verifyAddressIntent/VerifyAddressExecutorLWD";
 
 const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);

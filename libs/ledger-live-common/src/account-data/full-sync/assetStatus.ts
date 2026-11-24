@@ -1,7 +1,6 @@
 import type { Account } from "@ledgerhq/types-live";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { AccountTarget } from "@domain/api-account-data";
-import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   AccountAssetStatusSchema,
@@ -9,6 +8,7 @@ import {
   type AssetStatus,
   type AssetStatusQuery,
 } from "@domain/entity-account-status";
+import { currencyIdFromNetwork } from "@domain/entity-network";
 import { loadAssetStatusForFamily } from "../../coin-modules/registry";
 import { FullSyncAssetNotOnAccountError, FullSyncQueryRequiredError } from "./errors";
 

@@ -10,11 +10,6 @@
  * @ledgerhq/ledger-wallet-framework/derivation — no hardcoded coin types or path tables.
  */
 
-import {
-  fromDescriptorPath,
-  LegacyDerivationPathSchema,
-  type DerivationPath,
-} from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   getDerivationScheme,
@@ -24,6 +19,11 @@ import {
   derivationModeSupportsIndex,
   asDerivationMode,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
+import {
+  fromDescriptorPath,
+  LegacyDerivationPathSchema,
+  type DerivationPath,
+} from "@domain/entity-derivation";
 import type { AccountDescriptorV0 } from "./v0";
 import type { AccountDescriptorV1, UtxoAccountDescriptorV1, AccountBasedDescriptorV1 } from "./v1";
 import { networkOfV0, currencyIdFromNetwork } from "./network";

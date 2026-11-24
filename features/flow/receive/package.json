@@ -31,6 +31,7 @@
     "@domain/entity-account-receive": "workspace:*",
     "@domain/entity-account-status": "workspace:*",
     "@domain/entity-currency": "workspace:*",
+    "@domain/entity-network": "workspace:*",
     "@features/platform-account-data": "workspace:*",
     "@features/platform-currencies": "workspace:*",
     "@features/platform-device-intent": "workspace:*",

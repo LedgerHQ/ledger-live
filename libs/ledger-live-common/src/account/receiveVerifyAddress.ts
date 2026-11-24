@@ -1,7 +1,7 @@
 import type { Account } from "@ledgerhq/types-live";
 import type { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { fromDescriptorPath } from "@domain/entity-account-descriptor";
 import type { ReceiveVerification } from "@domain/entity-account-receive";
+import { fromDescriptorPath } from "@domain/entity-derivation";
 import { loadAccountModuleForFamily } from "../coin-modules/registry";
 
 /** The `getAddress` call showing an `address` verification on the device; none for any other type. */

@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
-import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
+import { AccountUUIDSchema } from "@domain/entity-account";
 import type { VerifyAddressOutcome, VerifyAddressSelection } from "../types";
 import { useVerifyAddressFlow } from "./useVerifyAddressFlow";
 

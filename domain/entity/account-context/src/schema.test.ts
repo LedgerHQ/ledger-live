@@ -1,4 +1,4 @@
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { AccountContextSchema, AccountContextStateSchema } from "./schema";
 import { mockAccountContext } from "./schema.mock";

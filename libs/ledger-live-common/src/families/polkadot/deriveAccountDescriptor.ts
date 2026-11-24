@@ -1,8 +1,9 @@
 import { map } from "rxjs";
-import { AccountDescriptorSchema, networkFromCurrencyId } from "@domain/entity-account-descriptor";
+import { AccountDescriptorSchema } from "@domain/entity-account-descriptor";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import type { AccountCandidate } from "@domain/entity-derivation";
 import type { PolkadotCoinConfig } from "@ledgerhq/coin-polkadot/config";
+import { networkFromCurrencyId } from "@domain/entity-network";
 import { getCurrencyConfiguration } from "../../config";
 import { deriveAddress } from "../../account-data/discovery/deriveAddress";
 import type { DeriveAccountDescriptor } from "../../coin-modules/types";

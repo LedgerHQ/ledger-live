@@ -1,9 +1,9 @@
 import { lastValueFrom } from "rxjs";
-import { networkFromCurrencyId } from "@domain/entity-account-descriptor";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { candidateOf } from "@domain/entity-derivation";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import Transport from "@ledgerhq/hw-transport";
+import { networkFromCurrencyId } from "@domain/entity-network";
 import type { RunOnTransport } from "../../coin-modules/types";
 import { deriveAccountDescriptor } from "./setup";
 

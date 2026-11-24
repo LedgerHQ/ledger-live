@@ -21,6 +21,7 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
+    "@domain/entity-account": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-currency": "workspace:*",

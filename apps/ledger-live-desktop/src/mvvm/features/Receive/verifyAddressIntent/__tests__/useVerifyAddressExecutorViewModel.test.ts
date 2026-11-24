@@ -1,5 +1,4 @@
 import { renderHook, waitFor } from "tests/testSetup";
-import { AddressSchema, DerivationPathSchema } from "@domain/entity-account-descriptor";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import type { VerifyAddressDeviceState } from "@features/platform-intent-verify-address";
@@ -10,6 +9,8 @@ import {
 import getAddress from "@ledgerhq/live-common/hw/getAddress/index";
 import { createFixtureTokenAccount } from "@ledgerhq/live-common/mock/fixtures/cryptoCurrencies";
 import { NEVER } from "rxjs";
+import { AddressSchema } from "@domain/entity-network";
+import { DerivationPathSchema } from "@domain/entity-derivation";
 import { useVerifyAddressExecutorViewModel } from "../useVerifyAddressExecutorViewModel";
 import {
   VERIFY_ACCOUNT,

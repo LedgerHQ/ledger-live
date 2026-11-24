@@ -9,7 +9,7 @@ import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { genAccount } from "../../mock/account";
 import { fromLegacyAccount } from "../../account/accountDescriptor";
 import { registerAllCoins } from "../../coin-modules/load-all-coins";

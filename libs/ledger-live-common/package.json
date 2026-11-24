@@ -116,6 +116,7 @@
     "@domain/api-currency-token": "workspace:^",
     "@domain/api-market-countervalues": "workspace:*",
     "@domain/api-swap-quotes": "workspace:^",
+    "@domain/entity-account": "workspace:^",
     "@domain/entity-account-balance": "workspace:^",
     "@domain/entity-account-balance-history": "workspace:^",
     "@domain/entity-account-data": "workspace:^",
@@ -133,6 +134,7 @@
     "@domain/entity-derivation": "workspace:^",
     "@domain/entity-interest-rate": "workspace:^",
     "@domain/entity-market-countervalues": "workspace:*",
+    "@domain/entity-network": "workspace:^",
     "@domain/entity-recent-addresses": "workspace:^",
     "@features/platform-account-analytics": "workspace:^",
     "@features/platform-account-source-coin-module": "workspace:^",
@@ -287,7 +289,6 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@domain/entity-account": "workspace:^",
     "@domain/entity-derivation": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@ledgerhq/device-react": "workspace:^",

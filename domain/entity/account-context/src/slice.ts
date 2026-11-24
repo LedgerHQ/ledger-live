@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account";
 import { initialAccountContextState, type AccountContext } from "./schema";
 
 /** Keys come from action payloads: one inherited from `Object.prototype` is never a record entry. */

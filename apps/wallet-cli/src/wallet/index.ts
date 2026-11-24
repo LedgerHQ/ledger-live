@@ -6,6 +6,7 @@ import { Observable, from } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { AddressSchema, type Address } from "@domain/entity-network";
 import type { AccountBalances, AccountDescriptor, SendEvent, DiscoveredAccountRaw } from "./models";
 // BridgeAdapter and CoinFrameworkAdapter are loaded lazily via dynamic import() inside getters
 // to avoid pulling in live-common/bridge/index (~328ms) and coinframework/local/evm (~105ms)
@@ -16,7 +17,6 @@ import type { EarnSolanaStake } from "./earn/types";
 import type { TransactionIntent } from "./intents";
 import type { NetworkId } from "../shared/accountDescriptor";
 import { currencyIdFromNetwork, toV1 } from "../shared/accountDescriptor";
-import { AddressSchema, type Address } from "@domain/entity-account-descriptor";
 import { paginateOperations } from "./paginate-operations";
 
 export class WalletAdapter {

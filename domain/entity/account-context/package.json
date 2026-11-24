@@ -20,11 +20,12 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
-    "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-account": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@domain/entity-account-descriptor": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",

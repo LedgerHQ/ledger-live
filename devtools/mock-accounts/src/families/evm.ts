@@ -1,4 +1,4 @@
-import { DerivationPathSchema } from "@domain/entity-account-descriptor";
+import { DerivationPathSchema } from "@domain/entity-derivation";
 import { checksumAddress } from "../encoding";
 import { balanceRow } from "../kinds/balance";
 import { randomAmount, randomBytes } from "../random";

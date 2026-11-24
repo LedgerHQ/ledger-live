@@ -1203,6 +1203,9 @@ importers:
       '@domain/entity-market-countervalues':
         specifier: workspace:^
         version: link:../../domain/entity/market-countervalues
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../../domain/entity/network
       '@domain/entity-predictions':
         specifier: workspace:^
         version: link:../../domain/entity/predictions
@@ -1816,6 +1819,9 @@ importers:
       '@domain/entity-account-descriptor':
         specifier: workspace:*
         version: link:../../domain/entity/account-descriptor
+      '@domain/entity-derivation':
+        specifier: workspace:*
+        version: link:../../domain/entity/derivation
       '@electron/notarize':
         specifier: 3.1.2
         version: 3.1.2
@@ -2964,6 +2970,12 @@ importers:
       '@domain/entity-account-descriptor':
         specifier: workspace:*
         version: link:../../domain/entity/account-descriptor
+      '@domain/entity-derivation':
+        specifier: workspace:*
+        version: link:../../domain/entity/derivation
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../../domain/entity/network
       '@features/flow-market-banner':
         specifier: workspace:^
         version: link:../../features/flow/market-banner
@@ -3204,6 +3216,12 @@ importers:
       '@domain/entity-currency-unit':
         specifier: workspace:^
         version: link:../../domain/entity/currency-unit
+      '@domain/entity-derivation':
+        specifier: workspace:*
+        version: link:../../domain/entity/derivation
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../../domain/entity/network
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
@@ -4689,6 +4707,9 @@ importers:
       '@domain/entity-derivation':
         specifier: workspace:*
         version: link:../../domain/entity/derivation
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../../domain/entity/network
       '@domain/entity-predictions':
         specifier: workspace:*
         version: link:../../domain/entity/predictions
@@ -5510,6 +5531,9 @@ importers:
       '@domain/api-account-data':
         specifier: workspace:*
         version: link:../../domain/api/account-data
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../../domain/entity/account
       '@domain/entity-account-balance':
         specifier: workspace:*
         version: link:../../domain/entity/account-balance
@@ -5537,6 +5561,12 @@ importers:
       '@domain/entity-currency-fiat':
         specifier: workspace:*
         version: link:../../domain/entity/currency-fiat
+      '@domain/entity-derivation':
+        specifier: workspace:*
+        version: link:../../domain/entity/derivation
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../../domain/entity/network
       '@noble/hashes':
         specifier: 'catalog:'
         version: 1.8.0
@@ -6540,6 +6570,9 @@ importers:
 
   domain/api/account-data:
     dependencies:
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../../entity/account
       '@domain/entity-account-data':
         specifier: workspace:*
         version: link:../../entity/account-data
@@ -6550,6 +6583,12 @@ importers:
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
     devDependencies:
+      '@domain/entity-derivation':
+        specifier: workspace:*
+        version: link:../../entity/derivation
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../../entity/network
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -6922,9 +6961,9 @@ importers:
         specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
-      '@domain/entity-account-descriptor':
+      '@domain/entity-account':
         specifier: workspace:*
-        version: link:../../entity/account-descriptor
+        version: link:../../entity/account
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../entity/currency-crypto
@@ -7248,6 +7287,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+      uuid:
+        specifier: 'catalog:'
+        version: 11.1.0
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -7328,6 +7370,9 @@ importers:
 
   domain/entity/account-balance:
     dependencies:
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../account
       '@domain/entity-account-data':
         specifier: workspace:*
         version: link:../account-data
@@ -7377,6 +7422,9 @@ importers:
 
   domain/entity/account-balance-history:
     dependencies:
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../account
       '@domain/entity-account-balance':
         specifier: workspace:*
         version: link:../account-balance
@@ -7432,9 +7480,9 @@ importers:
 
   domain/entity/account-context:
     dependencies:
-      '@domain/entity-account-descriptor':
+      '@domain/entity-account':
         specifier: workspace:*
-        version: link:../account-descriptor
+        version: link:../account
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -7442,6 +7490,9 @@ importers:
         specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
+      '@domain/entity-account-descriptor':
+        specifier: workspace:*
+        version: link:../account-descriptor
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -7475,9 +7526,9 @@ importers:
 
   domain/entity/account-data:
     dependencies:
-      '@domain/entity-account-descriptor':
+      '@domain/entity-account':
         specifier: workspace:*
-        version: link:../account-descriptor
+        version: link:../account
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -7485,6 +7536,12 @@ importers:
         specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
+      '@domain/entity-derivation':
+        specifier: workspace:*
+        version: link:../derivation
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../network
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -7515,12 +7572,12 @@ importers:
 
   domain/entity/account-descriptor:
     dependencies:
-      '@domain/entity-currency-crypto':
+      '@domain/entity-derivation':
         specifier: workspace:*
-        version: link:../currency-crypto
-      uuid:
-        specifier: 'catalog:'
-        version: 11.1.0
+        version: link:../derivation
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../network
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -7604,6 +7661,9 @@ importers:
 
   domain/entity/account-operation:
     dependencies:
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../account
       '@domain/entity-account-balance':
         specifier: workspace:*
         version: link:../account-balance
@@ -7619,6 +7679,9 @@ importers:
       '@domain/entity-currency-fiat':
         specifier: workspace:*
         version: link:../currency-fiat
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../network
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -7659,12 +7722,21 @@ importers:
 
   domain/entity/account-receive:
     dependencies:
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../account
       '@domain/entity-account-data':
         specifier: workspace:*
         version: link:../account-data
       '@domain/entity-account-descriptor':
         specifier: workspace:*
         version: link:../account-descriptor
+      '@domain/entity-derivation':
+        specifier: workspace:*
+        version: link:../derivation
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../network
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -7705,6 +7777,9 @@ importers:
 
   domain/entity/account-status:
     dependencies:
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../account
       '@domain/entity-account-data':
         specifier: workspace:*
         version: link:../account-data
@@ -8156,12 +8231,12 @@ importers:
 
   domain/entity/derivation:
     dependencies:
-      '@domain/entity-account-descriptor':
-        specifier: workspace:*
-        version: link:../account-descriptor
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../currency-crypto
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../network
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -8375,6 +8450,46 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.2(@types/node@24.12.4)(babel-plugin-macros@3.1.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.79.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.94.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/entity/network:
+    dependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../currency-crypto
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@support/jest':
+        specifier: workspace:*
+        version: link:../../../support/jest
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.24)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.24))
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
@@ -13653,6 +13768,9 @@ importers:
       '@domain/entity-currency':
         specifier: workspace:*
         version: link:../../../domain/entity/currency
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../../../domain/entity/network
       '@features/platform-account-data':
         specifier: workspace:*
         version: link:../../platform/account-data
@@ -13910,6 +14028,9 @@ importers:
       '@domain/api-account-data':
         specifier: workspace:*
         version: link:../../../domain/api/account-data
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account
       '@domain/entity-account-data':
         specifier: workspace:*
         version: link:../../../domain/entity/account-data
@@ -13920,6 +14041,12 @@ importers:
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
     devDependencies:
+      '@domain/entity-derivation':
+        specifier: workspace:*
+        version: link:../../../domain/entity/derivation
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../../../domain/entity/network
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -14044,13 +14171,22 @@ importers:
       '@domain/entity-account-status':
         specifier: workspace:*
         version: link:../../../domain/entity/account-status
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../../../domain/entity/network
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 13.3.0
     devDependencies:
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account
       '@domain/entity-currency':
         specifier: workspace:*
         version: link:../../../domain/entity/currency
+      '@domain/entity-derivation':
+        specifier: workspace:*
+        version: link:../../../domain/entity/derivation
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -14096,6 +14232,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:*
         version: link:../../../domain/api/currency-token
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account
       '@domain/entity-account-balance':
         specifier: workspace:*
         version: link:../../../domain/entity/account-balance
@@ -14126,6 +14265,9 @@ importers:
       '@domain/entity-currency-token':
         specifier: workspace:*
         version: link:../../../domain/entity/currency-token
+      '@domain/entity-network':
+        specifier: workspace:*
+        version: link:../../../domain/entity/network
       '@noble/hashes':
         specifier: 'catalog:'
         version: 1.8.0
@@ -20558,6 +20700,9 @@ importers:
       '@domain/api-swap-quotes':
         specifier: workspace:^
         version: link:../../domain/api/swap-quotes
+      '@domain/entity-account':
+        specifier: workspace:^
+        version: link:../../domain/entity/account
       '@domain/entity-account-balance':
         specifier: workspace:^
         version: link:../../domain/entity/account-balance
@@ -20609,6 +20754,9 @@ importers:
       '@domain/entity-market-countervalues':
         specifier: workspace:*
         version: link:../../domain/entity/market-countervalues
+      '@domain/entity-network':
+        specifier: workspace:^
+        version: link:../../domain/entity/network
       '@domain/entity-recent-addresses':
         specifier: workspace:^
         version: link:../../domain/entity/recent-addresses
@@ -21066,9 +21214,6 @@ importers:
         specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
-      '@domain/entity-account':
-        specifier: workspace:^
-        version: link:../../domain/entity/account
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies

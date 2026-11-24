@@ -5,13 +5,11 @@ import {
   accountDataSlice,
   isAccountDataReceived,
 } from "@domain/entity-account-data";
-import {
-  DerivationPathSchema,
-  NetworkIdSchema,
-  computeAccountUUID,
-  type AccountDescriptor,
-  type AccountUUID,
-} from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { DerivationPathSchema } from "@domain/entity-derivation";
+import { NetworkIdSchema } from "@domain/entity-network";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
+import type { AccountUUID } from "@domain/entity-account";
 import { accountDataExtra } from "./extra";
 import type { AccountDataSource } from "./source";
 
