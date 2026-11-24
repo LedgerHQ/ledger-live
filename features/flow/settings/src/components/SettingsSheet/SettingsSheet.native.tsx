@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { BottomSheetHeader, BottomSheetScrollView, Box } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import type { SettingsSheetProps } from "./SettingsSheet.types";
@@ -34,18 +34,30 @@ export function SettingsSheet({
   title,
   description,
   onClose,
+  canClose = true,
   children,
   testID,
 }: SettingsSheetProps) {
+  // The sheet reports its close when the closing animation starts: keep the content until hidden.
+  const [isContentShown, setIsContentShown] = useState(isOpen);
+  if (isOpen && !isContentShown) setIsContentShown(true);
+  const onModalHide = useCallback(() => {
+    if (!isOpen) setIsContentShown(false);
+  }, [isOpen]);
+
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
-      onClose={onClose}
+      onClose={canClose ? onClose : undefined}
+      onModalHide={onModalHide}
+      noCloseButton={!canClose}
+      preventBackdropClick={!canClose}
+      enablePanDownToClose={canClose}
       enableDynamicSizing
       contentHasBottomSpace
       testID={testID}
     >
-      {isOpen ? (
+      {isOpen || isContentShown ? (
         <SettingsSheetContent title={title} description={description} testID={testID}>
           {children}
         </SettingsSheetContent>

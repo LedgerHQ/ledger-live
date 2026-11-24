@@ -42,4 +42,44 @@ describe("SettingsSheet", () => {
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it("keeps its content while closing, until the sheet is hidden", async () => {
+    const user = userEvent.setup();
+    const sheet = (isOpen: boolean) => (
+      <SettingsSheet isOpen={isOpen} title="Theme" onClose={jest.fn()} testID="theme-sheet">
+        <Text>Dark</Text>
+      </SettingsSheet>
+    );
+    const { rerender } = render(sheet(true));
+
+    rerender(sheet(false));
+    expect(screen.getByText("Dark")).toBeVisible();
+
+    await user.press(screen.getByTestId("theme-sheet-hidden"));
+    expect(screen.queryByText("Dark")).toBeNull();
+  });
+
+  it("keeps its content when reopened before being hidden", async () => {
+    const user = userEvent.setup();
+    const sheet = (isOpen: boolean) => (
+      <SettingsSheet isOpen={isOpen} title="Theme" onClose={jest.fn()} testID="theme-sheet">
+        <Text>Dark</Text>
+      </SettingsSheet>
+    );
+    const { rerender } = render(sheet(true));
+
+    rerender(sheet(false));
+    rerender(sheet(true));
+    await user.press(screen.getByTestId("theme-sheet-hidden"));
+
+    expect(screen.getByText("Dark")).toBeVisible();
+  });
+
+  it("offers no way to dismiss it while it cannot close", () => {
+    render(
+      <SettingsSheet isOpen title="Theme" onClose={jest.fn()} canClose={false} testID="theme-sheet" />,
+    );
+
+    expect(screen.queryByTestId("theme-sheet-dismiss")).toBeNull();
+  });
 });

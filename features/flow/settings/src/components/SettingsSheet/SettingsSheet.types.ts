@@ -5,6 +5,8 @@ export type SettingsSheetProps = Readonly<{
   title: string;
   description?: string;
   onClose: () => void;
+  /** False while an action runs: no close button, backdrop, gesture or Escape closes the sheet. */
+  canClose?: boolean;
   children?: ReactNode;
   testID?: string;
 }>;

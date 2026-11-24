@@ -20,6 +20,7 @@ export function SettingsConfirmSheet({
       title={labels.title}
       description={labels.description}
       onClose={onCancel}
+      canClose={!isConfirming}
       testID={testID}
     >
       <div className="flex w-full gap-16">

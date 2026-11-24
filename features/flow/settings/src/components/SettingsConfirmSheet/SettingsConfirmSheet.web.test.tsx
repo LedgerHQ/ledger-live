@@ -65,4 +65,13 @@ describe("SettingsConfirmSheet", () => {
     expect(screen.getByTestId("confirm")).toBeDisabled();
     expect(screen.getByTestId("cancel")).toBeDisabled();
   });
+
+  it("cannot be closed while confirming", async () => {
+    const user = userEvent.setup();
+    const { onCancel } = renderSheet({ isConfirming: true });
+
+    await user.click(screen.getByRole("button", { name: "Close" }));
+
+    expect(onCancel).not.toHaveBeenCalled();
+  });
 });

@@ -7,20 +7,25 @@ export function SettingsSheet({
   title,
   description,
   onClose,
+  canClose = true,
   children,
   testID,
 }: SettingsSheetProps) {
   const onOpenChange = useCallback(
     (open: boolean) => {
-      if (!open) onClose();
+      if (!open && canClose) onClose();
     },
-    [onClose],
+    [onClose, canClose],
   );
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="w-[400px] bg-canvas-sheet" data-testid={testID}>
-        <DialogHeader title={title} description={description} onClose={onClose} />
+        <DialogHeader
+          title={title}
+          description={description}
+          onClose={canClose ? onClose : undefined}
+        />
         <DialogBody className="flex flex-col gap-24 px-24 pb-24">{children}</DialogBody>
       </DialogContent>
     </Dialog>

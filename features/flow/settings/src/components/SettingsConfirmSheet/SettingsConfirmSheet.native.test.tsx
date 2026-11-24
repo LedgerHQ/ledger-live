@@ -49,4 +49,20 @@ describe("SettingsConfirmSheet", () => {
 
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
+
+  it("offers no way to dismiss it while confirming", () => {
+    render(
+      <SettingsConfirmSheet
+        isOpen
+        tone="destructive"
+        labels={labels}
+        isConfirming
+        onConfirm={jest.fn()}
+        onCancel={jest.fn()}
+        testID="reset-sheet"
+      />,
+    );
+
+    expect(screen.queryByTestId("reset-sheet-dismiss")).toBeNull();
+  });
 });

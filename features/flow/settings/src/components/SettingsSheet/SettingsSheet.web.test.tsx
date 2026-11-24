@@ -43,4 +43,14 @@ describe("SettingsSheet", () => {
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it("does not close while it cannot close", async () => {
+    const user = userEvent.setup();
+    const onClose = jest.fn();
+    render(<SettingsSheet isOpen title="Select your region" onClose={onClose} canClose={false} />);
+
+    await user.click(screen.getByRole("button", { name: "Close" }));
+
+    expect(onClose).not.toHaveBeenCalled();
+  });
 });
