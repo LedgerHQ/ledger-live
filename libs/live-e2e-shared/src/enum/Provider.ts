@@ -102,6 +102,10 @@ export class EarnProvider extends BaseProvider {
   static readonly LIDO = new EarnProvider("lido", "Lido");
 }
 
+export class PerpsProvider extends BaseProvider {
+  static readonly SWAPKIT = new PerpsProvider("swapkit_hyperliquid", "SwapKit");
+}
+
 export class BuySellProvider extends BaseProvider {
   constructor(
     name: string,
