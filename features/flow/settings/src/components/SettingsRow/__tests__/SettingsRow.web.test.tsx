@@ -61,7 +61,7 @@ describe("SettingsRow", () => {
       />,
     );
 
-    expect(screen.getByTestId("row-toggle")).toBeInTheDocument();
+    expect(screen.getByTestId("row-toggle")).toHaveAttribute("aria-label", "Hide balance");
   });
 
   it("shows a value", () => {
