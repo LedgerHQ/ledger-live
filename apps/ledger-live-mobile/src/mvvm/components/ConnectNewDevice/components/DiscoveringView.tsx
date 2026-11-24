@@ -12,7 +12,7 @@ import {
 } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { useTranslation } from "~/context/Locale";
 import type { ConnectNewDeviceNonErrorUIState, ConnectNewDeviceViewProps } from "../types";
-import { getScanningMode, type ScanningMode } from "../utils/getScanningMode";
+import { getScanningMode } from "../utils/getScanningMode";
 import { DeviceCard } from "./DeviceCard";
 import { StateLayout } from "./StateLayout";
 
@@ -26,12 +26,6 @@ type DiscoveringViewProps = {
   isBehindErrorSheet: boolean;
   checkIsNewDevice: ConnectNewDeviceViewProps["checkIsNewDevice"];
 };
-
-const descriptionKeys = {
-  bluetooth: "connectNewDevice.discovering.description.bluetooth",
-  bluetoothAndUsb: "connectNewDevice.discovering.description.bluetoothAndUsb",
-  usb: "connectNewDevice.discovering.description.usb",
-} as const satisfies Record<ScanningMode, string>;
 
 export function DiscoveringView({
   state,
@@ -79,7 +73,7 @@ export function DiscoveringView({
       animation={scanningMode}
       loopAnimation
       title={t("connectNewDevice.discovering.title")}
-      description={t(descriptionKeys[scanningMode])}
+      description={t(`connectNewDevice.discovering.description.${scanningMode}`)}
       footer={
         state.showDeviceNotFound && onPressDeviceNotFound ? (
           <Button appearance="no-background" size="lg" isFull onPress={onPressDeviceNotFound}>

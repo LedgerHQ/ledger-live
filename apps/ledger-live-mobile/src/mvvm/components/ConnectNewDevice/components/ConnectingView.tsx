@@ -8,7 +8,7 @@ import {
 } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { useTranslation } from "~/context/Locale";
 import type { ConnectNewDeviceNonErrorUIState } from "../types";
-import { getDeviceTransport, type DeviceTransport } from "../utils/getDeviceTransport";
+import { getDeviceTransport } from "../utils/getDeviceTransport";
 import { StateLayout } from "./StateLayout";
 
 type ConnectingViewProps = {
@@ -21,11 +21,6 @@ type ConnectingViewProps = {
   /** Whether the device is not in the known devices. */
   isNewDevice: boolean;
 };
-
-const titleKeys = {
-  bluetooth: "connectNewDevice.connecting.bluetooth.title",
-  usb: "connectNewDevice.connecting.usb.title",
-} as const satisfies Record<DeviceTransport, string>;
 
 export function ConnectingView({
   state,
@@ -51,7 +46,7 @@ export function ConnectingView({
       <StateLayout
         animation="loading"
         loopAnimation
-        title={t(titleKeys[transport], { deviceName })}
+        title={t(`connectNewDevice.connecting.${transport}.title`, { deviceName })}
         // Only Bluetooth pairing can show a code on the device.
         description={
           transport === "bluetooth"

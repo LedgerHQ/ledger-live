@@ -7,7 +7,7 @@ import {
 } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { useTranslation } from "~/context/Locale";
 import type { ConnectNewDeviceNonErrorUIState } from "../types";
-import { getDeviceTransport, type DeviceTransport } from "../utils/getDeviceTransport";
+import { getDeviceTransport } from "../utils/getDeviceTransport";
 import { StateLayout } from "./StateLayout";
 
 type ConnectedViewProps = {
@@ -24,11 +24,6 @@ type ConnectedViewProps = {
   /** Whether the device is not in the known devices. */
   isNewDevice: boolean;
 };
-
-const titleKeys = {
-  bluetooth: "connectNewDevice.connected.bluetooth.title",
-  usb: "connectNewDevice.connected.usb.title",
-} as const satisfies Record<DeviceTransport, string>;
 
 export function ConnectedView({
   state,
@@ -52,7 +47,7 @@ export function ConnectedView({
       <StateLayout
         animation="success"
         loopAnimation={false}
-        title={t(titleKeys[getDeviceTransport(device.transport)])}
+        title={t(`connectNewDevice.connected.${getDeviceTransport(device.transport)}.title`)}
         testID="connect-new-device-connected"
       />
     </>
