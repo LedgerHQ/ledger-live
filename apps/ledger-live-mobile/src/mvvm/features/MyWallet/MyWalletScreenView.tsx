@@ -49,7 +49,10 @@ export function MyWalletScreenView({
 
   return (
     <Box style={{ flex: 1 }}>
-      <TrackScreen category="My Wallet" {...pageProperties} />
+      {/* Unmounted in the Add mode: the page is sent again when it closes, and the list events carry it. */}
+      {!(isDeviceListEnabled && isPairing) && (
+        <TrackScreen category="My Wallet" {...pageProperties} />
+      )}
       {/* The new device list has no scroll of its own: everything below the header scrolls. */}
       {isDeviceListEnabled && (
         <ScrollView

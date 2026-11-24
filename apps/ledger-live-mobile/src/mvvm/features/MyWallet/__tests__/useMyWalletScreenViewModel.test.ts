@@ -1,10 +1,10 @@
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { rnBleTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
+import { rnBleTransportIdentifier, rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import type { State } from "~/reducers/types";
 import { useMyWalletScreenViewModel } from "../useMyWalletScreenViewModel";
 
-const withKnownStaxAndNanoX = (state: State): State => ({
+const withKnownDevices = (state: State): State => ({
   ...state,
   knownDevices: {
     ...state.knownDevices,
@@ -21,6 +21,12 @@ const withKnownStaxAndNanoX = (state: State): State => ({
         deviceModelId: DeviceModelId.nanoX,
         transport: rnBleTransportIdentifier,
       },
+      {
+        id: "nano-s-plus-id",
+        name: "Ledger Nano S Plus",
+        deviceModelId: DeviceModelId.nanoSP,
+        transport: rnHidTransportIdentifier,
+      },
     ],
   },
 });
@@ -29,12 +35,12 @@ const renderViewModel = (isDeviceListEnabled: boolean) =>
   renderHook(() => useMyWalletScreenViewModel(), {
     overrideInitialState: withFlagOverrides(
       { lwmMyWalletDeviceList: { enabled: isDeviceListEnabled } },
-      withKnownStaxAndNanoX,
+      withKnownDevices,
     ),
   });
 
 describe("useMyWalletScreenViewModel", () => {
-  it("GIVEN the device list and two known devices, WHEN the screen renders, THEN it should give the device count and the sorted device models to the page", () => {
+  it("GIVEN the device list and Bluetooth and USB known devices, WHEN the screen renders, THEN it should give the count and the sorted models of the Bluetooth known devices to the page", () => {
     // GIVEN / WHEN
     const { result } = renderViewModel(true);
 
