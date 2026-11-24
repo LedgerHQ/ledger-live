@@ -259,7 +259,7 @@ catalog:
   rimraf: 4.4.1
   zx: 8.8.5
   # Modules published by coin-modules
-  "@ledgerhq/coin-evm": 17.1.5
+  "@ledgerhq/coin-evm": 17.1.6
   "@ledgerhq/coin-hypercore": 4.2.1
   "@ledgerhq/coin-module-framework": 13.3.0
   "@ledgerhq/coin-stellar": 12.3.2
