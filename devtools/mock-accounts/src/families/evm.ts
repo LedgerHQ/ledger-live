@@ -1,3 +1,4 @@
+import { AccountKeySchema } from "@domain/entity-account-descriptor";
 import { DerivationPathSchema } from "@domain/entity-derivation";
 import { checksumAddress } from "../encoding";
 import { balanceRow } from "../kinds/balance";
@@ -21,7 +22,7 @@ export const evm: MockFamily = {
     version: "2",
     type: "address",
     network,
-    key: checksumAddress(randomBytes(random, 20)),
+    key: AccountKeySchema.parse(checksumAddress(randomBytes(random, 20))),
     path: DerivationPathSchema.parse(`m/44h/${currency.coinType}h/${index}h/0/0`),
   }),
   address: (_currency, random) => checksumAddress(randomBytes(random, 20)),

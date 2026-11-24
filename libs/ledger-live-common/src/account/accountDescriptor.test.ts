@@ -1,5 +1,5 @@
 import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { AccountKeySchema, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
@@ -289,7 +289,7 @@ describe("descriptor -> legacy -> descriptor over generated descriptors", () => 
                 version: "2",
                 type: "utxo",
                 network,
-                key: XPUB,
+                key: AccountKeySchema.parse(XPUB),
                 path: toDescriptorPath(
                   runAccountDerivationScheme(scheme, currency, { account: index }),
                 ),
@@ -299,7 +299,7 @@ describe("descriptor -> legacy -> descriptor over generated descriptors", () => 
                 version: "2",
                 type: "address",
                 network,
-                key,
+                key: AccountKeySchema.parse(key),
                 path: pathOf({ node, address }),
               };
           const legacy = toLegacyAccount(descriptor);
@@ -546,7 +546,7 @@ describe("a descriptor of a public-key family keyed on its address", () => {
     version: "2",
     type: "address",
     network: NetworkIdSchema.parse("ton"),
-    key: address,
+    key: AccountKeySchema.parse(address),
     path: DerivationPathSchema.parse("m/44h/607h/0h/0h/0h/0h"),
   };
 
@@ -570,7 +570,7 @@ describe("toLegacyAccount", () => {
       version: "2",
       type: "address",
       network: NetworkIdSchema.parse("ethereum"),
-      key: ETH_ADDR,
+      key: AccountKeySchema.parse(ETH_ADDR),
       path: DerivationPathSchema.parse("m/44H/60H/2H/0/0"),
     });
     expect(back).toMatchObject({ derivationMode: "", index: 2 });
@@ -583,7 +583,7 @@ describe("toLegacyAccount", () => {
         version: "2",
         type: "address",
         network: NetworkIdSchema.parse("bitcoin"),
-        key: BTC_ADDR,
+        key: AccountKeySchema.parse(BTC_ADDR),
         path: DerivationPathSchema.parse("m/84h/0h/0h/0/0"),
       }),
     ).toThrow(UnsupportedDescriptorPathError);
@@ -596,7 +596,7 @@ describe("toLegacyAccount", () => {
         version: "2",
         type: "utxo",
         network: NetworkIdSchema.parse("tezos"),
-        key: XPUB,
+        key: AccountKeySchema.parse(XPUB),
         path: DerivationPathSchema.parse("m/44h/1729h/0h"),
       }),
     ).toThrow(UnsupportedDescriptorPathError);
@@ -609,7 +609,7 @@ describe("toLegacyAccount", () => {
         version: "2",
         type: "address",
         network: NetworkIdSchema.parse("ethereum"),
-        key: ETH_ADDR,
+        key: AccountKeySchema.parse(ETH_ADDR),
         path: DerivationPathSchema.parse("m/44h/60h/0h"),
       }),
     ).toThrow(UnsupportedDescriptorPathError);
@@ -625,7 +625,7 @@ describe("toLegacyAccount", () => {
         version: "2",
         type: "utxo",
         network: NetworkIdSchema.parse("bitcoin"),
-        key: XPUB,
+        key: AccountKeySchema.parse(XPUB),
         path: DerivationPathSchema.parse(path),
       }),
     ).toThrow(UnsupportedDescriptorPathError);
@@ -641,7 +641,7 @@ describe("toLegacyAccount", () => {
         version: "2",
         type: "utxo",
         network: NetworkIdSchema.parse("bitcoin"),
-        key: XPUB,
+        key: AccountKeySchema.parse(XPUB),
         path: DerivationPathSchema.parse(path),
       }),
     ).toThrow("hardened segments");

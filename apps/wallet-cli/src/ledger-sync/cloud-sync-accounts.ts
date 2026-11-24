@@ -134,8 +134,8 @@ function entryId(raw: unknown): string {
 
 // wallet-cli only knows how to build send intents for these families (see
 // `wallet/intents/families/*.ts`) — anything else converts to a valid AccountDescriptorV1 just fine
-// (toV1() only fails for a currency the derivation-mode registry itself can't resolve, or a path
-// index out of BIP32 range, which is a much smaller set) but would be unusable the moment any other command tried to act on it.
+// (toV1() only fails for a currency the derivation-mode registry itself can't resolve, a path
+// index out of BIP32 range or an empty key, which is a much smaller set) but would be unusable the moment any other command tried to act on it.
 const SUPPORTED_FAMILIES = new Set<string>(SUPPORTED_TRANSACTION_FAMILIES);
 
 // Not `isDerivationMode`: it checks `mode in modes`, so inherited keys such as "toString" pass it.
@@ -233,7 +233,7 @@ function convertSyncedAccount(
   const descriptor: AccountDescriptorV0 = parsed.data;
 
   // Checked before toV1() rather than relying on it to throw: toV1() only fails for a currency the
-  // derivation-mode registry can't resolve at all (or a path index out of BIP32 range), not for one wallet-cli simply has no
+  // derivation-mode registry can't resolve at all (or a path index out of BIP32 range, or an empty key), not for one wallet-cli simply has no
   // transaction-family support for (e.g. Cardano/Polkadot/Tezos convert to a perfectly valid
   // AccountDescriptorV1 and would otherwise be silently `imported`).
   const family = unsupportedFamily(descriptor.currencyId);
@@ -272,12 +272,7 @@ function convertSyncedAccount(
       : { status: "invalid", id: descriptor.id, reason: errMessage(e) };
   }
 
-  // toV1() copies the raw source's seedIdentifier/address verbatim and only validates the path of its
-  // output — a synced entry with a schema-valid-but-empty seedIdentifier (accountDescriptorSchema's
-  // `seedIdentifier` has no `.min(1)`) silently produced a structurally invalid V1 descriptor (e.g.
-  // an empty `address`) that looked fine in `session view` but threw on the next `parseV1()`.
-  // Validate here, once, so that class of entry is isolated as `invalid` instead of corrupting the
-  // session.
+  // toV1() rejects an empty key; this still catches any other structurally invalid output once.
   const validated = AccountDescriptorV1Schema.safeParse(v1);
   if (!validated.success) {
     return { status: "invalid", id: descriptor.id, reason: issues(validated.error) };

@@ -2,7 +2,7 @@ import { DerivationPathSchema } from "@domain/entity-derivation";
 import { NetworkIdSchema } from "@domain/entity-network";
 import { InvalidAccountDescriptorError } from "./errors";
 import { ETH_ADDR, SOL_ADDR, XPUB } from "./test-fixtures";
-import { AccountDescriptorSchema, type AccountDescriptor } from "./schema";
+import { AccountDescriptorSchema, AccountKeySchema, type AccountDescriptor } from "./schema";
 import { parseAccountDescriptor, serializeAccountDescriptor } from "./serialization";
 
 const UTXO: AccountDescriptor = {
@@ -10,7 +10,7 @@ const UTXO: AccountDescriptor = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  key: XPUB,
+  key: AccountKeySchema.parse(XPUB),
   path: DerivationPathSchema.parse("m/84h/0h/0h"),
 };
 
@@ -19,7 +19,7 @@ const ETH: AccountDescriptor = {
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse("ethereum"),
-  key: ETH_ADDR,
+  key: AccountKeySchema.parse(ETH_ADDR),
   path: DerivationPathSchema.parse("m/44h/60h/0h/0/0"),
 };
 
@@ -28,7 +28,7 @@ const SOL: AccountDescriptor = {
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse("solana_devnet"),
-  key: SOL_ADDR,
+  key: AccountKeySchema.parse(SOL_ADDR),
   path: DerivationPathSchema.parse("m/44h/501h/0h/0h"),
 };
 

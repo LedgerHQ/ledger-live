@@ -14,11 +14,15 @@ import { _setTestSpinner, installOutputCapture } from "./shared/ui";
 import { FakeSpinners } from "./testing/fake-spinner";
 import { resetTestSeams } from "./shared/test-seam";
 import { ETH_ADDR, SOL_ADDR } from "./shared/accountDescriptor/test-fixtures";
-import { DerivationPathSchema, NetworkIdSchema } from "./shared/accountDescriptor";
+import {
+  AccountKeySchema,
+  DerivationPathSchema,
+  NetworkIdSchema,
+} from "./shared/accountDescriptor";
 import type { SendIntentSummary } from "./agent-intent/send-intent";
 import type { SwapIntentSummary } from "./agent-intent/swap-intent";
 
-const XPUB = "xpub6BosfCnifzxcA";
+const XPUB = AccountKeySchema.parse("xpub6BosfCnifzxcA");
 
 const spinners = new FakeSpinners();
 beforeAll(() => _setTestSpinner(spinners.create));

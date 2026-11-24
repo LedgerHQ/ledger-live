@@ -4,14 +4,14 @@ import { ETH_ADDR, SOL_ADDR, XPUB } from "./test-fixtures";
 
 const TON_PUBKEY = "86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060";
 import { accountDescriptorKey } from "./key";
-import type { AccountDescriptor } from "./schema";
+import { AccountKeySchema, type AccountDescriptor } from "./schema";
 
 const utxo = (path: string, network = "bitcoin"): AccountDescriptor => ({
   purpose: "account",
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse(network),
-  key: XPUB,
+  key: AccountKeySchema.parse(XPUB),
   path: DerivationPathSchema.parse(path),
 });
 
@@ -20,7 +20,7 @@ const address = (addr: string, network = "ethereum"): AccountDescriptor => ({
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse(network),
-  key: addr,
+  key: AccountKeySchema.parse(addr),
   path: DerivationPathSchema.parse("m/44h/60h/0h/0/0"),
 });
 
