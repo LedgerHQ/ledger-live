@@ -97,12 +97,6 @@ export abstract class WebViewAppPage extends AppPage {
     await expect(webview.getByTestId(testId)).toBeVisible(timeout ? { timeout } : undefined);
   }
 
-  @step("Verify element is not visible in WebView")
-  protected async verifyElementIsNotVisible(testId: string) {
-    const webview = await this.getWebView();
-    await expect(webview.getByTestId(testId)).not.toBeVisible();
-  }
-
   @step("Verify text '$1' is displayed in WebView element")
   protected async verifyElementText(testId: string, expected: string) {
     const webview = await this.getWebView();
@@ -128,12 +122,6 @@ export abstract class WebViewAppPage extends AppPage {
     const input = webview.getByTestId(testId);
     await input.click();
     await input.fill(value);
-  }
-
-  @step("Verify element is not enabled in WebView")
-  protected async verifyElementIsNotEnabled(testId: string) {
-    const webview = await this.getWebView();
-    await expect(webview.getByTestId(testId)).not.toBeEnabled();
   }
 
   @step("Verify element is enabled in WebView")
