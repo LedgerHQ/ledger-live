@@ -36,6 +36,7 @@
     "custom.isReady",
     "custom.earn.isReady",
     "custom.getFunds",
+    "custom.openOperationDetails",
     "custom.navigate",
     "custom.getAccountIdFormats",
     "custom.bottomSheet.info",

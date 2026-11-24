@@ -8,6 +8,12 @@ import { renderHook } from "@tests/test-renderer";
 import { exchangeDeviceSession } from "LLM/features/WalletApiExchange/session/exchangeDeviceSession";
 import { useDeviceIntentExchangeEnabled } from "LLM/features/WalletApiExchange/hooks/useDeviceIntentExchangeEnabled";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
+import {
+  getWalletApiIdFromAccountId,
+  setWalletApiIdForAccountId,
+} from "@ledgerhq/live-common/wallet-api/converters";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Operation } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { useCustomExchangeHandlers } from "../CustomHandlers";
@@ -116,6 +122,51 @@ describe("useCustomExchangeHandlers custom.exchange.swap", () => {
 
     expect(onCancel).toHaveBeenCalledWith(signatureError);
     expect(onCompleteError).toHaveBeenCalledWith(signatureError);
+  });
+});
+
+describe("useCustomExchangeHandlers custom.openOperationDetails", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.mocked(useNavigation).mockReturnValue({
+      navigate: mockNavigate,
+      pop: mockPop,
+      addListener: jest.fn(() => jest.fn()),
+      getParent: jest.fn(),
+    } as never);
+  });
+
+  it("should navigate to the operation details screen of the operation with the hash", async () => {
+    const account = genAccount("earn-deposit-account", {
+      currency: getCryptoCurrencyById("ethereum"),
+      operationsSize: 3,
+    });
+    const [deposit] = account.operations;
+    setWalletApiIdForAccountId(account.id);
+    const { result } = renderHook(() =>
+      useCustomExchangeHandlers({
+        manifest: { id: "earn" } as never,
+        accounts: [account],
+        sendAppReady: jest.fn(),
+      }),
+    );
+
+    await result.current["custom.openOperationDetails"](
+      {
+        params: {
+          accountId: getWalletApiIdFromAccountId(account.id),
+          transactionHash: deposit.hash,
+        },
+      } as never,
+      {} as never,
+      {},
+    );
+
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.OperationDetails, {
+      accountId: account.id,
+      parentId: undefined,
+      operation: deposit,
+    });
   });
 });
 

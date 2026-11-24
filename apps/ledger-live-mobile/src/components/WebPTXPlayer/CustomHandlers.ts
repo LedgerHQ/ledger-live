@@ -43,6 +43,7 @@ import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/uti
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
+import { resolveOperationDetailsTarget } from "@ledgerhq/live-common/wallet-api/resolveOperationDetailsTarget";
 import { makeSetEarnInfoBottomSheetAction, makeSetEarnMenuBottomSheetAction } from "~/actions/earn";
 import { createOpenActionDialogHandler } from "./actionDialogStore";
 import type { Dispatch } from "redux";
@@ -336,6 +337,9 @@ export function useCustomExchangeHandlers({
       "custom.bottomSheet.info": createOpenInfoBottomSheetHandler(dispatch),
       "custom.bottomSheet.menu": createOpenMenuBottomSheetHandler(dispatch),
       "custom.dialog.confirmation": createOpenActionDialogHandler(dispatch),
+      "custom.openOperationDetails": createOpenOperationDetailsHandler(accounts, params =>
+        navigation.navigate(ScreenName.OperationDetails, params),
+      ),
     };
 
     return {
@@ -644,6 +648,19 @@ export function usePTXCustomHandlers(
     sendAppReady: sendEarnLiveAppReady,
     returnToPreviousScreenOnClose,
   });
+}
+
+export function createOpenOperationDetailsHandler(
+  accounts: AccountLike[],
+  openOperationDetails: (params: BaseNavigatorStackParamList[ScreenName.OperationDetails]) => void,
+) {
+  return async (request: { params?: unknown }) => {
+    const { accountId, parentId, operation } = resolveOperationDetailsTarget(
+      request.params,
+      accounts,
+    );
+    openOperationDetails({ accountId, parentId, operation });
+  };
 }
 
 export function createOpenInfoBottomSheetHandler(dispatch: Dispatch) {
