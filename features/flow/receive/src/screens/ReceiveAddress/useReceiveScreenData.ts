@@ -55,9 +55,9 @@ export function useReceiveScreenData(
   const isToken = !!descriptor && assetId !== currencyIdFromNetwork(descriptor.network);
   const assetQuery = useMemo(() => ({ assetId }), [assetId]);
 
-  const receiveRead = useAccountData("receive", descriptor);
-  const accountStatusRead = useAccountData("accountStatus", descriptor);
-  const assetStatusRead = useAccountData("assetStatus", isToken ? descriptor : undefined, {
+  const receiveRead = useAccountData("receive", accountUUID);
+  const accountStatusRead = useAccountData("accountStatus", accountUUID);
+  const assetStatusRead = useAccountData("assetStatus", isToken ? accountUUID : undefined, {
     query: assetQuery,
   });
 

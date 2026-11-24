@@ -31,8 +31,6 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
-    "@domain/entity-derivation": "workspace:*",
-    "@domain/entity-network": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

@@ -22,7 +22,7 @@ account:2:address:ethereum:0x71C7…976F:m/44h/60h/0h/0/0
 
 **2. One entity per UI concept.** The monolithic `Account` is split into small entities, each a `domain/entity/account-<kind>` package: a Zod schema, one `AccountDataRegistry` line, a slice keyed by `AccountUUID`, selectors and a mock. An entity exists only for a concept a screen shows. Tokens are rows of each entity (one balance row, one operation row per asset), not sub-accounts. Sync state (`blockHeight`, `lastSyncDate`, `syncHash`) is not a UI concept and is not carried over.
 
-**3. Read on demand, not synced ahead.** A screen asks for the kind it shows, when it shows it, with `useAccountData(kind, descriptor, { query })`, or `useAccountDataBatch(kind, descriptors, { query })` for a figure over many accounts. Nothing refreshes every account in the background to fill a monolith. A read younger than 30 s is not repeated, a read in flight is joined, and the latest one wins.
+**3. Read on demand, not synced ahead.** A screen asks for the kind it shows, when it shows it, with `useAccountData(kind, accountUUID, { query })`, or `useAccountDataBatch(kind, accountUUIDs, { query })` for a figure over many accounts. Nothing refreshes every account in the background to fill a monolith. A read younger than 30 s is not repeated, a read in flight is joined, and the latest one wins.
 
 **4. Layers that decouple the UI from the implementations.**
 
