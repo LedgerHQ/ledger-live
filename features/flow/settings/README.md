@@ -21,7 +21,8 @@ The sections come with the next tickets of the
 | `useSettingsLabels`      | `.`   | Page title and section names                                  |
 
 A row's trailing element is a chevron, an external link, a toggle, a value, a select or a button.
-On mobile, the select shows the current value; the picker comes with the mobile screens.
+On mobile, the select opens its options in a bottom sheet (Lumen `SelectList`), like the web
+select opens its list: render the Settings under `QueuedBottomSheetsProvider`.
 
 ## Hiding rows
 

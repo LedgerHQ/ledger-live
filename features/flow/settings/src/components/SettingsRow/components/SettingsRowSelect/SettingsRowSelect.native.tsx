@@ -1,17 +1,79 @@
 import React from "react";
-import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import {
+  BottomSheetHeader,
+  BottomSheetView,
+  Pressable,
+  SelectList,
+  SelectListContent,
+  SelectListItem,
+  SelectListItemContent,
+  SelectListItemText,
+  Text,
+} from "@ledgerhq/lumen-ui-rnative";
 import { ChevronDown } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { getSelectedOptionLabel } from "../../../../logic/settingsRowTrailing";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import type { SettingsRowSelectProps } from "./SettingsRowSelect.types";
+import { useSettingsRowSelectSheet } from "./useSettingsRowSelectSheet";
 
-/** Shows the current value; the picker comes with the mobile Settings screens. */
-export function SettingsRowSelect({ trailing }: SettingsRowSelectProps) {
+const CONTENT_BOTTOM_SPACING = 24;
+
+type SelectSheetContentProps = Readonly<{
+  title: string;
+  value: string;
+  items: ReturnType<typeof useSettingsRowSelectSheet>["items"];
+  onValueChange: (value: string | null) => void;
+}>;
+
+function SelectSheetContent({ title, value, items, onValueChange }: SelectSheetContentProps) {
+  const bottomInset = useBottomSheetBottomInset();
+
   return (
-    <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}>
-      <Text typography="body2" lx={{ color: "muted" }}>
-        {getSelectedOptionLabel(trailing.options, trailing.value)}
-      </Text>
-      <ChevronDown size={20} color="muted" />
-    </Box>
+    <BottomSheetView style={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}>
+      <BottomSheetHeader density="expanded" title={title} />
+      <SelectList items={items} value={value} onValueChange={onValueChange}>
+        <SelectListContent
+          renderItem={item => (
+            <SelectListItem key={item.value} value={item.value}>
+              <SelectListItemContent>
+                <SelectListItemText>{item.label}</SelectListItemText>
+              </SelectListItemContent>
+            </SelectListItem>
+          )}
+        />
+      </SelectList>
+    </BottomSheetView>
+  );
+}
+
+/** The current value opens a sheet listing the options, like the web select opens its list. */
+export function SettingsRowSelect({ trailing, rowTitle, disabled }: SettingsRowSelectProps) {
+  const { isOpen, open, close, items, onValueChange, selectedLabel } =
+    useSettingsRowSelectSheet(trailing);
+
+  return (
+    <>
+      <Pressable
+        onPress={open}
+        disabled={disabled}
+        accessibilityRole="button"
+        accessibilityLabel={rowTitle}
+        lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}
+      >
+        <Text typography="body2" lx={{ color: "muted" }}>
+          {selectedLabel}
+        </Text>
+        <ChevronDown size={20} color="muted" />
+      </Pressable>
+      <QueuedBottomSheet isRequestingToBeOpened={isOpen} onClose={close} enableDynamicSizing>
+        {isOpen ? (
+          <SelectSheetContent
+            title={rowTitle}
+            value={trailing.value}
+            items={items}
+            onValueChange={onValueChange}
+          />
+        ) : null}
+      </QueuedBottomSheet>
+    </>
   );
 }

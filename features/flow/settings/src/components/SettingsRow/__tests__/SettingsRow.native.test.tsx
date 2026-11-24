@@ -100,7 +100,8 @@ describe("SettingsRow", () => {
     expect(screen.getByText("4.2.0")).toBeVisible();
   });
 
-  it("shows the label of the selected option", () => {
+  it("opens the options in a sheet from the current value", async () => {
+    const user = userEvent.setup();
     render(
       <SettingsRow
         title="Theme"
@@ -116,8 +117,21 @@ describe("SettingsRow", () => {
       />,
     );
 
+    const trigger = screen.getByLabelText("Theme");
     expect(screen.getByText("Dark")).toBeVisible();
-    expect(screen.queryByText("Light")).toBeNull();
+    expect(screen.getByTestId("queued-bottom-sheet")).toHaveProp("accessibilityState", {
+      expanded: false,
+    });
+
+    await user.press(trigger);
+    expect(screen.getByTestId("queued-bottom-sheet")).toHaveProp("accessibilityState", {
+      expanded: true,
+    });
+
+    await user.press(screen.getByTestId("queued-bottom-sheet-dismiss"));
+    expect(screen.getByTestId("queued-bottom-sheet")).toHaveProp("accessibilityState", {
+      expanded: false,
+    });
   });
 
   it("runs the button action", async () => {
