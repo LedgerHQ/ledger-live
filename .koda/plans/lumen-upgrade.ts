@@ -160,28 +160,42 @@ const kodaCommitters = ["ldg-github-ci"];
 // (an email not linked to an account) is counted as a person: it can't be told apart from one.
 const ownerJq = `(.author.login | ltrimstr("app/") | rtrimstr("[bot]")) as $bot | ([.commits[].authors[] | (.login // "") | rtrimstr("[bot]") | select(. != $bot) | ${kodaCommitters.map(login => `select(. != "${login}")`).join(" | ")}] | unique | length) as $humans | if .author.is_bot and $humans == 0 then "bot" else "human" end`;
 
-// The bot PR this run replaces, as "<number> <head commit>", kept in .git so it is never committed.
+// The bot PRs this run replaces, one "<number> <head commit>" per line, kept in .git so it is never committed.
 const oldPrFile = ".git/lumen-old-upgrade-pr";
 
 // One upgrade PR at a time: `createBranch` adds a unique suffix, so without this each run opens another PR.
 const openPrExitCode = variable("openPrExitCode", z.number());
 const openPr = variable("openPr", z.string(), {
   description:
-    "The open upgrade PR as JSON, with its url and headRefName. Empty when none is open.",
+    "The open upgrade PRs as JSON, with their url and headRefName: the bot's PRs this run replaces, or the PR a person committed to. Empty when none is open.",
 });
 
-// Exit 0: no open upgrade PR. Exit 1: the bot's PR is open (stdout is its JSON), so the new PR replaces it.
-// Exit 2: `gh` failed. Exit 3: a person opened it or committed to it, so it gets a comment and is left alone.
+// The open upgrade PRs, as a jq filter over `gh pr list --json number,url,headRefName`.
+const upgradePrsJq = `[.[] | select(.headRefName | startswith("${repo.branchPrefix}"))]`;
+const listOpenPrs = "gh pr list --state open --limit 1000 --json number,url,headRefName --jq";
+
+// Every open upgrade PR is checked, not only the first: one a person committed to stops the run, even when a newer
+// bot PR is open too.
+// Exit 0: no open upgrade PR. Exit 1: only the bot's PRs are open (stdout is their JSON), so the new PR replaces them.
+// Exit 2: `gh` failed. Exit 3: a person opened one or committed to it (stdout is its JSON): it gets a comment and the
+// run stops.
 const checkOpenPrTask = task("check-open-pr")
   .runs(
     [
-      `n=$(gh pr list --state open --limit 1000 --json number,headRefName --jq '[.[] | select(.headRefName | startswith("${repo.branchPrefix}"))][0].number // empty') || exit 2`,
-      '[ -z "$n" ] && exit 0',
-      'gh pr view "$n" --json url,headRefName || exit 2',
-      `owner=$(gh pr view "$n" --json author,commits --jq '${ownerJq}') || exit 2`,
-      `[ "$owner" = bot ] && { gh pr view "$n" --json number,headRefOid --jq '"\\(.number) \\(.headRefOid)"' > ${oldPrFile} || exit 2; exit 1; }`,
-      'gh pr comment "$n" --body "A newer Lumen release is out. People have committed to this branch, so the automated upgrade left it unchanged: the next release after this PR merges picks up the rest." || exit 2',
-      "exit 3",
+      `prs=$(${listOpenPrs} '${upgradePrsJq} | .[].number') || exit 2`,
+      '[ -z "$prs" ] && exit 0',
+      `: > ${oldPrFile}`,
+      "for n in $prs; do",
+      `  owner=$(gh pr view "$n" --json author,commits --jq '${ownerJq}') || exit 2`,
+      '  if [ "$owner" != bot ]; then',
+      '    gh pr view "$n" --json url,headRefName || exit 2',
+      '    gh pr comment "$n" --body "A newer Lumen release is out. People have committed to this branch, so the automated upgrade left it unchanged: the next release after this PR merges picks up the rest." || exit 2',
+      "    exit 3",
+      "  fi",
+      `  gh pr view "$n" --json number,headRefOid --jq '"\\(.number) \\(.headRefOid)"' >> ${oldPrFile} || exit 2`,
+      "done",
+      `${listOpenPrs} '${upgradePrsJq}' || exit 2`,
+      "exit 1",
     ].join("\n"),
   )
   .continueOnError()
@@ -190,17 +204,19 @@ const checkOpenPrTask = task("check-open-pr")
 // Replacing the bot's PR instead of updating it keeps every run a full upgrade from the base branch:
 // code merged since then gets every migration in range. Someone may have pushed to it during the run, so it is closed
 // and its branch deleted only if it is still open, still the bot's alone and still at the commit checked at the start.
+// Each one is handled on its own: a failure on one doesn't stop the others.
 const closeOldPrTask = task("close-old-pr")
   .runs(
     [
-      `read -r n sha < ${oldPrFile}`,
       "new=$(gh pr view --json url --jq .url)",
-      `now=$(gh pr view "$n" --json state,headRefOid,author,commits --jq '.state + " " + .headRefOid + " " + (${ownerJq})')`,
-      'if [ "$now" = "OPEN $sha bot" ]; then',
-      '  gh pr close "$n" --delete-branch --comment "Superseded by $new."',
-      'elif [ "${now%% *}" = OPEN ]; then',
-      '  gh pr comment "$n" --body "Superseded by $new. This branch changed during the upgrade run, so it was left open: close it once its changes are handled."',
-      "fi",
+      "while read -r n sha; do",
+      `  now=$(gh pr view "$n" --json state,headRefOid,author,commits --jq '.state + " " + .headRefOid + " " + (${ownerJq})')`,
+      '  if [ "$now" = "OPEN $sha bot" ]; then',
+      '    gh pr close "$n" --delete-branch --comment "Superseded by $new."',
+      '  elif [ "${now%% *}" = OPEN ]; then',
+      '    gh pr comment "$n" --body "Superseded by $new. This branch changed during the upgrade run, so it was left open: close it once its changes are handled."',
+      "  fi",
+      `done < ${oldPrFile}`,
     ].join("\n"),
   )
   .continueOnError();
