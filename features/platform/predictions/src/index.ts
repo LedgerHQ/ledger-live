@@ -1,6 +1,7 @@
 export * from "./binding";
 export * from "./constants";
 export * from "./errors";
+export * from "./order";
 export * from "./server";
 export * from "./setup";
 export * from "./signingIntent";

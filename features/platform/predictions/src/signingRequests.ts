@@ -76,7 +76,7 @@ export function createPredictionsSigner<Account>({
   /** Throws when the account can't sign, e.g. `PredictionsAccountNotFound`. */
   findAccount: (walletAccountId: string) => Account;
   /** Runs before `sign` answers, e.g. to open the setup the live app reports to. */
-  onSigned: () => void;
+  onSigned?: () => void;
   /** What `sign` rejects with when the prompt closes unsigned, e.g. `UserRefusedOnDevice`. */
   refusal: () => Error;
 }>): PredictionsSigner<Account> {
@@ -102,7 +102,7 @@ export function createPredictionsSigner<Account>({
           typedData,
           onSuccess: signature =>
             settle(() => {
-              onSigned();
+              onSigned?.();
               resolve({ typedData, signature });
             }),
           onError: error => settle(() => reject(error)),
