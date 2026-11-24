@@ -1,4 +1,4 @@
-import { useGetGlobalMarketDataQuery } from "../state-manager/api";
+import { useGetGlobalMarketDataQuery } from "@domain/api-market-index-global";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
 import type { GlobalMarketDataRequestParams } from "../state-manager/types";
 
