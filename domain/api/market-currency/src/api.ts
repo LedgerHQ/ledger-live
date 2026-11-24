@@ -1,0 +1,110 @@
+import {
+  pairMarketsWithRequestedLedgerIds,
+  type MarketCurrency,
+  type MarketListQueryArg,
+} from "@domain/entity-market-currency";
+import { countervaluesApi } from "@shared/api-services";
+import { buildMarketListParams, getNextMarketListPage } from "./marketList";
+import { formatMarketCurrency, formatMarketCurrencies } from "./transforms";
+import { chunkLedgerIds, marketPageSize, marketsFromPages } from "./ledgerIdPages";
+import type {
+  MarketCurrencyRequestParams,
+  MarketItemResponse,
+  MarketsByLedgerIdsQueryParams,
+} from "./types";
+
+/** RTK Query cache tags for the market currency list and its lookups. */
+export const MARKET_CURRENCY_TAGS = ["MarketList", "CurrencyData"] as const;
+
+// `keepUnusedDataFor` is in seconds: the legacy client kept this data 3 minutes.
+const THREE_MINUTES_IN_SECONDS = 3 * 60;
+
+/**
+ * Market currency endpoints, injected into the shared Countervalues Service api.
+ *
+ * `enhanceEndpoints` registers this use case's cache tags on that api and `injectEndpoints` adds the
+ * endpoints — both mutate and return the same api object, so these endpoints share its reducer,
+ * middleware and cache with every other countervalues use case.
+ */
+export const marketCurrencyApi = countervaluesApi
+  .enhanceEndpoints({ addTagTypes: MARKET_CURRENCY_TAGS })
+  .injectEndpoints({
+    endpoints: build => ({
+      getMarketList: build.infiniteQuery<MarketCurrency[], MarketListQueryArg, number>({
+        query: ({ queryArg, pageParam }) => ({
+          url: "/v3/markets",
+          params: buildMarketListParams({ queryArg, page: pageParam }),
+        }),
+        transformResponse: (response: MarketItemResponse[]) => formatMarketCurrencies(response),
+        providesTags: ["MarketList"],
+        infiniteQueryOptions: {
+          initialPageParam: 0,
+          getNextPageParam: (lastPage, allPages, lastPageParam, _allPageParams, queryArg) =>
+            getNextMarketListPage(lastPage, allPages, lastPageParam, queryArg),
+        },
+        // The shared base query retries three times; this endpoint never did.
+        extraOptions: { maxRetries: 0 },
+        keepUnusedDataFor: THREE_MINUTES_IN_SECONDS,
+      }),
+      /**
+       * The raw markets of several ledger ids, in request order. The ids go out in chunks of the
+       * largest page size; a failed chunk is skipped while the others still count.
+       */
+      getMarketsByLedgerIds: build.query<MarketItemResponse[], MarketsByLedgerIdsQueryParams>({
+        async queryFn({ ledgerIds, counterCurrency }, _api, _extra, fetchWithBQ) {
+          const pages = await Promise.all(
+            chunkLedgerIds(ledgerIds).map(chunk =>
+              fetchWithBQ({
+                url: "/v3/markets",
+                params: {
+                  to: counterCurrency,
+                  ledgerIds: chunk.join(","),
+                  pageSize: marketPageSize(chunk.length),
+                },
+              }),
+            ),
+          );
+
+          const markets = marketsFromPages(pages);
+          if (!markets) {
+            return {
+              error: pages.find(page => page.error)?.error ?? {
+                status: "CUSTOM_ERROR",
+                error: "Invalid markets response",
+              },
+            };
+          }
+
+          const paired = pairMarketsWithRequestedLedgerIds(markets, ledgerIds);
+          return { data: paired.map(({ market }) => market) };
+        },
+        providesTags: ["CurrencyData"],
+        extraOptions: { maxRetries: 0 },
+        keepUnusedDataFor: THREE_MINUTES_IN_SECONDS,
+      }),
+      getCurrencyData: build.query<MarketCurrency | undefined, MarketCurrencyRequestParams>({
+        query: ({ id, ledgerIds, counterCurrency }) => ({
+          url: "/v3/markets",
+          params: {
+            to: counterCurrency,
+            pageSize: 1,
+            limit: 1,
+            ...(ledgerIds?.length ? { ledgerIds: ledgerIds.join(",") } : { ids: id }),
+          },
+        }),
+        providesTags: ["CurrencyData"],
+        transformResponse: (response: MarketItemResponse[]) =>
+          response?.[0] ? formatMarketCurrency(response[0]) : undefined,
+        extraOptions: { maxRetries: 0 },
+        keepUnusedDataFor: THREE_MINUTES_IN_SECONDS,
+      }),
+    }),
+  });
+
+export const {
+  useGetMarketListInfiniteQuery,
+  useGetMarketsByLedgerIdsQuery,
+  useGetCurrencyDataQuery,
+} = marketCurrencyApi;
+
+export type MarketCurrencyApi = typeof marketCurrencyApi;
