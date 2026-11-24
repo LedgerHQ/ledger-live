@@ -33,7 +33,14 @@ type ReceiveAddressAction = Readonly<{ label: string; onPress: () => void }>;
 export type ReceiveAddressActionsView = Readonly<{
   /** No address shown yet: the actions are there, but do nothing. */
   disabled: boolean;
-  copy?: ReceiveAddressAction & Readonly<{ hasCopied: boolean }>;
+  copy?: ReceiveAddressAction &
+    Readonly<{
+      hasCopied: boolean;
+      /** Copies from a press on the QR code, which plays its own animation. */
+      onPressCode: () => void;
+      /** How many times the Copy button was pressed: the QR code replays its animation on each. */
+      buttonPresses: number;
+    }>;
   share?: ReceiveAddressAction;
   /** `disabled` when the device cannot show this address. */
   verify?: ReceiveAddressAction & Readonly<{ disabled: boolean }>;
@@ -51,6 +58,8 @@ export type ReceiveAddressViewProps = Readonly<{
   actions: ReceiveAddressActionsView;
   /** "Copy · Share · Verify": the actions' labels, shown in their zone until the buttons land. */
   actionsPlaceholderLabel: string;
+  /** A device verification runs: on desktop, its own dialog takes the place of this one. */
+  isVerifying: boolean;
   /** "Receive USDC" */
   title: string;
   /** "Ethereum network" */

@@ -1,5 +1,14 @@
 import React from "react";
-import { Box, Link, TileButton } from "@ledgerhq/lumen-ui-rnative";
+import {
+  Box,
+  Card,
+  CardContent,
+  CardContentTitle,
+  CardHeader,
+  CardLeading,
+  Link,
+  type IconProps,
+} from "@ledgerhq/lumen-ui-rnative";
 import { ArrowUp, Check, Copy, PenEdit, Share, Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
 
@@ -14,6 +23,44 @@ type ContactAddressDetailActionsProps = Readonly<{
   canEdit?: boolean;
   canDelete?: boolean;
 }>;
+
+type ActionCardProps = Readonly<{
+  icon: React.ComponentType<IconProps>;
+  label: string;
+  disabled: boolean;
+  onPress?: () => void;
+  isDestructive?: boolean;
+  testID: string;
+}>;
+
+function ActionCard({
+  icon: Icon,
+  label,
+  disabled,
+  onPress,
+  isDestructive = false,
+  testID,
+}: ActionCardProps): React.JSX.Element {
+  const showsDestructiveColor = isDestructive && !disabled;
+
+  return (
+    <Card type="interactive" disabled={disabled} onPress={onPress} lx={{ flex: 1 }} testID={testID}>
+      <CardHeader>
+        <CardLeading>
+          <Icon size={24} disabled={disabled} color={showsDestructiveColor ? "error" : undefined} />
+          <CardContent>
+            <CardContentTitle
+              numberOfLines={1}
+              lx={showsDestructiveColor ? { color: "error" } : undefined}
+            >
+              {label}
+            </CardContentTitle>
+          </CardContent>
+        </CardLeading>
+      </CardHeader>
+    </Card>
+  );
+}
 
 export function ContactAddressDetailActions({
   hasCopied,
@@ -39,51 +86,40 @@ export function ContactAddressDetailActions({
       >
         {hasCopied ? t("contacts.addressDetail.copied") : t("contacts.addressDetail.copyAddress")}
       </Link>
-      <Box lx={{ flexDirection: "row", gap: "s8", width: "full" }}>
-        <TileButton
-          icon={ArrowUp}
-          disabled={!canSend || !onSend}
-          onPress={onSend}
-          isFull
-          lx={{ flex: 1 }}
-          numberOfLines={1}
-        >
-          {t("contacts.addressDetail.send")}
-        </TileButton>
-        <TileButton
-          icon={PenEdit}
-          disabled={!canEdit || !onEdit}
-          onPress={onEdit}
-          isFull
-          lx={{ flex: 1 }}
-          testID="contacts-address-detail-edit"
-          numberOfLines={1}
-        >
-          {t("contacts.addressDetail.edit")}
-        </TileButton>
-        <TileButton
-          icon={Share}
-          disabled={!onShare}
-          onPress={onShare}
-          isFull
-          lx={{ flex: 1 }}
-          testID="contacts-address-detail-share"
-          numberOfLines={1}
-        >
-          {t("contacts.addressDetail.share")}
-        </TileButton>
-        <TileButton
-          icon={Trash}
-          appearance="red"
-          disabled={!canDelete || !onDelete}
-          onPress={onDelete}
-          isFull
-          lx={{ flex: 1 }}
-          testID="contacts-address-detail-delete"
-          numberOfLines={1}
-        >
-          {t("contacts.addressDetail.delete")}
-        </TileButton>
+      <Box lx={{ gap: "s8", width: "full" }}>
+        <Box lx={{ flexDirection: "row", gap: "s8" }}>
+          <ActionCard
+            icon={ArrowUp}
+            label={t("contacts.addressDetail.send")}
+            disabled={!canSend || !onSend}
+            onPress={onSend}
+            testID="contacts-address-detail-send"
+          />
+          <ActionCard
+            icon={PenEdit}
+            label={t("contacts.addressDetail.edit")}
+            disabled={!canEdit || !onEdit}
+            onPress={onEdit}
+            testID="contacts-address-detail-edit"
+          />
+        </Box>
+        <Box lx={{ flexDirection: "row", gap: "s8" }}>
+          <ActionCard
+            icon={Share}
+            label={t("contacts.addressDetail.share")}
+            disabled={!onShare}
+            onPress={onShare}
+            testID="contacts-address-detail-share"
+          />
+          <ActionCard
+            icon={Trash}
+            label={t("contacts.addressDetail.delete")}
+            disabled={!canDelete || !onDelete}
+            onPress={onDelete}
+            isDestructive
+            testID="contacts-address-detail-delete"
+          />
+        </Box>
       </Box>
     </Box>
   );
