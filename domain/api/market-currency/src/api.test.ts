@@ -209,7 +209,21 @@ describe("getMarketsByLedgerIds", () => {
     );
 
     expect(result.isError).toBe(true);
-    expect(result.error).toEqual({ status: "CUSTOM_ERROR", error: "Invalid markets response" });
+    expect(result.error).toEqual({
+      status: "CUSTOM_ERROR",
+      error: expect.stringContaining("rawResponseSchema rejected the response"),
+    });
+    expect(result.data).toBeUndefined();
+  });
+
+  it("returns an error when every page item does not match the market item schema", async () => {
+    server.use(http.get(MARKETS_URL, () => HttpResponse.json([{ id: "bitcoin", ledgerIds: [] }])));
+
+    const result = await makeStore().dispatch(
+      getMarketsByLedgerIds.initiate({ ledgerIds: ["bitcoin"], counterCurrency: "usd" }),
+    );
+
+    expect(result.isError).toBe(true);
     expect(result.data).toBeUndefined();
   });
 
@@ -280,6 +294,20 @@ describe("getCurrencyData", () => {
     expect(result.isSuccess).toBe(true);
     expect(result.data).toBeUndefined();
   });
+
+  it("returns the schema failure when the body does not match the market item schema", async () => {
+    server.use(http.get(MARKETS_URL, () => HttpResponse.json([{ id: "bitcoin" }])));
+
+    const result = await makeStore().dispatch(
+      getCurrencyData.initiate({ id: "bitcoin", counterCurrency: "usd" }),
+    );
+
+    expect(result.isError).toBe(true);
+    expect(result.error).toEqual({
+      status: "CUSTOM_ERROR",
+      error: expect.stringContaining("rawResponseSchema rejected the response"),
+    });
+  });
 });
 
 describe("getMarketList", () => {
@@ -307,5 +335,20 @@ describe("getMarketList", () => {
     expect(seenUrls[0].searchParams.get("pageSize")).toBe("20");
     expect(seenUrls[0].searchParams.get("sort")).toBe("positive-price-change-1w");
     expect(result.data?.pages[0]?.[0].id).toBe("bitcoin");
+  });
+
+  it("returns the schema failure when a market item lacks a field the app reads", async () => {
+    const { price: _price, ...itemWithoutPrice } = mockMarketItemResponse();
+    server.use(http.get(MARKETS_URL, () => HttpResponse.json([itemWithoutPrice])));
+
+    const result = await makeStore().dispatch(
+      getMarketList.initiate({ counterCurrency: "usd", pageSize: 20 }),
+    );
+
+    expect(result.isError).toBe(true);
+    expect(result.error).toEqual({
+      status: "CUSTOM_ERROR",
+      error: expect.stringContaining("price"),
+    });
   });
 });

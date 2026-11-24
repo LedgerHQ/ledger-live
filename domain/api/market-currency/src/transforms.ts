@@ -1,5 +1,5 @@
 import { KeysPriceChange, type MarketCurrency } from "@domain/entity-market-currency";
-import type { MarketItemResponse } from "./types";
+import type { MarketItemResponse } from "./schema";
 
 /** Maps one raw `/v3/markets` item to the app-facing {@link MarketCurrency}. */
 export function formatMarketCurrency(currency: MarketItemResponse): MarketCurrency {
@@ -26,7 +26,7 @@ export function formatMarketCurrency(currency: MarketItemResponse): MarketCurren
     marketCapChangePercentage24h: currency.marketCapChangePercentage24h,
     circulatingSupply: currency.circulatingSupply,
     totalSupply: currency.totalSupply,
-    maxSupply: currency.maxSupply,
+    maxSupply: currency.maxSupply ?? undefined,
     ath: currency.allTimeHigh,
     athDate: new Date(currency.allTimeHighDate),
     atl: currency.allTimeLow,

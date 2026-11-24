@@ -23,7 +23,8 @@
   "dependencies": {
     "@shared/api-services": "workspace:*",
     "@domain/entity-market-currency": "workspace:*",
-    "@reduxjs/toolkit": "catalog:"
+    "@reduxjs/toolkit": "catalog:",
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

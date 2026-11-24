@@ -1,10 +1,10 @@
-import type { MarketItemResponse } from "./types";
+import { MarketItemResponseSchema, type MarketItemResponse } from "./schema";
 
 /** A raw `/v3/markets` item for app MSW handlers and tests. Override any field. */
 export function mockMarketItemResponse(
   overrides: Partial<MarketItemResponse> = {},
 ): MarketItemResponse {
-  return {
+  return MarketItemResponseSchema.parse({
     allTimeHigh: 69000,
     allTimeHighDate: "2021-11-10T14:24:11.000Z",
     allTimeLow: 67.81,
@@ -36,5 +36,5 @@ export function mockMarketItemResponse(
     totalVolume: 28_000_000_000,
     updatedAt: "2026-11-24T09:00:00.000Z",
     ...overrides,
-  };
+  });
 }

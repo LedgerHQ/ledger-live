@@ -20,6 +20,12 @@ describe("formatMarketCurrency", () => {
     );
   });
 
+  it("maps a null max supply to an unknown one", () => {
+    const currency = formatMarketCurrency(mockMarketItemResponse({ maxSupply: null }));
+
+    expect(currency.maxSupply).toBeUndefined();
+  });
+
   it("keys the price changes by window and defaults the 6-month change to 0", () => {
     const currency = formatMarketCurrency(
       mockMarketItemResponse({ priceChangePercentage6m: undefined }),

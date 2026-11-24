@@ -19,7 +19,10 @@ dependency.
 - `marketList.ts` — `buildMarketListParams` and `getNextMarketListPage`: the query params of one page
   and the pagination rule.
 - `sort.ts` — `getSortParam` and `getRange`: the `sort` param of an order over a price-change range.
-- `types.ts` — `MarketItemResponse`, the raw `/v3/markets` item, and the request params of the lookups.
+- `schema.ts` — `MarketItemResponseSchema`, the Zod schema of the raw `/v3/markets` item, its list
+  schema `MarketItemListResponseSchema`, and the `MarketItemResponse` type inferred from them.
+- `types.ts` — the request params of the lookups.
+- `internals/describeSchemaFailure.ts` — turns a rejected response schema into a `CUSTOM_ERROR`.
 - `marketItem.mock.ts` — a raw market item mock for app MSW handlers, exposed via the `./mock` subpath.
 
 ## The endpoints are injected, not created
@@ -42,11 +45,12 @@ export const marketCurrencyApi = countervaluesApi
 Both calls mutate and return that same object, so `marketCurrencyApi` **is** `countervaluesApi`. This
 package has no reducer, no middleware, no `reducerPath` and no `extraArgument` of its own.
 
-## No runtime validation of `/v3/markets`
+## Runtime validation of `/v3/markets`
 
-The legacy client typed the `/v3/markets` item but never validated it at runtime, and this package keeps
-that behaviour: a change of shape is caught by the types only. The only check is the one the lookups
-need: a `getMarketsByLedgerIds` page whose body is not a list is skipped.
+The raw item is validated by `MarketItemResponseSchema` before it is transformed. `getMarketList` and
+`getCurrencyData` pass the list schema as `rawResponseSchema`, and a rejected body reaches the query's
+`error` through `describeSchemaFailure`. `getMarketsByLedgerIds` validates each page: a page whose body
+does not match is skipped with the other failed pages, and the error is kept when every page fails.
 
 All three endpoints set `maxRetries: 0`: the shared base query retries three times, and these endpoints
 never did.

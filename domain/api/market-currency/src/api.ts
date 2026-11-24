@@ -3,21 +3,40 @@ import {
   type MarketCurrency,
   type MarketListQueryArg,
 } from "@domain/entity-market-currency";
+import type { FetchBaseQueryError, QueryReturnValue } from "@reduxjs/toolkit/query";
 import { countervaluesApi } from "@shared/api-services";
+import { describeSchemaFailure } from "./internals/describeSchemaFailure";
 import { buildMarketListParams, getNextMarketListPage } from "./marketList";
 import { formatMarketCurrency, formatMarketCurrencies } from "./transforms";
 import { chunkLedgerIds, marketPageSize, marketsFromPages } from "./ledgerIdPages";
-import type {
-  MarketCurrencyRequestParams,
-  MarketItemResponse,
-  MarketsByLedgerIdsQueryParams,
-} from "./types";
+import { MarketItemListResponseSchema, type MarketItemResponse } from "./schema";
+import type { MarketCurrencyRequestParams, MarketsByLedgerIdsQueryParams } from "./types";
 
 /** RTK Query cache tags for the market currency list and its lookups. */
 export const MARKET_CURRENCY_TAGS = ["MarketList", "CurrencyData"] as const;
 
 // `keepUnusedDataFor` is in seconds: the legacy client kept this data 3 minutes.
 const THREE_MINUTES_IN_SECONDS = 3 * 60;
+
+/**
+ * A `getMarketsByLedgerIds` page whose body does not match the raw market list fails like a
+ * transport error, so it is skipped with the other failed pages and its issues reach the caller.
+ */
+function validateMarketsPage(
+  page: QueryReturnValue<unknown, FetchBaseQueryError>,
+): QueryReturnValue<MarketItemResponse[], FetchBaseQueryError> {
+  if (page.error) return { error: page.error };
+
+  const parsed = MarketItemListResponseSchema.safeParse(page.data);
+  return parsed.success
+    ? { data: parsed.data }
+    : {
+        error: describeSchemaFailure({
+          schemaName: "rawResponseSchema",
+          issues: parsed.error.issues,
+        }),
+      };
+}
 
 /**
  * Market currency endpoints, injected into the shared Countervalues Service api.
@@ -35,6 +54,8 @@ export const marketCurrencyApi = countervaluesApi
           url: "/v3/markets",
           params: buildMarketListParams({ queryArg, page: pageParam }),
         }),
+        rawResponseSchema: MarketItemListResponseSchema,
+        catchSchemaFailure: describeSchemaFailure,
         transformResponse: (response: MarketItemResponse[]) => formatMarketCurrencies(response),
         providesTags: ["MarketList"],
         infiniteQueryOptions: {
@@ -53,15 +74,17 @@ export const marketCurrencyApi = countervaluesApi
       getMarketsByLedgerIds: build.query<MarketItemResponse[], MarketsByLedgerIdsQueryParams>({
         async queryFn({ ledgerIds, counterCurrency }, _api, _extra, fetchWithBQ) {
           const pages = await Promise.all(
-            chunkLedgerIds(ledgerIds).map(chunk =>
-              fetchWithBQ({
-                url: "/v3/markets",
-                params: {
-                  to: counterCurrency,
-                  ledgerIds: chunk.join(","),
-                  pageSize: marketPageSize(chunk.length),
-                },
-              }),
+            chunkLedgerIds(ledgerIds).map(async chunk =>
+              validateMarketsPage(
+                await fetchWithBQ({
+                  url: "/v3/markets",
+                  params: {
+                    to: counterCurrency,
+                    ledgerIds: chunk.join(","),
+                    pageSize: marketPageSize(chunk.length),
+                  },
+                }),
+              ),
             ),
           );
 
@@ -93,6 +116,8 @@ export const marketCurrencyApi = countervaluesApi
           },
         }),
         providesTags: ["CurrencyData"],
+        rawResponseSchema: MarketItemListResponseSchema,
+        catchSchemaFailure: describeSchemaFailure,
         transformResponse: (response: MarketItemResponse[]) =>
           response?.[0] ? formatMarketCurrency(response[0]) : undefined,
         extraOptions: { maxRetries: 0 },

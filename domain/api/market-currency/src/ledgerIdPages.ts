@@ -1,5 +1,5 @@
 import { MARKET_LIST_PAGE_SIZES, type MarketListPageSize } from "@domain/entity-market-currency";
-import type { MarketItemResponse } from "./types";
+import type { MarketItemResponse } from "./schema";
 
 /** Largest page `/v3/markets` serves: a ledger id lookup never asks for more per request. */
 export const MAX_MARKETS_PAGE_SIZE: MarketListPageSize =
