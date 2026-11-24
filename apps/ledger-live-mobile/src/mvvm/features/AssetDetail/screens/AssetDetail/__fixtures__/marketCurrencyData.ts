@@ -25,7 +25,6 @@ export const marketCurrencyData = {
     [KeysPriceChange.year]: 150,
   },
   marketCapChangePercentage24h: 1.5,
-  chartData: {},
   image: "",
   ledgerIds: [],
 };

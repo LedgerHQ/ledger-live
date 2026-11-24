@@ -38,7 +38,6 @@ export const format = (currency: MarketItemResponse): MarketCurrencyData => {
     athDate: new Date(currency.allTimeHighDate),
     atl: currency.allTimeLow,
     atlDate: new Date(currency.allTimeLowDate),
-    chartData: {},
   };
 };
 

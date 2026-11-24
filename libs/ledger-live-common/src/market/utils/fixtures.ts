@@ -148,7 +148,6 @@ export const MOCK_MARKET_CURRENCY_DATA: MarketCurrencyData[] = [
     athDate: new Date("2021-11-10"),
     atl: 100,
     atlDate: new Date("2013-07-06"),
-    chartData: {},
   },
   {
     id: "ethereum",
@@ -178,7 +177,6 @@ export const MOCK_MARKET_CURRENCY_DATA: MarketCurrencyData[] = [
     athDate: new Date("2021-11-10"),
     atl: 50,
     atlDate: new Date("2015-10-20"),
-    chartData: {},
   },
 ];
 

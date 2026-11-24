@@ -82,7 +82,6 @@ export type MarketCurrencyData = {
   athDate: Date;
   atl: number;
   atlDate: Date;
-  chartData: MarketCoinDataChart;
 };
 
 export type MarketPerformersParams = {

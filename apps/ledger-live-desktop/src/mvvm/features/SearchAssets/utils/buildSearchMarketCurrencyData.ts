@@ -49,6 +49,5 @@ export function buildSearchMarketCurrencyData({
     athDate: new Date(0),
     atl: 0,
     atlDate: new Date(0),
-    chartData: {},
   };
 }
