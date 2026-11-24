@@ -52,6 +52,7 @@ export function useReceiveAddressActions({
   const verifyFlow = useVerifyAddressFlow();
   // An object, not the address: copying the same address again must restart the feedback.
   const [copied, setCopied] = useState<Readonly<{ address: string }>>();
+  const [copyButtonPresses, setCopyButtonPresses] = useState(0);
 
   const address = selected?.address;
   const verification = selected?.verification;
@@ -69,6 +70,11 @@ export function useReceiveAddressActions({
     trackReceiveAddressButton("copy address");
     if (await onCopyAddress(address)) setCopied({ address });
   }, [address, onCopyAddress]);
+
+  const copyFromButton = useCallback(async () => {
+    setCopyButtonPresses(presses => presses + 1);
+    await copyAddress();
+  }, [copyAddress]);
 
   const shareAddress = useCallback(() => {
     if (!address || !onShareAddress) return;
@@ -97,7 +103,9 @@ export function useReceiveAddressActions({
         ? {
             label: hasCopied ? copy.copiedLabel : copy.copyLabel,
             hasCopied,
-            onPress: copyAddress,
+            onPress: copyFromButton,
+            onPressCode: copyAddress,
+            buttonPresses: copyButtonPresses,
           }
         : undefined,
       share: onShareAddress ? { label: copy.shareLabel, onPress: shareAddress } : undefined,
