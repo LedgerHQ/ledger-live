@@ -1,4 +1,3 @@
-import type { RefObject } from "react";
 import type { AddressParts } from "../../logic/splitAddress";
 import type { ReceiveIcon } from "../../logic/toReceiveAddressData";
 import type { ReceiveAddressOptionId } from "../../logic/toReceiveAddressOptions";
@@ -42,7 +41,8 @@ export type ReceiveAddressActionsView = Readonly<{
       /** How many times the Copy button was pressed: the QR code replays its animation on each. */
       buttonPresses: number;
     }>;
-  share?: ReceiveAddressAction;
+  /** Takes the image of the address card, where the screen could capture it. */
+  share?: Readonly<{ label: string; onPress: (cardImageUrl?: string) => void }>;
   /** `disabled` when the device cannot show this address. */
   verify?: ReceiveAddressAction & Readonly<{ disabled: boolean }>;
   /** Invites the user to verify, until they verify or dismiss it once. */
@@ -70,6 +70,4 @@ export type ReceiveAddressViewProps = Readonly<{
   closeLabel: string;
   backLabel: string;
   onClose: () => void;
-  /** Set on the card Share captures as an image, on mobile. */
-  cardRef?: RefObject<unknown>;
 }>;

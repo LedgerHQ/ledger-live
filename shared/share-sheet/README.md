@@ -9,26 +9,28 @@ Opens the system share sheet on mobile, with a text and, optionally, an image of
 
 ## Exports
 
-| Export              | Description                                                                     |
-| ------------------- | ------------------------------------------------------------------------------- |
-| `openShareSheet`    | `(content: ShareSheetContent) => Promise<void>`, resolves once the sheet closes |
-| `ShareSheetContent` | `{ message, capture? }`: the text, and a ref on the view to share as a PNG      |
+| Export              | Description                                                                         |
+| ------------------- | ----------------------------------------------------------------------------------- |
+| `openShareSheet`    | `(content: ShareSheetContent) => Promise<void>`, resolves once the sheet closes     |
+| `ShareSheetContent` | `{ message, imageUrl? }`: the text, and an image as `captureView` returns it        |
+| `captureView`       | `(view: RefObject<View \| null>) => Promise<string \| undefined>`, a PNG of the view |
 
-A cancel resolves like a share; a sheet that cannot open rejects. A view that cannot be captured
-shares the message alone.
+A cancel resolves like a share; a sheet that cannot open rejects. `captureView` never throws: a view
+that cannot be captured resolves `undefined`, and the share goes on with the message alone.
 
-On Android, a caller that wraps the call in the app lock's `leaveAppFor` catches the rejection
+On Android, a caller that wraps the share in the app lock's `leaveAppFor` catches the rejection
 outside that wrapper: `leaveAppFor` releases its app lock exemption only when the task rejects.
 
 ## Usage
 
 ```tsx
-import { openShareSheet } from "@shared/share-sheet";
+import { captureView, openShareSheet } from "@shared/share-sheet";
 
 const cardRef = useRef<View>(null);
 
 // <View ref={cardRef} collapsable={false}>…</View>
-await openShareSheet({ message: address, capture: cardRef });
+const imageUrl = await captureView(cardRef);
+await openShareSheet({ message: address, imageUrl });
 ```
 
 A captured view needs `collapsable={false}`: Android drops views that only lay out their children.

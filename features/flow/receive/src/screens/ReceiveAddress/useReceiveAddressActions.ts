@@ -24,7 +24,7 @@ type Params = Readonly<{
   copy: ReceiveAddressCopy;
   hasVerifyExecutor: boolean;
   onCopyAddress?: (address: string) => Promise<boolean>;
-  onShareAddress?: (address: string) => void;
+  onShareAddress?: (address: string, cardImageUrl?: string) => void;
 }>;
 
 export type ReceiveAddressActions = Readonly<{
@@ -76,11 +76,14 @@ export function useReceiveAddressActions({
     await copyAddress();
   }, [copyAddress]);
 
-  const shareAddress = useCallback(() => {
-    if (!address || !onShareAddress) return;
-    trackReceiveAddressButton("share address");
-    onShareAddress(address);
-  }, [address, onShareAddress]);
+  const shareAddress = useCallback(
+    (cardImageUrl?: string) => {
+      if (!address || !onShareAddress) return;
+      trackReceiveAddressButton("share address");
+      onShareAddress(address, cardImageUrl);
+    },
+    [address, onShareAddress],
+  );
 
   const verifyAddress = useCallback(() => {
     if (!familyConfig || !canVerifyOnDevice(verification)) return;

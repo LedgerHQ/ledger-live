@@ -1,8 +1,9 @@
-import React, { type RefObject } from "react";
+import React, { useRef } from "react";
 import { ScrollView, type View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, IconButton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ArrowLeft, Close } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { captureView } from "@shared/share-sheet";
 import { InfoState } from "@shared/ui-info-state";
 import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
@@ -26,11 +27,22 @@ export function ReceiveAddressView({
   actions,
   onBack,
   onClose,
-  cardRef,
 }: ReceiveAddressViewProps) {
   const { top, bottom } = useSafeAreaInsets();
   // While the verify hint is open, everything but the hint and the action tiles steps back.
   const isHintOpen = !!actions.verifyHint;
+  const cardRef = useRef<View>(null);
+  const { share } = actions;
+  // Share sends the card as an image too: only this view holds it.
+  const actionsWithCard = share
+    ? {
+        ...actions,
+        share: {
+          ...share,
+          onPress: () => void captureView(cardRef).then(share.onPress),
+        },
+      }
+    : actions;
 
   return (
     <Box
@@ -69,7 +81,7 @@ export function ReceiveAddressView({
         >
           <Box lx={{ flexGrow: 1, gap: "s24", paddingHorizontal: "s16", paddingBottom: "s16" }}>
             <Box
-              ref={cardRef as RefObject<View | null>}
+              ref={cardRef}
               // Kept as a native view, for Share to capture it.
               collapsable={false}
               lx={{ gap: "s24", backgroundColor: "canvas" }}
@@ -112,7 +124,7 @@ export function ReceiveAddressView({
               />
             ) : (
               <>
-                <AddressActions actions={actions} />
+                <AddressActions actions={actionsWithCard} />
                 <Dimmed isDimmed={isHintOpen}>
                   <ZonePlaceholder zone="notices" />
                 </Dimmed>

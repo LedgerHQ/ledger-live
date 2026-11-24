@@ -61,15 +61,12 @@ describe("useReceiveAddressScreenViewModel", () => {
     );
   });
 
-  it("shares the card as an image with the address", () => {
+  it("shares the address with the image of its card", () => {
     const { result } = renderViewModel();
 
-    result.current.onShareAddress?.("TXYZ");
+    result.current.onShareAddress?.("TXYZ", "file://card.png");
 
-    expect(openShareSheet).toHaveBeenCalledWith({
-      message: "TXYZ",
-      capture: result.current.cardRef,
-    });
+    expect(openShareSheet).toHaveBeenCalledWith({ message: "TXYZ", imageUrl: "file://card.png" });
   });
 
   it("lets the app lock see a share sheet that cannot open, then keeps the screen", async () => {

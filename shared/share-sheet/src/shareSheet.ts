@@ -1,22 +1,23 @@
 import type { RefObject } from "react";
+import type { View } from "react-native";
 import Share from "react-native-share";
 import { captureRef } from "react-native-view-shot";
 
 export type ShareSheetContent = Readonly<{
   message: string;
-  /** A view to share as a PNG image with the message. */
-  capture?: RefObject<unknown>;
+  /** An image to share with the message, as `captureView` returns it. */
+  imageUrl?: string;
 }>;
 
+/** Captures a view as a PNG image: its file URL, or `undefined` when the capture fails. */
+export async function captureView(view: RefObject<View | null>): Promise<string | undefined> {
+  return captureRef(view, { format: "png" }).catch(() => undefined);
+}
+
 /**
- * Opens the system share sheet. A capture that fails shares the message alone. Resolves once the
- * sheet closes, whether the user shared or cancelled; rejects when the sheet cannot open.
+ * Opens the system share sheet. Resolves once the sheet closes, whether the user shared or
+ * cancelled; rejects when the sheet cannot open.
  */
-export async function openShareSheet({ message, capture }: ShareSheetContent): Promise<void> {
-  const url = capture
-    ? await captureRef(capture as Parameters<typeof captureRef>[0], { format: "png" }).catch(
-        () => undefined,
-      )
-    : undefined;
-  await Share.open({ url, message, failOnCancel: false });
+export async function openShareSheet({ message, imageUrl }: ShareSheetContent): Promise<void> {
+  await Share.open({ url: imageUrl, message, failOnCancel: false });
 }

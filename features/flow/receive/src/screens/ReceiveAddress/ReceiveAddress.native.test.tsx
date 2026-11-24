@@ -1,5 +1,5 @@
 import React, { type ComponentProps } from "react";
-import { fireEvent, render, screen, within } from "@testing-library/react-native";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react-native";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
@@ -9,6 +9,10 @@ import {
   testReceive,
 } from "../../__tests__/receiveTestStore";
 import { ReceiveAddress } from "./ReceiveAddress";
+
+jest.mock("@shared/share-sheet", () => ({
+  captureView: jest.fn(async () => "file://card.png"),
+}));
 
 jest.mock("@ledgerhq/crypto-icons/native", () => {
   const { Text } = jest.requireActual("react-native");
@@ -119,7 +123,7 @@ describe("ReceiveAddress (Native)", () => {
     expect(screen.getByTestId("receive-address-options")).toBeTruthy();
   });
 
-  it("copies and shares the address", async () => {
+  it("copies the address, and shares it with the image of its card", async () => {
     const onCopyAddress = jest.fn(async () => true);
     const onShareAddress = jest.fn();
     renderScreen(jest.fn(), makeReceiveTestStore(), { onCopyAddress, onShareAddress });
@@ -128,7 +132,9 @@ describe("ReceiveAddress (Native)", () => {
     fireEvent.press(screen.getByTestId("receive-address-share"));
     fireEvent.press(screen.getByTestId("receive-address-copy"));
 
-    expect(onShareAddress).toHaveBeenCalledWith(testReceive.address);
+    await waitFor(() =>
+      expect(onShareAddress).toHaveBeenCalledWith(testReceive.address, "file://card.png"),
+    );
     expect(onCopyAddress).toHaveBeenCalledWith(testReceive.address);
     expect(await screen.findByText("Copied")).toBeTruthy();
   });

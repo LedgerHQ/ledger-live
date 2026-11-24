@@ -21,7 +21,6 @@ export function useReceiveAddressViewModel({
   onClose,
   onCopyAddress,
   onShareAddress,
-  cardRef,
   VerifyAddressExecutor,
   getFamilyConfig,
 }: ReceiveAddressProps): ReceiveAddressViewModel {
@@ -94,6 +93,5 @@ export function useReceiveAddressViewModel({
     backLabel: header.copy.backLabel,
     onBack: selection.backToSelection,
     onClose,
-    cardRef,
   };
 }

@@ -42,7 +42,7 @@ export function AddressActions({ actions }: AddressActionsProps) {
           testID="receive-address-verify-hint"
           style={{
             position: "absolute",
-            right: 0,
+            end: 0,
             bottom: "100%",
             width: HINT_WIDTH,
             zIndex: FRONT_LAYER,

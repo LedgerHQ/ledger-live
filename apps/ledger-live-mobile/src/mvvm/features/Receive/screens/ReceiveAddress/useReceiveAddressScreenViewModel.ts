@@ -1,5 +1,4 @@
-import { useCallback, useMemo, useRef } from "react";
-import type { View } from "react-native";
+import { useCallback, useMemo } from "react";
 import { accountsSlice } from "@domain/entity-account";
 import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
@@ -49,10 +48,9 @@ export function useReceiveAddressScreenViewModel({
     [familyConfig, featureFlags, legacyAccount],
   );
   const onCopyAddress = useCallback((address: string) => copyToClipboard(address), []);
-  const cardRef = useRef<View>(null);
-  const onShareAddress = useCallback(async (address: string) => {
+  const onShareAddress = useCallback(async (address: string, cardImageUrl?: string) => {
     // Caught outside leaveAppFor: it must see the failure to release the app lock exemption.
-    await leaveAppFor(() => openShareSheet({ message: address, capture: cardRef })).catch(
+    await leaveAppFor(() => openShareSheet({ message: address, imageUrl: cardImageUrl })).catch(
       () => undefined,
     );
   }, []);
@@ -63,7 +61,6 @@ export function useReceiveAddressScreenViewModel({
     onClose,
     onCopyAddress,
     onShareAddress,
-    cardRef,
     VerifyAddressExecutor: VerifyAddressExecutorLWM,
     getFamilyConfig,
   };

@@ -1,10 +1,27 @@
 import { createRef } from "react";
+import type { View } from "react-native";
 import Share from "react-native-share";
 import { captureRef } from "react-native-view-shot";
-import { openShareSheet } from "./shareSheet";
+import { captureView, openShareSheet } from "./shareSheet";
 
 jest.mock("react-native-share", () => ({ open: jest.fn(async () => ({ success: true })) }));
 jest.mock("react-native-view-shot", () => ({ captureRef: jest.fn() }));
+
+describe("captureView", () => {
+  it("captures the view as a PNG image", async () => {
+    jest.mocked(captureRef).mockResolvedValueOnce("file://card.png");
+    const view = createRef<View>();
+
+    await expect(captureView(view)).resolves.toBe("file://card.png");
+    expect(captureRef).toHaveBeenCalledWith(view, { format: "png" });
+  });
+
+  it("resolves without an image when the view cannot be captured", async () => {
+    jest.mocked(captureRef).mockRejectedValueOnce(new Error("capture failed"));
+
+    await expect(captureView(createRef<View>())).resolves.toBeUndefined();
+  });
+});
 
 describe("openShareSheet", () => {
   beforeEach(() => jest.clearAllMocks());
@@ -12,7 +29,6 @@ describe("openShareSheet", () => {
   it("shares the message", async () => {
     await openShareSheet({ message: "TXYZ" });
 
-    expect(captureRef).not.toHaveBeenCalled();
     expect(Share.open).toHaveBeenCalledWith({
       url: undefined,
       message: "TXYZ",
@@ -20,13 +36,9 @@ describe("openShareSheet", () => {
     });
   });
 
-  it("shares the view as a PNG image with the message", async () => {
-    jest.mocked(captureRef).mockResolvedValueOnce("file://card.png");
-    const capture = createRef<unknown>();
+  it("shares the image with the message", async () => {
+    await openShareSheet({ message: "TXYZ", imageUrl: "file://card.png" });
 
-    await openShareSheet({ message: "TXYZ", capture });
-
-    expect(captureRef).toHaveBeenCalledWith(capture, { format: "png" });
     expect(Share.open).toHaveBeenCalledWith({
       url: "file://card.png",
       message: "TXYZ",
@@ -38,17 +50,5 @@ describe("openShareSheet", () => {
     jest.mocked(Share.open).mockRejectedValueOnce(new Error("no activity"));
 
     await expect(openShareSheet({ message: "TXYZ" })).rejects.toThrow("no activity");
-  });
-
-  it("shares the message alone when the view cannot be captured", async () => {
-    jest.mocked(captureRef).mockRejectedValueOnce(new Error("capture failed"));
-
-    await openShareSheet({ message: "TXYZ", capture: createRef<unknown>() });
-
-    expect(Share.open).toHaveBeenCalledWith({
-      url: undefined,
-      message: "TXYZ",
-      failOnCancel: false,
-    });
   });
 });

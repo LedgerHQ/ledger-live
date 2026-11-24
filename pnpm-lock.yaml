@@ -13671,6 +13671,9 @@ importers:
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
+      '@shared/share-sheet':
+        specifier: workspace:*
+        version: link:../../../shared/share-sheet
       '@shared/ui-animated-qr-code':
         specifier: workspace:*
         version: link:../../../shared/ui-animated-qr-code
