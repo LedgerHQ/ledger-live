@@ -80,10 +80,31 @@ describe("createApi", () => {
     const api = createApi();
     const evmApi = (createEvmApi as jest.Mock).mock.results[0].value;
 
-    expect(api.listOperations).toBe(evmApi.listOperations);
     expect(api.lastBlock).toBe(evmApi.lastBlock);
     expect(api.getNextSequence).toBe(evmApi.getNextSequence);
     expect(api.validateAddress).toBe(evmApi.validateAddress);
+  });
+
+  it("reports GoldToken transfers of listOperations and getBlock as native CELO", async () => {
+    const api = createApi();
+    const evmApi = (createEvmApi as jest.Mock).mock.results[0].value;
+    const celoErc20 = "0x471EcE3750Da237f93B8E339c536989b8978a438";
+    const transfer = { asset: { type: "erc20", assetReference: celoErc20 } };
+    const options = { minHeight: 0 };
+    evmApi.listOperations.mockResolvedValueOnce({ items: [transfer], next: "cursor" });
+    evmApi.getBlock.mockResolvedValueOnce({
+      transactions: [{ operations: [{ type: "transfer", ...transfer }] }],
+    });
+
+    const page = await api.listOperations(mockCtx, "0xabc", options);
+    const block = await api.getBlock(mockCtx, 1);
+
+    expect(evmApi.listOperations).toHaveBeenCalledWith(mockCtx, "0xabc", options);
+    expect(evmApi.getBlock).toHaveBeenCalledWith(mockCtx, 1);
+    expect(page).toEqual({ items: [{ asset: { type: "native" } }], next: "cursor" });
+    expect(block.transactions[0].operations).toEqual([
+      { type: "transfer", asset: { type: "native" } },
+    ]);
   });
 
   it("overrides the Celo-specific (CIP-64) methods instead of delegating", () => {
