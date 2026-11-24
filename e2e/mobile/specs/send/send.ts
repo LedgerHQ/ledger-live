@@ -11,6 +11,7 @@ import { BroadcastFlow, shouldRunSharedAccountFlow } from "@e2e/helpers/broadcas
 import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 import type { LiveDataCommandOptions } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import type { InitOptions } from "@e2e/utils/initUtil";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 import { FF_DISABLE_NEW_SEND_FLOW } from "@e2e/utils/featureFlagUtils";
 import { describeIfNanoSSupports, describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
 
@@ -117,11 +118,11 @@ export async function verifySendAndOperationDetails(
   await app.operationDetails.checkTransactionType("OUT");
 }
 
-type RunSendTestOptions = SendTestOptions & {
+export type RunSendTestBaseOptions = TestMetaOptions & {
   transaction: TransactionType;
-  tmsLinks: string[];
-  tags: string[];
 };
+
+type RunSendTestOptions = SendTestOptions & RunSendTestBaseOptions;
 
 export function runSendTest(options: RunSendTestOptions) {
   const { transaction, tmsLinks, tags, ...sendOptions } = options;
@@ -153,14 +154,11 @@ export function runSendTest(options: RunSendTestOptions) {
   });
 }
 
-type RunSendInvalidAddressTestOptions = {
-  transaction: TransactionType;
+type RunSendInvalidAddressTestOptions = RunSendTestBaseOptions & {
   expectedErrorMessage: string;
   /** What the invalid recipient is, for the test name: e.g. "same as sender", "empty". */
   scenario: string;
   address?: string;
-  tmsLinks: string[];
-  tags: string[];
   accountName?: string;
 };
 
@@ -187,12 +185,9 @@ export function runSendInvalidAddressTest(options: RunSendInvalidAddressTestOpti
   });
 }
 
-type RunSendValidAddressTestOptions = {
-  transaction: TransactionType;
-  tmsLinks: string[];
+type RunSendValidAddressTestOptions = RunSendTestBaseOptions & {
   /** What the valid recipient is, for the test name: e.g. "lower case". */
   scenario: string;
-  tags: string[];
   accountName?: string;
   expectedWarningMessage?: string;
 };
@@ -234,11 +229,8 @@ export function runSendValidAddressTest(options: RunSendValidAddressTestOptions)
   });
 }
 
-type RunSendInvalidAmountTestOptions = {
-  transaction: TransactionType;
+type RunSendInvalidAmountTestOptions = RunSendTestBaseOptions & {
   expectedErrorMessage: string;
-  tmsLinks: string[];
-  tags: string[];
 };
 
 export function runSendInvalidAmountTest(options: RunSendInvalidAmountTestOptions) {
@@ -266,12 +258,9 @@ export function runSendInvalidAmountTest(options: RunSendInvalidAmountTestOption
   });
 }
 
-type RunSendInvalidTokenAmountTestOptions = {
-  transaction: TransactionType;
+type RunSendInvalidTokenAmountTestOptions = RunSendTestBaseOptions & {
   /** A RegExp is a summary-step error; a string is an amount-step error. */
   expectedErrorMessage: RegExp | string;
-  tmsLinks: string[];
-  tags: string[];
 };
 
 export function runSendInvalidTokenAmountTest(options: RunSendInvalidTokenAmountTestOptions) {
@@ -310,12 +299,6 @@ export function runSendInvalidTokenAmountTest(options: RunSendInvalidTokenAmount
     });
   });
 }
-
-type RunSendTestBaseOptions = {
-  transaction: TransactionType;
-  tmsLinks: string[];
-  tags: string[];
-};
 
 export function runSendMaxTest(options: RunSendTestBaseOptions) {
   const { transaction, tmsLinks, tags } = options;

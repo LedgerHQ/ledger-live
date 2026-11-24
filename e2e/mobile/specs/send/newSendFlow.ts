@@ -3,7 +3,7 @@ import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
 import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
-import { beforeAllFunction, SendTestOptions } from "@e2e/specs/send/send";
+import { beforeAllFunction, RunSendTestBaseOptions, SendTestOptions } from "@e2e/specs/send/send";
 
 export const beforeAllTokenFunction = async (
   transaction: TransactionType,
@@ -30,11 +30,7 @@ export const beforeAllTokenFunction = async (
   await app.mainNavigation.waitForWallet40Ready();
 };
 
-type RunNewSendFlowTestOptions = SendTestOptions & {
-  transaction: TransactionType;
-  tmsLinks: string[];
-  tags: string[];
-};
+type RunNewSendFlowTestOptions = SendTestOptions & RunSendTestBaseOptions;
 
 export function runNewSendFlowTokenTest(options: RunNewSendFlowTestOptions) {
   const { transaction, tmsLinks, tags, ...sendOptions } = options;

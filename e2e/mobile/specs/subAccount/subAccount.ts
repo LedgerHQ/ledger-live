@@ -11,6 +11,7 @@ import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 import invariant from "invariant";
 import { FF_DISABLE_NEW_SEND_FLOW } from "@e2e/utils/featureFlagUtils";
 import { describeIfNanoSSupports } from "@e2e/helpers/commonHelpers";
+import type { RunSendTestBaseOptions } from "@e2e/specs/send/send";
 
 const beforeAllFunction = async (transaction: TransactionType, setAccountToCredit: boolean) => {
   await app.init({
@@ -40,11 +41,7 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
   await app.mainNavigation.waitForWallet40Ready();
 };
 
-type RunSendSPLOptions = {
-  transaction: TransactionType;
-  tmsLinks: string[];
-  tags: string[];
-};
+type RunSendSPLOptions = RunSendTestBaseOptions;
 
 export function runSendSPL(options: RunSendSPLOptions) {
   const { transaction, tmsLinks, tags } = options;

@@ -11,6 +11,7 @@ import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 import { importContacts } from "@e2e/bridge/server";
+import type { RunSendTestBaseOptions } from "@e2e/specs/send/send";
 import { FF_LWM_CONTACTS_ENABLED, FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
 
 const SEND_VIA_CONTACT_MAIN_ADDRESS_ID = "e2e-send-via-contact-main";
@@ -84,12 +85,9 @@ async function initApp(
   return contacts;
 }
 
-type RunNewSendFlowContactsTestOptions = {
-  transaction: TransactionType;
+type RunNewSendFlowContactsTestOptions = RunSendTestBaseOptions & {
   spareAddress: string;
   retrievalAccount: Account | TokenAccount;
-  tmsLinks: string[];
-  tags: string[];
 };
 
 export function runNewSendFlowContactsTest(options: RunNewSendFlowContactsTestOptions) {
