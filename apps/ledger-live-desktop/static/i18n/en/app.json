@@ -4440,6 +4440,26 @@
         "setMax": "Set to maximum",
         "success": "Token settings updated",
         "gotIt": "Got it"
+      },
+      "deleteBlocked": {
+        "title": "Empty your {{ticker}} balance to remove it",
+        "description": "Send your remaining {{ticker}} balance to remove this asset."
+      },
+      "deleteConfirm": {
+        "title": "Are you sure you want to delete {{ticker}}?",
+        "description": "This asset will be removed from your portfolio, and you won't be able to receive anymore. The locked amount will be released to your {{accountName}} account."
+      },
+      "deleteSuccess": {
+        "title": "{{ticker}} was successfully removed from your account",
+        "description": "You can add this asset again anytime."
+      },
+      "deleteError": {
+        "title": "Failed to remove asset"
+      },
+      "deleteFeeError": {
+        "title": "Not enough balance",
+        "description": "You need at least {{minimumAmount}} to cover for the network fee.",
+        "swap": "Go to swap"
       }
     },
     "manageToken": {

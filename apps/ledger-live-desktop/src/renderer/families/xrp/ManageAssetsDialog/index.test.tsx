@@ -2,7 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { render, screen, within } from "tests/testSetup";
 import { HttpResponse, http, server } from "tests/server";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import {
   getIssuerFeeForToken,
   getNetworkReservesForCurrency,
@@ -91,7 +91,7 @@ describe("xrp ManageAssetsDialog", () => {
     ]);
   });
 
-  it("shows an IOU with its rows, Edit enabled and Delete disabled", async () => {
+  it("shows an IOU with its rows, Edit and Delete enabled", async () => {
     renderDialog();
     const card = getCard(xrpRlusdToken.id);
 
@@ -103,7 +103,7 @@ describe("xrp ManageAssetsDialog", () => {
     expect(card.getByText("1,000 RLUSD")).toBeVisible();
     expect(card.getByText("Activated")).toBeVisible();
     expect(card.getByTestId("xrp-manage-assets-edit")).toBeEnabled();
-    expect(card.getByTestId("xrp-manage-assets-delete")).toBeDisabled();
+    expect(card.getByTestId("xrp-manage-assets-delete")).toBeEnabled();
   });
 
   it("keeps Edit enabled on a frozen IOU", () => {
@@ -148,7 +148,7 @@ describe("xrp ManageAssetsDialog", () => {
     expect(screen.getByText("Your limit is 0: you can't receive this token.")).toBeVisible();
   });
 
-  it("shows an MPT without IOU settings, and Delete only, disabled", async () => {
+  it("shows an MPT without IOU settings, and Delete only", async () => {
     renderDialog();
     const card = getCard(xrpMptToken.id);
 
@@ -158,7 +158,81 @@ describe("xrp ManageAssetsDialog", () => {
     expect(card.queryByText("Balance limit")).not.toBeInTheDocument();
     expect(card.queryByText("Rippling")).not.toBeInTheDocument();
     expect(card.queryByTestId("xrp-manage-assets-edit")).not.toBeInTheDocument();
-    expect(card.getByTestId("xrp-manage-assets-delete")).toBeDisabled();
+    expect(card.getByTestId("xrp-manage-assets-delete")).toBeEnabled();
+  });
+
+  it("disables Delete while a removal of the token is pending, and says why on hover", async () => {
+    const pendingRemoval = {
+      type: "OPT_OUT",
+      transactionRaw: {
+        assetReference: xrpRlusdToken.tokenIdentifier,
+        assetOwner: xrpRlusdToken.contractAddress,
+      },
+    } as unknown as Operation;
+    const { user } = renderDialog({ ...account, pendingOperations: [pendingRemoval] });
+    const deleteButton = getCard(xrpRlusdToken.id).getByTestId("xrp-manage-assets-delete");
+
+    expect(deleteButton).toBeDisabled();
+    expect(getCard(xrpMptToken.id).getByTestId("xrp-manage-assets-delete")).toBeEnabled();
+
+    await user.hover(deleteButton.parentElement!);
+
+    expect(await screen.findByRole("tooltip", { name: "Removal pending" })).toBeInTheDocument();
+  });
+
+  it("disables Delete on a frozen token, and says why on hover", async () => {
+    const frozenAccount = makeXrpTokenAccount({ limit: new BigNumber(1), isLocked: true });
+    const { user } = renderDialog({ ...XRP_ACCOUNT, subAccounts: [frozenAccount] });
+    const deleteButton = getCard(xrpRlusdToken.id).getByTestId("xrp-manage-assets-delete");
+
+    expect(deleteButton).toBeDisabled();
+
+    await user.hover(deleteButton.parentElement!);
+
+    expect(
+      await screen.findByRole("tooltip", { name: "This token is frozen" }),
+    ).toBeInTheDocument();
+  });
+
+  it("opens Delete of an empty token, and its close button closes the dialog", async () => {
+    const emptyMptAccount = { ...XRP_MPT_TOKEN_ACCOUNT, balance: new BigNumber(0) };
+    const { user } = renderDialog({ ...XRP_ACCOUNT, subAccounts: [emptyMptAccount] });
+
+    await user.click(getCard(xrpMptToken.id).getByTestId("xrp-manage-assets-delete"));
+
+    expect(screen.getByText("Are you sure you want to delete TMPT?")).toBeVisible();
+
+    await user.click(screen.getByRole("button", { name: /close/i }));
+
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("goes back to the list from the balance screen's Got it", async () => {
+    const heldMptAccount = { ...XRP_MPT_TOKEN_ACCOUNT, balance: new BigNumber(5) };
+    const { user } = renderDialog({ ...XRP_ACCOUNT, subAccounts: [heldMptAccount] });
+
+    await user.click(getCard(xrpMptToken.id).getByTestId("xrp-manage-assets-delete"));
+    await user.click(screen.getByRole("button", { name: "Got it" }));
+
+    expect(screen.getByRole("dialog", { name: "Manage assets" })).toBeVisible();
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it("keeps the Delete screen once a sync drops the token account", async () => {
+    const heldMptAccount = { ...XRP_MPT_TOKEN_ACCOUNT, balance: new BigNumber(5) };
+    const { user, rerender } = renderDialog({ ...XRP_ACCOUNT, subAccounts: [heldMptAccount] });
+    await user.click(getCard(xrpMptToken.id).getByTestId("xrp-manage-assets-delete"));
+
+    rerender(
+      <AccountDialogs
+        account={{ ...XRP_ACCOUNT, subAccounts: [] }}
+        parentAccount={null}
+        params={{ screen: "manageAssets" }}
+        onClose={onClose}
+      />,
+    );
+
+    expect(screen.getByText("Empty your TMPT balance to remove it")).toBeVisible();
   });
 
   it("shows a skeleton until the transfer fee loads", async () => {

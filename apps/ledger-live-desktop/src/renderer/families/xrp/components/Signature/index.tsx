@@ -19,10 +19,20 @@ const DEVICE_CONNECTION_PARAMS = { acceptedDeviceModelIds: [] };
 type Props = Readonly<{
   signature: SignatureStepsViewModel;
   successTitle: string;
+  successDescription?: string;
+  hideViewDetails?: boolean;
+  errorTitle?: string;
   onClose: () => void;
 }>;
 
-export function SignatureSteps({ signature, successTitle, onClose }: Props) {
+export function SignatureSteps({
+  signature,
+  successTitle,
+  successDescription,
+  hideViewDetails,
+  errorTitle,
+  onClose,
+}: Props) {
   const { t } = useTranslation();
   const { phase, executorInput, failure, operation } = signature;
 
@@ -76,32 +86,54 @@ export function SignatureSteps({ signature, successTitle, onClose }: Props) {
           size="hug"
           testID="xrp-signature-success"
           title={successTitle}
+          description={successDescription}
           primaryCta={{ label: t("xrp.manageAssets.editAsset.gotIt"), onPress: onClose }}
-          secondaryCta={{
-            label: t("xrp.addToken.steps.confirmation.success.cta"),
-            onPress: onViewDetails,
-            testID: "xrp-signature-view-details",
-          }}
+          secondaryCta={
+            hideViewDetails
+              ? undefined
+              : {
+                  label: t("xrp.addToken.steps.confirmation.success.cta"),
+                  onPress: onViewDetails,
+                  testID: "xrp-signature-view-details",
+                }
+          }
         />
       </StepScreen>
     );
   }
 
   if (phase === "error" && failure) {
+    const broadcastError = t("xrp.addToken.steps.confirmation.broadcastError");
+    const errorMessage = <TranslatedError error={failure.error} field="title" />;
+
+    const errorContent = errorTitle
+      ? {
+          title: errorTitle,
+          description: errorMessage,
+          banner: failure.isSigned
+            ? {
+                appearance: "warning" as const,
+                description: broadcastError,
+                testID: "xrp-signature-broadcast-error",
+              }
+            : undefined,
+        }
+      : {
+          title: errorMessage,
+          description: failure.isSigned ? (
+            broadcastError
+          ) : (
+            <TranslatedError error={failure.error} field="description" />
+          ),
+        };
+
     return (
       <StepScreen onClose={onClose}>
         <InfoState
           preset="error"
           size="hug"
           testID="xrp-signature-error"
-          title={<TranslatedError error={failure.error} field="title" />}
-          description={
-            failure.isSigned ? (
-              t("xrp.addToken.steps.confirmation.broadcastError")
-            ) : (
-              <TranslatedError error={failure.error} field="description" />
-            )
-          }
+          {...errorContent}
           primaryCta={{
             label: t("common.tryAgain"),
             onPress: signature.onReset,
