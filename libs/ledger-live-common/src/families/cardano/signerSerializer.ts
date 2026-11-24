@@ -143,14 +143,22 @@ function prepareCertificate(cert: SignerTxCertificate): Certificate {
           deposit: cert.params.deposit,
         },
       };
-    case "VOTE_DELEGATION_ABSTAIN":
+    case "VOTE_DELEGATION":
       return {
         type: CertificateType.VOTE_DELEGATION,
         params: {
           stakeCredential,
-          dRep: {
-            type: DRepParamsType.ABSTAIN,
-          },
+          dRep:
+            cert.params.dRep.type === "KEY_HASH"
+              ? { type: DRepParamsType.KEY_HASH, keyHashHex: cert.params.dRep.keyHashHex }
+              : cert.params.dRep.type === "SCRIPT_HASH"
+                ? {
+                    type: DRepParamsType.SCRIPT_HASH,
+                    scriptHashHex: cert.params.dRep.scriptHashHex,
+                  }
+                : cert.params.dRep.type === "ABSTAIN"
+                  ? { type: DRepParamsType.ABSTAIN }
+                  : { type: DRepParamsType.NO_CONFIDENCE },
         },
       };
     default:

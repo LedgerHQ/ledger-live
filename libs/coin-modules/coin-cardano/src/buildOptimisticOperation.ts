@@ -117,7 +117,7 @@ export const buildOptimisticOperation = (
         c.cert.stakeCredential.hash.toString("hex") === stakeCredential.key,
     );
     if (walletRegistration) {
-      const deposit = new BigNumber(protocolParams.stakeKeyDeposit);
+      const deposit = new BigNumber(walletRegistration.cert.deposit);
       extra.deposit = formatCurrencyUnit(account.currency.units[0], deposit, {
         showCode: true,
         disableRounding: true,
@@ -183,13 +183,13 @@ export const buildOptimisticOperation = (
   }
 
   const opType: OperationType = txCertificates.find(
-    c => c.type === TyphonTypes.CertificateType.VOTE_DELEGATION,
+    c => c.type === TyphonTypes.CertificateType.STAKE_DELEGATION,
   )
-    ? "VOTE_DELEGATION"
-    : txCertificates.find(c => c.type === TyphonTypes.CertificateType.STAKE_DELEGATION)
-      ? "DELEGATE"
-      : txCertificates.find(c => c.type === TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION)
-        ? "UNDELEGATE"
+    ? "DELEGATE"
+    : txCertificates.find(c => c.type === TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION)
+      ? "UNDELEGATE"
+      : txCertificates.find(c => c.type === TyphonTypes.CertificateType.VOTE_DELEGATION)
+        ? "VOTE_DELEGATION"
         : getOperationType({
             valueChange: operationValue,
             fees: unsignedTransaction.getFee(),

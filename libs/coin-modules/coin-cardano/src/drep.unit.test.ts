@@ -11,7 +11,7 @@ const CIP_129_VECTORS = [
   {
     type: "script" as const,
     hash: "00000000000000000000000000000000000000000000000000000000",
-    id: "drep_script1yvqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqhv4syj",
+    id: "drep1yvqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq770f95",
   },
 ];
 

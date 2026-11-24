@@ -29,9 +29,12 @@ export async function getVoteDelegationTransactionStatus(
     }
   }
 
-  const deposit = account.cardanoResources.delegation?.status
-    ? new BigNumber(0)
-    : new BigNumber(account.cardanoResources.protocolParams.stakeKeyDeposit);
+  const deposit = !account.cardanoResources.delegation?.status
+    ? new BigNumber(
+        transaction.protocolParams?.stakeKeyDeposit ??
+          account.cardanoResources.protocolParams.stakeKeyDeposit,
+      )
+    : new BigNumber(0);
   if (account.spendableBalance.lt(estimatedFees.plus(deposit))) {
     errors.amount = deposit.gt(0)
       ? new CardanoStakeKeyDepositError("", { depositAmount: deposit.div(1e6).toString() })

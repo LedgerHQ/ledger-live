@@ -6,9 +6,13 @@ import { getVoteDelegationTransactionStatus } from "./voteDelegation";
 const voteDelegationTarget = { type: "alwaysAbstain" as const };
 
 describe("getVoteDelegationTransactionStatus", () => {
-  it("should include the protocol stake-key deposit in the outgoing amount when registering", async () => {
+  it("should include the prepared stake-key deposit in outgoing amount when registering", async () => {
     const account = getCardanoAccountFixture({ delegation: undefined });
-    account.cardanoResources.protocolParams = getProtocolParamsFixture();
+    account.cardanoResources.protocolParams = {
+      ...getProtocolParamsFixture(),
+      stakeKeyDeposit: 3_000_000,
+    };
+    const protocolParams = getProtocolParamsFixture();
 
     const status = await getVoteDelegationTransactionStatus(account, {
       family: "cardano",
@@ -17,7 +21,7 @@ describe("getVoteDelegationTransactionStatus", () => {
       amount: new BigNumber(0),
       fees: new BigNumber(100_000),
       poolId: undefined,
-      protocolParams: getProtocolParamsFixture(),
+      protocolParams,
       voteDelegationTarget,
     });
 
