@@ -33,7 +33,7 @@ describe("useMarketPerformers", () => {
       () =>
         useMarketPerformers({
           counterCurrency: "usd",
-          range: "24h",
+          range: "day",
           sort: "desc",
           limit: 5,
           top: 50,
