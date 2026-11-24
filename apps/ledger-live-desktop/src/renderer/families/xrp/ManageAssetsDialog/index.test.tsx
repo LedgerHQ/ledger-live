@@ -3,6 +3,10 @@ import BigNumber from "bignumber.js";
 import { render, screen, within } from "tests/testSetup";
 import { HttpResponse, http, server } from "tests/server";
 import type { Account } from "@ledgerhq/types-live";
+import {
+  getIssuerFeeForToken,
+  getNetworkReservesForCurrency,
+} from "@ledgerhq/live-common/families/xrp/logicPublic";
 import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
@@ -19,6 +23,17 @@ jest.mock("@ledgerhq/live-common/families/xrp/config", () => ({
   ...jest.requireActual("@ledgerhq/live-common/families/xrp/config"),
   getXrpEnabledTokenStandards: () => ["iou", "mpt"],
 }));
+
+// coin-xrp caches server_info and issuer roots: a test fails the fetch here, not on the node
+jest.mock("@ledgerhq/live-common/families/xrp/logicPublic", () => {
+  const actual = jest.requireActual("@ledgerhq/live-common/families/xrp/logicPublic");
+
+  return {
+    ...actual,
+    getIssuerFeeForToken: jest.fn(actual.getIssuerFeeForToken),
+    getNetworkReservesForCurrency: jest.fn(actual.getNetworkReservesForCurrency),
+  };
+});
 
 const XRPL_TESTNET_NODE = "https://s.altnet.rippletest.net:51234";
 
@@ -57,8 +72,9 @@ describe("xrp ManageAssetsDialog", () => {
     server.use(
       http.post(XRPL_TESTNET_NODE, () => {
         const node = { LedgerEntryType: "AccountRoot", Flags: 0 };
+        const info = { validated_ledger: { reserve_base_xrp: 1, reserve_inc_xrp: 0.3 } };
 
-        return HttpResponse.json({ result: { node, account_data: node, status: "success" } });
+        return HttpResponse.json({ result: { node, account_data: node, info, status: "success" } });
       }),
     );
   });
@@ -83,7 +99,7 @@ describe("xrp ManageAssetsDialog", () => {
     expect(card.getByText(formatAddress(XRP_ACCOUNT.freshAddress))).toBeVisible();
     expect(card.getByText("Trust Line (IOU)")).toBeVisible();
     expect(await card.findByText("0%")).toBeVisible();
-    expect(card.getByText("0.2 XRP")).toBeVisible();
+    expect(await card.findByText("0.3 XRP")).toBeVisible();
     expect(card.getByText("1,000 RLUSD")).toBeVisible();
     expect(card.getByText("Activated")).toBeVisible();
     expect(card.getByTestId("xrp-manage-assets-edit")).toBeEnabled();
@@ -132,17 +148,52 @@ describe("xrp ManageAssetsDialog", () => {
     expect(screen.getByText("Your limit is 0: you can't receive this token.")).toBeVisible();
   });
 
-  it("shows an MPT without IOU settings, and Delete only, disabled", () => {
+  it("shows an MPT without IOU settings, and Delete only, disabled", async () => {
     renderDialog();
     const card = getCard(xrpMptToken.id);
 
     expect(card.getByText("Test MPT")).toBeVisible();
     expect(card.getByText("Multi Purpose Token")).toBeVisible();
-    expect(card.getByText("0.2 XRP")).toBeVisible();
+    expect(await card.findByText("0.3 XRP")).toBeVisible();
     expect(card.queryByText("Balance limit")).not.toBeInTheDocument();
     expect(card.queryByText("Rippling")).not.toBeInTheDocument();
     expect(card.queryByTestId("xrp-manage-assets-edit")).not.toBeInTheDocument();
     expect(card.getByTestId("xrp-manage-assets-delete")).toBeDisabled();
+  });
+
+  it("shows a skeleton until the transfer fee loads", async () => {
+    renderDialog();
+    const card = getCard(xrpRlusdToken.id);
+
+    expect(card.getByTestId("xrp-manage-assets-transfer-fee-loading")).toBeInTheDocument();
+    expect(await card.findByText("0%")).toBeVisible();
+    expect(card.queryByTestId("xrp-manage-assets-transfer-fee-loading")).not.toBeInTheDocument();
+  });
+
+  it("shows a skeleton until the locked amount loads", async () => {
+    renderDialog();
+    const card = getCard(xrpRlusdToken.id);
+
+    expect(card.getByTestId("xrp-manage-assets-locked-amount-loading")).toBeInTheDocument();
+    expect(await card.findByText("0.3 XRP")).toBeVisible();
+    expect(card.queryByTestId("xrp-manage-assets-locked-amount-loading")).not.toBeInTheDocument();
+  });
+
+  it("shows an error for the locked amount when the reserves can't be fetched", async () => {
+    jest.mocked(getNetworkReservesForCurrency).mockRejectedValueOnce(new Error("timeout"));
+    renderDialog();
+    const card = getCard(xrpRlusdToken.id);
+
+    expect(await card.findByText("Couldn't load")).toBeVisible();
+  });
+
+  it("shows an error for the transfer fee when it can't be fetched", async () => {
+    jest.mocked(getIssuerFeeForToken).mockRejectedValueOnce(new Error("timeout"));
+    renderDialog({ ...XRP_ACCOUNT, subAccounts: [iouAccount] });
+    const card = getCard(xrpRlusdToken.id);
+
+    expect(await card.findByText("Couldn't load")).toBeVisible();
+    expect(await card.findByText("0.3 XRP")).toBeVisible();
   });
 
   it("hides a long balance limit in discreet mode", () => {

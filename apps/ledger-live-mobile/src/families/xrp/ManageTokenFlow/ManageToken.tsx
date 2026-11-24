@@ -16,6 +16,7 @@ import {
   DescriptionItemLeading,
   DescriptionItemTrailing,
   DescriptionItemValue,
+  Skeleton,
   Text,
   Tooltip,
   TooltipContent,
@@ -23,6 +24,8 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account } from "@ledgerhq/types-live";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
 import { isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
@@ -33,9 +36,14 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
 import { InfoTooltip } from "../components/InfoTooltip";
-import { type DeleteBlocker, getDeleteBlocker, OWNER_RESERVE } from "../utils";
+import { type DeleteBlocker, getDeleteBlocker } from "../utils";
 import DeleteTokenSheets from "./DeleteTokenSheets";
-import { type Props, useIssuerFeeText, useManageTokenViewModel } from "./useManageTokenViewModel";
+import {
+  type Props,
+  useIssuerFee,
+  useManageTokenViewModel,
+  useOwnerReserve,
+} from "./useManageTokenViewModel";
 
 const BLOCKER_KEYS: Record<DeleteBlocker, string> = {
   pending: "xrp.manageAssets.removalPending",
@@ -68,6 +76,57 @@ function WithSeparator(props: Readonly<{ children: React.ReactNode }>) {
       {` · `}
       {props.children}
     </>
+  );
+}
+
+function TransferFee(props: Readonly<{ token: TokenCurrency }>) {
+  const { t } = useTranslation();
+  const issuerFee = useIssuerFee(props.token);
+
+  if (issuerFee.isError) {
+    return t("xrp.manageAssets.transferFeeUnavailable");
+  }
+
+  if (issuerFee.value) {
+    return issuerFee.value;
+  }
+
+  return (
+    <Skeleton
+      testID="xrp-manage-asset-transfer-fee-loading"
+      lx={{ height: "s16", width: "s80", borderRadius: "full" }}
+    />
+  );
+}
+
+function LockedAmount(props: Readonly<{ currency: CryptoCurrency }>) {
+  const { t } = useTranslation();
+  const ownerReserve = useOwnerReserve(props.currency.id);
+
+  if (ownerReserve.isError) {
+    return t("xrp.manageAssets.lockedAmountUnavailable");
+  }
+
+  if (ownerReserve.value) {
+    return (
+      <>
+        <Text typography="body3" lx={{ color: "muted" }}>
+          <CurrencyUnitValue unit={props.currency.units[0]} value={ownerReserve.value} showCode />
+        </Text>
+        <CounterValue
+          currency={props.currency}
+          value={ownerReserve.value}
+          Wrapper={WithSeparator}
+        />
+      </>
+    );
+  }
+
+  return (
+    <Skeleton
+      testID="xrp-manage-asset-locked-amount-loading"
+      lx={{ height: "s16", width: "s80", borderRadius: "full" }}
+    />
   );
 }
 
@@ -121,13 +180,8 @@ function TokenCard(
   const { t } = useTranslation();
 
   const { token, xrpResources } = props.tokenAccount;
-
   const isIou = token.tokenType === "iou";
-
   const limit = xrpResources?.limit;
-
-  const issuerFeeText = useIssuerFeeText(token);
-
   const currency = props.account.currency;
 
   // A testnet has no network icon: badge it with its mainnet's
@@ -154,19 +208,14 @@ function TokenCard(
           <Row label={t("xrp.manageAssets.issuer")}>
             {shortAddressPreview(token.contractAddress)}
           </Row>
-          {issuerFeeText ? (
-            <Row
-              label={t("xrp.manageAssets.transferFee")}
-              info={t("xrp.manageAssets.transferFeeInfo")}
-            >
-              {issuerFeeText}
-            </Row>
-          ) : null}
+          <Row
+            label={t("xrp.manageAssets.transferFee")}
+            info={t("xrp.manageAssets.transferFeeInfo")}
+          >
+            <TransferFee token={token} />
+          </Row>
           <Row label={t("xrp.manageAssets.lockedAmount")}>
-            <Text typography="body3" lx={{ color: "muted" }}>
-              <CurrencyUnitValue unit={currency.units[0]} value={OWNER_RESERVE} showCode />
-            </Text>
-            <CounterValue currency={currency} value={OWNER_RESERVE} Wrapper={WithSeparator} />
+            <LockedAmount currency={currency} />
           </Row>
           {isIou && limit ? (
             <Row label={t("xrp.tokenSettings.balanceLimit")}>
