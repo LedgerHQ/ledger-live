@@ -1,5 +1,5 @@
 import { MarketPerformersParams } from "../utils/types";
-import { useGetMarketPerformersQuery } from "../state-manager/api";
+import { useGetMarketPerformersQuery } from "@domain/api-market-performers";
 import { REFETCH_TIME_ONE_MINUTE } from "../utils/timers";
 
 export const useMarketPerformers = (

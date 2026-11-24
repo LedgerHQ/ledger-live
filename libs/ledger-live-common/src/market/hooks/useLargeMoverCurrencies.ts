@@ -1,8 +1,6 @@
 import { useMemo } from "react";
-import {
-  pairMarketsWithRequestedLedgerIds,
-  useGetMarketsByLedgerIdsQuery,
-} from "../state-manager/api";
+import { useGetMarketsByLedgerIdsQuery } from "@domain/api-market-currency";
+import { pairMarketsWithRequestedLedgerIds } from "@domain/entity-market-currency";
 import { applyUsdRateToMarketItem } from "../utils/applyUsdRateToMarket";
 import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "../utils/timers";
 import { useMarketCounterValueRate } from "./useMarketCounterValueRate";

@@ -1,5 +1,5 @@
 import { TrendingPerformersParams } from "../utils/types";
-import { useGetTrendingPerformersQuery } from "../state-manager/api";
+import { useGetTrendingPerformersQuery } from "@domain/api-market-performers";
 import { REFETCH_TIME_ONE_MINUTE } from "../utils/timers";
 
 export const useTrendingPerformers = (

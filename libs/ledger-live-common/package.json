@@ -118,6 +118,7 @@
     "@domain/api-market-countervalues": "workspace:*",
     "@domain/api-market-currency": "workspace:*",
     "@domain/api-market-index-global": "workspace:*",
+    "@domain/api-market-performers": "workspace:*",
     "@domain/api-swap-quotes": "workspace:^",
     "@domain/entity-account-balance": "workspace:^",
     "@domain/entity-account-balance-history": "workspace:^",
