@@ -1,5 +1,18 @@
 # @features/flow-pay-card
 
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies [[`ce2c91d`](https://github.com/LedgerHQ/ledger-live/commit/ce2c91dde08828cc6a213ab19ba1e13efccacc41), [`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced), [`2e761cc`](https://github.com/LedgerHQ/ledger-live/commit/2e761ccb7416b0ba60b5f325c8237761e75a9b8d), [`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906), [`2267444`](https://github.com/LedgerHQ/ledger-live/commit/226744400780b00d6468f890d06a821440fb5608), [`9300f96`](https://github.com/LedgerHQ/ledger-live/commit/9300f9670ca7e76be132ea6fffc24c04c0f0b3ea), [`d27f68a`](https://github.com/LedgerHQ/ledger-live/commit/d27f68ac780099cbd47e533709ebef83f9345d89), [`9f6f480`](https://github.com/LedgerHQ/ledger-live/commit/9f6f48031fad77047e3a6377838816229ba4da5b), [`7fffee2`](https://github.com/LedgerHQ/ledger-live/commit/7fffee2e21d1a9b056d026bd2ff50431a1b2793a)]:
+  - @features/flow-pay-card-auth@0.14.0
+  - @features/flow-pay-card-transactions@0.8.0
+  - @domain/api-card-management@0.10.0
+  - @features/flow-pay-card-details@0.12.0
+  - @features/flow-pay-card-widget@0.8.0
+  - @features/flow-pay-card-assets@0.7.2
+  - @features/platform-pay-analytics@0.4.1
+
 ## 0.9.2-next.0
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-status",
-  "version": "0.1.0-next.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Account status entity: whether an account was ever used, and what blocks it or one of its assets",
   "main": "src/index.ts",

@@ -1,5 +1,12 @@
 # @features/flow-pay-deposit
 
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-pay-analytics@0.4.1
+
 ## 0.7.1-next.0
 
 ### Patch Changes

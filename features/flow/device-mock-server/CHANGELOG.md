@@ -1,5 +1,11 @@
 # @features/flow-device-mock-server
 
+## 0.2.0
+
+### Minor Changes
+
+- [#24957](https://github.com/LedgerHQ/ledger-live/pull/24957) [`21ae1aa`](https://github.com/LedgerHQ/ledger-live/commit/21ae1aac42f7243a7c6461265838f6f7753faf3c) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the mock server overlay selectors into the slice `selectors`, with the same exported names
+
 ## 0.2.0-next.0
 
 ### Minor Changes

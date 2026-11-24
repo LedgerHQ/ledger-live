@@ -1,5 +1,16 @@
 # @features/platform-verify-address-intent
 
+## 0.5.0
+
+### Minor Changes
+
+- [#24874](https://github.com/LedgerHQ/ledger-live/pull/24874) [`e1db61a`](https://github.com/LedgerHQ/ledger-live/commit/e1db61afaa383e6c5f0f5608ac0c7cf83436fff6) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Report how a verify-address intent ended as a Result, stop the remaining device requests and the running signer action of a cancelled verification, and give the Device Intent Executor wrappers the error screen the user closed
+
+### Patch Changes
+
+- Updated dependencies [[`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906)]:
+  - @features/platform-device-intent@5.6.0
+
 ## 0.5.0-next.0
 
 ### Minor Changes

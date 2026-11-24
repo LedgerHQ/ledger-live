@@ -1,5 +1,13 @@
 # @ledgerhq/live-signer-solana
 
+## 0.23.2
+
+### Patch Changes
+
+- Updated dependencies [[`081c422`](https://github.com/LedgerHQ/ledger-live/commit/081c422494180f04d0fbaf9de4d59370d7927863), [`a869e8b`](https://github.com/LedgerHQ/ledger-live/commit/a869e8b37d098ba06c01d36516ad7a6abb9aa0a5), [`8fbb9be`](https://github.com/LedgerHQ/ledger-live/commit/8fbb9beb39ff3ed1d1051d7df0b3e31a809f21f7), [`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0), [`5c0fdd1`](https://github.com/LedgerHQ/ledger-live/commit/5c0fdd126d68326f30d4ab911a69c79d718ed493), [`dc0e3ad`](https://github.com/LedgerHQ/ledger-live/commit/dc0e3ad24843961f7f71772b288c2dba473e93b0), [`c80f5de`](https://github.com/LedgerHQ/ledger-live/commit/c80f5de17b263d8e111ddd3b3247b04f7b9a687a), [`90db489`](https://github.com/LedgerHQ/ledger-live/commit/90db48910c3525f69fcef5a3644b666febd6a434), [`16bc82a`](https://github.com/LedgerHQ/ledger-live/commit/16bc82a772d61b5c2ca659922ffa8e74eab283d7), [`4ea6c56`](https://github.com/LedgerHQ/ledger-live/commit/4ea6c566069a55a0345df95add6dc62e37a30b01), [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b), [`14ab34d`](https://github.com/LedgerHQ/ledger-live/commit/14ab34dbbf4c1768fcdc8928f6db43d9ec58f10b), [`2959603`](https://github.com/LedgerHQ/ledger-live/commit/29596039c7129ac7a5dd216e1f1c172936bed43b), [`2cdf737`](https://github.com/LedgerHQ/ledger-live/commit/2cdf737ce9d268e248253d1f98bd614c0e30da3f), [`bbcce8f`](https://github.com/LedgerHQ/ledger-live/commit/bbcce8f2e7a83b3c7ec2fc066a357a17d1f72e3e), [`63fab1f`](https://github.com/LedgerHQ/ledger-live/commit/63fab1fa6e64cdf76d9b05ee77d45dd78875b12c), [`b004476`](https://github.com/LedgerHQ/ledger-live/commit/b0044764e765d48ff2edabb567a6e71dbd820276)]:
+  - @ledgerhq/ledger-wallet-framework@3.13.0
+  - @ledgerhq/coin-solana@3.1.0
+
 ## 0.23.2-next.0
 
 ### Patch Changes

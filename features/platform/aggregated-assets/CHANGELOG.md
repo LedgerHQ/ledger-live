@@ -1,5 +1,13 @@
 # @features/platform-aggregated-assets
 
+## 0.7.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-aggregated-assets@0.7.2
+  - @domain/entity-currency@0.5.1
+
 ## 0.7.2-next.0
 
 ### Patch Changes

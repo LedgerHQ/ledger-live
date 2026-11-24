@@ -1,5 +1,13 @@
 # @features/flow-contacts-add-contact
 
+## 0.10.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-contacts@0.13.1
+  - @domain/entity-contact@0.13.1
+
 ## 0.10.3-next.0
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @ledgerhq/transaction-observability
 
+## 0.7.0
+
+### Minor Changes
+
+- [#24861](https://github.com/LedgerHQ/ledger-live/pull/24861) [`16bc82a`](https://github.com/LedgerHQ/ledger-live/commit/16bc82a772d61b5c2ca659922ffa8e74eab283d7) Thanks [@henri-ly](https://github.com/henri-ly)! - Check a Solana transaction's blockhash before simulating it and report an expired one as `SolanaTxBlockhashExpired`, shown as is in the send flows with wording that asks the user to try again. Durable-nonce transactions skip the check, and a simulation that cannot find the blockhash runs once more after 500 ms
+
+### Patch Changes
+
+- Updated dependencies [[`081c422`](https://github.com/LedgerHQ/ledger-live/commit/081c422494180f04d0fbaf9de4d59370d7927863), [`a869e8b`](https://github.com/LedgerHQ/ledger-live/commit/a869e8b37d098ba06c01d36516ad7a6abb9aa0a5), [`4ea6c56`](https://github.com/LedgerHQ/ledger-live/commit/4ea6c566069a55a0345df95add6dc62e37a30b01), [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b), [`e516034`](https://github.com/LedgerHQ/ledger-live/commit/e5160345b50c0dc9e7c490da72d641c631d2ef7f)]:
+  - @ledgerhq/types-live@6.133.0
+
 ## 0.7.0-next.0
 
 ### Minor Changes

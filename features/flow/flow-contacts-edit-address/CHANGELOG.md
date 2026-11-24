@@ -1,5 +1,13 @@
 # @features/flow-contacts-edit-address
 
+## 0.8.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-contacts@0.13.1
+  - @domain/entity-contact@0.13.1
+
 ## 0.8.1-next.0
 
 ### Patch Changes

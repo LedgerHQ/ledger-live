@@ -1,6 +1,6 @@
 {
   "name": "@shared/ui-animated-qr-code",
-  "version": "0.2.0-next.0",
+  "version": "0.2.0",
   "private": true,
   "description": "QR code drawn and animated natively on iOS and Android: loading shimmer and copy ripple",
   "exports": {

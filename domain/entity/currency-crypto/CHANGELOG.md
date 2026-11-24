@@ -1,5 +1,15 @@
 # @domain/entity-currency-crypto
 
+## 0.20.0
+
+### Minor Changes
+
+- [#23224](https://github.com/LedgerHQ/ledger-live/pull/23224) [`79e96f7`](https://github.com/LedgerHQ/ledger-live/commit/79e96f7f41181a20bcee56c39fe528c2186eeede) Thanks [@cted-ledger](https://github.com/cted-ledger)! - give the zcash currencies their own zcash family: served by coin-zcash and the desktop zcash family module, and still presented to live apps as bitcoin-family currencies
+
+- [#25012](https://github.com/LedgerHQ/ledger-live/pull/25012) [`c80f5de`](https://github.com/LedgerHQ/ledger-live/commit/c80f5de17b263d8e111ddd3b3247b04f7b9a687a) Thanks [@dilaouid](https://github.com/dilaouid)! - Add Bitcoin Signet currency (bitcoin_signet)
+
+- [#24962](https://github.com/LedgerHQ/ledger-live/pull/24962) [`d3b0f92`](https://github.com/LedgerHQ/ledger-live/commit/d3b0f92aadd5743ec190f72e2212d665a776ce43) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - Rename the XRP currency to XRPL, after its network like other currencies, so default XRP accounts are named "XRPL 1"
+
 ## 0.20.0-next.0
 
 ### Minor Changes

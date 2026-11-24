@@ -1,5 +1,15 @@
 # @domain/entity-account-balance-history
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`f8afe58`](https://github.com/LedgerHQ/ledger-live/commit/f8afe58413ae68f5331031c27d9655dca1a56143)]:
+  - @domain/entity-account-descriptor@0.7.0
+  - @domain/entity-currency@0.5.1
+  - @domain/entity-account-balance@0.3.2
+  - @domain/entity-account-data@0.6.1
+
 ## 0.3.1-next.0
 
 ### Patch Changes

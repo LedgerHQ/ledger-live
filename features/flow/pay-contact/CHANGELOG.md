@@ -1,5 +1,19 @@
 # @features/flow-pay-contact
 
+## 0.10.0
+
+### Minor Changes
+
+- [#24902](https://github.com/LedgerHQ/ledger-live/pull/24902) [`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports and move single-platform types into the file that uses them
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/flow-contacts-detail@0.5.1
+  - @features/platform-contacts@0.13.1
+  - @features/flow-contacts-add-contact@0.10.3
+  - @domain/entity-contact@0.13.1
+
 ## 0.10.0-next.0
 
 ### Minor Changes

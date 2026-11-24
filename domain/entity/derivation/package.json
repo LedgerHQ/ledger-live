@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-derivation",
-  "version": "0.2.0-next.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Derivation modes of a currency as data: the paths an account scan derives and when it stops",
   "main": "src/index.ts",

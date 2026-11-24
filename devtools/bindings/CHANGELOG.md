@@ -1,5 +1,57 @@
 # @devtools/bindings
 
+## 0.17.0
+
+### Minor Changes
+
+- [#24868](https://github.com/LedgerHQ/ledger-live/pull/24868) [`2306c28`](https://github.com/LedgerHQ/ledger-live/commit/2306c2891e5ed4b13c36496bf22e184fa0dbf9d2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add the account-status DevTools tool, reading the `accountStatus` and `assetStatus` kinds per account and asset with the gates they make, and both kinds to the mock source
+
+- [#25155](https://github.com/LedgerHQ/ledger-live/pull/25155) [`6942305`](https://github.com/LedgerHQ/ledger-live/commit/694230569140fdc32c9ea7a0f0e906c4d2ded0a7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add an account discovery DevTools page: scan a currency with the scan accounts Device Intent and list the accounts found with what the scan cost
+
+- [#24882](https://github.com/LedgerHQ/ledger-live/pull/24882) [`76bab76`](https://github.com/LedgerHQ/ledger-live/commit/76bab76cf7009c9d5f6f54b2608157b3f0419a4e) Thanks [@ysitbon](https://github.com/ysitbon)! - Keep the Ledger Sync result of an add or remove member run when the device disconnects after the user approved it, unless Ledger Sync was reset in between. Each app orders late results with its own result order, passed in every add and remove member input. Ledger Wallet Desktop tracks the activation when the result arrives, so a late activation is tracked too.
+
+- [#24945](https://github.com/LedgerHQ/ledger-live/pull/24945) [`f5045dc`](https://github.com/LedgerHQ/ledger-live/commit/f5045dc9e69cf20b791779042acbaaf52b73b516) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the receive list and deeplink sections to the receive DevTools tool: the bindings list each account and token from the account model, and the apps open receive through their current receive openers
+
+### Patch Changes
+
+- Updated dependencies [[`79e96f7`](https://github.com/LedgerHQ/ledger-live/commit/79e96f7f41181a20bcee56c39fe528c2186eeede), [`d1f10fb`](https://github.com/LedgerHQ/ledger-live/commit/d1f10fbe2b9a1c9a90d28e0b79a7113932437bdc), [`0ed522e`](https://github.com/LedgerHQ/ledger-live/commit/0ed522eb7807af4e815f2aa3fd7d2bc18a1d35fc), [`aff97a0`](https://github.com/LedgerHQ/ledger-live/commit/aff97a0a8888e85a66b8d121f41adfa2ea884673), [`4f46643`](https://github.com/LedgerHQ/ledger-live/commit/4f466432512683457cbdca0ce7b64ddbf678c64d), [`27f3e4e`](https://github.com/LedgerHQ/ledger-live/commit/27f3e4eb74ac31f0f53aa55803ad7f082f669fe3), [`f8afe58`](https://github.com/LedgerHQ/ledger-live/commit/f8afe58413ae68f5331031c27d9655dca1a56143), [`ce2c91d`](https://github.com/LedgerHQ/ledger-live/commit/ce2c91dde08828cc6a213ab19ba1e13efccacc41), [`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced), [`99b84d2`](https://github.com/LedgerHQ/ledger-live/commit/99b84d26e7fe249a2d322d54472790afffaa4807), [`fe1f525`](https://github.com/LedgerHQ/ledger-live/commit/fe1f5257edcee5b92db6153e9f7d619104446294), [`e53d295`](https://github.com/LedgerHQ/ledger-live/commit/e53d295fcb840a2e8a8433daac282a6f22098707), [`6157b78`](https://github.com/LedgerHQ/ledger-live/commit/6157b78b2e7055b1389f7ed64a2fcccf26200c39), [`7f9d635`](https://github.com/LedgerHQ/ledger-live/commit/7f9d635ec37270cad9b67e4082363716c1b1b464), [`f04c3ec`](https://github.com/LedgerHQ/ledger-live/commit/f04c3ec7af3bfec56b14facc2a103d5d496492e2), [`c47814c`](https://github.com/LedgerHQ/ledger-live/commit/c47814c94967febb435d0dcb77cc2f8de7f2c3f7), [`2306c28`](https://github.com/LedgerHQ/ledger-live/commit/2306c2891e5ed4b13c36496bf22e184fa0dbf9d2), [`6942305`](https://github.com/LedgerHQ/ledger-live/commit/694230569140fdc32c9ea7a0f0e906c4d2ded0a7), [`c80f5de`](https://github.com/LedgerHQ/ledger-live/commit/c80f5de17b263d8e111ddd3b3247b04f7b9a687a), [`36284d6`](https://github.com/LedgerHQ/ledger-live/commit/36284d633c1961face1500f58fa2fc271cfb8ab5), [`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906), [`76bab76`](https://github.com/LedgerHQ/ledger-live/commit/76bab76cf7009c9d5f6f54b2608157b3f0419a4e), [`d5ff357`](https://github.com/LedgerHQ/ledger-live/commit/d5ff357b5df4d890cd22574d1cabd96168d0aa84), [`3b117a7`](https://github.com/LedgerHQ/ledger-live/commit/3b117a73628de3dc530c2fa8cd20486c7a2718b3), [`2267444`](https://github.com/LedgerHQ/ledger-live/commit/226744400780b00d6468f890d06a821440fb5608), [`4ef9ecd`](https://github.com/LedgerHQ/ledger-live/commit/4ef9ecde87b79d3667170d74e69443203f4b2280), [`9300f96`](https://github.com/LedgerHQ/ledger-live/commit/9300f9670ca7e76be132ea6fffc24c04c0f0b3ea), [`d27f68a`](https://github.com/LedgerHQ/ledger-live/commit/d27f68ac780099cbd47e533709ebef83f9345d89), [`9f6f480`](https://github.com/LedgerHQ/ledger-live/commit/9f6f48031fad77047e3a6377838816229ba4da5b), [`a8363ee`](https://github.com/LedgerHQ/ledger-live/commit/a8363eeb2cd97ce1942bfe0938ec317536e630c6), [`bda46c4`](https://github.com/LedgerHQ/ledger-live/commit/bda46c496fdacc801de3264d2854e00eb38b8499), [`655ced5`](https://github.com/LedgerHQ/ledger-live/commit/655ced54a202288883b740f67a3edecdd38247b5), [`7c824f3`](https://github.com/LedgerHQ/ledger-live/commit/7c824f377ec4a7bcc86f3edb71a198d7ea6ca9a5), [`ac052f5`](https://github.com/LedgerHQ/ledger-live/commit/ac052f5c42e9151f445e3ff4b20e811fbcfa84b4), [`fa94370`](https://github.com/LedgerHQ/ledger-live/commit/fa943701719e0fd0d6f9fb28f1c8bb90f6a7c5c9), [`de9c09c`](https://github.com/LedgerHQ/ledger-live/commit/de9c09c26ebca7c2dbceb9494de70a2c16c75a70), [`c20c157`](https://github.com/LedgerHQ/ledger-live/commit/c20c157c991dbfcd47f9300b997f74fac0f6d303), [`0025948`](https://github.com/LedgerHQ/ledger-live/commit/0025948951c9d894ce1e21f5f11b2a5a0b24b141), [`3c9c36d`](https://github.com/LedgerHQ/ledger-live/commit/3c9c36d4b6aba6232f04e124157bd8df08cf89da), [`b15271c`](https://github.com/LedgerHQ/ledger-live/commit/b15271ca307f00e929474a1560e64fd2af49b75e), [`85a7d14`](https://github.com/LedgerHQ/ledger-live/commit/85a7d14d54b4f7f411a3789e310e6f1b8d2d79bb), [`c4792da`](https://github.com/LedgerHQ/ledger-live/commit/c4792da62785d15ebbb543c81f444aeb6a62bafc), [`4ff1d9a`](https://github.com/LedgerHQ/ledger-live/commit/4ff1d9a587abb474300d0e1c188eeb62b0de66ea), [`f7f5295`](https://github.com/LedgerHQ/ledger-live/commit/f7f529560de8f7ee9d2ddf98f048610b9335d550), [`c5ad33d`](https://github.com/LedgerHQ/ledger-live/commit/c5ad33db466f7a5eaf24a70f571afdbf2496979a), [`7fffee2`](https://github.com/LedgerHQ/ledger-live/commit/7fffee2e21d1a9b056d026bd2ff50431a1b2793a), [`d3b0f92`](https://github.com/LedgerHQ/ledger-live/commit/d3b0f92aadd5743ec190f72e2212d665a776ce43)]:
+  - @domain/entity-currency-crypto@0.20.0
+  - @features/platform-device-onboarding@0.7.0
+  - @devtools/registry@0.10.0
+  - @features/flow-receive@0.3.0
+  - @domain/entity-account-status@0.1.0
+  - @shared/feature-flags@0.32.0
+  - @domain/entity-account-descriptor@0.7.0
+  - @domain/entity-derivation@0.2.0
+  - @features/flow-pay-card-auth@0.14.0
+  - @domain/api-card-management@0.10.0
+  - @domain/api-currency-token@0.9.0
+  - @devtools/account-discovery@0.2.0
+  - @features/platform-device-intent@5.6.0
+  - @features/platform-intent-wallet-sync@0.4.0
+  - @shared/live-config-overrides@0.3.0
+  - @features/flow-predictions@0.4.0
+  - @domain/entity-account-name@0.5.0
+  - @features/flow-pay-card-widget@0.8.0
+  - @features/platform-account-discovery@0.2.0
+  - @features/platform-intent-scan-accounts@0.3.0
+  - @features/flow-pay-feature-tour@0.11.0
+  - @domain/entity-currency@0.5.1
+  - @features/platform-account-source-portfolio@0.1.1
+  - @features/platform-feature-flags@0.13.1
+  - @domain/api-account-data@0.6.1
+  - @domain/entity-account@0.4.1
+  - @domain/entity-account-balance@0.3.2
+  - @domain/entity-account-balance-history@0.3.1
+  - @domain/entity-account-data@0.6.1
+  - @domain/entity-account-operation@0.3.1
+  - @domain/entity-account-receive@0.1.1
+  - @features/flow-pay-card-wallets@0.6.5
+  - @features/platform-card@0.10.1
+  - @features/platform-predictions@0.4.2
+  - @devtools/intent-wallet-sync@0.2.1
+  - @features/flow-account-detail-analytics-notice@0.4.0
+
 ## 0.17.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.35.0
+
+### Minor Changes
+
+- [#24780](https://github.com/LedgerHQ/ledger-live/pull/24780) [`4049cdf`](https://github.com/LedgerHQ/ledger-live/commit/4049cdfd20d5fb9185d5caa98fa23b5d87e04b02) Thanks [@ishaba](https://github.com/ishaba)! - Add getTronifyQuote, createTronifyRentRecord and uploadTronifyHash so the Swap live app can rent TRON energy from Tronify
+
 ## 0.35.0-next.0
 
 ### Minor Changes

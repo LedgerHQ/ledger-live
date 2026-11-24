@@ -1,5 +1,16 @@
 # @features/platform-intent-wallet-sync
 
+## 0.4.0
+
+### Minor Changes
+
+- [#24882](https://github.com/LedgerHQ/ledger-live/pull/24882) [`76bab76`](https://github.com/LedgerHQ/ledger-live/commit/76bab76cf7009c9d5f6f54b2608157b3f0419a4e) Thanks [@ysitbon](https://github.com/ysitbon)! - Keep the Ledger Sync result of an add or remove member run when the device disconnects after the user approved it, unless Ledger Sync was reset in between. Each app orders late results with its own result order, passed in every add and remove member input. Ledger Wallet Desktop tracks the activation when the result arrives, so a late activation is tracked too.
+
+### Patch Changes
+
+- Updated dependencies [[`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906)]:
+  - @features/platform-device-intent@5.6.0
+
 ## 0.4.0-next.0
 
 ### Minor Changes

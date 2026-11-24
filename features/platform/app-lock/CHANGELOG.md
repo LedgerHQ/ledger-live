@@ -1,5 +1,11 @@
 # @features/platform-app-lock
 
+## 0.9.0
+
+### Minor Changes
+
+- [#24819](https://github.com/LedgerHQ/ledger-live/pull/24819) [`24d4a2b`](https://github.com/LedgerHQ/ledger-live/commit/24d4a2b525d71348b0b33fc031674bbec7787e9c) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the biometrics type wording keys verifiable by the i18n key check, and resolve the biometrics type label with one `useBiometricsTypeLabel` hook from `@features/platform-app-lock/native`. `@features/platform-app-lock` no longer exports `biometricsTypeKey`.
+
 ## 0.9.0-next.0
 
 ### Minor Changes

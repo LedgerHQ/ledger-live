@@ -1,5 +1,25 @@
 # @ledgerhq/live-dmk
 
+## 0.41.0
+
+### Minor Changes
+
+- [#24692](https://github.com/LedgerHQ/ledger-live/pull/24692) [`ffe7941`](https://github.com/LedgerHQ/ledger-live/commit/ffe794109361069c813d36d198f547d40eb79b7f) Thanks [@benruseau](https://github.com/benruseau)! - Mobile runs the OS update through `@features/flow-device-os-update` and `@features/platform-device-os-update`. `live-dmk-shared` no longer exports the os-update API and `live-common` drops `os-update/*`.
+
+- [#24850](https://github.com/LedgerHQ/ledger-live/pull/24850) [`a1f1062`](https://github.com/LedgerHQ/ledger-live/commit/a1f1062c50e1093d09dc5c20bd7bd9b2678f8b37) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add an embedded mode to the connect new device state machine (`embedded: true`), so that a parent state machine can run it with its own discovery service, and add `EmbeddedConnectNewDeviceUIState`
+
+- [#24866](https://github.com/LedgerHQ/ledger-live/pull/24866) [`3d9e16e`](https://github.com/LedgerHQ/ledger-live/commit/3d9e16e2de416fabd1a06e74dfc1235e4cb5c48d) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add the connect known or new device state machine: it lists the known, connected and discovered devices, connects, disconnects and removes a device, and embeds the connect new device state machine to add a new device
+
+- [#24875](https://github.com/LedgerHQ/ledger-live/pull/24875) [`cbb1cc6`](https://github.com/LedgerHQ/ledger-live/commit/cbb1cc65fb0ac744eac9fd46eee90f3fd87595fd) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add `connectKnownOrNewDeviceUseCase`: it returns the UI states of the connect known or new device state machine as an `Observable`, with `pause` and `resume`
+
+- [#25009](https://github.com/LedgerHQ/ledger-live/pull/25009) [`c98e265`](https://github.com/LedgerHQ/ledger-live/commit/c98e2659c3236ec7c4664ea28393cfb1eab0e8b0) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - The connectDevice and connectNewDevice state machines start the disconnection of the other devices' sessions when they connect, so that Ledger Wallet keeps one DMK session at a time. The connectNewDevice state machine uses the open session of the selected device instead of opening a second one, and no longer disconnects a session that it opened when it stops before calling onConnected
+
+- [#24835](https://github.com/LedgerHQ/ledger-live/pull/24835) [`d5357b4`](https://github.com/LedgerHQ/ledger-live/commit/d5357b4060ca40b0dbb86119bb614fa4e45fe2ed) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Save the last use time of each known device when the app saves a connection to it
+
+- [#24884](https://github.com/LedgerHQ/ledger-live/pull/24884) [`54dbb60`](https://github.com/LedgerHQ/ledger-live/commit/54dbb60cde959955f5965bf6710520a05c2cd1da) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the React exports of live-dmk-shared to a `@ledgerhq/live-dmk-shared/react` entry point so the root entry imports no React
+
+- [#25107](https://github.com/LedgerHQ/ledger-live/pull/25107) [`161ebff`](https://github.com/LedgerHQ/ledger-live/commit/161ebff460d0a96a53c707bd8d386e52596e1815) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP: delete a token from Manage assets on mobile
+
 ## 0.41.0-next.0
 
 ### Minor Changes

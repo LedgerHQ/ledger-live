@@ -1,5 +1,13 @@
 # @ledgerhq/wallet-cli
 
+## 3.7.0
+
+### Minor Changes
+
+- [#24983](https://github.com/LedgerHQ/ledger-live/pull/24983) [`f8afe58`](https://github.com/LedgerHQ/ledger-live/commit/f8afe58413ae68f5331031c27d9655dca1a56143) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Brand the account descriptor's DerivationPath and move the legacy path bridges to @domain/entity-account-descriptor
+
+- [#24934](https://github.com/LedgerHQ/ledger-live/pull/24934) [`696c871`](https://github.com/LedgerHQ/ledger-live/commit/696c8711cb852f12d747b0f41b011200e5ee46f3) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - `operations` returns `nextCursor` when the history is longer than `--limit`, `null` on the last page, and `--cursor` returns the next page; an unknown `--cursor` exits 1 with `InvalidOperationsCursorError`
+
 ## 3.7.0-next.0
 
 ### Minor Changes

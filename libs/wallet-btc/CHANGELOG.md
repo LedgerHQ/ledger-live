@@ -1,5 +1,15 @@
 # @ledgerhq/wallet-btc
 
+## 1.3.0
+
+### Minor Changes
+
+- [#25179](https://github.com/LedgerHQ/ledger-live/pull/25179) [`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/live-network` 3.4.1, `@ledgerhq/ledger-key-ring-protocol` 1.2.2, `@ledgerhq/domain-service` 1.10.1, `@ledgerhq/evm-tools` 2.1.1), `axios` to 1.21.1 and `ws` to 8.23.0.
+
+- [#25012](https://github.com/LedgerHQ/ledger-live/pull/25012) [`c80f5de`](https://github.com/LedgerHQ/ledger-live/commit/c80f5de17b263d8e111ddd3b3247b04f7b9a687a) Thanks [@dilaouid](https://github.com/dilaouid)! - Add Bitcoin Signet currency (bitcoin_signet)
+
+- [#24975](https://github.com/LedgerHQ/ledger-live/pull/24975) [`7692d02`](https://github.com/LedgerHQ/ledger-live/commit/7692d02a905fd17f638b71fe868e63576462371b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Use @noble/hashes hmac instead of create-hmac in bip32 derivation
+
 ## 1.3.0-next.0
 
 ### Minor Changes

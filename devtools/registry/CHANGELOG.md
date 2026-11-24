@@ -1,5 +1,28 @@
 # @devtools/registry
 
+## 0.10.0
+
+### Minor Changes
+
+- [#25015](https://github.com/LedgerHQ/ledger-live/pull/25015) [`0ed522e`](https://github.com/LedgerHQ/ledger-live/commit/0ed522eb7807af4e815f2aa3fd7d2bc18a1d35fc) Thanks [@deepyjr](https://github.com/deepyjr)! - Add an app-toggles DevTools tool with a toggle to hide the pre-release overlay on nightly builds
+
+- [#24868](https://github.com/LedgerHQ/ledger-live/pull/24868) [`2306c28`](https://github.com/LedgerHQ/ledger-live/commit/2306c2891e5ed4b13c36496bf22e184fa0dbf9d2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add the account-status DevTools tool, reading the `accountStatus` and `assetStatus` kinds per account and asset with the gates they make, and both kinds to the mock source
+
+- [#25155](https://github.com/LedgerHQ/ledger-live/pull/25155) [`6942305`](https://github.com/LedgerHQ/ledger-live/commit/694230569140fdc32c9ea7a0f0e906c4d2ded0a7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add an account discovery DevTools page: scan a currency with the scan accounts Device Intent and list the accounts found with what the scan cost
+
+### Patch Changes
+
+- Updated dependencies [[`0ed522e`](https://github.com/LedgerHQ/ledger-live/commit/0ed522eb7807af4e815f2aa3fd7d2bc18a1d35fc), [`2306c28`](https://github.com/LedgerHQ/ledger-live/commit/2306c2891e5ed4b13c36496bf22e184fa0dbf9d2), [`6942305`](https://github.com/LedgerHQ/ledger-live/commit/694230569140fdc32c9ea7a0f0e906c4d2ded0a7), [`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906), [`f5045dc`](https://github.com/LedgerHQ/ledger-live/commit/f5045dc9e69cf20b791779042acbaaf52b73b516)]:
+  - @devtools/app-toggles@0.1.0
+  - @devtools/account-status@0.1.0
+  - @devtools/mock-accounts@0.5.0
+  - @devtools/account-discovery@0.2.0
+  - @devtools/feature-flags@0.13.0
+  - @devtools/coin-config@0.3.0
+  - @devtools/receive@0.3.0
+  - @devtools/device-onboarding@0.6.2
+  - @devtools/intent-wallet-sync@0.2.1
+
 ## 0.10.0-next.0
 
 ### Minor Changes

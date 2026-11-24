@@ -1,5 +1,12 @@
 # @features/flow-pay-request
 
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-pay-analytics@0.4.1
+
 ## 0.11.1-next.0
 
 ### Patch Changes

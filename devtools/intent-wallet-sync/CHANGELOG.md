@@ -1,5 +1,12 @@
 # @devtools/intent-wallet-sync
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`76bab76`](https://github.com/LedgerHQ/ledger-live/commit/76bab76cf7009c9d5f6f54b2608157b3f0419a4e)]:
+  - @features/platform-intent-wallet-sync@0.4.0
+
 ## 0.2.1-next.0
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @devtools/shell
 
+## 0.16.0
+
+### Minor Changes
+
+- [#24902](https://github.com/LedgerHQ/ledger-live/pull/24902) [`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove unused exports and move single-platform types into the file that uses them
+
+### Patch Changes
+
+- Updated dependencies [[`0ed522e`](https://github.com/LedgerHQ/ledger-live/commit/0ed522eb7807af4e815f2aa3fd7d2bc18a1d35fc), [`2306c28`](https://github.com/LedgerHQ/ledger-live/commit/2306c2891e5ed4b13c36496bf22e184fa0dbf9d2), [`6942305`](https://github.com/LedgerHQ/ledger-live/commit/694230569140fdc32c9ea7a0f0e906c4d2ded0a7)]:
+  - @devtools/registry@0.10.0
+
 ## 0.16.0-next.0
 
 ### Minor Changes

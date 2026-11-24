@@ -1,5 +1,21 @@
 # @features/platform-account-source-coin-module
 
+## 0.4.0
+
+### Minor Changes
+
+- [#25244](https://github.com/LedgerHQ/ledger-live/pull/25244) [`301aafa`](https://github.com/LedgerHQ/ledger-live/commit/301aafac69656abedfccbf8acbd4634d9eb6f9bb) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Read the accountStatus kind from the coin modules that implement getAccountStatus
+
+### Patch Changes
+
+- Updated dependencies [[`4f46643`](https://github.com/LedgerHQ/ledger-live/commit/4f466432512683457cbdca0ce7b64ddbf678c64d), [`f8afe58`](https://github.com/LedgerHQ/ledger-live/commit/f8afe58413ae68f5331031c27d9655dca1a56143)]:
+  - @domain/entity-account-status@0.1.0
+  - @domain/entity-account-descriptor@0.7.0
+  - @domain/api-account-data@0.6.1
+  - @domain/entity-account-balance@0.3.2
+  - @domain/entity-account-data@0.6.1
+  - @domain/entity-account-operation@0.3.1
+
 ## 0.4.0-next.0
 
 ### Minor Changes
