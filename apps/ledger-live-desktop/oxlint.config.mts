@@ -2,6 +2,7 @@ import { defineConfig } from "oxlint";
 import {
   ACCOUNT_DATA_SETUP_FILES,
   ACCOUNT_DATA_SOURCES,
+  ACCOUNT_DESCRIPTOR,
   BIGNUMBER_NAMED_IMPORT,
   ELECTRON_CLIPBOARD,
   EXPO_CLIPBOARD,
@@ -95,6 +96,7 @@ export default defineConfig({
               "The app no longer initialises the i18next global singleton. Import the app instance (or its 't') from '~/renderer/i18n/init'.",
           },
           ...WALLET_FRAMEWORK_CURRENCY_TYPES,
+          ...ACCOUNT_DESCRIPTOR,
         ],
         patterns: [
           LIVE_COMMON_LIB,
@@ -113,7 +115,12 @@ export default defineConfig({
   overrides: [
     {
       files: ["src/main/systemHandlers.ts", "src/main/systemHandlers.test.ts"],
-      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+      rules: {
+        "eslint/no-restricted-imports": [
+          "error",
+          { paths: [BIGNUMBER_NAMED_IMPORT, ...ACCOUNT_DESCRIPTOR] },
+        ],
+      },
     },
     {
       files: ACCOUNT_DATA_SETUP_FILES,
@@ -121,7 +128,12 @@ export default defineConfig({
     },
     {
       files: ["src/renderer/families/**"],
-      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+      rules: {
+        "eslint/no-restricted-imports": [
+          "error",
+          { paths: [BIGNUMBER_NAMED_IMPORT, ...ACCOUNT_DESCRIPTOR] },
+        ],
+      },
     },
     {
       files: [

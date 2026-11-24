@@ -65,6 +65,21 @@ import, as `features-flow` imports `@ledgerhq/lumen-lint-plugin`: Nx hashes that
 `lint`, and marks the package affected when it changes, only through that edge. Subtrees that keep their own config for now (the apps, the e2e
 suites, a few legacy `libs/` trees) are listed in the plugin's `exclusions.mjs`.
 
+## The account descriptor stays at the edges
+
+Code holds the `AccountUUID`. `@domain/entity-account-descriptor`, which carries the descriptor and
+its key, and `@domain/entity-account/descriptor`, which computes the `AccountUUID` from it, are
+restricted by `ACCOUNT_DESCRIPTOR` in `restricted-imports.mts`. They are exact `paths` names, so
+tests keep the `./schema.mock` entries. `base` and `features-flow` list them, and so do the desktop
+and mobile app configs, their `src/config/account-data-setup` files aside.
+
+`ACCOUNT_DESCRIPTOR_EDGES` lists the packages allowed to import it, as paths from the repo root:
+the account data router (`domain/api/account-data`), the legacy bridge (`domain/entity/account`),
+`features/platform/account-data`, discovery and the account sources. `base` turns each into an
+override below its layer root; `features-flow` does the same for its entries, keeping its own
+restrictions. A temporary entry carries a comment naming the ticket that removes it.
+`devtools`, `libs/ledger-live-common` and `apps/wallet-cli` are edges too and stay unrestricted.
+
 ## Rules
 
 ### `suffix-imports/no-platform-suffix`

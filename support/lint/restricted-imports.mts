@@ -121,6 +121,30 @@ export const ACCOUNT_DATA_SETUP_FILES = [
   "src/config/account-data-setup.test.ts",
 ];
 
+// Code holds the AccountUUID; only ACCOUNT_DESCRIPTOR_EDGES import what carries the descriptor and its key.
+// `paths` entries match the exact name, so tests keep @domain/entity-account-descriptor/schema.mock.
+export const ACCOUNT_DESCRIPTOR = [
+  "@domain/entity-account-descriptor",
+  "@domain/entity-account/descriptor",
+].map(name => ({
+  name,
+  message:
+    "Hold the AccountUUID; the descriptor stays at the edges (ACCOUNT_DESCRIPTOR_EDGES in " +
+    "support/lint, wallet-cli, devtools). Read view data (network, path) from " +
+    "@domain/entity-account selectors. See docs/account-models.",
+}));
+
+// Paths from the repo root, turned into overrides by the base preset; unrestricted layers are not listed.
+export const ACCOUNT_DESCRIPTOR_EDGES = [
+  "domain/api/account-data",
+  "domain/entity/account",
+  "features/platform/account-data",
+  "features/platform/account-discovery",
+  "features/platform/account-source-*",
+  // LIVE-42227: the receive flow selects accounts by AccountUUID.
+  "features/flow/receive",
+];
+
 export const COIN_MODULE_CREATE_API = {
   group: ["@ledgerhq/coin-*/api", "@ledgerhq/coin-*/api/*"],
   importNamePattern: "^createApi$",
