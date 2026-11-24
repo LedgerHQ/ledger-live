@@ -6,25 +6,22 @@ import type { SignatureExtraProps } from "LLM/features/Send/screens/Signature/in
 import TranslatedError from "~/components/TranslatedError";
 import { useTranslation } from "~/context/Locale";
 
-type DeleteTokenIntentComponentLWMProps = Readonly<{
+type TokenSignatureIntentComponentLWMProps = Readonly<{
   jobState: SignTransactionIntentWithResultJobState | undefined;
   extraProps: SignatureExtraProps;
   onClose: () => void;
 }>;
 
-export function DeleteTokenIntentComponentLWM({
-  jobState,
-  extraProps,
-  onClose,
-}: DeleteTokenIntentComponentLWMProps) {
+export function TokenSignatureIntentComponentLWM(props: TokenSignatureIntentComponentLWMProps) {
   const { t } = useTranslation();
+  const jobState = props.jobState;
 
   if (jobState?.type !== "error") {
     return (
       <SignTransactionIntentComponentLWM
         jobState={jobState}
-        extraProps={extraProps}
-        onClose={onClose}
+        extraProps={props.extraProps}
+        onClose={props.onClose}
       />
     );
   }
@@ -38,10 +35,10 @@ export function DeleteTokenIntentComponentLWM({
       primaryCta={{
         label: t("common.retry"),
         onPress: jobState.retry,
-        testID: "xrp-delete-token-sign-retry",
+        testID: "xrp-token-sign-retry",
       }}
-      secondaryCta={{ label: t("common.close"), onPress: onClose }}
-      testID="xrp-delete-token-sign-error"
+      secondaryCta={{ label: t("common.close"), onPress: props.onClose }}
+      testID="xrp-token-sign-error"
     />
   );
 }

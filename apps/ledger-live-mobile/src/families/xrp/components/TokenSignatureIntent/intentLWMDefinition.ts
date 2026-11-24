@@ -3,10 +3,10 @@ import {
   type SignTransactionIntentWithResultPlatformDefinition,
 } from "@ledgerhq/live-common/intents/signTransactionIntent";
 import type { SignatureExtraProps } from "LLM/features/Send/screens/Signature/intents/signTransactionIntent/types";
-import { DeleteTokenIntentComponentLWM } from "./componentLWM";
+import { TokenSignatureIntentComponentLWM } from "./componentLWM";
 
-export const deleteTokenIntentLWMDefinition: SignTransactionIntentWithResultPlatformDefinition<SignatureExtraProps> =
+export const tokenSignatureIntentLWMDefinition: SignTransactionIntentWithResultPlatformDefinition<SignatureExtraProps> =
   {
     ...signTransactionIntentWithResultDefinition,
-    component: DeleteTokenIntentComponentLWM,
+    component: TokenSignatureIntentComponentLWM,
   };
