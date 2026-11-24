@@ -13,6 +13,13 @@ import {
   WALLET_FRAMEWORK_CURRENCY_TYPES,
 } from "@support/lint/restricted-imports";
 import { SUFFIX_IMPORTS_PLUGIN } from "@support/lint/plugins";
+import { coinFamiliesLint } from "@support/lint/coin-families";
+
+const coinFamilies = coinFamiliesLint({
+  familiesDir: "src/renderer/families",
+  barrel: "contract",
+  allow: ["modals-loaders"],
+});
 
 export default defineConfig({
   env: { browser: true, es6: true, node: true },
@@ -31,7 +38,7 @@ export default defineConfig({
   },
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest"],
-  jsPlugins: [SUFFIX_IMPORTS_PLUGIN],
+  jsPlugins: [SUFFIX_IMPORTS_PLUGIN, ...coinFamilies.jsPlugins],
   ignorePatterns: ["*.min.js", "src/mvvm/hooks/redux.ts", "tests/artifacts/**"],
   rules: {
     "eslint/no-unused-vars": "warn",
@@ -65,6 +72,9 @@ export default defineConfig({
     "eslint/no-restricted-properties": ["error", NAVIGATOR_CLIPBOARD],
     "import/no-duplicates": "error",
     "suffix-imports/no-platform-suffix": "error",
+    ...coinFamilies.rules,
+    "coin-families/no-family-branch": ["error", { familiesDir: "src/renderer/families" }],
+    "coin-families/no-currency-id-branch": ["error", { familiesDir: "src/renderer/families" }],
     "import/no-named-as-default": "off",
     "eslint/no-restricted-imports": [
       "error",
@@ -94,11 +104,6 @@ export default defineConfig({
             group: ["~/mvvm/**"],
             message:
               "Use 'LLD' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLD' in your imports.",
-          },
-          {
-            group: ["**/renderer/families/*/**", "~/renderer/families/*/**"],
-            message:
-              "families files must not be imported directly. use the bridge or export them through the LLDCoinFamily interface instead.",
           },
           LIVE_COMMON_FEATURE_FLAGS,
           LIVE_COMMON_CURRENCY_ACCESSORS,
@@ -132,6 +137,20 @@ export default defineConfig({
       env: { jest: true },
       plugins: ["jest"],
       rules: { "typescript/no-explicit-any": "warn" },
+    },
+    {
+      files: [
+        "**/*.test.*",
+        "**/__tests__/**",
+        "**/__integrations__/**",
+        "**/__mocks__/**",
+        "tests/**",
+      ],
+      rules: {
+        "coin-families/no-coin-specific-import": "off",
+        "coin-families/no-family-branch": "off",
+        "coin-families/no-currency-id-branch": "off",
+      },
     },
   ],
 });
