@@ -559,12 +559,9 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    # The performance pool's queue, so it never runs beside an iOS measurement.
-    concurrency:
-      group: mobile-startup-perf-ios
-      cancel-in-progress: false
-      queue: max
-    runs-on: ["qaa", macOS, ARM64, "performance-pool"]
+    # TEST BRANCH ONLY: on the pool build-ios runs on, out of the performance pool's queue. It times
+    # nothing, and on other Macs it still never runs beside an iOS measurement.
+    runs-on: ["general-pool", macOS, ARM64]
     timeout-minutes: 120
     env:
       SNAPSHOT_DIR: snapshot/ios
