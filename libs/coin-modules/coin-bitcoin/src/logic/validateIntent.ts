@@ -5,6 +5,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/types";
 import {
   AmountRequired,
+  FeeNotLoaded,
   FeeTooHigh,
   InvalidAddress,
   NotEnoughBalance,
@@ -177,6 +178,41 @@ function validateFeeRatio(
 }
 
 /**
+ * Whether `customFees` imposes a fee (`parameters.fees`) its estimate was not priced with
+ * (`parameters.fixedFee`). The inputs, the send-max amount and the verdict of an estimate all depend
+ * on its fee, so they cannot be checked against another: the caller estimates again with that fee.
+ */
+function isUnpricedFee(customFees: FeeEstimation | undefined): boolean {
+  const customFee = amountParameter(customFees?.parameters, "fees");
+  if (customFee === undefined || customFee <= 0n) return false;
+  return amountParameter(customFees?.parameters, "fixedFee") !== customFee;
+}
+
+/**
+ * The fee `customFees` stands for, read in the order `craftTransaction` imposes it: the caller's
+ * absolute fee (`parameters.fees`) first, else `value`, the estimate's fee at its rate. An estimate
+ * priced with that same fee (`parameters.fixedFee`) keeps its `value`: crafting also pays the change
+ * below the dust threshold it gives to the fee.
+ */
+function feeOf(customFees: FeeEstimation | undefined): bigint {
+  const value = customFees?.value ?? 0n;
+  const customFee = amountParameter(customFees?.parameters, "fees");
+  if (customFee === undefined || customFee <= 0n) return value;
+  return isUnpricedFee(customFees) || value < customFee ? customFee : value;
+}
+
+/**
+ * The estimate's parameters that hold for the fee validated: under a fee it was not priced with, its
+ * fee-dependent `amount` and `sufficient` are left out, so that no stale amount is reported.
+ */
+function parametersFor(customFees: FeeEstimation | undefined): FeeEstimation["parameters"] {
+  const parameters = customFees?.parameters;
+  if (!isUnpricedFee(customFees)) return parameters;
+  const { amount: _amount, sufficient: _sufficient, ...feeIndependent } = parameters ?? {};
+  return feeIndependent;
+}
+
+/**
  * Fee-agnostic validation of a transaction intent, from the intent and the balances passed in,
  * plus `customFees` when provided: recipient, amount (funds, dust), fees (relay minimum), OP_RETURN
  * data, coin control, and a warning when the fees are high. Makes no network call.
@@ -189,18 +225,30 @@ export async function validateIntent(
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
   const config = await context.config(currencyId);
-  const fees = customFees?.value ?? 0n;
+  const fees = feeOf(customFees);
+  const parameters = parametersFor(customFees);
   const nativeBalance = balances.find(balance => balance.asset.type === "native")?.value ?? 0n;
-  const sweep = amountParameter(customFees?.parameters, "amount");
-  const sweepValue = amountParameter(customFees?.parameters, "sweepValue");
+  const sweep = amountParameter(parameters, "amount");
+  const sweepValue = amountParameter(parameters, "sweepValue");
   const amount = computeAmount(intent, nativeBalance, fees, sweep, sweepValue);
 
   const recipient = await validateRecipient(currencyId, config.name, intent);
-  const funds = validateAmount(currencyId, intent, amount, fees, nativeBalance, customFees);
+  const funds = validateAmount(
+    currencyId,
+    intent,
+    amount,
+    fees,
+    nativeBalance,
+    customFees && { ...customFees, ...(parameters === undefined ? {} : { parameters }) },
+  );
   const fee = validateFees(fees, customFees?.parameters);
   const opReturn = validateOpReturn(currencyId, intent);
   const coinControl = validateCoinControl(intent);
   const feeRatio = validateFeeRatio(customFees, amount, fees);
+  // Reported under `fees`, after the other fee checks: estimating again with this fee clears it.
+  const unpriced: Validation = isUnpricedFee(customFees)
+    ? { errors: { fees: new FeeNotLoaded() }, warnings: {} }
+    : NONE;
 
   return {
     errors: {
@@ -210,6 +258,7 @@ export async function validateIntent(
       ...opReturn.errors,
       ...coinControl.errors,
       ...feeRatio.errors,
+      ...unpriced.errors,
     },
     warnings: {
       ...recipient.warnings,

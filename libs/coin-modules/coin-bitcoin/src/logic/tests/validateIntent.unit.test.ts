@@ -1,6 +1,7 @@
 import type { Balance, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import {
   AmountRequired,
+  FeeNotLoaded,
   FeeTooHigh,
   InvalidAddress,
   NotEnoughBalance,
@@ -244,6 +245,76 @@ describe("validateIntent", () => {
     );
     expect(result.amount).toBe(0n);
     expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+  });
+
+  it("keeps the value of an estimate priced with the caller's fee, which includes sub-dust change", async () => {
+    const result = await validateIntent(
+      testContext(),
+      "bitcoin",
+      intent({ amount: 10_000n }),
+      [{ value: 15_100n, asset: { type: "native" } }],
+      { value: 5_100n, parameters: { fees: 5_000n, fixedFee: 5_000n, sufficient: true } },
+    );
+    expect(result.estimatedFees).toBe(5_100n);
+    expect(result.totalSpent).toBe(15_100n);
+    expect(result.errors).toEqual({});
+  });
+
+  it("sends the amount an estimate priced with the caller's fee for useAllAmount", async () => {
+    const result = await validateIntent(
+      testContext(),
+      "bitcoin",
+      intent({ useAllAmount: true }),
+      [{ value: 80_000n, asset: { type: "native" } }],
+      {
+        value: 5_000n,
+        parameters: { fees: 5_000n, fixedFee: 5_000n, amount: 75_000n, sufficient: true },
+      },
+    );
+    expect(result.amount).toBe(75_000n);
+    expect(result.estimatedFees).toBe(5_000n);
+    expect(result.totalSpent).toBe(80_000n);
+    expect(result.errors).toEqual({});
+  });
+
+  it.each([
+    ["a rate", { value: 330n, parameters: { fees: 5_000n, feePerByte: 2n, sufficient: true } }],
+    ["another fee", { value: 4_000n, parameters: { fees: 5_000n, fixedFee: 4_000n } }],
+  ])(
+    "asks for a new estimate when the caller's fee overrides one priced with %s",
+    async (_pricedWith, customFees) => {
+      const result = await validateIntent(testContext(), "bitcoin", intent(), BALANCES, customFees);
+      expect(result.estimatedFees).toBe(5_000n);
+      expect(result.errors.fees).toBeInstanceOf(FeeNotLoaded);
+    },
+  );
+
+  it("keeps a rate-priced estimate's verdict for a selection, whatever the fee passed", async () => {
+    // 29,000 from a 30,000-sat selection at 13 sat/vB: crafting refuses it.
+    const result = await validateIntent(
+      testContext(),
+      "bitcoin",
+      withControl({ selectedUtxos: [`${"a".repeat(64)}:0`] }),
+      BALANCES,
+      { value: 0n, parameters: { feePerByte: 13n, sufficient: false } },
+    );
+    expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+  });
+
+  it("reports no stale send-max amount under a fee the estimate was not priced with", async () => {
+    // Estimated with 4,000: its amount (76,000) no longer holds under 5,000.
+    const result = await validateIntent(
+      testContext(),
+      "bitcoin",
+      intent({ useAllAmount: true }),
+      [{ value: 80_000n, asset: { type: "native" } }],
+      {
+        value: 4_000n,
+        parameters: { fees: 5_000n, fixedFee: 4_000n, amount: 76_000n, sufficient: true },
+      },
+    );
+    expect(result.amount).toBe(75_000n);
+    expect(result.errors.fees).toBeInstanceOf(FeeNotLoaded);
   });
 
   it("sends the sweep amount the estimate priced for useAllAmount, even above the confirmed balance", async () => {
