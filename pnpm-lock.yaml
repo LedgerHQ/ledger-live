@@ -1137,6 +1137,9 @@ importers:
       '@domain/api-market-index-fear-and-greed':
         specifier: workspace:^
         version: link:../../domain/api/market-index-fear-and-greed
+      '@domain/api-market-trending-categories':
+        specifier: workspace:*
+        version: link:../../domain/api/market-trending-categories
       '@domain/api-push-devices':
         specifier: workspace:*
         version: link:../../domain/api/push-devices
@@ -2084,6 +2087,9 @@ importers:
       '@domain/api-market-index-fear-and-greed':
         specifier: workspace:^
         version: link:../../domain/api/market-index-fear-and-greed
+      '@domain/api-market-trending-categories':
+        specifier: workspace:*
+        version: link:../../domain/api/market-trending-categories
       '@domain/api-push-devices':
         specifier: workspace:*
         version: link:../../domain/api/push-devices
