@@ -48,6 +48,9 @@ export type MarketAssetChartDataRequestParams = MarketCounterValueParams & {
 
 export { KeysPriceChange } from "@domain/entity-market-currency";
 
+export type { MarketCurrency };
+
+/** @deprecated Use `MarketCurrency` from `@domain/entity-market-currency`. */
 export type MarketCurrencyData = MarketCurrency;
 
 export type MarketPerformersParams = {

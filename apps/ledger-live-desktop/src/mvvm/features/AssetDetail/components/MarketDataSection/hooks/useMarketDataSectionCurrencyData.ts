@@ -1,12 +1,12 @@
 import { useSelector } from "LLD/hooks/redux";
 import type { Unit } from "@domain/entity-currency-unit";
-import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import type { AssetMarketData } from "@ledgerhq/asset-detail";
 import { resolveAssetDetailSectionLoading } from "../../../utils/resolveAssetDetailSectionLoading";
 
 export type MarketDataSectionCurrencyData = Readonly<{
-  data?: MarketCurrencyData;
+  data?: MarketCurrency;
   showSkeleton: boolean;
   counterCurrency: string;
   counterValueUnit: Unit;

@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { TFunction } from "i18next";
 import {
-  MarketCurrencyData,
+  MarketCurrency,
   MarketListRequestParams,
   Order,
 } from "@ledgerhq/live-common/market/utils/types";
@@ -13,7 +13,7 @@ import {
 import { track } from "@shared/analytics";
 
 export type MarketTableData = {
-  marketData: MarketCurrencyData[];
+  marketData: MarketCurrency[];
   marketParams: MarketListRequestParams;
   locale: string;
   freshLoading: boolean;

@@ -1,7 +1,7 @@
-import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { applyDadaMarketFallback } from "../applyDadaMarketFallback";
 
-const baseMarket = (overrides: Partial<MarketCurrencyData> = {}): MarketCurrencyData =>
+const baseMarket = (overrides: Partial<MarketCurrency> = {}): MarketCurrency =>
   ({
     id: "bitcoin",
     ledgerIds: ["bitcoin"],
@@ -12,7 +12,7 @@ const baseMarket = (overrides: Partial<MarketCurrencyData> = {}): MarketCurrency
     totalSupply: 19_500_000,
     maxSupply: 21_000_000,
     ...overrides,
-  }) as MarketCurrencyData;
+  }) as MarketCurrency;
 
 describe("applyDadaMarketFallback", () => {
   it("returns DADA values verbatim when all merged fields are present", () => {

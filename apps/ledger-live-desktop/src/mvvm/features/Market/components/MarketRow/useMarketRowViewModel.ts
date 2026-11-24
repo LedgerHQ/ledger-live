@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { roundFiatPrice } from "@ledgerhq/live-currency-format";
 import { getCurrentTrackingPage, setTrackingSource, track } from "@shared/analytics";
-import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrency, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { getAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 import { Page, useMarketActions } from "LLD/features/Market/hooks/useMarketActions";
 import { getMarketPageCategoryAnalytics } from "LLD/features/Market/utils/marketPageAnalytics";
@@ -16,7 +16,7 @@ import { useMarketCounterValueUnit } from "LLD/features/Market/hooks/useMarketCo
 type UseMarketRowViewModelProps = {
   size: number;
   start: number;
-  currency: MarketCurrencyData;
+  currency: MarketCurrency;
   counterCurrency?: string;
   locale: string;
   range?: string;

@@ -9,7 +9,7 @@ import {
   ListItemTrailing,
   Trend,
 } from "@ledgerhq/lumen-ui-react";
-import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrency, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import type { AssetNavigationMarketState } from "LLD/features/Assets/types";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { roundFiatPrice } from "@ledgerhq/live-currency-format";
@@ -24,7 +24,7 @@ const ICON_SIZE = {
 } as const satisfies Record<AssetSuggestionRowDensity, number>;
 
 type AssetSuggestionRowProps = {
-  currency: MarketCurrencyData;
+  currency: MarketCurrency;
   locale: string;
   testIdPrefix: string;
   onClick: (currencyId: string, marketState?: AssetNavigationMarketState) => void;

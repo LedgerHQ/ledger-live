@@ -1,4 +1,4 @@
-import { KeysPriceChange, MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { KeysPriceChange, MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { State } from "~/reducers/types";
 
@@ -30,8 +30,8 @@ const PRICE_CHANGE_ZERO: Record<KeysPriceChange, number> = {
 };
 
 export const createMarketCurrencyData = (
-  overrides: Partial<MarketCurrencyData> = {},
-): MarketCurrencyData => ({
+  overrides: Partial<MarketCurrency> = {},
+): MarketCurrency => ({
   id: "bitcoin",
   ledgerIds: ["bitcoin"],
   name: "Bitcoin",

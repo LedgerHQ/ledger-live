@@ -2,10 +2,7 @@ import { useMemo } from "react";
 import { useGetCurrencyDataQuery } from "@domain/api-market-currency";
 import { format } from "@ledgerhq/live-common/market/utils/currencyFormatter";
 import { applyUsdRateToMarket } from "@ledgerhq/live-common/market/utils/applyUsdRateToMarket";
-import type {
-  MarketCurrencyData,
-  MarketItemResponse,
-} from "@ledgerhq/live-common/market/utils/types";
+import type { MarketCurrency, MarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "@ledgerhq/live-common/market/utils/timers";
 import { assetsDataApi } from "@domain/api-aggregated-assets";
 import { selectCurrency, useAssetsData } from "@features/platform-aggregated-assets";
@@ -84,7 +81,7 @@ export function useAssetMarketData({
 
   const { status: rateStatus, rate } = useUsdToFiatRate(counterCurrency);
 
-  const marketCurrencyData = useMemo<MarketCurrencyData | undefined>(() => {
+  const marketCurrencyData = useMemo<MarketCurrency | undefined>(() => {
     if (dadaMarket) {
       const formattedDadaMarket = format(dadaMarket as MarketItemResponse);
       const merged = applyDadaMarketFallback(formattedDadaMarket, marketFromHook);

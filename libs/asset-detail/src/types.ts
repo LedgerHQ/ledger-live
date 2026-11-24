@@ -1,4 +1,4 @@
-import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 export type AssetDetailMarketInfo = Readonly<{
@@ -21,7 +21,7 @@ export type AssetMarketDataInput = Readonly<{
 }>;
 
 export type AssetMarketData = Readonly<{
-  marketCurrencyData?: MarketCurrencyData;
+  marketCurrencyData?: MarketCurrency;
   marketId?: string;
   isLoading: boolean;
 }>;

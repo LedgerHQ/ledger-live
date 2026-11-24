@@ -1,4 +1,4 @@
-import { KeysPriceChange, MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { KeysPriceChange, MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 
 const EMPTY_PRICE_CHANGE: Record<KeysPriceChange, number> = {
   [KeysPriceChange.hour]: 0,
@@ -27,7 +27,7 @@ export function buildSearchMarketCurrencyData({
   image,
   price,
   priceChangePercentage24h,
-}: BuildSearchMarketCurrencyDataParams): MarketCurrencyData {
+}: BuildSearchMarketCurrencyDataParams): MarketCurrency {
   return {
     id,
     name,

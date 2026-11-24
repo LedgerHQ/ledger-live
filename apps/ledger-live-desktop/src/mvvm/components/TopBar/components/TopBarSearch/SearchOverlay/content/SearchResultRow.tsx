@@ -1,10 +1,10 @@
 import React from "react";
-import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import type { AssetNavigationMarketState } from "LLD/features/Assets/types";
 import { AssetSuggestionRow } from "LLD/features/SearchAssets/components/AssetSuggestionRow";
 
 type SearchResultRowProps = {
-  currency: MarketCurrencyData;
+  currency: MarketCurrency;
   locale: string;
   onClick: (currencyId: string, marketState?: AssetNavigationMarketState) => void;
 };

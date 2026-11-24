@@ -1,11 +1,11 @@
 import { useRef, useEffect } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { listItemHeight } from "~/renderer/screens/market/components/Table";
 
 type UseMarketListVirtualizationParams = {
   itemCount: number;
-  marketData: MarketCurrencyData[];
+  marketData: MarketCurrency[];
   loading: boolean;
   currenciesLength: number;
   listKey: string;

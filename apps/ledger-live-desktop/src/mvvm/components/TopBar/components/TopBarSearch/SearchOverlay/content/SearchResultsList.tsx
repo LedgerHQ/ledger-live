@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { AssetSuggestionsSkeleton } from "LLD/features/SearchAssets/components/AssetSuggestionsSkeleton";
 import { useAssetSuggestionsSectionViewModel } from "LLD/features/SearchAssets/hooks/useAssetSuggestionsSectionViewModel";
 import { VirtualList } from "LLD/components/VirtualList";
@@ -16,7 +16,7 @@ export function SearchResultsList() {
   const { locale } = useAssetSuggestionsSectionViewModel();
 
   const renderResult = useCallback(
-    (currency: MarketCurrencyData) => (
+    (currency: MarketCurrency) => (
       <SearchResultRow currency={currency} locale={locale} onClick={navigateToAsset} />
     ),
     [locale, navigateToAsset],

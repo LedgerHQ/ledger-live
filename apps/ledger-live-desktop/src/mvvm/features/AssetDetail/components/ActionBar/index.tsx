@@ -1,7 +1,7 @@
 import React from "react";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { ActionBarView } from "./ActionBar";
 import { useActionBarViewModel } from "./useActionBarViewModel";
 
@@ -9,7 +9,7 @@ type ActionBarProps = Readonly<{
   distributionItem?: DistributionItem;
   ledgerCurrency?: CryptoOrTokenCurrency;
   ledgerIds?: readonly string[];
-  marketCurrencyData?: MarketCurrencyData;
+  marketCurrencyData?: MarketCurrency;
   tickerHint: string;
   isDistributionLoading: boolean;
   isMarketLoading: boolean;

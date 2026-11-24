@@ -1,11 +1,11 @@
-import type { MarketCurrencyData, MarketItemResponse } from "./types";
+import type { MarketCurrency, MarketItemResponse } from "./types";
 
 /**
- * Convert the USD-denominated fields of a {@link MarketCurrencyData} into the
+ * Convert the USD-denominated fields of a {@link MarketCurrency} into the
  * user's fiat by multiplying by `rate` (e.g., USD→EUR rate). Non-USD fields
  * (percentages, dates, supplies, chartData) are preserved unchanged.
  */
-export function applyUsdRateToMarket(data: MarketCurrencyData, rate: number): MarketCurrencyData {
+export function applyUsdRateToMarket(data: MarketCurrency, rate: number): MarketCurrency {
   if (rate === 1) return data;
 
   return {

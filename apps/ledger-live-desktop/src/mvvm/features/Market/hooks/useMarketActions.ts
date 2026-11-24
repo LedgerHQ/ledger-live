@@ -1,4 +1,4 @@
-import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { useCallback, useMemo } from "react";
 import { useLocation } from "react-router";
 import { setTrackingSource, track } from "@shared/analytics";
@@ -26,7 +26,7 @@ export enum Page {
 }
 
 type MarketActionsProps = {
-  currency?: MarketCurrencyData | null;
+  currency?: MarketCurrency | null;
   page?: Page;
 };
 

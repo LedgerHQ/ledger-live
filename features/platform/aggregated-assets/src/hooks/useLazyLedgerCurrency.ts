@@ -3,7 +3,7 @@ import type { GetAssetsDataParams } from "@domain/api-aggregated-assets";
 import { selectCurrency } from "../currencySelection";
 import { useLazyAssetData } from "./useLazyAssetData";
 
-/* Structural: the caller passes live-common's MarketCurrencyData, which this layer cannot import. */
+/* Structural: the caller passes live-common's MarketCurrency, which this layer cannot import. */
 interface CurrencyWithLedgerIds {
   id?: string;
   ledgerIds?: string[];

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useAssetsData, useStablecoinTickers } from "@features/platform-aggregated-assets";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
-import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { mapAssetsDataToMarketCurrencies } from "../utils/mapAssetsDataToMarketCurrencies";
@@ -36,7 +36,7 @@ export function useAssetSuggestionsViewModel({
   const isError = assetsError || tickersError || (hasData && rateStatus === "error");
 
   const cryptos = useMemo(() => {
-    const cryptosData: MarketCurrencyData[] = [];
+    const cryptosData: MarketCurrency[] = [];
 
     for (const currency of mapAssetsDataToMarketCurrencies(data, rate ?? 1)) {
       if (tickers.has(currency.ticker.toUpperCase())) continue;

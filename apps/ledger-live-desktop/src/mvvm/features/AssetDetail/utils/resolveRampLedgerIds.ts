@@ -1,6 +1,6 @@
 import type { AccountLike, DistributionItem } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { ledgerIdsFromLedgerCurrency } from "@ledgerhq/asset-detail";
 
@@ -16,7 +16,7 @@ function collectLedgerIdsForRampFromAccounts(accounts: AccountLike[]): string[] 
 
 type ResolveRampLedgerIdsParams = Readonly<{
   ledgerIds?: readonly string[];
-  marketCurrencyData?: MarketCurrencyData;
+  marketCurrencyData?: MarketCurrency;
   distributionItem?: DistributionItem;
   ledgerCurrency?: CryptoOrTokenCurrency;
 }>;

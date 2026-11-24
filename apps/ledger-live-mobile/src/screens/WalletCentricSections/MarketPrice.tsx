@@ -8,7 +8,7 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import Touchable from "~/components/Touchable";
 import { useSettings } from "~/hooks";
-import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrency, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { useTimeRange } from "~/actions/settings";
 import { PortfolioRange } from "@ledgerhq/types-live";
 import { resolveMarketId } from "LLM/features/Market/utils/marketIdResolver";
@@ -16,7 +16,7 @@ import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAsse
 
 type Props = {
   currency: CryptoOrTokenCurrency;
-  selectedCoinData: MarketCurrencyData;
+  selectedCoinData: MarketCurrency;
   counterValueUnit: Unit;
 };
 
@@ -35,7 +35,7 @@ const MarketPrice = ({ currency, selectedCoinData, counterValueUnit }: Props) =>
     });
   }, [currency, openFromMarket]);
 
-  const getPrice = (selectedCoinData: MarketCurrencyData, range: PortfolioRange) => {
+  const getPrice = (selectedCoinData: MarketCurrency, range: PortfolioRange) => {
     const key: KeysPriceChange = range === "all" ? KeysPriceChange.year : KeysPriceChange[range];
     return selectedCoinData.priceChangePercentage[key];
   };

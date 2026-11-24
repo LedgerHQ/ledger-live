@@ -1,6 +1,6 @@
 import { renderHook, act } from "tests/testSetup";
 import { useNavigate } from "react-router";
-import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { resetTrackingPages, setTrackingSource, track } from "@shared/analytics";
 import { useSearchOverlayViewModel } from "../useSearchOverlayViewModel";
 import { useAssetSearchBar } from "../useAssetSearchBar";
@@ -110,7 +110,7 @@ describe("useSearchOverlayViewModel", () => {
       act(() => {
         result.current.contextValue.navigateToAsset("bitcoin", {
           name: "Bitcoin",
-        } as MarketCurrencyData);
+        } as MarketCurrency);
       });
 
       expect(mockedTrack).toHaveBeenCalledWith("asset_clicked", {
@@ -129,7 +129,7 @@ describe("useSearchOverlayViewModel", () => {
       act(() => {
         result.current.contextValue.navigateToAsset("bitcoin", {
           name: "Bitcoin",
-        } as MarketCurrencyData);
+        } as MarketCurrency);
       });
 
       expect(mockedTrack).toHaveBeenCalledWith(

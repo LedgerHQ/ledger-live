@@ -1,5 +1,5 @@
 import {
-  MarketCurrencyData,
+  MarketCurrency,
   MarketItemPerformer,
   MarketItemResponse,
   KeysPriceChange,
@@ -119,7 +119,7 @@ export const MOCK_MARKET_PERFORMERS: MarketItemPerformer[] = [
 /**
  * Mock market currency data for testing across platforms
  */
-export const MOCK_MARKET_CURRENCY_DATA: MarketCurrencyData[] = [
+export const MOCK_MARKET_CURRENCY_DATA: MarketCurrency[] = [
   {
     id: "bitcoin",
     ledgerIds: ["bitcoin"],
@@ -183,8 +183,8 @@ export const MOCK_MARKET_CURRENCY_DATA: MarketCurrencyData[] = [
 ];
 
 export const createMockMarketCurrencyData = (
-  overrides: Partial<MarketCurrencyData> = {},
-): MarketCurrencyData => ({
+  overrides: Partial<MarketCurrency> = {},
+): MarketCurrency => ({
   ...MOCK_MARKET_CURRENCY_DATA[0],
   ...overrides,
 });

@@ -5,7 +5,7 @@ import {
   toMarketId,
 } from "@domain/api-aggregated-assets";
 import { applyUsdRateToMarket } from "@ledgerhq/live-common/market/utils/applyUsdRateToMarket";
-import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { buildSearchMarketCurrencyData } from "./buildSearchMarketCurrencyData";
 
 const NO_DEACTIVATED_CURRENCIES = new Set<string>();
@@ -15,7 +15,7 @@ export function mapAssetsDataToMarketCurrencies(
   data: AssetsDataWithPagination | undefined,
   usdToFiatRate = 1,
   deactivatedCurrencyIds: ReadonlySet<string> = NO_DEACTIVATED_CURRENCIES,
-): MarketCurrencyData[] {
+): MarketCurrency[] {
   if (!data) return [];
   const { cryptoAssets, markets, currenciesOrder } = data;
 

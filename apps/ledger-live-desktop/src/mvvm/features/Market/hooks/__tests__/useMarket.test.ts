@@ -1,7 +1,7 @@
 import { act, renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
 import {
   KeysPriceChange,
-  type MarketCurrencyData,
+  type MarketCurrency,
   Order,
 } from "@ledgerhq/live-common/market/utils/types";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
@@ -30,9 +30,7 @@ const PRICE_CHANGE_ZERO: Record<KeysPriceChange, number> = {
   [KeysPriceChange.year]: 0,
 };
 
-const createMarketCurrencyData = (
-  overrides: Partial<MarketCurrencyData> = {},
-): MarketCurrencyData => ({
+const createMarketCurrencyData = (overrides: Partial<MarketCurrency> = {}): MarketCurrency => ({
   id: "bitcoin",
   ledgerIds: ["bitcoin"],
   name: "Bitcoin",
@@ -55,7 +53,7 @@ const createMarketCurrencyData = (
   ...overrides,
 });
 
-const mockMarketData = (data: MarketCurrencyData[] = []) =>
+const mockMarketData = (data: MarketCurrency[] = []) =>
   mockedUseMarketData.mockReturnValue(
     createMockMarketListResult({
       data,

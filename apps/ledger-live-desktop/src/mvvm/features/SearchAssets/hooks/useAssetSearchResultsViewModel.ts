@@ -3,7 +3,7 @@ import { useAssetsData } from "@features/platform-aggregated-assets";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import useEnv from "@features/platform-env";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
-import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
@@ -15,7 +15,7 @@ type Params = {
 };
 
 type Result = {
-  data: MarketCurrencyData[];
+  data: MarketCurrency[];
   isLoading: boolean;
   isError: boolean;
   loadNext?: () => void;
@@ -44,7 +44,7 @@ export function useAssetSearchResultsViewModel({ search, skip }: Params): Result
   // Hide currencies disabled by a feature flag, mirroring the receive flow.
   const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
 
-  const results = useMemo<MarketCurrencyData[]>(
+  const results = useMemo<MarketCurrency[]>(
     () => mapAssetsDataToMarketCurrencies(data, rate ?? 1, deactivatedCurrencyIds),
     [data, rate, deactivatedCurrencyIds],
   );

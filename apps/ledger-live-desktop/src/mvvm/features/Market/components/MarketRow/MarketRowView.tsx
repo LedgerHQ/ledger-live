@@ -13,14 +13,14 @@ import {
   MediaImage,
 } from "@ledgerhq/lumen-ui-react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
-import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { TruncatedText } from "LLD/components/TruncatedText";
 import { MARKET_TABLE_GRID_TEMPLATE, MARKET_CELL_CLASSNAME } from "../MarketTable/constants";
 import { MarketRowActions, MarketRowActionsProps } from "./MarketRowActions";
 
 export type MarketRowViewProps = {
   style: React.CSSProperties;
-  currency: MarketCurrencyData;
+  currency: MarketCurrency;
   isStarred: boolean;
   priceChangePercentage: number | undefined;
   formattedPrice: string;

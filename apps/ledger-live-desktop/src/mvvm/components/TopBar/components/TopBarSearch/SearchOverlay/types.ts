@@ -1,11 +1,11 @@
-import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import type { AssetNavigationMarketState } from "LLD/features/Assets/types";
 import type { StockSuggestion } from "LLD/features/Stocks/types";
 
 export type SearchMode = "suggestions" | "results" | "noResults" | "error";
 
 export type AssetSuggestionSection = {
-  data: MarketCurrencyData[];
+  data: MarketCurrency[];
   isLoading: boolean;
 };
 
@@ -20,7 +20,7 @@ export type SearchSuggestions = {
 };
 
 export type SearchResults = {
-  data: MarketCurrencyData[];
+  data: MarketCurrency[];
   isLoading: boolean;
   loadNext?: () => void;
   hasNextPage: boolean;

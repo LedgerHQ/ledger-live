@@ -1,4 +1,4 @@
-import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { applySupplyFallback } from "./applySupplyFallback";
 
 /**
@@ -8,9 +8,9 @@ import { applySupplyFallback } from "./applySupplyFallback";
  * omitting the ticker when it has no data.
  */
 export function applyDadaMarketFallback(
-  dadaMarket: MarketCurrencyData,
-  coinGeckoMarket: MarketCurrencyData | undefined,
-): MarketCurrencyData {
+  dadaMarket: MarketCurrency,
+  coinGeckoMarket: MarketCurrency | undefined,
+): MarketCurrency {
   return applySupplyFallback(
     {
       ...dadaMarket,

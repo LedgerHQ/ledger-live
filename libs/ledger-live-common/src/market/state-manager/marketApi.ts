@@ -4,7 +4,7 @@ import { log } from "@ledgerhq/logs";
 import {
   MarketAssetChartDataRequestParams,
   MarketCoinDataChart,
-  MarketCurrencyData,
+  MarketCurrency,
   MarketCurrencyRequestParams,
   MarketItemPerformer,
   MarketItemResponse,
@@ -57,7 +57,7 @@ export const marketApi = createApi({
     MarketDataTags.MarketList,
   ],
   endpoints: build => ({
-    getMarketList: build.infiniteQuery<MarketCurrencyData[], MarketListQueryArg, number>({
+    getMarketList: build.infiniteQuery<MarketCurrency[], MarketListQueryArg, number>({
       query: ({ queryArg, pageParam }) => ({
         url: "/v3/markets",
         params: buildMarketListParams({ queryArg, page: pageParam }),
@@ -122,7 +122,7 @@ export const marketApi = createApi({
       providesTags: [MarketDataTags.CurrencyData],
       keepUnusedDataFor: (REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH) / 1000,
     }),
-    getCurrencyData: build.query<MarketCurrencyData | undefined, MarketCurrencyRequestParams>({
+    getCurrencyData: build.query<MarketCurrency | undefined, MarketCurrencyRequestParams>({
       query: ({ id, ledgerIds, counterCurrency }) => ({
         url: "/v3/markets",
         params: {

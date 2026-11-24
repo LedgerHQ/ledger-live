@@ -5,7 +5,7 @@ import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataP
 import { filterMarketPerformersByAvailability } from "@ledgerhq/live-common/market/utils/index";
 import {
   KeysPriceChange,
-  type MarketCurrencyData,
+  type MarketCurrency,
   type MarketItemPerformer,
   Order,
 } from "@ledgerhq/live-common/market/utils/types";
@@ -40,7 +40,7 @@ export type MarketBannerItems = {
   isError: boolean;
 };
 
-function toPerformer(currency: MarketCurrencyData): MarketItemPerformer {
+function toPerformer(currency: MarketCurrency): MarketItemPerformer {
   const change = currency.priceChangePercentage;
   return {
     id: currency.id,

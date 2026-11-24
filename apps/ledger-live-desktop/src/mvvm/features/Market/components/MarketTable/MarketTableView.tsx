@@ -2,7 +2,7 @@ import React from "react";
 import { TFunction } from "i18next";
 import { Virtualizer } from "@tanstack/react-virtual";
 import { TableRoot, Table, TableBody } from "@ledgerhq/lumen-ui-react";
-import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { TrackScreen } from "@shared/analytics-react";
 import { MarketFavoritesEmptyState } from "../MarketFavoritesEmptyState";
 import { MarketNoAssetsEmptyState } from "../MarketNoAssetsEmptyState";
@@ -13,7 +13,7 @@ import { MarketTableSkeleton } from "./MarketTableSkeleton";
 export type MarketTableViewProps = {
   parentRef: React.RefObject<HTMLDivElement | null>;
   rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
-  marketData: MarketCurrencyData[];
+  marketData: MarketCurrency[];
   counterCurrency?: string;
   range?: string;
   search?: string;

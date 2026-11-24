@@ -68,6 +68,15 @@ export const LIVE_COMMON_LIB = {
   message: "Please remove the /lib import from live-common import.",
 };
 
+export const LIVE_COMMON_MARKET_STATE_MANAGER = {
+  group: [
+    "@ledgerhq/live-common/market/state-manager",
+    "@ledgerhq/live-common/market/state-manager/**",
+  ],
+  message:
+    "The legacy market api is being removed. Import the endpoints from the @domain/api-market-* packages (currency, chart, index-global, performers, trending-categories).",
+};
+
 export const LIVE_COMMON_FEATURE_FLAGS = {
   group: [
     "@ledgerhq/live-common/featureFlags",

@@ -1,4 +1,4 @@
-import { KeysPriceChange, MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { KeysPriceChange, MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { formatPrice } from "@ledgerhq/live-currency-format";
 import type { Unit } from "@domain/entity-currency-unit";
 import type { TFunction } from "i18next";
@@ -14,7 +14,7 @@ interface MapOptions {
 }
 
 export function mapMarketCurrencyToDisplayData(
-  item: MarketCurrencyData,
+  item: MarketCurrency,
   { counterValueUnit, range, locale, t }: MapOptions,
 ): MarketAssetDisplayData {
   const change = item.priceChangePercentage[range];

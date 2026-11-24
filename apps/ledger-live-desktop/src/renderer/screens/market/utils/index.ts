@@ -1,4 +1,4 @@
-import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { listItemHeight } from "../components/Table";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 
@@ -7,8 +7,8 @@ export function getCurrentPage(scrollPosition: number, pageSize: number): number
   return Math.floor(scrollPosition / size) + 1;
 }
 
-/** Minimal shape for ramp on/off-ramp checks (full `MarketCurrencyData` is assignable). */
-export type MarketCurrencyRampLedgerIds = Pick<MarketCurrencyData, "ledgerIds">;
+/** Minimal shape for ramp on/off-ramp checks (full `MarketCurrency` is assignable). */
+export type MarketCurrencyRampLedgerIds = Pick<MarketCurrency, "ledgerIds">;
 
 export function isAvailableOnBuy(
   currency: MarketCurrencyRampLedgerIds | null | undefined,
@@ -35,7 +35,7 @@ export function isAvailableOnSwap(
 }
 
 export function isAvailableOnStake(
-  currency: MarketCurrencyData | null | undefined,
+  currency: MarketCurrency | null | undefined,
   getCanStakeCurrency: (currencyId: string) => boolean,
 ) {
   if (!currency) return false;

@@ -1,12 +1,12 @@
 import React, { memo } from "react";
-import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { MarketRowView } from "./MarketRowView";
 import { useMarketRowViewModel } from "./useMarketRowViewModel";
 
 export type MarketRowProps = {
   size: number;
   start: number;
-  currency: MarketCurrencyData;
+  currency: MarketCurrency;
   counterCurrency?: string;
   locale: string;
   range?: string;

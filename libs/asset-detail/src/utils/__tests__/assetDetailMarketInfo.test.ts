@@ -1,7 +1,7 @@
-import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { isMarketCurrencyData, resolveAssetDetailMarketInfo } from "../assetDetailMarketInfo";
 
-const baseMarket = (overrides: Partial<MarketCurrencyData> = {}): MarketCurrencyData =>
+const baseMarket = (overrides: Partial<MarketCurrency> = {}): MarketCurrency =>
   ({
     id: "bitcoin",
     ledgerIds: ["bitcoin"],
@@ -9,7 +9,7 @@ const baseMarket = (overrides: Partial<MarketCurrencyData> = {}): MarketCurrency
     ticker: "BTC",
     price: 1,
     ...overrides,
-  }) as MarketCurrencyData;
+  }) as MarketCurrency;
 
 describe("resolveAssetDetailMarketInfo", () => {
   it("returns the first defined source converted to AssetDetailMarketInfo", () => {
@@ -29,7 +29,7 @@ describe("resolveAssetDetailMarketInfo", () => {
   });
 
   it("skips a source that has neither id, name, ticker, price nor ledgerIds", () => {
-    const empty = { ledgerIds: [] } as unknown as MarketCurrencyData;
+    const empty = { ledgerIds: [] } as unknown as MarketCurrency;
     expect(resolveAssetDetailMarketInfo(empty, baseMarket({ name: "Fallback" }))).toMatchObject({
       name: "Fallback",
     });

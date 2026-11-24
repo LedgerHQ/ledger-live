@@ -1,8 +1,8 @@
-import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import type { AssetDetailMarketInfo } from "../types";
 
 function toAssetDetailMarketInfo(
-  source: MarketCurrencyData | undefined,
+  source: MarketCurrency | undefined,
 ): AssetDetailMarketInfo | undefined {
   if (!source) return undefined;
 
@@ -25,14 +25,14 @@ function toAssetDetailMarketInfo(
 }
 
 export function resolveAssetDetailMarketInfo(
-  ...sources: Array<MarketCurrencyData | undefined>
+  ...sources: Array<MarketCurrency | undefined>
 ): AssetDetailMarketInfo | undefined {
   return sources
     .map(toAssetDetailMarketInfo)
     .find((marketInfo): marketInfo is AssetDetailMarketInfo => marketInfo !== undefined);
 }
 
-export function isMarketCurrencyData(value: unknown): value is MarketCurrencyData {
+export function isMarketCurrencyData(value: unknown): value is MarketCurrency {
   return (
     typeof value === "object" &&
     value !== null &&

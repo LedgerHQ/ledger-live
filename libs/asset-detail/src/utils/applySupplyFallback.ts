@@ -1,7 +1,7 @@
-import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 
-type MarketCurrencyDataWithOptionalSupply = Omit<MarketCurrencyData, "totalSupply" | "maxSupply"> &
-  Partial<Pick<MarketCurrencyData, "totalSupply" | "maxSupply">>;
+type MarketCurrencyDataWithOptionalSupply = Omit<MarketCurrency, "totalSupply" | "maxSupply"> &
+  Partial<Pick<MarketCurrency, "totalSupply" | "maxSupply">>;
 
 /**
  * Merge DADA-derived market data with a CoinGecko fallback for supply fields.
@@ -11,9 +11,9 @@ type MarketCurrencyDataWithOptionalSupply = Omit<MarketCurrencyData, "totalSuppl
  * by the CoinGecko value when available.
  */
 export function applySupplyFallback(
-  dadaMarket: MarketCurrencyData,
-  coinGeckoMarket: MarketCurrencyData | undefined,
-): MarketCurrencyData {
+  dadaMarket: MarketCurrency,
+  coinGeckoMarket: MarketCurrency | undefined,
+): MarketCurrency {
   const marketWithSupplyFallback: MarketCurrencyDataWithOptionalSupply = {
     ...dadaMarket,
     circulatingSupply: dadaMarket.circulatingSupply || coinGeckoMarket?.circulatingSupply || 0,
@@ -21,5 +21,5 @@ export function applySupplyFallback(
     maxSupply: dadaMarket.maxSupply || coinGeckoMarket?.maxSupply,
   };
 
-  return marketWithSupplyFallback as MarketCurrencyData;
+  return marketWithSupplyFallback as MarketCurrency;
 }

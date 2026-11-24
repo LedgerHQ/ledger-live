@@ -8,6 +8,7 @@ import {
   LIVE_COMMON_CURRENCY_ACCESSORS,
   LIVE_COMMON_FEATURE_FLAGS,
   LIVE_COMMON_LIB,
+  LIVE_COMMON_MARKET_STATE_MANAGER,
   LODASH,
   NAVIGATOR_CLIPBOARD,
   WALLET_FRAMEWORK_CURRENCY_TYPES,
@@ -90,6 +91,7 @@ export default defineConfig({
         ],
         patterns: [
           LIVE_COMMON_LIB,
+          LIVE_COMMON_MARKET_STATE_MANAGER,
           {
             group: ["~/mvvm/**"],
             message:

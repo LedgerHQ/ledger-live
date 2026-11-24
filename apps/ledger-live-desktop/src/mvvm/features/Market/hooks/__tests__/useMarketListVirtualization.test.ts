@@ -2,15 +2,15 @@
  * @jest-environment jsdom
  */
 import { act, renderHook, waitFor } from "tests/testSetup";
-import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { useMarketListVirtualization } from "../useMarketListVirtualization";
 import { mockDomMeasurements, setRefCurrent } from "LLD/features/__tests__/shared";
 import { MOCK_MARKET_CURRENCY_DATA } from "@ledgerhq/live-common/market/utils/fixtures";
 
-const buildData = (count: number): MarketCurrencyData[] =>
+const buildData = (count: number): MarketCurrency[] =>
   Array.from(
     { length: count },
-    (_, index) => ({ ...MOCK_MARKET_CURRENCY_DATA[0], id: `asset-${index}` }) as MarketCurrencyData,
+    (_, index) => ({ ...MOCK_MARKET_CURRENCY_DATA[0], id: `asset-${index}` }) as MarketCurrency,
   );
 
 /**
@@ -163,7 +163,7 @@ describe("useMarketListVirtualization", () => {
     const shortList = buildData(5);
 
     const { result, rerender } = renderHook(
-      ({ marketData, listKey }: { marketData: MarketCurrencyData[]; listKey: string }) =>
+      ({ marketData, listKey }: { marketData: MarketCurrency[]; listKey: string }) =>
         useMarketListVirtualization({
           itemCount: marketData.length,
           marketData,

@@ -16,7 +16,7 @@ import {
   createMockMarketListResult,
   createMockMarketPerformer,
 } from "@ledgerhq/live-common/market/utils/fixtures";
-import { MarketItemPerformer, MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { MarketItemPerformer, MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 import { selectMarketBannerRanking } from "~/renderer/reducers/marketBanner";
 import { MARKET_BANNER_ITEMS_COUNT } from "../utils/constants";
 
@@ -71,7 +71,7 @@ function mockTrendingQuery(
 
 function mockMarketDataQuery(
   overrides: Partial<{
-    data: MarketCurrencyData[];
+    data: MarketCurrency[];
     isLoading: boolean;
     isFetching: boolean;
     isError: boolean;

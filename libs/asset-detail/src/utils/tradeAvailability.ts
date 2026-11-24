@@ -1,8 +1,8 @@
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { MarketCurrency } from "@ledgerhq/live-common/market/utils/types";
 
-/** Minimal shape for ramp on/off-ramp checks (full `MarketCurrencyData` is assignable). */
-export type MarketCurrencyRampLedgerIds = Pick<MarketCurrencyData, "ledgerIds">;
+/** Minimal shape for ramp on/off-ramp checks (full `MarketCurrency` is assignable). */
+export type MarketCurrencyRampLedgerIds = Pick<MarketCurrency, "ledgerIds">;
 
 export function isAvailableOnBuy(
   currency: MarketCurrencyRampLedgerIds | null | undefined,
