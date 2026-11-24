@@ -17,8 +17,8 @@ describe("SettingsRow", () => {
       />,
     );
 
-    expect(screen.getByText("MEV protection")).toBeInTheDocument();
-    expect(screen.getByText("Enable for more reliable transactions")).toBeInTheDocument();
+    expect(screen.getByText("MEV protection")).toBeVisible();
+    expect(screen.getByText("Enable for more reliable transactions")).toBeVisible();
     await user.click(screen.getByRole("button", { name: "Learn more" }));
     expect(onSelectLink).toHaveBeenCalledTimes(1);
   });
@@ -67,7 +67,7 @@ describe("SettingsRow", () => {
   it("shows a value", () => {
     render(<SettingsRow title="Version" trailing={{ type: "value", text: "2.140.0" }} />);
 
-    expect(screen.getByText("2.140.0")).toBeInTheDocument();
+    expect(screen.getByText("2.140.0")).toBeVisible();
   });
 
   it("shows the selected option and reports the new one", async () => {
@@ -114,6 +114,6 @@ describe("SettingsRow", () => {
     );
 
     expect(screen.queryByTestId("hidden-row")).not.toBeInTheDocument();
-    expect(screen.getByTestId("shown-row")).toBeInTheDocument();
+    expect(screen.getByTestId("shown-row")).toBeVisible();
   });
 });
