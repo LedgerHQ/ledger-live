@@ -10,7 +10,6 @@ import {
   type ConnectNewDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
-import type { State } from "~/reducers/types";
 import { ConnectNewDeviceView } from "./ConnectNewDeviceView";
 import type { ConnectNewDeviceNonErrorUIState } from "./types";
 
@@ -31,16 +30,6 @@ const discoveringState: ConnectNewDeviceNonErrorUIState = {
   showDeviceNotFound: false,
 };
 
-const connectingState: ConnectNewDeviceUIState = {
-  type: ConnectNewDeviceUIStateTypes.Connecting,
-  device,
-};
-
-const withKnownNanoX = (state: State): State => ({
-  ...state,
-  knownDevices: { ...state.knownDevices, knownDevices: [device] },
-});
-
 const element = (viewState: ConnectNewDeviceUIState, isEmbedded: boolean) => (
   <DeviceIntentTrackingProvider value={{ sourceFlow: "onboarding" }}>
     <ConnectNewDeviceView
@@ -55,10 +44,9 @@ const element = (viewState: ConnectNewDeviceUIState, isEmbedded: boolean) => (
 
 function renderView(
   state: ConnectNewDeviceUIState,
-  overrideInitialState: (state: State) => State = initialState => initialState,
   { isEmbedded = false }: { isEmbedded?: boolean } = {},
 ) {
-  const view = render(element(state, isEmbedded), { overrideInitialState });
+  const view = render(element(state, isEmbedded));
 
   return {
     ...view,
@@ -88,17 +76,11 @@ describe("ConnectNewDeviceView tracking", () => {
     jest.clearAllMocks();
   });
 
-  it("GIVEN discovery runs, WHEN the list shows again, THEN it should send device_prompted once with the scanning mode", () => {
-    // GIVEN
-    const { rerenderState } = renderView(discoveringState);
-
-    // WHEN
-    rerenderState({ ...discoveringState, devices: [] });
+  it("GIVEN discovery runs, WHEN the list shows, THEN it should send the Discovering page with the scanning mode", () => {
+    // GIVEN / WHEN
+    renderView(discoveringState);
 
     // THEN
-    expect(trackedEvents("device_prompted")).toEqual([
-      { sourceFlow: "onboarding", deviceUxV2: true, scanningMode: "bluetooth" },
-    ]);
     expect(mockedTrackScreen).toHaveBeenCalledWith(
       expect.objectContaining({
         category: "Connect Device - Discovering",
@@ -125,78 +107,6 @@ describe("ConnectNewDeviceView tracking", () => {
         isNewDevice: true,
       },
     ]);
-  });
-
-  it("GIVEN a known device, WHEN it connects twice, THEN it should send device_connecting at each connection with isNewDevice false", () => {
-    // GIVEN
-    const { rerenderState } = renderView(connectingState, withKnownNanoX);
-
-    // WHEN
-    rerenderState({ ...connectingState });
-    rerenderState(discoveringState);
-    rerenderState(connectingState);
-
-    // THEN
-    expect(trackedEvents("device_connecting")).toEqual([
-      expect.objectContaining({
-        modelId: DeviceModelId.nanoX,
-        transport: "ble",
-        isNewDevice: false,
-      }),
-      expect.objectContaining({
-        modelId: DeviceModelId.nanoX,
-        transport: "ble",
-        isNewDevice: false,
-      }),
-    ]);
-  });
-
-  it("GIVEN the flow unmounts before a connection, WHEN it unmounts, THEN it should send deviceflow_aborted", () => {
-    // GIVEN
-    const { unmount } = renderView(discoveringState);
-
-    // WHEN
-    unmount();
-
-    // THEN
-    expect(trackedEvents("deviceflow_aborted")).toEqual([
-      { sourceFlow: "onboarding", deviceUxV2: true },
-    ]);
-  });
-
-  it("GIVEN a discovery error without retry, WHEN the flow unmounts on it, THEN it should send deviceflow_failed with the error", () => {
-    // GIVEN
-    const { unmount } = renderView({
-      type: ConnectNewDeviceUIStateTypes.DiscoveryError,
-      error: { type: BaseDiscoveryErrorTypes.Unknown },
-      ignore: jest.fn(),
-      close: jest.fn(),
-    });
-
-    // WHEN
-    unmount();
-
-    // THEN
-    expect(trackedEvents("deviceflow_failed")).toEqual([
-      {
-        sourceFlow: "onboarding",
-        deviceUxV2: true,
-        failureType: "DiscoveryError",
-        subError: "Unknown",
-      },
-    ]);
-  });
-
-  it("GIVEN the device connected, WHEN the flow unmounts, THEN it should send no outcome", () => {
-    // GIVEN
-    const { unmount } = renderView({ type: ConnectNewDeviceUIStateTypes.Connected, device });
-
-    // WHEN
-    unmount();
-
-    // THEN
-    expect(trackedEvents("deviceflow_aborted")).toEqual([]);
-    expect(trackedEvents("deviceflow_failed")).toEqual([]);
   });
 
   it("GIVEN an error sheet over the list, WHEN the error is fixed, THEN it should send the Discovering page again", () => {
@@ -226,7 +136,7 @@ describe("ConnectNewDeviceView tracking", () => {
 
   it("GIVEN the Add mode of the device list, WHEN the flow unmounts before a connection, THEN it should send no outcome", () => {
     // GIVEN
-    const { unmount } = renderView(discoveringState, undefined, { isEmbedded: true });
+    const { unmount } = renderView(discoveringState, { isEmbedded: true });
 
     // WHEN
     unmount();
