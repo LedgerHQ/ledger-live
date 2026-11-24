@@ -1137,6 +1137,9 @@ importers:
       '@domain/api-market-index-fear-and-greed':
         specifier: workspace:^
         version: link:../../domain/api/market-index-fear-and-greed
+      '@domain/api-market-index-global':
+        specifier: workspace:^
+        version: link:../../domain/api/market-index-global
       '@domain/api-market-trending-categories':
         specifier: workspace:*
         version: link:../../domain/api/market-trending-categories
@@ -2090,6 +2093,9 @@ importers:
       '@domain/api-market-index-fear-and-greed':
         specifier: workspace:^
         version: link:../../domain/api/market-index-fear-and-greed
+      '@domain/api-market-index-global':
+        specifier: workspace:^
+        version: link:../../domain/api/market-index-global
       '@domain/api-market-trending-categories':
         specifier: workspace:*
         version: link:../../domain/api/market-trending-categories
@@ -20911,9 +20917,6 @@ importers:
       '@domain/api-market-countervalues':
         specifier: workspace:*
         version: link:../../domain/api/market-countervalues
-      '@domain/api-market-index-global':
-        specifier: workspace:*
-        version: link:../../domain/api/market-index-global
       '@domain/api-swap-quotes':
         specifier: workspace:^
         version: link:../../domain/api/swap-quotes
