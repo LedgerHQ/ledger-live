@@ -13,7 +13,7 @@ record() {
     if command -v xcodebuild > /dev/null; then echo "xcode: $(xcodebuild -version | paste -sd ' ' -)"; fi
     local java
     if java=$(java -version 2>&1); then echo "java: $(head -1 <<< "$java")"; fi
-    echo "node: $(node --version)"
+    # Not Node: each ref pins its own in mise.toml, so it is part of the code compared.
   } > "$file"
 }
 

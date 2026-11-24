@@ -190,7 +190,9 @@ function oneCommit(inputs: PlanInputs, lsRemote: LsRemote): Omit<Builds, "sides"
     labelA: inputs.refA || inputs.branchName,
     warnings: [],
     cacheA: a?.isReleaseTag ?? false,
-    reviewedB: true,
+    // B is A's commit: reviewed when A is the run's own branch (only develop's runs save), a
+    // release tag's, or develop, release or main.
+    reviewedB: !a || a.isReviewedBranch || a.isReleaseTag,
   };
 }
 

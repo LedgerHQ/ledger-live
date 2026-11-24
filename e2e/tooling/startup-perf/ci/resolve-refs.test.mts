@@ -182,7 +182,11 @@ describe("planBuilds", () => {
   });
 
   it("saves to the cache only from develop, when B is develop, release, main or A's own", () => {
-    const refs = fakeLsRemote([...REFS, [SHA(8), "refs/heads/main"]]);
+    const refs = fakeLsRemote([
+      ...REFS,
+      [SHA(8), "refs/heads/main"],
+      [SHA(9), "refs/heads/feat/x"],
+    ]);
     const save = (inputs: Partial<PlanInputs>) =>
       planBuilds({ ...INPUTS, branchName: "develop", ...inputs }, refs).save;
     const nightly = { preset: "prod-vs-develop", refA: "", refB: "" };
@@ -191,6 +195,11 @@ describe("planBuilds", () => {
     assert.equal(save({ refB: "main" }), true);
     assert.equal(save({ preset: "aa-noise" }), true);
     assert.equal(save({ preset: "known-regression" }), true);
+    // A single-commit run builds B from A's commit: reviewed only when A's ref is.
+    assert.equal(save({ preset: "aa-noise", refA: "release" }), true);
+    assert.equal(save({ preset: "known-regression", refA: "live-mobile@4.27.1" }), true);
+    assert.equal(save({ preset: "aa-noise", refA: "feat/x" }), false);
+    assert.equal(save({ preset: "known-regression", refA: "feat/x" }), false);
     assert.equal(save({ refB: "live-mobile@4.27.1" }), false);
     // Only develop's role writes develop/, which every run restores from.
     assert.equal(save({ ...nightly, branchName: "release" }), false);

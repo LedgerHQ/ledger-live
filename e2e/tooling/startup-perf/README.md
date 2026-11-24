@@ -120,15 +120,17 @@ this run may write it (`save`).
 - **Toolchain:** B is built on the day's runners, whose Xcode, JDK or `@develop` composites can
   change without changing the key. The week in the key rebuilds A at least weekly, and each build
   writes `toolchain.txt` beside `sha.txt` (`ci/toolchain.sh`): the measure jobs warn when A's and
-  B's differ, as a startup difference may then come from the toolchain.
+  B's differ, as a startup difference may then come from the toolchain. Node is left out: each ref
+  pins its own in `mise.toml`, so a different Node is part of the code compared.
 - **Restore (`restore-cache`):** every run reads `develop/`, which only develop's role writes, so
   no run restores a build a branch run made. An entry counts once its download succeeded and its
   check holds (build A: its commit and binary match): the job publishes it as the run's artifact,
   and the build matrices leave that side out.
 - **Save (`save-cache`):** only in a run from develop, and only when B is develop, release or main
   (the branches only a pull request changes), or in a single-commit preset (`aa-noise`,
-  `known-regression`), whose B is built from A's commit. A `custom` run with the same tag on both
-  sides is not saved. B's build job runs B's code, which could replace another job's artifact
+  `known-regression`), whose B is built from A's commit, when that commit is reviewed: the run's
+  own branch, a release tag's, or develop, release or main. A `custom` run with the same tag on
+  both sides is not saved. B's build job runs B's code, which could replace another job's artifact
   before it is cached. Build A is saved only when it is a release tag's.
 - **Isolation:** neither cache job runs the measured code, and the build jobs are given no cache
   credentials. They keep `id-token: write` for JFrog's OIDC login, though, so the code they build
