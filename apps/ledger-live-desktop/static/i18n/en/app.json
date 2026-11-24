@@ -5653,6 +5653,13 @@
   },
   "settings": {
     "title": "Settings",
+    "sections": {
+      "general": "General",
+      "assetManagement": "Asset management",
+      "security": "Security",
+      "privacy": "Privacy",
+      "about": "About"
+    },
     "discreet": "Toggle discreet mode",
     "tabs": {
       "display": "General",

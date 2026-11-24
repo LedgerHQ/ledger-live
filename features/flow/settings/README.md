@@ -7,13 +7,25 @@ The new Settings of Ledger Wallet mobile and desktop (Settings 4.0), shown behin
 feature flag. Both apps share the same sections, rows and wording; only the rendering differs. The
 legacy Settings stay in the apps, untouched, until the flag reaches 100%.
 
-The package starts with the rule for hiding rows. The screens come with the next tickets of the
+The sections come with the next tickets of the
 [Settings 4.0 epic](https://ledgerhq.atlassian.net/browse/LIVE-41813).
+
+## Sections
+
+| Export                   | Entry | Purpose                                                       |
+| ------------------------ | ----- | ------------------------------------------------------------- |
+| `SettingsSection`        | `.`   | Block of rows with an optional title                          |
+| `SETTINGS_SECTIONS`      | `.`   | General, Asset management, Security, Privacy, About           |
+| `resolveSettingsSection` | `.`   | Turns an address segment into a section, General when unknown |
+| `useSettingsLabels`      | `.`   | Page title and section names                                  |
 
 ## Hiding rows
 
 The app decides which rows to hide and passes the list to the new Settings. Apollo is the first
 use: on that device the app hides `myLedgerProvider` and `mockAppUpdate`.
+
+Wrap the Settings in `HiddenSettingsProvider` with that list; `useIsSettingHidden(settingId)` tells
+a row whether it is in it.
 
 | Export              | Purpose                                                                  |
 | ------------------- | ------------------------------------------------------------------------ |
