@@ -9,11 +9,11 @@ import {
 } from "@domain/api-currency-token";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
 import type { WithAccountBalances } from "@domain/entity-account-balance";
-import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
 import { selectAccountNameByUUID, type AccountNamesState } from "@domain/entity-account-name";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import { setOverride } from "@shared/feature-flags";
 import { useFeature } from "@features/platform-feature-flags";
+import { currencyIdFromNetwork } from "@domain/entity-network";
 
 type ReceiveToolProps = Extract<DevToolsConfig[number], { id: "receive" }>["config"];
 type ReceiveToolAsset = ReceiveToolProps["trigger"]["assets"][number];

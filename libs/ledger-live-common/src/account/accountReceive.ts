@@ -1,11 +1,11 @@
 import type { Account } from "@ledgerhq/types-live";
-import { LegacyDerivationPathSchema, type DerivationPath } from "@domain/entity-account-descriptor";
 import {
   AccountReceiveSchema,
   ReceiveAddressUnknownError,
   ReceivePathUnknownError,
   type AccountReceive,
 } from "@domain/entity-account-receive";
+import { LegacyDerivationPathSchema, type DerivationPath } from "@domain/entity-derivation";
 
 /** The path the device is asked at: throws rather than leave the address unverified. */
 export function freshAddressDevicePath(

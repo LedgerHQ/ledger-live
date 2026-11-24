@@ -1,4 +1,5 @@
-import { AccountDescriptorSchema, UnknownNetworkError } from "@domain/entity-account-descriptor";
+import { AccountDescriptorSchema } from "@domain/entity-account-descriptor";
+import { UnknownNetworkError } from "@domain/entity-network";
 import { accountIndexOf, mockDescriptors } from "./generate";
 
 const BASE58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";

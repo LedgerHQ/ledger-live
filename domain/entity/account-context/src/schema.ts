@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
+import { AccountUUIDSchema } from "@domain/entity-account";
 
 /** What an account needs beside its descriptor to be read in full, kept aside because the descriptor is shared and logged. */
 export const AccountContextSchema = z.object({

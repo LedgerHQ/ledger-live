@@ -13,7 +13,7 @@ Ledger Live main types.
 
 | Instead of | Use |
 | --- | --- |
-| `Account`, `account.id` | `AccountDescriptor` and its `AccountUUID`, from `@domain/entity-account-descriptor` |
+| `Account`, `account.id` | `AccountDescriptor` (`@domain/entity-account-descriptor`, edges only) and its `AccountUUID` (`@domain/entity-account`) |
 | `Account[]` from the legacy store | the `accounts` slice of `@domain/entity-account` |
 | `balance`, `operations`, `balanceHistoryCache`… | one `account-*` entity per concept, read with `useAccountData` |
 | `TokenAccount`, `subAccounts` | the token's rows in each entity, by `assetId` |

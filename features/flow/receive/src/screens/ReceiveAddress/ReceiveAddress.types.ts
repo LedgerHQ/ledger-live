@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import type { AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account";
 import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVerifyAddressExecutorViewModel";
 import type { ReceiveFamilyConfigPort, ReceiveServiceIncident } from "../../types";

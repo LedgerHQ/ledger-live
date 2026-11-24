@@ -1,5 +1,5 @@
 import type { AccountDataError, AccountDataStatus } from "@domain/entity-account-data";
-import type { AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account";
 
 /** What a list of accounts' statuses amounts to: the failed accounts, and whether a head read is in flight. */
 export function summarizeStatuses(

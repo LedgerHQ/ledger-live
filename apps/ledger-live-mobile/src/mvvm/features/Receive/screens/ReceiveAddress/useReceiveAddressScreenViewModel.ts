@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { accountsSlice } from "@domain/entity-account";
-import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
+import { currencyIdFromNetwork } from "@domain/entity-network";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import type {
   GetReceiveFamilyConfig,

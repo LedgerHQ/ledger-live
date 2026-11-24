@@ -1,4 +1,4 @@
-import type { DerivationPath } from "@domain/entity-account-descriptor";
+import type { DerivationPath } from "./derivationPath";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AccountCandidateSchema } from "./schema";
 import { candidateOf, derivationModesOf, offersNewAccount, scanOf } from "./scan";

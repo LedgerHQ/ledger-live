@@ -3,7 +3,7 @@ import {
   CryptoOrTokenCurrencyIdSchema,
   type CryptoOrTokenCurrencyId,
 } from "@domain/entity-currency";
-import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
+import { AccountUUIDSchema } from "@domain/entity-account";
 
 /** An on-chain step the account must take before it transacts, whatever the asset. */
 export const AccountGateSchema = z.discriminatedUnion("type", [

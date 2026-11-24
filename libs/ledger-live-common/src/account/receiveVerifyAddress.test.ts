@@ -1,5 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { AddressSchema, DerivationPathSchema } from "@domain/entity-account-descriptor";
+import { AddressSchema } from "@domain/entity-network";
+import { DerivationPathSchema } from "@domain/entity-derivation";
 import { genAccount } from "../mock/account";
 import { registerAllCoins } from "../coin-modules/load-all-coins";
 import { toReceiveVerifyAccount, toReceiveVerifyAddressOptions } from "./receiveVerifyAddress";

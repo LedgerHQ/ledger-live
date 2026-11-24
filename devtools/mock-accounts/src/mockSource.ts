@@ -5,8 +5,8 @@ import {
   type AccountDataQuery,
   type AccountDataResult,
 } from "@domain/entity-account-data";
-import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { currencyIdFromNetwork } from "@domain/entity-network";
 import { familyOf } from "./families";
 import { kinds } from "./kinds";
 import { operationCountOf } from "./operationCounts";

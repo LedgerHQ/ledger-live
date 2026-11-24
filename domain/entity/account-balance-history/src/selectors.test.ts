@@ -1,6 +1,6 @@
 import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { mockAssetBalanceHistory } from "./schema.mock";
 import { selectAccountAssetBalanceHistory, selectAccountBalanceHistory } from "./selectors";
 import { mockAccountBalanceHistoriesState } from "./slice.mock";

@@ -1,8 +1,9 @@
+import { DerivationPathSchema } from "@domain/entity-derivation";
+import { NetworkIdSchema } from "@domain/entity-network";
 import { InvalidAccountDescriptorError } from "./errors";
 import { ETH_ADDR, SOL_ADDR, XPUB } from "./test-fixtures";
-import { AccountDescriptorSchema, DerivationPathSchema, type AccountDescriptor } from "./schema";
+import { AccountDescriptorSchema, type AccountDescriptor } from "./schema";
 import { parseAccountDescriptor, serializeAccountDescriptor } from "./serialization";
-import { NetworkIdSchema } from "./network";
 
 const UTXO: AccountDescriptor = {
   purpose: "account",

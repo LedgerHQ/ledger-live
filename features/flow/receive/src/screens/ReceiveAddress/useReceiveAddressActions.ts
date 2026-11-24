@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import type { AccountUUID } from "@domain/entity-account-descriptor";
 import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
+import type { AccountUUID } from "@domain/entity-account";
 import type { ReceiveAddressCopy } from "../../copy/useReceiveAddressCopy";
 import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVerifyAddressExecutorViewModel";
 import { useVerifyAddressFlow } from "../../hooks/useVerifyAddressFlow";

@@ -1,8 +1,12 @@
 import { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import type { DevToolsConfig } from "@devtools/registry";
-import { AccountIdSchema, accountsSlice, type AccountsState } from "@domain/entity-account";
-import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
+import {
+  AccountIdSchema,
+  accountsSlice,
+  type AccountsState,
+  AccountUUIDSchema,
+} from "@domain/entity-account";
 import {
   getDefaultAccountName,
   selectAccountNameByUUID,

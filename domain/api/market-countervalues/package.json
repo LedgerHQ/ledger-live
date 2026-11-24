@@ -39,7 +39,7 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
-    "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-account": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@jest/globals": "catalog:",

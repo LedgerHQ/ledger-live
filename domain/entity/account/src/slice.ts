@@ -1,5 +1,4 @@
 import { createEntityAdapter, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { AccountUUID } from "@domain/entity-account-descriptor";
 import type { AccountId } from "./legacy/schema";
 import {
   initialAccountsState,
@@ -8,6 +7,7 @@ import {
   type LegacyAccountEntry,
   type RemoteAccountEntry,
 } from "./schema";
+import type { AccountUUID } from "./accountUUID";
 
 const accountsAdapter = createEntityAdapter({
   selectId: (entry: AccountEntry) => entry.accountUUID,

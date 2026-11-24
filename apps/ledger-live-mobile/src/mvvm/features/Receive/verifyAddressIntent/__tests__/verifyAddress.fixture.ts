@@ -1,5 +1,4 @@
 import { legacyAccountsSynced, AccountIdSchema, accountsSlice } from "@domain/entity-account";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -7,6 +6,7 @@ import type { VerifyAddressSelection } from "@features/flow-receive";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
 import type { State } from "~/reducers/types";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 
 export const VERIFY_ACCOUNT = genAccount("receive-verify-address", {
   currency: getCryptoCurrencyById("ethereum"),
