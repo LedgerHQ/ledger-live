@@ -11,7 +11,12 @@ import {
 } from "@features/platform-persistence";
 import { ACCOUNTS_VERSION_LINE } from "@features/platform-persistence-accounts";
 import { createMemoryStorage, type ListableStoragePort } from "@shared/storage";
-import { deleteAccount, importStore, updateAccountWithUpdater } from "~/actions/accounts";
+import {
+  addOneAccount,
+  deleteAccount,
+  importStore,
+  updateAccountWithUpdater,
+} from "~/actions/accounts";
 import accountModel from "~/logic/accountModel";
 import accounts, { exportSelector } from "~/reducers/accounts";
 import wallet, {
@@ -199,6 +204,30 @@ describe("mobile accounts on persistence", () => {
       entry: 1,
     });
     await expect(storage.keys(PREFIX)).resolves.toEqual([PREFIX + second.id]);
+  });
+
+  it("keeps an account from a newer version stored and hidden when the state adds and removes its id", async () => {
+    const newer = { $v: 1, data: entries.second };
+    const { store, storage, hydrate, report, set, remove } = setup({
+      [PREFIX + first.id]: entries.first,
+      [PREFIX + second.id]: newer,
+      [ORDER_KEY]: [first.id, second.id],
+    });
+    await hydrate();
+
+    expect(ids(store.getState())).toEqual([first.id]);
+    expect(report).toHaveBeenCalledWith(
+      expect.objectContaining({ key: "accounts", operation: "newer", entry: 1 }),
+    );
+
+    store.dispatch(addOneAccount(second));
+    await settle();
+    store.dispatch(deleteAccount(second));
+    await settle();
+
+    const writtenKeys = [...set.mock.calls, ...remove.mock.calls].map(([key]) => key);
+    expect(writtenKeys).not.toContain(PREFIX + second.id);
+    await expect(storage.get(PREFIX + second.id)).resolves.toEqual(newer);
   });
 
   it("drops an account with an unsupported derivation mode, as importStore does, but keeps its key", async () => {

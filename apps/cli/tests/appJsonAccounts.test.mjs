@@ -103,8 +103,8 @@ test("a bad account is a warning with its index only, and the other accounts loa
   assert.equal(JSON.parse(result.stdout).data.accounts.length, 2);
 });
 
-test("an account from a newer version is a warning, and liveData --add keeps it as it is", () => {
-  const newer = fixtureCopy("newer.json", file => {
+test("an account with a legacy version above the line is a warning, and liveData --add keeps it as it is", () => {
+  const newer = fixtureCopy("above-the-line.json", file => {
     file.data.accounts[1].version = 4;
     return file;
   });
@@ -118,6 +118,23 @@ test("an account from a newer version is a warning, and liveData --add keeps it 
   assert.equal(add.status, 0, add.stderr);
   assert.match(add.stdout, /0 accounts added/);
   assert.deepEqual(storedAccounts(newer)[1], newerAccount);
+});
+
+test("an account from a newer version is a warning, and liveData --add keeps it as it is", () => {
+  const newer = fixtureCopy("newer.json", file => {
+    file.data.accounts[1] = { $v: 1, data: file.data.accounts[1] };
+    return file;
+  });
+  const before = JSON.stringify(storedAccounts(newer)[1]);
+
+  const scan = runCli("liveData", "--appjsonFile", newer);
+  const add = runCli("liveData", "--appjsonFile", fixture, "--appjson", newer, "--add");
+
+  assert.equal(scan.status, 0, scan.stderr);
+  assert.match(scan.stderr, /skipped the account at index 1 \(NewerRecordVersionError\)/);
+  assert.equal(add.status, 0, add.stderr);
+  assert.match(add.stdout, /0 accounts added/);
+  assert.equal(JSON.stringify(storedAccounts(newer)[1]), before);
 });
 
 test("liveData --add does not add again an account whose stored entry is unreadable", () => {

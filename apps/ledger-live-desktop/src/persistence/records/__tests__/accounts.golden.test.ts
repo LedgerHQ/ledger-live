@@ -12,7 +12,11 @@ import { createMemoryStorage, StorageLockedError, type StoragePort } from "@shar
 import type { AccountRaw } from "@ledgerhq/types-live";
 import accountModel from "~/helpers/accountModel";
 import rootReducer, { type State } from "~/renderer/reducers";
-import { initAccounts, updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import {
+  initAccounts,
+  replaceAccounts,
+  updateAccountWithUpdater,
+} from "~/renderer/actions/accounts";
 import { accountsRecord } from "../accounts";
 import { legacyAccountsExport, legacyAccountsTransform } from "./legacyAccountsTransform";
 
@@ -174,6 +178,30 @@ describe("stored versions", () => {
       expect.objectContaining({ key: "accounts", operation: "decode", entry: 1 }),
     ]);
     await expect(storage.get("accounts")).resolves.toEqual([v4]);
+  });
+});
+
+describe("an account from a newer version", () => {
+  it("keeps it stored and hidden when the state adds and removes an account with its id", async () => {
+    const [bitcoin] = storedAccountsOf(ETH_FIXTURE);
+    const newer = { $v: 1, data: ethereumEntry() };
+    const [ethereum] = (await loadWithLegacy([ethereumEntry()])).accounts;
+    const { state, failures, store, storage } = await hydrateStored([bitcoin, newer]);
+
+    expect(state.accounts.map(account => account.id)).toEqual([bitcoin.data.id]);
+    expect(failures).toEqual([
+      expect.objectContaining({ key: "accounts", operation: "newer", entry: 1 }),
+    ]);
+
+    store.dispatch(replaceAccounts([...state.accounts, ethereum]));
+    await flushWrites();
+    const written = (await storage.get("accounts")) as unknown[];
+    expect(written).toHaveLength(2);
+    expect(written).toContainEqual(newer);
+
+    store.dispatch(replaceAccounts([]));
+    await flushWrites();
+    await expect(storage.get("accounts")).resolves.toEqual([newer]);
   });
 });
 
