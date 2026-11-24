@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@shared/i18n": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {

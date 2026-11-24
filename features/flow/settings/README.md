@@ -15,17 +15,22 @@ The sections come with the next tickets of the
 | Export                   | Entry | Purpose                                                       |
 | ------------------------ | ----- | ------------------------------------------------------------- |
 | `SettingsSection`        | `.`   | Block of rows with an optional title                          |
+| `SettingsRow`            | `.`   | Icon, title, description with an optional link, and a trailing element |
 | `SETTINGS_SECTIONS`      | `.`   | General, Asset management, Security, Privacy, About           |
 | `resolveSettingsSection` | `.`   | Turns an address segment into a section, General when unknown |
 | `useSettingsLabels`      | `.`   | Page title and section names                                  |
+
+A row's trailing element is a chevron, an external link, a toggle, a value, a select or a button.
+On mobile, the select opens its options in a bottom sheet (Lumen `SelectList`), like the web
+select opens its list: render the Settings under `QueuedBottomSheetsProvider`.
 
 ## Hiding rows
 
 The app decides which rows to hide and passes the list to the new Settings. Apollo is the first
 use: on that device the app hides `myLedgerProvider` and `mockAppUpdate`.
 
-Wrap the Settings in `HiddenSettingsProvider` with that list; `useIsSettingHidden(settingId)` tells
-a row whether it is in it.
+Wrap the Settings in `HiddenSettingsProvider` with that list: a `SettingsRow` whose `settingId`
+is in it is not rendered.
 
 | Export              | Purpose                                                                  |
 | ------------------- | ------------------------------------------------------------------------ |
