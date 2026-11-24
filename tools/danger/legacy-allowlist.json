@@ -124,5 +124,83 @@
     "reason": "Market client until CVS becomes the single market data source",
     "target": "@domain/entity-market, @domain/api-market",
     "ticket": "LIVE-40896"
+  },
+  {
+    "path": "apps/ledger-live-mobile/src/mvvm/components/DeviceIntentExecutor/",
+    "reason": "Device Intent Executor view-models until @features/platform-device-intent hosts the device connection UI",
+    "target": "@features/platform-device-intent",
+    "ticket": "LIVE-40918"
+  },
+  {
+    "path": "apps/ledger-live-desktop/src/mvvm/components/DeviceIntentExecutor/",
+    "reason": "Device Intent Executor view-models until @features/platform-device-intent hosts the device connection UI",
+    "target": "@features/platform-device-intent",
+    "ticket": "LIVE-40918"
+  },
+  {
+    "path": "apps/ledger-live-mobile/src/mvvm/components/DeviceConnection/",
+    "reason": "Shared device connection states until they move with the Device Intent Executor",
+    "target": "@features/platform-device-intent",
+    "ticket": "LIVE-40918"
+  },
+  {
+    "path": "apps/ledger-live-mobile/src/mvvm/components/ConnectNewDevice/",
+    "reason": "Connectivity screen until it moves with the Device Intent Executor",
+    "target": "@features/platform-device-intent",
+    "ticket": "LIVE-40918"
+  },
+  {
+    "path": "apps/ledger-live-mobile/src/mvvm/components/ConnectKnownOrNewDevice/",
+    "reason": "Known or new device picker until it moves with the Device Intent Executor",
+    "target": "@features/platform-device-intent",
+    "ticket": "LIVE-40918"
+  },
+  {
+    "path": "apps/ledger-live-mobile/src/mvvm/features/MyWallet/views/MyWalletDeviceList/",
+    "reason": "My Wallet device list until it moves with the Device Intent Executor",
+    "target": "@features/platform-device-intent",
+    "ticket": "LIVE-40918"
+  },
+  {
+    "path": "apps/ledger-live-mobile/src/mvvm/components/DeviceActionContent/",
+    "reason": "Device action UI until both apps use the shared package",
+    "target": "@features/platform-device-action-content",
+    "ticket": "LIVE-40918"
+  },
+  {
+    "path": "apps/ledger-live-desktop/src/mvvm/components/DeviceActionContent/",
+    "reason": "Device action UI until both apps use the shared package",
+    "target": "@features/platform-device-action-content",
+    "ticket": "LIVE-40918"
+  },
+  {
+    "path": "apps/ledger-live-mobile/src/mvvm/features/FirmwareUpdate/",
+    "reason": "Mobile firmware update until OS update is one shared flow on the DMK",
+    "target": "@features/platform-device-os-update",
+    "ticket": "LIVE-40919"
+  },
+  {
+    "path": "apps/ledger-live-mobile/src/mvvm/features/OsUpdate/",
+    "reason": "Mobile OS update until OS update is one shared flow on the DMK",
+    "target": "@features/platform-device-os-update",
+    "ticket": "LIVE-40919"
+  },
+  {
+    "path": "libs/live-dmk-shared/",
+    "reason": "DMK integration shared by both apps until DMK device actions move to the new layers",
+    "target": "@features/platform-device-kit, @domain/api-device",
+    "ticket": "LIVE-40918"
+  },
+  {
+    "path": "libs/live-dmk-desktop/",
+    "reason": "Desktop DMK integration until DMK device actions move to the new layers",
+    "target": "@features/platform-device-kit, @domain/api-device",
+    "ticket": "LIVE-40918"
+  },
+  {
+    "path": "libs/live-dmk-mobile/",
+    "reason": "Mobile DMK integration until DMK device actions move to the new layers",
+    "target": "@features/platform-device-kit, @domain/api-device",
+    "ticket": "LIVE-40918"
   }
 ]
