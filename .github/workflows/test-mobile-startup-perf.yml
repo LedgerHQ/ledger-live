@@ -644,7 +644,7 @@ jobs:
 
       - name: Prepare the AVD
         timeout-minutes: 40
-        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@4ec6885a30db21556edda855e40d5d9a3c811db7 # TEST BRANCH ONLY: #25344
         with:
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
@@ -833,7 +833,7 @@ jobs:
       - name: Prepare the AVD
         id: avd
         timeout-minutes: 40
-        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@4ec6885a30db21556edda855e40d5d9a3c811db7 # TEST BRANCH ONLY: #25344
         with:
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
