@@ -6,6 +6,7 @@ import {
   BaseDiscoveryErrorTypes,
   ConnectKnownOrNewDeviceUIStateTypes,
   ConnectNewDeviceUIStateTypes,
+  ConnectionErrorTypes,
   rnBleTransportIdentifier,
   type ConnectKnownOrNewDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
@@ -44,6 +45,23 @@ const addModeDiscovering = addMode({
   showDeviceNotFound: false,
 });
 
+const connecting: ConnectKnownOrNewDeviceUIState = {
+  type: ConnectKnownOrNewDeviceUIStateTypes.Connecting,
+  devices: [],
+  device,
+  close: jest.fn(),
+};
+
+const connectionError: ConnectKnownOrNewDeviceUIState = {
+  type: ConnectKnownOrNewDeviceUIStateTypes.ConnectionError,
+  devices: [],
+  error: { type: ConnectionErrorTypes.BlePairingRefused },
+  device,
+  retry: jest.fn(),
+  ignore: jest.fn(),
+  close: jest.fn(),
+};
+
 const TrackingProvider = ({ children }: { children?: React.ReactNode }) => (
   <DeviceIntentTrackingProvider value={{ sourceFlow: "my_wallet" }}>
     {children}
@@ -70,9 +88,36 @@ const outcomes = () =>
     .mocked(track)
     .mock.calls.filter(([name]) => name === "deviceflow_aborted" || name === "deviceflow_failed");
 
+const deviceConnectingEvents = () =>
+  jest.mocked(track).mock.calls.filter(([name]) => name === "device_connecting");
+
 describe("useConnectKnownOrNewDeviceTracking", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  it("GIVEN a device the app does not know, WHEN it connects twice, THEN it should send device_connecting at each connection with isNewDevice true", () => {
+    // GIVEN
+    const { showState } = renderTracking(connecting);
+
+    // WHEN
+    showState({ ...connecting });
+    showState(connectionError);
+    showState(connecting);
+
+    // THEN
+    const deviceConnecting = [
+      "device_connecting",
+      {
+        sourceFlow: "my_wallet",
+        deviceUxV2: true,
+        modelId: DeviceModelId.nanoX,
+        transport: "ble",
+        matchedDevice: DeviceModelId.nanoX,
+        isNewDevice: true,
+      },
+    ];
+    expect(deviceConnectingEvents()).toEqual([deviceConnecting, deviceConnecting]);
   });
 
   it("GIVEN the Add mode, WHEN the list leaves it before a connection, THEN it should send deviceflow_aborted", () => {

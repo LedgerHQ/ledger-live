@@ -472,32 +472,6 @@ describe("ConnectKnownOrNewDeviceView", () => {
       ]);
     });
 
-    it("GIVEN a device is connecting, WHEN the view renders, THEN it should send device_connecting with isNewDevice", () => {
-      // GIVEN / WHEN
-      const row = makeRow("Flex 329");
-      renderView(
-        {
-          type: ConnectKnownOrNewDeviceUIStateTypes.Connecting,
-          devices: [row],
-          device: row.device,
-          close: jest.fn(),
-        },
-        [row],
-      );
-
-      // THEN
-      expect(trackedEvents("device_connecting")).toEqual([
-        {
-          sourceFlow: "my_wallet",
-          deviceUxV2: true,
-          modelId: DeviceModelId.stax,
-          transport: "ble",
-          matchedDevice: DeviceModelId.stax,
-          isNewDevice: true,
-        },
-      ]);
-    });
-
     it("GIVEN a connection error over the list, WHEN the user closes it, THEN it should send Close and deviceflow_aborted with the error", async () => {
       // GIVEN
       const row = makeRow("Flex 329");
