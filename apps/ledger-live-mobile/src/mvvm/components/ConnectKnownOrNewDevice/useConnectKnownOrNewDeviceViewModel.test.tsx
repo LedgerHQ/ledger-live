@@ -1,3 +1,4 @@
+import React from "react";
 import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import { AppState, BackHandler, type AppStateStatus } from "react-native";
@@ -15,6 +16,7 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import type { DeviceConnectionResult, KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { State } from "~/reducers/types";
+import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import type { ConnectKnownOrNewDeviceProps } from "./types";
 import { useConnectKnownOrNewDeviceViewModel } from "./useConnectKnownOrNewDeviceViewModel";
 
@@ -119,6 +121,13 @@ const withKnownNanoX =
     },
   });
 
+// The view model sends the flow events: it needs the tracking context of the component.
+const TrackingProvider = ({ children }: { children?: React.ReactNode }) => (
+  <DeviceIntentTrackingProvider value={{ sourceFlow: "my_wallet" }}>
+    {children}
+  </DeviceIntentTrackingProvider>
+);
+
 function setup(
   props: Partial<ConnectKnownOrNewDeviceProps> = {},
   overrideInitialState: (state: State) => State = state => state,
@@ -133,6 +142,7 @@ function setup(
   let currentProps = initialProps;
   const rendered = renderHook(() => useConnectKnownOrNewDeviceViewModel(currentProps), {
     overrideInitialState,
+    innerWrapper: TrackingProvider,
   });
   const rerender = (nextProps: Partial<ConnectKnownOrNewDeviceProps>) => {
     currentProps = { ...initialProps, ...nextProps };

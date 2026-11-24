@@ -2,7 +2,6 @@ import React from "react";
 import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import type { ConnectNewDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
 import type { SelectableDevice } from "@ledgerhq/live-dmk-shared";
-import { useIsNewDevice } from "LLM/components/DeviceConnection";
 import { TrackDIEScreen } from "LLM/components/DeviceIntentExecutor/components/TrackDIEScreen";
 import { useDeviceIntentTracking } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import {
@@ -12,7 +11,7 @@ import {
   trackDeviceSelected,
 } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { useTranslation } from "~/context/Locale";
-import type { ConnectNewDeviceNonErrorUIState } from "../types";
+import type { ConnectNewDeviceNonErrorUIState, ConnectNewDeviceViewProps } from "../types";
 import { getScanningMode, type ScanningMode } from "../utils/getScanningMode";
 import { DeviceCard } from "./DeviceCard";
 import { StateLayout } from "./StateLayout";
@@ -25,6 +24,7 @@ type DiscoveringViewProps = {
   onDeviceNotFound?: () => void;
   /** True while an error sheet shows over the view: its page is sent again once the sheet closes. */
   isBehindErrorSheet: boolean;
+  isNewDevice: ConnectNewDeviceViewProps["isNewDevice"];
 };
 
 const descriptionKeys = {
@@ -37,10 +37,10 @@ export function DiscoveringView({
   state,
   onDeviceNotFound,
   isBehindErrorSheet,
+  isNewDevice,
 }: Readonly<DiscoveringViewProps>): React.ReactNode {
   const { t } = useTranslation();
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
-  const isNewDevice = useIsNewDevice();
   const scanningMode = getScanningMode(state.scanningTransports);
   // Until discovery runs, the scanned transports are unknown.
   const isScanning = state.scanningTransports.length > 0;

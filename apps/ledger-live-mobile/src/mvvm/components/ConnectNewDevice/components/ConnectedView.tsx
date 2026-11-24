@@ -1,6 +1,5 @@
 import React from "react";
 import type { ConnectNewDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
-import { useIsNewDevice } from "LLM/components/DeviceConnection";
 import { TrackDIEScreen } from "LLM/components/DeviceIntentExecutor/components/TrackDIEScreen";
 import {
   getTrackingTransport,
@@ -22,6 +21,8 @@ type ConnectedViewProps = {
   >;
   /** True while an error sheet shows over the view: its page is sent again once the sheet closes. */
   isBehindErrorSheet: boolean;
+  /** Whether the device is not in the known devices. */
+  isNewDevice: boolean;
 };
 
 const titleKeys = {
@@ -32,9 +33,9 @@ const titleKeys = {
 export function ConnectedView({
   state,
   isBehindErrorSheet,
+  isNewDevice,
 }: Readonly<ConnectedViewProps>): React.ReactNode {
   const { t } = useTranslation();
-  const isNewDevice = useIsNewDevice();
   const { device } = state;
 
   return (
@@ -44,7 +45,7 @@ export function ConnectedView({
           category={PAGE_CONNECT_DEVICE.Connected}
           modelId={device.deviceModelId}
           transport={getTrackingTransport(device.transport)}
-          isNewDevice={isNewDevice(device)}
+          isNewDevice={isNewDevice}
           refreshSource
         />
       )}

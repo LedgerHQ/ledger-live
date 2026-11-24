@@ -1,3 +1,4 @@
+import React from "react";
 import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -12,6 +13,7 @@ import {
   type ConnectNewDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import type { DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import type { ConnectNewDeviceProps } from "./types";
 import { useConnectNewDeviceViewModel } from "./useConnectNewDeviceViewModel";
 
@@ -96,6 +98,13 @@ function useCaseInput() {
   return mockedConnectNewDevice.mock.calls[0][0];
 }
 
+// The view model sends the flow events: it needs the tracking context of the component.
+const TrackingProvider = ({ children }: { children?: React.ReactNode }) => (
+  <DeviceIntentTrackingProvider value={{ sourceFlow: "onboarding" }}>
+    {children}
+  </DeviceIntentTrackingProvider>
+);
+
 function renderViewModel(props: Partial<ConnectNewDeviceProps> = {}) {
   const allProps: ConnectNewDeviceProps = {
     sourceFlow: "onboarding",
@@ -105,7 +114,12 @@ function renderViewModel(props: Partial<ConnectNewDeviceProps> = {}) {
     ...props,
   };
 
-  return { ...renderHook(() => useConnectNewDeviceViewModel(allProps)), props: allProps };
+  return {
+    ...renderHook(() => useConnectNewDeviceViewModel(allProps), {
+      innerWrapper: TrackingProvider,
+    }),
+    props: allProps,
+  };
 }
 
 describe("useConnectNewDeviceViewModel", () => {
@@ -153,7 +167,9 @@ describe("useConnectNewDeviceViewModel", () => {
       onDeviceNotFound: jest.fn(),
       onClose: jest.fn(),
     };
-    const { rerender } = renderHook(() => useConnectNewDeviceViewModel(props));
+    const { rerender } = renderHook(() => useConnectNewDeviceViewModel(props), {
+      innerWrapper: TrackingProvider,
+    });
 
     // WHEN
     props = { ...props, onClose };

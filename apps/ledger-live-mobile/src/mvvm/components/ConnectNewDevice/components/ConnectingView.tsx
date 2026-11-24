@@ -1,7 +1,6 @@
 import React from "react";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { ConnectNewDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
-import { useIsNewDevice } from "LLM/components/DeviceConnection";
 import { TrackDIEScreen } from "LLM/components/DeviceIntentExecutor/components/TrackDIEScreen";
 import {
   getTrackingTransport,
@@ -19,6 +18,8 @@ type ConnectingViewProps = {
   >;
   /** True while an error sheet shows over the view: its page is sent again once the sheet closes. */
   isBehindErrorSheet: boolean;
+  /** Whether the device is not in the known devices. */
+  isNewDevice: boolean;
 };
 
 const titleKeys = {
@@ -29,12 +30,12 @@ const titleKeys = {
 export function ConnectingView({
   state,
   isBehindErrorSheet,
+  isNewDevice,
 }: Readonly<ConnectingViewProps>): React.ReactNode {
   const { t } = useTranslation();
   const { device } = state;
   const deviceName = device.name ?? t("deviceIntentExecutor.connectDevice.common.ledgerDevice");
   const transport = getDeviceTransport(device.transport);
-  const isNewDevice = useIsNewDevice();
 
   return (
     <>
@@ -43,7 +44,7 @@ export function ConnectingView({
           category={PAGE_CONNECT_DEVICE.Connecting}
           modelId={device.deviceModelId}
           transport={getTrackingTransport(device.transport)}
-          isNewDevice={isNewDevice(device)}
+          isNewDevice={isNewDevice}
           refreshSource
         />
       )}

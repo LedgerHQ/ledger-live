@@ -30,28 +30,24 @@ const discoveringState: ConnectNewDeviceNonErrorUIState = {
   showDeviceNotFound: false,
 };
 
-const element = (viewState: ConnectNewDeviceUIState, reportsOutcome: boolean) => (
+const element = (viewState: ConnectNewDeviceUIState) => (
   <DeviceIntentTrackingProvider value={{ sourceFlow: "onboarding" }}>
     <ConnectNewDeviceView
       state={viewState}
       lastNonErrorState={discoveringState}
       platform="android"
       onCloseErrorSheet={jest.fn()}
-      reportsOutcome={reportsOutcome}
+      isNewDevice={() => true}
     />
   </DeviceIntentTrackingProvider>
 );
 
-function renderView(
-  state: ConnectNewDeviceUIState,
-  { reportsOutcome = true }: { reportsOutcome?: boolean } = {},
-) {
-  const view = render(element(state, reportsOutcome));
+function renderView(state: ConnectNewDeviceUIState) {
+  const view = render(element(state));
 
   return {
     ...view,
-    rerenderState: (viewState: ConnectNewDeviceUIState) =>
-      view.rerender(element(viewState, reportsOutcome)),
+    rerenderState: (viewState: ConnectNewDeviceUIState) => view.rerender(element(viewState)),
   };
 }
 
@@ -132,16 +128,5 @@ describe("ConnectNewDeviceView tracking", () => {
     expect(trackedEvents("button_clicked")).toEqual([
       { sourceFlow: "onboarding", deviceUxV2: true, button: "Close", subError: "Unknown" },
     ]);
-  });
-
-  it("GIVEN the Add mode of the device list, WHEN the flow unmounts before a connection, THEN it should send no outcome", () => {
-    // GIVEN
-    const { unmount } = renderView(discoveringState, { reportsOutcome: false });
-
-    // WHEN
-    unmount();
-
-    // THEN
-    expect(trackedEvents("deviceflow_aborted")).toEqual([]);
   });
 });

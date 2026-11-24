@@ -6,7 +6,11 @@ import {
   ConnectNewDeviceUIStateTypes,
   useDeviceManagementKit,
 } from "@ledgerhq/live-dmk-mobile";
-import { useIsNewConnectedDevice, useSaveConnectedDevice } from "LLM/components/DeviceConnection";
+import {
+  useIsNewConnectedDevice,
+  useIsNewDevice,
+  useSaveConnectedDevice,
+} from "LLM/components/DeviceConnection";
 import {
   getConnectedDeviceTrackingProperties,
   trackDeviceConnected,
@@ -18,6 +22,7 @@ import type {
   ConnectNewDeviceProps,
   ConnectNewDeviceViewProps,
 } from "./types";
+import { useConnectNewDeviceTracking } from "./useConnectNewDeviceTracking";
 import { isErrorState } from "./utils/isErrorState";
 
 const LOG_TYPE = "ConnectNewDevice";
@@ -38,12 +43,13 @@ export function useConnectNewDeviceViewModel({
   onDeviceNotFound,
   onClose,
   delays,
-}: ConnectNewDeviceProps): Omit<ConnectNewDeviceViewProps, "reportsOutcome"> {
+}: ConnectNewDeviceProps): ConnectNewDeviceViewProps {
   const platform = Platform.OS === "ios" ? "ios" : "android";
   const dmk = useDeviceManagementKit();
   const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
   const saveConnectedDevice = useSaveConnectedDevice();
   const isNewConnectedDevice = useIsNewConnectedDevice();
+  const isNewDevice = useIsNewDevice();
   const [viewState, setViewState] = useState<ViewState>({
     state: INITIAL_STATE,
     lastNonErrorState: INITIAL_STATE,
@@ -93,6 +99,7 @@ export function useConnectNewDeviceViewModel({
   }, [dmk, isMockServerEnabled, saveConnectedDevice]);
 
   const { state } = viewState;
+  useConnectNewDeviceTracking(state, { reportsOutcome: true });
 
   const onCloseErrorSheet = useCallback(() => {
     switch (state.type) {
@@ -114,5 +121,6 @@ export function useConnectNewDeviceViewModel({
     platform,
     onDeviceNotFound,
     onCloseErrorSheet,
+    isNewDevice,
   };
 }

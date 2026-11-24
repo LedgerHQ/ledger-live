@@ -1,17 +1,14 @@
 import React from "react";
 import { Box, IconButton } from "@ledgerhq/lumen-ui-rnative";
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
-import {
-  ConnectNewDeviceView,
-  type ConnectNewDeviceViewProps,
-} from "LLM/components/ConnectNewDevice";
+import { ConnectNewDeviceView } from "LLM/components/ConnectNewDevice";
 import { useTranslation } from "~/context/Locale";
+import type { AddModeViewProps } from "./types";
 
-type AddModeProps = Omit<ConnectNewDeviceViewProps, "reportsOutcome"> & {
-  onClose: () => void;
-};
-
-export function AddMode({ onClose, ...viewProps }: Readonly<AddModeProps>): React.JSX.Element {
+export function AddModeView({
+  onClose,
+  ...viewProps
+}: Readonly<AddModeViewProps>): React.JSX.Element {
   const { t } = useTranslation();
 
   return (
@@ -26,7 +23,7 @@ export function AddMode({ onClose, ...viewProps }: Readonly<AddModeProps>): Reac
           testID="connect-known-or-new-device-add-mode-close"
         />
       </Box>
-      <ConnectNewDeviceView {...viewProps} reportsOutcome={false} />
+      <ConnectNewDeviceView {...viewProps} />
     </Box>
   );
 }

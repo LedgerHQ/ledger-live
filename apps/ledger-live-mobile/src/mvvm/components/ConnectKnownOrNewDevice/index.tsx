@@ -13,11 +13,14 @@ export type { ConnectKnownOrNewDeviceProps } from "./types";
  * `sourceFlow` of the caller.
  */
 export function ConnectKnownOrNewDevice(props: Readonly<ConnectKnownOrNewDeviceProps>) {
-  const viewModel = useConnectKnownOrNewDeviceViewModel(props);
-
   return (
     <DeviceIntentTrackingProvider value={{ sourceFlow: props.sourceFlow }}>
-      <ConnectKnownOrNewDeviceView {...viewModel} />
+      <ConnectKnownOrNewDeviceContainer {...props} />
     </DeviceIntentTrackingProvider>
   );
+}
+
+// Inside the provider: the view model sends tracking events.
+function ConnectKnownOrNewDeviceContainer(props: Readonly<ConnectKnownOrNewDeviceProps>) {
+  return <ConnectKnownOrNewDeviceView {...useConnectKnownOrNewDeviceViewModel(props)} />;
 }

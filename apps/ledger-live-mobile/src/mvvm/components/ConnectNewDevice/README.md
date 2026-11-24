@@ -44,11 +44,11 @@ Discovery, connection and unknown errors show in a bottom sheet, over the last v
 The component sends its events itself, with the Device UX V2 helpers of the DIE (`../DeviceIntentExecutor/utils/trackDeviceIntent.ts`). The events and their properties are in the [tracking plan](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7620034573).
 
 - The views send the pages and the buttons of their state: the `Connect Device - Discovering`, `Connecting` and `Connected` pages, `device_selected`, "I don't see my device", and the pages and buttons of the error sheet.
-- `useConnectNewDeviceTracking` sends the flow events: `device_prompted` once discovery runs, `device_connecting` at each connection and, alone, `deviceflow_aborted` or `deviceflow_failed` when the flow unmounts before a connection. In the Add mode of the device list (`reportsOutcome={false}`), the device list sends the outcome.
+- `useConnectNewDeviceTracking`, called by the view model, sends the flow events: `device_prompted` once discovery runs, `device_connecting` at each connection, and `deviceflow_aborted` or `deviceflow_failed` when the flow unmounts before a connection. With `reportsOutcome: false`, it sends no outcome: the Add mode of the device list passes it, because the device list sends the outcome.
 - The view under an error sheet sends its page again once the sheet closes. The `Close` button of an error sheet is sent only when the user presses it, not when the sheet closes for another reason.
 - The view model sends `device_connected`, before it saves the device.
-- `isNewDevice` is `true` when the device is not in the known devices (`useIsNewDevice`). It goes on the events about one device.
-- `ConnectNewDeviceView` reads `sourceFlow` from `DeviceIntentTrackingProvider`. A parent that shows the view gives this provider, as `ConnectKnownOrNewDevice` does. So the events are the same in the Add mode of the device list.
+- `isNewDevice` is `true` when the device is not in the known devices (`useIsNewDevice`). It goes on the events about one device. The view model gives it to the view.
+- `ConnectNewDeviceView` reads `sourceFlow` from `DeviceIntentTrackingProvider`. A parent that shows the view gives this provider, calls `useConnectNewDeviceTracking` in its view model and gives `isNewDevice`, as the Add mode of `ConnectKnownOrNewDevice` does. So the events are the same in the Add mode of the device list.
 
 ## Try it
 

@@ -37,6 +37,7 @@ import type {
   ConnectKnownOrNewDeviceProps,
   ConnectKnownOrNewDeviceViewProps,
 } from "./types";
+import { useConnectKnownOrNewDeviceTracking } from "./useConnectKnownOrNewDeviceTracking";
 import { assertNever } from "./utils/assertNever";
 
 const LOG_TYPE = "ConnectKnownOrNewDevice";
@@ -267,6 +268,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   }, [shouldPause]);
 
   const { state } = viewState;
+  useConnectKnownOrNewDeviceTracking(state);
   const isAdding = state.type === ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice;
 
   const wasAddingRef = useRef(false);

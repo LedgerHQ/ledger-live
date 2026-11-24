@@ -58,11 +58,14 @@ const TrackingProvider = ({ children }: { children?: React.ReactNode }) => (
 
 function renderTracking(
   initialState: ConnectNewDeviceUIState,
-  overrideInitialState: (state: State) => State = state => state,
+  {
+    overrideInitialState = state => state,
+    reportsOutcome = true,
+  }: { overrideInitialState?: (state: State) => State; reportsOutcome?: boolean } = {},
 ) {
   let uiState = initialState;
   const { rerender, unmount } = renderHook(
-    () => useConnectNewDeviceTracking(uiState, { reportsOutcome: true }),
+    () => useConnectNewDeviceTracking(uiState, { reportsOutcome }),
     { innerWrapper: TrackingProvider, overrideInitialState },
   );
 
@@ -130,7 +133,7 @@ describe("useConnectNewDeviceTracking", () => {
 
   it("GIVEN a known device, WHEN it connects twice, THEN it should send device_connecting at each connection with isNewDevice false", () => {
     // GIVEN
-    const { showState } = renderTracking(connecting, withKnownNanoX);
+    const { showState } = renderTracking(connecting, { overrideInitialState: withKnownNanoX });
 
     // WHEN
     showState({ ...connecting });
@@ -203,6 +206,17 @@ describe("useConnectNewDeviceTracking", () => {
       expect(outcomes()).toEqual([aborted]);
     },
   );
+
+  it("GIVEN a flow that does not report its outcome, as in the Add mode, WHEN it unmounts before a connection, THEN it should send no outcome", () => {
+    // GIVEN
+    const { unmount } = renderTracking(discovering, { reportsOutcome: false });
+
+    // WHEN
+    unmount();
+
+    // THEN
+    expect(outcomes()).toEqual([]);
+  });
 
   it("GIVEN the device connected, WHEN the flow unmounts, THEN it should send no outcome", () => {
     // GIVEN

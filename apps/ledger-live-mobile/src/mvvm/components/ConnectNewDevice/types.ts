@@ -2,7 +2,7 @@ import type {
   ConnectNewDeviceUIState,
   ConnectNewDeviceUIStateTypes,
 } from "@ledgerhq/live-dmk-mobile";
-import type { DeviceConnectionResult, SourceFlow } from "@ledgerhq/live-dmk-shared";
+import type { Device, DeviceConnectionResult, SourceFlow } from "@ledgerhq/live-dmk-shared";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 
 export type ConnectNewDeviceDelays = {
@@ -51,6 +51,6 @@ export type ConnectNewDeviceViewProps = {
   onDeviceNotFound?: () => void;
   /** Called on every close of the error sheet, also when `state` leaves an error. */
   onCloseErrorSheet: () => void;
-  /** False in the Add mode of the device list, which sends the outcome of the flow itself. */
-  reportsOutcome: boolean;
+  /** Whether a device is not in the known devices, for the events about that device. */
+  isNewDevice: (device: Device) => boolean;
 };
