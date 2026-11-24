@@ -1,4 +1,5 @@
-// Rationale and reported shapes: support/lint/README.md#coin-familiesno-family-branch.
+// Rationale and reported shapes: support/lint/README.md#coin-familiesno-family-branch and
+// support/lint/README.md#coin-familiesno-currency-id-branch.
 
 import fs from "node:fs";
 
@@ -29,8 +30,28 @@ const FAMILIES = new Set(
     .map(entry => entry.name),
 );
 
+const CURRENCY_MESSAGE = `Generic code must not branch on a currency id. Put the behaviour in the family of the currency and reach it through the families contract. See ${SKILL}`;
+
+// The registry of currency ids, one file per currency, each declaring its id at the top level.
+const CURRENCIES_DIRECTORY = new URL(
+  "../../../domain/entity/currency-crypto/src/currencies/",
+  import.meta.url,
+);
+const CURRENCY_ID_DECLARATION = /^ {2}id: "([^"]+)"/m;
+
+/** @type {Set<string>} */
+const CURRENCY_IDS = new Set();
+for (const file of fs.readdirSync(CURRENCIES_DIRECTORY)) {
+  if (!file.endsWith(".ts") || file === "index.ts") continue;
+  const source = fs.readFileSync(new URL(file, CURRENCIES_DIRECTORY), "utf8");
+  const id = CURRENCY_ID_DECLARATION.exec(source)?.[1];
+  if (id) CURRENCY_IDS.add(id);
+}
+
 // Only the names that hold a family. `fontFamily` and `deviceFamily` are not families.
 const FAMILY_IDENTIFIER = /^(?:family|currencyFamily|.+CurrencyFamily)$/;
+// Only the names that hold a currency id. `accountId` and `tokenId` are not currency ids.
+const CURRENCY_ID_NAME = /^(?:currencyId|.+CurrencyId)$/;
 
 const EQUALITY_OPERATORS = new Set(["===", "!==", "==", "!="]);
 const MEMBERSHIP_METHODS = new Set(["includes", "has", "indexOf"]);
@@ -83,20 +104,46 @@ function isFamilyExpression(node) {
 
 /**
  * @param {any} node
- * @returns {boolean} whether `node` is an array literal, or a `new Set` of one, that holds a family name
+ * @returns {boolean} whether `node` reads a currency id: `.currency.id`, `currency.id`, or a name that holds one
  */
-function isFamilyList(node) {
+function isCurrencyIdExpression(node) {
   const target = unwrap(node);
-  const isSet =
-    target?.type === "NewExpression" &&
-    target.callee?.type === "Identifier" &&
-    target.callee.name === "Set";
-  const list = isSet ? unwrap(target.arguments?.[0]) : target;
-  return (
-    list?.type === "ArrayExpression" &&
-    list.elements.some(element => FAMILIES.has(stringValue(element) ?? ""))
-  );
+  if (target?.type === "Identifier") return CURRENCY_ID_NAME.test(target.name);
+  if (target?.type !== "MemberExpression" || target.computed) return false;
+  if (target.property?.type !== "Identifier") return false;
+  if (CURRENCY_ID_NAME.test(target.property.name)) return true;
+
+  const owner = unwrap(target.object);
+  const isCurrency =
+    (owner?.type === "Identifier" && owner.name === "currency") ||
+    (owner?.type === "MemberExpression" &&
+      !owner.computed &&
+      owner.property?.type === "Identifier" &&
+      owner.property.name === "currency");
+  return target.property.name === "id" && isCurrency;
 }
+
+/**
+ * @param {(node: any) => boolean} isLiteral
+ * @returns {(node: any) => boolean} whether a node is an array literal, or a `new Set` of one, that holds a literal
+ */
+function listHolding(isLiteral) {
+  return node => {
+    const target = unwrap(node);
+    const isSet =
+      target?.type === "NewExpression" &&
+      target.callee?.type === "Identifier" &&
+      target.callee.name === "Set";
+    const list = isSet ? unwrap(target.arguments?.[0]) : target;
+    return list?.type === "ArrayExpression" && list.elements.some(isLiteral);
+  };
+}
+
+/** @param {any} node */
+const isFamilyLiteral = node => FAMILIES.has(stringValue(node) ?? "");
+
+/** @param {any} node */
+const isCurrencyIdLiteral = node => CURRENCY_IDS.has(stringValue(node) ?? "");
 
 /**
  * @param {{ isExpression: (node: any) => boolean, isList: (node: any) => boolean, isLiteral: (node: any) => boolean, message: string }} branch
@@ -169,9 +216,16 @@ function createBranchRule({ isExpression, isList, isLiteral, message }) {
 
 const noFamilyBranch = createBranchRule({
   isExpression: isFamilyExpression,
-  isList: isFamilyList,
-  isLiteral: node => FAMILIES.has(stringValue(node) ?? ""),
+  isList: listHolding(isFamilyLiteral),
+  isLiteral: isFamilyLiteral,
   message: FAMILY_MESSAGE,
 });
 
-export { noFamilyBranch };
+const noCurrencyIdBranch = createBranchRule({
+  isExpression: isCurrencyIdExpression,
+  isList: listHolding(isCurrencyIdLiteral),
+  isLiteral: isCurrencyIdLiteral,
+  message: CURRENCY_MESSAGE,
+});
+
+export { noCurrencyIdBranch, noFamilyBranch };

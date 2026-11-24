@@ -2,7 +2,7 @@
 
 import path from "node:path";
 
-import { noFamilyBranch } from "./branch-rules.js";
+import { noCurrencyIdBranch, noFamilyBranch } from "./branch-rules.js";
 import { appRoot, isInFamilies } from "./families-folder.js";
 import { isSpecifierCall } from "./specifier-calls.js";
 
@@ -249,5 +249,6 @@ export default {
   rules: {
     "no-coin-specific-import": noCoinSpecificImport,
     "no-family-branch": withDirectiveReport(noFamilyBranch),
+    "no-currency-id-branch": withDirectiveReport(noCurrencyIdBranch),
   },
 };

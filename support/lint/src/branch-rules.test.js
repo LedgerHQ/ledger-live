@@ -26,10 +26,14 @@ function fixture(files) {
   return root;
 }
 
-const oxlintrc = options =>
+const ID_RULE = "no-currency-id-branch";
+
+const oxlintrc = (rules = [RULE], options) =>
   JSON.stringify({
     jsPlugins: [COIN_FAMILIES_PLUGIN],
-    rules: { [`coin-families/${RULE}`]: options ? ["error", options] : "error" },
+    rules: Object.fromEntries(
+      rules.map(rule => [`coin-families/${rule}`, options ? ["error", options] : "error"]),
+    ),
   });
 
 /**
@@ -50,22 +54,32 @@ const ruleReports = stdout => stdout.split("\n").filter(line => line.includes(RU
 
 /**
  * @param {string[]} lines the source of `app/src/Generic.ts`, one entry per line
- * @returns {number[]} the lines that are reported
+ * @param {string[]} [rules] the rules that are on
+ * @returns {string[]} the reports, as `line:rule`, in line order
  */
-function reportedLines(lines) {
+function reportedBy(lines, rules = [RULE]) {
   const root = fixture({
-    ".oxlintrc.json": oxlintrc(),
+    ".oxlintrc.json": oxlintrc(rules),
     "app/package.json": "{}",
     "app/src/Generic.ts": lines.join("\n") + "\n",
   });
   const { stdout } = oxlint(root, ["--format", "unix"]);
-  return ruleReports(stdout)
-    .map(line => Number(line.split(":")[1]))
-    .sort((a, b) => a - b);
+  return stdout
+    .split("\n")
+    .filter(line => line.includes("coin-families("))
+    .map(line => `${line.split(":")[1]}:${/coin-families\(([^)]+)\)/.exec(line)?.[1]}`)
+    .sort((a, b) => parseInt(a) - parseInt(b) || a.localeCompare(b));
 }
 
-test("registers the rule with a schema, so that oxlint accepts it", () => {
+/**
+ * @param {string[]} lines the source of `app/src/Generic.ts`, one entry per line
+ * @returns {number[]} the lines that the family rule reports
+ */
+const reportedLines = lines => reportedBy(lines).map(report => parseInt(report));
+
+test("registers each rule with a schema, so that oxlint accepts it", () => {
   assert.deepEqual(Object.keys(plugin.rules[RULE].meta.schema[0].properties), ["familiesDir"]);
+  assert.deepEqual(Object.keys(plugin.rules[ID_RULE].meta.schema[0].properties), ["familiesDir"]);
 });
 
 test("D1: reports an equality between a family expression and a family literal, whatever the operator and the side", () => {
@@ -197,19 +211,24 @@ test("reports the real leaks listed as fixtures", () => {
   );
 });
 
-test("a file of the families folder is not checked, the same comparison elsewhere is", () => {
+test("a file of the families folder is not checked by either rule, the same code elsewhere is", () => {
+  const leaks =
+    'const a = transaction.family === "bitcoin" || account.currency.id === "bitcoin";\n';
   const root = fixture({
-    ".oxlintrc.json": oxlintrc({ familiesDir: "src/families" }),
+    ".oxlintrc.json": oxlintrc([RULE, ID_RULE], { familiesDir: "src/families" }),
     "app/package.json": "{}",
-    "app/src/families/bitcoin/Fees.ts": 'const a = transaction.family === "bitcoin";\n',
-    "app/src/Generic.ts": 'const a = transaction.family === "bitcoin";\n',
+    "app/src/families/bitcoin/Fees.ts": leaks,
+    "app/src/Generic.ts": leaks,
   });
 
   const { stdout } = oxlint(root, ["--format", "unix"]);
 
   assert.deepEqual(
-    ruleReports(stdout).map(line => line.split(":")[0]),
-    ["app/src/Generic.ts"],
+    stdout
+      .split("\n")
+      .filter(line => line.includes("coin-families("))
+      .map(line => line.split(":")[0]),
+    ["app/src/Generic.ts", "app/src/Generic.ts"],
   );
 });
 
@@ -276,6 +295,199 @@ test("oxlint reports the inline disable of the rule, as far as a directive canno
 
   assert.deepEqual(
     ruleReports(stdout).map(line => line.split(":").slice(0, 2).join(":")),
+    ["app/src/NextLine.ts:1"],
+  );
+});
+
+const idLines = lines => reportedBy(lines, [ID_RULE]).map(report => parseInt(report));
+
+test("currency id D1: reports an equality between a currency id expression and a currency id, whatever the operator and the side", () => {
+  assert.deepEqual(
+    idLines([
+      'const a = mainAccount.currency.id === "bitcoin";',
+      'const b = currency.id !== "tezos";',
+      'const c = route.params.currencyId == "aptos";',
+      'const d = "crypto_org" != currencyId;',
+      'const e = fromCurrencyId === "ethereum_classic";',
+      "const f = currency.id === `aptos`;",
+      'const g = (mainAccount as Account)?.currency.id === "bitcoin";',
+      'const h = account.currencyId === "solana";',
+    ]),
+    [1, 2, 3, 4, 5, 6, 7, 8],
+  );
+});
+
+test("currency id D2: reports each case of a switch on a currency id expression that holds a currency id", () => {
+  assert.deepEqual(
+    idLines([
+      "switch (currencyId) {",
+      '  case "aptos":',
+      "    break;",
+      '  case "not-a-currency":',
+      "    break;",
+      '  case "crypto_org":',
+      "    break;",
+      "  default:",
+      "}",
+      "switch (account.currency.id) {",
+      '  case "bitcoin":',
+      "    break;",
+      "}",
+    ]),
+    [2, 6, 11],
+  );
+});
+
+test("currency id D3: reports a membership check on a list literal, a Set literal or a same-file list", () => {
+  assert.deepEqual(
+    idLines([
+      'const CHAINS_WITH_FEE_DRAWER = ["bitcoin", "tezos"];',
+      "const check = () => CHAINS_WITH_FEE_DRAWER.includes(currency.id);",
+      'const a = ["bitcoin", "tezos"].includes(currency.id);',
+      'const b = new Set(["aptos"]).has(mainAccount.currency.id);',
+      'const c = ["aptos"].indexOf(currencyId) !== -1;',
+      'const IDS = new Set(["crypto_org"] as const);',
+      "const d = IDS.has(fromCurrencyId);",
+    ]),
+    [2, 3, 4, 5, 7],
+  );
+});
+
+test("currency id D3: a same-file list declared below the function that reads it is reported too", () => {
+  assert.deepEqual(
+    idLines([
+      "function isFeeDrawerChain(currencyId: string) {",
+      "  return CHAINS_WITH_FEE_DRAWER.includes(currencyId);",
+      "}",
+      'const CHAINS_WITH_FEE_DRAWER = ["bitcoin"];',
+    ]),
+    [2],
+  );
+});
+
+test("does not report what is not a currency id branch", () => {
+  assert.deepEqual(
+    idLines([
+      "const a = left.currency.id === right.currency.id;",
+      'const b = accountId === "bitcoin";',
+      'const c = tokenId === "bitcoin";',
+      'const d = currencyId === "not-a-currency";',
+      'const e = typeof currency === "string";',
+      'const f = route.currency !== "tezos";',
+      'const g = currency === "tezos";',
+      'const h = currency.name === "bitcoin";',
+      'const i = ["aptos"].includes(accountId);',
+      'const NOT_IDS = ["not-a-currency"];',
+      "const j = NOT_IDS.includes(currencyId);",
+      "switch (accountId) {",
+      '  case "bitcoin":',
+      "    break;",
+      "}",
+      "const k = allowedIds.includes(currencyId);",
+      'const l = family === "evm";',
+      'const m = currencyId === "evm";',
+      'const n = currencyId === "xrp";',
+    ]),
+    [],
+  );
+});
+
+test("currency id: reports the real leaks listed as fixtures", () => {
+  assert.deepEqual(
+    idLines([
+      'const isBitcoin = mainAccount.currency.id === "bitcoin";',
+      "export const isOwnLedger = (currency: Currency) => {",
+      '  if (currency.id === "ethereum_classic") return true;',
+      '  if (currency.id === "aptos") return true;',
+      '  return currency.id === "crypto_org";',
+      "};",
+    ]),
+    [1, 3, 4, 5],
+  );
+});
+
+test("a currency id that is also a family name is reported by the rule of its expression only", () => {
+  for (const name of ["bitcoin", "hedera", "solana", "aptos"]) {
+    assert.deepEqual(
+      reportedBy(
+        [`const a = family === "${name}";`, `const b = currencyId === "${name}";`],
+        [RULE, ID_RULE],
+      ),
+      ["1:no-family-branch", "2:no-currency-id-branch"],
+      name,
+    );
+  }
+});
+
+test("a name that is only a currency id, or only a family, is reported by one rule only", () => {
+  assert.deepEqual(
+    reportedBy(
+      [
+        'const a = family === "ethereum_classic";',
+        'const b = currencyId === "ethereum_classic";',
+        'const c = family === "evm";',
+        'const d = currencyId === "evm";',
+      ],
+      [RULE, ID_RULE],
+    ),
+    ["2:no-currency-id-branch", "3:no-family-branch"],
+  );
+});
+
+const ID_LEAK_A = 'const a = currencyId === "bitcoin";\n';
+const ID_LEAK_B = 'const b = currencyId === "tezos";\n';
+const ID_LEAK_C = 'const c = currencyId === "aptos";\n';
+
+function idBaselined() {
+  const root = fixture({
+    ".oxlintrc.json": oxlintrc([ID_RULE]),
+    "app/package.json": "{}",
+    "app/src/Two.ts": ID_LEAK_A + ID_LEAK_B,
+    "app/src/Other.ts": ID_LEAK_A,
+  });
+  assert.equal(oxlint(root, ["--suppress-all"]).status, 0);
+  return root;
+}
+
+test("currency id: a baselined file at its count passes", () => {
+  const { status, stdout } = oxlint(idBaselined(), ["--format", "unix"]);
+
+  assert.equal(status, 0);
+  assert.deepEqual(
+    stdout.split("\n").filter(line => line.includes(ID_RULE)),
+    [],
+  );
+});
+
+test("currency id: a baselined file with one violation more fails, and one with one less fails too", () => {
+  const more = idBaselined();
+  write(more, "Two.ts", ID_LEAK_A + ID_LEAK_B + ID_LEAK_C);
+  const { status, stdout } = oxlint(more, ["--format", "unix"]);
+  assert.equal(status, 1);
+  assert.equal(stdout.split("\n").filter(line => line.includes(ID_RULE)).length, 3);
+
+  const fewer = idBaselined();
+  write(fewer, "Two.ts", ID_LEAK_A);
+  const stale = oxlint(fewer, []);
+  assert.equal(stale.status, 1);
+  assert.match(stale.stdout, /suppressions that do not occur anymore/);
+});
+
+test("currency id: oxlint reports the inline disable of the rule, as far as a directive cannot hide it", () => {
+  const root = fixture({
+    ".oxlintrc.json": oxlintrc([ID_RULE]),
+    "app/package.json": "{}",
+    "app/src/NextLine.ts": `// oxlint-disable-next-line coin-families/${ID_RULE}\n${ID_LEAK_A}`,
+    "app/src/WholeFile.ts": `/* oxlint-disable coin-families/${ID_RULE} */\n${ID_LEAK_A}`,
+  });
+
+  const { stdout } = oxlint(root, ["--format", "unix"]);
+
+  assert.deepEqual(
+    stdout
+      .split("\n")
+      .filter(line => line.includes(ID_RULE))
+      .map(line => line.split(":").slice(0, 2).join(":")),
     ["app/src/NextLine.ts:1"],
   );
 });
