@@ -198,6 +198,19 @@ android {
             proguardFile "proguard-rules-detox.pro"
             matchingFallbacks = ['release']
         }
+        // e2e-v2 (WebdriverIO) builds: no Detox dependency. Firebase project comes from src/<buildType>/google-services.json.
+        // Testing Firebase project (app id com.ledger.live.testing is registered in it).
+        e2e {
+            initWith(buildTypes.stagingRelease)
+            applicationIdSuffix ".testing"
+            matchingFallbacks = ['stagingRelease', 'release']
+        }
+        // Production Firebase project.
+        e2ePreRelease {
+            initWith(buildTypes.release)
+            signingConfig signingConfigs.stagingRelease
+            matchingFallbacks = ['release']
+        }
     }
 }
 

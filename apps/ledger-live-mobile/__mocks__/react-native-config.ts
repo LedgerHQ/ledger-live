@@ -11,4 +11,5 @@ export default {
   DD_APP_ID: "DD_APP_ID",
   MOCK: false,
   DETOX: undefined,
+  E2E: undefined,
 };

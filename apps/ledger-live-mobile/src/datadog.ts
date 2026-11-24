@@ -46,7 +46,8 @@ const applicationIdVar = Config.DATADOG_APPLICATION_ID_VAR;
 const clientToken = process.env[`${clientTokenVar}`] || Config[`${clientTokenVar}`] || "";
 const applicationId = process.env[`${applicationIdVar}`] || Config[`${applicationIdVar}`] || "";
 
-export const isDatadogEnabled = !!clientToken && !!applicationId && !(Config.MOCK || Config.DETOX);
+export const isDatadogEnabled =
+  !!clientToken && !!applicationId && !(Config.MOCK || Config.E2E || Config.DETOX);
 
 let recording = false;
 /** Identifies the latest initialization: an older one finishing late must not open the gate. */

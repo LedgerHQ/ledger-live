@@ -25,3 +25,14 @@ apps/ledger-live-mobile/.env.android.prerelease:generic-api-key:4
 apps/ledger-live-mobile/.env.android.prerelease:generic-api-key:5
 apps/ledger-live-mobile/.env.ios.prerelease:generic-api-key:5
 apps/ledger-live-mobile/.env.ios.prerelease:generic-api-key:6
+apps/ledger-live-mobile/.env.e2e:generic-api-key:10
+apps/ledger-live-mobile/.env.e2e:generic-api-key:11
+apps/ledger-live-mobile/.env.e2e.prerelease:generic-api-key:8
+apps/ledger-live-mobile/.env.e2e.prerelease:generic-api-key:9
+
+# Firebase client API keys in the e2e Android google-services.json — public, shipped in the app, not secrets.
+apps/ledger-live-mobile/android/app/src/e2e/google-services.json:gcp-api-key:23
+apps/ledger-live-mobile/android/app/src/e2e/google-services.json:gcp-api-key:59
+apps/ledger-live-mobile/android/app/src/e2e/google-services.json:gcp-api-key:95
+apps/ledger-live-mobile/android/app/src/e2e/google-services.json:gcp-api-key:131
+apps/ledger-live-mobile/android/app/src/e2ePreRelease/google-services.json:gcp-api-key:23

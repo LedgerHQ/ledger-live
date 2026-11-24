@@ -441,7 +441,7 @@ export default class Root extends Component {
   }
 
   onInitFinished = () => {
-    if (Config.DETOX) {
+    if (Config.E2E || Config.DETOX) {
       init();
     }
   };

@@ -146,7 +146,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           renderError={() => <NetworkError handleTryAgain={reloadWebView} />}
           testID="wallet-api-webview"
           applicationNameForUserAgent={APPLICATION_NAME}
-          webviewDebuggingEnabled={__DEV__}
+          webviewDebuggingEnabled={__DEV__ || !!Config.E2E}
           allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
           javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
           injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}

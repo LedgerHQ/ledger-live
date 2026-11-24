@@ -1,0 +1,295 @@
+{
+  "data": {
+    "SPECTRON_RUN": {
+      "localStorage": {
+        "acceptedTermsVersion": "2019-12-04"
+      }
+    },
+    "settings": {
+      "hasCompletedOnboarding": true,
+      "counterValue": "USD",
+      "language": "en",
+      "theme": "light",
+      "region": null,
+      "locale": "en-US",
+      "orderAccounts": "balance|desc",
+      "countervalueFirst": false,
+      "autoLockTimeout": 10,
+      "marketIndicator": "western",
+      "currenciesSettings": {},
+      "pairExchanges": {},
+      "developerMode": false,
+      "loaded": true,
+      "shareAnalytics": false,
+      "sharePersonalizedRecommandations": false,
+      "hasSeenAnalyticsOptInPrompt": true,
+      "analyticsEnabled": false,
+      "personalizedRecommendationsEnabled": false,
+      "trackingEnabled": false,
+      "sentryLogs": true,
+      "readOnlyModeEnabled": false,
+      "hasOrderedNano": true,
+      "lastUsedVersion": "99.99.99",
+      "dismissedBanners": [],
+      "accountsViewMode": "list",
+      "showAccountsHelperBanner": true,
+      "hideEmptyTokenAccounts": false,
+      "sidebarCollapsed": false,
+      "discreetMode": false,
+      "preferredDeviceModel": "nanoS",
+      "hasInstalledApps": true,
+      "dismissedDynamicCards": [],
+      "seenDevices": [],
+      "blacklistedTokenIds": [],
+      "swapAcceptedProviderIds": [],
+      "deepLinkUrl": null,
+      "firstTimeLend": false,
+      "swapProviders": [],
+      "showClearCacheBanner": false,
+      "hasPassword": false
+    },
+    "user": {
+      "id": "08cf3393-c5eb-4ea7-92de-0deea22e3971"
+    },
+    "accounts": [
+      {
+        "data": {
+          "id": "js:2:bitcoin:xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk:native_segwit",
+          "seedIdentifier": "0419755e5e0438ebd497fc65de965b1395dd923459508bcf09eab8656cfa28bef99daf3626485522d02730c988820c623b35a8075baa208a31d39f1b01fe0551aa",
+          "used": true,
+          "derivationMode": "native_segwit",
+          "index": 0,
+          "freshAddress": "bc1qdze8zq6h4g2nu7gkx4vj3pf8zvag57t4d6ucr7",
+          "freshAddressPath": "84'/0'/0'/0/1",
+          "blockHeight": 965186,
+          "creationDate": "2026-09-02T09:22:01.000Z",
+          "operationsCount": 1,
+          "operations": [
+            {
+              "id": "js:2:bitcoin:xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk:native_segwit-0f7678af4bb8d1c1cef2ccf84ca90ec6af0ffc98aec20ff40533c4d2f64bec5e-IN",
+              "hash": "0f7678af4bb8d1c1cef2ccf84ca90ec6af0ffc98aec20ff40533c4d2f64bec5e",
+              "type": "IN",
+              "senders": [
+                "bc1qs9w45sqegk2m27d3ce2yzmf92y24g6zz9nd659",
+                "bc1q6xf7vh0xqf0m3d43up09hh7t0s2shn97v2sv73",
+                "bc1qm0s8h6wzfhv8l4nhr97my7wqq33ku4mahx6jq4",
+                "bc1q0ya75x757y40p9nfnxn7pxwxzc5mfysnfwnust"
+              ],
+              "recipients": ["bc1qv794aaha52dtyzc0xt9h0lt2hetq6x4xyt8dqe"],
+              "accountId": "js:2:bitcoin:xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk:native_segwit",
+              "blockHash": "00000000000000000000c6f19629b7f93082915277209b4534d21c5d62021189",
+              "blockHeight": 965146,
+              "extra": {
+                "inputs": [
+                  "2c72e980159a26caa9fa3f8cea8e5f4e873a19aa8e0005427584c44d0d2d6f0f-1",
+                  "1b2156c7a20697fa81861f9b16e0965986a1991c34740f6c6b04a37ada6a733a-1",
+                  "46d83952d1a8d3fcf8bc136aafaef181d2710ff27b9f2655ae6eee9a60b4010e-1",
+                  "34d8125190003f56d217e7ddd7dc26ce2271939b3d793ef2ee1b046431dc2a2f-1",
+                  "f6e514df62962def9038dba7100f99315e9c4dbdf62ae56c40d1bfa578b69f75-1",
+                  "a3ba1f2ad35f74a917ad2a454474ff97a0ff21b655de6fa628a54c795f3519dd-1"
+                ]
+              },
+              "date": "2026-09-02T09:22:01.000Z",
+              "value": "177607",
+              "fee": "1350",
+              "transactionSequenceNumber": "0",
+              "hasFailed": false
+            }
+          ],
+          "pendingOperations": [],
+          "currencyId": "bitcoin",
+          "balance": "177607",
+          "spendableBalance": "177607",
+          "balanceHistoryCache": {
+            "HOUR": {
+              "latestDate": 1788364800000,
+              "balances": [0, [177607, 7]]
+            },
+            "DAY": {
+              "latestDate": 1788300000000,
+              "balances": [0]
+            },
+            "WEEK": {
+              "latestDate": 1788040800000,
+              "balances": [0]
+            }
+          },
+          "xpub": "xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk",
+          "bitcoinResources": {
+            "utxos": [
+              [
+                "0f7678af4bb8d1c1cef2ccf84ca90ec6af0ffc98aec20ff40533c4d2f64bec5e",
+                0,
+                965146,
+                "bc1qv794aaha52dtyzc0xt9h0lt2hetq6x4xyt8dqe",
+                "177607",
+                1,
+                0
+              ]
+            ],
+            "walletAccount": {
+              "params": {
+                "xpub": "xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk",
+                "path": "84'/0'",
+                "index": 0,
+                "currency": "bitcoin",
+                "network": "mainnet",
+                "derivationMode": "Native SegWit"
+              },
+              "xpub": {
+                "xpub": "xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk",
+                "data": {
+                  "txs": [
+                    {
+                      "id": "0f7678af4bb8d1c1cef2ccf84ca90ec6af0ffc98aec20ff40533c4d2f64bec5e",
+                      "received_at": "2026-09-02T09:22:01Z",
+                      "fees": "1350",
+                      "inputs": [
+                        {
+                          "output_tx_id": "2c72e980159a26caa9fa3f8cea8e5f4e873a19aa8e0005427584c44d0d2d6f0f",
+                          "output_hash": "2c72e980159a26caa9fa3f8cea8e5f4e873a19aa8e0005427584c44d0d2d6f0f",
+                          "output_index": 1,
+                          "value": "33691",
+                          "address": "bc1qs9w45sqegk2m27d3ce2yzmf92y24g6zz9nd659",
+                          "sequence": 0
+                        },
+                        {
+                          "output_tx_id": "1b2156c7a20697fa81861f9b16e0965986a1991c34740f6c6b04a37ada6a733a",
+                          "output_hash": "1b2156c7a20697fa81861f9b16e0965986a1991c34740f6c6b04a37ada6a733a",
+                          "output_index": 1,
+                          "value": "36742",
+                          "address": "bc1q6xf7vh0xqf0m3d43up09hh7t0s2shn97v2sv73",
+                          "sequence": 0
+                        },
+                        {
+                          "output_tx_id": "46d83952d1a8d3fcf8bc136aafaef181d2710ff27b9f2655ae6eee9a60b4010e",
+                          "output_hash": "46d83952d1a8d3fcf8bc136aafaef181d2710ff27b9f2655ae6eee9a60b4010e",
+                          "output_index": 1,
+                          "value": "8336",
+                          "address": "bc1qm0s8h6wzfhv8l4nhr97my7wqq33ku4mahx6jq4",
+                          "sequence": 0
+                        },
+                        {
+                          "output_tx_id": "34d8125190003f56d217e7ddd7dc26ce2271939b3d793ef2ee1b046431dc2a2f",
+                          "output_hash": "34d8125190003f56d217e7ddd7dc26ce2271939b3d793ef2ee1b046431dc2a2f",
+                          "output_index": 1,
+                          "value": "74905",
+                          "address": "bc1qm0s8h6wzfhv8l4nhr97my7wqq33ku4mahx6jq4",
+                          "sequence": 0
+                        },
+                        {
+                          "output_tx_id": "f6e514df62962def9038dba7100f99315e9c4dbdf62ae56c40d1bfa578b69f75",
+                          "output_hash": "f6e514df62962def9038dba7100f99315e9c4dbdf62ae56c40d1bfa578b69f75",
+                          "output_index": 1,
+                          "value": "15321",
+                          "address": "bc1q0ya75x757y40p9nfnxn7pxwxzc5mfysnfwnust",
+                          "sequence": 0
+                        },
+                        {
+                          "output_tx_id": "a3ba1f2ad35f74a917ad2a454474ff97a0ff21b655de6fa628a54c795f3519dd",
+                          "output_hash": "a3ba1f2ad35f74a917ad2a454474ff97a0ff21b655de6fa628a54c795f3519dd",
+                          "output_index": 1,
+                          "value": "9962",
+                          "address": "bc1q0ya75x757y40p9nfnxn7pxwxzc5mfysnfwnust",
+                          "sequence": 0
+                        }
+                      ],
+                      "outputs": [
+                        {
+                          "output_index": 0,
+                          "value": "177607",
+                          "address": "bc1qv794aaha52dtyzc0xt9h0lt2hetq6x4xyt8dqe",
+                          "spent_at_height": null,
+                          "output_hash": "0f7678af4bb8d1c1cef2ccf84ca90ec6af0ffc98aec20ff40533c4d2f64bec5e",
+                          "block_height": 965146,
+                          "rbf": true
+                        }
+                      ],
+                      "block": {
+                        "hash": "00000000000000000000c6f19629b7f93082915277209b4534d21c5d62021189",
+                        "height": 965146,
+                        "time": "2026-09-02T09:22:01Z"
+                      },
+                      "tx_index": 1281,
+                      "rbf": null,
+                      "account": 0,
+                      "index": 0,
+                      "address": "bc1qv794aaha52dtyzc0xt9h0lt2hetq6x4xyt8dqe"
+                    }
+                  ],
+                  "addressCache": {
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-0": "bc1qv794aaha52dtyzc0xt9h0lt2hetq6x4xyt8dqe",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-1": "bc1qdze8zq6h4g2nu7gkx4vj3pf8zvag57t4d6ucr7",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-2": "bc1qttg56aafrkjtk0vfqzld3pxvcm32zveuswmckd",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-3": "bc1qtcpu0eacr3jpfesjgt8qqup85mr6l6drfd70ay",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-4": "bc1qu82hyqcznd7vm5j9xgm44tnzwkj4jzsqwc2lr3",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-5": "bc1qkkhz5pzh09r66fjf74xv76pmzkyq832r332072",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-6": "bc1qrqgutlw4xh6k3j7slmjcdgxdz9us9s5vfczh2w",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-7": "bc1qs3qa4j22qvangttgs2emfh2lsl3lgvfxtt8uvh",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-8": "bc1qj7recln9ucuhezqdch709mf0ppcw46gpjejx9r",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-9": "bc1q92xxx98mvffwm65l76yqmqvy9ctg9nga0jhkp0",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-10": "bc1qg824zg75szf4cxcs4044nuqyv94cmyvh26gsgx",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-11": "bc1qzcsqsccm7gmql2fh5pf5yh5573tdq2m9y6tnus",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-12": "bc1q8uue2dgfgnm8dzk586we8l3sa5m30z9uvsd299",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-13": "bc1qyfqap7lzkpzhqna5ext6hsxk6rp5ge3eygx2p9",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-14": "bc1q9dlrq6qwqgr8hs05e7ttp6zs33m8uvzkal4jcr",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-15": "bc1qkh6vw5wrjm4hgyyhmfpq6hh43t69hj6jpt45h8",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-16": "bc1qrsxesujuecg8hs8qac7uvqy90eqtkryfal6lg9",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-17": "bc1qxstxqv38m9357sfk9l8cxk7x4tjqfpg93fn3xy",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-18": "bc1qwnu529yltpcnfalzzg2jfe0ys26w55rgkcdfqc",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-19": "bc1q6ras9unvveqsl76p2r7e92lxf4fwn84z6hv9ez",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-0": "bc1q0jlznxllteycezj9qst8uh6sl746qp0420dpe3",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-1": "bc1qym8pd8jhpst82d07kl08386hhxll200r8wtc8a",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-2": "bc1q60kgcmfsf9dpvxww2f653qvnghdfqvamj9pqu8",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-3": "bc1qjue9qsfm9gp3xayx0vakdxlkqxgn9pfgj4z4xw",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-4": "bc1qq4sldmry8eel3ufz7zjzp3tgeyye7dtrz0lftc",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-5": "bc1q7350mr4njzlca5klypr564jgw2svjeyc85gdld",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-6": "bc1qj5xyps7mv9zezmhfe26cx6fw9euxhkfee8ngkt",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-7": "bc1q9wz2fklya387vzg2xcqx4v6m6y9l74ltyd87he",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-8": "bc1qk2sg2wcyck8ez4qyx43ccr8nrp2t9h8s2850s8",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-9": "bc1qvecfyfsyjep5nn6y2848kf23t7r7epa4y5kqhc",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-10": "bc1qqj9k9lm99m4n5hmcsyn720mljukmzrchz9np52",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-11": "bc1qrml7s5pf8jk3p76s70f23hs36n27k54nr3qj5f",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-12": "bc1qjcwe2745wewgdge5tht54rpqh28da504efsv2l",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-13": "bc1qgzv5vkugw6av3e28t3vj7w6qqwzmyxukn8n2l3",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-14": "bc1q3p98xtf7phyazr6jval83d3jmg9kuc56wfj03z",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-15": "bc1q9wcq4e65kt5tedff5mf3wpmt84m0stpqz8s6p2",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-16": "bc1qvw62yj5wv7eqh7hxvn5psm6hat5v397dh8z9mz",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-17": "bc1qaxtvmqqxufrm7p776gr8ah8yd9g8fdzfqxzmtw",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-18": "bc1qf4wsj3ahzxahpygg7yk0d6vegved69q743v8c4",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-1-19": "bc1qr3qxwn9wm53mg792gk5y9vggc0f0q4654dzqgw",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-20": "bc1qhzegj4ed4lyyaeaflfc3dxtas0ace4w340penv",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-21": "bc1qd0k9e4057w4m0txz858f7c7lkgwp4fyll8dtke",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-22": "bc1qqhs6ajfnl3md9v068z8djnxlj7ecl4er7qg32a",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-23": "bc1qrqas6eqz6c352n8p037knzf6syl3srxrsnqaty",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-24": "bc1qwus8c6r2r75r6ustxvqwfwhq7rf30u4xnkkflw",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-25": "bc1q24nr20fvqux0cudupulr8ym0w8w7xvuwz7mnk9",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-26": "bc1qxcwx4axkv94zcskeuj9exyeh2v7p0m8vq6q6v3",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-27": "bc1qev0q8emdhng9qpz5yxt95tqsz68wkc93kr0jr2",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-28": "bc1qdhn26mfmv2wu8ytnd020yjgkus6ps0wj5exxhc",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-29": "bc1qhser5jhgcd4lcdhu50aymsg3am4vpz9xfpw37l",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-30": "bc1qywmj0f6xedmetrq6hgl47uqndedde48gs7c43y",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-31": "bc1qva66uc3q4h496ssm8xdarr2szhr4cte5mmwqzs",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-32": "bc1qxzu7aeu3jp5yn58en8csvp09zlecyak6m5glzf",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-33": "bc1q2swr34u27ty9jt6ucexd4yf0yjvzeupesr279w",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-34": "bc1qmsw88szhzjy2d8h6uktmy7z04h4np5ns06t300",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-35": "bc1q2sgs5j5jc3cktpdgsjzvhn244qe8jpay99gus8",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-36": "bc1qetsuq3jkevtgly3dtvyqc772u6za3pzw3fq6pr",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-37": "bc1qxjk3m9fk4zqpznend4m3ucuuqaqqzaxfezkvmg",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-38": "bc1qd022yheh3ha90rjcexa990lxpaaks4tqvat6h4",
+                    "Bitcoin-Native SegWit-xpub6DKz8vPbqi2ffxBQvzuL3eUAFq6aJSgxnmT73NGtS81UzXkET1SPNeS2DzKHw2ukn5H5vdYoHvUkekxYqcs4SjZLG9u4T8yY2WUpYZGzyPk-0-39": "bc1qpvq9ty2s95jycxvqev5v00ka5885aktaxrmd2r"
+                  }
+                }
+              }
+            }
+          },
+          "swapHistory": [],
+          "name": "Bitcoin 1",
+          "starred": false
+        },
+        "version": 1
+      }
+    ],
+    "countervalues": {}
+  }
+}
