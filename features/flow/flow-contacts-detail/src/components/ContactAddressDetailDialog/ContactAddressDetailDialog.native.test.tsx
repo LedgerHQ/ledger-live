@@ -3,6 +3,7 @@ import {
   fireEvent,
   render as renderWithoutI18n,
   screen,
+  userEvent,
   waitFor,
 } from "@testing-library/react-native";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -123,7 +124,8 @@ describe("ContactAddressDetailDialog", () => {
     });
   });
 
-  it("should run the address actions the host allows", () => {
+  it("should run the address actions the host allows", async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     const onSend = jest.fn();
     const onEdit = jest.fn();
     const onDelete = jest.fn();
@@ -140,9 +142,9 @@ describe("ContactAddressDetailDialog", () => {
       />,
     );
 
-    fireEvent.press(screen.getByTestId("contacts-address-detail-send"));
-    fireEvent.press(screen.getByTestId("contacts-address-detail-edit"));
-    fireEvent.press(screen.getByTestId("contacts-address-detail-delete"));
+    await user.press(screen.getByTestId("contacts-address-detail-send"));
+    await user.press(screen.getByTestId("contacts-address-detail-edit"));
+    await user.press(screen.getByTestId("contacts-address-detail-delete"));
 
     expect(onSend).toHaveBeenCalledTimes(1);
     expect(onEdit).toHaveBeenCalledTimes(1);

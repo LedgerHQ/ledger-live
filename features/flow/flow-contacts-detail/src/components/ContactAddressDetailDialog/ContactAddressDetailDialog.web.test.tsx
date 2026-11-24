@@ -2,6 +2,7 @@ import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { copyToClipboard } from "@shared/clipboard";
 import { I18nTestProvider } from "@shared/i18n/testing";
+import userEvent from "@testing-library/user-event";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { createContactDetailAddressRowIntent } from "../../model/viewModel";
@@ -118,7 +119,8 @@ describe("ContactAddressDetailDialog", () => {
     );
   });
 
-  it("should run the address actions the host allows", () => {
+  it("should run the address actions the host allows", async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     const onSend = jest.fn();
     const onEdit = jest.fn();
     const onDelete = jest.fn();
@@ -136,16 +138,17 @@ describe("ContactAddressDetailDialog", () => {
       { wrapper: I18nTestProvider },
     );
 
-    fireEvent.click(screen.getByTestId("contacts-address-detail-send"));
-    fireEvent.click(screen.getByTestId("contacts-address-detail-edit"));
-    fireEvent.click(screen.getByTestId("contacts-address-detail-delete"));
+    await user.click(screen.getByTestId("contacts-address-detail-send"));
+    await user.click(screen.getByTestId("contacts-address-detail-edit"));
+    await user.click(screen.getByTestId("contacts-address-detail-delete"));
 
     expect(onSend).toHaveBeenCalledTimes(1);
     expect(onEdit).toHaveBeenCalledTimes(1);
     expect(onDelete).toHaveBeenCalledTimes(1);
   });
 
-  it("should disable the address actions the host does not allow", () => {
+  it("should disable the address actions the host does not allow", async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     const onSend = jest.fn();
     const onEdit = jest.fn();
     const onDelete = jest.fn();
@@ -159,7 +162,7 @@ describe("ContactAddressDetailDialog", () => {
       "contacts-address-detail-delete",
     ]) {
       expect(screen.getByTestId(testId)).toBeDisabled();
-      fireEvent.click(screen.getByTestId(testId));
+      await user.click(screen.getByTestId(testId));
     }
 
     expect(onSend).not.toHaveBeenCalled();
