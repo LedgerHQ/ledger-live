@@ -49,7 +49,6 @@ const INPUTS: PlanInputs = {
   pairs: "20",
   thresholdMs: "100",
   scenarios: "no-accounts,accounts",
-  accountsUserdata: "speculos-x-other-account,swap-history",
   read: "log",
   branchSha: SHA(9),
   branchName: "ci/branch",
@@ -211,12 +210,51 @@ describe("planBuilds", () => {
       planBuilds({ ...INPUTS, branchName: "develop", ...inputs }, fakeLsRemote());
     const nightly = plan({ preset: "prod-vs-develop", refA: "", refB: "" });
     assert.deepEqual([nightly.restore, nightly.cacheA, nightly.save], [true, true, true]);
-    // B is reviewed, so the run may save, but its A is no release's: nothing to restore or save.
+    // B is reviewed, so the run may save, but its A is no release's: only its snapshot is cached.
     const developTwice = plan({ refA: "develop", refB: "develop" });
     assert.deepEqual(
       [developTwice.restore, developTwice.cacheA, developTwice.save],
-      [false, false, true],
+      [true, false, true],
     );
+  });
+
+  it("makes and restores the accounts snapshot only for the accounts scenario", () => {
+    const plan = (scenarios: string) =>
+      planBuilds({ ...INPUTS, refA: "develop", refB: "develop", scenarios }, fakeLsRemote());
+    const withAccounts = plan("no-accounts,accounts");
+    assert.deepEqual([withAccounts.snapshot, withAccounts.restore], [true, true]);
+    assert.equal(withAccounts.snapshotRelease, "live-mobile@4.27.1");
+    const withoutAccounts = plan("no-accounts");
+    assert.deepEqual(
+      [withoutAccounts.snapshot, withoutAccounts.restore, withoutAccounts.snapshotRelease],
+      [false, false, ""],
+    );
+  });
+
+  it("gives each build matrix entry its commit, and B of known-regression its regression", () => {
+    const builds = (inputs: Partial<PlanInputs>) =>
+      planBuilds({ ...INPUTS, ...inputs }, fakeLsRemote()).builds;
+    assert.deepEqual(builds({}), [
+      { side: "a", ref: SHA(6), regression: "" },
+      { side: "b", ref: SHA(1), regression: "" },
+    ]);
+    assert.deepEqual(builds({ preset: "known-regression", refA: "develop" }), [
+      { side: "a", ref: SHA(1), regression: "" },
+      { side: "b", ref: SHA(1), regression: "LIVE-36190" },
+    ]);
+    assert.deepEqual(builds({ preset: "aa-noise", refA: "develop" }), [
+      { side: "a", ref: SHA(1), regression: "" },
+    ]);
+  });
+
+  it("says which platforms the run measures", () => {
+    const flags = (platforms: string) => {
+      const plan = planBuilds({ ...INPUTS, platforms }, fakeLsRemote());
+      return [plan.android, plan.ios];
+    };
+    assert.deepEqual(flags("Android & iOS"), [true, true]);
+    assert.deepEqual(flags("Android Only"), [true, false]);
+    assert.deepEqual(flags("iOS Only"), [false, true]);
   });
 
   for (const pairs of ["4", "7", "x", ""]) {
@@ -242,7 +280,6 @@ describe("inputsOf", () => {
     PAIRS: "",
     THRESHOLD: "100",
     SCENARIOS: "accounts",
-    ACCOUNTS_USERDATA: "swap-history",
     READ: "both",
     BRANCH_SHA: SHA(9),
     GITHUB_REF_NAME: "ci/branch",
@@ -270,10 +307,10 @@ describe("inputsOf", () => {
 });
 
 describe("outputsOf and summaryOf", () => {
-  for (const accountsUserdata of [`swap-history\nref_a=${SHA(7)}`, "swap-history\r"]) {
-    it(`refuses an output that spans lines: ${JSON.stringify(accountsUserdata)}`, () => {
-      const plan = planBuilds({ ...INPUTS, accountsUserdata }, fakeLsRemote());
-      assert.throws(() => outputsOf(plan), /accounts_userdata must be on one line/);
+  for (const read of [`log\nref_a=${SHA(7)}`, "log\r"]) {
+    it(`refuses an output that spans lines: ${JSON.stringify(read)}`, () => {
+      const plan = planBuilds({ ...INPUTS, read }, fakeLsRemote());
+      assert.throws(() => outputsOf(plan), /read must be on one line/);
     });
   }
 
@@ -283,6 +320,10 @@ describe("outputsOf and summaryOf", () => {
       outputsOf(plan),
       [
         'sides=["a","b"]',
+        `builds=[{"side":"a","ref":"${SHA(6)}","regression":""},{"side":"b","ref":"${SHA(1)}","regression":""}]`,
+        "snapshot=true",
+        "android=true",
+        "ios=true",
         'scenarios=["no-accounts","accounts"]',
         `ref_a=${SHA(6)}`,
         `ref_b=${SHA(1)}`,
@@ -295,8 +336,9 @@ describe("outputsOf and summaryOf", () => {
         "platforms=Android & iOS",
         "pairs=20",
         "threshold_ms=100",
-        "accounts_userdata=speculos-x-other-account,swap-history",
         "read=log",
+        "snapshot_release=live-mobile@4.27.1",
+        `snapshot_ref=${SHA(5)}`,
         "",
       ].join("\n"),
     );
@@ -304,6 +346,13 @@ describe("outputsOf and summaryOf", () => {
       summaryOf(plan, INPUTS, "4"),
       /^### Startup performance: custom\n\n- A: `live-mobile@4\.27\.0/,
     );
+    assert.match(summaryOf(plan, INPUTS, "4"), /- Accounts: the snapshot live-mobile@4\.27\.1's/);
+  });
+
+  it("names no snapshot release when the run has no accounts scenario", () => {
+    const plan = planBuilds({ ...INPUTS, scenarios: "no-accounts" }, fakeLsRemote());
+    assert.match(outputsOf(plan), /\nsnapshot_release=\nsnapshot_ref=\n$/);
+    assert.doesNotMatch(summaryOf(plan, INPUTS, "4"), /Accounts:/);
   });
 
   it("says in the summary why nothing is saved to the cache", () => {

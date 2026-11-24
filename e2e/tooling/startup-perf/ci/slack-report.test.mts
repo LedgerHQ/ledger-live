@@ -170,6 +170,19 @@ describe("messageOf", () => {
     assert.equal(lines.length, 3);
   });
 
+  it("says the accounts snapshot failed instead of listing the scenarios it held back", () => {
+    const report = withJobs(
+      { ios: { build: "success", snapshot: "failure", measure: "skipped" } },
+      ROWS.filter(r => r.platform === "android"),
+    );
+    const { outcome, lines } = messageOf(report);
+    assert.equal(outcome, "failed");
+    assert.equal(
+      lines.at(-1),
+      "🍏 iOS : ❌ the accounts snapshot could not be made, so nothing was measured",
+    );
+  });
+
   it("says which scenario has no result when a measure job timed out", () => {
     const report = withJobs(
       { android: { build: "success", measure: "cancelled" } },
@@ -574,8 +587,10 @@ describe("reportOf", () => {
         RUN_URL: "url",
         PLAN: "success",
         ANDROID_BUILD: "success",
+        ANDROID_SNAPSHOT: "success",
         ANDROID_MEASURE: "cancelled",
         IOS_BUILD: "skipped",
+        IOS_SNAPSHOT: "skipped",
         IOS_MEASURE: "skipped",
       },
       { rows: [], measurements: [] },
@@ -584,8 +599,8 @@ describe("reportOf", () => {
     assert.equal(report.pairs, "20");
     assert.deepEqual(report.jobs, {
       plan: "success",
-      android: { build: "success", measure: "cancelled" },
-      ios: { build: "skipped", measure: "skipped" },
+      android: { build: "success", snapshot: "success", measure: "cancelled" },
+      ios: { build: "skipped", snapshot: "skipped", measure: "skipped" },
     });
   });
 
