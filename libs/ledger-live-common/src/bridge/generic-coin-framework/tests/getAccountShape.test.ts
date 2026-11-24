@@ -3,6 +3,7 @@ import { UnexpectedGetBalanceError } from "@ledgerhq/coin-module-framework/error
 import { CurrencyRegionRestrictedError } from "../../../errors";
 import type {
   Account,
+  Operation,
   StakingDelegation,
   StakingResources,
   StakingUnbonding,
@@ -5843,6 +5844,20 @@ describe("genericGetAccountShape", () => {
       });
       expect(result.balance?.toString()).toBe("160");
       expect(listOperationsMock.mock.calls[0][2].minHeight).toBe(43);
+      expect(result.operations?.map(op => op.hash)).toEqual(["h2", "h1"]);
+    });
+
+    it("reads the history but does not list the validators while the account's own operation is pending", async () => {
+      // The fee, then the gas refunds of later blocks, move the balance at each pending sync.
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+      const pending = { hash: "h2", type: "OUT", date: new Date(NOW) } as unknown as Operation;
+
+      const result = await sync(storedAccount({ pendingOperations: [pending] }));
+
+      expect(getBalanceMock).toHaveBeenCalledTimes(1);
+      expect(getBalanceMock.mock.calls[0][2].listValidators).toBe(false);
+      expect(listOperationsMock).toHaveBeenCalledTimes(1);
       expect(result.operations?.map(op => op.hash)).toEqual(["h2", "h1"]);
     });
 

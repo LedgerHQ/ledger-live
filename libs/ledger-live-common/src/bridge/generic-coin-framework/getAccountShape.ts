@@ -1196,9 +1196,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         // A new position moves the spendable balance. A failed read may have come with a failed
         // listing, and a listing may be owed. A confirmation or recheck read lists nothing else:
         // the sync that saw the change already did.
+        // While the account's own operation is pending, its fee and the gas refunds that follow
+        // it in later blocks move the balance at each sync: they name no new position. A staking
+        // call it makes names its pool through the history, read on the node as a candidate, and
+        // a call that needs the listing marks it.
+        const ownOperationPending = (initialAccount?.pendingOperations?.length ?? 0) > 0;
         const listsValidators =
-          firstSpendable.toString() !== initialAccount?.spendableBalance?.toFixed() ||
-          totalMayHaveMoved ||
+          (!ownOperationPending &&
+            (firstSpendable.toString() !== initialAccount?.spendableBalance?.toFixed() ||
+              totalMayHaveMoved)) ||
           initialAccount?.historyRecheck?.reason === "failed" ||
           initialAccount?.historyRecheck?.listing === true;
         // A mark that only carries pools to look at reads no history.
