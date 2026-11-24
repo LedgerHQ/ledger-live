@@ -12,7 +12,10 @@ import { DeviceListItemStatuses, type SelectableDeviceListItem } from "@ledgerhq
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TrackDIEScreen } from "LLM/components/DeviceIntentExecutor/components/TrackDIEScreen";
-import { useDeviceIntentTracking } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
+import {
+  DeviceIntentTrackingProvider,
+  useDeviceIntentTracking,
+} from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import {
   getTrackingTransport,
   trackDeviceActionButtonClicked,
@@ -35,7 +38,8 @@ export function DeviceMenuSheet({
 }: Readonly<DeviceMenuSheetProps>): React.JSX.Element {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
+  const trackingContext = useDeviceIntentTracking();
+  const { sourceFlow, analyticsProperties } = trackingContext;
   const disconnect =
     item?.status === DeviceListItemStatuses.Connected ? item.disconnect : undefined;
   const remove = item?.remove;
@@ -63,15 +67,18 @@ export function DeviceMenuSheet({
     >
       <BottomSheetView style={{ paddingBottom: Math.max(bottomInset, BOTTOM_PADDING) }}>
         <BottomSheetHeader />
-        {item && (
-          <TrackDIEScreen
-            category={PAGE_DEVICE_MENU}
-            modelId={item.device.deviceModelId}
-            transport={getTrackingTransport(item.device.transport)}
-            deviceStatus={item.status}
-            refreshSource
-          />
-        )}
+        {/* The sheet renders its content through a portal, outside the provider of the component. */}
+        <DeviceIntentTrackingProvider value={trackingContext}>
+          {item && (
+            <TrackDIEScreen
+              category={PAGE_DEVICE_MENU}
+              modelId={item.device.deviceModelId}
+              transport={getTrackingTransport(item.device.transport)}
+              deviceStatus={item.status}
+              refreshSource
+            />
+          )}
+        </DeviceIntentTrackingProvider>
         {disconnect && (
           <ListItem
             onPress={runAndClose(DEVICE_LIST_BUTTON.Disconnect, disconnect)}

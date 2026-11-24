@@ -96,24 +96,32 @@ const pausedDiscovering = (devices: Array<DeviceListItem>): ConnectKnownOrNewDev
 });
 
 function renderView(state: ConnectKnownOrNewDeviceUIState, devices: Array<DeviceListItem> = []) {
-  const props: ConnectKnownOrNewDeviceViewProps = {
-    state,
-    devices,
-    addModeLastNonErrorState: {
-      type: ConnectNewDeviceUIStateTypes.Discovering,
-      devices: [],
-      scanningTransports: [],
-      showDeviceNotFound: false,
-    },
-    platform: "android",
-    onCloseErrorSheet: jest.fn(),
-    onCloseAddModeErrorSheet: jest.fn(),
+  const element = (viewState: ConnectKnownOrNewDeviceUIState) => {
+    const props: ConnectKnownOrNewDeviceViewProps = {
+      state: viewState,
+      devices,
+      addModeLastNonErrorState: {
+        type: ConnectNewDeviceUIStateTypes.Discovering,
+        devices: [],
+        scanningTransports: [],
+        showDeviceNotFound: false,
+      },
+      platform: "android",
+      onCloseErrorSheet: jest.fn(),
+      onCloseAddModeErrorSheet: jest.fn(),
+    };
+    return (
+      <DeviceIntentTrackingProvider value={{ sourceFlow: "my_wallet" }}>
+        <ConnectKnownOrNewDeviceView {...props} />
+      </DeviceIntentTrackingProvider>
+    );
   };
-  return render(
-    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_wallet" }}>
-      <ConnectKnownOrNewDeviceView {...props} />
-    </DeviceIntentTrackingProvider>,
-  );
+  const view = render(element(state));
+
+  return {
+    ...view,
+    showState: (viewState: ConnectKnownOrNewDeviceUIState) => view.rerender(element(viewState)),
+  };
 }
 
 const trackedEvents = (eventName: string) =>
@@ -470,6 +478,42 @@ describe("ConnectKnownOrNewDeviceView", () => {
           deviceStatus: DeviceListItemStatuses.Connected,
         },
       ]);
+    });
+
+    it("GIVEN a device the app does not know, WHEN it connects twice, THEN it should send device_connecting at each connection with isNewDevice true", () => {
+      // GIVEN
+      const row = makeRow("Flex 329");
+      const connecting: ConnectKnownOrNewDeviceUIState = {
+        type: ConnectKnownOrNewDeviceUIStateTypes.Connecting,
+        devices: [row],
+        device: row.device,
+        close: jest.fn(),
+      };
+      const { showState } = renderView(connecting, [row]);
+
+      // WHEN
+      showState({ ...connecting });
+      showState({
+        type: ConnectKnownOrNewDeviceUIStateTypes.ConnectionError,
+        devices: [row],
+        error: { type: ConnectionErrorTypes.BlePairingRefused },
+        device: row.device,
+        retry: jest.fn(),
+        ignore: jest.fn(),
+        close: jest.fn(),
+      });
+      showState(connecting);
+
+      // THEN
+      const deviceConnecting = {
+        sourceFlow: "my_wallet",
+        deviceUxV2: true,
+        modelId: DeviceModelId.stax,
+        transport: "ble",
+        matchedDevice: DeviceModelId.stax,
+        isNewDevice: true,
+      };
+      expect(trackedEvents("device_connecting")).toEqual([deviceConnecting, deviceConnecting]);
     });
 
     it("GIVEN a connection error over the list, WHEN the user closes it, THEN it should send Close and deviceflow_aborted with the error", async () => {

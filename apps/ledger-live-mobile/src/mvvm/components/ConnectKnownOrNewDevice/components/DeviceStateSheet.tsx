@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Banner,
   BottomSheetHeader,
@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import {
   ConnectKnownOrNewDeviceUIStateTypes,
+  rnHidTransportIdentifier,
   type ConnectKnownOrNewDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
@@ -18,9 +19,13 @@ import {
   TrackedWaitingForSelectedDeviceState,
   useIsNewDevice,
 } from "LLM/components/DeviceConnection";
-import { useDeviceIntentTracking } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
+import {
+  DeviceIntentTrackingProvider,
+  useDeviceIntentTracking,
+} from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import {
   trackConnectDeviceButtonClicked,
+  trackDeviceConnecting,
   trackDeviceflowCanceled,
 } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { useTranslation } from "~/context/Locale";
@@ -75,22 +80,68 @@ function WaitingHint({ onAddNewDevice }: Readonly<{ onAddNewDevice?: () => void 
   );
 }
 
+/**
+ * Sends `device_connecting` when it mounts: the connecting content mounts it at each new connection,
+ * retries included. Rendered after the page of that content, so the event carries that page.
+ */
+function DeviceConnectingEvent({
+  device,
+}: Readonly<{ device: DeviceStateSheetState["device"] }>): null {
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
+  const isNewDevice = useIsNewDevice();
+  const sendEventRef = useRef(() =>
+    trackDeviceConnecting({
+      sourceFlow,
+      modelId: device.deviceModelId,
+      transport: device.transport === rnHidTransportIdentifier ? "usb" : "ble",
+      extraProperties: { ...analyticsProperties, isNewDevice: isNewDevice(device) },
+    }),
+  );
+
+  useEffect(() => {
+    sendEventRef.current();
+  }, []);
+
+  return null;
+}
+
 function DeviceStateContent({
   state,
-}: Readonly<{ state: DeviceStateSheetState }>): React.ReactNode {
+  onAddNewDevicePressed,
+}: Readonly<{
+  state: DeviceStateSheetState;
+  /** Called before the waiting hint opens the Add mode. */
+  onAddNewDevicePressed: () => void;
+}>): React.ReactNode {
   const isNewDevice = useIsNewDevice();
 
   switch (state.type) {
-    case ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice:
+    case ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice: {
+      const { addNewDevice } = state;
       return (
         <>
           <TrackedWaitingForSelectedDeviceState device={state.device} />
-          {state.showDeviceNotFound && <WaitingHint onAddNewDevice={state.addNewDevice} />}
+          {state.showDeviceNotFound && (
+            <WaitingHint
+              onAddNewDevice={
+                addNewDevice
+                  ? () => {
+                      onAddNewDevicePressed();
+                      addNewDevice();
+                    }
+                  : undefined
+              }
+            />
+          )}
         </>
       );
+    }
     case ConnectKnownOrNewDeviceUIStateTypes.Connecting:
       return (
-        <TrackedConnectingState device={state.device} isNewDevice={isNewDevice(state.device)} />
+        <>
+          <TrackedConnectingState device={state.device} isNewDevice={isNewDevice(state.device)} />
+          <DeviceConnectingEvent device={state.device} />
+        </>
       );
     default:
       return assertNever(state);
@@ -98,7 +149,10 @@ function DeviceStateContent({
 }
 
 export function DeviceStateSheet({ state }: Readonly<DeviceStateSheetProps>): React.JSX.Element {
-  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
+  const trackingContext = useDeviceIntentTracking();
+  const { sourceFlow, analyticsProperties } = trackingContext;
+  // Set when the waiting hint opens the Add mode: the attempt goes on there, so its close is no outcome.
+  const isAddingNewDeviceRef = useRef(false);
   const { height: windowHeight } = useWindowDimensions();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
   // Lumen's static preset can force Android dynamic sheets full height, so use the live window cap.
@@ -108,8 +162,10 @@ export function DeviceStateSheet({ state }: Readonly<DeviceStateSheetProps>): Re
     <QueuedBottomSheet
       isRequestingToBeOpened={state !== null}
       onClose={() => {
+        const isAddingNewDevice = isAddingNewDeviceRef.current;
+        isAddingNewDeviceRef.current = false;
         // The sheet also reports a close once the state has left it: no outcome then.
-        if (!state) return;
+        if (!state || isAddingNewDevice) return;
         trackDeviceflowCanceled({
           sourceFlow,
           extraProperties: analyticsProperties,
@@ -128,7 +184,19 @@ export function DeviceStateSheet({ state }: Readonly<DeviceStateSheetProps>): Re
         showsVerticalScrollIndicator={false}
       >
         <BottomSheetHeader />
-        <Box lx={{ gap: "s16" }}>{state && <DeviceStateContent state={state} />}</Box>
+        {/* The sheet renders its content through a portal, outside the provider of the component. */}
+        <DeviceIntentTrackingProvider value={trackingContext}>
+          <Box lx={{ gap: "s16" }}>
+            {state && (
+              <DeviceStateContent
+                state={state}
+                onAddNewDevicePressed={() => {
+                  isAddingNewDeviceRef.current = true;
+                }}
+              />
+            )}
+          </Box>
+        </DeviceIntentTrackingProvider>
       </BottomSheetScrollView>
     </QueuedBottomSheet>
   );
