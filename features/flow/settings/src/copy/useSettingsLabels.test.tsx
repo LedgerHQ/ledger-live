@@ -6,7 +6,7 @@ import { useSettingsLabels } from "./useSettingsLabels";
 const resources = {
   en: {
     translation: {
-      newSettings: {
+      settings: {
         title: "Settings",
         sections: {
           general: "General",

@@ -11,13 +11,13 @@ export function useSettingsLabels(): SettingsLabels {
   const { t } = useTranslation();
   return useMemo(
     () => ({
-      title: t("newSettings.title"),
+      title: t("settings.title"),
       sections: {
-        general: t("newSettings.sections.general"),
-        assetManagement: t("newSettings.sections.assetManagement"),
-        security: t("newSettings.sections.security"),
-        privacy: t("newSettings.sections.privacy"),
-        about: t("newSettings.sections.about"),
+        general: t("settings.sections.general"),
+        assetManagement: t("settings.sections.assetManagement"),
+        security: t("settings.sections.security"),
+        privacy: t("settings.sections.privacy"),
+        about: t("settings.sections.about"),
       },
     }),
     [t],

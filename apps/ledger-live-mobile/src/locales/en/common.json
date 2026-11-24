@@ -4530,6 +4530,14 @@
     }
   },
   "settings": {
+    "title": "Settings",
+    "sections": {
+      "general": "General",
+      "assetManagement": "Asset management",
+      "security": "Security",
+      "privacy": "Privacy",
+      "about": "About"
+    },
     "header": "Settings",
     "resources": "Ledger resources",
     "display": {
@@ -12826,16 +12834,6 @@
         "cta": "Continue",
         "footer": "Crypto transaction services are provided by third-party provider MoonPay. Ledger provides no advice or recommendations."
       }
-    }
-  },
-  "newSettings": {
-    "title": "Settings",
-    "sections": {
-      "general": "General",
-      "assetManagement": "Asset management",
-      "security": "Security",
-      "privacy": "Privacy",
-      "about": "About"
     }
   }
 }

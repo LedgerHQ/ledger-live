@@ -5653,6 +5653,13 @@
   },
   "settings": {
     "title": "Settings",
+    "sections": {
+      "general": "General",
+      "assetManagement": "Asset management",
+      "security": "Security",
+      "privacy": "Privacy",
+      "about": "About"
+    },
     "discreet": "Toggle discreet mode",
     "tabs": {
       "display": "General",
@@ -11717,15 +11724,5 @@
     "error": "Unable to load analytics. Please try again.",
     "unavailable": "Data is not available for this selection.",
     "noResults": "No results"
-  },
-  "newSettings": {
-    "title": "Settings",
-    "sections": {
-      "general": "General",
-      "assetManagement": "Asset management",
-      "security": "Security",
-      "privacy": "Privacy",
-      "about": "About"
-    }
   }
 }
