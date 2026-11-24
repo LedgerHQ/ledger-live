@@ -3,6 +3,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { buildTags } from "tests/utils/tagsUtils";
 import { hasNightlyBuilds } from "tests/utils/nightlyBuildUtils";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 // Two cold starts and a device account scan, on top of the default per-test budget.
 const UPGRADE_TEST_TIMEOUT_MS = 600_000;
@@ -39,7 +40,7 @@ test.describe("App upgrade", () => {
       await previousApp.modularDialog.selectNetwork(currency);
       await previousApp.scanAccountsDrawer.selectFirstAccount();
       await previousApp.scanAccountsDrawer.clickCloseButton();
-      await previousApp.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1);
+      await previousApp.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, TIMEOUT.small);
 
       await previousApp.mainNavigation.openSettings();
       await previousApp.settings.changeCounterValue(counterValue.search);
