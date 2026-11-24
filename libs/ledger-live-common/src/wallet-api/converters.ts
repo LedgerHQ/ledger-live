@@ -191,9 +191,8 @@ export async function resolveWalletApiSpendableBalance(
  * Several bridges catch network/build failures and resolve `0` instead of rejecting
  * (Cardano, Kaspa, Concordium). `0` is also a genuine estimate for an empty account.
  * A zero result is kept only when the spendable balance exposed to Wallet API is zero (see
- * `getWalletApiSpendableBalance`: for Zcash that is the transparent pool only, so a
- * shielded-only account legitimately estimates `0`) or when pending token operations commit
- * the whole token balance. Native pending-operation values have family-specific fee semantics,
+ * `getWalletApiSpendableBalance`) or when pending token operations commit the whole token
+ * balance. Native pending-operation values have family-specific fee semantics,
  * so they are deliberately excluded from this check. Otherwise, zero is treated as an
  * ambiguous failure and omitted. Send-flow callers still receive the raw `0` from those bridges.
  *

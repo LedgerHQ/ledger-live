@@ -13,7 +13,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { resolveWalletApiSpendableBalance } from "@ledgerhq/live-common/wallet-api/converters";
-import aleoExtensions from "@ledgerhq/live-common/families/aleo/bridgeExtensions";
+import { defaultBridgeExtensions } from "@ledgerhq/live-common/bridge/defaultBridgeExtensions";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
@@ -159,7 +159,7 @@ describe("useDeviceNavigation - Aleo ARC-22 token with no sub-account", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.mocked(getAccountBridge).mockReturnValue(aleoExtensions as never);
+    jest.mocked(getAccountBridge).mockReturnValue(defaultBridgeExtensions as never);
   });
 
   /** Picks `token` in the drawer, then replays the device flow success with `aleoAccount`. */
