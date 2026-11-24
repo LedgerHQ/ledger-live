@@ -33,9 +33,7 @@ type Dispatch = ThunkDispatch<State, unknown, UnknownAction>;
 const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
 function describeGate(gate: AccountGate | AssetGate | null): string {
-  if (gate === null) return "none";
-  if (gate.type === "activation") return `activation · ${gate.method}`;
-  return gate.type;
+  return gate === null ? "none" : gate.type;
 }
 
 const describeRead = (status: AccountDataStatus | undefined) => ({

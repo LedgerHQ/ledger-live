@@ -1,10 +1,5 @@
 import type { AccountReceive } from "@domain/entity-account-receive";
-import {
-  receiveGate,
-  type AccountStatus,
-  type AssetActivationMethod,
-  type AssetStatus,
-} from "@domain/entity-account-status";
+import { receiveGate, type AccountStatus, type AssetStatus } from "@domain/entity-account-status";
 
 /** What the address screen shows, from the account data kinds it reads. */
 export type ReceiveScreenState =
@@ -13,7 +8,7 @@ export type ReceiveScreenState =
   /** The account must first register on its network (Canton, Concordium). */
   | Readonly<{ type: "onboardingRequired" }>
   /** The token must first be activated on the account (Hedera, Algorand, Stellar, XRP). */
-  | Readonly<{ type: "activationRequired"; method: AssetActivationMethod }>
+  | Readonly<{ type: "activationRequired" }>
   | Readonly<{ type: "error" }>;
 
 /** One kind as the screen reads it: `failed` when its read failed and nothing is stored. */
@@ -42,6 +37,6 @@ export function toReceiveScreenState({
   if (!accountStatus.data || (assetStatus && !assetStatus.data)) return LOADING;
 
   const gate = receiveGate(accountStatus.data, assetStatus?.data);
-  if (gate?.type === "activation") return { type: "activationRequired", method: gate.method };
+  if (gate?.type === "activation") return { type: "activationRequired" };
   return receive.data ? { type: "ready", receive: receive.data } : LOADING;
 }

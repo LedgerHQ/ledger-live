@@ -632,25 +632,22 @@ describe("accountStatus", () => {
   it.each([
     [false, { type: "onboarding" }],
     [true, null],
-  ])(
-    "hands the key as is and makes an onboarded %p account's gate %p",
-    async (isOnboarded, gate) => {
-      const getAccountStatus = jest.fn(async () => ({ used: false, isOnboarded }));
-      const addressOf = jest.fn(async () => "derived");
-      const source = createCoinModuleSource({
-        isCurrencySupported: () => true,
-        addressOf,
-        getApi: async () => undefined,
-        getAccountStatusApi: async () => ({ getAccountStatus }),
-      });
-      await expect(source.read?.accountStatus?.(target, undefined)).resolves.toEqual({
-        used: false,
-        gate,
-      });
-      expect(getAccountStatus).toHaveBeenCalledWith("0xabc", undefined);
-      expect(addressOf).not.toHaveBeenCalled();
-    },
-  );
+  ])("hands the key as is and makes an activated %p account's gate %p", async (activated, gate) => {
+    const getAccountStatus = jest.fn(async () => ({ activated, used: false }));
+    const addressOf = jest.fn(async () => "derived");
+    const source = createCoinModuleSource({
+      isCurrencySupported: () => true,
+      addressOf,
+      getApi: async () => undefined,
+      getAccountStatusApi: async () => ({ getAccountStatus }),
+    });
+    await expect(source.read?.accountStatus?.(target, undefined)).resolves.toEqual({
+      used: false,
+      gate,
+    });
+    expect(getAccountStatus).toHaveBeenCalledWith("0xabc", undefined);
+    expect(addressOf).not.toHaveBeenCalled();
+  });
 
   it("does not ask the coin module once the read aborted while it loaded", async () => {
     const getAccountStatus = jest.fn(async () => ({ used: true }));
@@ -686,23 +683,29 @@ describe("accountStatus", () => {
     expect(getAccountStatus).toHaveBeenCalledWith("0xabc", controller.signal);
   });
 
-  it("hands the account to the next source when the coin module has no getAccountStatus", async () => {
-    const statusFallback: AccountDataSource = {
-      id: AccountDataSourceIdSchema.parse("full-sync"),
-      supports: () => true,
-      read: { accountStatus: async () => ({ used: false, gate: null }) },
-    };
-    const router = createAccountDataRouter([
-      createCoinModuleSource({
-        isCurrencySupported: () => true,
-        getApi: async () => undefined,
-        getAccountStatusApi: async () => undefined,
-      }),
-      statusFallback,
-    ]);
-    await expect(router.read("accountStatus", ethereum)).resolves.toEqual({
-      data: { used: false, gate: null },
-      sourceId: statusFallback.id,
-    });
-  });
+  it.each([
+    ["has no getAccountStatus", async () => undefined],
+    ["does not know whether it was used", async () => ({ getAccountStatus: async () => ({}) })],
+  ])(
+    "hands the account to the next source when the coin module %s",
+    async (_, getAccountStatusApi) => {
+      const statusFallback: AccountDataSource = {
+        id: AccountDataSourceIdSchema.parse("full-sync"),
+        supports: () => true,
+        read: { accountStatus: async () => ({ used: false, gate: null }) },
+      };
+      const router = createAccountDataRouter([
+        createCoinModuleSource({
+          isCurrencySupported: () => true,
+          getApi: async () => undefined,
+          getAccountStatusApi,
+        }),
+        statusFallback,
+      ]);
+      await expect(router.read("accountStatus", ethereum)).resolves.toEqual({
+        data: { used: false, gate: null },
+        sourceId: statusFallback.id,
+      });
+    },
+  );
 });

@@ -70,9 +70,12 @@ export function createCoinModuleSource(host: CoinModuleHost): AccountDataSource 
     if (!api) {
       throw new AccountDataNotServedError(`No account status in the ${currencyId} coin module`);
     }
-    const { used, isOnboarded } = await api.getAccountStatus(descriptor.key, signal);
+    const { activated, used } = await api.getAccountStatus(descriptor.key, signal);
     if (signal?.aborted) throw abortReason(signal);
-    return { used, gate: isOnboarded === false ? { type: "onboarding" } : null };
+    if (used === undefined) {
+      throw new AccountDataNotServedError(`No used flag in the ${currencyId} account status`);
+    }
+    return { used, gate: activated === false ? { type: "onboarding" } : null };
   };
 
   return {
