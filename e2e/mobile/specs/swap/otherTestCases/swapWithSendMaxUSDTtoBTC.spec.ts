@@ -19,9 +19,4 @@ const swapWithSendMaxConfig = {
   ],
 };
 
-runSwapWithSendMaxTest(
-  swapWithSendMaxConfig.fromAccount,
-  swapWithSendMaxConfig.toAccount,
-  swapWithSendMaxConfig.tmsLinks,
-  swapWithSendMaxConfig.tags,
-);
+runSwapWithSendMaxTest(swapWithSendMaxConfig);

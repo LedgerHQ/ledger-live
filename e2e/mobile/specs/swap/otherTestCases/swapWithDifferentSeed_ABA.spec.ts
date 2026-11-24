@@ -25,13 +25,4 @@ const swapTestConfig = {
   ],
 };
 
-runSwapWithDifferentSeedTest(
-  swapTestConfig.swap,
-  swapTestConfig.userData,
-  swapTestConfig.errorMessage,
-  swapTestConfig.addressFrom,
-  swapTestConfig.addressTo,
-  swapTestConfig.tmsLinks,
-  swapTestConfig.tags,
-  swapTestConfig.lnsErrorMessage,
-);
+runSwapWithDifferentSeedTest(swapTestConfig);
