@@ -15,6 +15,7 @@ The sections come with the next tickets of the
 | Export                   | Entry  | Purpose                                                                 |
 | ------------------------ | ------ | ----------------------------------------------------------------------- |
 | `SettingsPage`           | `/web` | Desktop page: title and one tab per section; the app renders the content |
+| `SettingsGate`           | `/web` | New page behind `newSettings`, legacy Settings otherwise and for Help, Experimental, Developer |
 | `SettingsSection`        | `.`    | Block of rows with an optional title                                    |
 | `SettingsRow`            | `.`    | Icon, title, description with an optional link, and a trailing element  |
 | `SETTINGS_SECTIONS`      | `.`    | General, Asset management, Security, Privacy, About                     |
