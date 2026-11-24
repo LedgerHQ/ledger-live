@@ -1,10 +1,12 @@
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVerifyAddressExecutorViewModel";
 import { splitAddress } from "../../logic/splitAddress";
 import type { ReceiveAddressProps } from "./ReceiveAddress.types";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 import { useReceiveAddressActions } from "./useReceiveAddressActions";
 import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
+import { useReceiveAddressNotices } from "./useReceiveAddressNotices";
+import { useReceiveAddressPanel } from "./useReceiveAddressPanel";
 import { useReceiveAddressSelection } from "./useReceiveAddressSelection";
 import { useReceiveFamilyConfig } from "./useReceiveFamilyConfig";
 import { useReceiveScreenData } from "./useReceiveScreenData";
@@ -23,6 +25,8 @@ export function useReceiveAddressViewModel({
   onShareAddress,
   VerifyAddressExecutor,
   getFamilyConfig,
+  serviceIncidents,
+  onOpenUrl,
 }: ReceiveAddressProps): ReceiveAddressViewModel {
   const { descriptor, data, accountStatus } = useReceiveScreenData(accountUUID, assetId);
   const header = useReceiveAddressHeader(descriptor, assetId);
@@ -46,6 +50,21 @@ export function useReceiveAddressViewModel({
     hasVerifyExecutor: !!VerifyAddressExecutor,
     onCopyAddress,
     onShareAddress,
+  });
+
+  const { panel, openPanel, closePanel } = useReceiveAddressPanel();
+  const openServiceStatus = useCallback(() => openPanel("serviceStatus"), [openPanel]);
+  const hasIncidents = !!serviceIncidents?.length;
+  useEffect(() => {
+    if (!hasIncidents) closePanel();
+  }, [hasIncidents, closePanel]);
+  const { notices, serviceWarning } = useReceiveAddressNotices({
+    familyConfig,
+    selected,
+    serviceIncidents,
+    copy,
+    onOpenUrl,
+    openServiceStatus,
   });
 
   const address = useMemo(
@@ -77,6 +96,9 @@ export function useReceiveAddressViewModel({
         onSelect: selection.select,
       }
     : undefined;
+  const noticesPlaceholderLabel = [serviceWarning?.title, ...notices.map(notice => notice.text)]
+    .filter(Boolean)
+    .join(" · ");
 
   return {
     isLoading: data.type === "loading",
@@ -85,6 +107,18 @@ export function useReceiveAddressViewModel({
     address,
     actions,
     isVerifying: verification !== undefined,
+    notices,
+    serviceWarning,
+    noticesPlaceholderLabel,
+    serviceStatus:
+      panel === "serviceStatus" && serviceIncidents && hasIncidents
+        ? {
+            title: copy.serviceStatusTitle,
+            incidents: serviceIncidents,
+            gotItLabel: copy.gotItLabel,
+            onClose: closePanel,
+          }
+        : undefined,
     verification,
     title: header.title,
     networkLabel: header.networkLabel,
