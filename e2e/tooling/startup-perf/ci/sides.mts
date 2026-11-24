@@ -16,16 +16,21 @@ export type PlatformId = (typeof PLATFORMS)[number]["id"];
 export interface Restored {
   /** Build A, which the build matrix then leaves out. */
   a: boolean;
+  /** The accounts snapshot: the build matrix leaves out the release's E2E build (`snapshot`). */
+  snapshot: boolean;
 }
 
 /** The plan's sides that a platform's build job still makes. */
 export function sidesLeft(sides: string[], restored: Restored): string[] {
-  return sides.filter(side => !(side === "a" && restored.a));
+  return sides.filter(
+    side => !(side === "a" && restored.a) && !(side === "snapshot" && restored.snapshot),
+  );
 }
 
 /**
  * `<platform>`: the sides its build matrix makes, [] when nothing is left. `<platform>_save_a`:
  * whether save-cache caches the build A it makes, a release tag's (`cacheA`) the cache lacked.
+ * `<platform>_save_snapshot`: whether it caches the accounts snapshot its snapshot job makes.
  */
 export function outputsOf(
   sides: string[],
@@ -35,14 +40,18 @@ export function outputsOf(
   return PLATFORMS.map(({ id }) => {
     const left = sidesLeft(sides, restored[id]);
     const saveA = cacheA && left.includes("a");
-    return `${id}=${JSON.stringify(left)}\n${id}_save_a=${saveA}\n`;
+    const saveSnapshot = left.includes("snapshot");
+    return `${id}=${JSON.stringify(left)}\n${id}_save_a=${saveA}\n${id}_save_snapshot=${saveSnapshot}\n`;
   }).join("");
 }
 
-export function summaryOf(restored: Record<PlatformId, Restored>): string {
-  return PLATFORMS.filter(({ id }) => restored[id].a)
-    .map(({ name }) => `- ${name} build A restored from the cache\n`)
-    .join("");
+export function summaryOf(restored: Record<PlatformId, Restored>, snapshotRelease = ""): string {
+  return PLATFORMS.flatMap(({ id, name }) => [
+    ...(restored[id].a ? [`- ${name} build A restored from the cache\n`] : []),
+    ...(restored[id].snapshot
+      ? [`- ${name} accounts snapshot of ${snapshotRelease} restored from the cache\n`]
+      : []),
+  ]).join("");
 }
 
 export function sidesOf(json: string | undefined): string[] {
@@ -57,13 +66,16 @@ function main(): void {
   const env = process.env;
   const sides = sidesOf(env.SIDES);
   const restored: Record<PlatformId, Restored> = {
-    android: { a: env.RESTORED_A_ANDROID === "true" },
-    ios: { a: env.RESTORED_A_IOS === "true" },
+    android: {
+      a: env.RESTORED_A_ANDROID === "true",
+      snapshot: env.RESTORED_SNAPSHOT_ANDROID === "true",
+    },
+    ios: { a: env.RESTORED_A_IOS === "true", snapshot: env.RESTORED_SNAPSHOT_IOS === "true" },
   };
   const outputs = outputsOf(sides, restored, env.CACHE_A === "true");
   if (env.GITHUB_OUTPUT) appendFileSync(env.GITHUB_OUTPUT, outputs);
   else process.stdout.write(outputs);
-  appendSummary(summaryOf(restored));
+  appendSummary(summaryOf(restored, env.SNAPSHOT_RELEASE));
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

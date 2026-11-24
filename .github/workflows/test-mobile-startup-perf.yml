@@ -41,11 +41,6 @@ on:
         required: true
         type: string
         default: "20"
-      accounts_userdata:
-        description: "Userdata files (e2e/mobile/userdata, comma-separated) merged for the accounts scenario; settings come from the first"
-        required: true
-        type: string
-        default: "speculos-x-other-account,swap-history"
       threshold_ms:
         description: "B fails (prod-vs-release, prod-vs-develop, custom) or counts as detected (known-regression) when it is slower than A by more than this, on the Debug screen value (from the first JS import when A and B count from different points) or with the native start"
         required: true
@@ -92,8 +87,9 @@ jobs:
       platforms: ${{ steps.plan.outputs.platforms }}
       pairs: ${{ steps.plan.outputs.pairs }}
       threshold_ms: ${{ steps.plan.outputs.threshold_ms }}
-      accounts_userdata: ${{ steps.plan.outputs.accounts_userdata }}
       read: ${{ steps.plan.outputs.read }}
+      snapshot_release: ${{ steps.plan.outputs.snapshot_release }}
+      snapshot_ref: ${{ steps.plan.outputs.snapshot_ref }}
     steps:
       # This workflow's scripts only.
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -116,14 +112,14 @@ jobs:
           PAIRS: ${{ inputs.pairs }}
           THRESHOLD: ${{ inputs.threshold_ms }}
           SCENARIOS: ${{ inputs.scenarios }}
-          ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata }}
           READ: ${{ inputs.read }}
           BRANCH_SHA: ${{ github.sha }}
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
         run: node e2e/tooling/startup-perf/ci/resolve-refs.mts
 
   # Restores what the mobile E2E builds' S3 cache keeps for this run (develop/, which only runs
-  # from develop write): build A of a release tag, so the build matrices leave it out. The cache
+  # from develop write): build A of a release tag and the release's accounts snapshot, so the build
+  # matrices leave them out. The cache
   # credentials never share a job with the code being built (README.md, "The cache"). Outputs
   # <platform>_sides: the sides each build matrix still builds, [] when nothing is left, empty when
   # this job did not run (then: every side).
@@ -144,18 +140,36 @@ jobs:
       ios_sides: ${{ steps.sides.outputs.ios }}
       android_save_a: ${{ steps.sides.outputs.android_save_a }}
       ios_save_a: ${{ steps.sides.outputs.ios_save_a }}
+      android_save_snapshot: ${{ steps.sides.outputs.android_save_snapshot }}
+      ios_save_snapshot: ${{ steps.sides.outputs.ios_save_snapshot }}
       android_a_key: ${{ steps.keys.outputs.android_a }}
       ios_a_key: ${{ steps.keys.outputs.ios_a }}
+      android_snapshot_key: ${{ steps.snapshot-keys.outputs.android }}
+      ios_snapshot_key: ${{ steps.snapshot-keys.outputs.ios }}
     env:
       SHA_A: ${{ needs.plan.outputs.ref_a }}
+      SNAPSHOT_RELEASE: ${{ needs.plan.outputs.snapshot_release }}
     steps:
-      # The files of the key, this folder's restore action and sides.mts, and what the cache
+      # The files of the keys, this folder's restore action and sides.mts, and what the cache
       # profile's script reads.
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           sparse-checkout: |
             /.github/workflows/test-mobile-startup-perf.yml
             /e2e/tooling/startup-perf/ci/
+            /e2e/tooling/startup-perf/src/types.ts
+            /e2e/tooling/startup-perf/src/snapshot/
+            /e2e/tooling/startup-perf/src/measure/storage.ts
+            /e2e/tooling/startup-perf/src/measure/inject.ts
+            /e2e/tooling/startup-perf/src/measure/exec.ts
+            /e2e/tooling/startup-perf/src/measure/maestro.ts
+            /e2e/tooling/startup-perf/src/measure/types.ts
+            /e2e/tooling/startup-perf/src/measure/platforms/
+            /e2e/tooling/startup-perf/flows/add-accounts.yaml
+            /e2e/mobile/userdata/skip-onboarding.json
+            /libs/live-e2e-shared/src/cli/e2e-cli.ts
+            /libs/live-e2e-shared/src/cli/speculosSession.ts
+            /libs/live-e2e-shared/src/speculosAddress.ts
             /tools/nx/
             /nx.workspace.json
             /nx.s3.defaults.json
@@ -224,9 +238,55 @@ jobs:
           artifact: startup-perf-ios-a
           region: ${{ secrets.AWS_CACHE_REGION }}
 
-      # A side counts as restored once its artifact is published; otherwise its build job makes it.
-      # Also after a step failed or timed out: without these outputs, A's build job would rebuild a
-      # restored A.
+      # One snapshot per release and per version of the code that makes it: every module
+      # src/snapshot/run.ts imports, and the e2e-cli speculos command's own files. Not the E2E
+      # suites' Speculos settings it reuses (libs/live-e2e-shared/src/speculos*.ts), which change
+      # every few days and do not change the accounts the scan finds: bump the version by hand.
+      - name: The snapshot's keys
+        id: snapshot-keys
+        if: ${{ needs.plan.outputs.snapshot_release != '' }}
+        env:
+          PREFIX: develop/
+          CODE_HASH: ${{ hashFiles('e2e/tooling/startup-perf/src/types.ts', 'e2e/tooling/startup-perf/src/snapshot/**', 'e2e/tooling/startup-perf/src/measure/storage.ts', 'e2e/tooling/startup-perf/src/measure/inject.ts', 'e2e/tooling/startup-perf/src/measure/exec.ts', 'e2e/tooling/startup-perf/src/measure/maestro.ts', 'e2e/tooling/startup-perf/src/measure/types.ts', 'e2e/tooling/startup-perf/src/measure/platforms/**', 'e2e/tooling/startup-perf/ci/step.mts', '!e2e/tooling/startup-perf/src/**/*.test.ts', 'e2e/tooling/startup-perf/flows/add-accounts.yaml', 'e2e/mobile/userdata/skip-onboarding.json', 'libs/live-e2e-shared/src/cli/e2e-cli.ts', 'libs/live-e2e-shared/src/cli/speculosSession.ts', 'libs/live-e2e-shared/src/speculosAddress.ts') }}
+        run: |
+          for platform in android ios; do
+            echo "$platform=${PREFIX}startup-perf-snapshot-$platform-$SNAPSHOT_RELEASE-${CODE_HASH:0:16}-1" >> "$GITHUB_OUTPUT"
+          done
+
+      # Only the snapshot of this release, with its storage, replaces making it.
+      - name: Restore the Android snapshot
+        id: android-snapshot
+        if: ${{ needs.plan.outputs.snapshot_release != '' && needs.plan.outputs.platforms != 'iOS Only' }}
+        continue-on-error: true
+        timeout-minutes: 10
+        uses: ./e2e/tooling/startup-perf/ci/actions/restore
+        with:
+          key: ${{ steps.snapshot-keys.outputs.android }}
+          path: snapshot/android
+          check: >-
+            node -e 'process.exit(JSON.parse(require("fs").readFileSync("snapshot.json")).release === process.env.SNAPSHOT_RELEASE ? 0 : 1)'
+            && [[ -s ledger-live ]]
+          artifact: startup-perf-snapshot-android
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Restore the iOS snapshot
+        id: ios-snapshot
+        if: ${{ needs.plan.outputs.snapshot_release != '' && needs.plan.outputs.platforms != 'Android Only' }}
+        continue-on-error: true
+        timeout-minutes: 10
+        uses: ./e2e/tooling/startup-perf/ci/actions/restore
+        with:
+          key: ${{ steps.snapshot-keys.outputs.ios }}
+          path: snapshot/ios
+          check: >-
+            node -e 'process.exit(JSON.parse(require("fs").readFileSync("snapshot.json")).release === process.env.SNAPSHOT_RELEASE ? 0 : 1)'
+            && [[ -s ledger-live ]]
+          artifact: startup-perf-snapshot-ios
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      # A side counts as restored once its artifact is published; otherwise its job makes it. Also
+      # after a step failed or timed out: without these outputs, the build matrices would make a
+      # restored side again.
       - name: Sides left to build
         id: sides
         if: ${{ always() }}
@@ -235,6 +295,8 @@ jobs:
           CACHE_A: ${{ needs.plan.outputs.cache_a }}
           RESTORED_A_ANDROID: ${{ steps.android-a.outputs.restored }}
           RESTORED_A_IOS: ${{ steps.ios-a.outputs.restored }}
+          RESTORED_SNAPSHOT_ANDROID: ${{ steps.android-snapshot.outputs.restored }}
+          RESTORED_SNAPSHOT_IOS: ${{ steps.ios-snapshot.outputs.restored }}
         run: node e2e/tooling/startup-perf/ci/sides.mts
 
   build-android:
@@ -254,7 +316,7 @@ jobs:
     runs-on: ledger-wallet-8cpu-aws-public-cached
     timeout-minutes: 120
     env:
-      REF: ${{ matrix.side == 'a' && needs.plan.outputs.ref_a || needs.plan.outputs.ref_b }}
+      REF: ${{ matrix.side == 'a' && needs.plan.outputs.ref_a || matrix.side == 'b' && needs.plan.outputs.ref_b || needs.plan.outputs.snapshot_ref }}
       # Pods report the host CPU count; cap Gradle workers to the runner size.
       GRADLE_OPTS: -Dorg.gradle.workers.max=8
     steps:
@@ -311,6 +373,7 @@ jobs:
         run: GITHUB_STEP_SUMMARY=/dev/null pnpm build:llm:deps
 
       - name: Prepare the prod-like build
+        if: ${{ matrix.side != 'snapshot' }}
         env:
           STARTUP_PERF_REGRESSION: ${{ needs.plan.outputs.preset == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
         run: node .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.mts
@@ -325,12 +388,14 @@ jobs:
         run: pnpm mobile e2e:build -c android.emu.prerelease
 
       - name: Collect APK
+        env:
+          SIDE: ${{ matrix.side }}
         run: |
           set -euo pipefail
           mkdir -p out
           APK=$(find apps/ledger-live-mobile/android/app/build/outputs/apk/detoxPreRelease -name "*x86_64*.apk" | head -1)
           [[ -n "$APK" ]] || { echo "::error::no x86_64 detoxPreRelease APK found"; exit 1; }
-          node .startup-perf/e2e/tooling/startup-perf/ci/verify-build.mts android "$APK"
+          [[ "$SIDE" == snapshot ]] || node .startup-perf/e2e/tooling/startup-perf/ci/verify-build.mts android "$APK"
           cp "$APK" out/app.apk
           git rev-parse HEAD > out/sha.txt
           bash .startup-perf/e2e/tooling/startup-perf/ci/toolchain.sh record out/toolchain.txt
@@ -361,7 +426,7 @@ jobs:
     runs-on: ["general-pool", macOS, ARM64]
     timeout-minutes: 150
     env:
-      REF: ${{ matrix.side == 'a' && needs.plan.outputs.ref_a || needs.plan.outputs.ref_b }}
+      REF: ${{ matrix.side == 'a' && needs.plan.outputs.ref_a || matrix.side == 'b' && needs.plan.outputs.ref_b || needs.plan.outputs.snapshot_ref }}
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
@@ -408,6 +473,7 @@ jobs:
         run: GITHUB_STEP_SUMMARY=/dev/null pnpm build:llm:deps
 
       - name: Prepare the prod-like build
+        if: ${{ matrix.side != 'snapshot' }}
         env:
           STARTUP_PERF_REGRESSION: ${{ needs.plan.outputs.preset == 'known-regression' && matrix.side == 'b' && 'LIVE-36190' || '' }}
         run: node .startup-perf/e2e/tooling/startup-perf/ci/prepare-build.mts
@@ -421,11 +487,13 @@ jobs:
         run: pnpm mobile e2e:build -c ios.sim.prerelease
 
       - name: Collect app
+        env:
+          SIDE: ${{ matrix.side }}
         run: |
           set -euo pipefail
           mkdir -p out
           APP=apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app
-          node .startup-perf/e2e/tooling/startup-perf/ci/verify-build.mts ios "$APP"
+          [[ "$SIDE" == snapshot ]] || node .startup-perf/e2e/tooling/startup-perf/ci/verify-build.mts ios "$APP"
           ditto -c -k --keepParent "$APP" out/app.zip
           git rev-parse HEAD > out/sha.txt
           bash .startup-perf/e2e/tooling/startup-perf/ci/toolchain.sh record out/toolchain.txt
@@ -439,18 +507,20 @@ jobs:
           retention-days: 7
           overwrite: true
 
-  # Caches what this run made and the cache lacked (see restore-cache): build A of a release tag.
-  # Only when B builds reviewed code (save, resolve-refs.mts): B's build job could replace another
-  # job's artifact.
+  # Caches what this run made and the cache lacked (see restore-cache): build A of a release tag and
+  # the release's accounts snapshot. Only when B builds reviewed code (save, resolve-refs.mts): B's
+  # build job could replace another job's artifact.
   save-cache:
     name: "Save to the cache"
-    needs: [plan, restore-cache, build-android, build-ios]
+    needs: [plan, restore-cache, build-android, build-ios, snapshot-android, snapshot-ios]
     # Best-effort: what is not cached is made again by the next run.
     continue-on-error: true
     if: >-
       !cancelled() && needs.plan.outputs.save == 'true' &&
       (needs.restore-cache.outputs.android_save_a == 'true' && needs.build-android.result == 'success' ||
-      needs.restore-cache.outputs.ios_save_a == 'true' && needs.build-ios.result == 'success')
+      needs.restore-cache.outputs.ios_save_a == 'true' && needs.build-ios.result == 'success' ||
+      needs.restore-cache.outputs.android_save_snapshot == 'true' && needs.snapshot-android.result == 'success' ||
+      needs.restore-cache.outputs.ios_save_snapshot == 'true' && needs.snapshot-ios.result == 'success')
     permissions:
       id-token: write
       contents: read
@@ -511,14 +581,245 @@ jobs:
           artifact: startup-perf-ios-a
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: Cache the Android snapshot
+        if: ${{ needs.restore-cache.outputs.android_save_snapshot == 'true' && needs.snapshot-android.result == 'success' && steps.profile.outputs.cache-profile == 'develop' }}
+        continue-on-error: true
+        timeout-minutes: 10
+        uses: ./e2e/tooling/startup-perf/ci/actions/save
+        with:
+          key: ${{ needs.restore-cache.outputs.android_snapshot_key }}
+          path: snapshot/android
+          artifact: startup-perf-snapshot-android
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Cache the iOS snapshot
+        if: ${{ needs.restore-cache.outputs.ios_save_snapshot == 'true' && needs.snapshot-ios.result == 'success' && steps.profile.outputs.cache-profile == 'develop' }}
+        continue-on-error: true
+        timeout-minutes: 10
+        uses: ./e2e/tooling/startup-perf/ci/actions/save
+        with:
+          key: ${{ needs.restore-cache.outputs.ios_snapshot_key }}
+          path: snapshot/ios
+          artifact: startup-perf-snapshot-ios
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+  snapshot-android:
+    name: "Android accounts snapshot"
+    needs: [plan, restore-cache, build-android]
+    # On a miss: the snapshot side is left in the android build matrix (see restore-cache).
+    if: >-
+      !cancelled() && needs.build-android.result == 'success' &&
+      contains(fromJSON(needs.restore-cache.outputs.android_sides || needs.plan.outputs.sides), 'snapshot')
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ledger-wallet-8cpu-github-public-cached
+    timeout-minutes: 120
+    env:
+      SNAPSHOT_DIR: snapshot/android
+      SNAPSHOT_DEBUG_DIR: startup-perf-snapshot-debug/android
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Load AVD configuration
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        with:
+          config_only: "true"
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Setup Android Environment
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
+        with:
+          install_sdk: "false"
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile --filter="@ledgerhq/live-e2e-shared..." --filter="@ledgerhq/mobile-startup-perf" --unsafe-perm --ignore-scripts
+
+      # Its typecheck builds the libraries `e2e-cli speculos` runs from.
+      - name: Build the e2e shared lib's dependencies
+        run: GITHUB_STEP_SUMMARY=/dev/null pnpm exec nx run @ledgerhq/live-e2e-shared:typecheck
+
+      - name: Prepare the AVD
+        timeout-minutes: 40
+        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@develop
+        with:
+          r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2_endpoint: ${{ secrets.R2_ENDPOINT }}
+          create_if_missing: "true"
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: startup-perf-android-snapshot
+          path: builds/snapshot
+
+      - name: Sign the APK
+        env:
+          KS_PATH: ${{ secrets.ANDROID_KEYSTORE_PATH }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: bash e2e/tooling/startup-perf/devices/sign-apks.sh builds/snapshot
+
+      - name: Install Maestro ${{ env.MAESTRO_VERSION }}
+        run: bash e2e/tooling/startup-perf/devices/install-maestro.sh
+
+      - name: Boot the emulator
+        run: bash e2e/tooling/startup-perf/devices/boot-emulators.sh "$SNAPSHOT_DEBUG_DIR" 1
+
+      - name: Add the accounts through the UI
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
+          REMOTE_SPECULOS: "true"
+          SPECULOS_DEVICE: nanoX
+          RELEASE: ${{ needs.plan.outputs.snapshot_release }}
+        run: |
+          node e2e/tooling/startup-perf/src/snapshot/run.ts \
+            --platform android --device emulator-5554 \
+            --app builds/snapshot/signed.apk --app-id "$APP_ID" --release "$RELEASE" \
+            --out-dir "$SNAPSHOT_DIR" --debug-dir "$SNAPSHOT_DEBUG_DIR"
+
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: startup-perf-snapshot-android
+          path: ${{ env.SNAPSHOT_DIR }}/
+          retention-days: 7
+
+
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: ${{ always() }}
+        with:
+          name: startup-perf-snapshot-debug-android
+          path: ${{ env.SNAPSHOT_DEBUG_DIR }}
+          retention-days: 14
+          include-hidden-files: true
+
+  snapshot-ios:
+    name: "iOS accounts snapshot"
+    needs: [plan, restore-cache, build-ios]
+    # On a miss: the snapshot side is left in the ios build matrix (see restore-cache).
+    if: >-
+      !cancelled() && needs.build-ios.result == 'success' &&
+      contains(fromJSON(needs.restore-cache.outputs.ios_sides || needs.plan.outputs.sides), 'snapshot')
+    permissions:
+      id-token: write
+      contents: read
+    # The performance pool's queue, so it never runs beside an iOS measurement.
+    concurrency:
+      group: mobile-startup-perf-ios
+      cancel-in-progress: false
+      queue: max
+    runs-on: ["qaa", macOS, ARM64, "performance-pool"]
+    timeout-minutes: 120
+    env:
+      SNAPSHOT_DIR: snapshot/ios
+      SNAPSHOT_DEBUG_DIR: startup-perf-snapshot-debug/ios
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          skip-pod-cache: "true"
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile --filter="@ledgerhq/live-e2e-shared..." --filter="@ledgerhq/mobile-startup-perf" --unsafe-perm --ignore-scripts
+
+      # Its typecheck builds the libraries `e2e-cli speculos` runs from.
+      - name: Build the e2e shared lib's dependencies
+        run: GITHUB_STEP_SUMMARY=/dev/null pnpm exec nx run @ledgerhq/live-e2e-shared:typecheck
+
+      # Maestro needs a JDK.
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: startup-perf-ios-snapshot
+          path: builds/snapshot
+
+      - name: Unpack the app
+        run: ditto -x -k builds/snapshot/app.zip builds/snapshot
+
+      - name: Install Maestro ${{ env.MAESTRO_VERSION }}
+        run: bash e2e/tooling/startup-perf/devices/install-maestro.sh
+
+      - name: Create and boot a simulator
+        timeout-minutes: 20
+        run: bash e2e/tooling/startup-perf/devices/boot-simulators.sh 1
+
+      - name: Add the accounts through the UI
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
+          REMOTE_SPECULOS: "true"
+          SPECULOS_DEVICE: nanoX
+          RELEASE: ${{ needs.plan.outputs.snapshot_release }}
+        run: |
+          node e2e/tooling/startup-perf/src/snapshot/run.ts \
+            --platform ios --device "$SIM_1" \
+            --app builds/snapshot/ledgerlivemobile.app --app-id "$APP_ID" --release "$RELEASE" \
+            --out-dir "$SNAPSHOT_DIR" --debug-dir "$SNAPSHOT_DEBUG_DIR"
+
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: startup-perf-snapshot-ios
+          path: ${{ env.SNAPSHOT_DIR }}/
+          retention-days: 7
+
+
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: ${{ always() }}
+        with:
+          name: startup-perf-snapshot-debug-ios
+          path: ${{ env.SNAPSHOT_DEBUG_DIR }}
+          retention-days: 14
+          include-hidden-files: true
+
   measure-android:
     name: "Android startup (2 emulators, ${{ matrix.scenario }})"
-    needs: [plan, restore-cache, build-android]
-    # Built, or every side restored (build-android then skipped).
+    needs: [plan, restore-cache, build-android, snapshot-android]
+    # Built, or every side restored (build-android then skipped), and its accounts snapshot
+    # made or restored (snapshot-android then skipped).
     if: >-
       !cancelled() && needs.plan.result == 'success' &&
       needs.plan.outputs.platforms != 'iOS Only' &&
-      (needs.build-android.result == 'success' || needs.restore-cache.outputs.android_sides == '[]')
+      (needs.build-android.result == 'success' || needs.restore-cache.outputs.android_sides == '[]') &&
+      contains(fromJSON('["success","skipped"]'), needs.snapshot-android.result)
     strategy:
       fail-fast: false
       matrix:
@@ -595,21 +896,20 @@ jobs:
           name: startup-perf-android-b
           path: builds/b
 
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        if: ${{ matrix.scenario == 'accounts' }}
+        with:
+          name: startup-perf-snapshot-android
+          path: snapshot/android
+
       - name: Sign APKs
         env:
           KS_PATH: ${{ secrets.ANDROID_KEYSTORE_PATH }}
           KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           set -euo pipefail
-          BT="$ANDROID_HOME/build-tools/36.0.0"
           mkdir -p "$RESULTS_DIR/android"
-          for dir in builds/a builds/b; do
-            [[ -f "$dir/app.apk" ]] || continue
-            "$BT/zipalign" -f -p 4 "$dir/app.apk" "$dir/aligned.apk"
-            # shellcheck disable=SC2086
-            "$BT/apksigner" sign --v4-signing-enabled false --ks "$KS_PATH" --ks-pass $KS_PASS --ks-key-alias staging --key-pass $KS_PASS --out "$dir/signed.apk" "$dir/aligned.apk"
-            echo "$dir: $(cat "$dir/sha.txt")" | tee -a "$RESULTS_DIR/android/builds.txt"
-          done
+          bash e2e/tooling/startup-perf/devices/sign-apks.sh builds/a builds/b | tee -a "$RESULTS_DIR/android/builds.txt"
 
       - name: Compare the build toolchains
         run: bash e2e/tooling/startup-perf/ci/toolchain.sh compare builds/a builds/b
@@ -636,7 +936,6 @@ jobs:
           SCENARIO: ${{ matrix.scenario }}
           PAIRS: ${{ needs.plan.outputs.pairs }}
           READ: ${{ needs.plan.outputs.read }}
-          ACCOUNTS_USERDATA: ${{ needs.plan.outputs.accounts_userdata }}
         run: |
           set -euo pipefail
           APP_A=builds/a/signed.apk
@@ -648,7 +947,7 @@ jobs:
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
             --scenarios "$SCENARIO" --pairs "$PAIRS" --warmups 6 \
             --read "$READ" \
-            --accounts-userdata "$ACCOUNTS_USERDATA" \
+            --accounts-snapshot snapshot/android \
             --out-dir "$RESULTS_DIR/android"
 
       - name: Analyse
@@ -681,11 +980,12 @@ jobs:
 
   measure-ios:
     name: "iOS startup (2 simulators)"
-    needs: [plan, restore-cache, build-ios]
+    needs: [plan, restore-cache, build-ios, snapshot-ios]
     if: >-
       !cancelled() && needs.plan.result == 'success' &&
       needs.plan.outputs.platforms != 'Android Only' &&
-      (needs.build-ios.result == 'success' || needs.restore-cache.outputs.ios_sides == '[]')
+      (needs.build-ios.result == 'success' || needs.restore-cache.outputs.ios_sides == '[]') &&
+      contains(fromJSON('["success","skipped"]'), needs.snapshot-ios.result)
     # One iOS measurement at a time on the performance pool, so two never measure side by side;
     # queue: max keeps every waiting run instead of only the latest.
     concurrency:
@@ -723,6 +1023,12 @@ jobs:
           name: startup-perf-ios-b
           path: builds/b
 
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        if: ${{ contains(fromJSON(needs.plan.outputs.scenarios), 'accounts') }}
+        with:
+          name: startup-perf-snapshot-ios
+          path: snapshot/ios
+
       - name: Unpack apps
         run: |
           set -euo pipefail
@@ -750,7 +1056,6 @@ jobs:
           SCENARIOS: ${{ join(fromJSON(needs.plan.outputs.scenarios), ',') }}
           PAIRS: ${{ needs.plan.outputs.pairs }}
           READ: ${{ needs.plan.outputs.read }}
-          ACCOUNTS_USERDATA: ${{ needs.plan.outputs.accounts_userdata }}
         run: |
           set -euo pipefail
           APP_A=builds/a/ledgerlivemobile.app
@@ -762,7 +1067,7 @@ jobs:
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
             --scenarios "$SCENARIOS" --pairs "$PAIRS" \
             --read "$READ" \
-            --accounts-userdata "$ACCOUNTS_USERDATA" \
+            --accounts-snapshot snapshot/ios \
             --out-dir "$RESULTS_DIR/ios"
 
       - name: Analyse
@@ -795,7 +1100,7 @@ jobs:
 
   report-on-slack:
     name: "Slack report"
-    needs: [plan, restore-cache, build-android, build-ios, measure-android, measure-ios]
+    needs: [plan, restore-cache, build-android, build-ios, snapshot-android, snapshot-ios, measure-android, measure-ios]
     # As for the mobile E2E runs: every run posts to their results channel, passed or failed, and
     # the nightly or a dispatch with slack_notif to #live-repo-health too. A run cancelled by hand
     # posts nothing; a job that times out ends cancelled but still gets posted.
@@ -834,8 +1139,10 @@ jobs:
           PLAN: ${{ needs.plan.result }}
           # Every side restored counts as built.
           ANDROID_BUILD: ${{ needs.restore-cache.outputs.android_sides == '[]' && 'success' || needs.build-android.result }}
+          ANDROID_SNAPSHOT: ${{ needs.snapshot-android.result }}
           ANDROID_MEASURE: ${{ needs.measure-android.result }}
           IOS_BUILD: ${{ needs.restore-cache.outputs.ios_sides == '[]' && 'success' || needs.build-ios.result }}
+          IOS_SNAPSHOT: ${{ needs.snapshot-ios.result }}
           IOS_MEASURE: ${{ needs.measure-ios.result }}
         run: node e2e/tooling/startup-perf/ci/slack-report.mts
 

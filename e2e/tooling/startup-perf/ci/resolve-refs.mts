@@ -14,7 +14,6 @@ export interface PlanInputs {
   pairs: string;
   thresholdMs: string;
   scenarios: string;
-  accountsUserdata: string;
   /** Where run.ts reads each launch: log, both or screen. */
   read: string;
   /** The commit and the branch the workflow runs from. */
@@ -31,7 +30,6 @@ export const NIGHTLY: Omit<PlanInputs, "branchSha" | "branchName"> = {
   pairs: "20",
   thresholdMs: "100",
   scenarios: "no-accounts,accounts",
-  accountsUserdata: "speculos-x-other-account,swap-history",
   read: "log",
 };
 
@@ -48,8 +46,14 @@ interface Builds {
   reviewedB: boolean;
 }
 
-export interface Plan extends Builds {
-  /** `restore-cache` looks the cache up: for build A, when it is a release tag's. */
+export interface Plan extends Omit<Builds, "sides"> {
+  /**
+   * What the build matrices make before the cache: A, B unless the preset measures A's binary
+   * twice, and the release's E2E build for the accounts snapshot (`snapshot`). restore-cache leaves
+   * out what it restores.
+   */
+  sides: Array<"a" | "b" | "snapshot">;
+  /** `restore-cache` looks the cache up: for build A of a release tag, and the accounts snapshot. */
   restore: boolean;
   /**
    * `save-cache` caches what this run made, in a run from develop whose B builds only reviewed
@@ -58,11 +62,14 @@ export interface Plan extends Builds {
    */
   save: boolean;
   scenarios: string[];
+  /**
+   * The release whose E2E build makes the accounts scenario's snapshot (src/snapshot/run.ts), and
+   * its commit: none without that scenario.
+   */
+  snapshotRelease: string;
+  snapshotSha: string;
   /** The run's settings, which the build and measure jobs read from the plan's outputs. */
-  settings: Pick<
-    PlanInputs,
-    "preset" | "platforms" | "pairs" | "thresholdMs" | "accountsUserdata" | "read"
-  >;
+  settings: Pick<PlanInputs, "preset" | "platforms" | "pairs" | "thresholdMs" | "read">;
 }
 
 /** `git ls-remote <options> <this repository> <patterns>`. */
@@ -224,20 +231,24 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
   if (!/^\d+$/.test(inputs.thresholdMs)) throw new StepFailure("threshold_ms must be a number");
   const builds = buildsFor(inputs, lsRemote);
   const withSha = (label: string, sha: string) => `${label} (${sha.slice(0, 10)})`;
+  const scenarios = inputs.scenarios.split(",");
+  const snapshotRelease = scenarios.includes("accounts") ? latestProdTag(lsRemote) : "";
   return {
     ...builds,
     labelA: withSha(builds.labelA, builds.shaA),
     labelB: builds.sides.includes("b") ? withSha(builds.labelB, builds.shaB) : builds.labelB,
-    restore: builds.cacheA,
+    sides: snapshotRelease ? [...builds.sides, "snapshot"] : builds.sides,
+    restore: builds.cacheA || snapshotRelease !== "",
     // Every run restores from develop/, which only develop's role writes.
     save: builds.reviewedB && inputs.branchName === "develop",
-    scenarios: inputs.scenarios.split(","),
+    scenarios,
+    snapshotRelease,
+    snapshotSha: snapshotRelease ? resolveRef(snapshotRelease, lsRemote) : "",
     settings: {
       preset: inputs.preset,
       platforms: inputs.platforms,
       pairs: inputs.pairs,
       thresholdMs: inputs.thresholdMs,
-      accountsUserdata: inputs.accountsUserdata,
       read: inputs.read,
     },
   };
@@ -258,8 +269,9 @@ export function outputsOf(plan: Plan): string {
     platforms: plan.settings.platforms,
     pairs: plan.settings.pairs,
     threshold_ms: plan.settings.thresholdMs,
-    accounts_userdata: plan.settings.accountsUserdata,
     read: plan.settings.read,
+    snapshot_release: plan.snapshotRelease,
+    snapshot_ref: plan.snapshotSha,
   };
   // A line break in a free-text input would add or override outputs, such as a validated ref.
   return Object.entries(outputs)
@@ -281,6 +293,9 @@ export function summaryOf(plan: Plan, inputs: PlanInputs, avdCores: string): str
     `- A: \`${plan.labelA}\` → \`${plan.shaA}\``,
     `- B: \`${plan.labelB}\` → \`${plan.shaB}\``,
     `- ${inputs.pairs} pairs per scenario`,
+    ...(plan.snapshotRelease
+      ? [`- Accounts: the snapshot ${plan.snapshotRelease}'s E2E build made through its UI`]
+      : []),
     `- Android: one job (runner) per scenario, two emulators with ${avdCores} cores each, cellular network like E2E`,
     ...(plan.restore && !plan.save
       ? [`- Nothing this run makes is saved to the cache: ${notSaved}`]
@@ -301,7 +316,6 @@ export function inputsOf(env: NodeJS.ProcessEnv): PlanInputs {
     pairs: env.PAIRS ?? "",
     thresholdMs: env.THRESHOLD ?? "",
     scenarios: env.SCENARIOS ?? "",
-    accountsUserdata: env.ACCOUNTS_USERDATA ?? "",
     read: env.READ ?? "",
     ...branch,
   };
