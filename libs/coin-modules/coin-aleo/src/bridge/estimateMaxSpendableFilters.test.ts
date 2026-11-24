@@ -105,6 +105,15 @@ describe("estimateMaxSpendable with the private filter, through prepareTransacti
     );
   });
 
+  it("is the transparent token balance without filters on a token account", async () => {
+    expect(
+      await estimateMaxSpendable({
+        account: token,
+        parentAccount: account,
+      }),
+    ).toEqual(new BigNumber(TOKEN_PUBLIC_BALANCE));
+  });
+
   it("is the transparent token balance with private: false on a token account", async () => {
     expect(
       await estimateMaxSpendable({

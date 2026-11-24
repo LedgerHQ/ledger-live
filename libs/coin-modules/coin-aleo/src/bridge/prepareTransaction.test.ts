@@ -530,6 +530,25 @@ describe("prepareTransaction", () => {
     });
   });
 
+  it("should calculate a public token max from its transparent balance after deriving its mode", async () => {
+    mockCalculateAmount.mockImplementation(realCalculateAmount);
+    const transparentBalance = new BigNumber(123456);
+    const tokenAccount = { ...mockTokenAccount, transparentBalance };
+    const account = { ...accountWithTokenSubAccount, subAccounts: [tokenAccount] };
+
+    const result = await prepareTransaction(account, {
+      ...mockTransaction,
+      amount: new BigNumber(0),
+      useAllAmount: true,
+      subAccountId: tokenAccount.id,
+    });
+
+    expect(result).toMatchObject({
+      amount: transparentBalance,
+      mode: TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
+    });
+  });
+
   it("should set transfer_token_public mode and keep recipient for token public send", async () => {
     const result = await prepareTransaction(accountWithTokenSubAccount, {
       ...mockTransaction,
@@ -616,6 +635,37 @@ describe("prepareTransaction", () => {
         amountRecordCommitments: [mockUnspentTokenRecord2.commitment],
         feeRecordCommitment: mockUnspentRecord1.commitment,
       },
+    });
+  });
+
+  it("should calculate a private token max from selected token records after deriving its mode", async () => {
+    mockCalculateAmount.mockImplementation(realCalculateAmount);
+    mockAleoConfig.getCoinConfig.mockReturnValue({
+      ...mockConfig,
+      recordPickingStrategy: "manual",
+      isFeeSponsored: true,
+    });
+
+    const result = await prepareTransaction(accountWithTokenSubAccount, {
+      ...mockTransaction,
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      amount: new BigNumber(0),
+      useAllAmount: true,
+      subAccountId: mockTokenAccount.id,
+      properties: {
+        amountRecordCommitments: [
+          mockUnspentTokenRecord1.commitment,
+          mockUnspentTokenRecord2.commitment,
+        ],
+        feeRecordCommitment: null,
+      },
+    });
+
+    expect(result).toMatchObject({
+      amount: new BigNumber(mockUnspentTokenRecord1.microcredits).plus(
+        mockUnspentTokenRecord2.microcredits,
+      ),
+      mode: TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
     });
   });
 
