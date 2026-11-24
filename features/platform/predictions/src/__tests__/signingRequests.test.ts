@@ -1,10 +1,14 @@
 import { ZodError } from "zod";
+import { PLACE_ORDER_SIGNED_AT_MS } from "../__fixtures__/placeOrderTypedData";
+import { SELL_POSITION_TYPED_DATA } from "../__fixtures__/sellPositionTypedData";
 import { getBindingTypedData } from "../binding";
 import {
   createPredictionsSigner,
   createSigningRequests,
   type PredictionsSigningRequest,
 } from "../signingRequests";
+import type { PredictionsSigningPurpose } from "../signingIntent";
+import type { PredictionsTypedData } from "../typedData";
 
 type Account = { id: string; address: string };
 
@@ -12,12 +16,20 @@ const ACCOUNT: Account = { id: "account-1", address: "0x9858EfFD232B4033E47d9000
 const TYPED_DATA = getBindingTypedData(ACCOUNT.address);
 const SIGNATURE = "0xsigned";
 const typedDataFor = (account: Account) => getBindingTypedData(account.address);
+const SALE_TYPED_DATA: PredictionsTypedData = {
+  ...SELL_POSITION_TYPED_DATA,
+  domain: { ...SELL_POSITION_TYPED_DATA.domain, chainId: 137 },
+};
+const saleWith = (message: object): PredictionsTypedData => ({
+  ...SALE_TYPED_DATA,
+  message: { ...SALE_TYPED_DATA.message, ...message },
+});
 
 class Refusal extends Error {
   override name = "UserRefusedOnDevice";
 }
 
-function setup() {
+function setup(purpose: PredictionsSigningPurpose = "binding") {
   const requests = createSigningRequests<Account>();
   const opened: PredictionsSigningRequest<Account>[] = [];
   const root = { open: jest.fn(request => opened.push(request)), cancel: jest.fn() };
@@ -25,8 +37,9 @@ function setup() {
   const onSigned = jest.fn();
   const signer = createPredictionsSigner({
     requests,
-    purpose: "binding",
+    purpose,
     findAccount: () => ACCOUNT,
+    addressOf: account => account.address,
     onSigned,
     refusal: () => new Refusal(),
   });
@@ -130,6 +143,7 @@ describe("createPredictionsSigner", () => {
       findAccount: () => {
         throw new Error("No EVM account");
       },
+      addressOf: account => account.address,
       onSigned: jest.fn(),
       refusal: () => new Refusal(),
     });
@@ -150,12 +164,41 @@ describe("createPredictionsSigner", () => {
     expect(root.open).not.toHaveBeenCalled();
   });
 
+  describe("for a sale", () => {
+    beforeEach(() => jest.spyOn(Date, "now").mockReturnValue(PLACE_ORDER_SIGNED_AT_MS));
+    afterEach(() => jest.restoreAllMocks());
+
+    it("opens the prompt for a sale paying out to a trading wallet other than the account", () => {
+      const { signer, lastRequest } = setup("sale");
+
+      void signer.sign("wallet-account-1", () => SALE_TYPED_DATA);
+
+      expect(lastRequest().typedData).toBe(SALE_TYPED_DATA);
+    });
+
+    it.each([
+      [
+        "pays out to the signing account",
+        saleWith({ proxyWallet: ACCOUNT.address, dstWalletAddress: ACCOUNT.address.toLowerCase() }),
+      ],
+      ["pays out to another wallet", saleWith({ dstWalletAddress: `0x${"ab".repeat(20)}` })],
+      ["pays out in another token", saleWith({ dstTokenAddress: `0x${"cd".repeat(20)}` })],
+      ["pays out on another chain", saleWith({ dstTokenChainId: "1" })],
+    ])("refuses a sale that %s, without opening the prompt", (_case, sale) => {
+      const { signer, root } = setup("sale");
+
+      expect(() => signer.sign("wallet-account-1", () => sale)).toThrow(ZodError);
+      expect(root.open).not.toHaveBeenCalled();
+    });
+  });
+
   it("cancels only the request it opened", () => {
     const { requests, root, signer, lastRequest } = setup();
     const otherPlayer = createPredictionsSigner({
       requests,
       purpose: "binding",
       findAccount: () => ACCOUNT,
+      addressOf: account => account.address,
       onSigned: jest.fn(),
       refusal: () => new Refusal(),
     });

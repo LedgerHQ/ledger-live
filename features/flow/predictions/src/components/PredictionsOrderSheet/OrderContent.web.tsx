@@ -22,7 +22,9 @@ export function OrderContent({ order, report, onClose, onRetry }: OrderContentPr
         data-testid="predictions-order-placing"
       >
         <Spinner size={32} />
-        <h3 className="heading-4-semi-bold text-center text-base">{t(orderTitleKey(report))}</h3>
+        <h3 className="heading-4-semi-bold text-center text-base">
+          {t(orderTitleKey(order.side, report))}
+        </h3>
       </div>
     );
   }
