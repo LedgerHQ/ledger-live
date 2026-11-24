@@ -48,7 +48,10 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   const onCopy = useCallback((address: string) => copyToClipboard(address), []);
 
   const onShare = useCallback(async (address: string) => {
-    await leaveAppFor(() => openShareSheet({ message: address, capture: cardRef }));
+    // Caught outside leaveAppFor: it must see the failure to release the app lock exemption.
+    await leaveAppFor(() => openShareSheet({ message: address, capture: cardRef })).catch(
+      () => undefined,
+    );
   }, []);
 
   const markHintSeen = useCallback(() => {

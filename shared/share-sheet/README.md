@@ -14,8 +14,11 @@ Opens the system share sheet on mobile, with a text and, optionally, an image of
 | `openShareSheet`    | `(content: ShareSheetContent) => Promise<void>`, resolves once the sheet closes |
 | `ShareSheetContent` | `{ message, capture? }`: the text, and a ref on the view to share as a PNG      |
 
-It never throws: a cancel or a failure resolves like a share. A view that cannot be captured shares
-the message alone.
+A cancel resolves like a share; a sheet that cannot open rejects. A view that cannot be captured
+shares the message alone.
+
+On Android, a caller that wraps the call in the app lock's `leaveAppFor` catches the rejection
+outside that wrapper: `leaveAppFor` releases its app lock exemption only when the task rejects.
 
 ## Usage
 

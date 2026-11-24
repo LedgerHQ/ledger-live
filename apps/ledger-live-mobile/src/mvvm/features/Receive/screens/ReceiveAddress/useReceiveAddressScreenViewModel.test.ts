@@ -12,12 +12,13 @@ import { mockAccountStatus } from "@domain/entity-account-status/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { renderHook } from "@tests/test-renderer";
 import { openShareSheet } from "@shared/share-sheet";
+import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 import { VerifyAddressExecutorLWM } from "../../verifyAddressIntent/VerifyAddressExecutorLWM";
 import { useReceiveAddressScreenViewModel } from "./useReceiveAddressScreenViewModel";
 
 jest.mock("@shared/share-sheet", () => ({ openShareSheet: jest.fn(async () => undefined) }));
 jest.mock("LLM/features/AppLock/adapters/appVisibility", () => ({
-  leaveAppFor: (task: () => Promise<unknown>) => task(),
+  leaveAppFor: jest.fn((task: () => Promise<unknown>) => task()),
 }));
 
 const tronEntry = LegacyAccountEntrySchema.parse(
@@ -69,6 +70,16 @@ describe("useReceiveAddressScreenViewModel", () => {
       message: "TXYZ",
       capture: result.current.cardRef,
     });
+  });
+
+  it("lets the app lock see a share sheet that cannot open, then keeps the screen", async () => {
+    jest.mocked(openShareSheet).mockRejectedValueOnce(new Error("no activity"));
+    const { result } = renderViewModel();
+
+    await expect(result.current.onShareAddress?.("TXYZ")).resolves.toBeUndefined();
+    await expect(jest.mocked(leaveAppFor).mock.results.at(-1)?.value).rejects.toThrow(
+      "no activity",
+    );
   });
 
   it("reads the account's family config", () => {

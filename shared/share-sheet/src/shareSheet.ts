@@ -10,7 +10,7 @@ export type ShareSheetContent = Readonly<{
 
 /**
  * Opens the system share sheet. A capture that fails shares the message alone. Resolves once the
- * sheet closes, whether the user shared or cancelled, and never throws.
+ * sheet closes, whether the user shared or cancelled; rejects when the sheet cannot open.
  */
 export async function openShareSheet({ message, capture }: ShareSheetContent): Promise<void> {
   const url = capture
@@ -18,5 +18,5 @@ export async function openShareSheet({ message, capture }: ShareSheetContent): P
         () => undefined,
       )
     : undefined;
-  await Share.open({ url, message, failOnCancel: false }).catch(() => undefined);
+  await Share.open({ url, message, failOnCancel: false });
 }

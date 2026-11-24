@@ -34,10 +34,10 @@ describe("openShareSheet", () => {
     });
   });
 
-  it("resolves when the share sheet fails to open", async () => {
+  it("rejects when the share sheet cannot open", async () => {
     jest.mocked(Share.open).mockRejectedValueOnce(new Error("no activity"));
 
-    await expect(openShareSheet({ message: "TXYZ" })).resolves.toBeUndefined();
+    await expect(openShareSheet({ message: "TXYZ" })).rejects.toThrow("no activity");
   });
 
   it("shares the message alone when the view cannot be captured", async () => {
