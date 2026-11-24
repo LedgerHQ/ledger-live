@@ -1,4 +1,4 @@
-# Adds the accounts the scan finds for one coin on the Speculos the app has registered, as
+# Adds the accounts the scan selects for one coin on the Speculos the app has registered, as
 # e2e/mobile's add-account steps do: TICKER, and NETWORK, picked when the drawer asks for one.
 # src/snapshot/run.ts runs it once per coin.
 appId: com.ledger.live
@@ -55,7 +55,8 @@ appId: com.ledger.live
     visible:
       id: "enabled-add-accounts-continue-button"
     timeout: 240000
-# Every account the scan found is selected: the snapshot keeps them all.
+# Continue adds the accounts the scan selected, those with operations, as a user who keeps
+# the selection does.
 - tapOn:
     id: "enabled-add-accounts-continue-button"
 - extendedWaitUntil:

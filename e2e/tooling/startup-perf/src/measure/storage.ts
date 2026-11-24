@@ -133,27 +133,32 @@ export async function readStorageFiles(
 export const isAccountKey = (key: string) => key.startsWith(ACCOUNT_KEY_PREFIX);
 
 /**
- * `entries` with the first account's balance one unit above the stored one. The first launch's
- * sync puts it back, and the app saves an account whose balance changed (it ignores lastSyncDate),
- * so one account is saved again even when nothing changed on chain since the entries were saved.
+ * `entries` with each currency's first account one unit of balance above the stored one. The first
+ * launch's sync puts them back, and the app saves an account whose balance changed (it ignores
+ * lastSyncDate), so accounts are saved again even when nothing changed on chain since the entries
+ * were saved, as long as one of the chains syncs.
  */
-export function withAccountToResave(
+export function withAccountsToResave(
   entries: Array<[key: string, value: StorageValue]>,
 ): Array<[string, StorageValue]> {
-  const index = entries.findIndex(([key]) => isAccountKey(key));
-  if (index < 0) return entries;
-  const [key, value] = entries[index];
-  if (typeof value !== "string" && !isStringValue(value)) {
-    throw new Error(`storage: account ${key} is not a string`);
-  }
-  const record = JSON.parse(typeof value === "string" ? value : stringValue(value)) as {
-    data?: { balance?: unknown };
-  };
-  if (!record.data || typeof record.data.balance !== "string") {
-    throw new Error(`storage: account ${key} has no balance`);
-  }
-  record.data.balance = (BigInt(record.data.balance) + 1n).toString();
-  return entries.map((entry, i) => (i === index ? [key, JSON.stringify(record)] : entry));
+  const raised = new Set<unknown>();
+  return entries.map(entry => {
+    const [key, value] = entry;
+    if (!isAccountKey(key)) return entry;
+    if (typeof value !== "string" && !isStringValue(value)) {
+      throw new Error(`storage: account ${key} is not a string`);
+    }
+    const record = JSON.parse(typeof value === "string" ? value : stringValue(value)) as {
+      data?: { balance?: unknown; currencyId?: unknown };
+    };
+    if (!record.data || typeof record.data.balance !== "string") {
+      throw new Error(`storage: account ${key} has no balance`);
+    }
+    if (raised.has(record.data.currencyId)) return entry;
+    raised.add(record.data.currencyId);
+    record.data.balance = (BigInt(record.data.balance) + 1n).toString();
+    return [key, JSON.stringify(record)];
+  });
 }
 
 export function stringValue(value: Buffer): string {

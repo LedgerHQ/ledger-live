@@ -11,7 +11,7 @@ import {
   storageEntries,
   storageFiles,
   stringValue,
-  withAccountToResave,
+  withAccountsToResave,
 } from "./storage.ts";
 import type { Userdata } from "./types.ts";
 
@@ -219,30 +219,33 @@ describe("storageFiles and readStorageFiles", () => {
   });
 });
 
-describe("withAccountToResave", () => {
-  const account = (balance: string) => JSON.stringify({ data: { id: "x", balance }, version: 1 });
+describe("withAccountsToResave", () => {
+  const account = (currencyId: string, balance: string) =>
+    JSON.stringify({ data: { id: "x", currencyId, balance }, version: 1 });
 
-  it("raises the first account's balance by one unit, as a string or as stored bytes", () => {
+  it("raises each currency's first account by one unit, as a string or as stored bytes", () => {
     const entries: Array<[string, string]> = [
       ["settings", "{}"],
-      ["accounts.active.a", account("123456789012345678901234")],
-      ["accounts.active.b", account("5")],
+      ["accounts.active.a", account("bitcoin", "123456789012345678901234")],
+      ["accounts.active.b", account("bitcoin", "5")],
+      ["accounts.active.c", account("ethereum", "7")],
     ];
-    assert.deepEqual(withAccountToResave(entries), [
+    assert.deepEqual(withAccountsToResave(entries), [
       ["settings", "{}"],
-      ["accounts.active.a", account("123456789012345678901235")],
-      ["accounts.active.b", account("5")],
+      ["accounts.active.a", account("bitcoin", "123456789012345678901235")],
+      ["accounts.active.b", account("bitcoin", "5")],
+      ["accounts.active.c", account("ethereum", "8")],
     ]);
     const { data, meta } = encodeStorage(entries);
-    const [, raised] = withAccountToResave([...decodeStorage(data, meta)])[1];
-    assert.equal(raised, account("123456789012345678901235"));
+    const [, raised] = withAccountsToResave([...decodeStorage(data, meta)])[1];
+    assert.equal(raised, account("bitcoin", "123456789012345678901235"));
   });
 
   it("leaves entries without an account as they are, and rejects an account without a balance", () => {
     const entries: Array<[string, string]> = [["settings", "{}"]];
-    assert.equal(withAccountToResave(entries), entries);
+    assert.deepEqual(withAccountsToResave(entries), entries);
     assert.throws(
-      () => withAccountToResave([["accounts.active.a", JSON.stringify({ data: { id: "a" } })]]),
+      () => withAccountsToResave([["accounts.active.a", JSON.stringify({ data: { id: "a" } })]]),
       /has no balance/,
     );
   });

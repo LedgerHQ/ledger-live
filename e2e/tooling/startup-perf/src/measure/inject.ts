@@ -8,7 +8,7 @@ import {
   savedState,
   storageEntries,
   storageFiles,
-  withAccountToResave,
+  withAccountsToResave,
   type SavedState,
   type StorageValue,
 } from "./storage.ts";
@@ -110,7 +110,7 @@ export function createInjector({
     storage: StartingStorage;
     side: Side;
   }): Promise<void> {
-    const written = withAccountToResave(storage.entries);
+    const written = withAccountsToResave(storage.entries);
     const check = { platform: P, device, written, accounts: storage.accounts };
     for (const d of devices) await P.stop(d);
     await P.writeStorage(device, storageFiles(written));
@@ -138,8 +138,8 @@ interface Check {
  * every start, so it opened this storage) and kept the terms and every account. MMKV discards a
  * file whose CRC does not match, the app an account it does not support, and A and B must start
  * from the same accounts. A dropped account's record stays until the app saves accounts, so one
- * must have been saved again: the one withAccountToResave raised the balance of, once the sync
- * has put it back.
+ * must have been saved again: one of those withAccountsToResave raised the balance of, once its
+ * chain's sync has put it back.
  */
 const loaded = (saved: SavedState, accounts: number): boolean =>
   saved.idsSaved &&

@@ -157,8 +157,8 @@ The accounts scenario starts from accounts added through the app's UI, as a user
   starts a Speculinho session with `pnpm e2e-cli speculos` of `libs/live-e2e-shared` (the E2E
   suites' firmware, app versions and session tokens, on a `nanoX` with the E2E seed), sends the app
   `addKnownSpeculos` through `bridge.ts` and waits for its ACK, then `flows/add-accounts.yaml` adds
-  every account the scan finds, as e2e/mobile's add-account steps do, picking the coin's network
-  when the drawer asks for one. The storage it keeps leaves out what belongs to that install: the
+  the accounts the scan selects, those with operations, as e2e/mobile's add-account steps and a
+  user who keeps the selection do, picking the coin's network when the drawer asks for one. The storage it keeps leaves out what belongs to that install: the
   device entries (`ble`, `knownDevices`, `settings.lastConnectedDevice`), since a prod build has no
   Speculos to reach, the client ids (`identities`, formerly `user`), which each install makes as
   the no-accounts ones do, and the `trustchain`, whose member keypair each install makes
@@ -197,8 +197,8 @@ The accounts scenario starts from accounts added through the app's UI, as a user
   for every account written are still there (MMKV drops a file whose CRC does not match, the app an
   account it does not support), so A and B start from the same accounts, and unless the app saved
   one of them again: it saves accounts only once one changes (a sync), and only that save deletes
-  the record of an account it did not load. So that one always changes, the first account is
-  written with its balance one unit higher, which the sync puts back (the app ignores
+  the record of an account it did not load. So that one always changes, each currency's first
+  account is written with its balance one unit higher, which its sync puts back (the app ignores
   `lastSyncDate`, so a sync with nothing new on chain would save none). Feature flags are not written: they come from
   production Firebase. `prepare-build.mts` checks that each measured ref starts the E2E bridge only
   with `DETOX`, and `verify-build.mts` that the binary has no `MOCK` or `DETOX`.
