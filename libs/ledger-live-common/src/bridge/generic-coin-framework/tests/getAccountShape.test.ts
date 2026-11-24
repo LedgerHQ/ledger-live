@@ -5875,6 +5875,28 @@ describe("genericGetAccountShape", () => {
       expect(result.historyRecheck).toBeUndefined();
     });
 
+    it("replaces the stored row of a transaction read again under another type", async () => {
+      // Listed before its outcome, the transaction was stored as a FEES row; settled, it reads as IN.
+      getBalanceMock.mockResolvedValue(nativeBalance(150n));
+      listOperationsMock.mockResolvedValueOnce({ items: [coreOp("h2", 45)] });
+      const provisional = {
+        id: "h2-FEES",
+        hash: "h2",
+        accountId: "accId",
+        type: "FEES",
+        blockHeight: 45,
+        date: new Date(45_000),
+      };
+      const stored = storedAccount();
+
+      const result = await sync({ ...stored, operations: [provisional, ...stored.operations] });
+
+      expect(result.operations?.map(op => [op.hash, op.type])).toEqual([
+        ["h2", "IN"],
+        ["h1", "IN"],
+      ]);
+    });
+
     it("keeps the unexplained window for a rise the family does not name a refund", async () => {
       getBalanceMock.mockResolvedValue(nativeBalance(105n));
 

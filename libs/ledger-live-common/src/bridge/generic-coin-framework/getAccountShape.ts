@@ -368,6 +368,23 @@ function nextHistoryRecheck(
   return next;
 }
 
+/**
+ * The stored rows, less those of a transaction read again under other ids. A state-driven sync reads
+ * a transaction again until its outcome is indexed: listed first with no deposit, a transfer is a
+ * `FEES` row, then an `OUT` once settled, and the id carries the type. The rows read again replace
+ * every stored row of that transaction (a self-send keeps its two, since both are read again).
+ */
+function withoutRereadTransactions<T extends { id: string; hash: string }>(
+  stored: T[],
+  read: readonly { id: string; hash: string }[],
+  stateDriven: boolean,
+): T[] {
+  if (!stateDriven || read.length === 0) return stored;
+  const readIds = new Set(read.map(({ id }) => id));
+  const readHashes = new Set(read.map(({ hash }) => hash));
+  return stored.filter(({ id, hash }) => !readHashes.has(hash) || readIds.has(id));
+}
+
 function isNativeLiveOp(operation: OperationCommon): boolean {
   const assetReference = operation.extra?.assetReference;
   const assetOwner = operation.extra?.assetOwner;
@@ -1754,7 +1771,13 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // may list a transaction late, even below every stored one; the store bound still applies.
     const mergedOperations = (
       (stateDriven ? mergeOpsKeepingOlder : mergeOps)(
-        discardOld ? [] : relinkSubOperations(oldOps, confirmedSubOperationIndex),
+        discardOld
+          ? []
+          : withoutRereadTransactions(
+              relinkSubOperations(oldOps, confirmedSubOperationIndex),
+              newOperations,
+              stateDriven,
+            ),
         newOperations,
       ) as OperationCommon[]
     ).filter(op => op.type !== "IN" || !failedIncomingHashes.has(op.hash));
