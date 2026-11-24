@@ -15,6 +15,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
 import { useDappLifecycleMonitoring } from "~/analytics/useDappLifecycleMonitoring";
+import { useEarnAppLifecycleMonitoring } from "~/analytics/useEarnAppLifecycleMonitoring";
 
 const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
 
@@ -36,6 +37,7 @@ export function LiveApp({ route }: Props) {
 
   const isStakeRedirect = Boolean(params.accountId || params.yieldId);
   useDappLifecycleMonitoring(appId, isStakeRedirect);
+  useEarnAppLifecycleMonitoring(manifest?.id);
 
   useEffect(() => {
     setParams({

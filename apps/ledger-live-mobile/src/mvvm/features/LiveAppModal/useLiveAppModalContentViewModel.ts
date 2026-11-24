@@ -17,6 +17,7 @@ import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import type { LiveAppModalParams } from "~/reducers/liveAppModal";
+import { useEarnAppLifecycleMonitoring } from "~/analytics/useEarnAppLifecycleMonitoring";
 
 export type ExtraInputs = Record<string, string | undefined> | null;
 
@@ -43,6 +44,7 @@ const useLiveAppModalContentViewModel = (
 
   const manifest = useLiveAppManifest(manifestId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
+  useEarnAppLifecycleMonitoring(manifest?.id);
 
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);

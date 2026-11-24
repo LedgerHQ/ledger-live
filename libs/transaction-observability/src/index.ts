@@ -44,12 +44,14 @@ export {
 } from "./observer";
 
 export {
+  clearDismissedEarnAppSign,
   installEarnLifecycleHost,
   isEarnTxLifecycleMonitoringEnabled,
   setEarnTxLifecycleFlagReader,
   setTxLifecycleBaseUrl,
   startDappLifecycleMonitoring,
   startDappTxLifecycle,
+  startEarnAppLifecycleMonitoring,
 } from "./earnLifecycleHost";
 
 export { isBorrowApp, setBorrowManifestIdReader } from "./borrowApps";

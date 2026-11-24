@@ -1,9 +1,12 @@
+import { isEarnApp, setEarnManifestIdReader } from "./earnApps";
 import { TransactionPathway, type LogEvent } from "./logEvent";
 import { isEarnMonitoringApp, setStakeProgramAppsReader, stakeProgramAppIds } from "./stakingApps";
 import {
   abandonPendingDappTxLifecycle,
   clearPendingDappTxLifecycle,
   clearPendingTxLifecycle,
+  isTeardownAbandon,
+  monitorManifestTeardown,
   normalizeTxLifecycleBaseUrl,
   sendTxLifecycle,
   type TxLifecyclePath,
@@ -28,8 +31,6 @@ export function isEarnTxLifecycleMonitoringEnabled(): boolean {
   return readFlag?.() ?? false;
 }
 
-/** The Earn live app reports its own lifecycle; the host only monitors partner dApps. */
-const APP_OWNED_MANIFEST_IDS = new Set(["earn", "earn-stg", "earn-prd-eks"]);
 const DEFAULT_EARN_API_BASE_URL = "https://earn.api.live.ledger.com";
 
 let earnApiBaseUrl = DEFAULT_EARN_API_BASE_URL;
@@ -39,11 +40,14 @@ export function setTxLifecycleBaseUrl(baseUrl: string | undefined): void {
 }
 
 function isMonitoredDapp(manifestId: string): boolean {
-  return !APP_OWNED_MANIFEST_IDS.has(manifestId) && isEarnMonitoringApp(manifestId);
+  return !isEarnApp(manifestId) && isEarnMonitoringApp(manifestId);
 }
 
 function earnPathOf(event: LogEvent): TxLifecyclePath | undefined {
-  if (event.manifestId) return isMonitoredDapp(event.manifestId) ? "dapp" : undefined;
+  if (event.manifestId) {
+    if (isEarnApp(event.manifestId)) return "earn";
+    return isMonitoredDapp(event.manifestId) ? "dapp" : undefined;
+  }
 
   const isNativeRoute =
     event.pathway === TransactionPathway.Send || event.pathway === TransactionPathway.Unknown;
@@ -55,6 +59,8 @@ export const earnLifecycleProduct: TxLifecycleProduct = {
   pathOf: earnPathOf,
   isEnabled: isEarnTxLifecycleMonitoringEnabled,
   baseUrl: () => earnApiBaseUrl,
+  // Only the Earn live app reports its own lifecycle, on `earn_native`.
+  reports: (payload, source) => payload.path !== "earn" || isTeardownAbandon(payload, source),
 };
 
 declare const process: { env: Record<string, string | undefined> };
@@ -102,7 +108,7 @@ export function startDappLifecycleMonitoring(
   isStakeRedirect: boolean,
   enabled: boolean,
 ): (() => void) | undefined {
-  if (!manifestId || !isStakeRedirect) return;
+  if (!manifestId || !isStakeRedirect || isEarnApp(manifestId)) return;
 
   if (!enabled) {
     clearPendingDappTxLifecycle(platform, manifestId, earnLifecycleProduct.id);
@@ -115,6 +121,29 @@ export function startDappLifecycleMonitoring(
       abandonPendingDappTxLifecycle(platform, manifestId, earnLifecycleProduct.id);
     }
   };
+}
+
+/**
+ * Closes an Earn live app attempt left pending when the webview showing it goes away: the app
+ * cannot report it from a dead page. Each webview only abandons the attempt it started. Hosts call
+ * it from every container that can render a manifest; it ignores the ones that are not Earn's.
+ */
+export function startEarnAppLifecycleMonitoring(
+  platform: TxLifecyclePlatform,
+  manifestId: string | undefined,
+  enabled: boolean,
+): (() => void) | undefined {
+  if (!manifestId || !isEarnApp(manifestId)) return;
+  return monitorManifestTeardown(platform, earnLifecycleProduct, manifestId, enabled);
+}
+
+/**
+ * Drops the Earn live app attempt a dismissed sign drawer ended. The drawer rejects the app's
+ * request, so the app reports that cancel itself and a later teardown must not count it again.
+ */
+export function clearDismissedEarnAppSign(platform: TxLifecyclePlatform, manifestId: string): void {
+  if (!isEarnApp(manifestId)) return;
+  clearPendingDappTxLifecycle(platform, manifestId, earnLifecycleProduct.id);
 }
 
 /** The part of the `stakePrograms` feature this package needs; hosts pass their own richer type. */
@@ -136,6 +165,7 @@ export function installEarnLifecycleHost<F extends StakeProgramsFeature>(config:
   readStakePrograms: () => F | null | undefined;
   resolveVersionedRedirects: (feature: F, appVersion: string) => F;
   readAppVersion: () => string;
+  readManifestId: () => string | undefined;
   apiBaseUrl?: string;
 }): () => void {
   const {
@@ -144,11 +174,13 @@ export function installEarnLifecycleHost<F extends StakeProgramsFeature>(config:
     readStakePrograms,
     resolveVersionedRedirects,
     readAppVersion,
+    readManifestId,
     apiBaseUrl,
   } = config;
 
   setTxLifecycleBaseUrl(apiBaseUrl);
   setEarnTxLifecycleFlagReader(readEnabled);
+  setEarnManifestIdReader(readManifestId);
   setStakeProgramAppsReader(() => {
     const stakePrograms = readStakePrograms();
     if (!stakePrograms?.enabled) return [];

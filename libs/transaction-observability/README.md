@@ -100,10 +100,12 @@ to `/v1/tx/lifecycle`; it never forwards raw errors, signatures, addresses, amou
 or user/device/session identifiers. Its independent rollout switch is
 `earnTxLifecycleMonitoring`.
 
-The lifecycle transport keeps one native attempt per platform and one dApp attempt per platform
-and manifest. It suppresses unpaired or duplicate terminals, deduplicates equivalent dApp sign
-resubscriptions, and closes an unfinished dApp attempt as `failure/abandoned` when its own host
-WebView is torn down.
+The lifecycle transport keeps one native attempt per platform and one webview attempt (`dapp`,
+`earn` or `borrow`) per platform and manifest. It suppresses unpaired or duplicate terminals,
+deduplicates equivalent sign resubscriptions, and closes an unfinished webview attempt as
+`failure/abandoned` when its own host WebView is torn down. Only a `dapp` intent enriches a dApp
+placeholder; an intent on another path supersedes it, so the placeholder is reported as abandoned
+instead of being overwritten.
 
 For an allow-listed dApp, a Ledger-owned stake CTA redirect into the platform route is the intent
 boundary; opening the same manifest from Discover is not an attempt. The redirect placeholder uses
@@ -137,6 +139,43 @@ kill-switch is off never competes for a manifest at all. A pending attempt remem
 picking the sink never re-resolve ownership. To add a product, write its descriptor in its own
 host module and add it to that list.
 
+### Earn live app
+
+The Earn live app (manifests `earn`, `earn-stg`, `earn-prd-eks`, or the id `ptxEarnLiveApp`
+configures, read through `installEarnLifecycleHost`'s `readManifestId`) reports its own intents
+and terminals on `earn_native`. Like Borrow, the host tracks its attempts on path `earn` behind
+`earnTxLifecycleMonitoring`, posts to the Earn sink, and only reports a `failure/abandoned`
+terminal when the webview showing the app is torn down with a sign still pending. Success,
+failure, a closed sign modal and a superseded attempt post nothing, so nothing is counted twice.
+Partner dApps keep `dapp` and native sends keep `native`, reported in full.
+
+Every container that can render the manifest calls `startEarnAppLifecycleMonitoring` from an
+effect, with the id of the manifest its webview is actually rendering (`undefined` once the
+webview is gone): the Earn screens, the generic `LiveApp` routes, `LiveAppModal` and, on mobile,
+Web3Hub. It ignores any other manifest. Earn can be on screen twice on the same manifest (the
+mobile tab under a stacked Earn screen, desktop `LiveAppModal` over `/earn`), so each webview
+owns the attempts it started and its teardown only abandons those. Events carry no webview
+identity, so an attempt goes to the newest mounted webview, the one in front; a repeated identical
+intent moves it there too. Mounting drops an attempt no live webview owns, such as one left by an
+earlier visit or an unhooked surface.
+
+The mobile Earn tab stays mounted once visited, so an attempt started there is only abandoned when
+the tab unmounts. This under-reports, it never over-reports: leaving the tab for another tab or
+backgrounding the app is not a teardown.
+
+The mobile device-intent sign drawer rejects the app's request when it is dismissed, so the app
+reports that cancel itself. Its view model calls `clearDismissedEarnAppSign`, which drops the
+Earn live app attempt without posting. The sheet also reports a close when it unmounts with the
+webview, but React runs a removed tree's effect cleanups parent first, so the container's
+teardown abandon is posted before the drawer clears anything.
+
+`segmentEvent.ts` keeps its own hard-coded Earn ids, so a manifest only `ptxEarnLiveApp`
+configures still emits Segment `earn_transaction_*` events.
+
+On dashboards, `path:earn` terminals have no matching intent: completion-rate widgets must filter
+on `path`, and the Earn in-app abandon total is `path:(earn_native OR earn)`. The Earn sink
+decodes `path` strictly, so it must accept `earn` before a client sends it.
+
 ### Borrow
 
 Borrow reuses the Earn wire contract (`tx_intent` / `tx_terminal`, schema version 1) behind its
@@ -160,16 +199,16 @@ attempts that screen started. `installBorrowLifecycleHost` wires the readers at 
 `startBorrowLifecycleMonitoring` is the body of each host's Borrow webview effect. Earn behaviour
 and its flag are unchanged.
 
-A kill-switch going off only drops the attempts of its own product. A webview attempt (`dapp` or
-`borrow`) is keyed by platform and manifest, not by product or path, so the products only touch
+A kill-switch going off only drops the attempts of its own product. A webview attempt (`dapp`,
+`earn` or `borrow`) is keyed by platform and manifest, not by product or path, so the products only touch
 each other's attempts on a manifest both claim, which Earn owns. There the Borrow screen leaves
 Earn's pending attempt untouched: mounting does not drop it and teardown does not abandon it, since
 both only act on an attempt Borrow opened. Earn's own terminal or teardown closes it, on Earn's sink.
 
 One known gap: the host gets no event when signing completes, only the broadcast outcome. On
-desktop the sign modal lives outside the Borrow route, so a user who leaves Borrow after signing
-but before the broadcast returns gets a `failure/abandoned` terminal, and the broadcast success
-that follows is dropped as unpaired. The window is narrow and desktop only. Closing it needs a
+desktop the sign modal lives outside the Borrow and Earn routes, so a user who leaves the live app
+after signing but before the broadcast returns gets a `failure/abandoned` terminal, and the
+broadcast success that follows is dropped as unpaired. The window is narrow and desktop only. Closing it needs a
 sign-completed event from the bridge seam, so the teardown can skip attempts already signed.
 
 One thing to know if you ever reach for it: `track(event, props, { mandatory: true })` from
