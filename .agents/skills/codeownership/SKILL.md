@@ -1,6 +1,6 @@
 ---
 name: codeownership
-description: Maintain CODEOWNERS file and team directories. Provides resolve-codeowners.js to annotate files with their owner team — useful to split a large PR by team. Use when working with "**/team-*/**" or splitting monolithic files.
+description: Maintain CODEOWNERS file and team directories. Provides resolve-codeowners.js to annotate files with their owner team — useful to split a large PR by team. Use when editing CODEOWNERS, when adding a team's code to a file or folder another team owns (a registry, a barrel `index.ts`, a shared jest setup or config), when working with "**/team-*/**", or when splitting monolithic files.
 ---
 
 # Codeownership
@@ -70,3 +70,5 @@ It fails on rules that match no file, never take effect, re-own narrower rules f
 **/team-engagement/               @ledgerhq/engagement
 **/team-live-devices/             @ledgerhq/live-devices
 ```
+
+**`/devtools/`** follows the same convention: tool metadata lives in `devtools/registry/src/metadata/team-<team>/` and tool builders in `devtools/bindings/src/team-<team>/`, each with its own `index.ts`. Wiring a tool edits its team's folders, plus the generated `registry.ts` and the dependency lists in the `package.json` files; `devtools/bindings/src/index.ts` changes only when a team adds its first builder.

@@ -4,7 +4,7 @@ import type { DevToolsConfig } from "@devtools/registry";
 import { DEFAULT_ACCOUNT_DATA_MAX_AGE } from "@domain/api-account-data";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
 import type { AccountDataRootState } from "@domain/entity-account-data";
-import type { AccountDataRecorder } from "./accountDataRecorder";
+import type { AccountDataRecorder } from "../accountDataRecorder";
 
 type AccountDataToolProps = Extract<DevToolsConfig[number], { id: "account-data" }>["config"];
 

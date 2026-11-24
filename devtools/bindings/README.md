@@ -21,6 +21,22 @@ This package may import `@devtools/registry`, may import a tool's props types on
 
 Future tools add their own builder + row here, each depending only on the state it needs.
 
+## Layout
+
+Each builder lives in the folder of the team that owns its tool, the same team as its registry metadata (`devtools/registry/src/metadata/team-<team>/`):
+
+```
+src/
+├── team-<team>/
+│   ├── use<ToolName>ToolProps.ts       # the builder and its test
+│   ├── use<ToolName>ToolProps.test.tsx
+│   └── index.ts                        # the team's exports
+├── <shared helper>.ts                  # used by builders of several teams
+└── index.ts                            # re-exports every team folder
+```
+
+A new builder, its test and any helper only it uses go in its team's folder, and its export goes in that folder's `index.ts`. The `**/team-<team>/` rules in [`CODEOWNERS`](../../CODEOWNERS) then route the review to that team, with no `CODEOWNERS` edit. Add a `team-<team>/` folder, and its line in `src/index.ts`, the first time a team ships a builder.
+
 ## Usage
 
 ```tsx

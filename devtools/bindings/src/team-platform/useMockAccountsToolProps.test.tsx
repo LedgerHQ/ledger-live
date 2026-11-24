@@ -7,7 +7,7 @@ import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/en
 import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
-import { createAccountDataRecorder } from "./accountDataRecorder";
+import { createAccountDataRecorder } from "../accountDataRecorder";
 import { useMockAccountsToolProps } from "./useMockAccountsToolProps";
 
 const real = mockAddressAccountDescriptor();

@@ -40,7 +40,7 @@ AskUserQuestion({
 
 Stop here if the user selects none.
 
-If the tool has props, check whether `devtools/bindings/src/use<ToolName>ToolProps.ts` already exists (a few older hooks are named `use<ToolName>DevToolProps.ts`, e.g. `useEnvDevToolProps.ts`).
+If the tool has props, check whether `devtools/bindings/src/team-<team>/use<ToolName>ToolProps.ts` already exists (a few older hooks are named `use<ToolName>DevToolProps.ts`, e.g. `useEnvDevToolProps.ts`). `<team>` is the folder of the tool's registry metadata, `devtools/registry/src/metadata/team-<team>/`.
 - If it **exists**, skip to step 4 and use it directly.
 - If it **does not exist**, ask:
 
@@ -62,10 +62,12 @@ AskUserQuestion({
 
 ## 3. Create bindings (if requested)
 
-Create `devtools/bindings/src/use<ToolName>ToolProps.ts`, a hook that reads from the host's state and returns the tool's props type (e.g. `useFeatureFlagsToolProps.ts`). Then re-export it from `devtools/bindings/src/index.ts`.
+Create `devtools/bindings/src/team-<team>/use<ToolName>ToolProps.ts`, a hook that reads from the host's state and returns the tool's props type (e.g. `team-platform/useFeatureFlagsToolProps.ts`). Put its test, and any helper only it uses, in the same folder. Then re-export it from `devtools/bindings/src/team-<team>/index.ts`, not from `src/index.ts`.
+
+The team folder routes the review to the tool's team through the `**/team-<team>/` rules in `CODEOWNERS`. If the folder does not exist yet, create it with its `index.ts` and add `export * from "./team-<team>";` to `devtools/bindings/src/index.ts`.
 
 ```ts
-// devtools/bindings/src/useExampleToolProps.ts
+// devtools/bindings/src/team-<team>/useExampleToolProps.ts
 import type { ExampleToolProps } from "@devtools/example";
 
 export function useExampleToolProps(): ExampleToolProps {

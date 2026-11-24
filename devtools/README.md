@@ -75,7 +75,7 @@ A tool is a standalone React component packaged as `@devtools/<id>`. The shell n
 >
 > **Registry (rewritten on every generator run — do not edit manually):**
 > - `devtools/registry/src/registry.ts`
-> - `devtools/registry/src/metadata/<team>/index.ts` *(team barrel; registry imports these directly)*
+> - `devtools/registry/src/metadata/team-<team>/index.ts` *(team barrel; registry imports these directly)*
 > - `devtools/registry/package.json`
 
 > [!NOTE]
@@ -83,7 +83,7 @@ A tool is a standalone React component packaged as `@devtools/<id>`. The shell n
 
 ## Wiring
 
-The generator creates and fully populates `devtools/registry/src/metadata/<team>/<tool>.ts` from the answers you gave during the prompts. You do not need to edit it. If the tool has props, the only manual step left is to replace the placeholder in `devtools/<name>/src/types.ts` with the actual props your tool expects:
+The generator creates and fully populates `devtools/registry/src/metadata/team-<team>/<tool>.ts` from the answers you gave during the prompts. You do not need to edit it. If the tool has props, the only manual step left is to replace the placeholder in `devtools/<name>/src/types.ts` with the actual props your tool expects:
 
 ```ts
 // devtools/my-tool/src/types.ts  — fill this in
@@ -186,8 +186,8 @@ export default MyTool;
 ### Registry wiring
 
 1. Add `"@devtools/my-tool": "workspace:*"` to `devtools/registry/package.json` dependencies.
-2. Create `devtools/registry/src/metadata/<team>/my-tool.ts` (see the Wiring section above for the shape).
-3. Re-export it from `devtools/registry/src/metadata/<team>/index.ts`.
+2. Create `devtools/registry/src/metadata/team-<team>/my-tool.ts` (see the Wiring section above for the shape).
+3. Re-export it from `devtools/registry/src/metadata/team-<team>/index.ts`.
 4. In `devtools/registry/src/registry.ts`, add the import, add the entry to `tools`, and add the branch to `DevToolConfig`.
 
 </details>

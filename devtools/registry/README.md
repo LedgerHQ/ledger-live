@@ -36,15 +36,14 @@ The `loader` field, paired with a re-export of the tool's props type, is what ke
 registry/
 └── src/
     ├── metadata/
-    │   ├── <team>/                  # one folder per team
-    │   │   ├── <tool>.ts            # one ToolMetadata + props type re-export per tool
-    │   │   └── index.ts
-    │   └── index.ts
+    │   └── team-<team>/             # one folder per team
+    │       ├── <tool>.ts            # one ToolMetadata + props type re-export per tool
+    │       └── index.ts
     ├── types.ts                     # Category, Tool, ToolMetadata, ToolMetadataSchema, …
     └── index.ts                     # `tools` map + DevToolConfig union
 ```
 
-Metadata is grouped by team so ownership is visible in the file tree. Each tool file owns:
+Metadata is grouped by team so ownership is visible in the file tree. The `team-` prefix matches the `**/team-<team>/` rules in [`CODEOWNERS`](../../CODEOWNERS), so a team's metadata goes to that team for review without a `CODEOWNERS` edit. Each tool file owns:
 
 1. The `ToolMetadata` constant for that tool.
 2. A type re-export of the tool's props (`export type { MyToolProps } from "@devtools/my-tool"`) so the registry's `index.ts` can build the `DevToolConfig` union without importing the tool's implementation.
@@ -62,13 +61,12 @@ pnpm --filter @devtools/registry add-tool
 The generator will rewrite the following files on every run — **do not edit them manually**:
 
 - `src/registry.ts` — `tools` map, `DevToolConfig` union, all imports; fully rebuilt from the metadata folder
-- `src/metadata/<team>/index.ts` — all team barrel files; wiped and regenerated
-- `src/metadata/index.ts` — top-level metadata barrel; wiped and regenerated
+- `src/metadata/team-<team>/index.ts` — all team barrel files; wiped and regenerated
 - `package.json` — `dependencies` block; orphaned tool entries are removed, new ones are added
 
 It also creates one file you are expected to fill in:
 
-- `src/metadata/<team>/<tool>.ts` — the `ToolMetadata` constant and optional props type re-export for the new tool
+- `src/metadata/team-<team>/<tool>.ts` — the `ToolMetadata` constant and optional props type re-export for the new tool
 
 ## Runtime validation
 

@@ -1,8 +1,8 @@
-import * as coinIntegration from "./metadata/coin-integration";
-import * as engagement from "./metadata/engagement";
-import * as platform from "./metadata/platform";
-import * as ptx from "./metadata/ptx";
-import * as walletXp from "./metadata/wallet-xp";
+import * as coinIntegration from "./metadata/team-coin-integration";
+import * as engagement from "./metadata/team-engagement";
+import * as platform from "./metadata/team-platform";
+import * as ptx from "./metadata/team-ptx";
+import * as walletXp from "./metadata/team-wallet-xp";
 
 export const tools = {
   "feature-flags": platform.featureFlags,
