@@ -106,6 +106,25 @@ mints once before workers when a selected spec path contains `/paytab/`. `--grep
 so a smoke run that does not select that spec does not log in. The fixture injects the session when
 the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed out.
 
+## App upgrade
+
+`tests/specs/app.upgrade.spec.ts` downloads the latest published nightly from `download.live.ledger.com`,
+checks it against its published SHA-512, and caches it under `tests/artifacts/nightly-builds/`. It
+adds an account and changes the counter value and theme on that nightly, then opens the same profile
+with the build under test and checks all three are kept. The scheduled desktop run starts before
+that night's nightly is published, so it upgrades from the previous nightly (n-1) to the code that
+becomes the next one. It runs on Linux and macOS.
+
+Two environment variables pick other versions, as an exact version (`4.30.0-nightly.20261121020412`)
+or `latest`:
+
+- `E2E_UPGRADE_FROM_VERSION`: the version the profile is created with. Defaults to `latest`.
+- `E2E_UPGRADE_TO_VERSION`: the version to upgrade to. Defaults to the local build.
+
+```bash
+E2E_UPGRADE_FROM_VERSION=4.30.0-nightly.20261121020412 E2E_UPGRADE_TO_VERSION=latest pnpm e2e:desktop test:playwright app.upgrade
+```
+
 ## Feature Flags
 
 ### E2E_FEATURE_FLAGS_JSON

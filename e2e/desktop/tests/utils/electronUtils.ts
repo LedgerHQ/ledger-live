@@ -29,6 +29,7 @@ export async function launchApp({
   simulateCamera,
   windowSize,
   recordVideo,
+  executablePath,
 }: {
   env: Record<string, string>;
   lang: string;
@@ -37,10 +38,15 @@ export async function launchApp({
   simulateCamera?: string;
   windowSize: { width: number; height: number };
   recordVideo?: boolean;
+  /** A packaged app, such as a published nightly. Defaults to the local build on the repo's Electron. */
+  executablePath?: string;
 }): Promise<ElectronApplication> {
   return await electron.launch({
     args: [
-      `${path.join(__dirname, "../../../../apps/ledger-live-desktop/.webpack/main.bundle.js")}`,
+      // A packaged app loads its own bundle.
+      ...(executablePath
+        ? []
+        : [path.join(__dirname, "../../../../apps/ledger-live-desktop/.webpack/main.bundle.js")]),
       `--user-data-dir=${userdataDestinationPath}`,
       "--force-device-scale-factor=1",
       "--disable-dev-shm-usage",
@@ -65,7 +71,7 @@ export async function launchApp({
     env: withoutExclusiveLockEnv(env),
     colorScheme: theme,
     locale: lang,
-    executablePath: require("electron/index.js"),
+    executablePath: executablePath ?? require("electron/index.js"),
     timeout: TIMEOUT.xxxlarge,
   });
 }

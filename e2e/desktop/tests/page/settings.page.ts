@@ -4,7 +4,8 @@ import { expect } from "@playwright/test";
 import axios from "axios";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
-import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { getSavedSettings } from "tests/utils/userdata";
 
 export class SettingsPage extends AppPage {
   private static readonly EXPORT_LOGS_SOURCE_PATH = path.resolve("./ledgerwallet-logs.txt");
@@ -75,6 +76,16 @@ export class SettingsPage extends AppPage {
   @step("Expect counter value to be $0")
   async expectCounterValue(currency: string) {
     await expect(this.counterValueSelector).toHaveText(currency);
+  }
+
+  @step("Expect app.json to hold the changed settings")
+  async expectSettingsPersistedInAppJson(userdataFile: string, settings: Record<string, unknown>) {
+    await expect
+      .poll(() => getSavedSettings(userdataFile), {
+        timeout: TIMEOUT.medium,
+        intervals: [INTERVAL.tick],
+      })
+      .toMatchObject(settings);
   }
 
   @step("Change language to $0")
