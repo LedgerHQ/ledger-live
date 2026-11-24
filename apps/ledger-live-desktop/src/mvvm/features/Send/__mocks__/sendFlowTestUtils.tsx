@@ -302,14 +302,6 @@ jest.mock("@ledgerhq/live-common/flows/send/sponsored/useSponsoredSendOrchestrat
   },
 }));
 
-jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
-  marketApi: {
-    reducerPath: "marketApi",
-    reducer: (state = {}) => state,
-    middleware: () => (next: (action: unknown) => unknown) => (action: unknown) => next(action),
-  },
-}));
-
 jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () =>
   jest.fn(() => {
     const [transaction, setTransactionState] = React.useState(mockTransaction);

@@ -1,11 +1,11 @@
 import { track } from "@shared/analytics";
 import { renderHook, act } from "@tests/test-renderer";
 import { useBalanceGraphViewModel } from "../useBalanceGraphViewModel";
+import { useGetCurrencyDataQuery } from "@domain/api-market-currency";
 import {
-  useGetCurrencyDataQuery,
   useGetAssetChartDataQuery,
   useGetSupportedChartCounterCurrenciesQuery,
-} from "@ledgerhq/live-common/market/state-manager/marketApi";
+} from "@domain/api-market-chart";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import {
@@ -21,9 +21,12 @@ import { marketCurrencyData } from "../../../__fixtures__/marketCurrencyData";
 import type { RangeKey } from "../../../utils/rangeMapping";
 import { ASSET_DETAIL_CHART_HEIGHT } from "../constants";
 
-jest.mock("@ledgerhq/live-common/market/state-manager/marketApi", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/market/state-manager/marketApi"),
+jest.mock("@domain/api-market-currency", () => ({
+  ...jest.requireActual("@domain/api-market-currency"),
   useGetCurrencyDataQuery: jest.fn(),
+}));
+jest.mock("@domain/api-market-chart", () => ({
+  ...jest.requireActual("@domain/api-market-chart"),
   useGetAssetChartDataQuery: jest.fn(),
   useGetSupportedChartCounterCurrenciesQuery: jest.fn(),
 }));

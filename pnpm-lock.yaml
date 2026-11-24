@@ -1131,12 +1131,18 @@ importers:
       '@domain/api-market-countervalues':
         specifier: workspace:*
         version: link:../../domain/api/market-countervalues
+      '@domain/api-market-currency':
+        specifier: workspace:*
+        version: link:../../domain/api/market-currency
       '@domain/api-market-index-altcoin-season':
         specifier: workspace:^
         version: link:../../domain/api/market-index-altcoin-season
       '@domain/api-market-index-fear-and-greed':
         specifier: workspace:^
         version: link:../../domain/api/market-index-fear-and-greed
+      '@domain/api-market-trending-categories':
+        specifier: workspace:*
+        version: link:../../domain/api/market-trending-categories
       '@domain/api-push-devices':
         specifier: workspace:*
         version: link:../../domain/api/push-devices
@@ -2066,15 +2072,24 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:^
         version: link:../../domain/api/currency-token
+      '@domain/api-market-chart':
+        specifier: workspace:*
+        version: link:../../domain/api/market-chart
       '@domain/api-market-countervalues':
         specifier: workspace:*
         version: link:../../domain/api/market-countervalues
+      '@domain/api-market-currency':
+        specifier: workspace:*
+        version: link:../../domain/api/market-currency
       '@domain/api-market-index-altcoin-season':
         specifier: workspace:^
         version: link:../../domain/api/market-index-altcoin-season
       '@domain/api-market-index-fear-and-greed':
         specifier: workspace:^
         version: link:../../domain/api/market-index-fear-and-greed
+      '@domain/api-market-trending-categories':
+        specifier: workspace:*
+        version: link:../../domain/api/market-trending-categories
       '@domain/api-push-devices':
         specifier: workspace:*
         version: link:../../domain/api/push-devices
@@ -16474,6 +16489,9 @@ importers:
       '@domain/api-aggregated-assets':
         specifier: workspace:*
         version: link:../../domain/api/aggregated-assets
+      '@domain/api-market-currency':
+        specifier: workspace:*
+        version: link:../../domain/api/market-currency
       '@domain/entity-aggregated-asset':
         specifier: workspace:*
         version: link:../../domain/entity/aggregated-asset
@@ -21029,6 +21047,9 @@ importers:
       '@domain/api-market-index-global':
         specifier: workspace:*
         version: link:../../domain/api/market-index-global
+      '@domain/api-market-performers':
+        specifier: workspace:*
+        version: link:../../domain/api/market-performers
       '@domain/api-swap-quotes':
         specifier: workspace:^
         version: link:../../domain/api/swap-quotes

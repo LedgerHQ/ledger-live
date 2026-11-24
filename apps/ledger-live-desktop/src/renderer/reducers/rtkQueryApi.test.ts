@@ -1,5 +1,4 @@
 import { Tuple, type Middleware } from "@reduxjs/toolkit";
-import { marketApi } from "@ledgerhq/live-common/market/state-manager/api";
 import { aleoApi } from "@ledgerhq/live-common/families/aleo/state-manager/api";
 import { hederaApi } from "@ledgerhq/live-common/families/hedera/state-manager/api";
 import { xrpApi } from "@ledgerhq/live-common/families/xrp/state-manager/api";
@@ -31,7 +30,6 @@ const EXPECTED_REDUCER_PATHS = [
   "coinMarketCapApi",
   "countervaluesApi",
   "hederaApi",
-  "marketApi",
   "portfolioApi",
   "pushDevicesApi",
   "swapApi",
@@ -45,7 +43,6 @@ const EXPECTED_APIS = [
   cardApi,
   coinMarketCapApi,
   countervaluesApi,
-  marketApi,
   hederaApi,
   portfolioApi,
   pushDevicesApi,
@@ -90,7 +87,6 @@ describe("apiServices", () => {
   it("reads no app config before createExtra runs", () => {
     jest.isolateModules(() => {
       // Some legacy apis read their URL at import; none of them is one of `apiServices`.
-      jest.doMock("@ledgerhq/live-common/market/state-manager/api", () => stubApi("marketApi"));
       jest.doMock("@ledgerhq/live-common/families/aleo/state-manager/api", () =>
         stubApi("aleoApi"),
       );

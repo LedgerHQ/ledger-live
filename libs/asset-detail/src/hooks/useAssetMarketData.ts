@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useGetCurrencyDataQuery } from "@ledgerhq/live-common/market/state-manager/api";
+import { useGetCurrencyDataQuery } from "@domain/api-market-currency";
 import { format } from "@ledgerhq/live-common/market/utils/currencyFormatter";
 import { applyUsdRateToMarket } from "@ledgerhq/live-common/market/utils/applyUsdRateToMarket";
 import type {

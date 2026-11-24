@@ -7,7 +7,7 @@ const mockUseGetMarketsByLedgerIdsQuery = jest.fn();
 const mockResolveCounterCurrency = jest.fn();
 const mockHeldCurrencies = jest.fn<{ id: string; ticker: string }[], []>(() => []);
 
-jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
+jest.mock("@domain/api-market-currency", () => ({
   useGetMarketsByLedgerIdsQuery: (...args: unknown[]) => mockUseGetMarketsByLedgerIdsQuery(...args),
 }));
 

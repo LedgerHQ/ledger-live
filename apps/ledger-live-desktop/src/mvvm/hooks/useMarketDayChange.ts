@@ -6,7 +6,7 @@ import {
   type HeldMarketDayChange,
 } from "@features/platform-aggregated-assets";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useGetMarketsByLedgerIdsQuery } from "@ledgerhq/live-common/market/state-manager/api";
+import { useGetMarketsByLedgerIdsQuery } from "@domain/api-market-currency";
 import { useResolveMarketCounterCurrency } from "@ledgerhq/live-common/market/hooks/useResolveMarketCounterCurrency";
 import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "@ledgerhq/live-common/market/utils/timers";
 import { useSelector } from "LLD/hooks/redux";

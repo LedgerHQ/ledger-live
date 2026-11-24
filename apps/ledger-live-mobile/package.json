@@ -91,6 +91,8 @@
     "@domain/api-market-countervalues": "workspace:*",
     "@domain/api-market-index-altcoin-season": "workspace:^",
     "@domain/api-market-index-fear-and-greed": "workspace:^",
+    "@domain/api-market-chart": "workspace:*",
+    "@domain/api-market-currency": "workspace:*",
     "@domain/api-market-trending-categories": "workspace:*",
     "@domain/api-push-devices": "workspace:*",
     "@domain/entity-account": "workspace:^",
