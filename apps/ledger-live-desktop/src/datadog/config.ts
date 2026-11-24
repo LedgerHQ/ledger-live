@@ -1,5 +1,6 @@
+import { scrubResourceUrl } from "@features/platform-observability-redaction";
 import anonymizer from "~/datadog/anonymizer";
-import { scrubResourceUrl, scrubViewUrlHash, scrubActionTargetName } from "./scrubRum";
+import { scrubViewUrlHash, scrubActionTargetName } from "./scrubRum";
 import { shouldIgnoreErrorMessage } from "./ignoreErrors";
 
 export type ShouldSendCallback = () => boolean;

@@ -175,6 +175,8 @@ export type SwapStatusRequest = {
   swapId: string;
   transactionId?: string;
   operationId?: string;
+  // Needed by 1inch Fusion to find the order
+  network?: string;
 };
 export type SwapStatus = {
   provider: string;

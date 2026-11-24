@@ -11,6 +11,8 @@ export type SignRawTransactionIntentInput = Readonly<{
   parentAccount?: Account | null;
   /** Hex transaction bytes, passed as is to bridge.signRawOperation. */
   transaction: string;
+  /** Passed to bridge.signRawOperation: Bitcoin finalizes the PSBT only when it is set. */
+  broadcast?: boolean;
 }>;
 
 /** Same states as signTransactionIntent: signRawOperation emits the same SignOperationEvents. */

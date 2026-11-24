@@ -135,7 +135,10 @@ export function runCreateRenameDeleteContactTest(tmsLinks: string[], tags: strin
       await app.contacts.addContact(CONTACT_NAME);
 
       await app.contacts.expectSavedContactDisplayed(CONTACT_NAME);
-      await app.contacts.expectSavedContactAddressCount(CONTACT_NAME, NO_ADDRESS_LABEL);
+      await app.contacts.expectSavedContactAddressCount({
+        name: CONTACT_NAME,
+        expectedLabel: NO_ADDRESS_LABEL,
+      });
 
       // Resolved before the rename: the row id survives it, the name does not.
       const contactRowId = await app.contacts.getSavedContactRowId(CONTACT_NAME);
@@ -149,7 +152,10 @@ export function runCreateRenameDeleteContactTest(tmsLinks: string[], tags: strin
 
       await app.common.goToPreviousPage();
       await app.contacts.expectScreenVisible();
-      await app.contacts.expectSavedContactRowName(contactRowId, RENAMED_CONTACT_NAME);
+      await app.contacts.expectSavedContactRowName({
+        rowId: contactRowId,
+        name: RENAMED_CONTACT_NAME,
+      });
 
       await app.contacts.deleteContact(contactRowId);
 
@@ -303,10 +309,10 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
       await app.common.disableSynchronizationForiOS();
       await app.contacts.detail.tapAddressNameContinue();
       await mockServer.confirmDeviceIntent(REGISTER_DEVICE_PROMPT_ID);
-      await app.contacts.detail.expectAddressSaved(
-        ETHEREUM_ADDRESS.savedValue,
-        ETHEREUM_ADDRESS.networkId,
-      );
+      await app.contacts.detail.expectAddressSaved({
+        address: ETHEREUM_ADDRESS.savedValue,
+        networkId: ETHEREUM_ADDRESS.networkId,
+      });
 
       await mockServer.mockDashboardRename();
       await app.contacts.detail.renameContact(RENAMED_CONTACT_NAME);
@@ -339,11 +345,14 @@ export function runCreateDeleteContactWithAddressesTest(tmsLinks: string[], tags
       for (const [index, addressData] of CONTACT_ADDRESS_DATASET.entries()) {
         await app.contacts.detail.addAddress(addressData);
         await app.speculos.confirmContactAction();
-        await app.contacts.detail.expectAddressSaved(addressData.savedValue, addressData.networkId);
-        await app.contacts.detail.expectAddressLabel(
-          addressData.savedValue,
-          addressData.addressLabel,
-        );
+        await app.contacts.detail.expectAddressSaved({
+          address: addressData.savedValue,
+          networkId: addressData.networkId,
+        });
+        await app.contacts.detail.expectAddressLabel({
+          address: addressData.savedValue,
+          expectedLabel: addressData.addressLabel,
+        });
         await app.contacts.detail.expectAddressCount(addressCountLabel(index + 1));
       }
 
@@ -354,8 +363,11 @@ export function runCreateDeleteContactWithAddressesTest(tmsLinks: string[], tags
 
       await app.common.goToPreviousPage();
       await app.contacts.expectScreenVisible();
-      await app.contacts.expectSavedContactRowName(contactRowId, CONTACT_NAME);
-      await app.contacts.expectSavedContactAddressCount(CONTACT_NAME, remainingAddressCount);
+      await app.contacts.expectSavedContactRowName({ rowId: contactRowId, name: CONTACT_NAME });
+      await app.contacts.expectSavedContactAddressCount({
+        name: CONTACT_NAME,
+        expectedLabel: remainingAddressCount,
+      });
 
       await app.contacts.deleteContact(contactRowId);
       await app.contacts.expectScreenVisible();

@@ -34,11 +34,21 @@ const btcAccount: Account = {
   spendableBalance: new BigNumber(100000),
 };
 
+const hypercoreAccount: Account = {
+  ...genAccount("account-detail-swap-console-hypercore", {
+    currency: getCryptoCurrencyById("hypercore"),
+  }),
+  balance: new BigNumber(100000),
+  spendableBalance: new BigNumber(100000),
+};
+
 function renderAccountPage({
+  account = btcAccount,
   isAccountDetailEnabled = true,
-  initialRoute = getAccountUrl(btcAccount.id),
+  initialRoute = getAccountUrl(account.id),
   lwdSwapConsoleAbtest,
 }: {
+  account?: Account;
   isAccountDetailEnabled?: boolean;
   initialRoute?: string;
   lwdSwapConsoleAbtest?: { enabled: boolean; params: { console: boolean; quickAction: boolean } };
@@ -53,9 +63,10 @@ function renderAccountPage({
         ...withFlagOverrides({
           accountDetail: { enabled: isAccountDetailEnabled },
           ptxSwapLiveAppOnPortfolio: { enabled: true },
+          currencyHypercore: { enabled: true },
           ...(lwdSwapConsoleAbtest ? { lwdSwapConsoleAbtest } : {}),
         }),
-        accounts: [btcAccount],
+        accounts: [account],
       },
     },
   );
@@ -95,6 +106,23 @@ describe("AccountDetail swap console", () => {
     mockSwapCatalog.ids = ["ethereum"];
 
     renderAccountPage();
+
+    expect(screen.queryByTestId(SWAP_CONSOLE)).toBeNull();
+  });
+
+  it("hides the swap console on a hypercore account even when the catalog lists it", () => {
+    mockSwapCatalog.ids = ["hypercore"];
+
+    renderAccountPage({ account: hypercoreAccount });
+
+    expect(screen.queryByTestId(SWAP_CONSOLE)).toBeNull();
+  });
+
+  it("hides the swap console on a hypercore account while the catalog is not resolved yet", () => {
+    mockSwapCatalog.ids = [];
+    mockSwapCatalog.isResolved = false;
+
+    renderAccountPage({ account: hypercoreAccount });
 
     expect(screen.queryByTestId(SWAP_CONSOLE)).toBeNull();
   });

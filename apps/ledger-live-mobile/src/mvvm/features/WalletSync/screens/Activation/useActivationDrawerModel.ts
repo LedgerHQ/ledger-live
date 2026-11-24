@@ -52,6 +52,7 @@ const useActivationDrawerModel = ({
   const [currentOption, setCurrentOption] = useState<Options>(Options.SCAN);
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const hasCustomHeader = useMemo(() => currentStep === Steps.QrCodeMethod, [currentStep]);
+  const hasScrollableInstructions = currentStep === Steps.QrCodeMethod;
   const canGoBack = useMemo(
     () => currentStep === Steps.ChooseSyncMethod && startingStep === Steps.Activation,
     [currentStep, startingStep],
@@ -129,6 +130,7 @@ const useActivationDrawerModel = ({
   return {
     isOpen,
     hasCustomHeader,
+    hasScrollableInstructions,
     canGoBack,
     navigateToChooseSyncMethod,
     navigateToQrCodeMethod,

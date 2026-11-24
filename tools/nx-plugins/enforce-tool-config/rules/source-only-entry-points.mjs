@@ -2,7 +2,7 @@
 // that calls it. See CHECKS["no-build"] in source-only.mjs.
 
 const LIVE_COMMON =
-  "`nx run @ledgerhq/live-common:build` in the test-bridge-pr, test-integration, " +
+  "`nx run @ledgerhq/live-common:build` in the test-integration, " +
   "test-integration-pr and test-integration-weekly workflows and the monitor composite";
 
 const COIN_TESTER =

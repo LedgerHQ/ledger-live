@@ -39,7 +39,10 @@ function InvestSheetContent({ actions, onActionPress, testID }: Omit<Props, "isO
   const bottomInset = useBottomSheetBottomInset();
 
   return (
-    <BottomSheetView style={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}>
+    <BottomSheetView
+      style={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}
+      testID={testID ? `${testID}-content` : undefined}
+    >
       <BottomSheetHeader />
       {actions.map(({ id, state }) => {
         if (!isInvestAction(id)) return null;

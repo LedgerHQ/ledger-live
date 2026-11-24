@@ -225,7 +225,7 @@
     "chalk": "catalog:",
     "eslint": "8.57.0",
     "jest-sonar": "0.2.16",
-    "knip": "6.32.2",
+    "knip": "6.46.1",
     "nx": "catalog:",
     "nyc": "18.0.0",
     "oxfmt": "catalog:",

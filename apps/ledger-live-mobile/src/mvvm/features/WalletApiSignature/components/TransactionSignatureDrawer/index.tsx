@@ -26,6 +26,7 @@ function TransactionSignatureDrawer({ request, onClose }: Props) {
     signatureIntent,
     onIntentJobStateChanged,
     onIntentJobError,
+    onExecutorStateChanged,
     onUserCancel,
   } = useTransactionSignatureDrawerViewModel({ request, onClose });
 
@@ -61,7 +62,7 @@ function TransactionSignatureDrawer({ request, onClose }: Props) {
         deviceInitializationInput={deviceInitializationInput}
         intent={signatureIntent}
         intentComponentExtraProps={intentComponentExtraProps}
-        onExecutorStateChanged={noop}
+        onExecutorStateChanged={onExecutorStateChanged}
         onIntentJobStateChanged={onIntentJobStateChanged}
         onIntentJobComplete={noop}
         onIntentJobError={onIntentJobError}

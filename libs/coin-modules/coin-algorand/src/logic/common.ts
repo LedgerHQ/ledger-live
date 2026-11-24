@@ -1,4 +1,13 @@
+import type { AlgorandMemo } from "../types";
+
 export const ALGORAND_MIN_ACCOUNT_BALANCE = 100000n; // 0.1 ALGO in microAlgos
+
+/**
+ * The memo of an operation, from the note of its transaction
+ */
+export function toNoteMemo(note: string | undefined): AlgorandMemo | undefined {
+  return note ? { type: "string", kind: "note", value: note } : undefined;
+}
 
 /**
  * Compute minimum balance required for an Algorand account

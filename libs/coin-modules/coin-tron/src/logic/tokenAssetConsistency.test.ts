@@ -80,7 +80,7 @@ function mockTronGrid(log: object[]) {
     block_header: { raw_data: { number: blockHeight, timestamp: blockTimestamp } },
   };
 
-  mockedNetwork.mockImplementation((({
+  mockedNetwork.mockImplementation((async ({
     url,
     data,
   }: {

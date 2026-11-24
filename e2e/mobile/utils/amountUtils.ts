@@ -4,14 +4,17 @@ import {
   type NumberSeparators,
 } from "@ledgerhq/live-e2e-shared/data/numberFormat";
 
+type ExpectFormattedAmountOptions = {
+  text: string | null;
+  separators: NumberSeparators;
+  context: string;
+};
+
 // Matches on the full numeric token (not a loose substring) so a wrongly-formatted number
 // can't slip through. `context` is embedded in every thrown message, so a failure identifies
 // which call site it came from without needing a separate Allure step per assertion.
-export function expectFormattedAmount(
-  text: string | null,
-  separators: NumberSeparators,
-  context: string,
-): void {
+export function expectFormattedAmount(options: ExpectFormattedAmountOptions): void {
+  const { text, separators, context } = options;
   const label = ` (${context})`;
   if (!text) {
     throw new Error(`Expected a formatted amount but got "${text}"${label}`);

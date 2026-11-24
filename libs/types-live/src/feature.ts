@@ -256,7 +256,6 @@ export type Features = CurrencyFeatures & {
   ldmkPolkadotSigner: DefaultFeature;
   ldmkXrpSigner: DefaultFeature;
   ldmkTronSigner: DefaultFeature;
-  lldNetworkBasedAddAccount: DefaultFeature;
   llmDatadog: {
     enabled: boolean;
     params: Partial<{

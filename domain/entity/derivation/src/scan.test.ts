@@ -1,3 +1,4 @@
+import type { DerivationPath } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AccountCandidateSchema } from "./schema";
 import { candidateOf, derivationModesOf, offersNewAccount, scanOf } from "./scan";
@@ -61,5 +62,12 @@ describe("AccountCandidate paths", () => {
     // @ts-expect-error an address path is no account path
     const misplaced: typeof accountPath = addressPath;
     expect(misplaced).toBe("m/44h/60h/0h/0/0");
+  });
+});
+
+describe("AccountCandidate paths as descriptor paths", () => {
+  it("fits a candidate path where a descriptor path goes", () => {
+    const path: DerivationPath = candidateOf(ethereum, "", 0).addressPath;
+    expect(path).toBe("m/44h/60h/0h/0/0");
   });
 });

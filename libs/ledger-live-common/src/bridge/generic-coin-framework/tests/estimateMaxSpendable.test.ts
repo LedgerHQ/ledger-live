@@ -3,6 +3,7 @@ import { genericEstimateMaxSpendable } from "../estimateMaxSpendable";
 import * as coinframework from "../api";
 import { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { UnsupportedMaxSpendableFilter } from "@ledgerhq/ledger-wallet-framework/errors";
 
 // Mock the coin module API
 jest.mock("../api", () => ({
@@ -464,5 +465,345 @@ describe("genericEstimateMaxSpendable", () => {
         }),
       );
     });
+  });
+});
+
+describe("genericEstimateMaxSpendable with filters", () => {
+  const estimateFeesMock = jest.fn();
+  const craftTransactionData = () => ({ type: "none" });
+  const rows = [
+    { value: new BigNumber(40_000_000), locked: new BigNumber(10_000_000), pool: "main" },
+    { value: new BigNumber(15_000_000), pool: "reserve", private: true },
+  ];
+  const makeAccount = (overrides: Record<string, unknown> = {}) =>
+    ({
+      id: "account_id",
+      type: "Account",
+      spendableBalance: new BigNumber(50_000_000),
+      balance: new BigNumber(55_000_000),
+      balances: rows,
+      currency: {
+        id: "currency_family",
+        family: "currency_family",
+        name: "currency_name",
+        units: [{ name: "currency_name", code: "currency_code", magnitude: 6 }],
+      },
+      freshAddress: "account_address",
+      pendingOperations: [],
+      ...overrides,
+    }) as unknown as Account;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
+      estimateFees: estimateFeesMock.mockResolvedValue({ value: 10_000n }),
+    });
+  });
+
+  it("sets the pool of the selected row on the intent and bounds the amount by the row", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+
+    const result = await estimate({
+      account: makeAccount(),
+      parentAccount: null,
+      transaction: {} as any,
+      filters: { pools: ["main"] },
+    });
+
+    // The row's spendable part is 30,000,000: the 50,000,000 account balance is out of reach.
+    expect(result.toString()).toBe("29990000");
+    expect(estimateFeesMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ pool: "main", amount: 30_000_000n, useAllAmount: true }),
+    );
+  });
+
+  it("selects the row by the private flag", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+
+    const result = await estimate({
+      account: makeAccount(),
+      parentAccount: null,
+      transaction: {} as any,
+      filters: { private: true },
+    });
+
+    expect(result.toString()).toBe("14990000");
+    expect(estimateFeesMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ pool: "reserve" }),
+    );
+  });
+
+  it("takes the pending operations out of the selected public row", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const account = makeAccount({
+      spendableBalance: new BigNumber(50_000_000),
+      pendingOperations: [{ type: "OUT", value: new BigNumber(30_000_000), fee: new BigNumber(0) }],
+    });
+
+    const result = await estimate({
+      account,
+      parentAccount: null,
+      transaction: {} as any,
+      filters: { pools: ["main"] },
+    });
+
+    // The pending 30,000,000 sits on the public row, whose 30,000,000 spendable part is used up.
+    expect(result.toString()).toBe("0");
+  });
+
+  it("takes a pending spend out of the public row even when other pools could cover it", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const account = makeAccount({
+      balance: new BigNumber(100_000_000),
+      spendableBalance: new BigNumber(95_000_000),
+      balances: [
+        { value: new BigNumber(60_000_000), locked: new BigNumber(5_000_000), pool: "main" },
+        { value: new BigNumber(40_000_000), pool: "reserve", private: true },
+      ],
+      pendingOperations: [{ type: "OUT", value: new BigNumber(5_000_000), fee: new BigNumber(0) }],
+    });
+
+    const result = await estimate({
+      account,
+      parentAccount: null,
+      transaction: {} as any,
+      filters: { pools: ["main"] },
+    });
+
+    // 60,000,000 minus the 5,000,000 locked and the 5,000,000 pending leaves 50,000,000.
+    expect(result.toString()).toBe("49990000");
+  });
+
+  it("leaves a private row untouched by a pending public spend", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const account = makeAccount({
+      pendingOperations: [{ type: "OUT", value: new BigNumber(30_000_000), fee: new BigNumber(0) }],
+    });
+
+    const result = await estimate({
+      account,
+      parentAccount: null,
+      transaction: {} as any,
+      filters: { private: true },
+    });
+
+    expect(result.toString()).toBe("14990000");
+  });
+
+  it("sends no pool for the default row of a family without pools", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const account = makeAccount({ balances: [{ value: new BigNumber(50_000_000) }] });
+
+    const result = await estimate({
+      account,
+      parentAccount: null,
+      transaction: {} as any,
+      filters: { private: false },
+    });
+
+    expect(result.toString()).toBe("49990000");
+    expect(estimateFeesMock.mock.calls[0][1]).not.toHaveProperty("pool");
+  });
+
+  it("refuses rows that belong to several pools", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const account = makeAccount({
+      balances: [
+        { value: new BigNumber(1), pool: "main" },
+        { value: new BigNumber(2), pool: "reserve" },
+      ],
+    });
+
+    await expect(
+      estimate({
+        account,
+        parentAccount: null,
+        transaction: {} as any,
+        filters: { private: false },
+      }),
+    ).rejects.toBeInstanceOf(UnsupportedMaxSpendableFilter);
+    expect(estimateFeesMock).not.toHaveBeenCalled();
+  });
+
+  it("refuses filters that select no row", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+
+    await expect(
+      estimate({
+        account: makeAccount(),
+        parentAccount: null,
+        transaction: {} as any,
+        filters: { pools: ["unknown"] },
+      }),
+    ).rejects.toBeInstanceOf(UnsupportedMaxSpendableFilter);
+  });
+
+  it("sums the selected rows of a token account", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const token = {
+      type: "TokenAccount",
+      spendableBalance: new BigNumber(900),
+      balances: [
+        { value: new BigNumber(100), locked: new BigNumber(10), pool: "main" },
+        { value: new BigNumber(50), pool: "main", private: true },
+        { value: new BigNumber(700), pool: "reserve" },
+      ],
+      pendingOperations: [],
+    } as any;
+
+    const result = await estimate({
+      account: token,
+      parentAccount: null,
+      transaction: {} as any,
+      filters: { pools: ["main"] },
+    });
+
+    expect(result.toString()).toBe("140");
+    expect(estimateFeesMock).not.toHaveBeenCalled();
+  });
+
+  it("subtracts a token account's pending spend and floors at zero", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const token = {
+      type: "TokenAccount",
+      spendableBalance: new BigNumber(100),
+      balances: [{ value: new BigNumber(100), pool: "main" }],
+      pendingOperations: [{ type: "OUT", value: new BigNumber(30) }],
+    } as any;
+
+    expect(
+      (
+        await estimate({
+          account: token,
+          parentAccount: null,
+          transaction: {} as any,
+          filters: { pools: ["main"] },
+        })
+      ).toString(),
+    ).toBe("70");
+
+    token.pendingOperations = [{ type: "OUT", value: new BigNumber(500) }];
+    expect(
+      (
+        await estimate({
+          account: token,
+          parentAccount: null,
+          transaction: {} as any,
+          filters: { pools: ["main"] },
+        })
+      ).toString(),
+    ).toBe("0");
+  });
+
+  it("drops the pool a transaction names when the filter selects a row without a pool", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const account = makeAccount({
+      balances: [
+        { value: new BigNumber(40_000_000), locked: new BigNumber(10_000_000) },
+        { value: new BigNumber(15_000_000), pool: "reserve", private: true },
+      ],
+    });
+
+    await estimate({
+      account,
+      parentAccount: null,
+      transaction: { pool: "reserve" } as any,
+      filters: { private: false },
+    });
+
+    expect(estimateFeesMock.mock.calls[0][1]).not.toHaveProperty("pool");
+  });
+
+  it("refuses a row without a pool combined with a named pool", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const mixed = [{ value: new BigNumber(100) }, { value: new BigNumber(700), pool: "reserve" }];
+
+    await expect(
+      estimate({
+        account: makeAccount({ balance: new BigNumber(800), balances: mixed }),
+        parentAccount: null,
+        transaction: {} as any,
+        filters: { private: false },
+      }),
+    ).rejects.toBeInstanceOf(UnsupportedMaxSpendableFilter);
+    await expect(
+      estimate({
+        account: {
+          type: "TokenAccount",
+          spendableBalance: new BigNumber(800),
+          balances: mixed,
+          pendingOperations: [],
+        } as any,
+        parentAccount: null,
+        transaction: {} as any,
+        filters: { private: false },
+      }),
+    ).rejects.toBeInstanceOf(UnsupportedMaxSpendableFilter);
+  });
+
+  it("bounds a send-max amount the coin states itself by the selected rows", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    estimateFeesMock.mockResolvedValue({ value: 10_000n, parameters: { amount: 40_000_000n } });
+
+    const result = await estimate({
+      account: makeAccount(),
+      parentAccount: null,
+      transaction: {} as any,
+      filters: { pools: ["main"] },
+    });
+
+    // The "main" row holds 30,000,000 once its lock is out.
+    expect(result.toString()).toBe("30000000");
+  });
+
+  it("refuses token rows of several pools that no single transaction can spend", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const token = {
+      type: "TokenAccount",
+      spendableBalance: new BigNumber(800),
+      balances: [
+        { value: new BigNumber(100), pool: "main" },
+        { value: new BigNumber(700), pool: "reserve" },
+      ],
+      pendingOperations: [],
+    } as any;
+
+    await expect(
+      estimate({
+        account: token,
+        parentAccount: null,
+        transaction: {} as any,
+        filters: { private: false },
+      }),
+    ).rejects.toBeInstanceOf(UnsupportedMaxSpendableFilter);
+  });
+
+  it("refuses a token account that has no matching row", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+
+    await expect(
+      estimate({
+        account: { type: "TokenAccount", spendableBalance: new BigNumber(5) } as any,
+        parentAccount: null,
+        transaction: {} as any,
+        filters: { private: false },
+      }),
+    ).rejects.toBeInstanceOf(UnsupportedMaxSpendableFilter);
+  });
+
+  it("is unchanged without filters", async () => {
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+
+    const result = await estimate({
+      account: makeAccount(),
+      parentAccount: null,
+      transaction: {} as any,
+    });
+
+    expect(result.toString()).toBe("49990000");
+    expect(estimateFeesMock.mock.calls[0][1]).not.toHaveProperty("pool");
   });
 });

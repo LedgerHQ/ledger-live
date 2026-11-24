@@ -1,7 +1,12 @@
+import { DEFAULT_SYNC_STATE_DRIVEN, isStateDrivenSync } from "@ledgerhq/coin-near/config";
+import type { NearConfig } from "@ledgerhq/coin-near/config";
+import type { NearAccount } from "@ledgerhq/coin-near/types";
 import type {
   BridgeApi,
   OptimisticOperationDescriptor,
 } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { Account, Operation } from "@ledgerhq/types-live";
+import { getCurrencyConfiguration } from "../../../config";
 
 /**
  * NEAR names its staking modes `stake` / `unstake` / `withdraw`, while the generic framework's
@@ -43,9 +48,58 @@ export function describeOptimisticOperation(
   return mode === "withdraw" ? { type: "WITHDRAW_UNSTAKED" } : undefined;
 }
 
-export default {
-  stakingSupported: true,
-  usesStakingPositions: true,
-  computeIntentType,
-  describeOptimisticOperation,
-} satisfies BridgeApi;
+/**
+ * Read at each sync, from LiveConfig: the generic path never runs `setup.ts`, which seeds the
+ * legacy config singleton. A config that cannot be read keeps the module default.
+ */
+function syncsHistoryOnStateChange(): boolean {
+  try {
+    return isStateDrivenSync(getCurrencyConfiguration<NearConfig>("near"));
+  } catch {
+    return DEFAULT_SYNC_STATE_DRIVEN;
+  }
+}
+
+/**
+ * The legacy sync keeps its pools in `nearResources`, the generic one in `stakingPositions`: after
+ * a switch between the two, a pool may be known to one only. Both count as known pools.
+ */
+export function getKnownValidatorIds(account: Account): string[] {
+  const generic = (
+    (account as { stakingPositions?: { delegate?: string }[] }).stakingPositions ?? []
+  ).flatMap(({ delegate }) => (delegate ? [delegate] : []));
+  const legacy = ((account as Partial<NearAccount>).nearResources?.stakingPositions ?? []).map(
+    ({ validatorId }) => validatorId,
+  );
+  return [...new Set([...generic, ...legacy])];
+}
+
+/** The pool `coin-near` found in the transaction's actions, whatever the operation's type. */
+export function getStakingCallValidatorId(operation: Operation): string | undefined {
+  const { stakingPool } = operation.extra as { stakingPool?: unknown };
+  return typeof stakingPool === "string" ? stakingPool : undefined;
+}
+
+/** False for an operation the indexer listed before recording its outcome: its fee and status may change. */
+export function isOperationSettled(operation: Operation): boolean {
+  return (operation.extra as { outcomePending?: unknown }).outcomePending !== true;
+}
+
+/** A call relayed by another account may have funded a pool that the data does not name. */
+export function needsValidatorListing(operation: Operation): boolean {
+  return (operation.extra as { relayedCall?: unknown }).relayedCall === true;
+}
+
+export default function nearBridge(): BridgeApi {
+  return {
+    stakingSupported: true,
+    usesStakingPositions: true,
+    syncsHistoryOnStateChange: syncsHistoryOnStateChange(),
+    getKnownValidatorIds,
+    getStakingCallValidatorId,
+    isOperationSettled,
+    needsValidatorListing,
+    computeIntentType,
+    describeOptimisticOperation,
+  };
+}

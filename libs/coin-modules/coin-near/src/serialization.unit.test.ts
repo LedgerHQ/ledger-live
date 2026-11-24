@@ -31,9 +31,15 @@ describe("near resources serialization", () => {
       historyRecheckSince: 1_700_000_000_000,
       historyRecheckFingerprint: "c|d",
       historyConfirmPending: true,
+      historyConfirmBoundary: "tx-0",
       poolListingPending: true,
       pendingCandidatePools: ["new.poolv1.near"],
       historyEmpty: true,
+      pendingCandidatesSince: 1_700_000_000_001,
+      historyFailedSince: 1_700_000_000_002,
+      historyUnsettledSince: 1_700_000_000_003,
+      historyUnsettledHashes: ["tx-1", "tx-2"],
+      historyEmptySince: 1_700_000_000_004,
     };
 
     const raw = toNearResourcesRaw(resources);
@@ -41,10 +47,16 @@ describe("near resources serialization", () => {
     expect(raw.accountStateFingerprint).toBe("a|b");
     expect(raw.historyRecheckSince).toBe(1_700_000_000_000);
     expect(raw.historyConfirmPending).toBe(true);
+    expect(raw.historyConfirmBoundary).toBe("tx-0");
     expect(raw.poolListingPending).toBe(true);
     expect(raw.historyRecheckFingerprint).toBe("c|d");
     expect(raw.pendingCandidatePools).toEqual(["new.poolv1.near"]);
     expect(raw.historyEmpty).toBe(true);
+    expect(raw.pendingCandidatesSince).toBe(1_700_000_000_001);
+    expect(raw.historyFailedSince).toBe(1_700_000_000_002);
+    expect(raw.historyUnsettledSince).toBe(1_700_000_000_003);
+    expect(raw.historyUnsettledHashes).toEqual(["tx-1", "tx-2"]);
+    expect(raw.historyEmptySince).toBe(1_700_000_000_004);
     expect(fromNearResourcesRaw(raw)).toEqual(resources);
   });
 
@@ -61,10 +73,16 @@ describe("near resources serialization", () => {
     expect(raw).not.toHaveProperty("accountStateFingerprint");
     expect(raw).not.toHaveProperty("historyRecheckSince");
     expect(raw).not.toHaveProperty("historyConfirmPending");
+    expect(raw).not.toHaveProperty("historyConfirmBoundary");
     expect(raw).not.toHaveProperty("poolListingPending");
     expect(raw).not.toHaveProperty("historyRecheckFingerprint");
     expect(raw).not.toHaveProperty("pendingCandidatePools");
     expect(raw).not.toHaveProperty("historyEmpty");
+    expect(raw).not.toHaveProperty("pendingCandidatesSince");
+    expect(raw).not.toHaveProperty("historyFailedSince");
+    expect(raw).not.toHaveProperty("historyUnsettledSince");
+    expect(raw).not.toHaveProperty("historyUnsettledHashes");
+    expect(raw).not.toHaveProperty("historyEmptySince");
     expect(fromNearResourcesRaw(raw)).toEqual(base());
     expect(fromNearResourcesRaw(raw)).not.toHaveProperty("accountStateFingerprint");
   });

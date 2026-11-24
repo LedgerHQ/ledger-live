@@ -46,7 +46,12 @@ export function createBridges(signerContext: SignerContext<CantonSigner>, contex
   };
 
   const signOperation = buildSignOperation(signerContext, context);
-  const sync = makeSync({ getAccountShape: makeGetAccountShape(signerContext, context) });
+  const sync = makeSync({
+    getAccountShape: makeGetAccountShape(signerContext, context),
+    // getAccountShape merges the new operations with the stored ones, or replaces them on a
+    // rebuild: merging again would bring the stale ones back.
+    shouldMergeOps: false,
+  });
 
   const accountBridge: AccountBridge<Transaction, CantonAccount> = {
     broadcast: arg => broadcast(context, arg),

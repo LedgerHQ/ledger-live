@@ -105,6 +105,7 @@ describe("scanAccounts", () => {
       account: {
         id: "js:2:vechain:0x5066118c66793ED86bd379b50b20E32B0FC1aBf5:vechain",
         balance: new BigNumber("0"),
+        balances: [{ value: new BigNumber("0") }],
         balanceHistoryCache: {
           HOUR: {
             latestDate: expect.any(Number),
@@ -144,6 +145,7 @@ describe("scanAccounts", () => {
             token: vthoToken,
             balance: new BigNumber("0"),
             spendableBalance: new BigNumber("0"),
+            balances: [{ value: new BigNumber("0") }],
             creationDate: expect.any(Date),
             operationsCount: 0,
             operations: [],

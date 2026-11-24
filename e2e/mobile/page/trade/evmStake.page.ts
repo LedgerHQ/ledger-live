@@ -1,6 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import { byId } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
+import { isAccountDetailEnabled } from "@e2e/utils/featureFlagUtils";
 
 // Fee estimation round-trips to the node before the continue button enables.
 const FEE_ESTIMATION_TIMEOUT = TIMEOUT.xxxlarge;
@@ -16,6 +17,10 @@ export default class EvmStakePage {
 
   @Step("Start EVM delegation flow from account quick actions")
   async startDelegate() {
+    if (isAccountDetailEnabled()) {
+      await app.account.tapEarn();
+      return;
+    }
     await this.startDelegateCta.tap();
   }
 

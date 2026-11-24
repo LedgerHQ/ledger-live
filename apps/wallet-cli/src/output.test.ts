@@ -14,7 +14,7 @@ import { _setTestSpinner, installOutputCapture } from "./shared/ui";
 import { FakeSpinners } from "./testing/fake-spinner";
 import { resetTestSeams } from "./shared/test-seam";
 import { ETH_ADDR, SOL_ADDR } from "./shared/accountDescriptor/test-fixtures";
-import { NetworkIdSchema } from "./shared/accountDescriptor";
+import { DerivationPathSchema, NetworkIdSchema } from "./shared/accountDescriptor";
 import type { SendIntentSummary } from "./agent-intent/send-intent";
 import type { SwapIntentSummary } from "./agent-intent/swap-intent";
 
@@ -453,7 +453,7 @@ describe("HumanCommandOutput", () => {
       type: "utxo",
       network: NetworkIdSchema.parse("bitcoin"),
       key: XPUB,
-      path: "m/84h/0h/0h",
+      path: DerivationPathSchema.parse("m/84h/0h/0h"),
     } as const;
     try {
       const out = createCommandOutput("human", {

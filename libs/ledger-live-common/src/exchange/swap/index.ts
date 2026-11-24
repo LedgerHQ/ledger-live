@@ -24,7 +24,7 @@ export { getAvailableProviders } from "../providers";
 
 export const operationStatusList: Record<"finishedOK" | "finishedKO", readonly string[]> = {
   finishedOK: [TransactionStatus.Finished],
-  finishedKO: [TransactionStatus.Refunded],
+  finishedKO: [TransactionStatus.Refunded, TransactionStatus.Expired],
 };
 
 // A swap operation is considered pending if it is not in a finishedOK or finishedKO state

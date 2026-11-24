@@ -179,4 +179,28 @@ describe("importStore", () => {
       "starredAccounts/initStarredFromIds",
     ]);
   });
+
+  describe("migration version", () => {
+    async function decodedVersion(stored: { data: AccountRaw; version?: number }) {
+      mockDecode.mockResolvedValueOnce(fakeTuple("btc-1", "bitcoin"));
+      await runImportStore({ active: [stored] });
+      return mockDecode.mock.calls[0][0].version;
+    }
+
+    it("runs every migration for a legacy value stored with version 1", async () => {
+      await expect(
+        decodedVersion({ data: { id: "btc-1" } as AccountRaw, version: 1 }),
+      ).resolves.toBe(0);
+    });
+
+    it("runs every migration for a value stored without a version", async () => {
+      await expect(decodedVersion({ data: { id: "btc-1" } as AccountRaw })).resolves.toBe(0);
+    });
+
+    it("gives the stored version to the decoder for a value stored with its real version", async () => {
+      await expect(
+        decodedVersion({ data: { id: "btc-1" } as AccountRaw, version: 2 }),
+      ).resolves.toBe(2);
+    });
+  });
 });

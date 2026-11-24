@@ -35,7 +35,6 @@ import {
   SolanaTokenRecipientIsSenderATA,
 } from "../../errors";
 import { MAX_MEMO_LENGTH } from "../validateMemo";
-import { formatAPIValue } from "../../common";
 import type { ChainAPI } from "../../network";
 import {
   getMaybeMintAccount,
@@ -43,6 +42,7 @@ import {
   getMaybeTokenMint,
   getMaybeVoteAccount,
 } from "../../network/chain/web3";
+import { formatAPIValue } from "../../common";
 import { validateIntent as validateIntentRaw } from "../validateIntent";
 import type { SolanaCoinConfig } from "../../config";
 
@@ -390,6 +390,23 @@ describe("validateIntent", () => {
         expect(result.errors).toEqual({});
         expect(result.amount).toBe(1_000_000_000n);
         expect(result.totalSpent).toBe(1_000_000_000n + 5000n + BigInt(STAKE_ACC_RENT_EXEMPT));
+      });
+
+      it("reports the stake account rent apart from the network fee when funds fall short", async () => {
+        const required = 1_000_000_000n + 5000n + 10000n + BigInt(STAKE_ACC_RENT_EXEMPT);
+        const result = await validateIntent(
+          makeStakeIntent(),
+          [{ value: required - 1n + 890_880n, asset: { type: "native" }, locked: 890_880n }],
+          { value: 5000n },
+        );
+
+        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+        expect(result.errors.amount).toMatchObject({
+          fee: "5000",
+          deposit: String(STAKE_ACC_RENT_EXEMPT),
+          locked: "890880",
+          missing: "1",
+        });
       });
 
       it("leaves the rent inside the amount when sending all", async () => {
@@ -1276,16 +1293,62 @@ describe("validateIntent", () => {
         const result = await validateIntent(
           makeTokenIntent({ amount: 1n }),
           balancesWithNative(2_935_160n),
-          { value: TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE + FEE },
+          {
+            value: TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE + FEE,
+            parameters: { tokenAccountDeposit: TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE },
+          },
           api,
         );
 
         expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
         expect(result.errors.gasPrice as Error & Record<string, unknown>).toMatchObject({
+          fee: "5000",
+          deposit: "2157600",
+          locked: "890880",
+          missing: "118320",
+          recipientHasNoTokenAccount: true,
           fees: formatAPIValue(TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE + FEE),
           ticker: "SOL",
           cryptoName: "Solana",
         });
+      });
+
+      it("reports fee, deposit, locked reserve and shortfall apart for the PROD-12596 account", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
+        const api = makeFakeApi({ ataExists: false, rentByDataLength: {} });
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(2_690_000n),
+          { value: CLASSIC_ATA_RENT + FEE, parameters: { tokenAccountDeposit: CLASSIC_ATA_RENT } },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+        expect(result.errors.gasPrice as Error & Record<string, unknown>).toMatchObject({
+          fee: "5000",
+          deposit: "2039280",
+          locked: "890880",
+          missing: "245160",
+          recipientHasNoTokenAccount: true,
+        });
+      });
+
+      it("reads a deposit the bridge stored as a JSON-safe string", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
+        const api = makeFakeApi({ ataExists: false, rentByDataLength: {} });
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(2_690_000n),
+          {
+            value: CLASSIC_ATA_RENT + FEE,
+            parameters: { tokenAccountDeposit: CLASSIC_ATA_RENT.toString() },
+          },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toMatchObject({ fee: "5000", deposit: "2039280" });
       });
 
       it("does not pack NotEnoughGas when spendable covers that fee", async () => {
@@ -1351,6 +1414,10 @@ describe("validateIntent", () => {
         );
 
         expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+        expect(result.errors.gasPrice).toMatchObject({
+          deposit: "0",
+          recipientHasNoTokenAccount: false,
+        });
       });
 
       it("skips the native coverage check when recipient address is invalid", async () => {
@@ -1464,6 +1531,41 @@ describe("validateIntent", () => {
       });
 
       expect(result.errors.amount).toBeInstanceOf(SolanaTokenAccountNotAllowed);
+    });
+
+    describe("token account rent on token.createATA", () => {
+      const ATA_RENT = 2_039_280n;
+
+      beforeEach(() => {
+        mockedGetMaybeTokenMint.mockResolvedValue(splMint());
+        mockedGetMaybeTokenAccount.mockResolvedValue(undefined as never);
+      });
+
+      it("spends the rent along with the network fee", async () => {
+        const result = await validateIntent(authorityIntent("token.createATA"), makeBalances(), {
+          value: 5000n + ATA_RENT,
+          parameters: { tokenAccountDeposit: ATA_RENT },
+        });
+
+        expect(result.errors).toEqual({});
+        expect(result.totalSpent).toBe(5000n + ATA_RENT);
+      });
+
+      it("blocks when the fee alone fits but the rent does not, reporting each apart", async () => {
+        const result = await validateIntent(
+          authorityIntent("token.createATA"),
+          [{ value: 2_000_000n + 890_880n, asset: { type: "native" }, locked: 890_880n }],
+          { value: 5000n + ATA_RENT, parameters: { tokenAccountDeposit: ATA_RENT } },
+        );
+
+        expect(result.errors.fee).toBeInstanceOf(NotEnoughBalance);
+        expect(result.errors.fee).toMatchObject({
+          fee: "5000",
+          deposit: "2039280",
+          locked: "890880",
+          missing: "44280",
+        });
+      });
     });
 
     it("refuses to revoke against a token account that does not exist", async () => {

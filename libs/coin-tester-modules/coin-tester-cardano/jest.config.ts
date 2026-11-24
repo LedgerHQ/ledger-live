@@ -36,6 +36,7 @@ const config: Config = {
         "<rootDir>/src/signer.test.ts",
         "<rootDir>/src/yaciAdapter.test.ts",
         "<rootDir>/src/yaci.test.ts",
+        "<rootDir>/src/yaciIndexer.test.ts",
       ],
     },
     {

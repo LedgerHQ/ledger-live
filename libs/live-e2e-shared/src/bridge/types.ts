@@ -20,6 +20,7 @@ export type BridgePayloads = {
   settings: unknown;
   ble: unknown;
   payCard: unknown;
+  receiveVerifyHint: unknown;
 };
 
 export type OverrideFeatureFlagPayload = { id: FeatureId; value: Feature | undefined };
@@ -98,6 +99,7 @@ export type MessageData<P extends BridgePayloads = BridgePayloads> =
   | { type: "importBle"; id: string; payload: P["ble"] }
   | { type: "importPostOnboarding"; id: string; payload: Partial<PostOnboardingState> }
   | { type: "importPayCard"; id: string; payload: P["payCard"] }
+  | { type: "importReceiveVerifyHint"; id: string; payload: P["receiveVerifyHint"] }
   | { type: "overrideFeatureFlags"; id: string; payload: PartialFeatures }
   | { type: "overrideFeatureFlag"; id: string; payload: OverrideFeatureFlagPayload }
   | { type: "overrideLiveConfig"; id: string; payload: Record<string, unknown> }

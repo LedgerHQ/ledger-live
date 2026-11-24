@@ -6,7 +6,7 @@ import {
 } from "./schema";
 import { ETH_ADDR, XPUB } from "./test-fixtures";
 
-type MockOverrides<T> = Partial<Omit<T, "network">> & { network?: string };
+type MockOverrides<T> = Partial<Omit<T, "network" | "path">> & { network?: string; path?: string };
 
 export function mockUtxoAccountDescriptor(
   overrides?: MockOverrides<UtxoAccountDescriptor>,

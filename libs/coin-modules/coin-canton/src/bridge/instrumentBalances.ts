@@ -6,6 +6,8 @@ import type { InstrumentBalance } from "../types/gateway";
 
 export type CantonBalance = Balance & {
   utxoCount: number;
+  // A locked row can have a zero amount, so `locked` alone can't tell it apart.
+  isLocked: boolean;
   instrumentId: string;
   adminId: string;
 };
@@ -18,6 +20,7 @@ function adaptInstrument(native: NativeInstrument, instrument: InstrumentBalance
       ? { type: native.instrumentId }
       : { type: "token", assetReference: instrument.instrument_id },
     utxoCount: instrument.utxo_count,
+    isLocked: instrument.locked === true,
     instrumentId: instrument.instrument_id,
     adminId: instrument.admin_id,
   };

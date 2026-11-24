@@ -69,12 +69,13 @@
       "firstTimeLend": false,
       "swapProviders": [],
       "showClearCacheBanner": false,
-      "starredAccountIds": [],
       "hasPassword": false
     },
     "payCard": {
       "hasSeenFeatureTour": true,
-      "hasSeenLoginIntro": true,
+      "hasSeenLoginIntro": true
+    },
+    "receiveVerifyHint": {
       "hasSeenReceiveVerifyHint": true
     },
     "user": {
