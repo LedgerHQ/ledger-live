@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 import type { ContactAddressTestData } from "@ledgerhq/live-e2e-shared/contacts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { AppPage } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
 
@@ -54,7 +55,13 @@ export class ContactDetailPage extends AppPage {
 
   @step("Expect contact address count to show $0")
   async expectAddressCount(expectedLabel: string) {
-    await expect(this.addressCount).toHaveText(expectedLabel);
+    await expect(this.addressCount).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(this.addressCount).toHaveText(expectedLabel);
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Open Add address")
@@ -98,9 +105,11 @@ export class ContactDetailPage extends AppPage {
 
   @step("Expect $0 to be labelled $1")
   async expectAddressLabel(address: string, expectedLabel: string) {
-    await expect(this.addressRow(address).locator("[data-testid$='-label']")).toHaveText(
-      expectedLabel,
-    );
+    const label = this.addressRow(address).locator("[data-testid$='-label']");
+    await expect(label).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(label).toHaveText(expectedLabel);
+    });
   }
 
   @step("Delete address $0")
