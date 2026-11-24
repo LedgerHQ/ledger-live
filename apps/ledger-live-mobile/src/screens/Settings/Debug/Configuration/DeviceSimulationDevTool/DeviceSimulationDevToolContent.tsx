@@ -3,7 +3,7 @@ import { useTranslation } from "~/context/Locale";
 import { Flex, Text, Switch } from "@ledgerhq/native-ui";
 import { Button as LumenButton } from "@ledgerhq/lumen-ui-rnative";
 import SettingsRow from "~/components/SettingsRow";
-import { DEVICE_LABEL_I18N_KEYS, formatCurrentHistoryDisplay } from "./deviceSimulationLabels";
+import { formatCurrentHistoryDisplay } from "./deviceSimulationLabels";
 import { useDeviceSimulationDevToolViewModel } from "./useDeviceSimulationDevToolViewModel";
 
 const DeviceSimulationDevToolContent = () => {
@@ -42,7 +42,7 @@ const DeviceSimulationDevToolContent = () => {
       {deviceModels.map(model => (
         <SettingsRow
           key={model.id}
-          title={t(DEVICE_LABEL_I18N_KEYS[model.labelKey])}
+          title={t(`settings.debug.deviceSimulationDevTool.devices.${model.labelKey}`)}
           desc={t("settings.debug.deviceSimulationDevTool.deviceDesc")}
         >
           <Switch
