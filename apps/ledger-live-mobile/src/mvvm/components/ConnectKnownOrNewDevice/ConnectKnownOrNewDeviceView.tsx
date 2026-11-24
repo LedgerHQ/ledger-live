@@ -4,20 +4,17 @@ import {
   type ConnectKnownOrNewDeviceUIState,
   type DeviceListItem,
 } from "@ledgerhq/live-dmk-mobile";
-import { getConnectDeviceSubError, getConnectivityErrorFailure } from "@ledgerhq/live-dmk-shared";
+import { getConnectDeviceSubError } from "@ledgerhq/live-dmk-shared";
 import {
   ErrorBottomSheet,
   TrackedConnectionErrorState,
   TrackedDiscoveryErrorState,
   TrackedUnknownErrorState,
-  useIsNewDevice,
 } from "LLM/components/DeviceConnection";
 import { useDeviceIntentTracking } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import {
   CONNECT_DEVICE_BUTTON,
-  getTrackingTransport,
   trackConnectDeviceButtonClicked,
-  trackDeviceflowCanceled,
 } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { AddMode } from "./components/AddMode";
 import type { DeviceRowItem } from "./components/DeviceRow";
@@ -86,12 +83,12 @@ function getListLayout(state: ListUIState, keptDevices: Array<DeviceListItem>): 
 function ErrorStateView({
   state,
   platform,
+  isNewDevice,
 }: Readonly<{
   state: ConnectKnownOrNewDeviceErrorUIState;
   platform: ConnectKnownOrNewDeviceViewProps["platform"];
+  isNewDevice: ConnectKnownOrNewDeviceViewProps["isNewDevice"];
 }>): React.ReactNode {
-  const isNewDevice = useIsNewDevice();
-
   switch (state.type) {
     case ConnectKnownOrNewDeviceUIStateTypes.DiscoveryError:
       return <TrackedDiscoveryErrorState state={state} platform={platform} />;
@@ -111,7 +108,9 @@ export function ConnectKnownOrNewDeviceView({
   platform,
   onDeviceNotFound,
   onCloseErrorSheet,
+  onCloseDeviceStateSheet,
   onCloseAddModeErrorSheet,
+  isNewDevice,
   listFooter,
   children,
 }: Readonly<ConnectKnownOrNewDeviceViewProps>): React.JSX.Element {
@@ -142,32 +141,25 @@ export function ConnectKnownOrNewDeviceView({
     });
   };
 
-  // Every close, also when the screen loses focus: the outcome of the attempt.
-  const onCloseSheet = () => {
-    // The sheet also reports a close once the state has left the error: no outcome then.
-    if (errorState) {
-      trackDeviceflowCanceled({
-        sourceFlow,
-        extraProperties: analyticsProperties,
-        failure: getConnectivityErrorFailure(errorState, getTrackingTransport),
-      });
-    }
-    onCloseErrorSheet();
-  };
-
   return (
     <>
-      <DeviceSection {...listProps} listFooter={listFooter}>
+      <DeviceSection {...listProps} isNewDevice={isNewDevice} listFooter={listFooter}>
         {children}
       </DeviceSection>
-      <DeviceStateSheet state={deviceState} />
+      <DeviceStateSheet
+        state={deviceState}
+        isNewDevice={isNewDevice}
+        onClose={onCloseDeviceStateSheet}
+      />
       <ErrorBottomSheet
         isOpen={errorState !== null}
-        onClose={onCloseSheet}
+        onClose={onCloseErrorSheet}
         onHeaderClosePressed={onCloseButtonPressed}
         testID="connect-known-or-new-device-error-sheet"
       >
-        {errorState && <ErrorStateView state={errorState} platform={platform} />}
+        {errorState && (
+          <ErrorStateView state={errorState} platform={platform} isNewDevice={isNewDevice} />
+        )}
       </ErrorBottomSheet>
     </>
   );

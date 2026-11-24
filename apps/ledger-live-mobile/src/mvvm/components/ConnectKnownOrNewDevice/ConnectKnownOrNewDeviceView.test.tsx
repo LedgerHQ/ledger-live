@@ -96,31 +96,29 @@ const pausedDiscovering = (devices: Array<DeviceListItem>): ConnectKnownOrNewDev
 });
 
 function renderView(state: ConnectKnownOrNewDeviceUIState, devices: Array<DeviceListItem> = []) {
-  const element = (viewState: ConnectKnownOrNewDeviceUIState) => {
-    const props: ConnectKnownOrNewDeviceViewProps = {
-      state: viewState,
-      devices,
-      addModeLastNonErrorState: {
-        type: ConnectNewDeviceUIStateTypes.Discovering,
-        devices: [],
-        scanningTransports: [],
-        showDeviceNotFound: false,
-      },
-      platform: "android",
-      onCloseErrorSheet: jest.fn(),
-      onCloseAddModeErrorSheet: jest.fn(),
-    };
-    return (
-      <DeviceIntentTrackingProvider value={{ sourceFlow: "my_wallet" }}>
-        <ConnectKnownOrNewDeviceView {...props} />
-      </DeviceIntentTrackingProvider>
-    );
+  const props: ConnectKnownOrNewDeviceViewProps = {
+    state,
+    devices,
+    addModeLastNonErrorState: {
+      type: ConnectNewDeviceUIStateTypes.Discovering,
+      devices: [],
+      scanningTransports: [],
+      showDeviceNotFound: false,
+    },
+    platform: "android",
+    onCloseErrorSheet: jest.fn(),
+    onCloseDeviceStateSheet: jest.fn(),
+    onCloseAddModeErrorSheet: jest.fn(),
+    isNewDevice: () => true,
   };
-  const view = render(element(state));
 
   return {
-    ...view,
-    showState: (viewState: ConnectKnownOrNewDeviceUIState) => view.rerender(element(viewState)),
+    ...render(
+      <DeviceIntentTrackingProvider value={{ sourceFlow: "my_wallet" }}>
+        <ConnectKnownOrNewDeviceView {...props} />
+      </DeviceIntentTrackingProvider>,
+    ),
+    props,
   };
 }
 
@@ -129,11 +127,6 @@ const trackedEvents = (eventName: string) =>
     .mocked(track)
     .mock.calls.filter(([name]) => name === eventName)
     .map(([, properties]) => properties);
-
-const outcomes = () =>
-  jest
-    .mocked(track)
-    .mock.calls.filter(([name]) => name === "deviceflow_aborted" || name === "deviceflow_failed");
 
 describe("ConnectKnownOrNewDeviceView", () => {
   describe("Rows", () => {
@@ -485,46 +478,10 @@ describe("ConnectKnownOrNewDeviceView", () => {
       ]);
     });
 
-    it("GIVEN a device the app does not know, WHEN it connects twice, THEN it should send device_connecting at each connection with isNewDevice true", () => {
+    it("GIVEN a connection error over the list, WHEN the user closes it, THEN it should send Close and close the error sheet", async () => {
       // GIVEN
       const row = makeRow("Flex 329");
-      const connecting: ConnectKnownOrNewDeviceUIState = {
-        type: ConnectKnownOrNewDeviceUIStateTypes.Connecting,
-        devices: [row],
-        device: row.device,
-        close: jest.fn(),
-      };
-      const { showState } = renderView(connecting, [row]);
-
-      // WHEN
-      showState({ ...connecting });
-      showState({
-        type: ConnectKnownOrNewDeviceUIStateTypes.ConnectionError,
-        devices: [row],
-        error: { type: ConnectionErrorTypes.BlePairingRefused },
-        device: row.device,
-        retry: jest.fn(),
-        ignore: jest.fn(),
-        close: jest.fn(),
-      });
-      showState(connecting);
-
-      // THEN
-      const deviceConnecting = {
-        sourceFlow: "my_wallet",
-        deviceUxV2: true,
-        modelId: DeviceModelId.stax,
-        transport: "ble",
-        matchedDevice: DeviceModelId.stax,
-        isNewDevice: true,
-      };
-      expect(trackedEvents("device_connecting")).toEqual([deviceConnecting, deviceConnecting]);
-    });
-
-    it("GIVEN a connection error over the list, WHEN the user closes it, THEN it should send Close and deviceflow_aborted with the error", async () => {
-      // GIVEN
-      const row = makeRow("Flex 329");
-      const { user } = renderView(
+      const { user, props } = renderView(
         {
           type: ConnectKnownOrNewDeviceUIStateTypes.ConnectionError,
           devices: [row],
@@ -552,17 +509,9 @@ describe("ConnectKnownOrNewDeviceView", () => {
           subError: ConnectionErrorTypes.BlePairingRefused,
         },
       ]);
-      expect(trackedEvents("deviceflow_aborted")).toEqual([
-        {
-          sourceFlow: "my_wallet",
-          deviceUxV2: true,
-          failureType: "ConnectionError",
-          subError: ConnectionErrorTypes.BlePairingRefused,
-          modelId: DeviceModelId.stax,
-          transport: "ble",
-        },
-      ]);
+      expect(props.onCloseErrorSheet).toHaveBeenCalledTimes(1);
     });
+
     it("GIVEN the Add mode, WHEN its close bar is pressed, THEN it should send Close and close the Add mode", async () => {
       // GIVEN
       const close = jest.fn();
@@ -585,42 +534,6 @@ describe("ConnectKnownOrNewDeviceView", () => {
         { sourceFlow: "my_wallet", deviceUxV2: true, button: "Close" },
       ]);
       expect(close).toHaveBeenCalledTimes(1);
-    });
-
-    it("GIVEN the Add mode, WHEN a fatal error shows the unknown error sheet and the user closes it, THEN it should send one outcome, deviceflow_failed with the error", async () => {
-      // GIVEN
-      const { user, showState } = renderView({
-        type: ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice,
-        connectNewDeviceUIState: {
-          type: ConnectNewDeviceUIStateTypes.Discovering,
-          devices: [],
-          scanningTransports: [rnBleTransportIdentifier],
-          showDeviceNotFound: false,
-        },
-        close: jest.fn(),
-      });
-
-      // WHEN
-      showState({
-        type: ConnectKnownOrNewDeviceUIStateTypes.UnknownError,
-        error: new Error("boom"),
-      });
-      const closeButton = screen.getAllByRole("button", { name: "Close" }).at(-1);
-      if (!closeButton) throw new Error("Missing Close button");
-      await user.press(closeButton);
-
-      // THEN
-      expect(outcomes()).toEqual([
-        [
-          "deviceflow_failed",
-          {
-            sourceFlow: "my_wallet",
-            deviceUxV2: true,
-            failureType: "ConnectDeviceUnknownError",
-            subError: "Error",
-          },
-        ],
-      ]);
     });
   });
 });

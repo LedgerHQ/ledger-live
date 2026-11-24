@@ -18,13 +18,13 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Plus } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { useIsNewDevice } from "LLM/components/DeviceConnection";
 import { useDeviceIntentTracking } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import {
   trackConnectDeviceButtonClicked,
   trackDeviceSelected,
 } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { useTranslation } from "~/context/Locale";
+import type { ConnectKnownOrNewDeviceViewProps } from "../types";
 import { DEVICE_LIST_BUTTON } from "../utils/tracking";
 import { DeviceMenuSheet } from "./DeviceMenuSheet";
 import { DeviceRow, hasMenuActions, isSelectable, type DeviceRowItem } from "./DeviceRow";
@@ -42,6 +42,7 @@ type DeviceSectionProps = {
   onAddNewDevice?: () => void;
   /** Set while discovery is paused: the rows and the Add button show greyed out. */
   disabled?: boolean;
+  isNewDevice: ConnectKnownOrNewDeviceViewProps["isNewDevice"];
   /** Shown right under the list, only when the list has devices. */
   listFooter?: React.ReactNode;
   children?: React.ReactNode;
@@ -74,12 +75,12 @@ export function DeviceSection({
   devices,
   onAddNewDevice,
   disabled,
+  isNewDevice,
   listFooter,
   children,
 }: Readonly<DeviceSectionProps>): React.JSX.Element {
   const { t } = useTranslation();
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
-  const isNewDevice = useIsNewDevice();
   const [isExpanded, setIsExpanded] = useState(false);
   const [menuDeviceKey, setMenuDeviceKey] = useState<string | null>(null);
 
