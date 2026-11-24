@@ -16,6 +16,7 @@ import type {
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
 import { Observable, of, throwError } from "rxjs";
+import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import { signRawTransactionIntentJob } from "../job";
 import type { SignRawTransactionIntentInput, SignRawTransactionIntentJobState } from "../types";
 
@@ -71,14 +72,17 @@ function mockBridge(events$: Observable<SignOperationEvent>) {
   return bridge;
 }
 
-function collectStates(jobInput: SignRawTransactionIntentInput = input) {
+function collectStates(
+  jobInput: SignRawTransactionIntentInput = input,
+  onResult: (result: SignedOperation) => void = jest.fn(),
+) {
   const states: SignRawTransactionIntentJobState[] = [];
   let error: unknown = null;
   const subscription = signRawTransactionIntentJob({
     deviceConnectionResult,
     deviceExtractedContext,
     input: jobInput,
-    onResult: jest.fn(),
+    onResult,
   }).subscribe({
     next: state => states.push(state),
     error: e => {
@@ -154,5 +158,68 @@ describe("signRawTransactionIntentJob", () => {
 
     expect(states).toEqual([{ type: "pending", deviceModelId }]);
     expect(getError()).toBe(contractDataRefused);
+  });
+
+  it("reports the signed operation as the job's result", async () => {
+    mockBridge(of({ type: "signed", signedOperation }));
+    const onResult = jest.fn();
+
+    collectStates(input, onResult);
+    await flushPromises();
+
+    expect(onResult).toHaveBeenCalledTimes(1);
+    expect(onResult).toHaveBeenCalledWith(signedOperation);
+  });
+
+  it("reports no result on a refusal or a failure", async () => {
+    const onResult = jest.fn();
+    mockBridge(throwError(() => new TransportStatusError(0x6985)));
+    collectStates(input, onResult).subscription.unsubscribe();
+    mockBridge(throwError(() => new TransportStatusError(0x6a80)));
+    collectStates(input, onResult);
+    await flushPromises();
+
+    expect(onResult).not.toHaveBeenCalled();
+  });
+
+  it("errors when the bridge throws while called inside the live app context", async () => {
+    const bridge = mockBridge(of({ type: "signed", signedOperation }));
+    const unsupported = new Error("signRawOperation is not supported");
+    bridge.signRawOperation.mockImplementation(() => {
+      throw unsupported;
+    });
+
+    const { getError } = collectStates({ ...input, manifestId: "ledger-wallet-connect" });
+    await flushPromises();
+    await flushPromises();
+
+    expect(getError()).toBe(unsupported);
+  });
+
+  it("calls the bridge, retries included, inside the live app context, then restores it", async () => {
+    const bridge = mockBridge(of({ type: "signed", signedOperation }));
+    const contexts: Array<string | null | undefined> = [];
+    bridge.signRawOperation.mockImplementation(() => {
+      contexts.push(liveBlindSigningReporter.getContext().liveAppContext);
+      return contexts.length === 1
+        ? throwError(() => new TransportStatusError(0x6985))
+        : of({ type: "signed", signedOperation });
+    });
+    liveBlindSigningReporter.setContext({ liveAppContext: "outer-app" });
+
+    const { states, subscription } = collectStates({
+      ...input,
+      manifestId: "ledger-wallet-connect",
+    });
+    await flushPromises();
+    const cancelled = states.at(-1);
+    if (cancelled?.type !== "cancelled") throw new Error("Expected cancelled state");
+    cancelled.retry();
+    await flushPromises();
+
+    expect(contexts).toEqual(["ledger-wallet-connect", "ledger-wallet-connect"]);
+    expect(liveBlindSigningReporter.getContext().liveAppContext).toBe("outer-app");
+    subscription.unsubscribe();
+    liveBlindSigningReporter.setContext({ liveAppContext: null });
   });
 });

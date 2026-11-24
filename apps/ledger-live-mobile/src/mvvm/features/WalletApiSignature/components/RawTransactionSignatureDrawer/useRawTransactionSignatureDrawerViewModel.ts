@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import type { SignedOperation } from "@ledgerhq/types-live";
 import { createIntent, type ExecutorState } from "@features/platform-device-intent";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
-import type { SignRawTransactionIntentJobState } from "@ledgerhq/live-common/intents/signRawTransactionIntent";
 import {
   buildDeviceInitializationInput,
   type InitializationInput,
@@ -12,6 +12,23 @@ import { getConnectAppDependencies } from "../../utils/connectAppDependencies";
 import { getSignatureSourceFlow } from "../../utils/getSignatureSourceFlow";
 import { signRawTransactionIntentPlatformDefinition } from "./intentDefinition";
 import type { WalletApiDeviceIntentSignRawRequest } from "./types";
+
+type Signing = Readonly<{
+  deviceInitializationInput: InitializationInput;
+  signatureIntent: ReturnType<typeof createSignatureIntent>;
+}>;
+
+function createSignatureIntent(
+  request: WalletApiDeviceIntentSignRawRequest,
+  onResult: (signedOperation: SignedOperation) => void,
+) {
+  const { account, parentAccount, transaction, broadcast, manifestId } = request;
+  return createIntent(
+    signRawTransactionIntentPlatformDefinition,
+    { account, parentAccount: parentAccount ?? undefined, transaction, broadcast, manifestId },
+    { onResult },
+  );
+}
 
 type Props = {
   request: WalletApiDeviceIntentSignRawRequest;
@@ -31,29 +48,23 @@ function normalizeError(error: unknown): Error {
 }
 
 export function useRawTransactionSignatureDrawerViewModel({ request, onClose }: Props) {
-  const {
-    account,
-    parentAccount,
-    transaction,
-    broadcast,
-    appName,
-    dependencies,
-    onSuccess,
-    onError,
-  } = request;
+  const { account, parentAccount, appName, dependencies, onSuccess, onError } = request;
 
-  const [deviceInitializationInput, setDeviceInitializationInput] =
-    useState<InitializationInput | null>(null);
+  // The executor's two inputs change together, in one render.
+  const [signing, setSigning] = useState<Signing | null>(null);
   // The wallet-api promise is settled once: success, failure and dismiss race each other.
   const isSettledRef = useRef(false);
   // The failure of the last signing attempt, returned to the dApp when the user closes its
   // error screen. A retry starts a new attempt, whose job states clear it.
   const lastJobErrorRef = useRef<Error | null>(null);
+  // The signed operation the job reports. The request settles once the job has completed.
+  const signedOperationRef = useRef<SignedOperation | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     isSettledRef.current = false;
     lastJobErrorRef.current = null;
+    signedOperationRef.current = null;
 
     // Resolve the main account inside the async chain (rather than in render) so an
     // unexpected account shape rejects the wallet-api promise via onError/onClose instead
@@ -84,8 +95,12 @@ export function useRawTransactionSignatureDrawerViewModel({ request, onClose }: 
     };
 
     prepare()
-      .then(input => {
-        if (!cancelled) setDeviceInitializationInput(input);
+      .then(deviceInitializationInput => {
+        if (cancelled) return;
+        const signatureIntent = createSignatureIntent(request, signedOperation => {
+          signedOperationRef.current = signedOperation;
+        });
+        setSigning({ deviceInitializationInput, signatureIntent });
       })
       .catch(error => {
         if (cancelled || isSettledRef.current) return;
@@ -97,29 +112,21 @@ export function useRawTransactionSignatureDrawerViewModel({ request, onClose }: 
     return () => {
       cancelled = true;
     };
-  }, [account, parentAccount, appName, dependencies, onError, onClose]);
+  }, [request, account, parentAccount, appName, dependencies, onError, onClose]);
 
-  const signatureIntent = useMemo(
-    () =>
-      createIntent(signRawTransactionIntentPlatformDefinition, {
-        account,
-        parentAccount: parentAccount ?? undefined,
-        transaction,
-        broadcast,
-      }),
-    [account, parentAccount, transaction, broadcast],
-  );
+  // A new job state means a new signing attempt: the failure it replaces is no longer current.
+  const onIntentJobStateChanged = useCallback(() => {
+    lastJobErrorRef.current = null;
+  }, []);
 
-  const onIntentJobStateChanged = useCallback(
-    (jobState: SignRawTransactionIntentJobState) => {
-      lastJobErrorRef.current = null;
-      if (jobState.type !== "signed" || isSettledRef.current) return;
-      isSettledRef.current = true;
-      onSuccess(jobState.signedOperation);
-      onClose();
-    },
-    [onSuccess, onClose],
-  );
+  // Settling advances the request queue, which unmounts the executor: the job must have ended.
+  const onIntentJobComplete = useCallback(() => {
+    const signedOperation = signedOperationRef.current;
+    if (!signedOperation || isSettledRef.current) return;
+    isSettledRef.current = true;
+    onSuccess(signedOperation);
+    onClose();
+  }, [onSuccess, onClose]);
 
   // A signing failure keeps the executor's error screen open (Retry / Close).
   // A refusal is a `cancelled` job state, not a job error.
@@ -146,9 +153,10 @@ export function useRawTransactionSignatureDrawerViewModel({ request, onClose }: 
 
   return {
     sourceFlow: getSignatureSourceFlow(request.manifestId),
-    deviceInitializationInput,
-    signatureIntent,
+    deviceInitializationInput: signing?.deviceInitializationInput ?? null,
+    signatureIntent: signing?.signatureIntent ?? null,
     onIntentJobStateChanged,
+    onIntentJobComplete,
     onIntentJobError,
     onExecutorStateChanged,
     onUserCancel,

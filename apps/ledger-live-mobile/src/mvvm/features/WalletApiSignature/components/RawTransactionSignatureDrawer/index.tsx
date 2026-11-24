@@ -13,7 +13,6 @@ type Props = {
 };
 
 const deviceConnectionParams = { acceptedDeviceModelIds: [] };
-const noop = () => undefined;
 
 /**
  * Hosts the wallet-api raw signature step (the Device Intent Executor and the bottom sheet
@@ -25,6 +24,7 @@ function RawTransactionSignatureDrawer({ request, onClose }: Props) {
     deviceInitializationInput,
     signatureIntent,
     onIntentJobStateChanged,
+    onIntentJobComplete,
     onIntentJobError,
     onExecutorStateChanged,
     onUserCancel,
@@ -41,7 +41,7 @@ function RawTransactionSignatureDrawer({ request, onClose }: Props) {
     [request.manifestId, request.manifestName],
   );
 
-  if (!deviceInitializationInput) {
+  if (!deviceInitializationInput || !signatureIntent) {
     return null;
   }
 
@@ -61,7 +61,7 @@ function RawTransactionSignatureDrawer({ request, onClose }: Props) {
         intentComponentExtraProps={intentComponentExtraProps}
         onExecutorStateChanged={onExecutorStateChanged}
         onIntentJobStateChanged={onIntentJobStateChanged}
-        onIntentJobComplete={noop}
+        onIntentJobComplete={onIntentJobComplete}
         onIntentJobError={onIntentJobError}
         cancelIntentRequestId={undefined}
         onUserCancel={onUserCancel}

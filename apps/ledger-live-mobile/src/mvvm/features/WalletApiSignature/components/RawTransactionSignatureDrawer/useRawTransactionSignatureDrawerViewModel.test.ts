@@ -26,6 +26,14 @@ jest.mock("./intentDefinition", () => ({
 const mockedBuildInput = jest.mocked(buildDeviceInitializationInput);
 const mockedCreateIntent = jest.mocked(createIntent);
 
+/** Reports a result the way the executor forwards the job's onResult to the intent listener. */
+function reportResult(signed: SignedOperation) {
+  const listeners = mockedCreateIntent.mock.calls.at(-1)?.[2] as
+    | { onResult?: (result: SignedOperation) => void }
+    | undefined;
+  listeners?.onResult?.(signed);
+}
+
 const account = {
   id: "js:2:bitcoin:xpub:native_segwit",
   type: "Account",
@@ -100,26 +108,59 @@ describe("useRawTransactionSignatureDrawerViewModel", () => {
     });
   });
 
-  it("builds the raw signature intent with the transaction and broadcast", () => {
+  it("builds the raw signature intent with the transaction, broadcast and manifest", async () => {
     const { result } = setup();
+    await waitFor(() => expect(result.current.signatureIntent).not.toBeNull());
 
     expect(mockedCreateIntent).toHaveBeenCalledWith(
       { label: "Sign raw transaction" },
-      { account, parentAccount: undefined, transaction: "cHNidP8BAA==", broadcast: true },
+      {
+        account,
+        parentAccount: undefined,
+        transaction: "cHNidP8BAA==",
+        broadcast: true,
+        manifestId: "ledger-wallet-connect",
+      },
+      { onResult: expect.any(Function) },
     );
     expect(result.current.signatureIntent).toEqual({ uuid: "intent-1" });
   });
 
-  it("resolves the wallet-api promise and closes the drawer on a signed job state", async () => {
+  it("resolves the wallet-api promise and closes the drawer once the signing job completes", async () => {
     const { result, onSuccess, onClose } = setup();
     await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
 
+    // The executor's order: the job reports its result, emits the `signed` state, then completes.
     act(() => {
-      result.current.onIntentJobStateChanged({ type: "signed", signedOperation });
+      reportResult(signedOperation);
+      (result.current.onIntentJobStateChanged as (state: unknown) => void)({
+        type: "signed",
+        signedOperation,
+      });
+    });
+    // The job may still be running: the request must not leave the queue yet.
+    expect(onSuccess).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
+
+    act(() => {
+      result.current.onIntentJobComplete();
     });
 
     expect(onSuccess).toHaveBeenCalledWith(signedOperation);
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not settle when the job completes without a signed result", async () => {
+    const { result, onSuccess, onError, onClose } = setup();
+    await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+
+    act(() => {
+      result.current.onIntentJobComplete();
+    });
+
+    expect(onSuccess).not.toHaveBeenCalled();
+    expect(onError).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
   });
 
   it("rejects with UserRefusedOnDevice and closes when the user dismisses before signing", async () => {
@@ -190,8 +231,9 @@ describe("useRawTransactionSignatureDrawerViewModel", () => {
     await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
 
     act(() => {
-      result.current.onIntentJobStateChanged({ type: "signed", signedOperation });
-      result.current.onIntentJobStateChanged({ type: "signed", signedOperation });
+      reportResult(signedOperation);
+      result.current.onIntentJobComplete();
+      result.current.onIntentJobComplete();
       result.current.onUserCancel();
     });
 
