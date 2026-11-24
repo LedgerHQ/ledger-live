@@ -21,10 +21,6 @@ export default function ManageAssetsDialog({ account, tokenAccounts, onClose }: 
   const [editedTokenId, setEditedTokenId] = useState<string>();
   const editedTokenAccount = tokenAccounts.find(tokenAccount => tokenAccount.id === editedTokenId);
   const [deletedTokenAccount, setDeletedTokenAccount] = useState<XrpTokenAccount>();
-  const latestDeletedTokenAccount =
-    deletedTokenAccount &&
-    (tokenAccounts.find(tokenAccount => tokenAccount.id === deletedTokenAccount.id) ??
-      deletedTokenAccount);
   const isDeviceBlocked = useDeviceBlocked();
 
   const close = () => {
@@ -32,11 +28,11 @@ export default function ManageAssetsDialog({ account, tokenAccounts, onClose }: 
   };
 
   const renderScreen = () => {
-    if (latestDeletedTokenAccount) {
+    if (deletedTokenAccount) {
       return (
         <DeleteAsset
           account={account}
-          tokenAccount={latestDeletedTokenAccount}
+          tokenAccount={deletedTokenAccount}
           onBack={() => setDeletedTokenAccount(undefined)}
           onClose={close}
         />

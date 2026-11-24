@@ -6,7 +6,7 @@ import {
   XrpOptOutTokenInEscrow,
   type XrpTokenAccount,
 } from "@ledgerhq/live-common/families/xrp/types";
-import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
+import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { DeleteAsset } from "./index";
 import {
   XRP_ACCOUNT,
@@ -18,14 +18,8 @@ const mockBroadcast = jest.fn<Promise<Operation>, [SignedOperation]>();
 const mockSignedInput = jest.fn();
 const mockNavigate = jest.fn();
 const mockUseBridgeTransaction = jest.fn();
-const mockUpdateAccount = jest.fn();
-const mockUpdateTransaction = jest.fn();
 const mockStatus = { errors: {} as Record<string, Error>, warnings: {} };
-const mockBridge: { pending: boolean; error: Error | null; account: Account } = {
-  pending: false,
-  error: null,
-  account: XRP_ACCOUNT,
-};
+const mockBridge: { pending: boolean; error: Error | null } = { pending: false, error: null };
 const signedOperation = {
   signature: "signature",
   operation: {
@@ -52,12 +46,9 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
     mockUseBridgeTransaction();
     return {
       transaction: init().transaction,
-      account: mockBridge.account,
       status: mockStatus,
       bridgePending: mockBridge.pending,
       bridgeError: mockBridge.error,
-      updateAccount: mockUpdateAccount,
-      updateTransaction: mockUpdateTransaction,
     };
   },
 }));
@@ -125,7 +116,6 @@ describe("xrp DeleteAsset", () => {
     mockStatus.errors = {};
     mockBridge.pending = false;
     mockBridge.error = null;
-    mockBridge.account = XRP_ACCOUNT;
   });
 
   it("asks to empty a token that still has a balance, and Got it goes back to the list", async () => {
@@ -214,30 +204,6 @@ describe("xrp DeleteAsset", () => {
       "Some of this token is in escrow",
     );
     expect(getContinue()).toBeDisabled();
-  });
-
-  it("prepares the removal again against the synced account", () => {
-    const { rerender, onBack, onClose } = renderDeleteAsset(emptyMptAccount);
-
-    expect(mockUpdateAccount).not.toHaveBeenCalled();
-
-    const syncedAccount = { ...XRP_ACCOUNT, spendableBalance: new BigNumber(50_000_000) };
-    rerender(
-      <Dialog open>
-        <DialogContent>
-          <DeleteAsset
-            account={syncedAccount}
-            tokenAccount={emptyMptAccount}
-            onBack={onBack}
-            onClose={onClose}
-          />
-        </DialogContent>
-      </Dialog>,
-    );
-
-    expect(mockUpdateAccount).toHaveBeenCalledTimes(1);
-    expect(mockUpdateAccount).toHaveBeenCalledWith(syncedAccount);
-    expect(mockUpdateTransaction).toHaveBeenCalledTimes(1);
   });
 
   it("disables Continue while the bridge prepares the removal", () => {
