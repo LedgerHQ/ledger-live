@@ -215,6 +215,7 @@ apps/ledger-live-mobile/src/mvvm/contexts/__integrations__/WaitForAppReady.integ
 .github/workflows/notify-e2e-required-reusable.yml                  @ledgerhq/coin-integration @ledgerhq/platform
 apps/**/families/                                                   @ledgerhq/coin-integration
 apps/ledger-live-desktop/oxlint-suppressions.json                   @ledgerhq/coin-integration
+apps/ledger-live-mobile/oxlint-suppressions.json                    @ledgerhq/coin-integration
 apps/ledger-live-mobile/src/components/DelegationDrawer.tsx         @ledgerhq/coin-integration
 apps/cli/src/commands/blockchain                                    @ledgerhq/coin-integration
 libs/coin-*/                                                        @ledgerhq/coin-integration
