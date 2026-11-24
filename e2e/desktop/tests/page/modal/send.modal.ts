@@ -114,14 +114,6 @@ export class SendModal extends Modal {
     await this.inputError.waitFor({ state: expectedState });
   }
 
-  @step("Check if the error message is the same as expected")
-  async checkErrorMessage(errorMessage: string) {
-    await this.inputError.waitFor({ state: "visible" });
-    const errorText: string = await this.inputError.innerText();
-    const normalize = (str: string) => str.replace(/\u00A0/g, " ").trim();
-    expect(normalize(errorText)).toEqual(normalize(errorMessage));
-  }
-
   @step("Check warning message")
   async checkAmountWarningMessage(expectedWarningMessage: RegExp) {
     await expect(this.insufficientFundsWarning).toBeVisible();
