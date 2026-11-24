@@ -1,5 +1,5 @@
 ---
-name: record-versions
+name: record-versions-and-migrations
 description: |
   Change the stored shape of a persisted record: decide if it needs a new version, where the
   migration goes, and which tests and release steps it needs. Read before changing a record schema,
@@ -44,13 +44,16 @@ export const prefsVersions = recordVersions(z => z.strictObject({ theme: z.strin
   );
 ```
 
+Pass it to the record: `defineRecord({ key, versions: prefsVersions, codec, state })` (or
+`defineCollectionRecord`).
+
 1. Move the record definition to its owner package, if it is still in an app.
 2. Add 1 `.next(schema, step)` at the end of the list. Put the first app versions in a comment.
 3. Use a strict schema. `z.object` drops the unknown keys, so an older app erases a newer field.
 4. Write a pure, synchronous step from stored n-1 to stored n. It reads nothing else: no other
 key, no network, no clock, no device.
 5. Make sure that the step never throws on a value that the previous schema accepts, and never
-changes the id of an entry.
+changes the id of an entry, nor where the id is in the stored payload.
 6. Change the `codec` so that it maps the new latest shape to the state.
 7. Add the tests below, and write the first app versions in the changeset.
 
@@ -61,6 +64,7 @@ time limit: persistence writes only after a state change, and 1 key per entry wr
 changed entries.
 - `$v` marks the version: v0 is the bare legacy value, v1 and later are `{ $v: n, data }`. The
 account `version` is the legacy step count. Never use it for a new version.
+- A stored object with `$v` is always an envelope. A v0 schema never accepts `$v`.
 - Each writer (app, `apps/cli`, e2e seeds) encodes through the record definition, never with a
 fixed version number.
 - A read never writes. The migrated value goes to storage at the next state change.
@@ -68,15 +72,16 @@ fixed version number.
 ## Tests for each version
 
 - Store samples of each version in `__fixtures__/`, taken from a released app.
-- 1 schema snapshot for each version. The snapshot of a published version never changes.
+- 1 schema snapshot for each version, `storedSchemaSnapshot(record, n)`. The snapshot of a
+published version never changes.
 - Each sample upgrades to the latest version.
 
 ## Older apps
 
 An older app keeps a newer value stored and does not show it. It never writes over it:
 
-- **Value record**: status `failed` for the session, a "newer" report, the default state on
-screen.
+- **Value record**: status `failed` for the session, a report with operation `newer`, the
+default state on screen.
 - **Collection entry**: kept and hidden. A state entry with the same id does not replace it.
 
 So a downgrade loses no data, but it hides it until the user updates. 
