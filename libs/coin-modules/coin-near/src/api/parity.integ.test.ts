@@ -64,17 +64,20 @@ describe("CoinModuleApi vs account bridge (integration)", () => {
     expect(native.value - (native.locked ?? 0n)).toBe(BigInt(spendableBalance.toFixed(0)));
   }, 120_000);
 
-  it("reports the same total as the native balance, staking buckets included", async () => {
-    const [native] = await api.getBalance(context, ACCOUNT);
+  it("reports the same total as the sum of the native entries, staking buckets included", async () => {
+    const balances = await api.getBalance(context, ACCOUNT);
     const { balance, nearResources } = await getAccount(config(), ACCOUNT);
+    const natives = balances.filter(b => b.asset.type === "native");
 
     const frozen = nearResources.stakedBalance
       .plus(nearResources.availableBalance)
       .plus(nearResources.pendingBalance)
       .plus(nearResources.storageUsageBalance);
 
-    expect(native.value).toBe(BigInt(balance.toFixed(0)));
-    expect(native.locked).toBe(BigInt(BigNumber.min(frozen, balance).toFixed(0)));
+    expect(natives.reduce((sum, b) => sum + b.value, 0n)).toBe(BigInt(balance.toFixed(0)));
+    expect(natives.reduce((sum, b) => sum + (b.locked ?? 0n), 0n)).toBe(
+      BigInt(BigNumber.min(frozen, balance).toFixed(0)),
+    );
   }, 120_000);
 
   it.each([

@@ -1,3 +1,4 @@
+import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
 import { mockNearContext } from "../../test/context";
 import BigNumber from "bignumber.js";
 import { getAccount } from "../../network";
@@ -57,14 +58,18 @@ const position = (overrides: Partial<Position> = {}): Position => ({
   ...overrides,
 });
 
+const sum = (balances: Balance[], pick: (b: Balance) => bigint): bigint =>
+  balances.reduce((total, b) => total + pick(b), 0n);
+
 describe("getBalance", () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it("puts the native total first, so the framework reads it as the account balance", async () => {
+  it("puts the liquid funds first, as a plain native entry", async () => {
     (getAccount as jest.Mock).mockResolvedValue(accountShape({ amount: ONE_NEAR }));
 
     const balances = await getBalance(mockNearContext, ADDRESS);
 
+    expect(balances).toHaveLength(1);
     expect(balances[0].asset).toEqual({ type: "native" });
     expect(balances[0].stake).toBeUndefined();
     expect(balances[0].value).toBe(BigInt(ONE_NEAR.toFixed(0)));
@@ -104,7 +109,7 @@ describe("getBalance", () => {
     expect(shape.spendableBalance.isZero()).toBe(true);
   });
 
-  it("adds one entry per staking position and keeps the account total as the native value", async () => {
+  it("counts a staked position once: the native entries add up to the account total", async () => {
     const shape = accountShape({
       amount: ONE_NEAR,
       positions: [position({ staked: STAKED })],
@@ -114,16 +119,18 @@ describe("getBalance", () => {
     const balances = await getBalance(mockNearContext, ADDRESS);
 
     expect(balances).toHaveLength(2);
-    expect(balances[0].value).toBe(BigInt(shape.balance.toFixed(0)));
-    expect(balances[0].value - balances[0].locked!).toBe(BigInt(shape.spendableBalance.toFixed(0)));
-    expect(balances[1]).toMatchObject({
+    expect(balances[0].stake).toBeUndefined();
+    expect(balances[0].value).toBe(BigInt(ONE_NEAR.toFixed(0)));
+    expect(balances[1]).toEqual({
       value: BigInt(STAKED.toFixed(0)),
       asset: { type: "native" },
-      stake: { delegate: VALIDATOR, state: "active" },
+      locked: BigInt(STAKED.toFixed(0)),
+      stake: expect.objectContaining({ delegate: VALIDATOR, state: "active" }),
     });
+    expect(sum(balances, b => b.value)).toBe(BigInt(shape.balance.toFixed(0)));
   });
 
-  it("locks every staking bucket so the total stays spendable-accurate", async () => {
+  it("locks every staking bucket, so the summed entries keep the bridge's spendable", async () => {
     const shape = accountShape({
       amount: ONE_NEAR,
       positions: [position({ staked: STAKED, available: STAKED, pending: STAKED })],
@@ -131,10 +138,27 @@ describe("getBalance", () => {
     (getAccount as jest.Mock).mockResolvedValue(shape);
 
     const balances = await getBalance(mockNearContext, ADDRESS);
+    const stakes = balances.filter(b => b.stake !== undefined);
 
-    expect(balances[0].value).toBe(BigInt(shape.balance.toFixed(0)));
-    expect(balances[0].value - balances[0].locked!).toBe(BigInt(shape.spendableBalance.toFixed(0)));
-    expect(balances.filter(b => b.stake !== undefined)).toHaveLength(3);
+    expect(stakes).toHaveLength(3);
+    stakes.forEach(b => expect(b.locked).toBe(b.value));
+    expect(sum(balances, b => b.value)).toBe(BigInt(shape.balance.toFixed(0)));
+    expect(sum(balances, b => b.value) - sum(balances, b => b.locked ?? 0n)).toBe(
+      BigInt(shape.spendableBalance.toFixed(0)),
+    );
+  });
+
+  it("keeps a zero liquid entry first when every unit is in a pool", async () => {
+    const shape = accountShape({
+      amount: new BigNumber(0),
+      positions: [position({ staked: STAKED })],
+    });
+    (getAccount as jest.Mock).mockResolvedValue(shape);
+
+    const balances = await getBalance(mockNearContext, ADDRESS);
+
+    expect(balances[0]).toEqual({ value: 0n, asset: { type: "native" }, locked: 0n });
+    expect(sum(balances, b => b.value)).toBe(BigInt(STAKED.toFixed(0)));
   });
 
   describe("validator options", () => {
