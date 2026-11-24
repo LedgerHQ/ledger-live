@@ -39,7 +39,7 @@ export class ModularAccountDialog extends Dialog {
   @step("Select account by its row test id")
   async selectAccountRow(account: Account) {
     await expect(this.dialogContent).toBeVisible();
-    await this.page.getByTestId(`account-row-${account.accountName}`).click();
+    await this.page.getByTestId(`account-row-${getParentAccountName(account)}`).click();
   }
 
   @step("Click on add and existing account button")
