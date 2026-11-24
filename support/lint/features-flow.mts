@@ -105,12 +105,17 @@ export default defineConfig({
     {
       // Tailwind only runs on web; native styles go through Lumen's RN components.
       files: ["**/*.web.{ts,tsx}"],
-      jsPlugins: lumen.configs.recommended.jsPlugins,
+      jsPlugins: lumen.configs.react.recommended.jsPlugins,
       rules: {
-        ...lumen.configs.recommended.rules,
+        ...lumen.configs.react.recommended.rules,
         // `dark` is the Lumen color-scheme class toggled on <html> by ThemeProvider, not a utility.
         "better-tailwindcss/no-unknown-classes": ["error", { ignore: ["^dark$"] }],
       },
+    },
+    {
+      files: ["**/*.native.{ts,tsx}"],
+      jsPlugins: lumen.configs.reactnative.recommended.jsPlugins,
+      rules: lumen.configs.reactnative.recommended.rules,
     },
   ],
 });

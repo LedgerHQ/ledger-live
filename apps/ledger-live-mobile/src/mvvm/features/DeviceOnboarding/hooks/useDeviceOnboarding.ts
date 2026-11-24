@@ -5,6 +5,8 @@ import {
   stateValueToString,
   useDeviceOnboardingActor,
   type DeviceOnboardingActorSession,
+  type DeviceOnboardingContext,
+  type DeviceOnboardingExitReason,
   type OnboardingEvent,
   type OnboardingInspectionEvent,
   type SessionEvent,
@@ -32,6 +34,7 @@ import { matchesPairedDevice, selectPairedKnownDevices } from "../utils/pairedDe
 import { createDeviceOnboardingPorts } from "../utils/ports";
 import { isRebootedDevice } from "../utils/rebootedDevice";
 import { selectKnownDevicesToReconnect } from "../utils/reconnectDevices";
+import type { SeededResult } from "@features/platform-device-onboarding-analytics";
 
 type UseDeviceOnboardingInput = {
   dmk: DeviceManagementKit | null;
@@ -40,8 +43,14 @@ type UseDeviceOnboardingInput = {
   navigateOnExit?: boolean;
   wasReadOnlyAtEntry?: boolean;
   getNavigation?: () => NavigationProp<ParamListBase> | null;
-  /** Runs right before the exit navigates, so the host can stop blocking back. */
-  onLeave?: () => void;
+  /**
+   * Runs right before the exit navigates, so the host can stop blocking back. Returns the seeded
+   * result that the Sync offer screen needs.
+   */
+  onLeave?: (
+    reason: DeviceOnboardingExitReason,
+    context: DeviceOnboardingContext,
+  ) => SeededResult | null | void;
   /** Watches every machine update from the actor's creation. The funnel passes none. */
   inspect?: (event: OnboardingInspectionEvent) => void;
 };
@@ -164,8 +173,8 @@ export function useDeviceOnboarding({
     leaveOnboarding: (reason, context) => {
       const deferCompletion = context.onboardedOnEntry === false && reason === "completed";
       deferExitStatus.current = deferCompletion;
-      if (!deferCompletion) onLeave?.();
-      leaveOnboarding(reason, context);
+      const seededResult = deferCompletion ? null : onLeave?.(reason, context);
+      leaveOnboarding(reason, context, seededResult ?? null);
     },
   });
 

@@ -4,6 +4,7 @@ import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import { getAssetFromToken } from "@ledgerhq/live-common/families/xrp/bridge/api";
 import {
   enabledXrpTokenStandards,
+  hasPendingXrpTokenRemoval,
   heldXrpTokenIds,
   standardOf,
 } from "@ledgerhq/live-common/families/xrp/tokenHolding";
@@ -17,6 +18,8 @@ export const OWNER_RESERVE = new BigNumber(200_000);
 
 // An IOU fee steps in billionths: 7 decimals of a percentage
 const MAX_FEE_PERCENT_DECIMALS = 7;
+
+export type DeleteBlocker = "pending" | "frozen";
 
 export function findHeldTokenAccount(account: Account, token: TokenCurrency) {
   if (!heldXrpTokenIds(account).has(token.id)) return undefined;
@@ -69,6 +72,13 @@ export function getTokenFirstScreen(token: TokenCurrency) {
   return token.tokenType === "iou" ? ScreenName.XrpAddTokenSettings : ScreenName.XrpAddTokenReview;
 }
 
+function toAssetFields(token: TokenCurrency) {
+  const asset = getAssetFromToken(token);
+  if (!asset || !("assetReference" in asset)) return {};
+
+  return { assetReference: asset.assetReference, assetOwner: asset.assetOwner };
+}
+
 export function makeChangeTrustTransaction(
   bridge: AccountBridge<Transaction>,
   account: Account,
@@ -76,16 +86,32 @@ export function makeChangeTrustTransaction(
   amount: BigNumber,
   noRipple: boolean,
 ): Transaction {
-  const asset = getAssetFromToken(token);
-  const assetFields =
-    asset && "assetReference" in asset
-      ? { assetReference: asset.assetReference, assetOwner: asset.assetOwner }
-      : {};
-
   return bridge.updateTransaction(bridge.createTransaction(account), {
     mode: "changeTrust",
-    ...assetFields,
+    ...toAssetFields(token),
     amount,
     noRipple,
   });
+}
+
+export function makeOptOutTransaction(
+  bridge: AccountBridge<Transaction>,
+  account: Account,
+  token: TokenCurrency,
+): Transaction {
+  return bridge.updateTransaction(bridge.createTransaction(account), {
+    mode: "optOut",
+    ...toAssetFields(token),
+    amount: new BigNumber(0),
+  });
+}
+
+export function getDeleteBlocker(
+  account: Account,
+  tokenAccount: XrpTokenAccount,
+): DeleteBlocker | undefined {
+  if (hasPendingXrpTokenRemoval(account, tokenAccount.token)) return "pending";
+  if (tokenAccount.xrpResources?.isLocked) return "frozen";
+
+  return undefined;
 }

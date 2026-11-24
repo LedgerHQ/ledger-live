@@ -9,7 +9,6 @@
     "**/*.spec.ts",
     "**/*.spec.tsx",
     "**/__tests__/**/*",
-    "src/test-helpers/bridge-integration-suite.ts",
     "src/test-helpers/staticTime.ts",
     "**/tests/**/*",
     "**/__mocks__/**/*",

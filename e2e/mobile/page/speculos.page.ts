@@ -27,6 +27,17 @@ import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { SwapType, Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 
+export type AcceptSwapForDifferentSeedOptions = {
+  swap: SwapType;
+  amount: string;
+  errorMessage: string | null;
+};
+
+type SignTronRentPaymentOptions = {
+  amount: string;
+  payee: string;
+};
+
 function isSwap(value: SwapType | Account): value is SwapType {
   return value instanceof Swap;
 }
@@ -42,8 +53,9 @@ export default class SpeculosPage {
     await signSendTransaction(tx);
   }
 
-  @Step("Sign the Tronify rent payment of {{{0}}} USDT to {{{1}}}")
-  async signTronRentPayment(amount: string, payee: string) {
+  @Step("Sign the Tronify rent payment of {{{0.amount}}} USDT to {{{0.payee}}}")
+  async signTronRentPayment(options: SignTronRentPaymentOptions) {
+    const { amount, payee } = options;
     await signTronRentPayment(amount, payee);
   }
 
@@ -92,12 +104,9 @@ export default class SpeculosPage {
     await verifyAmountsAndAcceptSwap(swap, amount);
   }
 
-  @Step("Verify amounts {{{1}}} and accept swap for different seed")
-  async verifyAmountsAndAcceptSwapForDifferentSeed(
-    swap: SwapType,
-    amount: string,
-    errorMessage: string | null,
-  ) {
+  @Step("Verify amounts {{{0.amount}}} and accept swap for different seed")
+  async verifyAmountsAndAcceptSwapForDifferentSeed(options: AcceptSwapForDifferentSeedOptions) {
+    const { swap, amount, errorMessage } = options;
     await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage);
   }
 

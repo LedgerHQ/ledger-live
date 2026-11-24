@@ -48,6 +48,7 @@ describe("api/index", () => {
       craftRawTransaction: expect.any(Function),
       craftTransaction: expect.any(Function),
       estimateFees: expect.any(Function),
+      getAccountStatus: expect.any(Function),
       getBalance: expect.any(Function),
       getBlock: expect.any(Function),
       getBlockInfo: expect.any(Function),
@@ -55,6 +56,21 @@ describe("api/index", () => {
       listOperations: expect.any(Function),
       validateAddress: expect.any(Function),
       craftTransactionData: expect.any(Function),
+    });
+  });
+
+  describe("getAccountStatus", () => {
+    it("rejects with the abort reason of the context signal", async () => {
+      const controller = new AbortController();
+      const reason = new Error("aborted");
+      controller.abort(reason);
+
+      await expect(
+        createApi("concordium_testnet").getAccountStatus(
+          { ...context, signal: controller.signal },
+          "ab",
+        ),
+      ).rejects.toBe(reason);
     });
   });
 

@@ -94,7 +94,6 @@ function renderAnalytics({
             [parseAnyAccountId(parent.id), "Ethereum 1"],
             [parseAnyAccountId(btc.id), "Bitcoin 1"],
           ]),
-          starredAccountIds: new Set(),
           walletSync: { walletSyncState: { data: null, version: 0 } },
         },
       },

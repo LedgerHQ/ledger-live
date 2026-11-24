@@ -30,7 +30,8 @@ module.
 | `src/types.ts`                      | `Sample`: a line of `samples.jsonl`, which `measure/` writes and `analysis/` reads          |
 | `src/measure/run.ts`                | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl`       |
 | `src/measure/platforms/`            | `android.ts` and `ios.ts`, the two `Platform`s, through adb or simctl                       |
-| `src/measure/performance-screen.ts` | Reads App startup time and the startup events through Maestro                               |
+| `src/measure/startup-log.ts`        | Reads App startup time and the startup events from the app's `[startup]` log lines          |
+| `src/measure/performance-screen.ts` | Reads them on the Debug screen through Maestro: checks, and launches without the lines      |
 | `src/measure/inject.ts`             | Imports a scenario's userdata through the E2E bridge, once per install                      |
 | `src/measure/bridge.ts`             | The E2E bridge protocol (`apps/ledger-live-mobile/src/e2e/bridge/client.ts`)                |
 | `src/measure/maestro.ts`, `exec.ts` | Maestro and child-process calls                                                             |
@@ -47,13 +48,14 @@ module.
 | `prod-vs-release`  | latest `live-mobile@X.Y.Z` tag | `release` branch           | B is slower by > threshold_ms     |
 | `prod-vs-develop`  | latest `live-mobile@X.Y.Z` tag | `develop` or `ref_b`       | same                              |
 | `custom`           | any branch or tag              | any branch or tag          | same                              |
-| `aa-noise`         | one build                      | the same binary            | only on `Not enough pairs`        |
+| `aa-noise`         | one build                      | the same binary            | `Not enough pairs`                |
 | `known-regression` | this branch or `ref_a`         | A with LIVE-36190 re-added | B is not slower by > threshold_ms |
 
-`aa-noise` reports how finely the setup resolves B − A. `known-regression` shows whether the gate
-still catches LIVE-36190 on today's code: B no longer saves the trustchain at start, so every launch
-generates its keypair again, the cost #21001 removed (its other half, a zod check of the keypair, no
-longer exists).
+Every preset also fails when the Debug screen shows another App startup time than the device log
+(see A launch). `aa-noise` reports how finely the setup resolves B − A. `known-regression` shows
+whether the gate still catches LIVE-36190 on today's code: B no longer saves the trustchain at
+start, so every launch generates its keypair again, the cost #21001 removed (its other half, a zod
+check of the keypair, no longer exists).
 
 Every weekday at 03:17 UTC the workflow runs `prod-vs-develop` with the settings of `NIGHTLY` in
 `ci/resolve-refs.mts` (both platforms and scenarios, 20 pairs, 100 ms), as a scheduled run has no
@@ -103,13 +105,54 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
   post-onboarding state of `e2e/mobile/userdata` through `bridge.ts`, sends the settings again
   10 s later (the store's save effect may not be mounted yet), and fails when the app reports `MOCK`
   or `DETOX`. Feature flags are not imported: they come from production Firebase.
-- **Launch** with a plain `am start -W` / `simctl launch`, no test tool attached, wait 5 s, then let
-  Maestro open the Performance screen and read "App startup time" and the startup events. Measured
-  reads use `read-performance-quick.yaml`; warm-ups and retries use the full flow, whose optional
-  taps cost ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens
-  have no testIDs on any supported ref.
-- **Alternate devices** on every launch: right after a launch on the same simulator, one was
-  ~270 ms faster (run 39731729203). Halfway through each scenario A and B swap devices, so the
+- **Warm up 6 times on Android** before the rounds. In the first launches after an install (2–6,
+  ~20–230 s), Braze's content-card refresh put ~110 ms of JS before App started in about half of
+  them, never later: with 6 warm-ups the slow early rounds fell from 35–49% to 10–15% (runs
+  43996795129, 43996836527). iOS keeps 1, as it was not measured. A warm-up costs one launch: ~11 s
+  read from the log, ~40 s on the screen. Both builds are installed first, then warmed up in turn
+  like the rounds, on iOS too (not measured there). When each build warmed up right after its
+  install, the first one idled ~2 min through the other's install and warm-ups, and its round 0 was
+  ~60 ms slower than its later rounds, the second's no slower beyond noise (median of 30 Android A/A
+  runs, e.g. 44243454200). Warmed up in turn, it is ~15 ms faster than its later rounds, against
+  ~60 ms slower for the old order in the same wave (10 runs against 6, e.g. 44281313344 against
+  44281225038), with about the same A/A spread.
+- **Launch** with a plain `am start -W` / `simctl launch`, no test tool attached, wait 5 s, then
+  read the `[startup]` lines of the launched process in the device log (logcat's `ReactNativeJS`,
+  the simulator's `log show`), which the app writes as soon as the startup is over: a line per
+  startup event of the Debug screen (`[startup] App started (x2): 1650 ms`), then the App startup
+  time (`[startup] App startup time: 1650 ms, 13 events`). The app writes them at the error level,
+  the only one iOS release builds keep, through React Native's `nativeLoggingHook`, which Datadog
+  does not see. A measured launch lives ~6 s (iOS) or ~7–8 s (Android) from its process start: the
+  next launch stops it.
+- **Check it on the screen.** After each phase's rounds, one more launch, not measured, of the
+  phase's first build (A, then B) also lets Maestro open the Performance screen, which must show the
+  same time: a mismatch fails the run, whatever the preset. Each build is checked once per scenario,
+  and only while the scenario reads the device log. The check comes after the rounds so that both
+  builds' warm-ups are the same short log read, with no Maestro run on one device only before round
+  0, and because on iOS a screen read slows the next launch by ~280 ms, on either simulator (run
+  42356679784: the first launch of round 0 by 261–301 ms, the second not): the launch after the
+  check is the next injection. A check that cannot read the screen keeps its log value, and the
+  report names the build left unchecked. A launch whose lines have not come 20 s after the settle
+  time, or came unreadable (their event lines do not add up to the count the last line gives), is
+  read on the screen, and the report counts those of measured launches per build and cause; one
+  whose lines give a time of 0 or less fails, as the Debug screen would show the same. When a build
+  not known to write lines in a scenario writes none (built before #24576), warm-up or not, both
+  builds are read on the screen for the rest of the scenario, so pairs stay even, and the report
+  says so, even when that launch's screen read fails; a build that has written lines in the
+  scenario, readable or not, falls back on that launch only.
+  Until a release with #24576 is in production, `prod-vs-release` and `prod-vs-develop` (the
+  nightly) are read on the screen this way. `--read both` (the workflow's `read` input) reads every
+  launch both ways, `--read screen` the screen only. Screen reads of measured launches use
+  `read-performance-quick.yaml`; warm-ups, checks and retries use the full flow, whose optional taps
+  cost ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens have
+  no testIDs on any supported ref.
+- **Why the log.** Run 42352894550 read 64 launches both ways: the same time on every one. With the
+  log only (run 42356679784, 20 pairs), a launch takes 8.5 s on iOS and 10–11 s on Android instead
+  of 34–44 s, so the measure jobs take 33 and 22 min instead of ~65 and ~40. Measured iOS launches
+  also no longer follow a Maestro read, which made them ~280 ms slower than the warm-ups (runs
+  42325407516, 42352894550), and the iOS interval narrowed from about ±30 to ±18 ms.
+- **Alternate devices** on every measured launch: right after a launch on the same simulator, one
+  was ~270 ms faster (run 39731729203). Halfway through each scenario A and B swap devices, so the
   difference between the devices cancels out. On Android the other emulator is paused from the
   launch to the read.
 - **Recover**: an Android ANR or crash dialog is cleared by restarting its process (recorded as
@@ -122,18 +165,21 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
 - **Android**: the E2E AVD (develop's `avd.env`), two emulators with 4 cores each on the 8-CPU
   runner (faster and tighter A/A margins than 2 or 3: runs 39989878998, 39966762708, 39970514979),
   cold-booted (the snapshot has 2 cores), animations on, screen kept on, cellular network (the
-  emulated Wi-Fi added ~240–500 ms: runs 39941337433, 39966755704), and idle (load average below 1)
-  before the first launch.
+  emulated Wi-Fi added ~240–500 ms: runs 39941337433, 39966755704), the Messages and Google apps
+  disabled (their background jobs, a few minutes after boot, took the CPUs in ~4% of launches,
+  +20–100 ms), and idle (load average below 1) before the first launch.
 - **iOS**: two new simulators of the newest "iPhone N Pro", on the iOS E2E pool, one run at a time,
   measured once the host's 1-minute load is below its CPU count (at most 10 min after boot): 60 s
   after `bootstatus` it was still rising (74 → 128 and 83 → 106, runs 42260331032, 42261755814).
 
 ## The analysis
 
-Launches are paired by scenario, phase and round. B − A is the Hodges–Lehmann median of the paired
-differences, after removing the device bias (half the gap between the two phases), with a Wilcoxon
-signed-rank 95% interval. The gate is on the estimate; the mean with a bootstrap interval is what
-the manual test compares.
+Launches are paired by scenario, phase and round, and a pair is left out when only one of its
+launches followed a read of the Debug screen (after a fallback, above), on both platforms as a
+precaution, though the slowdown was measured on iOS only. B − A is the Hodges–Lehmann median of the
+paired differences, after removing the device bias (half the gap between the two phases), with a
+Wilcoxon signed-rank 95% interval. The gate is on the estimate; the mean with a bootstrap interval
+is what the manual test compares.
 
 `calibration.test.ts` checks these claims on simulated runs with a known B − A, a 150 ms device bias
 and launch outliers. The interval covers the true B − A in 94% of runs (90.5% with 3 and 9 pairs
@@ -149,7 +195,8 @@ Two measures, both ending at "App startup time":
 - **With native start**: from the process start, read by the harness on the app's clock (the
   emulator's clock was ~67 s off the runner's, run 40847012543) and joined through `JS start epoch`.
 
-`analyze.ts` exits 1 on `FAIL`, `Not detected`, `Not enough pairs` or no samples.
+`analyze.ts` exits 1 on `FAIL` (a Debug screen that disagrees with the device log included),
+`Not detected`, `Not enough pairs` or no samples.
 
 Each results artifact holds the rows as `summary.json` and the run they come from as `run.json`
 (preset, threshold, planned pairs, labels A and B), so a reader of the artifact alone, such as the

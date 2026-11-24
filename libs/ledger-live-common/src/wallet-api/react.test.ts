@@ -17,6 +17,7 @@ import { INITIAL_PLATFORM_STATE } from "./constants";
 import type { DiscoverDB } from "./types";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import { AccountPublicKeyUnavailable, BridgeSessionClosed, SignPsbtAppNotAllowed } from "../errors";
+import { UnsupportedMaxSpendableFilter } from "@ledgerhq/ledger-wallet-framework/errors";
 import { accountGetPublicKeyLogic, signRawTransactionLogic } from "./logic";
 import { getAccountBridge } from "../bridge";
 import { BridgeSession } from "./bridgeSession";
@@ -458,6 +459,28 @@ describe("account.list handler", () => {
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledWith(account, account);
     expect(resolveWalletApiMaxSpendable).not.toHaveBeenCalled();
   });
+
+  it("carries the per-pool balances next to the unchanged spendableBalance", async () => {
+    const balances = [{ value: new BigNumber(5), pool: "transparent" }];
+    const account = { ...createFixtureAccount("01"), balances };
+    const spendableBalance = new BigNumber(3);
+    jest.mocked(resolveWalletApiSpendableBalance).mockResolvedValue(spendableBalance);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+    const result = await getHandler()({});
+
+    expect(result).toEqual([expect.objectContaining({ balances, spendableBalance })]);
+  });
+
+  it("leaves balances out for an account that has none", async () => {
+    const account = createFixtureAccount("01");
+    jest.mocked(resolveWalletApiSpendableBalance).mockResolvedValue(new BigNumber(3));
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+    const result = await getHandler()({});
+
+    expect(result[0]).not.toHaveProperty("balances");
+  });
 });
 
 describe("currency.list handler — token lookup concurrency", () => {
@@ -591,6 +614,28 @@ describe("account.request handler", () => {
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledWith(account, undefined);
     expect(resolveWalletApiMaxSpendable).not.toHaveBeenCalled();
   });
+
+  it("carries the per-pool balances next to the unchanged spendableBalance", async () => {
+    const balances = [{ value: new BigNumber(5), pool: "transparent" }];
+    const account = { ...createFixtureAccount("01"), balances };
+    const spendableBalance = new BigNumber(3);
+    jest.mocked(resolveWalletApiSpendableBalance).mockResolvedValue(spendableBalance);
+    const uiAccountRequest = jest.fn(({ onSuccess }) => {
+      onSuccess(account, undefined);
+    });
+
+    renderHook(() =>
+      useWalletAPIServer(
+        createDefaultOptions({
+          accounts: [account],
+          uiHook: { "account.request": uiAccountRequest },
+        }),
+      ),
+    );
+    const result = await getHandler()({});
+
+    expect(result).toEqual(expect.objectContaining({ balances, spendableBalance }));
+  });
 });
 
 describe("UI flows of a closed bridge session", () => {
@@ -705,8 +750,17 @@ describe("account.getMaxSpendable handler", () => {
     if (!call) {
       throw new Error("account.getMaxSpendable was not registered");
     }
-    return call[1] as (params: { accountId: string }) => Promise<string>;
+    return call[1] as (params: {
+      accountId: string;
+      pools?: string[];
+      private?: boolean;
+    }) => Promise<string>;
   };
+
+  const poolRows = [
+    { value: new BigNumber(100), pool: "transparent" },
+    { value: new BigNumber(500), pool: "ironwood", private: true },
+  ];
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -725,7 +779,77 @@ describe("account.getMaxSpendable handler", () => {
     renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
 
     await expect(getHandler()({ accountId: "wallet-account-id" })).resolves.toBe("800");
-    expect(resolveWalletApiMaxSpendable).toHaveBeenCalledWith(account, account);
+    expect(resolveWalletApiMaxSpendable).toHaveBeenCalledWith(account, account, undefined);
+  });
+
+  it("passes the pool filters to the estimate", async () => {
+    const account = { ...createFixtureAccount("01"), balances: poolRows };
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+    jest.mocked(resolveWalletApiMaxSpendable).mockResolvedValue(new BigNumber(450));
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+
+    await expect(
+      getHandler()({ accountId: "wallet-account-id", pools: ["ironwood"], private: true }),
+    ).resolves.toBe("450");
+    expect(resolveWalletApiMaxSpendable).toHaveBeenCalledWith(account, account, {
+      pools: ["ironwood"],
+      private: true,
+    });
+  });
+
+  it("passes a private filter alone to the estimate", async () => {
+    const account = { ...createFixtureAccount("01"), balances: poolRows };
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+    jest.mocked(resolveWalletApiMaxSpendable).mockResolvedValue(new BigNumber(90));
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+
+    await getHandler()({ accountId: "wallet-account-id", private: false });
+
+    expect(resolveWalletApiMaxSpendable).toHaveBeenCalledWith(account, account, {
+      private: false,
+    });
+  });
+
+  it("calls the estimate without filters when none is given", async () => {
+    const account = createFixtureAccount("01");
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+    jest.mocked(resolveWalletApiMaxSpendable).mockResolvedValue(new BigNumber(1));
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+
+    await getHandler()({ accountId: "wallet-account-id" });
+
+    expect(resolveWalletApiMaxSpendable).toHaveBeenCalledWith(account, account, undefined);
+  });
+
+  it.each([
+    ["several pools", { pools: ["transparent", "ironwood"] }],
+    ["an unknown pool", { pools: ["sapling"] }],
+    ["a pool and a private flag that select no row", { pools: ["transparent"], private: true }],
+  ])("rejects with UnsupportedMaxSpendableFilter for %s", async (_label, params) => {
+    const account = { ...createFixtureAccount("01"), balances: poolRows };
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+
+    const rejection = getHandler()({ accountId: "wallet-account-id", ...params });
+
+    await expect(rejection).rejects.toBeInstanceOf(UnsupportedMaxSpendableFilter);
+    await expect(rejection).rejects.toMatchObject({ name: "UnsupportedMaxSpendableFilter" });
+    expect(resolveWalletApiMaxSpendable).not.toHaveBeenCalled();
+  });
+
+  it("rejects an account with no balance rows when a filter is given", async () => {
+    const account = createFixtureAccount("01");
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions({ accounts: [account] })));
+
+    await expect(
+      getHandler()({ accountId: "wallet-account-id", private: false }),
+    ).rejects.toBeInstanceOf(UnsupportedMaxSpendableFilter);
   });
 
   it("serializes a large estimate as a decimal integer string", async () => {

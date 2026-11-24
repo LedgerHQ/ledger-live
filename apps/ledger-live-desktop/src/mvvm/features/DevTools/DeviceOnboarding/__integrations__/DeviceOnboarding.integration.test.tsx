@@ -548,6 +548,37 @@ describe("DeviceOnboarding desktop integration", () => {
     expect(sessionSubscribers).toBe(0);
   });
 
+  it("should open the update drawer for the update a nano held back until setup", () => {
+    const device = {
+      deviceId: "device-id",
+      deviceName: "Nano X",
+      modelId: DeviceModelId.nanoX,
+      wired: true,
+    } satisfies Device;
+    const rendered = renderHook(() =>
+      useFirmwareUpdateHandover({
+        device,
+        machineState: "postSetupFirmware.firmwareUpdateDelegated",
+        send: jest.fn(),
+      }),
+    );
+
+    firmwareLookup.status = "available-firmware";
+    firmwareLookup.deviceInfo = {
+      version: "2.3.0",
+      isOSU: false,
+      mcuVersion: "1.0",
+    } as DeviceInfo;
+    firmwareLookup.firmwareUpdateContext = {
+      osu: {},
+      final: { name: "2.5.0" },
+      shouldFlashMCU: false,
+    } as FirmwareUpdateContext;
+    rendered.rerender(undefined);
+
+    expect(setDrawer).toHaveBeenCalledTimes(1);
+  });
+
   it("should send FIRMWARE_UPDATE_FLOW_CLOSED once when both drawer closes fire", () => {
     const send = jest.fn();
     const device = {

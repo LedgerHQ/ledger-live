@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   OnboardingStep,
@@ -11,14 +11,32 @@ import {
   toFirmwareUpdate,
 } from "LLM/features/DeviceOnboarding/utils/checksPhase";
 import { useSessionReconnect } from "@features/flow-device-onboarding-reconnect";
+import { useConfirmSkipAfterUpdateScreen } from "@features/flow-device-onboarding-update-offer";
 import { deviceLockedState } from "LLM/features/DeviceOnboarding/utils/deviceLocked";
 import { toSetupStage, type SetupStage } from "../Setup/toSetupStage";
 import type { SetupChecksProps, SetupScreenProps } from "../Setup/types";
 
 const checksSucceededState = "checks.checksSucceeded";
 const waitingState = "deviceSetup.waiting";
+const restoreRecoverState = "deviceSetup.restoreRecover";
+const restoreChoiceState = "deviceSetup.restoreChoice";
 const droppedState = "awaitingSession";
 const statesThatKeepTheStage = new Set([deviceLockedState, "readingState", droppedState]);
+const statesThatAnswerTheUpdate = new Set([
+  "checks.firmwareUpdateDelegated",
+  "checks.checksDone",
+  "checks.leavingEarlyCheckScreen",
+  checksSucceededState,
+]);
+
+function rechecksTheUpdate(liveMachineState: string | null) {
+  if (liveMachineState === null || statesThatAnswerTheUpdate.has(liveMachineState)) return false;
+  return (
+    liveMachineState.startsWith("checks.") ||
+    liveMachineState === "routing" ||
+    statesThatKeepTheStage.has(liveMachineState)
+  );
+}
 
 const doneState = "done";
 
@@ -26,6 +44,8 @@ export type UnseededFunnelInput = {
   machineState: string | null;
   liveMachineState: string | null;
   onboardedOnEntry: boolean | null;
+  /** Setup is done and only the held-back update is left: the checks screen shows it, not Setup. */
+  heldBackUpdatePending?: boolean;
   currentStep: string | null;
   seedPath: string | null;
   /** The user already left the Recover pitch (skip, remind later, or back from Recover). */
@@ -36,6 +56,9 @@ export type UnseededFunnelInput = {
   deviceNotGenuine: boolean;
   firmwareVersion: string | null;
   availableFirmwareVersion: string | null;
+  firmwareDeclined: boolean;
+  /** How many times the user came back from the update screen without updating. */
+  returnsWithoutUpdate: number;
   reportsRecoveryKey: boolean;
   device: Device | null;
   connectionError: string | null;
@@ -47,14 +70,25 @@ export type UnseededFunnelInput = {
 
 export type UnseededFunnelModel =
   | { status: "setup"; setup: SetupScreenProps }
+  | { status: "recoverRestore"; dismiss: () => void }
   | { status: "recoverNewSeed" }
   | { status: "success"; sawRecoverPitch: boolean };
 
 export function useUnseededFunnelViewModel(input: UnseededFunnelInput): UnseededFunnelModel | null {
   const { device, machineState, liveMachineState, send } = input;
-  const unseeded = input.onboardedOnEntry === false && device !== null && machineState !== null;
+  const [restoreDismissed, setRestoreDismissed] = useState(false);
+  const dismissRestore = useCallback(() => setRestoreDismissed(true), []);
+  if (restoreDismissed && machineState !== restoreRecoverState) setRestoreDismissed(false);
+
+  const unseeded =
+    input.onboardedOnEntry === false &&
+    input.heldBackUpdatePending !== true &&
+    device !== null &&
+    machineState !== null;
+  const stageState =
+    machineState === restoreRecoverState && restoreDismissed ? restoreChoiceState : machineState;
   const stage = unseeded
-    ? toUnseededStage(device, machineState, input.currentStep, input.reportsRecoveryKey)
+    ? toUnseededStage(device, stageState, input.currentStep, input.reportsRecoveryKey)
     : null;
   const holdsPrevious = unseeded && holdsPreviousStage(machineState, input.currentStep);
 
@@ -65,8 +99,15 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
     connect: input.reconnect,
   });
   useContinueChecks(unseeded, liveMachineState, send);
+  const confirmSkipUpdate = useConfirmSkipAfterUpdateScreen({
+    returnsWithoutUpdate: input.returnsWithoutUpdate,
+    recheckingUpdate: unseeded && rechecksTheUpdate(liveMachineState),
+  });
 
   if (unseeded && machineState === doneState) return toDoneModel(input);
+  if (unseeded && machineState === restoreRecoverState && !restoreDismissed) {
+    return { status: "recoverRestore", dismiss: dismissRestore };
+  }
   if (!unseeded || !visibleStage || !device || !machineState) return null;
 
   return {
@@ -77,7 +118,8 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
       suspendSheets: input.suspendSheets,
       reportsRecoveryKey: input.reportsRecoveryKey,
       connection,
-      checks: toChecks(input, machineState),
+      firmwareDeclined: input.firmwareDeclined,
+      checks: toChecks(input, machineState, confirmSkipUpdate),
       onQuit: input.onQuit,
     },
   };
@@ -142,7 +184,11 @@ function toDoneModel(
   return { status: "success", sawRecoverPitch: true };
 }
 
-function toChecks(input: UnseededFunnelInput, machineState: string): SetupChecksProps | null {
+function toChecks(
+  input: UnseededFunnelInput,
+  machineState: string,
+  confirmSkipUpdate: boolean,
+): SetupChecksProps | null {
   if (!machineState.startsWith("checks.")) return null;
   const state = toChecksScreenState(machineState, input.checksPaused, false);
   if (!state) return null;
@@ -153,6 +199,7 @@ function toChecks(input: UnseededFunnelInput, machineState: string): SetupChecks
     error: toChecksError(machineState, input.genuineFailureKind),
     deviceNotGenuine: input.deviceNotGenuine,
     update: toFirmwareUpdate(input.firmwareVersion, input.availableFirmwareVersion),
+    confirmSkipUpdate,
     onStart: () => send({ type: machineState === "checks.checksIdle" ? "RETRY" : "CONTINUE" }),
     onRetry: () => send({ type: "RETRY" }),
     onCloseSheet: () => send({ type: "CLOSE" }),

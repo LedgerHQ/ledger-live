@@ -170,11 +170,14 @@ export async function launchSpeculos(appName: string) {
   return device;
 }
 
-async function findPortByDeviceId(
-  deviceId: string,
-  maxAttempts = 3,
-  delay = INTERVAL.medium,
-): Promise<number | undefined> {
+type FindPortByDeviceIdOptions = {
+  deviceId: string;
+  maxAttempts?: number;
+  delay?: number;
+};
+
+async function findPortByDeviceId(options: FindPortByDeviceIdOptions): Promise<number | undefined> {
+  const { deviceId, maxAttempts = 3, delay = INTERVAL.medium } = options;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     log.info(
       "E2E",
@@ -222,7 +225,7 @@ export async function deleteSpeculos(deviceId?: string): Promise<number | undefi
     return;
   }
 
-  const port = await findPortByDeviceId(deviceId);
+  const port = await findPortByDeviceId({ deviceId });
   let stopped = false;
   try {
     stopped = await stopSpeculos(deviceId);
@@ -319,7 +322,7 @@ export async function registerSpeculos(speculosPort: number) {
   }
   process.env.SPECULOS_API_PORT = speculosPort.toString();
   delete process.env.DEVICE_PROXY_URL;
-  CLI.registerSpeculosTransport(speculosPort.toString(), speculosAddress);
+  CLI.registerSpeculosTransport({ apiPort: speculosPort.toString(), speculosAddress });
   setEnv("SPECULOS_API_PORT", speculosPort);
 }
 
@@ -390,15 +393,23 @@ function getKnownSpeculosAddress(speculosPort: number): string {
 /** How long the app may take to report an env value the test just pushed over the bridge. */
 const BRIDGE_ENV_SYNC_TIMEOUT = 15_000;
 
-async function waitForBridgeEnv(
-  key: string,
-  expectedValue: string,
-  timeout = BRIDGE_ENV_SYNC_TIMEOUT,
-  interval = INTERVAL.short,
-): Promise<void> {
+type WaitForBridgeEnvOptions = {
+  key: string;
+  expectedValue: string;
+  timeout?: number;
+  interval?: number;
+};
+
+async function waitForBridgeEnv(options: WaitForBridgeEnvOptions): Promise<void> {
+  const {
+    key,
+    expectedValue,
+    timeout = BRIDGE_ENV_SYNC_TIMEOUT,
+    interval = INTERVAL.short,
+  } = options;
   try {
-    await retryUntilTimeout(
-      async () => {
+    await retryUntilTimeout({
+      fn: async () => {
         const envsRaw = await getEnvs();
         const envs = envsRaw ? (JSON.parse(envsRaw) as Record<string, string | undefined>) : {};
         if ((envs[key] ?? "") !== expectedValue) {
@@ -407,8 +418,8 @@ async function waitForBridgeEnv(
       },
       timeout,
       interval,
-      { cancellable: true },
-    );
+      cancellable: true,
+    });
   } catch (cause) {
     const reason = cause instanceof Error ? cause.message : String(cause);
     throw new Error(
@@ -421,7 +432,7 @@ async function waitForBridgeEnv(
 export async function registerKnownSpeculos(speculosPort: number) {
   const address = getKnownSpeculosAddress(speculosPort);
   await addKnownSpeculos(address);
-  await waitForBridgeEnv("DEVICE_PROXY_URL", address);
+  await waitForBridgeEnv({ key: "DEVICE_PROXY_URL", expectedValue: address });
 }
 
 export async function removeSpeculosAndDeregisterKnownSpeculos(deviceId?: string) {
@@ -442,6 +453,6 @@ export async function removeSpeculosAndDeregisterKnownSpeculos(deviceId?: string
       }
     }
     await removeKnownSpeculos(getKnownSpeculosAddress(speculosPort));
-    await waitForBridgeEnv("DEVICE_PROXY_URL", "");
+    await waitForBridgeEnv({ key: "DEVICE_PROXY_URL", expectedValue: "" });
   }
 }

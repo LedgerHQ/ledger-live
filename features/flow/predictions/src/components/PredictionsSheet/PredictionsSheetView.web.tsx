@@ -14,6 +14,7 @@ export function PredictionsSheetView({ isOpen, shownStep, onDismiss }: Predictio
     <Dialog animated open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
         className="max-h-[90vh]"
+        data-testid={stepType ? `predictions-sheet-${stepType}` : undefined}
         // Only the consent step has a description for the dialog to point to.
         {...(stepType !== "consent" && { "aria-describedby": undefined })}
         // Lumen's DialogHeader always registers its own hidden title, empty for the intro.

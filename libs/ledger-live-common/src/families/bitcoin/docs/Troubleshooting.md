@@ -52,13 +52,13 @@ Sync account errors in Ledger Live, indicated by UI errors. These can be due to 
 1. **Use Dev Tools:** Start Ledger Live Desktop with `pnpm dev:lld:debug` and check the console for errors.
 2. **Inspect Backend Responses:** Look for HTTP request and response details in the network tab to find potential http errors.
 
-### Error 4: Bridge Integration Test Failures
+### Error 4: Device Replay Test Failures
 
 #### Description
-Failures in `bridge.integration.test.ts` may be due to nano app updates or `hw-app-btc` modifications leading to APDU incompatibility.
+Failures in `setup.apdu.test.ts`, `scanAccounts.integration.test.ts` or `accountBridge.integration.test.ts` may be due to nano app updates or `hw-app-btc` modifications leading to APDU incompatibility.
 
 #### Debugging Steps
-- For comprehensive details on handling bridge integration tests and APDU updates, please refer to [Ledger Developers Documentation](https://developers.ledger.com/docs/blockchain/testing#writing-bridgeintegrationtestts).
+- The recorded device answers are in `fixtures/scanAccounts.apdus.ts`: record them again from a Speculos or a real device when the APDUs changed.
 
 ---
 This guide is designed to assist in the diagnosis and resolution of common issues in bitcoin family

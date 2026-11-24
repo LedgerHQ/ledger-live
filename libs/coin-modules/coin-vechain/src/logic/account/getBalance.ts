@@ -5,6 +5,9 @@ import { getAccount } from "../../network";
 
 export const NATIVE_ASSET: AssetInfo = { type: "native" };
 
+/** VTHO, without the account `vthoAsset` adds: the asset of every fee, whoever paid it. */
+export const VTHO_ASSET: AssetInfo = { type: "token", assetReference: VTHO_ADDRESS };
+
 // `assetOwner` lets the generic coin-framework adapter attach the VTHO balance to its sub-account
 // (buildSubAccounts filters by `extra.assetReference` + `extra.assetOwner`). Mirrors coin-tron.
 export const vthoAsset = (address: string): AssetInfo => ({

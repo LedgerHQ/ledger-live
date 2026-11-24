@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
+import { syncOfferTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import { SyncOfferScreen } from "./index";
 
 function QueuedBottomSheetMock({
@@ -45,7 +46,9 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   QueuedBottomSheet: QueuedBottomSheetMock,
 }));
 
-function renderSyncOffer(phase: "offer" | "synchronizing" | "success" = "offer") {
+type Phase = "offer" | "synchronizing" | "success";
+
+function renderSyncOffer(phase: Phase = "offer", showGlow?: boolean) {
   const onActivate = jest.fn();
   const onSkip = jest.fn();
   const onLearnMore = jest.fn();
@@ -61,6 +64,7 @@ function renderSyncOffer(phase: "offer" | "synchronizing" | "success" = "offer")
         onQuit={onQuit}
         onContinue={onContinue}
         phase={phase}
+        showGlow={showGlow}
       />,
     ),
     onActivate,
@@ -175,4 +179,22 @@ describe("SyncOfferView", () => {
     expect(onQuit).toHaveBeenCalledTimes(1);
     expect(onActivate).not.toHaveBeenCalled();
   });
+
+  it.each<Phase>(["offer", "synchronizing", "success"])(
+    "should show the top glow on the %s layout when showGlow is true",
+    phase => {
+      renderSyncOffer(phase, true);
+
+      expect(screen.getByTestId(syncOfferTestIds.glow)).toHaveProp("showTop", true);
+    },
+  );
+
+  it.each<Phase>(["offer", "synchronizing", "success"])(
+    "should not render the top glow on the %s layout when showGlow is false",
+    phase => {
+      renderSyncOffer(phase, false);
+
+      expect(screen.queryByTestId(syncOfferTestIds.glow)).toBeNull();
+    },
+  );
 });

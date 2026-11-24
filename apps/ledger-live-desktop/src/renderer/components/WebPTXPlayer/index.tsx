@@ -48,7 +48,7 @@ export default function WebPTXPlayer({ manifest, inputs, Loader, basePath }: Web
 
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
-  const customPerpsHandlers = usePerpsHandlers(accounts);
+  const customPerpsHandlers = usePerpsHandlers(accounts, manifest);
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {

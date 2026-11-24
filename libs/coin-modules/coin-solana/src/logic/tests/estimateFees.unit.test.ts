@@ -343,9 +343,10 @@ describe("estimateFees", () => {
     } as TransactionIntent);
 
     expect(result.value).toBe(5000n + 2_039_280n);
+    expect(result.parameters?.tokenAccountDeposit).toBe(2_039_280n);
   });
 
-  it("charges the rent of the token account it opens", async () => {
+  it("charges the rent of the token account it opens and reports it apart", async () => {
     const api = createMockApi([5000]);
     (api.getAccountInfo as jest.Mock).mockResolvedValue(mintAccountInfo("spl-token"));
     (api.getMinimumBalanceForRentExemption as jest.Mock).mockResolvedValue(2_039_280);
@@ -365,6 +366,7 @@ describe("estimateFees", () => {
     } as unknown as TransactionIntent);
 
     expect(result.value).toBe(5000n + 2_039_280n);
+    expect(result.parameters?.tokenAccountDeposit).toBe(2_039_280n);
     expect((api.getAccountInfo as jest.Mock).mock.calls).toHaveLength(1);
   });
 

@@ -97,7 +97,6 @@ export type SettingsState = {
   hideSmallValueTokenOperations: boolean;
   sidebarCollapsed: boolean;
   discreetMode: boolean;
-  starredAccountIds?: string[];
   blacklistedTokenIds: string[];
   deepLinkUrl: string | undefined | null;
   lastSeenCustomImage: {

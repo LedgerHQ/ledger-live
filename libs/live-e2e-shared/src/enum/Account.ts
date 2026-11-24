@@ -269,6 +269,13 @@ export class Account {
     accountPath: "44'/354'/2'/0'/0'",
   });
 
+  static readonly HYPERCORE_1 = new Account({
+    currency: Currency.HYPERCORE,
+    accountName: "Hyperliquid 1",
+    index: 0,
+    accountPath: "44'/60'/0'/0/0",
+  });
+
   static readonly ETH_1 = new Account({
     currency: Currency.ETH,
     accountName: "Ethereum 1",

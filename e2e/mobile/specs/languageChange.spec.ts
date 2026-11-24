@@ -71,7 +71,10 @@ describe("Settings", () => {
         l10n.characterSet,
       );
       for (const label of l10n.translatedLabels) {
-        await app.settingsGeneral.expectTranslatedRow(label.testId, label.text);
+        await app.settingsGeneral.expectTranslatedRow({
+          testId: label.testId,
+          expectedText: label.text,
+        });
       }
     });
   }

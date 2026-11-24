@@ -26,6 +26,10 @@ export class ModularDialog extends Dialog {
     return await this.validateAssetsDialogItems();
   }
 
+  async checkAssetSelectionVisible() {
+    return await this.assetDialog.checkAssetSelectionVisible();
+  }
+
   async selectAsset(currency: Currency) {
     return await this.selectAssetByTicker(currency);
   }

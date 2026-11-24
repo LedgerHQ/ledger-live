@@ -7,7 +7,13 @@ import {
   getAccountSpendableBalance,
   getFeesCurrency,
 } from ".";
-import { isAccountEmpty, clearAccount, areAllOperationsLoaded } from "./helpers";
+import {
+  isAccountEmpty,
+  clearAccount,
+  areAllOperationsLoaded,
+  makeEmptyTokenAccount,
+  accountWithMandatoryTokens,
+} from "./helpers";
 
 const mockAccount = {} as Account;
 const tokenAccount = {
@@ -246,5 +252,24 @@ describe(areAllOperationsLoaded.name, () => {
         expect(areAllOperationsLoaded(mockAccount)).toEqual(true);
       });
     });
+  });
+});
+
+describe("token accounts created with a zero default balance row", () => {
+  const token = { id: "tok", parentCurrencyId: "ethereum" } as TokenCurrency;
+  const parent = {
+    type: "Account",
+    id: "js:2:ethereum:0x:",
+    currency: { id: "ethereum" },
+    subAccounts: [],
+  } as unknown as Account;
+
+  it("makeEmptyTokenAccount carries the row", () => {
+    expect(makeEmptyTokenAccount(parent, token).balances).toEqual([{ value: new BigNumber(0) }]);
+  });
+
+  it("accountWithMandatoryTokens carries the row on the added token accounts", () => {
+    const res = accountWithMandatoryTokens(parent, [token]);
+    expect(res.subAccounts?.[0].balances).toEqual([{ value: new BigNumber(0) }]);
   });
 });

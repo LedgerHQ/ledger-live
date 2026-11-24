@@ -348,13 +348,31 @@ function matchesFile(filePath, matcher) {
 
 const TEST_CALL = /(?<![.\w$])test(?:\.(?:only|skip|fixme|fail))?\s*\(\s*(`[^`]*`|"|'|[A-Za-z_$])/g;
 const DECLARES_TESTS = /(?<![.\w$])test(?:\.(?:only|skip|fixme|fail|describe))?\s*\(/;
-const REPEATS_CODE = /\b(?:for|while)\s*\(|\.(?:forEach|map|flatMap|reduce)\(|\bArray\.from\(/;
-const ALIASES_TEST = /\btest\s+as\s+\w|=\s*test\s*[;,)\n]/;
-// A named function can declare tests and be called more than once.
-const NAMED_FUNCTION =
-  /\bfunction\s*\*?\s*\w+\s*\(|\b(?:const|let|var)\s+\w+\s*=\s*(?:async\s+)?(?:function\b|\([^)]*\)\s*=>|\w+\s*=>)/;
+const REPEATS_CODE =
+  /\bfor\s*(?:await\s*)?\(|\bwhile\s*\(|\.\s*(?:forEach|map|flatMap|reduce(?:Right)?|filter|some|every|find(?:Last)?(?:Index)?)\s*\(|\bArray\s*\.\s*from\s*\(/;
+const ALIASES_TEST = /\btest\s+as\s+\w|=\s*test\s*(?:[;,)\n]|\.\s*extend\b)/;
 
-const withoutComments = text => text.replace(/\/\*[^]*?\*\/|\/\/[^\n]*/g, "");
+// A named function can declare tests and be called more than once.
+const PARAMS = String.raw`(?:<[^>]*>\s*)?\([^()]*(?:\([^()]*\)[^()]*)*\)`;
+const RETURN_TYPE = String.raw`(?:\s*:\s*[^=;{}()]+?)?`;
+// The flat `\([^)]*\)` form still catches a default such as `(prefix = "(") =>` that PARAMS misreads.
+const ARROW_OR_FUNCTION = String.raw`(?:async\s+)?(?:function\b|${PARAMS}${RETURN_TYPE}\s*=>|\([^)]*\)${RETURN_TYPE}\s*=>|\w+\s*=>)`;
+const NAMED_FUNCTION = new RegExp(
+  [
+    String.raw`\bfunction\s*\*?\s*\w+\s*[<(]`,
+    String.raw`\b(?:const|let|var)\s+\w+\s*(?::[^=]+)?=\s*${ARROW_OR_FUNCTION}`,
+    String.raw`\b\w+\s*:\s*${ARROW_OR_FUNCTION}`,
+    String.raw`^\s*(?:(?:public|private|protected|static|async)\s+)*\*?\s*(?!(?:if|for|while|switch|catch|with|return|function)\b)\w+\s*${PARAMS}${RETURN_TYPE}\s*\{`,
+  ].join("|"),
+  "m",
+);
+
+// Strings are matched first so that "https://…" or "specs/*.json" never opens a comment.
+const withoutComments = text =>
+  text.replace(
+    /("(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|`(?:\\.|[^`\\])*`)|\/\*[^]*?\*\/|\/\/[^\n]*/g,
+    (match, string) => string ?? "",
+  );
 
 // null unless every test() in the file has a literal title and runs exactly once.
 function countLiteralTests(filePath) {

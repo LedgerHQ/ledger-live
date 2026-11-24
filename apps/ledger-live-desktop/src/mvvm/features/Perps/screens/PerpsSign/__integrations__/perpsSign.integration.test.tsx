@@ -23,6 +23,7 @@ jest.mock("LLD/features/Send/screens/Signature/components/SimplifiedTransactionC
 const perpsSignData = {
   appName: "Hyperliquid",
   signFactory: jest.fn().mockResolvedValue({ signatures: [] }),
+  signOnSession: jest.fn().mockResolvedValue({ signatures: [] }),
   onSuccess: jest.fn(),
   onError: jest.fn(),
   onCancel: jest.fn(),
@@ -45,5 +46,30 @@ describe("PerpsSign integration", () => {
     render(<PerpsSignRoot />);
 
     expect(screen.queryByTestId("device-action")).not.toBeInTheDocument();
+  });
+
+  it("should reset to DeviceAction and cancel the previous request when replaced mid-sign", async () => {
+    const first = {
+      ...perpsSignData,
+      signFactory: jest.fn(() => new Promise<never>(() => {})),
+      onCancel: jest.fn(),
+    };
+    const second = {
+      ...perpsSignData,
+      signFactory: jest.fn().mockResolvedValue({ signatures: [] }),
+      onCancel: jest.fn(),
+    };
+    const { user } = render(<PerpsSignRoot />);
+
+    act(() => openPerpsSign(first));
+    await user.click(screen.getByTestId("device-action"));
+    expect(screen.getByTestId("sign-confirm")).toBeVisible();
+    expect(first.signFactory).toHaveBeenCalledTimes(1);
+
+    act(() => openPerpsSign(second));
+
+    expect(first.onCancel).toHaveBeenCalled();
+    expect(second.signFactory).not.toHaveBeenCalled();
+    expect(screen.getByTestId("device-action")).toBeVisible();
   });
 });

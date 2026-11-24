@@ -32,7 +32,21 @@ export function step<This extends HasConstructor, Args extends unknown[], Return
       const ctorName = this.constructor.name;
 
       const name = message
-        ? message.replace(/\$(\d+)/g, (_, idx) => String(args[Number(idx)]))
+        ? message.replace(/\$(\d+|[A-Za-z_]\w*)/g, (placeholder, key: string) => {
+            if (/^\d+$/.test(key)) return String(args[Number(key)]);
+            const value: unknown = Object.hasOwn(this, key) ? Reflect.get(this, key) : undefined;
+            if (
+              typeof value === "string" ||
+              typeof value === "number" ||
+              typeof value === "boolean"
+            ) {
+              return String(value);
+            }
+            console.warn(
+              `@step "${message}": "${key}" is not a string, number or boolean field on ${ctorName}`,
+            );
+            return placeholder;
+          })
         : `${ctorName}.${String(context.name)}`;
 
       try {

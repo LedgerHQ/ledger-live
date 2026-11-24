@@ -25,7 +25,6 @@ import {
 import { Information } from "@ledgerhq/lumen-ui-rnative/symbols";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
-import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account } from "@ledgerhq/types-live";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
 import { isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
@@ -35,8 +34,14 @@ import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
-import { OWNER_RESERVE } from "../utils";
+import { type DeleteBlocker, getDeleteBlocker, OWNER_RESERVE } from "../utils";
+import DeleteTokenSheets from "./DeleteTokenSheets";
 import { type Props, useIssuerFeeText, useManageTokenViewModel } from "./useManageTokenViewModel";
+
+const BLOCKER_KEYS: Record<DeleteBlocker, string> = {
+  pending: "xrp.manageAssets.removalPending",
+  frozen: "xrp.manageAssets.frozen",
+};
 
 function Row(
   props: Readonly<{
@@ -77,41 +82,6 @@ function Row(
   );
 }
 
-// CryptoIcon only draws a round network badge: Figma wants Lumen's square DotSymbol
-function TokenIcon(
-  props: Readonly<{ token: TokenCurrency; networkId: string; networkTicker: string }>,
-) {
-  const styles = useStyleSheet(
-    theme => ({
-      badge: {
-        position: "absolute",
-        right: -3,
-        bottom: -3,
-        borderRadius: 5,
-        borderWidth: 1,
-        overflow: "hidden",
-        borderColor: theme.colors.border.baseInverted,
-        backgroundColor: theme.colors.bg.muted,
-      },
-    }),
-    [],
-  );
-
-  return (
-    <Box lx={{ position: "relative" }}>
-      <CryptoIcon ledgerId={props.token.id} ticker={props.token.ticker} size={40} />
-      <Box style={styles.badge}>
-        <CryptoIcon
-          ledgerId={props.networkId}
-          ticker={props.networkTicker}
-          size={16}
-          shape="square"
-        />
-      </Box>
-    </Box>
-  );
-}
-
 function WithSeparator(props: Readonly<{ children: React.ReactNode }>) {
   return (
     <>
@@ -121,7 +91,52 @@ function WithSeparator(props: Readonly<{ children: React.ReactNode }>) {
   );
 }
 
-function TokenCard(props: Readonly<{ account: Account; tokenAccount: XrpTokenAccount }>) {
+// A disabled button takes no press: the trigger around it shows why it is disabled
+function DeleteButton(
+  props: Readonly<{
+    tokenId: string;
+    blocker?: DeleteBlocker;
+    onPress: () => void;
+  }>,
+) {
+  const { t } = useTranslation();
+
+  const testID = `xrp-manage-asset-delete-${props.tokenId}`;
+  const label = t("xrp.manageAssets.delete");
+
+  if (!props.blocker) {
+    return (
+      <Button appearance="base" size="sm" lx={{ flex: 1 }} onPress={props.onPress} testID={testID}>
+        {label}
+      </Button>
+    );
+  }
+
+  return (
+    <Tooltip>
+      <TooltipTrigger style={{ flex: 1 }} testID={`${testID}-reason`}>
+        <Button appearance="base" size="sm" isFull disabled testID={testID}>
+          {label}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent
+        content={
+          <Text typography="body1" lx={{ color: "base" }}>
+            {t(BLOCKER_KEYS[props.blocker])}
+          </Text>
+        }
+      />
+    </Tooltip>
+  );
+}
+
+function TokenCard(
+  props: Readonly<{
+    account: Account;
+    tokenAccount: XrpTokenAccount;
+    onDelete: (tokenAccount: XrpTokenAccount) => void;
+  }>,
+) {
   const { t } = useTranslation();
 
   const { token, xrpResources } = props.tokenAccount;
@@ -141,7 +156,7 @@ function TokenCard(props: Readonly<{ account: Account; tokenAccount: XrpTokenAcc
     <Card type="info" testID={`xrp-manage-asset-${token.id}`}>
       <CardHeader>
         <CardLeading>
-          <TokenIcon token={token} networkId={networkId} networkTicker={currency.ticker} />
+          <CryptoIcon ledgerId={token.id} ticker={token.ticker} network={networkId} size={40} />
           <CardContent>
             <CardContentTitle>{token.name}</CardContentTitle>
             <CardContentDescription>
@@ -201,15 +216,11 @@ function TokenCard(props: Readonly<{ account: Account; tokenAccount: XrpTokenAcc
               {t("xrp.manageAssets.edit")}
             </Button>
           ) : null}
-          <Button
-            appearance="base"
-            size="sm"
-            lx={{ flex: 1 }}
-            disabled
-            testID={`xrp-manage-asset-delete-${token.id}`}
-          >
-            {t("xrp.manageAssets.delete")}
-          </Button>
+          <DeleteButton
+            tokenId={token.id}
+            blocker={getDeleteBlocker(props.account, props.tokenAccount)}
+            onPress={() => props.onDelete(props.tokenAccount)}
+          />
         </CardFooterActions>
       </CardFooter>
     </Card>
@@ -224,7 +235,8 @@ export default function ManageToken(props: Props) {
     [],
   );
 
-  const { account, tokenAccounts } = useManageTokenViewModel(props);
+  const viewModel = useManageTokenViewModel(props);
+  const { account, tokenAccounts, deleting } = viewModel;
   if (!account) return null;
 
   return (
@@ -240,10 +252,24 @@ export default function ManageToken(props: Props) {
           </Text>
         ) : (
           tokenAccounts.map(tokenAccount => (
-            <TokenCard key={tokenAccount.id} account={account} tokenAccount={tokenAccount} />
+            <TokenCard
+              key={tokenAccount.id}
+              account={account}
+              tokenAccount={tokenAccount}
+              onDelete={viewModel.onDelete}
+            />
           ))
         )}
       </ScrollView>
+      {deleting ? (
+        <DeleteTokenSheets
+          key={deleting.id}
+          account={account}
+          tokenAccount={deleting}
+          onSuccess={viewModel.onDeleteSuccess}
+          onDone={viewModel.onDeleteDone}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }

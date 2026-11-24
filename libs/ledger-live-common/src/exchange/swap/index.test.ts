@@ -16,6 +16,12 @@ describe("swap/index", () => {
       expect(result).toBe(false);
     });
 
+    test("should return false for an expired swap", () => {
+      const result = isSwapOperationPending("expired");
+
+      expect(result).toBe(false);
+    });
+
     test("should return true for other status", () => {
       const result = isSwapOperationPending("RANDOM_STATUS");
 

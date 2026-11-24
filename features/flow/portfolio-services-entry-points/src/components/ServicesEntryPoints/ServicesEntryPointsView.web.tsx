@@ -32,7 +32,11 @@ function ServiceCard({ service, onOpenService }: ServiceCardProps) {
   }
 
   return (
-    <Card className="flex-1" onClick={handleClick}>
+    <Card
+      className="flex-1"
+      onClick={handleClick}
+      data-testid={`portfolio-services-entry-point-${service}`}
+    >
       <CardHeader>
         <CardLeading className="flex-none flex-col items-start gap-8">
           <Spot icon={ICONS[service]} />

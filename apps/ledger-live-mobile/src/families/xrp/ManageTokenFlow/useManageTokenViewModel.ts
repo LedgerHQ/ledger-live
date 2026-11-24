@@ -1,4 +1,6 @@
+import { useCallback, useState } from "react";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
 import { useGetIssuerFeeQuery } from "@ledgerhq/live-common/families/xrp/state-manager/api";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -22,9 +24,20 @@ export function useIssuerFeeText(token: TokenCurrency): string | undefined {
   return formatIssuerFee(issuerFee.data, locale);
 }
 
-export function useManageTokenViewModel(props: Props) {
-  const { account } = useAccountScreen(props.route);
-  if (account?.type !== "Account") return { account: undefined, tokenAccounts: [] };
+export function useManageTokenViewModel({ navigation, route }: Props) {
+  const { account: screenAccount } = useAccountScreen(route);
+  const [deleting, setDeleting] = useState<XrpTokenAccount>();
+  const onDeleteDone = useCallback(() => setDeleting(undefined), []);
+  const onDeleteSuccess = useCallback(() => navigation.goBack(), [navigation]);
 
-  return { account, tokenAccounts: getManageableTokenAccounts(account) };
+  const account = screenAccount?.type === "Account" ? screenAccount : undefined;
+
+  return {
+    account,
+    deleting,
+    onDeleteDone,
+    onDeleteSuccess,
+    tokenAccounts: account ? getManageableTokenAccounts(account) : [],
+    onDelete: setDeleting,
+  };
 }
