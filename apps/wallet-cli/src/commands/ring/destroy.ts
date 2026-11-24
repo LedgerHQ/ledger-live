@@ -18,6 +18,8 @@ import {
 import { createLkrpSdk } from "../../key-ring/lkrp-sdk";
 import { deriveWrappingKey } from "../../key-ring/crypto";
 import { promptHidden } from "../../key-ring/prompt";
+import { canAskToConfirm } from "../../agent-intent/confirm-prompt";
+import { CliProcessExitError } from "../../cli-process-exit-error";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { createCommandOutput, type CommandOutput } from "../../output";
 import {
@@ -28,8 +30,13 @@ import {
 
 async function confirmDestroy(): Promise<boolean> {
   const rl = createInterface({ input: process.stdin, output: process.stderr });
-  const answer = await new Promise<string | null>(resolve => {
-    rl.on("close", () => resolve(null));
+  const answer = await new Promise<string | null>((resolve, reject) => {
+    rl.once("close", () => resolve(null));
+    rl.once("SIGINT", () => {
+      process.stderr.write("\n");
+      reject(new CliProcessExitError(130));
+      rl.close();
+    });
     rl.once("line", line => {
       resolve(line.trim());
       rl.close();
@@ -40,7 +47,7 @@ async function confirmDestroy(): Promise<boolean> {
   if (answer !== null) return answer === "destroy";
 
   process.stderr.write("\n");
-  const declinedAtTerminal = process.stdin.isTTY === true;
+  const declinedAtTerminal = canAskToConfirm();
   if (declinedAtTerminal) return false;
   throw new Error(
     'No confirmation received: stdin ended before "destroy" was typed. Nothing was changed. ' +

@@ -17,6 +17,7 @@ import { pointStateHomeAt } from "../../testing/state-home";
 import { ETH_DESCRIPTOR } from "../../testing/constants";
 import { makeAuthenticatedQuoteServer } from "../../testing/authenticated-quote-server";
 import { InMemoryKeychain } from "../../testing/in-memory-keychain";
+import { CLEAR_AGENTS } from "../../testing/agent-env";
 import { resetTestSeams } from "../../shared/test-seam";
 
 function runCliWithStdin(
@@ -42,25 +43,38 @@ function runCliWithStdinText(
   });
 }
 
-async function runCliPressingKeyAtTerminal(
+/**
+ * Runs the CLI for a person at a terminal (stdin and stderr are terminals, no AI agent) unless the
+ * options or `env` say otherwise. `transcript` holds stdout and what reached the terminal.
+ */
+async function runCliAtTerminal(
   args: string[],
   env: Record<string, string>,
-  key: string,
-): Promise<RunResult> {
+  type: (stdin: PassThrough) => void,
+  { stdinIsTTY = true, stderrIsTTY = true } = {},
+): Promise<RunResult & { transcript: string }> {
   const stdinDesc = Object.getOwnPropertyDescriptor(process, "stdin");
   const stderrIsTTYDesc = Object.getOwnPropertyDescriptor(process.stderr, "isTTY");
   const stderrWrite = process.stderr.write;
-  const terminalStdin = Object.assign(new PassThrough(), { isTTY: true });
+  const terminalOutput: string[] = [];
+  const terminalStdin = Object.assign(new PassThrough(), { isTTY: stdinIsTTY });
   Object.defineProperty(process, "stdin", { get: () => terminalStdin, configurable: true });
   // readline only parses key presses when its output is a terminal.
-  Object.defineProperty(process.stderr, "isTTY", { value: true, configurable: true });
-  process.stderr.write = (() => true) as typeof process.stderr.write;
+  Object.defineProperty(process.stderr, "isTTY", { value: stderrIsTTY, configurable: true });
+  process.stderr.write = ((chunk: string | Uint8Array) => {
+    terminalOutput.push(Buffer.from(chunk).toString());
+    return true;
+  }) as typeof process.stderr.write;
   try {
-    const result = runCli(args, env);
-    terminalStdin.write(key);
-    return await result;
+    const pending = runCli(args, { ...CLEAR_AGENTS, ...env });
+    type(terminalStdin);
+    const result = await pending;
+    return {
+      ...result,
+      transcript: `stdout: ${result.stdout}\nterminal: ${terminalOutput.join("")}`,
+    };
   } finally {
-    terminalStdin.end();
+    if (!terminalStdin.writableEnded) terminalStdin.end();
     process.stderr.write = stderrWrite;
     if (stderrIsTTYDesc) Object.defineProperty(process.stderr, "isTTY", stderrIsTTYDesc);
     else delete (process.stderr as { isTTY?: boolean }).isTTY;
@@ -859,15 +873,43 @@ describe("ring destroy — confirmation prompt", () => {
     expect([..._store.values()]).toHaveLength(0);
   });
 
-  it.each([
-    ["Ctrl-C", "\x03"],
-    ["Ctrl-D", "\x04"],
-  ])("cancels on %s at a terminal", async (keyName, key) => {
+  it("exits 130 without changing anything on Ctrl-C at a terminal", async () => {
     await seedInitializedRing(dir);
 
-    const r = await runCliPressingKeyAtTerminal(["ring", "destroy", "--output", "json"], env, key);
-    expect(r.exitCode, `${keyName}: ${r.stdout}`).toBe(0);
+    const r = await runCliAtTerminal(["ring", "destroy", "--output", "json"], env, stdin =>
+      stdin.write("\x03"),
+    );
+    expect(r.exitCode, r.transcript).toBe(130);
+    expect(r.stdout).toBe("");
+    expect([..._store.values()]).toHaveLength(1);
+  });
+
+  it("cancels on Ctrl-D at a terminal", async () => {
+    await seedInitializedRing(dir);
+
+    const r = await runCliAtTerminal(["ring", "destroy", "--output", "json"], env, stdin =>
+      stdin.write("\x04"),
+    );
+    expect(r.exitCode, r.transcript).toBe(0);
     expect(JSON.parse(r.stdout)).toMatchObject({ cancelled: true });
+    expect([..._store.values()]).toHaveLength(1);
+  });
+
+  it.each([
+    ["stderr is redirected", {}, { stderrIsTTY: false }],
+    ["stdin is piped", {}, { stdinIsTTY: false }],
+    ["an AI agent runs it", { CLAUDECODE: "1" }, {}],
+  ])("fails when stdin ends and %s", async (situation, agentEnv, terminal) => {
+    await seedInitializedRing(dir);
+
+    const r = await runCliAtTerminal(
+      ["ring", "destroy", "--output", "json"],
+      { ...env, ...agentEnv },
+      stdin => stdin.end(),
+      terminal,
+    );
+    expect(r.exitCode, `${situation}: ${r.transcript}`).toBe(1);
+    expect(r.stdout).toMatch(/no confirmation received/i);
     expect([..._store.values()]).toHaveLength(1);
   });
 
