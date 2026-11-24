@@ -10,15 +10,16 @@ legacy Settings stay in the apps, untouched, until the flag reaches 100%.
 The sections come with the next tickets of the
 [Settings 4.0 epic](https://ledgerhq.atlassian.net/browse/LIVE-41813).
 
-## Sections
+## Page and rows
 
-| Export                   | Entry | Purpose                                                       |
-| ------------------------ | ----- | ------------------------------------------------------------- |
-| `SettingsSection`        | `.`   | Block of rows with an optional title                          |
-| `SettingsRow`            | `.`   | Icon, title, description with an optional link, and a trailing element |
-| `SETTINGS_SECTIONS`      | `.`   | General, Asset management, Security, Privacy, About           |
-| `resolveSettingsSection` | `.`   | Turns an address segment into a section, General when unknown |
-| `useSettingsLabels`      | `.`   | Page title and section names                                  |
+| Export                   | Entry  | Purpose                                                                 |
+| ------------------------ | ------ | ----------------------------------------------------------------------- |
+| `SettingsPage`           | `/web` | Desktop page: title and one tab per section; the app renders the content |
+| `SettingsSection`        | `.`    | Block of rows with an optional title                                    |
+| `SettingsRow`            | `.`    | Icon, title, description with an optional link, and a trailing element  |
+| `SETTINGS_SECTIONS`      | `.`    | General, Asset management, Security, Privacy, About                     |
+| `resolveSettingsSection` | `.`    | Turns an address segment into a section, General when unknown           |
+| `useSettingsLabels`      | `.`    | Page title and section names                                            |
 
 A row's trailing element is a chevron, an external link, a toggle, a value, a select or a button.
 On mobile, the select shows the current value; the picker comes with the mobile screens.
