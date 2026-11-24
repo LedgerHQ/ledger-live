@@ -87,7 +87,7 @@ describe("useAccountStatusToolProps", () => {
   it("reads an asset typed in: its gate, and the receive gate with the account's", async () => {
     const result = setup({
       account: { used: true, gate: null },
-      assets: { [USDC]: { gate: { type: "activation", method: "trustline" } } },
+      assets: { [USDC]: { gate: { type: "activation" } } },
     });
     act(() => result.current.onRead(stellarUUID));
     await waitFor(() => expect(result.current.accounts[0].used).toBe(true));
@@ -96,8 +96,8 @@ describe("useAccountStatusToolProps", () => {
     expect(result.current.accounts[0].assets).toEqual([
       expect.objectContaining({
         assetId: USDC,
-        gate: "activation · trustline",
-        receiveGate: "activation · trustline",
+        gate: "activation",
+        receiveGate: "activation",
         sourceId: "controlled",
       }),
     ]);

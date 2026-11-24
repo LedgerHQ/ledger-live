@@ -7,11 +7,11 @@ const { getAccountsByPublicKey } = jest.requireMock("../../network/proxyClient")
 const config = {} as ConcordiumCoinConfig;
 
 describe("getAccountStatus", () => {
-  it("is onboarded and used once the public key has an account on chain", async () => {
+  it("is activated and used once the public key has an account on chain", async () => {
     getAccountsByPublicKey.mockResolvedValue([{ address: "3abc" }]);
     await expect(getAccountStatus(config, "concordium", "ab")).resolves.toEqual({
+      activated: true,
       used: true,
-      isOnboarded: true,
     });
     expect(getAccountsByPublicKey).toHaveBeenCalledWith(config, "concordium", "ab", undefined);
   });
@@ -19,8 +19,8 @@ describe("getAccountStatus", () => {
   it("is neither without an account on chain", async () => {
     getAccountsByPublicKey.mockResolvedValue([]);
     await expect(getAccountStatus(config, "concordium", "ab")).resolves.toEqual({
+      activated: false,
       used: false,
-      isOnboarded: false,
     });
   });
 

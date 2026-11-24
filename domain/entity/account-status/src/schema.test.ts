@@ -49,23 +49,13 @@ describe("AssetStatusSchema", () => {
     expect(AssetStatusSchema.parse(mockAssetStatus())).toEqual({ gate: null });
   });
 
-  it.each(["association", "optIn", "trustline", "authorize"] as const)(
-    "should accept an asset activated by %s",
-    method => {
-      expect(mockAssetStatus({ gate: { type: "activation", method } })).toMatchObject({
-        gate: { method },
-      });
-    },
-  );
+  it("should accept the activation gate", () => {
+    const gate = { type: "activation" } as const;
+    expect(mockAssetStatus({ gate })).toEqual({ gate });
+  });
 
   it("should reject a gate other than an activation", () => {
     expect(AssetStatusSchema.safeParse({ gate: { type: "unknown" } }).success).toBe(false);
-  });
-
-  it("should reject an unknown activation method", () => {
-    expect(
-      AssetStatusSchema.safeParse({ gate: { type: "activation", method: "airdrop" } }).success,
-    ).toBe(false);
   });
 
   it("should reject a status that leaves the asset gate out", () => {
@@ -77,7 +67,7 @@ describe("AccountAssetStatusSchema", () => {
   it("should accept the status of a token", () => {
     const read = {
       assetId: "hedera/hts/usdc_0.0.456858",
-      status: mockAssetStatus({ gate: { type: "activation", method: "association" } }),
+      status: mockAssetStatus({ gate: { type: "activation" } }),
     };
     expect(AccountAssetStatusSchema.parse(read)).toEqual(read);
   });

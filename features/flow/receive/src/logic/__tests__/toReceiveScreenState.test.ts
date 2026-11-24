@@ -9,7 +9,7 @@ const failed: ReceiveKindRead<never> = { data: undefined, failed: true };
 const receive = mockAccountReceive();
 const used = mockAccountStatus();
 const onboarding = mockAccountStatus({ used: false, gate: { type: "onboarding" } });
-const optIn = mockAssetStatus({ gate: { type: "activation", method: "optIn" } });
+const toActivate = mockAssetStatus({ gate: { type: "activation" } });
 
 describe("toReceiveScreenState", () => {
   it("should be ready once the native coin's receive and account status are read", () => {
@@ -53,14 +53,14 @@ describe("toReceiveScreenState", () => {
     });
   });
 
-  it("should ask to activate the token with the method of its gate", () => {
+  it("should ask to activate the token behind an activation gate", () => {
     expect(
       toReceiveScreenState({
         receive: loaded(receive),
         accountStatus: loaded(used),
-        assetStatus: loaded(optIn),
+        assetStatus: loaded(toActivate),
       }),
-    ).toEqual({ type: "activationRequired", method: "optIn" });
+    ).toEqual({ type: "activationRequired" });
   });
 
   it.each([

@@ -50,10 +50,12 @@ export type CoinModuleOperationsApi = CoinModuleTokenResolver & {
   ): Promise<CoinModuleOperationsPage>;
 };
 
+/** Coin-modules ADR-079: a missing field is unknown. */
 export type CoinModuleAccountStatus = {
-  used: boolean;
-  /** Only on chains with onboarding. */
-  isOnboarded?: boolean;
+  /** Activated on its network, so it can receive and send; only on chains that need it, and it can be lost. */
+  activated?: boolean;
+  /** Ever used: a transaction, or a balance of any asset. */
+  used?: boolean;
 };
 
 export type CoinModuleAccountStatusApi = {

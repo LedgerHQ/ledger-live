@@ -31,7 +31,7 @@ const usdc = CryptoOrTokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin");
 const onboarding = mockAccountStatus({ used: false, gate: { type: "onboarding" } });
 const ready = mockAccountStatus();
 const held = mockAssetStatus();
-const trustline = mockAssetStatus({ gate: { type: "activation", method: "trustline" } });
+const toActivate = mockAssetStatus({ gate: { type: "activation" } });
 
 const reduce = (...actions: Parameters<typeof accountStatusSlice.reducer>[1][]) =>
   actions.reduce<AccountStatusState>(accountStatusSlice.reducer, initialAccountStatusState);
@@ -75,8 +75,8 @@ describe("accountStatusSlice", () => {
   });
 
   it("should store an asset status without the account status", () => {
-    expect(reduce(assetRead(trustline, { assetId: usdc }))[accountUUID]).toEqual({
-      assets: { [usdc]: { revision: 0, status: trustline } },
+    expect(reduce(assetRead(toActivate, { assetId: usdc }))[accountUUID]).toEqual({
+      assets: { [usdc]: { revision: 0, status: toActivate } },
     });
   });
 
@@ -84,13 +84,13 @@ describe("accountStatusSlice", () => {
     const state = reduce(
       accountRead(ready),
       assetRead(held),
-      assetRead(trustline, { assetId: usdc }),
+      assetRead(toActivate, { assetId: usdc }),
     );
     expect(state[accountUUID]).toEqual({
       account: { revision: 0, status: ready },
       assets: {
         [ethereum]: { revision: 0, status: held },
-        [usdc]: { revision: 0, status: trustline },
+        [usdc]: { revision: 0, status: toActivate },
       },
     });
   });
@@ -110,7 +110,7 @@ describe("accountStatusSlice", () => {
   });
 
   it("should keep the newer asset status when an older answer arrives", () => {
-    const state = reduce(assetRead(held, { revision: 2 }), assetRead(trustline, { revision: 1 }));
+    const state = reduce(assetRead(held, { revision: 2 }), assetRead(toActivate, { revision: 1 }));
     expect(state[accountUUID]?.assets[ethereum]).toEqual({ revision: 2, status: held });
   });
 
