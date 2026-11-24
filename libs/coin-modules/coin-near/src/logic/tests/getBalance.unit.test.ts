@@ -32,9 +32,15 @@ const accountShape = ({
   reserve?: BigNumber;
   positions?: Position[];
 }) => {
-  const staked = positions.reduce((acc, p) => acc.plus(p.staked), new BigNumber(0));
-  const available = positions.reduce((acc, p) => acc.plus(p.available), new BigNumber(0));
-  const pending = positions.reduce((acc, p) => acc.plus(p.pending), new BigNumber(0));
+  // Like `getStakingPositions`, the totals leave out each bucket below the staking threshold.
+  const sumAbove = (pick: (p: Position) => BigNumber) =>
+    positions.reduce(
+      (acc, p) => (pick(p).gte(getYoctoThreshold()) ? acc.plus(pick(p)) : acc),
+      new BigNumber(0),
+    );
+  const staked = sumAbove(p => p.staked);
+  const available = sumAbove(p => p.available);
+  const pending = sumAbove(p => p.pending);
 
   return {
     blockHeight: 140_000_000,
@@ -146,6 +152,22 @@ describe("getBalance", () => {
     expect(sum(balances, b => b.value) - sum(balances, b => b.locked ?? 0n)).toBe(
       BigInt(shape.spendableBalance.toFixed(0)),
     );
+  });
+
+  it("leaves pending dust out of both the entries and the account total", async () => {
+    const dust = getYoctoThreshold().minus(1);
+    const shape = accountShape({
+      amount: ONE_NEAR,
+      positions: [position({ staked: STAKED, pending: dust })],
+    });
+    (getAccount as jest.Mock).mockResolvedValue(shape);
+
+    const balances = await getBalance(mockNearContext, ADDRESS);
+
+    expect(balances.filter(b => b.stake !== undefined).map(b => b.stake!.state)).toEqual([
+      "active",
+    ]);
+    expect(sum(balances, b => b.value)).toBe(BigInt(shape.balance.toFixed(0)));
   });
 
   it("keeps a zero liquid entry first when every unit is in a pool", async () => {
