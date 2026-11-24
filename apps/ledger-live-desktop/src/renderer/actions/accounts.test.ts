@@ -32,7 +32,7 @@ function fakeTuple(
     derivationMode,
     name: `name-${id}`,
   } as unknown as Account;
-  const userData = { id, name: `custom-${id}`, starredIds: [] } as unknown as AccountUserData;
+  const userData = { id, name: `custom-${id}` } as AccountUserData;
   return [account, userData];
 }
 
@@ -50,7 +50,6 @@ function defaultNamedTuple(id: string, currencyId: string, index = 0): [Account,
   const userData = {
     id,
     name: getDefaultAccountName(account),
-    starredIds: [],
   } as unknown as AccountUserData;
   return [account, userData];
 }
@@ -122,7 +121,6 @@ describe("initAccounts with the persisted wallet state (LIVE-41517)", () => {
     const staleUserData = {
       id: account.id,
       name: getDefaultAccountName(account),
-      starredIds: [],
     } as unknown as AccountUserData;
     const walletState: ExportedWalletState = {
       ...exportWalletState({ wallet: walletInitialState, contacts: contactsInitialState }),

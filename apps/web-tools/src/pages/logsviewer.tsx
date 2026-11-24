@@ -708,7 +708,6 @@ function LogsDashboard({
             freshAddress: xpubOrAddress,
             freshAddressPath: "0'/0'/0'/0/0", // intentionally wrong, account not in possession
             name: currencyId + " " + shortAddressPreview(xpubOrAddress),
-            starred: true,
             balance: "0",
             blockHeight: 0,
             currencyId,
