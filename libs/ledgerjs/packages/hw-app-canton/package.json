@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-canton",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "Ledger Hardware Wallet Canton Application API",
   "keywords": [
     "Ledger",
@@ -45,7 +45,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "catalog:",
     "bip32-path": "^0.4.2",
-    "protobufjs": "8.4.1"
+    "protobufjs": "8.6.6"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "catalog:",

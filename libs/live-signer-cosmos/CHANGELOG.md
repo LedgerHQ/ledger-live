@@ -1,5 +1,19 @@
 # @ledgerhq/live-signer-cosmos
 
+## 0.6.7
+
+### Patch Changes
+
+- Updated dependencies [[`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0), [`a2a5926`](https://github.com/LedgerHQ/ledger-live/commit/a2a5926407deefc147511c80e786ec5298bd0f1c)]:
+  - @ledgerhq/coin-cosmos@4.0.0
+
+## 0.6.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0), [`a2a5926`](https://github.com/LedgerHQ/ledger-live/commit/a2a5926407deefc147511c80e786ec5298bd0f1c)]:
+  - @ledgerhq/coin-cosmos@4.0.0-next.0
+
 ## 0.6.6
 
 ### Patch Changes
@@ -185,19 +199,5 @@
 
 - Updated dependencies [[`147a290`](https://github.com/LedgerHQ/ledger-live/commit/147a2905d735eee5682d849b3e2c2cde5178f7bb), [`59ea8fb`](https://github.com/LedgerHQ/ledger-live/commit/59ea8fbd36754199f1c68ab53537460ca31c70b4)]:
   - @ledgerhq/coin-cosmos@1.2.0
-
-## 0.4.9-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`147a290`](https://github.com/LedgerHQ/ledger-live/commit/147a2905d735eee5682d849b3e2c2cde5178f7bb), [`59ea8fb`](https://github.com/LedgerHQ/ledger-live/commit/59ea8fbd36754199f1c68ab53537460ca31c70b4)]:
-  - @ledgerhq/coin-cosmos@1.2.0-next.0
-
-## 0.4.8
-
-### Patch Changes
-
-- Updated dependencies [[`beaaa31`](https://github.com/LedgerHQ/ledger-live/commit/beaaa315b5c4d4ccea8145f3a309ba557f961118)]:
-  - @ledgerhq/coin-cosmos@1.1.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

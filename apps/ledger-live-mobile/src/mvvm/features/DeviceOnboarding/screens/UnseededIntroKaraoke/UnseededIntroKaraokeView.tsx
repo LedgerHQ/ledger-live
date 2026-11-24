@@ -16,20 +16,23 @@ export function UnseededIntroKaraokeView({
   counterfeitWarning,
 }: UnseededIntroKaraokeViewProps) {
   return (
-    <Karaoke.Root phrases={phrases} tapLabel={tapLabel} testID={unseededIntroKaraokeTestIds.screen}>
-      <Karaoke.Sequence
-        action={
-          <Button
-            appearance="base"
-            size="lg"
-            isFull
-            testID={unseededIntroKaraokeTestIds.action}
-            onPress={onAction}
-          >
-            {actionLabel}
-          </Button>
-        }
-      />
+    <Karaoke.Root
+      phrases={phrases}
+      tapLabel={tapLabel}
+      testID={unseededIntroKaraokeTestIds.screen}
+      action={
+        <Button
+          appearance="base"
+          size="lg"
+          isFull
+          testID={unseededIntroKaraokeTestIds.action}
+          onPress={onAction}
+        >
+          {actionLabel}
+        </Button>
+      }
+    >
+      <Karaoke.Sequence />
       <DeviceOnboardingCloseBar
         label={closeLabel}
         testID={unseededIntroKaraokeTestIds.close}

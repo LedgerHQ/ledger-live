@@ -3,8 +3,14 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import type { Operation } from "@ledgerhq/types-live";
 import { xrpConfig } from "./config";
-import { enabledXrpTokenStandards, heldXrpTokenIds, standardOf } from "./tokenHolding";
+import {
+  enabledXrpTokenStandards,
+  hasPendingXrpTokenRemoval,
+  heldXrpTokenIds,
+  standardOf,
+} from "./tokenHolding";
 
 const ripple = getCryptoCurrencyById("ripple");
 
@@ -62,5 +68,43 @@ describe("heldXrpTokenIds", () => {
     expect(heldXrpTokenIds({ ...account, subAccounts: [held, removed] })).toEqual(
       new Set([iou.id]),
     );
+  });
+});
+
+describe("hasPendingXrpTokenRemoval", () => {
+  const account = genAccount("xrp", { currency: ripple });
+
+  const iouAsset = { assetReference: iou.tokenIdentifier, assetOwner: iou.contractAddress };
+
+  const removal: Operation = {
+    id: "op-opt-out",
+    hash: "",
+    type: "OPT_OUT",
+    value: new BigNumber(0),
+    fee: new BigNumber(12),
+    senders: [],
+    recipients: [],
+    blockHeight: null,
+    blockHash: null,
+    accountId: account.id,
+    date: new Date(),
+    extra: {},
+    transactionRaw: { amount: "0", recipient: "", ...iouAsset },
+  };
+
+  function withPending(operation: Operation) {
+    return { ...account, pendingOperations: [operation] };
+  }
+
+  it("finds a pending removal of the token", () => {
+    expect(hasPendingXrpTokenRemoval(withPending(removal), iou)).toBe(true);
+  });
+
+  it("ignores a pending removal of another token", () => {
+    expect(hasPendingXrpTokenRemoval(withPending(removal), mpt)).toBe(false);
+  });
+
+  it("ignores a pending operation that is not a removal", () => {
+    expect(hasPendingXrpTokenRemoval(withPending({ ...removal, type: "OPT_IN" }), iou)).toBe(false);
   });
 });

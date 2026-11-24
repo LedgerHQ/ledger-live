@@ -83,11 +83,6 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
     case "stakeAccountRent":
       dest.stakeAccountRent = isNumericLike(value) ? new BigNumber(value.toString()) : undefined;
       return;
-    case "memo":
-      // Fills a missing memo only: a memo set without memoType/memoValue is absent from the intent,
-      // so the coin module proposes its default again and would replace it.
-      if (typeof value === "string" && !dest.memo) dest.memo = value;
-      return;
     default:
       return;
   }
@@ -189,7 +184,9 @@ export function genericPrepareTransaction(
     // transaction the swap flow serialises with `JSON.stringify`, which throws on a raw bigint.
     const nextFeeParameters = feeParametersToJsonSafe(estimation.parameters);
 
-    const hasMemoToFill = typeof estimation.parameters?.memo === "string" && !transaction.memo;
+    const estimatedMemoValue = estimation.parameters?.memoValue;
+    const estimatedMemoType = estimation.parameters?.memoType;
+    const hasMemoToFill = typeof estimatedMemoValue === "string" && !transaction.memoValue;
 
     if (
       !hasMemoToFill &&
@@ -233,7 +230,6 @@ export function genericPrepareTransaction(
       "maxFeePerGas",
       "maxPriorityFeePerGas",
       "additionalFees",
-      "memo",
       // Slow/medium/fast presets produced by the coin-module: surfaced as-is
       // so the UI can render fee presets without ever fetching them itself.
       // Families that don't produce them leave this untouched.
@@ -248,6 +244,11 @@ export function genericPrepareTransaction(
 
     for (const field of fieldsToPropagate) {
       propagateField(estimation, field, next);
+    }
+
+    if (hasMemoToFill) {
+      next.memoValue = estimatedMemoValue;
+      if (typeof estimatedMemoType === "string") next.memoType = estimatedMemoType;
     }
 
     return next;

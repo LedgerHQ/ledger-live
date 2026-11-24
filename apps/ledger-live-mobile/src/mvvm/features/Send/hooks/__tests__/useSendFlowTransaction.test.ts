@@ -124,7 +124,6 @@ describe("useSendFlowTransaction", () => {
 
       expect(mockUpdateTransaction).toHaveBeenCalledWith(mockTransaction, {
         recipient: "cosmos1abc123",
-        memo: "test memo",
         memoType: "text",
         memoValue: "test memo",
       });

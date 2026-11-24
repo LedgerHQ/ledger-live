@@ -1,5 +1,6 @@
 import { zcashBalanceTypeConfig } from "./balanceType";
 import type { AccountLike } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { descriptor, getPrivacyAttributes, transparentOnlyDescriptor } from "./index";
 
 // Vectors shared with coin-zcash's `logic/address.test.ts`.
@@ -120,7 +121,7 @@ describe("zcash send descriptor", () => {
     const zcashAccount = (ufvk?: string): AccountLike =>
       ({
         type: "Account",
-        currency: { id: "zcash" },
+        currency: { id: "zcash", family: "zcash" },
         privateInfo: ufvk === undefined ? undefined : { ufvk },
       }) as unknown as AccountLike;
 
@@ -158,7 +159,7 @@ describe("zcash send descriptor", () => {
     const account = (currencyId: string, ufvk?: string): AccountLike =>
       ({
         type: "Account",
-        currency: { id: currencyId },
+        currency: getCryptoCurrencyById(currencyId),
         privateInfo: ufvk === undefined ? undefined : { ufvk },
       }) as unknown as AccountLike;
 

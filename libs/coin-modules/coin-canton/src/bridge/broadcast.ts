@@ -10,8 +10,5 @@ export const broadcast = async (
 ): Promise<Operation> => {
   const { operation, signature } = signedOperation;
   const hash = await broadcastLogic(getCurrencyContext(context, account.currency), signature);
-  if (!hash) {
-    throw new Error("canton: broadcast returned no transaction id");
-  }
   return patchOperationWithHash(operation, hash);
 };

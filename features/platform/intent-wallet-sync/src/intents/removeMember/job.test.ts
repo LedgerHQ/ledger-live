@@ -13,6 +13,7 @@ import type {
   TrustchainSDK,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { lastValueFrom } from "rxjs";
+import { createLedgerSyncResultOrder } from "../../ledgerSyncResultOrder";
 import type {
   LedgerSyncAwaitingDeviceConfirmationJobState,
   LedgerSyncCompletedJobState,
@@ -89,6 +90,7 @@ function createJob(removeMember: RemoveMember) {
       memberCredentials: MEMBER_CREDENTIALS,
       member: MEMBER,
       createSessionSdk: () => fakeTrustchainSdk({ removeMember }),
+      resultOrder: createLedgerSyncResultOrder(),
     },
     onResult,
   });
@@ -175,7 +177,7 @@ describe("removeMemberIntentJob", () => {
     expect(onResult).not.toHaveBeenCalled();
   });
 
-  it("should emit nothing after unsubscribe", async () => {
+  it("should emit no state but still report the result after unsubscribe", async () => {
     const deviceAnswer = createDeferred<Trustchain>();
     const removeMember = deviceCall(() => deviceAnswer.promise);
     const cancelled = startJob(removeMember);
@@ -190,6 +192,7 @@ describe("removeMemberIntentJob", () => {
 
     expect(witness.onResult).toHaveBeenCalledWith(ROTATED_TRUSTCHAIN);
     expect(cancelled.states).toEqual([PENDING, AWAITING]);
-    expect(cancelled.onResult).not.toHaveBeenCalled();
+    expect(cancelled.onResult).toHaveBeenCalledTimes(1);
+    expect(cancelled.onResult).toHaveBeenCalledWith(ROTATED_TRUSTCHAIN);
   });
 });

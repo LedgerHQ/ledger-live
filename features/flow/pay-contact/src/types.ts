@@ -28,8 +28,3 @@ export type ContactsTableLabels = Readonly<{
   viewContact: string;
   viewTransactions: string;
 }>;
-
-export type ContactRowViewModel = Readonly<{
-  contact: Contact;
-  transactionCount: number;
-}>;

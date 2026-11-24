@@ -213,3 +213,17 @@ export class InvalidParameterError extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+/**
+ * Raised when the `pools` / `private` filters of a max spendable request select no balance row the
+ * account can fund a transaction from: several pools at once (a transaction spends from one), an
+ * unknown pool, or a combination that matches no row.
+ */
+export class UnsupportedMaxSpendableFilter extends Error {
+  override name = "UnsupportedMaxSpendableFilter";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "UnsupportedMaxSpendableFilter");
+    if (fields) Object.assign(this, fields);
+  }
+}

@@ -1,30 +1,65 @@
 export type AmountScreenStackHeights = Readonly<{
-  viewportHeight: number;
+  availableHeight: number;
   amountHeight: number;
   feesHeight: number;
   quickActionsHeight: number;
 }>;
 
+export type AmountScreenCompactSavings = Readonly<{
+  keyboard: number;
+  amount: number;
+}>;
+
 export type AmountScreenStackLayout = Readonly<{
+  compact: boolean;
   scrollEnabled: boolean;
+  pinQuickActions: boolean;
 }>;
 
 type ResolveAmountScreenStackParams = Readonly<{
   requestedQuickActions: boolean;
   heights: AmountScreenStackHeights;
+  compact: boolean;
+  compactSavings: AmountScreenCompactSavings;
 }>;
+
+const UNMEASURED_LAYOUT: AmountScreenStackLayout = {
+  compact: false,
+  scrollEnabled: false,
+  pinQuickActions: false,
+};
 
 export function resolveAmountScreenStack({
   requestedQuickActions,
   heights,
+  compact,
+  compactSavings,
 }: ResolveAmountScreenStackParams): AmountScreenStackLayout {
-  const { viewportHeight, amountHeight, feesHeight, quickActionsHeight } = heights;
-  const hasStackMeasure = viewportHeight > 0 && amountHeight > 0 && feesHeight > 0;
-  const quickActionsContribute =
-    requestedQuickActions && quickActionsHeight > 0 ? quickActionsHeight : 0;
-  const stackedHeight = amountHeight + feesHeight + quickActionsContribute;
+  const { availableHeight, amountHeight, feesHeight, quickActionsHeight } = heights;
+  const hasStackMeasure = availableHeight > 0 && amountHeight > 0 && feesHeight > 0;
+  if (!hasStackMeasure) {
+    return UNMEASURED_LAYOUT;
+  }
+
+  const waitsForQuickActions = requestedQuickActions && quickActionsHeight === 0;
+  const visibleQuickActionsHeight = requestedQuickActions ? quickActionsHeight : 0;
+  const regularAvailableHeight = availableHeight - (compact ? compactSavings.keyboard : 0);
+  const regularAmountHeight = amountHeight + (compact ? compactSavings.amount : 0);
+  const nextCompact =
+    !waitsForQuickActions &&
+    regularAmountHeight + feesHeight + visibleQuickActionsHeight > regularAvailableHeight;
+
+  const nextAvailableHeight = regularAvailableHeight + (nextCompact ? compactSavings.keyboard : 0);
+  const contentHeight =
+    regularAmountHeight - (nextCompact ? compactSavings.amount : 0) + feesHeight;
+  const pinQuickActions =
+    requestedQuickActions &&
+    quickActionsHeight > 0 &&
+    contentHeight + quickActionsHeight > nextAvailableHeight;
 
   return {
-    scrollEnabled: hasStackMeasure && stackedHeight > viewportHeight,
+    compact: nextCompact,
+    scrollEnabled: pinQuickActions || contentHeight > nextAvailableHeight,
+    pinQuickActions,
   };
 }

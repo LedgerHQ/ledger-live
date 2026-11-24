@@ -1,5 +1,4 @@
 import type { TFunction } from "i18next";
-import type BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
@@ -8,11 +7,12 @@ import type { Step } from "~/renderer/components/Stepper";
 
 export type StepId = "token" | "settings" | "review" | "connectDevice" | "confirmation";
 
-export type TokenAction = "add" | "edit";
+export type TokenAction = "add" | "edit" | "remove";
 
 export const ACTION_I18N = {
   add: "xrp.addToken",
   edit: "xrp.tokenSettings",
+  remove: "xrp.removeToken",
 } as const satisfies Record<TokenAction, string>;
 
 export type StepProps = Readonly<{
@@ -36,7 +36,6 @@ export type StepProps = Readonly<{
   action: TokenAction;
   token: TokenCurrency | undefined;
   onChangeToken: (token: TokenCurrency | undefined | null) => void;
-  maxLimit: BigNumber | null;
   isRippling: boolean;
   onChangeRippling: (isRippling: boolean) => void;
   tokenAccount: TokenAccount | undefined;

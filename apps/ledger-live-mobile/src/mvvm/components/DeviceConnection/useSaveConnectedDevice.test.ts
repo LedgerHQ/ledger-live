@@ -5,7 +5,10 @@ import {
   DeviceModelId as DMKDeviceModelId,
   type ConnectedDevice,
 } from "@ledgerhq/device-management-kit";
+import { rnBleTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import { useSaveConnectedDevice } from "./useSaveConnectedDevice";
+
+const NOW = 1_700_000_000_000;
 
 function makeConnectedDevice(overrides: Partial<ConnectedDevice> = {}): ConnectedDevice {
   return {
@@ -14,12 +17,20 @@ function makeConnectedDevice(overrides: Partial<ConnectedDevice> = {}): Connecte
     modelId: DMKDeviceModelId.NANO_X,
     sessionId: "session-id",
     type: "BLE",
-    transport: "ble",
+    transport: rnBleTransportIdentifier,
     ...overrides,
   } as ConnectedDevice;
 }
 
 describe("useSaveConnectedDevice", () => {
+  beforeEach(() => {
+    jest.spyOn(Date, "now").mockReturnValue(NOW);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it("should save a wired device as the last connected device and a known device", () => {
     // GIVEN
     const { result, store } = renderHook(() => useSaveConnectedDevice());
@@ -41,25 +52,15 @@ describe("useSaveConnectedDevice", () => {
         name: "Ledger Nano X",
         deviceModelId: DeviceModelId.nanoX,
         transport: "hid",
+        lastUsedAt: NOW,
       },
     ]);
     expect(store.getState().ble.knownDevices).toEqual([]);
   });
 
-  it("should not add an unknown BLE device to the BLE known devices", () => {
+  it("should add an unknown BLE device to the BLE known devices", () => {
     // GIVEN
     const { result, store } = renderHook(() => useSaveConnectedDevice());
-
-    // WHEN
-    act(() => result.current(makeConnectedDevice()));
-
-    // THEN
-    expect(store.getState().ble.knownDevices).toEqual([]);
-  });
-
-  it("should add a new BLE device to the BLE known devices", () => {
-    // GIVEN
-    const { result, store } = renderHook(() => useSaveConnectedDevice({ isNewDevice: true }));
 
     // WHEN
     act(() => result.current(makeConnectedDevice()));
@@ -68,17 +69,6 @@ describe("useSaveConnectedDevice", () => {
     expect(store.getState().ble.knownDevices).toEqual([
       { id: "device-id", name: "Ledger Nano X", modelId: DeviceModelId.nanoX },
     ]);
-  });
-
-  it("should not add a new wired device to the BLE known devices", () => {
-    // GIVEN
-    const { result, store } = renderHook(() => useSaveConnectedDevice({ isNewDevice: true }));
-
-    // WHEN
-    act(() => result.current(makeConnectedDevice({ type: "USB", transport: "hid" })));
-
-    // THEN
-    expect(store.getState().ble.knownDevices).toEqual([]);
   });
 
   it("should update a BLE device that is already in the BLE known devices", () => {
@@ -108,7 +98,8 @@ describe("useSaveConnectedDevice", () => {
         id: "device-id",
         name: "Ledger Nano X",
         deviceModelId: DeviceModelId.nanoX,
-        transport: "ble",
+        transport: rnBleTransportIdentifier,
+        lastUsedAt: NOW,
       },
     ]);
     expect(store.getState().ble.knownDevices).toEqual([
@@ -117,6 +108,34 @@ describe("useSaveConnectedDevice", () => {
         name: "Ledger Nano X",
         modelId: DeviceModelId.nanoX,
       },
+    ]);
+  });
+
+  it("should replace the last use time of a known device with the time of the new connection", () => {
+    // GIVEN
+    const { result, store } = renderHook(() => useSaveConnectedDevice(), {
+      overrideInitialState: (state: State): State => ({
+        ...state,
+        knownDevices: {
+          knownDevices: [
+            {
+              id: "device-id",
+              name: "Ledger Nano X",
+              deviceModelId: DeviceModelId.nanoX,
+              transport: rnBleTransportIdentifier,
+              lastUsedAt: NOW - 1000,
+            },
+          ],
+        },
+      }),
+    });
+
+    // WHEN
+    act(() => result.current(makeConnectedDevice()));
+
+    // THEN
+    expect(store.getState().knownDevices.knownDevices).toEqual([
+      expect.objectContaining({ id: "device-id", lastUsedAt: NOW }),
     ]);
   });
 });

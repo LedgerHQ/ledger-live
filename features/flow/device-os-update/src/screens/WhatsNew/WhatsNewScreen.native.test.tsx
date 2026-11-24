@@ -2,6 +2,11 @@ import React from "react";
 import { render, screen } from "../../__tests__/render";
 import { WhatsNewScreen } from "./WhatsNewScreen";
 
+const TOP_INSET = 47;
+jest.mock("react-native-safe-area-context", () => ({
+  useSafeAreaInsets: () => ({ top: TOP_INSET, bottom: 0, left: 0, right: 0 }),
+}));
+
 const setup = (notes: string | null = "## Ledger Recover\n\nAn **optional** service.") => {
   const onStart = jest.fn();
   const onClose = jest.fn();
@@ -26,6 +31,12 @@ describe("WhatsNewScreen", () => {
     expect(screen.getByText("Version 5.4.3")).toBeVisible();
     expect(screen.getByText(/Ensure your 24 words Secret Recovery Phrase/)).toBeVisible();
     expect(screen.getByText("What’s in this OS update?")).toBeVisible();
+  });
+
+  it("keeps the navigation bar below the status bar", () => {
+    setup();
+
+    expect(screen.getByTestId("os-update-whats-new-screen")).toHaveStyle({ paddingTop: TOP_INSET });
   });
 
   it("renders the notes with the markdown renderer of the app", () => {

@@ -11,6 +11,13 @@ describe("ManageAgentsCard (Web)", () => {
     expect(screen.getByText("New")).toBeVisible();
   });
 
+  it("should hide the new badge when the flag does not show it", () => {
+    renderManageAgentsCard((ui, options) => render(ui, options), false);
+
+    expect(screen.getByText("Manage your agents")).toBeVisible();
+    expect(screen.queryByText("New")).toBeNull();
+  });
+
   it("should open Agent Intent", async () => {
     const user = userEvent.setup();
     const { onOpen } = renderManageAgentsCard((ui, options) => render(ui, options));

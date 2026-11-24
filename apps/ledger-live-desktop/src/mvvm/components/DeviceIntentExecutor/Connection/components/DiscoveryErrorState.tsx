@@ -1,5 +1,6 @@
 import React from "react";
-import { getConnectDeviceSubError, useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
+import { getConnectDeviceSubError } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared/react";
 import {
   BaseDiscoveryErrorTypes,
   ConnectDeviceUIStateTypes,

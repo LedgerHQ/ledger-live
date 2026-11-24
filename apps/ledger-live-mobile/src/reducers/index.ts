@@ -41,7 +41,7 @@ import trustchain from "./trustchain";
 import type { State } from "./types";
 import wallet from "./wallet";
 import walletconnect from "./walletconnect";
-import osUpdate from "LLM/features/OsUpdate/state/osUpdateSlice";
+import deviceOsUpdate from "@domain/entity-device-os-update";
 import walletSync from "./walletSync";
 import portfolioRefresh from "./portfolioRefresh";
 import portfolioBalanceDisplay from "./portfolioBalanceDisplay";
@@ -60,6 +60,7 @@ import { mockServerOverlaySlice } from "@features/flow-device-mock-server/state"
 import { contactsSlice } from "@domain/entity-contact";
 import { accountDataSlice } from "@domain/entity-account-data";
 import { accountReceivesSlice } from "@domain/entity-account-receive";
+import { accountStatusSlice } from "@domain/entity-account-status";
 import { accountBalancesSlice } from "@domain/entity-account-balance";
 import { accountOperationsSlice } from "@domain/entity-account-operation";
 import { accountBalanceHistoriesSlice } from "@domain/entity-account-balance-history";
@@ -98,7 +99,7 @@ const appReducer = combineReducers({
   receiveOptionsDrawer,
   rebornBuyDeviceDrawer,
   transferDrawer,
-  osUpdate,
+  deviceOsUpdate,
   swapTransactionStatusDrawer,
   currencyRegionRestrictedDrawer,
   notifications,
@@ -131,6 +132,7 @@ const appReducer = combineReducers({
   contacts: contactsSlice.reducer,
   accountData: accountDataSlice.reducer,
   accountReceives: accountReceivesSlice.reducer,
+  accountStatus: accountStatusSlice.reducer,
   accountBalances: accountBalancesSlice.reducer,
   accountOperations: accountOperationsSlice.reducer,
   accountBalanceHistories: accountBalanceHistoriesSlice.reducer,

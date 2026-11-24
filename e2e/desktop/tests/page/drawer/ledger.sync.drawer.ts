@@ -23,6 +23,15 @@ export class LedgerSyncDrawer extends Drawer {
   private readonly activateSuccessTitle = this.page.getByTestId(
     "walletsync-activate-success-title",
   );
+  private readonly deviceIntentDialog = this.page.getByTestId("device-intent-executor-dialog");
+  private readonly addMemberDeviceStep = this.page.getByTestId(
+    "wallet-sync-add-member-continue-on-device",
+  );
+  private readonly addMemberRejected = this.page.getByTestId("wallet-sync-add-member-rejected");
+  private readonly addMemberRetryButton = this.page.getByTestId("wallet-sync-add-member-retry");
+  private readonly removeMemberDeviceStep = this.page.getByTestId(
+    "wallet-sync-remove-member-continue-on-device",
+  );
 
   private async waitForDeleteSyncButton() {
     await this.deleteSyncButton.waitFor({ state: "visible" });
@@ -45,6 +54,39 @@ export class LedgerSyncDrawer extends Drawer {
   async clickConnectDevice() {
     await this.connectDeviceButton.waitFor({ state: "visible" });
     await this.connectDeviceButton.click();
+  }
+
+  @step("Expect the device step to run in the device intent dialog")
+  async expectDeviceIntentVisible() {
+    await expect(this.deviceIntentDialog).toBeVisible();
+    await expect(this.content).toBeHidden();
+  }
+
+  @step("Expect the activation device step in the device intent dialog")
+  async expectActivationDeviceStep() {
+    await expect(this.addMemberDeviceStep).toBeVisible();
+  }
+
+  /** The refusal replaces the device step in place, so it must be fully shown before Retry. */
+  @step("Expect the activation refused on device in the device intent dialog")
+  async expectActivationRejectedOnDevice() {
+    await expect(this.addMemberRejected).toBeInViewport({ ratio: 1 });
+    await expect(this.addMemberRetryButton).toBeVisible();
+  }
+
+  @step("Retry the activation in the device intent dialog")
+  async retryActivation() {
+    await this.addMemberRetryButton.click();
+  }
+
+  @step("Expect the remove instance device step in the device intent dialog")
+  async expectRemoveInstanceDeviceStep() {
+    await expect(this.removeMemberDeviceStep).toBeVisible();
+  }
+
+  @step("Expect the device intent dialog to be closed")
+  async expectDeviceIntentFinished() {
+    await expect(this.deviceIntentDialog).toBeHidden({ timeout: TIMEOUT.large });
   }
 
   @step("Expect activation success screen")

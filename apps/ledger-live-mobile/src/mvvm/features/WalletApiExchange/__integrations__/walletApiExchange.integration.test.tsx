@@ -1,8 +1,10 @@
 import React from "react";
 import { act, fireEvent, render, waitFor } from "@tests/test-renderer";
 import type { InitializationInput } from "LLM/components/DeviceIntentExecutor/types";
-import type { Operation, SignedOperation } from "@ledgerhq/types-live";
+import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import type { State } from "~/reducers/types";
 import ExchangeDeviceDrawer from "../components/ExchangeDeviceDrawer";
 import { exchangeDeviceSession } from "../session";
 import type { ExchangeSessionCompleteRequest, ExchangeSessionStartRequest } from "../session";
@@ -208,6 +210,54 @@ describe("WalletApiExchange feature", () => {
 
     await waitFor(() => expect(complete.onSuccess).toHaveBeenCalledWith(operation));
     expect(queryByTestId("device-intent-executor")).toBeNull();
+  });
+
+  it("records a sell on its account so it cannot be sped up or cancelled", async () => {
+    const account: Account = {
+      ...genAccount("sell-account", { currency: getCryptoCurrencyById("bitcoin") }),
+      id: fromAccount.id,
+    };
+    const withAccount = (state: State): State => ({
+      ...state,
+      accounts: { ...state.accounts, active: [account] },
+    });
+    const { store } = render(<ExchangeDeviceDrawer manifestId={manifest.id} />, {
+      overrideInitialState: withAccount,
+    });
+    const complete = completeRequest({ exchangeType: 1, exchange: { fromAccount } });
+    mockBroadcast.mockResolvedValue(operation);
+
+    await act(() => exchangeDeviceSession.requestComplete(complete));
+    await waitFor(() => expect(executor().intent.label).toBe("Complete exchange"));
+    finishJob({ status: "signed", signedOperation });
+
+    await waitFor(() => expect(complete.onSuccess).toHaveBeenCalledWith(operation));
+    const stored = store.getState().accounts.active.find(a => a.id === fromAccount.id);
+    expect(stored?.sellOperationIds).toEqual([operation.id]);
+  });
+
+  it("does not record a swap as a sell", async () => {
+    const account: Account = {
+      ...genAccount("swap-account", { currency: getCryptoCurrencyById("bitcoin") }),
+      id: fromAccount.id,
+    };
+    const withAccount = (state: State): State => ({
+      ...state,
+      accounts: { ...state.accounts, active: [account] },
+    });
+    const { store } = render(<ExchangeDeviceDrawer manifestId={manifest.id} />, {
+      overrideInitialState: withAccount,
+    });
+    const complete = completeRequest();
+    mockBroadcast.mockResolvedValue(operation);
+
+    await act(() => exchangeDeviceSession.requestComplete(complete));
+    await waitFor(() => expect(executor().intent.label).toBe("Complete exchange"));
+    finishJob({ status: "signed", signedOperation });
+
+    await waitFor(() => expect(complete.onSuccess).toHaveBeenCalledWith(operation));
+    const stored = store.getState().accounts.active.find(a => a.id === fromAccount.id);
+    expect(stored?.sellOperationIds).toBeUndefined();
   });
 
   it("tells the live app the swap failed, and shows the error in the same drawer", async () => {

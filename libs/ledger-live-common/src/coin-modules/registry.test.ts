@@ -4,6 +4,7 @@ import {
   registerCoinModules,
   getRegisteredFamilies,
   hasLocalApi,
+  localApiServesAccountData,
   isCurrencySupported,
   listSupportedCurrencies,
   resetCoinModulesForTests,
@@ -74,7 +75,7 @@ describe("supported currencies", () => {
     expect(hasLocalApi(getCryptoCurrencyById("litecoin"))).toBe(false);
   });
 
-  it("hasLocalApi is false for a currency another loader supports under the family of a loader with a local api", () => {
+  it("hasLocalApi is false for a currency whose own family's loader has no local api", () => {
     registerCoinModules([
       makeLoader("bitcoin", {
         supportedCoins: ["bitcoin"],
@@ -82,8 +83,27 @@ describe("supported currencies", () => {
       }),
       makeLoader("zcash", { supportedCoins: ["zcash"] }),
     ]);
-    expect(getCryptoCurrencyById("zcash").family).toBe("bitcoin");
+    expect(getCryptoCurrencyById("zcash").family).toBe("zcash");
     expect(hasLocalApi(getCryptoCurrencyById("zcash"))).toBe(false);
+  });
+
+  it("localApiServesAccountData holds for a local api unless its loader opts out", () => {
+    registerCoinModules([
+      makeLoader("bitcoin", {
+        supportedCoins: ["bitcoin"],
+        loadLocalApi: () => Promise.reject(new Error("not loaded")),
+      }),
+      makeLoader("filecoin", {
+        supportedCoins: ["filecoin"],
+        loadLocalApi: () => Promise.reject(new Error("not loaded")),
+        localApiServesAccountData: false,
+      }),
+      makeLoader("evm", { supportedCoins: ["ethereum"] }),
+    ]);
+    expect(localApiServesAccountData(getCryptoCurrencyById("bitcoin"))).toBe(true);
+    expect(hasLocalApi(getCryptoCurrencyById("filecoin"))).toBe(true);
+    expect(localApiServesAccountData(getCryptoCurrencyById("filecoin"))).toBe(false);
+    expect(localApiServesAccountData(getCryptoCurrencyById("ethereum"))).toBe(false);
   });
 
   it("listSupportedCurrencies unions all registered loaders", () => {

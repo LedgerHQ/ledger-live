@@ -5,6 +5,7 @@ import { exportWalletState, walletStateExportShouldDiffer } from "~/reducers/wal
 import isEqual from "lodash/isEqual";
 import throttleFn from "lodash/throttle";
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import { AppState } from "react-native";
 import { createSelector } from "~/context/selectors";
 import { useStore, useSelector } from "~/context/hooks";
 import { useTrackingPairs } from "~/actions/general";
@@ -82,36 +83,41 @@ function useDBSaveEffect<D, S>({
   const selectedSlice = useSelector(stateSelector);
   const forceSave = useRef(saveAtStart);
   const lastSavedState = useRef<MaybeState>(undefined);
-  const isSaving = useRef(false);
+  const inFlightSave = useRef<Promise<void> | undefined>(undefined);
   const latestProps = useRef({
     lense,
     save,
     getChangesStats,
   });
-  const checkForSave = useMemo(
-    () =>
-      // throttle allow to not spam lense and save too much because they are costly
-      // nb it does not prevent race condition here. save must be idempotent and atomic
-      throttleFn(async (): Promise<void> => {
-        if (isSaving.current) return checkForSave(); // if we are already saving, we re-schedule
-        const { lense, save, getChangesStats } = latestProps.current;
-        const state = storeRef.current.getState() as State;
-        const prev = lastSavedState.current;
-        if (prev !== undefined && prev !== null) {
-          const changedStats = getChangesStats(prev, state); // we compare last saved with latest state
-          if (!changedStats && !forceSave.current) return; // if it's falsy, it means there is no changes
-          isSaving.current = true;
-          try {
-            await save(await lense(state), changedStats); // we save it for real
-          } finally {
-            isSaving.current = false;
-          }
+  const checkForSave = useMemo(() => {
+    const run = async (): Promise<void> => {
+      if (inFlightSave.current) {
+        // wait for the save in flight, then check the latest state without another throttle delay,
+        // so a flush also covers the changes made during that save
+        await inFlightSave.current.catch(() => undefined);
+        return run();
+      }
+      const { lense, save, getChangesStats } = latestProps.current;
+      const state = storeRef.current.getState() as State;
+      const prev = lastSavedState.current;
+      if (prev !== undefined && prev !== null) {
+        const changedStats = getChangesStats(prev, state); // we compare last saved with latest state
+        if (!changedStats && !forceSave.current) return; // if it's falsy, it means there is no changes
+        const saving = (async () => save(await lense(state), changedStats))(); // we save it for real
+        inFlightSave.current = saving;
+        try {
+          await saving;
+        } finally {
+          inFlightSave.current = undefined;
         }
-        lastSavedState.current = state; // for the next round, we will be able to compare with latest successful state
-        forceSave.current = false;
-      }, throttle),
-    [throttle],
-  );
+      }
+      lastSavedState.current = state; // for the next round, we will be able to compare with latest successful state
+      forceSave.current = false;
+    };
+    // throttle allow to not spam lense and save too much because they are costly
+    // nb it does not prevent race condition here. save must be idempotent and atomic
+    return throttleFn(run, throttle);
+  }, [throttle]);
   useFlushMechanism(checkForSave);
   // each time the selected slice or props change, we will checkForSave
   useEffect(() => {
@@ -143,6 +149,16 @@ function useFlushMechanism({ flush, cancel }: { flush: () => void; cancel: () =>
       }
     };
   }, [flush]);
+}
+
+// the OS can kill a backgrounded app before the throttled saves run
+function useFlushOnBackground() {
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", nextAppState => {
+      if (nextAppState === "background") void flushAll();
+    });
+    return () => subscription.remove();
+  }, []);
 }
 
 const getSettingsChanged = (a: State, b: State) => a.settings !== b.settings;
@@ -255,6 +271,7 @@ const countervaluesChangesStats = (oldState: State, newState: State) =>
 export const ConfigureDBSaveEffects = () => {
   // TODO: instead of using these hooks, we should select from the redux state and make a static lense function.
   const trackingPairs = useTrackingPairs();
+  useFlushOnBackground();
 
   useDBSaveEffect({
     stateSelector: countervaluesStateSelector,

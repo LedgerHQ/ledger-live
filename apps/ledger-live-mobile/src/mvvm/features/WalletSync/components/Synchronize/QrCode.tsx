@@ -1,15 +1,23 @@
 import React from "react";
+import { Image } from "react-native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
-import QRCode from "react-native-qrcode-svg";
+import { QrCode as StyledQrCode } from "@shared/ui-qr-code";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Trans, useTranslation } from "~/context/Locale";
-import BottomContainer from "./BottomContainer";
+import BottomContainer, { INSTRUCTIONS_MAX_HEIGHT } from "./BottomContainer";
+import {
+  QR_CODE_TAB_CAPTION_HEIGHT,
+  QR_CODE_TAB_FRAME_SIZE,
+  QR_CODE_TAB_ROW_GAP,
+} from "./QrCodeTabCaption";
 
 const Italic = styled(Text)`
   font-style: italic;
 `;
 // Won't work since we don't have inter italic font
+
+const LOGO_SIZE = 65;
 
 type Props = {
   qrCodeValue?: string | null;
@@ -25,9 +33,16 @@ const QrCode = ({ qrCodeValue }: Props) => {
   const backgroundSize = 280;
   const distanceBetweenQRCodeAndScreenBorder = 48;
 
-  const QRSize = Math.round(width - distanceBetweenQRCodeAndScreenBorder);
+  // An explicit size rather than a height capped by maxHeight, which the sheet measured uncapped.
+  const QRSize = Math.min(Math.round(width - distanceBetweenQRCodeAndScreenBorder), backgroundSize);
   const maxQRCodeSize = backgroundSize - backgroundPadding * 2;
   const QRCodeSize = Math.min(QRSize - backgroundPadding, maxQRCodeSize);
+  // The box takes the room of the scan tab's taller frame and caption row, so its bottom stays put.
+  const instructionsMaxHeight =
+    INSTRUCTIONS_MAX_HEIGHT +
+    (QR_CODE_TAB_FRAME_SIZE - QRSize) +
+    QR_CODE_TAB_CAPTION_HEIGHT +
+    QR_CODE_TAB_ROW_GAP;
 
   const steps = [
     {
@@ -68,36 +83,38 @@ const QrCode = ({ qrCodeValue }: Props) => {
 
   return (
     <Flex
-      flexDirection={"column"}
-      rowGap={24}
+      minHeight={400}
+      justifyContent={"center"}
       alignItems={"center"}
-      marginBottom={20}
-      width={"100%"}
-      height={"100%"}
+      rowGap={QR_CODE_TAB_ROW_GAP}
     >
       <Flex
         alignItems={"center"}
         width={QRSize}
         height={QRSize}
-        maxWidth={backgroundSize}
-        maxHeight={backgroundSize}
         borderRadius={backgroundBorderRadius}
         background={colors.constant.white}
         justifyContent={"center"}
         testID="ws-qr-code-displayed"
       >
         {qrCodeValue ? (
-          <QRCode
+          <StyledQrCode
             value={qrCodeValue}
-            logo={require("~/images/bigSquareLogo.webp")}
-            logoSize={65}
             size={QRCodeSize}
+            foregroundColor={colors.constant.black}
+            testID="ws-qr-code"
+            centerContent={
+              <Image
+                source={require("~/images/bigSquareLogo.webp")}
+                style={{ width: LOGO_SIZE, height: LOGO_SIZE }}
+              />
+            }
           />
         ) : (
           <InfiniteLoader size={65} />
         )}
       </Flex>
-      <BottomContainer steps={steps} />
+      <BottomContainer steps={steps} maxHeight={instructionsMaxHeight} />
     </Flex>
   );
 };

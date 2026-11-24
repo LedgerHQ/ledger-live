@@ -18,7 +18,6 @@ import SelectAccountButton from "../Web3Player/SelectAccountButton";
 import useHeaderViewModel, { type HeaderViewModelValues } from "./useHeaderViewModel";
 
 const BAR_HEIGHT = 60;
-export const TOTAL_HEADER_HEIGHT = BAR_HEIGHT;
 const URL_BAR_HEIGHT = 40;
 const URL_TEXT_MAX_WIDTH = 128;
 

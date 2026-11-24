@@ -3,11 +3,8 @@ import type {
   DeviceConnectionParams,
   DeviceConnectionResult,
 } from "@features/platform-device-intent";
-import {
-  dmkToLedgerDeviceIdMap,
-  getConnectDeviceFailure,
-  useDeviceIntentTracking,
-} from "@ledgerhq/live-dmk-shared";
+import { dmkToLedgerDeviceIdMap, getConnectDeviceFailure } from "@ledgerhq/live-dmk-shared";
+import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared/react";
 import {
   connectDevice,
   ConnectDeviceUIStateTypes,

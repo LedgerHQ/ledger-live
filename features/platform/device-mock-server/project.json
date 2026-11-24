@@ -1,8 +1,0 @@
-{
-  "name": "@features/platform-device-mock-server",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

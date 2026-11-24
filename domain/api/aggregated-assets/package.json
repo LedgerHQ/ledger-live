@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-aggregated-assets",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "private": true,
   "description": "Domain API client for DADA (Dynamic Assets Data Aggregator): wire contract, RTK Query endpoints and response transforms",
   "main": "src/index.ts",
@@ -23,7 +23,6 @@
     "coverage": "jest --coverage"
   },
   "devDependencies": {
-    "@types/react": "catalog:",
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

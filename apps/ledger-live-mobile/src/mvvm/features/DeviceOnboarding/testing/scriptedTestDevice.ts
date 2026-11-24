@@ -75,9 +75,11 @@ type FirmwareCheckState = DeviceActionState<
 
 export type ScriptedTestDevice = {
   dmk: DeviceManagementKit;
+  readonly disconnect: jest.Mock;
   readonly sessionId: string;
   setSession(sessionId: string): void;
   show(): void;
+  hide(): void;
   unplug(): void;
   answerState(options: OsVersionAnswer): void;
   acceptToggle(): void;
@@ -127,10 +129,12 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
     throw new Error("Unexpected device action");
   });
 
+  const disconnect = jest.fn(() => Promise.resolve());
   const dmk = createDeviceManagementKit({
     listConnectedDevices: () => [],
     listenToAvailableDevices: () => foundDevices.events,
     connect: () => Promise.resolve(sessionId),
+    disconnect,
     getConnectedDevice: ({ sessionId: id }) => ({
       id: deviceId,
       name: staxName,
@@ -146,6 +150,7 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
 
   return {
     dmk,
+    disconnect,
     get sessionId() {
       return sessionId;
     },
@@ -161,6 +166,9 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
           deviceModel: { id: LedgerDeviceModelId.stax, model: DeviceModelId.STAX, name: staxName },
         } as DiscoveredDevice,
       ]);
+    },
+    hide() {
+      foundDevices.push([]);
     },
     unplug() {
       getSession(sessionId).set(DeviceStatus.NOT_CONNECTED);

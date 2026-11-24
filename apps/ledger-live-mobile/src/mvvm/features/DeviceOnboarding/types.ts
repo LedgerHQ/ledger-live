@@ -10,6 +10,11 @@ export type ChecksScreenState =
   | "updating"
   | "succeeded";
 
+export type DeviceUnlockSheetProps = Readonly<{
+  deviceModelId: Device["modelId"];
+  deviceName: string;
+}>;
+
 export type ChecksScreenProps = {
   device: Device;
   state: ChecksScreenState;

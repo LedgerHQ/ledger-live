@@ -5,6 +5,8 @@ export type LiveConfigOverridesState = {
   overrides: Record<string, unknown>;
 };
 
+export type StateWithLiveConfigOverrides = { liveConfigOverrides: LiveConfigOverridesState };
+
 export const LIVE_CONFIG_OVERRIDES_INITIAL_STATE: LiveConfigOverridesState = {
   overrides: {},
 };
@@ -28,10 +30,17 @@ const liveConfigOverridesSlice = createSlice({
       state.overrides = cloneOverridesSafely(action.payload);
     },
   },
+  selectors: {
+    liveConfigOverridesSelector: state => state.overrides,
+    hasLiveConfigOverridesSelector: state => Object.keys(state.overrides).length > 0,
+  },
 });
 
 export const { setLiveConfigOverride, setAllLiveConfigOverrides } =
   liveConfigOverridesSlice.actions;
+
+export const { liveConfigOverridesSelector, hasLiveConfigOverridesSelector } =
+  liveConfigOverridesSlice.selectors;
 
 /** Reducer for the `liveConfigOverrides` slice — register under `state.liveConfigOverrides`. */
 export const liveConfigOverridesReducer = liveConfigOverridesSlice.reducer;

@@ -1,5 +1,6 @@
 import invariant from "invariant";
-import createHmac from "create-hmac";
+import { hmac } from "@noble/hashes/hmac";
+import { sha512 } from "@noble/hashes/sha512";
 import type { BitcoinJS } from "coininfo";
 import { getSecp256k1Instance } from "./secp256k1";
 
@@ -23,7 +24,7 @@ class BIP32 {
     const data = Buffer.allocUnsafe(37);
     this.publicKey.copy(data, 0);
     data.writeUInt32BE(index, 33);
-    const I = createHmac("sha512", this.chainCode).update(data).digest();
+    const I = Buffer.from(hmac(sha512, this.chainCode, data));
     const IL = I.slice(0, 32);
     const IR = I.slice(32);
     const Ki = Buffer.from(await getSecp256k1Instance().publicKeyTweakAdd(this.publicKey, IL));

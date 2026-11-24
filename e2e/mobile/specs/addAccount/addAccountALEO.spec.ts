@@ -29,12 +29,11 @@ describeIfNanoSSupports(Currency.ALEO.id)("Add account", () => {
     await app.modularDrawer.selectCurrencyByTicker(Currency.ALEO.ticker);
     await app.modularDrawer.selectNetworkIfAsked(Currency.ALEO.name);
 
-    await waitForElementById("aleo-view-key-warning-screen");
-    await tapById("aleo-view-key-warning-allow-button");
+    await app.addAccount.allowAleoViewKey();
 
     await app.addAccount.addAccountAtIndex(`${Currency.ALEO.name} 1`, Currency.ALEO.id, 0);
 
-    await waitForElementById("aleo-view-key-approve-screen");
+    await app.addAccount.waitForAleoViewKeyApproveScreen();
 
     await app.speculos.shareViewKey();
     await app.addAccount.tapCloseAddAccountCta();

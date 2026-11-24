@@ -1,5 +1,5 @@
-import { renderHook } from "tests/testSetup";
-import { app, files } from "~/renderer/bridge";
+import { renderHook, waitFor } from "tests/testSetup";
+import { app, files, store } from "~/renderer/bridge";
 import { cleanCache, resetAll } from "~/renderer/storage";
 import { openUserDataFolderAndQuit, useHardReset, useSoftReset } from "./reset";
 
@@ -44,6 +44,31 @@ describe("reset", () => {
 
     expect(resetAll).toHaveBeenCalledTimes(1);
     expect(app.relaunch).toHaveBeenCalledTimes(1);
+  });
+
+  it("should relaunch only once the store is cleared", async () => {
+    let resolveClear: (() => void) | undefined;
+    jest
+      .mocked(store.clear)
+      .mockReturnValueOnce(new Promise<void>(resolve => (resolveClear = resolve)));
+    const { result } = renderHook(() => useHardReset());
+
+    const done = result.current();
+    await waitFor(() => expect(store.clear).toHaveBeenCalledTimes(1));
+    expect(app.relaunch).not.toHaveBeenCalled();
+    resolveClear?.();
+    await done;
+
+    expect(app.relaunch).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not relaunch when the store cannot be cleared", async () => {
+    jest.mocked(store.clear).mockRejectedValueOnce(new Error("EBUSY"));
+    const { result } = renderHook(() => useHardReset());
+
+    await expect(result.current()).rejects.toThrow("EBUSY");
+
+    expect(app.relaunch).not.toHaveBeenCalled();
   });
 
   it("should reload the app after a soft reset", async () => {

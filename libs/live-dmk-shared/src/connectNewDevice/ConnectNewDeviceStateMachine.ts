@@ -19,20 +19,13 @@ import {
   type DeviceDiscoveryService,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
+import { disconnectOtherSessions } from "../deviceConnectivity/disconnectOtherSessions";
 
 type ConnectNewDeviceStateMachineDiscoveryError<TDiscoveryError extends BaseDiscoveryError> =
   | TDiscoveryError
   | UnknownDiscoveryError;
 
 const LOG_TYPE = "ConnectNewDeviceStateMachine";
-
-const disconnectUnclaimedSession = (dmk: DeviceManagementKit, sessionId: string): void => {
-  dmk.disconnect({ sessionId }).catch(error => {
-    log(LOG_TYPE, "failed to disconnect a session that was never handed to onConnected", {
-      error,
-    });
-  });
-};
 
 const createConnectNewDeviceStateMachine = <
   TDiscoveryError extends BaseDiscoveryError = BaseDiscoveryError,
@@ -55,24 +48,25 @@ const createConnectNewDeviceStateMachine = <
     actors: {
       connectDevice: fromPromise(
         async ({
-          input,
-          signal,
+          input: { dmk, discoveredDevice },
         }: {
-          input: {
-            dmk: DeviceManagementKit;
-            discoveredDevice: DiscoveredDevice;
-          };
-          signal: AbortSignal;
+          input: { dmk: DeviceManagementKit; discoveredDevice: DiscoveredDevice };
         }): Promise<string> => {
-          const sessionId = await input.dmk.connect({
-            device: input.discoveredDevice,
+          disconnectOtherSessions(dmk, discoveredDevice);
+          const existingSession = dmk
+            .listConnectedDevices()
+            .find(
+              ({ id, transport }) =>
+                id === discoveredDevice.id && transport === discoveredDevice.transport,
+            );
+          if (existingSession) {
+            return existingSession.sessionId;
+          }
+
+          return dmk.connect({
+            device: discoveredDevice,
             sessionRefresherOptions: { isRefresherDisabled: true },
           });
-          const machineStoppedWhileConnecting = signal.aborted;
-          if (machineStoppedWhileConnecting) {
-            disconnectUnclaimedSession(input.dmk, sessionId);
-          }
-          return sessionId;
         },
       ),
       retryDiscovery: fromPromise<true | BaseDiscoveryError, BaseDiscoveryError>(
@@ -91,6 +85,7 @@ const createConnectNewDeviceStateMachine = <
     guards: {
       retryOutputIsTrue: (_, params: { output: true | BaseDiscoveryError }) =>
         params.output === true,
+      isEmbedded: ({ context }) => context.embedded,
     },
     actions: {
       updateListedDevices: assign({
@@ -253,6 +248,7 @@ const createConnectNewDeviceStateMachine = <
       ...input,
       deviceNotFoundDelay: input.deviceNotFoundDelay ?? DEFAULT_DEVICE_NOT_FOUND_DELAY,
       successDelay: input.successDelay ?? DEFAULT_SUCCESS_DELAY,
+      embedded: input.embedded ?? false,
       listedDevices: [],
       selectedDevice: null,
       sessionId: null,
@@ -312,9 +308,10 @@ const createConnectNewDeviceStateMachine = <
           [ConnectNewDeviceStateMachineEventTypes.UserTapsDiscoveryRetry]: {
             target: "RetryDiscovery",
           },
-          [ConnectNewDeviceStateMachineEventTypes.UserClosesDiscoveryError]: {
-            target: "Terminated",
-          },
+          [ConnectNewDeviceStateMachineEventTypes.UserClosesDiscoveryError]: [
+            { guard: "isEmbedded", target: "Discovering", actions: "ignoreDiscoveryError" },
+            { target: "Terminated" },
+          ],
         },
       },
       RetryDiscovery: {
@@ -323,9 +320,10 @@ const createConnectNewDeviceStateMachine = <
             target: "Discovering",
             actions: "ignoreDiscoveryError",
           },
-          [ConnectNewDeviceStateMachineEventTypes.UserClosesDiscoveryError]: {
-            target: "Terminated",
-          },
+          [ConnectNewDeviceStateMachineEventTypes.UserClosesDiscoveryError]: [
+            { guard: "isEmbedded", target: "Discovering", actions: "ignoreDiscoveryError" },
+            { target: "Terminated" },
+          ],
         },
         invoke: {
           src: "retryDiscovery",
@@ -505,14 +503,13 @@ export class DefaultConnectNewDeviceStateMachine<
       return;
     }
 
-    if (this.deviceDiscoveryService.isRunning) {
-      this.deviceDiscoveryService.stop();
+    // The parent keeps scanning.
+    if (snapshot.context.embedded) {
+      return;
     }
 
-    const { sessionId } = snapshot.context;
-    const stoppedDuringSuccessDelay = snapshot.matches("Connected");
-    if (stoppedDuringSuccessDelay && sessionId !== null) {
-      disconnectUnclaimedSession(this.dmk, sessionId);
+    if (this.deviceDiscoveryService.isRunning) {
+      this.deviceDiscoveryService.stop();
     }
   }
 }

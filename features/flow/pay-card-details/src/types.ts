@@ -5,6 +5,7 @@ import type { CardTransactionFormatters } from "@features/flow-pay-card-transact
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 import type { CardDetailsSceneProps } from "./components/CardDetails/Scenes/types";
 import type { CardSettingsActions } from "./components/More/types";
+import type { FreezeCopy } from "./components/Freeze/freezeCopy";
 
 export type { CardSettingsActions };
 
@@ -101,10 +102,10 @@ export type ConfirmPromptProps = ConfirmProps &
 
 export type ConfirmBodyProps = Readonly<{
   appearance: "error" | "info";
-  titleKey: string;
-  descriptionKey?: string;
+  titleKey: FreezeCopy["title"] | FreezeCopy["errorTitle"];
+  descriptionKey?: "payTab.card.freezeConfirm.description" | "payTab.card.confirmError.description";
   descriptionTestID?: string;
-  confirmLabelKey: string;
+  confirmLabelKey: FreezeCopy["action"] | "payTab.card.confirmError.retry";
   isPending?: boolean;
   onConfirm: () => void;
   onClose: () => void;

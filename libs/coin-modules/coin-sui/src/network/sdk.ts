@@ -1691,6 +1691,75 @@ const createTransactionForOthers = (
     grpc: api => buildOthersBody(address, transaction, withObjects, withoutBuildSimulation(api)),
   });
 
+const COIN_OBJECT_TYPE = /^0x0*2::coin::Coin<(.+)>$/;
+
+/** Short struct tag of the coin a `0x2::coin::Coin<T>` object holds, or undefined for any other object. */
+function coinTypeOf(objectType: string | undefined): string | undefined {
+  return objectType ? COIN_OBJECT_TYPE.exec(toShortStructTag(objectType))?.[1] : undefined;
+}
+
+/**
+ * Fetches the gas and owned input objects of a built transaction once, in the order
+ * `@mysten/ledger-signer` `getInputObjects` uses, and returns their BCS (for clear signing) with
+ * the distinct non-SUI coin types the transaction moves: `0x2::coin::Coin<T>` objects and
+ * `FundsWithdrawal` inputs drawn from the address balance, in short struct-tag form.
+ */
+async function fetchInputObjects(
+  tx: Transaction,
+  client: ClientWithCoreApi,
+): Promise<{ bcsObjects: Uint8Array[]; coinTypes: string[] }> {
+  const { inputs, gasData } = tx.getData();
+  const objectIds = [
+    ...(gasData.payment?.map(object => object.objectId) ?? []),
+    ...inputs.flatMap(input =>
+      input.$kind === "Object" && input.Object.$kind === "ImmOrOwnedObject"
+        ? [input.Object.ImmOrOwnedObject.objectId]
+        : [],
+    ),
+  ];
+
+  const bcsObjects: Uint8Array[] = [];
+  const types = new Set<string>();
+  if (objectIds.length > 0) {
+    const { objects } = await client.core.getObjects({ objectIds, include: { objectBcs: true } });
+    for (const object of objects) {
+      if (object instanceof Error) continue;
+      if (object.objectBcs) bcsObjects.push(object.objectBcs);
+      const coinType = coinTypeOf(object.type);
+      if (coinType) types.add(coinType);
+    }
+  }
+
+  for (const input of inputs) {
+    if (input.$kind === "FundsWithdrawal") {
+      types.add(toShortStructTag(input.FundsWithdrawal.typeArg.Balance));
+    }
+  }
+
+  types.delete(DEFAULT_COIN_TYPE);
+  return { bcsObjects, coinTypes: [...types] };
+}
+
+/**
+ * Builds a transaction that a dApp supplied, resolving only the fields it left unset (gas price,
+ * budget and payment, object versions). Commands and any gas data already set are kept as is.
+ * Also returns the input objects' BCS for clear signing and the non-SUI coin types it moves,
+ * both from a single object fetch.
+ */
+export const buildRawTransaction = (
+  config: SuiCoinConfig,
+  tx: Transaction,
+): Promise<{ serialized: Uint8Array; bcsObjects: Uint8Array[]; coinTypes: string[] }> => {
+  const build = async (client: ClientWithCoreApi) => {
+    const serialized = await tx.build({ client });
+    return { serialized, ...(await fetchInputObjects(tx, client)) };
+  };
+  return withTransport(config, {
+    graphql: api => build(makeSuiClientFromGraphQL(api)),
+    grpc: api => build(withoutBuildSimulation(api)),
+  });
+};
+
 /**
  * Performs a dry run of a transaction to estimate gas costs and fees.
  *

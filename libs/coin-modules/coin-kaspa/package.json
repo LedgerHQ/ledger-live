@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-kaspa",
-  "version": "2.8.0",
+  "version": "2.9.0",
   "description": "Ledger Kaspa Coin integration",
   "keywords": [
     "Ledger",
@@ -94,7 +94,6 @@
   "dependencies": {
     "@bitcoinerlab/secp256k1": "catalog:",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/devices": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "catalog:",
     "@ledgerhq/live-network": "catalog:",
@@ -103,12 +102,6 @@
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "bip32": "4.0.0",
-    "bip32-path": "^0.4.2",
-    "eip55": "^2.1.0",
-    "invariant": "^2.2.2",
-    "lodash": "catalog:",
-    "lru-cache": "^7.14.1",
-    "prando": "^6.0.1",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -118,19 +111,15 @@
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
-    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
-    "cross-env": "catalog:",
     "jest": "catalog:",
     "jest-sonar": "0.2.16",
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "rimraf": "catalog:",
-    "timemachine": "0.3.2",
     "typescript": "catalog:"
   },
   "files": [

@@ -3,6 +3,8 @@ export * from "./sessionWithDevice";
 export * from "./trustchainMemberId";
 export * from "./failure";
 export * from "./jobState";
+export * from "./acceptLedgerSyncResult";
+export * from "./ledgerSyncResultOrder";
 export * from "./intents/addMember/types";
 export * from "./intents/addMember/job";
 export * from "./intents/addMember/definition";

@@ -26,7 +26,7 @@ import reducer, {
   removeKnownDevice,
   removeKnownDevices,
   saveKnownDeviceName,
-  updateKnownDevice,
+  upsertKnownDevice,
 } from "../knownDevices";
 
 describe("knownDevices reducer", () => {
@@ -124,7 +124,7 @@ describe("knownDevices reducer", () => {
     });
   });
 
-  describe("updateKnownDevice", () => {
+  describe("upsertKnownDevice", () => {
     it("GIVEN an existing known device WHEN updating a matching device THEN it updates the existing entry", () => {
       // GIVEN
       const state = { knownDevices: [flex, nanoX] };
@@ -135,7 +135,7 @@ describe("knownDevices reducer", () => {
       };
 
       // WHEN
-      const nextState = reducer(state, updateKnownDevice(updatedDevice));
+      const nextState = reducer(state, upsertKnownDevice(updatedDevice));
 
       // THEN
       expect(nextState.knownDevices).toEqual([flex, updatedDevice]);
@@ -146,7 +146,7 @@ describe("knownDevices reducer", () => {
       const state = { knownDevices: [flex] };
 
       // WHEN
-      const nextState = reducer(state, updateKnownDevice(nanoX));
+      const nextState = reducer(state, upsertKnownDevice(nanoX));
 
       // THEN
       expect(nextState.knownDevices).toEqual([flex, nanoX]);
@@ -162,7 +162,7 @@ describe("knownDevices reducer", () => {
       };
 
       // WHEN
-      const nextState = reducer(state, updateKnownDevice(updatedDevice));
+      const nextState = reducer(state, upsertKnownDevice(updatedDevice));
 
       // THEN
       expect(nextState.knownDevices).toEqual([flex, updatedDevice]);
@@ -181,7 +181,7 @@ describe("knownDevices reducer", () => {
         name: "Ledger Nano S Plus",
       };
 
-      const nextState = reducer({ knownDevices: [mockServer] }, updateKnownDevice(updatedDevice));
+      const nextState = reducer({ knownDevices: [mockServer] }, upsertKnownDevice(updatedDevice));
 
       expect(nextState.knownDevices).toEqual([updatedDevice]);
     });
@@ -198,10 +198,32 @@ describe("knownDevices reducer", () => {
 
       const nextState = reducer(
         { knownDevices: [firstStax, secondStax] },
-        updateKnownDevice(renamedSecondStax),
+        upsertKnownDevice(renamedSecondStax),
       );
 
       expect(nextState.knownDevices).toEqual([firstStax, renamedSecondStax]);
+    });
+
+    it("GIVEN a known device with a last use time WHEN updating it with a later one THEN it saves the later one", () => {
+      // GIVEN
+      const state = { knownDevices: [{ ...nanoX, lastUsedAt: 1000 }] };
+
+      // WHEN
+      const nextState = reducer(state, upsertKnownDevice({ ...nanoX, lastUsedAt: 2000 }));
+
+      // THEN
+      expect(nextState.knownDevices).toEqual([{ ...nanoX, lastUsedAt: 2000 }]);
+    });
+
+    it("GIVEN a known device with a last use time WHEN updating it without one THEN it keeps the last use time", () => {
+      // GIVEN
+      const state = { knownDevices: [{ ...nanoX, lastUsedAt: 1000 }] };
+
+      // WHEN
+      const nextState = reducer(state, upsertKnownDevice({ ...nanoX, name: "Renamed" }));
+
+      // THEN
+      expect(nextState.knownDevices).toEqual([{ ...nanoX, name: "Renamed", lastUsedAt: 1000 }]);
     });
 
     it("GIVEN an existing Speculos known device WHEN a connection reports its fixed id THEN it updates that entry instead of adding one", () => {
@@ -212,7 +234,7 @@ describe("knownDevices reducer", () => {
         name: "Speculos - Ethereum",
       };
 
-      const nextState = reducer(state, updateKnownDevice(updatedDevice));
+      const nextState = reducer(state, upsertKnownDevice(updatedDevice));
 
       expect(nextState.knownDevices).toEqual([flex, updatedDevice]);
     });
@@ -474,6 +496,20 @@ describe("knownDevices reducer", () => {
       const persistedDevice = mapKnownDeviceToPersistedKnownDevice(device);
 
       expect(persistedDevice).toEqual({ ...device, transport: "mockserver" });
+      expect(persistedDevice && mapPersistedKnownDeviceToKnownDevice(persistedDevice)).toEqual(
+        device,
+      );
+    });
+
+    it("GIVEN a known device with a last use time WHEN persisting and hydrating it THEN it keeps the last use time", () => {
+      // GIVEN
+      const device = { ...nanoX, lastUsedAt: 1000 };
+
+      // WHEN
+      const persistedDevice = mapKnownDeviceToPersistedKnownDevice(device);
+
+      // THEN
+      expect(persistedDevice).toEqual({ ...device, transport: "rnble" });
       expect(persistedDevice && mapPersistedKnownDeviceToKnownDevice(persistedDevice)).toEqual(
         device,
       );

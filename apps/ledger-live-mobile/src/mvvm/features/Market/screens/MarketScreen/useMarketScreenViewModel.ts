@@ -16,10 +16,8 @@ import { starredMarketCoinsSelector } from "~/reducers/settings";
 
 type MarketScreenRoute = RouteProp<MarketNavigatorStackParamList, ScreenName.MarketList>;
 
-export type { MarketHighlightCard } from "./useMarketHighlights";
-
-export type { MarketCategories, MarketCategoryTab } from "./useMarketCategories";
-export type { MarketFilters, MarketFilterOption } from "./useMarketFilters";
+export type { MarketCategories } from "./useMarketCategories";
+export type { MarketFilters } from "./useMarketFilters";
 
 export type MarketScreenAssetsList = {
   assets: MarketAssetDisplayData[];

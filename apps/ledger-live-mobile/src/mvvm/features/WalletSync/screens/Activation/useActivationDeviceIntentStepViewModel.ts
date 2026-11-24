@@ -1,8 +1,12 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { track } from "@shared/analytics";
 import { createIntent, type DeviceConnectionResult } from "@features/platform-device-intent";
-import type { AddMemberIntent, AddMemberIntentInput } from "@features/platform-intent-wallet-sync";
+import {
+  acceptLedgerSyncResult,
+  type AddMemberIntent,
+  type AddMemberIntentInput,
+} from "@features/platform-intent-wallet-sync";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import {
   memberCredentialsSelector,
@@ -12,6 +16,7 @@ import {
 import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import {
   type GetOrCreateTrustchainCallbacks,
+  type MemberCredentials,
   type TrustchainResult,
   TrustchainResultType,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
@@ -24,6 +29,7 @@ import { AnalyticsEvents } from "../../Analytics/enums";
 import { useWalletSyncTrackingFlow } from "../../hooks/useLedgerSyncAnalytics";
 import { addMemberIntentLWMDefinition } from "../../deviceIntents/addMemberIntent/intentLWMDefinition";
 import { useCreateSessionSdk } from "../../deviceIntents/useCreateSessionSdk";
+import { ledgerSyncResultOrder } from "../../deviceIntents/ledgerSyncResultOrder";
 import {
   type LedgerSyncStepNavigation,
   useLedgerSyncIntentStep,
@@ -79,6 +85,10 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
     });
   }, []);
 
+  const activatedRef = useRef<{ trustchainResult: TrustchainResult; seededOffer: boolean } | null>(
+    null,
+  );
+
   const step = useLedgerSyncIntentStep<AddMemberIntent, ActivationStepInput>({
     input,
     onClose,
@@ -89,18 +99,38 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
         memberCredentials,
         currentTrustchain: trustchain ?? undefined,
         createSessionSdk,
+        resultOrder: ledgerSyncResultOrder,
         onInitialResponse: checkTrustchainsExist,
       };
       return createIntent(addMemberIntentLWMDefinition, intentInput, {
-        onResult: trustchainResult => onResult(trustchainResult, seededOffer === true),
+        onResult: trustchainResult =>
+          onResult(trustchainResult, seededOffer === true, memberCredentials),
       });
     },
     onDeviceRejected,
+    onCompleted,
   });
 
-  function onResult(trustchainResult: TrustchainResult, seededOffer: boolean) {
-    dispatch(setTrustchain(trustchainResult.trustchain));
-    track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
+  function onResult(
+    trustchainResult: TrustchainResult,
+    seededOffer: boolean,
+    runCredentials: MemberCredentials,
+  ) {
+    const isAccepted = dispatch(
+      acceptLedgerSyncResult(setTrustchain(trustchainResult.trustchain), runCredentials),
+    );
+    if (!isAccepted) return;
+    // A disconnected run and its Retry can both deliver: one activation, one event.
+    if (activatedRef.current === null) {
+      track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
+    }
+    activatedRef.current = { trustchainResult, seededOffer };
+  }
+
+  function onCompleted() {
+    const activated = activatedRef.current;
+    if (!activated) return;
+    const { trustchainResult, seededOffer } = activated;
     onActivated();
     step.finish();
     if (seededOffer) return;

@@ -1,3 +1,4 @@
+import { DerivationPathSchema } from "@domain/entity-account-descriptor";
 import { base58check } from "../encoding";
 import { balanceRow } from "../kinds/balance";
 import { randomAmount, randomBytes, type Random } from "../random";
@@ -64,7 +65,9 @@ export const bitcoin: MockFamily = {
     type: "utxo",
     network,
     key: xpub(currency.isTestnetFor !== undefined, index, random),
-    path: `m/${SEGWIT.has(currency.id) ? 84 : 44}h/${currency.coinType}h/${index}h`,
+    path: DerivationPathSchema.parse(
+      `m/${SEGWIT.has(currency.id) ? 84 : 44}h/${currency.coinType}h/${index}h`,
+    ),
   }),
   address: (currency, random) =>
     base58check(

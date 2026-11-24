@@ -18,6 +18,12 @@ export const countervaluesRatesSlice = createSlice({
     /** Drops every stored rate. */
     wipe: () => initialState,
   },
+  selectors: {
+    /** The whole rates state, as stored: save paths compare it by reference. */
+    selectState: state => state,
+    /** The rates' cache alone: what conversions read. */
+    selectCache: state => state.cache,
+  },
 });
 
 export const { set: setCountervaluesState, wipe: wipeCountervalues } =

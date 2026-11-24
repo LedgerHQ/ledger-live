@@ -1,5 +1,5 @@
 import { track } from "@shared/analytics";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
@@ -34,8 +34,6 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
   const { params } =
     useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWallet>>();
 
-  useAutoRedirectToPostOnboarding();
-
   // Auto-select a device passed via navigation params (e.g. redirect from "not enough space" error during a transactional flow).
   useEffect(() => {
     setDevice(params?.device);
@@ -57,7 +55,7 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
   const onSelect = (result: Result) => {
     setDevice(undefined);
 
-    if (result && "result" in result) {
+    if (result?.result) {
       navigation.navigate(NavigatorName.MyLedger, {
         screen: ScreenName.MyLedgerDevice,
         params: {
@@ -69,8 +67,15 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
     }
   };
 
+  // The modal stays closed while it holds the result of its last device action: clear it on hide.
+  const clearModalResultRef = useRef<(() => void) | undefined>(undefined);
+  const registerDeviceSelection = useCallback((clearResult: () => void) => {
+    clearModalResultRef.current = clearResult;
+  }, []);
+
   const onModalHide = () => {
     setDevice(undefined);
+    clearModalResultRef.current?.();
   };
 
   const onError = (error: Error) => {
@@ -133,6 +138,7 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
         device={device}
         onResult={onSelect}
         onModalHide={onModalHide}
+        registerDeviceSelection={registerDeviceSelection}
         action={action}
         request={null}
         onError={onError}
@@ -142,8 +148,19 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
   );
 }
 
+// Mounted only while focused: the Recover upsell state of the hook resets at each focus.
+function PostOnboardingRedirect() {
+  useAutoRedirectToPostOnboarding();
+  return null;
+}
+
 export function MyLedgerSection({ onPairingStateChanged }: MyLedgerSectionProps) {
   const isFocused = useIsFocused();
   if (!isFocused) return null;
-  return <MyLedgerSectionContent onPairingStateChanged={onPairingStateChanged} />;
+  return (
+    <>
+      <PostOnboardingRedirect />
+      <MyLedgerSectionContent onPairingStateChanged={onPairingStateChanged} />
+    </>
+  );
 }

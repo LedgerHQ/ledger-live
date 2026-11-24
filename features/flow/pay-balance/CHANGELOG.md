@@ -1,5 +1,27 @@
 # @features/flow-pay-balance
 
+## 0.11.0
+
+### Minor Changes
+
+- [#24814](https://github.com/LedgerHQ/ledger-live/pull/24814) [`9f6f480`](https://github.com/LedgerHQ/ledger-live/commit/9f6f48031fad77047e3a6377838816229ba4da5b) Thanks [@deepyjr](https://github.com/deepyjr)! - Translate the web-only Pay wordings in the web views so Mobile no longer needs them
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-pay-analytics@0.4.1
+
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#24814](https://github.com/LedgerHQ/ledger-live/pull/24814) [`9f6f480`](https://github.com/LedgerHQ/ledger-live/commit/9f6f48031fad77047e3a6377838816229ba4da5b) Thanks [@deepyjr](https://github.com/deepyjr)! - Translate the web-only Pay wordings in the web views so Mobile no longer needs them
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-pay-analytics@0.4.1-next.0
+
 ## 0.10.0
 
 ### Minor Changes

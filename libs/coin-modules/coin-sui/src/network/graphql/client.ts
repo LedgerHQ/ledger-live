@@ -7,7 +7,10 @@
 import { print } from "@0no-co/graphql.web";
 import type { TadaDocumentNode } from "gql.tada";
 
-class SuiGraphQLRequestError extends Error {}
+/** The GraphQL endpoint answered with a non-OK HTTP status. */
+export class SuiGraphQLRequestError extends Error {
+  override name = "SuiGraphQLRequestError";
+}
 
 interface QueryResponse<TData> {
   data?: TData | null;

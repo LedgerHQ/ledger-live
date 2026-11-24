@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { parseFiniteBigNumber } from "../bignumber";
 import {
   AccountBridge,
   Operation,
@@ -204,8 +205,8 @@ export const fromOperationRaw = (
   };
 
   if (transactionSequenceNumber !== undefined) {
-    const transactionSequenceNumberBN = new BigNumber(transactionSequenceNumber);
-    if (!transactionSequenceNumberBN.isNaN()) {
+    const transactionSequenceNumberBN = parseFiniteBigNumber(transactionSequenceNumber);
+    if (transactionSequenceNumberBN) {
       res.transactionSequenceNumber = transactionSequenceNumberBN;
     }
   }

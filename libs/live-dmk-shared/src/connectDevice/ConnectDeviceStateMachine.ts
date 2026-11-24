@@ -23,6 +23,7 @@ import {
   type DeviceDiscoveryService,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
+import { disconnectOtherSessions } from "../deviceConnectivity/disconnectOtherSessions";
 
 const WAITING_FOR_SELECTED_DEVICE_TIMEOUT = 30000;
 
@@ -60,6 +61,7 @@ const createConnectDeviceStateMachine = <
           };
           signal: AbortSignal;
         }): Promise<string> => {
+          disconnectOtherSessions(input.dmk, input.matchedDevice.discoveredDevice);
           const sessionId = await input.dmk.connect({
             device: input.matchedDevice.discoveredDevice,
             sessionRefresherOptions: { isRefresherDisabled: true },

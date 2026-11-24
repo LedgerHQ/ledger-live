@@ -14,7 +14,11 @@ import {
 import { Robot } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { ManageAgentsCardProps } from "./ManageAgentsCard.types";
 
-export function ManageAgentsCard({ onOpen, testID = "manage-agents-card" }: ManageAgentsCardProps) {
+export function ManageAgentsCard({
+  onOpen,
+  showNewBadge,
+  testID = "manage-agents-card",
+}: ManageAgentsCardProps) {
   const { t } = useTranslation();
 
   return (
@@ -30,12 +34,14 @@ export function ManageAgentsCard({ onOpen, testID = "manage-agents-card" }: Mana
           </CardContent>
         </CardLeading>
         <CardTrailing>
-          <Tag
-            label={t("common.new")}
-            appearance="accent"
-            size="md"
-            testID={`${testID}-new-badge`}
-          />
+          {showNewBadge ? (
+            <Tag
+              label={t("common.new")}
+              appearance="accent"
+              size="md"
+              testID={`${testID}-new-badge`}
+            />
+          ) : null}
         </CardTrailing>
       </CardHeader>
     </Card>

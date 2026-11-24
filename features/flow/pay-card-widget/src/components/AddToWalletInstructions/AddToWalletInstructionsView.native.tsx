@@ -1,6 +1,6 @@
 import React from "react";
-import { WalletErrorScene } from "./WalletErrorScene.native";
-import { WalletInstructionsScene } from "./WalletInstructionsScene.native";
+import { WalletErrorScene } from "./WalletErrorScene";
+import { WalletInstructionsScene } from "./WalletInstructionsScene";
 import type { AddToWalletInstructionsViewProps } from "./useAddToWalletInstructionsViewModel";
 
 export function AddToWalletInstructionsView(props: AddToWalletInstructionsViewProps) {

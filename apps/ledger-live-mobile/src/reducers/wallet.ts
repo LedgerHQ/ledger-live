@@ -2,18 +2,12 @@ import { useCallback } from "react";
 import { combineReducers, type Dispatch } from "@reduxjs/toolkit";
 import {
   accountNamesSlice,
-  accountNameSelector as entityAccountNameSelector,
   accountNameWithDefaultSelector as entityAccountNameWithDefault,
   setAccountName as setAccountNameRTK,
   initFromUserData,
 } from "@domain/entity-account-name";
 import { setContacts, type ContactsState } from "@domain/entity-contact";
-import {
-  starredAccountsSlice,
-  isStarredAccountSelector as entityIsStarredAccount,
-  setAccountStarred as setAccountStarredRTK,
-  initStarredFromIds,
-} from "@domain/entity-starred-account";
+import { starredAccountsSlice, initStarredFromIds } from "@domain/entity-starred-account";
 import { walletSyncSlice, walletSyncUpdate, type WSState } from "@domain/entity-wallet-sync";
 import {
   nonImportedAccountsSlice,
@@ -110,23 +104,10 @@ export const importWalletState =
 export const setAccountName = (accountId: string, name: string) =>
   setAccountNameRTK({ accountId, name });
 
-export const setAccountStarred = (accountId: string, starred: boolean) =>
-  setAccountStarredRTK({ accountId, starred });
-
 export { updateRecentAddresses };
-
-export const accountNameSelector = (
-  state: WalletState,
-  params: { accountId: string },
-): string | undefined => entityAccountNameSelector(state.accountNames, params);
 
 export const accountNameWithDefaultSelector = (state: WalletState, account: AccountLike): string =>
   entityAccountNameWithDefault(state.accountNames, account);
-
-export const isStarredAccountSelector = (
-  state: WalletState,
-  params: { accountId: string },
-): boolean => entityIsStarredAccount(state.starredAccountIds, params);
 
 export const accountUserDataExportSelector = (
   state: WalletState,

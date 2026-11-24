@@ -1,6 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import { byId, byIdWithDescendantText } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
+import type { AssetToPick } from "@e2e/page/drawer/transfer.drawer";
 
 const OPERATION_ROW_ID = "operations-list-item";
 
@@ -21,8 +22,10 @@ export default class AccountDetailPage {
   private readonly editNameScreen = byId("account-detail-edit-name-screen");
   private readonly heroBalance = byId("account-detail-hero-balance");
   private readonly heroAction = (action: string) => byId(`account-detail-hero-actions-${action}`);
+  private readonly sendRecipientInput = byId("recipient-input");
   private readonly transactions = byId("account-detail-transactions");
   private readonly anyOperationRow = byId(OPERATION_ROW_ID);
+  private readonly assetRow = (currencyName: string) => byId(`assetItem-${currencyName}`);
   private readonly operationRowWithType = (operationType: string) =>
     byIdWithDescendantText({ id: OPERATION_ROW_ID, text: operationType });
 
@@ -47,15 +50,60 @@ export default class AccountDetailPage {
     await this.heroBalance.expectVisible();
   }
 
-  @Step("Get visible account address label")
-  async getVisibleAddressLabel() {
-    await this.navBarAddress.expectVisible();
-    return await this.navBarAddress.getLabel();
+  @Step("Expect the address label to match {{{0}}}")
+  async expectAddressLabelMatching(pattern: RegExp) {
+    await this.navBarAddress.expectLabelMatching(pattern);
   }
 
-  @Step("Expect account transfer action to be visible")
-  async expectTransferActionVisible() {
-    await this.heroAction("transfer").expectVisible();
+  /** A token has no account screen of its own here: its row opens the asset page. */
+  @Step("Open the asset {{{0}}} held by the account")
+  async openAsset(currencyName: string) {
+    await this.assetRow(currencyName).scrollTo(this.scrollView);
+    await this.assetRow(currencyName).tap();
+    await app.assetDetail.expectAssetDetailPageVisible();
+  }
+
+  @Step("Expect account receive and send actions")
+  async expectReceiveAndSendActionsVisible() {
+    await this.openTransferDrawer();
+    await app.transferDrawer.expectReceiveVisible();
+    await app.transferDrawer.expectSendVisible();
+    await app.transferDrawer.close();
+  }
+
+  @Step("Tap on receive")
+  async tapReceive() {
+    await this.openTransferDrawer();
+    await app.transferDrawer.tapReceive();
+  }
+
+  @Step("Tap on send")
+  async tapSend(asset?: AssetToPick, isToken = false) {
+    await this.openTransferDrawer();
+    await app.transferDrawer.tapSend();
+    // A token is held next to its chain's asset, so the picker has to ask which one to send.
+    if (isToken || (await this.sendOpensAssetPicker())) {
+      if (!asset) throw new Error("Send asks which asset to send: pass the asset to pick");
+      await app.transferDrawer.pickAsset(asset);
+    }
+  }
+
+  /**
+   * A native send asks which asset to send only when the account holds several, which the app knows
+   * once it has synced the tokens: take whichever of the picker or the recipient screen shows first.
+   */
+  private async sendOpensAssetPicker() {
+    const deadline = Date.now() + TIMEOUT.xxlarge;
+    while (Date.now() < deadline) {
+      if (await app.transferDrawer.isAssetPickerVisible(TIMEOUT.xxxsmall)) return true;
+      if (await this.sendRecipientInput.isVisible(TIMEOUT.xxxsmall)) return false;
+    }
+    throw new Error("Send opened neither the asset picker nor the recipient screen");
+  }
+
+  private async openTransferDrawer() {
+    await this.heroAction("transfer").tap();
+    await app.transferDrawer.waitSettled();
   }
 
   @Step("Expect operation history to be visible")

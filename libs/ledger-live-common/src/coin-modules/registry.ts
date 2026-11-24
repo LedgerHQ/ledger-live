@@ -93,6 +93,11 @@ export function hasLocalApi(currency: CryptoCurrency): boolean {
   );
 }
 
+/** Whether the account data layer may read the currency from its local api: it has one, and its loader does not opt out. */
+export function localApiServesAccountData(currency: CryptoCurrency): boolean {
+  return hasLocalApi(currency) && loaders.get(currency.family)?.localApiServesAccountData !== false;
+}
+
 export function listSupportedCurrencies(): CryptoCurrency[] {
   if (!supportedCurrencies) {
     supportedCurrencies = [...getSupportedIds()].map(id => getCryptoCurrencyById(id));
@@ -125,6 +130,14 @@ export const loadAccountReceiveForFamily = makeLoaderCache(family =>
 
 export const loadAddressFromKeyForFamily = makeLoaderCache(family =>
   loaders.get(family)?.loadAddressFromKey?.(),
+);
+
+export const loadAccountStatusForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadAccountStatus?.(),
+);
+
+export const loadAssetStatusForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadAssetStatus?.(),
 );
 
 export const loadWalletApiAdapterForFamily = makeLoaderCache(family =>

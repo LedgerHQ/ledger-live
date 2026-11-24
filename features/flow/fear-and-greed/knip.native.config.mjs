@@ -10,7 +10,6 @@ export default createDualPlatformKnipConfig({
     "@testing-library/dom",
     "@testing-library/jest-dom",
     "@testing-library/react",
-    "@types/react-dom",
     "jest-environment-jsdom",
     "react-dom",
   ],

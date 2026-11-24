@@ -18,14 +18,6 @@ export const IMAGE_PROPS_BUY_DEVICE_FLEX = {
   },
 };
 
-export const IMAGE_PROPS_BUY_DEVICE_FLEX_BOX = {
-  imageStyle: {
-    height: 120,
-    right: -70,
-    bottom: -1,
-  },
-};
-
 export const IMAGE_PROPS_POST_PURCHASHE = {
   imageStyle: {
     height: 110,

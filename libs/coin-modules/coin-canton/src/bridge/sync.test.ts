@@ -1,19 +1,29 @@
+import {
+  emptyHistoryCache,
+  encodeAccountId,
+  encodeTokenAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { TokenAccount } from "@ledgerhq/types-live";
+import type { Account, AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonContext } from "../config";
-import * as accountBalance from "../logic/getBalance";
+import * as instrumentBalances from "./instrumentBalances";
 import * as gateway from "../network/gateway";
 import { OperationInfo } from "../network/gateway";
 import resolver from "../signer";
-import { createMockCantonCurrency, createMockCoinConfigValue } from "../test/fixtures";
-import { CantonAccount } from "../types";
+import { lastValueFrom } from "rxjs";
+import { createMockCantonAccount, createMockCantonCurrency } from "../test/fixtures";
+import { createBridges } from "./index";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
+import { CantonAccount, CantonSigner } from "../types";
 import * as onboard from "./onboard";
-import { makeGetAccountShape, filterDisabledTokenAccounts } from "./sync";
+import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
+import { makeGetAccountShape, filterDisabledTokenAccounts, SYNC_HASH } from "./sync";
 
 jest.mock("../network/gateway", () => ({
   ...jest.requireActual("../network/gateway"),
   getLedgerEnd: jest.fn(),
+  getNativeInstrument: jest.fn(),
   getOperations: jest.fn(),
   getPartyById: jest.fn(),
   getPendingTransferProposals: jest.fn(),
@@ -22,7 +32,7 @@ jest.mock("../network/gateway", () => ({
 }));
 jest.mock("../signer");
 jest.mock("./onboard");
-jest.mock("../logic/getBalance");
+jest.mock("./instrumentBalances");
 const mockFindTokenByAddressInCurrency = jest.fn().mockResolvedValue(undefined);
 const mockFindTokenById = jest.fn().mockResolvedValue(undefined);
 
@@ -33,8 +43,9 @@ jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
   })),
 }));
 
-const mockedGetBalance = accountBalance.getBalance as jest.Mock;
+const mockedGetBalance = instrumentBalances.getInstrumentBalances as jest.Mock;
 const mockedGetLedgerEnd = gateway.getLedgerEnd as jest.Mock;
+const mockedGetNativeInstrument = gateway.getNativeInstrument as jest.Mock;
 const mockedGetOperations = gateway.getOperations as jest.Mock;
 const mockedGetPendingTransferProposals = gateway.getPendingTransferProposals as jest.Mock;
 const mockedGetPartyById = gateway.getPartyById as jest.Mock;
@@ -68,6 +79,12 @@ const createMockNativeBalance = (amount: string, locked = false): CantonBalance 
   utxoCount: 1,
   instrumentId: "Amulet",
   adminId: "native-admin",
+});
+
+const impostorAmulet = (value: string): CantonBalance => ({
+  ...createMockNativeBalance(value),
+  asset: { type: "token", assetReference: "Amulet" },
+  adminId: "impostor::1220dddd",
 });
 
 const createMockOperationView = (
@@ -145,6 +162,157 @@ const createMockCantonAccountShapeInfo = (
   };
 };
 
+const tokenOperationView = (
+  instrument: { instrumentId: string; instrumentAdmin: string },
+  txHash: string,
+  overrides: Partial<OperationInfo> = {},
+): OperationInfo => ({
+  ...createMockOperationView({ txHash, ...instrument }),
+  asset: { type: "token", ...instrument },
+  ...overrides,
+});
+
+/** A send row of a token transaction, with its transfer's memo. */
+const tokenRowWithMemo = (
+  instrument: { instrumentId: string; instrumentAdmin: string },
+  uid: string,
+  reason: string | undefined,
+): OperationInfo =>
+  tokenOperationView(instrument, "memo-tx", {
+    uid,
+    transfers: [
+      {
+        address: "party123",
+        type: "Send",
+        value: "100",
+        asset: instrument.instrumentId,
+        details: { operationType: "transfer", metadata: { reason } },
+      },
+    ],
+  } as Partial<OperationInfo>);
+
+const rowAtHeight = (txHash: string, height: number): OperationInfo => ({
+  ...createMockOperationView({ txHash }),
+  block: { height, time: "" },
+});
+
+/** A row at a height, timestamped in height order. */
+const at = (row: OperationInfo, height: number): OperationInfo => ({
+  ...row,
+  transaction_timestamp: new Date(Date.UTC(2026, 0, 1, 0, 0, height)).toISOString(),
+  block: { height, time: "" },
+});
+
+/** The fee charged for a transaction, over all its operations. */
+const feeOf = (shape: Partial<CantonAccount>, hash: string) =>
+  (shape.operations ?? [])
+    .filter(op => op.hash === hash)
+    .reduce((total, op) => total.plus(op.fee), BigNumber(0));
+
+const fees = (shape: Partial<CantonAccount>) =>
+  (shape.operations ?? []).filter(op => op.type === "FEES");
+
+const storedOperation = (height: number, value = 1) =>
+  ({
+    id: `stored-${height}`,
+    hash: `stored-${height}`,
+    type: "OUT",
+    value: BigNumber(value),
+    fee: BigNumber(0),
+    blockHeight: height,
+    date: new Date(height),
+    senders: [],
+    recipients: [],
+    extra: { instrumentId: "Amulet" },
+  }) as unknown as CantonAccount["operations"][number];
+
+const readFrom = () => mockedGetOperations.mock.calls.map(([, , options]) => options);
+
+const syncFrom = (initialAccount: Partial<CantonAccount>) =>
+  makeGetAccountShape({} as SignerContext<CantonSigner>, fakeContext)(
+    createMockCantonAccountShapeInfo({
+      initialAccount: {
+        xpub: "party123",
+        operations: [],
+        subAccounts: [],
+        cantonResources: { isOnboarded: true, publicKey: "key" },
+        ...initialAccount,
+      } as unknown as CantonAccount,
+    }),
+    { paginationConfig: {} },
+  );
+
+/** A pending offer the account sent. */
+const sentOffer = (hash: string) => ({
+  contract_id: `contract-${hash}`,
+  sender: "party123",
+  receiver: "bob",
+  amount: "100",
+  instrument_id: "Amulet",
+  instrument_admin: "native-admin",
+  memo: "",
+  expires_at_micros: 4_102_444_800_000_000,
+  update_id: hash,
+});
+
+/** A sent offer's transaction: the proposal and its change, each with a fee of 5. */
+const offerRows = (hash: string, height: number) => [
+  at(createMockOperationView({ txHash: hash, operationType: "transfer-proposal" }), height),
+  at(createMockOperationView({ txHash: hash, uid: `change-${hash}` }), height),
+];
+
+/** Syncs from the previous shape, its resources through a serialization round trip. */
+const syncAfter = async (previous: Partial<CantonAccount>, syncHash: string | undefined) => {
+  const raw = {} as AccountRaw;
+  assignToAccountRaw(previous as Account, raw);
+  const restored = {} as Account;
+  assignFromAccountRaw(raw, restored);
+  mockedGetOperations.mockClear();
+  const shape = await syncFrom({
+    syncHash,
+    operations: previous.operations ?? [],
+    subAccounts: previous.subAccounts ?? [],
+    cantonResources: (restored as CantonAccount).cantonResources,
+  });
+  return { shape, from: readFrom().map(({ minOffset }) => minOffset) };
+};
+
+const resync = (previous: Partial<CantonAccount>) => syncAfter(previous, SYNC_HASH);
+
+const feesOf = (shape: Partial<CantonAccount>, hash: string) =>
+  (shape.operations ?? []).filter(op => op.hash === hash && op.type === "FEES");
+
+const replayOf = (shape: Partial<CantonAccount>) => shape.cantonResources?.replayTransactions ?? [];
+
+/** A first sync of the sent offer "offer" while pending: its fees only, and the offer to read again. */
+const syncPending = async () => {
+  const pending = await syncFrom({ syncHash: SYNC_HASH, cantonResources: {} as never });
+  expect(feesOf(pending, "offer")).toEqual([
+    expect.objectContaining({ value: BigNumber(10), fee: BigNumber(10) }),
+  ]);
+  expect(replayOf(pending)).toEqual([{ hash: "offer", height: 5 }]);
+  return pending;
+};
+
+/** A full sync through the account bridge, from an account holding one stale operation. */
+const syncAccount = async (
+  syncHash: string | undefined,
+  overrides: Partial<CantonAccount> = {},
+) => {
+  const initial = {
+    ...createMockCantonAccount(),
+    xpub: "party123",
+    syncHash,
+    operations: [storedOperation(5, 999)],
+    operationsCount: 1,
+    cantonResources: { isOnboarded: true, publicKey: "key", pendingTransferProposals: [] },
+    ...overrides,
+  } as unknown as CantonAccount;
+  const { accountBridge } = createBridges({} as SignerContext<CantonSigner>, fakeContext);
+  const updater = await lastValueFrom(accountBridge.sync(initial, { paginationConfig: {} }));
+  return updater(initial);
+};
+
 describe("makeGetAccountShape", () => {
   const fakeSignerContext = {} as any;
 
@@ -157,6 +325,8 @@ describe("makeGetAccountShape", () => {
     index: 0,
     initialAccount: undefined,
   };
+  const sync = () =>
+    makeGetAccountShape(fakeSignerContext, fakeContext)(defaultInfo, { paginationConfig: {} });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -172,6 +342,10 @@ describe("makeGetAccountShape", () => {
 
     mockedIsAuthorized.mockResolvedValue(true);
     mockedGetLedgerEnd.mockResolvedValue(12345);
+    mockedGetNativeInstrument.mockResolvedValue({
+      instrumentId: "Amulet",
+      instrumentAdmin: "native-admin",
+    });
     mockedGetPendingTransferProposals.mockResolvedValue([]);
     mockedGetPartyById.mockResolvedValue({ party_id: "test-party-id", public_key: "" });
     mockedGetCalTokensCached.mockResolvedValue(new Map());
@@ -282,14 +456,18 @@ describe("makeGetAccountShape", () => {
     const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
-    expect(shape).toMatchObject({
-      operations: [
+    expect(shape.operations).toEqual(
+      expect.arrayContaining([
         expect.objectContaining({
           type: "TRANSFER_PROPOSAL",
-          value: BigNumber(200), // transfer value only, fees not added for TRANSFER_PROPOSAL
+          value: BigNumber(200),
+          fee: BigNumber(0),
         }),
-      ],
-    });
+      ]),
+    );
+    expect(fees(shape)).toEqual([
+      expect.objectContaining({ hash: "tx3", value: BigNumber(5), fee: BigNumber(5) }),
+    ]);
   });
 
   it("should set operation type to TRANSFER_REJECTED when operationType is transfer-rejected", async () => {
@@ -657,173 +835,1054 @@ describe("makeGetAccountShape", () => {
       ],
     });
   });
+
+  describe("token attribution by instrument admin", () => {
+    const instrumentId = "USDCx";
+    const calAdmin = "decentralized-usdc-interchain-rep::1220aaaa";
+    const otherAdmin = "impostor::1220bbbb";
+    const usdcx = {
+      type: "TokenCurrency" as const,
+      id: "canton_network/cip56/usdcx",
+      contractAddress: calAdmin,
+      parentCurrencyId: "canton_network",
+      tokenType: "cip56",
+      name: "USDCx",
+      ticker: "USDCx",
+      delisted: false,
+      disableCountervalue: false,
+      units: [{ name: "USDCx", code: "USDCx", magnitude: 10 }],
+    };
+    const tokenBalance = (adminId: string, value: string, id = instrumentId): CantonBalance => ({
+      value: BigInt(value),
+      locked: 0n,
+      asset: { type: "token", assetReference: id },
+      utxoCount: 1,
+      instrumentId: id,
+      adminId,
+    });
+    const proposalFrom = (adminId: string) => ({
+      contract_id: `offer-from-${adminId}`,
+      sender: "sender-party",
+      receiver: "test-party-id",
+      amount: "1",
+      instrument_id: instrumentId,
+      instrument_admin: adminId,
+      memo: "",
+      expires_at_micros: 4_102_444_800_000_000,
+      update_id: `update-from-${adminId}`,
+    });
+
+    beforeEach(() => {
+      mockedGetCalTokensCached.mockResolvedValue(new Map([[usdcx.id, instrumentId]]));
+      mockFindTokenById.mockImplementation(async (id: string) =>
+        id === usdcx.id ? usdcx : undefined,
+      );
+      mockedGetEnabledInstrumentsCached.mockResolvedValue(
+        new Set([`${instrumentId}____${calAdmin}`]),
+      );
+      mockedGetOperations.mockResolvedValue({ operations: [] });
+    });
+
+    it("keeps only the CAL admin's balance and operations under the token", async () => {
+      mockedGetBalance.mockResolvedValue([
+        createMockNativeBalance("1000"),
+        tokenBalance(otherAdmin, "900"),
+        tokenBalance(calAdmin, "500"),
+        { ...tokenBalance(calAdmin, "200"), locked: 200n },
+      ]);
+      mockedGetOperations.mockResolvedValue({
+        operations: [
+          createMockOperationView({ txHash: "own-tx", instrumentId, instrumentAdmin: calAdmin }),
+          createMockOperationView({
+            txHash: "foreign-tx",
+            instrumentId,
+            instrumentAdmin: otherAdmin,
+          }),
+        ],
+      });
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([
+        expect.objectContaining({
+          token: usdcx,
+          balance: BigNumber(700),
+          spendableBalance: BigNumber(500),
+          operations: [expect.objectContaining({ hash: "own-tx" })],
+        }),
+      ]);
+      expect(shape.cantonResources?.instrumentUtxoCounts).toEqual({
+        Amulet: 1,
+        [`${instrumentId}____${calAdmin}`]: 2,
+        [`${instrumentId}____${otherAdmin}`]: 1,
+      });
+    });
+
+    it("gives each admin's balance to its own CAL token when two share an instrument id", async () => {
+      const otherUsdcx = {
+        ...usdcx,
+        id: "canton_network/cip56/usdcx-other",
+        contractAddress: otherAdmin,
+      };
+      mockedGetCalTokensCached.mockResolvedValue(
+        new Map([
+          [usdcx.id, instrumentId],
+          [otherUsdcx.id, instrumentId],
+        ]),
+      );
+      mockFindTokenById.mockImplementation(async (id: string) =>
+        [usdcx, otherUsdcx].find(token => token.id === id),
+      );
+      mockedGetEnabledInstrumentsCached.mockResolvedValue(
+        new Set([`${instrumentId}____${calAdmin}`, `${instrumentId}____${otherAdmin}`]),
+      );
+      mockedGetBalance.mockResolvedValue([
+        createMockNativeBalance("1000"),
+        tokenBalance(otherAdmin, "900"),
+        tokenBalance(calAdmin, "500"),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([
+        expect.objectContaining({ token: otherUsdcx, balance: BigNumber(900) }),
+        expect.objectContaining({ token: usdcx, balance: BigNumber(500) }),
+      ]);
+    });
+
+    it("creates no token sub-account for a CAL token without an admin", async () => {
+      mockFindTokenById.mockImplementation(async (id: string) =>
+        id === usdcx.id ? { ...usdcx, contractAddress: "" } : undefined,
+      );
+      mockedGetBalance.mockResolvedValue([
+        createMockNativeBalance("1000"),
+        tokenBalance(calAdmin, "500"),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([]);
+    });
+
+    it("creates no token sub-account from another admin's balance", async () => {
+      mockedGetBalance.mockResolvedValue([
+        createMockNativeBalance("1000"),
+        tokenBalance(otherAdmin, "900"),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([]);
+    });
+
+    it("creates no token sub-account from another admin's proposal", async () => {
+      mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+      mockedGetPendingTransferProposals.mockResolvedValue([proposalFrom(otherAdmin)]);
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([]);
+    });
+
+    it("keeps another admin's proposal off the token sub-account", async () => {
+      mockedGetBalance.mockResolvedValue([
+        createMockNativeBalance("1000"),
+        tokenBalance(calAdmin, "500"),
+      ]);
+      mockedGetPendingTransferProposals.mockResolvedValue([
+        proposalFrom(otherAdmin),
+        proposalFrom(calAdmin),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape.subAccounts).toEqual([
+        expect.objectContaining({
+          token: usdcx,
+          cantonResources: { pendingTransferProposals: [proposalFrom(calAdmin)] },
+        }),
+      ]);
+    });
+
+    it("reads the native balance by its instrument id whatever row comes first", async () => {
+      mockedGetBalance.mockResolvedValue([
+        tokenBalance("unlisted-admin::1220cccc", "900", "UnlistedToken"),
+        createMockNativeBalance("1000"),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape.balance).toEqual(BigNumber(1000));
+    });
+
+    describe("fee asset", () => {
+      const usdcxInstrument = { instrumentId, instrumentAdmin: calAdmin };
+      /** A proposal row the account sent, of CC or of USDCx. */
+      const proposalRow = (txHash: string, instrument = { instrumentId: "Amulet" }) => ({
+        ...createMockOperationView({ txHash, operationType: "transfer-proposal", ...instrument }),
+        ...(instrument.instrumentId === "Amulet"
+          ? {}
+          : { asset: { type: "token" as const, ...usdcxInstrument } }),
+      });
+      const pendingProposal = (updateId: string, instrument_id = "Amulet") => ({
+        ...proposalFrom(instrument_id === "Amulet" ? "native-admin" : calAdmin),
+        contract_id: `offer-${updateId}`,
+        sender: "party123",
+        receiver: "bob",
+        amount: "100",
+        instrument_id,
+        update_id: updateId,
+      });
+
+      beforeEach(() => {
+        mockedGetBalance.mockResolvedValue([
+          createMockNativeBalance("1000"),
+          tokenBalance(calAdmin, "500"),
+        ]);
+      });
+
+      it("keeps the CC fee of a token send out of the token, and charges it on the main account", async () => {
+        mockedGetOperations.mockResolvedValue({
+          operations: [tokenOperationView(usdcxInstrument, "token-tx")],
+        });
+
+        const shape = await sync();
+
+        expect(shape.subAccounts?.[0].operations).toEqual([
+          expect.objectContaining({ type: "OUT", value: BigNumber(100), fee: BigNumber(0) }),
+        ]);
+        expect(fees(shape)).toEqual([
+          expect.objectContaining({
+            hash: "token-tx",
+            value: BigNumber(5),
+            fee: BigNumber(5),
+            senders: ["party123"],
+            extra: expect.objectContaining({ instrumentId: "Amulet" }),
+          }),
+        ]);
+      });
+
+      it("charges the CC fee of a token send on the CC send of the same transaction", async () => {
+        mockedGetOperations.mockResolvedValue({
+          operations: [
+            tokenOperationView(usdcxInstrument, "mixed-tx"),
+            createMockOperationView({ txHash: "mixed-tx" }),
+          ],
+        });
+
+        const shape = await sync();
+
+        expect(shape.operations).toEqual([
+          expect.objectContaining({ type: "OUT", value: BigNumber(110), fee: BigNumber(10) }),
+        ]);
+      });
+
+      it("keeps one operation per asset for a send to several receivers, with every fee", async () => {
+        mockedGetOperations.mockResolvedValue({
+          operations: [
+            tokenOperationView(usdcxInstrument, "split-tx", { uid: "uid-1", recipients: ["bob"] }),
+            tokenOperationView(usdcxInstrument, "split-tx", {
+              uid: "uid-2",
+              recipients: ["carol"],
+            }),
+          ],
+        });
+
+        const shape = await sync();
+
+        expect(shape.subAccounts?.[0].operations).toEqual([
+          expect.objectContaining({ value: BigNumber(200), recipients: ["bob", "carol"] }),
+        ]);
+        expect(fees(shape)).toEqual([expect.objectContaining({ value: BigNumber(10) })]);
+      });
+
+      it.each([
+        ["keeps the memo the rows share", "lunch", "lunch", "lunch"],
+        ["keeps the memo of the only row with one", "lunch", undefined, "lunch"],
+        ["leaves no memo when the rows disagree", "lunch", "rent", undefined],
+      ])("%s", async (_, firstMemo, secondMemo, expected) => {
+        mockedGetOperations.mockResolvedValue({
+          operations: [
+            tokenRowWithMemo(usdcxInstrument, "uid-1", firstMemo),
+            tokenRowWithMemo(usdcxInstrument, "uid-2", secondMemo),
+          ],
+        });
+
+        const shape = await sync();
+
+        expect(shape.subAccounts?.[0].operations[0].extra).toEqual(
+          expect.objectContaining({ memo: expected }),
+        );
+      });
+
+      it("rebuilds a token sub-account without its stale operations, keeping its pending operations and regenerating its chart", async () => {
+        const staleChart = { HOUR: { latestDate: 1, balances: [42] } };
+        const pendingOperations = [{ id: "pending" }];
+        mockedGetOperations.mockResolvedValue({
+          operations: [tokenOperationView(usdcxInstrument, "fresh-token")],
+          next: -1,
+        });
+        const accountId = encodeAccountId({
+          type: "js",
+          version: "2",
+          currencyId: sampleCurrency.id,
+          xpubOrAddress: "party123",
+          derivationMode: "canton",
+        });
+
+        const account = await syncAccount(undefined, {
+          id: accountId,
+          subAccounts: [
+            {
+              type: "TokenAccount",
+              id: encodeTokenAccountId(accountId, usdcx as TokenAccount["token"]),
+              parentId: accountId,
+              token: usdcx,
+              balance: BigNumber(500),
+              spendableBalance: BigNumber(500),
+              creationDate: new Date(0),
+              operations: [{ ...storedOperation(9), id: "stale-token" }],
+              operationsCount: 1,
+              pendingOperations,
+              balanceHistoryCache: staleChart,
+              swapHistory: [],
+            },
+          ] as unknown as TokenAccount[],
+        });
+
+        const [subAccount] = account.subAccounts ?? [];
+        expect(subAccount.operations.map(op => op.hash)).toEqual(["fresh-token"]);
+        expect(subAccount.pendingOperations).toBe(pendingOperations);
+        expect(subAccount.balanceHistoryCache).not.toEqual(staleChart);
+        expect(subAccount.balanceHistoryCache).not.toEqual(emptyHistoryCache);
+      });
+
+      it("charges no fee for a token the account received", async () => {
+        mockedGetOperations.mockResolvedValue({
+          operations: [
+            tokenOperationView(usdcxInstrument, "in-tx", { type: "Receive", senders: ["alice"] }),
+          ],
+        });
+
+        const shape = await sync();
+
+        expect(shape.subAccounts?.[0].operations).toEqual([
+          expect.objectContaining({ type: "IN", value: BigNumber(100) }),
+        ]);
+        expect(shape.operations).toEqual([]);
+      });
+
+      it("keeps one operation per token for a transaction sending two tokens, and charges both CC fees once", async () => {
+        const cbtc = {
+          ...usdcx,
+          id: "canton_network/cip56/cbtc",
+          contractAddress: "cbtc-admin::1220eeee",
+          name: "CBTC",
+          ticker: "CBTC",
+        };
+        const cbtcInstrument = { instrumentId: "CBTC", instrumentAdmin: cbtc.contractAddress };
+        mockedGetCalTokensCached.mockResolvedValue(
+          new Map([
+            [usdcx.id, instrumentId],
+            [cbtc.id, "CBTC"],
+          ]),
+        );
+        mockFindTokenById.mockImplementation(async (id: string) =>
+          [usdcx, cbtc].find(token => token.id === id),
+        );
+        mockedGetEnabledInstrumentsCached.mockResolvedValue(
+          new Set([`${instrumentId}____${calAdmin}`, `CBTC____${cbtc.contractAddress}`]),
+        );
+        mockedGetBalance.mockResolvedValue([
+          createMockNativeBalance("1000"),
+          tokenBalance(calAdmin, "500"),
+          tokenBalance(cbtc.contractAddress, "300", "CBTC"),
+        ]);
+        mockedGetOperations.mockResolvedValue({
+          operations: [
+            tokenOperationView(usdcxInstrument, "two-tokens", { uid: "uid-1" }),
+            tokenOperationView(cbtcInstrument, "two-tokens", {
+              uid: "uid-2",
+              transfers: [
+                {
+                  address: "party123",
+                  type: "Send",
+                  value: "40",
+                  asset: "CBTC",
+                  details: { operationType: "transfer" },
+                },
+              ],
+            } as Partial<OperationInfo>),
+          ],
+        });
+
+        const shape = await sync();
+
+        const tokenOperations = (shape.subAccounts ?? []).map(({ token, operations }) => [
+          token.id,
+          operations.map(({ type, value, fee }) => [type, value.toString(), fee.toString()]),
+        ]);
+        expect(tokenOperations).toEqual(
+          expect.arrayContaining([
+            [usdcx.id, [["OUT", "100", "0"]]],
+            [cbtc.id, [["OUT", "40", "0"]]],
+          ]),
+        );
+        expect(tokenOperations).toHaveLength(2);
+        expect(fees(shape)).toEqual([
+          expect.objectContaining({ hash: "two-tokens", value: BigNumber(10) }),
+        ]);
+      });
+
+      describe("transfer proposals", () => {
+        it("charges the fees of a pending proposal the account sent, without the proposal", async () => {
+          mockedGetPendingTransferProposals.mockResolvedValue([pendingProposal("offer-tx")]);
+          mockedGetOperations.mockResolvedValue({
+            operations: [
+              proposalRow("offer-tx"),
+              createMockOperationView({ txHash: "offer-tx", uid: "change" }),
+            ],
+          });
+
+          const shape = await sync();
+
+          expect(shape.operations).toEqual([
+            expect.objectContaining({
+              hash: "offer-tx",
+              type: "FEES",
+              value: BigNumber(10),
+              fee: BigNumber(10),
+            }),
+          ]);
+        });
+
+        it("records nothing for a pending proposal the account received", async () => {
+          mockedGetPendingTransferProposals.mockResolvedValue([pendingProposal("offer-tx")]);
+          mockedGetOperations.mockResolvedValue({
+            operations: [{ ...proposalRow("offer-tx"), type: "Receive", senders: ["alice"] }],
+          });
+
+          const shape = await sync();
+
+          expect(shape.operations).toEqual([]);
+        });
+
+        it("charges the CC fee of a pending token proposal on the main account", async () => {
+          mockedGetPendingTransferProposals.mockResolvedValue([
+            pendingProposal("token-offer", instrumentId),
+          ]);
+          mockedGetOperations.mockResolvedValue({
+            operations: [proposalRow("token-offer", usdcxInstrument)],
+          });
+
+          const shape = await sync();
+
+          expect(shape.subAccounts?.[0].operations).toEqual([]);
+          expect(shape.operations).toEqual([
+            expect.objectContaining({
+              hash: "token-offer",
+              type: "FEES",
+              value: BigNumber(5),
+              extra: expect.objectContaining({ instrumentId: "Amulet" }),
+            }),
+          ]);
+        });
+
+        it("charges the fee of a settled proposal once, on its creation", async () => {
+          mockedGetOperations.mockResolvedValue({
+            operations: [
+              proposalRow("offer-tx"),
+              {
+                ...createMockOperationView({ txHash: "accept-tx" }),
+                fee: { ...createMockOperationView().fee, value: "0" },
+              },
+            ],
+          });
+
+          const shape = await sync();
+
+          expect(shape.operations).toEqual(
+            expect.arrayContaining([
+              expect.objectContaining({ type: "TRANSFER_PROPOSAL", fee: BigNumber(0) }),
+              expect.objectContaining({ hash: "accept-tx", type: "OUT", value: BigNumber(100) }),
+            ]),
+          );
+          expect(fees(shape)).toEqual([
+            expect.objectContaining({ hash: "offer-tx", value: BigNumber(5) }),
+          ]);
+        });
+      });
+
+      describe("a token that gets its sub-account", () => {
+        const accountId = encodeAccountId({
+          type: "js",
+          version: "2",
+          currencyId: sampleCurrency.id,
+          xpubOrAddress: "party123",
+          derivationMode: "canton",
+        });
+        const storedUsdcx = {
+          type: "TokenAccount",
+          id: encodeTokenAccountId(accountId, usdcx as TokenAccount["token"]),
+          parentId: accountId,
+          token: usdcx,
+          balance: BigNumber(500),
+          spendableBalance: BigNumber(500),
+          creationDate: new Date(0),
+          operations: [],
+          operationsCount: 0,
+          pendingOperations: [],
+          balanceHistoryCache: emptyHistoryCache,
+          swapHistory: [],
+        } as unknown as TokenAccount;
+        const rows = [
+          {
+            ...tokenOperationView(usdcxInstrument, "early-token"),
+            block: { height: 10, time: "" },
+          },
+          { ...createMockOperationView({ txHash: "late" }), block: { height: 20, time: "" } },
+        ];
+
+        beforeEach(() => {
+          mockedGetOperations.mockImplementation(async (_config, _party, { minOffset }) => ({
+            operations: rows.filter(row => row.block.height >= minOffset),
+            next: -1,
+          }));
+        });
+
+        it("reads the history again from offset 0, recovering a CC fee older than every stored operation", async () => {
+          const account = await syncAccount(SYNC_HASH, {
+            id: accountId,
+            operations: [storedOperation(20)],
+          });
+
+          expect(readFrom()).toEqual([expect.objectContaining({ minOffset: 0 })]);
+          expect(account.operations.map(op => op.hash).sort()).toEqual(["early-token", "late"]);
+          expect(fees(account)).toEqual([
+            expect.objectContaining({ hash: "early-token", value: BigNumber(5) }),
+          ]);
+          expect(account.subAccounts?.[0].operations.map(op => op.hash)).toEqual(["early-token"]);
+        });
+
+        it("keeps the fees of a settled offer the rebuild does not read in full, until it does", async () => {
+          let served = [...offerRows("offer", 5), ...rows];
+          mockedGetOperations.mockImplementation(async (_config, _party, { minOffset }) => ({
+            operations: served.filter(row => row.block.height >= minOffset),
+            next: -1,
+          }));
+          mockedGetPendingTransferProposals.mockResolvedValue([sentOffer("offer")]);
+          const pending = await syncFrom({
+            syncHash: SYNC_HASH,
+            subAccounts: [storedUsdcx],
+            cantonResources: {} as never,
+          });
+          expect(feesOf(pending, "offer")).toEqual([
+            expect.objectContaining({ value: BigNumber(10) }),
+          ]);
+          expect(replayOf(pending)).toEqual([{ hash: "offer", height: 5 }]);
+
+          mockedGetPendingTransferProposals.mockResolvedValue([]);
+          served = [...offerRows("offer", 5).map(row => ({ ...row, transfers: [] })), ...rows];
+          const rebuilt = await syncAfter({ ...pending, subAccounts: [] }, SYNC_HASH);
+          expect(rebuilt.from).toEqual([0]);
+          expect(feesOf(rebuilt.shape, "offer")).toEqual([
+            expect.objectContaining({ value: BigNumber(10) }),
+          ]);
+          expect(replayOf(rebuilt.shape)).toEqual([{ hash: "offer", height: 5 }]);
+          expect(rebuilt.shape.subAccounts?.[0].operations.map(op => op.hash)).toEqual([
+            "early-token",
+          ]);
+
+          served = [...offerRows("offer", 5), ...rows];
+          const recovered = await resync(rebuilt.shape);
+          expect(recovered.from).toEqual([5]);
+          expect(feesOf(recovered.shape, "offer")).toEqual([]);
+          expect(feeOf(recovered.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(recovered.shape)).toEqual([]);
+        });
+
+        it("reads on from the newest stored operation once the sub-account is stored", async () => {
+          await syncAccount(SYNC_HASH, {
+            id: accountId,
+            operations: [storedOperation(20)],
+            subAccounts: [storedUsdcx],
+          });
+
+          expect(readFrom()).toEqual([expect.objectContaining({ minOffset: 21 })]);
+        });
+
+        it("does not read the history again for a held token that stays disabled", async () => {
+          mockedGetEnabledInstrumentsCached.mockResolvedValue(new Set());
+
+          await syncAccount(SYNC_HASH, { id: accountId, operations: [storedOperation(20)] });
+          await syncAccount(SYNC_HASH, { id: accountId, operations: [storedOperation(20)] });
+
+          expect(readFrom()).toEqual([
+            expect.objectContaining({ minOffset: 21 }),
+            expect.objectContaining({ minOffset: 21 }),
+          ]);
+        });
+      });
+    });
+  });
+
+  describe("history reading", () => {
+    beforeEach(() => {
+      mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+      mockedGetOperations.mockResolvedValue({ operations: [], next: -1 });
+    });
+
+    it("reads past the newest stored operation of any account, up to the ledger end", async () => {
+      const shape = await syncFrom({
+        syncHash: SYNC_HASH,
+        operations: [storedOperation(5)],
+        subAccounts: [{ operations: [storedOperation(9)] }] as unknown as TokenAccount[],
+      });
+
+      expect(readFrom()).toEqual([{ minOffset: 10, maxOffset: 12345, limit: 1000 }]);
+      expect(shape.operations).toEqual([storedOperation(5)]);
+      expect(shape.syncHash).toBe(SYNC_HASH);
+    });
+
+    it("reads nothing when the account is at the ledger end", async () => {
+      await syncFrom({ syncHash: SYNC_HASH, operations: [storedOperation(12345)] });
+
+      expect(mockedGetOperations).not.toHaveBeenCalled();
+    });
+
+    it("reads every page, resuming after the last row served rather than at the gateway's next", async () => {
+      mockedGetOperations
+        .mockResolvedValueOnce({ operations: [rowAtHeight("first", 1)], next: 5 })
+        .mockResolvedValueOnce({ operations: [], next: 9 })
+        .mockResolvedValueOnce({ operations: [rowAtHeight("second", 8)], next: -1 });
+
+      const shape = await syncFrom({ syncHash: SYNC_HASH });
+
+      expect(readFrom()).toEqual([
+        { minOffset: 0, maxOffset: 12345, limit: 1000 },
+        { minOffset: 0, maxOffset: 12345, cursor: 2, limit: 1000 },
+        { minOffset: 0, maxOffset: 12345, cursor: 8, limit: 1000 },
+      ]);
+      expect(shape.operations?.map(op => op.hash).sort()).toEqual(["first", "second"]);
+    });
+
+    it("stops at the ledger end read before the walk", async () => {
+      mockedGetOperations.mockResolvedValueOnce({
+        operations: [{ ...createMockOperationView(), block: { height: 12345, time: "" } }],
+        next: 12347,
+      });
+
+      await syncFrom({ syncHash: SYNC_HASH });
+
+      expect(mockedGetOperations).toHaveBeenCalledTimes(1);
+    });
+
+    describe("pending offers read again", () => {
+      const laterRow = at(createMockOperationView({ txHash: "later" }), 9);
+      let rows: OperationInfo[] = [];
+
+      beforeEach(() => {
+        rows = offerRows("offer", 5);
+        mockedGetOperations.mockImplementation(async (_config, _party, { minOffset }) => ({
+          operations: rows.filter(row => row.block.height >= minOffset),
+          next: -1,
+        }));
+        mockedGetPendingTransferProposals.mockResolvedValue([sentOffer("offer")]);
+      });
+
+      it("replaces the fees stored while pending once the offer settles, and reads on", async () => {
+        const pending = await syncPending();
+
+        mockedGetPendingTransferProposals.mockResolvedValue([]);
+        rows = [...offerRows("offer", 5), laterRow];
+        const settled = await resync(pending);
+        expect(settled.from).toEqual([5]);
+        expect(feesOf(settled.shape, "offer")).toEqual([]);
+        expect(
+          settled.shape.operations?.filter(op => op.hash === "offer").map(op => op.type),
+        ).toEqual(expect.arrayContaining(["TRANSFER_PROPOSAL", "OUT"]));
+        expect(feeOf(settled.shape, "offer")).toEqual(BigNumber(10));
+        expect(replayOf(settled.shape)).toEqual([]);
+
+        const next = await resync(settled.shape);
+        expect(next.from).toEqual([10]);
+      });
+
+      it("keeps the fees of a settled offer the gateway does not read in full, until it does", async () => {
+        const pending = await syncPending();
+        mockedGetPendingTransferProposals.mockResolvedValue([]);
+        const invalid = offerRows("offer", 5).map(row => ({ ...row, transfers: [] }));
+
+        let previous: Partial<CantonAccount> = pending;
+        for (const partial of [[], invalid, [offerRows("offer", 5)[0], invalid[1]]]) {
+          rows = [...partial, laterRow];
+          const { shape, from } = await resync(previous);
+          expect(from).toEqual([5]);
+          expect(feesOf(shape, "offer")).toEqual([
+            expect.objectContaining({ value: BigNumber(10) }),
+          ]);
+          expect(replayOf(shape)).toEqual([{ hash: "offer", height: 5 }]);
+          expect(shape.operations?.map(op => op.hash)).toContain("later");
+          previous = shape;
+        }
+
+        rows = [...offerRows("offer", 5), laterRow];
+        const recovered = await resync(previous);
+        expect(feesOf(recovered.shape, "offer")).toEqual([]);
+        expect(feeOf(recovered.shape, "offer")).toEqual(BigNumber(10));
+        expect(replayOf(recovered.shape)).toEqual([]);
+      });
+
+      it("keeps the fees when the transaction read again charges less than they did", async () => {
+        const pending = await syncPending();
+        mockedGetPendingTransferProposals.mockResolvedValue([]);
+
+        rows = [offerRows("offer", 5)[1]];
+        const partial = await resync(pending);
+        expect(feesOf(partial.shape, "offer")).toEqual([
+          expect.objectContaining({ value: BigNumber(10) }),
+        ]);
+        expect(feeOf(partial.shape, "offer")).toEqual(BigNumber(10));
+        expect(replayOf(partial.shape)).toEqual([{ hash: "offer", height: 5 }]);
+
+        rows = offerRows("offer", 5);
+        const recovered = await resync(partial.shape);
+        expect(feesOf(recovered.shape, "offer")).toEqual([]);
+        expect(feeOf(recovered.shape, "offer")).toEqual(BigNumber(10));
+      });
+
+      it("keeps the fees of an offer not read in full through a rebuild", async () => {
+        const pending = await syncPending();
+        mockedGetPendingTransferProposals.mockResolvedValue([]);
+
+        rows = [laterRow];
+        const rebuilt = await syncAfter(pending, undefined);
+        expect(rebuilt.from).toEqual([0]);
+        expect(feesOf(rebuilt.shape, "offer")).toEqual([
+          expect.objectContaining({ value: BigNumber(10) }),
+        ]);
+        expect(replayOf(rebuilt.shape)).toEqual([{ hash: "offer", height: 5 }]);
+      });
+
+      it("charges an offer read again under another offer's earlier read once", async () => {
+        rows = [...offerRows("held", 3), ...offerRows("offer", 5)];
+        mockedGetPendingTransferProposals.mockResolvedValue([
+          sentOffer("held"),
+          sentOffer("offer"),
+        ]);
+        const pending = await syncFrom({ syncHash: SYNC_HASH, cantonResources: {} as never });
+        expect(replayOf(pending)).toEqual([
+          { hash: "held", height: 3 },
+          { hash: "offer", height: 5 },
+        ]);
+
+        mockedGetPendingTransferProposals.mockResolvedValue([sentOffer("held")]);
+        rows = offerRows("held", 3);
+        const skipped = await resync(pending);
+        expect(skipped.from).toEqual([3]);
+
+        rows = [...offerRows("held", 3), ...offerRows("offer", 5)];
+        const recovered = await resync(skipped.shape);
+        expect(recovered.from).toEqual([3]);
+        expect(feesOf(recovered.shape, "offer")).toEqual([]);
+        expect(feeOf(recovered.shape, "offer")).toEqual(BigNumber(10));
+        expect(replayOf(recovered.shape)).toEqual([{ hash: "held", height: 3 }]);
+      });
+
+      describe("an offer stored in full before it was listed as pending", () => {
+        const typesOf = (shape: Partial<CantonAccount>, hash: string) =>
+          (shape.operations ?? [])
+            .filter(op => op.hash === hash)
+            .map(op => op.type)
+            .sort();
+
+        /** A sync where only "held" is pending yet, which stores "offer" in full. */
+        const syncListedLate = async () => {
+          rows = [...offerRows("held", 3), ...offerRows("offer", 5)];
+          mockedGetPendingTransferProposals.mockResolvedValue([sentOffer("held")]);
+          const listedLate = await syncFrom({ syncHash: SYNC_HASH, cantonResources: {} as never });
+          expect(typesOf(listedLate, "offer")).toEqual(["OUT", "TRANSFER_PROPOSAL"]);
+          expect(feeOf(listedLate, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(listedLate)).toEqual([{ hash: "held", height: 3 }]);
+          mockedGetPendingTransferProposals.mockResolvedValue([
+            sentOffer("held"),
+            sentOffer("offer"),
+          ]);
+          return listedLate;
+        };
+
+        it("replaces its operations when read again while pending, charging its fees once", async () => {
+          const listedLate = await syncListedLate();
+
+          const pending = await resync(listedLate);
+          expect(pending.from).toEqual([3]);
+          expect(typesOf(pending.shape, "offer")).toEqual(["FEES"]);
+          expect(feeOf(pending.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(pending.shape)).toEqual(
+            expect.arrayContaining([
+              { hash: "held", height: 3 },
+              { hash: "offer", height: 5 },
+            ]),
+          );
+          expect(replayOf(pending.shape)).toHaveLength(2);
+
+          mockedGetPendingTransferProposals.mockResolvedValue([sentOffer("held")]);
+          const settled = await resync(pending.shape);
+          expect(typesOf(settled.shape, "offer")).toEqual(["OUT", "TRANSFER_PROPOSAL"]);
+          expect(feeOf(settled.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(settled.shape)).toEqual([{ hash: "held", height: 3 }]);
+        });
+
+        it("keeps its operations when read again in part, until it is read in full", async () => {
+          const listedLate = await syncListedLate();
+
+          rows = [...offerRows("held", 3), offerRows("offer", 5)[0]];
+          const partial = await resync(listedLate);
+          expect(typesOf(partial.shape, "offer")).toEqual(["OUT", "TRANSFER_PROPOSAL"]);
+          expect(feeOf(partial.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(partial.shape)).toContainEqual({ hash: "offer", height: 5 });
+
+          rows = offerRows("held", 3);
+          const rebuilt = await syncAfter(partial.shape, undefined);
+          expect(rebuilt.from).toEqual([0]);
+          expect(typesOf(rebuilt.shape, "offer")).toEqual(["OUT", "TRANSFER_PROPOSAL"]);
+          expect(feeOf(rebuilt.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(rebuilt.shape)).toContainEqual({ hash: "offer", height: 5 });
+
+          mockedGetPendingTransferProposals.mockResolvedValue([sentOffer("held")]);
+          rows = [...offerRows("held", 3), ...offerRows("offer", 5)];
+          const recovered = await resync(rebuilt.shape);
+          expect(typesOf(recovered.shape, "offer")).toEqual(["OUT", "TRANSFER_PROPOSAL"]);
+          expect(feeOf(recovered.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(recovered.shape)).toEqual([{ hash: "held", height: 3 }]);
+        });
+
+        it("drops it on a rebuild from an older sync hash, its fee in another asset", async () => {
+          const stored = {
+            ...storedOperation(5),
+            id: "offer-token",
+            hash: "offer",
+            fee: BigNumber(10),
+            extra: { instrumentId: "Token", instrumentAdmin: "token-admin" },
+          };
+
+          const rebuilt = await syncAfter({ operations: [stored] }, undefined);
+          expect(rebuilt.from).toEqual([0]);
+          expect(typesOf(rebuilt.shape, "offer")).toEqual(["FEES"]);
+          expect(feeOf(rebuilt.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(rebuilt.shape)).toEqual([{ hash: "offer", height: 5 }]);
+
+          mockedGetPendingTransferProposals.mockResolvedValue([]);
+          const settled = await resync(rebuilt.shape);
+          expect(typesOf(settled.shape, "offer")).toEqual(["OUT", "TRANSFER_PROPOSAL"]);
+          expect(feeOf(settled.shape, "offer")).toEqual(BigNumber(10));
+          expect(replayOf(settled.shape)).toEqual([]);
+        });
+      });
+
+      it("does not replay a received offer stored before it was listed as pending", async () => {
+        const offer = { ...sentOffer("received"), sender: "alice", receiver: "party123" };
+        rows = [
+          {
+            ...at(
+              createMockOperationView({ txHash: "received", operationType: "transfer-proposal" }),
+              5,
+            ),
+            type: "Receive",
+            senders: ["alice"],
+          },
+        ];
+        mockedGetPendingTransferProposals.mockResolvedValue([]);
+        const listedLate = await syncFrom({ syncHash: SYNC_HASH, cantonResources: {} as never });
+        expect(listedLate.operations?.map(op => op.hash)).toEqual(["received"]);
+
+        mockedGetPendingTransferProposals.mockResolvedValue([offer]);
+        const next = await resync(listedLate);
+        expect(next.from).toEqual([6]);
+        expect(next.shape.operations?.map(op => op.hash)).toEqual(["received"]);
+        expect(replayOf(next.shape)).toEqual([]);
+      });
+    });
+
+    it("rebuilds the history from offset 0 when the sync hash changed", async () => {
+      const balanceHistoryCache = { HOUR: { latestDate: 1, balances: [] } };
+      mockedGetOperations.mockResolvedValue({
+        operations: [createMockOperationView({ txHash: "fresh" })],
+        next: -1,
+      });
+
+      const shape = await syncFrom({
+        syncHash: undefined,
+        operations: [storedOperation(5, 999)],
+        subAccounts: [
+          { id: "sub", operations: [storedOperation(9)], balanceHistoryCache },
+        ] as unknown as TokenAccount[],
+      });
+
+      expect(readFrom()).toEqual([{ minOffset: 0, maxOffset: 12345, limit: 1000 }]);
+      expect(shape.operations?.map(op => op.hash)).toEqual(["fresh"]);
+    });
+
+    describe("through the account bridge", () => {
+      beforeEach(() => {
+        mockedGetOperations.mockResolvedValue({
+          operations: [createMockOperationView({ txHash: "fresh" })],
+          next: -1,
+        });
+      });
+
+      it("drops the stale stored operations after a sync hash change", async () => {
+        const account = await syncAccount(undefined);
+
+        expect(account.operations.map(op => op.hash)).toEqual(["fresh"]);
+        expect(account.syncHash).toBe(SYNC_HASH);
+      });
+
+      it("keeps the stored operations on an incremental sync", async () => {
+        const account = await syncAccount(SYNC_HASH);
+
+        expect(account.operations.map(op => op.hash)).toEqual(["fresh", "stored-5"]);
+      });
+    });
+  });
+
+  describe("native instrument admin", () => {
+    it("counts only the DSO's holdings of the native instrument id as CC", async () => {
+      mockedGetBalance.mockResolvedValue([
+        impostorAmulet("900"),
+        createMockNativeBalance("1000"),
+        createMockNativeBalance("50", true),
+      ]);
+
+      const shape = await sync();
+
+      expect(shape).toMatchObject({
+        balance: BigNumber(1050),
+        spendableBalance: BigNumber(1000),
+        subAccounts: [],
+      });
+      expect(shape.cantonResources?.instrumentUtxoCounts).toEqual({
+        Amulet: 2,
+        "Amulet____impostor::1220dddd": 1,
+      });
+    });
+
+    it("keeps the DSO party on the account for the offer list", async () => {
+      mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+
+      const shape = await sync();
+
+      expect(shape.cantonResources?.nativeInstrumentAdmin).toBe("native-admin");
+    });
+
+    it("scans an account without a party without reading the DSO party", async () => {
+      mockedIsOnboarded.mockResolvedValue({ isOnboarded: false });
+
+      const shape = await sync();
+
+      expect(mockedGetNativeInstrument).not.toHaveBeenCalled();
+      expect(shape.cantonResources).not.toHaveProperty("nativeInstrumentAdmin");
+    });
+
+    it("fails rather than guess the CC balance when the DSO party can't be read or was never saved", async () => {
+      mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+      mockedGetNativeInstrument.mockRejectedValue(new Error("gateway down"));
+
+      await expect(sync()).rejects.toThrow("gateway down");
+    });
+
+    it("uses the DSO party saved by an earlier sync when it can't be read", async () => {
+      mockedGetBalance.mockResolvedValue([impostorAmulet("900"), createMockNativeBalance("1000")]);
+      mockedGetNativeInstrument.mockRejectedValue(new Error("gateway down"));
+      const info = createMockCantonAccountShapeInfo({
+        initialAccount: {
+          xpub: "party123",
+          cantonResources: {
+            isOnboarded: true,
+            instrumentUtxoCounts: {},
+            pendingTransferProposals: [],
+            nativeInstrumentAdmin: "native-admin",
+          },
+        } as unknown as CantonAccount,
+      });
+
+      const shape = await makeGetAccountShape(fakeSignerContext, fakeContext)(info, {
+        paginationConfig: {},
+      });
+
+      expect(mockedGetBalance).toHaveBeenCalledWith(expect.anything(), "party123", {
+        instrumentId: "Amulet",
+        instrumentAdmin: "native-admin",
+      });
+      expect(shape.balance).toEqual(BigNumber(1000));
+      expect(shape.cantonResources?.nativeInstrumentAdmin).toBe("native-admin");
+    });
+  });
+});
+
+const createMockTokenAccount = (contractAddress: string, tokenId?: string): TokenAccount => ({
+  type: "TokenAccount",
+  id: `token-account-${contractAddress}`,
+  parentId: "parent-account-id",
+  token: {
+    type: "TokenCurrency",
+    id: tokenId ?? `token-id-${contractAddress}`,
+    contractAddress,
+    name: "Test Token",
+    ticker: "TEST",
+    decimals: 18,
+    parentCurrencyId: "canton_network",
+  } as any,
+  balance: new BigNumber(100),
+  spendableBalance: new BigNumber(100),
+  operationsCount: 0,
+  operations: [],
+  pendingOperations: [],
+  balanceHistoryCache: {
+    HOUR: { latestDate: null, balances: [] },
+    DAY: { latestDate: null, balances: [] },
+    WEEK: { latestDate: null, balances: [] },
+  },
+  swapHistory: [],
+  creationDate: new Date(),
 });
 
 describe("filterDisabledTokenAccounts", () => {
-  const mockConfig = createMockCoinConfigValue();
+  it("keeps the token accounts of enabled CAL tokens only", () => {
+    const enabled = createMockTokenAccount("0xenabled", "token-id-enabled");
+    const disabled = createMockTokenAccount("0xdisabled", "token-id-disabled");
+    const unlisted = createMockTokenAccount("0xunlisted", "token-id-unlisted");
+    const calTokens = new Map([
+      ["token-id-enabled", "instrument-enabled"],
+      ["token-id-disabled", "instrument-disabled"],
+    ]);
 
-  const createMockTokenAccount = (contractAddress: string, tokenId?: string): TokenAccount => ({
-    type: "TokenAccount",
-    id: `token-account-${contractAddress}`,
-    parentId: "parent-account-id",
-    token: {
-      type: "TokenCurrency",
-      id: tokenId ?? `token-id-${contractAddress}`,
-      contractAddress,
-      name: "Test Token",
-      ticker: "TEST",
-      decimals: 18,
-      parentCurrencyId: "canton_network",
-    } as any,
-    balance: new BigNumber(100),
-    spendableBalance: new BigNumber(100),
-    operationsCount: 0,
-    operations: [],
-    pendingOperations: [],
-    balanceHistoryCache: {
-      HOUR: { latestDate: null, balances: [] },
-      DAY: { latestDate: null, balances: [] },
-      WEEK: { latestDate: null, balances: [] },
-    },
-    swapHistory: [],
-    creationDate: new Date(),
+    const result = filterDisabledTokenAccounts(
+      [enabled, disabled, unlisted],
+      calTokens,
+      new Set(["instrument-enabled____0xenabled", "instrument-unlisted____0xunlisted"]),
+    );
+
+    expect(result).toEqual([enabled]);
   });
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+  it("does not keep token accounts without contractAddress", () => {
+    const withoutAddress = createMockTokenAccount("", "token-id-noaddr");
 
-  it("should return empty array when subAccounts is undefined", async () => {
-    const calTokens = new Map<string, string>();
-    const result = await filterDisabledTokenAccounts(mockConfig, undefined, calTokens);
+    const result = filterDisabledTokenAccounts(
+      [withoutAddress],
+      new Map([["token-id-noaddr", "instrument-noaddr"]]),
+      new Set(["instrument-noaddr____"]),
+    );
+
     expect(result).toEqual([]);
-    expect(mockedGetEnabledInstrumentsCached).not.toHaveBeenCalled();
   });
 
-  it("should return empty array when subAccounts is empty", async () => {
-    const calTokens = new Map<string, string>();
-    const result = await filterDisabledTokenAccounts(mockConfig, [], calTokens);
-    expect(result).toEqual([]);
-    expect(mockedGetEnabledInstrumentsCached).not.toHaveBeenCalled();
-  });
-
-  it("should filter out disabled token accounts", async () => {
-    const enabledAdminId = "0xenabled";
-    const disabledAdminId = "0xdisabled";
-    const enabledTokenId = "token-id-enabled";
-    const disabledTokenId = "token-id-disabled";
-    const enabledInstrumentId = "instrument-enabled";
-    const disabledInstrumentId = "instrument-disabled";
-
-    const enabledTokenAccount = createMockTokenAccount(enabledAdminId, enabledTokenId);
-    const disabledTokenAccount = createMockTokenAccount(disabledAdminId, disabledTokenId);
-
-    // calTokens maps token.id -> instrumentId
-    const calTokens = new Map<string, string>([
-      [enabledTokenId, enabledInstrumentId],
-      [disabledTokenId, disabledInstrumentId],
-    ]);
-
-    // enabledInstruments is a Set of keys in format "instrumentId____adminId"
-    mockedGetEnabledInstrumentsCached.mockResolvedValue(
-      new Set([`${enabledInstrumentId}____${enabledAdminId}`]),
-    );
-
-    const result = await filterDisabledTokenAccounts(
-      mockConfig,
-      [enabledTokenAccount, disabledTokenAccount],
-      calTokens,
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0]).toBe(enabledTokenAccount);
-    expect(mockedGetEnabledInstrumentsCached).toHaveBeenCalledWith(mockConfig);
-  });
-
-  it("should keep enabled token accounts", async () => {
-    const adminId1 = "0xenabled1";
-    const adminId2 = "0xenabled2";
-    const tokenId1 = "token-id-1";
-    const tokenId2 = "token-id-2";
-    const instrumentId1 = "instrument-1";
-    const instrumentId2 = "instrument-2";
-
-    const enabledTokenAccount1 = createMockTokenAccount(adminId1, tokenId1);
-    const enabledTokenAccount2 = createMockTokenAccount(adminId2, tokenId2);
-
-    const calTokens = new Map<string, string>([
-      [tokenId1, instrumentId1],
-      [tokenId2, instrumentId2],
-    ]);
-
-    mockedGetEnabledInstrumentsCached.mockResolvedValue(
-      new Set([`${instrumentId1}____${adminId1}`, `${instrumentId2}____${adminId2}`]),
-    );
-
-    const result = await filterDisabledTokenAccounts(
-      mockConfig,
-      [enabledTokenAccount1, enabledTokenAccount2],
-      calTokens,
-    );
-
-    expect(result).toHaveLength(2);
-    expect(result).toContain(enabledTokenAccount1);
-    expect(result).toContain(enabledTokenAccount2);
-  });
-
-  it("should not keep token accounts without contractAddress", async () => {
-    const tokenAccountWithoutAddress = {
-      ...createMockTokenAccount("0xtest", "token-id-noaddr"),
-      token: {
-        ...createMockTokenAccount("0xtest", "token-id-noaddr").token,
-        contractAddress: "",
-      },
-    };
-    const enabledAdminId = "0xenabled";
-    const enabledTokenId = "token-id-enabled";
-    const enabledInstrumentId = "instrument-enabled";
-    const enabledTokenAccount = createMockTokenAccount(enabledAdminId, enabledTokenId);
-
-    const calTokens = new Map<string, string>([
-      ["token-id-noaddr", "instrument-noaddr"],
-      [enabledTokenId, enabledInstrumentId],
-    ]);
-
-    mockedGetEnabledInstrumentsCached.mockResolvedValue(
-      new Set([`${enabledInstrumentId}____${enabledAdminId}`, "instrument-noaddr____"]),
-    );
-
-    const result = await filterDisabledTokenAccounts(
-      mockConfig,
-      [tokenAccountWithoutAddress, enabledTokenAccount],
-      calTokens,
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0]).toBe(enabledTokenAccount);
-    expect(result).not.toContain(tokenAccountWithoutAddress);
-  });
-
-  it("should handle empty enabled instruments list", async () => {
-    const adminId1 = "0xtoken1";
-    const adminId2 = "0xtoken2";
-    const tokenId1 = "token-id-1";
-    const tokenId2 = "token-id-2";
-
-    const tokenAccount1 = createMockTokenAccount(adminId1, tokenId1);
-    const tokenAccount2 = createMockTokenAccount(adminId2, tokenId2);
-
-    const calTokens = new Map<string, string>([
-      [tokenId1, "instrument-1"],
-      [tokenId2, "instrument-2"],
-    ]);
-
-    mockedGetEnabledInstrumentsCached.mockResolvedValue(new Set());
-
-    const result = await filterDisabledTokenAccounts(
-      mockConfig,
-      [tokenAccount1, tokenAccount2],
-      calTokens,
+  it("keeps nothing when no instrument is enabled", () => {
+    const result = filterDisabledTokenAccounts(
+      [createMockTokenAccount("0xtoken1", "token-id-1")],
+      new Map([["token-id-1", "instrument-1"]]),
+      new Set(),
     );
 
     expect(result).toEqual([]);

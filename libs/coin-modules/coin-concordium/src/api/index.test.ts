@@ -37,15 +37,7 @@ describe("api/index", () => {
   // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
   it("omits the capabilities the chain has none of", async () => {
     await expect(capabilityReport(createApi("concordium_testnet"), context)).resolves.toEqual({
-      unsupported: [
-        "call",
-        "getNextSequence",
-        "getRewards",
-        "getStakes",
-        "getValidators",
-        "register",
-        "validateIntent",
-      ],
+      supported: ["craftRawTransaction", "getBlock", "getBlockInfo", "validateAddress"],
       inconsistent: [],
     });
   });
@@ -123,6 +115,7 @@ describe("api/index", () => {
             recipient: "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G",
             amount: "1000000",
             fee: "500",
+            transactionFee: "500",
             value: "1000500",
             memo: undefined,
             date: new Date("2024-06-01T00:00:00Z"),

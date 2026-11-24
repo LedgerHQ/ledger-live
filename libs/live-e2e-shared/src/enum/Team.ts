@@ -7,4 +7,5 @@ export enum Team {
   EARN = "Earn",
   BST = "BST",
   ENGAGEMENT = "Engagement",
+  PERPS = "Perps",
 }

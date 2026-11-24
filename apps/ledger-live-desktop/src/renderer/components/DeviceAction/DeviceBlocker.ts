@@ -20,6 +20,7 @@ export const useDeviceBlocked = (): boolean => {
   const [blocked, setBlocked] = useState(mounted > 0);
   useEffect(() => {
     const sub = changes.subscribe(setBlocked);
+    setBlocked(mounted > 0);
     return () => sub.unsubscribe();
   }, []);
   return blocked;

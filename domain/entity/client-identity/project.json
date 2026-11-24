@@ -1,8 +1,5 @@
 {
   "targets": {
-    "build": {
-      "executor": "nx:noop"
-    },
     "check-export-rules": {
       "executor": "nx:run-commands",
       "options": {

@@ -9,6 +9,7 @@ import { KaspaSigner } from "@ledgerhq/coin-kaspa/types/signer";
 import { KaspaAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-kaspa/types/bridge";
 import { createBridges } from "@ledgerhq/coin-kaspa/bridge";
 import type { Bridge } from "@ledgerhq/types-live";
+import { createDeriveAccountDescriptor } from "./deriveAccountDescriptor";
 
 const createSigner: CreateSigner<KaspaSigner> = (transport: Transport) => {
   return new Kaspa(transport);
@@ -22,4 +23,6 @@ const bridge: Bridge<Transaction, KaspaAccount, TransactionStatus> = createBridg
   executeWithSigner(createSigner),
 );
 
-export { bridge, resolver };
+const deriveAccountDescriptor = createDeriveAccountDescriptor(resolver);
+
+export { bridge, resolver, deriveAccountDescriptor };

@@ -61,7 +61,8 @@ export default class SwapLiveAppPage {
   private readonly revokeApprovalButton = webById("revoke-approval-button");
   private readonly giveApprovalButton = webById("give-approval-button");
   private readonly signPermitButton = webById("sign-permit-button");
-  private readonly deviceActionErrorDescription = byId("error-description-deviceAction");
+  private readonly exchangeErrorDescription = byId("wallet-api-exchange-error-description");
+  private readonly exchangeRefused = byId("wallet-api-exchange-refused");
   private readonly liveAppTitle = byId("live-app-title");
 
   private readonly lnsUnsupportedBannerPattern =
@@ -260,7 +261,12 @@ export default class SwapLiveAppPage {
 
   @Step("Check error message: {{{0}}}")
   async checkErrorMessage(errorMessage: string) {
-    await this.deviceActionErrorDescription.expectText(errorMessage, { containing: true });
+    await this.exchangeErrorDescription.expectText(errorMessage, { containing: true });
+  }
+
+  @Step("Check the swap was refused on the device")
+  async checkSwapRefused() {
+    await this.exchangeRefused.waitVisible();
   }
 
   @Step("Check first quote container infos {{{0}}}")
@@ -318,7 +324,7 @@ export default class SwapLiveAppPage {
     const NET_ROUNDING_TOLERANCE = 0.02;
 
     await retryUntilTimeout(async () => {
-      const quotes = [];
+      const quotes: Awaited<ReturnType<typeof this.getProviderQuote>>[] = [];
       for (const provider of providerList) {
         quotes.push(await this.getProviderQuote(provider));
       }
@@ -341,7 +347,7 @@ export default class SwapLiveAppPage {
     const feesMatch =
       networkFeesIndex >= 0 ? /\$\s*(\d[\d,.]*)/.exec(quoteText.slice(networkFeesIndex)) : null;
     const usdAmountRegex = /\$\s*(\d[\d,.]*)/g;
-    const usdAmounts = [];
+    const usdAmounts: string[] = [];
     let usdAmountMatch: RegExpExecArray | null;
 
     while ((usdAmountMatch = usdAmountRegex.exec(quoteText)) !== null) {
@@ -393,6 +399,15 @@ export default class SwapLiveAppPage {
   @Step("Retrieve send currency amount value")
   async getAmountToSend() {
     return await this.fromAmountInput.getValue();
+  }
+
+  @Step("Expect send amount {{{0}}}")
+  async expectAmountToSend(expected: string | RegExp) {
+    if (typeof expected === "string") {
+      await this.fromAmountInput.expectValue(expected);
+    } else {
+      await this.fromAmountInput.expectValueMatching(expected);
+    }
   }
 
   @Step("Retrieve receive currency amount value")

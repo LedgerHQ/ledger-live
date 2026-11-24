@@ -1,6 +1,6 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q2, FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
+import { FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
 
 const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
@@ -16,7 +16,7 @@ describe("Portfolio with account", () => {
     await app.init({
       userdata: "skip-onboarding",
       speculosApp: CURRENCY.speculosApp,
-      featureFlags: { ...FF_LWM_WALLET_40_Q2, ...FF_NEW_SEND_FLOW_ENABLED },
+      featureFlags: FF_NEW_SEND_FLOW_ENABLED,
     });
     await app.mainNavigation.waitForWallet40Ready();
     await app.portfolio.addAccount();

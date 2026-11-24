@@ -178,7 +178,7 @@ export class WebHandle implements ElementHandle {
   async getIdentifier(timeout = TIMEOUT.xxlarge): Promise<string> {
     await this.waitVisible(timeout);
     const id = await withHardTimeout(
-      this.raw.runScript((el: HTMLElement) => el.getAttribute("data-testid") ?? ""),
+      this.raw.runScript((el: HTMLElement) => el.dataset.testid ?? ""),
       TIMEOUT.medium,
     );
     return scriptText(id);
@@ -199,6 +199,11 @@ export class WebHandle implements ElementHandle {
   async expectValue(text: string, options: ExpectTextOptions = {}): Promise<void> {
     const actualValue = await this.getValue();
     compareText(actualValue, text, options);
+  }
+
+  /** Waits for the input, reads its `value`, then asserts it matches `pattern`. */
+  async expectValueMatching(pattern: RegExp, timeout = TIMEOUT.xxlarge): Promise<void> {
+    jestExpect(await this.getValue(timeout)).toMatch(pattern);
   }
 
   /** Asserts the element exists in the webview now. A Detox expect: it does not wait. */

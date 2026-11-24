@@ -1,4 +1,5 @@
-import { makeTestApi, makeTestConfig, TEST_COSMOS_ENDPOINT } from "../../test/msw.mock";
+import coinConfig, { cosmosDefaults } from "../../config";
+import { CosmosAPI } from "../../network/Cosmos";
 import { getBlock } from "./getBlock";
 import { getBlockInfo } from "./getBlockInfo";
 
@@ -7,8 +8,9 @@ const MSG_SEND_HASH = "69FA03588DDD5D61DEA9A47CD51EC4E02921174E24C2A81610124BBA7
 const MSG_RECV_PACKET_HASH = "90E8A303E4AA540B4A635FD16EC75C8EC754E22B05BE21D2D785E523BD9F31B5";
 
 describe("getBlock (integ, Cosmos Hub)", () => {
-  const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
-  const config = makeTestConfig("cosmos", TEST_COSMOS_ENDPOINT);
+  coinConfig.setCoinConfig(() => cosmosDefaults.cosmos);
+  const api = new CosmosAPI("cosmos", undefined, cosmosDefaults.cosmos);
+  const config = cosmosDefaults.cosmos;
 
   it("returns the transactions of a historical block", async () => {
     const block = await getBlock(config, api, HEIGHT);

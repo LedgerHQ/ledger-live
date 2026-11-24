@@ -14,7 +14,11 @@ import {
 import { ChevronRight, Robot } from "@ledgerhq/lumen-ui-react/symbols";
 import type { ManageAgentsCardProps } from "./ManageAgentsCard.types";
 
-export function ManageAgentsCard({ onOpen, testID = "manage-agents-card" }: ManageAgentsCardProps) {
+export function ManageAgentsCard({
+  onOpen,
+  showNewBadge,
+  testID = "manage-agents-card",
+}: ManageAgentsCardProps) {
   const { t } = useTranslation();
 
   return (
@@ -30,12 +34,14 @@ export function ManageAgentsCard({ onOpen, testID = "manage-agents-card" }: Mana
           </CardContent>
         </CardLeading>
         <CardTrailing>
-          <Tag
-            label={t("common.new")}
-            appearance="accent"
-            size="md"
-            data-testid={`${testID}-new-badge`}
-          />
+          {showNewBadge ? (
+            <Tag
+              label={t("common.new")}
+              appearance="accent"
+              size="md"
+              data-testid={`${testID}-new-badge`}
+            />
+          ) : null}
           <ChevronRight size={24} />
         </CardTrailing>
       </CardHeader>

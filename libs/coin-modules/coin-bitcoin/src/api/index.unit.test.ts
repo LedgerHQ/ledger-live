@@ -13,6 +13,7 @@ import { getBalance } from "../logic/getBalance";
 import { getBlock } from "../logic/getBlock";
 import { getBlockInfo } from "../logic/getBlockInfo";
 import { lastBlock } from "../logic/lastBlock";
+import { listHoldings } from "../logic/listHoldings";
 import { listOperations } from "../logic/listOperations";
 import { validateIntent } from "../logic/validateIntent";
 import { testContext } from "../logic/tests/helpers/msw";
@@ -26,10 +27,11 @@ jest.mock("../logic/getBalance");
 jest.mock("../logic/getBlock");
 jest.mock("../logic/getBlockInfo");
 jest.mock("../logic/lastBlock");
+jest.mock("../logic/listHoldings");
 jest.mock("../logic/listOperations");
 jest.mock("../logic/validateIntent");
 
-const SUPPORTED = ["getBlock", "getBlockInfo", "validateIntent"];
+const SUPPORTED = ["getBlock", "getBlockInfo", "listHoldings", "validateIntent"];
 
 const intent: TransactionIntent<MemoNotSupported, BitcoinTxData> = {
   intentType: "transaction",
@@ -38,7 +40,7 @@ const intent: TransactionIntent<MemoNotSupported, BitcoinTxData> = {
   recipient: "b",
   amount: 1n,
   asset: { type: "native" },
-  data: { type: "string" },
+  data: { type: "unknown" },
 };
 
 describe("createApi", () => {
@@ -88,6 +90,13 @@ describe("createApi", () => {
     const options = { minHeight: 10, order: "asc" as const };
     await createApi("litecoin").listOperations(context, "addr", options);
     expect(listOperations).toHaveBeenCalledWith(context, "litecoin", "addr", options);
+  });
+
+  it("delegates listHoldings with the instance's currency", async () => {
+    jest.mocked(listHoldings).mockImplementation(async () => ({ items: [] }));
+    const options = { asset: { type: "native" as const }, cursor: "2" };
+    await createApi("litecoin").listHoldings(context, "addr", options);
+    expect(listHoldings).toHaveBeenCalledWith(context, "litecoin", "addr", options);
   });
 
   it("delegates craftTransaction with the custom fees", async () => {
@@ -150,12 +159,35 @@ describe("createApi", () => {
 
   it("returns the intent's bitcoin data, OP_RETURN data included", () => {
     const api = createApi("bitcoin");
-    expect(api.craftTransactionData(context, intent)).toEqual({ type: "string" });
+    expect(api.craftTransactionData(context, intent)).toEqual({ type: "unknown" });
     expect(
       api.craftTransactionData(context, {
         ...intent,
-        data: { type: "string", opReturnData: "abcd" },
+        data: { type: "unknown", opReturnData: "abcd" },
       }),
-    ).toEqual({ type: "string", opReturnData: "abcd" });
+    ).toEqual({ type: "unknown", opReturnData: "abcd" });
   });
+
+  it("keeps the intent's coin control, so the data round-trips into estimation and crafting", () => {
+    const utxoStrategy = {
+      strategy: "merge-outputs" as const,
+      excludedUtxos: [`${"ab".repeat(32)}:0`],
+    };
+    expect(
+      createApi("bitcoin").craftTransactionData(context, {
+        ...intent,
+        data: { type: "unknown", utxoStrategy },
+      }),
+    ).toEqual({ type: "unknown", utxoStrategy });
+  });
+
+  it.each([null, false, ""])(
+    "keeps a malformed coin control (%p), for estimation and crafting to refuse",
+    utxoStrategy => {
+      const data = { ...intent.data, utxoStrategy } as unknown as BitcoinTxData;
+      expect(
+        createApi("bitcoin").craftTransactionData(context, { ...intent, data }),
+      ).toHaveProperty("utxoStrategy", utxoStrategy);
+    },
+  );
 });

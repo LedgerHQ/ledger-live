@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-card-assets",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "private": true,
   "description": "Pay Card linked-wallet assets list for Ledger Wallet",
   "main": "src/index.ts",
@@ -54,7 +54,6 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",

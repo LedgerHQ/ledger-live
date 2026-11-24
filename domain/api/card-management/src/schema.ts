@@ -164,6 +164,13 @@ export const PAY_CARD_TRANSACTION_CATEGORIES = [
 
 export const PayCardTransactionCategorySchema = z.enum(PAY_CARD_TRANSACTION_CATEGORIES);
 
+export const PAY_CARD_TRANSACTION_STATUSES = [
+  "CONFIRMED",
+  "PENDING",
+  "DECLINED",
+  "REVERTED",
+] as const;
+
 export const PayCardTransactionFundingSourceSchema = z.object({
   currency: z.string().min(1),
   amount: z.string().min(1),
@@ -211,7 +218,7 @@ export const PayCardTransactionSchema = z.object({
   sign: z.enum(["DEBIT", "CREDIT"]),
   merchantNameLocation: z.string().min(1),
   mccCategory: PayCardTransactionCategorySchema.catch("MISC"),
-  status: z.enum(["CONFIRMED", "PENDING", "DECLINED", "REVERTED"]),
+  status: z.enum(PAY_CARD_TRANSACTION_STATUSES),
   /** The provider sends `""` on a transaction that was not declined, so an empty one is expected. */
   declineReason: z.string().optional(),
   transactionCurrency: z.string().min(1),

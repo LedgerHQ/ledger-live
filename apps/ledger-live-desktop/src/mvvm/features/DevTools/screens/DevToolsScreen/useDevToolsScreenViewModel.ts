@@ -29,6 +29,7 @@ import {
   useAppConfigToolProps,
   useAccountNameToolProps,
   useAccountReceiveToolProps,
+  useAccountStatusToolProps,
   useMockAccountsToolProps,
   useAccountDetailToolProps,
   useReceiveToolProps,
@@ -40,9 +41,12 @@ import {
 import { usePredictionsSetupHooks } from "@features/flow-predictions";
 import { PREDICTIONS_SETUP_FAILURE_REASONS } from "@features/platform-predictions";
 import type { DevToolsConfig } from "@devtools/shell";
+import { useAccountDiscoveryTool } from "../../AccountDiscovery/useAccountDiscoveryTool";
 import { useDevToolsRelay } from "./useDevToolsRelay";
+import { useReceiveDevToolTrigger } from "./useReceiveDevToolTrigger";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useIntentWalletSyncTool } from "../../IntentWalletSync/useIntentWalletSyncTool";
+import { useAppTogglesTool } from "../../AppToggles/useAppTogglesTool";
 import { useAccountDataRecorder } from "../../accountDataRecorder";
 import { getPortfolioServiceUrl } from "~/config/portfolioService";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
@@ -138,9 +142,10 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const legacyAccounts = useSelector(accountsSelector);
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
   const accountReceiveToolProps = useAccountReceiveToolProps();
+  const accountStatusToolProps = useAccountStatusToolProps();
   const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
   const accountDetailToolProps = useAccountDetailToolProps();
-  const receiveToolProps = useReceiveToolProps();
+  const receiveToolProps = useReceiveToolProps(useReceiveDevToolTrigger());
   const predictionsSetupHooks = usePredictionsSetupHooks();
   const predictionsSetup = useMemo<PredictionsSetup>(
     () => ({ hooks: predictionsSetupHooks, failureReasons: PREDICTIONS_SETUP_FAILURE_REASONS }),
@@ -148,6 +153,8 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   );
   const predictionsToolProps = usePredictionsToolProps(LIVE_APP_STORE, predictionsSetup);
   const intentWalletSync = useIntentWalletSyncTool();
+  const appTogglesToolProps = useAppTogglesTool();
+  const accountDiscovery = useAccountDiscoveryTool();
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -162,17 +169,20 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       { id: "account-data", config: accountDataToolProps },
       { id: "account-source-portfolio", config: accountSourcePortfolioToolProps },
       { id: "account-descriptor", config: accountDescriptorToolProps },
+      { id: "account-discovery", config: accountDiscovery.toolProps },
       { id: "account-balance", config: accountBalanceToolProps },
       { id: "account-operation", config: accountOperationToolProps },
       { id: "account-balance-history", config: accountBalanceHistoryToolProps },
       { id: "account-name", config: accountNameToolProps },
       { id: "account-receive", config: accountReceiveToolProps },
+      { id: "account-status", config: accountStatusToolProps },
       { id: "account-portfolio", config: accountPortfolioToolProps },
       { id: "mock-accounts", config: mockAccountsToolProps },
       { id: "account-detail", config: accountDetailToolProps },
       { id: "receive", config: receiveToolProps },
       { id: "predictions", config: predictionsToolProps },
       { id: "intent-wallet-sync", config: intentWalletSync.toolProps },
+      { id: "app-toggles", config: appTogglesToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -192,11 +202,14 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
       accountSourcePortfolioToolProps,
       accountNameToolProps,
       accountReceiveToolProps,
+      accountStatusToolProps,
       mockAccountsToolProps,
       accountDetailToolProps,
       receiveToolProps,
       predictionsToolProps,
       intentWalletSync.toolProps,
+      appTogglesToolProps,
+      accountDiscovery.toolProps,
     ],
   );
 
@@ -212,5 +225,8 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
     role: wireState.role,
     intentWalletSyncRun: intentWalletSync.run,
     onIntentWalletSyncRunCancelled: intentWalletSync.onRunCancelled,
+    accountDiscoveryRun: accountDiscovery.run,
+    onAccountDiscoveryRunCancelled: accountDiscovery.onRunCancelled,
+    onAccountDiscoveryRunFailed: accountDiscovery.onRunFailed,
   };
 }

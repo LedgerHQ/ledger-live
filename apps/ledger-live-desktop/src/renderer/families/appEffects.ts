@@ -5,7 +5,7 @@ import { lazy, type ComponentType } from "react";
 // that happen in the background). Each effect is a chunk of its own, so running it on every page
 // never loads the family module nor preloads its modals.
 const appEffectLoaders: Record<string, () => Promise<{ default: ComponentType }>> = {
-  bitcoin: () => import("./bitcoin/appEffect"),
+  zcash: () => import("./zcash/appEffect"),
 };
 
 const appEffects = new Map(

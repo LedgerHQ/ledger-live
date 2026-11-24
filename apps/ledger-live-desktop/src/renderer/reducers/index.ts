@@ -34,6 +34,7 @@ import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-cu
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import { accountDataSlice, type AccountDataState } from "@domain/entity-account-data";
 import { accountReceivesSlice, type AccountReceivesState } from "@domain/entity-account-receive";
+import { accountStatusSlice, type AccountStatusState } from "@domain/entity-account-status";
 import { accountBalancesSlice, type AccountBalancesState } from "@domain/entity-account-balance";
 import {
   accountOperationsSlice,
@@ -57,7 +58,12 @@ import {
   payCardFeatureTourSlice,
   type PayCardFeatureTourState,
 } from "@features/flow-pay-feature-tour/state";
-import { receiveVerifyHintSlice, type ReceiveVerifyHintState } from "@features/flow-receive/state";
+import {
+  receiveAddressDialogSlice,
+  receiveVerifyHintSlice,
+  type ReceiveAddressDialogState,
+  type ReceiveVerifyHintState,
+} from "@features/flow-receive/state";
 import {
   payCardAuthSlice,
   payCardLoginIntroSlice,
@@ -133,6 +139,7 @@ export type State = LLDRTKApiState & {
   contacts: ContactsState;
   accountData: AccountDataState;
   accountReceives: AccountReceivesState;
+  accountStatus: AccountStatusState;
   accountBalances: AccountBalancesState;
   accountOperations: AccountOperationsState;
   accountBalanceHistories: AccountBalanceHistoriesState;
@@ -142,6 +149,7 @@ export type State = LLDRTKApiState & {
   accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
   payCardFeatureTour: PayCardFeatureTourState;
   receiveVerifyHint: ReceiveVerifyHintState;
+  receiveAddressDialog: ReceiveAddressDialogState;
   payCardOnboardingWidget: PayCardOnboardingWidgetState;
   payCardAuth: PayCardAuthState;
   payCardLoginIntro: PayCardLoginIntroState;
@@ -188,6 +196,7 @@ const appReducer = combineReducers({
   contacts: contactsSlice.reducer,
   accountData: accountDataSlice.reducer,
   accountReceives: accountReceivesSlice.reducer,
+  accountStatus: accountStatusSlice.reducer,
   accountBalances: accountBalancesSlice.reducer,
   accountOperations: accountOperationsSlice.reducer,
   accountBalanceHistories: accountBalanceHistoriesSlice.reducer,
@@ -197,6 +206,7 @@ const appReducer = combineReducers({
   accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
   receiveVerifyHint: receiveVerifyHintSlice.reducer,
+  receiveAddressDialog: receiveAddressDialogSlice.reducer,
   payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,
   payCardAuth: payCardAuthSlice.reducer,
   payCardLoginIntro: payCardLoginIntroSlice.reducer,

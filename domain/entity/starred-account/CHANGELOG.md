@@ -1,5 +1,27 @@
 # @domain/entity-starred-account
 
+## 0.2.0
+
+### Minor Changes
+
+- [#24985](https://github.com/LedgerHQ/ledger-live/pull/24985) [`4ef9ecd`](https://github.com/LedgerHQ/ledger-live/commit/4ef9ecde87b79d3667170d74e69443203f4b2280) Thanks [@ysitbon](https://github.com/ysitbon)! - Nest `isStarredAccountSelector` in the starred accounts slice, bound to the slice state
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-account@0.4.1
+
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#24985](https://github.com/LedgerHQ/ledger-live/pull/24985) [`4ef9ecd`](https://github.com/LedgerHQ/ledger-live/commit/4ef9ecde87b79d3667170d74e69443203f4b2280) Thanks [@ysitbon](https://github.com/ysitbon)! - Nest `isStarredAccountSelector` in the starred accounts slice, bound to the slice state
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-account@0.4.1-next.0
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,8 +1,4 @@
-import {
-  createCoinModuleCallTransmitter,
-  sampleRateFor,
-  shouldTransmitCoinModuleCall,
-} from "./transmission";
+import { createCoinModuleCallTransmitter } from "./transmission";
 import type { CoinModuleCallEvent } from "./coinModuleCall";
 
 const event = (method: string, status: CoinModuleCallEvent["status"]): CoinModuleCallEvent => ({
@@ -38,75 +34,6 @@ const transmitter = (
 const never = () => 0.99;
 const always = () => 0;
 
-describe("shouldTransmitCoinModuleCall", () => {
-  it("always transmits a failure, even on the sync path", () => {
-    expect(shouldTransmitCoinModuleCall(event("getBalance", "failure"), { random: never })).toBe(
-      true,
-    );
-  });
-
-  it.each([
-    "craftTransaction",
-    "craftRawTransaction",
-    "craftTransactionData",
-    "combine",
-    "broadcast",
-  ])("always transmits a transaction-path call (%s)", method => {
-    expect(shouldTransmitCoinModuleCall(event(method, "success"), { random: never })).toBe(true);
-  });
-
-  it.each(["estimateFees", "validateIntent"])(
-    "samples a preparation call (%s) with its own rate",
-    method => {
-      const sampled = (random: () => number, preparationSampleRate: number) =>
-        shouldTransmitCoinModuleCall(event(method, "success"), {
-          syncPathSampleRate: 1,
-          preparationSampleRate,
-          random,
-        });
-
-      expect(sampled(() => 0.05, 0.1)).toBe(true);
-      expect(sampled(() => 0.5, 0.1)).toBe(false);
-      expect(sampled(always, 0)).toBe(false);
-    },
-  );
-
-  it("samples sync-path successes", () => {
-    expect(shouldTransmitCoinModuleCall(event("getBalance", "success"), { random: never })).toBe(
-      false,
-    );
-    expect(shouldTransmitCoinModuleCall(event("getBalance", "success"), { random: always })).toBe(
-      true,
-    );
-  });
-
-  it("samples not-supported calls like successes", () => {
-    expect(
-      shouldTransmitCoinModuleCall(event("getStakes", "not_supported"), { random: never }),
-    ).toBe(false);
-  });
-
-  it("honours a custom sync-path rate", () => {
-    expect(
-      shouldTransmitCoinModuleCall(event("listOperations", "success"), {
-        syncPathSampleRate: 1,
-        random: never,
-      }),
-    ).toBe(true);
-  });
-});
-
-describe("sampleRateFor", () => {
-  const rates = { syncPathSampleRate: 0.05, preparationSampleRate: 0.1 };
-
-  it("gives each tier its rate", () => {
-    expect(sampleRateFor("broadcast", rates)).toBe(1);
-    expect(sampleRateFor("craftTransactionData", rates)).toBe(1);
-    expect(sampleRateFor("estimateFees", rates)).toBe(0.1);
-    expect(sampleRateFor("getBalance", rates)).toBe(0.05);
-  });
-});
-
 describe("sampling attributes", () => {
   const config = {
     includeSyncPath: true,
@@ -117,12 +44,21 @@ describe("sampling attributes", () => {
 
   it("sends a sampled success with its tier's rate", () => {
     const transmit = createCoinModuleCallTransmitter(() => config, { random: () => 0.01 });
-    expect(transmit(event("getBalance", "success"))).toEqual({ sampleRate: 0.05, inSample: true });
+    expect(transmit(event("getBalance", "success"))).toEqual({
+      tier: "sync",
+      sampleRate: 0.05,
+      inSample: true,
+    });
     expect(transmit(event("estimateFees", "success"))).toEqual({
+      tier: "preparation",
       sampleRate: 0.1,
       inSample: true,
     });
-    expect(transmit(event("broadcast", "success"))).toEqual({ sampleRate: 1, inSample: true });
+    expect(transmit(event("broadcast", "success"))).toEqual({
+      tier: "transaction",
+      sampleRate: 1,
+      inSample: true,
+    });
   });
 
   it("marks a failure from a session outside the sample", () => {
@@ -130,13 +66,77 @@ describe("sampling attributes", () => {
       random: () => 0.5,
       clock: () => 0,
     });
-    expect(transmit(failure("getBalance"))).toEqual({ sampleRate: 0.05, inSample: false });
-    expect(transmit(failure("broadcast"))).toEqual({ sampleRate: 1, inSample: true });
+    expect(transmit(failure("getBalance"))).toEqual({
+      tier: "sync",
+      sampleRate: 0.05,
+      inSample: false,
+    });
+    expect(transmit(failure("broadcast"))).toEqual({
+      tier: "transaction",
+      sampleRate: 1,
+      inSample: true,
+    });
   });
 
   it("returns null for a dropped call", () => {
     const transmit = createCoinModuleCallTransmitter(() => config, { random: () => 0.5 });
     expect(transmit(event("getBalance", "success"))).toBeNull();
+  });
+
+  it.each(["craftTransaction", "craftRawTransaction", "combine", "broadcast"])(
+    "always sends a transaction-tier call (%s)",
+    method => {
+      const transmit = createCoinModuleCallTransmitter(() => config, { random: never });
+      expect(transmit(event(method, "success"))).toEqual({
+        tier: "transaction",
+        sampleRate: 1,
+        inSample: true,
+      });
+    },
+  );
+
+  it("samples craftTransactionData at the preparation rate", () => {
+    const transmit = createCoinModuleCallTransmitter(() => config, { random: () => 0.05 });
+    expect(transmit(event("craftTransactionData", "success"))).toEqual({
+      tier: "preparation",
+      sampleRate: 0.1,
+      inSample: true,
+    });
+  });
+
+  it("follows the flag's methodTiers over the defaults", () => {
+    const transmit = createCoinModuleCallTransmitter(
+      () => ({ ...config, methodTiers: { getBalance: "transaction" } }),
+      { random: never },
+    );
+    expect(transmit(event("getBalance", "success"))).toEqual({
+      tier: "transaction",
+      sampleRate: 1,
+      inSample: true,
+    });
+  });
+
+  it("drops a method the defaults do not list, failures included", () => {
+    const transmit = createCoinModuleCallTransmitter(() => config, { random: always });
+    expect(transmit(event("someFutureMethod", "success"))).toBeNull();
+    expect(transmit(event("someFutureMethod", "failure"))).toBeNull();
+  });
+
+  it("sends an unlisted method the flag gives a tier", () => {
+    const transmit = createCoinModuleCallTransmitter(
+      () => ({ ...config, methodTiers: { someFutureMethod: "sync" } }),
+      { random: always },
+    );
+    expect(transmit(event("someFutureMethod", "success"))).toEqual({
+      tier: "sync",
+      sampleRate: 0.05,
+      inSample: true,
+    });
+  });
+
+  it("samples not-supported calls like successes", () => {
+    const transmit = createCoinModuleCallTransmitter(() => config, { random: never });
+    expect(transmit(event("getStakes", "not_supported"))).toBeNull();
   });
 });
 
@@ -254,6 +254,35 @@ describe("createCoinModuleCallTransmitter", () => {
     });
     expect(transmit({ ...failure("getBalance"), status: "success" })).toBe(false);
     expect(transmit(failure("getBalance"))).toBe(true);
+  });
+
+  it("sends nothing of an off method, failures included", () => {
+    const transmit = transmitter(
+      () => ({ ...config, methodTiers: { craftTransactionData: "off" } }),
+      { random: () => 0, clock: () => 0 },
+    );
+    expect(transmit({ ...failure("craftTransactionData"), status: "success" })).toBe(false);
+    expect(transmit(failure("craftTransactionData"))).toBe(false);
+  });
+
+  it("applies a reclassification by the flag at once", () => {
+    let methodTiers: Record<string, "transaction" | "preparation"> = {};
+    const transmit = transmitter(() => ({ ...config, preparationSampleRate: 0.1, methodTiers }), {
+      random: () => 0.5,
+    });
+    const success = { ...failure("craftTransactionData"), status: "success" as const };
+
+    expect(transmit(success)).toBe(false);
+    methodTiers = { craftTransactionData: "transaction" };
+    expect(transmit(success)).toBe(true);
+  });
+
+  it("drops a method moved to the sync tier when the sync path is excluded", () => {
+    const transmit = transmitter(
+      () => ({ ...config, includeSyncPath: false, methodTiers: { broadcast: "sync" } }),
+      { random: () => 0, clock: () => 0 },
+    );
+    expect(transmit(failure("broadcast"))).toBe(false);
   });
 
   it("reads the config on every event, so a flag change applies at once", () => {

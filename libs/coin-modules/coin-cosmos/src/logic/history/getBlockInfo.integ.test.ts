@@ -1,11 +1,13 @@
-import { makeTestApi, TEST_COSMOS_ENDPOINT } from "../../test/msw.mock";
+import coinConfig, { cosmosDefaults } from "../../config";
+import { CosmosAPI } from "../../network/Cosmos";
 import { getBlockInfo } from "./getBlockInfo";
 
 const HEIGHT = 33721701;
 const HASH = "Ze5/0SKKqzMwkTViLiFXoYfkjfXMGw9RXF8/Ajxt+pc=";
 
 describe("getBlockInfo (integ, Cosmos Hub)", () => {
-  const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
+  coinConfig.setCoinConfig(() => cosmosDefaults.cosmos);
+  const api = new CosmosAPI("cosmos", undefined, cosmosDefaults.cosmos);
 
   it("returns the height, hash and time of a historical block", async () => {
     await expect(getBlockInfo(api, HEIGHT)).resolves.toEqual({

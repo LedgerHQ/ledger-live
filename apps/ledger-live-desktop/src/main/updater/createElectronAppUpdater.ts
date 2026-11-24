@@ -1,20 +1,26 @@
-import crypto from "crypto";
-import fs from "fs";
 import { UpdateFetchFileFail } from "../../errors";
 import network from "@ledgerhq/live-network/network";
 import createAppUpdater from "./createAppUpdater";
 import pubKey from "./ledger-pubkey";
-import { UpdateDownloadedEvent } from "electron-updater";
+import { UpdateInfo } from "electron-updater";
 
-export default async ({ feedURL, info }: { feedURL: string; info: UpdateDownloadedEvent }) => {
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
-  const { version: updateVersion, path: filename, downloadedFile: filePath } = info;
+// electron-updater rejects any download whose sha512 differs from the update info checked here.
+export default function createElectronAppUpdater({
+  feedURL,
+  info,
+}: {
+  feedURL: string;
+  info: UpdateInfo;
+}) {
+  const { version: updateVersion, files } = info;
   const hashFileURL = `${feedURL}/ledger-live-desktop-${updateVersion}.sha512sum`;
   const hashSigFileURL = `${feedURL}/ledger-live-desktop-${updateVersion}.sha512sum.sig`;
   const keysURL = `${feedURL}/pubkeys`;
   return createAppUpdater({
-    filename,
-    computeHash: () => sha512sumPath(filePath),
+    files: files.map(file => ({
+      filename: file.url,
+      sha512Hex: Buffer.from(file.sha512, "base64").toString("hex"),
+    })),
     getHashFile: () => getDistantFileContent(hashFileURL),
     getHashFileSignature: () => getDistantFileContent(hashSigFileURL, true),
     getNextKey: (fingerprint?: string | null) =>
@@ -24,18 +30,8 @@ export default async ({ feedURL, info }: { feedURL: string; info: UpdateDownload
     getNextKeySignature: async (fingerprint: string) =>
       getDistantFileContent(`${keysURL}/${fingerprint}.pem.sig`, true),
   });
-};
-
-// compute hash for given path.
-export function sha512sumPath(path: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const sum = crypto.createHash("sha512");
-    const stream = fs.createReadStream(path);
-    stream.on("data", data => sum.update(data));
-    stream.on("end", () => resolve(sum.digest("hex")));
-    stream.on("error", reject);
-  });
 }
+
 async function getDistantFileContent(url: string, binary = false) {
   const query: { method: string; url: string; responseType?: string } = {
     method: "GET",

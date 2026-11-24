@@ -1,5 +1,4 @@
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import IconService from "icon-sdk-js";
 import type { IcxTransaction, SignedTransaction } from "icon-sdk-js";
@@ -7,7 +6,7 @@ import { getCoinConfig } from "../config";
 import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS } from "../constants";
 import { isTestnet } from "../logic";
 import { IconAccount } from "../types/index";
-import { IconDelegationType } from "./api-type";
+import { IconDelegationType, IconSignedPayload } from "./api-type";
 
 const { HttpProvider } = IconService;
 const { IconBuilder } = IconService;
@@ -38,14 +37,14 @@ export function getDebugRpcUrl(currency: CryptoCurrency): string {
  * Broadcast blob to blockchain
  */
 export const broadcastTransaction = async (
-  signedOperation: SignedOperation,
+  signedOperation: IconSignedPayload,
   currency: CryptoCurrency,
 ) => {
   const { hash } = await submit(signedOperation, currency);
   return { hash };
 };
 
-export const submit = async (signedOperation: SignedOperation, currency: CryptoCurrency) => {
+export const submit = async (signedOperation: IconSignedPayload, currency: CryptoCurrency) => {
   const rpcURL = getRpcUrl(currency);
 
   const httpProvider = new HttpProvider(rpcURL);

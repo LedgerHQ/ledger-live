@@ -30,6 +30,11 @@ describe("fromOperationExtraRaw", () => {
     const extra = fromOperationExtraRaw({ feeCurrencyAddress: NATIVE_FEE_CURRENCY_MARKER });
     expect(extra).toEqual({ feeCurrencyAddress: NATIVE_FEE_CURRENCY_MARKER });
   });
+
+  it("round-trips the fee asset alone", () => {
+    const feeAsset = "0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e";
+    expect(fromOperationExtraRaw(toOperationExtraRaw({ feeAsset }))).toEqual({ feeAsset });
+  });
 });
 
 describe("toOperationExtraRaw", () => {

@@ -45,6 +45,7 @@ jest.mock("@devtools/bindings", () => ({
   useAccountSourcePortfolioToolProps: () => ({ marker: "account-source-portfolio-props" }),
   useAccountNameToolProps: () => ({ marker: "account-name-props" }),
   useAccountReceiveToolProps: () => ({ marker: "account-receive-props" }),
+  useAccountStatusToolProps: () => ({ marker: "account-status-props" }),
   useMockAccountsToolProps: () => ({ marker: "mock-accounts-props" }),
   useAccountDetailToolProps: () => ({ marker: "account-detail-props" }),
   useReceiveToolProps: () => ({ marker: "receive-props" }),
@@ -60,6 +61,15 @@ jest.mock("@devtools/bindings", () => ({
   useCoinConfigToolProps: () => ({ marker: "coin-config-props" }),
 }));
 
+jest.mock("../AccountDiscovery/useAccountDiscoveryTool", () => ({
+  useAccountDiscoveryTool: () => ({
+    toolProps: { marker: "account-discovery-props" },
+    run: null,
+    onRunCancelled: jest.fn(),
+    onRunFailed: jest.fn(),
+  }),
+}));
+
 jest.mock("../DeviceOnboarding/useDeviceOnboardingTool", () => ({
   useDeviceOnboardingTool: () => ({ marker: "device-onboarding-props" }),
 }));
@@ -70,6 +80,10 @@ jest.mock("../IntentWalletSync/useIntentWalletSyncTool", () => ({
     run: null,
     onRunCancelled: jest.fn(),
   }),
+}));
+
+jest.mock("../AppToggles/useAppTogglesTool", () => ({
+  useAppTogglesTool: () => ({ marker: "app-toggles-props" }),
 }));
 
 jest.mock("@devtools/wire", () => {
@@ -112,17 +126,20 @@ describe("DevToolsScreen", () => {
             config: { marker: "account-source-portfolio-props" },
           },
           { id: "account-descriptor", config: { marker: "account-descriptor-props" } },
+          { id: "account-discovery", config: { marker: "account-discovery-props" } },
           { id: "account-balance", config: { marker: "account-balance-props" } },
           { id: "account-operation", config: { marker: "account-operation-props" } },
           { id: "account-balance-history", config: { marker: "account-balance-history-props" } },
           { id: "account-name", config: { marker: "account-name-props" } },
           { id: "account-receive", config: { marker: "account-receive-props" } },
+          { id: "account-status", config: { marker: "account-status-props" } },
           { id: "account-portfolio", config: { marker: "account-portfolio-props" } },
           { id: "mock-accounts", config: { marker: "mock-accounts-props" } },
           { id: "account-detail", config: { marker: "account-detail-props" } },
           { id: "receive", config: { marker: "receive-props" } },
           { id: "predictions", config: { marker: "predictions-props" } },
           { id: "intent-wallet-sync", config: { marker: "intent-wallet-sync-props" } },
+          { id: "app-toggles", config: { marker: "app-toggles-props" } },
         ],
       }),
     );

@@ -1,7 +1,7 @@
 import React from "react";
 import { Tag } from "@ledgerhq/lumen-ui-react";
-import { AccountActions } from "../components/AccountActions/AccountActions.web";
-import { AccountBalance } from "../components/AccountBalance/AccountBalance.web";
+import { AccountActions } from "../components/AccountActions/AccountActions";
+import { AccountBalance } from "../components/AccountBalance/AccountBalance";
 import type { AccountHeroPort } from "./types";
 import { useAccountHeroViewModel } from "./useAccountHeroViewModel";
 

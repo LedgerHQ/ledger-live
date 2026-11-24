@@ -183,7 +183,7 @@ jobs:
           CARD_BAANX_HOSTED_UI: ${{ secrets.CARD_BAANX_HOSTED_UI }}
           CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
         with:
-          command: GITHUB_STEP_SUMMARY=/dev/null pnpm exec nx run live-mobile:e2e:ci -- -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
+          command: GITHUB_STEP_SUMMARY=/dev/null pnpm exec nx run live-mobile:e2e:build -- -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
           disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Upload Detox Native Build

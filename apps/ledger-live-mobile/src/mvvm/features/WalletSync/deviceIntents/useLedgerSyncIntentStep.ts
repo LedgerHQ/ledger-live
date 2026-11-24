@@ -48,6 +48,8 @@ type Params<RunIntent, StartInput> = Readonly<{
   /** False while a run cannot be built yet: the step waits, then starts. */
   isReady?: boolean;
   onDeviceRejected?: (connectionResult: DeviceConnectionResult | undefined) => void;
+  /** The job emitted `completed`: the result reached `onResult` while the step listened. */
+  onCompleted?: () => void;
 }>;
 
 function sceneOfFailure(reason: LedgerSyncFailureReason, error: Error): Scene {
@@ -92,16 +94,19 @@ export function useLedgerSyncIntentStep<RunIntent, StartInput>({
   buildIntent,
   isReady = true,
   onDeviceRejected,
+  onCompleted,
 }: Params<RunIntent, StartInput>): LedgerSyncIntentStep<RunIntent> {
   const navigation = useNavigation<LedgerSyncStepNavigation>();
   const { deleteMutation } = useDestroyTrustchain();
   const isLocked = useSelector(isModalLockedSelector);
   const buildIntentRef = useRef(buildIntent);
   const onDeviceRejectedRef = useRef(onDeviceRejected);
+  const onCompletedRef = useRef(onCompleted);
   const onCloseRef = useRef(onClose);
   useLayoutEffect(() => {
     buildIntentRef.current = buildIntent;
     onDeviceRejectedRef.current = onDeviceRejected;
+    onCompletedRef.current = onCompleted;
     onCloseRef.current = onClose;
   });
   const connectionResultRef = useRef<DeviceConnectionResult | undefined>(undefined);
@@ -174,7 +179,9 @@ export function useLedgerSyncIntentStep<RunIntent, StartInput>({
 
   const onIntentJobStateChanged = useCallback(
     (jobState: LedgerSyncJobState) => {
-      if (jobState.type === "device-rejected") {
+      if (jobState.type === "completed") {
+        onCompletedRef.current?.();
+      } else if (jobState.type === "device-rejected") {
         onDeviceRejectedRef.current?.(connectionResultRef.current);
       } else if (jobState.type === "failed") {
         showScene(sceneOfFailure(jobState.reason, jobState.error));

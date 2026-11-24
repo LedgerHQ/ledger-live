@@ -58,14 +58,14 @@ export function troubleshoot(): Troubleshoot[] {
   ];
 }
 
-function httpGet(url) {
+function httpGet(url: string) {
   return {
     technicalDescription: "fetching " + url,
     job: axios.get(url, { timeout: 30000 }),
   };
 }
 
-function websocketConnects(url) {
+function websocketConnects(url: string) {
   const job = new Promise((resolve, reject) => {
     const ws = new WS(url);
     const timeout = setTimeout(() => {

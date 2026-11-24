@@ -37,6 +37,10 @@ import type { RestoreBackupStateMachineInput } from "../restore-backup/types";
 import { checkErrorCauseStateMachine } from "../shared/checkErrorCauseStateMachine";
 import { DeviceSituationEventType, isRecovered } from "../shared/types";
 import {
+  hasUnexplainedRecoveryAfter,
+  isRepeatedUnexplainedRecovery,
+} from "../shared/utils/unexplainedRecovery";
+import {
   isAllowInstallFirmwareRefusedError,
   isAllowSecureConnectionRefusedError,
 } from "../shared/utils/isPromptRefusedError";
@@ -302,6 +306,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
     ...input,
     lastSentState: null,
     lastAction: null,
+    hasUnexplainedRecovery: false,
     lastInteraction: null,
     osVersion: null,
     updateIndex: 0,
@@ -339,7 +344,9 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
           sessionId: context.connectedDevice.sessionId,
         }),
         onDone: {
-          actions: assign({ osVersion: ({ event }) => event.output }),
+          actions: assign({
+            osVersion: ({ event }) => event.output,
+          }),
           target: "CheckOsVersion",
         },
         onError: {
@@ -400,6 +407,8 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
           {
             guard: ({ event }) =>
               event.output.map(({ name }) => isDashboardName(name)).orDefault(false),
+            // Ends the chain resumed from GetOsVersion: its success alone would not clear the flag.
+            actions: assign({ hasUnexplainedRecovery: false }),
             target: "InstallOsu",
           },
           {
@@ -495,7 +504,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
             target: "CheckErrorCause",
           },
           {
-            actions: assign({ osuProgress: 1 }),
+            actions: assign({ osuProgress: 1, hasUnexplainedRecovery: false }),
             target: "WaitForReadyAfterOsu",
           },
         ],
@@ -527,6 +536,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
           actions: assign({
             osVersion: ({ event }) => event.output.osVersion,
             connectedDevice: ({ event }) => event.output.connectedDevice,
+            hasUnexplainedRecovery: false,
           }),
           target: "CheckAfterOsuInstall",
         },
@@ -597,6 +607,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
           {
             actions: assign({
               flashesDone: ({ context }) => context.flashesDone + 1,
+              hasUnexplainedRecovery: false,
               currentFlashProgress: 0,
               lastFlashTarget: ({ event }) =>
                 event.output.isRight() ? event.output.unsafeCoerce().target : null,
@@ -631,6 +642,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
           actions: assign({
             osVersion: ({ event }) => event.output.osVersion,
             connectedDevice: ({ event }) => event.output.connectedDevice,
+            hasUnexplainedRecovery: false,
           }),
           target: "CheckAfterFlash",
         },
@@ -702,6 +714,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
           {
             actions: assign({
               flashesDone: ({ context }) => context.flashesDone + 1,
+              hasUnexplainedRecovery: false,
               currentFlashProgress: 0,
               lastFlashTarget: ({ event }) =>
                 event.output.isRight() ? event.output.unsafeCoerce().target : null,
@@ -714,9 +727,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
     WaitForReadyAfterRecoveryFlash: {
       entry: [
         { type: "logState", params: "WaitForReadyAfterRecoveryFlash" },
-        assign({
-          lastAction: ApplyUpdatesStateMachineLastAction.WaitForReadyAfterRecoveryFlash,
-        }),
+        assign({ lastAction: ApplyUpdatesStateMachineLastAction.WaitForReadyAfterRecoveryFlash }),
         enqueueActions(({ context, enqueue, check }) => {
           if (context.lastFlashTarget === MCU_FLASH_TARGET && !check("hasFinalFirmware")) {
             enqueue({
@@ -737,6 +748,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
           actions: assign({
             osVersion: ({ event }) => event.output.osVersion,
             connectedDevice: ({ event }) => event.output.connectedDevice,
+            hasUnexplainedRecovery: false,
           }),
           target: "CheckAfterRecoveryFlash",
         },
@@ -823,6 +835,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
               updateIndex: 0,
               osuProgress: 1,
               flashCompleted: true,
+              hasUnexplainedRecovery: false,
             }),
             target: "InstallFinalFirmware",
           },
@@ -881,6 +894,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
                   .orDefault(context.osUpdates),
               updateIndex: 0,
               osuProgress: 1,
+              hasUnexplainedRecovery: false,
             }),
             target: "CheckFinalFirmware",
           },
@@ -895,6 +909,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
                   .orDefault(context.osUpdates),
               updateIndex: 0,
               osuProgress: 0,
+              hasUnexplainedRecovery: false,
             }),
             target: "CheckResolvedUpdates",
           },
@@ -970,7 +985,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
             target: "CheckErrorCause",
           },
           {
-            actions: assign({ finalProgress: 1 }),
+            actions: assign({ finalProgress: 1, hasUnexplainedRecovery: false }),
             target: "WaitForReadyAfterFinalInstall",
           },
         ],
@@ -996,6 +1011,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
           actions: assign({
             osVersion: ({ event }) => event.output.osVersion,
             connectedDevice: ({ event }) => event.output.connectedDevice,
+            hasUnexplainedRecovery: false,
           }),
           target: "CheckNextUpdate",
         },
@@ -1129,10 +1145,17 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
         }),
         onDone: [
           {
+            guard: ({ context, event }) =>
+              isRepeatedUnexplainedRecovery(context.hasUnexplainedRecovery, event.output),
+            target: "UnrecoverableError",
+          },
+          {
             guard: ({ event }) => isRecovered(event.output),
             actions: assign({
               connectedDevice: ({ context, event }) =>
                 isRecovered(event.output) ? event.output.connectedDevice : context.connectedDevice,
+              hasUnexplainedRecovery: ({ context, event }) =>
+                hasUnexplainedRecoveryAfter(context.hasUnexplainedRecovery, event.output),
             }),
             target: "ResumeLastAction",
           },

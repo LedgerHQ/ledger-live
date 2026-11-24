@@ -6,5 +6,6 @@ export default defineConfig({
   rules: {
     // Reporters and CLI tooling in support/ write to the console by design.
     "eslint/no-console": "off",
+    "redux-slices/selectors-in-slice": "off",
   },
 });

@@ -1,8 +1,0 @@
-{
-  "name": "@domain/api-push-devices",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

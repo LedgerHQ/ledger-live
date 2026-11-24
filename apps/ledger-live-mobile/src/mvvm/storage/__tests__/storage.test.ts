@@ -15,6 +15,14 @@ afterEach(() => jest.restoreAllMocks());
 
 const error = new Error("Test error");
 
+function loggedErrors(): string {
+  return JSON.stringify(jest.mocked(console.error).mock.calls);
+}
+
+function accountKey(xpub: string): string {
+  return `accounts.active.js:2:bitcoin:${xpub}:native_segwit`;
+}
+
 describe("storage", () => {
   let mockInitStorageState: jest.SpyInstance;
 
@@ -224,6 +232,32 @@ describe("storage", () => {
       });
     });
 
+    describe("handles bulk get error", () => {
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        getMethod = jest.spyOn(asyncStorageWrapper, "get").mockImplementation(() => {
+          throw error;
+        });
+        const storage = createTestStorage();
+
+        // Act
+        await storage
+          .get([accountKey("xpubTestAccount1"), accountKey("xpubTestAccount2")])
+          .catch(noop);
+      });
+
+      it("should log the key count and operation but not the keys", () => {
+        expect(console.error).toHaveBeenCalledWith("Error with extra data:", error, {
+          op: "get",
+          keyCount: 2,
+        });
+        expect(loggedErrors()).not.toContain("xpubTestAccount");
+      });
+    });
+
     describe("read errors with MMKV", () => {
       const readCount = 6;
       let lastSyntaxError: SyntaxError;
@@ -361,7 +395,7 @@ describe("storage", () => {
 
         // Act
         try {
-          result = await storage.save("test", { value: 1 });
+          result = await storage.save("test", { privatekey: "secret-save-value" });
         } catch (e) {
           result = e;
         }
@@ -375,6 +409,14 @@ describe("storage", () => {
         expect(result).toEqual(error);
       });
 
+      it("should log the key and operation but not the value", () => {
+        expect(console.error).toHaveBeenCalledWith("Error with extra data:", error, {
+          op: "save",
+          key: "test",
+        });
+        expect(loggedErrors()).not.toContain("secret-save-value");
+      });
+
       it("should log the #save error", () => {
         expect(console.error).toHaveBeenCalledWith("Error saving key to storage", {
           error: error,
@@ -384,6 +426,36 @@ describe("storage", () => {
             storageType: STORAGE_TYPE.ASYNC_STORAGE,
           },
         });
+      });
+    });
+
+    describe("handles bulk save error", () => {
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        saveMethod = jest.spyOn(asyncStorageWrapper, "save").mockImplementation(() => {
+          throw error;
+        });
+        const storage = createTestStorage();
+
+        // Act
+        await storage
+          .save([
+            [accountKey("xpubTestAccount1"), { privatekey: "secret-bulk-value-1" }],
+            [accountKey("xpubTestAccount2"), { privatekey: "secret-bulk-value-2" }],
+          ])
+          .catch(noop);
+      });
+
+      it("should log the key count and operation but not the keys or values", () => {
+        expect(console.error).toHaveBeenCalledWith("Error with extra data:", error, {
+          op: "save",
+          keyCount: 2,
+        });
+        expect(loggedErrors()).not.toContain("xpubTestAccount");
+        expect(loggedErrors()).not.toContain("secret-bulk-value");
       });
     });
   });
@@ -566,6 +638,32 @@ describe("storage", () => {
         });
       });
     });
+
+    describe("handles bulk delete error", () => {
+      beforeEach(async () => {
+        // Arrange
+        mockInitStorageState = jest.fn().mockImplementation(state => {
+          state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
+        });
+        deleteMethod = jest.spyOn(asyncStorageWrapper, "delete").mockImplementation(() => {
+          throw error;
+        });
+        const storage = createTestStorage();
+
+        // Act
+        await storage
+          .delete([accountKey("xpubTestAccount1"), accountKey("xpubTestAccount2")])
+          .catch(noop);
+      });
+
+      it("should log the key count and operation but not the keys", () => {
+        expect(console.error).toHaveBeenCalledWith("Error with extra data:", error, {
+          op: "delete",
+          keyCount: 2,
+        });
+        expect(loggedErrors()).not.toContain("xpubTestAccount");
+      });
+    });
   });
 
   describe("push", () => {
@@ -630,7 +728,7 @@ describe("storage", () => {
 
         // Act
         try {
-          result = await storage.push("test", 1);
+          result = await storage.push("test", "secret-push-value");
         } catch (e) {
           result = e;
         }
@@ -642,6 +740,14 @@ describe("storage", () => {
 
       it("should return the value returned by #push", () => {
         expect(result).toEqual(error);
+      });
+
+      it("should log the key and operation but not the value", () => {
+        expect(console.error).toHaveBeenCalledWith("Error with extra data:", error, {
+          op: "push",
+          key: "test",
+        });
+        expect(loggedErrors()).not.toContain("secret-push-value");
       });
 
       it("should log the #push error", () => {

@@ -6,20 +6,10 @@ import { NATIVE_FEE_CURRENCY_MARKER } from "@ledgerhq/live-common/families/celo/
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 
-const mockUseQuery = jest.fn();
 const mockUseTokenByAddressInCurrency = jest.fn();
-const mockGetCeloTransactionFeeCurrency = jest.fn();
-
-jest.mock("@tanstack/react-query", () => ({
-  useQuery: (...args: unknown[]) => mockUseQuery(...args),
-}));
 
 jest.mock("@features/platform-currencies", () => ({
   useTokenByAddressInCurrency: (...args: unknown[]) => mockUseTokenByAddressInCurrency(...args),
-}));
-
-jest.mock("@ledgerhq/live-common/families/celo/network", () => ({
-  getCeloTransactionFeeCurrency: (...args: unknown[]) => mockGetCeloTransactionFeeCurrency(...args),
 }));
 
 import operationDetails from "../operationDetails";
@@ -29,7 +19,7 @@ const { getDisplayFee, useFeesCurrency } = operationDetails;
 const celo = getCryptoCurrencyById("celo");
 
 const buildOperation = (
-  overrides: Partial<Operation> & Partial<{ feeCurrencyAddress: string }> = {},
+  overrides: Partial<Operation> & Partial<{ feeCurrencyAddress: string; feeAsset: string }> = {},
 ): Operation => ({
   id: "celo:test-op",
   hash: "0xhash",
@@ -44,11 +34,12 @@ const buildOperation = (
   date: new Date("2026-01-01"),
   hasFailed: false,
   ...overrides,
-  extra:
-    overrides.extra ??
-    (overrides.feeCurrencyAddress != null
+  extra: overrides.extra ?? {
+    ...(overrides.feeCurrencyAddress != null
       ? { feeCurrencyAddress: overrides.feeCurrencyAddress }
       : {}),
+    ...(overrides.feeAsset != null ? { feeAsset: overrides.feeAsset } : {}),
+  },
 });
 
 const buildToken = (
@@ -104,36 +95,45 @@ const buildAccount = (subAccounts: TokenAccount[] = []): Account => ({
   subAccounts,
 });
 
+const ADAPTER = "0xabcdef0123456789abcdef0123456789abcdef01";
+const USDC_ADAPTER = "0x2f25deb3848c207fc8e0c34035b3ba7fc157602b";
+const USDC = "0xceba9300f2b948710d2653dd7b07f33a8b32118c";
+// A pending operation built before `feeAsset` existed: its fee is in the adapter's 18 decimals
+const legacyPending = (fee: string) =>
+  buildOperation({ fee: new BigNumber(fee), feeCurrencyAddress: ADAPTER });
+
 describe("celo mobile operationDetails.getDisplayFee", () => {
   const account = buildAccount();
 
-  it("returns undefined for a native CryptoCurrency", () => {
+  it("returns undefined for a fee already in its token's units", () => {
     expect(
-      getDisplayFee(buildOperation({ fee: new BigNumber("1000000000000000000") }), account, celo),
+      getDisplayFee(
+        buildOperation({ fee: new BigNumber("1601"), feeAsset: ADAPTER }),
+        account,
+        buildToken(ADAPTER, 6),
+      ),
     ).toBeUndefined();
+  });
+
+  it("returns undefined for a native CryptoCurrency", () => {
+    expect(getDisplayFee(legacyPending("1000000000000000000"), account, celo)).toBeUndefined();
   });
 
   it("returns undefined when the token magnitude is exactly 18", () => {
     expect(
-      getDisplayFee(
-        buildOperation({ fee: new BigNumber("1000000000000000000") }),
-        account,
-        buildToken("0xc0ffee", 18),
-      ),
+      getDisplayFee(legacyPending("1000000000000000000"), account, buildToken("0xc0ffee", 18)),
     ).toBeUndefined();
   });
 
   it("returns undefined when the token magnitude is missing", () => {
     const token: TokenCurrency = { ...buildToken("0xc0ffee"), units: [] };
-    expect(
-      getDisplayFee(buildOperation({ fee: new BigNumber("1000000000000000000") }), account, token),
-    ).toBeUndefined();
+    expect(getDisplayFee(legacyPending("1000000000000000000"), account, token)).toBeUndefined();
   });
 
   it("rescales a 6-decimal token fee from 18-decimal units (USDC-like)", () => {
     expect(
       getDisplayFee(
-        buildOperation({ fee: new BigNumber("1000000000000000000") }),
+        legacyPending("1000000000000000000"),
         account,
         buildToken("0xc0ffee", 6),
       )?.toFixed(),
@@ -143,18 +143,14 @@ describe("celo mobile operationDetails.getDisplayFee", () => {
   it("floors the result for non-exact divisions", () => {
     // For magnitude 6 the divisor is 1e12; (1e12 + 1) / 1e12 = 1.000…001 → 1.
     expect(
-      getDisplayFee(
-        buildOperation({ fee: new BigNumber("1000000000001") }),
-        account,
-        buildToken("0xc0ffee", 6),
-      )?.toFixed(),
+      getDisplayFee(legacyPending("1000000000001"), account, buildToken("0xc0ffee", 6))?.toFixed(),
     ).toBe("1");
   });
 
   it("rescales an 8-decimal token fee correctly", () => {
     expect(
       getDisplayFee(
-        buildOperation({ fee: new BigNumber("500000000000000000") }),
+        legacyPending("500000000000000000"),
         account,
         buildToken("0xc0ffee", 8),
       )?.toFixed(),
@@ -165,72 +161,64 @@ describe("celo mobile operationDetails.getDisplayFee", () => {
 describe("celo mobile operationDetails.useFeesCurrency", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseQuery.mockReturnValue({ data: undefined });
     mockUseTokenByAddressInCurrency.mockReturnValue({ token: undefined });
   });
 
-  it("returns undefined when the stored marker is NATIVE", () => {
-    const account = buildAccount();
+  it("returns undefined for a fee paid in CELO", () => {
+    const { result } = renderHook(() => useFeesCurrency(buildOperation(), buildAccount()));
+
+    expect(result.current).toBeUndefined();
+    expect(mockUseTokenByAddressInCurrency).toHaveBeenCalledWith("", "celo", { skip: true });
+  });
+
+  it("returns undefined for the NATIVE marker of an older pending operation", () => {
     const operation = buildOperation({ feeCurrencyAddress: NATIVE_FEE_CURRENCY_MARKER });
 
-    const { result } = renderHook(() => useFeesCurrency(operation, account));
-
-    expect(result.current).toBeUndefined();
-    expect(mockUseQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
-  });
-
-  it("returns undefined when neither stored nor fetched address is available", () => {
-    const account = buildAccount();
-    const operation = buildOperation();
-
-    const { result } = renderHook(() => useFeesCurrency(operation, account));
+    const { result } = renderHook(() => useFeesCurrency(operation, buildAccount()));
 
     expect(result.current).toBeUndefined();
   });
 
-  it("returns the matching subAccount token when the adapter is a known token contract", () => {
-    const adapter = "0xabcdef0123456789abcdef0123456789abcdef01";
-    const token = buildToken(adapter);
+  it("returns the sub-account token of the fee asset", () => {
+    const token = buildToken(ADAPTER);
     const account = buildAccount([buildTokenAccount(token)]);
-    const operation = buildOperation({ feeCurrencyAddress: adapter });
 
-    const { result } = renderHook(() => useFeesCurrency(operation, account));
+    const { result } = renderHook(() =>
+      useFeesCurrency(buildOperation({ feeAsset: ADAPTER }), account),
+    );
 
     expect(result.current).toBe(token);
+    expect(mockUseTokenByAddressInCurrency).toHaveBeenCalledWith(ADAPTER, "celo", { skip: true });
   });
 
-  it("falls back to the CAL token when no subAccount matches", () => {
-    const adapter = "0xabcdef0123456789abcdef0123456789abcdef01";
-    const calToken = buildToken(adapter, 6, "celo/erc20/cal");
+  it("falls back to the CAL token when no sub-account holds the fee asset", () => {
+    const calToken = buildToken(ADAPTER, 6, "celo/erc20/cal");
     mockUseTokenByAddressInCurrency.mockReturnValue({ token: calToken });
-    const account = buildAccount();
-    const operation = buildOperation({ feeCurrencyAddress: adapter });
 
-    const { result } = renderHook(() => useFeesCurrency(operation, account));
+    const { result } = renderHook(() =>
+      useFeesCurrency(buildOperation({ feeAsset: ADAPTER }), buildAccount()),
+    );
 
     expect(result.current).toBe(calToken);
-    expect(mockUseTokenByAddressInCurrency).toHaveBeenCalledWith(adapter, "celo", { skip: false });
+    expect(mockUseTokenByAddressInCurrency).toHaveBeenCalledWith(ADAPTER, "celo", { skip: false });
   });
 
-  it("uses the fetched address when nothing is stored on the operation", () => {
-    const adapter = "0xabcdef0123456789abcdef0123456789abcdef01";
-    const token = buildToken(adapter);
-    const account = buildAccount([buildTokenAccount(token)]);
-    const operation = buildOperation();
-    mockUseQuery.mockReturnValue({ data: adapter });
+  it("returns null while the fee token is not resolved, so no fee shows in CELO", () => {
+    const { result } = renderHook(() =>
+      useFeesCurrency(buildOperation({ feeAsset: ADAPTER }), buildAccount()),
+    );
 
-    const { result } = renderHook(() => useFeesCurrency(operation, account));
+    expect(result.current).toBeNull();
+  });
+
+  it("resolves the token behind the adapter of an older pending operation", () => {
+    const token = buildToken(USDC);
+    const account = buildAccount([buildTokenAccount(token)]);
+
+    const { result } = renderHook(() =>
+      useFeesCurrency(buildOperation({ feeCurrencyAddress: USDC_ADAPTER }), account),
+    );
 
     expect(result.current).toBe(token);
-    expect(mockUseQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: true }));
-  });
-
-  it("disables the RPC fetch when the operation has no block height", () => {
-    const account = buildAccount();
-    const operation = buildOperation({ blockHeight: null });
-
-    renderHook(() => useFeesCurrency(operation, account));
-
-    expect(mockUseQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
   });
 });

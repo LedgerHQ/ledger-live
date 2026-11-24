@@ -42,15 +42,3 @@ export interface QuickActionsCtasProps {
   /** Source screen name for analytics */
   readonly sourceScreenName?: string;
 }
-
-/**
- * Props for TransferDrawer component
- */
-export interface TransferDrawerProps {
-  /** Whether the drawer is open */
-  readonly isOpen: boolean;
-  /** Callback when drawer is closed */
-  readonly onClose: () => void;
-  /** Source screen name for analytics */
-  readonly sourceScreenName?: string;
-}

@@ -19,7 +19,7 @@ import type {
 } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types";
 import type { DecodedURISchemePayment } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
-import type { PerpsTransactionSignedParams } from "LLM/features/Perps/types";
+import type { PerpsTransactionSignedParams } from "@ledgerhq/live-common/wallet-api/Perps/reviewDetails";
 import type { AssetDetailNavigatorParamsList } from "LLM/features/AssetDetail/types";
 import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
@@ -71,6 +71,7 @@ import type { InternetComputerNeuronManageFlowParamList } from "../../../familie
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
 import type { XrpAddTokenFlowParamList } from "../../../families/xrp/AddTokenFlow/types";
+import type { XrpManageTokenFlowParamList } from "../../../families/xrp/ManageTokenFlow/types";
 import type { CantonOnboardAccountParamList } from "../../../families/canton/Onboard/types";
 import type { ConcordiumOnboardAccountParamList } from "../../../families/concordium/Onboard/types";
 import type { HederaDelegationFlowParamList } from "../../../families/hedera/DelegationFlow/types";
@@ -110,6 +111,7 @@ import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
 import type { SwapSubScreensNavigatorParamList } from "./SwapSubScreensNavigator";
 import type { PerpsNavigatorParamList } from "./PerpsNavigator";
+import type { ReceiveNavigatorParamList } from "./ReceiveNavigator";
 import type { GlobalSearchNavigatorParamList } from "LLM/features/GlobalSearch/types";
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
@@ -117,7 +119,7 @@ import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import { SignRawTransactionNavigatorParamList } from "./SignRawTransactionNavigator";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import type { BackupHubNavigatorParamList } from "LLM/features/BackupHub/types";
-import type { OsUpdateFlowMode } from "@ledgerhq/live-common/os-update/types";
+import type { OsUpdateFlowMode } from "@features/flow-device-os-update";
 
 export type CommonAddAccountNavigatorParamsList = {
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -126,6 +128,17 @@ export type CommonAddAccountNavigatorParamsList = {
   analyticsPropertyFlow?: string;
   onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
   onError?: (_: Error) => void;
+};
+
+export type RecoverRouteParams = {
+  platform?: string;
+  device?: Device;
+  fromOnboarding?: boolean;
+  name?: string;
+  source?: string;
+  redirectTo?: string;
+  callback?: string;
+  date?: string;
 };
 
 export type BaseNavigatorStackParamList = {
@@ -161,16 +174,8 @@ export type BaseNavigatorStackParamList = {
     goToURL?: string;
   };
   [NavigatorName.Web3Hub]: NavigatorScreenParams<Web3HubStackParamList>;
-  [ScreenName.Recover]: {
-    platform?: string;
-    device?: Device;
-    fromOnboarding?: boolean;
-    name?: string;
-    source?: string;
-    redirectTo?: string;
-    callback?: string;
-    date?: string; // used to reload the webview in case of multiple restore in a row
-  };
+  [ScreenName.Recover]: RecoverRouteParams;
+  [ScreenName.DeviceOnboardingRecover]: RecoverRouteParams;
   [ScreenName.LearnWebView]: {
     uri?: string;
   };
@@ -234,6 +239,7 @@ export type BaseNavigatorStackParamList = {
   };
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
   [NavigatorName.ReceiveFunds]?: NavigatorScreenParams<ReceiveFundsStackParamList>;
+  [NavigatorName.Receive]?: NavigatorScreenParams<ReceiveNavigatorParamList>;
   [NavigatorName.SendFunds]: NavigatorScreenParams<SendFundsNavigatorStackParamList>;
   [NavigatorName.SendFlow]: {
     onClose?: () => void;
@@ -352,6 +358,7 @@ export type BaseNavigatorStackParamList = {
 
   // Xrp
   [NavigatorName.XrpAddTokenFlow]: NavigatorScreenParams<XrpAddTokenFlowParamList>;
+  [NavigatorName.XrpManageTokenFlow]: NavigatorScreenParams<XrpManageTokenFlowParamList>;
 
   // Hedera
   [NavigatorName.HederaAssociateTokenFlow]: NavigatorScreenParams<HederaAssociateTokenFlowParamList>;

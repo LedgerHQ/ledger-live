@@ -23,6 +23,7 @@ export default class UndelegatePage {
     byId(`${currencyId}-delegation-amount-input`);
   private readonly amountContinue = (currencyId: string) =>
     byId(`enabled-${currencyId}-delegation-amount-continue`);
+  private readonly delegationAction = (actionId: string) => byId(actionId);
 
   @Step("Tap staking position row to open delegation drawer {{{0}}}")
   async tapStakingRow(currencyId: string, rowIndex?: number) {
@@ -45,7 +46,7 @@ export default class UndelegatePage {
   private async tapDelegationAction(currencyId: string, action: "unstake" | "redelegate") {
     const actionId = DELEGATION_ACTION_IDS[currencyId]?.[action];
     invariant(actionId, `No ${action} action id mapped for currency "${currencyId}"`);
-    await byId(actionId).tap();
+    await this.delegationAction(actionId).tap();
   }
 
   @Step("Enter unstake amount {{{1}}}")

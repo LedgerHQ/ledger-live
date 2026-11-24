@@ -61,4 +61,22 @@ describe("estimateMaxSpendable", () => {
     // After deducting fees (0.1) + gas reserve (0.1) = 0.6 SUI, which is < 1 SUI minimum
     expect(result).toEqual(new BigNumber(0));
   });
+
+  it("returns zero when the gas budget exceeds the spendable balance", async () => {
+    const account: SuiAccount = createFixtureAccount({ spendableBalance: new BigNumber(10) });
+    mockEstimateFees.mockResolvedValue({ fees: new BigNumber(5), gasBudget: new BigNumber(20) });
+
+    const result = await estimateMaxSpendable({ account, transaction: createFixtureTransaction() });
+
+    expect(result).toEqual(new BigNumber(0));
+  });
+
+  it("returns zero when the fee estimation fails", async () => {
+    const account: SuiAccount = createFixtureAccount();
+    mockEstimateFees.mockRejectedValue(new Error("rpc"));
+
+    const result = await estimateMaxSpendable({ account, transaction: createFixtureTransaction() });
+
+    expect(result).toEqual(new BigNumber(0));
+  });
 });

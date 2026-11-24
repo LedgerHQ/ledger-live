@@ -10,7 +10,6 @@ import type {
 } from "./lumenNativeStack";
 
 export type {
-  LumenNavBarScreenOptions,
   LumenNativeStackNavigationOptions,
   LumenStackNavBarDefaults,
 } from "./lumenNativeStack";

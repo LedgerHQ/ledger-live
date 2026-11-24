@@ -1,6 +1,6 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import BigNumber from "bignumber.js";
-import { type TronCoinConfig } from "../config";
+import { tronDefaults, type TronCoinConfig } from "../config";
 import {
   craftStandardTransaction,
   defaultFetchParams,
@@ -17,10 +17,7 @@ const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 
 const mockLogger: Logger = (..._args: unknown[]) => {};
 
-const mockConfig = {
-  status: { type: "active" },
-  explorer: { url: "https://tron.coin.ledger.com" },
-} as TronCoinConfig;
+const mockConfig = tronDefaults.tron as TronCoinConfig;
 
 /**
  * Tests used to help to develop and debug. Can't be reliable for the CI.

@@ -25,6 +25,7 @@ export enum DeviceLabels {
   DELEGATE_FROM = "Delegate from",
   DELEGATE_STAKE = "Delegate stake",
   DEPOSIT = "Deposit",
+  DONT_CONNECT = "Don't connect",
   EXPERT_MODE = "Expert mode",
   ENABLE_TRANSACTION_CHECK = "Enable Transaction Check",
   ENERGY_RENTAL_TRONIFY = "Energy rental - Tronify",

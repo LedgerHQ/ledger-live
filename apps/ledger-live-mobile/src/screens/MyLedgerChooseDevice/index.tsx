@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
@@ -9,11 +9,7 @@ import { ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { useUnifiedAddDevice } from "LLM/features/DeviceOnboarding/hooks/useUnifiedAddDevice";
 import DeviceActionModal from "~/components/DeviceActionModal";
-import {
-  BaseComposite,
-  ReactNavigationHeaderOptions,
-  StackNavigatorProps,
-} from "~/components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
 
@@ -30,11 +26,6 @@ type NavigationProps = BaseComposite<
 >;
 
 type Props = NavigationProps;
-
-// Defines here some of the header options for this screen to be able to reset back to them.
-export const headerOptions: ReactNavigationHeaderOptions = {
-  headerShown: false,
-};
 
 type ChooseDeviceProps = Props & {
   isFocused: boolean;
@@ -68,7 +59,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   const onSelect = (result: Result) => {
     setDevice(undefined);
 
-    if (result && "result" in result) {
+    if (result?.result) {
       // FIXME: nullable stuff not taken into account here?
       // `result` overrides values from `params` (prop `device` for ex)
       // @ts-expect-error Result has nullable fields
@@ -80,8 +71,15 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
     }
   };
 
+  // The modal stays closed while it holds the result of its last device action: clear it on hide.
+  const clearModalResultRef = useRef<(() => void) | undefined>(undefined);
+  const registerDeviceSelection = (clearResult: () => void) => {
+    clearModalResultRef.current = clearResult;
+  };
+
   const onModalHide = () => {
     setDevice(undefined);
+    clearModalResultRef.current?.();
   };
 
   const onError = (error: Error) => {
@@ -143,6 +141,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         device={device}
         onResult={onSelect}
         onModalHide={onModalHide}
+        registerDeviceSelection={registerDeviceSelection}
         action={action}
         request={null}
         onError={onError}

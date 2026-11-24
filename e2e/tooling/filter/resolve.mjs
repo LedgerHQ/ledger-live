@@ -14,7 +14,7 @@ import {
 } from "./escaping.mjs";
 import { isRuntimeGeneratedTag } from "./generatedTags.mjs";
 import { findTestFiles as findSpecFiles, filterTestFiles } from "./selectSpecs.mjs";
-import { TEAM_SLUGS, createTeamExpander } from "./teamSpecs.mjs";
+import { TEAM_SLUGS, createTeamExpander, readLocalImports } from "./teamSpecs.mjs";
 
 const currentFile = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFile);
@@ -340,6 +340,122 @@ export function resolveE2eSelection({
   return { filter, runner_filter: runnerFilter, ok, notes };
 }
 
+// Titles and tags can come from imported helpers, so their text counts as the spec's own.
+function matchesFile(filePath, matcher) {
+  const texts = [filePath, fs.readFileSync(filePath, "utf8"), ...readLocalImports(filePath)];
+  return texts.some(text => matcher.test(text));
+}
+
+const TEST_CALL = /(?<![.\w$])test(?:\.(?:only|skip|fixme|fail))?\s*\(\s*(`[^`]*`|"|'|[A-Za-z_$])/g;
+const DECLARES_TESTS = /(?<![.\w$])test(?:\.(?:only|skip|fixme|fail|describe))?\s*\(/;
+const REPEATS_CODE =
+  /\bfor\s*(?:await\s*)?\(|\bwhile\s*\(|\.\s*(?:forEach|map|flatMap|reduce(?:Right)?|filter|some|every|find(?:Last)?(?:Index)?)\s*\(|\bArray\s*\.\s*from\s*\(/;
+const ALIASES_TEST = /\btest\s+as\s+\w|=\s*test\s*(?:[;,)\n]|\.\s*extend\b)/;
+
+// A named function can declare tests and be called more than once.
+const PARAMS = String.raw`(?:<[^>]*>\s*)?\([^()]*(?:\([^()]*\)[^()]*)*\)`;
+const RETURN_TYPE = String.raw`(?:\s*:\s*[^=;{}()]+?)?`;
+// The flat `\([^)]*\)` form still catches a default such as `(prefix = "(") =>` that PARAMS misreads.
+const ARROW_OR_FUNCTION = String.raw`(?:async\s+)?(?:function\b|${PARAMS}${RETURN_TYPE}\s*=>|\([^)]*\)${RETURN_TYPE}\s*=>|\w+\s*=>)`;
+const NAMED_FUNCTION = new RegExp(
+  [
+    String.raw`\bfunction\s*\*?\s*\w+\s*[<(]`,
+    String.raw`\b(?:const|let|var)\s+\w+\s*(?::[^=]+)?=\s*${ARROW_OR_FUNCTION}`,
+    String.raw`\b\w+\s*:\s*${ARROW_OR_FUNCTION}`,
+    String.raw`^\s*(?:(?:public|private|protected|static|async)\s+)*\*?\s*(?!(?:if|for|while|switch|catch|with|return|function)\b)\w+\s*${PARAMS}${RETURN_TYPE}\s*\{`,
+  ].join("|"),
+  "m",
+);
+
+// Strings are matched first so that "https://…" or "specs/*.json" never opens a comment.
+const withoutComments = text =>
+  text.replace(
+    /("(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|`(?:\\.|[^`\\])*`)|\/\*[^]*?\*\/|\/\/[^\n]*/g,
+    (match, string) => string ?? "",
+  );
+
+// null unless every test() in the file has a literal title and runs exactly once.
+function countLiteralTests(filePath) {
+  const source = withoutComments(fs.readFileSync(filePath, "utf8"));
+  const firstArgs = [...source.matchAll(TEST_CALL)].map(match => match[1]);
+  const hasRuntimeTitle = firstArgs.some(arg => /^[A-Za-z_$]/.test(arg) || arg.includes("${"));
+  const helperDeclaresTests = readLocalImports(filePath).some(text =>
+    DECLARES_TESTS.test(withoutComments(text)),
+  );
+  if (
+    firstArgs.length === 0 ||
+    hasRuntimeTitle ||
+    helperDeclaresTests ||
+    REPEATS_CODE.test(source) ||
+    ALIASES_TEST.test(source) ||
+    NAMED_FUNCTION.test(source)
+  ) {
+    return null;
+  }
+  return firstArgs.length;
+}
+
+// Desktop tests the selection reaches, or null to keep the full shard count.
+export function estimatePlaywrightTestCount(options = {}) {
+  try {
+    const files = selectPlaywrightSpecs(options);
+    if (!files || files.length === 0) return null;
+    const counts = files.map(countLiteralTests);
+    return counts.includes(null) ? null : counts.reduce((sum, count) => sum + count, 0);
+  } catch (error) {
+    console.warn(`::notice title=Shard estimate failed::keeping the full shard count: ${error}`);
+    return null;
+  }
+}
+
+function selectPlaywrightSpecs({
+  input = "",
+  smokeTests = false,
+  checkDir = "",
+  team = "",
+  invertFilter = false,
+} = {}) {
+  if (!checkDir || invertFilter) return null;
+  useRepoRootCwd();
+  const specFiles = findSpecFiles(checkDir);
+  if (specFiles.length === 0) return null;
+
+  const selectedTeam = String(team ?? "")
+    .trim()
+    .toLowerCase();
+  const hasTeam = Boolean(selectedTeam) && selectedTeam !== "all";
+  const baseFilter = normalizeAlternatives(resolveBaseFilter(input).filter);
+  if (!hasTeam && !baseFilter) return null;
+
+  let selected = hasTeam
+    ? createTeamExpander({ files: specFiles, specRoot: checkDir, runner: "playwright" }).specs(
+        selectedTeam,
+      )
+    : specFiles;
+
+  // As in resolveE2eSelection, only a team ANDs @smoke with the filter.
+  const conjuncts = hasTeam
+    ? [smokeTests ? "@smoke" : "", baseFilter]
+    : [applySmokeFilter(baseFilter, smokeTests)];
+  const isBuiltAtRuntime = part => isRuntimeGeneratedTag(part) || isLeafTitlePattern(part);
+  // An alternative no spec or helper mentions can only match a title built at runtime.
+  const matchesNoSpec = part => {
+    try {
+      const matcher = new RegExp(part, "i");
+      return !specFiles.some(file => matchesFile(file, matcher));
+    } catch {
+      return true;
+    }
+  };
+  for (const conjunct of conjuncts) {
+    if (!conjunct || splitFilter(conjunct).some(isBuiltAtRuntime)) continue;
+    if (splitFilter(conjunct).some(matchesNoSpec)) return null;
+    const matcher = new RegExp(conjunct, "i");
+    selected = selected.filter(file => matchesFile(file, matcher));
+  }
+  return selected;
+}
+
 // Kept for callers that only want the pattern string (and for the default CLI output).
 export function resolveTestFilter(options = {}) {
   return resolveE2eSelection(options).filter;
@@ -474,8 +590,14 @@ if (process.argv[1] === currentFile) {
     const { filter, runner_filter: runnerFilter, ok } = resolveE2eSelection(options);
     // stdout must stay empty on failure so the workflow never captures a half-resolved value.
     if (!ok) process.exit(1);
-    console.log(
-      options.githubOutput ? formatGithubOutput({ filter, runner_filter: runnerFilter }) : filter,
-    );
+    if (!options.githubOutput) {
+      console.log(filter);
+    } else {
+      const outputs = { filter, runner_filter: runnerFilter };
+      if (options.runner === "playwright") {
+        outputs.test_count = estimatePlaywrightTestCount(options) ?? "";
+      }
+      console.log(formatGithubOutput(outputs));
+    }
   }
 }

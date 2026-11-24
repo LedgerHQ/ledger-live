@@ -11,6 +11,7 @@ import {
 
 export {
   AccountDescriptorSchema as AccountDescriptorV1Schema,
+  DerivationPathSchema,
   AddressAccountDescriptorSchema as AccountBasedDescriptorV1Schema,
   UtxoAccountDescriptorSchema as UtxoAccountDescriptorV1Schema,
   serializeAccountDescriptor as serializeV1,

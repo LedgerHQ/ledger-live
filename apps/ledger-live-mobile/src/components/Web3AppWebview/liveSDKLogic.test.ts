@@ -47,7 +47,7 @@ describe("prepareSignTransaction", () => {
     // When
     const tx = createPlatformTransaction();
 
-    const { liveTx } = await getPlatformTransactionSignFlowInfos(tx);
+    const { liveTx } = await getPlatformTransactionSignFlowInfos(tx, childAccount);
 
     const result = await prepareSignTransaction(childAccount, parentAccount, liveTx);
 

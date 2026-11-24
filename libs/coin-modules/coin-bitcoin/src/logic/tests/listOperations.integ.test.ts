@@ -1,15 +1,9 @@
-import type { BitcoinContext } from "../../config";
+import { bitcoinDefaults, type BitcoinContext } from "../../config";
 import { listOperations } from "../listOperations";
 import { EMPTIED_P2PKH, FUNDED_P2WPKH, PRISTINE_P2WPKH } from "./helpers/fixtures";
 
 const context: BitcoinContext = {
-  config: async () => ({
-    status: { type: "active" },
-    name: "Bitcoin",
-    unit: { name: "bitcoin", code: "BTC", magnitude: 8 },
-    explorer: { url: "https://explorers.api.live.ledger.com" },
-    explorerId: "btc",
-  }),
+  config: async () => bitcoinDefaults.bitcoin,
   logger: () => {},
 };
 

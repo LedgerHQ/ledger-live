@@ -1,6 +1,6 @@
 import React from "react";
 import { renderHook } from "@testing-library/react";
-import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared/react";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import { initializerDevice } from "../../testUtils";
 import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../../utils/trackDeviceIntent";

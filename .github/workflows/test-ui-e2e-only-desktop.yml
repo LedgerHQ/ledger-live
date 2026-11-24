@@ -18,7 +18,8 @@ on:
     # The cron expression below is matched verbatim in the concurrency group and the
     # E2E_BROADCAST_ENABLED env — keep all three in sync.
     - cron: "0 1 * * 1"
-    - cron: "0 1 * * 2-5"
+    - cron: "0 1 * * 2,3"
+    - cron: "0 1 * * 4,5"
   workflow_dispatch:
     inputs:
       ref:
@@ -31,7 +32,7 @@ on:
         description: "Run only one team's tests. ANDed with test_filter, Smoke and the device."
         required: false
         type: choice
-        options: [all, bst, buy-and-sell, coin-integration, earn, engagement, my-ledger-onboarding, swap, wallet-xp]
+        options: [all, bst, buy-and-sell, coin-integration, earn, engagement, my-ledger-onboarding, perps, swap, wallet-xp]
         default: all
       invert_filter:
         description: Ignore test having name pattern (entered in the previous field)
@@ -98,7 +99,6 @@ on:
         type: choice
         options:
           - defaults
-          - wallet40-q1
           - account-detail
         default: defaults
       feature_flags_json:
@@ -122,7 +122,7 @@ on:
         required: false
         type: string
       team:
-        description: "Team slug whose specs to run. One of: all, bst, buy-and-sell, coin-integration, earn, engagement, my-ledger-onboarding, swap, wallet-xp."
+        description: "Team slug whose specs to run. One of: all, bst, buy-and-sell, coin-integration, earn, engagement, my-ledger-onboarding, perps, swap, wallet-xp."
         required: false
         type: string
         default: all
@@ -188,11 +188,14 @@ permissions:
   contents: read
 
 env:
-  E2E_DESKTOP_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
+  E2E_DESKTOP_FEATURE_FLAGS: ${{ inputs.feature_flags || github.event.schedule == '0 1 * * 2,3' && 'account-detail' || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
   SPECULOS_APP_PROVIDER: ${{ inputs.app_provider || '1' }}
   # Broadcast on explicit request, or on the Monday nightly (see the schedule above).
   E2E_BROADCAST_ENABLED: ${{ inputs.enable_broadcast || github.event.schedule == '0 1 * * 1' }}
+  # Playwright workers per Linux shard, one per CPU of its 8-CPU runner. Pods report the host
+  # CPU count, so set workers explicitly rather than as a percentage. The shard sizing reads it too.
+  E2E_WORKERS: 8
 
 jobs:
   prepare-devices:
@@ -202,8 +205,8 @@ jobs:
       device_1: ${{ steps.parse.outputs.device_1 }}
       device_2: ${{ steps.parse.outputs.device_2 }}
       is_dual: ${{ steps.parse.outputs.is_dual }}
-      e2e_matrix: ${{ steps.parse.outputs.e2e_matrix }}
-      shard_total: ${{ steps.parse.outputs.shard_total }}
+      e2e_matrix: ${{ steps.shards.outputs.e2e_matrix }}
+      shard_total: ${{ steps.shards.outputs.shard_total }}
       runner_filter: ${{ steps.test-filter.outputs.runner_filter }}
       extra_os_matrix: ${{ steps.extra-os.outputs.extra_os_matrix }}
     steps:
@@ -225,20 +228,7 @@ jobs:
             [4]=stax                # Thursday   - Stax
             [5]=nanoS               # Friday     - LNS
           )
-          SHARD_TOTAL=4
-          echo "shard_total=$SHARD_TOTAL" >> "$GITHUB_OUTPUT"
-          # Prints e2e_matrix with one entry per shard of each "<device>:<is_primary>:<artifact_suffix>".
-          e2e_matrix() {
-            local entries=() spec device is_primary artifact_suffix shard
-            for spec in "$@"; do
-              IFS=: read -r device is_primary artifact_suffix <<< "$spec"
-              for shard in $(seq 1 "$SHARD_TOTAL"); do
-                entries+=("$(printf '{"device":"%s","is_primary":%s,"artifact_suffix":"%s","shard":%d,"shard_total":%d}' \
-                  "$device" "$is_primary" "$artifact_suffix" "$shard" "$SHARD_TOTAL")")
-              done
-            done
-            (IFS=,; echo "e2e_matrix={\"include\":[${entries[*]}]}")
-          }
+          # Each "<device>:<is_primary>:<artifact_suffix>"; the shard matrix is built once the filter is resolved.
           if [ "$EVENT_NAME" = "schedule" ]; then
             DOW=$(date -u +%u)
             DEVICE="${WEEKDAY_DEVICE[$DOW]:-nanoSP}"
@@ -246,14 +236,14 @@ jobs:
               echo "device_1=$DEVICE"
               echo "device_2=skipped"
               echo "is_dual=false"
-              e2e_matrix "$DEVICE:true:"
+              echo "device_specs=$DEVICE:true:"
             } >> "$GITHUB_OUTPUT"
           elif [ "$SPECULOS_DEVICE_INPUT" = "nanoSP and stax" ]; then
             {
               echo "device_1=nanoSP"
               echo "device_2=stax"
               echo "is_dual=true"
-              e2e_matrix "nanoSP:true:" "stax:false:-stax"
+              echo "device_specs=nanoSP:true: stax:false:-stax"
             } >> "$GITHUB_OUTPUT"
           else
             DEVICE="$SPECULOS_DEVICE_INPUT"
@@ -261,7 +251,7 @@ jobs:
               echo "device_1=$DEVICE"
               echo "device_2=skipped"
               echo "is_dual=false"
-              e2e_matrix "$DEVICE:true:"
+              echo "device_specs=$DEVICE:true:"
             } >> "$GITHUB_OUTPUT"
           fi
         shell: bash
@@ -311,6 +301,33 @@ jobs:
             --runner playwright \
             --github-output >> "$GITHUB_OUTPUT"
 
+      - name: Size the shard matrix to the selection
+        id: shards
+        env:
+          DEVICE_SPECS: ${{ steps.parse.outputs.device_specs }}
+          # Empty when unknown, so the run keeps the full shard count.
+          TEST_COUNT: ${{ steps.test-filter.outputs.test_count }}
+          REPEAT_EACH: ${{ inputs.repeat_each }}
+        run: |
+          MAX_SHARDS=4
+          SHARD_TOTAL=$MAX_SHARDS
+          if [[ "$TEST_COUNT" =~ ^[1-9][0-9]*$ ]]; then
+            [[ "$REPEAT_EACH" =~ ^[1-9][0-9]*$ ]] || REPEAT_EACH=1
+            NEEDED=$(( (TEST_COUNT * REPEAT_EACH + E2E_WORKERS - 1) / E2E_WORKERS ))
+            SHARD_TOTAL=$(( NEEDED < MAX_SHARDS ? NEEDED : MAX_SHARDS ))
+          fi
+          echo "shard_total=$SHARD_TOTAL" >> "$GITHUB_OUTPUT"
+          entries=()
+          for spec in $DEVICE_SPECS; do
+            IFS=: read -r device is_primary artifact_suffix <<< "$spec"
+            for shard in $(seq 1 "$SHARD_TOTAL"); do
+              entries+=("$(printf '{"device":"%s","is_primary":%s,"artifact_suffix":"%s","shard":%d,"shard_total":%d}' \
+                "$device" "$is_primary" "$artifact_suffix" "$shard" "$SHARD_TOTAL")")
+            done
+          done
+          (IFS=,; echo "e2e_matrix={\"include\":[${entries[*]}]}") >> "$GITHUB_OUTPUT"
+        shell: bash
+
       - name: Write workflow context to GitHub Summary
         env:
           FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
@@ -322,7 +339,8 @@ jobs:
           FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           TEAM_INPUT: ${{ inputs.team || 'all' }}
           DEVICES: ${{ steps.parse.outputs.is_dual == 'true' && format('{0} + {1}', steps.parse.outputs.device_1, steps.parse.outputs.device_2) || steps.parse.outputs.device_1 }}
-          SHARD_TOTAL: ${{ steps.parse.outputs.shard_total }}
+          SHARD_TOTAL: ${{ steps.shards.outputs.shard_total }}
+          TEST_COUNT: ${{ steps.test-filter.outputs.test_count }}
           RUN_ON_MACOS: ${{ inputs.run_on_macos || false }}
           RUN_ON_WINDOWS: ${{ inputs.run_on_windows || false }}
         run: |
@@ -344,7 +362,7 @@ jobs:
             echo "- **Triggered branch:** $TRIGGERED_BRANCH"
             echo "- **Commit SHA:** $COMMIT_SHA"
             echo "- **Device selected:** $DEVICES"
-            echo "- **Shards per device:** $SHARD_TOTAL"
+            echo "- **Shards per device:** $SHARD_TOTAL${TEST_COUNT:+ (up to $TEST_COUNT matching test(s))}"
             echo "- **Also on macOS:** $RUN_ON_MACOS"
             echo "- **Also on Windows:** $RUN_ON_WINDOWS"
             echo "- **Speculos:** Speculinho (remote)"
@@ -382,8 +400,6 @@ jobs:
       # The runner has no Docker daemon, so Speculos runs remotely on Speculinho.
       REMOTE_SPECULOS: "true"
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device != 'nanoS' && 'latest' || 'speculos-38ccc68068db-coinapps-85c7e5c' }}
-      # Pods report the host CPU count, so set workers explicitly rather than as a percentage.
-      E2E_WORKERS: 8
       E2E_PRIMARY_DEVICE: ${{ matrix.is_primary }}
       cache-bucket: ll-nx-cache
       USERDATA_CACHE_ENABLED: ${{ inputs.build_type != 'js' }}

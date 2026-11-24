@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-concordium",
-  "version": "1.8.1",
+  "version": "1.9.0",
   "description": "Concordium coin integration",
   "keywords": [
     "Ledger",
@@ -191,6 +191,7 @@
     "@walletconnect/types": "2.26.0",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
+    "bs58check": "catalog:",
     "invariant": "^2.2.4",
     "rxjs": "catalog:"
   },
@@ -206,8 +207,6 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
-    "dotenv": "16.4.7",
-    "expect": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
@@ -229,7 +228,7 @@
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
-    "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
+    "test-integ": "jest --config=jest.integ.config.js --passWithNoTests",
     "typecheck": "tsc --noEmit --customConditions node",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"

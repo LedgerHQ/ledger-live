@@ -28,8 +28,3 @@ const sendFlowSlice = createSlice({
 
 export const { openSendFlow, closeSendFlow } = sendFlowSlice.actions;
 export default sendFlowSlice.reducer;
-
-// Selectors
-export const sendFlowSelector = (state: { sendFlow: SendFlowState }) => state.sendFlow;
-export const selectIsOpen = (state: { sendFlow: SendFlowState }) => state.sendFlow.isOpen;
-export const selectParams = (state: { sendFlow: SendFlowState }) => state.sendFlow.params;

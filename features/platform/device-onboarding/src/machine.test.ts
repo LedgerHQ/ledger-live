@@ -65,6 +65,7 @@ afterEach(() => {
 
 const deviceRefusal = { fails: { _tag: "RefusedByUserDAError" } };
 const checkFailure = { fails: new UnknownDAError() };
+const deviceDisconnected = { fails: { _tag: "DeviceDisconnectedWhileSendingError" } };
 const secureConnectionPrompt = { prompts: UserInteractionRequired.AllowSecureConnection };
 
 const passingChecks: OnboardingDmkScript = { genuineCheck: [genuine], firmwareCheck: [upToDate] };
@@ -288,6 +289,20 @@ describe("the on-device waiting screen", () => {
     expect(exitOf(actor)).toMatchObject({ reason: "userQuit" });
   });
 
+  it("is left without a command to the lost session when the user quits", async () => {
+    const { actor, fake } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [secureConnectionPrompt],
+    });
+
+    actor.send({ type: "TRANSPORT_LOST" });
+    actor.send({ type: "QUIT" });
+    await settle();
+
+    expect(fake.earlyCheckToggles()).toEqual([EarlyCheckToggle.Enter]);
+    expect(exitOf(actor)).toMatchObject({ reason: "userQuit" });
+  });
+
   it("is shown again to a device that relocked before its checks were done", async () => {
     const { actor, fake } = await start({
       osVersion: [os(unseeded)],
@@ -325,6 +340,58 @@ describe("the genuine check", () => {
       kind,
       failure: (failure as { fails: unknown }).fails,
     });
+  });
+
+  it("waits for the session to be lost before opening a disconnect error", async () => {
+    const { actor } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [deviceDisconnected],
+    });
+
+    expect(stateOf(actor)).toBe("genuineFailurePending");
+
+    actor.send({ type: "TRANSPORT_LOST" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("awaitingSession");
+  });
+
+  it("opens the disconnect error when the session is not lost in time", async () => {
+    const { actor } = await start(
+      { osVersion: [os(unseeded)], genuineCheck: [deviceDisconnected] },
+      { sessionSettleMs: 50 },
+    );
+    expect(stateOf(actor)).toBe("genuineFailurePending");
+
+    await wait(250);
+
+    expect(stateOf(actor)).toBe("genuineFailed");
+  });
+
+  it("runs the genuine check again when a new session opens while waiting", async () => {
+    const { actor } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [deviceDisconnected, genuine],
+      firmwareCheck: [upToDate],
+    });
+    expect(stateOf(actor)).toBe("genuineFailurePending");
+
+    actor.send({ type: "SESSION_CHANGED", sessionId: "session-2" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("checksSucceeded");
+    expect(actor.getSnapshot().context.lastGenuineFailure).toBeNull();
+  });
+
+  it("waits for the session to be lost when the secure channel drops", async () => {
+    const { actor } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [secureConnectionPrompt],
+    });
+
+    actor.send({ type: "SECURE_CHANNEL_LOST", failure: { _tag: "DisconnectError" } });
+
+    expect(stateOf(actor)).toBe("genuineFailurePending");
   });
 
   it("sends a device that is not genuine to the support screen", async () => {
@@ -584,6 +651,51 @@ describe("the firmware check", () => {
     expect(stateOf(actor)).toBe("firmwareCheckFailed");
   });
 
+  it("waits for the session to be lost before offering a retry after a disconnect", async () => {
+    const { actor } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [genuine],
+      firmwareCheck: [deviceDisconnected],
+    });
+
+    expect(stateOf(actor)).toBe("firmwareFailurePending");
+
+    actor.send({ type: "TRANSPORT_LOST" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("awaitingSession");
+  });
+
+  it("runs the firmware check again when a new session opens while waiting", async () => {
+    const { actor } = await start({
+      osVersion: [os(unseeded)],
+      genuineCheck: [genuine],
+      firmwareCheck: [deviceDisconnected, upToDate],
+    });
+    expect(stateOf(actor)).toBe("firmwareFailurePending");
+
+    actor.send({ type: "SESSION_CHANGED", sessionId: "session-2" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("checksSucceeded");
+  });
+
+  it("offers a retry when the session is not lost in time after a disconnect", async () => {
+    const { actor } = await start(
+      {
+        osVersion: [os(unseeded)],
+        genuineCheck: [genuine],
+        firmwareCheck: [deviceDisconnected],
+      },
+      { sessionSettleMs: 50 },
+    );
+    expect(stateOf(actor)).toBe("firmwareFailurePending");
+
+    await wait(250);
+
+    expect(stateOf(actor)).toBe("firmwareCheckFailed");
+  });
+
   it("runs again on a retry", async () => {
     const { actor } = await start({
       osVersion: [os(unseeded)],
@@ -685,6 +797,39 @@ describe("the firmware handover", () => {
     actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId: "session" });
 
     expect(stateOf(actor)).toBe("readingState");
+  });
+
+  it("flags the way back to the checks until the checks start again", async () => {
+    const { actor } = await start(
+      handoverScript([os(unseeded)], { firmwareCheck: [updateAvailable, upToDate] }),
+    );
+
+    actor.send({ type: "USER_ACCEPT" });
+    await settle();
+    expect(actor.getSnapshot().context.returningFromFirmwareUpdate).toBe(false);
+
+    actor.send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED", sessionId: "session" });
+    expect(actor.getSnapshot().context.returningFromFirmwareUpdate).toBe(true);
+
+    await settle();
+    expect(actor.getSnapshot().context.returningFromFirmwareUpdate).toBe(false);
+  });
+
+  it("flags the wait for the rebooted session until the checks start again", async () => {
+    const { actor } = await start(
+      handoverScript([os(unseeded)], { firmwareCheck: [updateAvailable, upToDate] }),
+    );
+
+    actor.send({ type: "USER_ACCEPT" });
+    await settle();
+    actor.send({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" });
+
+    expect(stateOf(actor)).toBe("awaitingSessionAfterFirmwareUpdate");
+    expect(actor.getSnapshot().context.returningFromFirmwareUpdate).toBe(true);
+
+    actor.send({ type: "SESSION_READY", sessionId: "session-after-update" });
+    await settle();
+    expect(actor.getSnapshot().context.returningFromFirmwareUpdate).toBe(false);
   });
 
   it("completes the checks when the device comes back updated", async () => {
@@ -1398,6 +1543,16 @@ describe("device setup", () => {
     expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
   });
 
+  it("knows a new seed first seen on its confirmation step", async () => {
+    const { actor } = await enterSetup();
+
+    await follow(actor, [OnboardingStep.Pin, OnboardingStep.NewDeviceConfirming]);
+    actor.send(stepChanged(OnboardingStep.Ready));
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
+  });
+
   it("skips naming on a nano and still reaches done", async () => {
     const { actor } = await enterSetup({ deviceModelId: DeviceModelId.NANO_X });
 
@@ -1562,6 +1717,85 @@ describe("device setup", () => {
     });
   });
 
+  it("should pause seed polling only while the device is being set up", async () => {
+    const seededRun = await launch({ osVersion: [os(seeded)], ...passingChecks });
+    const seededState = stateOf(seededRun.actor);
+
+    seededRun.actor.send({ type: "PAUSE_POLLING" });
+    await settle();
+
+    expect(stateOf(seededRun.actor)).toBe(seededState);
+    expect(seededRun.actor.getSnapshot().context.pollingPaused).toBe(false);
+    seededRun.actor.stop();
+
+    const { actor, fake } = await enterSetup();
+    actor.send(stepChanged(OnboardingStep.RecoverRestore));
+    await settle();
+    expect(actor.getSnapshot().context.pollingPaused).toBe(false);
+
+    actor.send({ type: "PAUSE_POLLING" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("restoreRecover");
+    expect(actor.getSnapshot().context.pollingPaused).toBe(true);
+    const callsWhilePaused = fake.sendCommand.mock.calls.length;
+
+    await settle();
+    expect(fake.sendCommand.mock.calls.length).toBe(callsWhilePaused);
+
+    actor.send({ type: "RESUME_POLLING" });
+    await settle();
+    expect(actor.getSnapshot().context.pollingPaused).toBe(false);
+  });
+
+  it("keeps polling paused across a lock while Recover owns the device", async () => {
+    const { actor, fake } = await startOnRecoverRestore();
+
+    actor.send({ type: "PAUSE_POLLING" });
+    await settle();
+    const unlock = lockDevice(fake);
+    actor.send({ type: "LOCKED" });
+    await settle();
+    expect(stateOf(actor)).toBe("deviceLocked");
+
+    unlock();
+    await wait(1100);
+    await settle();
+    const callsWhenBack = fake.sendCommand.mock.calls.length;
+    await wait(1100);
+
+    expect(stateOf(actor)).toBe("waiting");
+    expect(actor.getSnapshot().context.pollingPaused).toBe(true);
+    expect(fake.sendCommand.mock.calls.length).toBe(callsWhenBack);
+
+    actor.send({ type: "RESUME_POLLING" });
+    await settle();
+    expect(stateOf(actor)).toBe("restoreRecover");
+    expect(actor.getSnapshot().context.pollingPaused).toBe(false);
+    actor.stop();
+  });
+
+  it("clears the pause on a resume sent while the device is locked", async () => {
+    const { actor, fake } = await startOnRecoverRestore();
+
+    actor.send({ type: "PAUSE_POLLING" });
+    await settle();
+    const unlock = lockDevice(fake);
+    actor.send({ type: "LOCKED" });
+    await settle();
+    actor.send({ type: "RESUME_POLLING" });
+    await settle();
+
+    expect(stateOf(actor)).toBe("deviceLocked");
+    expect(actor.getSnapshot().context.pollingPaused).toBe(false);
+
+    unlock();
+    await wait(1100);
+    await settle();
+    expect(stateOf(actor)).toBe("restoreRecover");
+    actor.stop();
+  });
+
   it("polls the device for the whole setup phase and stops once it has exited", async () => {
     const { actor, fake } = await launch(
       { osVersion: [os({ ...unseeded, seVersion: "2.4.0" })], ...passingChecks },
@@ -1597,10 +1831,14 @@ async function launch(
     hostsSeedSetup: boolean;
     omitHostsSeedSetup: boolean;
     leaveOnboarding: (reason: string, context: DeviceOnboardingContext) => void;
+    sessionSettleMs: number;
   }> = {},
 ): Promise<{ actor: OnboardingActor; fake: FakeOnboardingDmk }> {
   const fake = createFakeOnboardingDmk(script);
   const machine = deviceOnboardingMachine.provide({
+    ...(overrides.sessionSettleMs === undefined
+      ? {}
+      : { delays: { sessionSettle: overrides.sessionSettleMs } }),
     actions: {
       leaveOnboarding: ({ context }, params) => overrides.leaveOnboarding?.(params.reason, context),
     },
@@ -1655,6 +1893,24 @@ async function enterSetup(
     },
     overrides,
   );
+}
+
+function startOnRecoverRestore(): Promise<{ actor: OnboardingActor; fake: FakeOnboardingDmk }> {
+  const recoverRestore: OsVersionResponseOptions = {
+    ...unseeded,
+    onboardingState: "restore-recover-backup",
+  };
+  return start({ osVersion: [os(unseeded), os(recoverRestore)], ...passingChecks });
+}
+
+// Every command fails until the returned function lets them through again.
+function lockDevice(fake: FakeOnboardingDmk): () => void {
+  const answer = fake.sendCommand.getMockImplementation();
+  fake.sendCommand.mockImplementation(() => Promise.reject(new Error("device is locked")));
+
+  return () => {
+    if (answer) fake.sendCommand.mockImplementation(answer);
+  };
 }
 
 async function follow(actor: OnboardingActor, steps: OnboardingStep[]): Promise<void> {
@@ -1797,6 +2053,12 @@ function metadata(update: AvailableFirmwareUpdate | undefined): GetDeviceMetadat
 }
 
 const wholeReadDeviceStateBackoffMs = 1500;
+
+function wait(ms: number): Promise<void> {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
 
 function settleRetries(): Promise<void> {
   return new Promise(resolve => {

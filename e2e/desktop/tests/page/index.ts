@@ -6,6 +6,7 @@ import { AssetDrawer } from "tests/page/drawer/asset.drawer";
 import { AssetDetailPage } from "tests/page/assetDetail.page";
 import { AssetPage } from "tests/page/asset.page";
 import { BorrowPage } from "tests/page/borrow.page";
+import { PerpsPage } from "tests/page/perps.page";
 import { BuyAndSellPage } from "tests/page/buyAndSell.page";
 import { DelegateDrawer } from "tests/page/drawer/delegate.drawer";
 import { DelegateModal } from "tests/page/modal/delegate.modal";
@@ -98,6 +99,7 @@ export class Application extends PageHolder {
   public operationDrawer = new OperationDrawer(this.page);
   public password = new PasswordlockModal(this.page);
   public myLedger = new MyLedgerPage(this.page);
+  public perps = new PerpsPage(this.page, this.electronApp);
   public portfolio = new PortfolioPage(this.page);
   public onboarding = new OnboardingPage(this.page);
   public postOnboarding = new PostOnboardingPage(this.page);

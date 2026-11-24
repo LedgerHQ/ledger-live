@@ -1,5 +1,6 @@
 import { useAddAddressReviewLabels } from "../../copy/useAddAddressReviewLabels";
-import type { ContactsAddAddressReviewProps, ContactsAddAddressReviewViewProps } from "./types";
+import type { ContactsAddAddressReviewProps } from "./types";
+import type { ContactsAddAddressReviewViewProps } from "./ContactsAddAddressReviewView";
 
 export function useContactsAddAddressReviewViewModel({
   addressEntry,

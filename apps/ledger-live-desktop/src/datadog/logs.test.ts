@@ -316,7 +316,7 @@ describe("datadog logs", () => {
       it("logs a transaction-path call as info", () => {
         coinModuleCallLogger(call);
         expect(datadogLogs.logger.info).toHaveBeenCalledWith("coin_module_call", {
-          coinModule: { ...call, sampleRate: 1, inSample: true },
+          coinModule: { ...call, tier: "transaction", sampleRate: 1, inSample: true },
         });
       });
 
@@ -328,6 +328,7 @@ describe("datadog logs", () => {
         expect(datadogLogs.logger.error).toHaveBeenCalledWith("coin_module_call", {
           coinModule: {
             ...failure,
+            tier: "sync",
             sampleRate: observabilityOn.syncPathSampleRate,
             inSample: false,
           },

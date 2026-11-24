@@ -4,7 +4,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { CurrencyNotSupported } from "../errors";
 import { decodeAccountId, getMainAccount, checkAccountSupported } from "../account";
-import { getEnv } from "@shared/env";
+import { usesMockBridges } from "./mockMode";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import {
   Account,
@@ -26,7 +26,6 @@ import {
   loadBridgeExtensionsForFamily,
 } from "../coin-modules/registry";
 import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
-import { resolveFamily } from "./zcashRouting";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import { log } from "@ledgerhq/logs";
@@ -106,9 +105,9 @@ export function clearBridgeCache(family?: string): void {
 }
 
 async function buildCurrencyBridge(currency: CryptoCurrency): Promise<CurrencyBridge> {
-  const family = resolveFamily(currency);
+  const family = currency.family;
 
-  if (getEnv("MOCK")) {
+  if (usesMockBridges()) {
     const mockBridge = await loadMockBridgeForFamily(family);
     // TODO Remove once we delete mock bridges tests
     if (mockBridge) {
@@ -134,7 +133,7 @@ async function buildCurrencyBridge(currency: CryptoCurrency): Promise<CurrencyBr
 }
 
 export const getCurrencyBridge = (currency: CryptoCurrency): Promise<CurrencyBridge> => {
-  const family = resolveFamily(currency);
+  const family = currency.family;
   if (!currencyBridgePromiseCache[family]) {
     currencyBridgePromiseCache[family] = annotatePromise(buildCurrencyBridge(currency));
   }
@@ -201,7 +200,7 @@ export function getAccountBridge(
   const mainAccount = getMainAccount(account, parentAccount);
   const { currency } = mainAccount;
   const supportedError = checkAccountSupported(mainAccount);
-  const family = resolveFamily(currency);
+  const family = currency.family;
 
   if (supportedError) {
     const key = `${family}|${currency.id}|${mainAccount.derivationMode}`;

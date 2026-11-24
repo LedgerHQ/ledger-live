@@ -15,6 +15,10 @@ const initialState: DialogsWithDataState = {
     isOpen: false,
     data: null,
   },
+  FAMILY_DIALOG: {
+    isOpen: false,
+    data: null,
+  },
 };
 
 describe("dialogsWithData reducer", () => {
@@ -44,6 +48,7 @@ describe("dialogsWithData reducer", () => {
           data: { swapId: "swap-1", provider: "lifi" },
         },
         CURRENCY_REGION_RESTRICTED: { isOpen: false, data: null },
+        FAMILY_DIALOG: { isOpen: false, data: null },
       },
       closeDialogWithData("SWAP_TRANSACTION_STATUS"),
     );
@@ -74,6 +79,7 @@ describe("dialogsWithData selectors", () => {
               data,
             },
             CURRENCY_REGION_RESTRICTED: { isOpen: false, data: null },
+            FAMILY_DIALOG: { isOpen: false, data: null },
           },
         },
         "SWAP_TRANSACTION_STATUS",

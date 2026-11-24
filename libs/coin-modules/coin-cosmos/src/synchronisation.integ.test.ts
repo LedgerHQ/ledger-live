@@ -2,18 +2,15 @@ import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHel
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Operation, SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import cryptoFactory from "./chain/chain";
 import { getAccountShape } from "./synchronisation";
 import type { StakingAccount } from "@ledgerhq/types-live";
 import { CosmosAccount } from "./types";
+import cosmosCoinConfig, { cosmosDefaults } from "./config";
 
-// Mock the cryptoFactory module
-jest.mock("./chain/chain", () => {
-  const actual = jest.requireActual("./chain/chain");
-  return {
-    __esModule: true,
-    default: jest.fn(actual.default),
-  };
+beforeAll(() => {
+  cosmosCoinConfig.setCoinConfig(
+    currencyId => cosmosDefaults[currencyId as keyof typeof cosmosDefaults],
+  );
 });
 
 const testAccounts = [
@@ -21,46 +18,24 @@ const testAccounts = [
     id: "cosmos",
     unit: "uatom",
     address: "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq",
-    lcd: "https://cosmoshub4.coin.ledger.com",
-    version: "v1beta1",
-    epochedStaking: false,
   },
   {
     id: "injective",
     unit: "inj",
     address: "inj1vmzrwxhgllkjaswzawaue7m7f9qcrc0rfth2v2",
-    lcd: "https://injective-rest.publicnode.com",
-    version: "v1beta1",
-    epochedStaking: false,
   },
   {
     id: "babylon",
     unit: "ubbn",
     address: "bbn1uwpws077a0a9pclapv3f2fyj5u0mlh6ewmds8n",
-    lcd: "https://babylon.coin.ledger.com",
-    version: "v1beta1",
-    epochedStaking: true,
   },
 ];
 
 describe.each(testAccounts)("Testing synchronisation", testAccount => {
-  const { id, unit, address, lcd, version, epochedStaking } = testAccount;
+  const { id, unit, address } = testAccount;
   let result: Partial<CosmosAccount & StakingAccount>;
 
   beforeEach(async () => {
-    (cryptoFactory as jest.Mock).mockReturnValue({
-      lcd,
-      stakingDocUrl: "",
-      unbondingPeriod: 0,
-      ledgerValidator: undefined,
-      validatorPrefix: "",
-      prefix: "",
-      defaultPubKeyType: "",
-      defaultGas: 0,
-      minGasPrice: 0,
-      version,
-      epochedStaking,
-    } as any);
     result = await getAccountShape(
       {
         address,
@@ -74,10 +49,6 @@ describe.each(testAccounts)("Testing synchronisation", testAccount => {
       {} as SyncConfig,
     );
   }, 30000);
-
-  afterEach(() => {
-    (cryptoFactory as jest.Mock).mockClear();
-  });
 
   function sumOf(amounts: BigNumber[]): BigNumber {
     return amounts.reduce((acc, curr) => acc.plus(curr), BigNumber(0));
@@ -147,18 +118,6 @@ describe("Testing CosmosHub opperation", () => {
   let operations: Operation[];
 
   beforeAll(async () => {
-    (cryptoFactory as jest.Mock).mockReturnValue({
-      lcd: "https://cosmoshub4.coin.ledger.com",
-      stakingDocUrl: "",
-      unbondingPeriod: 0,
-      ledgerValidator: undefined,
-      validatorPrefix: "",
-      prefix: "",
-      defaultPubKeyType: "",
-      defaultGas: 0,
-      minGasPrice: 0,
-      version: "v1beta1",
-    } as any);
     const result = await getAccountShape(
       {
         address: testAccounts[0].address,
@@ -175,10 +134,6 @@ describe("Testing CosmosHub opperation", () => {
       operations = result.operations;
     }
   }, 30000);
-
-  afterAll(() => {
-    (cryptoFactory as jest.Mock).mockClear();
-  });
 
   it("should fetch operations successfully", async () => {
     expect(operations).toBeInstanceOf(Array);
@@ -233,18 +188,6 @@ describe("Testing Injective opperation", () => {
   let operations: Operation[];
 
   beforeAll(async () => {
-    (cryptoFactory as jest.Mock).mockReturnValue({
-      lcd: "https://injective-rest.publicnode.com",
-      stakingDocUrl: "",
-      unbondingPeriod: 0,
-      ledgerValidator: undefined,
-      validatorPrefix: "",
-      prefix: "",
-      defaultPubKeyType: "",
-      defaultGas: 0,
-      minGasPrice: 0,
-      version: "v1beta1",
-    } as any);
     const result = await getAccountShape(
       {
         address: testAccounts[1].address,
@@ -261,10 +204,6 @@ describe("Testing Injective opperation", () => {
       operations = result.operations;
     }
   }, 30000);
-
-  afterAll(() => {
-    (cryptoFactory as jest.Mock).mockClear();
-  });
 
   it("should fetch operations successfully", async () => {
     expect(operations).toBeInstanceOf(Array);

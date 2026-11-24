@@ -19,7 +19,10 @@ import {
   TO_MANY_UTXOS_WARNING_COUNT,
 } from "./getTransactionStatus";
 
-jest.mock("../network/gateway");
+jest.mock("../network/gateway", () => ({
+  ...jest.requireActual("../network/gateway"),
+  isTopologyChangeRequiredCached: jest.fn(),
+}));
 const mockedGateway = gateway as jest.Mocked<typeof gateway>;
 
 const defaultConfig: CantonCoinConfig = {
@@ -52,6 +55,10 @@ describe("getTransactionStatus", () => {
       },
     },
   };
+  const accountWithUtxoCounts = (instrumentUtxoCounts: Record<string, number>): CantonAccount => ({
+    ...mockAccount,
+    cantonResources: { ...mockAccount.cantonResources, instrumentUtxoCounts },
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -390,6 +397,58 @@ describe("getTransactionStatus", () => {
 
       expect(result.warnings.tooManyUtxos).toBeUndefined();
       expect(result.errors.utxoCount).toBeUndefined();
+    });
+
+    describe("token sends", () => {
+      const tokenId = "USDCx";
+      const instrumentAdmin = "issuer::1220";
+      const tokenTransaction: Transaction = {
+        family: "canton",
+        amount: new BigNumber(50),
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
+        fee: new BigNumber(10),
+        tokenId,
+        instrumentAdmin,
+        subAccountId: "token-sub-account",
+      };
+
+      it.each([
+        { count: TO_MANY_UTXOS_WARNING_COUNT + 1, expected: TooManyUtxosWarning },
+        { count: TO_MANY_UTXOS_CRITICAL_COUNT, expected: TooManyUtxosWarning },
+        { count: TO_MANY_UTXOS_CRITICAL_COUNT + 1, expected: TooManyUtxosCritical },
+      ])(
+        "reports $expected.name for $count UTXOs keyed the way sync stores them",
+        async ({ count, expected }) => {
+          const account = accountWithUtxoCounts({
+            [gateway.getKey(tokenId, instrumentAdmin)]: count,
+          });
+
+          const result = await getTransactionStatus(account, tokenTransaction);
+
+          expect(result.warnings.tooManyUtxos).toBeInstanceOf(expected);
+        },
+      );
+
+      it("reports nothing at exactly the warning count", async () => {
+        const account = accountWithUtxoCounts({
+          [gateway.getKey(tokenId, instrumentAdmin)]: TO_MANY_UTXOS_WARNING_COUNT,
+        });
+
+        const result = await getTransactionStatus(account, tokenTransaction);
+
+        expect(result.warnings.tooManyUtxos).toBeUndefined();
+      });
+
+      it("ignores the counts of the same id under another admin and of the native instrument", async () => {
+        const account = accountWithUtxoCounts({
+          [gateway.getKey(tokenId, "other-issuer::1220")]: TO_MANY_UTXOS_CRITICAL_COUNT + 1,
+          Amulet: TO_MANY_UTXOS_CRITICAL_COUNT + 1,
+        });
+
+        const result = await getTransactionStatus(account, tokenTransaction);
+
+        expect(result.warnings.tooManyUtxos).toBeUndefined();
+      });
     });
   });
 

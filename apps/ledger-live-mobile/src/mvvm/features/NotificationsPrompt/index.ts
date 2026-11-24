@@ -5,19 +5,12 @@ export { useNotificationsData } from "./hooks/useNotificationsData";
 export { useNotificationsPromptEligibility } from "./hooks/useNotificationsPromptEligibility";
 export { useNotificationsDrawer } from "./hooks/useNotificationsDrawer";
 export {
-  INACTIVITY_DRAWER_DELAY_MS,
-  checkIsInactive,
   evaluateAfterActionTrigger,
   evaluateInactivityTrigger,
-  getNextRepromptDelay,
-  canPromptTransactionsAlertsForAction,
-  getNotificationPromptTarget,
-  shouldPromptOptInDrawerAfterAction,
 } from "./utils/notificationsPromptEngine";
 export type {
   DataOfUser,
   InitPushNotificationsDataResult,
-  NotificationCategory,
   NotificationPromptTarget,
 } from "./types";
 export type {
@@ -25,9 +18,7 @@ export type {
   InactivityTriggerDecision,
   NotificationsPromptAfterActionSource,
   NotificationsPromptRepromptDelay,
-  NotificationsPromptSkipDecision,
   NotificationsPromptSkipReason,
-  NotificationsPromptShowDecision,
   NotificationsPromptSource,
 } from "./utils/notificationsPromptEngine";
 export {

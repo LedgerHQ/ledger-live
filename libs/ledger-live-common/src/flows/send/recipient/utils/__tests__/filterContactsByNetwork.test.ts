@@ -75,11 +75,15 @@ describe("filterContactsByNetwork", () => {
     ]);
   });
 
-  it("keeps the personal contact without a matching address when asked", () => {
+  it("drops the personal contact without a matching address even when asked", () => {
     const contacts = [{ id: "contact-me", isMe: true, addresses: [solanaAddress] }];
 
-    expect(filterContactsByNetwork(contacts, "ethereum", { includeMe: true })).toEqual([
-      { id: "contact-me", isMe: true, addresses: [] },
-    ]);
+    expect(filterContactsByNetwork(contacts, "ethereum", { includeMe: true })).toEqual([]);
+  });
+
+  it("drops the personal contact without any address even when asked", () => {
+    const contacts = [{ id: "contact-me", isMe: true, addresses: [] }];
+
+    expect(filterContactsByNetwork(contacts, "ethereum", { includeMe: true })).toEqual([]);
   });
 });

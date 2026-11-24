@@ -52,6 +52,28 @@ export type CompressedBalanceHistoryCache = Record<
   CompressedBalanceHistoryDataCache
 >;
 
+/**
+ * One row of an account's balance breakdown: a pool of one asset inside one account.
+ * Rows partition the account balance: `balance === Σ value`. The spendable part of a row is
+ * `value − locked`. A row is identified by `pool` and `private` together.
+ */
+export type AccountBalance = {
+  value: BigNumber;
+  /** The non-spendable part of `value`, including funds committed to pending operations. */
+  locked?: BigNumber;
+  /** A family-defined pool id, opaque to the wallet. */
+  pool?: string;
+  /** The row is held privately and is not visible on-chain. */
+  private?: boolean;
+};
+
+export type AccountBalanceRaw = {
+  value: string;
+  locked?: string;
+  pool?: string;
+  private?: boolean;
+};
+
 /** Legacy, like `Account`: tokens are rows of each `account-*` entity, see https://github.com/LedgerHQ/ledger-live/tree/develop/docs/account-models. A token belongs to an Account and share the parent account address */
 export type TokenAccount = {
   type: "TokenAccount";
@@ -59,8 +81,11 @@ export type TokenAccount = {
   // id of the parent account this token account belongs to
   parentId: string;
   token: TokenCurrency;
+  // broken down per pool in `balances`
   balance: BigNumber;
   spendableBalance: BigNumber;
+  // per-pool breakdown of `balance`, filled at every sync
+  balances?: AccountBalance[];
   creationDate: Date;
   operationsCount: number;
   operations: Operation[];
@@ -89,6 +114,37 @@ export type Address = {
 export type AccountReadiness = {
   ready: boolean;
   reason?: string;
+};
+
+/**
+ * What the generic sync still has to read of an account's history, kept between two syncs. Only a
+ * family that opts in through `syncsHistoryOnStateChange` gets one. It is internal to the sync: no
+ * screen reads it.
+ * - `failed`: the last history read threw, the stored operations were kept. `failedSince` is the time
+ *   (ms) of the first failure of the run: past one hour the failure is no longer tolerated;
+ * - `unexplained`: the state changed but the history brought nothing new. `since` is the time (ms)
+ *   of the first such read and `spendableBalance` the spendable balance it was seen on, with
+ *   `balance` the total when that spendable balance is zero (the total then tells a change);
+ * - `confirm`: one more read after new operations, to catch the ones that land late. `minHeight`
+ *   is the height the read that found them started from, so the confirmation reads the same range.
+ *   `unsettledSince` is the time (ms) a read first returned an operation whose outcome the indexer
+ *   had not recorded: the range is read again until the outcome shows or one hour has passed;
+ * - `pools`: no history to read, only staking pools to look at (`validatorIds`, `listing`).
+ * `validatorIds` are validators that new staking operations named and the stored positions lack:
+ * the next sync reads them as known validators, on the node, until one shows a position or one
+ * hour has passed since `validatorsSince`. `listing` asks the next sync to list the pools once.
+ */
+export type HistoryRecheck = {
+  reason: "failed" | "unexplained" | "confirm" | "pools";
+  since?: number;
+  spendableBalance?: string;
+  balance?: string;
+  minHeight?: number;
+  validatorIds?: string[];
+  validatorsSince?: number;
+  listing?: boolean;
+  unsettledSince?: number;
+  failedSince?: number;
 };
 
 /**
@@ -136,10 +192,14 @@ export type Account = {
   readiness?: AccountReadiness;
   // next account sequence (nonce). Present only when the family opts in via accountSequenceSupported.
   sequence?: number;
-  // account balance in satoshi
+  // history the generic sync has yet to read. Present only when the family opts in via syncsHistoryOnStateChange.
+  historyRecheck?: HistoryRecheck;
+  // account balance in satoshi, broken down per pool in `balances`
   balance: BigNumber;
   // part of the balance that can effectively be spent
   spendableBalance: BigNumber;
+  // per-pool breakdown of `balance` (native rows), filled at every sync
+  balances?: AccountBalance[];
   // date the account started "existing", essentially the date of the older tx received/done of this account
   // It is equal to Date.now() for EMPTY accounts because empty account don't really "exists"
   creationDate: Date;
@@ -183,6 +243,8 @@ export type Account = {
   // On some blockchain, an account can have resources (gained, delegated, ...)
   // Swap operations linked to this account
   swapHistory: SwapOperation[];
+  // Ids of operations broadcast by a sell flow; they cannot be sped up or cancelled
+  sellOperationIds?: string[];
   // Hash used to discard tx history on sync
   syncHash?: string | undefined;
   // Array of NFTs computed by diffing NFTOperations ordered from newest to oldest
@@ -210,6 +272,7 @@ export type TokenAccountRaw = {
   pendingOperations: OperationRaw[];
   balance: string;
   spendableBalance?: string;
+  balances?: AccountBalanceRaw[];
   // Compressed format for storage optimization (backward compatible: accepts both formats)
   balanceHistoryCache?: CompressedBalanceHistoryCache | BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
@@ -229,8 +292,10 @@ export type AccountRaw = {
   used?: boolean;
   readiness?: AccountReadiness;
   sequence?: number;
+  historyRecheck?: HistoryRecheck;
   balance: string;
   spendableBalance?: string;
+  balances?: AccountBalanceRaw[];
   blockHeight: number;
   creationDate?: string;
   operationsCount?: number;
@@ -246,6 +311,7 @@ export type AccountRaw = {
   // Compressed format for storage optimization (backward compatible: accepts both formats)
   balanceHistoryCache?: CompressedBalanceHistoryCache | BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
+  sellOperationIds?: string[];
   syncHash?: string | undefined;
   nfts?: ProtoNFTRaw[];
 };

@@ -9,6 +9,7 @@ import {
   isAccountDataReceived,
 } from "@domain/entity-account-data";
 import {
+  DerivationPathSchema,
   NetworkIdSchema,
   type AccountDescriptor,
   type AccountUUID,
@@ -51,7 +52,7 @@ describe("a kind added from outside the framework packages", () => {
       type: "address",
       network: NetworkIdSchema.parse("cosmos"),
       key: "cosmos1abc",
-      path: "m/44h/118h/0h/0/0",
+      path: DerivationPathSchema.parse("m/44h/118h/0h/0/0"),
     };
     const store = configureStore({
       reducer: { accountData: accountDataSlice.reducer, accountStaking: stakingSlice.reducer },

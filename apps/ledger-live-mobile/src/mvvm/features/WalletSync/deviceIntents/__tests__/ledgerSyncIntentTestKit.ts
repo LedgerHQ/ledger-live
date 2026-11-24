@@ -5,11 +5,12 @@ import {
   type DeviceConnectionResult,
   type DeviceExtractedContext,
 } from "@features/platform-device-intent";
-import type {
-  AddMemberIntent,
-  AddMemberIntentInput,
-  RemoveMemberIntent,
-  RemoveMemberIntentInput,
+import {
+  createLedgerSyncResultOrder,
+  type AddMemberIntent,
+  type AddMemberIntentInput,
+  type RemoveMemberIntent,
+  type RemoveMemberIntentInput,
 } from "@features/platform-intent-wallet-sync";
 import type {
   MemberCredentials,
@@ -47,6 +48,7 @@ export function buildAddMemberIntent(): AddMemberIntent {
   const input: AddMemberIntentInput = {
     memberCredentials: MEMBER_CREDENTIALS,
     createSessionSdk: jest.fn(),
+    resultOrder: createLedgerSyncResultOrder(),
   };
   return createIntent(addMemberIntentLWMDefinition, input);
 }
@@ -57,6 +59,7 @@ export function buildRemoveMemberIntent(): RemoveMemberIntent {
     memberCredentials: MEMBER_CREDENTIALS,
     member: OTHER_MEMBER,
     createSessionSdk: jest.fn(),
+    resultOrder: createLedgerSyncResultOrder(),
   };
   return createIntent(removeMemberIntentLWMDefinition, input);
 }

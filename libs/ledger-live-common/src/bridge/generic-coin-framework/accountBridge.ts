@@ -17,6 +17,7 @@ import { genericBroadcast } from "./broadcast";
 import { genericSignOperation } from "./signOperation";
 import { genericSignRawOperation } from "./signRawOperation";
 import { postSync } from "./postSync";
+import { genericAccountBalances } from "./utils";
 import { genericValidateAddress } from "./validateAddress";
 import { getAccountRawAssignHooks } from "./accountRawAssign";
 import type { GenericTransaction, CoinFrameworkSigner } from "./types";
@@ -39,6 +40,7 @@ export async function getCoinFrameworkAccountBridge(
     sync: makeSync({
       getAccountShape: genericGetAccountShape(network, kind),
       postSync,
+      getAccountBalances: genericAccountBalances,
       // Defaults to `false`: the shape already returns the merged list. Left on, the outer
       // `mergeOps(stored, shape.operations)` re-adds every operation the store bound just dropped,
       // undoing it, and resurrects the history a from-scratch resync deliberately discarded. A

@@ -1,5 +1,5 @@
 import React from "react";
-import { AddToWalletCtaView } from "./AddToWalletCtaView.native";
+import { AddToWalletCtaView } from "./AddToWalletCtaView";
 import {
   useAddToWalletCtaViewModel,
   type AddToWalletCtaAppearance,

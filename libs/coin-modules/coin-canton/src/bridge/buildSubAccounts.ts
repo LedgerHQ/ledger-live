@@ -14,6 +14,23 @@ export type CantonTokenAccount = TokenAccount & {
   cantonResources: { pendingTransferProposals: TransferProposal[] };
 };
 
+/**
+ * `mergeOps`, keeping the fetched operations older than every stored one, which it drops: the sync
+ * reads a transaction again below the newest stored operation (a settled offer).
+ */
+export function mergeOperations(stored: Operation[], fetched: Operation[]): Operation[] {
+  const merged = mergeOps(stored, fetched);
+  const ids = new Set(merged.map(({ id }) => id));
+  const older = new Map(fetched.filter(({ id }) => !ids.has(id)).map(op => [op.id, op]));
+  if (older.size === 0) return merged;
+  return [...merged, ...older.values()].sort((a, b) => b.date.getTime() - a.date.getTime());
+}
+
+const isOperationOf = (instrumentId: string, adminId: string) => (op: Operation) => {
+  const extra = op.extra as { instrumentId?: string; instrumentAdmin?: string };
+  return extra?.instrumentId === instrumentId && extra?.instrumentAdmin === adminId;
+};
+
 export function buildSubAccounts({
   accountId,
   tokenBalances,
@@ -37,27 +54,25 @@ export function buildSubAccounts({
   if (tokenBalances.length === 0) return [];
 
   const tokenAccounts: CantonTokenAccount[] = [];
-  const existingAccountByTicker: { [ticker: string]: TokenAccount } = {};
-  const existingAccountTickers: string[] = [];
-
+  const existingAccountById = new Map<string, TokenAccount>();
   for (const existingSubAccount of existingSubAccounts) {
-    if (existingSubAccount.type === "TokenAccount") {
-      const { ticker } = existingSubAccount.token;
-      existingAccountTickers.push(ticker);
-      existingAccountByTicker[ticker] = existingSubAccount;
+    // The first one: sync regenerates a chart only if it still is the first saved sub-account's.
+    if (!existingAccountById.has(existingSubAccount.id)) {
+      existingAccountById.set(existingSubAccount.id, existingSubAccount);
     }
   }
+  // Saved before sync matched admins, or under a former token id, history can sit in any sub-account.
+  const savedOperations = existingSubAccounts.flatMap(
+    existingSubAccount => existingSubAccount.operations,
+  );
 
   for (const { totalBalance, spendableBalance, token, adminId } of tokenBalances) {
-    const initialTokenAccount = existingAccountByTicker[token.ticker];
+    const subAccountId = encodeTokenAccountId(accountId, token);
+    const initialTokenAccount = existingAccountById.get(subAccountId);
 
     const instrumentId = calTokens.get(token.id) || token.name;
 
-    // Filter operations for this specific instrument (both id and admin must match)
-    const tokenOperations = allOperations.filter(op => {
-      const extra = op.extra as { instrumentId?: string; instrumentAdmin?: string };
-      return extra?.instrumentId === instrumentId && extra?.instrumentAdmin === adminId;
-    });
+    const isOwnOperation = isOperationOf(instrumentId, adminId);
 
     // Filter pending transfer proposals for this specific instrument
     const tokenPendingTransferProposals = pendingTransferProposals.filter(
@@ -67,11 +82,12 @@ export function buildSubAccounts({
     const tokenAccount = buildSubAccount({
       totalBalance: new BigNumber(totalBalance.toString()),
       spendableBalance: new BigNumber(spendableBalance.toString()),
-      accountId,
+      subAccountId,
       initialTokenAccount,
       parentAccountId: accountId,
       token,
-      operations: tokenOperations,
+      operations: allOperations.filter(isOwnOperation),
+      previousOperations: savedOperations.filter(isOwnOperation),
       pendingTransferProposals: tokenPendingTransferProposals,
     });
     if (tokenAccount) tokenAccounts.push(tokenAccount);
@@ -83,32 +99,33 @@ export function buildSubAccounts({
 function buildSubAccount({
   totalBalance,
   spendableBalance,
-  accountId,
+  subAccountId,
   initialTokenAccount,
   parentAccountId,
   token,
   operations,
+  previousOperations,
   pendingTransferProposals,
 }: {
   totalBalance: BigNumber;
   spendableBalance: BigNumber;
-  accountId: string;
+  subAccountId: string;
   initialTokenAccount: TokenAccount | undefined;
   parentAccountId: string;
   token: TokenCurrency;
   operations: Operation[];
+  previousOperations: Operation[];
   pendingTransferProposals: TransferProposal[];
 }): CantonTokenAccount {
-  const subAccountId = encodeTokenAccountId(accountId, token);
-
-  // Merge old operations with new ones and update accountId for sub-account
-  const oldOperations = initialTokenAccount?.operations || [];
-  const newOperations = operations.map(op => ({
+  const toSubAccount = (op: Operation): Operation => ({
     ...op,
     id: encodeOperationId(subAccountId, op.hash, op.type),
     accountId: subAccountId,
-  }));
-  const mergedOperations = mergeOps(oldOperations, newOperations);
+  });
+  const mergedOperations = mergeOperations(
+    mergeOps([], previousOperations.map(toSubAccount)),
+    operations.map(toSubAccount),
+  );
 
   const creationDate =
     mergedOperations.length > 0

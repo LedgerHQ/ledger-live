@@ -24,6 +24,7 @@ export function FamilySendRecipientNotice() {
     <Notice
       account={mainAccount}
       transaction={transaction}
+      status={state.transaction.status}
       onBlockedChange={setFamilyRecipientBlocked}
     />
   );

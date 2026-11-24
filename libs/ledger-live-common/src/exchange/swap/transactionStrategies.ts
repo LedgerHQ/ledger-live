@@ -183,6 +183,32 @@ export function bitcoinTransaction({
   return baseTransaction;
 }
 
+/**
+ * A transparent send to the payin address. The fee follows ZIP-317 and is set by
+ * `prepareTransaction`, so a fee override from the provider does not apply.
+ */
+export function zcashTransaction({
+  amount,
+  recipient,
+  extraTransactionParameters,
+  customErrorType,
+}: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "zcash" }>> {
+  // Bitcoin carries these as OP_RETURN data. A Zcash transaction cannot, and sending
+  // without the data the provider asked for would lose the swap.
+  if (extraTransactionParameters)
+    throw createStepError({
+      error: new Error("Zcash transactions cannot carry extra transaction parameters"),
+      step: StepError.PAYLOAD,
+      customErrorType,
+    });
+
+  return {
+    family: "zcash",
+    amount,
+    recipient,
+  };
+}
+
 export function solanaTransaction(
   {
     amount,
@@ -323,4 +349,5 @@ export const transactionStrategy: {
   vechain: defaultTransaction,
   kaspa: defaultTransaction,
   xrp: rippleTransaction,
+  zcash: zcashTransaction,
 };

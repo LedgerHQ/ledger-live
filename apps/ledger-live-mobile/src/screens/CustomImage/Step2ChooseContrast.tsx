@@ -1,7 +1,6 @@
 import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "~/context/Locale";
-import styled from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Image, ImageErrorEventData, NativeSyntheticEvent, Pressable } from "react-native";
 import { useSharedValue, withTiming } from "react-native-reanimated";
@@ -33,14 +32,6 @@ import ContrastChoice from "~/components/CustomImage/ContrastChoice";
 import { ScreenName } from "~/const";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-
-export const PreviewImage = styled.Image.attrs({
-  resizeMode: "contain",
-})`
-  align-self: center;
-  width: 200px;
-  height: 200px;
-`;
 
 const previewDimensions = {
   height: 406,

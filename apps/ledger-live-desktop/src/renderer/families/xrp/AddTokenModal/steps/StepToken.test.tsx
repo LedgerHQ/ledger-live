@@ -76,11 +76,11 @@ describe("StepToken", () => {
     expect(loadNext).toHaveBeenCalled();
   });
 
-  it("says every token is added once none is left", () => {
+  it("says no token is available once the list is empty", () => {
     renderStepToken();
 
     expect(selectProps().noOptionsMessage({ inputValue: "" })).toBe(
-      "xrp.addToken.steps.token.allAdded",
+      "xrp.addToken.steps.token.empty",
     );
   });
 

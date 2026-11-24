@@ -6,7 +6,6 @@ import {
 } from "@domain/entity-account-receive";
 import { defaultAccountReceive } from "../../account/accountReceive";
 import { getSendDescriptor } from "../../bridge/descriptor/registry";
-import { resolveFamily } from "../../bridge/zcashRouting";
 import { loadAccountReceiveForFamily } from "../../coin-modules/registry";
 
 /** `address` with the memo a sender can attach to it, as the coin's send descriptor declares it. */
@@ -20,7 +19,7 @@ function withMemo<T extends ReceiveAddress>(account: Account, address: T): T {
 
 /** The `receive` kind of a synced account: its family's own rule if it has one, else the default. */
 export async function toAccountReceive(account: Account): Promise<AccountReceive> {
-  const familyReceive = await loadAccountReceiveForFamily(resolveFamily(account.currency));
+  const familyReceive = await loadAccountReceiveForFamily(account.currency.family);
   const receive = withMemo(account, (familyReceive ?? defaultAccountReceive)(account));
   return receive.shielded ? { ...receive, shielded: withMemo(account, receive.shielded) } : receive;
 }
