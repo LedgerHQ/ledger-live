@@ -41,9 +41,26 @@ function rechecksTheUpdate(liveMachineState: string | null) {
 
 const doneState = "done";
 
+export type RestoreDismissal = Readonly<{
+  dismissed: boolean;
+  dismiss: () => void;
+  /** The state the screen shows: the restore choice once the Recover restore screen is closed. */
+  visibleState: string | null;
+}>;
+
+/** Closing the Recover restore screen shows the restore choice while the machine stays on Recover. */
+export function useRestoreDismissal(machineState: string | null): RestoreDismissal {
+  const [dismissed, setDismissed] = useState(false);
+  const dismiss = useCallback(() => setDismissed(true), []);
+  if (dismissed && machineState !== restoreRecoverState) setDismissed(false);
+  const showsChoice = dismissed && machineState === restoreRecoverState;
+  return { dismissed, dismiss, visibleState: showsChoice ? restoreChoiceState : machineState };
+}
+
 export type UnseededFunnelInput = {
   machineState: string | null;
   liveMachineState: string | null;
+  restoreDismissal: RestoreDismissal;
   onboardedOnEntry: boolean | null;
   /** Setup is done and only the held-back update is left: the checks screen shows it, not Setup. */
   heldBackUpdatePending?: boolean;
@@ -79,19 +96,19 @@ export type UnseededFunnelModel =
 
 export function useUnseededFunnelViewModel(input: UnseededFunnelInput): UnseededFunnelModel | null {
   const { device, machineState, liveMachineState, send } = input;
-  const [restoreDismissed, setRestoreDismissed] = useState(false);
-  const dismissRestore = useCallback(() => setRestoreDismissed(true), []);
-  if (restoreDismissed && machineState !== restoreRecoverState) setRestoreDismissed(false);
+  const {
+    dismissed: restoreDismissed,
+    dismiss: dismissRestore,
+    visibleState,
+  } = input.restoreDismissal;
 
   const unseeded =
     input.onboardedOnEntry === false &&
     input.heldBackUpdatePending !== true &&
     device !== null &&
     machineState !== null;
-  const stageState =
-    machineState === restoreRecoverState && restoreDismissed ? restoreChoiceState : machineState;
   const stage = unseeded
-    ? toUnseededStage(device, stageState, input.currentStep, input.reportsRecoveryKey)
+    ? toUnseededStage(device, visibleState, input.currentStep, input.reportsRecoveryKey)
     : null;
   const holdsPrevious = unseeded && holdsPreviousStage(machineState, input.currentStep);
 

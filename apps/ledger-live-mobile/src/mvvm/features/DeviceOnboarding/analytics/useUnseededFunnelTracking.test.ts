@@ -232,6 +232,47 @@ describe("useUnseededFunnelTracking", () => {
     ]);
   });
 
+  it("should not finish the setup when a reconnect runs the checks during the Recovery Key backup", () => {
+    const seeded = { ...newSeed, lastDeviceState: { isOnboarded: true, recoveryKeyStatus: null } };
+    walk([
+      { state: "deviceSetup.backupRecoveryKey", context: newSeed },
+      { state: "checks.genuineCheck.running", context: seeded } as Step,
+      { state: "deviceSetup.backupRecoveryKey", context: seeded } as Step,
+      {
+        state: "done",
+        context: {
+          ...newSeed,
+          lastDeviceState: { isOnboarded: true, recoveryKeyStatus: RecoveryKeyStatus.Ready },
+        },
+      } as Step,
+    ]);
+
+    const finished = jest
+      .mocked(track)
+      .mock.calls.filter(([event]) => event === "onboarding_device_setup_finished");
+    expect(finished).toHaveLength(1);
+    expect(jest.mocked(trackPage).mock.calls.map(([page]) => page.category)).toContain(
+      "Ledger Recovery key - Success",
+    );
+  });
+
+  it("should leave the Recovery Key result out when the device reports no final status", () => {
+    walk([
+      { state: "deviceSetup.backupRecoveryKey", context: newSeed },
+      {
+        state: "done",
+        context: {
+          ...newSeed,
+          lastDeviceState: { isOnboarded: true, recoveryKeyStatus: RecoveryKeyStatus.None },
+        },
+      } as Step,
+    ]);
+
+    const pages = jest.mocked(trackPage).mock.calls.map(([page]) => page.category);
+    expect(pages).not.toContain("Ledger Recovery key - Rejected");
+    expect(pages).not.toContain("Ledger Recovery key - Success");
+  });
+
   it("should send nothing for a device seeded on entry", () => {
     walk([
       { state: "checks.genuineCheck.running", context: { onboardedOnEntry: true } },

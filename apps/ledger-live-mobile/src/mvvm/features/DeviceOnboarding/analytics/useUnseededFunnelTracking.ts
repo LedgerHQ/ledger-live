@@ -29,15 +29,6 @@ type Input = Readonly<{
 
 export type UnseededFunnel = Readonly<{ props: FunnelProps; status: UnseededStatus }>;
 
-/** States that pass between two setup steps: the setup is not over while one shows. */
-const statesBetweenSteps = new Set([
-  "readingState",
-  "routing",
-  "deviceLocked",
-  "awaitingSession",
-  "awaitingSessionAfterFirmwareUpdate",
-]);
-
 /** Sent by the checks error drawers, not from the machine state. */
 const pagesSentElsewhere = new Set<OnboardingPage>([
   onboardingPages.genuineCheckRefused,
@@ -94,11 +85,12 @@ function isFunnelState(machineState: string): boolean {
   );
 }
 
-function setupFinished(machineState: string, context: DeviceOnboardingContext): boolean {
+/** Not `isOnboarded`: a reconnect during the Recovery Key backup already reads a seeded device. */
+function setupFinished(machineState: string): boolean {
   return (
-    context.lastDeviceState?.isOnboarded === true &&
-    !machineState.startsWith("deviceSetup.") &&
-    !statesBetweenSteps.has(machineState)
+    machineState === "setupExit" ||
+    machineState === "done" ||
+    machineState.startsWith("postSetupFirmware.")
   );
 }
 
@@ -143,7 +135,6 @@ export function useUnseededFunnelTracking({
   const funnel = useStableFunnel(machineContext);
   const started = useRef(false);
   const finished = useRef(false);
-  const recoveryKeyOffered = useRef(false);
   const lastPage = useRef<OnboardingPage | null>(null);
   const sentOnce = useRef(new Set<OnboardingPage>());
 
@@ -160,10 +151,7 @@ export function useUnseededFunnelTracking({
     // The device restarted its setup: the abandoned attempt must not decide the new one's pages.
     const setupForgotten =
       machineContext.seedPath === null && machineContext.currentSetupStep === null;
-    if (setupForgotten && !finished.current) {
-      recoveryKeyOffered.current = false;
-      sentOnce.current.clear();
-    }
+    if (setupForgotten && !finished.current) sentOnce.current.clear();
 
     if (!started.current && isFunnelState(machineState)) {
       started.current = true;
@@ -178,18 +166,16 @@ export function useUnseededFunnelTracking({
     const shown = unseededShownPage(machineState, machineContext, status);
     if (shown && shown.page !== lastPage.current) {
       lastPage.current = shown.page;
-      if (shown.page === onboardingPages.recoveryKeyStart) recoveryKeyOffered.current = true;
       if (!pagesSentElsewhere.has(shown.page)) {
         trackOnboardingPage(shown.page, props, shown.extraProps);
       }
     }
 
-    if (started.current && !finished.current && setupFinished(machineState, machineContext)) {
+    if (started.current && !finished.current && setupFinished(machineState)) {
       finished.current = true;
       setupSuccessPages(
         machineContext.seedPath,
         machineContext.lastDeviceState?.recoveryKeyStatus ?? null,
-        recoveryKeyOffered.current,
       ).forEach(sendOnce);
       trackUnseededSetupFinished(props, status);
     }

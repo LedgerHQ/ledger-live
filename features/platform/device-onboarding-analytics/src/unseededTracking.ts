@@ -116,21 +116,10 @@ export function setupPage(machineState: string | null): OnboardingPage | null {
 export function setupSuccessPages(
   seedPath: SeedPath | null,
   recoveryKeyStatus: RecoveryKeyStatus | null,
-  recoveryKeyOffered: boolean,
 ): OnboardingPage[] {
   switch (seedPath) {
-    case SeedPath.NewSeed: {
-      // Polling can miss the backup step: a final status still says the key was offered.
-      const recoveryKeyAnswered =
-        recoveryKeyStatus === RecoveryKeyStatus.Ready ||
-        recoveryKeyStatus === RecoveryKeyStatus.Rejected;
-      if (!recoveryKeyOffered && !recoveryKeyAnswered) return [onboardingPages.newSeedSuccess];
-      const recoveryKeyResult =
-        recoveryKeyStatus === RecoveryKeyStatus.Ready
-          ? onboardingPages.recoveryKeySuccess
-          : onboardingPages.recoveryKeyRejected;
-      return [onboardingPages.newSeedSuccess, recoveryKeyResult];
-    }
+    case SeedPath.NewSeed:
+      return [onboardingPages.newSeedSuccess, ...recoveryKeyResult(recoveryKeyStatus)];
     case SeedPath.RestorePhrase:
       return [onboardingPages.restorePhraseSuccess];
     case SeedPath.RecoveryKey:
@@ -138,4 +127,11 @@ export function setupSuccessPages(
     default:
       return [];
   }
+}
+
+/** Only a status the device reported: any other one leaves the Recovery Key result unknown. */
+function recoveryKeyResult(status: RecoveryKeyStatus | null): OnboardingPage[] {
+  if (status === RecoveryKeyStatus.Ready) return [onboardingPages.recoveryKeySuccess];
+  if (status === RecoveryKeyStatus.Rejected) return [onboardingPages.recoveryKeyRejected];
+  return [];
 }

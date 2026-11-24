@@ -77,7 +77,11 @@ import {
   toDeviceUnlockSheetProps,
 } from "LLM/features/DeviceOnboarding/utils/deviceLocked";
 import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pairedDevice";
-import { useUnseededFunnelViewModel, type UnseededFunnelModel } from "./useUnseededFunnelViewModel";
+import {
+  useRestoreDismissal,
+  useUnseededFunnelViewModel,
+  type UnseededFunnelModel,
+} from "./useUnseededFunnelViewModel";
 
 /** Dedicated so Braze can tell a deferred Recover from a plain skip. The tracking-plan name is still open. */
 const recoverDeferredEvent = "recover_deferred_from_new_seed";
@@ -656,8 +660,9 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     firmwareUpdateStarted,
   });
   const { trackClick, trackAbort, trackExit } = seededTracking;
+  const restoreDismissal = useRestoreDismissal(shownState);
   const unseededFunnel = useUnseededFunnelTracking({
-    machineState: shownState,
+    machineState: restoreDismissal.visibleState,
     machineContext: onboarding.snapshot?.context ?? null,
   });
   const checksTracking = useMemo<ChecksTracking>(
@@ -980,6 +985,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const unseededSetup = useUnseededFunnelViewModel({
     machineState: shownState,
     liveMachineState: machineState,
+    restoreDismissal,
     onboardedOnEntry,
     heldBackUpdatePending,
     currentStep: onboarding.context?.currentOnboardingStep ?? null,

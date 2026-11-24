@@ -59,44 +59,27 @@ describe("setupPage", () => {
 });
 
 describe("setupSuccessPages", () => {
-  it("should close a new seed with the Recovery Key result when it was offered", () => {
-    expect(setupSuccessPages(SeedPath.NewSeed, RecoveryKeyStatus.Ready, true)).toEqual([
-      onboardingPages.newSeedSuccess,
-      onboardingPages.recoveryKeySuccess,
-    ]);
-    expect(setupSuccessPages(SeedPath.NewSeed, RecoveryKeyStatus.Rejected, true)).toEqual([
-      onboardingPages.newSeedSuccess,
-      onboardingPages.recoveryKeyRejected,
-    ]);
-  });
-
   it.each([
-    [RecoveryKeyStatus.Ready, onboardingPages.recoveryKeySuccess],
-    [RecoveryKeyStatus.Rejected, onboardingPages.recoveryKeyRejected],
-  ])(
-    "should send the %s Recovery Key result even when polling missed the backup step",
-    (status, page) => {
-      expect(setupSuccessPages(SeedPath.NewSeed, status, false)).toEqual([
-        onboardingPages.newSeedSuccess,
-        page,
-      ]);
-    },
-  );
-
-  it("should close a new seed alone when the device offers no Recovery Key", () => {
-    expect(setupSuccessPages(SeedPath.NewSeed, null, false)).toEqual([
+    [RecoveryKeyStatus.Ready, [onboardingPages.recoveryKeySuccess]],
+    [RecoveryKeyStatus.Rejected, [onboardingPages.recoveryKeyRejected]],
+    [RecoveryKeyStatus.None, []],
+    [RecoveryKeyStatus.Unknown, []],
+    [null, []],
+  ])("should close a new seed with the %s Recovery Key status", (status, recoveryKeyPages) => {
+    expect(setupSuccessPages(SeedPath.NewSeed, status)).toEqual([
       onboardingPages.newSeedSuccess,
+      ...recoveryKeyPages,
     ]);
   });
 
   it("should close each restore with its own success page", () => {
-    expect(setupSuccessPages(SeedPath.RestorePhrase, null, false)).toEqual([
+    expect(setupSuccessPages(SeedPath.RestorePhrase, null)).toEqual([
       onboardingPages.restorePhraseSuccess,
     ]);
-    expect(setupSuccessPages(SeedPath.RecoveryKey, null, false)).toEqual([
+    expect(setupSuccessPages(SeedPath.RecoveryKey, null)).toEqual([
       onboardingPages.restoreRecoveryKeySuccess,
     ]);
-    expect(setupSuccessPages(SeedPath.Recover, null, false)).toEqual([]);
+    expect(setupSuccessPages(SeedPath.Recover, null)).toEqual([]);
   });
 });
 
