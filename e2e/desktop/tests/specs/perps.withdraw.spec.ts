@@ -57,10 +57,11 @@ test.describe("Perps withdraw", () => {
       await app.perpsWithdrawDialog.clickReview();
       await app.perpsWithdrawDialog.expectReview({ sourceAccount, receiverAccount });
       await app.perpsWithdrawDialog.clickWithdraw();
+      await app.perpsWithdrawDialog.expectSigning();
       await app.speculos.signTypedMessage();
       await app.perpsTransactionSignedDialog.expectTransactionSigned(receiverAccount);
       await app.perpsTransactionSignedDialog.close();
-      await app.perps.expectFundedAccountBalance();
+      await app.perps.expectWithdrawButtonVisible();
     },
   );
 });

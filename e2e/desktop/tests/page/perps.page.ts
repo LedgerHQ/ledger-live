@@ -31,4 +31,10 @@ export class PerpsPage extends WebViewAppPage {
     const webview = await this.getWebView();
     await webview.getByTestId(this.withdrawButtonTestId).click();
   }
+
+  @step("Verify the Perps home shows the Withdraw button")
+  async expectWithdrawButtonVisible() {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.withdrawButtonTestId)).toBeVisible();
+  }
 }

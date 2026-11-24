@@ -14,10 +14,8 @@ export class PerpsWithdrawDialog extends Dialog {
   private readonly selectCurrency = this.page.getByTestId("perps-withdraw-select-currency");
   private readonly reviewCta = this.page.getByTestId("perps-withdraw-review-cta");
 
-  private readonly reviewTitle = this.page.getByRole("heading", { name: "Withdraw via SwapKit" });
-  private readonly reviewSubtitle = this.page
-    .getByText(/^Our partner SwapKit manages your swap and withdrawal/)
-    .first();
+  private readonly reviewTitle = this.page.getByRole("heading", { name: /^Withdraw via / });
+  private readonly reviewDialog = this.page.getByRole("dialog", { name: /^Withdraw via / });
   private readonly reviewBackButton = this.page.getByRole("button", { name: "Back" });
   private readonly swapDetailsTitle = this.page.getByText("Swap details", { exact: true });
   private readonly withdrawDetailsTitle = this.page.getByText("Withdraw details", { exact: true });
@@ -27,6 +25,8 @@ export class PerpsWithdrawDialog extends Dialog {
   private readonly networkFees = this.page.getByTestId("perps-withdraw-network-fees");
   private readonly totalDebited = this.page.getByTestId("perps-withdraw-total-debited");
   private readonly withdrawCta = this.page.getByTestId("perps-withdraw-cta");
+
+  private readonly signTerms = this.page.getByText(/^By signing this transaction, I accept /);
 
   @step("Verify the Perps withdraw form")
   async expectWithdrawForm() {
@@ -73,7 +73,9 @@ export class PerpsWithdrawDialog extends Dialog {
   }) {
     await expect(this.reviewTitle).toBeVisible();
     await this.softExpect(async soft => {
-      await soft(this.reviewSubtitle).toBeVisible();
+      await soft(this.reviewDialog).toHaveAccessibleDescription(
+        /^Our partner .+ manages your swap and withdrawal/,
+      );
       await soft(this.swapDetailsTitle).toBeVisible();
       await soft(this.withdrawDetailsTitle).toBeVisible();
     });
@@ -91,5 +93,10 @@ export class PerpsWithdrawDialog extends Dialog {
   @step("Confirm the Perps withdraw")
   async clickWithdraw() {
     await this.withdrawCta.click();
+  }
+
+  @step("Verify the Perps withdraw signing dialog")
+  async expectSigning() {
+    await expect(this.signTerms).toBeVisible();
   }
 }
