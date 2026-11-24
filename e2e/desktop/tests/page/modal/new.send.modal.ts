@@ -41,7 +41,6 @@ export class NewSendModal extends Modal {
   readonly recipientStep = this.dialog.getByTestId("send-recipient-step");
   readonly validationStatusMessage = this.dialog.getByTestId("address-validation-status");
   readonly recipientErrorBanner = this.dialog.getByTestId("recipient-error-banner");
-  readonly recipientWarningBanner = this.dialog.getByTestId("recipient-warning-banner");
   private readonly recentHistoryWarning = this.dialog.getByTestId("send-recent-history-warning");
   readonly memoInput = this.dialog.getByTestId("send-memo-input");
   private readonly memoTypeSelect = this.dialog.getByTestId("send-memo-options-select");
@@ -257,25 +256,6 @@ export class NewSendModal extends Modal {
     await expect(this.recipientErrorBanner).toBeHidden();
   }
 
-  @step("Verify recipient validation warning: $0")
-  async expectRecipientWarning(message: string | RegExp) {
-    await expect(this.recipientWarningBanner).toBeVisible();
-    await this.softExpect(
-      async soft => {
-        await soft(this.recipientWarningBanner).toContainText(message);
-      },
-      { timeout: TIMEOUT.large },
-    );
-  }
-
-  @step("Verify recipient validation warning is hidden")
-  async expectRecipientWarningHidden() {
-    // The matched row can render from a local match while the bridge is still in flight.
-    // The warning banner is mounted only once that request settles.
-    await expect(this.recipientStep).toHaveAttribute("data-recipient-validation", "settled");
-    await expect(this.recipientWarningBanner).toBeHidden();
-  }
-
   @step("Verify invalid address feedback")
   async expectInvalidAddress() {
     await expect(this.validationStatusMessage).toBeVisible();
@@ -287,12 +267,6 @@ export class NewSendModal extends Modal {
     await this.memoInput.waitFor({ state: "visible" });
     await this.memoInput.fill(memo);
     await expect(this.memoInput).toHaveValue(memo);
-  }
-
-  @step("Verify the memo field is empty")
-  async expectMemoEmpty() {
-    await expect(this.memoInput).toBeVisible();
-    await expect(this.memoInput).toHaveValue("");
   }
 
   @step("Confirm sending without memo")

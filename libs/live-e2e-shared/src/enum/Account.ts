@@ -900,14 +900,6 @@ export class TokenAccount extends Account {
     tokenType: TokenType.ERC20,
     parentAccount: Account.POL_1,
   });
-  static readonly POL_UNI = new TokenAccount({
-    currency: Currency.POL_UNI,
-    accountName: "Uniswap 1",
-    index: 0,
-    accountPath: "44'/60'/0'/0/0",
-    tokenType: TokenType.ERC20,
-    parentAccount: Account.POL_1,
-  });
   static readonly TRX_USDT = new TokenAccount({
     currency: Currency.TRX_USDT,
     accountName: "(Tron) USDT 1",

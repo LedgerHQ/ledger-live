@@ -291,37 +291,6 @@ export const liveDataWithAddressCommand = (
   return named("liveDataWithAddressCommand", cmd);
 };
 
-export const liveDataWithParentAddressCommand = (
-  liveDataAccount: Account | TokenAccount,
-  accountToAssign: TokenAccount,
-) => {
-  const cmd = async (userdataPath?: string) => {
-    if (!applyGeneratedUserdata(liveDataAccount, userdataPath)) {
-      await runCliLiveData({
-        currency: liveDataAccount.currency.speculosApp.name,
-        index: liveDataAccount.index,
-        add: true,
-        appjson: userdataPath,
-      });
-    }
-
-    if (!accountToAssign.parentAccount) {
-      throw new Error("Parent account is required");
-    }
-
-    const address = await getAccountAddress(accountToAssign.parentAccount);
-
-    accountToAssign.address = address;
-    return address;
-  };
-  cmd.canUseGeneratedUserdata = () =>
-    hasGeneratedUserdata(liveDataAccount) &&
-    !!accountToAssign.parentAccount &&
-    hasGeneratedUserdata(accountToAssign.parentAccount) &&
-    !isUtxoBasedCurrency(accountToAssign.parentAccount.currency.id);
-  return named("liveDataWithParentAddressCommand", cmd);
-};
-
 export const liveDataWithRecipientAddressCommand = (
   tx: Transaction,
   options?: LiveDataCommandOptions,

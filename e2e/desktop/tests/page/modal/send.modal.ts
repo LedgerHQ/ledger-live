@@ -100,11 +100,6 @@ export class SendModal extends Modal {
     await expect(this.continueButton).toBeEnabled();
   }
 
-  @step("Check continue button disabled")
-  async checkContinueButtonDisabled() {
-    await expect(this.continueButton).toBeDisabled();
-  }
-
   @step("Fill amount $0")
   async fillAmount(amount: string) {
     if (amount == "send max") {
