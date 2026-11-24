@@ -274,4 +274,25 @@ another module (it cannot be told from a list of currency ids), and duck typing
 The baseline and the inline disables work as for `no-coin-specific-import`, including its
 directive report. A config that turns on both rules gets the comment reported once per rule.
 
+### `coin-families/no-currency-id-branch`
+
+The same three checks as `no-family-branch`, for a currency id, in
+[`src/branch-rules.js`](src/branch-rules.js). A currency id is the `id` of a currency under
+[`domain/entity/currency-crypto/src/currencies`](../../domain/entity/currency-crypto/src/currencies),
+read once when the plugin loads. A currency id expression is `.currency.id`, `currency.id`, or a
+name (identifier or property) that is `currencyId` or ends in `CurrencyId`. Other `*Id` names
+(`accountId`, `tokenId`) are not matched.
+
+It is a rule of its own, with its own baseline count, because a name can be both a family and a
+currency id: 27 of the 31 families are also currency ids (`bitcoin`, `hedera`, `solana`, ...), while
+`ethereum_classic` and `crypto_org` are currency ids only and `evm`, `xrp`, `canton` and `multiversx`
+are families only. The rule tells them apart by the expression, not by the string:
+`family === "bitcoin"` is reported by `no-family-branch`, `currencyId === "bitcoin"` by this rule, and
+`currencyId === "evm"` by neither.
+
+The `familiesDir` option and the exemption of the families folder are the ones of `no-family-branch`.
+
+The blind spots of `no-family-branch` apply, and one more: a currency compared without `.id`
+(`route.currency !== "tezos"`) is not a currency id expression, so it is not reported.
+
 Run the rules' tests with `nx run @support/lint:test`.
