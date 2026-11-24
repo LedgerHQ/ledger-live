@@ -16,7 +16,8 @@ export const CLI_WRITTEN_VERSION = 1;
 export const accountEnvelopeSchema = (zod: typeof z) =>
   zod.strictObject({
     data: zod.looseObject({ id: zod.string(), currencyId: zod.string() }),
-    version: zod.number().int().min(0).max(ACCOUNTS_VERSION_LINE.length),
+    /** An account with no `version` decodes as each app's legacy read did. */
+    version: zod.number().int().min(0).max(ACCOUNTS_VERSION_LINE.length).optional(),
   });
 
 export type StoredAccount = z.infer<ReturnType<typeof accountEnvelopeSchema>>;

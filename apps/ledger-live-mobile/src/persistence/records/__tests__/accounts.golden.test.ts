@@ -73,7 +73,7 @@ function setup(
   return { store, storage, report, hydrate, persistence, set, remove };
 }
 
-async function legacyImport(active: Array<{ data: AccountRaw; version: number }>) {
+async function legacyImport(active: Array<{ data: AccountRaw; version?: number }>) {
   const store = createStore();
   (await importStore({ active }))(store.dispatch);
   return store.getState();
@@ -136,6 +136,29 @@ describe("mobile accounts on persistence", () => {
       expect(store.getState().accounts).toEqual(legacy.accounts);
     },
   );
+
+  it("runs all the steps for an account with no version, as importStore does", async () => {
+    const aptos = genAccount("mobile-golden-aptos-none", {
+      currency: getCryptoCurrencyById("aptos"),
+    });
+    const { data } = await storedEntry(aptos);
+    const stored = { data: { ...data, freshAddressPath: "44'/637'/0'/0/0" } };
+    const { store, hydrate, report, set } = setup({
+      [PREFIX + aptos.id]: stored,
+      [ORDER_KEY]: [aptos.id],
+    });
+
+    await hydrate();
+    await settle();
+
+    const legacy = await legacyImport([stored]);
+    expect(report).not.toHaveBeenCalled();
+    expect(store.getState().accounts.active.map(account => account.freshAddressPath)).toEqual([
+      "44'/637'/0'/0'/0'",
+    ]);
+    expect(store.getState().accounts).toEqual(legacy.accounts);
+    expect(set).not.toHaveBeenCalled();
+  });
 
   it("loads a key missing from the order first, as the legacy read does", async () => {
     const { store, hydrate } = setup({

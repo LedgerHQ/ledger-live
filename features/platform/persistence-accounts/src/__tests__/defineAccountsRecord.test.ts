@@ -39,6 +39,14 @@ describe("defineAccountsRecord", () => {
     ]);
   });
 
+  it("gives the app codec no version when the stored account has none", async () => {
+    const { decoded, failures } = await decodeEntries(record.codec, [
+      { data: { id: "a", currencyId: "bitcoin" } },
+    ]);
+    expect(failures).toEqual([]);
+    expect(decoded).toEqual([{ id: "a", version: undefined }]);
+  });
+
   it.each([
     ["a version above the line", stored("b", 4)],
     ["an unknown envelope key", { ...stored("b", 3), $v: 1 }],
@@ -104,7 +112,6 @@ describe("defineAccountsRecord", () => {
           },
           "required": [
             "data",
-            "version",
           ],
           "type": "object",
         },

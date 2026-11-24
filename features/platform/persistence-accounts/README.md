@@ -10,14 +10,14 @@ for all of them. Each app injects its own account model.
 ## What the package holds
 
 - The stored shape of 1 account, `accountEnvelopeSchema`: a strict `{ data, version }`. `data`
-  stays loose (`id` and `currencyId` only), and `version` goes from 0 to the line length.
+  stays loose (`id` and `currencyId` only), and `version`, optional, goes from 0 to the line length.
 - The version line, `ACCOUNTS_VERSION_LINE`: `idFormat2018` → `aptosHardenedPath` →
   `cryptoOrgResources`. Each app keeps the code of the steps and its own version count, as today:
 
   | Writer | Reads | Writes |
   | --- | --- | --- |
-  | Desktop | the stored version, 0 to 3 | 3 |
-  | Mobile | the stored version, but a stored 1 reads as 0 (LIVE-40516) | 2 |
+  | Desktop | the stored version, 0 to 3; no version runs no step, as the legacy load did | 3 |
+  | Mobile | the stored version, but a stored 1 or no version reads as 0 (LIVE-40516) | 2 |
   | `apps/cli`, e2e seeds | ignores it | 1 (`CLI_WRITTEN_VERSION`) |
 
   Mobile has no `idFormat2018` step, so a mobile version counts 1 step less than the line. All

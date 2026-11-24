@@ -22,6 +22,10 @@ describe("parseStoredAccount", () => {
     },
   );
 
+  it("accepts a stored account with no version, as the legacy mobile read did", () => {
+    expect(parseStoredAccount({ data: raw })).toEqual({ data: raw });
+  });
+
   it.each([
     ["a string", "ciphertext"],
     ["no data", { version: 3 }],
@@ -29,6 +33,8 @@ describe("parseStoredAccount", () => {
     ["a negative version", { data: raw, version: -1 }],
     ["a decimal version", { data: raw, version: 1.5 }],
     ["a version above the line", { data: raw, version: 4 }],
+    ["a null version", { data: raw, version: null }],
+    ["a string version", { data: raw, version: "1" }],
     ["an unknown envelope key", { data: raw, version: 3, $v: 1 }],
   ])("refuses %s", (_label, stored) => {
     expect(() => parseStoredAccount(stored)).toThrow(RecordDecodeError);

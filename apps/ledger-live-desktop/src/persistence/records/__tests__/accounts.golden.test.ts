@@ -136,6 +136,20 @@ describe("stored versions", () => {
     expect(state.accounts[0]?.id).toMatch(/^ethereumjs:2:ethereum:.*:ethM$/);
   });
 
+  it("loads an entry with no version as the legacy code does", async () => {
+    const none = { data: ethereumEntry().data };
+
+    const legacy = await loadWithLegacy([none]);
+    const { state, statuses, failures } = await hydrateStored([none]);
+
+    expect(statuses.accounts).toBe("loaded");
+    expect(failures).toEqual([]);
+    expect(state.accounts.map(account => account.id)).toEqual(
+      legacy.accounts.map(account => account.id),
+    );
+    expect(state.accounts).toHaveLength(1);
+  });
+
   it("round-trips a v3 entry byte for byte", async () => {
     const legacy = await loadWithLegacy([ethereumEntry()]);
     const v3 = JSON.parse(await legacyStoredBytes(legacy));
