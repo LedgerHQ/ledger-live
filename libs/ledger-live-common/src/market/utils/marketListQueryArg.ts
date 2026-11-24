@@ -3,7 +3,7 @@ import {
   MARKET_LIST_PAGE_SIZES,
   type MarketListPageSize,
   type MarketListQueryArg,
-} from "../state-manager/types";
+} from "@domain/entity-market-currency";
 import { Order, type MarketListRequestParams } from "./types";
 
 export { buildMarketListParams, getNextMarketListPage } from "@domain/api-market-currency";

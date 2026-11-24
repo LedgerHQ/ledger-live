@@ -4,7 +4,7 @@ import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { marketCurrencyApi, useGetMarketListInfiniteQuery } from "@domain/api-market-currency";
 import { toMarketListQueryArg } from "../utils/marketListQueryArg";
 import type { MarketListRequestParams, MarketListRequestResult } from "../utils/types";
-import type { MarketListQueryArg } from "../state-manager/types";
+import type { MarketListQueryArg } from "@domain/entity-market-currency";
 
 type MarketApiState = {
   [marketCurrencyApi.reducerPath]: ReturnType<typeof marketCurrencyApi.reducer>;
