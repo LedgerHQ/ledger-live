@@ -74,10 +74,7 @@ const beforeAllInvalidAddressFunction = async (
       async (userdataPath?: string) => {
         await liveDataCommand(transaction.accountToDebit)(userdataPath);
 
-        if (
-          transaction.accountToCredit.accountName !== Account.EMPTY.accountName &&
-          transaction.accountToCredit.accountName !== Account.BTC_NATIVE_SEGWIT_1.accountName
-        ) {
+        if (transaction.accountToCredit.accountName !== Account.BTC_NATIVE_SEGWIT_1.accountName) {
           transaction.accountToCredit.address = await getAccountAddress(
             transaction.accountToCredit,
           );
@@ -189,14 +186,13 @@ export function runSendInvalidAddressTest(options: RunSendInvalidAddressTestOpti
 }
 
 type RunSendValidAddressTestOptions = RunSendTestBaseOptions & {
-  /** What the valid recipient is, for the test name: e.g. "lower case". */
+  /** What the valid recipient is, for the test name: e.g. "with tag". */
   scenario: string;
   accountName?: string;
-  expectedWarningMessage?: string;
 };
 
 export function runSendValidAddressTest(options: RunSendValidAddressTestOptions) {
-  const { transaction, tmsLinks, scenario, tags, accountName, expectedWarningMessage } = options;
+  const { transaction, tmsLinks, scenario, tags, accountName } = options;
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: TestFolder.LEGACY_TESTS,
   });
@@ -209,17 +205,9 @@ export function runSendValidAddressTest(options: RunSendValidAddressTestOptions)
 
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send - valid address - ${scenario}`, async () => {
       await app.send.navigateToSendScreen(transaction.accountToDebit, accountName);
-      const shouldLowerCaseRecipientAddress =
-        transaction.accountToCredit === Account.ETH_2_LOWER_CASE ||
-        scenario.toLowerCase().includes("lower case");
-
-      const baseRecipientAddress = transaction.accountToCredit.address ?? "";
-      const recipientAddress = shouldLowerCaseRecipientAddress
-        ? baseRecipientAddress.toLowerCase()
-        : baseRecipientAddress;
-      transaction.accountToCredit.address = recipientAddress;
+      const recipientAddress = transaction.accountToCredit.address ?? "";
       await app.send.setRecipient({ address: recipientAddress, memoTag: transaction.memoTag });
-      await app.send.expectSendRecipientSuccess(expectedWarningMessage);
+      await app.send.expectSendRecipientSuccess();
       await app.send.recipientContinue(transaction.memoTag);
       await app.send.setAmountAndContinue(transaction.amount);
 
@@ -227,7 +215,6 @@ export function runSendValidAddressTest(options: RunSendValidAddressTestOptions)
       await app.send.expectSummaryAmount(amountWithCode);
       await app.send.expectSummaryRecipient(transaction.accountToCredit.address);
       await app.send.expectSummaryMemoTag(transaction.memoTag);
-      if (expectedWarningMessage) await app.send.expectSummaryWarning(expectedWarningMessage);
     });
   });
 }

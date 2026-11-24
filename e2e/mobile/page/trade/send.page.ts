@@ -32,7 +32,6 @@ export default class SendPage {
   private readonly summaryRecipient = byId("send-summary-recipient");
   private readonly summaryRecipientEns = byId("send-summary-recipient-ens");
   private readonly summaryMemoTag = byId("summary-memo-tag");
-  private readonly summaryWarning = byId("send-summary-warning");
   private readonly summaryError = byId("insufficient-fee-error");
   private readonly summaryContinueEnabledButton = byId("enabled-summary-continue-button");
   private readonly summaryContinueDisabledButton = byId("disabled-summary-continue-button");
@@ -108,13 +107,9 @@ export default class SendPage {
     }
   }
 
-  @Step("Expect recipient step success {{{0}}}")
-  async expectSendRecipientSuccess(expectedWarningMessage?: string) {
-    if (expectedWarningMessage) {
-      await this.recipientError.expectText(expectedWarningMessage);
-    } else {
-      await this.recipientError.expectNotVisible();
-    }
+  @Step("Expect recipient step success")
+  async expectSendRecipientSuccess() {
+    await this.recipientError.expectNotVisible();
     await this.recipientContinueEnabledButton.expectVisible();
   }
 
@@ -191,11 +186,6 @@ export default class SendPage {
     await this.summaryError.expectTextMatching(errorMessage);
     await this.summaryContinueEnabledButton.expectNotVisible();
     await this.summaryContinueDisabledButton.expectVisible();
-  }
-
-  @Step("Expect warning in summary {{{0}}}")
-  async expectSummaryWarning(warningMessage: string) {
-    await this.summaryWarning.expectText(warningMessage);
   }
 
   @Step("Expect recipient ENS in summary {{{0}}}")

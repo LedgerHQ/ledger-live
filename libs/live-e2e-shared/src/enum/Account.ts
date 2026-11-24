@@ -297,12 +297,6 @@ export class Account {
     accountPath: "44'/60'/1'/0/0",
     ensName: "speculos-qaa.eth",
   });
-  static readonly ETH_2_LOWER_CASE = new Account({
-    currency: Currency.ETH,
-    accountName: "Ethereum 2",
-    index: 1,
-    accountPath: "44'/60'/1'/0/0",
-  });
   static readonly ETH_3 = new Account({
     currency: Currency.ETH,
     accountName: "Ethereum 3",
@@ -645,13 +639,6 @@ export class Account {
     accountName: "SEI Network (EVM) 2",
     index: 1,
     accountPath: "44'/60'/1'/0/0",
-  });
-
-  static readonly EMPTY = new Account({
-    currency: Currency.BTC,
-    accountName: "Empty",
-    index: 0,
-    accountPath: "",
   });
 }
 
