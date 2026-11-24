@@ -1,7 +1,7 @@
 import React from "react";
 import {
   BottomSheetHeader,
-  BottomSheetView,
+  BottomSheetScrollView,
   Pressable,
   SelectList,
   SelectListContent,
@@ -28,7 +28,10 @@ function SelectSheetContent({ title, value, items, onValueChange }: SelectSheetC
   const bottomInset = useBottomSheetBottomInset();
 
   return (
-    <BottomSheetView style={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}>
+    <BottomSheetScrollView
+      contentContainerStyle={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}
+      showsVerticalScrollIndicator={false}
+    >
       <BottomSheetHeader density="expanded" title={title} />
       <SelectList items={items} value={value} onValueChange={onValueChange}>
         <SelectListContent
@@ -41,7 +44,7 @@ function SelectSheetContent({ title, value, items, onValueChange }: SelectSheetC
           )}
         />
       </SelectList>
-    </BottomSheetView>
+    </BottomSheetScrollView>
   );
 }
 
@@ -64,7 +67,12 @@ export function SettingsRowSelect({ trailing, rowTitle, disabled }: SettingsRowS
         </Text>
         <ChevronDown size={20} color="muted" />
       </Pressable>
-      <QueuedBottomSheet isRequestingToBeOpened={isOpen} onClose={close} enableDynamicSizing>
+      <QueuedBottomSheet
+        isRequestingToBeOpened={isOpen}
+        onClose={close}
+        enableDynamicSizing
+        contentHasBottomSpace
+      >
         {isOpen ? (
           <SelectSheetContent
             title={rowTitle}
