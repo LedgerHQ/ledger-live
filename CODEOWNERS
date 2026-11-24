@@ -276,6 +276,8 @@ domain/entity/market-performers/                            @ledgerhq/wallet-xp
 domain/api/market-performers/                               @ledgerhq/wallet-xp
 domain/entity/market-chart/                              @ledgerhq/wallet-xp
 domain/api/market-chart/                                 @ledgerhq/wallet-xp
+domain/entity/market-index-global/                       @ledgerhq/wallet-xp
+domain/api/market-index-global/                          @ledgerhq/wallet-xp
 features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
 
 ### ... portfolio service => @ledgerhq/wallet-xp ... ###
