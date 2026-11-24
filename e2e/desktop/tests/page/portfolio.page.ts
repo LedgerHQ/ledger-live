@@ -7,6 +7,8 @@ import { CryptoAddressesBanner } from "tests/component/portfolio/cryptoAddresses
 import { AssetsView } from "tests/component/portfolio/assetsView";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import type { SoftExpectMatcher } from "tests/utils/softExpect";
+import { ModularDialog } from "tests/page/dialog/modular.dialog";
+import { ModularScanAccountsDrawer } from "tests/page/drawer/modular.scan.accounts.drawer";
 
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
 type ServiceEntryPoint = "perps" | "borrow" | "predictions";
@@ -37,6 +39,8 @@ export class PortfolioPage extends AppPage {
   );
   public readonly cryptoAddressesBanner = new CryptoAddressesBanner(this.page);
   public readonly assetsView = new AssetsView(this.page);
+  private readonly modularDialog = new ModularDialog(this.page);
+  private readonly scanAccountsDrawer = new ModularScanAccountsDrawer(this.page);
   private readonly addAccountCta = this.cryptoAddressesBanner.addAccountCTA;
   private readonly noDeviceTitle = this.page.getByTestId("no-device-title");
 
@@ -80,6 +84,17 @@ export class PortfolioPage extends AppPage {
   @step("Click add account button")
   async clickAddAccountButton() {
     await this.addAccountCta.click();
+  }
+
+  /** Adds the first account the device finds for `currency`, through the modular dialog. */
+  @step("Add $0 account")
+  async addAccount(currency: Currency) {
+    await this.clickAddAccountButton();
+    await this.modularDialog.validateItems();
+    await this.modularDialog.selectAssetByTicker(currency);
+    await this.modularDialog.selectNetwork(currency);
+    await this.scanAccountsDrawer.selectFirstAccount();
+    await this.scanAccountsDrawer.clickCloseButton();
   }
 
   private async openHistoryPage() {

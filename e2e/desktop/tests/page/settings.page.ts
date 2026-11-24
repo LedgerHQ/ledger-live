@@ -4,10 +4,11 @@ import { expect } from "@playwright/test";
 import axios from "axios";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
-import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
-import { getSavedSettings } from "tests/utils/userdata";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { MainNavigationPage } from "tests/page/mainNavigation.page";
 
 export class SettingsPage extends AppPage {
+  private readonly mainNavigation = new MainNavigationPage(this.page);
   private static readonly EXPORT_LOGS_SOURCE_PATH = path.resolve("./ledgerwallet-logs.txt");
   private static readonly EXPORT_LOGS_ARTIFACT_PATH = path.resolve(
     __dirname,
@@ -68,24 +69,26 @@ export class SettingsPage extends AppPage {
 
   @step("Change counter value to $0")
   async changeCounterValue(currency: string) {
+    await this.selectCounterValue(currency);
+  }
+
+  /** Opens Settings, searches the counter value and checks `label` is selected. */
+  @step("Change counter value to $1")
+  async openAndChangeCounterValue(search: string, label: string) {
+    await this.mainNavigation.openSettings();
+    await this.selectCounterValue(search);
+    await this.expectCounterValue(label);
+  }
+
+  private async selectCounterValue(search: string) {
     await this.counterValueSelector.click();
-    await this.counterValueSearchBar.fill(currency);
+    await this.counterValueSearchBar.fill(search);
     await this.counterValueDropdownChoiceEuro.click();
   }
 
   @step("Expect counter value to be $0")
   async expectCounterValue(currency: string) {
     await expect(this.counterValueSelector).toHaveText(currency);
-  }
-
-  @step("Expect app.json to hold the changed settings")
-  async expectSettingsPersistedInAppJson(userdataFile: string, settings: Record<string, unknown>) {
-    await expect
-      .poll(() => getSavedSettings(userdataFile), {
-        timeout: TIMEOUT.medium,
-        intervals: [INTERVAL.tick],
-      })
-      .toMatchObject(settings);
   }
 
   @step("Change language to $0")
@@ -103,6 +106,18 @@ export class SettingsPage extends AppPage {
 
   @step("Change theme to $0")
   async changeTheme(themeLabel: string) {
+    await this.selectTheme(themeLabel);
+  }
+
+  /** Opens Settings, changes the theme and checks it is selected. */
+  @step("Change theme to $0")
+  async openAndChangeTheme(themeLabel: string) {
+    await this.mainNavigation.openSettings();
+    await this.selectTheme(themeLabel);
+    await this.expectThemeSelected(themeLabel);
+  }
+
+  private async selectTheme(themeLabel: string) {
     await expect(this.themeSelector).toBeVisible();
     await this.themeSelector.click();
     const option = this.selectOptions.filter({ hasText: themeLabel });

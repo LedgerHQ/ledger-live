@@ -50,21 +50,6 @@ export async function getUserdataUserId(userdataFile?: string): Promise<string> 
   return parsed.data?.identities?.userId || parsed.data?.user?.id || "";
 }
 
-/** The settings saved in app.json, or undefined while the app is still writing it. */
-export async function getSavedSettings(
-  userdataFile: string,
-): Promise<Record<string, unknown> | undefined> {
-  try {
-    const parsed: { data?: { settings?: Record<string, unknown> } } =
-      await getUserdata(userdataFile);
-    return parsed.data?.settings;
-  } catch (e) {
-    const code = e instanceof Error && "code" in e ? e.code : undefined;
-    if (code !== "ENOENT" && !(e instanceof SyntaxError)) throw e;
-    return undefined;
-  }
-}
-
 /** A fresh install has not seen the analytics opt-in screen, so Get started opens it. */
 export const FRESH_INSTALL_SETTINGS = { shareAnalytics: false, hasSeenAnalyticsOptInPrompt: false };
 
