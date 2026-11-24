@@ -47,4 +47,35 @@ describe("SettingsRow", () => {
 
     expect(screen.queryByTestId("hidden-row")).toBeNull();
   });
+
+  it("names the toggle after the row", () => {
+    render(
+      <SettingsRow
+        title="Hide balance"
+        trailing={{ type: "toggle", value: false, onToggle: jest.fn() }}
+        testID="hide-balance"
+      />,
+    );
+
+    expect(screen.getByTestId("hide-balance-toggle")).toHaveProp(
+      "accessibilityLabel",
+      "Hide balance",
+    );
+  });
+
+  it("keeps the description link inert in a disabled row", async () => {
+    const user = userEvent.setup();
+    const onSelectLink = jest.fn();
+    render(
+      <SettingsRow
+        title="Analytics"
+        descriptionLink={{ label: "Learn more", onSelect: onSelectLink }}
+        disabled
+      />,
+    );
+
+    await user.press(screen.getByText("Learn more"));
+
+    expect(onSelectLink).not.toHaveBeenCalled();
+  });
 });

@@ -6,6 +6,7 @@ import type { SettingsRowTrailingProps } from "./SettingsRowTrailing.types";
 
 export function SettingsRowTrailing({
   trailing,
+  rowTitle,
   disabled,
   toggleTestID,
 }: SettingsRowTrailingProps) {
@@ -20,6 +21,7 @@ export function SettingsRowTrailing({
           checked={trailing.value}
           onCheckedChange={trailing.onToggle}
           disabled={disabled}
+          accessibilityLabel={rowTitle}
           testID={toggleTestID}
         />
       );
