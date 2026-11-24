@@ -116,7 +116,10 @@ export const deviceOnboardingMachine = setup({
         deviceModelId: context.deviceModelId,
         isOnboarded: context.isOnboarded,
       }),
-    seedSetupNotHosted: ({ context }) => !context.isOnboarded && !context.hostsSeedSetup,
+    unseededNotConnected: ({ context }) => !context.isOnboarded && !context.connectUnseededDevice,
+    // On entry only: a device seeded during this flow must not fall back in the middle of it.
+    seededNotConnected: ({ context }) =>
+      context.onboardedOnEntry === true && !context.connectSeededDevice,
     deviceNotGenuine: ({ context }) => currentVerdict(context)?.isGenuine === false,
     awaitsStart: ({ context }) => !context.hasStarted,
     canShowEarlyCheck: ({ context }) =>
@@ -224,7 +227,8 @@ export const deviceOnboardingMachine = setup({
       always: [
         { guard: "deviceNotGenuine", target: "checks.notGenuineSupport" },
         { guard: "requiresLegacyFlow", target: "legacyFallback" },
-        { guard: "seedSetupNotHosted", target: "legacyFallback" },
+        { guard: "unseededNotConnected", target: "legacyFallback" },
+        { guard: "seededNotConnected", target: "legacyFallback" },
         { guard: "awaitsStart", target: "awaitingStart" },
         { guard: "canShowEarlyCheck", target: "checks.enteringEarlyCheckScreen" },
         { target: "checks.checksIdle" },

@@ -18,7 +18,9 @@ export type ExitOutput = { reason: DeviceOnboardingExitReason };
 export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingContext {
   return {
     ...input,
-    hostsSeedSetup: input.hostsSeedSetup ?? false,
+    connectUnseededDevice: input.connectUnseededDevice ?? false,
+    // A caller that does not pass it keeps the seeded checks, as before this flag existed.
+    connectSeededDevice: input.connectSeededDevice ?? true,
     lastDeviceState: null,
     firmwareVersion: null,
     hasStarted: false,

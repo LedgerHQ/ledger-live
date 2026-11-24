@@ -79,8 +79,9 @@ export async function launch(
   overrides: Partial<{
     deviceModelId: DeviceModelId;
     offerSync: boolean;
-    hostsSeedSetup: boolean;
-    omitHostsSeedSetup: boolean;
+    connectUnseededDevice: boolean;
+    omitConnectUnseededDevice: boolean;
+    connectSeededDevice: boolean;
     leaveOnboarding: (reason: string, context: DeviceOnboardingContext) => void;
     sessionSettleMs: number;
   }> = {},
@@ -102,7 +103,10 @@ export async function launch(
       deviceId: "device",
       deviceModelId: overrides.deviceModelId ?? DeviceModelId.FLEX,
       offerSync: overrides.offerSync ?? false,
-      ...(overrides.omitHostsSeedSetup ? {} : { hostsSeedSetup: overrides.hostsSeedSetup ?? true }),
+      ...(overrides.omitConnectUnseededDevice
+        ? {}
+        : { connectUnseededDevice: overrides.connectUnseededDevice ?? true }),
+      connectSeededDevice: overrides.connectSeededDevice ?? true,
     },
   }).start();
 
