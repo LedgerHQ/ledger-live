@@ -9,25 +9,26 @@ import { closeApp, launchApp, waitForAppReady } from "tests/utils/electronUtils"
 import { getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
 import { safeAppendFile } from "tests/utils/fileUtils";
 import {
-  findPreviousNightlyVersion,
-  installNightlyBuild,
-  resolveNightlyVersion,
-  type NightlyBuild,
-} from "tests/utils/nightlyBuildUtils";
+  findPreviousVersion,
+  installPublishedBuild,
+  localChannel,
+  resolvePublishedVersion,
+  type PublishedBuild,
+} from "tests/utils/publishedBuildUtils";
 
 /**
- * A nightly's updater reads this feed (only non-production builds do). A closed port fails the
- * check as if offline, so the nightly does not install a newer one over the cached build on quit.
+ * Nightlies and prereleases read this update feed (production builds ignore it). A closed port
+ * fails the check as if offline, so the app does not install a newer build over the cached one on quit.
  */
-const NIGHTLY_APP_ENV = { UPDATE_FEED_URL: "http://127.0.0.1:1" };
+const PUBLISHED_APP_ENV = { UPDATE_FEED_URL: "http://127.0.0.1:1" };
 
 type LaunchOptions = Omit<Parameters<typeof launchApp>[0], "executablePath">;
 type RunningApp = { electronApp: ElectronApplication; page: Page };
 
 type AppUpgradeOptions = {
-  from: NightlyBuild;
+  from: PublishedBuild;
   /** Undefined for the local build under test. */
-  to: NightlyBuild | undefined;
+  to: PublishedBuild | undefined;
   launchOptions: LaunchOptions;
   testInfo: TestInfo;
 };
@@ -36,8 +37,8 @@ type AppUpgradeOptions = {
 export class AppUpgrade {
   readonly fromVersion: string;
   readonly toVersion: string;
-  private readonly from: NightlyBuild;
-  private readonly to: NightlyBuild | undefined;
+  private readonly from: PublishedBuild;
+  private readonly to: PublishedBuild | undefined;
   private readonly launchOptions: LaunchOptions;
   private readonly testInfo: TestInfo;
   private running: RunningApp | undefined;
@@ -90,10 +91,10 @@ export class AppUpgrade {
     if (running) await closeApp(running.electronApp, this.launchOptions.userdataDestinationPath);
   }
 
-  private async launch(logName: string, build: NightlyBuild | undefined): Promise<Application> {
+  private async launch(logName: string, build: PublishedBuild | undefined): Promise<Application> {
     const electronApp = await launchApp({
       ...this.launchOptions,
-      env: { ...this.launchOptions.env, ...(build && NIGHTLY_APP_ENV) },
+      env: { ...this.launchOptions.env, ...(build && PUBLISHED_APP_ENV) },
       executablePath: build?.executablePath,
     });
     const page = await electronApp.firstWindow();
@@ -115,30 +116,33 @@ export class AppUpgrade {
 }
 
 /**
- * `previous` is the nightly before `to` (n-1 for n), or the latest nightly when `to` is the local
- * build. Anything else is resolved as `latest` or an exact version.
+ * `previous` is the version before `to` on its channel (n-1 for n), or the latest one of the
+ * branch's channel when `to` is the local build. Anything else is a channel or an exact version.
  */
-async function resolveUpgradeFromVersion(requested: string, to: NightlyBuild | undefined) {
-  if (requested !== "previous") return resolveNightlyVersion(requested);
-  return to ? findPreviousNightlyVersion(to.version) : resolveNightlyVersion("latest");
+async function resolveUpgradeFromVersion(requested: string, to: PublishedBuild | undefined) {
+  if (requested !== "previous") return resolvePublishedVersion(requested);
+  return to ? findPreviousVersion(to.version) : resolvePublishedVersion(localChannel());
 }
 
 type AppUpgradeFixtures = {
-  /** `E2E_UPGRADE_TO_VERSION`: the latest nightly by default, or the local build for `local`. */
-  upgradeTo: NightlyBuild | undefined;
-  /** `E2E_UPGRADE_FROM_VERSION`: the nightly before `upgradeTo` by default. */
-  upgradeFrom: NightlyBuild;
+  /**
+   * `E2E_UPGRADE_TO_VERSION`: by default the latest build of the branch's channel (`next` on the
+   * release branch, `hotfix` on the hotfix branch, `nightly` otherwise), or the local build for `local`.
+   */
+  upgradeTo: PublishedBuild | undefined;
+  /** `E2E_UPGRADE_FROM_VERSION`: the version before `upgradeTo` on its channel by default. */
+  upgradeFrom: PublishedBuild;
   appUpgrade: AppUpgrade;
 };
 
 export const test = base.extend<AppUpgradeFixtures>({
   upgradeTo: [
     async ({}, use) => {
-      const requested = process.env.E2E_UPGRADE_TO_VERSION || "latest";
+      const requested = process.env.E2E_UPGRADE_TO_VERSION || localChannel();
       await use(
         requested === "local"
           ? undefined
-          : await installNightlyBuild(await resolveNightlyVersion(requested)),
+          : await installPublishedBuild(await resolvePublishedVersion(requested)),
       );
     },
     { timeout: TIMEOUT.xxxxlarge },
@@ -147,7 +151,7 @@ export const test = base.extend<AppUpgradeFixtures>({
   upgradeFrom: [
     async ({ upgradeTo }, use) => {
       const requested = process.env.E2E_UPGRADE_FROM_VERSION || "previous";
-      await use(await installNightlyBuild(await resolveUpgradeFromVersion(requested, upgradeTo)));
+      await use(await installPublishedBuild(await resolveUpgradeFromVersion(requested, upgradeTo)));
     },
     { timeout: TIMEOUT.xxxxlarge },
   ],

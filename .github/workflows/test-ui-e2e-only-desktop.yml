@@ -111,12 +111,12 @@ on:
         required: false
         type: number
       upgrade_from_version:
-        description: "App upgrade test: nightly to start from (e.g. 4.30.0-nightly.20261121020412) or latest. Blank: the nightly before the one it upgrades to"
+        description: "App upgrade test: version to start from (e.g. 4.30.0-next.0), or nightly, next or hotfix for the latest one. Blank: the version before the one it upgrades to"
         required: false
         type: string
         default: ""
       upgrade_to_version:
-        description: "App upgrade test: nightly to upgrade to, or local for the build under test. Blank: the latest nightly"
+        description: "App upgrade test: version to upgrade to, nightly, next, hotfix, or local for the build under test. Blank: the latest next on release, hotfix on hotfix, nightly otherwise"
         required: false
         type: string
         default: ""
@@ -194,12 +194,12 @@ on:
         required: false
         type: number
       upgrade_from_version:
-        description: "App upgrade test: nightly to start from (e.g. 4.30.0-nightly.20261121020412) or latest. Blank: the nightly before the one it upgrades to"
+        description: "App upgrade test: version to start from (e.g. 4.30.0-next.0), or nightly, next or hotfix for the latest one. Blank: the version before the one it upgrades to"
         required: false
         type: string
         default: ""
       upgrade_to_version:
-        description: "App upgrade test: nightly to upgrade to, or local for the build under test. Blank: the latest nightly"
+        description: "App upgrade test: version to upgrade to, nightly, next, hotfix, or local for the build under test. Blank: the latest next on release, hotfix on hotfix, nightly otherwise"
         required: false
         type: string
         default: ""
@@ -395,7 +395,7 @@ jobs:
             echo "- **Feature Flags:** $FEATURE_FLAGS"
             echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
             echo "- **Repeat each:** $REPEAT_EACH"
-            echo "- **App upgrade:** ${UPGRADE_FROM_VERSION:-previous nightly} -> ${UPGRADE_TO_VERSION:-latest nightly}"
+            echo "- **App upgrade:** ${UPGRADE_FROM_VERSION:-previous} -> ${UPGRADE_TO_VERSION:-latest of the branch channel}"
           } >> "$GITHUB_STEP_SUMMARY"
         shell: bash
 
@@ -424,7 +424,8 @@ jobs:
       REMOTE_SPECULOS: "true"
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device != 'nanoS' && 'latest' || 'speculos-38ccc68068db-coinapps-85c7e5c' }}
       E2E_PRIMARY_DEVICE: ${{ matrix.is_primary }}
-      # Empty: the app upgrade test goes from the previous nightly to the latest one.
+      # Empty: the app upgrade test goes from the previous build to the latest one of the branch's
+      # channel: next on release, hotfix on hotfix, nightly otherwise.
       E2E_UPGRADE_FROM_VERSION: ${{ inputs.upgrade_from_version }}
       E2E_UPGRADE_TO_VERSION: ${{ inputs.upgrade_to_version }}
       cache-bucket: ll-nx-cache
@@ -683,7 +684,8 @@ jobs:
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ needs.prepare-devices.outputs.device_1 != 'nanoS' && 'latest' || 'speculos-38ccc68068db-coinapps-85c7e5c' }}
       E2E_BROADCAST_ENABLED: false
       E2E_PRIMARY_DEVICE: false
-      # Empty: the app upgrade test goes from the previous nightly to the latest one.
+      # Empty: the app upgrade test goes from the previous build to the latest one of the branch's
+      # channel: next on release, hotfix on hotfix, nightly otherwise.
       E2E_UPGRADE_FROM_VERSION: ${{ inputs.upgrade_from_version }}
       E2E_UPGRADE_TO_VERSION: ${{ inputs.upgrade_to_version }}
       cache-bucket: ll-nx-cache

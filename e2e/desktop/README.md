@@ -108,27 +108,43 @@ the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed 
 
 ## App upgrade
 
-`tests/specs/app.upgrade.spec.ts` upgrades between two published nightlies: from the previous one
-(n-1) to the latest one (n). It adds an account and changes the counter value and theme on n-1, then
-opens the same profile with n and checks all three are kept. It runs on Linux and macOS.
+`tests/specs/app.upgrade.spec.ts` upgrades between the two latest published builds of the branch's
+channel: from the previous one (n-1) to the latest one (n). It adds an account and changes the
+counter value and theme on n-1, then opens the same profile with n and checks all three are kept.
+It runs on Linux and macOS.
 
-It reads the latest nightly from the `download.live.ledger.com` update manifest. That manifest names
-no earlier nightly, so it finds n-1 from the public runs of the nightly workflow
-(`release-final-nightly.yml`): each run stamps its version with the time its `snapshot versioning`
-step runs, and the first earlier version with a published checksum is n-1. Nights without a nightly
-(Sunday and Monday) and runs whose desktop build was not published are skipped.
+The channel comes from the app version of the branch under test:
 
-Each nightly is checked against its published SHA-512 and cached under
-`tests/artifacts/nightly-builds/`. After each launch, the test checks the app reports the expected
-version. The report shows both versions in its step names.
+| Branch               | App version      | Channel   | Example                                                            |
+| -------------------- | ---------------- | --------- | ------------------------------------------------------------------ |
+| `release`            | `X.Y.Z-next.N`   | `next`    | `4.30.0-next.0` -> `4.30.0-next.1`                                 |
+| `hotfix`             | `X.Y.Z-hotfix.N` | `hotfix`  | `4.26.0-next.2` -> `4.26.1-hotfix.0`                               |
+| `develop` and others | `X.Y.Z`          | `nightly` | `4.30.0-nightly.20261121020412` -> `4.30.0-nightly.20261124020210` |
+
+Production builds are a separate app, so a prerelease never upgrades from one.
+
+The latest build of a channel comes from its `download.live.ledger.com` update manifest
+(`next-mac.yml`, `nightly-linux.yml`…). Neither the manifests nor the buckets list earlier builds,
+so n-1 is found by checking which versions have a published checksum:
+
+- **Prereleases** are numbered from 0 for each version: n-1 is the previous number. For the first
+  prerelease of a version, it is the last prerelease of the version before, on the same channel or
+  else on the other one: the first hotfix starts from the release candidate it fixes.
+- **Nightlies** are stamped with their build time: n-1 comes from the public runs of the nightly
+  workflow (`release-final-nightly.yml`), from the time its `snapshot versioning` step ran. Nights
+  without a nightly (Sunday and Monday) are skipped.
+
+Builds that were never published, such as failed ones, are skipped. Each build is checked against
+its published SHA-512 and cached under `tests/artifacts/published-builds/`. After each launch, the
+test checks the app reports the expected version. The report shows both versions in its step names.
 
 Two environment variables, or the `upgrade_from_version` and `upgrade_to_version` inputs of the
 desktop E2E workflow, pick other versions:
 
-- `E2E_UPGRADE_TO_VERSION`: `latest` (default), an exact version (`4.30.0-nightly.20261124020210`),
-  or `local` for the build under test.
-- `E2E_UPGRADE_FROM_VERSION`: `previous` (default: the nightly before the one it upgrades to, or the
-  latest one when it upgrades to `local`), `latest`, or an exact version.
+- `E2E_UPGRADE_TO_VERSION`: a channel (`nightly`, `next` or `hotfix`) for its latest build, an exact
+  version (`4.30.0-next.1`), or `local` for the build under test. Default: the branch's channel.
+- `E2E_UPGRADE_FROM_VERSION`: `previous` (default: the version before the one it upgrades to, or the
+  latest build of the branch's channel when it upgrades to `local`), a channel, or an exact version.
 
 ```bash
 E2E_UPGRADE_TO_VERSION=local pnpm e2e:desktop test:playwright app.upgrade
