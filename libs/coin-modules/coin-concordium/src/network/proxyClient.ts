@@ -143,8 +143,9 @@ export function getBlocksAtHeight(
 
 /**
  * Get all transaction summaries (with structured, tagged events) for a block.
- * GET /v0/blockTransactionEvents/{blockHash}
- * Returns an empty array for blocks with no transactions.
+ * GET /v0/blockTransactionEvents/{blockHash}?canonicalAddresses=y
+ * Returns an empty array for blocks with no transactions. Each summary maps its
+ * account addresses to their canonical address (`canonicalAddresses`).
  */
 export function getBlockTransactionEvents(
   config: ConcordiumCoinConfig,
@@ -155,6 +156,7 @@ export function getBlockTransactionEvents(
     client.request<BlockTransactionEventsResponse>({
       method: "GET",
       url: `/v0/blockTransactionEvents/${blockHash}`,
+      params: { canonicalAddresses: "y" },
     }),
   );
 }

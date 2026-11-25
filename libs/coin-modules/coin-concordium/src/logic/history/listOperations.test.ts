@@ -83,7 +83,7 @@ describe("parseTransaction", () => {
     });
   });
 
-  it("should keep a transfer received on another alias of the account", () => {
+  it("should keep a transfer received on another alias of the account, naming it by the queried address", () => {
     const { cost: _omitted, ...withoutCost } = baseTx;
     const tx: WalletProxyTransaction = {
       ...withoutCost,
@@ -101,13 +101,13 @@ describe("parseTransaction", () => {
     expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
       type: "IN",
       sender: VALID_ADDRESS_2,
-      recipient: VALID_ADDRESS_ALIAS,
+      recipient: VALID_ADDRESS,
       amount: "2000000",
       value: "2000000",
     });
   });
 
-  it("should keep a transfer sent from another alias of the account", () => {
+  it("should keep a transfer sent from another alias of the account, naming it by the queried address", () => {
     const tx: WalletProxyTransaction = {
       ...baseTx,
       details: {
@@ -121,7 +121,7 @@ describe("parseTransaction", () => {
 
     expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
       type: "OUT",
-      sender: VALID_ADDRESS_ALIAS,
+      sender: VALID_ADDRESS,
       recipient: VALID_ADDRESS_2,
       amount: "1000000",
       value: "1000500",
@@ -144,8 +144,8 @@ describe("parseTransaction", () => {
 
     expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
       type: "OUT",
-      sender: VALID_ADDRESS_ALIAS,
-      recipient: VALID_ADDRESS_ALIAS_2,
+      sender: VALID_ADDRESS,
+      recipient: VALID_ADDRESS,
       amount: "0",
       fee: "500",
       value: "500",
@@ -169,6 +169,27 @@ describe("parseTransaction", () => {
       type: "OUT",
       amount: "0",
       value: "500",
+    });
+  });
+
+  it("names a sponsor that is another alias of the account by the queried address", () => {
+    const tx: WalletProxyTransaction = {
+      ...baseTx,
+      origin: { type: "account", address: VALID_ADDRESS_2 },
+      sponsor: { sponsor: VALID_ADDRESS_ALIAS, cost: "500" },
+      details: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS_2,
+        transferDestination: VALID_ADDRESS_ALIAS_2,
+        transferAmount: "1000000",
+      },
+    } as WalletProxyTransaction;
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "IN",
+      recipient: VALID_ADDRESS,
+      feesPayer: VALID_ADDRESS,
     });
   });
 
@@ -487,7 +508,7 @@ describe("parseTransaction, PLT", () => {
 
     expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
       type: "IN",
-      recipient: VALID_ADDRESS_ALIAS,
+      recipient: VALID_ADDRESS,
       value: "20000000",
       tokenId: "trUSDT",
     });
@@ -505,8 +526,8 @@ describe("parseTransaction, PLT", () => {
 
     expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
       type: "OUT",
-      sender: VALID_ADDRESS_ALIAS,
-      recipient: VALID_ADDRESS_ALIAS_2,
+      sender: VALID_ADDRESS,
+      recipient: VALID_ADDRESS,
       amount: "0",
       value: "0",
       fee: "595400",

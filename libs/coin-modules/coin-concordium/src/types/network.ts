@@ -115,6 +115,12 @@ export interface BlockTransactionSummary {
   index?: number;
   type?: { type: string; contents?: string };
   result: BlockTransactionResult;
+  /**
+   * With `canonicalAddresses=y`: each account address in the summary (often an
+   * alias) mapped to the canonical address of its account. An address with no
+   * account in the block (e.g. in a reject reason) is absent.
+   */
+  canonicalAddresses?: Record<string, string>;
 }
 
 /**
