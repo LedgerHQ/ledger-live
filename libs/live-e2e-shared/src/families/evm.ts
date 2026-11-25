@@ -233,6 +233,26 @@ export const signTypedMessageNanoS = withDeviceController(
     },
 );
 
+/** The Hyperliquid app reviews an order as "Review message to open long" and signs it as a message. */
+export async function signHyperliquidMessage() {
+  if (isTouchDevice()) {
+    await waitFor(DeviceLabels.REVIEW_MESSAGE);
+    await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
+    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+    return;
+  }
+  await signHyperliquidMessageButtonDevice();
+}
+
+const signHyperliquidMessageButtonDevice = withDeviceController(
+  ({ getButtonsController }) =>
+    async () => {
+      await waitFor(DeviceLabels.REVIEW_MESSAGE);
+      await pressUntilTextFound(DeviceLabels.SIGN_TYPED_MESSAGE);
+      await getButtonsController().both();
+    },
+);
+
 export async function signTypedMessage() {
   if (isTouchDevice()) {
     return signTypedMessageTouchDevices();

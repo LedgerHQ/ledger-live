@@ -50,6 +50,7 @@ export enum DeviceLabels {
   REVIEW_TRANSACTION = "Review transaction",
   REVIEW_TRANSACTION_TO = "Review transaction to",
   REVIEW_TYPED_MESSAGE = "Review typed",
+  REVIEW_MESSAGE = "Review message",
   SEND = "Send",
   SEND_TO_ADDRESS = "Send to address",
   SEND_TO_ADDRESS_2 = "Send to address (2/2)",

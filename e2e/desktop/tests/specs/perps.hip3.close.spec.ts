@@ -12,6 +12,7 @@ import {
   closeHip3PositionIfOpen,
   openHip3Position,
   openPerpsFromPortfolio,
+  PERPS_REAL_BROADCAST_ENV,
 } from "tests/utils/perpsPositionFlows";
 
 const account = Account.HYPERCORE_1;
@@ -32,26 +33,24 @@ test.describe("Perps HIP-3 close position", { lock: lock.names }, () => {
       entries: getPerpsLiveAppStorage(account, { hip3: true }),
     },
     featureFlags: FF_PERPS_DESKTOP,
-    // Real broadcast, overriding any host DISABLE_TRANSACTION_BROADCAST value.
-    env: { DISABLE_TRANSACTION_BROADCAST: "0" },
+    env: PERPS_REAL_BROADCAST_ENV,
   });
 
-  test.beforeEach(async ({ app }) => {
+  test.beforeEach(async ({ app, speculos }) => {
     await openPerpsFromPortfolio(app);
-    await closeHip3PositionIfOpen(app);
-    await openHip3Position(app, { side: "long" });
+    await openHip3Position(app, speculos.relaunch, { side: "long" });
   });
 
   // Keeps the real position from staying open if the close fails.
-  test.afterEach(async ({ app }) => {
-    await closeHip3PositionIfOpen(app);
+  test.afterEach(async ({ app, speculos }) => {
+    await closeHip3PositionIfOpen(app, speculos.relaunch);
   });
 
   test(
     "Close a HIP-3 position",
     { tag: buildTags({ currencyId: account.currency.id, skipLNS: true }) },
-    async ({ app }) => {
-      await closeHip3Position(app);
+    async ({ app, speculos }) => {
+      await closeHip3Position(app, speculos.relaunch);
     },
   );
 });

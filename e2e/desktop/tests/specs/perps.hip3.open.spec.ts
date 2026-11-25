@@ -11,6 +11,7 @@ import {
   closeHip3PositionIfOpen,
   openHip3Position,
   openPerpsFromPortfolio,
+  PERPS_REAL_BROADCAST_ENV,
 } from "tests/utils/perpsPositionFlows";
 import type { PerpsOrderSide } from "tests/page/perps.order.page";
 
@@ -34,18 +35,16 @@ test.describe("Perps HIP-3 open position", { lock: lock.names }, () => {
       entries: getPerpsLiveAppStorage(account, { hip3: true }),
     },
     featureFlags: FF_PERPS_DESKTOP,
-    // Real broadcast, overriding any host DISABLE_TRANSACTION_BROADCAST value.
-    env: { DISABLE_TRANSACTION_BROADCAST: "0" },
+    env: PERPS_REAL_BROADCAST_ENV,
   });
 
   test.beforeEach(async ({ app }) => {
     await openPerpsFromPortfolio(app);
-    await closeHip3PositionIfOpen(app);
   });
 
   // The position is a real one, so it is closed even when the test fails.
-  test.afterEach(async ({ app }) => {
-    await closeHip3PositionIfOpen(app);
+  test.afterEach(async ({ app, speculos }) => {
+    await closeHip3PositionIfOpen(app, speculos.relaunch);
   });
 
   for (const side of sides) {
@@ -54,8 +53,8 @@ test.describe("Perps HIP-3 open position", { lock: lock.names }, () => {
       {
         tag: buildTags({ currencyId: account.currency.id, skipLNS: true }),
       },
-      async ({ app }) => {
-        await openHip3Position(app, { side });
+      async ({ app, speculos }) => {
+        await openHip3Position(app, speculos.relaunch, { side });
       },
     );
   }

@@ -20,6 +20,8 @@ export class AppInfos {
 
   static readonly ETHEREUM_CLASSIC = new AppInfos("Ethereum Classic");
 
+  static readonly HYPERLIQUID = new AppInfos("Hyperliquid");
+
   static readonly SOLANA = new AppInfos("Solana");
 
   static readonly POLKADOT = new AppInfos("Polkadot");
