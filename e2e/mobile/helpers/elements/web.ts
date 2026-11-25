@@ -193,7 +193,7 @@ export class WebHandle implements ElementHandle {
   /** Waits for the element, reads its text, then compares it as the options say: equal by default. */
   async expectText(text: string, options: ExpectTextOptions = {}): Promise<void> {
     const actualText = await this.getText();
-    compareText(actualText, text, options);
+    compareText({ actual: actualText, expected: text, ...options });
   }
 
   /** Waits for the element, reads its text, then asserts it matches `pattern`. */
@@ -204,7 +204,7 @@ export class WebHandle implements ElementHandle {
   /** Waits for the input, reads its `value`, then compares it as the options say: equal by default. */
   async expectValue(text: string, options: ExpectTextOptions = {}): Promise<void> {
     const actualValue = await this.getValue();
-    compareText(actualValue, text, options);
+    compareText({ actual: actualValue, expected: text, ...options });
   }
 
   /** Waits for the input, reads its `value`, then asserts it matches `pattern`. */

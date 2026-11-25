@@ -125,7 +125,7 @@ export class Application {
     const userdataPath = getUserdataPath(userdataSpeculos);
     fs.copyFileSync(getUserdataPath(options.userdata || "skip-onboarding"), userdataPath);
     try {
-      await InitializationManager.initialize(options, userdataPath, userdataSpeculos);
+      await InitializationManager.initialize({ ...options, userdataPath, userdataSpeculos });
     } finally {
       fs.unlinkSync(userdataPath);
     }

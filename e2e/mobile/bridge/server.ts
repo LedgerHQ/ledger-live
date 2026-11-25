@@ -199,7 +199,7 @@ export function setFeatureFlag(flag: OverrideFeatureFlagPayload) {
 }
 
 export async function importContacts(contacts: Contact[]) {
-  await fetchData({ type: "importContacts", id: uniqueId(), payload: contacts });
+  await fetchData({ message: { type: "importContacts", id: uniqueId(), payload: contacts } });
 }
 
 /** Replaces the app's coin-config overrides (deep-merged over its default and remote config). */
@@ -209,9 +209,7 @@ export async function overrideLiveConfig(payload: Record<string, unknown>) {
 
 export async function importLocalManifests(manifests: LiveAppManifest[]) {
   const importedIds = await fetchData({
-    type: "importLocalManifests",
-    id: uniqueId(),
-    payload: manifests,
+    message: { type: "importLocalManifests", id: uniqueId(), payload: manifests },
   });
   if (!importedIds) {
     throw new Error(
@@ -232,39 +230,52 @@ export async function swapSetup() {
   if (!process.env.SWAP_API_BASE) {
     console.warn("[swapSetup] SWAP_API_BASE env var is not set, will use client-side default");
   }
-  return fetchData({ type: "swapSetup", id: uniqueId(), swapApiBase: process.env.SWAP_API_BASE });
+  return fetchData({
+    message: { type: "swapSetup", id: uniqueId(), swapApiBase: process.env.SWAP_API_BASE },
+  });
 }
 
 export async function waitSwapReady() {
-  return fetchData({ type: "waitSwapReady", id: uniqueId() }, TIMEOUT.xlarge, "waitSwapReady");
+  return fetchData({
+    message: { type: "waitSwapReady", id: uniqueId() },
+    timeout: TIMEOUT.xlarge,
+    correlationKey: "waitSwapReady",
+  });
 }
 
 export async function waitEarnReady() {
-  return fetchData({ type: "waitEarnReady", id: uniqueId() }, TIMEOUT.xlarge, "waitEarnReady");
+  return fetchData({
+    message: { type: "waitEarnReady", id: uniqueId() },
+    timeout: TIMEOUT.xlarge,
+    correlationKey: "waitEarnReady",
+  });
 }
 
 export async function getLogs() {
-  return fetchData({ type: "getLogs", id: uniqueId() });
+  return fetchData({ message: { type: "getLogs", id: uniqueId() } });
 }
 
 export async function getFlags() {
-  return fetchData({ type: "getFlags", id: uniqueId() });
+  return fetchData({ message: { type: "getFlags", id: uniqueId() } });
 }
 
 export async function getEnvs() {
-  return fetchData({ type: "getEnvs", id: uniqueId() });
+  return fetchData({ message: { type: "getEnvs", id: uniqueId() } });
 }
 
 /** Last Buy/Sell handoff URL (`goToManifest` + `goToURL`) seen by the app, or "" if none yet. */
 export async function getPtxHandoff() {
-  return fetchData({ type: "getPtxHandoff", id: uniqueId() });
+  return fetchData({ message: { type: "getPtxHandoff", id: uniqueId() } });
 }
 
-async function fetchData(
-  message: MessageData,
-  timeout = BRIDGE_RESPONSE_TIMEOUT,
-  correlationKey: string = message.id,
-): Promise<string> {
+type FetchDataOptions = {
+  message: MessageData;
+  timeout?: number;
+  correlationKey?: string;
+};
+
+async function fetchData(options: FetchDataOptions): Promise<string> {
+  const { message, timeout = BRIDGE_RESPONSE_TIMEOUT, correlationKey = message.id } = options;
   return new Promise<string>(resolve => {
     postMessage(message);
     const timeoutId = setTimeout(() => {
