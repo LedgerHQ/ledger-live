@@ -32,6 +32,10 @@ When a task involves GitHub â€” pull requests, issues, CI checks, or releases â€
 
 Before committing, read the [git-conventions](./.agents/skills/git-conventions/SKILL.md) skill. Before creating or editing a file in `.changeset/`, read the [create-changeset](./.agents/skills/create-changeset/SKILL.md) skill: it decides whether a change needs one and which bump to use.
 
+## Comments
+
+Before adding a comment in any file, YAML and shell included, read the [comments](./.agents/skills/comments/SKILL.md) skill.
+
 ## Validate Before Finishing
 
 Before completing or pushing code changes, run the [validate-changes](./.agents/skills/validate-changes/SKILL.md) skill.
