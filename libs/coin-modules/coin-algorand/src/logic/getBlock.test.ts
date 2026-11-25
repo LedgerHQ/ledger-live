@@ -120,6 +120,7 @@ describe("getBlock", () => {
         ],
         fees: 1000n,
         feesPayer: ALICE,
+        feesAsset: NATIVE,
         details: { txType: "pay" },
       },
     ]);
@@ -268,6 +269,7 @@ describe("getBlock", () => {
         ],
         fees: 1000n,
         feesPayer: ALICE,
+        feesAsset: NATIVE,
         details: { txType: "appl" },
       },
     ]);
@@ -287,6 +289,7 @@ describe("getBlock", () => {
         operations: [],
         fees: 1000n,
         feesPayer: ALICE,
+        feesAsset: NATIVE,
         details: { txType: "keyreg" },
       },
     ]);
@@ -398,6 +401,31 @@ describe("getBlock", () => {
     ]);
   });
 
+  it("points the note of an inner opt-in at its transfer, before its OPT operation", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        id: "APPL",
+        "tx-type": "appl",
+        "inner-txns": [
+          innerTransaction({
+            sender: ALICE,
+            note: "b3B0LWlu",
+            "tx-type": "axfer",
+            "asset-transfer-transaction": assetTransfer({ amount: 0, receiver: ALICE }),
+          }),
+        ],
+      }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    const { operations, details } = transactions[0];
+    expect(details?.innerNotes).toEqual([
+      expect.objectContaining({ from: ALICE, to: ALICE, operationIndex: 0 }),
+    ]);
+    expect(operations.map(({ type }) => type)).toEqual(["transfer", "transfer", "other"]);
+  });
+
   it("gives the note of an inner transfer nested under an inner transaction without note", async () => {
     mockGetBlockTransactions.mockResolvedValue([
       transaction({
@@ -450,11 +478,20 @@ describe("getBlock", () => {
     const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
 
     const memo = { type: "string", kind: "note", value: "cm9vdA==" };
-    expect(transactions[0].details?.participationRewards).toEqual([
-      { address: ALICE, amount: 1n, memo },
-      { address: BOB, amount: 2n, memo },
-      { address: CAROL, amount: 3n },
+    const { operations, details } = transactions[0];
+    expect(details?.participationRewards).toEqual([
+      { address: ALICE, amount: 1n, memo, operationIndex: 2 },
+      { address: BOB, amount: 2n, memo, operationIndex: 3 },
+      { address: CAROL, amount: 3n, operationIndex: 4 },
     ]);
+    for (const { address, amount, operationIndex } of details?.participationRewards ?? []) {
+      expect(operations[operationIndex]).toEqual({
+        type: "transfer",
+        address,
+        asset: NATIVE,
+        amount,
+      });
+    }
   });
 
   it("keeps the exact value of an amount above the safe integer range", async () => {

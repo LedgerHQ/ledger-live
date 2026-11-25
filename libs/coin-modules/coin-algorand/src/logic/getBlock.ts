@@ -38,16 +38,16 @@ export async function getBlock(context: AlgorandContext, height: number): Promis
 // A block only holds transactions that succeeded
 function toBlockTransaction(tx: ExplorerTransaction<ExplorerAmount>): BlockTransaction {
   const memo = toNoteMemo(tx.note);
-  const operations: BlockOperation[] = [];
-  const innerNotes: InnerNote[] = [];
-  collectOperations(tx, operations, innerNotes, false);
-  const participationRewards = toRewards(tx);
+  const collected: Collected = { operations: [], innerNotes: [], participationRewards: [] };
+  collectOperations(tx, collected, false);
+  const { operations, innerNotes, participationRewards } = collected;
   return {
     hash: tx.id,
     failed: false,
     operations,
     fees: BigInt(tx.fee),
     feesPayer: tx.sender,
+    feesAsset: NATIVE_ASSET,
     details: {
       txType: tx["tx-type"],
       ...(memo ? { memo } : {}),
@@ -72,40 +72,46 @@ type InnerNote = {
 };
 
 /**
- * The participation rewards of a transaction and of its inner transactions, with the note of the transaction that
- * pays them: listOperations gives them as REWARD rows, getBlock as transfers without peer.
+ * A participation reward of a transaction or of its inner transactions, with the note of the transaction that pays it:
+ * listOperations gives it as a REWARD row, getBlock as a transfer without peer, at `operationIndex` in `operations`.
  */
-type Reward = { address: string; amount: bigint; memo?: AlgorandMemo };
+type Reward = { address: string; amount: bigint; memo?: AlgorandMemo; operationIndex: number };
 
-function toRewards(tx: ExplorerInnerTransaction<ExplorerAmount>): Reward[] {
-  const memo = toNoteMemo(tx.note);
-  return [
-    ...rewardsOf(tx).map(([address, amount]) => ({
-      address,
-      amount: BigInt(amount),
-      ...(memo ? { memo } : {}),
-    })),
-    ...(tx["inner-txns"] ?? []).flatMap(toRewards),
-  ];
-}
+type Collected = {
+  operations: BlockOperation[];
+  innerNotes: InnerNote[];
+  participationRewards: Reward[];
+};
 
 // The fees of inner transactions are left out: they are paid by application accounts
 function collectOperations(
   tx: ExplorerInnerTransaction<ExplorerAmount>,
-  operations: BlockOperation[],
-  innerNotes: InnerNote[],
+  collected: Collected,
   inner: boolean,
 ): void {
-  const memo = inner ? toNoteMemo(tx.note) : undefined;
-  if (memo) {
-    // toTransferOperations starts with the debit and credit of each leg, in order
-    transferLegs(tx).forEach(({ from, to, asset }, leg) =>
+  const { operations, innerNotes, participationRewards } = collected;
+  const memo = toNoteMemo(tx.note);
+  const legs = transferLegs(tx);
+  if (inner && memo) {
+    // Each leg gives its debit then its credit, in order
+    legs.forEach(({ from, to, asset }, leg) =>
       innerNotes.push({ from, to, asset, memo, operationIndex: operations.length + 2 * leg }),
     );
   }
-  operations.push(...toTransferOperations(tx), ...toRewardOperations(tx));
-  for (const innerTx of tx["inner-txns"] ?? [])
-    collectOperations(innerTx, operations, innerNotes, true);
+  operations.push(
+    ...legs.flatMap(({ from, to, asset, amount }) => transfer(from, to, asset, amount)),
+    ...toOptOperations(tx, legs),
+  );
+  for (const [address, amount] of rewardsOf(tx)) {
+    participationRewards.push({
+      address,
+      amount: BigInt(amount),
+      ...(memo ? { memo } : {}),
+      operationIndex: operations.length,
+    });
+    operations.push({ type: "transfer", address, asset: NATIVE_ASSET, amount: BigInt(amount) });
+  }
+  for (const innerTx of tx["inner-txns"] ?? []) collectOperations(innerTx, collected, true);
 }
 
 /** A movement of a payment or an asset transfer: to its receiver, and to its close address if any. */
@@ -151,35 +157,19 @@ function transferLegs(tx: ExplorerInnerTransaction<ExplorerAmount>): TransferLeg
   return [];
 }
 
-function toTransferOperations(tx: ExplorerInnerTransaction<ExplorerAmount>): BlockOperation[] {
-  const transfers = transferLegs(tx).flatMap(({ from, to, asset, amount }) =>
-    transfer(from, to, asset, amount),
-  );
-
+// The OPT_IN or OPT_OUT of an asset transfer, from the source and asset of its receiver leg
+function toOptOperations(
+  tx: ExplorerInnerTransaction<ExplorerAmount>,
+  legs: TransferLeg[],
+): BlockOperation[] {
   const assetTransfer = tx["asset-transfer-transaction"];
-  if (tx["tx-type"] === AlgoTransactionType.ASSET_TRANSFER && assetTransfer) {
-    const asset: AssetInfo = { type: "asa", assetReference: assetTransfer["asset-id"].toString() };
-    const source = assetTransfer.sender ?? tx.sender;
-    const ledgerOpType = getOptInOutType(tx.sender, source, assetTransfer);
-    // Same memo as the listOperations OPT row of this transaction
-    const memo = toNoteMemo(tx.note);
-    return [
-      ...transfers,
-      ...(ledgerOpType
-        ? [
-            {
-              type: "other" as const,
-              address: source,
-              asset,
-              ledgerOpType,
-              ...(memo ? { memo } : {}),
-            },
-          ]
-        : []),
-    ];
-  }
-
-  return transfers;
+  if (tx["tx-type"] !== AlgoTransactionType.ASSET_TRANSFER || !assetTransfer) return [];
+  const { from: source, asset } = legs[0];
+  const ledgerOpType = getOptInOutType(tx.sender, source, assetTransfer);
+  if (!ledgerOpType) return [];
+  // Same memo as the listOperations OPT row of this transaction
+  const memo = toNoteMemo(tx.note);
+  return [{ type: "other", address: source, asset, ledgerOpType, ...(memo ? { memo } : {}) }];
 }
 
 function getOptInOutType(
@@ -222,13 +212,4 @@ function rewardsOf(tx: ExplorerInnerTransaction<ExplorerAmount>): [string, Explo
   return rewards.filter(
     (reward): reward is [string, ExplorerAmount] => reward[0] !== undefined && reward[1] > 0,
   );
-}
-
-function toRewardOperations(tx: ExplorerInnerTransaction<ExplorerAmount>): BlockOperation[] {
-  return rewardsOf(tx).map(([address, amount]) => ({
-    type: "transfer",
-    address,
-    asset: NATIVE_ASSET,
-    amount: BigInt(amount),
-  }));
 }

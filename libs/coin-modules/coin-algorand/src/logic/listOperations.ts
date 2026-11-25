@@ -111,7 +111,9 @@ function convertToOperations(tx: AlgoTransaction, address: string): Operation[] 
     type === "OPT_IN" || type === "OPT_OUT"
       ? [toOperation(tx, { ...toOptFields(tx, address), type }, { ledgerOpType: type })]
       : toLegOperations(tx, address);
-  return [...primary, ...rewards];
+  // A transaction whose movements are all 0 still costs its fee payer the fee
+  const fees = primary.length === 0 && isRootFeePayer(tx, address) ? [toFeesRow(tx, address)] : [];
+  return [...primary, ...fees, ...rewards];
 }
 
 function isTransfer(tx: AlgoTransaction): boolean {
@@ -139,6 +141,7 @@ function toOperation(
       block: { height: tx.round, hash: "", time: date },
       fees: BigInt(tx.fee.toString()),
       feesPayer: tx.feesPayer,
+      feesAsset: { type: "native" },
       date,
       failed: false,
     },
@@ -184,39 +187,40 @@ type TransferLeg = { from: string; to: string; amount: bigint; close: boolean };
 
 function transferLegs(tx: AlgoTransaction): TransferLeg[] {
   const from = getOperationSender(tx);
-  const [to, amount, closeTo, closeAmount] =
-    tx.type === AlgoTransactionType.PAYMENT
-      ? [
-          (tx.details as AlgoPaymentInfo).recipientAddress,
-          (tx.details as AlgoPaymentInfo).amount,
-          (tx.details as AlgoPaymentInfo).closeToAddress,
-          (tx.details as AlgoPaymentInfo).closeAmount,
-        ]
-      : [
-          (tx.details as AlgoAssetTransferInfo).assetRecipientAddress,
-          (tx.details as AlgoAssetTransferInfo).assetAmount,
-          (tx.details as AlgoAssetTransferInfo).assetCloseToAddress,
-          (tx.details as AlgoAssetTransferInfo).assetCloseAmount,
-        ];
+  const leg = (to: string, amount: BigNumber, close: boolean): TransferLeg => ({
+    from,
+    to,
+    amount: BigInt(amount.toString()),
+    close,
+  });
+  if (tx.type === AlgoTransactionType.PAYMENT) {
+    const { recipientAddress, amount, closeToAddress, closeAmount } = tx.details as AlgoPaymentInfo;
+    return [
+      leg(recipientAddress, amount, false),
+      ...(closeToAddress ? [leg(closeToAddress, closeAmount ?? new BigNumber(0), true)] : []),
+    ];
+  }
+  const { assetRecipientAddress, assetAmount, assetCloseToAddress, assetCloseAmount } =
+    tx.details as AlgoAssetTransferInfo;
   return [
-    { from, to, amount: BigInt(amount.toString()), close: false },
-    ...(closeTo
-      ? [{ from, to: closeTo, amount: BigInt((closeAmount ?? 0).toString()), close: true }]
+    leg(assetRecipientAddress, assetAmount, false),
+    ...(assetCloseToAddress
+      ? [leg(assetCloseToAddress, assetCloseAmount ?? new BigNumber(0), true)]
       : []),
   ];
 }
 
 /**
  * One row per movement of the account, with the parties of that movement, as coin-evm and coin-tezos: getBlock gives
- * one transfer per movement, and A4 one operation per transfer. The 0 receiver movement of a transaction that only
- * closes the account gives no row, as A4 drops 0 transfers.
+ * one transfer per movement, and A4 one operation per transfer. A 0 movement of a transaction that also closes the
+ * account gives no row, as A4 drops 0 transfers; a lone 0 movement keeps its row, as in the other coin modules.
  */
 function toLegOperations(tx: AlgoTransaction, address: string): Operation[] {
   const legs = transferLegs(tx);
   const asset = getOperationAsset(tx);
   return legs
     .filter(leg => leg.from === address || leg.to === address)
-    .filter(leg => leg.close || leg.amount !== 0n || legs.length === 1)
+    .filter(leg => leg.amount !== 0n || legs.length === 1)
     .map(leg => {
       const type = leg.from === address ? "OUT" : "IN";
       const value = (leg.from === address) !== (leg.to === address) ? leg.amount : 0n;

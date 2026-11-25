@@ -1095,6 +1095,65 @@ describe("listOperations", () => {
   });
 
   // A4 drops the 0 transfer of the receiver on the block path
+  // A4 drops 0 transfers on the block path
+  it("should give the close address of an opt-out with nothing left no row", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [
+        {
+          ...asaTransfer({ id: "OPTOUT", sender: address, recipient: "CREATOR", amount: 0 }),
+          details: {
+            assetAmount: new BigNumber(0),
+            assetId: "123",
+            assetRecipientAddress: "CREATOR",
+            assetSenderAddress: undefined,
+            assetCloseAmount: new BigNumber(0),
+            assetCloseToAddress: "CREATOR",
+          },
+        },
+      ],
+      nextToken: undefined,
+    });
+
+    const creator = await listOperations(mockAlgorandContext, "CREATOR", { order: "desc" });
+    const sender = await listOperations(mockAlgorandContext, address, { order: "desc" });
+
+    expect(creator.items).toEqual([]);
+    expect(sender.items.map(({ id, type, value }) => ({ id, type, value }))).toEqual([
+      { id: "OPTOUT", type: "OPT_OUT", value: 0n },
+      { id: "OPTOUT-fees", type: "FEES", value: 0n },
+    ]);
+  });
+
+  it("should give the fee payer of a payment whose movements are all 0 a FEES row", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [
+        {
+          ...asaTransfer({ id: "CLOSE", sender: address, recipient: "RECIPIENT", amount: 0 }),
+          type: AlgoTransactionType.PAYMENT,
+          details: {
+            amount: new BigNumber(0),
+            recipientAddress: "RECIPIENT",
+            closeAmount: new BigNumber(0),
+            closeToAddress: "CLOSE_ADDRESS",
+          },
+        },
+      ],
+      nextToken: undefined,
+    });
+
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        id: "CLOSE",
+        type: "FEES",
+        value: 0n,
+        senders: [address],
+        tx: expect.objectContaining({ fees: 1000n, feesAsset: { type: "native" } }),
+      }),
+    ]);
+  });
+
   it("should give no row to the 0 receiver movement of a payment that only closes the account", async () => {
     mockGetAccountTransactions.mockResolvedValue({
       transactions: [
