@@ -1,4 +1,10 @@
-import { keychainEntry, deleteKeychainEntry, wrapSecret, unwrapSecret } from "./keychain-entry";
+import {
+  keychainEntry,
+  deleteKeychainEntry,
+  wrapSecret,
+  unwrapSecret,
+  type KeychainEntry,
+} from "./keychain-entry";
 
 /**
  * Thrown when a stored Agent Intent secret key is password-protected (`ENC:`) but no wrapping key
@@ -20,6 +26,15 @@ function getEntry(profileId: string) {
   return keychainEntry("agent-intent-key", "agent-intent", profileId);
 }
 
+function getEncryptionEntry(profileId: string, agentPublicKey: string) {
+  return keychainEntry(
+    "agent-intent-encryption-key",
+    "agent-intent-encryption",
+    profileId,
+    agentPublicKey.toLowerCase(),
+  );
+}
+
 /**
  * Save an Agent Intent profile's secret key to the OS keychain. With a wrappingKey the secret is
  * AES-256-GCM encrypted and `ENC:`-prefixed so the entry is self-describing, matching the ring
@@ -38,7 +53,35 @@ export async function loadAgentIntentSecretKey(
   profileId: string,
   wrappingKey?: CryptoKey,
 ): Promise<string | null> {
-  const stored = getEntry(profileId).getPassword();
+  return loadSecret(getEntry(profileId), profileId, wrappingKey);
+}
+
+export async function saveAgentIntentEncryptionKey(
+  profileId: string,
+  agentPublicKey: string,
+  secretKeyHex: string,
+): Promise<void> {
+  getEncryptionEntry(profileId, agentPublicKey).setPassword(await wrapSecret(secretKeyHex));
+}
+
+export function loadAgentIntentEncryptionKey(
+  profileId: string,
+  agentPublicKey: string,
+): Promise<string | null> {
+  return loadSecret(getEncryptionEntry(profileId, agentPublicKey), profileId);
+}
+
+export const deleteAgentIntentEncryptionKey = (
+  profileId: string,
+  agentPublicKey: string,
+): boolean => deleteKeychainEntry(() => getEncryptionEntry(profileId, agentPublicKey));
+
+async function loadSecret(
+  entry: KeychainEntry,
+  profileId: string,
+  wrappingKey?: CryptoKey,
+): Promise<string | null> {
+  const stored = entry.getPassword();
   if (!stored) return null;
 
   // CRLF-tolerant trim: a keychain entry written on Windows may carry a trailing \r.

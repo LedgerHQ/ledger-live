@@ -9,6 +9,7 @@ import {
   readFileSync,
   unlinkSync,
 } from "node:fs";
+import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { stateDir } from "@bunli/utils";
 import { APP_NAME } from "../session/session-store";
@@ -24,8 +25,30 @@ export function agentIntentKeyFilePath(profileId: string): string {
   return join(agentIntentKeyDir(), `${profileId}.key`);
 }
 
+export function agentIntentEncryptionKeyFilePath(
+  profileId: string,
+  agentPublicKey: string,
+): string {
+  const agentKeyHash = createHash("sha256")
+    .update(agentPublicKey.toLowerCase())
+    .digest("hex")
+    .slice(0, 16);
+  return join(agentIntentKeyDir(), "encryption", `${profileId}.${agentKeyHash}.key`);
+}
+
 export function saveAgentIntentKeyFile(profileId: string, secretKeyHex: string): void {
-  const path = agentIntentKeyFilePath(profileId);
+  saveKeyFile(agentIntentKeyFilePath(profileId), secretKeyHex);
+}
+
+export function saveAgentIntentEncryptionKeyFile(
+  profileId: string,
+  agentPublicKey: string,
+  secretKeyHex: string,
+): void {
+  saveKeyFile(agentIntentEncryptionKeyFilePath(profileId, agentPublicKey), secretKeyHex);
+}
+
+function saveKeyFile(path: string, secretKeyHex: string): void {
   const dir = dirname(path);
   mkdirSync(dir, { recursive: true, mode: 0o700 });
   chmodSync(dir, 0o700); // enforce on a dir that already existed with looser permissions
@@ -36,7 +59,17 @@ export function saveAgentIntentKeyFile(profileId: string, secretKeyHex: string):
 // refused before the key is read. Checked on the descriptor it is read from, never through a symlink,
 // and opened non-blocking so a FIFO is rejected instead of hanging the open.
 export function loadAgentIntentKeyFile(profileId: string): string | null {
-  const path = agentIntentKeyFilePath(profileId);
+  return loadKeyFile(agentIntentKeyFilePath(profileId));
+}
+
+export function loadAgentIntentEncryptionKeyFile(
+  profileId: string,
+  agentPublicKey: string,
+): string | null {
+  return loadKeyFile(agentIntentEncryptionKeyFilePath(profileId, agentPublicKey));
+}
+
+function loadKeyFile(path: string): string | null {
   let fd: number;
   try {
     fd = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
@@ -74,8 +107,19 @@ export function loadAgentIntentKeyFile(profileId: string): string | null {
 
 // "Deleted" and "already absent" both satisfy the postcondition (no key remains).
 export function deleteAgentIntentKeyFile(profileId: string): boolean {
+  return deleteKeyFile(agentIntentKeyFilePath(profileId));
+}
+
+export function deleteAgentIntentEncryptionKeyFile(
+  profileId: string,
+  agentPublicKey: string,
+): boolean {
+  return deleteKeyFile(agentIntentEncryptionKeyFilePath(profileId, agentPublicKey));
+}
+
+function deleteKeyFile(path: string): boolean {
   try {
-    unlinkSync(agentIntentKeyFilePath(profileId));
+    unlinkSync(path);
     return true;
   } catch (e) {
     return e instanceof Error && "code" in e && e.code === "ENOENT";

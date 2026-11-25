@@ -2,9 +2,12 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import { InMemoryKeychain } from "../testing/in-memory-keychain";
 import { overridePlatform } from "../testing/os-keychain";
 import {
+  deleteAgentIntentEncryptionKey,
   deleteAgentIntentSecretKey,
   hasAgentIntentSecretKey,
+  loadAgentIntentEncryptionKey,
   loadAgentIntentSecretKey,
+  saveAgentIntentEncryptionKey,
   saveAgentIntentSecretKey,
 } from "./agent-intent-keychain";
 import {
@@ -74,6 +77,34 @@ describe("Agent Intent keychain entries", () => {
     keychain.deleteError = new Error("keychain locked");
 
     expect(deleteAgentIntentSecretKey("bot")).toBe(false);
+  });
+});
+
+describe("Agent Intent encryption keychain entries", () => {
+  const AGENT_KEY = "02".padEnd(66, "a");
+
+  it("keep the encryption key apart from the agent key of the same profile", async () => {
+    await saveAgentIntentSecretKey("bot", "deadbeef");
+    await saveAgentIntentEncryptionKey("bot", AGENT_KEY, "cafef00d");
+
+    expect(await loadAgentIntentSecretKey("bot")).toBe("deadbeef");
+    expect(await loadAgentIntentEncryptionKey("bot", AGENT_KEY)).toBe("cafef00d");
+  });
+
+  it("keep the encryption key of an earlier agent key from a re-enrolled profile", async () => {
+    await saveAgentIntentEncryptionKey("bot", AGENT_KEY, "cafef00d");
+
+    expect(await loadAgentIntentEncryptionKey("bot", "03".padEnd(66, "b"))).toBeNull();
+  });
+
+  it("delete only the encryption key", async () => {
+    await saveAgentIntentSecretKey("bot", "deadbeef");
+    await saveAgentIntentEncryptionKey("bot", AGENT_KEY, "cafef00d");
+
+    expect(deleteAgentIntentEncryptionKey("bot", AGENT_KEY)).toBe(true);
+
+    expect(await loadAgentIntentEncryptionKey("bot", AGENT_KEY)).toBeNull();
+    expect(await loadAgentIntentSecretKey("bot")).toBe("deadbeef");
   });
 });
 

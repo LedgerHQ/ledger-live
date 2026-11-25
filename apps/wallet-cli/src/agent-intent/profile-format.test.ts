@@ -3,6 +3,7 @@ import {
   redactUrlCredentials,
   hasUrlCredentials,
   agentIntentProfileStatus,
+  agentIntentRingAccessStatus,
   formatInvalidAgentIntentProfilesWarning,
 } from "./profile-format";
 
@@ -114,5 +115,48 @@ describe("formatInvalidAgentIntentProfilesWarning", () => {
     expect(warning).toContain("broken-1, broken-2");
     expect(warning).toContain("kept as-is");
     expect(warning).toContain("ignored until it is fixed");
+  });
+});
+
+describe("agentIntentRingAccessStatus", () => {
+  const now = new Date("2026-01-01T00:00:00.000Z");
+  const encryptionPublicKey = "03".padEnd(66, "e");
+  const ringAccess = { encryptionPublicKey };
+
+  it("is none without a grant or a request", () => {
+    expect(agentIntentRingAccessStatus({}, now)).toBe("none");
+  });
+
+  it("is granted once the profile's encryption key is granted", () => {
+    expect(agentIntentRingAccessStatus({ encryptionPublicKey, ringAccess }, now)).toBe("granted");
+  });
+
+  it("is none when the grant names another encryption key than the profile's", () => {
+    const other = "02".padEnd(66, "f");
+
+    expect(agentIntentRingAccessStatus({ encryptionPublicKey: other, ringAccess }, now)).toBe(
+      "none",
+    );
+    expect(agentIntentRingAccessStatus({ ringAccess }, now)).toBe("none");
+  });
+
+  it("is requesting while a request has not expired", () => {
+    const pendingRingAccess = { expiresAt: "2026-01-01T00:30:00.000Z" };
+
+    expect(agentIntentRingAccessStatus({ pendingRingAccess }, now)).toBe("requesting");
+  });
+
+  it("stays granted while a later request is pending", () => {
+    const pendingRingAccess = { expiresAt: "2026-01-01T00:30:00.000Z" };
+
+    expect(
+      agentIntentRingAccessStatus({ encryptionPublicKey, ringAccess, pendingRingAccess }, now),
+    ).toBe("granted");
+  });
+
+  it("ignores an expired request left by a killed run", () => {
+    const pendingRingAccess = { expiresAt: "2025-12-31T23:30:00.000Z" };
+
+    expect(agentIntentRingAccessStatus({ pendingRingAccess }, now)).toBe("none");
   });
 });

@@ -2,7 +2,7 @@
 
 You are a remote agent. Your machine has no Ledger; the human has one. You hold a software identity (a secp256k1 key in this machine's OS keychain, or in a key file when the human allows it, step 2), and every payment or swap you make is a **proposal**: the human reviews it and approves or rejects it on their Ledger. Nothing you run signs or broadcasts a transaction, and no `agent-intent` command needs a device.
 
-Run every command with `--output json`. Output is one JSON object per line: a success line carries `status` `"success"`, a progress line (`enrollment-pending`, `enrollment-waiting`, `recovery-pending`) carries a `type`, and a failure line carries `ok: false` and `error.message` (the command then exits 1); some failures also carry an `error.code`. `enroll` without `--detach` and `recover` print two lines: a pending event first, the final result when they finish. An `error.code` of `"keychain_unavailable"` means no usable OS keychain: follow step 2. Otherwise match `error.code` or `error.message` against the error table (step 12).
+Run every command with `--output json`. Output is one JSON object per line: a success line carries `status` `"success"`, a progress line (`enrollment-pending`, `enrollment-waiting`, `recovery-pending`, `ring-access-pending`, `ring-access-waiting`) carries a `type`, and a failure line carries `ok: false` and `error.message` (the command then exits 1); some failures also carry an `error.code`. `enroll` and `ring-access` without `--detach`, and `recover`, print two lines: a pending event first, the final result when they finish. An `error.code` of `"keychain_unavailable"` means no usable OS keychain: follow step 2. Otherwise match `error.code` or `error.message` against the error table (step 13).
 
 ## 1. Status gate
 
@@ -15,7 +15,7 @@ Read `profiles[].profileStatus` (also `profileId`, `environment`, `source`, `acc
 - no profiles, or only `expired` ones: if the human asked to enroll or to use Agent Intent, go to step 2. Otherwise enrolling adds this agent to their Ledger Sync, so ask first, word for word: "This machine has no Ledger. Do you want to connect your Ledger to this agent with Agent Intent, so I can propose payments you approve on it?" Go to step 2 only on yes;
 - `pending`: go to step 5 and run `wait`: it tells a listener that still waits from a lost one;
 - `recovering`: if its `recover` job is still running in your terminal tool, go to step 10 and finish the handoff; otherwise use it as `enrolled`: it reads `enrolled` again once its recovery link expires;
-- one `enrolled` profile: go to the step the request needs (6 sync, 7 payment, 8 swap, 9 follow up, 10 recover). For an enroll request, or the human saying they approved, report that profile (id, environment, and `fingerprint` from `show`), and enroll another only when the human asks for a second one;
+- one `enrolled` profile: go to the step the request needs (6 sync, 7 payment, 8 swap, 9 follow up, 10 recover, 11 Key Ring access). For an enroll request, or the human saying they approved, report that profile (id, environment, and `fingerprint` from `show`), and enroll another only when the human asks for a second one;
 - several `enrolled` profiles: ask the human which one to use.
 
 A request that only asks about profiles ("show my agent-intent profiles") is done here: report each profile's id, environment and `profileStatus`, or that there are none and that you can enroll. `pnpm --silent wallet-cli start agent-intent show --profile <id> --output json` adds the profile's `fingerprint`.
@@ -76,9 +76,9 @@ pnpm --silent wallet-cli start agent-intent wait --profile <id> --timeout 2s --o
 
 - `type` `"enrollment-waiting"`: the listener is running; go on.
 - `ok: false` with `error.code` `listener_exited` or `profile_not_found`: the host stopped the listener when `enroll` returned. Never send that link: the human could still approve it, which adds the agent to their Ledger Sync with nothing left to receive the approval. The id is burned: pick a new one (step 3) and enroll as a background job (below).
-- any other error: error table (step 12).
+- any other error: error table (step 13).
 
-Done when that check reports `enrollment-waiting` and you have the link: from the `enrollment-pending` line, or from `wait` (step 5) after an `enrollment-waiting` line. When `enroll` fails instead, match its error in the error table (step 12).
+Done when that check reports `enrollment-waiting` and you have the link: from the `enrollment-pending` line, or from `wait` (step 5) after an `enrollment-waiting` line. When `enroll` fails instead, match its error in the error table (step 13).
 
 **Background job** (`enroll` on a host that stops the `--detach` listener, and every `recover`). Start the command without `--detach` as a background job of your terminal tool, read the pending event from the job's output while it runs, and leave the job running through the handoff (step 5; for `recover`, step 10). On a terminal tool without background jobs, tell the human that this enrollment or recovery cannot be completed from this host; every other `agent-intent` command still runs there. Below, `<cmd>` is `enroll` or `recover`. The job's status and its stop come from your tool:
 
@@ -90,7 +90,7 @@ With a background job, done when you have read the pending event, the first JSON
 
 ## 5. Human handoff and wait
 
-First check that `enrollmentUrl` opens on the host in step 11, One host; when it does not, send nothing and tell the human the CLI printed a link to another host. When `keyStore` is `"plaintext-file"`, tell the human first that the agent key is stored unencrypted on this machine. Then send the human the `enrollmentUrl`, the `fingerprint` and the `expiresAt` time, and ask them to:
+First check that `enrollmentUrl` opens on the host in step 12, One host; when it does not, send nothing and tell the human the CLI printed a link to another host. When `keyStore` is `"plaintext-file"`, tell the human first that the agent key is stored unencrypted on this machine. Then send the human the `enrollmentUrl`, the `fingerprint` and the `expiresAt` time, and ask them to:
 
 1. update their Ledger's firmware if Ledger Wallet offers an update, make sure Ledger Sync is on in Ledger Wallet, then quit the Ledger Wallet desktop app so the browser can reach the device;
 2. open the link once, and keep that page open from clicking Review until the approvals finish: leaving it closes the relay and loses the enrollment;
@@ -122,7 +122,7 @@ pnpm --silent wallet-cli start agent-intent wait --profile <id> --output json
 
 If the page says "The agent identity was added successfully. Full Ledger Sync account access was not shared.", the second approval failed (outdated firmware is a known cause). The enrollment keeps waiting: ask the human to fix that and press "Try again" before `expiresAt`. If instead `wait` reports `listener_exited` with `Enrollment relay closed before completion was acknowledged`, the page gave up on this enrollment: it is lost, go to step 2 for a new id. Each lost attempt leaves the agent on the human's Ledger Sync; tell them so they can remove it there.
 
-Done when `wait` reports `status` `"success"`, `enrolled: true`, `trustchainId` and `accountAccessEnvironment`, and `pnpm --silent wallet-cli start agent-intent show --profile <id> --output json` reports `profileStatus` `"enrolled"`; or when `wait` reported a final error and you followed its row in step 12.
+Done when `wait` reports `status` `"success"`, `enrolled: true`, `trustchainId` and `accountAccessEnvironment`, and `pnpm --silent wallet-cli start agent-intent show --profile <id> --output json` reports `profileStatus` `"enrolled"`; or when `wait` reported a final error and you followed its row in step 13.
 
 ## 6. Sync the human's accounts (when the human asks to import them)
 
@@ -176,9 +176,9 @@ Done when you have reported every imported and unchanged label with its network,
 pnpm --silent wallet-cli start agent-intent send --profile <id> --account <label> --to <recipient> --amount '<n> <TICKER>' --dry-run --output json
 ```
 
-Show the human the summary (`sender`, `recipient`, `displayAmount`, `asset`, and `feeStrategy` on Ethereum or `memo` on Solana) and get their confirmation, then run the same command without `--dry-run`. When the rule does not apply, run it without `--dry-run` directly. Before every run without `--dry-run`, note the time with `date -u +%Y-%m-%dT%H:%M:%SZ` in its own call: step 11, No blind retry, matches on it.
+Show the human the summary (`sender`, `recipient`, `displayAmount`, `asset`, and `feeStrategy` on Ethereum or `memo` on Solana) and get their confirmation, then run the same command without `--dry-run`. When the rule does not apply, run it without `--dry-run` directly. Before every run without `--dry-run`, note the time with `date -u +%Y-%m-%dT%H:%M:%SZ` in its own call: step 12, No blind retry, matches on it.
 
-Done when the human has the review link (`deeplink`) and the `intentId` from the output. When the service returned no readable link, pass on the warning "accepted the intent but returned no readable review link" and find the intent as step 11, No blind retry, says. When the warning is "The review link has an unexpected shape", `deeplink` is set but `intentId` is not: send the link only if it passes step 11, One host, and take the id from that same lookup; after a timeout or an HTTP 5xx, do the same before any new proposal. An intent that exists changes only through step 9 (cancel, then a new proposal).
+Done when the human has the review link (`deeplink`) and the `intentId` from the output. When the service returned no readable link, pass on the warning "accepted the intent but returned no readable review link" and find the intent as step 12, No blind retry, says. When the warning is "The review link has an unexpected shape", `deeplink` is set but `intentId` is not: send the link only if it passes step 12, One host, and take the id from that same lookup; after a timeout or an HTTP 5xx, do the same before any new proposal. An intent that exists changes only through step 9 (cancel, then a new proposal).
 
 wallet-cli does not check the sender's balance. The human reviews the intent and approves or rejects it on their Ledger.
 
@@ -203,11 +203,11 @@ pnpm --silent wallet-cli start agent-intent swap --profile <id> --sender <sender
 
 Show the human the summary (`sender`, `from.ticker`, `to.ticker`, `fromAmount`, `toAmount`, `provider`, and the approval step when `needsTokenApproval` is `true`) and get their confirmation, then run the same command without `--dry-run`. Each run quotes again, so give the human the `toAmount` and `provider` of the real run with its link. When the rule does not apply, run it without `--dry-run` directly. Note the time before every run without `--dry-run`, as in step 7.
 
-Done as in step 7: the human has the `deeplink` and the `intentId`, or, after the no-readable-link warning, a timeout or an HTTP 5xx, the result of step 11, No blind retry.
+Done as in step 7: the human has the `deeplink` and the `intentId`, or, after the no-readable-link warning, a timeout or an HTTP 5xx, the result of step 12, No blind retry.
 
 ## 9. Follow up: status, intents, cancel
 
-Use these when the human asks about a proposal ("is my payment approved", "what did you propose", "cancel that"), and to check whether a proposal landed (step 11, No blind retry). `status` and `intents` are read-only, so a failed run is safe to re-run.
+Use these when the human asks about a proposal ("is my payment approved", "what did you propose", "cancel that"), and to check whether a proposal landed (step 12, No blind retry). `status` and `intents` are read-only, so a failed run is safe to re-run.
 
 **One intent.**
 
@@ -260,24 +260,42 @@ It needs an `enrolled` profile whose key is still on this machine (keychain or k
 
 `recover` takes no `--name`, `--source` or `--environment`: they come from the profile; keep its service URL at the default (step 4). It has no `--detach`, and `wait` does not cover it: run it as a background job (step 4, Background job, `<cmd>` is `recover`). Hand off as in step 5, items 1 to 3, with `recoveryUrl` in place of `enrollmentUrl` (host check included), then ask the human to approve on their Ledger as the page asks: recovery re-checks only the agent's own membership. End your turn while they approve; the job keeps waiting. Some hosts wake you when the job exits (OpenClaw with notifyOnExit, Claude Code); otherwise read its last output line when the human says they approved, or once `expiresAt` has passed. Done when it exits with `recovered: true` and `trustchainId`. On a timeout, an interruption or a failed check the profile stays `enrolled` with its previous data; run `recover` again to retry.
 
-## 11. Gotchas
+## 11. Key Ring access
+
+Run `ring-access` only when the human asks to give the agent access to their Ledger Key Ring. It needs an `enrolled` profile. Its first run creates the profile's encryption key, stored like the agent key (keychain or key file), and every run asks the human to add that key to their Key Ring. It prints a pending event (`type` `"ring-access-pending"`, `ringAccessUrl`, `fingerprint`, `expiresAt`, `keyStore`), then waits for the human's answer.
+
+```bash
+pnpm --silent wallet-cli start agent-intent ring-access --profile <id> --detach --output json
+```
+
+It takes no `--name`, `--source` or `--environment`: they come from the profile; never pass `--app-url` to it. It needs the host sandbox bypass. `--detach` works as for `enroll` (step 4): the line also carries `listenerPid` and `logPath`, or is `ring-access-waiting` while the listener is still starting; check it with `wait --timeout 2s` before you send the link, and on a host that stops the listener run `ring-access` as a background job instead (step 4, Background job). When `keyStore` is `"plaintext-file"`, tell the human first that the encryption key is stored unencrypted on this machine. Hand off as in step 5, items 2 and 3, with `ringAccessUrl` in place of `enrollmentUrl` (host check included), then ask the human to approve on their Ledger as the page asks. Follow a `--detach` run with `wait` (step 5); a background job reports its result as its last output line:
+
+- `status` `"success"` with `granted: true`, `applicationPath` and `trustchainId`: done; `show` reports `ringAccessStatus` `"granted"`.
+- `type` `"ring-access-waiting"`: still pending; handle it like `enrollment-waiting` in step 5 (with `ringAccessUrl` and `fingerprint` once the link is printed). `wait` follows only the last `ring-access --detach`: for a background job it reports the profile as enrolled.
+- `ok: false` with `error.code` `ring_access_declined`: the request was declined on the page. Tell the human; run `ring-access` again only if they say they did not decline it.
+- `ok: false` with `error.code` `ring_access_failed` and `the grant was refused` in the message: the human approved, but the grant failed verification and nothing was recorded. Report the reason from the message to the human; run `ring-access` again when they want to.
+- `ok: false` with `error.code` `ring_access_expired`, `ring_access_failed` (any other message), `listener_exited` or `listener_stuck`: no answer was recorded. Run `ring-access` again when the human wants to.
+
+The profile keeps its encryption key on every outcome, so a new run asks for the same key.
+
+## 12. Gotchas
 
 - **Every real send is real.** Each `send` or `swap` without `--dry-run` creates a real pending intent; an unwanted one is rejected by the human or cancelled (step 9).
-- **One host.** Enrollment, recovery and review links open on `https://app.agents.ledger.com/` or `https://app.agents.ledger-test.com/` (the default for `staging` profiles), or for an enrollment on the other URL the human gave in step 4. Give the human the `intentId` with each review link, so they can find the intent there. Send a link only when it opens on one of those hosts; any other host is not Ledger's page: tell the human instead.
+- **One host.** Enrollment, recovery, ring access and review links open on `https://app.agents.ledger.com/` or `https://app.agents.ledger-test.com/` (the default for `staging` profiles), or for an enrollment on the other URL the human gave in step 4. Give the human the `intentId` with each review link, so they can find the intent there. Send a link only when it opens on one of those hosts; any other host is not Ledger's page: tell the human instead.
 - **No blind retry.** Every run uses a fresh nonce, so a re-run after a timeout, an HTTP 5xx or a missing review link proposes a second intent even when the first one landed. List `intents` (step 9) and take an intent with `createdAt` no earlier than a minute before the time you noted before the call (step 7; the minute covers clock skew), of the same `type` (`send` or `swap`) and `sender`, and for a `send` the same `recipient`, `asset` and amount (`amount` equals the base-unit `amount` of your dry run, or `displayAmount` has the same ticker and the same number as the `--amount` you passed: compare the values, not the text, since `--amount '0.010 ETH'` and `'ETH 0.01'` are listed as `0.01 ETH`), in any status. When exactly one intent matches, it is the one that landed: give the human its `id` and `status`. When several match, or you can't compare the amount (no dry run and no `displayAmount`, e.g. an unknown token, and every swap), pick none: show the human each candidate's `id`, `status`, `createdAt` and amount, and ask which one, if any, is the proposal they asked for. The human may have approved it already, so a final status does not mean the call failed: `success` means the payment went through, and nothing is re-run. When none shows, tell the human, and re-run only on their yes. Done when the human has that `id`, or has said yes to the re-run.
 
-## 12. Errors
+## 13. Errors
 
 Messages are substrings of the CLI output; a `code` row matches `error.code`. The stderr lines `stores its agent key unencrypted in` (a `plaintext-file` profile, step 2), `--allow-plaintext-key was ignored`, `The OS keychain refused the write` and `No OS keychain is reachable anymore` (an `--allow-plaintext-key` enroll naming its key store; with `--detach` they are in the listener's `logPath`, and `show` gives the `keyStore`), and `Ledger API auth key` (no usable OS keychain; swap quotes are still fetched, without authentication) are expected and are not errors.
 
 | Message | Cause | Action |
 |---|---|---|
-| code `listener_exited` (from `wait`) | the listener ended before the approval arrived; the message gives its last error, then ends with `Log: <path>.` Causes: the human left the page after Review (`Enrollment relay closed`), the host killed background processes, a reboot | the enrollment is lost: step 2, new id. If the human had approved, tell them the agent stays on their Ledger Sync. When it comes from the check right after `enroll --detach`, or recurs at once, the host kills background processes: enroll under a new id as a background job (step 4); on a host without background jobs, tell the human enrollment cannot be completed from this host |
-| code `listener_stuck` (from `wait`) | a live listener has not saved the profile within 10 minutes, e.g. a keychain unlock prompt answered too late; the key was removed and nothing was saved | step 2, new id |
+| code `listener_exited` (from `wait`) | after `ring-access --detach`: step 11. Otherwise the listener ended before the approval arrived; the message gives its last error, then ends with `Log: <path>.` Causes: the human left the page after Review (`Enrollment relay closed`), the host killed background processes, a reboot | the enrollment is lost: step 2, new id. If the human had approved, tell them the agent stays on their Ledger Sync. When it comes from the check right after `enroll --detach`, or recurs at once, the host kills background processes: enroll under a new id as a background job (step 4); on a host without background jobs, tell the human enrollment cannot be completed from this host |
+| code `listener_stuck` (from `wait`) | after `ring-access --detach`: step 11. Otherwise a live listener has not saved the profile within 10 minutes, e.g. a keychain unlock prompt answered too late; the key was removed and nothing was saved | step 2, new id |
 | code `enrollment_expired` (from `wait`) | the link expired without an approval (also a keychain unlock prompt answered too late) | step 2, new id |
 | code `profile_not_found` (from `wait`) | no profile with that id in this machine's state dir | check the id with step 1; otherwise step 2, new id |
 | `An enrollment listener for profile ... is already running` | `enroll --detach` on a profile whose listener still waits | step 5, `wait` on that profile |
-| `The enrollment listener ... before printing its first event` / `did not start` / `printed an unexpected first line` | the `--detach` listener failed to start; the log path is in the message | report the message to the human; step 1: an id missing from `list` is still free, so re-run the same `enroll`, otherwise step 3 |
+| `The enrollment listener ... before printing its first event` / `The ring access listener ... before printing its first event` / `did not start` / `printed an unexpected first line` | the `--detach` listener failed to start; the log path is in the message | report the message to the human. For `enroll`, step 1: an id missing from `list` is still free, so re-run the same `enroll`, otherwise step 3. For `ring-access`, re-run it once the cause is fixed |
 | the enrollment page says "Agent link not valid" | the URL was damaged on the way, has expired, is for another environment or comes from an outdated CLI; the sentence under it says which | step 5, Relay the URL whole |
 | the enrollment page says "This agent source is not supported" | the frontend does not accept that `--source` | the id is burned (a background-job `enroll`: stop the job). Tell the human the frontend refused source `<source>`; enroll again only under the source you run in, when the human asks |
 | `Profile id must contain only letters, numbers, dots, underscores, and dashes` | bad `--profile` | pick an id per step 3 |
@@ -293,6 +311,14 @@ Messages are substrings of the CLI output; a `code` row matches `error.code`. Th
 | `Enrollment did not complete (Enrollment relay closed before completion was acknowledged.)` | the enrollment page gave up (e.g. after a failed Ledger Sync step) | the enrollment is lost: step 2, new id; tell the human the agent stays on their Ledger Sync |
 | `Enrollment did not complete` | timeout, interruption, or the approval failed verification (e.g. `Completion is for the ... environment`) | the enrollment cannot be resumed: step 2 |
 | `Recovery did not complete` | timeout, interruption or failed check | the profile keeps its enrollment; re-run `recover` if the human still wants it |
+| code `ring_access_declined` | the ring access request was declined on the page | step 11 |
+| code `ring_access_expired` | the ring access link expired without an answer | step 11 |
+| code `ring_access_failed` (`Ring access did not complete`) | interruption, or the grant failed verification (`the grant was refused`, followed by the reason) | the profile keeps its encryption key; step 11 |
+| `A ring access listener for profile ... is already running` | `ring-access` on a profile whose listener still waits | a `--detach` run: `wait` on that profile (step 11); a background job: read its output |
+| `of profile ... is missing` / `does not match its recorded encryption public key` / `does not hold a valid key` | the encryption key is gone or from another key | report the message to the human: it says how to start over with a new encryption key |
+| `Could not read the OS keychain encryption key` / `Could not store the encryption key` | the OS keychain is locked or refused the write | ask the human to unlock it, then re-run `ring-access` |
+| `Could not read the encryption key file` | a `plaintext-file` profile's encryption key file is unreadable (e.g. `are too open`, a symlink, another owner) | `are too open`: run the `chmod 600 <path>` from the message, then re-run `ring-access`; otherwise report the message to the human |
+| `changed while preparing the ring access request` / `changed while preparing its encryption key` | another command changed the profile meanwhile | step 1, then retry |
 | `has not completed enrollment, so there is nothing to recover` | `recover` on a pending or expired profile | step 2 |
 | `was removed or changed while waiting for approval` / `changed while preparing the recovery` | another command changed the profile meanwhile | step 1, then retry |
 | `No Agent Intent profile named` | wrong id or another machine | step 1 |
@@ -335,6 +361,6 @@ Messages are substrings of the CLI output; a `code` row matches `error.code`. Th
 | `Could not authenticate profile` / `Authentication with the Agent Intent service failed` | sign-in failed | check network; ask the human whether the enrollment is still active |
 | `rejected the intent as invalid` | wallet-cli and service disagree on the format | report to the human; an unchanged retry fails the same way |
 | `reused nonce` | nonce collision | re-run once; each run uses a fresh nonce |
-| `The Agent Intent service failed (HTTP` / `Could not reach the Agent Intent service` | 5xx, timeout or network error | `send`/`swap`: the intent may exist, step 11, No blind retry. `status`/`intents`/`cancel`: nothing changed; re-run later |
+| `The Agent Intent service failed (HTTP` / `Could not reach the Agent Intent service` | 5xx, timeout or network error | `send`/`swap`: the intent may exist, step 12, No blind retry. `status`/`intents`/`cancel`: nothing changed; re-run later |
 | `is rate-limiting requests` | too many requests | wait a minute, then re-run |
 | `rejected the request (HTTP` / `Agent Intent request failed:` | other service error | report the message to the human |

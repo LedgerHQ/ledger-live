@@ -12,10 +12,14 @@ import {
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import {
+  agentIntentEncryptionKeyFilePath,
   agentIntentKeyFilePath,
+  deleteAgentIntentEncryptionKeyFile,
   deleteAgentIntentKeyFile,
   hasAgentIntentKeyFile,
+  loadAgentIntentEncryptionKeyFile,
   loadAgentIntentKeyFile,
+  saveAgentIntentEncryptionKeyFile,
   saveAgentIntentKeyFile,
 } from "./agent-intent-key-file";
 import { installOutputCapture } from "../shared/ui";
@@ -156,5 +160,48 @@ describe("agent-intent key file", () => {
     saveAgentIntentKeyFile("bot", "deadbeef");
     expect(deleteAgentIntentKeyFile("bot")).toBe(true);
     expect(hasAgentIntentKeyFile("bot")).toBe(false);
+  });
+});
+
+describe("agent-intent encryption key file", () => {
+  const AGENT_KEY = "02".padEnd(66, "a");
+  const OTHER_AGENT_KEY = "03".padEnd(66, "b");
+
+  it("lives in its own directory, named by profile id and agent key", () => {
+    const path = agentIntentEncryptionKeyFilePath("bot", AGENT_KEY);
+
+    expect(dirname(path)).toBe(join(cliStateDirIn(stateHome), "agent-intent-keys", "encryption"));
+    expect(path).toMatch(/[/\\]bot\.[0-9a-f]{16}\.key$/);
+    expect(agentIntentEncryptionKeyFilePath("bot", AGENT_KEY.toUpperCase())).toBe(path);
+  });
+
+  it.skipIf(!isPosix)("writes the key at 0600 apart from the agent key and reads it back", () => {
+    saveAgentIntentKeyFile("bot", "deadbeef");
+    saveAgentIntentEncryptionKeyFile("bot", AGENT_KEY, "cafef00d");
+
+    expect(mode(agentIntentEncryptionKeyFilePath("bot", AGENT_KEY))).toBe(0o600);
+    expect(loadAgentIntentEncryptionKeyFile("bot", AGENT_KEY)).toBe("cafef00d");
+    expect(loadAgentIntentKeyFile("bot")).toBe("deadbeef");
+  });
+
+  it.skipIf(!isPosix)(
+    "does not hand a profile re-enrolled with a new agent key the old key",
+    () => {
+      saveAgentIntentEncryptionKeyFile("bot", AGENT_KEY, "cafef00d");
+
+      expect(loadAgentIntentEncryptionKeyFile("bot", OTHER_AGENT_KEY)).toBeNull();
+    },
+  );
+
+  it.skipIf(!isPosix)("refuses an encryption key file readable by others", () => {
+    saveAgentIntentEncryptionKeyFile("bot", AGENT_KEY, "cafef00d");
+    chmodSync(agentIntentEncryptionKeyFilePath("bot", AGENT_KEY), 0o644);
+
+    expect(() => loadAgentIntentEncryptionKeyFile("bot", AGENT_KEY)).toThrow(/Permissions 644/);
+  });
+
+  it("reads a missing encryption key file as absent and reports it deleted", () => {
+    expect(loadAgentIntentEncryptionKeyFile("bot", AGENT_KEY)).toBeNull();
+    expect(deleteAgentIntentEncryptionKeyFile("bot", AGENT_KEY)).toBe(true);
   });
 });
