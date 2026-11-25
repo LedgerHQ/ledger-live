@@ -5,4 +5,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
-runPayContactTest(testConfig.tmsLinks, testConfig.tags);
+runPayContactTest(testConfig);

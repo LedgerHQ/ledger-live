@@ -4,6 +4,7 @@ import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNanoSSupports } from "@e2e/helpers/commonHelpers";
 import type { PartialFeatures } from "@shared/feature-flags";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 const CURRENCY_FEATURE_FLAGS = new Map<string, PartialFeatures>([
   [Currency.BABY.id, { currencyBabylon: { enabled: true } }],
@@ -11,7 +12,10 @@ const CURRENCY_FEATURE_FLAGS = new Map<string, PartialFeatures>([
 
 const PRUNED_HISTORY_CURRENCIES = new Set([Currency.BABY.id]);
 
-export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], tags: string[]) {
+type AddAccountTestOptions = TestMetaOptions & { currency: CurrencyType };
+
+export function runAddAccountTest(options: AddAccountTestOptions) {
+  const { currency, tmsLinks, tags } = options;
   describeIfNanoSSupports(currency.id)("Add account", () => {
     beforeAll(async () => {
       await app.init({

@@ -74,7 +74,13 @@ const ensurePortfolioReady = async () => {
   await app.mainNavigation.waitForWallet40Ready();
 };
 
-const openStablecoinAssetDetail = async (assetName: string, ticker: string) => {
+type StablecoinAssetOptions = {
+  assetName: string;
+  ticker: string;
+};
+
+const openStablecoinAssetDetail = async (options: StablecoinAssetOptions) => {
+  const { assetName, ticker } = options;
   if (!(await app.portfolio.isStablecoinListPageVisible())) {
     await ensurePortfolioReady();
     await app.portfolio.openStablecoinsListW40();
@@ -92,7 +98,7 @@ const ensureDaiAssetDetail = async () => {
     return;
   }
 
-  await openStablecoinAssetDetail(DAI_ASSET_NAME, DAI_TICKER);
+  await openStablecoinAssetDetail({ assetName: DAI_ASSET_NAME, ticker: DAI_TICKER });
 };
 
 setTeamOwner(Team.WALLET_XP);
@@ -161,7 +167,10 @@ describe("Asset aggregation", () => {
     await ensureDaiAssetDetail();
     await app.assetDetail.openHoldingAddress(POLYGON_ACCOUNT_ID);
 
-    await app.account.waitAndVerifyTokenAccountName(POLYGON_DAI_ASSET_NAME, POLYGON_ACCOUNT_NAME);
+    await app.account.waitAndVerifyTokenAccountName({
+      tokenName: POLYGON_DAI_ASSET_NAME,
+      parentAccountName: POLYGON_ACCOUNT_NAME,
+    });
     await app.account.expectAccountAddressLabel({
       accountId: POLYGON_DAI_ACCOUNT_ID,
       address: getAddressFromAccountId(POLYGON_DAI_ACCOUNT_ID),
@@ -175,7 +184,7 @@ describe("Asset aggregation", () => {
   $TmsLink("B2CQA-5533");
   it(`[${Currency.ETH_USDT.testLabel}] - Star an asset and filter the market list by starred`, async () => {
     // DAI is intentionally not used here because its Asset Detail favorite flow is currently broken.
-    await openStablecoinAssetDetail(USDT_ASSET_NAME, USDT_TICKER);
+    await openStablecoinAssetDetail({ assetName: USDT_ASSET_NAME, ticker: USDT_TICKER });
     await app.assetDetail.addToFavorites();
 
     await app.market.openViaDeeplink();

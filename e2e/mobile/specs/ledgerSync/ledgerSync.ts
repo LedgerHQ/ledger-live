@@ -18,6 +18,7 @@ import {
 } from "@ledgerhq/live-e2e-shared/ledgerSync/testData";
 import type { SpeculosAppType } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import type { PartialFeatures } from "@shared/feature-flags";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 const APP_INSTANCE_NAME = "LWM";
 const defaultAccountName = `${Currency.ETH.name} 1`;
@@ -35,6 +36,8 @@ type LedgerSyncSuite = {
   /** The seed hook only matters because Speculos reads it at launch, and the teardown frees it. */
   usesSpeculos?: boolean;
 };
+
+type LedgerSyncDieTestOptions = TestMetaOptions & { onDie?: boolean };
 
 /** Keeps the hooks in one place so a suite cannot forget the seed or the Speculos teardown. */
 function ledgerSyncSuite(
@@ -107,7 +110,8 @@ async function openActivationFlowFromSettings() {
   await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
 }
 
-export function runLedgerSyncAddAccountTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncAddAccountTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   ledgerSyncSuite(
     {
       suite: "add account",
@@ -150,7 +154,8 @@ export function runLedgerSyncAddAccountTest(tmsLinks: string[], tags: string[]) 
   );
 }
 
-export function runLedgerSyncRenameAccountTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncRenameAccountTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   ledgerSyncSuite(
     {
       suite: "rename account",
@@ -182,7 +187,8 @@ export function runLedgerSyncRenameAccountTest(tmsLinks: string[], tags: string[
   );
 }
 
-export function runLedgerSyncDeleteAccountTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncDeleteAccountTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   ledgerSyncSuite(
     {
       suite: "delete account",
@@ -212,15 +218,8 @@ export function runLedgerSyncDeleteAccountTest(tmsLinks: string[], tags: string[
   );
 }
 
-export function runLedgerSyncDeleteInstanceTest({
-  tmsLinks,
-  tags,
-  onDie = false,
-}: {
-  tmsLinks: string[];
-  tags: string[];
-  onDie?: boolean;
-}) {
+export function runLedgerSyncDeleteInstanceTest(options: LedgerSyncDieTestOptions) {
+  const { tmsLinks, tags, onDie = false } = options;
   ledgerSyncSuite(
     {
       suite: onDie ? "delete instance on DIE" : "delete instance",
@@ -263,7 +262,8 @@ export function runLedgerSyncDeleteInstanceTest({
   );
 }
 
-export function runLedgerSyncDeleteBackupTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncDeleteBackupTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   ledgerSyncSuite(
     {
       suite: "delete backup",
@@ -291,7 +291,8 @@ export function runLedgerSyncDeleteBackupTest(tmsLinks: string[], tags: string[]
   );
 }
 
-export function runLedgerSyncSettingsEntryPointTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncSettingsEntryPointTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   ledgerSyncSuite(
     {
       suite: "entry point in settings",
@@ -308,7 +309,8 @@ export function runLedgerSyncSettingsEntryPointTest(tmsLinks: string[], tags: st
   );
 }
 
-export function runLedgerSyncActivationNoBackupTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncActivationNoBackupTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   ledgerSyncSuite(
     {
       suite: "activation flow no backup activated",
@@ -324,15 +326,8 @@ export function runLedgerSyncActivationNoBackupTest(tmsLinks: string[], tags: st
   );
 }
 
-export function runLedgerSyncActivationBackupTest({
-  tmsLinks,
-  tags,
-  onDie = false,
-}: {
-  tmsLinks: string[];
-  tags: string[];
-  onDie?: boolean;
-}) {
+export function runLedgerSyncActivationBackupTest(options: LedgerSyncDieTestOptions) {
+  const { tmsLinks, tags, onDie = false } = options;
   ledgerSyncSuite(
     {
       suite: onDie ? "activation flow backup activated on DIE" : "activation flow backup activated",
@@ -368,7 +363,8 @@ export function runLedgerSyncActivationBackupTest({
 }
 
 /** Flag on only: the rejected state and its Retry are DIE screens. */
-export function runLedgerSyncActivationRejectRetryTest(tmsLinks: string[], tags: string[]) {
+export function runLedgerSyncActivationRejectRetryTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   ledgerSyncSuite(
     {
       suite: "activation flow rejected on device then retried on DIE",

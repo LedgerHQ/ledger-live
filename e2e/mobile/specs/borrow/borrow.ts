@@ -35,6 +35,8 @@ export interface BorrowTmsLinks {
   withdraw: string;
 }
 
+type BorrowTestOptions = { tmsLinks: BorrowTmsLinks; tags: string[] };
+
 async function initBorrowApp() {
   await app.init({
     userdata: "skip-onboarding-with-last-seen-device",
@@ -73,7 +75,8 @@ async function resetBorrowState(flowName: string) {
  * The three flows share the single funded account, so they stay in one file: jest never runs a
  * file's describes in parallel, and one `BroadcastFlow.BORROW` slot keeps them on one platform.
  */
-export function runBorrowTests(tmsLinks: BorrowTmsLinks, tags: string[]) {
+export function runBorrowTests(options: BorrowTestOptions) {
+  const { tmsLinks, tags } = options;
   declareBroadcastAccounts(loanAccount, collateralAccount, debtAccount);
   // Not on LNS, as on Desktop: the nanos Ethereum app blind-signs every Morpho step.
   const describeBorrowFlow = shouldRunBroadcastFlow(BroadcastFlow.BORROW)
