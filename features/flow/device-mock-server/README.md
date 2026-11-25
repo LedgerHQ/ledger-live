@@ -20,3 +20,5 @@ The app renders `MockServerSettingsForm` in its settings screen and passes:
   app saves the settings, forgets the mock devices outside the session and restarts.
 
 The server calls come from [`@features/platform-device-mock-server`](../../platform/device-mock-server).
+The server itself is documented in the
+[device mock server README](https://github.com/LedgerHQ/device-sdk-ts/blob/develop/apps/device-mock-server/README.md).

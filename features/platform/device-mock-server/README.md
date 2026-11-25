@@ -10,6 +10,9 @@ app state, so the apps and the DMK libs (`@ledgerhq/live-dmk-*`) share it.
 The DMK transport, the legacy `hw-transport` bridge and the `mockserver|` compat device ids stay in
 `@ledgerhq/live-dmk-shared`: they need the DMK session and the legacy transport registry.
 
+The server itself (sessions, devices, APDU mocks, Speculos, limits) is documented in the
+[device mock server README](https://github.com/LedgerHQ/device-sdk-ts/blob/develop/apps/device-mock-server/README.md).
+
 ## Exports
 
 | Export | What it does |

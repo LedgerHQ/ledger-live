@@ -92,7 +92,12 @@ export function DeviceStateSheet({ state }: Readonly<DeviceStateSheetProps>): Re
         showsVerticalScrollIndicator={false}
       >
         <BottomSheetHeader />
-        <Box lx={{ gap: "s16" }}>{state && <DeviceStateContent state={state} />}</Box>
+        <Box
+          lx={{ gap: "s16" }}
+          testID={state ? `connect-known-or-new-device-state-sheet-${state.type}` : undefined}
+        >
+          {state && <DeviceStateContent state={state} />}
+        </Box>
       </BottomSheetScrollView>
     </QueuedBottomSheet>
   );

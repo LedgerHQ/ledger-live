@@ -56,7 +56,10 @@ export function DeviceRow({
         <DevicePackshot deviceModelId={item.device.deviceModelId} />
         <ListItemContent lx={{ gap: "s4" }}>
           <ListItemTitle>{deviceName}</ListItemTitle>
-          <Box lx={{ alignSelf: "flex-start" }}>
+          <Box
+            lx={{ alignSelf: "flex-start" }}
+            testID={`connect-known-or-new-device-row-${item.key}-status`}
+          >
             <DeviceStatusTag status={item.status} />
           </Box>
         </ListItemContent>

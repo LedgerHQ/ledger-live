@@ -1,7 +1,10 @@
 import { Step } from "jest-allure2-reporter/api";
 import { byId } from "@e2e/helpers/elements/native";
+import DeviceListPage from "@e2e/page/wallet/deviceList.page";
 
 export default class MyWalletPage {
+  deviceList = new DeviceListPage();
+
   private readonly addDeviceEntry = byId("select-device-add-new");
   private readonly contactsButton = byId("my-wallet-contacts-button");
   private readonly quickActionHelp = byId("my-wallet-quick-action-help");
