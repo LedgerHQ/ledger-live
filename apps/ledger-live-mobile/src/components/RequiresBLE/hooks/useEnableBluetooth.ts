@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Observable } from "rxjs";
 import { NativeModules, Platform } from "react-native";
-import getBLETransport from "~/transport/bleTransport";
+import { DeviceManagementKitBLETransport } from "@ledgerhq/live-dmk-mobile";
 import { areRealBleAndUsbDisabled } from "~/transport/areRealBleAndUsbDisabled";
 
 const { BluetoothHelperModule } = NativeModules;
@@ -121,7 +121,7 @@ export function useEnableBluetooth(
   useEffect(() => {
     if (!isHookEnabled || areRealBleAndUsbDisabled()) return;
 
-    const sub = new Observable(getBLETransport().observeState).subscribe({
+    const sub = new Observable(DeviceManagementKitBLETransport.observeState).subscribe({
       next: ({ type }: { type: string }) => setObservedTransportState(type),
     });
     return () => sub.unsubscribe();

@@ -6,8 +6,8 @@ import { registerTransportModule, type TransportModule } from "@ledgerhq/live-co
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import getBLETransport from "~/transport/bleTransport";
 import {
+  DeviceManagementKitBLETransport,
   DeviceManagementKitHIDTransport,
   DeviceManagementKitHTTPProxyTransport,
   getDeviceManagementKit,
@@ -31,7 +31,7 @@ export const registerTransports = ({
   isMockServerEnabled: () => boolean;
 }) => {
   if (Config.BLE_LOG_LEVEL) {
-    getBLETransport().setLogLevel(Config.BLE_LOG_LEVEL);
+    DeviceManagementKitBLETransport.setLogLevel(Config.BLE_LOG_LEVEL);
   }
 
   registerTransportModule({
@@ -103,7 +103,7 @@ export const registerTransports = ({
   registerTransportModule({
     id: "ble",
     open: (id, timeoutMs, traceContext, matchDeviceByName) =>
-      getBLETransport().open(id, timeoutMs, traceContext, { matchDeviceByName }),
-    disconnect: id => getBLETransport().disconnectDevice(id),
+      DeviceManagementKitBLETransport.open(id, timeoutMs, traceContext, { matchDeviceByName }),
+    disconnect: id => DeviceManagementKitBLETransport.disconnectDevice(id),
   });
 };
