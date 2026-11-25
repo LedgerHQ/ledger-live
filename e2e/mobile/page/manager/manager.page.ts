@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "@e2e/helpers/commonHelpers";
+import { openDeeplink, waitForIosTransitionEnd } from "@e2e/helpers/commonHelpers";
 import { byId } from "@e2e/helpers/elements/native";
 
 export default class ManagerPage {
@@ -25,6 +25,7 @@ export default class ManagerPage {
 
   @Step("Go back from My Ledger to My Wallet")
   async goBackToMyWallet() {
+    await waitForIosTransitionEnd();
     await this.headerBackButton.tap();
     await app.myWallet.expectScreenVisible();
   }
