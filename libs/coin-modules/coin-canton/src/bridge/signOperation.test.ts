@@ -1,4 +1,5 @@
 import { addPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/pending";
+import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -240,17 +241,18 @@ describe("buildSignOperation", () => {
         (await sign(tokenTransaction, { signedAccount: sender })).operation,
       );
 
-    it("should be a CC send when the token account is not found and CC is crafted", async () => {
-      const { operation } = await sign(
-        createMockTransaction({ tokenId: config.nativeInstrumentId, subAccountId }),
-      );
-
-      expect(operation).toMatchObject({ type: "OUT", value: BigNumber(110) });
-      expect(operation.subOperations ?? []).toEqual([]);
+    it.each([
+      ["the token", tokenTransaction],
+      ["CC", createMockTransaction({ tokenId: config.nativeInstrumentId, subAccountId })],
+    ])("should refuse to sign %s for a token account that is gone", async (_, transaction) => {
+      await expect(sign(transaction)).rejects.toThrow(InvalidTransactionError);
+      expect(mockedPrepare).not.toHaveBeenCalled();
     });
 
-    it("should charge the CC fee alone when the account holds no token account for it", async () => {
-      const { operation } = await sign(tokenTransaction);
+    it("should charge the CC fee alone for a token sent without a token account", async () => {
+      const { subAccountId: _, ...withoutTokenAccount } = tokenTransaction;
+
+      const { operation } = await sign(withoutTokenAccount as Transaction);
 
       expect(operation).toMatchObject({ type: "FEES", value: BigNumber(10), subOperations: [] });
     });

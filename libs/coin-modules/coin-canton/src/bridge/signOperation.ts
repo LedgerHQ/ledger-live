@@ -1,4 +1,4 @@
-import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
+import { FeeNotLoaded, InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
@@ -118,8 +118,12 @@ export const buildSignOperation =
   ({ account, deviceId, transaction }) =>
     new Observable(o => {
       async function main() {
-        const { fee } = transaction;
+        const { fee, subAccountId } = transaction;
         if (!fee) throw new FeeNotLoaded();
+        // The status blocks it too: a token account that is gone must not send another asset.
+        if (subAccountId && !account.subAccounts?.some(({ id }) => id === subAccountId)) {
+          throw new InvalidTransactionError();
+        }
 
         try {
           // o observables allows to define steps of the signing process with the device

@@ -3,6 +3,8 @@ import {
   FeeNotLoaded,
   FeeTooHigh,
   InvalidAddress,
+  InvalidTransactionError,
+  NotEnoughBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughSpendableBalance,
   RecipientRequired,
@@ -55,6 +57,16 @@ describe("getTransactionStatus", () => {
       },
     },
   };
+  const withTokenAccount = (spendableBalance: number): CantonAccount => ({
+    ...mockAccount,
+    subAccounts: [
+      {
+        type: "TokenAccount",
+        id: "token-sub-account",
+        spendableBalance: new BigNumber(spendableBalance),
+      } as NonNullable<CantonAccount["subAccounts"]>[number],
+    ],
+  });
   const accountWithUtxoCounts = (instrumentUtxoCounts: Record<string, number>): CantonAccount => ({
     ...mockAccount,
     cantonResources: { ...mockAccount.cantonResources, instrumentUtxoCounts },
@@ -448,6 +460,24 @@ describe("getTransactionStatus", () => {
         const result = await getTransactionStatus(account, tokenTransaction);
 
         expect(result.warnings.tooManyUtxos).toBeUndefined();
+      });
+
+      it.each([
+        ["without token accounts", { ...mockAccount, subAccounts: undefined }],
+        ["holding other token accounts", { ...mockAccount, subAccounts: [] }],
+      ])("blocks the send when its token account is gone, the account %s", async (_, account) => {
+        const result = await getTransactionStatus(account as CantonAccount, tokenTransaction);
+
+        expect(result.errors.amount).toBeInstanceOf(InvalidTransactionError);
+      });
+
+      it("checks the amount against its token account", async () => {
+        expect((await getTransactionStatus(withTokenAccount(50), tokenTransaction)).errors).toEqual(
+          {},
+        );
+        expect(
+          (await getTransactionStatus(withTokenAccount(49), tokenTransaction)).errors.amount,
+        ).toBeInstanceOf(NotEnoughBalance);
       });
     });
   });
