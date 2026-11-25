@@ -1,12 +1,17 @@
 import { useCallback, useMemo } from "react";
-import type { GeneralSettingsValues, SettingsPort } from "@features/flow-settings";
+import type { SettingsPort } from "@features/flow-settings";
+import type {
+  GeneralSettingsPort,
+  GeneralSettingsValues,
+  GeneralSettingUpdate,
+} from "@features/flow-settings-general";
 import {
   isSecurityUpdate,
   type SecuritySettingsPort,
   type SecuritySettingsValues,
   type SecurityUpdate,
 } from "@features/flow-settings-security";
-import { useGeneralSettingsAdapter, type GeneralSettingUpdate } from "./sections/general";
+import { useGeneralSettingsAdapter } from "./sections/general/useGeneralSettingsAdapter";
 import { useSecuritySettingsAdapter } from "./sections/security/useSecuritySettingsAdapter";
 import type { AppLockAdapter } from "./sections/security/types";
 
@@ -17,6 +22,7 @@ export type MobileSettingsPort = SettingsPort<
   GeneralSettingsValues & SecuritySettingsValues,
   MobileSettingsUpdate
 > &
+  Pick<GeneralSettingsPort, "languages" | "currencies" | "ledgerSync"> &
   Pick<SecuritySettingsPort, "requestAppLock">;
 
 /**
@@ -45,7 +51,11 @@ export function useMobileSettingsPort(appLock: AppLockAdapter): MobileSettingsPo
     [general, security],
   );
 
+  const { languages, currencies, ledgerSync } = general;
   const { requestAppLock } = security;
 
-  return useMemo(() => ({ values, setValue, requestAppLock }), [values, setValue, requestAppLock]);
+  return useMemo(
+    () => ({ values, setValue, languages, currencies, ledgerSync, requestAppLock }),
+    [values, setValue, languages, currencies, ledgerSync, requestAppLock],
+  );
 }
