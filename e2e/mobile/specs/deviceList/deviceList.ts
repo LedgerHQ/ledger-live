@@ -30,8 +30,9 @@ const STATUS_LABELS = {
 
 const ABSENT_DEVICE_ID = "e2e-absent-device";
 
-// `buildDeviceList` keys the row of a known device `known:<transport>:<id>`.
-const knownDeviceKey = (deviceId: string) => `known:mockserver:${deviceId}`;
+// `buildDeviceList` keys the row of a known device `known:<transport>:<id>`, and the transport id
+// of the mock server is `mockserverIdentifier`.
+const knownDeviceKey = (deviceId: string) => `known:MOCKSERVER:${deviceId}`;
 
 const BLUETOOTH_MODELS = new Set<DeviceModelId>([
   DeviceModelId.nanoX,
