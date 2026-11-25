@@ -5,7 +5,7 @@ import type { AddModeProps, AddModeViewProps } from "./types";
 export function useAddModeViewModel(props: AddModeProps): AddModeViewProps {
   // The device list sends the outcome of the Add mode.
   useConnectNewDeviceTracking(props.state, { reportsOutcome: false });
-  const isNewDevice = useIsNewDevice();
+  const checkIsNewDevice = useIsNewDevice();
 
-  return { ...props, isNewDevice };
+  return { ...props, checkIsNewDevice };
 }

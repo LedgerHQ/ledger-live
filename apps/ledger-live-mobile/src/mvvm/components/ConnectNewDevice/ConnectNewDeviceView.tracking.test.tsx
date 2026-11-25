@@ -37,7 +37,7 @@ const element = (viewState: ConnectNewDeviceUIState) => (
       lastNonErrorState={discoveringState}
       platform="android"
       onCloseErrorSheet={jest.fn()}
-      isNewDevice={() => true}
+      checkIsNewDevice={() => true}
     />
   </DeviceIntentTrackingProvider>
 );

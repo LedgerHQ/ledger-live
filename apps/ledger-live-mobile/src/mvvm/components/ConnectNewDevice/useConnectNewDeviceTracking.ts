@@ -26,7 +26,7 @@ export function useConnectNewDeviceTracking(
   { reportsOutcome }: { reportsOutcome: boolean },
 ): void {
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
-  const isNewDevice = useIsNewDevice();
+  const checkIsNewDevice = useIsNewDevice();
 
   const latestRef = useRef({ sourceFlow, analyticsProperties, reportsOutcome });
   useLayoutEffect(() => {
@@ -64,7 +64,7 @@ export function useConnectNewDeviceTracking(
           sourceFlow,
           modelId: state.device.deviceModelId,
           transport: state.device.transport === rnHidTransportIdentifier ? "usb" : "ble",
-          extraProperties: { ...analyticsProperties, isNewDevice: isNewDevice(state.device) },
+          extraProperties: { ...analyticsProperties, isNewDevice: checkIsNewDevice(state.device) },
         });
         return;
       case ConnectNewDeviceUIStateTypes.Connected:
@@ -77,7 +77,7 @@ export function useConnectNewDeviceTracking(
       default:
         failureRef.current = getConnectNewDeviceFailure(state, getTrackingTransport);
     }
-  }, [analyticsProperties, isNewDevice, sourceFlow, state]);
+  }, [analyticsProperties, checkIsNewDevice, sourceFlow, state]);
 
   useEffect(() => {
     const latest = latestRef;

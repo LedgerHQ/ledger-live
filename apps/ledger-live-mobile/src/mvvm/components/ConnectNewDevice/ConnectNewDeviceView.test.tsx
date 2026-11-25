@@ -49,7 +49,7 @@ function renderView(
         platform="android"
         onDeviceNotFound={withDeviceNotFound ? onDeviceNotFound : undefined}
         onCloseErrorSheet={onCloseErrorSheet}
-        isNewDevice={() => true}
+        checkIsNewDevice={() => true}
       />
     </DeviceIntentTrackingProvider>,
   );
@@ -194,7 +194,7 @@ describe("ConnectNewDeviceView", () => {
           lastNonErrorState={makeDiscoveringState()}
           platform="android"
           onCloseErrorSheet={jest.fn()}
-          isNewDevice={() => true}
+          checkIsNewDevice={() => true}
         />
       </DeviceIntentTrackingProvider>,
     );

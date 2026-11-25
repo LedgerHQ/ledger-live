@@ -52,5 +52,5 @@ export type ConnectNewDeviceViewProps = {
   /** Called on every close of the error sheet, also when `state` leaves an error. */
   onCloseErrorSheet: () => void;
   /** Whether a device is not in the known devices, for the events about that device. */
-  isNewDevice: (device: Device) => boolean;
+  checkIsNewDevice: (device: Device) => boolean;
 };

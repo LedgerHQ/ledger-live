@@ -1,6 +1,6 @@
 import type { ConnectNewDeviceViewProps } from "LLM/components/ConnectNewDevice";
 
-export type AddModeProps = Omit<ConnectNewDeviceViewProps, "isNewDevice"> & {
+export type AddModeProps = Omit<ConnectNewDeviceViewProps, "checkIsNewDevice"> & {
   onClose: () => void;
 };
 

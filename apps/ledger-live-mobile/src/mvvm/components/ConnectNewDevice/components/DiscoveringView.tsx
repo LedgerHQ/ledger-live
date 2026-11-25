@@ -24,7 +24,7 @@ type DiscoveringViewProps = {
   onDeviceNotFound?: () => void;
   /** True while an error sheet shows over the view: its page is sent again once the sheet closes. */
   isBehindErrorSheet: boolean;
-  isNewDevice: ConnectNewDeviceViewProps["isNewDevice"];
+  checkIsNewDevice: ConnectNewDeviceViewProps["checkIsNewDevice"];
 };
 
 const descriptionKeys = {
@@ -37,7 +37,7 @@ export function DiscoveringView({
   state,
   onDeviceNotFound,
   isBehindErrorSheet,
-  isNewDevice,
+  checkIsNewDevice,
 }: Readonly<DiscoveringViewProps>): React.ReactNode {
   const { t } = useTranslation();
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
@@ -66,7 +66,7 @@ export function DiscoveringView({
               device: selectableDevice.device,
               extraProperties: {
                 ...analyticsProperties,
-                isNewDevice: isNewDevice(selectableDevice.device),
+                isNewDevice: checkIsNewDevice(selectableDevice.device),
               },
             });
             selectableDevice.onSelect();

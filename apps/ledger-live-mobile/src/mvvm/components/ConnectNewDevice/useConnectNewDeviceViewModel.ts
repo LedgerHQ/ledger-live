@@ -48,18 +48,18 @@ export function useConnectNewDeviceViewModel({
   const dmk = useDeviceManagementKit();
   const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
   const saveConnectedDevice = useSaveConnectedDevice();
-  const isNewConnectedDevice = useIsNewConnectedDevice();
-  const isNewDevice = useIsNewDevice();
+  const checkIsNewConnectedDevice = useIsNewConnectedDevice();
+  const checkIsNewDevice = useIsNewDevice();
   const [viewState, setViewState] = useState<ViewState>({
     state: INITIAL_STATE,
     lastNonErrorState: INITIAL_STATE,
   });
 
   // The flow starts once per mount: callers can pass new callbacks without restarting it.
-  const callbacksRef = useRef({ onConnected, onClose, sourceFlow, isNewConnectedDevice });
+  const callbacksRef = useRef({ onConnected, onClose, sourceFlow, checkIsNewConnectedDevice });
   useEffect(() => {
-    callbacksRef.current = { onConnected, onClose, sourceFlow, isNewConnectedDevice };
-  }, [onConnected, onClose, sourceFlow, isNewConnectedDevice]);
+    callbacksRef.current = { onConnected, onClose, sourceFlow, checkIsNewConnectedDevice };
+  }, [onConnected, onClose, sourceFlow, checkIsNewConnectedDevice]);
   const initialDelaysRef = useRef(delays);
 
   if (!dmk) {
@@ -77,7 +77,7 @@ export function useConnectNewDeviceViewModel({
           sourceFlow: callbacksRef.current.sourceFlow,
           ...getConnectedDeviceTrackingProperties(connectedDevice),
           extraProperties: {
-            isNewDevice: callbacksRef.current.isNewConnectedDevice(connectedDevice),
+            isNewDevice: callbacksRef.current.checkIsNewConnectedDevice(connectedDevice),
           },
         });
         saveConnectedDevice(connectedDevice);
@@ -121,6 +121,6 @@ export function useConnectNewDeviceViewModel({
     platform,
     onDeviceNotFound,
     onCloseErrorSheet,
-    isNewDevice,
+    checkIsNewDevice,
   };
 }

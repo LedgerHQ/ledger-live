@@ -23,10 +23,11 @@ export function useIsNewDevice(): (device: Device) => boolean {
  * before the device is saved: the save makes every device known.
  */
 export function useIsNewConnectedDevice(): (connectedDevice: ConnectedDevice) => boolean {
-  const isNewDevice = useIsNewDevice();
+  const checkIsNewDevice = useIsNewDevice();
 
   return useCallback(
-    (connectedDevice: ConnectedDevice) => isNewDevice(connectedDeviceToDevice(connectedDevice)),
-    [isNewDevice],
+    (connectedDevice: ConnectedDevice) =>
+      checkIsNewDevice(connectedDeviceToDevice(connectedDevice)),
+    [checkIsNewDevice],
   );
 }

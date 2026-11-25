@@ -146,7 +146,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   const knownDevices = useSelector(knownDevicesSelector);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const saveConnectedDevice = useSaveConnectedDevice();
-  const isNewConnectedDevice = useIsNewConnectedDevice();
+  const checkIsNewConnectedDevice = useIsNewConnectedDevice();
   const isFocused = useIsFocused();
   const isAppInBackground = useIsAppInBackground({ includeInactive: false });
   const shouldPause = isPaused || !isFocused || isAppInBackground;
@@ -166,7 +166,7 @@ export function useConnectKnownOrNewDeviceViewModel({
     mockServerDevices,
     lastConnectedDevice,
     shouldPause,
-    isNewConnectedDevice,
+    checkIsNewConnectedDevice,
   });
   useLayoutEffect(() => {
     latestRef.current = {
@@ -177,7 +177,7 @@ export function useConnectKnownOrNewDeviceViewModel({
       mockServerDevices,
       lastConnectedDevice,
       shouldPause,
-      isNewConnectedDevice,
+      checkIsNewConnectedDevice,
     };
   });
   // The flow calls onConnected before it emits the state that follows the connection.
@@ -220,7 +220,7 @@ export function useConnectKnownOrNewDeviceViewModel({
             sourceFlow: latestRef.current.sourceFlow,
             ...getConnectedDeviceTrackingProperties(connectedDevice),
             extraProperties: {
-              isNewDevice: latestRef.current.isNewConnectedDevice(connectedDevice),
+              isNewDevice: latestRef.current.checkIsNewConnectedDevice(connectedDevice),
             },
           });
         }

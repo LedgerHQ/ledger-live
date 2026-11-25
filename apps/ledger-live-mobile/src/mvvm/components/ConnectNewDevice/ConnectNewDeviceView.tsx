@@ -30,12 +30,12 @@ function assertNever(value: never): never {
 function NonErrorStateView({
   state,
   isBehindErrorSheet,
-  isNewDevice,
+  checkIsNewDevice,
   onDeviceNotFound,
 }: Readonly<{
   state: ConnectNewDeviceNonErrorUIState;
   isBehindErrorSheet: boolean;
-  isNewDevice: ConnectNewDeviceViewProps["isNewDevice"];
+  checkIsNewDevice: ConnectNewDeviceViewProps["checkIsNewDevice"];
   onDeviceNotFound?: () => void;
 }>): React.ReactNode {
   switch (state.type) {
@@ -44,7 +44,7 @@ function NonErrorStateView({
         <DiscoveringView
           state={state}
           isBehindErrorSheet={isBehindErrorSheet}
-          isNewDevice={isNewDevice}
+          checkIsNewDevice={checkIsNewDevice}
           onDeviceNotFound={onDeviceNotFound}
         />
       );
@@ -53,7 +53,7 @@ function NonErrorStateView({
         <ConnectingView
           state={state}
           isBehindErrorSheet={isBehindErrorSheet}
-          isNewDevice={isNewDevice(state.device)}
+          isNewDevice={checkIsNewDevice(state.device)}
         />
       );
     case ConnectNewDeviceUIStateTypes.Connected:
@@ -62,7 +62,7 @@ function NonErrorStateView({
         <ConnectedView
           state={state}
           isBehindErrorSheet={isBehindErrorSheet}
-          isNewDevice={isNewDevice(state.device)}
+          isNewDevice={checkIsNewDevice(state.device)}
         />
       );
     case ConnectNewDeviceUIStateTypes.Terminated:
@@ -75,17 +75,19 @@ function NonErrorStateView({
 function ErrorStateView({
   state,
   platform,
-  isNewDevice,
+  checkIsNewDevice,
 }: Readonly<{
   state: ConnectNewDeviceErrorUIState;
   platform: ConnectNewDeviceViewProps["platform"];
-  isNewDevice: ConnectNewDeviceViewProps["isNewDevice"];
+  checkIsNewDevice: ConnectNewDeviceViewProps["checkIsNewDevice"];
 }>): React.ReactNode {
   switch (state.type) {
     case ConnectNewDeviceUIStateTypes.DiscoveryError:
       return <TrackedDiscoveryErrorState state={state} platform={platform} />;
     case ConnectNewDeviceUIStateTypes.ConnectionError:
-      return <TrackedConnectionErrorState state={state} isNewDevice={isNewDevice(state.device)} />;
+      return (
+        <TrackedConnectionErrorState state={state} isNewDevice={checkIsNewDevice(state.device)} />
+      );
     case ConnectNewDeviceUIStateTypes.UnknownError:
       return <TrackedUnknownErrorState state={state} />;
     default:
@@ -99,7 +101,7 @@ export function ConnectNewDeviceView({
   platform,
   onDeviceNotFound,
   onCloseErrorSheet,
-  isNewDevice,
+  checkIsNewDevice,
 }: Readonly<ConnectNewDeviceViewProps>) {
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
 
@@ -123,7 +125,7 @@ export function ConnectNewDeviceView({
       <NonErrorStateView
         state={nonErrorState}
         isBehindErrorSheet={errorState !== null}
-        isNewDevice={isNewDevice}
+        checkIsNewDevice={checkIsNewDevice}
         onDeviceNotFound={onDeviceNotFound}
       />
       <ErrorBottomSheet
@@ -133,7 +135,11 @@ export function ConnectNewDeviceView({
         testID="connect-new-device-error-sheet"
       >
         {errorState && (
-          <ErrorStateView state={errorState} platform={platform} isNewDevice={isNewDevice} />
+          <ErrorStateView
+            state={errorState}
+            platform={platform}
+            checkIsNewDevice={checkIsNewDevice}
+          />
         )}
       </ErrorBottomSheet>
     </Box>
