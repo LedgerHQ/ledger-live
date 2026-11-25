@@ -1,6 +1,21 @@
 import { act, renderHook } from "tests/testSetup";
-import { saveSettings } from "~/renderer/actions/settings";
+import { setHasPassword } from "~/renderer/actions/application";
+import {
+  saveSettings,
+  setAutoLockTimeout,
+  setDiscreetMode,
+  setMevProtection,
+} from "~/renderer/actions/settings";
+import { openURL } from "~/renderer/linking";
+import { isModalOpened } from "~/renderer/reducers/modals";
+import {
+  autoLockTimeoutSelector,
+  discreetModeSelector,
+  mevProtectionSelector,
+} from "~/renderer/reducers/settings";
 import { useDesktopSettingsPort } from "./useDesktopSettingsPort";
+
+jest.mock("~/renderer/linking", () => ({ openURL: jest.fn() }));
 
 function renderPort(settings: Parameters<typeof saveSettings>[0] = {}) {
   const hook = renderHook(() => useDesktopSettingsPort());
@@ -45,5 +60,119 @@ describe("useDesktopSettingsPort", () => {
     });
 
     expect(result.current.values.theme).toBe("dark");
+  });
+});
+
+describe("useDesktopSettingsPort, Security section", () => {
+  it("reads the Security values from the legacy store", () => {
+    const { result } = renderPort({
+      discreetMode: true,
+      mevProtection: false,
+      autoLockTimeout: 30,
+    });
+
+    expect(result.current.values).toMatchObject({
+      hideBalance: true,
+      mevProtection: false,
+      autoLockTimeout: 30,
+      passwordSet: false,
+      biometricKind: null,
+    });
+  });
+
+  it("reads whether a password is set from the application state", () => {
+    const { result, store } = renderPort();
+
+    act(() => {
+      store.dispatch(setHasPassword(true));
+    });
+
+    expect(result.current.values.passwordSet).toBe(true);
+  });
+
+  it("keeps the General values next to the Security ones", () => {
+    const { result } = renderPort({ theme: "dark", discreetMode: true });
+
+    expect(result.current.values).toMatchObject({ theme: "dark", hideBalance: true });
+  });
+
+  it("stores a hide balance change as the legacy discreet mode", () => {
+    const { result, store } = renderPort({ discreetMode: false });
+
+    act(() => {
+      result.current.setValue({ key: "hideBalance", value: true });
+    });
+
+    expect(discreetModeSelector(store.getState())).toBe(true);
+  });
+
+  it("stores a MEV protection change like the legacy toggle", () => {
+    const { result, store } = renderPort({ mevProtection: true });
+
+    act(() => {
+      result.current.setValue({ key: "mevProtection", value: false });
+    });
+
+    expect(mevProtectionSelector(store.getState())).toBe(false);
+  });
+
+  it("stores an auto-lock timeout change", () => {
+    const { result, store } = renderPort({ autoLockTimeout: 10 });
+
+    act(() => {
+      result.current.setValue({ key: "autoLockTimeout", value: -1 });
+    });
+
+    expect(autoLockTimeoutSelector(store.getState())).toBe(-1);
+  });
+
+  it("does not touch the theme when a Security setting changes", () => {
+    const { result, store } = renderPort({ theme: "dark" });
+
+    act(() => {
+      result.current.setValue({ key: "hideBalance", value: true });
+    });
+
+    expect(store.getState().settings.theme).toBe("dark");
+  });
+
+  it("shows a change made elsewhere in the app, as the legacy screens make it", () => {
+    const { result, store } = renderPort({ discreetMode: false, mevProtection: true });
+
+    act(() => {
+      store.dispatch(setDiscreetMode(true));
+      store.dispatch(setMevProtection(false));
+      store.dispatch(setAutoLockTimeout(60));
+    });
+
+    expect(result.current.values).toMatchObject({
+      hideBalance: true,
+      mevProtection: false,
+      autoLockTimeout: 60,
+    });
+  });
+
+  it.each([
+    ["set", "MODAL_PASSWORD"],
+    ["change", "MODAL_PASSWORD"],
+    ["remove", "MODAL_DISABLE_PASSWORD"],
+  ] as const)("opens the legacy password modal for %s", (action, modal) => {
+    const { result, store } = renderPort();
+
+    act(() => {
+      result.current.requestAppLock(action);
+    });
+
+    expect(isModalOpened(store.getState(), modal)).toBe(true);
+  });
+
+  it("opens the MEV protection page", () => {
+    const { result } = renderPort();
+
+    result.current.openMevProtectionInfo();
+
+    expect(jest.mocked(openURL)).toHaveBeenCalledWith(
+      expect.stringContaining("support.ledger.com"),
+    );
   });
 });
