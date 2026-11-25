@@ -274,6 +274,8 @@ domain/api/market-index-fear-and-greed/                  @ledgerhq/wallet-xp
 domain/api/market-index-altcoin-season/                  @ledgerhq/wallet-xp
 domain/entity/market-index-global/                       @ledgerhq/wallet-xp
 domain/api/market-index-global/                          @ledgerhq/wallet-xp
+domain/entity/market-chart/                              @ledgerhq/wallet-xp
+domain/api/market-chart/                                 @ledgerhq/wallet-xp
 features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
 
 ### ... market trending categories => @ledgerhq/wallet-xp ... ###
