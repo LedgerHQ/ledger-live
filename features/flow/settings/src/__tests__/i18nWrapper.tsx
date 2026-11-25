@@ -10,6 +10,7 @@ const resources = {
           general: "General",
           assetManagement: "Asset management",
           security: "Security",
+          notifications: "Notifications",
           privacy: "Privacy",
           about: "About",
         },
