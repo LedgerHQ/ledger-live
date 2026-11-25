@@ -13,9 +13,6 @@ import { getChartRangeSegment, getRange } from "../utils";
 import { buildMarketListParams, getNextMarketListPage } from "../utils/marketListQueryArg";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH, ONE_DAY } from "../utils/timers";
 import {
-  GlobalMarketData,
-  GlobalMarketDataRequestParams,
-  GlobalMarketDataResponseSchema,
   MarketChartApiResponseSchema,
   MarketDataTags,
   SupportedChartCounterCurrenciesSchema,
@@ -105,7 +102,6 @@ export const marketApi = createApi({
     MarketDataTags.CurrencyData,
     MarketDataTags.ChartData,
     MarketDataTags.ChartCounterCurrencies,
-    MarketDataTags.GlobalData,
     MarketDataTags.TrendingPerformers,
     MarketDataTags.MarketList,
   ],
@@ -237,33 +233,6 @@ export const marketApi = createApi({
       },
       keepUnusedDataFor: ONE_DAY / 1000,
     }),
-    getGlobalMarketData: build.query<GlobalMarketData, GlobalMarketDataRequestParams>({
-      query: ({ counterCurrency }) => ({
-        url: "/v3/markets/global",
-        params: { to: counterCurrency },
-      }),
-      providesTags: [MarketDataTags.GlobalData],
-      transformResponse: (response: unknown): GlobalMarketData => {
-        const result = GlobalMarketDataResponseSchema.safeParse(response);
-
-        if (!result.success) {
-          log("market", "Invalid global market data response schema:", {
-            errors: result.error.issues,
-          });
-          throw new Error(
-            `[Market API] Global market data schema validation failed: ${result.error.issues
-              .map(e => `${e.path.join(".")}: ${e.message}`)
-              .join(", ")}`,
-          );
-        }
-
-        return {
-          marketCap: result.data.marketCap,
-          changePercentage24h: result.data.percentageChanges["1d"] * 100,
-        };
-      },
-      keepUnusedDataFor: (REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH) / 1000,
-    }),
     getTrendingPerformers: build.query<MarketItemPerformer[], TrendingPerformersQueryParams>({
       async queryFn({ counterCurrency }, _api, _extra, fetchWithBQ) {
         const trendingResult = await fetchWithBQ("/v3/currencies/trending");
@@ -321,6 +290,5 @@ export const {
   useGetCurrencyDataQuery,
   useGetAssetChartDataQuery,
   useGetSupportedChartCounterCurrenciesQuery,
-  useGetGlobalMarketDataQuery,
   useGetTrendingPerformersQuery,
 } = marketApi;

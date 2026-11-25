@@ -79,6 +79,7 @@
     "@domain/api-market-index-altcoin-season": "workspace:^",
     "@domain/api-market-index-fear-and-greed": "workspace:^",
     "@domain/api-market-trending-categories": "workspace:*",
+    "@domain/api-market-index-global": "workspace:^",
     "@domain/api-push-devices": "workspace:*",
     "@domain/entity-account": "workspace:^",
     "@domain/entity-account-alias": "workspace:^",

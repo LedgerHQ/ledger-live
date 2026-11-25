@@ -10,7 +10,6 @@ export enum MarketDataTags {
   CurrencyData = "CurrencyData",
   ChartData = "ChartData",
   ChartCounterCurrencies = "ChartCounterCurrencies",
-  GlobalData = "GlobalData",
   TrendingPerformers = "TrendingPerformers",
   MarketList = "MarketList",
 }
@@ -46,26 +45,6 @@ export const SupportedChartCounterCurrenciesSchema = z
   .transform(currencies => currencies.map(currency => currency.toLowerCase()));
 
 export type MarketChartApiResponse = z.infer<typeof MarketChartApiResponseSchema>;
-
-// Raw /v3/markets/global response: percentageChanges values are ratios (e.g. -0.0171 = -1.71%).
-export const GlobalMarketDataResponseSchema = z.object({
-  marketCap: z.number(),
-  percentageChanges: z.object({
-    "1d": z.number(),
-  }),
-});
-
-export type GlobalMarketDataResponse = z.infer<typeof GlobalMarketDataResponseSchema>;
-
-export interface GlobalMarketDataRequestParams {
-  counterCurrency: string;
-}
-
-export interface GlobalMarketData {
-  marketCap: number;
-  // 24h change expressed as a percentage (e.g. -1.71), ready for display.
-  changePercentage24h: number;
-}
 
 // Raw /v3/currencies/trending response: an ordered list of { id, supported } currencies.
 export const TrendingCurrenciesResponseSchema = z.array(
