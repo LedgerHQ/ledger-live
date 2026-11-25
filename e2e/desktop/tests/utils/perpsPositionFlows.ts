@@ -1,5 +1,7 @@
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import type { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import type { Application } from "tests/page";
+import { getSavedAccountAddress } from "tests/utils/userdata";
 import type { PerpsOrderSide } from "tests/page/perps.order.page";
 
 // Real broadcast, overriding any host value.
@@ -57,12 +59,21 @@ export async function closeHip3Position(
   await app.perpsOrder.expectPositionClosed();
 }
 
-// Teardown for tests that must not leave a real position open.
-export async function closeHip3PositionIfOpen(
+// The provider lists the open positions, so no market has to be scanned.
+export async function closeOpenHip3Positions(
   app: Application,
-  { relaunchSpeculos }: { relaunchSpeculos: RelaunchSpeculos },
+  {
+    account,
+    userdataFile,
+    relaunchSpeculos,
+  }: { account: Account; userdataFile: string; relaunchSpeculos: RelaunchSpeculos },
 ) {
-  if (await app.perpsOrder.hasPositionOnOpenedMarket()) {
+  const address = await getSavedAccountAddress(userdataFile, account);
+  const positions = await app.perpsOrder.getProviderHip3Positions(address);
+  for (const position of positions) {
+    await app.perpsOrder.openPositionFromList(position);
     await closeHip3Position(app, { relaunchSpeculos });
+    await app.perpsOrder.expectPositionRowHidden(position);
   }
+  await app.perpsOrder.expectNoProviderHip3Positions(address);
 }

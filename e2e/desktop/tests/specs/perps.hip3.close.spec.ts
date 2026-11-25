@@ -9,7 +9,7 @@ import { getPerpsLiveAppStorage } from "tests/utils/perpsLiveAppStorage";
 import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 import {
   closeHip3Position,
-  closeHip3PositionIfOpen,
+  closeOpenHip3Positions,
   openHip3Position,
   openPerpsFromPortfolio,
   PERPS_REAL_BROADCAST_ENV,
@@ -38,14 +38,23 @@ test.describe("Perps HIP-3 close position", { lock: lock.names }, () => {
     env: PERPS_REAL_BROADCAST_ENV,
   });
 
-  test.beforeEach(async ({ app, speculos }) => {
+  test.beforeEach(async ({ app, speculos, userdataFile }) => {
     await openPerpsFromPortfolio(app);
+    await closeOpenHip3Positions(app, {
+      account,
+      userdataFile,
+      relaunchSpeculos: speculos.relaunch,
+    });
     await openHip3Position(app, { side: "long", relaunchSpeculos: speculos.relaunch });
   });
 
   // Keeps the real position from staying open if the close fails.
-  test.afterEach(async ({ app, speculos }) => {
-    await closeHip3PositionIfOpen(app, { relaunchSpeculos: speculos.relaunch });
+  test.afterEach(async ({ app, speculos, userdataFile }) => {
+    await closeOpenHip3Positions(app, {
+      account,
+      userdataFile,
+      relaunchSpeculos: speculos.relaunch,
+    });
   });
 
   test(

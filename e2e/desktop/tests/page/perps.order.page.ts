@@ -1,7 +1,7 @@
-import { expect } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { WebViewAppPage } from "tests/page/webViewApp.page";
-import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export type PerpsOrderSide = "long" | "short";
 
@@ -12,6 +12,10 @@ const AUTO_CLOSE_OFFSETS = {
   long: { takeProfit: "+10%", stopLoss: "-5%" },
   short: { takeProfit: "-5%", stopLoss: "+5%" },
 } satisfies Record<PerpsOrderSide, AutoCloseOffsets>;
+
+const HIP3_PROVIDER_ID = "hyperliquid-xyz";
+
+export type ProviderPosition = { marketId: string; symbol: string };
 
 const autoCloseSummary = /Take profit \$([\d,.]+), Stop loss \$([\d,.]+)/;
 
@@ -36,8 +40,6 @@ export class PerpsOrderPage extends WebViewAppPage {
   private readonly autoCloseSubmitTestId = "desktop-order-configure-auto-close-submit";
   private readonly configureSubmitTestId = "configure-order-submit-button";
 
-  private marketOpened = false;
-
   @step("Open the first HIP-3 market")
   async openFirstHip3Market() {
     const webview = await this.getWebView();
@@ -45,7 +47,6 @@ export class PerpsOrderPage extends WebViewAppPage {
       .getByTestId(/^market-item-xyz:/)
       .first()
       .click();
-    this.marketOpened = true;
     await expect(
       webview.getByTestId(this.orderWidgetTestId),
       "A position already open on this market hides the order form: close it first",
@@ -172,14 +173,69 @@ export class PerpsOrderPage extends WebViewAppPage {
     await webview.getByTestId(this.closeRecapCtaTestId).click();
   }
 
-  // False when the test never opened a market, so teardown has nothing to look for.
-  @step("Check whether the opened market holds a position")
-  async hasPositionOnOpenedMarket(): Promise<boolean> {
-    if (!this.marketOpened) return false;
+  @step("Read the open HIP-3 positions from the provider")
+  async getProviderHip3Positions(address: string): Promise<ProviderPosition[]> {
     const webview = await this.getWebView();
-    const closeButton = webview.getByTestId(this.closePositionButtonTestId);
-    await expect(webview.getByTestId(this.orderWidgetTestId).or(closeButton)).toBeVisible();
-    return closeButton.isVisible();
+    const positions: unknown = await webview.evaluate(
+      async ({ walletAddress, providerId }) => {
+        const post = await fetch("/proxy/perps/v1/positions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ address: walletAddress, providerId }),
+        });
+        if (!post.ok) throw new Error(`The Perps provider answered ${post.status}`);
+        const open: { marketId: string }[] = await post.json();
+        return Promise.all(
+          open.map(async ({ marketId }) => {
+            const get = await fetch(`/proxy/perps/v1/markets/${encodeURIComponent(marketId)}`);
+            if (!get.ok) throw new Error(`The Perps provider answered ${get.status} for a market`);
+            const market = await get.json();
+            return { marketId, symbol: market.baseAsset.symbol };
+          }),
+        );
+      },
+      { walletAddress: address, providerId: HIP3_PROVIDER_ID },
+    );
+    if (!Array.isArray(positions)) throw new Error("The Perps provider returned no position list");
+    return positions.map(position => {
+      if (typeof position?.marketId !== "string" || typeof position?.symbol !== "string") {
+        throw new Error("A provider position has no market id or symbol");
+      }
+      return { marketId: position.marketId, symbol: position.symbol };
+    });
+  }
+
+  @step("Verify the provider reports no open HIP-3 position")
+  async expectNoProviderHip3Positions(address: string) {
+    await expect
+      .poll(async () => (await this.getProviderHip3Positions(address)).length, {
+        timeout: TIMEOUT.xxlarge,
+        intervals: [INTERVAL.medium],
+      })
+      .toBe(0);
+  }
+
+  @step("Open the position of the market from the positions list")
+  async openPositionFromList(position: ProviderPosition) {
+    const webview = await this.getWebView();
+    const row = this.positionRow(webview, position);
+    await expect(
+      row,
+      `The provider reports a position on ${position.marketId} that the positions list does not show`,
+    ).toBeVisible({ timeout: TIMEOUT.xxlarge });
+    await row.click();
+  }
+
+  @step("Verify the positions list no longer shows the market")
+  async expectPositionRowHidden(position: ProviderPosition) {
+    const webview = await this.getWebView();
+    await expect(this.positionRow(webview, position)).toBeHidden({ timeout: TIMEOUT.xxlarge });
+  }
+
+  // The list shows the symbol without its dex prefix, then the side and leverage.
+  private positionRow(webview: Page, { symbol: providerSymbol }: ProviderPosition) {
+    const symbol = providerSymbol.replace(/^.*:/, "");
+    return webview.getByRole("button", { name: new RegExp(`${symbol}\\s+(Long|Short) \\d+x`) });
   }
 
   private async expectPositionAutoClose(side: PerpsOrderSide) {

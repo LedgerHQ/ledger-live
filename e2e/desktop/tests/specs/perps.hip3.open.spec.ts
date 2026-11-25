@@ -8,7 +8,7 @@ import { buildTags } from "tests/utils/tagsUtils";
 import { getPerpsLiveAppStorage } from "tests/utils/perpsLiveAppStorage";
 import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 import {
-  closeHip3PositionIfOpen,
+  closeOpenHip3Positions,
   openHip3Position,
   openPerpsFromPortfolio,
   PERPS_REAL_BROADCAST_ENV,
@@ -41,13 +41,22 @@ test.describe("Perps HIP-3 open position", { lock: lock.names }, () => {
     env: PERPS_REAL_BROADCAST_ENV,
   });
 
-  test.beforeEach(async ({ app }) => {
+  test.beforeEach(async ({ app, speculos, userdataFile }) => {
     await openPerpsFromPortfolio(app);
+    await closeOpenHip3Positions(app, {
+      account,
+      userdataFile,
+      relaunchSpeculos: speculos.relaunch,
+    });
   });
 
   // The position is a real one, so it is closed even when the test fails.
-  test.afterEach(async ({ app, speculos }) => {
-    await closeHip3PositionIfOpen(app, { relaunchSpeculos: speculos.relaunch });
+  test.afterEach(async ({ app, speculos, userdataFile }) => {
+    await closeOpenHip3Positions(app, {
+      account,
+      userdataFile,
+      relaunchSpeculos: speculos.relaunch,
+    });
   });
 
   for (const { side, xrayTicket } of orders) {

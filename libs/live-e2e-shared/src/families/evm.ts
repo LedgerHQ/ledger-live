@@ -205,20 +205,36 @@ export async function approveContractTransaction() {
   return approveContractTransactionButtonDevice();
 }
 
-export async function signTypedMessageTouchDevices() {
-  await waitFor(DeviceLabels.REVIEW_TYPED_MESSAGE);
+async function signMessageTouchDevices(reviewLabel: DeviceLabels) {
+  await waitFor(reviewLabel);
   await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
   await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
 }
 
-export const signTypedMessageButtonDevice = withDeviceController(
+const signMessageButtonDevice = withDeviceController(
   ({ getButtonsController }) =>
-    async () => {
-      await waitFor(DeviceLabels.REVIEW_TYPED_MESSAGE);
+    async (reviewLabel: DeviceLabels) => {
+      await waitFor(reviewLabel);
       await pressUntilTextFound(DeviceLabels.SIGN_TYPED_MESSAGE);
       await getButtonsController().both();
     },
 );
+
+/** Signs a message whose review the device app opens with the `reviewLabel` screen. */
+async function signMessage(reviewLabel: DeviceLabels) {
+  if (isTouchDevice()) {
+    return signMessageTouchDevices(reviewLabel);
+  }
+  return signMessageButtonDevice(reviewLabel);
+}
+
+export async function signTypedMessageTouchDevices() {
+  await signMessageTouchDevices(DeviceLabels.REVIEW_TYPED_MESSAGE);
+}
+
+export async function signTypedMessageButtonDevice() {
+  await signMessageButtonDevice(DeviceLabels.REVIEW_TYPED_MESSAGE);
+}
 
 /**
  * The nanos app (1.16.2) shows typed data as domain and message hashes only, behind a "Blind
@@ -235,23 +251,8 @@ export const signTypedMessageNanoS = withDeviceController(
 
 /** The Hyperliquid app reviews an order as "Review message to open long" and signs it as a message. */
 export async function signHyperliquidMessage() {
-  if (isTouchDevice()) {
-    await waitFor(DeviceLabels.REVIEW_MESSAGE);
-    await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
-    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
-    return;
-  }
-  await signHyperliquidMessageButtonDevice();
+  await signMessage(DeviceLabels.REVIEW_MESSAGE);
 }
-
-const signHyperliquidMessageButtonDevice = withDeviceController(
-  ({ getButtonsController }) =>
-    async () => {
-      await waitFor(DeviceLabels.REVIEW_MESSAGE);
-      await pressUntilTextFound(DeviceLabels.SIGN_TYPED_MESSAGE);
-      await getButtonsController().both();
-    },
-);
 
 export async function signTypedMessage() {
   if (isTouchDevice()) {
