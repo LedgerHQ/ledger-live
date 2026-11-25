@@ -8,10 +8,15 @@ import { accountUserDataExportSelector } from "~/renderer/reducers/wallet";
 
 type AccountsState = Pick<State, "accounts" | "wallet">;
 
+/** The legacy desktop read runs no migration step for an account with no version. */
+const RUNS_NO_STEP = accountModel.version;
+
 /** The record validates only the envelope; the account model reads the rest of the raw account. */
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-const asRawModel = (stored: StoredAccount) =>
-  stored as unknown as { data: AccountRaw; version: number };
+const asRawModel = ({ data, version }: StoredAccount) => ({
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  data: data as AccountRaw,
+  version: version ?? RUNS_NO_STEP,
+});
 
 /** The legacy desktop model as is: it migrates from the stored version and writes version 3. */
 export const accountsRecord = defineAccountsRecord({
