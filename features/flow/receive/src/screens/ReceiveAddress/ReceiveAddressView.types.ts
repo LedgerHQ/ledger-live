@@ -2,7 +2,6 @@ import type { AddressParts } from "../../logic/splitAddress";
 import type { ReceiveIcon } from "../../logic/toReceiveAddressData";
 import type { ReceiveAddressOptionId } from "../../logic/toReceiveAddressOptions";
 import type { ReceiveNoticeKind, ReceiveNoticeTone } from "../../logic/toReceiveNotices";
-import type { ReceiveServiceIncident } from "../../types";
 
 /** The account data could not be read: Retry reads what failed again. */
 export type ReceiveAddressError = Readonly<{
@@ -57,17 +56,13 @@ export type ReceiveNoticeView = Readonly<{
   learnMore?: ReceiveAddressAction;
 }>;
 
-export type ReceiveServiceWarningView = Readonly<{
-  title: string;
-  ctaLabel: string;
-  onPress: () => void;
-}>;
+export type ReceiveIncidentTextPartView = Readonly<{ text: string; onPress?: () => void }>;
 
 export type ReceiveServiceStatusView = Readonly<{
   title: string;
-  incidents: readonly ReceiveServiceIncident[];
-  gotItLabel: string;
-  onClose: () => void;
+  description?: readonly ReceiveIncidentTextPartView[];
+  continueLabel: string;
+  onContinue: () => void;
 }>;
 
 export type ReceiveAddressViewProps = Readonly<{
@@ -81,7 +76,6 @@ export type ReceiveAddressViewProps = Readonly<{
   /** A device verification runs: on desktop, its own dialog takes the place of this one. */
   isVerifying: boolean;
   notices: readonly ReceiveNoticeView[];
-  serviceWarning?: ReceiveServiceWarningView;
   noticesPlaceholderLabel: string;
   serviceStatus?: ReceiveServiceStatusView;
   /** "Receive USDC" */
