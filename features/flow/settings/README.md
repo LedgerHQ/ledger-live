@@ -73,6 +73,7 @@ the app store, and a value can move out of the app later without the sections ch
 | `SettingsPortProvider`   | Gives the sections a `SettingsPort`; the app mounts it with a memoized value |
 | `useSetting(key)`        | Current value of a setting, re-rendered when the app changes it           |
 | `useUpdateSetting()`     | Returns `setValue({ key, value })`, which applies the change and its side effects |
+| `useSettingsPort<Port>()` | The port typed for a section living in its own package, which names its own values and updates |
 | `SettingsValues`         | Type of every setting, composed from one file per section under `src/ports/sections/` |
 
 The app builds the port from its own store. `values` is a snapshot read with the app's selectors,
@@ -87,6 +88,14 @@ in `src/ports/sections/<section>.ts`, a handler in each app, and a row in the ta
 
 Side effects that need the app stay in the app: desktop main-process IPC, native modules and app
 restart. The tracking events of a screen stay in its view.
+
+## Sections in their own package
+
+Each section after General is a flow package of its own, for example `@features/flow-settings-security`. It
+declares its values and updates, and takes the shell's `SettingsPort<Values, Update>` as its port type. The
+shell imports no section: the app composes them. It gives `SettingsGate` a `renderSection` function that
+returns the content of a section, and provides one port that carries the values and changes of every section
+(see `createFakePort` in `@features/flow-settings/testing` for the tests of a section).
 
 ## Consumers
 

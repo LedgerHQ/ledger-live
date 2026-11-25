@@ -12,6 +12,11 @@ export type SettingsGateProps = Readonly<{
   legacySettings: ReactNode;
   /** Rows the app hides, given to `HiddenSettingsProvider`. */
   rowsToHide: unknown;
+  /**
+   * Content of a section. The app composes it from the section packages, so the shell never
+   * imports one. Empty while a section has no content yet.
+   */
+  renderSection?: (section: SettingsSectionId) => ReactNode;
   testID?: string;
 }>;
 
@@ -21,6 +26,7 @@ export function SettingsGate({
   onSelectSection,
   legacySettings,
   rowsToHide,
+  renderSection,
   testID,
 }: SettingsGateProps) {
   const { showLegacySettings, selectedSection } = useSettingsGateViewModel(subPath);
@@ -34,7 +40,7 @@ export function SettingsGate({
         onSelectSection={onSelectSection}
         testID={testID}
       >
-        {null}
+        {renderSection?.(selectedSection) ?? null}
       </SettingsPage>
     </HiddenSettingsProvider>
   );

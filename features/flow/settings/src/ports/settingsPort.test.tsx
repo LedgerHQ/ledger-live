@@ -1,8 +1,14 @@
 import React, { type ReactNode } from "react";
 import { act, renderHook } from "@testing-library/react";
 import { SettingsPortMissing } from "./errors";
-import { SettingsPortProvider, useSetting, useUpdateSetting } from "./settingsPort";
-import { createFakeSettingsPort } from "./testing/fakeSettingsPort";
+import {
+  SettingsPortProvider,
+  useSetting,
+  useSettingsPort,
+  useUpdateSetting,
+} from "./settingsPort";
+import { createFakePort, createFakeSettingsPort } from "./testing/fakeSettingsPort";
+import type { SettingsPort, UpdateOf } from "./types";
 
 describe("useSetting", () => {
   it("returns the value the app provides for the key", () => {
@@ -45,5 +51,29 @@ describe("useUpdateSetting", () => {
 
     expect(updates).toEqual([{ key: "theme", value: "dark" }]);
     expect(port.values.theme).toBe("dark");
+  });
+});
+
+describe("useSettingsPort", () => {
+  type CounterValues = Readonly<{ count: number }>;
+  type CounterPort = SettingsPort<CounterValues, UpdateOf<CounterValues>>;
+
+  it("gives a section its own values and updates from the one port the app provides", () => {
+    const { port, updates } = createFakePort<CounterValues, UpdateOf<CounterValues>>(
+      { count: 1 },
+      { count: 2 },
+    );
+
+    const { result } = renderHook(() => useSettingsPort<CounterPort>(), {
+      wrapper: ({ children }: { children: ReactNode }) => (
+        <SettingsPortProvider value={port}>{children}</SettingsPortProvider>
+      ),
+    });
+    act(() => {
+      result.current.setValue({ key: "count", value: 3 });
+    });
+
+    expect(updates).toEqual([{ key: "count", value: 3 }]);
+    expect(port.values.count).toBe(3);
   });
 });
