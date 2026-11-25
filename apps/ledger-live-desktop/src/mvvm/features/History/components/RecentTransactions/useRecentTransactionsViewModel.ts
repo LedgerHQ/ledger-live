@@ -82,6 +82,7 @@ export function useRecentTransactionsViewModel({
       }
       setDrawer(OperationDetails, {
         operationId: operation.id,
+        hash: operation.hash,
         accountId: account.id,
         parentId: parentAccount?.id,
       });

@@ -1,5 +1,10 @@
 import { renderHook, act, waitFor, withFlagOverrides } from "tests/testSetup";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { Operation } from "@ledgerhq/types-live";
 import { useNavigate, useLocation } from "react-router";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { useHistoryViewModel } from "../useHistoryViewModel";
 import { track } from "@shared/analytics";
 
@@ -9,8 +14,9 @@ jest.mock("react-router", () => ({
   useLocation: jest.fn(),
 }));
 
+const mockHistoryOperations = jest.fn();
 jest.mock("../useHistoryOperations", () => ({
-  useHistoryOperations: () => [],
+  useHistoryOperations: () => mockHistoryOperations(),
 }));
 
 jest.mock("../useHistoryTable", () => ({
@@ -28,6 +34,11 @@ jest.mock("../useHistoryVirtualization", () => ({
   }),
 }));
 
+jest.mock("~/renderer/drawers/Provider", () => ({
+  ...jest.requireActual("~/renderer/drawers/Provider"),
+  setDrawer: jest.fn(),
+}));
+
 const mockNavigate = jest.fn();
 const mockUseNavigate = jest.mocked(useNavigate);
 const mockUseLocation = jest.mocked(useLocation);
@@ -35,6 +46,7 @@ const mockUseLocation = jest.mocked(useLocation);
 describe("useHistoryViewModel navigateBack", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockHistoryOperations.mockReturnValue([]);
     mockUseNavigate.mockReturnValue(mockNavigate);
     mockUseLocation.mockReturnValue({
       pathname: "/history",
@@ -69,6 +81,29 @@ describe("useHistoryViewModel navigateBack", () => {
     const { result } = renderHook(() => useHistoryViewModel());
 
     expect(result.current.showBackButton).toBe(false);
+  });
+
+  it("opens operation details with the operation hash when a row is clicked", () => {
+    const account = genAccount("history-row", {
+      currency: getCryptoCurrencyById("bitcoin"),
+      operationsSize: 0,
+    });
+    const operation = { id: "operation-id", hash: "operation-hash", type: "OUT" } as Operation;
+    const row = {
+      original: { operation, account, parentAccount: undefined },
+    } as Parameters<ReturnType<typeof useHistoryViewModel>["onRowClick"]>[0];
+    const { result } = renderHook(() => useHistoryViewModel());
+
+    act(() => {
+      result.current.onRowClick(row);
+    });
+
+    expect(setDrawer).toHaveBeenCalledWith(OperationDetails, {
+      operationId: operation.id,
+      hash: operation.hash,
+      accountId: account.id,
+      parentId: undefined,
+    });
   });
 
   it("should format the dust filter threshold in USD without a reference conversion", () => {

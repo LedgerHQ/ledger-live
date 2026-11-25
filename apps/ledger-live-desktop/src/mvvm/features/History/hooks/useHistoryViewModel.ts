@@ -121,6 +121,7 @@ export function useHistoryViewModel(): HistoryViewModel {
     });
     setDrawer(OperationDetails, {
       operationId: operation.id,
+      hash: operation.hash,
       accountId: account.id,
       parentId: parentAccount?.id,
     });

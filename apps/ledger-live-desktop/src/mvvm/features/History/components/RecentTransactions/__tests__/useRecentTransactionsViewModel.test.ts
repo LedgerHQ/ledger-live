@@ -90,6 +90,7 @@ describe("useRecentTransactionsViewModel", () => {
     });
     expect(setDrawer).toHaveBeenCalledWith(OperationDetails, {
       operationId: operation.id,
+      hash: operation.hash,
       accountId: account.id,
       parentId: undefined,
     });

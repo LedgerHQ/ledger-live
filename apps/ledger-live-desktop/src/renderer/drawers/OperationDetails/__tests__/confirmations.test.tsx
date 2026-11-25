@@ -103,4 +103,80 @@ describe("OperationDetails confirmations", () => {
 
     expect(await screen.findByTestId("transaction-type")).toHaveTextContent("Fees");
   });
+
+  it("prefers a confirmed operation over a pending operation with the same hash", async () => {
+    const confirmedOperation = {
+      ...operation,
+      id: `${ACCOUNT_ID}-${operation.hash}-FEES`,
+      type: "FEES",
+    } as Operation;
+    const pendingOperation = {
+      ...operation,
+      id: `${ACCOUNT_ID}-${operation.hash}-OUT`,
+      type: "OUT",
+      blockHash: null,
+      blockHeight: null,
+    } as unknown as Operation;
+    const account = {
+      ...makeAccount("bitcoin"),
+      operations: [confirmedOperation],
+      pendingOperations: [pendingOperation],
+    };
+
+    render(
+      <OperationDetails
+        operationId="removed-operation"
+        hash={operation.hash}
+        accountId={account.id}
+      />,
+      { initialState: { accounts: [account] } },
+    );
+
+    expect(await screen.findByTestId("transaction-type")).toHaveTextContent("Fees");
+  });
+
+  it("falls back to a pending top-level operation when no confirmed operation matches", async () => {
+    const pendingOperation = {
+      ...operation,
+      id: `${ACCOUNT_ID}-${operation.hash}-OUT`,
+      type: "OUT",
+      blockHash: null,
+      blockHeight: null,
+    } as unknown as Operation;
+    const account = {
+      ...makeAccount("bitcoin"),
+      operations: [],
+      pendingOperations: [pendingOperation],
+    };
+
+    render(
+      <OperationDetails
+        operationId="removed-operation"
+        hash={operation.hash}
+        accountId={account.id}
+      />,
+      { initialState: { accounts: [account] } },
+    );
+
+    expect(await screen.findByTestId("transaction-type")).toHaveTextContent("Sent");
+  });
+
+  it("does not fall back to an internal operation with the same hash", () => {
+    const internalOperation = { ...operation, id: "internal-operation" } as Operation;
+    const account = {
+      ...makeAccount("bitcoin"),
+      operations: [{ ...operation, hash: "parent-hash", internalOperations: [internalOperation] }],
+    };
+
+    render(
+      <OperationDetails
+        operationId="removed-operation"
+        hash={operation.hash}
+        accountId={account.id}
+      />,
+      { initialState: { accounts: [account] } },
+    );
+
+    expect(screen.queryByTestId("transaction-type")).not.toBeInTheDocument();
+  });
 });
