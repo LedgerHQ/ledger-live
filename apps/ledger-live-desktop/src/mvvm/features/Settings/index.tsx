@@ -2,9 +2,13 @@ import React, { useCallback, type ReactNode } from "react";
 import { useNavigate, useParams } from "react-router";
 import type { SettingsSectionId } from "@features/flow-settings";
 import { SettingsGate } from "@features/flow-settings/web";
+import { Security } from "@features/flow-settings-security";
 import { DesktopSettingsPortProvider } from "./DesktopSettingsPortProvider";
 
 const NO_ROWS_TO_HIDE: readonly string[] = [];
+
+const renderSection = (section: SettingsSectionId) =>
+  section === "security" ? <Security testID="settings-security" /> : null;
 
 type SettingsRouteProps = Readonly<{ legacySettings: ReactNode }>;
 
@@ -23,6 +27,7 @@ export function SettingsRoute({ legacySettings }: SettingsRouteProps) {
         onSelectSection={onSelectSection}
         legacySettings={legacySettings}
         rowsToHide={NO_ROWS_TO_HIDE}
+        renderSection={renderSection}
         testID="settings-page"
       />
     </DesktopSettingsPortProvider>

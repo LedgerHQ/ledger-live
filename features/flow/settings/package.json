@@ -13,6 +13,7 @@
     },
     "./web": "./src/web/index.web.ts",
     "./native": "./src/native/index.native.ts",
+    "./testing": "./src/ports/testing/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
