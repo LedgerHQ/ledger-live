@@ -38,12 +38,14 @@ export async function getBlock(context: AlgorandContext, height: number): Promis
 // A block only holds transactions that succeeded
 function toBlockTransaction(tx: ExplorerTransaction<ExplorerAmount>): BlockTransaction {
   const memo = toNoteMemo(tx.note);
-  const innerNotes = (tx["inner-txns"] ?? []).flatMap(toInnerNotes);
+  const operations: BlockOperation[] = [];
+  const innerNotes: InnerNote[] = [];
+  collectOperations(tx, operations, innerNotes, false);
   const rewards = toRewards(tx);
   return {
     hash: tx.id,
     failed: false,
-    operations: toOperations(tx),
+    operations,
     fees: BigInt(tx.fee),
     feesPayer: tx.sender,
     details: {
@@ -58,17 +60,16 @@ function toBlockTransaction(tx: ExplorerTransaction<ExplorerAmount>): BlockTrans
 /**
  * The note of an inner transaction, on each of its transfers: listOperations gives every row the note of the
  * transaction it comes from, and the transfers of inner transactions are flattened into their root, which has its own
- * note (`memo`).
+ * note (`memo`). `operationIndex` is the position in `operations` of the debit of the transfer, its credit is the next
+ * one: the parties and asset alone do not tell apart two transfers between the same accounts.
  */
-type InnerNote = { from: string; to: string; asset: AssetInfo; memo: AlgorandMemo };
-
-function toInnerNotes(tx: ExplorerInnerTransaction<ExplorerAmount>): InnerNote[] {
-  const memo = toNoteMemo(tx.note);
-  const notes = memo
-    ? transferLegs(tx).map(({ from, to, asset }) => ({ from, to, asset, memo }))
-    : [];
-  return [...notes, ...(tx["inner-txns"] ?? []).flatMap(toInnerNotes)];
-}
+type InnerNote = {
+  from: string;
+  to: string;
+  asset: AssetInfo;
+  memo: AlgorandMemo;
+  operationIndex: number;
+};
 
 /**
  * The participation rewards of a transaction and of its inner transactions, with the note of the transaction that
@@ -89,12 +90,22 @@ function toRewards(tx: ExplorerInnerTransaction<ExplorerAmount>): Reward[] {
 }
 
 // The fees of inner transactions are left out: they are paid by application accounts
-function toOperations(tx: ExplorerInnerTransaction<ExplorerAmount>): BlockOperation[] {
-  return [
-    ...toTransferOperations(tx),
-    ...toRewardOperations(tx),
-    ...(tx["inner-txns"] ?? []).flatMap(toOperations),
-  ];
+function collectOperations(
+  tx: ExplorerInnerTransaction<ExplorerAmount>,
+  operations: BlockOperation[],
+  innerNotes: InnerNote[],
+  inner: boolean,
+): void {
+  const memo = inner ? toNoteMemo(tx.note) : undefined;
+  if (memo) {
+    // toTransferOperations starts with the debit and credit of each leg, in order
+    transferLegs(tx).forEach(({ from, to, asset }, leg) =>
+      innerNotes.push({ from, to, asset, memo, operationIndex: operations.length + 2 * leg }),
+    );
+  }
+  operations.push(...toTransferOperations(tx), ...toRewardOperations(tx));
+  for (const innerTx of tx["inner-txns"] ?? [])
+    collectOperations(innerTx, operations, innerNotes, true);
 }
 
 /** A movement of a payment or an asset transfer: to its receiver, and to its close address if any. */

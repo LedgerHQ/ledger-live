@@ -358,10 +358,44 @@ describe("getBlock", () => {
       txType: "appl",
       memo: { type: "string", kind: "note", value: "cm9vdA==" },
       innerNotes: [
-        { from: "APP", to: ALICE, asset: NATIVE, memo: inner },
-        { from: "APP", to: CAROL, asset: NATIVE, memo: inner },
+        { from: "APP", to: ALICE, asset: NATIVE, memo: inner, operationIndex: 2 },
+        { from: "APP", to: CAROL, asset: NATIVE, memo: inner, operationIndex: 4 },
       ],
     });
+  });
+
+  it("tells apart the noted transfer among transfers between the same accounts", async () => {
+    const pay = (amount: number, note?: string) =>
+      innerTransaction({
+        sender: "APP",
+        ...(note ? { note } : {}),
+        "tx-type": "pay",
+        "payment-transaction": payment(amount, ALICE),
+      });
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        id: "APPL",
+        "tx-type": "appl",
+        "inner-txns": [pay(5), pay(7, "c2Vjb25k"), pay(7)],
+      }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    const { operations, details } = transactions[0];
+    expect(details?.innerNotes).toEqual([
+      {
+        from: "APP",
+        to: ALICE,
+        asset: NATIVE,
+        memo: { type: "string", kind: "note", value: "c2Vjb25k" },
+        operationIndex: 2,
+      },
+    ]);
+    expect(operations.slice(2, 4)).toEqual([
+      { type: "transfer", address: "APP", peer: ALICE, asset: NATIVE, amount: -7n },
+      { type: "transfer", address: ALICE, peer: "APP", asset: NATIVE, amount: 7n },
+    ]);
   });
 
   it("gives the note of an inner transfer nested under an inner transaction without note", async () => {
@@ -396,6 +430,7 @@ describe("getBlock", () => {
           to: BOB,
           asset: NATIVE,
           memo: { type: "string", kind: "note", value: "bmVzdGVk" },
+          operationIndex: 0,
         },
       ],
     });
