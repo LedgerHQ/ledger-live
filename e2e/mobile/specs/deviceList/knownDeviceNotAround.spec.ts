@@ -5,4 +5,4 @@ const testConfig = {
   tags: ["@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
-runKnownDeviceNotAroundTest(testConfig.tmsLinks, testConfig.tags);
+runKnownDeviceNotAroundTest(testConfig);

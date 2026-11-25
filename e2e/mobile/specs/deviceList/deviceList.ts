@@ -100,7 +100,12 @@ function setupDeviceList({ deviceInSession, deviceKnown }: DeviceListSetup) {
   return { deviceKey: () => knownDeviceKey(deviceId) };
 }
 
-function tagDeviceListScenario(tmsLinks: string[], tags: string[]) {
+type DeviceListTestOptions = {
+  tmsLinks: string[];
+  tags: string[];
+};
+
+function tagDeviceListScenario({ tmsLinks, tags }: DeviceListTestOptions) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
 }
@@ -111,48 +116,54 @@ async function openMyWalletDeviceList() {
   await app.mainNavigation.openMyWallet();
 }
 
-export function runOpenMyLedgerFromKnownDeviceTest(tmsLinks: string[], tags: string[]) {
+export function runOpenMyLedgerFromKnownDeviceTest(options: DeviceListTestOptions) {
   setTeamOwner(Team.MY_LEDGER_ONBOARDING);
   describeIfBluetoothModel("Device list - open My Ledger from a known device", () => {
     const setup = setupDeviceList({ deviceInSession: true, deviceKnown: true });
-    tagDeviceListScenario(tmsLinks, tags);
+    tagDeviceListScenario(options);
 
     it("Lists the known device as available and opens My Ledger from it", async () => {
       await openMyWalletDeviceList();
-      await app.myWallet.deviceList.expectDeviceStatus(setup.deviceKey(), STATUS_LABELS.available);
+      await app.myWallet.deviceList.expectDeviceStatus({
+        deviceKey: setup.deviceKey(),
+        statusLabel: STATUS_LABELS.available,
+      });
       await app.myWallet.deviceList.openMyLedger(setup.deviceKey());
     });
   });
 }
 
-export function runAddDeviceFromEmptyListTest(tmsLinks: string[], tags: string[]) {
+export function runAddDeviceFromEmptyListTest(options: DeviceListTestOptions) {
   setTeamOwner(Team.MY_LEDGER_ONBOARDING);
   describeIfBluetoothModel("Device list - add a device from the empty list", () => {
     const setup = setupDeviceList({ deviceInSession: true, deviceKnown: false });
-    tagDeviceListScenario(tmsLinks, tags);
+    tagDeviceListScenario(options);
 
     it("Adds the device, opens My Ledger and lists the device as connected", async () => {
       await openMyWalletDeviceList();
       await app.myWallet.deviceList.openAddModeFromEmptyList();
       await app.myWallet.deviceList.addDeviceAndOpenMyLedger();
       await app.manager.goBackToMyWallet();
-      await app.myWallet.deviceList.expectDeviceStatus(setup.deviceKey(), STATUS_LABELS.connected);
+      await app.myWallet.deviceList.expectDeviceStatus({
+        deviceKey: setup.deviceKey(),
+        statusLabel: STATUS_LABELS.connected,
+      });
     });
   });
 }
 
-export function runKnownDeviceNotAroundTest(tmsLinks: string[], tags: string[]) {
+export function runKnownDeviceNotAroundTest(options: DeviceListTestOptions) {
   setTeamOwner(Team.MY_LEDGER_ONBOARDING);
   describeIfBluetoothModel("Device list - known device that is not around", () => {
     const setup = setupDeviceList({ deviceInSession: false, deviceKnown: true });
-    tagDeviceListScenario(tmsLinks, tags);
+    tagDeviceListScenario(options);
 
     it("Lists the known device as not connected and waits for it when tapped", async () => {
       await openMyWalletDeviceList();
-      await app.myWallet.deviceList.expectDeviceStatus(
-        setup.deviceKey(),
-        STATUS_LABELS.unavailable,
-      );
+      await app.myWallet.deviceList.expectDeviceStatus({
+        deviceKey: setup.deviceKey(),
+        statusLabel: STATUS_LABELS.unavailable,
+      });
       await app.myWallet.deviceList.waitForDevice(setup.deviceKey());
     });
   });

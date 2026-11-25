@@ -5,4 +5,4 @@ const testConfig = {
   tags: ["@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
-runOpenMyLedgerFromKnownDeviceTest(testConfig.tmsLinks, testConfig.tags);
+runOpenMyLedgerFromKnownDeviceTest(testConfig);

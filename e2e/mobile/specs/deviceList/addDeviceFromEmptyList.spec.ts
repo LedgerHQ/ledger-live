@@ -5,4 +5,4 @@ const testConfig = {
   tags: ["@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
-runAddDeviceFromEmptyListTest(testConfig.tmsLinks, testConfig.tags);
+runAddDeviceFromEmptyListTest(testConfig);

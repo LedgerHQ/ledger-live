@@ -3,6 +3,11 @@ import { byId, byIdWithDescendantText } from "@e2e/helpers/elements/native";
 import DeviceStateDrawer from "@e2e/page/drawer/deviceState.drawer";
 import ConnectDevicePage from "@e2e/page/onboarding/deviceOnboarding/connectDevice.page";
 
+type DeviceStatusOptions = {
+  deviceKey: string;
+  statusLabel: string;
+};
+
 /** The device list of My Wallet. A device key is the key the app gives its row. */
 export default class DeviceListPage {
   addMode = new ConnectDevicePage();
@@ -18,8 +23,8 @@ export default class DeviceListPage {
       text: statusLabel,
     });
 
-  @Step("Expect the device {{0}} to show the status {{1}}")
-  async expectDeviceStatus(deviceKey: string, statusLabel: string) {
+  @Step("Expect the device {{0.deviceKey}} to show the status {{0.statusLabel}}")
+  async expectDeviceStatus({ deviceKey, statusLabel }: DeviceStatusOptions) {
     await this.deviceStatus(deviceKey, statusLabel).waitVisible();
   }
 
