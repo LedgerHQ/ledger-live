@@ -42,6 +42,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     memo: tr.memo,
     poolId: tr.poolId,
     protocolParams: tr.protocolParams,
+    voteDelegationTarget: tr.voteDelegationTarget,
   };
 };
 
@@ -55,6 +56,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     memo: t.memo,
     poolId: t.poolId,
     protocolParams: t.protocolParams,
+    voteDelegationTarget: t.voteDelegationTarget,
   };
 };
 

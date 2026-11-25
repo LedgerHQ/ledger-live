@@ -11,6 +11,8 @@ import type {
 import { types as TyphonTypes } from "@stricahq/typhonjs";
 import type BigNumber from "bignumber.js";
 
+import type { VoteDelegationTarget } from "./drep";
+
 export enum PaymentChain {
   external = 0,
   internal = 1,
@@ -172,7 +174,7 @@ export type CardanoResourcesRaw = {
   protocolParams: ProtocolParamsRaw;
 };
 
-export type CardanoOperationMode = "send" | "delegate" | "undelegate";
+export type CardanoOperationMode = "send" | "delegate" | "undelegate" | "voteDelegation";
 
 /**
  * Cardano transaction
@@ -184,6 +186,7 @@ export type Transaction = TransactionCommon & {
   memo?: string;
   poolId: string | undefined;
   protocolParams?: ProtocolParams;
+  voteDelegationTarget?: VoteDelegationTarget;
   // add here all transaction-specific fields if you implement other modes than "send"
 };
 
@@ -197,6 +200,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   memo?: string;
   poolId: string | undefined;
   protocolParams?: ProtocolParams;
+  voteDelegationTarget?: VoteDelegationTarget;
   // also the transaction fields as raw JSON data
 };
 

@@ -92,11 +92,16 @@ export type DelegationCertificate = {
 };
 
 export type VoteDelegationCertificate = {
-  type: "VOTE_DELEGATION_ABSTAIN";
+  type: "VOTE_DELEGATION";
   params: {
     stakeCredential: {
       keyPath: string;
     };
+    dRep:
+      | { type: "KEY_HASH"; keyHashHex: string }
+      | { type: "SCRIPT_HASH"; scriptHashHex: string }
+      | { type: "ABSTAIN" }
+      | { type: "NO_CONFIDENCE" };
   };
 };
 

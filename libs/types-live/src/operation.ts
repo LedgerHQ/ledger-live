@@ -27,6 +27,7 @@ export type OperationType =
   | "LEGACY_UNFREEZE"
   // POLKADOT
   | "VOTE"
+  | "VOTE_DELEGATION"
   | "REWARD_PAYOUT"
   | "BOND"
   | "UNBOND"

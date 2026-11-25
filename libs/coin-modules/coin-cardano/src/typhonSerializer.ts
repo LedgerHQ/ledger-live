@@ -237,29 +237,39 @@ function prepareStakeDeRegistrationCertificate(
 function prepareVoteDelegationCertificate(
   certificate: TyphonTypes.VoteDelegationCertificate,
 ): VoteDelegationCertificate {
-  if (certificate.cert.dRep.type !== TyphonTypes.DRepType.ABSTAIN) {
-    throw new Error(`DRep type ${certificate.cert.dRep.type} not supported`);
-  }
-
   if (
-    certificate.cert.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
-    certificate.cert.stakeCredential.bipPath
+    certificate.cert.stakeCredential.type !== TyphonTypes.HashType.ADDRESS ||
+    !certificate.cert.stakeCredential.bipPath
   ) {
-    return {
-      type: "VOTE_DELEGATION_ABSTAIN",
-      params: {
-        stakeCredential: {
-          keyPath: getBipPathString({
-            account: certificate.cert.stakeCredential.bipPath.account,
-            chain: certificate.cert.stakeCredential.bipPath.chain,
-            index: certificate.cert.stakeCredential.bipPath.index,
-          }),
-        },
-      },
-    };
-  } else {
     throw new Error("Invalid stakeKey type");
   }
+
+  const dRep = certificate.cert.dRep;
+  const dRepParams =
+    dRep.type === TyphonTypes.DRepType.ADDRESS
+      ? { type: "KEY_HASH" as const, keyHashHex: dRep.key!.toString("hex") }
+      : dRep.type === TyphonTypes.DRepType.SCRIPT
+        ? { type: "SCRIPT_HASH" as const, scriptHashHex: dRep.key!.toString("hex") }
+        : dRep.type === TyphonTypes.DRepType.ABSTAIN
+          ? { type: "ABSTAIN" as const }
+          : dRep.type === TyphonTypes.DRepType.NO_CONFIDENCE
+            ? { type: "NO_CONFIDENCE" as const }
+            : undefined;
+  if (!dRepParams) throw new Error(`DRep type ${dRep.type} not supported`);
+
+  return {
+    type: "VOTE_DELEGATION",
+    params: {
+      stakeCredential: {
+        keyPath: getBipPathString({
+          account: certificate.cert.stakeCredential.bipPath.account,
+          chain: certificate.cert.stakeCredential.bipPath.chain,
+          index: certificate.cert.stakeCredential.bipPath.index,
+        }),
+      },
+      dRep: dRepParams,
+    },
+  };
 }
 
 function prepareWithdrawal(withdrawal: TyphonTypes.Withdrawal): SignerTxWithdrawal {

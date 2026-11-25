@@ -51,7 +51,11 @@ const FAMILY_ACTIONS: Record<string, Record<string, EarnTransactionType>> = {
     claimreward: "claimReward",
     claimrewardcompound: "compoundReward",
   },
-  cardano: { delegate: "delegate", undelegate: "undelegate" },
+  cardano: {
+    delegate: "delegate",
+    undelegate: "undelegate",
+    votedelegation: "delegate",
+  },
   polkadot: {
     bond: "delegate",
     nominate: "delegate",

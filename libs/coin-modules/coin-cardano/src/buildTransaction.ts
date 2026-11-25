@@ -9,6 +9,7 @@ import BigNumber from "bignumber.js";
 import { decodeTokenAssetId, decodeTokenCurrencyId, getTokenAssetId } from "./buildSubAccounts";
 import { CARDANO_MAX_SUPPLY } from "./constants";
 import { CardanoInvalidProtoParams, CardanoMinAmountError } from "./errors";
+import { toTyphonDRep } from "./drep";
 import {
   getAccountStakeCredential,
   getBaseAddress,
@@ -418,6 +419,58 @@ const buildUndelegateTransaction = async ({
   });
 };
 
+const buildVoteDelegationTransaction = async ({
+  account,
+  transaction,
+  typhonTx,
+  changeAddress,
+}: {
+  account: CardanoAccount;
+  transaction: Transaction;
+  typhonTx: TyphonTransaction;
+  changeAddress: TyphonTypes.CardanoAddress;
+}): Promise<TyphonTransaction> => {
+  if (!transaction.voteDelegationTarget) throw new Error("Missing vote delegation target");
+
+  const cardanoResources = account.cardanoResources as CardanoResources;
+  const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
+  const stakeKeyHashCredential: TyphonTypes.HashCredential = {
+    hash: Buffer.from(stakeCredential.key, "hex"),
+    type: TyphonTypes.HashType.ADDRESS,
+    bipPath: stakeCredential.path,
+  };
+
+  if (!cardanoResources.delegation?.status) {
+    typhonTx.addCertificate({
+      type: TyphonTypes.CertificateType.STAKE_KEY_REGISTRATION,
+      cert: {
+        stakeCredential: stakeKeyHashCredential,
+        deposit: new BigNumber(transaction.protocolParams!.stakeKeyDeposit),
+      },
+    });
+  }
+
+  typhonTx.addCertificate({
+    type: TyphonTypes.CertificateType.VOTE_DELEGATION,
+    cert: {
+      stakeCredential: stakeKeyHashCredential,
+      dRep: toTyphonDRep(transaction.voteDelegationTarget),
+    },
+  });
+
+  const transactionInputs: Array<TyphonTypes.Input> = [];
+  let usedUtxoAdaAmount = new BigNumber(0);
+  const requiredInputAmount = new BigNumber(transaction.protocolParams!.stakeKeyDeposit).plus(10e6);
+  for (const utxo of [...cardanoResources.utxos].sort(sortByAdaDesc)) {
+    if (usedUtxoAdaAmount.gt(requiredInputAmount)) break;
+    const input = getTyphonInputFromUtxo(utxo);
+    transactionInputs.push(input);
+    usedUtxoAdaAmount = usedUtxoAdaAmount.plus(input.amount);
+  }
+
+  return typhonTx.prepareTransaction({ inputs: transactionInputs, changeAddress });
+};
+
 /**
  *
  * @param {CardanoAccount} account
@@ -529,6 +582,8 @@ export const buildTransaction = async (
     return buildDelegateTransaction({ account, transaction, typhonTx, changeAddress });
   } else if (transaction.mode === "undelegate") {
     return buildUndelegateTransaction({ account, transaction, typhonTx, changeAddress });
+  } else if (transaction.mode === "voteDelegation") {
+    return buildVoteDelegationTransaction({ account, transaction, typhonTx, changeAddress });
   } else {
     throw new Error("Invalid transaction mode");
   }

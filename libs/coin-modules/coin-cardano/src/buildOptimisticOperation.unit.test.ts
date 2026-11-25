@@ -114,12 +114,63 @@ describe("buildOptimisticOperation", () => {
       });
     });
 
+    it("should report a vote delegation as fee plus stake-key deposit", () => {
+      const mockUnsignedTx = {
+        getInputs: () => [{ address: accountAddress, amount: new BigNumber(10e6) }],
+        getOutputs: () => [{ address: accountAddress, amount: new BigNumber(7e6) }],
+        getCertificates: () => [
+          {
+            type: TyphonTypes.CertificateType.STAKE_KEY_REGISTRATION,
+            cert: {
+              stakeCredential: {
+                type: TyphonTypes.HashType.ADDRESS,
+                hash: { toString: () => stakeCredKey },
+              },
+              deposit: new BigNumber(1e6),
+            },
+          },
+          {
+            type: TyphonTypes.CertificateType.VOTE_DELEGATION,
+            cert: {},
+          },
+        ],
+        getWithdrawals: () => [],
+        getFee: () => new BigNumber(1e6),
+        getTransactionHash: () => ({ toString: () => "vote-tx" }),
+        getAuxiliaryData: () => null,
+      } as unknown as TyphonTransaction;
+
+      const operation = buildOptimisticOperation(account, mockUnsignedTx, transaction);
+
+      expect(operation).toMatchObject({
+        type: "VOTE_DELEGATION",
+        value: new BigNumber(3e6),
+        fee: new BigNumber(1e6),
+        extra: { deposit: expect.stringMatching(/^1\s*ADA$/) },
+      });
+    });
+
+    it("preserves delegate classification when the transaction includes an abstain certificate", () => {
+      const mockUnsignedTx = {
+        getInputs: () => [{ address: accountAddress, amount: new BigNumber(10e6) }],
+        getOutputs: () => [{ address: accountAddress, amount: new BigNumber(9e6) }],
+        getCertificates: () => [
+          {
+            type: TyphonTypes.CertificateType.STAKE_DELEGATION,
+            cert: { stakeCredential: {}, poolKeyHash: "pool1xyz" },
+          },
+          { type: TyphonTypes.CertificateType.VOTE_DELEGATION, cert: {} },
+        ],
+        getWithdrawals: () => [],
+        getFee: () => new BigNumber(1e6),
+        getTransactionHash: () => ({ toString: () => "delegate-tx" }),
+        getAuxiliaryData: () => null,
+      } as unknown as TyphonTransaction;
+
+      expect(buildOptimisticOperation(account, mockUnsignedTx, transaction).type).toBe("DELEGATE");
+    });
+
     it("should correctly identify deregistration with withdrawals", () => {
-      /**
-       * Mock unsigned transaction with stake key deregistration and withdrawal
-       * Transaction has total 13 ADA available to use
-       *  (8 ADA input + 2 ADA deregister refund + 3 ADA rewards withdrawal)
-       */
       const mockUnsignedTx = {
         getInputs: () => [
           {
