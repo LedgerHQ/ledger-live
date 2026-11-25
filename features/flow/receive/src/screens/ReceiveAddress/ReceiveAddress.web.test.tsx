@@ -1,25 +1,40 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
+import React, { type ComponentProps } from "react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
   makeReceiveTestStore,
+  testOpenExternal,
   receiveTestWrapper,
   testAccountUUID,
   testReceive,
 } from "../../__tests__/receiveTestStore";
+import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVerifyAddressExecutorViewModel";
+import { RECEIVE_URLS } from "../../urls";
 import { ReceiveAddress } from "./ReceiveAddress";
 
-const renderScreen = (onClose = jest.fn(), store = makeReceiveTestStore()) =>
+const renderScreen = (
+  onClose = jest.fn(),
+  store = makeReceiveTestStore(),
+  ports: Partial<ComponentProps<typeof ReceiveAddress>> = {},
+) =>
   render(
     <ReceiveAddress
       accountUUID={testAccountUUID}
       assetId={CryptoOrTokenCurrencyIdSchema.parse("ethereum")}
       onClose={onClose}
+      {...ports}
     />,
     { wrapper: receiveTestWrapper(store) },
   );
+
+const VerifyAddressExecutor = ({ selection, onExit }: UseVerifyAddressExecutorViewModelParams) => (
+  <div data-testid="verify-executor">
+    {selection.verification.path}
+    <button onClick={() => onExit("verified")}>Done</button>
+  </div>
+);
 
 describe("ReceiveAddress (Web)", () => {
   it("opens as a dialog that closes from its header", async () => {
@@ -83,16 +98,132 @@ describe("ReceiveAddress (Web)", () => {
     expect(screen.getByTestId("receive-address-options")).toBeVisible();
   });
 
+  it("should copy the address from the Copy tile", async () => {
+    const onCopyAddress = jest.fn(async () => true);
+    renderScreen(jest.fn(), makeReceiveTestStore(), { onCopyAddress });
+
+    await userEvent.setup().click(await screen.findByTestId("receive-address-copy"));
+
+    expect(onCopyAddress).toHaveBeenCalledWith(testReceive.address);
+    expect(screen.getByTestId("receive-address-copy")).toHaveTextContent("Copied");
+  });
+
+  it("should copy the address from a click on the QR code", async () => {
+    const onCopyAddress = jest.fn(async () => true);
+    renderScreen(jest.fn(), makeReceiveTestStore(), { onCopyAddress });
+
+    await userEvent.setup().click(await screen.findByTestId("receive-address-qr-code"));
+
+    expect(onCopyAddress).toHaveBeenCalledWith(testReceive.address);
+  });
+
+  it("should point at Verify until the hint is dismissed, then verify on the device", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), { VerifyAddressExecutor });
+    const user = userEvent.setup();
+
+    expect(await screen.findByTestId("receive-address-verify-hint")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Got it" }));
+    expect(screen.queryByTestId("receive-address-verify-hint")).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Verify" }));
+    expect(screen.getByTestId("verify-executor")).toHaveTextContent(testReceive.verification!.path);
+  });
+
+  it("should hide the address dialog while the device verifies, then show it again", async () => {
+    const onClose = jest.fn();
+    renderScreen(onClose, makeReceiveTestStore(), { VerifyAddressExecutor });
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("button", { name: "Got it" }));
+
+    await user.click(screen.getByRole("button", { name: "Verify" }));
+    await waitFor(() => expect(screen.queryByTestId("receive-address")).toBeNull());
+
+    await user.click(screen.getByRole("button", { name: "Done" }));
+    expect(await screen.findByTestId("receive-address")).toBeVisible();
+    expect(screen.queryByTestId("verify-executor")).toBeNull();
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it("should disable Verify for an address the device cannot show", async () => {
+    const receive = jest.fn(async () => mockAccountReceive({ verification: undefined }));
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }), { VerifyAddressExecutor });
+
+    expect(await screen.findByRole("button", { name: "Verify" })).toBeDisabled();
+    expect(screen.queryByTestId("receive-address-verify-hint")).toBeNull();
+  });
+
+  it("shows the family's notices and links them to their support article", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      getFamilyConfig: () => ({ notices: ["tronInactiveAccount"] }),
+    });
+
+    const notice = await screen.findByTestId("receive-address-notice-tronInactiveAccount");
+    expect(notice).toHaveTextContent("Send at least 0.1 TRX");
+    await userEvent.setup().click(screen.getByRole("button", { name: "Learn more" }));
+    expect(testOpenExternal).toHaveBeenCalledWith(RECEIVE_URLS.tronInactiveAccount);
+  });
+
+  it("shows a service incident before the address, then the address on Continue", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      serviceIncidents: [
+        {
+          title: "Ethereum degraded",
+          description: [
+            { text: "Investigating. See " },
+            { text: "this article", url: "https://support.ledger.com/article" },
+          ],
+        },
+      ],
+    });
+    const user = userEvent.setup();
+
+    const incident = screen.getByTestId("receive-address-service-status");
+    expect(incident).toHaveTextContent("Ethereum degraded");
+    expect(incident).toHaveTextContent("Investigating. See this article");
+    expect(screen.queryByTestId("receive-address-summary")).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "this article" }));
+    expect(testOpenExternal).toHaveBeenCalledWith("https://support.ledger.com/article");
+
+    await user.click(screen.getByRole("button", { name: "Continue" }));
+    expect(await screen.findByTestId("receive-address-summary")).toBeVisible();
+  });
+
+  it("keeps the verify hint for after the incident, so the dialog still closes", async () => {
+    const onClose = jest.fn();
+    const receive = jest.fn(async () => mockAccountReceive());
+    renderScreen(onClose, makeReceiveTestStore({ receive }), {
+      VerifyAddressExecutor,
+      serviceIncidents: [{ title: "Ethereum degraded" }],
+    });
+    await waitFor(() => expect(receive).toHaveBeenCalled());
+
+    expect(screen.getByTestId("receive-address")).toHaveAttribute(
+      "aria-label",
+      "Ethereum degraded",
+    );
+    await userEvent.setup().click(screen.getByRole("button", { name: "Close" }));
+
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("shows the verify hint once the user continued past the incident", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      VerifyAddressExecutor,
+      serviceIncidents: [{ title: "Ethereum degraded" }],
+    });
+
+    await userEvent.setup().click(screen.getByRole("button", { name: "Continue" }));
+
+    expect(await screen.findByTestId("receive-address-verify-hint")).toBeVisible();
+  });
+
   it("lays the zones out in screen order", async () => {
     renderScreen();
     await screen.findByTestId("receive-address-summary");
 
     expect(
       screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.dataset.testid),
-    ).toEqual([
-      "receive-address-zone-actions",
-      "receive-address-zone-notices",
-      "receive-address-zone-extras",
-    ]);
+    ).toEqual(["receive-address-zone-extras"]);
   });
 });

@@ -31,12 +31,12 @@ export interface Transaction {
   // nVersionGroupId is used only for Zcash, different version of Zcash has different nVersionGroupId
   // refer to https://github.com/zcash/zcash/blob/master/src/primitives/transaction.h for more details
   nVersionGroupId?: Buffer;
-  // nExpiryHeight is used only for Decred and Zcash and ZenCash.
+  // nExpiryHeight is used only for Decred and Zcash.
   // It sets the block height after which transactions will be removed
   // from the mempool if they have not been mined
   // refer to https://zips.z.cash/zip-0203 for more details
   nExpiryHeight?: Buffer;
-  // extraData is used only for Zcash and ZenCash and komodo
+  // extraData is used only for Zcash and komodo
   extraData?: Buffer;
   // zCash specific
   consensusBranchId?: Buffer;

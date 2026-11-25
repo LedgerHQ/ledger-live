@@ -6,9 +6,9 @@ const transactionE2E = {
   xrayTicket: ["B2CQA-3082"],
   tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@solana", "@family-solana"],
 };
-runSendSPLAddressValid(
-  transactionE2E.tx,
-  transactionE2E.expectedWarningMessage,
-  transactionE2E.xrayTicket,
-  transactionE2E.tag,
-);
+runSendSPLAddressValid({
+  transaction: transactionE2E.tx,
+  expectedWarningMessage: transactionE2E.expectedWarningMessage,
+  tmsLinks: transactionE2E.xrayTicket,
+  tags: transactionE2E.tag,
+});

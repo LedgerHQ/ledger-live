@@ -10,6 +10,9 @@ export const llmWalletApiDeviceIntentSign = flagWith(
   },
   {
     enabled: false,
-    params: { variantId: "control", enabledManifestIds: ["swap-live-app-stg-aws"] },
+    params: {
+      variantId: "control",
+      enabledManifestIds: ["swap-live-app-stg-aws", "ledger-wallet-connect"],
+    },
   },
 );

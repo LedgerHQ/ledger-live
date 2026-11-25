@@ -94,6 +94,7 @@ export default function nearBridge(): BridgeApi {
   return {
     stakingSupported: true,
     usesStakingPositions: true,
+    partitionsNativeBalance: true,
     syncsHistoryOnStateChange: syncsHistoryOnStateChange(),
     getKnownValidatorIds,
     getStakingCallValidatorId,

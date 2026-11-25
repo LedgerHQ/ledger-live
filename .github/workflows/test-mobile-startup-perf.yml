@@ -85,6 +85,9 @@ jobs:
       ref_b: ${{ steps.plan.outputs.ref_b }}
       label_a: ${{ steps.plan.outputs.label_a }}
       label_b: ${{ steps.plan.outputs.label_b }}
+      cache_a: ${{ steps.plan.outputs.cache_a }}
+      restore: ${{ steps.plan.outputs.restore }}
+      save: ${{ steps.plan.outputs.save }}
       preset: ${{ steps.plan.outputs.preset }}
       platforms: ${{ steps.plan.outputs.platforms }}
       pairs: ${{ steps.plan.outputs.pairs }}
@@ -119,17 +122,135 @@ jobs:
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
         run: node e2e/tooling/startup-perf/ci/resolve-refs.mts
 
+  # Restores what the mobile E2E builds' S3 cache keeps for this run (develop/, which only runs
+  # from develop write): build A of a release tag, so the build matrices leave it out. The cache
+  # credentials never share a job with the code being built (README.md, "The cache"). Outputs
+  # <platform>_sides: the sides each build matrix still builds, [] when nothing is left, empty when
+  # this job did not run (then: every side).
+  restore-cache:
+    name: "Restore from the cache"
+    needs: [plan]
+    if: ${{ needs.plan.outputs.restore == 'true' }}
+    # Best-effort: without its outputs, the build jobs build every side.
+    continue-on-error: true
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ledger-wallet-1cpu-aws-public-cached
+    # The build jobs wait for this one.
+    timeout-minutes: 15
+    outputs:
+      android_sides: ${{ steps.sides.outputs.android }}
+      ios_sides: ${{ steps.sides.outputs.ios }}
+      android_save_a: ${{ steps.sides.outputs.android_save_a }}
+      ios_save_a: ${{ steps.sides.outputs.ios_save_a }}
+      android_a_key: ${{ steps.keys.outputs.android_a }}
+      ios_a_key: ${{ steps.keys.outputs.ios_a }}
+    env:
+      SHA_A: ${{ needs.plan.outputs.ref_a }}
+    steps:
+      # The files of the key, this folder's restore action and sides.mts, and what the cache
+      # profile's script reads.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          sparse-checkout: |
+            /.github/workflows/test-mobile-startup-perf.yml
+            /e2e/tooling/startup-perf/ci/
+            /tools/nx/
+            /nx.workspace.json
+            /nx.s3.defaults.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+
+      # The E2E builds' cache: develop's role on develop, the branch role elsewhere. Without it,
+      # what the cache keeps is made as before: no step of the cache fails the run.
+      - name: Resolve the cache role
+        id: profile
+        continue-on-error: true
+        uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@develop
+        with:
+          develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+
+      - uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
+        continue-on-error: true
+        with:
+          role-to-assume: ${{ steps.profile.outputs.role-arn }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      # develop/ in every run (see above), then what build A depends on besides its commit (the
+      # harness and this workflow), the week, so that A is rebuilt on the week's runners as B is,
+      # and a version to bump by hand.
+      - name: Build A's keys
+        id: keys
+        if: ${{ needs.plan.outputs.cache_a == 'true' }}
+        env:
+          PREFIX: develop/
+          HARNESS: ${{ hashFiles('.github/workflows/test-mobile-startup-perf.yml', 'e2e/tooling/startup-perf/ci/*-build.mts', 'e2e/tooling/startup-perf/ci/step.mts', 'e2e/tooling/startup-perf/ci/toolchain.sh') }}
+        run: |
+          week=$(date -u +%G-W%V)
+          for platform in android ios; do
+            echo "${platform}_a=${PREFIX}startup-perf-$platform-$SHA_A-$HARNESS-$week-1" >> "$GITHUB_OUTPUT"
+          done
+
+      # Only a whole build of commit A, with its platform's binary, replaces building it.
+      - name: Restore Android build A
+        id: android-a
+        if: ${{ needs.plan.outputs.cache_a == 'true' && needs.plan.outputs.platforms != 'iOS Only' }}
+        continue-on-error: true
+        timeout-minutes: 10
+        uses: ./e2e/tooling/startup-perf/ci/actions/restore
+        with:
+          key: ${{ steps.keys.outputs.android_a }}
+          path: startup-perf-cache/android-a
+          check: '[[ "$(cat sha.txt)" == "$SHA_A" && -s app.apk ]]'
+          artifact: startup-perf-android-a
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Restore iOS build A
+        id: ios-a
+        if: ${{ needs.plan.outputs.cache_a == 'true' && needs.plan.outputs.platforms != 'Android Only' }}
+        continue-on-error: true
+        timeout-minutes: 10
+        uses: ./e2e/tooling/startup-perf/ci/actions/restore
+        with:
+          key: ${{ steps.keys.outputs.ios_a }}
+          path: startup-perf-cache/ios-a
+          check: '[[ "$(cat sha.txt)" == "$SHA_A" && -s app.zip ]]'
+          artifact: startup-perf-ios-a
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      # A side counts as restored once its artifact is published; otherwise its build job makes it.
+      # Also after a step failed or timed out: without these outputs, A's build job would rebuild a
+      # restored A.
+      - name: Sides left to build
+        id: sides
+        if: ${{ always() }}
+        env:
+          SIDES: ${{ needs.plan.outputs.sides }}
+          CACHE_A: ${{ needs.plan.outputs.cache_a }}
+          RESTORED_A_ANDROID: ${{ steps.android-a.outputs.restored }}
+          RESTORED_A_IOS: ${{ steps.ios-a.outputs.restored }}
+        run: node e2e/tooling/startup-perf/ci/sides.mts
+
   build-android:
     name: "Android build ${{ matrix.side }}"
-    needs: [plan]
-    if: ${{ needs.plan.outputs.platforms != 'iOS Only' }}
+    needs: [plan, restore-cache]
+    if: >-
+      !cancelled() && needs.plan.result == 'success' &&
+      needs.plan.outputs.platforms != 'iOS Only' &&
+      needs.restore-cache.outputs.android_sides != '[]'
     permissions:
       id-token: write
       contents: read
     strategy:
       fail-fast: true
       matrix:
-        side: ${{ fromJSON(needs.plan.outputs.sides) }}
+        side: ${{ fromJSON(needs.restore-cache.outputs.android_sides || needs.plan.outputs.sides) }}
     runs-on: ledger-wallet-8cpu-aws-public-cached
     timeout-minutes: 120
     env:
@@ -212,25 +333,31 @@ jobs:
           node .startup-perf/e2e/tooling/startup-perf/ci/verify-build.mts android "$APK"
           cp "$APK" out/app.apk
           git rev-parse HEAD > out/sha.txt
+          bash .startup-perf/e2e/tooling/startup-perf/ci/toolchain.sh record out/toolchain.txt
           ls -la out
 
+      # A restore that failed partway may have published this name already.
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: startup-perf-android-${{ matrix.side }}
           path: out/
           retention-days: 7
+          overwrite: true
 
   build-ios:
     name: "iOS build ${{ matrix.side }}"
-    needs: [plan]
-    if: ${{ needs.plan.outputs.platforms != 'Android Only' }}
+    needs: [plan, restore-cache]
+    if: >-
+      !cancelled() && needs.plan.result == 'success' &&
+      needs.plan.outputs.platforms != 'Android Only' &&
+      needs.restore-cache.outputs.ios_sides != '[]'
     permissions:
       id-token: write
       contents: read
     strategy:
       fail-fast: true
       matrix:
-        side: ${{ fromJSON(needs.plan.outputs.sides) }}
+        side: ${{ fromJSON(needs.restore-cache.outputs.ios_sides || needs.plan.outputs.sides) }}
     runs-on: ["general-pool", macOS, ARM64]
     timeout-minutes: 150
     env:
@@ -301,18 +428,97 @@ jobs:
           node .startup-perf/e2e/tooling/startup-perf/ci/verify-build.mts ios "$APP"
           ditto -c -k --keepParent "$APP" out/app.zip
           git rev-parse HEAD > out/sha.txt
+          bash .startup-perf/e2e/tooling/startup-perf/ci/toolchain.sh record out/toolchain.txt
           ls -la out
 
+      # A restore that failed partway may have published this name already.
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: startup-perf-ios-${{ matrix.side }}
           path: out/
           retention-days: 7
+          overwrite: true
+
+  # Caches what this run made and the cache lacked (see restore-cache): build A of a release tag.
+  # Only when B builds reviewed code (save, resolve-refs.mts): B's build job could replace another
+  # job's artifact.
+  save-cache:
+    name: "Save to the cache"
+    needs: [plan, restore-cache, build-android, build-ios]
+    # Best-effort: what is not cached is made again by the next run.
+    continue-on-error: true
+    if: >-
+      !cancelled() && needs.plan.outputs.save == 'true' &&
+      (needs.restore-cache.outputs.android_save_a == 'true' && needs.build-android.result == 'success' ||
+      needs.restore-cache.outputs.ios_save_a == 'true' && needs.build-ios.result == 'success')
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ledger-wallet-1cpu-aws-public-cached
+    timeout-minutes: 45
+    steps:
+      # This folder's save action, and what the cache profile's script reads.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          sparse-checkout: |
+            /e2e/tooling/startup-perf/ci/actions/
+            /tools/nx/
+            /nx.workspace.json
+            /nx.s3.defaults.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+
+      # The E2E builds' cache: develop's role on develop, the branch role elsewhere. Without it,
+      # nothing is cached and the next run makes it again: no step of the cache fails the run.
+      - name: Resolve the cache role
+        id: profile
+        continue-on-error: true
+        uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@develop
+        with:
+          develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+
+      - uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
+        continue-on-error: true
+        with:
+          role-to-assume: ${{ steps.profile.outputs.role-arn }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      # Only develop's role writes develop/: on another run, the plan's save is false anyway.
+      - name: Cache Android build A
+        if: ${{ needs.restore-cache.outputs.android_save_a == 'true' && needs.build-android.result == 'success' && steps.profile.outputs.cache-profile == 'develop' }}
+        continue-on-error: true
+        timeout-minutes: 10
+        uses: ./e2e/tooling/startup-perf/ci/actions/save
+        with:
+          key: ${{ needs.restore-cache.outputs.android_a_key }}
+          path: startup-perf-cache/android-a
+          artifact: startup-perf-android-a
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Cache iOS build A
+        if: ${{ needs.restore-cache.outputs.ios_save_a == 'true' && needs.build-ios.result == 'success' && steps.profile.outputs.cache-profile == 'develop' }}
+        continue-on-error: true
+        timeout-minutes: 10
+        uses: ./e2e/tooling/startup-perf/ci/actions/save
+        with:
+          key: ${{ needs.restore-cache.outputs.ios_a_key }}
+          path: startup-perf-cache/ios-a
+          artifact: startup-perf-ios-a
+          region: ${{ secrets.AWS_CACHE_REGION }}
 
   measure-android:
     name: "Android startup (2 emulators, ${{ matrix.scenario }})"
-    needs: [plan, build-android]
-    if: ${{ needs.plan.outputs.platforms != 'iOS Only' }}
+    needs: [plan, restore-cache, build-android]
+    # Built, or every side restored (build-android then skipped).
+    if: >-
+      !cancelled() && needs.plan.result == 'success' &&
+      needs.plan.outputs.platforms != 'iOS Only' &&
+      (needs.build-android.result == 'success' || needs.restore-cache.outputs.android_sides == '[]')
     strategy:
       fail-fast: false
       matrix:
@@ -342,46 +548,19 @@ jobs:
           # adb, build-tools and the emulator are on the image.
           install_sdk: "false"
 
-      - name: Check for a preinstalled AVD
-        id: preinstalled-avd
-        run: |
-          stamp="${HOME}/.android/avd-cache-key"
-          if [ "$(cat "$stamp" 2>/dev/null)" = "${AVD_CACHE_KEY}" ]; then
-            echo "Preinstalled AVD matches ${AVD_CACHE_KEY}"
-            echo "found=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          if [ -f "$stamp" ]; then
-            echo "::warning title=Runner image AVD is out of date::Image has $(cat "$stamp"), need ${AVD_CACHE_KEY}; using R2."
-            rm -rf "${HOME}/.android/avd" "$stamp" \
-              /usr/local/lib/android/sdk/emulator \
-              "/usr/local/lib/android/sdk/system-images/android-${AVD_API}/${AVD_TARGET}/${AVD_ARCH}"
-          fi
-          echo "found=false" >> "$GITHUB_OUTPUT"
-
-      - name: Download android emulator
-        if: steps.preinstalled-avd.outputs.found != 'true'
-        timeout-minutes: 10
-        continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+      - name: Prepare the AVD
         id: avd
+        timeout-minutes: 40
+        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@develop
         with:
-          key: ${{ env.AVD_CACHE_KEY }}
-          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
-          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
-          bucket: ledger-live-cache
-          endpoint: ${{ secrets.R2_ENDPOINT }}
-          region: auto
-          destination: /
-
-      # No R2 credentials: this workflow never writes E2E's AVD cache.
-      - name: Create the AVD (not on the image nor in R2)
-        if: steps.preinstalled-avd.outputs.found != 'true' && steps.avd.outputs.cache-hit != 'true'
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+          r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2_endpoint: ${{ secrets.R2_ENDPOINT }}
+          create_if_missing: "true"
 
       - name: Report the AVD in use
         env:
-          AVD_SOURCE: ${{ steps.preinstalled-avd.outputs.found == 'true' && 'runner image' || steps.avd.outputs.cache-hit == 'true' && 'R2' || 'created in this job' }}
+          AVD_SOURCE: ${{ steps.avd.outputs.source }}
           SCENARIO: ${{ matrix.scenario }}
         run: |
           {
@@ -431,6 +610,9 @@ jobs:
             "$BT/apksigner" sign --v4-signing-enabled false --ks "$KS_PATH" --ks-pass $KS_PASS --ks-key-alias staging --key-pass $KS_PASS --out "$dir/signed.apk" "$dir/aligned.apk"
             echo "$dir: $(cat "$dir/sha.txt")" | tee -a "$RESULTS_DIR/android/builds.txt"
           done
+
+      - name: Compare the build toolchains
+        run: bash e2e/tooling/startup-perf/ci/toolchain.sh compare builds/a builds/b
 
       - name: Install Maestro ${{ env.MAESTRO_VERSION }}
         run: bash e2e/tooling/startup-perf/devices/install-maestro.sh
@@ -499,8 +681,11 @@ jobs:
 
   measure-ios:
     name: "iOS startup (2 simulators)"
-    needs: [plan, build-ios]
-    if: ${{ needs.plan.outputs.platforms != 'Android Only' }}
+    needs: [plan, restore-cache, build-ios]
+    if: >-
+      !cancelled() && needs.plan.result == 'success' &&
+      needs.plan.outputs.platforms != 'Android Only' &&
+      (needs.build-ios.result == 'success' || needs.restore-cache.outputs.ios_sides == '[]')
     # One iOS measurement at a time on the performance pool, so two never measure side by side;
     # queue: max keeps every waiting run instead of only the latest.
     concurrency:
@@ -547,6 +732,9 @@ jobs:
             ditto -x -k "$dir/app.zip" "$dir"
             echo "$dir: $(cat "$dir/sha.txt")" | tee -a "$RESULTS_DIR/ios/builds.txt"
           done
+
+      - name: Compare the build toolchains
+        run: bash e2e/tooling/startup-perf/ci/toolchain.sh compare builds/a builds/b
 
       - name: Install Maestro ${{ env.MAESTRO_VERSION }}
         run: bash e2e/tooling/startup-perf/devices/install-maestro.sh
@@ -607,7 +795,7 @@ jobs:
 
   report-on-slack:
     name: "Slack report"
-    needs: [plan, build-android, build-ios, measure-android, measure-ios]
+    needs: [plan, restore-cache, build-android, build-ios, measure-android, measure-ios]
     # As for the mobile E2E runs: every run posts to their results channel, passed or failed, and
     # the nightly or a dispatch with slack_notif to #live-repo-health too. A run cancelled by hand
     # posts nothing; a job that times out ends cancelled but still gets posted.
@@ -644,9 +832,10 @@ jobs:
           LABEL_B: ${{ needs.plan.outputs.label_b }}
           SCENARIOS: ${{ needs.plan.outputs.scenarios }}
           PLAN: ${{ needs.plan.result }}
-          ANDROID_BUILD: ${{ needs.build-android.result }}
+          # Every side restored counts as built.
+          ANDROID_BUILD: ${{ needs.restore-cache.outputs.android_sides == '[]' && 'success' || needs.build-android.result }}
           ANDROID_MEASURE: ${{ needs.measure-android.result }}
-          IOS_BUILD: ${{ needs.build-ios.result }}
+          IOS_BUILD: ${{ needs.restore-cache.outputs.ios_sides == '[]' && 'success' || needs.build-ios.result }}
           IOS_MEASURE: ${{ needs.measure-ios.result }}
         run: node e2e/tooling/startup-perf/ci/slack-report.mts
 

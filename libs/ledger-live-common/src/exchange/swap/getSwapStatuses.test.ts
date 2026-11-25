@@ -60,13 +60,13 @@ describe("getSwapStatuses", () => {
     expect(statuses).toEqual([unknown]);
   });
 
-  it("keeps the first statuses when asking again as oneinchfusion fails", async () => {
-    const statuses = [
-      { provider: "oneinch", swapId: ORDER_HASH, status: "unknown" as const },
-      { provider: "changelly", swapId: "cex-swap", status: "finished" as const },
-    ];
+  it("returns the oneinch swap as pending when asking again as oneinchfusion fails", async () => {
+    const cexSwap = { provider: "changelly", swapId: "cex-swap", status: "finished" as const };
     mockedGetMultipleStatus
-      .mockResolvedValueOnce(statuses)
+      .mockResolvedValueOnce([
+        { provider: "oneinch", swapId: ORDER_HASH, status: "unknown" },
+        cexSwap,
+      ])
       .mockRejectedValueOnce(new Error("network"));
 
     await expect(
@@ -77,7 +77,7 @@ describe("getSwapStatuses", () => {
         ],
         "ethereum",
       ),
-    ).resolves.toEqual(statuses);
+    ).resolves.toEqual([{ provider: "oneinch", swapId: ORDER_HASH, status: "pending" }, cexSwap]);
   });
 
   it("does not ask again for a resolved oneinch swap or without a network", async () => {

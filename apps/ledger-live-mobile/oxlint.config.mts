@@ -12,6 +12,9 @@ import {
   WALLET_FRAMEWORK_CURRENCY_TYPES,
 } from "@support/lint/restricted-imports";
 import { SUFFIX_IMPORTS_PLUGIN } from "@support/lint/plugins";
+import { coinFamiliesLint } from "@support/lint/coin-families";
+
+const coinFamilies = coinFamiliesLint({ familiesDir: "src/families", barrel: "forbidden" });
 
 const MVVM_ALIAS = {
   group: ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
@@ -66,7 +69,7 @@ export default defineConfig({
   globals: { __DEV__: "readonly", __REDUX_DEVTOOLS_EXTENSION__: "readonly" },
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest", "jsx-a11y"],
-  jsPlugins: [SUFFIX_IMPORTS_PLUGIN],
+  jsPlugins: [SUFFIX_IMPORTS_PLUGIN, ...coinFamilies.jsPlugins],
   ignorePatterns: [
     "*.min.js",
     "node_modules",
@@ -102,6 +105,7 @@ export default defineConfig({
     "eslint/no-restricted-properties": ["error", NAVIGATOR_CLIPBOARD],
     "import/no-duplicates": "error",
     "suffix-imports/no-platform-suffix": "error",
+    ...coinFamilies.rules,
     "import/no-named-as-default": "off",
     "typescript/no-explicit-any": "error",
     "typescript/no-non-null-assertion": "off",
@@ -168,6 +172,14 @@ export default defineConfig({
     {
       files: ACCOUNT_DATA_SETUP_FILES,
       rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+    },
+    {
+      files: ["**/*.test.*", "**/__tests__/**", "**/__integrations__/**", "**/__mocks__/**"],
+      rules: {
+        "coin-families/no-coin-specific-import": "off",
+        "coin-families/no-family-branch": "off",
+        "coin-families/no-currency-id-branch": "off",
+      },
     },
   ],
 });

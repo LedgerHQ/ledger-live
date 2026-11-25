@@ -33,12 +33,13 @@ export type SetupInfoViewProps = Readonly<{
 
 type Translate = ReturnType<typeof useTranslation>["t"];
 
-type InfoSheetKind = "setupChoice" | "recoveryPhrase" | "restoreChoice" | "recoveryKey";
+type InfoSheetKind = "setupChoice" | "pin" | "recoveryPhrase" | "restoreChoice" | "recoveryKey";
 
 type InfoSheetContent = Omit<InfoSheetProps, "isOpen" | "onOpenLink" | "onClose">;
 
 const sheetByCard = {
   setupChoice: "setupChoice",
+  pin: "pin",
   recoveryPhrase: "recoveryPhrase",
   restoreChoice: "restoreChoice",
   recoveryKey: "recoveryKey",
@@ -47,6 +48,7 @@ const sheetByCard = {
 
 const linkBySheet = {
   setupChoice: setupInfoUrls.faq,
+  pin: setupInfoUrls.faq,
   recoveryPhrase: setupInfoUrls.recoveryPhrase,
   restoreChoice: setupInfoUrls.faq,
   recoveryKey: setupInfoUrls.faq,
@@ -81,6 +83,16 @@ function sheetContent(
           },
         ],
         paragraphs: [],
+        linkLabel: faqLabel,
+      };
+    case "pin":
+      return {
+        title: t("deviceOnboarding.setup.info.pin.title"),
+        rows: [],
+        paragraphs: [
+          t("deviceOnboarding.setup.info.pin.description"),
+          t("deviceOnboarding.setup.info.pin.lostSigner"),
+        ],
         linkLabel: faqLabel,
       };
     case "recoveryPhrase":

@@ -11,6 +11,7 @@ import {
 } from "LLM/components/DeviceIntentExecutor";
 import { signMessageIntentPlatformDefinition } from "./intentDefinition";
 import type { WalletApiDeviceIntentSignMessageRequest } from "./types";
+import { getSignatureSourceFlow } from "../../utils/getSignatureSourceFlow";
 
 type Props = {
   request: WalletApiDeviceIntentSignMessageRequest;
@@ -131,6 +132,7 @@ export function useMessageSignatureDrawerViewModel({ request, onClose }: Props) 
   }, [onError, onCancel, onClose]);
 
   return {
+    sourceFlow: getSignatureSourceFlow(request.manifestId),
     deviceInitializationInput,
     signatureIntent,
     onIntentJobStateChanged,

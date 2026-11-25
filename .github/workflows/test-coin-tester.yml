@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 env:
-  COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar multiversx cosmos cardano casper vechain near stacks kaspa zcash aleo ton internet_computer"
+  COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar multiversx cosmos cardano casper vechain near stacks kaspa zcash aleo ton internet_computer filecoin"
   # The coin testers that run against coin-sandbox: for each, the coin-sandbox networks it runs and the versions it asks
   # for, as the flags of coin-sandbox's `up` and `pull`. This is the only place the versions are written: the tester
   # reads them from COIN_SANDBOX_<NETWORK> (`libs/coin-tester/src/versions.ts`) and only these images are pulled from
@@ -49,7 +49,8 @@ env:
         "babylon": { "flags": "--node babylon@4.6.0" },
         "gonka": { "flags": "--node inference-chain@0.2.16" }
       },
-      "xrp": { "ripple": { "flags": "--node xrpld@3.4.1", "pull": false } }
+      "xrp": { "ripple": { "flags": "--node xrpld@3.4.1", "pull": false } },
+      "filecoin": { "filecoin": { "flags": "--node lotus@1.39.1 --indexer filecoin-api-stub" } }
     }
 
 jobs:

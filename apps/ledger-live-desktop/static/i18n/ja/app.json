@@ -2774,10 +2774,36 @@
     }
   },
   "receiveAddress" : {
+    "title" : "{{asset}}を受け取る",
+    "networkLabel" : "{{network}}ネットワーク",
     "addressDisplayed" : {
       "title" : "アドレスが安全に表示されています",
-      "description" : "貼り付けまたは共有したアドレスが、お使いのLedgerデバイスのアドレスとマッチしていることを認証してください。",
-      "gotItCta" : "了解"
+      "description" : "貼り付けまたは共有したアドレスが、お使いのLedgerデバイスのアドレスとマッチしていることを認証してください。"
+    },
+    "addressVerified" : {
+      "title" : "認証済みアドレス",
+      "description" : "Ledger Wallet™のアドレスは、お使いのLedgerデバイスのアドレスとマッチしています。",
+      "doneCta" : "完了"
+    },
+    "addressMismatch" : {
+      "title" : "このアドレスは、お使いのLedgerとマッチしません",
+      "description" : "このアドレスは使用しないでください。このアカウントで設定されていないLedgerを使用している可能性があります。正しいLedgerを接続し、再度認証してください。それでもマッチしない場合は、Ledgerサポートにお問い合わせください。",
+      "contactSupportCta" : "Ledgerサポートへお問い合わせ",
+      "closeCta" : "閉じる"
+    },
+    "selectAddress" : {
+      "title" : "アドレスを選択"
+    },
+    "addressOptions" : {
+      "transparent" : "パブリックアドレス",
+      "shielded" : "プライベートアドレス"
+    },
+    "close" : "閉じる",
+    "back" : "戻る",
+    "error" : {
+      "title" : "このアドレスを読み込めませんでした。",
+      "description" : "インターネット接続を確認してから、もう一度お試しください。",
+      "retry" : "再試行"
     }
   },
   "send" : {
@@ -3061,7 +3087,7 @@
     },
     "sponsoredPolling" : {
       "title" : "エネルギーを提供中です。",
-      "waiting" : "通常、これには最大30秒かかります。",
+      "waiting" : "最大2分ほどかかる場合があります。",
       "elapsed" : "経過時間：{{time}}"
     },
     "sponsoredFailure" : {
@@ -4308,7 +4334,7 @@
         "token" : {
           "title" : "トークン",
           "selectLabel" : "トークンを選択",
-          "allAdded" : "すでに利用可能なすべてのトークンをこのアカウントに追加しています。",
+          "empty" : "このアカウントに追加可能なトークンはありません。",
           "loadError" : "トークンリストを読み込めませんでした。",
           "info" : "トークンを追加すると、ネットワーク手数料を支払うトランザクションが送信され、トークンを保有している間はXRPが確保されます。トランザクション履歴に表示されます。"
         },
@@ -4316,12 +4342,18 @@
           "title" : "設定",
           "limit" : "トラストリミット",
           "max" : "最大",
-          "limitInfo" : "トラストリミットは、アカウントが保有を受け入れる最大の{{token}}量です。"
+          "limitInfo" : "トラストリミットは、アカウントが保有を受け入れる最大の{{token}}量です。最大をオンにすると、XRP Ledgerが許可する上限を使用できます。",
+          "maximum" : "最大"
         },
         "review" : {
           "title" : "確認",
           "token" : "トークン",
-          "issuer" : "発行者"
+          "issuer" : "発行者",
+          "issuerFee" : "発行者手数料",
+          "issuerFeeTooltip" : "ホルダー間の各送金から、発行者が受け取る割合。",
+          "issuerFeeError" : "発行元の手数料の詳細を確認できませんでした。",
+          "notEnoughReserve" : "このトークンを追加するには、少なくとも{{minimumAmount}}が利用可能である必要があります。",
+          "receive" : "受け取る"
         },
         "connectDevice" : {
           "title" : "デバイス"
@@ -4329,8 +4361,8 @@
         "confirmation" : {
           "title" : "確認",
           "success" : {
-            "title" : "{{token}}トークンが正常に追加されました",
-            "text" : "XRPアカウントで<0>{{token}}</0>の受け取りが可能になりました。",
+            "title" : "{{token}}の追加リクエストを送信しました",
+            "text" : "ネットワークによるトランザクションの承認後に適用されます。",
             "cta" : "詳細を表示"
           },
           "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
@@ -4344,14 +4376,59 @@
       "steps" : {
         "confirmation" : {
           "success" : {
-            "title" : "{{token}}のトラストラインの限度額が更新されました",
-            "text" : "お客様のXRPアカウントで、新しい限度額まで<0>{{token}}</0>の受け入れが可能になりました。"
+            "title" : "{{token}}の更新リクエストを送信しました"
+          }
+        }
+      }
+    },
+    "manageAssets" : {
+      "cta" : "管理",
+      "title" : "資産管理",
+      "tokenType" : "トークンタイプ",
+      "tokenTypeTooltip" : "Trust Line (IOU) には、残高上限とリップリング設定があります。Multi Purpose Token (MPT) には設定はありません。",
+      "iou" : "Trust Line (IOU)",
+      "mpt" : "Multi Purpose Token",
+      "transferFee" : "転送手数料",
+      "lockedAmount" : "ロックされた数量",
+      "balanceLimit" : "残高上限",
+      "ripplingTooltip" : "リップリングにより、他のユーザーによる支払いで、同一の通貨コードを持つトークン間での残高移動が可能になります。",
+      "activated" : "有効化されました",
+      "deactivated" : "無効化されました",
+      "edit" : "編集",
+      "delete" : "削除"
+    },
+    "manageToken" : {
+      "title" : "トークンの管理",
+      "settings" : {
+        "title" : "アドバンス設定",
+        "description" : "トラストリミットまたはリプリングを変更します。"
+      },
+      "remove" : {
+        "description" : "このトラストラインを閉じて、そのXRPリザーブを取り戻します。"
+      }
+    },
+    "removeToken" : {
+      "title" : "トークンを削除",
+      "pending" : "削除保留中",
+      "frozen" : "このトークンは凍結されています。",
+      "steps" : {
+        "review" : {
+          "unlocked" : "{{amount}}はロック解除され、再び利用可能になります。",
+          "info" : "今後、このトークンを受け取ることはできなくなります。後で再び追加することができます（{{amount}}は再びロックされます）。",
+          "balanceLeft" : "{{balance}}をまだ保有しています。このトークンを削除する前に、残高を送信してください。",
+          "send" : "送付"
+        },
+        "connectDevice" : {
+          "limitZero" : "デバイスに0のトラスト制限が表示されます。これが、XRP Ledgerがトークンを削除する仕組みです。"
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "{{token}}の削除リクエストを送信しました"
           }
         }
       }
     },
     "tokenAccount" : {
-      "editSettings" : "設定を編集",
       "trustLimit" : "信用限度",
       "trustLimitTooltip" : "アカウントが保有できる、このトークンの最大数量。"
     },
@@ -4360,6 +4437,9 @@
       "on" : "オン",
       "off" : "オフ",
       "warning" : "これをオンにすると、他のユーザーによる支払いで、同一の通貨コードを持つトークン間での残高移動が許可されます。自分が何をしているのか理解している場合にのみ、オンにしてください。"
+    },
+    "send" : {
+      "issuerFee" : "発行者手数料"
     },
     "receive" : {
       "addToken" : "トークンの追加",
@@ -5615,7 +5695,14 @@
       },
       "devTools" : {
         "rowTitle" : "DevTools",
-        "rowDesc" : "DevToolsシェル（機能フラグおよび開発ツールパネル）を開きます。"
+        "rowDesc" : "DevToolsシェル（機能フラグおよび開発ツールパネル）を開きます。",
+        "appToggles" : {
+          "hideNightlyLayer" : {
+            "label" : "プレリリースのオーバーレイを非表示にする",
+            "description" : "ナイトリービルドに表示されるPRERELEASEの透かしを非表示にします（きれいなスクリーンショットを撮影する場合など）。",
+            "lockedReason" : "このオーバーレイはナイトリービルドにのみ表示されます。"
+          }
+        }
       },
       "brazeTools" : {
         "title" : "Brazeツール",
@@ -7156,6 +7243,9 @@
         "expiresAt" : "有効期限（日時）",
         "expiresIn" : "残り有効期間",
         "amount" : "数量",
+        "unknownToken" : "不明なトークン",
+        "instrumentId" : "インストルメントID",
+        "instrumentAdmin" : "インストルメント管理者",
         "transaction" : "トランザクション",
         "viewTransaction" : "トランザクションを表示",
         "action" : "アクション",
@@ -8091,7 +8181,8 @@
       "description" : "問題が発生しました。再試行するか、疑わしい場合はLedgerサポートにご連絡ください。"
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Ethereumアプリでブラインド署名またはコントラクトデータを有効化する"
+      "title" : "Ethereumアプリでブラインド署名またはコントラクトデータを有効化する",
+      "description" : "デバイスでEthereumアプリの設定を開き、ブラインド署名をオンにしてから再試行してください。"
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "Celoアプリの設定でコントラクトデータを有効にしてください"
@@ -8114,11 +8205,11 @@
       "description" : "このトークンの保有を停止するには、代わりに削除してください。"
     },
     "XrpTokenFrozen" : {
-      "title" : "このトークンを送信することはできません。",
+      "title" : "トークンは凍結されています",
       "description" : "発行元が凍結しました。"
     },
     "XrpTokenNotAuthorized" : {
-      "title" : "このトークンを送信することはできません。",
+      "title" : "アカウントが承認されていません",
       "description" : "発行元がアカウントによる保有を承認していません。"
     },
     "XrpTokenCannotReceive" : {
@@ -8143,6 +8234,54 @@
     "XrpReserveIncrease" : {
       "title" : "このトークンが追加されている間、アカウントの{{amount}}がロックされます。",
       "description" : "トークンを削除すると戻ります。"
+    },
+    "XrpAccountNotActivated" : {
+      "title" : "アカウントがまだアクティベートされていません。",
+      "description" : "これを有効化してこのトークンを追加するには、少なくとも{{amount}}を受け取ってください。これには、アカウントの有効化と、トークン用にロックされるXRPが含まれます。"
+    },
+    "XrpTrustLimitTooHigh" : {
+      "title" : "制限が最大値を超えています。",
+      "description" : "最大ボタンを使用して上限を最大に設定します。"
+    },
+    "XrpTrustSetUnchanged" : {
+      "title" : "これらの設定は既に適用されています。",
+      "description" : "このトークンを更新するには、制限またはリップリングを変更してください。"
+    },
+    "XrpRecipientNotActivated" : {
+      "title" : "このアカウントは有効化されていません",
+      "description" : "トークンを受け取ることはできません。"
+    },
+    "XrpRecipientTokenNotAdded" : {
+      "title" : "この受取人はこのトークンを受け取ることができません。",
+      "description" : "まずは相手に追加するよう依頼してください。"
+    },
+    "XrpRecipientLimitTooLow" : {
+      "title" : "受取人の上限が低すぎます",
+      "description" : "受信者はこのトークンを最大{{maxAmount}}までしか受け取ることができません。"
+    },
+    "XrpSendToIssuer" : {
+      "title" : "トークンの発行元に送信中",
+      "description" : "これらのトークンは破棄され、誰にも付与されません。"
+    },
+    "XrpOptOutBalanceNotZero" : {
+      "title" : "このトークンの残高が0である必要があります",
+      "description" : "トークンを削除する前に、すべて送信してください。"
+    },
+    "XrpOptOutTokenInEscrow" : {
+      "title" : "このトークンの一部はエスクローに入っています。",
+      "description" : "エスクローが完了またはキャンセルされたら、トークンを削除してください。"
+    },
+    "XrpOptOutTokenFrozen" : {
+      "title" : "{{assetCode}}は削除できません",
+      "description" : "発行元がお客様のアカウントでそれを凍結しました。"
+    },
+    "XrpOptOutIncomplete" : {
+      "title" : "このトークンは削除できません",
+      "description" : "XRP Ledgerは、ロックされたXRPとともに、それをアカウントに保持します。"
+    },
+    "XrpReserveRelease" : {
+      "title" : "このトークン用にロックされている{{amount}}が解放されます。",
+      "description" : "トークンが削除されると、これを使用できるようになります。"
     },
     "InvalidExplorerResponse" : {
       "title" : "{{currencyName}}エクスプローラーからの応答が無効です"
@@ -8274,6 +8413,10 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+    },
+    "SolanaTxBlockhashExpired" : {
+      "title" : "トランザクションが期限切れです。",
+      "description" : "ネットワークはこのトランザクションを受け付けなくなりました。もう一度、新しく作成し直してください。"
     },
     "SolanaRecipientMemoIsRequired" : {
       "title" : "受取人アドレスにはメモが必要です"
@@ -8674,6 +8817,22 @@
     "SuiAddressBalanceAppUpdateRequired" : {
       "title" : "Suiアプリをアップデートしてください。",
       "description" : "お使いのLedgerのSuiアプリでは、SUIアドレスの残高からの送金に署名できません。LedgerデバイスのSuiアプリをアップデートして、再度お試しください。"
+    },
+    "SuiRawTransactionInvalid" : {
+      "title" : "読み取り不可能なSuiトランザクション",
+      "description" : "アプリがLedger Walletで読み取れないSuiトランザクションを送信しました。アプリからもう一度試すか、サポートにお問い合わせください。"
+    },
+    "SuiRawTransactionSenderMismatch" : {
+      "title" : "異なるSuiアカウント",
+      "description" : "このトランザクションは、別のSuiアカウント用に作成されました。アプリに接続されているアカウントを選択して、もう一度お試しください。"
+    },
+    "SuiRawTransactionResolutionFailed" : {
+      "title" : "Suiトランザクションを準備できませんでした",
+      "description" : "使用する資産がまだ存在していること、およびアカウントがネットワーク手数料を支払えることを確認してから、アプリからもう一度お試しください。"
+    },
+    "SuiSponsoredTransactionBroadcastUnsupported" : {
+      "title" : "スポンサー付きSuiトランザクション",
+      "description" : "このトランザクションのネットワーク手数料はスポンサーによって支払われるため、Ledger Wallet™はネットワークに送信できません。アプリ自身が送信する必要があります。これが繰り返し発生する場合は、アプリのサポートにお問い合わせください。"
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "現在利用可能な（ステーキングされていない）残高は{{currentBalance}}ですが、これは{{assetName}}のステーキングを解除するためのネットワーク手数料を支払うには不十分です。",

@@ -27,6 +27,7 @@ A key is verified when its type is a finite set of literals. A key typed `string
 
 1. **Literal at the call site**: `t("payTab.login.title")`. Greppable, needs no types.
 2. **Domain union, key derived in one place**: a new member fails the check until its key exists.
+   A literal union, an `as const` array or object, or a TS string enum all expand.
    ```ts
    type Stage = "intro" | "login";
    declare const stage: Stage;
@@ -37,6 +38,15 @@ A key is verified when its type is a finite set of literals. A key typed `string
    type Props = { titleKey: "x.intro.title" | "x.login.title" };
    ```
 
+Don't map a union to full key literals when the keys share a pattern: the map duplicates every key
+in the bundle, and the template is checked just as well.
+
+```ts
+const titleKeys = { intro: "x.intro.title", login: "x.login.title" } as const; // ❌
+t(titleKeys[stage]);
+t(`x.${stage}.title`); // ✅
+```
+
 What widens a key to `string` and hides it:
 
 ```ts
@@ -45,10 +55,12 @@ const rows = [{ key: "a" }, { key: "b" }]; // add as const
 function labelKey(kind: Kind): string { ... } // annotate the literal union
 ```
 
-The check resolves workspace packages only: a type inferred from a third-party package (`z.infer`,
-a `react-native-keychain` enum) is `any` to it. Map such a value through a feature-owned
-``as const satisfies Record<DomainUnion, `prefix.${string}`>`` table, read by a helper whose
-parameter is the table's own keys. The prefix in the value type catches a typo in a key.
+The check resolves workspace packages only: a type inferred from a third-party package (a
+`react-native-keychain` enum) is `any` to it. Pass it through a parameter typed with a workspace union.
+
+**Zod caveat**: `z.infer` of a `z.enum` is `any` to the check. Type the span with the `as const`
+tuple the schema is built from: `const STAGES = ["intro", "login"] as const; z.enum(STAGES);
+type Stage = (typeof STAGES)[number];`.
 
 Template spans must be unions or literal consts, not `string` or `number`. Template keys are not
 greppable: the check, not search, protects a "dead" key from deletion.

@@ -12,6 +12,7 @@ import {
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { setContacts } from "@domain/entity-contact";
+import { identitiesSlice } from "@domain/entity-client-identity";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { restorePayCardBalanceFilter } from "@features/flow-pay-balance/state";
 import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state";
@@ -50,8 +51,6 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
-import { setSpeculosDeviceModel, setSpeculosSessionToken } from "~/services/registerTransports";
 import { appNetworkLogStore, initAppNetworkLogging } from "../appNetworkLogStore";
 import { readLaunchForceProvider } from "~/launchForceProvider";
 
@@ -62,7 +61,7 @@ let retryCount = 0;
 const maxRetries = 5; // Maximum number of retry attempts
 const retryDelay = 500; // Initial retry delay in milliseconds
 
-async function disconnectDeviceIntentSpeculosSessions() {
+async function disconnectAllSpeculosSessions() {
   const dmk = getDeviceManagementKit();
   await Promise.all(
     dmk
@@ -70,11 +69,6 @@ async function disconnectDeviceIntentSpeculosSessions() {
       .filter(device => device.transport === speculosIdentifier)
       .map(({ sessionId }) => dmk.disconnect({ sessionId }).catch(() => {})),
   );
-}
-
-async function disconnectAllSpeculosSessions() {
-  await DeviceManagementKitTransportSpeculos.disconnectAll();
-  await disconnectDeviceIntentSpeculosSessions();
 }
 
 function removeKnownSpeculosDevices() {
@@ -255,10 +249,13 @@ async function onMessage(event: WebSocketMessageEvent) {
       case "importPayCard": {
         // The same fan-out LedgerStore performs on the persisted blob: one payload, one slice each.
         store.dispatch(restorePayCardFeatureTour(msg.payload));
-        store.dispatch(restoreReceiveVerifyHint(msg.payload));
         store.dispatch(restorePayCardBalanceFilter(msg.payload));
         store.dispatch(restorePayCardLoginIntro(msg.payload));
         store.dispatch(restorePayCardOnboardingWidget(msg.payload));
+        break;
+      }
+      case "importReceiveVerifyHint": {
+        store.dispatch(restoreReceiveVerifyHint(msg.payload));
         break;
       }
       case "overrideFeatureFlags": {
@@ -268,6 +265,10 @@ async function onMessage(event: WebSocketMessageEvent) {
       case "overrideFeatureFlag": {
         const { id, value } = msg.payload as { id: FeatureId; value: Feature | undefined };
         store.dispatch(setOverride({ key: id, value }));
+        break;
+      }
+      case "overrideUserId": {
+        store.dispatch(identitiesSlice.actions.importFromLegacy({ userId: msg.payload }));
         break;
       }
       case "overrideLiveConfig": {
@@ -332,8 +333,6 @@ async function onMessage(event: WebSocketMessageEvent) {
         }: { address: string; model: DeviceModelId; sessionToken?: string } = JSON.parse(
           msg.payload,
         );
-        setSpeculosDeviceModel(model);
-        setSpeculosSessionToken(sessionToken);
         await disconnectAllSpeculosSessions();
         const speculosDeviceId = buildSpeculosLegacyDeviceId(address);
         const knownSpeculosIds = bleDevicesSelector(store.getState())
@@ -357,7 +356,7 @@ async function onMessage(event: WebSocketMessageEvent) {
             modelId: model,
           }),
         );
-        // Device intents only offer DMK-known devices, so Speculos is registered here too.
+        // Device intents and `withDevice` both reach Speculos through this app DMK target.
         speculosTargetSubject.next({
           url: address,
           deviceModelId: ledgerToDmkDeviceIdMap[model],
@@ -377,8 +376,6 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "removeKnownSpeculos": {
         const address = msg.payload;
-        setSpeculosDeviceModel(undefined);
-        setSpeculosSessionToken(undefined);
         await disconnectAllSpeculosSessions();
         store.dispatch(removeKnownBleDevice(buildSpeculosLegacyDeviceId(address)));
         speculosTargetSubject.next(null);

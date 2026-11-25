@@ -19,6 +19,7 @@ const account: AccountSettingsAccount = {
 function renderSettings(
   overrides: Partial<AccountSettingsAdapter<AccountSettingsAccount>> = {},
   settingsAccount: AccountSettingsAccount = account,
+  onManageAssets?: () => void,
 ) {
   const adapter: AccountSettingsAdapter<AccountSettingsAccount> = {
     isNameEditDisabled: false,
@@ -36,6 +37,7 @@ function renderSettings(
       adapter={adapter}
       isOpen
       onClose={onClose}
+      onManageAssets={onManageAssets}
       testID="settings"
     />,
     { wrapper: I18nWrapper },
@@ -136,5 +138,18 @@ describe("AccountSettings (Web)", () => {
     renderSettings();
 
     expect(screen.queryByTestId("account-settings-view-explorer")).toBeNull();
+  });
+
+  it("closes, then opens Manage assets", async () => {
+    const onManageAssets = jest.fn();
+    const { onClose, user } = renderSettings({}, account, onManageAssets);
+
+    await user.click(screen.getByTestId("account-settings-manage-assets"));
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onManageAssets).toHaveBeenCalledTimes(1);
+    expect(onClose.mock.invocationCallOrder[0]).toBeLessThan(
+      onManageAssets.mock.invocationCallOrder[0],
+    );
   });
 });

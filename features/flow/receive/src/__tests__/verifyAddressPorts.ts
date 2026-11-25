@@ -1,8 +1,8 @@
-import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import { AccountUUIDSchema } from "@domain/entity-account";
 import type { VerifyAddressExecutorPorts, VerifyAddressSelection } from "../types";
 
 export const ADDRESS = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";

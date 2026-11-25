@@ -172,6 +172,14 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
     postMessage({ type: "importPayCard", id: uniqueId(), payload: data.payCard });
   }
 
+  if (data.receiveVerifyHint) {
+    postMessage({
+      type: "importReceiveVerifyHint",
+      id: uniqueId(),
+      payload: data.receiveVerifyHint,
+    });
+  }
+
   if (data.featureFlags?.overrides) {
     await setFeatureFlags(data.featureFlags.overrides);
   }
@@ -197,6 +205,11 @@ export async function importContacts(contacts: Contact[]) {
 /** Replaces the app's coin-config overrides (deep-merged over its default and remote config). */
 export async function overrideLiveConfig(payload: Record<string, unknown>) {
   await postAndAwaitAck({ type: "overrideLiveConfig", id: uniqueId(), payload });
+}
+
+/** Replaces the user id the app generated on a fresh install, e.g. to share it with a Manager API lookup. */
+export async function overrideUserId(userId: string) {
+  await postAndAwaitAck({ type: "overrideUserId", id: uniqueId(), payload: userId });
 }
 
 export async function importLocalManifests(manifests: LiveAppManifest[]) {

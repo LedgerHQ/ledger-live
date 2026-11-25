@@ -10,10 +10,4 @@ const swapCheckProviderTestConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
-runSwapDexNativeFlow(
-  swapCheckProviderTestConfig.fromAccount,
-  swapCheckProviderTestConfig.toAccount,
-  swapCheckProviderTestConfig.provider,
-  swapCheckProviderTestConfig.tmsLinks,
-  swapCheckProviderTestConfig.tags,
-);
+runSwapDexNativeFlow(swapCheckProviderTestConfig);

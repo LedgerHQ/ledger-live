@@ -37,8 +37,10 @@ async function resolveOneinchSwapsAsFusion(
       unknownSwaps.map(({ swapId }) => ({ provider: ONEINCH_FUSION_PROVIDER, swapId, network })),
     );
   } catch {
-    // Keep the other swaps' statuses, the next poll asks again
-    return statuses;
+    // Pending, not unknown: the status dialog stops polling on unknown
+    return statuses.map(status =>
+      isUnknownOneinchSwap(status) ? { ...status, status: TransactionStatus.Pending } : status,
+    );
   }
 
   return statuses.map(status => {

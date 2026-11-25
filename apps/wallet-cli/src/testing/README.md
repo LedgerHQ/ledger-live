@@ -24,6 +24,7 @@ binary.
 | `fake-spinner` | Spinner fake for `_setTestSpinner` that records what it shows |
 | `gated-module-mock` | Module mock that other test files can't see (`createGatedModuleMock`) |
 | `clear-shell-env` | Test preload (`bunfig.toml`) that drops `SPECULOS_*` and `SWAP_API_BASE` from the shell or `.env`, so tests don't pick the Speculos transport or another Swap API |
+| `agent-env` | `runCli` env that clears every AI-agent signal, e.g. `CURSOR_AGENT` inside Cursor (`CLEAR_AGENTS`) |
 | `skill-fixtures` | Reads an installed skill's files and rewrites its sidecar, e.g. as an older wallet-cli would have |
 
 ## CLI tests

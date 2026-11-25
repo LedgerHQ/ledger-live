@@ -1,4 +1,3 @@
-import type { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
@@ -9,7 +8,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { type IcpCurrencyConfig, nodeUrl } from "../config";
+import { type IcpContext, nodeUrl } from "../config";
 import { ICP_DUMMY_ADDRESS } from "../constants";
 import resolver from "../signer";
 import type {
@@ -37,7 +36,7 @@ import { validateAddress } from "./validateAddress";
 
 function buildCurrencyBridge(
   signerContext: SignerContext<ICPSigner>,
-  resolveHost: () => string,
+  resolveHost: () => Promise<string>,
 ): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
@@ -53,7 +52,7 @@ function buildCurrencyBridge(
 
 function buildAccountBridge(
   signerContext: SignerContext<ICPSigner>,
-  resolveHost: () => string,
+  resolveHost: () => Promise<string>,
 ): AccountBridge<
   Transaction,
   ICPAccount,
@@ -90,13 +89,10 @@ function buildAccountBridge(
   };
 }
 
-// The coin config is held per bridge pair, not in a module-level singleton, so two pairs built
-// against different nodes do not leak into each other. Without one, the bridges reach mainnet.
-export function createBridges(
-  signerContext: SignerContext<ICPSigner>,
-  coinConfig?: CoinConfig<IcpCurrencyConfig>,
-) {
-  const resolveHost = () => nodeUrl(coinConfig?.());
+// The context is held per bridge pair, not in a module-level singleton, so two pairs built
+// against different nodes do not leak into each other.
+export function createBridges(signerContext: SignerContext<ICPSigner>, context: IcpContext) {
+  const resolveHost = async () => nodeUrl(await context.config());
   return {
     currencyBridge: buildCurrencyBridge(signerContext, resolveHost),
     accountBridge: buildAccountBridge(signerContext, resolveHost),

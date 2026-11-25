@@ -24,12 +24,4 @@ const swapHistoryTestConfig = {
   ],
 };
 
-runExportSwapHistoryOperationsTest(
-  swapHistoryTestConfig.swap,
-  swapHistoryTestConfig.provider,
-  swapHistoryTestConfig.swapId,
-  swapHistoryTestConfig.addressFrom,
-  swapHistoryTestConfig.addressTo,
-  swapHistoryTestConfig.tmsLinks,
-  swapHistoryTestConfig.tags,
-);
+runExportSwapHistoryOperationsTest(swapHistoryTestConfig);

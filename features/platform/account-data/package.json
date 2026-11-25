@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-account-data",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "description": "useAccountData: the React hook that keeps one kind of account data read while a screen shows it",
   "main": "src/index.ts",
@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@domain/api-account-data": "workspace:*",
+    "@domain/entity-account": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
     "@reduxjs/toolkit": "catalog:"
@@ -30,6 +31,8 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@domain/entity-derivation": "workspace:*",
+    "@domain/entity-network": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

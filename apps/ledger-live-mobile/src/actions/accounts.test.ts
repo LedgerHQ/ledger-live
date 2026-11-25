@@ -24,16 +24,12 @@ function fakeTuple(
     derivationMode: derivationMode as DerivationMode,
     name: `name-${id}`,
   } as unknown as Account;
-  const userData = { id, name: `custom-${id}`, starredIds: [] } as unknown as AccountUserData;
+  const userData = { id, name: `custom-${id}` } as AccountUserData;
   return [account, userData];
 }
 
-/** An account the user starred but never renamed: its name is the default one. */
-function starredTupleWithDefaultName(
-  id: string,
-  currencyId: string,
-  index = 0,
-): [Account, AccountUserData] {
+/** An account the user never renamed: its name is the default one. */
+function defaultNamedTuple(id: string, currencyId: string, index = 0): [Account, AccountUserData] {
   const account = {
     id,
     type: "Account",
@@ -42,24 +38,8 @@ function starredTupleWithDefaultName(
     index,
     name: `name-${id}`,
   } as unknown as Account;
-  const userData = {
-    id,
-    name: getDefaultAccountName(account),
-    starredIds: [id],
-  } as unknown as AccountUserData;
+  const userData: AccountUserData = { id, name: getDefaultAccountName(account) };
   return [account, userData];
-}
-
-async function starredIdsPayload(rawAccounts: {
-  active: { data: AccountRaw }[];
-}): Promise<string[]> {
-  const dispatched = await runImportStore(rawAccounts);
-  const action = dispatched.find(
-    a => a.type === "starredAccounts/initStarredFromIds",
-  ) as unknown as {
-    payload: string[];
-  };
-  return action.payload;
 }
 
 async function runImportStore(rawAccounts: { active: { data: AccountRaw }[] }) {
@@ -136,48 +116,20 @@ describe("importStore", () => {
     expect(action.payload.accounts.map((a: Account) => a.id)).toEqual(["btc-segwit"]);
   });
 
-  it("keeps starred ids of accounts that kept their default name", async () => {
-    mockDecode.mockResolvedValueOnce(starredTupleWithDefaultName("btc-default", "bitcoin"));
-
-    await expect(
-      starredIdsPayload({ active: [{ data: { id: "btc-default" } as AccountRaw }] }),
-    ).resolves.toEqual(["btc-default"]);
-  });
-
-  it("collects starred ids from both renamed and default-named accounts", async () => {
-    const renamed = fakeTuple("btc-renamed", "bitcoin");
-    renamed[1].starredIds = ["btc-renamed"];
-    mockDecode
-      .mockResolvedValueOnce(renamed)
-      .mockResolvedValueOnce(starredTupleWithDefaultName("eth-default", "ethereum"));
-
-    const ids = await starredIdsPayload({
-      active: [
-        { data: { id: "btc-renamed" } as AccountRaw },
-        { data: { id: "eth-default" } as AccountRaw },
-      ],
-    });
-    expect(ids.sort()).toEqual(["btc-renamed", "eth-default"]);
-  });
-
   it("does not leak default names into the account names payload", async () => {
-    mockDecode.mockResolvedValueOnce(starredTupleWithDefaultName("btc-default", "bitcoin"));
+    mockDecode.mockResolvedValueOnce(defaultNamedTuple("btc-default", "bitcoin"));
 
     const action = await initAction({ active: [{ data: { id: "btc-default" } as AccountRaw }] });
     expect(action.payload.accountsUserData.map((u: AccountUserData) => u.id)).toEqual([]);
   });
 
-  it("also dispatches account name and starred initialization", async () => {
+  it("also dispatches account name initialization", async () => {
     mockDecode.mockResolvedValueOnce(fakeTuple("btc-1", "bitcoin"));
 
     const types = (await runImportStore({ active: [{ data: { id: "btc-1" } as AccountRaw }] })).map(
       a => a.type,
     );
-    expect(types).toEqual([
-      "INIT_ACCOUNTS",
-      "accountNames/initFromUserData",
-      "starredAccounts/initStarredFromIds",
-    ]);
+    expect(types).toEqual(["INIT_ACCOUNTS", "accountNames/initFromUserData"]);
   });
 
   describe("migration version", () => {

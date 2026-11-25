@@ -2,7 +2,7 @@
 # electron-builder). The target app is chosen by ENV["APP_IDENTIFIER"], so a
 # nightly/prerelease can never be uploaded to the production record.
 fastlane_require "dotenv"
-fastlane_require "semver"
+require "semver" # gem "semver2": fastlane_require probes a differently named gem in a child ruby
 fastlane_require "json"
 
 # Plain-Ruby JSON parse (no fastlane plugin dep); path is relative to this file.

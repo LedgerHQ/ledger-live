@@ -28,11 +28,4 @@ const swapHistoryTestConfig = {
   },
 };
 
-runSwapHistoryOperationsTest(
-  swapHistoryTestConfig.swap,
-  swapHistoryTestConfig.provider,
-  swapHistoryTestConfig.swapId,
-  swapHistoryTestConfig.tmsLinks,
-  swapHistoryTestConfig.tags,
-  swapHistoryTestConfig.details,
-);
+runSwapHistoryOperationsTest(swapHistoryTestConfig);

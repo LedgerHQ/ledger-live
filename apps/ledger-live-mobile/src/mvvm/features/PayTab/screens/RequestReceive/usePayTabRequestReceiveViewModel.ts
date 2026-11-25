@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { View } from "react-native";
-import Share from "react-native-share";
-import { captureRef } from "react-native-view-shot";
 import { copyToClipboard } from "@shared/clipboard";
+import { captureView, openShareSheet } from "@shared/share-sheet";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RequestReceiveProps } from "@features/flow-pay-request";
@@ -49,12 +48,9 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   const onCopy = useCallback((address: string) => copyToClipboard(address), []);
 
   const onShare = useCallback(async (address: string) => {
-    try {
-      const imageUrl = await captureRef(cardRef, { format: "png" });
-      await leaveAppFor(() => Share.open({ url: imageUrl, message: address, failOnCancel: false }));
-    } catch {
-      // TODO: handle share/capture errors
-    }
+    const imageUrl = await captureView(cardRef);
+    // Caught outside leaveAppFor: it must see the failure to release the app lock exemption.
+    await leaveAppFor(() => openShareSheet({ message: address, imageUrl })).catch(() => undefined);
   }, []);
 
   const markHintSeen = useCallback(() => {

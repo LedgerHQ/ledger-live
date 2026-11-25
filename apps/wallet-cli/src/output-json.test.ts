@@ -1,10 +1,10 @@
 import "./live-common-setup";
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { AddressSchema } from "@domain/entity-network";
 import { installOutputCapture } from "./shared/ui";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { USDT_TOKEN_INFO, USDT_TOKEN_JSON } from "./testing/cal-fixtures";
 import { SwapBackendError } from "./commands/swap/swap-backend-error";
-import { AddressSchema } from "@domain/entity-account-descriptor";
 import { DerivationPathSchema, NetworkIdSchema } from "./shared/accountDescriptor";
 
 const XPUB = "xpub6BosfCnifzxcA";

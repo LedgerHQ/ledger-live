@@ -1,0 +1,101 @@
+name: "Prepare Android AVD"
+description: "Use the runner image's AVD when it is the configured one, else download it from R2, else create it or fail"
+# Needs the AVD configuration in the job environment: setup-android-avd with config_only.
+# Composite steps take no timeout: set timeout-minutes on the step that calls this action, above
+# download_timeout_minutes and, with create_if_missing, the time to create the AVD.
+inputs:
+  cache_key:
+    description: "R2 key of the AVD; the configuration's AVD_CACHE_KEY when empty"
+    required: false
+    default: ""
+  r2_access_key:
+    description: "R2 access key, to download the AVD"
+    required: true
+  r2_secret_key:
+    description: "R2 secret key"
+    required: true
+  r2_endpoint:
+    description: "R2 endpoint"
+    required: true
+  create_if_missing:
+    description: "Create the AVD when R2 has none, instead of failing"
+    required: false
+    default: "false"
+  download_timeout_minutes:
+    description: "Minutes the R2 download may take before it counts as failed"
+    required: false
+    default: "10"
+outputs:
+  source:
+    description: "Where the AVD comes from: runner image, R2 or created in this job"
+    value: ${{ steps.report.outputs.source }}
+
+runs:
+  using: "composite"
+  steps:
+    # A runner image with this AVD baked in (setup-android-avd's stamp) skips the download.
+    # Otherwise remove the image's AVD, so the R2 copy isn't extracted on top of it.
+    - name: Check for a preinstalled AVD
+      id: preinstalled
+      shell: bash
+      env:
+        WANTED: ${{ inputs.cache_key || env.AVD_CACHE_KEY }}
+      run: |
+        : "${WANTED:?no AVD cache key: load setup-android-avd with config_only first}"
+        stamp="${HOME}/.android/avd-cache-key"
+        if [ "$(cat "$stamp" 2>/dev/null)" = "${WANTED}" ]; then
+          echo "Preinstalled AVD matches ${WANTED}"
+          echo "found=true" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        if [ -f "$stamp" ]; then
+          echo "::warning title=Runner image AVD is out of date::Image has $(cat "$stamp"), need ${WANTED}; using R2."
+          rm -rf "${HOME}/.android/avd" "$stamp" \
+            /usr/local/lib/android/sdk/emulator \
+            "/usr/local/lib/android/sdk/system-images/android-${AVD_API}/${AVD_TARGET}/${AVD_ARCH}"
+        fi
+        echo "found=false" >> "$GITHUB_OUTPUT"
+
+    - name: Download the AVD from R2
+      id: download
+      if: steps.preinstalled.outputs.found != 'true'
+      continue-on-error: true
+      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+      with:
+        key: ${{ inputs.cache_key || env.AVD_CACHE_KEY }}
+        accessKey: ${{ inputs.r2_access_key }}
+        secretKey: ${{ inputs.r2_secret_key }}
+        bucket: ledger-live-cache
+        endpoint: ${{ inputs.r2_endpoint }}
+        region: auto
+        destination: /
+        timeout-minutes: ${{ inputs.download_timeout_minutes }}
+
+    - name: Fail without the AVD
+      if: steps.preinstalled.outputs.found != 'true' && steps.download.outcome != 'success' && inputs.create_if_missing != 'true'
+      shell: bash
+      env:
+        KEY: ${{ inputs.cache_key || env.AVD_CACHE_KEY }}
+      run: |
+        echo "::error title=No Android AVD::The runner image has no AVD ${KEY}, and its R2 download failed."
+        exit 1
+
+    # Not uploaded: the setup-android-avd jobs that hold R2 write credentials do that.
+    - name: Create the AVD (not on the image nor in R2)
+      if: steps.preinstalled.outputs.found != 'true' && steps.download.outcome != 'success' && inputs.create_if_missing == 'true'
+      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+
+    - name: Report the AVD in use
+      id: report
+      continue-on-error: true
+      shell: bash
+      env:
+        SOURCE: ${{ steps.preinstalled.outputs.found == 'true' && 'runner image' || steps.download.outcome == 'success' && 'R2' || 'created in this job' }}
+        KEY: ${{ inputs.cache_key || env.AVD_CACHE_KEY }}
+      run: |
+        echo "source=${SOURCE}" >> "$GITHUB_OUTPUT"
+        sdk=/usr/local/lib/android/sdk
+        echo "### Android AVD (${SOURCE})"
+        echo "- Key: \`${KEY}\`"
+        echo "- Emulator: \`$("${sdk}/emulator/emulator" -version 2>/dev/null | head -1)\`"
+        echo "- System image revision: \`$(sed -n 's/^Pkg.Revision=//p' "${sdk}/system-images/android-${AVD_API}/${AVD_TARGET}/${AVD_ARCH}/source.properties")\`"

@@ -22,7 +22,7 @@ A spec MUST declare only test metadata and invoke the sibling test function. The
 
 ### State MUST be arranged in fixtures and flags
 
-See [E2E conventions](../../docs/e2e-conventions.md#setup-must-be-deterministic). Entry-point flags MUST belong in the test function file, combined with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports `data.settings`, `data.accounts`, `data.trustchain`, `data.postOnboarding`, and `data.payCard` when present. Other domain entities cannot be seeded this way.
+See [E2E conventions](../../docs/e2e-conventions.md#setup-must-be-deterministic). Entry-point flags MUST belong in the test function file, combined with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports `data.settings`, `data.accounts`, `data.trustchain`, `data.postOnboarding`, `data.payCard`, and `data.receiveVerifyHint` when present. Other domain entities cannot be seeded this way.
 
 ### State MUST NOT be arranged in UI steps
 
@@ -178,7 +178,7 @@ import { $KnownFailure } from "@e2e/helpers/knownFailure";
 
 // Whole spec: right before the test function call, like $TmsLink / $Tag.
 $KnownFailure("LIVE-12345");
-runSendTest(transaction, ["B2CQA-4225"], ["@NanoX", "@family-evm"]);
+runSendTest({ transaction, tmsLinks: ["B2CQA-4225"], tags: ["@NanoX", "@family-evm"] });
 
 // One test: right before its it(), inside the describe.
 $KnownFailure("LIVE-12345");

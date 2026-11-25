@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import type { AccountUUID } from "@domain/entity-account-descriptor";
 import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
+import type { AccountUUID } from "@domain/entity-account";
 import type { ReceiveAddressCopy } from "../../copy/useReceiveAddressCopy";
 import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVerifyAddressExecutorViewModel";
 import { useVerifyAddressFlow } from "../../hooks/useVerifyAddressFlow";
@@ -24,7 +24,7 @@ type Params = Readonly<{
   copy: ReceiveAddressCopy;
   hasVerifyExecutor: boolean;
   onCopyAddress?: (address: string) => Promise<boolean>;
-  onShareAddress?: (address: string) => void;
+  onShareAddress?: (address: string, cardImageUrl?: string) => void;
 }>;
 
 export type ReceiveAddressActions = Readonly<{
@@ -52,6 +52,7 @@ export function useReceiveAddressActions({
   const verifyFlow = useVerifyAddressFlow();
   // An object, not the address: copying the same address again must restart the feedback.
   const [copied, setCopied] = useState<Readonly<{ address: string }>>();
+  const [copyButtonPresses, setCopyButtonPresses] = useState(0);
 
   const address = selected?.address;
   const verification = selected?.verification;
@@ -70,11 +71,19 @@ export function useReceiveAddressActions({
     if (await onCopyAddress(address)) setCopied({ address });
   }, [address, onCopyAddress]);
 
-  const shareAddress = useCallback(() => {
-    if (!address || !onShareAddress) return;
-    trackReceiveAddressButton("share address");
-    onShareAddress(address);
-  }, [address, onShareAddress]);
+  const copyFromButton = useCallback(async () => {
+    setCopyButtonPresses(presses => presses + 1);
+    await copyAddress();
+  }, [copyAddress]);
+
+  const shareAddress = useCallback(
+    (cardImageUrl?: string) => {
+      if (!address || !onShareAddress) return;
+      trackReceiveAddressButton("share address");
+      onShareAddress(address, cardImageUrl);
+    },
+    [address, onShareAddress],
+  );
 
   const verifyAddress = useCallback(() => {
     if (!familyConfig || !canVerifyOnDevice(verification)) return;
@@ -97,7 +106,9 @@ export function useReceiveAddressActions({
         ? {
             label: hasCopied ? copy.copiedLabel : copy.copyLabel,
             hasCopied,
-            onPress: copyAddress,
+            onPress: copyFromButton,
+            onPressCode: copyAddress,
+            buttonPresses: copyButtonPresses,
           }
         : undefined,
       share: onShareAddress ? { label: copy.shareLabel, onPress: shareAddress } : undefined,

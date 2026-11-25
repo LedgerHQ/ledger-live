@@ -1,6 +1,8 @@
+import type { ReceiveHelpQuestionId } from "../../copy/useReceiveAddressCopy";
 import type { AddressParts } from "../../logic/splitAddress";
 import type { ReceiveIcon } from "../../logic/toReceiveAddressData";
 import type { ReceiveAddressOptionId } from "../../logic/toReceiveAddressOptions";
+import type { ReceiveNoticeKind, ReceiveNoticeTone } from "../../logic/toReceiveNotices";
 
 /** The account data could not be read: Retry reads what failed again. */
 export type ReceiveAddressError = Readonly<{
@@ -33,12 +35,43 @@ type ReceiveAddressAction = Readonly<{ label: string; onPress: () => void }>;
 export type ReceiveAddressActionsView = Readonly<{
   /** No address shown yet: the actions are there, but do nothing. */
   disabled: boolean;
-  copy?: ReceiveAddressAction & Readonly<{ hasCopied: boolean }>;
-  share?: ReceiveAddressAction;
+  copy?: ReceiveAddressAction &
+    Readonly<{
+      hasCopied: boolean;
+      /** Copies from a press on the QR code, which plays its own animation. */
+      onPressCode: () => void;
+      /** How many times the Copy button was pressed: the QR code replays its animation on each. */
+      buttonPresses: number;
+    }>;
+  share?: Readonly<{ label: string; onPress: (cardImageUrl?: string) => void }>;
   /** `disabled` when the device cannot show this address. */
   verify?: ReceiveAddressAction & Readonly<{ disabled: boolean }>;
   /** Invites the user to verify, until they verify or dismiss it once. */
   verifyHint?: Readonly<{ message: string; gotItLabel: string; onGotIt: () => void }>;
+}>;
+
+export type ReceiveNoticeView = Readonly<{
+  id: ReceiveNoticeKind;
+  tone: ReceiveNoticeTone;
+  text: string;
+  learnMore?: ReceiveAddressAction;
+}>;
+
+export type ReceiveIncidentTextPartView = Readonly<{ text: string; onPress?: () => void }>;
+
+export type ReceiveServiceStatusView = Readonly<{
+  title: string;
+  description?: readonly ReceiveIncidentTextPartView[];
+  continueLabel: string;
+  onContinue: () => void;
+}>;
+
+export type ReceiveHelpCardView = Readonly<{ title: string; onPress: () => void }>;
+
+export type ReceiveHelpPanelView = Readonly<{
+  title: string;
+  questions: readonly (ReceiveAddressAction & Readonly<{ id: ReceiveHelpQuestionId }>)[];
+  onClose: () => void;
 }>;
 
 export type ReceiveAddressViewProps = Readonly<{
@@ -49,8 +82,12 @@ export type ReceiveAddressViewProps = Readonly<{
   /** Absent until the address is read, and while the user picks one. */
   address?: ReceiveAddressShown;
   actions: ReceiveAddressActionsView;
-  /** "Copy · Share · Verify": the actions' labels, shown in their zone until the buttons land. */
-  actionsPlaceholderLabel: string;
+  /** A device verification runs: on desktop, its own dialog takes the place of this one. */
+  isVerifying: boolean;
+  notices: readonly ReceiveNoticeView[];
+  serviceStatus?: ReceiveServiceStatusView;
+  helpCard: ReceiveHelpCardView;
+  helpPanel?: ReceiveHelpPanelView;
   /** "Receive USDC" */
   title: string;
   /** "Ethereum network" */

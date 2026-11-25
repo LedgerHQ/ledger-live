@@ -1,9 +1,10 @@
 import { from, map, switchMap } from "rxjs";
 import type Transport from "@ledgerhq/hw-transport";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { AccountDescriptorSchema, fromDescriptorPath } from "@domain/entity-account-descriptor";
+import { AccountDescriptorSchema } from "@domain/entity-account-descriptor";
 import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { getNetworkParameters } from "@ledgerhq/coin-bitcoin/networks";
+import { fromDescriptorPath } from "@domain/entity-derivation";
 import type { Resolver } from "../../hw/getAddress/types";
 import type { DeriveAccountDescriptor } from "../../coin-modules/types";
 

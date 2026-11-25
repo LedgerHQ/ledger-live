@@ -19,9 +19,4 @@ const testConfig = {
   ],
 };
 
-runSwapNetworkFeesAboveAccountBalanceTest(
-  testConfig.swap,
-  testConfig.errorMessage,
-  testConfig.tmsLinks,
-  testConfig.tags,
-);
+runSwapNetworkFeesAboveAccountBalanceTest(testConfig);

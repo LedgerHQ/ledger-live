@@ -6,11 +6,11 @@ const transaction = new Transaction(
   "1",
   Fee.FAST,
 );
-runSendInvalidTokenAmountTest(
+runSendInvalidTokenAmountTest({
   transaction,
-  new RegExp(
+  expectedErrorMessage: new RegExp(
     /You need \d+\.\d+ BNB in your account to pay for transaction fees on the BNB Smart Chain network\. .*/,
   ),
-  ["B2CQA-2700"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@bsc", "@family-evm"],
-);
+  tmsLinks: ["B2CQA-2700"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@bsc", "@family-evm"],
+});

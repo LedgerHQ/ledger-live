@@ -20,6 +20,7 @@ import {
   getDsoPartyIdCached,
   getEnabledInstruments,
   getEnabledInstrumentsCached,
+  getEnabledInstrumentsStrictCached,
   getLedgerEnd,
   getNativeInstrument,
   getNodeInfo,
@@ -31,6 +32,7 @@ import {
   getTransferPreApproval,
   isPartyAlreadyExists,
   isPartyNotFound,
+  isPartyNotFoundByPublicKey,
   isTopologyChangeRequired,
   isTopologyChangeRequiredCached,
   isTransferOfferExpired,
@@ -79,6 +81,20 @@ const mockBalances = createMockInstrumentBalances(2, [
     utxo_count: 1,
   },
 ]);
+
+describe("isPartyNotFoundByPublicKey", () => {
+  it("matches the gateway's unknown public key message", () => {
+    expect(
+      isPartyNotFoundByPublicKey(new Error('Party with public key "abab" does not exist')),
+    ).toBe(true);
+  });
+
+  it("does not match other party errors", () => {
+    expect(isPartyNotFoundByPublicKey(new Error("Party not found"))).toBe(false);
+    expect(isPartyNotFoundByPublicKey(new Error('Party with id "x" already exists'))).toBe(false);
+    expect(isPartyNotFoundByPublicKey("Party with public key does not exist")).toBe(false);
+  });
+});
 
 describe("isPartyNotFound", () => {
   it("returns true for party not found message (spaces)", () => {
@@ -965,6 +981,28 @@ describe("getEnabledInstruments", () => {
     expect(consoleErrorSpy).toHaveBeenCalled();
 
     consoleErrorSpy.mockRestore();
+  });
+});
+
+describe("getEnabledInstrumentsStrictCached", () => {
+  const mockConfig = createTestNodeConfig();
+  const mockNetwork = network as jest.MockedFunction<typeof network>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    clearEnabledInstrumentsCache(mockConfig);
+  });
+
+  it("rejects on a failed read and reads again on the next call", async () => {
+    const outage = new Error("Network error");
+    mockNetwork.mockRejectedValueOnce(outage);
+    await expect(getEnabledInstrumentsStrictCached(mockConfig)).rejects.toThrow(outage.message);
+
+    mockNetwork.mockResolvedValueOnce({ data: [{ id: "Amulet", admin: "admin1" }], status: 200 });
+    await expect(getEnabledInstrumentsStrictCached(mockConfig)).resolves.toEqual(
+      new Set(["Amulet____admin1"]),
+    );
+    expect(mockNetwork).toHaveBeenCalledTimes(2);
   });
 });
 

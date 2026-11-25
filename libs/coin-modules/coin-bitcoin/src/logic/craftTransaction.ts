@@ -149,6 +149,32 @@ function buildSigningRequest(
 }
 
 /**
+ * The fee `customFees` imposes on crafting:
+ * - `parameters.fees`, the caller's custom fee (Ledger Live sets it with `value`), as an absolute
+ *   fee: it wins over a `feePerByte` the estimate's parameters carry back, which only describe the
+ *   estimate, so the signed fee is the one shown;
+ * - else `parameters.feePerByte`, a rate (a custom rate under `feesStrategy: "custom"`, used as
+ *   given);
+ * - else a positive `value`, as an absolute fee. A zero `value` imposes nothing: some callers (e.g.
+ *   coin-service) send `0n` beside the fee parameters, and the rate then follows `feesStrategy`.
+ */
+function imposedFee(customFees?: FeeEstimation): { feePerByte?: unknown; fixedFee?: bigint } {
+  if (!customFees) return {};
+  // A bigint only, refused otherwise rather than ignored: the caller sets it, unlike the estimate's
+  // parameters, which Ledger Live hands back JSON-safe.
+  const customFee = customFees.parameters?.fees;
+  if (customFee !== undefined && customFee !== null && typeof customFee !== "bigint") {
+    throw new Error("customFees.parameters.fees must be a bigint");
+  }
+  if (customFee !== undefined && customFee !== null && customFee > 0n) {
+    return { fixedFee: customFee };
+  }
+  const feePerByte = customFees.parameters?.feePerByte;
+  if (feePerByte !== undefined) return { feePerByte };
+  return customFees.value > 0n ? { fixedFee: customFees.value } : {};
+}
+
+/**
  * Crafts the unsigned transaction of a native transfer from a single address: the transaction
  * `planTransaction` plans (the same `estimateFees` prices), serialized.
  *
@@ -161,10 +187,9 @@ function buildSigningRequest(
  * transaction version is the one the currency's Ledger app builds (2 for app-bitcoin-new, 1
  * otherwise).
  *
- * `customFees.parameters.feePerByte` imposes a rate (a custom rate under `feesStrategy: "custom"`,
- * used as given); otherwise a positive `customFees.value` imposes the absolute fee (Ledger Live's
- * custom fee). A zero `value` imposes nothing: the rate follows `feesStrategy`. Without
- * `customFees`, the medium explorer rate is used.
+ * The fee is imposed by `customFees` as `imposedFee` reads it: the caller's custom fee
+ * (`parameters.fees`) first, then a rate (`parameters.feePerByte`), then a positive `value`.
+ * Without `customFees`, the medium explorer rate is used.
  *
  * Crafting refuses only what it cannot build: an intent other than a native transfer, a recipient
  * or sender that is not an address of the currency, outputs that do not cover the intent
@@ -181,15 +206,11 @@ export async function craftTransaction(
     throw new Error("only native transfers are supported");
   }
   const config = await context.config(currencyId);
-  const imposedRate = customFees?.parameters?.feePerByte;
-  // An absolute fee is imposed only when one is given: some callers (e.g. coin-service) send
-  // `value: 0n` alongside the fee parameters to mean "no absolute fee".
-  const fixedFee =
-    customFees && imposedRate === undefined && customFees.value > 0n ? customFees.value : undefined;
+  const imposed = imposedFee(customFees);
   const plan = await planTransaction(config, currencyId, intent, {
-    feePerByte: imposedRate,
+    feePerByte: imposed.feePerByte,
     feesStrategy: customFees?.parameters?.feesStrategy,
-    ...(fixedFee === undefined ? {} : { fixedFee }),
+    ...(imposed.fixedFee === undefined ? {} : { fixedFee: imposed.fixedFee }),
   });
   if (!plan.selection.sufficient) throw new NotEnoughBalance();
   const redeemScript =

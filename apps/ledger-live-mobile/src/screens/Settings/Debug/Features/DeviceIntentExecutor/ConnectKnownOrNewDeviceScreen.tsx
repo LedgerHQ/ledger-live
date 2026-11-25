@@ -60,6 +60,7 @@ export default function DebugConnectKnownOrNewDeviceScreen() {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={isAdding ? styles.fill : undefined}>
           <ConnectKnownOrNewDevice
+            sourceFlow="debug"
             onConnected={onConnected}
             onAddModeChange={onAddModeChange}
             isPaused={isPaused}

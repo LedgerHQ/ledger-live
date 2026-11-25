@@ -20,7 +20,7 @@
  */
 
 import { z } from "zod";
-import { AddressSchema } from "@domain/entity-account-descriptor";
+import { AddressSchema } from "@domain/entity-network";
 
 // ---------------------------------------------------------------------------
 // GET /v0/grow?dashboard_supported=true

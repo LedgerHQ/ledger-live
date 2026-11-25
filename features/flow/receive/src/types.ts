@@ -1,12 +1,13 @@
 import type { ComponentType } from "react";
 import type { DeviceModelId } from "@ledgerhq/device-management-kit";
-import type { AccountDescriptor, AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { AccountReceive, ReceiveVerification } from "@domain/entity-account-receive";
 import type { AccountStatus } from "@domain/entity-account-status";
 import type { CryptoOrTokenCurrency, CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import type { VerifyAddressIntentJobState } from "@features/platform-intent-verify-address";
 import type { PartialFeatures } from "@shared/feature-flags";
+import type { AccountUUID } from "@domain/entity-account";
 import type { DeviceShownVerification } from "./logic/canVerifyOnDevice";
 
 export type ReceiveNoticeId =
@@ -53,6 +54,14 @@ export type GetReceiveFamilyConfig<A = unknown> = (
 export type ReceiveFamilyConfigPort = (
   input: Omit<ReceiveFamilyConfigInput, "featureFlags" | "legacyAccount">,
 ) => Partial<ReceiveFamilyConfig>;
+
+/** A piece of an incident's text: a link when it has a `url`. */
+export type ReceiveIncidentTextPart = Readonly<{ text: string; url?: string }>;
+
+export type ReceiveServiceIncident = Readonly<{
+  title: string;
+  description?: readonly ReceiveIncidentTextPart[];
+}>;
 
 /** The account and the asset a receive flow shows the address of. */
 export type ReceiveTarget = Readonly<{

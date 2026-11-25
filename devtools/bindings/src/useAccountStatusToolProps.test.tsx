@@ -5,13 +5,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import { accountDataExtra } from "@domain/api-account-data";
 import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
 import { AccountDataSourceIdSchema, accountDataSlice } from "@domain/entity-account-data";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import {
   accountStatusSlice,
   type AccountStatus,
   type AssetStatus,
 } from "@domain/entity-account-status";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { useAccountStatusToolProps } from "./useAccountStatusToolProps";
 
 const stellar = mockAddressAccountDescriptor();
@@ -87,7 +87,7 @@ describe("useAccountStatusToolProps", () => {
   it("reads an asset typed in: its gate, and the receive gate with the account's", async () => {
     const result = setup({
       account: { used: true, gate: null },
-      assets: { [USDC]: { gate: { type: "activation", method: "trustline" } } },
+      assets: { [USDC]: { gate: { type: "activation" } } },
     });
     act(() => result.current.onRead(stellarUUID));
     await waitFor(() => expect(result.current.accounts[0].used).toBe(true));
@@ -96,8 +96,8 @@ describe("useAccountStatusToolProps", () => {
     expect(result.current.accounts[0].assets).toEqual([
       expect.objectContaining({
         assetId: USDC,
-        gate: "activation · trustline",
-        receiveGate: "activation · trustline",
+        gate: "activation",
+        receiveGate: "activation",
         sourceId: "controlled",
       }),
     ]);

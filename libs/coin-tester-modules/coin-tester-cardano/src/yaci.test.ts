@@ -1,10 +1,13 @@
-import { resetDevnet, spawnYaci, topup } from "./yaci";
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
+import { resetDevnet, spawnYaci, topup, YACI_STORE_API } from "./yaci";
 
 const mockUpOne = jest.fn();
+const mockDown = jest.fn();
 
 // yaci.ts tears the devnet down on process exit; keep that from touching a real container.
 jest.mock("docker-compose", () => ({
-  down: jest.fn().mockResolvedValue({}),
+  down: (...args: unknown[]) => mockDown(...args),
   upOne: (...args: unknown[]) => mockUpOne(...args),
 }));
 
@@ -199,7 +202,7 @@ describe("resetDevnet on a stuck chain", () => {
     ]);
   });
 
-  it("bounds the logs command with a kill timeout", async () => {
+  it("bounds the logs and in-container commands with a kill timeout", async () => {
     chainHealthyFromReset(2);
 
     const done = resetDevnet();
@@ -209,6 +212,12 @@ describe("resetDevnet on a stuck chain", () => {
     expect(mockExecFile).toHaveBeenCalledWith(
       "docker",
       expect.arrayContaining(["compose", "logs", "yaci"]),
+      expect.objectContaining({ timeout: 10_000, killSignal: "SIGKILL" }),
+      expect.any(Function),
+    );
+    expect(mockExecFile).toHaveBeenCalledWith(
+      "docker",
+      expect.arrayContaining(["compose", "exec", "-T", "yaci"]),
       expect.objectContaining({ timeout: 10_000, killSignal: "SIGKILL" }),
       expect.any(Function),
     );
@@ -231,8 +240,8 @@ describe("deadlines", () => {
   it("fails a reset that never answers, without re-sending it", async () => {
     fetchMock.mockImplementation(never);
 
-    const assertion = expect(resetDevnet()).rejects.toThrow("timed out");
-    await jest.advanceTimersByTimeAsync(60_000);
+    const assertion = expect(resetDevnet()).rejects.toThrow(/timed out[\s\S]*Container logs:/);
+    await jest.advanceTimersByTimeAsync(160_000);
     await assertion;
 
     expect(calls("/admin/devnet/reset")).toHaveLength(1);
@@ -254,14 +263,88 @@ describe("deadlines", () => {
 });
 
 describe("spawnYaci", () => {
-  it("reports both log streams of a devnet that does not become healthy", async () => {
+  const RESET_URL = "http://localhost:10000/local-cluster/api/admin/devnet/reset";
+  const unhealthy = { exitCode: 1, out: "", err: "container coin-tester-cardano is unhealthy" };
+  const server = setupServer();
+  const resetEndpoint = jest.fn<Response | Promise<Response>, []>();
+  let interceptedFetch: typeof fetch;
+
+  beforeAll(() => {
+    server.listen({ onUnhandledRequest: "error" });
+    interceptedFetch = global.fetch;
+  });
+  afterAll(() => server.close());
+
+  beforeEach(() => {
+    global.fetch = interceptedFetch;
     jest.spyOn(console, "log").mockImplementation(() => {});
-    mockUpOne.mockRejectedValue({ exitCode: 1, out: "", err: "container yaci is unhealthy" });
+    mockUpOne.mockReset();
+    mockDown.mockReset().mockResolvedValue({});
+    resetEndpoint.mockReset().mockImplementation(() => new HttpResponse(null));
+    server.use(
+      http.post(RESET_URL, () => resetEndpoint()),
+      http.get(`${YACI_STORE_API}/blocks/latest`, () => HttpResponse.json({ height: 1 })),
+    );
+  });
+
+  afterEach(() => server.resetHandlers());
+
+  it("resets the devnet when compose reports it unhealthy", async () => {
+    mockUpOne.mockRejectedValue(unhealthy);
+
+    await expect(spawnYaci()).resolves.toBeUndefined();
+
+    expect(resetEndpoint).toHaveBeenCalledTimes(1);
+    expect(mockDown).not.toHaveBeenCalled();
+    expect(warnings()).toEqual([
+      expect.stringMatching(
+        /did not become healthy \(exit code 1\n[\s\S]*resetting it[\s\S]*node socket/,
+      ),
+    ]);
+  });
+
+  it("fails with the compose and reset errors and releases the container when the reset fails", async () => {
+    mockUpOne.mockRejectedValue(unhealthy);
+    resetEndpoint.mockReturnValue(HttpResponse.error());
+
+    await expect(spawnYaci()).rejects.toThrow(
+      /did not become healthy: exit code 1\ncontainer coin-tester-cardano is unhealthy\nReset failed: /,
+    );
+    expect(mockDown).toHaveBeenCalledTimes(1);
+  });
+
+  it("fails without a reset when the container does not start", async () => {
+    mockUpOne.mockRejectedValue({ exitCode: 1, out: "", err: "port is already allocated" });
     mockExecFile.mockImplementation(logsAnswer(null, CONTAINER_LOGS, "store failed to start"));
 
     await expect(spawnYaci()).rejects.toThrow(
-      /did not become healthy: exit code 1\ncontainer yaci is unhealthy\nstore failed to start\nWaiting for node socket/,
+      /did not start: exit code 1\nport is already allocated\nstore failed to start\nWaiting for node socket/,
     );
+    expect(resetEndpoint).not.toHaveBeenCalled();
+    expect(mockDown).toHaveBeenCalledTimes(1);
+  });
+
+  it("reports the container logs when the in-container diagnostics cannot run", async () => {
+    mockUpOne.mockRejectedValue(unhealthy);
+    mockExecFile.mockImplementation((...args: unknown[]) =>
+      (args[1] as string[]).includes("exec")
+        ? logsAnswer(new Error("Command failed: docker compose exec"), "", "")(...args)
+        : logsAnswer(null, CONTAINER_LOGS)(...args),
+    );
+
+    await spawnYaci();
+
+    expect(warnings()).toEqual([
+      expect.stringMatching(/node socket[\s\S]*container internals unavailable: Command failed/),
+    ]);
+  });
+
+  it("does not reset a devnet that becomes healthy", async () => {
+    mockUpOne.mockResolvedValue({ exitCode: 0, out: "", err: "" });
+
+    await spawnYaci();
+
+    expect(resetEndpoint).not.toHaveBeenCalled();
   });
 });
 

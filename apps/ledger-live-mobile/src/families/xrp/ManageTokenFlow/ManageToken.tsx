@@ -16,29 +16,36 @@ import {
   DescriptionItemLeading,
   DescriptionItemTrailing,
   DescriptionItemValue,
-  InteractiveIcon,
+  Skeleton,
   Text,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@ledgerhq/lumen-ui-rnative";
-import { Information } from "@ledgerhq/lumen-ui-rnative/symbols";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account } from "@ledgerhq/types-live";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
 import { isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { type RemoveBlocker, getRemoveBlocker } from "@ledgerhq/live-common/families/xrp/tokens";
 import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
 import { TrackScreen } from "@shared/analytics-react";
 import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
-import { type DeleteBlocker, getDeleteBlocker, OWNER_RESERVE } from "../utils";
+import { InfoTooltip } from "../components/InfoTooltip";
 import DeleteTokenSheets from "./DeleteTokenSheets";
-import { type Props, useIssuerFeeText, useManageTokenViewModel } from "./useManageTokenViewModel";
+import {
+  type Props,
+  useIssuerFee,
+  useManageTokenViewModel,
+  useOwnerReserve,
+} from "./useManageTokenViewModel";
 
-const BLOCKER_KEYS: Record<DeleteBlocker, string> = {
+const BLOCKER_KEYS: Record<RemoveBlocker, string> = {
   pending: "xrp.manageAssets.removalPending",
   frozen: "xrp.manageAssets.frozen",
 };
@@ -54,26 +61,7 @@ function Row(
     <DescriptionItem size="sm">
       <DescriptionItemLeading>
         <DescriptionItemLabel>{props.label}</DescriptionItemLabel>
-        {props.info ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <InteractiveIcon
-                icon={Information}
-                size={16}
-                iconType="stroked"
-                accessibilityLabel={props.label}
-              />
-            </TooltipTrigger>
-            <TooltipContent
-              title={props.label}
-              content={
-                <Text typography="body1" lx={{ color: "base" }}>
-                  {props.info}
-                </Text>
-              }
-            />
-          </Tooltip>
-        ) : null}
+        {props.info ? <InfoTooltip title={props.label} info={props.info} /> : null}
       </DescriptionItemLeading>
       <DescriptionItemTrailing>
         <DescriptionItemValue>{props.children}</DescriptionItemValue>
@@ -91,11 +79,62 @@ function WithSeparator(props: Readonly<{ children: React.ReactNode }>) {
   );
 }
 
+function TransferFee(props: Readonly<{ token: TokenCurrency }>) {
+  const { t } = useTranslation();
+  const issuerFee = useIssuerFee(props.token);
+
+  if (issuerFee.isError) {
+    return t("xrp.manageAssets.transferFeeUnavailable");
+  }
+
+  if (issuerFee.value) {
+    return issuerFee.value;
+  }
+
+  return (
+    <Skeleton
+      testID="xrp-manage-asset-transfer-fee-loading"
+      lx={{ height: "s16", width: "s80", borderRadius: "full" }}
+    />
+  );
+}
+
+function LockedAmount(props: Readonly<{ currency: CryptoCurrency }>) {
+  const { t } = useTranslation();
+  const ownerReserve = useOwnerReserve(props.currency.id);
+
+  if (ownerReserve.isError) {
+    return t("xrp.manageAssets.lockedAmountUnavailable");
+  }
+
+  if (ownerReserve.value) {
+    return (
+      <>
+        <Text typography="body3" lx={{ color: "muted" }}>
+          <CurrencyUnitValue unit={props.currency.units[0]} value={ownerReserve.value} showCode />
+        </Text>
+        <CounterValue
+          currency={props.currency}
+          value={ownerReserve.value}
+          Wrapper={WithSeparator}
+        />
+      </>
+    );
+  }
+
+  return (
+    <Skeleton
+      testID="xrp-manage-asset-locked-amount-loading"
+      lx={{ height: "s16", width: "s80", borderRadius: "full" }}
+    />
+  );
+}
+
 // A disabled button takes no press: the trigger around it shows why it is disabled
 function DeleteButton(
   props: Readonly<{
     tokenId: string;
-    blocker?: DeleteBlocker;
+    blocker?: RemoveBlocker;
     onPress: () => void;
   }>,
 ) {
@@ -134,19 +173,15 @@ function TokenCard(
   props: Readonly<{
     account: Account;
     tokenAccount: XrpTokenAccount;
+    onEdit: (tokenAccount: XrpTokenAccount) => void;
     onDelete: (tokenAccount: XrpTokenAccount) => void;
   }>,
 ) {
   const { t } = useTranslation();
 
   const { token, xrpResources } = props.tokenAccount;
-
   const isIou = token.tokenType === "iou";
-
   const limit = xrpResources?.limit;
-
-  const issuerFeeText = useIssuerFeeText(token);
-
   const currency = props.account.currency;
 
   // A testnet has no network icon: badge it with its mainnet's
@@ -173,19 +208,14 @@ function TokenCard(
           <Row label={t("xrp.manageAssets.issuer")}>
             {shortAddressPreview(token.contractAddress)}
           </Row>
-          {issuerFeeText ? (
-            <Row
-              label={t("xrp.manageAssets.transferFee")}
-              info={t("xrp.manageAssets.transferFeeInfo")}
-            >
-              {issuerFeeText}
-            </Row>
-          ) : null}
+          <Row
+            label={t("xrp.manageAssets.transferFee")}
+            info={t("xrp.manageAssets.transferFeeInfo")}
+          >
+            <TransferFee token={token} />
+          </Row>
           <Row label={t("xrp.manageAssets.lockedAmount")}>
-            <Text typography="body3" lx={{ color: "muted" }}>
-              <CurrencyUnitValue unit={currency.units[0]} value={OWNER_RESERVE} showCode />
-            </Text>
-            <CounterValue currency={currency} value={OWNER_RESERVE} Wrapper={WithSeparator} />
+            <LockedAmount currency={currency} />
           </Row>
           {isIou && limit ? (
             <Row label={t("xrp.tokenSettings.balanceLimit")}>
@@ -210,7 +240,7 @@ function TokenCard(
               appearance="gray"
               size="sm"
               lx={{ flex: 1 }}
-              disabled
+              onPress={() => props.onEdit(props.tokenAccount)}
               testID={`xrp-manage-asset-edit-${token.id}`}
             >
               {t("xrp.manageAssets.edit")}
@@ -218,7 +248,7 @@ function TokenCard(
           ) : null}
           <DeleteButton
             tokenId={token.id}
-            blocker={getDeleteBlocker(props.account, props.tokenAccount)}
+            blocker={getRemoveBlocker(props.account, props.tokenAccount)}
             onPress={() => props.onDelete(props.tokenAccount)}
           />
         </CardFooterActions>
@@ -256,6 +286,7 @@ export default function ManageToken(props: Props) {
               key={tokenAccount.id}
               account={account}
               tokenAccount={tokenAccount}
+              onEdit={viewModel.onEdit}
               onDelete={viewModel.onDelete}
             />
           ))

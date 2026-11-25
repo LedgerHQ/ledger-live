@@ -1,5 +1,5 @@
 import { addressFromKey } from "@ledgerhq/live-common/account/accountDescriptor";
-import type { Address } from "@domain/entity-account-descriptor";
+import type { Address } from "@domain/entity-network";
 import type { AccountBasedDescriptorV1 } from "./v1";
 import { currencyIdFromNetwork } from "./network";
 

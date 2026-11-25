@@ -5,5 +5,5 @@ import { heldTokenAssetStatus } from "../../account/accountStatus";
 
 /** An ASA the account does not hold needs an opt-in, as the opt-in flows offer it. */
 export default function algorandAssetStatus(account: Account, token: TokenCurrency): AssetStatus {
-  return heldTokenAssetStatus(account, token, "optIn");
+  return heldTokenAssetStatus(account, token);
 }

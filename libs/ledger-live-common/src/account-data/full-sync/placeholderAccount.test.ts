@@ -1,5 +1,6 @@
-import { AccountDescriptorSchema, toNetworkId } from "@domain/entity-account-descriptor";
+import { AccountDescriptorSchema } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { toNetworkId } from "@domain/entity-network";
 import { fromLegacyAccount } from "../../account/accountDescriptor";
 import { genScannedMockAccount } from "../../bridge/mockHelpers";
 import { placeholderAccount } from "./placeholderAccount";

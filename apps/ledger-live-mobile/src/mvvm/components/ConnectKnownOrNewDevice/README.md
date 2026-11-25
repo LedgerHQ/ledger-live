@@ -8,6 +8,7 @@ The component runs `connectKnownOrNewDevice` from `@ledgerhq/live-dmk-mobile`. T
 
 | Prop                                | What it does                                                                                                                                                                         |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `sourceFlow`                        | The flow that shows the component, for example `my_wallet`. The component adds it to all its analytics events, also in the Add mode. |
 | `onConnected(result)`               | Called each time the user connects a device, also a device that was already connected. The device is already saved.                                                                  |
 | `onAddModeChange(isAdding)`         | Called when the Add mode starts and stops. The caller hides the rest of its screen during the Add mode.                                                                             |
 | `isPaused`                          | Stops discovery while the caller uses the device.                                                                                                                                   |
@@ -51,6 +52,17 @@ With `onAddDevice`, the component does not open the Add mode. The Add link, the 
 ## Errors
 
 Discovery, connection and unknown errors show in a bottom sheet over the list, with the shared error components in [`../DeviceConnection/`](../DeviceConnection/). Closing a discovery or connection error goes back to the list. Closing the unknown error starts the component again, with a new state machine.
+
+## Analytics
+
+The component sends its events itself, with the Device UX V2 helpers of the DIE and the `sourceFlow` of the caller. The events and their properties are in the [tracking plan](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7620034573).
+
+- The views send the pages and the buttons of their state: `device_selected` with `deviceStatus` and `isNewDevice`, Add, "Add a Ledger device", Show all and Show less, the `Drawer - Device Menu` page with Disconnect and Remove, the waiting and connecting pages, the waiting hint, the error sheets and the close bar of the Add mode. The view model gives them `checkIsNewDevice`.
+- `useConnectKnownOrNewDeviceTracking`, called by the view model, sends `device_connecting` at each connection from the list, with the `Connect Device - Connecting` page: the connecting sheet sends that page later, through its portal.
+- The view model sends `deviceflow_aborted` or `deviceflow_failed` when the waiting sheet, the connecting sheet or an error sheet closes, with the error when one shows. The sheets also close when the screen loses focus. A waiting or connecting sheet that closes because the state has left it sends no outcome, for instance when the waiting hint opens the Add mode. The `Close` button of an error sheet is sent only when the user presses it.
+- A sheet renders its content through a portal, outside the `DeviceIntentTrackingProvider` of the component, so each sheet provides the tracking context again inside.
+- The view model sends `device_connected` for a new connection, before it saves the device. A tap on a connected device reuses its session and sends none.
+- In the Add mode, `ConnectNewDeviceView` and the view model of `components/AddMode` send the events of the connectivity screen (see the [ConnectNewDevice README](../ConnectNewDevice/README.md#analytics)), but not the outcome. `useConnectKnownOrNewDeviceTracking` sends it when the Add mode ends before a connection, with Close, Android Back or an unmount of the list: `deviceflow_aborted`, or `deviceflow_failed` with the error that shows. After a fatal error, the unknown error sheet over the list sends it.
 
 ## Try it
 

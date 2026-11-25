@@ -60,6 +60,10 @@ export const isPartyNotFound = (error: unknown): boolean => {
   return false;
 };
 
+// The gateway's 400 PARTY_NOT_FOUND_BY_PUBLIC_KEY: `Party with public key "…" does not exist`.
+export const isPartyNotFoundByPublicKey = (error: unknown): boolean =>
+  error instanceof Error && /party with public key .* does not exist/i.test(error.message);
+
 // live-network keeps only the body `message` and drops the gateway's TRANSFER_OFFER_EXPIRED `type`.
 export const isTransferOfferExpired = (error: unknown): boolean =>
   error instanceof Error && error.message.toLowerCase().includes("transfer offer has expired");
@@ -223,13 +227,17 @@ export type InstrumentInfo = {
 
 export type InstrumentsResponse = InstrumentInfo[];
 
+async function readEnabledInstruments(config: CantonCoinConfig): Promise<Set<string>> {
+  const { data } = await gatewayNetwork<InstrumentsResponse>({
+    method: "GET",
+    url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/instruments`,
+  });
+  return new Set(data.map(({ id, admin }) => getKey(id, admin)));
+}
+
 export async function getEnabledInstruments(config: CantonCoinConfig): Promise<Set<string>> {
   try {
-    const { data } = await gatewayNetwork<InstrumentsResponse>({
-      method: "GET",
-      url: `${getGatewayUrl(config)}/v1/node/${getNodeId(config)}/instruments`,
-    });
-    return new Set(data.map(({ id, admin }) => getKey(id, admin)));
+    return await readEnabledInstruments(config);
   } catch (error) {
     // If API fails, return empty array (fail-safe: only native instrument will work)
     console.error("Failed to fetch enabled instruments:", error);
@@ -246,9 +254,17 @@ export const getEnabledInstrumentsCached = makeLRUCache(
   minutes(15),
 );
 
+/** Rejects on a failed read, never cached, where an empty set would read as "no token enabled". */
+export const getEnabledInstrumentsStrictCached = makeLRUCache(
+  readEnabledInstruments,
+  getEnabledInstrumentsCacheKey,
+  minutes(15),
+);
+
 export function clearEnabledInstrumentsCache(config: CantonCoinConfig): void {
   const cacheKey = getEnabledInstrumentsCacheKey(config);
   getEnabledInstrumentsCached.clear(cacheKey);
+  getEnabledInstrumentsStrictCached.clear(cacheKey);
 }
 
 export async function submitOnboarding(

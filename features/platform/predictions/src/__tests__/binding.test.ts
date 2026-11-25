@@ -1,5 +1,6 @@
 import { TypedDataEncoder, Wallet, type TypedDataDomain } from "ethers";
-import { getBindingTypedData, isBindingSigner, type PredictionsTypedData } from "../binding";
+import { getBindingTypedData } from "../binding";
+import { isTypedDataSigner, type PredictionsTypedData } from "../typedData";
 
 const wallet = new Wallet(`0x${"11".repeat(32)}`);
 
@@ -42,20 +43,20 @@ describe("Predictions account binding", () => {
   it("accepts a signature from the account", () => {
     const typedData = getBindingTypedData(wallet.address);
 
-    expect(isBindingSigner(wallet.address, typedData, signedBy(wallet)(typedData))).toBe(true);
+    expect(isTypedDataSigner(wallet.address, typedData, signedBy(wallet)(typedData))).toBe(true);
   });
 
   it("rejects a signature from another account", () => {
     const typedData = getBindingTypedData(wallet.address);
     const otherWallet = new Wallet(`0x${"22".repeat(32)}`);
 
-    expect(isBindingSigner(wallet.address, typedData, signedBy(otherWallet)(typedData))).toBe(
+    expect(isTypedDataSigner(wallet.address, typedData, signedBy(otherWallet)(typedData))).toBe(
       false,
     );
   });
 
   it("rejects a signature that can't be recovered", () => {
-    expect(isBindingSigner(wallet.address, getBindingTypedData(wallet.address), "0x1234")).toBe(
+    expect(isTypedDataSigner(wallet.address, getBindingTypedData(wallet.address), "0x1234")).toBe(
       false,
     );
   });

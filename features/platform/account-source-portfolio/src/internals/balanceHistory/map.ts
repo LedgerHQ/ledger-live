@@ -3,7 +3,8 @@ import {
   AssetBalanceHistorySchema,
   type AssetBalanceHistory,
 } from "@domain/entity-account-balance-history";
-import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { currencyIdFromNetwork } from "@domain/entity-network";
 import { countervaluesOf, type Fiat } from "../fiat";
 
 /** `unmapped`: token points with no CAL id, left out. `unreadable`: assets with a point that could not be read. */

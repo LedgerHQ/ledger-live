@@ -7,4 +7,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
-runColdStartTest(testConfig.account, testConfig.tmsLinks, testConfig.tags, "v2");
+runColdStartTest({ ...testConfig, depositScreen: "v2" });

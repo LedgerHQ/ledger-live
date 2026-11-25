@@ -4,8 +4,6 @@ import { step } from "tests/misc/reporters/step";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 
 export class SendModal extends Modal {
-  private accountDebitContainer = this.page.locator("#account-debit-placeholder");
-  private accountDebitInput = this.page.locator("#account-debit-placeholder input");
   readonly recipientInput = this.page.getByTestId("send-recipient-input");
   readonly tagInput = this.page.getByTestId("memo-tag-input");
   private readonly checkDeviceLabel = this.page.getByTestId("device-signature-notice");
@@ -17,9 +15,6 @@ export class SendModal extends Modal {
   private noTagButton = this.page.getByRole("button", { name: "Don’t add Tag" });
   private ENSAddressLabel = this.page.getByTestId("ens-address-sendModal");
 
-  readonly inputError = this.page.locator("id=input-error"); // no data-testid because css style is applied
-  readonly insufficientFundsWarning = this.page.getByTestId("insufficient-funds-warning");
-  readonly inputWarning = this.page.locator("id=input-warning");
   readonly cryptoAmountField = this.page.getByTestId("modal-amount-field");
 
   @step("Click `Continue` button")
@@ -93,66 +88,5 @@ export class SendModal extends Modal {
   @step("Verify tx sent text")
   async expectTxSent() {
     await expect(this.checkTransactionbroadcastLabel).toBeVisible();
-  }
-
-  @step("Check continue button enable")
-  async checkContinueButtonEnable() {
-    await expect(this.continueButton).toBeEnabled();
-  }
-
-  @step("Check continue button disabled")
-  async checkContinueButtonDisabled() {
-    await expect(this.continueButton).toBeDisabled();
-  }
-
-  @step("Fill amount $0")
-  async fillAmount(amount: string) {
-    if (amount == "send max") {
-      await this.toggleMaxAmount();
-    } else {
-      await this.cryptoAmountField.fill(amount);
-    }
-  }
-
-  @step("Check input error state visibibility: $0")
-  async checkInputErrorVisibility(expectedState: "visible" | "hidden") {
-    await this.inputError.waitFor({ state: expectedState });
-  }
-
-  @step("Check if the error message is the same as expected")
-  async checkErrorMessage(errorMessage: string) {
-    await this.inputError.waitFor({ state: "visible" });
-    const errorText: string = await this.inputError.innerText();
-    const normalize = (str: string) => str.replace(/\u00A0/g, " ").trim();
-    expect(normalize(errorText)).toEqual(normalize(errorMessage));
-  }
-
-  @step("Check warning message")
-  async checkAmountWarningMessage(expectedWarningMessage: RegExp) {
-    await expect(this.insufficientFundsWarning).toBeVisible();
-    const warningText = await this.insufficientFundsWarning.innerText();
-    expect(warningText).toMatch(expectedWarningMessage);
-  }
-
-  @step("Check warning message")
-  async checkInputWarningMessage(expectedWarningMessage: string) {
-    await expect(this.inputWarning).toBeVisible();
-    const warningText = await this.inputWarning.innerText();
-    expect(warningText).toMatch(expectedWarningMessage);
-  }
-
-  @step("Check input warning state visibility: $0")
-  async checkInputWarningVisibility(expectedState: "visible" | "hidden") {
-    await this.inputWarning.waitFor({ state: expectedState });
-  }
-
-  @step("Select currency to debit")
-  async selectDebitCurrency(tx: Transaction) {
-    await expect(this.accountDebitContainer).toBeVisible();
-    await this.accountDebitContainer.click();
-    await this.accountDebitInput.fill(tx.accountToDebit.currency.ticker);
-    await this.dropdownOptions
-      .locator(this.optionWithText(tx.accountToDebit.currency.ticker.toUpperCase()))
-      .click();
   }
 }

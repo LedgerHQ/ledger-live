@@ -13,5 +13,6 @@ export const signRawTransactionIntentJob: Job<
       transaction: input.transaction,
       deviceId,
       deviceModelId,
+      broadcast: input.broadcast,
     }),
 });

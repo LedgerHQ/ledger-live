@@ -29,23 +29,48 @@ function formatComposeError(error: unknown): string {
   return `exit code ${result.exitCode ?? "unknown"}\n${composeStreams(result)}`;
 }
 
-/** Boot the devnet; resolves once the healthcheck sees a produced block. */
+/** Boot the devnet; resolves once compose reports it healthy, or once a reset recovers its store. */
 export async function spawnYaci(): Promise<void> {
   console.log("Starting Yaci DevKit...");
   try {
     await compose.upOne("yaci", { ...composeOpts(), commandOptions: ["--wait"] });
   } catch (error) {
-    // `--wait` only reports "unhealthy"; the container logs carry the actual cause.
-    const logs = await yaciLogs();
-    // Jest skips globalTeardown when globalSetup throws, so release the container here.
-    await killYaci().catch(cleanupError =>
-      console.warn(`Yaci DevKit cleanup failed: ${formatComposeError(cleanupError)}`),
-    );
-    throw new Error(`Yaci DevKit did not become healthy: ${formatComposeError(error)}\n${logs}`, {
-      cause: error,
-    });
+    await recoverFailedBoot(error);
   }
   console.log(chalk.bgBlueBright(" -  YACI DEVKIT READY ✅  - "));
+}
+
+// Jest skips globalTeardown when globalSetup throws, so a failed boot releases the container itself.
+async function releaseYaci(): Promise<void> {
+  await killYaci().catch(cleanupError =>
+    console.warn(`Yaci DevKit cleanup failed: ${formatComposeError(cleanupError)}`),
+  );
+}
+
+const COMPOSE_UNHEALTHY_MESSAGE = "is unhealthy";
+
+async function recoverFailedBoot(error: unknown): Promise<void> {
+  const composeError = formatComposeError(error);
+  // `--wait` only reports "unhealthy"; the container logs carry the actual cause.
+  const logs = await yaciLogs();
+  if (!composeError.includes(COMPOSE_UNHEALTHY_MESSAGE)) {
+    await releaseYaci();
+    throw new Error(`Yaci DevKit did not start: ${composeError}\n${logs}`, { cause: error });
+  }
+
+  console.warn(`Yaci DevKit did not become healthy (${composeError}); resetting it\n${logs}`);
+  // Workaround: yaci-store can stall at genesis while the node forges; a reset restarts it.
+  // See: https://github.com/bloxbean/yaci/blob/02f699b/core/src/main/java/com/bloxbean/cardano/yaci/core/protocol/Agent.java#L27-L34
+  try {
+    await resetDevnet();
+  } catch (resetError: unknown) {
+    await releaseYaci();
+    const reason = resetError instanceof Error ? resetError.message : String(resetError);
+    throw new Error(
+      `Yaci DevKit did not become healthy: ${composeError}\nReset failed: ${reason}`,
+      { cause: resetError },
+    );
+  }
 }
 
 export async function killYaci(): Promise<void> {
@@ -177,9 +202,9 @@ type StoreUtxo = {
 
 const utxoRef = (u: StoreUtxo) => `${u.tx_hash}#${u.output_index}`;
 
-// Suites call resetDevnet() then topup() inside one hook bounded by jest's 600 s ceiling, which also has
+// Suites call resetDevnet() then topup() inside one hook bounded by jest's 900 s ceiling, which also has
 // to fit their own sync (negativeCases allows 310 s). Worst cases that go on to top-up and sync, with
-// ~2.5 s poll overshoot per wait: reset ≈ 2×45 (POSTs) + 2×22.5 (block waits) + 10 (logs) ≈ 145 s,
+// ~2.5 s poll overshoot per wait: reset ≈ 2×150 (POSTs) + 2×22.5 (block waits) + 10 (logs) ≈ 355 s,
 // topup ≈ 15 + 54 (adminPost: 5×10 s + 4×1 s) + 45 ≈ 120 s. Measured needs are a fraction of that:
 // reset 7-15 s, first block ~2 s later, top-up confirmed in ~1 s.
 const TOPUP_SNAPSHOT_TIMEOUT_MS = 15_000;
@@ -217,41 +242,90 @@ export async function topup(address: string, adaAmount: number): Promise<void> {
 }
 
 // Reset stops the node and store, drops their data and starts a new chain from genesis. It answers in
-// 7-15 s, past ADMIN_TIMEOUT_MS, so it gets its own bound.
-const RESET_TIMEOUT_MS = 45_000;
+// 7-15 s, past ADMIN_TIMEOUT_MS, so it gets its own bound; a CI reset once ran past 45 s.
+const RESET_TIMEOUT_MS = 150_000;
 // Reset POSTs per resetDevnet call, shared between a 5xx retry and a re-reset of a stuck chain.
 const RESET_ATTEMPTS = 2;
 // yaci-devkit 0.10.6 answers the reset without waiting for a block (`ClusterCommands.startLocalCluster`
 // skips `waitForNextBlocks` on a first run), so the store reports height -1 until the node forges. The
 // Cardano bridge rejects a non-positive tip (`lastBlock`), and a top-up sent before forging may not
 // land, so reset waits for a produced block. The first block normally lands ~2 s after the reset
-// answers. CI has seen a reset leave the chain at -1 past a 30 s wait while a later reset in the same
-// run worked, so a stuck chain gets one fresh reset.
+// answers. The store can stall at -1 while the node keeps forging (see `recoverFailedBoot`), so a stuck store
+// gets one fresh reset.
 const BLOCK_WAIT_TIMEOUT_MS = 20_000;
-const LOGS_TIMEOUT_MS = 10_000;
+const DOCKER_OUTPUT_TIMEOUT_MS = 10_000;
 
-/**
- * Tail of the devnet container's output; never rejects. Uses `execFile` rather than `docker-compose`,
- * which cannot cancel its child: the timeout kills a hung `docker compose logs` instead of leaking it.
- */
-function yaciLogs(): Promise<string> {
+// yaci-cli writes the container output; the node and the store log to files inside it. These show
+// which side is stuck: the node's tip and forge traces against the store's latest block and sync log.
+// Paths are those of the yaci-cli 0.10.6 image.
+const IN_CONTAINER_DIAGNOSTICS = `
+exec 2>&1
+cd /clusters/nodes/default/node
+echo "== node tip"
+CARDANO_NODE_SOCKET_PATH=node.sock timeout 3 /app/cardano-bin/cardano-cli query tip --testnet-magic 42
+echo "== store latest block"
+curl -s -m 5 http://127.0.0.1:8080/api/v1/blocks/latest; echo
+echo "== node forge traces (last 3000 lines)"
+tail -n 3000 node.log | grep -oE "Trace(Forged|Adopted|NodeIsLeader|NodeNotLeader|NodeCannotForge|ForgeStateUpdateError|SlotIsImmutable|BlockFromFuture|DidntAdoptBlock|ForgedInvalidBlock|NoLedgerState|NoLedgerView)[A-Za-z]*" | sort | uniq -c
+echo "== node log"
+grep -vE "Debug|InboundGovernor|ConnectionManager|PublicRootPeers|LocalRootPeers|PeerSelection|Mempool" node.log | tail -n 40
+for f in /app/store/logs/*.log; do
+  [ -f "$f" ] || continue
+  echo "== store log $f"
+  grep -vE " DEBUG |ClassPathScanner|RootClass|Hibernate" "$f" | tail -n 60
+done
+echo "== yaci-cli log"
+tail -n 40 /app/logs/yaci-cli.log
+echo "== resources"
+uptime; free -m; df -h /
+`;
+
+// `docker <args>` in the package folder; resolves to its output (or why it is missing), never rejects.
+function dockerOutput(label: string, args: string[]): Promise<string> {
   return new Promise(resolve => {
+    // `execFile` rather than `docker-compose`, which cannot cancel its child: the timeout kills a hung
+    // docker command instead of leaking it.
     execFile(
       "docker",
-      ["compose", "logs", "--no-color", "--tail", "200", "yaci"],
+      args,
       {
         cwd: PACKAGE_ROOT,
         env: process.env,
-        timeout: LOGS_TIMEOUT_MS,
+        timeout: DOCKER_OUTPUT_TIMEOUT_MS,
         killSignal: "SIGKILL",
         maxBuffer: 16 * 1024 * 1024,
       },
       (error, stdout, stderr) => {
         const streams = composeStreams({ out: String(stdout), err: String(stderr) });
-        resolve(error ? `(container logs unavailable: ${error.message})\n${streams}` : streams);
+        resolve(error ? `(${label} unavailable: ${error.message})\n${streams}` : streams);
       },
     );
   });
+}
+
+// The devnet container's output, then its node and store logs; never rejects.
+async function yaciLogs(): Promise<string> {
+  const [output, internals] = await Promise.all([
+    dockerOutput("container logs", [
+      "compose",
+      "logs",
+      "--no-color",
+      "--timestamps",
+      "--tail",
+      "200",
+      "yaci",
+    ]),
+    dockerOutput("container internals", [
+      "compose",
+      "exec",
+      "-T",
+      "yaci",
+      "sh",
+      "-c",
+      IN_CONTAINER_DIAGNOSTICS,
+    ]),
+  ]);
+  return `${output}\n${internals}`;
 }
 
 /** Reset the devnet ledger to a clean state; resolves once the reset chain produces blocks again. */
@@ -264,7 +338,11 @@ export async function resetDevnet(): Promise<void> {
     // can take a fresh one.
     const failure = await adminPostOnce(resetPath, undefined, RESET_TIMEOUT_MS, false);
     if (failure) {
-      if (!failure.retryable || last) throw failure.error;
+      if (!failure.retryable || last) {
+        throw new Error(`${failure.error.message}\nContainer logs:\n${await yaciLogs()}`, {
+          cause: failure.error,
+        });
+      }
       console.warn(
         `Yaci admin POST ${resetPath} attempt ${attempt} failed (${failure.error.message}); retrying`,
       );

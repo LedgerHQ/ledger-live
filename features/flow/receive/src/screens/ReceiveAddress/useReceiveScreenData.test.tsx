@@ -1,8 +1,8 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { mockAccountStatus, mockAssetStatus } from "@domain/entity-account-status/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import {
   makeReceiveTestStore,
   receiveTestWrapper,
@@ -44,14 +44,12 @@ describe("useReceiveScreenData", () => {
     const { wrapper } = setup({
       assetStatus: async (_target, query) => ({
         assetId: query!.assetId,
-        status: mockAssetStatus({ gate: { type: "activation", method: "association" } }),
+        status: mockAssetStatus({ gate: { type: "activation" } }),
       }),
     });
     const { result } = renderHook(() => useReceiveScreenData(accountUUID, USDC), { wrapper });
 
-    await waitFor(() =>
-      expect(result.current.data).toEqual({ type: "activationRequired", method: "association" }),
-    );
+    await waitFor(() => expect(result.current.data).toEqual({ type: "activationRequired" }));
   });
 
   it("should ask to onboard the account", async () => {

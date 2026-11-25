@@ -1,3 +1,4 @@
+export * from "./accountUUID";
 export * from "./legacy/schema";
 export * from "./legacy/utils";
 export * from "./legacy/connectStore";

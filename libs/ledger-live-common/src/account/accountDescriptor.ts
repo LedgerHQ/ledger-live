@@ -1,14 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import {
-  currencyIdFromNetwork,
-  fromDescriptorPath,
-  AccountDescriptorSchema,
-  AddressSchema,
-  type Address,
-  networkFromCurrencyId,
-  toDescriptorPath,
-  type AccountDescriptor,
-} from "@domain/entity-account-descriptor";
+import { AccountDescriptorSchema, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import {
@@ -21,6 +12,13 @@ import {
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import {
+  currencyIdFromNetwork,
+  AddressSchema,
+  type Address,
+  networkFromCurrencyId,
+} from "@domain/entity-network";
+import { fromDescriptorPath, toDescriptorPath } from "@domain/entity-derivation";
 import { getAccountDescriptorType, loadAddressFromKeyForFamily } from "../coin-modules/registry";
 
 /** Families keyed on their public key: their address cannot give back what reading the account needs. */

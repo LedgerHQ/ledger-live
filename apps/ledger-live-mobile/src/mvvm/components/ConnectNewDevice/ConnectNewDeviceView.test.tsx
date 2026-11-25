@@ -9,6 +9,7 @@ import {
   rnHidTransportIdentifier,
   type ConnectNewDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
+import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import { ConnectNewDeviceView } from "./ConnectNewDeviceView";
 import type { ConnectNewDeviceNonErrorUIState } from "./types";
 
@@ -41,13 +42,16 @@ function renderView(
   const onCloseErrorSheet = jest.fn();
 
   const view = render(
-    <ConnectNewDeviceView
-      state={state}
-      lastNonErrorState={lastNonErrorState}
-      platform="android"
-      onDeviceNotFound={withDeviceNotFound ? onDeviceNotFound : undefined}
-      onCloseErrorSheet={onCloseErrorSheet}
-    />,
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "onboarding" }}>
+      <ConnectNewDeviceView
+        state={state}
+        lastNonErrorState={lastNonErrorState}
+        platform="android"
+        onDeviceNotFound={withDeviceNotFound ? onDeviceNotFound : undefined}
+        onCloseErrorSheet={onCloseErrorSheet}
+        checkIsNewDevice={() => true}
+      />
+    </DeviceIntentTrackingProvider>,
   );
 
   return { ...view, onDeviceNotFound, onCloseErrorSheet };
@@ -184,12 +188,15 @@ describe("ConnectNewDeviceView", () => {
     const card = screen.getByText("Ledger Nano X");
 
     view.rerender(
-      <ConnectNewDeviceView
-        state={makeUsbState("usb-id-2")}
-        lastNonErrorState={makeDiscoveringState()}
-        platform="android"
-        onCloseErrorSheet={jest.fn()}
-      />,
+      <DeviceIntentTrackingProvider value={{ sourceFlow: "onboarding" }}>
+        <ConnectNewDeviceView
+          state={makeUsbState("usb-id-2")}
+          lastNonErrorState={makeDiscoveringState()}
+          platform="android"
+          onCloseErrorSheet={jest.fn()}
+          checkIsNewDevice={() => true}
+        />
+      </DeviceIntentTrackingProvider>,
     );
 
     expect(screen.getByText("Ledger Nano X")).toBe(card);
@@ -209,6 +216,25 @@ describe("ConnectNewDeviceView", () => {
 
     expect(screen.getByLabelText("Connect Ledger Nano X")).toBeVisible();
     expect(screen.getByLabelText("Connect Ledger Stax")).toBeVisible();
+  });
+
+  it("should give each select button a test id named after its discovered device key", () => {
+    renderView(
+      makeDiscoveringState({
+        devices: [
+          { key: "nano-x", device, isAvailable: true, onSelect: jest.fn() },
+          {
+            key: "stax",
+            device: { ...usbDevice, id: "stax-id", name: "Ledger Stax" },
+            isAvailable: true,
+            onSelect: jest.fn(),
+          },
+        ],
+      }),
+    );
+
+    expect(screen.getByTestId("connect-new-device-select-nano-x")).toBeVisible();
+    expect(screen.getByTestId("connect-new-device-select-stax")).toBeVisible();
   });
 
   it("should show a discovery error in the sheet over the last non-error view", () => {

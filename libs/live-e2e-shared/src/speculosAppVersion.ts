@@ -8,6 +8,7 @@ import * as path from "path";
 
 const liveCommonVersion = "34.64.0"; // live-common version isn't really necessary here, so we can hardcode it
 const nanoAppProviderId = 1;
+const defaultManagerApiBase = "https://manager.api.live.ledger.com/api";
 const BASELINE_CATALOG_APP = "Bitcoin";
 
 export type CatalogApp = { versionDisplayName: string; version: string; provider?: number };
@@ -98,6 +99,16 @@ export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<s
   process.env.SPECULOS_FIRMWARE_VERSION = firmware;
 
   return firmware;
+}
+
+/** The newest provider OS, so one the Manager API offers no update from, whatever its app catalog. */
+export async function getLatestFirmwareVersion(device: DeviceModelId): Promise<string> {
+  const repository = new HttpManagerApiRepository(
+    process.env.MANAGER_API_BASE ?? defaultManagerApiBase,
+    liveCommonVersion,
+  );
+  const { firmwares } = await newestProviderFirmwares(repository, device);
+  return firmwares[0].version;
 }
 
 /**

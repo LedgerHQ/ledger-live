@@ -83,12 +83,22 @@ describe("useReceiveAddressActions", () => {
     }
   });
 
-  it("should share the address", () => {
+  it("should count the Copy button presses for the QR code, not the presses on the code", async () => {
+    const { result, onCopyAddress } = setup();
+
+    await act(() => result.current.actions.copy!.onPress());
+    await act(() => result.current.actions.copy!.onPressCode());
+
+    expect(onCopyAddress).toHaveBeenCalledTimes(2);
+    expect(result.current.actions.copy?.buttonPresses).toBe(1);
+  });
+
+  it("should share the address with the image of its card", () => {
     const { result, onShareAddress } = setup();
 
-    act(() => result.current.actions.share!.onPress());
+    act(() => result.current.actions.share!.onPress("file://card.png"));
 
-    expect(onShareAddress).toHaveBeenCalledWith(shown.address);
+    expect(onShareAddress).toHaveBeenCalledWith(shown.address, "file://card.png");
     expect(track).toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({ button: "share address" }),

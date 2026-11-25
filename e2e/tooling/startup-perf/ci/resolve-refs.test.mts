@@ -60,6 +60,17 @@ describe("resolveRef", () => {
     assert.equal(resolveRef("develop", fakeLsRemote()), SHA(1));
     assert.equal(resolveRef("live-mobile@4.27.1", fakeLsRemote()), SHA(5));
   });
+  it("refuses a name that is both a branch and a tag: the branch could stand in for a release", () => {
+    const shadowed = fakeLsRemote([...REFS, [SHA(8), "refs/heads/live-mobile@4.27.1"]]);
+    assert.throws(
+      () => resolveRef("live-mobile@4.27.1", shadowed),
+      /'live-mobile@4\.27\.1' is both a branch and a tag/,
+    );
+    assert.throws(
+      () => planBuilds({ ...INPUTS, preset: "prod-vs-develop", refA: "", refB: "" }, shadowed),
+      /is both a branch and a tag/,
+    );
+  });
   it("refuses a raw SHA, which could be a fork's commit", () => {
     assert.throws(
       () => resolveRef(SHA(1), fakeLsRemote()),
@@ -155,6 +166,59 @@ describe("planBuilds", () => {
     assert.equal(plan.labelB, `develop with LIVE-36190 re-added (${SHA(1).slice(0, 10)})`);
   });
 
+  it("caches build A only when it is a release tag's", () => {
+    const cacheA = (inputs: Partial<PlanInputs>) =>
+      planBuilds({ ...INPUTS, ...inputs }, fakeLsRemote()).cacheA;
+    assert.equal(cacheA({ preset: "prod-vs-develop", refA: "", refB: "" }), true);
+    assert.equal(cacheA({ preset: "known-regression", refA: "live-mobile@4.27.1" }), true);
+    assert.equal(cacheA({ refA: "develop", refB: "live-mobile@4.27.1" }), false);
+    assert.equal(cacheA({ preset: "aa-noise", refA: "" }), false);
+    assert.equal(cacheA({ refA: "live-mobile@4.28.0-nightly.1" }), false);
+    const branchNamedLikeATag = fakeLsRemote([...REFS, [SHA(8), "refs/heads/live-mobile@4.30.0"]]);
+    assert.equal(
+      planBuilds({ ...INPUTS, refA: "live-mobile@4.30.0" }, branchNamedLikeATag).cacheA,
+      false,
+    );
+  });
+
+  it("saves to the cache only from develop, when B is develop, release, main or A's own", () => {
+    const refs = fakeLsRemote([
+      ...REFS,
+      [SHA(8), "refs/heads/main"],
+      [SHA(9), "refs/heads/feat/x"],
+    ]);
+    const save = (inputs: Partial<PlanInputs>) =>
+      planBuilds({ ...INPUTS, branchName: "develop", ...inputs }, refs).save;
+    const nightly = { preset: "prod-vs-develop", refA: "", refB: "" };
+    assert.equal(save(nightly), true);
+    assert.equal(save({ preset: "prod-vs-release", refA: "", refB: "" }), true);
+    assert.equal(save({ refB: "main" }), true);
+    assert.equal(save({ preset: "aa-noise" }), true);
+    assert.equal(save({ preset: "known-regression" }), true);
+    // A single-commit run builds B from A's commit: reviewed only when A's ref is.
+    assert.equal(save({ preset: "aa-noise", refA: "release" }), true);
+    assert.equal(save({ preset: "known-regression", refA: "live-mobile@4.27.1" }), true);
+    assert.equal(save({ preset: "aa-noise", refA: "feat/x" }), false);
+    assert.equal(save({ preset: "known-regression", refA: "feat/x" }), false);
+    assert.equal(save({ refB: "live-mobile@4.27.1" }), false);
+    // Only develop's role writes develop/, which every run restores from.
+    assert.equal(save({ ...nightly, branchName: "release" }), false);
+    assert.equal(save({ ...nightly, branchName: "feat/x" }), false);
+  });
+
+  it("restores and saves build A only when it is a release tag's", () => {
+    const plan = (inputs: Partial<PlanInputs>) =>
+      planBuilds({ ...INPUTS, branchName: "develop", ...inputs }, fakeLsRemote());
+    const nightly = plan({ preset: "prod-vs-develop", refA: "", refB: "" });
+    assert.deepEqual([nightly.restore, nightly.cacheA, nightly.save], [true, true, true]);
+    // B is reviewed, so the run may save, but its A is no release's: nothing to restore or save.
+    const developTwice = plan({ refA: "develop", refB: "develop" });
+    assert.deepEqual(
+      [developTwice.restore, developTwice.cacheA, developTwice.save],
+      [false, false, true],
+    );
+  });
+
   for (const pairs of ["4", "7", "x", ""]) {
     it(`refuses ${JSON.stringify(pairs)} pairs`, () => {
       assert.throws(() => planBuilds({ ...INPUTS, pairs }, fakeLsRemote()), /even number ≥ 6/);
@@ -224,6 +288,9 @@ describe("outputsOf and summaryOf", () => {
         `ref_b=${SHA(1)}`,
         `label_a=live-mobile@4.27.0 (${SHA(6).slice(0, 10)})`,
         `label_b=develop (${SHA(1).slice(0, 10)})`,
+        "cache_a=true",
+        "restore=true",
+        "save=false",
         "preset=custom",
         "platforms=Android & iOS",
         "pairs=20",
@@ -236,6 +303,21 @@ describe("outputsOf and summaryOf", () => {
     assert.match(
       summaryOf(plan, INPUTS, "4"),
       /^### Startup performance: custom\n\n- A: `live-mobile@4\.27\.0/,
+    );
+  });
+
+  it("says in the summary why nothing is saved to the cache", () => {
+    const summary = (inputs: PlanInputs) =>
+      summaryOf(planBuilds(inputs, fakeLsRemote()), inputs, "4");
+    const fromDevelop = { ...INPUTS, branchName: "develop" };
+    assert.doesNotMatch(summary(fromDevelop), /not saved|Nothing/);
+    assert.match(
+      summary({ ...fromDevelop, refB: "live-mobile@4.27.1" }),
+      /- Nothing this run makes is saved to the cache: B is not develop, release or main\n/,
+    );
+    assert.match(
+      summary(INPUTS),
+      /- Nothing this run makes is saved to the cache: only a run from develop saves it\n/,
     );
   });
 });

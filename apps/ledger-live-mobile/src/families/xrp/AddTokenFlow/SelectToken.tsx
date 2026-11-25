@@ -9,21 +9,20 @@ import {
   ListItemDescription,
   ListItemLeading,
   ListItemTitle,
-  ListItemTrailing,
   SearchInput,
   Spinner,
-  Tag,
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { TrackScreen } from "@shared/analytics-react";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
-import { type Props, type TokenItem, useSelectTokenViewModel } from "./useSelectTokenViewModel";
+import { type Props, useSelectTokenViewModel } from "./useSelectTokenViewModel";
 
-function keyExtractor(item: TokenItem) {
-  return item.token.id;
+function keyExtractor(token: TokenCurrency) {
+  return token.id;
 }
 
 export default function SelectToken(props: Props) {
@@ -31,8 +30,8 @@ export default function SelectToken(props: Props) {
   const viewModel = useSelectTokenViewModel(props);
   const { onSelectToken } = viewModel;
 
-  const renderItem: ListRenderItem<TokenItem> = useCallback(
-    ({ item: { token, isHeld } }) => (
+  const renderItem: ListRenderItem<TokenCurrency> = useCallback(
+    ({ item: token }) => (
       <ListItem onPress={() => onSelectToken(token)} testID={`xrp-token-row-${token.id}`}>
         <ListItemLeading>
           <CurrencyIcon currency={token} size={40} />
@@ -43,18 +42,9 @@ export default function SelectToken(props: Props) {
             </ListItemDescription>
           </ListItemContent>
         </ListItemLeading>
-        {isHeld ? (
-          <ListItemTrailing>
-            <Tag
-              appearance="gray"
-              size="sm"
-              label={t("xrp.addToken.steps.token.alreadyAddedTag")}
-            />
-          </ListItemTrailing>
-        ) : null}
       </ListItem>
     ),
-    [onSelectToken, t],
+    [onSelectToken],
   );
 
   const renderEmpty = () => {
@@ -87,19 +77,6 @@ export default function SelectToken(props: Props) {
     <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
       <TrackScreen category="XrpAddTokenFlow" name="SelectToken" />
       <Box lx={{ flex: 1, paddingHorizontal: "s16", gap: "s16" }}>
-        {viewModel.isHeldTokenWarningVisible ? (
-          <Banner
-            appearance="warning"
-            title={t("xrp.addToken.steps.token.alreadyAdded")}
-            onClose={viewModel.onDismissHeldToken}
-            primaryAction={
-              <Button appearance="gray" size="sm" onPress={viewModel.onOpenTokenPage}>
-                {t("xrp.addToken.steps.token.openTokenPage")}
-              </Button>
-            }
-            testID="xrp-token-already-added"
-          />
-        ) : null}
         <SearchInput
           placeholder={t("common.search")}
           value={viewModel.search}
@@ -107,7 +84,7 @@ export default function SelectToken(props: Props) {
           testID="xrp-token-search"
         />
         <FlatList
-          data={viewModel.items}
+          data={viewModel.tokens}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           ListEmptyComponent={renderEmpty}

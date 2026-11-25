@@ -174,6 +174,7 @@ describe("CoinModuleApi (integration)", () => {
       expect(stakes.length).toBeGreaterThan(0);
       stakes.forEach(balance => {
         expect(balance.value).toBe(balance.stake!.amount);
+        expect(balance.locked).toBe(balance.stake!.amount);
         expect(VALID_STAKE_STATES).toContain(balance.stake!.state);
         expect(balance.stake!.delegate).toMatch(/\S/);
       });

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-cli",
-  "version": "3.6.0",
+  "version": "3.7.0",
   "private": true,
   "description": "Ledger Wallet CLI using Device Management Kit (USB)",
   "license": "Apache-2.0",
@@ -58,6 +58,8 @@
     "@domain/entity-currency-fiat": "workspace:^",
     "@domain/entity-currency-token": "workspace:^",
     "@domain/entity-currency-unit": "workspace:^",
+    "@domain/entity-derivation": "workspace:*",
+    "@domain/entity-network": "workspace:*",
     "@features/platform-currencies": "workspace:^",
     "@ledgerhq/agent-intent-sdk": "0.2.0",
     "@ledgerhq/auth": "catalog:",

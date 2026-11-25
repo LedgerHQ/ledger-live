@@ -68,6 +68,8 @@ pnpm desktop lint:guardrails                             # security focused lint
 pnpm desktop typecheck                                   # typecheck
 ```
 
+The coin-family lint baseline and its accepted exceptions are in [docs/lint.md](docs/lint.md).
+
 ### E2E Testing
 
 See [`e2e/destkop/README.md`](../../e2e/desktop/README.md) for End-to-End testing details.
