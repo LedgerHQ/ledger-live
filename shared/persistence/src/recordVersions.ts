@@ -25,7 +25,11 @@ export type RecordVersions<Latest> = Readonly<{
 
 type Upgrade<Latest> = (storedVersion: number, stored: unknown, key: string) => Latest;
 
-type Chain<Latest> = {
+/**
+ * The record versions so far, v0 to `latest`, and the migration from each version to the next.
+ * The legacy migrations of the apps are not in it.
+ */
+type MigrationChain<Latest> = {
   latest: number;
   schema: z.ZodType<Latest>;
   storedSchemas: ReadonlyArray<z.ZodType>;
@@ -71,42 +75,46 @@ function payloadOf(stored: unknown): unknown {
   return "data" in stored ? stored.data : undefined;
 }
 
-function fromChain<Latest>(chain: Chain<Latest>): RecordVersions<Latest> {
+function fromMigrationChain<Latest>(
+  migrationChain: MigrationChain<Latest>,
+): RecordVersions<Latest> {
   return Object.freeze({
-    latest: chain.latest,
-    storedSchemas: chain.storedSchemas,
+    latest: migrationChain.latest,
+    storedSchemas: migrationChain.storedSchemas,
 
     next<Next>(
       schemaFactory: SchemaFactory<Next>,
       step: (previous: Latest) => NoInfer<Next>,
     ): RecordVersions<Next> {
-      const version = chain.latest + 1;
+      const version = migrationChain.latest + 1;
       const schema = schemaFactory(z);
       const storedSchema = z.strictObject({ $v: z.literal(version), data: schema });
       const upgrade: Upgrade<Next> = (storedVersion, stored, key) =>
         storedVersion === version
           ? parse(storedSchema, stored, key, version).data
-          : runStep(step, chain.upgrade(storedVersion, stored, key), key, version);
-      return fromChain({
+          : runStep(step, migrationChain.upgrade(storedVersion, stored, key), key, version);
+      return fromMigrationChain({
         latest: version,
         schema,
-        storedSchemas: Object.freeze([...chain.storedSchemas, storedSchema]),
+        storedSchemas: Object.freeze([...migrationChain.storedSchemas, storedSchema]),
         upgrade,
       });
     },
 
     decode(stored: unknown, key: string): Latest {
-      const storedVersion = storedVersionOf(stored, key, chain.latest);
-      if (storedVersion > chain.latest) {
-        throw new NewerRecordVersionError(key, chain.latest, storedVersion);
+      const storedVersion = storedVersionOf(stored, key, migrationChain.latest);
+      if (storedVersion > migrationChain.latest) {
+        throw new NewerRecordVersionError(key, migrationChain.latest, storedVersion);
       }
-      const upgraded = chain.upgrade(storedVersion, stored, key);
-      const stepsRan = storedVersion < chain.latest;
-      return stepsRan ? parse(chain.schema, upgraded, key, chain.latest) : upgraded;
+      const upgraded = migrationChain.upgrade(storedVersion, stored, key);
+      const stepsRan = storedVersion < migrationChain.latest;
+      return stepsRan
+        ? parse(migrationChain.schema, upgraded, key, migrationChain.latest)
+        : upgraded;
     },
 
     encode: (latest: Latest): unknown =>
-      chain.latest === 0 ? latest : { $v: chain.latest, data: latest },
+      migrationChain.latest === 0 ? latest : { $v: migrationChain.latest, data: latest },
 
     payloadOf,
   });
@@ -115,7 +123,7 @@ function fromChain<Latest>(chain: Chain<Latest>): RecordVersions<Latest> {
 /** The versions of a record, starting with v0: the bare stored shape, with no `$v`. */
 export function recordVersions<V0>(schemaFactory: SchemaFactory<V0>): RecordVersions<V0> {
   const schema = schemaFactory(z);
-  return fromChain({
+  return fromMigrationChain({
     latest: 0,
     schema,
     storedSchemas: Object.freeze([schema]),
