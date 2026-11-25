@@ -9,7 +9,6 @@ import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-naviga
 import { Text, Flex, IconsLegacy, ScrollContainer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { getEnv } from "@shared/env";
 import { NavigatorName, ScreenName } from "~/const";
 import { bleDevicesSelector } from "~/reducers/ble";
 import Touchable from "../Touchable";
@@ -226,15 +225,9 @@ export default function SelectDevice({
 
   const checkDeviceStatus = useCallback(
     (displayedDevice: DisplayedAvailableDevice) => {
-      const isMockEnv = getEnv("MOCK");
       const { deviceId } = displayedDevice.device;
       const isSpeculos = deviceId.startsWith("speculos|");
-      if (
-        performDeviceLockedCheck &&
-        !isMockEnv &&
-        !isSpeculos &&
-        !isMockServerCompatDeviceId(deviceId)
-      ) {
+      if (performDeviceLockedCheck && !isSpeculos && !isMockServerCompatDeviceId(deviceId)) {
         setDeviceToCheckLockedStatus(displayedDevice);
       } else {
         notifyDeviceSelected(displayedDevice.device, displayedDevice.discoveredDevice);
@@ -270,11 +263,10 @@ export default function SelectDevice({
         connectionType: wired ? "USB" : "BLE",
       });
 
-      const isMockEnv = getEnv("MOCK");
       const isMockServerDevice = isMockServerCompatDeviceId(deviceId);
       const isNonBleDebugDevice =
         deviceId.includes("httpdebug") || deviceId.startsWith("speculos|") || isMockServerDevice;
-      if (!wired && !isMockEnv && !isNonBleDebugDevice) {
+      if (!wired && !isNonBleDebugDevice) {
         setSelectedBleDevice(displayedDevice);
       } else {
         setSelectedBleDevice(null);
