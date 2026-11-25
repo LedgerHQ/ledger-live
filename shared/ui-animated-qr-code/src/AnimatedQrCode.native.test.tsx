@@ -49,6 +49,11 @@ const { withTiming } = reanimated;
 
 const popStarts = () => withTiming.mock.calls.filter(([toValue]) => toValue === CENTER_POP).length;
 
+const holdTargets = () =>
+  withTiming.mock.calls
+    .filter(([toValue]) => toValue === 0 || toValue === 1)
+    .map(([toValue]) => toValue);
+
 afterEach(() => {
   reanimated.setReducedMotion(false);
   withTiming.mockClear();
@@ -124,22 +129,32 @@ describe("AnimatedQrCode", () => {
     expect(screen.queryByRole("button")).toBeNull();
   });
 
-  it("plays the ripple and pops the badge on a confirmed press", () => {
+  it("grows the badge while held, then plays the ripple once released", () => {
     renderQrCode({ onPress: jest.fn() });
+    const code = screen.getByTestId(TEST_ID);
 
-    fireEvent.press(screen.getByTestId(TEST_ID));
+    fireEvent(code, "pressIn");
 
+    expect(holdTargets()).toEqual([1]);
+    expect(nativeView().props.pressCount).toBe(0);
+
+    fireEvent(code, "pressOut");
+    fireEvent.press(code);
+
+    expect(holdTargets()).toEqual([1, 0]);
     expect(nativeView().props.pressCount).toBe(1);
-    expect(popStarts()).toBe(1);
+    expect(popStarts()).toBe(0);
   });
 
-  it("plays nothing on a touch that does not end as a press, like the start of a scroll", () => {
+  it("shrinks the badge back without a ripple when the touch does not end as a press, like a scroll", () => {
     renderQrCode({ onPress: jest.fn() });
+    const code = screen.getByTestId(TEST_ID);
 
-    fireEvent(screen.getByTestId(TEST_ID), "pressIn");
+    fireEvent(code, "pressIn");
+    fireEvent(code, "pressOut");
 
+    expect(holdTargets()).toEqual([1, 0]);
     expect(nativeView().props.pressCount).toBe(0);
-    expect(popStarts()).toBe(0);
   });
 
   it("plays the ripple and pops the badge when the trigger key changes", () => {
@@ -162,9 +177,11 @@ describe("AnimatedQrCode", () => {
   it("plays no press while loading", () => {
     renderQrCode({ animation: "loading", onPress: jest.fn() });
 
+    fireEvent(screen.getByTestId(TEST_ID), "pressIn");
     fireEvent.press(screen.getByTestId(TEST_ID));
 
     expect(nativeView().props.pressCount).toBe(0);
+    expect(holdTargets()).toEqual([]);
   });
 
   it("hides the skeleton disc once loaded", () => {
@@ -186,10 +203,12 @@ describe("AnimatedQrCode", () => {
       const onPress = jest.fn();
       const { rerender } = renderQrCode({ onPress });
 
+      fireEvent(screen.getByTestId(TEST_ID), "pressIn");
       fireEvent.press(screen.getByTestId(TEST_ID));
       act(() => rerender({ triggerKey: 1 }));
 
       expect(onPress).toHaveBeenCalledTimes(1);
+      expect(holdTargets()).toEqual([]);
       expect(nativeView().props.pressCount).toBe(0);
       expect(popStarts()).toBe(0);
     });

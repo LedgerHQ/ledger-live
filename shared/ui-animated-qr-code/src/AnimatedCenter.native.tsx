@@ -1,7 +1,16 @@
 import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { createAnimatedComponent, useAnimatedStyle } from "react-native-reanimated";
-import { getQrElementFrame, toRgbString, type QrElement } from "./animationTimeline";
+import {
+  createAnimatedComponent,
+  type SharedValue,
+  useAnimatedStyle,
+} from "react-native-reanimated";
+import {
+  CENTER_POP_SCALE,
+  getQrElementFrame,
+  toRgbString,
+  type QrElement,
+} from "./animationTimeline";
 import { centerStyle, contentStyle, placeholderStyle } from "./styles";
 import { useCenterTime } from "./useCenterTime";
 import type { QrAnimation } from "./types";
@@ -15,7 +24,8 @@ const PRESSED_AT = 0;
 type AnimatedCenterProps = Readonly<{
   animation: QrAnimation;
   animated: boolean;
-  pressCount: number;
+  popCount: number;
+  hold: SharedValue<number>;
   size: number;
   diameter: number;
   children?: React.ReactNode;
@@ -28,13 +38,14 @@ type AnimatedCenterProps = Readonly<{
 export function AnimatedCenter({
   animation,
   animated,
-  pressCount,
+  popCount,
+  hold,
   size,
   diameter,
   children,
 }: AnimatedCenterProps): React.JSX.Element {
   const loading = animation === "loading";
-  const time = useCenterTime(animation, animated, pressCount);
+  const time = useCenterTime(animation, animated, popCount);
 
   const placeholderFrameStyle = useAnimatedStyle(() => {
     if (!loading) return { opacity: 0 };
@@ -45,7 +56,7 @@ export function AnimatedCenter({
   const contentFrameStyle = useAnimatedStyle(() => {
     if (loading) return { opacity: 0, transform: [{ scale: 1 }] };
     const frame = getQrElementFrame(animation, time.get(), CENTER, PRESSED_AT);
-    return { opacity: 1, transform: [{ scale: frame.scale }] };
+    return { opacity: 1, transform: [{ scale: frame.scale + CENTER_POP_SCALE * hold.get() }] };
   });
 
   const offset = (size - diameter) / 2;

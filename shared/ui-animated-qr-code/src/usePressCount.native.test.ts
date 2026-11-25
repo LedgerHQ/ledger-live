@@ -45,4 +45,14 @@ describe("usePressCount", () => {
 
     expect(result.current.pressCount).toBe(0);
   });
+
+  it("pops the center for trigger keys only, a tap has already grown it", () => {
+    const { result, rerender } = renderPressCount(4);
+
+    act(() => result.current.press());
+    rerender({ key: 5, on: true });
+
+    expect(result.current.pressCount).toBe(2);
+    expect(result.current.popCount).toBe(1);
+  });
 });

@@ -29,7 +29,7 @@ export const SHIMMER_SWEEP = 1.2;
 
 /** Seconds the center content pops for after a press. */
 export const CENTER_POP = 0.35;
-const CENTER_POP_SCALE = 0.18;
+export const CENTER_POP_SCALE = 0.18;
 const RIPPLE_DELAY = 0.1;
 const RIPPLE_SWEEP = 0.9;
 const RIPPLE_BAND = 0.12;

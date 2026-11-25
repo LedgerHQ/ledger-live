@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { Pressable } from "@ledgerhq/lumen-ui-rnative";
 import { requireNativeComponent, type ViewProps } from "react-native";
-import { useReducedMotion } from "react-native-reanimated";
+import { useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
 import { AnimatedCenter } from "./AnimatedCenter";
 import { createQrMatrix } from "./qrMatrix";
 import { paperStyle } from "./styles";
@@ -11,6 +11,7 @@ import type { AnimatedQrCodeProps, QrAnimation } from "./types";
 const NATIVE_VIEW_NAME = "SharedAnimatedQrCodeView";
 // Share of the clear center the badge covers, leaving a margin of white around it.
 const CENTER_DIAMETER_RATIO = 0.75;
+const HOLD_MS = 150;
 
 type NativeQrCodeViewProps = ViewProps &
   Readonly<{
@@ -46,11 +47,20 @@ export function AnimatedQrCode({
   const matrix = useMemo(() => createQrMatrix(value, hasCenter), [value, hasCenter]);
   const dots = useMemo(() => matrix.dots.flatMap(({ row, col }) => [row, col]), [matrix]);
   // The skeleton has nothing to ripple.
-  const { pressCount, press } = usePressCount(triggerKey, animated && animation !== "loading");
+  const playsPresses = animated && animation !== "loading";
+  const { pressCount, popCount, press } = usePressCount(triggerKey, playsPresses);
   const pressable = onPress !== undefined;
+  const hold = useSharedValue(0);
   const sizeStyle = { width: size, height: size };
 
-  // On a confirmed press, not on touch down: the start of a scroll over the code plays nothing.
+  // The center grows on touch down and stays big while held; the ripple waits for a confirmed press,
+  // so the start of a scroll over the code only grows and shrinks it back.
+  const handlePressIn = useCallback(() => {
+    if (playsPresses) hold.set(withTiming(1, { duration: HOLD_MS }));
+  }, [playsPresses, hold]);
+  const handlePressOut = useCallback(() => {
+    hold.set(withTiming(0, { duration: HOLD_MS }));
+  }, [hold]);
   const handlePress = useCallback(() => {
     press();
     onPress?.();
@@ -64,6 +74,8 @@ export function AnimatedQrCode({
       accessible={pressable}
       accessibilityRole={pressable ? "button" : undefined}
       accessibilityLabel={accessibilityLabel}
+      onPressIn={pressable ? handlePressIn : undefined}
+      onPressOut={pressable ? handlePressOut : undefined}
       onPress={handlePress}
     >
       <NativeQrCodeView
@@ -78,7 +90,8 @@ export function AnimatedQrCode({
         <AnimatedCenter
           animation={animation}
           animated={animated}
-          pressCount={pressCount}
+          popCount={popCount}
+          hold={hold}
           size={size}
           diameter={matrix.clearCount * (size / matrix.moduleCount) * CENTER_DIAMETER_RATIO}
         >
