@@ -2,16 +2,16 @@ import React from "react";
 import { render } from "@tests/test-renderer";
 import { ConnectDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
 import { TrackScreen } from "@shared/analytics-react";
-import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
-import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
-import { UnknownErrorState } from "./UnknownErrorState";
+import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
+import { PAGE_CONNECT_DEVICE } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
+import { TrackedUnknownErrorState } from "./TrackedUnknownErrorState";
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
 
 function renderState(error: unknown = new Error("boom")) {
   return render(
     <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
-      <UnknownErrorState state={{ type: ConnectDeviceUIStateTypes.UnknownError, error }} />
+      <TrackedUnknownErrorState state={{ type: ConnectDeviceUIStateTypes.UnknownError, error }} />
     </DeviceIntentTrackingProvider>,
   );
 }

@@ -12,9 +12,9 @@ import {
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import { urls } from "~/utils/urls";
-import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
-import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
-import { ConnectionErrorState } from "./ConnectionErrorState";
+import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
+import { PAGE_CONNECT_DEVICE } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
+import { TrackedConnectionErrorState } from "./TrackedConnectionErrorState";
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
 const mockedTrack = jest.mocked(track);
@@ -48,7 +48,7 @@ function renderState(errorType: ConnectionErrorType) {
 
   const view = render(
     <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
-      <ConnectionErrorState state={state} />
+      <TrackedConnectionErrorState state={state} />
     </DeviceIntentTrackingProvider>,
   );
 
@@ -94,11 +94,15 @@ describe("ConnectionErrorState (DIE tracking)", () => {
   });
 
   it.each([
-    { type: BaseConnectionErrorTypes.Unknown, label: "Try again" },
-    { type: ConnectionErrorTypes.BlePairingPeerRemovedPairing, label: "I unpaired, try again" },
+    { type: BaseConnectionErrorTypes.Unknown, label: "Try again", subError: "Unknown" },
+    {
+      type: ConnectionErrorTypes.BlePairingPeerRemovedPairing,
+      label: "I unpaired, try again",
+      subError: ConnectionErrorTypes.BlePairingPeerRemovedPairing,
+    },
   ])(
     "GIVEN a $type error WHEN retry is pressed THEN it tracks button_clicked and retries",
-    async ({ type, label }) => {
+    async ({ type, label, subError }) => {
       // GIVEN
       const { user, retry } = renderState(type);
 
@@ -110,6 +114,7 @@ describe("ConnectionErrorState (DIE tracking)", () => {
         sourceFlow: "my_ledger",
         deviceUxV2: true,
         button: "Retry",
+        subError,
       });
       expect(retry).toHaveBeenCalledTimes(1);
     },
@@ -136,6 +141,7 @@ describe("ConnectionErrorState (DIE tracking)", () => {
         sourceFlow: "my_ledger",
         deviceUxV2: true,
         button: "Get Help",
+        subError: expect.any(String),
       });
       expect(Linking.openURL).toHaveBeenCalledWith(url);
     },

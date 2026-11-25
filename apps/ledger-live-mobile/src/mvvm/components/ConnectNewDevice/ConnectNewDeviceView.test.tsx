@@ -9,6 +9,7 @@ import {
   rnHidTransportIdentifier,
   type ConnectNewDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
+import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import { ConnectNewDeviceView } from "./ConnectNewDeviceView";
 import type { ConnectNewDeviceNonErrorUIState } from "./types";
 
@@ -41,13 +42,16 @@ function renderView(
   const onCloseErrorSheet = jest.fn();
 
   const view = render(
-    <ConnectNewDeviceView
-      state={state}
-      lastNonErrorState={lastNonErrorState}
-      platform="android"
-      onDeviceNotFound={withDeviceNotFound ? onDeviceNotFound : undefined}
-      onCloseErrorSheet={onCloseErrorSheet}
-    />,
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "onboarding" }}>
+      <ConnectNewDeviceView
+        state={state}
+        lastNonErrorState={lastNonErrorState}
+        platform="android"
+        onDeviceNotFound={withDeviceNotFound ? onDeviceNotFound : undefined}
+        onCloseErrorSheet={onCloseErrorSheet}
+        checkIsNewDevice={() => true}
+      />
+    </DeviceIntentTrackingProvider>,
   );
 
   return { ...view, onDeviceNotFound, onCloseErrorSheet };
@@ -184,12 +188,15 @@ describe("ConnectNewDeviceView", () => {
     const card = screen.getByText("Ledger Nano X");
 
     view.rerender(
-      <ConnectNewDeviceView
-        state={makeUsbState("usb-id-2")}
-        lastNonErrorState={makeDiscoveringState()}
-        platform="android"
-        onCloseErrorSheet={jest.fn()}
-      />,
+      <DeviceIntentTrackingProvider value={{ sourceFlow: "onboarding" }}>
+        <ConnectNewDeviceView
+          state={makeUsbState("usb-id-2")}
+          lastNonErrorState={makeDiscoveringState()}
+          platform="android"
+          onCloseErrorSheet={jest.fn()}
+          checkIsNewDevice={() => true}
+        />
+      </DeviceIntentTrackingProvider>,
     );
 
     expect(screen.getByText("Ledger Nano X")).toBe(card);

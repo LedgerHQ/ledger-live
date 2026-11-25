@@ -4,7 +4,7 @@ import type {
   ConnectKnownOrNewDeviceUIStateTypes,
   DeviceListItem,
 } from "@ledgerhq/live-dmk-mobile";
-import type { DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
+import type { DeviceConnectionResult, SourceFlow } from "@ledgerhq/live-dmk-shared";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import type {
   ConnectNewDeviceDelays,
@@ -19,6 +19,11 @@ export type ConnectKnownOrNewDeviceDelays = {
 };
 
 export type ConnectKnownOrNewDeviceProps = {
+  /**
+   * The flow that shows the component. The component adds it to all its analytics events, also to
+   * the events of the Add mode.
+   */
+  sourceFlow: SourceFlow;
   /** Called each time the user connects a device, also a device that was already connected. */
   onConnected: (result: DeviceConnectionResult) => void;
   /** Called when the Add mode starts and stops. The caller hides the rest of its screen. */

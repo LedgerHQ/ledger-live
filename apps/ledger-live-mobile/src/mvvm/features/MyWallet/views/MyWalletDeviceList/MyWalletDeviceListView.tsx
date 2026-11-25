@@ -36,6 +36,7 @@ export function MyWalletDeviceListView({
         {/* The same parent in the Add mode, so that the component does not remount. */}
         <View style={isAdding ? styles.fill : undefined}>
           <ConnectKnownOrNewDevice
+            sourceFlow="my_wallet"
             onConnected={onConnected}
             onAddModeChange={onAddModeChange}
             isPaused={isPaused}

@@ -17,7 +17,14 @@ import {
 import { buildMockServerCompatDeviceId, type KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { BehaviorSubject } from "rxjs";
 import { isErrorState } from "LLM/components/ConnectNewDevice";
-import { useSaveConnectedDevice } from "LLM/components/DeviceConnection";
+import {
+  useCheckIsNewConnectedDevice,
+  useSaveConnectedDevice,
+} from "LLM/components/DeviceConnection";
+import {
+  getConnectedDeviceTrackingProperties,
+  trackDeviceConnected,
+} from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { removeKnownBleDevice } from "~/actions/ble";
 import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
 import useIsAppInBackground from "~/components/useIsAppInBackground";
@@ -33,6 +40,7 @@ import type {
   ConnectKnownOrNewDeviceProps,
   ConnectKnownOrNewDeviceViewProps,
 } from "./types";
+import { useConnectKnownOrNewDeviceTracking } from "./useConnectKnownOrNewDeviceTracking";
 import { assertNever } from "./utils/assertNever";
 
 const LOG_TYPE = "ConnectKnownOrNewDevice";
@@ -122,6 +130,7 @@ function getLastConnectedDeviceId({ transport, id }: KnownDevice): string {
 }
 
 export function useConnectKnownOrNewDeviceViewModel({
+  sourceFlow,
   onConnected,
   onAddModeChange,
   isPaused,
@@ -140,6 +149,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   const knownDevices = useSelector(knownDevicesSelector);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const saveConnectedDevice = useSaveConnectedDevice();
+  const checkIsNewConnectedDevice = useCheckIsNewConnectedDevice();
   const isFocused = useIsFocused();
   const isAppInBackground = useIsAppInBackground({ includeInactive: false });
   const shouldPause = isPaused || !isFocused || isAppInBackground;
@@ -152,23 +162,29 @@ export function useConnectKnownOrNewDeviceViewModel({
 
   // The flow starts once per mount and per restart: the latest values are read from here.
   const latestRef = useRef({
+    sourceFlow,
     onConnected,
     onAddModeChange,
     onAddDevice,
     mockServerDevices,
     lastConnectedDevice,
     shouldPause,
+    checkIsNewConnectedDevice,
   });
   useLayoutEffect(() => {
     latestRef.current = {
+      sourceFlow,
       onConnected,
       onAddModeChange,
       onAddDevice,
       mockServerDevices,
       lastConnectedDevice,
       shouldPause,
+      checkIsNewConnectedDevice,
     };
   });
+  // The flow calls onConnected before it emits the state that follows the connection.
+  const lastStateTypeRef = useRef<ConnectKnownOrNewDeviceUIState["type"] | null>(null);
 
   useEffect(() => {
     knownDevices$.next(knownDevices);
@@ -200,7 +216,18 @@ export function useConnectKnownOrNewDeviceViewModel({
       knownDevices$,
       removeKnownDevice: removeDevice,
       onConnected: result => {
-        saveConnectedDevice(result.connectedDevice);
+        const { connectedDevice } = result;
+        if (lastStateTypeRef.current === ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice) {
+          // Before the save, which makes every device known.
+          trackDeviceConnected({
+            sourceFlow: latestRef.current.sourceFlow,
+            ...getConnectedDeviceTrackingProperties(connectedDevice),
+            extraProperties: {
+              isNewDevice: latestRef.current.checkIsNewConnectedDevice(connectedDevice),
+            },
+          });
+        }
+        saveConnectedDevice(connectedDevice);
         dispatch(setReadOnlyMode(false));
         latestRef.current.onConnected(result);
       },
@@ -214,7 +241,10 @@ export function useConnectKnownOrNewDeviceViewModel({
     });
     flowRef.current = flow;
     const subscription = flow.uiStates.subscribe({
-      next: state => setViewState(previous => toNextViewState(previous, state)),
+      next: state => {
+        lastStateTypeRef.current = state.type;
+        setViewState(previous => toNextViewState(previous, state));
+      },
     });
 
     return () => {
@@ -241,6 +271,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   }, [shouldPause]);
 
   const { state } = viewState;
+  useConnectKnownOrNewDeviceTracking(state);
   const isAdding = state.type === ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice;
 
   const wasAddingRef = useRef(false);

@@ -1,3 +1,5 @@
+import React from "react";
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import { AppState, BackHandler, type AppStateStatus } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -14,6 +16,7 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import type { DeviceConnectionResult, KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { State } from "~/reducers/types";
+import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import type { ConnectKnownOrNewDeviceProps } from "./types";
 import { useConnectKnownOrNewDeviceViewModel } from "./useConnectKnownOrNewDeviceViewModel";
 
@@ -118,11 +121,19 @@ const withKnownNanoX =
     },
   });
 
+// The view model sends the flow events: it needs the tracking context of the component.
+const TrackingProvider = ({ children }: { children?: React.ReactNode }) => (
+  <DeviceIntentTrackingProvider value={{ sourceFlow: "my_wallet" }}>
+    {children}
+  </DeviceIntentTrackingProvider>
+);
+
 function setup(
   props: Partial<ConnectKnownOrNewDeviceProps> = {},
   overrideInitialState: (state: State) => State = state => state,
 ) {
   const initialProps: ConnectKnownOrNewDeviceProps = {
+    sourceFlow: "my_wallet",
     onConnected: jest.fn(),
     onAddModeChange: jest.fn(),
     isPaused: false,
@@ -131,6 +142,7 @@ function setup(
   let currentProps = initialProps;
   const rendered = renderHook(() => useConnectKnownOrNewDeviceViewModel(currentProps), {
     overrideInitialState,
+    innerWrapper: TrackingProvider,
   });
   const rerender = (nextProps: Partial<ConnectKnownOrNewDeviceProps>) => {
     currentProps = { ...initialProps, ...nextProps };
@@ -309,6 +321,40 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
       expect(state.knownDevices.knownDevices).toEqual([
         expect.objectContaining({ id: "nano-x-id", lastUsedAt: expect.any(Number) }),
       ]);
+    });
+
+    it("GIVEN the Add mode, WHEN the flow connects a new device, THEN it should send device_connected with isNewDevice true", () => {
+      // GIVEN
+      setup();
+      emit({
+        type: ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice,
+        connectNewDeviceUIState: {
+          type: ConnectNewDeviceUIStateTypes.Connected,
+          device: knownNanoX,
+        },
+        close: jest.fn(),
+      });
+
+      // WHEN
+      act(() => lastInput().onConnected(makeConnectionResult()));
+
+      // THEN
+      expect(jest.mocked(track)).toHaveBeenCalledWith(
+        "device_connected",
+        expect.objectContaining({ sourceFlow: "my_wallet", deviceUxV2: true, isNewDevice: true }),
+      );
+    });
+
+    it("GIVEN the device list, WHEN the user connects a connected device, THEN it should send no device_connected", () => {
+      // GIVEN
+      setup();
+      emit(discoveringState);
+
+      // WHEN
+      act(() => lastInput().onConnected(makeConnectionResult()));
+
+      // THEN
+      expect(jest.mocked(track)).not.toHaveBeenCalledWith("device_connected", expect.anything());
     });
 
     it("GIVEN a running flow, WHEN the flow connects a device, THEN it should turn off the read-only mode", () => {

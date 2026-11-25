@@ -10,9 +10,9 @@ import {
   type DiscoveryError,
 } from "@ledgerhq/live-dmk-mobile";
 import { makeDiscoveryError } from "LLM/components/DeviceConnection/__fixtures__/discoveryError";
-import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
-import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
-import { DiscoveryErrorState } from "./DiscoveryErrorState";
+import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
+import { PAGE_CONNECT_DEVICE } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
+import { TrackedDiscoveryErrorState } from "./TrackedDiscoveryErrorState";
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
 const mockedTrack = jest.mocked(track);
@@ -97,7 +97,7 @@ function renderState({
 
   const view = render(
     <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
-      <DiscoveryErrorState state={state} platform="android" />
+      <TrackedDiscoveryErrorState state={state} platform="android" />
     </DeviceIntentTrackingProvider>,
   );
 
@@ -179,6 +179,7 @@ describe("DiscoveryErrorState (DIE tracking)", () => {
         sourceFlow: "my_ledger",
         deviceUxV2: true,
         button,
+        subError: type === BaseDiscoveryErrorTypes.Unknown ? "Unknown" : type,
       });
       expect(retry).toHaveBeenCalledTimes(1);
     },
@@ -198,6 +199,7 @@ describe("DiscoveryErrorState (DIE tracking)", () => {
       sourceFlow: "my_ledger",
       deviceUxV2: true,
       button: "Continue with USB",
+      subError: DiscoveryErrorTypes.LocationDisabledManualAction,
     });
     expect(ignore).toHaveBeenCalledTimes(1);
   });

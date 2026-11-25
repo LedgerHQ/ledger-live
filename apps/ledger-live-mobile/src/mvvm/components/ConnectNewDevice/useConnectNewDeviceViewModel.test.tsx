@@ -1,3 +1,5 @@
+import React from "react";
+import { track } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
@@ -11,6 +13,7 @@ import {
   type ConnectNewDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import type { DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import type { ConnectNewDeviceProps } from "./types";
 import { useConnectNewDeviceViewModel } from "./useConnectNewDeviceViewModel";
 
@@ -95,15 +98,28 @@ function useCaseInput() {
   return mockedConnectNewDevice.mock.calls[0][0];
 }
 
+// The view model sends the flow events: it needs the tracking context of the component.
+const TrackingProvider = ({ children }: { children?: React.ReactNode }) => (
+  <DeviceIntentTrackingProvider value={{ sourceFlow: "onboarding" }}>
+    {children}
+  </DeviceIntentTrackingProvider>
+);
+
 function renderViewModel(props: Partial<ConnectNewDeviceProps> = {}) {
   const allProps: ConnectNewDeviceProps = {
+    sourceFlow: "onboarding",
     onConnected: jest.fn(),
     onDeviceNotFound: jest.fn(),
     onClose: jest.fn(),
     ...props,
   };
 
-  return { ...renderHook(() => useConnectNewDeviceViewModel(allProps)), props: allProps };
+  return {
+    ...renderHook(() => useConnectNewDeviceViewModel(allProps), {
+      innerWrapper: TrackingProvider,
+    }),
+    props: allProps,
+  };
 }
 
 describe("useConnectNewDeviceViewModel", () => {
@@ -146,11 +162,14 @@ describe("useConnectNewDeviceViewModel", () => {
     // GIVEN
     const onClose = jest.fn();
     let props: ConnectNewDeviceProps = {
+      sourceFlow: "onboarding",
       onConnected: jest.fn(),
       onDeviceNotFound: jest.fn(),
       onClose: jest.fn(),
     };
-    const { rerender } = renderHook(() => useConnectNewDeviceViewModel(props));
+    const { rerender } = renderHook(() => useConnectNewDeviceViewModel(props), {
+      innerWrapper: TrackingProvider,
+    });
 
     // WHEN
     props = { ...props, onClose };
@@ -195,6 +214,24 @@ describe("useConnectNewDeviceViewModel", () => {
       { id: "device-id", name: "Ledger Nano X", modelId: DeviceModelId.nanoX },
     ]);
     expect(props.onConnected).toHaveBeenCalledWith(connectionResult);
+  });
+
+  it("GIVEN a device the app does not know, WHEN the flow connects it, THEN it should send device_connected with isNewDevice true", () => {
+    // GIVEN
+    renderViewModel();
+
+    // WHEN
+    act(() => useCaseInput().onConnected(makeConnectionResult()));
+
+    // THEN
+    expect(jest.mocked(track)).toHaveBeenCalledWith("device_connected", {
+      sourceFlow: "onboarding",
+      deviceUxV2: true,
+      modelId: DeviceModelId.nanoX,
+      transport: "ble",
+      matchedDevice: DeviceModelId.nanoX,
+      isNewDevice: true,
+    });
   });
 
   it("should call onClose when the use case closes", () => {

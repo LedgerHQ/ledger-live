@@ -11,6 +11,7 @@ import {
   type DeviceListItem,
   type SelectableDeviceListItem,
 } from "@ledgerhq/live-dmk-mobile";
+import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import { ConnectKnownOrNewDeviceView } from "./ConnectKnownOrNewDeviceView";
 import type { ConnectKnownOrNewDeviceViewProps } from "./types";
 
@@ -105,7 +106,11 @@ function renderView(state: ConnectKnownOrNewDeviceUIState, devices: Array<Device
     onCloseErrorSheet: jest.fn(),
     onCloseAddModeErrorSheet: jest.fn(),
   };
-  return render(<ConnectKnownOrNewDeviceView {...props} />);
+  return render(
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_wallet" }}>
+      <ConnectKnownOrNewDeviceView {...props} />
+    </DeviceIntentTrackingProvider>,
+  );
 }
 
 describe("ConnectKnownOrNewDeviceView", () => {

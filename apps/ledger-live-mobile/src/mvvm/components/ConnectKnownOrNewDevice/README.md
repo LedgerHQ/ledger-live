@@ -8,6 +8,7 @@ The component runs `connectKnownOrNewDevice` from `@ledgerhq/live-dmk-mobile`. T
 
 | Prop                                | What it does                                                                                                                                                                         |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `sourceFlow`                        | The flow that shows the component, for example `my_wallet`. The component adds it to all its analytics events, also in the Add mode. |
 | `onConnected(result)`               | Called each time the user connects a device, also a device that was already connected. The device is already saved.                                                                  |
 | `onAddModeChange(isAdding)`         | Called when the Add mode starts and stops. The caller hides the rest of its screen during the Add mode.                                                                             |
 | `isPaused`                          | Stops discovery while the caller uses the device.                                                                                                                                   |
@@ -51,6 +52,10 @@ With `onAddDevice`, the component does not open the Add mode. The Add link, the 
 ## Errors
 
 Discovery, connection and unknown errors show in a bottom sheet over the list, with the shared error components in [`../DeviceConnection/`](../DeviceConnection/). Closing a discovery or connection error goes back to the list. Closing the unknown error starts the component again, with a new state machine.
+
+## Analytics
+
+The component gives `sourceFlow` to `DeviceIntentTrackingProvider`. In the Add mode, `ConnectNewDeviceView` and the view model of `components/AddMode` send the events of the connectivity screen with this `sourceFlow` (see the [ConnectNewDevice README](../ConnectNewDevice/README.md#analytics)). The view model sends `device_connected` for a device connected in the Add mode, before it saves the device. The embedded flow sends no outcome: `useConnectKnownOrNewDeviceTracking`, called by the view model, sends it when the Add mode ends before a connection, with Close, Android Back or an unmount of the list. It sends `deviceflow_aborted`, or `deviceflow_failed` with the error that shows. It sends nothing when a fatal error shows the unknown error of the list. The events are in the [tracking plan](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7620034573).
 
 ## Try it
 

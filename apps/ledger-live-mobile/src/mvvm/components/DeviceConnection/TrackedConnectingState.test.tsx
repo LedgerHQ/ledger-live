@@ -1,12 +1,11 @@
 import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { ConnectDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
-import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
-import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
-import { ConnectingState } from "./ConnectingState";
+import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
+import { PAGE_CONNECT_DEVICE } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
+import { TrackedConnectingState } from "./TrackedConnectingState";
 
 const mockedTrackScreen = jest.mocked(TrackScreen);
 
@@ -28,9 +27,7 @@ describe("ConnectingState", () => {
   it("should render the connecting title", () => {
     render(
       <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
-        <ConnectingState
-          state={{ type: ConnectDeviceUIStateTypes.Connecting, device: makeKnownDevice() }}
-        />
+        <TrackedConnectingState device={makeKnownDevice()} />
       </DeviceIntentTrackingProvider>,
     );
 
@@ -44,7 +41,7 @@ describe("ConnectingState", () => {
     // WHEN
     render(
       <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
-        <ConnectingState state={{ type: ConnectDeviceUIStateTypes.Connecting, device }} />
+        <TrackedConnectingState device={device} />
       </DeviceIntentTrackingProvider>,
     );
 
