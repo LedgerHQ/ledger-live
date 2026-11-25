@@ -322,8 +322,8 @@ export default class PortfolioPage {
   @Step("Expect the portfolio out of read-only mode")
   async expectSignerPortfolioVisible(timeout = TIMEOUT.xxxlarge) {
     await this.signerPortfolio.waitVisible(timeout);
-    await this.readOnlyItems.expectNotVisible();
-    await this.connectButton.expectNotVisible();
+    await this.readOnlyItems.waitNotVisible();
+    await this.connectButton.waitNotVisible();
   }
 
   @Step("Expect the no-signer balance title to be visible")
