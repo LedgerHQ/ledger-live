@@ -20,14 +20,23 @@ module.exports = {
     "@babel/plugin-transform-class-static-block",
     "@babel/plugin-transform-flow-strip-types",
     ["@babel/plugin-transform-private-methods", { loose: true }],
+    // RN 0.86 preset dropped it; inversify reads constructor.length (LIVE-39331)
+    "@babel/plugin-transform-parameters",
     // Transform template literals for Hermes compatibility (ajv uses tagged templates)
     "@babel/plugin-transform-template-literals",
     [
       "babel-plugin-transform-inline-environment-variables",
       // Exclude JEST_WORKER_ID and VITEST_WORKER_ID to avoid MMKV conflicts
       // MMKV checks for these variables to determine if it runs for tests.
-      // DETOX_APP_VERSION is set by rspack's DefinePlugin, which runs after Babel.
-      { exclude: ["JEST_WORKER_ID", "VITEST_WORKER_ID", "DETOX_APP_VERSION"] },
+      // DETOX_APP_VERSION and EXPO_PUBLIC_USE_RN_FETCH are set by rspack's DefinePlugin, which runs after Babel.
+      {
+        exclude: [
+          "JEST_WORKER_ID",
+          "VITEST_WORKER_ID",
+          "DETOX_APP_VERSION",
+          "EXPO_PUBLIC_USE_RN_FETCH",
+        ],
+      },
     ],
     // Fabric optimization are not supported by Detox and needs to be disabled.
     // Only inject collapsable={false} for builds running Detox tests.

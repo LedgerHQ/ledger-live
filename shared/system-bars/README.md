@@ -11,24 +11,33 @@ On iOS every call does nothing: iOS has no navigation bar.
 
 ## Exports
 
-| Export                    | Description                                                                                   |
-| ------------------------- | --------------------------------------------------------------------------------------------- |
-| `applyNavigationBarTheme` | `({ backgroundColor, isDark }) => Promise<void>` — paints the bar, picks readable button colors |
-| `NavigationBarTheme`      | Type of the argument above                                                                    |
+| Export                           | Description                                                                                                 |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `applyNavigationBarTheme`        | `({ isDark, backgroundColor, paintBackground? }) => void` — picks readable button colors and paints the bar |
+| `NavigationBarBackgroundPainter` | `(argbColor: number) => void` — app-provided native call that paints the bar                                |
+| `NavigationBarTheme`             | Type of the argument above                                                                                  |
 
 ## Usage
 
 ```ts
 import { applyNavigationBarTheme } from "@shared/system-bars";
 
-applyNavigationBarTheme({ backgroundColor: theme.colors.bg.canvas, isDark }).catch(console.error);
+applyNavigationBarTheme({ isDark, backgroundColor, paintBackground });
 ```
 
-## Edge-to-edge
+The native call is fire-and-forget: `expo-navigation-bar` does not return its Promise, so a native
+failure cannot be caught here.
 
-With Android edge-to-edge (forced on Android 15+), the system ignores the background color and
-only the button colors apply. `expo-navigation-bar` 57 (Expo SDK 57) drops the background color
-API, so this package will only set the button colors after that upgrade.
+## Background color
+
+`expo-navigation-bar` 57 (Expo SDK 57) has no background color API. The app injects
+`paintBackground`, which gets the color as an Android ARGB number; without it only the button color
+changes. Ledger Wallet Mobile passes its native `NavigationBarColorModule`, which paints only on
+Android 10–14, where the app is not edge-to-edge. Android 15+ always draws edge-to-edge, so the app
+canvas shows behind the bar. When the Activity resumes, the module repaints the last color and, on
+Android 10+, restores the button style from its luminance, so both survive Activity recreation. On
+Android 8–9 the library draws a translucent scrim that matches the button color; below Android 8
+nothing changes.
 
 ## Testing
 

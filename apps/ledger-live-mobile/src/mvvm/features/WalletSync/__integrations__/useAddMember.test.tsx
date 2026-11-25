@@ -22,10 +22,9 @@ function deferredReject<T = never>() {
 }
 
 const mockGetOrCreateTrustchain = jest.fn();
+const mockTrustchainSdk = { getOrCreateTrustchain: mockGetOrCreateTrustchain };
 jest.mock("../hooks/useTrustchainSdk", () => ({
-  useTrustchainSdk: () => ({
-    getOrCreateTrustchain: mockGetOrCreateTrustchain,
-  }),
+  useTrustchainSdk: () => mockTrustchainSdk,
 }));
 
 jest.mock("../hooks/useDestroyTrustchain", () => ({
@@ -44,12 +43,15 @@ const navigationMocks = {
   params: undefined as { seededOffer?: boolean } | undefined,
 };
 
+const mockParentNavigation = { goBack: navigationMocks.goBack };
+const mockNavigation = {
+  navigate: navigationMocks.navigate,
+  getParent: () => mockParentNavigation,
+};
+
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
-  useNavigation: () => ({
-    navigate: navigationMocks.navigate,
-    getParent: () => ({ goBack: navigationMocks.goBack }),
-  }),
+  useNavigation: () => mockNavigation,
   useRoute: () => ({ params: navigationMocks.params }),
 }));
 

@@ -32,6 +32,7 @@ buildscript {
         }
     }
 }
+apply plugin: "expo-root-project"
 apply plugin: "com.facebook.react.rootproject"
 
 allprojects {
@@ -65,7 +66,7 @@ allprojects {
             force 'androidx.core:core:1.13.1'
 
             dependencySubstitution {
-                substitute module("com.github.CanHub:Android-Image-Cropper") using module("com.vanniktech:android-image-cropper:4.6.0")
+                substitute module("com.github.CanHub:Android-Image-Cropper") using module("com.vanniktech:android-image-cropper:4.7.0")
             }
             force "androidx.core:core:$rootProject.ext.androidXCore"
             force "androidx.core:core-ktx:$rootProject.ext.androidXCore"

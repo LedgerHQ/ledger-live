@@ -1,5 +1,5 @@
 import React from "react";
-import { BackHandler } from "react-native";
+import { BackHandler, type HardwareBackPressEvent } from "react-native";
 import type { OsUpdate } from "@domain/entity-device-os-update";
 import { render, screen } from "@tests/test-renderer";
 import type { State } from "~/reducers/types";
@@ -77,13 +77,14 @@ describe("OnboardingOsUpdateScreen", () => {
   });
 
   it("gives the early security check back as not completed on the Android back button", () => {
+    const backPressEvent: HardwareBackPressEvent = { type: "hardwareBackPress", timeStamp: 0 };
     const addEventListener = jest.spyOn(BackHandler, "addEventListener");
     render(<OnboardingOsUpdateScreen {...props} />, { overrideInitialState });
     const [, onHardwareBack] = addEventListener.mock.calls.find(
       ([eventName]) => eventName === "hardwareBackPress",
     ) ?? [undefined, undefined];
 
-    expect(onHardwareBack?.()).toBe(true);
+    expect(onHardwareBack?.(backPressEvent)).toBe(true);
     expect(mockOnBackFromUpdate).toHaveBeenCalledWith("start");
     addEventListener.mockRestore();
   });

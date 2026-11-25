@@ -1,4 +1,4 @@
-import { BackHandler } from "react-native";
+import { BackHandler, type HardwareBackPressEvent } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { act, renderHook } from "@tests/test-renderer";
 import {
@@ -12,9 +12,10 @@ jest.mock("@react-navigation/native", () => ({
   useFocusEffect: jest.fn(),
 }));
 
-type BackPressHandler = () => boolean | null | undefined;
+type BackPressHandler = Parameters<typeof BackHandler.addEventListener>[1];
 
 const backPressHandlers: BackPressHandler[] = [];
+const backPressEvent: HardwareBackPressEvent = { type: "hardwareBackPress", timeStamp: 0 };
 
 jest.mock("@features/flow-predictions/native", () => ({
   ...jest.requireActual("@features/flow-predictions/native"),
@@ -108,7 +109,9 @@ describe("usePredictionsOrderResultViewModel", () => {
     let isConsumed = false;
     act(() => {
       // Like React Native: the latest listener first, until one takes it.
-      isConsumed = [...backPressHandlers].reverse().some(handler => handler() === true);
+      isConsumed = [...backPressHandlers]
+        .reverse()
+        .some(handler => handler(backPressEvent) === true);
     });
 
     expect(isConsumed).toBe(true);
