@@ -42,7 +42,7 @@ type DeviceSectionProps = {
   onAddNewDevice?: () => void;
   /** Set while discovery is paused: the rows and the Add button show greyed out. */
   disabled?: boolean;
-  isNewDevice: ConnectKnownOrNewDeviceViewProps["isNewDevice"];
+  checkIsNewDevice: ConnectKnownOrNewDeviceViewProps["checkIsNewDevice"];
   /** Shown right under the list, only when the list has devices. */
   listFooter?: React.ReactNode;
   children?: React.ReactNode;
@@ -75,7 +75,7 @@ export function DeviceSection({
   devices,
   onAddNewDevice,
   disabled,
-  isNewDevice,
+  checkIsNewDevice,
   listFooter,
   children,
 }: Readonly<DeviceSectionProps>): React.JSX.Element {
@@ -105,7 +105,7 @@ export function DeviceSection({
               device: item.device,
               extraProperties: {
                 ...analyticsProperties,
-                isNewDevice: isNewDevice(item.device),
+                isNewDevice: checkIsNewDevice(item.device),
                 deviceStatus: item.status,
               },
             });

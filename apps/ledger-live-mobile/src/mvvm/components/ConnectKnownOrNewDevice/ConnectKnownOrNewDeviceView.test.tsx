@@ -109,7 +109,7 @@ function renderView(state: ConnectKnownOrNewDeviceUIState, devices: Array<Device
     onCloseErrorSheet: jest.fn(),
     onCloseDeviceStateSheet: jest.fn(),
     onCloseAddModeErrorSheet: jest.fn(),
-    isNewDevice: () => true,
+    checkIsNewDevice: () => true,
   };
 
   return {

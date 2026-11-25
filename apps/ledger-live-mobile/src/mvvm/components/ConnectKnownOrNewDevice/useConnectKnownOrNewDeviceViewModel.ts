@@ -159,7 +159,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const saveConnectedDevice = useSaveConnectedDevice();
   const checkIsNewConnectedDevice = useCheckIsNewConnectedDevice();
-  const isNewDevice = useCheckIsNewDevice();
+  const checkIsNewDevice = useCheckIsNewDevice();
   const { analyticsProperties } = useDeviceIntentTracking();
   const isFocused = useIsFocused();
   const isAppInBackground = useIsAppInBackground({ includeInactive: false });
@@ -392,7 +392,7 @@ export function useConnectKnownOrNewDeviceViewModel({
     onCloseErrorSheet,
     onCloseDeviceStateSheet,
     onCloseAddModeErrorSheet,
-    isNewDevice,
+    checkIsNewDevice,
     listFooter,
     children,
   };

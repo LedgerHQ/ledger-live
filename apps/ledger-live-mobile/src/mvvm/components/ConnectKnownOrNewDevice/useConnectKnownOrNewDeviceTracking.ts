@@ -11,7 +11,7 @@ import {
   type DeviceIntentTrackingProperties,
   type SourceFlow,
 } from "@ledgerhq/live-dmk-shared";
-import { useIsNewDevice } from "LLM/components/DeviceConnection";
+import { useCheckIsNewDevice } from "LLM/components/DeviceConnection";
 import { useDeviceIntentTracking } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import {
   getTrackingTransport,
@@ -44,7 +44,7 @@ function trackAddModeOutcome(
  */
 export function useConnectKnownOrNewDeviceTracking(state: ConnectKnownOrNewDeviceUIState): void {
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
-  const isNewDevice = useIsNewDevice();
+  const checkIsNewDevice = useCheckIsNewDevice();
 
   const latestRef = useRef<TrackingContext>({ sourceFlow, analyticsProperties });
   useLayoutEffect(() => {
@@ -67,12 +67,12 @@ export function useConnectKnownOrNewDeviceTracking(state: ConnectKnownOrNewDevic
       transport: state.device.transport === rnHidTransportIdentifier ? "usb" : "ble",
       extraProperties: {
         ...analyticsProperties,
-        isNewDevice: isNewDevice(state.device),
+        isNewDevice: checkIsNewDevice(state.device),
         // The connecting sheet sends its page later, through its portal.
         page: PAGE_CONNECT_DEVICE.Connecting,
       },
     });
-  }, [analyticsProperties, isNewDevice, sourceFlow, state]);
+  }, [analyticsProperties, checkIsNewDevice, sourceFlow, state]);
 
   useEffect(() => {
     if (state.type === ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice) {

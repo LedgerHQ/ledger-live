@@ -67,7 +67,7 @@ export type ConnectKnownOrNewDeviceViewProps = {
   /** Called on every close of the error sheet of the Add mode. */
   onCloseAddModeErrorSheet: () => void;
   /** Whether a device is not in the known devices, for the events about that device. */
-  isNewDevice: (device: Device) => boolean;
+  checkIsNewDevice: (device: Device) => boolean;
   listFooter?: ReactNode;
   children?: ReactNode;
 };

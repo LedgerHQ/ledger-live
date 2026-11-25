@@ -39,7 +39,7 @@ export type DeviceStateSheetState = Extract<
 type DeviceStateSheetProps = {
   /** The waiting or connecting state, or `null` when the sheet is closed. */
   state: DeviceStateSheetState | null;
-  isNewDevice: ConnectKnownOrNewDeviceViewProps["isNewDevice"];
+  checkIsNewDevice: ConnectKnownOrNewDeviceViewProps["checkIsNewDevice"];
   /** Called on every close, also when `state` leaves the sheet. */
   onClose: () => void;
 };
@@ -80,10 +80,10 @@ function WaitingHint({ onAddNewDevice }: Readonly<{ onAddNewDevice?: () => void 
 
 function DeviceStateContent({
   state,
-  isNewDevice,
+  checkIsNewDevice,
 }: Readonly<{
   state: DeviceStateSheetState;
-  isNewDevice: ConnectKnownOrNewDeviceViewProps["isNewDevice"];
+  checkIsNewDevice: ConnectKnownOrNewDeviceViewProps["checkIsNewDevice"];
 }>): React.ReactNode {
   switch (state.type) {
     case ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice:
@@ -95,7 +95,10 @@ function DeviceStateContent({
       );
     case ConnectKnownOrNewDeviceUIStateTypes.Connecting:
       return (
-        <TrackedConnectingState device={state.device} isNewDevice={isNewDevice(state.device)} />
+        <TrackedConnectingState
+          device={state.device}
+          isNewDevice={checkIsNewDevice(state.device)}
+        />
       );
     default:
       return assertNever(state);
@@ -104,7 +107,7 @@ function DeviceStateContent({
 
 export function DeviceStateSheet({
   state,
-  isNewDevice,
+  checkIsNewDevice,
   onClose,
 }: Readonly<DeviceStateSheetProps>): React.JSX.Element {
   const trackingContext = useDeviceIntentTracking();
@@ -131,7 +134,7 @@ export function DeviceStateSheet({
         {/* The sheet renders its content through a portal, outside the provider of the component. */}
         <DeviceIntentTrackingProvider value={trackingContext}>
           <Box lx={{ gap: "s16" }}>
-            {state && <DeviceStateContent state={state} isNewDevice={isNewDevice} />}
+            {state && <DeviceStateContent state={state} checkIsNewDevice={checkIsNewDevice} />}
           </Box>
         </DeviceIntentTrackingProvider>
       </BottomSheetScrollView>

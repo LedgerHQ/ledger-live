@@ -83,17 +83,19 @@ function getListLayout(state: ListUIState, keptDevices: Array<DeviceListItem>): 
 function ErrorStateView({
   state,
   platform,
-  isNewDevice,
+  checkIsNewDevice,
 }: Readonly<{
   state: ConnectKnownOrNewDeviceErrorUIState;
   platform: ConnectKnownOrNewDeviceViewProps["platform"];
-  isNewDevice: ConnectKnownOrNewDeviceViewProps["isNewDevice"];
+  checkIsNewDevice: ConnectKnownOrNewDeviceViewProps["checkIsNewDevice"];
 }>): React.ReactNode {
   switch (state.type) {
     case ConnectKnownOrNewDeviceUIStateTypes.DiscoveryError:
       return <TrackedDiscoveryErrorState state={state} platform={platform} />;
     case ConnectKnownOrNewDeviceUIStateTypes.ConnectionError:
-      return <TrackedConnectionErrorState state={state} isNewDevice={isNewDevice(state.device)} />;
+      return (
+        <TrackedConnectionErrorState state={state} isNewDevice={checkIsNewDevice(state.device)} />
+      );
     case ConnectKnownOrNewDeviceUIStateTypes.UnknownError:
       return <TrackedUnknownErrorState state={state} />;
     default:
@@ -110,7 +112,7 @@ export function ConnectKnownOrNewDeviceView({
   onCloseErrorSheet,
   onCloseDeviceStateSheet,
   onCloseAddModeErrorSheet,
-  isNewDevice,
+  checkIsNewDevice,
   listFooter,
   children,
 }: Readonly<ConnectKnownOrNewDeviceViewProps>): React.JSX.Element {
@@ -143,12 +145,12 @@ export function ConnectKnownOrNewDeviceView({
 
   return (
     <>
-      <DeviceSection {...listProps} isNewDevice={isNewDevice} listFooter={listFooter}>
+      <DeviceSection {...listProps} checkIsNewDevice={checkIsNewDevice} listFooter={listFooter}>
         {children}
       </DeviceSection>
       <DeviceStateSheet
         state={deviceState}
-        isNewDevice={isNewDevice}
+        checkIsNewDevice={checkIsNewDevice}
         onClose={onCloseDeviceStateSheet}
       />
       <ErrorBottomSheet
@@ -158,7 +160,11 @@ export function ConnectKnownOrNewDeviceView({
         testID="connect-known-or-new-device-error-sheet"
       >
         {errorState && (
-          <ErrorStateView state={errorState} platform={platform} isNewDevice={isNewDevice} />
+          <ErrorStateView
+            state={errorState}
+            platform={platform}
+            checkIsNewDevice={checkIsNewDevice}
+          />
         )}
       </ErrorBottomSheet>
     </>
