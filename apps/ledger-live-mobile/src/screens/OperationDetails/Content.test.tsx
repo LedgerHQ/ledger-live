@@ -240,7 +240,7 @@ describe("OperationDetails content, token operations section", () => {
   it("opens the token info modal with the support link of the token standard", async () => {
     const { user } = renderContent(accountWith([tokenAccount]), operationWithTokenOperation);
 
-    await user.press(await screen.findByTestId("TokenOperationsInfo"));
+    await user.press(await screen.findByRole("button", { name: "About token operations" }));
 
     expect(await screen.findByText("Learn more")).toBeOnTheScreen();
   });
@@ -249,7 +249,7 @@ describe("OperationDetails content, token operations section", () => {
     const splTokenAccount = { ...tokenAccount, token: { ...usdc, tokenType: "spl" } };
     const { user } = renderContent(accountWith([splTokenAccount]), operationWithTokenOperation);
 
-    await user.press(await screen.findByTestId("TokenOperationsInfo"));
+    await user.press(await screen.findByRole("button", { name: "About token operations" }));
 
     expect(await screen.findByText("Close")).toBeOnTheScreen();
     expect(screen.queryByText("Learn more")).toBeNull();

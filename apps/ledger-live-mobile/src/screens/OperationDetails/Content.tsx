@@ -78,6 +78,19 @@ type Props = {
   mainAccount: Account;
 };
 
+const getSubOperationToken = (
+  account: AccountLike,
+  subOperations: Operation[],
+): TokenCurrency | undefined => {
+  if (account.type !== "Account") return undefined;
+
+  const subOperationAccountIds = new Set(subOperations.map(op => op.accountId));
+  const tokenAccount = (account.subAccounts ?? []).find(subAccount =>
+    subOperationAccountIds.has(subAccount.id),
+  );
+  return tokenAccount?.token;
+};
+
 export default function Content({
   account,
   mainAccount,
@@ -138,14 +151,7 @@ export default function Content({
   const uniqueRecipients = uniq<(typeof operation.recipients)[0]>(operation.recipients);
   const { type, hasFailed } = operation;
   const subOperations = operation.subOperations || [];
-  const subOperationToken =
-    account.type === "Account"
-      ? (account.subAccounts ?? []).find(
-          subAccount =>
-            subAccount.type === "TokenAccount" &&
-            subOperations.some(op => op.accountId === subAccount.id),
-        )?.token
-      : undefined;
+  const subOperationToken = getSubOperationToken(account, subOperations);
   const isToken = subOperationToken !== undefined;
   const internalOperations = operation.internalOperations || [];
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
@@ -323,7 +329,13 @@ export default function Content({
               />
             </LText>
             {isToken ? (
-              <Touchable style={styles.info} onPress={onPressInfo} event="TokenOperationsInfo">
+              <Touchable
+                style={styles.info}
+                onPress={onPressInfo}
+                event="TokenOperationsInfo"
+                accessibilityRole="button"
+                accessibilityLabel={t("operationDetails.tokenOperationsInfo")}
+              >
                 <Info size={12} color={colors.grey} />
               </Touchable>
             ) : null}
