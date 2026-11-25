@@ -245,7 +245,7 @@ export class PerpsOrderPage extends WebViewAppPage {
     const [, takeProfit, stopLoss] = autoCloseSummary.exec(await autoClose.innerText()) ?? [];
     const offsets = AUTO_CLOSE_OFFSETS[side];
     const expectedRatio = offsetToFactor(offsets.takeProfit) / offsetToFactor(offsets.stopLoss);
-    expect(toNumber(takeProfit ?? "") / toNumber(stopLoss ?? "")).toBeCloseTo(expectedRatio, 1);
+    expect(toNumber(takeProfit ?? "") / toNumber(stopLoss ?? "")).toBeCloseTo(expectedRatio, 2);
   }
 
   private async pickAutoCloseOffset(title: "Take profit" | "Stop loss", offset: string) {
