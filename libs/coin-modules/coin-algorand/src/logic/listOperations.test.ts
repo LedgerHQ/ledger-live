@@ -10,6 +10,36 @@ const mockGetAccountTransactions = network.getAccountTransactions as jest.Mocked
   typeof network.getAccountTransactions
 >;
 
+const asaTransfer = (fields: {
+  id?: string;
+  rootId?: string;
+  sender: string;
+  recipient: string;
+  amount: number;
+  feesPayer?: string;
+  note?: string;
+}) => ({
+  id: fields.id ?? "ASA",
+  rootId: fields.rootId ?? fields.id ?? "ASA",
+  type: AlgoTransactionType.ASSET_TRANSFER,
+  senderAddress: fields.sender,
+  feesPayer: fields.feesPayer ?? fields.sender,
+  fee: new BigNumber("1000"),
+  round: 1000000,
+  timestamp: "1700000000",
+  note: fields.note,
+  senderRewards: new BigNumber(0),
+  recipientRewards: new BigNumber(0),
+  details: {
+    assetAmount: new BigNumber(fields.amount),
+    assetId: "123",
+    assetRecipientAddress: fields.recipient,
+    assetSenderAddress: undefined,
+    assetCloseAmount: undefined,
+    assetCloseToAddress: undefined,
+  },
+});
+
 describe("listOperations", () => {
   const address = "ALGO_ADDRESS_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
@@ -344,13 +374,21 @@ describe("listOperations", () => {
     await expect(
       listOperations(mockAlgorandContext, address, { order: "desc" }),
     ).resolves.toMatchObject({
-      items: [{ type: "OPT_OUT", value: 150n }],
+      items: [
+        { type: "OPT_OUT", value: 150n, recipients: ["RECIPIENT_ADDRESS", "CLOSE_ADDRESS"] },
+        { id: "TX_OPTOUT-fees", type: "FEES", value: 0n, senders: [address], tx: { fees: 1000n } },
+      ],
     });
     const { items } = await listOperations(mockAlgorandContext, "CLOSE_ADDRESS", {
       order: "desc",
     });
     expect(items).toMatchObject([{ type: "IN", value: 100n }]);
-    expect(items[0].details).toBeUndefined();
+    expect(items[0].details).toEqual({
+      ledgerOpType: "IN",
+      assetAmount: "100",
+      assetSenders: [address],
+      assetRecipients: ["RECIPIENT_ADDRESS", "CLOSE_ADDRESS"],
+    });
   });
   it("should include memo when note is present", async () => {
     const tx = {
@@ -449,7 +487,7 @@ describe("listOperations", () => {
 
     const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
-    expect(items.map(item => item.type)).toEqual(["OPT_IN", "REWARD"]);
+    expect(items.map(item => item.type)).toEqual(["OPT_IN", "REWARD", "FEES"]);
     expect(items[1].details).toEqual({
       memo: { type: "string", kind: "note", value: "b3B0LWlu" },
     });
@@ -481,7 +519,7 @@ describe("listOperations", () => {
 
     const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
-    expect(items.map(item => item.type)).toEqual(["OPT_IN", "REWARD"]);
+    expect(items.map(item => item.type)).toEqual(["OPT_IN", "REWARD", "FEES"]);
     expect(items[1]).not.toHaveProperty("details");
   });
 
@@ -847,8 +885,14 @@ describe("listOperations", () => {
       listOperations(mockAlgorandContext, address, { order: "desc" }),
     ).resolves.toMatchObject({
       items: [
-        { type: "FEES", value: 0n, asset: { type: "native" }, tx: { fees: 1000n } },
         { type: "REWARD", value: 25n, tx: { fees: 0n } },
+        {
+          type: "FEES",
+          value: 0n,
+          asset: { type: "native" },
+          senders: [address],
+          tx: { fees: 1000n },
+        },
       ],
     });
   });
@@ -909,10 +953,129 @@ describe("listOperations", () => {
       listOperations(mockAlgorandContext, address, { order: "desc" }),
     ).resolves.toMatchObject({
       items: [
-        { type: "FEES", value: 0n, tx: { fees: 1000n } },
         { type: "REWARD", value: 25n, tx: { fees: 0n } },
+        { type: "FEES", value: 0n, tx: { fees: 1000n } },
       ],
     });
+  });
+
+  // The details coin-evm and coin-tezos set on token rows, which A4 also sets on the token operations of a block
+  it("should give an ASA transfer the token details", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [asaTransfer({ sender: "SENDER", recipient: address, amount: 5 })],
+      nextToken: undefined,
+    });
+
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        type: "IN",
+        details: {
+          ledgerOpType: "IN",
+          assetAmount: "5",
+          assetSenders: ["SENDER"],
+          assetRecipients: [address],
+        },
+      }),
+    ]);
+  });
+
+  // The fee payer of a transaction without native row gets a FEES row, last (ADR-0028 fee payer rule in A4)
+  it("should give the fee payer of an ASA send and of an opt-in a FEES row, after the token row", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [
+        asaTransfer({ id: "SEND", sender: address, recipient: "RECIPIENT", amount: 5 }),
+        asaTransfer({ id: "OPTIN", sender: address, recipient: address, amount: 0 }),
+      ],
+      nextToken: undefined,
+    });
+
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
+
+    expect(
+      items.map(({ id, type, senders, recipients }) => ({ id, type, senders, recipients })),
+    ).toEqual([
+      { id: "SEND", type: "OUT", senders: [address], recipients: ["RECIPIENT"] },
+      { id: "SEND-fees", type: "FEES", senders: [address], recipients: [] },
+      { id: "OPTIN", type: "OPT_IN", senders: [address], recipients: [address] },
+      { id: "OPTIN-fees", type: "FEES", senders: [address], recipients: [] },
+    ]);
+  });
+
+  it("should give the FEES row of an ASA send the note of its transaction", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [
+        asaTransfer({
+          id: "SEND",
+          sender: address,
+          recipient: "RECIPIENT",
+          amount: 5,
+          note: "aGk=",
+        }),
+      ],
+      nextToken: undefined,
+    });
+
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
+
+    expect(items[1]).toMatchObject({
+      id: "SEND-fees",
+      type: "FEES",
+      details: { memo: { type: "string", kind: "note", value: "aGk=" } },
+    });
+  });
+
+  it("should keep the FEES row of an application call whose inner transaction sends an ASA to its fee payer", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [
+        {
+          ...asaTransfer({ id: "APPL", sender: address, recipient: "APP", amount: 0 }),
+          type: "appl",
+          details: undefined,
+        },
+        asaTransfer({
+          id: "APPL-inner-0",
+          rootId: "APPL",
+          sender: "APP",
+          recipient: address,
+          amount: 1,
+          feesPayer: address,
+        }),
+      ],
+      nextToken: undefined,
+    });
+
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
+
+    expect(items.map(({ id, type }) => ({ id, type }))).toEqual([
+      { id: "APPL-inner-0", type: "IN" },
+      { id: "APPL", type: "FEES" },
+    ]);
+  });
+
+  it("should name the receiver of a payment once when it is also its close address", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [
+        {
+          ...asaTransfer({ id: "CLOSE", sender: address, recipient: "RECIPIENT", amount: 0 }),
+          type: AlgoTransactionType.PAYMENT,
+          details: {
+            amount: new BigNumber(3000),
+            recipientAddress: "RECIPIENT",
+            closeAmount: new BigNumber(396000),
+            closeToAddress: "RECIPIENT",
+          },
+        },
+      ],
+      nextToken: undefined,
+    });
+
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
+
+    expect(items).toEqual([
+      expect.objectContaining({ type: "OUT", value: 399000n, recipients: ["RECIPIENT"] }),
+    ]);
   });
 
   it("should return a FEES operation for non-transfer transactions", async () => {

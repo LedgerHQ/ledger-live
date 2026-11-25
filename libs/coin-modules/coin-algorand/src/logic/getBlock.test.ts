@@ -314,6 +314,114 @@ describe("getBlock", () => {
     expect(transactions[0].operations).toHaveLength(7);
   });
 
+  it("gives the note of the transaction in its details", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({ note: "aW52b2ljZSA0Mg==", "payment-transaction": payment(100, BOB) }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    expect(transactions[0].details).toEqual({
+      txType: "pay",
+      memo: { type: "string", kind: "note", value: "aW52b2ljZSA0Mg==" },
+    });
+  });
+
+  // An application call and its inner transactions each have their own note: listOperations gives every row the note
+  // of the transaction it comes from, and the inner transfers are flattened into the root.
+  it("gives the note of each inner transfer apart from the note of the root", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        id: "APPL",
+        note: "cm9vdA==",
+        "tx-type": "appl",
+        "inner-txns": [
+          innerTransaction({
+            sender: "APP",
+            "tx-type": "axfer",
+            "asset-transfer-transaction": assetTransfer({ amount: 1, receiver: ALICE }),
+          }),
+          innerTransaction({
+            sender: "APP",
+            note: "aW5uZXI=",
+            "tx-type": "pay",
+            "payment-transaction": payment(5, ALICE, { amount: 7, to: CAROL }),
+          }),
+        ],
+      }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    const inner = { type: "string", kind: "note", value: "aW5uZXI=" };
+    expect(transactions[0].details).toEqual({
+      txType: "appl",
+      memo: { type: "string", kind: "note", value: "cm9vdA==" },
+      innerNotes: [
+        { from: "APP", to: ALICE, asset: NATIVE, memo: inner },
+        { from: "APP", to: CAROL, asset: NATIVE, memo: inner },
+      ],
+    });
+  });
+
+  it("gives the note of an inner transfer nested under an inner transaction without note", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        id: "APPL",
+        "tx-type": "appl",
+        "inner-txns": [
+          innerTransaction({
+            sender: "APP",
+            "tx-type": "appl",
+            "inner-txns": [
+              innerTransaction({
+                sender: "APP2",
+                note: "bmVzdGVk",
+                "tx-type": "pay",
+                "payment-transaction": payment(3, BOB),
+              }),
+            ],
+          }),
+        ],
+      }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    expect(transactions[0].details).toEqual({
+      txType: "appl",
+      innerNotes: [
+        {
+          from: "APP2",
+          to: BOB,
+          asset: NATIVE,
+          memo: { type: "string", kind: "note", value: "bmVzdGVk" },
+        },
+      ],
+    });
+  });
+
+  it("lists the participation rewards with the note of the transaction that pays them", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        note: "cm9vdA==",
+        "payment-transaction": payment(100, BOB),
+        "sender-rewards": 1,
+        "receiver-rewards": 2,
+        "inner-txns": [innerTransaction({ sender: CAROL, "sender-rewards": 3 })],
+      }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    const memo = { type: "string", kind: "note", value: "cm9vdA==" };
+    expect(transactions[0].details?.rewards).toEqual([
+      { address: ALICE, amount: 1n, memo },
+      { address: BOB, amount: 2n, memo },
+      { address: CAROL, amount: 3n },
+    ]);
+  });
+
   it("keeps the exact value of an amount above the safe integer range", async () => {
     const amount = 2n ** 64n - 1n;
     mockGetBlockTransactions.mockResolvedValue([

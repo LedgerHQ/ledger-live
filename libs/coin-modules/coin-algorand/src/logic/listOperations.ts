@@ -33,10 +33,11 @@ export async function listOperations(
     nextToken: cursor,
     includeInnerTransactions: true,
   });
-  const operations = dropRedundantFeesOperations(
+  const operations = withFeesOperations(
     result.transactions
       .filter(tx => isRelevantToAddress(tx, address))
       .flatMap(tx => convertToOperations(tx, address)),
+    address,
   );
 
   if (order === "desc") {
@@ -48,13 +49,41 @@ export async function listOperations(
   return { items: operations, next: result.nextToken ?? "" };
 }
 
-// Every row of a root transaction carries its fee, so a FEES row is only needed when no
-// other row does. REWARD rows carry no fee.
-function dropRedundantFeesOperations(operations: Operation[]): Operation[] {
-  const hashesWithFees = new Set(
-    operations.filter(op => op.type !== "FEES" && op.type !== "REWARD").map(op => op.tx.hash),
-  );
-  return operations.filter(op => op.type !== "FEES" || !hashesWithFees.has(op.tx.hash));
+/**
+ * The fee payer of a transaction gets one FEES row, last, when no native row of the transaction carries its fee: the
+ * convention A4 follows when it builds the operations of a block (ADR-0028, fee payer rule), and that of coin-tezos. A
+ * REWARD row carries no fee, as an EVM internal transfer, so it does not replace the FEES row.
+ */
+function withFeesOperations(operations: Operation[], address: string): Operation[] {
+  const byHash = new Map<string, Operation[]>();
+  for (const op of operations) byHash.set(op.tx.hash, [...(byHash.get(op.tx.hash) ?? []), op]);
+
+  return [...byHash.values()].flatMap(rows => {
+    const others = rows.filter(op => op.type !== "FEES");
+    const feesPayer = rows[0].tx.feesPayer === address;
+    const native = others.some(op => op.asset.type === "native" && op.type !== "REWARD");
+    if (!feesPayer || native) return others;
+    return [...others, rows.find(op => op.type === "FEES") ?? toFeesOperation(rows, address)];
+  });
+}
+
+/**
+ * The FEES row of a transaction whose root row is a token or OPT operation, with the note of the root. The root row of
+ * a fee payer is always listed (`isRelevantToAddress`), and every row of a transaction shares its `tx`.
+ */
+function toFeesOperation(rows: Operation[], address: string): Operation {
+  const { tx } = rows[0];
+  const memo = rows.find(op => op.id === tx.hash)?.details?.memo;
+  return {
+    id: `${tx.hash}-fees`,
+    type: "FEES",
+    value: 0n,
+    asset: { type: "native" },
+    senders: [address],
+    recipients: [],
+    tx,
+    ...(memo ? { details: { memo } } : {}),
+  };
 }
 
 function isRootFeePayer(tx: AlgoTransaction, address: string): boolean {
@@ -117,14 +146,24 @@ function convertToOperation(tx: AlgoTransaction, address: string, feesOnly = fal
   const value = isTransferOperation ? getOperationValue(tx, address) : 0n;
   const { senders, recipients } = isTransferOperation
     ? getOperationParties(tx)
-    : { senders: [], recipients: [] };
+    : { senders: [address], recipients: [] };
   const asset = isTransferOperation ? getOperationAsset(tx) : { type: "native" };
   const date = new Date(Number.parseInt(tx.timestamp) * SECONDS_TO_MILLISECONDS);
   const memo = toNoteMemo(tx.note);
+  const isToken = asset.type !== "native" && (type === "IN" || type === "OUT");
   const details = {
     ...(memo ? { memo } : {}),
     // The fields of the getBlock OPT operation, so that both sync paths give the same OPT event
     ...(type === "OPT_IN" || type === "OPT_OUT" ? { asset, ledgerOpType: type } : {}),
+    // The token details of the coin-modules, which A4 also sets on the token operations of a block
+    ...(isToken
+      ? {
+          ledgerOpType: type,
+          assetAmount: value.toString(),
+          assetSenders: senders,
+          assetRecipients: recipients,
+        }
+      : {}),
   };
 
   return {
@@ -257,7 +296,8 @@ function getOperationParties(tx: AlgoTransaction): { senders: string[]; recipien
     recipients.push(details.assetRecipientAddress);
     if (details.assetCloseToAddress) recipients.push(details.assetCloseToAddress);
   }
-  return { senders, recipients };
+  // A transaction that closes to its own receiver names it once
+  return { senders, recipients: [...new Set(recipients)] };
 }
 
 function getOperationAsset(tx: AlgoTransaction): { type: string; assetReference?: string } {
