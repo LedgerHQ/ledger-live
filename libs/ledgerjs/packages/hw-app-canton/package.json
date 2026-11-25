@@ -59,7 +59,7 @@
     "@typescript/native": "catalog:",
     "typescript": "catalog:",
     "jest": "catalog:",
-    "protobufjs-cli": "2.4.1",
+    "protobufjs-cli": "2.5.1",
     "rimraf": "4.4.1",
     "oxlint": "catalog:"
   },
