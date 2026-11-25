@@ -12,7 +12,7 @@ import {
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { device } from "detox";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { launchApp } from "@e2e/helpers/commonHelpers";
+import { launchApp, waitForIosTransitionEnd } from "@e2e/helpers/commonHelpers";
 import { MockServerDevicePage } from "@e2e/page/mockServerDevice.page";
 import type { PartialFeatures } from "@shared/feature-flags";
 
@@ -121,10 +121,14 @@ function tagDeviceListScenario({ tmsLinks, tags }: DeviceListTestOptions) {
   tags.forEach(tag => $Tag(tag));
 }
 
-/** The device list polls the mock server, so the app never goes idle on iOS. */
+/**
+ * The device list polls the mock server, so the app never goes idle on iOS. The list also ignores
+ * taps until the transition to My Wallet ends: it pauses while its screen is not focused.
+ */
 async function openMyWalletDeviceList() {
   await app.common.disableSynchronizationForiOS();
   await app.mainNavigation.openMyWallet();
+  await waitForIosTransitionEnd();
 }
 
 export function runOpenMyLedgerFromKnownDeviceTest(options: DeviceListTestOptions) {
