@@ -59,6 +59,31 @@ duplicate is ignored.
 A row id is the English label of the row in camelCase, e.g. "My Ledger provider" gives
 `myLedgerProvider`. Add the id to `SETTING_IDS` when a row needs to be hidden.
 
+## Settings values
+
+A section reads and changes settings through a port the app provides. The package never imports
+the app store, and a value can move out of the app later without the sections changing.
+
+| Export                   | Purpose                                                                   |
+| ------------------------ | ------------------------------------------------------------------------- |
+| `SettingsPortProvider`   | Gives the sections a `SettingsPort`; the app mounts it with a memoized value |
+| `useSetting(key)`        | Current value of a setting, re-rendered when the app changes it           |
+| `useUpdateSetting()`     | Returns `setValue({ key, value })`, which applies the change and its side effects |
+| `SettingsValues`         | Type of every setting, composed from one file per section under `src/ports/sections/` |
+
+The app builds the port from its own store. `values` is a snapshot read with the app's selectors,
+so the sections re-render on change. Each app maps every key to its legacy selector and action.
+
+`theme` is the first key and shows the pattern. Each section adds its keys when it lands: its values
+in `src/ports/sections/<section>.ts`, a handler in each app, and a row in the table below.
+
+| Key     | Value                           | Side effects of a change                           |
+| ------- | ------------------------------- | -------------------------------------------------- |
+| `theme` | `"system" \| "light" \| "dark"` | Stored only. Desktop stores `null` for `"system"`. |
+
+Side effects that need the app stay in the app: desktop main-process IPC, native modules and app
+restart. The tracking events of a screen stay in its view.
+
 ## Consumers
 
 Ledger Wallet Desktop and Ledger Wallet Mobile.
