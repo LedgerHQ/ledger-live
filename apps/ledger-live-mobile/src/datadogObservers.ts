@@ -1,4 +1,5 @@
 import { setCoinModuleCallObserver } from "@features/platform-coin-observability";
+import { setOperationSink } from "@shared/observability-operations";
 import { setTransactionObserver } from "@ledgerhq/transaction-observability";
 import {
   coinModuleCallLogger,
@@ -6,6 +7,7 @@ import {
   scrubTrackedRequestUrls,
   transactionBroadcastLogger,
 } from "./datadog";
+import { datadogOperationSink } from "./datadogOperationSink";
 
 /**
  * Forwards coin-module calls and bridge-seam broadcast outcomes to Datadog logs. Registered at
@@ -14,5 +16,6 @@ import {
  */
 setCoinModuleCallObserver(coinModuleCallLogger);
 setTransactionObserver(transactionBroadcastLogger);
+setOperationSink(datadogOperationSink);
 
 if (isDatadogEnabled) scrubTrackedRequestUrls();
