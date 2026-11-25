@@ -2084,6 +2084,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:^
         version: link:../../domain/api/currency-token
+      '@domain/api-market-chart':
+        specifier: workspace:*
+        version: link:../../domain/api/market-chart
       '@domain/api-market-countervalues':
         specifier: workspace:*
         version: link:../../domain/api/market-countervalues
@@ -21015,6 +21018,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:^
         version: link:../../domain/api/currency-token
+      '@domain/api-market-chart':
+        specifier: workspace:*
+        version: link:../../domain/api/market-chart
       '@domain/api-market-countervalues':
         specifier: workspace:*
         version: link:../../domain/api/market-countervalues

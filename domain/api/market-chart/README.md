@@ -12,6 +12,7 @@ that service's reducer, middleware and cache. No `createApi` of its own.
   and `getSupportedChartCounterCurrencies` (lowercased, kept 1 day). No retries. A rejected schema
   becomes a `CUSTOM_ERROR`.
 - `types.ts` — request params.
+- `toMarketChartRange.ts` — narrows a loose range string to a `MarketChartRange`, `undefined` when unknown.
 - `internals/` — private range-to-URL-segment mapping and schema failure description.
 
 ```ts
