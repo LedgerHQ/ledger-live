@@ -132,4 +132,12 @@ describe("SetupStepper", () => {
 
     expect(stepper.getByText("Give your Ledger Nano X a unique name")).toBeVisible();
   });
+
+  it("should let the bottom glow show through the card", () => {
+    renderStepper();
+
+    expect(screen.getByTestId(setupStepperTestIds.stepper).props.lx).toMatchObject({
+      backgroundColor: "surfaceTransparent",
+    });
+  });
 });
