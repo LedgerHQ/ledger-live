@@ -14,6 +14,7 @@ export function MyWalletScreenView({
   isPairing,
   onPairingStateChanged,
   isDeviceListEnabled,
+  pageProperties,
 }: Readonly<MyWalletScreenViewProps>) {
   const scrollRef = useRef<ScrollView>(null);
   const [scrollHeight, setScrollHeight] = useState<number | null>(null);
@@ -48,7 +49,10 @@ export function MyWalletScreenView({
 
   return (
     <Box style={{ flex: 1 }}>
-      <TrackScreen category="My Wallet" />
+      {/* Unmounted in the Add mode: the page is sent again when it closes, and the list events carry it. */}
+      {!(isDeviceListEnabled && isPairing) && (
+        <TrackScreen category="My Wallet" {...pageProperties} />
+      )}
       {/* The new device list has no scroll of its own: everything below the header scrolls. */}
       {isDeviceListEnabled && (
         <ScrollView

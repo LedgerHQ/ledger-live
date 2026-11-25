@@ -4,7 +4,7 @@ import type {
   ConnectKnownOrNewDeviceUIStateTypes,
   DeviceListItem,
 } from "@ledgerhq/live-dmk-mobile";
-import type { DeviceConnectionResult, SourceFlow } from "@ledgerhq/live-dmk-shared";
+import type { Device, DeviceConnectionResult, SourceFlow } from "@ledgerhq/live-dmk-shared";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import type {
   ConnectNewDeviceDelays,
@@ -62,8 +62,12 @@ export type ConnectKnownOrNewDeviceViewProps = {
   onDeviceNotFound?: () => void;
   /** Called on every close of the error sheet, also when `state` leaves an error. */
   onCloseErrorSheet: () => void;
+  /** Called on every close of the waiting and connecting sheet, also when `state` leaves it. */
+  onCloseDeviceStateSheet: () => void;
   /** Called on every close of the error sheet of the Add mode. */
   onCloseAddModeErrorSheet: () => void;
+  /** Whether a device is not in the known devices, for the events about that device. */
+  checkIsNewDevice: (device: Device) => boolean;
   listFooter?: ReactNode;
   children?: ReactNode;
 };

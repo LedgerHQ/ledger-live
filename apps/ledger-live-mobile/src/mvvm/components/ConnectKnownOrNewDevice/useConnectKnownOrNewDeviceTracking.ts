@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import {
   ConnectKnownOrNewDeviceUIStateTypes,
   ConnectNewDeviceUIStateTypes,
+  rnHidTransportIdentifier,
   type ConnectKnownOrNewDeviceUIState,
   type ConnectNewDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
@@ -10,9 +11,12 @@ import {
   type DeviceIntentTrackingProperties,
   type SourceFlow,
 } from "@ledgerhq/live-dmk-shared";
+import { useCheckIsNewDevice } from "LLM/components/DeviceConnection";
 import { useDeviceIntentTracking } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import {
   getTrackingTransport,
+  PAGE_CONNECT_DEVICE,
+  trackDeviceConnecting,
   trackDeviceflowCanceled,
 } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 
@@ -34,19 +38,41 @@ function trackAddModeOutcome(
 }
 
 /**
- * Sends the outcome of the Add mode when it ends before a connection: Close, Android Back or an
- * unmount of the list. After a fatal error, the unknown error sheet of the list sends it.
+ * Sends `device_connecting` each time the device list connects a device, retries included, and the
+ * outcome of the Add mode when it ends before a connection: Close, Android Back or an unmount of the
+ * list. After a fatal error, the unknown error sheet of the list sends it.
  */
 export function useConnectKnownOrNewDeviceTracking(state: ConnectKnownOrNewDeviceUIState): void {
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
+  const checkIsNewDevice = useCheckIsNewDevice();
 
   const latestRef = useRef<TrackingContext>({ sourceFlow, analyticsProperties });
   useLayoutEffect(() => {
     latestRef.current = { sourceFlow, analyticsProperties };
   });
 
+  const previousTypeRef = useRef<ConnectKnownOrNewDeviceUIState["type"] | null>(null);
   // Set while the Add mode shows.
   const lastAddModeStateRef = useRef<ConnectNewDeviceUIState | null>(null);
+
+  useEffect(() => {
+    const previousType = previousTypeRef.current;
+    previousTypeRef.current = state.type;
+
+    if (state.type !== ConnectKnownOrNewDeviceUIStateTypes.Connecting) return;
+    if (previousType === ConnectKnownOrNewDeviceUIStateTypes.Connecting) return;
+    trackDeviceConnecting({
+      sourceFlow,
+      modelId: state.device.deviceModelId,
+      transport: state.device.transport === rnHidTransportIdentifier ? "usb" : "ble",
+      extraProperties: {
+        ...analyticsProperties,
+        isNewDevice: checkIsNewDevice(state.device),
+        // The connecting sheet sends its page later, through its portal.
+        page: PAGE_CONNECT_DEVICE.Connecting,
+      },
+    });
+  }, [analyticsProperties, checkIsNewDevice, sourceFlow, state]);
 
   useEffect(() => {
     if (state.type === ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice) {

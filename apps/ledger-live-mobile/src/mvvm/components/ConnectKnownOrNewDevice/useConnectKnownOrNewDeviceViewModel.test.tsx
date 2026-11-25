@@ -9,6 +9,7 @@ import {
   connectKnownOrNewDevice,
   ConnectKnownOrNewDeviceUIStateTypes,
   ConnectNewDeviceUIStateTypes,
+  ConnectionErrorTypes,
   DeviceListItemStatuses,
   rnBleTransportIdentifier,
   useDeviceManagementKit,
@@ -293,6 +294,70 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
     });
   });
 
+  describe("Outcomes", () => {
+    const outcomes = () =>
+      jest
+        .mocked(track)
+        .mock.calls.filter(
+          ([name]) => name === "deviceflow_aborted" || name === "deviceflow_failed",
+        );
+
+    it("GIVEN a connection error over the list, WHEN its sheet closes, THEN it should send deviceflow_aborted with the error", () => {
+      // GIVEN
+      const { result } = setup();
+      emit({
+        type: ConnectKnownOrNewDeviceUIStateTypes.ConnectionError,
+        devices: [nanoXRow],
+        error: { type: ConnectionErrorTypes.BlePairingRefused },
+        device: knownNanoX,
+        retry: jest.fn(),
+        ignore: jest.fn(),
+        close: jest.fn(),
+      });
+
+      // WHEN
+      act(() => result.current.onCloseErrorSheet());
+
+      // THEN
+      expect(outcomes()).toEqual([
+        [
+          "deviceflow_aborted",
+          {
+            sourceFlow: "my_wallet",
+            deviceUxV2: true,
+            failureType: "ConnectionError",
+            subError: ConnectionErrorTypes.BlePairingRefused,
+            modelId: DeviceModelId.nanoX,
+            transport: "ble",
+          },
+        ],
+      ]);
+    });
+
+    it("GIVEN the Add mode, WHEN a fatal error shows the unknown error sheet and it closes, THEN it should send one outcome, deviceflow_failed with the error", () => {
+      // GIVEN
+      const { result } = setup();
+      emit(makeAddModeState());
+
+      // WHEN
+      emit({ type: ConnectKnownOrNewDeviceUIStateTypes.UnknownError, error: new Error("boom") });
+      act(() => result.current.onCloseErrorSheet());
+
+      // THEN
+      expect(outcomes()).toEqual([
+        [
+          "deviceflow_failed",
+          {
+            sourceFlow: "my_wallet",
+            deviceUxV2: true,
+            failureType: "ConnectDeviceUnknownError",
+            subError: "Error",
+          },
+        ],
+      ]);
+    });
+  });
+
   describe("Save", () => {
     it("GIVEN a running flow, WHEN the flow connects a device, THEN it should call onConnected with the connection result", () => {
       // GIVEN
@@ -342,6 +407,26 @@ describe("useConnectKnownOrNewDeviceViewModel", () => {
       expect(jest.mocked(track)).toHaveBeenCalledWith(
         "device_connected",
         expect.objectContaining({ sourceFlow: "my_wallet", deviceUxV2: true, isNewDevice: true }),
+      );
+    });
+
+    it("GIVEN a known device connecting from the list, WHEN the flow connects it, THEN it should send device_connected with isNewDevice false", () => {
+      // GIVEN
+      setup({}, withKnownNanoX("nano-x-id"));
+      emit({
+        type: ConnectKnownOrNewDeviceUIStateTypes.Connecting,
+        devices: [],
+        device: knownNanoX,
+        close: jest.fn(),
+      });
+
+      // WHEN
+      act(() => lastInput().onConnected(makeConnectionResult()));
+
+      // THEN
+      expect(jest.mocked(track)).toHaveBeenCalledWith(
+        "device_connected",
+        expect.objectContaining({ sourceFlow: "my_wallet", isNewDevice: false }),
       );
     });
 

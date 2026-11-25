@@ -55,7 +55,14 @@ Discovery, connection and unknown errors show in a bottom sheet over the list, w
 
 ## Analytics
 
-The component gives `sourceFlow` to `DeviceIntentTrackingProvider`. In the Add mode, `ConnectNewDeviceView` and the view model of `components/AddMode` send the events of the connectivity screen with this `sourceFlow` (see the [ConnectNewDevice README](../ConnectNewDevice/README.md#analytics)). The view model sends `device_connected` for a device connected in the Add mode, before it saves the device. The embedded flow sends no outcome: `useConnectKnownOrNewDeviceTracking`, called by the view model, sends it when the Add mode ends before a connection, with Close, Android Back or an unmount of the list. It sends `deviceflow_aborted`, or `deviceflow_failed` with the error that shows. It sends nothing when a fatal error shows the unknown error of the list. The events are in the [tracking plan](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7620034573).
+The component sends its events itself, with the Device UX V2 helpers of the DIE and the `sourceFlow` of the caller. The events and their properties are in the [tracking plan](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7620034573).
+
+- The views send the pages and the buttons of their state: `device_selected` with `deviceStatus` and `isNewDevice`, Add, "Add a Ledger device", Show all and Show less, the `Drawer - Device Menu` page with Disconnect and Remove, the waiting and connecting pages, the waiting hint, the error sheets and the close bar of the Add mode. The view model gives them `checkIsNewDevice`.
+- `useConnectKnownOrNewDeviceTracking`, called by the view model, sends `device_connecting` at each connection from the list, with the `Connect Device - Connecting` page: the connecting sheet sends that page later, through its portal.
+- The view model sends `deviceflow_aborted` or `deviceflow_failed` when the waiting sheet, the connecting sheet or an error sheet closes, with the error when one shows. The sheets also close when the screen loses focus. A waiting or connecting sheet that closes because the state has left it sends no outcome, for instance when the waiting hint opens the Add mode. The `Close` button of an error sheet is sent only when the user presses it.
+- A sheet renders its content through a portal, outside the `DeviceIntentTrackingProvider` of the component, so each sheet provides the tracking context again inside.
+- The view model sends `device_connected` for a new connection, before it saves the device. A tap on a connected device reuses its session and sends none.
+- In the Add mode, `ConnectNewDeviceView` and the view model of `components/AddMode` send the events of the connectivity screen (see the [ConnectNewDevice README](../ConnectNewDevice/README.md#analytics)), but not the outcome. `useConnectKnownOrNewDeviceTracking` sends it when the Add mode ends before a connection, with Close, Android Back or an unmount of the list: `deviceflow_aborted`, or `deviceflow_failed` with the error that shows. After a fatal error, the unknown error sheet over the list sends it.
 
 ## Try it
 

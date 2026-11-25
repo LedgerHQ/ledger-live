@@ -1,7 +1,10 @@
 import React from "react";
 import type { Device } from "@ledgerhq/live-dmk-shared";
 import { TrackDIEScreen } from "LLM/components/DeviceIntentExecutor/components/TrackDIEScreen";
-import { PAGE_CONNECT_DEVICE } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
+import {
+  getTrackingTransport,
+  PAGE_CONNECT_DEVICE,
+} from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { WaitingForSelectedDeviceState } from "./WaitingForSelectedDeviceState";
 
 type TrackedWaitingForSelectedDeviceStateProps = {
@@ -17,6 +20,7 @@ export function TrackedWaitingForSelectedDeviceState({
       <TrackDIEScreen
         category={PAGE_CONNECT_DEVICE.WaitingForSelectedDevice}
         modelId={device.deviceModelId}
+        transport={getTrackingTransport(device.transport)}
         refreshSource
       />
       <WaitingForSelectedDeviceState device={device} />

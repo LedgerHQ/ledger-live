@@ -114,7 +114,8 @@ type ConnectivityErrorUIState =
   | ConnectionErrorUIState<BaseConnectionError>
   | UnknownErrorUIState;
 
-function getConnectivityErrorFailure(
+/** The error screen of a connectivity error state, shared by every connectivity flow. */
+export function getConnectivityErrorFailure(
   state: ConnectivityErrorUIState,
   getTransport: GetDeviceFlowTransport,
 ): DeviceFlowFailure {
