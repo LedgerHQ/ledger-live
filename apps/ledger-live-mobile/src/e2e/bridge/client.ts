@@ -111,8 +111,7 @@ function applyMockServerLaunchArgs() {
   const args = LaunchArguments.value();
   const url = args["mockServerUrl"];
   const token = args["mockServerToken"];
-  const model = args["mockServerModel"];
-  if (!isNonEmptyString(url) || !isNonEmptyString(token) || !isNonEmptyString(model)) return;
+  if (!isNonEmptyString(url) || !isNonEmptyString(token)) return;
 
   const provider = readLaunchForceProvider(args["forceProvider"]);
   if (provider !== undefined) {
@@ -128,19 +127,26 @@ function applyMockServerLaunchArgs() {
   }
   store.dispatch(setMockServerSettings({ enabled: true, url, token }));
 
-  seedMockServerKnownDevice(model as DeviceModelId);
+  const model = args["mockServerModel"];
+  if (!isNonEmptyString(model)) return;
+  const deviceId = args["mockServerDeviceId"];
+  seedMockServerKnownDevice(model as DeviceModelId, isNonEmptyString(deviceId) ? deviceId : "");
 }
 
-function seedMockServerKnownDevice(model: DeviceModelId) {
+/** A known device with no id matches any device of its model in the session. */
+function seedMockServerKnownDevice(model: DeviceModelId, id: string) {
   const alreadySeeded = knownDevicesSelector(store.getState()).some(
-    device => device.transport === mockserverIdentifier && device.deviceModelId === model,
+    device =>
+      device.transport === mockserverIdentifier &&
+      device.deviceModelId === model &&
+      (id === "" || device.id === id),
   );
   if (alreadySeeded) return;
 
   store.dispatch(
     addKnownDevice({
       transport: mockserverIdentifier,
-      id: "",
+      id,
       name: null,
       deviceModelId: model,
     }),

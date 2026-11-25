@@ -128,6 +128,12 @@ export class MockServerSessionHandle {
     return name;
   }
 
+  /** Id the app discovers the device under, and saves it under once connected. */
+  async deviceId(): Promise<string> {
+    const { id } = await this.firstDevice();
+    return id;
+  }
+
   /**
    * Freezes the device on an onboarding step by pinning GET_VERSION. Only the flag bytes
    * are rewritten — the rest of the reply is whatever the device actually returned, so
