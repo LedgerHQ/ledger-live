@@ -6,30 +6,36 @@ import {
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import {
-  getNextTabBarCompaction,
-  INITIAL_TAB_BAR_SCROLL_TRACKING,
-  type TabBarScrollTracking,
-} from "LLM/components/MainTabBar/getNextTabBarCompaction";
-import { setTabBarCompact, tabBarCompactOnUI } from "LLM/components/MainTabBar/tabBarDensityStore";
+  getNextScrollCompaction,
+  INITIAL_SCROLL_COMPACTION_TRACKING,
+  type ScrollCompactionTracking,
+} from "@shared/scroll-compaction";
+import {
+  setTabBarCompact,
+  tabBarCompactOnUI,
+  tabBarResetGenerationOnUI,
+} from "LLM/components/MainTabBar/tabBarDensityStore";
 
 type UseScrollOffsetOptions = {
   readonly drivesTabBarDensity?: boolean;
 };
 
 function updateTabBarDensity(
-  tracking: SharedValue<TabBarScrollTracking>,
+  tracking: SharedValue<ScrollCompactionTracking>,
   event: Pick<NativeScrollEvent, "contentOffset" | "contentSize" | "layoutMeasurement">,
 ) {
   "worklet";
-  const { isCompact, ...nextTracking } = getNextTabBarCompaction(tracking.value, {
+  const resetGeneration = tabBarResetGenerationOnUI.value;
+  const { isCompact, ...nextTracking } = getNextScrollCompaction(tracking.value, {
     offset: event.contentOffset.y,
     maxOffset: event.contentSize.height - event.layoutMeasurement.height,
     isCompact: tabBarCompactOnUI.value,
+    resetGeneration,
   });
   tracking.value = nextTracking;
   if (isCompact !== tabBarCompactOnUI.value) {
     tabBarCompactOnUI.value = isCompact;
-    scheduleOnRN(setTabBarCompact, isCompact);
+    scheduleOnRN(setTabBarCompact, isCompact, resetGeneration);
   }
 }
 
@@ -44,7 +50,7 @@ export function useScrollOffset(
 ) {
   const ownScrollY = useSharedValue(0);
   const offset = scrollY ?? ownScrollY;
-  const tabBarScrollTracking = useSharedValue(INITIAL_TAB_BAR_SCROLL_TRACKING);
+  const tabBarScrollTracking = useSharedValue(INITIAL_SCROLL_COMPACTION_TRACKING);
 
   const onScroll = useAnimatedScrollHandler(event => {
     offset.value = event.contentOffset.y;

@@ -1,29 +1,24 @@
 import { useSyncExternalStore } from "react";
 import { makeMutable } from "react-native-reanimated";
-
-type Listener = () => void;
-
-const listeners = new Set<Listener>();
-let isCompact = false;
+import { createScrollCompactionStore } from "@shared/scroll-compaction";
 
 export const tabBarCompactOnUI = makeMutable(false);
+export const tabBarResetGenerationOnUI = makeMutable(0);
 
-function subscribe(listener: Listener) {
-  listeners.add(listener);
-  return () => {
-    listeners.delete(listener);
-  };
-}
+export const tabBarDensity = createScrollCompactionStore({
+  onApply: isCompact => {
+    tabBarCompactOnUI.value = isCompact;
+  },
+  onReset: resetGeneration => {
+    tabBarResetGenerationOnUI.value = resetGeneration;
+  },
+});
 
-export const getIsTabBarCompact = () => isCompact;
+export const {
+  getIsCompact: getIsTabBarCompact,
+  setCompact: setTabBarCompact,
+  reset: resetTabBarDensity,
+} = tabBarDensity;
 
-export function setTabBarCompact(next: boolean) {
-  tabBarCompactOnUI.value = next;
-  if (next === isCompact) return;
-  isCompact = next;
-  listeners.forEach(listener => listener());
-}
-
-export const resetTabBarDensity = () => setTabBarCompact(false);
-
-export const useIsTabBarCompact = () => useSyncExternalStore(subscribe, getIsTabBarCompact);
+export const useIsTabBarCompact = () =>
+  useSyncExternalStore(tabBarDensity.subscribe, tabBarDensity.getIsCompact);

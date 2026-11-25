@@ -1,8 +1,10 @@
 import { renderHook, act } from "@tests/test-renderer";
 import {
+  tabBarDensity,
   resetTabBarDensity,
   setTabBarCompact,
   tabBarCompactOnUI,
+  tabBarResetGenerationOnUI,
   useIsTabBarCompact,
 } from "../tabBarDensityStore";
 
@@ -41,6 +43,27 @@ describe("tabBarDensityStore", () => {
 
     resetTabBarDensity();
 
+    expect(tabBarCompactOnUI.value).toBe(false);
+  });
+
+  it("should move to a new reset generation on reset", () => {
+    const before = tabBarDensity.getResetGeneration();
+
+    resetTabBarDensity();
+
+    expect(tabBarDensity.getResetGeneration()).toBe(before + 1);
+    expect(tabBarResetGenerationOnUI.value).toBe(before + 1);
+  });
+
+  it("should drop a compact update computed before the last reset", () => {
+    const { result } = renderHook(() => useIsTabBarCompact());
+    const staleGeneration = tabBarDensity.getResetGeneration();
+    act(() => resetTabBarDensity());
+    tabBarCompactOnUI.value = true;
+
+    act(() => setTabBarCompact(true, staleGeneration));
+
+    expect(result.current).toBe(false);
     expect(tabBarCompactOnUI.value).toBe(false);
   });
 });
