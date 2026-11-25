@@ -10,6 +10,7 @@ import {
 import {
   describeAgentIntentError,
   isAcceptedWithoutReviewLink,
+  isHttpError,
   redactServiceText,
 } from "./service-errors";
 
@@ -96,6 +97,21 @@ describe("SDK errors, as the real SDK throws them", () => {
     });
 
     expect(describeAgentIntentError(e, "bot").message).toMatch(/issuer does not match.*Re-enroll/s);
+  });
+});
+
+describe("isHttpError", () => {
+  it.each([
+    ["the SDK's class", new AgentIntentHttpError("Illegal transition", 400), true],
+    [
+      "another copy of the SDK's class",
+      Object.assign(new Error("Illegal transition"), { name: "AgentIntentHttpError", status: 400 }),
+      true,
+    ],
+    ["another SDK error", new AgentIntentSdkError("Malformed"), false],
+    ["a plain object", { name: "AgentIntentHttpError", status: 400 }, false],
+  ])("recognizes %s: %p", (_, error, expected) => {
+    expect(isHttpError(error)).toBe(expected);
   });
 });
 
