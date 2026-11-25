@@ -51,8 +51,8 @@ export async function listOperations(
 
 /**
  * The fee payer of a transaction gets one FEES row, last, when no native row of the transaction carries its fee: the
- * convention A4 follows when it builds the operations of a block (ADR-0028, fee payer rule), and that of coin-tezos. A
- * REWARD row carries no fee, as an EVM internal transfer, so it does not replace the FEES row.
+ * convention A4 follows when it builds the operations of a block (ADR-0028, fee payer rule). A REWARD row carries no
+ * fee, as A4 gives none to the operations that do not pay the transaction's fee, so it does not replace the FEES row.
  */
 function withFeesOperations(operations: Operation[], address: string): Operation[] {
   const byHash = new Map<string, Operation[]>();
@@ -100,86 +100,43 @@ function isRelevantToAddress(tx: AlgoTransaction, address: string): boolean {
 }
 
 function convertToOperations(tx: AlgoTransaction, address: string): Operation[] {
-  const feesOnly = isRootFeePayer(tx, address) && isTransfer(tx) && !isMovementParty(tx, address);
-  const operation = convertToOperation(tx, address, feesOnly);
   const reward = getReward(tx, address);
-
-  if (isTransfer(tx)) {
-    return reward === undefined
-      ? [operation]
-      : [operation, createRewardOperation(operation, tx, address, reward)];
+  const rewards = reward === undefined ? [] : [toRewardOperation(tx, address, reward)];
+  if (!isTransfer(tx) || !isMovementParty(tx, address)) {
+    return [...(isRootFeePayer(tx, address) ? [toFeesRow(tx, address)] : []), ...rewards];
   }
 
-  const fees = isRootFeePayer(tx, address) ? [operation] : [];
-  return reward === undefined
-    ? fees
-    : [...fees, createRewardOperation(operation, tx, address, reward)];
-}
-
-function createRewardOperation(
-  operation: Operation,
-  tx: AlgoTransaction,
-  address: string,
-  reward: bigint,
-): Operation {
-  // Only the memo carries over: the other details (OPT fields) describe the primary operation
-  const { details, ...primary } = operation;
-  return {
-    ...primary,
-    id: `${tx.id}-reward-${address}`,
-    type: "REWARD",
-    value: reward,
-    asset: { type: "native" },
-    senders: [],
-    recipients: [address],
-    tx: { ...operation.tx, fees: 0n },
-    ...(details?.memo ? { details: { memo: details.memo } } : {}),
-  };
+  const type = getOperationType(tx, address);
+  const primary =
+    type === "OPT_IN" || type === "OPT_OUT"
+      ? [toOperation(tx, { ...toOptFields(tx, address), type }, { ledgerOpType: type })]
+      : toLegOperations(tx, address);
+  return [...primary, ...rewards];
 }
 
 function isTransfer(tx: AlgoTransaction): boolean {
   return tx.type === AlgoTransactionType.PAYMENT || tx.type === AlgoTransactionType.ASSET_TRANSFER;
 }
-function convertToOperation(tx: AlgoTransaction, address: string, feesOnly = false): Operation {
-  const isTransferOperation = isTransfer(tx) && !feesOnly;
-  const type = isTransferOperation ? getOperationType(tx, address) : "FEES";
-  const value = isTransferOperation ? getOperationValue(tx, address) : 0n;
-  const { senders, recipients } = isTransferOperation
-    ? getOperationParties(tx)
-    : { senders: [address], recipients: [] };
-  const asset = isTransferOperation ? getOperationAsset(tx) : { type: "native" };
+
+type OperationFields = Pick<
+  Operation,
+  "id" | "type" | "value" | "asset" | "senders" | "recipients"
+>;
+
+// Every row of a transaction carries its note and its location
+function toOperation(
+  tx: AlgoTransaction,
+  fields: OperationFields,
+  extraDetails: Record<string, unknown> = {},
+): Operation {
   const date = new Date(Number.parseInt(tx.timestamp) * SECONDS_TO_MILLISECONDS);
   const memo = toNoteMemo(tx.note);
-  const isToken = asset.type !== "native" && (type === "IN" || type === "OUT");
-  const details = {
-    ...(memo ? { memo } : {}),
-    // The fields of the getBlock OPT operation, so that both sync paths give the same OPT event
-    ...(type === "OPT_IN" || type === "OPT_OUT" ? { asset, ledgerOpType: type } : {}),
-    // The token details of the coin-modules, which A4 also sets on the token operations of a block
-    ...(isToken
-      ? {
-          ledgerOpType: type,
-          assetAmount: value.toString(),
-          assetSenders: senders,
-          assetRecipients: recipients,
-        }
-      : {}),
-  };
-
+  const details = { ...(memo ? { memo } : {}), ...extraDetails };
   return {
-    id: tx.id,
-    type,
-    value,
-    asset,
-    senders,
-    recipients,
+    ...fields,
     tx: {
       hash: tx.rootId,
-      block: {
-        height: tx.round,
-        hash: "",
-        time: date,
-      },
+      block: { height: tx.round, hash: "", time: date },
       fees: BigInt(tx.fee.toString()),
       feesPayer: tx.feesPayer,
       date,
@@ -187,6 +144,100 @@ function convertToOperation(tx: AlgoTransaction, address: string, feesOnly = fal
     },
     ...(Object.keys(details).length > 0 ? { details } : {}),
   };
+}
+
+function toFeesRow(tx: AlgoTransaction, address: string): Operation {
+  return toOperation(tx, {
+    id: tx.id,
+    type: "FEES",
+    value: 0n,
+    asset: { type: "native" },
+    senders: [address],
+    recipients: [],
+  });
+}
+
+function toRewardOperation(tx: AlgoTransaction, address: string, reward: bigint): Operation {
+  const operation = toOperation(tx, {
+    id: `${tx.id}-reward-${address}`,
+    type: "REWARD",
+    value: reward,
+    asset: { type: "native" },
+    senders: [],
+    recipients: [address],
+  });
+  return { ...operation, tx: { ...operation.tx, fees: 0n } };
+}
+
+// An OPT row describes the whole transaction: A4 folds the transfers of an OPT_OUT into one operation too
+function toOptFields(tx: AlgoTransaction, address: string): Omit<OperationFields, "type"> {
+  return {
+    id: tx.id,
+    value: getOperationValue(tx, address),
+    asset: getOperationAsset(tx),
+    ...getOperationParties(tx),
+  };
+}
+
+/** A movement of a payment or an asset transfer: to its receiver, or to its close address. */
+type TransferLeg = { from: string; to: string; amount: bigint; close: boolean };
+
+function transferLegs(tx: AlgoTransaction): TransferLeg[] {
+  const from = getOperationSender(tx);
+  const [to, amount, closeTo, closeAmount] =
+    tx.type === AlgoTransactionType.PAYMENT
+      ? [
+          (tx.details as AlgoPaymentInfo).recipientAddress,
+          (tx.details as AlgoPaymentInfo).amount,
+          (tx.details as AlgoPaymentInfo).closeToAddress,
+          (tx.details as AlgoPaymentInfo).closeAmount,
+        ]
+      : [
+          (tx.details as AlgoAssetTransferInfo).assetRecipientAddress,
+          (tx.details as AlgoAssetTransferInfo).assetAmount,
+          (tx.details as AlgoAssetTransferInfo).assetCloseToAddress,
+          (tx.details as AlgoAssetTransferInfo).assetCloseAmount,
+        ];
+  return [
+    { from, to, amount: BigInt(amount.toString()), close: false },
+    ...(closeTo
+      ? [{ from, to: closeTo, amount: BigInt((closeAmount ?? 0).toString()), close: true }]
+      : []),
+  ];
+}
+
+/**
+ * One row per movement of the account, with the parties of that movement, as coin-evm and coin-tezos: getBlock gives
+ * one transfer per movement, and A4 one operation per transfer. The 0 receiver movement of a transaction that only
+ * closes the account gives no row, as A4 drops 0 transfers.
+ */
+function toLegOperations(tx: AlgoTransaction, address: string): Operation[] {
+  const legs = transferLegs(tx);
+  const asset = getOperationAsset(tx);
+  return legs
+    .filter(leg => leg.from === address || leg.to === address)
+    .filter(leg => leg.close || leg.amount !== 0n || legs.length === 1)
+    .map(leg => {
+      const type = leg.from === address ? "OUT" : "IN";
+      const value = (leg.from === address) !== (leg.to === address) ? leg.amount : 0n;
+      const senders = [leg.from];
+      const recipients = [leg.to];
+      // The token details of the coin-modules, which A4 also sets on the token operations of a block
+      const tokenDetails =
+        asset.type === "native"
+          ? {}
+          : {
+              ledgerOpType: type,
+              assetAmount: value.toString(),
+              assetSenders: senders,
+              assetRecipients: recipients,
+            };
+      return toOperation(
+        tx,
+        { id: leg.close ? `${tx.id}-close` : tx.id, type, value, asset, senders, recipients },
+        tokenDetails,
+      );
+    });
 }
 
 function getReward(tx: AlgoTransaction, address: string): bigint | undefined {

@@ -121,7 +121,7 @@ describe("listOperations", () => {
     expect(items[0].asset).toEqual({ type: "native" });
   });
 
-  it("should include a payment close amount for its sender and close address", async () => {
+  it("should give the close amount of a payment its own row, with the parties of that movement", async () => {
     const tx = {
       id: "TX_CLOSE",
       rootId: "TX_CLOSE",
@@ -148,12 +148,20 @@ describe("listOperations", () => {
     await expect(
       listOperations(mockAlgorandContext, address, { order: "desc" }),
     ).resolves.toMatchObject({
-      items: [{ value: 1000n, tx: { feesPayer: address } }],
+      items: [
+        { id: "TX_CLOSE", type: "OUT", value: 100n, recipients: ["RECIPIENT_ADDRESS"] },
+        { id: "TX_CLOSE-close", type: "OUT", value: 900n, recipients: ["CLOSE_ADDRESS"] },
+      ],
     });
 
     await expect(
       listOperations(mockAlgorandContext, "CLOSE_ADDRESS", { order: "desc" }),
-    ).resolves.toMatchObject({ items: [{ type: "IN", value: 900n }] });
+    ).resolves.toMatchObject({
+      items: [{ id: "TX_CLOSE-close", type: "IN", value: 900n, senders: [address] }],
+    });
+    await expect(
+      listOperations(mockAlgorandContext, "RECIPIENT_ADDRESS", { order: "desc" }),
+    ).resolves.toMatchObject({ items: [{ id: "TX_CLOSE", type: "IN", value: 100n }] });
   });
 
   it("should convert asset transfer to operation with asa type", async () => {
@@ -246,7 +254,6 @@ describe("listOperations", () => {
 
     expect(items[0].type).toBe("OPT_IN");
     expect(items[0].details).toEqual({
-      asset: { type: "asa", assetReference: "67890" },
       ledgerOpType: "OPT_IN",
     });
   });
@@ -279,7 +286,6 @@ describe("listOperations", () => {
 
     expect(items[0].details).toEqual({
       memo: { type: "string", kind: "note", value: "b3B0LWlu" },
-      asset: { type: "asa", assetReference: "67890" },
       ledgerOpType: "OPT_IN",
     });
   });
@@ -341,7 +347,6 @@ describe("listOperations", () => {
 
     expect(items[0].type).toBe("OPT_OUT");
     expect(items[0].details).toEqual({
-      asset: { type: "asa", assetReference: "11111" },
       ledgerOpType: "OPT_OUT",
     });
   });
@@ -382,12 +387,12 @@ describe("listOperations", () => {
     const { items } = await listOperations(mockAlgorandContext, "CLOSE_ADDRESS", {
       order: "desc",
     });
-    expect(items).toMatchObject([{ type: "IN", value: 100n }]);
+    expect(items).toMatchObject([{ id: "TX_OPTOUT-close", type: "IN", value: 100n }]);
     expect(items[0].details).toEqual({
       ledgerOpType: "IN",
       assetAmount: "100",
       assetSenders: [address],
-      assetRecipients: ["RECIPIENT_ADDRESS", "CLOSE_ADDRESS"],
+      assetRecipients: ["CLOSE_ADDRESS"],
     });
   });
   it("should include memo when note is present", async () => {
@@ -1054,7 +1059,7 @@ describe("listOperations", () => {
     ]);
   });
 
-  it("should name the receiver of a payment once when it is also its close address", async () => {
+  it("should give a row to each movement of a payment whose receiver is also its close address", async () => {
     mockGetAccountTransactions.mockResolvedValue({
       transactions: [
         {
@@ -1074,8 +1079,46 @@ describe("listOperations", () => {
     const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
     expect(items).toEqual([
-      expect.objectContaining({ type: "OUT", value: 399000n, recipients: ["RECIPIENT"] }),
+      expect.objectContaining({
+        id: "CLOSE",
+        type: "OUT",
+        value: 3000n,
+        recipients: ["RECIPIENT"],
+      }),
+      expect.objectContaining({
+        id: "CLOSE-close",
+        type: "OUT",
+        value: 396000n,
+        recipients: ["RECIPIENT"],
+      }),
     ]);
+  });
+
+  // A4 drops the 0 transfer of the receiver on the block path
+  it("should give no row to the 0 receiver movement of a payment that only closes the account", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [
+        {
+          ...asaTransfer({ id: "CLOSE", sender: address, recipient: "RECIPIENT", amount: 0 }),
+          type: AlgoTransactionType.PAYMENT,
+          details: {
+            amount: new BigNumber(0),
+            recipientAddress: "RECIPIENT",
+            closeAmount: new BigNumber(396000),
+            closeToAddress: "CLOSE_ADDRESS",
+          },
+        },
+      ],
+      nextToken: undefined,
+    });
+
+    const sender = await listOperations(mockAlgorandContext, address, { order: "desc" });
+    const receiver = await listOperations(mockAlgorandContext, "RECIPIENT", { order: "desc" });
+
+    expect(sender.items.map(({ id, type, value }) => ({ id, type, value }))).toEqual([
+      { id: "CLOSE-close", type: "OUT", value: 396000n },
+    ]);
+    expect(receiver.items).toEqual([]);
   });
 
   it("should return a FEES operation for non-transfer transactions", async () => {

@@ -450,7 +450,7 @@ describe("getBlock", () => {
     const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
 
     const memo = { type: "string", kind: "note", value: "cm9vdA==" };
-    expect(transactions[0].details?.rewards).toEqual([
+    expect(transactions[0].details?.participationRewards).toEqual([
       { address: ALICE, amount: 1n, memo },
       { address: BOB, amount: 2n, memo },
       { address: CAROL, amount: 3n },
@@ -629,7 +629,7 @@ describe("getBlock", () => {
     expect(listAmounts).toEqual(blockAmounts);
   });
 
-  it("gives an OPT list operation the details of the block OPT operation without its type and address", async () => {
+  it("gives an OPT list operation the asset of the block OPT operation and its other fields as details", async () => {
     mockGetBlockTransactions.mockResolvedValue([
       transaction({
         id: "OPTIN",
@@ -701,12 +701,12 @@ describe("getBlock", () => {
     const blockOptEvents = block.transactions.map(blockTransaction =>
       blockTransaction.operations
         .filter(operation => operation.type === "other")
-        .map(({ type: _type, address: _address, ...event }) => event),
+        .map(({ type: _type, address: _address, asset, ...details }) => ({ asset, details })),
     );
     const listOptEvents = ["OPTIN", "OPTOUT"].map(hash =>
       items
         .filter(item => item.tx.hash === hash && item.type.startsWith("OPT_"))
-        .map(item => item.details),
+        .map(({ asset, details }) => ({ asset, details })),
     );
 
     expect(listOptEvents).toEqual(blockOptEvents);

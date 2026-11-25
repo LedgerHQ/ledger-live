@@ -41,7 +41,7 @@ function toBlockTransaction(tx: ExplorerTransaction<ExplorerAmount>): BlockTrans
   const operations: BlockOperation[] = [];
   const innerNotes: InnerNote[] = [];
   collectOperations(tx, operations, innerNotes, false);
-  const rewards = toRewards(tx);
+  const participationRewards = toRewards(tx);
   return {
     hash: tx.id,
     failed: false,
@@ -52,7 +52,7 @@ function toBlockTransaction(tx: ExplorerTransaction<ExplorerAmount>): BlockTrans
       txType: tx["tx-type"],
       ...(memo ? { memo } : {}),
       ...(innerNotes.length > 0 ? { innerNotes } : {}),
-      ...(rewards.length > 0 ? { rewards } : {}),
+      ...(participationRewards.length > 0 ? { participationRewards } : {}),
     },
   };
 }
