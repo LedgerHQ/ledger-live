@@ -1,3 +1,4 @@
+import type { BlockOperation } from "@ledgerhq/coin-module-framework/api/index";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type { TronCoinConfig } from "../config";
 import {
@@ -6,6 +7,7 @@ import {
   getTransactionInfoByBlockNum,
 } from "../network";
 import { encode58Check } from "../network/format";
+import { block82524825, block82524825TxInfos } from "./__fixtures__/block82524825";
 import { getBlock, getBlockInfo } from "./getBlock";
 
 jest.mock("../network", () => ({
@@ -36,6 +38,9 @@ const transferPair = (tokenHex: string, fromHex: string, toHex: string, amount: 
     },
   ];
 };
+
+const internalTransfersOf = (operations: BlockOperation[]) =>
+  operations.filter(op => op.type === "transfer");
 
 const mockLogger: Logger = jest.fn();
 
@@ -943,5 +948,260 @@ describe("getBlock", () => {
     expect(result.info.height).toBe(100);
     expect(result.transactions).toHaveLength(1);
     expect(result.transactions[0].fees).toBe(BigInt(4000));
+  });
+
+  describe("internal transactions", () => {
+    const callerHex = "41a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2";
+    const contractHex = "41aabbccdd11223344556677889900aabbccdd1122";
+    const recipientHex = "41f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5";
+    const contractCallBlock = (contractRet: string = "SUCCESS") => ({
+      blockID: "blockhash",
+      block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
+      transactions: [
+        {
+          txID: "tx1",
+          raw_data: {
+            contract: [
+              {
+                type: "TriggerSmartContract",
+                parameter: {
+                  value: {
+                    owner_address: callerHex,
+                    contract_address: contractHex,
+                    data: "3ccfd60b",
+                  },
+                },
+              },
+            ],
+          },
+          ret: [{ contractRet }],
+        },
+      ],
+    });
+    const internalTx = (
+      callValueInfo: { callValue?: number; tokenId?: string }[],
+      extra: { rejected?: boolean } = {},
+    ) => ({
+      hash: "internal1",
+      caller_address: contractHex,
+      transferTo_address: recipientHex,
+      callValueInfo,
+      note: "63616c6c",
+      ...extra,
+    });
+
+    describe("on a recorded mainnet USDT -> TRX swap", () => {
+      const swapTxId = block82524825.transactions[0].txID;
+      const wtrx = "TNUC9Qb1rRpS5CbWLmNMxXBjyFoydXjWFR";
+      const hop1 = "TCFNp179Lg46D16zKoumd4Poa2WFFdtqYj";
+      const hop2 = "TJKb72SKzSmYKC4jNievJwTLx9XDmcip7n";
+      const recipient = "TQXc5qXqnk6jLqb2svERcj2ZnvoKFjUwA5";
+      const amount = 47_814_575_212n;
+      const native = { type: "native" };
+
+      beforeEach(() => {
+        (getBlockWithTransactions as jest.Mock).mockResolvedValue(block82524825);
+      });
+
+      it("credits the TRX the swap pays out to its recipient", async () => {
+        mockGetTransactionInfoByBlockNum.mockResolvedValue(block82524825TxInfos);
+
+        const { transactions } = await getBlock(mockLogger, mockConfig, 82524825);
+
+        expect(transactions).toHaveLength(1);
+        const [swap] = transactions;
+        expect(swap.hash).toBe(swapTxId);
+        expect(swap.operations).toContainEqual({
+          type: "transfer",
+          address: recipient,
+          peer: hop2,
+          asset: native,
+          amount,
+        });
+      });
+
+      it("reports each value-moving internal call once, as a debit/credit pair", async () => {
+        mockGetTransactionInfoByBlockNum.mockResolvedValue(block82524825TxInfos);
+
+        const { transactions } = await getBlock(mockLogger, mockConfig, 82524825);
+
+        const nativeOps = transactions[0].operations.filter(
+          op => op.type === "transfer" && op.asset.type === "native",
+        );
+        // 29 internal transactions, of which only 3 move TRX: the 26 zero-value calls give nothing.
+        expect(nativeOps).toEqual([
+          { type: "transfer", address: wtrx, peer: hop1, asset: native, amount: -amount },
+          { type: "transfer", address: hop1, peer: wtrx, asset: native, amount },
+          { type: "transfer", address: hop1, peer: hop2, asset: native, amount: -amount },
+          { type: "transfer", address: hop2, peer: hop1, asset: native, amount },
+          { type: "transfer", address: hop2, peer: recipient, asset: native, amount: -amount },
+          { type: "transfer", address: recipient, peer: hop2, asset: native, amount },
+        ]);
+      });
+
+      it("keeps the operations read from the event logs and the fee unchanged", async () => {
+        const [txInfo] = block82524825TxInfos;
+        const { internal_transactions: _, ...txInfoWithoutInternals } = txInfo;
+        mockGetTransactionInfoByBlockNum.mockResolvedValue([txInfoWithoutInternals]);
+        const withoutInternals = await getBlock(mockLogger, mockConfig, 82524825);
+        mockGetTransactionInfoByBlockNum.mockResolvedValue(block82524825TxInfos);
+
+        const withInternals = await getBlock(mockLogger, mockConfig, 82524825);
+
+        const before = withoutInternals.transactions[0];
+        const after = withInternals.transactions[0];
+        expect(after.operations.slice(0, before.operations.length)).toEqual(before.operations);
+        expect(after.operations).toHaveLength(before.operations.length + 6);
+        expect(after.fees).toBe(BigInt(txInfo.fee));
+        expect(after.fees).toBe(before.fees);
+        expect(after.feesPayer).toBe("TNoZuAuL83PSh8TG4W92AvLqkA4E2dKSNm");
+      });
+    });
+
+    it("maps an internal TRX transfer to a native debit/credit pair", async () => {
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(contractCallBlock());
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([
+        { id: "tx1", fee: 100, internal_transactions: [internalTx([{ callValue: 4104742878 }])] },
+      ]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(internalTransfersOf(result.transactions[0].operations)).toEqual([
+        {
+          type: "transfer",
+          address: encode58Check(contractHex),
+          peer: encode58Check(recipientHex),
+          asset: { type: "native" },
+          amount: -4104742878n,
+        },
+        {
+          type: "transfer",
+          address: encode58Check(recipientHex),
+          peer: encode58Check(contractHex),
+          asset: { type: "native" },
+          amount: 4104742878n,
+        },
+      ]);
+      expect(result.transactions[0].fees).toBe(100n);
+    });
+
+    it("maps an internal TRC10 transfer to the TRC10 asset", async () => {
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(contractCallBlock());
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([
+        {
+          id: "tx1",
+          internal_transactions: [internalTx([{ callValue: 500, tokenId: "1002000" }])],
+        },
+      ]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(internalTransfersOf(result.transactions[0].operations)).toEqual([
+        expect.objectContaining({
+          address: encode58Check(contractHex),
+          asset: { type: "trc10", assetReference: "1002000" },
+          amount: -500n,
+        }),
+        expect.objectContaining({
+          address: encode58Check(recipientHex),
+          asset: { type: "trc10", assetReference: "1002000" },
+          amount: 500n,
+        }),
+      ]);
+    });
+
+    it("ignores a rejected internal transfer", async () => {
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(contractCallBlock());
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([
+        {
+          id: "tx1",
+          internal_transactions: [internalTx([{ callValue: 1000 }], { rejected: true })],
+        },
+      ]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(internalTransfersOf(result.transactions[0].operations)).toEqual([]);
+    });
+
+    it("ignores internal calls that move no value", async () => {
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(contractCallBlock());
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([
+        {
+          id: "tx1",
+          internal_transactions: [
+            internalTx([{}]),
+            internalTx([{ callValue: 0 }]),
+            internalTx([]),
+            { hash: "internal2", caller_address: contractHex, transferTo_address: recipientHex },
+          ],
+        },
+      ]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(internalTransfersOf(result.transactions[0].operations)).toEqual([]);
+    });
+
+    it("ignores the internal transfers of a failed transaction", async () => {
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(contractCallBlock("REVERT"));
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([
+        { id: "tx1", fee: 300, internal_transactions: [internalTx([{ callValue: 1000 }])] },
+      ]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(result.transactions[0].failed).toBe(true);
+      expect(result.transactions[0].fees).toBe(300n);
+      expect(internalTransfersOf(result.transactions[0].operations)).toEqual([]);
+    });
+
+    it("skips and logs an internal transfer whose amount is not a safe integer", async () => {
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(contractCallBlock());
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([
+        { id: "tx1", internal_transactions: [internalTx([{ callValue: 2 ** 60 }])] },
+      ]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(internalTransfersOf(result.transactions[0].operations)).toEqual([]);
+      expect(mockLogger).toHaveBeenCalledWith(
+        "tron/getBlock",
+        "skipping internal transfer with an unreadable amount",
+        expect.objectContaining({ txID: "tx1", internalTxHash: "internal1" }),
+      );
+    });
+
+    it("adds internal transfers after the operations of a plain transfer", async () => {
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue({
+        blockID: "blockhash",
+        block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
+        transactions: [
+          {
+            txID: "tx1",
+            raw_data: {
+              contract: [
+                {
+                  type: "TransferContract",
+                  parameter: {
+                    value: { owner_address: callerHex, to_address: contractHex, amount: 7 },
+                  },
+                },
+              ],
+            },
+            ret: [{ contractRet: "SUCCESS" }],
+          },
+        ],
+      });
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([
+        { id: "tx1", internal_transactions: [internalTx([{ callValue: 7 }])] },
+      ]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(
+        result.transactions[0].operations.map(op => op.type === "transfer" && op.amount),
+      ).toEqual([-7n, 7n, -7n, 7n]);
+    });
   });
 });
