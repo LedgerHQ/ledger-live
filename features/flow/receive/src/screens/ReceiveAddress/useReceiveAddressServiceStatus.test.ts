@@ -7,7 +7,7 @@ jest.mock("@shared/analytics", () => ({ track: jest.fn(), trackPage: jest.fn() }
 
 const renderServiceStatus = (
   initialIncidents: readonly ReceiveServiceIncident[] | undefined,
-  onOpenUrl?: (url: string) => void,
+  onOpenUrl: (url: string) => void = jest.fn(),
 ) =>
   renderHook(
     ({ incidents }) =>
@@ -63,11 +63,11 @@ describe("useReceiveAddressServiceStatus", () => {
     expect(onOpenUrl).toHaveBeenCalledWith("https://ledger.com/a");
   });
 
-  it("shows links as text when the app cannot open them", () => {
+  it("shows as text the links the opener refuses", () => {
     const { result } = renderServiceStatus([
       {
         title: "Stellar degraded",
-        description: [{ text: "this article", url: "https://ledger.com/a" }],
+        description: [{ text: "this article", url: "http://support.ledger.com/article" }],
       },
     ]);
 

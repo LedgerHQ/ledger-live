@@ -12,7 +12,6 @@ import { mockReceiveFamilyConfigInput } from "@features/flow-receive/types.mock"
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { renderHook } from "tests/testSetup";
 import { useLLDCoinFamily } from "~/renderer/families";
-import { openURL } from "~/renderer/linking";
 import { VerifyAddressExecutorLWD } from "../../verifyAddressIntent/VerifyAddressExecutorLWD";
 import { useReceiveAddressDialogViewModel } from "./useReceiveAddressDialogViewModel";
 
@@ -50,7 +49,6 @@ describe("useReceiveAddressDialogViewModel", () => {
         VerifyAddressExecutor: VerifyAddressExecutorLWD,
         onCopyAddress: expect.any(Function),
         getFamilyConfig: undefined,
-        onOpenUrl: openURL,
       }),
     );
     expect(result.current.onShareAddress).toBeUndefined();

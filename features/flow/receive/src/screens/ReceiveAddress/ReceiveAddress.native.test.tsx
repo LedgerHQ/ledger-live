@@ -11,6 +11,7 @@ import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
   makeReceiveTestStore,
+  testOpenExternal,
   receiveTestWrapper,
   testAccountUUID,
   testReceive,
@@ -195,20 +196,17 @@ describe("ReceiveAddress (Native)", () => {
   });
 
   it("shows the family's notices and links them to their support article", async () => {
-    const onOpenUrl = jest.fn();
     renderScreen(jest.fn(), makeReceiveTestStore(), {
       getFamilyConfig: () => ({ notices: ["tronInactiveAccount"] }),
-      onOpenUrl,
     });
     const user = userEvent.setup();
 
     expect(await screen.findByTestId("receive-address-notice-tronInactiveAccount")).toBeTruthy();
     await user.press(screen.getByText("Learn more"));
-    expect(onOpenUrl).toHaveBeenCalledWith(RECEIVE_URLS.tronInactiveAccount);
+    expect(testOpenExternal).toHaveBeenCalledWith(RECEIVE_URLS.tronInactiveAccount);
   });
 
   it("shows a service incident in a bottom sheet over the screen, with its links, until Continue", async () => {
-    const onOpenUrl = jest.fn();
     renderScreen(jest.fn(), makeReceiveTestStore(), {
       serviceIncidents: [
         {
@@ -219,13 +217,12 @@ describe("ReceiveAddress (Native)", () => {
           ],
         },
       ],
-      onOpenUrl,
     });
     const user = userEvent.setup();
 
     expect(await screen.findByText("Ethereum degraded")).toBeTruthy();
     await user.press(screen.getByText("this article"));
-    expect(onOpenUrl).toHaveBeenCalledWith("https://support.ledger.com/article");
+    expect(testOpenExternal).toHaveBeenCalledWith("https://support.ledger.com/article");
 
     await user.press(screen.getByText("Continue"));
     expect(screen.queryByTestId("receive-address-service-status")).toBeNull();

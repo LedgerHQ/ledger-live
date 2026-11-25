@@ -11,7 +11,6 @@ import { mockAccountEntry } from "@domain/entity-account/schema.mock";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { mockAccountStatus } from "@domain/entity-account-status/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
-import { Linking } from "react-native";
 import { ServiceStatusProvider } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { http, HttpResponse, server } from "@tests/server";
 import { renderHook, waitFor } from "@tests/test-renderer";
@@ -139,23 +138,5 @@ describe("useReceiveAddressScreenViewModel", () => {
         { title: "Ledger Wallet down", description: [{ text: "Investigating." }] },
       ]),
     );
-  });
-
-  it("opens the links of the screen outside the app", () => {
-    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
-    const { result } = renderViewModel();
-
-    result.current.onOpenUrl?.("https://support.ledger.com/article");
-
-    expect(openURL).toHaveBeenCalledWith("https://support.ledger.com/article");
-  });
-
-  it("carries on when the system cannot open a link", async () => {
-    const openURL = jest.spyOn(Linking, "openURL").mockRejectedValue(new Error("no handler"));
-    const { result } = renderViewModel();
-
-    result.current.onOpenUrl?.("https://support.ledger.com/article");
-
-    await expect(openURL.mock.results.at(-1)?.value).rejects.toThrow("no handler");
   });
 });

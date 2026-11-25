@@ -10,7 +10,7 @@ type Params = Readonly<{
   familyConfig: ReceiveFamilyConfig | undefined;
   selected: ReceiveAddressOption | undefined;
   copy: ReceiveAddressCopy;
-  onOpenUrl: ((url: string) => void) | undefined;
+  onOpenUrl: (url: string) => void;
 }>;
 
 export function useReceiveAddressNotices({
@@ -31,10 +31,9 @@ export function useReceiveAddressNotices({
             id,
             tone,
             text: copy.noticeTexts[id],
-            learnMore:
-              learnMoreUrl && onOpenUrl
-                ? { label: copy.learnMoreLabel, onPress: () => onOpenUrl(learnMoreUrl) }
-                : undefined,
+            learnMore: learnMoreUrl
+              ? { label: copy.learnMoreLabel, onPress: () => onOpenUrl(learnMoreUrl) }
+              : undefined,
           }))
         : [],
     [selected, familyNotices, copy, onOpenUrl],

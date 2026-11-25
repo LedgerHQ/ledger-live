@@ -16,7 +16,6 @@ import { useFeatureFlags } from "@features/platform-feature-flags";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useCopyToClipboard } from "LLD/hooks/useCopyToClipboard";
 import { useLLDCoinFamily } from "~/renderer/families";
-import { openURL } from "~/renderer/linking";
 import type { State } from "~/renderer/reducers";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import { currencyIdFromNetwork } from "@domain/entity-network";
@@ -76,6 +75,5 @@ export function useReceiveAddressDialogViewModel({
     VerifyAddressExecutor: VerifyAddressExecutorLWD,
     getFamilyConfig,
     serviceIncidents,
-    onOpenUrl: openURL,
   };
 }
