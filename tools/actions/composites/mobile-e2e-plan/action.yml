@@ -78,7 +78,7 @@ inputs:
     required: true
 outputs:
   plan:
-    description: "JSON object of strings, one key per former determine-builds output"
+    description: "JSON object of strings: one key per former determine-builds output, plus the JS bundle hashes"
     value: ${{ steps.plan.outputs.plan }}
 runs:
   using: "composite"
@@ -312,6 +312,8 @@ runs:
         avd_exists: ${{ steps.check-avd.outputs.cache-hit }}
         pod_check_key: ${{ steps.cache-keys.outputs.pod_check_key }}
         pod_lockfile_validated: ${{ steps.check-lockfile-status.outputs.cache-hit }}
+        js_bundle_hash_ios: ${{ inputs.js_bundle_hash_ios }}
+        js_bundle_hash_android: ${{ inputs.js_bundle_hash_android }}
       run: |
         node -e '
           const keys = process.argv.slice(1);
@@ -322,7 +324,7 @@ runs:
           ios_timeout android_timeout ios_native_exists ios_js_exists ios_js_prefix android_native_exists \
           android_js_exists android_js_prefix ios_native_key ios_js_key android_native_key android_js_key \
           android_timing_cache_key ios_timing_cache_key avd_cache_key avd_exists pod_check_key \
-          pod_lockfile_validated
+          pod_lockfile_validated js_bundle_hash_ios js_bundle_hash_android
 
     - name: Write the plan summary
       shell: bash
