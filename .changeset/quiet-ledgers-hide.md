@@ -1,5 +1,6 @@
 ---
 "@shared/feature-flags": minor
+"@features/platform-device-onboarding": minor
 "@features/platform-device-onboarding-analytics": minor
 "live-mobile": minor
 ---
