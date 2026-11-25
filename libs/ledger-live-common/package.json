@@ -146,6 +146,7 @@
     "@features/platform-feature-flags": "workspace:^",
     "@features/platform-feature-flags-firebase": "workspace:^",
     "@features/platform-market-countervalues": "workspace:*",
+    "@features/platform-wallet-api-signature-cancel": "workspace:^",
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/coin-aleo": "workspace:^",
     "@ledgerhq/coin-algorand": "workspace:^",

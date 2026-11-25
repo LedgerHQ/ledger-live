@@ -369,6 +369,7 @@ describe("useUiHook - transaction.sign device-intent branching", () => {
       parentAccount: undefined,
       signFlowInfos: { liveTx: {}, ...signFlowInfos },
       options: { hwAppId: undefined, dependencies: undefined },
+      requestGroupId: "wc-topic",
       onSuccess,
       onError,
     });
@@ -404,6 +405,7 @@ describe("useUiHook - transaction.sign device-intent branching", () => {
         transaction: preparedTx,
         manifestId: mockManifest.id,
         manifestName: mockManifest.name,
+        requestGroupId: "wc-topic",
         onSuccess,
         onError,
       }),
@@ -502,6 +504,7 @@ describe("useUiHook - message.sign device-intent branching", () => {
       account,
       message,
       options: { hwAppId: undefined, dependencies: undefined },
+      requestGroupId: "wc-topic",
       onSuccess,
       onError,
       onCancel,
@@ -526,7 +529,14 @@ describe("useUiHook - message.sign device-intent branching", () => {
     });
 
     expect(mockRequestDeviceIntentSignMessage).toHaveBeenCalledWith(
-      expect.objectContaining({ account, message, onSuccess, onError, onCancel }),
+      expect.objectContaining({
+        account,
+        message,
+        requestGroupId: "wc-topic",
+        onSuccess,
+        onError,
+        onCancel,
+      }),
     );
     expect(mockNavigate).not.toHaveBeenCalled();
   });

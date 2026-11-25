@@ -74,6 +74,7 @@ import type { WalletApiDeviceIntentSignRequest } from "LLM/features/WalletApiSig
 import type { WalletApiDeviceIntentSignMessageRequest } from "LLM/features/WalletApiSignature/components/MessageSignatureDrawer";
 import { useDeviceIntentSignEnabled } from "LLM/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
 import { useWalletApiSignatureQueue } from "LLM/features/WalletApiSignature/hooks/useWalletApiSignatureQueue";
+import { handlers as signatureCancelHandlers } from "@features/platform-wallet-api-signature-cancel";
 import { AccountPublicKeyUnavailable } from "@ledgerhq/live-common/errors";
 import type { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSession";
 import {
@@ -157,7 +158,19 @@ export function useWebView(
     enqueueMessageSignature,
     closeCurrentSignature,
     clearSignatures,
+    cancelSignatures,
   } = useWalletApiSignatureQueue();
+  // A live app cancels the sign requests it tagged with a `requestGroupId`, e.g. Wallet
+  // Connect when the dApp they were made for disconnects. Only the device-intent flow queues
+  // its requests here, so without it the method is not exposed rather than cancelling nothing.
+  const deviceIntentSignEnabled = useDeviceIntentSignEnabled(manifest.id);
+  const customHandlersWithSignatureCancel = useMemo(
+    () =>
+      deviceIntentSignEnabled
+        ? { ...signatureCancelHandlers({ cancelSignatures }), ...customHandlers }
+        : customHandlers,
+    [cancelSignatures, customHandlers, deviceIntentSignEnabled],
+  );
   // Set on getPublicKey failure; the consuming component renders it as a native bottom modal.
   const [publicKeyUnavailableError, setPublicKeyUnavailableError] = useState<Error | null>(null);
   const clearPublicKeyUnavailableError = useCallback(() => setPublicKeyUnavailableError(null), []);
@@ -221,7 +234,7 @@ export function useWebView(
     config,
     webviewHook,
     uiHook,
-    customHandlers,
+    customHandlers: customHandlersWithSignatureCancel,
     bridgeSession: bridge.session,
   });
   const [cacheBustedLiveAppsDb, setCacheBustedLiveAppsDbState, cacheBustedLoaded] =
@@ -736,7 +749,15 @@ export function useUiHook({
       "account.publicKeyUnavailable": () => {
         onPublicKeyUnavailable?.(new AccountPublicKeyUnavailable());
       },
-      "message.sign": ({ account, message, options, onSuccess, onError, onCancel }) => {
+      "message.sign": ({
+        account,
+        message,
+        options,
+        requestGroupId,
+        onSuccess,
+        onError,
+        onCancel,
+      }) => {
         // When enabled, skip the SignMessage stack and connect to the device directly
         // through the DeviceIntentExecutor, surfaced as a bottom-sheet drawer over the
         // live app (see MessageSignatureDrawer). The message is already prepared
@@ -750,6 +771,7 @@ export function useUiHook({
             dependencies: options?.dependencies,
             manifestId: manifest.id,
             manifestName: manifest.name,
+            requestGroupId,
             onSuccess,
             onError,
             onCancel,
@@ -783,6 +805,7 @@ export function useUiHook({
         parentAccount,
         signFlowInfos: { liveTx },
         options,
+        requestGroupId,
         onSuccess,
         onError,
       }) => {
@@ -805,6 +828,7 @@ export function useUiHook({
               dependencies: options?.dependencies,
               manifestId: manifest.id,
               manifestName: manifest.name,
+              requestGroupId,
               onSuccess,
               onError,
             });

@@ -427,6 +427,7 @@ apps/ledger-live-mobile/src/screens/Discover/            @ledgerhq/coin-integrat
 apps/ledger-live-mobile/src/screens/Platform/            @ledgerhq/coin-integration
 libs/ledger-live-common/src/platform/                    @ledgerhq/coin-integration
 libs/ledger-live-common/src/wallet-api/                  @ledgerhq/coin-integration
+features/platform/wallet-api-signature-cancel/           @ledgerhq/coin-integration
 libs/deeplink-module/                                    @ledgerhq/coin-integration
 /tests/dummy-live-app/                                   @ledgerhq/coin-integration
 /tests/dummy-wallet-app/                                 @ledgerhq/coin-integration
