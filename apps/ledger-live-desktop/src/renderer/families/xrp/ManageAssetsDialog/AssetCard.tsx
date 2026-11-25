@@ -29,14 +29,13 @@ import {
 } from "@ledgerhq/live-common/families/xrp/state-manager/api";
 import { formatIssuerFee, formatTrustLimit } from "@ledgerhq/live-common/families/xrp/tokens";
 import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
-import { formatFeesValue } from "@ledgerhq/live-common/flows/send/utils/networkFeesDisplay";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import type { Account } from "@ledgerhq/types-live";
-import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import { useSelector } from "LLD/hooks/redux";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
-import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
+import { localeSelector } from "~/renderer/reducers/settings";
 import { LabelWithInfo } from "../components/LabelWithInfo";
+import { XrpAmount } from "../components/XrpAmount";
 import { getRemoveAvailability } from "../utils";
 
 type Props = Readonly<{
@@ -87,9 +86,6 @@ function TransferFee({ token }: Readonly<{ token: TokenCurrency }>) {
 
 function LockedAmount({ currency }: Readonly<{ currency: CryptoCurrency }>) {
   const { t } = useTranslation();
-  const locale = useSelector(localeSelector);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const calculateCountervalue = useCalculateCountervalueCallback({ to: counterValueCurrency });
   const reserves = useGetNetworkReservesQuery(currency.id);
 
   if (reserves.isError) {
@@ -97,23 +93,8 @@ function LockedAmount({ currency }: Readonly<{ currency: CryptoCurrency }>) {
   }
 
   if (reserves.data) {
-    const ownerReserve = new BigNumber(reserves.data.increment);
-    const lockedAmount = formatFeesValue({
-      locale,
-      estimatedFees: ownerReserve,
-      estimatedFeesCountervalue: calculateCountervalue(currency, ownerReserve),
-      fiatUnit: counterValueCurrency.units[0],
-      displayUnit: currency.units[0],
-      mode: "both",
-    });
-
     return (
-      <span className="flex items-center gap-4">
-        {lockedAmount.displayFeesValue}
-        {lockedAmount.secondaryFeesValue ? (
-          <span className="body-3 text-muted">{lockedAmount.secondaryFeesValue}</span>
-        ) : null}
-      </span>
+      <XrpAmount currency={currency} value={new BigNumber(reserves.data.increment)} size="sm" />
     );
   }
 
@@ -177,7 +158,7 @@ export function AssetCard({ account, tokenAccount, onEdit, onDelete }: AssetCard
         <Row
           label={
             <LabelWithInfo
-              label={t("xrp.manageAssets.transferFee")}
+              label={t("xrp.manageAssets.issuerFee")}
               info={t("xrp.addToken.steps.review.issuerFeeTooltip")}
             />
           }

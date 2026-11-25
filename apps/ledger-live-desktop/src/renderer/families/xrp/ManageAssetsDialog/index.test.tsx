@@ -97,7 +97,7 @@ describe("xrp ManageAssetsDialog", () => {
 
     expect(card.getByText("RLUSD")).toBeVisible();
     expect(card.getByText(formatAddress(XRP_ACCOUNT.freshAddress))).toBeVisible();
-    expect(card.getByText("Trust Line (IOU)")).toBeVisible();
+    expect(card.getByText("Trust Line")).toBeVisible();
     expect(await card.findByText("0%")).toBeVisible();
     expect(await card.findByText("0.3 XRP")).toBeVisible();
     expect(card.getByText("1,000 RLUSD")).toBeVisible();
@@ -153,7 +153,7 @@ describe("xrp ManageAssetsDialog", () => {
     const card = getCard(xrpMptToken.id);
 
     expect(card.getByText("Test MPT")).toBeVisible();
-    expect(card.getByText("Multi Purpose Token")).toBeVisible();
+    expect(card.getByText("Multi-Purpose Token (MPT)")).toBeVisible();
     expect(await card.findByText("0.3 XRP")).toBeVisible();
     expect(card.queryByText("Balance limit")).not.toBeInTheDocument();
     expect(card.queryByText("Rippling")).not.toBeInTheDocument();

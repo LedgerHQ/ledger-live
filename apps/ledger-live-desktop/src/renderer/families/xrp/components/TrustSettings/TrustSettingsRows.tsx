@@ -34,7 +34,9 @@ export function TrustSettingsRows({ settings }: Readonly<{ settings: TrustSettin
   return (
     <div className="flex flex-col gap-12">
       <div className="flex items-center justify-between py-2">
-        <span className="body-2 text-muted">{limitTitle}</span>
+        <span className="body-2 text-muted">
+          <LabelWithInfo label={limitTitle} info={t("xrp.manageAssets.balanceLimitTooltip")} />
+        </span>
         <button
           type="button"
           className="cursor-pointer border-0 bg-transparent p-0"
