@@ -53,7 +53,7 @@ import {
 import { useAutoSelectDevice } from "./useAutoSelectDevice";
 import { DeviceLockedCheckDrawer } from "./DeviceLockedCheckDrawer";
 import { areRealBleAndUsbDisabled } from "~/transport/areRealBleAndUsbDisabled";
-import { makeMockDiscoveredDevice } from "~/transport/mockDiscoveredDevice";
+import { toDiscoveredDevice } from "~/transport/toDiscoveredDevice";
 import {
   mapScannedDeviceToDisplayedAvailableDevice,
   mapHidDeviceToDisplayedAvailableDevice,
@@ -290,7 +290,7 @@ export default function SelectDevice({
           checkDeviceStatus({
             device: displayedDevice.device,
             available: true,
-            discoveredDevice: makeMockDiscoveredDevice(displayedDevice.device),
+            discoveredDevice: toDiscoveredDevice(displayedDevice.device),
           });
         }
       }
@@ -412,7 +412,7 @@ export default function SelectDevice({
         {
           device: ProxyDevice,
           available: true,
-          discoveredDevice: makeMockDiscoveredDevice(ProxyDevice),
+          discoveredDevice: toDiscoveredDevice(ProxyDevice),
         },
         ...devices,
       ];
