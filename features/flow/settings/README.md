@@ -26,6 +26,18 @@ A row's trailing element is a chevron, an external link, a toggle, a value, a se
 On mobile, the select opens its options in a bottom sheet (Lumen `SelectList`), like the web
 select opens its list: render the Settings under `QueuedBottomSheetsProvider`.
 
+## Sheets
+
+A sheet opens on top of the Settings: a bottom sheet on mobile, a dialog on desktop.
+
+| Export                 | Entry | Purpose                                                                 |
+| ---------------------- | ----- | ----------------------------------------------------------------------- |
+| `SettingsSheet`        | `.`   | Title, optional description, close button and any content               |
+| `SettingsConfirmSheet` | `.`   | Confirm or cancel an action, `destructive` or `neutral`, disabled while it runs |
+
+On mobile, `SettingsSheet` goes through `QueuedBottomSheet`, so the app must render it under
+`QueuedBottomSheetsProvider` like any queued sheet.
+
 ## Hiding rows
 
 The app decides which rows to hide and passes the list to the new Settings. Apollo is the first
