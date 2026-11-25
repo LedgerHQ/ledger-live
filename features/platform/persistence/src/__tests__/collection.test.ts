@@ -270,6 +270,25 @@ describe.each(["singleKey", "keyPerEntry"] as const)(
       await expect(readStored(keyScheme, storage)).resolves.toEqual([entry("a", 1), newer]);
     });
 
+    it("should keep a newer entry stored when a migrated entry already loads its id", async () => {
+      const newer = { $v: 1, data: entry("migrated-a", 2) };
+      const { store, storage, failures, hydrate } = setup({
+        keyScheme,
+        stored: storeEntries(keyScheme, [entry("a", 1, 0), newer], ["a", "migrated-a"]),
+      });
+      await hydrate();
+      expect(store.getState().items).toEqual([{ id: "migrated-a", value: 1 }]);
+      expect(failures).toEqual([
+        expect.objectContaining({ key: "items", operation: "newer", entry: 1 }),
+      ]);
+
+      store.dispatch(items.actions.setValue({ id: "migrated-a", value: 5 }));
+      store.dispatch(items.actions.add({ id: "c", value: 3 }));
+      await settle();
+
+      await expect(readStored(keyScheme, storage)).resolves.toEqual([entry("c", 3), newer]);
+    });
+
     it("replaces an entry that a migration gives a new id, then removes it for good", async () => {
       const storage = createMemoryStorage(
         storeEntries(keyScheme, [entry("a", 1, 0), entry("b", 2)], ["a", "b"]),
