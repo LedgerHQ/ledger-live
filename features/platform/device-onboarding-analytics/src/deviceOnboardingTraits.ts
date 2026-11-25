@@ -13,5 +13,7 @@ export function deviceOnboardingTraits(
     connectUnseededDevice: isOn("connectUnseededDevice"),
     offerLedgerSync: isOn("offerLedgerSync"),
     unifiedEntryPoints: isOn("unifiedEntryPoints"),
+    // Recover stays on unless the flag turns it off, so a saved value without it reports true.
+    recover: Boolean(flag?.enabled && (flag.params?.recover ?? true)),
   };
 }

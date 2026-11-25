@@ -45,6 +45,7 @@ import type { DeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hook
 import { useAfterDelay } from "LLM/features/DeviceOnboarding/hooks/useAfterDelay";
 import { useFirmwareUpdateHandover } from "LLM/features/DeviceOnboarding/hooks/useFirmwareUpdateHandover";
 import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
+import { useRecoverInOnboarding } from "LLM/features/DeviceOnboarding/hooks/useRecoverInOnboarding";
 import { useReconnectWhileDeviceOff } from "LLM/features/DeviceOnboarding/hooks/useReconnectWhileDeviceOff";
 import type { SetupScreenProps } from "LLM/features/DeviceOnboarding/screens/Setup/types";
 import { seededButtons } from "@features/platform-device-onboarding-analytics";
@@ -880,7 +881,8 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const recoverFeature = useFeature("protectServicesMobile");
-  const recoverAvailable = recoverFeature?.enabled === true;
+  const recoverInOnboarding = useRecoverInOnboarding();
+  const recoverAvailable = recoverInOnboarding && recoverFeature?.enabled === true;
   const protectId = recoverFeature?.params?.protectId ?? defaultProtectId;
   const focused = useIsFocused();
   const [pastRecover, setPastRecover] = useState(false);
@@ -957,6 +959,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     seedPath,
     pastRecover,
     recoverAvailable,
+    recoverRestoreAvailable: recoverInOnboarding,
     checksPaused: onboarding.context?.checksPaused === true,
     genuineFailureKind: readString(onboarding.context?.genuineFailureKind),
     deviceNotGenuine:

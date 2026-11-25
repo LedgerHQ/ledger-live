@@ -10,7 +10,10 @@ const device = {
   wired: false,
 } as Device;
 
-function input(machineState: string): UnseededFunnelInput {
+function input(
+  machineState: string,
+  overrides: Partial<UnseededFunnelInput> = {},
+): UnseededFunnelInput {
   return {
     machineState,
     liveMachineState: machineState,
@@ -19,6 +22,7 @@ function input(machineState: string): UnseededFunnelInput {
     seedPath: null,
     pastRecover: false,
     recoverAvailable: true,
+    recoverRestoreAvailable: true,
     checksPaused: false,
     genuineFailureKind: null,
     deviceNotGenuine: false,
@@ -33,6 +37,7 @@ function input(machineState: string): UnseededFunnelInput {
     reconnect: jest.fn(),
     send: jest.fn(),
     onQuit: jest.fn(),
+    ...overrides,
   };
 }
 
@@ -71,5 +76,28 @@ describe("useUnseededFunnelViewModel", () => {
     machineState = "deviceSetup.restoreRecover";
     rerender(undefined);
     expect(result.current?.status).toBe("recoverRestore");
+  });
+
+  it("should show the restore choice instead of Recover restore when the flag hides Recover", () => {
+    const { result } = renderHook(() =>
+      useUnseededFunnelViewModel(
+        input("deviceSetup.restoreRecover", { recoverRestoreAvailable: false }),
+      ),
+    );
+
+    expect(result.current?.status).toBe("setup");
+    if (result.current?.status !== "setup") throw new Error("expected setup");
+    expect(result.current.setup.stage).toMatchObject({
+      kind: "restore",
+      infoCard: "restoreChoice",
+    });
+  });
+
+  it("should skip the Recover pitch after a new seed when Recover is unavailable", () => {
+    const { result } = renderHook(() =>
+      useUnseededFunnelViewModel(input("done", { seedPath: "newSeed", recoverAvailable: false })),
+    );
+
+    expect(result.current).toEqual({ status: "success", sawRecoverPitch: false });
   });
 });

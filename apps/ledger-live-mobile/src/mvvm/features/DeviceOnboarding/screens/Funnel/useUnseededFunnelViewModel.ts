@@ -51,6 +51,8 @@ export type UnseededFunnelInput = {
   /** The user already left the Recover pitch (skip, remind later, or back from Recover). */
   pastRecover: boolean;
   recoverAvailable: boolean;
+  /** Off when the deviceOnboarding flag hides Recover: the restore step then shows the device choice. */
+  recoverRestoreAvailable: boolean;
   checksPaused: boolean;
   genuineFailureKind: string | null;
   deviceNotGenuine: boolean;
@@ -85,8 +87,9 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
     input.heldBackUpdatePending !== true &&
     device !== null &&
     machineState !== null;
+  const hidesRecoverRestore = restoreDismissed || !input.recoverRestoreAvailable;
   const stageState =
-    machineState === restoreRecoverState && restoreDismissed ? restoreChoiceState : machineState;
+    machineState === restoreRecoverState && hidesRecoverRestore ? restoreChoiceState : machineState;
   const stage = unseeded
     ? toUnseededStage(device, stageState, input.currentStep, input.reportsRecoveryKey)
     : null;
@@ -105,7 +108,7 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
   });
 
   if (unseeded && machineState === doneState) return toDoneModel(input);
-  if (unseeded && machineState === restoreRecoverState && !restoreDismissed) {
+  if (unseeded && machineState === restoreRecoverState && !hidesRecoverRestore) {
     return { status: "recoverRestore", dismiss: dismissRestore };
   }
   if (!unseeded || !visibleStage || !device || !machineState) return null;
