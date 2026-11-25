@@ -6,14 +6,14 @@ import {
   type StoredAccountData,
 } from "@features/platform-persistence-accounts";
 import { StorageLockedError, type StoragePort } from "@shared/storage";
-import { createNodeFileStorage } from "@shared/storage-node-file";
+import { createNodeFileStorage, type NodeFileStorage } from "@shared/storage-node-file";
 
 export const ENCRYPTED_USERDATA_MESSAGE = "encrypted ledger live data is not supported";
 
 const CRYPTO_ASSETS_KEY = "cryptoAssets";
 
 // The only module of the seeds that uses the storage port.
-const openUserdata = (filePath: string): StoragePort =>
+const openUserdata = (filePath: string): NodeFileStorage =>
   createNodeFileStorage({ filePath, encryptedKeys: [ACCOUNTS_RECORD_KEY] });
 
 /**
@@ -38,14 +38,18 @@ export const writeUserdataAccounts = (
   accounts: ReadonlyArray<unknown>,
 ): Promise<void> => openUserdata(filePath).set(ACCOUNTS_RECORD_KEY, accounts);
 
-/** Writes the token cache that `update` gives from the stored one, unless it gives nothing. */
-export async function updateUserdataCryptoAssets(
+/** Writes the accounts and the token cache that `updateCryptoAssets` gives, in 1 write. */
+export async function writeUserdataAccountsAndCryptoAssets(
   filePath: string,
-  update: (stored: unknown) => unknown,
+  accounts: ReadonlyArray<unknown>,
+  updateCryptoAssets: (stored: unknown) => unknown,
 ): Promise<void> {
   const storage = openUserdata(filePath);
-  const next = update(await storage.get(CRYPTO_ASSETS_KEY));
-  if (next !== undefined) await storage.set(CRYPTO_ASSETS_KEY, next);
+  const cryptoAssets = updateCryptoAssets(await storage.get(CRYPTO_ASSETS_KEY));
+  await storage.setMany({
+    [ACCOUNTS_RECORD_KEY]: accounts,
+    ...(cryptoAssets === undefined ? {} : { [CRYPTO_ASSETS_KEY]: cryptoAssets }),
+  });
 }
 
 /** Validates a stored account before a seed adds it or changes it. */

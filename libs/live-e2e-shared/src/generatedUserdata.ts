@@ -5,9 +5,8 @@ import type { Account, TokenAccount } from "./enum/Account";
 import {
   isEncryptedUserdataError,
   readUserdataAccounts,
-  updateUserdataCryptoAssets,
   validateStoredAccount,
-  writeUserdataAccounts,
+  writeUserdataAccountsAndCryptoAssets,
 } from "./userdataAccounts";
 
 type AccountRawEntry = {
@@ -109,9 +108,10 @@ export async function applyGeneratedUserdata(
   }
 
   validateStoredAccount(entry);
-  await writeUserdataAccounts(userdataPath, appendAccounts(stored, [entry]));
-  await updateUserdataCryptoAssets(userdataPath, existing =>
-    mergeCryptoAssets(isCryptoAssets(existing) ? existing : undefined, coin),
+  await writeUserdataAccountsAndCryptoAssets(
+    userdataPath,
+    appendAccounts(stored, [entry]),
+    existing => mergeCryptoAssets(isCryptoAssets(existing) ? existing : undefined, coin),
   );
   return true;
 }

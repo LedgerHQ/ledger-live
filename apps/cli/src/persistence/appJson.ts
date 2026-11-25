@@ -3,7 +3,7 @@ import { ACCOUNTS_RECORD_KEY, appendAccounts } from "@features/platform-persiste
 import type { Account } from "@ledgerhq/types-live";
 import { decodeEntries, encodeEntries } from "@shared/persistence";
 import { StorageLockedError, type StoragePort } from "@shared/storage";
-import { createNodeFileStorage } from "@shared/storage-node-file";
+import { createNodeFileStorage, type NodeFileStorage } from "@shared/storage-node-file";
 import { cliAccountsCodec } from "./accountsCodec";
 
 export const ENCRYPTED_APP_JSON_MESSAGE = "encrypted ledger live data is not supported";
@@ -11,7 +11,7 @@ export const ENCRYPTED_APP_JSON_MESSAGE = "encrypted ledger live data is not sup
 const describeWithoutValue = (error: unknown) =>
   error instanceof Error ? error.name : typeof error;
 
-async function openAppJson(filePath: string): Promise<StoragePort> {
+async function openAppJson(filePath: string): Promise<NodeFileStorage> {
   await access(filePath);
   return createNodeFileStorage({ filePath, encryptedKeys: [ACCOUNTS_RECORD_KEY] });
 }
@@ -58,8 +58,7 @@ export async function addAccountsToAppJson(
   const storage = await openAppJson(filePath);
   const stored = await readStoredAccounts(storage).catch(refuseEncrypted);
   const all = appendAccounts(stored, await encodeNewAccounts(accounts));
-  await storage.set(ACCOUNTS_RECORD_KEY, all);
-  await storage.set("cryptoAssets", cryptoAssets);
+  await storage.setMany({ [ACCOUNTS_RECORD_KEY]: all, cryptoAssets });
   return all.length - stored.length;
 }
 

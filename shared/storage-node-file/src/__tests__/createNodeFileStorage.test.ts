@@ -135,6 +135,62 @@ describe("createNodeFileStorage", () => {
   });
 });
 
+describe("setMany", () => {
+  it("writes every key, and keeps the other keys and the other top-level fields", async () => {
+    const filePath = nextFilePath();
+    writeFileSync(filePath, JSON.stringify({ data: { settings: { a: 1 } }, other: true }));
+    const storage = createNodeFileStorage({ filePath });
+
+    await storage.setMany({ vault: [{ id: "x" }], cryptoAssets: { tokens: [] } });
+
+    expect(readJson(filePath)).toEqual({
+      data: { settings: { a: 1 }, vault: [{ id: "x" }], cryptoAssets: { tokens: [] } },
+      other: true,
+    });
+  });
+
+  it("writes none of the keys when one of them holds ciphertext", async () => {
+    const filePath = nextFilePath();
+    const content = JSON.stringify({ data: { vault: "ciphertext" } });
+    writeFileSync(filePath, content);
+    const storage = createNodeFileStorage({ filePath, encryptedKeys: ["vault"] });
+
+    await expect(storage.setMany({ cryptoAssets: { tokens: [] }, vault: [] })).rejects.toEqual(
+      new StorageLockedError("vault"),
+    );
+    expect(readFileSync(filePath, "utf-8")).toBe(content);
+  });
+
+  it("writes none of the keys to a file of another shape", async () => {
+    const filePath = nextFilePath();
+    writeFileSync(filePath, "[]");
+    const storage = createNodeFileStorage({ filePath });
+
+    await expect(storage.setMany({ vault: [], cryptoAssets: {} })).rejects.toThrow(TypeError);
+    expect(readFileSync(filePath, "utf-8")).toBe("[]");
+  });
+
+  it("goes in call order with set", async () => {
+    const filePath = nextFilePath();
+    const storage = createNodeFileStorage({ filePath });
+
+    await Promise.all([
+      storage.set("a", 1),
+      storage.setMany({ a: 2, b: 2 }),
+      storage.set("b", 3),
+      storage.setMany({ c: 4 }),
+    ]);
+
+    expect(readJson(filePath)).toEqual({ data: { a: 2, b: 3, c: 4 } });
+  });
+
+  it("throws a RangeError for an empty key, as set does", () => {
+    const storage = createNodeFileStorage({ filePath: nextFilePath() });
+
+    expect(() => storage.setMany({ vault: [], "": 1 })).toThrow(RangeError);
+  });
+});
+
 describeWithFileModes("the file mode", () => {
   it.each([
     ["0600", 0o600],
@@ -155,5 +211,15 @@ describeWithFileModes("the file mode", () => {
     await createNodeFileStorage({ filePath }).set("vault", []);
 
     expect(modeOf(filePath)).toBe(0o600);
+  });
+
+  it("stays 0640 when setMany replaces the file", async () => {
+    const filePath = nextFilePath();
+    writeFileSync(filePath, JSON.stringify({ data: {} }));
+    chmodSync(filePath, 0o640);
+
+    await createNodeFileStorage({ filePath }).setMany({ vault: [], cryptoAssets: {} });
+
+    expect(modeOf(filePath)).toBe(0o640);
   });
 });

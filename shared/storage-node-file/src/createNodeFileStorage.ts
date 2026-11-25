@@ -51,10 +51,15 @@ async function writeAppJson(filePath: string, file: AppJsonFile): Promise<void> 
   await rename(temporaryPath, filePath);
 }
 
+export type NodeFileStorage = StoragePort & {
+  /** Writes the keys in 1 file replacement: a crash leaves all of them or none. */
+  setMany(entries: Readonly<Record<string, unknown>>): Promise<void>;
+};
+
 export function createNodeFileStorage({
   filePath,
   encryptedKeys = [],
-}: NodeFileStorageInput): StoragePort {
+}: NodeFileStorageInput): NodeFileStorage {
   const encrypted = new Set(encryptedKeys);
   let queue: Promise<unknown> = Promise.resolve();
 
@@ -63,6 +68,17 @@ export function createNodeFileStorage({
     queue = result.catch(() => undefined);
     return result;
   };
+
+  const writeEntries = (entries: Readonly<Record<string, unknown>>) =>
+    inOrder(async () => {
+      const file = (await readAppJson(filePath)) ?? { data: {} };
+      // A tool cannot encrypt: it must never replace the ciphertext of an encrypted key.
+      for (const key of Object.keys(entries)) {
+        const isStillEncrypted = encrypted.has(key) && typeof file.data?.[key] === "string";
+        if (isStillEncrypted) throw new StorageLockedError(key);
+      }
+      await writeAppJson(filePath, { ...file, data: { ...file.data, ...entries } });
+    });
 
   return {
     get(key) {
@@ -77,13 +93,11 @@ export function createNodeFileStorage({
     },
     set(key, value) {
       assertKey(key);
-      return inOrder(async () => {
-        const file = (await readAppJson(filePath)) ?? { data: {} };
-        // A tool cannot encrypt: it must never replace the ciphertext of an encrypted key.
-        const isStillEncrypted = encrypted.has(key) && typeof file.data?.[key] === "string";
-        if (isStillEncrypted) throw new StorageLockedError(key);
-        await writeAppJson(filePath, { ...file, data: { ...file.data, [key]: value } });
-      });
+      return writeEntries({ [key]: value });
+    },
+    setMany(entries) {
+      Object.keys(entries).forEach(assertKey);
+      return writeEntries(entries);
     },
   };
 }

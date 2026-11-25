@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { copyFileSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { test } from "node:test";
@@ -53,6 +53,20 @@ test("liveData --add keeps the stored accounts and the other keys as they are", 
   assert.equal(after.data.accounts.length, 2);
   assert.equal(after.data.accounts[1].version, 1);
   assert.ok(after.data.cryptoAssets !== undefined);
+});
+
+test("liveData --add leaves app.json as it is when it cannot write", () => {
+  const target = fixtureCopy("unwritable.json", file => {
+    file.data.accounts = file.data.accounts.slice(0, 1);
+    return file;
+  });
+  const before = readFileSync(target, "utf-8");
+  mkdirSync(`${target}.tmp`);
+
+  const result = runCli("liveData", "--appjsonFile", fixture, "--appjson", target, "--add");
+
+  assert.notEqual(result.status, 0);
+  assert.equal(readFileSync(target, "utf-8"), before);
 });
 
 /** The token cache comes from the network at each run, as before: compare the rest. */

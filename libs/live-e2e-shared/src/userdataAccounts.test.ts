@@ -6,7 +6,7 @@ import test from "node:test";
 import type { Account } from "./enum/Account";
 import { seedZcashPrivateInfo } from "./cliCommandsUtils";
 import { applyGeneratedUserdata } from "./generatedUserdata";
-import { addRawAccountIfMissing } from "./userdataAccounts";
+import { addRawAccountIfMissing, writeUserdataAccountsAndCryptoAssets } from "./userdataAccounts";
 
 const directory = mkdtempSync(path.join(os.tmpdir(), "e2e-userdata-"));
 let fileIndex = 0;
@@ -61,6 +61,37 @@ test("addRawAccountIfMissing refuses an encrypted file with the legacy message",
   await assert.rejects(addRawAccountIfMissing(filePath, { id: "a", currencyId: "tron" }), {
     message: "encrypted ledger live data is not supported",
   });
+});
+
+test("writeUserdataAccountsAndCryptoAssets writes the accounts and the token cache from the stored one", async () => {
+  const filePath = userdataFile({
+    ...baseUserdata(),
+    data: { ...baseUserdata().data, cryptoAssets: { tokens: [] } },
+  });
+  const accounts = [STORED_BITCOIN, { data: { id: "js:2:tron:T1:" }, version: 1 }];
+
+  await writeUserdataAccountsAndCryptoAssets(filePath, accounts, stored => ({ stored }));
+
+  const file = JSON.parse(readFileSync(filePath, "utf-8"));
+  assert.deepEqual(file.data.accounts, accounts);
+  assert.deepEqual(file.data.cryptoAssets, { stored: { tokens: [] } });
+  assert.deepEqual(file.data.settings, { counterValue: "USD" });
+  assert.equal(file.other, true);
+});
+
+test("writeUserdataAccountsAndCryptoAssets keeps the token cache when the update gives nothing", async () => {
+  const filePath = userdataFile({
+    ...baseUserdata(),
+    data: { ...baseUserdata().data, cryptoAssets: { tokens: [] } },
+  });
+  const accounts = [STORED_BITCOIN, { data: { id: "js:2:tron:T1:" }, version: 1 }];
+
+  await writeUserdataAccountsAndCryptoAssets(filePath, accounts, () => undefined);
+
+  const file = JSON.parse(readFileSync(filePath, "utf-8"));
+  assert.deepEqual(file.data.accounts, accounts);
+  assert.deepEqual(file.data.cryptoAssets, { tokens: [] });
+  assert.equal(file.other, true);
 });
 
 const OBJECT_ACCOUNTS = { data: { accounts: { a: STORED_BITCOIN } } };

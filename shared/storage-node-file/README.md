@@ -15,7 +15,9 @@ app, so they cannot write a shape that the app does not read.
 - A missing file reads as `undefined`. The first write creates `{ "data": { … } }`.
 - A string value for a key in `encryptedKeys` throws `StorageLockedError` on read and write: the
   tools cannot decrypt a file with a password, and they never replace its ciphertext.
-- Writes go in call order, through a temporary file and a rename. The JSON is compact, as the
-  desktop app writes it.
+- `setMany(entries)` writes several keys in 1 file replacement: all of them or none. A tool that
+  writes keys that belong together uses it.
+- `set` and `setMany` go in call order, through a temporary file and a rename. The JSON is compact,
+  as the desktop app writes it.
 
 The adapter does not watch the file. Do not use it on a file that the desktop app has open.
