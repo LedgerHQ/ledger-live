@@ -154,6 +154,25 @@ describe("getBalance", () => {
     );
   });
 
+  it("keeps the bridge's balance and spendable when liquid funds are under the reserve with a stake", async () => {
+    const amount = new BigNumber("10000000000000000000000"); // 0.01 NEAR, below the reserve
+    const shape = accountShape({ amount, positions: [position({ staked: STAKED })] });
+    (getAccount as jest.Mock).mockResolvedValue(shape);
+
+    const balances = await getBalance(mockNearContext, ADDRESS);
+
+    expect(balances[0]).toEqual({
+      value: BigInt(amount.toFixed(0)),
+      asset: { type: "native" },
+      locked: BigInt(amount.toFixed(0)),
+    });
+    expect(sum(balances, b => b.value)).toBe(BigInt(shape.balance.toFixed(0)));
+    expect(sum(balances, b => b.value) - sum(balances, b => b.locked ?? 0n)).toBe(
+      BigInt(shape.spendableBalance.toFixed(0)),
+    );
+    expect(shape.spendableBalance.isZero()).toBe(true);
+  });
+
   it("leaves pending dust out of both the entries and the account total", async () => {
     const dust = getYoctoThreshold().minus(1);
     const shape = accountShape({
