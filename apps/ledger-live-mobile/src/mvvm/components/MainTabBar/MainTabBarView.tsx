@@ -18,7 +18,8 @@ const GRADIENT_STOPS = [
 export const MainTabBarView: React.FC<MainTabBarViewProps> = ({
   activeRouteName,
   tabItems,
-  isCompact,
+  hasManyTabs,
+  density,
   onTabPress,
   hideTabBar,
   bottomInset,
@@ -48,8 +49,9 @@ export const MainTabBarView: React.FC<MainTabBarViewProps> = ({
 
       <TabBar
         active={activeRouteName}
+        density={density}
         onTabPress={onTabPress}
-        lx={{ marginHorizontal: isCompact ? "s8" : "s24" }}
+        lx={{ marginHorizontal: hasManyTabs ? "s8" : "s24" }}
       >
         {tabItems.map(item => (
           <TabBarItem

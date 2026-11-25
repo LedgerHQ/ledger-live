@@ -1,5 +1,5 @@
 import { track } from "@shared/analytics";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import {
   Home,
@@ -18,19 +18,20 @@ import { NavigatorName } from "~/const";
 import type { TabItemConfig, MainTabBarViewProps } from "./types";
 import { useTranslation } from "~/context/Locale";
 import {
-  COMPACT_TAB_COUNT,
+  MANY_TABS_COUNT,
   getLabelKey,
   TRACKING_EXTRA_PROPS_MAP,
   TRACKING_LABEL_MAP,
   TRACKING_MENUENTRY_EVENT,
 } from "./constants";
 import { scrollToTopEvent } from "./scrollToTopEvent";
+import { resetTabBarDensity, useIsTabBarCompact } from "./tabBarDensityStore";
 
 type UseMainTabBarViewModelParams = Pick<BottomTabBarProps, "state" | "navigation">;
 
 type UseMainTabBarViewModelReturn = Pick<
   MainTabBarViewProps,
-  "activeRouteName" | "tabItems" | "isCompact" | "onTabPress"
+  "activeRouteName" | "tabItems" | "hasManyTabs" | "density" | "onTabPress"
 >;
 
 type TabIconConfig = { icon: TabItemConfig["icon"]; activeIcon?: TabItemConfig["activeIcon"] };
@@ -59,8 +60,8 @@ function trackTabNavigation(targetName: string, sourceName: string, value: strin
   track(TRACKING_MENUENTRY_EVENT, { entry, page, ...TRACKING_EXTRA_PROPS_MAP[targetName] });
 }
 
-function handleScrollToTop(value: string, activeRouteName: string) {
-  if (value === NavigatorName.Portfolio && activeRouteName === NavigatorName.Portfolio) {
+function handleScrollToTop(activeRouteName: string) {
+  if (activeRouteName === NavigatorName.Portfolio) {
     scrollToTopEvent.emit();
   }
 }
@@ -71,6 +72,15 @@ export const useMainTabBarViewModel = ({
 }: UseMainTabBarViewModelParams): UseMainTabBarViewModelReturn => {
   const activeRouteName = state.routes[state.index].name;
   const { t } = useTranslation();
+
+  const isTabBarCompact = useIsTabBarCompact();
+
+  const previousRouteName = useRef(activeRouteName);
+  useEffect(() => {
+    if (previousRouteName.current === activeRouteName) return;
+    previousRouteName.current = activeRouteName;
+    resetTabBarDensity();
+  }, [activeRouteName]);
 
   const tabItems: readonly TabItemConfig[] = useMemo(
     () =>
@@ -105,16 +115,19 @@ export const useMainTabBarViewModel = ({
       const targetRoute = state.routes.find(route => route.name === value);
       if (!targetRoute) return;
 
-      handleScrollToTop(value, activeRouteName);
-
-      if (activeRouteName !== value) {
-        navigateToTab(targetRoute, value);
+      if (activeRouteName === value) {
+        resetTabBarDensity();
+        handleScrollToTop(activeRouteName);
+        return;
       }
+
+      navigateToTab(targetRoute, value);
     },
     [state.routes, activeRouteName, navigateToTab],
   );
 
-  const isCompact = tabItems.length >= COMPACT_TAB_COUNT;
+  const hasManyTabs = tabItems.length >= MANY_TABS_COUNT;
+  const density = isTabBarCompact ? "compact" : "expanded";
 
-  return { activeRouteName, tabItems, isCompact, onTabPress };
+  return { activeRouteName, tabItems, hasManyTabs, density, onTabPress };
 };

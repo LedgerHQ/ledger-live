@@ -3,6 +3,7 @@ import { renderHook, act } from "@tests/test-renderer";
 import { NavigatorName } from "~/const";
 import * as stakeLabelHelpers from "~/helpers/getStakeLabelLocaleBased";
 import { scrollToTopEvent } from "../scrollToTopEvent";
+import { resetTabBarDensity, setTabBarCompact } from "../tabBarDensityStore";
 import { useMainTabBarViewModel } from "../useMainTabBarViewModel";
 
 jest.mock("~/helpers/getStakeLabelLocaleBased", () => ({
@@ -43,6 +44,7 @@ function renderOnTab(activeIndex: number, routeNames?: readonly string[]) {
 describe("useMainTabBarViewModel", () => {
   afterEach(() => {
     mockGetEarnOrYieldSuffix.mockReset().mockReturnValue("earn");
+    resetTabBarDensity();
   });
 
   describe("earn/yield tab label", () => {
@@ -160,19 +162,74 @@ describe("useMainTabBarViewModel", () => {
     });
   });
 
-  describe("compact layout", () => {
-    it("should not be compact with four tabs", () => {
+  describe("many tabs layout", () => {
+    it("should not have many tabs with four tabs", () => {
       const fourTabs = TAB_ROUTE_NAMES.filter(name => name !== NavigatorName.AgentIntentTab);
 
       const { result } = renderOnTab(0, fourTabs);
 
-      expect(result.current.isCompact).toBe(false);
+      expect(result.current.hasManyTabs).toBe(false);
     });
 
-    it("should be compact with five tabs", () => {
+    it("should have many tabs with five tabs", () => {
       const { result } = renderOnTab(0);
 
-      expect(result.current.isCompact).toBe(true);
+      expect(result.current.hasManyTabs).toBe(true);
+    });
+  });
+
+  describe("scroll density", () => {
+    it("should be expanded by default", () => {
+      const { result } = renderOnTab(0);
+
+      expect(result.current.density).toBe("expanded");
+    });
+
+    it("should be compact when a scroll compacts the tab bar", () => {
+      const { result } = renderOnTab(0);
+
+      act(() => setTabBarCompact(true));
+
+      expect(result.current.density).toBe("compact");
+    });
+
+    it("should expand when the active tab is pressed again", () => {
+      const { result } = renderOnTab(1);
+      act(() => setTabBarCompact(true));
+
+      act(() => {
+        result.current.onTabPress(NavigatorName.Swap);
+      });
+
+      expect(result.current.density).toBe("expanded");
+    });
+
+    it("should expand when the active tab changes", () => {
+      let state = createState(0);
+      const navigation = createNavigation();
+      const { result, rerender } = renderHook(() =>
+        useMainTabBarViewModel({ state: state as never, navigation: navigation as never }),
+      );
+      act(() => setTabBarCompact(true));
+
+      state = createState(1);
+      rerender({});
+
+      expect(result.current.density).toBe("expanded");
+    });
+
+    it("should still navigate when a tab is pressed while compact", () => {
+      const navigation = createNavigation();
+      const { result } = renderHook(() =>
+        useMainTabBarViewModel({ state: createState(0) as never, navigation: navigation as never }),
+      );
+      act(() => setTabBarCompact(true));
+
+      act(() => {
+        result.current.onTabPress(NavigatorName.Earn);
+      });
+
+      expect(navigation.navigate).toHaveBeenCalledWith(NavigatorName.Earn);
     });
   });
 });
