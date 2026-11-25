@@ -4,12 +4,12 @@
 import { renderHook } from "@testing-library/react";
 import { useMarketCounterValueRate } from "../useMarketCounterValueRate";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
-import { useGetSupportedChartCounterCurrenciesQuery } from "../../state-manager/api";
+import { useGetSupportedChartCounterCurrenciesQuery } from "@domain/api-market-chart";
 
 jest.mock("@features/platform-market-countervalues", () => ({
   useUsdToFiatRate: jest.fn(),
 }));
-jest.mock("../../state-manager/api", () => ({
+jest.mock("@domain/api-market-chart", () => ({
   useGetSupportedChartCounterCurrenciesQuery: jest.fn(),
 }));
 
