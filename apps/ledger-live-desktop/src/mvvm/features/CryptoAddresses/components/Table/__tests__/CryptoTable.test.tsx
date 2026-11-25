@@ -2,11 +2,14 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { act, within } from "@testing-library/react";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
+import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
+import { importLLDCoinFamily } from "~/renderer/families";
 import { CryptoTable } from "../CryptoTable";
 import {
   ETH_ACCOUNT,
   ETH_ACCOUNT_2,
   ETH_ACCOUNT_WITH_USDC,
+  XRP_ACCOUNT_WITH_TOKEN,
 } from "LLD/features/__mocks__/accounts.mock";
 import { createWalletState } from "../../../testUtils/createWalletState";
 import { setAccountName } from "~/renderer/reducers/wallet";
@@ -15,6 +18,13 @@ import {
   buildMainAccountByIdMap,
   lookupParentAccountFromMap,
 } from "@ledgerhq/asset-aggregation/assetDistribution/index";
+
+jest.mock("@ledgerhq/live-common/families/xrp/config", () => {
+  return {
+    ...jest.requireActual("@ledgerhq/live-common/families/xrp/config"),
+    getXrpEnabledTokenStandards: jest.fn(),
+  };
+});
 
 function expectColumnHeaders(): void {
   expect(screen.getByRole("columnheader", { name: "Name" })).toBeVisible();
@@ -165,6 +175,10 @@ describe("CryptoTable", () => {
   describe("account settings", () => {
     const SETTINGS_DIALOG_TEST_ID = "crypto-addresses-account-settings-dialog";
 
+    beforeAll(async () => {
+      await Promise.all(["xrp", "evm"].map(family => importLLDCoinFamily(family)));
+    });
+
     const renderWithAccountDetail = (
       rows: Parameters<typeof CryptoTable>[0]["rows"],
       accountDetail: { enabled: boolean; params?: { excludedCurrencyIds: string[] } },
@@ -218,6 +232,27 @@ describe("CryptoTable", () => {
       await user.type(input, "Savings{Enter}");
 
       expect(await screen.findByTestId("crypto-account-row-Savings")).toBeVisible();
+    });
+
+    it("opens Manage assets of an XRP account that holds tokens, and closes the settings", async () => {
+      jest.mocked(getXrpEnabledTokenStandards).mockReturnValue(["iou", "mpt"]);
+      const { store, user } = renderWithAccountDetail(
+        [XRP_ACCOUNT_WITH_TOKEN],
+        { enabled: true },
+        new Map([[XRP_ACCOUNT_WITH_TOKEN.id, "XRP 1"]]),
+      );
+
+      await user.click(screen.getByRole("button", { name: "Account settings" }));
+      const manageAssetsItem = await screen.findByTestId("account-settings-manage-assets");
+      await user.click(manageAssetsItem);
+
+      await waitFor(() => {
+        expect(screen.queryByTestId(SETTINGS_DIALOG_TEST_ID)).not.toBeInTheDocument();
+      });
+      expect(store.getState().dialogsWithData.FAMILY_DIALOG).toEqual({
+        isOpen: true,
+        data: { accountId: XRP_ACCOUNT_WITH_TOKEN.id, params: { screen: "manageAssets" } },
+      });
     });
 
     it("keeps the edit name button for an excluded currency", () => {

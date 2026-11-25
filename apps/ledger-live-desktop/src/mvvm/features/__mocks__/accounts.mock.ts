@@ -1,4 +1,9 @@
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import BigNumber from "bignumber.js";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
+import type { Account } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import {
   arbitrumCurrency,
   baseCurrency,
@@ -52,3 +57,36 @@ export const SOL_ACCOUNT = genAccount("solana-1", {
   currency: solanaCurrency,
   operationsSize: 100,
 });
+
+const xrpTestnetCurrency = getCryptoCurrencyById("ripple_testnet");
+
+const xrpIouToken: TokenCurrency = {
+  type: "TokenCurrency",
+  id: TokenCurrencyIdSchema.parse("ripple_testnet/iou/rlusd"),
+  parentCurrencyId: xrpTestnetCurrency.id,
+  contractAddress: "rIssuer",
+  tokenIdentifier: "524C555344000000000000000000000000000000",
+  tokenType: "iou",
+  name: "RLUSD",
+  ticker: "RLUSD",
+  units: [{ name: "RLUSD", code: "RLUSD", magnitude: 0 }],
+};
+
+export const XRP_ACCOUNT: Account = {
+  ...genAccount("xrp-1", { currency: xrpTestnetCurrency }),
+  subAccounts: [],
+};
+
+const XRP_IOU_TOKEN_ACCOUNT: XrpTokenAccount = {
+  ...genTokenAccount(0, XRP_ACCOUNT, xrpIouToken),
+  xrpResources: {
+    isLocked: false,
+    isRippling: false,
+    limit: new BigNumber(1000),
+  },
+};
+
+export const XRP_ACCOUNT_WITH_TOKEN: Account = {
+  ...XRP_ACCOUNT,
+  subAccounts: [XRP_IOU_TOKEN_ACCOUNT],
+};

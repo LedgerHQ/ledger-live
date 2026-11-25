@@ -544,6 +544,11 @@ export type LLDCoinFamily<
    */
   addAssetAction?: (args: { account: A; dispatch: AppDispatch }) => void;
 
+  manageAssetsAction?: {
+    canManage: (account: A) => boolean;
+    open: (args: { account: A; dispatch: AppDispatch }) => void;
+  };
+
   /** Overrides `currency.tokenTypes`. Read it through `useTokenTypes` */
   getTokenTypes?: (currency: CryptoCurrency) => string[];
 
