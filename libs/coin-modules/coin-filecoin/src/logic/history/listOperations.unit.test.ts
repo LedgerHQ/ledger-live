@@ -40,7 +40,7 @@ const makeNativeTx = (overrides = {}) => ({
 describe("listOperations", () => {
   beforeEach(() => jest.resetAllMocks());
 
-  it("OUT value equals amount + fee", async () => {
+  it("OUT value is the amount, with the fee in tx.fees", async () => {
     mockedFetchTxs.mockResolvedValueOnce({
       txs: [makeNativeTx()],
       metadata: { limit: 50, offset: 0 },
@@ -50,8 +50,23 @@ describe("listOperations", () => {
     const result = await listOperations(ADDRESS, { minHeight: 0 });
 
     const outOp = result.items.find(op => op.type === "OUT");
-    // value = 1000000000000000000 + 150000000000
-    expect(outOp?.value).toBe(1_000_000_150_000_000_000n);
+    expect(outOp?.value).toBe(1_000_000_000_000_000_000n);
+    expect(outOp?.tx.fees).toBe(150_000_000_000n);
+  });
+
+  it("a zero-value outgoing message is a FEES operation of value 0", async () => {
+    mockedFetchTxs.mockResolvedValueOnce({
+      txs: [makeNativeTx({ amount: "0" })],
+      metadata: { limit: 50, offset: 0 },
+    });
+    mockedFetchERC20.mockResolvedValueOnce({ txs: [] });
+
+    const result = await listOperations(ADDRESS, { minHeight: 0 });
+
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].type).toBe("FEES");
+    expect(result.items[0].value).toBe(0n);
+    expect(result.items[0].tx.fees).toBe(150_000_000_000n);
   });
 
   it("next is undefined when both streams are empty", async () => {
