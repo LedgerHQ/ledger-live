@@ -111,6 +111,11 @@ export class MyLedgerPage extends AppPage {
     "custom-image-contrast-continue-button",
   );
   private readonly customImageFinishButton = this.page.getByTestId("custom-image-finish-button");
+  private readonly removeCustomImageButton = this.page.getByTestId("remove-custom-image-button");
+  private readonly customImageRemoved = this.page.getByTestId("device-custom-image-removed");
+  private readonly closeCustomImageRemovalButton = this.page.getByTestId(
+    "close-device-custom-image-removal-button",
+  );
 
   /**
    * `/manager` renders a DeviceAction that connects and runs `listApps` before the
@@ -441,6 +446,23 @@ export class MyLedgerPage extends AppPage {
     await this.cropContinueButton.click();
     await this.contrastContinueButton.click();
     await this.customImageFinishButton.click();
+  }
+
+  /** Opening the removal drawer starts the device action, so there is no confirm click. */
+  @step("Remove the custom lock screen")
+  async removeCustomLockScreen() {
+    await this.openCustomLockScreen();
+    await this.removeCustomImageButton.click();
+  }
+
+  @step("Expect the custom lock screen to be removed")
+  async expectCustomLockScreenRemoved() {
+    await expect(this.customImageRemoved).toBeVisible({ timeout: TIMEOUT.large });
+  }
+
+  @step("Close the custom lock screen removal")
+  async closeCustomLockScreenRemoval() {
+    await this.closeCustomImageRemovalButton.click();
   }
 
   @step("Expect the custom lock screen action to read $0")
