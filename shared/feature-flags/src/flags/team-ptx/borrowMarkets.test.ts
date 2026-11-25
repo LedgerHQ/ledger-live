@@ -49,7 +49,7 @@ describe("borrowMarkets", () => {
     ["markets as an array", { markets: ["ethereum/erc20/usd__coin"] }],
     [
       "a collateral list as a string",
-      { markets: { "ethereum/erc20/usd__coin": "base/erc20/coinbase_wrapped_btc" } },
+      { markets: { "ethereum/erc20/usd__coin": "ethereum/erc20/coinbase_wrapped_btc" } },
     ],
     ["a non-string collateral id", { markets: { "ethereum/erc20/usd__coin": [42] } }],
   ])("should reject %s", (_, params) => {
