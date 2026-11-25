@@ -10,7 +10,7 @@ import IconInfo from "~/icons/Info";
 import LText from "~/components/LText";
 import Button from "~/components/Button";
 import { rgba } from "../../colors";
-import { urls } from "~/utils/urls";
+import { getTokenSupportLink } from "~/utils/getTokenSupportLink";
 
 export type Props = {
   isOpened: boolean;
@@ -20,7 +20,6 @@ export type Props = {
 
 function Modal({ isOpened, onClose, currency }: Props) {
   const { colors } = useTheme();
-  const tokenType = currency.type === "TokenCurrency" ? currency.tokenType : "erc20";
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
       <SafeAreaView style={styles.modal}>
@@ -43,11 +42,10 @@ function Modal({ isOpened, onClose, currency }: Props) {
             type="primary"
             title={<Trans i18nKey="common.learnMore" />}
             containerStyle={[styles.modalBtn, styles.learnMore]}
-            onPress={() =>
-              Linking.openURL(
-                urls.supportLinkByTokenType[tokenType as keyof typeof urls.supportLinkByTokenType],
-              )
-            }
+            onPress={() => {
+              const supportLink = getTokenSupportLink(currency);
+              if (supportLink) Linking.openURL(supportLink);
+            }}
           />
         </View>
       </SafeAreaView>
