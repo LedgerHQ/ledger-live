@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { CLEAR_AGENTS } from "../testing/agent-env";
 import { runCli } from "../testing/cli-runner";
 import { cliStateDirIn } from "../testing/state-home";
 
@@ -22,20 +23,6 @@ async function makeStateHome(): Promise<string> {
 function markerPath(stateHome: string): string {
   return path.join(cliStateDirIn(stateHome), "first-run.json");
 }
-
-// Neutralizes every ambient agent signal (e.g. CURSOR_AGENT is present in the
-// real process.env when this suite runs inside Cursor) so per-agent tests can
-// assert on exactly the one they set.
-const CLEAR_AGENTS = {
-  CLAUDECODE: "",
-  CLAUDE_CODE: "",
-  CURSOR_AGENT: "",
-  CODEX_ENABLED: "",
-  GEMINI_CLI: "",
-  OPENCODE: "",
-  AMP_CURRENT_THREAD_ID: "",
-  AGENT: "",
-};
 
 /** Env that lets the nudge fire: re-enable it and isolate the state marker. */
 function nudgeEnv(
