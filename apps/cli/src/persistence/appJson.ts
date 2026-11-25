@@ -1,5 +1,9 @@
 import { access } from "node:fs/promises";
-import { ACCOUNTS_RECORD_KEY, appendAccounts } from "@features/platform-persistence-accounts";
+import {
+  ACCOUNTS_RECORD_KEY,
+  accountsNotStored,
+  appendAccounts,
+} from "@features/platform-persistence-accounts";
 import type { Account } from "@ledgerhq/types-live";
 import { decodeEntries, encodeEntries } from "@shared/persistence";
 import { StorageLockedError, type StoragePort } from "@shared/storage";
@@ -57,7 +61,8 @@ export async function addAccountsToAppJson(
 ): Promise<number> {
   const storage = await openAppJson(filePath);
   const stored = await readStoredAccounts(storage).catch(refuseEncrypted);
-  const all = appendAccounts(stored, await encodeNewAccounts(accounts));
+  const added = await encodeNewAccounts(accountsNotStored(stored, accounts));
+  const all = appendAccounts(stored, added);
   await storage.setMany({ [ACCOUNTS_RECORD_KEY]: all, cryptoAssets });
   return all.length - stored.length;
 }

@@ -78,8 +78,11 @@ stop the others. `defineCollectionRecord` gives a `CollectionRecordDefinition` f
 
 For Node tools with no Redux (`apps/cli`, the e2e seeds), `defineCollectionCodec` gives the checked
 codec alone. `decodeEntries(codec, stored)` gives the decoded entries and the failures by index,
-`encodeEntries(codec, entries, state)` encodes, and `appendEntries(storedEntryId, stored, added)`
-adds new entries to a stored list and keeps the stored ones as they are.
+`encodeEntries(codec, entries, state)` encodes, `entriesNotStored(storedEntryId, stored, entries,
+entryId)` gives the entries whose id is not stored yet, and `appendEntries(storedEntryId, stored,
+added)` adds new entries to a stored list and keeps the stored ones as they are. To add to a
+stored list: filter with `entriesNotStored`, then encode, then append, so that a stored entry is
+never encoded again.
 
 ## Rules for each record
 

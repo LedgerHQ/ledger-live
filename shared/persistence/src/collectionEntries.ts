@@ -26,8 +26,24 @@ export function encodeEntries<State, Entry>(
 }
 
 /**
- * Keeps the stored entries as they are, also those that do not decode, and adds each new entry
- * whose id is not stored yet. For the Node tools that add to a stored list.
+ * The entries whose id is not stored yet, also against a stored entry that does not decode. Filter
+ * with it before `encodeEntries`: a stored entry is never encoded again. It compares the stored id
+ * before any migration.
+ */
+export function entriesNotStored<Entry>(
+  storedEntryId: (stored: unknown) => string | undefined,
+  stored: ReadonlyArray<unknown>,
+  entries: ReadonlyArray<Entry>,
+  entryId: (entry: Entry) => string,
+): Entry[] {
+  const storedIds = new Set(stored.map(storedEntryId));
+  return entries.filter(entry => !storedIds.has(entryId(entry)));
+}
+
+/**
+ * Keeps the stored entries as they are, byte for byte, also those that do not decode, and adds
+ * each encoded entry whose id is not stored yet. For the Node tools that add to a stored list:
+ * filter with `entriesNotStored`, encode, then append.
  */
 export function appendEntries(
   storedEntryId: (stored: unknown) => string | undefined,

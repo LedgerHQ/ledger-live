@@ -165,6 +165,36 @@ test("liveData --add does not add again an account whose stored entry is unreada
   assert.equal(new Set(ids).size, ids.length);
 });
 
+const withUnsupportedAccount = file => {
+  file.data.accounts[1].data.derivationMode = "notADerivationMode";
+  return file;
+};
+
+test("liveData --add skips a stored account that the cli cannot encode", () => {
+  const target = fixtureCopy("unsupported-stored.json", withUnsupportedAccount);
+  const before = JSON.stringify(storedAccounts(target));
+
+  const result = runCli("liveData", "--appjsonFile", target, "--appjson", target, "--add");
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /0 accounts added\./);
+  assert.equal(JSON.stringify(storedAccounts(target)), before);
+});
+
+test("liveData --add fails on a new account that the cli cannot encode, and leaves app.json as it is", () => {
+  const source = fixtureCopy("unsupported-source.json", withUnsupportedAccount);
+  const target = fixtureCopy("unsupported-new.json", file => {
+    file.data.accounts = file.data.accounts.slice(0, 1);
+    return file;
+  });
+  const before = readFileSync(target, "utf-8");
+
+  const result = runCli("liveData", "--appjsonFile", source, "--appjson", target, "--add");
+
+  assert.notEqual(result.status, 0);
+  assert.equal(readFileSync(target, "utf-8"), before);
+});
+
 test("the published manifest lists no workspace package", () => {
   const manifest = readJson(path.join(here, "..", "dist", "package.json"));
   const workspaceDependencies = Object.entries(manifest.dependencies ?? {}).filter(([name]) =>

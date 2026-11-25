@@ -1,4 +1,4 @@
-import { appendEntries } from "@shared/persistence";
+import { appendEntries, entriesNotStored } from "@shared/persistence";
 import type { z } from "zod";
 import { accountsVersions, type accountEnvelopeSchema } from "./accountsVersions";
 import { accountIdOfPayload } from "./envelope.internals";
@@ -46,3 +46,9 @@ export const appendAccounts = (
   stored: ReadonlyArray<unknown>,
   added: ReadonlyArray<unknown>,
 ): unknown[] => appendEntries(storedAccountId, stored, added);
+
+/** The accounts whose id is not stored yet, to encode before `appendAccounts`. */
+export const accountsNotStored = <Account extends { id: string }>(
+  stored: ReadonlyArray<unknown>,
+  accounts: ReadonlyArray<Account>,
+): Account[] => entriesNotStored(storedAccountId, stored, accounts, account => account.id);

@@ -37,6 +37,8 @@ for all of them. Each app injects its own account model.
   - `encodeRawAccount(raw)`: a raw account at `CLI_WRITTEN_VERSION`, encoded at the latest record
     version.
   - `encodeStoredAccount(account)`: a stored account, encoded at the latest record version.
+  - `accountsNotStored(stored, accounts)`: the accounts whose id is not stored yet, to encode
+    before `appendAccounts`.
   - `appendAccounts(stored, added)` and `storedAccountId(stored)`: the id of an account of any
     record version, newer included.
 

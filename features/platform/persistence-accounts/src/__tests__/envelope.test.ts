@@ -1,5 +1,6 @@
 import { NewerRecordVersionError, RecordDecodeError } from "@shared/persistence";
 import {
+  accountsNotStored,
   appendAccounts,
   CLI_WRITTEN_VERSION,
   encodeRawAccount,
@@ -110,5 +111,19 @@ describe("appendAccounts", () => {
         encodeRawAccount({ ...raw, id: "c" }),
       ]),
     ).toEqual([...stored, encodeRawAccount({ ...raw, id: "c" })]);
+  });
+});
+
+describe("accountsNotStored", () => {
+  it("keeps only the accounts whose id is not stored, in any stored version or state", () => {
+    const stored = [
+      encodeRawAccount({ ...raw, id: "a" }),
+      { data: { id: "b", currencyId: "x" }, version: 9 },
+      { $v: 1, data: { data: { ...raw, id: "c" }, version: 3 } },
+    ];
+
+    expect(accountsNotStored(stored, [{ id: "a" }, { id: "b" }, { id: "c" }, { id: "d" }])).toEqual(
+      [{ id: "d" }],
+    );
   });
 });

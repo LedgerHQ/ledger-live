@@ -1,4 +1,9 @@
-import { appendEntries, decodeEntries, encodeEntries } from "../collectionEntries";
+import {
+  appendEntries,
+  decodeEntries,
+  encodeEntries,
+  entriesNotStored,
+} from "../collectionEntries";
 import { defineCollectionRecord } from "../defineCollectionRecord";
 import { NewerRecordVersionError, RecordDecodeError } from "../errors";
 import { recordVersions } from "../recordVersions";
@@ -118,6 +123,25 @@ describe("encodeEntries", () => {
       { data: { id: "a", value: 1, label: "first" }, version: 2 },
       { data: { id: "b", value: 2, label: "second" }, version: 2 },
     ]);
+  });
+});
+
+describe("entriesNotStored", () => {
+  it("keeps only the entries whose id is not stored, also against an unreadable stored entry", () => {
+    const stored = [
+      { data: { id: "a", value: 1 }, version: 2 },
+      { data: { id: "b", value: "x" }, version: 9 },
+      "garbage",
+    ];
+    const entries: Item[] = [
+      { id: "a", value: 1 },
+      { id: "b", value: 2 },
+      { id: "c", value: 3 },
+    ];
+
+    expect(
+      entriesNotStored(itemsRecord.storedEntryId, stored, entries, itemsRecord.entryId),
+    ).toEqual([{ id: "c", value: 3 }]);
   });
 });
 
