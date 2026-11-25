@@ -1,4 +1,4 @@
-# @shared/platform-linking
+# @shared/linking
 
 > [!CAUTION]
 > **Status: UNSTABLE** — New package; API may change as features adopt it.
@@ -22,7 +22,7 @@ This package abstracts those into a single provider that each app wires once.
 
 ```tsx
 // apps/ledger-live-desktop
-import { LinkingProvider } from "@shared/platform-linking";
+import { LinkingProvider } from "@shared/linking";
 import { shell } from "electron";
 import { track } from "@shared/analytics";
 
@@ -44,7 +44,7 @@ import { track } from "@shared/analytics";
 ### Feature usage
 
 ```tsx
-import { useOpenLink, useLocalizedUrl } from "@shared/platform-linking";
+import { useOpenLink, useLocalizedUrl } from "@shared/linking";
 
 function MyComponent() {
   const openLink = useOpenLink();
@@ -80,7 +80,9 @@ export const FEATURE_URLS = {
 | `LinkingProvider`  | React context provider — wire once per app                    |
 | `useOpenLink`      | Hook returning a fire-and-forget function that validates, tracks, and opens a URL |
 | `useLocalizedUrl`  | Hook returning a localized version of a URL                   |
+| `useUrlLocalizer`  | Hook returning a function that localizes the URLs it is given |
 | `assertSafeUrl`    | Throws if a URL uses a disallowed protocol (https/mailto only) |
+| `isSafeUrl`        | Whether `assertSafeUrl` accepts a URL, without throwing       |
 | `localizeUrl`      | Pure function to localize Ledger URLs by language             |
 | `LinkingConfig`    | Config type for the provider                                  |
 | `LocalizationConfig` | Localization subset of the config                          |

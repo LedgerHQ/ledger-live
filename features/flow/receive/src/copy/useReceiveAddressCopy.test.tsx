@@ -39,6 +39,12 @@ describe("useReceiveAddressCopy", () => {
       },
       learnMoreLabel: "Learn more",
       continueLabel: "Continue",
+      helpCardTitle: "Need support? Get help",
+      helpTitle: "Get help",
+      helpQuestions: {
+        receiveFromExchange: "How to receive from exchanges?",
+        receiveSecurely: "How to receive securely?",
+      },
     });
   });
 });

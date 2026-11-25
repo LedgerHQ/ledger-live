@@ -2463,6 +2463,12 @@
     },
     "serviceStatus": {
       "continue": "Continue"
+    },
+    "help": {
+      "cardTitle": "Need support? Get help",
+      "title": "Get help",
+      "receiveFromExchange": "How to receive from exchanges?",
+      "receiveSecurely": "How to receive securely?"
     }
   },
   "ratings": {

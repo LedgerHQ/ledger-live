@@ -55,12 +55,6 @@ describe("useReceiveAddressNotices", () => {
     expect(result.current).toEqual([]);
   });
 
-  it("offers no Learn more when the app cannot open links", () => {
-    const { result } = setup({ onOpenUrl: undefined });
-
-    expect(result.current[0].learnMore).toBeUndefined();
-  });
-
   it("keeps the same notices across renders", () => {
     const { result, rerender } = setup();
     const notices = result.current;

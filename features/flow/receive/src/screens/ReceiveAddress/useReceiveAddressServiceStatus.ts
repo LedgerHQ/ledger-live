@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { trackPage } from "@shared/analytics";
+import { isSafeUrl } from "@shared/linking";
 import type { ReceiveServiceIncident } from "../../types";
 import { RECEIVE_ADDRESS_PAGE, SERVICE_WARNING_PAGE } from "./receiveAddressTracking";
 import type { ReceiveServiceStatusView } from "./ReceiveAddressView.types";
@@ -7,7 +8,7 @@ import type { ReceiveServiceStatusView } from "./ReceiveAddressView.types";
 type Params = Readonly<{
   serviceIncidents: readonly ReceiveServiceIncident[] | undefined;
   continueLabel: string;
-  onOpenUrl: ((url: string) => void) | undefined;
+  onOpenUrl: (url: string) => void;
 }>;
 
 export function useReceiveAddressServiceStatus({
@@ -36,7 +37,7 @@ export function useReceiveAddressServiceStatus({
             title: incident.title,
             description: incident.description?.map(({ text, url }) => ({
               text,
-              onPress: url && onOpenUrl ? () => onOpenUrl(url) : undefined,
+              onPress: url && isSafeUrl(url) ? () => onOpenUrl(url) : undefined,
             })),
             continueLabel,
             onContinue,

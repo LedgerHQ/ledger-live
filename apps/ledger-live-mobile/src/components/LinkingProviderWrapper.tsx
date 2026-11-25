@@ -17,9 +17,7 @@ export function LinkingProviderWrapper({
 
   const config = useMemo<LinkingConfig>(
     () => ({
-      openExternal: url => {
-        Linking.openURL(url);
-      },
+      openExternal: url => Linking.openURL(url),
       onLinkOpened: url => {
         track("OpenURL", { url });
       },

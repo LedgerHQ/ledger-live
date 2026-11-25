@@ -1,10 +1,12 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
+import { useOpenLink, useUrlLocalizer } from "@shared/linking";
 import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVerifyAddressExecutorViewModel";
 import { splitAddress } from "../../logic/splitAddress";
 import type { ReceiveAddressProps } from "./ReceiveAddress.types";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 import { useReceiveAddressActions } from "./useReceiveAddressActions";
 import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
+import { useReceiveAddressHelp } from "./useReceiveAddressHelp";
 import { useReceiveAddressNotices } from "./useReceiveAddressNotices";
 import { useReceiveAddressSelection } from "./useReceiveAddressSelection";
 import { useReceiveAddressServiceStatus } from "./useReceiveAddressServiceStatus";
@@ -26,7 +28,6 @@ export function useReceiveAddressViewModel({
   VerifyAddressExecutor,
   getFamilyConfig,
   serviceIncidents,
-  onOpenUrl,
 }: ReceiveAddressProps): ReceiveAddressViewModel {
   const { descriptor, data, accountStatus } = useReceiveScreenData(accountUUID, assetId);
   const header = useReceiveAddressHeader(descriptor, assetId);
@@ -52,12 +53,24 @@ export function useReceiveAddressViewModel({
     onShareAddress,
   });
 
+  const openLink = useOpenLink();
+  const localizeUrl = useUrlLocalizer();
+  const openSupportUrl = useCallback(
+    (url: string) => openLink(localizeUrl(url)),
+    [openLink, localizeUrl],
+  );
   const serviceStatus = useReceiveAddressServiceStatus({
     serviceIncidents,
     continueLabel: copy.continueLabel,
-    onOpenUrl,
+    onOpenUrl: openLink,
   });
-  const notices = useReceiveAddressNotices({ familyConfig, selected, copy, onOpenUrl });
+  const notices = useReceiveAddressNotices({
+    familyConfig,
+    selected,
+    copy,
+    onOpenUrl: openSupportUrl,
+  });
+  const { helpCard, helpPanel } = useReceiveAddressHelp({ copy, onOpenUrl: openSupportUrl });
   // The hint waits for the incident: it would lock a dialog that no longer shows the tiles.
   const shownActions = useMemo(
     () => (serviceStatus && actions.verifyHint ? { ...actions, verifyHint: undefined } : actions),
@@ -103,6 +116,8 @@ export function useReceiveAddressViewModel({
     isVerifying: verification !== undefined,
     notices,
     serviceStatus,
+    helpCard,
+    helpPanel,
     verification,
     title: header.title,
     networkLabel: header.networkLabel,

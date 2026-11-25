@@ -1,3 +1,4 @@
+import type { ReceiveHelpQuestionId } from "../../copy/useReceiveAddressCopy";
 import type { AddressParts } from "../../logic/splitAddress";
 import type { ReceiveIcon } from "../../logic/toReceiveAddressData";
 import type { ReceiveAddressOptionId } from "../../logic/toReceiveAddressOptions";
@@ -65,6 +66,14 @@ export type ReceiveServiceStatusView = Readonly<{
   onContinue: () => void;
 }>;
 
+export type ReceiveHelpCardView = Readonly<{ title: string; onPress: () => void }>;
+
+export type ReceiveHelpPanelView = Readonly<{
+  title: string;
+  questions: readonly (ReceiveAddressAction & Readonly<{ id: ReceiveHelpQuestionId }>)[];
+  onClose: () => void;
+}>;
+
 export type ReceiveAddressViewProps = Readonly<{
   /** The address is not known yet: skeletons hold the place of the QR card and the address. */
   isLoading: boolean;
@@ -77,6 +86,8 @@ export type ReceiveAddressViewProps = Readonly<{
   isVerifying: boolean;
   notices: readonly ReceiveNoticeView[];
   serviceStatus?: ReceiveServiceStatusView;
+  helpCard: ReceiveHelpCardView;
+  helpPanel?: ReceiveHelpPanelView;
   /** "Receive USDC" */
   title: string;
   /** "Ethereum network" */

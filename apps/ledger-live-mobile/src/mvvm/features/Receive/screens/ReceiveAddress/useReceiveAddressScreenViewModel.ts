@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react";
-import { Linking } from "react-native";
 import { accountsSlice } from "@domain/entity-account";
 import { currencyIdFromNetwork } from "@domain/entity-network";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
@@ -34,10 +33,6 @@ const toIncidentTextPart = (segment: HtmlLinkSegment) =>
 
 const toIncidentTextParts = (html: string | undefined) =>
   html === undefined ? undefined : buildHtmlDisplaySegments(html).map(toIncidentTextPart);
-
-const openUrl = (url: string) => {
-  Linking.openURL(url).catch(() => undefined);
-};
 
 const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
@@ -91,6 +86,5 @@ export function useReceiveAddressScreenViewModel({
     VerifyAddressExecutor: VerifyAddressExecutorLWM,
     getFamilyConfig,
     serviceIncidents,
-    onOpenUrl: openUrl,
   };
 }
