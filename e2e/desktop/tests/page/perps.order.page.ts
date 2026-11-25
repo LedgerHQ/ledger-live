@@ -47,9 +47,7 @@ export class PerpsOrderPage extends WebViewAppPage {
     const webview = await this.getWebView();
     const markets = webview.getByTestId(market.marketTestId);
     await expect(markets.first()).toBeVisible();
-    const listed = await markets.evaluateAll(items =>
-      items.map(item => item.getAttribute("data-testid") ?? ""),
-    );
+    const listed = await markets.evaluateAll(items => items.map(item => item.dataset.testid ?? ""));
     const busy = new Set(positions.map(({ symbol }) => `market-item-${symbol}`));
     const free = listed.find(testId => !busy.has(testId));
     if (!free) throw new Error(`Every listed ${market.label} market already holds a position`);
@@ -212,10 +210,11 @@ export class PerpsOrderPage extends WebViewAppPage {
       );
       return perProvider.flat();
     }, address);
-    if (!Array.isArray(positions)) throw new Error("The Perps provider returned no position list");
+    if (!Array.isArray(positions))
+      throw new TypeError("The Perps provider returned no position list");
     return positions.map(position => {
       if (typeof position?.marketId !== "string" || typeof position?.symbol !== "string") {
-        throw new Error("A provider position has no market id or symbol");
+        throw new TypeError("A provider position has no market id or symbol");
       }
       return { marketId: position.marketId, symbol: position.symbol };
     });
@@ -254,7 +253,9 @@ export class PerpsOrderPage extends WebViewAppPage {
   // The list shows the symbol without its dex prefix, then the side and leverage.
   private positionRow(webview: Page, { symbol: providerSymbol }: ProviderPosition) {
     const symbol = providerSymbol.replace(/^.*:/, "");
-    return webview.getByRole("button", { name: new RegExp(`${symbol}\\s+(Long|Short) \\d+x`) });
+    return webview.getByRole("button", {
+      name: new RegExp(String.raw`${symbol}\s+(Long|Short) \d+x`),
+    });
   }
 
   private async expectPositionAutoClose(side: PerpsOrderSide) {

@@ -72,6 +72,18 @@ export async function readPerpsPositions(
   return app.perpsOrder.getProviderPositions(address);
 }
 
+async function closeOpenedPosition(
+  app: Application,
+  {
+    position,
+    relaunchSpeculos,
+  }: { position: ProviderPosition; relaunchSpeculos: RelaunchSpeculos },
+) {
+  await app.perpsOrder.openPositionFromList(position);
+  await closePerpsPosition(app, { relaunchSpeculos });
+  await app.perpsOrder.expectPositionRowHidden(position);
+}
+
 // Closes only what the test opened, on any market: positions not listed at the start.
 export async function closePerpsPositionsOpenedByTest(
   app: Application,
@@ -92,9 +104,7 @@ export async function closePerpsPositionsOpenedByTest(
     ({ marketId }) => !known.includes(marketId),
   );
   for (const position of opened) {
-    await app.perpsOrder.openPositionFromList(position);
-    await closePerpsPosition(app, { relaunchSpeculos });
-    await app.perpsOrder.expectPositionRowHidden(position);
+    await closeOpenedPosition(app, { position, relaunchSpeculos }); // NOSONAR: closes share one device
   }
   const address = await getSavedAccountAddress(userdataFile, account);
   await app.perpsOrder.expectNoNewProviderPositions(address, known);
