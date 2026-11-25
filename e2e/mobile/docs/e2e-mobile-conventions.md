@@ -162,7 +162,8 @@ iOS smart punctuation turns a typed `'` into `’`, so a straight apostrophe in 
 The test function calls `declareBroadcastAccounts`, `declareCliBroadcastAccounts` or `declareSharedResources` ([`helpers/exclusiveLock.ts`](../helpers/exclusiveLock.ts)) before its `describe`:
 
 ```ts
-export function runDelegateTest(delegation: DelegateType /* … */) {
+export function runDelegateTest(options: RunDelegateTestOptions) {
+  const { delegation /* … */ } = options;
   declareBroadcastAccounts(delegation.account);
   describe("Delegate", () => {
 ```

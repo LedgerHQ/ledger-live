@@ -219,7 +219,13 @@ export const normalizeText = (text: string) =>
     .replace(/\u202F/g, " ")
     .trim();
 
-export const parseTickerAmount = (text: string, ticker: string) => {
+type TickerAmountOptions = {
+  text: string;
+  ticker: string;
+};
+
+export const parseTickerAmount = (options: TickerAmountOptions) => {
+  const { text, ticker } = options;
   const normalized = normalizeText(text).replace(/,/g, "");
   const tickerAmountRegex = new RegExp(String.raw`(-?\d+(?:\.\d+)?)\s*${escapeRegExp(ticker)}`);
   const match = tickerAmountRegex.exec(normalized);

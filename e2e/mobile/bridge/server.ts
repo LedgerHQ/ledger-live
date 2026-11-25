@@ -331,8 +331,14 @@ export async function removeKnownSpeculos(address: string) {
   postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: address });
 }
 
+type ResolvePendingOptions = {
+  key: string;
+  payload: string;
+};
+
 /** Resolve the bridge call waiting on `key`, if any. */
-function resolvePending(key: string, payload: string) {
+function resolvePending(options: ResolvePendingOptions) {
+  const { key, payload } = options;
   const pending = global.pendingCallbacks?.get(key);
   if (!pending) return;
   global.pendingCallbacks.delete(key);
@@ -347,7 +353,7 @@ function onMessage(messageStr: string) {
     case "ACK":
       log(`${msg.id}`);
       delete webSocket.messages[msg.id];
-      resolvePending(ackKey(msg.id), "");
+      resolvePending({ key: ackKey(msg.id), payload: "" });
       break;
     case "walletAPIResponse":
       webSocket.e2eBridgeServer.next(msg);
@@ -358,16 +364,16 @@ function onMessage(messageStr: string) {
     case "appEnvs":
     case "contactsImported":
     case "localManifestsImported":
-      resolvePending(msg.id, msg.payload);
+      resolvePending({ key: msg.id, payload: msg.payload });
       break;
     case "swapSetupDone":
-      resolvePending(msg.id, "swapSetup done");
+      resolvePending({ key: msg.id, payload: "swapSetup done" });
       break;
     case "swapLiveAppReady":
-      resolvePending("waitSwapReady", "Swap Live App is ready");
+      resolvePending({ key: "waitSwapReady", payload: "Swap Live App is ready" });
       break;
     case "earnLiveAppReady":
-      resolvePending("waitEarnReady", "Earn Live App is ready");
+      resolvePending({ key: "waitEarnReady", payload: "Earn Live App is ready" });
       break;
     case "appFile":
       try {
