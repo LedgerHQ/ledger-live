@@ -29,6 +29,7 @@ import {
   getBipPathString,
   getMemoFromTx,
   getOperationType,
+  isFailedTransaction,
   isHexString,
   mergeTokens,
 } from "./logic";
@@ -296,6 +297,7 @@ export function mapTxToAccountOperation(
     subOperations,
     blockHeight: tx.blockHeight,
     date: new Date(tx.timestamp),
+    hasFailed: isFailedTransaction(tx),
     extra: extra,
     blockHash: undefined,
   };
