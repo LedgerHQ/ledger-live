@@ -7,8 +7,10 @@ import { log, run } from "../measure/exec.ts";
 
 // Speculinho's usage reports count sessions by this origin (libs/live-e2e-shared/SPECULINHO.md).
 const SUITE = "mobile-startup-perf";
-// /acquire waits up to 90 s for a slot at the instance cap, then up to 150 s for the instance.
-const START_TIMEOUT_MS = 360_000;
+// Above the CLI's own deadlines (up to 90 s for a slot at the instance cap, 30 s for /acquire,
+// 150 s for the instance), after which it releases what it acquired: this stops only a CLI that
+// hangs, never one still within them. Killing the launcher would not stop the CLI itself.
+const START_TIMEOUT_MS = 600_000;
 const STOP_TIMEOUT_MS = 120_000;
 
 export interface SpeculosSession {
@@ -54,6 +56,7 @@ export function createSpeculos({ repoRoot, workDir }: { repoRoot: string; workDi
         log(`  ${lastLines(stdout, 1)}`);
         return parseSession(await readFile(out, "utf8"));
       } finally {
+        // Also makes a CLI that outlived the timeout fail to write the session, and release it.
         await rm(sessionDir, { recursive: true, force: true });
       }
     },

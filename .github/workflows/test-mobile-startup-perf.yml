@@ -273,7 +273,7 @@ jobs:
           path: snapshot/android
           check: >-
             node -e 'process.exit(JSON.parse(require("fs").readFileSync("snapshot.json")).release === process.env.SNAPSHOT_RELEASE ? 0 : 1)'
-            && [[ -s ledger-live ]]
+            && [[ -s ledger-live && -s ledger-live.crc ]]
           artifact: startup-perf-snapshot-android
           region: ${{ secrets.AWS_CACHE_REGION }}
 
@@ -288,7 +288,7 @@ jobs:
           path: snapshot/ios
           check: >-
             node -e 'process.exit(JSON.parse(require("fs").readFileSync("snapshot.json")).release === process.env.SNAPSHOT_RELEASE ? 0 : 1)'
-            && [[ -s ledger-live ]]
+            && [[ -s ledger-live && -s ledger-live.crc ]]
           artifact: startup-perf-snapshot-ios
           region: ${{ secrets.AWS_CACHE_REGION }}
 
@@ -1118,12 +1118,13 @@ jobs:
           LABEL_B: ${{ needs.plan.outputs.label_b }}
           SCENARIOS: ${{ needs.plan.outputs.scenarios }}
           PLAN: ${{ needs.plan.result }}
-          # Every entry restored counts as built; a failed snapshot build as a failed snapshot.
+          # Every entry restored counts as built; a failed or cancelled snapshot build as such a
+          # snapshot, whose job it skips.
           ANDROID_BUILD: ${{ needs.restore-cache.outputs.android_builds == '[]' && 'success' || needs.build-android.result }}
-          ANDROID_SNAPSHOT: ${{ needs.build-snapshot-android.result == 'failure' && 'failure' || needs.snapshot-android.result }}
+          ANDROID_SNAPSHOT: ${{ contains(fromJSON('["failure", "cancelled"]'), needs.build-snapshot-android.result) && needs.build-snapshot-android.result || needs.snapshot-android.result }}
           ANDROID_MEASURE: ${{ needs.measure-android.result }}
           IOS_BUILD: ${{ needs.restore-cache.outputs.ios_builds == '[]' && 'success' || needs.build-ios.result }}
-          IOS_SNAPSHOT: ${{ needs.build-snapshot-ios.result == 'failure' && 'failure' || needs.snapshot-ios.result }}
+          IOS_SNAPSHOT: ${{ contains(fromJSON('["failure", "cancelled"]'), needs.build-snapshot-ios.result) && needs.build-snapshot-ios.result || needs.snapshot-ios.result }}
           IOS_MEASURE: ${{ needs.measure-ios.result }}
         run: node e2e/tooling/startup-perf/ci/slack-report.mts
 
