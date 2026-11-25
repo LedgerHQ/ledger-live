@@ -1154,6 +1154,73 @@ describe("listOperations", () => {
     ]);
   });
 
+  // A4 derives an OUT and an IN from the two transfers getBlock gives
+  it("should give a payment to the account itself an OUT and an IN of its amount", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [
+        {
+          ...asaTransfer({ id: "SELF", sender: address, recipient: address, amount: 0 }),
+          type: AlgoTransactionType.PAYMENT,
+          details: {
+            amount: new BigNumber(5000),
+            recipientAddress: address,
+            closeAmount: undefined,
+            closeToAddress: undefined,
+          },
+        },
+      ],
+      nextToken: undefined,
+    });
+
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
+
+    expect(
+      items.map(({ id, type, value, senders, recipients }) => ({
+        id,
+        type,
+        value,
+        senders,
+        recipients,
+      })),
+    ).toEqual([
+      { id: "SELF", type: "OUT", value: 5000n, senders: [address], recipients: [address] },
+      { id: "SELF-in", type: "IN", value: 5000n, senders: [address], recipients: [address] },
+    ]);
+  });
+
+  it("should give an ASA transfer to the account itself an OUT and an IN with their token details", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [asaTransfer({ id: "SELF", sender: address, recipient: address, amount: 7 })],
+      nextToken: undefined,
+    });
+
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
+
+    expect(items.map(({ type, value, details }) => ({ type, value, details }))).toEqual([
+      {
+        type: "OUT",
+        value: 7n,
+        details: {
+          ledgerOpType: "OUT",
+          assetAmount: "7",
+          assetSenders: [address],
+          assetRecipients: [address],
+        },
+      },
+      {
+        type: "IN",
+        value: 7n,
+        details: {
+          ledgerOpType: "IN",
+          assetAmount: "7",
+          assetSenders: [address],
+          assetRecipients: [address],
+        },
+      },
+      expect.objectContaining({ type: "FEES" }),
+    ]);
+  });
+
   it("should give no row to the 0 receiver movement of a payment that only closes the account", async () => {
     mockGetAccountTransactions.mockResolvedValue({
       transactions: [

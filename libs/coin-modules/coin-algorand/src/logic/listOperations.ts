@@ -213,7 +213,8 @@ function transferLegs(tx: AlgoTransaction): TransferLeg[] {
 /**
  * One row per movement of the account, with the parties of that movement, as coin-evm and coin-tezos: getBlock gives
  * one transfer per movement, and A4 one operation per transfer. A 0 movement of a transaction that also closes the
- * account gives no row, as A4 drops 0 transfers; a lone 0 movement keeps its row, as in the other coin modules.
+ * account gives no row, as A4 drops 0 transfers; a lone 0 movement keeps its row, as in the other coin modules. A
+ * movement to the account itself gives an OUT and an IN of its amount, as coin-evm and as A4 derives its two transfers.
  */
 function toLegOperations(tx: AlgoTransaction, address: string): Operation[] {
   const legs = transferLegs(tx);
@@ -221,27 +222,42 @@ function toLegOperations(tx: AlgoTransaction, address: string): Operation[] {
   return legs
     .filter(leg => leg.from === address || leg.to === address)
     .filter(leg => leg.amount !== 0n || legs.length === 1)
-    .map(leg => {
+    .flatMap(leg => {
+      const id = leg.close ? `${tx.id}-close` : tx.id;
+      if (leg.from === address && leg.to === address) {
+        return leg.amount === 0n
+          ? [toLegOperation(tx, leg, asset, id, "OUT", 0n)]
+          : [
+              toLegOperation(tx, leg, asset, id, "OUT", leg.amount),
+              toLegOperation(tx, leg, asset, `${id}-in`, "IN", leg.amount),
+            ];
+      }
       const type = leg.from === address ? "OUT" : "IN";
-      const value = (leg.from === address) !== (leg.to === address) ? leg.amount : 0n;
-      const senders = [leg.from];
-      const recipients = [leg.to];
-      // The token details of the coin-modules, which A4 also sets on the token operations of a block
-      const tokenDetails =
-        asset.type === "native"
-          ? {}
-          : {
-              ledgerOpType: type,
-              assetAmount: value.toString(),
-              assetSenders: senders,
-              assetRecipients: recipients,
-            };
-      return toOperation(
-        tx,
-        { id: leg.close ? `${tx.id}-close` : tx.id, type, value, asset, senders, recipients },
-        tokenDetails,
-      );
+      return [toLegOperation(tx, leg, asset, id, type, leg.amount)];
     });
+}
+
+function toLegOperation(
+  tx: AlgoTransaction,
+  leg: TransferLeg,
+  asset: Operation["asset"],
+  id: string,
+  type: "IN" | "OUT",
+  value: bigint,
+): Operation {
+  const senders = [leg.from];
+  const recipients = [leg.to];
+  // The token details of the coin-modules, which A4 also sets on the token operations of a block
+  const tokenDetails =
+    asset.type === "native"
+      ? {}
+      : {
+          ledgerOpType: type,
+          assetAmount: value.toString(),
+          assetSenders: senders,
+          assetRecipients: recipients,
+        };
+  return toOperation(tx, { id, type, value, asset, senders, recipients }, tokenDetails);
 }
 
 function getReward(tx: AlgoTransaction, address: string): bigint | undefined {
