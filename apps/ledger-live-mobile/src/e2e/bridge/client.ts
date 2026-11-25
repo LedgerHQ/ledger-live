@@ -51,8 +51,6 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
-import { setSpeculosDeviceModel, setSpeculosSessionToken } from "~/services/registerTransports";
 import { appNetworkLogStore, initAppNetworkLogging } from "../appNetworkLogStore";
 import { readLaunchForceProvider } from "~/launchForceProvider";
 
@@ -63,7 +61,7 @@ let retryCount = 0;
 const maxRetries = 5; // Maximum number of retry attempts
 const retryDelay = 500; // Initial retry delay in milliseconds
 
-async function disconnectDeviceIntentSpeculosSessions() {
+async function disconnectAllSpeculosSessions() {
   const dmk = getDeviceManagementKit();
   await Promise.all(
     dmk
@@ -71,11 +69,6 @@ async function disconnectDeviceIntentSpeculosSessions() {
       .filter(device => device.transport === speculosIdentifier)
       .map(({ sessionId }) => dmk.disconnect({ sessionId }).catch(() => {})),
   );
-}
-
-async function disconnectAllSpeculosSessions() {
-  await DeviceManagementKitTransportSpeculos.disconnectAll();
-  await disconnectDeviceIntentSpeculosSessions();
 }
 
 function removeKnownSpeculosDevices() {
@@ -340,8 +333,6 @@ async function onMessage(event: WebSocketMessageEvent) {
         }: { address: string; model: DeviceModelId; sessionToken?: string } = JSON.parse(
           msg.payload,
         );
-        setSpeculosDeviceModel(model);
-        setSpeculosSessionToken(sessionToken);
         await disconnectAllSpeculosSessions();
         const speculosDeviceId = buildSpeculosLegacyDeviceId(address);
         const knownSpeculosIds = bleDevicesSelector(store.getState())
@@ -365,7 +356,7 @@ async function onMessage(event: WebSocketMessageEvent) {
             modelId: model,
           }),
         );
-        // Device intents only offer DMK-known devices, so Speculos is registered here too.
+        // Device intents and `withDevice` both reach Speculos through this app DMK target.
         speculosTargetSubject.next({
           url: address,
           deviceModelId: ledgerToDmkDeviceIdMap[model],
@@ -385,8 +376,6 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "removeKnownSpeculos": {
         const address = msg.payload;
-        setSpeculosDeviceModel(undefined);
-        setSpeculosSessionToken(undefined);
         await disconnectAllSpeculosSessions();
         store.dispatch(removeKnownBleDevice(buildSpeculosLegacyDeviceId(address)));
         speculosTargetSubject.next(null);
