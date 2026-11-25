@@ -57,12 +57,13 @@ const targetsToLock = (declaration: LockDeclaration, env: TestEnv): LockTarget[]
  * detail of their `test.describe` or `test`, so Playwright never runs two of them on the same
  * target at once in this run, and `fixtures` to `test.use`, so the exclusive lock fixture keeps
  * other CI machines off them. The fixture takes the whole declaration: Playwright reads an array
- * whose second item is an object, e.g. two accounts, as a `[value, options]` fixture. `names` only
- * see the runner's environment, while the fixture locks on the broadcast setting the app gets.
+ * whose second item is an object, e.g. two accounts, as a `[value, options]` fixture. `names` see
+ * the runner's environment, or `env` when a test overrides it, as the fixture locks on the
+ * broadcast setting the app gets.
  */
-export function exclusiveLockFor(declaration: LockDeclaration) {
+export function exclusiveLockFor(declaration: LockDeclaration, env?: TestEnv) {
   return {
-    names: lockKeys(targetsToLock(declaration, undefined)),
+    names: lockKeys(targetsToLock(declaration, env)),
     fixtures: { lockDeclaration: declaration },
   };
 }

@@ -16,7 +16,7 @@ import {
 } from "tests/utils/perpsPositionFlows";
 
 const account = Account.HYPERCORE_1;
-const lock = exclusiveLockFor({ broadcastAccounts: [account] });
+const lock = exclusiveLockFor({ broadcastAccounts: [account] }, PERPS_REAL_BROADCAST_ENV);
 
 const xrayTicket = "B2CQA-4707";
 
@@ -40,12 +40,12 @@ test.describe("Perps HIP-3 close position", { lock: lock.names }, () => {
 
   test.beforeEach(async ({ app, speculos }) => {
     await openPerpsFromPortfolio(app);
-    await openHip3Position(app, speculos.relaunch, { side: "long" });
+    await openHip3Position(app, { side: "long", relaunchSpeculos: speculos.relaunch });
   });
 
   // Keeps the real position from staying open if the close fails.
   test.afterEach(async ({ app, speculos }) => {
-    await closeHip3PositionIfOpen(app, speculos.relaunch);
+    await closeHip3PositionIfOpen(app, { relaunchSpeculos: speculos.relaunch });
   });
 
   test(
@@ -55,7 +55,7 @@ test.describe("Perps HIP-3 close position", { lock: lock.names }, () => {
       annotation: { type: "TMS", description: xrayTicket },
     },
     async ({ app, speculos }) => {
-      await closeHip3Position(app, speculos.relaunch);
+      await closeHip3Position(app, { relaunchSpeculos: speculos.relaunch });
     },
   );
 });

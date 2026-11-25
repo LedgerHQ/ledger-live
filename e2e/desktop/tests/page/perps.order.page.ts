@@ -8,16 +8,24 @@ export type PerpsOrderSide = "long" | "short";
 type AutoCloseOffsets = { takeProfit: string; stopLoss: string };
 
 // Quick-option labels of the live app, by side.
-export const AUTO_CLOSE_OFFSETS: Record<PerpsOrderSide, AutoCloseOffsets> = {
+const AUTO_CLOSE_OFFSETS = {
   long: { takeProfit: "+10%", stopLoss: "-5%" },
   short: { takeProfit: "-5%", stopLoss: "+5%" },
-};
+} satisfies Record<PerpsOrderSide, AutoCloseOffsets>;
+
+const autoCloseSummary = /Take profit \$([\d,.]+), Stop loss \$([\d,.]+)/;
+
+const offsetToFactor = (offset: string) => 1 + Number.parseFloat(offset) / 100;
+
+const toNumber = (text: string) => Number.parseFloat(text.replaceAll(/[^\d.]/g, ""));
 
 export class PerpsOrderPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "perps";
 
   private readonly orderWidgetTestId = "desktop-order-widget";
   private readonly amountInputTestId = "desktop-amount-input";
+  private readonly leverageButtonTestId = "configure-leverage-button";
+  private readonly confirmLeverageTestId = "confirm-leverage-button";
   private readonly openPositionButtonTestId = "open-position-button";
   private readonly statusDialogTitleTestId = "status-dialog-title";
   private readonly statusDialogContinueTestId = "status-dialog-primary-button";
@@ -28,28 +36,29 @@ export class PerpsOrderPage extends WebViewAppPage {
   private readonly autoCloseSubmitTestId = "desktop-order-configure-auto-close-submit";
   private readonly configureSubmitTestId = "configure-order-submit-button";
 
-  @step("Open the first HIP-3 market without a position")
-  async openFirstHip3MarketWithoutPosition() {
+  private marketOpened = false;
+
+  @step("Open the first HIP-3 market")
+  async openFirstHip3Market() {
     const webview = await this.getWebView();
-    const markets = webview.getByTestId(/^market-item-xyz:/);
-    const orderWidget = webview.getByTestId(this.orderWidgetTestId);
-    const closeButton = webview.getByTestId(this.closePositionButtonTestId);
-    const count = await markets.count();
-    for (let index = 0; index < count; index++) {
-      await markets.nth(index).click();
-      await expect(orderWidget.or(closeButton)).toBeVisible();
-      if (await orderWidget.isVisible()) return;
-    }
-    throw new Error("Every listed HIP-3 market already has an open position");
+    await webview
+      .getByTestId(/^market-item-xyz:/)
+      .first()
+      .click();
+    this.marketOpened = true;
+    await expect(
+      webview.getByTestId(this.orderWidgetTestId),
+      "A position already open on this market hides the order form: close it first",
+    ).toBeVisible();
   }
 
-  @step("Select the order side")
+  @step("Select the $0 order side")
   async selectSide(side: PerpsOrderSide) {
     const webview = await this.getWebView();
     await webview.getByTestId(`order-tab-${side}`).click();
   }
 
-  @step("Enter the order margin in USD")
+  @step("Enter the order margin of $0 USD")
   async enterMargin(amountUsd: number) {
     const webview = await this.getWebView();
     const orderWidget = webview.getByTestId(this.orderWidgetTestId);
@@ -57,15 +66,21 @@ export class PerpsOrderPage extends WebViewAppPage {
     await expect(orderWidget.getByTestId(this.openPositionButtonTestId)).toBeEnabled();
   }
 
-  @step("Set the order leverage")
+  @step("Set the order leverage to $0")
   async setLeverage(leverage: number) {
     const webview = await this.getWebView();
-    await webview.getByTestId("configure-leverage-button").click();
+    await webview.getByTestId(this.leverageButtonTestId).click();
     await webview.getByTestId(`slider-${leverage}`).click();
-    await webview.getByTestId("confirm-leverage-button").click();
+    await webview.getByTestId(this.confirmLeverageTestId).click();
   }
 
-  @step("Set the Take profit and Stop loss of the order")
+  @step("Verify the order leverage is $0")
+  async expectLeverage(leverage: number) {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.leverageButtonTestId)).toContainText(`${leverage}x`);
+  }
+
+  @step("Set the Take profit and Stop loss of a $0 order")
   async setAutoClose(side: PerpsOrderSide) {
     const webview = await this.getWebView();
     const offsets = AUTO_CLOSE_OFFSETS[side];
@@ -98,16 +113,33 @@ export class PerpsOrderPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.statusDialogTitleTestId)).toBeVisible({
       timeout: TIMEOUT.xxlarge,
     });
-    await webview.getByTestId(this.statusDialogContinueTestId).click();
-    await this.expectPositionOpen();
   }
 
-  @step("Verify the position is open")
-  async expectPositionOpen() {
+  @step("Continue after the order was placed")
+  async clickContinueAfterOrderPlaced() {
     const webview = await this.getWebView();
-    await expect(webview.getByTestId(this.closePositionButtonTestId)).toBeVisible({
-      timeout: TIMEOUT.xxlarge,
-    });
+    await webview.getByTestId(this.statusDialogContinueTestId).click();
+  }
+
+  @step("Verify the opened $0 position")
+  async expectOpenedPosition({
+    side,
+    leverage,
+    marginUsd,
+  }: {
+    side: PerpsOrderSide;
+    leverage: number;
+    marginUsd: number;
+  }) {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.closePositionButtonTestId)).toHaveText(
+      new RegExp(`^Close ${side}$`, "i"),
+      { timeout: TIMEOUT.xxlarge },
+    );
+    await expect(webview.getByRole("button", { name: /^Leverage/ })).toContainText(`${leverage}x`);
+    const margin = webview.getByRole("button", { name: /^Margin/ });
+    await expect.poll(async () => toNumber(await margin.innerText())).toBeCloseTo(marginUsd, 0);
+    await this.expectPositionAutoClose(side);
   }
 
   @step("Verify the position is closed")
@@ -129,15 +161,35 @@ export class PerpsOrderPage extends WebViewAppPage {
   @step("Verify the position close recap")
   async expectCloseRecap() {
     const webview = await this.getWebView();
-    const recapCta = webview.getByTestId(this.closeRecapCtaTestId);
-    await expect(recapCta).toBeVisible({ timeout: TIMEOUT.xxlarge });
-    await recapCta.click();
+    await expect(webview.getByTestId(this.closeRecapCtaTestId)).toBeVisible({
+      timeout: TIMEOUT.xxlarge,
+    });
   }
 
-  @step("Check whether a position is open")
-  async hasOpenPosition(): Promise<boolean> {
+  @step("Click Trade again on the position close recap")
+  async clickTradeAgainOnCloseRecap() {
     const webview = await this.getWebView();
-    return webview.getByTestId(this.closePositionButtonTestId).isVisible();
+    await webview.getByTestId(this.closeRecapCtaTestId).click();
+  }
+
+  // False when the test never opened a market, so teardown has nothing to look for.
+  @step("Check whether the opened market holds a position")
+  async hasPositionOnOpenedMarket(): Promise<boolean> {
+    if (!this.marketOpened) return false;
+    const webview = await this.getWebView();
+    const closeButton = webview.getByTestId(this.closePositionButtonTestId);
+    await expect(webview.getByTestId(this.orderWidgetTestId).or(closeButton)).toBeVisible();
+    return closeButton.isVisible();
+  }
+
+  private async expectPositionAutoClose(side: PerpsOrderSide) {
+    const webview = await this.getWebView();
+    const autoClose = webview.getByRole("button", { name: /^Autoclose/ });
+    await expect(autoClose).toContainText(autoCloseSummary);
+    const [, takeProfit, stopLoss] = autoCloseSummary.exec(await autoClose.innerText()) ?? [];
+    const offsets = AUTO_CLOSE_OFFSETS[side];
+    const expectedRatio = offsetToFactor(offsets.takeProfit) / offsetToFactor(offsets.stopLoss);
+    expect(toNumber(takeProfit ?? "") / toNumber(stopLoss ?? "")).toBeCloseTo(expectedRatio, 1);
   }
 
   private async pickAutoCloseOffset(title: "Take profit" | "Stop loss", offset: string) {

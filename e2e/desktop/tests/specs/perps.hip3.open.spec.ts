@@ -16,7 +16,7 @@ import {
 import type { PerpsOrderSide } from "tests/page/perps.order.page";
 
 const account = Account.HYPERCORE_1;
-const lock = exclusiveLockFor({ broadcastAccounts: [account] });
+const lock = exclusiveLockFor({ broadcastAccounts: [account] }, PERPS_REAL_BROADCAST_ENV);
 
 const orders = [
   { side: "long", xrayTicket: "B2CQA-4699" },
@@ -47,7 +47,7 @@ test.describe("Perps HIP-3 open position", { lock: lock.names }, () => {
 
   // The position is a real one, so it is closed even when the test fails.
   test.afterEach(async ({ app, speculos }) => {
-    await closeHip3PositionIfOpen(app, speculos.relaunch);
+    await closeHip3PositionIfOpen(app, { relaunchSpeculos: speculos.relaunch });
   });
 
   for (const { side, xrayTicket } of orders) {
@@ -58,7 +58,7 @@ test.describe("Perps HIP-3 open position", { lock: lock.names }, () => {
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app, speculos }) => {
-        await openHip3Position(app, speculos.relaunch, { side });
+        await openHip3Position(app, { side, relaunchSpeculos: speculos.relaunch });
       },
     );
   }
