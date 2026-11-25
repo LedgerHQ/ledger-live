@@ -19,51 +19,27 @@ import customLockScreenFetch from "@ledgerhq/live-common/hw/customLockScreenFetc
 import customLockScreenRemove from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import connectManagerFactory from "@ledgerhq/live-common/hw/connectManager";
 import connectAppFactory from "@ledgerhq/live-common/hw/connectApp";
-import useEnv from "@features/platform-env";
 import { withOsUpdatesResolution } from "LLM/features/OsUpdate/hooks/useResolveOsUpdates/withOsUpdatesResolution";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
-import {
-  connectAppExecMock,
-  connectManagerExecMock,
-  fetchImageExecMock,
-  startExchangeExecMock,
-  completeExchangeExecMock,
-  installLanguageExecMock,
-  loadImageExecMock,
-  removeImageExecMock,
-  renameDeviceExecMock,
-} from "~/e2e/bridge/types";
 
 export function useAppDeviceAction({
   allowNonOnboardedDevice = false,
 }: {
   allowNonOnboardedDevice?: boolean;
 } = {}) {
-  const envMock = useEnv("MOCK");
-  const deviceProxy = useEnv("DEVICE_PROXY_URL");
-  const mock = envMock && !deviceProxy;
   return useMemo(
-    () =>
-      appCreateAction(mock ? connectAppExecMock : connectAppFactory({ allowNonOnboardedDevice })),
-    [allowNonOnboardedDevice, mock],
+    () => appCreateAction(connectAppFactory({ allowNonOnboardedDevice })),
+    [allowNonOnboardedDevice],
   );
 }
 
 export function useTransactionDeviceAction() {
-  const mock = useEnv("MOCK");
-  return useMemo(
-    () => transactionCreateAction(mock ? connectAppExecMock : connectAppFactory()),
-    [mock],
-  );
+  return useMemo(() => transactionCreateAction(connectAppFactory()), []);
 }
 
 export function useRawTransactionDeviceAction() {
-  const mock = useEnv("MOCK");
-  return useMemo(
-    () => rawTransactionCreateAction(mock ? connectAppExecMock : connectAppFactory()),
-    [mock],
-  );
+  return useMemo(() => rawTransactionCreateAction(connectAppFactory()), []);
 }
 
 type ManagerDeviceActionOptions = {
@@ -74,78 +50,42 @@ type ManagerDeviceActionOptions = {
 export function useManagerDeviceAction({
   resolveOsUpdates = false,
 }: ManagerDeviceActionOptions = {}) {
-  const mock = useEnv("MOCK");
   return useMemo(() => {
-    const action = managerCreateAction(mock ? connectManagerExecMock : connectManagerFactory());
+    const action = managerCreateAction(connectManagerFactory());
     return resolveOsUpdates ? withOsUpdatesResolution(action) : action;
-  }, [mock, resolveOsUpdates]);
+  }, [resolveOsUpdates]);
 }
 
 export function useSignMessageDeviceAction() {
-  const mock = useEnv("MOCK");
-  return useMemo(
-    () => signMessageCreateAction(mock ? connectAppExecMock : connectAppFactory()),
-    [mock],
-  );
+  return useMemo(() => signMessageCreateAction(connectAppFactory()), []);
 }
 
 export function useInstallLanguageDeviceAction() {
-  const mock = useEnv("MOCK");
-  return useMemo(
-    () => installLanguageCreateAction(mock ? installLanguageExecMock : installLanguage),
-    [mock],
-  );
+  return useMemo(() => installLanguageCreateAction(installLanguage), []);
 }
 
 export function useLoadImageDeviceAction() {
-  const mock = useEnv("MOCK");
-  return useMemo(
-    () => loadImageCreateAction(mock ? loadImageExecMock : customLockScreenLoad),
-    [mock],
-  );
+  return useMemo(() => loadImageCreateAction(customLockScreenLoad), []);
 }
 
 export function useFetchImageDeviceAction() {
-  const mock = useEnv("MOCK");
-  return useMemo(
-    () => fetchImageCreateAction(mock ? fetchImageExecMock : customLockScreenFetch),
-    [mock],
-  );
+  return useMemo(() => fetchImageCreateAction(customLockScreenFetch), []);
 }
 
 export function useRemoveImageDeviceAction() {
-  const mock = useEnv("MOCK");
-  return useMemo(
-    () => removeImageCreateAction(mock ? removeImageExecMock : customLockScreenRemove),
-    [mock],
-  );
+  return useMemo(() => removeImageCreateAction(customLockScreenRemove), []);
 }
 
 export function useStartExchangeDeviceAction() {
-  const mock = useEnv("MOCK");
-  return useMemo(
-    () =>
-      mock
-        ? startExchangeCreateAction(connectAppExecMock, startExchangeExecMock)
-        : startExchangeCreateAction(connectAppFactory(), startExchange),
-    [mock],
-  );
+  return useMemo(() => startExchangeCreateAction(connectAppFactory(), startExchange), []);
 }
 
 export function useCompleteExchangeDeviceAction() {
-  const mock = useEnv("MOCK");
-  return useMemo(
-    () => completeExchangeCreateAction(mock ? completeExchangeExecMock : completeExchange),
-    [mock],
-  );
+  return useMemo(() => completeExchangeCreateAction(completeExchange), []);
 }
 
 export function useRenameDeviceAction() {
-  const mock = useEnv("MOCK");
-  return useMemo(
-    () => renameDeviceCreateAction(mock ? renameDeviceExecMock : renameDevice),
-    [mock],
-  );
+  return useMemo(() => renameDeviceCreateAction(renameDevice), []);
 }
 
 export function useSelectDevice(defaultDevice?: Device) {

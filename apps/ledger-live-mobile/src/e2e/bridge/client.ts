@@ -28,7 +28,7 @@ import { LaunchArguments } from "react-native-launch-arguments";
 import logReport from "~/log-report";
 import { webviewLogStore } from "~/e2e/webviewLogStore";
 import { ptxHandoffStore } from "~/e2e/ptxHandoffStore";
-import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
+import { MessageData, ServerData } from "./types";
 import { getAllEnvs, setEnv } from "@shared/env";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import Config from "react-native-config";
@@ -223,10 +223,6 @@ async function onMessage(event: WebSocketMessageEvent) {
       case "importContacts": {
         store.dispatch(setContacts(msg.payload));
         postMessage({ type: "contactsImported", id: msg.id, payload: "" });
-        break;
-      }
-      case "mockDeviceEvent": {
-        msg.payload.forEach(e => mockDeviceEventSubject.next(e));
         break;
       }
       case "importSettings": {

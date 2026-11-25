@@ -1,14 +1,4 @@
 import type { Contact } from "@domain/entity-contact";
-import type { Event as AppEvent } from "@ledgerhq/live-common/hw/actions/app";
-import type { ConnectAppEvent } from "@ledgerhq/live-common/hw/connectApp";
-import type { ConnectManagerEvent } from "@ledgerhq/live-common/hw/connectManager";
-import type { InstallLanguageEvent } from "@ledgerhq/live-common/hw/installLanguage";
-import type { LoadImageEvent } from "@ledgerhq/live-common/hw/customLockScreenLoad";
-import type { FetchImageEvent } from "@ledgerhq/live-common/hw/customLockScreenFetch";
-import type { ExchangeRequestEvent } from "@ledgerhq/live-common/hw/actions/startExchange";
-import type { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/platform/types";
-import type { RemoveImageEvent } from "@ledgerhq/live-common/hw/customLockScreenRemove";
-import type { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { AccountRaw, PostOnboardingState } from "@ledgerhq/types-live";
@@ -59,7 +49,6 @@ export type ServerData =
   | { type: "earnLiveAppReady" };
 
 export type MessageData<P extends BridgePayloads = BridgePayloads> =
-  | { type: "mockDeviceEvent"; id: string; payload: MockDeviceEvent[] }
   | { type: "acceptTerms"; id: string }
   | { type: "addKnownSpeculos"; id: string; payload: string }
   | { type: "removeKnownSpeculos"; id: string; payload: string }
@@ -92,16 +81,3 @@ export type MessageData<P extends BridgePayloads = BridgePayloads> =
   | { type: "waitSwapReady"; id: string }
   | { type: "waitEarnReady"; id: string }
   | { type: "ACK"; id: string };
-
-export type MockDeviceEvent =
-  | ConnectAppEvent
-  | AppEvent
-  | ConnectManagerEvent
-  | InstallLanguageEvent
-  | LoadImageEvent
-  | FetchImageEvent
-  | ExchangeRequestEvent
-  | RemoveImageEvent
-  | RenameDeviceEvent
-  | CompleteExchangeRequestEvent
-  | { type: "complete" };
