@@ -27,12 +27,4 @@ const swapHistoryERC20TestConfig = {
   ],
 };
 
-runExportSwapHistoryOperationsTest(
-  swapHistoryERC20TestConfig.swap,
-  swapHistoryERC20TestConfig.provider,
-  swapHistoryERC20TestConfig.swapId,
-  swapHistoryERC20TestConfig.addressFrom,
-  swapHistoryERC20TestConfig.addressTo,
-  swapHistoryERC20TestConfig.tmsLinks,
-  swapHistoryERC20TestConfig.tags,
-);
+runExportSwapHistoryOperationsTest(swapHistoryERC20TestConfig);
