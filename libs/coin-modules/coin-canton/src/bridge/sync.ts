@@ -27,16 +27,16 @@ import {
   getOperations,
   getPartyById,
   type OperationInfo,
-  type TransferProposal,
 } from "../network/gateway";
 import resolver from "../signer";
-import { CantonAccount, CantonResources, CantonSigner, type ReplayTransaction } from "../types";
+import { CantonAccount, CantonResources, CantonSigner, type ScanCheckpoint } from "../types";
 import { buildSubAccounts, mergeOperations } from "./buildSubAccounts";
 import { getCurrencyContext } from "./context";
 import { isAccountOnboarded } from "./onboard";
 
 /**
- * Bumped whenever stored operations go stale, so that every account syncs again from scratch:
+ * Bumped whenever stored operations go stale, or rows dropped so far (see `scanCheckpoint`) get an
+ * operation, so that every account syncs again from scratch:
  * 1: fees in their own asset (ADR-068) — a token operation no longer carries the CC fee, which the
  * main account charges.
  */
@@ -211,17 +211,6 @@ function toOperations(
   );
 }
 
-const filterOperations = (
-  transactions: OperationInfo[],
-  accountId: string,
-  partyId: string,
-  pendingTransferProposals: TransferProposal[],
-): Operation[] => {
-  const pendingUpdateIds = new Set(pendingTransferProposals.map(p => p.update_id));
-
-  return toOperations(transactions.filter(isValidOperation), accountId, partyId, pendingUpdateIds);
-};
-
 /** Every row from `start` to `end`, the ledger end read before the walk so it does not chase new activity. */
 async function readOperations(
   config: CantonCoinConfig,
@@ -247,25 +236,27 @@ async function readOperations(
   }
 }
 
-/** The highest (`Math.max`) or lowest (`Math.min`) block height of the operations. */
-const blockHeightBound = (
-  operations: Operation[],
-  bound: (a: number, b: number) => number,
-): number | undefined =>
-  operations.reduce<number | undefined>((result, { blockHeight }) => {
-    if (typeof blockHeight !== "number") return result;
-    return result === undefined ? blockHeight : bound(result, blockHeight);
-  }, undefined);
-
 /**
- * Where the history is read from: after the newest stored operation, or at the oldest transaction
- * to read again, whichever comes first.
+ * The rows from the checkpoint's transaction, below every transaction to read again. Offsets are
+ * local to a node and the gateway fails over between nodes, so when the checkpoint's transaction is
+ * not where it was read, or without a checkpoint, the rows from offset 0.
  */
-const readStart = (stored: Operation[], replay: ReplayTransaction[]): number => {
-  const lastSyncedHeight = blockHeightBound(stored, Math.max);
-  if (lastSyncedHeight === undefined) return 0;
-  return Math.min(lastSyncedHeight + 1, ...replay.map(({ height }) => height));
-};
+async function readHistory(
+  config: CantonCoinConfig,
+  partyId: string,
+  checkpoint: ScanCheckpoint | undefined,
+  end: number,
+): Promise<{ rows: OperationInfo[]; isFullRead: boolean }> {
+  if (checkpoint) {
+    const rows = await readOperations(config, partyId, checkpoint.height, end);
+    const isCheckpointRead = rows.some(
+      ({ transaction_hash, block }) =>
+        transaction_hash === checkpoint.hash && block.height === checkpoint.height,
+    );
+    if (isCheckpointRead) return { rows, isFullRead: false };
+  }
+  return { rows: await readOperations(config, partyId, 0, end), isFullRead: true };
+}
 
 /** The fees of the operations, by instrument. */
 const feesByInstrument = (operations: Operation[]): Map<string, BigNumber> => {
@@ -394,6 +385,15 @@ export function makeGetAccountShape(
     ];
 
     const replay = initialAccount?.cantonResources?.replayTransactions ?? [];
+    // Clearing the account, or restoring it while a token lookup fails, drops operations but keeps
+    // the resources.
+    const hasDroppedOperations =
+      initialAccount?.blockHeight === 0 ||
+      (initialAccount?.operations ?? []).length < (initialAccount?.operationsCount ?? 0);
+    const checkpoint =
+      isRebuild || hasDroppedOperations
+        ? undefined
+        : initialAccount?.cantonResources?.scanCheckpoint;
 
     // Main account operations: the native instrument only. By id alone: the gateway gives every
     // Amulet operation the same placeholder admin.
@@ -401,23 +401,31 @@ export function makeGetAccountShape(
       (op.extra as { instrumentId?: string })?.instrumentId === nativeInstrumentId;
 
     const blockHeight = await getLedgerEnd(config);
-    let fetchedOperations: Operation[] = [];
-    const validHashes = new Set<string>();
-    const invalidHashes = new Set<string>();
-    if (xpubOrAddress) {
-      // Token operations count too, or a run of them would be read again on every sync.
-      const start = readStart(allKeptOperations, replay);
-      const rows = await readOperations(config, xpubOrAddress, start, blockHeight);
-      for (const row of rows) {
-        (isValidOperation(row) ? validHashes : invalidHashes).add(row.transaction_hash);
-      }
-      fetchedOperations = filterOperations(
-        rows,
-        accountId,
-        xpubOrAddress,
-        pendingTransferProposals,
-      );
-    }
+    const { rows, isFullRead } = xpubOrAddress
+      ? await readHistory(config, xpubOrAddress, checkpoint, blockHeight)
+      : { rows: [], isFullRead: false };
+    const validRows = rows.filter(isValidOperation);
+    const validHashes = new Set(validRows.map(row => row.transaction_hash));
+    const invalidHashes = new Set(
+      rows.filter(row => !isValidOperation(row)).map(row => row.transaction_hash),
+    );
+
+    const pendingHashes = new Set(pendingTransferProposals.map(({ update_id }) => update_id));
+    const replayHashes = new Set(replay.map(({ hash }) => hash));
+    const storedHashes = new Set(allKeptOperations.map(({ hash }) => hash));
+    // A transaction read again could come back degraded, and another type would duplicate it. After
+    // a drop, a token can keep its operation of a transaction whose fee the main account lost.
+    const isFinal = (hash: string) =>
+      !hasDroppedOperations &&
+      storedHashes.has(hash) &&
+      !replayHashes.has(hash) &&
+      !pendingHashes.has(hash);
+    const fetchedOperations = toOperations(
+      validRows.filter(row => !isFinal(row.transaction_hash)),
+      accountId,
+      xpubOrAddress,
+      pendingHashes,
+    );
 
     // A transaction of a pending offer stores its paid fees only. It is read again, in full, on
     // every sync until it settles, and replaces what it stored: a settled transaction can charge
@@ -426,7 +434,6 @@ export function makeGetAccountShape(
     // before it was listed as pending joins them when it is read again while pending, or its
     // stored fees would add to the fees read. Not under an older sync hash: the rebuild drops those
     // operations, and their fees can sit in an asset that no read charges again.
-    const pendingHashes = new Set(pendingTransferProposals.map(({ update_id }) => update_id));
     const initialOperations = [
       ...(initialAccount?.operations ?? []),
       ...(initialAccount?.subAccounts ?? []).flatMap(subAccount => subAccount.operations),
@@ -434,7 +441,6 @@ export function makeGetAccountShape(
     const joinableHashes = new Set(
       initialAccount?.syncHash === SYNC_HASH ? initialOperations.map(({ hash }) => hash) : [],
     );
-    const replayHashes = new Set(replay.map(({ hash }) => hash));
     for (const { hash } of fetchedOperations) {
       if (pendingHashes.has(hash) && joinableHashes.has(hash)) replayHashes.add(hash);
     }
@@ -460,11 +466,31 @@ export function makeGetAccountShape(
     const nextReplay = new Map(
       replay.filter(({ hash }) => unresolved.has(hash)).map(entry => [entry.hash, entry]),
     );
-    for (const { hash, blockHeight: height } of fetchedOperations) {
-      if (pendingHashes.has(hash) && !nextReplay.has(hash) && typeof height === "number") {
-        nextReplay.set(hash, { hash, height });
+    // An offer the account received stores nothing while pending, so it is read again too, unless it
+    // was stored before it was listed. One with an invalid row and no fees to replace only holds
+    // the checkpoint while pending: replayed, it would hold it for good if the row stayed invalid.
+    const fetchedHashes = new Set(fetchedOperations.map(({ hash }) => hash));
+    const storedOfferHashes = new Set(
+      allKeptOperations.filter(({ type }) => type === "TRANSFER_PROPOSAL").map(({ hash }) => hash),
+    );
+    const heldRows = rows.filter(
+      ({ transaction_hash: hash }) =>
+        pendingHashes.has(hash) && (fetchedHashes.has(hash) || !storedOfferHashes.has(hash)),
+    );
+    for (const { transaction_hash: hash, block } of heldRows) {
+      const isReplayable = fetchedHashes.has(hash) || !invalidHashes.has(hash);
+      if (isReplayable && !nextReplay.has(hash)) {
+        nextReplay.set(hash, { hash, height: block.height });
       }
     }
+
+    // The height of a transaction that a full read did not settle can be another node's.
+    const isReplayPlaced = !isFullRead || unresolved.size === 0;
+    const replayStart = Math.min(
+      ...Array.from(nextReplay.values(), ({ height }) => height),
+      ...heldRows.map(({ block }) => block.height),
+    );
+    const lastScanned = rows.filter(({ block }) => block.height < replayStart).at(-1);
 
     const storedOperations = keptOperations.filter(op => !isReplayed(op));
     const storedSubAccounts = keptSubAccounts.map(subAccount =>
@@ -494,6 +520,14 @@ export function makeGetAccountShape(
       ...(nativeInstrument ? { nativeInstrumentAdmin: nativeInstrument.instrumentAdmin } : {}),
       ...(publicKey ? { publicKey } : {}),
       ...(nextReplay.size > 0 ? { replayTransactions: [...nextReplay.values()] } : {}),
+      ...(lastScanned && isReplayPlaced
+        ? {
+            scanCheckpoint: {
+              hash: lastScanned.transaction_hash,
+              height: lastScanned.block.height,
+            },
+          }
+        : {}),
       xpub: xpubOrAddress,
     };
 

@@ -1,9 +1,14 @@
 import {
+  clearAccount,
   emptyHistoryCache,
   encodeAccountId,
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import {
+  fromAccountRaw,
+  toAccountRaw,
+} from "@ledgerhq/ledger-wallet-framework/serialization/index";
 import type { Account, AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonContext } from "../config";
@@ -286,6 +291,34 @@ const feesOf = (shape: Partial<CantonAccount>, hash: string) =>
 
 const replayOf = (shape: Partial<CantonAccount>) => shape.cantonResources?.replayTransactions ?? [];
 
+const checkpointOf = (shape: Partial<CantonAccount>) => shape.cantonResources?.scanCheckpoint;
+
+const hashesOf = (shape: Partial<CantonAccount>) => shape.operations?.map(({ hash }) => hash);
+
+const withoutFee = (row: OperationInfo): OperationInfo => ({
+  ...row,
+  fee: { ...row.fee, value: "0" },
+});
+
+/** A first sync, from an account without resources. */
+const syncFirst = () => syncFrom({ syncHash: SYNC_HASH, cantonResources: {} as never });
+
+/** The resources of a synced account, up to the given checkpoint. */
+const resourcesUpTo = (scanCheckpoint: { hash: string; height: number }) => ({
+  isOnboarded: true,
+  publicKey: "key",
+  instrumentUtxoCounts: {},
+  pendingTransferProposals: [],
+  scanCheckpoint,
+});
+
+/** A gateway that serves the rows from the requested offset, in one page. */
+const serveRows = (rows: () => OperationInfo[]) =>
+  mockedGetOperations.mockImplementation(async (_config, _party, { minOffset }) => ({
+    operations: rows().filter(row => row.block.height >= minOffset),
+    next: -1,
+  }));
+
 /** A first sync of the sent offer "offer" while pending: its fees only, and the offer to read again. */
 const syncPending = async () => {
   const pending = await syncFrom({ syncHash: SYNC_HASH, cantonResources: {} as never });
@@ -304,6 +337,7 @@ const syncAccount = async (
   const initial = {
     ...createMockCantonAccount(),
     xpub: "party123",
+    blockHeight: 20,
     syncHash,
     operations: [storedOperation(5, 999)],
     operationsCount: 1,
@@ -1370,9 +1404,11 @@ describe("makeGetAccountShape", () => {
           const account = await syncAccount(SYNC_HASH, {
             id: accountId,
             operations: [storedOperation(20)],
+            cantonResources: resourcesUpTo({ hash: "early-token", height: 10 }),
           });
 
           expect(readFrom()).toEqual([expect.objectContaining({ minOffset: 0 })]);
+          expect(checkpointOf(account)).toEqual({ hash: "late", height: 20 });
           expect(account.operations.map(op => op.hash).sort()).toEqual(["early-token", "late"]);
           expect(fees(account)).toEqual([
             expect.objectContaining({ hash: "early-token", value: BigNumber(5) }),
@@ -1410,32 +1446,121 @@ describe("makeGetAccountShape", () => {
           ]);
 
           served = [...offerRows("offer", 5), ...rows];
+          expect(checkpointOf(rebuilt.shape)).toBeUndefined();
           const recovered = await resync(rebuilt.shape);
-          expect(recovered.from).toEqual([5]);
+          expect(recovered.from).toEqual([0]);
           expect(feesOf(recovered.shape, "offer")).toEqual([]);
           expect(feeOf(recovered.shape, "offer")).toEqual(BigNumber(10));
           expect(replayOf(recovered.shape)).toEqual([]);
+          expect(checkpointOf(recovered.shape)).toEqual({ hash: "late", height: 20 });
         });
 
-        it("reads on from the newest stored operation once the sub-account is stored", async () => {
+        it("leaves the account as it was when a later page of the history fails", async () => {
+          const account = {
+            id: accountId,
+            operations: [storedOperation(20)],
+            cantonResources: resourcesUpTo({ hash: "late", height: 20 }),
+          };
+          mockedGetOperations
+            .mockResolvedValueOnce({ operations: [rows[0]], next: 15 })
+            .mockRejectedValueOnce(new Error("gateway"));
+          await expect(syncAccount(SYNC_HASH, account)).rejects.toThrow("gateway");
+          mockedGetOperations.mockClear();
+
+          const retried = await syncAccount(SYNC_HASH, account);
+          expect(readFrom()).toEqual([expect.objectContaining({ minOffset: 0 })]);
+          expect(retried.operations.map(op => op.hash).sort()).toEqual(["early-token", "late"]);
+          expect(checkpointOf(retried)).toEqual({ hash: "late", height: 20 });
+        });
+
+        describe("after a restore that does not find a token", () => {
+          const restoreFinding = async (foundTokens: (typeof usdcx)[]) => {
+            const tokenIds = foundTokens.map(({ id }) => id);
+            const synced = await syncAccount(SYNC_HASH, { id: accountId });
+            const found = synced.subAccounts?.filter(({ token }) => tokenIds.includes(token.id));
+            const notFound = { ...storedUsdcx, token: { ...usdcx, id: "not-found" } };
+            const saved = { ...synced, subAccounts: [...(found ?? []), notFound] } as Account;
+            const raw = toAccountRaw(saved, { assignToAccountRaw });
+            const restored = (await fromAccountRaw(raw, { assignFromAccountRaw })) as CantonAccount;
+            expect(restored.operations).toEqual([]);
+            expect(checkpointOf(restored)).toEqual({ hash: "late", height: 20 });
+
+            mockedGetBalance.mockResolvedValue([
+              createMockNativeBalance("1000"),
+              ...foundTokens.map(() => tokenBalance(calAdmin, "500")),
+            ]);
+            mockedGetOperations.mockClear();
+            return restored;
+          };
+
+          it.each([
+            ["without another token", []],
+            ["next to a token that is found", [usdcx]],
+          ])("reads the history again from offset 0, %s", async (_, foundTokens) => {
+            const account = await syncAccount(SYNC_HASH, await restoreFinding(foundTokens));
+
+            expect(readFrom()).toEqual([expect.objectContaining({ minOffset: 0 })]);
+            expect(account.operations.map(op => op.hash).sort()).toEqual(["early-token", "late"]);
+            expect(fees(account)).toEqual([
+              expect.objectContaining({ hash: "early-token", value: BigNumber(5) }),
+            ]);
+            expect(
+              account.subAccounts?.map(({ token, operations }) => [token, operations.length]),
+            ).toEqual(foundTokens.map(token => [token, 1]));
+            expect(checkpointOf(account)).toEqual({ hash: "late", height: 20 });
+          });
+
+          it("keeps the operations of a token that is found when the read leaves them out", async () => {
+            const restored = await restoreFinding([usdcx]);
+            serveRows(() => [rows[1]]);
+
+            const account = await syncAccount(SYNC_HASH, restored);
+            expect(account.subAccounts?.[0].operations.map(op => op.hash)).toEqual(["early-token"]);
+          });
+        });
+
+        it("reads the history again from offset 0 after a clear, when only the token had operations", async () => {
+          const received = { type: "Receive" as const, senders: ["alice"] };
+          serveRows(() => [at(tokenOperationView(usdcxInstrument, "token-in", received), 10)]);
+          const synced = await syncAccount(SYNC_HASH, {
+            id: accountId,
+            operations: [],
+            operationsCount: 0,
+          });
+          expect(synced.operations).toEqual([]);
+          expect(checkpointOf(synced)).toEqual({ hash: "token-in", height: 10 });
+
+          mockedGetOperations.mockClear();
+          const account = await syncAccount(SYNC_HASH, clearAccount(synced));
+          expect(readFrom()).toEqual([expect.objectContaining({ minOffset: 0 })]);
+          expect(account.subAccounts?.[0].operations.map(op => op.hash)).toEqual(["token-in"]);
+        });
+
+        it("reads on from the checkpoint once the sub-account is stored", async () => {
           await syncAccount(SYNC_HASH, {
             id: accountId,
             operations: [storedOperation(20)],
             subAccounts: [storedUsdcx],
+            cantonResources: resourcesUpTo({ hash: "late", height: 20 }),
           });
 
-          expect(readFrom()).toEqual([expect.objectContaining({ minOffset: 21 })]);
+          expect(readFrom()).toEqual([expect.objectContaining({ minOffset: 20 })]);
         });
 
         it("does not read the history again for a held token that stays disabled", async () => {
           mockedGetEnabledInstrumentsCached.mockResolvedValue(new Set());
 
-          await syncAccount(SYNC_HASH, { id: accountId, operations: [storedOperation(20)] });
-          await syncAccount(SYNC_HASH, { id: accountId, operations: [storedOperation(20)] });
+          const account = {
+            id: accountId,
+            operations: [storedOperation(20)],
+            cantonResources: resourcesUpTo({ hash: "late", height: 20 }),
+          };
+          await syncAccount(SYNC_HASH, account);
+          await syncAccount(SYNC_HASH, account);
 
           expect(readFrom()).toEqual([
-            expect.objectContaining({ minOffset: 21 }),
-            expect.objectContaining({ minOffset: 21 }),
+            expect.objectContaining({ minOffset: 20 }),
+            expect.objectContaining({ minOffset: 20 }),
           ]);
         });
       });
@@ -1448,22 +1573,219 @@ describe("makeGetAccountShape", () => {
       mockedGetOperations.mockResolvedValue({ operations: [], next: -1 });
     });
 
-    it("reads past the newest stored operation of any account, up to the ledger end", async () => {
-      const shape = await syncFrom({
-        syncHash: SYNC_HASH,
-        operations: [storedOperation(5)],
-        subAccounts: [{ operations: [storedOperation(9)] }] as unknown as TokenAccount[],
+    describe("scan checkpoint", () => {
+      const droppedToken = { instrumentId: "Unlisted", instrumentAdmin: "unlisted-admin" };
+      const first = at(createMockOperationView({ txHash: "first" }), 5);
+      const droppedTokenRow = at(tokenOperationView(droppedToken, "token-tx"), 8);
+      const invalidRow = {
+        ...at(createMockOperationView({ txHash: "invalid" }), 9),
+        transfers: [],
+      };
+      const later = at(createMockOperationView({ txHash: "later" }), 12);
+      let rows: OperationInfo[] = [];
+
+      beforeEach(() => {
+        rows = [first, withoutFee(droppedTokenRow), invalidRow];
+        serveRows(() => rows);
       });
 
-      expect(readFrom()).toEqual([{ minOffset: 10, maxOffset: 12345, limit: 1000 }]);
-      expect(shape.operations).toEqual([storedOperation(5)]);
-      expect(shape.syncHash).toBe(SYNC_HASH);
+      it("passes a tail of rows that produce no stored operation", async () => {
+        const synced = await syncFirst();
+        expect(hashesOf(synced)).toEqual(["first"]);
+        expect(checkpointOf(synced)).toEqual({ hash: "invalid", height: 9 });
+
+        rows = [...rows, later];
+        const next = await resync(synced);
+        expect(next.from).toEqual([9]);
+        expect(hashesOf(next.shape)).toEqual(["later", "first"]);
+        expect(checkpointOf(next.shape)).toEqual({ hash: "later", height: 12 });
+      });
+
+      it("keeps the operations and the checkpoint when nothing is new", async () => {
+        rows = [first];
+        const synced = await syncFirst();
+
+        const idle = await resync(synced);
+        expect(idle.from).toEqual([5]);
+        expect(idle.shape.operations).toEqual(synced.operations);
+        expect(checkpointOf(idle.shape)).toEqual({ hash: "first", height: 5 });
+      });
+
+      it("stores the checkpoint's transaction once it comes back valid", async () => {
+        const synced = await syncFirst();
+
+        rows = [first, at(createMockOperationView({ txHash: "invalid" }), 9)];
+        const next = await resync(synced);
+        expect(hashesOf(next.shape)).toEqual(["invalid", "first"]);
+      });
+
+      it("reads from offset 0 without a checkpoint, keeping the stored operations", async () => {
+        rows = [first, later];
+        const shape = await syncFrom({
+          syncHash: SYNC_HASH,
+          operations: [storedOperation(10)],
+          cantonResources: {} as never,
+        });
+
+        expect(readFrom()).toEqual([{ minOffset: 0, maxOffset: 12345, limit: 1000 }]);
+        expect(hashesOf(shape)).toEqual(["later", "first", "stored-10"]);
+        expect(checkpointOf(shape)).toEqual({ hash: "later", height: 12 });
+      });
+
+      it("reads the whole history again after the account is cleared", async () => {
+        rows = [first, later];
+        const synced = await syncFirst();
+        const cleared = clearAccount({
+          ...createMockCantonAccount(),
+          ...synced,
+          subAccounts: [],
+        } as CantonAccount);
+        expect(checkpointOf(cleared)).toEqual({ hash: "later", height: 12 });
+
+        mockedGetOperations.mockClear();
+        const shape = await syncFrom(cleared);
+        expect(readFrom()).toEqual([expect.objectContaining({ minOffset: 0 })]);
+        expect(hashesOf(shape)).toEqual(["later", "first"]);
+      });
+
+      it("bypasses the checkpoint when the sync hash changed, and replaces it", async () => {
+        rows = [first, later];
+        const { shape, from } = await syncAfter(
+          {
+            operations: [storedOperation(5, 999)],
+            cantonResources: resourcesUpTo({ hash: "first", height: 5 }),
+          },
+          undefined,
+        );
+
+        expect(from).toEqual([0]);
+        expect(hashesOf(shape)).toEqual(["later", "first"]);
+        expect(checkpointOf(shape)).toEqual({ hash: "later", height: 12 });
+      });
+
+      it.each([
+        ["an incremental sync", SYNC_HASH, 5],
+        ["a rebuild", undefined, 0],
+      ])(
+        "leaves the account as it was when a later page of %s fails",
+        async (_, syncHash, from) => {
+          const account = {
+            operations: [storedOperation(5)],
+            cantonResources: resourcesUpTo({ hash: "first", height: 5 }),
+          };
+          mockedGetOperations
+            .mockResolvedValueOnce({ operations: [first], next: 9 })
+            .mockRejectedValueOnce(new Error("gateway"));
+          await expect(syncAfter(account, syncHash)).rejects.toThrow("gateway");
+
+          rows = [first, later];
+          const retried = await syncAfter(account, syncHash);
+          expect(retried.from).toEqual([from]);
+          expect(hashesOf(retried.shape)).toContain("later");
+          expect(checkpointOf(retried.shape)).toEqual({ hash: "later", height: 12 });
+        },
+      );
+
+      it("takes a second page for the checkpoint's transaction and a full page after it", async () => {
+        mockedGetOperations
+          .mockResolvedValueOnce({ operations: [first], next: 13 })
+          .mockResolvedValueOnce({ operations: [later], next: -1 });
+
+        const { shape } = await resync({
+          cantonResources: resourcesUpTo({ hash: "first", height: 5 }),
+        });
+
+        expect(readFrom()).toEqual([
+          { minOffset: 5, maxOffset: 12345, limit: 1000 },
+          { minOffset: 5, maxOffset: 12345, cursor: 6, limit: 1000 },
+        ]);
+        expect(checkpointOf(shape)).toEqual({ hash: "later", height: 12 });
+      });
+
+      describe("from another node, whose offsets differ", () => {
+        const missed = createMockOperationView({ txHash: "missed" });
+        const onOtherNode = (height: number) => [
+          at(createMockOperationView({ txHash: "first" }), height),
+          at(missed, height + 1),
+        ];
+
+        it.each([
+          ["above the checkpoint", 20],
+          ["below the checkpoint", 1],
+        ])("reads from offset 0 when its rows are %s", async (_, height) => {
+          rows = [first];
+          const synced = await syncFirst();
+
+          rows = onOtherNode(height);
+          const switched = await resync(synced);
+          expect(switched.from).toEqual([5, 0]);
+          expect(hashesOf(switched.shape)?.sort()).toEqual(["first", "missed"]);
+          expect(checkpointOf(switched.shape)).toEqual({ hash: "missed", height: height + 1 });
+
+          rows = [first, at(missed, 7)];
+          const back = await resync(switched.shape);
+          expect(back.from.at(-1)).toBe(0);
+          expect(hashesOf(back.shape)?.sort()).toEqual(["first", "missed"]);
+          expect(checkpointOf(back.shape)).toEqual({ hash: "missed", height: 7 });
+        });
+
+        it("reads from offset 0 when another transaction is at the checkpoint's offset", async () => {
+          rows = [first];
+          const synced = await syncFirst();
+
+          rows = [at(missed, 3), at(createMockOperationView({ txHash: "other" }), 5)];
+          const switched = await resync(synced);
+          expect(switched.from).toEqual([5, 0]);
+          expect(hashesOf(switched.shape)?.sort()).toEqual(["first", "missed", "other"]);
+        });
+
+        it("reads from offset 0 when its ledger end is below the checkpoint", async () => {
+          rows = [first, later];
+          const synced = await syncFirst();
+
+          mockedGetLedgerEnd.mockResolvedValueOnce(11);
+          rows = onOtherNode(3);
+          const switched = await resync(synced);
+          expect(switched.from).toEqual([0]);
+          expect(hashesOf(switched.shape)?.sort()).toEqual(["first", "later", "missed"]);
+        });
+
+        it("keeps the history when the node does not host the account", async () => {
+          rows = [first, later];
+          const synced = await syncFirst();
+
+          rows = [];
+          const empty = await resync(synced);
+          expect(hashesOf(empty.shape)).toEqual(["later", "first"]);
+          expect(checkpointOf(empty.shape)).toBeUndefined();
+
+          rows = [first, later];
+          const back = await resync(empty.shape);
+          expect(back.from).toEqual([0]);
+          expect(checkpointOf(back.shape)).toEqual({ hash: "later", height: 12 });
+        });
+
+        it("does not add an operation when a stored transaction comes back as another type", async () => {
+          rows = [first];
+          const synced = await syncFirst();
+          expect(synced.operations?.map(({ type }) => type)).toEqual(["OUT"]);
+
+          rows = [at(createMockOperationView({ txHash: "first", value: "0" }), 20)];
+          const switched = await resync(synced);
+          expect(switched.shape.operations).toEqual(synced.operations);
+        });
+      });
     });
 
-    it("reads nothing when the account is at the ledger end", async () => {
-      await syncFrom({ syncHash: SYNC_HASH, operations: [storedOperation(12345)] });
+    it("reads the checkpoint's transaction alone when the account is at the ledger end", async () => {
+      mockedGetOperations.mockResolvedValue({
+        operations: [rowAtHeight("newest", 12345)],
+        next: -1,
+      });
 
-      expect(mockedGetOperations).not.toHaveBeenCalled();
+      await resync({ cantonResources: resourcesUpTo({ hash: "newest", height: 12345 }) });
+
+      expect(readFrom()).toEqual([{ minOffset: 12345, maxOffset: 12345, limit: 1000 }]);
     });
 
     it("reads every page, resuming after the last row served rather than at the gateway's next", async () => {
@@ -1494,15 +1816,14 @@ describe("makeGetAccountShape", () => {
     });
 
     describe("pending offers read again", () => {
+      const earlierRow = at(createMockOperationView({ txHash: "earlier" }), 2);
+      const belowOffers = { hash: "earlier", height: 2 };
       const laterRow = at(createMockOperationView({ txHash: "later" }), 9);
       let rows: OperationInfo[] = [];
 
       beforeEach(() => {
         rows = offerRows("offer", 5);
-        mockedGetOperations.mockImplementation(async (_config, _party, { minOffset }) => ({
-          operations: rows.filter(row => row.block.height >= minOffset),
-          next: -1,
-        }));
+        serveRows(() => [earlierRow, ...rows]);
         mockedGetPendingTransferProposals.mockResolvedValue([sentOffer("offer")]);
       });
 
@@ -1511,8 +1832,9 @@ describe("makeGetAccountShape", () => {
 
         mockedGetPendingTransferProposals.mockResolvedValue([]);
         rows = [...offerRows("offer", 5), laterRow];
+        expect(checkpointOf(pending)).toEqual(belowOffers);
         const settled = await resync(pending);
-        expect(settled.from).toEqual([5]);
+        expect(settled.from).toEqual([2]);
         expect(feesOf(settled.shape, "offer")).toEqual([]);
         expect(
           settled.shape.operations?.filter(op => op.hash === "offer").map(op => op.type),
@@ -1520,8 +1842,24 @@ describe("makeGetAccountShape", () => {
         expect(feeOf(settled.shape, "offer")).toEqual(BigNumber(10));
         expect(replayOf(settled.shape)).toEqual([]);
 
+        expect(checkpointOf(settled.shape)).toEqual({ hash: "later", height: 9 });
         const next = await resync(settled.shape);
-        expect(next.from).toEqual([10]);
+        expect(next.from).toEqual([9]);
+      });
+
+      it("replaces the fees stored while only part of the offer was valid, once it settles", async () => {
+        const [validRow, otherRow] = offerRows("offer", 5);
+        rows = [validRow, { ...otherRow, transfers: [] }];
+        const pending = await syncFirst();
+        expect(feesOf(pending, "offer")).toEqual([expect.objectContaining({ fee: BigNumber(5) })]);
+        expect(replayOf(pending)).toEqual([{ hash: "offer", height: 5 }]);
+
+        mockedGetPendingTransferProposals.mockResolvedValue([]);
+        rows = [...offerRows("offer", 5), laterRow];
+        const settled = await resync(pending);
+        expect(feesOf(settled.shape, "offer")).toEqual([]);
+        expect(feeOf(settled.shape, "offer")).toEqual(BigNumber(10));
+        expect(replayOf(settled.shape)).toEqual([]);
       });
 
       it("keeps the fees of a settled offer the gateway does not read in full, until it does", async () => {
@@ -1533,7 +1871,8 @@ describe("makeGetAccountShape", () => {
         for (const partial of [[], invalid, [offerRows("offer", 5)[0], invalid[1]]]) {
           rows = [...partial, laterRow];
           const { shape, from } = await resync(previous);
-          expect(from).toEqual([5]);
+          expect(from).toEqual([2]);
+          expect(checkpointOf(shape)).toEqual(belowOffers);
           expect(feesOf(shape, "offer")).toEqual([
             expect.objectContaining({ value: BigNumber(10) }),
           ]);
@@ -1595,11 +1934,11 @@ describe("makeGetAccountShape", () => {
         mockedGetPendingTransferProposals.mockResolvedValue([sentOffer("held")]);
         rows = offerRows("held", 3);
         const skipped = await resync(pending);
-        expect(skipped.from).toEqual([3]);
+        expect(skipped.from).toEqual([2]);
 
         rows = [...offerRows("held", 3), ...offerRows("offer", 5)];
         const recovered = await resync(skipped.shape);
-        expect(recovered.from).toEqual([3]);
+        expect(recovered.from).toEqual([2]);
         expect(feesOf(recovered.shape, "offer")).toEqual([]);
         expect(feeOf(recovered.shape, "offer")).toEqual(BigNumber(10));
         expect(replayOf(recovered.shape)).toEqual([{ hash: "held", height: 3 }]);
@@ -1631,7 +1970,7 @@ describe("makeGetAccountShape", () => {
           const listedLate = await syncListedLate();
 
           const pending = await resync(listedLate);
-          expect(pending.from).toEqual([3]);
+          expect(pending.from).toEqual([2]);
           expect(typesOf(pending.shape, "offer")).toEqual(["FEES"]);
           expect(feeOf(pending.shape, "offer")).toEqual(BigNumber(10));
           expect(replayOf(pending.shape)).toEqual(
@@ -1696,26 +2035,184 @@ describe("makeGetAccountShape", () => {
         });
       });
 
-      it("does not replay a received offer stored before it was listed as pending", async () => {
+      describe("a received offer", () => {
         const offer = { ...sentOffer("received"), sender: "alice", receiver: "party123" };
-        rows = [
-          {
-            ...at(
-              createMockOperationView({ txHash: "received", operationType: "transfer-proposal" }),
-              5,
-            ),
-            type: "Receive",
-            senders: ["alice"],
-          },
-        ];
+        const offerRow: OperationInfo = {
+          ...at(
+            createMockOperationView({ txHash: "received", operationType: "transfer-proposal" }),
+            5,
+          ),
+          type: "Receive",
+          senders: ["alice"],
+        };
+        const replay = [{ hash: "received", height: 5 }];
+
+        beforeEach(() => {
+          rows = [offerRow, laterRow];
+          mockedGetPendingTransferProposals.mockResolvedValue([offer]);
+        });
+
+        it("is read again until it settles, also after a read that leaves it out", async () => {
+          const pending = await syncFirst();
+          expect(hashesOf(pending)).toEqual(["later", "earlier"]);
+          expect(replayOf(pending)).toEqual(replay);
+          expect(checkpointOf(pending)).toEqual(belowOffers);
+
+          mockedGetPendingTransferProposals.mockResolvedValue([]);
+          rows = [laterRow];
+          const leftOut = await resync(pending);
+          expect(leftOut.from).toEqual([2]);
+          expect(hashesOf(leftOut.shape)).toEqual(["later", "earlier"]);
+          expect(replayOf(leftOut.shape)).toEqual(replay);
+          expect(checkpointOf(leftOut.shape)).toEqual(belowOffers);
+
+          rows = [offerRow, laterRow];
+          const settled = await resync(leftOut.shape);
+          expect(settled.from).toEqual([2]);
+          expect(hashesOf(settled.shape)).toEqual(["later", "received", "earlier"]);
+          expect(settled.shape.operations?.[1].type).toBe("TRANSFER_PROPOSAL");
+          expect(replayOf(settled.shape)).toEqual([]);
+          expect(checkpointOf(settled.shape)).toEqual({ hash: "later", height: 9 });
+        });
+
+        it("leaves no checkpoint while it is the first row, and is read from offset 0", async () => {
+          serveRows(() => rows);
+          const pending = await syncFirst();
+          expect(checkpointOf(pending)).toBeUndefined();
+
+          mockedGetPendingTransferProposals.mockResolvedValue([]);
+          const settled = await resync(pending);
+          expect(settled.from).toEqual([0]);
+          expect(hashesOf(settled.shape)).toEqual(["later", "received"]);
+          expect(checkpointOf(settled.shape)).toEqual({ hash: "later", height: 9 });
+        });
+
+        it("is found again on a node whose offsets differ, after a full read that leaves it out", async () => {
+          const pending = await syncFirst();
+
+          mockedGetPendingTransferProposals.mockResolvedValue([]);
+          const otherNodeRows = [at(earlierRow, 1), at(offerRow, 3), at(laterRow, 40)];
+          serveRows(() => [otherNodeRows[0], otherNodeRows[2]]);
+          const leftOut = await resync(pending);
+          expect(replayOf(leftOut.shape)).toEqual(replay);
+          expect(checkpointOf(leftOut.shape)).toBeUndefined();
+
+          serveRows(() => otherNodeRows);
+          const settled = await resync(leftOut.shape);
+          expect(settled.from).toEqual([0]);
+          expect(hashesOf(settled.shape)).toContain("received");
+          expect(replayOf(settled.shape)).toEqual([]);
+        });
+
+        it("replaces an operation of another type stored before it was listed as pending", async () => {
+          rows = [at(createMockOperationView({ txHash: "received", type: "Receive" }), 5)];
+          rows[0].senders = ["alice"];
+          mockedGetPendingTransferProposals.mockResolvedValue([]);
+          const degraded = await syncFirst();
+          expect(degraded.operations?.map(({ type }) => type)).toEqual(["IN", "OUT"]);
+
+          rows = [offerRow, laterRow];
+          mockedGetPendingTransferProposals.mockResolvedValue([offer]);
+          const pending = await resync(degraded);
+          expect(replayOf(pending.shape)).toEqual(replay);
+          expect(checkpointOf(pending.shape)).toBeUndefined();
+
+          mockedGetPendingTransferProposals.mockResolvedValue([]);
+          const settled = await resync(pending.shape);
+          expect(settled.from).toEqual([0]);
+          expect(settled.shape.operations?.map(({ type }) => type)).toEqual([
+            "OUT",
+            "TRANSFER_PROPOSAL",
+            "OUT",
+          ]);
+          expect(checkpointOf(settled.shape)).toEqual({ hash: "later", height: 9 });
+        });
+
+        it("is not replayed when it was stored before it was listed as pending", async () => {
+          rows = [offerRow];
+          mockedGetPendingTransferProposals.mockResolvedValue([]);
+          const listedLate = await syncFirst();
+          expect(hashesOf(listedLate)).toEqual(["received", "earlier"]);
+
+          mockedGetPendingTransferProposals.mockResolvedValue([offer]);
+          const next = await resync(listedLate);
+          expect(next.from).toEqual([5]);
+          expect(hashesOf(next.shape)).toEqual(["received", "earlier"]);
+          expect(replayOf(next.shape)).toEqual([]);
+        });
+
+        describe("whose row comes back without transfers", () => {
+          const invalidRow = { ...offerRow, transfers: [] };
+
+          beforeEach(() => {
+            rows = [invalidRow, laterRow];
+          });
+
+          it("keeps the checkpoint below it while pending, and is recorded once it settles", async () => {
+            const pending = await syncFirst();
+            expect(hashesOf(pending)).toEqual(["later", "earlier"]);
+            expect(replayOf(pending)).toEqual([]);
+            expect(checkpointOf(pending)).toEqual(belowOffers);
+
+            const stillPending = await resync(pending);
+            expect(stillPending.from).toEqual([2]);
+            expect(checkpointOf(stillPending.shape)).toEqual(belowOffers);
+
+            mockedGetPendingTransferProposals.mockResolvedValue([]);
+            rows = [offerRow, laterRow];
+            const settled = await resync(stillPending.shape);
+            expect(settled.from).toEqual([2]);
+            expect(hashesOf(settled.shape)).toEqual(["later", "received", "earlier"]);
+            expect(checkpointOf(settled.shape)).toEqual({ hash: "later", height: 9 });
+          });
+
+          it("is replayed once its row is valid while pending", async () => {
+            const pending = await syncFirst();
+
+            rows = [offerRow, laterRow];
+            const valid = await resync(pending);
+            expect(replayOf(valid.shape)).toEqual(replay);
+            expect(checkpointOf(valid.shape)).toEqual(belowOffers);
+          });
+
+          it.each([
+            ["", []],
+            [", also next to a valid row", [offerRow]],
+          ])("no longer holds the checkpoint once it settles%s", async (_, validRows) => {
+            rows = [invalidRow, ...validRows, laterRow];
+            const pending = await syncFirst();
+            expect(replayOf(pending)).toEqual([]);
+            expect(checkpointOf(pending)).toEqual(belowOffers);
+
+            mockedGetPendingTransferProposals.mockResolvedValue([]);
+            const settled = await resync(pending);
+            expect(replayOf(settled.shape)).toEqual([]);
+            expect(checkpointOf(settled.shape)).toEqual({ hash: "later", height: 9 });
+          });
+
+          it("does not hold the checkpoint when it was stored before it was listed as pending", async () => {
+            rows = [offerRow];
+            mockedGetPendingTransferProposals.mockResolvedValue([]);
+            const listedLate = await syncFirst();
+
+            mockedGetPendingTransferProposals.mockResolvedValue([offer]);
+            rows = [invalidRow, laterRow];
+            const next = await resync(listedLate);
+            expect(hashesOf(next.shape)).toEqual(["later", "received", "earlier"]);
+            expect(checkpointOf(next.shape)).toEqual({ hash: "later", height: 9 });
+          });
+        });
+      });
+
+      it("does not read again an offer listed late, below the checkpoint", async () => {
+        rows = [...offerRows("offer", 5), laterRow];
         mockedGetPendingTransferProposals.mockResolvedValue([]);
         const listedLate = await syncFrom({ syncHash: SYNC_HASH, cantonResources: {} as never });
-        expect(listedLate.operations?.map(op => op.hash)).toEqual(["received"]);
 
-        mockedGetPendingTransferProposals.mockResolvedValue([offer]);
+        mockedGetPendingTransferProposals.mockResolvedValue([sentOffer("offer")]);
         const next = await resync(listedLate);
-        expect(next.from).toEqual([6]);
-        expect(next.shape.operations?.map(op => op.hash)).toEqual(["received"]);
+        expect(next.from).toEqual([9]);
+        expect(feeOf(next.shape, "offer")).toEqual(BigNumber(10));
         expect(replayOf(next.shape)).toEqual([]);
       });
     });

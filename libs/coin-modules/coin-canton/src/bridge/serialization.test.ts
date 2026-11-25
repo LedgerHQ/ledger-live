@@ -97,7 +97,19 @@ describe("canton account serialization", () => {
     );
   });
 
-  it("restores an account saved without transactions to read again without them", () => {
+  it("round-trips the scan checkpoint through save and restore", () => {
+    const scanCheckpoint = { hash: "newest", height: 12 };
+    const account = createMockCantonAccount({}, { scanCheckpoint }) as Account;
+
+    const accountRaw = { id: account.id } as AccountRaw;
+    assignToAccountRaw(account, accountRaw);
+    const restored = { id: account.id } as Account;
+    assignFromAccountRaw(accountRaw, restored);
+
+    expect((restored as CantonAccount).cantonResources.scanCheckpoint).toEqual(scanCheckpoint);
+  });
+
+  it("restores an account saved without transactions to read again or a checkpoint without them", () => {
     const accountRaw = { id: "acc" } as CantonAccountRaw;
     accountRaw.cantonResources = {
       isOnboarded: true,
@@ -109,6 +121,7 @@ describe("canton account serialization", () => {
     assignFromAccountRaw(accountRaw as AccountRaw, account);
 
     expect("replayTransactions" in (account as CantonAccount).cantonResources).toBe(false);
+    expect("scanCheckpoint" in (account as CantonAccount).cantonResources).toBe(false);
   });
 
   it("restores an account saved before the native instrument admin without one", () => {

@@ -72,8 +72,11 @@ const createOnboardedAccount = (
 ): CantonAccount => {
   const cantonAccount = account as CantonAccount;
   const cantonResources = { ...cantonAccount.cantonResources, isOnboarded: true };
-  // Onboarding can follow a network reset, which replaces the DSO party, so the next sync reads it again.
+  // Onboarding can follow a network reset, which replaces the DSO party and the history.
   delete cantonResources.nativeInstrumentAdmin;
+  delete cantonResources.scanCheckpoint;
+  const previousPartyId = account.xpub || cantonResources.xpub;
+  if (partyId !== previousPartyId) delete cantonResources.replayTransactions;
   return {
     ...cantonAccount,
     xpub: partyId,
