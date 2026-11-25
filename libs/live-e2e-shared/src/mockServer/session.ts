@@ -25,6 +25,9 @@ type PromptProgress = {
   lastAdvancedAt: number;
 };
 
+/** A device with a chosen id, so that the app finds a device it already knows. */
+export type MockServerDeviceWithId = DeviceConfig & { id: string };
+
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const isIdleScreen = (text: string) => text.trim() === "" || /is ready/i.test(text);
@@ -132,6 +135,11 @@ export class MockServerSessionHandle {
   async deviceId(): Promise<string> {
     const { id } = await this.firstDevice();
     return id;
+  }
+
+  /** Attaches a device to the session. The app discovers it within a second. */
+  async addDevice(device: MockServerDeviceWithId): Promise<void> {
+    await this.client.addDevice(device);
   }
 
   /**

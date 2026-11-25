@@ -1,9 +1,9 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { deviceUnderTest } from "@ledgerhq/live-e2e-shared/mockServer/devices";
 import {
-  MockServerSessionHandle,
   disposeMockServerSession,
   provisionMockServerSession,
+  type MockServerDeviceWithId,
 } from "@ledgerhq/live-e2e-shared/mockServer/session";
 import {
   getLatestFirmwareVersion,
@@ -13,6 +13,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { device } from "detox";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { launchApp } from "@e2e/helpers/commonHelpers";
+import { MockServerDevicePage } from "@e2e/page/mockServerDevice.page";
 import type { PartialFeatures } from "@shared/feature-flags";
 
 const DEVICE_LIST_FEATURE_FLAGS: PartialFeatures = {
@@ -28,7 +29,8 @@ const STATUS_LABELS = {
   connected: "Connected",
 };
 
-const ABSENT_DEVICE_ID = "e2e-absent-device";
+// Id of a known device that the session holds only once the test turns it on.
+const LATE_DEVICE_ID = "e2e-late-device";
 
 // `buildDeviceList` keys the row of a known device `known:<transport>:<id>`, and the transport id
 // of the mock server is `mockserverIdentifier`.
@@ -57,23 +59,20 @@ type DeviceListSetup = {
 
 function setupDeviceList({ deviceInSession, deviceKnown }: DeviceListSetup) {
   let session: { baseUrl: string; token: string } | undefined;
-  let deviceId = ABSENT_DEVICE_ID;
+  let mockServer: MockServerDevicePage | undefined;
+  let mockDevice: MockServerDeviceWithId | undefined;
 
   beforeAll(async () => {
     const { modelId, apps: _noApps, ...deviceConfig } = deviceUnderTest();
-    const devices = deviceInSession
-      ? [
-          {
-            ...deviceConfig,
-            connectivity_type: "BLE",
-            firmware_version: await getLatestFirmwareVersion(modelId),
-          },
-        ]
-      : [];
-    session = await provisionMockServerSession(devices);
-    if (deviceInSession) {
-      deviceId = await new MockServerSessionHandle(session.baseUrl, session.token).deviceId();
-    }
+    const bluetoothDevice = {
+      ...deviceConfig,
+      connectivity_type: "BLE",
+      firmware_version: await getLatestFirmwareVersion(modelId),
+    };
+    session = await provisionMockServerSession(deviceInSession ? [bluetoothDevice] : []);
+    mockServer = new MockServerDevicePage(session.baseUrl, session.token);
+    const deviceId = deviceInSession ? await mockServer.deviceId() : LATE_DEVICE_ID;
+    mockDevice = { ...bluetoothDevice, id: deviceId };
 
     const port = await launchApp({
       newInstance: true,
@@ -97,7 +96,19 @@ function setupDeviceList({ deviceInSession, deviceKnown }: DeviceListSetup) {
     }
   });
 
-  return { deviceKey: () => knownDeviceKey(deviceId) };
+  const getMockDevice = (): MockServerDeviceWithId => {
+    if (!mockDevice) throw new Error("The device list setup did not run");
+    return mockDevice;
+  };
+
+  return {
+    deviceKey: () => knownDeviceKey(getMockDevice().id),
+    /** Adds the device to the session, as when the user turns it on near the phone. */
+    turnOnDevice: async () => {
+      if (!mockServer) throw new Error("The device list setup did not run");
+      await mockServer.turnOnDevice(getMockDevice());
+    },
+  };
 }
 
 type DeviceListTestOptions = {
@@ -158,13 +169,15 @@ export function runKnownDeviceNotAroundTest(options: DeviceListTestOptions) {
     const setup = setupDeviceList({ deviceInSession: false, deviceKnown: true });
     tagDeviceListScenario(options);
 
-    it("Lists the known device as not connected and waits for it when tapped", async () => {
+    it("Waits for the known device when tapped and opens My Ledger once it is on", async () => {
       await openMyWalletDeviceList();
       await app.myWallet.deviceList.expectDeviceStatus({
         deviceKey: setup.deviceKey(),
         statusLabel: STATUS_LABELS.unavailable,
       });
       await app.myWallet.deviceList.waitForDevice(setup.deviceKey());
+      await setup.turnOnDevice();
+      await app.manager.expectDeviceInfoVisible();
     });
   });
 }

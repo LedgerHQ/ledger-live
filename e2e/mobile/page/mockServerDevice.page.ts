@@ -1,6 +1,9 @@
 import { byId } from "@e2e/helpers/elements/native";
 import { Step } from "jest-allure2-reporter/api";
-import { MockServerSessionHandle } from "@ledgerhq/live-e2e-shared/mockServer/session";
+import {
+  MockServerSessionHandle,
+  type MockServerDeviceWithId,
+} from "@ledgerhq/live-e2e-shared/mockServer/session";
 import { INTERVAL } from "@e2e/utils/timeouts";
 
 const DASHBOARD_RENAME_APDU_PREFIX = "e02e";
@@ -30,5 +33,10 @@ export class MockServerDevicePage extends MockServerSessionHandle {
   @Step("Dismiss the device completion status")
   async dismissDeviceCompletionStatus() {
     await this.dismissCompletionStatus();
+  }
+
+  @Step("Turn on the device {{0.id}}")
+  async turnOnDevice(device: MockServerDeviceWithId) {
+    await this.addDevice(device);
   }
 }
