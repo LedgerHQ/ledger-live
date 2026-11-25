@@ -28,6 +28,11 @@ inputs:
     type: string
     required: false
     default: ${{ github.workspace }}
+  timeout-minutes:
+    description: "Minutes the S3 copy may take before it fails (GNU timeout); no limit when empty"
+    type: string
+    required: false
+    default: ""
 outputs:
   cache-hit:
     description: "Indicates if the cache was successfully downloaded"
@@ -40,7 +45,12 @@ runs:
       shell: bash
       run: |
         ENDPOINT_URL="${INPUTS_ENDPOINT:-s3.${INPUTS_REGION}.amazonaws.com}"
-        aws s3 cp s3://${INPUTS_BUCKET}/${INPUTS_KEY}/cache.tzst /tmp/cache.tzst --endpoint-url "https://${ENDPOINT_URL}" --region ${INPUTS_REGION} --no-progress
+        limit=()
+        if [ -n "${INPUTS_TIMEOUT_MINUTES}" ]; then
+          bin=$(command -v timeout || command -v gtimeout) || { echo "::error::timeout-minutes needs GNU timeout"; exit 1; }
+          limit=("$bin" "${INPUTS_TIMEOUT_MINUTES}m")
+        fi
+        "${limit[@]}" aws s3 cp s3://${INPUTS_BUCKET}/${INPUTS_KEY}/cache.tzst /tmp/cache.tzst --endpoint-url "https://${ENDPOINT_URL}" --region ${INPUTS_REGION} --no-progress
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}
@@ -49,6 +59,7 @@ runs:
         INPUTS_KEY: ${{ inputs.key }}
         INPUTS_REGION: ${{ inputs.region }}
         INPUTS_ENDPOINT: ${{ inputs.endpoint }}
+        INPUTS_TIMEOUT_MINUTES: ${{ inputs.timeout-minutes }}
 
     - name: Un-Compress files (Linux)
       if: runner.os == 'Linux' && steps.download-cache.outcome == 'success'
