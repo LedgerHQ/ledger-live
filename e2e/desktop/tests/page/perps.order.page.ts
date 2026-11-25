@@ -28,14 +28,19 @@ export class PerpsOrderPage extends WebViewAppPage {
   private readonly autoCloseSubmitTestId = "desktop-order-configure-auto-close-submit";
   private readonly configureSubmitTestId = "configure-order-submit-button";
 
-  @step("Open the first HIP-3 market")
-  async openFirstHip3Market() {
+  @step("Open the first HIP-3 market without a position")
+  async openFirstHip3MarketWithoutPosition() {
     const webview = await this.getWebView();
-    await webview
-      .getByTestId(/^market-item-xyz:/)
-      .first()
-      .click();
-    await expect(webview.getByTestId(this.orderWidgetTestId)).toBeVisible();
+    const markets = webview.getByTestId(/^market-item-xyz:/);
+    const orderWidget = webview.getByTestId(this.orderWidgetTestId);
+    const closeButton = webview.getByTestId(this.closePositionButtonTestId);
+    const count = await markets.count();
+    for (let index = 0; index < count; index++) {
+      await markets.nth(index).click();
+      await expect(orderWidget.or(closeButton)).toBeVisible();
+      if (await orderWidget.isVisible()) return;
+    }
+    throw new Error("Every listed HIP-3 market already has an open position");
   }
 
   @step("Select the order side")

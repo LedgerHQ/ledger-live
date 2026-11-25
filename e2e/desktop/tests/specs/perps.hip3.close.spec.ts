@@ -18,6 +18,8 @@ import {
 const account = Account.HYPERCORE_1;
 const lock = exclusiveLockFor({ broadcastAccounts: [account] });
 
+const xrayTicket = "B2CQA-4707";
+
 test.describe("Perps HIP-3 close position", { lock: lock.names }, () => {
   // Remove once the Perps feature flags are on PRD.
   test.skip(!IS_PERPS_LIVE_APP_STAGING, "Perps feature flags are not on PRD yet");
@@ -48,7 +50,10 @@ test.describe("Perps HIP-3 close position", { lock: lock.names }, () => {
 
   test(
     "Close a HIP-3 position",
-    { tag: buildTags({ currencyId: account.currency.id, skipLNS: true }) },
+    {
+      tag: buildTags({ currencyId: account.currency.id, skipLNS: true }),
+      annotation: { type: "TMS", description: xrayTicket },
+    },
     async ({ app, speculos }) => {
       await closeHip3Position(app, speculos.relaunch);
     },

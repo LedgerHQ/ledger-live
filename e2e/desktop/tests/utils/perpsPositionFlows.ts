@@ -20,7 +20,7 @@ export async function openHip3Position(
   relaunchSpeculos: (appName: string) => Promise<unknown>,
   { side, marginUsd = MIN_ORDER_MARGIN_USD }: { side: PerpsOrderSide; marginUsd?: number },
 ) {
-  await app.perpsOrder.openFirstHip3Market();
+  await app.perpsOrder.openFirstHip3MarketWithoutPosition();
   await app.perpsOrder.selectSide(side);
   await app.perpsOrder.enterMargin(marginUsd);
   await app.perpsOrder.setAutoClose(side);

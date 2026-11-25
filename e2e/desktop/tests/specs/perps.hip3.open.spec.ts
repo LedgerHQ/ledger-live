@@ -18,7 +18,10 @@ import type { PerpsOrderSide } from "tests/page/perps.order.page";
 const account = Account.HYPERCORE_1;
 const lock = exclusiveLockFor({ broadcastAccounts: [account] });
 
-const sides: PerpsOrderSide[] = ["long", "short"];
+const orders = [
+  { side: "long", xrayTicket: "B2CQA-4699" },
+  { side: "short", xrayTicket: "B2CQA-4700" },
+] satisfies { side: PerpsOrderSide; xrayTicket: string }[];
 
 test.describe("Perps HIP-3 open position", { lock: lock.names }, () => {
   // Remove once the Perps feature flags are on PRD.
@@ -47,11 +50,12 @@ test.describe("Perps HIP-3 open position", { lock: lock.names }, () => {
     await closeHip3PositionIfOpen(app, speculos.relaunch);
   });
 
-  for (const side of sides) {
+  for (const { side, xrayTicket } of orders) {
     test(
       `Open a HIP-3 ${side} position with margin, take profit and stop loss`,
       {
         tag: buildTags({ currencyId: account.currency.id, skipLNS: true }),
+        annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app, speculos }) => {
         await openHip3Position(app, speculos.relaunch, { side });
