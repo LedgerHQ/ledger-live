@@ -3,6 +3,7 @@ import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { openModalWithReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
+import { importLLDCoinFamily } from "~/renderer/families";
 import { DeeplinkHandler, DeeplinkHandlerContext } from "../types";
 import { getAccountsOrSubAccountsByCurrency } from "../utils";
 
@@ -42,15 +43,16 @@ async function handleTransactionFlow(
   recipient: string | undefined,
   amount: string | undefined,
   context: DeeplinkHandlerContext,
+  delegateModal?: "MODAL_DELEGATE",
 ): Promise<void> {
   const { dispatch, accounts, openAddAccountFlow, openAssetFlow, openSendFlow } = context;
 
   const modalMap = {
     send: "MODAL_SEND",
-    delegate: "MODAL_DELEGATE",
     receive: "MODAL_RECEIVE",
   } as const;
-  const modal = modalMap[flowType];
+  const modal = flowType === "delegate" ? delegateModal : modalMap[flowType];
+  if (!modal) return;
 
   const sendRecipient = typeof recipient === "string" ? recipient : undefined;
   const sendAmount = typeof amount === "string" ? amount : undefined;
@@ -140,7 +142,18 @@ export const receiveHandler: DeeplinkHandler<"receive"> = async (route, context)
 };
 
 export const delegateHandler: DeeplinkHandler<"delegate"> = async (route, context) => {
-  if (route.currency !== "tezos") return;
+  const currency = route.currency ? findCryptoCurrencyByKeyword(route.currency) : undefined;
+  if (!currency) return;
 
-  await handleTransactionFlow("delegate", route.currency, route.recipient, route.amount, context);
+  const family = await importLLDCoinFamily(currency.family);
+  if (!family.delegateDeeplinkModal) return;
+
+  await handleTransactionFlow(
+    "delegate",
+    route.currency,
+    route.recipient,
+    route.amount,
+    context,
+    family.delegateDeeplinkModal,
+  );
 };

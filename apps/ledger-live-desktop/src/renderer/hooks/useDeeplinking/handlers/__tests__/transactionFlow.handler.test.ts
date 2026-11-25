@@ -165,8 +165,20 @@ describe("transactionFlow.handler", () => {
   });
 
   describe("delegateHandler", () => {
-    it("does nothing when currency is not tezos", async () => {
+    it("does nothing when the currency is unknown", async () => {
+      mockFindCryptoCurrencyByKeyword.mockReturnValue(undefined);
       const context = createMockContext();
+
+      await delegateHandler({ type: "delegate", currency: "unknown" }, context);
+
+      expect(context.dispatch).not.toHaveBeenCalled();
+    });
+
+    it("does nothing when the family of the currency has no delegate deeplink modal", async () => {
+      const mockAccount = createMockAccount("ethereum");
+      mockFindCryptoCurrencyByKeyword.mockReturnValue(getCryptoCurrencyById("ethereum"));
+      mockGetAccountsOrSubAccountsByCurrency.mockReturnValue([mockAccount]);
+      const context = createMockContext({ accounts: [mockAccount] });
 
       await delegateHandler({ type: "delegate", currency: "ethereum" }, context);
 

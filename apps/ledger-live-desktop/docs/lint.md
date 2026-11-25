@@ -20,3 +20,11 @@ These files are Electron process plumbing for the Zcash native host, not coin lo
 | `src/renderer/zcash.ts` | The renderer wraps the `coin-zcash` IPC client over the `zcash` bridge. |
 
 `src/bridge/contract.ts` declares the `ZcashBridge` type for the same channel. No rule reports it, since it imports no coin package.
+
+## Temporary exceptions
+
+No rule reports these, so they are not in the baseline. They stay until the flags are removed.
+
+| File | Why |
+| --- | --- |
+| `src/renderer/analytics/segment.ts` | The `ldmkSolanaSigner`, `ldmkCosmosSigner`, `ldmkPolkadotSigner` and `ldmkTronSigner` flags are sent as user properties. Their names are kept, and they go away with the flags. |

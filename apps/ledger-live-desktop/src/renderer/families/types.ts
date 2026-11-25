@@ -618,6 +618,11 @@ export type LLDCoinFamily<
   StepSummaryNetworkFeesRow?: React.ComponentType<SummaryNetworkFeesRowProps<T>>;
 
   /**
+   * Hide the amount and the total spent rows on Summary Step
+   */
+  hidesSummaryAmount?: (transaction: T) => boolean;
+
+  /**
    * Allow to override the sender (From) address display on Summary Step
    */
   StepSummaryFromAddress?: React.ComponentType<{
@@ -704,6 +709,11 @@ export type LLDCoinFamily<
    * Component allowing to fully customize the add account flow in the drawer
    */
   ModularDrawerAddAccountFlowManager?: React.ComponentType<ModularDrawerAddAccountFlowManagerProps>;
+
+  /**
+   * Modal opened by the `delegate` deeplink. A family without it ignores that deeplink.
+   */
+  delegateDeeplinkModal?: "MODAL_DELEGATE";
 
   /** Modal chunks to warm when this family loads, so the first open is instant. */
   modalsToPreload?: CoinModalKey[];
