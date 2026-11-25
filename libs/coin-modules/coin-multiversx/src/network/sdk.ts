@@ -275,6 +275,8 @@ const transactionToESDTOperation = (
   const hash = transaction.txHash ?? "";
   const blockHeight = transaction.round;
   const date = new Date(transaction.timestamp ? transaction.timestamp * 1000 : 0);
+  const hasFailed =
+    !transaction.status || transaction.status === "fail" || transaction.status === "invalid";
 
   return {
     id: encodeOperationId(tokenAccountId, hash, type),
@@ -288,6 +290,7 @@ const transactionToESDTOperation = (
     recipients,
     blockHeight,
     blockHash: transaction.miniBlockHash,
+    hasFailed,
     extra: {},
   };
 };
