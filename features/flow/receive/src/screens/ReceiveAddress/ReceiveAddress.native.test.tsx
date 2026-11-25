@@ -1,5 +1,12 @@
 import React, { type ComponentProps } from "react";
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react-native";
+import {
+  fireEvent,
+  render,
+  screen,
+  userEvent,
+  waitFor,
+  within,
+} from "@testing-library/react-native";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
@@ -8,7 +15,13 @@ import {
   testAccountUUID,
   testReceive,
 } from "../../__tests__/receiveTestStore";
+import { RECEIVE_URLS } from "../../urls";
 import { ReceiveAddress } from "./ReceiveAddress";
+
+jest.mock("react-native", () => ({
+  ...jest.requireActual("react-native"),
+  useWindowDimensions: () => ({ width: 390, height: 844, scale: 3, fontScale: 1 }),
+}));
 
 jest.mock("@shared/share-sheet", () => ({
   captureView: jest.fn(async () => "file://card.png"),
@@ -181,12 +194,48 @@ describe("ReceiveAddress (Native)", () => {
     expect(within(card).getByText("Receive ETH")).toBeTruthy();
   });
 
+  it("shows the family's notices and links them to their support article", async () => {
+    const onOpenUrl = jest.fn();
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      getFamilyConfig: () => ({ notices: ["tronInactiveAccount"] }),
+      onOpenUrl,
+    });
+    const user = userEvent.setup();
+
+    expect(await screen.findByTestId("receive-address-notice-tronInactiveAccount")).toBeTruthy();
+    await user.press(screen.getByText("Learn more"));
+    expect(onOpenUrl).toHaveBeenCalledWith(RECEIVE_URLS.tronInactiveAccount);
+  });
+
+  it("shows a service incident in a bottom sheet over the screen, with its links, until Continue", async () => {
+    const onOpenUrl = jest.fn();
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      serviceIncidents: [
+        {
+          title: "Ethereum degraded",
+          description: [
+            { text: "Investigating. See " },
+            { text: "this article", url: "https://support.ledger.com/article" },
+          ],
+        },
+      ],
+      onOpenUrl,
+    });
+    const user = userEvent.setup();
+
+    expect(await screen.findByText("Ethereum degraded")).toBeTruthy();
+    await user.press(screen.getByText("this article"));
+    expect(onOpenUrl).toHaveBeenCalledWith("https://support.ledger.com/article");
+
+    await user.press(screen.getByText("Continue"));
+    expect(screen.queryByTestId("receive-address-service-status")).toBeNull();
+  });
+
   it("lays the zones out in screen order", async () => {
     renderScreen();
     await screen.findByTestId("receive-address-summary");
 
     expect(screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.props.testID)).toEqual([
-      "receive-address-zone-notices",
       "receive-address-zone-extras",
     ]);
   });

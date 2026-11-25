@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { Linking } from "react-native";
 import { accountsSlice } from "@domain/entity-account";
 import { currencyIdFromNetwork } from "@domain/entity-network";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
@@ -8,6 +9,11 @@ import type {
   ReceiveFamilyConfigPort,
 } from "@features/flow-receive";
 import { useFeatureFlags } from "@features/platform-feature-flags";
+import {
+  buildHtmlDisplaySegments,
+  type HtmlLinkSegment,
+} from "@ledgerhq/live-common/hooks/useHtmlLinkSegments";
+import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import type { Account } from "@ledgerhq/types-live";
 import { copyToClipboard } from "@shared/clipboard";
 import { openShareSheet } from "@shared/share-sheet";
@@ -23,6 +29,16 @@ const familyConfigs = receiveAddressConfigs as Partial<
   Record<string, GetReceiveFamilyConfig<Account>>
 >;
 
+const toIncidentTextPart = (segment: HtmlLinkSegment) =>
+  segment.type === "link" ? { text: segment.label, url: segment.href } : { text: segment.content };
+
+const toIncidentTextParts = (html: string | undefined) =>
+  html === undefined ? undefined : buildHtmlDisplaySegments(html).map(toIncidentTextPart);
+
+const openUrl = (url: string) => {
+  Linking.openURL(url).catch(() => undefined);
+};
+
 const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
 type Params = Pick<ReceiveAddressProps, "accountUUID" | "assetId" | "onClose">;
@@ -37,10 +53,22 @@ export function useReceiveAddressScreenViewModel({
     entry?.legacyId ? accountSelector(state, { accountId: entry.legacyId }) : undefined,
   );
   const featureFlags = useFeatureFlags();
-  const family = entry
-    ? CRYPTO_CURRENCIES_REGISTRY[currencyIdFromNetwork(entry.descriptor.network)]?.family
+  const network = entry
+    ? CRYPTO_CURRENCIES_REGISTRY[currencyIdFromNetwork(entry.descriptor.network)]
     : undefined;
-  const familyConfig = family ? familyConfigs[family] : undefined;
+  const familyConfig = network ? familyConfigs[network.family] : undefined;
+  const { incidents } = useFilteredServiceStatus({
+    tickers: network ? [network.ticker] : [],
+    entryPoint: "flow",
+  });
+  const serviceIncidents = useMemo(
+    () =>
+      incidents.map(incident => ({
+        title: incident.name,
+        description: toIncidentTextParts(incident.incident_updates?.[0]?.body),
+      })),
+    [incidents],
+  );
 
   const getFamilyConfig = useMemo<ReceiveFamilyConfigPort | undefined>(
     () => familyConfig && (input => familyConfig({ ...input, featureFlags, legacyAccount })),
@@ -62,5 +90,7 @@ export function useReceiveAddressScreenViewModel({
     onShareAddress,
     VerifyAddressExecutor: VerifyAddressExecutorLWM,
     getFamilyConfig,
+    serviceIncidents,
+    onOpenUrl: openUrl,
   };
 }

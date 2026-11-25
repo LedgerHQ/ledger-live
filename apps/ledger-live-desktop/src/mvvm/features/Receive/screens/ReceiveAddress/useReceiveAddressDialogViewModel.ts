@@ -1,7 +1,10 @@
 import { useCallback, useMemo } from "react";
 import { accountsSlice } from "@domain/entity-account";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
-import { buildHtmlDisplaySegments } from "@ledgerhq/live-common/hooks/useHtmlLinkSegments";
+import {
+  buildHtmlDisplaySegments,
+  type HtmlLinkSegment,
+} from "@ledgerhq/live-common/hooks/useHtmlLinkSegments";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import {
   closeReceiveAddressDialog,
@@ -19,14 +22,11 @@ import { accountSelector } from "~/renderer/reducers/accounts";
 import { currencyIdFromNetwork } from "@domain/entity-network";
 import { VerifyAddressExecutorLWD } from "../../verifyAddressIntent/VerifyAddressExecutorLWD";
 
+const toIncidentTextPart = (segment: HtmlLinkSegment) =>
+  segment.type === "link" ? { text: segment.label, url: segment.href } : { text: segment.content };
+
 const toIncidentTextParts = (html: string | undefined) =>
-  html === undefined
-    ? undefined
-    : buildHtmlDisplaySegments(html).map(segment =>
-        segment.type === "link"
-          ? { text: segment.label, url: segment.href }
-          : { text: segment.content },
-      );
+  html === undefined ? undefined : buildHtmlDisplaySegments(html).map(toIncidentTextPart);
 
 const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 

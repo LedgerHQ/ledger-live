@@ -1,3 +1,4 @@
+import React, { type ComponentType, type ReactNode } from "react";
 import type { Account } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -10,7 +11,10 @@ import { mockAccountEntry } from "@domain/entity-account/schema.mock";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { mockAccountStatus } from "@domain/entity-account-status/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
-import { renderHook } from "@tests/test-renderer";
+import { Linking } from "react-native";
+import { ServiceStatusProvider } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
+import { http, HttpResponse, server } from "@tests/server";
+import { renderHook, waitFor } from "@tests/test-renderer";
 import { openShareSheet } from "@shared/share-sheet";
 import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 import { VerifyAddressExecutorLWM } from "../../verifyAddressIntent/VerifyAddressExecutorLWM";
@@ -31,7 +35,10 @@ const tronAccount: Account = {
   id: tronEntry.legacyId,
 };
 
-const renderViewModel = (entry = tronEntry) =>
+const renderViewModel = (
+  entry = tronEntry,
+  innerWrapper?: ComponentType<{ children?: ReactNode }>,
+) =>
   renderHook(
     () =>
       useReceiveAddressScreenViewModel({
@@ -40,6 +47,7 @@ const renderViewModel = (entry = tronEntry) =>
         onClose: jest.fn(),
       }),
     {
+      innerWrapper,
       overrideInitialState: state => ({
         ...state,
         accountEntries: accountsSlice.reducer(undefined, legacyAccountsSynced([entry])),
@@ -89,5 +97,65 @@ describe("useReceiveAddressScreenViewModel", () => {
         accountStatus: mockAccountStatus({ used: false }),
       }),
     ).toEqual({ notices: ["tronInactiveAccount"] });
+  });
+
+  it("gives the Tron incidents and the global ones, with their Ledger links", async () => {
+    const incident = (name: string, componentName: string | undefined, body: string) => ({
+      name,
+      components: componentName ? [{ name: componentName }] : [],
+      incident_updates: [{ body }],
+    });
+    server.use(
+      http.get("*/summary.json", () =>
+        HttpResponse.json({
+          incidents: [
+            incident(
+              "Tron degraded",
+              "Tron (TRX)",
+              'See <a href="https://support.ledger.com/x">our article</a> or <a href="https://evil.example">this</a>.',
+            ),
+            incident("Bitcoin degraded", "Bitcoin (BTC)", "Delays."),
+            incident("Ledger Wallet down", undefined, "Investigating."),
+          ],
+        }),
+      ),
+    );
+    const { result } = renderViewModel(tronEntry, ({ children }) => (
+      <ServiceStatusProvider autoUpdateDelay={60_000}>{children}</ServiceStatusProvider>
+    ));
+
+    await waitFor(() =>
+      expect(result.current.serviceIncidents).toEqual([
+        {
+          title: "Tron degraded",
+          description: [
+            { text: "See " },
+            { text: "our article", url: "https://support.ledger.com/x" },
+            { text: " or " },
+            { text: "this" },
+            { text: "." },
+          ],
+        },
+        { title: "Ledger Wallet down", description: [{ text: "Investigating." }] },
+      ]),
+    );
+  });
+
+  it("opens the links of the screen outside the app", () => {
+    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+    const { result } = renderViewModel();
+
+    result.current.onOpenUrl?.("https://support.ledger.com/article");
+
+    expect(openURL).toHaveBeenCalledWith("https://support.ledger.com/article");
+  });
+
+  it("carries on when the system cannot open a link", async () => {
+    const openURL = jest.spyOn(Linking, "openURL").mockRejectedValue(new Error("no handler"));
+    const { result } = renderViewModel();
+
+    result.current.onOpenUrl?.("https://support.ledger.com/article");
+
+    await expect(openURL.mock.results.at(-1)?.value).rejects.toThrow("no handler");
   });
 });
