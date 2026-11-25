@@ -3,6 +3,7 @@ import type { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import type { Application } from "tests/page";
 import { getSavedAccountAddress } from "tests/utils/userdata";
 import type { PerpsOrderSide, ProviderPosition } from "tests/page/perps.order.page";
+import type { PerpsMarketGroup } from "tests/utils/perpsMarkets";
 
 // Real broadcast, overriding any host value.
 export const PERPS_REAL_BROADCAST_ENV = { DISABLE_TRANSACTION_BROADCAST: "0" };
@@ -18,15 +19,17 @@ export async function openPerpsFromPortfolio(app: Application) {
   await app.perps.expectFundedAccountBalance();
 }
 
-export async function openHip3Position(
+export async function openPerpsPosition(
   app: Application,
   {
+    market,
     side,
     positions,
     relaunchSpeculos,
     marginUsd = ORDER_MARGIN_USD,
     leverage = ORDER_LEVERAGE,
   }: {
+    market: PerpsMarketGroup;
     side: PerpsOrderSide;
     positions: ProviderPosition[];
     relaunchSpeculos: RelaunchSpeculos;
@@ -34,7 +37,7 @@ export async function openHip3Position(
     leverage?: number;
   },
 ) {
-  await app.perpsOrder.openFirstHip3MarketWithoutPosition(positions);
+  await app.perpsOrder.openFirstMarketWithoutPosition(market, positions);
   await app.perpsOrder.selectSide(side);
   await app.perpsOrder.setLeverage(leverage);
   await app.perpsOrder.expectLeverage(leverage);
@@ -49,7 +52,7 @@ export async function openHip3Position(
   await app.perpsOrder.expectOpenedPosition({ side, leverage, marginUsd });
 }
 
-export async function closeHip3Position(
+export async function closePerpsPosition(
   app: Application,
   { relaunchSpeculos }: { relaunchSpeculos: RelaunchSpeculos },
 ) {
@@ -61,16 +64,16 @@ export async function closeHip3Position(
   await app.perpsOrder.expectPositionClosed();
 }
 
-export async function readHip3Positions(
+export async function readPerpsPositions(
   app: Application,
   { account, userdataFile }: { account: Account; userdataFile: string },
 ) {
   const address = await getSavedAccountAddress(userdataFile, account);
-  return app.perpsOrder.getProviderHip3Positions(address);
+  return app.perpsOrder.getProviderPositions(address);
 }
 
-// Closes only what the test opened: the positions the provider did not list at the start.
-export async function closeHip3PositionsOpenedByTest(
+// Closes only what the test opened, on any market: positions not listed at the start.
+export async function closePerpsPositionsOpenedByTest(
   app: Application,
   {
     account,
@@ -85,14 +88,14 @@ export async function closeHip3PositionsOpenedByTest(
   },
 ) {
   const known = positionsAtStart.map(({ marketId }) => marketId);
-  const opened = (await readHip3Positions(app, { account, userdataFile })).filter(
+  const opened = (await readPerpsPositions(app, { account, userdataFile })).filter(
     ({ marketId }) => !known.includes(marketId),
   );
   for (const position of opened) {
     await app.perpsOrder.openPositionFromList(position);
-    await closeHip3Position(app, { relaunchSpeculos });
+    await closePerpsPosition(app, { relaunchSpeculos });
     await app.perpsOrder.expectPositionRowHidden(position);
   }
   const address = await getSavedAccountAddress(userdataFile, account);
-  await app.perpsOrder.expectNoNewProviderHip3Positions(address, known);
+  await app.perpsOrder.expectNoNewProviderPositions(address, known);
 }

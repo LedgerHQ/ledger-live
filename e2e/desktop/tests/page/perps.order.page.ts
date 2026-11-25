@@ -2,6 +2,7 @@ import { expect, type Page } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { WebViewAppPage } from "tests/page/webViewApp.page";
 import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import type { PerpsMarketGroup } from "tests/utils/perpsMarkets";
 
 export type PerpsOrderSide = "long" | "short";
 
@@ -12,8 +13,6 @@ const AUTO_CLOSE_OFFSETS = {
   long: { takeProfit: "+10%", stopLoss: "-5%" },
   short: { takeProfit: "-5%", stopLoss: "+5%" },
 } satisfies Record<PerpsOrderSide, AutoCloseOffsets>;
-
-const HIP3_PROVIDER_ID = "hyperliquid-xyz";
 
 const MIN_ORDER_NOTIONAL_USD = 12;
 const MARGIN_TOLERANCE_USD = 0.5;
@@ -43,17 +42,17 @@ export class PerpsOrderPage extends WebViewAppPage {
   private readonly autoCloseSubmitTestId = "desktop-order-configure-auto-close-submit";
   private readonly configureSubmitTestId = "configure-order-submit-button";
 
-  @step("Open the first HIP-3 market without a position")
-  async openFirstHip3MarketWithoutPosition(positions: ProviderPosition[]) {
+  @step("Open the first market without a position")
+  async openFirstMarketWithoutPosition(market: PerpsMarketGroup, positions: ProviderPosition[]) {
     const webview = await this.getWebView();
-    const markets = webview.getByTestId(/^market-item-xyz:/);
+    const markets = webview.getByTestId(market.marketTestId);
     await expect(markets.first()).toBeVisible();
     const listed = await markets.evaluateAll(items =>
       items.map(item => item.getAttribute("data-testid") ?? ""),
     );
     const busy = new Set(positions.map(({ symbol }) => `market-item-${symbol}`));
     const free = listed.find(testId => !busy.has(testId));
-    if (!free) throw new Error("Every listed HIP-3 market already holds a position");
+    if (!free) throw new Error(`Every listed ${market.label} market already holds a position`);
     await webview.getByTestId(free).click();
     await expect(
       webview.getByTestId(this.orderWidgetTestId),
@@ -184,29 +183,35 @@ export class PerpsOrderPage extends WebViewAppPage {
     await webview.getByTestId(this.closeRecapCtaTestId).click();
   }
 
-  @step("Read the open HIP-3 positions from the provider")
-  async getProviderHip3Positions(address: string): Promise<ProviderPosition[]> {
+  @step("Read the open positions of every provider")
+  async getProviderPositions(address: string): Promise<ProviderPosition[]> {
     const webview = await this.getWebView();
-    const positions: unknown = await webview.evaluate(
-      async ({ walletAddress, providerId }) => {
-        const post = await fetch("/proxy/perps/v1/positions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ address: walletAddress, providerId }),
-        });
-        if (!post.ok) throw new Error(`The Perps provider answered ${post.status}`);
-        const open: { marketId: string }[] = await post.json();
-        return Promise.all(
-          open.map(async ({ marketId }) => {
-            const get = await fetch(`/proxy/perps/v1/markets/${encodeURIComponent(marketId)}`);
-            if (!get.ok) throw new Error(`The Perps provider answered ${get.status} for a market`);
-            const market = await get.json();
-            return { marketId, symbol: market.baseAsset.symbol };
-          }),
-        );
-      },
-      { walletAddress: address, providerId: HIP3_PROVIDER_ID },
-    );
+    const positions: unknown = await webview.evaluate(async walletAddress => {
+      const fetchJson = async (url: string, init?: RequestInit) => {
+        const response = await fetch(url, init);
+        if (!response.ok) throw new Error(`The Perps provider answered ${response.status}`);
+        return response.json();
+      };
+      const providers: { id: string }[] = await fetchJson("/proxy/perps/v1/providers");
+      const perProvider = await Promise.all(
+        providers.map(async ({ id: providerId }) => {
+          const open: { marketId: string }[] = await fetchJson("/proxy/perps/v1/positions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ address: walletAddress, providerId }),
+          });
+          return Promise.all(
+            open.map(async ({ marketId }) => {
+              const market = await fetchJson(
+                `/proxy/perps/v1/markets/${encodeURIComponent(marketId)}`,
+              );
+              return { marketId, symbol: market.baseAsset.symbol };
+            }),
+          );
+        }),
+      );
+      return perProvider.flat();
+    }, address);
     if (!Array.isArray(positions)) throw new Error("The Perps provider returned no position list");
     return positions.map(position => {
       if (typeof position?.marketId !== "string" || typeof position?.symbol !== "string") {
@@ -216,15 +221,14 @@ export class PerpsOrderPage extends WebViewAppPage {
     });
   }
 
-  @step("Verify the provider reports no new HIP-3 position")
-  async expectNoNewProviderHip3Positions(address: string, knownMarketIds: string[]) {
+  @step("Verify the provider reports no new position")
+  async expectNoNewProviderPositions(address: string, knownMarketIds: string[]) {
     const known = new Set(knownMarketIds);
     await expect
       .poll(
         async () =>
-          (await this.getProviderHip3Positions(address)).filter(
-            ({ marketId }) => !known.has(marketId),
-          ).length,
+          (await this.getProviderPositions(address)).filter(({ marketId }) => !known.has(marketId))
+            .length,
         { timeout: TIMEOUT.xxlarge, intervals: [INTERVAL.medium] },
       )
       .toBe(0);

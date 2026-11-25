@@ -7,22 +7,26 @@ import { FF_PERPS_DESKTOP, IS_PERPS_LIVE_APP_STAGING } from "tests/utils/feature
 import { buildTags } from "tests/utils/tagsUtils";
 import { getPerpsLiveAppStorage } from "tests/utils/perpsLiveAppStorage";
 import { exclusiveLockFor } from "tests/utils/exclusiveLock";
-import type { ProviderPosition } from "tests/page/perps.order.page";
+import { HIP3_MARKETS } from "tests/utils/perpsMarkets";
 import {
-  closeHip3Position,
-  closeHip3PositionsOpenedByTest,
-  openHip3Position,
+  closePerpsPositionsOpenedByTest,
+  openPerpsPosition,
   openPerpsFromPortfolio,
-  readHip3Positions,
+  readPerpsPositions,
   PERPS_REAL_BROADCAST_ENV,
 } from "tests/utils/perpsPositionFlows";
+import type { PerpsOrderSide, ProviderPosition } from "tests/page/perps.order.page";
 
 const account = Account.HYPERCORE_1;
+const market = HIP3_MARKETS;
 const lock = exclusiveLockFor({ broadcastAccounts: [account] }, PERPS_REAL_BROADCAST_ENV);
 
-const xrayTicket = "B2CQA-4707";
+const orders = [
+  { side: "long", xrayTicket: "B2CQA-4699" },
+  { side: "short", xrayTicket: "B2CQA-4700" },
+] satisfies { side: PerpsOrderSide; xrayTicket: string }[];
 
-test.describe("Perps HIP-3 close position", { lock: lock.names }, () => {
+test.describe("Perps open position", { lock: lock.names }, () => {
   // Remove once the Perps feature flags are on PRD.
   test.skip(!IS_PERPS_LIVE_APP_STAGING, "Perps feature flags are not on PRD yet");
 
@@ -34,7 +38,7 @@ test.describe("Perps HIP-3 close position", { lock: lock.names }, () => {
     cliCommands: [liveDataCommand(account)],
     webviewLocalStorage: {
       hostnamePrefix: "perps.",
-      entries: getPerpsLiveAppStorage(account, { hip3: true }),
+      entries: getPerpsLiveAppStorage(account, { featureFlags: market.liveAppFlags }),
     },
     featureFlags: FF_PERPS_DESKTOP,
     env: PERPS_REAL_BROADCAST_ENV,
@@ -43,21 +47,16 @@ test.describe("Perps HIP-3 close position", { lock: lock.names }, () => {
   // Unset until the provider is read, so a failed setup never closes a position it did not open.
   let positionsAtStart: ProviderPosition[] | undefined;
 
-  test.beforeEach(async ({ app, speculos, userdataFile }) => {
+  test.beforeEach(async ({ app, userdataFile }) => {
     positionsAtStart = undefined;
     await openPerpsFromPortfolio(app);
-    positionsAtStart = await readHip3Positions(app, { account, userdataFile });
-    await openHip3Position(app, {
-      side: "long",
-      positions: positionsAtStart,
-      relaunchSpeculos: speculos.relaunch,
-    });
+    positionsAtStart = await readPerpsPositions(app, { account, userdataFile });
   });
 
-  // Keeps the real position from staying open if the close fails.
+  // The position is a real one, so it is closed even when the test fails.
   test.afterEach(async ({ app, speculos, userdataFile }) => {
     if (!positionsAtStart) return;
-    await closeHip3PositionsOpenedByTest(app, {
+    await closePerpsPositionsOpenedByTest(app, {
       account,
       userdataFile,
       positionsAtStart,
@@ -65,14 +64,21 @@ test.describe("Perps HIP-3 close position", { lock: lock.names }, () => {
     });
   });
 
-  test(
-    "Close a HIP-3 position",
-    {
-      tag: buildTags({ currencyId: account.currency.id, skipLNS: true }),
-      annotation: { type: "TMS", description: xrayTicket },
-    },
-    async ({ app, speculos }) => {
-      await closeHip3Position(app, { relaunchSpeculos: speculos.relaunch });
-    },
-  );
+  for (const { side, xrayTicket } of orders) {
+    test(
+      `Open a ${market.label} ${side} position with margin, take profit and stop loss`,
+      {
+        tag: buildTags({ currencyId: account.currency.id, skipLNS: true }),
+        annotation: { type: "TMS", description: xrayTicket },
+      },
+      async ({ app, speculos }) => {
+        await openPerpsPosition(app, {
+          market,
+          side,
+          positions: positionsAtStart ?? [],
+          relaunchSpeculos: speculos.relaunch,
+        });
+      },
+    );
+  }
 });
