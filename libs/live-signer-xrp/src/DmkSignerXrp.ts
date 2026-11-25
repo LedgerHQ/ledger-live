@@ -16,19 +16,23 @@ import { getEnv } from "@ledgerhq/live-env";
 import type { XrpAddress, XrpSignature, XrpSigner } from "./types";
 
 type DAError = GetAddressDAError | SignTransactionDAError;
+type ContextModule = Parameters<SignerXrpBuilder["withContextModule"]>[0];
 
 export class DmkSignerXrp implements XrpSigner {
   private readonly signer: SignerXrp;
 
-  constructor(dmk: DeviceManagementKit, sessionId: string) {
+  // TEMP prototype: contextModule lets live-common pass the MPT descriptor mock
+  constructor(dmk: DeviceManagementKit, sessionId: string, contextModuleOverride?: ContextModule) {
     const originToken = "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5"; // gitleaks:allow
     const calUrl = getEnv("CAL_SERVICE_URL");
     const calMode = calUrl.includes("ledger-test") || calUrl.includes(".stg.") ? "test" : "prod";
-    const contextModule = new ContextModuleBuilder({ originToken })
-      .setAppSource("ledger-wallet")
-      .setChain(ContextModuleChainID.Xrp)
-      .setCalConfig({ url: `${calUrl}/v1`, mode: calMode, branch: "main" })
-      .build();
+    const contextModule =
+      contextModuleOverride ??
+      new ContextModuleBuilder({ originToken })
+        .setAppSource("ledger-wallet")
+        .setChain(ContextModuleChainID.Xrp)
+        .setCalConfig({ url: `${calUrl}/v1`, mode: calMode, branch: "main" })
+        .build();
 
     this.signer = new SignerXrpBuilder({ dmk, sessionId, originToken })
       .withContextModule(contextModule)

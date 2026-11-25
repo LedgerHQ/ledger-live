@@ -61,6 +61,7 @@ const webPreferences: WebPreferences = {
   nodeIntegration: false,
   contextIsolation: true,
   sandbox: true,
+  webSecurity: false,
   // globally disable spellchecks which aren't useful to us & problematic for crypto address fields & so on
   spellcheck: false, // FIXME we should overrides this directly on the input fields instead of globally disabling it
 };

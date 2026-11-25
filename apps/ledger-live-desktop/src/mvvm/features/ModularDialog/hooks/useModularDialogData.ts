@@ -14,6 +14,46 @@ import { useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
 import { buildAssetsSorted } from "@ledgerhq/live-common/modularDrawer/utils/buildAssetsSorted";
 import useEnv from "@features/platform-env";
+import type { AssetsData } from "@domain/api-aggregated-assets";
+import type { AggregatedAssetId } from "@domain/entity-aggregated-asset";
+import { XRP_DEV_TOKENS } from "@ledgerhq/live-common/families/xrp/devTokens";
+
+// TEMP prototype: DADA does not list the XRP dev tokens, so they are added to its response
+function withXrpDevTokens(data: AssetsData, currencyIds?: string[]): AssetsData {
+  const knownIds = new Set(Object.keys(data.cryptoOrTokenCurrencies));
+  const tokens = XRP_DEV_TOKENS.filter(
+    token => !knownIds.has(token.id) && (!currencyIds?.length || currencyIds.includes(token.id)),
+  );
+  if (tokens.length === 0) return data;
+
+  const assetIds = tokens.map(token => token.id as AggregatedAssetId);
+
+  return {
+    ...data,
+    cryptoAssets: {
+      ...data.cryptoAssets,
+      ...Object.fromEntries(
+        tokens.map(token => [
+          token.id,
+          {
+            id: token.id as AggregatedAssetId,
+            ticker: token.ticker,
+            name: token.name,
+            assetsIds: { [token.parentCurrencyId]: token.id },
+          },
+        ]),
+      ),
+    },
+    cryptoOrTokenCurrencies: {
+      ...data.cryptoOrTokenCurrencies,
+      ...Object.fromEntries(tokens.map(token => [token.id, token])),
+    },
+    currenciesOrder: {
+      ...data.currenciesOrder,
+      metaCurrencyIds: [...data.currenciesOrder.metaCurrencyIds, ...assetIds],
+    },
+  };
+}
 
 export function useModularDialogData() {
   const modularDrawerFeature = useFeature("lldModularDrawer");
@@ -39,7 +79,15 @@ export function useModularDialogData() {
   const useCase = useSelector(modularDialogUseCaseSelector);
   const areCurrenciesFiltered = useSelector(modularDialogAreCurrenciesFilteredSelector);
 
-  const { data, isLoading, isSuccess, error, errorInfo, loadNext, refetch } = useAssetsData({
+  const {
+    data: apiData,
+    isLoading,
+    isSuccess,
+    error,
+    errorInfo,
+    loadNext,
+    refetch,
+  } = useAssetsData({
     search: searchedValue,
     currencyIds: resolvedNetworkIds === undefined ? currencyIds : undefined,
     networkIds: resolvedNetworkIds,
@@ -51,6 +99,10 @@ export function useModularDialogData() {
     isStaging,
     includeTestNetworks: devMode,
   });
+  const data = useMemo(
+    () => (apiData ? withXrpDevTokens(apiData, currencyIds) : undefined),
+    [apiData, currencyIds],
+  );
 
   const assetsSorted = useMemo(
     () =>
