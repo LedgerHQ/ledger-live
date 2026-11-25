@@ -36,10 +36,16 @@ class PersistenceFailureError extends Error {
   }
 }
 
+/** A newer version comes back after a downgrade: expected, so a warning, not an error. */
+function report(failure: PersistenceFailure) {
+  if (failure.operation === "newer") logger.warn(describePersistenceFailure(failure));
+  else logger.critical(new PersistenceFailureError(failure), "persistence");
+}
+
 export const persistence = createPersistence<State>({
   storage: createElectronStorage({ bridge: db, encryptedKeys: ENCRYPTED_KEYS }),
   bindings: BINDINGS,
-  report: failure => logger.critical(new PersistenceFailureError(failure), "persistence"),
+  report,
 });
 
 class AccountsUnreadableError extends Error {

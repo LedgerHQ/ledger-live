@@ -27,9 +27,11 @@ const BINDINGS: ReadonlyArray<PersistenceBinding<State>> = [
   },
 ];
 
+/** A newer version comes back after a downgrade: expected, so a warning, not a Datadog error. */
 const report = (failure: PersistenceFailure) => {
   const message = describePersistenceFailure(failure);
   console.warn(message);
+  if (failure.operation === "newer") return;
   // Not ~/datadog: it imports the store, which imports this module. The SDK buffers the error
   // until it starts, and drops it when Datadog is off.
   DdRum.addError(message, ErrorSource.SOURCE, "");

@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { selectRecordStatus } from "@features/platform-persistence";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { db } from "~/renderer/bridge";
+import logger from "~/renderer/logger";
 import accountModel from "~/helpers/accountModel";
 import rootReducer from "~/renderer/reducers";
 import { accountNameSelector, exportWalletState } from "~/renderer/reducers/wallet";
@@ -112,5 +113,43 @@ describe("hydrateAtStart", () => {
     expect(accountNameSelector(store.getState().wallet, { accountId: account.id })).toBe(
       "From the wallet",
     );
+  });
+});
+
+describe("the persistence report", () => {
+  beforeEach(() => {
+    jest.spyOn(logger, "warn").mockImplementation(() => {});
+    jest.spyOn(logger, "critical").mockImplementation(() => {});
+  });
+  afterEach(() => {
+    jest.mocked(db.getKey).mockReset();
+    jest.restoreAllMocks();
+  });
+
+  it("should warn, not report a critical error, when an account comes from a newer app", async () => {
+    const newer = { $v: 1, data: { data: { id: "newer", currencyId: "bitcoin" }, version: 3 } };
+    stored({ accounts: [newer] });
+
+    await expect(hydrateAtStart(createStore())).resolves.toEqual({
+      accounts: "loaded",
+      history: "empty",
+    });
+
+    expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining("newer version"));
+    expect(logger.critical).not.toHaveBeenCalled();
+  });
+
+  it("should report a critical error when the accounts cannot be decoded", async () => {
+    stored({ accounts: { not: "a list" } });
+
+    await expect(hydrateAtStart(createStore())).rejects.toThrow(
+      expect.objectContaining({ name: "AccountsUnreadableError" }),
+    );
+
+    expect(logger.critical).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "PersistenceFailureError" }),
+      "persistence",
+    );
+    expect(logger.warn).not.toHaveBeenCalled();
   });
 });
