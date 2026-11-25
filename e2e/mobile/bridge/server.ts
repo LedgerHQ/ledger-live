@@ -207,6 +207,11 @@ export async function overrideLiveConfig(payload: Record<string, unknown>) {
   await postAndAwaitAck({ type: "overrideLiveConfig", id: uniqueId(), payload });
 }
 
+/** Replaces the user id the app generated on a fresh install, e.g. to share it with a Manager API lookup. */
+export async function overrideUserId(userId: string) {
+  await postAndAwaitAck({ type: "overrideUserId", id: uniqueId(), payload: userId });
+}
+
 export async function importLocalManifests(manifests: LiveAppManifest[]) {
   const importedIds = await fetchData({
     type: "importLocalManifests",

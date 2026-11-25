@@ -100,6 +100,7 @@ export type MessageData<P extends BridgePayloads = BridgePayloads> =
   | { type: "importPostOnboarding"; id: string; payload: Partial<PostOnboardingState> }
   | { type: "importPayCard"; id: string; payload: P["payCard"] }
   | { type: "importReceiveVerifyHint"; id: string; payload: P["receiveVerifyHint"] }
+  | { type: "overrideUserId"; id: string; payload: string }
   | { type: "overrideFeatureFlags"; id: string; payload: PartialFeatures }
   | { type: "overrideFeatureFlag"; id: string; payload: OverrideFeatureFlagPayload }
   | { type: "overrideLiveConfig"; id: string; payload: Record<string, unknown> }

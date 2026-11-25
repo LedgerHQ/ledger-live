@@ -43,6 +43,11 @@ export default class OnboardingStepsPage {
     await this.getStartedButton.expectVisible();
   }
 
+  @Step("Expect the starting options to be visible")
+  async expectStartingOptionsVisible(): Promise<void> {
+    await this.accessWalletButton.waitVisible();
+  }
+
   @Step("Select starting option {{{0}}}")
   async selectStartingOption(option: "setupLedger" | "accessWallet"): Promise<void> {
     switch (option) {

@@ -211,6 +211,25 @@ describe("ConnectNewDeviceView", () => {
     expect(screen.getByLabelText("Connect Ledger Stax")).toBeVisible();
   });
 
+  it("should give each select button a test id named after its discovered device key", () => {
+    renderView(
+      makeDiscoveringState({
+        devices: [
+          { key: "nano-x", device, isAvailable: true, onSelect: jest.fn() },
+          {
+            key: "stax",
+            device: { ...usbDevice, id: "stax-id", name: "Ledger Stax" },
+            isAvailable: true,
+            onSelect: jest.fn(),
+          },
+        ],
+      }),
+    );
+
+    expect(screen.getByTestId("connect-new-device-select-nano-x")).toBeVisible();
+    expect(screen.getByTestId("connect-new-device-select-stax")).toBeVisible();
+  });
+
   it("should show a discovery error in the sheet over the last non-error view", () => {
     renderView({
       type: ConnectNewDeviceUIStateTypes.DiscoveryError,

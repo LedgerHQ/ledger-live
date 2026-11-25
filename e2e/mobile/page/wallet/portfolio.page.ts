@@ -38,6 +38,7 @@ export default class PortfolioPage {
   // The regex also matches the legacy wallet screen, until legacyWallet leaves the source code.
   private readonly portfolioList = byId(/portfolio-screen|PortfolioReadOnlyItems/);
   private readonly readOnlyItems = byId("PortfolioReadOnlyItems");
+  private readonly signerPortfolio = byId("portfolio-screen");
   private readonly accountsList = byId("PortfolioAccountsList");
   private readonly emptyPortfolioList = byId("PortfolioEmptyList");
   private readonly heroScrollView = byId(/^(PortfolioAccountsList|PortfolioEmptyList)$/);
@@ -316,6 +317,13 @@ export default class PortfolioPage {
   @Step("Expect the read-only Wallet to be visible")
   async expectReadOnlyPortfolioVisible(timeout = TIMEOUT.xxxlarge) {
     await this.readOnlyItems.waitVisible(timeout);
+  }
+
+  @Step("Expect the portfolio out of read-only mode")
+  async expectSignerPortfolioVisible(timeout = TIMEOUT.xxxlarge) {
+    await this.signerPortfolio.waitVisible(timeout);
+    await this.readOnlyItems.waitNotVisible();
+    await this.connectButton.waitNotVisible();
   }
 
   @Step("Expect the no-signer balance title to be visible")
