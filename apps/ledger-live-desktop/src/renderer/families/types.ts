@@ -544,6 +544,11 @@ export type LLDCoinFamily<
    */
   addAssetAction?: (args: { account: A; dispatch: AppDispatch }) => void;
 
+  /**
+   * Opens the family's token management. The account settings of the new Account Detail and
+   * Crypto addresses pages show "Manage assets" only for a family that defines it, when
+   * `canManage` is true.
+   */
   manageAssetsAction?: {
     canManage: (account: A) => boolean;
     open: (args: { account: A; dispatch: AppDispatch }) => void;

@@ -3,11 +3,11 @@ import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/
 import type { Account } from "@ledgerhq/types-live";
 import { render, screen, waitFor } from "tests/testSetup";
 import { importLLDCoinFamily } from "~/renderer/families";
+import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import {
-  ETH_ACCOUNT,
   XRP_ACCOUNT,
   XRP_ACCOUNT_WITH_TOKEN,
-} from "LLD/features/__mocks__/accounts.mock";
+} from "~/renderer/families/xrp/__mocks__/account.mock";
 import { Header } from "../components/Header";
 
 jest.mock("@ledgerhq/live-common/families/xrp/config", () => {

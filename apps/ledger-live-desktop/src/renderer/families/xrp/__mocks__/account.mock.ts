@@ -14,6 +14,11 @@ export const XRP_IOU_TOKEN_ACCOUNT: XrpTokenAccount = {
   xrpResources: { isLocked: false, limit: new BigNumber(1000), isRippling: false },
 };
 
+export const XRP_ACCOUNT_WITH_TOKEN: Account = {
+  ...XRP_ACCOUNT,
+  subAccounts: [XRP_IOU_TOKEN_ACCOUNT],
+};
+
 export const XRP_MPT_TOKEN_ACCOUNT: XrpTokenAccount = {
   ...genTokenAccount(1, XRP_ACCOUNT, xrpMptToken),
   xrpResources: { isLocked: false },

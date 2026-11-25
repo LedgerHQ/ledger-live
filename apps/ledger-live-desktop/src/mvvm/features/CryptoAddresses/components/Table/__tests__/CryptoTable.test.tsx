@@ -9,8 +9,8 @@ import {
   ETH_ACCOUNT,
   ETH_ACCOUNT_2,
   ETH_ACCOUNT_WITH_USDC,
-  XRP_ACCOUNT_WITH_TOKEN,
 } from "LLD/features/__mocks__/accounts.mock";
+import { XRP_ACCOUNT_WITH_TOKEN } from "~/renderer/families/xrp/__mocks__/account.mock";
 import { createWalletState } from "../../../testUtils/createWalletState";
 import { setAccountName } from "~/renderer/reducers/wallet";
 import { setLastUserSyncClickTimestamp } from "~/renderer/reducers/syncRefresh";
