@@ -3,4 +3,4 @@ import { runUnstakeRequiredTezos } from "@e2e/specs/stake/stake";
 
 // XTZ_2 (index 1) is DELEGATED + STAKED: changing validator is blocked until the user unstakes first.
 const delegation = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
-runUnstakeRequiredTezos(delegation, "changeValidator", ["B2CQA-5919"]);
+runUnstakeRequiredTezos({ delegation, action: "changeValidator", tmsLinks: ["B2CQA-5919"] });
