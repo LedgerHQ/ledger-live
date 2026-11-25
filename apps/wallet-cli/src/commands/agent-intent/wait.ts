@@ -161,7 +161,7 @@ function checkProfile(
     out.agentIntentEnrolled({
       profileId,
       trustchainId: profile.trustchainId,
-      accountAccessEnvironment: profile.accountAccess?.environment ?? profile.environment,
+      ...(profile.accountAccess && { accountAccessEnvironment: profile.accountAccess.environment }),
       keyStore: profile.keyStore,
     });
     return undefined;

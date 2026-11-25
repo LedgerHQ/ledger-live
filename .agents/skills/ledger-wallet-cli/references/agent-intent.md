@@ -93,9 +93,9 @@ With a background job, done when you have read the pending event, the first JSON
 First check that `enrollmentUrl` opens on the host in step 11, One host; when it does not, send nothing and tell the human the CLI printed a link to another host. When `keyStore` is `"plaintext-file"`, tell the human first that the agent key is stored unencrypted on this machine. Then send the human the `enrollmentUrl`, the `fingerprint` and the `expiresAt` time, and ask them to:
 
 1. update their Ledger's firmware if Ledger Wallet offers an update, make sure Ledger Sync is on in Ledger Wallet, then quit the Ledger Wallet desktop app so the browser can reach the device;
-2. open the link once, and keep that page open from clicking Review until the approvals finish: leaving it closes the relay and loses the enrollment;
+2. open the link and keep that page open until the approvals finish. If they leave it, they can open the same link again before `expiresAt`; when the page then says the agent isn't reachable, they wait 10 seconds and reload;
 3. check that the fingerprint on the page equals the one you sent;
-4. approve on their Ledger twice: first the agent identity, then sharing Ledger Sync account access with it.
+4. approve on their Ledger: first the agent identity, then sharing Ledger Sync account access with it. Account access lets you import their accounts (step 6). When the page lets them skip it, the enrollment still completes and you can still propose payments and swaps.
 
 They send nothing back: the frontend returns the approval to the waiting listener over an encrypted relay, and wallet-cli verifies it before saving anything. There is no `complete` command and no completion JSON to paste.
 
@@ -116,17 +116,19 @@ pnpm --silent wallet-cli start agent-intent wait --profile <id> --output json
 - `status` `"success"` with `enrolled: true`: final, see Done below.
 - `type` `"enrollment-waiting"` without `enrollmentUrl` and without `expiresAt`: the listener has no link yet (e.g. an OS keychain prompt is still open). Keep calling `wait`, which returns as soon as the link appears, and do not end your turn: hand over the link as above once `wait` reports it with `fingerprint`, `expiresAt` and `keyStore`.
 - `type` `"enrollment-waiting"` with `expiresAt` but without `enrollmentUrl`: a background-job `enroll`, whose link is in the job's output, never in `wait`'s. Handle it as the next item.
-- `type` `"enrollment-waiting"` with `enrollmentUrl` (also `expiresAt`, `fingerprint`, `keyStore`, `listenerPid`): still pending. Run `wait` again for at most about 2 minutes in this turn, then end your turn and ask the human to reply once both approvals finish; run `wait` when they do. If it still reports `enrollment-waiting` after they say they approved, ask them what the page shows.
+- `type` `"enrollment-waiting"` with `enrollmentUrl` (also `expiresAt`, `fingerprint`, `keyStore`, `listenerPid`): still pending. Run `wait` again for at most about 2 minutes in this turn, then end your turn and ask the human to reply once the approvals finish; run `wait` when they do. If it still reports `enrollment-waiting` after they say they approved, ask them what the page shows.
 - `ok: false` with `error.code` `listener_exited`, `listener_stuck`, `enrollment_expired` or `profile_not_found`: final, the enrollment is lost; error table.
 - `ok: false` with an error the listener logged before saving the profile (e.g. `keychain_unavailable` after the human denied a keychain prompt): handle it like the same error from `enroll`.
 
-If the page says "The agent identity was added successfully. Full Ledger Sync account access was not shared.", the second approval failed (outdated firmware is a known cause). The enrollment keeps waiting: ask the human to fix that and press "Try again" before `expiresAt`. If instead `wait` reports `listener_exited` with `Enrollment relay closed before completion was acknowledged`, the page gave up on this enrollment: it is lost, go to step 2 for a new id. Each lost attempt leaves the agent on the human's Ledger Sync; tell them so they can remove it there.
+If the page says "The agent identity was added successfully. Full Ledger Sync account access was not shared.", the second approval failed (outdated firmware is a known cause). The enrollment keeps waiting: ask the human to fix that and press "Try again" before `expiresAt`. If instead `wait` reports `listener_exited`, the enrollment is lost: find its last error in the error table (step 12), then go to step 2 for a new id. Each lost attempt after the first approval leaves the agent on the human's Ledger Sync; tell them so they can remove it there.
 
-Done when `wait` reports `status` `"success"`, `enrolled: true`, `trustchainId` and `accountAccessEnvironment`, and `pnpm --silent wallet-cli start agent-intent show --profile <id> --output json` reports `profileStatus` `"enrolled"`; or when `wait` reported a final error and you followed its row in step 12.
+When the human tells you they rejected the enrollment, stop calling `wait`: the id is burned. The listener may keep waiting until `expiresAt`, because not every enrollment page reports a rejection to it.
+
+Done when `wait` reports `status` `"success"`, `enrolled: true` and `trustchainId` (plus `accountAccessEnvironment` when the human shared account access), and `pnpm --silent wallet-cli start agent-intent show --profile <id> --output json` reports `profileStatus` `"enrolled"`; or when `wait` reported a final error and you followed its row in step 12.
 
 ## 6. Sync the human's accounts (when the human asks to import them)
 
-Enrollment also gives the agent read access to the human's Ledger Sync account list: the accounts of their Ledger Wallet desktop and mobile apps, public data only. `sync` imports them as session labels on a machine that never ran `account discover`. Imported labels work like `account discover` labels, and steps 7 and 8 offer them as senders.
+When the human shares account access during enrollment (step 5), the agent gets read access to their Ledger Sync account list: the accounts of their Ledger Wallet desktop and mobile apps, public data only. `sync` imports them as session labels on a machine that never ran `account discover`. Imported labels work like `account discover` labels, and steps 7 and 8 offer them as senders. A profile enrolled without account access has nothing to sync: `wait` and `show` report no `accountAccessEnvironment` / `accountAccess`, and senders for steps 7 and 8 come from the human.
 
 ```bash
 pnpm --silent wallet-cli start agent-intent sync --profile <id> --output json
@@ -158,7 +160,7 @@ Done when you have reported every imported and unchanged label with its network,
 
 - **Sender:** on the asset's network, pass `--account <label>` for a candidate below, or `--from <address>` for an address the human named. With a label, a ticker-only token is looked up in what the account holds first.
   1. The human named an address: use it. Otherwise run `pnpm --silent wallet-cli start session view --output json`; a candidate is an `accounts` entry whose `descriptor` starts with `account:2:address:ethereum:` followed by `0x` plus 40 hex characters (Ethereum), or with `account:2:address:solana:` followed by a base58 address (Solana). A label the human named counts only if it is a candidate.
-  2. No candidate and the profile is enrolled: run only `pnpm --silent wallet-cli start agent-intent sync --profile <id> --output json` (no step 6 report), then list again.
+  2. No candidate and the profile has `accountAccess` (step 1): run only `pnpm --silent wallet-cli start agent-intent sync --profile <id> --output json` (no step 6 report), then list again.
   3. Show each candidate's label and address and ask which to send from; with one candidate, take it: the dry run shows it to the human.
   4. Still no candidate: ask the human for the sender address.
 - **Ethereum addresses** (`--from`, `--to`, `--token`): `0x` plus 40 hex characters. Mixed-case input must pass its EIP-55 checksum; on a checksum error ask the human for the address again.
@@ -272,7 +274,7 @@ Messages are substrings of the CLI output; a `code` row matches `error.code`. Th
 
 | Message | Cause | Action |
 |---|---|---|
-| code `listener_exited` (from `wait`) | the listener ended before the approval arrived; the message gives its last error, then ends with `Log: <path>.` Causes: the human left the page after Review (`Enrollment relay closed`), the host killed background processes, a reboot | the enrollment is lost: step 2, new id. If the human had approved, tell them the agent stays on their Ledger Sync. When it comes from the check right after `enroll --detach`, or recurs at once, the host kills background processes: enroll under a new id as a background job (step 4); on a host without background jobs, tell the human enrollment cannot be completed from this host |
+| code `listener_exited` (from `wait`) | the listener ended before the approval arrived; the message gives its last error, then ends with `Log: <path>.` Causes: the relay never opened or dropped while wallet-cli was checking or saving the approval (`Enrollment relay closed`, `Enrollment relay connection failed`), the host killed background processes, a reboot | the enrollment is lost: step 2, new id. If the human had approved, tell them the agent stays on their Ledger Sync. When it comes from the check right after `enroll --detach`, or recurs at once, the host kills background processes: enroll under a new id as a background job (step 4); on a host without background jobs, tell the human enrollment cannot be completed from this host |
 | code `listener_stuck` (from `wait`) | a live listener has not saved the profile within 10 minutes, e.g. a keychain unlock prompt answered too late; the key was removed and nothing was saved | step 2, new id |
 | code `enrollment_expired` (from `wait`) | the link expired without an approval (also a keychain unlock prompt answered too late) | step 2, new id |
 | code `profile_not_found` (from `wait`) | no profile with that id in this machine's state dir | check the id with step 1; otherwise step 2, new id |
@@ -290,7 +292,8 @@ Messages are substrings of the CLI output; a `code` row matches `error.code`. Th
 | `Could not store the agent's secret key in the OS keychain` / `Could not read the OS keychain entry` | macOS or Windows: the OS keychain refused the write, or the read of the profile's existing entry; nothing was saved | step 2's macOS/Windows paragraph: sandbox bypass, then ask the human to unlock the keychain or allow access and re-run; never offer `--allow-plaintext-key` |
 | `Could not write the agent key file` | the key file could not be written; nothing was saved | report the message to the human; re-run the same command once they fix it |
 | `is invalid; use e.g. 45s` / `is too long; the maximum is 30d` | bad `--expires-in` or `--timeout` | use `45s`, `30m`, `2h` or `1d`, up to `30d` |
-| `Enrollment did not complete (Enrollment relay closed before completion was acknowledged.)` | the enrollment page gave up (e.g. after a failed Ledger Sync step) | the enrollment is lost: step 2, new id; tell the human the agent stays on their Ledger Sync |
+| `Enrollment did not complete (The user rejected this agent enrollment request.)` | the human rejected the enrollment on the page | a deliberate choice: ask whether to enroll again (step 2, new id); never retry on your own |
+| `Enrollment did not complete (Enrollment relay closed before completion was acknowledged.)` / `(Enrollment relay connection failed.)` | the relay never opened, or dropped while wallet-cli was checking or saving the approval | the enrollment is lost: step 2, new id; tell the human the agent may stay on their Ledger Sync |
 | `Enrollment did not complete` | timeout, interruption, or the approval failed verification (e.g. `Completion is for the ... environment`) | the enrollment cannot be resumed: step 2 |
 | `Recovery did not complete` | timeout, interruption or failed check | the profile keeps its enrollment; re-run `recover` if the human still wants it |
 | `has not completed enrollment, so there is nothing to recover` | `recover` on a pending or expired profile | step 2 |
@@ -298,6 +301,7 @@ Messages are substrings of the CLI output; a `code` row matches `error.code`. Th
 | `No Agent Intent profile named` | wrong id or another machine | step 1 |
 | `is not enrolled yet` | a proposal or follow-up command on a pending profile | step 5, or a fresh enrollment if the link expired |
 | `has no Ledger Sync access yet` | `sync` on a profile that is not enrolled | step 1 |
+| `was enrolled without Ledger Sync account access` | `sync` on a profile whose human skipped account access | tell the human; senders for steps 7 and 8 come from them, or from a new enrollment (step 2) that shares access |
 | `no longer has Ledger Sync access` | the human removed the agent from Ledger Sync; nothing changed | tell the human; senders for steps 7 and 8 then come from the human |
 | `changed while this sync was running` | concurrent change; nothing saved | re-run `sync` |
 | `Restored Ledger Sync trustchain does not match` | the stored account access is inconsistent | report to the human; do not retry in a loop |

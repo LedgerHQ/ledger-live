@@ -174,9 +174,18 @@ describe("agent-intent sync", () => {
   });
 
   it("should fail when the profile has no Ledger Sync access yet", async () => {
-    storedProfile = makeProfile({ accountAccess: undefined });
+    storedProfile = makeProfile({ trustchainId: undefined, accountAccess: undefined });
 
     await expect(runSync()).rejects.toThrow(/has no Ledger Sync access yet/);
+    expect(sdkEnvironments).toEqual([]);
+  });
+
+  it("should fail when the profile was enrolled without Ledger Sync account access", async () => {
+    storedProfile = makeProfile({ accountAccess: undefined });
+
+    await expect(runSync()).rejects.toThrow(
+      /was enrolled without Ledger Sync account access, so it has no accounts to import/,
+    );
     expect(sdkEnvironments).toEqual([]);
   });
 

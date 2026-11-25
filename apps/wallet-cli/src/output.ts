@@ -373,7 +373,7 @@ export type AgentIntentRecovered = {
 export type AgentIntentEnrolled = {
   profileId: string;
   trustchainId: string;
-  accountAccessEnvironment: string;
+  accountAccessEnvironment?: string;
   keyStore: AgentIntentProfileMeta["keyStore"];
 };
 
@@ -985,7 +985,8 @@ class HumanCommandOutput implements CommandOutput {
   }: AgentIntentEnrolled): void {
     writeStdout(
       `${colors.green("✔")} Agent Intent profile "${profileId}" enrolled. Trustchain ID: ` +
-        `${trustchainId} (account access: ${accountAccessEnvironment}, key store: ${keyStore})`,
+        `${trustchainId} (account access: ${accountAccessEnvironment ?? "not shared"}, ` +
+        `key store: ${keyStore})`,
     );
   }
 

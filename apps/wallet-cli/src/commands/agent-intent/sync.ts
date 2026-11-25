@@ -33,6 +33,13 @@ function requireEnrolledProfile(session: Session, profileId: string): EnrolledPr
     throw new Error(`No Agent Intent profile named "${profileId}".`);
   }
   const { accountAccess } = profile;
+  if (!accountAccess && profile.trustchainId) {
+    throw new Error(
+      `Agent Intent profile "${profileId}" was enrolled without Ledger Sync account access, so ` +
+        "it has no accounts to import — enroll a new profile and share account access during " +
+        "its approval.",
+    );
+  }
   if (!accountAccess) {
     throw new Error(
       `Agent Intent profile "${profileId}" has no Ledger Sync access yet — complete its ` +

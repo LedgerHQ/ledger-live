@@ -3259,8 +3259,8 @@ importers:
         specifier: workspace:^
         version: link:../../features/platform/device-intent
       '@ledgerhq/agent-intent-sdk':
-        specifier: 0.2.0
-        version: 0.2.0
+        specifier: 0.4.0
+        version: 0.4.0
       '@ledgerhq/auth':
         specifier: 'catalog:'
         version: 0.2.0
@@ -30331,8 +30331,8 @@ packages:
     resolution: {integrity: sha512-WPXQUaAeAMVaLTEFpoq3T2O1C+FstkjJnDQqy95Ck1UdILajsRhu6mhJ8H2f4NFPRBoCNN+qywTJfq/gGki5mw==}
     engines: {node: '>= 8.0.0'}
 
-  '@ledgerhq/agent-intent-sdk@0.2.0':
-    resolution: {integrity: sha512-4ojWhRwkFdByn3xydgFwnmct98PPWCxRcTSl7GQBwHov2ZNO4nlVo4g2Rl9DMDJFIGPL6K6xubCPK6A30roVVw==}
+  '@ledgerhq/agent-intent-sdk@0.4.0':
+    resolution: {integrity: sha512-NKgHA4wD4eVekOluVFjb1IDnDZAbjcOaizZEF3F3LTUyiKLduxJ4c+0LJ4EKYd+S38siDz6/eg2wlaRhaxeQ+Q==}
     engines: {node: '>=24.0.0'}
 
   '@ledgerhq/auth@0.2.0':
@@ -48929,11 +48929,11 @@ snapshots:
     dependencies:
       vary: 1.1.2
 
-  '@ledgerhq/agent-intent-sdk@0.2.0':
+  '@ledgerhq/agent-intent-sdk@0.4.0':
     dependencies:
       '@noble/curves': 2.4.0
       '@noble/hashes': 2.4.0
-      bs58: 4.0.1
+      bs58: 6.0.0
 
   '@ledgerhq/auth@0.2.0':
     dependencies:
