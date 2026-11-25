@@ -33,6 +33,8 @@ readonly UNUSED_PACKAGES=(
   com.google.android.googlequicksearchbox
   com.google.android.markup
   com.google.android.printservice.recommendation
+  com.google.android.settings.intelligence
+  com.google.android.tts
   com.google.android.youtube
 )
 
@@ -61,12 +63,6 @@ adb shell settings put global verifier_verify_adb_installs 0
 # The emulated Wi-Fi delays every packet the guest receives by 100–300 ms; cellular does not.
 adb shell svc wifi disable
 log "Wi-Fi off"
-
-# Compile now, so the background dexopt job does not run again after every restore.
-log "running the background dexopt job"
-start=$(date +%s)
-timeout 600 adb shell cmd package bg-dexopt-job >/dev/null || log "dexopt job did not finish cleanly"
-log "dexopt job took $(($(date +%s) - start)) s"
 
 log "$(adb shell pm list packages -e | wc -l) packages enabled"
 log "packages left enabled:"
