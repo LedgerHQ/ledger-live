@@ -190,12 +190,14 @@ const minaBeforeAll = (accounts: AccountType[]) => async () => {
   await app.mainNavigation.waitForWallet40Ready();
 };
 
+type StartMinaSpecOptions = TestMetaOptions & { flow: BroadcastFlow };
+
 /**
  * The three mina flows share their accounts with the other mobile platform, so when both broadcast
  * in the same run each flow only runs on the platform that owns it, which keeps the two jobs from
  * building transactions on the same account and colliding on its nonce.
  */
-function startMinaSpec(options: TestMetaOptions & { flow: BroadcastFlow }) {
+function startMinaSpec(options: StartMinaSpecOptions) {
   const { tmsLinks, tags } = options;
   setTeamOwner(coinTeamOwner(Currency.MINA.id), { folder: TestFolder.DELEGATE });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
