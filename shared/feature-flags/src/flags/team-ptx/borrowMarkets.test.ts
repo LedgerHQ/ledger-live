@@ -23,7 +23,6 @@ describe("borrowMarkets", () => {
             "ethereum/erc20/wrapped_bitcoin",
             "ethereum/erc20/wsteth",
           ],
-          "base/erc20/usd_coin": ["base/erc20/coinbase_wrapped_btc"],
         },
       },
     };
@@ -33,7 +32,7 @@ describe("borrowMarkets", () => {
 
   it.each([
     ["no market", {}],
-    ["a stablecoin with no collateral", { "base/erc20/usd_coin": [] }],
+    ["a stablecoin with no collateral", { "ethereum/erc20/usd__coin": [] }],
   ])("should accept %s when enabled", (_, markets) => {
     expect(borrowMarkets.parse({ enabled: true, params: { markets } })).toEqual({
       enabled: true,
@@ -50,9 +49,9 @@ describe("borrowMarkets", () => {
     ["markets as an array", { markets: ["ethereum/erc20/usd__coin"] }],
     [
       "a collateral list as a string",
-      { markets: { "base/erc20/usd_coin": "base/erc20/coinbase_wrapped_btc" } },
+      { markets: { "ethereum/erc20/usd__coin": "base/erc20/coinbase_wrapped_btc" } },
     ],
-    ["a non-string collateral id", { markets: { "base/erc20/usd_coin": [42] } }],
+    ["a non-string collateral id", { markets: { "ethereum/erc20/usd__coin": [42] } }],
   ])("should reject %s", (_, params) => {
     expect(() => borrowMarkets.parse({ enabled: true, params })).toThrow();
   });
