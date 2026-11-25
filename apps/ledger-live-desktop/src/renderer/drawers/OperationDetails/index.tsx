@@ -88,11 +88,12 @@ const mapStateToProps = (
   state: State,
   props: {
     operationId: string;
+    hash?: string;
     accountId: string;
     parentId?: string | null;
   },
 ) => {
-  const { operationId, accountId, parentId } = props;
+  const { operationId, hash, accountId, parentId } = props;
   const parentAccount: Account | undefined =
     typeof parentId !== "undefined" && parentId !== null
       ? accountSelector(state, {
@@ -119,7 +120,14 @@ const mapStateToProps = (
         currency: mainCurrency,
       })
     : 0;
-  const operation = account ? findOperationInAccount(account, operationId) : null;
+  const operation = account
+    ? (findOperationInAccount(account, operationId) ??
+      (hash
+        ? ([...account.operations, ...account.pendingOperations].find(
+            operation => operation.hash === hash,
+          ) ?? null)
+        : null))
+    : null;
   return {
     account,
     parentAccount,
@@ -214,6 +222,7 @@ const OperationD = (props: Props) => {
     (type: openOperationType, operation: Operation, parentOperation?: Operation) => {
       const data = {
         operationId: operation.id,
+        hash: operation.hash,
         accountId: operation.accountId,
         parentOperation: undefined as Operation | undefined,
         parentId: undefined as string | undefined,

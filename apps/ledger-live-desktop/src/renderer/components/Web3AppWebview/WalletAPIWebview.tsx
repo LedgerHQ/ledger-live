@@ -213,6 +213,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
             tracking.broadcastOperationDetailsClick(manifest);
             setDrawer(OperationDetails, {
               operationId: optimisticOperation.id,
+              hash: optimisticOperation.hash,
               accountId: account.id,
               parentId: parentAccount?.id,
             });

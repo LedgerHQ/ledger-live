@@ -144,6 +144,7 @@ describe("UnstakeFlowModal/StepConfirmationFooter", () => {
     expect(onClose).toHaveBeenCalled();
     expect(mockedSetDrawer).toHaveBeenCalledWith(expect.any(Function), {
       operationId: op.id,
+      hash: op.hash,
       accountId: account.id,
     });
   });

@@ -41,6 +41,7 @@ describe("StepConfirmation", () => {
     expect(onClose).toHaveBeenCalled();
     expect(setDrawer).toHaveBeenCalledWith(expect.anything(), {
       operationId: xrpOperation.id,
+      hash: xrpOperation.hash,
       accountId: account?.id,
       parentId: undefined,
     });

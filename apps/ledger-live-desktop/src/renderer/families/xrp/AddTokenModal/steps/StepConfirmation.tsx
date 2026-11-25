@@ -85,6 +85,7 @@ export function StepConfirmationFooter({
 
     setDrawer(OperationDetails, {
       operationId: optimisticOperation.id,
+      hash: optimisticOperation.hash,
       accountId: account.id,
       parentId: parentAccount?.id,
     });

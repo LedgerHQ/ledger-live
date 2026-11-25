@@ -163,6 +163,7 @@ describe("StepConfirmationFooter", () => {
     expect(props.onClose).toHaveBeenCalledTimes(1);
     expect(setDrawer).toHaveBeenCalledWith(expect.anything(), {
       operationId: operation.id,
+      hash: operation.hash,
       accountId: props.account?.id,
     });
   });

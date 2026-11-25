@@ -69,6 +69,7 @@ export class OperationsList extends PureComponent<Props, State> {
   handleClickOperation = (operation: Operation, account: AccountLike, parentAccount?: Account) =>
     setDrawer(OperationDetails, {
       operationId: operation.id,
+      hash: operation.hash,
       accountId: account.id,
       parentId: parentAccount?.id,
     });

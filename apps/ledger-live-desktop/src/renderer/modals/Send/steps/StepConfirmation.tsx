@@ -141,6 +141,7 @@ export function StepConfirmationFooter({
             if (account && concernedOperation) {
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
+                hash: concernedOperation.hash,
                 accountId: account.id,
                 parentId: (parentAccount && parentAccount.id) || undefined,
               });

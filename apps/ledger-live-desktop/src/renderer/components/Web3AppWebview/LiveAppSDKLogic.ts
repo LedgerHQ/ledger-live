@@ -128,6 +128,7 @@ export const broadcastTransactionLogic = (
           tracking.platformBroadcastOperationDetailsClick(manifest);
           setDrawer(OperationDetails, {
             operationId: optimisticOperation.id,
+            hash: optimisticOperation.hash,
             accountId: account.id,
             parentId: parentAccount?.id,
           });
