@@ -1,17 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { isInconclusiveVerdict } from "../../ci/step.mts";
-import {
-  debugBase,
-  failedRows,
-  fromJsStart,
-  fromProcessStart,
-  pairUp,
-  runInfoOf,
-  summarise,
-  type Row,
-} from "./analyze.ts";
-import { comparison, launch, startsDifferWithFallback } from "./fake-samples.ts";
+import { debugBase, failedRows, pairUp, runInfoOf, summarise, type Row } from "./analyze.ts";
+import { comparison, launch } from "./fake-samples.ts";
 
 const GATE = { preset: "custom", thresholdMs: 100 };
 function rowOf(rows: Row[], measure: (name: string) => boolean): Row {
@@ -19,8 +10,7 @@ function rowOf(rows: Row[], measure: (name: string) => boolean): Row {
   assert.ok(row, "no such row");
   return row;
 }
-const debugRow = (rows: Row[]) => rowOf(rows, name => name.startsWith("Debug screen"));
-const nativeRow = (rows: Row[]) => rowOf(rows, name => name === "With native start");
+const debugRow = (rows: Row[]) => rowOf(rows, name => name === "Debug screen");
 
 describe("pairUp", () => {
   it("pairs A and B of the same round and drops warm-ups, failures and unpaired launches", () => {
@@ -74,8 +64,8 @@ describe("debugBase", () => {
   it("is js when the Debug value starts at the first JS import", () => {
     assert.equal(debugBase(launch({ side: "A", appStartupTime: 700, jsStartOffset: 5 })), "js");
   });
-  it("is process when it starts where the harness reads the process start", () => {
-    const s = launch({ side: "A", appStartupTime: 1500, jsStartOffset: 800, nativeStartMs: 760 });
+  it("is process when the first JS import comes well after its start", () => {
+    const s = launch({ side: "A", appStartupTime: 1500, jsStartOffset: 800 });
     assert.equal(debugBase(s), "process");
   });
   it("is null without startup events", () => {
@@ -85,29 +75,12 @@ describe("debugBase", () => {
   });
 });
 
-describe("fromJsStart and fromProcessStart", () => {
-  it("give the same times for builds that count from different starts", () => {
-    const jsBased = launch({
-      side: "A",
-      appStartupTime: 700,
-      jsStartOffset: 0,
-      nativeStartMs: 800,
-    });
-    const processBased = launch({ side: "B", appStartupTime: 1500, jsStartOffset: 800 });
-    assert.equal(fromJsStart(jsBased), fromJsStart(processBased));
-    assert.equal(fromProcessStart(jsBased), 1500);
-  });
-});
-
 describe("summarise", () => {
   it("passes when B is as fast as A", () => {
     const rows = summarise(comparison({ deltaMs: 0 }), GATE);
     assert.deepEqual(
       rows.map(r => [r.measure, r.verdict]),
-      [
-        ["Debug screen", "PASS"],
-        ["With native start", "PASS"],
-      ],
+      [["Debug screen", "PASS"]],
     );
   });
 
@@ -202,49 +175,40 @@ describe("summarise", () => {
     assert.match(row.verdict, /^PASS/);
   });
 
-  it("compares from the first JS import when A and B count from different starts", () => {
-    const samples = comparison({
-      deltaMs: 0,
-      a: { jsStartOffset: 0, nativeStartMs: 800 },
-      b: { jsStartOffset: 800, nativeStartMs: 800 },
-    }).map(s => (s.side === "B" ? { ...s, appStartupTime: (s.appStartupTime ?? 0) + 800 } : s));
-    const rows = summarise(samples, GATE);
-    const row = debugRow(rows);
-    assert.equal(row.measure, "Debug screen, from JS start");
-    assert.deepEqual(row.bases, { A: "js", B: "process" });
-    assert.equal(row.verdict, "PASS");
-    assert.equal(nativeRow(rows).verdict, "PASS");
-  });
-
-  it("keeps a launch that fell back to the first JS import when comparing from there", () => {
-    const row = debugRow(summarise(startsDifferWithFallback(), GATE));
-    assert.equal(row.measure, "Debug screen, from JS start");
-    assert.equal(row.pairs, 6);
-    assert.deepEqual(row.hl, { estimate: 0, low: 0, high: 0 });
-    assert.deepEqual(row.offBaseLaunches, { A: 0, B: 1 });
-  });
-
-  it("leaves out of the Debug screen row a launch that counted from another start", () => {
-    const samples = comparison({
-      pairs: 8,
-      deltaMs: 0,
-      a: { jsStartOffset: 800, nativeStartMs: 800 },
-      b: { jsStartOffset: 800, nativeStartMs: 800 },
-    });
+  it("leaves out a launch that counted from the first JS import", () => {
+    const samples = comparison({ pairs: 8, deltaMs: 0 });
     const firstA = samples.find(s => s.side === "A");
     assert.ok(firstA?.events);
     firstA.events["Before js imports"].time = 0;
     const row = debugRow(summarise(samples, GATE));
-    assert.deepEqual(row.offBaseLaunches, { A: 1, B: 0 });
+    assert.deepEqual(row.jsStartLaunches, { A: 1, B: 0 });
     assert.equal(row.pairs, 7);
   });
 
-  it("fails the native start row of a build without the JS start epoch event", () => {
-    const samples = comparison({ deltaMs: 0 }).map(s =>
-      s.side === "B" ? { ...s, events: { "Before js imports": { count: 1, time: 5 } } } : s,
-    );
-    const row = nativeRow(summarise(samples, GATE));
-    assert.equal(row.verdict, "Not enough pairs");
+  it("fails as not enough pairs when a build counts every launch from the first JS import", () => {
+    for (const both of [false, true]) {
+      const js = { jsStartOffset: 0 };
+      const row = debugRow(
+        summarise(comparison({ deltaMs: 0, a: js, ...(both ? { b: js } : {}) }), GATE),
+      );
+      assert.deepEqual(row.bases, { A: "js", B: both ? "js" : "process" });
+      assert.deepEqual(row.jsStartLaunches, { A: 6, B: both ? 6 : 0 });
+      assert.equal(row.pairs, 0);
+      assert.equal(row.verdict, "Not enough pairs");
+      assert.equal(failedRows([row]), true);
+    }
+  });
+
+  it("fails as not enough pairs when both builds count most launches from the first JS import", () => {
+    const samples = comparison({ pairs: 12, deltaMs: 0 });
+    for (const s of samples) {
+      if (s.round < 4 && s.events) s.events["Before js imports"].time = 0;
+    }
+    const row = debugRow(summarise(samples, GATE));
+    assert.deepEqual(row.bases, { A: "js", B: "js" });
+    assert.deepEqual(row.jsStartLaunches, { A: 8, B: 8 });
+    assert.deepEqual(row.pairsPerPhase, [2, 2]);
+    assert.match(row.verdict, /^Not enough pairs: 2 before the device swap, 2 after/);
     assert.equal(failedRows([row]), true);
   });
 

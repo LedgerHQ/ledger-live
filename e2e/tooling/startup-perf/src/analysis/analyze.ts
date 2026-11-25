@@ -51,9 +51,10 @@ export interface Row extends Difference {
   platform: string;
   scenario: string;
   measure: string;
-  startsDiffer: boolean;
+  /** The start most of each build's launches counted from. */
   bases: Record<Side, DebugBase | null>;
-  offBaseLaunches: Record<Side, number>;
+  /** Launches counted from the first JS import, left out. */
+  jsStartLaunches: Record<Side, number>;
   failed: number;
   launches: number;
   detectable: number | null;
@@ -124,15 +125,6 @@ function verdictFor({ preset, hl, thresholdMs }: GateOptions & { hl: Interval | 
 const MIN_PAIRS_PER_PHASE = 3;
 
 const jsStartOffset = (s: Sample) => s.events?.["Before js imports"]?.time;
-export const fromJsStart = (s: Sample): number =>
-  (s.appStartupTime ?? Number.NaN) - (jsStartOffset(s) ?? Number.NaN);
-const jsStartEpoch = (s: Sample): number => {
-  const name = Object.keys(s.events ?? {}).find(n => /^JS start epoch \d+$/.test(n));
-  return name ? Number(name.split(" ").pop()) : Number.NaN;
-};
-const harnessNativeStart = (s: Sample): number =>
-  jsStartEpoch(s) - (s.processStartAppClockAt ?? Number.NaN);
-export const fromProcessStart = (s: Sample): number => harnessNativeStart(s) + fromJsStart(s);
 
 export function debugBase(s: Sample): DebugBase | null {
   const offset = jsStartOffset(s);
@@ -198,39 +190,31 @@ export function summarise(samples: Sample[], { preset, thresholdMs }: GateOption
           .filter(base => base !== null),
       );
     const bases = { A: baseOf("A"), B: baseOf("B") };
-    const startsDiffer = bases.A !== null && bases.B !== null && bases.A !== bases.B;
-    const offBase = (s: Sample) => {
-      const base = debugBase(s);
-      return base !== null && base !== bases[s.side];
-    };
-    const offBaseCount = (side: Side) => read.filter(s => s.side === side && offBase(s)).length;
-    const offBaseLaunches = { A: offBaseCount("A"), B: offBaseCount("B") };
-    const debugValue = difference(group, s => (offBase(s) ? Number.NaN : s.appStartupTime));
-    const jsStart = difference(group, fromJsStart);
-    const withNative = difference(group, fromProcessStart);
-    const screen = startsDiffer && jsStart.pairs ? jsStart : debugValue;
+    // Every supported build counts from the process start (LIVE-40286): a launch counted from the
+    // first JS import found none and misses the native startup, whatever the build's other launches.
+    const fromJsStart = (s: Sample) => debugBase(s) === "js";
+    const jsStartCount = (side: Side) => read.filter(s => s.side === side && fromJsStart(s)).length;
+    const jsStartLaunches = { A: jsStartCount("A"), B: jsStartCount("B") };
+    const debugValue = difference(group, s => (fromJsStart(s) ? Number.NaN : s.appStartupTime));
     const verdictOf = (d: Difference): string => {
       if (d.thinPhase) {
         return `Not enough pairs: ${d.pairsPerPhase[0]} before the device swap, ${d.pairsPerPhase[1]} after (${MIN_PAIRS_PER_PHASE} needed on each side)`;
       }
       return verdictFor({ preset, hl: d.hl, thresholdMs });
     };
-    const row = (measure: string, d: Difference): Row => ({
-      platform,
-      scenario,
-      measure,
-      startsDiffer,
-      bases,
-      offBaseLaunches,
-      ...d,
-      failed: measured.filter(s => !s.ok).length,
-      launches: measured.length,
-      detectable: detectableAt80(d.hl, thresholdMs),
-      verdict: verdictOf(d),
-    });
     return [
-      row(screen === jsStart ? "Debug screen, from JS start" : "Debug screen", screen),
-      row("With native start", withNative),
+      {
+        platform,
+        scenario,
+        measure: "Debug screen",
+        bases,
+        jsStartLaunches,
+        ...debugValue,
+        failed: measured.filter(s => !s.ok).length,
+        launches: measured.length,
+        detectable: detectableAt80(debugValue.hl, thresholdMs),
+        verdict: verdictOf(debugValue),
+      },
     ];
   });
 }

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { summarise } from "./analyze.ts";
-import { comparison, startsDifferWithFallback } from "./fake-samples.ts";
+import { comparison, withFallback } from "./fake-samples.ts";
 import { toMarkdown } from "./report.ts";
 
 describe("toMarkdown", () => {
@@ -12,7 +12,7 @@ describe("toMarkdown", () => {
     thresholdMs: 100,
   };
 
-  it("writes one table row per measure with its verdict", () => {
+  it("writes one table row per platform and scenario with its verdict", () => {
     const markdown = toMarkdown(summarise(comparison({ deltaMs: 200 }), options), options);
     assert.match(markdown, /^### Startup time, custom: B − A$/m);
     assert.match(markdown, /^A = live-mobile@4\.27\.0 · B = release\.$/m);
@@ -20,7 +20,6 @@ describe("toMarkdown", () => {
       markdown,
       /^\| android \| accounts \| Debug screen \| 6 \| .* \| FAIL: B is slower by more than 100 ms \|$/m,
     );
-    assert.match(markdown, /^\| android \| accounts \| With native start \| 6 \| /m);
   });
 
   it("states the gate only for presets that gate B against A", () => {
@@ -37,12 +36,27 @@ describe("toMarkdown", () => {
     });
   }
 
-  it("says a launch that fell back is kept in the row from the first JS import", () => {
-    const markdown = toMarkdown(summarise(startsDifferWithFallback(), options), options);
+  it("says a launch that fell back to the first JS import is left out", () => {
+    const markdown = toMarkdown(summarise(withFallback(), options), options);
     assert.match(
       markdown,
-      /1 launch\(es\) of build B counted from another start than the process start .* are kept in the row from the first JS import/,
+      /1 launch\(es\) of build B counted from the first JS import, not the process start \(the app found none\), and are left out\./,
     );
+  });
+
+  it("names each build whose launches counted from the first JS import", () => {
+    const js = { jsStartOffset: 0 };
+    const markdown = toMarkdown(
+      summarise(comparison({ deltaMs: 0, a: js, b: js }), options),
+      options,
+    );
+    for (const side of ["A", "B"]) {
+      assert.match(
+        markdown,
+        new RegExp(`6 launch\\(es\\) of build ${side} counted from the first JS import`),
+      );
+    }
+    assert.match(markdown, /\| Not enough pairs \|$/m);
   });
 
   it("says what known-regression's B is", () => {

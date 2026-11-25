@@ -225,26 +225,6 @@ export function createAndroid({ appId }: { appId: string }): Platform {
       });
       if (!/^OK/m.test(stdout)) throw new Error(`avd start on ${device}: ${stdout.trim()}`);
     },
-    // On the runner's clock and on the emulator's, which the app's Date.now() uses.
-    async processStart(device) {
-      const before = Date.now();
-      const { stdout, failed } = await run(
-        "adb",
-        [
-          "-s",
-          device,
-          "shell",
-          `echo "epoch \${EPOCHREALTIME:-$(date +%s.%N)}"; cat /proc/uptime; cat /proc/$(pidof -s ${appId})/stat`,
-        ],
-        { allowFail: true, timeoutMs: DEVICE_QUERY_TIMEOUT_MS },
-      );
-      const after = Date.now();
-      if (failed) return null;
-      const at = parseProcessStart(stdout, (before + after) / 2);
-      const guestEpoch = Number(/^epoch (\d+\.\d+)/m.exec(stdout)?.[1]) * 1000;
-      const appClockAt = Number.isFinite(guestEpoch) ? parseProcessStart(stdout, guestEpoch) : null;
-      return at === null ? null : { at, appClockAt, pid: parseStatPid(stdout) };
-    },
     async pid(device) {
       const { stdout, failed } = await run("adb", ["-s", device, "shell", "pidof", "-s", appId], {
         allowFail: true,
@@ -271,20 +251,6 @@ export function createAndroid({ appId }: { appId: string }): Platform {
       await writeFile(file, stdout);
     },
   };
-}
-
-// Field 22 of /proc/<pid>/stat is the process start in clock ticks since boot (USER_HZ = 100).
-export function parseProcessStart(text: string, readAt: number): number | null {
-  const uptime = Number(/^(\d+\.\d+) /m.exec(text)?.[1]);
-  const stat = text.slice(text.lastIndexOf(")") + 2).split(" ");
-  const startTicks = Number(stat[19]);
-  if (!Number.isFinite(uptime) || !Number.isFinite(startTicks)) return null;
-  return Math.round(readAt - (uptime - startTicks / 100) * 1000);
-}
-
-export function parseStatPid(text: string): number | null {
-  const pid = Number(/^(\d+) \(/m.exec(text)?.[1]);
-  return Number.isInteger(pid) && pid > 0 ? pid : null;
 }
 
 export interface ScreenState {

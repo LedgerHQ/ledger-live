@@ -4,8 +4,6 @@ import {
   BRIDGE_IMPORT,
   bundleWithoutDetox,
   DETOX_BRIDGE_BLOCK,
-  JS_START_LINE,
-  logJsStartEpoch,
   prodLikeEnv,
   readdLive36190,
   realBlur,
@@ -64,15 +62,6 @@ describe("prodLikeEnv", () => {
 
   it("fails when a test mode is still set another way", () => {
     assert.throws(() => prodLikeEnv("export MOCK = 1\n"), /still sets MOCK, DETOX/);
-  });
-});
-
-describe("logJsStartEpoch", () => {
-  it("logs the wall clock of the JS start", () => {
-    assert.deepEqual(linesOf(logJsStartEpoch(`${JS_START_LINE}\n`)), [
-      'const startupPerfJsStart = logStartupEvent("Before js imports");',
-      "logStartupEvent(`JS start epoch ${startupPerfJsStart.time}`); // startup-perf: JS start wall clock",
-    ]);
   });
 });
 

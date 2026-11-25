@@ -118,7 +118,6 @@ describe("the mobile app of this checkout", () => {
       assert.doesNotMatch(read(app, "package.json"), /"e2e:build": "[^"]*DETOX=1/);
       assert.match(read(app, "rspack.config.mjs"), /startup-perf prod-like: no blur mock/);
       assert.doesNotMatch(read(app, ".env.mock.prerelease"), /^(MOCK|DETOX|FORCE_DEBUG_VISIBLE)=/m);
-      assert.match(read(app, "src/mvvm/utils/logStartup/beforeJSImports.ts"), /JS start epoch/);
       assert.match(read(app, "src/components/DBSave.ts"), TRUSTCHAIN_SAVED_AT_START);
     });
   });

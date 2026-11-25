@@ -69,19 +69,6 @@ export function prodLikeEnv(envFile: string): { text: string; removed: string[];
   return { text: textOf(lines), removed, swap };
 }
 
-/** Logs a `JS start epoch <ms>` startup event: the wall clock of the JS start. */
-export const logJsStartEpoch = (source: string): string =>
-  textOf(
-    linesOf(source).flatMap(line =>
-      line === JS_START_LINE
-        ? [
-            'const startupPerfJsStart = logStartupEvent("Before js imports");',
-            "logStartupEvent(`JS start epoch ${startupPerfJsStart.time}`); // startup-perf: JS start wall clock",
-          ]
-        : [line],
-    ),
-  );
-
 /**
  * LIVE-36190: the trustchain is no longer saved at start, so its member keypair is generated again
  * at every launch (#21001 fixed it; its other half, a zod check of the keypair, no longer exists).
@@ -163,10 +150,11 @@ function checkApp(files: AppFiles, regression: string): void {
       "refs before live-mobile@4.29.0 are not supported: this one does not write its startup to the device log (#24576), where it is read",
     );
   }
-  if ([files.rspack, files.jsStart].some(file => read(file).includes("startup-perf"))) {
+  if (read(files.rspack).includes("startup-perf")) {
     throw new StepFailure("this checkout is already patched");
   }
   requireOne(files.rspack, RSPACK_LINE, "isDetoxBuild");
+  // analyze.ts tells from this event which start each launch's Debug value counts from.
   requireOne(files.jsStart, JS_START_LINE, "JS start");
   if (!startsBridgeOnlyWithDetox(read(files.index))) {
     throw new StepFailure(
@@ -230,9 +218,6 @@ function main(): void {
   writeFileSync(files.env, env.text);
   env.removed.forEach(key => console.error(`  removed ${key}`));
   if (env.swap) console.error("  SWAP_API_BASE set to prod");
-
-  rewrite(files.jsStart, logJsStartEpoch);
-  summary('startup events include "JS start epoch <ms>"');
 
   if (regression) {
     rewrite(files.dbSave, readdLive36190);

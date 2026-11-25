@@ -29,10 +29,6 @@ export interface Sample extends SampleMeta {
   clearedDialogs?: string[];
   screen?: unknown;
   otherPaused?: boolean;
-  /** Epoch ms of the process start on the runner's clock (null when not read). */
-  processStartAt?: number | null;
-  /** The same instant on the clock of the app's "JS start epoch" event. */
-  processStartAppClockAt?: number | null;
   pid?: number | null;
   /** `am start -W` TotalTime, Android only. */
   amStartMs?: number | null;

@@ -42,7 +42,7 @@ on:
         type: string
         default: "20"
       threshold_ms:
-        description: "B fails (prod-vs-release, prod-vs-develop, custom) or counts as detected (known-regression) when it is slower than A by more than this, on the Debug screen value (from the first JS import when A and B count from different points) or with the native start"
+        description: "B fails (prod-vs-release, prod-vs-develop, custom) or counts as detected (known-regression) when it is slower than A by more than this, on the Debug screen value"
         required: true
         type: string
         default: "100"

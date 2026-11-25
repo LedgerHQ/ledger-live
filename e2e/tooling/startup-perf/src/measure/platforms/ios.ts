@@ -1,6 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { DEVICE_QUERY_TIMEOUT_MS, INSTALL_TIMEOUT_MS, run, sleep } from "../exec.ts";
+import { INSTALL_TIMEOUT_MS, run, sleep } from "../exec.ts";
 import type { Platform } from "../types.ts";
 
 // Up to 15 s for Maestro's xcodebuild driver to exit.
@@ -9,22 +9,6 @@ const DRIVER_EXIT_POLL_MS = 500;
 const LOG_SHOW_TIMEOUT_MS = 120_000;
 // A startup-log query takes under 1 s: this only bounds a hung `log show`.
 const STARTUP_LOG_QUERY_TIMEOUT_MS = 30_000;
-
-// sysctl KERN_PROC_PID: kinfo_proc opens with p_starttime, a timeval.
-const PROCESS_START_PY = `
-import ctypes, sys
-libc = ctypes.CDLL("/usr/lib/libc.dylib")
-mib = (ctypes.c_int * 4)(1, 14, 1, int(sys.argv[1]))
-size = ctypes.c_size_t(0)
-if libc.sysctl(mib, 4, None, ctypes.byref(size), None, 0) != 0 or size.value < 16:
-    sys.exit(1)
-buf = ctypes.create_string_buffer(size.value)
-if libc.sysctl(mib, 4, buf, ctypes.byref(size), None, 0) != 0 or size.value < 16:
-    sys.exit(1)
-sec = int.from_bytes(buf.raw[0:8], "little", signed=True)
-usec = int.from_bytes(buf.raw[8:12], "little", signed=True)
-print(sec * 1000 + usec / 1000)
-`;
 
 // Maestro's xcodebuild driver outlives the call that started it.
 async function stopDriver(device: string): Promise<void> {
@@ -80,16 +64,6 @@ export function createIos({ appId }: { appId: string }): Platform {
       const pid = Number(/:\s*(\d+)\s*$/m.exec(stdout)?.[1]);
       pids.set(device, Number.isInteger(pid) && pid > 0 ? pid : null);
       return {};
-    },
-    async processStart(device) {
-      const pid = pids.get(device);
-      if (!pid) return null;
-      const { stdout, failed } = await run("python3", ["-c", PROCESS_START_PY, String(pid)], {
-        allowFail: true,
-        timeoutMs: DEVICE_QUERY_TIMEOUT_MS,
-      });
-      const at = Number(stdout.trim());
-      return failed || !Number.isFinite(at) ? null : { at, appClockAt: at, pid };
     },
     async pid(device) {
       const pid = pids.get(device);

@@ -15,14 +15,6 @@ export interface Maestro {
   }): Promise<RunResult>;
 }
 
-export interface ProcessStart {
-  /** Epoch ms on the runner's clock. */
-  at: number;
-  /** Epoch ms on the clock the app's Date.now() uses. */
-  appClockAt: number | null;
-  pid: number | null;
-}
-
 /** What run.ts needs from a device platform: android.ts and ios.ts implement it. */
 export interface Platform {
   install(device: string, app: string): Promise<void>;
@@ -45,7 +37,6 @@ export interface Platform {
   /** Freezes the device for the other one's launch; false when the platform can't. */
   pause(device: string): Promise<boolean>;
   resume(device: string): Promise<void>;
-  processStart(device: string): Promise<ProcessStart | null>;
   pid(device: string): Promise<number | null>;
   /** What the JavaScript of the app process `pid` wrote to the device log, its lines with `text`. */
   jsLog(device: string, pid: number, text: string): Promise<string>;

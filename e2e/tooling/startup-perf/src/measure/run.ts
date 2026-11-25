@@ -112,11 +112,8 @@ async function sample(meta: SampleMeta): Promise<Sample> {
     record.otherPaused = paused;
     const launch = await P.launch(meta.device);
     await sleep(SETTLE_MS);
-    const processStart = await P.processStart(meta.device);
-    record.processStartAt = processStart?.at ?? null;
-    record.processStartAppClockAt = processStart?.appClockAt ?? null;
     // The startup lines are those of this process.
-    record.pid = processStart?.pid ?? (await P.pid(meta.device));
+    record.pid = await P.pid(meta.device);
     if (record.pid === null)
       throw new Error("the app was not running at the end of the settle time");
     if (paused) {

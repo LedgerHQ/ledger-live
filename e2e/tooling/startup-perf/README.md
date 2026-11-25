@@ -47,7 +47,7 @@ and `flows/` the snapshot's Maestro flow. Each test sits next to its module.
 | `src/measure/maestro.ts`, `exec.ts` | Maestro (the snapshot's flow) and child-process calls                                       |
 | `src/analysis/analyze.ts`           | The CLI that judges: pairs A and B, tells which start each Debug value counts from, verdict |
 | `src/analysis/stats.ts`             | Median, Hodges–Lehmann with its Wilcoxon interval, bootstrap mean, uneven-phase widening    |
-| `src/analysis/report.ts`            | The job summary: B − A per platform, scenario and measure                                   |
+| `src/analysis/report.ts`            | The job summary: B − A per platform and scenario                                            |
 | `src/analysis/fake-samples.ts`      | Fake launches for the analysis tests                                                        |
 | `flows/`                            | The snapshot's Maestro flow, `add-accounts.yaml`                                            |
 
@@ -72,14 +72,14 @@ inputs; the plan job passes the settings on to the other jobs.
 
 As for the mobile E2E runs, every run posts its result to their Slack results channel, passed or
 failed, and the nightly or a dispatch with `slack_notif` ticked to #live-repo-health too: each
-platform and scenario's Debug screen verdict and B − A (the native start's too when its verdict
-differs), or why it has none (a build that did not finish, a measurement that timed out). The
-header gives the pairs per scenario, and a line its own count when it has fewer. A measurement
-that stopped after enough pairs is named on its scenario's line, from the `measurement.txt` each
-measure job adds to its results. A verdict whose interval contains the threshold shows as ⚠️
-"Probably within" or "Probably slower by more than" the threshold and turns the bar yellow, unless
-another line is ❌; the run still fails on "Probably slower", as the gate is on the estimate. A post
-Slack rejects fails the Slack job; a run cancelled by hand posts nothing.
+platform and scenario's Debug screen verdict and B − A, or why it has none (a build that did not
+finish, a measurement that timed out). The header gives the pairs per scenario, and a line its own
+count when it has fewer. A measurement that stopped after enough pairs is named on its scenario's
+line, from the `measurement.txt` each measure job adds to its results. A verdict whose interval
+contains the threshold shows as ⚠️ "Probably within" or "Probably slower by more than" the
+threshold and turns the bar yellow, unless another line is ❌; the run still fails on "Probably
+slower", as the gate is on the estimate. A post Slack rejects fails the Slack job; a run cancelled
+by hand posts nothing.
 
 Refs are branches or tags only: a raw SHA could be a fork's commit, run with the workflow's secrets.
 A name that is both a branch and a tag is refused: the release tags are lightweight, so git would
@@ -116,14 +116,15 @@ Android, Release simulator app on iOS, with the JS bundled in the binary. `prepa
 - keeps the real blur, which rspack aliases to the E2E mock for any "mock" env file;
 - bundles without `DETOX=1`, which `e2e:build` sets from ef2aed228e8 on (blur mock, and
   `collapsable={false}` on every view);
-- adds a `JS start epoch <ms>` startup event, the wall clock of the JS start;
 - for `known-regression`'s B, drops the trustchain's `saveAtStart` (LIVE-36190, above).
 
-It checks every anchor before editing, and the edited lines carry `startup-perf`. The scripts and
-userdata come from the workflow's ref, so released tags are measured with today's harness. The jobs
-write no remote Nx, pnpm, Gradle or AVD cache: they run with develop's role while building any ref.
-Gradle downloads its dependencies through JFrog (`jfrog-maven-auth`), like develop's Android builds:
-straight from Maven Central, the shared runner IP can get a 429 (run 42829119387).
+It checks every anchor before editing, including the app's own `Before js imports` startup event,
+from which the analysis tells the start each launch counts from, and the edited lines carry
+`startup-perf`. The scripts and userdata come from the workflow's ref, so released tags are measured
+with today's harness. The jobs write no remote Nx, pnpm, Gradle or AVD cache: they run with
+develop's role while building any ref. Gradle downloads its dependencies through JFrog
+(`jfrog-maven-auth`), like develop's Android builds: straight from Maven Central, the shared runner
+IP can get a 429 (run 42829119387).
 
 ### The cache
 
@@ -285,14 +286,17 @@ around the swap), slightly under 95% since the bias is fitted from the same laun
 what the report says: a B as fast as A never fails, one slower by the threshold fails about half the
 time, and one slower by "Flags a slowdown of" in more than 80% of runs.
 
-Two measures, both ending at "App startup time":
-
-- **Debug screen**: Settings > Debug > Performance > App startup time, as the app writes it to the
-  device log. Builds count it from the first JS import (4.26–4.27,
-  b3700d9164b) or from the process start (LIVE-40286 on). When A and B count from different starts,
-  this row compares from the first JS import.
-- **With native start**: from the process start, read by the harness on the app's clock (the
-  emulator's clock was ~67 s off the runner's, run 40847012543) and joined through `JS start epoch`.
+One measure, **Debug screen**: Settings > Debug > Performance > App startup time, as the app writes
+it to the device log, counted from the app process start (LIVE-40286, from 4.28 on; 4.26–4.27
+counted from the first JS import, b3700d9164b). A launch whose `Before js imports` event comes
+within 50 ms of its start was counted from the first JS import, as when the app finds no process
+start, and misses the native startup: it is left out whatever the build's other launches did, with
+its pair, and the report names how many. When fewer than 3 pairs are left on either side of the
+device swap (at 20 pairs, when 8 of a phase's 10 are lost), the row fails as `Not enough pairs`;
+otherwise it is judged on the pairs left, with a wider interval. Until #25529, the harness also
+measured from the process start it read itself ("With native start"), and compared from the first JS
+import when A and B counted from different starts: on 4.29 and later builds the native start matched
+the Debug value within 6 ms on every nightly row, with the same verdicts.
 
 `analyze.ts` exits 1 on `FAIL`, `Not detected`, `Not enough pairs` or no samples.
 
