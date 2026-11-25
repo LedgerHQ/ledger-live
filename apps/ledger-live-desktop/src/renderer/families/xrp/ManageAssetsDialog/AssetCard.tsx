@@ -27,6 +27,7 @@ import {
   useGetIssuerFeeQuery,
   useGetNetworkReservesQuery,
 } from "@ledgerhq/live-common/families/xrp/state-manager/api";
+import { formatIssuerFee, formatTrustLimit } from "@ledgerhq/live-common/families/xrp/tokens";
 import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
 import { formatFeesValue } from "@ledgerhq/live-common/flows/send/utils/networkFeesDisplay";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
@@ -36,7 +37,7 @@ import { useSelector } from "LLD/hooks/redux";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { LabelWithInfo } from "../components/LabelWithInfo";
-import { formatIssuerFee, formatTrustLimit, getRemoveAvailability } from "../utils";
+import { getRemoveAvailability } from "../utils";
 
 type Props = Readonly<{
   account: Account;

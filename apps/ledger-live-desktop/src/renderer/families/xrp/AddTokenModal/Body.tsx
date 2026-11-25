@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -8,7 +7,13 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import {
+  getDefaultTrustLimit,
+  makeChangeTrustTransaction,
+  makeOptOutTransaction,
+  toAssetFields,
+  toTrustLineFields,
+} from "@ledgerhq/live-common/families/xrp/tokens";
 import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { Track } from "@shared/analytics-react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -17,7 +22,6 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Stepper from "~/renderer/components/Stepper";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import logger from "~/renderer/logger";
-import { makeChangeTrustTransaction, makeOptOutTransaction, toAssetFields } from "../utils";
 import StepToken, { StepTokenFooter } from "./steps/StepToken";
 import StepSettings, { StepSettingsFooter } from "./steps/StepSettings";
 import StepReview, { StepReviewFooter } from "./steps/StepReview";
@@ -147,8 +151,12 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
       parentAccount: undefined,
       transaction:
         action === "remove" && tokenAccount
-          ? makeOptOutTransaction(bridge, params.account, tokenAccount)
-          : makeChangeTrustTransaction(bridge, params.account, tokenAccount),
+          ? makeOptOutTransaction(bridge, params.account, tokenAccount.token)
+          : makeChangeTrustTransaction(
+              bridge,
+              params.account,
+              tokenAccount && toTrustLineFields(tokenAccount),
+            ),
     };
   });
 
@@ -159,7 +167,7 @@ export default function Body({ stepId, onClose, onChangeStepId, params }: Props)
           assetReference: undefined,
           assetOwner: undefined,
           ...toAssetFields(picked),
-          amount: picked.tokenType === "iou" ? MAX_TRUST_LIMIT : new BigNumber(0),
+          amount: getDefaultTrustLimit(picked),
         });
       });
     },

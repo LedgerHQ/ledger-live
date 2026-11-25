@@ -3,13 +3,17 @@ import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { formatCurrencyUnit, sanitizeValueString } from "@ledgerhq/live-common/currencies/index";
 import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import {
+  formatTrustLimit,
+  getLimitError,
+  isLimitBelowBalance,
+} from "@ledgerhq/live-common/families/xrp/tokens";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/xrp/types";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useSelector } from "LLD/hooks/redux";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { formatTrustLimit, getLimitError } from "../../utils";
 
 const ZERO = new BigNumber(0);
 
@@ -93,11 +97,11 @@ export function useTrustSettings({
   const isLimitEmpty = limitText === "";
   const isStatusShown = !isLimitEmpty && !bridgePending;
   const limitError = isStatusShown ? getLimitError(status) : undefined;
-  const isLimitBelowBalance = limit.gt(0) && limit.lt(balance);
+  const isBelowBalance = isLimitBelowBalance(limit, balance);
 
   const getLimitErrorText = () => {
     if (limitError) return t(`errors.${limitError.name}.title`);
-    if (!isLimitBelowBalance) return undefined;
+    if (!isBelowBalance) return undefined;
 
     const formattedBalance = formatCurrencyUnit(unit, balance, {
       discreet,
@@ -121,8 +125,7 @@ export function useTrustSettings({
     onChangeRippling,
     unitCode: unit.code,
     limitErrorText: getLimitErrorText(),
-    isLimitConfirmDisabled:
-      isLimitEmpty || Boolean(limitError) || isLimitBelowBalance || bridgePending,
+    isLimitConfirmDisabled: isLimitEmpty || Boolean(limitError) || isBelowBalance || bridgePending,
     limitLabel: formatTrustLimit({
       limit,
       unit,

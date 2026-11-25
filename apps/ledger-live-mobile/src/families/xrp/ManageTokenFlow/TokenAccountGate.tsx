@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
+import { getManagedTokenAccounts } from "@ledgerhq/live-common/families/xrp/tokens";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import { getManageableTokenAccounts } from "../utils";
 import type { TokenAccountParams, XrpManageTokenFlowParamList } from "./types";
 
 type Navigation = BaseComposite<
@@ -16,10 +16,9 @@ export default function TokenAccountGate({ children }: Readonly<{ children: Reac
   const navigation = useNavigation<Navigation>();
   const route = useRoute<RouteProp<Record<string, TokenAccountParams>, string>>();
   const { account, parentAccount } = useAccountScreen(route);
-  const isAvailable =
-    account?.type === "TokenAccount" &&
-    !!parentAccount &&
-    getManageableTokenAccounts(parentAccount).some(tokenAccount => tokenAccount.id === account.id);
+  const managedTokenAccounts = parentAccount ? getManagedTokenAccounts(parentAccount) : [];
+  const isManaged = managedTokenAccounts.some(tokenAccount => tokenAccount.id === account?.id);
+  const isAvailable = account?.type === "TokenAccount" && isManaged;
   const { parentId } = route.params;
 
   useEffect(() => {

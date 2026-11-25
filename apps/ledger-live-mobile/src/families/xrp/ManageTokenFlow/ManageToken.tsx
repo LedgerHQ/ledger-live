@@ -29,6 +29,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account } from "@ledgerhq/types-live";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
 import { isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { type RemoveBlocker, getRemoveBlocker } from "@ledgerhq/live-common/families/xrp/tokens";
 import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
 import { TrackScreen } from "@shared/analytics-react";
 import CounterValue from "~/components/CounterValue";
@@ -36,7 +37,6 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
 import { InfoTooltip } from "../components/InfoTooltip";
-import { type DeleteBlocker, getDeleteBlocker } from "../utils";
 import DeleteTokenSheets from "./DeleteTokenSheets";
 import {
   type Props,
@@ -45,7 +45,7 @@ import {
   useOwnerReserve,
 } from "./useManageTokenViewModel";
 
-const BLOCKER_KEYS: Record<DeleteBlocker, string> = {
+const BLOCKER_KEYS: Record<RemoveBlocker, string> = {
   pending: "xrp.manageAssets.removalPending",
   frozen: "xrp.manageAssets.frozen",
 };
@@ -134,7 +134,7 @@ function LockedAmount(props: Readonly<{ currency: CryptoCurrency }>) {
 function DeleteButton(
   props: Readonly<{
     tokenId: string;
-    blocker?: DeleteBlocker;
+    blocker?: RemoveBlocker;
     onPress: () => void;
   }>,
 ) {
@@ -248,7 +248,7 @@ function TokenCard(
           ) : null}
           <DeleteButton
             tokenId={token.id}
-            blocker={getDeleteBlocker(props.account, props.tokenAccount)}
+            blocker={getRemoveBlocker(props.account, props.tokenAccount)}
             onPress={() => props.onDelete(props.tokenAccount)}
           />
         </CardFooterActions>
