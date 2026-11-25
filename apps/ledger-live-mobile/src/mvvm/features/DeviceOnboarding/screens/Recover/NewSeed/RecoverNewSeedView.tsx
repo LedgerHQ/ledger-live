@@ -146,6 +146,7 @@ function DetailSheet({
   onStart,
   onRemind,
   onClose,
+  onOpened,
 }: NonNullable<RecoverNewSeedViewProps["sheet"]>) {
   const { bottom } = useSafeAreaInsets();
 
@@ -153,6 +154,7 @@ function DetailSheet({
     <QueuedBottomSheet
       isRequestingToBeOpened
       onClose={onClose}
+      onOpened={onOpened}
       enableDynamicSizing
       contentHasBottomSpace
       testID={recoverNewSeedTestIds.sheet}

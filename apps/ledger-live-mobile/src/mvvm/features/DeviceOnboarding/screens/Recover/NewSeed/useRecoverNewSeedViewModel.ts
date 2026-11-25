@@ -39,6 +39,8 @@ export type RecoverDetailSheet = Readonly<{
   onStart: () => void;
   onRemind: () => void;
   onClose: () => void;
+  /** Called by the sheet once it is on screen: a queued or suspended sheet sends no page. */
+  onOpened: () => void;
 }>;
 
 export type RecoverNewSeedViewProps = Readonly<{
@@ -69,6 +71,7 @@ export function useRecoverNewSeedViewModel({
   const detailFlag = useFeature("recoverDetailedDrawerOnboarding");
   const showsDetail = detailFlag?.enabled === true;
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const sheetTracked = useRef(false);
   const funnelProps = funnel?.props ?? null;
   const phrases = [
     t("deviceOnboarding.karaoke.recover.tooManyBackups"),
@@ -108,7 +111,6 @@ export function useRecoverNewSeedViewModel({
         return;
       }
       setIsSheetOpen(true);
-      showPage(onboardingPages.recoverSheet);
     },
     onSkip: () => {
       clickOnPitch(onboardingButtons.skipRecover);
@@ -140,7 +142,16 @@ export function useRecoverNewSeedViewModel({
             remindLabel: t("deviceOnboarding.karaoke.recover.sheet.remindLater"),
             onStart: onOpenLiveApp,
             onRemind: onRemindLater,
-            onClose: () => setIsSheetOpen(false),
+            onClose: () => {
+              sheetTracked.current = false;
+              setIsSheetOpen(false);
+            },
+            onOpened: () => {
+              // Opens again after a suspension: that is the same visit.
+              if (sheetTracked.current) return;
+              sheetTracked.current = true;
+              showPage(onboardingPages.recoverSheet);
+            },
           }
         : null,
   };

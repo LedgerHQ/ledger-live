@@ -52,6 +52,7 @@ describe("useRecoverNewSeedViewModel", () => {
     act(() => result.current.onAdvance(3));
     act(() => result.current.onProtect());
     rerender(undefined as never);
+    act(() => result.current.sheet?.onOpened());
 
     expect(sent).toEqual([
       "onboarding_Ledger_Recover",
@@ -141,5 +142,40 @@ describe("useRecoverNewSeedViewModel", () => {
     suspendSheets = false;
     rerender(undefined);
     expect(result.current.sheet).not.toBeNull();
+  });
+
+  it("should send the sheet page only once it opens, and once per visit", () => {
+    const sent = sentInOrder();
+    const funnel = {
+      props: unseededProps(DeviceModelId.STAX, SeedPath.NewSeed),
+      status: { ledgerSyncEligible: true, firmwareUpdateAvailability: "no" as const },
+    };
+    let suspendSheets = true;
+    const { result, rerender } = renderHook(
+      () => useRecoverNewSeedViewModel({ ...props, funnel, suspendSheets }),
+      {
+        overrideInitialState: withFlagOverrides({
+          recoverDetailedDrawerOnboarding: { enabled: true },
+        }),
+      },
+    );
+    act(() => result.current.onProtect());
+    const sheetPages = () => sent.filter(name => name === "Page Ledger Recover bottom sheet");
+    expect(sheetPages()).toHaveLength(0);
+
+    suspendSheets = false;
+    rerender(undefined);
+    act(() => result.current.sheet?.onOpened());
+    suspendSheets = true;
+    rerender(undefined);
+    suspendSheets = false;
+    rerender(undefined);
+    act(() => result.current.sheet?.onOpened());
+    expect(sheetPages()).toHaveLength(1);
+
+    act(() => result.current.sheet?.onClose());
+    act(() => result.current.onProtect());
+    act(() => result.current.sheet?.onOpened());
+    expect(sheetPages()).toHaveLength(2);
   });
 });
