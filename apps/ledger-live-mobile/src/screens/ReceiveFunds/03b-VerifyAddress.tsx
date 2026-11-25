@@ -2,7 +2,6 @@ import { TrackScreen } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Subscription } from "rxjs";
-import { filter, first, map } from "rxjs/operators";
 import { TouchableOpacity, Linking, LayoutChangeEvent } from "react-native";
 import { useSelector } from "~/context/hooks";
 import { useTranslation, Trans } from "~/context/Locale";
@@ -17,7 +16,6 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-na
 import PreventNativeBack from "~/components/PreventNativeBack";
 import SkipLock from "~/components/behaviour/SkipLock";
 import logger from "../../logger";
-import { rejectionOp } from "~/logic/debugReject";
 import { ScreenName } from "~/const";
 import LText from "~/components/LText";
 import Button from "~/components/Button";
@@ -27,7 +25,6 @@ import Illustration from "~/images/illustration/Illustration";
 import { urls } from "~/utils/urls";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { e2eBridgeClient } from "~/e2e/bridge/client";
 import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
@@ -98,36 +95,29 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
       if (!account) return;
       const mainAccount = getMainAccount(account, parentAccount);
 
-      sub.current = (
-        mainAccount.id.startsWith("mock")
-          ? e2eBridgeClient.pipe(
-              filter(msg => msg.type === "mockDeviceEvent"),
-              first(),
-              map(() => ({})),
-              rejectionOp(),
-            )
-          : (await getAccountBridge(mainAccount)).receive(mainAccount, {
-              deviceId: device.deviceId,
-              verify: true,
-            })
-      ).subscribe({
-        complete: () => {
-          if (onSuccess) onSuccess(mainAccount.freshAddress);
-          else
-            navigation.navigate(ScreenName.ReceiveConfirmation, {
-              ...route.params,
-              verified: true,
-              createTokenAccount: false,
-            });
-        },
-        error: (error: Error) => {
-          if (error && error.name !== "UserRefusedAddress") {
-            logger.critical(error);
-          }
-          setError(error);
-          if (onError) onError();
-        },
-      });
+      sub.current = (await getAccountBridge(mainAccount))
+        .receive(mainAccount, {
+          deviceId: device.deviceId,
+          verify: true,
+        })
+        .subscribe({
+          complete: () => {
+            if (onSuccess) onSuccess(mainAccount.freshAddress);
+            else
+              navigation.navigate(ScreenName.ReceiveConfirmation, {
+                ...route.params,
+                verified: true,
+                createTokenAccount: false,
+              });
+          },
+          error: (error: Error) => {
+            if (error && error.name !== "UserRefusedAddress") {
+              logger.critical(error);
+            }
+            setError(error);
+            if (onError) onError();
+          },
+        });
     },
     [account, navigation, onError, onSuccess, parentAccount, route.params],
   );
