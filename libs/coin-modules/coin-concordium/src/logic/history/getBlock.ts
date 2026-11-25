@@ -50,6 +50,7 @@ function toBlockTransaction(summary: BlockTransactionSummary): BlockTransaction 
     hash: summary.hash,
     failed: summary.result.outcome === "reject",
     fees: BigInt(sponsor ? sponsor.cost : summary.cost),
+    feesAsset: { type: "native" },
     ...(feesPayer ? { feesPayer } : {}),
     operations,
     ...(memo ? { details: { memo } } : {}),

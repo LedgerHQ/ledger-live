@@ -253,6 +253,7 @@ describe("Sui Api", () => {
           hash: "3PPknnwqbx8F7EeBCUZMUqC4aKKZmj2fXH3CJFLXdbL6",
           date: new Date("2025-04-30T22:46:02.473Z"),
           fees: -13_812_040n,
+          feesAsset: { type: "native" },
           feesPayer: "0x56c8b7ba565a7852265ee23695a0347102d7ad60f0db46091458f55f37424e6c",
           failed: false,
           block: {
