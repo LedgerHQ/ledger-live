@@ -162,6 +162,9 @@ module.exports = {
     "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",
     "^react$": "<rootDir>/node_modules/react",
     "^react/(.*)$": "<rootDir>/node_modules/react/$1",
+    // SPIKE rn88: React Native 0.88 exposes these subpaths only through package exports
+    "^react-native/(setup-env|react-private-interface|asset-registry)$":
+      "<rootDir>/node_modules/react-native/src/$1.js",
     "^react-native/(.*)$": "<rootDir>/node_modules/react-native/$1",
     "^react-native$": "<rootDir>/node_modules/react-native",
     "^react-native-fit-image$": "<rootDir>/__tests__/mocks/react-native-fit-image.js",

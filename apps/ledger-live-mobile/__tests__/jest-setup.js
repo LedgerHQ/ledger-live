@@ -1,3 +1,5 @@
+// SPIKE rn88: React Native 0.88 removed InteractionManager; the app restores it in index.js
+import "~/interactionManagerShim";
 import { setEnv } from "@shared/env";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";

@@ -12,26 +12,17 @@ type Props = {
   networkActivityIndicatorVisible?: boolean;
   showHideTransition?: "fade" | "slide";
 };
-const oldAndroid = Platform.OS === "android" && Platform.Version < 23;
-
-function StyledStatusBar({
-  animated = true,
-  translucent = true,
-  backgroundColor = "transparent",
-  barStyle = "dark-content",
-}: Props) {
-  const { colors, dark } = useTheme();
+// SPIKE rn88: React Native 0.88 StatusBar has no backgroundColor / translucent (edge-to-edge only)
+function StyledStatusBar({ animated = true, barStyle = "dark-content" }: Props) {
+  const { dark } = useTheme();
   // Android: the app theme hides the status bar; it stays hidden until the splash screen goes, so
   // it appears once with the app instead of reappearing during the startup.
   const splashScreenHidden = useIsSplashScreenHidden();
-  const newColor = oldAndroid && barStyle === "dark-content" ? colors.live : backgroundColor;
   const statusBarStyle = dark ? "light-content" : barStyle;
   return (
     <StatusBar
       hidden={Platform.OS === "android" && !splashScreenHidden}
-      backgroundColor={newColor}
       animated={animated}
-      translucent={translucent}
       barStyle={statusBarStyle}
     />
   );

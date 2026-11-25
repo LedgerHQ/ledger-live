@@ -1,5 +1,6 @@
 import { renderHook } from "@testing-library/react-native";
-import { InteractionManager, type TextInput } from "react-native";
+import { type TextInput } from "react-native";
+import { InteractionManager } from "~/interactionManagerShim";
 import { useRecipientInputFocus } from "../../context/RecipientInputFocusContext";
 import { useRecipientInputAutoFocus } from "../useRecipientInputAutoFocus";
 

@@ -1,5 +1,6 @@
 import { useEffect, useRef, type RefObject } from "react";
-import { InteractionManager, type TextInput } from "react-native";
+import { type TextInput } from "react-native";
+import { InteractionManager } from "~/interactionManagerShim";
 import { useRecipientInputFocus } from "../context/RecipientInputFocusContext";
 
 /**

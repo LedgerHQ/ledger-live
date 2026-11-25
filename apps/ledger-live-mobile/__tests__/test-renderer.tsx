@@ -21,6 +21,7 @@ import {
 } from "@testing-library/react-native";
 import QueuedBottomSheetsProvider from "LLM/components/QueuedDrawer/QueuedBottomSheetsProvider";
 import React from "react";
+import GestureHandlerRootViewContext from "react-native-gesture-handler/lib/module/GestureHandlerRootViewContext";
 import { I18nextProvider } from "react-i18next";
 import { I18nProvider } from "@shared/i18n";
 import { Provider } from "react-redux";
@@ -292,11 +293,15 @@ function Providers({
       content
     ) : (
       // For default rendering, add new providers here
-      <BottomSheetModalProvider>
-        <QueuedBottomSheetsProvider>
-          <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
-        </QueuedBottomSheetsProvider>
-      </BottomSheetModalProvider>
+      // SPIKE rn88: gesture-handler 3 throws when a GestureDetector has no GestureHandlerRootView above it;
+      // only its context here, a real root view would add a View to every rendered tree
+      <GestureHandlerRootViewContext.Provider value>
+        <BottomSheetModalProvider>
+          <QueuedBottomSheetsProvider>
+            <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
+          </QueuedBottomSheetsProvider>
+        </BottomSheetModalProvider>
+      </GestureHandlerRootViewContext.Provider>
     );
 
   // General Providers needed for all render types. i18n belongs here rather than in the

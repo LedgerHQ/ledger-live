@@ -2,7 +2,8 @@ import invariant from "invariant";
 import { concat, of, from, Subscription } from "rxjs";
 import { concatMap, filter } from "rxjs/operators";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { InteractionManager, Platform } from "react-native";
+import { Platform } from "react-native";
+import { InteractionManager } from "~/interactionManagerShim";
 import { log } from "@ledgerhq/logs";
 import { useRoute, useNavigation, type RouteProp } from "@react-navigation/native";
 import type {

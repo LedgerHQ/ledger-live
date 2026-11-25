@@ -1,4 +1,4 @@
-module.exports = (path, options) => {
+const appResolver = (path, options) => {
   // Call the defaultResolver, so we leverage its cache, error handling, etc.
   //
   // @features/flow-* packages rely on package.json conditional exports
@@ -30,3 +30,14 @@ module.exports = (path, options) => {
     },
   });
 };
+
+// SPIKE rn88: Reanimated 4.7 needs its Jest resolver (web initializers + worklets web build in Jest).
+// It runs first and hands over to the app resolver above as its default resolver.
+const reanimatedResolver = require("react-native-reanimated/jest/resolver");
+
+module.exports = (path, options) =>
+  reanimatedResolver(path, {
+    ...options,
+    defaultResolver: (request, nextOptions) =>
+      appResolver(request, { ...nextOptions, defaultResolver: options.defaultResolver }),
+  });

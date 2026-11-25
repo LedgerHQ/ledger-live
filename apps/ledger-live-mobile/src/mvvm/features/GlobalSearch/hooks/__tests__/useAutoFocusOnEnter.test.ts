@@ -1,5 +1,6 @@
 import { renderHook } from "@tests/test-renderer";
-import { InteractionManager, Platform } from "react-native";
+import { Platform } from "react-native";
+import { InteractionManager } from "~/interactionManagerShim";
 import { useAutoFocusOnEnter } from "../useAutoFocusOnEnter";
 
 const mockAddListener = jest.fn();

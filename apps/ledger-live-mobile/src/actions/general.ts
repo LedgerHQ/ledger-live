@@ -1,5 +1,5 @@
 import { useMemo, useCallback, useEffect, useState } from "react";
-import { InteractionManager } from "react-native";
+import { InteractionManager } from "~/interactionManagerShim";
 import { useSelector, useDispatch } from "~/context/hooks";
 import {
   flattenSortAccounts,

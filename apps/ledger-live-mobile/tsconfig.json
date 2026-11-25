@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base",
   "compilerOptions": {
     "moduleResolution": "bundler",
-    "customConditions": ["react-native", "@ledgerhq/source"],
+    "customConditions": ["react-native", "@ledgerhq/source", "react-native-legacy-deep-imports"],
     "moduleSuffixes": [".native", ""],
     "module": "preserve",
     "allowJs": false,

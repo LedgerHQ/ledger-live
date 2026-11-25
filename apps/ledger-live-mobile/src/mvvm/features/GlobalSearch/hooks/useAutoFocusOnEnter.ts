@@ -1,5 +1,6 @@
 import { useEffect, type RefObject } from "react";
-import { InteractionManager, Platform, type TextInput } from "react-native";
+import { Platform, type TextInput } from "react-native";
+import { InteractionManager } from "~/interactionManagerShim";
 import { useNavigation, type ParamListBase } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 

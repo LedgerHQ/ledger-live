@@ -1,4 +1,4 @@
-import { InteractionManager } from "react-native";
+import { InteractionManager } from "~/interactionManagerShim";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { useRefreshAccountsOrderingAfterInteractions } from "./general";
 

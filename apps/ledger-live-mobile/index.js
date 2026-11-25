@@ -1,3 +1,4 @@
+import "./src/interactionManagerShim";
 import "./src/getRandomValuesPolyfill";
 // Injects node.js shims.
 // https://github.com/parshap/node-libs-react-native
