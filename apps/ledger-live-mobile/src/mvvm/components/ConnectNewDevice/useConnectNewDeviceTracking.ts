@@ -5,7 +5,7 @@ import {
   type ConnectNewDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import { getConnectNewDeviceFailure, type DeviceFlowFailure } from "@ledgerhq/live-dmk-shared";
-import { useIsNewDevice } from "LLM/components/DeviceConnection";
+import { useCheckIsNewDevice } from "LLM/components/DeviceConnection";
 import { useDeviceIntentTracking } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import {
   getTrackingTransport,
@@ -26,7 +26,7 @@ export function useConnectNewDeviceTracking(
   { reportsOutcome }: { reportsOutcome: boolean },
 ): void {
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
-  const checkIsNewDevice = useIsNewDevice();
+  const checkIsNewDevice = useCheckIsNewDevice();
 
   const latestRef = useRef({ sourceFlow, analyticsProperties, reportsOutcome });
   useLayoutEffect(() => {

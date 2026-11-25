@@ -17,7 +17,10 @@ import {
 import { buildMockServerCompatDeviceId, type KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { BehaviorSubject } from "rxjs";
 import { isErrorState } from "LLM/components/ConnectNewDevice";
-import { useIsNewConnectedDevice, useSaveConnectedDevice } from "LLM/components/DeviceConnection";
+import {
+  useCheckIsNewConnectedDevice,
+  useSaveConnectedDevice,
+} from "LLM/components/DeviceConnection";
 import {
   getConnectedDeviceTrackingProperties,
   trackDeviceConnected,
@@ -146,7 +149,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   const knownDevices = useSelector(knownDevicesSelector);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const saveConnectedDevice = useSaveConnectedDevice();
-  const checkIsNewConnectedDevice = useIsNewConnectedDevice();
+  const checkIsNewConnectedDevice = useCheckIsNewConnectedDevice();
   const isFocused = useIsFocused();
   const isAppInBackground = useIsAppInBackground({ includeInactive: false });
   const shouldPause = isPaused || !isFocused || isAppInBackground;

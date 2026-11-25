@@ -7,8 +7,8 @@ import {
   useDeviceManagementKit,
 } from "@ledgerhq/live-dmk-mobile";
 import {
-  useIsNewConnectedDevice,
-  useIsNewDevice,
+  useCheckIsNewConnectedDevice,
+  useCheckIsNewDevice,
   useSaveConnectedDevice,
 } from "LLM/components/DeviceConnection";
 import {
@@ -48,8 +48,8 @@ export function useConnectNewDeviceViewModel({
   const dmk = useDeviceManagementKit();
   const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
   const saveConnectedDevice = useSaveConnectedDevice();
-  const checkIsNewConnectedDevice = useIsNewConnectedDevice();
-  const checkIsNewDevice = useIsNewDevice();
+  const checkIsNewConnectedDevice = useCheckIsNewConnectedDevice();
+  const checkIsNewDevice = useCheckIsNewDevice();
   const [viewState, setViewState] = useState<ViewState>({
     state: INITIAL_STATE,
     lastNonErrorState: INITIAL_STATE,

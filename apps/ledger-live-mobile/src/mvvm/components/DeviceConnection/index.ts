@@ -8,7 +8,7 @@ export { TrackedDiscoveryErrorState } from "./TrackedDiscoveryErrorState";
 export { TrackedUnknownErrorState } from "./TrackedUnknownErrorState";
 export { TrackedWaitingForSelectedDeviceState } from "./TrackedWaitingForSelectedDeviceState";
 export { UnknownErrorState } from "./UnknownErrorState";
-export { useIsNewConnectedDevice, useIsNewDevice } from "./useIsNewDevice";
+export { useCheckIsNewConnectedDevice, useCheckIsNewDevice } from "./useCheckIsNewDevice";
 export { useSaveConnectedDevice } from "./useSaveConnectedDevice";
 export { useSaveDevice } from "./useSaveDevice";
 export { WaitingForSelectedDeviceState } from "./WaitingForSelectedDeviceState";
