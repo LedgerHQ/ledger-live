@@ -369,11 +369,13 @@ describe("Predictions buy order", () => {
     expect(await screen.findByText(preparingTitle)).toBeOnTheScreen();
     device.sign(OWNER_SIGNATURE);
     await signing;
+    finishClosingExecutor();
 
     await expect(reportOrder({ status: "filled" }, earlierWalletOrderId)).resolves.toEqual({
       action: "close",
     });
-    expect(await screen.findByText("Placing your order")).toBeOnTheScreen();
+    expect(isOrderOpen()).toBe(true);
+    expect(screen.getByText("Placing your order")).toBeOnTheScreen();
   });
 
   it("only offers to close an order MoonPay can't place", async () => {
