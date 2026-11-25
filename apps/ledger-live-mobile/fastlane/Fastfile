@@ -11,7 +11,7 @@
 #
 #
 fastlane_require "dotenv"
-fastlane_require "semver"
+require "semver" # gem "semver2": fastlane_require probes a differently named gem in a child ruby
 
 PROJECT_NAME = "ledgerlivemobile"
 XCODE_PROJECT = "./ios/#{PROJECT_NAME}.xcodeproj"
