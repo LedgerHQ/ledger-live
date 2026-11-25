@@ -1,6 +1,14 @@
 import React from "react";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
-import type { ZonePlaceholderProps } from "./ZonePlaceholder.types";
+
+/** A zone of the address screen, in screen order. Each zone's task replaces its placeholder. */
+type ReceiveAddressZone = "header" | "summary" | "address" | "actions" | "notices" | "extras";
+
+type ZonePlaceholderProps = Readonly<{
+  zone: ReceiveAddressZone;
+  /** What the zone will show, once its task lands. */
+  label?: string;
+}>;
 
 const HEIGHT = {
   header: 56,

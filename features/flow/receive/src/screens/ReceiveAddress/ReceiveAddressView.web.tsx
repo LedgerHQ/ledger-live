@@ -6,9 +6,10 @@ import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
+import { HelpPanel } from "./components/HelpPanel";
+import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
 import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
 import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
-import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
 export function ReceiveAddressView({
@@ -22,6 +23,8 @@ export function ReceiveAddressView({
   isVerifying,
   notices,
   serviceStatus,
+  helpCard,
+  helpPanel,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -42,6 +45,19 @@ export function ReceiveAddressView({
       </DialogBody>
     </>
   );
+  const helpContent = helpPanel && (
+    <>
+      <DialogHeader
+        density="expanded"
+        title={helpPanel.title}
+        onBack={helpPanel.onClose}
+        onClose={closeDialog}
+      />
+      <DialogBody>
+        <HelpPanel helpPanel={helpPanel} />
+      </DialogBody>
+    </>
+  );
 
   return (
     <Dialog open={!isVerifying} onOpenChange={handleOpenChange} height="fit">
@@ -59,6 +75,7 @@ export function ReceiveAddressView({
         ) : null}
         <DialogBackgroundToneProvider>
           {incidentContent ??
+            helpContent ??
             (addressSelection ? (
               <>
                 <DialogHeader
@@ -114,7 +131,7 @@ export function ReceiveAddressView({
                       <ReceiveAddressNotices notices={notices} />
                     </>
                   )}
-                  <ZonePlaceholder zone="extras" />
+                  <ReceiveAddressExtras helpCard={helpCard} />
                 </DialogBody>
               </>
             ))}
