@@ -11,6 +11,15 @@ index 4366d927d700afb868fa2650635407d580f3d39c..a7405eb4bcc537dc1275e4e84596c3a9
      repositories {
          google()
          mavenCentral()
+@@ -41,7 +41,7 @@ android {
+     buildTypes {
+         release {
+             minifyEnabled false
+-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
++            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+         }
+     }
+ }
 diff --git a/android/src/main/java/com/parsempo/ImageCropTools/ImageCropViewManager.kt b/android/src/main/java/com/parsempo/ImageCropTools/ImageCropViewManager.kt
 index be9b96b89df8c6d151e5199202e4c4cf16c04888..9c006a925dd174f35eb05d9b17ad3715851da1f5 100644
 --- a/android/src/main/java/com/parsempo/ImageCropTools/ImageCropViewManager.kt

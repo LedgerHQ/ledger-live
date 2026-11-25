@@ -1,0 +1,33 @@
+Drop the web-only ViewStyle and TextStyle cursor that expo 58 redeclares as string, so React Native 0.88 CursorValue stays the only type. Tracked in LIVE-39334.
+SDK 58 already fixed userSelect/transitionDuration/boxShadow/filter/outlineColor (https://github.com/expo/expo/issues/51747), not cursor.
+Remove when expo stops redeclaring ViewStyle/TextStyle cursor (https://github.com/expo/expo/pull/52703 was closed unmerged) and mobile typecheck passes without this patch.
+
+diff --git a/types/react-native-web.d.ts b/types/react-native-web.d.ts
+--- a/types/react-native-web.d.ts
++++ b/types/react-native-web.d.ts
+@@ -3,6 +3,7 @@
+ import { StyleProp } from 'react-native';
+ import * as RN from 'react-native';
+ 
++// Ledger patch (LIVE-39334), see patches/expo@58.0.26.patch header before removing: https://github.com/expo/expo/issues/51747
+ declare module 'react-native' {
+   /**
+    * View
+@@ -41,8 +42,6 @@
+     /** @platform web */
+     clip?: string;
+     /** @platform web */
+-    cursor?: string;
+-    /** @platform web */
+     gridAutoColumns?: string;
+     /** @platform web */
+     gridAutoFlow?: string;
+@@ -144,8 +143,6 @@
+     /** @platform web */
+     clip?: string;
+     /** @platform web */
+-    cursor?: string;
+-    /** @platform web */
+     gridAutoColumns?: string;
+     /** @platform web */
+     gridAutoFlow?: string;

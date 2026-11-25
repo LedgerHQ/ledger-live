@@ -25,3 +25,7 @@ apps/ledger-live-mobile/.env.android.prerelease:generic-api-key:4
 apps/ledger-live-mobile/.env.android.prerelease:generic-api-key:5
 apps/ledger-live-mobile/.env.ios.prerelease:generic-api-key:5
 apps/ledger-live-mobile/.env.ios.prerelease:generic-api-key:6
+
+# CocoaPods SPEC CHECKSUMS (public SHA-1 of pod specs) in the RN 0.88 spike Podfile.lock — not secrets.
+apps/ledger-live-mobile/ios/Podfile.lock:generic-api-key:4795
+apps/ledger-live-mobile/ios/Podfile.lock:generic-api-key:4881

@@ -27,9 +27,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Needed by Braze -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- Needed by Live apps -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- Required for the webview camera/audio media -->
+    <!-- SPIKE rn88: AGP 9 rejects SDK versions in uses-sdk; minSdk/targetSdk come from build.gradle -->
     <uses-sdk
-        android:minSdkVersion="25"
-        android:targetSdkVersion="36"
         tools:overrideLibrary="com.ledger.reactnative, ca.jaysoo.extradimensions" />
 
     <uses-feature

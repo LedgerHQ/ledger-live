@@ -40,3 +40,6 @@
 # member and the Continuation type name must survive shrinking for the lookup to match.
 -keep class kotlin.coroutines.ContinuationKt { *; }
 -keepnames class kotlin.coroutines.Continuation
+
+# SPIKE rn88: AGP 9 only accepts proguard-android-optimize.txt; keep the previous no-optimize behavior
+-dontoptimize
