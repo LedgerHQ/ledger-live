@@ -11,7 +11,7 @@ a platform entry (`./web`, `./native`), while Redux and navigation stay in the a
 
 | Entry | Export | Description |
 | --- | --- | --- |
-| `.` | `AccountSettingsMenu` | Change name (current name on the right) · Manage assets (web only, with `onManageAssets`) · View advanced logs · Remove account from portfolio (destructive) |
+| `.` | `AccountSettingsMenu` | Change name (current name on the right) · Manage assets (with `onManageAssets`) · View advanced logs · Remove account from portfolio (destructive) |
 | `.` | `AdvancedLogsContent` | Takes the app's formatting `locale` (not the translation language) for the sync date · derivation tip banner (when `derivationTag` is passed) · sync date · logs JSON · "Copy logs" (`@shared/clipboard`, result through `onCopied`) |
 | `.` | `RemoveAccountContent` | Error spot · "Remove account?" · "Yes, remove" / "Keep" |
 | `.` | `buildAdvancedLogs(input, locale)` | Pure: picks `{ xpub, index, freshAddressPath, id, blockHeight }` as pretty JSON and formats the sync date |
