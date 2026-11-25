@@ -17,7 +17,7 @@ import type {
   PltAccountToken,
   RawOperation,
 } from "../types";
-import { attachSubOperations } from "./operations";
+import { attachSubOperations, splitPaidFee } from "./operations";
 import { mapRawOperationToBridgeOperation } from "./serialization";
 import {
   applyTokensToResources,
@@ -95,11 +95,12 @@ const PAGE_SIZE = 1000;
 /**
  * Bumped when the parser starts keeping or revaluing rows it read differently,
  * so every stored history is re-read once. 2: aliases of the account matched.
+ * 3: every row that cost or moved CCD kept.
  *
  * A token whose CAL unit, decimals or balance cannot be trusted during that
  * re-read keeps its stored rows, and nothing re-reads them later: LIVE-41804.
  */
-const HISTORY_VERSION = "history=2";
+const HISTORY_VERSION = "history=3";
 
 const TOKENS_OFF_SYNC_HASH = `tokens=off:${HISTORY_VERSION}`;
 
@@ -185,12 +186,12 @@ export async function syncOperations(
   }
 
   const newOperations = [
-    ...nativeItems.map(op => mapRawOperationToBridgeOperation(op, accountId)),
+    ...nativeItems.flatMap(splitPaidFee).map(op => mapRawOperationToBridgeOperation(op, accountId)),
     ...pltOperations.map(op => buildParentOperation(op, accountId)),
   ];
 
   // Keeping the old copies would resurrect operations this parser no longer
-  // produces, and `sameOp` ignores `hasFailed`, so a stale one would win.
+  // produces: an id embeds the type, so a retyped row does not replace its old copy.
   return { operations: mergeOps(fromScratch ? [] : oldOperations, newOperations), pltOperations };
 }
 

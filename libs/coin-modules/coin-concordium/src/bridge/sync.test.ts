@@ -1,6 +1,10 @@
 import BigNumber from "bignumber.js";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
+  encodeOperationId,
+  getOperationAmountNumber,
+} from "@ledgerhq/ledger-wallet-framework/operation";
+import {
   createFixtureCurrency,
   createFixtureOperation,
   createFixtureTokenAccount,
@@ -236,6 +240,71 @@ describe("syncOperations", () => {
       { minHeight: 0, limit: 1000, order: "desc" },
       CURRENCY_ID,
     );
+  });
+
+  describe("an IN whose fee the account paid itself", () => {
+    const paidIn = (over?: Record<string, unknown>) =>
+      createRawOpFixture({
+        type: "IN",
+        sender: VALID_ADDRESS_2,
+        recipient: VALID_ADDRESS,
+        amount: "10000",
+        value: "10000",
+        fee: "5292571",
+        feesPayer: VALID_ADDRESS,
+        memo: "hello",
+        ...over,
+      });
+
+    const syncOne = async (item: object) => {
+      listOperations.mockResolvedValue({ items: [item], next: undefined });
+      const { operations } = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [], {
+        enableTokens: false,
+      });
+      return operations;
+    };
+
+    it("becomes an IN without a fee and a FEES of the account", async () => {
+      const item = paidIn();
+      const operations = await syncOne(item);
+
+      expect(operations).toHaveLength(2);
+      const received = operations.find(({ type }) => type === "IN");
+      const fees = operations.find(({ type }) => type === "FEES");
+      expect(received).toMatchObject({
+        senders: [VALID_ADDRESS_2],
+        recipients: [VALID_ADDRESS],
+        value: new BigNumber(10000),
+        fee: new BigNumber(0),
+        extra: { memo: "hello" },
+      });
+      expect(fees).toMatchObject({
+        hash: received?.hash,
+        senders: [VALID_ADDRESS],
+        recipients: [],
+        value: new BigNumber(5292571),
+        fee: new BigNumber(5292571),
+      });
+      expect(fees?.extra).toEqual({});
+      expect(fees?.id).not.toBe(received?.id);
+      const { date, blockHeight, blockHash } = item;
+      expect(received).toMatchObject({ date, blockHeight, blockHash, hasFailed: false });
+      expect(fees).toMatchObject({ date, blockHeight, blockHash, hasFailed: false });
+    });
+
+    it("keeps both operations when the amount equals the fee", async () => {
+      const operations = await syncOne(paidIn({ amount: "5292571", value: "5292571" }));
+
+      expect(operations.map(({ type }) => type).sort()).toEqual(["FEES", "IN"]);
+    });
+
+    it.each([
+      ["IN", { fee: "0" }],
+      ["OUT", { type: "OUT" }],
+      ["FEES", { type: "FEES" }],
+    ])("stays a single %s otherwise", async (type, over) => {
+      expect((await syncOne(paidIn(over))).map(op => op.type)).toEqual([type]);
+    });
   });
 
   it("should map and merge new operations with old", async () => {
@@ -726,25 +795,95 @@ describe("getAccountShape with tokens disabled", () => {
   it("records a syncHash that names the off state", async () => {
     const result = await shape();
 
-    expect(result.syncHash).toBe("tokens=off:history=2");
+    expect(result.syncHash).toBe("tokens=off:history=3");
   });
 
-  it("should re-read from zero an account stored before aliases were matched", async () => {
-    await getAccountShape({
-      currency: createFixtureCurrency(),
-      derivationMode: "",
-      derivationPath: "44'/1'/0'/0'/0'/0'",
-      index: 0,
-      initialAccount: storedAccount({ syncHash: "tokens=off" }),
-      rest: { publicKey: PUBLIC_KEY },
+  it.each(["tokens=off", "tokens=off:history=2"])(
+    "should re-read from zero a history stored under the older version %s",
+    async syncHash => {
+      const result = await getAccountShape({
+        currency: createFixtureCurrency(),
+        derivationMode: "",
+        derivationPath: "44'/1'/0'/0'/0'/0'",
+        index: 0,
+        initialAccount: storedAccount({ syncHash }),
+        rest: { publicKey: PUBLIC_KEY },
+      });
+
+      expect(listOperations).toHaveBeenCalledWith(
+        config,
+        VALID_ADDRESS,
+        { minHeight: 0, limit: 1000, order: "desc" },
+        CURRENCY_ID,
+      );
+      expect(result.syncHash).toBe("tokens=off:history=3");
+    },
+  );
+
+  it("splits a stored IN the account sponsored into an IN and a FEES, once", async () => {
+    const hash = "ee".repeat(32);
+    const accountId = `js:2:${CURRENCY_ID}:${PUBLIC_KEY}:`;
+    const inId = encodeOperationId(accountId, hash, "IN");
+    const feesId = encodeOperationId(accountId, hash, "FEES");
+    const sponsoredIn = createRawOpFixture({
+      hash,
+      type: "IN",
+      sender: VALID_ADDRESS_2,
+      recipient: VALID_ADDRESS,
+      amount: "1000000",
+      value: "1000000",
+      fee: "4000",
+      feesPayer: VALID_ADDRESS,
+    });
+    listOperations.mockResolvedValue({ items: [sponsoredIn], next: undefined });
+    const sync = (initialAccount: ConcordiumAccount) =>
+      getAccountShape({
+        currency: createFixtureCurrency(),
+        derivationMode: "",
+        derivationPath: "44'/1'/0'/0'/0'/0'",
+        index: 0,
+        initialAccount,
+        rest: { publicKey: PUBLIC_KEY },
+      });
+    const storedIn = createFixtureOperation({
+      id: inId,
+      hash,
+      type: "IN",
+      value: new BigNumber(1000000),
+      fee: new BigNumber(4000),
     });
 
-    expect(listOperations).toHaveBeenCalledWith(
-      config,
-      VALID_ADDRESS,
-      { minHeight: 0, limit: 1000, order: "desc" },
-      CURRENCY_ID,
+    const reread = await sync(
+      storedAccount({ syncHash: "tokens=off:history=2", operations: [storedIn] }),
     );
+    const next = await sync(
+      storedAccount({ syncHash: reread.syncHash, operations: reread.operations }),
+    );
+
+    for (const { operations } of [reread, next]) {
+      expect(operations.map(({ id }: Operation) => id).sort()).toEqual([feesId, inId].sort());
+      expect(
+        operations.reduce(
+          (sum: BigNumber, op: Operation) => sum.plus(getOperationAmountNumber(op)),
+          new BigNumber(0),
+        ),
+      ).toEqual(new BigNumber(996000));
+    }
+  });
+
+  it("keeps the fee of a token transfer the account only sponsored, as CCD", async () => {
+    listOperations.mockResolvedValue({
+      items: [
+        createRawOpFixture({ type: "FEES", recipient: "", amount: "0", fee: "300", value: "300" }),
+      ],
+      next: undefined,
+    });
+
+    const result = await shape();
+
+    expect(result.operations).toHaveLength(1);
+    expect(result.operations[0]).toMatchObject({ type: "FEES", recipients: [] });
+    expect(result.operations[0].value).toEqual(new BigNumber(300));
   });
 
   it("should replace a stored operation whose type the alias matching changed", async () => {
@@ -792,7 +931,7 @@ describe("getAccountShape with tokens disabled", () => {
 
     expect(result.operations).toEqual([]);
     expect(result.subAccounts).toEqual([]);
-    expect(result.syncHash).toBe("tokens=off:history=2");
+    expect(result.syncHash).toBe("tokens=off:history=3");
   });
 
   it("re-reads the history from zero once the stored assumptions no longer hold", async () => {
@@ -821,7 +960,7 @@ describe("getAccountShape with tokens disabled", () => {
 
   it("re-reads once for an account stored before this family had a syncHash", async () => {
     // What carries the corrected parsing onto history already on disk: nothing
-    // else revisits a stored operation, since `sameOp` ignores `hasFailed`.
+    // else revisits a stored operation.
     await getAccountShape({
       currency: createFixtureCurrency(),
       derivationMode: "",
@@ -842,7 +981,7 @@ describe("getAccountShape with tokens disabled", () => {
   it("keeps the watermark when the stored assumptions still hold", async () => {
     const initialAccount = {
       operations: [createFixtureOperation({ blockHeight: 500 })],
-      syncHash: "tokens=off:history=2",
+      syncHash: "tokens=off:history=3",
       concordiumResources: { publicKey: PUBLIC_KEY },
     } as unknown as ConcordiumAccount;
 
@@ -947,6 +1086,31 @@ describe("getAccountShape with tokens enabled", () => {
     expect(parent.subOperations[0].accountId).toBe(SUB_ACCOUNT_ID);
   });
 
+  it("leaves a CCD fee without sub-operations", async () => {
+    listOperations.mockResolvedValue({
+      items: [
+        pltRawOp(),
+        createRawOpFixture({ type: "FEES", recipient: "", amount: "0", value: "100" }),
+      ],
+      next: undefined,
+    });
+
+    const result = await shape();
+
+    expect(
+      result.operations.map((op: Operation) => [
+        op.type,
+        op.value.toString(),
+        op.subOperations?.length,
+      ]),
+    ).toEqual(
+      expect.arrayContaining([
+        ["FEES", "595400", 1],
+        ["FEES", "100", undefined],
+      ]),
+    );
+  });
+
   it("leaves a plain CCD transfer without sub-operations", async () => {
     listOperations.mockResolvedValue({ items: [createRawOpFixture()], next: undefined });
 
@@ -968,42 +1132,45 @@ describe("getAccountShape with tokens enabled", () => {
   it("records a syncHash that names both the CAL and the on state", async () => {
     const result = await shape();
 
-    expect(result.syncHash).toMatch(/^0x[0-9a-f]+:tokens=on:history=2$/);
+    expect(result.syncHash).toMatch(/^0x[0-9a-f]+:tokens=on:history=3$/);
   });
 
-  it("should defer the re-read of a pre-alias history through a CAL outage, then re-read once", async () => {
-    const getTokensSyncHash = (mockCryptoAssetsStore as { getTokensSyncHash: jest.Mock })
-      .getTokensSyncHash;
-    const current = (await shape()).syncHash;
-    const legacy = current?.replace(/:history=2$/, "");
+  it.each(["", ":history=2"])(
+    'should defer the re-read of a history stored with "%s" through a CAL outage, then re-read once',
+    async olderVersion => {
+      const getTokensSyncHash = (mockCryptoAssetsStore as { getTokensSyncHash: jest.Mock })
+        .getTokensSyncHash;
+      const current = (await shape()).syncHash;
+      const legacy = current?.replace(/:history=3$/, olderVersion);
 
-    getTokensSyncHash.mockRejectedValueOnce(new Error("CAL down"));
-    const duringOutage = await shape(storedAccount({ syncHash: legacy }));
-    expect(duringOutage.syncHash).toBe(legacy);
-    expect(listOperations).toHaveBeenLastCalledWith(
-      tokensOnConfig,
-      VALID_ADDRESS,
-      { minHeight: 501, limit: 1000, order: "desc" },
-      CURRENCY_ID,
-    );
+      getTokensSyncHash.mockRejectedValueOnce(new Error("CAL down"));
+      const duringOutage = await shape(storedAccount({ syncHash: legacy }));
+      expect(duringOutage.syncHash).toBe(legacy);
+      expect(listOperations).toHaveBeenLastCalledWith(
+        tokensOnConfig,
+        VALID_ADDRESS,
+        { minHeight: 501, limit: 1000, order: "desc" },
+        CURRENCY_ID,
+      );
 
-    const recovered = await shape(storedAccount({ syncHash: legacy }));
-    expect(recovered.syncHash).toBe(current);
-    expect(listOperations).toHaveBeenLastCalledWith(
-      tokensOnConfig,
-      VALID_ADDRESS,
-      { minHeight: 0, limit: 1000, order: "desc" },
-      CURRENCY_ID,
-    );
+      const recovered = await shape(storedAccount({ syncHash: legacy }));
+      expect(recovered.syncHash).toBe(current);
+      expect(listOperations).toHaveBeenLastCalledWith(
+        tokensOnConfig,
+        VALID_ADDRESS,
+        { minHeight: 0, limit: 1000, order: "desc" },
+        CURRENCY_ID,
+      );
 
-    await shape(storedAccount({ syncHash: current }));
-    expect(listOperations).toHaveBeenLastCalledWith(
-      tokensOnConfig,
-      VALID_ADDRESS,
-      { minHeight: 501, limit: 1000, order: "desc" },
-      CURRENCY_ID,
-    );
-  });
+      await shape(storedAccount({ syncHash: current }));
+      expect(listOperations).toHaveBeenLastCalledWith(
+        tokensOnConfig,
+        VALID_ADDRESS,
+        { minHeight: 501, limit: 1000, order: "desc" },
+        CURRENCY_ID,
+      );
+    },
+  );
 
   it("gives two different blacklists two different syncHashes", async () => {
     const first = await shape(undefined, ["a"]);
@@ -1047,7 +1214,7 @@ describe("getAccountShape with tokens enabled", () => {
 
     const result = await shape();
 
-    expect(result.syncHash).toBe("tokens=off:history=2");
+    expect(result.syncHash).toBe("tokens=off:history=3");
   });
 
   it("invalidates the syncHash when a balance failure leaves transfers unattributed", async () => {
@@ -1125,6 +1292,6 @@ describe("getAccountShape with tokens enabled", () => {
 
     const result = await shape();
 
-    expect(result.syncHash).toMatch(/:tokens=on:history=2$/);
+    expect(result.syncHash).toMatch(/:tokens=on:history=3$/);
   });
 });

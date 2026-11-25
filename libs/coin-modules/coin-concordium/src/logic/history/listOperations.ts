@@ -19,13 +19,25 @@ const DEFAULT_PAGE_SIZE = 100;
  */
 const TOKEN_UPDATE_DETAILS_TYPE = "tokenUpdate";
 
+const NATIVE_TRANSFER_TYPES: ReadonlySet<string> = new Set(["transfer", "transferWithMemo"]);
+
+const SCHEDULED_TRANSFER_TYPES: ReadonlySet<string> = new Set([
+  "transferWithSchedule",
+  "transferWithScheduleAndMemo",
+]);
+
+type HashedTransaction = WalletProxyTransaction & { transactionHash: string };
+
+const hasHash = (tx: WalletProxyTransaction): tx is HashedTransaction =>
+  Boolean(tx.transactionHash);
+
 export interface RawOperationPage {
   items: RawOperation[];
   next: string | undefined;
 }
 
 function transactionFields(
-  tx: WalletProxyTransaction,
+  tx: HashedTransaction,
   address: string,
 ): Pick<
   RawOperation,
@@ -58,16 +70,53 @@ function isSentByAccount(tx: WalletProxyTransaction): boolean {
  * replacing the address with `self` when it is the queried account.
  */
 function feesPayerOf(tx: WalletProxyTransaction, address: string): string | undefined {
-  if (tx.sponsor) return tx.sponsor.sponsor;
+  if (tx.sponsor) {
+    return isSameAccount(tx.sponsor.sponsor, address) ? address : tx.sponsor.sponsor;
+  }
   return isSentByAccount(tx) ? address : tx.origin.address;
 }
 
-function parseNativeTransfer(tx: WalletProxyTransaction, address: string): RawOperation | null {
+/** The microCCD this account paid for the transaction, as its sponsor or its unsponsored sender. */
+function paidCost(tx: WalletProxyTransaction, address: string): bigint {
+  if (tx.sponsor) {
+    return isSameAccount(tx.sponsor.sponsor, address) ? BigInt(tx.sponsor.cost) : 0n;
+  }
+  return isSentByAccount(tx) ? BigInt(tx.cost || 0) : 0n;
+}
+
+function nativeMemo(tx: HashedTransaction): string | undefined {
+  return tx.details.memo ? decodeMemo(tx.details.memo, tx.transactionHash) : undefined;
+}
+
+/** The fee the account paid for a transaction that moved none of its CCD, if it paid one. */
+function feesOperation(
+  tx: HashedTransaction,
+  address: string,
+  failed: boolean,
+): RawOperation | null {
+  const fee = paidCost(tx, address);
+  if (fee === 0n) return null;
+
+  return {
+    ...transactionFields(tx, address),
+    type: "FEES",
+    sender: address,
+    recipient: "",
+    amount: "0",
+    fee: String(fee),
+    value: String(fee),
+    memo: isSentByAccount(tx) ? nativeMemo(tx) : undefined,
+    failed,
+  };
+}
+
+function parseNativeTransfer(tx: HashedTransaction, address: string): RawOperation | null {
   // A rejection carries none of the transfer fields, so neither party can be
-  // read off it and only the payer's row exists at all. Without this the
-  // transaction disappears and the CCD it cost with it.
+  // read off it and only the sender's and the sponsor's rows exist at all.
   if (tx.details.outcome === "reject") {
-    return isSentByAccount(tx) ? feeOnlyOperation(tx, address, true) : null;
+    return isSentByAccount(tx)
+      ? sentWithoutTransfer(tx, address, true)
+      : feesOperation(tx, address, true);
   }
 
   const sender = tx.details.transferSource || "";
@@ -79,12 +128,12 @@ function parseNativeTransfer(tx: WalletProxyTransaction, address: string): RawOp
   const isIncoming = isSameAccount(recipient, address);
 
   if (!isOutgoing && !isIncoming) {
-    return null;
+    return feesOperation(tx, address, false);
   }
 
   // Between two aliases of the account the amount never leaves it: only the fee does.
   const amount = isOutgoing && isIncoming ? "0" : tx.details.transferAmount || "0";
-  const fee = String(tx.cost || 0);
+  const fee = paidCost(tx, address);
 
   return {
     ...transactionFields(tx, address),
@@ -92,9 +141,9 @@ function parseNativeTransfer(tx: WalletProxyTransaction, address: string): RawOp
     sender,
     recipient,
     amount,
-    fee,
-    value: isOutgoing ? String(BigInt(amount) + BigInt(fee)) : amount,
-    memo: tx.details.memo ? decodeMemo(tx.details.memo, tx.transactionHash) : undefined,
+    fee: String(fee),
+    value: isOutgoing ? String(BigInt(amount) + fee) : amount,
+    memo: nativeMemo(tx),
     failed: false,
   };
 }
@@ -110,16 +159,17 @@ function rejectedTokenId(tx: WalletProxyTransaction): string | undefined {
 }
 
 /**
- * The CCD an unreadable `tokenUpdate` cost. Naming a token keeps it a token
- * operation worth nothing; without one it degrades to a plain CCD cost.
+ * A sent transfer or `tokenUpdate` with no transfer to read: rejected, or a token
+ * update of another kind. Naming a token keeps it a token operation worth
+ * nothing; without one it degrades to a plain CCD cost.
  */
-function feeOnlyOperation(
-  tx: WalletProxyTransaction,
+function sentWithoutTransfer(
+  tx: HashedTransaction,
   address: string,
   failed: boolean,
   tokenId?: string,
 ): RawOperation {
-  const fee = String(tx.cost || 0);
+  const fee = String(paidCost(tx, address));
 
   return {
     ...transactionFields(tx, address),
@@ -136,13 +186,10 @@ function feeOnlyOperation(
 }
 
 /** A rejection carries none of the transfer fields, and only the payer moved anything. */
-function parseRejectedTokenUpdate(
-  tx: WalletProxyTransaction,
-  address: string,
-): RawOperation | null {
-  if (!isSentByAccount(tx)) return null;
+function parseRejectedTokenUpdate(tx: HashedTransaction, address: string): RawOperation | null {
+  if (!isSentByAccount(tx)) return feesOperation(tx, address, true);
 
-  const operation = feeOnlyOperation(tx, address, true, rejectedTokenId(tx));
+  const operation = sentWithoutTransfer(tx, address, true, rejectedTokenId(tx));
   const rejectCode = pltRejectCode(tx.details.rawRejectReason);
 
   // Set conditionally so a reason this layer cannot narrow leaves the field
@@ -162,7 +209,7 @@ function isTokenDecimals(decimals: unknown): decimals is number {
  * account-to-account `TokenTransfer`; a mint, burn, list update, pause or batch
  * carries only the type and outcome, so none of them are defaulted here.
  */
-function parseTokenUpdate(tx: WalletProxyTransaction, address: string): RawOperation | null {
+function parseTokenUpdate(tx: HashedTransaction, address: string): RawOperation | null {
   if (tx.details.outcome === "reject") {
     return parseRejectedTokenUpdate(tx, address);
   }
@@ -178,13 +225,15 @@ function parseTokenUpdate(tx: WalletProxyTransaction, address: string): RawOpera
   ) {
     // Not a transfer this layer can read, but the CCD it cost still left the
     // payer's account, and dropping it would show up as an unexplained debit.
-    return isSentByAccount(tx) ? feeOnlyOperation(tx, address, false) : null;
+    return isSentByAccount(tx)
+      ? sentWithoutTransfer(tx, address, false)
+      : feesOperation(tx, address, false);
   }
 
   const isOutgoing = isSameAccount(transferSource, address);
   const isIncoming = isSameAccount(transferDestination, address);
   if (!isOutgoing && !isIncoming) {
-    return null;
+    return feesOperation(tx, address, false);
   }
 
   const amount = isOutgoing && isIncoming ? "0" : tokenTransferAmount.value;
@@ -195,7 +244,7 @@ function parseTokenUpdate(tx: WalletProxyTransaction, address: string): RawOpera
     sender: transferSource,
     recipient: transferDestination,
     amount,
-    fee: isSentByAccount(tx) ? String(tx.cost || 0) : "0",
+    fee: String(paidCost(tx, address)),
     // The token amount alone: the fee is CCD and belongs to the parent
     // operation, so folding it in here would put µCCD into a token balance.
     value: amount,
@@ -206,16 +255,75 @@ function parseTokenUpdate(tx: WalletProxyTransaction, address: string): RawOpera
   };
 }
 
+/** Throws rather than defaulting: a wrong amount would be stored for good. */
+function microCcd(value: unknown, tx: HashedTransaction): bigint {
+  if (typeof value === "string" && /^-?\d+$/.test(value)) return BigInt(value);
+  if (typeof value === "number" && Number.isSafeInteger(value)) return BigInt(value);
+
+  throw new Error(`concordium: transaction ${tx.transactionHash} carries no readable amount`);
+}
+
+function scheduledMovement(tx: HashedTransaction, address: string): bigint {
+  const { transferDestination = "", transferAmount } = tx.details;
+
+  if (isSentByAccount(tx)) return -microCcd(transferAmount, tx);
+  return isSameAccount(transferDestination, address) ? microCcd(transferAmount, tx) : 0n;
+}
+
+/** The microCCD the transaction moved in or out of the account, without the fee. */
+function movedAmount(tx: HashedTransaction, address: string): bigint {
+  if (SCHEDULED_TRANSFER_TYPES.has(tx.details.type)) return scheduledMovement(tx, address);
+
+  // Only a contract call pays an account that did not send it. The amounts of any
+  // other type are the sender's, even when the proxy reports them to a sponsor.
+  if (!isSentByAccount(tx) && tx.details.type !== "update") return 0n;
+
+  return tx.cost === undefined ? microCcd(tx.total, tx) : microCcd(tx.subtotal ?? 0, tx);
+}
+
+function parseOtherTransaction(tx: HashedTransaction, address: string): RawOperation | null {
+  if (tx.details.outcome === "reject") return feesOperation(tx, address, true);
+
+  const moved = movedAmount(tx, address);
+  if (moved === 0n) return feesOperation(tx, address, false);
+
+  const fee = paidCost(tx, address);
+  const common = {
+    ...transactionFields(tx, address),
+    fee: String(fee),
+    memo: nativeMemo(tx),
+    failed: false,
+  };
+
+  if (moved < 0n) {
+    return {
+      ...common,
+      type: "OUT",
+      sender: address,
+      recipient: tx.details.transferDestination ?? "",
+      amount: String(-moved),
+      value: String(-moved + fee),
+    };
+  }
+
+  // A contract pays in an `update`, whose origin is only the account that called it.
+  const isScheduled = SCHEDULED_TRANSFER_TYPES.has(tx.details.type);
+  return {
+    ...common,
+    type: "IN",
+    sender: (isScheduled && tx.origin.address) || "",
+    recipient: address,
+    amount: String(moved),
+    value: String(moved),
+  };
+}
+
 export function parseTransaction(tx: WalletProxyTransaction, address: string): RawOperation | null {
-  if (tx.details.type === TOKEN_UPDATE_DETAILS_TYPE) {
-    return parseTokenUpdate(tx, address);
-  }
+  if (!hasHash(tx)) return null;
+  if (tx.details.type === TOKEN_UPDATE_DETAILS_TYPE) return parseTokenUpdate(tx, address);
+  if (NATIVE_TRANSFER_TYPES.has(tx.details.type)) return parseNativeTransfer(tx, address);
 
-  if (tx.details.type !== "transfer" && tx.details.type !== "transferWithMemo") {
-    return null;
-  }
-
-  return parseNativeTransfer(tx, address);
+  return parseOtherTransaction(tx, address);
 }
 
 /**
