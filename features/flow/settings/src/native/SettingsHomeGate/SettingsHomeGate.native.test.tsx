@@ -61,4 +61,23 @@ describe("SettingsHomeGate", () => {
 
     expect(onSelectSection).toHaveBeenCalledWith("general");
   });
+
+  it("opens the developer tools the app gives from the new home", async () => {
+    mockUseFeature.mockReturnValue({ enabled: true });
+    const user = userEvent.setup();
+    const onOpenDebug = jest.fn();
+    render(
+      <SettingsHomeGate
+        onSelectSection={jest.fn()}
+        legacySettings={<Text>Legacy settings</Text>}
+        rowsToHide={[]}
+        devTools={{ onOpenDeveloper: jest.fn(), onOpenDebug }}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    await user.press(screen.getByTestId("settings-home-debug"));
+
+    expect(onOpenDebug).toHaveBeenCalledTimes(1);
+  });
 });

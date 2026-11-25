@@ -5,6 +5,7 @@ import { ScreenName } from "~/const";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import Settings from "~/screens/Settings";
+import { useSettingsDevTools } from "../hooks/useSettingsDevTools";
 import { useSettingsRowsToHide } from "../hooks/useSettingsRowsToHide";
 
 type SettingsHomeScreenProps = StackNavigatorProps<
@@ -19,12 +20,14 @@ export function SettingsHomeScreen({ navigation, route }: SettingsHomeScreenProp
       navigation.navigate(ScreenName.SettingsSection, { section }),
     [navigation],
   );
+  const devTools = useSettingsDevTools(navigation);
 
   return (
     <SettingsHomeGate
       onSelectSection={onSelectSection}
       legacySettings={<Settings navigation={navigation} route={route} />}
       rowsToHide={rowsToHide}
+      devTools={devTools}
       testID="settings-home"
     />
   );
