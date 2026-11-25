@@ -1,11 +1,10 @@
 import { track } from "@shared/analytics";
-import { renderHook, act } from "@tests/test-renderer";
+import { renderHook, act, waitFor } from "@tests/test-renderer";
+import { server, http, HttpResponse } from "@tests/server";
+import type { PathParams } from "msw";
 import { useBalanceGraphViewModel } from "../useBalanceGraphViewModel";
 import { useGetCurrencyDataQuery } from "@ledgerhq/live-common/market/state-manager/marketApi";
-import {
-  useGetAssetChartDataQuery,
-  useGetSupportedChartCounterCurrenciesQuery,
-} from "@domain/api-market-chart";
+import { marketChartApi } from "@domain/api-market-chart";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import {
@@ -25,11 +24,6 @@ jest.mock("@ledgerhq/live-common/market/state-manager/marketApi", () => ({
   ...jest.requireActual("@ledgerhq/live-common/market/state-manager/marketApi"),
   useGetCurrencyDataQuery: jest.fn(),
 }));
-jest.mock("@domain/api-market-chart", () => ({
-  ...jest.requireActual("@domain/api-market-chart"),
-  useGetAssetChartDataQuery: jest.fn(),
-  useGetSupportedChartCounterCurrenciesQuery: jest.fn(),
-}));
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
   useUsdToFiatRate: jest.fn(() => ({ status: "ready", rate: 1 })),
@@ -37,10 +31,11 @@ jest.mock("@features/platform-market-countervalues", () => ({
 jest.mock("LLM/features/Receive");
 
 const mockUseGetCurrencyDataQuery = jest.mocked(useGetCurrencyDataQuery);
-const mockUseGetAssetChartDataQuery = jest.mocked(useGetAssetChartDataQuery);
-const mockUseGetSupportedChartCounterCurrenciesQuery = jest.mocked(
-  useGetSupportedChartCounterCurrenciesQuery,
-);
+const endpoints = {
+  chart: jest.fn<Response | Promise<Response>, [{ request: Request; params: PathParams }]>(),
+  supported: jest.fn<Response, [{ request: Request }]>(),
+};
+const releaseHeldCharts: Array<() => void> = [];
 const mockUseUsdToFiatRate = jest.mocked(useUsdToFiatRate);
 const mockUseOpenReceiveDrawer = jest.mocked(useOpenReceiveDrawer);
 const handleOpenReceiveDrawer = jest.fn();
@@ -93,16 +88,47 @@ const mockCurrency = (result: { data: unknown; isFetching?: boolean }) =>
     ...result,
   } as unknown as ReturnType<typeof useGetCurrencyDataQuery>);
 
-const mockChart = (result: { data: unknown; isLoading?: boolean; isFetching?: boolean }) =>
-  mockUseGetAssetChartDataQuery.mockReturnValue({
-    isLoading: false,
-    isFetching: false,
-    currentData: result.data,
-    ...result,
-  } as unknown as ReturnType<typeof useGetAssetChartDataQuery>);
+type ChartByRange = Record<string, Array<[number, number]> | undefined>;
 
-const renderVM = (params: VMParams = { currency: mockBtcCryptoCurrency }, options?: StateOption) =>
-  renderHook(() => useBalanceGraphViewModel(params), options);
+const mockChart = (data: ChartByRange) =>
+  endpoints.chart
+    .mockReset()
+    .mockImplementation(({ params }) =>
+      HttpResponse.json({ values: data[String(params.segment)] ?? [] }),
+    );
+
+const mockChartFailure = () =>
+  endpoints.chart.mockReset().mockImplementation(() => HttpResponse.json({}, { status: 500 }));
+
+/** Answers the next chart requests only once the test ends, to observe the loading state. */
+const holdChart = () => {
+  const gate = new Promise<void>(resolve => releaseHeldCharts.push(resolve));
+  endpoints.chart.mockReset().mockImplementation(async () => {
+    await gate;
+    return HttpResponse.json({ values: [] });
+  });
+};
+
+const renderPendingVM = (
+  params: VMParams = { currency: mockBtcCryptoCurrency },
+  options?: StateOption,
+) => renderHook(() => useBalanceGraphViewModel(params), options);
+
+const renderVM = async (
+  params: VMParams = { currency: mockBtcCryptoCurrency },
+  options?: StateOption,
+) => {
+  const view = renderPendingVM(params, options);
+  await waitFor(() => expect(view.result.current.isLoading).toBe(false));
+  return view;
+};
+
+type VMResult = { current: ReturnType<typeof useBalanceGraphViewModel> };
+
+const changeRange = async (result: VMResult, range: RangeKey) => {
+  act(() => result.current.onRangeChange(range));
+  await waitFor(() => expect(result.current.isLoading).toBe(false));
+};
 
 type TokenFunds = { token: TokenCurrency; balance: number };
 type AccountFunds = { currencyId: string; balance: number; tokens?: TokenFunds[] };
@@ -146,50 +172,57 @@ describe("useBalanceGraphViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockCurrency({ data: marketCurrencyData });
-    mockChart({ data: CHART_DATA_BY_RANGE });
+    mockChart(CHART_DATA_BY_RANGE);
+    endpoints.supported
+      .mockReset()
+      .mockImplementation(() => HttpResponse.json(["usd", "eur", "bitcoin"]));
+    server.use(
+      http.get("*/v3/markets/chart/:segment/:id", endpoints.chart),
+      http.get("*/v3/supported/markets/chart/to", endpoints.supported),
+    );
     mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 1 });
-    mockUseGetSupportedChartCounterCurrenciesQuery.mockReturnValue({
-      data: ["usd", "eur", "bitcoin"],
-      isError: false,
-    } as unknown as ReturnType<typeof useGetSupportedChartCounterCurrenciesQuery>);
     mockUseOpenReceiveDrawer.mockReturnValue({
       handleOpenReceiveDrawer,
       openReceiveForAccount: jest.fn(),
     });
   });
 
+  afterEach(() => {
+    releaseHeldCharts.splice(0).forEach(release => release());
+  });
+
   describe("price & trend", () => {
-    it("exposes price and the 24h change percentage by default", () => {
-      const { result } = renderVM();
+    it("exposes price and the 24h change percentage by default", async () => {
+      const { result } = await renderVM();
 
       expect(result.current.price).toBe(50000);
       expect(result.current.priceChangePercentage).toBe(2.35);
     });
 
-    it("returns price=0 and hasMarketData=false when no market data", () => {
+    it("returns price=0 and hasMarketData=false when no market data", async () => {
       mockCurrency({ data: undefined });
 
-      const { result } = renderVM();
+      const { result } = await renderVM();
 
       expect(result.current.price).toBe(0);
       expect(result.current.hasMarketData).toBe(false);
       expect(result.current.priceChangePercentage).toBeNaN();
     });
 
-    it("uses the correct priceChangePercentage key after range change", () => {
-      const { result } = renderVM();
+    it("uses the correct priceChangePercentage key after range change", async () => {
+      const { result } = await renderVM();
 
-      act(() => result.current.onRangeChange("1w"));
+      await changeRange(result, "1w");
       expect(result.current.priceChangePercentage).toBe(-5.12);
 
-      act(() => result.current.onRangeChange("1y"));
+      await changeRange(result, "1y");
       expect(result.current.priceChangePercentage).toBe(150.0);
     });
   });
 
   describe("priceFormatter", () => {
-    it("splits a USD-formatted value into FormattedValue parts", () => {
-      const { result } = renderVM();
+    it("splits a USD-formatted value into FormattedValue parts", async () => {
+      const { result } = await renderVM();
 
       const formatted = result.current.priceFormatter(1234.56);
 
@@ -199,8 +232,8 @@ describe("useBalanceGraphViewModel", () => {
       expect(formatted.currencyText).toBe("$");
     });
 
-    it("preserves 6 decimals for a sub-cent BONK-like price", () => {
-      const { result } = renderVM();
+    it("preserves 6 decimals for a sub-cent BONK-like price", async () => {
+      const { result } = await renderVM();
 
       const formatted = result.current.priceFormatter(0.000006);
 
@@ -211,44 +244,44 @@ describe("useBalanceGraphViewModel", () => {
   });
 
   describe("formattedPriceChange", () => {
-    it("returns a signed currency string for a positive change", () => {
-      const { result } = renderVM();
+    it("returns a signed currency string for a positive change", async () => {
+      const { result } = await renderVM();
 
       expect(result.current.formattedPriceChange).toMatch(/^\+/);
     });
 
-    it("returns a minus-prefixed string for a negative change", () => {
-      const { result } = renderVM();
+    it("returns a minus-prefixed string for a negative change", async () => {
+      const { result } = await renderVM();
 
-      act(() => result.current.onRangeChange("1w"));
+      await changeRange(result, "1w");
 
       expect(result.current.formattedPriceChange).toMatch(/^-/);
     });
 
-    it("returns undefined when no market data", () => {
+    it("returns undefined when no market data", async () => {
       mockCurrency({ data: undefined });
 
-      const { result } = renderVM();
+      const { result } = await renderVM();
 
       expect(result.current.formattedPriceChange).toBeUndefined();
     });
 
-    it("renders a signed '<' threshold marker for a tiny BONK-like variation", () => {
+    it("renders a signed '<' threshold marker for a tiny BONK-like variation", async () => {
       mockCurrency({ data: { ...marketCurrencyData, price: 6e-6 } });
 
-      const { result } = renderVM();
+      const { result } = await renderVM();
 
       expect(result.current.formattedPriceChange).toBe("+<$0.000001");
     });
   });
 
   describe("onRangeChange", () => {
-    it("updates selectedRange and fires analytics", () => {
-      const { result } = renderVM();
+    it("updates selectedRange and fires analytics", async () => {
+      const { result } = await renderVM();
 
       expect(result.current.selectedRange).toBe("1d");
 
-      act(() => result.current.onRangeChange("1m"));
+      await changeRange(result, "1m");
 
       expect(result.current.selectedRange).toBe("1m");
       expect(track).toHaveBeenCalledWith("button_clicked", {
@@ -259,24 +292,24 @@ describe("useBalanceGraphViewModel", () => {
       });
     });
 
-    it("does not fire analytics when selecting the same range", () => {
-      const { result } = renderVM();
+    it("does not fire analytics when selecting the same range", async () => {
+      const { result } = await renderVM();
 
-      act(() => result.current.onRangeChange("1d"));
+      await changeRange(result, "1d");
 
       expect(track).not.toHaveBeenCalled();
     });
   });
 
   describe("showReceive", () => {
-    it("is false when currency is undefined", () => {
-      const { result } = renderVM({ currency: undefined });
+    it("is false when currency is undefined", async () => {
+      const { result } = await renderVM({ currency: undefined });
 
       expect(result.current.showReceive).toBe(false);
     });
 
-    it("is true when the asset has no account", () => {
-      const { result } = renderVM(
+    it("is true when the asset has no account", async () => {
+      const { result } = await renderVM(
         { currency: mockBtcCryptoCurrency },
         withFunds([{ currencyId: "ethereum", balance: 1000 }]),
       );
@@ -284,8 +317,8 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.showReceive).toBe(true);
     });
 
-    it("is false when the asset already has an account without funds", () => {
-      const { result } = renderVM(
+    it("is false when the asset already has an account without funds", async () => {
+      const { result } = await renderVM(
         { currency: mockBtcCryptoCurrency },
         withFunds([
           { currencyId: "bitcoin", balance: 0 },
@@ -296,8 +329,8 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.showReceive).toBe(false);
     });
 
-    it("is false when the asset already has funds", () => {
-      const { result } = renderVM(
+    it("is false when the asset already has funds", async () => {
+      const { result } = await renderVM(
         { currency: mockBtcCryptoCurrency },
         withFunds([
           { currencyId: "bitcoin", balance: 500 },
@@ -308,8 +341,8 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.showReceive).toBe(false);
     });
 
-    it("is false when a multi-network asset has funds on another ledger id", () => {
-      const { result } = renderVM(
+    it("is false when a multi-network asset has funds on another ledger id", async () => {
+      const { result } = await renderVM(
         { currency: mockEthCryptoCurrency, ledgerIds: ["ethereum", "optimism"] },
         withFunds([
           { currencyId: "ethereum", balance: 0 },
@@ -320,8 +353,8 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.showReceive).toBe(false);
     });
 
-    it("is false when the wallet has an asset account with no funds at all", () => {
-      const { result } = renderVM(
+    it("is false when the wallet has an asset account with no funds at all", async () => {
+      const { result } = await renderVM(
         { currency: mockBtcCryptoCurrency },
         withFunds([
           { currencyId: "bitcoin", balance: 0 },
@@ -332,8 +365,8 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.showReceive).toBe(false);
     });
 
-    it("is false when hideReceive is true even if conditions are met", () => {
-      const { result } = renderVM(
+    it("is false when hideReceive is true even if conditions are met", async () => {
+      const { result } = await renderVM(
         { currency: mockBtcCryptoCurrency, hideReceive: true },
         withFunds([
           { currencyId: "bitcoin", balance: 0 },
@@ -344,8 +377,8 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.showReceive).toBe(false);
     });
 
-    it("is false for a token the user already holds (regression: ERC-20 detected via flattenAccounts)", () => {
-      const { result } = renderVM(
+    it("is false for a token the user already holds (regression: ERC-20 detected via flattenAccounts)", async () => {
+      const { result } = await renderVM(
         { currency: eursToken },
         withFunds([
           {
@@ -361,8 +394,8 @@ describe("useBalanceGraphViewModel", () => {
   });
 
   describe("onReceivePress", () => {
-    it("tracks analytics and opens the receive drawer", () => {
-      const { result } = renderVM();
+    it("tracks analytics and opens the receive drawer", async () => {
+      const { result } = await renderVM();
 
       act(() => result.current.onReceivePress());
 
@@ -374,24 +407,18 @@ describe("useBalanceGraphViewModel", () => {
       expect(handleOpenReceiveDrawer).toHaveBeenCalledTimes(1);
     });
 
-    it("forwards the parent-provided ledgerIds list to useOpenReceiveDrawer", () => {
+    it("forwards the parent-provided ledgerIds list to useOpenReceiveDrawer", async () => {
       const ledgerIds = ["ethereum", "optimism", "arbitrum", "base"];
 
-      renderHook(() =>
-        useBalanceGraphViewModel({
-          currency: mockBtcCryptoCurrency,
-          hideReceive: false,
-          ledgerIds,
-        }),
-      );
+      await renderVM({ currency: mockBtcCryptoCurrency, hideReceive: false, ledgerIds });
 
       expect(mockUseOpenReceiveDrawer).toHaveBeenCalledWith(
         expect.objectContaining({ currency: mockBtcCryptoCurrency, currencyIds: ledgerIds }),
       );
     });
 
-    it("falls back to the locally derived ledgerIds when no list is threaded down", () => {
-      renderHook(() => useBalanceGraphViewModel({ currency: mockBtcCryptoCurrency }));
+    it("falls back to the locally derived ledgerIds when no list is threaded down", async () => {
+      await renderVM({ currency: mockBtcCryptoCurrency });
 
       expect(mockUseOpenReceiveDrawer).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -403,15 +430,15 @@ describe("useBalanceGraphViewModel", () => {
   });
 
   describe("ranges", () => {
-    it("exposes the full range list in chronological order (1d → all)", () => {
-      const { result } = renderVM();
+    it("exposes the full range list in chronological order (1d → all)", async () => {
+      const { result } = await renderVM();
 
       const values = result.current.ranges.map(r => r.value);
       expect(values).toEqual(["1d", "1w", "1m", "1y", "all"]);
     });
 
-    it("exposes a runtime guard that accepts only known range keys", () => {
-      const { result } = renderVM();
+    it("exposes a runtime guard that accepts only known range keys", async () => {
+      const { result } = await renderVM();
 
       expect(result.current.isRangeValue("1d")).toBe(true);
       expect(result.current.isRangeValue("1y")).toBe(true);
@@ -420,65 +447,65 @@ describe("useBalanceGraphViewModel", () => {
   });
 
   describe("series and chartColor", () => {
-    it("builds the price series from the chart data of the selected range", () => {
-      const { result } = renderVM();
+    it("builds the price series from the chart data of the selected range", async () => {
+      const { result } = await renderVM();
 
       expect(result.current.series).toHaveLength(1);
       expect(result.current.series[0]?.id).toBe("asset-detail-price");
       expect(result.current.series[0]?.data).toEqual([100, 110, 120, 50000]);
     });
 
-    it("should end the series on the header price", () => {
-      const { result } = renderVM();
+    it("should end the series on the header price", async () => {
+      const { result } = await renderVM();
 
       expect(result.current.series[0]?.data.at(-1)).toBe(50000);
       expect(result.current.price).toBe(50000);
     });
 
-    it("rebuilds the series when the selected range changes", () => {
-      const { result } = renderVM();
+    it("rebuilds the series when the selected range changes", async () => {
+      const { result } = await renderVM();
 
-      act(() => result.current.onRangeChange("1w"));
+      await changeRange(result, "1w");
       expect(result.current.series[0]?.data).toEqual([200, 210, 50000]);
 
-      act(() => result.current.onRangeChange("1y"));
+      await changeRange(result, "1y");
       expect(result.current.series[0]?.data).toEqual([400, 410, 420, 430, 50000]);
     });
 
-    it("keeps a stable series identity across renders when inputs are unchanged", () => {
-      const { result, rerender } = renderVM();
+    it("keeps a stable series identity across renders when inputs are unchanged", async () => {
+      const { result, rerender } = await renderVM();
 
       const initial = result.current.series;
       rerender({});
       expect(result.current.series).toBe(initial);
     });
 
-    it("returns an empty series when no chart data is available", () => {
-      mockChart({ data: undefined });
+    it("returns an empty series when the chart request fails", async () => {
+      mockChartFailure();
 
-      const { result } = renderVM();
+      const { result } = await renderVM();
 
       expect(result.current.series).toHaveLength(1);
       expect(result.current.series[0]?.data).toEqual([]);
     });
 
-    it("returns chartColor='success' when the selected range has a positive % change", () => {
-      const { result } = renderVM();
+    it("returns chartColor='success' when the selected range has a positive % change", async () => {
+      const { result } = await renderVM();
 
       expect(result.current.chartColor).toBe("success");
     });
 
-    it("returns chartColor='error' when the selected range has a negative % change", () => {
-      const { result } = renderVM();
+    it("returns chartColor='error' when the selected range has a negative % change", async () => {
+      const { result } = await renderVM();
 
-      act(() => result.current.onRangeChange("1w"));
+      await changeRange(result, "1w");
       expect(result.current.chartColor).toBe("error");
     });
 
-    it("returns chartColor='muted' when no market data is available", () => {
+    it("returns chartColor='muted' when no market data is available", async () => {
       mockCurrency({ data: undefined });
 
-      const { result } = renderVM();
+      const { result } = await renderVM();
 
       expect(result.current.chartColor).toBe("muted");
     });
@@ -492,34 +519,32 @@ describe("useBalanceGraphViewModel", () => {
       }),
     };
 
-    it("fetches the chart in USD when the ticker is outside the chart allowlist", () => {
-      renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
+    it("fetches the chart in USD when the ticker is outside the chart allowlist", async () => {
+      await renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
 
-      expect(mockUseGetAssetChartDataQuery).toHaveBeenCalledWith(
-        expect.objectContaining({ counterCurrency: "usd" }),
-        expect.anything(),
-      );
+      const requestedUrl = new URL(endpoints.chart.mock.calls[0][0].request.url);
+      expect(requestedUrl.searchParams.get("to")).toBe("usd");
       expect(mockUseUsdToFiatRate).toHaveBeenCalledWith("btc", expect.anything());
     });
 
-    it("rescales the USD chart into the BTC counter value", () => {
+    it("rescales the USD chart into the BTC counter value", async () => {
       mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 2 });
 
-      const { result } = renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
+      const { result } = await renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
 
       expect(result.current.series[0]?.data).toEqual([200, 220, 240, 50000]);
     });
   });
 
   describe("chart formatting & axes", () => {
-    it("formats a chart value as a counter-value price string", () => {
-      const { result } = renderVM();
+    it("formats a chart value as a counter-value price string", async () => {
+      const { result } = await renderVM();
 
       expect(result.current.formatValue(100)).toContain("100");
     });
 
-    it("builds a tooltip title from the timestamp at the given index", () => {
-      const { result } = renderVM();
+    it("builds a tooltip title from the timestamp at the given index", async () => {
+      const { result } = await renderVM();
 
       // 1d chart data timestamps are [1, 2, 3].
       const title = result.current.tooltipTitle(0);
@@ -527,28 +552,28 @@ describe("useBalanceGraphViewModel", () => {
       expect(title).not.toBe("");
     });
 
-    it("returns undefined tooltip title for an out-of-range index", () => {
-      const { result } = renderVM();
+    it("returns undefined tooltip title for an out-of-range index", async () => {
+      const { result } = await renderVM();
 
       expect(result.current.tooltipTitle(99)).toBeUndefined();
     });
 
-    it("hides the x-axis and keeps the y-axis hidden", () => {
-      const { result } = renderVM();
+    it("hides the x-axis and keeps the y-axis hidden", async () => {
+      const { result } = await renderVM();
 
       expect(result.current.showXAxis).toBe(false);
       expect(result.current.showYAxis).toBe(false);
     });
 
-    it("exposes evenly spaced x-axis ticks covering every point when data is short", () => {
-      const { result } = renderVM();
+    it("exposes evenly spaced x-axis ticks covering every point when data is short", async () => {
+      const { result } = await renderVM();
 
       // 1d has 4 points (<= min ticks) → one tick per point.
       expect(result.current.xAxis.ticks).toEqual([0, 1, 2, 3]);
     });
 
-    it("pads the y-axis domain 32px below the min and 24px above the max for their labels", () => {
-      const { result } = renderVM();
+    it("pads the y-axis domain 32px below the min and 24px above the max for their labels", async () => {
+      const { result } = await renderVM();
 
       const domain = result.current.yAxis.domain;
       expect(typeof domain).toBe("function");
@@ -562,8 +587,8 @@ describe("useBalanceGraphViewModel", () => {
   });
 
   describe("scrubbing", () => {
-    it("drives the price, date and range-start variation from the hovered point", () => {
-      const { result } = renderVM();
+    it("drives the price, date and range-start variation from the hovered point", async () => {
+      const { result } = await renderVM();
 
       // Historical 1d points stay [100, 110, 120]; the live price is appended after them.
       act(() => result.current.onScrubberPositionChange(1));
@@ -577,8 +602,8 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.timeLabel).not.toBe("");
     });
 
-    it("reverts to the live price and range label when scrubbing ends", () => {
-      const { result } = renderVM();
+    it("reverts to the live price and range label when scrubbing ends", async () => {
+      const { result } = await renderVM();
 
       const rangeLabel = result.current.timeLabel;
 
@@ -592,8 +617,8 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.timeLabel).toBe(rangeLabel);
     });
 
-    it("should show the header price when scrubbing the last point and keep it after release", () => {
-      const { result } = renderVM();
+    it("should show the header price when scrubbing the last point and keep it after release", async () => {
+      const { result } = await renderVM();
 
       const lastIndex = result.current.series[0].data.length - 1;
       act(() => result.current.onScrubberPositionChange(lastIndex));
@@ -606,8 +631,8 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.price).toBe(50000);
     });
 
-    it("ignores an out-of-range index (no scrub)", () => {
-      const { result } = renderVM();
+    it("ignores an out-of-range index (no scrub)", async () => {
+      const { result } = await renderVM();
 
       act(() => result.current.onScrubberPositionChange(99));
 
@@ -615,10 +640,12 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.price).toBe(50000);
     });
 
-    it("ignores a non-finite value at the hovered index", () => {
-      mockChart({ data: { ...CHART_DATA_BY_RANGE, "1d": [[1, NaN]] } });
+    it("ignores a chart point the API schema rejects", async () => {
+      endpoints.chart
+        .mockReset()
+        .mockImplementation(() => HttpResponse.json({ values: [[1, null]] }));
 
-      const { result } = renderVM();
+      const { result } = await renderVM();
 
       act(() => result.current.onScrubberPositionChange(0));
 
@@ -626,10 +653,10 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.price).toBe(50000);
     });
 
-    it("shows a 0 price / 0 timestamp point instead of swallowing it", () => {
-      mockChart({ data: { ...CHART_DATA_BY_RANGE, "1d": [[0, 0]] } });
+    it("shows a 0 price / 0 timestamp point instead of swallowing it", async () => {
+      mockChart({ ...CHART_DATA_BY_RANGE, "1d": [[0, 0]] });
 
-      const { result } = renderVM();
+      const { result } = await renderVM();
 
       act(() => result.current.onScrubberPositionChange(0));
 
@@ -638,42 +665,42 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.timeLabel).toBeDefined();
     });
 
-    it("clears the selection when the range changes mid-scrub", () => {
-      const { result } = renderVM();
+    it("clears the selection when the range changes mid-scrub", async () => {
+      const { result } = await renderVM();
 
       act(() => result.current.onScrubberPositionChange(1));
       expect(result.current.isScrubbing).toBe(true);
 
-      act(() => result.current.onRangeChange("1w"));
+      await changeRange(result, "1w");
 
       expect(result.current.isScrubbing).toBe(false);
       expect(result.current.price).toBe(50000);
     });
 
-    it("formats 1w hover time label as time + date", () => {
-      const { result } = renderVM();
+    it("formats 1w hover time label as time + date", async () => {
+      const { result } = await renderVM();
 
-      act(() => result.current.onRangeChange("1w"));
+      await changeRange(result, "1w");
       act(() => result.current.onScrubberPositionChange(0));
 
       expect(result.current.timeLabel).toContain("2024");
       expect(result.current.timeLabel).toContain(":");
     });
 
-    it("formats 1d hover time label as time only", () => {
-      const { result } = renderVM();
+    it("formats 1d hover time label as time only", async () => {
+      const { result } = await renderVM();
 
-      act(() => result.current.onRangeChange("1d"));
+      await changeRange(result, "1d");
       act(() => result.current.onScrubberPositionChange(0));
 
       expect(result.current.timeLabel).toContain(":");
       expect(result.current.timeLabel).not.toContain("2024");
     });
 
-    it("formats 1y hover time label as date only", () => {
-      const { result } = renderVM();
+    it("formats 1y hover time label as date only", async () => {
+      const { result } = await renderVM();
 
-      act(() => result.current.onRangeChange("1y"));
+      await changeRange(result, "1y");
       act(() => result.current.onScrubberPositionChange(0));
 
       expect(result.current.timeLabel).toContain("2024");
@@ -682,14 +709,14 @@ describe("useBalanceGraphViewModel", () => {
   });
 
   describe("transaction points", () => {
-    it("always enables point-only tooltips", () => {
-      const { result } = renderVM();
+    it("always enables point-only tooltips", async () => {
+      const { result } = await renderVM();
 
       expect(result.current.pointTooltipsOnly).toBe(true);
     });
 
-    it("exposes the extrema markers when there are no scoped operations", () => {
-      const { result } = renderVM();
+    it("exposes the extrema markers when there are no scoped operations", async () => {
+      const { result } = await renderVM();
 
       expect(result.current.points).toEqual([
         { index: 3, value: 50000, color: "success", labelPosition: "top", hidePoint: true },
@@ -702,7 +729,7 @@ describe("useBalanceGraphViewModel", () => {
     it("reflects the fetching state of useCurrencyData", () => {
       mockCurrency({ data: undefined, isFetching: true });
 
-      const { result } = renderVM({
+      const { result } = renderPendingVM({
         currency: mockBtcCryptoCurrency,
         marketApiId: mockBtcCryptoCurrency.id,
         knownLedgerIds: [mockBtcCryptoCurrency.id],
@@ -711,75 +738,71 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.isLoading).toBe(true);
     });
 
-    it("is true while the chart data query is loading", () => {
-      mockChart({ data: undefined, isLoading: true });
+    it("is true until the chart request resolves", async () => {
+      holdChart();
 
-      const { result } = renderVM();
-
-      expect(result.current.isLoading).toBe(true);
-    });
-
-    it("is true while fetching a new timeframe that has no data yet", () => {
-      mockChart({ data: undefined, isFetching: true });
-
-      const { result } = renderVM();
+      const { result } = renderPendingVM();
+      await waitFor(() => expect(endpoints.chart).toHaveBeenCalledTimes(1));
 
       expect(result.current.isLoading).toBe(true);
     });
 
-    it("stays false while refetching in the background with existing data", () => {
-      mockChart({ data: CHART_DATA_BY_RANGE, isFetching: true });
+    it("is false once the chart request fails", async () => {
+      mockChartFailure();
 
-      const { result } = renderVM();
+      const { result } = await renderVM();
 
       expect(result.current.isLoading).toBe(false);
+    });
+
+    it("stays false while refetching in the background with existing data", async () => {
+      const { result, store } = await renderVM();
+      holdChart();
+
+      act(() => {
+        store.dispatch(marketChartApi.util.invalidateTags(["ChartData"]));
+      });
+      await waitFor(() => expect(endpoints.chart).toHaveBeenCalledTimes(1));
+
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.series[0].data.length).toBeGreaterThan(0);
     });
   });
 
   describe("timeframe transition", () => {
-    it("keeps the previous timeframe series while the next one is loading", () => {
-      mockChart({ data: { "1d": CHART_DATA_BY_RANGE["1d"] }, isFetching: true });
-
-      const { result } = renderVM();
+    it("keeps the previous timeframe series while the next one is loading", async () => {
+      const { result } = await renderVM();
       const seriesBeforeChange = result.current.series;
-      expect(result.current.isLoading).toBe(false);
       expect(seriesBeforeChange[0].data.length).toBeGreaterThan(0);
+      holdChart();
 
-      act(() => {
-        result.current.onRangeChange("1w");
-      });
+      act(() => result.current.onRangeChange("1w"));
+      await waitFor(() => expect(endpoints.chart).toHaveBeenCalledTimes(1));
 
       expect(result.current.isLoading).toBe(true);
       expect(result.current.series).toBe(seriesBeforeChange);
     });
 
-    it("drops the previous series once the new timeframe settles with no data", () => {
-      mockChart({ data: { "1d": CHART_DATA_BY_RANGE["1d"] }, isFetching: true });
-
-      const { result, rerender } = renderVM();
-
-      act(() => {
-        result.current.onRangeChange("1w");
-      });
+    it("drops the previous series once the new timeframe settles with no data", async () => {
+      const { result } = await renderVM();
       expect(result.current.series[0].data.length).toBeGreaterThan(0);
+      mockChart({ "1d": CHART_DATA_BY_RANGE["1d"], "1w": [] });
 
-      mockChart({ data: { "1d": CHART_DATA_BY_RANGE["1d"] }, isFetching: false });
-      rerender(undefined);
+      await changeRange(result, "1w");
 
-      expect(result.current.isLoading).toBe(false);
       expect(result.current.series[0].data).toHaveLength(0);
     });
 
-    it("does not show the previous asset's series when switching to an asset with no data", () => {
-      mockChart({ data: CHART_DATA_BY_RANGE });
+    it("does not show the previous asset's series when switching to an asset with no data", async () => {
       const params: VMParams = { currency: mockBtcCryptoCurrency, knownLedgerIds: ["btc"] };
-      const { result, rerender } = renderHook(() => useBalanceGraphViewModel(params));
+      const { result, rerender } = await renderVM(params);
       expect(result.current.series[0].data.length).toBeGreaterThan(0);
 
       // Switch to a different asset whose chart has no data yet (still fetching).
+      holdChart();
       params.knownLedgerIds = ["other-asset"];
-      mockChart({ data: undefined, isFetching: true });
       rerender(undefined);
+      await waitFor(() => expect(endpoints.chart).toHaveBeenCalledTimes(1));
 
       expect(result.current.series[0].data).toHaveLength(0);
       expect(result.current.isLoading).toBe(true);
