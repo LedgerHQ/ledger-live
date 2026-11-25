@@ -2318,6 +2318,9 @@ importers:
       '@features/flow-receive':
         specifier: workspace:^
         version: link:../../features/flow/receive
+      '@features/flow-settings':
+        specifier: workspace:^
+        version: link:../../features/flow/settings
       '@features/platform-account-analytics':
         specifier: workspace:^
         version: link:../../features/platform/account-analytics
@@ -14118,6 +14121,9 @@ importers:
       '@features/platform-feature-flags':
         specifier: workspace:*
         version: link:../../platform/feature-flags
+      '@shared/analytics-react':
+        specifier: workspace:*
+        version: link:../../../shared/analytics-react
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n

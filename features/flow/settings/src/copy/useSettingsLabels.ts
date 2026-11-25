@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import { useTranslation } from "@shared/i18n";
-import type { SettingsSectionId } from "../logic/settingsSections";
+import type { SettingsHomeSectionId } from "../logic/settingsHomeSections";
 
 export type SettingsLabels = Readonly<{
   title: string;
-  sections: Readonly<Record<SettingsSectionId, string>>;
+  sections: Readonly<Record<SettingsHomeSectionId, string>>;
 }>;
 
 export function useSettingsLabels(): SettingsLabels {
@@ -16,6 +16,7 @@ export function useSettingsLabels(): SettingsLabels {
         general: t("settings.sections.general"),
         assetManagement: t("settings.sections.assetManagement"),
         security: t("settings.sections.security"),
+        notifications: t("settings.sections.notifications"),
         privacy: t("settings.sections.privacy"),
         about: t("settings.sections.about"),
       },

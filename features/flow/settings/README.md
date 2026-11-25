@@ -12,15 +12,19 @@ The sections come with the next tickets of the
 
 ## Page and rows
 
-| Export                   | Entry  | Purpose                                                                 |
-| ------------------------ | ------ | ----------------------------------------------------------------------- |
-| `SettingsPage`           | `/web` | Desktop page: title and one tab per section; the app renders the content |
-| `SettingsGate`           | `/web` | New page behind `newSettings`, legacy Settings otherwise and for Help, Experimental, Developer |
-| `SettingsSection`        | `.`    | Block of rows with an optional title                                    |
-| `SettingsRow`            | `.`    | Icon, title, description with an optional link, and a trailing element  |
-| `SETTINGS_SECTIONS`      | `.`    | General, Asset management, Security, Privacy, About                     |
-| `resolveSettingsSection` | `.`    | Turns an address segment into a section, General when unknown           |
-| `useSettingsLabels`      | `.`    | Page title and section names                                            |
+| Export                     | Entry     | Purpose                                                                                        |
+| -------------------------- | --------- | ---------------------------------------------------------------------------------------------- |
+| `SettingsPage`             | `/web`    | Desktop page: title and one tab per section; the app renders the content                       |
+| `SettingsGate`             | `/web`    | New page behind `newSettings`, legacy Settings otherwise and for Help, Experimental, Developer |
+| `SettingsSection`          | `.`       | Block of rows with an optional title                                                           |
+| `SettingsRow`              | `.`       | Icon, title, description with an optional link, and a trailing element                         |
+| `SETTINGS_SECTIONS`        | `.`       | General, Asset management, Security, Privacy, About                                            |
+| `resolveSettingsSection`   | `.`       | Turns an address segment into a section, General when unknown                                  |
+| `SETTINGS_HOME_SECTIONS`   | `.`       | Mobile home sections: the desktop ones plus Notifications                                      |
+| `useSettingsLabels`        | `.`       | Page title and section names                                                                   |
+| `SettingsHome`             | `/native` | Mobile home: one row per section, the app opens the section screen                             |
+| `SettingsHomeGate`         | `/native` | New home behind `newSettings` (tracks `Page Settings`), legacy home otherwise                  |
+| `useIsSettingsHomeEnabled` | `/native` | Whether the new home is on, for the header the app's navigator sets                            |
 
 A row's trailing element is a chevron, an external link, a toggle, a value, a select or a button.
 On mobile, the select opens its options in a bottom sheet (Lumen `SelectList`), like the web

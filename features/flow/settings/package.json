@@ -12,6 +12,7 @@
       "default": "./src/index.ts"
     },
     "./web": "./src/web/index.web.ts",
+    "./native": "./src/native/index.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -25,6 +26,7 @@
   },
   "dependencies": {
     "@features/platform-feature-flags": "workspace:*",
+    "@shared/analytics-react": "workspace:*",
     "@shared/i18n": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*",
     "zod": "catalog:"
