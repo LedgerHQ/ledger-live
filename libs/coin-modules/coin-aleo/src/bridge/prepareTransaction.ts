@@ -93,9 +93,16 @@ function preparePublicTransaction({
   estimatedFees: BigNumber;
   isSelfTransfer: boolean;
 }): AleoTransaction {
-  const calculatedAmount = calculateAmount({ transaction, account, estimatedFees });
+  const transactionWithDerivedMode = updateTransaction(transaction, {
+    mode: derivedTransactionMode,
+  });
+  const calculatedAmount = calculateAmount({
+    transaction: transactionWithDerivedMode,
+    account,
+    estimatedFees,
+  });
 
-  return updateTransaction(transaction, {
+  return updateTransaction(transactionWithDerivedMode, {
     amount: calculatedAmount.amount,
     fees: estimatedFees,
     mode: derivedTransactionMode,
@@ -134,6 +141,7 @@ function preparePrivateTransaction({
   });
 
   const transactionWithRecords = updateTransaction(transaction, {
+    mode: derivedTransactionMode,
     properties: {
       ...transaction.properties,
       amountRecordCommitments: newAmountRecordCommitments,

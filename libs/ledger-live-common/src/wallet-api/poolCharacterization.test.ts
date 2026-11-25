@@ -281,16 +281,14 @@ describe("pool-holding families, as exposed to live apps", () => {
       });
     });
 
-    it("exposes the parent's transparent balance net of the fee as the max of a token account", async () => {
+    it("exposes a token's transparent balance as its max", async () => {
       const parent = withTransparentBalance(1_000_000);
       const token = makeTokenAccount({ ...parent }, 500_000);
       const account = { ...parent, subAccounts: [token] };
 
-      // The token's spendable balance is its own transparent balance, while the max the bridge
-      // computes follows the native transparent balance.
       expect(await exposedTo(token, account)).toEqual({
         spendableBalance: new BigNumber(500_000),
-        maxSpendable: new BigNumber(1_000_000 - FEE),
+        maxSpendable: new BigNumber(500_000),
       });
     });
 
