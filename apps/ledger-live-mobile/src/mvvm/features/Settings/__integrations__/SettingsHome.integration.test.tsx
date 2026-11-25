@@ -92,3 +92,54 @@ describe("Settings home", () => {
     expect(getNavBarTitle()).toHaveTextContent("Settings");
   });
 });
+
+describe("Settings home developer tools", () => {
+  const isDevBuild = __DEV__;
+  const setDevBuild = (value: boolean) =>
+    Object.defineProperty(global, "__DEV__", { value, configurable: true });
+
+  afterEach(() => {
+    setDevBuild(isDevBuild);
+  });
+
+  function renderSettingsHome({ isDebugUnlocked }: Readonly<{ isDebugUnlocked: boolean }>) {
+    return render(<SettingsNavigator />, {
+      overrideInitialState: withFlagOverrides({ newSettings: { enabled: true } }, state => ({
+        ...state,
+        appstate: { ...state.appstate, debugMenuVisible: isDebugUnlocked },
+      })),
+    });
+  }
+
+  it("shows the Developer and Debug rows in a dev build", async () => {
+    renderSettingsHome({ isDebugUnlocked: false });
+
+    expect(await screen.findByTestId("settings-home-developer")).toBeVisible();
+    expect(screen.getByTestId("settings-home-debug")).toBeVisible();
+  });
+
+  it("hides the Debug row in a release build until the debug menu is unlocked", async () => {
+    setDevBuild(false);
+
+    renderSettingsHome({ isDebugUnlocked: false });
+
+    expect(await screen.findByTestId("settings-home-developer")).toBeVisible();
+    expect(screen.queryByTestId("settings-home-debug")).toBeNull();
+  });
+
+  it("shows the Debug row in a release build once the debug menu is unlocked", async () => {
+    setDevBuild(false);
+
+    renderSettingsHome({ isDebugUnlocked: true });
+
+    expect(await screen.findByTestId("settings-home-debug")).toBeVisible();
+  });
+
+  it("opens the Developer screen from its row", async () => {
+    const { user } = renderSettingsHome({ isDebugUnlocked: false });
+
+    await user.press(await screen.findByTestId("settings-home-developer"));
+
+    expect(await screen.findByText("Custom CAL reference")).toBeVisible();
+  });
+});

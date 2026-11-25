@@ -4,6 +4,7 @@ import { TrackScreen } from "@shared/analytics-react";
 import { HiddenSettingsProvider } from "../../components/HiddenSettingsProvider/HiddenSettingsProvider";
 import type { SettingsHomeSectionId } from "../../logic/settingsHomeSections";
 import { SettingsHome } from "../SettingsHome/SettingsHome";
+import type { SettingsHomeDevTools } from "../SettingsHome/SettingsHomeDevTools";
 import { useSettingsHomeGateViewModel } from "./useSettingsHomeGateViewModel";
 
 export type SettingsHomeGateProps = Readonly<{
@@ -12,6 +13,8 @@ export type SettingsHomeGateProps = Readonly<{
   legacySettings: ReactNode;
   /** Rows the app hides, given to `HiddenSettingsProvider`. */
   rowsToHide: unknown;
+  /** Rows to the developer tools, after the sections. */
+  devTools?: SettingsHomeDevTools;
   testID?: string;
 }>;
 
@@ -20,6 +23,7 @@ export function SettingsHomeGate({
   onSelectSection,
   legacySettings,
   rowsToHide,
+  devTools,
   testID,
 }: SettingsHomeGateProps) {
   const { showLegacySettings } = useSettingsHomeGateViewModel();
@@ -30,7 +34,7 @@ export function SettingsHomeGate({
     <HiddenSettingsProvider rowsToHide={rowsToHide}>
       <TrackScreen category="Settings" />
       <ScrollView>
-        <SettingsHome onSelectSection={onSelectSection} testID={testID} />
+        <SettingsHome onSelectSection={onSelectSection} devTools={devTools} testID={testID} />
       </ScrollView>
     </HiddenSettingsProvider>
   );

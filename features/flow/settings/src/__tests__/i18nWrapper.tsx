@@ -14,6 +14,8 @@ const resources = {
           privacy: "Privacy",
           about: "About",
         },
+        developer: { title: "Developer" },
+        debug: { title: "Debug" },
       },
     },
   },

@@ -27,4 +27,40 @@ describe("SettingsHome", () => {
 
     expect(onSelectSection).toHaveBeenCalledWith("notifications");
   });
+
+  it("shows no developer tool row when the app gives none", () => {
+    render(<SettingsHome onSelectSection={jest.fn()} />, { wrapper: I18nWrapper });
+
+    expect(screen.queryByTestId("settings-home-developer")).toBeNull();
+    expect(screen.queryByTestId("settings-home-debug")).toBeNull();
+  });
+
+  it("shows the Developer row alone when the app does not open Debug", () => {
+    render(<SettingsHome onSelectSection={jest.fn()} devTools={{ onOpenDeveloper: jest.fn() }} />, {
+      wrapper: I18nWrapper,
+    });
+
+    expect(screen.getByText("Developer")).toBeVisible();
+    expect(screen.queryByTestId("settings-home-debug")).toBeNull();
+  });
+
+  it("shows Developer then Debug after the sections and opens the pressed one", async () => {
+    const user = userEvent.setup();
+    const onOpenDeveloper = jest.fn();
+    const onOpenDebug = jest.fn();
+    render(
+      <SettingsHome onSelectSection={jest.fn()} devTools={{ onOpenDeveloper, onOpenDebug }} />,
+      { wrapper: I18nWrapper },
+    );
+
+    expect(
+      screen.getAllByText(/^(About|Developer|Debug)$/).map(node => node.props.children),
+    ).toEqual(["About", "Developer", "Debug"]);
+
+    await user.press(screen.getByTestId("settings-home-developer"));
+    expect(onOpenDeveloper).toHaveBeenCalledTimes(1);
+
+    await user.press(screen.getByTestId("settings-home-debug"));
+    expect(onOpenDebug).toHaveBeenCalledTimes(1);
+  });
 });
