@@ -1,3 +1,4 @@
+import { addPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/pending";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -179,6 +180,101 @@ describe("buildSignOperation", () => {
     });
 
     expect(operation.transactionSequenceNumber).toEqual(pending.transactionSequenceNumber?.plus(1));
+  });
+
+  it("should charge a native send's fee in its value, sent by the party", async () => {
+    const { operation } = await sign(nativeTransaction);
+
+    expect(operation).toMatchObject({
+      accountId: account.id,
+      type: "OUT",
+      value: BigNumber(110),
+      fee: BigNumber(10),
+      senders: [XPUB_PARTY],
+    });
+  });
+
+  describe("of a token send", () => {
+    const subAccountId = `${account.id}+token`;
+    const tokenAccount = {
+      ...account,
+      subAccounts: [{ type: "TokenAccount", id: subAccountId, pendingOperations: [] }],
+    } as unknown as Account;
+    const tokenTransaction = createMockTransaction({
+      tokenId: "USDCx",
+      instrumentAdmin: "issuer",
+      subAccountId,
+    });
+
+    it("should be a CC FEES operation on the parent, with the token's OUT as a sub-operation", async () => {
+      mockedSubmit.mockResolvedValue({ submission_id: "submission", update_id: "update-id" });
+      const signedOperation = await sign(tokenTransaction, { signedAccount: tokenAccount });
+      const operation = await broadcast(createMockContext(config), {
+        account: tokenAccount,
+        signedOperation,
+      });
+
+      expect(operation).toMatchObject({
+        id: encodeOperationId(account.id, "update-id", "FEES"),
+        accountId: account.id,
+        type: "FEES",
+        value: BigNumber(10),
+        fee: BigNumber(10),
+        subOperations: [
+          {
+            id: encodeOperationId(subAccountId, "update-id", "OUT"),
+            hash: "update-id",
+            accountId: subAccountId,
+            type: "OUT",
+            value: BigNumber(100),
+            fee: BigNumber(0),
+            transactionSequenceNumber: operation.transactionSequenceNumber,
+          },
+        ],
+      });
+    });
+
+    const send = async (sender: Account) =>
+      addPendingOperation(
+        sender,
+        (await sign(tokenTransaction, { signedAccount: sender })).operation,
+      );
+
+    it("should be a CC send when the token account is not found and CC is crafted", async () => {
+      const { operation } = await sign(
+        createMockTransaction({ tokenId: config.nativeInstrumentId, subAccountId }),
+      );
+
+      expect(operation).toMatchObject({ type: "OUT", value: BigNumber(110) });
+      expect(operation.subOperations ?? []).toEqual([]);
+    });
+
+    it("should charge the CC fee alone when the account holds no token account for it", async () => {
+      const { operation } = await sign(tokenTransaction);
+
+      expect(operation).toMatchObject({ type: "FEES", value: BigNumber(10), subOperations: [] });
+    });
+
+    it("should number the operation above a pending token operation", async () => {
+      const subPending = { transactionSequenceNumber: BigNumber(Date.now() + 60_000) };
+      const sender = {
+        ...tokenAccount,
+        subAccounts: [{ ...tokenAccount.subAccounts?.[0], pendingOperations: [subPending] }],
+      } as unknown as Account;
+
+      const { operation } = await sign(tokenTransaction, { signedAccount: sender });
+
+      expect(operation.transactionSequenceNumber).toEqual(
+        subPending.transactionSequenceNumber.plus(1),
+      );
+    });
+
+    it("should be pending on the token account, keeping an earlier token send", async () => {
+      const afterSecond = await send(await send(tokenAccount));
+
+      expect(afterSecond.pendingOperations).toHaveLength(2);
+      expect(afterSecond.subAccounts?.[0].pendingOperations).toHaveLength(2);
+    });
   });
 
   it("should fail the broadcast when the gateway returns no update id", async () => {

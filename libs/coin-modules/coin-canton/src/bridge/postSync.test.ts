@@ -87,16 +87,17 @@ describe("postSync", () => {
   });
 });
 
+const send = (base: Account, hash: string) =>
+  addPendingOperation(
+    base,
+    operation(hash, { transactionSequenceNumber: nextPendingSequenceNumber(base) }),
+  );
+
 describe("nextPendingSequenceNumber", () => {
   afterEach(() => jest.useRealTimers());
 
   it("keeps the earlier pending operation of two sends in the same millisecond", () => {
     jest.useFakeTimers({ now: 1_000 });
-    const send = (base: Account, hash: string) =>
-      addPendingOperation(
-        base,
-        operation(hash, { transactionSequenceNumber: nextPendingSequenceNumber(base) }),
-      );
 
     const afterSecond = send(send(account({}), "first"), "second");
 

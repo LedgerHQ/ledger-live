@@ -233,6 +233,18 @@ const storedOperation = (height: number, value = 1) =>
     extra: { instrumentId: "Amulet" },
   }) as unknown as CantonAccount["operations"][number];
 
+const failed = (row: OperationInfo): OperationInfo => ({ ...row, status: "Failed" });
+
+const pendingOperation = (hash: string, sequence: number) =>
+  ({
+    ...storedOperation(sequence),
+    id: `pending-${hash}`,
+    hash,
+    senders: ["party123"],
+    date: new Date(),
+    transactionSequenceNumber: BigNumber(sequence),
+  }) as CantonAccount["operations"][number];
+
 const readFrom = () => mockedGetOperations.mock.calls.map(([, , options]) => options);
 
 const syncFrom = (initialAccount: Partial<CantonAccount>) =>
@@ -363,6 +375,11 @@ describe("makeGetAccountShape", () => {
   };
   const sync = () =>
     makeGetAccountShape(fakeSignerContext, fakeContext)(defaultInfo, { paginationConfig: {} });
+  const syncRows = (rows: OperationInfo[]) => {
+    mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+    mockedGetOperations.mockResolvedValue({ operations: rows });
+    return sync();
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -487,12 +504,6 @@ describe("makeGetAccountShape", () => {
   });
 
   describe("a failed transaction", () => {
-    const syncRows = (rows: OperationInfo[]) => {
-      mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
-      mockedGetOperations.mockResolvedValue({ operations: rows });
-      return sync();
-    };
-
     it("is a failed send whose value is its fee only", async () => {
       const shape = await syncRows([{ ...createMockOperationView(), status: "Failed" }]);
 
@@ -1167,8 +1178,6 @@ describe("makeGetAccountShape", () => {
       });
 
       describe("of a failed transaction", () => {
-        const failed = (row: OperationInfo): OperationInfo => ({ ...row, status: "Failed" });
-
         it("flags the token send and its CC fee failed, the token moving nothing", async () => {
           mockedGetOperations.mockResolvedValue({
             operations: [failed(tokenOperationView(usdcxInstrument, "token-tx"))],
@@ -2347,18 +2356,11 @@ describe("makeGetAccountShape", () => {
       });
 
       it("removes a pending operation once its transaction is synced, keeping the others", async () => {
-        const pending = (hash: string, sequence: number) =>
-          ({
-            ...storedOperation(sequence),
-            id: `pending-${hash}`,
-            hash,
-            senders: ["party123"],
-            date: new Date(),
-            transactionSequenceNumber: BigNumber(sequence),
-          }) as CantonAccount["operations"][number];
-
         const account = await syncAccount(SYNC_HASH, {
-          pendingOperations: [pending("later", Date.now() + 1), pending("fresh", Date.now())],
+          pendingOperations: [
+            pendingOperation("later", Date.now() + 1),
+            pendingOperation("fresh", Date.now()),
+          ],
         });
 
         expect(account.pendingOperations.map(op => op.hash)).toEqual(["later"]);
