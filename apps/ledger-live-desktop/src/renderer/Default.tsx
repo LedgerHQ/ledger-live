@@ -26,6 +26,7 @@ import Page from "LLD/components/Page";
 import NightlyLayer from "LLD/components/NightlyLayer";
 import { isFullscreenOverlayRoute, isWallet40Page } from "LLD/components/Page/utils";
 import { useIsAccountDetailPage } from "LLD/features/AccountDetail/hooks/useIsAccountDetailPage";
+import { useIsNewSettingsPage } from "LLD/features/Settings/hooks/useIsNewSettingsPage";
 import AnalyticsConsole from "~/renderer/components/AnalyticsConsole";
 import ThemeConsole from "~/renderer/components/ThemeConsole";
 import DebugMock from "~/renderer/components/debug/DebugMock";
@@ -81,6 +82,7 @@ import {
   preloadBackgrounds,
 } from "LLD/components/Page/backgrounds";
 import { SettingsRoute } from "LLD/features/Settings";
+import { SETTINGS_ROUTE_PATH } from "LLD/features/Settings/routes";
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const PortfolioPage = lazy(() => import("LLD/features/Portfolio/screens/PortfolioPage"));
 const Settings = lazy(() => import("~/renderer/screens/settings"));
@@ -215,7 +217,7 @@ function MainAppContent() {
             <Routes>
               <Route path="/" element={withSuspense(PortfolioPage)({})} />
               <Route
-                path="/settings/*"
+                path={SETTINGS_ROUTE_PATH}
                 element={<SettingsRoute legacySettings={withSuspense(Settings)({})} />}
               />
               <Route path="/devtools" element={withSuspense(DevToolsScreen)({})} />
@@ -268,7 +270,8 @@ export const MainAppLayout = () => {
   const backgroundImage = getPageBackground(pathname, theme);
 
   const isAccountDetailPage = useIsAccountDetailPage(pathname);
-  const useWallet40Layout = isAccountDetailPage || isWallet40Page(pathname);
+  const isNewSettingsPage = useIsNewSettingsPage(pathname);
+  const useWallet40Layout = isAccountDetailPage || isNewSettingsPage || isWallet40Page(pathname);
 
   useEffect(() => {
     preloadBackgrounds();
@@ -495,7 +498,7 @@ export default function Default() {
                     ) : (
                       <>
                         <Route
-                          path="/settings/*"
+                          path={SETTINGS_ROUTE_PATH}
                           element={withSuspense(WelcomeScreenSettings)({})}
                         />
                         <Route
