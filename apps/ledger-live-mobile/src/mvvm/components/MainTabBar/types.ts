@@ -1,5 +1,5 @@
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import type { TabBarItemProps } from "@ledgerhq/lumen-ui-rnative";
+import type { TabBarItemProps, TabBarProps } from "@ledgerhq/lumen-ui-rnative";
 
 export type TabItemConfig = Pick<
   TabBarItemProps,
@@ -9,7 +9,8 @@ export type TabItemConfig = Pick<
 export interface MainTabBarViewProps {
   readonly activeRouteName: string;
   readonly tabItems: readonly TabItemConfig[];
-  readonly isCompact: boolean;
+  readonly hasManyTabs: boolean;
+  readonly density: NonNullable<TabBarProps["density"]>;
   readonly onTabPress: (value: string) => void;
   readonly hideTabBar: boolean;
   readonly bottomInset: number;

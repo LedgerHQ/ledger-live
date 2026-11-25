@@ -1,10 +1,11 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { render, screen } from "@tests/test-renderer";
+import { act, render, screen } from "@tests/test-renderer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigatorName } from "~/const";
 import * as stakeLabelHelpers from "~/helpers/getStakeLabelLocaleBased";
 import { MainTabBar } from "../index";
+import { resetTabBarDensity, setTabBarCompact } from "../tabBarDensityStore";
 import type { MainTabBarProps } from "../types";
 
 jest.mock("~/helpers/getStakeLabelLocaleBased", () => ({
@@ -30,6 +31,15 @@ const EarnScreen = () => <StubScreen label="Earn Content" />;
 const CardScreen = () => <StubScreen label="Card Content" />;
 const AgentsScreen = () => <StubScreen label="Agents Content" />;
 
+function getTabLabelContainer(label: string) {
+  let node = screen.getByText(label).parent;
+  while (node && !("jestAnimatedStyle" in node.props)) {
+    node = node.parent;
+  }
+  if (!node) throw new Error(`No animated container for the "${label}" tab label`);
+  return node;
+}
+
 function TestNavigator({ withAgentsTab = false }: { readonly withAgentsTab?: boolean }) {
   return (
     <Tab.Navigator
@@ -48,6 +58,10 @@ function TestNavigator({ withAgentsTab = false }: { readonly withAgentsTab?: boo
 }
 
 describe("MainTabBar Integration", () => {
+  afterEach(() => {
+    resetTabBarDensity();
+  });
+
   it("should render all tab labels", () => {
     render(<TestNavigator />);
 
@@ -115,5 +129,40 @@ describe("MainTabBar Integration", () => {
     await user.press(screen.getByRole("tab", { name: "Agents" }));
 
     expect(screen.getByText("Agents Content")).toBeVisible();
+  });
+
+  describe("scroll density", () => {
+    it("should hide the tab labels when a scroll compacts the tab bar", () => {
+      render(<TestNavigator />);
+
+      act(() => setTabBarCompact(true));
+      act(() => jest.runAllTimers());
+
+      expect(getTabLabelContainer("Home")).toHaveAnimatedStyle({ opacity: 0 });
+      expect(screen.getByRole("tab", { name: "Home" })).toBeVisible();
+    });
+
+    it("should navigate and expand when a tab is pressed while compact", async () => {
+      const { user } = render(<TestNavigator />);
+      act(() => setTabBarCompact(true));
+      act(() => jest.runAllTimers());
+
+      await user.press(screen.getByRole("tab", { name: "Earn" }));
+      act(() => jest.runAllTimers());
+
+      expect(screen.getByText("Earn Content")).toBeVisible();
+      expect(getTabLabelContainer("Home")).toHaveAnimatedStyle({ opacity: 1 });
+    });
+
+    it("should expand when the active tab is pressed again", async () => {
+      const { user } = render(<TestNavigator />);
+      act(() => setTabBarCompact(true));
+      act(() => jest.runAllTimers());
+
+      await user.press(screen.getByRole("tab", { name: "Home" }));
+      act(() => jest.runAllTimers());
+
+      expect(getTabLabelContainer("Home")).toHaveAnimatedStyle({ opacity: 1 });
+    });
   });
 });

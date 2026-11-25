@@ -17,6 +17,7 @@ import { DefaultAccountSwapParamList } from "../types";
 import { useSwapWallet40HeaderStateUpdater } from "./navigationHandlers/wallet40/useSwapWallet40HeaderState";
 import { useSwapAndroidHardwareBackPress } from "./navigationHandlers/useSwapAndroidHardwareBackPress";
 import { Wallet40Background } from "LLM/components/Wallet40Background";
+import { useTabBarDensityScrollHandler } from "LLM/components/MainTabBar/useTabBarDensityScrollHandler";
 
 type SwapWebviewContentProps = {
   manifest: LiveAppManifest;
@@ -34,6 +35,7 @@ function SwapWebviewContent({
   resetWebview,
 }: Readonly<SwapWebviewContentProps>) {
   const { customHandlers, inputs } = useSwapWebviewProps({ manifest, params, resetWebview });
+  const updateTabBarDensity = useTabBarDensityScrollHandler();
 
   return (
     <Web3AppWebview
@@ -41,6 +43,7 @@ function SwapWebviewContent({
       manifest={manifest}
       customHandlers={customHandlers}
       onStateChange={setWebviewState}
+      onScroll={updateTabBarDensity}
       inputs={inputs}
     />
   );

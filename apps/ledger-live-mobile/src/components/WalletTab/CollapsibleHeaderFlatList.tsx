@@ -25,7 +25,7 @@ function CollapsibleHeaderFlatList<T>({
 }: CollapsibleHeaderFlatListProps<T>) {
   // Outside the Wallet tab (e.g. Market), the list has no tab chrome to clear and no scroll to share.
   const { scrollY } = useWalletNavScrollContext();
-  const { onScroll } = useScrollOffset(scrollY);
+  const { onScroll } = useScrollOffset(scrollY, { drivesTabBarDensity: true });
   const isInWalletTab = scrollY !== undefined;
   const headerHeight = isInWalletTab ? WALLET_TAB_HEADER_HEIGHT : 0;
   const tabBarHeight = isInWalletTab ? WALLET_TAB_BAR_HEIGHT : 0;

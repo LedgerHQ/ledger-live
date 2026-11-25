@@ -51,7 +51,7 @@ export function PayTabView({
   trackRecipientAddressSelection,
   disclaimer,
 }: PayTabViewProps) {
-  const { scrollY, onScroll } = useScrollOffset();
+  const { scrollY, onScroll } = useScrollOffset(undefined, { drivesTabBarDensity: true });
 
   return (
     <Box lx={{ flex: 1 }}>
