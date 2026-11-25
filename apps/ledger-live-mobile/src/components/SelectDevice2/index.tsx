@@ -3,7 +3,6 @@ import { TrackScreen } from "@shared/analytics-react";
 import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { Platform, View } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import Config from "react-native-config";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-navigation/native";
@@ -53,8 +52,7 @@ import {
 } from "~/reducers/settings";
 import { useAutoSelectDevice } from "./useAutoSelectDevice";
 import { DeviceLockedCheckDrawer } from "./DeviceLockedCheckDrawer";
-import { useMockBleDevicesScanning } from "~/transport/bleTransport/useMockBle";
-import { useMockHidDevicesDiscovery } from "~/transport/useMockHidDiscovery";
+import { areRealBleAndUsbDisabled } from "~/transport/areRealBleAndUsbDisabled";
 import { makeMockDiscoveredDevice } from "~/transport/mockDiscoveredDevice";
 import {
   mapScannedDeviceToDisplayedAvailableDevice,
@@ -165,21 +163,12 @@ export default function SelectDevice({
 
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep | null>(null);
 
-  /**
-   * FIXME: Swapping between mock and real hooks is not ideal.
-   * This is a temporary workaround to keep e2e tests working until transport-level mocking is implemented
-   * directly with the DMK, which will allow real hooks to work transparently with mocked transports.
-   * Previously it was working because the discovery mocks were done directly inside the legacy HID and BLE transports.
-   * We have to progressively remove those legacy transports, hence this temporary workaround.
-   */
-  const isMockMode = Boolean(Config.MOCK || Config.DETOX);
+  const isRealBleAndUsbDisabled = areRealBleAndUsbDisabled();
   const mockServerConfig = useSelector(mockServerConfigSelector);
   const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
   const mockServerDevices = useMockServerDevicesDiscovery(isFocused ? mockServerConfig : null);
 
-  const mockHidState = useMockHidDevicesDiscovery(isMockMode && !isMockServerEnabled);
-  const realHidState = useHidDevicesDiscovery(!isMockMode && !isMockServerEnabled);
-  const { hidDevices } = isMockMode ? mockHidState : realHidState;
+  const { hidDevices } = useHidDevicesDiscovery(!isRealBleAndUsbDisabled && !isMockServerEnabled);
 
   const scanningEnabled =
     isFocused &&
@@ -188,10 +177,7 @@ export default function SelectDevice({
     pairingFlowStep !== "pairing" &&
     !deviceToCheckLockedStatus;
 
-  const mockScanningState = useMockBleDevicesScanning(isMockMode && scanningEnabled);
-  const realScanningState = useBleDevicesScanning(!isMockMode && scanningEnabled);
-
-  const bleScanningState = isMockMode ? mockScanningState : realScanningState;
+  const bleScanningState = useBleDevicesScanning(!isRealBleAndUsbDisabled && scanningEnabled);
 
   const scannedDevices = bleScanningState.scannedDevices;
 

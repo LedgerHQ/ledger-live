@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { Observable, Subscription } from "rxjs";
+import { Observable } from "rxjs";
 import { NativeModules, Platform } from "react-native";
-import Config from "react-native-config";
 import getBLETransport from "~/transport/bleTransport";
+import { areRealBleAndUsbDisabled } from "~/transport/areRealBleAndUsbDisabled";
 
 const { BluetoothHelperModule } = NativeModules;
 
@@ -98,7 +98,7 @@ export function useEnableBluetooth(
   const checkAndRequestAgain = useCallback(async () => {
     // Early return when mocking, because when running LLM in an iOS simulator
     // prompting the user to enable bluetooth services will randomly crash the app
-    if (!isHookEnabled || Config.MOCK || Config.DETOX) return;
+    if (!isHookEnabled || areRealBleAndUsbDisabled()) return;
 
     // We actually can't do anything with the result, as on iOS it will always be BLE_UNKNOWN_STATE
     await promptBluetoothCallback();
@@ -116,18 +116,17 @@ export function useEnableBluetooth(
   // so it would emit events on bluetooth services changes
   // Observes the bluetooth state (if powered on or not)
   useEffect(() => {
-    let sub: null | Subscription;
-
-    if (isHookEnabled) {
-      sub = new Observable(getBLETransport().observeState).subscribe({
-        next: ({ type }: { type: string }) => setObservedTransportState(type),
-      });
+    if (!isHookEnabled) return;
+    // Without real Bluetooth, no Bluetooth requirement must block the mock and e2e builds.
+    if (areRealBleAndUsbDisabled()) {
+      setObservedTransportState("PoweredOn");
+      return;
     }
-    return () => {
-      if (sub) {
-        sub.unsubscribe();
-      }
-    };
+
+    const sub = new Observable(getBLETransport().observeState).subscribe({
+      next: ({ type }: { type: string }) => setObservedTransportState(type),
+    });
+    return () => sub.unsubscribe();
   }, [isHookEnabled]);
 
   let bluetoothServicesState: BluetoothServicesState = "disabled";
