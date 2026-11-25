@@ -20,6 +20,7 @@ A child workflow or action on develop can only rely on what exists on **every** 
 
 - ❌ A new step running `pnpm <new-script>`, `nx run <new-project>:<target>` or a new file path. It fails on release/hotfix, where the script or project doesn't exist yet.
 - ❌ A new **required** input on a reusable workflow. Older root workflows don't pass it.
+- ❌ A root workflow passing an input that develop's child does not declare yet, even an optional one. GitHub checks the call against the `@develop` child and rejects the whole root workflow ("Invalid workflow file … is not defined in the referenced workflow"), so every PR check stops. actionlint and a scratch-branch dispatch read your branch's child, so neither catches it.
 - ❌ Removing or renaming an input or output. Older callers still pass or read it.
 - ❌ Changing a composite action's inputs in a way older callers can't satisfy.
 
@@ -31,6 +32,7 @@ Release and hotfix pipelines are the worst place to find this out.
 - Guard steps on presence, e.g. `if: hashFiles('path/to/new/config') != ''`, or check in the script before running it.
 - Give new inputs a `default` and keep them optional. Deprecate inputs before removing them, and remove them only after release and hotfix have caught up.
 - To make a new check mandatory everywhere, land the code first, then wire it into the root workflow (which runs at the commit) rather than the `@develop` child. Or wait until the change has reached `main` before you make the child depend on it.
+- To pass a new input from a root workflow, use two PRs. First add the input to the child, optional with a default. Then pass it from the root once the child is on develop.
 - Composite actions are local to the repo, but `@develop` pins them the same way, so the same rules apply.
 
 ### Clean up guards and deprecations
@@ -48,6 +50,7 @@ release, hotfix and main have the change. When you add one:
 
 - [ ] Every command the changed child runs exists on `release` and `main` today (`git show origin/release:package.json`, `git ls-tree origin/main -- <path>`)
 - [ ] New inputs are optional with defaults, and no inputs or outputs were removed
+- [ ] Every `with:` key a changed root workflow passes to a `@develop` child is declared under develop's `workflow_call` (`git show origin/develop:.github/workflows/<child>.yml | sed -n '/^  workflow_call:/,/^[a-z]/p' | grep -n '^      <input>:'`)
 - [ ] Any guard you rely on is explained in a short comment at the step
 - [ ] Each guard or deprecated input has a cleanup ticket, and its key is in the comment at the step
 
