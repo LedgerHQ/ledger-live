@@ -1,18 +1,5 @@
 import React from "react";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardContentDescription,
-  CardContentTitle,
-  CardHeader,
-  CardLeading,
-  CardTrailing,
-  Spinner,
-  Stepper,
-} from "@ledgerhq/lumen-ui-rnative";
-import { CheckmarkCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glow } from "@shared/ui-glow/native";
@@ -22,28 +9,16 @@ import { ChecksDrawers } from "LLM/features/DeviceOnboarding/components/ChecksDr
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { setupTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import { SetupInfo } from "@features/flow-device-onboarding-setup-info";
+import { SetupStepper } from "@features/flow-device-onboarding-setup-stage";
 import { ReconnectSheet } from "@features/flow-device-onboarding-reconnect";
 import { UpdateOfferSheets } from "@features/flow-device-onboarding-update-offer";
-import type { SetupStageStatus, SetupViewProps } from "./useSetupScreenViewModel";
-
-function StageStatus({ status }: Readonly<{ status: SetupStageStatus }>) {
-  if (status === "loading") return <Spinner size={20} testID={setupTestIds.stageLoading} />;
-  if (status === "success") {
-    return <CheckmarkCircleFill size={20} color="success" testID={setupTestIds.stageSuccess} />;
-  }
-  return null;
-}
+import type { SetupViewProps } from "./useSetupScreenViewModel";
 
 export function SetupView({
   deviceModelId,
   deviceName,
   title,
-  stageTitle,
-  stageDescription,
-  currentStep,
-  completedSteps,
-  totalSteps,
-  status,
+  stepper,
   closeLabel,
   onAskLeave,
   startLabel,
@@ -114,26 +89,7 @@ export function SetupView({
           suspendSheets={suspendInfoSheet}
           reportsRecoveryKey={reportsRecoveryKey}
         />
-        <Card type="info" testID={setupTestIds.stepper}>
-          <CardHeader>
-            <CardLeading>
-              <Stepper
-                currentStep={completedSteps}
-                totalSteps={totalSteps}
-                label={`${currentStep}/${totalSteps}`}
-              />
-              <CardContent>
-                <CardContentTitle>{stageTitle}</CardContentTitle>
-                {stageDescription ? (
-                  <CardContentDescription>{stageDescription}</CardContentDescription>
-                ) : null}
-              </CardContent>
-            </CardLeading>
-            <CardTrailing>
-              <StageStatus status={status} />
-            </CardTrailing>
-          </CardHeader>
-        </Card>
+        <SetupStepper {...stepper} />
       </Box>
       <ChecksDrawers
         testIds={setupTestIds}

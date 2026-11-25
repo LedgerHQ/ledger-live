@@ -20,6 +20,7 @@ import {
   isFirmwareUpdateDelegated,
   isHeldBackUpdatePending,
   SeedPath,
+  updateWaitsForSeed,
   type DeviceOnboardingContext,
   type DeviceOnboardingExitReason,
 } from "@features/platform-device-onboarding";
@@ -105,7 +106,13 @@ export type DeviceOnboardingFunnelModel = (
       powerOnSheet: PowerOnSheetModel | null;
       reconnectSheet: ReconnectSheetProps | null;
     }
-  | { status: "setup"; setup: SetupScreenProps; unlockSheet: DeviceUnlockSheetProps | null }
+  | {
+      status: "setup";
+      setup: SetupScreenProps;
+      unlockSheet: DeviceUnlockSheetProps | null;
+      powerOnSheet: PowerOnSheetModel | null;
+      reconnectSheet: ReconnectSheetProps | null;
+    }
   | {
       status: "recoverRestore";
       recoverRestore: RecoverRestoreScreenProps;
@@ -373,11 +380,36 @@ function checksQuit(actions: ScreenActions): () => void {
   return actions.leaveFromHeader;
 }
 
+/**
+ * Leaving the wait for the updated device stops the reconnect, as on the checks screen. Otherwise,
+ * mid-setup, leaving asks first; once only the held-back update is left, the update handover has its
+ * own way out.
+ */
+function setupQuit(
+  actions: Readonly<{
+    confirmsQuit: boolean;
+    liveState: string | null;
+    state: string | null;
+    requestQuit: () => void;
+    leaveFirmwareReconnect: () => void;
+    closeFirmwareHandover: () => void;
+    quitMachine: () => void;
+  }>,
+): () => void {
+  // The update reboots the device and drops its genuine verdict: the wait still has its own way out.
+  if (actions.liveState === awaitingSessionAfterFirmwareUpdateState) {
+    return actions.leaveFirmwareReconnect;
+  }
+  if (actions.confirmsQuit) return actions.requestQuit;
+  if (isFirmwareUpdateDelegated(actions.state)) return actions.closeFirmwareHandover;
+  return actions.quitMachine;
+}
+
 function genuineCheckCompleted(context: DeviceOnboardingSession["context"]): boolean {
   return context?.verdictMatchesSession === true;
 }
 
-/** When leaving asks first, and whether the held-back update still keeps the checks screen. */
+/** When leaving asks first, and whether the held-back update still waits for an answer. */
 function leaveRules(
   flat: DeviceOnboardingSession["context"],
   machine: NonNullable<DeviceOnboardingSession["snapshot"]>["context"] | undefined,
@@ -447,7 +479,8 @@ function checksWhileDeviceOff(
   built: DeviceOnboardingFunnelModel,
   { active, device, quitConfirmationOpen, onQuit, onRetry }: DeviceOffOverlay,
 ): DeviceOnboardingFunnelModel {
-  if (!active || built.status !== "checks") return built;
+  // The OS check held back until setup shows on Setup: it recovers like the checks screen.
+  if (!active || (built.status !== "checks" && built.status !== "setup")) return built;
   if (onRetry) {
     return {
       ...built,
@@ -952,7 +985,9 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     machineState: shownState,
     liveMachineState: machineState,
     onboardedOnEntry,
-    heldBackUpdatePending,
+    updateAfterSetup: holdsUpdateUntilSetup(onboarding.snapshot?.context),
+    seeded: onboarding.snapshot?.context.isOnboarded === true,
+    funnelRecoversDrop: deviceOffDuringChecks,
     currentStep: onboarding.context?.currentOnboardingStep ?? null,
     seedPath,
     pastRecover,
@@ -975,7 +1010,15 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     suspendSheets,
     reconnect: reconnectToLiveDevice,
     send,
-    onQuit: requestQuit,
+    onQuit: setupQuit({
+      confirmsQuit,
+      liveState: machineState,
+      state: onboarding.state,
+      requestQuit,
+      leaveFirmwareReconnect,
+      closeFirmwareHandover,
+      quitMachine,
+    }),
   });
   dismissRestoreRef.current = restoreDismiss(unseededSetup);
 
@@ -1101,6 +1144,8 @@ function screenForUnseeded(
       setup: flow.setup,
       quitConfirmation: actions.quitConfirmation,
       unlockSheet: null,
+      powerOnSheet: null,
+      reconnectSheet: null,
     };
   }
   if (flow?.status === "recoverNewSeed") {
@@ -1127,6 +1172,20 @@ function screenForUnseeded(
     };
   }
   return null;
+}
+
+/** An unseeded Nano whose OS can only update once it is seeded. */
+function holdsUpdateUntilSetup(
+  context: NonNullable<DeviceOnboardingSession["snapshot"]>["context"] | undefined,
+): boolean {
+  if (!context) return false;
+  if (context.updateAfterSetup) return true;
+  if (context.firmwareVersion === null || context.onboardedOnEntry !== false) return false;
+  return updateWaitsForSeed({
+    currentVersion: context.firmwareVersion,
+    deviceModelId: context.deviceModelId,
+    isOnboarded: false,
+  });
 }
 
 function readString(value: unknown): string | null {

@@ -2862,6 +2862,15 @@
         "successDescription": "Your device is genuine and safe to use",
         "notUpToDateDescription": "Your device is not up-to-date"
       },
+      "genuine": {
+        "title": "Ledger Genuine Check",
+        "description": "Confirming Ledger OS is safe to use.",
+        "successDescription": "Ledger OS is genuine and safe to use."
+      },
+      "osCheck": {
+        "title": "Ledger OS version check",
+        "description": "Checking..."
+      },
       "naming": {
         "title": "Device name",
         "description": "Give your {{productName}} a unique name"
@@ -2871,7 +2880,7 @@
         "description": "It prevents unwanted access"
       },
       "setupChoice": {
-        "title": "Setup choice"
+        "title": "Set up choice"
       },
       "security": {
         "title": "Security setup",
@@ -2884,13 +2893,19 @@
       },
       "info": {
         "cards": {
-          "setupChoice": "Which setup method?",
+          "setupChoice": "Set up or restore?",
+          "pin": "Your Ledger signer’s PIN Code: Explained",
           "recoveryPhrase": "What’s a Secret Recovery Phrase?",
           "restoreChoice": "Choose a backup to restore from",
           "recoveryKey": "What’s a Recovery Key?",
           "restoreRecoveryKey": "What’s a Secret Recovery Key?"
         },
         "faq": "View complete FAQ",
+        "pin": {
+          "title": "Your Ledger signer’s PIN Code: Explained",
+          "description": "Your PIN code is the first layer of security on your Ledger signer. You can’t sign a transaction on a Ledger signer without it. You can’t even update the signer’s firmware.",
+          "lostSigner": "If you lose your Ledger signer, it’s stolen, or otherwise falls into the wrong hands, you don’t have to worry. Without your PIN code, nobody can access your signer. Moreover, if they try to guess your PIN code, your signer will factory reset after three incorrect attempts."
+        },
         "setupChoice": {
           "title": "Set up or restore?",
           "newDevice": {
@@ -2941,13 +2956,13 @@
         }
       },
       "updateOffer": {
-        "title": "Update OS™ to unlock full functionality",
+        "title": "Ledger OS update is ready",
         "versions": "OS {{current}} → OS {{available}}",
-        "description": "Get access to transaction check and the latest device features.",
+        "description": "A quick update gives you the latest security improvements, new features, and a smoother experience.",
         "updateCta": "Update Ledger OS™",
         "skip": {
-          "title": "Skip this update?",
-          "description": "You’ll miss the latest fixes and features for your Ledger device.",
+          "title": "Skip this Ledger OS update?",
+          "description": "Without this update, you won’t benefit from the latest security fixes and improvements.",
           "updateCta": "Update now",
           "skipCta": "Skip anyway"
         }

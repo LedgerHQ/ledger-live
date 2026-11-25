@@ -1,5 +1,6 @@
 export type SetupInfoCard =
   | "setupChoice"
+  | "pin"
   | "recoveryPhrase"
   | "restoreChoice"
   | "recoveryKey"

@@ -8,7 +8,7 @@ device OS is out of date.
 
 ## Exports
 
-- `UpdateOfferSheets`: the "Update OS™ to unlock full functionality" sheet and the "Skip this
+- `UpdateOfferSheets`: the "Ledger OS update is ready" sheet and the "Skip this Ledger OS
   update?" confirmation.
   - The offer's close button opens the confirmation.
   - **Update now** calls `onUpdate`.

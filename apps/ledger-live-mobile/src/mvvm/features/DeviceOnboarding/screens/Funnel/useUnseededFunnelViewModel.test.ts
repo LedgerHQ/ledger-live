@@ -36,6 +36,11 @@ function input(machineState: string): UnseededFunnelInput {
   };
 }
 
+function setupOf(model: ReturnType<typeof useUnseededFunnelViewModel>) {
+  if (model?.status !== "setup") throw new Error(`expected setup, got ${model?.status}`);
+  return model.setup;
+}
+
 describe("useUnseededFunnelViewModel", () => {
   it("should show Recover restore while the device is on that step", () => {
     const { result } = renderHook(() =>
@@ -71,5 +76,111 @@ describe("useUnseededFunnelViewModel", () => {
     machineState = "deviceSetup.restoreRecover";
     rerender(undefined);
     expect(result.current?.status).toBe("recoverRestore");
+  });
+
+  describe("on a Nano that updates its OS after setup", () => {
+    const nanoX = {
+      ...device,
+      deviceName: "Ledger Nano X",
+      modelId: DeviceModelId.nanoX,
+    } as Device;
+
+    function nanoInput(
+      machineState: string,
+      overrides: Partial<UnseededFunnelInput> = {},
+    ): UnseededFunnelInput {
+      return {
+        ...input(machineState),
+        device: nanoX,
+        currentStep: null,
+        firmwareVersion: "2.4.0",
+        updateAfterSetup: true,
+        seeded: false,
+        ...overrides,
+      };
+    }
+
+    it("should show the genuine check as the first of five steps", () => {
+      const { result } = renderHook(() =>
+        useUnseededFunnelViewModel(nanoInput("checks.genuineCheck.running")),
+      );
+
+      expect(setupOf(result.current).stage).toMatchObject({ kind: "genuine", index: 0, total: 5 });
+    });
+
+    it("should show the held-back OS check as the fifth step once seeded", () => {
+      const { result } = renderHook(() =>
+        useUnseededFunnelViewModel(
+          nanoInput("postSetupFirmware.firmwareUpdateOffered", {
+            seeded: true,
+            availableFirmwareVersion: "2.8.0",
+          }),
+        ),
+      );
+
+      const setup = setupOf(result.current);
+      expect(setup.stage).toMatchObject({ kind: "osCheck", index: 4, total: 5 });
+      expect(setup.checks).toMatchObject({
+        state: "updating",
+        update: { current: "2.4.0", available: "2.8.0" },
+      });
+    });
+
+    it("should keep five steps after the update moved the OS out of the held-back range", () => {
+      let overrides: Partial<UnseededFunnelInput> = { seeded: true };
+      const { result, rerender } = renderHook(() =>
+        useUnseededFunnelViewModel(nanoInput("postSetupFirmware.firmwareCheck", overrides)),
+      );
+
+      overrides = { seeded: true, updateAfterSetup: false, firmwareVersion: "2.8.0" };
+      rerender(undefined);
+
+      expect(setupOf(result.current).stage).toMatchObject({ kind: "osCheck", index: 4, total: 5 });
+    });
+
+    it("should keep the OS check while the updated device reboots and reconnects", () => {
+      let machineState = "postSetupFirmware.firmwareUpdateDelegated";
+      const { result, rerender } = renderHook(() =>
+        useUnseededFunnelViewModel(nanoInput(machineState, { seeded: true })),
+      );
+
+      for (const state of ["awaitingSessionAfterFirmwareUpdate", "readingState", "routing"]) {
+        machineState = state;
+        rerender(undefined);
+        expect(setupOf(result.current).stage).toMatchObject({ kind: "osCheck", index: 4 });
+      }
+    });
+
+    it("should not hold a stage while a touchscreen waits for its updated device", () => {
+      const { result } = renderHook(() =>
+        useUnseededFunnelViewModel({
+          ...input("awaitingSessionAfterFirmwareUpdate"),
+          seeded: true,
+        }),
+      );
+
+      expect(result.current).toBeNull();
+    });
+
+    it("should skip a failed OS check after setup", () => {
+      const send = jest.fn();
+      const { result } = renderHook(() =>
+        useUnseededFunnelViewModel(
+          nanoInput("postSetupFirmware.firmwareCheckFailed", { seeded: true, send }),
+        ),
+      );
+
+      setupOf(result.current).checks?.onSkipFirmwareCheck?.();
+
+      expect(send).toHaveBeenCalledWith({ type: "SKIP" });
+    });
+
+    it("should not offer to skip a failed check before setup", () => {
+      const { result } = renderHook(() =>
+        useUnseededFunnelViewModel(nanoInput("checks.firmwareCheckFailed")),
+      );
+
+      expect(setupOf(result.current).checks?.onSkipFirmwareCheck).toBeUndefined();
+    });
   });
 });
