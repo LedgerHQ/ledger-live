@@ -492,7 +492,7 @@ jobs:
       - name: Cache Android build A
         if: ${{ needs.restore-cache.outputs.android_save_a == 'true' && needs.build-android.result == 'success' && steps.profile.outputs.cache-profile == 'develop' }}
         continue-on-error: true
-        timeout-minutes: 25
+        timeout-minutes: 10
         uses: ./e2e/tooling/startup-perf/ci/actions/save
         with:
           key: ${{ needs.restore-cache.outputs.android_a_key }}
@@ -503,7 +503,7 @@ jobs:
       - name: Cache iOS build A
         if: ${{ needs.restore-cache.outputs.ios_save_a == 'true' && needs.build-ios.result == 'success' && steps.profile.outputs.cache-profile == 'develop' }}
         continue-on-error: true
-        timeout-minutes: 25
+        timeout-minutes: 10
         uses: ./e2e/tooling/startup-perf/ci/actions/save
         with:
           key: ${{ needs.restore-cache.outputs.ios_a_key }}

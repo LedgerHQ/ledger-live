@@ -8,7 +8,8 @@ set -euo pipefail
 record() {
   local file=$1
   {
-    echo "os: $(uname -sm) $(sw_vers -productVersion 2> /dev/null || true)"
+    # macOS's major.minor: a pool's hosts may differ by a patch release, and Xcode has its own line.
+    echo "os: $(uname -sm) $(sw_vers -productVersion 2> /dev/null | cut -d. -f1,2 || true)"
     if [[ -n "${ImageOS:-}${ImageVersion:-}" ]]; then echo "image: ${ImageOS:-} ${ImageVersion:-}"; fi
     if command -v xcodebuild > /dev/null; then echo "xcode: $(xcodebuild -version | paste -sd ' ' -)"; fi
     local java
