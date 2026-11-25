@@ -11,7 +11,6 @@ export enum MarketDataTags {
   ChartData = "ChartData",
   ChartCounterCurrencies = "ChartCounterCurrencies",
   GlobalData = "GlobalData",
-  TrendingCategories = "TrendingCategories",
   TrendingPerformers = "TrendingPerformers",
   MarketList = "MarketList",
 }
@@ -67,16 +66,6 @@ export interface GlobalMarketData {
   // 24h change expressed as a percentage (e.g. -1.71), ready for display.
   changePercentage24h: number;
 }
-
-// Raw /v3/categories/trending response: a list of { id, name } categories.
-export const TrendingCategoriesResponseSchema = z.array(
-  z.object({
-    id: z.string(),
-    name: z.string(),
-  }),
-);
-
-export type MarketTrendingCategory = z.infer<typeof TrendingCategoriesResponseSchema>[number];
 
 // Raw /v3/currencies/trending response: an ordered list of { id, supported } currencies.
 export const TrendingCurrenciesResponseSchema = z.array(

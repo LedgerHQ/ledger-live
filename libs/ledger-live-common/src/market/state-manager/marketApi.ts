@@ -22,14 +22,10 @@ import {
   MarketListQueryArg,
   MarketPerformersQueryParams,
   MarketsByLedgerIdsQueryParams,
-  MarketTrendingCategory,
-  TrendingCategoriesResponseSchema,
   TrendingCurrenciesResponseSchema,
   TrendingPerformersQueryParams,
 } from "./types";
 import { currencyFormatter, format, formatPerformer } from "../utils/currencyFormatter";
-
-const MAX_TRENDING_CATEGORIES = 5;
 
 // /v3/markets only accepts these pageSize values.
 const ALLOWED_MARKET_PAGE_SIZES = [1, 5, 20, 50] as const;
@@ -110,7 +106,6 @@ export const marketApi = createApi({
     MarketDataTags.ChartData,
     MarketDataTags.ChartCounterCurrencies,
     MarketDataTags.GlobalData,
-    MarketDataTags.TrendingCategories,
     MarketDataTags.TrendingPerformers,
     MarketDataTags.MarketList,
   ],
@@ -269,27 +264,6 @@ export const marketApi = createApi({
       },
       keepUnusedDataFor: (REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH) / 1000,
     }),
-    getTrendingCategories: build.query<MarketTrendingCategory[], void>({
-      query: () => ({ url: "/v3/categories/trending" }),
-      providesTags: [MarketDataTags.TrendingCategories],
-      transformResponse: (response: unknown): MarketTrendingCategory[] => {
-        const result = TrendingCategoriesResponseSchema.safeParse(response);
-
-        if (!result.success) {
-          log("market", "Invalid trending categories response schema:", {
-            errors: result.error.issues,
-          });
-          throw new Error(
-            `[Market API] Trending categories schema validation failed: ${result.error.issues
-              .map(e => `${e.path.join(".")}: ${e.message}`)
-              .join(", ")}`,
-          );
-        }
-
-        return result.data.slice(0, MAX_TRENDING_CATEGORIES);
-      },
-      keepUnusedDataFor: (REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH) / 1000,
-    }),
     getTrendingPerformers: build.query<MarketItemPerformer[], TrendingPerformersQueryParams>({
       async queryFn({ counterCurrency }, _api, _extra, fetchWithBQ) {
         const trendingResult = await fetchWithBQ("/v3/currencies/trending");
@@ -348,6 +322,5 @@ export const {
   useGetAssetChartDataQuery,
   useGetSupportedChartCounterCurrenciesQuery,
   useGetGlobalMarketDataQuery,
-  useGetTrendingCategoriesQuery,
   useGetTrendingPerformersQuery,
 } = marketApi;
