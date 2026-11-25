@@ -2,11 +2,11 @@ import type { Cursor, Page, Stake, StakeAction } from "@ledgerhq/coin-module-fra
 import type { NearContext } from "../config";
 import { getStakingPositions } from "../network";
 import type { NearStakingPosition } from "../network/sdk.types";
-import { canUnstake, canWithdraw } from "../logic";
+import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
 
 // Maps a delegation to up to three stakes (staked, unbonding, withdrawable) per pool. Rewards
 // compound into the staked balance so aren't a separate position, and sub-threshold dust (the node
-// under-reports staked by 1 yoctoNEAR) is dropped.
+// under-reports staked by 1 yoctoNEAR) is dropped in every bucket, as the account totals drop it.
 export function toStakes(address: string, positions: NearStakingPosition[]): Stake[] {
   const items: Stake[] = [];
 
@@ -26,7 +26,7 @@ export function toStakes(address: string, positions: NearStakingPosition[]): Sta
       });
     }
 
-    if (pending.gt(0)) {
+    if (pending.gte(getYoctoThreshold())) {
       items.push({
         uid: `${address}:${validatorId}:pending`,
         address,

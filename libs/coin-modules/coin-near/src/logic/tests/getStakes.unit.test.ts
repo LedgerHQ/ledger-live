@@ -74,9 +74,9 @@ describe("toStakes", () => {
     expect(stakes.map(s => s.state)).toEqual(["active", "deactivating", "withdrawable"]);
   });
 
-  it("drops staked and withdrawable dust below the staking threshold", () => {
+  it("drops staked, pending and withdrawable dust below the staking threshold", () => {
     const stakes = toStakes(ADDRESS, [
-      position({ staked: BELOW_THRESHOLD, available: BELOW_THRESHOLD }),
+      position({ staked: BELOW_THRESHOLD, pending: BELOW_THRESHOLD, available: BELOW_THRESHOLD }),
     ]);
 
     expect(stakes).toEqual([]);
