@@ -13,9 +13,7 @@ import {
   type StartingStorage,
 } from "./inject.ts";
 import { createPlatform } from "./platforms/create.ts";
-import { createMaestro } from "./maestro.ts";
-import { createPerformanceReader } from "./performance-screen.ts";
-import { createStartupLineWriters, createStartupLogReader } from "./startup-log.ts";
+import { createStartupLogReader, type StartupRead } from "./startup-log.ts";
 import type { PlatformName, Sample, SampleMeta, Side } from "../types.ts";
 
 const { values: opts } = parseArgs({
@@ -38,8 +36,6 @@ const { values: opts } = parseArgs({
     warmups: { type: "string", default: "1" },
     "idle-ms": { type: "string", default: "2000" },
     "settle-ms": { type: "string", default: "5000" },
-    read: { type: "string", default: "log" },
-    maestro: { type: "string", default: "maestro" },
     "out-dir": { type: "string", default: "startup-perf-results" },
   },
 });
@@ -57,7 +53,6 @@ const PAIRS = Number(opts.pairs);
 const WARMUPS = Number(opts.warmups);
 const IDLE_MS = Number(opts["idle-ms"]);
 const SETTLE_MS = Number(opts["settle-ms"]);
-const READ = opts.read;
 const OUT_DIR = insideWorkingDir(opts["out-dir"]);
 const SAMPLES_FILE = path.join(OUT_DIR, "samples.jsonl");
 const DEBUG_DIR = path.join(OUT_DIR, "debug");
@@ -78,30 +73,18 @@ function validateOptions(): void {
   if (!Number.isInteger(WARMUPS) || WARMUPS < 0) {
     throw new Error("--warmups must be a whole number ≥ 0");
   }
-  if (!["log", "screen", "both"].includes(READ)) {
-    throw new Error("--read must be log, screen or both");
-  }
   for (const s of SCENARIOS) {
     if (!["no-accounts", "accounts"].includes(s)) throw new Error(`unknown scenario ${s}`);
   }
 }
 
-const maestro = createMaestro({ binary: opts.maestro, platform: PLATFORM, devices: DEVICES });
-const P = createPlatform(PLATFORM, { appId: APP_ID, maestro });
-const readPerformance = createPerformanceReader({ platform: P, maestro });
+const P = createPlatform(PLATFORM, { appId: APP_ID });
 const readStartupLog = createStartupLogReader(P);
 const inject = createInjector({ platform: P, devices: DEVICES });
 
 const consecutiveFailures = new Map<string, number>();
-// On iOS a read of the Debug screen slows the next launch, on either simulator (README.md).
-let screenReadSinceLaunch = false;
-// Becomes "screen" for the rest of a scenario once a build not known to write startup lines in it
-// writes none (a build before #24576): both builds are then read on the screen, so every pair stays
-// even.
-let read = READ;
-const lineWriters = createStartupLineWriters();
 
-async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<Sample> {
+async function sample(meta: SampleMeta): Promise<Sample> {
   const record: Sample = {
     platform: PLATFORM,
     ...meta,
@@ -110,7 +93,6 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
   };
   const name = `${meta.scenario}-p${meta.phase}-r${meta.round}-${meta.side}`;
   const other = meta.device === DEVICES[0] ? DEVICES[1] : DEVICES[0];
-  maestro.calls = [];
   let readStart: number | null = null;
   let paused = false;
   try {
@@ -128,14 +110,12 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
       return false;
     });
     record.otherPaused = paused;
-    record.afterScreenRead = screenReadSinceLaunch;
-    screenReadSinceLaunch = false;
     const launch = await P.launch(meta.device);
     await sleep(SETTLE_MS);
     const processStart = await P.processStart(meta.device);
     record.processStartAt = processStart?.at ?? null;
     record.processStartAppClockAt = processStart?.appClockAt ?? null;
-    // The read flow opens a deep link, which would start the app again if it had exited.
+    // The startup lines are those of this process.
     record.pid = processStart?.pid ?? (await P.pid(meta.device));
     if (record.pid === null)
       throw new Error("the app was not running at the end of the settle time");
@@ -145,13 +125,7 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
       paused = false;
     }
     readStart = Date.now();
-    const perf = await readStartup({
-      meta,
-      record,
-      pid: record.pid,
-      checkScreen: checkScreen || READ === "both",
-      debugFile: path.join(DEBUG_DIR, `${name}.txt`),
-    });
+    const perf = await readStartup(meta.device, record.pid);
     const pidAtRead = await P.pid(meta.device);
     if (pidAtRead !== record.pid) {
       throw new Error(`the app process changed before the read (pid ${record.pid} → ${pidAtRead})`);
@@ -167,14 +141,11 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
     if (paused) await P.resume(other);
   }
   if (readStart !== null) record.readMs = Date.now() - readStart;
-  record.maestroCalls = maestro.calls;
   await appendFile(SAMPLES_FILE, JSON.stringify(record) + "\n");
   const what = record.ok
     ? `${record.appStartupTime} ms`
     : `FAILED: ${record.error?.split("\n")[0]}`;
-  let kind = "";
-  if (meta.check) kind = "check ";
-  else if (meta.warmup) kind = "warm-up ";
+  const kind = meta.warmup ? "warm-up " : "";
   log(`${kind}${name} on ${meta.device}: ${what}`);
   if ((consecutiveFailures.get(meta.device) ?? 0) >= MAX_CONSECUTIVE_FAILURES) {
     throw new Error(
@@ -185,64 +156,18 @@ async function sample(meta: SampleMeta, { checkScreen = false } = {}): Promise<S
 }
 
 /**
- * The startup from the device log, or from the Debug screen when its lines never came or could not
- * be read. With `checkScreen` the screen is read too, to check it shows the same time.
+ * The startup the app wrote to the device log as soon as it was over: the launch fails when its
+ * lines never come or cannot be read.
  */
-async function readStartup({
-  meta,
-  record,
-  pid,
-  checkScreen,
-  debugFile,
-}: {
-  meta: SampleMeta;
-  /** The launch's sample: marked when its lines are missing or unreadable, before the screen read. */
-  record: Sample;
-  pid: number;
-  checkScreen: boolean;
-  debugFile: string;
-}): Promise<Pick<Sample, "appStartupTime" | "events" | "readFrom" | "screenAppStartupTime">> {
-  const measured = !meta.warmup && !meta.check;
-  const readScreen = () => {
-    screenReadSinceLaunch = true;
-    return readPerformance(meta.device, { quick: measured, debugFile });
-  };
-  if (read === "screen") return { ...(await readScreen()), readFrom: "screen" };
-  const fromLog = await readStartupLog(meta.device, pid, LOG_READ_TIMEOUT_MS).catch(errorMessage);
-  const switches = lineWriters.switchesToScreen(meta.side, fromLog);
-  if (typeof fromLog === "string") {
-    log(`  unreadable startup lines in the device log, reading the screen: ${fromLog}`);
-    record.unreadableLogLines = fromLog.slice(0, 300);
-    return { ...(await readScreen()), readFrom: "screen-fallback" };
-  }
-  if (!fromLog) {
-    log(
-      `  no startup lines in the device log ${LOG_READ_TIMEOUT_MS} ms after the settle time: reading the screen`,
-    );
-    record.noLogLines = true;
-    if (switches) {
-      log(`  build ${meta.side} does not log its startup: both builds are read on the screen`);
-      read = "screen";
-      record.switchedToScreen = true;
-    }
-    return { ...(await readScreen()), readFrom: "screen-fallback" };
-  }
-  if (fromLog.appStartupTime <= 0) throw new Error(`App startup time ${fromLog.appStartupTime} ms`);
-  if (!checkScreen) return { ...fromLog, readFrom: "log" };
-  // A measured launch (--read both) fails on it; a warm-up or a check keeps its log value.
-  const onScreen = await readScreen().catch((error: unknown) => {
-    if (measured) throw error;
-    log(`  could not check the device log on the Debug screen: ${errorMessage(error)}`);
-    record.screenCheckError = errorMessage(error).slice(0, 300);
-    return null;
-  });
-  if (!onScreen) return { ...fromLog, readFrom: "log" };
-  if (onScreen.appStartupTime !== fromLog.appStartupTime) {
-    log(
-      `  the Debug screen shows ${onScreen.appStartupTime} ms, the log ${fromLog.appStartupTime} ms`,
+async function readStartup(device: string, pid: number): Promise<StartupRead> {
+  const read = await readStartupLog(device, pid, LOG_READ_TIMEOUT_MS);
+  if (!read) {
+    throw new Error(
+      `no startup lines in the device log ${LOG_READ_TIMEOUT_MS} ms after the settle time`,
     );
   }
-  return { ...fromLog, readFrom: "log", screenAppStartupTime: onScreen.appStartupTime };
+  if (read.appStartupTime <= 0) throw new Error(`App startup time ${read.appStartupTime} ms`);
+  return read;
 }
 
 function writeMeta(): Promise<void> {
@@ -259,7 +184,6 @@ function writeMeta(): Promise<void> {
         warmups: WARMUPS,
         idleMs: IDLE_MS,
         settleMs: SETTLE_MS,
-        read: READ,
         userdata: {
           "no-accounts": opts["no-accounts-userdata"],
           accounts: opts["accounts-snapshot"] ?? opts["accounts-userdata"],
@@ -297,8 +221,6 @@ async function installAndInject({
     await P.stop(device);
     await inject({ device, storage, side });
   });
-  // The injection is a launch: it takes the slowdown of a screen read before it.
-  screenReadSinceLaunch = false;
 }
 
 /** Launches each build once on its device, in the phase's order: a warm-up round or a measured one. */
@@ -327,10 +249,8 @@ async function startingStorage(scenario: string): Promise<StartingStorage> {
 async function measureScenario(scenario: string): Promise<void> {
   const storage = await startingStorage(scenario);
   log(`=== ${scenario}: ${storage.accounts} accounts from ${storage.source}`);
-  read = READ;
-  lineWriters.clear();
   for (const phase of [0, 1]) {
-    // A measured launch never follows one on the same device; a warm-up after a check can.
+    // A measured launch never follows one on the same device.
     const { placement, order } = layout(phase);
     for (const side of order) {
       await installAndInject({ scenario, side, device: placement[side], storage });
@@ -341,23 +261,6 @@ async function measureScenario(scenario: string): Promise<void> {
     }
     for (let round = 0; round < PAIRS / 2; round++) {
       await launchEach({ scenario, phase, round, warmup: false });
-    }
-    // After the rounds, so both builds' warm-ups match, and on iOS the slower launch that follows a
-    // screen read is the next injection. Each build is checked once per scenario.
-    if (read === "log") {
-      const [side] = order;
-      await sample(
-        {
-          scenario,
-          phase,
-          round: PAIRS / 2,
-          side,
-          device: placement[side],
-          warmup: false,
-          check: true,
-        },
-        { checkScreen: true },
-      );
     }
   }
 }

@@ -23,8 +23,9 @@ const TRUSTCHAIN_LENSE = "    lense: trustchainStoreSelector,";
 const SAVE_AT_START = "    saveAtStart: true,";
 const SWAP_API_BASE = 'SWAP_API_BASE="https://swap.ledger.com/v5"';
 // Keys no store env file has.
+// FORCE_DEBUG_VISIBLE only shows Settings > Debug: the startup is read from the device log.
 const TEST_ONLY_KEY =
-  /^(MOCK|DETOX|MOCK_COUNTERVALUES|DISABLE_YELLOW_BOX|FEATURE_FLAGS|SIMCTL_CHILD_\w*)=/;
+  /^(MOCK|DETOX|MOCK_COUNTERVALUES|DISABLE_YELLOW_BOX|FEATURE_FLAGS|FORCE_DEBUG_VISIBLE|SIMCTL_CHILD_\w*)=/;
 const TEST_MODE_KEY = /^\s*(?:export\s+)?(?:MOCK|DETOX|MOCK_COUNTERVALUES)\s*=/;
 // known-regression's build B: LIVE-36190, the only regression it re-adds.
 const REGRESSIONS = new Set(["LIVE-36190"]);
@@ -122,6 +123,8 @@ interface AppFiles {
   rspack: string;
   packageJson: string;
   jsStart: string;
+  /** Writes the startup to the device log (#24576, live-mobile@4.29.0 on), where run.ts reads it. */
+  startupLog: string;
   dbSave: string;
 }
 
@@ -131,6 +134,7 @@ const appFiles = (app: string): AppFiles => ({
   rspack: path.join(app, "rspack.config.mjs"),
   packageJson: path.join(app, "package.json"),
   jsStart: path.join(app, "src/mvvm/utils/logStartup/beforeJSImports.ts"),
+  startupLog: path.join(app, "src/mvvm/utils/logLastStartupEvents.ts"),
   dbSave: path.join(app, "src/components/DBSave.ts"),
 });
 
@@ -151,6 +155,14 @@ function checkApp(files: AppFiles, regression: string): void {
       "refs before live-mobile@4.26.0 are not supported: this one still has react-native-startup-time",
     );
   }
+  if (
+    !existsSync(files.startupLog) ||
+    !read(files.startupLog).includes("writeStartupToDeviceLog(")
+  ) {
+    throw new StepFailure(
+      "refs before live-mobile@4.29.0 are not supported: this one does not write its startup to the device log (#24576), where it is read",
+    );
+  }
   if ([files.rspack, files.jsStart].some(file => read(file).includes("startup-perf"))) {
     throw new StepFailure("this checkout is already patched");
   }
@@ -162,7 +174,7 @@ function checkApp(files: AppFiles, regression: string): void {
     );
   }
   if (regression) checkLive36190(files.dbSave);
-  for (const line of ["MOCK=1", "DETOX=1", "FORCE_DEBUG_VISIBLE=1"]) {
+  for (const line of ["MOCK=1", "DETOX=1"]) {
     if (exactly(files.env, line) !== 1) {
       throw new StepFailure(`expected one '${line}' line in ${files.env}`);
     }
@@ -227,7 +239,7 @@ function main(): void {
     summary("LIVE-36190 re-added: the trustchain is no longer saved at start");
   }
   summary(
-    "prod-like build: no MOCK/DETOX in the env file (so no E2E bridge), swap on prod, real blur",
+    "prod-like build: no MOCK/DETOX (so no E2E bridge) or FORCE_DEBUG_VISIBLE in the env file, swap on prod, real blur",
   );
 }
 

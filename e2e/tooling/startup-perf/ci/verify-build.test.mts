@@ -14,7 +14,7 @@ import {
   RES_VALUES_MARKERS,
 } from "./verify-build.mts";
 
-const PROD_LIKE: BuildCounts = { mock: 0, detox: 0, debug: 1, blurMock: 0, blurReal: 1 };
+const PROD_LIKE: BuildCounts = { mock: 0, detox: 0, debug: 0, blurMock: 0, blurReal: 1 };
 
 describe("countMarkers", () => {
   it("counts the lines of BuildConfig.java that set a test mode", () => {
@@ -47,9 +47,9 @@ describe("judge", () => {
   });
 
   for (const [change, error] of [
-    [{ debug: 0 }, /FORCE_DEBUG_VISIBLE=1 is not in the generated config/],
-    [{ mock: 1 }, /MOCK or DETOX is still in the generated config/],
-    [{ detox: 1 }, /MOCK or DETOX is still in the generated config/],
+    [{ mock: 1 }, /MOCK, DETOX or FORCE_DEBUG_VISIBLE is still in the generated config/],
+    [{ detox: 1 }, /MOCK, DETOX or FORCE_DEBUG_VISIBLE is still in the generated config/],
+    [{ debug: 1 }, /MOCK, DETOX or FORCE_DEBUG_VISIBLE is still in the generated config/],
     [{ blurMock: 1 }, /still has the E2E blur mock/],
   ] as const) {
     it(`fails on ${JSON.stringify(change)}`, () => {

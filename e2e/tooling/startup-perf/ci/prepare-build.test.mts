@@ -56,13 +56,9 @@ describe("prodLikeEnv", () => {
     const result = prodLikeEnv(env);
     assert.equal(
       result.text,
-      textOf([
-        "FORCE_DEBUG_VISIBLE=1",
-        'SWAP_API_BASE="https://swap.ledger.com/v5"',
-        "API_KEY=secret",
-      ]),
+      textOf(['SWAP_API_BASE="https://swap.ledger.com/v5"', "API_KEY=secret"]),
     );
-    assert.deepEqual(result.removed, ["MOCK", "DETOX", "SIMCTL_CHILD_FOO"]);
+    assert.deepEqual(result.removed, ["MOCK", "DETOX", "FORCE_DEBUG_VISIBLE", "SIMCTL_CHILD_FOO"]);
     assert.equal(result.swap, true);
   });
 

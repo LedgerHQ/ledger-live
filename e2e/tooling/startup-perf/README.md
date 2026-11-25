@@ -12,16 +12,16 @@ keystore.
 `ci/` holds what the plan, cache, build and Slack jobs run, from a checkout of `ci/` alone and, in
 the build jobs, with the measured ref's Node (24.14 or later from `live-mobile@4.26.0` on): it never
 imports from `src/` (`src/` may import from `ci/`), and its scripts are `.mts` so Node runs them as
-ES modules without the `package.json`. `devices/` holds the shell the measure jobs run to get the
-emulators or simulators and Maestro ready, `src/` the three programs (`snapshot/` makes the accounts
-snapshot, `measure/` writes `samples.jsonl`, `analysis/` reads it), and `flows/` the Maestro flows.
-Each test sits next to its module.
+ES modules without the `package.json`. `devices/` holds the shell the snapshot and measure jobs run
+to get the emulators or simulators ready, and Maestro for the snapshot, `src/` the three programs
+(`snapshot/` makes the accounts snapshot, `measure/` writes `samples.jsonl`, `analysis/` reads it),
+and `flows/` the snapshot's Maestro flow. Each test sits next to its module.
 
 | Path                                | Role                                                                                        |
 | ----------------------------------- | ------------------------------------------------------------------------------------------- |
 | `ci/resolve-refs.mts`               | The plan job: resolves refs A and B to commits, branches and tags only                      |
 | `ci/prepare-build.mts`              | Makes the checked-out ref's E2E prerelease build prod-like, before `e2e:build`              |
-| `ci/verify-build.mts`               | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur              |
+| `ci/verify-build.mts`               | Checks the built binary: no `MOCK`, `DETOX` or `FORCE_DEBUG_VISIBLE`, real blur             |
 | `ci/slack-report.mts`               | The Slack job: the run's result from the jobs and each `summary.json`                       |
 | `ci/step.mts`                       | What those share: workspace paths, error annotations, job summary, failing verdicts         |
 | `ci/toolchain.sh`                   | Records a build's toolchain beside its `sha.txt`; warns when A's and B's differ             |
@@ -42,15 +42,14 @@ Each test sits next to its module.
 | `src/measure/run.ts`                | The CLI that measures: installs, injects and launches A and B, writes `samples.jsonl`       |
 | `src/measure/platforms/`            | `android.ts` and `ios.ts`, the two `Platform`s, through adb or simctl                       |
 | `src/measure/startup-log.ts`        | Reads App startup time and the startup events from the app's `[startup]` log lines          |
-| `src/measure/performance-screen.ts` | Reads them on the Debug screen through Maestro: checks, and launches without the lines      |
 | `src/measure/inject.ts`             | Writes a scenario's userdata or snapshot into a fresh install, then launches it once        |
 | `src/measure/storage.ts`            | The app's storage files (MMKV instance `ledger-live`): writes them, reads them back         |
-| `src/measure/maestro.ts`, `exec.ts` | Maestro and child-process calls                                                             |
+| `src/measure/maestro.ts`, `exec.ts` | Maestro (the snapshot's flow) and child-process calls                                       |
 | `src/analysis/analyze.ts`           | The CLI that judges: pairs A and B, tells which start each Debug value counts from, verdict |
 | `src/analysis/stats.ts`             | Median, Hodges–Lehmann with its Wilcoxon interval, bootstrap mean, uneven-phase widening    |
 | `src/analysis/report.ts`            | The job summary: B − A per platform, scenario and measure                                   |
 | `src/analysis/fake-samples.ts`      | Fake launches for the analysis tests                                                        |
-| `flows/`                            | Maestro flows: Settings > Debug > Performance, and the snapshot's `add-accounts.yaml`       |
+| `flows/`                            | The snapshot's Maestro flow, `add-accounts.yaml`                                            |
 
 ## Presets
 
@@ -62,8 +61,7 @@ Each test sits next to its module.
 | `aa-noise`         | one build                      | the same binary            | `Not enough pairs`                |
 | `known-regression` | this branch or `ref_a`         | A with LIVE-36190 re-added | B is not slower by > threshold_ms |
 
-Every preset also fails when the Debug screen shows another App startup time than the device log
-(see A launch). `aa-noise` reports how finely the setup resolves B − A. `known-regression` shows
+`aa-noise` reports how finely the setup resolves B − A. `known-regression` shows
 whether the gate still catches LIVE-36190 on today's code: B no longer saves the trustchain at
 start, so every launch generates its keypair again, the cost #21001 removed (its other half, a zod
 check of the keypair, no longer exists).
@@ -85,8 +83,8 @@ Slack rejects fails the Slack job; a run cancelled by hand posts nothing.
 
 Refs are branches or tags only: a raw SHA could be a fork's commit, run with the workflow's secrets.
 A name that is both a branch and a tag is refused: the release tags are lightweight, so git would
-take the branch. Refs start at `live-mobile@4.26.0`: `prepare-build.mts` rejects older ones, which
-still count the Debug value with react-native-startup-time.
+take the branch. Refs start at `live-mobile@4.29.0`, the first release that writes its startup to
+the device log (#24576), where it is read: `prepare-build.mts` rejects older ones.
 Pairs are even and at least 6, half before and half after the device swap; fewer give no 95%
 interval.
 
@@ -178,7 +176,8 @@ The accounts scenario starts from accounts added through the app's UI, as a user
   and Solana in turn, it starts a Speculinho session with `pnpm e2e-cli speculos` of
   `libs/live-e2e-shared` (the E2E suites' firmware, app versions and session tokens, on a `nanoX`
   with the E2E seed), sends the app `addKnownSpeculos` through `bridge.ts` and waits for its ACK,
-  then `flows/add-accounts.yaml` adds the accounts the scan selects, those with operations, as
+  then `flows/add-accounts.yaml` (through Maestro, with `--no-reinstall-driver`, which saves ~50 s
+  per call: run 40006507791) adds the accounts the scan selects, those with operations, as
   e2e/mobile's add-account steps and a user who keeps the selection do, picking the coin's network
   when the drawer asks for one. The storage it keeps leaves out what belongs to that install: the
   device entries (`ble`, `knownDevices`, `settings.lastConnectedDevice`), since a prod build has no
@@ -223,18 +222,19 @@ The accounts scenario starts from accounts added through the app's UI, as a user
   with its balance one unit higher, which its sync puts back (the app ignores `lastSyncDate`, so a
   sync with nothing new on chain would save none). Feature flags are not written: they come from
   production Firebase. `prepare-build.mts` checks that each measured ref starts the E2E bridge only
-  with `DETOX`, and `verify-build.mts` that the binary has no `MOCK` or `DETOX`.
+  with `DETOX`, and `verify-build.mts` that the binary has no `MOCK` or `DETOX`. `prepare-build.mts`
+  also removes `FORCE_DEBUG_VISIBLE`, which only shows Settings > Debug: nothing opens it.
 - **Warm up 6 times on Android** before the rounds. In the first launches after an install (2–6,
   ~20–230 s), Braze's content-card refresh put ~110 ms of JS before App started in about half of
   them, never later: with 6 warm-ups the slow early rounds fell from 35–49% to 10–15% (runs
-  43996795129, 43996836527). iOS keeps 1, as it was not measured. A warm-up costs one launch: ~11 s
-  read from the log, ~40 s on the screen. Both builds are installed first, then warmed up in turn
-  like the rounds, on iOS too (not measured there). When each build warmed up right after its
-  install, the first one idled ~2 min through the other's install and warm-ups, and its round 0 was
-  ~60 ms slower than its later rounds, the second's no slower beyond noise (median of 30 Android A/A
-  runs, e.g. 44243454200). Warmed up in turn, it is ~15 ms faster than its later rounds, against
-  ~60 ms slower for the old order in the same wave (10 runs against 6, e.g. 44281313344 against
-  44281225038), with about the same A/A spread.
+  43996795129, 43996836527). iOS keeps 1, as it was not measured. A warm-up costs one launch, ~11 s.
+  Both builds are installed first, then warmed up in turn like the rounds, on iOS too (not measured
+  there). When each build warmed up right after its install, the first one idled ~2 min through the
+  other's install and warm-ups, and its round 0 was ~60 ms slower than its later rounds, the
+  second's no slower beyond noise (median of 30 Android A/A runs, e.g. 44243454200). Warmed up in
+  turn, it is ~15 ms faster than its later rounds, against ~60 ms slower for the old order in the
+  same wave (10 runs against 6, e.g. 44281313344 against 44281225038), with about the same A/A
+  spread.
 - **Launch** with a plain `am start -W` / `simctl launch`, no test tool attached, wait 5 s, then
   read the `[startup]` lines of the launched process in the device log (logcat's `ReactNativeJS`,
   the simulator's `log show`), which the app writes as soon as the startup is over: a line per
@@ -242,42 +242,23 @@ The accounts scenario starts from accounts added through the app's UI, as a user
   time (`[startup] App startup time: 1650 ms, 13 events`). The app writes them at the error level,
   the only one iOS release builds keep, through React Native's `nativeLoggingHook`, which Datadog
   does not see. A measured launch lives ~6 s (iOS) or ~7–8 s (Android) from its process start: the
-  next launch stops it.
-- **Check it on the screen.** After each phase's rounds, one more launch, not measured, of the
-  phase's first build (A, then B) also lets Maestro open the Performance screen, which must show the
-  same time: a mismatch fails the run, whatever the preset. Each build is checked once per scenario,
-  and only while the scenario reads the device log. The check comes after the rounds so that both
-  builds' warm-ups are the same short log read, with no Maestro run on one device only before round
-  0, and because on iOS a screen read slows the next launch by ~280 ms, on either simulator (run
-  42356679784: the first launch of round 0 by 261–301 ms, the second not): the launch after the
-  check is the next injection. A check that cannot read the screen keeps its log value, and the
-  report names the build left unchecked. A launch whose lines have not come 20 s after the settle
-  time, or came unreadable (their event lines do not add up to the count the last line gives), is
-  read on the screen, and the report counts those of measured launches per build and cause; one
-  whose lines give a time of 0 or less fails, as the Debug screen would show the same. When a build
-  not known to write lines in a scenario writes none (built before #24576), warm-up or not, both
-  builds are read on the screen for the rest of the scenario, so pairs stay even, and the report
-  says so, even when that launch's screen read fails; a build that has written lines in the
-  scenario, readable or not, falls back on that launch only.
-  Until a release with #24576 is in production, `prod-vs-release` and `prod-vs-develop` (the
-  nightly) are read on the screen this way. `--read both` (the workflow's `read` input) reads every
-  launch both ways, `--read screen` the screen only. Screen reads of measured launches use
-  `read-performance-quick.yaml`; warm-ups, checks and retries use the full flow, whose optional taps
-  cost ~7 s when no prompt shows. The flows select by text: the Debug and Performance screens have
-  no testIDs on any supported ref.
-- **Why the log.** Run 42352894550 read 64 launches both ways: the same time on every one. With the
-  log only (run 42356679784, 20 pairs), a launch takes 8.5 s on iOS and 10–11 s on Android instead
-  of 34–44 s, so the measure jobs take 33 and 22 min instead of ~65 and ~40. Measured iOS launches
-  also no longer follow a Maestro read, which made them ~280 ms slower than the warm-ups (runs
-  42325407516, 42352894550), and the iOS interval narrowed from about ±30 to ±18 ms.
+  next launch stops it. A launch whose lines have not come 20 s after the settle time, came
+  unreadable (their event lines do not add up to the count the last line gives) or give a time of 0
+  or less fails, as any failed launch (see Recover).
+- **Why the log only.** Run 42352894550 read 64 launches both from the log and on the Debug screen
+  through Maestro: the same time on every one. From the log (run 42356679784, 20 pairs), a launch
+  takes 8.5 s on iOS and 10–11 s on Android instead of 34–44 s, so the measure jobs take 33 and 22
+  min instead of ~65 and ~40. On iOS a screen read also made the next launch ~280 ms slower, on
+  either simulator (runs 42325407516, 42352894550, 42356679784), and without it the iOS interval
+  narrowed from about ±30 to ±18 ms. The measurement no longer opens the Debug screen at all, and
+  the measure jobs no longer install Maestro.
 - **Alternate devices** on every measured launch: right after a launch on the same simulator, one
   was ~270 ms faster (run 39731729203). Halfway through each scenario A and B swap devices, so the
   difference between the devices cancels out. On Android the other emulator is paused from the
   launch to the read.
 - **Recover**: an Android ANR or crash dialog is cleared by restarting its process (recorded as
-  `clearedDialogs`), a failed read is retried once with the full flow, and 4 failures in a row on
-  one device stop the run. Maestro runs with `--no-reinstall-driver` (~50 s per read otherwise, run
-  40006507791) and, on iOS, one driver port per simulator.
+  `clearedDialogs`), a failed launch counts in the report's failed launches and leaves its pair out,
+  and 4 failures in a row on one device stop the run.
 
 ## The devices
 
@@ -293,9 +274,7 @@ The accounts scenario starts from accounts added through the app's UI, as a user
 
 ## The analysis
 
-Launches are paired by scenario, phase and round, and a pair is left out when only one of its
-launches followed a read of the Debug screen (after a fallback, above), on both platforms as a
-precaution, though the slowdown was measured on iOS only. B − A is the Hodges–Lehmann median of the
+Launches are paired by scenario, phase and round. B − A is the Hodges–Lehmann median of the
 paired differences, after removing the device bias (half the gap between the two phases), with a
 Wilcoxon signed-rank 95% interval. The gate is on the estimate; the mean with a bootstrap interval
 is what the manual test compares.
@@ -308,14 +287,14 @@ time, and one slower by "Flags a slowdown of" in more than 80% of runs.
 
 Two measures, both ending at "App startup time":
 
-- **Debug screen**: the value as shown. Builds count it from the first JS import (4.26–4.27,
+- **Debug screen**: Settings > Debug > Performance > App startup time, as the app writes it to the
+  device log. Builds count it from the first JS import (4.26–4.27,
   b3700d9164b) or from the process start (LIVE-40286 on). When A and B count from different starts,
   this row compares from the first JS import.
 - **With native start**: from the process start, read by the harness on the app's clock (the
   emulator's clock was ~67 s off the runner's, run 40847012543) and joined through `JS start epoch`.
 
-`analyze.ts` exits 1 on `FAIL` (a Debug screen that disagrees with the device log included),
-`Not detected`, `Not enough pairs` or no samples.
+`analyze.ts` exits 1 on `FAIL`, `Not detected`, `Not enough pairs` or no samples.
 
 Each results artifact holds the rows as `summary.json` and the run they come from as `run.json`
 (preset, threshold, planned pairs, labels A and B), so a reader of the artifact alone, such as the
@@ -331,11 +310,10 @@ They run in the "E2E Tooling Checks" PR job when this folder changes. `app-contr
 the mobile app of the checkout against what the measurement needs: `prepare-build.mts` still applies
 (LIVE-36190 included), the E2E bridge still starts only with `DETOX`, the app still reads the
 storage `storage.ts` writes (instance, keys, migration status, terms version) and saves its client
-ids at every start, and the screens the
-flows open still show "Debug", "Performance" and "App startup time". The package does not depend on
-`live-mobile`, so a mobile PR does not run it: an app change that breaks the measurement fails this
-test at the next change to this folder, and a workflow run before that stops in `prepare-build.mts`
-on the missing anchor. The code is TypeScript that
-Node 24 runs as it is, with no build step: `tsc` checks it in strict mode, so a field renamed in
-`Sample` fails wherever it is still used. Only erasable syntax is allowed (no `enum` or
-`namespace`), and imports name the `.ts` file.
+ids at every start, and it still writes its startup to the device log as `startup-log.ts` reads it.
+The package does not depend on `live-mobile`, so a mobile PR does not run it: an app change that
+breaks the measurement fails this test at the next change to this folder, and a workflow run before
+that stops in `prepare-build.mts` on the missing anchor. The code is TypeScript that Node 24 runs as
+it is, with no build step: `tsc` checks it in strict mode, so a field renamed in `Sample` fails
+wherever it is still used. Only erasable syntax is allowed (no `enum` or `namespace`), and imports
+name the `.ts` file.

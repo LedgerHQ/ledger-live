@@ -12,10 +12,6 @@ const SHELL_SAFE = /^[\w.-]+$/;
 const WAKE_SETTLE_MS = 1000;
 // Before the dialog is checked again after its process was killed.
 const DIALOG_RESTART_MS = 5000;
-// Before the next hierarchy read: a fling coasts longer than a swipe.
-const FLING_SETTLE_MS = 1500;
-const SWIPE_SETTLE_MS = 800;
-const DEFAULT_SCREEN_SIZE: [number, number] = [1080, 2400];
 
 async function stopDriver(device: string): Promise<void> {
   for (const pkg of ["dev.mobile.maestro", "dev.mobile.maestro.test"]) {
@@ -40,7 +36,6 @@ async function asRoot(device: string, script: string, allowFail = false) {
 export function createAndroid({ appId }: { appId: string }): Platform {
   if (!SHELL_SAFE.test(appId)) throw new Error(`unexpected app id ${appId}`);
   const components = new Map<string, string>();
-  const screenSizes = new Map<string, [number, number]>();
   const appDir = `/data/data/${appId}`;
   const storageDir = `${appDir}/files/mmkv`;
 
@@ -69,43 +64,6 @@ export function createAndroid({ appId }: { appId: string }): Platform {
     return found;
   }
 
-  async function screenSize(device: string): Promise<[number, number]> {
-    const known = screenSizes.get(device);
-    if (known) return known;
-    const { stdout } = await run("adb", ["-s", device, "shell", "wm", "size"], {
-      allowFail: true,
-    });
-    const sizes = [...stdout.matchAll(/(?<!\d)(\d+)x(\d+)/g)].map((m): [number, number] => [
-      Number(m[1]),
-      Number(m[2]),
-    ]);
-    const size = sizes.at(-1) ?? DEFAULT_SCREEN_SIZE;
-    screenSizes.set(device, size);
-    return size;
-  }
-
-  async function swipeUp(device: string, { fling }: { fling: boolean }): Promise<void> {
-    const [width, height] = await screenSize(device);
-    const x = String(Math.round(width / 2));
-    if (fling) {
-      const from = String(Math.round(height * 0.85));
-      const to = String(Math.round(height * 0.15));
-      for (let i = 0; i < 3; i++) {
-        await run("adb", ["-s", device, "shell", "input", "swipe", x, from, x, to, "80"], {
-          allowFail: true,
-        });
-      }
-      await sleep(FLING_SETTLE_MS);
-      return;
-    }
-    const from = String(Math.round(height * 0.75));
-    const to = String(Math.round(height * 0.3));
-    await run("adb", ["-s", device, "shell", "input", "swipe", x, from, x, to, "600"], {
-      allowFail: true,
-    });
-    await sleep(SWIPE_SETTLE_MS);
-  }
-
   return {
     async install(device, apk) {
       await run("adb", ["-s", device, "uninstall", appId], { allowFail: true });
@@ -117,7 +75,6 @@ export function createAndroid({ appId }: { appId: string }): Platform {
     },
     async stop(device) {
       await run("adb", ["-s", device, "shell", "am", "force-stop", appId], { allowFail: true });
-      await stopDriver(device);
     },
     stopDriver,
     async writeStorage(device, files) {
@@ -307,8 +264,6 @@ export function createAndroid({ appId }: { appId: string }): Platform {
         .filter(line => line.includes(text))
         .join("\n");
     },
-    scrollDown: device => swipeUp(device, { fling: false }),
-    scrollToEnd: device => swipeUp(device, { fling: true }),
     async diagnostics(device, file) {
       const { stdout } = await run("adb", ["-s", device, "logcat", "-d", "-t", "3000"], {
         allowFail: true,

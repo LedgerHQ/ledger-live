@@ -77,7 +77,7 @@ function validateOptions(): void {
 }
 
 const maestro = createMaestro({ binary: opts.maestro, platform: PLATFORM, devices: [DEVICE] });
-const P = createPlatform(PLATFORM, { appId: opts["app-id"], maestro });
+const P = createPlatform(PLATFORM, { appId: opts["app-id"] });
 
 async function addAccounts(
   coin: Coin,
@@ -155,6 +155,7 @@ async function main(): Promise<void> {
   } finally {
     await bridge.close();
   }
+  await P.stopDriver(DEVICE);
   await P.stop(DEVICE);
 
   const stored = await readStorageFiles(name => P.readStorage(DEVICE, name));

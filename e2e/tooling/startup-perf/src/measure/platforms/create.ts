@@ -1,5 +1,5 @@
 import type { PlatformName } from "../../types.ts";
-import type { Maestro, Platform } from "../types.ts";
+import type { Platform } from "../types.ts";
 import { createAndroid } from "./android.ts";
 import { createIos } from "./ios.ts";
 
@@ -21,10 +21,7 @@ export function knownAppId(appId: string): string {
   return known;
 }
 
-export function createPlatform(
-  name: PlatformName,
-  { appId, maestro }: { appId: string; maestro: Maestro },
-): Platform {
+export function createPlatform(name: PlatformName, { appId }: { appId: string }): Platform {
   const id = knownAppId(appId);
-  return name === "android" ? createAndroid({ appId: id }) : createIos({ appId: id, maestro });
+  return name === "android" ? createAndroid({ appId: id }) : createIos({ appId: id });
 }

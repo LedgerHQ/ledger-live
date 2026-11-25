@@ -1,8 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { DEVICE_QUERY_TIMEOUT_MS, INSTALL_TIMEOUT_MS, run, sleep } from "../exec.ts";
-import { FLOWS_DIR, MAESTRO_SCROLL_TIMEOUT_MS } from "../maestro.ts";
-import type { Maestro, Platform } from "../types.ts";
+import type { Platform } from "../types.ts";
 
 // Up to 15 s for Maestro's xcodebuild driver to exit.
 const DRIVER_EXIT_POLLS = 30;
@@ -10,9 +9,6 @@ const DRIVER_EXIT_POLL_MS = 500;
 const LOG_SHOW_TIMEOUT_MS = 120_000;
 // A startup-log query takes under 1 s: this only bounds a hung `log show`.
 const STARTUP_LOG_QUERY_TIMEOUT_MS = 30_000;
-
-const SCROLL_FLOW = path.join(FLOWS_DIR, "scroll-performance.yaml");
-const SCROLL_TO_END_FLOW = path.join(FLOWS_DIR, "scroll-performance-to-end.yaml");
 
 // sysctl KERN_PROC_PID: kinfo_proc opens with p_starttime, a timeval.
 const PROCESS_START_PY = `
@@ -48,7 +44,7 @@ async function stopDriver(device: string): Promise<void> {
 }
 
 /** iOS simulators, through simctl. */
-export function createIos({ appId, maestro }: { appId: string; maestro: Maestro }): Platform {
+export function createIos({ appId }: { appId: string }): Platform {
   const pids = new Map<string, number | null>();
 
   // MMKV's default directory, in the data container simctl creates at install.
@@ -64,7 +60,6 @@ export function createIos({ appId, maestro }: { appId: string; maestro: Maestro 
     },
     async stop(device) {
       await run("xcrun", ["simctl", "terminate", device, appId], { allowFail: true });
-      await stopDriver(device);
     },
     stopDriver,
     async writeStorage(device, files) {
@@ -126,22 +121,6 @@ export function createIos({ appId, maestro }: { appId: string; maestro: Maestro 
       return false;
     },
     async resume() {},
-    async scrollDown(device) {
-      await maestro.invoke({
-        device,
-        command: "test",
-        args: [SCROLL_FLOW],
-        timeoutMs: MAESTRO_SCROLL_TIMEOUT_MS,
-      });
-    },
-    async scrollToEnd(device) {
-      await maestro.invoke({
-        device,
-        command: "test",
-        args: [SCROLL_TO_END_FLOW],
-        timeoutMs: MAESTRO_SCROLL_TIMEOUT_MS,
-      });
-    },
     async diagnostics(device, file) {
       const { stdout } = await run(
         "xcrun",
