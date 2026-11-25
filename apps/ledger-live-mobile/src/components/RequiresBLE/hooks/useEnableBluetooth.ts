@@ -90,7 +90,10 @@ export function useEnableBluetooth(
     isHookEnabled: true,
   },
 ) {
-  const [observedTransportState, setObservedTransportState] = useState<string>("Unknown");
+  // Without real Bluetooth, no Bluetooth requirement must block the mock and e2e builds.
+  const [observedTransportState, setObservedTransportState] = useState<string>(() =>
+    areRealBleAndUsbDisabled() ? "PoweredOn" : "Unknown",
+  );
 
   const promptBluetoothCallback = usePromptEnableBluetoothCallback();
 
@@ -116,12 +119,7 @@ export function useEnableBluetooth(
   // so it would emit events on bluetooth services changes
   // Observes the bluetooth state (if powered on or not)
   useEffect(() => {
-    if (!isHookEnabled) return;
-    // Without real Bluetooth, no Bluetooth requirement must block the mock and e2e builds.
-    if (areRealBleAndUsbDisabled()) {
-      setObservedTransportState("PoweredOn");
-      return;
-    }
+    if (!isHookEnabled || areRealBleAndUsbDisabled()) return;
 
     const sub = new Observable(getBLETransport().observeState).subscribe({
       next: ({ type }: { type: string }) => setObservedTransportState(type),
