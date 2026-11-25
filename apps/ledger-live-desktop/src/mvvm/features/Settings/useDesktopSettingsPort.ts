@@ -1,23 +1,11 @@
-import { useCallback, useMemo } from "react";
-import type { SettingsPort, SettingsValues, SettingUpdate } from "@features/flow-settings";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { applyGeneralSettingUpdate } from "./sections/general";
-import { userThemeSelector } from "~/renderer/reducers/settings";
+import type { SettingsPort } from "@features/flow-settings";
+import { useGeneralSettingsAdapter } from "./sections/general";
 
 /**
- * Builds the settings port of Ledger Wallet Desktop from the legacy settings store. Each change
- * runs the side effects the legacy Settings screens run today, section by section.
+ * Builds the settings port of Ledger Wallet Desktop from the legacy settings store. Each section
+ * has its own adapter that reads its values and runs the side effects the legacy Settings screens
+ * run today.
  */
 export function useDesktopSettingsPort(): SettingsPort {
-  const dispatch = useDispatch();
-  const theme = useSelector(userThemeSelector);
-
-  const values = useMemo<SettingsValues>(() => ({ theme: theme ?? "system" }), [theme]);
-
-  const setValue = useCallback(
-    (update: SettingUpdate) => applyGeneralSettingUpdate(dispatch, update),
-    [dispatch],
-  );
-
-  return useMemo(() => ({ values, setValue }), [values, setValue]);
+  return useGeneralSettingsAdapter();
 }
