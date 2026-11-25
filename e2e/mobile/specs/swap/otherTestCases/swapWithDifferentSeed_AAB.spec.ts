@@ -2,7 +2,7 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { runSwapWithDifferentSeedTest } from "@e2e/specs/swap/otherTestCases/swap.other";
 
-const swapTestConfig = {
+runSwapWithDifferentSeedTest({
   swap: new Swap(Account.ETH_1, Account.SOL_1, "0.03"),
   tmsLinks: ["B2CQA-3089"],
   userData: "speculos-x-other-account",
@@ -24,6 +24,4 @@ const swapTestConfig = {
     "@solana",
     "@family-solana",
   ],
-};
-
-runSwapWithDifferentSeedTest(swapTestConfig);
+});

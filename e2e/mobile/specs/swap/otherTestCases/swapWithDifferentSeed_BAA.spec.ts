@@ -2,7 +2,7 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runSwapWithDifferentSeedTest } from "@e2e/specs/swap/otherTestCases/swap.other";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 
-const swapTestConfig = {
+runSwapWithDifferentSeedTest({
   swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03"),
   tmsLinks: ["B2CQA-3091"],
   userData: "speculos-x-other-account",
@@ -22,6 +22,4 @@ const swapTestConfig = {
     "@bitcoin",
     "@family-bitcoin",
   ],
-};
-
-runSwapWithDifferentSeedTest(swapTestConfig);
+});
