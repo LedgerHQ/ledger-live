@@ -1,7 +1,9 @@
-import React, { useCallback } from "react";
-import { FlatList, type ListRenderItem } from "react-native";
+import React, { useCallback, useRef } from "react";
+import { type ListRenderItem, type TextInput } from "react-native";
 import {
   Banner,
+  BottomSheetFlatList,
+  BottomSheetHeader,
   Box,
   Button,
   ListItem,
@@ -14,15 +16,35 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { TrackScreen } from "@shared/analytics-react";
+import { InfoState } from "@shared/ui-info-state";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { useBottomSheetKeyboardAwareInput } from "@shared/ui-queued-bottom-sheet/keyboard";
 import CurrencyIcon from "~/components/CurrencyIcon";
-import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
 import { type Props, useSelectTokenViewModel } from "./useSelectTokenViewModel";
 
 function keyExtractor(token: TokenCurrency) {
   return token.id;
+}
+
+function Search(props: Readonly<{ value: string; onChangeText: (text: string) => void }>) {
+  const { t } = useTranslation();
+  const inputRef = useRef<TextInput>(null);
+  const inputProps = useBottomSheetKeyboardAwareInput(inputRef);
+
+  return (
+    <Box lx={{ paddingHorizontal: "s16", paddingBottom: "s8" }}>
+      <SearchInput
+        ref={inputRef}
+        {...inputProps}
+        placeholder={t("common.search")}
+        value={props.value}
+        onChangeText={props.onChangeText}
+        testID="xrp-token-search"
+      />
+    </Box>
+  );
 }
 
 export default function SelectToken(props: Props) {
@@ -37,9 +59,7 @@ export default function SelectToken(props: Props) {
           <CurrencyIcon currency={token} size={40} />
           <ListItemContent>
             <ListItemTitle>{token.name}</ListItemTitle>
-            <ListItemDescription>
-              {`${token.ticker} · ${formatAddress(token.contractAddress)}`}
-            </ListItemDescription>
+            <ListItemDescription>{token.ticker}</ListItemDescription>
           </ListItemContent>
         </ListItemLeading>
       </ListItem>
@@ -68,22 +88,24 @@ export default function SelectToken(props: Props) {
 
     return (
       <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
-        {t("xrp.addToken.steps.token.empty")}
+        {t("xrp.addToken.steps.token.noResults")}
       </Text>
     );
   };
 
   return (
-    <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
+    <>
       <TrackScreen category="XrpAddTokenFlow" name="SelectToken" />
-      <Box lx={{ flex: 1, paddingHorizontal: "s16", gap: "s16" }}>
-        <SearchInput
-          placeholder={t("common.search")}
-          value={viewModel.search}
-          onChangeText={viewModel.onChangeSearch}
-          testID="xrp-token-search"
-        />
-        <FlatList
+      <QueuedBottomSheet
+        isRequestingToBeOpened={!viewModel.isEmpty}
+        onClose={viewModel.isEmpty ? undefined : viewModel.onClose}
+        snapPoints="full"
+        restoreOnFocus
+        testID="xrp-select-token-sheet"
+      >
+        <BottomSheetHeader spacing density="expanded" title={t("xrp.addToken.steps.token.title")} />
+        <Search value={viewModel.search} onChangeText={viewModel.onChangeSearch} />
+        <BottomSheetFlatList
           data={viewModel.tokens}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
@@ -93,7 +115,27 @@ export default function SelectToken(props: Props) {
           keyboardDismissMode="on-drag"
           showsVerticalScrollIndicator={false}
         />
-      </Box>
-    </SafeAreaView>
+      </QueuedBottomSheet>
+      <QueuedBottomSheet
+        isRequestingToBeOpened={viewModel.isEmpty}
+        onClose={viewModel.onClose}
+        enableDynamicSizing
+        testID="xrp-no-assets-sheet"
+      >
+        <Box lx={{ paddingHorizontal: "s16" }}>
+          <InfoState
+            size="hug"
+            preset="error"
+            title={t("xrp.addToken.steps.token.noAssetsTitle")}
+            description={t("xrp.addToken.steps.token.noAssetsText")}
+            primaryCta={{
+              label: t("xrp.addToken.steps.token.gotIt"),
+              onPress: viewModel.onClose,
+              testID: "xrp-no-assets-got-it",
+            }}
+          />
+        </Box>
+      </QueuedBottomSheet>
+    </>
   );
 }

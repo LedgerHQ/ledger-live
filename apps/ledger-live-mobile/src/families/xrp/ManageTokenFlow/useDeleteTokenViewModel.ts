@@ -36,7 +36,7 @@ export function useDeleteTokenViewModel(props: Props) {
 
   const signAndBroadcast = useSignAndBroadcast({
     account,
-    tokenAccount,
+    token: tokenAccount.token,
     transaction,
     action: "delete",
     initialStep: tokenAccount.balance.gt(0) ? "blocked" : "confirm",

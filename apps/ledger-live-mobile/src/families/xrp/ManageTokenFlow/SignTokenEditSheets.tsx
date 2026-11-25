@@ -1,5 +1,4 @@
 import React from "react";
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import type { InfoStateProps } from "@shared/ui-info-state";
 import TranslatedError from "~/components/TranslatedError";
 import { useTranslation } from "~/context/Locale";
@@ -78,16 +77,10 @@ export default function SignTokenEditSheets(props: Props) {
     <SignAndBroadcastSheet
       flow={props.viewModel}
       infoState={infoState}
+      trackCategory="XrpManageTokenFlow"
       trackName={TRACK_NAMES[props.viewModel.infoStep]}
       testID="xrp-edit-token-sheet"
-    >
-      {props.viewModel.infoStep === "success" ? (
-        <SyncOneAccountOnMount
-          reason="transaction-flow-confirmation"
-          priority={10}
-          accountId={props.accountId}
-        />
-      ) : null}
-    </SignAndBroadcastSheet>
+      accountId={props.accountId}
+    />
   );
 }

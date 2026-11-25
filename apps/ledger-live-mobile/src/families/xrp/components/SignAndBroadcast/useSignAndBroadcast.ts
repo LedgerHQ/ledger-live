@@ -1,10 +1,11 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { createIntent, type Intent } from "@features/platform-device-intent";
 import { track } from "@shared/analytics";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
-import type { Transaction, XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
+import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { presentBroadcastError } from "@ledgerhq/live-common/flows/send/presentBroadcastError";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import type {
@@ -40,16 +41,19 @@ type Signing = Readonly<{
 type Failure = Readonly<{ error: Error; isSigned: boolean }>;
 
 type Props<Extra extends string> = Readonly<{
-  action: "edit" | "delete";
+  action: "add" | "edit" | "delete";
   account: Account;
-  tokenAccount: XrpTokenAccount;
+  token: TokenCurrency;
   transaction: Transaction | null | undefined;
   initialStep?: Extra;
   onCancel?: () => void;
-  onExit: (operation: Operation | undefined) => void;
+  onSuccess?: (operation: Operation) => void;
+  onExit?: (operation: Operation | undefined) => void;
 }>;
 
-export type SignAndBroadcast = ReturnType<typeof useSignAndBroadcast<string>>;
+export type SignAndBroadcast<Extra extends string = string> = ReturnType<
+  typeof useSignAndBroadcast<Extra>
+>;
 
 const NON_INFO_STEPS = new Set<string>(["idle", "sign", "closed"]);
 
@@ -67,8 +71,8 @@ function toError(rejection: unknown): Error {
 }
 
 export function useSignAndBroadcast<Extra extends string = never>(props: Props<Extra>) {
-  const { action, account, tokenAccount, transaction } = props;
-  const { initialStep = "idle", onCancel, onExit } = props;
+  const { action, account, token, transaction } = props;
+  const { initialStep = "idle", onCancel, onSuccess, onExit } = props;
 
   const dispatch = useDispatch();
   const [step, setStep] = useState<Step<Extra>>(initialStep);
@@ -135,19 +139,21 @@ export function useSignAndBroadcast<Extra extends string = never>(props: Props<E
     goTo("broadcasting");
     broadcast(signedOperation)
       .then(operation => {
-        operationRef.current = operation;
+        // onSuccess leaves for its own screen before the account update re-renders this one
+        if (onSuccess) onSuccess(operation);
+        else operationRef.current = operation;
         dispatch(
           updateAccountWithUpdater({
             accountId: account.id,
             updater: current => addPendingOperation(current, operation),
           }),
         );
-        goTo("success");
+        goTo(onSuccess ? "closed" : "success");
       })
       .catch(error => {
         showError({ error: presentBroadcastError(error, account, null), isSigned: true });
       });
-  }, [account, broadcast, dispatch, goTo, showError]);
+  }, [account, broadcast, dispatch, goTo, onSuccess, showError]);
 
   const onClose = useCallback(() => goTo("closed"), [goTo]);
 
@@ -161,7 +167,7 @@ export function useSignAndBroadcast<Extra extends string = never>(props: Props<E
 
     const operation = operationRef.current;
     operationRef.current = undefined;
-    onExit(operation);
+    onExit?.(operation);
   }, [onExit]);
 
   // The executor sheet cancels on close and on unmount, with the props of its last render.
@@ -178,9 +184,9 @@ export function useSignAndBroadcast<Extra extends string = never>(props: Props<E
     return {
       action,
       currency: account.currency.id,
-      tokenType: tokenAccount.token.tokenType,
+      tokenType: token.tokenType,
     };
-  }, [action, account.currency.id, tokenAccount.token.tokenType]);
+  }, [action, account.currency.id, token.tokenType]);
 
   const onIntentJobStateChanged = useCallback(
     (jobState: SignTransactionIntentWithResultJobState) => {

@@ -30,17 +30,22 @@ const SIGNED_OPERATION = { operation: XRP_IOU_REMOVAL, signature: "sig" };
 
 const onExit = jest.fn();
 const onCancel = jest.fn();
+const onSuccess = jest.fn();
 
-function renderSignAndBroadcast() {
+function renderSignAndBroadcast(
+  action: "add" | "edit" | "delete" = "edit",
+  withSuccessScreen = false,
+) {
   return renderHook(
     () => {
       return useSignAndBroadcast({
         transaction,
         onCancel,
         onExit,
-        action: "edit",
+        onSuccess: withSuccessScreen ? onSuccess : undefined,
+        action,
         account: XRP_ACCOUNT_WITH_TOKEN,
-        tokenAccount: XRP_IOU_TOKEN_ACCOUNT,
+        token: XRP_IOU_TOKEN_ACCOUNT.token,
         initialStep: "confirm",
       });
     },
@@ -96,6 +101,19 @@ describe("useSignAndBroadcast", () => {
     await waitFor(() => expect(result.current.infoStep).toBe("success"));
     expect(mockBroadcast).toHaveBeenCalledTimes(1);
     expect(mockBroadcast).toHaveBeenCalledWith(SIGNED_OPERATION);
+  });
+
+  it("hands the broadcast operation to onSuccess and closes the sheet instead of showing success", async () => {
+    const { result } = renderSignAndBroadcast("add", true);
+    await startSigning(result);
+
+    signAndComplete(result);
+
+    await waitFor(() => expect(onSuccess).toHaveBeenCalledWith(XRP_IOU_REMOVAL));
+    expect(result.current.infoStep).toBe("broadcasting");
+    expect(result.current.isInfoSheetOpen).toBe(false);
+    act(() => result.current.onInfoSheetHidden());
+    expect(onExit).toHaveBeenCalledWith(undefined);
   });
 
   it("shows the broadcast failure as signed", async () => {
@@ -195,28 +213,31 @@ describe("useSignAndBroadcast", () => {
     expect(onExit).toHaveBeenCalledWith(undefined);
   });
 
-  it("tracks a signing error with the action and the token type", () => {
-    const { result } = renderSignAndBroadcast();
+  it.each(["add", "edit", "delete"] as const)(
+    "tracks a signing error with the %s action and the token type",
+    action => {
+      const { result } = renderSignAndBroadcast(action);
 
-    act(() => {
-      result.current.onIntentJobStateChanged({
-        type: "error",
-        error: new Error("Device busy"),
-        retry: jest.fn(),
+      act(() => {
+        result.current.onIntentJobStateChanged({
+          type: "error",
+          error: new Error("Device busy"),
+          retry: jest.fn(),
+        });
       });
-    });
 
-    expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith(
-      "error_displayed",
-      expect.objectContaining({
-        action: "edit",
-        tokenType: "iou",
-        step: "signature",
-        message_id: "Error",
-      }),
-    );
-  });
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenCalledWith(
+        "error_displayed",
+        expect.objectContaining({
+          action,
+          tokenType: "iou",
+          step: "signature",
+          message_id: "Error",
+        }),
+      );
+    },
+  );
 
   it("does not track a job state that is not an error", () => {
     const { result } = renderSignAndBroadcast();
