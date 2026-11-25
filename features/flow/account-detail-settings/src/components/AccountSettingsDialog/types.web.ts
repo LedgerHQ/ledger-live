@@ -14,6 +14,7 @@ export type AccountSettingsDialogProps = Readonly<{
   onConfirmName: (name: string) => void;
   onConfirmRemove: () => void;
   explorerUrl?: string;
+  onManageAssets?: () => void;
   onEvent?: AccountSettingsEventHandler;
   testID?: string;
 }>;

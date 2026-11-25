@@ -29,5 +29,6 @@ export type AccountSettingsProps<TAccount extends AccountSettingsAccount> = Read
   adapter: AccountSettingsAdapter<TAccount>;
   isOpen: boolean;
   onClose: () => void;
+  onManageAssets?: () => void;
   testID?: string;
 }>;
