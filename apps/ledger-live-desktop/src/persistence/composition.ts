@@ -12,6 +12,7 @@ import { createElectronStorage } from "@shared/storage-electron";
 import { db } from "~/renderer/bridge";
 import logger from "~/renderer/logger";
 import type { State } from "~/renderer/reducers";
+import { fetchTrustchain } from "~/renderer/actions/trustchain";
 import { importWalletState } from "~/renderer/reducers/wallet";
 import { getKey, SET_KEY_DEBOUNCE_MS } from "~/renderer/storage";
 import type { AppDispatch, ReduxStore } from "~/state-manager/configureStore";
@@ -56,6 +57,9 @@ class EncryptedRecordsStillLockedError extends Error {
   override name = "EncryptedRecordsStillLockedError";
 }
 
+const encryptedRecordsLoaded = (state: State): boolean =>
+  ENCRYPTED_KEYS.every(key => isWritableStatus(selectRecordStatus(state, key)));
+
 /**
  * Hydrates, then imports the `app.wallet` state, as `fetchAccounts` did: its account names win
  * over the copy in each account (LIVE-41517). `wallet` is not a persistence record yet, and it is
@@ -69,7 +73,8 @@ async function hydrateWithWallet(
   const wallet = await getKey("app", "wallet");
   const statuses = await persistence.hydrate(store, { keys });
   if (statuses.accounts === "failed") throw new AccountsUnreadableError();
-  if (isWritableStatus(statuses.accounts) && wallet?.walletSyncState) {
+  // From the state: a retry may hydrate no record at all.
+  if (encryptedRecordsLoaded(store.getState()) && wallet?.walletSyncState) {
     const dispatch: AppDispatch = store.dispatch;
     dispatch(importWalletState(wallet));
   }
@@ -79,13 +84,20 @@ async function hydrateWithWallet(
 /** At start. `accounts` is `locked` while the app has a password: the app then shows the lock. */
 export const hydrateAtStart = (store: ReduxStore) => hydrateWithWallet(store);
 
-/** True once the encrypted records are in the state: a later unlock does not read them again. */
-export const encryptedRecordsLoaded = (state: State): boolean =>
-  ENCRYPTED_KEYS.every(key => isWritableStatus(selectRecordStatus(state, key)));
+/** The unlocks that failed after loading part of the encrypted state: the next try loads the rest. */
+const unfinishedUnlocks = new WeakSet<ReduxStore>();
 
-/** After the password unlock. It throws while a record is still encrypted (wrong password). */
-export async function hydrateEncryptedRecords(store: ReduxStore): Promise<void> {
-  const statuses = await hydrateWithWallet(store, ENCRYPTED_KEYS);
-  const stillLocked = ENCRYPTED_KEYS.filter(key => statuses[key] === "locked");
+/** After the password unlock. Throws until the records, wallet and trustchain are all loaded. */
+export async function hydrateEncryptedState(store: ReduxStore): Promise<void> {
+  if (encryptedRecordsLoaded(store.getState()) && !unfinishedUnlocks.has(store)) return;
+  unfinishedUnlocks.add(store);
+  const notLoaded = ENCRYPTED_KEYS.filter(
+    key => !isWritableStatus(selectRecordStatus(store.getState(), key)),
+  );
+  const statuses = await hydrateWithWallet(store, notLoaded);
+  const stillLocked = notLoaded.filter(key => statuses[key] === "locked");
   if (stillLocked.length > 0) throw new EncryptedRecordsStillLockedError(stillLocked.join(", "));
+  const dispatch: AppDispatch = store.dispatch;
+  await dispatch(fetchTrustchain());
+  unfinishedUnlocks.delete(store);
 }

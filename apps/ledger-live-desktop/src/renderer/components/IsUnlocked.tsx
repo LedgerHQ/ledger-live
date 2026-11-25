@@ -6,8 +6,7 @@ import { PasswordIncorrectError } from "@ledgerhq/live-common/errors";
 import { setEncryptionKey, isEncryptionKeyCorrect, hasBeenDecrypted } from "~/renderer/storage";
 import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
 import { useHardReset } from "~/renderer/reset";
-import { encryptedRecordsLoaded, hydrateEncryptedRecords } from "~/persistence/composition";
-import { fetchTrustchain } from "~/renderer/actions/trustchain";
+import { hydrateEncryptedState } from "~/persistence/composition";
 import { unlock } from "~/renderer/actions/application";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import Box from "~/renderer/components/Box";
@@ -56,11 +55,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
         } else if (!(await isEncryptionKeyCorrect(inputValue.password))) {
           throw new PasswordIncorrectError();
         }
-        // Also after a first try whose hydration failed: the app never unlocks without them.
-        if (!encryptedRecordsLoaded(store.getState())) {
-          await hydrateEncryptedRecords(store);
-          await dispatch(fetchTrustchain());
-        }
+        await hydrateEncryptedState(store);
         dispatch(unlock());
       } catch {
         setIncorrectPassword(new PasswordIncorrectError());
