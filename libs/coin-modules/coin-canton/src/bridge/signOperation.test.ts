@@ -1,5 +1,6 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import type { Account, SignedOperation } from "@ledgerhq/types-live";
+import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import type { CantonCoinConfig, CantonContext } from "../config";
 import { prepareTransferRequest, submit } from "../network/gateway";
 import {
@@ -159,6 +160,7 @@ describe("buildSignOperation", () => {
     expect(broadcasted).toMatchObject({
       hash: "update-id",
       id: encodeOperationId(account.id, "update-id", "OUT"),
+      transactionSequenceNumber: signedOperation.operation.transactionSequenceNumber,
     });
     const { signature } = JSON.parse(signedOperation.signature);
     expect(mockedSubmit).toHaveBeenCalledWith(
@@ -167,6 +169,16 @@ describe("buildSignOperation", () => {
       createMockPrepareTransferResponse().serialized,
       signature,
     );
+  });
+
+  it("should give the optimistic operation a sequence number above the account's pending ones", async () => {
+    const pending = { transactionSequenceNumber: BigNumber(Date.now() + 60_000) } as Operation;
+
+    const { operation } = await sign(nativeTransaction, {
+      signedAccount: { ...account, pendingOperations: [pending] },
+    });
+
+    expect(operation.transactionSequenceNumber).toEqual(pending.transactionSequenceNumber?.plus(1));
   });
 
   it("should fail the broadcast when the gateway returns no update id", async () => {

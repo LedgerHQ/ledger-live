@@ -137,6 +137,9 @@ function chargeSeparateFee(
  *
  * A transaction of a pending transfer proposal yields its paid fees only, as FEES operations: the
  * offer list shows the proposal itself until it settles.
+ *
+ * A failed row moves no value, so its operation keeps its fee only. Canton commits a transaction as
+ * a whole, so one failed row flags every operation of the transaction as failed.
  */
 function toOperations(
   rows: ValidOperationInfo[],
@@ -145,6 +148,9 @@ function toOperations(
   pendingHashes: ReadonlySet<string>,
 ): Operation[] {
   const groups = new Map<string, OperationGroup>();
+  const failedHashes = new Set(
+    rows.filter(row => row.status === "Failed").map(row => row.transaction_hash),
+  );
   const separateFees = new Map<
     string,
     { row: ValidOperationInfo; instrument: Instrument; fee: BigNumber }
@@ -176,7 +182,7 @@ function toOperations(
       recipients: new Set<string>(),
       memos: new Set<string>(),
     };
-    group.transferValue = group.transferValue.plus(transferValue);
+    if (row.status !== "Failed") group.transferValue = group.transferValue.plus(transferValue);
     if (memo !== undefined) group.memos.add(memo);
     group.fee = group.fee.plus(shownFee);
     if (separateFeeAsset) addSeparateFee(row, separateFeeAsset, fee);
@@ -201,6 +207,7 @@ function toOperations(
       recipients: [...recipients],
       date: new Date(row.transaction_timestamp),
       transactionSequenceNumber: new BigNumber(row.block.height),
+      hasFailed: failedHashes.has(row.transaction_hash),
       extra: {
         uid: row.uid,
         // Rows that disagree leave no memo rather than one that holds for some of them only.

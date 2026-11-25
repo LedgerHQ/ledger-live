@@ -3,7 +3,8 @@ import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import { AccountBridge, Operation } from "@ledgerhq/types-live";
+import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
@@ -38,6 +39,19 @@ function toTransferIntent(
       : { expiration: transaction.expireInSeconds }),
     ...(memo ? { memo: { type: "string", kind: "reason", value: memo } } : {}),
   };
+}
+
+/**
+ * Canton has no nonce. A synced operation takes its ledger offset, far below a timestamp in ms, so the
+ * framework never drops a pending operation by sequence: the sync removes it by hash. Distinct per
+ * pending operation, so that a send does not replace an earlier one still pending.
+ */
+export function nextPendingSequenceNumber(account: Account): BigNumber {
+  return account.pendingOperations.reduce(
+    (next, { transactionSequenceNumber }) =>
+      transactionSequenceNumber?.gte(next) ? transactionSequenceNumber.plus(1) : next,
+    new BigNumber(Date.now()),
+  );
 }
 
 export const buildSignOperation =
@@ -96,6 +110,7 @@ export const buildSignOperation =
             senders: [account.freshAddress],
             recipients: [transaction.recipient],
             date: new Date(),
+            transactionSequenceNumber: nextPendingSequenceNumber(account),
             extra: {},
           };
 
