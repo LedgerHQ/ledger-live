@@ -226,3 +226,32 @@ describe("OperationDetails content, fee paid in a token", () => {
     expect(screen.getByText(`countervalue ${ethereum.id} 21000000000000`)).toBeOnTheScreen();
   });
 });
+
+describe("OperationDetails content, token operations section", () => {
+  const operationWithTokenOperation = { ...nativeOperation, subOperations: [feesOperation] };
+
+  it("lists the token operation in the token operations section", async () => {
+    renderContent(accountWith([tokenAccount]), operationWithTokenOperation);
+
+    expect(await screen.findByText("Token operations")).toBeOnTheScreen();
+    expect(screen.queryByText("Subaccount operations")).toBeNull();
+  });
+
+  it("opens the token info modal with the support link of the token standard", async () => {
+    const { user } = renderContent(accountWith([tokenAccount]), operationWithTokenOperation);
+
+    await user.press(await screen.findByTestId("TokenOperationsInfo"));
+
+    expect(await screen.findByText("Learn more")).toBeOnTheScreen();
+  });
+
+  it("hides learn more in the token info modal when the token standard has no support link", async () => {
+    const splTokenAccount = { ...tokenAccount, token: { ...usdc, tokenType: "spl" } };
+    const { user } = renderContent(accountWith([splTokenAccount]), operationWithTokenOperation);
+
+    await user.press(await screen.findByTestId("TokenOperationsInfo"));
+
+    expect(await screen.findByText("Close")).toBeOnTheScreen();
+    expect(screen.queryByText("Learn more")).toBeNull();
+  });
+});

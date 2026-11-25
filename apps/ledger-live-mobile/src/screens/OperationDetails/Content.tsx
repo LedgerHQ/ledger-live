@@ -129,7 +129,6 @@ export default function Content({
   const currencySettings = useCurrencySettingsForAccount(mainAccount);
   const bridge = useAccountBridge(mainAccount);
 
-  const isToken = currency.type === "TokenCurrency";
   const accountName = useAccountName(account);
   const unit = useAccountUnit(account);
   const amount = getOperationAmountNumber(operation);
@@ -139,6 +138,15 @@ export default function Content({
   const uniqueRecipients = uniq<(typeof operation.recipients)[0]>(operation.recipients);
   const { type, hasFailed } = operation;
   const subOperations = operation.subOperations || [];
+  const subOperationToken =
+    account.type === "Account"
+      ? (account.subAccounts ?? []).find(
+          subAccount =>
+            subAccount.type === "TokenAccount" &&
+            subOperations.some(op => op.accountId === subAccount.id),
+        )?.token
+      : undefined;
+  const isToken = subOperationToken !== undefined;
   const internalOperations = operation.internalOperations || [];
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
 
@@ -304,7 +312,7 @@ export default function Content({
 
       {subOperations.length > 0 && account.type === "Account" && (
         <>
-          <View style={[sectionStyles.wrapper]}>
+          <View style={[sectionStyles.wrapper, styles.subOperationsTitle]}>
             <LText color="grey" semiBold>
               <Trans
                 i18nKey={
@@ -489,7 +497,9 @@ export default function Content({
         </View>
       )}
 
-      <Modal isOpened={isModalOpened} onClose={onModalClose} currency={currency} />
+      {subOperationToken ? (
+        <Modal isOpened={isModalOpened} onClose={onModalClose} currency={subOperationToken} />
+      ) : null}
     </>
   );
 }
@@ -538,6 +548,10 @@ const styles = StyleSheet.create({
   },
   confirmation: {
     fontSize: 16,
+  },
+  subOperationsTitle: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   info: {
     marginLeft: 5,
