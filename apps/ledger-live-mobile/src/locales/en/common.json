@@ -4967,6 +4967,14 @@
           "europa": "Ledger Flex",
           "apex": "Ledger Flex Plus"
         }
+      },
+      "devTools": {
+        "appToggles": {
+          "simulateApolloDevice": {
+            "label": "Simulate an Apollo device",
+            "description": "Act as if the app ran on Apollo: the new Settings hide My Ledger provider and Mock app update."
+          }
+        }
       }
     }
   },

@@ -284,6 +284,8 @@ export type SettingsState = {
   countervalueFirst: boolean;
   graphCountervalueFirst: boolean;
   hideEmptyTokenAccounts: boolean;
+  /** Developer toggle: the app acts as if it ran on an Apollo device, until Device XP tells. */
+  simulateApolloDevice: boolean;
   filterTokenOperationsZeroAmount: boolean;
   hideSmallValueTokenOperations: boolean;
   blacklistedTokenIds: string[];

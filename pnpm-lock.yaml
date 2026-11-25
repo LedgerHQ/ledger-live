@@ -4608,12 +4608,24 @@ importers:
 
   devtools/app-toggles:
     devDependencies:
+      '@gorhom/bottom-sheet':
+        specifier: 'catalog:'
+        version: 5.2.7(db28dd4150d1c921a8a8f9e748e99a4b)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.37
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
         version: 0.1.75(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.37)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@ledgerhq/lumen-ui-rnative':
+        specifier: 'catalog:'
+        version: 0.1.76(384c4ff3da10cf40103c69d29cb6b8bd)
+      '@ledgerhq/lumen-utils-shared':
+        specifier: 'catalog:'
+        version: 0.1.19(react@19.1.4)
+      '@react-native/babel-preset':
+        specifier: 'catalog:'
+        version: 0.81.6(@babel/core@7.28.5)
       '@support/jest':
         specifier: workspace:*
         version: link:../../support/jest
@@ -4632,24 +4644,39 @@ importers:
       '@testing-library/react':
         specifier: 'catalog:'
         version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@testing-library/react-native':
+        specifier: 'catalog:'
+        version: 13.3.3(patch_hash=4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76)(jest@30.5.2(@types/node@24.12.4)(babel-plugin-macros@3.1.0))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react-test-renderer@19.1.4(react@19.1.4))(react@19.1.4)
       '@testing-library/user-event':
         specifier: 'catalog:'
         version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.4
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
+      babel-jest:
+        specifier: 'catalog:'
+        version: 30.5.2(@babel/core@7.28.5)
+      expo-haptics:
+        specifier: 'catalog:'
+        version: 15.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.1(patch_hash=a146323144a9d19c5db1e0869477abc1386e1e81527e954761d6602330c3478a)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.4)(babel-plugin-macros@3.1.0)
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       oxfmt:
         specifier: 'catalog:'
         version: 0.79.0
@@ -4661,6 +4688,24 @@ importers:
         version: 19.1.4
       react-dom:
         specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-native:
+        specifier: 'catalog:'
+        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
+      react-native-reanimated:
+        specifier: 'catalog:'
+        version: 4.3.4(react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
+      react-native-safe-area-context:
+        specifier: 'catalog:'
+        version: 5.7.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
+      react-native-svg:
+        specifier: 'catalog:'
+        version: 15.15.4(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
+      react-native-worklets:
+        specifier: 'catalog:'
+        version: 0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
+      react-test-renderer:
+        specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
       typescript:
         specifier: 'catalog:'

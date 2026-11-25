@@ -243,6 +243,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_READONLY_MODE = "SETTINGS_SET_READONLY_MODE",
   SETTINGS_SWITCH_COUNTERVALUE_FIRST = "SETTINGS_SWITCH_COUNTERVALUE_FIRST",
   SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS = "SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS",
+  SETTINGS_SET_SIMULATE_APOLLO_DEVICE = "SETTINGS_SET_SIMULATE_APOLLO_DEVICE",
   SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT = "SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT",
   SETTINGS_HIDE_SMALL_VALUE_TOKEN_OPERATIONS = "SETTINGS_HIDE_SMALL_VALUE_TOKEN_OPERATIONS",
   SHOW_TOKEN = "SHOW_TOKEN",
@@ -311,6 +312,7 @@ export type SettingsSetSelectedTimeRangePayload = SettingsState["selectedTimeRan
 export type SettingsSetHasInstalledAnyAppPayload = SettingsState["hasInstalledAnyApp"];
 export type SettingsSetReadOnlyModePayload = SettingsState["readOnlyModeEnabled"];
 export type SettingsHideEmptyTokenAccountsPayload = SettingsState["hideEmptyTokenAccounts"];
+export type SettingsSetSimulateApolloDevicePayload = SettingsState["simulateApolloDevice"];
 export type SettingsFilterTokenOperationsZeroAmountPayload =
   SettingsState["filterTokenOperationsZeroAmount"];
 export type SettingsHideSmallValueTokenOperationsPayload =
@@ -401,6 +403,7 @@ export type SettingsPayload =
   | SettingsSetHasInstalledAnyAppPayload
   | SettingsSetReadOnlyModePayload
   | SettingsHideEmptyTokenAccountsPayload
+  | SettingsSetSimulateApolloDevicePayload
   | SettingsFilterTokenOperationsZeroAmountPayload
   | SettingsHideSmallValueTokenOperationsPayload
   | SettingsShowTokenPayload

@@ -9,6 +9,7 @@ import {
   DangerouslyOverrideStatePayload,
   SettingsDismissBannerPayload,
   SettingsHideEmptyTokenAccountsPayload,
+  SettingsSetSimulateApolloDevicePayload,
   SettingsImportPayload,
   SettingsSetHasInstalledAnyAppPayload,
   SettingsLastSeenDeviceInfoPayload,
@@ -138,6 +139,9 @@ export const switchCountervalueFirst = createAction(
 );
 export const setHideEmptyTokenAccounts = createAction<SettingsHideEmptyTokenAccountsPayload>(
   SettingsActionTypes.SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS,
+);
+export const setSimulateApolloDevice = createAction<SettingsSetSimulateApolloDevicePayload>(
+  SettingsActionTypes.SETTINGS_SET_SIMULATE_APOLLO_DEVICE,
 );
 export const setFilterTokenOperationsZeroAmount =
   createAction<SettingsFilterTokenOperationsZeroAmountPayload>(
