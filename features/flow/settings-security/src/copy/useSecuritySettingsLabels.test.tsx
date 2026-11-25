@@ -40,5 +40,6 @@ describe("useSecuritySettingsLabels", () => {
 
     expect(biometrics.title).toBe(name);
     expect(biometrics.description).toBe(`Use ${name} to open the app.`);
+    expect(biometrics.disabledDescription).toBe(`To enable ${name}, turn on "App lock".`);
   });
 });

@@ -3,23 +3,28 @@ import { act, renderHook } from "@testing-library/react";
 import { track } from "@shared/analytics";
 import { SettingsPortProvider } from "@features/flow-settings";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
+import { createFakeLinking } from "./__tests__/fakeLinking";
 import { createFakeSecurityPort } from "./__tests__/fakeSecurityPort";
 import type { SecuritySettingsValues } from "./types";
+import { SECURITY_URLS } from "./urls";
 import { useSecurityViewModel } from "./useSecurityViewModel";
 
 jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
 
 function renderViewModel(initial?: Partial<SecuritySettingsValues>) {
   const fake = createFakeSecurityPort(initial);
+  const { openExternal, LinkingWrapper } = createFakeLinking();
   const hook = renderHook(() => useSecurityViewModel({}), {
     wrapper: ({ children }: { children: ReactNode }) => (
       <I18nWrapper>
-        <SettingsPortProvider value={fake.port}>{children}</SettingsPortProvider>
+        <LinkingWrapper>
+          <SettingsPortProvider value={fake.port}>{children}</SettingsPortProvider>
+        </LinkingWrapper>
       </I18nWrapper>
     ),
   });
   const row = (id: string) => hook.result.current.rows.find(candidate => candidate.id === id);
-  return { ...fake, ...hook, row };
+  return { ...fake, ...hook, openExternal, row };
 }
 
 describe("useSecurityViewModel", () => {
@@ -93,11 +98,11 @@ describe("useSecurityViewModel", () => {
   });
 
   it("opens the MEV protection page from the link", () => {
-    const { row, openMevProtectionInfo } = renderViewModel();
+    const { row, openExternal } = renderViewModel();
 
     row("mevProtection")?.descriptionLink?.onSelect();
 
-    expect(openMevProtectionInfo).toHaveBeenCalledTimes(1);
+    expect(openExternal.mock.calls).toEqual([[SECURITY_URLS.mevProtection]]);
   });
 
   it("asks the app to set the password when App lock is turned on", () => {

@@ -5,6 +5,7 @@ const EDITABLE_SECURITY_KEYS: ReadonlySet<string> = new Set<SecurityUpdate["key"
   "hideBalance",
   "mevProtection",
   "autoLockTimeout",
+  "biometricsEnabled",
 ]);
 
 /** Tells whether a change of the Settings port belongs to the Security section. */
@@ -23,6 +24,9 @@ export function applySecurityUpdate(effects: SecuritySideEffects, update: Securi
       return;
     case "autoLockTimeout":
       effects.setAutoLockTimeout(update.value);
+      return;
+    case "biometricsEnabled":
+      effects.setBiometricsEnabled(update.value);
       return;
   }
 }

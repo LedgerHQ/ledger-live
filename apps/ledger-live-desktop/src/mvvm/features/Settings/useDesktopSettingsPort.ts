@@ -16,7 +16,7 @@ export type DesktopSettingsPort = SettingsPort<
   GeneralSettingsValues & SecuritySettingsValues,
   DesktopSettingsUpdate
 > &
-  Pick<SecuritySettingsPort, "requestAppLock" | "openMevProtectionInfo">;
+  Pick<SecuritySettingsPort, "requestAppLock">;
 
 /**
  * Builds the settings port of Ledger Wallet Desktop from the legacy settings store. Each section
@@ -43,10 +43,7 @@ export function useDesktopSettingsPort(): DesktopSettingsPort {
     [general, security],
   );
 
-  const { requestAppLock, openMevProtectionInfo } = security;
+  const { requestAppLock } = security;
 
-  return useMemo(
-    () => ({ values, setValue, requestAppLock, openMevProtectionInfo }),
-    [values, setValue, requestAppLock, openMevProtectionInfo],
-  );
+  return useMemo(() => ({ values, setValue, requestAppLock }), [values, setValue, requestAppLock]);
 }
