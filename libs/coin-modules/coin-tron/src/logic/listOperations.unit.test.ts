@@ -6,6 +6,7 @@ import {
   fetchTronAccountTxsPage,
   FetchTxsPageParams,
   getBlock,
+  getTransactionInfoById,
   TxEndpoint,
   TxEndpointPage,
 } from "../network";
@@ -18,6 +19,14 @@ jest.mock("../network", () => ({
   fetchTronAccountTxsPage: jest.fn(),
   fetchTronAccountTxsEndpointPage: jest.fn(),
   getBlock: jest.fn(),
+  getTransactionInfoById: jest.fn(),
+}));
+
+// A contract call's receipt pays the account the amount its fake record names.
+jest.mock("./internalTransfers", () => ({
+  readInternalTransfers: jest.fn((_logger, receipt: { payout: number }) => [
+    { index: 0, from: "TContract", to: "tronExampleAddress", amount: BigInt(receipt.payout) },
+  ]),
 }));
 
 jest.mock("../network/trongrid/trongrid-adapters", () => ({
@@ -30,7 +39,14 @@ const address = "tronExampleAddress";
 const config = {} as TronCoinConfig;
 const logger: Logger = (..._args: unknown[]) => {};
 
-type FakeRecord = { id: string; ts: number; endpoint: TxEndpoint; filteredOut?: boolean };
+type FakeRecord = {
+  id: string;
+  ts: number;
+  endpoint: TxEndpoint;
+  filteredOut?: boolean;
+  /** Set on a successful contract call whose receipt pays the account this amount. */
+  payout?: number;
+};
 
 type FakeQuery = FetchTxsPageParams & { endpoint: TxEndpoint; offset: number };
 
@@ -39,7 +55,10 @@ function toTxInfo(record: FakeRecord): TrongridTxInfo {
     txID: record.id,
     date: new Date(record.ts),
     blockHeight: record.ts,
-    type: record.endpoint === "trc20" ? "TriggerSmartContract" : "TransferContract",
+    type:
+      record.endpoint === "trc20" || record.payout !== undefined
+        ? "TriggerSmartContract"
+        : "TransferContract",
     from: address,
     to: "TRecipient",
     value: new BigNumber(1),
@@ -63,6 +82,7 @@ function fakeTronGrid(records: FakeRecord[]) {
     return {
       rawTimestamps: slice.map(r => r.ts),
       txs: slice.filter(r => !r.filteredOut).map(toTxInfo),
+      contractCalls: slice.filter(r => r.payout !== undefined).map(toTxInfo),
       next: isFullPageEvenIfNothingFollows(slice, query)
         ? JSON.stringify({ ...query, offset: query.offset + query.limit })
         : undefined,
@@ -91,6 +111,14 @@ const native = (id: string, ts: number, kept = true): FakeRecord => ({
   filteredOut: !kept,
 });
 const trc20 = (id: string, ts: number): FakeRecord => ({ id, ts, endpoint: "trc20" });
+// A successful native contract call: dropped as an operation, but its receipt is read.
+const contractCall = (id: string, ts: number): FakeRecord => ({
+  id,
+  ts,
+  endpoint: "native",
+  filteredOut: true,
+  payout: 1,
+});
 
 async function walkLikePaginateOperations(
   options: Partial<ListOperationsOptions>,
@@ -124,7 +152,16 @@ describe("listOperations", () => {
       time: new Date(height),
     }));
     (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation((tx: TrongridTxInfo) => ({
-      id: tx.tokenType === "trc20" ? `${tx.txID}:trc20` : tx.txID,
+      id:
+        tx.internalIndex !== undefined
+          ? `${tx.txID}:internal`
+          : tx.tokenType === "trc20"
+            ? `${tx.txID}:trc20`
+            : tx.txID,
+    }));
+    (getTransactionInfoById as jest.Mock).mockImplementation(async (_logger, _config, txID) => ({
+      id: txID,
+      payout: 1,
     }));
   });
 
@@ -267,6 +304,57 @@ describe("listOperations", () => {
       expect(first.items).toEqual([]);
       expect(first.next).toBe("4000");
       expect(await walkLikePaginateOperations({ order: "desc" })).toEqual(["n3", "n2"]);
+    });
+  });
+
+  describe("internal transfers of contract calls", () => {
+    it("lists each one once, on the page of its call, whatever the page cuts", async () => {
+      fakeTronGrid([
+        native("n9", 9000),
+        contractCall("c8", 8000),
+        native("n7", 7000),
+        contractCall("c6", 6000),
+        trc20("t5", 5000),
+        contractCall("c4", 4000),
+        native("n3", 3000),
+      ]);
+      const expected = ["n9", "c8:internal", "n7", "c6:internal", "t5:trc20", "c4:internal", "n3"];
+
+      expect(await walkLikePaginateOperations({ order: "desc" })).toEqual(expected);
+      expect(await walkLikePaginateOperations({ order: "asc" })).toEqual([...expected].reverse());
+      expect(await walkLikePaginateOperations({ order: "desc", limit: 1 })).toEqual(expected);
+    });
+
+    it("lists the internal transfers of a timestamp group spanning several pages", async () => {
+      fakeTronGrid([
+        native("n9", 9000),
+        native("a", 5000),
+        native("b", 5000),
+        native("c", 5000),
+        contractCall("d", 5000),
+        native("n1", 1000),
+      ]);
+
+      expect(await walkLikePaginateOperations({ order: "desc" })).toEqual([
+        "n9",
+        "a",
+        "b",
+        "c",
+        "d:internal",
+        "n1",
+      ]);
+    });
+
+    it("reads one receipt per contract call over a whole walk", async () => {
+      fakeTronGrid([contractCall("c3", 3000), contractCall("c2", 2000), contractCall("c1", 1000)]);
+
+      await walkLikePaginateOperations({ order: "desc", limit: 1 });
+
+      expect((getTransactionInfoById as jest.Mock).mock.calls.map(call => call[2])).toEqual([
+        "c3",
+        "c2",
+        "c1",
+      ]);
     });
   });
 

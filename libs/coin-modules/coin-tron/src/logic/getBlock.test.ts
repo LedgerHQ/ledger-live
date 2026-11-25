@@ -1166,7 +1166,7 @@ describe("getBlock", () => {
 
       expect(internalTransfersOf(result.transactions[0].operations)).toEqual([]);
       expect(mockLogger).toHaveBeenCalledWith(
-        "tron/getBlock",
+        "tron/internalTransfers",
         "skipping internal transfer with an unreadable amount",
         expect.objectContaining({ txID: "tx1", internalTxHash: "internal1" }),
       );

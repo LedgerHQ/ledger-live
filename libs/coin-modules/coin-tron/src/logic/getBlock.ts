@@ -23,6 +23,7 @@ import {
   decodeTrc20TransferLog,
 } from "../network/utils";
 import type { TrongridTxInfo, TrongridTxType } from "../types";
+import { readInternalTransfers } from "./internalTransfers";
 
 type BlockTxInfo = TrongridTxInfo;
 
@@ -112,9 +113,7 @@ function toBlockTransaction(
   // TRX (or TRC10) a contract sends during the call — a DEX payout, an exchange withdrawal, a
   // refund — appears in neither `raw_data` nor the event logs, only in the receipt's internal
   // transactions. A failed transaction reverts all of them, so they are only read for a success.
-  const internalOperations = txInfo.hasFailed
-    ? []
-    : toInternalTransferOperations(logger, txInfo.txID, txDetail);
+  const internalOperations = txInfo.hasFailed ? [] : toInternalTransferOperations(logger, txDetail);
 
   return {
     hash: txInfo.txID,
@@ -126,43 +125,22 @@ function toBlockTransaction(
 }
 
 /**
- * The debit/credit pair of every value a contract moved during the transaction. The transaction's
- * own `call_value` is not part of the internal transactions, and a TRC20 movement is a contract
- * storage change rather than a value transfer, so neither is counted twice. No fee is attached:
- * the transaction's fee payer already pays for the whole execution.
+ * The debit/credit pair of every value a contract moved during the transaction. No fee is
+ * attached: the transaction's fee payer already pays for the whole execution.
  */
 function toInternalTransferOperations(
   logger: Logger,
-  txID: string,
   txDetail: TransactionInfoByBlockNumAPI | undefined,
 ): BlockOperation[] {
-  return (txDetail?.internal_transactions ?? []).flatMap(internalTx => {
-    if (internalTx.rejected) return [];
-
-    return (internalTx.callValueInfo ?? []).flatMap(({ callValue, tokenId }) => {
-      if (!callValue) return [];
-      if (!Number.isSafeInteger(callValue) || callValue < 0) {
-        logger("tron/getBlock", "skipping internal transfer with an unreadable amount", {
-          txID,
-          internalTxHash: internalTx.hash,
-          callValue,
-        });
-        return [];
-      }
-
-      // A `tokenId` names the TRC10 token moved; without one the value is TRX.
-      const asset: AssetInfo = tokenId
-        ? { type: "trc10", assetReference: tokenId }
-        : { type: "native" };
-      const from = encode58Check(internalTx.caller_address);
-      const to = encode58Check(internalTx.transferTo_address);
-      const amount = BigInt(callValue);
-
-      return [
-        { type: "transfer" as const, address: from, peer: to, asset, amount: -amount },
-        { type: "transfer" as const, address: to, peer: from, asset, amount },
-      ];
-    });
+  return readInternalTransfers(logger, txDetail).flatMap(({ from, to, amount, tokenId }) => {
+    // A `tokenId` names the TRC10 token moved; without one the value is TRX.
+    const asset: AssetInfo = tokenId
+      ? { type: "trc10", assetReference: tokenId }
+      : { type: "native" };
+    return [
+      { type: "transfer" as const, address: from, peer: to, asset, amount: -amount },
+      { type: "transfer" as const, address: to, peer: from, asset, amount },
+    ];
   });
 }
 
