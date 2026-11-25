@@ -97,7 +97,7 @@ The spec MUST pass the `B2CQA-XXXX` id and the test function MUST call `$TmsLink
 
 ```ts
 // spec
-runBrowseAndSearchContactsTest(["B2CQA-6240"], tags);
+runBrowseAndSearchContactsTest({ tmsLinks: ["B2CQA-6240"], tags });
 
 // test function
 setTeamOwner(Team.WALLET_XP);

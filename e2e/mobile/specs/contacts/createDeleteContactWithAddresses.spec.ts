@@ -6,4 +6,4 @@ const testConfig = {
   tags: ["@NanoSP", "@NanoX", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
-runCreateDeleteContactWithAddressesTest(testConfig.tmsLinks, testConfig.tags);
+runCreateDeleteContactWithAddressesTest(testConfig);

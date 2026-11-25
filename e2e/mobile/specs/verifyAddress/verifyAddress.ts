@@ -4,10 +4,14 @@ import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNanoS, describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
 import { isReceiveBlockedOnLNS } from "@ledgerhq/live-e2e-shared/nanoSSupport";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 const LNS_DEPRECATION_ERROR_TITLE = "Ledger Nano S™ does not support this feature";
 
-export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], tags: string[]) {
+type VerifyAddressTestOptions = TestMetaOptions & { account: AccountType };
+
+export function runVerifyAddressTest(options: VerifyAddressTestOptions) {
+  const { account, tmsLinks, tags } = options;
   const describeOnDevice = isReceiveBlockedOnLNS(account.currency.id)
     ? describeIfNotNanoS
     : describe;
