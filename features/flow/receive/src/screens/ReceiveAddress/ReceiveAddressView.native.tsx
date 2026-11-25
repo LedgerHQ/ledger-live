@@ -11,6 +11,8 @@ import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
 import { ReceiveAddressTitle } from "./components/ReceiveAddressTitle";
 import { Dimmed } from "./components/Dimmed";
+import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
+import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
@@ -25,7 +27,8 @@ export function ReceiveAddressView({
   closeLabel,
   backLabel,
   actions,
-  noticesPlaceholderLabel,
+  notices,
+  serviceStatus,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -126,7 +129,7 @@ export function ReceiveAddressView({
               <>
                 <AddressActions actions={actionsWithCard} />
                 <Dimmed isDimmed={isHintOpen}>
-                  <ZonePlaceholder zone="notices" label={noticesPlaceholderLabel} />
+                  <ReceiveAddressNotices notices={notices} />
                 </Dimmed>
               </>
             )}
@@ -136,6 +139,7 @@ export function ReceiveAddressView({
           </Box>
         </ScrollView>
       )}
+      {serviceStatus ? <ServiceStatusPanel serviceStatus={serviceStatus} /> : null}
     </Box>
   );
 }

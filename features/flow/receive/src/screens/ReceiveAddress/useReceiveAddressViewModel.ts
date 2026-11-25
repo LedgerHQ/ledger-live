@@ -93,7 +93,6 @@ export function useReceiveAddressViewModel({
         onSelect: selection.select,
       }
     : undefined;
-  const noticesPlaceholderLabel = notices.map(notice => notice.text).join(" · ");
 
   return {
     isLoading: data.type === "loading",
@@ -103,7 +102,6 @@ export function useReceiveAddressViewModel({
     actions: shownActions,
     isVerifying: verification !== undefined,
     notices,
-    noticesPlaceholderLabel,
     serviceStatus,
     verification,
     title: header.title,

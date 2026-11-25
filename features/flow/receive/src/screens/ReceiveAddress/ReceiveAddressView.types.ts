@@ -76,7 +76,6 @@ export type ReceiveAddressViewProps = Readonly<{
   /** A device verification runs: on desktop, its own dialog takes the place of this one. */
   isVerifying: boolean;
   notices: readonly ReceiveNoticeView[];
-  noticesPlaceholderLabel: string;
   serviceStatus?: ReceiveServiceStatusView;
   /** "Receive USDC" */
   title: string;

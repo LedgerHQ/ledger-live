@@ -1,6 +1,5 @@
 import React from "react";
-import { Dialog, DialogBody, DialogContent, DialogHeader, Link } from "@ledgerhq/lumen-ui-react";
-import { WarningFill } from "@ledgerhq/lumen-ui-react/symbols";
+import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { InfoState } from "@shared/ui-info-state";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import { AddressActions } from "./components/AddressActions";
@@ -8,6 +7,7 @@ import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
 import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
+import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
@@ -38,30 +38,7 @@ export function ReceiveAddressView({
     <>
       <DialogHeader density="compact" onClose={closeDialog} />
       <DialogBody>
-        <InfoState
-          preset="spot"
-          spotProps={{ icon: WarningFill, appearance: "warning" }}
-          backgroundTone="error"
-          size="hug"
-          title={serviceStatus.title}
-          description={serviceStatus.description?.map(part =>
-            part.onPress ? (
-              <Link key={part.text} asChild appearance="inherit" size="inherit" underline>
-                <button type="button" className="cursor-pointer" onClick={part.onPress}>
-                  {part.text}
-                </button>
-              </Link>
-            ) : (
-              <React.Fragment key={part.text}>{part.text}</React.Fragment>
-            ),
-          )}
-          primaryCta={{
-            label: serviceStatus.continueLabel,
-            onPress: serviceStatus.onContinue,
-            testID: "receive-address-service-status-continue",
-          }}
-          testID="receive-address-service-status"
-        />
+        <ServiceStatusPanel serviceStatus={serviceStatus} />
       </DialogBody>
     </>
   );

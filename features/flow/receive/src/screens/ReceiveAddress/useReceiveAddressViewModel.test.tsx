@@ -47,7 +47,7 @@ describe("useReceiveAddressViewModel", () => {
       { wrapper: receiveTestWrapper() },
     );
 
-    await waitFor(() => expect(result.current.noticesPlaceholderLabel).toMatch(/^For privacy/));
+    await waitFor(() => expect(result.current.notices.map(notice => notice.id)).toEqual(["utxo"]));
   });
 
   it("should show the service incident before the address, until the user continues", async () => {
