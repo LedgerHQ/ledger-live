@@ -7,11 +7,13 @@ import { FF_PERPS_DESKTOP, IS_PERPS_LIVE_APP_STAGING } from "tests/utils/feature
 import { buildTags } from "tests/utils/tagsUtils";
 import { getPerpsLiveAppStorage } from "tests/utils/perpsLiveAppStorage";
 import { exclusiveLockFor } from "tests/utils/exclusiveLock";
+import type { ProviderPosition } from "tests/page/perps.order.page";
 import {
   closeHip3Position,
-  closeOpenHip3Positions,
+  closeHip3PositionsOpenedByTest,
   openHip3Position,
   openPerpsFromPortfolio,
+  readHip3Positions,
   PERPS_REAL_BROADCAST_ENV,
 } from "tests/utils/perpsPositionFlows";
 
@@ -38,21 +40,27 @@ test.describe("Perps HIP-3 close position", { lock: lock.names }, () => {
     env: PERPS_REAL_BROADCAST_ENV,
   });
 
+  // Unset until the provider is read, so a failed setup never closes a position it did not open.
+  let positionsAtStart: ProviderPosition[] | undefined;
+
   test.beforeEach(async ({ app, speculos, userdataFile }) => {
+    positionsAtStart = undefined;
     await openPerpsFromPortfolio(app);
-    await closeOpenHip3Positions(app, {
-      account,
-      userdataFile,
+    positionsAtStart = await readHip3Positions(app, { account, userdataFile });
+    await openHip3Position(app, {
+      side: "long",
+      positions: positionsAtStart,
       relaunchSpeculos: speculos.relaunch,
     });
-    await openHip3Position(app, { side: "long", relaunchSpeculos: speculos.relaunch });
   });
 
   // Keeps the real position from staying open if the close fails.
   test.afterEach(async ({ app, speculos, userdataFile }) => {
-    await closeOpenHip3Positions(app, {
+    if (!positionsAtStart) return;
+    await closeHip3PositionsOpenedByTest(app, {
       account,
       userdataFile,
+      positionsAtStart,
       relaunchSpeculos: speculos.relaunch,
     });
   });

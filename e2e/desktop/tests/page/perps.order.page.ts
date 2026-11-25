@@ -15,6 +15,9 @@ const AUTO_CLOSE_OFFSETS = {
 
 const HIP3_PROVIDER_ID = "hyperliquid-xyz";
 
+const MIN_ORDER_NOTIONAL_USD = 12;
+const MARGIN_TOLERANCE_USD = 0.5;
+
 export type ProviderPosition = { marketId: string; symbol: string };
 
 const autoCloseSummary = /Take profit \$([\d,.]+), Stop loss \$([\d,.]+)/;
@@ -40,16 +43,21 @@ export class PerpsOrderPage extends WebViewAppPage {
   private readonly autoCloseSubmitTestId = "desktop-order-configure-auto-close-submit";
   private readonly configureSubmitTestId = "configure-order-submit-button";
 
-  @step("Open the first HIP-3 market")
-  async openFirstHip3Market() {
+  @step("Open the first HIP-3 market without a position")
+  async openFirstHip3MarketWithoutPosition(positions: ProviderPosition[]) {
     const webview = await this.getWebView();
-    await webview
-      .getByTestId(/^market-item-xyz:/)
-      .first()
-      .click();
+    const markets = webview.getByTestId(/^market-item-xyz:/);
+    await expect(markets.first()).toBeVisible();
+    const listed = await markets.evaluateAll(items =>
+      items.map(item => item.getAttribute("data-testid") ?? ""),
+    );
+    const busy = new Set(positions.map(({ symbol }) => `market-item-${symbol}`));
+    const free = listed.find(testId => !busy.has(testId));
+    if (!free) throw new Error("Every listed HIP-3 market already holds a position");
+    await webview.getByTestId(free).click();
     await expect(
       webview.getByTestId(this.orderWidgetTestId),
-      "A position already open on this market hides the order form: close it first",
+      "The order form is hidden although the provider reports no position here",
     ).toBeVisible();
   }
 
@@ -122,7 +130,7 @@ export class PerpsOrderPage extends WebViewAppPage {
     await webview.getByTestId(this.statusDialogContinueTestId).click();
   }
 
-  @step("Verify the opened $0 position")
+  @step("Verify the opened position")
   async expectOpenedPosition({
     side,
     leverage,
@@ -139,7 +147,10 @@ export class PerpsOrderPage extends WebViewAppPage {
     );
     await expect(webview.getByRole("button", { name: /^Leverage/ })).toContainText(`${leverage}x`);
     const margin = webview.getByRole("button", { name: /^Margin/ });
-    await expect.poll(async () => toNumber(await margin.innerText())).toBeCloseTo(marginUsd, 0);
+    const shownMargin = async () => toNumber(await margin.innerText());
+    // The exchange rounds the size down, so the margin can fall below the request.
+    await expect.poll(shownMargin).toBeGreaterThanOrEqual(MIN_ORDER_NOTIONAL_USD / leverage);
+    await expect.poll(shownMargin).toBeLessThanOrEqual(marginUsd + MARGIN_TOLERANCE_USD);
     await this.expectPositionAutoClose(side);
   }
 
@@ -205,13 +216,17 @@ export class PerpsOrderPage extends WebViewAppPage {
     });
   }
 
-  @step("Verify the provider reports no open HIP-3 position")
-  async expectNoProviderHip3Positions(address: string) {
+  @step("Verify the provider reports no new HIP-3 position")
+  async expectNoNewProviderHip3Positions(address: string, knownMarketIds: string[]) {
+    const known = new Set(knownMarketIds);
     await expect
-      .poll(async () => (await this.getProviderHip3Positions(address)).length, {
-        timeout: TIMEOUT.xxlarge,
-        intervals: [INTERVAL.medium],
-      })
+      .poll(
+        async () =>
+          (await this.getProviderHip3Positions(address)).filter(
+            ({ marketId }) => !known.has(marketId),
+          ).length,
+        { timeout: TIMEOUT.xxlarge, intervals: [INTERVAL.medium] },
+      )
       .toBe(0);
   }
 

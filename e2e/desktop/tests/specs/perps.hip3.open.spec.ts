@@ -8,12 +8,13 @@ import { buildTags } from "tests/utils/tagsUtils";
 import { getPerpsLiveAppStorage } from "tests/utils/perpsLiveAppStorage";
 import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 import {
-  closeOpenHip3Positions,
+  closeHip3PositionsOpenedByTest,
   openHip3Position,
   openPerpsFromPortfolio,
+  readHip3Positions,
   PERPS_REAL_BROADCAST_ENV,
 } from "tests/utils/perpsPositionFlows";
-import type { PerpsOrderSide } from "tests/page/perps.order.page";
+import type { PerpsOrderSide, ProviderPosition } from "tests/page/perps.order.page";
 
 const account = Account.HYPERCORE_1;
 const lock = exclusiveLockFor({ broadcastAccounts: [account] }, PERPS_REAL_BROADCAST_ENV);
@@ -41,20 +42,22 @@ test.describe("Perps HIP-3 open position", { lock: lock.names }, () => {
     env: PERPS_REAL_BROADCAST_ENV,
   });
 
-  test.beforeEach(async ({ app, speculos, userdataFile }) => {
+  // Unset until the provider is read, so a failed setup never closes a position it did not open.
+  let positionsAtStart: ProviderPosition[] | undefined;
+
+  test.beforeEach(async ({ app, userdataFile }) => {
+    positionsAtStart = undefined;
     await openPerpsFromPortfolio(app);
-    await closeOpenHip3Positions(app, {
-      account,
-      userdataFile,
-      relaunchSpeculos: speculos.relaunch,
-    });
+    positionsAtStart = await readHip3Positions(app, { account, userdataFile });
   });
 
   // The position is a real one, so it is closed even when the test fails.
   test.afterEach(async ({ app, speculos, userdataFile }) => {
-    await closeOpenHip3Positions(app, {
+    if (!positionsAtStart) return;
+    await closeHip3PositionsOpenedByTest(app, {
       account,
       userdataFile,
+      positionsAtStart,
       relaunchSpeculos: speculos.relaunch,
     });
   });
@@ -67,7 +70,11 @@ test.describe("Perps HIP-3 open position", { lock: lock.names }, () => {
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app, speculos }) => {
-        await openHip3Position(app, { side, relaunchSpeculos: speculos.relaunch });
+        await openHip3Position(app, {
+          side,
+          positions: positionsAtStart ?? [],
+          relaunchSpeculos: speculos.relaunch,
+        });
       },
     );
   }
