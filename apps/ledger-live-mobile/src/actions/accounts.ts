@@ -11,15 +11,36 @@ import { AccountsActionTypes } from "./types";
 import logger from "../logger";
 import { getDefaultAccountName, initFromUserData } from "@domain/entity-account-name";
 import { checkAccountSupported } from "@ledgerhq/live-common/account/index";
-import type { Dispatch } from "redux";
+import type { Dispatch, UnknownAction } from "redux";
 
 type StoredAccount = { data: AccountRaw; version?: number };
 
 const LEGACY_UNKNOWN_VERSION = 1;
 
-function migrationVersionOf({ version }: StoredAccount): number {
+export function migrationVersionOf({ version }: Pick<StoredAccount, "version">): number {
   if (version === undefined || version === LEGACY_UNKNOWN_VERSION) return 0;
   return version;
+}
+
+/** The actions that load decoded accounts: unsupported accounts are dropped, as before. */
+export function initAccountsActions(
+  tuples: ReadonlyArray<[Account, AccountUserData]>,
+): UnknownAction[] {
+  const supported = tuples.filter(([account]) => {
+    const error = checkAccountSupported(account);
+    if (!error) return true;
+    console.warn(`dropping an account of ${account.currency.id}: ${error.message}`);
+    return false;
+  });
+
+  const accounts = supported.map(([account]) => account);
+  const accountsUserData = supported
+    .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
+    .map(([, userData]) => userData);
+  return [
+    { type: "INIT_ACCOUNTS", payload: { accounts, accountsUserData } },
+    initFromUserData(accountsUserData.map(({ id, name }) => ({ id, name }))),
+  ];
 }
 
 export const importStore = async (rawAccounts: { active: StoredAccount[] }) => {
@@ -44,23 +65,9 @@ export const importStore = async (rawAccounts: { active: StoredAccount[] }) => {
     (tuple): tuple is [Account, AccountUserData] => tuple !== null,
   );
 
-  const supported = tuples.filter(([account]) => {
-    const error = checkAccountSupported(account);
-    if (!error) return true;
-    console.warn(`dropping account ${account.id}: ${error.message}`);
-    return false;
-  });
-
-  const accounts = supported.map(([account]) => account);
-  const accountsUserData = supported
-    .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
-    .map(([, userData]) => userData);
+  const actions = initAccountsActions(tuples);
   return (dispatch: Dispatch) => {
-    dispatch({
-      type: "INIT_ACCOUNTS",
-      payload: { accounts, accountsUserData },
-    });
-    dispatch(initFromUserData(accountsUserData.map(({ id, name }) => ({ id, name }))));
+    actions.forEach(action => dispatch(action));
   };
 };
 export const reorderAccounts = createAction<AccountsReorderPayload>(

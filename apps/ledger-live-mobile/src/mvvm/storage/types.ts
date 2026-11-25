@@ -5,6 +5,9 @@ export interface Storage {
   /** Get the current storage state. */
   getState(): StorageState;
 
+  /** Resolves when the initializer has selected the storage type. Never rejects. */
+  whenReady(): Promise<void>;
+
   /** Trigger syntax error for debugging */
   incrementNumberOfErrorsDebug(error: unknown): void;
 

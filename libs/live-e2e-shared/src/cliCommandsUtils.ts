@@ -1,4 +1,3 @@
-import fs from "fs";
 import invariant from "invariant";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
@@ -22,6 +21,20 @@ import { getCcdAccountAddress } from "./families/concordium";
 import { approveToken } from "./families/evm";
 import { enableBlindSigningOnNanoS } from "./speculos";
 import { ZCASH_TEST_PRIVATE_INFO } from "./families/zcash";
+import { access } from "node:fs/promises";
+import {
+  encodeStoredAccount,
+  type StoredAccount,
+  type StoredAccountData,
+} from "@features/platform-persistence-accounts";
+import {
+  addRawAccountIfMissing,
+  ENCRYPTED_USERDATA_MESSAGE,
+  isEncryptedUserdataError,
+  readUserdataAccounts,
+  validateStoredAccount,
+  writeUserdataAccounts,
+} from "./userdataAccounts";
 import type { ZcashPrivateInfoRaw } from "@ledgerhq/coin-zcash/network/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -92,7 +105,7 @@ export const liveDataCommand = (
   options?: LiveDataCommandOptions,
 ) => {
   const cmd = async (userdataPath?: string) => {
-    if (!applyGeneratedUserdata(account, userdataPath)) {
+    if (!(await applyGeneratedUserdata(account, userdataPath))) {
       await runCliLiveData({
         currency: options?.currency ?? account.currency.cliKeyword,
         index: account.index,
@@ -189,7 +202,7 @@ export const addEmptyAccountCommand = (account: Account, options?: LiveDataComma
       derivationMode: derivationMode as DerivationMode,
     });
 
-    const stub: Record<string, unknown> = {
+    const stub: StoredAccountData = {
       id,
       seedIdentifier,
       name: account.accountName,
@@ -214,20 +227,16 @@ export const addEmptyAccountCommand = (account: Account, options?: LiveDataComma
     // rehydration (e.g. Tron: `tronResources.bandwidth.freeLimit`).
     Object.assign(stub, emptyFamilyExtras(cryptoCurrency.family));
 
-    const raw = JSON.parse(fs.readFileSync(userdataPath, "utf-8"));
-    raw.data = raw.data ?? {};
-    if (typeof raw.data.accounts === "string") {
-      throw new Error("encrypted ledger live data is not supported");
-    }
-    raw.data.accounts = raw.data.accounts ?? [];
-    const exists = raw.data.accounts.some(
-      (entry: { data?: { id?: string } }) => entry?.data?.id === id,
-    );
-    if (!exists) {
-      raw.data.accounts.push({ data: stub, version: 1 });
-      fs.writeFileSync(userdataPath, JSON.stringify(raw), "utf-8");
-    }
+    await addRawAccountIfMissing(userdataPath, stub);
   });
+
+function readableStoredAccount(entry: unknown): StoredAccount | undefined {
+  try {
+    return validateStoredAccount(entry);
+  } catch {
+    return undefined;
+  }
+}
 
 /**
  * Seeds an already-activated Zcash private balance onto the account
@@ -243,27 +252,25 @@ export function seedZcashPrivateInfo(account: Account, shieldedAddress: string) 
     if (!userdataPath) {
       throw new Error("seedZcashPrivateInfo requires a userdataPath");
     }
-    const raw = JSON.parse(fs.readFileSync(userdataPath, "utf-8"));
-    if (typeof raw?.data?.accounts === "string") {
-      throw new TypeError("encrypted ledger live data is not supported");
-    }
-    if (!Array.isArray(raw?.data?.accounts)) {
-      throw new TypeError(
-        `seedZcashPrivateInfo: expected raw.data.accounts to be an array in ${userdataPath}, got ${JSON.stringify(raw?.data)}`,
-      );
-    }
-    const entry = raw.data.accounts.find(
-      (a: { data?: { currencyId?: string; index?: number } }) =>
-        a?.data?.currencyId === account.currency.id && a?.data?.index === account.index,
+    await access(userdataPath);
+    const stored = await readUserdataAccounts(userdataPath).catch((error: unknown) => {
+      throw isEncryptedUserdataError(error) ? new TypeError(ENCRYPTED_USERDATA_MESSAGE) : error;
+    });
+    const readable = stored.map(readableStoredAccount);
+    const index = readable.findIndex(
+      candidate =>
+        candidate?.data.currencyId === account.currency.id &&
+        candidate?.data.index === account.index,
     );
-    if (!entry) {
+    const found = readable[index];
+    if (!found) {
       throw new Error(
         `seedZcashPrivateInfo: no account matching currencyId "${account.currency.id}" and index ${account.index} in ${userdataPath}. Did liveDataCommand run first?`,
       );
     }
     const privateInfo: ZcashPrivateInfoRaw = { ...ZCASH_TEST_PRIVATE_INFO, shieldedAddress };
-    entry.data.privateInfo = privateInfo;
-    fs.writeFileSync(userdataPath, JSON.stringify(raw), "utf-8");
+    stored[index] = encodeStoredAccount({ ...found, data: { ...found.data, privateInfo } });
+    await writeUserdataAccounts(userdataPath, stored);
   };
 }
 
@@ -295,7 +302,7 @@ export const liveDataWithRecipientAddressCommand = (
   options?: LiveDataCommandOptions,
 ) => {
   return named("liveDataWithRecipientAddressCommand", async (userdataPath?: string) => {
-    if (!applyGeneratedUserdata(tx.accountToDebit, userdataPath)) {
+    if (!(await applyGeneratedUserdata(tx.accountToDebit, userdataPath))) {
       await runCliLiveData({
         currency: tx.accountToDebit.currency.speculosApp.name,
         index: tx.accountToDebit.index,

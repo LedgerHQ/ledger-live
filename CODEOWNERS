@@ -39,6 +39,8 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 
 # Platform — features
 /features/                                               @ledgerhq/platform
+/features/platform/persistence/                          @ledgerhq/platform
+/features/platform/persistence-accounts/                 @ledgerhq/platform
 
 # Platform — shared
 /shared/                                                 @ledgerhq/platform
@@ -55,6 +57,11 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /shared/env/                                             @ledgerhq/platform
 /shared/native-performance/                              @ledgerhq/platform
 /shared/device-locale/                                   @ledgerhq/platform
+/shared/storage/                                         @ledgerhq/platform
+/shared/persistence/                                     @ledgerhq/platform
+/shared/storage-electron/                                @ledgerhq/platform
+/shared/storage-mmkv/                                    @ledgerhq/platform
+/shared/storage-node-file/                               @ledgerhq/platform
 
 # Platform — mobile
 apps/ledger-live-mobile/android/                         @ledgerhq/platform

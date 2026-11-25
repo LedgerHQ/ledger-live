@@ -1,0 +1,26 @@
+{
+  "data": {
+    "id": "mock:1:arbitrum:true_arbitrum_0:",
+    "seedIdentifier": "mock",
+    "name": "Arbitrum 1",
+    "starred": false,
+    "derivationMode": "",
+    "index": 0,
+    "freshAddress": "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
+    "freshAddressPath": "44'/60'/0'/0/0",
+    "blockHeight": 121403,
+    "creationDate": "2020-02-29T00:58:50.328Z",
+    "operationsCount": 0,
+    "operations": [],
+    "pendingOperations": [],
+    "currencyId": "arbitrum",
+    "unitMagnitude": 18,
+    "lastSyncDate": "2020-03-14T17:34:42.000Z",
+    "balance": "10135465432293584185",
+    "spendableBalance": "10135465432293584185",
+    "xpub": "9E69E7535D132709D70AE0F85B7560A55DF243BAC817194D3E079950CBE00EBC",
+    "subAccounts": [],
+    "swapHistory": []
+  },
+  "version": 3
+}

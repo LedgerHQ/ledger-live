@@ -18,8 +18,7 @@ import { restorePayCardFeatureTour } from "@features/flow-pay-feature-tour/state
 import { restoreReceiveVerifyHint } from "@features/flow-receive/state";
 import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
 import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
-import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
-import { saveAccounts } from "~/db";
+import { persistAccountsNow } from "~/persistence/persistAccountsNow";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
 import {
@@ -219,7 +218,7 @@ async function onMessage(event: WebSocketMessageEvent) {
         (await importAccountsRaw({ active: msg.payload }))(store.dispatch);
         try {
           // workaround: persist bridge-imported accounts so they survive app restarts (QAA-1353)
-          await saveAccounts(await accountsExportSelector(store.getState()));
+          await persistAccountsNow(store.getState());
         } catch (error) {
           log(`Failed to persist bridge-imported accounts: ${String(error)}`);
         }

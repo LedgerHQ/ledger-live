@@ -13,10 +13,10 @@ type Props = {
 export default function MockAccountGenerator({ count, title, desc }: Props) {
   const { t } = useTranslation();
 
-  const handleGenerate = async () => {
+  const handleGenerate = () => {
     try {
       const accounts = generateRandomAccounts(count);
-      await injectMockAccounts(accounts, true);
+      injectMockAccounts(accounts, true);
     } catch (error) {
       console.warn("Failed to generate mock accounts:", error);
       alert(t("settings.developer.mockAccounts.alerts.generateError"));

@@ -11,7 +11,7 @@ import {
   NAVIGATOR_CLIPBOARD,
   WALLET_FRAMEWORK_CURRENCY_TYPES,
 } from "@support/lint/restricted-imports";
-import { SUFFIX_IMPORTS_PLUGIN } from "@support/lint/plugins";
+import { STORAGE_BOUNDARIES_PLUGIN, SUFFIX_IMPORTS_PLUGIN } from "@support/lint/plugins";
 import { coinFamiliesLint } from "@support/lint/coin-families";
 
 const coinFamilies = coinFamiliesLint({ familiesDir: "src/families", barrel: "forbidden" });
@@ -69,7 +69,7 @@ export default defineConfig({
   globals: { __DEV__: "readonly", __REDUX_DEVTOOLS_EXTENSION__: "readonly" },
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest", "jsx-a11y"],
-  jsPlugins: [SUFFIX_IMPORTS_PLUGIN, ...coinFamilies.jsPlugins],
+  jsPlugins: [SUFFIX_IMPORTS_PLUGIN, STORAGE_BOUNDARIES_PLUGIN, ...coinFamilies.jsPlugins],
   ignorePatterns: [
     "*.min.js",
     "node_modules",
@@ -80,6 +80,10 @@ export default defineConfig({
     "index.d.ts",
   ],
   rules: {
+    // Legacy save code still talks to the engines. Warnings until each record uses
+    // persistence (epic LIVE-35368).
+    "storage/no-engine-import": "warn",
+    "storage/no-port-import": "warn",
     "eslint/no-unused-vars": "warn",
     "eslint/no-empty-pattern": "warn",
     "eslint/no-constant-binary-expression": "warn",

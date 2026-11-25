@@ -10,7 +10,7 @@ import {
   accountUserDataExportSelector,
 } from "~/renderer/reducers/wallet";
 import type { AppDispatch } from "~/state-manager/configureStore";
-import { getKey } from "~/renderer/storage";
+import type { State } from "~/renderer/reducers";
 import { Account, AccountUserData } from "@ledgerhq/types-live";
 import { v4 as uuidv4 } from "uuid";
 import sample from "lodash/sample";
@@ -46,15 +46,20 @@ export const getRandomCurrency = () => {
   return currency;
 };
 
-export const injectMockAccounts = async (
+export const injectMockAccounts = (
   accounts: [Account, AccountUserData][],
   replaceExisting = false,
-) => {
-  const accountData = replaceExisting ? [] : await getKey("app", "accounts", []);
+): void => {
   const store = window.ledger.store;
+  const state: State = store.getState();
+  const existing: [Account, AccountUserData][] = replaceExisting
+    ? []
+    : state.accounts.map(account => [
+        account,
+        accountUserDataExportSelector(state.wallet, { account }),
+      ]);
 
-  const newAccountData = accountData?.concat(accounts);
-  (store.dispatch as AppDispatch)(initAccounts(newAccountData || []));
+  (store.dispatch as AppDispatch)(initAccounts(existing.concat(accounts)));
 };
 
 export const generateRandomAccounts = (count: number): [Account, AccountUserData][] => {

@@ -31,6 +31,7 @@ import { sleepingListener } from "./sleepingListener";
 import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
 import { createMobileCountervaluesMiddleware } from "./middleware/countervalues";
 import { createMobileAuthMiddleware } from "./middleware/auth";
+import { persistence } from "~/persistence/composition";
 
 export const store = configureStore({
   reducer: reducers,
@@ -74,7 +75,8 @@ export const store = configureStore({
         }),
       )
       .concat(sleepingListener.middleware)
-      .concat(createMobileCountervaluesMiddleware()),
+      .concat(createMobileCountervaluesMiddleware())
+      .concat(persistence.middleware),
 
   enhancers: getDefaultEnhancers => {
     const enhancers = getDefaultEnhancers();

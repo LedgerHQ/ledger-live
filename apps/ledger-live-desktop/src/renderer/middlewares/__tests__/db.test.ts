@@ -368,6 +368,16 @@ describe("DBMiddleware - receiveVerifyHint branch", () => {
   });
 });
 
+it("leaves history to persistence", () => {
+  mockedSetKey.mockReset();
+  const before = baseState();
+  const after: FakeState = { ...before, history: { lastSeenOperationDate: "2026-01-01" } };
+
+  runMiddleware([before, after], { type: "history/markOperationsAsSeen" });
+
+  expect(mockedSetKey).not.toHaveBeenCalledWith("app", "history", expect.anything());
+});
+
 describe("DBMiddleware - liveConfigOverrides branch", () => {
   beforeEach(() => {
     mockedSetKey.mockReset();
@@ -637,7 +647,7 @@ describe("DBMiddleware - lock gate on encrypted records", () => {
     jest.mocked(accountsPersistedStateChanged).mockReturnValue(false);
   });
 
-  it("does not write wallet or accounts while the app is locked", () => {
+  it("does not write wallet while the app is locked", () => {
     const before = lockedState();
     const after: FakeState = { ...before, wallet: { changed: true }, accounts: [] };
 
@@ -647,17 +657,17 @@ describe("DBMiddleware - lock gate on encrypted records", () => {
     expect(mockedSetKey).not.toHaveBeenCalledWith("app", "accounts", expect.anything());
   });
 
-  it("writes wallet and accounts when the app is unlocked", () => {
+  it("writes wallet when the app is unlocked, and leaves accounts to persistence", () => {
     const before = baseState();
     const after: FakeState = { ...before, wallet: { changed: true } };
 
     runMiddleware([before, after], { type: "ACCOUNTS_UPDATE" });
 
     expect(mockedSetKey).toHaveBeenCalledWith("app", "wallet", after);
-    expect(mockedSetKey).toHaveBeenCalledWith("app", "accounts", []);
+    expect(mockedSetKey).not.toHaveBeenCalledWith("app", "accounts", expect.anything());
   });
 
-  it("writes wallet and accounts on the APPLICATION_SET_DATA action that unlocks the app", () => {
+  it("writes wallet on the APPLICATION_SET_DATA action that unlocks the app", () => {
     const before = lockedState();
     const after: FakeState = {
       ...before,
@@ -668,6 +678,5 @@ describe("DBMiddleware - lock gate on encrypted records", () => {
     runMiddleware([before, after], { type: "APPLICATION_SET_DATA", payload: { isLocked: false } });
 
     expect(mockedSetKey).toHaveBeenCalledWith("app", "wallet", after);
-    expect(mockedSetKey).toHaveBeenCalledWith("app", "accounts", []);
   });
 });

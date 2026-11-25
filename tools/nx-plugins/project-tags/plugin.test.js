@@ -77,6 +77,48 @@ test("features/platform/account-source-* also gets type:account-data-source", ()
   );
 });
 
+test("shared/storage and shared/storage-* get type:storage", () => {
+  assert.deepEqual(inferTags("shared/storage", "@shared/storage"), [
+    "scope:no-apps",
+    "scope:shared",
+    "type:storage",
+  ]);
+  assert.deepEqual(inferTags("shared/storage-mmkv", "@shared/storage-mmkv"), [
+    "scope:no-apps",
+    "scope:shared",
+    "type:storage",
+  ]);
+  assert.deepEqual(inferTags("shared/storage-like", "@shared/storage-like"), [
+    "scope:no-apps",
+    "scope:shared",
+    "type:storage",
+  ]);
+  assert.deepEqual(inferTags("shared/storagebox", "@shared/storagebox"), [
+    "scope:no-apps",
+    "scope:shared",
+  ]);
+});
+
+test("shared/persistence gets type:persistence-records", () => {
+  assert.deepEqual(inferTags("shared/persistence", "@shared/persistence"), [
+    "scope:no-apps",
+    "scope:shared",
+    "type:persistence-records",
+  ]);
+});
+
+test("features/platform/persistence-* gets type:persistence-records", () => {
+  assert.deepEqual(
+    inferTags("features/platform/persistence-accounts", "@features/platform-persistence-accounts"),
+    ["scope:features", "scope:no-apps", "type:feature-platform", "type:persistence-records"],
+  );
+  assert.ok(
+    !inferTags("features/platform/persistence", "@features/platform-persistence").includes(
+      "type:persistence-records",
+    ),
+  );
+});
+
 test("features/flow/* gets scope:features + type:feature-flow", () => {
   assert.deepEqual(inferTags("features/flow/wallet", "@features/flow-wallet"), [
     "scope:features",

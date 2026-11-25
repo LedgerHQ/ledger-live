@@ -17,12 +17,12 @@ export default function StocksMockAccountGenerator({ title, desc }: Props) {
 
   const stocksCount = tokensByParent.reduce((sum, { tokens }) => sum + tokens.length, 0);
 
-  const handleGenerate = useCallback(async () => {
+  const handleGenerate = useCallback(() => {
     if (!window.confirm(t("settings.developer.mockAccounts.alerts.confirmErase"))) return;
     setLoading(true);
     try {
       const accounts = generateStockAccounts(tokensByParent);
-      await injectMockAccounts(accounts, true);
+      injectMockAccounts(accounts, true);
     } catch (error) {
       console.warn("Failed to generate stock accounts:", error);
       alert(t("settings.developer.mockAccounts.alerts.generateError"));

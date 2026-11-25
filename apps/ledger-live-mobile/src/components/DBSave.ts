@@ -47,6 +47,8 @@ import { payCardOnboardingWidgetPersistedSelector } from "@features/flow-pay-car
 import { accountAnalyticsIntroductionPersistedSelector } from "@features/flow-account-detail-analytics-notice/state";
 import { saveAccountAnalyticsIntroductionSafely } from "LLM/features/AccountDetail/analyticsIntroductionStorage";
 import { settingsStoreSelector } from "~/reducers/settings";
+import { selectUsesPersistence } from "@features/platform-persistence";
+import { persistence } from "~/persistence/composition";
 import type { State } from "~/reducers/types";
 import { Maybe } from "../types/helpers";
 import { extractPersistedCALFromState, persistedCALContentEqual } from "@domain/api-currency-token";
@@ -68,15 +70,18 @@ type Props<Data, Stats> = {
   getChangesStats: (next: State, prev: State) => Stats;
   save: (data: Data, changedStats: Stats) => Promise<void>;
   saveAtStart?: boolean;
+  /** The key of the record that replaces this save: the hook never saves once persistence owns it. */
+  recordKey?: string;
 };
 
-function useDBSaveEffect<D, S>({
+export function useDBSaveEffect<D, S>({
   stateSelector,
   lense,
   throttle = 500,
   save,
   getChangesStats,
   saveAtStart = false,
+  recordKey,
 }: Props<D, S>) {
   const store = useStore();
   const storeRef = useRef(store);
@@ -100,6 +105,7 @@ function useDBSaveEffect<D, S>({
       }
       const { lense, save, getChangesStats } = latestProps.current;
       const state = storeRef.current.getState() as State;
+      if (recordKey !== undefined && selectUsesPersistence(state, recordKey)) return;
       const prev = lastSavedState.current;
       if (prev !== undefined && prev !== null) {
         const changedStats = getChangesStats(prev, state); // we compare last saved with latest state
@@ -118,7 +124,7 @@ function useDBSaveEffect<D, S>({
     // throttle allow to not spam lense and save too much because they are costly
     // nb it does not prevent race condition here. save must be idempotent and atomic
     return throttleFn(run, throttle);
-  }, [throttle]);
+  }, [throttle, recordKey]);
   useFlushMechanism(checkForSave);
   // each time the selected slice or props change, we will checkForSave
   useEffect(() => {
@@ -134,10 +140,15 @@ function useDBSaveEffect<D, S>({
     checkForSave();
   }, [lense, save, checkForSave, store, getChangesStats, selectedSlice]);
 }
-const flushes: Array<() => void> = [];
-export const flushAll = () => Promise.all(flushes.map(flush => flush()));
+/** The lodash flush of a throttled save: the promise of the save it runs, if any. */
+type FlushSave = () => Promise<void> | undefined;
 
-function useFlushMechanism({ flush, cancel }: { flush: () => void; cancel: () => void }) {
+const flushes: FlushSave[] = [];
+// A failed persistence write is already reported.
+const flushPersistence = () => persistence.flush().catch(() => undefined);
+export const flushAll = () => Promise.all([...flushes.map(flush => flush()), flushPersistence()]);
+
+function useFlushMechanism({ flush, cancel }: { flush: FlushSave; cancel: () => void }) {
   const cancelRef = useRef(cancel);
   useEffect(() => () => cancelRef.current(), []);
   useEffect(() => {
@@ -290,6 +301,7 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: getAccountsChanged,
     lense: accountsExportSelector,
+    recordKey: "accounts",
   });
   useDBSaveEffect({
     stateSelector: (state: State) => state.ble,
@@ -350,6 +362,7 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: marketBannerNotEquals,
     lense: marketBannerStoreSelector,
+    recordKey: "marketBanner",
   });
 
   useDBSaveEffect({
@@ -416,6 +429,7 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: historyNotEquals,
     lense: (state: State) => state.history,
+    recordKey: "history",
   });
 
   useDBSaveEffect({

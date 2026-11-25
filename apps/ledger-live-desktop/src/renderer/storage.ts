@@ -5,12 +5,9 @@ import { getEnv } from "@shared/env";
 import type { ConfigSelectionId } from "@shared/app-config";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
-import accountModel from "~/helpers/accountModel";
 import { flushInRounds } from "~/helpers/flushInRounds";
 import debounce from "lodash/debounce";
 
-import { Account, AccountRaw, AccountUserData } from "@ledgerhq/types-live";
-import { DataModel } from "@ledgerhq/live-common/DataModel";
 import { CounterValuesStatus, RateMapRaw } from "@domain/entity-market-countervalues";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { settingsStoreSelector } from "./reducers/settings";
@@ -34,7 +31,6 @@ import type { PayCardOnboardingWidgetPersistedState } from "@features/flow-pay-c
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
-  Because only serialized json can be sent between processes, the transform system now live here.
  */
 
 export type User = {
@@ -58,9 +54,8 @@ export type PayCard = PayCardFeatureTourState &
 
 export type TrustchainStore = ReturnType<typeof trustchainStoreSelector>;
 
-// The types seen from the user side.
+// The types seen from the user side. Persistence owns `accounts` and `history` (src/persistence/).
 type DatabaseValues = {
-  accounts: Account[];
   user: User;
   countervalues: Countervalues;
   postOnboarding: PostOnboarding;
@@ -75,7 +70,6 @@ type DatabaseValues = {
   featureFlags: Pick<FeatureFlagsState, "overrides" | "bannerVisible">;
   coinConfigOverrides: { overrides: Record<string, unknown> };
   identities: PersistedIdentities;
-  history: { lastSeenOperationDate: string | null };
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
     appConfig?: Record<string, ConfigSelectionId>;
@@ -91,51 +85,7 @@ type DatabaseValues = {
   accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
 };
 
-// Infers the type seen from the user side (non-raw).
-type DatabaseValue<
-  K extends keyof DatabaseValues,
-  T = K extends keyof Transforms ? Transforms[K] : unknown,
-  // This is needed to make the type inference work here.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  V = T extends Transform<any, any> ? Awaited<ReturnType<T["get"]>> : DatabaseValues[K],
-> = V;
-
-// A Transformer is a pair of functions to encode/decode the raw data.
-type Transform<R, M> = {
-  get: (
-    raws: Parameters<DataModel<R, M>["decode"]>[0][],
-  ) => Promise<Awaited<ReturnType<DataModel<R, M>["decode"]>>[] | null>;
-  set: (
-    raws: Parameters<DataModel<R, M>["encode"]>[0][],
-  ) => Promise<Awaited<ReturnType<DataModel<R, M>["encode"]>>[]>;
-};
-
-// A map of transformers.
-type Transforms = {
-  accounts: Transform<AccountRaw, [Account, AccountUserData]>;
-};
-
-const transforms: Transforms = {
-  accounts: {
-    get: async raws => {
-      // NB to prevent parsing encrypted string as JSON
-      if (typeof raws === "string") return null;
-      const accounts: Array<[Account, AccountUserData]> = [];
-      if (raws) {
-        for (const raw of raws) {
-          try {
-            accounts.push(await accountModel.decode(raw));
-          } catch (e) {
-            logger.critical(e);
-          }
-        }
-      }
-      return accounts;
-    },
-    set: async accounts =>
-      Promise.all((accounts || []).map(account => accountModel.encode(account))),
-  },
-};
+type DatabaseValue<K extends keyof DatabaseValues> = DatabaseValues[K];
 
 export const getKey = async <
   K extends keyof DatabaseValues,
@@ -146,18 +96,13 @@ export const getKey = async <
   keyPath: K,
   defaultValue?: DV,
 ): Promise<V> => {
-  let data: unknown = await db.getKey(ns, keyPath, defaultValue);
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const transform = transforms[keyPath as keyof Transforms];
-  if (transform) {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    data = await transform.get(data as Parameters<typeof transform.get>[0]);
-  }
+  const data: unknown = await db.getKey(ns, keyPath, defaultValue);
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return data as V;
 };
 
-const SET_KEY_DEBOUNCE_MS = getEnv("PLAYWRIGHT_RUN") ? 0 : 1000;
+/** Playwright runs write at once; persistence uses the same delay for its records. */
+export const SET_KEY_DEBOUNCE_MS = getEnv("PLAYWRIGHT_RUN") ? 0 : 1000;
 
 type DebouncedSetKey = ReturnType<typeof debounce<(value: unknown) => Promise<void>>>;
 
@@ -175,20 +120,15 @@ function getDebouncedSetKey(ns: string, keyPath: keyof DatabaseValues): Debounce
 
   const write = async (value: unknown, generation: number) => {
     try {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      const transform = transforms[keyPath as keyof Transforms];
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      const transformedValue = transform
-        ? await transform.set(value as Parameters<typeof transform.set>[0])
-        : value;
       const resetSinceQueued = generation !== writeGeneration;
       if (resetSinceQueued) return;
-      await db.setKey(ns, keyPath, transformedValue as Serializable);
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      await db.setKey(ns, keyPath, value as Serializable);
     } catch (e) {
       logger.error("debouncedSetKey failed", { ns, keyPath }, e);
     }
   };
-  // An older value that still encodes must not reach main after a newer one.
+  // An older value must not reach main after a newer one.
   let lastWrite: Promise<void> = Promise.resolve();
   const debouncedSetKey = debounce((value: unknown) => {
     const generation = writeGeneration;

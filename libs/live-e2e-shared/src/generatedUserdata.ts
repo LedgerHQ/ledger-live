@@ -1,6 +1,13 @@
 import fs from "fs";
 import path from "path";
+import { appendAccounts } from "@features/platform-persistence-accounts";
 import type { Account, TokenAccount } from "./enum/Account";
+import {
+  isEncryptedUserdataError,
+  readUserdataAccounts,
+  validateStoredAccount,
+  writeUserdataAccountsAndCryptoAssets,
+} from "./userdataAccounts";
 
 type AccountRawEntry = {
   data: {
@@ -55,20 +62,24 @@ function matchEntry(
   );
 }
 
-function mergeCryptoAssets(base: UserdataFile, coin: UserdataFile | null): void {
+function mergeCryptoAssets(
+  existing: CryptoAssets | undefined,
+  coin: UserdataFile | null,
+): CryptoAssets | undefined {
   const tokens = coin?.data?.cryptoAssets?.tokens;
-  if (!tokens?.length) return;
-  base.data = base.data ?? {};
-  const existing = base.data.cryptoAssets ?? {
+  if (!tokens?.length) return undefined;
+  const merged = existing ?? {
     version: coin?.data?.cryptoAssets?.version,
     tokens: [],
   };
-  const seen = new Set((existing.tokens ?? []).map(t => t.id));
-  for (const token of tokens) {
-    if (!seen.has(token.id)) (existing.tokens ??= []).push(token);
-  }
-  base.data.cryptoAssets = existing;
+  const mergedTokens = merged.tokens ?? [];
+  const seen = new Set(mergedTokens.map(t => t.id));
+  merged.tokens = [...mergedTokens, ...tokens.filter(token => !seen.has(token.id))];
+  return merged;
 }
+
+const isCryptoAssets = (value: unknown): value is CryptoAssets =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
 
 export function hasGeneratedUserdata(account: Account | TokenAccount): boolean {
   if (account.currency.id.includes("/")) return false;
@@ -76,31 +87,33 @@ export function hasGeneratedUserdata(account: Account | TokenAccount): boolean {
   return Array.isArray(accounts) && matchEntry(accounts, account) !== undefined;
 }
 
-export function applyGeneratedUserdata(
+export async function applyGeneratedUserdata(
   account: Account | TokenAccount,
   userdataPath?: string,
-): boolean {
+): Promise<boolean> {
   if (account.currency.id.includes("/")) return false;
 
   const coin = loadCoinFile(account);
   const accounts = coin?.data?.accounts;
   const entry = Array.isArray(accounts) ? matchEntry(accounts, account) : undefined;
+  if (!userdataPath || !entry) return false;
 
-  if (userdataPath && entry) {
-    const base = readJson(userdataPath) ?? {};
-    base.data = base.data ?? {};
-    if (typeof base.data.accounts !== "string") {
-      base.data.accounts = base.data.accounts ?? [];
-      if (!base.data.accounts.some(e => e?.data?.id === entry.data.id)) {
-        base.data.accounts.push(entry);
-      }
-      mergeCryptoAssets(base, coin);
-      fs.writeFileSync(userdataPath, JSON.stringify(base), "utf-8");
-      return true;
-    }
+  let stored: unknown[];
+  try {
+    stored = await readUserdataAccounts(userdataPath);
+  } catch (error) {
+    // The cli refuses an encrypted file too: leave it as it is.
+    if (isEncryptedUserdataError(error)) return false;
+    throw error;
   }
 
-  return false;
+  validateStoredAccount(entry);
+  await writeUserdataAccountsAndCryptoAssets(
+    userdataPath,
+    appendAccounts(stored, [entry]),
+    existing => mergeCryptoAssets(isCryptoAssets(existing) ? existing : undefined, coin),
+  );
+  return true;
 }
 
 export function getGeneratedAddress(account: Account | TokenAccount): string | null {

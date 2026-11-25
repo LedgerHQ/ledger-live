@@ -967,6 +967,30 @@ describe("storage", () => {
       expect(asyncStorageGet).not.toHaveBeenCalled();
     });
 
+    it("should resolve whenReady after an asynchronous initializer selects MMKV", async () => {
+      // Arrange
+      let selectMMKV: () => void = noop;
+      mockInitStorageState = jest.fn().mockImplementation(
+        state =>
+          new Promise<void>(resolve => {
+            selectMMKV = () => {
+              state.storageType = STORAGE_TYPE.MMKV;
+              resolve();
+            };
+          }),
+      );
+      const storage = createTestStorage();
+      const storageTypeBeforeInit = storage.getState().storageType;
+
+      // Act
+      selectMMKV();
+      await storage.whenReady();
+
+      // Assert
+      expect(storageTypeBeforeInit).toBe(STORAGE_TYPE.ASYNC_STORAGE);
+      expect(storage.getState().storageType).toBe(STORAGE_TYPE.MMKV);
+    });
+
     it("should stay on AsyncStorage when the initializer rejects", async () => {
       // Arrange
       jest.spyOn(console, "warn").mockImplementation(noop);
