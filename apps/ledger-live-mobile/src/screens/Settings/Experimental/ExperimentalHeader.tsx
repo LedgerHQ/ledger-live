@@ -17,7 +17,6 @@ import { useSelector } from "~/context/hooks";
 import { useExperimental } from "../../../experimental";
 import LText from "~/components/LText";
 import ExperimentalIcon from "~/icons/Experimental";
-import { rejections } from "~/logic/debugReject";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { featureFlagsBannerVisibleSelector } from "@shared/feature-flags";
@@ -87,10 +86,6 @@ function ExperimentalHeader() {
     [openState, top],
   );
 
-  const onPressMock = useCallback(() => {
-    rejections.next();
-  }, []);
-
   const onPressExperimental = useCallback(() => {
     navigation.navigate(NavigatorName.Base, {
       screen: NavigatorName.Settings,
@@ -142,11 +137,9 @@ function ExperimentalHeader() {
         ]}
       >
         <View style={[containerBaseStyle, { top }]}>
-          <TouchableOpacity onPress={onPressMock}>
-            <LText bold style={styles.label}>
-              MOCK
-            </LText>
-          </TouchableOpacity>
+          <LText bold style={styles.label}>
+            MOCK
+          </LText>
         </View>
       </View>
     );
