@@ -5,8 +5,7 @@ import { ScreenName } from "~/const";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import Settings from "~/screens/Settings";
-
-const NO_ROWS_TO_HIDE: readonly string[] = [];
+import { useSettingsRowsToHide } from "../hooks/useSettingsRowsToHide";
 
 type SettingsHomeScreenProps = StackNavigatorProps<
   SettingsNavigatorStackParamList,
@@ -14,6 +13,7 @@ type SettingsHomeScreenProps = StackNavigatorProps<
 >;
 
 export function SettingsHomeScreen({ navigation, route }: SettingsHomeScreenProps) {
+  const rowsToHide = useSettingsRowsToHide();
   const onSelectSection = useCallback(
     (section: SettingsHomeSectionId) =>
       navigation.navigate(ScreenName.SettingsSection, { section }),
@@ -24,7 +24,7 @@ export function SettingsHomeScreen({ navigation, route }: SettingsHomeScreenProp
     <SettingsHomeGate
       onSelectSection={onSelectSection}
       legacySettings={<Settings navigation={navigation} route={route} />}
-      rowsToHide={NO_ROWS_TO_HIDE}
+      rowsToHide={rowsToHide}
       testID="settings-home"
     />
   );
