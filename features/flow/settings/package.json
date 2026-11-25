@@ -36,6 +36,8 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/feature-flags": "workspace:*",
     "@support/jest": "workspace:*",
     "@support/lint": "workspace:*",
     "@swc/core": "catalog:",
@@ -55,6 +57,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
+    "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
     "typescript": "catalog:"
   },

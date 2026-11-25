@@ -45,17 +45,34 @@ On mobile, `SettingsSheet` goes through `QueuedBottomSheet`, so the app must ren
 ## Hiding rows
 
 The app decides which rows to hide and passes the list to the new Settings. Apollo is the first
-use: on that device the app hides `myLedgerProvider` and `mockAppUpdate`.
+use: on Apollo, `myLedgerProvider` and `mockAppUpdate` are always hidden. Firebase cannot target
+Apollo, so the app tells whether it runs on Apollo, and while `newSettings` is on, its params can
+also hide each row by hand on any device.
+
+| `newSettings` param    | Default | Row hidden while `true`, or always on Apollo |
+| ---------------------- | ------- | -------------------------------------------- |
+| `hideMyLedgerProvider` | `false` | `myLedgerProvider`                           |
+| `hideMockAppUpdate`    | `false` | `mockAppUpdate`                              |
+
+Off Apollo, the params count only while the flag is on, and a flag served without params hides
+nothing. Firebase value of `feature_new_settings` that hides both rows on every device:
+
+```json
+{ "enabled": true, "params": { "hideMyLedgerProvider": true, "hideMockAppUpdate": true } }
+```
+
+`useApolloHiddenSettings(isApollo)` returns that list.
 
 Wrap the Settings in `HiddenSettingsProvider` with that list: a `SettingsRow` whose `settingId`
 is in it is not rendered.
 
-| Export              | Purpose                                                                  |
-| ------------------- | ------------------------------------------------------------------------ |
-| `SETTING_IDS`       | Closed list of the rows that can be hidden                               |
-| `SettingId`         | One of `SETTING_IDS`                                                     |
-| `isSettingId`       | Tells whether a value is a known row id                                  |
-| `getHiddenSettings` | Turns the list given by the app into the set of rows to hide             |
+| Export                    | Purpose                                                      |
+| ------------------------- | ------------------------------------------------------------ |
+| `SETTING_IDS`             | Closed list of the rows that can be hidden                   |
+| `SettingId`               | One of `SETTING_IDS`                                         |
+| `isSettingId`             | Tells whether a value is a known row id                      |
+| `getHiddenSettings`       | Turns the list given by the app into the set of rows to hide |
+| `useApolloHiddenSettings` | Rows to hide: all on Apollo, or those the params turn on     |
 
 `getHiddenSettings` never throws: a missing list, a value that is not a list, an unknown id or a
 duplicate is ignored.

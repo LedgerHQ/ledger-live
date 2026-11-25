@@ -3,6 +3,7 @@ export * from "./logic/settingsSections";
 export * from "./logic/settingsHomeSections";
 export * from "./copy/useSettingsLabels";
 export * from "./components/HiddenSettingsProvider/HiddenSettingsProvider";
+export * from "./hooks/useApolloHiddenSettings";
 export * from "./ports/types";
 export * from "./ports/settingsPort";
 export * from "./ports/sections/general";
