@@ -3,7 +3,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import FollowStepsOnDevice from "../DeviceActions/FollowStepsOnDevice";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import { ledgerSyncErrorForDisplay } from "../../ledgerSyncErrorForDisplay";
+import { ledgerSyncErrorForDisplay } from "@features/flow-ledger-sync";
 import { useAddMember } from "../../hooks/useAddMember";
 import { InfiniteLoader } from "@ledgerhq/react-ui";
 import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";

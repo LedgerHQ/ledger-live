@@ -41,7 +41,26 @@ const KEY_RING_PERSISTENCE_LENS_PATHS = [
   importNames: ["selectPersistedKeyRingState"],
   message: "Only the app persistence files write the key ring state to disk.",
 }));
-const KEY_RING_PATHS = [...KEY_RING_SECRET_PATHS, ...KEY_RING_PERSISTENCE_LENS_PATHS];
+// The Ledger Sync flow owns these key ring operations: screens go through it.
+const KEY_RING_FLOW_PATHS = [
+  {
+    name: "@features/platform-key-ring",
+    importNames: [
+      "acceptLedgerSyncResult",
+      "fetchKeyRingServiceStatus",
+      "isKeyRingError",
+      "keyRingErrorForDisplay",
+      "KeyRingPairingClosedError",
+    ],
+    message:
+      "Use @features/flow-ledger-sync: useLedgerSyncResultAcceptance, useLedgerSyncServiceStatus, ledgerSyncErrorForDisplay and its pairing and recovery hooks.",
+  },
+];
+const KEY_RING_PATHS = [
+  ...KEY_RING_SECRET_PATHS,
+  ...KEY_RING_PERSISTENCE_LENS_PATHS,
+  ...KEY_RING_FLOW_PATHS,
+];
 const KEY_RING_PERSISTENCE_FILES = [
   "src/renderer/middlewares/db.ts",
   "src/renderer/storage.ts",
@@ -161,7 +180,10 @@ export default defineConfig({
       rules: {
         "eslint/no-restricted-imports": [
           "error",
-          { paths: [...APP_PATHS, ...KEY_RING_SECRET_PATHS], patterns: APP_PATTERNS },
+          {
+            paths: [...APP_PATHS, ...KEY_RING_SECRET_PATHS, ...KEY_RING_FLOW_PATHS],
+            patterns: APP_PATTERNS,
+          },
         ],
       },
     },

@@ -2,7 +2,8 @@ import React from "react";
 import type { KeyRingMember } from "@features/platform-key-ring";
 import { Step } from "~/renderer/reducers/walletSync";
 import type { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
-import { useInitMemberCredentials } from "../hooks/useInitMemberCredentials";
+import { useInitMemberKey } from "@features/flow-ledger-sync";
+import { useKeyRingClient } from "../hooks/useKeyRingClient";
 import { AddMemberIntentStep } from "./addMemberIntent/AddMemberIntentStep";
 import { RemoveMemberIntentStep } from "./removeMemberIntent/RemoveMemberIntentStep";
 
@@ -24,7 +25,8 @@ export function LedgerSyncDeviceStep({
   onError,
 }: LedgerSyncDeviceStepProps) {
   // The panel, whose router initializes them, may never have opened (onboarding entry).
-  useInitMemberCredentials();
+  const keyRing = useKeyRingClient();
+  useInitMemberKey(keyRing);
 
   if (step === Step.DeviceActionInstance) {
     return <RemoveMemberIntentStep member={member} onError={onError} />;

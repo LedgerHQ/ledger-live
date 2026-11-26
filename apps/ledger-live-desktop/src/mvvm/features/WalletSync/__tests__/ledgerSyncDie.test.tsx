@@ -21,7 +21,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { Flow, initialStateWalletSync, Step } from "~/renderer/reducers/walletSync";
 import { LedgerSyncDeviceIntentExecutorLWD } from "../deviceIntents/LedgerSyncDeviceIntentExecutorLWD";
 import { buildDeviceConnection } from "../deviceIntents/__tests__/ledgerSyncIntentTestKit";
-import { ledgerSyncResultOrder } from "../deviceIntents/ledgerSyncResultOrder";
+import { ledgerSyncResultOrder } from "@features/flow-ledger-sync";
 import { addMemberIntentLWDDefinition } from "../deviceIntents/addMemberIntent/intentLWDDefinition";
 import { removeMemberIntentLWDDefinition } from "../deviceIntents/removeMemberIntent/intentLWDDefinition";
 import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";

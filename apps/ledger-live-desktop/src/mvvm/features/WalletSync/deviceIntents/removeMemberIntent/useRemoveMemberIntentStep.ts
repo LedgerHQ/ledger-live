@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 import { createIntent } from "@features/platform-device-intent";
 import { selectHasKeyRingMemberKey, selectIsKeyRingMember } from "@domain/entity-key-ring";
 import {
-  acceptLedgerSyncResult,
-  commitKeyRingTree,
+  buildRemoveMemberIntentInput,
+  useLedgerSyncResultAcceptance,
+} from "@features/flow-ledger-sync";
+import {
   selectKeyRingSession,
   type KeyRingMember,
   type KeyRingSession,
@@ -15,7 +17,6 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useKeyRingClient } from "../../hooks/useKeyRingClient";
-import { ledgerSyncResultOrder } from "../ledgerSyncResultOrder";
 import { removeMemberIntentLWDDefinition } from "./intentLWDDefinition";
 
 /**
@@ -31,7 +32,7 @@ export function useRemoveMemberIntentStep(
   const hasMemberKey = useSelector(selectHasKeyRingMemberKey);
   const isMember = useSelector(selectIsKeyRingMember);
   const session = useSelector(selectKeyRingSession);
-  const isStoredRef = useRef(false);
+  const { resultRef, accept } = useLedgerSyncResultAcceptance<true>();
 
   const onUserCancel = useCallback(
     () => dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.SynchronizedInstances })),
@@ -44,16 +45,15 @@ export function useRemoveMemberIntentStep(
 
   const onResult = useCallback(
     (newTrustchain: KeyRingTreeUpdate, runSession: KeyRingSession) => {
-      if (!dispatch(acceptLedgerSyncResult(commitKeyRingTree(newTrustchain), runSession))) return;
-      isStoredRef.current = true;
+      accept(newTrustchain, runSession, true);
     },
-    [dispatch],
+    [accept],
   );
 
   const onJobStateChanged = useCallback(
     (jobState: RemoveMemberJobState) => {
       if (jobState.type === "completed") {
-        if (!isStoredRef.current) return;
+        if (!resultRef.current) return;
         dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
       } else if (jobState.type === "failed" && jobState.reason === "not-allowed") {
         dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.UnsecuredLedger }));
@@ -61,7 +61,7 @@ export function useRemoveMemberIntentStep(
         onError(jobState.error);
       }
     },
-    [dispatch, onError],
+    [dispatch, onError, resultRef],
   );
 
   const createRunIntent =
@@ -69,12 +69,7 @@ export function useRemoveMemberIntentStep(
       ? (): RemoveMemberIntent =>
           createIntent(
             removeMemberIntentLWDDefinition,
-            {
-              session,
-              member,
-              client,
-              resultOrder: ledgerSyncResultOrder,
-            },
+            buildRemoveMemberIntentInput({ session, member, client }),
             {
               onResult: newTrustchain => onResult(newTrustchain, session),
               onJobStateChanged,

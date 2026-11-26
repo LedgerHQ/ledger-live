@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from "react";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import { ledgerSyncErrorForDisplay } from "../ledgerSyncErrorForDisplay";
+import { ledgerSyncErrorForDisplay } from "@features/flow-ledger-sync";
 
 type LedgerSyncDeviceStepErrorValue = Readonly<{
   error: Error | null;

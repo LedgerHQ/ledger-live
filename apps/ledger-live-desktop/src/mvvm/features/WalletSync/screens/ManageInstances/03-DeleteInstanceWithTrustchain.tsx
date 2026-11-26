@@ -2,7 +2,7 @@ import React from "react";
 import type { KeyRingMember } from "@features/platform-key-ring";
 import FollowStepsOnDevice from "../DeviceActions/FollowStepsOnDevice";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import { ledgerSyncErrorForDisplay } from "../../ledgerSyncErrorForDisplay";
+import { ledgerSyncErrorForDisplay } from "@features/flow-ledger-sync";
 import { useRemoveMember } from "LLD/features/WalletSync/hooks/useRemoveMember";
 import { InfiniteLoader } from "@ledgerhq/react-ui";
 

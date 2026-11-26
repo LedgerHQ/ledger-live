@@ -1,35 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useLedgerSyncLoadingSettled } from "@features/flow-ledger-sync";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { walletSyncFlowSelector, walletSyncNextStepSelector } from "~/renderer/reducers/walletSync";
-import { useWalletSyncUserState } from "../components/WalletSyncContext";
 import { useFeature } from "@features/platform-feature-flags";
 
 export function useLoadingStep() {
   const dispatch = useDispatch();
-  const [waitedWatchLoop, setWaitedWatchLoop] = useState(false);
-  const { visualPending } = useWalletSyncUserState();
   const nextStep = useSelector(walletSyncNextStepSelector);
   const flow = useSelector(walletSyncFlowSelector);
   const featureWalletSync = useFeature("lldWalletSync");
-  const initialTimeout = featureWalletSync?.params?.watchConfig?.initialTimeout || 1000;
-  const visualPendingTimeout = 1000;
+  const isSettled = useLedgerSyncLoadingSettled(
+    featureWalletSync?.params?.watchConfig?.initialTimeout,
+  );
 
   useEffect(() => {
-    const timeout = setTimeout(
-      () => {
-        setWaitedWatchLoop(true);
-      },
-      initialTimeout + visualPendingTimeout + 500,
-    );
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [initialTimeout]);
-
-  useEffect(() => {
-    if (waitedWatchLoop && !visualPending && nextStep) {
+    if (isSettled && nextStep) {
       dispatch(
         setFlow({
           flow,
@@ -39,5 +25,5 @@ export function useLoadingStep() {
         }),
       );
     }
-  }, [waitedWatchLoop, visualPending, dispatch, flow, nextStep]);
+  }, [isSettled, dispatch, flow, nextStep]);
 }

@@ -1,7 +1,7 @@
 import { renderHook } from "tests/testSetup";
 import { createKeyRingClient, commitKeyRingTree } from "@features/platform-key-ring";
 import { useIntentWalletSyncToolState } from "@devtools/bindings";
-import { ledgerSyncResultOrder } from "../../WalletSync/deviceIntents/ledgerSyncResultOrder";
+import { ledgerSyncResultOrder } from "@features/flow-ledger-sync";
 import { useIntentWalletSyncTool } from "./useIntentWalletSyncTool";
 
 const mockAppClient = { name: "app client" };

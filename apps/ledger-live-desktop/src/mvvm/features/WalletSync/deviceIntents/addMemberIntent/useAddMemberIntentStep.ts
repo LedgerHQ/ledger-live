@@ -2,8 +2,11 @@ import { useCallback, useRef } from "react";
 import { createIntent, type ExecutorState } from "@features/platform-device-intent";
 import { selectHasKeyRingMemberKey } from "@domain/entity-key-ring";
 import {
-  acceptLedgerSyncResult,
-  commitKeyRingTree,
+  buildAddMemberIntentInput,
+  trackLedgerSyncActivated,
+  useLedgerSyncResultAcceptance,
+} from "@features/flow-ledger-sync";
+import {
   selectKeyRingSession,
   type AddMemberIntent,
   type AddMemberIntentInput,
@@ -15,14 +18,14 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import type { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import {
-  trackLedgerSyncActivated,
-  useLeaveDeviceStepOnTrustchainJoined,
-} from "../../hooks/useOnTrustchainJoined";
+  AnalyticsFlow,
+  walletSyncEntryFlowProperties,
+  type AnalyticsPage,
+} from "../../hooks/useLedgerSyncAnalytics";
+import { useLeaveDeviceStepOnTrustchainJoined } from "../../hooks/useOnTrustchainJoined";
 import { toLegacyDevice } from "../toLegacyDevice";
 import { useKeyRingClient } from "../../hooks/useKeyRingClient";
-import { ledgerSyncResultOrder } from "../ledgerSyncResultOrder";
 import { addMemberIntentLWDDefinition } from "./intentLWDDefinition";
 
 /**
@@ -36,20 +39,15 @@ export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (erro
   const session = useSelector(selectKeyRingSession);
   const leaveDeviceStep = useLeaveDeviceStepOnTrustchainJoined(sourcePage);
   const deviceRef = useRef<Device | null>(null);
-  const resultRef = useRef<KeyRingActivation | null>(null);
+  const { resultRef, accept } = useLedgerSyncResultAcceptance<KeyRingActivation>();
 
   const onResult = useCallback(
     (result: KeyRingActivation, runSession: KeyRingSession) => {
-      const isAccepted = dispatch(
-        acceptLedgerSyncResult(commitKeyRingTree(result.tree), runSession),
+      accept(result.tree, runSession, result, () =>
+        trackLedgerSyncActivated(walletSyncEntryFlowProperties(AnalyticsFlow)),
       );
-      if (!isAccepted) return;
-      // A disconnected run and its Retry can both deliver: one activation, one event.
-      const isFirstResult = resultRef.current === null;
-      resultRef.current = result;
-      if (isFirstResult) trackLedgerSyncActivated();
     },
-    [dispatch],
+    [accept],
   );
 
   const onJobStateChanged = useCallback(
@@ -73,18 +71,14 @@ export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (erro
           onError(jobState.error);
       }
     },
-    [dispatch, onError, leaveDeviceStep],
+    [dispatch, onError, leaveDeviceStep, resultRef],
   );
 
   const createRunIntent = hasMemberKey
     ? (): AddMemberIntent =>
         createIntent<AddMemberJobState, AddMemberIntentInput, undefined, KeyRingActivation>(
           addMemberIntentLWDDefinition,
-          {
-            session,
-            client,
-            resultOrder: ledgerSyncResultOrder,
-          },
+          buildAddMemberIntentInput({ session, client }),
           { onResult: result => onResult(result, session), onJobStateChanged },
         )
     : null;

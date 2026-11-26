@@ -1,10 +1,5 @@
-import {
-  commitKeyRingTree,
-  isKeyRingError,
-  selectKeyRingSession,
-  type KeyRingMember,
-  type KeyRingTreeUpdate,
-} from "@features/platform-key-ring";
+import { useLedgerSyncMemberRemoval } from "@features/flow-ledger-sync";
+import { selectKeyRingSession, type KeyRingMember } from "@features/platform-key-ring";
 import { selectIsKeyRingMember, selectHasKeyRingMemberKey } from "@domain/entity-key-ring";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
@@ -23,6 +18,7 @@ export function useRemoveMember({ device, member }: Props) {
   const session = useSelector(selectKeyRingSession);
   const isMember = useSelector(selectIsKeyRingMember);
   const hasMemberKey = useSelector(selectHasKeyRingMemberKey);
+  const removeMemberWithDevice = useLedgerSyncMemberRemoval();
   const [error, setError] = useState<Error | null>(null);
 
   const sdkRef = useRef(sdk);
@@ -42,41 +38,36 @@ export function useRemoveMember({ device, member }: Props) {
     [dispatch],
   );
 
-  const transitionToNextScreen = useCallback(
-    (trustchainResult: KeyRingTreeUpdate) => {
-      dispatch(commitKeyRingTree(trustchainResult));
-      dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
-    },
-    [dispatch],
-  );
-
   const removeMember = useCallback(
     async (member: KeyRingMember) => {
-      try {
-        if (!deviceRef.current) {
-          throw new Error("Device not found");
-        }
-        if (!isActiveMemberRef.current) {
-          throw new Error("trustchain or memberCredentials is not set");
-        }
-        const newTrustchain = await sdkRef.current.removeMember(sessionRef.current, {
-          legacyDeviceId: deviceRef.current.deviceId,
-          member,
-          callbacks: {
-            onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
-            onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
-          },
-        });
+      const outcome = await removeMemberWithDevice({
+        client: sdkRef.current,
+        session: sessionRef.current,
+        member,
+        legacyDeviceId: deviceRef.current?.deviceId,
+        callbacks: {
+          onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
+          onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
+        },
+        assertReady: () => {
+          if (!deviceRef.current) {
+            throw new Error("Device not found");
+          }
+          if (!isActiveMemberRef.current) {
+            throw new Error("trustchain or memberCredentials is not set");
+          }
+        },
+        onRemoved: () =>
+          dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted })),
+      });
+      if (outcome.type === "done") return;
 
-        transitionToNextScreen(newTrustchain);
-      } catch (error) {
-        if (error instanceof Error) setError(error);
-        if (isKeyRingError(error, "not-allowed")) {
-          dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.UnsecuredLedger }));
-        }
+      if (outcome.error instanceof Error) setError(outcome.error);
+      if (outcome.reason === "not-allowed") {
+        dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.UnsecuredLedger }));
       }
     },
-    [dispatch, transitionToNextScreen],
+    [dispatch, removeMemberWithDevice],
   );
 
   useEffect(() => {

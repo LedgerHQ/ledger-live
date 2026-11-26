@@ -3,7 +3,6 @@
  */
 import { renderHook, waitFor } from "tests/testSetup";
 import { mockKeyRingTreeRecord } from "@domain/entity-key-ring/schema.mock";
-import { commitKeyRingTree } from "@features/platform-key-ring";
 import { keyRingTreeUpdateFixture } from "@features/platform-key-ring/testing";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
@@ -19,7 +18,6 @@ jest.mock("~/renderer/reducers/walletSync", () => ({
 const device = { deviceId: "", modelId: DeviceModelId.stax, wired: true };
 const TREE_RECORD = mockKeyRingTreeRecord();
 const tree = keyRingTreeUpdateFixture(TREE_RECORD);
-const treeCommitted = commitKeyRingTree(tree);
 
 function keyRingError(name: string): Error {
   return Object.assign(new Error(name), { name });
@@ -35,7 +33,7 @@ describe("useAddMember", () => {
   it("should create a new trustchain", async () => {
     Mocks.sdk.activate.mockResolvedValue({ tree, outcome: "created" });
 
-    const { result } = renderHook(() => useAddMember({ device }), {
+    const { result, store } = renderHook(() => useAddMember({ device }), {
       initialState: {
         settings: INITIAL_STATE,
       },
@@ -44,7 +42,7 @@ describe("useAddMember", () => {
     await waitFor(() => expect(Mocks.sdk.activate).toHaveBeenCalled());
 
     expect(result.current.error).toBeNull();
-    expect(mockDispatch).toHaveBeenCalledWith(treeCommitted);
+    expect(store.getState().trustchain.trustchain).toEqual(TREE_RECORD);
     expect(Mocks.setFlow).toHaveBeenCalledWith({
       flow: Flow.Activation,
       step: Step.ActivationLoading,
@@ -57,7 +55,7 @@ describe("useAddMember", () => {
 
   it("should get an existing trustchain", async () => {
     Mocks.sdk.activate.mockResolvedValue({ tree, outcome: "restored" });
-    const { result } = renderHook(() => useAddMember({ device }), {
+    const { result, store } = renderHook(() => useAddMember({ device }), {
       initialState: {
         settings: INITIAL_STATE,
       },
@@ -66,7 +64,7 @@ describe("useAddMember", () => {
     await waitFor(() => expect(Mocks.sdk.activate).toHaveBeenCalled());
 
     expect(result.current.error).toBeNull();
-    expect(mockDispatch).toHaveBeenCalledWith(treeCommitted);
+    expect(store.getState().trustchain.trustchain).toEqual(TREE_RECORD);
     expect(Mocks.setFlow).toHaveBeenCalledWith({
       flow: Flow.Activation,
       step: Step.ActivationLoading,
@@ -97,10 +95,10 @@ describe("useAddMember", () => {
   });
 
   it("should handle missing device", async () => {
-    const { result } = renderHook(() => useAddMember({ device: null }));
+    const { result, store } = renderHook(() => useAddMember({ device: null }));
 
     expect(result.current.error).toBeNull();
-    expect(mockDispatch).not.toHaveBeenCalledWith(treeCommitted);
+    expect(store.getState().trustchain.trustchain).toBeNull();
     expect(Mocks.setFlow).toHaveBeenCalledWith({
       flow: Flow.Activation,
       step: Step.DeviceAction,
@@ -110,7 +108,7 @@ describe("useAddMember", () => {
 
   it("should handle already initialized trustchain", async () => {
     Mocks.sdk.activate.mockRejectedValue(keyRingError("TrustchainAlreadyInitialized"));
-    const { result } = renderHook(() => useAddMember({ device }), {
+    const { result, store } = renderHook(() => useAddMember({ device }), {
       initialState: {
         settings: INITIAL_STATE,
       },
@@ -119,7 +117,7 @@ describe("useAddMember", () => {
     await waitFor(() => expect(Mocks.sdk.activate).toHaveBeenCalled());
 
     expect(result.current.error).toBeNull();
-    expect(mockDispatch).not.toHaveBeenCalledWith(treeCommitted);
+    expect(store.getState().trustchain.trustchain).toBeNull();
     expect(Mocks.setFlow).toHaveBeenCalledWith({
       flow: Flow.Synchronize,
       step: Step.AlreadySecuredSameSeed,
@@ -129,7 +127,7 @@ describe("useAddMember", () => {
 
   it("should handle trustchain initialized with other seed", async () => {
     Mocks.sdk.activate.mockRejectedValue(keyRingError("TrustchainAlreadyInitializedWithOtherSeed"));
-    const { result } = renderHook(() => useAddMember({ device }), {
+    const { result, store } = renderHook(() => useAddMember({ device }), {
       initialState: {
         settings: INITIAL_STATE,
       },
@@ -138,7 +136,7 @@ describe("useAddMember", () => {
     await waitFor(() => expect(Mocks.sdk.activate).toHaveBeenCalled());
 
     expect(result.current.error).toBeNull();
-    expect(mockDispatch).not.toHaveBeenCalledWith(treeCommitted);
+    expect(store.getState().trustchain.trustchain).toBeNull();
     expect(Mocks.setFlow).toHaveBeenCalledWith({
       flow: Flow.Synchronize,
       step: Step.AlreadySecuredOtherSeed,
@@ -148,7 +146,7 @@ describe("useAddMember", () => {
 
   it("should handle other sdk errors", async () => {
     Mocks.sdk.activate.mockRejectedValue(new Error("Random error"));
-    const { result } = renderHook(() => useAddMember({ device }), {
+    const { result, store } = renderHook(() => useAddMember({ device }), {
       initialState: {
         settings: INITIAL_STATE,
       },
@@ -158,7 +156,7 @@ describe("useAddMember", () => {
     await waitFor(() => expect(result.current.error).toBeInstanceOf(Error)); // Wait for the setError
 
     expect(result.current.error?.message).toBe("Random error");
-    expect(mockDispatch).not.toHaveBeenCalledWith(treeCommitted);
+    expect(store.getState().trustchain.trustchain).toBeNull();
     expect(Mocks.setFlow).not.toHaveBeenCalled();
     expect(Mocks.track).not.toHaveBeenCalled();
   });

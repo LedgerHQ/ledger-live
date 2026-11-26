@@ -1,9 +1,5 @@
-import {
-  classifyKeyRingError,
-  commitKeyRingTree,
-  selectKeyRingSession,
-  type KeyRingActivation,
-} from "@features/platform-key-ring";
+import { useLedgerSyncActivation } from "@features/flow-ledger-sync";
+import { selectKeyRingSession, type KeyRingActivation } from "@features/platform-key-ring";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
@@ -22,6 +18,7 @@ export function useAddMember({
   const dispatch = useDispatch();
   const sdk = useKeyRingClient();
   const session = useSelector(selectKeyRingSession);
+  const activate = useLedgerSyncActivation();
   const [error, setError] = useState<Error | null>(null);
 
   const [userDeviceInteraction, setUserDeviceInteraction] = useState(false);
@@ -32,12 +29,9 @@ export function useAddMember({
 
   const onTrustchainJoined = useOnTrustchainJoined(sourcePage);
 
-  const transitionToNextScreen = useCallback(
-    (activation: KeyRingActivation) => {
-      dispatch(commitKeyRingTree(activation.tree));
-      onTrustchainJoined(activation, device);
-    },
-    [device, dispatch, onTrustchainJoined],
+  const onActivated = useCallback(
+    (activation: KeyRingActivation) => onTrustchainJoined(activation, device),
+    [device, onTrustchainJoined],
   );
 
   const handleMissingDevice = useCallback(() => {
@@ -54,34 +48,33 @@ export function useAddMember({
   };
 
   useEffect(() => {
-    const addMember = async () => {
-      try {
-        if (!deviceRef.current) {
-          return handleMissingDevice();
-        }
-        const activation = await sdkRef.current.activate(sessionRef.current, {
-          legacyDeviceId: deviceRef.current.deviceId,
-          callbacks: {
-            onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
-            onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
-          },
-        });
-
-        transitionToNextScreen(activation);
-      } catch (error) {
-        const category = classifyKeyRingError(error);
-        if (category === "already-member") {
-          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredSameSeed }));
-        } else if (category === "member-of-other-tree") {
-          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredOtherSeed }));
-        } else {
-          setError(error as Error);
-        }
+    async function addMember() {
+      if (!deviceRef.current) {
+        return handleMissingDevice();
       }
-    };
+      const outcome = await activate({
+        client: sdkRef.current,
+        session: sessionRef.current,
+        legacyDeviceId: deviceRef.current.deviceId,
+        callbacks: {
+          onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
+          onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
+        },
+        onActivated,
+      });
+      if (outcome.type === "done") return;
+
+      if (outcome.reason === "already-member") {
+        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredSameSeed }));
+      } else if (outcome.reason === "member-of-other-tree") {
+        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredOtherSeed }));
+      } else {
+        setError(outcome.error as Error);
+      }
+    }
 
     addMember();
-  }, [dispatch, handleMissingDevice, transitionToNextScreen]);
+  }, [activate, dispatch, handleMissingDevice, onActivated]);
 
   return { error, userDeviceInteraction, handleMissingDevice, onRetry };
 }

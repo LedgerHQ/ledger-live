@@ -1,7 +1,7 @@
-import { renderHook } from "tests/testSetup";
+import { renderHook, waitFor } from "tests/testSetup";
+import { LedgerSyncErrorMessage } from "@features/flow-ledger-sync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useLifeCycle } from "../hooks/walletSync.hooks";
-import { ErrorType } from "../hooks/type.hooks";
 
 function keyRingError(name: string): Error {
   return Object.assign(new Error(name), { name });
@@ -13,7 +13,7 @@ const Mocks = {
   setFlow: jest.fn(),
   track: jest.fn(),
   invalidateAuth: jest.fn(),
-  refetch: jest.fn(),
+  restore: jest.fn(() => new Promise(() => {})),
 };
 
 jest.mock("LLD/hooks/redux", () => ({
@@ -23,7 +23,10 @@ jest.mock("LLD/hooks/redux", () => ({
 
 jest.mock("@features/platform-key-ring", () => ({
   ...jest.requireActual("@features/platform-key-ring"),
-  resetKeyRingState: () => Mocks.resetKeyRingState(),
+  resetKeyRingState: () => {
+    Mocks.resetKeyRingState();
+    return { type: "test/resetKeyRingState" };
+  },
 }));
 
 jest.mock("~/renderer/actions/walletSync", () => ({
@@ -36,11 +39,7 @@ jest.mock("@shared/analytics", () => ({
 }));
 
 jest.mock("../hooks/useKeyRingClient", () => ({
-  useKeyRingClient: () => ({ invalidateAuth: Mocks.invalidateAuth }),
-}));
-
-jest.mock("../hooks/useRestoreTrustchain", () => ({
-  useRestoreTrustchain: () => ({ refetch: Mocks.refetch }),
+  useKeyRingClient: () => ({ invalidateAuth: Mocks.invalidateAuth, restore: Mocks.restore }),
 }));
 
 describe("useLifeCycle", () => {
@@ -87,17 +86,17 @@ describe("useLifeCycle", () => {
     );
   });
 
-  it("should call restoreTrustchain refetch on TrustchainOutdated", () => {
+  it("should restore the trustchain on TrustchainOutdated", async () => {
     const { result } = renderHook(() => useLifeCycle());
     result.current.handleError(keyRingError("TrustchainOutdated"));
 
-    expect(Mocks.refetch).toHaveBeenCalled();
+    await waitFor(() => expect(Mocks.restore).toHaveBeenCalled());
     expect(Mocks.resetKeyRingState).not.toHaveBeenCalled();
   });
 
   it("should reset when error message includes NO_TRUSTCHAIN", () => {
     const { result } = renderHook(() => useLifeCycle());
-    result.current.handleError(new Error(ErrorType.NO_TRUSTCHAIN));
+    result.current.handleError(new Error(LedgerSyncErrorMessage.noTrustchain));
 
     expect(Mocks.resetKeyRingState).toHaveBeenCalled();
     expect(Mocks.track).toHaveBeenCalledWith("ledgersync_deactivated");

@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
 import { useNavigate } from "react-router";
-import { track } from "@shared/analytics";
+import { trackLedgerSyncActivated } from "@features/flow-ledger-sync";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { KeyRingActivation } from "@features/platform-key-ring";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -12,10 +12,6 @@ import {
   AnalyticsPage,
   walletSyncEntryFlowProperties,
 } from "./useLedgerSyncAnalytics";
-
-export function trackLedgerSyncActivated() {
-  track("ledgersync_activated", walletSyncEntryFlowProperties(AnalyticsFlow));
-}
 
 /**
  * Leaves the device step once this instance joined the trustchain: ends the onboarding or moves
@@ -58,7 +54,7 @@ export function useOnTrustchainJoined(sourcePage?: AnalyticsPage) {
 
   return useCallback(
     (activation: KeyRingActivation, device: Device | null) => {
-      trackLedgerSyncActivated();
+      trackLedgerSyncActivated(walletSyncEntryFlowProperties(AnalyticsFlow));
       leaveDeviceStep(activation, device);
     },
     [leaveDeviceStep],

@@ -22,12 +22,10 @@ function keyRingError(name: string): Error {
 const Mocks = {
   removeMember: jest.fn(),
   setFlow: jest.fn(),
-  committedTree: jest.fn(),
 };
 
 const mockDispatch = jest.fn((action: { type?: string; payload?: unknown }) => {
   if (action.type === "WALLET_SYNC_CHANGE_FLOW") Mocks.setFlow(action.payload);
-  else Mocks.committedTree(action.payload ?? action);
 });
 
 jest.mock("LLD/hooks/redux", () => {
@@ -96,7 +94,7 @@ describe("useRemoveMember", () => {
   it("should remove member and transition to success step on success", async () => {
     Mocks.removeMember.mockResolvedValue(keyRingTreeUpdateFixture(ROTATED_TREE_RECORD));
 
-    const { result } = renderHook(
+    const { result, store } = renderHook(
       () => useRemoveMember({ device: mockDevice, member: mockMember }),
       { initialState },
     );
@@ -113,7 +111,7 @@ describe("useRemoveMember", () => {
     });
 
     await waitFor(() => {
-      expect(Mocks.committedTree).toHaveBeenCalledWith(ROTATED_TREE_RECORD);
+      expect(store.getState().trustchain.trustchain).toEqual(ROTATED_TREE_RECORD);
       expect(Mocks.setFlow).toHaveBeenCalledWith({
         flow: Flow.ManageInstances,
         step: Step.InstanceSuccesfullyDeleted,

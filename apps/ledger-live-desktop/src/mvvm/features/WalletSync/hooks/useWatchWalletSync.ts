@@ -7,6 +7,7 @@ import {
   type WalletSyncUserState,
 } from "@features/platform-wallet-sync";
 import { selectKeyRingSession } from "@features/platform-key-ring";
+import { useOnKeyRingRefreshNeeded } from "@features/flow-ledger-sync";
 import { bulkSetAccountNames } from "@domain/entity-account-name";
 import { selectContacts, setContacts } from "@domain/entity-contact";
 import { updateRecentAddresses } from "@domain/entity-recent-addresses";
@@ -30,7 +31,6 @@ import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import { walletSyncUpdate } from "@domain/entity-wallet-sync";
 import { replaceAccounts } from "~/renderer/actions/accounts";
 import { useKeyRingClient } from "./useKeyRingClient";
-import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
 import { useFeature } from "@features/platform-feature-flags";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
@@ -117,7 +117,10 @@ export function useWatchWalletSync(): WalletSyncUserState {
   const session = useSelector(selectKeyRingSession);
   const keyRing = useKeyRingClient();
   const cloudSync = useCloudSyncSDK();
-  const onRefreshNeeded = useOnTrustchainRefreshNeeded(keyRing);
+  const onRefreshNeeded = useOnKeyRingRefreshNeeded(keyRing, {
+    resetOnCategories: ["member-removed"],
+    readTreeIdAt: "call",
+  });
 
   return useWalletSyncWatcher({
     walletSyncFeature: featureWalletSync,

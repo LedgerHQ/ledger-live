@@ -6,7 +6,7 @@ import { rgba } from "~/renderer/styles/helpers";
 import QRCode from "~/renderer/components/QRCode";
 import { useQRCode } from "../../hooks/useQRCode";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import { ledgerSyncErrorForDisplay } from "../../ledgerSyncErrorForDisplay";
+import { ledgerSyncErrorForDisplay } from "@features/flow-ledger-sync";
 import { TrackScreen } from "@shared/analytics-react";
 import {
   AnalyticsFlow,

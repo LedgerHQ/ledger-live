@@ -6,7 +6,8 @@ import SynchronizeWallet from "./Synchronize";
 import WalletSyncManageInstances from "./ManageInstances";
 import WalletSyncActivation from "./Activation";
 import WalletSyncManage from "./Manage";
-import { useInitMemberCredentials } from "../hooks/useInitMemberCredentials";
+import { useInitMemberKey } from "@features/flow-ledger-sync";
+import { useKeyRingClient } from "../hooks/useKeyRingClient";
 import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
 import type { KeyRingMember } from "@features/platform-key-ring";
 
@@ -28,7 +29,8 @@ export interface BackProps {}
 
 export const WalletSyncRouter = forwardRef<BackRef, RouterProps>(
   ({ currentPage, selectedInstance, onSelectInstance }, ref) => {
-    useInitMemberCredentials();
+    const keyRing = useKeyRingClient();
+    useInitMemberKey(keyRing);
     const walletSyncFlow = useSelector(walletSyncFlowSelector);
 
     switch (walletSyncFlow) {

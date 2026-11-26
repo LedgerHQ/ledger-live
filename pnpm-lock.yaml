@@ -1302,6 +1302,9 @@ importers:
       '@features/flow-large-screen-upsell':
         specifier: workspace:^
         version: link:../../features/flow/large-screen-upsell
+      '@features/flow-ledger-sync':
+        specifier: workspace:^
+        version: link:../../features/flow/ledger-sync
       '@features/flow-pay-balance':
         specifier: workspace:^
         version: link:../../features/flow/pay-balance
