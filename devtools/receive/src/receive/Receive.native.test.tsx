@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@support/jest/devtools/native";
+import { fireEvent, render, screen, userEvent } from "@support/jest/devtools/native";
 import type { ReceiveToolAsset } from "../types";
 import { Receive } from "./Receive";
 
@@ -50,11 +50,14 @@ describe("Receive", () => {
     expect(flag.setEnabled).toHaveBeenCalledWith(true);
   });
 
-  it("applies the excluded families typed in the input", () => {
+  it("applies the excluded families typed in the input", async () => {
+    const user = userEvent.setup();
     const { flag } = renderTool({ enabled: true, excludedFamilies: ["tron"] });
 
-    fireEvent.changeText(screen.getByDisplayValue("tron"), " bitcoin, , tezos ");
-    fireEvent.press(screen.getByText("Apply"));
+    const input = screen.getByDisplayValue("tron");
+    await user.clear(input);
+    await user.type(input, " bitcoin, , tezos ");
+    await user.press(screen.getByText("Apply"));
     expect(flag.setExcludedFamilies).toHaveBeenCalledWith(["bitcoin", "tezos"]);
   });
 
@@ -66,20 +69,22 @@ describe("Receive", () => {
     expect(screen.getAllByText("Ethereum")).toHaveLength(2);
   });
 
-  it("opens receive on the tapped asset", () => {
+  it("opens receive on the tapped asset", async () => {
+    const user = userEvent.setup();
     const { trigger } = renderTool();
 
-    fireEvent.press(screen.getByLabelText("USD Coin, Ethereum"));
+    await user.press(screen.getByLabelText("USD Coin, Ethereum"));
     expect(trigger.onReceive).toHaveBeenCalledWith({
       legacyAccountId: "js:2:ethereum:0xabc:",
       assetId: "ethereum/erc20/usd__coin",
     });
   });
 
-  it("opens receive from the asset selection", () => {
+  it("opens receive from the asset selection", async () => {
+    const user = userEvent.setup();
     const { trigger } = renderTool();
 
-    fireEvent.press(screen.getByText("Pick an asset"));
+    await user.press(screen.getByText("Pick an asset"));
     expect(trigger.onPickAsset).toHaveBeenCalledTimes(1);
   });
 
@@ -89,22 +94,25 @@ describe("Receive", () => {
     expect(screen.getByText("No account yet: pick an asset to add one.")).toBeOnTheScreen();
   });
 
-  it("opens the deeplink typed in the input", () => {
+  it("opens the deeplink typed in the input", async () => {
+    const user = userEvent.setup();
     const { trigger } = renderTool();
 
-    fireEvent.changeText(
-      screen.getByDisplayValue("ledgerwallet://receive?currency=ethereum"),
-      "ledgerwallet://receive?currency=bitcoin",
-    );
-    fireEvent.press(screen.getByText("Open"));
+    const input = screen.getByDisplayValue("ledgerwallet://receive?currency=ethereum");
+    await user.clear(input);
+    await user.type(input, "ledgerwallet://receive?currency=bitcoin");
+    await user.press(screen.getByText("Open"));
     expect(trigger.onOpenDeeplink).toHaveBeenCalledWith("ledgerwallet://receive?currency=bitcoin");
   });
 
-  it.each(["", "not-a-url"])("does not open the invalid deeplink %p", url => {
+  it.each(["", "not-a-url"])("does not open the invalid deeplink %p", async url => {
+    const user = userEvent.setup();
     const { trigger } = renderTool();
 
-    fireEvent.changeText(screen.getByDisplayValue("ledgerwallet://receive?currency=ethereum"), url);
-    fireEvent.press(screen.getByText("Open"));
+    const input = screen.getByDisplayValue("ledgerwallet://receive?currency=ethereum");
+    await user.clear(input);
+    if (url) await user.type(input, url);
+    await user.press(screen.getByText("Open"));
     expect(screen.getByText("Not a valid URL.")).toBeOnTheScreen();
     expect(trigger.onOpenDeeplink).not.toHaveBeenCalled();
   });
@@ -120,10 +128,11 @@ describe("Receive", () => {
     expect(positions).toEqual([...positions].sort((a, b) => a - b));
   });
 
-  it("marks the verify hint as seen", () => {
+  it("marks the verify hint as seen", async () => {
+    const user = userEvent.setup();
     const { verifyHint } = renderTool({ hasSeenVerifyHint: false });
 
-    fireEvent.press(screen.getByLabelText("Show the hint on the next receive"));
+    await user.press(screen.getByLabelText("Show the hint on the next receive"));
     expect(verifyHint.setHasSeen).toHaveBeenCalledWith(true);
   });
 });
