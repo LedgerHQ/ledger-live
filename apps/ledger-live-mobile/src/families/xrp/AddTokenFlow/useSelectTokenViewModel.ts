@@ -9,8 +9,7 @@ import type {
   StackNavigatorNavigation,
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
-import type { ScreenName } from "~/const";
-import { getTokenFirstScreen } from "../utils";
+import { ScreenName } from "~/const";
 import type { XrpAddTokenFlowParamList } from "./types";
 
 export type Props = BaseComposite<
@@ -55,7 +54,7 @@ export function useSelectTokenViewModel({ navigation, route }: Props) {
 
   const onSelectToken = useCallback(
     (token: TokenCurrency) => {
-      navigation.navigate(getTokenFirstScreen(token), { token, accountId: account.id });
+      navigation.navigate(ScreenName.XrpAddTokenReview, { token, accountId: account.id });
     },
     [account.id, navigation],
   );
