@@ -32,6 +32,7 @@ import {
 import { TooManyUtxosCritical, TooManyUtxosWarning, TopologyChangeError } from "../types/errors";
 import type { CantonMemo } from "../types/transaction";
 import { assetInstrument, type Instrument, instrumentOf, isInstrument } from "./asset";
+import { estimateFees, estimateSendMax } from "./estimateFees";
 import { isRecipientValid, minReserveOf } from "./utils";
 
 type CantonIntent = TransactionIntent<CantonMemo>;
@@ -83,9 +84,22 @@ function recipientError(recipient: string, currencyName: string): Error | undefi
   return undefined;
 }
 
-// A token's fee is paid in the native coin, so the whole spendable holding can be sent.
-const sendMaxAmount = (sent: Holding, fees: bigint, isToken: boolean): bigint =>
-  isToken ? sent.spendable : sent.spendable - fees;
+// The parent pays a token's fee; a prepared native amount, 0 included, is kept, as it is the one crafted.
+async function sendMaxOf(
+  context: CantonContext,
+  intent: CantonIntent,
+  sent: Holding,
+  customFees: FeeEstimation | undefined,
+  isToken: boolean,
+): Promise<{ amount: bigint; fees: bigint }> {
+  if (isToken) return { amount: sent.spendable, fees: customFees?.value ?? 0n };
+  const isPrepared = intent.amount > 0n || customFees?.parameters?.amount !== undefined;
+  if (isPrepared) {
+    return { amount: intent.amount, fees: await estimateFees(context, intent.amount) };
+  }
+  const max = await estimateSendMax(context, sent.spendable);
+  return { amount: max.amount, fees: max.fee };
+}
 
 function amountError(
   config: CantonCoinConfig,
@@ -166,10 +180,11 @@ export async function validateIntent(
   const target = instrumentOf(intent.asset, config.nativeInstrumentId);
   const isToken = intent.asset.type !== "native";
   const isSendMax = !!intent.useAllAmount;
-  const fees = customFees?.value ?? 0n;
   const native = holdingOf(balances.filter(({ asset }) => asset.type === "native"));
   const sent = isToken ? tokenHolding(balances, target, config.nativeInstrumentId) : native;
-  const amount = isSendMax ? sendMaxAmount(sent, fees, isToken) : intent.amount;
+  const { amount, fees } = isSendMax
+    ? await sendMaxOf(context, intent, sent, customFees, isToken)
+    : { amount: intent.amount, fees: customFees?.value ?? 0n };
   const spend: Spend = {
     amount,
     fees,
