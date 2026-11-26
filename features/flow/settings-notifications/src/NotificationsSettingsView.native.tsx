@@ -11,7 +11,7 @@ export function NotificationsSettingsView({
   testID,
 }: NotificationsSettingsViewProps) {
   return (
-    <Box lx={{ gap: "s8" }} testID={testID}>
+    <Box lx={{ gap: "s8", paddingTop: "s8" }} testID={testID}>
       <TrackScreen category="Settings" name="Notifications" />
       {osPermissionBanner ? (
         <Box lx={{ paddingHorizontal: "s16" }}>
@@ -28,7 +28,7 @@ export function NotificationsSettingsView({
           />
         </Box>
       ) : null}
-      <Box lx={{ paddingHorizontal: "s8", gap: "s4" }}>
+      <Box lx={{ paddingHorizontal: "s8", gap: "s20" }}>
         {rows.map(({ id, ...row }) => (
           <SettingsRow
             key={id}
