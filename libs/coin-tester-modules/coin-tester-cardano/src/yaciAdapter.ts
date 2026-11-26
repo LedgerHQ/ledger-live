@@ -1,6 +1,6 @@
 // Pure translators: Yaci Store (Blockfrost-compatible) JSON → the Strica `/v1/*` shapes coin-cardano
 // consumes (`@ledgerhq/coin-cardano/api/api-types`). Side-effect-free, so they unit-test offline.
-// Field maps verified against yaci-devkit@0.10.6.
+// Field maps checked against the yaci-store 2.0.7 source (yaci-devkit 0.12.0).
 import {
   type APIDelegation,
   type APILatestBlock,
