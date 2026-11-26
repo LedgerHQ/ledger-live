@@ -1,4 +1,5 @@
 import type { z } from "zod";
+import { RecordDecodeError } from "./errors";
 import type { RecordVersions } from "./recordVersions";
 
 export type ValueCodec<Slice, Stored> = {
@@ -32,6 +33,20 @@ export type ValueRecordDefinition<State, Action = unknown, Slice = unknown> = Re
   state: Readonly<ValueStateMapping<State, Slice, Action>>;
 }>;
 
+function runCodecDecode<Slice, Stored>(
+  codec: ValueCodec<Slice, Stored>,
+  latest: Stored,
+  key: string,
+  version: number,
+): Slice {
+  try {
+    return codec.decode(latest);
+  } catch (error) {
+    const name = error instanceof Error ? error.name : typeof error;
+    throw new RecordDecodeError(key, version, `the codec decode threw ${name}`);
+  }
+}
+
 export function defineRecord<State, Slice, Stored, Action>(
   input: ValueRecordInput<State, Slice, Stored, Action>,
 ): ValueRecordDefinition<State, Action, Slice> {
@@ -44,7 +59,8 @@ export function defineRecord<State, Slice, Stored, Action>(
     storedSchemas: versions.storedSchemas,
     codec: Object.freeze({
       encode: (slice: Slice) => versions.encode(codec.encode(slice)),
-      decode: (stored: unknown) => codec.decode(versions.decode(stored, key)),
+      decode: (stored: unknown) =>
+        runCodecDecode(codec, versions.decode(stored, key), key, versions.latest),
     }),
     state: Object.freeze({ select: state.select, toHydrationAction: state.toHydrationAction }),
   });

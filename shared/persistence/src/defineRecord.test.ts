@@ -58,3 +58,47 @@ describe("defineRecord", () => {
     expect(decodeSecret).not.toThrow(secret);
   });
 });
+
+const secret = "do-not-log-this";
+
+const throwingTokenRecord = defineRecord({
+  key: "token",
+  versions: recordVersions(z => z.strictObject({ token: z.string() })).next(
+    z => z.strictObject({ token: z.string() }),
+    v0 => v0,
+  ),
+  codec: {
+    encode: (token: string) => ({ token }),
+    decode: (stored): string => {
+      throw new SyntaxError(stored.token);
+    },
+  },
+  state: {
+    select: (state: { token: string }) => state.token,
+    toHydrationAction: token => ({ type: "token/init", payload: token }),
+  },
+});
+
+const decodeInvalid = () => throwingTokenRecord.codec.decode({ $v: 1, data: { token: 1 } });
+
+describe("a codec decode that fails", () => {
+  it("should throw a RecordDecodeError with no stored value when the codec decode throws", () => {
+    const decodeSecret = () => throwingTokenRecord.codec.decode({ $v: 1, data: { token: secret } });
+    expect(decodeSecret).toThrow(RecordDecodeError);
+    expect(decodeSecret).toThrow(expect.objectContaining({ key: "token", version: 1 }));
+    expect(decodeSecret).toThrow("the codec decode threw SyntaxError");
+    expect(decodeSecret).not.toThrow(secret);
+  });
+
+  it("should throw a NewerRecordVersionError when the stored value is of a newer version and the codec decode throws", () => {
+    expect(() => throwingTokenRecord.codec.decode({ $v: 2, data: { token: secret } })).toThrow(
+      NewerRecordVersionError,
+    );
+  });
+
+  it("should keep the schema reason when the stored value is invalid and the codec decode throws", () => {
+    expect(decodeInvalid).toThrow(RecordDecodeError);
+    expect(decodeInvalid).toThrow("invalid_type");
+    expect(decodeInvalid).not.toThrow("codec decode");
+  });
+});

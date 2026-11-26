@@ -22,7 +22,8 @@ const historyRecord = defineRecord({
 
 - `versions`: the stored shape of each version, and the steps between them.
 - `codec`: `encode` gives the stored value of the latest version. `decode` gets a value of the
-  latest version: the definition upgrades an older stored value first.
+  latest version: the definition upgrades an older stored value first. A `decode` that throws
+  gives a `RecordDecodeError`.
 - `state`: `select` gives the reference that persistence compares to find a change.
   `toHydrationAction` puts the decoded value in the state, only at hydration.
 
