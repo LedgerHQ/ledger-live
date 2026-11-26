@@ -95,6 +95,38 @@ requests.
 
 A thunk reads the provider with `getAuthProvider(dispatch)`.
 
+### Several providers
+
+A store can hold several providers, one per key: the default one has no key. Give each
+extra provider a `key`, and pass the same key to the base query of the APIs that
+authenticate with it. Declare the key once, so the middleware and the APIs can't drift:
+
+```ts
+const OTHER_REALM_AUTH = "other-realm";
+
+createAuthMiddleware<State>({
+  key: OTHER_REALM_AUTH,
+  isFeatureEnabled: state => isOtherRealmAuthEnabled(state),
+  createAuthProvider: () => new AuthSDK(otherRealmConfig, { provider: otherRealmIdentity }),
+});
+
+const otherRealmApi = createApi({
+  reducerPath: "otherRealmApi",
+  baseQuery: createAuthenticatedBaseQuery({ baseUrl }, { authProviderKey: OTHER_REALM_AUTH }),
+  endpoints: build => ({ /* … */ }),
+});
+```
+
+`isOtherRealmAuthEnabled`, `otherRealmConfig` and `otherRealmIdentity` stand for the app's
+own feature check, Keycloak config and identity provider.
+
+The middleware without a key keeps answering base queries without one and
+`getAuthProvider(dispatch)`. A thunk reads a keyed provider with
+`getAuthProvider(dispatch, OTHER_REALM_AUTH)`. Each provider has its own `isFeatureEnabled`.
+When no middleware holds a key, base queries with that key send their requests without a
+token, like a store without the middleware, and `getAuthProvider` throws
+`AuthProviderMissingError`. When two middlewares share a key, the first in the chain answers.
+
 ## Scope
 
 This package owns the RTK Query adapter and the middleware that holds the provider.
