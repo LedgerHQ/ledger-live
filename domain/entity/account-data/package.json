@@ -25,8 +25,6 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@domain/entity-derivation": "workspace:*",
-    "@domain/entity-network": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

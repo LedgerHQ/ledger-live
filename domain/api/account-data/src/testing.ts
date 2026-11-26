@@ -5,7 +5,7 @@ import {
   accountDataSlice,
   isAccountDataReceived,
 } from "@domain/entity-account-data";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { AccountKeySchema, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import { DerivationPathSchema } from "@domain/entity-derivation";
 import { NetworkIdSchema } from "@domain/entity-network";
 import { computeAccountUUID } from "@domain/entity-account/schema.mock";
@@ -73,7 +73,7 @@ export const descriptorOf = (index: number, network = "ethereum"): AccountDescri
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse(network),
-  key: `0x${index}`,
+  key: AccountKeySchema.parse(`0x${index}`),
   path: DerivationPathSchema.parse(`m/44h/60h/${index}h/0/0`),
 });
 

@@ -1,4 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import type { z } from "zod";
 import { AccountDescriptorSchema, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
@@ -153,7 +154,7 @@ export function fromLegacyAccount(account: LegacyAccountIdentity): AccountDescri
   return AccountDescriptorSchema.parse(buildDescriptor(account));
 }
 
-function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
+function buildDescriptor(account: LegacyAccountIdentity): z.input<typeof AccountDescriptorSchema> {
   const currency = getCryptoCurrencyById(account.currency.id);
   const network = networkFromCurrencyId(CryptoCurrencyIdSchema.parse(account.currency.id));
   const derivationMode = asDerivationMode(account.derivationMode);

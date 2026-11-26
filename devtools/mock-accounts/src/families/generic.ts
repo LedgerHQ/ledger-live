@@ -1,3 +1,4 @@
+import { AccountKeySchema } from "@domain/entity-account-descriptor";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { DerivationPathSchema } from "@domain/entity-derivation";
 import { base58 } from "../encoding";
@@ -13,7 +14,7 @@ export const generic: MockFamily = {
     version: "2",
     type: "address",
     network,
-    key: address(currency, random),
+    key: AccountKeySchema.parse(address(currency, random)),
     path: DerivationPathSchema.parse(`m/44h/${currency.coinType}h/${index}h/0/0`),
   }),
   address,

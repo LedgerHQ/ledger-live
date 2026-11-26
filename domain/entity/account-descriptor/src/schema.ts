@@ -7,8 +7,14 @@ export const AccountPurposeSchema = z.enum(["account", "mock"]);
 
 export type AccountPurpose = z.infer<typeof AccountPurposeSchema>;
 
-/** The public value the account is found and read from on its network. */
-const AccountKeySchema = z.string().min(1).regex(/^\S+$/, "key must not contain whitespace");
+/** The value the account is found and read from on its network; branded so an unvalidated string cannot pass for it. */
+export const AccountKeySchema = z
+  .string()
+  .min(1)
+  .regex(/^\S+$/, "key must not contain whitespace")
+  .brand<"AccountKey">();
+
+export type AccountKey = z.infer<typeof AccountKeySchema>;
 
 export const UtxoAccountDescriptorSchema = z.object({
   purpose: AccountPurposeSchema,

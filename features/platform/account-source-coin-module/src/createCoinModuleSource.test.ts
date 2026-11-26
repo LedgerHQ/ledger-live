@@ -1,7 +1,7 @@
 import { createAccountDataRouter, type AccountDataSource } from "@domain/api-account-data";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { AccountKeySchema, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import { DerivationPathSchema } from "@domain/entity-derivation";
 import { NetworkIdSchema } from "@domain/entity-network";
@@ -23,7 +23,7 @@ const utxo: AccountDescriptor = {
   version: "2",
   type: "utxo",
   network: NetworkIdSchema.parse("bitcoin"),
-  key: XPUB,
+  key: AccountKeySchema.parse(XPUB),
   path: DerivationPathSchema.parse("m/84h/0h/0h"),
 };
 
@@ -32,7 +32,7 @@ const address = (network: string, value: string): AccountDescriptor => ({
   version: "2",
   type: "address",
   network: NetworkIdSchema.parse(network),
-  key: value,
+  key: AccountKeySchema.parse(value),
   path: DerivationPathSchema.parse("m/44h/60h/0h/0/0"),
 });
 

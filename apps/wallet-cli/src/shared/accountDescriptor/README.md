@@ -87,7 +87,7 @@ import { toV1, toV0, serializeV1, parseV1 } from "./index";
 
 ### `toV1(v0: AccountDescriptorV0): AccountDescriptorV1`
 
-Converts a V0 descriptor to V1. Derives the type (`utxo` vs `account`) by checking whether `seedIdentifier` looks like an xpub (starts with `xpub`, `ypub`, `zpub`). Reconstructs the BIP32 path from `derivationMode` + `index`. Throws `UnsupportedFamilyError` for a currency with no known derivation, and `InvalidDerivationPathError` when the built path is not a valid BIP32 path (e.g. an index of 2^31 or more).
+Converts a V0 descriptor to V1. Derives the type (`utxo` vs `account`) by checking whether `seedIdentifier` looks like an xpub (starts with `xpub`, `ypub`, `zpub`). Reconstructs the BIP32 path from `derivationMode` + `index`. Throws `UnsupportedFamilyError` for a currency with no known derivation, `InvalidDerivationPathError` when the built path is not a valid BIP32 path (e.g. an index of 2^31 or more), and `InvalidAccountDescriptorError` when `seedIdentifier` is empty or holds whitespace.
 
 ### `toV0(v1: AccountDescriptorV1): AccountDescriptorV0`
 

@@ -11,6 +11,7 @@ import {
 
 export {
   AccountDescriptorSchema as AccountDescriptorV1Schema,
+  AccountKeySchema,
   AddressAccountDescriptorSchema as AccountBasedDescriptorV1Schema,
   UtxoAccountDescriptorSchema as UtxoAccountDescriptorV1Schema,
   serializeAccountDescriptor as serializeV1,
