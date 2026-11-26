@@ -104,7 +104,9 @@ cache role trusts it, and the run caches what they build (see "The cache"). So i
   or a 5xx is tried again twice.
 
 To measure another branch, run the workflow from that branch: a run from any other branch gets the
-branch cache role, builds any ref and saves nothing.
+branch cache role, builds any ref and saves nothing. Its snapshot's release is still checked: the
+snapshot job runs that release's E2E app with the E2E seed in its environment, in every run, so
+the release must be a tag whose commit passes the check above.
 
 ## The build
 

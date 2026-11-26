@@ -343,14 +343,18 @@ describe("checkReleaseTags", () => {
     fakeLsRemote(),
   );
 
-  it("checks the release tags of a run from develop only", () => {
+  it("checks A's and B's tags in a run from develop, and the snapshot's in every run", () => {
     assert.deepEqual(fromDevelop.tagsToCheck, [{ ref: "live-mobile@4.27.1", sha: SHA(5) }]);
     const fromRelease = planBuilds(
-      { ...INPUTS, refA: "live-mobile@4.27.0", refB: "live-mobile@4.27.1", branchName: "release" },
+      { ...INPUTS, refA: "live-mobile@4.27.0", refB: "develop", branchName: "release" },
       fakeLsRemote(),
     );
-    assert.deepEqual(fromRelease.tagsToCheck, []);
-    assert.deepEqual(planBuilds(INPUTS, fakeLsRemote()).tagsToCheck, []);
+    // The snapshot job runs the release's app next to the E2E seed, whichever branch runs it.
+    const snapshotTag = [{ ref: "live-mobile@4.27.1", sha: SHA(5) }];
+    assert.deepEqual(fromRelease.tagsToCheck, snapshotTag);
+    assert.deepEqual(planBuilds(INPUTS, fakeLsRemote()).tagsToCheck, snapshotTag);
+    const noAccounts = { ...INPUTS, scenarios: "no-accounts" };
+    assert.deepEqual(planBuilds(noAccounts, fakeLsRemote()).tagsToCheck, []);
     const aaFromDevelop = {
       ...INPUTS,
       preset: "aa-noise",
@@ -401,17 +405,21 @@ describe("checkReleaseTags", () => {
       ...REFS.filter(([, name]) => !name.startsWith(tag)),
       [SHA(8), "refs/heads/live-mobile@4.27.1"],
     ]);
-    let listed = false;
-    const replacing: LsRemote = (options, patterns) => {
-      const refs = listed ? replaced : fakeLsRemote();
-      if (options.includes("--tags")) listed = true;
-      return refs(options, patterns);
+    const replacing = (): LsRemote => {
+      let listed = false;
+      return (options, patterns) => {
+        const refs = listed ? replaced : fakeLsRemote();
+        if (options.includes("--tags")) listed = true;
+        return refs(options, patterns);
+      };
     };
     const snapshotOnly = { preset: "aa-noise", refA: "", scenarios: "accounts" };
-    assert.throws(
-      () => planBuilds({ ...INPUTS, ...snapshotOnly, branchName: "develop" }, replacing),
-      /a run from develop builds only .*: to measure 'live-mobile@4\.27\.1', run the workflow from it/,
-    );
+    for (const branchName of ["develop", "ci/branch"]) {
+      assert.throws(
+        () => planBuilds({ ...INPUTS, ...snapshotOnly, branchName }, replacing()),
+        /live-mobile@4\.27\.1 is no longer a release tag of this repository/,
+      );
+    }
   });
 
   it("refuses a tag on the release bot's signed hotfix prerelease, which no release is on", async () => {

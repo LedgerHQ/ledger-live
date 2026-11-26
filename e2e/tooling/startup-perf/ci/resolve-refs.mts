@@ -79,7 +79,7 @@ export interface Plan extends Builds {
    */
   snapshotRelease: string;
   snapshotSha: string;
-  /** The release tags a run from develop builds, which `checkReleaseTags` vets. */
+  /** The release tags `checkReleaseTags` vets: the snapshot's in every run, A's and B's from develop. */
   tagsToCheck: Array<{ ref: string; sha: string }>;
   /** The run's settings, which the build and measure jobs read from the plan's outputs. */
   settings: Pick<PlanInputs, "preset" | "platforms" | "pairs" | "thresholdMs" | "read">;
@@ -274,17 +274,21 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
   const withSha = (label: string, sha: string) => `${label} (${sha.slice(0, 10)})`;
   const scenarios = inputs.scenarios.split(",");
   const snapshotRelease = scenarios.includes("accounts") ? latestProdTag(lsRemote) : "";
-  // Through resolveForRun, as build A: the tag may have given way to a branch of its name since.
-  const snapshot = snapshotRelease ? [resolveForRun(inputs, snapshotRelease, lsRemote)] : [];
-  // The snapshot's release is built too (build-snapshot-<platform>), and cached like build A. Each
-  // commit once: a tag resolved twice may have moved in between, and the jobs build both commits.
-  const tagsToCheck =
-    inputs.branchName === CACHE_BRANCH
-      ? [...builds.refs, ...snapshot]
-          .filter(r => r.isReleaseTag)
-          .map(({ ref, sha }) => ({ ref, sha }))
-          .filter((tag, i, tags) => tags.findIndex(t => t.sha === tag.sha) === i)
-      : [];
+  // The snapshot job runs this release's E2E app with the E2E seed in its environment, in every run:
+  // its tag is checked in every run, and must still be a tag (it may have given way to a branch of
+  // its name since the tags were listed). A and B only in a run from develop (resolveForRun).
+  const snapshot = snapshotRelease ? [resolve(snapshotRelease, lsRemote)] : [];
+  if (snapshot[0] && !snapshot[0].isReleaseTag) {
+    throw new StepFailure(
+      `${snapshotRelease} is no longer a release tag of this repository: the accounts snapshot is made only from one`,
+    );
+  }
+  const builtTags = inputs.branchName === CACHE_BRANCH ? builds.refs : [];
+  // Each commit once: a tag resolved twice may have moved in between, and the jobs build both.
+  const tagsToCheck = [...builtTags, ...snapshot]
+    .filter(r => r.isReleaseTag)
+    .map(({ ref, sha }) => ({ ref, sha }))
+    .filter((tag, i, tags) => tags.findIndex(t => t.sha === tag.sha) === i);
   return {
     ...builds,
     labelA: withSha(builds.labelA, builds.shaA),
