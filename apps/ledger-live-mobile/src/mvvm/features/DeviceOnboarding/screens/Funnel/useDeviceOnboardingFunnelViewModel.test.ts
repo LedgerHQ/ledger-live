@@ -243,6 +243,7 @@ function seededMachineContext(
   return {
     sessionId: "s1",
     onboardedOnEntry: true,
+    connectSeededDevice: true,
     isOnboarded: true,
     deviceModelId: "stax",
     firmwareVersion: "2.4.0",
@@ -2705,6 +2706,8 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
             onboardedOnEntry: false,
             firmwareVersion: "2.4.0",
             deviceModelId: DmkDeviceModelId.NANO_X,
+            lastDeviceState: null,
+            recoveryKeyBackupOpen: false,
           },
         } as DeviceOnboardingSession["snapshot"],
       }),
@@ -3182,7 +3185,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       checks.onRetry();
 
       expect(screensOf(checks)).toEqual([]);
-      expect(checks.seededDeviceType).toBe("stax");
+      expect(checks.funnelProps).toMatchObject({ deviceType: "stax" });
       expect(clicks()).toEqual([]);
       expect(send).toHaveBeenCalledWith({ type: "RETRY" });
     });

@@ -28,7 +28,7 @@ export function MarketBannerFilterDrawer({ controller }: MarketBannerFilterDrawe
     () =>
       controller.options.map(option => ({
         value: option.value,
-        label: t(option.labelKey),
+        label: t(`marketBanner.filter.options.${option.value}`),
         disabled: option.disabled,
         description: option.descriptionKey ? t(option.descriptionKey) : undefined,
       })),

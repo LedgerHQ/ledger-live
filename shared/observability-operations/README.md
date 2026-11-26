@@ -11,18 +11,34 @@ monitoring tool, for example Datadog RUM feature operations. The React hook live
 ## Track an operation
 
 ```ts
-import { failOperation, startOperation, succeedOperation } from "@shared/observability-operations";
+import {
+  annotateOperation,
+  failOperation,
+  startOperation,
+  succeedOperation,
+  toErrorAttributes,
+} from "@shared/observability-operations";
 
 const id = startOperation("checkout", { attributes: { currency_id: "bitcoin" } });
+annotateOperation("checkout", { attributes: { step: "payment" } });
 succeedOperation("checkout", { attributes: { items: 2 } });
-failOperation("checkout", "ERROR", { attributes: { error_name: error.name } });
+failOperation("checkout", "ERROR", { attributes: toErrorAttributes(error) });
 ```
 
 - **Start** sends only when a sink is registered and records. It returns the operation id, or
   `null`. Starting an active operation again keeps the first start.
+- **Annotate** stores attributes on the active operation and sends them with its stop, whatever
+  stops it.
 - **Stop** (`succeedOperation`, `failOperation`) sends only when its start was sent, once, to the
-  sink of that start. Its attributes are merged over the start attributes. `expectedId` stops the
-  operation only if it is still the one that id started.
+  sink of that start. Its attributes override the annotations, which override the start
+  attributes. `expectedId` acts on the operation only if it is still the one that id started.
+- **Errors**: `toErrorAttributes(error)` gives `error_name`, `error_cause_name`, `error_message`,
+  `error_apdu_status`, `error_http_status` and `error_code`, read from the error or its causes
+  (`cause`, or `originalError` for a Device Management Kit error, whose `_tag` names it). The
+  message goes through `sanitizeErrorMessage`, which replaces every word holding a digit, a dot, an
+  `@` or a `/`, such as most addresses, amounts and URLs. It is best effort, not a PII boundary: a
+  value made only of letters stays as it is (`invalid recipient address alice`). The `url` field is
+  never read.
 - **Failure reasons**: `ERROR` (a technical failure), `ABANDONED` (the user left it), `OTHER` (any
   other failure). Monitoring counts `OTHER` against availability like `ERROR`, so an expected dead
   end, such as nothing to add, succeeds with an `outcome` attribute instead.

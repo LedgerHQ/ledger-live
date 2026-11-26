@@ -99,6 +99,12 @@ const receiveTestResources = {
           learnMore: "Learn more",
         },
         serviceStatus: { continue: "Continue" },
+        memoTag: {
+          title: "Need a Tag/Memo?",
+          description:
+            "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+          gotIt: "Got it",
+        },
         help: {
           cardTitle: "Need support? Get help",
           title: "Get help",

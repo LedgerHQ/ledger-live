@@ -4,6 +4,7 @@ import {
   FeeNotLoaded,
   FeeTooHigh,
   InvalidAddress,
+  InvalidTransactionError,
   NotEnoughBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughBalanceInParentAccount,
@@ -47,14 +48,13 @@ export const getTransactionStatus = async (
   // For token transactions, fees are paid from parent account, so totalSpent is just amount
   const totalSpent = isTokenTransaction ? amount : amount.plus(estimatedFees);
 
+  const subAccount = account.subAccounts?.find(
+    sub => sub.type === "TokenAccount" && sub.id === transaction.subAccountId,
+  );
   // Get the account balance to check against (subAccount for tokens, main account for native)
-  let accountBalance = account.spendableBalance;
-  if (isTokenTransaction && account.subAccounts) {
-    const subAccount = account.subAccounts.find(
-      sub => sub.type === "TokenAccount" && sub.id === transaction.subAccountId,
-    );
-    accountBalance = subAccount?.spendableBalance ?? new BigNumber(0);
-  }
+  const accountBalance = isTokenTransaction
+    ? (subAccount?.spendableBalance ?? new BigNumber(0))
+    : account.spendableBalance;
 
   if (amount.gt(0) && estimatedFees.times(10).gt(amount) && !isTokenTransaction) {
     // if the fee is more than 10 times the amount, we warn the user that fee is high compared to what he is sending
@@ -83,6 +83,11 @@ export const getTransactionStatus = async (
   // For token transactions, check that parent account has enough native balance to pay fees
   if (isTokenTransaction && estimatedFees.gt(account.balance)) {
     errors.amount = new NotEnoughBalanceInParentAccount();
+  }
+
+  // A token account gone since the flow started, e.g. its token disabled: never send another asset.
+  if (isTokenTransaction && !subAccount) {
+    errors.amount = new InvalidTransactionError();
   }
 
   // Check if total spent exceeds available balance

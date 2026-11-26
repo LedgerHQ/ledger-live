@@ -401,6 +401,12 @@ describe("mapRawOperationToBridgeOperation", () => {
     expect(mapRawOperationToBridgeOperation(raw, ACCOUNT_ID).hasFailed).toBe(true);
   });
 
+  it("lists no sender for an amount that came from a contract", () => {
+    const raw = createRawOperation({ type: "IN", sender: "", fee: "0" });
+
+    expect(mapRawOperationToBridgeOperation(raw, ACCOUNT_ID).senders).toEqual([]);
+  });
+
   it("lists no recipient for a transaction that never named one", () => {
     const raw = createRawOperation({ recipient: "" });
 

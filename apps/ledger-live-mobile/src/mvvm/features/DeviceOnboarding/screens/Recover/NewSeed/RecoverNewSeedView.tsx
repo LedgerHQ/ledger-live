@@ -39,13 +39,19 @@ export function RecoverNewSeedView({
   price,
   protectLabel,
   skipLabel,
+  onAdvance,
   onProtect,
   onSkip,
   onClose,
   sheet,
 }: RecoverNewSeedViewProps) {
   return (
-    <Karaoke.Root phrases={phrases} tapLabel={tapLabel} testID={recoverNewSeedTestIds.screen}>
+    <Karaoke.Root
+      phrases={phrases}
+      tapLabel={tapLabel}
+      onAdvance={onAdvance}
+      testID={recoverNewSeedTestIds.screen}
+    >
       <Karaoke.Sequence />
       <Karaoke.Final>
         <Explanation
@@ -140,6 +146,7 @@ function DetailSheet({
   onStart,
   onRemind,
   onClose,
+  onOpened,
 }: NonNullable<RecoverNewSeedViewProps["sheet"]>) {
   const { bottom } = useSafeAreaInsets();
 
@@ -147,6 +154,7 @@ function DetailSheet({
     <QueuedBottomSheet
       isRequestingToBeOpened
       onClose={onClose}
+      onOpened={onOpened}
       enableDynamicSizing
       contentHasBottomSpace
       testID={recoverNewSeedTestIds.sheet}

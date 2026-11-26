@@ -7,30 +7,12 @@ import { getEnv } from "@shared/env";
 import { retry } from "@ledgerhq/live-common/promise";
 import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
 import logger from "./logger";
-import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
-import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
-import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceManagementKitTransport, getDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
+import { AppDmkSpeculosTransport } from "@ledgerhq/live-dmk-speculos";
 
 enum RendererTransportModule {
   DeviceManagementKit,
   DeviceManagementKitSpeculos,
-}
-
-// Speculos cannot tell the DMK transport which device it emulates (it defaults
-// to Stax), so we map the SPECULOS_DEVICE name set by the e2e setup to the model.
-const SPECULOS_DEVICE_TO_MODEL: Record<string, DeviceModelId> = {
-  nanoS: DeviceModelId.nanoS,
-  nanoSP: DeviceModelId.nanoSP,
-  nanoX: DeviceModelId.nanoX,
-  stax: DeviceModelId.stax,
-  flex: DeviceModelId.europa,
-  nanoGen5: DeviceModelId.apex,
-};
-
-function getSpeculosDmkModel() {
-  const model = SPECULOS_DEVICE_TO_MODEL[getEnv("SPECULOS_DEVICE")];
-  return model ? ledgerToDmkDeviceIdMap[model] : undefined;
 }
 
 /**
@@ -91,7 +73,7 @@ export function registerTransportModules() {
         type: "renderer-setup",
         message: "Open called on registered module",
         data: {
-          transport: "DeviceManagementKitTransportSpeculos",
+          transport: "AppDmkSpeculosTransport",
           timeoutMs,
         },
         context: {
@@ -99,24 +81,10 @@ export function registerTransportModules() {
         },
       });
 
-      const speculosApiPort = getEnv("SPECULOS_API_PORT");
-
-      return retry(
-        () =>
-          DeviceManagementKitTransportSpeculos.open({
-            apiPort: speculosApiPort ? String(speculosApiPort) : undefined,
-            // Read at each open: relaunching a remote Speculos moves it to a new URL and session
-            // token (see `window.ledger.setSpeculosTarget`).
-            baseURL: process.env.SPECULOS_ADDRESS,
-            bearerToken: process.env.SPECULOS_SESSION_TOKEN,
-            timeout: timeoutMs,
-            model: getSpeculosDmkModel(),
-          }),
-        {
-          interval: 500,
-          maxRetry: 4,
-        },
-      );
+      return retry(() => AppDmkSpeculosTransport.open(getDeviceManagementKit(), timeoutMs), {
+        interval: 500,
+        maxRetry: 4,
+      });
     },
     disconnect: () => Promise.resolve(),
   });

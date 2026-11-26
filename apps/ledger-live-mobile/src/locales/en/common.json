@@ -2470,6 +2470,11 @@
       "title": "Get help",
       "receiveFromExchange": "How to receive from exchanges?",
       "receiveSecurely": "How to receive securely?"
+    },
+    "memoTag": {
+      "title": "Need a Tag/Memo?",
+      "description": "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+      "gotIt": "Got it"
     }
   },
   "ratings": {
@@ -4206,6 +4211,7 @@
     "sending": "Sending...",
     "receiving": "Receiving...",
     "tokenOperations": "Token operations",
+    "tokenOperationsInfo": "About token operations",
     "subAccountOperations": "Subaccount operations",
     "internalOperations": "Internal operations",
     "tokenModal": {
@@ -4577,7 +4583,7 @@
     "security": {
       "hideBalance": {
         "title": "Hide balance",
-        "description": "Hide amounts for all balances. You can also access it from your top main navigation."
+        "description": "Hide amounts for all balances. Also accessible via a long press on your home balance amount."
       },
       "appLock": {
         "title": "App lock",
@@ -4601,6 +4607,7 @@
       },
       "biometrics": {
         "description": "Use {{biometric}} to open the app.",
+        "disabledDescription": "To enable {{biometric}}, turn on \"App lock\".",
         "kind": {
           "faceId": "Face ID",
           "touchId": "Touch ID",

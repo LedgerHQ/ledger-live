@@ -52,7 +52,7 @@ describe("listOperations", () => {
           expect(operation).toHaveProperty("amount");
           expect(operation).toHaveProperty("fee");
 
-          expect(["IN", "OUT"]).toContain(operation.type);
+          expect(["IN", "OUT", "FEES"]).toContain(operation.type);
           expect(typeof operation.value).toBe("string");
           expect(typeof operation.amount).toBe("string");
           expect(typeof operation.fee).toBe("string");
@@ -86,7 +86,7 @@ describe("listOperations", () => {
       if (operations.length > 0) {
         const hashes = operations.map(op => op.hash);
         const uniqueHashes = new Set(hashes);
-        expect(uniqueHashes.size).toBeLessThanOrEqual(operations.length);
+        expect(uniqueHashes.size).toBe(operations.length);
       }
     });
 
@@ -108,12 +108,13 @@ describe("listOperations", () => {
       operations = page.items;
     });
 
-    it("should categorize operations as IN or OUT", async () => {
+    it("should categorize operations as IN, OUT or FEES", async () => {
       if (operations.length > 0) {
         const inOps = operations.filter(op => op.type === "IN");
         const outOps = operations.filter(op => op.type === "OUT");
+        const feesOps = operations.filter(op => op.type === "FEES");
 
-        expect(inOps.length + outOps.length).toBe(operations.length);
+        expect(inOps.length + outOps.length + feesOps.length).toBe(operations.length);
       }
     });
 

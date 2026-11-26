@@ -14,13 +14,12 @@ import type {
 import { Subject, type Observable } from "rxjs";
 import type { PayCardPersistedState } from "~/db";
 import type { ReceiveVerifyHintState } from "@features/flow-receive/state";
-import type { BleState, SettingsState } from "~/reducers/types";
+import type { SettingsState } from "~/reducers/types";
 
 export type { ServerData } from "@ledgerhq/live-e2e-shared/bridge/types";
 
 export type MessageData = BridgeMessageData<{
   settings: Partial<SettingsState>;
-  ble: BleState;
   payCard: Partial<PayCardPersistedState>;
   receiveVerifyHint: Partial<ReceiveVerifyHintState>;
 }>;

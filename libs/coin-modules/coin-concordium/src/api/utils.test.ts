@@ -104,6 +104,35 @@ describe("mapRawOperationToApiOperation", () => {
     expect(result.tx.fees).toBe(BigInt(500));
   });
 
+  it("maps a FEES operation to the account that paid, worth nothing beyond tx.fees", () => {
+    const raw = createRawOperation({
+      type: "FEES",
+      recipient: "",
+      amount: "0",
+      value: "500",
+      feesPayer: ADDRESS,
+    });
+
+    expect(mapRawOperationToApiOperation(raw, ADDRESS)).toMatchObject({
+      type: "FEES",
+      asset: { type: "native" },
+      value: BigInt(0),
+      senders: [ADDRESS],
+      recipients: [],
+      tx: { fees: BigInt(500), feesPayer: ADDRESS },
+    });
+  });
+
+  it("names no sender for an amount a contract paid out", () => {
+    const raw = createRawOperation({ type: "IN", sender: "", recipient: ADDRESS, fee: "0" });
+
+    expect(mapRawOperationToApiOperation(raw, ADDRESS)).toMatchObject({
+      type: "IN",
+      senders: [],
+      recipients: [ADDRESS],
+    });
+  });
+
   it("should mark failed transactions", () => {
     const raw = createRawOperation({ failed: true });
     const result = mapRawOperationToApiOperation(raw, ADDRESS);

@@ -118,6 +118,7 @@ export const scenarioEthereum: Scenario<GenericTransaction, Account> = {
       unit: { name: "ether", code: "ETH", magnitude: 18 },
       gasTracker: {
         type: "ledger",
+        compatibility: { eip1559: true },
         explorerId: "eth",
       },
       node: {

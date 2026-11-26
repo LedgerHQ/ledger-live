@@ -228,12 +228,38 @@ describe("ReceiveAddress (Native)", () => {
     expect(screen.queryByTestId("receive-address-service-status")).toBeNull();
   });
 
-  it("lays the zones out in screen order", async () => {
+  it("opens the help in a bottom sheet, each question opening its article, until closed", async () => {
     renderScreen();
-    await screen.findByTestId("receive-address-summary");
+    const user = userEvent.setup();
 
-    expect(screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.props.testID)).toEqual([
-      "receive-address-zone-extras",
-    ]);
+    await user.press(await screen.findByText("Need support? Get help"));
+    expect(screen.getByTestId("receive-address-help-panel")).toBeTruthy();
+
+    await user.press(screen.getByText("How to receive from exchanges?"));
+    expect(testOpenExternal).toHaveBeenCalledWith(RECEIVE_URLS.receiveFromExchange);
+
+    await user.press(screen.getByTestId("receive-address-help-sheet-dismiss"));
+    expect(screen.queryByTestId("receive-address-help-panel")).toBeNull();
+  });
+
+  it("shows the help card under an error too", async () => {
+    const receive = jest.fn(async () => {
+      throw new Error("offline");
+    });
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
+
+    expect(await screen.findByTestId("receive-address-error")).toBeTruthy();
+    expect(screen.getByTestId("receive-address-help-card")).toBeTruthy();
+  });
+
+  it("opens the memo bottom sheet from its card", async () => {
+    const receive = jest.fn(async () => mockAccountReceive({ memo: { type: "tag" } }));
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
+
+    fireEvent.press(await screen.findByTestId("receive-address-memo-card"));
+    expect(screen.getByTestId("receive-address-memo-panel")).toBeTruthy();
+
+    fireEvent.press(screen.getByText("Got it"));
+    expect(screen.queryByTestId("receive-address-memo-panel")).toBeNull();
   });
 });

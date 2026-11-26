@@ -1,40 +1,23 @@
 import { track } from "@shared/analytics";
 import { setupScanDeviceTests } from "./shared";
+import { setSyncScanObservable } from "./syncBridgeHooks";
 import BigNumber from "bignumber.js";
 import { Observable, of } from "rxjs";
-import type { Account, ScanAccountEvent } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import { prepareCurrency } from "~/bridge/cache";
 import type { AnalyticMetadata } from "LLM/hooks/useAnalytics/types";
 import useScanDeviceAccountsViewModel from "../useScanDeviceAccountsViewModel";
 
-// Mock the bridge hooks so scanning is fully synchronous and has a *stable* identity.
-// The real `useCurrencyBridge` returns a fresh object each render, which would restart the
-// scan subscription on every re-render and leak async work between tests.
-jest.mock("@ledgerhq/live-common/bridge/useCurrencyBridge", () => {
-  const state: { obs: unknown } = { obs: require("rxjs").EMPTY };
-  return {
-    __esModule: true,
-    useCurrencyBridge: () => ({
-      scanAccounts: () => state.obs,
-      preload: () => Promise.resolve(undefined),
-      hydrate: () => {},
-    }),
-    __setScanObservable: (obs: unknown) => {
-      state.obs = obs;
-    },
-  };
-});
-
-jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
-  __esModule: true,
-  useAccountBridgeOrNull: () => ({ isAccountEmpty: () => false }),
-}));
-
-const { __setScanObservable } = jest.requireMock(
+jest.mock(
   "@ledgerhq/live-common/bridge/useCurrencyBridge",
-) as { __setScanObservable: (obs: unknown) => void };
+  () => require("./syncBridgeHooks").currencyBridgeHook,
+);
+jest.mock(
+  "@ledgerhq/live-common/bridge/useAccountBridge",
+  () => require("./syncBridgeHooks").accountBridgeHook,
+);
 
 const {
   replace,
@@ -44,41 +27,13 @@ const {
   setRouteParams,
   makeDiscoveredEvent,
   resetSpies,
-  getCurrentCurrency,
+  createAccount: createEmptyAccount,
 } = setupScanDeviceTests();
 
-const setScanObservable = (obs: Observable<ScanAccountEvent>) => __setScanObservable(obs);
+const setScanObservable = setSyncScanObservable;
 
-const createAccount = (overrides?: Partial<Account>): Account => {
-  const balance = overrides?.balance ?? new BigNumber(1000);
-  return {
-    type: "Account",
-    id: overrides?.id ?? "js:eth:0:eth",
-    seedIdentifier: "seed",
-    derivationMode: "",
-    index: 0,
-    freshAddress: "0xabc",
-    freshAddressPath: "44/60",
-    used: overrides?.used ?? true,
-    balance,
-    spendableBalance: balance,
-    creationDate: new Date(),
-    blockHeight: 0,
-    currency: getCurrentCurrency(),
-    operationsCount: 0,
-    operations: [],
-    pendingOperations: [],
-    lastSyncDate: new Date(),
-    balanceHistoryCache: {
-      HOUR: { latestDate: null, balances: [] },
-      DAY: { latestDate: null, balances: [] },
-      WEEK: { latestDate: null, balances: [] },
-    },
-    swapHistory: [],
-    subAccounts: [],
-    ...overrides,
-  };
-};
+const createAccount = (overrides?: Partial<Account>) =>
+  createEmptyAccount({ balance: new BigNumber(1000), used: true, ...overrides });
 
 const analyticsMetadata: AnalyticMetadata = {
   ScanDeviceAccounts: {

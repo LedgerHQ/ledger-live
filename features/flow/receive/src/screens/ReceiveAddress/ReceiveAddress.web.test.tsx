@@ -218,12 +218,53 @@ describe("ReceiveAddress (Web)", () => {
     expect(await screen.findByTestId("receive-address-verify-hint")).toBeVisible();
   });
 
-  it("lays the zones out in screen order", async () => {
+  it("opens the help from its card, each question opening its article, then back to the address", async () => {
     renderScreen();
-    await screen.findByTestId("receive-address-summary");
+    const user = userEvent.setup();
 
-    expect(
-      screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.dataset.testid),
-    ).toEqual(["receive-address-zone-extras"]);
+    await user.click(await screen.findByTestId("receive-address-help-card"));
+    expect(screen.getByRole("heading", { name: "Get help" })).toBeVisible();
+    expect(screen.queryByTestId("receive-address-summary")).toBeNull();
+
+    await user.click(screen.getByText("How to receive securely?"));
+    expect(testOpenExternal).toHaveBeenCalledWith(RECEIVE_URLS.receiveSecurely);
+
+    await user.click(screen.getByRole("button", { name: "Go back" }));
+    expect(screen.getByTestId("receive-address-summary")).toBeVisible();
+  });
+
+  it("shows the help card under an error too", async () => {
+    const receive = jest.fn(async () => {
+      throw new Error("offline");
+    });
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
+
+    expect(await screen.findByTestId("receive-address-error")).toBeVisible();
+    expect(screen.getByTestId("receive-address-help-card")).toHaveTextContent(
+      "Need support? Get help",
+    );
+  });
+
+  it("offers no memo card for an address without memo", async () => {
+    renderScreen();
+
+    await screen.findByTestId("receive-address-summary");
+    expect(screen.queryByTestId("receive-address-memo-card")).toBeNull();
+  });
+
+  it("opens the memo panel from its card, then goes back to the address", async () => {
+    const receive = jest.fn(async () => mockAccountReceive({ memo: { type: "tag" } }));
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
+    const user = userEvent.setup();
+
+    await user.click(await screen.findByTestId("receive-address-memo-card"));
+    expect(screen.getByTestId("receive-address-memo-panel")).toHaveTextContent(
+      "You might need a Tag/Memo",
+    );
+    await user.click(screen.getByRole("button", { name: "Learn more" }));
+    expect(testOpenExternal).toHaveBeenCalledWith(RECEIVE_URLS.memoTag);
+
+    await user.click(screen.getByRole("button", { name: "Got it" }));
+    expect(screen.getByTestId("receive-address-summary")).toBeVisible();
   });
 });

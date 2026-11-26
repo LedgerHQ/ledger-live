@@ -118,4 +118,22 @@ describe("prepareTransaction", () => {
       expect(await prepareTransaction(context, account, prepared)).toBe(prepared);
     });
   });
+
+  describe("asset", () => {
+    const account = { currency: { id: "canton_network" }, subAccounts: [] } as unknown as Account;
+    const prepare = (transaction: Partial<Transaction>) =>
+      prepareTransaction(createMockContext(), account, {
+        fee: new BigNumber(0),
+        tokenId: "",
+        ...transaction,
+      } as Transaction);
+
+    it("is CC when no token is chosen", async () => {
+      expect((await prepare({})).tokenId).toBe(createMockCoinConfigValue().nativeInstrumentId);
+    });
+
+    it("is not CC when the chosen token account is gone", async () => {
+      expect((await prepare({ subAccountId: "gone" })).tokenId).toBe("");
+    });
+  });
 });

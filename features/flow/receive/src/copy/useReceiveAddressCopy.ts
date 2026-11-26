@@ -29,6 +29,9 @@ export type ReceiveAddressCopy = Readonly<{
   helpCardTitle: string;
   helpTitle: string;
   helpQuestions: Readonly<Record<ReceiveHelpQuestionId, string>>;
+  memoTitle: string;
+  memoDescription: string;
+  memoGotIt: string;
 }>;
 
 /** The labels of the address screen, under the `receiveAddress` namespace. */
@@ -75,6 +78,9 @@ export function useReceiveAddressCopy({
         receiveFromExchange: t("receiveAddress.help.receiveFromExchange"),
         receiveSecurely: t("receiveAddress.help.receiveSecurely"),
       },
+      memoTitle: t("receiveAddress.memoTag.title"),
+      memoDescription: t("receiveAddress.memoTag.description"),
+      memoGotIt: t("receiveAddress.memoTag.gotIt"),
     }),
     [t, assetTicker, networkName],
   );

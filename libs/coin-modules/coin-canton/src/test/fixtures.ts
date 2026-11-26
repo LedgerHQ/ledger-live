@@ -144,6 +144,8 @@ export const createMockTokenAccount = (overrides: Partial<TokenAccount> = {}): T
     } as TokenCurrency,
     balance: new BigNumber(0),
     spendableBalance: new BigNumber(0),
+    operations: [],
+    pendingOperations: [],
     ...overrides,
   }) as TokenAccount;
 

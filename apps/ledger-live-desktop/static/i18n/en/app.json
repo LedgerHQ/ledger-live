@@ -2826,6 +2826,11 @@
       "title": "Get help",
       "receiveFromExchange": "How to receive from exchanges?",
       "receiveSecurely": "How to receive securely?"
+    },
+    "memoTag": {
+      "title": "Need a Tag/Memo?",
+      "description": "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+      "gotIt": "Got it"
     }
   },
   "send": {
@@ -5752,6 +5757,7 @@
       },
       "biometrics": {
         "description": "Use {{biometric}} to open the app.",
+        "disabledDescription": "To enable {{biometric}}, turn on \"App lock\".",
         "kind": {
           "faceId": "Face ID",
           "touchId": "Touch ID",

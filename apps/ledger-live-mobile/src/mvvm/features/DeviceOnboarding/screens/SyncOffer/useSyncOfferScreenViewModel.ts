@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import {
-  seededButtons,
-  seededPages,
-  seededProps,
-  trackSeededClick,
-  trackSeededPage,
-  type DeviceModelId,
+  onboardingButtons,
+  onboardingPages,
+  trackOnboardingClick,
+  trackOnboardingPage,
+  type FunnelProps,
   type ScreenTracking,
-  type SeededButton,
-  type SeededPage,
+  type OnboardingButton,
+  type OnboardingPage,
   type TrackingProps,
 } from "@features/platform-device-onboarding-analytics";
 
@@ -73,7 +72,8 @@ export type SyncOfferScreenProps = Readonly<{
   onContinue: () => void;
   phase: SyncOfferPhase;
   showGlow?: boolean;
-  seededDeviceType?: DeviceModelId | null;
+  /** Set in a tracked funnel, seeded or unseeded. */
+  funnelProps?: FunnelProps | null;
 }>;
 
 export function useSyncOfferScreenViewModel({
@@ -84,19 +84,19 @@ export function useSyncOfferScreenViewModel({
   onContinue,
   phase,
   showGlow = false,
-  seededDeviceType,
+  funnelProps,
 }: SyncOfferScreenProps): SyncOfferViewProps {
   const { t } = useTranslation();
   const [isSkipDrawerOpen, setIsSkipDrawerOpen] = useState(false);
   const closeSkipDrawer = () => setIsSkipDrawerOpen(false);
-  const trackingProps = seededDeviceType ? seededProps(seededDeviceType) : undefined;
-  const screenTracking = (category: SeededPage): ScreenTracking | null =>
+  const trackingProps = funnelProps ?? undefined;
+  const screenTracking = (category: OnboardingPage): ScreenTracking | null =>
     trackingProps ? { category, ...trackingProps } : null;
-  const trackClick = (button: SeededButton) => {
-    if (seededDeviceType) trackSeededClick(button, seededDeviceType);
+  const trackClick = (button: OnboardingButton) => {
+    if (funnelProps) trackOnboardingClick(button, funnelProps);
   };
   const quit = () => {
-    trackClick(seededButtons.close);
+    trackClick(onboardingButtons.close);
     onQuit();
   };
 
@@ -104,12 +104,12 @@ export function useSyncOfferScreenViewModel({
     return {
       phase,
       showGlow,
-      screenTracking: screenTracking(seededPages.ledgerSyncSuccess),
+      screenTracking: screenTracking(onboardingPages.ledgerSyncSuccess),
       title: t("deviceOnboarding.syncOffer.success.title"),
       continueLabel: t("deviceOnboarding.syncOffer.success.cta"),
       closeLabel: t("deviceOnboarding.checks.close"),
       onContinue: () => {
-        trackClick(seededButtons.continue);
+        trackClick(onboardingButtons.continue);
         onContinue();
       },
       onQuit: quit,
@@ -129,7 +129,7 @@ export function useSyncOfferScreenViewModel({
   return {
     phase,
     showGlow,
-    screenTracking: screenTracking(seededPages.ledgerSync),
+    screenTracking: screenTracking(onboardingPages.ledgerSync),
     title: t("deviceOnboarding.syncOffer.title"),
     description: t("deviceOnboarding.syncOffer.description"),
     learnMoreLabel: t("deviceOnboarding.syncOffer.learnMore"),
@@ -137,15 +137,15 @@ export function useSyncOfferScreenViewModel({
     skipLabel: t("deviceOnboarding.syncOffer.skip"),
     closeLabel: t("deviceOnboarding.checks.close"),
     onActivate: () => {
-      trackClick(seededButtons.activateSync);
+      trackClick(onboardingButtons.activateSync);
       onActivate();
     },
     onOpenSkip: () => {
-      trackClick(seededButtons.skip);
+      trackClick(onboardingButtons.skip);
       setIsSkipDrawerOpen(true);
     },
     onLearnMore: () => {
-      trackClick(seededButtons.learnMore);
+      trackClick(onboardingButtons.learnMore);
       onLearnMore();
     },
     onQuit: quit,
@@ -153,15 +153,15 @@ export function useSyncOfferScreenViewModel({
       trackingProps,
       isOpen: isSkipDrawerOpen,
       onClose: closeSkipDrawer,
-      onClosePressed: () => trackClick(seededButtons.close),
+      onClosePressed: () => trackClick(onboardingButtons.close),
       onSkip: () => {
-        trackClick(seededButtons.yesSkip);
-        if (seededDeviceType) trackSeededPage(seededPages.ledgerSyncRefused, seededDeviceType);
+        trackClick(onboardingButtons.yesSkip);
+        if (funnelProps) trackOnboardingPage(onboardingPages.ledgerSyncRefused, funnelProps);
         closeSkipDrawer();
         onSkip();
       },
       onActivate: () => {
-        trackClick(seededButtons.enableSync);
+        trackClick(onboardingButtons.enableSync);
         closeSkipDrawer();
         onActivate();
       },

@@ -18,7 +18,7 @@ const MAINNET_RECIPIENT =
   "addr1qxqm3nxwzf70ke9jqa2zrtrevjznpv6yykptxnv34perjc8a7zgxmpv5pgk4hhhe0m9kfnlsf5pt7d2ahkxaul2zygrq3nura9";
 
 // A cold devnet can make the first getAccountShape slow; bound each raw sync attempt and retry so a
-// stalled sync fails fast/diagnosably instead of hanging to jest's 600s hook ceiling (this suite has
+// stalled sync fails fast/diagnosably instead of hanging to jest's hook timeout (this suite has
 // no retry of its own, unlike the executeScenario the scenario suites run through).
 const SYNC_ATTEMPT_TIMEOUT_MS = 60_000;
 const SYNC_ATTEMPTS = 5;

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import {
+  annotateOperation,
   failOperation,
   isOperationActive,
   startOperation,
@@ -17,6 +18,7 @@ export type UseOperationOptions = {
 
 export type OperationHandle = {
   start: (attributes?: OperationAttributes) => boolean;
+  annotate: (attributes: OperationAttributes) => boolean;
   succeed: (attributes?: OperationAttributes) => boolean;
   fail: (reason: OperationFailureReason, attributes?: OperationAttributes) => boolean;
   isActive: () => boolean;
@@ -24,7 +26,7 @@ export type OperationHandle = {
 
 export type OperationHookTracker = Pick<
   OperationTracker,
-  "start" | "succeed" | "fail" | "isActive"
+  "start" | "annotate" | "succeed" | "fail" | "isActive"
 >;
 
 type StartedOperation = { name: string; operationKey?: string; id: OperationId };
@@ -68,6 +70,16 @@ export function createUseOperation(tracker: OperationHookTracker) {
       return true;
     }, []);
 
+    const annotate = useCallback((attributes: OperationAttributes) => {
+      const operation = started.current;
+      if (!operation) return false;
+      return tracker.annotate(operation.name, {
+        operationKey: operation.operationKey,
+        attributes,
+        expectedId: operation.id,
+      });
+    }, []);
+
     const succeed = useCallback((attributes?: OperationAttributes) => {
       const operation = started.current;
       if (!operation) return false;
@@ -106,12 +118,16 @@ export function createUseOperation(tracker: OperationHookTracker) {
       [],
     );
 
-    return useMemo(() => ({ start, succeed, fail, isActive }), [start, succeed, fail, isActive]);
+    return useMemo(
+      () => ({ start, annotate, succeed, fail, isActive }),
+      [start, annotate, succeed, fail, isActive],
+    );
   };
 }
 
 export const useOperation = createUseOperation({
   start: startOperation,
+  annotate: annotateOperation,
   succeed: succeedOperation,
   fail: failOperation,
   isActive: isOperationActive,

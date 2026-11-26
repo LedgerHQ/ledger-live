@@ -9,7 +9,10 @@ export function SettingsRowDescription({
 }: SettingsRowDescriptionProps) {
   return (
     <>
-      {description ? <ListItemDescription>{description}</ListItemDescription> : null}
+      {description ? (
+        // Lumen cuts descriptions to one line by default; the design wraps them, so 0 lifts the limit.
+        <ListItemDescription numberOfLines={0}>{description}</ListItemDescription>
+      ) : null}
       {link ? (
         <Link
           size="sm"

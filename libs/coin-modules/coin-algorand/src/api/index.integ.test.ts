@@ -104,8 +104,16 @@ describe("Algorand Api (mainnet)", () => {
           },
         ],
         fees: 0n,
+        feesAsset: { type: "native" },
         feesPayer: "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA",
-        details: { txType: "pay" },
+        details: {
+          txType: "pay",
+          memo: {
+            type: "string",
+            kind: "note",
+            value: "UHJvcG9zZXJQYXlvdXQgZm9yIFJvdW5kIDY2NjA3NjU1",
+          },
+        },
       });
     });
 

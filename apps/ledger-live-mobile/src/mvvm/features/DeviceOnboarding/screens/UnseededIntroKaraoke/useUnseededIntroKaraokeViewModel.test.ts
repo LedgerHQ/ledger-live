@@ -1,12 +1,58 @@
 import { act } from "react";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId as DmkDeviceModelId } from "@ledgerhq/device-management-kit";
+import { track } from "@shared/analytics";
+import { unseededProps } from "@features/platform-device-onboarding-analytics";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import {
   useUnseededIntroKaraokeViewModel,
   type UnseededIntroKaraokeScreenProps,
 } from "./useUnseededIntroKaraokeViewModel";
 
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
+
 describe("useUnseededIntroKaraokeViewModel", () => {
+  it("should send the karaoke events of the tracking plan", () => {
+    jest.mocked(track).mockClear();
+    const funnelProps = unseededProps(DmkDeviceModelId.STAX, null);
+    const { result } = renderHook(() =>
+      useUnseededIntroKaraokeViewModel({
+        deviceModelId: DeviceModelId.stax,
+        funnelProps,
+        onFinish: () => true,
+        onClose: jest.fn(),
+      }),
+    );
+
+    expect(result.current.screenTracking).toMatchObject({
+      category: "Unseeded - Karaoke intro",
+      phraseIndex: 1,
+      phraseCount: 4,
+    });
+    act(() => result.current.onAdvance(1));
+    act(() => result.current.onAction());
+
+    expect(
+      jest
+        .mocked(track)
+        .mock.calls.map(([event, props]) => [
+          event,
+          (props as Record<string, unknown> | undefined)?.button,
+        ]),
+    ).toEqual([
+      ["karaoke_advanced", undefined],
+      ["button_clicked", "Start my setup"],
+      ["karaoke_completed", undefined],
+    ]);
+    expect(track).toHaveBeenCalledWith(
+      "karaoke_advanced",
+      expect.objectContaining({ karaokeType: "unseeded-intro", phraseIndex: 2, phraseCount: 4 }),
+    );
+  });
+
   it("should resume the counterfeit warning after another sheet was on top", () => {
     const onFinish = jest.fn(() => true);
     let props: UnseededIntroKaraokeScreenProps = {
