@@ -1,6 +1,7 @@
 import type { InputDescriptor } from "../../../bridge/descriptor/types";
+import { MAX_MEMO_LENGTH } from "../logic";
 
 export const memo: InputDescriptor = {
   type: "text",
-  maxLength: 32,
+  maxLength: MAX_MEMO_LENGTH,
 };
