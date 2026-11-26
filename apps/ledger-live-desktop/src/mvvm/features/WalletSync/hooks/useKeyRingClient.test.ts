@@ -8,12 +8,10 @@ const PRODUCTION_SETUP: KeyRingClientSetup = {
   cloudSyncApiBaseUrl: "https://cloud-sync.production",
   getCurrentWSState: () => ({ data: null, version: 0 }),
 };
-const STAGING_RENAMED_SETUP: KeyRingClientSetup = {
-  isMockEnv: false,
+const RENAMED_SETUP: KeyRingClientSetup = {
+  ...PRODUCTION_SETUP,
   instanceName: "Renamed instance",
-  trustchainApiBaseUrl: "https://trustchain.staging",
-  cloudSyncApiBaseUrl: "https://cloud-sync.staging",
-  getCurrentWSState: () => ({ data: null, version: 0 }),
+  getCurrentWSState: () => ({ data: null, version: 1 }),
 };
 
 const mockCurrentSetup = { current: PRODUCTION_SETUP };
@@ -75,7 +73,7 @@ describe("useKeyRingClient", () => {
       await importFreshHooks();
 
     const { result, rerender } = renderHook(() => useKeyRingClient());
-    mockCurrentSetup.current = STAGING_RENAMED_SETUP;
+    mockCurrentSetup.current = RENAMED_SETUP;
     rerender({});
 
     expect(createRotationReencryption).toHaveBeenCalledTimes(1);
@@ -90,12 +88,12 @@ describe("useKeyRingClient", () => {
     expect(createKeyRingClient).toHaveBeenCalledTimes(1);
   });
 
-  it("should keep the client after the flag environment changes and an instance rename", async () => {
+  it("should keep the client after an instance rename", async () => {
     const { useKeyRingClient, createKeyRingClient } = await importFreshHooks();
     const { result, rerender } = renderHook(() => useKeyRingClient());
     const first = result.current;
 
-    mockCurrentSetup.current = STAGING_RENAMED_SETUP;
+    mockCurrentSetup.current = RENAMED_SETUP;
     rerender({});
     const later = renderHook(() => useKeyRingClient());
 

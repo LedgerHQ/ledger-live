@@ -6,7 +6,10 @@ import {
 } from "@ledgerhq/live-e2e-shared/contacts";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
+import {
+  ledgerSyncAppConfig,
+  ledgerSyncEnvironment,
+} from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
 import {
   destroyTrustchain,
@@ -83,6 +86,7 @@ test.describe("Contacts - rename with an address (mock server)", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     settings: { hasDismissedContactsFeatureIntroduction: true },
     featureFlags: CONTACTS_FEATURE_FLAGS,
+    appConfig: ledgerSyncAppConfig,
     cliCommands: [],
     cliCommandsOnApp: [
       trustchainCommands.map(cmd => ({ app: AppInfos.LS, cmd })),

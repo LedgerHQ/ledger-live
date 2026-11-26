@@ -10,9 +10,9 @@ import type { LedgerSyncServiceStatus, LedgerSyncServiceStatusOptions } from "..
  *
  * @example
  * ```ts
- * const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(env);
+ * const { keyRingApiBaseUrl, cloudSyncApiBaseUrl } = useLedgerSyncBackends();
  * const { isError, error } = useLedgerSyncServiceStatus({
- *   keyRingApiBaseUrl: trustchainApiBaseUrl,
+ *   keyRingApiBaseUrl,
  *   cloudSyncApiBaseUrl,
  *   enabled: featureWalletSync?.enabled === true,
  * });

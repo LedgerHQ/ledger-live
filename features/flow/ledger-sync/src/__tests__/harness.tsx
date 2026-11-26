@@ -18,7 +18,13 @@ export function renderLedgerSyncHook<Result, Props>(
     trustchain = mockKeyRingState(),
     sequence = [],
     initialProps,
-  }: Readonly<{ trustchain?: KeyRingState; sequence?: string[]; initialProps?: Props }> = {},
+    extraArgument,
+  }: Readonly<{
+    trustchain?: KeyRingState;
+    sequence?: string[];
+    initialProps?: Props;
+    extraArgument?: unknown;
+  }> = {},
 ) {
   const recorder: Middleware = () => next => action => {
     if (typeof action === "object" && action !== null && "type" in action) {
@@ -29,7 +35,8 @@ export function renderLedgerSyncHook<Result, Props>(
   const store = configureStore({
     reducer: { trustchain: keyRingReducer, walletSync: walletSyncSlice.reducer },
     preloadedState: { trustchain },
-    middleware: getDefaultMiddleware => getDefaultMiddleware().concat(recorder),
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({ thunk: { extraArgument } }).concat(recorder),
   });
   const queryClient = new QueryClient({
     defaultOptions: { queries: { gcTime: Infinity, retry: false } },

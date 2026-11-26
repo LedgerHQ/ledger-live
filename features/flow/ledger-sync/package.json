@@ -29,7 +29,8 @@
     "@features/platform-wallet-sync": "workspace:^",
     "@ledgerhq/logs": "catalog:",
     "@shared/analytics": "workspace:^",
-    "@shared/cloud-sync": "workspace:^"
+    "@shared/cloud-sync": "workspace:^",
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "@reduxjs/toolkit": "catalog:",

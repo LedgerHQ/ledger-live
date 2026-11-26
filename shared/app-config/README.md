@@ -114,8 +114,9 @@ choice, not a limitation to work around:
 
 So the store never re-reads a configuration value on a request to follow a runtime change, and a
 debug tool that changes one saves it, then reloads when the developer asks: a reload can be slow
-under a debugger or on an emulator, so several changes take a single one. Only Keycloak reads the configuration so
-far: the other services keep their `@shared/env` reads until they move to it.
+under a debugger or on an emulator, so several changes take a single one. Keycloak and the Ledger
+Sync backends read the configuration so far: the other services keep their `@shared/env` reads until
+they move to it.
 
 ## Selecting an option
 
@@ -123,7 +124,8 @@ far: the other services keep their `@shared/env` reads until they move to it.
 `session`: the declared switches, the default option, the selections read at boot and the storage.
 Each store hands `session` to `createAppConfigMiddleware`, with the `reload` that starts the next
 session. The storage and the reload are dependencies, so they stay in the middleware's closure
-rather than in the thunk `extraArgument`, which only carries config.
+rather than in the thunk `extraArgument`, which only carries config, such as the Ledger Sync
+backends that `ledgerSyncBackendsExtra` of `@features/flow-ledger-sync` hands its hooks.
 
 - Once the store is created, the middleware sets the `appConfig` slice to the session without its
   storage, and its saved selections to the ones read at boot. Register `appConfigReducer` under

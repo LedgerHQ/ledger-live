@@ -9,7 +9,9 @@ import {
 } from "@features/platform-key-ring/testing";
 import { setOverride } from "@shared/feature-flags";
 import { getEnv } from "@shared/env";
-import customCreateStore from "./configureStore";
+import { readOnlyConfigStorage } from "@shared/app-config";
+import { loadAppConfig } from "~/setup";
+import customCreateStore, { type AppDispatch } from "./configureStore";
 
 jest.mock("@shared/env", () => {
   const actual = jest.requireActual<typeof import("@shared/env")>("@shared/env");
@@ -53,6 +55,26 @@ describe("customCreateStore", () => {
         LEDGER_COUNTERVALUES_API: 1,
         PUSH_DEVICES_SERVICE_URL: 2,
         SWAP_API_BASE: 0,
+      });
+    });
+
+    it("carries the Ledger Sync backends of the app config it is created with", () => {
+      const store = customCreateStore({
+        fetchRemoteFlags: null,
+        appConfig: loadAppConfig({
+          selections: readOnlyConfigStorage(() => ({ ledgerKeyRing: "staging" })),
+          devValues: readOnlyConfigStorage(() => ({})),
+        }),
+      });
+
+      const dispatch: AppDispatch = store.dispatch;
+      const extra = dispatch((_dispatch, _getState, extraArgument) => extraArgument);
+
+      expect(extra).toMatchObject({
+        ledgerSyncBackends: {
+          keyRingApiBaseUrl: "https://trustchain-backend.api.aws.stg.ldg-tech.com",
+          cloudSyncApiBaseUrl: "https://cloud-sync-backend.api.aws.stg.ldg-tech.com",
+        },
       });
     });
   });

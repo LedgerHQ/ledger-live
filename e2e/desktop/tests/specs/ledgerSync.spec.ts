@@ -3,7 +3,10 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
-import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
+import {
+  ledgerSyncAppConfig,
+  ledgerSyncEnvironment,
+} from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { ethAccount, secondEthAccount } from "@ledgerhq/live-e2e-shared/ledgerSync/testData";
 import {
@@ -52,6 +55,7 @@ function preSeededTrustchain({
 }: { seedCommands?: CliCommand[]; onDie?: boolean } = {}) {
   return {
     teamOwner: Team.WALLET_XP,
+    appConfig: ledgerSyncAppConfig,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: AppInfos.LS,
     cliCommands: [
@@ -272,6 +276,7 @@ for (const { titleSuffix, onDie } of DEVICE_STEP_VARIANTS) {
 function unactivatedFeatureFlags({ onDie = false }: { onDie?: boolean } = {}) {
   return {
     teamOwner: Team.WALLET_XP,
+    appConfig: ledgerSyncAppConfig,
     userdata: "skip-onboarding-with-last-seen-device",
     featureFlags: {
       lldWalletSync: {

@@ -22,6 +22,7 @@ import reducers, { State } from "~/renderer/reducers";
 import { apiServices, applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { accountDataExtra } from "@domain/api-account-data";
+import { ledgerSyncBackendsExtra } from "@features/flow-ledger-sync";
 import { accountDataSources, accountDataTaps } from "~/config/account-data-setup";
 import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
 import { loadAppConfig } from "~/setup";
@@ -71,6 +72,10 @@ const customCreateStore = ({
                 ),
               ),
               ...apiServices.createExtra({ ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION") }),
+              ...ledgerSyncBackendsExtra({
+                keyRingApiBaseUrl: appConfig.trustchainApiBaseUrl,
+                cloudSyncApiBaseUrl: appConfig.cloudSyncApiBaseUrl,
+              }),
             },
           },
         }),

@@ -204,6 +204,20 @@ describe("mobile store", () => {
         expect.objectContaining({ ledgerClientVersion: "set-before-store-creation" }),
       );
     });
+
+    it("carries the Ledger Sync backends of the session app config", () => {
+      const { store } = require("./configureStore") as typeof import("./configureStore");
+      const { appConfig } = require("~/setup") as typeof import("~/setup");
+
+      expect(readExtra(store)).toEqual(
+        expect.objectContaining({
+          ledgerSyncBackends: {
+            keyRingApiBaseUrl: appConfig.trustchainApiBaseUrl,
+            cloudSyncApiBaseUrl: appConfig.cloudSyncApiBaseUrl,
+          },
+        }),
+      );
+    });
   });
 
   describe("env reads at store creation", () => {

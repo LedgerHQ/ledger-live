@@ -9,10 +9,11 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
 import { HttpResponse, http, server } from "@tests/server";
 import { renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import { appConfig } from "~/setup";
 import { useWatchWalletSync } from "../hooks/useWatchWalletSync";
 
 const originalMockEnv = getEnv("MOCK");
-const cloudSyncApiBaseUrl = getEnv("CLOUD_SYNC_API_PROD");
+const { cloudSyncApiBaseUrl } = appConfig;
 
 const keyRingState: KeyRingState = {
   trustchain: {
@@ -37,7 +38,7 @@ const endpoints = {
   push: jest.fn<EndpointResult, EndpointParams>(),
 };
 
-describe("useWatchWalletSync PROD cursor synchronization", () => {
+describe("useWatchWalletSync cursor synchronization", () => {
   beforeAll(() => {
     jest.useRealTimers();
   });
@@ -60,16 +61,16 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     jest.useFakeTimers();
   });
 
-  it("should apply PROD data when its cursor is newer than the local cursor", async () => {
+  it("should apply backend data when its cursor is newer than the local cursor", async () => {
     /**
      * GIVEN
      * - Local wallet: accounts [A, B].
      * - Cached distant state: version 7, accounts [A, B].
-     * - PROD backend: version 10, accounts [A].
+     * - Backend: version 10, accounts [A].
      *
      * WHEN the Wallet Sync loop runs.
      *
-     * THEN PROD is pulled and account B is removed locally.
+     * THEN the backend is pulled and account B is removed locally.
      */
     endpoints.pull.mockReturnValue(
       HttpResponse.json({
@@ -102,16 +103,16 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     });
   });
 
-  it("should keep local data when the PROD cursor is older than the local cursor", async () => {
+  it("should keep local data when the backend cursor is older than the local cursor", async () => {
     /**
      * GIVEN
      * - Local wallet: accounts [A, B].
      * - Cached distant state: version 10, accounts [A, B].
-     * - PROD backend: version 7, accounts [A].
+     * - Backend: version 7, accounts [A].
      *
      * WHEN the Wallet Sync loop runs.
      *
-     * THEN PROD reports that the cursor is up to date and local data remains unchanged.
+     * THEN the backend reports that the cursor is up to date and local data remains unchanged.
      */
     endpoints.pull.mockReturnValue(HttpResponse.json({ status: "up-to-date" }));
     endpoints.push.mockReturnValue(HttpResponse.json({ status: "updated" }));
@@ -139,16 +140,16 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     });
   });
 
-  it("should overwrite PROD from local data when both cursors have the same version", async () => {
+  it("should overwrite the backend from local data when both cursors have the same version", async () => {
     /**
      * GIVEN
      * - Local wallet: accounts [A].
      * - Cached distant state: version 7, accounts [A, B].
-     * - PROD backend: version 7, accounts [A, C].
+     * - Backend: version 7, accounts [A, C].
      *
      * WHEN the Wallet Sync loop runs.
      *
-     * THEN PROD reports that the cursor is up to date and is overwritten with accounts [A].
+     * THEN the backend reports that the cursor is up to date and is overwritten with accounts [A].
      */
     endpoints.pull.mockReturnValue(HttpResponse.json({ status: "up-to-date" }));
     endpoints.push.mockReturnValue(HttpResponse.json({ status: "updated" }));
@@ -178,12 +179,12 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     });
   });
 
-  it("should reset the local cursor when PROD has no data", async () => {
+  it("should reset the local cursor when the backend has no data", async () => {
     /**
      * GIVEN
      * - Local wallet: accounts [A, B].
      * - Cached distant state: version 7, accounts [A, B].
-     * - PROD backend: no data.
+     * - Backend: no data.
      *
      * WHEN the Wallet Sync loop runs.
      *
@@ -215,16 +216,16 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     ]);
   });
 
-  it("should push local data when PROD and the local cursor have no data", async () => {
+  it("should push local data when the backend and the local cursor have no data", async () => {
     /**
      * GIVEN
      * - Local wallet: accounts [A, B].
      * - Cached distant state: version 0, no data.
-     * - PROD backend: no data.
+     * - Backend: no data.
      *
      * WHEN the Wallet Sync loop runs.
      *
-     * THEN local accounts are pushed to PROD as version 1.
+     * THEN local accounts are pushed to the backend as version 1.
      */
     endpoints.pull.mockReturnValue(HttpResponse.json({ status: "no-data" }));
     endpoints.push.mockReturnValue(HttpResponse.json({ status: "updated" }));

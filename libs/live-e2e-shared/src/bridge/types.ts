@@ -47,6 +47,11 @@ export type ServerData =
       payload: string;
     }
   | {
+      type: "appConfig";
+      id: string;
+      payload: string;
+    }
+  | {
       type: "ptxHandoff";
       id: string;
       payload: string;
@@ -66,6 +71,7 @@ export type MessageData<P extends BridgePayloads = BridgePayloads> =
   | { type: "getLogs"; id: string }
   | { type: "getFlags"; id: string }
   | { type: "getEnvs"; id: string }
+  | { type: "getAppConfig"; id: string }
   | { type: "getPtxHandoff"; id: string }
   | { type: "navigate"; id: string; payload: string }
   | { type: "importSettings"; id: string; payload: P["settings"] }

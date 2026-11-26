@@ -19,6 +19,7 @@ import { setIdentitiesStore } from "@ledgerhq/live-common/device/firmwareDistrib
 import { recentAddressesSelector } from "~/reducers/wallet";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { accountDataExtra } from "@domain/api-account-data";
+import { ledgerSyncBackendsExtra } from "@features/flow-ledger-sync";
 import { accountDataSources, connectAccounts } from "~/config/account-data-setup";
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector } from "~/reducers/settings";
@@ -51,6 +52,10 @@ export const store = configureStore({
               ),
             ),
             ...apiServices.createExtra({ ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION") }),
+            ...ledgerSyncBackendsExtra({
+              keyRingApiBaseUrl: appConfig.trustchainApiBaseUrl,
+              cloudSyncApiBaseUrl: appConfig.cloudSyncApiBaseUrl,
+            }),
           },
         },
       }),

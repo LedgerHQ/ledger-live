@@ -24,6 +24,7 @@ differently, the difference is an explicit option, never a default that favours 
 | `useOnKeyRingRefreshNeeded` | The `onRefreshNeeded` port of the watcher; `resetOnCategories`, `readTreeIdAt` |
 | `useDestroyLedgerSync` | Deletes the backup; `onBeforeReset`, `onAfterReset`, `onError` |
 | `useLedgerSyncServiceStatus` | Health of the key ring and Cloud Sync backends; `enabled` |
+| `ledgerSyncBackendsExtra`, `useLedgerSyncBackends` | The backend URLs of the app config, through the thunk `extraArgument` |
 | `useLedgerSyncPairingHost` | Shows the QR code another instance scans; `startBinding`, `notifyPaired`, `onFailure` |
 | `useLedgerSyncPairingJoin` | Joins the key tree of a scanned QR code; `onFailure` |
 | `useLedgerSyncActivation`, `useLedgerSyncMemberRemoval` | The legacy (non-DIE) device calls, resolving a typed outcome |
@@ -33,6 +34,7 @@ differently, the difference is an explicit option, never a default that favours 
 | `useLedgerSyncLoadingSettled` | True once the loading step waited for the watch loop |
 | `LedgerSyncAnalyticsEvent`, `trackLedgerSyncActivated`, `trackLedgerSyncRejectedOnDevice` | The lifecycle events; the app passes its `flow` |
 | `ledgerSyncErrorForDisplay`, `isNoTrustchainError`, `isUnauthorizedMemberError`, `LedgerSyncErrorMessage` | Error helpers |
+| `LedgerSyncBackendsMissingError` | `useLedgerSyncBackends` on a store built without `ledgerSyncBackendsExtra` |
 | `LedgerSyncQueryKey` | The query keys, to invalidate the members list |
 
 Results are this package's own types (`LedgerSyncMembers`, `LedgerSyncDestroy`, ...), never the
@@ -43,8 +45,15 @@ query library's.
 Screens, drawers, navigation and deep links; the page and button analytics and the `flow`
 resolution; the device intent platform definitions and executors; the composition root
 (`useKeyRingClient`, the v1 device bridge); `useWatchWalletSync` and `useCloudSyncSDK`, which wire
-`libs/`; the app's configuration (`getWalletSyncEnvironmentParams`, feature flags), passed in as
-values.
+`libs/`; the feature flags, passed in as values.
+
+## Backends
+
+The key ring and Cloud Sync base URLs come from the `ledgerKeyRing` switch of the app config
+(`apps/*/src/setup/load.ts`), never from a feature flag. Each app spreads
+`ledgerSyncBackendsExtra({ keyRingApiBaseUrl, cloudSyncApiBaseUrl })` into the thunk
+`extraArgument` of its store, from the configuration resolved for the session, and its hooks read
+them with `useLedgerSyncBackends()`. A test store that renders those hooks spreads it too.
 
 ## Peer dependencies
 

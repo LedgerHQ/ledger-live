@@ -2,6 +2,7 @@ import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { getEnv, setEnv } from "@shared/env";
 import { selectRemoteFlagsReady } from "@shared/feature-flags";
+import { readOnlyConfigStorage } from "@shared/app-config";
 import type { KeyRingState } from "@domain/entity-key-ring";
 import { classifyKeyRingError, type KeyRingClient } from "@features/platform-key-ring";
 import { keyRingAuthChallengeFixture } from "@features/platform-key-ring/testing";
@@ -29,9 +30,7 @@ const KEY_RING_STATE: KeyRingState = {
   },
 };
 
-// In this test suite, the fake trustchain is always a member of the PROD environment
-// and never a member of the STAGING environment.
-// So the authentication should always succeed on PROD and fail on STAGING.
+// The fake key tree has this keypair as a member on the prod backends only.
 const endpoints = {
   prodChallenge: jest.fn(() =>
     HttpResponse.json({
@@ -86,17 +85,11 @@ describe("useKeyRingClient", () => {
     server.close();
   });
 
-  it("should authenticate when the keypair is a member of the trustchain", async () => {
+  it("should authenticate when the app config selects the backends the keypair is a member of", async () => {
+    const store = await createStoreOnKeyRing("prod");
     const { useKeyRingClient, authenticate } = await importFreshClient();
 
-    const { result } = renderHook(() => useKeyRingClient(), {
-      initialState: withFlagOverrides({
-        lldWalletSync: {
-          enabled: true,
-          params: { environment: "PROD", watchConfig: {}, learnMoreLink: "" },
-        },
-      }),
-    });
+    const { result } = renderHook(() => useKeyRingClient(), { store });
 
     await expect(authenticate(result.current)).resolves.toBe(true);
 
@@ -104,7 +97,30 @@ describe("useKeyRingClient", () => {
     expect(endpoints.stagingAuthenticate).not.toHaveBeenCalled();
   });
 
-  it("should reject as a removed member when the SDK uses the wrong environment", async () => {
+  it("should reject as a removed member when the app config selects other backends", async () => {
+    const store = await createStoreOnKeyRing("staging");
+    const { useKeyRingClient, authenticate } = await importFreshClient();
+
+    const { result } = renderHook(() => useKeyRingClient(), { store });
+
+    const error = await authenticate(result.current).catch((rejection: unknown) => rejection);
+
+    expect(classifyKeyRingError(error)).toBe("member-removed");
+    expect(error).toMatchObject({
+      message: "Not a member of trustchain",
+      cause: expect.objectContaining({ name: "TrustchainEjected" }),
+    });
+  });
+
+  it("should use the prod backends of a prod build when the app config selects none", async () => {
+    const { useKeyRingClient, authenticate } = await importFreshClient();
+
+    const { result } = renderHook(() => useKeyRingClient());
+
+    await expect(authenticate(result.current)).resolves.toBe(true);
+  });
+
+  it("should ignore the environment of the feature flag", async () => {
     const { useKeyRingClient, authenticate } = await importFreshClient();
 
     const { result } = renderHook(() => useKeyRingClient(), {
@@ -116,24 +132,11 @@ describe("useKeyRingClient", () => {
       }),
     });
 
-    const error = await authenticate(result.current).catch((rejection: unknown) => rejection);
-
-    expect(classifyKeyRingError(error)).toBe("member-removed");
-    expect(error).toMatchObject({
-      message: "Not a member of trustchain",
-      cause: expect.objectContaining({ name: "TrustchainEjected" }),
-    });
-  });
-
-  it("should use PROD when the feature flag has not been set yet", async () => {
-    const { useKeyRingClient, authenticate } = await importFreshClient();
-
-    const { result } = renderHook(() => useKeyRingClient());
-
     await expect(authenticate(result.current)).resolves.toBe(true);
+    expect(endpoints.stagingAuthenticate).not.toHaveBeenCalled();
   });
 
-  it("should use PROD when remote feature flags fail at startup", async () => {
+  it("should keep the backends of the app config when remote feature flags fail at startup", async () => {
     const createStore = (await import("~/state-manager/configureStore")).default;
     const { useKeyRingClient, authenticate } = await importFreshClient();
 
@@ -153,6 +156,18 @@ describe("useKeyRingClient", () => {
     await expect(authenticate(result.current)).resolves.toBe(true);
   });
 });
+
+async function createStoreOnKeyRing(ledgerKeyRing: "prod" | "staging") {
+  const createStore = (await import("~/state-manager/configureStore")).default;
+  const { loadAppConfig } = await import("~/setup");
+  return createStore({
+    fetchRemoteFlags: null,
+    appConfig: loadAppConfig({
+      selections: readOnlyConfigStorage(() => ({ ledgerKeyRing })),
+      devValues: readOnlyConfigStorage(() => ({})),
+    }),
+  });
+}
 
 async function importFreshClient() {
   const { useKeyRingClient } = await import("../hooks/useKeyRingClient");

@@ -31,6 +31,32 @@ describe("loadAppConfig", () => {
     });
   });
 
+  it.each([
+    ["prod", "https://trustchain.api.live.ledger.com", "https://cloud-sync.api.live.ledger.com"],
+    [
+      "staging",
+      "https://trustchain-backend.api.aws.stg.ldg-tech.com",
+      "https://cloud-sync-backend.api.aws.stg.ldg-tech.com",
+    ],
+  ] as const)(
+    "resolves the Ledger Sync backends of the %s profile",
+    (profile, trustchainApiBaseUrl, cloudSyncApiBaseUrl) => {
+      expect(loadAppConfig(noSelections, profile).config).toMatchObject({
+        trustchainApiBaseUrl,
+        cloudSyncApiBaseUrl,
+      });
+    },
+  );
+
+  it("resolves the Ledger Sync backends of the selected option over the profile", () => {
+    const stagingSelected = storageOf({ ledgerKeyRing: "staging" }, {});
+
+    expect(loadAppConfig(stagingSelected, "prod").config).toMatchObject({
+      trustchainApiBaseUrl: "https://trustchain-backend.api.aws.stg.ldg-tech.com",
+      cloudSyncApiBaseUrl: "https://cloud-sync-backend.api.aws.stg.ldg-tech.com",
+    });
+  });
+
   it("resolves the dev values of a staging profile on Dev", () => {
     const storage = storageOf(
       { ledgerKeyRing: "dev", keycloakRealm: "dev" },

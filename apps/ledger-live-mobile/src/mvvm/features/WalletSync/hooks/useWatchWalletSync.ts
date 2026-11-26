@@ -7,6 +7,7 @@ import {
   type WalletSyncUserState,
 } from "@features/platform-wallet-sync";
 import { selectKeyRingSession } from "@features/platform-key-ring";
+import { useLedgerSyncBackends } from "@features/flow-ledger-sync";
 import { bulkSetAccountNames } from "@domain/entity-account-name";
 import { selectContacts, setContacts } from "@domain/entity-contact";
 import { updateRecentAddresses } from "@domain/entity-recent-addresses";
@@ -33,7 +34,6 @@ import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { bridgeCache } from "~/bridge/cache";
 import { replaceAccounts } from "~/actions/accounts";
 import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import logger from "~/logger";
 
 type DistantState = DistantDocument;
@@ -89,10 +89,7 @@ async function save(
 }
 
 export function useCloudSyncSDK(): KeyRingCloudSync<DistantState> {
-  const featureWalletSync = useFeature("llmWalletSync");
-  const { cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
+  const { cloudSyncApiBaseUrl } = useLedgerSyncBackends();
   const walletsync = useWalletsync();
   const getState = useGetState();
   const saveUpdate = useSaveUpdate();

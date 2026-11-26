@@ -8,6 +8,7 @@ import {
   setAllOverrides,
   selectFeature,
   getAllFeatureFlags,
+  FEATURE_FLAGS_DEFAULTS,
 } from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importPersistedKeyRingState } from "@features/platform-key-ring";
@@ -48,6 +49,7 @@ import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { appNetworkLogStore, initAppNetworkLogging } from "../appNetworkLogStore";
 import { readLaunchForceProvider } from "~/launchForceProvider";
+import { appConfig } from "~/setup";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -76,19 +78,10 @@ function removeKnownSpeculosDevices() {
   }
 }
 
-function overrideLedgerSyncEnvironment() {
-  const environment = LaunchArguments.value()["ledger_sync_environment"];
-  if (environment !== "PROD" && environment !== "STAGING") return;
-
-  log(`[E2E Bridge Client]: Ledger Sync environment=${environment}`);
+// Detox starts with Ledger Sync off, on its default params, until a suite pushes its flags.
+function disableLedgerSyncAtLaunch() {
   store.dispatch(
-    setOverride({
-      key: "llmWalletSync",
-      value: {
-        enabled: false,
-        params: { environment, watchConfig: {}, learnMoreLink: "" },
-      },
-    }),
+    setOverride({ key: "llmWalletSync", value: FEATURE_FLAGS_DEFAULTS.llmWalletSync }),
   );
 }
 
@@ -150,7 +143,7 @@ export function init() {
     Config.MOCK = "";
   }
   setEnv("DISABLE_TRANSACTION_BROADCAST", disable_broadcast != "0");
-  overrideLedgerSyncEnvironment();
+  disableLedgerSyncAtLaunch();
 
   initAppNetworkLogging();
 
@@ -311,6 +304,10 @@ async function onMessage(event: WebSocketMessageEvent) {
           id: msg.id,
           payload,
         });
+        break;
+      }
+      case "getAppConfig": {
+        postMessage({ type: "appConfig", id: msg.id, payload: JSON.stringify(appConfig) });
         break;
       }
       case "addKnownSpeculos": {

@@ -17,10 +17,7 @@ import { liveSlug } from "../cloudSync/liveSlug";
  * function localStateSelector(state: State): WalletSyncLocalState { ... }
  *
  * export function useCloudSyncSDK(): KeyRingCloudSync<DistantDocument> {
- *   const walletSyncFeature = useFeature("lldWalletSync");
- *   const { cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
- *     walletSyncFeature?.params?.environment,
- *   );
+ *   const { cloudSyncApiBaseUrl } = useLedgerSyncBackends();
  *   return useKeyRingCloudSync({
  *     apiBaseUrl: cloudSyncApiBaseUrl,
  *     walletsync: useWalletsync(),
@@ -99,7 +96,7 @@ export type KeyRingCloudSyncPorts<
   Schema extends ZodType,
   DistantState = z.infer<Schema>,
 > = Readonly<{
-  /** Base URL of the Cloud Sync API, from the app's environment parameters. */
+  /** Base URL of the Cloud Sync API, from the app config. */
   apiBaseUrl: string;
   /** The app's data manager, from `createWalletsync` in live-wallet. */
   walletsync: CloudSyncDataManager<LocalState, Update, Schema, DistantState>;

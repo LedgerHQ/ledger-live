@@ -77,7 +77,8 @@ if (newLocalState) {
 
 Each app caches one client at module level, built on first use with
 `createKeyRingClient({ mock, instanceName, apiBaseUrl, deviceBridge })`; the URLs come from the
-flag's `environment` param and the application id (`16`) lives in the package. Device intents
+`ledgerKeyRing` switch of the app config, through `useLedgerSyncBackends` of
+`@features/flow-ledger-sync`, and the application id (`16`) lives in the package. Device intents
 run on the client bound to their DMK session with `client.forDeviceSession`. The device bridge
 comes from `createKeyRingV1DeviceBridge` (`@features/platform-key-ring/v1`), which the
 composition root alone imports: it gets the app's `withDevice` and the `DmkCompatTransport` of a

@@ -1,18 +1,16 @@
 import {
+  useLedgerSyncBackends,
   useLedgerSyncServiceStatus,
   type LedgerSyncServiceStatus,
 } from "@features/flow-ledger-sync";
 import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 
 export function useLedgerSyncStatus(): LedgerSyncServiceStatus {
   const featureWalletSync = useFeature("llmWalletSync");
-  const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
+  const { keyRingApiBaseUrl, cloudSyncApiBaseUrl } = useLedgerSyncBackends();
 
   return useLedgerSyncServiceStatus({
-    keyRingApiBaseUrl: trustchainApiBaseUrl,
+    keyRingApiBaseUrl,
     cloudSyncApiBaseUrl,
     enabled: featureWalletSync?.enabled === true,
   });

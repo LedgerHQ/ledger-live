@@ -6,11 +6,7 @@ const PRODUCTION_SETUP: KeyRingClientSetup = {
   instanceName: "Mobile instance",
   apiBaseUrl: "https://trustchain.production",
 };
-const STAGING_RENAMED_SETUP: KeyRingClientSetup = {
-  mock: false,
-  instanceName: "Renamed instance",
-  apiBaseUrl: "https://trustchain.staging",
-};
+const RENAMED_SETUP: KeyRingClientSetup = { ...PRODUCTION_SETUP, instanceName: "Renamed instance" };
 
 const mockCurrentSetup = { current: PRODUCTION_SETUP };
 jest.mock("@features/platform-key-ring", () => ({
@@ -53,12 +49,12 @@ describe("useKeyRingClient", () => {
     expect(result.current).toBe(createKeyRingClient.mock.results[0].value);
   });
 
-  it("should keep the client after the flag environment changes and an instance rename", async () => {
+  it("should keep the client after an instance rename", async () => {
     const { useKeyRingClient, createKeyRingClient } = await importFreshHooks();
     const { result, rerender } = renderHook(() => useKeyRingClient());
     const first = result.current;
 
-    mockCurrentSetup.current = STAGING_RENAMED_SETUP;
+    mockCurrentSetup.current = RENAMED_SETUP;
     rerender({});
     const later = renderHook(() => useKeyRingClient());
 

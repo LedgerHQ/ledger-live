@@ -268,6 +268,11 @@ export async function getEnvs() {
   return fetchData({ message: { type: "getEnvs", id: uniqueId() } });
 }
 
+/** The configuration the app resolved at boot, as JSON, or "" when the bridge has not connected yet. */
+export async function getAppConfig() {
+  return fetchData({ message: { type: "getAppConfig", id: uniqueId() } });
+}
+
 /** Last Buy/Sell handoff URL (`goToManifest` + `goToURL`) seen by the app, or "" if none yet. */
 export async function getPtxHandoff() {
   return fetchData({ message: { type: "getPtxHandoff", id: uniqueId() } });
@@ -367,6 +372,7 @@ function onMessage(messageStr: string) {
     case "ptxHandoff":
     case "appFlags":
     case "appEnvs":
+    case "appConfig":
     case "contactsImported":
     case "localManifestsImported":
       resolvePending({ key: msg.id, payload: msg.payload });

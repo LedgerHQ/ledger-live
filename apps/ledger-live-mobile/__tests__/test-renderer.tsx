@@ -61,6 +61,8 @@ import { FEATURE_FLAGS_INITIAL_STATE, FEATURE_FLAGS_DEFAULTS } from "@shared/fea
 import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feature-flags";
 import { getEnv } from "@shared/env";
 import { calApiExtra, coinMarketCapApiExtra, cvsApiExtra } from "@shared/api-services";
+import { ledgerSyncBackendsExtra } from "@features/flow-ledger-sync";
+import { appConfig } from "~/setup";
 import { LinkingProvider } from "@shared/linking";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
@@ -166,6 +168,10 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
                 getCountervaluesServiceUrl: () => getEnv("LEDGER_COUNTERVALUES_API"),
               }),
               ...coinMarketCapApiExtra({ coinMarketCapApiUrl: getEnv("CMC_API_URL") }),
+              ...ledgerSyncBackendsExtra({
+                keyRingApiBaseUrl: appConfig.trustchainApiBaseUrl,
+                cloudSyncApiBaseUrl: appConfig.cloudSyncApiBaseUrl,
+              }),
             },
           },
         }),
