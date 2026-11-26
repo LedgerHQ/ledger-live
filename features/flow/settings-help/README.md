@@ -50,7 +50,7 @@ Desktop: `apps/ledger-live-desktop/src/mvvm/features/Settings/sections/help.tsx`
 ## Tracking
 
 The events of the legacy buttons are kept, sent when the button is pressed: `ClearCacheIntent`,
-`HardResetIntent`, and `Launch Onboarding from Settings`. The screens
+`View user data`, `HardResetIntent`, and `Launch Onboarding from Settings`. The screens
 `Settings Help`, and `Modal CleanCache` or `Modal HardReset` while a confirmation is open, are
 tracked too. `ExportLogs` is sent by the app, which renders that row.
 

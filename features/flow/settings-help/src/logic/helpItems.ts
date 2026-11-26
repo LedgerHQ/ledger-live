@@ -55,6 +55,7 @@ export function isConfirmedHelpItem(id: HelpItemId): id is HelpConfirmedItemId {
 
 export const HELP_ITEM_EVENTS: Readonly<Partial<Record<HelpItemId, string>>> = {
   clearCache: "ClearCacheIntent",
+  viewUserData: "View user data",
   resetApp: "HardResetIntent",
   launchOnboarding: "Launch Onboarding from Settings",
 };

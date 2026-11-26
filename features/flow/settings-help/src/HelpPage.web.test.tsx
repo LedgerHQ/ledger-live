@@ -162,6 +162,7 @@ describe("HelpPage", () => {
 
   it.each([
     ["clearCache", "ClearCacheIntent"],
+    ["viewUserData", "View user data"],
     ["resetApp", "HardResetIntent"],
     ["launchOnboarding", "Launch Onboarding from Settings"],
   ])("tracks %s as %s when its button is pressed", async (id, event) => {
@@ -177,7 +178,6 @@ describe("HelpPage", () => {
     const user = userEvent.setup();
     renderHelpPage();
 
-    await user.click(screen.getByTestId("settings-help-viewUserData-button"));
     await user.click(screen.getByTestId("settings-help-support"));
 
     expect(mockTrack).not.toHaveBeenCalled();
