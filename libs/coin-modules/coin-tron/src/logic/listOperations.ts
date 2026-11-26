@@ -265,15 +265,24 @@ function mergeEndpoints(
   trc20Txs: TrongridTxInfo[],
 ): TrongridTxInfo[] {
   const trc20TxIds = new Set(trc20Txs.map(tx => tx.txID));
+  const txIdsWithTokenCallValue = new Set(
+    nativeTxs.filter(tx => tx.isCallValue && tx.idSuffix !== undefined).map(tx => tx.txID),
+  );
   const nativeTxsToList = nativeTxs.flatMap(tx =>
     tx.isCallValue
-      ? toListedCallValue(tx, address, trc20TxIds.has(tx.txID))
+      ? toListedCallValue(
+          tx,
+          address,
+          trc20TxIds.has(tx.txID),
+          txIdsWithTokenCallValue.has(tx.txID),
+        )
       : trc20TxIds.has(tx.txID)
         ? []
         : [tx],
   );
   // Consumers charge a transaction's fee through its native operation when it has one, as for
-  // coin-evm: the TRX a call attached takes the fee off the call's TRC20 records.
+  // coin-evm, and otherwise through its first token operation: the TRX call value takes the fee
+  // off the call's TRC20 records.
   const txIdsWithNativeFee = new Set(
     nativeTxsToList.filter(tx => tx.idSuffix === CALL_VALUE_SUFFIX).map(tx => tx.txID),
   );
@@ -287,17 +296,19 @@ const CALL_VALUE_SUFFIX = "call-value";
 
 /**
  * A call's value, listed for its sender or its contract only. A call the TRC20 endpoint lists too
- * keeps the transaction id on its TRC20 record: the TRX attached, if any, becomes an operation of
- * its own, which carries the fee.
+ * keeps the transaction id on its TRC20 record: the TRX attached becomes an operation of its own,
+ * which carries the fee. With no TRX attached, that operation is only kept to carry the fee away
+ * from a TRC10 call value, whose operation has none.
  */
 function toListedCallValue(
   tx: TrongridTxInfo,
   address: string,
   hasTrc20Record: boolean,
+  hasTokenCallValue: boolean,
 ): TrongridTxInfo[] {
   if (tx.from !== address && tx.to !== address) return [];
   if (tx.idSuffix !== undefined || !hasTrc20Record) return [tx];
-  if (!tx.value || tx.value.isZero()) return [];
+  if ((!tx.value || tx.value.isZero()) && !hasTokenCallValue) return [];
   return [{ ...tx, idSuffix: CALL_VALUE_SUFFIX }];
 }
 

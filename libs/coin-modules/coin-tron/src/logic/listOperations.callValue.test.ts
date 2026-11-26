@@ -180,6 +180,25 @@ describe("listOperations — value attached to a smart contract call", () => {
       ]);
     });
 
+    it("keeps the fee on TRX when a call with a TRC20 transfer attaches only TRC10", async () => {
+      serve({
+        native: page([call({ call_token_value: 42, token_id: 1002000 })]),
+        trc20: page([trc20Record]),
+      });
+
+      expect(await summary()).toEqual([
+        ["tx1-call-value", "OUT", 0n, { type: "native" }, 1000n],
+        [
+          "tx1-call-token-value",
+          "OUT",
+          42n,
+          { type: "trc10", assetReference: "1002000", assetOwner: account },
+          0n,
+        ],
+        ["tx1", "IN", 5_000_000n, { type: "trc20", assetReference: usdt, assetOwner: account }, 0n],
+      ]);
+    });
+
     it("lists the TRC10 a call attaches as an operation of its own", async () => {
       serve({ native: page([call({ call_token_value: 42, token_id: 1002000 })]) });
 
