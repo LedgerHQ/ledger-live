@@ -7,6 +7,7 @@ import reducer, {
   accountContextReceived,
   accountContextRemoved,
   accountContextSlice,
+  legacyAccountContextsSynced,
   selectAccountContext,
 } from "./slice";
 
@@ -44,5 +45,25 @@ describe("accountContextSlice", () => {
     const state = reducer(undefined, accountContextReceived({ accountUUID: inherited, context }));
     expect(state).toEqual({});
     expect(selectAccountContext(root(state), inherited)).toBeUndefined();
+  });
+});
+
+describe("legacyAccountContextsSynced", () => {
+  it("replaces the held accounts' contexts and drops the removed ones, leaving the others", () => {
+    const candidate = otherAccountUUID;
+    const stored = reducer(
+      reducer(undefined, accountContextReceived({ accountUUID, context })),
+      accountContextReceived({ accountUUID: candidate, context: { viewKey: "candidate" } }),
+    );
+    const removedOnly = reducer(
+      stored,
+      legacyAccountContextsSynced({ contexts: [], removed: [accountUUID] }),
+    );
+    expect(removedOnly).toEqual({ [candidate]: { viewKey: "candidate" } });
+    const replaced = reducer(
+      stored,
+      legacyAccountContextsSynced({ contexts: [{ accountUUID, context: {} }], removed: [] }),
+    );
+    expect(selectAccountContext(root(replaced), accountUUID)).toEqual({});
   });
 });
