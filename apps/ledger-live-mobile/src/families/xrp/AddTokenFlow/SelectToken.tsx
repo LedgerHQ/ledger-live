@@ -1,7 +1,10 @@
-import React, { useCallback } from "react";
-import { FlatList, type ListRenderItem } from "react-native";
+import React, { useCallback, useRef } from "react";
+import { type ListRenderItem, type TextInput } from "react-native";
 import {
   Banner,
+  BottomSheetFlatList,
+  BottomSheetHeader,
+  BottomSheetView,
   Box,
   Button,
   ListItem,
@@ -16,8 +19,10 @@ import {
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { TrackScreen } from "@shared/analytics-react";
+import { InfoState } from "@shared/ui-info-state";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
+import { useBottomSheetKeyboardAwareInput } from "@shared/ui-queued-bottom-sheet/keyboard";
 import CurrencyIcon from "~/components/CurrencyIcon";
-import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
 import { type Props, useSelectTokenViewModel } from "./useSelectTokenViewModel";
 
@@ -25,10 +30,50 @@ function keyExtractor(token: TokenCurrency) {
   return token.id;
 }
 
+function TokenSearch(props: Readonly<{ value: string; onChangeText: (text: string) => void }>) {
+  const { t } = useTranslation();
+  const inputRef = useRef<TextInput>(null);
+  const inputProps = useBottomSheetKeyboardAwareInput(inputRef);
+
+  return (
+    <Box lx={{ paddingHorizontal: "s16", paddingBottom: "s8" }}>
+      <SearchInput
+        ref={inputRef}
+        {...inputProps}
+        placeholder={t("common.search")}
+        value={props.value}
+        onChangeText={props.onChangeText}
+        testID="xrp-token-search"
+      />
+    </Box>
+  );
+}
+
+function NoAssets(props: Readonly<{ onClose: () => void }>) {
+  const { t } = useTranslation();
+  const bottomInset = useBottomSheetBottomInset();
+
+  return (
+    <BottomSheetView style={{ paddingBottom: bottomInset }}>
+      <InfoState
+        size="hug"
+        preset="error"
+        title={t("xrp.addToken.steps.token.noAssetsTitle")}
+        description={t("xrp.addToken.steps.token.noAssetsText")}
+        primaryCta={{
+          label: t("xrp.addToken.steps.token.gotIt"),
+          onPress: props.onClose,
+          testID: "xrp-no-assets-got-it",
+        }}
+      />
+    </BottomSheetView>
+  );
+}
+
 export default function SelectToken(props: Props) {
   const { t } = useTranslation();
   const viewModel = useSelectTokenViewModel(props);
-  const { onSelectToken } = viewModel;
+  const { onSelectToken, idsSharingNameAndTicker } = viewModel;
 
   const renderItem: ListRenderItem<TokenCurrency> = useCallback(
     ({ item: token }) => (
@@ -38,13 +83,15 @@ export default function SelectToken(props: Props) {
           <ListItemContent>
             <ListItemTitle>{token.name}</ListItemTitle>
             <ListItemDescription>
-              {`${token.ticker} · ${formatAddress(token.contractAddress)}`}
+              {idsSharingNameAndTicker.has(token.id)
+                ? `${token.ticker} · ${formatAddress(token.contractAddress)}`
+                : token.ticker}
             </ListItemDescription>
           </ListItemContent>
         </ListItemLeading>
       </ListItem>
     ),
-    [onSelectToken],
+    [onSelectToken, idsSharingNameAndTicker],
   );
 
   const renderEmpty = () => {
@@ -68,22 +115,24 @@ export default function SelectToken(props: Props) {
 
     return (
       <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
-        {t("xrp.addToken.steps.token.empty")}
+        {t("xrp.addToken.steps.token.noResults")}
       </Text>
     );
   };
 
   return (
-    <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
+    <>
       <TrackScreen category="XrpAddTokenFlow" name="SelectToken" />
-      <Box lx={{ flex: 1, paddingHorizontal: "s16", gap: "s16" }}>
-        <SearchInput
-          placeholder={t("common.search")}
-          value={viewModel.search}
-          onChangeText={viewModel.onChangeSearch}
-          testID="xrp-token-search"
-        />
-        <FlatList
+      <QueuedBottomSheet
+        isRequestingToBeOpened={!viewModel.isEmpty}
+        onClose={viewModel.isEmpty ? undefined : viewModel.onClose}
+        snapPoints="full"
+        restoreOnFocus
+        testID="xrp-select-token-sheet"
+      >
+        <BottomSheetHeader spacing density="expanded" title={t("xrp.addToken.steps.token.title")} />
+        <TokenSearch value={viewModel.search} onChangeText={viewModel.onChangeSearch} />
+        <BottomSheetFlatList
           data={viewModel.tokens}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
@@ -93,7 +142,16 @@ export default function SelectToken(props: Props) {
           keyboardDismissMode="on-drag"
           showsVerticalScrollIndicator={false}
         />
-      </Box>
-    </SafeAreaView>
+      </QueuedBottomSheet>
+      <QueuedBottomSheet
+        isRequestingToBeOpened={viewModel.isEmpty}
+        onClose={viewModel.isEmpty ? viewModel.onClose : undefined}
+        enableDynamicSizing
+        restoreOnFocus
+        testID="xrp-no-assets-sheet"
+      >
+        <NoAssets onClose={viewModel.onClose} />
+      </QueuedBottomSheet>
+    </>
   );
 }

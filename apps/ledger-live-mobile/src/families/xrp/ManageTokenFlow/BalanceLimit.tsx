@@ -1,74 +1,49 @@
-import React from "react";
-import { ScrollView } from "react-native";
-import { Box, Button, Text, TextInput } from "@ledgerhq/lumen-ui-rnative";
-import { TrackScreen } from "@shared/analytics-react";
-import SafeAreaView from "~/components/SafeAreaView";
-import { useTranslation } from "~/context/Locale";
+import React, { useCallback } from "react";
+import type BigNumber from "bignumber.js";
+import invariant from "invariant";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import BalanceLimitScreen from "../components/BalanceLimitScreen";
 import TokenAccountGate from "./TokenAccountGate";
-import { useBalanceLimitViewModel } from "./useBalanceLimitViewModel";
+import type { XrpManageTokenFlowParamList } from "./types";
+
+type Props = BaseComposite<
+  StackNavigatorProps<XrpManageTokenFlowParamList, ScreenName.XrpManageTokenBalanceLimit>
+>;
 
 function BalanceLimitContent() {
-  const { t } = useTranslation();
-  const viewModel = useBalanceLimitViewModel();
-  const balanceLimitLabel = t("xrp.tokenSettings.balanceLimit");
+  const navigation = useNavigation<Props["navigation"]>();
+  const route = useRoute<Props["route"]>();
+  const { account: tokenAccount } = useAccountScreen(route);
+  invariant(tokenAccount?.type === "TokenAccount", "xrp: token account required");
+
+  const { accountId, parentId, balanceLimit } = route.params;
+
+  const onConfirm = useCallback(
+    (limit: BigNumber) => {
+      navigation.popTo(
+        ScreenName.XrpManageTokenSettings,
+        {
+          accountId,
+          parentId,
+          balanceLimit: { limit: limit.toFixed() },
+        },
+        { merge: true },
+      );
+    },
+    [accountId, navigation, parentId],
+  );
 
   return (
-    <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
-      <TrackScreen category="XrpManageTokenFlow" name="BalanceLimit" />
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1, padding: 16, gap: 16 }}
-        keyboardShouldPersistTaps="handled"
-      >
-        <Box lx={{ gap: "s8" }}>
-          <Text typography="heading3SemiBold" lx={{ color: "base" }}>
-            {balanceLimitLabel}
-          </Text>
-          <Text typography="body2" lx={{ color: "muted" }}>
-            {t("xrp.tokenSettings.balanceLimitDescription")}
-          </Text>
-        </Box>
-        <TextInput
-          label={balanceLimitLabel}
-          value={viewModel.inputText}
-          onChangeText={viewModel.onChangeLimitText}
-          hideClearButton
-          suffix={
-            viewModel.isMaximum ? undefined : (
-              <Text typography="body1" lx={{ color: "muted" }}>
-                {viewModel.token.ticker}
-              </Text>
-            )
-          }
-          keyboardType="decimal-pad"
-          status={viewModel.errorText ? "error" : undefined}
-          helperText={viewModel.errorText}
-          testID="xrp-limit-input"
-        />
-        <Box lx={{ alignItems: "flex-start" }}>
-          <Button
-            appearance="gray"
-            size="sm"
-            disabled={viewModel.isMaximum}
-            onPress={viewModel.onSetMaximum}
-            testID="xrp-limit-set-maximum"
-          >
-            {t("xrp.tokenSettings.setToMaximum")}
-          </Button>
-        </Box>
-      </ScrollView>
-      <Box lx={{ padding: "s16" }}>
-        <Button
-          appearance="base"
-          size="lg"
-          isFull
-          disabled={viewModel.isConfirmDisabled}
-          onPress={viewModel.onConfirm}
-          testID="xrp-limit-confirm"
-        >
-          {t("common.confirm")}
-        </Button>
-      </Box>
-    </SafeAreaView>
+    <BalanceLimitScreen
+      token={tokenAccount.token}
+      limit={balanceLimit.limit}
+      balance={tokenAccount.balance}
+      onConfirm={onConfirm}
+      trackCategory="XrpManageTokenFlow"
+    />
   );
 }
 
