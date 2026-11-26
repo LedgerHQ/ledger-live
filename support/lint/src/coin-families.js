@@ -9,7 +9,7 @@ import { isSpecifierCall } from "./specifier-calls.js";
 const SKILL = ".agents/skills/coin-families-contract/SKILL.md";
 
 const MESSAGES = {
-  "coin-package": `Generic code must not import a coin module or a live-signer. Reach coin code through the families contract. See ${SKILL}`,
+  "coin-package": `Generic code must not import a coin module, a live-signer, a device signer kit or wallet-btc. Reach coin code through the families contract. See ${SKILL}`,
   "live-common-family": `Generic code must not import a live-common family. Reach coin code through the families contract. See ${SKILL}`,
   "app-family": `Generic code must not import an app families folder directly. Go through the families contract. See ${SKILL}`,
   directive: `Inline disables of coin-families rules are not allowed: a violation is baselined, never silenced. See ${SKILL}`,
@@ -18,7 +18,8 @@ const MESSAGES = {
 // coin-package. The package name, not a prefix capture, decides: the capture would stop at the first `-` and
 // take `coin-module-framework` for a coin module.
 const LEDGERHQ_PACKAGE = /^@ledgerhq\/([^/]+)/;
-const COIN_PACKAGE_PREFIXES = ["coin-", "live-signer-"];
+const COIN_PACKAGE_PREFIXES = ["coin-", "live-signer-", "device-signer-kit-"];
+const COIN_PACKAGE_NAMES = new Set(["wallet-btc"]);
 const NOT_A_COIN_MODULE = new Set([
   "coin-module-framework",
   "coin-framework",
@@ -66,11 +67,13 @@ const SCHEMA = [
 
 /**
  * @param {string} specifier
- * @returns {boolean} whether it names a coin module or a live-signer package, or one of their subpaths
+ * @returns {boolean} whether it names a coin module, a live-signer, a device signer kit or wallet-btc, or one of
+ *   their subpaths
  */
 function isCoinPackage(specifier) {
   const name = LEDGERHQ_PACKAGE.exec(specifier)?.[1];
   if (!name) return false;
+  if (COIN_PACKAGE_NAMES.has(name)) return true;
   if (!COIN_PACKAGE_PREFIXES.some(prefix => name.startsWith(prefix))) return false;
   return !NOT_A_COIN_MODULE.has(name) && !name.startsWith(COIN_TESTER_PREFIX);
 }
