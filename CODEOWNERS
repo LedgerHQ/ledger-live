@@ -57,6 +57,7 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /shared/env/                                             @ledgerhq/platform
 /shared/native-performance/                              @ledgerhq/platform
 /shared/device-locale/                                   @ledgerhq/platform
+/shared/storage/                                         @ledgerhq/platform
 
 # Platform — mobile
 apps/ledger-live-mobile/android/                         @ledgerhq/platform
