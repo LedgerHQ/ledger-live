@@ -56,11 +56,15 @@ const record = (name, message, context) => {
   return (context ? recordTask.with(context) : recordTask).writes(result);
 };
 
-/** Checks out the newest open upgrade PR's branch and prints its name; prints nothing when none. */
+/**
+ * Checks out the newest open upgrade PR's branch and prints its name; prints nothing when none.
+ * Filters in jq: `--author` or `--search` would go through GitHub search, which returns
+ * 30 results by default and lags behind newly opened PRs.
+ */
 const checkoutOpenPrTask = task("checkout-open-pr")
   .runs(
     `set -eo pipefail
-branch=$(gh pr list --state open --author app/koda-apps --json headRefName --jq '[.[].headRefName | select(startswith("${settings.branchPrefix}"))][0] // ""')
+branch=$(gh pr list --state open --limit 1000 --json headRefName,author --jq '[.[] | select(.author.login == "app/koda-apps" and (.headRefName | startswith("${settings.branchPrefix}"))) | .headRefName][0] // ""')
 if [ -n "$branch" ]; then
   GIT_TERMINAL_PROMPT=0 timeout 300 git fetch --quiet origin "$branch:refs/remotes/origin/$branch"
   git checkout --quiet -B "$branch" "origin/$branch"
