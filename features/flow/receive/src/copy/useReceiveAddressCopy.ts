@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useTranslation } from "@shared/i18n";
 import type { ReceiveAddressOptionId } from "../logic/toReceiveAddressOptions";
 import type { ReceiveNoticeKind } from "../logic/toReceiveNotices";
+import type { ReceiveGateType } from "../types";
 
 export const RECEIVE_HELP_QUESTIONS = ["receiveFromExchange", "receiveSecurely"] as const;
 
@@ -32,6 +33,9 @@ export type ReceiveAddressCopy = Readonly<{
   memoTitle: string;
   memoDescription: string;
   memoGotIt: string;
+  gates: Readonly<
+    Record<ReceiveGateType, Readonly<{ title: string; description: string; actionLabel: string }>>
+  >;
 }>;
 
 /** The labels of the address screen, under the `receiveAddress` namespace. */
@@ -81,6 +85,21 @@ export function useReceiveAddressCopy({
       memoTitle: t("receiveAddress.memoTag.title"),
       memoDescription: t("receiveAddress.memoTag.description"),
       memoGotIt: t("receiveAddress.memoTag.gotIt"),
+      gates: {
+        onboarding: {
+          title: t("receiveAddress.gates.onboarding.title"),
+          description: t("receiveAddress.gates.onboarding.description", { network: networkName }),
+          actionLabel: t("receiveAddress.gates.onboarding.action"),
+        },
+        activation: {
+          title: t("receiveAddress.gates.activation.title", { asset: assetTicker }),
+          description: t("receiveAddress.gates.activation.description", {
+            asset: assetTicker,
+            network: networkName,
+          }),
+          actionLabel: t("receiveAddress.gates.activation.action", { asset: assetTicker }),
+        },
+      },
     }),
     [t, assetTicker, networkName],
   );

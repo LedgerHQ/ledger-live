@@ -49,6 +49,20 @@ describe("useReceiveAddressCopy", () => {
       memoDescription:
         "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
       memoGotIt: "Got it",
+      gates: {
+        onboarding: {
+          title: "Set up your account first",
+          description:
+            "Your account must be onboarded on the Ethereum network before it can receive funds.",
+          actionLabel: "Onboard account",
+        },
+        activation: {
+          title: "Add USDC to your account first",
+          description:
+            "Your account must enable USDC on the Ethereum network before it can receive it. This may cost a small network fee.",
+          actionLabel: "Add USDC",
+        },
+      },
     });
   });
 });

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { accountsSlice, type AccountsState, type AccountUUID } from "@domain/entity-account";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
@@ -32,7 +32,15 @@ export type UseReceiveScreenDataResult = Readonly<{
   data: ReceiveScreenData;
   /** Absent until it is read. */
   accountStatus: AccountStatus | undefined;
+  /**
+   * Reads the account's receive and statuses again, once the user may have onboarded or activated,
+   * then again while the gate stays: the chain or the sync cache may not show it yet.
+   */
+  refreshGate: () => void;
 }>;
+
+const GATE_FOLLOW_UP_DELAY = 10_000;
+const GATE_FOLLOW_UPS = 6;
 
 const { selectAccountEntry } = accountsSlice.getSelectors(
   (state: ReceiveScreenRootState) => state.accountEntries,
@@ -97,9 +105,31 @@ export function useReceiveScreenData(
     refreshAssetStatus,
   ]);
 
+  const readGateAgain = useCallback(() => {
+    void refreshReceive();
+    void refreshAccountStatus();
+    if (isToken) void refreshAssetStatus();
+  }, [isToken, refreshReceive, refreshAccountStatus, refreshAssetStatus]);
+
+  const [followUps, setFollowUps] = useState(0);
+  const refreshGate = useCallback(() => {
+    readGateAgain();
+    setFollowUps(GATE_FOLLOW_UPS);
+  }, [readGateAgain]);
+  const isGated = state.type === "onboardingRequired" || state.type === "activationRequired";
+  useEffect(() => {
+    if (!isGated || followUps === 0) return;
+    const timer = setTimeout(() => {
+      readGateAgain();
+      setFollowUps(remaining => remaining - 1);
+    }, GATE_FOLLOW_UP_DELAY);
+    return () => clearTimeout(timer);
+  }, [isGated, followUps, readGateAgain]);
+
   return {
     descriptor,
     data: state.type === "error" ? { type: "error", retry } : state,
     accountStatus,
+    refreshGate,
   };
 }

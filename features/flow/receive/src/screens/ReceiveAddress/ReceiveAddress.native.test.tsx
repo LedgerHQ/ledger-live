@@ -8,6 +8,7 @@ import {
   within,
 } from "@testing-library/react-native";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
+import { mockAccountStatus } from "@domain/entity-account-status/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
   makeReceiveTestStore,
@@ -261,5 +262,22 @@ describe("ReceiveAddress (Native)", () => {
 
     fireEvent.press(screen.getByText("Got it"));
     expect(screen.queryByTestId("receive-address-memo-panel")).toBeNull();
+  });
+
+  it("asks to onboard the account in place of the address, then opens the app's flow", async () => {
+    const onResolveGate = jest.fn();
+    renderScreen(
+      jest.fn(),
+      makeReceiveTestStore({
+        accountStatus: async () => mockAccountStatus({ gate: { type: "onboarding" } }),
+      }),
+      { onResolveGate },
+    );
+
+    expect(await screen.findByTestId("receive-address-gate-onboarding")).toBeTruthy();
+    expect(screen.queryByTestId("receive-address-skeleton")).toBeNull();
+
+    await userEvent.setup().press(screen.getByText("Onboard account"));
+    expect(onResolveGate).toHaveBeenCalledTimes(1);
   });
 });

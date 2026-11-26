@@ -55,6 +55,9 @@ export type ReceiveFamilyConfigPort = (
   input: Omit<ReceiveFamilyConfigInput, "featureFlags" | "legacyAccount">,
 ) => Partial<ReceiveFamilyConfig>;
 
+/** What the account must do on its network before it can receive: register it, or enable the token. */
+export type ReceiveGateType = "onboarding" | "activation";
+
 /** A piece of an incident's text: a link when it has a `url`. */
 export type ReceiveIncidentTextPart = Readonly<{ text: string; url?: string }>;
 

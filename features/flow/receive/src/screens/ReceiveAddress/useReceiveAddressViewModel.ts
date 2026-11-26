@@ -4,7 +4,9 @@ import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVer
 import { splitAddress } from "../../logic/splitAddress";
 import type { ReceiveAddressProps } from "./ReceiveAddress.types";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
+import type { ReceiveGateType } from "../../types";
 import { useReceiveAddressActions } from "./useReceiveAddressActions";
+import { useReceiveAddressGate } from "./useReceiveAddressGate";
 import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
 import { useReceiveAddressHelp } from "./useReceiveAddressHelp";
 import { useReceiveAddressMemo } from "./useReceiveAddressMemo";
@@ -12,13 +14,18 @@ import { useReceiveAddressNotices } from "./useReceiveAddressNotices";
 import { useReceiveAddressSelection } from "./useReceiveAddressSelection";
 import { useReceiveAddressServiceStatus } from "./useReceiveAddressServiceStatus";
 import { useReceiveFamilyConfig } from "./useReceiveFamilyConfig";
-import { useReceiveScreenData } from "./useReceiveScreenData";
+import { useReceiveScreenData, type ReceiveScreenData } from "./useReceiveScreenData";
 
 export type ReceiveAddressViewModel = ReceiveAddressViewProps &
   Readonly<{
     /** The device verification to mount, while one runs. */
     verification: UseVerifyAddressExecutorViewModelParams | undefined;
   }>;
+
+const GATE_OF_STATE: Partial<Record<ReceiveScreenData["type"], ReceiveGateType>> = {
+  onboardingRequired: "onboarding",
+  activationRequired: "activation",
+};
 
 export function useReceiveAddressViewModel({
   accountUUID,
@@ -29,8 +36,12 @@ export function useReceiveAddressViewModel({
   VerifyAddressExecutor,
   getFamilyConfig,
   serviceIncidents,
+  onResolveGate,
 }: ReceiveAddressProps): ReceiveAddressViewModel {
-  const { descriptor, data, accountStatus } = useReceiveScreenData(accountUUID, assetId);
+  const { descriptor, data, accountStatus, refreshGate } = useReceiveScreenData(
+    accountUUID,
+    assetId,
+  );
   const header = useReceiveAddressHeader(descriptor, assetId);
   const receive = data.type === "ready" ? data.receive : undefined;
   const selection = useReceiveAddressSelection(receive);
@@ -72,6 +83,13 @@ export function useReceiveAddressViewModel({
     onOpenUrl: openSupportUrl,
   });
   const { helpCard, helpPanel } = useReceiveAddressHelp({ copy, onOpenUrl: openSupportUrl });
+  const gate = useReceiveAddressGate({
+    gateType: GATE_OF_STATE[data.type],
+    isVisible: !serviceStatus && !helpPanel,
+    copy,
+    onResolveGate,
+    refreshGate,
+  });
   const { memoCard, memoPanel } = useReceiveAddressMemo({
     selected,
     copy,
@@ -116,6 +134,7 @@ export function useReceiveAddressViewModel({
   return {
     isLoading: data.type === "loading",
     error,
+    gate,
     addressSelection,
     address,
     actions: shownActions,
