@@ -129,7 +129,7 @@ function RecoverIllustration() {
 }
 
 const styles = StyleSheet.create({
-  illustration: { width: 240, height: 240 },
+  illustration: { width: "100%", height: 200 },
 });
 
 function DetailSheet({
