@@ -20,6 +20,7 @@ import {
   TO_MANY_UTXOS_CRITICAL_COUNT,
   TO_MANY_UTXOS_WARNING_COUNT,
 } from "./getTransactionStatus";
+import { prepareTransaction } from "./prepareTransaction";
 
 jest.mock("../network/gateway", () => ({
   ...jest.requireActual("../network/gateway"),
@@ -291,6 +292,12 @@ describe("getTransactionStatus", () => {
       fee,
       tokenId: "",
     });
+    const statusOfSendMax = async (spendable: BigNumber) => {
+      mockConfig = { ...defaultConfig, minReserve: 0 };
+      const account = { ...mockAccount, balance: spendable, spendableBalance: spendable };
+      const prepared = await prepareTransaction(mockContext, account, sendMax(new BigNumber(0)));
+      return getTransactionStatus(account, prepared);
+    };
     it("should return NotEnoughBalance when the fee leaves nothing to send", async () => {
       mockConfig = { ...defaultConfig, minReserve: 0 };
 
@@ -323,6 +330,28 @@ describe("getTransactionStatus", () => {
       );
 
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalanceBecauseDestinationNotCreated);
+    });
+
+    describe("prepared with the tiered fee", () => {
+      const CC = new BigNumber(10).pow(38);
+
+      it("should send a positive amount from 1.01 CC, warning that the fee is high", async () => {
+        const result = await statusOfSendMax(CC.times(1.01));
+
+        expect(result.amount.gt(0)).toBe(true);
+        expect(result.errors).toEqual({});
+        expect(result.warnings.feeTooHigh).toBeInstanceOf(FeeTooHigh);
+      });
+
+      it.each([
+        ["1 CC", CC],
+        ["0.5 CC", CC.div(2)],
+      ])("should return NotEnoughBalance from %s", async (_, spendable) => {
+        const result = await statusOfSendMax(spendable);
+
+        expect(result.amount).toEqual(new BigNumber(0));
+        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+      });
     });
   });
 
