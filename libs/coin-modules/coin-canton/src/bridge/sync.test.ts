@@ -233,6 +233,19 @@ const storedOperation = (height: number, value = 1) =>
     extra: { instrumentId: "Amulet" },
   }) as unknown as CantonAccount["operations"][number];
 
+/** A receive row of the "mixed-in" transaction, from a sender, with its transfer's memo. */
+const receive = (uid: string, sender: string, reason: string): OperationInfo => {
+  const row = createMockOperationView({ type: "Receive", txHash: "mixed-in", uid });
+  return {
+    ...row,
+    senders: [sender],
+    transfers: (row.transfers ?? []).map(transfer => ({
+      ...transfer,
+      details: { ...transfer.details, metadata: { reason } },
+    })),
+  };
+};
+
 /** A failed transfer instruction as the gateway sends it: one transfer of 0, with no fee. */
 const failed = (row: OperationInfo): OperationInfo =>
   ({
@@ -535,6 +548,36 @@ describe("makeGetAccountShape", () => {
 
       expect(shape.operations).toEqual([
         expect.objectContaining({ type: "IN", value: BigNumber(0), hasFailed: true }),
+      ]);
+    });
+
+    it("keeps the fee of a failed row with an amount, moving no value", async () => {
+      const shape = await syncRows([{ ...createMockOperationView(), status: "Failed" }]);
+
+      expect(shape.operations).toEqual([
+        expect.objectContaining({
+          type: "OUT",
+          value: BigNumber(5),
+          fee: BigNumber(5),
+          hasFailed: true,
+        }),
+      ]);
+    });
+
+    it("leaves its sender and memo off a successful receive of the same transaction", async () => {
+      const shape = await syncRows([
+        failed(receive("uid-eve", "eve", "failed")),
+        receive("uid-bob", "bob", "paid"),
+      ]);
+
+      expect(shape.operations).toEqual([
+        expect.objectContaining({
+          type: "IN",
+          value: BigNumber(100),
+          senders: ["bob"],
+          hasFailed: false,
+          extra: expect.objectContaining({ memo: "paid" }),
+        }),
       ]);
     });
 
@@ -1237,6 +1280,8 @@ describe("makeGetAccountShape", () => {
                 type: "FEES",
                 value: BigNumber(5),
                 fee: BigNumber(5),
+                senders: ["party123"],
+                recipients: [],
                 hasFailed: false,
               }),
             ]);

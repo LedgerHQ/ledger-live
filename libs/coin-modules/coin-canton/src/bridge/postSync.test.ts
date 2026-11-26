@@ -94,7 +94,10 @@ describe("postSync", () => {
     });
     const synced = account({
       subAccounts: [
-        subAccount({ operations: [operation("synced")], pendingOperations: [operation("synced")] }),
+        subAccount({
+          operations: [operation("synced")],
+          pendingOperations: [operation("synced"), operation("gone-since")],
+        }),
       ],
     });
 
