@@ -22,7 +22,7 @@ function getTransportIdentifier(device: Device): TransportIdentifier {
   return device.wired ? rnHidTransportIdentifier : rnBleTransportIdentifier;
 }
 
-export function makeMockDiscoveredDevice(device: Device): DiscoveredDevice {
+export function toDiscoveredDevice(device: Device): DiscoveredDevice {
   const dmkDeviceModelId = ledgerToDmkDeviceIdMap[device.modelId] ?? DMKDeviceModelId.NANO_X;
   return {
     id: device.deviceId,
