@@ -36,6 +36,7 @@ function seededFunnelFlags({
         connectUnseededDevice: false,
         offerLedgerSync,
         unifiedEntryPoints,
+        recover: true,
       },
     },
     lwmNotificationsOptIn: { enabled: false },
