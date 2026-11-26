@@ -1,5 +1,4 @@
 import { addPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/pending";
-import { setEnv } from "@ledgerhq/live-env";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { createMockCantonAccount } from "../test/fixtures";
@@ -7,7 +6,7 @@ import type { CantonAccount } from "../types";
 import { postSync } from "./postSync";
 import { nextPendingSequenceNumber } from "./signOperation";
 
-const RETENTION_MS = 30 * 60 * 1000;
+const DEFAULT_RETENTION_MS = 30 * 60 * 1000;
 
 const operation = (hash: string, overrides: Partial<Operation> = {}): Operation => ({
   id: `op-${hash}`,
@@ -45,8 +44,6 @@ const account = (overrides: Partial<CantonAccount>): CantonAccount => ({
 });
 
 describe("postSync", () => {
-  beforeAll(() => setEnv("OPERATION_OPTIMISTIC_RETENTION", RETENTION_MS));
-
   it("removes a pending operation whose transaction is synced, keeping the others", () => {
     const synced = account({
       operations: [
@@ -71,7 +68,7 @@ describe("postSync", () => {
   });
 
   it("removes the sub-accounts' pending operations past the retention, and those synced", () => {
-    const expired = operation("expired", { date: new Date(Date.now() - RETENTION_MS - 1) });
+    const expired = operation("expired", { date: new Date(Date.now() - DEFAULT_RETENTION_MS - 1) });
     const synced = account({
       subAccounts: [
         subAccount({
