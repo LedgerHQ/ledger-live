@@ -37,6 +37,11 @@ type Trustchain = {
 }
 ```
 
+In Ledger Wallet this store is the `trustchain` slice of
+[`@domain/entity-key-ring`](../../domain/entity/key-ring). Only `@features/platform-key-ring`
+reads its fields; the apps pass an opaque session to the key ring client
+([App integration](./07-app-integration.md#sessions-and-opaque-results)).
+
 - `walletSyncEncryptionKey` is derived at the `applicationPath` location of the
   [derivation tree](./01-hardware-lkrp.md#the-derivation-tree--the-application-path).
 - `applicationPath` **rotates** (the last index increments) when the key must change — e.g.
@@ -193,9 +198,9 @@ streams. Consequently `restoreTrustchain` and `getMembers` reject a closed strea
 `TrustchainEjected`, and `getOrCreateTrustchain` reopens on the next index after a close.
 
 Because ejection is already handled by the [watch-loop recovery](#errors--automatic-recovery)
-(`onTrustchainRefreshNeeded` → `resetTrustchainStore`), the **UI needs no change**; the
-integrations' `useDestroyTrustchain` hooks simply call `destroyApplication` instead of
-`destroyTrustchain`.
+(`onTrustchainRefreshNeeded` → `resetKeyRingState`), the **UI needs no change**; the key ring
+client's `destroy`, which the apps' `useDestroyTrustchain` hooks call, runs `destroyApplication`
+instead of `destroyTrustchain`.
 
 ## Errors & automatic recovery
 

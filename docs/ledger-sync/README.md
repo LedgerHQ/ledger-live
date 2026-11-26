@@ -47,6 +47,11 @@ The **domain types are unchanged** — the code still uses `Trustchain`, `Member
 `TrustchainSDK`, `TrustchainOutdated`, etc. So throughout these docs "Trustchain" refers to
 the protocol/objects and "LKRP" to the library/product that implements it.
 
+Ledger Wallet itself speaks a third vocabulary: the **key ring** packages wrap LKRP behind a
+protocol-agnostic API (`KeyRingClient`, `KeyRingSession`, key tree, member key), so a later LKRP
+version swaps one adapter. Only `@features/platform-key-ring` imports the LKRP libraries; see
+[App integration](./07-app-integration.md).
+
 ## The layered architecture
 
 From the lowest level (hardware) to the highest (the app the user sees):
@@ -71,8 +76,14 @@ flowchart TB
         cssdk <-->|"pull / push / delete<br/>(E2E encrypted)"| csapi
     end
 
+    subgraph KR["Key ring (Ledger Wallet trust)"]
+        pkr["features/platform/key-ring<br/><b>KeyRingClient</b> · v1 adapter · intents"]
+        ekr["domain/entity/key-ring<br/>trustchain slice"]
+        pkr --> ekr
+    end
+
     subgraph WS["4 · Wallet Sync (app integration)"]
-        wsdm["shared/wallet-sync + features/platform/wallet-sync<br/><b>CloudSyncDataManager</b><br/>+ createWalletSyncWatchLoop"]
+        wsdm["shared/cloud-sync-module + features/platform/wallet-sync<br/><b>CloudSyncDataManager</b><br/>+ useWalletSyncWatcher"]
     end
 
     subgraph APPS["Consumers"]
@@ -83,10 +94,13 @@ flowchart TB
     end
 
     hwlkrp --> tcsdk
-    tcsdk --> cssdk
+    tcsdk --> pkr
+    pkr -->|"KeyRingStream: auth, encrypt"| wsdm
     cssdk --> wsdm
     wsdm --> lld
     wsdm --> llm
+    pkr --> lld
+    pkr --> llm
     wsdm --> webtools
     tcsdk -.-> webtools
     cssdk -.-> webtools
@@ -113,7 +127,9 @@ flowchart TB
 | Trustchain API | [trustchain-backend](https://github.com/LedgerHQ/trustchain-backend) | CRUD-like API for Trustchain operations + authentication. |
 | live-wallet / cloudsync | [`shared/cloud-sync`](../../shared/cloud-sync) | `CloudSyncSDK`: atomic pull / push / delete of the encrypted wallet-sync data. |
 | Cloud Sync API | [cloud-sync-backend](https://github.com/LedgerHQ/cloud-sync-backend) | Stores encrypted data, authenticated via the Trustchain API. |
-| live-wallet / walletsync | [`shared/cloud-sync-module`](../../shared/cloud-sync-module) + [`features/platform/wallet-sync`](../../features/platform/wallet-sync) | `CloudSyncDataManager` aggregation + watch-loop lifecycle. |
+| live-wallet / walletsync | [`shared/cloud-sync-module`](../../shared/cloud-sync-module) + [`features/platform/wallet-sync`](../../features/platform/wallet-sync) | `CloudSyncDataManager` aggregation + the watch loop and Cloud Sync client both apps share. |
+| Key ring trust | [`features/platform/key-ring`](../../features/platform/key-ring) | `KeyRingClient` port over the TrustchainSDK, device intents, API auth identity provider, rotation lifecycle. The only LKRP importer in Ledger Wallet. |
+| Key ring state | [`domain/entity/key-ring`](../../domain/entity/key-ring) | The `trustchain` slice (same persisted shape) and the selectors features read. |
 | live-wallet / accounts module | [`libs/live-wallet/src/accounts`](../../libs/live-wallet/src/accounts) | Accounts sync module (interim — pending `@domain/entity-account`). |
 | domain entity modules | [`domain/entity/account-name`](../../domain/entity/account-name), [`domain/entity/recent-addresses`](../../domain/entity/recent-addresses), [`domain/entity/wallet-sync`](../../domain/entity/wallet-sync) | RTK slices + per-type `cloudSyncModule.ts` implementations. |
 | web-tools | [`apps/web-tools/src/trustchain`](../../apps/web-tools/src/trustchain) · [live.ledger.tools/trustchain](https://live.ledger.tools/trustchain) | Dev/QA tools to debug Trustchain, Cloud Sync and test synchronization across simulated instances. |
