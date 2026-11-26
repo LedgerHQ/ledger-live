@@ -5,6 +5,7 @@ import type { AccountBridge } from "@ledgerhq/types-live";
 import { CANTON_UNSET_RECIPIENT } from "@ledgerhq/coin-canton/constants";
 import BigNumber from "bignumber.js";
 import { validateAddress } from "../../../bridge/validateAddress";
+import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 
 // The calls data can be copied to mock-data.ts from the file.
 // This function creates a live API with logging for generating mock data
@@ -77,19 +78,7 @@ const sync = (_initialAccount: CantonAccount): any => {
   };
 };
 
-const receive = (_account: CantonAccount, _opts: { deviceId: string }): any => {
-  return {
-    subscribe: (observer: any) => {
-      observer.next({
-        address: "mock-address",
-        path: "44'/60'/0'/0/0",
-        publicKey: "mock-public-key",
-      });
-      observer.complete();
-      return { unsubscribe: () => {} };
-    },
-  };
-};
+const receive = makeAccountBridgeReceive();
 
 const signOperation = (): any => {
   return {
