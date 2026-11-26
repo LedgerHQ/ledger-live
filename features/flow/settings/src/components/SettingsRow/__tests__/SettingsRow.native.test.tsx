@@ -11,10 +11,10 @@ describe("SettingsRow", () => {
     expect(screen.getByText("Hide amounts")).toBeVisible();
   });
 
-  it("shows the whole description, on as many lines as it needs", () => {
+  it("shows the description on up to two lines", () => {
     render(<SettingsRow title="Hide balance" description="Hide amounts" />);
 
-    expect(screen.getByText("Hide amounts").parent).toHaveProp("numberOfLines", 0);
+    expect(screen.getByText("Hide amounts").parent).toHaveProp("numberOfLines", 2);
   });
 
   it("selects the row when it leads somewhere", async () => {

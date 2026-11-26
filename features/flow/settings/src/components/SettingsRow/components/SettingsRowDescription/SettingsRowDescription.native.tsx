@@ -10,8 +10,8 @@ export function SettingsRowDescription({
   return (
     <>
       {description ? (
-        // Lumen cuts descriptions to one line by default; the design wraps them, so 0 lifts the limit.
-        <ListItemDescription numberOfLines={0}>{description}</ListItemDescription>
+        // The Lumen list item has a fixed height: past two lines the description is clipped.
+        <ListItemDescription numberOfLines={2}>{description}</ListItemDescription>
       ) : null}
       {link ? (
         <Link
