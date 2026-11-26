@@ -178,7 +178,10 @@ export type WalletSyncWatcherPorts<
   walletsync: CloudSyncDataManager<LocalState, Update, Schema, DistantState>;
   /** Reads the current store state, not a render snapshot. */
   getState: () => State;
-  /** Receives the reset actions when this instance is removed or not allowed. */
+  /**
+   * Receives the reset actions when this instance is removed or not allowed: the store dispatch,
+   * whose thunk `extraArgument` holds the key ring runtime the reset thunk reads.
+   */
   dispatch: KeyRingDispatch;
   /** Module-level selectors: a new function on each render would restart the loop. */
   localStateSelector: (state: State) => LocalState;

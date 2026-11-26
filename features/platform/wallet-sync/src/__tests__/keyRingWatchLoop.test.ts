@@ -3,10 +3,14 @@ import { setupServer } from "msw/node";
 import { z } from "zod";
 import { makeCipher, type TrustchainSDK } from "@shared/cloud-sync";
 import type { CloudSyncDataManager } from "@shared/cloud-sync-module";
-import type { KeyRingStream } from "@features/platform-key-ring";
+import type { KeyRingRotationHandler, KeyRingStream } from "@features/platform-key-ring";
+import { fakeKeyRingClient } from "@features/platform-key-ring/testing";
 import { createKeyRingCloudSync } from "../cloudSync/keyRingCloudSync";
 import { makeLocalIncrementalUpdate, makeSaveNewUpdate } from "../watchLoop/incrementalUpdates";
-import { createRotationReencryption } from "../cloudSync/rotationReencryption";
+import {
+  createRotationReencryption,
+  registerRotationReencryption,
+} from "../cloudSync/rotationReencryption";
 import { createKeyRingWatchLoop } from "../internals/keyRingWatchLoop";
 
 const API = "https://cloud-sync.test";
@@ -222,5 +226,33 @@ describe("createRotationReencryption", () => {
     expect(calls).toEqual(["delete old Bearer token-old", "upload new Bearer token-new"]);
     expect(next.encrypt).toHaveBeenCalled();
     expect(await cipher.decrypt(LOCATOR, uploaded)).toEqual({ value: "current" });
+  });
+});
+
+describe("registerRotationReencryption", () => {
+  it("registers one re-encryption handler on the client lifecycle and returns its unregistration", async () => {
+    const unregister = jest.fn();
+    const onKeyRotation = jest.fn((_handler: KeyRingRotationHandler) => unregister);
+    const client = fakeKeyRingClient({
+      lifecycle: { onKeyRotation, subscribe: () => () => undefined },
+    });
+    server.use(
+      http.delete(URL, () => new HttpResponse(null, { status: 204 })),
+      http.post(URL, () => HttpResponse.json({ status: "updated" })),
+    );
+
+    const unregistration = registerRotationReencryption(client, {
+      cloudSyncApiBaseUrl: API,
+      getCurrentWSState: () => ({ data: { value: "current" }, version: 4 }),
+    });
+
+    expect(onKeyRotation).toHaveBeenCalledTimes(1);
+    expect(unregistration).toBe(unregister);
+    const previous = fakeStream({ treeId: "root-id", streamPath: "old" });
+    const next = fakeStream({ treeId: "root-id", streamPath: "new" });
+    await (
+      await onKeyRotation.mock.calls[0][0](previous)
+    )(next);
+    expect(next.encrypt).toHaveBeenCalled();
   });
 });

@@ -6,6 +6,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { z } from "zod";
 import type { CloudSyncDataManager } from "@shared/cloud-sync-module";
 import {
+  keyRingRuntimeExtra,
   KeyRingMemberRemovedError,
   KeyRingNotAllowedError,
   selectKeyRingSession,
@@ -73,8 +74,11 @@ function fakeStream(): KeyRingStream {
 
 function setup(pull: () => Promise<void>) {
   const dispatched: unknown[] = [];
+  const extra = keyRingRuntimeExtra({
+    getState: () => ({ trustchain: { trustchain: null, memberCredentials: null } }),
+  });
   function dispatch(action: unknown): unknown {
-    if (typeof action === "function") return action(dispatch);
+    if (typeof action === "function") return action(dispatch, getState, extra);
     dispatched.push(action);
     return action;
   }
