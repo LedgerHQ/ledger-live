@@ -243,6 +243,7 @@ function seededMachineContext(
   return {
     sessionId: "s1",
     onboardedOnEntry: true,
+    connectSeededDevice: true,
     isOnboarded: true,
     deviceModelId: "stax",
     firmwareVersion: "2.4.0",

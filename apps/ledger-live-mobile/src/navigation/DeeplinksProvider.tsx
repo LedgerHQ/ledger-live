@@ -88,8 +88,28 @@ function isWalletConnectLink(url: string) {
   );
 }
 
+const SYNC_ONBOARDING_DEEP_LINK_PATH = "sync-onboarding";
+
+const deviceOnboardingSyncScreenConfig = {
+  [NavigatorName.DeviceOnboarding]: {
+    screens: {
+      [ScreenName.DeviceOnboardingConnect]: SYNC_ONBOARDING_DEEP_LINK_PATH,
+    },
+  },
+};
+
+export type LinkingOptionsParams = {
+  isDeviceOnboardingEnabled?: boolean;
+};
+
+export type OnboardingLinkingOptionsParams = LinkingOptionsParams & {
+  acceptedTermsOfUse: boolean;
+};
+
 // DeepLinking
-export const linkingOptions = () => ({
+export const linkingOptions = ({
+  isDeviceOnboardingEnabled = false,
+}: LinkingOptionsParams = {}) => ({
   async getInitialURL() {
     const url = await Linking.getInitialURL();
     if (url) {
@@ -137,7 +157,9 @@ export const linkingOptions = () => ({
     "https://ledger-staging.go.link",
   ],
   config: {
+    ...(isDeviceOnboardingEnabled ? { initialRouteName: NavigatorName.Base } : {}),
     screens: {
+      ...(isDeviceOnboardingEnabled ? deviceOnboardingSyncScreenConfig : {}),
       [NavigatorName.Base]: {
         initialRouteName: NavigatorName.Main,
         screens: {
@@ -153,7 +175,11 @@ export const linkingOptions = () => ({
 
           [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
 
-          [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
+          ...(!isDeviceOnboardingEnabled
+            ? {
+                [ScreenName.BleDevicePairingFlow]: SYNC_ONBOARDING_DEEP_LINK_PATH,
+              }
+            : {}),
 
           [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
 
@@ -242,23 +268,30 @@ export const linkingOptions = () => ({
   },
 });
 
-const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
+export const getOnboardingLinkingOptions = ({
+  acceptedTermsOfUse,
+  isDeviceOnboardingEnabled = false,
+}: OnboardingLinkingOptionsParams) => ({
   ...linkingOptions(),
   config: {
     initialRouteName: NavigatorName.BaseOnboarding,
     screens: !acceptedTermsOfUse
       ? {}
       : {
-          [NavigatorName.BaseOnboarding]: {
-            screens: {
-              [NavigatorName.Onboarding]: {
-                initialRouteName: ScreenName.OnboardingWelcome,
-                screens: {
-                  [ScreenName.OnboardingBleDevicePairingFlow]: "sync-onboarding",
+          ...(isDeviceOnboardingEnabled
+            ? deviceOnboardingSyncScreenConfig
+            : {
+                [NavigatorName.BaseOnboarding]: {
+                  screens: {
+                    [NavigatorName.Onboarding]: {
+                      initialRouteName: ScreenName.OnboardingWelcome,
+                      screens: {
+                        [ScreenName.OnboardingBleDevicePairingFlow]: SYNC_ONBOARDING_DEEP_LINK_PATH,
+                      },
+                    },
+                  },
                 },
-              },
-            },
-          },
+              }),
           [NavigatorName.Base]: {
             screens: {
               [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
@@ -332,15 +365,18 @@ export const DeeplinksProvider = ({
   const lwmPayTabFlag = useFeature("lwmPayTab");
   const lwmContactsFlag = useFeature("lwmContacts");
   const predictionsFlag = useFeature("ptxPredictionsLiveAppMobile");
+  const deviceOnboardingFlag = useFeature("deviceOnboarding");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
   const predictionsManifestId = predictionsFlag?.params?.manifest_id;
+  // Only the master toggle here: seeded or unseeded is decided later, once the device is read.
+  const isDeviceOnboardingEnabled = Boolean(deviceOnboardingFlag?.enabled);
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const theme = themes[resolvedTheme] as ReactNavigation.Theme;
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(() => {
-    const options = linkingOptions();
+    const options = linkingOptions({ isDeviceOnboardingEnabled });
     return (
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {
@@ -558,7 +594,10 @@ export const DeeplinksProvider = ({
                 },
               },
             }
-          : getOnboardingLinkingOptions(!!userAcceptedTerms)),
+          : getOnboardingLinkingOptions({
+              acceptedTermsOfUse: !!userAcceptedTerms,
+              isDeviceOnboardingEnabled,
+            })),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
             // Track deeplink session when app comes from background
@@ -901,6 +940,7 @@ export const DeeplinksProvider = ({
     lwmBackupHubFlag?.enabled,
     lwmPayTabFlag?.enabled,
     lwmContactsFlag?.enabled,
+    isDeviceOnboardingEnabled,
   ]);
   const [isReady, setIsReady] = React.useState(false);
   const [isNavigationContainerReady, setIsNavigationContainerReady] = React.useState(false);
