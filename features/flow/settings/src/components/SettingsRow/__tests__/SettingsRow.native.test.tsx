@@ -11,6 +11,12 @@ describe("SettingsRow", () => {
     expect(screen.getByText("Hide amounts")).toBeVisible();
   });
 
+  it("shows the whole description, on as many lines as it needs", () => {
+    render(<SettingsRow title="Hide balance" description="Hide amounts" />);
+
+    expect(screen.getByText("Hide amounts").parent).toHaveProp("numberOfLines", 0);
+  });
+
   it("selects the row when it leads somewhere", async () => {
     const user = userEvent.setup();
     const onSelect = jest.fn();

@@ -1,4 +1,5 @@
 ---
+"@features/flow-settings": minor
 "@features/flow-settings-notifications": minor
 "live-mobile": minor
 ---
