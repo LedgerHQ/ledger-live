@@ -16,7 +16,9 @@ export function fromTrongridTxInfoToOperation(
   const operation: Operation = {
     id: isInternal
       ? `${trongridTxInfo.txID}-internal-${trongridTxInfo.internalIndex}`
-      : trongridTxInfo.txID,
+      : trongridTxInfo.idSuffix
+        ? `${trongridTxInfo.txID}-${trongridTxInfo.idSuffix}`
+        : trongridTxInfo.txID,
     tx: {
       hash: trongridTxInfo.txID,
       block: {

@@ -120,6 +120,13 @@ type TransactionContract = {
   receiver_address?: string;
   unfreeze_balance?: number;
   balance?: number;
+  /** TRX (sun) a smart contract call sends to the called contract. */
+  call_value?: number;
+  /** TRC10 amount a smart contract call or creation sends to the contract, of token `token_id`. */
+  call_token_value?: number;
+  token_id?: number;
+  /** The contract a `CreateSmartContract` deploys; `call_value` is the TRX it is endowed with. */
+  new_contract?: { call_value?: number };
 };
 
 //-- Transaction details

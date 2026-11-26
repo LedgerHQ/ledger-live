@@ -8,6 +8,7 @@ import {
 } from "../network";
 import { encode58Check } from "../network/format";
 import { block82524825, block82524825TxInfos } from "./__fixtures__/block82524825";
+import * as trxSwap from "./__fixtures__/trxSwap88336767";
 import { getBlock, getBlockInfo } from "./getBlock";
 
 jest.mock("../network", () => ({
@@ -48,6 +49,15 @@ const mockConfig = {
   status: { type: "active" },
   explorer: { url: "https://tron.coin.ledger.com" },
 } as TronCoinConfig;
+
+const pair = (from: string, to: string, asset: unknown, amount: bigint) => [
+  { type: "transfer", address: from, peer: to, asset, amount: -amount },
+  { type: "transfer", address: to, peer: from, asset, amount },
+];
+const transfersOf = async () => {
+  const { transactions } = await getBlock(mockLogger, mockConfig, 100);
+  return internalTransfersOf(transactions[0].operations);
+};
 
 describe("getBlockInfo", () => {
   beforeEach(() => {
@@ -1202,6 +1212,122 @@ describe("getBlock", () => {
       expect(
         result.transactions[0].operations.map(op => op.type === "transfer" && op.amount),
       ).toEqual([-7n, 7n, -7n, 7n]);
+    });
+  });
+
+  describe("value attached to a smart contract call", () => {
+    const callerHex = "41a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2";
+    const contractHex = "41aabbccdd11223344556677889900aabbccdd1122";
+    const caller = encode58Check(callerHex);
+    const contract = encode58Check(contractHex);
+    const blockOf = (
+      type: string,
+      value: Record<string, unknown>,
+      contractRet: string = "SUCCESS",
+    ) => ({
+      blockID: "blockhash",
+      block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
+      transactions: [
+        {
+          txID: "tx1",
+          raw_data: {
+            contract: [{ type, parameter: { value: { owner_address: callerHex, ...value } } }],
+          },
+          ret: [{ contractRet }],
+        },
+      ],
+    });
+    describe("on a recorded mainnet TRX -> USDT swap", () => {
+      const wtrx = "TNUC9Qb1rRpS5CbWLmNMxXBjyFoydXjWFR";
+
+      beforeEach(() => {
+        (getBlockWithTransactions as jest.Mock).mockResolvedValue(trxSwap.block);
+        mockGetTransactionInfoByBlockNum.mockResolvedValue(trxSwap.txInfos);
+      });
+
+      it("debits the TRX the account attached and credits the router with it", async () => {
+        const { transactions } = await getBlock(mockLogger, mockConfig, 88336767);
+
+        expect(transactions[0].operations.slice(0, 2)).toEqual(
+          pair(trxSwap.account, trxSwap.router, { type: "native" }, 9_500_000_000n),
+        );
+      });
+
+      it("balances the router's TRX: what it receives with the call, it wraps as WTRX", async () => {
+        const { transactions } = await getBlock(mockLogger, mockConfig, 88336767);
+
+        const trxDeltaOf = (address: string) =>
+          transactions[0].operations
+            .filter(op => op.type === "transfer" && op.asset.type === "native")
+            .reduce(
+              (sum, op) =>
+                op.type === "transfer" && op.address === address ? sum + op.amount : sum,
+              0n,
+            );
+        expect(trxDeltaOf(trxSwap.router)).toBe(0n);
+        expect(trxDeltaOf(trxSwap.account)).toBe(-9_500_000_000n);
+        expect(trxDeltaOf(wtrx)).toBe(9_500_000_000n);
+      });
+    });
+
+    it("reports the TRC10 a call attaches with its token", async () => {
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        blockOf("TriggerSmartContract", {
+          contract_address: contractHex,
+          call_value: 5,
+          call_token_value: 7,
+          token_id: 1002000,
+        }),
+      );
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([]);
+
+      expect(await transfersOf()).toEqual([
+        ...pair(caller, contract, { type: "native" }, 5n),
+        ...pair(caller, contract, { type: "trc10", assetReference: "1002000" }, 7n),
+      ]);
+    });
+
+    it("reports nothing a failed call attached, which is refunded", async () => {
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        blockOf("TriggerSmartContract", { contract_address: contractHex, call_value: 5 }, "REVERT"),
+      );
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([]);
+
+      expect(await transfersOf()).toEqual([]);
+    });
+
+    it("credits a created contract with its endowment, read from the receipt's address", async () => {
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        blockOf("CreateSmartContract", { new_contract: { call_value: 9 } }),
+      );
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([
+        { id: "tx1", fee: 0, contract_address: contractHex },
+      ]);
+
+      expect(await transfersOf()).toEqual(pair(caller, contract, { type: "native" }, 9n));
+    });
+
+    it("reports no endowment when no receipt names the created contract", async () => {
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        blockOf("CreateSmartContract", { new_contract: { call_value: 9 } }),
+      );
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([]);
+
+      expect(await transfersOf()).toEqual([]);
+    });
+
+    it("skips an unreadable call value", async () => {
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        blockOf("TriggerSmartContract", { contract_address: contractHex, call_value: 2 ** 60 }),
+      );
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([]);
+
+      expect(await transfersOf()).toEqual([]);
+      expect(mockLogger).toHaveBeenCalledWith(
+        "tron/callValue",
+        "skipping a call value that cannot be read",
+        expect.objectContaining({ txID: "tx1" }),
+      );
     });
   });
 });

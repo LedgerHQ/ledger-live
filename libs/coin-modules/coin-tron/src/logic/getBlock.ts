@@ -23,6 +23,7 @@ import {
   decodeTrc20TransferLog,
 } from "../network/utils";
 import type { TrongridTxInfo, TrongridTxType } from "../types";
+import { readCallValues } from "../network/callValue";
 import { readInternalTransfers } from "./internalTransfers";
 
 type BlockTxInfo = TrongridTxInfo;
@@ -114,14 +115,58 @@ function toBlockTransaction(
   // refund — appears in neither `raw_data` nor the event logs, only in the receipt's internal
   // transactions. A failed transaction reverts all of them, so they are only read for a success.
   const internalOperations = txInfo.hasFailed ? [] : toInternalTransferOperations(logger, txDetail);
+  // The value the sender attaches to the call, refunded as well when the transaction fails.
+  const callValueOperations = txInfo.hasFailed
+    ? []
+    : toCallValueOperations(logger, tx, txInfo, txDetail);
 
   return {
     hash: txInfo.txID,
     failed: txInfo.hasFailed,
     fees: BigInt(fee),
     feesPayer: txInfo.from,
-    operations: [...operations, ...internalOperations],
+    operations: [...callValueOperations, ...operations, ...internalOperations],
   };
+}
+
+/**
+ * The debit/credit pair of every value the sender attached to a smart contract call (to the called
+ * contract) or creation (to the created contract, which only the receipt names).
+ */
+function toCallValueOperations(
+  logger: Logger,
+  tx: BlockTransactionAPI,
+  txInfo: BlockTxInfo,
+  txDetail: TransactionInfoByBlockNumAPI | undefined,
+): BlockOperation[] {
+  const contract = tx.raw_data.contract[0];
+  if (!contract) return [];
+  const contractAddressHex =
+    contract.type === "CreateSmartContract"
+      ? txDetail?.contract_address
+      : contract.type === "TriggerSmartContract"
+        ? contract.parameter.value.contract_address
+        : undefined;
+  if (!contractAddressHex) return [];
+
+  const contractAddress = encode58Check(contractAddressHex);
+  return readCallValues(logger, tx.txID, contract.type, contract.parameter.value).flatMap(
+    ({ amount, tokenId }) => {
+      const asset: AssetInfo = tokenId
+        ? { type: "trc10", assetReference: tokenId }
+        : { type: "native" };
+      return [
+        {
+          type: "transfer" as const,
+          address: txInfo.from,
+          peer: contractAddress,
+          asset,
+          amount: -amount,
+        },
+        { type: "transfer" as const, address: contractAddress, peer: txInfo.from, asset, amount },
+      ];
+    },
+  );
 }
 
 /**

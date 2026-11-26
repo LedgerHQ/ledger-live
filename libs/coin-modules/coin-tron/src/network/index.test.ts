@@ -4,6 +4,7 @@ import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import type { TronCoinConfig } from "../config";
 import { TronTransactionExpired } from "../types/errors";
+import { encode58Check } from "./format";
 import {
   broadcastHexTron,
   broadcastTron,
@@ -798,7 +799,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
     expect(result.native.txs).toEqual([]);
   });
 
-  it("fetchTronAccountTxsPage drops malformed and successful smart contract native records", async () => {
+  it("fetchTronAccountTxsPage drops malformed native records and values successful calls at their call value", async () => {
     mockedNetwork
       .mockResolvedValueOnce(
         mockResponse({ data: [validNativeTx, malformedTx, successfulSmartContract], meta: {} }),
@@ -816,7 +817,13 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       order: "desc",
     });
 
-    expect(result.native.txs.map(t => t.txID)).toEqual(["tx-native"]);
+    expect(result.native.txs.map(t => t.txID)).toEqual(["tx-native", "tx-smart-success"]);
+    expect(result.native.txs[1]).toMatchObject({
+      isCallValue: true,
+      to: encode58Check(recipientHex),
+      value: new BigNumber(0),
+      tokenType: undefined,
+    });
     expect(result.native.rawTimestamps).toHaveLength(3);
     expect(result.native.next).toBeUndefined();
     expect(result.trc20.txs.map(t => t.txID)).toEqual(["tx-smart-success"]);

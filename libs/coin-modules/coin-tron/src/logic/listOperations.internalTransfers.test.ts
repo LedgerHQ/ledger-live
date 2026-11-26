@@ -154,10 +154,31 @@ describe("listOperations — value moved by contracts (internal transactions)", 
       }) as never);
     });
 
-    it("lists the TRX the contract paid as an internal IN operation of the call", async () => {
+    it("lists the call with its fee, then the TRX the contract paid as an internal IN", async () => {
       const { items } = await listOperations(logger, config, account, options);
+      const block = {
+        height: 82524820,
+        hash: payout.block.blockID,
+        time: new Date(payout.block.block_header.raw_data.timestamp),
+      };
 
       expect(items).toEqual([
+        {
+          id: callTxId,
+          type: "OUT",
+          value: 0n,
+          asset: { type: "native" },
+          senders: [account],
+          recipients: [contract],
+          tx: {
+            hash: callTxId,
+            block,
+            fees: 990_300n,
+            feesPayer: account,
+            date: new Date(1778242722000),
+            failed: false,
+          },
+        },
         {
           id: `${callTxId}-internal-3`,
           type: "IN",
@@ -406,7 +427,7 @@ describe("listOperations — value moved by contracts (internal transactions)", 
 
       expect(receiptRequests()).toHaveLength(1);
       expect(requestsTo("/wallet/gettransactionbyid")).toHaveLength(1);
-      expect(items.map(op => op.id)).toEqual(["tx1-internal-0", "tx1-internal-1"]);
+      expect(items.map(op => op.id)).toEqual(["tx1", "tx1-internal-0", "tx1-internal-1"]);
     });
 
     it("fails the page with TronMissingReceipt when the node does not know the transaction yet", async () => {

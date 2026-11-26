@@ -70,7 +70,7 @@ export async function listOperations(
     );
   }
 
-  const { txs, internalTransferTxs, next } = await cutPage(logger, config, order, pages);
+  const { txs, internalTransferTxs, next } = await cutPage(logger, config, address, order, pages);
   const summedTxs = aggregateTrc20Transfers(txs, address);
   const internalTxs = await readInternalTransfersOf(logger, config, address, internalTransferTxs);
   // A stable sort: a transaction's internal transfers follow the operations of its timestamp.
@@ -166,11 +166,12 @@ function toInternalTxInfo(
 async function cutPage(
   logger: Logger,
   config: TronCoinConfig,
+  address: string,
   order: Order,
   pages: Record<TxEndpoint, TxEndpointPage>,
 ): Promise<PageContent & { next: string | undefined }> {
   const merge = (contents: Record<TxEndpoint, PageContent>): PageContent => ({
-    txs: mergeEndpoints(order, contents.native.txs, contents.trc20.txs),
+    txs: mergeEndpoints(order, address, contents.native.txs, contents.trc20.txs),
     internalTransferTxs: contents.internal.internalTransferTxs,
   });
   const cut = (keep: (timestamp: number) => boolean) =>
@@ -259,12 +260,35 @@ function followNext(
 
 function mergeEndpoints(
   order: Order,
+  address: string,
   nativeTxs: TrongridTxInfo[],
   trc20Txs: TrongridTxInfo[],
 ): TrongridTxInfo[] {
   const trc20TxIds = new Set(trc20Txs.map(tx => tx.txID));
-  const nativeTxsWithoutTrc20Record = nativeTxs.filter(tx => !trc20TxIds.has(tx.txID));
-  return [...nativeTxsWithoutTrc20Record, ...trc20Txs].sort(compareTxsByTimestamp(order));
+  const nativeTxsToList = nativeTxs.flatMap(tx =>
+    tx.isCallValue
+      ? toListedCallValue(tx, address, trc20TxIds.has(tx.txID))
+      : trc20TxIds.has(tx.txID)
+        ? []
+        : [tx],
+  );
+  return [...nativeTxsToList, ...trc20Txs].sort(compareTxsByTimestamp(order));
+}
+
+/**
+ * A call's value, listed for its sender or its contract only. A call the TRC20 endpoint lists too
+ * keeps the transaction id and the fee on its TRC20 record: the TRX attached, if any, becomes an
+ * operation of its own.
+ */
+function toListedCallValue(
+  tx: TrongridTxInfo,
+  address: string,
+  hasTrc20Record: boolean,
+): TrongridTxInfo[] {
+  if (tx.from !== address && tx.to !== address) return [];
+  if (tx.idSuffix !== undefined || !hasTrc20Record) return [tx];
+  if (!tx.value || tx.value.isZero()) return [];
+  return [{ ...tx, fee: new BigNumber(0), idSuffix: "call-value" }];
 }
 
 async function toOperations(
