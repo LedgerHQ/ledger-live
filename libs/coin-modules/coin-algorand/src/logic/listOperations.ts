@@ -49,11 +49,7 @@ export async function listOperations(
   return { items: operations, next: result.nextToken ?? "" };
 }
 
-/**
- * The fee payer of a transaction gets one FEES row, last, when no native row of the transaction carries its fee: the
- * convention A4 follows when it builds the operations of a block (ADR-0028, fee payer rule). A REWARD row carries no
- * fee, as A4 gives none to the operations that do not pay the transaction's fee, so it does not replace the FEES row.
- */
+// The fee payer without a native row gets a FEES row, last: https://github.com/LedgerHQ/a4/blob/main/docs/architecture/decisions/0028-wallet-operation-semantics-in-events.md (rule 4)
 function withFeesOperations(operations: Operation[], address: string): Operation[] {
   const byHash = new Map<string, Operation[]>();
   for (const op of operations) byHash.set(op.tx.hash, [...(byHash.get(op.tx.hash) ?? []), op]);
@@ -61,16 +57,12 @@ function withFeesOperations(operations: Operation[], address: string): Operation
   return [...byHash.values()].flatMap(rows => {
     const others = rows.filter(op => op.type !== "FEES");
     const feesPayer = rows[0].tx.feesPayer === address;
-    const native = others.some(op => op.asset.type === "native" && op.type !== "REWARD");
+    const native = others.some(op => op.asset.type === "native");
     if (!feesPayer || native) return others;
     return [...others, rows.find(op => op.type === "FEES") ?? toFeesOperation(rows, address)];
   });
 }
 
-/**
- * The FEES row of a transaction whose root row is a token or OPT operation, with the note of the root. The root row of
- * a fee payer is always listed (`isRelevantToAddress`), and every row of a transaction shares its `tx`.
- */
 function toFeesOperation(rows: Operation[], address: string): Operation {
   const { tx } = rows[0];
   const memo = rows.find(op => op.id === tx.hash)?.details?.memo;
@@ -161,7 +153,7 @@ function toFeesRow(tx: AlgoTransaction, address: string): Operation {
 }
 
 function toRewardOperation(tx: AlgoTransaction, address: string, reward: bigint): Operation {
-  const operation = toOperation(tx, {
+  return toOperation(tx, {
     id: `${tx.id}-reward-${address}`,
     type: "REWARD",
     value: reward,
@@ -169,7 +161,6 @@ function toRewardOperation(tx: AlgoTransaction, address: string, reward: bigint)
     senders: [],
     recipients: [address],
   });
-  return { ...operation, tx: { ...operation.tx, fees: 0n } };
 }
 
 // An OPT row describes the whole transaction: A4 folds the transfers of an OPT_OUT into one operation too
@@ -210,12 +201,7 @@ function transferLegs(tx: AlgoTransaction): TransferLeg[] {
   ];
 }
 
-/**
- * One row per movement of the account, with the parties of that movement, as coin-evm and coin-tezos: getBlock gives
- * one transfer per movement, and A4 one operation per transfer. A 0 movement of a transaction that also closes the
- * account gives no row, as A4 drops 0 transfers; a lone 0 movement keeps its row, as in the other coin modules. A
- * movement to the account itself gives an OUT and an IN of its amount, as coin-evm and as A4 derives its two transfers.
- */
+// One row per getBlock transfer, as A4 derives them; a lone 0 movement keeps its row, as in the other coin modules
 function toLegOperations(tx: AlgoTransaction, address: string): Operation[] {
   const legs = transferLegs(tx);
   const asset = getOperationAsset(tx);

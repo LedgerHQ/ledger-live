@@ -462,7 +462,7 @@ describe("listOperations", () => {
       value: 500n,
       senders: [],
       recipients: [address],
-      tx: { fees: 0n },
+      tx: { fees: 1000n },
     });
   });
 
@@ -492,7 +492,7 @@ describe("listOperations", () => {
 
     const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
-    expect(items.map(item => item.type)).toEqual(["OPT_IN", "REWARD", "FEES"]);
+    expect(items.map(item => item.type)).toEqual(["OPT_IN", "REWARD"]);
     expect(items[1].details).toEqual({
       memo: { type: "string", kind: "note", value: "b3B0LWlu" },
     });
@@ -524,7 +524,7 @@ describe("listOperations", () => {
 
     const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
-    expect(items.map(item => item.type)).toEqual(["OPT_IN", "REWARD", "FEES"]);
+    expect(items.map(item => item.type)).toEqual(["OPT_IN", "REWARD"]);
     expect(items[1]).not.toHaveProperty("details");
   });
 
@@ -871,7 +871,7 @@ describe("listOperations", () => {
           round: 1000000,
           timestamp: "1700000000",
           note: undefined,
-          senderRewards: new BigNumber(25),
+          senderRewards: new BigNumber(0),
           recipientRewards: new BigNumber(0),
           details: {
             assetAmount: new BigNumber(100),
@@ -890,7 +890,6 @@ describe("listOperations", () => {
       listOperations(mockAlgorandContext, address, { order: "desc" }),
     ).resolves.toMatchObject({
       items: [
-        { type: "REWARD", value: 25n, tx: { fees: 0n } },
         {
           type: "FEES",
           value: 0n,
@@ -933,7 +932,112 @@ describe("listOperations", () => {
     ).resolves.toMatchObject({ items: [] });
   });
 
-  it("should create a reward operation for a non-transfer root transaction", async () => {
+  it("should give a clawback submitter with a reward only the reward, which carries the fee", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [
+        {
+          ...asaTransfer({ id: "CLAWBACK", sender: address, recipient: "RECIPIENT", amount: 100 }),
+          senderRewards: new BigNumber(25),
+          details: {
+            assetAmount: new BigNumber(100),
+            assetId: "123",
+            assetRecipientAddress: "RECIPIENT",
+            assetSenderAddress: "SOURCE",
+            assetCloseAmount: undefined,
+            assetCloseToAddress: undefined,
+          },
+        },
+      ],
+      nextToken: undefined,
+    });
+
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
+
+    expect(items).toEqual([
+      expect.objectContaining({
+        type: "REWARD",
+        value: 25n,
+        tx: expect.objectContaining({ fees: 1000n, feesPayer: address }),
+      }),
+    ]);
+  });
+
+  it("should give the reward of an inner transaction the fees and fee payer of its root", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [
+        {
+          ...asaTransfer({ id: "APPL", sender: "ROOT_SENDER", recipient: "APP", amount: 0 }),
+          type: "appl",
+          details: undefined,
+        },
+        {
+          ...asaTransfer({
+            id: "APPL-inner-0",
+            rootId: "APPL",
+            sender: "APP",
+            recipient: address,
+            amount: 0,
+            feesPayer: "ROOT_SENDER",
+          }),
+          type: AlgoTransactionType.PAYMENT,
+          recipientRewards: new BigNumber(9),
+          details: {
+            amount: new BigNumber(50),
+            recipientAddress: address,
+            closeAmount: undefined,
+            closeToAddress: undefined,
+          },
+        },
+      ],
+      nextToken: undefined,
+    });
+
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
+
+    expect(
+      items.map(({ type, value, tx }) => ({
+        type,
+        value,
+        tx: tx.hash,
+        fees: tx.fees,
+        feesPayer: tx.feesPayer,
+      })),
+    ).toEqual([
+      { type: "IN", value: 50n, tx: "APPL", fees: 1000n, feesPayer: "ROOT_SENDER" },
+      { type: "REWARD", value: 9n, tx: "APPL", fees: 1000n, feesPayer: "ROOT_SENDER" },
+    ]);
+  });
+
+  it("should give the reward of a receiver that does not pay the fee the fee of its transaction, and no FEES operation", async () => {
+    mockGetAccountTransactions.mockResolvedValue({
+      transactions: [
+        {
+          ...asaTransfer({ id: "PAY", sender: "SENDER", recipient: address, amount: 0 }),
+          type: AlgoTransactionType.PAYMENT,
+          recipientRewards: new BigNumber(7),
+          details: {
+            amount: new BigNumber(300),
+            recipientAddress: address,
+            closeAmount: undefined,
+            closeToAddress: undefined,
+          },
+        },
+      ],
+      nextToken: undefined,
+    });
+
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
+
+    expect(
+      items.map(({ type, value, tx }) => ({ type, value, fees: tx.fees, feesPayer: tx.feesPayer })),
+    ).toEqual([
+      { type: "IN", value: 300n, fees: 1000n, feesPayer: "SENDER" },
+      { type: "REWARD", value: 7n, fees: 1000n, feesPayer: "SENDER" },
+    ]);
+  });
+
+  // A4 derives the reward as a native operation carrying the fee, so the fee payer gets no FEES operation
+  it("should give the reward of a non-transfer root transaction the fee, instead of a FEES operation", async () => {
     mockGetAccountTransactions.mockResolvedValue({
       transactions: [
         {
@@ -957,10 +1061,7 @@ describe("listOperations", () => {
     await expect(
       listOperations(mockAlgorandContext, address, { order: "desc" }),
     ).resolves.toMatchObject({
-      items: [
-        { type: "REWARD", value: 25n, tx: { fees: 0n } },
-        { type: "FEES", value: 0n, tx: { fees: 1000n } },
-      ],
+      items: [{ type: "REWARD", value: 25n, tx: { fees: 1000n } }],
     });
   });
 

@@ -57,12 +57,7 @@ function toBlockTransaction(tx: ExplorerTransaction<ExplorerAmount>): BlockTrans
   };
 }
 
-/**
- * The note of an inner transaction, on each of its transfers: listOperations gives every row the note of the
- * transaction it comes from, and the transfers of inner transactions are flattened into their root, which has its own
- * note (`memo`). `operationIndex` is the position in `operations` of the debit of the transfer, its credit is the next
- * one: the parties and asset alone do not tell apart two transfers between the same accounts.
- */
+// operationIndex: the debit of the inner transfer in `operations`, its credit is the next one
 type InnerNote = {
   from: string;
   to: string;
@@ -71,10 +66,7 @@ type InnerNote = {
   operationIndex: number;
 };
 
-/**
- * A participation reward of a transaction or of its inner transactions, with the note of the transaction that pays it:
- * listOperations gives it as a REWARD row, getBlock as a transfer without peer, at `operationIndex` in `operations`.
- */
+// operationIndex: the transfer without peer that credits the reward in `operations`
 type Reward = { address: string; amount: bigint; memo?: AlgorandMemo; operationIndex: number };
 
 type Collected = {
@@ -83,7 +75,7 @@ type Collected = {
   participationRewards: Reward[];
 };
 
-// The fees of inner transactions are left out: they are paid by application accounts
+// Known gap: an inner transaction fee that its application account pays is recorded nowhere
 function collectOperations(
   tx: ExplorerInnerTransaction<ExplorerAmount>,
   collected: Collected,

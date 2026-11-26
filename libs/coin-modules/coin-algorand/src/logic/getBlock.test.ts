@@ -544,11 +544,12 @@ describe("getBlock", () => {
     ]);
   });
 
-  it("keeps signed list operation amounts consistent with block transfers by address and asset", async () => {
+  it("keeps signed list operation amounts, rewards included, consistent with block transfers by address and asset", async () => {
     mockGetBlockTransactions.mockResolvedValue([
       transaction({
         id: "PAY",
         "payment-transaction": payment(100, ALICE, { amount: 900, to: CAROL }),
+        "sender-rewards": 7,
       }),
       transaction({
         id: "ASA",
@@ -580,7 +581,7 @@ describe("getBlock", () => {
           type: "pay",
           senderAddress: ALICE,
           feesPayer: ALICE,
-          senderRewards: new BigNumber(0),
+          senderRewards: new BigNumber(7),
           recipientRewards: new BigNumber(0),
           closeRewards: undefined,
           closeAmount: undefined,
