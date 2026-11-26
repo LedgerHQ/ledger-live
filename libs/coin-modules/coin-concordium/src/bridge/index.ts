@@ -10,8 +10,8 @@ import { CONCORDIUM_DUMMY_ADDRESS, DEFAULT_ENABLE_TOKENS } from "../constants";
 import resolver from "../signer";
 import type {
   ConcordiumAccount,
+  ConcordiumBridgeContext,
   ConcordiumCoinConfig,
-  ConcordiumContext,
   ConcordiumCurrencyBridge,
   ConcordiumSigner,
   Transaction,
@@ -38,11 +38,11 @@ import { validateAddress } from "./validateAddress";
 const makePostSync =
   (config: ConcordiumCoinConfig) =>
   (_initial: ConcordiumAccount, synced: ConcordiumAccount): ConcordiumAccount =>
-    (config.enableTokens ?? DEFAULT_ENABLE_TOKENS) ? synced : stripSubAccounts(synced);
+    (config.enableTokens ?? DEFAULT_ENABLE_TOKENS) === true ? synced : stripSubAccounts(synced);
 
 export function createBridges(
   signerContext: SignerContext<ConcordiumSigner>,
-  context: ConcordiumContext,
+  context: ConcordiumBridgeContext,
 ) {
   const getAddress = resolver(signerContext);
   const receive = buildReceive(signerContext, context);

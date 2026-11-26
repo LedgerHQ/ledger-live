@@ -211,7 +211,7 @@ export const makeGetAccountShape =
       derivationMode,
     });
 
-    const enableTokens = config.enableTokens ?? DEFAULT_ENABLE_TOKENS;
+    const enableTokens = (config.enableTokens ?? DEFAULT_ENABLE_TOKENS) === true;
 
     try {
       const accountsResponse = await getAccountsByPublicKey(config, currency.id, publicKey);

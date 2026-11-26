@@ -755,8 +755,8 @@ describe("getAccountShape", () => {
 });
 
 /**
- * `enableTokens` is the shipping default of `false`, and this file's coin config
- * leaves the flag unset, so no extra setup is needed to exercise it.
+ * `enableTokens` is the shipping default of `false`, which this file's coin config
+ * sets explicitly, so no extra setup is needed to exercise it.
  *
  * The chain response carries a PLT throughout, so the flag rather than an empty
  * chain is what has to keep tokens out.

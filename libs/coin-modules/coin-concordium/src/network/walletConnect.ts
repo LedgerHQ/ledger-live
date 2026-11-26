@@ -21,11 +21,20 @@ const PROJECT_ID = getEnv("WALLETCONNECT_PROJECT_ID");
  * The first pairing therefore fixes the relay until restart.
  */
 let sharedSignClient: Promise<SignClient> | null = null;
+let sharedRelayUrl: string | null = null;
 
 function getSharedSignClient(relayUrl: string): Promise<SignClient> {
+  if (sharedSignClient && relayUrl !== sharedRelayUrl) {
+    log("concordium-onboarding", "Ignoring a relay URL change until restart", {
+      active: sharedRelayUrl,
+      requested: relayUrl,
+    });
+  }
+  sharedRelayUrl ??= relayUrl;
   sharedSignClient ??= SignClient.init({ projectId: PROJECT_ID, relayUrl }).catch(
     (error: unknown) => {
       sharedSignClient = null;
+      sharedRelayUrl = null;
       throw error;
     },
   );

@@ -1,7 +1,7 @@
 import type { ConcordiumSigner } from "@ledgerhq/coin-concordium";
 import { createBridges } from "@ledgerhq/coin-concordium/bridge/index";
 import concordiumResolver from "@ledgerhq/coin-concordium/signer";
-import type { ConcordiumCoinConfig } from "@ledgerhq/coin-concordium/config";
+import type { ConcordiumBridgeConfig } from "@ledgerhq/coin-concordium/config";
 import { ConcordiumAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-concordium/types";
 import { DmkSignerConcordium } from "@ledgerhq/live-signer-concordium";
 import Transport from "@ledgerhq/hw-transport";
@@ -20,7 +20,7 @@ const createSigner: CreateSigner<ConcordiumSigner> = (transport: Transport): Con
 
 const bridge: Bridge<Transaction, ConcordiumAccount, TransactionStatus> = createBridges(
   executeWithSigner(createSigner),
-  buildContext<ConcordiumCoinConfig>("concordium"),
+  buildContext<ConcordiumBridgeConfig>("concordium"),
 );
 
 const resolver: Resolver = createResolver(createSigner, concordiumResolver);

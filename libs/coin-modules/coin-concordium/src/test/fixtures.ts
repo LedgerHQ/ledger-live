@@ -15,9 +15,9 @@ import {
   type TokenCurrency,
 } from "@ledgerhq/ledger-wallet-framework/types";
 import type {
-  ConcordiumCoinConfig,
+  ConcordiumBridgeConfig,
+  ConcordiumBridgeContext,
   ConcordiumConfig,
-  ConcordiumContext,
   Transaction,
 } from "../types";
 
@@ -31,19 +31,20 @@ export const PUBLIC_KEY = "aa".repeat(32);
 // 96 hex characters (48 bytes) - standard credential ID length
 export const CRED_ID = "cc".repeat(48);
 
-export const TESTNET_COIN_CONFIG: ConcordiumConfig = {
-  networkType: "testnet",
-  proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
-  walletConnect: { relayUrl: "wss://relay.walletconnect.com" },
-  minReserve: 100000,
-  // Matches the shipped default. Token tests opt in through `createFixtureContext`.
-  enableTokens: false,
-};
+export const TESTNET_COIN_CONFIG: ConcordiumConfig & Pick<ConcordiumBridgeConfig, "walletConnect"> =
+  {
+    networkType: "testnet",
+    proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
+    walletConnect: { relayUrl: "wss://relay.walletconnect.com" },
+    minReserve: 100000,
+    // Matches the shipped default. Token tests opt in through `createFixtureContext`.
+    enableTokens: false,
+  };
 
-/** Builds the testnet {@link ConcordiumCoinConfig} passed to `createApi` in API tests. */
+/** Builds the testnet {@link ConcordiumBridgeConfig}, which also serves API tests. */
 export function createFixtureConfig(
-  overrides?: Partial<ConcordiumCoinConfig>,
-): ConcordiumCoinConfig {
+  overrides?: Partial<ConcordiumBridgeConfig>,
+): ConcordiumBridgeConfig {
   return {
     status: { type: "active" },
     name: "Concordium (Testnet)",
@@ -53,8 +54,10 @@ export function createFixtureConfig(
   };
 }
 
-/** Builds a {@link ConcordiumContext} resolving to the testnet coin config. */
-export function createFixtureContext(overrides?: Partial<ConcordiumCoinConfig>): ConcordiumContext {
+/** Builds a {@link ConcordiumBridgeContext} resolving to the testnet coin config. */
+export function createFixtureContext(
+  overrides?: Partial<ConcordiumBridgeConfig>,
+): ConcordiumBridgeContext {
   return {
     config: async () => createFixtureConfig(overrides),
     logger: () => {},

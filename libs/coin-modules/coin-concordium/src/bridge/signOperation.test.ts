@@ -53,13 +53,7 @@ jest.mock("../logic", () => {
 });
 
 jest.mock("./getTransactionStatus", () => ({
-  getTransactionStatus: jest.fn().mockResolvedValue({
-    errors: {},
-    warnings: {},
-    estimatedFees: new BigNumber(1000),
-    amount: new BigNumber(5000000),
-    totalSpent: new BigNumber(5001000),
-  }),
+  buildGetTransactionStatus: jest.fn(() => jest.fn()),
 }));
 
 const context = createFixtureContext();
@@ -239,7 +233,7 @@ describe("signOperation", () => {
     // recipient cache expires well within the time it takes to plug in and
     // unlock a device, so it would usually be a live request.
     it("does not fetch a transaction status while signing", async () => {
-      const { getTransactionStatus } = jest.requireMock("./getTransactionStatus");
+      const { buildGetTransactionStatus } = jest.requireMock("./getTransactionStatus");
       const mockSigner = createFixtureSigner();
       const signOperation = buildSignOperation(createFixtureSignerContext(mockSigner), context);
 
@@ -251,7 +245,7 @@ describe("signOperation", () => {
         }).pipe(toArray()),
       );
 
-      expect(getTransactionStatus).not.toHaveBeenCalled();
+      expect(buildGetTransactionStatus).not.toHaveBeenCalled();
     });
 
     it("should set operation fee from estimation", async () => {

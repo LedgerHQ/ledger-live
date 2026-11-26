@@ -53,7 +53,7 @@ export async function estimateFees(
     log("concordium", "estimateFees error", { error });
 
     return {
-      cost: BigInt(tuning(config.fees?.defaultCost, DEFAULT_FEES_DEFAULT_COST)),
+      cost: BigInt(tuning(config.fees?.defaultCost, DEFAULT_FEES_DEFAULT_COST, 1)),
       energy: memo ? CONCORDIUM_ENERGY.TRANSFER_WITH_MEMO_MAX : CONCORDIUM_ENERGY.DEFAULT,
     };
   }

@@ -129,6 +129,16 @@ describe("walletConnect", () => {
         expect(mockSignClientInit).toHaveBeenCalledTimes(1);
       });
 
+      it("should keep the first relay until restart", async () => {
+        await new ConcordiumWalletConnect().getClient(RELAY_URL);
+        await new ConcordiumWalletConnect().getClient("wss://other.example");
+
+        expect(mockSignClientInit).toHaveBeenCalledTimes(1);
+        expect(mockSignClientInit).toHaveBeenCalledWith(
+          expect.objectContaining({ relayUrl: RELAY_URL }),
+        );
+      });
+
       it("should keep the SignClient when onboarding reopens", async () => {
         const client1 = await setWalletConnect().getClient(RELAY_URL);
         clearWalletConnect();

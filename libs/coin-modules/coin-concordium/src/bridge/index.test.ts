@@ -1,5 +1,5 @@
 import { lastValueFrom } from "rxjs";
-import type { ConcordiumAccount, ConcordiumContext } from "../types";
+import type { ConcordiumAccount, ConcordiumBridgeContext } from "../types";
 import { createFixtureConfig } from "../test/fixtures";
 import { createBridges } from ".";
 
@@ -58,7 +58,7 @@ describe("createBridges", () => {
  */
 describe("createBridges token visibility wiring", () => {
   const mockConfig = jest.fn(async (_currencyId?: string) => createFixtureConfig());
-  const context: ConcordiumContext = { config: mockConfig, logger: () => {} };
+  const context: ConcordiumBridgeContext = { config: mockConfig, logger: () => {} };
 
   const build = async (enableTokens: boolean): Promise<{ sync: PostSync; scan: PostSync }> => {
     jest.clearAllMocks();

@@ -14,7 +14,7 @@ import { getWalletConnect } from "../network/walletConnect";
 import { getPublicKey, signCredentialDeployment } from "../signer";
 import {
   type ConcordiumAccount,
-  type ConcordiumContext,
+  type ConcordiumBridgeContext,
   type ConcordiumSigner,
   type ConcordiumOnboardProgress,
   type ConcordiumOnboardResult,
@@ -44,7 +44,7 @@ const withTimeout = <T>(promise: Promise<T>, error: Error): Promise<T> => {
 };
 
 export const buildOnboardAccount =
-  (signerContext: SignerContext<ConcordiumSigner>, context: ConcordiumContext) =>
+  (signerContext: SignerContext<ConcordiumSigner>, context: ConcordiumBridgeContext) =>
   (
     currencyId: string,
     deviceId: string,
@@ -178,7 +178,7 @@ export const buildOnboardAccount =
     });
 
 export const buildPairWalletConnect =
-  (context: ConcordiumContext) =>
+  (context: ConcordiumBridgeContext) =>
   (currencyId: string, _deviceId: string): Observable<ConcordiumPairingProgress> =>
     new Observable(o => {
       async function main() {
@@ -191,13 +191,19 @@ export const buildPairWalletConnect =
           }
 
           const config = await context.config(currencyId);
+          const relayUrl = config.walletConnect?.relayUrl;
+          if (!relayUrl) {
+            throw new Error(
+              `concordium: no walletConnect.relayUrl in the coin config of ${currencyId}`,
+            );
+          }
           const network = config.networkType;
           const chainId = CONCORDIUM_CHAIN_IDS[network];
 
           const { uri: encodedUri, approval } = await walletConnect.initiatePairing(
             network,
             chainId,
-            config.walletConnect.relayUrl,
+            relayUrl,
           );
 
           if (!encodedUri) {

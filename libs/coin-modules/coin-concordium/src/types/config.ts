@@ -5,9 +5,6 @@ export type ConcordiumNetwork = "mainnet" | "testnet";
 export type ConcordiumConfig = {
   networkType: ConcordiumNetwork;
   proxyUrl: string;
-  walletConnect: {
-    relayUrl: string;
-  };
   /**
    * @default DEFAULT_MIN_RESERVE (0)
    */
@@ -71,6 +68,13 @@ export type ConcordiumConfig = {
 
 export type ConcordiumCoinConfig = CurrencyConfig & ConcordiumConfig;
 
+/** The bridge also onboards through WalletConnect; the Alpaca API never reads the relay. */
+export type ConcordiumBridgeConfig = ConcordiumCoinConfig & {
+  walletConnect: {
+    relayUrl: string;
+  };
+};
+
 /**
  * The {@link Context} threaded through the coin-concordium bridge and API layers (ADR-019).
  *
@@ -78,3 +82,5 @@ export type ConcordiumCoinConfig = CurrencyConfig & ConcordiumConfig;
  * it explicitly into the network/logic layers.
  */
 export type ConcordiumContext = Context<ConcordiumCoinConfig>;
+
+export type ConcordiumBridgeContext = Context<ConcordiumBridgeConfig>;

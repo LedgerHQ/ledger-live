@@ -1,6 +1,12 @@
-import type { ConcordiumCoinConfig } from "./types/config";
+import type { ConcordiumBridgeConfig } from "./types/config";
 
-export type { ConcordiumCoinConfig, ConcordiumConfig, ConcordiumContext } from "./types/config";
+export type {
+  ConcordiumBridgeConfig,
+  ConcordiumBridgeContext,
+  ConcordiumCoinConfig,
+  ConcordiumConfig,
+  ConcordiumContext,
+} from "./types/config";
 
 export const concordiumDefaults = {
   concordium: {
@@ -19,4 +25,4 @@ export const concordiumDefaults = {
     proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
     walletConnect: { relayUrl: "wss://relay.walletconnect.com" },
   },
-} satisfies Record<string, ConcordiumCoinConfig>;
+} satisfies Record<string, ConcordiumBridgeConfig>;

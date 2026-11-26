@@ -3,7 +3,11 @@ import { firstValueFrom, toArray } from "rxjs";
 import { concordiumDefaults } from "../config";
 import { submitCredential } from "../network/proxyClient";
 import { ConcordiumWalletConnect } from "../network/walletConnect";
-import { AccountOnboardStatus, ConcordiumPairingStatus, type ConcordiumContext } from "../types";
+import {
+  AccountOnboardStatus,
+  ConcordiumPairingStatus,
+  type ConcordiumBridgeContext,
+} from "../types";
 import { CRED_ID, createFixtureAccount, createFixtureCurrency, PUBLIC_KEY } from "../test/fixtures";
 import { buildOnboardAccount, buildPairWalletConnect } from "./onboard";
 import {
@@ -66,7 +70,7 @@ jest.mock("../network/proxyClient", () => ({
  * - Real signer context
  */
 describe("onboard (testnet integration)", () => {
-  const context: ConcordiumContext = {
+  const context: ConcordiumBridgeContext = {
     config: async () => concordiumDefaults.concordium_testnet,
     logger: () => {},
   };

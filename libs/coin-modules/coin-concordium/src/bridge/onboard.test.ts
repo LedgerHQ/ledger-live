@@ -4,7 +4,7 @@ import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { ConcordiumSessionExpiredError } from "../types";
 import { firstValueFrom, toArray } from "rxjs";
 import { AccountOnboardStatus, ConcordiumPairingStatus } from "../types";
-import type { ConcordiumContext } from "../types";
+import type { ConcordiumBridgeContext } from "../types";
 import {
   createFixtureAccount,
   createFixtureConfig,
@@ -21,7 +21,7 @@ import {
 
 const mainnetConfig = createFixtureConfig({ networkType: "mainnet" });
 const mockConfig = jest.fn(async (_currencyId?: string) => mainnetConfig);
-const context: ConcordiumContext = { config: mockConfig, logger: () => {} };
+const context: ConcordiumBridgeContext = { config: mockConfig, logger: () => {} };
 
 // Mock dependencies
 const mockGetSession = jest.fn();
@@ -348,6 +348,22 @@ describe("onboard", () => {
       expect(successEvent).toMatchObject({
         sessionTopic: "session-topic-123",
       });
+    });
+
+    it.each([
+      ["absent", undefined],
+      ["empty", { relayUrl: "" }],
+    ])("should fail before pairing when the relay URL is %s", async (_case, walletConnect) => {
+      const config = { ...createFixtureConfig(), walletConnect } as never;
+      const pairWalletConnect = buildPairWalletConnect({
+        config: async () => config,
+        logger: () => {},
+      });
+
+      await expect(
+        firstValueFrom(pairWalletConnect("concordium_testnet", "test-device").pipe(toArray())),
+      ).rejects.toThrow("no walletConnect.relayUrl");
+      expect(mockInitiatePairing).not.toHaveBeenCalled();
     });
 
     it("should throw error when WalletConnect is not available", async () => {

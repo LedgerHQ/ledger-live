@@ -81,6 +81,12 @@ describe("estimateFees", () => {
     await expect(
       estimateFees(createFixtureConfig({ fees: { defaultCost: 2_000_000 } }), CURRENCY_ID),
     ).resolves.toEqual({ cost: BigInt(2_000_000), energy: CONCORDIUM_ENERGY.DEFAULT });
+    await expect(
+      estimateFees(createFixtureConfig({ fees: { defaultCost: 0 } }), CURRENCY_ID),
+    ).resolves.toEqual({
+      cost: BigInt(DEFAULT_FEES_DEFAULT_COST),
+      energy: CONCORDIUM_ENERGY.DEFAULT,
+    });
   });
 
   it("falls back to the memo ceiling when the proxy fails on a memo transfer", async () => {
