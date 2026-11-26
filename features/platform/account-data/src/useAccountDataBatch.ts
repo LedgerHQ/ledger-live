@@ -17,7 +17,7 @@ import { useHeldByKey } from "./internals/useHeldByKey";
 import type { UseAccountDataOptions } from "./useAccountData";
 
 export type UseAccountDataBatchResult = {
-  /** The accounts the accounts slice holds, once each, in the order given. */
+  /** The accounts a slice holds the descriptor of, once each, in the order given. */
   accountUUIDs: AccountUUID[];
   /** A head read of at least one account is in flight; next pages loaded elsewhere do not count. */
   pending: boolean;

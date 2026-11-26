@@ -5,6 +5,10 @@
 
 Account discovery as a stream: `discoverAccounts(host, { currencyId })` is an `Observable<DiscoveredAccount>`, in the order of the legacy `scanAccounts`. It answers "which accounts does this seed have on this currency", and nothing else: no `Account`, no sync, no store.
 
+Each `DiscoveredAccount` carries a descriptor, so `discoverAccounts`, the host types and `registerDiscoveredAccounts` come from `@features/platform-account-discovery/descriptor`, which lint keeps to the edges (`ACCOUNT_DESCRIPTOR`, see [`docs/account-models`](../../../docs/account-models)). The root entry holds the errors and `ScannedAccount`, what the UI holds.
+
+`registerDiscoveredAccounts(dispatch, isHeld)` is the operator the edge pipes the scan through: it registers each descriptor in the `discoveredAccounts` slice of [`@domain/entity-account`](../../../domain/entity/account), so `useAccountData` reads the account before it is added, and emits a `ScannedAccount` (`{ accountUUID, candidate, status }`). `isHeld` skips UUIDs already in the accounts slice, so a rediscovered saved account does not re-enter the register after promotion. The flow dispatches `discoveredAccountsCleared` when it ends or rescans.
+
 ```mermaid
 flowchart LR
   D["@domain/entity-derivation<br/>candidateOf(currency, mode, index)"] --> S[discoverAccounts]
@@ -12,7 +16,9 @@ flowchart LR
   H1 -- AccountDescriptor --> S
   S -- "readStatus(descriptor)" --> R["account data router<br/>kind: accountStatus"]
   R --> X1[full sync source]
-  S -- DiscoveredAccount --> U[UI / add account flow]
+  S -- DiscoveredAccount --> REG[registerDiscoveredAccounts]
+  REG -- descriptor --> DA["discoveredAccounts slice"]
+  REG -- ScannedAccount --> U[UI / add account flow]
 ```
 
 ## What the host gives

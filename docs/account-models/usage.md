@@ -6,11 +6,11 @@ In the [MVVM](../../.agents/skills/mvvm-architecture/SKILL.md) split, the view m
 - **`useAccountDataBatch(kind, accountUUIDs, { query })`** keeps that kind of many accounts read, with a different return: `accountUUIDs` in the order given, `errors` (one `{ accountUUID, error }` per failed account), `pending` on first reads and refreshes only, and `refresh`. It has no `hasMore` or `loadMore`: page an account with `useAccountData`.
 - **The entity's selector** reads the data from its slice, by `AccountUUID` and the same query.
 
-The snippets type the store as `State`, the app's root state. Each app mounts the `accounts` slice at `accountEntries`.
+The snippets type the store as `State`, the app's root state. Each app mounts the `accounts` slice at `accountEntries`, and the `discoveredAccounts` slice at its name.
 
 ## Hold the AccountUUID
 
-A screen holds the `AccountUUID`, for example from a route parameter, and passes it to the hooks: they read the descriptor from the `accounts` slice, so the descriptor stays at the edges (the account data router and sources, discovery, the legacy bridge, wallet-cli, devtools), since its key is sensitive. An account the slice does not hold is not read.
+A screen holds the `AccountUUID`, for example from a route parameter, and passes it to the hooks: they resolve the descriptor from the slices that hold one, so the descriptor stays at the edges (the account data router and sources, discovery, the legacy bridge, wallet-cli, devtools), since its key is sensitive: the `accounts` slice, then the `discoveredAccounts` register of the accounts a scan found and the user has not added ([data layer](./data-layer.md#accounts-not-added-yet)). An account neither holds is not read.
 
 ```ts
 const { selectAccountUUIDByLegacyId } = accountsSlice.getSelectors(

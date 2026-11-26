@@ -68,8 +68,9 @@ suites, a few legacy `libs/` trees) are listed in the plugin's `exclusions.mjs`.
 ## The account descriptor stays at the edges
 
 Code holds the `AccountUUID`. `@domain/entity-account-descriptor`, which carries the descriptor and
-its key, and `@domain/entity-account/descriptor`, which computes the `AccountUUID` from it, are
-restricted by `ACCOUNT_DESCRIPTOR` in `restricted-imports.mts`. They are exact `paths` names, so
+its key, `@domain/entity-account/descriptor`, which computes the `AccountUUID` from it, and
+`@features/platform-account-discovery/descriptor`, whose results carry descriptors, are restricted
+by `ACCOUNT_DESCRIPTOR` in `restricted-imports.mts`. They are exact `paths` names, so
 tests keep the `./schema.mock` entries. `base` and `features-flow` list them, and so do the desktop
 and mobile app configs, their `src/config/account-data-setup` files aside.
 

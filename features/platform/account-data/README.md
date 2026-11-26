@@ -18,6 +18,15 @@ const { pending } = useAccountDataBatch("balance", accountUUIDs);
 const total = useSelector(state => selectTotal(state, accountUUIDs));
 ```
 
-Both hooks take `AccountUUID`s and read each descriptor from the `accounts` slice (`state.accountEntries`, from `@domain/entity-account`): the descriptor never leaves this package, and an account the slice does not hold is not read.
+Both hooks take `AccountUUID`s and resolve each descriptor from the slices that hold one, both from `@domain/entity-account`: the `accounts` slice (`state.accountEntries`), then the `discoveredAccounts` register of the accounts a scan found and the user has not added, so a scan screen reads their balance. The descriptor never leaves this package, and an account neither slice holds is not read.
+
+```mermaid
+flowchart LR
+  HOOK["useAccountData(kind, uuid)"] --> AE{"accountEntries[uuid]?"}
+  AE -- yes --> READ["fetchAccountData(kind, descriptor)"]
+  AE -- no --> DA{"discoveredAccounts[uuid]?"}
+  DA -- yes --> READ
+  DA -- no --> NONE["accountUUID: undefined, not read"]
+```
 
 See [the account data layer](../../../docs/account-models/data-layer.md).

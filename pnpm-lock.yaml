@@ -14776,6 +14776,9 @@ importers:
       '@domain/api-account-data':
         specifier: workspace:*
         version: link:../../../domain/api/account-data
+      '@domain/entity-account':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account
       '@domain/entity-account-descriptor':
         specifier: workspace:*
         version: link:../../../domain/entity/account-descriptor
@@ -14795,6 +14798,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest

@@ -19,7 +19,7 @@ import {
   type DeriveAccount,
   type DiscoveredAccount,
   type DiscoveryHost,
-} from "@features/platform-account-discovery";
+} from "@features/platform-account-discovery/descriptor";
 import {
   createIntent,
   isDeviceDisconnectedError,

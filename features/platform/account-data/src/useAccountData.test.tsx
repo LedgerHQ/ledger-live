@@ -11,7 +11,14 @@ import {
   selectFeed,
   sourceIdOf,
 } from "@domain/api-account-data/testing";
-import { AccountIdSchema, legacyAccountsSynced, type AccountUUID } from "@domain/entity-account";
+import {
+  AccountIdSchema,
+  discoveredAccountsCleared,
+  discoveredAccountsRegistered,
+  legacyAccountsSynced,
+  remoteAccountsAdded,
+  type AccountUUID,
+} from "@domain/entity-account";
 import { makeStoreWithAccounts, uuidOf } from "./testStore.mock";
 import { useAccountData } from "./useAccountData";
 
@@ -51,7 +58,7 @@ describe("useAccountData", () => {
     expect(counter).not.toHaveBeenCalled();
   });
 
-  it("does nothing for an account the accounts slice does not hold", () => {
+  it("does nothing for an account no slice holds", () => {
     const counter = jest.fn(async () => 1);
     const { wrapper } = setup({ counter });
     const { result } = renderHook(() => useAccountData("counter", uuidOf(9)), { wrapper });
@@ -177,5 +184,74 @@ describe("useAccountData", () => {
     expect(result.current.usdt.hasMore).toBe(false);
     expect(result.current.all.hasMore).toBe(true);
     expect(feed.mock.lastCall?.[0].cursor).toBe("usdt-c1");
+  });
+});
+
+describe("useAccountData on an account discovery found", () => {
+  const found = descriptorOf(9);
+  const foundUUID = uuidOf(9);
+
+  function setupDiscovered(read: AccountDataSource["read"]) {
+    const store = makeStoreWithAccounts(
+      [{ id: sourceIdOf("s"), supports: () => true, read }],
+      undefined,
+      [found],
+    );
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <Provider store={store}>{children}</Provider>
+    );
+    return { store, wrapper };
+  }
+
+  it("reads it before it is added, under the UUID it keeps", async () => {
+    const counter = jest.fn(async (target: AccountTarget) => indexOf(target));
+    const { store, wrapper } = setupDiscovered({ counter });
+    const { result } = renderHook(() => useAccountData("counter", foundUUID), { wrapper });
+    expect(result.current).toEqual(
+      expect.objectContaining({ accountUUID: foundUUID, pending: true }),
+    );
+    await waitFor(() => expect(result.current.pending).toBe(false));
+    expect(store.getState().counter[foundUUID]).toBe(9);
+    expect(counter.mock.lastCall?.[0].descriptor).toEqual(found);
+  });
+
+  it("takes the descriptor of the accounts slice first", async () => {
+    const counter = jest.fn(async (target: AccountTarget) => indexOf(target));
+    const { store, wrapper } = setupDiscovered({ counter });
+    store.dispatch(
+      discoveredAccountsRegistered([{ accountUUID: uuidOf(0), descriptor: descriptorOf(5) }]),
+    );
+    const { result } = renderHook(() => useAccountData("counter", uuidOf(0)), { wrapper });
+    await waitFor(() => expect(result.current.pending).toBe(false));
+    expect(counter.mock.lastCall?.[0].descriptor).toEqual(descriptorOf(0));
+  });
+
+  it("stops reading it once the register is cleared", async () => {
+    const counter = jest.fn(async () => 1);
+    const { store, wrapper } = setupDiscovered({ counter });
+    const { result } = renderHook(() => useAccountData("counter", foundUUID), { wrapper });
+    await waitFor(() => expect(result.current.pending).toBe(false));
+    act(() => {
+      store.dispatch(discoveredAccountsCleared());
+    });
+    expect(result.current.accountUUID).toBeUndefined();
+    await act(() => result.current.refresh());
+    expect(counter).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps its data and does not read again once it is added", async () => {
+    const counter = jest.fn(async (target: AccountTarget) => indexOf(target));
+    const { store, wrapper } = setupDiscovered({ counter });
+    const { result } = renderHook(() => useAccountData("counter", foundUUID, { maxAge: 0 }), {
+      wrapper,
+    });
+    await waitFor(() => expect(result.current.pending).toBe(false));
+    act(() => {
+      store.dispatch(remoteAccountsAdded([{ accountUUID: foundUUID, descriptor: found }]));
+    });
+    expect(store.getState().discoveredAccounts).toEqual({});
+    expect(result.current.accountUUID).toBe(foundUUID);
+    expect(store.getState().counter[foundUUID]).toBe(9);
+    expect(counter).toHaveBeenCalledTimes(1);
   });
 });
