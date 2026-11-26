@@ -18,6 +18,7 @@ import {
   type BaseDiscoveryError,
   type DeviceConnectionResult,
   type DeviceDiscoveryService,
+  type IsMatchingConnectedDevice,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
 
@@ -32,6 +33,7 @@ export type ConnectDeviceUseCaseInput<
   dmk: DeviceManagementKit;
   deviceDiscoveryService: DeviceDiscoveryService<TDiscoveryError>;
   matchDiscoveredDevices: ConnectDeviceMatchDiscoveredDevices;
+  isMatchingConnectedDevice?: IsMatchingConnectedDevice;
   mapConnectionError: ConnectDeviceMapConnectionError<TConnectionError>;
   onConnected: (result: DeviceConnectionResult) => void;
   buildCompatDeviceId?: (device: DeviceConnectionResult["connectedDevice"]) => string;

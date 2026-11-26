@@ -17,9 +17,13 @@ import {
   type BaseDiscoveryError,
   BaseDiscoveryErrorTypes,
   type DeviceDiscoveryService,
+  type IsMatchingConnectedDevice,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
-import { disconnectOtherSessions } from "../deviceConnectivity/disconnectOtherSessions";
+import {
+  disconnectOtherSessions,
+  isSameDeviceByIdAndTransport,
+} from "../deviceConnectivity/disconnectOtherSessions";
 
 type ConnectNewDeviceStateMachineDiscoveryError<TDiscoveryError extends BaseDiscoveryError> =
   | TDiscoveryError
@@ -48,17 +52,22 @@ const createConnectNewDeviceStateMachine = <
     actors: {
       connectDevice: fromPromise(
         async ({
-          input: { dmk, discoveredDevice },
+          input: {
+            dmk,
+            discoveredDevice,
+            isMatchingConnectedDevice = isSameDeviceByIdAndTransport,
+          },
         }: {
-          input: { dmk: DeviceManagementKit; discoveredDevice: DiscoveredDevice };
+          input: {
+            dmk: DeviceManagementKit;
+            discoveredDevice: DiscoveredDevice;
+            isMatchingConnectedDevice?: IsMatchingConnectedDevice;
+          };
         }): Promise<string> => {
-          disconnectOtherSessions(dmk, discoveredDevice);
+          disconnectOtherSessions(dmk, discoveredDevice, isMatchingConnectedDevice);
           const existingSession = dmk
             .listConnectedDevices()
-            .find(
-              ({ id, transport }) =>
-                id === discoveredDevice.id && transport === discoveredDevice.transport,
-            );
+            .find(connectedDevice => isMatchingConnectedDevice(connectedDevice, discoveredDevice));
           if (existingSession) {
             return existingSession.sessionId;
           }
@@ -362,6 +371,7 @@ const createConnectNewDeviceStateMachine = <
           input: ({ context }) => ({
             dmk: context.dmk,
             discoveredDevice: context.selectedDevice!,
+            isMatchingConnectedDevice: context.isMatchingConnectedDevice,
           }),
           onDone: {
             target: "Connected",

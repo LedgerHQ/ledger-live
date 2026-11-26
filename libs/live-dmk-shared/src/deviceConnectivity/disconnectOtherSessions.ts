@@ -1,7 +1,16 @@
 import type { DeviceManagementKit, DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { log } from "@ledgerhq/logs";
 
+import type { IsMatchingConnectedDevice } from "./types";
+
 const LOG_TYPE = "disconnectOtherSessions";
+
+export const isSameDeviceByIdAndTransport: IsMatchingConnectedDevice = (
+  connectedDevice,
+  discoveredDevice,
+) =>
+  connectedDevice.id === discoveredDevice.id &&
+  connectedDevice.transport === discoveredDevice.transport;
 
 /**
  * Ledger Wallet keeps one DMK session at a time: call this right before `dmk.connect`. It starts
@@ -11,11 +20,13 @@ const LOG_TYPE = "disconnectOtherSessions";
  */
 export function disconnectOtherSessions(
   dmk: DeviceManagementKit,
-  deviceToConnect: Pick<DiscoveredDevice, "id" | "transport">,
+  deviceToConnect: DiscoveredDevice,
+  isMatchingConnectedDevice: IsMatchingConnectedDevice = isSameDeviceByIdAndTransport,
 ): void {
-  for (const { sessionId, id, transport } of dmk.listConnectedDevices()) {
-    const isDeviceToConnect = id === deviceToConnect.id && transport === deviceToConnect.transport;
+  for (const connectedDevice of dmk.listConnectedDevices()) {
+    const isDeviceToConnect = isMatchingConnectedDevice(connectedDevice, deviceToConnect);
     if (!isDeviceToConnect) {
+      const { sessionId } = connectedDevice;
       dmk.disconnect({ sessionId }).catch(error => {
         log(LOG_TYPE, "failed to disconnect a session before a connection", { sessionId, error });
       });

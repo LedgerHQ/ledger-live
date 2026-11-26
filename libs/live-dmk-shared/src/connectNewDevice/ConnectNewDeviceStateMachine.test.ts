@@ -23,6 +23,7 @@ import {
   BaseConnectionErrorTypes,
   BaseDiscoveryErrorTypes,
   type BaseConnectionError,
+  type IsMatchingConnectedDevice,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
 import { createFakeDeviceDiscoveryService } from "../deviceConnectivity/discoveryService/__test-utils__/createFakeDeviceDiscoveryService";
@@ -91,6 +92,7 @@ type SetupTestOptions = {
   readonly mapConnectionError?: ConnectNewDeviceMapConnectionError;
   readonly getDiscoveredDeviceKey?: ConnectNewDeviceGetDiscoveredDeviceKey;
   readonly filterListedDevices?: ConnectNewDeviceFilterListedDevices;
+  readonly isMatchingConnectedDevice?: IsMatchingConnectedDevice;
   readonly buildCompatDeviceId?: (device: ConnectedDevice) => string;
   readonly deviceNotFoundDelay?: number;
   readonly successDelay?: number;
@@ -109,6 +111,7 @@ const setupTest = ({
   mapConnectionError = jest.fn(error => ({ type: BaseConnectionErrorTypes.Unknown, error })),
   getDiscoveredDeviceKey = getDeviceKeyById,
   filterListedDevices,
+  isMatchingConnectedDevice,
   buildCompatDeviceId,
   deviceNotFoundDelay,
   successDelay,
@@ -151,6 +154,7 @@ const setupTest = ({
     mapConnectionError,
     getDiscoveredDeviceKey,
     ...(filterListedDevices ? { filterListedDevices } : {}),
+    ...(isMatchingConnectedDevice ? { isMatchingConnectedDevice } : {}),
     ...(buildCompatDeviceId ? { buildCompatDeviceId } : {}),
     ...(deviceNotFoundDelay === undefined ? {} : { deviceNotFoundDelay }),
     ...(successDelay === undefined ? {} : { successDelay }),
@@ -634,6 +638,54 @@ describe("ConnectNewDeviceStateMachine", () => {
         [{ sessionId: "nano-x-usb-session" }],
         [{ sessionId: "stax-session" }],
       ]);
+    });
+
+    it("GIVEN an open session matched by isMatchingConnectedDevice with a different id, WHEN the user selects that device, THEN it should reuse the session and not disconnect it", async () => {
+      // GIVEN
+      const nanoXUsb: DiscoveredDevice = {
+        id: "1002",
+        name: "Ledger Nano X",
+        deviceModel: { id: "nanoX", model: DMKDeviceModelId.NANO_X, name: "Ledger Nano X" },
+        transport: usbTransport,
+      } as DiscoveredDevice;
+      const openUsbSession = makeConnectedDevice({
+        id: "usb_1002",
+        transport: usbTransport,
+        type: "USB",
+        modelId: DMKDeviceModelId.NANO_X,
+        sessionId: "nano-x-usb-session",
+      });
+      const setup = setupTest({
+        connectedDevice: openUsbSession,
+        openSessions: [
+          openUsbSession,
+          makeConnectedDevice({ id: stax.id, sessionId: "stax-session" }),
+        ],
+        isMatchingConnectedDevice: (connected, discovered) =>
+          connected.transport === discovered.transport &&
+          (connected.transport === usbTransport
+            ? connected.modelId === discovered.deviceModel.model
+            : connected.id === discovered.id),
+      });
+
+      // WHEN
+      setup.machine.start();
+      setup.discoverDevices([nanoXUsb]);
+      select(setup.lastState(ConnectNewDeviceUIStateTypes.Discovering).devices[0]);
+      await flushPromises();
+      jest.advanceTimersByTime(DEFAULT_SUCCESS_DELAY);
+
+      // THEN
+      expect(setup.connect).not.toHaveBeenCalled();
+      expect(jest.mocked(setup.dmk.disconnect).mock.calls).toEqual([
+        [{ sessionId: "stax-session" }],
+      ]);
+      expect(setup.onConnected).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sessionId: "nano-x-usb-session",
+          connectedDevice: openUsbSession,
+        }),
+      );
     });
   });
 

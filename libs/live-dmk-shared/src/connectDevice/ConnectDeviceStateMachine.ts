@@ -21,6 +21,7 @@ import {
   type BaseDiscoveryError,
   BaseDiscoveryErrorTypes,
   type DeviceDiscoveryService,
+  type IsMatchingConnectedDevice,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
 import { disconnectOtherSessions } from "../deviceConnectivity/disconnectOtherSessions";
@@ -58,10 +59,15 @@ const createConnectDeviceStateMachine = <
           input: {
             dmk: DeviceManagementKit;
             matchedDevice: MatchedDevice;
+            isMatchingConnectedDevice?: IsMatchingConnectedDevice;
           };
           signal: AbortSignal;
         }): Promise<string> => {
-          disconnectOtherSessions(input.dmk, input.matchedDevice.discoveredDevice);
+          disconnectOtherSessions(
+            input.dmk,
+            input.matchedDevice.discoveredDevice,
+            input.isMatchingConnectedDevice,
+          );
           const sessionId = await input.dmk.connect({
             device: input.matchedDevice.discoveredDevice,
             sessionRefresherOptions: { isRefresherDisabled: true },
@@ -398,6 +404,7 @@ const createConnectDeviceStateMachine = <
           input: ({ context }) => ({
             dmk: context.dmk,
             matchedDevice: context.selectedMatchedDevice!,
+            isMatchingConnectedDevice: context.isMatchingConnectedDevice,
           }),
           onDone: {
             target: "Connected",

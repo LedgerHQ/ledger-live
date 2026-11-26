@@ -22,6 +22,7 @@ import { dmkToLedgerDeviceIdMap } from "../config/dmkToLedgerDeviceIdMap";
 import {
   BaseConnectionErrorTypes,
   BaseDiscoveryErrorTypes,
+  type IsMatchingConnectedDevice,
   type UnknownConnectionError,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
@@ -124,6 +125,7 @@ type SetupTestOptions = {
   readonly connect?: jest.MockedFunction<DeviceManagementKit["connect"]>;
   readonly mapConnectionError?: ConnectDeviceMapConnectionError;
   readonly matchDiscoveredDevices?: ConnectDeviceMatchDiscoveredDevices;
+  readonly isMatchingConnectedDevice?: IsMatchingConnectedDevice;
   readonly onConnected?: jest.Mock;
   readonly buildCompatDeviceId?: (device: ConnectedDevice) => string;
 };
@@ -159,6 +161,7 @@ const setupTest = (options: SetupTestOptions = {}) => {
     connect = jest.fn().mockResolvedValue("session-id"),
     mapConnectionError = jest.fn(error => ({ type: BaseConnectionErrorTypes.Unknown, error })),
     matchDiscoveredDevices = defaultMatchDiscoveredDevices,
+    isMatchingConnectedDevice,
     onConnected = jest.fn(),
     buildCompatDeviceId,
   } = options;
@@ -193,6 +196,7 @@ const setupTest = (options: SetupTestOptions = {}) => {
     deviceDiscoveryService,
     mapConnectionError,
     matchDiscoveredDevices,
+    ...(isMatchingConnectedDevice ? { isMatchingConnectedDevice } : {}),
     onConnected,
     ...(buildCompatDeviceId ? { buildCompatDeviceId } : {}),
   });
@@ -435,6 +439,51 @@ describe("ConnectDeviceStateMachine", () => {
         device: discoveredDevice,
         sessionRefresherOptions: { isRefresherDisabled: true },
       });
+    });
+
+    it("keeps an open session matched by isMatchingConnectedDevice and disconnects other sessions", async () => {
+      const usbTransport = "RN_HID" as TransportIdentifier;
+      const knownUsbDevice: KnownDevice = {
+        transport: usbTransport,
+        deviceModelId: DeviceModelId.nanoX,
+        id: "1002",
+        name: "Ledger Nano X",
+      };
+      const disconnect = jest.fn().mockResolvedValue(undefined);
+      const connect = jest.fn().mockResolvedValue("session-new");
+      const dmk = {
+        connect,
+        disconnect,
+        getConnectedDevice: jest.fn(() => makeConnectedDevice({ sessionId: "session-new" })),
+        listConnectedDevices: jest.fn(() => [
+          makeConnectedDevice({
+            id: "usb_1002",
+            transport: usbTransport,
+            modelId: DMKDeviceModelId.NANO_X,
+            sessionId: "same-usb-session",
+          }),
+          makeConnectedDevice({
+            id: "other-ble",
+            transport: testTransport,
+            modelId: DMKDeviceModelId.STAX,
+            sessionId: "other-session",
+          }),
+        ]),
+      } as unknown as DeviceManagementKit;
+      const { discoverDevices, machine } = setupTest({
+        knownDevices: [knownUsbDevice],
+        dmk,
+        isMatchingConnectedDevice: (connected, discovered) =>
+          connected.transport === discovered.transport &&
+          connected.modelId === discovered.deviceModel.model,
+      });
+
+      machine.start();
+      discoverDevices([makeDiscoveredDevice({ id: "1002", transport: usbTransport })]);
+      await Promise.resolve();
+
+      expect(disconnect.mock.calls).toEqual([[{ sessionId: "other-session" }]]);
+      expect(connect).toHaveBeenCalledTimes(1);
     });
 
     it("disconnects a session that connects after the machine stops", async () => {

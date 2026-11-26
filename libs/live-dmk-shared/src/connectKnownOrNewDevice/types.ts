@@ -22,6 +22,7 @@ import {
   type DeviceConnectionResult,
   type DeviceDiscoveryService,
   type DiscoveryErrorUIState,
+  type IsMatchingConnectedDevice,
   type UnknownErrorUIState,
 } from "../deviceConnectivity/types";
 
@@ -107,6 +108,7 @@ export type ConnectKnownOrNewDeviceStateMachineInput<
   onAddNewDevice?: (hasDevices: boolean) => void;
   getDiscoveredDeviceKey: ConnectNewDeviceGetDiscoveredDeviceKey;
   filterListedDevices?: ConnectNewDeviceFilterListedDevices;
+  isMatchingConnectedDevice?: IsMatchingConnectedDevice;
   buildCompatDeviceId?: (device: ConnectedDevice) => string;
   isPaused?: boolean;
   delays?: ConnectKnownOrNewDeviceDelays;

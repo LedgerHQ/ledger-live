@@ -28,6 +28,7 @@ import {
   BaseConnectionErrorTypes,
   BaseDiscoveryErrorTypes,
   type BaseConnectionError,
+  type IsMatchingConnectedDevice,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
 
@@ -119,6 +120,7 @@ type SetupTestOptions = {
   readonly onAddNewDevice?: jest.Mock;
   readonly isPaused?: boolean;
   readonly delays?: ConnectKnownOrNewDeviceDelays;
+  readonly isMatchingConnectedDevice?: IsMatchingConnectedDevice;
 };
 
 const startedMachines: Array<DefaultConnectKnownOrNewDeviceStateMachine> = [];
@@ -132,6 +134,7 @@ const setupTest = ({
   onAddNewDevice,
   isPaused,
   delays,
+  isMatchingConnectedDevice,
 }: SetupTestOptions = {}) => {
   const knownDevices$ = new BehaviorSubject(knownDevices);
   const connectedDevices$ = new BehaviorSubject<Array<ConnectedDevice>>([]);
@@ -176,6 +179,7 @@ const setupTest = ({
     onConnected,
     ...(onAddNewDevice === undefined ? {} : { onAddNewDevice }),
     getDiscoveredDeviceKey: ({ transport, id }) => `${transport}:${id}`,
+    ...(isMatchingConnectedDevice ? { isMatchingConnectedDevice } : {}),
     ...(isPaused === undefined ? {} : { isPaused }),
     delays: { connectNewDevice: { successDelay: 0 }, ...delays },
   });
@@ -1217,6 +1221,44 @@ describe("ConnectKnownOrNewDeviceStateMachine", () => {
       expect(setup.onConnected).toHaveBeenCalledTimes(1);
       expect(setup.onConnected).toHaveBeenCalledWith(
         expect.objectContaining({ sessionId: "new-nano-s-session" }),
+      );
+    });
+
+    it("GIVEN the Add mode is open and an open USB session matches by isMatchingConnectedDevice, WHEN that USB device is selected, THEN it should reuse the session without disconnecting it", async () => {
+      // GIVEN
+      const connectedFlexWithDifferentId = makeConnectedDevice({
+        id: "usb_1002",
+        sessionId: "flex-usb-session",
+        modelId: DMKDeviceModelId.FLEX,
+        name: "Flex",
+        type: "USB",
+        transport: usbTransport,
+      });
+      const setup = setupTest({
+        isMatchingConnectedDevice: (connected, discovered) =>
+          connected.transport === discovered.transport &&
+          (connected.transport === usbTransport
+            ? connected.modelId === discovered.deviceModel.model
+            : connected.id === discovered.id),
+      });
+      setup.setConnectedDevices([connectedFlexWithDifferentId]);
+      jest.mocked(setup.dmk.getConnectedDevice).mockReturnValue(connectedFlexWithDifferentId);
+      openAddMode(setup);
+      setup.discoverDevices([flexUsb]);
+
+      // WHEN
+      selectInAddMode(setup, flexUsb);
+      await flushPromises();
+      await flushPromises();
+
+      // THEN
+      expect(setup.connect).not.toHaveBeenCalled();
+      expect(setup.disconnect).not.toHaveBeenCalled();
+      expect(setup.onConnected).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sessionId: "flex-usb-session",
+          connectedDevice: connectedFlexWithDifferentId,
+        }),
       );
     });
 

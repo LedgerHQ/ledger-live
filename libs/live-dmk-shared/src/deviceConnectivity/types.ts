@@ -14,6 +14,11 @@ export type Device = {
   name: string | null;
 };
 
+export type IsMatchingConnectedDevice = (
+  connectedDevice: ConnectedDevice,
+  discoveredDevice: DiscoveredDevice,
+) => boolean;
+
 export enum BaseConnectionErrorTypes {
   Unknown = "unknown",
 }

@@ -15,6 +15,7 @@ import {
   type DeviceConnectionResult,
   type DeviceDiscoveryService,
   type DiscoveryErrorUIState,
+  type IsMatchingConnectedDevice,
   type UnknownErrorUIState,
 } from "../deviceConnectivity/types";
 
@@ -55,6 +56,7 @@ export type ConnectNewDeviceStateMachineInput<
   mapConnectionError: ConnectNewDeviceMapConnectionError<TConnectionError>;
   getDiscoveredDeviceKey: ConnectNewDeviceGetDiscoveredDeviceKey;
   filterListedDevices?: ConnectNewDeviceFilterListedDevices;
+  isMatchingConnectedDevice?: IsMatchingConnectedDevice;
   buildCompatDeviceId?: (device: ConnectedDevice) => string;
   deviceNotFoundDelay?: number;
   successDelay?: number;

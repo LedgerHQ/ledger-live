@@ -11,6 +11,7 @@ import { connectDevice } from "./connectDevice";
 import { MockServerDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/MockServerDeviceDiscoverySource";
 import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnBleDeviceDiscoverySource";
 import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
+import { isMatchingConnectedDevice } from "../utils/isMatchingConnectedDevice";
 import { buildMobileCompatDeviceId, createConnectionError, filterMatchedDevices } from "./utils";
 
 jest.mock("@ledgerhq/live-dmk-shared", () => {
@@ -84,6 +85,7 @@ describe("mobile connectDevice", () => {
       isMockServerEnabled: false,
       deviceDiscoveryService: expect.any(DefaultDeviceDiscoveryService),
       matchDiscoveredDevices: filterMatchedDevices,
+      isMatchingConnectedDevice,
       mapConnectionError: createConnectionError,
       buildCompatDeviceId: buildMobileCompatDeviceId,
     });

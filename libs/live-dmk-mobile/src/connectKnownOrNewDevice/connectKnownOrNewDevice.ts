@@ -16,6 +16,7 @@ import { buildDiscoverySources } from "../connectNewDevice/buildDiscoverySources
 import { filterListedDevices } from "../connectNewDevice/filterListedDevices";
 import { getDiscoveredDeviceKey } from "../connectNewDevice/getDiscoveredDeviceKey";
 import { findMatchingDevice } from "../utils/findMatchingDevice";
+import { isMatchingConnectedDevice } from "../utils/isMatchingConnectedDevice";
 import { buildGetConnectivity, type GetMockServerDevices } from "./getConnectivity";
 
 export type ConnectKnownOrNewDeviceInput = {
@@ -54,6 +55,7 @@ export function connectKnownOrNewDevice({
     mapConnectionError: createConnectionError,
     getDiscoveredDeviceKey,
     filterListedDevices,
+    isMatchingConnectedDevice,
     buildCompatDeviceId: buildMobileCompatDeviceId,
   });
 }

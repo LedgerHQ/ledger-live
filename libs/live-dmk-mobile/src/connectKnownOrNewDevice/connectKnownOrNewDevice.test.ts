@@ -31,6 +31,7 @@ import { buildMobileCompatDeviceId, createConnectionError } from "../connectDevi
 import { filterListedDevices } from "../connectNewDevice/filterListedDevices";
 import { getDiscoveredDeviceKey } from "../connectNewDevice/getDiscoveredDeviceKey";
 import { findMatchingDevice } from "../utils/findMatchingDevice";
+import { isMatchingConnectedDevice } from "../utils/isMatchingConnectedDevice";
 
 jest.mock("@ledgerhq/live-dmk-shared", () => {
   const actual = jest.requireActual("@ledgerhq/live-dmk-shared");
@@ -170,6 +171,7 @@ describe("mobile connectKnownOrNewDevice", () => {
       mapConnectionError: createConnectionError,
       getDiscoveredDeviceKey,
       filterListedDevices,
+      isMatchingConnectedDevice,
       buildCompatDeviceId: buildMobileCompatDeviceId,
     });
     subscription.unsubscribe();

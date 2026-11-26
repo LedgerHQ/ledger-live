@@ -13,6 +13,7 @@ import { buildMobileCompatDeviceId, createConnectionError } from "../connectDevi
 import { buildDiscoverySources } from "./buildDiscoverySources";
 import { filterListedDevices } from "./filterListedDevices";
 import { getDiscoveredDeviceKey } from "./getDiscoveredDeviceKey";
+import { isMatchingConnectedDevice } from "../utils/isMatchingConnectedDevice";
 
 export type ConnectNewDeviceInput = {
   dmk: DeviceManagementKit;
@@ -34,6 +35,7 @@ export function connectNewDevice(
     mapConnectionError: createConnectionError,
     getDiscoveredDeviceKey,
     filterListedDevices,
+    isMatchingConnectedDevice,
     buildCompatDeviceId: buildMobileCompatDeviceId,
   });
 }

@@ -43,6 +43,7 @@ import {
   type BaseDiscoveryError,
   type DeviceConnectionResult,
   type DeviceDiscoveryService,
+  type IsMatchingConnectedDevice,
   type UnknownDiscoveryError,
 } from "../deviceConnectivity/types";
 
@@ -169,9 +170,14 @@ const createConnectKnownOrNewDeviceStateMachine = <
           input: {
             dmk: DeviceManagementKit;
             discoveredDevice: DiscoveredDevice;
+            isMatchingConnectedDevice?: IsMatchingConnectedDevice;
           };
         }): Promise<string> => {
-          disconnectOtherSessions(input.dmk, input.discoveredDevice);
+          disconnectOtherSessions(
+            input.dmk,
+            input.discoveredDevice,
+            input.isMatchingConnectedDevice,
+          );
           return await input.dmk.connect({
             device: input.discoveredDevice,
             sessionRefresherOptions: { isRefresherDisabled: true },
@@ -588,6 +594,7 @@ const createConnectKnownOrNewDeviceStateMachine = <
           input: ({ context }) => ({
             dmk: context.dmk,
             discoveredDevice: context.selectedEntry!.discoveredDevice!,
+            isMatchingConnectedDevice: context.isMatchingConnectedDevice,
           }),
           onDone: {
             target: "Discovering",
@@ -708,6 +715,9 @@ const createConnectKnownOrNewDeviceStateMachine = <
             getDiscoveredDeviceKey: context.getDiscoveredDeviceKey,
             ...(context.filterListedDevices
               ? { filterListedDevices: context.filterListedDevices }
+              : {}),
+            ...(context.isMatchingConnectedDevice
+              ? { isMatchingConnectedDevice: context.isMatchingConnectedDevice }
               : {}),
             ...(context.buildCompatDeviceId
               ? { buildCompatDeviceId: context.buildCompatDeviceId }

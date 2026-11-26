@@ -16,6 +16,7 @@ import { MockServerDeviceDiscoverySource } from "../deviceConnectivity/discovery
 import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnBleDeviceDiscoverySource";
 import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
 import { SpeculosDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/SpeculosDeviceDiscoverySource";
+import { isMatchingConnectedDevice } from "../utils/isMatchingConnectedDevice";
 import { buildMobileCompatDeviceId, createConnectionError, filterMatchedDevices } from "./utils";
 
 export type ConnectDeviceInput = {
@@ -58,6 +59,7 @@ export function connectDevice(input: ConnectDeviceInput): Observable<MobileConne
       discoverySources,
     ),
     matchDiscoveredDevices: filterMatchedDevices,
+    isMatchingConnectedDevice,
     mapConnectionError: createConnectionError,
     buildCompatDeviceId: buildMobileCompatDeviceId,
   });

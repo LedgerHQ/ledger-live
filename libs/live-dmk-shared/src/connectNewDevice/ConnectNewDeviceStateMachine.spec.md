@@ -74,7 +74,8 @@ stateDiagram-v2
   the retry result is then dropped. In embedded mode, it does the same as ignore.
 - `Connecting` stops discovery and starts the disconnection of the other
   devices' sessions without waiting for it (`disconnectOtherSessions`). If the
-  selected device already has an open DMK session (same id and transport), the
+  selected device already has an open DMK session (matched by the injected
+  `isMatchingConnectedDevice`, or by id and transport when omitted), the
   machine uses that session. Otherwise, it calls `dmk.connect` with the selected
   discovered device and the DMK session refresher disabled.
 - A connection failure is mapped with `mapConnectionError` (for example BLE

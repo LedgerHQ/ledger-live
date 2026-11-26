@@ -14,6 +14,7 @@ export type {
   DeviceDiscoveryStartArgs,
   DiscoveryErrorResolution,
   DiscoveryErrorUIState,
+  IsMatchingConnectedDevice,
   UnknownConnectionError,
   UnknownDiscoveryError,
   UnknownErrorUIState,

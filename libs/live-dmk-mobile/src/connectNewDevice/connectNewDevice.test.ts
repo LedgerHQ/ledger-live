@@ -1,5 +1,6 @@
 import {
   DeviceModelId,
+  type ConnectedDevice,
   type DeviceManagementKit,
   type DiscoveredDevice,
   type TransportIdentifier,
@@ -22,6 +23,7 @@ import { RnBleDeviceDiscoverySource } from "../deviceConnectivity/discoveryServi
 import { RnHidDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/RnHidDeviceDiscoverySource";
 import { SpeculosDeviceDiscoverySource } from "../deviceConnectivity/discoveryService/sources/SpeculosDeviceDiscoverySource";
 import { buildMobileCompatDeviceId, createConnectionError } from "../connectDevice/utils";
+import { isMatchingConnectedDevice } from "../utils/isMatchingConnectedDevice";
 import { filterListedDevices } from "./filterListedDevices";
 import { getDiscoveredDeviceKey } from "./getDiscoveredDeviceKey";
 
@@ -140,6 +142,7 @@ describe("mobile connectNewDevice", () => {
       mapConnectionError: createConnectionError,
       getDiscoveredDeviceKey,
       filterListedDevices,
+      isMatchingConnectedDevice,
       buildCompatDeviceId: buildMobileCompatDeviceId,
     });
 
@@ -282,5 +285,63 @@ describe("mobile connectNewDevice", () => {
     expect(dmk.connect).toHaveBeenCalledWith(expect.objectContaining({ device: discoveredDevice }));
 
     subscription.unsubscribe();
+  });
+
+  it("should reuse an open Android USB session when the discovered id differs from the connected session id", async () => {
+    jest.useFakeTimers();
+    try {
+      // GIVEN
+      setPlatformOS("android");
+      discoverOn(RnHidDeviceDiscoverySource, rnHidTransportIdentifier, "1002");
+      const openUsbDevice = {
+        id: "usb_1002",
+        sessionId: "usb-session-1",
+        modelId: DeviceModelId.NANO_X,
+        name: "Nano X 1A2B",
+        type: "USB",
+        transport: rnHidTransportIdentifier,
+      } as ConnectedDevice;
+      const dmk = {
+        connect: jest.fn(() => NEVER_RESOLVED),
+        disconnect: jest.fn().mockResolvedValue(undefined),
+        listConnectedDevices: jest.fn(() => [openUsbDevice]),
+        getConnectedDevice: jest.fn(() => openUsbDevice),
+      } as unknown as DeviceManagementKit;
+      const onConnected = jest.fn();
+      const states: Array<MobileConnectNewDeviceUIState> = [];
+      const subscription = connectNewDevice({
+        dmk,
+        onConnected,
+        onClose: jest.fn(),
+        isMockServerEnabled: false,
+        successDelay: 0,
+      }).subscribe(state => states.push(state));
+
+      const discoveringState = states[states.length - 1];
+      if (discoveringState?.type !== ConnectNewDeviceUIStateTypes.Discovering) {
+        throw new Error(`Expected the discovering state, got ${discoveringState?.type}`);
+      }
+      const [listedDevice] = discoveringState.devices;
+      if (!listedDevice?.isAvailable) throw new Error("Expected an available USB device");
+
+      // WHEN
+      listedDevice.onSelect();
+      await jest.advanceTimersByTimeAsync(0);
+
+      // THEN
+      expect(dmk.disconnect).not.toHaveBeenCalled();
+      expect(dmk.connect).not.toHaveBeenCalled();
+      expect(onConnected).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sessionId: "usb-session-1",
+          connectedDevice: openUsbDevice,
+          compatDeviceWired: true,
+        }),
+      );
+
+      subscription.unsubscribe();
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });
