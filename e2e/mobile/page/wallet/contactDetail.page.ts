@@ -41,6 +41,7 @@ export default class ContactDetailPage {
   private readonly registerAddressDeviceConfirmation = byId(
     "contacts-register-external-address-continue-on-device",
   );
+  private readonly registerAddressError = byId("contacts-register-external-address-error");
   private readonly addressDetailDialog = byId("contacts-address-detail-dialog");
   private readonly deleteAddressAction = byId("contacts-address-detail-delete");
   private readonly deleteAddressContent = byId("contacts-delete-address-content");
@@ -146,7 +147,11 @@ export default class ContactDetailPage {
   @Step("Tap address name continue button")
   async tapAddressNameContinue() {
     await this.addAddressNameContinueButton.tap();
-    await this.registerAddressDeviceConfirmation.waitVisible();
+    // Polls fresh matchers: Android atIndex stays bound to its first (short-sheet) match.
+    await this.registerAddressDeviceConfirmation.waitVisible(
+      TIMEOUT.xxlarge,
+      this.registerAddressError,
+    );
   }
 
   @Step("Add address {{{0.addressInput}}} for {{0.networkName}}")
