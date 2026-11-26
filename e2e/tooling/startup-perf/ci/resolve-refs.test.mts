@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import {
+  ANCHOR,
+  ANCHOR_CRON,
+  ANCHOR_TAG,
   checkReleaseTags,
   type GitHubGet,
   inputsOf,
@@ -45,6 +49,13 @@ function fakeLsRemote(refs = REFS): LsRemote {
       .join("");
   };
 }
+
+// The anchor release, older than a newer release made since.
+const ANCHORED = fakeLsRemote([
+  ...REFS,
+  [SHA(8), `refs/tags/${ANCHOR_TAG}`],
+  [SHA(0), "refs/tags/live-mobile@99.0.0"],
+]);
 
 const INPUTS: PlanInputs = {
   preset: "custom",
@@ -148,6 +159,19 @@ describe("planBuilds", () => {
       fakeLsRemote(),
     );
     assert.deepEqual(plan.warnings, ["develop and develop are the same commit"]);
+  });
+
+  it("defaults anchor to ANCHOR_TAG against develop, not the latest prod tag", () => {
+    const plan = planBuilds({ ...INPUTS, preset: "anchor", refA: "", refB: "" }, ANCHORED);
+    assert.deepEqual([plan.shaA, plan.shaB], [SHA(8), SHA(1)]);
+    assert.equal(plan.labelA, `${ANCHOR_TAG} (${SHA(8).slice(0, 10)})`);
+    assert.equal(plan.snapshotRelease, ANCHOR_TAG);
+    assert.equal(plan.cacheA, true);
+    const set = { ...INPUTS, preset: "anchor", refA: "live-mobile@4.27.0", refB: "release" };
+    assert.deepEqual(
+      [planBuilds(set, ANCHORED).shaA, planBuilds(set, ANCHORED).shaB],
+      [SHA(6), SHA(2)],
+    );
   });
 
   it("needs both refs for custom", () => {
@@ -275,6 +299,16 @@ describe("planBuilds", () => {
     );
   });
 
+  it("makes the accounts snapshot from A's release, or from the latest when A is not one", () => {
+    const release = (inputs: Partial<PlanInputs>) =>
+      planBuilds({ ...INPUTS, refB: "develop", ...inputs }, fakeLsRemote()).snapshotRelease;
+    // An older A would otherwise read the storage of a newer app than itself.
+    assert.equal(release({ refA: "live-mobile@4.27.0" }), "live-mobile@4.27.0");
+    assert.equal(release({ refA: "release" }), "live-mobile@4.27.1");
+    assert.equal(release({ preset: "aa-noise", refA: "" }), "live-mobile@4.27.1");
+    assert.equal(release({ preset: "aa-noise", refA: "live-mobile@4.27.0" }), "live-mobile@4.27.0");
+  });
+
   it("gives each build matrix entry its commit, and B of known-regression its regression", () => {
     const builds = (inputs: Partial<PlanInputs>) =>
       planBuilds({ ...INPUTS, ...inputs }, fakeLsRemote()).builds;
@@ -345,13 +379,15 @@ describe("checkReleaseTags", () => {
   it("checks A's and B's tags in a run from develop, and the snapshot's in every run", () => {
     assert.deepEqual(fromDevelop.tagsToCheck, [{ ref: "live-mobile@4.27.1", sha: SHA(5) }]);
     const fromRelease = planBuilds(
-      { ...INPUTS, refA: "live-mobile@4.27.0", refB: "develop", branchName: "release" },
+      { ...INPUTS, refA: "release", refB: "develop", branchName: "release" },
       fakeLsRemote(),
     );
     // The snapshot job runs the release's app next to the E2E seed, whichever branch runs it.
-    const snapshotTag = [{ ref: "live-mobile@4.27.1", sha: SHA(5) }];
-    assert.deepEqual(fromRelease.tagsToCheck, snapshotTag);
-    assert.deepEqual(planBuilds(INPUTS, fakeLsRemote()).tagsToCheck, snapshotTag);
+    assert.deepEqual(fromRelease.tagsToCheck, [{ ref: "live-mobile@4.27.1", sha: SHA(5) }]);
+    // A's release makes the snapshot: checked as the snapshot's, from any branch.
+    assert.deepEqual(planBuilds(INPUTS, fakeLsRemote()).tagsToCheck, [
+      { ref: "live-mobile@4.27.0", sha: SHA(6) },
+    ]);
     const noAccounts = { ...INPUTS, scenarios: "no-accounts" };
     assert.deepEqual(planBuilds(noAccounts, fakeLsRemote()).tagsToCheck, []);
     const aaFromDevelop = {
@@ -370,6 +406,9 @@ describe("checkReleaseTags", () => {
     const snapshotOnly = { preset: "aa-noise", refA: "", scenarios: "accounts" };
     assert.deepEqual(tags(snapshotOnly), [{ ref: "live-mobile@4.27.1", sha: SHA(5) }]);
     assert.deepEqual(tags({ refA: "live-mobile@4.27.0", refB: "develop" }), [
+      { ref: "live-mobile@4.27.0", sha: SHA(6) },
+    ]);
+    assert.deepEqual(tags({ refA: "release", refB: "live-mobile@4.27.0" }), [
       { ref: "live-mobile@4.27.0", sha: SHA(6) },
       { ref: "live-mobile@4.27.1", sha: SHA(5) },
     ]);
@@ -548,6 +587,40 @@ describe("inputsOf", () => {
     assert.deepEqual(plan.scenarios, ["no-accounts", "accounts"]);
   });
 
+  it("runs the anchor's settings on the anchor's schedule, the nightly's on the other", () => {
+    const scheduled = (cron: string) =>
+      inputsOf({
+        GITHUB_EVENT_NAME: "schedule",
+        SCHEDULE: cron,
+        BRANCH_SHA: SHA(1),
+        GITHUB_REF_NAME: "develop",
+      });
+    assert.deepEqual(scheduled(ANCHOR_CRON), {
+      ...ANCHOR,
+      branchSha: SHA(1),
+      branchName: "develop",
+    });
+    assert.deepEqual(scheduled("17 3 * * 1-5"), {
+      ...NIGHTLY,
+      branchSha: SHA(1),
+      branchName: "develop",
+    });
+    const plan = planBuilds(scheduled(ANCHOR_CRON), ANCHORED);
+    assert.deepEqual([plan.shaA, plan.shaB, plan.save], [SHA(8), SHA(1), true]);
+  });
+
+  it("schedules the anchor in the workflow, whose run name tells the dashboard it apart", () => {
+    const workflow = readFileSync(
+      new URL("../../../../.github/workflows/test-mobile-startup-perf.yml", import.meta.url),
+      "utf8",
+    );
+    assert.ok(workflow.includes(`- cron: "${ANCHOR_CRON}"`));
+    assert.ok(workflow.includes(`github.event.schedule == '${ANCHOR_CRON}' && 'Anchor'`));
+    // The plan job's and the Slack job's, which names the run even when the plan failed.
+    assert.equal(workflow.split("SCHEDULE: ${{ github.event.schedule }}").length - 1, 2);
+    assert.match(workflow, /options: \[prod-vs-release, prod-vs-develop, anchor, /);
+  });
+
   it("keeps a dispatch's inputs as they are, so a blank one is still refused", () => {
     const inputs = inputsOf({ GITHUB_EVENT_NAME: "workflow_dispatch", ...DISPATCH });
     assert.equal(inputs.platforms, "iOS Only");
@@ -586,8 +659,8 @@ describe("outputsOf and summaryOf", () => {
         "platforms=Android & iOS",
         "pairs=20",
         "threshold_ms=100",
-        "snapshot_release=live-mobile@4.27.1",
-        `snapshot_ref=${SHA(5)}`,
+        "snapshot_release=live-mobile@4.27.0",
+        `snapshot_ref=${SHA(6)}`,
         "",
       ].join("\n"),
     );
@@ -595,7 +668,7 @@ describe("outputsOf and summaryOf", () => {
       summaryOf(plan, INPUTS, "4"),
       /^### Startup performance: custom\n\n- A: `live-mobile@4\.27\.0/,
     );
-    assert.match(summaryOf(plan, INPUTS, "4"), /- Accounts: the snapshot live-mobile@4\.27\.1's/);
+    assert.match(summaryOf(plan, INPUTS, "4"), /- Accounts: the snapshot live-mobile@4\.27\.0's/);
   });
 
   it("names no snapshot release when the run has no accounts scenario", () => {

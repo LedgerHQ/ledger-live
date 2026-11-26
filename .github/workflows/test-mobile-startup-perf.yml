@@ -1,6 +1,6 @@
 name: "[Mobile] - Startup Performance - Scheduled/Manual"
 run-name: >
-  @Mobile startup perf • ${{ github.event_name == 'schedule' && 'Nightly' || format('{0} • {1}', inputs.preset, inputs.platforms) }} • ${{ github.ref_name }} • ${{ github.actor }}
+  @Mobile startup perf • ${{ github.event_name == 'schedule' && (github.event.schedule == '47 3 * * 1-5' && 'Anchor' || 'Nightly') || format('{0} • {1}', inputs.preset, inputs.platforms) }} • ${{ github.ref_name }} • ${{ github.actor }}
 
 # B2CQA-6555 (iOS) and B2CQA-6593 (Android). See e2e/tooling/startup-perf/README.md.
 
@@ -8,20 +8,23 @@ on:
   schedule:
     # Weekdays, after the mobile E2E nightly: develop against production (ci/resolve-refs.mts).
     - cron: "17 3 * * 1-5"
+    # Then the anchor: develop against a fixed older release (ANCHOR_CRON and ANCHOR_TAG there).
+    # The run name says Anchor for this cron, which is how the dashboard tells the two apart.
+    - cron: "47 3 * * 1-5"
   workflow_dispatch:
     inputs:
       preset:
         description: "What to compare"
         required: true
         type: choice
-        options: [prod-vs-release, prod-vs-develop, custom, aa-noise, known-regression]
+        options: [prod-vs-release, prod-vs-develop, anchor, custom, aa-noise, known-regression]
         default: prod-vs-release
       ref_a:
-        description: "Build A, a branch or tag of this repository (live-mobile@4.29.0 or later). Blank: the latest live-mobile@X.Y.Z tag (prod-vs-release, prod-vs-develop) or this branch (aa-noise, known-regression)"
+        description: "Build A, a branch or tag of this repository (live-mobile@4.29.0 or later). Blank: the latest live-mobile@X.Y.Z tag (prod-vs-release, prod-vs-develop), the anchor release in ci/resolve-refs.mts (anchor) or this branch (aa-noise, known-regression)"
         required: false
         type: string
       ref_b:
-        description: "Build B, a branch or tag of this repository. Blank: the release branch (prod-vs-release) or develop (prod-vs-develop). From develop, only develop, release, main, hotfix or a live-mobile@X.Y.Z tag: to measure another branch, run from it"
+        description: "Build B, a branch or tag of this repository. Blank: the release branch (prod-vs-release) or develop (prod-vs-develop, anchor). From develop, only develop, release, main, hotfix or a live-mobile@X.Y.Z tag: to measure another branch, run from it"
         required: false
         type: string
       platforms:
@@ -42,7 +45,7 @@ on:
         type: string
         default: "20"
       threshold_ms:
-        description: "B fails (prod-vs-release, prod-vs-develop, custom) or counts as detected (known-regression) when it is slower than A by more than this, on the Debug screen value"
+        description: "B fails (prod-vs-release, prod-vs-develop, anchor, custom) or counts as detected (known-regression) when it is slower than A by more than this, on the Debug screen value"
         required: true
         type: string
         default: "100"
@@ -113,6 +116,8 @@ jobs:
           PAIRS: ${{ inputs.pairs }}
           THRESHOLD: ${{ inputs.threshold_ms }}
           SCENARIOS: ${{ inputs.scenarios }}
+          # A scheduled run's cron: the anchor's or the nightly's.
+          SCHEDULE: ${{ github.event.schedule }}
           BRANCH_SHA: ${{ github.sha }}
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
           # Reads a release tag's commit, which a run from develop, release or main checks.
@@ -1090,6 +1095,8 @@ jobs:
           SLACK_SECONDARY_CHANNEL: ${{ (github.event_name == 'schedule' || inputs.slack_notif) && 'C05FKJ7DFAP' || '' }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           PRESET: ${{ needs.plan.outputs.preset }}
+          # Names a scheduled run, nightly or anchor, even when the plan failed.
+          SCHEDULE: ${{ github.event.schedule }}
           THRESHOLD: ${{ needs.plan.outputs.threshold_ms }}
           PAIRS: ${{ needs.plan.outputs.pairs }}
           LABEL_A: ${{ needs.plan.outputs.label_a }}

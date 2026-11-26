@@ -5,6 +5,7 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { ANCHOR_CRON } from "./resolve-refs.mts";
 import {
   insideWorkingDir,
   isFailingVerdict,
@@ -39,6 +40,8 @@ interface PlatformJobs {
 
 export interface RunReport {
   event: string;
+  /** A scheduled run's cron: the anchor's or the nightly's. */
+  schedule: string;
   preset: string;
   thresholdMs: string;
   /** The pairs per scenario the plan asked for, which the header gives. */
@@ -220,10 +223,11 @@ function gateOf(preset: string, thresholdMs: string): string {
 const HEADER_MAX = 150;
 
 function headerOf(report: RunReport): string {
-  const run =
-    report.event === "schedule"
-      ? ":ledger-logo: Ledger Live Mobile startup performance nightly"
-      : ":ledger-logo: Ledger Live Mobile startup performance";
+  // A scheduled run is the nightly, or the anchor's against a fixed older release: named by its
+  // cron, which a failed plan, writing no preset, does not lose.
+  const scheduled = report.schedule === ANCHOR_CRON ? " anchor" : " nightly";
+  const kind = report.event === "schedule" ? scheduled : "";
+  const run = `:ledger-logo: Ledger Live Mobile startup performance${kind}`;
   if (report.jobs.plan !== "success") return `${run} results`;
   const pairs = report.pairs ? ` · ${report.pairs} pairs` : "";
   // A/A measures one build twice: there is no B to name.
@@ -341,6 +345,7 @@ export function resultsIn(dir: string): Results {
 export function reportOf(env: NodeJS.ProcessEnv, { rows, measurements }: Results): RunReport {
   return {
     event: env.GITHUB_EVENT_NAME ?? "",
+    schedule: env.SCHEDULE ?? "",
     preset: env.PRESET ?? "",
     thresholdMs: env.THRESHOLD ?? "",
     pairs: env.PAIRS ?? "",
