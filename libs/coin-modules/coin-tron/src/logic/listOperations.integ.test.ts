@@ -323,16 +323,16 @@ describe("listOperations", () => {
       it("should return failed transaction with internal_transactions with correct operation fields", async () => {
         // https://tronscan.org/#/transaction/2824c452c141c74fdd9cb13c4d4e5369145cd1ab02baeedcb42b6b440e95e435
         // Failed TriggerSmartContract at block 63747682 with fee 2,341,260 sun
-        // Failed TUSD (TUpMhErZL2fhh4sVNULAbNKLokS4GjC1F4) interaction — no to_address, so type is UNKNOWN
+        // Failed TUSD (TUpMhErZL2fhh4sVNULAbNKLokS4GjC1F4) transfer of 2 TUSD, decoded from the call data
         const txHash = "2824c452c141c74fdd9cb13c4d4e5369145cd1ab02baeedcb42b6b440e95e435";
         const options: ListOperationsOptions = { limit: 100, minTimestamp, order: "asc" };
         const result = await listOperations(logger, config, testingAccount, options);
         const operation = result.items.find(op => op.tx.hash === txHash);
         expect(operation).toMatchObject({
-          type: "UNKNOWN",
-          value: 0n,
+          type: "OUT",
+          value: 2_000_000_000_000_000_000n,
           senders: [testingAccount],
-          recipients: [],
+          recipients: ["TP2UBwsCKKJvmo18JtBFYveRkC7qe2qJCE"],
           asset: { type: "trc20", assetReference: "TUpMhErZL2fhh4sVNULAbNKLokS4GjC1F4" },
           tx: expect.objectContaining({
             hash: txHash,

@@ -981,8 +981,13 @@ export function adaptCoreOperationToLiveOperation(
   // sync charges it once, as a FEES operation of the fee token (`tokenFeeOperations`).
   const bnFees = new BigNumber(extra.feeAsset ? 0 : op.tx.fees.toString());
   const hasFailed = op.tx.failed;
-  // A failed transaction's only effect is its fee: a token amount would replace the 0 value in the
-  // sub-account (`buildSubAccounts`).
+  // A failed token operation shows the amount it attempted: `value` below is its native fee, which
+  // `buildSubAccounts` would otherwise put on the token sub-account. Balance history moves no token
+  // for it (`balanceHistoryCache`).
+  if (hasFailed && op.asset?.type !== "native" && extra.assetAmount === undefined) {
+    extra.assetAmount = op.value.toString();
+  }
+  // A fee paid in the token is charged by its own FEES operation, and the failed one keeps its 0 value.
   if (extra.feeAsset && hasFailed) delete extra.assetAmount;
   const value = computeOperationValue(op, opType, bnFees, hasFailed, feesPayerRule);
 
