@@ -67,4 +67,30 @@ describe.each([0, 1])("estimateMaxSpendable with a fee of %i CC", fee => {
       expect(max).toEqual(prepared.amount);
     },
   );
+
+  it("should give the CC amount for the main account, even with a token chosen", async () => {
+    const max = await estimateMaxSpendable(context, {
+      account,
+      transaction: createMockTransaction({ subAccountId: tokenAccount.id }),
+    });
+
+    expect(max).toEqual(CC.times(9 - fee));
+  });
+});
+
+describe("estimateMaxSpendable with a fee that grows with the amount", () => {
+  const context = createMockContext({ ...createMockCoinConfigValue(), minReserve: 0 });
+
+  it("should match the CC amount Send max prepares", async () => {
+    const baseFeeAndOnePercentOfTheBalance = CC.plus(CC.times(9).div(100));
+    const prepared = await prepareTransaction(context, account, sendMax);
+
+    const max = await estimateMaxSpendable(context, {
+      account,
+      transaction: createMockTransaction(),
+    });
+
+    expect(max).toEqual(CC.times(9).minus(baseFeeAndOnePercentOfTheBalance));
+    expect(max).toEqual(prepared.amount);
+  });
 });
