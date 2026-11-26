@@ -5,6 +5,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "aleo",
     supportedCoins: ["aleo", "aleo_testnet"],
+    accountCompletion: { kind: "viewKey" },
     accountDescriptorType: "address",
     loadSetup: () => import("../families/aleo/setup"),
     loadTransaction: () => import("@ledgerhq/coin-aleo/transaction").then(m => m.default),

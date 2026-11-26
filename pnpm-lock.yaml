@@ -15015,6 +15015,9 @@ importers:
       '@domain/entity-account':
         specifier: workspace:*
         version: link:../../../domain/entity/account
+      '@domain/entity-account-context':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-context
       '@domain/entity-account-descriptor':
         specifier: workspace:*
         version: link:../../../domain/entity/account-descriptor

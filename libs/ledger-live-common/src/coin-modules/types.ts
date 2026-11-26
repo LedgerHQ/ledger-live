@@ -19,6 +19,7 @@ import type { AccountReceive } from "@domain/entity-account-receive";
 import type { AccountStatus, AssetStatus } from "@domain/entity-account-status";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { AccountCandidate } from "@domain/entity-derivation";
+import type { AccountCompletionEvent } from "@features/platform-account-discovery/descriptor";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CoinModuleImpl } from "@ledgerhq/coin-module-framework/api/index";
@@ -131,6 +132,21 @@ export type FamilySetup<
   messageSigner?: MessageSignerModule;
   /** The descriptor of a discovery candidate, when the family is not known by the address `resolver` gives (UTXO, Hedera). */
   deriveAccountDescriptor?: DeriveAccountDescriptor;
+  /** The device step after selection that makes a discovered descriptor addable (Aleo: its view key); the loader's `accountCompletion` announces it. */
+  completeAccountDescriptors?: CompleteAccountDescriptors;
+};
+
+/** Emits `waiting` for each account, then its progress, `failed` for an account another seed derives; rethrows any other error but a refusal, so a disconnect reaches the Device Intent's retry. */
+export type CompleteAccountDescriptors = (
+  runOnTransport: RunOnTransport,
+  currency: CryptoCurrency,
+  selected: readonly AccountDescriptor[],
+) => Observable<AccountCompletionEvent>;
+
+/** Synchronous, so a flow knows a family has a completion step without loading its setup. */
+export type AccountCompletionMeta = {
+  /** Picks the generic copy of the step; a closed union, grown per need. */
+  readonly kind: "viewKey";
 };
 
 /** Runs a device job on a transport, with the derivation's abort signal for the job to check between its device reads. */
@@ -172,6 +188,8 @@ export type CoinModuleLoader<
   /** How an account of this family is identified as an AccountDescriptor. */
   accountDescriptorType: AccountDescriptor["type"];
   loadSetup: () => Promise<FamilySetup<T, A, U, O, R>>;
+  /** Set when the family's setup has `completeAccountDescriptors`. */
+  accountCompletion?: AccountCompletionMeta;
   loadTransaction: () => Promise<TransactionModule<T, U, A, TRaw, URaw>>;
   loadDeviceTxConfig?: () => Promise<DeviceTransactionConfigFn<T, any, A>>;
   loadWalletApiAdapter?: () => Promise<WalletApiAdapterModule<W, A>>;
