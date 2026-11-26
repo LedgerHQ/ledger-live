@@ -9177,9 +9177,6 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:^
         version: link:../../domain/entity/currency-crypto
-      '@features/platform-wallet-sync':
-        specifier: workspace:^
-        version: link:../../features/platform/wallet-sync
       '@jest/reporters':
         specifier: 'catalog:'
         version: 30.5.2

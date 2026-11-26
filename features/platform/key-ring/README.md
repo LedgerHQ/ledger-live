@@ -3,6 +3,8 @@
 > [!CAUTION]
 > **Status: UNSTABLE**. New package, in active development.
 
+Ledger Sync = `@features/platform-key-ring` (trust) + `@features/platform-wallet-sync` (data) + `@features/platform-ledger-sync` (product logic), with `@domain/entity-key-ring` and `@domain/entity-wallet-sync` (state). This package is the trust part. Dependency direction: `@features/platform-wallet-sync` and `@features/platform-ledger-sync` depend on it; among the Ledger Sync packages it depends only on `@domain/entity-key-ring`.
+
 The trust package of Ledger Wallet: the only package that talks to the Ledger Key Ring Protocol.
 Apps and features reach Ledger Sync trust through its protocol-agnostic API; today one adapter
 runs it on the v1 SDK (`@ledgerhq/ledger-key-ring-protocol`), and a v2 adapter on the device-sdk

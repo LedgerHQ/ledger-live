@@ -3,6 +3,8 @@
 > [!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
+Ledger Sync = `@features/platform-key-ring` (trust) + `@features/platform-wallet-sync` (data) + `@features/platform-ledger-sync` (product logic), with `@domain/entity-key-ring` and `@domain/entity-wallet-sync` (state). This package is the data part. Dependency direction: it depends on `@features/platform-key-ring`, `@domain/entity-wallet-sync` and `@shared/cloud-sync*`, never on `@features/platform-ledger-sync`, which depends on it.
+
 Platform-level orchestration for Ledger Live wallet synchronisation.
 
 Wires together `@shared/cloud-sync` (network), `@shared/cloud-sync-module` (aggregation) and the domain entity modules into a runnable watch loop. Exports:

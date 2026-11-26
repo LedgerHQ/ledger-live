@@ -4,6 +4,8 @@
 > **Status: UNSTABLE**. New package, in active development: the apps are moving their Ledger
 > Sync hooks onto it.
 
+Ledger Sync = `@features/platform-key-ring` (trust) + `@features/platform-wallet-sync` (data) + `@features/platform-ledger-sync` (product logic), with `@domain/entity-key-ring` and `@domain/entity-wallet-sync` (state). This package is the product part. Dependency direction: it depends on `@features/platform-wallet-sync` and `@features/platform-key-ring`; no package depends on it, only the apps.
+
 The Ledger Sync product logic of both apps, shared by its journeys: activation, QR code pairing,
 instances, backup deletion. Headless: the journeys and their views stay in the apps for now. It
 owns the business logic Desktop and Mobile duplicated, on top of the key ring client of
