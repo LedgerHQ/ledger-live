@@ -1,11 +1,22 @@
 import React from "react";
 import { Text } from "react-native";
 import { act, fireEvent, render, screen } from "@testing-library/react-native";
+import { triggerHapticFeedback } from "@ledgerhq/lumen-ui-rnative";
 import * as reanimated from "../jest/mocks/react-native-reanimated";
 import { CENTER_POP } from "./animationTimeline";
 import { AnimatedQrCode } from "./index";
 import { createQrMatrix } from "./qrMatrix";
 import type { AnimatedQrCodeProps } from "./types";
+
+// The Lumen stub is a Proxy: spreading it would drop the components.
+jest.mock("@ledgerhq/lumen-ui-rnative", () => {
+  const lumen = jest.requireActual("@ledgerhq/lumen-ui-rnative");
+  const triggerHapticFeedback = jest.fn();
+  return new Proxy(lumen, {
+    get: (target, prop) =>
+      prop === "triggerHapticFeedback" ? triggerHapticFeedback : target[prop],
+  });
+});
 
 const ADDRESS = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
 const NATIVE_VIEW = "SharedAnimatedQrCodeView";
@@ -52,6 +63,7 @@ const popStarts = () => withTiming.mock.calls.filter(([toValue]) => toValue === 
 afterEach(() => {
   reanimated.setReducedMotion(false);
   withTiming.mockClear();
+  jest.mocked(triggerHapticFeedback).mockClear();
 });
 
 describe("AnimatedQrCode", () => {
@@ -109,6 +121,27 @@ describe("AnimatedQrCode", () => {
     fireEvent.press(screen.getByTestId(TEST_ID));
 
     expect(onPress).toHaveBeenCalledTimes(1);
+  });
+
+  it("plays its haptic feedback on a tap", () => {
+    renderQrCode({ onPress: jest.fn(), hapticFeedback: "soft" });
+
+    fireEvent.press(screen.getByTestId(TEST_ID));
+
+    expect(triggerHapticFeedback).toHaveBeenCalledWith("soft");
+  });
+
+  it("plays no haptic feedback on a touch that does not end as a press, without one, or without onPress", () => {
+    renderQrCode({ onPress: jest.fn(), hapticFeedback: "soft" });
+    fireEvent(screen.getByTestId(TEST_ID), "pressIn");
+
+    renderQrCode({ onPress: jest.fn(), testID: "other" });
+    fireEvent.press(screen.getByTestId("other"));
+
+    renderQrCode({ hapticFeedback: "soft", testID: "not-pressable" });
+    fireEvent.press(screen.getByTestId("not-pressable"));
+
+    expect(triggerHapticFeedback).not.toHaveBeenCalled();
   });
 
   it("is a button for screen readers when pressable", () => {
