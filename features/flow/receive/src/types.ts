@@ -1,6 +1,5 @@
 import type { ComponentType } from "react";
 import type { DeviceModelId } from "@ledgerhq/device-management-kit";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { AccountReceive, ReceiveVerification } from "@domain/entity-account-receive";
 import type { AccountStatus } from "@domain/entity-account-status";
 import type { CryptoOrTokenCurrency, CryptoOrTokenCurrencyId } from "@domain/entity-currency";
@@ -32,7 +31,6 @@ export type ReceiveFamilyConfig = Readonly<{
  * for what no account data kind serves yet.
  */
 export type ReceiveFamilyConfigInput<A = unknown> = Readonly<{
-  descriptor: AccountDescriptor;
   asset: Pick<CryptoOrTokenCurrency, "id" | "type">;
   featureFlags: PartialFeatures;
   /** The account's `receive` data, absent until it is read. */
@@ -69,7 +67,6 @@ export type ReceiveServiceIncident = Readonly<{
 /** The account and the asset a receive flow shows the address of. */
 export type ReceiveTarget = Readonly<{
   accountUUID: AccountUUID;
-  descriptor: AccountDescriptor;
   assetId: CryptoOrTokenCurrencyId;
 }>;
 

@@ -36,11 +36,12 @@ What an account *has* — a name, a balance, a history, a star — lives in its 
 ```ts
 import { AccountIdSchema, accountsSlice } from "@domain/entity-account";
 
-const { selectAccountEntry, selectAccountUUIDByLegacyId } = accountsSlice.getSelectors(
-  (state: State) => state.accountEntries,
-);
+const { selectAccountEntry, selectAccountLegacyId, selectAccountUUIDByLegacyId } =
+  accountsSlice.getSelectors((state: State) => state.accountEntries);
 
 const entry = selectAccountEntry(state, accountUUID); // { accountUUID, descriptor, legacyId? }
+// The legacy account behind it, for the app code that still reads one:
+const legacyId = selectAccountLegacyId(state, accountUUID);
 // Only at the boundary with a legacy screen:
 const uuid = selectAccountUUIDByLegacyId(state, AccountIdSchema.parse(legacyAccount.id));
 ```

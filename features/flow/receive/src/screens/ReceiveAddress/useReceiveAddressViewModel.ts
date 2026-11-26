@@ -38,16 +38,12 @@ export function useReceiveAddressViewModel({
   serviceIncidents,
   onResolveGate,
 }: ReceiveAddressProps): ReceiveAddressViewModel {
-  const { descriptor, data, accountStatus, refreshGate } = useReceiveScreenData(
-    accountUUID,
-    assetId,
-  );
-  const header = useReceiveAddressHeader(descriptor, assetId);
+  const { data, accountStatus, refreshGate } = useReceiveScreenData(accountUUID, assetId);
+  const header = useReceiveAddressHeader(assetId);
   const receive = data.type === "ready" ? data.receive : undefined;
   const selection = useReceiveAddressSelection(receive);
   const familyConfig = useReceiveFamilyConfig({
     getFamilyConfig,
-    descriptor,
     asset: header.asset,
     receive,
     accountStatus,
