@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Box } from "@ledgerhq/native-ui";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import { PortfolioBalanceSync } from "LLM/features/Portfolio/components/PortfolioBalanceSync";
@@ -8,6 +8,7 @@ import { ScreenName } from "~/const/navigation";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { Wallet40Background } from "LLM/components/Wallet40Background";
+import storage from "LLM/storage";
 import WalletTabNavigatorScrollManager, {
   useWalletNavScrollContext,
 } from "../WalletTab/WalletTabNavigatorScrollManager";
@@ -31,6 +32,10 @@ export default function PortfolioRootScreen({ navigation, route }: NavigationPro
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
 
   const { backgroundColor } = useWallet40Theme();
+
+  useEffect(() => {
+    void storage.handleMigration();
+  }, []);
 
   const PortfolioComponent = useMemo(
     () => (readOnlyModeEnabled && hasNoAccounts ? ReadOnlyPortfolio : Portfolio),

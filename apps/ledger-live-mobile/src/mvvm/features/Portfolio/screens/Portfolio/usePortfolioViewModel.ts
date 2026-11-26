@@ -21,7 +21,6 @@ import { useLNUpsellBannerState } from "LLM/features/LNUpsell";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 import { usePostOnboardingCompletionTracking } from "~/logic/postOnboarding/usePostOnboardingCompletionTracking";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
-import storage from "LLM/storage";
 import { DdRum } from "@datadog/mobile-react-native";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
 import { ddAddViewLoadingTime } from "LLM/utils/ddAddViewLoadingTime";
@@ -48,10 +47,6 @@ const usePortfolioViewModel = (navigation: {
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   const { backgroundColor } = useWallet40Theme();
-
-  useEffect(() => {
-    void storage.handleMigration();
-  }, []);
 
   const onBackFromUpdate = useCallback(() => {
     navigation.goBack();

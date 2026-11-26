@@ -1,12 +1,14 @@
 import React from "react";
 import { renderWithReactQuery, screen } from "@tests/test-renderer";
 import { server, http, HttpResponse, delay } from "@tests/server";
+import storage from "LLM/storage";
 import {
   EMPTY_STATE_MAX_ASSETS,
   EMPTY_STATE_MAX_STABLECOINS,
   EMPTY_STATE_MAX_STOCKS,
 } from "LLM/features/WalletAssets/constants";
 import {
+  PortfolioRootTest,
   PortfolioTest,
   ReadOnlyPortfolioTest,
   overrideInitialStateWithReadOnly,
@@ -51,10 +53,25 @@ function renderedSectionsOrder() {
 }
 
 describe("Portfolio Screen", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it("should render Portfolio", async () => {
     renderWithReactQuery(<PortfolioTest />);
 
     expect(await screen.findByTestId("PortfolioEmptyList")).toBeVisible();
+  });
+
+  it("should run the storage migration when a user with accounts opens the portfolio", async () => {
+    const handleMigration = jest.spyOn(storage, "handleMigration");
+
+    renderWithReactQuery(<PortfolioRootTest />, {
+      overrideInitialState: overrideInitialStateWithAccounts(),
+    });
+
+    expect(await screen.findByTestId("PortfolioAccountsList")).toBeVisible();
+    expect(handleMigration).toHaveBeenCalledTimes(1);
   });
 
   describe("Portfolio Balance Section", () => {
