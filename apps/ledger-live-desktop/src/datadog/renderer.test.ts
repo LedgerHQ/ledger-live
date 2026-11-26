@@ -7,6 +7,7 @@ import {
   captureException,
   addBreadcrumb,
   addAction,
+  isDatadogRecording,
   setDatadogActionsEnabled,
   setTags,
   setUser,
@@ -126,6 +127,12 @@ describe("datadog renderer", () => {
     });
   });
 
+  describe("isDatadogRecording", () => {
+    it("should not record when not initialized", () => {
+      expect(isDatadogRecording()).toBe(false);
+    });
+  });
+
   describe("addAction", () => {
     it("should not call datadogRum.addAction when not initialized", () => {
       addAction("test", { foo: "bar" });
@@ -235,6 +242,26 @@ describe("datadog renderer", () => {
       expect(datadogRum.startView).toHaveBeenCalledWith("main");
       expect(datadogRum.setGlobalContext).toHaveBeenCalled();
       expect(datadogRum.setUser).toHaveBeenCalledWith({ id: "test-dd-id" });
+    });
+
+    it("should enable the RUM feature operations", () => {
+      expect(datadogRum.init).toHaveBeenCalledWith(
+        expect.objectContaining({ enableExperimentalFeatures: ["feature_operation_vital"] }),
+      );
+    });
+
+    it("isDatadogRecording should follow the user consent and the lldDatadog flag", async () => {
+      let consent = true;
+      __resetDatadogForTesting();
+      await initDatadog(() => consent, undefined, createMockStore());
+      expect(isDatadogRecording()).toBe(true);
+
+      consent = false;
+      expect(isDatadogRecording()).toBe(false);
+
+      consent = true;
+      setDatadogActionsEnabled(false);
+      expect(isDatadogRecording()).toBe(false);
     });
 
     it("when already initialized should return true without calling init again", async () => {

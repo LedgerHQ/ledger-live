@@ -1641,6 +1641,12 @@ importers:
       '@shared/network-status':
         specifier: workspace:*
         version: link:../../shared/network-status
+      '@shared/observability-operations':
+        specifier: workspace:*
+        version: link:../../shared/observability-operations
+      '@shared/observability-operations-react':
+        specifier: workspace:*
+        version: link:../../shared/observability-operations-react
       '@shared/trend':
         specifier: workspace:*
         version: link:../../shared/trend

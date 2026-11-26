@@ -246,6 +246,8 @@
     "@shared/live-config-overrides": "workspace:*",
     "@shared/lottie": "workspace:*",
     "@shared/network-status": "workspace:*",
+    "@shared/observability-operations": "workspace:*",
+    "@shared/observability-operations-react": "workspace:*",
     "@shared/trend": "workspace:*",
     "@shared/ui-info-state": "workspace:*",
     "@tanstack/react-query": "5.28.9",
