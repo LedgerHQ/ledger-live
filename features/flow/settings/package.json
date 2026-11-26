@@ -58,6 +58,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
+    "react-native-safe-area-context": "catalog:",
     "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
     "typescript": "catalog:"
@@ -67,10 +68,14 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
-    "react-native": "catalog:"
+    "react-native": "catalog:",
+    "react-native-safe-area-context": "catalog:"
   },
   "peerDependenciesMeta": {
     "react-native": {
+      "optional": true
+    },
+    "react-native-safe-area-context": {
       "optional": true
     },
     "@ledgerhq/lumen-ui-react": {
