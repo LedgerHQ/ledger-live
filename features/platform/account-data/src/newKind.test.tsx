@@ -8,7 +8,12 @@ import {
   accountDataSlice,
   isAccountDataReceived,
 } from "@domain/entity-account-data";
-import { accountsSlice, remoteAccountsAdded, type AccountUUID } from "@domain/entity-account";
+import {
+  accountsSlice,
+  discoveredAccountsSlice,
+  remoteAccountsAdded,
+  type AccountUUID,
+} from "@domain/entity-account";
 import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { useAccountData } from "./useAccountData";
@@ -54,6 +59,7 @@ describe("a kind added from outside the framework packages", () => {
         accountData: accountDataSlice.reducer,
         accountStaking: stakingSlice.reducer,
         accountEntries: accountsSlice.reducer,
+        discoveredAccounts: discoveredAccountsSlice.reducer,
       },
       preloadedState: {
         accountEntries: accountsSlice.reducer(

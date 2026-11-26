@@ -9,6 +9,7 @@ import {
 import {
   type FeedPage,
   type FeedQuery,
+  descriptorOf,
   indexOf,
   sourceIdOf,
 } from "@domain/api-account-data/testing";
@@ -116,6 +117,21 @@ describe("useAccountDataBatch", () => {
     rerender({ list: accounts });
     await waitFor(() => expect(counter).toHaveBeenCalledTimes(4));
     expect(counter.mock.lastCall?.[0].descriptor).toEqual(held[2]);
+  });
+
+  it("reads the accounts discovery found in the same batch as the added ones", async () => {
+    const counter = jest.fn(async (targets: readonly AccountTarget[]) => settled(targets));
+    const source = { id: sourceIdOf("s"), supports: () => true, readBatch: { counter } };
+    const store = makeStoreWithAccounts([source], held.slice(0, 1), [descriptorOf(8)]);
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <Provider store={store}>{children}</Provider>
+    );
+    const list = [uuidOf(0), uuidOf(8), uuidOf(9)];
+    const { result } = renderHook(() => useAccountDataBatch("counter", list), { wrapper });
+    expect(result.current.accountUUIDs).toEqual([uuidOf(0), uuidOf(8)]);
+    await waitFor(() => expect(result.current.pending).toBe(false));
+    expect(counter).toHaveBeenCalledTimes(1);
+    expect(store.getState().counter[uuidOf(8)]).toBe(8);
   });
 
   it("reads and lists a duplicated account once", async () => {

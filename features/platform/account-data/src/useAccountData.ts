@@ -20,7 +20,7 @@ export type UseAccountDataOptions<K extends AccountDataKind> = {
 };
 
 export type UseAccountDataResult = {
-  /** What the entity slices key the account by; absent until the accounts slice holds the account. */
+  /** What the entity slices key the account by; absent until a slice holds its descriptor (the accounts, or the accounts discovery found). */
   accountUUID: AccountUUID | undefined;
   /** A read is in flight. */
   pending: boolean;

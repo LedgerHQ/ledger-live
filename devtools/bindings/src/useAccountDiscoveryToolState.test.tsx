@@ -6,7 +6,10 @@ import { accountDataExtra, type AccountDataSource } from "@domain/api-account-da
 import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
 import { AccountDescriptorSchema } from "@domain/entity-account-descriptor";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
-import type { DeriveAccount, DiscoveredAccount } from "@features/platform-account-discovery";
+import type {
+  DeriveAccount,
+  DiscoveredAccount,
+} from "@features/platform-account-discovery/descriptor";
 import type {
   DeviceConnectionResult,
   DeviceExtractedContext,

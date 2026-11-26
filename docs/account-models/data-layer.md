@@ -2,7 +2,38 @@
 
 A screen asks for one kind of data of one account (a balance, a page of operations) when it needs it, instead of reading a monolithic `Account` filled by the background sync. The router picks, per account, the first source able to serve it; the answer lands in that kind's entity slice, and how the read went in the framework's `accountData` slice.
 
-Accounts are identified by an `AccountDescriptor` ([`@domain/entity-account-descriptor`](../../domain/entity/account-descriptor), edges only) and keyed by its `AccountUUID` ([`@domain/entity-account`](../../domain/entity/account)). The accounts of the app live in the `accounts` slice of [`@domain/entity-account`](../../domain/entity/account), by `AccountUUID` (each app mounts it at `accountEntries` while the legacy store holds `accounts`, and binds its selectors there), kept in step with the legacy accounts by `connectAccountsStore` (wired in each app's `account-data-setup.ts`), so a screen holding a legacy account finds its `AccountUUID` with `selectAccountUUIDByLegacyId`. The hooks resolve the descriptor from that slice: a screen never holds it.
+Accounts are identified by an `AccountDescriptor` ([`@domain/entity-account-descriptor`](../../domain/entity/account-descriptor), edges only) and keyed by its `AccountUUID` ([`@domain/entity-account`](../../domain/entity/account)). The accounts of the app live in the `accounts` slice of [`@domain/entity-account`](../../domain/entity/account), by `AccountUUID` (each app mounts it at `accountEntries` while the legacy store holds `accounts`, and binds its selectors there), kept in step with the legacy accounts by `connectAccountsStore` (wired in each app's `account-data-setup.ts`), so a screen holding a legacy account finds its `AccountUUID` with `selectAccountUUIDByLegacyId`. The hooks resolve the descriptor from the slices that hold one: a screen never holds it.
+
+## Accounts not added yet
+
+Discovery finds accounts the user has not added (the add account flow's scan). Its edge, `registerDiscoveredAccounts` of `@features/platform-account-discovery/descriptor`, registers each one in the `discoveredAccounts` slice of [`@domain/entity-account`](../../domain/entity/account) (`AccountUUID → AccountDescriptor`, no data) when that UUID is not already held in `accountEntries`, and hands the flow `{ accountUUID, candidate, status }`. The hooks look the descriptor up in `accountEntries` first, then in `discoveredAccounts`, so a scanned account keeps the whole lifecycle (`pending`, `refresh`, batching per source).
+
+```mermaid
+flowchart LR
+  subgraph edge["Edge: descriptor allowed"]
+    DISC["discoverAccounts<br/>+ registerDiscoveredAccounts"]
+  end
+  subgraph store["Store"]
+    DA["discoveredAccounts<br/>UUID → descriptor"]
+    AE["accountEntries<br/>UUID → descriptor"]
+    DATA["account data slices<br/>keyed by UUID"]
+  end
+  HOOK["useAccountData / useAccountDataBatch<br/>1. accountEntries 2. discoveredAccounts"]
+  UI["add account flow<br/>UUIDs only"]
+
+  DISC -- discoveredAccountsRegistered --> DA
+  DISC -- "{ accountUUID, candidate, status }" --> UI
+  UI -- "useAccountData('balance', uuid)" --> HOOK
+  HOOK --> AE
+  HOOK --> DA
+  HOOK -- "fetchAccountData, key = AccountUUID" --> DATA
+  UI -- "add" --> AE
+  AE -. "added: leaves the register" .-> DA
+  UI -. "discoveredAccountsCleared<br/>flow end, rescan" .-> DA
+```
+
+- **Promotion.** Once the account lands in `accountEntries` it leaves the register. Its data needs no move: `fetchAccountData` keys it by `computeAccountUUID(descriptor)`, deterministic, which is the `AccountUUID` the account keeps.
+- **Clearing.** The flow dispatches `discoveredAccountsCleared` when it ends or its scan restarts.
 
 ## Packages
 
@@ -29,7 +60,7 @@ sequenceDiagram
     participant A as accountData slice
     participant E as entity slice
     S->>H: (kind, accountUUID, { query })
-    H->>T: dispatch with the descriptor from the accounts slice
+    H->>T: dispatch with the descriptor from the accounts slice, else the discovered accounts
     T->>A: fresh or in flight? else requested
     T->>R: read(kind, descriptor, { query })
     R->>X: first ranked source with a reader for kind and supports(descriptor, kind)

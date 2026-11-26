@@ -3,7 +3,11 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { accountDataExtra, type AccountDataSource } from "@domain/api-account-data";
 import { cryptoAssetsApi } from "@domain/api-currency-token";
-import { accountsSlice, remoteAccountsAdded } from "@domain/entity-account";
+import {
+  accountsSlice,
+  discoveredAccountsSlice,
+  remoteAccountsAdded,
+} from "@domain/entity-account";
 import { AccountDataSourceIdSchema, accountDataSlice } from "@domain/entity-account-data";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { accountReceivesSlice } from "@domain/entity-account-receive";
@@ -47,6 +51,7 @@ export function makeReceiveTestStore(reads: Partial<ReceiveReads> = {}) {
     reducer: {
       accountData: accountDataSlice.reducer,
       accountEntries: accountsSlice.reducer,
+      discoveredAccounts: discoveredAccountsSlice.reducer,
       accountReceives: accountReceivesSlice.reducer,
       accountStatus: accountStatusSlice.reducer,
       receiveVerifyHint: receiveVerifyHintSlice.reducer,

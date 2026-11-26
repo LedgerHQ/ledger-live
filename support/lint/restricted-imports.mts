@@ -126,6 +126,7 @@ export const ACCOUNT_DATA_SETUP_FILES = [
 export const ACCOUNT_DESCRIPTOR = [
   "@domain/entity-account-descriptor",
   "@domain/entity-account/descriptor",
+  "@features/platform-account-discovery/descriptor",
 ].map(name => ({
   name,
   message:
