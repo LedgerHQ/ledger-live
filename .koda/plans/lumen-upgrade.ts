@@ -2,23 +2,12 @@
 /**
  * Upgrades Lumen to latest (Lumen ADR 027). Continues the open upgrade PR when there is one:
  * rebases it on the base branch, then bumps and migrates again. Opens a new PR otherwise.
- * Repo specifics live in `.koda/lumen/settings.ts`.
+ * Repo specifics live in `.koda/lumen/settings.ts` and `.koda/lumen/pull-request.ts`.
  */
 import { agent, allTools, literal, plan, task, variable } from "@cairn/plan";
 import { z } from "zod";
+import { pullRequest } from "../lumen/pull-request.ts";
 import { settings } from "../lumen/settings.ts";
-
-const prBodyTemplate = `### 📝 Description
-
-Automated Lumen upgrade, run by Koda from \`.koda/plans/lumen-upgrade.ts\`. Each Lumen release rebases this PR on \`${settings.baseBranch}\` and moves it to the new latest, so review its latest state.
-
-### 👀 Needs a human
-
-<humanReview>
-
-### 🔗 Context
-
-- **ADR**: [ADR 027: Automated Lumen upgrades in consumer repos](https://ledgerhq.atlassian.net/wiki/spaces/DLS/pages/7689666642)`;
 
 const openBranch = variable("openBranch", z.string(), {
   description: "Branch of the open upgrade PR this run continues. Empty when a new PR is opened.",
@@ -132,7 +121,7 @@ const migrateTask = task("migrate")
 3. For each package, run \`${migrationsCli} check --package <name> --from <previous> --to <new>\` from the repo root, so every package using Lumen is scanned. Exit code 1 means \`expect: none\` patterns still have hits: fix them and run it again. Hits listed as review are for a human: do not edit them.
 4. Write prBody: the template with <humanReview> replaced by a Markdown list of what you could not decide and every review hit, with the file paths, or by \`Nothing.\` when there is none. Change nothing else.`,
   )
-  .with({ versions, template: literal(prBodyTemplate) })
+  .with({ versions, template: literal(pullRequest.body) })
   .writes(prBody);
 
 const fixChecksTask = shellOutput =>
@@ -156,7 +145,7 @@ const pushTask = task("push").runs("git push --quiet --force-with-lease -u origi
 /** Opens the PR, or returns the branch's open one. */
 const createPrTask = task("create-pr")
   .uses(upgrader)
-  .createPr({ title: settings.prTitle, body: prBody.field("body") })
+  .createPr({ title: pullRequest.title, body: prBody.field("body") })
   .writes({ url: prUrl });
 
 const labelFlags = settings.labels.map(label => `--add-label "${label}"`).join(" ");
