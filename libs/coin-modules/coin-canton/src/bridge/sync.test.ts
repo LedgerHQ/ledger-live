@@ -233,6 +233,42 @@ const storedOperation = (height: number, value = 1) =>
     extra: { instrumentId: "Amulet" },
   }) as unknown as CantonAccount["operations"][number];
 
+/** A receive row of the "mixed-in" transaction, from a sender, with its transfer's memo. */
+const receive = (uid: string, sender: string, reason: string): OperationInfo => {
+  const row = createMockOperationView({ type: "Receive", txHash: "mixed-in", uid });
+  return {
+    ...row,
+    senders: [sender],
+    transfers: (row.transfers ?? []).map(transfer => ({
+      ...transfer,
+      details: { ...transfer.details, metadata: { reason } },
+    })),
+  };
+};
+
+/** A failed transfer instruction as the gateway sends it: one transfer of 0, with no fee. */
+const failed = (row: OperationInfo): OperationInfo =>
+  ({
+    ...row,
+    status: "Failed",
+    fee: { ...row.fee, value: "0" },
+    transfers: (row.transfers ?? []).map(transfer => ({
+      ...transfer,
+      value: "0",
+      details: { ...transfer.details, operationType: "transfer-failed" },
+    })),
+  }) as OperationInfo;
+
+const pendingOperation = (hash: string, sequence: number) =>
+  ({
+    ...storedOperation(sequence),
+    id: `pending-${hash}`,
+    hash,
+    senders: ["party123"],
+    date: new Date(),
+    transactionSequenceNumber: BigNumber(sequence),
+  }) as CantonAccount["operations"][number];
+
 const readFrom = () => mockedGetOperations.mock.calls.map(([, , options]) => options);
 
 const syncFrom = (initialAccount: Partial<CantonAccount>) =>
@@ -363,6 +399,11 @@ describe("makeGetAccountShape", () => {
   };
   const sync = () =>
     makeGetAccountShape(fakeSignerContext, fakeContext)(defaultInfo, { paginationConfig: {} });
+  const syncRows = (rows: OperationInfo[]) => {
+    mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+    mockedGetOperations.mockResolvedValue({ operations: rows });
+    return sync();
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -483,6 +524,69 @@ describe("makeGetAccountShape", () => {
           value: BigNumber(5), // fee is 5 in createMockOperationView
         }),
       ],
+    });
+  });
+
+  describe("a failed transfer instruction", () => {
+    it("is a failed operation of no value on the sender's side", async () => {
+      const shape = await syncRows([failed(createMockOperationView())]);
+
+      expect(shape.operations).toEqual([
+        expect.objectContaining({
+          type: "FEES",
+          value: BigNumber(0),
+          fee: BigNumber(0),
+          hasFailed: true,
+        }),
+      ]);
+    });
+
+    it("is a failed receive of no value", async () => {
+      const shape = await syncRows([
+        { ...failed(createMockOperationView({ type: "Receive" })), senders: ["bob"] },
+      ]);
+
+      expect(shape.operations).toEqual([
+        expect.objectContaining({ type: "IN", value: BigNumber(0), hasFailed: true }),
+      ]);
+    });
+
+    it("keeps the fee of a failed row with an amount, moving no value", async () => {
+      const shape = await syncRows([{ ...createMockOperationView(), status: "Failed" }]);
+
+      expect(shape.operations).toEqual([
+        expect.objectContaining({
+          type: "OUT",
+          value: BigNumber(5),
+          fee: BigNumber(5),
+          hasFailed: true,
+        }),
+      ]);
+    });
+
+    it("leaves its sender and memo off a successful receive of the same transaction", async () => {
+      const shape = await syncRows([
+        failed(receive("uid-eve", "eve", "failed")),
+        receive("uid-bob", "bob", "paid"),
+      ]);
+
+      expect(shape.operations).toEqual([
+        expect.objectContaining({
+          type: "IN",
+          value: BigNumber(100),
+          senders: ["bob"],
+          hasFailed: false,
+          extra: expect.objectContaining({ memo: "paid" }),
+        }),
+      ]);
+    });
+
+    it("leaves a successful transaction unflagged", async () => {
+      const shape = await syncRows([createMockOperationView()]);
+
+      expect(shape.operations).toEqual([
+        expect.objectContaining({ value: BigNumber(105), hasFailed: false }),
+      ]);
     });
   });
 
@@ -1127,6 +1231,67 @@ describe("makeGetAccountShape", () => {
         ]);
       });
 
+      describe("of a failed transfer instruction", () => {
+        const inOrder = [
+          ["token row first", (token: OperationInfo, cc: OperationInfo) => [token, cc]],
+          ["CC row first", (token: OperationInfo, cc: OperationInfo) => [cc, token]],
+        ] as const;
+
+        it.each(inOrder)(
+          "flags the failed token instruction only, not its successful CC sibling (%s)",
+          async (_, order) => {
+            mockedGetOperations.mockResolvedValue({
+              operations: order(
+                failed(tokenOperationView(usdcxInstrument, "mixed-tx")),
+                createMockOperationView({ txHash: "mixed-tx" }),
+              ),
+            });
+
+            const shape = await sync();
+
+            expect(shape.subAccounts?.[0].operations).toEqual([
+              expect.objectContaining({ value: BigNumber(0), fee: BigNumber(0), hasFailed: true }),
+            ]);
+            expect(shape.operations).toEqual([
+              expect.objectContaining({
+                type: "OUT",
+                value: BigNumber(105),
+                fee: BigNumber(5),
+                hasFailed: false,
+              }),
+            ]);
+          },
+        );
+
+        it.each(inOrder)(
+          "unflags the CC FEES operation that charges a successful token send's fee (%s)",
+          async (_, order) => {
+            mockedGetOperations.mockResolvedValue({
+              operations: order(
+                tokenOperationView(usdcxInstrument, "mixed-tx"),
+                failed(createMockOperationView({ txHash: "mixed-tx" })),
+              ),
+            });
+
+            const shape = await sync();
+
+            expect(shape.operations).toEqual([
+              expect.objectContaining({
+                type: "FEES",
+                value: BigNumber(5),
+                fee: BigNumber(5),
+                senders: ["party123"],
+                recipients: [],
+                hasFailed: false,
+              }),
+            ]);
+            expect(shape.subAccounts?.[0].operations).toEqual([
+              expect.objectContaining({ value: BigNumber(100), hasFailed: false }),
+            ]);
+          },
+        );
+      });
+
       it("keeps one operation per asset for a send to several receivers, with every fee", async () => {
         mockedGetOperations.mockResolvedValue({
           operations: [
@@ -1167,7 +1332,9 @@ describe("makeGetAccountShape", () => {
 
       it("rebuilds a token sub-account without its stale operations, keeping its pending operations and regenerating its chart", async () => {
         const staleChart = { HOUR: { latestDate: 1, balances: [42] } };
-        const pendingOperations = [{ id: "pending" }];
+        const pendingOperations = [
+          { ...storedOperation(10), id: "pending", hash: "pending", date: new Date() },
+        ];
         mockedGetOperations.mockResolvedValue({
           operations: [tokenOperationView(usdcxInstrument, "fresh-token")],
           next: -1,
@@ -1202,7 +1369,7 @@ describe("makeGetAccountShape", () => {
 
         const [subAccount] = account.subAccounts ?? [];
         expect(subAccount.operations.map(op => op.hash)).toEqual(["fresh-token"]);
-        expect(subAccount.pendingOperations).toBe(pendingOperations);
+        expect(subAccount.pendingOperations).toEqual(pendingOperations);
         expect(subAccount.balanceHistoryCache).not.toEqual(staleChart);
         expect(subAccount.balanceHistoryCache).not.toEqual(emptyHistoryCache);
       });
@@ -2255,6 +2422,17 @@ describe("makeGetAccountShape", () => {
         const account = await syncAccount(SYNC_HASH);
 
         expect(account.operations.map(op => op.hash)).toEqual(["fresh", "stored-5"]);
+      });
+
+      it("removes a pending operation once its transaction is synced, keeping the others", async () => {
+        const account = await syncAccount(SYNC_HASH, {
+          pendingOperations: [
+            pendingOperation("later", Date.now() + 1),
+            pendingOperation("fresh", Date.now()),
+          ],
+        });
+
+        expect(account.pendingOperations.map(op => op.hash)).toEqual(["later"]);
       });
     });
   });

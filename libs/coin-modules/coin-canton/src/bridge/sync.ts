@@ -55,6 +55,14 @@ const instrumentOf = (asset: AssetView | undefined): Instrument | undefined =>
 const isSameInstrument = (a: Instrument, b: Instrument): boolean =>
   a.instrumentId === b.instrumentId && a.instrumentAdmin === b.instrumentAdmin;
 
+type Counterparties = { senders: Set<string>; recipients: Set<string>; memos: Set<string> };
+
+const counterparties = (senders: string[] = []): Counterparties => ({
+  senders: new Set(senders),
+  recipients: new Set(),
+  memos: new Set(),
+});
+
 /** One operation of an asset in a transaction: the gateway gives a row per receiver. */
 type OperationGroup = {
   row: ValidOperationInfo;
@@ -62,9 +70,18 @@ type OperationGroup = {
   type: CantonOperationType;
   transferValue: BigNumber;
   fee: BigNumber;
-  senders: Set<string>;
-  recipients: Set<string>;
-  memos: Set<string>;
+  /** Of the successful contributions; the operation shows the failed ones only when it failed. */
+  succeeded: Counterparties;
+  failedOnly: Counterparties;
+  /** Every row that contributed to the operation, its value or its fee, failed. */
+  failed: boolean;
+};
+
+type SeparateFee = {
+  row: ValidOperationInfo;
+  instrument: Instrument;
+  fee: BigNumber;
+  failed: boolean;
 };
 
 const groupKey = (hash: string, { instrumentId, instrumentAdmin }: Instrument, type: string) =>
@@ -106,7 +123,7 @@ function classifyRow(row: ValidOperationInfo, partyId: string) {
  */
 function chargeSeparateFee(
   groups: Map<string, OperationGroup>,
-  { row, instrument, fee }: { row: ValidOperationInfo; instrument: Instrument; fee: BigNumber },
+  { row, instrument, fee, failed }: SeparateFee,
   partyId: string,
 ): void {
   const payer = [...CHARGED_TYPES]
@@ -114,6 +131,8 @@ function chargeSeparateFee(
     .find(group => group !== undefined);
   if (payer) {
     payer.fee = payer.fee.plus(fee);
+    payer.failed &&= failed;
+    (failed ? payer.failedOnly : payer.succeeded).senders.add(partyId);
     return;
   }
   groups.set(groupKey(row.transaction_hash, instrument, "FEES"), {
@@ -122,9 +141,9 @@ function chargeSeparateFee(
     type: "FEES",
     transferValue: new BigNumber(0),
     fee,
-    senders: new Set([partyId]),
-    recipients: new Set(),
-    memos: new Set(),
+    succeeded: counterparties(failed ? [] : [partyId]),
+    failedOnly: counterparties(failed ? [partyId] : []),
+    failed,
   });
 }
 
@@ -137,6 +156,11 @@ function chargeSeparateFee(
  *
  * A transaction of a pending transfer proposal yields its paid fees only, as FEES operations: the
  * offer list shows the proposal itself until it settles.
+ *
+ * The gateway gives each transfer instruction its own outcome, and several instructions can share a
+ * transaction. A failed row moves no value. An operation is failed only when every row that
+ * contributed to it failed, so a successful sibling transfer is never flagged. A successful
+ * operation shows the counterparties and memo of its successful contributions only.
  */
 function toOperations(
   rows: ValidOperationInfo[],
@@ -145,14 +169,17 @@ function toOperations(
   pendingHashes: ReadonlySet<string>,
 ): Operation[] {
   const groups = new Map<string, OperationGroup>();
-  const separateFees = new Map<
-    string,
-    { row: ValidOperationInfo; instrument: Instrument; fee: BigNumber }
-  >();
+  const separateFees = new Map<string, SeparateFee>();
   const addSeparateFee = (row: ValidOperationInfo, instrument: Instrument, fee: BigNumber) => {
     const key = groupKey(row.transaction_hash, instrument, "");
-    const separate = separateFees.get(key) ?? { row, instrument, fee: new BigNumber(0) };
+    const separate = separateFees.get(key) ?? {
+      row,
+      instrument,
+      fee: new BigNumber(0),
+      failed: true,
+    };
     separate.fee = separate.fee.plus(fee);
+    separate.failed &&= row.status === "Failed";
     separateFees.set(key, separate);
   };
 
@@ -172,23 +199,28 @@ function toOperations(
       type,
       transferValue: new BigNumber(0),
       fee: new BigNumber(0),
-      senders: new Set<string>(),
-      recipients: new Set<string>(),
-      memos: new Set<string>(),
+      succeeded: counterparties(),
+      failedOnly: counterparties(),
+      failed: true,
     };
-    group.transferValue = group.transferValue.plus(transferValue);
-    if (memo !== undefined) group.memos.add(memo);
+    const failed = row.status === "Failed";
+    if (!failed) group.transferValue = group.transferValue.plus(transferValue);
+    group.failed &&= failed;
+    const shown = failed ? group.failedOnly : group.succeeded;
+    if (memo !== undefined) shown.memos.add(memo);
     group.fee = group.fee.plus(shownFee);
     if (separateFeeAsset) addSeparateFee(row, separateFeeAsset, fee);
-    row.senders.forEach(sender => group.senders.add(sender));
-    row.recipients.forEach(recipient => group.recipients.add(recipient));
+    row.senders.forEach(sender => shown.senders.add(sender));
+    row.recipients.forEach(recipient => shown.recipients.add(recipient));
     groups.set(key, group);
   }
 
   for (const separate of separateFees.values()) chargeSeparateFee(groups, separate, partyId);
 
-  return [...groups.values()].map(
-    ({ row, instrument, type, transferValue, fee, senders, recipients, memos }) => ({
+  return [...groups.values()].map(({ succeeded, failedOnly, ...group }) => {
+    const { row, instrument, type, transferValue, fee, failed } = group;
+    const { senders, recipients, memos } = failed ? failedOnly : succeeded;
+    return {
       id: encodeOperationId(accountId, row.transaction_hash, type),
       hash: row.transaction_hash,
       accountId,
@@ -201,14 +233,15 @@ function toOperations(
       recipients: [...recipients],
       date: new Date(row.transaction_timestamp),
       transactionSequenceNumber: new BigNumber(row.block.height),
+      hasFailed: failed,
       extra: {
         uid: row.uid,
         // Rows that disagree leave no memo rather than one that holds for some of them only.
         memo: memos.size === 1 ? [...memos][0] : undefined,
         ...instrument,
       },
-    }),
-  );
+    };
+  });
 }
 
 /** Every row from `start` to `end`, the ledger end read before the walk so it does not chase new activity. */
