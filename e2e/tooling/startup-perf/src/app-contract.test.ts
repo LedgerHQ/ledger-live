@@ -29,6 +29,8 @@ const PREPARED_FILES = [
 const TRUSTCHAIN_SAVED_AT_START = /lense: trustchainStoreSelector,\n\s*saveAtStart: true,/;
 
 const read = (root: string, file: string) => readFileSync(path.join(root, file), "utf8");
+const assertIncludes = (source: string, line: string) =>
+  assert.ok(source.includes(line), `the app's source no longer contains: ${line}`);
 const stderrOf = (error: unknown) =>
   error instanceof Error && "stderr" in error ? String(error.stderr) : String(error);
 
@@ -103,28 +105,21 @@ describe("the mobile app of this checkout", () => {
       read(APP, "src/components/DBSave.ts"),
       /stateSelector: \(state: State\) => state\.identities,\n(\s*\w+: [^\n]*\n)*?\s*saveAtStart: true,/,
     );
-    assert.match(read(APP, "src/db.ts"), new RegExp(`storage\\.save\\("${IDENTITIES_KEY}"`));
+    assertIncludes(read(APP, "src/db.ts"), `storage.save("${IDENTITIES_KEY}"`);
   });
 
   it("reads the keys storage.ts writes before the first launch", () => {
-    const quoted = (text: string) => `"${text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`;
-    assert.match(
-      read(APP, "src/mvvm/storage/mmkvStorageWrapper/constants.ts"),
-      new RegExp(`ID: ${quoted(STORAGE_FILE)}`),
-    );
+    const storageIds = read(APP, "src/mvvm/storage/mmkvStorageWrapper/constants.ts");
+    assertIncludes(storageIds, `ID: "${STORAGE_FILE}"`);
     const migration = read(APP, "src/mvvm/storage/utils/migrations/constants.ts");
-    assert.match(migration, new RegExp(`MIGRATION_STATUS_KEY = ${quoted(MIGRATION_DONE[0])}`));
-    assert.match(migration, new RegExp(`COMPLETED: ${quoted(MIGRATION_DONE[1])}`));
+    assertIncludes(migration, `MIGRATION_STATUS_KEY = "${MIGRATION_DONE[0]}"`);
+    assertIncludes(migration, `COMPLETED: "${MIGRATION_DONE[1]}"`);
     const db = read(APP, "src/db.ts");
-    assert.match(db, new RegExp(`ACCOUNTS_KEY_SORT = ${quoted(ACCOUNT_ORDER_KEY)}`));
-    assert.match(db, new RegExp(`ACCOUNTS_DB_PREFIX = ${quoted(ACCOUNT_KEY_PREFIX)}`));
-    for (const key of ["settings", "postOnboarding"]) {
-      assert.match(db, new RegExp(`storage\\.get\\(${quoted(key)}\\)`));
-    }
-    assert.match(
-      read(APP, "src/logic/terms.tsx"),
-      new RegExp(`generalTermsVersionRequired = ${quoted(GENERAL_TERMS_VERSION)}`),
-    );
+    assertIncludes(db, `ACCOUNTS_KEY_SORT = "${ACCOUNT_ORDER_KEY}"`);
+    assertIncludes(db, `ACCOUNTS_DB_PREFIX = "${ACCOUNT_KEY_PREFIX}"`);
+    for (const key of ["settings", "postOnboarding"]) assertIncludes(db, `storage.get("${key}")`);
+    const terms = read(APP, "src/logic/terms.tsx");
+    assertIncludes(terms, `generalTermsVersionRequired = "${GENERAL_TERMS_VERSION}"`);
   });
 
   it("shows the screens and labels the Maestro flows and the parser look for", () => {
