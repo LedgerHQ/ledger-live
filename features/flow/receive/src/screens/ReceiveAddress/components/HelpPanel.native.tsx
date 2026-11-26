@@ -26,6 +26,7 @@ function HelpPanelContent({ helpPanel }: HelpPanelProps) {
       {helpPanel.questions.map(question => (
         <ListItem
           key={question.id}
+          lx={{ marginHorizontal: "-s8" }}
           onPress={question.onPress}
           testID={`receive-address-help-${question.id}`}
         >
