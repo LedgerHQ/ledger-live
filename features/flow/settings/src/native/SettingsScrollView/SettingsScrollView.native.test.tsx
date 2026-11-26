@@ -21,4 +21,14 @@ describe("SettingsScrollView", () => {
       paddingBottom: BOTTOM_INSET,
     });
   });
+
+  it("does not bounce when the content fits the screen", () => {
+    render(
+      <SettingsScrollView testID="settings-scroll">
+        <Text>Row</Text>
+      </SettingsScrollView>,
+    );
+
+    expect(screen.getByTestId("settings-scroll")).toHaveProp("alwaysBounceVertical", false);
+  });
 });

@@ -8,7 +8,11 @@ export type SettingsScrollViewProps = Readonly<{ children: ReactNode; testID?: s
 export function SettingsScrollView({ children, testID }: SettingsScrollViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
   return (
-    <ScrollView contentContainerStyle={{ paddingBottom: bottomInset }} testID={testID}>
+    <ScrollView
+      contentContainerStyle={{ paddingBottom: bottomInset }}
+      alwaysBounceVertical={false}
+      testID={testID}
+    >
       {children}
     </ScrollView>
   );
