@@ -7,6 +7,8 @@ import type { KeyRingErrorCategory } from "../types";
 export const TRANSLATION_NAMES: Readonly<Record<KeyRingErrorCategory, string>> = {
   "member-removed": "TrustchainEjected",
   "not-allowed": "TrustchainNotAllowed",
+  // The backend reports it as a 4xx, which both apps translate with its message.
+  "not-member": "LedgerAPI4xx",
   "tree-not-found": "TrustchainNotFound",
   "no-tree-for-seed": "NoTrustchainInitialized",
   outdated: "TrustchainOutdated",

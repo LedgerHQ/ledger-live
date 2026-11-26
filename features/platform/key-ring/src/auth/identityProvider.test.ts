@@ -6,7 +6,9 @@ import { mockKeyRingState } from "@domain/entity-key-ring/slice.mock";
 import { mockKeyRingTreeRecord } from "@domain/entity-key-ring/schema.mock";
 import { initMemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/utils";
 import { createKeyRingIdentityProvider } from "./identityProvider";
+import type { KeyRingState } from "@domain/entity-key-ring";
 import { selectKeyRingSession } from "../state/session";
+import { keyRingRuntimeExtra } from "../state/runtime";
 import { keyRingAttestationFixture, keyRingAuthChallengeFixture } from "../testing";
 
 function makeJwt(payload: Record<string, unknown>): string {
@@ -50,6 +52,14 @@ async function postedChallenge() {
   return SignedChallengeSchema.parse(await authenticate.mock.calls[0][0].request.json());
 }
 
+// The provider of an app store: the runtime and the session read the same state.
+function providerOn(readState: () => KeyRingState) {
+  const { keyRingRuntime } = keyRingRuntimeExtra({ getState: () => ({ trustchain: readState() }) });
+  return createKeyRingIdentityProvider(keyRingRuntime, () =>
+    selectKeyRingSession({ trustchain: readState() }),
+  );
+}
+
 const REQUEST = {
   challenge: keyRingAuthChallengeFixture,
   clientId: "ledger-wallet",
@@ -62,9 +72,7 @@ describe("createKeyRingIdentityProvider", () => {
     const memberCredentials = initMemberCredentials();
     const tree = mockKeyRingTreeRecord({ rootId: "ROOTID" });
     const state = mockKeyRingState({ trustchain: tree, memberCredentials });
-    const provider = createKeyRingIdentityProvider(() =>
-      selectKeyRingSession({ trustchain: state }),
-    );
+    const provider = providerOn(() => state);
 
     expect(provider.brokerId).toBe("lkrp");
     await provider.authenticate(REQUEST);
@@ -86,9 +94,7 @@ describe("createKeyRingIdentityProvider", () => {
   it("reads the state at each authentication", async () => {
     authenticate.mockReturnValue(HttpResponse.json("auth-code"));
     let state = mockKeyRingState({ trustchain: null, memberCredentials: null });
-    const provider = createKeyRingIdentityProvider(() =>
-      selectKeyRingSession({ trustchain: state }),
-    );
+    const provider = providerOn(() => state);
 
     await expect(provider.authenticate(REQUEST)).rejects.toMatchObject({
       name: "WalletAuthNoCredentialsError",
@@ -99,5 +105,35 @@ describe("createKeyRingIdentityProvider", () => {
     await provider.authenticate(REQUEST);
     const body = await postedChallenge();
     expect(body.signature.attestation).toBeUndefined();
+  });
+
+  it("signs with the member key of the runtime's key store", async () => {
+    authenticate.mockReturnValue(HttpResponse.json("auth-code"));
+    const storeKey = initMemberCredentials();
+    const tree = mockKeyRingTreeRecord({ rootId: "ROOTID" });
+    const { keyRingRuntime } = keyRingRuntimeExtra({
+      getState: () => ({
+        trustchain: mockKeyRingState({ trustchain: tree, memberCredentials: storeKey }),
+      }),
+    });
+    const provider = createKeyRingIdentityProvider(keyRingRuntime, () =>
+      selectKeyRingSession({
+        trustchain: mockKeyRingState({ trustchain: tree, memberCredentials: null }),
+      }),
+    );
+
+    await provider.authenticate(REQUEST);
+
+    const body = await postedChallenge();
+    expect(body.signature.credential.publicKey).toBe(storeKey.pubkey);
+    expect(body.signature.attestation).toBe(keyRingAttestationFixture("ROOTID"));
+  });
+
+  it("refuses a runtime this package did not build", () => {
+    expect(() =>
+      createKeyRingIdentityProvider({ kind: "KeyRingRuntime" }, () =>
+        selectKeyRingSession({ trustchain: mockKeyRingState() }),
+      ),
+    ).toThrow("Unknown key ring runtime");
   });
 });

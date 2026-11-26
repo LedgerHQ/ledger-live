@@ -6,6 +6,7 @@ import type {
 } from "@features/platform-device-intent";
 import {
   getKeyRingDeviceInitialization,
+  ledgerSyncDeviceUnsupportedFailure,
   type LedgerSyncJobState,
 } from "@features/platform-key-ring";
 import {
@@ -26,24 +27,32 @@ type LedgerSyncDeviceIntentExecutorLWDProps<Input, Result> = Readonly<{
 
 /**
  * Runs a Ledger Sync intent in the Ledger Sync device app. The executor opens
- * or installs the app before the job starts; mount one per run.
+ * or installs the app before the job starts; mount one per run. A device
+ * requirement the executor cannot express fails the intent as `device-unsupported`.
  */
 export function LedgerSyncDeviceIntentExecutorLWD<Input, Result>({
   intent,
   onUserCancel,
   onExecutorStateChanged = noop,
 }: LedgerSyncDeviceIntentExecutorLWDProps<Input, Result>): React.ReactElement | null {
+  const [initialization] = useState(getKeyRingDeviceInitialization);
   const [initializationInput, setInitializationInput] = useState<InitializationInput | null>(null);
 
   useEffect(() => {
+    if (initialization.kind !== "os-feature") return;
+    intent.onJobStateChanged?.(ledgerSyncDeviceUnsupportedFailure(initialization));
+  }, [initialization, intent]);
+
+  useEffect(() => {
+    if (initialization.kind !== "app") return;
     let cancelled = false;
-    buildDeviceInitializationInput(getKeyRingDeviceInitialization()).then(input => {
+    buildDeviceInitializationInput(initialization).then(input => {
       if (!cancelled) setInitializationInput(input);
     }, onUserCancel);
     return () => {
       cancelled = true;
     };
-  }, [onUserCancel]);
+  }, [initialization, onUserCancel]);
 
   if (!initializationInput) return null;
 

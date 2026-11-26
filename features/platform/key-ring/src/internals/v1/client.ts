@@ -35,7 +35,8 @@ import type { LifecycleHub } from "../lifecycleHub";
 import { LEDGER_SYNC_APPLICATION_ID } from "./constants";
 import type { V1DeviceBridge } from "./deviceBridge";
 import { v1Lifecycle } from "./lifecycle";
-import { createSliceKeyStore } from "./sliceKeyStore";
+import { fetchV1ServiceStatus } from "./serviceStatus";
+import { createSliceKeyStore, generateMemberKeyRecord, type V1KeyStore } from "./sliceKeyStore";
 import { v1Stream } from "./stream";
 import { withKeyRingErrors } from "./withKeyRingErrors";
 
@@ -63,7 +64,11 @@ export function v1SdkFactory({
 
 /** What every v1 client of one app session shares. */
 export type V1ClientSetup = Readonly<{
+  /** The e2e mock environment, whose SDK hands out its own mock member keys. */
+  mock: boolean;
   apiBaseUrl: string;
+  /** The key store of the app's runtime, which generates member keys. */
+  keyStore: V1KeyStore;
   bridge: V1DeviceBridge;
   hub: LifecycleHub;
   createSdk: (deviceAccess: WithDevice) => TrustchainSDK;
@@ -92,7 +97,12 @@ class V1KeyRingClient implements KeyRingClient {
 
   createMemberKey() {
     return withKeyRingErrors(async () =>
-      memberKeyUpdateOf(await this.#sdk.initMemberCredentials()),
+      memberKeyUpdateOf(
+        // The mock SDK only accepts the mock keys it generates itself.
+        this.#setup.mock
+          ? await this.#sdk.initMemberCredentials()
+          : await generateMemberKeyRecord(this.#setup.keyStore),
+      ),
     );
   }
 
@@ -213,6 +223,10 @@ class V1KeyRingClient implements KeyRingClient {
 
   invalidateAuth() {
     this.#sdk.invalidateJwt();
+  }
+
+  serviceStatus() {
+    return fetchV1ServiceStatus(this.#setup.apiBaseUrl);
   }
 
   // A DIE session client runs on its session whatever the id; the app client needs the legacy id.

@@ -1,5 +1,5 @@
 import { renderHook, waitFor } from "tests/testSetup";
-import { LedgerSyncErrorMessage } from "@features/flow-ledger-sync";
+import { mockKeyRingState } from "@domain/entity-key-ring/slice.mock";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useLifeCycle } from "../hooks/walletSync.hooks";
 
@@ -94,9 +94,13 @@ describe("useLifeCycle", () => {
     expect(Mocks.resetKeyRingState).not.toHaveBeenCalled();
   });
 
-  it("should reset when error message includes NO_TRUSTCHAIN", () => {
-    const { result } = renderHook(() => useLifeCycle());
-    result.current.handleError(new Error(LedgerSyncErrorMessage.noTrustchain));
+  it("should reset when the backend lost the key tree of this instance", () => {
+    const { result } = renderHook(() => useLifeCycle(), {
+      initialState: { trustchain: mockKeyRingState() },
+    });
+    result.current.handleError(
+      Object.assign(new Error("No such trustchain"), { name: "LedgerAPI4xx" }),
+    );
 
     expect(Mocks.resetKeyRingState).toHaveBeenCalled();
     expect(Mocks.track).toHaveBeenCalledWith("ledgersync_deactivated");

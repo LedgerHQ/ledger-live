@@ -155,14 +155,17 @@ describe("customCreateStore", () => {
 
       const store = customCreateStore({ fetchRemoteFlags: null });
       store.dispatch(setOverride({ key: "lwdAuth", value: { enabled: true } }));
-      void importPersistedKeyRingState({
-        trustchain: {
-          rootId: TRUSTCHAIN_ID,
-          walletSyncEncryptionKey: "wallet-sync-encryption-key",
-          applicationPath: "m/0'/16'/0'",
-        },
-        memberCredentials: MEMBER_CREDENTIALS,
-      })(store.dispatch);
+      const dispatch: AppDispatch = store.dispatch;
+      void dispatch(
+        importPersistedKeyRingState({
+          trustchain: {
+            rootId: TRUSTCHAIN_ID,
+            walletSyncEncryptionKey: "wallet-sync-encryption-key",
+            applicationPath: "m/0'/16'/0'",
+          },
+          memberCredentials: MEMBER_CREDENTIALS,
+        }),
+      );
 
       await getAuthProvider(store.dispatch).withToken({ queryFn });
 

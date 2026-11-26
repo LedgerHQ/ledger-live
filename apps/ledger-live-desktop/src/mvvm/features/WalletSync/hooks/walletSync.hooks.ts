@@ -1,5 +1,4 @@
 import {
-  LedgerSyncErrorMessage,
   ledgerSyncErrorForDisplay,
   useLedgerSyncErrorRecovery,
   type LedgerSyncErrorRecovery,
@@ -16,7 +15,6 @@ export function useLifeCycle(): LedgerSyncErrorRecovery {
   return useLedgerSyncErrorRecovery({
     client,
     onReset: () => dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize })),
-    resetOnMessages: [LedgerSyncErrorMessage.noTrustchain],
     logError: error => console.error("GetMember :" + ledgerSyncErrorForDisplay(error)),
   });
 }

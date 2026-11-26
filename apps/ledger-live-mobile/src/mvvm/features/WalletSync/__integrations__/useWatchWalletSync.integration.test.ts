@@ -1,8 +1,12 @@
 import { EMPTY } from "rxjs";
 import { getEnv, setEnv } from "@shared/env";
 import { makeCipher } from "@shared/cloud-sync";
-import type { KeyRingState } from "@domain/entity-key-ring";
-import { createKeyRingClient, selectKeyRingSession } from "@features/platform-key-ring";
+import { keyRingInitialState, type KeyRingState } from "@domain/entity-key-ring";
+import {
+  createKeyRingClient,
+  keyRingRuntimeExtra,
+  selectKeyRingSession,
+} from "@features/platform-key-ring";
 import { createKeyRingV1DeviceBridge } from "@features/platform-key-ring/v1";
 import { accountsSyncModule } from "@ledgerhq/live-wallet/accounts";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -333,6 +337,8 @@ function streamCipher() {
         throw new Error("No device session in this test");
       },
     }),
+    runtime: keyRingRuntimeExtra({ getState: () => ({ trustchain: keyRingInitialState }) })
+      .keyRingRuntime,
   });
   const stream = client.openStream(selectKeyRingSession({ trustchain: keyRingState }));
   if (!stream) throw new Error("the key ring state has no stream");

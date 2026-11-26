@@ -8,11 +8,8 @@ import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 
 import { ConfirmManageKey } from "../../components/ManageKey/Confirm";
 import { HookResult } from "./useManageKeyDrawer";
-import {
-  isNoTrustchainError,
-  isUnauthorizedMemberError,
-  ledgerSyncErrorForDisplay,
-} from "@features/flow-ledger-sync";
+import { ledgerSyncErrorForDisplay } from "@features/flow-ledger-sync";
+import { classifyKeyRingError } from "@features/platform-key-ring";
 import { SpecificError } from "../../components/Error/SpecificError";
 import { ErrorReason } from "../../hooks/useSpecificError";
 
@@ -28,10 +25,11 @@ const ManageKeyDrawer = ({
 
   const getScene = () => {
     if (deleteMutation.error) {
-      if (isNoTrustchainError(deleteMutation.error)) {
+      const category = classifyKeyRingError(deleteMutation.error);
+      if (category === "tree-not-found") {
         return <SpecificError error={ErrorReason.NO_TRUSTCHAIN} primaryAction={onCreateKey} />;
       }
-      if (isUnauthorizedMemberError(deleteMutation.error)) {
+      if (category === "not-member") {
         return (
           <SpecificError error={ErrorReason.UNAUTHORIZED_MEMBER} primaryAction={onCreateKey} />
         );

@@ -2,6 +2,7 @@ import { AuthSDK } from "@ledgerhq/auth";
 import {
   createKeyRingIdentityProvider,
   selectKeyRingSession,
+  type KeyRingRuntime,
 } from "@features/platform-key-ring/store";
 import { createAuthMiddleware } from "@shared/auth";
 import { selectFeature } from "@shared/feature-flags";
@@ -13,17 +14,20 @@ type KeycloakConfig = Pick<
   "keycloakClientId" | "keycloakBaseUrl" | "keycloakRealm"
 >;
 
-export function createDesktopAuthMiddleware({
-  keycloakClientId,
-  keycloakBaseUrl,
-  keycloakRealm,
-}: KeycloakConfig) {
+export function createDesktopAuthMiddleware(
+  { keycloakClientId, keycloakBaseUrl, keycloakRealm }: KeycloakConfig,
+  keyRingRuntime: KeyRingRuntime,
+) {
   return createAuthMiddleware<State>({
     isFeatureEnabled: (state): boolean => selectFeature(state, "lwdAuth").enabled ?? false,
     createAuthProvider: getState =>
       new AuthSDK(
         { clientId: keycloakClientId, keycloakBaseUrl, keycloakRealm, disablePkce: true },
-        { provider: createKeyRingIdentityProvider(() => selectKeyRingSession(getState())) },
+        {
+          provider: createKeyRingIdentityProvider(keyRingRuntime, () =>
+            selectKeyRingSession(getState()),
+          ),
+        },
       ),
   });
 }

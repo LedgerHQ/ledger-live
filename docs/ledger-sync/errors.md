@@ -17,6 +17,8 @@ texts stay the same.
 | `TrustchainEjected` | `member-removed` |
 | `TrustchainNotAllowed` | `not-allowed` |
 | `TrustchainNotFound` | `tree-not-found` |
+| `LedgerAPI4xx` saying "No such trustchain" | `tree-not-found` |
+| `LedgerAPI4xx` saying "Not a member of trustchain" or "You are not member" | `not-member` |
 | `NoTrustchainInitialized` | `no-tree-for-seed` |
 | `TrustchainOutdated` | `outdated` |
 | `TrustchainAlreadyInitialized` | `already-member` |

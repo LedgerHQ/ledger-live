@@ -15,6 +15,7 @@ export * from "./hooks/useOnKeyRingRefreshNeeded";
 export * from "./hooks/useDestroyLedgerSync";
 export * from "./hooks/useLedgerSyncServiceStatus";
 export * from "./hooks/useLedgerSyncBackends";
+export * from "./hooks/useKeyRingRuntime";
 export * from "./hooks/useLedgerSyncPairingHost";
 export * from "./hooks/useLedgerSyncPairingJoin";
 export * from "./hooks/useLedgerSyncActivation";

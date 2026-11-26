@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { getEnv } from "@shared/env";
 import type { KeyRingClientConfig } from "@features/platform-key-ring";
-import { useLedgerSyncBackends } from "@features/flow-ledger-sync";
+import { useKeyRingRuntime, useLedgerSyncBackends } from "@features/flow-ledger-sync";
 import { useInstanceName } from "./useInstanceName";
 
 export type KeyRingClientSetup = Omit<KeyRingClientConfig, "deviceBridge">;
@@ -11,9 +11,10 @@ export function useKeyRingClientSetup(): KeyRingClientSetup {
   const { keyRingApiBaseUrl } = useLedgerSyncBackends();
   const mock = !!getEnv("MOCK");
   const instanceName = useInstanceName();
+  const runtime = useKeyRingRuntime();
 
   return useMemo(
-    () => ({ mock, instanceName, apiBaseUrl: keyRingApiBaseUrl }),
-    [mock, instanceName, keyRingApiBaseUrl],
+    () => ({ mock, instanceName, apiBaseUrl: keyRingApiBaseUrl, runtime }),
+    [mock, instanceName, keyRingApiBaseUrl, runtime],
   );
 }

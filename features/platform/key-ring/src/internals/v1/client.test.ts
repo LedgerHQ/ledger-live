@@ -8,7 +8,8 @@ import {
 import type { KeyRingState } from "@domain/entity-key-ring";
 import { TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { lastValueFrom, of, type Observable } from "rxjs";
-import { Permissions } from "@ledgerhq/hw-ledger-key-ring-protocol";
+import { Permissions, crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
+import { KeyRingMemberKeyRecordSchema } from "@domain/entity-key-ring";
 import { KeyRingMemberSchema } from "../../schema";
 import {
   KeyRingNotAllowedError,
@@ -18,6 +19,7 @@ import {
 import { memberKeyRecordOf, sessionOf, treeRecordOf } from "../handles";
 import { createLifecycleHub } from "../lifecycleHub";
 import { createV1Client } from "./client";
+import { createSliceKeyStore, type V1KeyStore } from "./sliceKeyStore";
 
 jest.mock("@ledgerhq/ledger-key-ring-protocol/qrcode/index", () => ({
   createQRCodeHostInstance: jest.fn(),
@@ -35,7 +37,11 @@ function notStubbed(): never {
   throw new Error("not stubbed");
 }
 
-function setup(stubs: Partial<TrustchainSDK> = {}, state: KeyRingState = STATE) {
+function setup(
+  stubs: Partial<TrustchainSDK> = {},
+  state: KeyRingState = STATE,
+  { mock = false, keyStore = createSliceKeyStore(() => state) }: SetupOptions = {},
+) {
   const sdk: TrustchainSDK = {
     initMemberCredentials: notStubbed,
     getOrCreateTrustchain: notStubbed,
@@ -57,13 +63,17 @@ function setup(stubs: Partial<TrustchainSDK> = {}, state: KeyRingState = STATE) 
   const createSdk = jest.fn((_deviceAccess: unknown) => sdk);
   const createSessionTransport = jest.fn(() => ({ transport: "session" }) as never);
   const client = createV1Client({
+    mock,
     apiBaseUrl: "https://trustchain.test",
+    keyStore,
     bridge: { withDevice: jest.fn(), createSessionTransport },
     hub,
     createSdk,
   });
   return { client, session: sessionOf(state), events, hub, createSdk, createSessionTransport };
 }
+
+type SetupOptions = Readonly<{ mock?: boolean; keyStore?: V1KeyStore }>;
 
 describe("createV1Client", () => {
   it("activate runs getOrCreateTrustchain with the session and maps the outcome", async () => {
@@ -198,9 +208,32 @@ describe("createV1Client", () => {
     expect(events).toHaveBeenCalledWith({ type: "reset" });
   });
 
-  it("createMemberKey asks the SDK for new credentials", async () => {
-    const { client } = setup({ initMemberCredentials: jest.fn(async () => MEMBER_KEY) });
+  it("createMemberKey generates a secp256k1 member key through the key store", async () => {
+    const keyStore = createSliceKeyStore(() => STATE);
+    const generate = jest.spyOn(keyStore, "generate");
+    const initMemberCredentials = jest.fn();
+    const { client } = setup({ initMemberCredentials }, STATE, { keyStore });
+
+    const memberKey = memberKeyRecordOf(await client.createMemberKey());
+
+    expect(generate).toHaveBeenCalledWith("member", "ecdsa-secp256k1");
+    const { publicKey } = await generate.mock.results[0].value;
+    expect(memberKey.pubkey).toBe(crypto.to_hex(publicKey));
+    expect(KeyRingMemberKeyRecordSchema.safeParse(memberKey).success).toBe(true);
+    expect(memberKey).not.toEqual(MEMBER_KEY);
+    expect(initMemberCredentials).not.toHaveBeenCalled();
+  });
+
+  it("createMemberKey keeps the mock SDK's own keys in the mock environment", async () => {
+    const keyStore = createSliceKeyStore(() => STATE);
+    const generate = jest.spyOn(keyStore, "generate");
+    const { client } = setup({ initMemberCredentials: jest.fn(async () => MEMBER_KEY) }, STATE, {
+      mock: true,
+      keyStore,
+    });
+
     expect(memberKeyRecordOf(await client.createMemberKey())).toBe(MEMBER_KEY);
+    expect(generate).not.toHaveBeenCalled();
   });
 
   it("openStream binds the stream to the key tree and the member key", async () => {

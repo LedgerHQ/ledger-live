@@ -56,8 +56,11 @@ export type LedgerSyncErrorRecoveryOptions = Readonly<{
   client: KeyRingClient;
   /** The app's move back to the activation, run after the reset and before `invalidateAuth`. */
   onReset: () => void;
-  /** An error whose message includes one of these resets Ledger Sync. */
-  resetOnMessages: readonly string[];
+  /**
+   * True: a members query that resolved no members (`LedgerSyncMembersUnresolvedError`) resets
+   * Ledger Sync too. Omitted: it is ignored.
+   */
+  resetOnUnresolvedMembers?: boolean;
   /** Called first with every handled error, for the app's log. */
   logError?: (error: Error) => void;
 }>;
@@ -106,7 +109,8 @@ export type LedgerSyncDestroy = Readonly<{
 
 /** Options of `useLedgerSyncServiceStatus`. */
 export type LedgerSyncServiceStatusOptions = Readonly<{
-  keyRingApiBaseUrl: string;
+  /** The app's key ring client: it reads the status of its key ring backend. */
+  client: KeyRingClient;
   cloudSyncApiBaseUrl: string;
   /** False: neither status is fetched. Omitted: both are. */
   enabled?: boolean;
@@ -199,6 +203,7 @@ export type LedgerSyncDeviceFailure =
   | "not-allowed"
   | "no-tree-for-seed"
   | "user-refused"
+  | "device-unsupported"
   | "other";
 
 /** The end of a legacy activation or removal. */

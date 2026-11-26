@@ -1,6 +1,8 @@
 import React from "react";
+import { keyRingInitialState } from "@domain/entity-key-ring";
 import {
   createKeyRingClient,
+  keyRingRuntimeExtra,
   KeyRingMemberIdSchema,
   type KeyRingMember,
 } from "@features/platform-key-ring";
@@ -43,6 +45,8 @@ export const mockedSdk = createKeyRingClient({
   instanceName: "LLD Integration",
   apiBaseUrl: getWalletSyncEnvironmentParams("STAGING").trustchainApiBaseUrl,
   deviceBridge: keyRingDeviceBridge,
+  runtime: keyRingRuntimeExtra({ getState: () => ({ trustchain: keyRingInitialState }) })
+    .keyRingRuntime,
 });
 
 export const walletSyncActivatedState = {

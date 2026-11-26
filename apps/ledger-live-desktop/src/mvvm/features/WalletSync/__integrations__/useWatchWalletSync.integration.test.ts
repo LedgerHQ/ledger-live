@@ -1,7 +1,15 @@
 import { getEnv, setEnv } from "@shared/env";
 import { makeCipher } from "@shared/cloud-sync";
-import type { KeyRingMemberKeyRecord, KeyRingTreeRecord } from "@domain/entity-key-ring";
-import { createKeyRingClient, selectKeyRingSession } from "@features/platform-key-ring";
+import {
+  keyRingInitialState,
+  type KeyRingMemberKeyRecord,
+  type KeyRingTreeRecord,
+} from "@domain/entity-key-ring";
+import {
+  createKeyRingClient,
+  keyRingRuntimeExtra,
+  selectKeyRingSession,
+} from "@features/platform-key-ring";
 import { accountsSyncModule } from "@ledgerhq/live-wallet/accounts";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { HttpResponse, http, server } from "tests/server";
@@ -310,6 +318,8 @@ function cipherOf(targetTrustchain: KeyRingTreeRecord) {
     instanceName: "Cursor regression",
     apiBaseUrl: "foo",
     deviceBridge: keyRingDeviceBridge,
+    runtime: keyRingRuntimeExtra({ getState: () => ({ trustchain: keyRingInitialState }) })
+      .keyRingRuntime,
   });
   const stream = client.openStream(
     selectKeyRingSession({ trustchain: { trustchain: targetTrustchain, memberCredentials } }),

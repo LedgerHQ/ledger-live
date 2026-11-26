@@ -82,5 +82,7 @@ export type LedgerSyncFailureReason =
   | "not-allowed"
   /** `no-tree-for-seed`: there is no key tree yet to add the member to. */
   | "no-trustchain"
+  /** `device-unsupported`: the device or its OS cannot run the key ring protocol. */
+  | "device-unsupported"
   /** Any other error. */
   | "unknown";

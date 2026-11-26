@@ -30,6 +30,7 @@ import { useFlows } from "../hooks/useFlows";
 import WalletSyncDrawer from "../components/Drawer";
 import OpenOrInstallTrustChainApp from "../screens/DeviceActions/openOrInstall";
 import { INSTANCES, lldWalletSyncFeatureFlag } from "./shared";
+import type { AppDispatch } from "~/state-manager/configureStore";
 
 jest.mock("../deviceIntents/LedgerSyncDeviceIntentExecutorLWD", () => ({
   LedgerSyncDeviceIntentExecutorLWD: jest.fn(() =>
@@ -333,7 +334,8 @@ describe("Ledger Sync device steps on DIE", () => {
       const intent = lastIntent();
 
       act(() => {
-        void resetKeyRingState()(store.dispatch);
+        const dispatch: AppDispatch = store.dispatch;
+        void dispatch(resetKeyRingState());
       });
       deliver(activation("created", TRUSTCHAIN), intent);
       emit({ type: "completed" }, intent);
@@ -500,7 +502,8 @@ describe("Ledger Sync device steps on DIE", () => {
       const intent = lastIntent();
 
       act(() => {
-        void resetKeyRingState()(store.dispatch);
+        const dispatch: AppDispatch = store.dispatch;
+        void dispatch(resetKeyRingState());
       });
       deliver(keyRingTreeUpdateFixture(NEW_TRUSTCHAIN), intent);
       emit({ type: "completed" }, intent);

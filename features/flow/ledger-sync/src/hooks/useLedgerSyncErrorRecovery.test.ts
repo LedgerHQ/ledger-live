@@ -2,29 +2,33 @@
  * @jest-environment jsdom
  */
 import { act, waitFor } from "@testing-library/react";
-import { selectIsKeyRingMember, selectKeyRingTreeId } from "@domain/entity-key-ring";
+import {
+  selectIsKeyRingMember,
+  selectKeyRingTreeId,
+  type KeyRingState,
+} from "@domain/entity-key-ring";
+import { mockKeyRingState } from "@domain/entity-key-ring/slice.mock";
 import {
   KeyRingError,
   KeyRingMemberRemovedError,
   KeyRingNotAllowedError,
   KeyRingOutdatedError,
+  KeyRingTreeNotFoundError,
 } from "@features/platform-key-ring";
 import { fakeKeyRingClient } from "@features/platform-key-ring/testing";
-import { LedgerSyncErrorMessage } from "../logic/errors";
+import { LedgerSyncMembersUnresolvedError } from "../errors";
 import type { LedgerSyncErrorRecoveryOptions } from "../types";
 import { listenToAnalytics, stopAnalytics } from "../__tests__/analytics";
 import { newTreeUpdate } from "../__tests__/fixtures";
 import { renderLedgerSyncHook } from "../__tests__/harness";
 import { useLedgerSyncErrorRecovery } from "./useLedgerSyncErrorRecovery";
 
-const DESKTOP_MESSAGES = [LedgerSyncErrorMessage.noTrustchain];
-const MOBILE_MESSAGES = [
-  LedgerSyncErrorMessage.noTrustchain,
-  LedgerSyncErrorMessage.membersDataUndefined,
-];
 const RESET = "trustchain/keyRingReset";
 
-function renderRecovery(options: Partial<LedgerSyncErrorRecoveryOptions> = {}) {
+function renderRecovery(
+  options: Partial<LedgerSyncErrorRecoveryOptions> = {},
+  trustchain: KeyRingState = mockKeyRingState(),
+) {
   const sequence: string[] = [];
   listenToAnalytics(sequence);
   const client = fakeKeyRingClient({
@@ -41,13 +45,16 @@ function renderRecovery(options: Partial<LedgerSyncErrorRecoveryOptions> = {}) {
       useLedgerSyncErrorRecovery({
         client,
         onReset,
-        resetOnMessages: DESKTOP_MESSAGES,
         ...options,
       }),
-    { sequence },
+    { sequence, trustchain },
   );
   sequence.length = 0;
   return { ...rendered, client, onReset, sequence };
+}
+
+function api4xx(message: string): Error {
+  return Object.assign(new Error(message), { name: "LedgerAPI4xx" });
 }
 
 afterEach(stopAnalytics);
@@ -84,40 +91,56 @@ describe("useLedgerSyncErrorRecovery", () => {
     expect(onReset).not.toHaveBeenCalled();
   });
 
-  it("should reset on a message the app lists", () => {
-    const { result, onReset } = renderRecovery();
+  it.each([
+    ["4xx of the backend", api4xx("No such trustchain 02ab")],
+    ["key ring error mapped from it", new KeyRingTreeNotFoundError("No such trustchain 02ab")],
+  ])("should reset once when the backend lost the key tree, as the %s", (_case, error) => {
+    const { result, sequence } = renderRecovery();
 
-    act(() =>
-      result.current.handleError(new Error(`Error: ${LedgerSyncErrorMessage.noTrustchain}`)),
+    act(() => result.current.handleError(error));
+
+    expect(sequence).toEqual([RESET, "track", "onReset", "invalidateAuth"]);
+  });
+
+  it("should ignore a missing key tree while the instance has none", () => {
+    const { result, onReset, sequence } = renderRecovery(
+      {},
+      mockKeyRingState({ trustchain: null }),
     );
 
-    expect(onReset).toHaveBeenCalledTimes(1);
+    act(() => result.current.handleError(new KeyRingTreeNotFoundError("TrustchainNotFound")));
+
+    expect(onReset).not.toHaveBeenCalled();
+    expect(sequence).toEqual([]);
+  });
+
+  it("should ignore a refused key that is not in the key tree", () => {
+    const { result, onReset } = renderRecovery();
+
+    act(() => result.current.handleError(api4xx("Not a member of trustchain")));
+
+    expect(onReset).not.toHaveBeenCalled();
   });
 
   it.each([
-    ["desktop", DESKTOP_MESSAGES, 0],
-    ["mobile", MOBILE_MESSAGES, 1],
-  ])(
-    "should reset on the members data undefined error only with the %s messages",
-    (_app, resetOnMessages, resets) => {
-      const { result, onReset } = renderRecovery({ resetOnMessages });
-
-      act(() => result.current.handleError(new Error(LedgerSyncErrorMessage.membersDataUndefined)));
-
-      expect(onReset).toHaveBeenCalledTimes(resets);
-    },
-  );
-
-  it("should reset twice on an error matching both a category and a message", () => {
-    const { result, onReset } = renderRecovery();
+    ["without the option", {}, 0],
+    ["with resetOnUnresolvedMembers", { resetOnUnresolvedMembers: true }, 1],
+  ])("should reset on unresolved members only %s", (_case, options, resets) => {
+    const { result, onReset } = renderRecovery(options, mockKeyRingState({ trustchain: null }));
 
     act(() =>
-      result.current.handleError(
-        new KeyRingMemberRemovedError(LedgerSyncErrorMessage.noTrustchain),
-      ),
+      result.current.handleError(new LedgerSyncMembersUnresolvedError(["useGetMembers", null])),
     );
 
-    expect(onReset).toHaveBeenCalledTimes(2);
+    expect(onReset).toHaveBeenCalledTimes(resets);
+  });
+
+  it("should not reset on an error that only reads like unresolved members", () => {
+    const { result, onReset } = renderRecovery({ resetOnUnresolvedMembers: true });
+
+    act(() => result.current.handleError(new Error('["useGetMembers",null] data is undefined')));
+
+    expect(onReset).not.toHaveBeenCalled();
   });
 
   it("should log the error before anything else when the app logs", () => {

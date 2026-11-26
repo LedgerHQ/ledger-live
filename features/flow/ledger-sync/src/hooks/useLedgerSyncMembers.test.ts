@@ -5,7 +5,7 @@ import { act, waitFor } from "@testing-library/react";
 import { mockKeyRingState } from "@domain/entity-key-ring/slice.mock";
 import { KeyRingNotAllowedError, commitKeyRingTree } from "@features/platform-key-ring";
 import { fakeKeyRingClient } from "@features/platform-key-ring/testing";
-import { LedgerSyncErrorMessage } from "../logic/errors";
+import { LedgerSyncMembersUnresolvedError } from "../errors";
 import { fakeStream, member, newTreeUpdate } from "../__tests__/fixtures";
 import { renderLedgerSyncHook } from "../__tests__/harness";
 import { useLedgerSyncMembers } from "./useLedgerSyncMembers";
@@ -58,17 +58,33 @@ describe("useLedgerSyncMembers", () => {
     expect(result.current.isError).toBe(true);
   });
 
-  it("should fail with the members data undefined message when nothing is listed without a stream", async () => {
-    jest.spyOn(console, "error").mockImplementation(() => undefined);
+  it("should fail with the unresolved members error on a refetch without a member key", async () => {
     const onError = jest.fn();
-    const client = fakeKeyRingClient({
-      openStream: () => null,
-      listMembers: jest.fn().mockResolvedValue(undefined),
+    const listMembers = jest.fn();
+    const client = fakeKeyRingClient({ openStream: () => null, listMembers });
+    const { result } = renderLedgerSyncHook(() => useLedgerSyncMembers({ client, onError }), {
+      trustchain: mockKeyRingState({ memberCredentials: null }),
     });
-    renderLedgerSyncHook(() => useLedgerSyncMembers({ client, onError }));
+
+    await act(() => result.current.refetch());
 
     await waitFor(() => expect(onError).toHaveBeenCalled());
-    expect(onError.mock.calls[0][0].message).toContain(LedgerSyncErrorMessage.membersDataUndefined);
+    const [error] = onError.mock.calls[0];
+    expect(error).toBeInstanceOf(LedgerSyncMembersUnresolvedError);
+    expect(String(error)).toBe('Error: ["useGetMembers",null] data is undefined');
+    expect(listMembers).not.toHaveBeenCalled();
+    expect(result.current.isError).toBe(true);
+  });
+
+  it("should not query the members without a member key until a refetch", () => {
+    const onError = jest.fn();
+    const client = fakeKeyRingClient({ openStream: () => null, listMembers: jest.fn() });
+    const { result } = renderLedgerSyncHook(() => useLedgerSyncMembers({ client, onError }), {
+      trustchain: mockKeyRingState({ memberCredentials: null }),
+    });
+
+    expect(result.current.isFetching).toBe(false);
+    expect(onError).not.toHaveBeenCalled();
   });
 
   it("should list the members again after a key rotation", async () => {

@@ -20,6 +20,7 @@ import { recentAddressesSelector } from "~/reducers/wallet";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { accountDataExtra } from "@domain/api-account-data";
 import { ledgerSyncBackendsExtra } from "@features/flow-ledger-sync";
+import { keyRingRuntimeExtra } from "@features/platform-key-ring/store";
 import { accountDataSources, connectAccounts } from "~/config/account-data-setup";
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector } from "~/reducers/settings";
@@ -32,6 +33,8 @@ import { sleepingListener } from "./sleepingListener";
 import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
 import { createMobileCountervaluesMiddleware } from "./middleware/countervalues";
 import { createMobileAuthMiddleware } from "./middleware/auth";
+
+const keyRing = keyRingRuntimeExtra({ getState: (): State => store.getState() });
 
 export const store = configureStore({
   reducer: reducers,
@@ -56,11 +59,12 @@ export const store = configureStore({
               keyRingApiBaseUrl: appConfig.trustchainApiBaseUrl,
               cloudSyncApiBaseUrl: appConfig.cloudSyncApiBaseUrl,
             }),
+            ...keyRing,
           },
         },
       }),
     )
-      .concat(createMobileAuthMiddleware(appConfig))
+      .concat(createMobileAuthMiddleware(appConfig, keyRing.keyRingRuntime))
       .concat(rebootMiddleware)
       .concat(
         createIdentitiesSyncMiddleware({

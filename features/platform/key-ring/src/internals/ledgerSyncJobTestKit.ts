@@ -15,7 +15,9 @@ import type {
 } from "../intents/jobState";
 import type { KeyRingClient } from "../types";
 import { createLifecycleHub } from "./lifecycleHub";
+import { keyRingInitialState } from "@domain/entity-key-ring";
 import { createV1Client } from "./v1/client";
+import { createSliceKeyStore } from "./v1/sliceKeyStore";
 
 /** A v1 SDK whose every method throws unless the test stubs it with its own signature. */
 export function fakeTrustchainSdk(stubs: Partial<TrustchainSDK>): TrustchainSDK {
@@ -39,7 +41,9 @@ export function fakeTrustchainSdk(stubs: Partial<TrustchainSDK>): TrustchainSDK 
 /** The real v1 adapter on a fake SDK, so the jobs run the same client the apps build. */
 export function fakeAppClient(stubs: Partial<TrustchainSDK>): KeyRingClient {
   return createV1Client({
+    mock: false,
     apiBaseUrl: "https://trustchain.test",
+    keyStore: createSliceKeyStore(() => keyRingInitialState),
     bridge: {
       withDevice: () => () => {
         throw new Error("the app device access must not be used");

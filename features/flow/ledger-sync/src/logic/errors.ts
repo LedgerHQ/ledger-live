@@ -2,16 +2,6 @@ import { classifyKeyRingError, keyRingErrorForDisplay } from "@features/platform
 import type { LedgerSyncDeviceFailure } from "../types";
 
 /**
- * Messages the Ledger Sync error recovery matches with `includes`. `membersDataUndefined` is the
- * error the members query reports when it resolves nothing for a session without a key tree
- * stream.
- */
-export const LedgerSyncErrorMessage = Object.freeze({
-  noTrustchain: "No such trustchain",
-  membersDataUndefined: '["useGetMembers",null] data is undefined',
-} as const);
-
-/**
  * The error an error screen shows for a Ledger Sync failure, with its existing translation: the
  * `keyRingErrorForDisplay` of `@features/platform-key-ring`, typed `Error` in and out.
  *
@@ -25,18 +15,19 @@ export function ledgerSyncErrorForDisplay(error: Error): Error {
   return displayed instanceof Error ? displayed : error;
 }
 
-/** True when the backend reports that the key tree does not exist. */
-export function isNoTrustchainError(error: Error): boolean {
-  return error.message.includes(LedgerSyncErrorMessage.noTrustchain);
-}
-
-/** True when the backend refuses this instance because it is not a member of the key tree. */
-export function isUnauthorizedMemberError(error: Error): boolean {
-  return (
-    error.name === "LedgerAPI4xx" &&
-    (error.message.includes("Not a member of trustchain") ||
-      error.message.includes("You are not member"))
-  );
+/**
+ * True when the backend no longer has the key tree this instance is a member of: a
+ * `tree-not-found` error while the store still holds a key tree. Without one, the instance has no
+ * key tree to lose: the error comes from a call made without a key tree, not from the backend.
+ *
+ * @example
+ * ```ts
+ * const isMember = useSelector(selectIsKeyRingMember);
+ * if (error && !isLedgerSyncTreeGone(error, isMember)) showAlert(error);
+ * ```
+ */
+export function isLedgerSyncTreeGone(error: unknown, isKeyRingMember: boolean): boolean {
+  return isKeyRingMember && classifyKeyRingError(error) === "tree-not-found";
 }
 
 /**
@@ -56,4 +47,5 @@ const DEVICE_FAILURES: ReadonlySet<string> = new Set<LedgerSyncDeviceFailure>([
   "not-allowed",
   "no-tree-for-seed",
   "user-refused",
+  "device-unsupported",
 ]);

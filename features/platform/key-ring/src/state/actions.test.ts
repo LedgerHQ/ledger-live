@@ -24,6 +24,7 @@ import {
   resetKeyRingState,
 } from "./actions";
 import { selectPersistedKeyRingState } from "./persistence";
+import { keyRingRuntimeExtra } from "./runtime";
 
 // The shape both apps store: desktop `app.json` key `trustchain`, mobile storage key `trustchain`.
 const DESKTOP_APP_JSON_TRUSTCHAIN = JSON.parse(
@@ -62,13 +63,19 @@ function v1Reducer(
 // The state a key ring thunk stores, from the one action it dispatches.
 function dispatchedState(thunk: KeyRingThunk): KeyRingState {
   const dispatched: KeyRingAction[] = [];
-  void thunk(action => dispatched.push(action));
+  const extra = keyRingRuntimeExtra({ getState: () => ({ trustchain: keyRingInitialState }) });
+  void thunk(action => dispatched.push(action), jest.fn(), extra);
   expect(dispatched).toHaveLength(1);
   return keyRingReducer(undefined, dispatched[0] as never);
 }
 
 function makeStore() {
-  return configureStore({ reducer: { trustchain: keyRingReducer } });
+  const extra = keyRingRuntimeExtra({ getState: () => store.getState() });
+  const store = configureStore({
+    reducer: { trustchain: keyRingReducer },
+    middleware: getDefaultMiddleware => getDefaultMiddleware({ thunk: { extraArgument: extra } }),
+  });
+  return store;
 }
 
 describe("importPersistedKeyRingState", () => {
@@ -151,5 +158,42 @@ describe("key ring actions match the v1 store handlers", () => {
     expect(() => commitKeyRingTree({ kind: "KeyRingTreeUpdate" })).toThrow(
       "Unknown key ring tree update",
     );
+  });
+});
+
+describe("the key ring thunks on the v1 runtime", () => {
+  it.each([
+    ["the boot import", () => importPersistedKeyRingState(undefined)],
+    ["the reset", () => resetKeyRingState()],
+  ])("should store a new member key within the dispatch of %s", (_case, thunk) => {
+    const store = makeStore();
+    const notifiedStates: string[] = [];
+    store.subscribe(() => notifiedStates.push(JSON.stringify(store.getState().trustchain)));
+
+    const stored = store.dispatch(thunk());
+
+    expect(notifiedStates).toHaveLength(1);
+    const { memberCredentials } = store.getState().trustchain;
+    expect(KeyRingMemberKeyRecordSchema.safeParse(memberCredentials).success).toBe(true);
+    expect(notifiedStates[0]).toBe(JSON.stringify(store.getState().trustchain));
+    return expect(stored).resolves.toBeUndefined();
+  });
+
+  it.each([
+    ["no thunk extra argument", undefined],
+    ["an extra argument without runtime", { other: "service" }],
+    ["a runtime this package did not build", { keyRingRuntime: { kind: "KeyRingRuntime" } }],
+  ])("should throw a clear error on a store with %s", (_case, extraArgument) => {
+    const store = configureStore({
+      reducer: { trustchain: keyRingReducer },
+      middleware: getDefaultMiddleware => getDefaultMiddleware({ thunk: { extraArgument } }),
+    });
+
+    for (const thunk of [importPersistedKeyRingState(undefined), resetKeyRingState()]) {
+      expect(() => store.dispatch(thunk)).toThrow(
+        expect.objectContaining({ name: "KeyRingRuntimeMissingError" }),
+      );
+    }
+    expect(store.getState().trustchain).toBe(keyRingInitialState);
   });
 });

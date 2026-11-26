@@ -1,5 +1,5 @@
 import { createKeyRingClient, type KeyRingClient } from "@features/platform-key-ring";
-import { createRotationReencryption } from "@features/platform-wallet-sync";
+import { registerRotationReencryption } from "@features/platform-wallet-sync";
 import { keyRingDeviceBridge } from "../keyRingDeviceBridge";
 import { type KeyRingClientSetup, useKeyRingClientSetup } from "./useKeyRingClientSetup";
 
@@ -20,15 +20,15 @@ function createAppKeyRingClient({
   trustchainApiBaseUrl,
   cloudSyncApiBaseUrl,
   getCurrentWSState,
+  runtime,
 }: KeyRingClientSetup): KeyRingClient {
   const client = createKeyRingClient({
     mock: isMockEnv,
     instanceName,
     apiBaseUrl: trustchainApiBaseUrl,
     deviceBridge: keyRingDeviceBridge,
+    runtime,
   });
-  client.lifecycle.onKeyRotation(
-    createRotationReencryption({ cloudSyncApiBaseUrl, getCurrentWSState }),
-  );
+  registerRotationReencryption(client, { cloudSyncApiBaseUrl, getCurrentWSState });
   return client;
 }

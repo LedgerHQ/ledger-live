@@ -35,10 +35,14 @@ export type KeyRingAuthPolicy = z.infer<typeof KeyRingAuthPolicySchema>;
 export type KeyRingDeviceRequirement = z.infer<typeof KeyRingDeviceRequirementSchema>;
 
 /**
- * The input the DIE executor initializes the device with, from `getKeyRingDeviceInitialization`.
- * Legacy device actions read `appRequest` alone.
+ * How to initialize the device before a key ring device operation, from
+ * `getKeyRingDeviceInitialization`. Branch on `kind`: `app` is the input the DIE executor and the
+ * legacy device actions (`appRequest` alone) take; `os-feature` is a requirement they cannot
+ * express yet, which the app reports as the `device-unsupported` failure.
  */
-export type KeyRingDeviceInitialization = Readonly<{ appRequest: Readonly<{ appName: string }> }>;
+export type KeyRingDeviceInitialization =
+  | Readonly<{ kind: "app"; appRequest: Readonly<{ appName: string }> }>
+  | Readonly<{ kind: "os-feature"; feature: string; minimumOsVersion?: string }>;
 
 /**
  * The protocol-agnostic reason of a key ring failure, from `classifyKeyRingError`. Branch on it
@@ -49,7 +53,7 @@ export type KeyRingErrorCategory = z.infer<typeof KeyRingErrorCategorySchema>;
 /** What happened to the key tree, as `KeyRingLifecycle.subscribe` reports it. */
 export type KeyRingLifecycleEvent = z.infer<typeof KeyRingLifecycleEventSchema>;
 
-/** The name and version of the key ring backend, from `fetchKeyRingServiceStatus`. */
+/** The name and version of the key ring backend, from `KeyRingClient.serviceStatus`. */
 export type KeyRingServiceStatus = z.infer<typeof KeyRingServiceStatusSchema>;
 
 /**
@@ -88,10 +92,26 @@ export type KeyRingDeviceSession = Readonly<{
 export type KeyRingAction = Readonly<{ type: string; payload: unknown }>;
 
 /**
- * A key ring state change that may need the key store, such as generating a member key. Dispatch
- * it with the app's dispatch; the returned promise settles once the state is stored.
+ * A key ring state change that needs the key store, such as generating a member key. Dispatch it
+ * with the app's dispatch, on a store whose thunk `extraArgument` holds `keyRingRuntimeExtra`; the
+ * returned promise settles once the state is stored.
  */
-export type KeyRingThunk = (dispatch: (action: KeyRingAction) => unknown) => Promise<void>;
+export type KeyRingThunk = (
+  dispatch: (action: KeyRingAction) => unknown,
+  getState: () => unknown,
+  extra: unknown,
+) => Promise<void>;
+
+/**
+ * Where this instance keeps its member key, and how the key ring state changes with it: what the
+ * key ring thunks, the identity provider and the client share. Opaque: build it once per store
+ * with `keyRingRuntimeExtra`. The v1 runtime keeps the key in the `trustchain` slice; a secure key
+ * storage replaces it without changing its callers.
+ */
+export type KeyRingRuntime = Readonly<{ kind: "KeyRingRuntime" }>;
+
+/** This package's slice of the thunk `extraArgument`, from `keyRingRuntimeExtra`. */
+export type KeyRingRuntimeExtra = Readonly<{ keyRingRuntime: KeyRingRuntime }>;
 
 /** A dispatch that takes both plain actions and key ring thunks, as the apps' store dispatch does. */
 export interface KeyRingDispatch {
@@ -240,10 +260,9 @@ export type KeyRingJoinPairingOptions = Readonly<{
  *   instanceName,
  *   apiBaseUrl: trustchainApiBaseUrl,
  *   deviceBridge: createKeyRingV1DeviceBridge({ withDevice, createSessionTransport }),
+ *   runtime,
  * });
- * client.lifecycle.onKeyRotation(
- *   createRotationReencryption({ cloudSyncApiBaseUrl, getCurrentWSState }),
- * );
+ * registerRotationReencryption(client, { cloudSyncApiBaseUrl, getCurrentWSState });
  *
  * // Activate, then store the key tree it returns.
  * const session = selectKeyRingSession(store.getState());
@@ -272,8 +291,8 @@ export interface KeyRingClient {
    */
   forDeviceSession(deviceSession: KeyRingDeviceSession): KeyRingClient;
   /**
-   * Generates a member key for this instance, without joining any key tree. Store it with
-   * `commitKeyRingMemberKey`.
+   * Generates a member key for this instance in the key store of the runtime, without joining any
+   * key tree. Store it with `commitKeyRingMemberKey`.
    */
   createMemberKey(): Promise<KeyRingMemberKeyUpdate>;
   /**
@@ -315,4 +334,9 @@ export interface KeyRingClient {
   openStream(session: KeyRingSession): KeyRingStream | null;
   /** Drops the cached access token: the next authenticated call asks a new one. */
   invalidateAuth(): void;
+  /**
+   * The name and version of the key ring backend, for the Ledger Sync status screens. Rejects with
+   * the transport error as is when the backend cannot be reached, and on an unexpected shape.
+   */
+  serviceStatus(): Promise<KeyRingServiceStatus>;
 }

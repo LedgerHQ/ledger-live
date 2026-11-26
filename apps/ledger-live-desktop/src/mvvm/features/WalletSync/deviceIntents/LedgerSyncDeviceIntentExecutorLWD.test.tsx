@@ -4,8 +4,16 @@ import {
   buildDeviceInitializationInput,
   DeviceIntentExecutor,
 } from "LLD/components/DeviceIntentExecutor";
+import { getKeyRingDeviceInitialization } from "@features/platform-key-ring";
 import { buildAddMemberIntent, INITIALIZATION_INPUT } from "./__tests__/ledgerSyncIntentTestKit";
 import { LedgerSyncDeviceIntentExecutorLWD } from "./LedgerSyncDeviceIntentExecutorLWD";
+
+jest.mock("@features/platform-key-ring", () => ({
+  ...jest.requireActual("@features/platform-key-ring"),
+  getKeyRingDeviceInitialization: jest.fn(
+    jest.requireActual("@features/platform-key-ring").getKeyRingDeviceInitialization,
+  ),
+}));
 
 jest.mock("LLD/components/DeviceIntentExecutor", () => ({
   buildDeviceInitializationInput: jest.fn(),
@@ -26,6 +34,7 @@ describe("LedgerSyncDeviceIntentExecutorLWD", () => {
 
     await waitFor(() => expect(DeviceIntentExecutor).toHaveBeenCalled());
     expect(buildDeviceInitializationInput).toHaveBeenCalledWith({
+      kind: "app",
       appRequest: { appName: "Ledger Sync" },
     });
     expect(jest.mocked(DeviceIntentExecutor).mock.calls.at(-1)?.[0]).toMatchObject({
@@ -44,6 +53,26 @@ describe("LedgerSyncDeviceIntentExecutorLWD", () => {
     render(<LedgerSyncDeviceIntentExecutorLWD intent={intent} onUserCancel={onUserCancel} />);
 
     await waitFor(() => expect(onUserCancel).toHaveBeenCalledTimes(1));
+    expect(DeviceIntentExecutor).not.toHaveBeenCalled();
+  });
+
+  it("should fail the intent as device-unsupported on an OS feature requirement", () => {
+    jest
+      .mocked(getKeyRingDeviceInitialization)
+      .mockReturnValueOnce({ kind: "os-feature", feature: "lkrp", minimumOsVersion: "2.0.0" });
+    const onJobStateChanged = jest.fn();
+
+    render(
+      <LedgerSyncDeviceIntentExecutorLWD
+        intent={{ ...intent, onJobStateChanged }}
+        onUserCancel={jest.fn()}
+      />,
+    );
+
+    expect(onJobStateChanged).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "failed", reason: "device-unsupported" }),
+    );
+    expect(buildDeviceInitializationInput).not.toHaveBeenCalled();
     expect(DeviceIntentExecutor).not.toHaveBeenCalled();
   });
 });

@@ -1,6 +1,5 @@
 import { StackActions, useNavigation } from "@react-navigation/native";
 import {
-  LedgerSyncErrorMessage,
   useLedgerSyncErrorRecovery,
   type LedgerSyncErrorRecovery,
 } from "@features/flow-ledger-sync";
@@ -19,11 +18,6 @@ export function useLifeCycle(): LedgerSyncErrorRecovery {
           screen: ScreenName.WalletSyncActivationInit,
         }),
       ),
-    resetOnMessages: RESET_ON_MESSAGES,
+    resetOnUnresolvedMembers: true,
   });
 }
-
-const RESET_ON_MESSAGES = [
-  LedgerSyncErrorMessage.noTrustchain,
-  LedgerSyncErrorMessage.membersDataUndefined,
-];

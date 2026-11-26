@@ -84,19 +84,23 @@ comes from `createKeyRingV1DeviceBridge` (`@features/platform-key-ring/v1`), whi
 composition root alone imports: it gets the app's `withDevice` and the `DmkCompatTransport` of a
 session, both from `libs/`.
 
-Desktop registers `createRotationReencryption` on `client.lifecycle.onKeyRotation`, so that on a
+Desktop calls `registerRotationReencryption(client, ...)` of `@features/platform-wallet-sync`, so that on a
 [key rotation](./02-trustchain-sdk.md#key-rotation-on-member-removal) the Cloud Sync data moves
 to the new key. Mobile does not register it yet.
 
 ### Store, persistence and API auth
 
 - The root reducer mounts the slice of `@domain/entity-key-ring` under `trustchain`.
-- At boot, `importPersistedKeyRingState(persisted)` validates the stored member key and
-  generates a new one when it is missing or invalid.
+- Each store spreads `keyRingRuntimeExtra({ getState })` (`@features/platform-key-ring/store`)
+  into its thunk `extraArgument`: the key ring runtime holds the key store of the member key. The
+  key ring thunks, the identity provider and the client (`useKeyRingRuntime` of
+  `@features/flow-ledger-sync`) read that one runtime.
+- At boot, `dispatch(importPersistedKeyRingState(persisted))` validates the stored member key and
+  generates a new one when it is missing or invalid, within the dispatch.
 - LWD persists `app.trustchain` on `isKeyRingAction`; LWM persists the `trustchain` key. Both
   write `selectPersistedKeyRingState`.
 - The `@shared/auth` middleware builds `AuthSDK` with
-  `createKeyRingIdentityProvider(() => selectKeyRingSession(getState()))`
+  `createKeyRingIdentityProvider(keyRingRuntime, () => selectKeyRingSession(getState()))`
   (flags `lwdAuth` / `lwmAuth`).
 
 ## Feature flags & entry points

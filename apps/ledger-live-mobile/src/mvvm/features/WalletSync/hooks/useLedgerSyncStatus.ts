@@ -4,13 +4,14 @@ import {
   type LedgerSyncServiceStatus,
 } from "@features/flow-ledger-sync";
 import { useFeature } from "@features/platform-feature-flags";
+import { useKeyRingClient } from "./useKeyRingClient";
 
 export function useLedgerSyncStatus(): LedgerSyncServiceStatus {
   const featureWalletSync = useFeature("llmWalletSync");
-  const { keyRingApiBaseUrl, cloudSyncApiBaseUrl } = useLedgerSyncBackends();
+  const { cloudSyncApiBaseUrl } = useLedgerSyncBackends();
 
   return useLedgerSyncServiceStatus({
-    keyRingApiBaseUrl,
+    client: useKeyRingClient(),
     cloudSyncApiBaseUrl,
     enabled: featureWalletSync?.enabled === true,
   });

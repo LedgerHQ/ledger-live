@@ -1,5 +1,4 @@
 import { useQueries, type UseQueryResult } from "@tanstack/react-query";
-import { fetchKeyRingServiceStatus } from "@features/platform-key-ring";
 import { getCloudSyncApi } from "@shared/cloud-sync";
 import { LedgerSyncQueryKey } from "../logic/queryKeys";
 import type { LedgerSyncServiceStatus, LedgerSyncServiceStatusOptions } from "../types";
@@ -10,16 +9,16 @@ import type { LedgerSyncServiceStatus, LedgerSyncServiceStatusOptions } from "..
  *
  * @example
  * ```ts
- * const { keyRingApiBaseUrl, cloudSyncApiBaseUrl } = useLedgerSyncBackends();
+ * const { cloudSyncApiBaseUrl } = useLedgerSyncBackends();
  * const { isError, error } = useLedgerSyncServiceStatus({
- *   keyRingApiBaseUrl,
+ *   client: useKeyRingClient(),
  *   cloudSyncApiBaseUrl,
  *   enabled: featureWalletSync?.enabled === true,
  * });
  * ```
  */
 export function useLedgerSyncServiceStatus({
-  keyRingApiBaseUrl,
+  client,
   cloudSyncApiBaseUrl,
   enabled,
 }: LedgerSyncServiceStatusOptions): LedgerSyncServiceStatus {
@@ -28,7 +27,7 @@ export function useLedgerSyncServiceStatus({
     queries: [
       {
         queryKey: [LedgerSyncQueryKey.keyRingStatus],
-        queryFn: () => fetchKeyRingServiceStatus(keyRingApiBaseUrl),
+        queryFn: () => client.serviceStatus(),
         ...enabledOption,
       },
       {

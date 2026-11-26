@@ -1,5 +1,6 @@
-import type { KeyRingClient, KeyRingDeviceBridge } from "../types";
+import type { KeyRingClient, KeyRingDeviceBridge, KeyRingRuntime } from "../types";
 import { createLifecycleHub } from "../internals/lifecycleHub";
+import { runtimePartsOf } from "../internals/runtime";
 import { createV1Client, v1SdkFactory } from "../internals/v1/client";
 import { v1BridgeOf } from "../internals/v1/deviceBridge";
 
@@ -18,14 +19,17 @@ import { v1BridgeOf } from "../internals/v1/deviceBridge";
  *     withDevice,
  *     createSessionTransport: ({ dmk, sessionId }) => new DmkCompatTransport(dmk, sessionId),
  *   }),
+ *   runtime: useKeyRingRuntime(),
  * });
  * ```
  */
 export function createKeyRingClient(config: KeyRingClientConfig): KeyRingClient {
   const hub = createLifecycleHub();
   return createV1Client({
+    mock: config.mock,
     apiBaseUrl: config.apiBaseUrl,
     bridge: v1BridgeOf(config.deviceBridge),
+    keyStore: runtimePartsOf(config.runtime).keyStore,
     hub,
     createSdk: v1SdkFactory({
       mock: config.mock,
@@ -46,4 +50,6 @@ export type KeyRingClientConfig = Readonly<{
   apiBaseUrl: string;
   /** How the protocol adapter reaches devices. */
   deviceBridge: KeyRingDeviceBridge;
+  /** The runtime of the app store's thunk `extraArgument`: its key store generates member keys. */
+  runtime: KeyRingRuntime;
 }>;

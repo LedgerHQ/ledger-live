@@ -37,10 +37,15 @@ export const KeyRingDeviceRequirementSchema = z.discriminatedUnion("kind", [
 /**
  * Why a key ring operation failed, the same for every protocol version. `classifyKeyRingError`
  * returns one; the `pairing-*` categories come from `hostPairing` and `joinPairing` only.
+ *
+ * `not-member`: the backend refuses a key that is not in the key tree. It differs from
+ * `not-allowed`, a token without permission on the key tree, and from `member-removed`, this
+ * instance removed or without a key tree.
  */
 export const KeyRingErrorCategorySchema = z.enum([
   "member-removed",
   "not-allowed",
+  "not-member",
   "tree-not-found",
   "no-tree-for-seed",
   "outdated",

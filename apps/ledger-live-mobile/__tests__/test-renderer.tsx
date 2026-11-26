@@ -62,6 +62,8 @@ import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feat
 import { getEnv } from "@shared/env";
 import { calApiExtra, coinMarketCapApiExtra, cvsApiExtra } from "@shared/api-services";
 import { ledgerSyncBackendsExtra } from "@features/flow-ledger-sync";
+import { keyRingRuntimeExtra } from "@features/platform-key-ring/store";
+import type { KeyRingState } from "@domain/entity-key-ring";
 import { appConfig } from "~/setup";
 import { LinkingProvider } from "@shared/linking";
 import StyleProvider from "~/StyleProvider";
@@ -151,7 +153,10 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
     },
   };
 
-  return configureStore({
+  const keyRing = keyRingRuntimeExtra({
+    getState: (): { trustchain: KeyRingState } => store.getState(),
+  });
+  const store = configureStore({
     reducer: reducers,
     middleware: getDefaultMiddleware =>
       applyLlmRTKApiMiddlewares(
@@ -172,6 +177,7 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
                 keyRingApiBaseUrl: appConfig.trustchainApiBaseUrl,
                 cloudSyncApiBaseUrl: appConfig.cloudSyncApiBaseUrl,
               }),
+              ...keyRing,
             },
           },
         }),
@@ -180,6 +186,7 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
     preloadedState: state,
     devTools: false,
   });
+  return store;
 }
 
 export type ReduxStore = ReturnType<typeof createStore>;

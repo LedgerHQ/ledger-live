@@ -1,4 +1,12 @@
-import { createKeyRingDebugSdk, setDebugKeyRingMemberKey, setDebugKeyRingTree } from "./devtools";
+import { keyRingInitialState } from "@domain/entity-key-ring";
+import { mockKeyRingState } from "@domain/entity-key-ring/slice.mock";
+import {
+  createKeyRingDebugSdk,
+  selectDebugKeyRingMemberKey,
+  selectDebugKeyRingTree,
+  setDebugKeyRingMemberKey,
+  setDebugKeyRingTree,
+} from "./devtools";
 import { createKeyRingV1DeviceBridge } from "./v1";
 import {
   mockKeyRingMemberKeyRecord,
@@ -27,5 +35,18 @@ describe("debug setters", () => {
       type: "trustchain/keyRingMemberKeySet",
       payload: memberKey,
     });
+  });
+});
+
+describe("debug readers", () => {
+  it("read the raw key tree and member key of the slice", () => {
+    const state = mockKeyRingState();
+    expect(selectDebugKeyRingTree({ trustchain: state })).toBe(state.trustchain);
+    expect(selectDebugKeyRingMemberKey({ trustchain: state })).toBe(state.memberCredentials);
+  });
+
+  it("read null on a fresh instance", () => {
+    expect(selectDebugKeyRingTree({ trustchain: keyRingInitialState })).toBeNull();
+    expect(selectDebugKeyRingMemberKey({ trustchain: keyRingInitialState })).toBeNull();
   });
 });

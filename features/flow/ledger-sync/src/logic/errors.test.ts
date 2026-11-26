@@ -2,12 +2,11 @@ import {
   KeyRingError,
   KeyRingMemberRemovedError,
   KeyRingNotAllowedError,
+  KeyRingTreeNotFoundError,
 } from "@features/platform-key-ring";
 import {
-  LedgerSyncErrorMessage,
   classifyLedgerSyncDeviceFailure,
-  isNoTrustchainError,
-  isUnauthorizedMemberError,
+  isLedgerSyncTreeGone,
   ledgerSyncErrorForDisplay,
 } from "./errors";
 
@@ -38,28 +37,25 @@ describe("ledgerSyncErrorForDisplay", () => {
   });
 });
 
-describe("isNoTrustchainError", () => {
-  it("should match a message that includes the no trustchain message", () => {
-    expect(isNoTrustchainError(new Error(`API: ${LedgerSyncErrorMessage.noTrustchain} 42`))).toBe(
-      true,
+describe("isLedgerSyncTreeGone", () => {
+  it.each([
+    ["the backend 4xx", namedError("LedgerAPI4xx", "No such trustchain 02ab")],
+    ["its mapped key ring error", new KeyRingTreeNotFoundError("No such trustchain 02ab")],
+  ])("should match %s while the instance is a member", (_case, error) => {
+    expect(isLedgerSyncTreeGone(error, true)).toBe(true);
+  });
+
+  it("should not match a missing key tree while the instance has none", () => {
+    expect(isLedgerSyncTreeGone(new KeyRingTreeNotFoundError("TrustchainNotFound"), false)).toBe(
+      false,
     );
   });
 
-  it("should not match another message", () => {
-    expect(isNoTrustchainError(new Error("Network down"))).toBe(false);
-  });
-});
-
-describe("isUnauthorizedMemberError", () => {
-  it.each(["Not a member of trustchain", "You are not member"])(
-    "should match a 4xx API error saying %s",
-    message => {
-      expect(isUnauthorizedMemberError(namedError("LedgerAPI4xx", message))).toBe(true);
-    },
-  );
-
-  it("should not match the same message from another error", () => {
-    expect(isUnauthorizedMemberError(new Error("You are not member"))).toBe(false);
+  it.each([
+    ["another category", new KeyRingError("not-member", "Not a member of trustchain")],
+    ["the message on an error of another name", new Error("No such trustchain")],
+  ])("should not match %s", (_case, error) => {
+    expect(isLedgerSyncTreeGone(error, true)).toBe(false);
   });
 });
 
@@ -70,13 +66,17 @@ describe("classifyLedgerSyncDeviceFailure", () => {
     "not-allowed",
     "no-tree-for-seed",
     "user-refused",
+    "device-unsupported",
   ] as const)("should keep the %s category", category => {
     expect(classifyLedgerSyncDeviceFailure(new KeyRingError(category))).toBe(category);
   });
 
-  it("should map any other key ring category to other", () => {
-    expect(classifyLedgerSyncDeviceFailure(new KeyRingError("network"))).toBe("other");
-  });
+  it.each(["network", "not-member", "tree-not-found"] as const)(
+    "should map the %s category to other",
+    category => {
+      expect(classifyLedgerSyncDeviceFailure(new KeyRingError(category))).toBe("other");
+    },
+  );
 
   it("should map an error that is not a key ring error to other", () => {
     expect(classifyLedgerSyncDeviceFailure(new Error("Device not found"))).toBe("other");

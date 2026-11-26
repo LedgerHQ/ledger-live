@@ -59,6 +59,7 @@ function sceneOfFailure(reason: LedgerSyncFailureReason, error: Error): Scene {
       return { kind: SceneKind.UnbackedError };
     case "not-allowed":
       return { kind: SceneKind.KeyError };
+    case "device-unsupported":
     case "unknown":
       return { kind: SceneKind.GenericError, error };
   }

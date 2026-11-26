@@ -2,7 +2,12 @@ import React, { useEffect } from "react";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
-import { getKeyRingDeviceInitialization } from "@features/platform-key-ring";
+import {
+  getKeyRingDeviceInitialization,
+  ledgerSyncDeviceUnsupportedFailure,
+} from "@features/platform-key-ring";
+import { ledgerSyncErrorForDisplay } from "@features/flow-ledger-sync";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -14,17 +19,22 @@ type Props = {
 
 export default function OpenOrInstallTrustChainApp({ goNext }: Props) {
   const action = useConnectAppAction();
-  const request = getKeyRingDeviceInitialization().appRequest;
+  const initialization = getKeyRingDeviceInitialization();
 
   useEffect(() => {
     setOriginFlow(HOOKS_TRACKING_LOCATIONS.ledgerSync);
   }, []);
 
+  if (initialization.kind === "os-feature") {
+    const { error } = ledgerSyncDeviceUnsupportedFailure(initialization);
+    return <ErrorDisplay error={ledgerSyncErrorForDisplay(error)} withExportLogs />;
+  }
+
   return (
     <DeviceAction
       location={HOOKS_TRACKING_LOCATIONS.ledgerSync}
       action={action}
-      request={request}
+      request={initialization.appRequest}
       onResult={({ device }) => goNext(device)}
       overridesPreferredDeviceModel={DeviceModelId.stax}
     />

@@ -1,6 +1,6 @@
-import { isKeyRingAction } from "@domain/entity-key-ring";
+import { isKeyRingAction, keyRingInitialState } from "@domain/entity-key-ring";
 import { mockKeyRingState } from "@domain/entity-key-ring/slice.mock";
-import type { KeyRingPersistedState } from "@features/platform-key-ring";
+import { keyRingRuntimeExtra, type KeyRingPersistedState } from "@features/platform-key-ring";
 import { getKey } from "~/renderer/storage";
 import { fetchTrustchain } from "./trustchain";
 
@@ -10,6 +10,8 @@ jest.mock("~/renderer/storage", () => ({
 
 describe("fetchTrustchain", () => {
   const dispatch = jest.fn();
+  const getState = jest.fn();
+  const extra = keyRingRuntimeExtra({ getState: () => ({ trustchain: keyRingInitialState }) });
 
   function importedKeyRingStates(): unknown[] {
     return dispatch.mock.calls
@@ -21,7 +23,7 @@ describe("fetchTrustchain", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     dispatch.mockImplementation(action =>
-      typeof action === "function" ? action(dispatch) : action,
+      typeof action === "function" ? action(dispatch, getState, extra) : action,
     );
   });
 
@@ -35,7 +37,7 @@ describe("fetchTrustchain", () => {
     });
     jest.mocked(getKey).mockResolvedValue(persistedTrustchainStore);
 
-    await fetchTrustchain()(dispatch, jest.fn(), undefined);
+    await fetchTrustchain()(dispatch, getState, extra);
 
     expect(getKey).toHaveBeenCalledWith("app", "trustchain");
     expect(importedKeyRingStates()).toEqual([persistedTrustchainStore]);
@@ -44,7 +46,7 @@ describe("fetchTrustchain", () => {
   it("should dispatch a default trustchain state when storage is missing", async () => {
     jest.mocked(getKey).mockResolvedValue(undefined);
 
-    await fetchTrustchain()(dispatch, jest.fn(), undefined);
+    await fetchTrustchain()(dispatch, getState, extra);
 
     expect(importedKeyRingStates()).toEqual([
       {
@@ -62,7 +64,7 @@ describe("fetchTrustchain", () => {
       .mocked(getKey)
       .mockResolvedValue("6a9f1c...ciphertext..." as unknown as KeyRingPersistedState);
 
-    await fetchTrustchain()(dispatch, jest.fn(), undefined);
+    await fetchTrustchain()(dispatch, getState, extra);
 
     expect(getKey).toHaveBeenCalledWith("app", "trustchain");
     expect(dispatch).not.toHaveBeenCalled();

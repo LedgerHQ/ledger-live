@@ -1,6 +1,8 @@
+import { keyRingInitialState, KeyRingMemberKeyRecordSchema } from "@domain/entity-key-ring";
 import { createKeyRingV1DeviceBridge } from "../v1";
 import { createKeyRingClient } from "./keyRingClient";
 import { memberKeyRecordOf } from "../internals/handles";
+import { keyRingRuntimeExtra } from "../state/runtime";
 
 const CONFIG = {
   mock: true,
@@ -14,6 +16,8 @@ const CONFIG = {
       throw new Error("no device in the mock environment");
     },
   }),
+  runtime: keyRingRuntimeExtra({ getState: () => ({ trustchain: keyRingInitialState }) })
+    .keyRingRuntime,
 };
 
 describe("createKeyRingClient", () => {
@@ -21,6 +25,18 @@ describe("createKeyRingClient", () => {
     const client = createKeyRingClient(CONFIG);
     const memberKey = memberKeyRecordOf(await client.createMemberKey());
     expect(memberKey.pubkey).toBe("mock-pub-key-Test instance-1");
+  });
+
+  it("generates a real member key outside the mock environment", async () => {
+    const client = createKeyRingClient({ ...CONFIG, mock: false });
+    const memberKey = memberKeyRecordOf(await client.createMemberKey());
+    expect(KeyRingMemberKeyRecordSchema.safeParse(memberKey).success).toBe(true);
+  });
+
+  it("refuses a runtime this package did not build", () => {
+    expect(() => createKeyRingClient({ ...CONFIG, runtime: { kind: "KeyRingRuntime" } })).toThrow(
+      "Unknown key ring runtime",
+    );
   });
 
   it("shares its lifecycle with the clients bound to a device session", () => {

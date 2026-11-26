@@ -20,11 +20,12 @@ differently, the difference is an explicit option, never a default that favours 
 | `useRestoreKeyRing` | Reloads the key tree after a rotation; runs on `refetch` only |
 | `useInitMemberKey` | Gives this instance a member key when it has none |
 | `useLedgerSyncMembers` | The members list of the key tree; errors go to `onError` |
-| `useLedgerSyncErrorRecovery` | Resets, restores or ignores after a members error; `resetOnMessages`, `logError` |
+| `useLedgerSyncErrorRecovery` | Resets, restores or ignores after a members error, by category; `resetOnUnresolvedMembers`, `logError` |
 | `useOnKeyRingRefreshNeeded` | The `onRefreshNeeded` port of the watcher; `resetOnCategories`, `readTreeIdAt` |
 | `useDestroyLedgerSync` | Deletes the backup; `onBeforeReset`, `onAfterReset`, `onError` |
-| `useLedgerSyncServiceStatus` | Health of the key ring and Cloud Sync backends; `enabled` |
+| `useLedgerSyncServiceStatus` | Health of the key ring backend (through the client) and of Cloud Sync; `enabled` |
 | `ledgerSyncBackendsExtra`, `useLedgerSyncBackends` | The backend URLs of the app config, through the thunk `extraArgument` |
+| `useKeyRingRuntime` | The key ring runtime of the thunk `extraArgument`, for the app's `createKeyRingClient` |
 | `useLedgerSyncPairingHost` | Shows the QR code another instance scans; `startBinding`, `notifyPaired`, `onFailure` |
 | `useLedgerSyncPairingJoin` | Joins the key tree of a scanned QR code; `onFailure` |
 | `useLedgerSyncActivation`, `useLedgerSyncMemberRemoval` | The legacy (non-DIE) device calls, resolving a typed outcome |
@@ -33,8 +34,9 @@ differently, the difference is an explicit option, never a default that favours 
 | `WalletSyncContext`, `useWalletSyncUserState` | The watch loop state; each app mounts the provider |
 | `useLedgerSyncLoadingSettled` | True once the loading step waited for the watch loop |
 | `LedgerSyncAnalyticsEvent`, `trackLedgerSyncActivated`, `trackLedgerSyncRejectedOnDevice` | The lifecycle events; the app passes its `flow` |
-| `ledgerSyncErrorForDisplay`, `isNoTrustchainError`, `isUnauthorizedMemberError`, `LedgerSyncErrorMessage` | Error helpers |
+| `ledgerSyncErrorForDisplay`, `isLedgerSyncTreeGone` | Error helpers; branch on `classifyKeyRingError` of `@features/platform-key-ring` otherwise |
 | `LedgerSyncBackendsMissingError` | `useLedgerSyncBackends` on a store built without `ledgerSyncBackendsExtra` |
+| `LedgerSyncMembersUnresolvedError` | A members `refetch` without a member key |
 | `LedgerSyncQueryKey` | The query keys, to invalidate the members list |
 
 Results are this package's own types (`LedgerSyncMembers`, `LedgerSyncDestroy`, ...), never the
@@ -53,7 +55,9 @@ The key ring and Cloud Sync base URLs come from the `ledgerKeyRing` switch of th
 (`apps/*/src/setup/load.ts`), never from a feature flag. Each app spreads
 `ledgerSyncBackendsExtra({ keyRingApiBaseUrl, cloudSyncApiBaseUrl })` into the thunk
 `extraArgument` of its store, from the configuration resolved for the session, and its hooks read
-them with `useLedgerSyncBackends()`. A test store that renders those hooks spreads it too.
+them with `useLedgerSyncBackends()`. The same `extraArgument` holds `keyRingRuntimeExtra` of
+`@features/platform-key-ring`, which the key ring thunks and `useKeyRingRuntime()` read. A test
+store that renders those hooks spreads both.
 
 ## Peer dependencies
 

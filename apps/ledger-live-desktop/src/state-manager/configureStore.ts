@@ -23,6 +23,7 @@ import { apiServices, applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQ
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { accountDataExtra } from "@domain/api-account-data";
 import { ledgerSyncBackendsExtra } from "@features/flow-ledger-sync";
+import { keyRingRuntimeExtra } from "@features/platform-key-ring/store";
 import { accountDataSources, accountDataTaps } from "~/config/account-data-setup";
 import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
 import { loadAppConfig } from "~/setup";
@@ -55,6 +56,7 @@ const customCreateStore = ({
   countervalues,
   appConfig: { config: appConfig, session: appConfigSession } = loadAppConfig(),
 }: Props) => {
+  const keyRing = keyRingRuntimeExtra({ getState: (): State => store.getState() });
   const store = configureStore({
     reducer: reducers,
     preloadedState: withAccountAliases(state),
@@ -76,12 +78,13 @@ const customCreateStore = ({
                 keyRingApiBaseUrl: appConfig.trustchainApiBaseUrl,
                 cloudSyncApiBaseUrl: appConfig.cloudSyncApiBaseUrl,
               }),
+              ...keyRing,
             },
           },
         }),
       )
         // Before the app's middlewares, so the provider request stops here instead of reaching the logger and db.
-        .concat(createDesktopAuthMiddleware(appConfig))
+        .concat(createDesktopAuthMiddleware(appConfig, keyRing.keyRingRuntime))
         .concat(logger)
         .concat(createAccountAliasMiddleware())
         .concat(analyticsMiddleware ? [analyticsMiddleware] : [])

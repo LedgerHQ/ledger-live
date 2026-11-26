@@ -5,6 +5,7 @@ const PRODUCTION_SETUP: KeyRingClientSetup = {
   mock: false,
   instanceName: "Mobile instance",
   apiBaseUrl: "https://trustchain.production",
+  runtime: { kind: "KeyRingRuntime" },
 };
 const RENAMED_SETUP: KeyRingClientSetup = { ...PRODUCTION_SETUP, instanceName: "Renamed instance" };
 

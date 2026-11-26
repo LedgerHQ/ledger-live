@@ -1,6 +1,7 @@
 import React, { useEffect, useState, ReactNode, useCallback } from "react";
 import { Provider } from "react-redux";
 import { Store } from "redux";
+import type { KeyRingDispatch } from "@features/platform-key-ring";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import { restorePredictionsState } from "@domain/entity-predictions";
@@ -78,7 +79,8 @@ import { startCountervaluesWhenReady } from "./startCountervaluesWhenReady";
 interface Props {
   onInitFinished: () => void;
   children: (props: { ready: boolean; currencyInitialized: boolean }) => ReactNode;
-  store: Store;
+  /** The app store: its dispatch runs the key ring thunks with the runtime of its thunk extra. */
+  store: Store & { dispatch: KeyRingDispatch };
 }
 
 const MAX_RETRIES = 3;
@@ -293,7 +295,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(restoreReceiveVerifyHint(receiveVerifyHintState));
       }
 
-      void importPersistedKeyRingState(trustchainStore)(store.dispatch);
+      void store.dispatch(importPersistedKeyRingState(trustchainStore));
 
       if (walletStore) {
         importWalletState(walletStore)(store.dispatch);

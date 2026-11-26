@@ -6,12 +6,14 @@ import { track } from "@shared/analytics";
 import { act, render, screen, waitFor, within, withFlagOverrides } from "@tests/test-renderer";
 import type { ExecutorState } from "@features/platform-device-intent";
 import { EMPTY } from "rxjs";
+import { keyRingInitialState } from "@domain/entity-key-ring";
 import { mockKeyRingTreeRecord } from "@domain/entity-key-ring/schema.mock";
 import { keyRingTreeUpdateFixture } from "@features/platform-key-ring/testing";
 import { createKeyRingV1DeviceBridge } from "@features/platform-key-ring/v1";
 import {
   commitKeyRingMemberKey,
   createKeyRingClient,
+  keyRingRuntimeExtra,
   KeyRingMemberSchema,
   resetKeyRingState,
   type KeyRingActivateOptions,
@@ -210,6 +212,8 @@ const streamClient = createKeyRingClient({
       throw new Error("No device session in this test");
     },
   }),
+  runtime: keyRingRuntimeExtra({ getState: () => ({ trustchain: keyRingInitialState }) })
+    .keyRingRuntime,
 });
 
 // The stream a session opens names its key tree: the public view of what the session holds.
@@ -595,7 +599,9 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should start the activation step from the manage key error", async () => {
-      mockDeleteError.current = new Error("No such trustchain");
+      mockDeleteError.current = Object.assign(new Error("No such trustchain"), {
+        name: "LedgerAPI4xx",
+      });
       mockActivate.mockImplementation(awaitConfirmationForever);
 
       const { user } = render(<ManageKeyEntry />, {

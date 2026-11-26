@@ -1,7 +1,8 @@
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { track } from "@shared/analytics";
-import { LedgerSyncErrorMessage } from "@features/flow-ledger-sync";
+import { mockKeyRingState } from "@domain/entity-key-ring/slice.mock";
+import { LedgerSyncMembersUnresolvedError } from "@features/flow-ledger-sync";
 import { renderHook, waitFor } from "@tests/test-renderer";
 import { useLifeCycle } from "../useLifeCycle";
 
@@ -35,7 +36,10 @@ function QueryClientWrapper({ children }: { children?: React.ReactNode }) {
 }
 
 function renderLifeCycle() {
-  return renderHook(() => useLifeCycle(), { innerWrapper: QueryClientWrapper });
+  return renderHook(() => useLifeCycle(), {
+    innerWrapper: QueryClientWrapper,
+    overrideInitialState: state => ({ ...state, trustchain: mockKeyRingState() }),
+  });
 }
 
 // The v1 SDK errors reach the app unchanged: only their name identifies them.
@@ -84,9 +88,11 @@ describe("useLifeCycle", () => {
     expect(mockResetKeyRingState).not.toHaveBeenCalled();
   });
 
-  it("should reset when error message includes NO_TRUSTCHAIN", () => {
+  it("should reset when the backend lost the key tree of this instance", () => {
     const { result } = renderLifeCycle();
-    result.current.handleError(new Error(LedgerSyncErrorMessage.noTrustchain));
+    result.current.handleError(
+      Object.assign(new Error("No such trustchain"), { name: "LedgerAPI4xx" }),
+    );
 
     expect(mockResetKeyRingState).toHaveBeenCalled();
     expect(mockedTrack).toHaveBeenCalledWith("ledgersync_deactivated");
@@ -94,9 +100,9 @@ describe("useLifeCycle", () => {
     expect(mockInvalidateAuth).toHaveBeenCalled();
   });
 
-  it("should reset when error message includes NULL query key pattern", () => {
+  it("should reset when the members query resolved no members", () => {
     const { result } = renderLifeCycle();
-    result.current.handleError(new Error(LedgerSyncErrorMessage.membersDataUndefined));
+    result.current.handleError(new LedgerSyncMembersUnresolvedError(["useGetMembers", null]));
 
     expect(mockResetKeyRingState).toHaveBeenCalled();
     expect(mockedTrack).toHaveBeenCalledWith("ledgersync_deactivated");

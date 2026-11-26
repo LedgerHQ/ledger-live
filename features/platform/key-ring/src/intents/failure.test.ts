@@ -5,7 +5,12 @@ import {
   TrustchainEjected,
   TrustchainNotAllowed,
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import { isUserRefusedOnDevice, mapLedgerSyncErrorToFailure } from "./failure";
+import { KeyRingDeviceUnsupportedError } from "../errors";
+import {
+  isUserRefusedOnDevice,
+  ledgerSyncDeviceUnsupportedFailure,
+  mapLedgerSyncErrorToFailure,
+} from "./failure";
 import { failedState, namedError } from "../internals/ledgerSyncJobTestKit";
 
 describe("mapLedgerSyncErrorToFailure", () => {
@@ -62,5 +67,24 @@ describe("isUserRefusedOnDevice", () => {
     "UserRefusedOnDevice",
   ])("should not match %p", error => {
     expect(isUserRefusedOnDevice(error)).toBe(false);
+  });
+});
+
+describe("the device-unsupported reason", () => {
+  it("should map a device-unsupported key ring error to its own reason", () => {
+    const error = new KeyRingDeviceUnsupportedError();
+    expect(mapLedgerSyncErrorToFailure(error)).toEqual(failedState("device-unsupported", error));
+  });
+
+  it.each([
+    [{ kind: "os-feature", feature: "lkrp", minimumOsVersion: "2.0.0" }, "lkrp from OS 2.0.0"],
+    [{ kind: "os-feature", feature: "lkrp" }, "lkrp"],
+  ] as const)("should report %p as device-unsupported", (init, what) => {
+    const failure = ledgerSyncDeviceUnsupportedFailure(init);
+
+    expect(failure.type).toBe("failed");
+    expect(failure.reason).toBe("device-unsupported");
+    expect(failure.error).toBeInstanceOf(KeyRingDeviceUnsupportedError);
+    expect(failure.error.message).toBe(`The device needs ${what}`);
   });
 });

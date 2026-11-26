@@ -2,7 +2,7 @@ import { KeyRingErrorCategorySchema } from "./schema";
 import type { KeyRingErrorCategory } from "./types";
 import { getErrorName } from "./internals/errors";
 import { TRANSLATION_NAMES } from "./internals/translationNames";
-import { V1_ERROR_CATEGORIES } from "./internals/v1/errorCategories";
+import { v1ErrorCategory } from "./internals/v1/errorCategories";
 
 /**
  * A key ring failure with a category both protocol versions report. Every `KeyRingClient`
@@ -92,8 +92,9 @@ export class KeyRingPairingClosedError extends KeyRingError {
 
 /**
  * The category of any error a key ring operation throws: a `KeyRingError`, or a protocol error
- * matched by name so it survives a lost prototype. Undefined for any other error. Branch on it
- * rather than on error classes, which change with the protocol version.
+ * matched by name so it survives a lost prototype (by message for a 4xx of the key ring backend).
+ * Undefined for any other error. Branch on it rather than on error classes, which change with the
+ * protocol version.
  *
  * @example
  * ```ts
@@ -113,7 +114,7 @@ export function classifyKeyRingError(error: unknown): KeyRingErrorCategory | und
   const typed = categoryOfKeyRingError(error);
   if (typed) return typed;
   const name = getErrorName(error);
-  return name === undefined ? undefined : V1_ERROR_CATEGORIES.get(name);
+  return name === undefined ? undefined : v1ErrorCategory(name, messageOf(error));
 }
 
 /** True when `error` is a key ring error of `category`. */

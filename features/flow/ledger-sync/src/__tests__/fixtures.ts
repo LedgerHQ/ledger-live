@@ -1,8 +1,11 @@
+import { keyRingInitialState } from "@domain/entity-key-ring";
 import { mockKeyRingTreeRecord } from "@domain/entity-key-ring/schema.mock";
 import {
   KeyRingMemberSchema,
   createKeyRingClient,
+  keyRingRuntimeExtra,
   type KeyRingMember,
+  type KeyRingRuntime,
   type KeyRingStream,
   type KeyRingTreeUpdate,
 } from "@features/platform-key-ring";
@@ -29,12 +32,19 @@ export function fakeStream(treeId = "mock-root-id", streamPath = "m/0'/16'/0'"):
   };
 }
 
+/** A key ring runtime on the state of a fresh instance, for a client built outside a store. */
+export function freshKeyRingRuntime(): KeyRingRuntime {
+  return keyRingRuntimeExtra({ getState: () => ({ trustchain: keyRingInitialState }) })
+    .keyRingRuntime;
+}
+
 /** A real mock-environment client: the only source of member key updates the store accepts. */
 export function mockEnvironmentKeyRingClient() {
   return createKeyRingClient({
     mock: true,
     instanceName: "Test instance",
     apiBaseUrl: "https://trustchain.test",
+    runtime: freshKeyRingRuntime(),
     deviceBridge: createKeyRingV1DeviceBridge({
       withDevice: () => () => {
         throw new Error("no device in the mock environment");

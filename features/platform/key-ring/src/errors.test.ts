@@ -145,3 +145,54 @@ describe("keyRingErrorForDisplay", () => {
     expect(keyRingErrorForDisplay(other)).toBe(other);
   });
 });
+
+function api4xx(message: string): Error {
+  return Object.assign(new Error(message), { name: "LedgerAPI4xx", status: 404 });
+}
+
+describe("a 4xx of the key ring backend", () => {
+  it.each([
+    ["No such trustchain 02ab", "tree-not-found"],
+    ["Not a member of trustchain", "not-member"],
+    ["Error: You are not member of this trustchain", "not-member"],
+  ] as const)("classifies %p as %s", (message, category) => {
+    expect(classifyKeyRingError(api4xx(message))).toBe(category);
+  });
+
+  it("maps the missing key tree to its typed error, keeping the message and the 4xx", () => {
+    const error = api4xx("No such trustchain 02ab");
+    const mapped = toKeyRingError(error);
+    expect(mapped).toBeInstanceOf(KeyRingTreeNotFoundError);
+    expect(mapped).toMatchObject({ category: "tree-not-found", message: error.message });
+    expect(mapped?.cause).toBe(error);
+  });
+
+  it("maps a key outside the key tree to not-member, keeping the message and the 4xx", () => {
+    const error = api4xx("Not a member of trustchain");
+    const mapped = toKeyRingError(error);
+    expect(mapped).toMatchObject({ category: "not-member", message: error.message });
+    expect(mapped?.cause).toBe(error);
+  });
+
+  it("shows the original 4xx of a mapped one", () => {
+    const error = api4xx("You are not member");
+    expect(keyRingErrorForDisplay(toKeyRingError(error))).toBe(error);
+  });
+
+  it("shows a not-member error without cause as the 4xx both apps translate", () => {
+    const shown = keyRingErrorForDisplay(new KeyRingError("not-member", "You are not member"));
+    expect(shown).toMatchObject({ name: "LedgerAPI4xx", message: "You are not member" });
+  });
+
+  it.each([
+    ["another 4xx", api4xx("JWT is expired")],
+    ["the message on an error of another name", named("No such trustchain")],
+    [
+      "the message on a 5xx",
+      Object.assign(new Error("No such trustchain"), { name: "LedgerAPI5xx" }),
+    ],
+  ])("leaves %s out of these categories", (_case, error) => {
+    expect(classifyKeyRingError(error)).not.toBe("tree-not-found");
+    expect(classifyKeyRingError(error)).not.toBe("not-member");
+  });
+});

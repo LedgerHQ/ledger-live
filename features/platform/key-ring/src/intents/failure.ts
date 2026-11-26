@@ -1,6 +1,6 @@
 import type { LedgerSyncFailureJobState, LedgerSyncFailureReason } from "./jobState";
-import type { KeyRingErrorCategory } from "../types";
-import { classifyKeyRingError } from "../errors";
+import type { KeyRingDeviceInitialization, KeyRingErrorCategory } from "../types";
+import { classifyKeyRingError, KeyRingDeviceUnsupportedError } from "../errors";
 import { toError } from "../internals/errors";
 
 /**
@@ -17,6 +17,29 @@ export function mapLedgerSyncErrorToFailure(error: unknown): LedgerSyncFailureJo
 }
 
 /**
+ * The terminal `failed` state, with the `device-unsupported` reason, of a run whose device
+ * initialization is an OS feature the DIE input cannot express yet. The app reports it in place
+ * of starting the executor, where it would report any other failure.
+ *
+ * @example
+ * ```ts
+ * if (initialization.kind === "os-feature") {
+ *   intent.onJobStateChanged?.(ledgerSyncDeviceUnsupportedFailure(initialization));
+ * }
+ * ```
+ */
+export function ledgerSyncDeviceUnsupportedFailure(
+  initialization: Extract<KeyRingDeviceInitialization, { kind: "os-feature" }>,
+): LedgerSyncFailureJobState {
+  const minimum = initialization.minimumOsVersion
+    ? ` from OS ${initialization.minimumOsVersion}`
+    : "";
+  return mapLedgerSyncErrorToFailure(
+    new KeyRingDeviceUnsupportedError(`The device needs ${initialization.feature}${minimum}`),
+  );
+}
+
+/**
  * Whether the user refused the request on the device, which the job reports as
  * `device-rejected` so the app can offer a retry.
  */
@@ -30,4 +53,5 @@ const FAILURE_REASON_BY_CATEGORY: ReadonlyMap<KeyRingErrorCategory, LedgerSyncFa
     ["member-of-other-tree", "already-secured-other-seed"],
     ["not-allowed", "not-allowed"],
     ["no-tree-for-seed", "no-trustchain"],
+    ["device-unsupported", "device-unsupported"],
   ]);

@@ -3,7 +3,6 @@ import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { getAuthProvider } from "@shared/auth";
 import type { KeyRingMemberKeyRecord } from "@domain/entity-key-ring";
-import { importPersistedKeyRingState } from "@features/platform-key-ring";
 import {
   keyRingAttestationFixture,
   keyRingAuthChallengeFixture,
@@ -118,6 +117,8 @@ describe("mobile store", () => {
       );
 
       const { store } = require("./configureStore");
+      // The runtime of the store is known to the key ring module loaded with it.
+      const { importPersistedKeyRingState } = freshKeyRingModule();
       store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
       store.dispatch(
         importPersistedKeyRingState({
@@ -205,6 +206,13 @@ describe("mobile store", () => {
       );
     });
 
+    it("carries the key ring runtime the key ring thunks read", () => {
+      const { store } = require("./configureStore") as typeof import("./configureStore");
+      const { readKeyRingRuntime } = freshKeyRingModule();
+
+      expect(readKeyRingRuntime(readExtra(store))).toEqual({ kind: "KeyRingRuntime" });
+    });
+
     it("carries the Ledger Sync backends of the session app config", () => {
       const { store } = require("./configureStore") as typeof import("./configureStore");
       const { appConfig } = require("~/setup") as typeof import("~/setup");
@@ -217,6 +225,30 @@ describe("mobile store", () => {
           },
         }),
       );
+    });
+  });
+
+  describe("key ring boot", () => {
+    beforeEach(() => {
+      jest.resetModules();
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("LEDGER_CLIENT_VERSION", "jest");
+    });
+
+    it("should store the member key in the dispatch of the boot import, before any reader", () => {
+      const { store } = require("./configureStore") as typeof import("./configureStore");
+      const { importPersistedKeyRingState } = freshKeyRingModule();
+      const { selectHasKeyRingMemberKey } =
+        require("@domain/entity-key-ring") as typeof import("@domain/entity-key-ring");
+      const hasKeyAtNotification: boolean[] = [];
+      store.subscribe(() => hasKeyAtNotification.push(selectHasKeyRingMemberKey(store.getState())));
+      expect(selectHasKeyRingMemberKey(store.getState())).toBe(false);
+
+      const stored = store.dispatch(importPersistedKeyRingState(undefined));
+
+      expect(selectHasKeyRingMemberKey(store.getState())).toBe(true);
+      expect(hasKeyAtNotification).toEqual([true]);
+      return expect(stored).resolves.toBeUndefined();
     });
   });
 
@@ -290,6 +322,11 @@ function isThunkDispatch(
   dispatch: unknown,
 ): dispatch is ThunkDispatch<unknown, unknown, UnknownAction> {
   return typeof dispatch === "function";
+}
+
+// After `jest.resetModules`, the store holds the runtime of the key ring module loaded with it.
+function freshKeyRingModule() {
+  return require("@features/platform-key-ring") as typeof import("@features/platform-key-ring");
 }
 
 function readExtra({ dispatch }: { dispatch: unknown }): unknown {

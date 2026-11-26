@@ -22,7 +22,7 @@ import type { InitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { addMemberIntentLWMDefinition } from "../addMemberIntent/intentLWMDefinition";
 import { removeMemberIntentLWMDefinition } from "../removeMemberIntent/intentLWMDefinition";
 
-const KEY_RING_APP_NAME = getKeyRingDeviceInitialization().appRequest.appName;
+const KEY_RING_APP_NAME = keyRingAppName();
 
 export const INITIALIZATION_INPUT: InitializationInput = {
   appName: KEY_RING_APP_NAME,
@@ -86,4 +86,10 @@ export function buildDeviceConnection(sessionId: string): DeviceConnectionResult
     compatDeviceName: "Ledger Stax",
     compatDeviceWired: false,
   };
+}
+
+function keyRingAppName(): string {
+  const initialization = getKeyRingDeviceInitialization();
+  if (initialization.kind !== "app") throw new Error("The key ring runs in an app on v1");
+  return initialization.appRequest.appName;
 }

@@ -16,7 +16,8 @@ export function useLedgerSyncInfo() {
   );
   const walletState = useSelector(walletSelector);
 
-  const statusQuery = useLedgerSyncServiceStatus(useLedgerSyncBackends());
+  const { cloudSyncApiBaseUrl } = useLedgerSyncBackends();
+  const statusQuery = useLedgerSyncServiceStatus({ client: keyRing, cloudSyncApiBaseUrl });
 
   return {
     statusQuery,

@@ -5,7 +5,11 @@
 import { waitFor } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
+import { createKeyRingClient } from "@features/platform-key-ring";
+import { createKeyRingV1DeviceBridge } from "@features/platform-key-ring/v1";
+import { freshKeyRingRuntime } from "../__tests__/fixtures";
 import { renderLedgerSyncHook } from "../__tests__/harness";
+import { LedgerSyncQueryKey } from "../logic/queryKeys";
 import { useLedgerSyncServiceStatus } from "./useLedgerSyncServiceStatus";
 
 const KEY_RING_URL = "https://trustchain.test";
@@ -30,13 +34,21 @@ beforeEach(() => {
     .mockImplementation(() => HttpResponse.json({ name: "cloud-sync", version: "1.0.0" }));
 });
 
+// The app client: its status call is the real one, on the client's backend.
+const client = createKeyRingClient({
+  mock: false,
+  instanceName: "Test instance",
+  apiBaseUrl: KEY_RING_URL,
+  deviceBridge: createKeyRingV1DeviceBridge({
+    withDevice: jest.fn(),
+    createSessionTransport: jest.fn(),
+  }),
+  runtime: freshKeyRingRuntime(),
+});
+
 function renderStatus(enabled?: boolean) {
   return renderLedgerSyncHook(() =>
-    useLedgerSyncServiceStatus({
-      keyRingApiBaseUrl: KEY_RING_URL,
-      cloudSyncApiBaseUrl: CLOUD_SYNC_URL,
-      enabled,
-    }),
+    useLedgerSyncServiceStatus({ client, cloudSyncApiBaseUrl: CLOUD_SYNC_URL, enabled }),
   );
 }
 
@@ -49,6 +61,30 @@ describe("useLedgerSyncServiceStatus", () => {
     expect(result.current).toEqual({ error: null, isLoading: false, isError: false });
     expect(endpoints.keyRingStatus).toHaveBeenCalledTimes(1);
     expect(endpoints.cloudSyncStatus).toHaveBeenCalledTimes(1);
+  });
+
+  it("should cache both statuses under the same query keys", async () => {
+    const { result, queryClient } = renderStatus();
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(queryClient.getQueryData([LedgerSyncQueryKey.keyRingStatus])).toEqual({
+      name: "trustchain-backend",
+      version: "1.0.0",
+    });
+    expect(queryClient.getQueryData([LedgerSyncQueryKey.cloudSyncStatus])).toEqual({
+      name: "cloud-sync",
+      version: "1.0.0",
+    });
+  });
+
+  it("should report the failure of the key ring backend as the client rejects it", async () => {
+    endpoints.keyRingStatus.mockImplementation(() =>
+      HttpResponse.json({ message: "unknown route" }, { status: 404 }),
+    );
+    const { result } = renderStatus();
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(result.current.error).toMatchObject({ name: "LedgerAPI4xx", message: "unknown route" });
   });
 
   it("should report the failure of one backend", async () => {

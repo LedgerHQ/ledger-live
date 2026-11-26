@@ -43,6 +43,7 @@ export function fakeKeyRingClient(stubs: Partial<KeyRingClient> = {}): KeyRingCl
     joinPairing: notStubbed,
     openStream: notStubbed,
     invalidateAuth: notStubbed,
+    serviceStatus: notStubbed,
     ...stubs,
   };
   return client;

@@ -9,6 +9,7 @@ import { createKeyRingClient } from "./keyRingClient";
 import { createKeyRingV1DeviceBridge } from "../v1";
 import { selectKeyRingSession } from "../state/session";
 import { commitKeyRingTree, importPersistedKeyRingState } from "../state/actions";
+import { keyRingRuntimeExtra } from "../state/runtime";
 import { generateV1MemberKey } from "../internals/v1/sliceKeyStore";
 import { keyRingAuthChallengeFixture } from "../testing";
 
@@ -132,7 +133,12 @@ describe("a key ring client derived for a device session", () => {
       transports.push(transport);
       return seed as unknown as ApduDevice;
     });
-    const store = configureStore({ reducer: { trustchain: keyRingReducer } });
+    const keyRing = keyRingRuntimeExtra({ getState: () => store.getState() });
+    const store = configureStore({
+      reducer: { trustchain: keyRingReducer },
+      middleware: getDefaultMiddleware =>
+        getDefaultMiddleware({ thunk: { extraArgument: keyRing } }),
+    });
     store.dispatch(
       importPersistedKeyRingState({ trustchain: null, memberCredentials: generateV1MemberKey() }),
     );
@@ -146,6 +152,7 @@ describe("a key ring client derived for a device session", () => {
         },
         createSessionTransport,
       }),
+      runtime: keyRing.keyRingRuntime,
     });
     const deviceSession = { dmk: {} as never, sessionId: "session-1" };
     const sessionClient = appClient.forDeviceSession(deviceSession);
