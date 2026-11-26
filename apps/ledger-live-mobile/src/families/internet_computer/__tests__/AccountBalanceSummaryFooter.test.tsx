@@ -61,6 +61,18 @@ describe("AccountBalanceSummaryFooter", () => {
     expect(screen.getByText(/^2\b/)).toBeVisible();
   });
 
+  it("shows the ICP unit for the staked balance but not total maturity", () => {
+    renderFooter([
+      makeNeuron({
+        cachedNeuronStakeE8s: ICP,
+        maturityE8sEquivalent: ICP,
+      }),
+    ]);
+
+    expect(screen.getByText("1 ICP")).toBeVisible();
+    expect(screen.getByText("1")).toBeVisible();
+  });
+
   it("sums the stake across every neuron", () => {
     renderFooter([
       makeNeuron({ id: 1n, cachedNeuronStakeE8s: 2n * ICP }),

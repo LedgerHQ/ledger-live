@@ -82,7 +82,14 @@ function ICPBalanceSummaryFooter({ account }: Readonly<{ account: ICPAccount }>)
           key={item.key}
           title={item.title}
           onPress={onPressInfoCreator(item.key)}
-          value={<CurrencyUnitValue unit={unit} value={item.value} disableRounding />}
+          value={
+            <CurrencyUnitValue
+              unit={unit}
+              value={item.value}
+              disableRounding
+              showCode={item.key !== "totalMaturity"}
+            />
+          }
           isLast={index === items.length - 1}
         />
       ))}
