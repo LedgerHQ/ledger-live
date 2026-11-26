@@ -39,20 +39,17 @@ describe("isMatchingConnectedDevice", () => {
     expect(isMatchingConnectedDevice(connected, discovered)).toBe(false);
   });
 
-  describe.each([
-    ["RN_HID", rnHidTransportIdentifier],
-    ["Speculos", speculosIdentifier],
-  ])("%s", (_, transport: TransportIdentifier) => {
+  describe("RN_HID", () => {
     it("should match by model when ids differ", () => {
       const connected = makeConnectedDevice({
         id: "usb_1002",
-        transport,
+        transport: rnHidTransportIdentifier,
         type: "USB",
         modelId: DeviceModelId.NANO_X,
       });
       const discovered = makeDiscoveredDevice({
         id: "1002",
-        transport,
+        transport: rnHidTransportIdentifier,
         deviceModel: { id: "nanoX", model: DeviceModelId.NANO_X, name: "Ledger Nano X" },
       });
 
@@ -62,13 +59,13 @@ describe("isMatchingConnectedDevice", () => {
     it("should not match when models differ", () => {
       const connected = makeConnectedDevice({
         id: "usb_1002",
-        transport,
+        transport: rnHidTransportIdentifier,
         type: "USB",
         modelId: DeviceModelId.NANO_X,
       });
       const discovered = makeDiscoveredDevice({
         id: "1002",
-        transport,
+        transport: rnHidTransportIdentifier,
         deviceModel: { id: "stax", model: DeviceModelId.STAX, name: "Ledger Stax" },
       });
 
@@ -79,6 +76,7 @@ describe("isMatchingConnectedDevice", () => {
   describe.each([
     ["RN_BLE", rnBleTransportIdentifier],
     ["MockServer", mockserverIdentifier],
+    ["Speculos", speculosIdentifier],
   ])("%s", (_, transport: TransportIdentifier) => {
     it("should match when id and transport are the same", () => {
       const connected = makeConnectedDevice({ id: "device-1", transport });
