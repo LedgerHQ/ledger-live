@@ -20,6 +20,7 @@ describe("getBlock (integ, Cosmos Hub)", () => {
       hash: MSG_SEND_HASH,
       failed: false,
       fees: 3629n,
+      feesAsset: { type: "native" },
       feesPayer: "cosmos16exhyvwyy82fnavqgupf67lku4jvvd82h7p20u",
       operations: [
         {

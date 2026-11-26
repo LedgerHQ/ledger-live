@@ -91,6 +91,7 @@ describe("getBlock", () => {
           hash: TX_HASH,
           failed: false,
           fees: 3629n,
+          feesAsset: { type: "native" },
           feesPayer: SENDER,
           operations: [
             {

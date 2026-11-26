@@ -344,6 +344,7 @@ function makeOperation(params: MakeOperationParams): Operation {
         time: new Date(meta.blockTime * 1000),
       },
       fees: meta.fee,
+      feesAsset: { type: "native" },
       ...(feesPayer ? { feesPayer } : {}),
       date: new Date(meta.blockTime * 1000),
       failed: meta.failed,
