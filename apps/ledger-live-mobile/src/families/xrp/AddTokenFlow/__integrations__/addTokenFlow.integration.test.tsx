@@ -2,10 +2,11 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { Text } from "react-native";
+import { useNavigationState } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { BridgeSyncContext } from "@ledgerhq/live-common/bridge/react/index";
-import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import { track } from "@shared/analytics";
 import { HttpResponse, http, server } from "@tests/server";
@@ -13,7 +14,6 @@ import { act, render, screen, waitFor, within } from "@tests/test-renderer";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { updateAccount } from "~/actions/accounts";
 import { NavigatorName, ScreenName } from "~/const";
-import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 import { component } from "../index";
 import {
   XRP_ACCOUNT,
@@ -55,10 +55,6 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => {
   };
 });
 
-jest.mock("~/screens/Swap/navigation/navigateToSwapTab", () => {
-  return { navigateToSwapTab: jest.fn() };
-});
-
 jest.mock("~/datadog", () => {
   return {
     isDatadogEnabled: false,
@@ -68,13 +64,6 @@ jest.mock("~/datadog", () => {
     customLogEventMapper: jest.fn(),
     viewNamePredicate: jest.fn(),
     broadcastLogger: jest.fn(),
-  };
-});
-
-jest.mock("@ledgerhq/live-common/families/xrp/config", () => {
-  return {
-    ...jest.requireActual("@ledgerhq/live-common/families/xrp/config"),
-    getXrpEnabledTokenStandards: jest.fn(),
   };
 });
 
@@ -178,10 +167,18 @@ function AccountScreen() {
   return <Text>XRP account screen</Text>;
 }
 
+function MainProbe({ route }: Readonly<{ route: { params?: unknown } }>) {
+  const stackRouteNames = useNavigationState(state => state.routes.map(({ name }) => name));
+  return (
+    <Text testID="main-target">{JSON.stringify({ stackRouteNames, params: route.params })}</Text>
+  );
+}
+
 function AddTokenFlowHarness() {
   return (
     <BridgeSyncContext.Provider value={mockSync}>
       <OuterStack.Navigator screenOptions={{ headerShown: false }}>
+        <OuterStack.Screen name={NavigatorName.Main} component={MainProbe as never} />
         <OuterStack.Screen name={ScreenName.Account} component={AccountScreen} />
         <OuterStack.Screen name={NavigatorName.XrpAddTokenFlow} component={component} />
       </OuterStack.Navigator>
@@ -196,8 +193,9 @@ function renderAt(
 ) {
   return render(<AddTokenFlowHarness />, {
     navigationInitialState: {
-      index: 1,
+      index: 2,
       routes: [
+        { name: NavigatorName.Main },
         { name: ScreenName.Account },
         {
           name: NavigatorName.XrpAddTokenFlow,
@@ -270,16 +268,28 @@ function getSignedTransaction() {
 }
 
 describe("XRP AddTokenFlow (integration)", () => {
+  let savedProvider: typeof LiveConfig.instance.provider;
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockExecutorProps = undefined;
-    jest.mocked(getXrpEnabledTokenStandards).mockReturnValue(["iou", "mpt"]);
+    savedProvider = LiveConfig.instance.provider;
+    LiveConfig.setProvider({
+      getValueByKey: (key: string) =>
+        key === `config_currency_${XRP_ACCOUNT.currency.id}`
+          ? { enabledTokenStandards: ["iou", "mpt"] }
+          : undefined,
+    });
     mockStatus({});
     calEndpoint.mockReset();
     mockTokensInCal([xrpIouToken, xrpMptToken]);
     nodeEndpoint.mockReset();
     mockTransferRate();
     server.use(http.post(XRPL_TESTNET_NODE, nodeEndpoint), http.get("*/v1/tokens", calEndpoint));
+  });
+
+  afterEach(() => {
+    LiveConfig.instance.provider = savedProvider;
   });
 
   describe("Select asset", () => {
@@ -611,11 +621,17 @@ describe("XRP AddTokenFlow (integration)", () => {
       expect(screen.getByText("Get XRP")).toBeVisible();
       await user.press(screen.getByTestId("xrp-go-to-swap"));
 
-      expect(navigateToSwapTab).toHaveBeenCalledWith(
-        expect.objectContaining({
-          params: { toCurrencyId: XRP_ACCOUNT.currency.id, toAccountId: XRP_ACCOUNT.id },
-        }),
-      );
+      const swapTarget = await screen.findByTestId("main-target");
+      expect(JSON.parse(swapTarget.props.children)).toEqual({
+        stackRouteNames: [NavigatorName.Main],
+        params: {
+          screen: NavigatorName.Swap,
+          params: {
+            screen: ScreenName.SwapTab,
+            params: { toCurrencyId: XRP_ACCOUNT.currency.id, toAccountId: XRP_ACCOUNT.id },
+          },
+        },
+      });
     });
 
     it("unblocks once the account gets funded", async () => {
