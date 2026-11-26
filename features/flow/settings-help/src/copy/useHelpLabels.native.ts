@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "@shared/i18n";
 import type { HelpLabels } from "./helpLabels.types";
+import { helpRow } from "./helpRow";
 
 /** Reuses the translation keys of My Wallet Help and of the legacy clear cache drawer. */
 export function useHelpLabels(): HelpLabels {
@@ -14,26 +15,26 @@ export function useHelpLabels(): HelpLabels {
         more: t("myWallet.help.sections.more"),
       },
       items: {
-        support: {
-          title: t("myWallet.help.rows.ledgerSupport.title"),
-          description: t("myWallet.help.rows.ledgerSupport.description"),
-        },
-        academy: {
-          title: t("myWallet.help.rows.ledgerAcademy.title"),
-          description: t("myWallet.help.rows.ledgerAcademy.description"),
-        },
-        saveLogs: {
-          title: t("myWallet.help.rows.saveLogs.title"),
-          description: t("myWallet.help.rows.saveLogs.description"),
-        },
-        status: {
-          title: t("myWallet.help.rows.ledgerStatus.title"),
-          description: t("myWallet.help.rows.ledgerStatus.description"),
-        },
-        clearCache: {
-          title: t("myWallet.help.rows.clearCache.title"),
-          description: t("myWallet.help.rows.clearCache.description"),
-        },
+        support: helpRow(
+          t("myWallet.help.rows.ledgerSupport.title"),
+          t("myWallet.help.rows.ledgerSupport.description"),
+        ),
+        academy: helpRow(
+          t("myWallet.help.rows.ledgerAcademy.title"),
+          t("myWallet.help.rows.ledgerAcademy.description"),
+        ),
+        saveLogs: helpRow(
+          t("myWallet.help.rows.saveLogs.title"),
+          t("myWallet.help.rows.saveLogs.description"),
+        ),
+        status: helpRow(
+          t("myWallet.help.rows.ledgerStatus.title"),
+          t("myWallet.help.rows.ledgerStatus.description"),
+        ),
+        clearCache: helpRow(
+          t("myWallet.help.rows.clearCache.title"),
+          t("myWallet.help.rows.clearCache.description"),
+        ),
       },
       confirmations: {
         clearCache: {

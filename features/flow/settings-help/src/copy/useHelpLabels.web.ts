@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "@shared/i18n";
 import type { HelpLabels } from "./helpLabels.types";
+import { helpRow } from "./helpRow";
 
 /** Reuses the legacy desktop translation keys wherever their wording still fits. */
 export function useHelpLabels(): HelpLabels {
@@ -14,48 +15,42 @@ export function useHelpLabels(): HelpLabels {
         more: t("settings.helpPage.groups.more"),
       },
       items: {
-        support: {
-          title: t("settings.helpPage.support.title"),
-          description: t("settings.helpPage.support.description"),
-        },
-        academy: {
-          title: t("help.ledgerAcademy.title"),
-          description: t("help.ledgerAcademy.desc"),
-        },
-        saveLogs: {
-          title: t("settings.exportLogs.title"),
-          description: t("settings.helpPage.saveLogs.description"),
-          action: t("settings.exportLogs.btn"),
-        },
-        status: {
-          title: t("settings.helpPage.status.title"),
-          description: t("help.status.desc"),
-        },
-        clearCache: {
-          title: t("settings.profile.softResetTitle"),
-          description: t("settings.helpPage.clearCache.description"),
-          action: t("settings.profile.softReset"),
-        },
-        viewUserData: {
-          title: t("settings.openUserDataDirectory.title"),
-          description: t("settings.helpPage.viewUserData.description"),
-          action: t("settings.openUserDataDirectory.btn"),
-        },
-        repairDevice: {
-          title: t("settings.repairDevice.title"),
-          description: t("settings.repairDevice.descSettings"),
-          action: t("settings.repairDevice.button"),
-        },
-        launchOnboarding: {
-          title: t("settings.profile.launchOnboarding"),
-          description: t("settings.profile.launchOnboardingDesc"),
-          action: t("common.launch"),
-        },
-        resetApp: {
-          title: t("settings.profile.hardResetTitle"),
-          description: t("settings.helpPage.resetApp.description"),
-          action: t("common.reset"),
-        },
+        support: helpRow(
+          t("settings.helpPage.support.title"),
+          t("settings.helpPage.support.description"),
+        ),
+        academy: helpRow(t("help.ledgerAcademy.title"), t("help.ledgerAcademy.desc")),
+        saveLogs: helpRow(
+          t("settings.exportLogs.title"),
+          t("settings.helpPage.saveLogs.description"),
+          t("settings.exportLogs.btn"),
+        ),
+        status: helpRow(t("settings.helpPage.status.title"), t("help.status.desc")),
+        clearCache: helpRow(
+          t("settings.profile.softResetTitle"),
+          t("settings.helpPage.clearCache.description"),
+          t("settings.profile.softReset"),
+        ),
+        viewUserData: helpRow(
+          t("settings.openUserDataDirectory.title"),
+          t("settings.helpPage.viewUserData.description"),
+          t("settings.openUserDataDirectory.btn"),
+        ),
+        repairDevice: helpRow(
+          t("settings.repairDevice.title"),
+          t("settings.repairDevice.descSettings"),
+          t("settings.repairDevice.button"),
+        ),
+        launchOnboarding: helpRow(
+          t("settings.profile.launchOnboarding"),
+          t("settings.profile.launchOnboardingDesc"),
+          t("common.launch"),
+        ),
+        resetApp: helpRow(
+          t("settings.profile.hardResetTitle"),
+          t("settings.helpPage.resetApp.description"),
+          t("common.reset"),
+        ),
       },
       confirmations: {
         clearCache: {
