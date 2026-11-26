@@ -7,9 +7,11 @@ import { ModularDrawerVisibleParams } from "@ledgerhq/live-common/modularDrawer/
 import { useDispatch } from "LLD/hooks/redux";
 import { openModalWithReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import { getCurrentTrackingPage } from "@shared/analytics";
+import { failOperation } from "@shared/observability-operations";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { GlobalModalData, ModalData } from "~/renderer/modals/types";
 import ModularDrawerAddAccountFlowManager from "../../AddAccountDrawer/ModularDrawerAddAccountFlowManager";
+import { ADD_ACCOUNT_OPERATION } from "../../AddAccountDrawer/domain";
 import { useModularDialogAnalytics } from "../analytics/useModularDialogAnalytics";
 import { CloseButton } from "../components/CloseButton";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
@@ -72,6 +74,7 @@ export function useOpenAssetFlow<Name extends keyof GlobalModalData = keyof Glob
       dispatch(setSourceValue(source));
 
       const onClose = () => {
+        failOperation(ADD_ACCOUNT_OPERATION, "ABANDONED", { attributes: { trigger: "close" } });
         setDrawer();
         trackModularDialogEvent("button_clicked", {
           button: "Close",

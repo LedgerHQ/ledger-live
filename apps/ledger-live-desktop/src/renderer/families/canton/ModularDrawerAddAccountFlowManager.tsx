@@ -21,6 +21,7 @@ import ConnectYourDevice from "LLD/features/AddAccountDrawer/screens/ConnectYour
 import EditAccountName from "LLD/features/AddAccountDrawer/screens/EditAccountName";
 import FundAccount from "LLD/features/AddAccountDrawer/screens/FundAccount";
 import ScanAccounts from "LLD/features/AddAccountDrawer/screens/ScanAccounts";
+import { useScanAttempt } from "LLD/features/AddAccountDrawer/hooks/useScanAttempt";
 import { ADD_ACCOUNT_FLOW_NAME } from "LLD/features/AddAccountDrawer/analytics/addAccount.types";
 import {
   ANALYTICS_PROPERTY_FLOW,
@@ -76,6 +77,8 @@ const ModularDrawerAddAccountFlowManager = ({
     onAccountSelected,
     originalCurrency: currency,
   });
+
+  const { scanAttempt, retryScan } = useScanAttempt(navigateToConnectDevice);
 
   const isAccountSelectionFlow = !!onAccountSelected;
   const cryptoCurrency =
@@ -153,8 +156,11 @@ const ModularDrawerAddAccountFlowManager = ({
           <StepContainer paddingX="8px" data-test-id="content">
             <ScanAccounts
               currency={cryptoCurrency}
-              deviceId={connectAppResult.device.deviceId}
-              onRetry={navigateToConnectDevice}
+              device={connectAppResult.device}
+              attempt={scanAttempt}
+              isToken={currency.type === "TokenCurrency"}
+              inline={isAccountSelectionFlow}
+              onRetry={retryScan}
               onComplete={handleScanComplete}
               analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
               navigateToWarningScreen={navigateToWarningScreen}
