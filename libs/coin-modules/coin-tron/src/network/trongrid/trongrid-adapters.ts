@@ -44,9 +44,11 @@ export function fromTrongridTxInfoToOperation(
     operation.details = { ledgerOpType: type };
   }
 
-  // A value moved by a contract during the transaction, like coin-evm's internal operations: it
-  // shares the transaction's hash, but its fee is already paid by the transaction itself.
-  if (isInternal) {
+  // TRX moved by a contract during the transaction, like coin-evm's internal operations: it shares
+  // the transaction's hash, but its fee is already paid by the transaction itself. Consumers attach
+  // `internal` operations to the native account and add them to its balance whatever their asset,
+  // so a TRC10 one is left a plain token operation of its sub-account.
+  if (isInternal && asset.type === "native") {
     operation.details = { ...operation.details, internal: true };
   }
 

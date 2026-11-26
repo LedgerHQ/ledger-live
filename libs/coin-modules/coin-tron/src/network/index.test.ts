@@ -1099,6 +1099,27 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
     });
   });
 
+  it("fetchTronAccountTxsEndpointPage moves only TronGrid's own next links to the configured host", async () => {
+    const nextOf = async (next: string) => {
+      mockedNetwork.mockResolvedValueOnce(mockResponse({ data: [], meta: { links: { next } } }));
+      const page = await fetchTronAccountTxsEndpointPage(
+        mockLogger,
+        mockConfig,
+        "internal",
+        `${TRON_BASE_URL}/v1/page-1`,
+      );
+      return page.next;
+    };
+
+    expect(await nextOf("https://api.trongrid.io/v1/page-2")).toBe(`${TRON_BASE_URL}/v1/page-2`);
+    expect(await nextOf("https://api.shasta.trongrid.io/v1/page-2")).toBe(
+      `${TRON_BASE_URL}/v1/page-2`,
+    );
+    expect(await nextOf("https://apiXtrongrid.io/v1/page-2")).toBe(
+      "https://apiXtrongrid.io/v1/page-2",
+    );
+  });
+
   it("fetchTronAccountTxsEndpointPage reads the page a next link points to, per endpoint", async () => {
     mockedNetwork
       .mockResolvedValueOnce(

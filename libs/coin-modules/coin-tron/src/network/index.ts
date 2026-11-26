@@ -732,6 +732,13 @@ async function getAllTransactions<T>(
   return all;
 }
 
+const TRONGRID_ORIGIN = /^https:\/\/api(\.[a-z]*)?\.trongrid\.io/;
+
+/** TronGrid's next-page link, on the configured explorer host. */
+function toConfiguredHost(config: TronCoinConfig, url: string | undefined): string | undefined {
+  return url?.replace(TRONGRID_ORIGIN, getBaseApiUrl(config));
+}
+
 const getTransactions = async (
   logger: Logger,
   config: TronCoinConfig,
@@ -743,10 +750,7 @@ const getTransactions = async (
   const transactions = await fetchWithBaseUrl<
     TransactionResponseTronAPI<TransactionTronAPI | MalformedTransactionTronAPI>
   >(logger, url);
-  const nextUrl = transactions.meta.links?.next?.replace(
-    /https:\/\/api(\.[a-z]*)?.trongrid.io/,
-    getBaseApiUrl(config),
-  );
+  const nextUrl = toConfiguredHost(config, transactions.meta.links?.next);
   const results = transactions.data ?? [];
   return {
     results,
@@ -766,10 +770,7 @@ const getTrc20 = async (
 
   return {
     results: transactions.data,
-    nextUrl: transactions.meta.links?.next?.replace(
-      /https:\/\/api(\.[a-z]*)?.trongrid.io/,
-      getBaseApiUrl(config),
-    ),
+    nextUrl: toConfiguredHost(config, transactions.meta.links?.next),
   };
 };
 
@@ -787,10 +788,7 @@ const getInternalTransactions = async (
 
   return {
     results: transactions.data ?? [],
-    nextUrl: transactions.meta.links?.next?.replace(
-      /https:\/\/api(\.[a-z]*)?.trongrid.io/,
-      getBaseApiUrl(config),
-    ),
+    nextUrl: toConfiguredHost(config, transactions.meta.links?.next),
   };
 };
 
