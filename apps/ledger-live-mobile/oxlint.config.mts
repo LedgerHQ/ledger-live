@@ -63,10 +63,6 @@ const KEY_RING_PATTERNS = [
     group: ["@ledgerhq/hw-ledger-key-ring-protocol", "@ledgerhq/hw-ledger-key-ring-protocol/*"],
     message: "Use getKeyRingDeviceRequirement from @features/platform-key-ring.",
   },
-  {
-    group: ["@features/platform-intent-wallet-sync"],
-    message: "The Ledger Sync device intents moved to @features/platform-key-ring.",
-  },
 ];
 
 const BASE_RESTRICTED_PATHS = [
