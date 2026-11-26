@@ -39,4 +39,14 @@ describe("byte-limited memo tag inputs", () => {
       });
     },
   );
+
+  it.each(["algorand", "cardano", "concordium", "solana", "stacks"] as const)(
+    "should not cap the %s memo input natively, so a long paste reaches validation",
+    family => {
+      const MemoTagInput = perFamily[family];
+      render(<MemoTagInput onChange={onChange} />);
+
+      expect(screen.getByTestId("memo-tag-input")).not.toHaveProp("maxLength");
+    },
+  );
 });
