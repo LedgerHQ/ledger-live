@@ -127,7 +127,7 @@
   },
   "src/screens/ConnectDevice.tsx": {
     "coin-families/no-coin-specific-import": {
-      "count": 51
+      "count": 50
     }
   },
   "src/screens/Fees/FeeContainer.tsx": {

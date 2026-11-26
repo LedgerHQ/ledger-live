@@ -8798,9 +8798,8 @@
     "token": "Tokens",
     "addToken": {
       "cta": "Add token",
-      "title": "Add token",
+      "addAsset": "Add",
       "receiveAlert": "Add this token to your account before you receive it.",
-      "receive": "Receive",
       "steps": {
         "token": {
           "title": "Select asset",
@@ -8810,35 +8809,30 @@
           "gotIt": "Got it",
           "loadError": "The token list couldn't load."
         },
-        "settings": {
-          "title": "Settings",
-          "limitInfo": "The trust limit is the most {{token}} your account accepts to hold."
-        },
         "review": {
-          "title": "Review",
+          "title": "Review asset details",
           "tokenType": "Token type",
-          "tokenTypeIou": "Trust Line (IOU)",
-          "tokenTypeMpt": "Multi purpose token",
-          "account": "Account address",
-          "tokenName": "Token name",
-          "issuer": "Issuer",
-          "networkFees": "Network fees"
-        },
-        "selectDevice": {
-          "title": "Select device"
-        },
-        "connectDevice": {
-          "title": "Connect device"
+          "tokenTypeIou": "Trust Line",
+          "tokenTypeMpt": "Multi-Purpose Token (MPT)",
+          "account": "Account",
+          "asset": "Asset",
+          "networkFee": "Network fee",
+          "transferFeeValue": "{{fee}} per transaction",
+          "lockedAmountInfo": "XRP amount added to your account's reserve to hold this asset."
         }
       },
       "errors": {
-        "notEnoughXrp": "You need at least {{minimumAmount}} available to add this token.",
-        "notEnoughXrpLocked": "{{amount}} will be locked on your account.",
-        "limitZero": "The trust limit must be above 0."
+        "notEnoughBalance": "Not enough balance",
+        "notEnoughBalanceText": "You need at least {{amount}} to add this asset.",
+        "getXrp": "Get XRP"
       },
       "success": {
-        "title": "Request to add {{token}} sent",
-        "text": "It applies once the network confirms the transaction."
+        "title": "Asset added",
+        "text": "You can now make transactions with this asset.",
+        "cta": "Got it"
+      },
+      "error": {
+        "title": "Failed to add asset"
       }
     },
     "manageAssets": {
@@ -8879,10 +8873,7 @@
       }
     },
     "tokenSettings": {
-      "limit": "Trust limit",
       "balanceLimit": "Balance limit",
-      "maxLimit": "Max trust limit",
-      "maxLimitInfo": "The trust limit is the most {{token}} your account accepts to hold. The maximum permitted trust limit is <amount/>.",
       "maximum": "Maximum",
       "editTitle": "Edit details",
       "balanceLimitDescription": "Select the maximum amount of this asset your account can hold.",
@@ -8906,8 +8897,6 @@
       "label": "Rippling",
       "activated": "Activated",
       "deactivated": "Deactivated",
-      "on": "On",
-      "off": "Off",
       "warning": "Turning this on allows other users' payments to move your balance between tokens with the same currency code. Only turn it on if you know what you're doing."
     }
   },

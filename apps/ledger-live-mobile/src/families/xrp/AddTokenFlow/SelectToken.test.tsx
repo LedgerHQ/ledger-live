@@ -91,12 +91,12 @@ describe("XRP add token - select asset", () => {
     });
   });
 
-  it("opens the settings of the tapped IOU", async () => {
+  it("opens the review of the tapped IOU", async () => {
     const { user } = renderScreen();
 
     await user.press(screen.getByTestId(`xrp-token-row-${xrpIouToken.id}`));
 
-    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.XrpAddTokenSettings, {
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.XrpAddTokenReview, {
       accountId: XRP_ACCOUNT.id,
       token: xrpIouToken,
     });
