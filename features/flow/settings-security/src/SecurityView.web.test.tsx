@@ -2,12 +2,17 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { SettingsPortProvider } from "@features/flow-settings";
+import { trackPage } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
 import { createFakeSecurityPort } from "./__tests__/fakeSecurityPort";
 import { Security } from "./Security";
 
-jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
-jest.mock("@shared/analytics-react", () => ({ Track: () => null }));
+jest.mock("@shared/analytics", () => ({ track: jest.fn(), trackPage: jest.fn() }));
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  Track: () => null,
+}));
 
 function renderSecurity(initial?: Parameters<typeof createFakeSecurityPort>[0]) {
   const fake = createFakeSecurityPort(initial);
@@ -22,6 +27,24 @@ function renderSecurity(initial?: Parameters<typeof createFakeSecurityPort>[0]) 
 }
 
 describe("Security", () => {
+  it("should track the Settings Security page when entering from another screen", () => {
+    jest.mocked(trackPage).mockClear();
+    render(<TrackScreen category="Portfolio" />).unmount();
+
+    renderSecurity();
+
+    expect(jest.mocked(trackPage).mock.calls).toEqual([
+      [
+        { category: "Portfolio", name: undefined, props: {} },
+        { updateRoutes: true, refreshSource: true, mandatory: false },
+      ],
+      [
+        { category: "Settings", name: "Security", props: {} },
+        { updateRoutes: true, refreshSource: true, mandatory: false },
+      ],
+    ]);
+  });
+
   it("shows hide balance, App lock and MEV protection with their descriptions", () => {
     renderSecurity();
 
