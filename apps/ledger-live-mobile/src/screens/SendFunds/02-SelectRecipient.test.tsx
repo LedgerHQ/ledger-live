@@ -280,3 +280,49 @@ describe("SendSelectRecipient — memo longer than the chain allows", () => {
     expect(screen.getByTestId("enabled-recipient-continue-button")).toBeVisible();
   });
 });
+
+describe("SendSelectRecipient — Stellar memo in the wrong format", () => {
+  const stellarAccountState = withFlagOverrides({ llmMemoTag: { enabled: true } }, state => ({
+    ...state,
+    accounts: {
+      active: [
+        {
+          id: "parentId",
+          type: "Account",
+          currency: { units: [], family: "stellar", id: "stellar" },
+          subAccounts: [],
+          operations: [],
+          operationsCount: 0,
+          balance: { gt: () => true },
+          spendableBalance: { gt: () => true },
+        } as unknown as Account,
+      ],
+    },
+  }));
+
+  it("shows why Continue is disabled for a text memo over 28 characters", async () => {
+    const setTransaction = jest.fn();
+    mockBridgeTransaction({
+      transaction: { recipient: "GRECIPIENT", family: "stellar" },
+      setTransaction,
+    });
+    render(
+      <SendSelectRecipient
+        route={
+          { params: { accountId: "parentId" } } as unknown as RouteProp<
+            SendFundsNavigatorStackParamList,
+            ScreenName.SendSelectRecipient
+          >
+        }
+      />,
+      { overrideInitialState: stellarAccountState },
+    );
+
+    setTransaction.mockClear();
+    fireEvent.changeText(screen.getByPlaceholderText("Memo value"), "a".repeat(29));
+    await waitFor(() => expect(setTransaction).toHaveBeenCalled());
+
+    expect(screen.getByText("Memo format is wrong")).toBeVisible();
+    expect(screen.getByTestId("disabled-recipient-continue-button")).toBeVisible();
+  });
+});
