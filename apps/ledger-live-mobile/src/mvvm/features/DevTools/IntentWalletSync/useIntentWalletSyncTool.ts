@@ -1,5 +1,5 @@
 import { useIntentWalletSyncToolState } from "@devtools/bindings";
-import { ledgerSyncResultOrder } from "@features/flow-ledger-sync";
+import { ledgerSyncResultOrder } from "@features/platform-ledger-sync";
 import { commitKeyRingTree } from "@features/platform-key-ring";
 import { useKeyRingClient } from "../../WalletSync/hooks/useKeyRingClient";
 import { addMemberIntentLWMDefinition } from "../../WalletSync/deviceIntents/addMemberIntent/intentLWMDefinition";

@@ -1,4 +1,4 @@
-import { useLedgerSyncMemberRemoval } from "@features/flow-ledger-sync";
+import { useLedgerSyncMemberRemoval } from "@features/platform-ledger-sync";
 import {
   assertKeyRingMember,
   isSameKeyRingMember,

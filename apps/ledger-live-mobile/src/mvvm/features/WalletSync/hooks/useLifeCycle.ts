@@ -2,7 +2,7 @@ import { StackActions, useNavigation } from "@react-navigation/native";
 import {
   useLedgerSyncErrorRecovery,
   type LedgerSyncErrorRecovery,
-} from "@features/flow-ledger-sync";
+} from "@features/platform-ledger-sync";
 import { NavigatorName, ScreenName } from "~/const";
 import { useKeyRingClient } from "./useKeyRingClient";
 

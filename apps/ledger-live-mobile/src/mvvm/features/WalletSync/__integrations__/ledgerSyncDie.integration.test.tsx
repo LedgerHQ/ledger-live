@@ -38,7 +38,7 @@ import ManageKeyDrawer from "../screens/ManageKey/ManageKeyDrawer";
 import { useManageKeyDrawer } from "../screens/ManageKey/useManageKeyDrawer";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Steps } from "../types/Activation";
-import { LedgerSyncAnalyticsEvent } from "@features/flow-ledger-sync";
+import { LedgerSyncAnalyticsEvent } from "@features/platform-ledger-sync";
 
 const mockActivate = jest.fn();
 const mockRemoveMember = jest.fn();
@@ -72,8 +72,8 @@ jest.mock("../hooks/useDestroyTrustchain", () => ({
 }));
 
 // The tests create the member credentials themselves.
-jest.mock("@features/flow-ledger-sync", () => ({
-  ...jest.requireActual("@features/flow-ledger-sync"),
+jest.mock("@features/platform-ledger-sync", () => ({
+  ...jest.requireActual("@features/platform-ledger-sync"),
   useInitMemberKey: () => ({
     memberCredentials: null,
     generateMemberKey: jest.fn(),

@@ -5,7 +5,7 @@ import {
   trackLedgerSyncActivated,
   trackLedgerSyncRejectedOnDevice,
   useLedgerSyncResultAcceptance,
-} from "@features/flow-ledger-sync";
+} from "@features/platform-ledger-sync";
 import { createIntent, type DeviceConnectionResult } from "@features/platform-device-intent";
 import {
   selectKeyRingSession,

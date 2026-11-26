@@ -2,7 +2,7 @@ import {
   trackLedgerSyncActivated,
   trackLedgerSyncRejectedOnDevice,
   useLedgerSyncActivation,
-} from "@features/flow-ledger-sync";
+} from "@features/platform-ledger-sync";
 import { selectKeyRingSession, type KeyRingActivation } from "@features/platform-key-ring";
 import { selectHasKeyRingMemberKey } from "@domain/entity-key-ring";
 import { useSelector } from "~/context/hooks";

@@ -17,7 +17,7 @@ import { DeletionError } from "../../components/ManageInstances/DeletionError";
 import { DrawerProps, SceneKind } from "../../hooks/useFollowInstructionDrawer";
 import { SpecificError } from "../../components/Error/SpecificError";
 import { ErrorReason } from "../../hooks/useSpecificError";
-import { ledgerSyncErrorForDisplay } from "@features/flow-ledger-sync";
+import { ledgerSyncErrorForDisplay } from "@features/platform-ledger-sync";
 
 type Props = DrawerProps & {
   isOpen: boolean;

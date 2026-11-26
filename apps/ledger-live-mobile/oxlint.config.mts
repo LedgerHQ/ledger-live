@@ -47,7 +47,7 @@ const KEY_RING_PERSISTENCE_LENS_PATHS = [
   importNames: ["selectPersistedKeyRingState"],
   message: "Only the app persistence files write the key ring state to disk.",
 }));
-// The Ledger Sync flow owns these key ring operations: screens go through it.
+// @features/platform-ledger-sync owns these key ring operations: screens go through it.
 const KEY_RING_FLOW_PATHS = [
   {
     name: "@features/platform-key-ring",
@@ -58,7 +58,7 @@ const KEY_RING_FLOW_PATHS = [
       "KeyRingPairingClosedError",
     ],
     message:
-      "Use @features/flow-ledger-sync: useLedgerSyncResultAcceptance, useLedgerSyncServiceStatus, ledgerSyncErrorForDisplay and its pairing and recovery hooks.",
+      "Use @features/platform-ledger-sync: useLedgerSyncResultAcceptance, useLedgerSyncServiceStatus, ledgerSyncErrorForDisplay and its pairing and recovery hooks.",
   },
 ];
 const KEY_RING_PATHS = [

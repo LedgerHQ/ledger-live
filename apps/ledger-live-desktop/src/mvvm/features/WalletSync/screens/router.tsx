@@ -6,7 +6,7 @@ import SynchronizeWallet from "./Synchronize";
 import WalletSyncManageInstances from "./ManageInstances";
 import WalletSyncActivation from "./Activation";
 import WalletSyncManage from "./Manage";
-import { useInitMemberKey } from "@features/flow-ledger-sync";
+import { useInitMemberKey } from "@features/platform-ledger-sync";
 import { useKeyRingClient } from "../hooks/useKeyRingClient";
 import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
 import type { KeyRingMember } from "@features/platform-key-ring";

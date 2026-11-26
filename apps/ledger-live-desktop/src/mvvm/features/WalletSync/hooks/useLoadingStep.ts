@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLedgerSyncLoadingSettled } from "@features/flow-ledger-sync";
+import { useLedgerSyncLoadingSettled } from "@features/platform-ledger-sync";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { walletSyncFlowSelector, walletSyncNextStepSelector } from "~/renderer/reducers/walletSync";

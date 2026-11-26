@@ -8,8 +8,8 @@ import { syncOfferSettleDelay, useSyncOfferRouteViewModel } from "./useSyncOffer
 
 const mockWalletSyncState = { visualPending: false };
 
-jest.mock("@features/flow-ledger-sync", () => ({
-  ...jest.requireActual("@features/flow-ledger-sync"),
+jest.mock("@features/platform-ledger-sync", () => ({
+  ...jest.requireActual("@features/platform-ledger-sync"),
   useWalletSyncUserState: () => mockWalletSyncState,
 }));
 

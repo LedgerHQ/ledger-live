@@ -3,7 +3,7 @@
  */
 import React from "react";
 import { render, screen, renderHook } from "tests/testSetup";
-import { useWalletSyncUserState } from "@features/flow-ledger-sync";
+import { useWalletSyncUserState } from "@features/platform-ledger-sync";
 import { WalletSyncProvider } from "../components/WalletSyncContext";
 
 jest.mock("../hooks/useWatchWalletSync", () => ({

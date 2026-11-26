@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useFeature } from "@features/platform-feature-flags";
-import { useInitMemberKey } from "@features/flow-ledger-sync";
+import { useInitMemberKey } from "@features/platform-ledger-sync";
 import { useKeyRingClient } from "../../hooks/useKeyRingClient";
 import { LedgerSyncIntentStepLWM } from "../../deviceIntents/LedgerSyncIntentStepLWM";
 import {

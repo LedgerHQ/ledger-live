@@ -2,7 +2,7 @@ import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { track } from "@shared/analytics";
 import { mockKeyRingState } from "@domain/entity-key-ring/slice.mock";
-import { LedgerSyncMembersUnresolvedError } from "@features/flow-ledger-sync";
+import { LedgerSyncMembersUnresolvedError } from "@features/platform-ledger-sync";
 import { renderHook, waitFor } from "@tests/test-renderer";
 import { useLifeCycle } from "../useLifeCycle";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { WalletSyncContext } from "@features/flow-ledger-sync";
+import { WalletSyncContext } from "@features/platform-ledger-sync";
 import { useWatchWalletSync } from "../hooks/useWatchWalletSync";
 
 export function WalletSyncProvider({ children }: { children: React.ReactNode }) {

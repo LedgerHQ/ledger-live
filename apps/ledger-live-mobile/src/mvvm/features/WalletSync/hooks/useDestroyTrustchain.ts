@@ -1,4 +1,4 @@
-import { useDestroyLedgerSync } from "@features/flow-ledger-sync";
+import { useDestroyLedgerSync } from "@features/platform-ledger-sync";
 import { useKeyRingClient } from "./useKeyRingClient";
 import { useCloudSyncSDK } from "./useWatchWalletSync";
 import { useCurrentStep } from "./useCurrentStep";

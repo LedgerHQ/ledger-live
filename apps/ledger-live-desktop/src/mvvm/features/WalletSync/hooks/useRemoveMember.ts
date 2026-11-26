@@ -1,4 +1,4 @@
-import { useLedgerSyncMemberRemoval } from "@features/flow-ledger-sync";
+import { useLedgerSyncMemberRemoval } from "@features/platform-ledger-sync";
 import { selectKeyRingSession, type KeyRingMember } from "@features/platform-key-ring";
 import { selectIsKeyRingMember, selectHasKeyRingMemberKey } from "@domain/entity-key-ring";
 import { useDispatch, useSelector } from "LLD/hooks/redux";

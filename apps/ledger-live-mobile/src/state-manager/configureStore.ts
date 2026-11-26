@@ -19,7 +19,7 @@ import { setIdentitiesStore } from "@ledgerhq/live-common/device/firmwareDistrib
 import { recentAddressesSelector } from "~/reducers/wallet";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { accountDataExtra } from "@domain/api-account-data";
-import { ledgerSyncBackendsExtra } from "@features/flow-ledger-sync";
+import { ledgerSyncBackendsExtra } from "@features/platform-ledger-sync";
 import { keyRingRuntimeExtra } from "@features/platform-key-ring/store";
 import { accountDataSources, connectAccounts } from "~/config/account-data-setup";
 import { State } from "~/reducers/types";

@@ -1,4 +1,7 @@
-import { useOnKeyRingRefreshNeeded, type KeyRingRefreshOptions } from "@features/flow-ledger-sync";
+import {
+  useOnKeyRingRefreshNeeded,
+  type KeyRingRefreshOptions,
+} from "@features/platform-ledger-sync";
 import type { KeyRingClient, KeyRingSession } from "@features/platform-key-ring";
 
 export function useOnTrustchainRefreshNeeded(

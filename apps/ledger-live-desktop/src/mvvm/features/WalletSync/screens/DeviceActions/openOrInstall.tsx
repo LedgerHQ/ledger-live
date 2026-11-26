@@ -6,7 +6,7 @@ import {
   getKeyRingDeviceInitialization,
   ledgerSyncDeviceUnsupportedFailure,
 } from "@features/platform-key-ring";
-import { ledgerSyncErrorForDisplay } from "@features/flow-ledger-sync";
+import { ledgerSyncErrorForDisplay } from "@features/platform-ledger-sync";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";

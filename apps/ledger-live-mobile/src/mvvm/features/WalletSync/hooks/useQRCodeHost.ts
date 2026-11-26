@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLedgerSyncPairingHost } from "@features/flow-ledger-sync";
+import { useLedgerSyncPairingHost } from "@features/platform-ledger-sync";
 import { useWalletSyncTrackingFlow } from "./useLedgerSyncAnalytics";
 import { useKeyRingClient } from "./useKeyRingClient";
 import { Options, Steps } from "../types/Activation";

@@ -4,7 +4,7 @@ import { selectHasKeyRingMemberKey, selectIsKeyRingMember } from "@domain/entity
 import {
   buildRemoveMemberIntentInput,
   useLedgerSyncResultAcceptance,
-} from "@features/flow-ledger-sync";
+} from "@features/platform-ledger-sync";
 import {
   selectKeyRingSession,
   type KeyRingMember,

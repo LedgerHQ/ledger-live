@@ -23,7 +23,7 @@ import { useCustomTimeOut } from "../../hooks/useCustomTimeOut";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { blockPasswordLock } from "~/actions/appstate";
 import { selectIsKeyRingMember } from "@domain/entity-key-ring";
-import { isLedgerSyncTreeGone } from "@features/flow-ledger-sync";
+import { isLedgerSyncTreeGone } from "@features/platform-ledger-sync";
 import { useFeature } from "@features/platform-feature-flags";
 
 const WalletSyncManage = () => {

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { getEnv } from "@shared/env";
 import type { KeyRingClientConfig } from "@features/platform-key-ring";
-import { useKeyRingRuntime, useLedgerSyncBackends } from "@features/flow-ledger-sync";
+import { useKeyRingRuntime, useLedgerSyncBackends } from "@features/platform-ledger-sync";
 import { useInstanceName } from "./useInstanceName";
 
 export type KeyRingClientSetup = Omit<KeyRingClientConfig, "deviceBridge">;

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLedgerSyncLoadingSettled } from "@features/flow-ledger-sync";
+import { useLedgerSyncLoadingSettled } from "@features/platform-ledger-sync";
 import { useFeature } from "@features/platform-feature-flags";
 import { NavigatorName, ScreenName } from "~/const";
 import { useNavigation } from "@react-navigation/core";

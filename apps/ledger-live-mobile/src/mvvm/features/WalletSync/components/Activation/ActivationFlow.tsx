@@ -22,7 +22,7 @@ import PinCodeInput from "../../screens/Synchronize/PinCodeInput";
 import SyncError from "../../screens/Synchronize/SyncError";
 import ScannedInvalidQrCode from "../../screens/Synchronize/ScannedInvalidQrCode";
 import ScannedOldImportQrCode from "../../screens/Synchronize/ScannedOldImportQrCode";
-import { useInitMemberKey } from "@features/flow-ledger-sync";
+import { useInitMemberKey } from "@features/platform-ledger-sync";
 import { useKeyRingClient } from "../../hooks/useKeyRingClient";
 import { useSyncWithQrCode } from "../../hooks/useSyncWithQrCode";
 import { SpecificError } from "../Error/SpecificError";

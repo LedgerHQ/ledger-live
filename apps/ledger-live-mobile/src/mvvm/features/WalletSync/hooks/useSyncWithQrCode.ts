@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useLedgerSyncPairingJoin } from "@features/flow-ledger-sync";
+import { useLedgerSyncPairingJoin } from "@features/platform-ledger-sync";
 import { classifyKeyRingError } from "@features/platform-key-ring";
 import { selectKeyRingTreeId } from "@domain/entity-key-ring";
 import { useSelector } from "~/context/hooks";

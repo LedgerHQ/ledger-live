@@ -1,4 +1,4 @@
-import { useLedgerSyncActivation } from "@features/flow-ledger-sync";
+import { useLedgerSyncActivation } from "@features/platform-ledger-sync";
 import { selectKeyRingSession, type KeyRingActivation } from "@features/platform-key-ring";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";

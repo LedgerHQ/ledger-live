@@ -2,7 +2,7 @@ import {
   ledgerSyncErrorForDisplay,
   useLedgerSyncErrorRecovery,
   type LedgerSyncErrorRecovery,
-} from "@features/flow-ledger-sync";
+} from "@features/platform-ledger-sync";
 import { useDispatch } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";

@@ -2,7 +2,7 @@ import React from "react";
 import type { KeyRingMember } from "@features/platform-key-ring";
 import { Step } from "~/renderer/reducers/walletSync";
 import type { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
-import { useInitMemberKey } from "@features/flow-ledger-sync";
+import { useInitMemberKey } from "@features/platform-ledger-sync";
 import { useKeyRingClient } from "../hooks/useKeyRingClient";
 import { AddMemberIntentStep } from "./addMemberIntent/AddMemberIntentStep";
 import { RemoveMemberIntentStep } from "./removeMemberIntent/RemoveMemberIntentStep";

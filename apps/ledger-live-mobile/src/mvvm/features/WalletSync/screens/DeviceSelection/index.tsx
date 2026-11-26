@@ -19,7 +19,7 @@ import {
   getKeyRingDeviceInitialization,
   ledgerSyncDeviceUnsupportedFailure,
 } from "@features/platform-key-ring";
-import { ledgerSyncErrorForDisplay } from "@features/flow-ledger-sync";
+import { ledgerSyncErrorForDisplay } from "@features/platform-ledger-sync";
 import GenericErrorView from "~/components/GenericErrorView";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";

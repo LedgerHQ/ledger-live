@@ -1,7 +1,7 @@
 import { renderHook } from "tests/testSetup";
 import { useSyncSources } from "../useSyncSources";
 import * as liveCommon from "@ledgerhq/live-common/bridge/react/index";
-import * as ledgerSync from "@features/flow-ledger-sync";
+import * as ledgerSync from "@features/platform-ledger-sync";
 import { defaultWalletSyncReturn } from "./fixtures";
 
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
@@ -9,8 +9,8 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   useSyncSources: jest.fn(),
 }));
 
-jest.mock("@features/flow-ledger-sync", () => ({
-  ...jest.requireActual("@features/flow-ledger-sync"),
+jest.mock("@features/platform-ledger-sync", () => ({
+  ...jest.requireActual("@features/platform-ledger-sync"),
   useWalletSyncUserState: jest.fn(),
 }));
 

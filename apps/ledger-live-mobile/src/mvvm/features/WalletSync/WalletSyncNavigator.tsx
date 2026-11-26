@@ -9,7 +9,7 @@ import WalletSyncActivation from "LLM/features/WalletSync/screens/Activation";
 import { ActivationProcess } from "./screens/Activation/ActivationProcess";
 import { ActivationSuccess } from "./screens/Activation/ActivationSuccess";
 import { ActivationLoading } from "./screens/Activation/ActivationLoading";
-import { useInitMemberKey } from "@features/flow-ledger-sync";
+import { useInitMemberKey } from "@features/platform-ledger-sync";
 import { useKeyRingClient } from "./hooks/useKeyRingClient";
 import WalletSyncManage from "./screens/Manage";
 import { useTranslation } from "~/context/Locale";

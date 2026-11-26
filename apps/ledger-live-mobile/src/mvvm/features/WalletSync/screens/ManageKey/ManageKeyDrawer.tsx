@@ -8,7 +8,7 @@ import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 
 import { ConfirmManageKey } from "../../components/ManageKey/Confirm";
 import { HookResult } from "./useManageKeyDrawer";
-import { ledgerSyncErrorForDisplay } from "@features/flow-ledger-sync";
+import { ledgerSyncErrorForDisplay } from "@features/platform-ledger-sync";
 import { classifyKeyRingError } from "@features/platform-key-ring";
 import { SpecificError } from "../../components/Error/SpecificError";
 import { ErrorReason } from "../../hooks/useSpecificError";

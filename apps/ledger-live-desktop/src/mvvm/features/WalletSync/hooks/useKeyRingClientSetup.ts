@@ -1,7 +1,7 @@
 import { getEnv } from "@shared/env";
 import { useStore } from "LLD/hooks/redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
-import { useKeyRingRuntime, useLedgerSyncBackends } from "@features/flow-ledger-sync";
+import { useKeyRingRuntime, useLedgerSyncBackends } from "@features/platform-ledger-sync";
 import type { KeyRingRuntime } from "@features/platform-key-ring";
 import { useInstanceName } from "./useInstanceName";
 

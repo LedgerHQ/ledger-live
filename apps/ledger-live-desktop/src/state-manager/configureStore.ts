@@ -22,7 +22,7 @@ import reducers, { State } from "~/renderer/reducers";
 import { apiServices, applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { accountDataExtra } from "@domain/api-account-data";
-import { ledgerSyncBackendsExtra } from "@features/flow-ledger-sync";
+import { ledgerSyncBackendsExtra } from "@features/platform-ledger-sync";
 import { keyRingRuntimeExtra } from "@features/platform-key-ring/store";
 import { accountDataSources, accountDataTaps } from "~/config/account-data-setup";
 import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";

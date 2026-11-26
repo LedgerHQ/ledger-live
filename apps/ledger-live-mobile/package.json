@@ -156,7 +156,7 @@
     "@features/flow-history-export": "workspace:^",
     "@features/flow-large-screen-upsell": "workspace:^",
     "@features/flow-lazy-onboarding-banner": "workspace:^",
-    "@features/flow-ledger-sync": "workspace:^",
+    "@features/platform-ledger-sync": "workspace:^",
     "@features/flow-pay-balance": "workspace:^",
     "@features/flow-pay-bank-transfer": "workspace:^",
     "@features/flow-pay-card": "workspace:^",

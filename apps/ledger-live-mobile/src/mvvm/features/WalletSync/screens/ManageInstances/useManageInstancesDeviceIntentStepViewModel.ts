@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import {
   buildRemoveMemberIntentInput,
   useLedgerSyncResultAcceptance,
-} from "@features/flow-ledger-sync";
+} from "@features/platform-ledger-sync";
 import { createIntent } from "@features/platform-device-intent";
 import {
   assertKeyRingMember,

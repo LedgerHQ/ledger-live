@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useLedgerSyncBackends, useLedgerSyncServiceStatus } from "@features/flow-ledger-sync";
+import { useLedgerSyncBackends, useLedgerSyncServiceStatus } from "@features/platform-ledger-sync";
 import { selectKeyRingTreeId } from "@domain/entity-key-ring";
 import { selectKeyRingSession } from "@features/platform-key-ring";
 import { useSelector } from "LLD/hooks/redux";

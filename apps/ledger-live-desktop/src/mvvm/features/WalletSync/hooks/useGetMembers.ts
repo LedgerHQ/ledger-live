@@ -1,4 +1,4 @@
-import { useLedgerSyncMembers } from "@features/flow-ledger-sync";
+import { useLedgerSyncMembers } from "@features/platform-ledger-sync";
 import { useKeyRingClient } from "./useKeyRingClient";
 import { useLifeCycle } from "./walletSync.hooks";
 

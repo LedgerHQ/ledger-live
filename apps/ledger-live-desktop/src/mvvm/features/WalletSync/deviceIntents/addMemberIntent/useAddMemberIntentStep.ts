@@ -5,7 +5,7 @@ import {
   buildAddMemberIntentInput,
   trackLedgerSyncActivated,
   useLedgerSyncResultAcceptance,
-} from "@features/flow-ledger-sync";
+} from "@features/platform-ledger-sync";
 import {
   selectKeyRingSession,
   type AddMemberIntent,

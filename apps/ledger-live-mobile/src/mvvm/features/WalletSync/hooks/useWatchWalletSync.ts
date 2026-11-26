@@ -7,7 +7,7 @@ import {
   type WalletSyncUserState,
 } from "@features/platform-wallet-sync";
 import { selectKeyRingSession } from "@features/platform-key-ring";
-import { useLedgerSyncBackends } from "@features/flow-ledger-sync";
+import { useLedgerSyncBackends } from "@features/platform-ledger-sync";
 import { bulkSetAccountNames } from "@domain/entity-account-name";
 import { selectContacts, setContacts } from "@domain/entity-contact";
 import { updateRecentAddresses } from "@domain/entity-recent-addresses";

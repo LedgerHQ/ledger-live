@@ -11,7 +11,7 @@ import { DeletionError } from "../../components/ManageInstances/DeletionError";
 import { HookResult, Scene } from "./useManageInstanceDrawer";
 import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
 import { ErrorReason } from "../../hooks/useSpecificError";
-import { ledgerSyncErrorForDisplay } from "@features/flow-ledger-sync";
+import { ledgerSyncErrorForDisplay } from "@features/platform-ledger-sync";
 
 const ManageInstancesDrawer = ({
   isDrawerVisible,

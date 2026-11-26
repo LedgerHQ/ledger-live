@@ -3,7 +3,7 @@ import { useState, useCallback } from "react";
 import type React from "react";
 import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 import { useGetMembers } from "../../hooks/useGetMembers";
-import type { LedgerSyncMembers } from "@features/flow-ledger-sync";
+import type { LedgerSyncMembers } from "@features/platform-ledger-sync";
 import {
   isCurrentKeyRingMember,
   selectKeyRingSession,

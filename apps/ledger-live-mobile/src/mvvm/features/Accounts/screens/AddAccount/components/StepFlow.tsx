@@ -10,7 +10,7 @@ import { Options, Steps } from "LLM/features/WalletSync/types/Activation";
 import SyncError from "LLM/features/WalletSync/screens/Synchronize/SyncError";
 import PinCodeDisplay from "LLM/features/WalletSync/screens/Synchronize/PinCodeDisplay";
 import PinCodeInput from "LLM/features/WalletSync/screens/Synchronize/PinCodeInput";
-import { useInitMemberKey } from "@features/flow-ledger-sync";
+import { useInitMemberKey } from "@features/platform-ledger-sync";
 import { useKeyRingClient } from "LLM/features/WalletSync/hooks/useKeyRingClient";
 import { useSyncWithQrCode } from "LLM/features/WalletSync/hooks/useSyncWithQrCode";
 import { SpecificError } from "LLM/features/WalletSync/components/Error/SpecificError";

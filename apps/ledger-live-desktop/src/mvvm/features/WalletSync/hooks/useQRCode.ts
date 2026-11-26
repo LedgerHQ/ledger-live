@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useLedgerSyncPairingHost } from "@features/flow-ledger-sync";
+import { useLedgerSyncPairingHost } from "@features/platform-ledger-sync";
 import { useDispatch, useStore } from "LLD/hooks/redux";
 import { setDrawerVisibility, setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
 import { Flow, Step, walletSyncStepSelector } from "~/renderer/reducers/walletSync";

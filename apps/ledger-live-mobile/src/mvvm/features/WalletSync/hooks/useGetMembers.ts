@@ -1,4 +1,4 @@
-import { useLedgerSyncMembers, type LedgerSyncMembers } from "@features/flow-ledger-sync";
+import { useLedgerSyncMembers, type LedgerSyncMembers } from "@features/platform-ledger-sync";
 import { useKeyRingClient } from "./useKeyRingClient";
 import { useLifeCycle } from "./useLifeCycle";
 

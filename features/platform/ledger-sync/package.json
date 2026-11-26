@@ -1,16 +1,12 @@
 {
-  "name": "@features/flow-ledger-sync",
+  "name": "@features/platform-ledger-sync",
   "version": "0.1.0",
   "private": true,
-  "description": "The Ledger Sync journey: activation, pairing, instances, backup deletion",
+  "description": "The Ledger Sync product logic both apps share: activation, pairing, instances, backup deletion",
   "main": "src/index.ts",
-  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": {
-      "react-native": "./src/index.native.ts",
-      "default": "./src/index.ts"
-    },
+    ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,

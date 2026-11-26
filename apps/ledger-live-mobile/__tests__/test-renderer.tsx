@@ -61,7 +61,7 @@ import { FEATURE_FLAGS_INITIAL_STATE, FEATURE_FLAGS_DEFAULTS } from "@shared/fea
 import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feature-flags";
 import { getEnv } from "@shared/env";
 import { calApiExtra, coinMarketCapApiExtra, cvsApiExtra } from "@shared/api-services";
-import { ledgerSyncBackendsExtra } from "@features/flow-ledger-sync";
+import { ledgerSyncBackendsExtra } from "@features/platform-ledger-sync";
 import { keyRingRuntimeExtra } from "@features/platform-key-ring/store";
 import type { KeyRingState } from "@domain/entity-key-ring";
 import { appConfig } from "~/setup";

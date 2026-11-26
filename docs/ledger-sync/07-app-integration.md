@@ -78,7 +78,7 @@ if (newLocalState) {
 Each app caches one client at module level, built on first use with
 `createKeyRingClient({ mock, instanceName, apiBaseUrl, deviceBridge })`; the URLs come from the
 `ledgerKeyRing` switch of the app config, through `useLedgerSyncBackends` of
-`@features/flow-ledger-sync`, and the application id (`16`) lives in the package. Device intents
+`@features/platform-ledger-sync`, and the application id (`16`) lives in the package. Device intents
 run on the client bound to their DMK session with `client.forDeviceSession`. The device bridge
 comes from `createKeyRingV1DeviceBridge` (`@features/platform-key-ring/v1`), which the
 composition root alone imports: it gets the app's `withDevice` and the `DmkCompatTransport` of a
@@ -94,7 +94,7 @@ to the new key. Mobile does not register it yet.
 - Each store spreads `keyRingRuntimeExtra({ getState })` (`@features/platform-key-ring/store`)
   into its thunk `extraArgument`: the key ring runtime holds the key store of the member key. The
   key ring thunks, the identity provider and the client (`useKeyRingRuntime` of
-  `@features/flow-ledger-sync`) read that one runtime.
+  `@features/platform-ledger-sync`) read that one runtime.
 - At boot, `dispatch(importPersistedKeyRingState(persisted))` validates the stored member key and
   generates a new one when it is missing or invalid, within the dispatch.
 - LWD persists `app.trustchain` on `isKeyRingAction`; LWM persists the `trustchain` key. Both

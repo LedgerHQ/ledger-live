@@ -2,7 +2,7 @@ import {
   useLedgerSyncBackends,
   useLedgerSyncServiceStatus,
   type LedgerSyncServiceStatus,
-} from "@features/flow-ledger-sync";
+} from "@features/platform-ledger-sync";
 import { useFeature } from "@features/platform-feature-flags";
 import { useKeyRingClient } from "./useKeyRingClient";
 

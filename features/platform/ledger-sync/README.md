@@ -1,10 +1,11 @@
-# @features/flow-ledger-sync
+# @features/platform-ledger-sync
 
 > [!CAUTION]
 > **Status: UNSTABLE**. New package, in active development: the apps are moving their Ledger
 > Sync hooks onto it.
 
-The Ledger Sync journey of both apps: activation, QR code pairing, instances, backup deletion. It
+The Ledger Sync product logic of both apps, shared by its journeys: activation, QR code pairing,
+instances, backup deletion. Headless: the journeys and their views stay in the apps for now. It
 owns the business logic Desktop and Mobile duplicated, on top of the key ring client of
 `@features/platform-key-ring`. Each app keeps a thin hook with its old name that calls the one
 here, and keeps its screens, navigation, the device intent rendering and its composition root.
@@ -66,6 +67,6 @@ bundle: the app provides the query client and the store.
 
 ## Tests
 
-`pnpm nx run @features/flow-ledger-sync:test`. Hook tests run on jsdom with a real store and query
+`pnpm nx run @features/platform-ledger-sync:test`. Hook tests run on jsdom with a real store and query
 client, a `fakeKeyRingClient` from `@features/platform-key-ring/testing`, and MSW for the status
 endpoints.

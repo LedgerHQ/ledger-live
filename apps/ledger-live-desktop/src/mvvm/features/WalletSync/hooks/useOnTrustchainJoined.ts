@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
 import { useNavigate } from "react-router";
-import { trackLedgerSyncActivated } from "@features/flow-ledger-sync";
+import { trackLedgerSyncActivated } from "@features/platform-ledger-sync";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { KeyRingActivation } from "@features/platform-key-ring";
 import { useDispatch, useSelector } from "LLD/hooks/redux";

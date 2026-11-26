@@ -4,7 +4,7 @@ import IconsHeader from "./IconsHeader";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
-import { useInitMemberKey } from "@features/flow-ledger-sync";
+import { useInitMemberKey } from "@features/platform-ledger-sync";
 import { useKeyRingClient } from "../../hooks/useKeyRingClient";
 import { useFeature } from "@features/platform-feature-flags";
 import { Linking } from "react-native";

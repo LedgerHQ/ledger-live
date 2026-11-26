@@ -125,7 +125,7 @@ they move to it.
 Each store hands `session` to `createAppConfigMiddleware`, with the `reload` that starts the next
 session. The storage and the reload are dependencies, so they stay in the middleware's closure
 rather than in the thunk `extraArgument`, which only carries config, such as the Ledger Sync
-backends that `ledgerSyncBackendsExtra` of `@features/flow-ledger-sync` hands its hooks.
+backends that `ledgerSyncBackendsExtra` of `@features/platform-ledger-sync` hands its hooks.
 
 - Once the store is created, the middleware sets the `appConfig` slice to the session without its
   storage, and its saved selections to the ones read at boot. Register `appConfigReducer` under
