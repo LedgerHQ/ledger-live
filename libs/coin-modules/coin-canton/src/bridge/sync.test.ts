@@ -233,7 +233,18 @@ const storedOperation = (height: number, value = 1) =>
     extra: { instrumentId: "Amulet" },
   }) as unknown as CantonAccount["operations"][number];
 
-const failed = (row: OperationInfo): OperationInfo => ({ ...row, status: "Failed" });
+/** A failed transfer instruction as the gateway sends it: one transfer of 0, with no fee. */
+const failed = (row: OperationInfo): OperationInfo =>
+  ({
+    ...row,
+    status: "Failed",
+    fee: { ...row.fee, value: "0" },
+    transfers: (row.transfers ?? []).map(transfer => ({
+      ...transfer,
+      value: "0",
+      details: { ...transfer.details, operationType: "transfer-failed" },
+    })),
+  }) as OperationInfo;
 
 const pendingOperation = (hash: string, sequence: number) =>
   ({
@@ -503,15 +514,15 @@ describe("makeGetAccountShape", () => {
     });
   });
 
-  describe("a failed transaction", () => {
-    it("is a failed send whose value is its fee only", async () => {
-      const shape = await syncRows([{ ...createMockOperationView(), status: "Failed" }]);
+  describe("a failed transfer instruction", () => {
+    it("is a failed operation of no value on the sender's side", async () => {
+      const shape = await syncRows([failed(createMockOperationView())]);
 
       expect(shape.operations).toEqual([
         expect.objectContaining({
-          type: "OUT",
-          value: BigNumber(5),
-          fee: BigNumber(5),
+          type: "FEES",
+          value: BigNumber(0),
+          fee: BigNumber(0),
           hasFailed: true,
         }),
       ]);
@@ -519,7 +530,7 @@ describe("makeGetAccountShape", () => {
 
     it("is a failed receive of no value", async () => {
       const shape = await syncRows([
-        { ...createMockOperationView({ type: "Receive" }), senders: ["bob"], status: "Failed" },
+        { ...failed(createMockOperationView({ type: "Receive" })), senders: ["bob"] },
       ]);
 
       expect(shape.operations).toEqual([
@@ -1177,27 +1188,40 @@ describe("makeGetAccountShape", () => {
         ]);
       });
 
-      describe("of a failed transaction", () => {
-        it("flags the token send and its CC fee failed, the token moving nothing", async () => {
-          mockedGetOperations.mockResolvedValue({
-            operations: [failed(tokenOperationView(usdcxInstrument, "token-tx"))],
-          });
-
-          const shape = await sync();
-
-          expect(shape.subAccounts?.[0].operations).toEqual([
-            expect.objectContaining({ type: "OUT", value: BigNumber(0), hasFailed: true }),
-          ]);
-          expect(fees(shape)).toEqual([
-            expect.objectContaining({ value: BigNumber(5), fee: BigNumber(5), hasFailed: true }),
-          ]);
-        });
-
-        it.each([
+      describe("of a failed transfer instruction", () => {
+        const inOrder = [
           ["token row first", (token: OperationInfo, cc: OperationInfo) => [token, cc]],
           ["CC row first", (token: OperationInfo, cc: OperationInfo) => [cc, token]],
-        ])(
-          "flags every operation of the transaction failed, keeping a successful row's value (%s)",
+        ] as const;
+
+        it.each(inOrder)(
+          "flags the failed token instruction only, not its successful CC sibling (%s)",
+          async (_, order) => {
+            mockedGetOperations.mockResolvedValue({
+              operations: order(
+                failed(tokenOperationView(usdcxInstrument, "mixed-tx")),
+                createMockOperationView({ txHash: "mixed-tx" }),
+              ),
+            });
+
+            const shape = await sync();
+
+            expect(shape.subAccounts?.[0].operations).toEqual([
+              expect.objectContaining({ value: BigNumber(0), fee: BigNumber(0), hasFailed: true }),
+            ]);
+            expect(shape.operations).toEqual([
+              expect.objectContaining({
+                type: "OUT",
+                value: BigNumber(105),
+                fee: BigNumber(5),
+                hasFailed: false,
+              }),
+            ]);
+          },
+        );
+
+        it.each(inOrder)(
+          "unflags the CC FEES operation that charges a successful token send's fee (%s)",
           async (_, order) => {
             mockedGetOperations.mockResolvedValue({
               operations: order(
@@ -1210,14 +1234,14 @@ describe("makeGetAccountShape", () => {
 
             expect(shape.operations).toEqual([
               expect.objectContaining({
-                type: "OUT",
-                value: BigNumber(10),
-                fee: BigNumber(10),
-                hasFailed: true,
+                type: "FEES",
+                value: BigNumber(5),
+                fee: BigNumber(5),
+                hasFailed: false,
               }),
             ]);
             expect(shape.subAccounts?.[0].operations).toEqual([
-              expect.objectContaining({ value: BigNumber(100), hasFailed: true }),
+              expect.objectContaining({ value: BigNumber(100), hasFailed: false }),
             ]);
           },
         );

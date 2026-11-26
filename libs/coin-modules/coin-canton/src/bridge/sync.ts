@@ -65,6 +65,15 @@ type OperationGroup = {
   senders: Set<string>;
   recipients: Set<string>;
   memos: Set<string>;
+  /** Every row that contributed to the operation, its value or its fee, failed. */
+  failed: boolean;
+};
+
+type SeparateFee = {
+  row: ValidOperationInfo;
+  instrument: Instrument;
+  fee: BigNumber;
+  failed: boolean;
 };
 
 const groupKey = (hash: string, { instrumentId, instrumentAdmin }: Instrument, type: string) =>
@@ -106,7 +115,7 @@ function classifyRow(row: ValidOperationInfo, partyId: string) {
  */
 function chargeSeparateFee(
   groups: Map<string, OperationGroup>,
-  { row, instrument, fee }: { row: ValidOperationInfo; instrument: Instrument; fee: BigNumber },
+  { row, instrument, fee, failed }: SeparateFee,
   partyId: string,
 ): void {
   const payer = [...CHARGED_TYPES]
@@ -114,6 +123,7 @@ function chargeSeparateFee(
     .find(group => group !== undefined);
   if (payer) {
     payer.fee = payer.fee.plus(fee);
+    payer.failed &&= failed;
     return;
   }
   groups.set(groupKey(row.transaction_hash, instrument, "FEES"), {
@@ -125,6 +135,7 @@ function chargeSeparateFee(
     senders: new Set([partyId]),
     recipients: new Set(),
     memos: new Set(),
+    failed,
   });
 }
 
@@ -138,8 +149,9 @@ function chargeSeparateFee(
  * A transaction of a pending transfer proposal yields its paid fees only, as FEES operations: the
  * offer list shows the proposal itself until it settles.
  *
- * A failed row moves no value, so its operation keeps its fee only. Canton commits a transaction as
- * a whole, so one failed row flags every operation of the transaction as failed.
+ * The gateway gives each transfer instruction its own outcome, and several instructions can share a
+ * transaction. A failed row moves no value. An operation is failed only when every row that
+ * contributed to it failed, so a successful sibling transfer is never flagged.
  */
 function toOperations(
   rows: ValidOperationInfo[],
@@ -148,17 +160,17 @@ function toOperations(
   pendingHashes: ReadonlySet<string>,
 ): Operation[] {
   const groups = new Map<string, OperationGroup>();
-  const failedHashes = new Set(
-    rows.filter(row => row.status === "Failed").map(row => row.transaction_hash),
-  );
-  const separateFees = new Map<
-    string,
-    { row: ValidOperationInfo; instrument: Instrument; fee: BigNumber }
-  >();
+  const separateFees = new Map<string, SeparateFee>();
   const addSeparateFee = (row: ValidOperationInfo, instrument: Instrument, fee: BigNumber) => {
     const key = groupKey(row.transaction_hash, instrument, "");
-    const separate = separateFees.get(key) ?? { row, instrument, fee: new BigNumber(0) };
+    const separate = separateFees.get(key) ?? {
+      row,
+      instrument,
+      fee: new BigNumber(0),
+      failed: true,
+    };
     separate.fee = separate.fee.plus(fee);
+    separate.failed &&= row.status === "Failed";
     separateFees.set(key, separate);
   };
 
@@ -181,8 +193,11 @@ function toOperations(
       senders: new Set<string>(),
       recipients: new Set<string>(),
       memos: new Set<string>(),
+      failed: true,
     };
-    if (row.status !== "Failed") group.transferValue = group.transferValue.plus(transferValue);
+    const failed = row.status === "Failed";
+    if (!failed) group.transferValue = group.transferValue.plus(transferValue);
+    group.failed &&= failed;
     if (memo !== undefined) group.memos.add(memo);
     group.fee = group.fee.plus(shownFee);
     if (separateFeeAsset) addSeparateFee(row, separateFeeAsset, fee);
@@ -194,7 +209,7 @@ function toOperations(
   for (const separate of separateFees.values()) chargeSeparateFee(groups, separate, partyId);
 
   return [...groups.values()].map(
-    ({ row, instrument, type, transferValue, fee, senders, recipients, memos }) => ({
+    ({ row, instrument, type, transferValue, fee, senders, recipients, memos, failed }) => ({
       id: encodeOperationId(accountId, row.transaction_hash, type),
       hash: row.transaction_hash,
       accountId,
@@ -207,7 +222,7 @@ function toOperations(
       recipients: [...recipients],
       date: new Date(row.transaction_timestamp),
       transactionSequenceNumber: new BigNumber(row.block.height),
-      hasFailed: failedHashes.has(row.transaction_hash),
+      hasFailed: failed,
       extra: {
         uid: row.uid,
         // Rows that disagree leave no memo rather than one that holds for some of them only.

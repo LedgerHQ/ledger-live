@@ -85,6 +85,33 @@ describe("postSync", () => {
       "recent",
     ]);
   });
+
+  it("keeps a token send broadcast during the sync, from the account as it is now", () => {
+    const current = account({
+      subAccounts: [
+        subAccount({ pendingOperations: [operation("synced"), operation("during-sync")] }),
+      ],
+    });
+    const synced = account({
+      subAccounts: [
+        subAccount({ operations: [operation("synced")], pendingOperations: [operation("synced")] }),
+      ],
+    });
+
+    expect(postSync(current, synced).subAccounts?.[0].pendingOperations.map(op => op.hash)).toEqual(
+      ["during-sync"],
+    );
+  });
+
+  it("keeps the synced pending operations of a token account the current account lacks", () => {
+    const synced = account({
+      subAccounts: [subAccount({ pendingOperations: [operation("recent")] })],
+    });
+
+    expect(
+      postSync(account({}), synced).subAccounts?.[0].pendingOperations.map(op => op.hash),
+    ).toEqual(["recent"]);
+  });
 });
 
 const send = (base: Account, hash: string) =>

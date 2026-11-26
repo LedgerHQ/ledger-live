@@ -37,7 +37,7 @@ export const prepareTransaction = async (
     }
   }
 
-  // Native when no token is chosen. A token account that is gone leaves no asset, and the status blocks the send.
+  // Native when no token is chosen. A token account that is gone sets no asset: the status and the signing block the send.
   if (!tokenId && !transaction.subAccountId) {
     tokenId = (await context.config(account.currency.id)).nativeInstrumentId;
   }

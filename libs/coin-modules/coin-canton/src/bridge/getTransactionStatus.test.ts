@@ -464,7 +464,14 @@ describe("getTransactionStatus", () => {
 
       it.each([
         ["without token accounts", { ...mockAccount, subAccounts: undefined }],
-        ["holding other token accounts", { ...mockAccount, subAccounts: [] }],
+        ["with no token account", { ...mockAccount, subAccounts: [] }],
+        [
+          "holding another token account",
+          {
+            ...mockAccount,
+            subAccounts: [{ ...withTokenAccount(1_000).subAccounts?.[0], id: "other-token" }],
+          },
+        ],
       ])("blocks the send when its token account is gone, the account %s", async (_, account) => {
         const result = await getTransactionStatus(account as CantonAccount, tokenTransaction);
 
