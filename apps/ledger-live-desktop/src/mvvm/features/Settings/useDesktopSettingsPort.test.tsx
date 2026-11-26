@@ -6,7 +6,6 @@ import {
   setDiscreetMode,
   setMevProtection,
 } from "~/renderer/actions/settings";
-import { openURL } from "~/renderer/linking";
 import { isModalOpened } from "~/renderer/reducers/modals";
 import {
   autoLockTimeoutSelector,
@@ -14,8 +13,6 @@ import {
   mevProtectionSelector,
 } from "~/renderer/reducers/settings";
 import { useDesktopSettingsPort } from "./useDesktopSettingsPort";
-
-jest.mock("~/renderer/linking", () => ({ openURL: jest.fn() }));
 
 function renderPort(settings: Parameters<typeof saveSettings>[0] = {}) {
   const hook = renderHook(() => useDesktopSettingsPort());
@@ -77,6 +74,8 @@ describe("useDesktopSettingsPort, Security section", () => {
       autoLockTimeout: 30,
       passwordSet: false,
       biometricKind: null,
+      biometricsEnabled: false,
+      biometricsRequirePassword: false,
     });
   });
 
@@ -164,15 +163,5 @@ describe("useDesktopSettingsPort, Security section", () => {
     });
 
     expect(isModalOpened(store.getState(), modal)).toBe(true);
-  });
-
-  it("opens the MEV protection page", () => {
-    const { result } = renderPort();
-
-    result.current.openMevProtectionInfo();
-
-    expect(jest.mocked(openURL)).toHaveBeenCalledWith(
-      expect.stringContaining("support.ledger.com"),
-    );
   });
 });

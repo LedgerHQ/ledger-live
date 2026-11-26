@@ -33,6 +33,7 @@ const resources = {
           },
           biometrics: {
             description: "Use {{biometric}} to open the app.",
+            disabledDescription: 'To enable {{biometric}}, turn on "App lock".',
             kind: {
               faceId: "Face ID",
               touchId: "Touch ID",

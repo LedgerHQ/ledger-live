@@ -9,6 +9,7 @@ import { trackHideBalanceToggle, trackMevProtectionToggle } from "./tracking";
 type RowContext = Readonly<{
   port: SecuritySettingsPort;
   labels: SecurityLabels;
+  openMevProtectionInfo: () => void;
   base: Pick<SecurityRowViewProps, "id" | "disabled" | "testID">;
 }>;
 
@@ -70,9 +71,21 @@ const ROW_BUILDERS: Readonly<Record<SecurityRow["id"], RowBuilder>> = {
     },
   }),
 
-  biometrics: ({ labels, base }) => ({ ...base, ...labels.biometrics }),
+  biometrics: ({ port: { values, setValue }, labels, base }) => ({
+    ...base,
+    title: labels.biometrics.title,
+    description: base.disabled
+      ? labels.biometrics.disabledDescription
+      : labels.biometrics.description,
+    biometricKind: values.biometricKind ?? undefined,
+    trailing: {
+      type: "toggle",
+      value: values.biometricsEnabled,
+      onToggle: value => setValue({ key: "biometricsEnabled", value }),
+    },
+  }),
 
-  mevProtection: ({ port: { values, setValue, openMevProtectionInfo }, labels, base }) => ({
+  mevProtection: ({ port: { values, setValue }, labels, openMevProtectionInfo, base }) => ({
     ...base,
     title: labels.mevProtection.title,
     description: labels.mevProtection.description,
@@ -93,7 +106,8 @@ export function toSecurityRowViewProps(
   { id, enabled }: SecurityRow,
   port: SecuritySettingsPort,
   labels: SecurityLabels,
+  openMevProtectionInfo: () => void,
 ): SecurityRowViewProps {
   const base = { id, disabled: !enabled, testID: `setting-${id}` };
-  return ROW_BUILDERS[id]({ port, labels, base });
+  return ROW_BUILDERS[id]({ port, labels, openMevProtectionInfo, base });
 }

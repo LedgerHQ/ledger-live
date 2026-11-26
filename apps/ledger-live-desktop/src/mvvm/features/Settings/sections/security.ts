@@ -8,11 +8,8 @@ import {
   type SecurityUpdate,
 } from "@features/flow-settings-security";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
 import { setAutoLockTimeout, setDiscreetMode, setMevProtection } from "~/renderer/actions/settings";
-import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
-import { openURL } from "~/renderer/linking";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 import {
   autoLockTimeoutSelector,
@@ -30,10 +27,17 @@ export function useSecuritySettingsAdapter(): SecuritySettingsPort {
   const mevProtection = useSelector(mevProtectionSelector);
   const passwordSet = useSelector(hasPasswordSelector);
   const autoLockTimeout = useSelector(autoLockTimeoutSelector);
-  const mevProtectionUrl = useLocalizedUrl(urls.mevProtection);
 
   const values = useMemo<SecuritySettingsValues>(
-    () => ({ hideBalance, mevProtection, passwordSet, autoLockTimeout, biometricKind: null }),
+    () => ({
+      hideBalance,
+      mevProtection,
+      passwordSet,
+      autoLockTimeout,
+      biometricKind: null,
+      biometricsEnabled: false,
+      biometricsRequirePassword: false,
+    }),
     [hideBalance, mevProtection, passwordSet, autoLockTimeout],
   );
 
@@ -42,6 +46,8 @@ export function useSecuritySettingsAdapter(): SecuritySettingsPort {
       setHideBalance: value => dispatch(setDiscreetMode(value)),
       setMevProtection: value => dispatch(setMevProtection(value)),
       setAutoLockTimeout: timeout => dispatch(setAutoLockTimeout(timeout)),
+      // Desktop has no biometrics row: the section never sends this change.
+      setBiometricsEnabled: () => undefined,
     }),
     [dispatch],
   );
@@ -59,10 +65,5 @@ export function useSecuritySettingsAdapter(): SecuritySettingsPort {
     [dispatch],
   );
 
-  const openMevProtectionInfo = useCallback(() => openURL(mevProtectionUrl), [mevProtectionUrl]);
-
-  return useMemo(
-    () => ({ values, setValue, requestAppLock, openMevProtectionInfo }),
-    [values, setValue, requestAppLock, openMevProtectionInfo],
-  );
+  return useMemo(() => ({ values, setValue, requestAppLock }), [values, setValue, requestAppLock]);
 }

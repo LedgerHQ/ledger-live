@@ -6,6 +6,7 @@ const createEffects = () =>
     setHideBalance: jest.fn(),
     setMevProtection: jest.fn(),
     setAutoLockTimeout: jest.fn(),
+    setBiometricsEnabled: jest.fn(),
   }) satisfies SecuritySideEffects;
 
 describe("applySecurityUpdate", () => {
@@ -38,6 +39,17 @@ describe("applySecurityUpdate", () => {
     expect(effects.setHideBalance).not.toHaveBeenCalled();
     expect(effects.setMevProtection).not.toHaveBeenCalled();
   });
+
+  it("changes the biometrics and nothing else", () => {
+    const effects = createEffects();
+
+    applySecurityUpdate(effects, { key: "biometricsEnabled", value: true });
+
+    expect(effects.setBiometricsEnabled.mock.calls).toEqual([[true]]);
+    expect(effects.setHideBalance).not.toHaveBeenCalled();
+    expect(effects.setMevProtection).not.toHaveBeenCalled();
+    expect(effects.setAutoLockTimeout).not.toHaveBeenCalled();
+  });
 });
 
 describe("isSecurityUpdate", () => {
@@ -45,6 +57,7 @@ describe("isSecurityUpdate", () => {
     expect(isSecurityUpdate({ key: "hideBalance" })).toBe(true);
     expect(isSecurityUpdate({ key: "mevProtection" })).toBe(true);
     expect(isSecurityUpdate({ key: "autoLockTimeout" })).toBe(true);
+    expect(isSecurityUpdate({ key: "biometricsEnabled" })).toBe(true);
   });
 
   it("leaves the changes of the other sections", () => {

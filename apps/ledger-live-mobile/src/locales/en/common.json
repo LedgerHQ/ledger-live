@@ -4577,7 +4577,7 @@
     "security": {
       "hideBalance": {
         "title": "Hide balance",
-        "description": "Hide amounts for all balances. You can also access it from your top main navigation."
+        "description": "Hide amounts for all balances. Also accessible via a long press on your home balance amount."
       },
       "appLock": {
         "title": "App lock",
@@ -4601,6 +4601,7 @@
       },
       "biometrics": {
         "description": "Use {{biometric}} to open the app.",
+        "disabledDescription": "To enable {{biometric}}, turn on \"App lock\".",
         "kind": {
           "faceId": "Face ID",
           "touchId": "Touch ID",
