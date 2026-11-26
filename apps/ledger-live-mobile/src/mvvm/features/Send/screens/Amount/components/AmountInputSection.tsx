@@ -88,6 +88,7 @@ export function AmountInputSection({
           maxDecimalLength={viewModel.maxDecimalLength}
           editable={!viewModel.isDisabled}
           showSoftInputOnFocus={false}
+          caretHidden
           isInvalid={message?.type === "error"}
         />
         {viewModel.isFiatModeAvailable && (
