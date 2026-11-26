@@ -1,0 +1,20 @@
+/** The `name` of any thrown value that has a string one, prototype or not. */
+export function getErrorName(error: unknown): string | undefined {
+  if (typeof error !== "object" || error === null) return undefined;
+  const name = (error as { name?: unknown }).name;
+  return typeof name === "string" ? name : undefined;
+}
+
+/** Any thrown value as an `Error`, keeping the original name: the failure mapping and the logs read it. */
+export function toError(error: unknown): Error {
+  if (error instanceof Error) return error;
+  if (typeof error === "string") return new Error(error);
+
+  const message = (error as { message?: unknown } | null)?.message;
+  const mapped = new Error(
+    typeof message === "string" ? message : "Ledger Sync device call failed",
+  );
+  const name = getErrorName(error);
+  if (name) mapped.name = name;
+  return mapped;
+}

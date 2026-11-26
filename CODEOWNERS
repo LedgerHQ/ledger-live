@@ -176,6 +176,7 @@ features/platform/intent-wallet-sync/                    @ledgerhq/wallet-xp
 
 # Wallet: Ledger Sync key ring
 domain/entity/key-ring/                                  @ledgerhq/wallet-xp
+features/platform/key-ring/                              @ledgerhq/wallet-xp
 
 # Wallet — App lock
 features/platform/app-lock/                              @ledgerhq/wallet-xp
