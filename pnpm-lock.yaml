@@ -4806,6 +4806,9 @@ importers:
       '@domain/entity-derivation':
         specifier: workspace:*
         version: link:../../domain/entity/derivation
+      '@domain/entity-key-ring':
+        specifier: workspace:*
+        version: link:../../domain/entity/key-ring
       '@domain/entity-network':
         specifier: workspace:*
         version: link:../../domain/entity/network
@@ -4854,9 +4857,9 @@ importers:
       '@features/platform-intent-scan-accounts':
         specifier: workspace:*
         version: link:../../features/platform/intent-scan-accounts
-      '@features/platform-intent-wallet-sync':
+      '@features/platform-key-ring':
         specifier: workspace:*
-        version: link:../../features/platform/intent-wallet-sync
+        version: link:../../features/platform/key-ring
       '@features/platform-predictions':
         specifier: workspace:*
         version: link:../../features/platform/predictions
@@ -4888,9 +4891,6 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.13.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
-      '@ledgerhq/ledger-key-ring-protocol':
-        specifier: 'catalog:'
-        version: 1.2.2(@typescript/typescript6@6.0.2)(axios@1.21.1(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -5542,9 +5542,9 @@ importers:
 
   devtools/intent-wallet-sync:
     dependencies:
-      '@features/platform-intent-wallet-sync':
+      '@features/platform-key-ring':
         specifier: workspace:*
-        version: link:../../features/platform/intent-wallet-sync
+        version: link:../../features/platform/key-ring
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'

@@ -20,6 +20,8 @@ const web = {
       },
     ],
   },
+  // The key ring barrel loads the device crypto, whose @noble packages ship as ESM only.
+  transformIgnorePatterns: ["node_modules/.pnpm/(?!(@noble\\+))"],
 };
 
 module.exports = {

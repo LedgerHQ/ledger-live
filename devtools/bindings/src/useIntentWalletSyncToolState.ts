@@ -1,25 +1,30 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import { createIntent, isDeviceDisconnectedError } from "@features/platform-device-intent";
 import {
   acceptLedgerSyncResult,
-  TrustchainMemberId,
+  isCurrentKeyRingMember,
+  isSameKeyRingMember,
+  selectKeyRingSession,
   type AddMemberIntent,
-  type AddMemberIntentInput,
   type AddMemberIntentPlatformDefinition,
-  type CreateSessionSdk,
+  type KeyRingClient,
+  type KeyRingMember,
+  type KeyRingMemberId,
+  type KeyRingSession,
+  type KeyRingTreeUpdate,
   type LedgerSyncJobState,
   type LedgerSyncResultOrder,
   type RemoveMemberIntent,
   type RemoveMemberIntentPlatformDefinition,
-} from "@features/platform-intent-wallet-sync";
+} from "@features/platform-key-ring";
+import {
+  selectHasKeyRingMemberKey,
+  selectIsKeyRingMember,
+  selectKeyRingTreeId,
+  type KeyRingState,
+} from "@domain/entity-key-ring";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
-import type {
-  MemberCredentials,
-  Trustchain,
-  TrustchainMember,
-  TrustchainSDK,
-} from "@ledgerhq/ledger-key-ring-protocol/types";
 import type {
   WalletSyncIntentToolLogRow,
   WalletSyncIntentToolOperation,
@@ -31,34 +36,20 @@ export type IntentWalletSyncRun =
   | { readonly operation: "add-member"; readonly intent: AddMemberIntent }
   | { readonly operation: "remove-member"; readonly intent: RemoveMemberIntent };
 
-/** What the app injects: its platform definitions, its session SDK factory and its key ring store action. */
+/** What the app injects: its platform definitions, its key ring client and its key ring action. */
 export interface IntentWalletSyncToolStateParams {
   readonly addMemberIntentDefinition: AddMemberIntentPlatformDefinition;
   readonly removeMemberIntentDefinition: RemoveMemberIntentPlatformDefinition;
-  readonly createSessionSdk: CreateSessionSdk;
   /** The app's one Ledger Sync result order, the one its Ledger Sync screens pass too. */
   readonly resultOrder: LedgerSyncResultOrder;
-  /** Lists the members without the device: it authenticates with the member credentials. */
-  readonly sdk: Pick<TrustchainSDK, "getMembers">;
-  /** The key ring store's `setTrustchain`. Its module loads device crypto, so the app passes it. */
-  readonly setTrustchain: (trustchain: Trustchain) => UnknownAction;
+  /** The app's cached client: it lists the members and runs the intents. */
+  readonly keyRing: KeyRingClient;
+  /** The key ring's `commitKeyRingTree`. Its module loads device crypto, so the app passes it. */
+  readonly commitKeyRingTree: (update: KeyRingTreeUpdate) => UnknownAction;
 }
 
-/** The key ring store's slice, which both apps mount under `trustchain`. */
-interface TrustchainState {
-  readonly trustchain: {
-    readonly trustchain: Trustchain | null;
-    readonly memberCredentials: MemberCredentials | null;
-  };
-}
-
-function selectTrustchain(state: TrustchainState) {
-  return state.trustchain.trustchain;
-}
-
-function selectMemberCredentials(state: TrustchainState) {
-  return state.trustchain.memberCredentials;
-}
+/** The key ring slice, which both apps mount under `trustchain`. */
+type KeyRingRootState = Readonly<{ trustchain: KeyRingState }>;
 
 /** The devtool props, and the run the host mounts its executor with. */
 export interface IntentWalletSyncToolState {
@@ -69,7 +60,7 @@ export interface IntentWalletSyncToolState {
   readonly onRunCancelled: () => void;
 }
 
-/** Never keys nor credentials: the reason, the device model, the error name or the root id. */
+/** Never keys nor credentials: the reason, the device model, the error name or the key tree id. */
 function describeJobState(state: LedgerSyncJobState, completedDetail: string | null) {
   switch (state.type) {
     case "failed":
@@ -86,22 +77,20 @@ function describeJobState(state: LedgerSyncJobState, completedDetail: string | n
   }
 }
 
-/** Members belong to the trustchain and credentials they were loaded with. */
+/** Members belong to the key tree and the member key they were loaded with. */
 interface LoadedMembers {
-  readonly rootId: string;
-  readonly pubkey: string;
-  readonly members: readonly TrustchainMember[];
+  readonly treeId: string | null;
+  readonly session: KeyRingSession;
+  readonly members: readonly KeyRingMember[];
 }
 
 function isLoadedFor(
   loaded: LoadedMembers | null,
-  trustchain: Trustchain | null,
-  memberCredentials: MemberCredentials | null,
+  treeId: string | null,
+  session: KeyRingSession,
 ): loaded is LoadedMembers {
   return (
-    loaded !== null &&
-    loaded.rootId === trustchain?.rootId &&
-    loaded.pubkey === memberCredentials?.pubkey
+    loaded !== null && loaded.treeId === treeId && isSameKeyRingMember(loaded.session, session)
   );
 }
 
@@ -113,29 +102,27 @@ function errorName(error: unknown): string | null {
 /**
  * Drives the Ledger Sync intents devtool. The host mounts its own executor
  * with `run.intent`; this hook builds the intents, logs every job state they
- * emit, stores their resulting trustchain and reloads members.
+ * emit, commits their resulting key tree and reloads members.
  */
 export function useIntentWalletSyncToolState(
   params: IntentWalletSyncToolStateParams,
 ): IntentWalletSyncToolState {
-  const dispatch = useDispatch<ThunkDispatch<TrustchainState, unknown, UnknownAction>>();
-  const storedTrustchain = useSelector(selectTrustchain);
-  const storedMemberCredentials = useSelector(selectMemberCredentials);
+  const dispatch = useDispatch<ThunkDispatch<KeyRingRootState, unknown, UnknownAction>>();
+  const store = useStore<KeyRingRootState>();
+  const session = useSelector(selectKeyRingSession);
+  const treeId = useSelector(selectKeyRingTreeId);
+  const hasMemberKey = useSelector(selectHasKeyRingMemberKey);
+  const isMember = useSelector(selectIsKeyRingMember);
 
-  const latest = {
-    ...params,
-    trustchain: storedTrustchain,
-    memberCredentials: storedMemberCredentials,
-  };
-  const paramsRef = useRef(latest);
+  const paramsRef = useRef(params);
   useLayoutEffect(() => {
-    paramsRef.current = latest;
+    paramsRef.current = params;
   });
 
-  // A Ledger Sync reset since the run started rotates the credentials: its late result is dropped.
-  const storeRunTrustchain = useCallback(
-    (next: Trustchain, runCredentials: MemberCredentials): boolean =>
-      dispatch(acceptLedgerSyncResult(paramsRef.current.setTrustchain(next), runCredentials)),
+  // A Ledger Sync reset since the run started rotates the member key: its late result is dropped.
+  const commitRunTree = useCallback(
+    (update: KeyRingTreeUpdate, runSession: KeyRingSession): boolean =>
+      dispatch(acceptLedgerSyncResult(paramsRef.current.commitKeyRingTree(update), runSession)),
     [dispatch],
   );
 
@@ -151,21 +138,23 @@ export function useIntentWalletSyncToolState(
   );
 
   const membersRequestRef = useRef(0);
-  const loadMembers = useCallback(async (trustchain: Trustchain) => {
-    const { memberCredentials, sdk } = paramsRef.current;
-    if (!memberCredentials) return;
+  const loadMembers = useCallback(async () => {
+    const state = store.getState();
+    if (!selectHasKeyRingMemberKey(state) || !selectIsKeyRingMember(state)) return;
+    const requestSession = selectKeyRingSession(state);
+    const requestTreeId = selectKeyRingTreeId(state);
     const request = ++membersRequestRef.current;
     const isLatestRequest = () => request === membersRequestRef.current;
     try {
-      const members = await sdk.getMembers(trustchain, memberCredentials);
+      const members = await paramsRef.current.keyRing.listMembers(requestSession);
       if (isLatestRequest()) {
-        setLoadedMembers({ rootId: trustchain.rootId, pubkey: memberCredentials.pubkey, members });
+        setLoadedMembers({ treeId: requestTreeId, session: requestSession, members });
       }
     } catch (error) {
-      console.warn("Ledger Sync intents devtool: getMembers failed", errorName(error));
+      console.warn("Ledger Sync intents devtool: listMembers failed", errorName(error));
       if (isLatestRequest()) setLoadedMembers(null);
     }
-  }, []);
+  }, [store]);
 
   const endRunWithError = useCallback(
     (operation: WalletSyncIntentToolOperation) => (error: unknown) => {
@@ -181,102 +170,89 @@ export function useIntentWalletSyncToolState(
   );
 
   const onAddMember = useCallback(() => {
-    const {
-      memberCredentials,
-      trustchain,
-      createSessionSdk,
-      resultOrder,
-      addMemberIntentDefinition,
-    } = paramsRef.current;
-    if (!memberCredentials) return;
+    const state = store.getState();
+    if (!selectHasKeyRingMemberKey(state)) return;
+    const { keyRing, resultOrder, addMemberIntentDefinition } = paramsRef.current;
+    const runSession = selectKeyRingSession(state);
 
     let completedDetail: string | null = null;
-    let resultTrustchain: Trustchain | null = null;
-    const input: AddMemberIntentInput = {
-      memberCredentials,
-      createSessionSdk,
-      resultOrder,
-      ...(trustchain ? { currentTrustchain: trustchain } : {}),
-    };
-    const intent: AddMemberIntent = createIntent(addMemberIntentDefinition, input, {
-      onResult: result => {
-        if (!storeRunTrustchain(result.trustchain, memberCredentials)) return;
-        resultTrustchain = result.trustchain;
-        completedDetail = `${result.type} ${result.trustchain.rootId}`;
+    let resultCommitted = false;
+    const intent: AddMemberIntent = createIntent(
+      addMemberIntentDefinition,
+      { session: runSession, client: keyRing, resultOrder },
+      {
+        onResult: result => {
+          if (!commitRunTree(result.tree, runSession)) return;
+          resultCommitted = true;
+          completedDetail = `${result.outcome} ${selectKeyRingTreeId(store.getState())}`;
+        },
+        onJobStateChanged: jobState =>
+          append("add-member", jobState.type, describeJobState(jobState, completedDetail)),
+        onJobComplete: () => {
+          setRun(null);
+          if (resultCommitted) void loadMembers();
+        },
+        onJobError: endRunWithError("add-member"),
       },
-      onJobStateChanged: state =>
-        append("add-member", state.type, describeJobState(state, completedDetail)),
-      onJobComplete: () => {
-        setRun(null);
-        if (resultTrustchain) void loadMembers(resultTrustchain);
-      },
-      onJobError: endRunWithError("add-member"),
-    });
+    );
     setRun({ operation: "add-member", intent });
-  }, [append, endRunWithError, loadMembers, storeRunTrustchain]);
+  }, [append, commitRunTree, endRunWithError, loadMembers, store]);
 
   const onRemoveMember = useCallback(
-    (memberId: TrustchainMemberId) => {
-      const {
-        memberCredentials,
-        trustchain,
-        createSessionSdk,
-        resultOrder,
-        removeMemberIntentDefinition,
-      } = paramsRef.current;
-      if (!memberCredentials || !trustchain) return;
-      if (!isLoadedFor(loadedMembers, trustchain, memberCredentials)) return;
+    (memberId: KeyRingMemberId) => {
+      const state = store.getState();
+      if (!selectHasKeyRingMemberKey(state) || !selectIsKeyRingMember(state)) return;
+      const runSession = selectKeyRingSession(state);
+      if (!isLoadedFor(loadedMembers, selectKeyRingTreeId(state), runSession)) return;
       const member = loadedMembers.members.find(candidate => candidate.id === memberId);
-      // The SDK refuses to remove the current member: that needs its own flow.
-      if (!member || member.id === memberCredentials.pubkey) return;
+      // The key ring refuses to remove the current member: that needs its own flow.
+      if (!member || isCurrentKeyRingMember(runSession, member.id)) return;
+      const { keyRing, resultOrder, removeMemberIntentDefinition } = paramsRef.current;
 
-      let resultTrustchain: Trustchain | null = null;
+      let resultTreeId: string | null = null;
+      let resultCommitted = false;
       const intent: RemoveMemberIntent = createIntent(
         removeMemberIntentDefinition,
-        { trustchain, memberCredentials, member, createSessionSdk, resultOrder },
+        { session: runSession, member, client: keyRing, resultOrder },
         {
-          onResult: result => {
-            if (!storeRunTrustchain(result, memberCredentials)) return;
-            resultTrustchain = result;
+          onResult: update => {
+            if (!commitRunTree(update, runSession)) return;
+            resultCommitted = true;
+            resultTreeId = selectKeyRingTreeId(store.getState());
           },
-          onJobStateChanged: state =>
-            append(
-              "remove-member",
-              state.type,
-              describeJobState(state, resultTrustchain?.rootId ?? null),
-            ),
+          onJobStateChanged: jobState =>
+            append("remove-member", jobState.type, describeJobState(jobState, resultTreeId)),
           onJobComplete: () => {
             setRun(null);
-            if (resultTrustchain) void loadMembers(resultTrustchain);
+            if (resultCommitted) void loadMembers();
           },
           onJobError: endRunWithError("remove-member"),
         },
       );
       setRun({ operation: "remove-member", intent });
     },
-    [append, endRunWithError, loadMembers, loadedMembers, storeRunTrustchain],
+    [append, commitRunTree, endRunWithError, loadMembers, loadedMembers, store],
   );
 
   const onRefreshMembers = useCallback(() => {
-    const { trustchain } = paramsRef.current;
-    if (trustchain) void loadMembers(trustchain);
+    void loadMembers();
   }, [loadMembers]);
 
   const onClearLog = useCallback(() => setLog([]), []);
   const onRunCancelled = useCallback(() => setRun(null), []);
 
   const toolMembers = useMemo(() => {
-    if (!isLoadedFor(loadedMembers, storedTrustchain, storedMemberCredentials)) return null;
+    if (!isLoadedFor(loadedMembers, treeId, session)) return null;
     return loadedMembers.members
-      .filter(({ id }) => id !== storedMemberCredentials?.pubkey)
-      .map(({ id, name }) => ({ id: TrustchainMemberId.parse(id), name }));
-  }, [loadedMembers, storedTrustchain, storedMemberCredentials]);
+      .filter(({ id }) => !isCurrentKeyRingMember(session, id))
+      .map(({ id, name }) => ({ id, name }));
+  }, [loadedMembers, treeId, session]);
 
   const toolProps = useMemo<WalletSyncIntentToolProps>(
     () => ({
       status: run ? "running" : "idle",
-      hasMemberCredentials: storedMemberCredentials !== null,
-      hasTrustchain: storedTrustchain !== null,
+      hasMemberCredentials: hasMemberKey,
+      hasTrustchain: isMember,
       members: toolMembers,
       log,
       onAddMember,
@@ -286,8 +262,8 @@ export function useIntentWalletSyncToolState(
     }),
     [
       run,
-      storedMemberCredentials,
-      storedTrustchain,
+      hasMemberKey,
+      isMember,
       toolMembers,
       log,
       onAddMember,

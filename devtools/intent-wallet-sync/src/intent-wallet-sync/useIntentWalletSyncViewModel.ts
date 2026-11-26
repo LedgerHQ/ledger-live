@@ -1,4 +1,4 @@
-import type { TrustchainMemberId } from "@features/platform-intent-wallet-sync";
+import type { KeyRingMemberId } from "@features/platform-key-ring";
 import type { WalletSyncIntentToolOperation, WalletSyncIntentToolProps } from "../types";
 import { headerCopy, membersCopy } from "./copy";
 
@@ -13,7 +13,7 @@ export interface IntentWalletSyncLogLine {
 }
 
 export interface IntentWalletSyncMemberRow {
-  readonly id: TrustchainMemberId;
+  readonly id: KeyRingMemberId;
   readonly name: string;
   readonly onRemove: () => void;
 }

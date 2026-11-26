@@ -1,54 +1,49 @@
 import React, { type PropsWithChildren } from "react";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
-import { configureStore, createAction, type UnknownAction } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import {
   addMemberIntentDefinition,
   createLedgerSyncResultOrder,
+  KeyRingMemberIdSchema,
+  KeyRingMemberSchema,
   removeMemberIntentDefinition,
-  TrustchainMemberId,
+  selectKeyRingSession,
+  type KeyRingMember,
+  type KeyRingSession,
+  type KeyRingTreeUpdate,
   type LedgerSyncJobState,
-} from "@features/platform-intent-wallet-sync";
+} from "@features/platform-key-ring";
+import { fakeKeyRingClient } from "@features/platform-key-ring/testing";
 import {
-  TrustchainResultType,
-  type MemberCredentials,
-  type Trustchain,
-  type TrustchainMember,
-} from "@ledgerhq/ledger-key-ring-protocol/types";
+  keyRingMemberKeySet,
+  keyRingSlice,
+  keyRingTreeSet,
+  type KeyRingState,
+} from "@domain/entity-key-ring";
+import {
+  mockKeyRingMemberKeyRecord,
+  mockKeyRingTreeRecord,
+} from "@domain/entity-key-ring/schema.mock";
 import {
   useIntentWalletSyncToolState,
   type IntentWalletSyncToolStateParams,
 } from "./useIntentWalletSyncToolState";
 
-const MEMBER_CREDENTIALS: MemberCredentials = { pubkey: "pubkey", privatekey: "privatekey" };
-// A Ledger Sync reset rotates the member credentials.
-const OTHER_CREDENTIALS: MemberCredentials = { pubkey: "other", privatekey: "other-key" };
-const TRUSTCHAIN: Trustchain = {
-  rootId: "root-id",
-  applicationPath: "m/0'/16'/0'",
-  walletSyncEncryptionKey: "key",
-};
-const ROTATED: Trustchain = { ...TRUSTCHAIN, walletSyncEncryptionKey: "rotated" };
-const MEMBERS: TrustchainMember[] = [
-  { id: "member-1", name: "Desktop", permissions: 1 },
-  { id: "member-2", name: "Mobile", permissions: 1 },
-];
-
-interface TrustchainStore {
-  trustchain: Trustchain | null;
-  memberCredentials: MemberCredentials | null;
-}
-
-const setTrustchain = createAction<Trustchain>("SET_TRUSTCHAIN");
-const setMemberCredentials = createAction<MemberCredentials>("SET_MEMBER_CREDENTIALS");
-
-function trustchainReducer(state: TrustchainStore | undefined, action: UnknownAction) {
-  const current = state ?? { trustchain: null, memberCredentials: null };
-  if (setTrustchain.match(action)) return { ...current, trustchain: action.payload };
-  if (setMemberCredentials.match(action)) return { ...current, memberCredentials: action.payload };
-  return current;
-}
+const MEMBER_CREDENTIALS = mockKeyRingMemberKeyRecord();
+// A Ledger Sync reset rotates the member key.
+const OTHER_CREDENTIALS = mockKeyRingMemberKeyRecord({
+  pubkey: `03${"c".repeat(64)}`,
+  privatekey: "d".repeat(64),
+});
+const TRUSTCHAIN = mockKeyRingTreeRecord({ rootId: "root-id" });
+const ROTATED = { ...TRUSTCHAIN, walletSyncEncryptionKey: "rotated" };
+const ROTATED_UPDATE: KeyRingTreeUpdate = { kind: "KeyRingTreeUpdate" };
+const MEMBERS = KeyRingMemberSchema.array().parse([
+  { id: "member-1", name: "Desktop" },
+  { id: "member-2", name: "Mobile" },
+]);
 
 function createDeferred<T>() {
   const settle: { resolve?: (value: T) => void } = {};
@@ -62,17 +57,18 @@ function buildParams() {
   return {
     addMemberIntentDefinition: { ...addMemberIntentDefinition, component: () => null },
     removeMemberIntentDefinition: { ...removeMemberIntentDefinition, component: () => null },
-    createSessionSdk: jest.fn(),
     resultOrder: createLedgerSyncResultOrder(),
-    sdk: { getMembers: jest.fn().mockResolvedValue(MEMBERS) },
-    setTrustchain,
+    keyRing: Object.assign(fakeKeyRingClient(), {
+      listMembers: jest.fn<Promise<KeyRingMember[]>, [KeyRingSession]>().mockResolvedValue(MEMBERS),
+    }),
+    commitKeyRingTree: jest.fn((_update: KeyRingTreeUpdate) => keyRingTreeSet(ROTATED)),
   } satisfies IntentWalletSyncToolStateParams;
 }
 
-function renderTool(stored: Partial<TrustchainStore> = {}) {
+function renderTool(stored: Partial<KeyRingState> = {}) {
   const params = buildParams();
   const store = configureStore({
-    reducer: { trustchain: trustchainReducer },
+    reducer: { trustchain: keyRingSlice.reducer },
     preloadedState: {
       trustchain: { trustchain: TRUSTCHAIN, memberCredentials: MEMBER_CREDENTIALS, ...stored },
     },
@@ -105,19 +101,20 @@ describe("useIntentWalletSyncToolState", () => {
     });
   });
 
-  it("should run add member, log its states, store the trustchain and reload members", async () => {
+  it("should run add member, log its states, commit the key tree and reload members", async () => {
     const { result, store, params } = renderTool();
+    const runSession = selectKeyRingSession(store.getState());
 
     act(() => result.current.toolProps.onAddMember());
 
     const run = result.current.run;
     expect(run?.operation).toBe("add-member");
     expect(run?.intent.input).toEqual({
-      memberCredentials: MEMBER_CREDENTIALS,
-      currentTrustchain: TRUSTCHAIN,
-      createSessionSdk: params.createSessionSdk,
+      session: runSession,
+      client: params.keyRing,
       resultOrder: params.resultOrder,
     });
+    expect(run?.intent.input.session).toBe(runSession);
     expect(result.current.toolProps.status).toBe("running");
 
     emit(run, { type: "pending" });
@@ -129,12 +126,13 @@ describe("useIntentWalletSyncToolState", () => {
     emit(run, { type: "processing" });
     act(() =>
       run?.operation === "add-member"
-        ? run.intent.onResult?.({ type: TrustchainResultType.created, trustchain: ROTATED })
+        ? run.intent.onResult?.({ outcome: "created", tree: ROTATED_UPDATE })
         : undefined,
     );
     emit(run, { type: "completed" });
     act(() => run?.intent.onJobComplete?.());
 
+    expect(params.commitKeyRingTree).toHaveBeenCalledWith(ROTATED_UPDATE);
     expect(store.getState().trustchain.trustchain).toEqual(ROTATED);
     expect(result.current.run).toBeNull();
     expect(
@@ -155,15 +153,21 @@ describe("useIntentWalletSyncToolState", () => {
         { id: "member-2", name: "Mobile" },
       ]),
     );
-    expect(params.sdk.getMembers).toHaveBeenCalledWith(ROTATED, MEMBER_CREDENTIALS);
+    expect(params.keyRing.listMembers.mock.lastCall?.[0]).toBe(
+      selectKeyRingSession(store.getState()),
+    );
   });
 
-  it("should not pass a current trustchain when the instance has none", () => {
-    const { result } = renderTool({ trustchain: null });
+  it("should pass the session alone when the instance has no key tree", () => {
+    const { result, store, params } = renderTool({ trustchain: null });
 
     act(() => result.current.toolProps.onAddMember());
 
-    expect(result.current.run?.intent.input).not.toHaveProperty("currentTrustchain");
+    expect(result.current.run?.intent.input).toEqual({
+      session: selectKeyRingSession(store.getState()),
+      client: params.keyRing,
+      resultOrder: params.resultOrder,
+    });
   });
 
   it("should log the failure reason and the refusal, without credentials", () => {
@@ -187,29 +191,35 @@ describe("useIntentWalletSyncToolState", () => {
     );
   });
 
-  it("should remove a loaded member and store the rotated trustchain", async () => {
+  it("should remove a loaded member and commit the rotated key tree", async () => {
     const { result, store, params } = renderTool();
+    const runSession = selectKeyRingSession(store.getState());
 
     act(() => result.current.toolProps.onRefreshMembers());
     await waitFor(() => expect(result.current.toolProps.members).toHaveLength(2));
 
-    act(() => result.current.toolProps.onRemoveMember(TrustchainMemberId.parse("member-2")));
+    act(() => result.current.toolProps.onRemoveMember(KeyRingMemberIdSchema.parse("member-2")));
     const run = result.current.run;
     expect(run?.operation).toBe("remove-member");
-    expect(run?.intent.input).toMatchObject({ trustchain: TRUSTCHAIN, member: MEMBERS[1] });
+    expect(run?.intent.input).toMatchObject({ member: MEMBERS[1] });
+    expect(run?.intent.input.session).toBe(runSession);
 
-    act(() => (run?.operation === "remove-member" ? run.intent.onResult?.(ROTATED) : undefined));
+    act(() =>
+      run?.operation === "remove-member" ? run.intent.onResult?.(ROTATED_UPDATE) : undefined,
+    );
     emit(run, { type: "completed" });
     act(() => run?.intent.onJobComplete?.());
 
+    expect(params.commitKeyRingTree).toHaveBeenCalledWith(ROTATED_UPDATE);
     expect(store.getState().trustchain.trustchain).toEqual(ROTATED);
     expect(result.current.toolProps.log.at(-1)).toMatchObject({
       operation: "remove-member",
       jobState: "completed",
       detail: "root-id",
     });
-    await waitFor(() =>
-      expect(params.sdk.getMembers).toHaveBeenLastCalledWith(ROTATED, MEMBER_CREDENTIALS),
+    await waitFor(() => expect(params.keyRing.listMembers).toHaveBeenCalledTimes(2));
+    expect(params.keyRing.listMembers.mock.lastCall?.[0]).toBe(
+      selectKeyRingSession(store.getState()),
     );
   });
 
@@ -219,44 +229,49 @@ describe("useIntentWalletSyncToolState", () => {
     const run = result.current.run;
 
     act(() => {
-      store.dispatch(setMemberCredentials(OTHER_CREDENTIALS));
+      store.dispatch(keyRingMemberKeySet(OTHER_CREDENTIALS));
     });
     act(() =>
       run?.operation === "add-member"
-        ? run.intent.onResult?.({ type: TrustchainResultType.created, trustchain: ROTATED })
+        ? run.intent.onResult?.({ outcome: "created", tree: ROTATED_UPDATE })
         : undefined,
     );
     act(() => run?.intent.onJobComplete?.());
 
     expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN);
-    expect(params.sdk.getMembers).not.toHaveBeenCalled();
+    expect(params.keyRing.listMembers).not.toHaveBeenCalled();
   });
 
   it("should drop a remove member result that arrives after Ledger Sync was reset", async () => {
     const { result, store, params } = renderTool();
     act(() => result.current.toolProps.onRefreshMembers());
     await waitFor(() => expect(result.current.toolProps.members).toHaveLength(2));
-    act(() => result.current.toolProps.onRemoveMember(TrustchainMemberId.parse("member-2")));
+    act(() => result.current.toolProps.onRemoveMember(KeyRingMemberIdSchema.parse("member-2")));
     const run = result.current.run;
 
     act(() => {
-      store.dispatch(setMemberCredentials(OTHER_CREDENTIALS));
+      store.dispatch(keyRingMemberKeySet(OTHER_CREDENTIALS));
     });
-    act(() => (run?.operation === "remove-member" ? run.intent.onResult?.(ROTATED) : undefined));
+    act(() =>
+      run?.operation === "remove-member" ? run.intent.onResult?.(ROTATED_UPDATE) : undefined,
+    );
     act(() => run?.intent.onJobComplete?.());
 
     expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN);
-    expect(params.sdk.getMembers).toHaveBeenCalledTimes(1);
+    expect(params.keyRing.listMembers).toHaveBeenCalledTimes(1);
   });
 
   it("should neither list nor remove this instance's own member", async () => {
     const { result, params } = renderTool();
-    const self: TrustchainMember = { id: MEMBER_CREDENTIALS.pubkey, name: "This", permissions: 1 };
-    params.sdk.getMembers.mockResolvedValue([...MEMBERS, self]);
+    const self = KeyRingMemberSchema.parse({
+      id: MEMBER_CREDENTIALS.pubkey,
+      name: "This",
+    });
+    params.keyRing.listMembers.mockResolvedValue([...MEMBERS, self]);
 
     act(() => result.current.toolProps.onRefreshMembers());
     await waitFor(() => expect(result.current.toolProps.members).toHaveLength(2));
-    act(() => result.current.toolProps.onRemoveMember(TrustchainMemberId.parse(self.id)));
+    act(() => result.current.toolProps.onRemoveMember(self.id));
 
     expect(result.current.toolProps.members?.map(({ id }) => id)).not.toContain(self.id);
     expect(result.current.run).toBeNull();
@@ -264,8 +279,8 @@ describe("useIntentWalletSyncToolState", () => {
 
   it("should keep the latest members when an older fetch settles last", async () => {
     const { result, params } = renderTool();
-    const older = createDeferred<TrustchainMember[]>();
-    params.sdk.getMembers
+    const older = createDeferred<KeyRingMember[]>();
+    params.keyRing.listMembers
       .mockImplementationOnce(() => older.promise)
       .mockResolvedValueOnce([MEMBERS[0]]);
 
@@ -278,14 +293,14 @@ describe("useIntentWalletSyncToolState", () => {
   });
 
   it.each([
-    ["trustchain", setTrustchain({ ...TRUSTCHAIN, rootId: "other-root-id" })],
-    ["member credentials", setMemberCredentials({ pubkey: "other-pubkey", privatekey: "other" })],
+    ["key tree", keyRingTreeSet({ ...TRUSTCHAIN, rootId: "other-root-id" })],
+    ["member key", keyRingMemberKeySet(OTHER_CREDENTIALS)],
   ])("should hide members and ignore a pending fetch after a %s change", async (_, change) => {
     const { result, store, params } = renderTool();
     act(() => result.current.toolProps.onRefreshMembers());
     await waitFor(() => expect(result.current.toolProps.members).toHaveLength(2));
-    const pending = createDeferred<TrustchainMember[]>();
-    params.sdk.getMembers.mockImplementationOnce(() => pending.promise);
+    const pending = createDeferred<KeyRingMember[]>();
+    params.keyRing.listMembers.mockImplementationOnce(() => pending.promise);
 
     act(() => result.current.toolProps.onRefreshMembers());
     act(() => {
@@ -295,7 +310,7 @@ describe("useIntentWalletSyncToolState", () => {
     await act(async () => pending.resolve(MEMBERS));
 
     expect(result.current.toolProps.members).toBeNull();
-    act(() => result.current.toolProps.onRemoveMember(TrustchainMemberId.parse("member-2")));
+    act(() => result.current.toolProps.onRemoveMember(KeyRingMemberIdSchema.parse("member-2")));
     expect(result.current.run).toBeNull();
   });
 
