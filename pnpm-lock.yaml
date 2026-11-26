@@ -2681,6 +2681,9 @@ importers:
       '@shared/observability-operations':
         specifier: workspace:*
         version: link:../../shared/observability-operations
+      '@shared/observability-operations-react':
+        specifier: workspace:*
+        version: link:../../shared/observability-operations-react
       '@shared/share-sheet':
         specifier: workspace:*
         version: link:../../shared/share-sheet

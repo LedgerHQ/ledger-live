@@ -1,10 +1,16 @@
 import { setupScanDeviceTests } from "./shared";
+import { DdRum } from "@datadog/mobile-react-native";
 import BigNumber from "bignumber.js";
 import { of, EMPTY } from "rxjs";
 import type { Account } from "@ledgerhq/types-live";
 import { renderHook, waitFor, act } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
+import { setOperationSink } from "@shared/observability-operations";
+import { datadogOperationSink } from "~/datadogOperationSink";
 import useScanDeviceAccountsViewModel from "../useScanDeviceAccountsViewModel";
+
+jest.mock("@datadog/mobile-react-native", () => require("@tests/mocks/datadogMobileReactNative"));
+jest.mock("~/datadog", () => ({ isDatadogRecording: () => true }));
 
 jest.mock("@ledgerhq/coin-concordium/bridge/serialization", () => ({
   isConcordiumAccount: (account: Account) =>
@@ -57,6 +63,9 @@ const createConcordiumAccount = (
 describe("ScanDeviceConcordiumAccounts", () => {
   beforeEach(() => {
     resetSpies();
+    jest.mocked(DdRum.succeedFeatureOperation).mockClear();
+    jest.mocked(DdRum.failFeatureOperation).mockClear();
+    setOperationSink(datadogOperationSink);
     setRouteParams("concordium");
     setScanObservable(EMPTY);
   });
@@ -88,6 +97,37 @@ describe("ScanDeviceConcordiumAccounts", () => {
         currency: expect.objectContaining({ id: "concordium" }),
       },
     });
+  });
+
+  it("should succeed the add_account RUM operation as a hand-off before replacing the screen", async () => {
+    const account = createConcordiumAccount({ concordiumResources: { isOnboarded: false } });
+    setScanObservable(of(makeDiscoveredEvent(account)));
+
+    const { result, unmount } = renderHook(() =>
+      useScanDeviceAccountsViewModel({
+        existingAccounts: [],
+        blacklistedTokenIds: [],
+        analyticsMetadata: {},
+      }),
+    );
+
+    await waitFor(() => expect(result.current.selectedIds).toContain(account.id));
+    await act(() => {
+      result.current.importAccounts();
+    });
+    unmount();
+
+    const succeedFeatureOperation = jest.mocked(DdRum.succeedFeatureOperation);
+    expect(succeedFeatureOperation).toHaveBeenCalledTimes(1);
+    expect(succeedFeatureOperation).toHaveBeenCalledWith(
+      "add_account",
+      null,
+      expect.objectContaining({ handoff: "concordium_onboarding", accounts_selected: 1 }),
+    );
+    expect(succeedFeatureOperation.mock.invocationCallOrder[0]).toBeLessThan(
+      replace.mock.invocationCallOrder[0],
+    );
+    expect(DdRum.failFeatureOperation).not.toHaveBeenCalled();
   });
 
   it("should not navigate to onboard when account is already onboarded", async () => {
