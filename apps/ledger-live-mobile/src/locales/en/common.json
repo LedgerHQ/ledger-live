@@ -4211,6 +4211,7 @@
     "sending": "Sending...",
     "receiving": "Receiving...",
     "tokenOperations": "Token operations",
+    "tokenOperationsInfo": "About token operations",
     "subAccountOperations": "Subaccount operations",
     "internalOperations": "Internal operations",
     "tokenModal": {

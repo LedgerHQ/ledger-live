@@ -37,13 +37,10 @@ describe("OperationDetails Modal", () => {
     expect(openURL).toHaveBeenCalledWith(urls.supportLinkByTokenType.erc20);
   });
 
-  it("opens nothing on learn more when the token standard has no support link", async () => {
-    const { user } = render(
-      <Modal isOpened onClose={jest.fn()} currency={makeToken("unlisted")} />,
-    );
+  it("hides learn more when the token standard has no support link", () => {
+    render(<Modal isOpened onClose={jest.fn()} currency={makeToken("unlisted")} />);
 
-    await user.press(screen.getByText("Learn more"));
-
-    expect(openURL).not.toHaveBeenCalled();
+    expect(screen.getByText("Close")).toBeOnTheScreen();
+    expect(screen.queryByText("Learn more")).toBeNull();
   });
 });
