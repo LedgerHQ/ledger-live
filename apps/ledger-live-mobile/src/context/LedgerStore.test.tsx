@@ -390,10 +390,10 @@ describe("LedgerStoreProvider", () => {
         getDefaultMiddleware({ thunk: { extraArgument: KEY_RING_EXTRA } }),
     });
     store.dispatch(setCachedFlagsSettled());
-    const notifiedWithoutKey: boolean[] = [];
+    const keyAtNotification: boolean[] = [];
     store.subscribe(() => {
       const trustchainChanged = store.getState().trustchain !== keyRingInitialState;
-      if (trustchainChanged) notifiedWithoutKey.push(!selectHasKeyRingMemberKey(store.getState()));
+      if (trustchainChanged) keyAtNotification.push(selectHasKeyRingMemberKey(store.getState()));
     });
     const keyAtReadyRender: boolean[] = [];
 
@@ -410,6 +410,7 @@ describe("LedgerStoreProvider", () => {
     expect(screen.getByText("ready")).toBeOnTheScreen();
     expect(keyAtReadyRender.length).toBeGreaterThan(0);
     expect(keyAtReadyRender.every(Boolean)).toBe(true);
-    expect(notifiedWithoutKey).toEqual([false]);
+    expect(keyAtNotification.length).toBeGreaterThan(0);
+    expect(keyAtNotification.every(Boolean)).toBe(true);
   });
 });

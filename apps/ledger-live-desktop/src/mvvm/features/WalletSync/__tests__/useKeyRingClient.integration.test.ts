@@ -113,24 +113,26 @@ describe("useKeyRingClient", () => {
   });
 
   it("should use the prod backends of a prod build when the app config selects none", async () => {
+    const store = await createFreshStore();
     const { useKeyRingClient, authenticate } = await importFreshClient();
 
-    const { result } = renderHook(() => useKeyRingClient());
+    const { result } = renderHook(() => useKeyRingClient(), { store });
 
     await expect(authenticate(result.current)).resolves.toBe(true);
   });
 
   it("should ignore the environment of the feature flag", async () => {
-    const { useKeyRingClient, authenticate } = await importFreshClient();
-
-    const { result } = renderHook(() => useKeyRingClient(), {
-      initialState: withFlagOverrides({
+    const store = await createFreshStore(
+      withFlagOverrides({
         lldWalletSync: {
           enabled: true,
           params: { environment: "STAGING", watchConfig: {}, learnMoreLink: "" },
         },
       }),
-    });
+    );
+    const { useKeyRingClient, authenticate } = await importFreshClient();
+
+    const { result } = renderHook(() => useKeyRingClient(), { store });
 
     await expect(authenticate(result.current)).resolves.toBe(true);
     expect(endpoints.stagingAuthenticate).not.toHaveBeenCalled();
@@ -156,6 +158,14 @@ describe("useKeyRingClient", () => {
     await expect(authenticate(result.current)).resolves.toBe(true);
   });
 });
+
+// The store comes from the same fresh modules as the hook: its key ring runtime is that module's.
+async function createFreshStore(initialState?: ReturnType<typeof withFlagOverrides>) {
+  const createStore = (await import("~/state-manager/configureStore")).default;
+  type StoreState = NonNullable<Parameters<typeof createStore>[0]["state"]>;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  return createStore({ fetchRemoteFlags: null, state: initialState as StoreState });
+}
 
 async function createStoreOnKeyRing(ledgerKeyRing: "prod" | "staging") {
   const createStore = (await import("~/state-manager/configureStore")).default;
