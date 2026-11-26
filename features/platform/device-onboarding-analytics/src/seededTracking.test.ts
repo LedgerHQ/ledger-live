@@ -26,7 +26,7 @@ const shared = {
   sourceFlow: "onboarding",
   "onboarding type": "seeded device",
   seedConfiguration: "already_seeded",
-  deviceModelId: "stax",
+  deviceType: "stax",
 };
 
 const seeded: SeededResult = {

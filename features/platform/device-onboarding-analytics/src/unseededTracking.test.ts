@@ -26,7 +26,7 @@ describe("unseededProps", () => {
     expect(unseededProps(DeviceModelId.STAX, null)).toEqual({
       sourceFlow: "onboarding",
       "onboarding type": "unseeded device",
-      deviceModelId: "stax",
+      deviceType: "stax",
     });
   });
 

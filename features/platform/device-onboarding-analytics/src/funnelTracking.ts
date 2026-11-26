@@ -72,7 +72,7 @@ export type FunnelProps = Readonly<
   {
     sourceFlow: "onboarding";
     "onboarding type": OnboardingType;
-    deviceModelId: string;
+    deviceType: string;
   } & Record<string, string>
 >;
 
@@ -81,7 +81,7 @@ export function seededProps(deviceModelId: DeviceModelId): FunnelProps {
     sourceFlow: "onboarding",
     "onboarding type": "seeded device",
     seedConfiguration: "already_seeded",
-    deviceModelId,
+    deviceType: deviceModelId,
   };
 }
 
@@ -95,7 +95,7 @@ export function unseededProps(
     sourceFlow: "onboarding",
     "onboarding type": "unseeded device",
     ...(seedConfiguration ? { seedConfiguration } : {}),
-    deviceModelId,
+    deviceType: deviceModelId,
   };
 }
 

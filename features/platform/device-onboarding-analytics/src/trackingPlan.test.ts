@@ -55,7 +55,7 @@ function sentPlan(): string[] {
 }
 
 function milestone(seed: string): string {
-  return `deviceModelId, firmware_update_availability, ledger_sync_eligibility, onboarding type, ${seed}source, sourceFlow`;
+  return `deviceType, firmware_update_availability, ledger_sync_eligibility, onboarding type, ${seed}source, sourceFlow`;
 }
 
 function keys(props: object | null | undefined): string {
@@ -128,12 +128,12 @@ describe("onboarding tracking plan", () => {
     trackSeededDone(result);
     trackSeededAborted(result);
 
-    const shared = "deviceModelId, onboarding type, seedConfiguration, sourceFlow";
-    const end = `deviceModelId, firmware_update_availability, firmware_update_done, firmware_update_started, ledger_sync_done, onboarding type, seedConfiguration, source, sourceFlow`;
+    const shared = "deviceType, onboarding type, seedConfiguration, sourceFlow";
+    const end = `deviceType, firmware_update_availability, firmware_update_done, firmware_update_started, ledger_sync_done, onboarding type, seedConfiguration, source, sourceFlow`;
     expect(sentPlan()).toEqual([
       `Page Genuine Check | ${shared}`,
-      `button_clicked "Continue" | button, deviceModelId, onboarding type, seedConfiguration, source, sourceFlow`,
-      `onboarding_started | deviceModelId, ledger_sync_eligibility, onboarding type, seedConfiguration, source, sourceFlow`,
+      `button_clicked "Continue" | button, deviceType, onboarding type, seedConfiguration, source, sourceFlow`,
+      `onboarding_started | deviceType, ledger_sync_eligibility, onboarding type, seedConfiguration, source, sourceFlow`,
       `onboarding_done | ${end}`,
       `onboarding_aborted | ${end}`,
     ]);
@@ -151,11 +151,11 @@ describe("onboarding tracking plan", () => {
     trackKaraokePage(karaokes.recover, afterChoice, 3);
 
     expect(sentPlan()).toEqual([
-      "Page Pin setup | deviceModelId, onboarding type, sourceFlow",
-      "Page Karaoke Ledger Recover | deviceModelId, karaokeType, onboarding type, phraseCount, phraseIndex, seedConfiguration, sourceFlow",
+      "Page Pin setup | deviceType, onboarding type, sourceFlow",
+      "Page Karaoke Ledger Recover | deviceType, karaokeType, onboarding type, phraseCount, phraseIndex, seedConfiguration, sourceFlow",
       `onboarding_started | ${milestone("")}`,
-      "karaoke_advanced | deviceModelId, karaokeType, onboarding type, page, phraseCount, phraseIndex, source, sourceFlow",
-      "karaoke_completed | deviceModelId, karaokeType, onboarding type, source, sourceFlow",
+      "karaoke_advanced | deviceType, karaokeType, onboarding type, page, phraseCount, phraseIndex, source, sourceFlow",
+      "karaoke_completed | deviceType, karaokeType, onboarding type, source, sourceFlow",
       `onboarding_device_setup_finished | ${milestone("seedConfiguration, ")}`,
       `onboarding_Ledger_Recover | ${milestone("seedConfiguration, ")}`,
     ]);

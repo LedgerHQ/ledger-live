@@ -6,4 +6,4 @@
 "@shared/ui-karaoke": minor
 ---
 
-Track the unseeded device onboarding funnel, and send deviceModelId instead of deviceType in the seeded one
+Track the unseeded device onboarding funnel. Seeded and unseeded events share the same props

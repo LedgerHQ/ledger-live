@@ -127,7 +127,7 @@ describe("useUnseededFunnelTracking", () => {
       expect.objectContaining({
         "onboarding type": "unseeded device",
         seedConfiguration: "restore_seed",
-        deviceModelId: "stax",
+        deviceType: "stax",
       }),
     );
   });

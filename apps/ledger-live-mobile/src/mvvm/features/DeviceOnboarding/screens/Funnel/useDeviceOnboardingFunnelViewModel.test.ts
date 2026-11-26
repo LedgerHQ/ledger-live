@@ -3184,7 +3184,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       checks.onRetry();
 
       expect(screensOf(checks)).toEqual([]);
-      expect(checks.funnelProps).toMatchObject({ deviceModelId: "stax" });
+      expect(checks.funnelProps).toMatchObject({ deviceType: "stax" });
       expect(clicks()).toEqual([]);
       expect(send).toHaveBeenCalledWith({ type: "RETRY" });
     });
@@ -3202,7 +3202,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       const checks = renderUpdateOffer();
 
       expect(checks.screensFor?.("unsupportedUsbDrawer").at(-1)?.tracking).toEqual(
-        expect.objectContaining({ reason: "usb_required", deviceModelId: "stax" }),
+        expect.objectContaining({ reason: "usb_required", deviceType: "stax" }),
       );
     });
 

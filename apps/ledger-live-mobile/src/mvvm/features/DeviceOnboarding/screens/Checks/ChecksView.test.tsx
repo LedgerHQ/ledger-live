@@ -925,7 +925,7 @@ describe("ChecksView", () => {
       sourceFlow: "onboarding",
       "onboarding type": "seeded device",
       seedConfiguration: "already_seeded",
-      deviceModelId: "stax",
+      deviceType: "stax",
     };
 
     it("should send the refused page once and the spec retry click when the device refuses", async () => {
@@ -939,7 +939,7 @@ describe("ChecksView", () => {
       expect(jest.mocked(TrackScreen)).toHaveBeenCalledWith(
         expect.objectContaining({
           category: "Genuine Check refused on device",
-          deviceModelId: "stax",
+          deviceType: "stax",
         }),
         undefined,
       );
@@ -975,7 +975,7 @@ describe("ChecksView", () => {
 
       expect(track).toHaveBeenCalledWith(
         "button_clicked",
-        expect.objectContaining({ page: "Genuine Check error", deviceModelId: "stax" }),
+        expect.objectContaining({ page: "Genuine Check error", deviceType: "stax" }),
       );
     });
 

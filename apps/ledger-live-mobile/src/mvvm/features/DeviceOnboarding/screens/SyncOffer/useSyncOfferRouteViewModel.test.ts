@@ -340,7 +340,7 @@ describe("useSyncOfferRouteViewModel", () => {
 
     expect(result.current.funnelProps).toMatchObject({
       "onboarding type": "seeded device",
-      deviceModelId: "stax",
+      deviceType: "stax",
     });
   });
 
