@@ -2,14 +2,17 @@ import React from "react";
 import { TrackScreen } from "@shared/analytics-react";
 import type { HelpPageProps } from "./HelpPage.types";
 import { HelpView } from "./HelpView";
+import type { HelpSlots } from "./types";
 import { useHelpViewModel } from "./useHelpViewModel";
 
-/** The Help page of the new Settings. The app provides its `port` and `slots`. */
-export function HelpPage({ port, slots, whileConfirming, testID }: HelpPageProps) {
-  const { confirmationScreenName, ...viewModel } = useHelpViewModel(port);
+const NO_SLOTS: HelpSlots = {};
+
+/** The Help page of the new Settings and of My Wallet. The app provides its `port` and `slots`. */
+export function HelpPage({ port, slots = NO_SLOTS, whileConfirming, testID }: HelpPageProps) {
+  const { screen, confirmationScreenName, ...viewModel } = useHelpViewModel(port);
   return (
     <>
-      <TrackScreen category="Settings" name="Help" />
+      <TrackScreen category={screen.category} name={screen.name} />
       {confirmationScreenName ? (
         <TrackScreen category="Modal" name={confirmationScreenName} />
       ) : null}

@@ -1,6 +1,6 @@
 import React from "react";
 import { act, renderHook } from "@testing-library/react";
-import { createFakeHelpPort } from "./__tests__/fakeHelpPort";
+import { createFakeHelpPort, createFakeMobileHelpPort } from "./__tests__/fakeHelpPort";
 import { createFakeLinking } from "./__tests__/fakeLinking";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
 import { useHelpViewModel } from "./useHelpViewModel";
@@ -42,5 +42,27 @@ describe("useHelpViewModel confirmation", () => {
 
     expect(result.current.confirmation.isOpen).toBe(false);
     expect(result.current.confirmation.labels.title).toBe("Reset Ledger Wallet");
+  });
+});
+
+describe("useHelpViewModel with a mobile port", () => {
+  it("lists the mobile rows and asks to clear the cache as an information", () => {
+    const { result } = renderHook(() => useHelpViewModel(createFakeMobileHelpPort()), {
+      wrapper: Wrapper,
+    });
+    const rows = result.current.groups.flatMap(group => group.rows);
+
+    act(() => rows.find(row => row.id === "clearCache")?.onPress?.());
+
+    expect(rows.map(row => row.id)).toEqual([
+      "support",
+      "academy",
+      "saveLogs",
+      "status",
+      "clearCache",
+    ]);
+    expect(result.current.screen).toEqual({ category: "My Wallet", name: "Help" });
+    expect(result.current.confirmation.tone).toBe("neutral");
+    expect(result.current.confirmationScreenName).toBeNull();
   });
 });

@@ -1,20 +1,8 @@
 import { useMemo } from "react";
-import type { SettingsConfirmSheetLabels } from "@features/flow-settings";
 import { useTranslation } from "@shared/i18n";
-import type { HelpGroupId, HelpItemId } from "../logic/helpItems";
+import type { HelpLabels } from "./helpLabels.types";
 
-export type HelpRowLabels = Readonly<{ title: string; description: string; action?: string }>;
-
-export type HelpConfirmId = "clearCache" | "resetApp";
-
-export type HelpLabels = Readonly<{
-  title: string;
-  groups: Readonly<Record<HelpGroupId, string>>;
-  items: Readonly<Record<HelpItemId, HelpRowLabels>>;
-  confirmations: Readonly<Record<HelpConfirmId, SettingsConfirmSheetLabels>>;
-}>;
-
-/** Reuses the legacy translation keys wherever their wording still fits. */
+/** Reuses the legacy desktop translation keys wherever their wording still fits. */
 export function useHelpLabels(): HelpLabels {
   const { t } = useTranslation();
 
