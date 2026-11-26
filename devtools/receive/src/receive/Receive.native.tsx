@@ -60,7 +60,7 @@ function AssetRow({ row }: Readonly<{ row: ReceiveRow }>) {
 }
 
 export function Receive(props: ReceiveToolProps) {
-  const { flag, excluded, deeplink, rows, pickAsset } = useReceiveToolViewModel(props);
+  const { flag, excluded, deeplink, rows, pickAsset, verifyHint } = useReceiveToolViewModel(props);
   const { bottom } = useSafeAreaInsets();
 
   return (
@@ -96,6 +96,34 @@ export function Receive(props: ReceiveToolProps) {
           </Button>
         </Box>
       </Section>
+      <Section title={copy.deeplinkTitle} description={copy.deeplinkDescription}>
+        <TextInput
+          label={copy.deeplinkLabel}
+          value={deeplink.draft}
+          onChangeText={deeplink.setDraft}
+          helperText={deeplink.error}
+          status={deeplink.error && "error"}
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+        <Box lx={{ alignItems: "flex-end" }}>
+          <Button appearance="gray" size="sm" disabled={!deeplink.canOpen} onPress={deeplink.open}>
+            {copy.openDeeplink}
+          </Button>
+        </Box>
+      </Section>
+      <Section title={copy.verifyHintTitle} description={copy.verifyHintDescription}>
+        <Box lx={ROW_LX}>
+          <Text typography="body2" lx={{ color: "base" }} style={{ flexShrink: 1 }}>
+            {copy.verifyHintShown}
+          </Text>
+          <Switch
+            accessibilityLabel={copy.verifyHintShown}
+            checked={verifyHint.isShown}
+            onCheckedChange={verifyHint.setShown}
+          />
+        </Box>
+      </Section>
       <Section title={copy.triggerTitle} description={copy.triggerDescription}>
         <Box lx={{ alignItems: "flex-start" }}>
           <Button appearance="gray" size="sm" onPress={pickAsset}>
@@ -113,22 +141,6 @@ export function Receive(props: ReceiveToolProps) {
             ))}
           </Box>
         )}
-      </Section>
-      <Section title={copy.deeplinkTitle} description={copy.deeplinkDescription}>
-        <TextInput
-          label={copy.deeplinkLabel}
-          value={deeplink.draft}
-          onChangeText={deeplink.setDraft}
-          helperText={deeplink.error}
-          status={deeplink.error && "error"}
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-        <Box lx={{ alignItems: "flex-end" }}>
-          <Button appearance="gray" size="sm" disabled={!deeplink.canOpen} onPress={deeplink.open}>
-            {copy.openDeeplink}
-          </Button>
-        </Box>
       </Section>
     </ScrollView>
   );
