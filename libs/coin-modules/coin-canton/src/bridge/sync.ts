@@ -10,6 +10,7 @@ import BigNumber from "bignumber.js";
 import type { CantonCoinConfig, CantonContext } from "../config";
 import { isCantonAccountEmpty } from "../helpers";
 import { resumeOffset } from "../logic/listOperations";
+import { getMaxTxQuery } from "../tuning";
 import type { CantonOperationType } from "../logic/operationType";
 import {
   CHARGED_TYPES,
@@ -41,8 +42,6 @@ import { isAccountOnboarded } from "./onboard";
  * main account charges.
  */
 export const SYNC_HASH = "1";
-
-const GATEWAY_PAGE_SIZE = 1_000;
 
 type Instrument = { instrumentId: string; instrumentAdmin: string };
 
@@ -259,7 +258,7 @@ async function readOperations(
       minOffset: start,
       maxOffset: end,
       cursor,
-      limit: GATEWAY_PAGE_SIZE,
+      limit: getMaxTxQuery(config),
     });
     rows.push(...operations);
     if (next === undefined || next < 0) return rows;
@@ -395,7 +394,9 @@ export function makeGetAccountShape(
 
     // One snapshot, so that the rebuild check and the sub-accounts agree on the enabled tokens.
     const enabledInstruments =
-      tokenBalances.length > 0 ? await getEnabledInstrumentsCached(config) : new Set<string>();
+      tokenBalances.length > 0
+        ? await getEnabledInstrumentsCached(config, context.logger)
+        : new Set<string>();
     const storedSubAccountIds = new Set(initialAccount?.subAccounts?.map(({ id }) => id));
     // Rows of a token without a sub-account produced no operation, and later syncs read past them.
     const hasNewTokenAccount = tokenBalances.some(

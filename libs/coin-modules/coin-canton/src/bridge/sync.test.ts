@@ -271,8 +271,8 @@ const pendingOperation = (hash: string, sequence: number) =>
 
 const readFrom = () => mockedGetOperations.mock.calls.map(([, , options]) => options);
 
-const syncFrom = (initialAccount: Partial<CantonAccount>) =>
-  makeGetAccountShape({} as SignerContext<CantonSigner>, fakeContext)(
+const syncFrom = (initialAccount: Partial<CantonAccount>, context: CantonContext = fakeContext) =>
+  makeGetAccountShape({} as SignerContext<CantonSigner>, context)(
     createMockCantonAccountShapeInfo({
       initialAccount: {
         xpub: "party123",
@@ -1797,6 +1797,17 @@ describe("makeGetAccountShape", () => {
         expect(readFrom()).toEqual([{ minOffset: 0, maxOffset: 12345, limit: 1000 }]);
         expect(hashesOf(shape)).toEqual(["later", "first", "stored-10"]);
         expect(checkpointOf(shape)).toEqual({ hash: "later", height: 12 });
+      });
+
+      it("reads by the configured page size", async () => {
+        rows = [first, later];
+        const pagedConfig = { ...sampleConfig, gateway: { maxTxQuery: 50 } };
+        await syncFrom({ syncHash: SYNC_HASH, operations: [], cantonResources: {} as never }, {
+          ...fakeContext,
+          config: async () => pagedConfig,
+        } as unknown as CantonContext);
+
+        expect(readFrom()).toEqual([{ minOffset: 0, maxOffset: 12345, limit: 50 }]);
       });
 
       it("reads the whole history again after the account is cleared", async () => {

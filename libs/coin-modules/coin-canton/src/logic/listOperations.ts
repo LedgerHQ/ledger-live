@@ -6,6 +6,7 @@ import type {
 import { InvalidParameterError } from "@ledgerhq/coin-module-framework/errors";
 import type { CantonCoinConfig, CantonContext } from "../config";
 import { getLedgerEnd, getOperations, isGatewayEnabled } from "../network/gateway";
+import { getMaxTxQuery } from "../tuning";
 import type { OperationView } from "../types/gateway";
 import {
   decodeAscendingCursor,
@@ -17,7 +18,6 @@ import { toOperation } from "./toOperation";
 
 const DEFAULT_PAGE_SIZE = 100;
 const INITIAL_WINDOW_WIDTH = 10_000;
-const GATEWAY_PAGE_SIZE = 1_000;
 
 type Query = {
   config: CantonCoinConfig;
@@ -89,7 +89,7 @@ async function readWindow(
       minOffset: lowestOffset,
       maxOffset: highestOffset,
       cursor,
-      limit: GATEWAY_PAGE_SIZE,
+      limit: getMaxTxQuery(config),
     });
     keepNewest(buffer, operations, pageSize);
     if (next < 0) return buffer;

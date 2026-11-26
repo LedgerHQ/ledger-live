@@ -5,7 +5,11 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { InvalidParameterError } from "@ledgerhq/coin-module-framework/errors";
 import { getLedgerEnd, getOperations, isGatewayEnabled } from "../../network/gateway";
-import { createMockContext, createMockOperationView } from "../../test/fixtures";
+import {
+  createMockCoinConfigValue,
+  createMockContext,
+  createMockOperationView,
+} from "../../test/fixtures";
 import type { OperationView } from "../../types/gateway";
 import { decodeDescendingCursor } from "../cursor";
 import { listOperations } from "../listOperations";
@@ -309,6 +313,19 @@ describe("listOperations", () => {
   });
 
   describe("newest first", () => {
+    it("reads each window by the configured page size", async () => {
+      fakeGateway({ rows: rowsAt([10, 20]), ledgerEnd: 100 });
+      const paged = createMockContext(createMockCoinConfigValue({ gateway: { maxTxQuery: 50 } }));
+
+      await listOperations(paged, PARTY, { minHeight: 0, order: "desc" });
+
+      expect(mockedGetOperations).toHaveBeenCalledWith(
+        expect.anything(),
+        PARTY,
+        expect.objectContaining({ limit: 50 }),
+      );
+    });
+
     it("stops at minHeight", async () => {
       fakeGateway({ rows: rowsAt([10, 20, 30, 40]), ledgerEnd: 100 });
 

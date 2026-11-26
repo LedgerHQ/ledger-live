@@ -19,6 +19,7 @@ import {
   TO_MANY_UTXOS_WARNING_COUNT,
 } from "../constants";
 import { isRecipientValid } from "../logic/utils";
+import { getMinReserve } from "../tuning";
 import { getKey, isTopologyChangeRequiredCached } from "../network/gateway";
 import {
   Transaction,
@@ -40,7 +41,7 @@ export const getTransactionStatus = async (
   const warnings: Record<string, Error> = {};
 
   // reserveAmount is the minimum amount of currency that an account must hold in order to stay activated
-  const reserveAmount = new BigNumber((await context.config(account.currency.id)).minReserve || 0);
+  const reserveAmount = new BigNumber(getMinReserve(await context.config(account.currency.id)));
   const estimatedFees = new BigNumber(transaction.fee || 0);
   const amount = new BigNumber(transaction.amount);
 

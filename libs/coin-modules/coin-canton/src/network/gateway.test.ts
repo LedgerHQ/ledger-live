@@ -23,6 +23,7 @@ import {
   getEnabledInstrumentsStrictCached,
   getLedgerEnd,
   getNativeInstrument,
+  getNodeId,
   getNodeInfo,
   getOperations,
   getPartyById,
@@ -30,6 +31,7 @@ import {
   getPartyByPubKey,
   getPendingTransferProposals,
   getTransferPreApproval,
+  isGatewayEnabled,
   isPartyAlreadyExists,
   isPartyNotFound,
   isPartyNotFoundByPublicKey,
@@ -59,6 +61,9 @@ jest.mock("@ledgerhq/live-env", () => ({
     return undefined;
   }),
 }));
+
+const logger = jest.fn();
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const createTestNodeConfig = (): CantonCoinConfig => ({
   ...createMockCoinConfigValue(),
@@ -795,6 +800,7 @@ describe("prepare and submit transaction helpers", () => {
 
 describe("getCalTokensCached", () => {
   const mockCurrency = createMockCantonCurrency();
+  const calConfig = createMockCoinConfigValue();
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeEach(() => {
@@ -815,8 +821,8 @@ describe("getCalTokensCached", () => {
     ];
     mockNetwork.mockResolvedValue({ data: calTokens, status: 200 });
 
-    const map1 = await getCalTokensCached(mockCurrency.id);
-    const map2 = await getCalTokensCached(mockCurrency.id);
+    const map1 = await getCalTokensCached(calConfig, mockCurrency.id);
+    const map2 = await getCalTokensCached(calConfig, mockCurrency.id);
 
     expect(map1.get("tok1")).toBe("ident1");
     expect(map2.get("tok1")).toBe("ident1");
@@ -842,14 +848,14 @@ describe("getCalTokensCached", () => {
     ];
     mockNetwork.mockResolvedValue({ data: calTokens, status: 200 });
 
-    await getCalTokensCached(mockCurrency.id);
+    await getCalTokensCached(calConfig, mockCurrency.id);
     getCalTokensCached.clear(mockCurrency.id);
     mockNetwork.mockResolvedValue({
       data: [{ ...calTokens[0], token_identifier: "ident2" }],
       status: 200,
     });
 
-    const map = await getCalTokensCached(mockCurrency.id);
+    const map = await getCalTokensCached(calConfig, mockCurrency.id);
     expect(map.get("tok1")).toBe("ident2");
     expect(mockNetwork).toHaveBeenCalledTimes(2);
   });
@@ -932,7 +938,7 @@ describe("getEnabledInstruments", () => {
 
     mockNetwork.mockResolvedValue({ data: mockInstrumentsResponse, status: 200 });
 
-    const result = await getEnabledInstruments(mockConfig);
+    const result = await getEnabledInstruments(mockConfig, logger);
 
     expect(result).toEqual(
       new Set(["Amulet____admin1", "0x1234567890abcdef____admin2", "0xabcdef1234567890____admin3"]),
@@ -945,19 +951,15 @@ describe("getEnabledInstruments", () => {
     );
   });
 
-  it("should return empty Set on API failure (fail-safe)", async () => {
-    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+  it("should return empty Set on API failure (fail-safe) and log through the context logger", async () => {
     mockNetwork.mockRejectedValue(new Error("Network error"));
 
-    const result = await getEnabledInstruments(mockConfig);
+    const result = await getEnabledInstruments(mockConfig, logger);
 
     expect(result).toEqual(new Set());
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "Failed to fetch enabled instruments:",
-      expect.any(Error),
-    );
-
-    consoleErrorSpy.mockRestore();
+    expect(logger).toHaveBeenCalledWith("canton/gateway", "Failed to fetch enabled instruments", {
+      error: expect.any(Error),
+    });
   });
 
   it("should return empty Set when API returns empty instruments list", async () => {
@@ -965,22 +967,19 @@ describe("getEnabledInstruments", () => {
 
     mockNetwork.mockResolvedValue({ data: mockEmptyResponse, status: 200 });
 
-    const result = await getEnabledInstruments(mockConfig);
+    const result = await getEnabledInstruments(mockConfig, logger);
 
     expect(result).toEqual(new Set());
   });
 
   it("should handle malformed API response gracefully", async () => {
-    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
     // API returns data that is not an array
     mockNetwork.mockResolvedValue({ data: { invalid: "response" }, status: 200 });
 
-    const result = await getEnabledInstruments(mockConfig);
+    const result = await getEnabledInstruments(mockConfig, logger);
 
     expect(result).toEqual(new Set());
-    expect(consoleErrorSpy).toHaveBeenCalled();
-
-    consoleErrorSpy.mockRestore();
+    expect(logger).toHaveBeenCalled();
   });
 });
 
@@ -1027,17 +1026,17 @@ describe("getEnabledInstrumentsCached", () => {
     mockNetwork.mockResolvedValue({ data: mockInstrumentsResponse, status: 200 });
 
     // First call - should fetch from API
-    const result1 = await getEnabledInstrumentsCached(mockConfig);
+    const result1 = await getEnabledInstrumentsCached(mockConfig, logger);
     expect(result1).toEqual(new Set(["Amulet____admin1", "0x1234567890abcdef____admin2"]));
     expect(mockNetwork).toHaveBeenCalledTimes(1);
 
     // Second call - should return cached value
-    const result2 = await getEnabledInstrumentsCached(mockConfig);
+    const result2 = await getEnabledInstrumentsCached(mockConfig, logger);
     expect(result2).toEqual(new Set(["Amulet____admin1", "0x1234567890abcdef____admin2"]));
     expect(mockNetwork).toHaveBeenCalledTimes(1); // Still only 1 call
 
     // Third call - should still return cached value
-    const result3 = await getEnabledInstrumentsCached(mockConfig);
+    const result3 = await getEnabledInstrumentsCached(mockConfig, logger);
     expect(result3).toEqual(new Set(["Amulet____admin1", "0x1234567890abcdef____admin2"]));
     expect(mockNetwork).toHaveBeenCalledTimes(1); // Still only 1 call
   });
@@ -1053,7 +1052,7 @@ describe("getEnabledInstrumentsCached", () => {
     mockNetwork.mockResolvedValueOnce({ data: mockResponse1, status: 200 });
 
     // First call
-    const result1 = await getEnabledInstrumentsCached(mockConfig);
+    const result1 = await getEnabledInstrumentsCached(mockConfig, logger);
     expect(result1).toEqual(new Set(["Amulet____admin1"]));
     expect(mockNetwork).toHaveBeenCalledTimes(1);
 
@@ -1064,7 +1063,7 @@ describe("getEnabledInstrumentsCached", () => {
     mockNetwork.mockResolvedValueOnce({ data: mockResponse2, status: 200 });
 
     // Second call after clear - should fetch fresh data
-    const result2 = await getEnabledInstrumentsCached(mockConfig);
+    const result2 = await getEnabledInstrumentsCached(mockConfig, logger);
     expect(result2).toEqual(new Set(["Amulet____admin1", "0xnewtoken____admin2"]));
     expect(mockNetwork).toHaveBeenCalledTimes(2);
   });
@@ -1074,10 +1073,10 @@ describe("getEnabledInstrumentsCached", () => {
       .mockResolvedValueOnce({ data: [{ id: "TokenA", admin: "admin-a" }], status: 200 })
       .mockResolvedValueOnce({ data: [{ id: "TokenB", admin: "admin-b" }], status: 200 });
 
-    await expect(getEnabledInstrumentsCached(gatewayA)).resolves.toEqual(
+    await expect(getEnabledInstrumentsCached(gatewayA, logger)).resolves.toEqual(
       new Set(["TokenA____admin-a"]),
     );
-    await expect(getEnabledInstrumentsCached(gatewayB)).resolves.toEqual(
+    await expect(getEnabledInstrumentsCached(gatewayB, logger)).resolves.toEqual(
       new Set(["TokenB____admin-b"]),
     );
     expect(mockNetwork).toHaveBeenCalledTimes(2);
@@ -1085,16 +1084,115 @@ describe("getEnabledInstrumentsCached", () => {
 
   it("clears only the entry of the gateway it is given", async () => {
     mockNetwork.mockResolvedValue({ data: [{ id: "Amulet", admin: "admin1" }], status: 200 });
-    await getEnabledInstrumentsCached(gatewayA);
-    await getEnabledInstrumentsCached(gatewayB);
+    await getEnabledInstrumentsCached(gatewayA, logger);
+    await getEnabledInstrumentsCached(gatewayB, logger);
 
     clearEnabledInstrumentsCache(gatewayA);
-    await getEnabledInstrumentsCached(gatewayA);
-    await getEnabledInstrumentsCached(gatewayB);
+    await getEnabledInstrumentsCached(gatewayA, logger);
+    await getEnabledInstrumentsCached(gatewayB, logger);
 
     expect(mockNetwork).toHaveBeenCalledTimes(3);
     expect(mockNetwork).toHaveBeenLastCalledWith(
       expect.objectContaining({ url: expect.stringContaining(gatewayA.gatewayUrl) }),
     );
   });
+});
+
+describe("coin-config fields", () => {
+  it("reads the node id from the config", () => {
+    expect(getNodeId(createTestNodeConfig())).toBe("test-node-id");
+  });
+
+  it("fails with a config error when the node id is missing", () => {
+    expect(() => getNodeId({ ...createTestNodeConfig(), nodeId: "" })).toThrow(
+      "canton: no nodeId in the coin config",
+    );
+  });
+
+  it("enables the gateway only when the config says so", () => {
+    const { useGateway: _, ...withoutToggle } = createMockCoinConfigValue();
+    expect(isGatewayEnabled(withoutToggle)).toBe(false);
+    expect(isGatewayEnabled({ ...withoutToggle, useGateway: true })).toBe(true);
+  });
+});
+
+describe("cache lifetimes from the coin config", () => {
+  const mockNetwork = network as jest.MockedFunction<typeof network>;
+
+  const cases: Array<{
+    name: string;
+    gateway?: NonNullable<CantonCoinConfig["gateway"]>;
+    calTokensCacheTtlMs?: number;
+    data: unknown;
+    read: (config: CantonCoinConfig) => Promise<unknown>;
+  }> = [
+    {
+      name: "DSO party",
+      gateway: { dsoPartyCacheTtlMs: 1 },
+      data: { dso_id: "DSO::1" },
+      read: config => getDsoPartyIdCached(config),
+    },
+    {
+      name: "party by id",
+      gateway: { partyCacheTtlMs: 1 },
+      data: { party_id: "p", public_key: "k" },
+      read: config => getPartyByIdCached(config, "ttl-party"),
+    },
+    {
+      name: "topology check",
+      gateway: { topologyCacheTtlMs: 1 },
+      data: { party_id: "p" },
+      read: config => isTopologyChangeRequiredCached(config, "ttl-key"),
+    },
+    {
+      name: "enabled instruments",
+      gateway: { instrumentsCacheTtlMs: 1 },
+      data: [],
+      read: config => getEnabledInstrumentsCached(config, logger),
+    },
+    {
+      name: "CAL tokens",
+      calTokensCacheTtlMs: 1,
+      data: [],
+      read: config => getCalTokensCached(config, "ttl-currency"),
+    },
+  ];
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    getDsoPartyIdCached.reset();
+    getPartyByIdCached.reset();
+    isTopologyChangeRequiredCached.reset();
+    getEnabledInstrumentsCached.reset();
+    getCalTokensCached.reset();
+  });
+
+  it.each(cases)("caches the $name for the module default", async ({ data, read }) => {
+    mockNetwork.mockResolvedValue({ data, status: 200 });
+    const config = createTestNodeConfig();
+
+    await read(config);
+    await read(config);
+
+    expect(mockNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  // lru-cache reads the clock directly, so a real short TTL is used instead of fake timers.
+  it.each(cases)(
+    "reads the $name again after the configured TTL",
+    async ({ gateway, calTokensCacheTtlMs, data, read }) => {
+      mockNetwork.mockResolvedValue({ data, status: 200 });
+      const config: CantonCoinConfig = {
+        ...createTestNodeConfig(),
+        ...(gateway ? { gateway } : {}),
+        ...(calTokensCacheTtlMs ? { calTokensCacheTtlMs } : {}),
+      };
+
+      await read(config);
+      await sleep(5);
+      await read(config);
+
+      expect(mockNetwork).toHaveBeenCalledTimes(2);
+    },
+  );
 });

@@ -1,15 +1,31 @@
 import type { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 
 export type CantonConfig = {
-  nodeUrl?: string;
-  nodeId?: string;
-  gatewayUrl?: string;
-  // TODELETE
-  minReserve?: number;
+  gatewayUrl: string;
+  /** The gateway node, unless the `CANTON_NODE_ID_OVERRIDE` env is set. */
+  nodeId: string;
   networkType: "mainnet" | "devnet" | "testnet" | "localnet";
-  useGateway?: boolean;
   nativeInstrumentId: string;
+  /** @default DEFAULT_USE_GATEWAY (false) */
+  useGateway?: boolean;
+  /** @default DEFAULT_MIN_RESERVE (0) */
+  minReserve?: number;
+  /** A fixed fee in CC. Without it, the fee follows the tier schedule. */
   fee?: number;
+  gateway?: {
+    /** Rows per operations request. @default DEFAULT_MAX_TX_QUERY (1000) */
+    maxTxQuery?: number;
+    /** @default DEFAULT_DSO_PARTY_CACHE_TTL_MS (900000) */
+    dsoPartyCacheTtlMs?: number;
+    /** @default DEFAULT_PARTY_CACHE_TTL_MS (3600000) */
+    partyCacheTtlMs?: number;
+    /** @default DEFAULT_TOPOLOGY_CACHE_TTL_MS (600000) */
+    topologyCacheTtlMs?: number;
+    /** @default DEFAULT_INSTRUMENTS_CACHE_TTL_MS (900000) */
+    instrumentsCacheTtlMs?: number;
+  };
+  /** Lifetime of the CAL token map. @default DEFAULT_CAL_TOKENS_CACHE_TTL_MS (1800000) */
+  calTokensCacheTtlMs?: number;
 };
 
 export type CantonCoinConfig = CurrencyConfig & CantonConfig;
@@ -25,10 +41,8 @@ export const cantonDefaults = {
     },
     name: "Canton Network",
     unit: { name: "cc", code: "CC", magnitude: 38 },
-    nodeUrl: "https://canton-gateway.api.live.ledger.com/v1/node/ledger-live-mainnet",
     nodeId: "ledger-live-mainnet",
     gatewayUrl: "https://canton-gateway.api.live.ledger.com",
-    minReserve: 0,
     useGateway: true,
     networkType: "mainnet",
     nativeInstrumentId: "Amulet",
@@ -41,10 +55,8 @@ export const cantonDefaults = {
     },
     name: "Canton Network (Devnet)",
     unit: { name: "cc", code: "CC", magnitude: 38 },
-    nodeUrl: "https://canton-gateway-devnet.api.live.ledger-test.com/v1/node/ledger-live-devnet",
     nodeId: "ledger-live-devnet",
     gatewayUrl: "https://canton-gateway-devnet.api.live.ledger-test.com",
-    minReserve: 0,
     useGateway: true,
     networkType: "devnet",
     nativeInstrumentId: "Amulet",
@@ -57,10 +69,8 @@ export const cantonDefaults = {
     },
     name: "Canton Network (Testnet)",
     unit: { name: "cc", code: "CC", magnitude: 38 },
-    nodeUrl: "https://canton-gateway-testnet.api.live.ledger-test.com/v1/node/ledger-live-testnet",
     nodeId: "ledger-live-testnet",
     gatewayUrl: "https://canton-gateway-testnet.api.live.ledger-test.com",
-    minReserve: 0,
     nativeInstrumentId: "Amulet",
     useGateway: true,
     networkType: "testnet",

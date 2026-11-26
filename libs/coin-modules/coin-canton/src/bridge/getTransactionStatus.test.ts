@@ -29,6 +29,8 @@ jest.mock("../network/gateway", () => ({
 const mockedGateway = gateway as jest.Mocked<typeof gateway>;
 
 const defaultConfig: CantonCoinConfig = {
+  gatewayUrl: "https://canton-gateway.example.com",
+  nodeId: "test-node",
   minReserve: 100,
   networkType: "mainnet",
   status: { type: "active" },

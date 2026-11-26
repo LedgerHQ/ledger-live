@@ -194,6 +194,17 @@ describe("getAccountStatus", () => {
     });
   });
 
+  it("pages the operations by the configured page size", async () => {
+    chain({});
+    const paged = { ...config, gateway: { maxTxQuery: 50 } };
+    await getAccountStatus(createMockContext(paged), currency.id, "ab");
+    expect(mockedGateway.getOperations).toHaveBeenCalledWith(paged, "party", {
+      minOffset: 0,
+      cursor: undefined,
+      limit: 50,
+    });
+  });
+
   it("reads the next pages until it finds a native operation", async () => {
     chain({});
     mockedGateway.getOperations

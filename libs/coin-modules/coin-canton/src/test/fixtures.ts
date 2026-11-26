@@ -40,6 +40,7 @@ const DEFAULT_VALUES = {
   CONFIG: {
     GATEWAY_URL: "https://canton-gateway-devnet.api.live.ledger-test.com",
     NETWORK_TYPE: "devnet",
+    NODE_ID: "ledger-live-devnet",
   },
 } as const;
 
@@ -274,8 +275,9 @@ export const createMockInstrumentBalances = (
   );
 };
 
-export const createMockCoinConfigValue = createFactory({
+export const createMockCoinConfigValue = createFactory<CantonCoinConfig>({
   gatewayUrl: DEFAULT_VALUES.CONFIG.GATEWAY_URL,
+  nodeId: DEFAULT_VALUES.CONFIG.NODE_ID,
   useGateway: true,
   networkType: DEFAULT_VALUES.CONFIG.NETWORK_TYPE,
   nativeInstrumentId: DEFAULT_VALUES.INSTRUMENT.ID,

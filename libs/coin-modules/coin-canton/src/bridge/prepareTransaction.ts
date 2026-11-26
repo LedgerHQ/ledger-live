@@ -43,7 +43,10 @@ export const prepareTransaction = async (
   let tokenId = transaction.tokenId;
   let instrumentAdmin: string | undefined;
   if (subAccount) {
-    const calTokens = await getCalTokensCached(account.currency.id);
+    const calTokens = await getCalTokensCached(
+      await context.config(account.currency.id),
+      account.currency.id,
+    );
     tokenId = calTokens.get(subAccount.token.id) || subAccount.token.name;
     instrumentAdmin = subAccount.token.contractAddress;
   }

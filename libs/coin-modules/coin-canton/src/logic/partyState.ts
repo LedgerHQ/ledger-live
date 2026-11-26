@@ -18,6 +18,7 @@ import { isInstrument, type NativeInstrument } from "./asset";
 import { getInstrumentBalances, type CantonBalance } from "./instrumentBalances";
 import { resumeOffset } from "./listOperations";
 import { determineOperationType, type CantonOperationType } from "./operationType";
+import { getMaxTxQuery, getMinReserve } from "../tuning";
 
 export type ValidOperationInfo = OperationInfo & {
   asset: { type: "native" | "token"; instrumentId: string; instrumentAdmin: string };
@@ -208,7 +209,7 @@ export async function readPartyBalances(
   }
 
   throwIfAborted(signal);
-  const calTokens = await getCalTokensCached(currencyId);
+  const calTokens = await getCalTokensCached(config, currencyId);
   const tokensByKey = await heldTokensByKey(calTokens, balances, signal);
   const aggregatedBalances = aggregateBalances(
     balances,
@@ -221,7 +222,7 @@ export async function readPartyBalances(
   const unlockedAmount = new BigNumber((nativeBalance?.unlockedBalance ?? 0n).toString());
   const lockedAmount = new BigNumber((nativeBalance?.lockedBalance ?? 0n).toString());
   const totalBalance = unlockedAmount.plus(lockedAmount);
-  const reserveMin = new BigNumber(config.minReserve || 0);
+  const reserveMin = new BigNumber(getMinReserve(config));
   const spendableBalance = BigNumber.max(0, unlockedAmount.minus(reserveMin));
 
   const instrumentUtxoCounts: Record<string, number> = {};
@@ -254,8 +255,6 @@ export async function readPartyBalances(
   };
 }
 
-const OPERATIONS_PAGE_SIZE = 1_000;
-
 /** Whether the sync would give the party an operation on its main account. */
 export async function hasNativeOperation(
   config: CantonCoinConfig,
@@ -277,7 +276,7 @@ export async function hasNativeOperation(
     const { operations, next } = await getOperations(config, partyId, {
       minOffset: 0,
       cursor,
-      limit: OPERATIONS_PAGE_SIZE,
+      limit: getMaxTxQuery(config),
     });
     if (operations.some(isNative)) return true;
     if (next === undefined || next < 0) return false;

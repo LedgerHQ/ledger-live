@@ -1,8 +1,17 @@
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
-import { hours, makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import type { LiveNetworkRequest, LiveNetworkResponse } from "@ledgerhq/live-network/network";
-import type { CantonCoinConfig } from "../config";
+import type { CantonCoinConfig, CantonContext } from "../config";
+import {
+  DEFAULT_CAL_TOKENS_CACHE_TTL_MS,
+  DEFAULT_DSO_PARTY_CACHE_TTL_MS,
+  DEFAULT_INSTRUMENTS_CACHE_TTL_MS,
+  DEFAULT_PARTY_CACHE_TTL_MS,
+  DEFAULT_TOPOLOGY_CACHE_TTL_MS,
+  DEFAULT_USE_GATEWAY,
+} from "../constants";
+import { tuning } from "../tuning";
+import { makeConfigurableLRUCache } from "./cache";
 import { TopologyChangeError, TransferOfferExpiredError } from "../types/errors";
 import type {
   GetBalanceResponse,
@@ -44,13 +53,17 @@ export const getNodeId = (config: CantonCoinConfig) => {
   if (overrideNodeId) {
     return overrideNodeId;
   }
-  return config.nodeId || "ledger-live-devnet";
+  if (!config.nodeId) throw new Error("canton: no nodeId in the coin config");
+  return config.nodeId;
 };
 export const getNetworkType = (config: CantonCoinConfig) => config.networkType;
 
 export function isGatewayEnabled(config: CantonCoinConfig): boolean {
-  return config.useGateway === true;
+  return (config.useGateway ?? DEFAULT_USE_GATEWAY) === true;
 }
+
+// A TTL of 0 would cache without expiry.
+const ttlOf = (value: number | undefined, fallback: number) => tuning(value, fallback, 1);
 
 export const isPartyNotFound = (error: unknown): boolean => {
   if (error instanceof Error) {
@@ -122,7 +135,11 @@ const getDsoPartyIdCacheKey = (config: CantonCoinConfig) =>
   `${getGatewayUrl(config)}_${getNodeId(config)}`;
 
 // A DSO party cached before a network reset hides CC balances until node info is read again.
-export const getDsoPartyIdCached = makeLRUCache(getDsoPartyId, getDsoPartyIdCacheKey, minutes(15));
+export const getDsoPartyIdCached = makeConfigurableLRUCache(
+  getDsoPartyId,
+  getDsoPartyIdCacheKey,
+  config => ttlOf(config.gateway?.dsoPartyCacheTtlMs, DEFAULT_DSO_PARTY_CACHE_TTL_MS),
+);
 
 export function clearDsoPartyIdCache(config: CantonCoinConfig): void {
   getDsoPartyIdCached.clear(getDsoPartyIdCacheKey(config));
@@ -147,11 +164,11 @@ export async function getPartyById(config: CantonCoinConfig, partyId: string): P
   return await getParty(config, partyId, "party-id");
 }
 
-export const getPartyByIdCached = makeLRUCache(
+export const getPartyByIdCached = makeConfigurableLRUCache(
   getPartyById,
   (config: CantonCoinConfig, partyId: string) =>
     `${getGatewayUrl(config)}_${getNodeId(config)}_${partyId}`,
-  hours(1),
+  config => ttlOf(config.gateway?.partyCacheTtlMs, DEFAULT_PARTY_CACHE_TTL_MS),
 );
 
 export async function getPartyByPubKey(config: CantonCoinConfig, pubKey: string): Promise<Party> {
@@ -209,10 +226,10 @@ export async function isTopologyChangeRequired(config: CantonCoinConfig, pubKey:
 const getIsTopologyChangeRequiredCacheKey = (config: CantonCoinConfig, pubKey: string): string =>
   `${getGatewayUrl(config)}_${getNodeId(config)}_${pubKey}`;
 
-export const isTopologyChangeRequiredCached = makeLRUCache(
+export const isTopologyChangeRequiredCached = makeConfigurableLRUCache(
   isTopologyChangeRequired,
   getIsTopologyChangeRequiredCacheKey,
-  minutes(10),
+  config => ttlOf(config.gateway?.topologyCacheTtlMs, DEFAULT_TOPOLOGY_CACHE_TTL_MS),
 );
 
 export function clearIsTopologyChangeRequiredCache(config: CantonCoinConfig, pubKey: string): void {
@@ -235,12 +252,15 @@ async function readEnabledInstruments(config: CantonCoinConfig): Promise<Set<str
   return new Set(data.map(({ id, admin }) => getKey(id, admin)));
 }
 
-export async function getEnabledInstruments(config: CantonCoinConfig): Promise<Set<string>> {
+export async function getEnabledInstruments(
+  config: CantonCoinConfig,
+  logger: CantonContext["logger"],
+): Promise<Set<string>> {
   try {
     return await readEnabledInstruments(config);
   } catch (error) {
     // If API fails, return empty array (fail-safe: only native instrument will work)
-    console.error("Failed to fetch enabled instruments:", error);
+    logger("canton/gateway", "Failed to fetch enabled instruments", { error });
     return new Set();
   }
 }
@@ -248,17 +268,20 @@ export async function getEnabledInstruments(config: CantonCoinConfig): Promise<S
 const getEnabledInstrumentsCacheKey = (config: CantonCoinConfig): string =>
   `instruments_${getGatewayUrl(config)}_${getNodeId(config)}`;
 
-export const getEnabledInstrumentsCached = makeLRUCache(
+const instrumentsTtlOf = (config: CantonCoinConfig) =>
+  ttlOf(config.gateway?.instrumentsCacheTtlMs, DEFAULT_INSTRUMENTS_CACHE_TTL_MS);
+
+export const getEnabledInstrumentsCached = makeConfigurableLRUCache(
   getEnabledInstruments,
   getEnabledInstrumentsCacheKey,
-  minutes(15),
+  instrumentsTtlOf,
 );
 
 /** Rejects on a failed read, never cached, where an empty set would read as "no token enabled". */
-export const getEnabledInstrumentsStrictCached = makeLRUCache(
+export const getEnabledInstrumentsStrictCached = makeConfigurableLRUCache(
   readEnabledInstruments,
   getEnabledInstrumentsCacheKey,
-  minutes(15),
+  instrumentsTtlOf,
 );
 
 export function clearEnabledInstrumentsCache(config: CantonCoinConfig): void {
@@ -507,9 +530,12 @@ export type CalToken = {
 
 /**
  * Fetch Canton tokens from CAL service and create a map of id -> token_identifier.
- * Keyed by currency id, which the config does not carry.
+ * Keyed by currency id, which the config does not carry; the config sets the cache lifetime.
  */
-async function getCalTokens(currencyId: string): Promise<Map<string, string>> {
+async function getCalTokens(
+  _config: CantonCoinConfig,
+  currencyId: string,
+): Promise<Map<string, string>> {
   const calUrl = getEnv("CAL_SERVICE_URL");
   const { data: calTokens } = await gatewayNetwork<CalToken[]>({
     method: "GET",
@@ -524,9 +550,13 @@ async function getCalTokens(currencyId: string): Promise<Map<string, string>> {
   return tokenIdentifierMap;
 }
 
-const getCalTokensCacheKey = (currencyId: string): string => currencyId;
+const getCalTokensCacheKey = (_config: CantonCoinConfig, currencyId: string): string => currencyId;
 
-export const getCalTokensCached = makeLRUCache(getCalTokens, getCalTokensCacheKey, minutes(30));
+export const getCalTokensCached = makeConfigurableLRUCache(
+  getCalTokens,
+  getCalTokensCacheKey,
+  config => ttlOf(config.calTokensCacheTtlMs, DEFAULT_CAL_TOKENS_CACHE_TTL_MS),
+);
 
 // Re-export types that are needed by other modules
 export type {
