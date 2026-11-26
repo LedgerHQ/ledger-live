@@ -21,7 +21,6 @@ shell package `@features/flow-settings`. Web only for now: mobile keeps its own 
 | More                | Ledger status        | Opens the status page                                                                        |
 | More                | Clear cache          | Asks for a confirmation, then clears the cache                                               |
 | More                | View user data       | Opens the user data folder                                                                   |
-| More                | Troubleshoot network | Opens the troubleshooting modal                                                              |
 | More                | Repair device        | The app's repair flow, rendered through a slot                                               |
 | More                | Device setup         | Launches the onboarding                                                                      |
 | More                | Reset                | Asks for a confirmation, then erases the local data                                          |
@@ -51,7 +50,7 @@ Desktop: `apps/ledger-live-desktop/src/mvvm/features/Settings/sections/help.tsx`
 ## Tracking
 
 The events of the legacy buttons are kept, sent when the button is pressed: `ClearCacheIntent`,
-`HardResetIntent` and `TroubleshootNetwork`, and `Launch Onboarding from Settings`. The screens
+`HardResetIntent`, and `Launch Onboarding from Settings`. The screens
 `Settings Help`, and `Modal CleanCache` or `Modal HardReset` while a confirmation is open, are
 tracked too. `ExportLogs` is sent by the app, which renders that row.
 

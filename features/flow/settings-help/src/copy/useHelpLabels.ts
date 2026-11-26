@@ -53,11 +53,6 @@ export function useHelpLabels(): HelpLabels {
           description: t("settings.helpPage.viewUserData.description"),
           action: t("settings.openUserDataDirectory.btn"),
         },
-        troubleshootNetwork: {
-          title: t("settings.troubleshootNetwork.title"),
-          description: t("settings.troubleshootNetwork.desc"),
-          action: t("settings.troubleshootNetwork.btn"),
-        },
         repairDevice: {
           title: t("settings.repairDevice.title"),
           description: t("settings.repairDevice.descSettings"),

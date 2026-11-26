@@ -16,7 +16,6 @@ import {
   Question,
   Coins,
   Trash,
-  Wifi,
   LedgerDevices,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import type { HelpItemId } from "../../logic/helpItems";
@@ -31,7 +30,6 @@ const ROW_ICONS = {
   status: ListEye,
   clearCache: Clear,
   viewUserData: Coins,
-  troubleshootNetwork: Wifi,
   repairDevice: Bolt,
   launchOnboarding: LedgerDevices,
   resetApp: Trash,

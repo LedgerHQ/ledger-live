@@ -10,7 +10,6 @@ export function createFakeHelpPort(): HelpPort & {
   clearCache: jest.Mock;
   resetApp: jest.Mock;
   viewUserData: jest.Mock;
-  troubleshootNetwork: jest.Mock;
   launchOnboarding: jest.Mock;
 } {
   return {
@@ -18,7 +17,6 @@ export function createFakeHelpPort(): HelpPort & {
     clearCache: jest.fn().mockResolvedValue(undefined),
     resetApp: jest.fn().mockResolvedValue(undefined),
     viewUserData: jest.fn(),
-    troubleshootNetwork: jest.fn(),
     launchOnboarding: jest.fn(),
   };
 }

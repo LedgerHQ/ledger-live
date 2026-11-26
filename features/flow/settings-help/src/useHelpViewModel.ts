@@ -71,7 +71,6 @@ export function useHelpViewModel(port: HelpPort): HelpViewModel {
     academy: () => openLink(port.links.academy),
     status: () => openLink(port.links.status),
     viewUserData: () => port.viewUserData(),
-    troubleshootNetwork: () => port.troubleshootNetwork(),
     launchOnboarding: () => port.launchOnboarding(),
   };
 

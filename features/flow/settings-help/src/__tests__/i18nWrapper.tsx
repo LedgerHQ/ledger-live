@@ -49,11 +49,6 @@ const resources = {
           warning: "Resetting Ledger Wallet will erase your swap transaction history.",
         },
         openUserDataDirectory: { title: "View user data", btn: "View" },
-        troubleshootNetwork: {
-          title: "Troubleshoot networking",
-          desc: "Run a checklist to assess networking conditions.",
-          btn: "Troubleshoot",
-        },
         repairDevice: {
           title: "Repair your Ledger device",
           descSettings: "Use this to restore your Ledger device.",

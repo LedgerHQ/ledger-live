@@ -58,7 +58,6 @@ describe("HelpPage", () => {
       "Ledger status",
       "Clear cache",
       "View user data",
-      "Troubleshoot networking",
       "Repair your Ledger device",
       "Device setup",
       "Reset Ledger Wallet",
@@ -95,14 +94,12 @@ describe("HelpPage", () => {
     expect(port.viewUserData).toHaveBeenCalledTimes(1);
   });
 
-  it("runs the troubleshooting and the onboarding from their buttons", async () => {
+  it("launches the onboarding from its button", async () => {
     const user = userEvent.setup();
     const { port } = renderHelpPage();
 
-    await user.click(screen.getByTestId("settings-help-troubleshootNetwork-button"));
     await user.click(screen.getByTestId("settings-help-launchOnboarding-button"));
 
-    expect(port.troubleshootNetwork).toHaveBeenCalledTimes(1);
     expect(port.launchOnboarding).toHaveBeenCalledTimes(1);
   });
 
@@ -166,7 +163,6 @@ describe("HelpPage", () => {
   it.each([
     ["clearCache", "ClearCacheIntent"],
     ["resetApp", "HardResetIntent"],
-    ["troubleshootNetwork", "TroubleshootNetwork"],
     ["launchOnboarding", "Launch Onboarding from Settings"],
   ])("tracks %s as %s when its button is pressed", async (id, event) => {
     const user = userEvent.setup();

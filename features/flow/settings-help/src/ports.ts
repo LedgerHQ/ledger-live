@@ -10,6 +10,5 @@ export type HelpPort = Readonly<{
   clearCache(): Promise<void>;
   resetApp(): Promise<void>;
   viewUserData(): void;
-  troubleshootNetwork(): void;
   launchOnboarding(): void;
 }>;

@@ -5,7 +5,6 @@ export const HELP_ITEM_IDS = [
   "status",
   "clearCache",
   "viewUserData",
-  "troubleshootNetwork",
   "repairDevice",
   "launchOnboarding",
   "resetApp",
@@ -29,7 +28,6 @@ export const HELP_GROUPS: readonly Readonly<{ id: HelpGroupId; items: readonly H
       "status",
       "clearCache",
       "viewUserData",
-      "troubleshootNetwork",
       "repairDevice",
       "launchOnboarding",
       "resetApp",
@@ -44,7 +42,6 @@ export const HELP_ITEM_ACTIONS: Readonly<Record<HelpItemId, HelpItemAction>> = {
   status: "external",
   clearCache: "button",
   viewUserData: "button",
-  troubleshootNetwork: "button",
   repairDevice: "slot",
   launchOnboarding: "button",
   resetApp: "button",
@@ -59,7 +56,6 @@ export function isConfirmedHelpItem(id: HelpItemId): id is HelpConfirmedItemId {
 export const HELP_ITEM_EVENTS: Readonly<Partial<Record<HelpItemId, string>>> = {
   clearCache: "ClearCacheIntent",
   resetApp: "HardResetIntent",
-  troubleshootNetwork: "TroubleshootNetwork",
   launchOnboarding: "Launch Onboarding from Settings",
 };
 
