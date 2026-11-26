@@ -70,6 +70,16 @@ export type TrongridTxInfo = {
    * carries no fee and must not share the transaction's operation id.
    */
   internalIndex?: number;
+  /**
+   * Set on the operation of a successful smart contract call's own record: the value its sender
+   * attached to the call, sent to the called contract (`to`).
+   */
+  isCallValue?: boolean;
+  /**
+   * Distinguishes the operation from another one of the same transaction, which keeps the bare
+   * transaction id: its id is `{txID}-{idSuffix}`.
+   */
+  idSuffix?: string;
 };
 
 export type TrongridExtraTxInfo = {

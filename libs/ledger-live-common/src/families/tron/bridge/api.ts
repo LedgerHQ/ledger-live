@@ -216,7 +216,8 @@ export default function tronBridge(currency: CryptoCurrency): BridgeApi {
     // TRON's TRC-20 `fee_limit` is a ceiling, not a charge, so it cannot come from
     // `FeeEstimation.value`; `estimateFees` publishes it as `parameters.feeLimit` (LIVE-36865).
     forwardsFeeParametersToCraft: true,
-    // Resync to recover dropped history: LIVE-41088, LIVE-41093
-    syncVersion: "1",
+    // Resync to recover dropped history: LIVE-41088, LIVE-41093; then to read the TRX contracts
+    // move and calls attach, and give repeated operations of a transaction distinct ids: BACK-11812
+    syncVersion: "2",
   };
 }

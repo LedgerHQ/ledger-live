@@ -49,6 +49,7 @@ import {
   TriggerConstantContractParams,
   TriggerConstantContractResponse,
 } from "./types";
+import { readCallValues } from "./callValue";
 import { abiEncodeTrc20Transfer, hexToAscii, trc20ContractAddressFromLogs } from "./utils";
 
 const getBaseApiUrl = (config: TronCoinConfig): string => config.explorer.url;
@@ -848,15 +849,59 @@ async function toNativePage(
     results
       .filter(isTransactionTronAPI)
       .filter(isValidNativeTx)
-      .map(tx =>
-        formatTrongridTxResponse(logger, tx, addr => accountNamesCache(logger, config, addr)),
-      ),
+      .map(async tx => {
+        const info = await formatTrongridTxResponse(logger, tx, addr =>
+          accountNamesCache(logger, config, addr),
+        );
+        return info && isSuccessfulTriggerSmartContract(info)
+          ? toCallValueTxs(logger, tx, info)
+          : [info];
+      }),
   );
   return {
     rawTimestamps: results.map(tx => tx.block_timestamp),
-    txs: compact(formatted).filter(tx => !isSuccessfulTriggerSmartContract(tx)),
+    txs: compact(formatted.flat()),
     next,
   };
+}
+
+/**
+ * A successful smart contract call's own record, as the value its sender attached to it: TRX
+ * (`call_value`, possibly 0, with the transaction's fee) and TRC10, if any (without the fee). The
+ * formatter reads the record as a TRC20 transfer from its call data, which only the TRC20 endpoint
+ * reports reliably, so that reading is replaced.
+ */
+function toCallValueTxs(
+  logger: Logger,
+  tx: TransactionTronAPI,
+  info: TrongridTxInfo,
+): TrongridTxInfo[] {
+  const { parameter, type } = tx.raw_data.contract[0];
+  const contractAddress = parameter.value.contract_address;
+  const call: TrongridTxInfo = {
+    ...info,
+    to: contractAddress ? encode58Check(contractAddress) : undefined,
+    value: new BigNumber(0),
+    tokenType: undefined,
+    tokenId: undefined,
+    tokenAddress: undefined,
+    isCallValue: true,
+  };
+
+  const values = readCallValues(logger, tx.txID, type, parameter.value);
+  const trx = values.find(value => value.tokenId === undefined);
+  const trc10 = values.filter(value => value.tokenId !== undefined);
+  return [
+    { ...call, value: new BigNumber((trx?.amount ?? 0n).toString()) },
+    ...trc10.map(({ amount, tokenId }) => ({
+      ...call,
+      value: new BigNumber(amount.toString()),
+      fee: new BigNumber(0),
+      tokenType: "trc10" as const,
+      tokenId,
+      idSuffix: "call-token-value",
+    })),
+  ];
 }
 
 async function toTrc20Page(
