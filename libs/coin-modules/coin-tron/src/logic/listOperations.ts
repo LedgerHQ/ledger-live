@@ -272,13 +272,23 @@ function mergeEndpoints(
         ? []
         : [tx],
   );
-  return [...nativeTxsToList, ...trc20Txs].sort(compareTxsByTimestamp(order));
+  // Consumers charge a transaction's fee through its native operation when it has one, as for
+  // coin-evm: the TRX a call attached takes the fee off the call's TRC20 records.
+  const txIdsWithNativeFee = new Set(
+    nativeTxsToList.filter(tx => tx.idSuffix === CALL_VALUE_SUFFIX).map(tx => tx.txID),
+  );
+  const trc20TxsToList = trc20Txs.map(tx =>
+    txIdsWithNativeFee.has(tx.txID) ? { ...tx, fee: new BigNumber(0) } : tx,
+  );
+  return [...nativeTxsToList, ...trc20TxsToList].sort(compareTxsByTimestamp(order));
 }
+
+const CALL_VALUE_SUFFIX = "call-value";
 
 /**
  * A call's value, listed for its sender or its contract only. A call the TRC20 endpoint lists too
- * keeps the transaction id and the fee on its TRC20 record: the TRX attached, if any, becomes an
- * operation of its own.
+ * keeps the transaction id on its TRC20 record: the TRX attached, if any, becomes an operation of
+ * its own, which carries the fee.
  */
 function toListedCallValue(
   tx: TrongridTxInfo,
@@ -288,7 +298,7 @@ function toListedCallValue(
   if (tx.from !== address && tx.to !== address) return [];
   if (tx.idSuffix !== undefined || !hasTrc20Record) return [tx];
   if (!tx.value || tx.value.isZero()) return [];
-  return [{ ...tx, fee: new BigNumber(0), idSuffix: "call-value" }];
+  return [{ ...tx, idSuffix: CALL_VALUE_SUFFIX }];
 }
 
 async function toOperations(

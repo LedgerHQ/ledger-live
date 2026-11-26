@@ -50,7 +50,7 @@ describe("listOperations — value attached to a smart contract call", () => {
     mockedNetwork.mockReset();
   });
 
-  it("lists the TRX a recorded TRX -> USDT swap paid, next to the USDT it received", async () => {
+  it("lists the TRX a recorded TRX -> USDT swap paid, with the fee, next to the USDT it received", async () => {
     serve({ native: trxSwap.nativePage, trc20: trxSwap.trc20Page }, trxSwap.blockHeader);
 
     const { items } = await listOperations(logger, config, trxSwap.account, options);
@@ -71,7 +71,7 @@ describe("listOperations — value attached to a smart contract call", () => {
         value: 9_500_000_000n,
         asset: "native",
         recipients: [trxSwap.router],
-        fees: 0n,
+        fees: 513_000n,
       },
       {
         id: trxSwap.txID,
@@ -79,7 +79,7 @@ describe("listOperations — value attached to a smart contract call", () => {
         value: 2_881_673_945n,
         asset: "trc20",
         recipients: [trxSwap.account],
-        fees: 513_000n,
+        fees: 0n,
       },
     ]);
   });
@@ -168,6 +168,15 @@ describe("listOperations — value attached to a smart contract call", () => {
           { type: "trc20", assetReference: usdt, assetOwner: account },
           1000n,
         ],
+      ]);
+    });
+
+    it("charges the fee once, on the TRX a call with a TRC20 transfer attached", async () => {
+      serve({ native: page([call({ call_value: 700 })]), trc20: page([trc20Record]) });
+
+      expect(await summary()).toEqual([
+        ["tx1-call-value", "OUT", 700n, { type: "native" }, 1000n],
+        ["tx1", "IN", 5_000_000n, { type: "trc20", assetReference: usdt, assetOwner: account }, 0n],
       ]);
     });
 
