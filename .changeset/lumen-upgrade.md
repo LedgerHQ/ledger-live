@@ -17,6 +17,6 @@
 
 Upgrade Lumen to latest
 
-- Updated `@ledgerhq/lumen-design-core` to `0.1.37`
-- Updated `@ledgerhq/lumen-ui-react` to `0.1.75`
-- Updated `@ledgerhq/lumen-ui-rnative` to `0.1.76`
+- Updated `@ledgerhq/lumen-design-core` to `0.1.38`
+- Updated `@ledgerhq/lumen-ui-react` to `0.1.76`
+- Updated `@ledgerhq/lumen-ui-rnative` to `0.1.77`
