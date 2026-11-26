@@ -1,11 +1,10 @@
 import { useCallback, useMemo } from "react";
 import { accountsSlice } from "@domain/entity-account";
-import { currencyIdFromNetwork } from "@domain/entity-network";
-import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
-import type {
-  GetReceiveFamilyConfig,
-  ReceiveAddressProps,
-  ReceiveFamilyConfigPort,
+import {
+  useReceiveNetwork,
+  type GetReceiveFamilyConfig,
+  type ReceiveAddressProps,
+  type ReceiveFamilyConfigPort,
 } from "@features/flow-receive";
 import { useFeatureFlags } from "@features/platform-feature-flags";
 import {
@@ -34,7 +33,9 @@ const toIncidentTextPart = (segment: HtmlLinkSegment) =>
 const toIncidentTextParts = (html: string | undefined) =>
   html === undefined ? undefined : buildHtmlDisplaySegments(html).map(toIncidentTextPart);
 
-const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountLegacyId } = accountsSlice.getSelectors(
+  (state: State) => state.accountEntries,
+);
 
 type Params = Pick<ReceiveAddressProps, "accountUUID" | "assetId" | "onClose">;
 
@@ -43,14 +44,12 @@ export function useReceiveAddressScreenViewModel({
   assetId,
   onClose,
 }: Params): ReceiveAddressProps {
-  const entry = useSelector(state => selectAccountEntry(state, accountUUID));
+  const legacyId = useSelector(state => selectAccountLegacyId(state, accountUUID));
   const legacyAccount = useSelector(state =>
-    entry?.legacyId ? accountSelector(state, { accountId: entry.legacyId }) : undefined,
+    legacyId ? accountSelector(state, { accountId: legacyId }) : undefined,
   );
   const featureFlags = useFeatureFlags();
-  const network = entry
-    ? CRYPTO_CURRENCIES_REGISTRY[currencyIdFromNetwork(entry.descriptor.network)]
-    : undefined;
+  const { network } = useReceiveNetwork(assetId);
   const familyConfig = network ? familyConfigs[network.family] : undefined;
   const { incidents } = useFilteredServiceStatus({
     tickers: network ? [network.ticker] : [],

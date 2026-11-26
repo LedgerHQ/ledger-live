@@ -25,8 +25,8 @@ describe("useReceiveAddressViewModel", () => {
     const { useReceiveAddressHeader: actualHeader } = jest.requireActual(
       "./useReceiveAddressHeader",
     );
-    jest.mocked(useReceiveAddressHeader).mockImplementation((descriptor, assetId) => ({
-      ...actualHeader(descriptor, assetId),
+    jest.mocked(useReceiveAddressHeader).mockImplementation(assetId => ({
+      ...actualHeader(assetId),
       data: undefined,
     }));
 

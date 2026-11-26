@@ -40,12 +40,7 @@ export function resolveReceiveRoute<A>({
 
   const { isSupported } = resolveReceiveFamilyConfig({
     family,
-    familyConfig: familyConfig?.({
-      descriptor: target.descriptor,
-      asset,
-      featureFlags,
-      legacyAccount,
-    }),
+    familyConfig: familyConfig?.({ asset, featureFlags, legacyAccount }),
     excludedFamilies: flag.params?.excludedFamilies ?? [],
   });
   return isSupported ? target : undefined;
