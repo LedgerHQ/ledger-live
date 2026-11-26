@@ -67,6 +67,7 @@ export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (erro
         case "no-trustchain":
           dispatch(setFlow({ flow: Flow.Synchronize, step: Step.UnbackedError }));
           break;
+        case "device-unsupported":
         default:
           onError(jobState.error);
       }

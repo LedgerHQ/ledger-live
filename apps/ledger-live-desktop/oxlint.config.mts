@@ -47,7 +47,6 @@ const KEY_RING_FLOW_PATHS = [
     name: "@features/platform-key-ring",
     importNames: [
       "acceptLedgerSyncResult",
-      "fetchKeyRingServiceStatus",
       "isKeyRingError",
       "keyRingErrorForDisplay",
       "KeyRingPairingClosedError",
