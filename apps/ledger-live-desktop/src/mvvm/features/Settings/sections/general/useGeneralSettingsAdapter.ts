@@ -52,7 +52,11 @@ export function useGeneralSettingsAdapter(): GeneralSettingsPort {
   const data = useMemo<GeneralSettingsData>(
     () => ({
       languages: supportedLanguages.map(id => ({ value: id, label: Languages[id].label })),
-      currencies: supportedCounterValues.map(({ value, label }) => ({ value, label })),
+      currencies: supportedCounterValues.map(({ value, currency }) => ({
+        value,
+        label: currency.name,
+        description: currency.ticker,
+      })),
       ledgerSync,
     }),
     [supportedLanguages, supportedCounterValues, ledgerSync],

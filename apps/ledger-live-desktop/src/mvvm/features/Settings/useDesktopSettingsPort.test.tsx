@@ -117,7 +117,8 @@ describe("useDesktopSettingsPort", () => {
 
     expect(result.current.currencies).toContainEqual({
       value: "BTC",
-      label: "Bitcoin - BTC",
+      label: "Bitcoin",
+      description: "BTC",
     });
   });
 

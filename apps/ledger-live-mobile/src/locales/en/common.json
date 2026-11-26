@@ -4632,6 +4632,35 @@
         "learnMore": "Learn more"
       }
     },
+    "general": {
+      "ledgerSync": {
+        "title": "Ledger Sync",
+        "description": "Keep your wallet up to date on all your devices",
+        "manage": "Manage",
+        "activate": "Sync"
+      },
+      "theme": {
+        "title": "Theme",
+        "description": "Select your app theme",
+        "options": {
+          "system": "System",
+          "light": "Light",
+          "dark": "Dark"
+        }
+      },
+      "language": {
+        "title": "Language",
+        "description": "Select the app language"
+      },
+      "currency": {
+        "title": "Currency",
+        "description": "Select the currency displayed in the app"
+      },
+      "search": {
+        "placeholder": "Search",
+        "emptyLabel": "No results"
+      }
+    },
     "header": "Settings",
     "resources": "Ledger resources",
     "display": {

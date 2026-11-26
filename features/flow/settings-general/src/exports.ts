@@ -4,4 +4,6 @@ export * from "./logic/region/regionChoices";
 export * from "./logic/region/regionLocales";
 export * from "./logic/region/regionUpdate";
 export * from "./useGeneralSettingsPort";
+export * from "./copy/useGeneralSectionLabels";
+export * from "./useGeneralSectionViewModel";
 export type * from "./ports";

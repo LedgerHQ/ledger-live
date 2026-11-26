@@ -7,6 +7,7 @@ export function SettingsSheet({
   isOpen,
   title,
   description,
+  headerDensity = "expanded",
   onClose,
   canClose,
   children,
@@ -15,7 +16,7 @@ export function SettingsSheet({
   return (
     <SettingsBottomSheet isOpen={isOpen} onClose={onClose} canClose={canClose} testID={testID}>
       <BottomSheetHeader
-        density="expanded"
+        density={headerDensity}
         title={title}
         description={description}
         testID={testID && `${testID}-header`}

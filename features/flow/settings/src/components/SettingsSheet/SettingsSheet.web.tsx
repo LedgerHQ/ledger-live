@@ -6,6 +6,7 @@ export function SettingsSheet({
   isOpen,
   title,
   description,
+  headerDensity = "compact",
   onClose,
   canClose = true,
   children,
@@ -22,6 +23,7 @@ export function SettingsSheet({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="w-[400px] bg-canvas-sheet" data-testid={testID}>
         <DialogHeader
+          density={headerDensity}
           title={title}
           description={description}
           onClose={canClose ? onClose : undefined}
