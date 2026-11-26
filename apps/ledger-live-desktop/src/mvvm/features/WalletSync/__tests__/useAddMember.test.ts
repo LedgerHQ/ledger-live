@@ -2,15 +2,13 @@
  * @jest-environment jsdom
  */
 import { renderHook, waitFor } from "tests/testSetup";
-import { TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { mockKeyRingTreeRecord } from "@domain/entity-key-ring/schema.mock";
+import { commitKeyRingTree } from "@features/platform-key-ring";
+import { keyRingTreeUpdateFixture } from "@features/platform-key-ring/testing";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { AnalyticsFlow } from "../hooks/useLedgerSyncAnalytics";
 import { useAddMember } from "../hooks/useAddMember";
-import {
-  TrustchainAlreadyInitialized,
-  TrustchainAlreadyInitializedWithOtherSeed,
-} from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 
 jest.mock("~/renderer/reducers/walletSync", () => ({
@@ -19,26 +17,23 @@ jest.mock("~/renderer/reducers/walletSync", () => ({
 }));
 
 const device = { deviceId: "", modelId: DeviceModelId.stax, wired: true };
-const trustchain = {
-  rootId: "trustchainId",
-  walletSyncEncryptionKey: "0x123",
-  applicationPath: "m/0'/16'/1'",
-};
+const TREE_RECORD = mockKeyRingTreeRecord();
+const tree = keyRingTreeUpdateFixture(TREE_RECORD);
+const treeCommitted = commitKeyRingTree(tree);
+
+function keyRingError(name: string): Error {
+  return Object.assign(new Error(name), { name });
+}
 
 const Mocks = {
-  sdk: { getOrCreateTrustchain: jest.fn() },
-  memberCredentialsSelector: jest.fn(),
-  setTrustchain: jest.fn(),
+  sdk: { activate: jest.fn() },
   setFlow: jest.fn(),
   track: jest.fn(),
 };
 
 describe("useAddMember", () => {
   it("should create a new trustchain", async () => {
-    Mocks.sdk.getOrCreateTrustchain.mockResolvedValue({
-      trustchain,
-      type: TrustchainResultType.created,
-    });
+    Mocks.sdk.activate.mockResolvedValue({ tree, outcome: "created" });
 
     const { result } = renderHook(() => useAddMember({ device }), {
       initialState: {
@@ -46,10 +41,10 @@ describe("useAddMember", () => {
       },
     });
 
-    await waitFor(() => expect(Mocks.sdk.getOrCreateTrustchain).toHaveBeenCalled());
+    await waitFor(() => expect(Mocks.sdk.activate).toHaveBeenCalled());
 
     expect(result.current.error).toBeNull();
-    expect(Mocks.setTrustchain).toHaveBeenCalledWith(trustchain);
+    expect(mockDispatch).toHaveBeenCalledWith(treeCommitted);
     expect(Mocks.setFlow).toHaveBeenCalledWith({
       flow: Flow.Activation,
       step: Step.ActivationLoading,
@@ -61,20 +56,17 @@ describe("useAddMember", () => {
   });
 
   it("should get an existing trustchain", async () => {
-    Mocks.sdk.getOrCreateTrustchain.mockResolvedValue({
-      trustchain,
-      type: TrustchainResultType.restored,
-    });
+    Mocks.sdk.activate.mockResolvedValue({ tree, outcome: "restored" });
     const { result } = renderHook(() => useAddMember({ device }), {
       initialState: {
         settings: INITIAL_STATE,
       },
     });
 
-    await waitFor(() => expect(Mocks.sdk.getOrCreateTrustchain).toHaveBeenCalled());
+    await waitFor(() => expect(Mocks.sdk.activate).toHaveBeenCalled());
 
     expect(result.current.error).toBeNull();
-    expect(Mocks.setTrustchain).toHaveBeenCalledWith(trustchain);
+    expect(mockDispatch).toHaveBeenCalledWith(treeCommitted);
     expect(Mocks.setFlow).toHaveBeenCalledWith({
       flow: Flow.Activation,
       step: Step.ActivationLoading,
@@ -85,11 +77,30 @@ describe("useAddMember", () => {
     expect(Mocks.track).toHaveBeenCalledWith("ledgersync_activated", { flow: AnalyticsFlow });
   });
 
+  it("should activate the key ring with the device and the device callbacks", async () => {
+    Mocks.sdk.activate.mockResolvedValue({ tree, outcome: "created" });
+    renderHook(() => useAddMember({ device }), {
+      initialState: {
+        settings: INITIAL_STATE,
+      },
+    });
+
+    await waitFor(() => expect(Mocks.sdk.activate).toHaveBeenCalled());
+
+    expect(Mocks.sdk.activate).toHaveBeenCalledWith(expect.anything(), {
+      legacyDeviceId: "",
+      callbacks: {
+        onStartRequestUserInteraction: expect.any(Function),
+        onEndRequestUserInteraction: expect.any(Function),
+      },
+    });
+  });
+
   it("should handle missing device", async () => {
     const { result } = renderHook(() => useAddMember({ device: null }));
 
     expect(result.current.error).toBeNull();
-    expect(Mocks.setTrustchain).not.toHaveBeenCalledWith(trustchain);
+    expect(mockDispatch).not.toHaveBeenCalledWith(treeCommitted);
     expect(Mocks.setFlow).toHaveBeenCalledWith({
       flow: Flow.Activation,
       step: Step.DeviceAction,
@@ -98,17 +109,17 @@ describe("useAddMember", () => {
   });
 
   it("should handle already initialized trustchain", async () => {
-    Mocks.sdk.getOrCreateTrustchain.mockRejectedValue(new TrustchainAlreadyInitialized());
+    Mocks.sdk.activate.mockRejectedValue(keyRingError("TrustchainAlreadyInitialized"));
     const { result } = renderHook(() => useAddMember({ device }), {
       initialState: {
         settings: INITIAL_STATE,
       },
     });
 
-    await waitFor(() => expect(Mocks.sdk.getOrCreateTrustchain).toHaveBeenCalled());
+    await waitFor(() => expect(Mocks.sdk.activate).toHaveBeenCalled());
 
     expect(result.current.error).toBeNull();
-    expect(Mocks.setTrustchain).not.toHaveBeenCalledWith(trustchain);
+    expect(mockDispatch).not.toHaveBeenCalledWith(treeCommitted);
     expect(Mocks.setFlow).toHaveBeenCalledWith({
       flow: Flow.Synchronize,
       step: Step.AlreadySecuredSameSeed,
@@ -117,19 +128,17 @@ describe("useAddMember", () => {
   });
 
   it("should handle trustchain initialized with other seed", async () => {
-    Mocks.sdk.getOrCreateTrustchain.mockRejectedValue(
-      new TrustchainAlreadyInitializedWithOtherSeed(),
-    );
+    Mocks.sdk.activate.mockRejectedValue(keyRingError("TrustchainAlreadyInitializedWithOtherSeed"));
     const { result } = renderHook(() => useAddMember({ device }), {
       initialState: {
         settings: INITIAL_STATE,
       },
     });
 
-    await waitFor(() => expect(Mocks.sdk.getOrCreateTrustchain).toHaveBeenCalled());
+    await waitFor(() => expect(Mocks.sdk.activate).toHaveBeenCalled());
 
     expect(result.current.error).toBeNull();
-    expect(Mocks.setTrustchain).not.toHaveBeenCalledWith(trustchain);
+    expect(mockDispatch).not.toHaveBeenCalledWith(treeCommitted);
     expect(Mocks.setFlow).toHaveBeenCalledWith({
       flow: Flow.Synchronize,
       step: Step.AlreadySecuredOtherSeed,
@@ -137,45 +146,25 @@ describe("useAddMember", () => {
     expect(Mocks.track).not.toHaveBeenCalled();
   });
 
-  it("should handle missing member credentials", async () => {
-    Mocks.memberCredentialsSelector.mockReturnValue(null);
-    const { result } = renderHook(() => useAddMember({ device }), {
-      initialState: {
-        settings: INITIAL_STATE,
-      },
-    });
-
-    await waitFor(() => expect(result.current.error).toBeInstanceOf(Error)); // Wait for the setError
-
-    expect(Mocks.sdk.getOrCreateTrustchain).not.toHaveBeenCalled();
-    expect(Mocks.setTrustchain).not.toHaveBeenCalledWith(trustchain);
-    expect(Mocks.setFlow).not.toHaveBeenCalled();
-    expect(Mocks.track).not.toHaveBeenCalled();
-  });
-
   it("should handle other sdk errors", async () => {
-    Mocks.sdk.getOrCreateTrustchain.mockRejectedValue(new Error("Random error"));
+    Mocks.sdk.activate.mockRejectedValue(new Error("Random error"));
     const { result } = renderHook(() => useAddMember({ device }), {
       initialState: {
         settings: INITIAL_STATE,
       },
     });
 
-    await waitFor(() => expect(Mocks.sdk.getOrCreateTrustchain).toHaveBeenCalled());
+    await waitFor(() => expect(Mocks.sdk.activate).toHaveBeenCalled());
     await waitFor(() => expect(result.current.error).toBeInstanceOf(Error)); // Wait for the setError
 
     expect(result.current.error?.message).toBe("Random error");
-    expect(Mocks.setTrustchain).not.toHaveBeenCalled();
+    expect(mockDispatch).not.toHaveBeenCalledWith(treeCommitted);
     expect(Mocks.setFlow).not.toHaveBeenCalled();
     expect(Mocks.track).not.toHaveBeenCalled();
   });
 
   beforeEach(() => {
     jest.clearAllMocks();
-    Mocks.memberCredentialsSelector.mockReturnValue({
-      pubkey: "pubkey",
-      privatekey: "privatekey",
-    });
   });
 });
 
@@ -189,13 +178,6 @@ jest.mock("LLD/hooks/redux", () => {
   };
 });
 
-jest.mock("@ledgerhq/ledger-key-ring-protocol/store", () => ({
-  ...jest.requireActual("@ledgerhq/ledger-key-ring-protocol/store"),
-  memberCredentialsSelector: () => Mocks.memberCredentialsSelector(),
-  trustchainSelector: () => null,
-  setTrustchain: (trustchain: unknown) => Mocks.setTrustchain(trustchain),
-}));
-
 jest.mock("~/renderer/actions/walletSync", () => ({
   setFlow: (flow: unknown) => Mocks.setFlow(flow),
 }));
@@ -205,6 +187,6 @@ jest.mock("@shared/analytics", () => ({
   track: (event: string, props?: Record<string, unknown>) => Mocks.track(event, props),
 }));
 
-jest.mock("../hooks/useTrustchainSdk", () => ({
-  useTrustchainSdk: () => Mocks.sdk,
+jest.mock("../hooks/useKeyRingClient", () => ({
+  useKeyRingClient: () => Mocks.sdk,
 }));

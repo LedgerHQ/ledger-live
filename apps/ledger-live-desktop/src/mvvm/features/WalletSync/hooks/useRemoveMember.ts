@@ -1,31 +1,34 @@
 import {
-  memberCredentialsSelector,
-  setTrustchain,
-  trustchainSelector,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
+  commitKeyRingTree,
+  isKeyRingError,
+  selectKeyRingSession,
+  type KeyRingMember,
+  type KeyRingTreeUpdate,
+} from "@features/platform-key-ring";
+import { selectIsKeyRingMember, selectHasKeyRingMemberKey } from "@domain/entity-key-ring";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { useTrustchainSdk } from "./useTrustchainSdk";
-import { TrustchainMember, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type Props = {
   device: Device | null;
-  member: TrustchainMember | null;
+  member: KeyRingMember | null;
 };
 
 export function useRemoveMember({ device, member }: Props) {
   const dispatch = useDispatch();
-  const sdk = useTrustchainSdk();
-  const trustchain = useSelector(trustchainSelector);
-  const memberCredentials = useSelector(memberCredentialsSelector);
+  const sdk = useKeyRingClient();
+  const session = useSelector(selectKeyRingSession);
+  const isMember = useSelector(selectIsKeyRingMember);
+  const hasMemberKey = useSelector(selectHasKeyRingMemberKey);
   const [error, setError] = useState<Error | null>(null);
 
   const sdkRef = useRef(sdk);
   const deviceRef = useRef(device);
-  const memberCredentialsRef = useRef(memberCredentials);
-  const trustchainRef = useRef(trustchain);
+  const sessionRef = useRef(session);
+  const isActiveMemberRef = useRef(isMember && hasMemberKey);
 
   const [userDeviceInteraction, setUserDeviceInteraction] = useState(false);
 
@@ -40,37 +43,35 @@ export function useRemoveMember({ device, member }: Props) {
   );
 
   const transitionToNextScreen = useCallback(
-    (trustchainResult: Trustchain) => {
-      dispatch(setTrustchain(trustchainResult));
+    (trustchainResult: KeyRingTreeUpdate) => {
+      dispatch(commitKeyRingTree(trustchainResult));
       dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
     },
     [dispatch],
   );
 
   const removeMember = useCallback(
-    async (member: TrustchainMember) => {
+    async (member: KeyRingMember) => {
       try {
         if (!deviceRef.current) {
           throw new Error("Device not found");
         }
-        if (!trustchainRef.current || !memberCredentialsRef.current) {
+        if (!isActiveMemberRef.current) {
           throw new Error("trustchain or memberCredentials is not set");
         }
-        const newTrustchain = await sdkRef.current.removeMember(
-          deviceRef.current.deviceId,
-          trustchainRef.current,
-          memberCredentialsRef.current,
+        const newTrustchain = await sdkRef.current.removeMember(sessionRef.current, {
+          legacyDeviceId: deviceRef.current.deviceId,
           member,
-          {
+          callbacks: {
             onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
             onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
           },
-        );
+        });
 
         transitionToNextScreen(newTrustchain);
       } catch (error) {
         if (error instanceof Error) setError(error);
-        if ((error as { name?: string })?.name === "TrustchainNotAllowed") {
+        if (isKeyRingError(error, "not-allowed")) {
           dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.UnsecuredLedger }));
         }
       }

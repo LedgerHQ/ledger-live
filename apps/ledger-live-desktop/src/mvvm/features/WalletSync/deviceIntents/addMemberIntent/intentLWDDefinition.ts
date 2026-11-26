@@ -1,7 +1,7 @@
 import {
   addMemberIntentDefinition,
   type AddMemberIntentPlatformDefinition,
-} from "@features/platform-intent-wallet-sync";
+} from "@features/platform-key-ring";
 import { AddMemberComponentLWD } from "./componentLWD";
 
 export const addMemberIntentLWDDefinition: AddMemberIntentPlatformDefinition = {

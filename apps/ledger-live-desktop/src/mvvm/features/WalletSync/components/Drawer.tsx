@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import type { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type { KeyRingMember } from "@features/platform-key-ring";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { walletSyncDrawerVisibilitySelector } from "~/renderer/reducers/walletSync";
@@ -44,7 +44,7 @@ const WalletSyncDrawer: React.FC<WalletSyncDrawerProps> = ({ currentPage, onClos
   const isOpen = useSelector(walletSyncDrawerVisibilitySelector);
   const deviceStep = useLedgerSyncDeviceStep(isOpen);
   const currentStep = deviceStep.step;
-  const [selectedInstance, setSelectedInstance] = useState<TrustchainMember | null>(null);
+  const [selectedInstance, setSelectedInstance] = useState<KeyRingMember | null>(null);
   const hasBack = useMemo(() => STEPS_WITH_BACK.includes(currentStep), [currentStep]);
   const hasFlowEvent = useMemo(() => !StepsOutsideFlow.includes(currentStep), [currentStep]);
 

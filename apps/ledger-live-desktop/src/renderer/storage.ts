@@ -15,7 +15,7 @@ import { CounterValuesStatus, RateMapRaw } from "@domain/entity-market-counterva
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { settingsStoreSelector } from "./reducers/settings";
 import logger from "./logger";
-import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import type { KeyRingPersistedState } from "@features/platform-key-ring/persistence";
 import { marketStoreSelector } from "./reducers/market";
 import { marketBannerStoreSelector } from "./reducers/marketBanner";
 import { knownDevicesStoreSelector } from "./reducers/knownDevices";
@@ -56,8 +56,6 @@ export type PayCard = PayCardFeatureTourState &
   PayCardLoginIntroState &
   PayCardOnboardingWidgetPersistedState;
 
-export type TrustchainStore = ReturnType<typeof trustchainStoreSelector>;
-
 // The types seen from the user side.
 type DatabaseValues = {
   accounts: Account[];
@@ -65,7 +63,7 @@ type DatabaseValues = {
   countervalues: Countervalues;
   postOnboarding: PostOnboarding;
   settings: Settings;
-  trustchain: TrustchainStore;
+  trustchain: KeyRingPersistedState;
   wallet: ExportedWalletState;
   market: Market;
   marketBanner: MarketBanner;

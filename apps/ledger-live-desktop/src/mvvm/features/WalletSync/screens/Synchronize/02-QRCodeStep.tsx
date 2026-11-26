@@ -6,6 +6,7 @@ import { rgba } from "~/renderer/styles/helpers";
 import QRCode from "~/renderer/components/QRCode";
 import { useQRCode } from "../../hooks/useQRCode";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import { ledgerSyncErrorForDisplay } from "../../ledgerSyncErrorForDisplay";
 import { TrackScreen } from "@shared/analytics-react";
 import {
   AnalyticsFlow,
@@ -82,7 +83,9 @@ export default function SynchWithQRCodeStep({ sourcePage }: { sourcePage?: Analy
   }
 
   if (error) {
-    return <ErrorDisplay error={error} onRetry={startQRCodeProcessing} />;
+    return (
+      <ErrorDisplay error={ledgerSyncErrorForDisplay(error)} onRetry={startQRCodeProcessing} />
+    );
   }
 
   return (

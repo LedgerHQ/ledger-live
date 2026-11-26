@@ -2,7 +2,7 @@ import React from "react";
 import { renderHook } from "@testing-library/react";
 import { render, screen } from "tests/testSetup";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
-import type { LedgerSyncJobState } from "@features/platform-intent-wallet-sync";
+import type { LedgerSyncJobState } from "@features/platform-key-ring";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { LedgerSyncJobStateLWD } from "./LedgerSyncJobStateLWD";
 

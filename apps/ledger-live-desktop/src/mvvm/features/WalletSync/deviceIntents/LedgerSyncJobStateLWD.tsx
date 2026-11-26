@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
-import type { LedgerSyncJobState } from "@features/platform-intent-wallet-sync";
+import type { LedgerSyncJobState } from "@features/platform-key-ring";
 import { InfoState } from "@shared/ui-info-state";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { ContinueOnDevice } from "LLD/components/DeviceIntentExecutor/components/DeviceGenericStates/ContinueOnDevice";

@@ -1,36 +1,50 @@
-import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type { KeyRingMember } from "@features/platform-key-ring";
 import { ChangeFlowPayload } from "../reducers/walletSync";
 
-export const setFlow = (payload: ChangeFlowPayload) => ({
-  type: "WALLET_SYNC_CHANGE_FLOW",
-  payload,
-});
+export function setFlow(payload: ChangeFlowPayload) {
+  return {
+    type: "WALLET_SYNC_CHANGE_FLOW",
+    payload,
+  };
+}
 
-export const setDrawerVisibility = (payload: boolean) => ({
-  type: "WALLET_SYNC_CHANGE_DRAWER_VISIBILITY",
-  payload,
-});
+export function setDrawerVisibility(payload: boolean) {
+  return {
+    type: "WALLET_SYNC_CHANGE_DRAWER_VISIBILITY",
+    payload,
+  };
+}
 
-export const setFaked = (payload: boolean) => ({
-  type: "WALLET_SYNC_FAKED",
-  payload,
-});
+export function setFaked(payload: boolean) {
+  return {
+    type: "WALLET_SYNC_FAKED",
+    payload,
+  };
+}
 
-export const addInstance = (payload: TrustchainMember) => ({
-  type: "WALLET_SYNC_CHANGE_ADD_INSTANCE",
-  payload,
-});
+export function addInstance(payload: KeyRingMember) {
+  return {
+    type: "WALLET_SYNC_CHANGE_ADD_INSTANCE",
+    payload,
+  };
+}
 
-export const resetWalletSync = () => ({
-  type: "WALLET_SYNC_RESET",
-});
+export function resetWalletSync() {
+  return {
+    type: "WALLET_SYNC_RESET",
+  };
+}
 
-export const setQrCodeUrl = (payload: string | null) => ({
-  type: "WALLET_SYNC_CHANGE_QRCODE_URL",
-  payload,
-});
+export function setQrCodeUrl(payload: string | null) {
+  return {
+    type: "WALLET_SYNC_CHANGE_QRCODE_URL",
+    payload,
+  };
+}
 
-export const setQrCodePinCode = (payload: string | null) => ({
-  type: "WALLET_SYNC_CHANGE_QRCODE_PINCODE",
-  payload,
-});
+export function setQrCodePinCode(payload: string | null) {
+  return {
+    type: "WALLET_SYNC_CHANGE_QRCODE_PINCODE",
+    payload,
+  };
+}

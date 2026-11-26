@@ -1,24 +1,20 @@
 import { useCallback, useEffect, useRef } from "react";
 import { createIntent } from "@features/platform-device-intent";
+import { selectHasKeyRingMemberKey, selectIsKeyRingMember } from "@domain/entity-key-ring";
 import {
   acceptLedgerSyncResult,
+  commitKeyRingTree,
+  selectKeyRingSession,
+  type KeyRingMember,
+  type KeyRingSession,
+  type KeyRingTreeUpdate,
   type RemoveMemberIntent,
   type RemoveMemberJobState,
-} from "@features/platform-intent-wallet-sync";
-import {
-  memberCredentialsSelector,
-  setTrustchain,
-  trustchainSelector,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
-import type {
-  MemberCredentials,
-  Trustchain,
-  TrustchainMember,
-} from "@ledgerhq/ledger-key-ring-protocol/types";
+} from "@features/platform-key-ring";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { useCreateSessionSdk } from "../useCreateSessionSdk";
+import { useKeyRingClient } from "../../hooks/useKeyRingClient";
 import { ledgerSyncResultOrder } from "../ledgerSyncResultOrder";
 import { removeMemberIntentLWDDefinition } from "./intentLWDDefinition";
 
@@ -27,13 +23,14 @@ import { removeMemberIntentLWDDefinition } from "./intentLWDDefinition";
  * legacy `DeleteInstanceWithTrustChain` step does.
  */
 export function useRemoveMemberIntentStep(
-  member: TrustchainMember | null,
+  member: KeyRingMember | null,
   onError: (error: Error) => void,
 ) {
   const dispatch = useDispatch();
-  const createSessionSdk = useCreateSessionSdk();
-  const memberCredentials = useSelector(memberCredentialsSelector);
-  const trustchain = useSelector(trustchainSelector);
+  const client = useKeyRingClient();
+  const hasMemberKey = useSelector(selectHasKeyRingMemberKey);
+  const isMember = useSelector(selectIsKeyRingMember);
+  const session = useSelector(selectKeyRingSession);
   const isStoredRef = useRef(false);
 
   const onUserCancel = useCallback(
@@ -46,8 +43,8 @@ export function useRemoveMemberIntentStep(
   }, [member, onUserCancel]);
 
   const onResult = useCallback(
-    (newTrustchain: Trustchain, runCredentials: MemberCredentials) => {
-      if (!dispatch(acceptLedgerSyncResult(setTrustchain(newTrustchain), runCredentials))) return;
+    (newTrustchain: KeyRingTreeUpdate, runSession: KeyRingSession) => {
+      if (!dispatch(acceptLedgerSyncResult(commitKeyRingTree(newTrustchain), runSession))) return;
       isStoredRef.current = true;
     },
     [dispatch],
@@ -68,19 +65,18 @@ export function useRemoveMemberIntentStep(
   );
 
   const createRunIntent =
-    member && trustchain && memberCredentials
+    member && isMember && hasMemberKey
       ? (): RemoveMemberIntent =>
           createIntent(
             removeMemberIntentLWDDefinition,
             {
-              trustchain,
-              memberCredentials,
+              session,
               member,
-              createSessionSdk,
+              client,
               resultOrder: ledgerSyncResultOrder,
             },
             {
-              onResult: newTrustchain => onResult(newTrustchain, memberCredentials),
+              onResult: newTrustchain => onResult(newTrustchain, session),
               onJobStateChanged,
             },
           )

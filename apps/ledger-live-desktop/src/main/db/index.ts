@@ -7,7 +7,7 @@ import pick from "lodash/pick";
 import fs from "fs/promises";
 import { getEnv } from "@shared/env";
 import { NoDBPathGiven, DBWrongPassword } from "../../errors";
-import { INITIAL_STATE as trustchainInitialState } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { keyRingPersistedInitialState } from "@features/platform-key-ring/persistence";
 import {
   exportWalletState,
   initialState as walletInitialState,
@@ -250,7 +250,7 @@ type EncryptedAppKeyPath = (typeof encryptedDataPaths)[number][1];
 // Empty payloads encrypted when password lock is enabled before any account exists.
 const ENCRYPTION_PATH_DEFAULTS: Record<EncryptedAppKeyPath, unknown> = {
   accounts: [],
-  trustchain: trustchainInitialState,
+  trustchain: keyRingPersistedInitialState,
   wallet: exportWalletState({ wallet: walletInitialState, contacts: contactsInitialState }),
 };
 

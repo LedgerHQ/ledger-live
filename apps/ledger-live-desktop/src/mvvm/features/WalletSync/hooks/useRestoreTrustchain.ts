@@ -1,28 +1,18 @@
-import {
-  memberCredentialsSelector,
-  trustchainSelector,
-  setTrustchain,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
-import { Trustchain, MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { commitKeyRingTree, selectKeyRingSession } from "@features/platform-key-ring";
 import { useQuery } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { QueryKey } from "./type.hooks";
-import { useTrustchainSdk } from "./useTrustchainSdk";
+import { useKeyRingClient } from "./useKeyRingClient";
 
 export const useRestoreTrustchain = () => {
   const dispatch = useDispatch();
-  const sdk = useTrustchainSdk();
-  const memberCredentials = useSelector(memberCredentialsSelector);
-
-  const trustchain = useSelector(trustchainSelector);
+  const sdk = useKeyRingClient();
+  const session = useSelector(selectKeyRingSession);
 
   async function restoreTrustchain() {
-    const newTrustchain = await sdk.restoreTrustchain(
-      trustchain as Trustchain,
-      memberCredentials as MemberCredentials,
-    );
+    const newTrustchain = await sdk.restore(session);
 
-    dispatch(setTrustchain(newTrustchain));
+    dispatch(commitKeyRingTree(newTrustchain));
 
     return newTrustchain;
   }

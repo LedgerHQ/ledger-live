@@ -1,17 +1,16 @@
 import { useCallback, useRef } from "react";
 import { createIntent, type ExecutorState } from "@features/platform-device-intent";
+import { selectHasKeyRingMemberKey } from "@domain/entity-key-ring";
 import {
   acceptLedgerSyncResult,
+  commitKeyRingTree,
+  selectKeyRingSession,
   type AddMemberIntent,
   type AddMemberIntentInput,
   type AddMemberJobState,
-} from "@features/platform-intent-wallet-sync";
-import {
-  memberCredentialsSelector,
-  setTrustchain,
-  trustchainSelector,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
-import type { MemberCredentials, TrustchainResult } from "@ledgerhq/ledger-key-ring-protocol/types";
+  type KeyRingActivation,
+  type KeyRingSession,
+} from "@features/platform-key-ring";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
@@ -22,7 +21,7 @@ import {
   useLeaveDeviceStepOnTrustchainJoined,
 } from "../../hooks/useOnTrustchainJoined";
 import { toLegacyDevice } from "../toLegacyDevice";
-import { useCreateSessionSdk } from "../useCreateSessionSdk";
+import { useKeyRingClient } from "../../hooks/useKeyRingClient";
 import { ledgerSyncResultOrder } from "../ledgerSyncResultOrder";
 import { addMemberIntentLWDDefinition } from "./intentLWDDefinition";
 
@@ -32,17 +31,17 @@ import { addMemberIntentLWDDefinition } from "./intentLWDDefinition";
  */
 export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (error: Error) => void) {
   const dispatch = useDispatch();
-  const createSessionSdk = useCreateSessionSdk();
-  const memberCredentials = useSelector(memberCredentialsSelector);
-  const trustchain = useSelector(trustchainSelector);
+  const client = useKeyRingClient();
+  const hasMemberKey = useSelector(selectHasKeyRingMemberKey);
+  const session = useSelector(selectKeyRingSession);
   const leaveDeviceStep = useLeaveDeviceStepOnTrustchainJoined(sourcePage);
   const deviceRef = useRef<Device | null>(null);
-  const resultRef = useRef<TrustchainResult | null>(null);
+  const resultRef = useRef<KeyRingActivation | null>(null);
 
   const onResult = useCallback(
-    (result: TrustchainResult, runCredentials: MemberCredentials) => {
+    (result: KeyRingActivation, runSession: KeyRingSession) => {
       const isAccepted = dispatch(
-        acceptLedgerSyncResult(setTrustchain(result.trustchain), runCredentials),
+        acceptLedgerSyncResult(commitKeyRingTree(result.tree), runSession),
       );
       if (!isAccepted) return;
       // A disconnected run and its Retry can both deliver: one activation, one event.
@@ -77,17 +76,16 @@ export function useAddMemberIntentStep(sourcePage: AnalyticsPage, onError: (erro
     [dispatch, onError, leaveDeviceStep],
   );
 
-  const createRunIntent = memberCredentials
+  const createRunIntent = hasMemberKey
     ? (): AddMemberIntent =>
-        createIntent<AddMemberJobState, AddMemberIntentInput, undefined, TrustchainResult>(
+        createIntent<AddMemberJobState, AddMemberIntentInput, undefined, KeyRingActivation>(
           addMemberIntentLWDDefinition,
           {
-            memberCredentials,
-            currentTrustchain: trustchain ?? undefined,
-            createSessionSdk,
+            session,
+            client,
             resultOrder: ledgerSyncResultOrder,
           },
-          { onResult: result => onResult(result, memberCredentials), onJobStateChanged },
+          { onResult: result => onResult(result, session), onJobStateChanged },
         )
     : null;
 

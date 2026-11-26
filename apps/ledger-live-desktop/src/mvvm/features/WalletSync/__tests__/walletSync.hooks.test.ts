@@ -1,19 +1,18 @@
 import { renderHook } from "tests/testSetup";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useLifeCycle } from "../hooks/walletSync.hooks";
-import {
-  TrustchainEjected,
-  TrustchainNotAllowed,
-  TrustchainOutdated,
-} from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { ErrorType } from "../hooks/type.hooks";
+
+function keyRingError(name: string): Error {
+  return Object.assign(new Error(name), { name });
+}
 
 const Mocks = {
   dispatch: jest.fn(),
-  resetTrustchainStore: jest.fn(),
+  resetKeyRingState: jest.fn(),
   setFlow: jest.fn(),
   track: jest.fn(),
-  invalidateJwt: jest.fn(),
+  invalidateAuth: jest.fn(),
   refetch: jest.fn(),
 };
 
@@ -22,9 +21,9 @@ jest.mock("LLD/hooks/redux", () => ({
   useDispatch: () => Mocks.dispatch,
 }));
 
-jest.mock("@ledgerhq/ledger-key-ring-protocol/store", () => ({
-  ...jest.requireActual("@ledgerhq/ledger-key-ring-protocol/store"),
-  resetTrustchainStore: () => Mocks.resetTrustchainStore(),
+jest.mock("@features/platform-key-ring", () => ({
+  ...jest.requireActual("@features/platform-key-ring"),
+  resetKeyRingState: () => Mocks.resetKeyRingState(),
 }));
 
 jest.mock("~/renderer/actions/walletSync", () => ({
@@ -36,8 +35,8 @@ jest.mock("@shared/analytics", () => ({
   track: (event: string) => Mocks.track(event),
 }));
 
-jest.mock("../hooks/useTrustchainSdk", () => ({
-  useTrustchainSdk: () => ({ invalidateJwt: Mocks.invalidateJwt }),
+jest.mock("../hooks/useKeyRingClient", () => ({
+  useKeyRingClient: () => ({ invalidateAuth: Mocks.invalidateAuth }),
 }));
 
 jest.mock("../hooks/useRestoreTrustchain", () => ({
@@ -61,9 +60,9 @@ describe("useLifeCycle", () => {
 
   it("should reset and track on TrustchainEjected", () => {
     const { result } = renderHook(() => useLifeCycle());
-    result.current.handleError(new TrustchainEjected());
+    result.current.handleError(keyRingError("TrustchainEjected"));
 
-    expect(Mocks.resetTrustchainStore).toHaveBeenCalled();
+    expect(Mocks.resetKeyRingState).toHaveBeenCalled();
     expect(Mocks.track).toHaveBeenCalledWith("ledgersync_deactivated");
     expect(Mocks.dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -71,14 +70,14 @@ describe("useLifeCycle", () => {
         payload: { flow: Flow.Activation, step: Step.CreateOrSynchronize },
       }),
     );
-    expect(Mocks.invalidateJwt).toHaveBeenCalled();
+    expect(Mocks.invalidateAuth).toHaveBeenCalled();
   });
 
   it("should reset and track on TrustchainNotAllowed", () => {
     const { result } = renderHook(() => useLifeCycle());
-    result.current.handleError(new TrustchainNotAllowed());
+    result.current.handleError(keyRingError("TrustchainNotAllowed"));
 
-    expect(Mocks.resetTrustchainStore).toHaveBeenCalled();
+    expect(Mocks.resetKeyRingState).toHaveBeenCalled();
     expect(Mocks.track).toHaveBeenCalledWith("ledgersync_deactivated");
     expect(Mocks.dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -90,17 +89,17 @@ describe("useLifeCycle", () => {
 
   it("should call restoreTrustchain refetch on TrustchainOutdated", () => {
     const { result } = renderHook(() => useLifeCycle());
-    result.current.handleError(new TrustchainOutdated());
+    result.current.handleError(keyRingError("TrustchainOutdated"));
 
     expect(Mocks.refetch).toHaveBeenCalled();
-    expect(Mocks.resetTrustchainStore).not.toHaveBeenCalled();
+    expect(Mocks.resetKeyRingState).not.toHaveBeenCalled();
   });
 
   it("should reset when error message includes NO_TRUSTCHAIN", () => {
     const { result } = renderHook(() => useLifeCycle());
     result.current.handleError(new Error(ErrorType.NO_TRUSTCHAIN));
 
-    expect(Mocks.resetTrustchainStore).toHaveBeenCalled();
+    expect(Mocks.resetKeyRingState).toHaveBeenCalled();
     expect(Mocks.track).toHaveBeenCalledWith("ledgersync_deactivated");
     expect(Mocks.dispatch).toHaveBeenCalledWith(
       expect.objectContaining({

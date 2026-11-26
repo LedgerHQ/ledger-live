@@ -1,5 +1,6 @@
 import React, { createContext, useContext } from "react";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import { ledgerSyncErrorForDisplay } from "../ledgerSyncErrorForDisplay";
 
 type LedgerSyncDeviceStepErrorValue = Readonly<{
   error: Error | null;
@@ -25,5 +26,5 @@ function useLedgerSyncDeviceStepError(): LedgerSyncDeviceStepErrorValue {
 export function LedgerSyncDeviceStepError() {
   const { error, onRetry } = useLedgerSyncDeviceStepError();
   if (!error) return null;
-  return <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />;
+  return <ErrorDisplay error={ledgerSyncErrorForDisplay(error)} withExportLogs onRetry={onRetry} />;
 }

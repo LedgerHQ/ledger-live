@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
-import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
+import { getKeyRingDeviceInitialization } from "@features/platform-key-ring";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -14,7 +14,7 @@ type Props = {
 
 export default function OpenOrInstallTrustChainApp({ goNext }: Props) {
   const action = useConnectAppAction();
-  const request = { appName: TRUSTCHAIN_APP_NAME };
+  const request = getKeyRingDeviceInitialization().appRequest;
 
   useEffect(() => {
     setOriginFlow(HOOKS_TRACKING_LOCATIONS.ledgerSync);

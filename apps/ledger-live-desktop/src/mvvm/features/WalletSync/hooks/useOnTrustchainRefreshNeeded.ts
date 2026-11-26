@@ -1,34 +1,37 @@
 import { useCallback } from "react";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector, useStore } from "LLD/hooks/redux";
+import { selectHasKeyRingMemberKey, selectKeyRingTreeId } from "@domain/entity-key-ring";
 import {
-  MemberCredentials,
-  Trustchain,
-  TrustchainSDK,
-} from "@ledgerhq/ledger-key-ring-protocol/types";
-import { setTrustchain, resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+  commitKeyRingTree,
+  isKeyRingError,
+  resetKeyRingState,
+  type KeyRingClient,
+  type KeyRingSession,
+} from "@features/platform-key-ring";
 import { log } from "@ledgerhq/logs";
 import { track } from "@shared/analytics";
 
 export function useOnTrustchainRefreshNeeded(
-  trustchainSdk: TrustchainSDK,
-  memberCredentials: MemberCredentials | null,
-): (trustchain: Trustchain) => Promise<void> {
+  client: KeyRingClient,
+): (session: KeyRingSession) => Promise<void> {
   const dispatch = useDispatch();
+  const store = useStore();
+  const hasMemberKey = useSelector(selectHasKeyRingMemberKey);
   const onTrustchainRefreshNeeded = useCallback(
-    async (trustchain: Trustchain) => {
+    async (session: KeyRingSession) => {
       try {
-        if (!memberCredentials) return;
-        log("walletsync", "onTrustchainRefreshNeeded " + trustchain.rootId);
-        const newTrustchain = await trustchainSdk.restoreTrustchain(trustchain, memberCredentials);
-        dispatch(setTrustchain(newTrustchain));
+        if (!hasMemberKey) return;
+        log("walletsync", "onTrustchainRefreshNeeded " + selectKeyRingTreeId(store.getState()));
+        const newTrustchain = await client.restore(session);
+        dispatch(commitKeyRingTree(newTrustchain));
       } catch (e) {
-        if ((e as { name?: string })?.name === "TrustchainEjected") {
-          dispatch(resetTrustchainStore());
+        if (isKeyRingError(e, "member-removed")) {
+          dispatch(resetKeyRingState());
           track("ledgersync_deactivated");
         }
       }
     },
-    [dispatch, trustchainSdk, memberCredentials],
+    [dispatch, client, hasMemberKey, store],
   );
   return onTrustchainRefreshNeeded;
 }

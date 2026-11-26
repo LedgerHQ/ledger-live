@@ -2,7 +2,7 @@ import { useCallback, useRef } from "react";
 import { useNavigate } from "react-router";
 import { track } from "@shared/analytics";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type { KeyRingActivation } from "@features/platform-key-ring";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setDrawerVisibility, setFlow } from "~/renderer/actions/walletSync";
 import { saveSettings, setLastOnboardedDevice } from "~/renderer/actions/settings";
@@ -28,7 +28,7 @@ export function useLeaveDeviceStepOnTrustchainJoined(sourcePage?: AnalyticsPage)
   const isOnboardingNewDeviceInitial = useRef(isOnboardingNewDevice);
 
   return useCallback(
-    (trustchainResult: TrustchainResult, device: Device | null) => {
+    (activation: KeyRingActivation, device: Device | null) => {
       if (sourcePage === AnalyticsPage.Onboarding) {
         if (!isOnboardingNewDeviceInitial.current) {
           dispatch(saveSettings({ hasCompletedOnboarding: true }));
@@ -42,10 +42,8 @@ export function useLeaveDeviceStepOnTrustchainJoined(sourcePage?: AnalyticsPage)
             flow: Flow.Activation,
             step: Step.ActivationLoading,
             nextStep:
-              trustchainResult.type === TrustchainResultType.created
-                ? Step.ActivationFinal
-                : Step.SynchronizationFinal,
-            hasTrustchainBeenCreated: trustchainResult.type === TrustchainResultType.created,
+              activation.outcome === "created" ? Step.ActivationFinal : Step.SynchronizationFinal,
+            hasTrustchainBeenCreated: activation.outcome === "created",
           }),
         );
       }
@@ -59,9 +57,9 @@ export function useOnTrustchainJoined(sourcePage?: AnalyticsPage) {
   const leaveDeviceStep = useLeaveDeviceStepOnTrustchainJoined(sourcePage);
 
   return useCallback(
-    (trustchainResult: TrustchainResult, device: Device | null) => {
+    (activation: KeyRingActivation, device: Device | null) => {
       trackLedgerSyncActivated();
-      leaveDeviceStep(trustchainResult, device);
+      leaveDeviceStep(activation, device);
     },
     [leaveDeviceStep],
   );

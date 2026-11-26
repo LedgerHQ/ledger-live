@@ -1,4 +1,4 @@
-import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { importPersistedKeyRingState } from "@features/platform-key-ring/store";
 import { getKey } from "~/renderer/storage";
 import { ThunkResult } from "./types";
 
@@ -7,5 +7,5 @@ export const fetchTrustchain =
     const data = await getKey("app", "trustchain");
     const dataIsEncrypted = typeof data === "string";
     if (dataIsEncrypted) return;
-    dispatch(importTrustchainStoreState(data));
+    dispatch(importPersistedKeyRingState(data));
   };

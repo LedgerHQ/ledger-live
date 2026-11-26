@@ -1,10 +1,10 @@
 import React from "react";
-import type { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type { KeyRingMember } from "@features/platform-key-ring";
 import { LedgerSyncIntentRun } from "../LedgerSyncIntentRun";
 import { useRemoveMemberIntentStep } from "./useRemoveMemberIntentStep";
 
 type RemoveMemberIntentStepProps = Readonly<{
-  member: TrustchainMember | null;
+  member: KeyRingMember | null;
   onError: (error: Error) => void;
 }>;
 

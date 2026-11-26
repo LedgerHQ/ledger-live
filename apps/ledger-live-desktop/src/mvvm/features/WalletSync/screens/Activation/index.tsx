@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Flex } from "@ledgerhq/react-ui";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { setFlow } from "~/renderer/actions/walletSync";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 
 import { FlowOptions, useFlows } from "../../hooks/useFlows";
 import CreateOrSynchronizeStep from "./01-CreateOrSynchronizeStep";
@@ -34,8 +34,7 @@ const WalletSyncActivation = forwardRef<BackRef, Props>(({ sourcePage }, ref) =>
 
   const { onClickTrack } = useLedgerSyncAnalytics();
   const lwdledgerSyncOptimisation = useFeature("lwdLedgerSyncOptimisation");
-  const trustchain = useSelector(trustchainSelector);
-  const isLedgerSyncActivated = Boolean(trustchain?.rootId);
+  const isLedgerSyncActivated = useSelector(selectIsLedgerSyncActive);
 
   useImperativeHandle(ref, () => ({
     goBack,

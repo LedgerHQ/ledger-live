@@ -1,6 +1,5 @@
 import React from "react";
 import { render, waitFor } from "tests/testSetup";
-import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import {
   buildDeviceInitializationInput,
   DeviceIntentExecutor,
@@ -27,7 +26,7 @@ describe("LedgerSyncDeviceIntentExecutorLWD", () => {
 
     await waitFor(() => expect(DeviceIntentExecutor).toHaveBeenCalled());
     expect(buildDeviceInitializationInput).toHaveBeenCalledWith({
-      appRequest: { appName: TRUSTCHAIN_APP_NAME },
+      appRequest: { appName: "Ledger Sync" },
     });
     expect(jest.mocked(DeviceIntentExecutor).mock.calls.at(-1)?.[0]).toMatchObject({
       enabled: true,

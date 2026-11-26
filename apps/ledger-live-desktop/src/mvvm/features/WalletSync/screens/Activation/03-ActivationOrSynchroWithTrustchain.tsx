@@ -3,6 +3,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import FollowStepsOnDevice from "../DeviceActions/FollowStepsOnDevice";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import { ledgerSyncErrorForDisplay } from "../../ledgerSyncErrorForDisplay";
 import { useAddMember } from "../../hooks/useAddMember";
 import { InfiniteLoader } from "@ledgerhq/react-ui";
 import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
@@ -16,7 +17,9 @@ export default function ActivationOrSynchroWithTrustchain({ device, sourcePage }
   const { error, userDeviceInteraction, onRetry } = useAddMember({ device, sourcePage });
 
   if (error) {
-    return <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />;
+    return (
+      <ErrorDisplay error={ledgerSyncErrorForDisplay(error)} withExportLogs onRetry={onRetry} />
+    );
   }
 
   if (userDeviceInteraction && device) {

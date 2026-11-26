@@ -1,5 +1,5 @@
 import React from "react";
-import type { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type { KeyRingMember } from "@features/platform-key-ring";
 import { Step } from "~/renderer/reducers/walletSync";
 import type { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
 import { useInitMemberCredentials } from "../hooks/useInitMemberCredentials";
@@ -9,7 +9,7 @@ import { RemoveMemberIntentStep } from "./removeMemberIntent/RemoveMemberIntentS
 type LedgerSyncDeviceStepProps = Readonly<{
   step: Step;
   sourcePage: AnalyticsPage;
-  member: TrustchainMember | null;
+  member: KeyRingMember | null;
   onError: (error: Error) => void;
 }>;
 

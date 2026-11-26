@@ -5,7 +5,7 @@ import { ContinueOnDevice, Flex } from "@ledgerhq/react-ui";
 import { useSelector } from "LLD/hooks/redux";
 import { SeedOriginType } from "@ledgerhq/types-live";
 import { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import { useFeature } from "@features/platform-feature-flags";
 
 import { useTheme } from "styled-components";
@@ -86,8 +86,7 @@ const useCompanionSteps = ({
   const { colors } = useTheme();
 
   const deviceToRestore = useSelector(lastSeenDeviceSelector);
-  const trustchain = useSelector(trustchainSelector);
-  const isLedgerSyncActive = Boolean(trustchain?.rootId);
+  const isLedgerSyncActive = useSelector(selectIsLedgerSyncActive);
   const initialIsLedgerSyncActive = useRef(isLedgerSyncActive);
   const nanoOnboardingEnableSyncFeature =
     useFeature("lldOnboardingEnableSync")?.params?.touchscreens;

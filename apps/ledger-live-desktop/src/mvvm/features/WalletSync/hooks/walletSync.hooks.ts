@@ -1,23 +1,24 @@
 import { track } from "@shared/analytics";
-import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { classifyKeyRingError, resetKeyRingState } from "@features/platform-key-ring";
 import { useDispatch } from "LLD/hooks/redux";
 import { ErrorType } from "./type.hooks";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useRestoreTrustchain } from "./useRestoreTrustchain";
-import { useTrustchainSdk } from "./useTrustchainSdk";
+import { useKeyRingClient } from "./useKeyRingClient";
+import { ledgerSyncErrorForDisplay } from "../ledgerSyncErrorForDisplay";
 
 export const useLifeCycle = () => {
   const dispatch = useDispatch();
-  const sdk = useTrustchainSdk();
+  const sdk = useKeyRingClient();
 
   const { refetch: restoreTrustchain } = useRestoreTrustchain();
 
   function reset() {
-    dispatch(resetTrustchainStore());
+    dispatch(resetKeyRingState());
     track("ledgersync_deactivated");
     dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
-    sdk.invalidateJwt();
+    sdk.invalidateAuth();
   }
 
   const includesErrorActions: { [key: string]: () => void } = {
@@ -25,12 +26,13 @@ export const useLifeCycle = () => {
   };
 
   function handleError(error: Error) {
-    console.error("GetMember :" + error);
+    console.error("GetMember :" + ledgerSyncErrorForDisplay(error));
 
-    if (error?.name === "TrustchainEjected") reset();
-    if (error?.name === "TrustchainNotAllowed") reset();
+    const category = classifyKeyRingError(error);
+    if (category === "member-removed") reset();
+    if (category === "not-allowed") reset();
 
-    if (error?.name === "TrustchainOutdated") restoreTrustchain();
+    if (category === "outdated") restoreTrustchain();
 
     const errorToHandle = Object.entries(includesErrorActions).find(([err, _action]) =>
       error.message.includes(err),

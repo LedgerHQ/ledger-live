@@ -1,30 +1,27 @@
-import {
-  memberCredentialsSelector,
-  trustchainSelector,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectHasKeyRingMemberKey, selectIsKeyRingMember } from "@domain/entity-key-ring";
+import { selectKeyRingSession } from "@features/platform-key-ring";
 import { useSelector } from "LLD/hooks/redux";
-import { useTrustchainSdk } from "./useTrustchainSdk";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { QueryKey } from "./type.hooks";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useLifeCycle } from "./walletSync.hooks";
-import { TrustchainNotFound } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
 export function useGetMembers() {
-  const sdk = useTrustchainSdk();
-  const trustchain = useSelector(trustchainSelector);
-  const memberCredentials = useSelector(memberCredentialsSelector);
+  const sdk = useKeyRingClient();
+  const session = useSelector(selectKeyRingSession);
+  const isMember = useSelector(selectIsKeyRingMember);
+  const hasMemberKey = useSelector(selectHasKeyRingMemberKey);
   const { handleError } = useLifeCycle();
+  // Changes with each key rotation, so the members list is fetched again after one.
+  const treeStreamRef = useMemo(() => sdk.openStream(session)?.ref ?? null, [sdk, session]);
 
   function fetchMembers() {
-    if (!memberCredentials) {
+    if (!hasMemberKey) {
       return;
     }
-    if (!trustchain) {
-      throw new TrustchainNotFound();
-    }
 
-    return sdk.getMembers(trustchain, memberCredentials);
+    return sdk.listMembers(session);
   }
 
   const {
@@ -33,13 +30,13 @@ export function useGetMembers() {
     isError: isErrorGetMembers,
     error: getMembersError,
   } = useQuery({
-    queryKey: [QueryKey.getMembers, trustchain],
+    queryKey: [QueryKey.getMembers, treeStreamRef],
     queryFn: () => fetchMembers(),
     refetchOnMount: true,
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
     retry: false,
-    enabled: !!trustchain && !!memberCredentials,
+    enabled: isMember && hasMemberKey,
   });
 
   useEffect(() => {

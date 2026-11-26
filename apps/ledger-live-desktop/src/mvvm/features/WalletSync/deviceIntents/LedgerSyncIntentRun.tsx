@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { ExecutorState, Intent } from "@features/platform-device-intent";
-import type { LedgerSyncJobState } from "@features/platform-intent-wallet-sync";
+import type { LedgerSyncJobState } from "@features/platform-key-ring";
 import { LedgerSyncDeviceIntentExecutorLWD } from "./LedgerSyncDeviceIntentExecutorLWD";
 
 type LedgerSyncIntentRunProps<Input, Result> = Readonly<{

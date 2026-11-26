@@ -1,5 +1,5 @@
 import React from "react";
-import type { AddMemberJobState } from "@features/platform-intent-wallet-sync";
+import type { AddMemberJobState } from "@features/platform-key-ring";
 import { LedgerSyncJobStateLWD } from "../LedgerSyncJobStateLWD";
 
 type AddMemberComponentLWDProps = Readonly<{

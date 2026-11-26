@@ -6,7 +6,7 @@ export function useContactsLedgerSyncStatus(): ContactsLedgerSyncStatus {
   const walletSyncFeature = useFeature("lldWalletSync");
   const {
     statusQuery: { isError, isLoading },
-    trustchain,
+    treeId,
   } = useLedgerSyncInfo();
 
   if (!walletSyncFeature?.enabled || isError) {
@@ -17,5 +17,5 @@ export function useContactsLedgerSyncStatus(): ContactsLedgerSyncStatus {
     return "checking";
   }
 
-  return trustchain?.rootId ? "ready" : "inactive";
+  return treeId ? "ready" : "inactive";
 }

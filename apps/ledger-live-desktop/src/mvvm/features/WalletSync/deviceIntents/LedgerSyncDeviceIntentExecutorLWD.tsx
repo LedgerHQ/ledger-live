@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import type {
   DeviceConnectionParams,
   ExecutorState,
   Intent,
 } from "@features/platform-device-intent";
-import type { LedgerSyncJobState } from "@features/platform-intent-wallet-sync";
+import {
+  getKeyRingDeviceInitialization,
+  type LedgerSyncJobState,
+} from "@features/platform-key-ring";
 import {
   buildDeviceInitializationInput,
   DeviceIntentExecutor,
@@ -35,7 +37,7 @@ export function LedgerSyncDeviceIntentExecutorLWD<Input, Result>({
 
   useEffect(() => {
     let cancelled = false;
-    buildDeviceInitializationInput({ appRequest: { appName: TRUSTCHAIN_APP_NAME } }).then(input => {
+    buildDeviceInitializationInput(getKeyRingDeviceInitialization()).then(input => {
       if (!cancelled) setInitializationInput(input);
     }, onUserCancel);
     return () => {

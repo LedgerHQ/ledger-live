@@ -1,18 +1,16 @@
 import { useCallback, useState } from "react";
-import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { selectHasKeyRingMemberKey, selectIsKeyRingMember } from "@domain/entity-key-ring";
+import {
+  classifyKeyRingError,
+  commitKeyRingTree,
+  KeyRingPairingClosedError,
+  selectKeyRingSession,
+  type KeyRingSession,
+} from "@features/platform-key-ring";
 import { useDispatch, useSelector, useStore } from "LLD/hooks/redux";
 import { setDrawerVisibility, setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
 import { Flow, Step, walletSyncStepSelector } from "~/renderer/reducers/walletSync";
-import {
-  trustchainSelector,
-  memberCredentialsSelector,
-  setTrustchain,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useTrustchainSdk } from "./useTrustchainSdk";
-import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { track } from "@shared/analytics";
 import { QueryKey } from "./type.hooks";
@@ -31,14 +29,11 @@ export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const trustchain = useSelector(trustchainSelector);
-  const memberCredentials = useSelector(memberCredentialsSelector);
+  const session = useSelector(selectKeyRingSession);
+  const isMember = useSelector(selectIsKeyRingMember);
+  const hasMemberKey = useSelector(selectHasKeyRingMemberKey);
   const store = useStore();
-  const sdk = useTrustchainSdk();
-  const featureWalletSync = useFeature("lldWalletSync");
-  const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
+  const sdk = useKeyRingClient();
   const [url, setUrl] = useState<string | null>(null);
   const memberName = useInstanceName();
 
@@ -47,9 +42,9 @@ export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
   }, [dispatch]);
 
   const { mutate, isPending, error } = useMutation({
-    mutationFn: (memberCredentials: MemberCredentials) =>
-      createQRCodeHostInstance({
-        trustchainApiBaseUrl,
+    mutationFn: (runSession: KeyRingSession) =>
+      sdk.hostPairing(runSession, {
+        memberName,
         onDisplayQRCode: url => {
           setUrl(url);
         },
@@ -57,46 +52,39 @@ export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
           dispatch(setQrCodePinCode(digits));
           dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCode }));
         },
-        addMember: async member => {
-          if (trustchain) {
-            await sdk.addMember(trustchain, memberCredentials, member);
-            return trustchain;
-          }
-          throw new NoTrustchainInitialized();
-        },
-        memberCredentials,
-        memberName,
-        initialTrustchainId: trustchain?.rootId,
       }),
 
     // Don't use retry here because it always uses a delay despite setting it to 0
     onError(e) {
-      if (e?.name === "QRCodeWSClosed") {
-        const { time } = e as unknown as { time: number };
-        if (time >= MIN_TIME_TO_REFRESH) startQRCodeProcessing();
-      }
-      if (e?.name === "InvalidDigitsError") {
-        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCodeError }));
-      }
-      if (e?.name === "QRCodeProtocolError") {
-        if (walletSyncStepSelector(store.getState()) === Step.SynchronizeWithQRCode) {
-          startQRCodeProcessing();
-        } else {
-          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
+      switch (classifyKeyRingError(e)) {
+        case "pairing-closed": {
+          const time = e instanceof KeyRingPairingClosedError ? e.elapsedMs : undefined;
+          if (time !== undefined && time >= MIN_TIME_TO_REFRESH) startQRCodeProcessing();
+          break;
         }
-      }
-      if (e?.name === "NoTrustchainInitialized") {
-        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.UnbackedError }));
-      }
-      if (e?.name === "TrustchainAlreadyInitialized") {
-        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
+        case "pairing-invalid-code":
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCodeError }));
+          break;
+        case "pairing-protocol":
+          if (walletSyncStepSelector(store.getState()) === Step.SynchronizeWithQRCode) {
+            startQRCodeProcessing();
+          } else {
+            dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
+          }
+          break;
+        case "no-tree-for-seed":
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.UnbackedError }));
+          break;
+        case "already-member":
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
+          break;
       }
     },
 
     onSuccess(newTrustchain) {
       if (newTrustchain) {
-        dispatch(setTrustchain(newTrustchain));
-        if (!trustchain) {
+        dispatch(commitKeyRingTree(newTrustchain));
+        if (!isMember) {
           track("ledgersync_activated", walletSyncEntryFlowProperties(AnalyticsFlow));
         }
       }
@@ -121,8 +109,8 @@ export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
   });
 
   const startQRCodeProcessing = useCallback(() => {
-    if (memberCredentials) mutate(memberCredentials);
-  }, [mutate, memberCredentials]);
+    if (hasMemberKey) mutate(session);
+  }, [mutate, hasMemberKey, session]);
 
   return {
     url,

@@ -8,7 +8,7 @@ import WalletSyncActivation from "./Activation";
 import WalletSyncManage from "./Manage";
 import { useInitMemberCredentials } from "../hooks/useInitMemberCredentials";
 import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
-import type { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type { KeyRingMember } from "@features/platform-key-ring";
 
 export interface BackRef {
   goBack: () => void;
@@ -19,8 +19,8 @@ export interface Props {
 }
 
 type RouterProps = Props & {
-  selectedInstance: TrustchainMember | null;
-  onSelectInstance: (instance: TrustchainMember) => void;
+  selectedInstance: KeyRingMember | null;
+  onSelectInstance: (instance: KeyRingMember) => void;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

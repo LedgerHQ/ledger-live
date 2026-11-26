@@ -1,10 +1,7 @@
-import { useTrustchainSdk } from "./useTrustchainSdk";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import {
-  trustchainSelector,
-  resetTrustchainStore,
-  memberCredentialsSelector,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectKeyRingTreeId } from "@domain/entity-key-ring";
+import { resetKeyRingState, selectKeyRingSession } from "@features/platform-key-ring";
 import { useMutation } from "@tanstack/react-query";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
@@ -15,23 +12,24 @@ import { track } from "@shared/analytics";
 
 export function useDestroyTrustchain() {
   const dispatch = useDispatch();
-  const sdk = useTrustchainSdk();
+  const sdk = useKeyRingClient();
   const cloudSyncSDK = useCloudSyncSDK();
-  const trustchain = useSelector(trustchainSelector);
-  const memberCredentials = useSelector(memberCredentialsSelector);
+  const session = useSelector(selectKeyRingSession);
+  const treeId = useSelector(selectKeyRingTreeId);
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      if (!trustchain || !memberCredentials) {
+      const stream = sdk.openStream(session);
+      if (!stream) {
         return;
       }
-      await cloudSyncSDK.destroy(trustchain, memberCredentials);
-      await sdk.destroyApplication(trustchain, memberCredentials);
+      await cloudSyncSDK.destroy(stream);
+      await sdk.destroy(session);
     },
-    mutationKey: [QueryKey.destroyTrustchain, trustchain],
+    mutationKey: [QueryKey.destroyTrustchain, treeId],
     onSuccess: () => {
       dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.BackupDeleted }));
-      dispatch(resetTrustchainStore());
+      dispatch(resetKeyRingState());
       track("ledgersync_deactivated");
       dispatch(walletSyncUpdate({ data: null, version: 0 }));
     },

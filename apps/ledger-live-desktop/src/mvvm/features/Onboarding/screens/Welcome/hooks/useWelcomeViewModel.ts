@@ -14,7 +14,7 @@ import { urls } from "~/config/urls";
 import { useAnalyticsOptInPrompt } from "LLD/features/AnalyticsOptInPrompt/hooks/useCommonLogic";
 import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsKeyRingMember } from "@domain/entity-key-ring";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export function useWelcomeViewModel() {
@@ -36,8 +36,8 @@ export function useWelcomeViewModel() {
   // Redux selectors
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
-  const trustchain = useSelector(trustchainSelector);
-  const shouldInitiallySelectDevice = useRef(hasCompletedOnboarding && !trustchain);
+  const isKeyRingMember = useSelector(selectIsKeyRingMember);
+  const shouldInitiallySelectDevice = useRef(hasCompletedOnboarding && !isKeyRingMember);
 
   // Navigation effect
   useEffect(() => {
