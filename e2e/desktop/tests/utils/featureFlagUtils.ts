@@ -52,6 +52,14 @@ export const FF_POST_ONBOARDING_MOCK_DESKTOP = {
   lldLedgerSyncEntryPoints: { enabled: false },
 } satisfies PartialFeatures;
 
+export const FF_ENTRY_POINTS_SERVICES_BORROW = {
+  entryPointsServices: { enabled: true, params: { services: ["borrow"] } },
+} satisfies PartialFeatures;
+
+export const FF_ENTRY_POINTS_SERVICES_DISABLED = {
+  entryPointsServices: { enabled: false },
+} satisfies PartialFeatures;
+
 export const FF_BORROW_DESKTOP = {
   ptxBorrowLiveApp: {
     enabled: true,
