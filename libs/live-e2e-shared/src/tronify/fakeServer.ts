@@ -97,27 +97,30 @@ export async function expectRentOrderedFromFake(
   );
 }
 
+type UsdtTransferOptions = {
+  fake: Pick<FakeTronify, "broadcasts">;
+  recipient: string | undefined;
+  amount: string;
+};
+
+type UsdtTransferWaitOptions = UsdtTransferOptions & { timeoutMs?: number };
+
 /** Waits for the app to broadcast a USDT `transfer(recipient, amount)`, which the fake answers and
  * never forwards. `amount` is in USDT, as the specs write it. */
 export async function expectUsdtTransferBroadcastToFake(
-  fake: Pick<FakeTronify, "broadcasts">,
-  recipient: string | undefined,
-  amount: string,
-  timeoutMs = 30_000,
+  options: UsdtTransferWaitOptions,
 ): Promise<void> {
+  const { fake, recipient, amount, timeoutMs = 30_000 } = options;
   await pollUntil(
-    () => hasUsdtTransferBroadcast(fake, recipient, amount),
+    () => hasUsdtTransferBroadcast({ fake, recipient, amount }),
     timeoutMs,
     `fake TronGrid got no broadcast of ${amount} USDT to ${recipient} in ${timeoutMs} ms`,
   );
 }
 
 /** Whether the app broadcast a USDT `transfer(recipient, amount)`. `amount` is in USDT. */
-export function hasUsdtTransferBroadcast(
-  fake: Pick<FakeTronify, "broadcasts">,
-  recipient: string | undefined,
-  amount: string,
-): boolean {
+export function hasUsdtTransferBroadcast(options: UsdtTransferOptions): boolean {
+  const { fake, recipient, amount } = options;
   if (!recipient) throw new Error("The transaction has no recipient address to look for");
   const toHex = base58ToHex(recipient);
   const baseUnits = parseUsdt(amount);

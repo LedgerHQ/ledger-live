@@ -42,7 +42,10 @@ export interface AccountNonces {
   pending: number;
 }
 
-export async function readAccountNonces(address: string, rpcUrl?: string): Promise<AccountNonces> {
+type AccountNoncesOptions = { address: string; rpcUrl?: string };
+
+export async function readAccountNonces(options: AccountNoncesOptions): Promise<AccountNonces> {
+  const { address, rpcUrl } = options;
   const provider = new JsonRpcProvider(resolveRpc(rpcUrl));
   try {
     const [latest, pending] = await Promise.all([
@@ -60,7 +63,7 @@ export async function waitForChainNonceSettled(options: BorrowSetupOptions = {})
 
   const address = await resolveBorrowAddress(options);
   const deadline = Date.now() + NONCE_SETTLE_TIMEOUT_MS;
-  let nonces = await readAccountNonces(address, options.rpcUrl);
+  let nonces = await readAccountNonces({ address, rpcUrl: options.rpcUrl });
 
   while (Date.now() < deadline) {
     if (nonces.latest === nonces.pending) {
@@ -68,7 +71,7 @@ export async function waitForChainNonceSettled(options: BorrowSetupOptions = {})
       return;
     }
     await new Promise(resolve => setTimeout(resolve, NONCE_SETTLE_POLL_MS));
-    nonces = await readAccountNonces(address, options.rpcUrl);
+    nonces = await readAccountNonces({ address, rpcUrl: options.rpcUrl });
   }
 
   throw new Error(

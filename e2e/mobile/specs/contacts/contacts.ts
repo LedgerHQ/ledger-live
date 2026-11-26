@@ -263,7 +263,7 @@ export function runRenameContactOnDeviceTest(options: TestMetaOptions) {
         apps,
       };
       session = await provisionMockServerSession([config]);
-      mockServer = new MockServerDevicePage(session.baseUrl, session.token);
+      mockServer = new MockServerDevicePage(session);
 
       const port = await launchApp({
         newInstance: true,
@@ -294,7 +294,7 @@ export function runRenameContactOnDeviceTest(options: TestMetaOptions) {
     afterAll(async () => {
       if (!session) return;
       try {
-        await disposeMockServerSession(session.baseUrl, session.token);
+        await disposeMockServerSession(session);
       } catch {
         // The session expires on its own. A failed dispose must not hide the spec result.
       }

@@ -115,14 +115,14 @@ export class SyncOnboardingPage extends AppPage {
 
   @step("Set the device up as new")
   async setUpAsNewDevice(mockServer: MockServerDevicePage) {
-    await mockServer.pinOnboardingStep(ONBOARDING_STEP.newDevice);
+    await mockServer.pinOnboardingStep({ step: ONBOARDING_STEP.newDevice });
     await this.continueToSetup();
     await this.expectNewSeedPath();
   }
 
   @step("Restore the device from a seed")
   async restoreFromSeed(mockServer: MockServerDevicePage) {
-    await mockServer.pinOnboardingStep(ONBOARDING_STEP.restoreSeed);
+    await mockServer.pinOnboardingStep({ step: ONBOARDING_STEP.restoreSeed });
     await this.continueToSetup();
     await this.expectRestoreSeedPath();
   }
@@ -133,13 +133,29 @@ export class SyncOnboardingPage extends AppPage {
    */
   @step("Back up the seed on a Ledger Recovery Key")
   async backUpOnRecoveryKey(mockServer: MockServerDevicePage) {
-    await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true, CHARON_STATUS.choice);
+    await mockServer.pinOnboardingStep({
+      step: ONBOARDING_STEP.ready,
+      onboarded: true,
+      charonStatus: CHARON_STATUS.choice,
+    });
     await this.expectRecoveryKeyBackupScreen();
-    await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true, CHARON_STATUS.running);
+    await mockServer.pinOnboardingStep({
+      step: ONBOARDING_STEP.ready,
+      onboarded: true,
+      charonStatus: CHARON_STATUS.running,
+    });
     await this.expectRecoveryKeyBackupScreen();
-    await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true, CHARON_STATUS.naming);
+    await mockServer.pinOnboardingStep({
+      step: ONBOARDING_STEP.ready,
+      onboarded: true,
+      charonStatus: CHARON_STATUS.naming,
+    });
     await this.expectRecoveryKeyBackupScreen();
-    await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true, CHARON_STATUS.ready);
+    await mockServer.pinOnboardingStep({
+      step: ONBOARDING_STEP.ready,
+      onboarded: true,
+      charonStatus: CHARON_STATUS.ready,
+    });
     await this.expectRecoveryKeyBackupComplete();
   }
 

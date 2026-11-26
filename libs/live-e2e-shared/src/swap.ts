@@ -98,12 +98,20 @@ async function findQuotableAmount(
   return amount;
 }
 
+type SwapPairOptions = {
+  accountFrom: Account;
+  accountTo: Account;
+};
+
+type MinimumSwapAmountOptions = SwapPairOptions & {
+  providersWhitelist?: string[];
+};
+
 export async function getMinimumSwapAmount(
-  accountFrom: Account,
-  accountTo: Account,
-  providersWhitelist?: string[],
+  options: MinimumSwapAmountOptions,
 ): Promise<number | null> {
-  const minimum = await discoverMinimumSwapAmount(accountFrom, accountTo, providersWhitelist);
+  const { accountFrom, accountTo, providersWhitelist } = options;
+  const minimum = await discoverMinimumSwapAmount(options);
   if (minimum === null || IS_PRD_SWAP_API) {
     return minimum;
   }
@@ -114,13 +122,13 @@ export async function getMinimumSwapAmount(
   }
   return findQuotableAmount(marginAmount, async amount => {
     try {
-      const data = await requestQuotes(
+      const data = await requestQuotes({
         accountFrom,
         accountTo,
         addressFrom,
-        amount,
-        providersWhitelist?.join(",") ?? PROVIDERS_WHITELIST,
-      );
+        amountFrom: amount,
+        providersWhitelist: providersWhitelist?.join(",") ?? PROVIDERS_WHITELIST,
+      });
       return Array.isArray(data) ? data : null;
     } catch (error: unknown) {
       console.warn("Error validating swap amount:", sanitizeError(error));
@@ -129,13 +137,14 @@ export async function getMinimumSwapAmount(
   });
 }
 
-async function requestQuotes(
-  accountFrom: Account,
-  accountTo: Account,
-  addressFrom: string,
-  amountFrom: number,
-  providersWhitelist: string,
-): Promise<unknown> {
+type QuoteRequestOptions = SwapPairOptions & {
+  addressFrom: string;
+  amountFrom: number;
+  providersWhitelist: string;
+};
+
+async function requestQuotes(options: QuoteRequestOptions): Promise<unknown> {
+  const { accountFrom, accountTo, addressFrom, amountFrom, providersWhitelist } = options;
   const requestConfig: AxiosRequestConfig = {
     method: "GET",
     url: SWAP_QUOTE_URL,
@@ -162,10 +171,9 @@ async function requestQuotes(
 }
 
 async function discoverMinimumSwapAmount(
-  accountFrom: Account,
-  accountTo: Account,
-  providersWhitelist?: string[],
+  options: MinimumSwapAmountOptions,
 ): Promise<number | null> {
+  const { accountFrom, accountTo, providersWhitelist } = options;
   try {
     const addressFrom = accountFrom.address || accountFrom.parentAccount?.address;
 
@@ -173,13 +181,13 @@ async function discoverMinimumSwapAmount(
       throw new Error("No address available from accounts when requesting minimum swap amount.");
     }
 
-    const data = await requestQuotes(
+    const data = await requestQuotes({
       accountFrom,
       accountTo,
       addressFrom,
-      PROBE_AMOUNT,
-      providersWhitelist?.join(",") ?? PROVIDERS_WHITELIST,
-    );
+      amountFrom: PROBE_AMOUNT,
+      providersWhitelist: providersWhitelist?.join(",") ?? PROVIDERS_WHITELIST,
+    });
 
     if (!Array.isArray(data)) {
       console.warn("Unexpected quote API response, falling back to countervalues");
@@ -217,22 +225,25 @@ function isUsableQuote(q: SwapQuoteItem): boolean {
   return q.code === undefined && Number(q.amountTo) > 0;
 }
 
+type ProviderHealthOptions = SwapPairOptions & {
+  eligibleProviders: SwapProvider[];
+};
+
 export async function keepRunningProviders(
-  eligibleProviders: SwapProvider[],
-  accountFrom: Account,
-  accountTo: Account,
+  options: ProviderHealthOptions,
 ): Promise<SwapProvider[]> {
+  const { eligibleProviders, accountFrom, accountTo } = options;
   const addressFrom = accountFrom.address || accountFrom.parentAccount?.address;
   if (!addressFrom) {
     console.warn("No address available from accounts when checking provider health.");
     return eligibleProviders;
   }
 
-  const amountFrom = await getMinimumSwapAmount(
+  const amountFrom = await getMinimumSwapAmount({
     accountFrom,
     accountTo,
-    eligibleProviders.map(p => p.name),
-  );
+    providersWhitelist: eligibleProviders.map(p => p.name),
+  });
   if (amountFrom == null) {
     return eligibleProviders;
   }
@@ -275,16 +286,13 @@ export async function keepRunningProviders(
   }
 }
 
-export async function pickRotatingProvider(
-  eligibleProviders: SwapProvider[],
-  accountFrom: Account,
-  accountTo: Account,
-): Promise<SwapProvider> {
+export async function pickRotatingProvider(options: ProviderHealthOptions): Promise<SwapProvider> {
+  const { eligibleProviders, accountFrom, accountTo } = options;
   if (eligibleProviders.length === 0) {
     throw new Error("[Providers Health Check] - eligibleProviders is empty");
   }
 
-  const runningProviders = await keepRunningProviders(eligibleProviders, accountFrom, accountTo);
+  const runningProviders = await keepRunningProviders(options);
   if (runningProviders.length === 0) {
     throw new Error(
       `[Providers Health Check] - no running swap provider for ` +

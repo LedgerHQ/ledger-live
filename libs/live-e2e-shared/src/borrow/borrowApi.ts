@@ -163,6 +163,15 @@ function requireAllowanceSpender(
   );
 }
 
+type CollateralSpenderOptions = {
+  address: string;
+  collateralAmount: string;
+  loanAmount: string;
+  marketId?: string;
+};
+
+type RepaySpenderOptions = { address: string; marketId: string };
+
 /**
  * Address the collateral allowance is granted to, read from the approve step the partner builds.
  * It is an adapter the partner can redeploy, so it is resolved rather than pinned. Building an
@@ -174,12 +183,8 @@ function requireAllowanceSpender(
  * wrong one zeroes an allowance the UI never uses, and the approval step the spec drives then
  * silently stays unnecessary.
  */
-export async function resolveCollateralSpender(
-  address: string,
-  collateralAmount: string,
-  loanAmount: string,
-  marketId: string = DEFAULT_MARKET_ID,
-): Promise<string> {
+export async function resolveCollateralSpender(options: CollateralSpenderOptions): Promise<string> {
+  const { address, collateralAmount, loanAmount, marketId = DEFAULT_MARKET_ID } = options;
   const { steps } = await postAction({
     address,
     action: "supplyAndBorrow",
@@ -193,7 +198,8 @@ export async function resolveCollateralSpender(
  * position being repaid (not a market's `collateral[].id`), so an open loan with debt must
  * already exist — the partner has nothing to build a repay against otherwise.
  */
-export async function resolveRepaySpender(address: string, marketId: string): Promise<string> {
+export async function resolveRepaySpender(options: RepaySpenderOptions): Promise<string> {
+  const { address, marketId } = options;
   const { steps } = await postAction({
     address,
     action: "repay",
