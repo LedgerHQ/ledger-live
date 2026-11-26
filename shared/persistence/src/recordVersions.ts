@@ -2,14 +2,14 @@ import { z } from "zod";
 import { NewerRecordVersionError, RecordDecodeError } from "./errors";
 import { toRecordDecodeError } from "./internals/toRecordDecodeError";
 
-type SchemaFactory<T> = (zod: typeof z) => z.ZodType<T>;
+type SchemaFactory<Output, Input = unknown> = (zod: typeof z) => z.ZodType<Output, Input>;
 
 export type RecordVersions<Latest> = Readonly<{
   latest: number;
   /** The bare v0 schema, then a strict `{ $v: n, data }` for each next version. */
   storedSchemas: ReadonlyArray<z.ZodType>;
-  next<Next>(
-    schema: SchemaFactory<Next>,
+  next<Next extends NextInput, NextInput>(
+    schema: SchemaFactory<Next, NextInput>,
     step: (previous: Latest) => NoInfer<Next>,
   ): RecordVersions<Next>;
   /** Checks `$v` before any schema. */
@@ -104,7 +104,9 @@ function fromMigrationChain<Latest>(
 }
 
 /** Starts at v0: the bare stored shape, with no `$v`. */
-export function recordVersions<V0>(schemaFactory: SchemaFactory<V0>): RecordVersions<V0> {
+export function recordVersions<V0 extends V0Input, V0Input>(
+  schemaFactory: SchemaFactory<V0, V0Input>,
+): RecordVersions<V0> {
   const schema = schemaFactory(z);
   return fromMigrationChain({
     latest: 0,

@@ -64,6 +64,11 @@ describe("recordVersions with v0, v1 and v2", () => {
     expect(prefsVersions.decode({ $v: 2, data: latest }, KEY)).toEqual(latest);
   });
 
+  it("should decode the encoded value to the same value when the latest version is v2", () => {
+    const latest = { theme: "dark", fontSize: 16, compact: true };
+    expect(prefsVersions.decode(prefsVersions.encode(latest), KEY)).toEqual(latest);
+  });
+
   it("should encode the latest version in a $v envelope", () => {
     expect(prefsVersions.latest).toBe(2);
     expect(prefsVersions.encode({ theme: "dark", fontSize: 16, compact: false })).toEqual({
@@ -182,5 +187,33 @@ describe("a decode error message", () => {
 
     expect(error).toHaveProperty("message", decodeMessage("unrecognized_keys"));
     expect(String(error)).not.toContain(accountId);
+  });
+});
+
+describe("a stored schema", () => {
+  it("should refuse a transform to another type when it defines v0", () => {
+    // @ts-expect-error the encode writes a number that the schema refuses
+    const versions = recordVersions(z => z.string().transform(text => text.length));
+    expect(() => versions.decode(versions.encode(4), KEY)).toThrow(RecordDecodeError);
+  });
+
+  it("should refuse a transform to another type when next adds a version", () => {
+    const versions = recordVersions(z => z.strictObject({ theme: z.string() })).next(
+      // @ts-expect-error the encode writes a number that the schema refuses
+      z => z.strictObject({ theme: z.string().transform(theme => theme.length) }),
+      v0 => ({ theme: v0.theme.length }),
+    );
+    expect(() => versions.decode(versions.encode({ theme: 4 }), KEY)).toThrow(RecordDecodeError);
+  });
+
+  it("should keep the brand and the default in the decoded type when the schema has them", () => {
+    const versions = recordVersions(z =>
+      z.strictObject({ id: z.string().brand<"PrefsId">(), theme: z.string().default("light") }),
+    );
+    const latest = versions.decode({ id: "a" }, KEY);
+    const theme: string = latest.theme;
+    // @ts-expect-error a plain string is not a branded id
+    const id: typeof latest.id = "a";
+    expect(versions.decode(versions.encode(latest), KEY)).toEqual({ id, theme });
   });
 });

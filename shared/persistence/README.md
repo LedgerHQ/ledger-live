@@ -29,6 +29,10 @@ const historyRecord = defineRecord({
 
 A schema is a function of the `z` that it gets, so a record package does not depend on `zod`.
 
+A stored schema checks a value and does not change it, so a decode of an encoded value gives the
+same value. Do not use `transform` or `preprocess` in a stored schema. The typecheck refuses a
+schema that decodes to a type that it does not accept, e.g. a `transform` from a string to a number.
+
 ## Versions
 
 `recordVersions(v0Schema)` starts at v0. Each `.next(schema, step)` adds 1 version, with a pure

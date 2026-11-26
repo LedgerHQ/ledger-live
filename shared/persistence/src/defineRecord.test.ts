@@ -57,6 +57,11 @@ describe("defineRecord", () => {
     expect(decodeSecret).toThrow(expect.objectContaining({ key: "counter", version: 0 }));
     expect(decodeSecret).not.toThrow(secret);
   });
+
+  it("should decode the encoded slice to the same slice when it has no transient value", () => {
+    const slice = { value: 3, transient: "" };
+    expect(counterRecord.codec.decode(counterRecord.codec.encode(slice))).toEqual(slice);
+  });
 });
 
 const secret = "do-not-log-this";

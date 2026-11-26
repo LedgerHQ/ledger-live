@@ -48,6 +48,7 @@ Pass it to the record: `defineRecord({ key, versions: prefsVersions, codec, stat
 1. Move the record definition to its owner package, if it is still in an app.
 2. Add 1 `.next(schema, step)` at the end of the list. Put the first app versions in a comment.
 3. Use a strict schema. `z.object` drops the unknown keys, so an older app erases a newer field.
+Do not use `transform` or `preprocess`: the encode must write a value that the schema reads.
 4. Write a pure, synchronous step from stored n-1 to stored n. It reads nothing else: no other
 key, no network, no clock, no device.
 5. Make sure that the step never throws on a value that the previous schema accepts.
