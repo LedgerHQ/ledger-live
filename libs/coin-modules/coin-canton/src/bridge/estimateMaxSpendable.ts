@@ -16,6 +16,9 @@ export const estimateMaxSpendable = async (
     transaction,
   }: Parameters<AccountBridge<Transaction, CantonAccount>["estimateMaxSpendable"]>[0],
 ): Promise<BigNumber> => {
+  // The parent account pays a token's fee in CC.
+  if (account.type === "TokenAccount") return account.spendableBalance;
+
   const mainAccount = getMainAccount(account, parentAccount);
   const newTransaction = await prepareTransaction(context, mainAccount, {
     ...createTransaction(account),

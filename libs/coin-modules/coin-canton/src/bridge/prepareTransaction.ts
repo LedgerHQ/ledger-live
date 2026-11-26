@@ -11,30 +11,41 @@ type CantonTokenAccount = TokenAccount & {
   cantonResources: { instrumentAdmin: string };
 };
 
+const estimateFee = async (context: CantonContext, amount: BigNumber): Promise<BigNumber> =>
+  BigNumber((await estimateFees(context, BigInt(amount.toFixed()))).toString());
+
 export const prepareTransaction = async (
   context: CantonContext,
   account: Account,
   transaction: Transaction,
 ): Promise<Transaction> => {
-  const amount = transaction.amount || BigNumber(0);
-  const fee = BigNumber(
-    (
-      await estimateFees(getCurrencyContext(context, account.currency), BigInt(amount.toFixed()))
-    ).toString(),
-  );
+  const currencyContext = getCurrencyContext(context, account.currency);
+  const isTokenTransaction = !!transaction.subAccountId;
+  const subAccount = isTokenTransaction
+    ? account.subAccounts?.find(
+        (sub): sub is CantonTokenAccount =>
+          sub.type === "TokenAccount" && sub.id === transaction.subAccountId,
+      )
+    : undefined;
+
+  let amount = transaction.amount || BigNumber(0);
+  let fee: BigNumber;
+  if (transaction.useAllAmount) {
+    const spendable = isTokenTransaction
+      ? (subAccount?.spendableBalance ?? BigNumber(0))
+      : account.spendableBalance;
+    fee = await estimateFee(currencyContext, spendable);
+    amount = isTokenTransaction ? spendable : BigNumber.max(0, spendable.minus(fee));
+  } else {
+    fee = await estimateFee(currencyContext, amount);
+  }
 
   let tokenId = transaction.tokenId;
   let instrumentAdmin: string | undefined;
-  if (transaction.subAccountId && account.subAccounts) {
-    const subAccount = account.subAccounts.find(
-      (sub): sub is CantonTokenAccount =>
-        sub.type === "TokenAccount" && sub.id === transaction.subAccountId,
-    );
-    if (subAccount) {
-      const calTokens = await getCalTokensCached(account.currency.id);
-      tokenId = calTokens.get(subAccount.token.id) || subAccount.token.name;
-      instrumentAdmin = subAccount.token.contractAddress;
-    }
+  if (subAccount) {
+    const calTokens = await getCalTokensCached(account.currency.id);
+    tokenId = calTokens.get(subAccount.token.id) || subAccount.token.name;
+    instrumentAdmin = subAccount.token.contractAddress;
   }
 
   // Default to native instrument if no tokenId set
@@ -46,5 +57,6 @@ export const prepareTransaction = async (
     fee,
     tokenId,
     ...(instrumentAdmin ? { instrumentAdmin } : {}),
+    ...(transaction.useAllAmount ? { amount } : {}),
   });
 };

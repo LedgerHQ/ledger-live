@@ -3,6 +3,7 @@ import {
   FeeNotLoaded,
   FeeTooHigh,
   InvalidAddress,
+  NotEnoughBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughSpendableBalance,
   RecipientRequired,
@@ -58,6 +59,11 @@ describe("getTransactionStatus", () => {
   const accountWithUtxoCounts = (instrumentUtxoCounts: Record<string, number>): CantonAccount => ({
     ...mockAccount,
     cantonResources: { ...mockAccount.cantonResources, instrumentUtxoCounts },
+  });
+  const accountWith = (balance: number, minReserve: number): CantonAccount => ({
+    ...mockAccount,
+    balance: new BigNumber(balance),
+    spendableBalance: BigNumber.max(0, new BigNumber(balance).minus(minReserve)),
   });
 
   beforeEach(() => {
@@ -261,6 +267,51 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(mockAccount, transaction);
 
       expect(result.errors.amount).toBeUndefined();
+    });
+  });
+
+  describe("Send max", () => {
+    const fee = new BigNumber(10);
+    const sendMax = (amount: BigNumber): Transaction => ({
+      family: "canton",
+      amount,
+      useAllAmount: true,
+      recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
+      fee,
+      tokenId: "",
+    });
+    it("should return NotEnoughBalance when the fee leaves nothing to send", async () => {
+      mockConfig = { ...defaultConfig, minReserve: 0 };
+
+      const result = await getTransactionStatus(accountWith(5, 0), sendMax(new BigNumber(0)));
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+
+    it.each([0, 100])(
+      "should accept the spendable balance minus the fee with a reserve of %i",
+      async minReserve => {
+        mockConfig = { ...defaultConfig, minReserve };
+        const account = accountWith(1000, minReserve);
+
+        const result = await getTransactionStatus(
+          account,
+          sendMax(account.spendableBalance.minus(fee)),
+        );
+
+        expect(result.errors).toEqual({});
+      },
+    );
+
+    it("should keep refusing a maximum below the reserve a new recipient needs", async () => {
+      const account = accountWith(150, 100);
+
+      const result = await getTransactionStatus(
+        account,
+        sendMax(account.spendableBalance.minus(fee)),
+      );
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalanceBecauseDestinationNotCreated);
     });
   });
 
