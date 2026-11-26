@@ -50,7 +50,8 @@ env:
         "gonka": { "flags": "--node inference-chain@0.2.16" }
       },
       "xrp": { "ripple": { "flags": "--node xrpld@3.4.1", "pull": false } },
-      "filecoin": { "filecoin": { "flags": "--node lotus@1.39.1 --indexer filecoin-api-stub" } }
+      "filecoin": { "filecoin": { "flags": "--node lotus@1.39.1 --indexer filecoin-api-stub" } },
+      "tezos": { "tezos": { "flags": "--node octez@25.3 --indexer tzkt@1.17.5" } }
     }
 
 jobs:
