@@ -52,7 +52,7 @@ type AccountStatusCapability<C> = {
  * `context.config()` and threaded explicitly (as the required first argument) into the concordium
  * network/logic layers. The `currencyId` used for chain selection is captured once from
  * {@link createApi} and forwarded from this closure unchanged. The classic bridge resolves the same
- * config from its `getCoinConfig` singleton and threads it the same way.
+ * config from the `Context` it receives and threads it the same way.
  *
  * Checked against {@link CoinModuleImpl} with `satisfies` rather than annotated as it, so the
  * precise shape survives and a caller sees exactly which methods exist.

@@ -1,11 +1,6 @@
-import buildCoinConfig from "@ledgerhq/coin-module-framework/config";
 import type { ConcordiumCoinConfig } from "./types/config";
 
-export type { ConcordiumCoinConfig } from "./types/config";
-
-const { setCoinConfig, getCoinConfig } = buildCoinConfig<ConcordiumCoinConfig>();
-
-export default { setCoinConfig, getCoinConfig };
+export type { ConcordiumCoinConfig, ConcordiumConfig, ConcordiumContext } from "./types/config";
 
 export const concordiumDefaults = {
   concordium: {
@@ -14,8 +9,7 @@ export const concordiumDefaults = {
     unit: { name: "ccd", code: "CCD", magnitude: 6 },
     networkType: "mainnet",
     proxyUrl: "https://ccd-wallet-proxy-mainnet.coin.ledger.com",
-    minReserve: 0,
-    enableTokens: false,
+    walletConnect: { relayUrl: "wss://relay.walletconnect.com" },
   },
   concordium_testnet: {
     status: { type: "active" },
@@ -23,7 +17,6 @@ export const concordiumDefaults = {
     unit: { name: "ccd", code: "CCD", magnitude: 6 },
     networkType: "testnet",
     proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
-    minReserve: 0,
-    enableTokens: false,
+    walletConnect: { relayUrl: "wss://relay.walletconnect.com" },
   },
 } satisfies Record<string, ConcordiumCoinConfig>;

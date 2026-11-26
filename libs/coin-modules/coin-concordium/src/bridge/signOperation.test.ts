@@ -12,7 +12,7 @@ import {
   createFixtureTokenAccount,
   createFixtureTransaction,
   createFixtureOperation,
-  setupTestnetCoinConfig,
+  createFixtureContext,
   VALID_ADDRESS,
 } from "../test/fixtures";
 import { buildSignOperation } from "./signOperation";
@@ -62,12 +62,14 @@ jest.mock("./getTransactionStatus", () => ({
   }),
 }));
 
+const context = createFixtureContext();
+
 const sign = async (
   transaction: ReturnType<typeof createFixtureTransaction>,
   account: ReturnType<typeof createFixtureAccount> = createFixtureAccount(),
 ) => {
   const mockSigner = createFixtureSigner();
-  const signOperation = buildSignOperation(createFixtureSignerContext(mockSigner));
+  const signOperation = buildSignOperation(createFixtureSignerContext(mockSigner), context);
   const events = await firstValueFrom(
     signOperation({ account, deviceId: "device-1", transaction }).pipe(toArray()),
   );
@@ -84,7 +86,6 @@ const withTokenSubAccount = () => {
 describe("signOperation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    setupTestnetCoinConfig();
   });
 
   describe("buildSignOperation", () => {
@@ -92,7 +93,7 @@ describe("signOperation", () => {
       // GIVEN
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
 
@@ -115,7 +116,7 @@ describe("signOperation", () => {
       // GIVEN
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const account = createFixtureAccount();
       const transaction = createFixtureTransaction({ fee: undefined });
 
@@ -134,7 +135,7 @@ describe("signOperation", () => {
       // GIVEN
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const derivationPath = "44'/1'/0'/0'/0'/5'";
       const account = createFixtureAccount({ freshAddressPath: derivationPath });
       const transaction = createFixtureTransaction();
@@ -155,7 +156,7 @@ describe("signOperation", () => {
       // GIVEN
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const derivationPath = "44'/1'/0'/0'/0'/0'";
       const account = createFixtureAccount({ freshAddressPath: derivationPath });
       const transaction = createFixtureTransaction();
@@ -186,7 +187,7 @@ describe("signOperation", () => {
       // GIVEN
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
 
@@ -215,7 +216,7 @@ describe("signOperation", () => {
       // GIVEN
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
 
@@ -240,7 +241,7 @@ describe("signOperation", () => {
     it("does not fetch a transaction status while signing", async () => {
       const { getTransactionStatus } = jest.requireMock("./getTransactionStatus");
       const mockSigner = createFixtureSigner();
-      const signOperation = buildSignOperation(createFixtureSignerContext(mockSigner));
+      const signOperation = buildSignOperation(createFixtureSignerContext(mockSigner), context);
 
       await firstValueFrom(
         signOperation({
@@ -257,7 +258,7 @@ describe("signOperation", () => {
       // GIVEN
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
 
@@ -278,7 +279,7 @@ describe("signOperation", () => {
       // GIVEN
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const account = createFixtureAccount({
         pendingOperations: [
           createFixtureOperation({ transactionSequenceNumber: new BigNumber(10) }),
@@ -306,7 +307,7 @@ describe("signOperation", () => {
       // GIVEN
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const account = createFixtureAccount({
         pendingOperations: [],
         operations: [createFixtureOperation({ transactionSequenceNumber: new BigNumber(7) })],
@@ -332,7 +333,7 @@ describe("signOperation", () => {
       // GIVEN
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const account = createFixtureAccount({
         pendingOperations: [],
         operations: [],
@@ -359,7 +360,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       mockSigner.signTransaction = jest.fn().mockRejectedValue(new Error("User rejected"));
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
 
@@ -379,7 +380,7 @@ describe("signOperation", () => {
       const { craftTransaction } = jest.requireMock("../logic");
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const account = createFixtureAccount();
       const transaction = createFixtureTransaction({
         amount: new BigNumber(1000000),
@@ -415,7 +416,7 @@ describe("signOperation", () => {
       const { combine } = jest.requireMock("../logic");
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
 
@@ -439,7 +440,7 @@ describe("signOperation", () => {
       const { craftTransaction } = jest.requireMock("../logic");
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const account = createFixtureAccount();
       const transaction = createFixtureTransaction({ memo: "test memo" });
 
@@ -464,7 +465,7 @@ describe("signOperation", () => {
       // GIVEN
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const account = createFixtureAccount();
       const transaction = createFixtureTransaction();
       const beforeTime = new Date();
@@ -489,7 +490,7 @@ describe("signOperation", () => {
       // GIVEN
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const signOperation = buildSignOperation(signerContext);
+      const signOperation = buildSignOperation(signerContext, context);
       const account = createFixtureAccount({ id: "concordium:test-account" });
       const transaction = createFixtureTransaction();
 

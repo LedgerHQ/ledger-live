@@ -93,6 +93,43 @@ describe("fetchAccountTokens", () => {
     expect(getAccountBalance).toHaveBeenCalledTimes(1);
   });
 
+  it("does not serve one endpoint's answer for another", async () => {
+    const address = nextAddress();
+    getAccountBalance.mockResolvedValueOnce({});
+    getAccountBalance.mockResolvedValueOnce({
+      finalizedBalance: { accountAmount: "1", accountTokens: [] },
+    });
+
+    await expect(
+      fetchAccountTokens({
+        config: { proxyUrl: "https://a" } as ConcordiumCoinConfig,
+        currencyId,
+        address,
+      }),
+    ).resolves.toEqual({ status: "absent" });
+    await expect(
+      fetchAccountTokens({
+        config: { proxyUrl: "https://b" } as ConcordiumCoinConfig,
+        currencyId,
+        address,
+      }),
+    ).resolves.toEqual({ status: "readable", entries: [] });
+  });
+
+  it("reads the TTL from the coin config", async () => {
+    const address = nextAddress();
+    const shortTtl = { gateway: { accountTokensCacheTtlMs: 1 } } as ConcordiumCoinConfig;
+    getAccountBalance.mockResolvedValue({
+      finalizedBalance: { accountAmount: "1", accountTokens: [] },
+    });
+
+    await fetchAccountTokens({ config: shortTtl, currencyId, address });
+    await new Promise(resolve => setTimeout(resolve, 20));
+    await fetchAccountTokens({ config: shortTtl, currencyId, address });
+
+    expect(getAccountBalance).toHaveBeenCalledTimes(2);
+  });
+
   it("does not cache a failure", async () => {
     const address = nextAddress();
     getAccountBalance.mockRejectedValueOnce(new Error("proxy unreachable"));

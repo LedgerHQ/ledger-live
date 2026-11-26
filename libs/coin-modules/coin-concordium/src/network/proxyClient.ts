@@ -16,33 +16,36 @@ import type {
   SubmitTransferData,
   TransactionQueryParams,
 } from "../types";
+import {
+  DEFAULT_GATEWAY_RETRIES,
+  DEFAULT_GATEWAY_RETRY_DELAY_MS,
+  DEFAULT_GATEWAY_TIMEOUT_MS,
+} from "../constants";
+import { tuning } from "../tuning";
 
 interface ProxyClient {
   baseUrl: string;
   request<TResponse, TRequest = unknown>(config: LiveNetworkRequest<TRequest>): Promise<TResponse>;
 }
 
-const PROXY_TIMEOUT = 30000;
-const DEFAULT_RETRIES = 2;
-const RETRY_DELAY = 1000;
-
 function createProxyClient(config: ConcordiumCoinConfig): ProxyClient {
   const baseUrl = config.proxyUrl;
+  const timeout = tuning(config.gateway?.timeoutMs, DEFAULT_GATEWAY_TIMEOUT_MS, 1);
 
   const request = async <TResponse, TRequest = unknown>(
-    config: LiveNetworkRequest<TRequest>,
+    requestConfig: LiveNetworkRequest<TRequest>,
   ): Promise<TResponse> => {
-    if (!config.url) {
+    if (!requestConfig.url) {
       throw new Error("URL is required for proxy client requests");
     }
     const response = await network<TResponse, TRequest>({
-      ...config,
-      url: `${baseUrl}${config.url}`,
-      timeout: PROXY_TIMEOUT,
+      ...requestConfig,
+      url: `${baseUrl}${requestConfig.url}`,
+      timeout,
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        ...config.headers,
+        ...requestConfig.headers,
       },
     });
     return response.data;
@@ -51,41 +54,30 @@ function createProxyClient(config: ConcordiumCoinConfig): ProxyClient {
   return { baseUrl, request };
 }
 
-const CLIENTS_BY_CURRENCY = new Map<string, ProxyClient>();
-
-function getClient(config: ConcordiumCoinConfig, currencyId: string): ProxyClient {
-  const existing = CLIENTS_BY_CURRENCY.get(currencyId);
-  if (existing) return existing;
-
-  const client = createProxyClient(config);
-  CLIENTS_BY_CURRENCY.set(currencyId, client);
-  return client;
-}
-
 /**
- * Executes a function with a proxy client, handling retries and error handling
+ * Executes a function with a proxy client built from `config`, retrying on failure.
  *
  * @param config - The Concordium coin configuration
- * @param currencyId - The Concordium currency ID
+ * @param _currencyId - Unused: the client is built from `config` alone
  * @param execute - Function to execute with the client
- * @param options.retries - Number of retries (default: 2)
+ * @param options.retries - Number of retries (default: `config.gateway.retries`)
  * @param options.signal - Stops retrying and rejects with its reason once aborted
  * @returns Result of the execute function
  */
 export async function withClient<T>(
   config: ConcordiumCoinConfig,
-  currencyId: string,
+  _currencyId: string,
   execute: (client: ProxyClient) => Promise<T>,
   {
-    retries = DEFAULT_RETRIES,
+    retries = tuning(config.gateway?.retries, DEFAULT_GATEWAY_RETRIES),
     signal,
   }: { retries?: number; signal?: AbortSignal | undefined } = {},
 ): Promise<T> {
-  const client = getClient(config, currencyId);
+  const client = createProxyClient(config);
 
   return retry(() => execute(client), {
     maxRetry: retries,
-    interval: RETRY_DELAY,
+    interval: tuning(config.gateway?.retryDelayMs, DEFAULT_GATEWAY_RETRY_DELAY_MS),
     intervalMultiplicator: 1,
     signal,
   });

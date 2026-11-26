@@ -1,7 +1,12 @@
 import { log } from "@ledgerhq/logs";
 import { memoEncodedSize } from "@ledgerhq/concordium-core";
-import { CONCORDIUM_ENERGY, PLT_ENERGY_BUFFER_PERCENT } from "../../constants";
+import {
+  CONCORDIUM_ENERGY,
+  DEFAULT_FEES_DEFAULT_COST,
+  DEFAULT_PLT_ENERGY_BUFFER_PERCENT,
+} from "../../constants";
 import { getTransactionCost } from "../../network/proxyClient";
+import { tuning } from "../../tuning";
 import type { ConcordiumCoinConfig } from "../../types";
 
 export interface FeeEstimation {
@@ -17,15 +22,15 @@ export interface PltFeeParams {
 }
 
 /**
- * Applies {@link PLT_ENERGY_BUFFER_PERCENT} to an energy figure, rounding up.
+ * Applies a percentage buffer to an energy figure, rounding up.
  *
  * Rounding up rather than truncating keeps a small estimate from losing its
  * buffer entirely to integer division. The cost is not buffered with this: it is
  * derived from the buffered energy instead — see {@link estimateTokenFees}.
  */
-export function applyEnergyBuffer(value: bigint): bigint {
+export function applyEnergyBuffer(value: bigint, bufferPercent: number): bigint {
   const scale = BigInt(100);
-  return (value * (scale + PLT_ENERGY_BUFFER_PERCENT) + scale - BigInt(1)) / scale;
+  return (value * (scale + BigInt(bufferPercent)) + scale - BigInt(1)) / scale;
 }
 
 export async function estimateFees(
@@ -48,7 +53,7 @@ export async function estimateFees(
     log("concordium", "estimateFees error", { error });
 
     return {
-      cost: CONCORDIUM_ENERGY.DEFAULT_COST,
+      cost: BigInt(tuning(config.fees?.defaultCost, DEFAULT_FEES_DEFAULT_COST)),
       energy: memo ? CONCORDIUM_ENERGY.TRANSFER_WITH_MEMO_MAX : CONCORDIUM_ENERGY.DEFAULT,
     };
   }
@@ -83,7 +88,11 @@ export async function estimateTokenFees(
 
   const energy = BigInt(result.energy);
   const cost = BigInt(result.cost);
-  const bufferedEnergy = applyEnergyBuffer(energy);
+  const bufferPercent = tuning(
+    config.fees?.pltEnergyBufferPercent,
+    DEFAULT_PLT_ENERGY_BUFFER_PERCENT,
+  );
+  const bufferedEnergy = applyEnergyBuffer(energy, bufferPercent);
 
   // The fee has to fund the buffered energy, not merely carry the same buffer.
   // The chain deposits `ceil(rate * headerEnergy)` (`Types.hs` `computeCost`) and
@@ -93,7 +102,7 @@ export async function estimateTokenFees(
   // `cost` is already `ceil(rate * energy)` and so `cost / energy >= rate`.
   const bufferedCost =
     energy === BigInt(0)
-      ? applyEnergyBuffer(cost)
+      ? applyEnergyBuffer(cost, bufferPercent)
       : (cost * bufferedEnergy + energy - BigInt(1)) / energy;
 
   return { cost: bufferedCost, energy: bufferedEnergy };

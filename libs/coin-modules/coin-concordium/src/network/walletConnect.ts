@@ -11,24 +11,24 @@ import { CONCORDIUM_CHAIN_IDS } from "../constants";
 
 const REQUEST_CREATE_ACCOUNT_EXPIRY = 7 * 24 * 60 * 60; // 7 days in seconds
 
-const CLIENT_CONFIG = {
-  projectId: getEnv("WALLETCONNECT_PROJECT_ID"),
-  relayUrl: "wss://relay.walletconnect.com",
-};
+const PROJECT_ID = getEnv("WALLETCONNECT_PROJECT_ID");
 
 /**
  * One SignClient per process, outliving clearWalletConnect(). WalletConnect Core is a
  * process-wide singleton, and on each heartbeat every SignClient unsubscribes the shared
  * relayer topics that are not its own sessions, its own pending sessions, a pairing or its
  * auth response topic. Two SignClients would drop each other's session topics.
+ * The first pairing therefore fixes the relay until restart.
  */
 let sharedSignClient: Promise<SignClient> | null = null;
 
-function getSharedSignClient(): Promise<SignClient> {
-  sharedSignClient ??= SignClient.init(CLIENT_CONFIG).catch((error: unknown) => {
-    sharedSignClient = null;
-    throw error;
-  });
+function getSharedSignClient(relayUrl: string): Promise<SignClient> {
+  sharedSignClient ??= SignClient.init({ projectId: PROJECT_ID, relayUrl }).catch(
+    (error: unknown) => {
+      sharedSignClient = null;
+      throw error;
+    },
+  );
 
   return sharedSignClient;
 }
@@ -45,13 +45,14 @@ export class ConcordiumWalletConnect {
    */
   private readonly approvedTopics = new Set<string>();
 
-  async getClient(): Promise<SignClient> {
+  /** Initializes the shared client on first use. Only pairing calls this. */
+  async getClient(relayUrl: string): Promise<SignClient> {
     if (this.client) {
       return this.client;
     }
 
     try {
-      this.client = await getSharedSignClient();
+      this.client = await getSharedSignClient(relayUrl);
 
       return this.client;
     } catch (error) {
@@ -80,8 +81,14 @@ export class ConcordiumWalletConnect {
     return networks;
   }
 
+  /** The shared client if a pairing in this process initialized it; cleanup has no relay URL. */
+  private async getExistingClient(): Promise<SignClient | null> {
+    this.client ??= sharedSignClient ? await sharedSignClient : null;
+    return this.client;
+  }
+
   private async getConcordiumSessions(): Promise<SessionTypes.Struct[]> {
-    const client = await this.getClient();
+    const client = await this.getExistingClient();
 
     if (!client) return [];
 
@@ -105,7 +112,9 @@ export class ConcordiumWalletConnect {
 
   async disconnectAllSessions(): Promise<void> {
     try {
-      const client = await this.getClient();
+      const client = await this.getExistingClient();
+      if (!client) return;
+
       const concordiumSessions = await this.getConcordiumSessions();
 
       if (concordiumSessions.length === 0) return;
@@ -137,7 +146,10 @@ export class ConcordiumWalletConnect {
   async requestCreateAccount(
     params: IDAppCreateAccountParams,
   ): Promise<IDAppCreateAccountResponse> {
-    const client = await this.getClient();
+    const client = await this.getExistingClient();
+    if (!client) {
+      throw new Error("WalletConnect client is not initialized. Pair with Concordium IDApp first.");
+    }
 
     return client.request<IDAppCreateAccountResponse>({
       topic: params.topic,
@@ -153,12 +165,13 @@ export class ConcordiumWalletConnect {
   async initiatePairing(
     _network: ConcordiumNetwork,
     chainId: string,
+    relayUrl: string,
   ): Promise<{
     uri?: string;
     approval: () => Promise<SessionTypes.Struct>;
   }> {
     try {
-      const client = await this.getClient();
+      const client = await this.getClient(relayUrl);
 
       const expiredPairings = client.pairing
         .getAll({ active: true })

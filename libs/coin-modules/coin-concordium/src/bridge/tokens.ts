@@ -18,8 +18,8 @@ import type {
   RawOperation,
   Transaction,
 } from "../types";
-
-const CAL_LOOKUP_CONCURRENCY = 4;
+import { DEFAULT_CAL_LOOKUP_CONCURRENCY } from "../constants";
+import { tuning } from "../tuning";
 
 /**
  * Result of one sync's token resolution.
@@ -326,14 +326,16 @@ function resolveEntries({
   currencyId,
   accountId,
   blacklistedTokenIds,
+  calLookupConcurrency,
 }: {
   accountTokens: PltAccountToken[];
   currencyId: string;
   accountId: string;
   blacklistedTokenIds: string[];
+  calLookupConcurrency: number;
 }): Promise<ResolvedEntry[] | undefined> {
   return promiseAllBatched(
-    CAL_LOOKUP_CONCURRENCY,
+    calLookupConcurrency,
     accountTokens,
     async (entry: PltAccountToken): Promise<ResolvedEntry> => {
       if (!isUsableEntry(entry)) {
@@ -498,6 +500,7 @@ export async function resolveTokenSubAccounts({
   pltOperations = [],
   blacklistedTokenIds = [],
   refetchAll = false,
+  calLookupConcurrency,
 }: {
   enableTokens: boolean;
   currencyId: string;
@@ -507,6 +510,7 @@ export async function resolveTokenSubAccounts({
   pltOperations?: RawOperation[];
   blacklistedTokenIds?: string[];
   refetchAll?: boolean;
+  calLookupConcurrency?: number | undefined;
 }): Promise<ResolvedTokens> {
   if (!enableTokens) {
     return { kind: "cleared" };
@@ -522,6 +526,8 @@ export async function resolveTokenSubAccounts({
     currencyId,
     accountId,
     blacklistedTokenIds,
+    // A batch of zero would look up nothing and drop every stored token.
+    calLookupConcurrency: tuning(calLookupConcurrency, DEFAULT_CAL_LOOKUP_CONCURRENCY, 1),
   });
 
   // A CAL query error rejects rather than returning undefined, and one rejection

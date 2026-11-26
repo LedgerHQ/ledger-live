@@ -1,10 +1,36 @@
-import { makeLRUCache, minutes, seconds } from "@ledgerhq/live-network/cache";
+import { makeLRUCache, type CacheRes } from "@ledgerhq/live-network/cache";
+import {
+  DEFAULT_ACCOUNT_TOKENS_CACHE_TTL_MS,
+  DEFAULT_PLT_MODULE_STATE_CACHE_TTL_MS,
+} from "../constants";
+import { tuning } from "../tuning";
 import type { ConcordiumCoinConfig, PltAccountToken, PltModuleState } from "../types";
 import { readAccountTokens, readPltState } from "./plt";
 import { getAccountBalance, getPltTokenInfo } from "./proxyClient";
 
 type TokenQuery = { config: ConcordiumCoinConfig; currencyId: string; tokenId: string };
 type AccountQuery = { config: ConcordiumCoinConfig; currencyId: string; address: string };
+
+/** One LRU cache per configured TTL, keyed by endpoint so no proxy answers for another. */
+function makeTtlCache<Q extends { config: ConcordiumCoinConfig; currencyId: string }, R>(
+  fetch: (query: Q) => Promise<R>,
+  keyOf: (query: Q) => string,
+  ttlMsOf: (config: ConcordiumCoinConfig) => number,
+): (query: Q) => Promise<R> {
+  const caches = new Map<number, CacheRes<[Q], R>>();
+  return query => {
+    const ttl = ttlMsOf(query.config);
+    let cache = caches.get(ttl);
+    if (!cache) {
+      cache = makeLRUCache(fetch, q => `${q.config.proxyUrl}:${q.currencyId}:${keyOf(q)}`, {
+        max: 100,
+        ttl,
+      });
+      caches.set(ttl, cache);
+    }
+    return cache(query);
+  };
+}
 
 /**
  * What the recipient's balance response turned out to be.
@@ -38,13 +64,14 @@ export type RecipientTokens =
  * The same blob also carries `paused`, which *is* mutable — do not read it from
  * here. The pause check belongs to the sender and comes from synced resources.
  */
-export const fetchPltModuleState = makeLRUCache(
+export const fetchPltModuleState = makeTtlCache(
   async ({ config, currencyId, tokenId }: TokenQuery): Promise<PltModuleState | undefined> => {
     const info = await getPltTokenInfo(config, currencyId, tokenId);
     return readPltState(info?.tokenState?.moduleState);
   },
-  ({ currencyId, tokenId }) => `${currencyId}:${tokenId}`,
-  minutes(5),
+  ({ tokenId }) => tokenId,
+  config =>
+    tuning(config.gateway?.pltModuleStateCacheTtlMs, DEFAULT_PLT_MODULE_STATE_CACHE_TTL_MS, 1),
 );
 
 /**
@@ -56,14 +83,14 @@ export const fetchPltModuleState = makeLRUCache(
  *
  * Keyed on the address alone, not on the token: one response carries every
  * token the account holds, so a per-token key would refetch the same body once
- * per token. Thirty seconds matches the equivalent Hedera lookup, and the cache
+ * per token. The default of thirty seconds matches the equivalent Hedera lookup, and the cache
  * drops a rejected entry rather than storing the failure, so a transient proxy
  * error is retried on the next keystroke instead of being pinned for the TTL.
  * The TTL is what bounds staleness of the one mutable half of the check: list
  * *membership* changes under the user, where the token's list configuration
  * cannot (CIS-7 fixes both flags at creation).
  */
-export const fetchAccountTokens = makeLRUCache(
+export const fetchAccountTokens = makeTtlCache(
   async ({ config, currencyId, address }: AccountQuery): Promise<RecipientTokens> => {
     const { finalizedBalance } = await getAccountBalance(config, currencyId, address);
     if (!finalizedBalance) return { status: "absent" };
@@ -71,6 +98,6 @@ export const fetchAccountTokens = makeLRUCache(
     const entries = readAccountTokens(finalizedBalance.accountTokens);
     return entries ? { status: "readable", entries } : { status: "unreadable" };
   },
-  ({ currencyId, address }) => `${currencyId}:${address}`,
-  seconds(30),
+  ({ address }) => address,
+  config => tuning(config.gateway?.accountTokensCacheTtlMs, DEFAULT_ACCOUNT_TOKENS_CACHE_TTL_MS, 1),
 );

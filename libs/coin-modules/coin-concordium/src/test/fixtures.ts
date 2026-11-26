@@ -20,7 +20,6 @@ import type {
   ConcordiumContext,
   Transaction,
 } from "../types";
-import coinConfig from "../config";
 
 // Valid Concordium addresses for testing
 export const VALID_ADDRESS = "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w";
@@ -35,20 +34,11 @@ export const CRED_ID = "cc".repeat(48);
 export const TESTNET_COIN_CONFIG: ConcordiumConfig = {
   networkType: "testnet",
   proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
+  walletConnect: { relayUrl: "wss://relay.walletconnect.com" },
   minReserve: 100000,
-  // Matches the shipped default. Token tests opt in through `setupTestnetCoinConfig`.
+  // Matches the shipped default. Token tests opt in through `createFixtureContext`.
   enableTokens: false,
 };
-
-export function setupTestnetCoinConfig(overrides?: Partial<ConcordiumCoinConfig>): void {
-  coinConfig.setCoinConfig(() => ({
-    status: { type: "active" },
-    name: "Concordium (Testnet)",
-    unit: { name: "ccd", code: "CCD", magnitude: 6 },
-    ...TESTNET_COIN_CONFIG,
-    ...overrides,
-  }));
-}
 
 /** Builds the testnet {@link ConcordiumCoinConfig} passed to `createApi` in API tests. */
 export function createFixtureConfig(
@@ -63,10 +53,10 @@ export function createFixtureConfig(
   };
 }
 
-/** Builds a {@link ConcordiumContext} resolving to the testnet coin config for API tests. */
-export function createFixtureContext(): ConcordiumContext {
+/** Builds a {@link ConcordiumContext} resolving to the testnet coin config. */
+export function createFixtureContext(overrides?: Partial<ConcordiumCoinConfig>): ConcordiumContext {
   return {
-    config: async () => createFixtureConfig(),
+    config: async () => createFixtureConfig(overrides),
     logger: () => {},
   };
 }

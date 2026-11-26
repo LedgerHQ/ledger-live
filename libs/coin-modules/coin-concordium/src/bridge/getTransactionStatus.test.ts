@@ -14,7 +14,7 @@ import {
   createFixtureTokenAccount,
   createFixtureTokenCurrency,
   createFixtureTransaction,
-  setupTestnetCoinConfig,
+  createFixtureContext,
   VALID_ADDRESS,
   VALID_ADDRESS_2,
 } from "../test/fixtures";
@@ -34,7 +34,7 @@ import {
 } from "../types/errors";
 import type { ConcordiumAccount, ConcordiumTokenResources } from "../types";
 import { checkRecipientRestrictions } from "../logic/transaction/pltRecipientRestrictions";
-import { getTransactionStatus } from "./getTransactionStatus";
+import { buildGetTransactionStatus } from "./getTransactionStatus";
 
 // The recipient's standing is the one input that is not on the account, so it
 // is the one that reaches the network. Its own rules are covered in
@@ -100,8 +100,13 @@ const tokenTx = (subAccountId: string, over = {}) =>
   });
 
 describe("getTransactionStatus", () => {
+  let getTransactionStatus: ReturnType<typeof buildGetTransactionStatus>;
+  const useConfig = (overrides: Parameters<typeof createFixtureContext>[0]) => {
+    getTransactionStatus = buildGetTransactionStatus(createFixtureContext(overrides));
+  };
+
   beforeEach(() => {
-    setupTestnetCoinConfig({ minReserve: 0, currency: createFixtureAccount().currency });
+    useConfig({ minReserve: 0 });
     mockedRecipientRestrictions.mockReset();
     mockedRecipientRestrictions.mockResolvedValue(undefined);
   });
@@ -239,7 +244,7 @@ describe("getTransactionStatus", () => {
 
     it("should return ConcordiumInsufficientFunds when totalSpent exceeds balance minus reserve but not balance", async () => {
       // GIVEN - balance (500000) >= totalSpent (500000) > balance (500000) - reserve (100000) = 400000
-      setupTestnetCoinConfig({ minReserve: 100000, currency: createFixtureAccount().currency });
+      useConfig({ minReserve: 100000 });
       const account = createFixtureAccount({ balance: new BigNumber(500000) });
       const transaction = createFixtureTransaction({
         amount: new BigNumber(400000),
@@ -256,7 +261,7 @@ describe("getTransactionStatus", () => {
 
     it("should not error when amount is below reserve but totalSpent is within limits", async () => {
       // GIVEN - amount (50000) < reserve (100000), but totalSpent (51000) < balance (1000000) - reserve (100000)
-      setupTestnetCoinConfig({ minReserve: 100000, currency: createFixtureAccount().currency });
+      useConfig({ minReserve: 100000 });
       const account = createFixtureAccount({ balance: new BigNumber(1000000) });
       const transaction = createFixtureTransaction({
         amount: new BigNumber(50000),
@@ -273,7 +278,7 @@ describe("getTransactionStatus", () => {
 
     it("should not error when amount equals reserve", async () => {
       // GIVEN
-      setupTestnetCoinConfig({ minReserve: 100000, currency: createFixtureAccount().currency });
+      useConfig({ minReserve: 100000 });
       const account = createFixtureAccount({ balance: new BigNumber(1000000) });
       const transaction = createFixtureTransaction({
         amount: new BigNumber(100000),
