@@ -14,7 +14,6 @@ import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { ServiceStatusProvider } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { http, HttpResponse, server } from "@tests/server";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
-import { getEnv } from "@shared/env";
 import { openShareSheet } from "@shared/share-sheet";
 import { leaveAppFor } from "LLM/features/AppLock/adapters/appVisibility";
 import { VerifyAddressExecutorLWM } from "../../verifyAddressIntent/VerifyAddressExecutorLWM";
@@ -58,7 +57,7 @@ const USDT_ID = "tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t";
 
 const serveUsdt = () =>
   server.use(
-    http.get(`${getEnv("CAL_SERVICE_URL")}/v1/tokens`, () =>
+    http.get("*/v1/tokens", () =>
       HttpResponse.json([
         {
           id: USDT_ID,
