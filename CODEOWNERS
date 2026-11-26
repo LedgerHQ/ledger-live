@@ -152,6 +152,7 @@ features/flow/history-export/                            @ledgerhq/wallet-xp
 features/flow/settings/                                  @ledgerhq/wallet-xp
 features/flow/settings-notifications/                    @ledgerhq/wallet-xp
 features/flow/settings-general/                          @ledgerhq/wallet-xp
+features/flow/settings-privacy/                          @ledgerhq/wallet-xp
 features/flow/settings-security/                         @ledgerhq/wallet-xp
 features/platform/account-analytics/                     @ledgerhq/wallet-xp
 features/platform/quick-actions/                         @ledgerhq/wallet-xp
