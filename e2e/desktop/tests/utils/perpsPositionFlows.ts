@@ -38,7 +38,8 @@ export async function openPerpsPosition(
   },
 ) {
   await app.perpsOrder.openFirstMarketWithoutPosition(market, positions);
-  await app.perpsOrder.selectSide(side);
+  // The order form opens on Long.
+  if (side === "short") await app.perpsOrder.selectSide(side);
   await app.perpsOrder.setLeverage(leverage);
   await app.perpsOrder.expectLeverage(leverage);
   await app.perpsOrder.enterMargin(marginUsd);

@@ -17,6 +17,7 @@ import {
   readPerpsPositions,
   PERPS_REAL_BROADCAST_ENV,
 } from "tests/utils/perpsPositionFlows";
+import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
 
 const account = Account.HYPERCORE_1;
 const market = HIP3_MARKETS;
@@ -27,6 +28,7 @@ const xrayTicket = "B2CQA-4707";
 test.describe("Perps close position", { lock: lock.names }, () => {
   // Remove once the Perps feature flags are on PRD.
   test.skip(!IS_PERPS_LIVE_APP_STAGING, "Perps feature flags are not on PRD yet");
+  skipSharedAccountOnSecondaryLeg("Perps close", PERPS_REAL_BROADCAST_ENV);
 
   test.use(lock.fixtures);
   test.use({

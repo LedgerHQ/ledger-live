@@ -10,11 +10,13 @@ import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 import { HIP3_MARKETS } from "tests/utils/perpsMarkets";
 import {
   closePerpsPositionsOpenedByTest,
-  openPerpsPosition,
   openPerpsFromPortfolio,
   readPerpsPositions,
+  ORDER_LEVERAGE,
+  ORDER_MARGIN_USD,
   PERPS_REAL_BROADCAST_ENV,
 } from "tests/utils/perpsPositionFlows";
+import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
 import type { PerpsOrderSide, ProviderPosition } from "tests/page/perps.order.page";
 
 const account = Account.HYPERCORE_1;
@@ -29,6 +31,7 @@ const orders = [
 test.describe("Perps open position", { lock: lock.names }, () => {
   // Remove once the Perps feature flags are on PRD.
   test.skip(!IS_PERPS_LIVE_APP_STAGING, "Perps feature flags are not on PRD yet");
+  skipSharedAccountOnSecondaryLeg("Perps open", PERPS_REAL_BROADCAST_ENV);
 
   test.use(lock.fixtures);
   test.use({
@@ -72,11 +75,23 @@ test.describe("Perps open position", { lock: lock.names }, () => {
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app, speculos }) => {
-        await openPerpsPosition(app, {
-          market,
+        await app.perpsOrder.openFirstMarketWithoutPosition(market, positionsAtStart ?? []);
+        // The order form opens on Long.
+        if (side === "short") await app.perpsOrder.selectSide(side);
+        await app.perpsOrder.setLeverage(ORDER_LEVERAGE);
+        await app.perpsOrder.expectLeverage(ORDER_LEVERAGE);
+        await app.perpsOrder.enterMargin(ORDER_MARGIN_USD);
+        await app.perpsOrder.setAutoClose(side);
+        await app.perpsOrder.expectAutoCloseSet();
+        await speculos.relaunch(AppInfos.HYPERLIQUID.name);
+        await app.perpsOrder.clickOpenPosition();
+        await app.speculos.signHyperliquidMessage();
+        await app.perpsOrder.expectOrderPlaced();
+        await app.perpsOrder.clickContinueAfterOrderPlaced();
+        await app.perpsOrder.expectOpenedPosition({
           side,
-          positions: positionsAtStart ?? [],
-          relaunchSpeculos: speculos.relaunch,
+          leverage: ORDER_LEVERAGE,
+          marginUsd: ORDER_MARGIN_USD,
         });
       },
     );

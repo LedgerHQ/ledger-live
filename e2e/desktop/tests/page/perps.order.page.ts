@@ -8,7 +8,7 @@ export type PerpsOrderSide = "long" | "short";
 
 type AutoCloseOffsets = { takeProfit: string; stopLoss: string };
 
-// Quick-option labels of the live app, by side.
+// Quick options are price offsets, not ROE.
 const AUTO_CLOSE_OFFSETS = {
   long: { takeProfit: "+10%", stopLoss: "-5%" },
   short: { takeProfit: "-5%", stopLoss: "+5%" },
@@ -21,9 +21,16 @@ export type ProviderPosition = { marketId: string; symbol: string };
 
 const autoCloseSummary = /Take profit \$([\d,.]+), Stop loss \$([\d,.]+)/;
 
+const usdAmount = /\$([\d,.]+)/;
+
 const offsetToFactor = (offset: string) => 1 + Number.parseFloat(offset) / 100;
 
-const toNumber = (text: string) => Number.parseFloat(text.replaceAll(/[^\d.]/g, ""));
+const parseAmount = (text: string) => Number.parseFloat(text.replaceAll(",", ""));
+
+// NaN while the button shows no amount yet, so a poll keeps waiting.
+const readUsdAmount = (text: string) => parseAmount(usdAmount.exec(text)?.[1] ?? "");
+
+const escapeRegExp = (text: string) => text.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 
 export class PerpsOrderPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "perps";
@@ -100,8 +107,9 @@ export class PerpsOrderPage extends WebViewAppPage {
   async expectAutoCloseSet() {
     const webview = await this.getWebView();
     const orderWidget = webview.getByTestId(this.orderWidgetTestId);
-    await expect(orderWidget.getByText("Take profit")).toBeVisible();
-    await expect(orderWidget.getByText("Stop loss")).toBeVisible();
+    await expect(orderWidget.getByRole("button", { name: /^Autoclose/ })).toContainText(
+      autoCloseSummary,
+    );
   }
 
   @step("Click Open position")
@@ -144,7 +152,7 @@ export class PerpsOrderPage extends WebViewAppPage {
     );
     await expect(webview.getByRole("button", { name: /^Leverage/ })).toContainText(`${leverage}x`);
     const margin = webview.getByRole("button", { name: /^Margin/ });
-    const shownMargin = async () => toNumber(await margin.innerText());
+    const shownMargin = async () => readUsdAmount(await margin.innerText());
     // The exchange rounds the size down, so the margin can fall below the request.
     await expect.poll(shownMargin).toBeGreaterThanOrEqual(MIN_ORDER_NOTIONAL_USD / leverage);
     await expect.poll(shownMargin).toBeLessThanOrEqual(marginUsd + MARGIN_TOLERANCE_USD);
@@ -252,9 +260,9 @@ export class PerpsOrderPage extends WebViewAppPage {
 
   // The list shows the symbol without its dex prefix, then the side and leverage.
   private positionRow(webview: Page, { symbol: providerSymbol }: ProviderPosition) {
-    const symbol = providerSymbol.replace(/^.*:/, "");
+    const symbol = escapeRegExp(providerSymbol.replace(/^.*:/, ""));
     return webview.getByRole("button", {
-      name: new RegExp(String.raw`${symbol}\s+(Long|Short) \d+x`),
+      name: new RegExp(String.raw`(?<![\w-])${symbol}\s+(Long|Short) \d+x`),
     });
   }
 
@@ -265,7 +273,10 @@ export class PerpsOrderPage extends WebViewAppPage {
     const [, takeProfit, stopLoss] = autoCloseSummary.exec(await autoClose.innerText()) ?? [];
     const offsets = AUTO_CLOSE_OFFSETS[side];
     const expectedRatio = offsetToFactor(offsets.takeProfit) / offsetToFactor(offsets.stopLoss);
-    expect(toNumber(takeProfit ?? "") / toNumber(stopLoss ?? "")).toBeCloseTo(expectedRatio, 2);
+    expect(parseAmount(takeProfit ?? "") / parseAmount(stopLoss ?? "")).toBeCloseTo(
+      expectedRatio,
+      2,
+    );
   }
 
   private async pickAutoCloseOffset(title: "Take profit" | "Stop loss", offset: string) {

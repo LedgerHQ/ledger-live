@@ -38,9 +38,9 @@ export type LockDeclaration = {
 };
 
 /** The test's `env` fixture, which overrides the runner's environment for the app. */
-type TestEnv = Readonly<Record<string, string>> | undefined;
+export type TestEnv = Readonly<Record<string, string>> | undefined;
 
-const isAppBroadcastEnabled = (env: TestEnv) =>
+export const isAppBroadcastEnabled = (env: TestEnv) =>
   (env?.DISABLE_TRANSACTION_BROADCAST ?? process.env.DISABLE_TRANSACTION_BROADCAST ?? "1") === "0";
 
 const lockedBroadcastAccounts = ({ broadcastAccounts = [] }: LockDeclaration, env: TestEnv) =>
