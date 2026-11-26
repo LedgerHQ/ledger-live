@@ -24,5 +24,7 @@ type NotificationRowIconProps = Readonly<{ id: NotificationKey; disabled?: boole
 
 export function NotificationRowIcon({ id, disabled }: NotificationRowIconProps) {
   const Icon = ICONS[id];
-  return <Icon size={ICON_SIZE} color={disabled ? "disabled" : "base"} />;
+  const color = disabled ? "disabled" : "base";
+  // react-native-svg does not repaint `currentColor` strokes when only `color` changes.
+  return <Icon key={color} size={ICON_SIZE} color={color} />;
 }
