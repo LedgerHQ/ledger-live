@@ -1,12 +1,12 @@
 import { StackActions, useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import { setLedgerSyncActivateDrawer } from "~/actions/walletSync";
 import { NavigatorName, ScreenName } from "~/const";
 
 export function LedgerSyncDeepLinkHandler() {
-  const hasTrustchain = !!useSelector(trustchainSelector)?.rootId;
+  const hasTrustchain = useSelector(selectIsLedgerSyncActive);
   const navigation = useNavigation();
   const dispatch = useDispatch();
 

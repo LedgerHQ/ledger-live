@@ -59,7 +59,7 @@ import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
 import { importMarket } from "~/actions/market";
 import { importMarketListConfig } from "~/reducers/market";
 import { importMarketBannerState } from "~/reducers/marketBanner";
-import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { importPersistedKeyRingState } from "@features/platform-key-ring/store";
 import { importWalletState } from "~/reducers/wallet";
 import { restoreAccountAnalyticsIntroductionFromStorage } from "LLM/features/AccountDetail/analyticsIntroductionStorage";
 import { hasOnboardedWithDeviceSelector } from "LLM/features/AccountDetail/utils/hasOnboardedWithDevice";
@@ -293,7 +293,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(restoreReceiveVerifyHint(receiveVerifyHintState));
       }
 
-      store.dispatch(importTrustchainStoreState(trustchainStore));
+      void importPersistedKeyRingState(trustchainStore)(store.dispatch);
 
       if (walletStore) {
         importWalletState(walletStore)(store.dispatch);

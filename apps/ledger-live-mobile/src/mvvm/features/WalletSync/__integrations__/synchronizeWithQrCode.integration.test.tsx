@@ -1,10 +1,9 @@
 import React from "react";
 import { render, screen, act } from "@tests/test-renderer";
 import { INITIAL_TEST, WalletSyncSettingsNavigator } from "./shared";
-import {
-  createQRCodeCandidateInstance,
-  createQRCodeHostInstance,
-} from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
+import type { KeyRingClientConfig } from "@features/platform-key-ring";
+import { keyRingTreeUpdateFixture } from "@features/platform-key-ring/testing";
+import { mockKeyRingTreeRecord } from "@domain/entity-key-ring/schema.mock";
 import { Code } from "react-native-vision-camera";
 
 import { mockSimulateBarcodeScanned } from "@tests/jest-setup";
@@ -20,16 +19,30 @@ const MOCK_CODE: Code = {
   },
 };
 
-jest.mock("@ledgerhq/ledger-key-ring-protocol/qrcode/index", () => ({
-  createQRCodeCandidateInstance: jest.fn(),
-  createQRCodeHostInstance: jest.fn(),
-}));
+const joinedTrustchain = mockKeyRingTreeRecord({ rootId: "joined-root-id" });
+const joinedTree = keyRingTreeUpdateFixture(joinedTrustchain);
+
+const mockHostPairing = jest.fn();
+const mockJoinPairing = jest.fn();
+
+jest.mock("@features/platform-key-ring", () => {
+  const actual = jest.requireActual("@features/platform-key-ring");
+  return {
+    ...actual,
+    // The client is a class instance: override its pairing methods on the instance itself.
+    createKeyRingClient: (config: KeyRingClientConfig) =>
+      Object.assign(actual.createKeyRingClient(config), {
+        hostPairing: mockHostPairing,
+        joinPairing: mockJoinPairing,
+      }),
+  };
+});
 
 jest.useFakeTimers();
 
 describe("SynchronizeWithQrCode", () => {
   it("Should render the host QR code once the Ledger Sync url is received", async () => {
-    (createQRCodeHostInstance as jest.Mock).mockImplementation(({ onDisplayQRCode }) => {
+    mockHostPairing.mockImplementation((_session, { onDisplayQRCode }) => {
       onDisplayQRCode("wss://trustchain.api.live.ledger.com/v1/qr?host=02abc");
       return new Promise(() => {});
     });
@@ -52,12 +65,12 @@ describe("SynchronizeWithQrCode", () => {
     const mockPromiseQRCodeCandidate = new Promise(resolve => {
       resolveQRCodeFlowPromise = resolve;
     });
-    (createQRCodeCandidateInstance as jest.Mock).mockImplementation(({ onRequestQRCodeInput }) => {
-      requestQRCodeInput = onRequestQRCodeInput;
+    mockJoinPairing.mockImplementation((_session, { onRequestPairingCode }) => {
+      requestQRCodeInput = onRequestPairingCode;
       return mockPromiseQRCodeCandidate;
     });
 
-    const { user } = render(<WalletSyncSettingsNavigator />, {
+    const { user, store } = render(<WalletSyncSettingsNavigator />, {
       overrideInitialState: INITIAL_TEST,
     });
     await user.press(await screen.findByText(/ledger sync/i));
@@ -95,7 +108,7 @@ describe("SynchronizeWithQrCode", () => {
     // Resolve the QR code flow promise only if pin code is set
     if (pinCodeSet) {
       if (typeof resolveQRCodeFlowPromise === "function") {
-        resolveQRCodeFlowPromise({ member: { name: "test" } });
+        resolveQRCodeFlowPromise(joinedTree);
       }
     }
 
@@ -105,5 +118,6 @@ describe("SynchronizeWithQrCode", () => {
       jest.advanceTimersByTime(3 * 1000);
     });
     expect(await screen.findByText("Sync successful")).toBeDefined();
+    expect(store.getState().trustchain.trustchain).toEqual(joinedTrustchain);
   });
 });

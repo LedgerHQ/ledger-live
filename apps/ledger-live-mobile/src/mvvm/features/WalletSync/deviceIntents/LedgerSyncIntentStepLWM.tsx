@@ -1,6 +1,6 @@
 import React from "react";
 import type { Intent } from "@features/platform-device-intent";
-import type { LedgerSyncJobState } from "@features/platform-intent-wallet-sync";
+import type { LedgerSyncJobState } from "@features/platform-key-ring";
 import GenericFollowInstructionsDrawer from "../screens/FollowInstructions";
 import { LedgerSyncDeviceIntentExecutorLWM } from "./LedgerSyncDeviceIntentExecutorLWM";
 import type { LedgerSyncIntentStep } from "./useLedgerSyncIntentStep";

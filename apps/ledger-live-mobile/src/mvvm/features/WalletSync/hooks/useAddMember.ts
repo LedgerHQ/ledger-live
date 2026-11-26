@@ -1,13 +1,13 @@
 import { track } from "@shared/analytics";
 import {
-  memberCredentialsSelector,
-  setTrustchain,
-  trustchainSelector,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
+  classifyKeyRingError,
+  commitKeyRingTree,
+  selectKeyRingSession,
+  type KeyRingActivation,
+} from "@features/platform-key-ring";
+import { selectHasKeyRingMemberKey } from "@domain/entity-key-ring";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { useTrustchainSdk } from "./useTrustchainSdk";
-import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { useCallback, useRef } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
@@ -22,12 +22,12 @@ import { OnboardingType } from "~/reducers/types";
 import { CONNECTION_TYPES } from "~/analytics/hooks/variables";
 
 export function useAddMember({ device }: { device: Device | null }): DrawerProps {
-  const trustchain = useSelector(trustchainSelector);
+  const session = useSelector(selectKeyRingSession);
   const dispatch = useDispatch();
-  const sdk = useTrustchainSdk();
-  const memberCredentials = useSelector(memberCredentialsSelector);
-  const memberCredentialsRef = useRef(memberCredentials);
-  const trustchainRef = useRef(trustchain);
+  const client = useKeyRingClient();
+  const hasMemberKey = useSelector(selectHasKeyRingMemberKey);
+  const hasMemberKeyRef = useRef(hasMemberKey);
+  const sessionRef = useRef(session);
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
   const { params } =
     useRoute<
@@ -39,15 +39,15 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
   const trackingFlow = useWalletSyncTrackingFlow();
 
   const transitionToNextScreen = useCallback(
-    (trustchainResult: TrustchainResult) => {
-      dispatch(setTrustchain(trustchainResult.trustchain));
+    (activation: KeyRingActivation) => {
+      dispatch(commitKeyRingTree(activation.tree));
       track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
       if (seededOffer) {
         navigation.getParent()?.goBack();
         return;
       }
       navigation.navigate(ScreenName.WalletSyncLoading, {
-        created: trustchainResult.type === TrustchainResultType.created,
+        created: activation.outcome === "created",
       });
     },
     [dispatch, navigation, seededOffer, trackingFlow],
@@ -57,44 +57,33 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
     async setScene => {
       try {
         if (!device) return;
-        if (!memberCredentialsRef.current) {
+        if (!hasMemberKeyRef.current) {
           throw new Error("memberCredentials is not set");
         }
-        const trustchainResult = await sdk.getOrCreateTrustchain(
-          device.deviceId,
-          memberCredentialsRef.current,
-          {
-            onInitialResponse: trustchains => {
-              if (
-                onboardingType === OnboardingType.setupNew ||
-                hasCompletedOnboarding ||
-                Object.keys(trustchains).length > 0
-              )
-                return;
-              else throw new NoTrustchainInitialized();
-            },
+        const activation = await client.activate(sessionRef.current, {
+          legacyDeviceId: device.deviceId,
+          callbacks: {
             onStartRequestUserInteraction: () =>
               setScene({ kind: SceneKind.DeviceInstructions, device }),
             onEndRequestUserInteraction: () => setScene({ kind: SceneKind.Loader }),
           },
-          undefined,
-          trustchainRef.current ?? undefined,
-        );
-        if (trustchainResult) {
-          transitionToNextScreen(trustchainResult);
+          allowTreeCreation: onboardingType === OnboardingType.setupNew || hasCompletedOnboarding,
+        });
+        if (activation) {
+          transitionToNextScreen(activation);
         }
       } catch (error) {
-        const eName = (error as { name?: string })?.name;
-        if (eName === "TrustchainNotAllowed") {
+        const category = classifyKeyRingError(error);
+        if (category === "not-allowed") {
           setScene({ kind: SceneKind.KeyError });
-        } else if (eName === "TrustchainAlreadyInitialized") {
+        } else if (category === "already-member") {
           setScene({ kind: SceneKind.AlreadySecuredSameSeed });
-        } else if (eName === "TrustchainAlreadyInitializedWithOtherSeed") {
+        } else if (category === "member-of-other-tree") {
           setScene({ kind: SceneKind.AlreadySecuredOtherSeed });
-        } else if (eName === "NoTrustchainInitialized") {
+        } else if (category === "no-tree-for-seed") {
           setScene({ kind: SceneKind.UnbackedError });
         } else if (error instanceof Error) {
-          if (eName === "UserRefusedOnDevice") {
+          if (category === "user-refused") {
             track(AnalyticsEvents.LedgerSyncRejectedOnDevice, {
               page: "Ledger Sync",
               modelId: device?.modelId,
@@ -105,6 +94,6 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
         }
       }
     },
-    [device, sdk, transitionToNextScreen, hasCompletedOnboarding],
+    [device, client, transitionToNextScreen, hasCompletedOnboarding],
   );
 }

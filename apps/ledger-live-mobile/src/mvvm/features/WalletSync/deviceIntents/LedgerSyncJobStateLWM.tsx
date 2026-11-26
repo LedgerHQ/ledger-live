@@ -1,6 +1,6 @@
 import React from "react";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
-import type { LedgerSyncJobState } from "@features/platform-intent-wallet-sync";
+import type { LedgerSyncJobState } from "@features/platform-key-ring";
 import { InfoState } from "@shared/ui-info-state";
 import { Trans } from "~/context/Locale";
 import ModalLock from "~/components/ModalLock";

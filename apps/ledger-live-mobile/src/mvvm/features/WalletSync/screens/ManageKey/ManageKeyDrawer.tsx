@@ -8,7 +8,11 @@ import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 
 import { ConfirmManageKey } from "../../components/ManageKey/Confirm";
 import { HookResult } from "./useManageKeyDrawer";
-import { isNoTrustchainError, isUnauthorizedMemberError } from "../../utils/errors";
+import {
+  isNoTrustchainError,
+  isUnauthorizedMemberError,
+  keyRingErrorForDisplayView,
+} from "../../utils/errors";
 import { SpecificError } from "../../components/Error/SpecificError";
 import { ErrorReason } from "../../hooks/useSpecificError";
 
@@ -34,7 +38,7 @@ const ManageKeyDrawer = ({
       }
       return (
         <GenericErrorView
-          error={deleteMutation.error}
+          error={keyRingErrorForDisplayView(deleteMutation.error)}
           withDescription
           withHelp
           hasExportLogButton

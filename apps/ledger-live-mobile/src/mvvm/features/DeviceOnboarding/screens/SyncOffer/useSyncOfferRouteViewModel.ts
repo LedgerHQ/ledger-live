@@ -8,7 +8,7 @@ import {
   type ParamListBase,
   type RouteProp,
 } from "@react-navigation/native";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import { useFeature } from "@features/platform-feature-flags";
 import { seededProps, trackSeededDone } from "@features/platform-device-onboarding-analytics";
 import { useCompleteSeededOnboarding } from "LLM/features/DeviceOnboarding/hooks/useCompleteSeededOnboarding";
@@ -53,7 +53,7 @@ export function useSyncOfferRouteViewModel(): SyncOfferRouteViewModel {
     seededResult,
     unseededProps = null,
   } = useRoute<OfferRoute>().params;
-  const hasTrustchain = Boolean(useSelector(trustchainSelector)?.rootId);
+  const hasTrustchain = useSelector(selectIsLedgerSyncActive);
   const { visualPending } = useWalletSyncUserState();
   const featureWalletSync = useFeature("llmWalletSync");
   const initialTimeout =

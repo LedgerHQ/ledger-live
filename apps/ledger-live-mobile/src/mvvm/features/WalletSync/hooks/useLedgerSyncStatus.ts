@@ -1,8 +1,6 @@
 import { useQueries, UseQueryResult } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
-import getTrustchainApi, {
-  StatusAPIResponse as TrustchainStatus,
-} from "@ledgerhq/ledger-key-ring-protocol/api";
+import { fetchKeyRingServiceStatus, type KeyRingServiceStatus } from "@features/platform-key-ring";
 import { getCloudSyncApi, StatusAPIResponse as CloudSyncStatus } from "@shared/cloud-sync";
 import { useFeature } from "@features/platform-feature-flags";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
@@ -16,7 +14,7 @@ export function useLedgerSyncStatus() {
   const QUERIES = [
     {
       queryKey: [QueryKey.fetchTrustchainStatus],
-      queryFn: () => getTrustchainApi(trustchainApiBaseUrl).fetchStatus(),
+      queryFn: () => fetchKeyRingServiceStatus(trustchainApiBaseUrl),
       enabled: isWalletSyncEnabled,
     },
     {
@@ -32,7 +30,7 @@ export function useLedgerSyncStatus() {
   });
 }
 
-function combineData(results: UseQueryResult<TrustchainStatus | CloudSyncStatus, Error>[]) {
+function combineData(results: UseQueryResult<KeyRingServiceStatus | CloudSyncStatus, Error>[]) {
   return {
     error: results.find(result => result.isError)?.error || null,
     isLoading: results.some(result => result.isLoading),

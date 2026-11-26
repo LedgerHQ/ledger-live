@@ -5,24 +5,22 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { track } from "@shared/analytics";
 import { act, render, screen, waitFor, within, withFlagOverrides } from "@tests/test-renderer";
 import type { ExecutorState } from "@features/platform-device-intent";
-import type { LedgerSyncJobState } from "@features/platform-intent-wallet-sync";
+import { EMPTY } from "rxjs";
+import { mockKeyRingTreeRecord } from "@domain/entity-key-ring/schema.mock";
+import { keyRingTreeUpdateFixture } from "@features/platform-key-ring/testing";
+import { createKeyRingV1DeviceBridge } from "@features/platform-key-ring/v1";
 import {
-  resetTrustchainStore,
-  setMemberCredentials,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
-import {
-  NoTrustchainInitialized,
-  TrustchainAlreadyInitialized,
-  TrustchainAlreadyInitializedWithOtherSeed,
-  TrustchainNotAllowed,
-} from "@ledgerhq/ledger-key-ring-protocol/errors";
-import {
-  type GetOrCreateTrustchainCallbacks,
-  type Trustchain,
-  type TrustchainDeviceCallbacks,
-  type TrustchainMember,
-  TrustchainResultType,
-} from "@ledgerhq/ledger-key-ring-protocol/types";
+  commitKeyRingMemberKey,
+  createKeyRingClient,
+  KeyRingMemberSchema,
+  resetKeyRingState,
+  type KeyRingActivateOptions,
+  type KeyRingActivation,
+  type KeyRingDeviceCallbacks,
+  type KeyRingSession,
+  type KeyRingTreeUpdate,
+  type LedgerSyncJobState,
+} from "@features/platform-key-ring";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { useLedgerSyncActivationStepViewModel } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/LedgerSyncActivationStep/useLedgerSyncActivationStepViewModel";
@@ -40,15 +38,27 @@ import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Steps } from "../types/Activation";
 import { AnalyticsEvents } from "../Analytics/enums";
 
-const mockGetOrCreateTrustchain = jest.fn();
+const mockActivate = jest.fn();
 const mockRemoveMember = jest.fn();
+const mockForDeviceSession = jest.fn();
 
-jest.mock("../deviceIntents/useCreateSessionSdk", () => ({
-  useCreateSessionSdk: () => () => ({
-    getOrCreateTrustchain: mockGetOrCreateTrustchain,
-    removeMember: mockRemoveMember,
-  }),
-}));
+// The app client binds each DIE run to a fake client of the session.
+jest.mock("@features/platform-key-ring", () => {
+  const actual = jest.requireActual("@features/platform-key-ring");
+  return {
+    ...actual,
+    createKeyRingClient: (config: Parameters<typeof actual.createKeyRingClient>[0]) => {
+      const client = actual.createKeyRingClient(config);
+      jest.spyOn(client, "forDeviceSession").mockImplementation(deviceSession => {
+        mockForDeviceSession(deviceSession);
+        return jest
+          .requireActual("@features/platform-key-ring/testing")
+          .fakeKeyRingClient({ activate: mockActivate, removeMember: mockRemoveMember });
+      });
+      return client;
+    },
+  };
+});
 
 // The error of the last key deletion, which the manage key drawer shows.
 const mockDeleteError: { current: Error | null } = { current: null };
@@ -67,7 +77,7 @@ jest.mock("../hooks/useInitMemberCredentials", () => ({
   }),
 }));
 
-const MEMBER: TrustchainMember = { id: "member-2", name: "Desktop", permissions: 112 };
+const MEMBER = KeyRingMemberSchema.parse({ id: "member-2", name: "Desktop" });
 
 jest.mock("../hooks/useGetMembers", () => ({
   useGetMembers: () => ({
@@ -175,13 +185,36 @@ function pressBack() {
   });
 }
 
-const TRUSTCHAIN: Trustchain = {
+const TRUSTCHAIN = mockKeyRingTreeRecord({
   rootId: "rootId",
   applicationPath: "applicationPath",
   walletSyncEncryptionKey: "walletSyncEncryptionKey",
-};
+});
 
-const ROTATED_TRUSTCHAIN: Trustchain = { ...TRUSTCHAIN, walletSyncEncryptionKey: "rotated" };
+const ROTATED_TRUSTCHAIN = mockKeyRingTreeRecord({
+  ...TRUSTCHAIN,
+  walletSyncEncryptionKey: "rotated",
+});
+
+const TREE = keyRingTreeUpdateFixture(TRUSTCHAIN);
+const ROTATED_TREE = keyRingTreeUpdateFixture(ROTATED_TRUSTCHAIN);
+
+const streamClient = createKeyRingClient({
+  mock: true,
+  instanceName: "Ledger Sync DIE test",
+  apiBaseUrl: "https://trustchain.test",
+  deviceBridge: createKeyRingV1DeviceBridge({
+    withDevice: () => () => EMPTY,
+    createSessionTransport: () => {
+      throw new Error("No device session in this test");
+    },
+  }),
+});
+
+// The stream a session opens names its key tree: the public view of what the session holds.
+function treeOf(session: KeyRingSession) {
+  return streamClient.openStream(session)?.ref ?? null;
+}
 
 const MEMBER_CREDENTIALS = { privatekey: "privatekey", pubkey: "pubkey" };
 
@@ -346,7 +379,7 @@ function initialState({
   memberCredentials = MEMBER_CREDENTIALS,
 }: {
   ledgerSyncDie?: boolean;
-  trustchain?: Trustchain | null;
+  trustchain?: typeof TRUSTCHAIN | null;
   hasCompletedOnboarding?: boolean;
   onboardingType?: OnboardingType;
   memberCredentials?: typeof MEMBER_CREDENTIALS | null;
@@ -404,23 +437,21 @@ async function waitForEntryScreen() {
   return screen.getByText("entry screen");
 }
 
-// The SDK on a seed without trustchain: it reports no trustchain, then creates one.
+// The key ring on a seed without key tree: it creates one only when it is allowed to.
 async function createOnSeedWithoutTrustchain(
-  _deviceId: string,
-  _memberCredentials: unknown,
-  callbacks: GetOrCreateTrustchainCallbacks,
-) {
-  callbacks.onInitialResponse?.({});
-  return { type: TrustchainResultType.created, trustchain: TRUSTCHAIN };
+  _session: KeyRingSession,
+  { allowTreeCreation = true }: KeyRingActivateOptions,
+): Promise<KeyRingActivation> {
+  if (!allowTreeCreation) throw namedError("NoTrustchainInitialized");
+  return { outcome: "created", tree: TREE };
 }
 
-// The SDK waiting for the user's confirmation on the device.
+// The key ring waiting for the user's confirmation on the device.
 function awaitConfirmationForever(
-  _deviceId: string,
-  _memberCredentials: unknown,
-  callbacks: TrustchainDeviceCallbacks,
+  _session: KeyRingSession,
+  { callbacks }: Readonly<{ callbacks?: KeyRingDeviceCallbacks }>,
 ) {
-  callbacks.onStartRequestUserInteraction?.();
+  callbacks?.onStartRequestUserInteraction?.();
   return new Promise(() => {});
 }
 
@@ -433,8 +464,11 @@ function deviceAnswer<T>() {
   return { promise, settle };
 }
 
-function namedError(ErrorClass: new (message?: string) => Error): Error {
-  return new ErrorClass("from the SDK");
+// The v1 SDK errors reach the app unchanged: only their name identifies them.
+function namedError(name: string): Error {
+  const error = new Error("from the SDK");
+  error.name = name;
+  return error;
 }
 
 describe("Ledger Sync device steps on DIE, opened over the entry screen", () => {
@@ -561,7 +595,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
 
     it("should start the activation step from the manage key error", async () => {
       mockDeleteError.current = new Error("No such trustchain");
-      mockGetOrCreateTrustchain.mockImplementation(awaitConfirmationForever);
+      mockActivate.mockImplementation(awaitConfirmationForever);
 
       const { user } = render(<ManageKeyEntry />, {
         overrideInitialState: initialState({ trustchain: TRUSTCHAIN }),
@@ -593,26 +627,27 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
 
   describe("activation", () => {
     it.each([
-      [TrustchainResultType.created, true],
-      [TrustchainResultType.updated, false],
-      [TrustchainResultType.restored, false],
+      ["created", true],
+      ["joined", false],
+      ["restored", false],
     ])(
       "should store the trustchain and reach the loading screen when it is %s",
-      async (type, created) => {
-        mockGetOrCreateTrustchain.mockResolvedValue({ type, trustchain: TRUSTCHAIN });
+      async (outcome, created) => {
+        mockActivate.mockResolvedValue({ outcome, tree: TREE });
 
         const { store } = await activateFromSettings();
 
         expect(await screen.findByText(loadingScreen(created))).toBeVisible();
         expectNoProcessScreen();
         expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN);
-        expect(mockGetOrCreateTrustchain).toHaveBeenCalledWith(
-          "compat-1",
-          MEMBER_CREDENTIALS,
-          expect.objectContaining({ onInitialResponse: expect.any(Function) }),
-          undefined,
-          undefined,
+        expect(mockForDeviceSession).toHaveBeenCalledWith(
+          expect.objectContaining({ sessionId: "session-1" }),
         );
+        expect(mockActivate).toHaveBeenCalledWith(
+          expect.anything(),
+          expect.objectContaining({ allowTreeCreation: true }),
+        );
+        expect(treeOf(mockActivate.mock.calls[0][0])).toBeNull();
         expect(track).toHaveBeenCalledWith(AnalyticsEvents.LedgerSyncActivated, {
           flow: "Ledger Sync",
         });
@@ -620,7 +655,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     );
 
     it("should open the device step over the entry screen", async () => {
-      mockGetOrCreateTrustchain.mockImplementation(awaitConfirmationForever);
+      mockActivate.mockImplementation(awaitConfirmationForever);
 
       await activateFromSettings();
 
@@ -630,22 +665,19 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should pass the current trustchain so the SDK restores it", async () => {
-      mockGetOrCreateTrustchain.mockResolvedValue({
-        type: TrustchainResultType.restored,
-        trustchain: TRUSTCHAIN,
-      });
+      mockActivate.mockResolvedValue({ outcome: "restored", tree: TREE });
 
       await activateFromSettings(initialState({ trustchain: TRUSTCHAIN }));
 
       await screen.findByText(loadingScreen(false));
-      expect(mockGetOrCreateTrustchain.mock.calls[0][4]).toEqual(TRUSTCHAIN);
+      expect(treeOf(mockActivate.mock.calls[0][0])).toEqual({
+        treeId: TRUSTCHAIN.rootId,
+        streamPath: TRUSTCHAIN.applicationPath,
+      });
     });
 
     it("should run from Add account and reach the loading screen", async () => {
-      mockGetOrCreateTrustchain.mockResolvedValue({
-        type: TrustchainResultType.created,
-        trustchain: TRUSTCHAIN,
-      });
+      mockActivate.mockResolvedValue({ outcome: "created", tree: TREE });
 
       const { user } = render(<AddAccountEntry />, { overrideInitialState: initialState({}) });
       await user.press(await screen.findByTestId("add-accounts-modal-wallet-sync-button"));
@@ -656,12 +688,12 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it.each([
-      [TrustchainAlreadyInitialized, /This app is already secured by this Ledger/],
-      [TrustchainAlreadyInitializedWithOtherSeed, /You can’t use this Ledger to sync/],
-      [NoTrustchainInitialized, /Sync not detected/],
-      [TrustchainNotAllowed, /Connect the same Ledger device you used for enabling Ledger Sync/],
-    ])("should route %p to its existing error scene", async (ErrorClass, title) => {
-      mockGetOrCreateTrustchain.mockRejectedValue(namedError(ErrorClass));
+      ["TrustchainAlreadyInitialized", /This app is already secured by this Ledger/],
+      ["TrustchainAlreadyInitializedWithOtherSeed", /You can’t use this Ledger to sync/],
+      ["NoTrustchainInitialized", /Sync not detected/],
+      ["TrustchainNotAllowed", /Connect the same Ledger device you used for enabling Ledger Sync/],
+    ])("should route %p to its existing error scene", async (errorName, title) => {
+      mockActivate.mockRejectedValue(namedError(errorName));
 
       await activateFromSettings();
 
@@ -670,7 +702,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should route an unknown error to the generic error", async () => {
-      mockGetOrCreateTrustchain.mockRejectedValue(new Error("network down"));
+      mockActivate.mockRejectedValue(new Error("network down"));
 
       await activateFromSettings();
 
@@ -678,7 +710,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should stay on the entry screen when the error drawer is closed", async () => {
-      mockGetOrCreateTrustchain.mockRejectedValue(new Error("network down"));
+      mockActivate.mockRejectedValue(new Error("network down"));
 
       const { user } = await activateFromSettings();
       await screen.findByText(/network down/);
@@ -689,7 +721,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should show the unbacked error when an onboarding syncs with Ledger Sync on a seed without trustchain", async () => {
-      mockGetOrCreateTrustchain.mockImplementation(createOnSeedWithoutTrustchain);
+      mockActivate.mockImplementation(createOnSeedWithoutTrustchain);
 
       const { store } = await activateFromSettings(
         initialState({ hasCompletedOnboarding: false, onboardingType: OnboardingType.walletSync }),
@@ -700,7 +732,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should create the trustchain on a seed without trustchain once the onboarding is completed", async () => {
-      mockGetOrCreateTrustchain.mockImplementation(createOnSeedWithoutTrustchain);
+      mockActivate.mockImplementation(createOnSeedWithoutTrustchain);
 
       const { store } = await activateFromSettings(
         initialState({ onboardingType: OnboardingType.walletSync }),
@@ -711,9 +743,9 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should track the rejection on the device, then succeed on retry", async () => {
-      mockGetOrCreateTrustchain
+      mockActivate
         .mockRejectedValueOnce(new UserRefusedOnDevice())
-        .mockResolvedValueOnce({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN });
+        .mockResolvedValueOnce({ outcome: "created", tree: TREE });
 
       const { user } = await activateFromSettings();
 
@@ -727,11 +759,11 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       await user.press(screen.getByTestId("wallet-sync-add-member-retry"));
 
       expect(await screen.findByText(loadingScreen(true))).toBeVisible();
-      expect(mockGetOrCreateTrustchain).toHaveBeenCalledTimes(2);
+      expect(mockActivate).toHaveBeenCalledTimes(2);
     });
 
     it("should stay on the entry screen when the rejection is closed", async () => {
-      mockGetOrCreateTrustchain.mockRejectedValue(new UserRefusedOnDevice());
+      mockActivate.mockRejectedValue(new UserRefusedOnDevice());
 
       const { user } = await activateFromSettings();
       await user.press(await screen.findByTestId("wallet-sync-add-member-close"));
@@ -740,7 +772,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should drop the onboarding marker when the companion step is closed without activating", async () => {
-      mockGetOrCreateTrustchain.mockRejectedValue(new UserRefusedOnDevice());
+      mockActivate.mockRejectedValue(new UserRefusedOnDevice());
 
       const { store, user } = await activateFromCompanion();
       expect(store.getState().settings.fromLedgerSyncOnboarding).toBe(true);
@@ -751,10 +783,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should keep the onboarding marker when the companion step activates", async () => {
-      mockGetOrCreateTrustchain.mockResolvedValue({
-        type: TrustchainResultType.created,
-        trustchain: TRUSTCHAIN,
-      });
+      mockActivate.mockResolvedValue({ outcome: "created", tree: TREE });
 
       const { store } = await activateFromCompanion();
 
@@ -763,21 +792,19 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should run again when Retry closes the unbacked error", async () => {
-      mockGetOrCreateTrustchain
-        .mockRejectedValueOnce(namedError(NoTrustchainInitialized))
-        .mockResolvedValueOnce({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN });
+      mockActivate
+        .mockRejectedValueOnce(namedError("NoTrustchainInitialized"))
+        .mockResolvedValueOnce({ outcome: "created", tree: TREE });
 
       const { user } = await activateFromSettings();
       await user.press(await screen.findByText("Try again"));
 
       expect(await screen.findByText(loadingScreen(true))).toBeVisible();
-      expect(mockGetOrCreateTrustchain).toHaveBeenCalledTimes(2);
+      expect(mockActivate).toHaveBeenCalledTimes(2);
     });
 
     it("should keep the delete success screen after deleting the key from the other seed error", async () => {
-      mockGetOrCreateTrustchain.mockRejectedValue(
-        namedError(TrustchainAlreadyInitializedWithOtherSeed),
-      );
+      mockActivate.mockRejectedValue(namedError("TrustchainAlreadyInitializedWithOtherSeed"));
 
       const { user } = await activateFromSettings();
       await user.press(await screen.findByText("Delete my encryption key"));
@@ -790,24 +817,22 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should start the activation once the member credentials are created", async () => {
-      mockGetOrCreateTrustchain.mockResolvedValue({
-        type: TrustchainResultType.created,
-        trustchain: TRUSTCHAIN,
-      });
+      mockActivate.mockResolvedValue({ outcome: "created", tree: TREE });
 
       const { store } = await activateFromSettings(initialState({ memberCredentials: null }));
 
-      expect(mockGetOrCreateTrustchain).not.toHaveBeenCalled();
+      expect(mockActivate).not.toHaveBeenCalled();
+      const memberKey = await streamClient.createMemberKey();
       act(() => {
-        store.dispatch(setMemberCredentials(MEMBER_CREDENTIALS));
+        store.dispatch(commitKeyRingMemberKey(memberKey));
       });
 
       expect(await screen.findByText(loadingScreen(true))).toBeVisible();
     });
 
     it("should store a result that arrives after the step closed, without navigating", async () => {
-      const answer = deviceAnswer<{ type: TrustchainResultType; trustchain: Trustchain }>();
-      mockGetOrCreateTrustchain.mockReturnValue(answer.promise);
+      const answer = deviceAnswer<KeyRingActivation>();
+      mockActivate.mockReturnValue(answer.promise);
 
       const { store } = await activateFromSettings();
       await screen.findByTestId("device-intent-sheet");
@@ -815,7 +840,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       await waitForEntryScreen();
 
       await act(async () => {
-        answer.settle({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN });
+        answer.settle({ outcome: "created", tree: TREE });
       });
 
       await waitFor(() => expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN));
@@ -824,19 +849,14 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should store both results of a disconnected run and its retry but track one activation", async () => {
-      const answer = deviceAnswer<{ type: TrustchainResultType; trustchain: Trustchain }>();
-      mockGetOrCreateTrustchain.mockReturnValue(answer.promise);
+      const answer = deviceAnswer<KeyRingActivation>();
+      mockActivate.mockReturnValue(answer.promise);
 
       const { store } = await activateFromSettings();
       await screen.findByTestId("device-intent-sheet");
-      act(() =>
-        mockMountedIntent.current?.onResult?.({
-          type: TrustchainResultType.created,
-          trustchain: TRUSTCHAIN,
-        }),
-      );
+      act(() => mockMountedIntent.current?.onResult?.({ outcome: "created", tree: TREE }));
       await act(async () => {
-        answer.settle({ type: TrustchainResultType.restored, trustchain: ROTATED_TRUSTCHAIN });
+        answer.settle({ outcome: "restored", tree: ROTATED_TREE });
       });
 
       expect(await screen.findByText(loadingScreen(false))).toBeVisible();
@@ -849,19 +869,19 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should drop a result that arrives after Ledger Sync was reset", async () => {
-      const answer = deviceAnswer<{ type: TrustchainResultType; trustchain: Trustchain }>();
-      mockGetOrCreateTrustchain.mockReturnValue(answer.promise);
+      const answer = deviceAnswer<KeyRingActivation>();
+      mockActivate.mockReturnValue(answer.promise);
 
       const { store } = await activateFromSettings();
       await screen.findByTestId("device-intent-sheet");
       pressBack();
       await waitForEntryScreen();
       act(() => {
-        store.dispatch(resetTrustchainStore());
+        store.dispatch(resetKeyRingState());
       });
 
       await act(async () => {
-        answer.settle({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN });
+        answer.settle({ outcome: "created", tree: TREE });
       });
 
       expect(store.getState().trustchain.trustchain).toBeNull();
@@ -879,7 +899,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       expect(
         await screen.findByText(`reached ${ScreenName.WalletSyncActivationProcess} {}`),
       ).toBeVisible();
-      expect(mockGetOrCreateTrustchain).not.toHaveBeenCalled();
+      expect(mockActivate).not.toHaveBeenCalled();
     });
   });
 
@@ -923,7 +943,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should close the device step when it is dismissable", async () => {
-      mockGetOrCreateTrustchain.mockRejectedValue(new UserRefusedOnDevice());
+      mockActivate.mockRejectedValue(new UserRefusedOnDevice());
 
       await activateFromSettings();
       await screen.findByTestId("wallet-sync-add-member-rejected");
@@ -934,7 +954,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should be ignored while the device confirmation locks the step", async () => {
-      mockGetOrCreateTrustchain.mockImplementation(awaitConfirmationForever);
+      mockActivate.mockImplementation(awaitConfirmationForever);
 
       const { store } = await activateFromSettings();
       await screen.findByTestId("wallet-sync-add-member-continue-on-device");
@@ -950,7 +970,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
 
   describe("instance removal", () => {
     it("should store the rotated trustchain and reach the deletion success", async () => {
-      mockRemoveMember.mockResolvedValue(ROTATED_TRUSTCHAIN);
+      mockRemoveMember.mockResolvedValue(ROTATED_TREE);
 
       const { store } = await removeInstance();
 
@@ -961,17 +981,21 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       ).toBeVisible();
       expectNoProcessScreen();
       expect(store.getState().trustchain.trustchain).toEqual(ROTATED_TRUSTCHAIN);
-      expect(mockRemoveMember).toHaveBeenCalledWith(
-        "compat-1",
-        TRUSTCHAIN,
-        MEMBER_CREDENTIALS,
-        MEMBER,
-        expect.any(Object),
+      expect(mockForDeviceSession).toHaveBeenCalledWith(
+        expect.objectContaining({ sessionId: "session-1" }),
       );
+      expect(mockRemoveMember).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ member: MEMBER }),
+      );
+      expect(treeOf(mockRemoveMember.mock.calls[0][0])).toEqual({
+        treeId: TRUSTCHAIN.rootId,
+        streamPath: TRUSTCHAIN.applicationPath,
+      });
     });
 
     it("should store a rotated trustchain that arrives after the step closed, without navigating", async () => {
-      const answer = deviceAnswer<Trustchain>();
+      const answer = deviceAnswer<KeyRingTreeUpdate>();
       mockRemoveMember.mockReturnValue(answer.promise);
 
       const { store } = await removeInstance();
@@ -980,7 +1004,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       await waitForEntryScreen();
 
       await act(async () => {
-        answer.settle(ROTATED_TRUSTCHAIN);
+        answer.settle(ROTATED_TREE);
       });
 
       await waitFor(() =>
@@ -991,7 +1015,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should drop a rotated trustchain that arrives after Ledger Sync was reset", async () => {
-      const answer = deviceAnswer<Trustchain>();
+      const answer = deviceAnswer<KeyRingTreeUpdate>();
       mockRemoveMember.mockReturnValue(answer.promise);
 
       const { store } = await removeInstance();
@@ -999,11 +1023,11 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       pressBack();
       await waitForEntryScreen();
       act(() => {
-        store.dispatch(resetTrustchainStore());
+        store.dispatch(resetKeyRingState());
       });
 
       await act(async () => {
-        answer.settle(ROTATED_TRUSTCHAIN);
+        answer.settle(ROTATED_TREE);
       });
 
       expect(store.getState().trustchain.trustchain).toBeNull();
@@ -1022,7 +1046,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     });
 
     it("should show the unsecured error when the device may not remove the instance", async () => {
-      mockRemoveMember.mockRejectedValue(namedError(TrustchainNotAllowed));
+      mockRemoveMember.mockRejectedValue(namedError("TrustchainNotAllowed"));
 
       await removeInstance();
 
@@ -1034,7 +1058,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
     it("should retry the removal after a rejection on the device", async () => {
       mockRemoveMember
         .mockRejectedValueOnce(new UserRefusedOnDevice())
-        .mockResolvedValueOnce(ROTATED_TRUSTCHAIN);
+        .mockResolvedValueOnce(ROTATED_TREE);
 
       const { user } = await removeInstance();
       await user.press(await screen.findByTestId("wallet-sync-remove-member-retry"));

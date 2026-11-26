@@ -1,13 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useStore, useSelector, useDispatch } from "~/context/hooks";
-import noop from "lodash/noop";
-import { CloudSyncSDK } from "@shared/cloud-sync";
 import {
-  createWalletSyncWatchLoop,
-  liveSlug,
-  makeSaveNewUpdate,
-  makeLocalIncrementalUpdate,
+  useKeyRingCloudSync,
+  useWalletSyncWatcher,
+  type KeyRingCloudSync,
+  type WalletSyncUserState,
 } from "@features/platform-wallet-sync";
+import { selectKeyRingSession } from "@features/platform-key-ring";
 import { bulkSetAccountNames } from "@domain/entity-account-name";
 import { selectContacts, setContacts } from "@domain/entity-contact";
 import { updateRecentAddresses } from "@domain/entity-recent-addresses";
@@ -20,13 +19,8 @@ import {
   type WalletSyncLocalState,
 } from "@ledgerhq/live-wallet/walletSyncComposition";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import {
-  memberCredentialsSelector,
-  resetTrustchainStore,
-  trustchainSelector,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
 import { walletSyncUpdate } from "@domain/entity-wallet-sync";
-import { useTrustchainSdk } from "./useTrustchainSdk";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
 import {
@@ -94,50 +88,25 @@ async function save(
   }
 }
 
-export function useCloudSyncSDK(): CloudSyncSDK<DistantState> {
+export function useCloudSyncSDK(): KeyRingCloudSync<DistantState> {
   const featureWalletSync = useFeature("llmWalletSync");
   const { cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
     featureWalletSync?.params?.environment,
   );
-  const trustchainSdk = useTrustchainSdk();
   const walletsync = useWalletsync();
   const getState = useGetState();
-  const getCurrentVersion = useCallback(() => latestDistantVersionSelector(getState()), [getState]);
   const saveUpdate = useSaveUpdate();
 
-  const saveNewUpdate = useMemo(
-    () =>
-      makeSaveNewUpdate({
-        walletsync,
-        getState,
-        latestDistantStateSelector,
-        latestDistantVersionSelector,
-        localStateSelector,
-        saveUpdate,
-      }),
-    [walletsync, getState, saveUpdate],
-  );
-
-  const cloudSyncSDK = useMemo(
-    () =>
-      new CloudSyncSDK({
-        apiBaseUrl: cloudSyncApiBaseUrl,
-        slug: liveSlug,
-        trustchainSdk,
-        getCurrentVersion,
-        saveNewUpdate,
-      }),
-    [cloudSyncApiBaseUrl, trustchainSdk, getCurrentVersion, saveNewUpdate],
-  );
-
-  return cloudSyncSDK;
+  return useKeyRingCloudSync({
+    apiBaseUrl: cloudSyncApiBaseUrl,
+    walletsync,
+    getState,
+    latestDistantStateSelector,
+    latestDistantVersionSelector,
+    localStateSelector,
+    saveUpdate,
+  });
 }
-
-export type WalletSyncUserState = {
-  visualPending: boolean;
-  walletSyncError: Error | null;
-  onUserRefresh: () => void;
-};
 
 export function useWatchWalletSync(): WalletSyncUserState {
   const featureWalletSync = useFeature("llmWalletSync");
@@ -145,87 +114,25 @@ export function useWatchWalletSync(): WalletSyncUserState {
   const getState = useGetState();
   const dispatch = useDispatch();
   const walletsync = useWalletsync();
-  const memberCredentials = useSelector(memberCredentialsSelector);
-  const trustchain = useSelector(trustchainSelector);
-  const trustchainSdk = useTrustchainSdk();
-  const walletSyncSdk = useCloudSyncSDK();
-  const onTrustchainRefreshNeeded = useOnTrustchainRefreshNeeded(trustchainSdk, memberCredentials);
+  const session = useSelector(selectKeyRingSession);
+  const keyRing = useKeyRingClient();
+  const cloudSync = useCloudSyncSDK();
+  const onRefreshNeeded = useOnTrustchainRefreshNeeded(keyRing);
 
-  const [visualPending, setVisualPending] = useState(true);
-  const [walletSyncError, setWalletSyncError] = useState<Error | null>(null);
-  const onUserRefreshRef = useRef<() => void>(noop);
-  const state = useMemo(
-    () => ({
-      visualPending,
-      walletSyncError,
-      onUserRefresh: onUserRefreshRef.current,
-    }),
-    [visualPending, walletSyncError],
-  );
-
-  const resetLedgerSync = useCallback(() => {
-    dispatch(resetTrustchainStore());
-    dispatch(walletSyncUpdate({ data: null, version: 0 }));
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (walletSyncError) {
-      if (walletSyncError?.name === "TrustchainNotAllowed") resetLedgerSync();
-      if (walletSyncError?.name === "TrustchainEjected") resetLedgerSync();
-    }
-  }, [dispatch, resetLedgerSync, walletSyncError]);
-
-  // pull and push wallet sync loop
-  useEffect(() => {
-    const canNotRunWatchLoop = !featureWalletSync?.enabled || !trustchain || !memberCredentials;
-
-    if (canNotRunWatchLoop) {
-      onUserRefreshRef.current = noop;
-      setVisualPending(false);
-      setWalletSyncError(null);
-      return;
-    }
-
-    const localIncrementUpdate = makeLocalIncrementalUpdate({
-      walletsync,
-      getState,
-      latestWalletStateSelector,
-      localStateSelector,
-      saveUpdate,
-    });
-
-    const { unsubscribe, onUserRefreshIntent } = createWalletSyncWatchLoop({
-      walletsync,
-      walletSyncSdk,
-      watchConfig: featureWalletSync?.params?.watchConfig,
-      localIncrementUpdate,
-      trustchain,
-      memberCredentials,
-      setVisualPending,
-      getState,
-      localStateSelector,
-      latestDistantStateSelector,
-      onError: e => setWalletSyncError(e && e instanceof Error ? e : new Error(String(e))),
-      onStartPolling: () => setWalletSyncError(null),
-      onTrustchainRefreshNeeded,
-    });
-
-    onUserRefreshRef.current = onUserRefreshIntent;
-
-    return unsubscribe;
-  }, [
-    featureWalletSync,
-    getState,
-    trustchainSdk,
+  return useWalletSyncWatcher({
+    walletSyncFeature: featureWalletSync,
+    keyRing,
+    session,
+    cloudSync,
     walletsync,
-    walletSyncSdk,
-    trustchain,
-    memberCredentials,
-    onTrustchainRefreshNeeded,
+    getState,
+    dispatch,
+    localStateSelector,
+    latestDistantStateSelector,
+    latestWalletStateSelector,
     saveUpdate,
-  ]);
-
-  return state;
+    onRefreshNeeded,
+  });
 }
 
 function useSaveUpdate() {

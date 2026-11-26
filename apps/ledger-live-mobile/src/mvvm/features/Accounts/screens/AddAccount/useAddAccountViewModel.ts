@@ -9,7 +9,7 @@ import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/ty
 import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
 import { blockPasswordLock } from "~/actions/appstate";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import { useFeature } from "@features/platform-feature-flags";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -29,12 +29,12 @@ type NavigationProps = BaseComposite<
 const useAddAccountViewModel = ({ isOpened, onClose, currency }: AddAccountDrawerProps) => {
   const dispatch = useDispatch();
   const { currentStep, setCurrentStep } = useCurrentStep();
-  const trustchain = useSelector(trustchainSelector);
+  const isLedgerSyncActive = useSelector(selectIsLedgerSyncActive);
   const ledgerSyncOptimisationFlag = useFeature("lwmLedgerSyncOptimisation");
   const { openDrawer } = useModularDrawerController();
   const deviceIntentStep = useActivationDeviceIntentStep();
 
-  const shouldOpenModularDrawerDirectly = ledgerSyncOptimisationFlag?.enabled && trustchain?.rootId;
+  const shouldOpenModularDrawerDirectly = ledgerSyncOptimisationFlag?.enabled && isLedgerSyncActive;
 
   useEffect(() => {
     if (isOpened && shouldOpenModularDrawerDirectly) {

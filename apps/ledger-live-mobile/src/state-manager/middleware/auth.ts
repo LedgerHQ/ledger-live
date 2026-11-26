@@ -1,6 +1,8 @@
 import { AuthSDK } from "@ledgerhq/auth";
-import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
-import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import {
+  createKeyRingIdentityProvider,
+  selectKeyRingSession,
+} from "@features/platform-key-ring/store";
 import { createAuthMiddleware } from "@shared/auth";
 import { selectFeature } from "@shared/feature-flags";
 import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
@@ -23,7 +25,7 @@ export function createMobileAuthMiddleware({
       new AuthSDK(
         { clientId: keycloakClientId, keycloakBaseUrl, keycloakRealm, disablePkce: true },
         {
-          provider: new LkrpIdentityProvider((): TrustchainStore => getState().trustchain),
+          provider: createKeyRingIdentityProvider(() => selectKeyRingSession(getState())),
           createPkcePair: createPkcePairWithExpoCrypto,
         },
       ),

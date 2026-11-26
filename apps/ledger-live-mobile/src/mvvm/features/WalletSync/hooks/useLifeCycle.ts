@@ -1,26 +1,26 @@
 import { track } from "@shared/analytics";
-import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { classifyKeyRingError, resetKeyRingState } from "@features/platform-key-ring";
 import { useDispatch } from "~/context/hooks";
 import { ErrorType } from "./type.hooks";
 import { StackActions, useNavigation } from "@react-navigation/native";
 import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
-import { useTrustchainSdk } from "./useTrustchainSdk";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { useRestoreTrustchain } from "./useRestoreTrustchain";
 import { NavigatorName, ScreenName } from "~/const";
 
 export const useLifeCycle = () => {
   const dispatch = useDispatch();
-  const sdk = useTrustchainSdk();
+  const client = useKeyRingClient();
   const { refetch: restoreTrustchain } = useRestoreTrustchain();
   const navigation = useNavigation();
 
   function reset() {
-    dispatch(resetTrustchainStore());
+    dispatch(resetKeyRingState());
     track(AnalyticsEvents.LedgerSyncDeactivated);
     const routeName = NavigatorName.WalletSync;
     const screen = ScreenName.WalletSyncActivationInit;
     navigation.dispatch(StackActions.replace(routeName, { screen }));
-    sdk.invalidateJwt();
+    client.invalidateAuth();
   }
 
   const includesErrorActions: { [key: string]: () => void } = {
@@ -29,10 +29,11 @@ export const useLifeCycle = () => {
   };
 
   function handleError(error: Error) {
-    if (error?.name === "TrustchainEjected") reset();
-    if (error?.name === "TrustchainNotAllowed") reset();
+    const category = classifyKeyRingError(error);
+    if (category === "member-removed") reset();
+    if (category === "not-allowed") reset();
 
-    if (error?.name === "TrustchainOutdated") restoreTrustchain();
+    if (category === "outdated") restoreTrustchain();
 
     const errorToHandle = Object.entries(includesErrorActions).find(([err, _action]) =>
       error.message.includes(err),

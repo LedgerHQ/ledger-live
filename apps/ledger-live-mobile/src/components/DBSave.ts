@@ -1,4 +1,4 @@
-import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectPersistedKeyRingState } from "@features/platform-key-ring/persistence";
 import { largeScreenUpsellModalSelector } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { exportWalletState, walletStateExportShouldDiffer } from "~/reducers/wallet";
@@ -377,11 +377,11 @@ export const ConfigureDBSaveEffects = () => {
   });
 
   useDBSaveEffect({
-    stateSelector: (state: State) => state.trustchain,
+    stateSelector: selectPersistedKeyRingState,
     save: saveTrustchainState,
     throttle: 500,
     getChangesStats: trustchainNotEquals,
-    lense: trustchainStoreSelector,
+    lense: selectPersistedKeyRingState,
     saveAtStart: true,
   });
 

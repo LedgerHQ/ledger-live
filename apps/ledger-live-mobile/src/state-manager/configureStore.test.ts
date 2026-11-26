@@ -1,12 +1,13 @@
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
-import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { getAuthProvider } from "@shared/auth";
-import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
-import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
+import type { KeyRingMemberKeyRecord } from "@domain/entity-key-ring";
+import { importPersistedKeyRingState } from "@features/platform-key-ring";
+import {
+  keyRingAttestationFixture,
+  keyRingAuthChallengeFixture,
+} from "@features/platform-key-ring/testing";
 import { setOverride } from "@shared/feature-flags";
 
 jest.mock("~/config/bridge-setup", () => ({
@@ -42,13 +43,13 @@ jest.mock("~/firebase/remoteConfig", () => ({
 
 describe("mobile store", () => {
   describe("auth provider flow", () => {
-    const MEMBER_CREDENTIALS: MemberCredentials = {
+    const MEMBER_CREDENTIALS: KeyRingMemberKeyRecord = {
       pubkey: "02e3311a12c450604725f02d1a775ef5cdb4a1b832eb41ac6b1302adbe92a612fc",
       privatekey: "873f500bd20783224f7e78d4f8cce3d2bf69eb8008fbd697d20bbea31a721a03",
     };
 
     const TRUSTCHAIN_ID = "ROOTID";
-    const ATTESTATION = crypto.to_hex(liveAuthentication(TRUSTCHAIN_ID));
+    const ATTESTATION = keyRingAttestationFixture(TRUSTCHAIN_ID);
 
     const LKRP_TOKEN = makeJwt({ sub: "idp", exp: 4102444800 });
     const KEYCLOAK_JWT = makeJwt({ sub: "keycloak", exp: 4102444800 });
@@ -64,9 +65,18 @@ describe("mobile store", () => {
     const server = setupServer(
       // Any host and realm: which Keycloak the config resolves to is covered by the setup tests.
       http.get("*/realms/:realm/protocol/openid-connect/auth", endpoints.keycloakAuth),
-      http.post(`https://${CHALLENGE.json.host}/openid/v1/authenticate`, endpoints.lkrpAuth),
-      http.post(`https://${CHALLENGE.json.host}/openid/v1/token`, endpoints.lkrpToken),
-      http.post(`https://${CHALLENGE.json.host}/openid/v1/exchange`, endpoints.tokenExchange),
+      http.post(
+        `https://${keyRingAuthChallengeFixture.json.host}/openid/v1/authenticate`,
+        endpoints.lkrpAuth,
+      ),
+      http.post(
+        `https://${keyRingAuthChallengeFixture.json.host}/openid/v1/token`,
+        endpoints.lkrpToken,
+      ),
+      http.post(
+        `https://${keyRingAuthChallengeFixture.json.host}/openid/v1/exchange`,
+        endpoints.tokenExchange,
+      ),
     );
 
     beforeAll(() => {
@@ -94,7 +104,10 @@ describe("mobile store", () => {
 
     it("should authenticate with attestation when trustchain store has a root id", async () => {
       endpoints.keycloakAuth.mockImplementation(() =>
-        HttpResponse.json({ tlv: CHALLENGE.tlv, json: CHALLENGE.json }),
+        HttpResponse.json({
+          tlv: keyRingAuthChallengeFixture.tlv,
+          json: keyRingAuthChallengeFixture.json,
+        }),
       );
       endpoints.lkrpAuth.mockImplementation(() => HttpResponse.json("auth-code-xyz"));
       endpoints.lkrpToken.mockImplementation(() =>
@@ -107,7 +120,7 @@ describe("mobile store", () => {
       const { store } = require("./configureStore");
       store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
       store.dispatch(
-        importTrustchainStoreState({
+        importPersistedKeyRingState({
           trustchain: {
             rootId: TRUSTCHAIN_ID,
             walletSyncEncryptionKey: "wallet-sync-encryption-key",

@@ -37,7 +37,7 @@ import ratings from "./ratings";
 import settings from "./settings";
 import sendFlow from "./sendFlow";
 import toasts from "./toast";
-import trustchain from "./trustchain";
+import trustchain from "@domain/entity-key-ring";
 import type { State } from "./types";
 import wallet from "./wallet";
 import walletconnect from "./walletconnect";

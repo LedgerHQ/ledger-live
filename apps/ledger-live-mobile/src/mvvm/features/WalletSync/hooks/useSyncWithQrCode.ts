@@ -1,9 +1,11 @@
 import { track } from "@shared/analytics";
 import { useCallback, useState, useRef } from "react";
-import { MemberCredentials, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import { setTrustchain, trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import {
+  classifyKeyRingError,
+  commitKeyRingTree,
+  type KeyRingSession,
+} from "@features/platform-key-ring";
+import { selectIsKeyRingMember, selectKeyRingTreeId } from "@domain/entity-key-ring";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
 import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
@@ -11,27 +13,25 @@ import { useWalletSyncTrackingFlow } from "./useLedgerSyncAnalytics";
 import { Steps } from "../types/Activation";
 import { NavigatorName, ScreenName } from "~/const";
 import { useInstanceName } from "./useInstanceName";
-import { useTrustchainSdk } from "./useTrustchainSdk";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { useCurrentStep } from "./useCurrentStep";
 
-function resolveSyncErrorStep(error: unknown, trustchainRootId?: string): Steps | undefined {
-  const errorName = (error as { name?: string })?.name;
-
-  switch (errorName) {
-    case "ScannedOldImportQrCode":
+function resolveSyncErrorStep(error: unknown, treeId: string | null): Steps | undefined {
+  switch (classifyKeyRingError(error)) {
+    case "pairing-outdated-qr-code":
       return Steps.ScannedOldImportQrCode;
-    case "ScannedInvalidQrCode":
+    case "pairing-invalid-qr-code":
       return Steps.ScannedInvalidQrCode;
-    case "InvalidDigitsError":
-    case "QRCodeProtocolError":
+    case "pairing-invalid-code":
+    case "pairing-protocol":
       return Steps.SyncError;
-    case "NoTrustchainInitialized":
+    case "no-tree-for-seed":
       return Steps.UnbackedError;
-    case "TrustchainAlreadyInitialized":
-      return (error as Error)?.message === trustchainRootId
+    case "already-member":
+      return (error as Error)?.message === (treeId ?? undefined)
         ? Steps.AlreadyBacked
         : Steps.BackedWithDifferentSeeds;
-    case "TrustchainAlreadyInitializedWithOtherSeed":
+    case "member-of-other-tree":
       return Steps.BackedWithDifferentSeeds;
     default:
       return undefined;
@@ -43,8 +43,9 @@ export const useSyncWithQrCode = () => {
   const [nbDigits, setDigits] = useState<number | null>(null);
   const [input, setInput] = useState<string | null>(null);
   const instanceName = useInstanceName();
-  const trustchain = useSelector(trustchainSelector);
-  const sdk = useTrustchainSdk();
+  const isMember = useSelector(selectIsKeyRingMember);
+  const treeId = useSelector(selectKeyRingTreeId);
+  const client = useKeyRingClient();
 
   const navigation = useNavigation();
 
@@ -73,30 +74,21 @@ export const useSyncWithQrCode = () => {
   }, [navigation]);
 
   const handleStart = useCallback(
-    async (url: string, memberCredentials: MemberCredentials) => {
+    async (url: string, session: KeyRingSession) => {
       try {
-        const newTrustchain = await createQRCodeCandidateInstance({
-          memberCredentials,
-          scannedUrl: url,
+        const newTree = await client.joinPairing(session, {
           memberName: instanceName,
-          onRequestQRCodeInput,
-          addMember: async (member: TrustchainMember) => {
-            if (trustchain) {
-              await sdk.addMember(trustchain, memberCredentials, member);
-              return trustchain;
-            }
-            throw new NoTrustchainInitialized();
-          },
-          initialTrustchainId: trustchain?.rootId,
+          scannedUrl: url,
+          onRequestPairingCode: onRequestQRCodeInput,
         });
-        if (newTrustchain) {
-          dispatch(setTrustchain(newTrustchain));
-          if (!trustchain) track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
+        if (newTree) {
+          dispatch(commitKeyRingTree(newTree));
+          if (!isMember) track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
         }
         onSyncFinished();
         return true;
       } catch (e) {
-        const errorStep = resolveSyncErrorStep(e, trustchain?.rootId);
+        const errorStep = resolveSyncErrorStep(e, treeId);
         if (errorStep) {
           setCurrentStep(errorStep);
           return;
@@ -107,9 +99,10 @@ export const useSyncWithQrCode = () => {
     [
       instanceName,
       onRequestQRCodeInput,
-      trustchain,
+      isMember,
+      treeId,
       onSyncFinished,
-      sdk,
+      client,
       dispatch,
       setCurrentStep,
       trackingFlow,

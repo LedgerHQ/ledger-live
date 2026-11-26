@@ -4,7 +4,7 @@ import { payCardBalanceInitialState } from "@features/flow-pay-balance/state";
 import { payCardFeatureTourInitialState } from "@features/flow-pay-feature-tour/state";
 import { receiveVerifyHintInitialState } from "@features/flow-receive/state";
 import { initialIdentitiesState } from "@domain/entity-client-identity";
-import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { keyRingInitialState } from "@domain/entity-key-ring";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { countervaluesInitialState as COUNTERVALUES_INITIAL_STATE } from "@features/platform-market-countervalues";
 import type { CountervaluesSettings } from "@domain/entity-market-countervalues";
@@ -103,7 +103,7 @@ const INITIAL_STATE: State = {
   receiveVerifyHint: receiveVerifyHintInitialState,
   settings: SETTINGS_INITIAL_STATE,
   toasts: TOASTS_INITIAL_STATE,
-  trustchain: TRUSTCHAIN_INITIAL_STATE,
+  trustchain: keyRingInitialState,
   wallet: WALLET_INITIAL_STATE,
   walletconnect: WALLET_CONNECT_INITIAL_STATE,
   walletSync: WALLETSYNC_INITIAL_STATE,

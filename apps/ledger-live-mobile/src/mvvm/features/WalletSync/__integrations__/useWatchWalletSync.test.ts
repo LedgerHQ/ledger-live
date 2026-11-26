@@ -1,6 +1,6 @@
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { bindCtx } from "@ledgerhq/live-wallet/accounts";
-import { mockedSdk, simpleTrustChain } from "./shared";
+import { simpleTrustChain } from "./shared";
 import { useWatchWalletSync } from "../hooks/useWatchWalletSync";
 
 const INITIAL_STATE = withFlagOverrides(
@@ -34,13 +34,19 @@ jest.mock("@ledgerhq/live-wallet/accounts", () => {
   return { ...actual, bindCtx: jest.fn(actual.bindCtx) };
 });
 
-jest.mock("../hooks/useTrustchainSdk", () => ({
-  useTrustchainSdk: () => ({
-    getMembers: (mockedSdk.getMembers = jest.fn()),
-    removeMember: (mockedSdk.removeMember = jest.fn()),
-    initMemberCredentials: (mockedSdk.initMemberCredentials = jest.fn()),
-  }),
-}));
+const mockStream = {
+  ref: { treeId: simpleTrustChain.rootId, streamPath: simpleTrustChain.applicationPath },
+  withAuth: jest.fn(),
+  encrypt: jest.fn(),
+  decrypt: jest.fn(),
+};
+
+jest.mock("../hooks/useKeyRingClient", () => {
+  const client = jest
+    .requireActual("@features/platform-key-ring/testing")
+    .fakeKeyRingClient({ openStream: () => mockStream });
+  return { useKeyRingClient: () => client };
+});
 
 describe("useWatchWalletSync", () => {
   it("should not run ledger sync watch loop when ff is disabled", async () => {

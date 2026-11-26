@@ -18,7 +18,8 @@ import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
 import ScannedInvalidQrCode from "LLM/features/WalletSync/screens/Synchronize/ScannedInvalidQrCode";
 import ScannedOldImportQrCode from "LLM/features/WalletSync/screens/Synchronize/ScannedOldImportQrCode";
 import { useSelector } from "~/context/hooks";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
+import { selectKeyRingSession } from "@features/platform-key-ring";
 
 type Props = {
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -54,14 +55,15 @@ const StepFlow = ({
   onCloseAddAccountDrawer,
 }: Props) => {
   const { currentStep, setCurrentStep } = useCurrentStep();
-  const { memberCredentials } = useInitMemberCredentials();
-  const trustchain = useSelector(trustchainSelector);
+  const { hasMemberKey } = useInitMemberCredentials();
+  const session = useSelector(selectKeyRingSession);
+  const isLedgerSyncActive = useSelector(selectIsLedgerSyncActive);
 
   const { handleStart, handleSendDigits, nbDigits } = useSyncWithQrCode();
 
   const handleQrCodeScanned = (data: string) => {
     onQrCodeScanned();
-    if (memberCredentials) handleStart(data, memberCredentials);
+    if (hasMemberKey) handleStart(data, session);
   };
 
   const handlePinCodeSubmit = (input: string) => {
@@ -78,7 +80,7 @@ const StepFlow = ({
               doesNotHaveAccount={doesNotHaveAccount}
               currency={currency}
               onShowWalletSyncDrawer={
-                trustchain?.rootId ? navigateToQrCodeMethod : navigateToChooseSyncMethod
+                isLedgerSyncActive ? navigateToQrCodeMethod : navigateToChooseSyncMethod
               }
               onCloseAddAccountDrawer={onCloseAddAccountDrawer}
             />

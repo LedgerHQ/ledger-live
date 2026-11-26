@@ -1,5 +1,6 @@
 import React from "react";
-import { useWatchWalletSync, WalletSyncUserState } from "../../hooks/useWatchWalletSync";
+import type { WalletSyncUserState } from "@features/platform-wallet-sync";
+import { useWatchWalletSync } from "../../hooks/useWatchWalletSync";
 
 export const WalletSyncContext = React.createContext<WalletSyncUserState>({
   visualPending: false,

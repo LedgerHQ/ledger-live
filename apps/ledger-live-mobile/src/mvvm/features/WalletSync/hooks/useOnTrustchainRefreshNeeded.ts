@@ -1,36 +1,39 @@
 import { track } from "@shared/analytics";
 import { useCallback } from "react";
-import { useDispatch } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
 import {
-  MemberCredentials,
-  Trustchain,
-  TrustchainSDK,
-} from "@ledgerhq/ledger-key-ring-protocol/types";
-import { setTrustchain, resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+  classifyKeyRingError,
+  commitKeyRingTree,
+  resetKeyRingState,
+  type KeyRingClient,
+  type KeyRingSession,
+} from "@features/platform-key-ring";
+import { selectHasKeyRingMemberKey, selectKeyRingTreeId } from "@domain/entity-key-ring";
 import { log } from "@ledgerhq/logs";
 import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
 
 export function useOnTrustchainRefreshNeeded(
-  trustchainSdk: TrustchainSDK,
-  memberCredentials: MemberCredentials | null,
-): (trustchain: Trustchain) => Promise<void> {
+  client: KeyRingClient,
+): (session: KeyRingSession) => Promise<void> {
   const dispatch = useDispatch();
+  const hasMemberKey = useSelector(selectHasKeyRingMemberKey);
+  const treeId = useSelector(selectKeyRingTreeId);
   const onTrustchainRefreshNeeded = useCallback(
-    async (trustchain: Trustchain) => {
+    async (session: KeyRingSession) => {
       try {
-        if (!memberCredentials) return;
-        log("walletsync", "onTrustchainRefreshNeeded " + trustchain.rootId);
-        const newTrustchain = await trustchainSdk.restoreTrustchain(trustchain, memberCredentials);
-        dispatch(setTrustchain(newTrustchain));
+        if (!hasMemberKey) return;
+        log("walletsync", "onTrustchainRefreshNeeded " + treeId);
+        const newTree = await client.restore(session);
+        dispatch(commitKeyRingTree(newTree));
       } catch (e) {
-        const eName = (e as { name?: string })?.name;
-        if (eName === "TrustchainEjected" || eName === "TrustchainNotAllowed") {
-          dispatch(resetTrustchainStore());
+        const category = classifyKeyRingError(e);
+        if (category === "member-removed" || category === "not-allowed") {
+          dispatch(resetKeyRingState());
           track(AnalyticsEvents.LedgerSyncDeactivated);
         }
       }
     },
-    [dispatch, trustchainSdk, memberCredentials],
+    [dispatch, client, hasMemberKey, treeId],
   );
   return onTrustchainRefreshNeeded;
 }

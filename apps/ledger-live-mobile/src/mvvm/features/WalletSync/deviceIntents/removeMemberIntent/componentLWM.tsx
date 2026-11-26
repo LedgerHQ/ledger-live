@@ -1,5 +1,5 @@
 import React from "react";
-import type { RemoveMemberJobState } from "@features/platform-intent-wallet-sync";
+import type { RemoveMemberJobState } from "@features/platform-key-ring";
 import { LedgerSyncJobStateLWM } from "../LedgerSyncJobStateLWM";
 
 type RemoveMemberComponentLWMProps = Readonly<{

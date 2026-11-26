@@ -1,6 +1,6 @@
 import React from "react";
 import { render, waitFor } from "@tests/test-renderer";
-import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
+import { getKeyRingDeviceInitialization } from "@features/platform-key-ring";
 import {
   buildDeviceInitializationInput,
   DeviceIntentExecutor,
@@ -26,9 +26,7 @@ describe("LedgerSyncDeviceIntentExecutorLWM", () => {
     render(<LedgerSyncDeviceIntentExecutorLWM intent={intent} onUserCancel={jest.fn()} />);
 
     await waitFor(() => expect(DeviceIntentExecutor).toHaveBeenCalled());
-    expect(buildDeviceInitializationInput).toHaveBeenCalledWith({
-      appRequest: { appName: TRUSTCHAIN_APP_NAME },
-    });
+    expect(buildDeviceInitializationInput).toHaveBeenCalledWith(getKeyRingDeviceInitialization());
     expect(jest.mocked(DeviceIntentExecutor).mock.calls.at(-1)?.[0]).toMatchObject({
       enabled: true,
       sourceFlow: "ledger_sync",

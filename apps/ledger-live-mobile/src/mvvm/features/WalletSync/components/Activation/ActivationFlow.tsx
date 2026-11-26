@@ -2,6 +2,7 @@ import { TrackScreen } from "@shared/analytics-react";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { useSelector } from "~/context/hooks";
+import { selectKeyRingSession } from "@features/platform-key-ring";
 import Activation from ".";
 import ActivationModal from "./ActivationModal";
 import { useFeature } from "@features/platform-feature-flags";
@@ -54,14 +55,15 @@ const ActivationFlow = ({
   onCreateKey,
 }: Props) => {
   const { currentStep, setCurrentStep } = useCurrentStep();
-  const { memberCredentials } = useInitMemberCredentials();
+  const { hasMemberKey } = useInitMemberCredentials();
+  const session = useSelector(selectKeyRingSession);
   const lwmLedgerSyncOptimisation = useFeature("lwmLedgerSyncOptimisation");
 
   const { handleStart, handleSendDigits, nbDigits } = useSyncWithQrCode();
 
   const handleQrCodeScanned = (data: string) => {
     onQrCodeScanned();
-    if (memberCredentials) handleStart(data, memberCredentials);
+    if (hasMemberKey) handleStart(data, session);
   };
 
   const handlePinCodeSubmit = useCallback(

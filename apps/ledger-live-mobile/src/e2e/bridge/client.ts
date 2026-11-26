@@ -10,7 +10,7 @@ import {
   getAllFeatureFlags,
 } from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
-import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { importPersistedKeyRingState } from "@features/platform-key-ring";
 import { setContacts } from "@domain/entity-contact";
 import { identitiesSlice } from "@domain/entity-client-identity";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
@@ -217,7 +217,7 @@ async function onMessage(event: WebSocketMessageEvent) {
       case "importTrustchain": {
         // Boot hydration has already run and minted throwaway member credentials, so this
         // overwrites them. DBSave persists the slice on its own.
-        store.dispatch(importTrustchainStoreState(msg.payload));
+        store.dispatch(importPersistedKeyRingState(msg.payload));
         break;
       }
       case "importContacts": {

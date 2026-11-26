@@ -1,7 +1,7 @@
 import {
   removeMemberIntentDefinition,
   type RemoveMemberIntentPlatformDefinition,
-} from "@features/platform-intent-wallet-sync";
+} from "@features/platform-key-ring";
 import { RemoveMemberComponentLWM } from "./componentLWM";
 
 export const removeMemberIntentLWMDefinition: RemoveMemberIntentPlatformDefinition = {

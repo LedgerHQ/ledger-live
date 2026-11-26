@@ -26,7 +26,7 @@ import {
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
 import type { WalletState } from "./wallet";
-import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import type { KeyRingState } from "@domain/entity-key-ring";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import type { BorrowState } from "./borrow";
 import type { CountervaluesStoreState } from "@features/platform-market-countervalues";
@@ -520,7 +520,7 @@ export type State = LLMRTKApiState & {
   accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
   settings: SettingsState;
   toasts: ToastState;
-  trustchain: TrustchainStore;
+  trustchain: KeyRingState;
   wallet: WalletState;
   walletconnect: WalletConnectState;
   walletSync: WalletSyncState;

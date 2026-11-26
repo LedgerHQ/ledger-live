@@ -17,6 +17,7 @@ import { DeletionError } from "../../components/ManageInstances/DeletionError";
 import { DrawerProps, SceneKind } from "../../hooks/useFollowInstructionDrawer";
 import { SpecificError } from "../../components/Error/SpecificError";
 import { ErrorReason } from "../../hooks/useSpecificError";
+import { keyRingErrorForDisplayView } from "../../utils/errors";
 
 type Props = DrawerProps & {
   isOpen: boolean;
@@ -74,7 +75,14 @@ const GenericFollowInstructionsDrawer = ({
         );
 
       case SceneKind.GenericError:
-        return <GenericErrorView error={scene.error} withDescription withHelp hasExportLogButton />;
+        return (
+          <GenericErrorView
+            error={keyRingErrorForDisplayView(scene.error)}
+            withDescription
+            withHelp
+            hasExportLogButton
+          />
+        );
 
       case SceneKind.UnbackedError:
         return (

@@ -1,8 +1,9 @@
 import { EMPTY } from "rxjs";
 import { getEnv, setEnv } from "@shared/env";
 import { makeCipher } from "@shared/cloud-sync";
-import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
-import type { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type { KeyRingState } from "@domain/entity-key-ring";
+import { createKeyRingClient, selectKeyRingSession } from "@features/platform-key-ring";
+import { createKeyRingV1DeviceBridge } from "@features/platform-key-ring/v1";
 import { accountsSyncModule } from "@ledgerhq/live-wallet/accounts";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
@@ -13,15 +14,16 @@ import { useWatchWalletSync } from "../hooks/useWatchWalletSync";
 const originalMockEnv = getEnv("MOCK");
 const cloudSyncApiBaseUrl = getEnv("CLOUD_SYNC_API_PROD");
 
-const trustchain: Trustchain = {
-  rootId: "mock-root-id-cursor-regression",
-  applicationPath: "m/0'/16'/0'",
-  walletSyncEncryptionKey: "1".padStart(64, "0"),
-};
-
-const memberCredentials: MemberCredentials = {
-  pubkey: "mock-pub-key-cursor-regression",
-  privatekey: "mock-private-key-cursor-regression",
+const keyRingState: KeyRingState = {
+  trustchain: {
+    rootId: "mock-root-id-cursor-regression",
+    applicationPath: "m/0'/16'/0'",
+    walletSyncEncryptionKey: "1".padStart(64, "0"),
+  },
+  memberCredentials: {
+    pubkey: "mock-pub-key-cursor-regression",
+    privatekey: "mock-private-key-cursor-regression",
+  },
 };
 
 const accountA = genAccount("cursor-regression-account-a");
@@ -73,7 +75,7 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
       HttpResponse.json({
         status: "out-of-sync",
         version: 10,
-        payload: await encrypt(trustchain, {
+        payload: await encrypt({
           accounts: descriptorsFor([accountA]),
         }),
         date: "2026-09-17T00:00:00.000Z",
@@ -171,7 +173,7 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     const { payload } = (await endpoints.push.mock.calls[0][0].request.json()) as {
       payload: string;
     };
-    expect(await decrypt(trustchain, payload)).toMatchObject({
+    expect(await decrypt(payload)).toMatchObject({
       accounts: descriptorsFor([accountA]),
     });
   });
@@ -247,7 +249,7 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     const { payload } = (await endpoints.push.mock.calls[0][0].request.json()) as {
       payload: string;
     };
-    expect(await decrypt(trustchain, payload)).toMatchObject({
+    expect(await decrypt(payload)).toMatchObject({
       accounts: descriptorsFor([accountA, accountB]),
     });
   });
@@ -283,7 +285,7 @@ function renderWalletSync({
           ...state.accounts,
           active: localAccounts,
         },
-        trustchain: { trustchain, memberCredentials },
+        trustchain: keyRingState,
         wallet: {
           ...state.wallet,
           walletSync: {
@@ -319,22 +321,36 @@ function descriptorsFor(accounts: Account[]) {
   ).nextState;
 }
 
-function encrypt(targetTrustchain: Trustchain, payload: unknown): Promise<string> {
-  return makeCipher(
-    getSdk(
-      true,
-      { applicationId: 16, name: "Cursor regression", apiBaseUrl: "foo" },
-      () => () => EMPTY,
-    ),
-  ).encrypt(targetTrustchain, payload);
+function streamCipher() {
+  const client = createKeyRingClient({
+    mock: true,
+    instanceName: "Cursor regression",
+    apiBaseUrl: "foo",
+    deviceBridge: createKeyRingV1DeviceBridge({
+      withDevice: () => () => EMPTY,
+      createSessionTransport: () => {
+        throw new Error("No device session in this test");
+      },
+    }),
+  });
+  const stream = client.openStream(selectKeyRingSession({ trustchain: keyRingState }));
+  if (!stream) throw new Error("the key ring state has no stream");
+  const locator = keyRingState.trustchain;
+  if (!locator) throw new Error("the key ring state has no key tree");
+  const cipher = makeCipher<unknown>({
+    withAuth: () => Promise.reject(new Error("the cipher never authenticates")),
+    encryptUserData: (_tree, data) => stream.encrypt(data),
+    decryptUserData: (_tree, data) => stream.decrypt(data),
+  });
+  return { cipher, locator };
 }
 
-function decrypt(targetTrustchain: Trustchain, payload: string): Promise<unknown> {
-  return makeCipher(
-    getSdk(
-      true,
-      { applicationId: 16, name: "Cursor regression", apiBaseUrl: "foo" },
-      () => () => EMPTY,
-    ),
-  ).decrypt(targetTrustchain, payload);
+function encrypt(payload: unknown): Promise<string> {
+  const { cipher, locator } = streamCipher();
+  return cipher.encrypt(locator, payload);
+}
+
+function decrypt(payload: string): Promise<unknown> {
+  const { cipher, locator } = streamCipher();
+  return cipher.decrypt(locator, payload);
 }

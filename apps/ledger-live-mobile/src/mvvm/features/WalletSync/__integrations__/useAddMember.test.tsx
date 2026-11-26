@@ -5,12 +5,12 @@ import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { useAddMember } from "../hooks/useAddMember";
 import { SceneKind } from "../hooks/useFollowInstructionDrawer";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import { TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { AnalyticsEvents } from "../Analytics/enums";
 import { CONNECTION_TYPES } from "~/analytics/hooks/variables";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { keyRingTreeUpdateFixture } from "@features/platform-key-ring/testing";
+import { mockKeyRingTreeRecord } from "@domain/entity-key-ring/schema.mock";
 import { ScreenName } from "~/const";
 
 function deferredReject<T = never>() {
@@ -21,12 +21,27 @@ function deferredReject<T = never>() {
   return { promise, reject };
 }
 
-const mockGetOrCreateTrustchain = jest.fn();
-jest.mock("../hooks/useTrustchainSdk", () => ({
-  useTrustchainSdk: () => ({
-    getOrCreateTrustchain: mockGetOrCreateTrustchain,
-  }),
-}));
+const mockActivate = jest.fn();
+jest.mock("../hooks/useKeyRingClient", () => {
+  const client = jest
+    .requireActual("@features/platform-key-ring/testing")
+    .fakeKeyRingClient({ activate: (...args: unknown[]) => mockActivate(...args) });
+  return { useKeyRingClient: () => client };
+});
+
+const createdTrustchain = mockKeyRingTreeRecord({
+  rootId: "rootId",
+  applicationPath: "applicationPath",
+  walletSyncEncryptionKey: "walletSyncEncryptionKey",
+});
+const createdTree = keyRingTreeUpdateFixture(createdTrustchain);
+
+// The v1 SDK errors reach the app unchanged: only their name identifies them.
+function keyRingSdkError(name: string): Error {
+  const error = new Error();
+  error.name = name;
+  return error;
+}
 
 jest.mock("../hooks/useDestroyTrustchain", () => ({
   useDestroyTrustchain: () => ({
@@ -99,12 +114,6 @@ function TestHarness({ device }: { device: Device }) {
   return <Text testID="scene-kind">{SceneKind[scene.kind]}</Text>;
 }
 
-const createdTrustchain = {
-  rootId: "rootId",
-  applicationPath: "applicationPath",
-  walletSyncEncryptionKey: "walletSyncEncryptionKey",
-};
-
 describe("useAddMember", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -113,7 +122,7 @@ describe("useAddMember", () => {
 
   it("should set GenericError scene when UserRefusedOnDevice is thrown", async () => {
     const { promise, reject } = deferredReject();
-    mockGetOrCreateTrustchain.mockReturnValue(promise);
+    mockActivate.mockReturnValue(promise);
 
     render(<TestHarness device={MOCK_BLE_DEVICE} />, {
       overrideInitialState: INITIAL_STATE,
@@ -127,7 +136,7 @@ describe("useAddMember", () => {
   });
 
   it("should track LedgerSyncRejectedOnDevice with BLE connection type", async () => {
-    mockGetOrCreateTrustchain.mockRejectedValue(new UserRefusedOnDevice());
+    mockActivate.mockRejectedValue(new UserRefusedOnDevice());
 
     render(<TestHarness device={MOCK_BLE_DEVICE} />, {
       overrideInitialState: INITIAL_STATE,
@@ -143,7 +152,7 @@ describe("useAddMember", () => {
   });
 
   it("should track LedgerSyncRejectedOnDevice with USB connection type", async () => {
-    mockGetOrCreateTrustchain.mockRejectedValue(new UserRefusedOnDevice());
+    mockActivate.mockRejectedValue(new UserRefusedOnDevice());
 
     render(<TestHarness device={MOCK_USB_DEVICE} />, {
       overrideInitialState: INITIAL_STATE,
@@ -160,14 +169,14 @@ describe("useAddMember", () => {
 
   it("should set KeyError scene without tracking on TrustchainNotAllowed", async () => {
     const { promise, reject } = deferredReject();
-    mockGetOrCreateTrustchain.mockReturnValue(promise);
+    mockActivate.mockReturnValue(promise);
 
     render(<TestHarness device={MOCK_BLE_DEVICE} />, {
       overrideInitialState: INITIAL_STATE,
     });
 
     await jest.advanceTimersByTimeAsync(0);
-    reject(new TrustchainNotAllowed());
+    reject(keyRingSdkError("TrustchainNotAllowed"));
     await jest.advanceTimersByTimeAsync(0);
 
     expect(screen.getByTestId("scene-kind").props.children).toBe("KeyError");
@@ -175,10 +184,7 @@ describe("useAddMember", () => {
   });
 
   it("should open the loading screen when the trustchain is written", async () => {
-    mockGetOrCreateTrustchain.mockResolvedValue({
-      trustchain: createdTrustchain,
-      type: TrustchainResultType.created,
-    });
+    mockActivate.mockResolvedValue({ outcome: "created", tree: createdTree });
 
     render(<TestHarness device={MOCK_BLE_DEVICE} />, {
       overrideInitialState: INITIAL_STATE,
@@ -194,10 +200,7 @@ describe("useAddMember", () => {
 
   it("should pop Wallet Sync when the seeded offer trustchain is written", async () => {
     navigationMocks.params = { seededOffer: true };
-    mockGetOrCreateTrustchain.mockResolvedValue({
-      trustchain: createdTrustchain,
-      type: TrustchainResultType.created,
-    });
+    mockActivate.mockResolvedValue({ outcome: "created", tree: createdTree });
 
     const { store } = render(<TestHarness device={MOCK_BLE_DEVICE} />, {
       overrideInitialState: INITIAL_STATE,

@@ -11,11 +11,12 @@ import { DeletionError } from "../../components/ManageInstances/DeletionError";
 import { HookResult, Scene } from "./useManageInstanceDrawer";
 import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
 import { ErrorReason } from "../../hooks/useSpecificError";
+import { keyRingErrorForDisplayView } from "../../utils/errors";
 
 const ManageInstancesDrawer = ({
   isDrawerVisible,
   handleClose,
-  memberCredentials,
+  isCurrentInstance,
   memberHook,
   scene,
   changeScene,
@@ -33,7 +34,14 @@ const ManageInstancesDrawer = ({
 
   const getScene = () => {
     if (isError) {
-      return <GenericErrorView error={error} withDescription withHelp hasExportLogButton />;
+      return (
+        <GenericErrorView
+          error={keyRingErrorForDisplayView(error)}
+          withDescription
+          withHelp
+          hasExportLogButton
+        />
+      );
     }
 
     if (isLoading) {
@@ -49,7 +57,7 @@ const ManageInstancesDrawer = ({
           changeScene={changeScene}
           onClickInstance={onClickInstance}
           members={data}
-          currentInstance={memberCredentials?.pubkey}
+          isCurrentInstance={isCurrentInstance}
         />
       );
     }

@@ -3,14 +3,11 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
 import GeneralSettings from "~/screens/Settings/General";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
-import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import WalletSyncNavigator from "../WalletSyncNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { withFlagOverrides } from "@tests/test-renderer";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
-import { EMPTY } from "rxjs";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
 const Stack = createNativeStackNavigator<
@@ -76,14 +73,4 @@ export const INITIAL_TEST = withFlagOverrides(
       readOnlyModeEnabled: false,
     },
   }),
-);
-
-export const mockedSdk = getSdk(
-  true,
-  {
-    applicationId: 12,
-    name: "LLD Integration",
-    apiBaseUrl: getWalletSyncEnvironmentParams("STAGING").trustchainApiBaseUrl,
-  },
-  () => () => EMPTY,
 );

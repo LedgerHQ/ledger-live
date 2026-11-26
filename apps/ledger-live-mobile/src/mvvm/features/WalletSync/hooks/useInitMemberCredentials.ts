@@ -1,27 +1,25 @@
-import {
-  memberCredentialsSelector,
-  setMemberCredentials,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
+import { commitKeyRingMemberKey } from "@features/platform-key-ring";
+import { selectHasKeyRingMemberKey } from "@domain/entity-key-ring";
 import { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { useTrustchainSdk } from "./useTrustchainSdk";
+import { useKeyRingClient } from "./useKeyRingClient";
 
 export function useInitMemberCredentials() {
-  const sdk = useTrustchainSdk();
+  const client = useKeyRingClient();
   const dispatch = useDispatch();
 
-  const memberCredentials = useSelector(memberCredentialsSelector);
+  const hasMemberKey = useSelector(selectHasKeyRingMemberKey);
 
   const generateMemberCredentials = useCallback(async () => {
-    if (!memberCredentials) {
-      const newMemberCredentials = await sdk.initMemberCredentials();
-      dispatch(setMemberCredentials(newMemberCredentials));
+    if (!hasMemberKey) {
+      const memberKey = await client.createMemberKey();
+      dispatch(commitKeyRingMemberKey(memberKey));
     }
-  }, [memberCredentials, sdk, dispatch]);
+  }, [hasMemberKey, client, dispatch]);
 
   useEffect(() => {
     generateMemberCredentials();
   }, [generateMemberCredentials]);
 
-  return { memberCredentials, generateMemberCredentials };
+  return { hasMemberKey, generateMemberCredentials };
 }

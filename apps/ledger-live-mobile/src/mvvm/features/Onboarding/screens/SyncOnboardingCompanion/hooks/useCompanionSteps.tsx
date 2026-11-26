@@ -1,7 +1,7 @@
 import { TrackScreen } from "@shared/analytics-react";
 import React, { useState, ReactNode, useMemo, useRef } from "react";
 import { useTranslation } from "~/context/Locale";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { Flex, Text, VerticalTimeline } from "@ledgerhq/native-ui";
@@ -66,7 +66,7 @@ const useCompanionSteps = ({
   const [companionStepKey, setCompanionStepKey] = useState<FirstStepCompanionStepKey>(
     FirstStepCompanionStepKey.EarlySecurityCheckCompleted,
   );
-  const isLedgerSyncActive = Boolean(useSelector(trustchainSelector)?.rootId);
+  const isLedgerSyncActive = useSelector(selectIsLedgerSyncActive);
   const isLedgerSyncActiveAtStart = useRef(isLedgerSyncActive);
 
   const hasSyncStep = !isLedgerSyncActiveAtStart.current && isSyncStepEnabled;

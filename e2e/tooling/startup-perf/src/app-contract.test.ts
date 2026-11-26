@@ -16,7 +16,7 @@ const PREPARED_FILES = [
   "src/mvvm/utils/logStartup/beforeJSImports.ts",
   "src/components/DBSave.ts",
 ];
-const TRUSTCHAIN_SAVED_AT_START = /lense: trustchainStoreSelector,\n\s*saveAtStart: true,/;
+const TRUSTCHAIN_SAVED_AT_START = /lense: selectPersistedKeyRingState,\n\s*saveAtStart: true,/;
 
 const read = (root: string, file: string) => readFileSync(path.join(root, file), "utf8");
 const stderrOf = (error: unknown) =>

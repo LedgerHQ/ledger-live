@@ -11,7 +11,7 @@ import {
   AnalyticsButton,
 } from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { activateDrawerSelector } from "~/reducers/walletSync";
@@ -32,21 +32,21 @@ const WalletSyncRow = () => {
     dispatch(setLedgerSyncActivateDrawer(false));
     setCurrentStep(Steps.Activation);
   }, [dispatch, setCurrentStep]);
-  const trustchain = useSelector(trustchainSelector);
+  const isLedgerSyncActive = useSelector(selectIsLedgerSyncActive);
   const ledgerSyncOptimisationFlag = useFeature("lwmLedgerSyncOptimisation");
   const navigateToWalletSyncActivationScreen = useCallback(() => {
     // Here we need to check if the user has a backup or not to determine the screen to navigate to
     onClickTrack({ button: AnalyticsButton.LedgerSync, page: AnalyticsPage.SettingsGeneral });
     setOriginFlow(HOOKS_TRACKING_LOCATIONS.ledgerSyncFlow);
 
-    if (trustchain?.rootId) {
+    if (isLedgerSyncActive) {
       navigation.navigate(NavigatorName.WalletSync, {
         screen: ScreenName.WalletSyncActivated,
       });
     } else {
       dispatch(setLedgerSyncActivateDrawer(true));
     }
-  }, [navigation, onClickTrack, trustchain?.rootId, dispatch]);
+  }, [navigation, onClickTrack, isLedgerSyncActive, dispatch]);
 
   return (
     <>
