@@ -368,6 +368,9 @@ patchedDependencies:
 allowBuilds:
   "@apollo/protobufjs": true
   "@datadog/mobile-react-native": true
+  "@datadog/native-appsec": false
+  "@datadog/native-iast-taint-tracking": false
+  "@datadog/native-metrics": false
   "@firebase/util": false
   "@parcel/watcher": false
   "@swc/core": true

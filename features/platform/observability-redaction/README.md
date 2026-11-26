@@ -27,5 +27,6 @@ call, and has no dependency on a vendor SDK: each app applies it in its own SDK 
 
 ## Consumers
 
-- Ledger Wallet Desktop: `resource.url` in the Datadog `beforeSend`.
+- Ledger Wallet Desktop: `resource.url` in the renderer Datadog `beforeSend`, and the main-process
+  resource and error URLs in the Electron SDK `beforeSendRum`.
 - Ledger Wallet Mobile: the RUM resources reported by the Datadog SDK.

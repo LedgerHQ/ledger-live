@@ -5,6 +5,7 @@ import "./bootstrap";
 import "./saveHandlers";
 import "./systemHandlers";
 import contextMenu from "electron-context-menu";
+import { bufferUncaughtErrorMain } from "~/datadog/main";
 
 for (const k in process.env) {
   setEnvUnsafe(k, process.env[k]);
@@ -18,6 +19,13 @@ if (!__DEV__) {
     const stack = error.stack ? error.stack : `${error.name}: ${error.message}`;
     const message = "Uncaught Exception:\n" + stack;
     console.error(message);
+    bufferUncaughtErrorMain(error);
+  });
+
+  process.on("unhandledRejection", function (reason) {
+    const stack = reason instanceof Error ? (reason.stack ?? reason.message) : String(reason);
+    console.error("Unhandled Rejection:\n" + stack);
+    bufferUncaughtErrorMain(reason);
   });
 }
 
