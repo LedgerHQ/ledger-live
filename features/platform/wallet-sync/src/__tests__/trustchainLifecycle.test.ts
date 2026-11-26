@@ -1,4 +1,5 @@
-import { liveSlug, trustchainLifecycle } from "../trustchainLifecycle";
+import { liveSlug } from "../cloudSync/liveSlug";
+import { trustchainLifecycle } from "../legacy/trustchainLifecycle";
 
 const deleteData = jest.fn(async () => {});
 const uploadData = jest.fn(async () => {});

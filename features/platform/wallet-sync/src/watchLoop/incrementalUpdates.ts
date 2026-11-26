@@ -2,6 +2,32 @@ import { UpdateEvent } from "@shared/cloud-sync";
 import { CloudSyncDataManager } from "@shared/cloud-sync-module";
 import { ZodType, z } from "zod";
 
+/**
+ * Builds the `saveNewUpdate` callback Cloud Sync calls on each update event. On new data it
+ * resolves the incremental update against the local state and saves the new local state when
+ * something changed, or only the document and version when the version moved. Pushed data saves
+ * the document; deleted data saves an empty document at version 0.
+ *
+ * `saveUpdate` receives `newLocalState: null` when the local state must stay as it is.
+ *
+ * @example
+ * ```ts
+ * const saveNewUpdate = makeSaveNewUpdate({
+ *   walletsync,
+ *   getState: store.getState,
+ *   latestDistantStateSelector,
+ *   latestDistantVersionSelector,
+ *   localStateSelector,
+ *   saveUpdate,
+ * });
+ * const cloudSync = createKeyRingCloudSync({
+ *   apiBaseUrl,
+ *   slug: liveSlug,
+ *   getCurrentVersion,
+ *   saveNewUpdate,
+ * });
+ * ```
+ */
 export function makeSaveNewUpdate<
   S,
   LocalState,
@@ -59,6 +85,22 @@ export function makeSaveNewUpdate<
   };
 }
 
+/**
+ * Builds the step of each watch loop cycle that resolves the last saved document against the
+ * current local state again, and saves the new local state when that resolution has changes. The
+ * document and version passed to `saveUpdate` are the stored ones.
+ *
+ * @example
+ * ```ts
+ * const localIncrementUpdate = makeLocalIncrementalUpdate({
+ *   walletsync,
+ *   getState: store.getState,
+ *   latestWalletStateSelector,
+ *   localStateSelector,
+ *   saveUpdate,
+ * });
+ * ```
+ */
 export function makeLocalIncrementalUpdate<
   S,
   LocalState,
