@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { estimateFees } from "../logic/estimateFees";
 import { getCalTokensCached } from "../network/gateway";
 import {
   createMockCantonAccount,
@@ -80,9 +81,10 @@ describe.each([0, 1])("estimateMaxSpendable with a fee of %i CC", fee => {
 
 describe("estimateMaxSpendable with a fee that grows with the amount", () => {
   const context = createMockContext({ ...createMockCoinConfigValue(), minReserve: 0 });
+  const costOf = async (amount: BigNumber) =>
+    amount.plus((await estimateFees(context, BigInt(amount.toFixed()))).toString());
 
-  it("should match the CC amount Send max prepares", async () => {
-    const baseFeeAndOnePercentOfTheBalance = CC.plus(CC.times(9).div(100));
+  it("should match the largest CC amount that fits, as Send max prepares it", async () => {
     const prepared = await prepareTransaction(context, account, sendMax);
 
     const max = await estimateMaxSpendable(context, {
@@ -90,7 +92,8 @@ describe("estimateMaxSpendable with a fee that grows with the amount", () => {
       transaction: createMockTransaction(),
     });
 
-    expect(max).toEqual(CC.times(9).minus(baseFeeAndOnePercentOfTheBalance));
     expect(max).toEqual(prepared.amount);
+    expect((await costOf(max)).lte(CC.times(9))).toBe(true);
+    expect((await costOf(max.plus(1))).gt(CC.times(9))).toBe(true);
   });
 });

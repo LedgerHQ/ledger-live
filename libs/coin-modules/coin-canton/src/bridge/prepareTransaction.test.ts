@@ -1,5 +1,6 @@
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { estimateSendMax } from "../logic/estimateFees";
 import { getCalTokensCached } from "../network/gateway";
 import {
   createMockCantonAccount,
@@ -74,6 +75,37 @@ describe("prepareTransaction", () => {
       const newTx = await prepareTransaction(contextWithFee(1), account, sendMax());
 
       expect(newTx.amount).toEqual(CC.times(8));
+    });
+
+    it.each([1.01, 100])(
+      "should send with the tiered fee the largest amount that fits in %s CC, with its fee",
+      async balance => {
+        const context = createMockContext(createMockCoinConfigValue());
+        const spendable = CC.times(balance);
+        const max = await estimateSendMax(context, BigInt(spendable.toFixed()));
+
+        const newTx = await prepareTransaction(context, ccAccount(spendable), sendMax());
+
+        expect(newTx).toMatchObject({
+          amount: new BigNumber(max.amount.toString()),
+          fee: new BigNumber(max.fee.toString()),
+        });
+      },
+    );
+
+    it("should take the Send max amount and its fee from a single fee config read", async () => {
+      const config = jest
+        .fn()
+        .mockResolvedValueOnce({ ...createMockCoinConfigValue(), fee: 1 })
+        .mockResolvedValue({ ...createMockCoinConfigValue(), fee: 5 });
+
+      const newTx = await prepareTransaction(
+        { ...createMockContext(), config },
+        ccAccount(CC.times(9)),
+        sendMax({ tokenId: createMockCoinConfigValue().nativeInstrumentId }),
+      );
+
+      expect(newTx).toMatchObject({ amount: CC.times(8), fee: CC });
     });
 
     it("should send nothing when the CC spendable balance does not cover the fee", async () => {
