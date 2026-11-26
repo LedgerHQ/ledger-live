@@ -15,7 +15,11 @@ import {
   PairingRefusedError,
   rnBleTransportIdentifier,
 } from "@ledgerhq/device-transport-kit-react-native-ble";
-import { activeDeviceSessionSubject, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import {
+  activeDeviceSessionSubject,
+  disconnectOtherSessions,
+  dmkToLedgerDeviceIdMap,
+} from "@ledgerhq/live-dmk-shared";
 import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import {
   catchError,
@@ -196,6 +200,7 @@ export class DeviceManagementKitBLETransport extends Transport {
         switchMap(async discoveredDevice => {
           tracer.trace(`[DMKTransport] [open] device found ${discoveredDevice.id}`);
 
+          disconnectOtherSessions(getDeviceManagementKit(), discoveredDevice);
           const sessionId = await getDeviceManagementKit()
             .connect({
               device: discoveredDevice,
@@ -257,7 +262,7 @@ export class DeviceManagementKitBLETransport extends Transport {
         throw error;
       }
     } else {
-      await getDeviceManagementKit().close();
+      disconnectOtherSessions(getDeviceManagementKit(), deviceOrId);
       const sessionId = await getDeviceManagementKit().connect({
         device: deviceOrId,
         sessionRefresherOptions: { isRefresherDisabled: true },

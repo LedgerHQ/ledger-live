@@ -8,6 +8,7 @@ import {
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 import Transport from "@ledgerhq/hw-transport";
+import { disconnectOtherSessions } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import { BehaviorSubject, Subscription, firstValueFrom } from "rxjs";
 import { first, tap, timeout } from "rxjs/operators";
@@ -97,6 +98,7 @@ export class DeviceManagementKitHIDTransport extends Transport {
         ),
       );
       tracer.trace("[open] device found", { device: device[0] });
+      disconnectOtherSessions(dmk, device[0]);
       const sessionId = await dmk.connect({
         device: device[0],
         sessionRefresherOptions: { isRefresherDisabled: true },
