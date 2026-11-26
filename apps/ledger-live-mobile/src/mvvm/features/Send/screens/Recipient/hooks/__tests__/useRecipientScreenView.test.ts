@@ -825,6 +825,37 @@ describe("useRecipientScreenView", () => {
     expect(result.current.isSkipMemoConfirmationOpen).toBe(false);
   });
 
+  it("stays on the recipient step when the memo kept for the selected address fails validation", () => {
+    const onAddressSelected = jest.fn();
+    mockedSendFeatures.hasMemoForRecipient.mockReturnValue(true);
+    mockedUseSendFlowData.mockReturnValue({
+      recipientSearch: mockRecipientSearch,
+      state: {
+        ...mockSendFlowState,
+        recipient: {
+          address: "same_address",
+          memo: { type: "MEMO", value: "x".repeat(65) },
+        },
+        transaction: { status: { errors: { transaction: new Error("MemoTooLong") } } },
+      } as never,
+      uiConfig: {} as never,
+    });
+
+    const { result } = renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected,
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    act(() => result.current.handleAddressSelect("same_address"));
+
+    expect(onAddressSelected).toHaveBeenCalledWith("same_address", undefined, false);
+    expect(result.current.isSkipMemoConfirmationOpen).toBe(false);
+  });
+
   it("asks for confirmation when another address is selected after a filled memo", () => {
     const onAddressSelected = jest.fn();
     mockedSendFeatures.hasMemoForRecipient.mockReturnValue(true);
