@@ -5,6 +5,7 @@ import { useSendFlowAccount } from "./useSendFlowAccount";
 import { useSyncSendFlowAccount } from "./useSyncSendFlowAccount";
 import { getSendUiConfig } from "../uiConfig";
 import { canSkipRecipientStep } from "../types";
+import { getMemoTooLongError } from "../recipient/utils/memoValue";
 import type {
   SendFlowState,
   SendFlowInitParams,
@@ -178,16 +179,38 @@ export function useSendFlowBusinessLogic({
     [recipientSearchValue],
   );
 
+  const memoTooLongError = useMemo(
+    () =>
+      getMemoTooLongError({
+        value: recipient?.memo?.value ?? "",
+        maxLength: uiConfig.memoMaxLength,
+        memoType: uiConfig.memoType,
+      }),
+    [recipient?.memo?.value, uiConfig.memoMaxLength, uiConfig.memoType],
+  );
+
+  const transactionState: SendFlowTransactionState = useMemo(() => {
+    const bridgeState = transactionHook.state;
+    if (!memoTooLongError) return bridgeState;
+    return {
+      ...bridgeState,
+      status: {
+        ...bridgeState.status,
+        errors: { ...bridgeState.status.errors, transaction: memoTooLongError },
+      },
+    };
+  }, [transactionHook.state, memoTooLongError]);
+
   const state: SendFlowState = useMemo(
     () => ({
       account: accountHook.state,
-      transaction: transactionHook.state,
+      transaction: transactionState,
       recipient,
       operation: operationHook.state,
       isLoading: transactionHook.state.bridgePending,
       flowStatus,
     }),
-    [accountHook.state, transactionHook.state, recipient, operationHook.state, flowStatus],
+    [accountHook.state, transactionState, recipient, operationHook.state, flowStatus],
   );
 
   const statusActions = useMemo(

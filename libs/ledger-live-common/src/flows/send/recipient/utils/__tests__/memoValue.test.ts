@@ -1,4 +1,5 @@
-import { sanitizeMemoValue } from "../memoValue";
+import { MemoTooLong } from "../../../../../errors";
+import { getMemoTooLongError, sanitizeMemoValue } from "../memoValue";
 
 describe("sanitizeMemoValue", () => {
   it("returns the value untouched for non-tag memo types", () => {
@@ -40,5 +41,43 @@ describe("sanitizeMemoValue", () => {
     expect(
       sanitizeMemoValue({ value: "9007199254740993", memoType: "tag", memoMaxValue: U64_MAX }),
     ).toBe("9007199254740993");
+  });
+});
+
+describe("getMemoTooLongError", () => {
+  it("reports the length and the limit of a memo longer than maxLength", () => {
+    const error = getMemoTooLongError({ value: "a".repeat(40), maxLength: 32, memoType: "text" });
+
+    expect(error).toBeInstanceOf(MemoTooLong);
+    expect(error).toMatchObject({ name: "MemoTooLong", memoLength: 40, maxLength: 32 });
+  });
+
+  it("accepts a memo exactly at maxLength", () => {
+    expect(
+      getMemoTooLongError({ value: "a".repeat(32), maxLength: 32, memoType: "text" }),
+    ).toBeUndefined();
+  });
+
+  it("accepts any memo when the descriptor has no maxLength", () => {
+    expect(getMemoTooLongError({ value: "a".repeat(1000), memoType: "text" })).toBeUndefined();
+  });
+
+  it("leaves tag memos to their memoMaxValue clamp", () => {
+    expect(
+      getMemoTooLongError({ value: "4294967295", maxLength: 3, memoType: "tag" }),
+    ).toBeUndefined();
+  });
+
+  it("counts UTF-8 bytes, so multibyte characters under the character limit are too long", () => {
+    expect(
+      getMemoTooLongError({ value: "é".repeat(17), maxLength: 32, memoType: "text" }),
+    ).toMatchObject({ memoLength: 34, maxLength: 32 });
+  });
+
+  it("counts a four-byte emoji as four bytes", () => {
+    expect(getMemoTooLongError({ value: "👍", maxLength: 3, memoType: "text" })).toMatchObject({
+      memoLength: 4,
+      maxLength: 3,
+    });
   });
 });

@@ -8241,6 +8241,9 @@
     "MaxFeeTooLow": {
       "title": "Fee is lower than the recommended value"
     },
+    "MemoTooLong": {
+      "title": "Memo is too long ({{memoLength}}/{{maxLength}} bytes)"
+    },
     "GasPriceTooLow": {
       "title": "Gas price is lower than the network minimum"
     },

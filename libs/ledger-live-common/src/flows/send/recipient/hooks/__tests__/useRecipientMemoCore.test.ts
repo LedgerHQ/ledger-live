@@ -46,6 +46,17 @@ describe("useRecipientMemoCore", () => {
     expect(result.current.showMemoValueInput).toBe(true);
   });
 
+  it("forwards a pasted memo whole so the flow can flag it as too long", () => {
+    const pastedMemo = "exchange-deposit-memo-".repeat(30);
+    const { result, onMemoChange } = setup();
+
+    act(() => result.current.onMemoValueChange(pastedMemo));
+
+    expect(onMemoChange).toHaveBeenLastCalledWith({ value: pastedMemo, type: undefined });
+    expect(result.current.memo.value).toBe(pastedMemo);
+    expect(result.current.hasFilledMemo).toBe(true);
+  });
+
   it("resets the value when the memo type changes", () => {
     const { result, onMemoChange } = setup({
       memoType: "typed",

@@ -142,7 +142,6 @@ export function SendHeader() {
                   currencyId={currencyId}
                   currencyTicker={state.account.currency?.ticker}
                   value={memo.value}
-                  maxLength={uiConfig.memoMaxLength}
                   memoType={uiConfig.memoType}
                   memoMaxValue={uiConfig.memoMaxValue}
                   transactionError={transactionError}
@@ -162,7 +161,6 @@ export function SendHeader() {
     recipientContact,
     recipientPlaceholder,
     recipientSearch,
-    uiConfig.memoMaxLength,
     uiConfig.memoType,
     uiConfig.memoMaxValue,
     t,

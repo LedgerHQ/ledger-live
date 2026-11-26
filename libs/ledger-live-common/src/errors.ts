@@ -111,6 +111,17 @@ export class SourceHasMultiSign extends Error {
   }
 }
 
+export class MemoTooLong extends Error {
+  override name = "MemoTooLong";
+  readonly memoLength: number;
+  readonly maxLength: number;
+  constructor(memoLength: number, maxLength: number) {
+    super(`Memo is ${memoLength} bytes, above the maximum of ${maxLength} bytes`);
+    this.memoLength = memoLength;
+    this.maxLength = maxLength;
+  }
+}
+
 // Note: info of this code can be found here:
 // https://github.com/cosmos/cosmos-sdk/blob/v0.40.0-rc3/types/errors/errors.go#L16
 class CosmosBroadcastCodeInternal extends Error {

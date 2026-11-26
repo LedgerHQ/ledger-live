@@ -37,7 +37,6 @@ export function MemoControls({ vm }: MemoControlsProps) {
           currencyId={vm.currencyId}
           memoLabel={vm.memoLabel}
           value={vm.memo.value}
-          maxLength={vm.uiConfig.memoMaxLength}
           memoType={vm.uiConfig.memoType}
           memoMaxValue={vm.uiConfig.memoMaxValue}
           transactionError={vm.memoError}

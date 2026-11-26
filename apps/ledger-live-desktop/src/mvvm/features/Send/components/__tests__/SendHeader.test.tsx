@@ -5,7 +5,9 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { SendHeader } from "../SendHeader";
+import { MemoTooLong } from "@ledgerhq/live-common/errors";
 import { useSendHeaderModel } from "../../hooks/useSendHeaderModel";
+import { useSendHeaderMemo } from "../../hooks/useSendHeaderMemo";
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../../context/SendFlowContext";
 
@@ -27,29 +29,31 @@ jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext"
   }),
 }));
 jest.mock("../AddressDisclaimer", () => ({ AddressDisclaimer: () => null }));
-jest.mock("../../hooks/useSendHeaderMemo", () => ({
-  useSendHeaderMemo: () => ({
-    currencyId: undefined,
-    hasMemoTypeOptions: false,
-    memo: { value: "", type: undefined },
-    memoTypeOptions: [],
-    onMemoTypeChange: jest.fn(),
-    showMemoValueInput: false,
-    onMemoValueChange: jest.fn(),
-    showSkipMemo: false,
-    skipMemoState: "idle",
-    onSkipMemoRequestConfirm: jest.fn(),
-    onSkipMemoCancelConfirm: jest.fn(),
-    onSkipMemoConfirm: jest.fn(),
-    resetViewState: jest.fn(),
-  }),
-}));
+jest.mock("../../hooks/useSendHeaderMemo");
 jest.mock("@ledgerhq/lumen-ui-react", () => ({
   ...jest.requireActual("@ledgerhq/lumen-ui-react"),
   DialogHeader: ({ title }: { title?: string }) => <div>{title}</div>,
 }));
 
 const mockedUseSendHeaderModel = jest.mocked(useSendHeaderModel);
+const mockedUseSendHeaderMemo = jest.mocked(useSendHeaderMemo);
+
+const baseMemo: ReturnType<typeof useSendHeaderMemo> = {
+  currencyId: undefined,
+  hasMemoTypeOptions: false,
+  memo: { value: "", type: undefined },
+  memoTypeOptions: [],
+  onMemoTypeChange: jest.fn(),
+  showMemoValueInput: false,
+  onMemoValueChange: jest.fn(),
+  showSkipMemo: false,
+  skipMemoState: "propose",
+  hasFilledMemo: false,
+  onSkipMemoRequestConfirm: jest.fn(),
+  onSkipMemoCancelConfirm: jest.fn(),
+  onSkipMemoConfirm: jest.fn(),
+  resetViewState: jest.fn(),
+};
 
 const baseModel = {
   addressInputValue: "0x123456...12345678",
@@ -76,6 +80,7 @@ const baseModel = {
 describe("SendHeader", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedUseSendHeaderMemo.mockReturnValue(baseMemo);
     (useFlowWizard as jest.Mock).mockReturnValue({
       currentStep: SEND_FLOW_STEP.AMOUNT,
       currentStepConfig: { addressInput: true },
@@ -157,5 +162,57 @@ describe("SendHeader", () => {
     render(<SendHeader />);
 
     expect(screen.getByDisplayValue("0x123456...12345678")).toHaveAttribute("readonly");
+  });
+
+  describe("memo input", () => {
+    function renderRecipientStepWithMemo(model: Partial<ReturnType<typeof useSendHeaderModel>>) {
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.RECIPIENT,
+        currentStepConfig: { addressInput: true },
+        navigation: { goToNextStep: jest.fn() },
+      });
+      (useSendFlowData as jest.Mock).mockReturnValue({
+        state: {
+          account: { account: null, parentAccount: null, currency: { ticker: "MINA" } },
+          recipient: null,
+          transaction: { status: {} },
+        },
+        uiConfig: { hasMemo: true, memoType: "text", memoMaxLength: 5 },
+        recipientSearch: { value: "B62q-recipient", setValue: jest.fn(), clear: jest.fn() },
+      });
+      mockedUseSendHeaderModel.mockReturnValue({
+        ...baseModel,
+        addressInputValue: "B62q-recipient",
+        showMemoControls: true,
+        ...model,
+      });
+      const onMemoValueChange = jest.fn();
+      mockedUseSendHeaderMemo.mockReturnValue({
+        ...baseMemo,
+        currencyId: "mina",
+        showMemoValueInput: true,
+        onMemoValueChange,
+      });
+      return { ...render(<SendHeader />), onMemoValueChange };
+    }
+
+    it("keeps a pasted memo longer than the coin's memo limit whole", async () => {
+      const { user, onMemoValueChange } = renderRecipientStepWithMemo({});
+
+      await user.click(screen.getByTestId("send-memo-input"));
+      await user.paste("deposit-1234567890");
+
+      expect(onMemoValueChange).toHaveBeenLastCalledWith("deposit-1234567890");
+    });
+
+    it("shows the memo length against the limit when the memo is too long", () => {
+      const memoTooLong = new MemoTooLong(18, 5);
+      renderRecipientStepWithMemo({
+        transactionError: memoTooLong,
+        transactionErrorName: memoTooLong.name,
+      });
+
+      expect(screen.getByText("Memo is too long (18/5 bytes)")).toBeVisible();
+    });
   });
 });
