@@ -9337,10 +9337,17 @@ importers:
         version: 1.94.0
 
   e2e/tooling/startup-perf:
+    dependencies:
+      ws:
+        specifier: 'catalog:'
+        version: 8.23.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.4
+      '@types/ws':
+        specifier: 'catalog:'
+        version: 8.5.10
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
