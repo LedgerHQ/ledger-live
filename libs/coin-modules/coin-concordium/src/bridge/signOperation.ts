@@ -61,11 +61,7 @@ export const buildSignOperation =
         });
 
         const config = await context.config(account.currency.id);
-        const nextSequenceNumber = await getNextValidSequence(
-          config,
-          account.freshAddress,
-          account.currency.id,
-        );
+        const nextSequenceNumber = await getNextValidSequence(config, account.freshAddress);
 
         // Fails closed: the alternative is a signed CCD transfer. Typed rather
         // than an invariant because a user can reach this, so it needs to reach
@@ -90,7 +86,7 @@ export const buildSignOperation =
         const estimation =
           tokenAccount && transaction.energy !== undefined
             ? { cost: BigInt(fee.toString()), energy: BigInt(transaction.energy) }
-            : await estimateFees(config, account.currency.id, transaction.memo);
+            : await estimateFees(config, transaction.memo);
 
         const signature = await signerContext(deviceId, async signer => {
           const { freshAddressPath: derivationPath } = account;

@@ -23,7 +23,7 @@ describe("Concordium Api (testnet)", () => {
   const ADDRESS_PRISTINE = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
 
   beforeAll(() => {
-    api = withDefaults(createApi("concordium_testnet"));
+    api = withDefaults(createApi());
   });
 
   describe("estimateFees", () => {

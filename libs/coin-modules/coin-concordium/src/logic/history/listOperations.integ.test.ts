@@ -9,12 +9,9 @@ describe("listOperations", () => {
 
   describe("Account with no transactions", () => {
     it("should return empty array for pristine account", async () => {
-      const { items: operations, next: cursor } = await listOperations(
-        config,
-        ADDRESS_PRISTINE,
-        { minHeight: 0 },
-        "concordium_testnet",
-      );
+      const { items: operations, next: cursor } = await listOperations(config, ADDRESS_PRISTINE, {
+        minHeight: 0,
+      });
 
       expect(Array.isArray(operations)).toBe(true);
       expect(operations.length).toBe(0);
@@ -27,12 +24,7 @@ describe("listOperations", () => {
     let cursor: string | undefined;
 
     beforeAll(async () => {
-      const page = await listOperations(
-        config,
-        ADDRESS_WITH_BALANCE,
-        { minHeight: 0 },
-        "concordium_testnet",
-      );
+      const page = await listOperations(config, ADDRESS_WITH_BALANCE, { minHeight: 0 });
       operations = page.items;
       cursor = page.next;
     });
@@ -99,12 +91,7 @@ describe("listOperations", () => {
     let operations: RawOperation[];
 
     beforeAll(async () => {
-      const page = await listOperations(
-        config,
-        ADDRESS_WITH_BALANCE,
-        { minHeight: 0 },
-        "concordium_testnet",
-      );
+      const page = await listOperations(config, ADDRESS_WITH_BALANCE, { minHeight: 0 });
       operations = page.items;
     });
 

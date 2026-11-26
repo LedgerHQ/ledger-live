@@ -266,10 +266,10 @@ describe("onboard (testnet integration)", () => {
       const mockData = { v: 0, value: {} } as never;
       const config = await context.config(currency.id);
 
-      const result = await submitCredential(config, currency.id, mockData);
+      const result = await submitCredential(config, mockData);
 
       expect(result).toEqual({ submissionId: "test-submission-123" });
-      expect(mockSubmitCredential).toHaveBeenCalledWith(config, currency.id, mockData);
+      expect(mockSubmitCredential).toHaveBeenCalledWith(config, mockData);
     }, 15000);
 
     it("should use correct testnet configuration", async () => {

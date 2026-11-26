@@ -316,7 +316,7 @@ describe("onboard", () => {
       await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
-      expect(submitCredential).toHaveBeenCalledWith(mainnetConfig, currency.id, {
+      expect(submitCredential).toHaveBeenCalledWith(mainnetConfig, {
         v: 0,
         value: { test: "data" },
       });

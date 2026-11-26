@@ -7,7 +7,7 @@ export const buildBroadcast =
   (context: ConcordiumContext): AccountBridge<Transaction>["broadcast"] =>
   async ({ account, signedOperation: { signature, operation } }) => {
     const config = await context.config(account.currency.id);
-    const hash = await broadcastLogic(config, signature, account.currency.id);
+    const hash = await broadcastLogic(config, signature);
     if (!hash) {
       throw new Error("concordium: broadcast returned no transaction id");
     }

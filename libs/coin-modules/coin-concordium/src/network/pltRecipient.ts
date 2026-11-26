@@ -8,11 +8,11 @@ import type { ConcordiumCoinConfig, PltAccountToken, PltModuleState } from "../t
 import { readAccountTokens, readPltState } from "./plt";
 import { getAccountBalance, getPltTokenInfo } from "./proxyClient";
 
-type TokenQuery = { config: ConcordiumCoinConfig; currencyId: string; tokenId: string };
-type AccountQuery = { config: ConcordiumCoinConfig; currencyId: string; address: string };
+type TokenQuery = { config: ConcordiumCoinConfig; tokenId: string };
+type AccountQuery = { config: ConcordiumCoinConfig; address: string };
 
 /** One LRU cache per configured TTL, keyed by endpoint so no proxy answers for another. */
-function makeTtlCache<Q extends { config: ConcordiumCoinConfig; currencyId: string }, R>(
+function makeTtlCache<Q extends { config: ConcordiumCoinConfig }, R>(
   fetch: (query: Q) => Promise<R>,
   keyOf: (query: Q) => string,
   ttlMsOf: (config: ConcordiumCoinConfig) => number,
@@ -22,7 +22,7 @@ function makeTtlCache<Q extends { config: ConcordiumCoinConfig; currencyId: stri
     const ttl = ttlMsOf(query.config);
     let cache = caches.get(ttl);
     if (!cache) {
-      cache = makeLRUCache(fetch, q => `${q.config.proxyUrl}:${q.currencyId}:${keyOf(q)}`, {
+      cache = makeLRUCache(fetch, q => `${q.config.proxyUrl}:${keyOf(q)}`, {
         max: 100,
         ttl,
       });
@@ -65,8 +65,8 @@ export type RecipientTokens =
  * here. The pause check belongs to the sender and comes from synced resources.
  */
 export const fetchPltModuleState = makeTtlCache(
-  async ({ config, currencyId, tokenId }: TokenQuery): Promise<PltModuleState | undefined> => {
-    const info = await getPltTokenInfo(config, currencyId, tokenId);
+  async ({ config, tokenId }: TokenQuery): Promise<PltModuleState | undefined> => {
+    const info = await getPltTokenInfo(config, tokenId);
     return readPltState(info?.tokenState?.moduleState);
   },
   ({ tokenId }) => tokenId,
@@ -91,8 +91,8 @@ export const fetchPltModuleState = makeTtlCache(
  * cannot (CIS-7 fixes both flags at creation).
  */
 export const fetchAccountTokens = makeTtlCache(
-  async ({ config, currencyId, address }: AccountQuery): Promise<RecipientTokens> => {
-    const { finalizedBalance } = await getAccountBalance(config, currencyId, address);
+  async ({ config, address }: AccountQuery): Promise<RecipientTokens> => {
+    const { finalizedBalance } = await getAccountBalance(config, address);
     if (!finalizedBalance) return { status: "absent" };
 
     const entries = readAccountTokens(finalizedBalance.accountTokens);

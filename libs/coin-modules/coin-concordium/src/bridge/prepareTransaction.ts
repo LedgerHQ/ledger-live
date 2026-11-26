@@ -51,7 +51,6 @@ function recipientForEstimation(recipient: string): AccountAddress {
  */
 async function estimatePltFees(
   config: ConcordiumCoinConfig,
-  currencyId: string,
   subAccount: TokenAccount,
   transaction: Transaction,
 ): Promise<FeeEstimation | undefined> {
@@ -68,7 +67,7 @@ async function estimatePltFees(
     ...(memo ? { memo } : {}),
   });
 
-  return estimateTokenFees(config, currencyId, {
+  return estimateTokenFees(config, {
     tokenId: subAccount.token.contractAddress,
     listOperationsSize: operations.length,
   });
@@ -86,12 +85,7 @@ export const buildPrepareTransaction =
     }
 
     if (subAccount?.type === "TokenAccount") {
-      const estimation = await estimatePltFees(
-        config,
-        account.currency.id,
-        subAccount,
-        transaction,
-      );
+      const estimation = await estimatePltFees(config, subAccount, transaction);
       if (!estimation) return transaction;
 
       const fee = new BigNumber(estimation.cost.toString());
@@ -106,7 +100,7 @@ export const buildPrepareTransaction =
       return { ...transaction, fee, energy };
     }
 
-    const estimation = await estimateFees(config, account.currency.id, transaction.memo);
+    const estimation = await estimateFees(config, transaction.memo);
     const fee = new BigNumber(estimation.cost.toString());
 
     // Only the PLT path persists `energy`, so one arriving here belonged to a

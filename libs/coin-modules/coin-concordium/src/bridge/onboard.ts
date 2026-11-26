@@ -127,7 +127,7 @@ export const buildOnboardAccount =
 
           const data = buildSubmitCredentialData(credentialDeploymentTransaction, signature);
 
-          await submitCredential(config, currencyId, data);
+          await submitCredential(config, data);
 
           const onboardResult: ConcordiumOnboardResult = {
             account: {

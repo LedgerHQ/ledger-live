@@ -65,7 +65,6 @@ const valueToBigNumber = (value?: string | number): BigNumber => {
  */
 export async function getBalance(
   config: ConcordiumCoinConfig,
-  currencyId: string,
   address: string,
 ): Promise<{
   balance: BigNumber;
@@ -73,7 +72,7 @@ export async function getBalance(
   accountTokens: PltAccountToken[] | undefined;
 }> {
   const { finalizedBalance: { accountAmount, accountAtDisposal, accountTokens } = {} } =
-    await getAccountBalance(config, currencyId, address).catch(error => {
+    await getAccountBalance(config, address).catch(error => {
       log("concordium-sync", `Error fetching balance for account with address ${address}`, {
         error,
       });
@@ -157,7 +156,6 @@ async function computeSyncHash(
  */
 export async function syncOperations(
   config: ConcordiumCoinConfig,
-  currencyId: string,
   address: string,
   accountId: string,
   oldOperations: Operation[],
@@ -171,12 +169,12 @@ export async function syncOperations(
 
   const limit = tuning(config.gateway?.maxTxQuery, DEFAULT_MAX_TX_QUERY, 1);
   const items = await paginateOperations(cursor =>
-    listOperations(
-      config,
-      address,
-      { minHeight, limit, order: "desc", ...(cursor ? { cursor } : {}) },
-      currencyId,
-    ),
+    listOperations(config, address, {
+      minHeight,
+      limit,
+      order: "desc",
+      ...(cursor ? { cursor } : {}),
+    }),
   );
 
   const nativeItems: RawOperation[] = [];
@@ -219,7 +217,7 @@ export const makeGetAccountShape =
     const enableTokens = (config.enableTokens ?? DEFAULT_ENABLE_TOKENS) === true;
 
     try {
-      const accountsResponse = await getAccountsByPublicKey(config, currency.id, publicKey);
+      const accountsResponse = await getAccountsByPublicKey(config, publicKey);
 
       if (!accountsResponse?.length) {
         // An account that does not exist on chain holds no tokens, so this is
@@ -269,16 +267,12 @@ export const makeGetAccountShape =
         { operations, pltOperations },
         blockHeight,
       ] = await Promise.all([
-        getBalance(config, currency.id, account.address),
-        syncOperations(
-          config,
-          currency.id,
-          account.address,
-          accountId,
-          initialAccount?.operations ?? [],
-          { enableTokens, refetchAll },
-        ),
-        getConsensusInfo(config, currency.id)
+        getBalance(config, account.address),
+        syncOperations(config, account.address, accountId, initialAccount?.operations ?? [], {
+          enableTokens,
+          refetchAll,
+        }),
+        getConsensusInfo(config)
           .then(consensus => consensus.lastFinalizedBlockHeight)
           .catch(() => 0),
       ]);

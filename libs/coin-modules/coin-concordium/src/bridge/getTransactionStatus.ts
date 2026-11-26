@@ -267,7 +267,6 @@ async function getTokenTransactionStatus(
     ? undefined
     : await checkRecipientRestrictions({
         config,
-        currencyId: account.currency.id,
         recipient: transaction.recipient,
         tokenId,
         ticker: subAccount.token.ticker,

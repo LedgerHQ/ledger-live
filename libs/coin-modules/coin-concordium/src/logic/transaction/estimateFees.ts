@@ -35,11 +35,10 @@ export function applyEnergyBuffer(value: bigint, bufferPercent: number): bigint 
 
 export async function estimateFees(
   config: ConcordiumCoinConfig,
-  currencyId: string,
   memo?: string,
 ): Promise<FeeEstimation> {
   try {
-    const result = await getTransactionCost(config, currencyId, {
+    const result = await getTransactionCost(config, {
       type: "simpleTransfer",
       numSignatures: 1,
       ...(memo ? { memoSize: memoEncodedSize(memo) } : {}),
@@ -75,10 +74,9 @@ export async function estimateFees(
  */
 export async function estimateTokenFees(
   config: ConcordiumCoinConfig,
-  currencyId: string,
   { tokenId, listOperationsSize }: PltFeeParams,
 ): Promise<FeeEstimation> {
-  const result = await getTransactionCost(config, currencyId, {
+  const result = await getTransactionCost(config, {
     type: "tokenUpdate",
     numSignatures: 1,
     tokenId,

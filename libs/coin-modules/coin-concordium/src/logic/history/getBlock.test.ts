@@ -21,7 +21,6 @@ const { decodeMemoFromCbor: decodeMemoFromCborMock } = jest.requireMock(
   "@ledgerhq/concordium-core",
 );
 
-const CURRENCY = "concordium_testnet";
 const config = createFixtureConfig();
 const SENDER = "3U6m951FWryY56SKFFHgMLGVHtJtk4VaxN7V2F9hjkR7Sg1FUx";
 const RECIPIENT = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
@@ -47,11 +46,11 @@ describe("getBlock", () => {
     getBlockTransactionEventsMock.mockResolvedValue([]);
 
     // WHEN
-    const result = await getBlock(config, 1000, CURRENCY);
+    const result = await getBlock(config, 1000);
 
     // THEN
-    expect(getBlockInfoMock).toHaveBeenCalledWith(config, 1000, CURRENCY);
-    expect(getBlockTransactionEventsMock).toHaveBeenCalledWith(config, CURRENCY, BLOCK_INFO.hash);
+    expect(getBlockInfoMock).toHaveBeenCalledWith(config, 1000);
+    expect(getBlockTransactionEventsMock).toHaveBeenCalledWith(config, BLOCK_INFO.hash);
     expect(result.info).toEqual(BLOCK_INFO);
     expect(result.transactions).toEqual([]);
   });
@@ -78,7 +77,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions).toEqual([
@@ -124,7 +123,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     const asset = { type: "native" };
@@ -156,7 +155,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions[0].operations).toEqual([
@@ -186,7 +185,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions[0].operations).toEqual([]);
@@ -216,7 +215,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(decodeMemoFromCborMock).toHaveBeenCalledWith(Buffer.from("6548656c6c6f", "hex"));
@@ -236,7 +235,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions).toEqual([
@@ -258,7 +257,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions[0]).toMatchObject({ fees: 800n, feesPayer: sponsor });
@@ -277,7 +276,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions[0]).toMatchObject({ fees: 601n, feesPayer: SENDER });
@@ -291,7 +290,7 @@ describe("getBlock", () => {
       getBlockTransactionEventsMock.mockResolvedValue([
         { hash: "2c".repeat(32), sender, cost: "400", result: { outcome: "success", events } },
       ]);
-      const { transactions } = await getBlock(config, 1000, CURRENCY);
+      const { transactions } = await getBlock(config, 1000);
       return transactions[0].operations;
     };
 
@@ -405,7 +404,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions[0].operations).toEqual([]);
@@ -440,7 +439,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions[0].details).toBeUndefined();
@@ -459,7 +458,7 @@ describe("getBlock", () => {
     ]);
 
     // WHEN
-    const { transactions } = await getBlock(config, 1000, CURRENCY);
+    const { transactions } = await getBlock(config, 1000);
 
     // THEN
     expect(transactions[0]).toEqual({

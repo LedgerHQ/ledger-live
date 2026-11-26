@@ -24,7 +24,7 @@ describe("logic/account", () => {
 
   describe("getBalance", () => {
     it("should return balance as native asset", async () => {
-      const result = await getBalance(config, VALID_ADDRESS, "concordium_testnet");
+      const result = await getBalance(config, VALID_ADDRESS);
 
       expect(result).toHaveLength(1);
       expect(result[0].asset).toEqual({ type: "native" });
@@ -34,9 +34,9 @@ describe("logic/account", () => {
     it("should call getAccountBalance with correct parameters", async () => {
       const { getAccountBalance } = jest.requireMock("../../network/proxyClient");
 
-      await getBalance(config, VALID_ADDRESS, "concordium_testnet");
+      await getBalance(config, VALID_ADDRESS);
 
-      expect(getAccountBalance).toHaveBeenCalledWith(config, "concordium_testnet", VALID_ADDRESS);
+      expect(getAccountBalance).toHaveBeenCalledWith(config, VALID_ADDRESS);
     });
 
     it("should handle zero balance", async () => {
@@ -45,7 +45,7 @@ describe("logic/account", () => {
         finalizedBalance: { accountAmount: "0" },
       });
 
-      const result = await getBalance(config, VALID_ADDRESS, "concordium_testnet");
+      const result = await getBalance(config, VALID_ADDRESS);
 
       expect(result[0].value).toBe(BigInt(0));
     });
@@ -56,7 +56,7 @@ describe("logic/account", () => {
         finalizedBalance: { accountAmount: "999999999999999999" },
       });
 
-      const result = await getBalance(config, VALID_ADDRESS, "concordium_testnet");
+      const result = await getBalance(config, VALID_ADDRESS);
 
       expect(result[0].value).toBe(BigInt("999999999999999999"));
     });
@@ -65,15 +65,13 @@ describe("logic/account", () => {
       const { getAccountBalance } = jest.requireMock("../../network/proxyClient");
       getAccountBalance.mockRejectedValueOnce(new Error("Account not found"));
 
-      await expect(getBalance(config, VALID_ADDRESS, "concordium_testnet")).rejects.toThrow(
-        "Account not found",
-      );
+      await expect(getBalance(config, VALID_ADDRESS)).rejects.toThrow("Account not found");
     });
   });
 
   describe("getNextValidSequence", () => {
     it("should return nonce from network", async () => {
-      const result = await getNextValidSequence(config, VALID_ADDRESS, "concordium_testnet");
+      const result = await getNextValidSequence(config, VALID_ADDRESS);
 
       expect(result).toBe(42);
     });
@@ -81,16 +79,16 @@ describe("logic/account", () => {
     it("should call getAccountNonce with correct parameters", async () => {
       const { getAccountNonce } = jest.requireMock("../../network/proxyClient");
 
-      await getNextValidSequence(config, VALID_ADDRESS, "concordium_testnet");
+      await getNextValidSequence(config, VALID_ADDRESS);
 
-      expect(getAccountNonce).toHaveBeenCalledWith(config, "concordium_testnet", VALID_ADDRESS);
+      expect(getAccountNonce).toHaveBeenCalledWith(config, VALID_ADDRESS);
     });
 
     it("should handle nonce of 0", async () => {
       const { getAccountNonce } = jest.requireMock("../../network/proxyClient");
       getAccountNonce.mockResolvedValueOnce({ nonce: 0 });
 
-      const result = await getNextValidSequence(config, VALID_ADDRESS, "concordium_testnet");
+      const result = await getNextValidSequence(config, VALID_ADDRESS);
 
       expect(result).toBe(0);
     });
@@ -99,7 +97,7 @@ describe("logic/account", () => {
       const { getAccountNonce } = jest.requireMock("../../network/proxyClient");
       getAccountNonce.mockResolvedValueOnce({ nonce: 999999999 });
 
-      const result = await getNextValidSequence(config, VALID_ADDRESS, "concordium_testnet");
+      const result = await getNextValidSequence(config, VALID_ADDRESS);
 
       expect(result).toBe(999999999);
     });
@@ -108,9 +106,7 @@ describe("logic/account", () => {
       const { getAccountNonce } = jest.requireMock("../../network/proxyClient");
       getAccountNonce.mockRejectedValueOnce(new Error("Network timeout"));
 
-      await expect(
-        getNextValidSequence(config, VALID_ADDRESS, "concordium_testnet"),
-      ).rejects.toThrow("Network timeout");
+      await expect(getNextValidSequence(config, VALID_ADDRESS)).rejects.toThrow("Network timeout");
     });
   });
 });

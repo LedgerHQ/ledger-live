@@ -9,7 +9,6 @@ jest.mock("./proxyClient", () => ({
 const { getAccountBalance, getPltTokenInfo } = jest.requireMock("./proxyClient");
 
 const config = {} as ConcordiumCoinConfig;
-const currencyId = "concordium_testnet";
 
 // The caches are module state, so every case uses an address or token of its
 // own rather than trying to reset them between tests.
@@ -32,17 +31,18 @@ describe("fetchAccountTokens", () => {
       finalizedBalance: { accountAmount: "1", accountTokens: entries },
     });
 
-    await expect(
-      fetchAccountTokens({ config, currencyId, address: nextAddress() }),
-    ).resolves.toEqual({ status: "readable", entries });
+    await expect(fetchAccountTokens({ config, address: nextAddress() })).resolves.toEqual({
+      status: "readable",
+      entries,
+    });
   });
 
   it("reports an address that does not exist as absent, not as empty", async () => {
     getAccountBalance.mockResolvedValue({});
 
-    await expect(
-      fetchAccountTokens({ config, currencyId, address: nextAddress() }),
-    ).resolves.toEqual({ status: "absent" });
+    await expect(fetchAccountTokens({ config, address: nextAddress() })).resolves.toEqual({
+      status: "absent",
+    });
   });
 
   it("distinguishes an existing account holding nothing", async () => {
@@ -50,9 +50,10 @@ describe("fetchAccountTokens", () => {
       finalizedBalance: { accountAmount: "0", accountTokens: [] },
     });
 
-    await expect(
-      fetchAccountTokens({ config, currencyId, address: nextAddress() }),
-    ).resolves.toEqual({ status: "readable", entries: [] });
+    await expect(fetchAccountTokens({ config, address: nextAddress() })).resolves.toEqual({
+      status: "readable",
+      entries: [],
+    });
   });
 
   // The boundary is where a malformed response stops. Downstream reads absence
@@ -74,9 +75,9 @@ describe("fetchAccountTokens", () => {
   ])("reports the response as unreadable when %s", async (_label, finalizedBalance) => {
     getAccountBalance.mockResolvedValue({ finalizedBalance });
 
-    await expect(
-      fetchAccountTokens({ config, currencyId, address: nextAddress() }),
-    ).resolves.toEqual({ status: "unreadable" });
+    await expect(fetchAccountTokens({ config, address: nextAddress() })).resolves.toEqual({
+      status: "unreadable",
+    });
   });
 
   // `getTransactionStatus` re-runs on every keystroke, so a repeated address
@@ -87,8 +88,8 @@ describe("fetchAccountTokens", () => {
       finalizedBalance: { accountAmount: "1", accountTokens: [] },
     });
 
-    await fetchAccountTokens({ config, currencyId, address });
-    await fetchAccountTokens({ config, currencyId, address });
+    await fetchAccountTokens({ config, address });
+    await fetchAccountTokens({ config, address });
 
     expect(getAccountBalance).toHaveBeenCalledTimes(1);
   });
@@ -103,14 +104,12 @@ describe("fetchAccountTokens", () => {
     await expect(
       fetchAccountTokens({
         config: { proxyUrl: "https://a" } as ConcordiumCoinConfig,
-        currencyId,
         address,
       }),
     ).resolves.toEqual({ status: "absent" });
     await expect(
       fetchAccountTokens({
         config: { proxyUrl: "https://b" } as ConcordiumCoinConfig,
-        currencyId,
         address,
       }),
     ).resolves.toEqual({ status: "readable", entries: [] });
@@ -123,9 +122,9 @@ describe("fetchAccountTokens", () => {
       finalizedBalance: { accountAmount: "1", accountTokens: [] },
     });
 
-    await fetchAccountTokens({ config: shortTtl, currencyId, address });
+    await fetchAccountTokens({ config: shortTtl, address });
     await new Promise(resolve => setTimeout(resolve, 20));
-    await fetchAccountTokens({ config: shortTtl, currencyId, address });
+    await fetchAccountTokens({ config: shortTtl, address });
 
     expect(getAccountBalance).toHaveBeenCalledTimes(2);
   });
@@ -137,10 +136,8 @@ describe("fetchAccountTokens", () => {
       finalizedBalance: { accountAmount: "2", accountTokens: [] },
     });
 
-    await expect(fetchAccountTokens({ config, currencyId, address })).rejects.toThrow(
-      "proxy unreachable",
-    );
-    await expect(fetchAccountTokens({ config, currencyId, address })).resolves.toEqual({
+    await expect(fetchAccountTokens({ config, address })).rejects.toThrow("proxy unreachable");
+    await expect(fetchAccountTokens({ config, address })).resolves.toEqual({
       status: "readable",
       entries: [],
     });
@@ -152,9 +149,9 @@ describe("fetchPltModuleState", () => {
     const moduleState = { allowList: true, denyList: false };
     getPltTokenInfo.mockResolvedValue({ tokenState: { moduleState } });
 
-    await expect(
-      fetchPltModuleState({ config, currencyId, tokenId: nextToken() }),
-    ).resolves.toEqual(moduleState);
+    await expect(fetchPltModuleState({ config, tokenId: nextToken() })).resolves.toEqual(
+      moduleState,
+    );
   });
 
   // Rejected here rather than passed on, so no caller has to remember to.
@@ -164,17 +161,15 @@ describe("fetchPltModuleState", () => {
   ])("reports %s as unreadable", async (_label, moduleState) => {
     getPltTokenInfo.mockResolvedValue({ tokenState: { moduleState } });
 
-    await expect(
-      fetchPltModuleState({ config, currencyId, tokenId: nextToken() }),
-    ).resolves.toBeUndefined();
+    await expect(fetchPltModuleState({ config, tokenId: nextToken() })).resolves.toBeUndefined();
   });
 
   it("serves a repeated token from the cache", async () => {
     const tokenId = nextToken();
     getPltTokenInfo.mockResolvedValue({ tokenState: { moduleState: {} } });
 
-    await fetchPltModuleState({ config, currencyId, tokenId });
-    await fetchPltModuleState({ config, currencyId, tokenId });
+    await fetchPltModuleState({ config, tokenId });
+    await fetchPltModuleState({ config, tokenId });
 
     expect(getPltTokenInfo).toHaveBeenCalledTimes(1);
   });

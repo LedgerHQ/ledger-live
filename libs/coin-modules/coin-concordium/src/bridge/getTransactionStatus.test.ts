@@ -924,7 +924,6 @@ describe("getTransactionStatus", () => {
 
         expect(mockedRecipientRestrictions).toHaveBeenCalledWith(
           expect.objectContaining({
-            currencyId: account.currency.id,
             recipient: VALID_ADDRESS_2,
             tokenId: PLT_ID,
             ticker: subAccount.token.ticker,
