@@ -7,10 +7,13 @@ import {
   fetchTronAccountTxsEndpointPage,
   fetchTronAccountTxsPage,
   getBlock,
+  getTransactionById,
   getTransactionInfoById,
+  InternalTransferTx,
   TxEndpoint,
   TxEndpointPage,
 } from "../network";
+import { encode58Check } from "../network/format";
 import {
   fromTrongridTxInfoToOperation,
   hasUnresolvedTokenReference,
@@ -30,6 +33,8 @@ import { aggregateTrc20Transfers } from "./aggregateTrc20Transfers";
 import { InternalTransfer, readInternalTransfers } from "./internalTransfers";
 
 // A page is cut only between block timestamps, so a transaction is never split across pages.
+
+const TX_ENDPOINTS: readonly TxEndpoint[] = ["native", "trc20", "internal"];
 
 export type ListOperationsOptions = {
   limit: number;
@@ -53,88 +58,106 @@ export async function listOperations(
     maxTimestamp: order === "asc" ? undefined : (start ?? undefined),
     order,
   });
-  const [native, trc20] = await Promise.all([
-    skipEmptyLinkedPages(logger, config, "native", firstPages.native, new Set()),
-    skipEmptyLinkedPages(logger, config, "trc20", firstPages.trc20, new Set()),
-  ]);
+  const pages = await mapEndpoints(endpoint =>
+    skipEmptyLinkedPages(logger, config, endpoint, firstPages[endpoint], new Set()),
+  );
 
   const cursorPageIsEmpty =
-    start !== null && native.rawTimestamps.length === 0 && trc20.rawTimestamps.length === 0;
+    start !== null && TX_ENDPOINTS.every(endpoint => pages[endpoint].rawTimestamps.length === 0);
   if (cursorPageIsEmpty) {
     throw new TronEmptyPage(
       `TronGrid returned empty page for cursor ${cursor} — transient failure, retry required`,
     );
   }
 
-  const { txs, contractCalls, next } = await cutPage(logger, config, order, { native, trc20 });
+  const { txs, internalTransferTxs, next } = await cutPage(logger, config, order, pages);
   const summedTxs = aggregateTrc20Transfers(txs, address);
-  const internalTxs = await readInternalTransfersOf(logger, config, address, contractCalls);
+  const internalTxs = await readInternalTransfersOf(logger, config, address, internalTransferTxs);
   // A stable sort: a transaction's internal transfers follow the operations of its timestamp.
   const pageTxs = [...summedTxs, ...internalTxs].sort(compareTxsByTimestamp(order));
   return { items: await toOperations(logger, config, address, pageTxs), next };
 }
 
-type PageContent = { txs: TrongridTxInfo[]; contractCalls: TrongridTxInfo[] };
+async function mapEndpoints<T>(
+  read: (endpoint: TxEndpoint) => Promise<T>,
+): Promise<Record<TxEndpoint, T>> {
+  const [native, trc20, internal] = await Promise.all(TX_ENDPOINTS.map(read));
+  return { native, trc20, internal };
+}
+
+type PageContent = { txs: TrongridTxInfo[]; internalTransferTxs: InternalTransferTx[] };
 
 const keepAll = () => true;
 
 /**
- * The page's records whose timestamp passes `keep`: its transactions, and the contract calls
- * whose receipts are read for internal transfers. Both are cut by the same rule, so an internal
- * transfer is listed on the page of the transaction that made it, and only there.
+ * The page's records whose timestamp passes `keep`. The internal-transactions endpoint is cut by
+ * the same rule as the others, so an internal transfer is listed on the page of the transaction
+ * that made it, and only there.
  */
 function pageContent(page: TxEndpointPage, keep: (timestamp: number) => boolean): PageContent {
   return {
     txs: page.txs.filter(tx => keep(tx.date.getTime())),
-    contractCalls: (page.contractCalls ?? []).filter(tx => keep(tx.date.getTime())),
+    internalTransferTxs: (page.internalTransferTxs ?? []).filter(tx => keep(tx.date.getTime())),
   };
 }
 
 /**
- * TronGrid's account endpoints list no internal transaction: the TRX (or TRC10) a contract sends
- * to this account, or this account sends as a contract, is only in the receipts of the contract
- * calls. Each one moving value to or from the account gives an operation of its own, under the
- * call's hash, with no fee — the call's fee payer already paid for the whole execution.
- *
- * Only the receipts of calls TronGrid lists for the account are read, so a transfer made by a
- * transaction that otherwise does not involve the account is not found here.
+ * The TRX (or TRC10) contracts moved to or from the account, read from the receipts of the
+ * transactions the internal-transactions endpoint lists: its records have no block number, and may
+ * omit the value they moved. Each value moved gives an operation of its own, under the
+ * transaction's hash, with no fee — the transaction's sender already paid for its execution.
  */
 async function readInternalTransfersOf(
   logger: Logger,
   config: TronCoinConfig,
   address: string,
-  contractCalls: TrongridTxInfo[],
+  internalTransferTxs: InternalTransferTx[],
 ): Promise<TrongridTxInfo[]> {
-  const callsById = new Map(contractCalls.map(call => [call.txID, call]));
-  const perCall = await promiseAllBatched(3, [...callsById.values()], async call => {
-    const receipt = await getTransactionInfoById(logger, config, call.txID);
-    if (!receipt) {
-      throw new TronMissingReceipt(`No receipt yet for contract call ${call.txID}, retry required`);
+  const txsById = new Map(internalTransferTxs.map(tx => [tx.txID, tx]));
+  const perTx = await promiseAllBatched(3, [...txsById.values()], async ({ txID, date }) => {
+    const [receipt, tx] = await Promise.all([
+      getTransactionInfoById(logger, config, txID),
+      getTransactionById(logger, config, txID),
+    ]);
+    if (!receipt || receipt.blockNumber === undefined || !tx) {
+      throw new TronMissingReceipt(`No receipt yet for transaction ${txID}, retry required`);
     }
+    // A failed transaction's revert undoes every value its contracts moved.
+    if (tx.ret?.[0]?.contractRet !== "SUCCESS") return [];
+
+    const [contract] = tx.raw_data.contract;
+    const sender = contract?.parameter.value.owner_address;
+    const parent: InternalTransferParent = {
+      txID,
+      date,
+      blockHeight: receipt.blockNumber,
+      type:
+        contract?.type === "CreateSmartContract" ? "CreateSmartContract" : "TriggerSmartContract",
+      ...(sender ? { feesPayer: encode58Check(sender) } : {}),
+    };
     return readInternalTransfers(logger, receipt)
       .filter(({ from, to }) => from !== to && (from === address || to === address))
-      .map(transfer => toInternalTxInfo(call, receipt.blockNumber, transfer));
+      .map(transfer => toInternalTxInfo(parent, transfer));
   });
-  return perCall.flat();
+  return perTx.flat();
 }
 
+type InternalTransferParent = Pick<
+  TrongridTxInfo,
+  "txID" | "date" | "blockHeight" | "type" | "feesPayer"
+>;
+
 function toInternalTxInfo(
-  call: TrongridTxInfo,
-  receiptBlockNumber: number | undefined,
+  parent: InternalTransferParent,
   { index, from, to, amount, tokenId }: InternalTransfer,
 ): TrongridTxInfo {
   return {
-    txID: call.txID,
-    date: call.date,
-    blockHeight: receiptBlockNumber ?? call.blockHeight,
-    // A TRC20 record of the call may be an approval: the transfer itself is a plain call's.
-    type: call.type === "CreateSmartContract" ? "CreateSmartContract" : "TriggerSmartContract",
+    ...parent,
     from,
     to,
     value: new BigNumber(amount.toString()),
     fee: new BigNumber(0),
     hasFailed: false,
-    feesPayer: call.feesPayer ?? call.from,
     internalIndex: index,
     ...(tokenId ? { tokenType: "trc10", tokenId } : {}),
   };
@@ -146,40 +169,37 @@ async function cutPage(
   order: Order,
   pages: Record<TxEndpoint, TxEndpointPage>,
 ): Promise<PageContent & { next: string | undefined }> {
-  const merge = (native: PageContent, trc20: PageContent): PageContent => ({
-    txs: mergeEndpoints(order, native.txs, trc20.txs),
-    contractCalls: [...native.contractCalls, ...trc20.contractCalls],
+  const merge = (contents: Record<TxEndpoint, PageContent>): PageContent => ({
+    txs: mergeEndpoints(order, contents.native.txs, contents.trc20.txs),
+    internalTransferTxs: contents.internal.internalTransferTxs,
   });
+  const cut = (keep: (timestamp: number) => boolean) =>
+    merge({
+      native: pageContent(pages.native, keep),
+      trc20: pageContent(pages.trc20, keep),
+      internal: pageContent(pages.internal, keep),
+    });
 
-  const boundary = pageBoundary(order, [pages.native, pages.trc20]);
+  const boundary = pageBoundary(
+    order,
+    TX_ENDPOINTS.map(endpoint => pages[endpoint]),
+  );
   if (boundary === undefined) {
-    return {
-      ...merge(pageContent(pages.native, keepAll), pageContent(pages.trc20, keepAll)),
-      next: undefined,
-    };
+    return { ...cut(keepAll), next: undefined };
   }
 
   const isBeforeBoundary = (ts: number) => walksBefore(order, ts, boundary);
-  if (
-    pages.native.rawTimestamps.some(isBeforeBoundary) ||
-    pages.trc20.rawTimestamps.some(isBeforeBoundary)
-  ) {
-    return {
-      ...merge(
-        pageContent(pages.native, isBeforeBoundary),
-        pageContent(pages.trc20, isBeforeBoundary),
-      ),
-      next: String(boundary),
-    };
+  if (TX_ENDPOINTS.some(endpoint => pages[endpoint].rawTimestamps.some(isBeforeBoundary))) {
+    return { ...cut(isBeforeBoundary), next: String(boundary) };
   }
 
-  const [nativeGroup, trc20Group] = await Promise.all([
-    readWholeTimestampGroup(logger, config, "native", pages.native, boundary),
-    readWholeTimestampGroup(logger, config, "trc20", pages.trc20, boundary),
-  ]);
+  const groups = await mapEndpoints(endpoint =>
+    readWholeTimestampGroup(logger, config, endpoint, pages[endpoint], boundary),
+  );
+  const hasMore = TX_ENDPOINTS.some(endpoint => groups[endpoint].hasMore);
   return {
-    ...merge(nativeGroup, trc20Group),
-    next: nativeGroup.hasMore || trc20Group.hasMore ? String(stepPast(order, boundary)) : undefined,
+    ...merge(groups),
+    next: hasMore ? String(stepPast(order, boundary)) : undefined,
   };
 }
 
@@ -206,7 +226,7 @@ async function readWholeTimestampGroup(
   );
   return {
     txs: [...group.txs, ...rest.txs],
-    contractCalls: [...group.contractCalls, ...rest.contractCalls],
+    internalTransferTxs: [...group.internalTransferTxs, ...rest.internalTransferTxs],
     hasMore: rest.hasMore,
   };
 }

@@ -143,8 +143,8 @@ export class TronPageServedTwice extends Error {
 }
 
 /**
- * The node knows no receipt for a contract call TronGrid listed — it lags behind. The receipt holds
- * the TRX the call's contracts moved, so the page cannot be served without it: retry it.
+ * The node does not know yet a transaction TronGrid listed internal transfers for — it lags behind.
+ * Its receipt holds the TRX its contracts moved, so the page cannot be served without it: retry it.
  */
 export class TronMissingReceipt extends Error {
   override name = "TronMissingReceipt";

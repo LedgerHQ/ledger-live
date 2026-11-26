@@ -157,6 +157,28 @@ export type InternalTransactionAPI = {
   rejected?: boolean;
 };
 
+/**
+ * An entry of TronGrid's `/v1/accounts/{address}/internal-transactions`: a value a contract moved
+ * to or from the account inside a transaction (`tx_id`), which the account's other endpoints never
+ * list. It has no block number, and its `call_value` may be omitted even when value moved, so only
+ * the parent transaction's receipt says what it moved.
+ */
+export type AccountInternalTransactionAPI = {
+  internal_tx_id: string;
+  tx_id: string;
+  /** `41`-prefixed hex address. */
+  from_address: string;
+  /** `41`-prefixed hex address. */
+  to_address: string;
+  block_timestamp: number;
+  data?: {
+    note?: string;
+    rejected?: boolean;
+    /** `_` is TRX in sun; any other key is a TRC10 token id. */
+    call_value?: Record<string, number>;
+  };
+};
+
 export type TransactionInfoTronAPI = {
   id: string;
   fee?: number;
