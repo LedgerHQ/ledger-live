@@ -19,6 +19,7 @@ jobs:
     if: ${{!github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-wallet-actions/.github/workflows/renovate-sync-reusable.yml@main
     with:
+      renovate-login: gre-ledger
       runs-on: ledger-wallet-2cpu-aws-public
       minor-packages: |
         ledger-live-desktop
