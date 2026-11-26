@@ -14643,12 +14643,6 @@ importers:
         specifier: 'catalog:'
         version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
     devDependencies:
-      '@domain/entity-derivation':
-        specifier: workspace:*
-        version: link:../../../domain/entity/derivation
-      '@domain/entity-network':
-        specifier: workspace:*
-        version: link:../../../domain/entity/network
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
