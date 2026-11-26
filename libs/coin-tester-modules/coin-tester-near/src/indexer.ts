@@ -138,6 +138,9 @@ export function startIndexer(rpc: RpcCall): SetupServerApi {
       return HttpResponse.json({ data });
     }),
 
+    // Every transfer the sandbox scenarios make is a transaction `/txns` already lists.
+    http.get(`${INDEXER_URL}/v3/accounts/:address/receipts`, () => HttpResponse.json({ data: [] })),
+
     // Read as `response.data.gas_price`, so the payload is `{ data: { gas_price } }`.
     http.get(`${INDEXER_URL}/v3/stats`, async () => {
       const { gas_price: gasPrice } = await rpc<{ gas_price: string }>("gas_price", [null]);

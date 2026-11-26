@@ -48,6 +48,7 @@ export type NearReceiptNode = {
   public_key?: string;
   actions: NearReceiptAction[];
   outcome: { status: boolean };
+  block?: { block_hash?: string; block_height?: string; block_timestamp?: string };
   receipts?: NearReceiptNode[];
 };
 
