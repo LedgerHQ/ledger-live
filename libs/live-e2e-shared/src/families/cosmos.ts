@@ -17,7 +17,7 @@ export const delegateCosmos = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getDelegateEvents(delegatingAccount);
-      expectSpeculosEventsContain(delegatingAccount.amount, events);
+      expectSpeculosEventsContain({ substring: delegatingAccount.amount, events });
 
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
@@ -33,12 +33,12 @@ export const sendCosmos = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getSendEvents(tx);
-      expectSpeculosEventsContain(tx.amount, events);
+      expectSpeculosEventsContain({ substring: tx.amount, events });
 
       if (!tx.accountToCredit.address) {
         throw new Error("Recipient address is not set");
       }
-      expectSpeculosEventsContain(tx.accountToCredit.address, events);
+      expectSpeculosEventsContain({ substring: tx.accountToCredit.address, events });
       expectMemoTagInEvents(tx, events);
 
       if (isTouchDevice()) {

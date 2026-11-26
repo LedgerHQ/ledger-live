@@ -169,10 +169,10 @@ function signInPage(key: string): string {
  * installs a service worker that adds it to each request the Speculos page makes. Only that page
  * (`GET /`), static HTML, loads without the key. The session token never leaves the proxy.
  */
-export async function startSpeculosWebProxy(
-  target: string,
-  token: string,
-): Promise<SpeculosWebProxy> {
+type WebProxyOptions = { target: string; token: string };
+
+export async function startSpeculosWebProxy(options: WebProxyOptions): Promise<SpeculosWebProxy> {
+  const { target, token } = options;
   const upstream = new URL(target);
   const basePath = upstream.pathname.replace(/\/+$/, "");
   const send = upstream.protocol === "https:" ? https.request : http.request;
@@ -285,7 +285,10 @@ export async function startSpeculosWebProxy(
  * token goes in the `Authorization` header, as Speculinho documents for VNC apps: noVNC's
  * `speculinho.token.<token>` subprotocol cannot carry a token with `/` or `=`.
  */
-export async function startSpeculosVncBridge(url: string, token?: string): Promise<LocalServer> {
+type VncBridgeOptions = { url: string; token?: string };
+
+export async function startSpeculosVncBridge(options: VncBridgeOptions): Promise<LocalServer> {
+  const { url, token } = options;
   const { WebSocket } = await import("undici");
   const headers: Record<string, string> = token ? { authorization: `Bearer ${token}` } : {};
   const sockets = new Set<net.Socket>();
@@ -334,11 +337,14 @@ export async function startSpeculosVncBridge(url: string, token?: string): Promi
   };
 }
 
-async function startOnce<T extends LocalServer>(
-  started: Map<string, T>,
-  deviceId: string,
-  start: () => Promise<T>,
-): Promise<T> {
+type StartOnceOptions<T extends LocalServer> = {
+  started: Map<string, T>;
+  deviceId: string;
+  start: () => Promise<T>;
+};
+
+async function startOnce<T extends LocalServer>(options: StartOnceOptions<T>): Promise<T> {
+  const { started, deviceId, start } = options;
   let server = started.get(deviceId);
   if (!server) {
     server = await start();
@@ -352,15 +358,21 @@ async function localWebUrl(
   { url, token }: NonNullable<SpeculosScreenAccess["web"]>,
 ): Promise<string> {
   if (!token) return `${url}/`;
-  const proxy = await startOnce(webProxies, deviceId, () => startSpeculosWebProxy(url, token));
+  const proxy = await startOnce({
+    started: webProxies,
+    deviceId,
+    start: () => startSpeculosWebProxy({ target: url, token }),
+  });
   return proxy.signInUrl();
 }
 
 async function localVncPort(deviceId: string, endpoint: SpeculosVncEndpoint): Promise<number> {
   if (endpoint.kind === "tcp") return endpoint.port;
-  const bridge = await startOnce(vncBridges, deviceId, () =>
-    startSpeculosVncBridge(endpoint.url, endpoint.token),
-  );
+  const bridge = await startOnce({
+    started: vncBridges,
+    deviceId,
+    start: () => startSpeculosVncBridge({ url: endpoint.url, token: endpoint.token }),
+  });
   return bridge.port;
 }
 
@@ -370,7 +382,10 @@ const BROWSER_OPENERS: Partial<Record<NodeJS.Platform, string>> = {
   linux: "/usr/bin/xdg-open",
 };
 
-function openWebPage(deviceId: string, url: string): void {
+type WebPageOptions = { deviceId: string; url: string };
+
+function openWebPage(options: WebPageOptions): void {
+  const { deviceId, url } = options;
   console.warn(`[speculosScreen] Showing the screen of ${deviceId} at ${url}`);
   const opener = BROWSER_OPENERS[process.platform];
   if (!opener) return;
@@ -381,7 +396,10 @@ function openWebPage(deviceId: string, url: string): void {
   });
 }
 
-function openVncViewer(deviceId: string, port: number, password: string): void {
+type VncViewerOptions = { deviceId: string; port: number; password: string };
+
+function openVncViewer(options: VncViewerOptions): void {
+  const { deviceId, port, password } = options;
   const address = `vnc://127.0.0.1:${port}`;
   if (process.platform !== "darwin") {
     console.warn(`[speculosScreen] Screen of ${deviceId}: ${address} (password ${password})`);
@@ -405,9 +423,13 @@ export async function showSpeculosScreen(deviceId: string): Promise<void> {
   const access = accesses.get(deviceId);
   try {
     if (mode === "web" && access?.web) {
-      openWebPage(deviceId, await localWebUrl(deviceId, access.web));
+      openWebPage({ deviceId, url: await localWebUrl(deviceId, access.web) });
     } else if (mode === "vnc" && access?.vnc) {
-      openVncViewer(deviceId, await localVncPort(deviceId, access.vnc), access.vnc.password);
+      openVncViewer({
+        deviceId,
+        port: await localVncPort(deviceId, access.vnc),
+        password: access.vnc.password,
+      });
     } else {
       console.warn(`[speculosScreen] No ${mode} access to ${deviceId}; see the warnings above`);
     }

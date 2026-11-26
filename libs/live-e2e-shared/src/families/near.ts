@@ -17,7 +17,7 @@ export const delegateNear = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getDelegateEvents(delegatingAccount);
-      expectSpeculosEventsContain(delegatingAccount.provider, events);
+      expectSpeculosEventsContain({ substring: delegatingAccount.provider, events });
 
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);

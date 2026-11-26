@@ -14,12 +14,17 @@ const RETRYABLE_NODE_CODES = new Set([
  * no-response network errors, common Node socket codes, or "socket hang up"
  * (speculos-device-controller / remote Speculos).
  */
+type RetryAxiosOptions = {
+  maxRetries?: number;
+  baseDelay?: number;
+  retryableStatusCodes?: number[];
+};
+
 export async function retryAxiosRequest<T>(
   requestFn: () => Promise<T>,
-  maxRetries: number = 5,
-  baseDelay: number = 1000,
-  retryableStatusCodes: number[] = [500, 502, 503, 504],
+  options: RetryAxiosOptions = {},
 ): Promise<T> {
+  const { maxRetries = 5, baseDelay = 1000, retryableStatusCodes = [500, 502, 503, 504] } = options;
   let lastError: AxiosError | Error;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {

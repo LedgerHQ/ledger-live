@@ -11,7 +11,7 @@ export const delegateCelo = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getDelegateEvents(delegatingAccount);
-      expectSpeculosEventsContain(delegatingAccount.amount, events);
+      expectSpeculosEventsContain({ substring: delegatingAccount.amount, events });
 
       if (isTouchDevice()) {
         await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);

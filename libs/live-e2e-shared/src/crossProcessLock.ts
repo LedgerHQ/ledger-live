@@ -52,7 +52,10 @@ function sanitize(key: string): string {
   return Buffer.from(key, "utf8").toString("base64url");
 }
 
-function lockDirFor(key: string, rootDir: string = defaultRootDir()): string {
+type LockDirOptions = { key: string; rootDir?: string };
+
+function lockDirFor(options: LockDirOptions): string {
+  const { key, rootDir = defaultRootDir() } = options;
   return path.join(rootDir, sanitize(key));
 }
 
@@ -84,7 +87,10 @@ async function removeStaleLock(lockDir: string, staleMs: number): Promise<void> 
 }
 
 /** Removes the lock at `lockDir` if stale, else gives its holder `backoffMs` to release it. */
-async function waitForLockDir(lockDir: string, staleMs: number, backoffMs: number): Promise<void> {
+type LockWaitOptions = { lockDir: string; staleMs: number; backoffMs: number };
+
+async function waitForLockDir(options: LockWaitOptions): Promise<void> {
+  const { lockDir, staleMs, backoffMs } = options;
   const { mtimeMs } = await fs.promises.stat(lockDir);
   if (Date.now() - mtimeMs > staleMs) await removeStaleLock(lockDir, staleMs);
   else await delay(backoffMs);
@@ -107,7 +113,7 @@ export async function acquireCrossProcessLock(
   const acquireTimeoutMs = options.acquireTimeoutMs ?? DEFAULT_ACQUIRE_TIMEOUT_MS;
   const backoffMs = options.backoffMs ?? DEFAULT_BACKOFF_MS;
 
-  const lockDir = lockDirFor(key, rootDir);
+  const lockDir = lockDirFor({ key, rootDir });
   await fs.promises.mkdir(rootDir, { recursive: true });
   const start = Date.now();
   const timedOut = () =>
@@ -123,7 +129,7 @@ export async function acquireCrossProcessLock(
       if (!isErrnoException(err) || err.code !== "EEXIST") throw err;
     }
     if (Date.now() - start > acquireTimeoutMs) throw timedOut();
-    await waitForLockDir(lockDir, staleMs, backoffMs).catch(() => {});
+    await waitForLockDir({ lockDir, staleMs, backoffMs }).catch(() => {});
     return takeLockDir();
   };
   await takeLockDir();

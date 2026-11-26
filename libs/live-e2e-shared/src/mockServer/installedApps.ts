@@ -17,7 +17,7 @@ async function appsByName(
   const cached = catalogCache.get(key);
   if (cached) return cached;
 
-  const pending = getNanoAppCatalog(model, firmware, provider).then(
+  const pending = getNanoAppCatalog({ device: model, deviceFirmware: firmware, provider }).then(
     catalog =>
       new Map(
         catalog.map(app => [
