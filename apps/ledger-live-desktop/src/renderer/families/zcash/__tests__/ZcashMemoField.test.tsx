@@ -80,6 +80,6 @@ describe("ZcashMemoField", () => {
       />,
     );
 
-    expect(screen.getByText("Memo must not exceed 512 bytes")).toBeInTheDocument();
+    expect(screen.getByText("Memo must not exceed 512 bytes")).toBeVisible();
   });
 });

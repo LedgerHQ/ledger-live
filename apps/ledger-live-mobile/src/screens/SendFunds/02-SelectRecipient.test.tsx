@@ -1,5 +1,5 @@
 import React from "react";
-import { screen, render, fireEvent, withFlagOverrides } from "@tests/test-renderer";
+import { screen, render, fireEvent, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import SendSelectRecipient from "./02-SelectRecipient";
 import { Account } from "@ledgerhq/types-live";
 import * as useBridgeTransactionModule from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -247,10 +247,11 @@ describe("SendSelectRecipient — memo longer than the chain allows", () => {
     },
   }));
 
-  it("shows the memo size against the limit and keeps Continue disabled", () => {
+  it("keeps Continue disabled once the debounced memo update lands, until the memo fits", async () => {
+    const setTransaction = jest.fn();
     mockBridgeTransaction({
       transaction: { recipient: "addr1-recipient", family: "cardano" },
-      setTransaction: jest.fn(),
+      setTransaction,
     });
     render(
       <SendSelectRecipient
@@ -264,10 +265,18 @@ describe("SendSelectRecipient — memo longer than the chain allows", () => {
       { overrideInitialState: cardanoAccountState },
     );
 
+    setTransaction.mockClear();
     fireEvent.changeText(screen.getByTestId("memo-tag-input"), "a".repeat(65));
+    await waitFor(() => expect(setTransaction).toHaveBeenCalled());
 
     expect(screen.getByTestId("memo-tag-input")).toHaveDisplayValue("a".repeat(65));
     expect(screen.getByText("Memo is too long (65/64 bytes)")).toBeVisible();
     expect(screen.getByTestId("disabled-recipient-continue-button")).toBeVisible();
+
+    setTransaction.mockClear();
+    fireEvent.changeText(screen.getByTestId("memo-tag-input"), "a".repeat(64));
+    await waitFor(() => expect(setTransaction).toHaveBeenCalled());
+
+    expect(screen.getByTestId("enabled-recipient-continue-button")).toBeVisible();
   });
 });
