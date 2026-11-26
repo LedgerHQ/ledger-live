@@ -3,7 +3,12 @@ import { encodeAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/
 import { type GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Operation } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
-import { DEFAULT_ENABLE_TOKENS, DEFAULT_MAX_TX_QUERY, DEFAULT_MIN_RESERVE } from "../constants";
+import {
+  DEFAULT_CAL_LOOKUP_CONCURRENCY,
+  DEFAULT_ENABLE_TOKENS,
+  DEFAULT_MAX_TX_QUERY,
+  DEFAULT_MIN_RESERVE,
+} from "../constants";
 import { tuning } from "../tuning";
 import {
   getAccountBalance,
@@ -280,7 +285,12 @@ export const makeGetAccountShape =
 
       const resolvedTokens = await resolveTokenSubAccounts({
         enableTokens,
-        calLookupConcurrency: config.tokens?.calLookupConcurrency,
+        // A batch of zero would look up nothing and drop every stored token.
+        calLookupConcurrency: tuning(
+          config.tokens?.calLookupConcurrency,
+          DEFAULT_CAL_LOOKUP_CONCURRENCY,
+          1,
+        ),
         currencyId: currency.id,
         accountId,
         accountTokens,

@@ -59,7 +59,7 @@ export function createFixtureContext(
   overrides?: Partial<ConcordiumBridgeConfig>,
 ): ConcordiumBridgeContext {
   return {
-    config: async () => createFixtureConfig(overrides),
+    config: () => Promise.resolve(createFixtureConfig(overrides)),
     logger: () => {},
   };
 }

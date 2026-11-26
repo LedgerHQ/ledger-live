@@ -83,6 +83,7 @@ const resolve = (over: Partial<Parameters<typeof resolveTokenSubAccounts>[0]> = 
     accountId: ACCOUNT_ID,
     accountTokens: [makeEntry()],
     initialAccount: undefined,
+    calLookupConcurrency: 4,
     ...over,
   });
 
@@ -90,20 +91,6 @@ describe("resolveTokenSubAccounts", () => {
   beforeEach(() => {
     useStore({ [TOKEN_ID]: makeToken(TOKEN_ID) });
   });
-
-  it.each([0, -1, 1.5])(
-    "falls back to the default CAL concurrency for an override of %s",
-    async calLookupConcurrency => {
-      const result = await resolve({ calLookupConcurrency });
-
-      expect(result).toMatchObject({
-        kind: "resolved",
-        subAccounts: [
-          expect.objectContaining({ token: expect.objectContaining({ id: expect.any(String) }) }),
-        ],
-      });
-    },
-  );
 
   it("clears when the feature is off, whatever the chain reports", async () => {
     await expect(resolve({ enableTokens: false })).resolves.toEqual({ kind: "cleared" });

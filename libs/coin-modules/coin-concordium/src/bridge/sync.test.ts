@@ -1098,6 +1098,29 @@ describe("getAccountShape with tokens enabled", () => {
     expect(subAccount?.operations[0].value).toEqual(new BigNumber("3000000"));
   });
 
+  it.each([0, -1, 1.5])(
+    "still resolves token sub-accounts with a CAL concurrency override of %s",
+    async calLookupConcurrency => {
+      const getShape = makeGetAccountShape({
+        ...tokensOnConfig,
+        tokens: { calLookupConcurrency },
+      }) as any;
+
+      const result = await getShape(
+        {
+          currency: createFixtureCurrency(),
+          derivationMode: "",
+          derivationPath: "44'/1'/0'/0'/0'/0'",
+          index: 0,
+          rest: { publicKey: PUBLIC_KEY },
+        },
+        undefined,
+      );
+
+      expect(result.subAccounts?.map((a: { id: string }) => a.id)).toEqual([SUB_ACCOUNT_ID]);
+    },
+  );
+
   it("hangs the token transfer under the CCD operation that paid for it", async () => {
     listOperations.mockResolvedValue({ items: [pltRawOp()], next: undefined });
 
