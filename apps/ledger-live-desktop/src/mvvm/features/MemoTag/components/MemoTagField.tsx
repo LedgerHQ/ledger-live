@@ -23,7 +23,6 @@ const InstructionText = styled(Text)`
 `;
 
 type MemoTagFieldProps = InputBaseProps & {
-  maxMemoLength?: number;
   showLabel?: boolean;
   CaracterCountComponent?: React.FC;
   autoFocus?: boolean;
@@ -38,7 +37,6 @@ const MemoTagField = ({
   value,
   onChange,
   showLabel = true,
-  maxMemoLength,
   CaracterCountComponent,
   autoFocus,
   placeholder,
@@ -74,7 +72,6 @@ const MemoTagField = ({
           value={value}
           spellCheck="false"
           ff="Inter"
-          maxLength={maxMemoLength}
           autoFocus={autoFocus}
           data-testid="memo-tag-input"
         />

@@ -5,24 +5,6 @@ import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/coin-zcash/types";
 import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
 
-// Memo can only be attached to shielded outputs (512 bytes max, ZIP-302).
-const MAX_MEMO_BYTES = 512;
-
-const encoder = new TextEncoder();
-
-// The limit is defined in bytes, but MemoTagField's maxLength caps characters, so
-// multi-byte input could still exceed it. Truncate to whole characters that fit in the
-// byte budget so the constraint is enforced as the user types instead of at signing time.
-const truncateToBytes = (value: string, maxBytes: number): string => {
-  if (encoder.encode(value).length <= maxBytes) return value;
-  let result = "";
-  for (const char of value) {
-    if (encoder.encode(result + char).length > maxBytes) break;
-    result += char;
-  }
-  return result;
-};
-
 type Props = {
   account: Account;
   transaction: Transaction;
@@ -38,8 +20,7 @@ const ZcashMemoField = ({ account, transaction, status, onChange, autoFocus }: P
 
   const onMemoChange = useCallback(
     (memo: string) => {
-      const truncated = truncateToBytes(memo, MAX_MEMO_BYTES);
-      onChange(bridge.updateTransaction(tx, { memo: truncated }));
+      onChange(bridge.updateTransaction(tx, { memo }));
     },
     [onChange, bridge, tx],
   );
@@ -51,7 +32,6 @@ const ZcashMemoField = ({ account, transaction, status, onChange, autoFocus }: P
       value={tx.memo ?? ""}
       onChange={onMemoChange}
       autoFocus={autoFocus}
-      maxMemoLength={MAX_MEMO_BYTES}
       label={t("zcash.shielded.send.memo.label")}
       tooltipText={t("zcash.shielded.send.memo.tooltip")}
       placeholder={t("zcash.shielded.send.memo.placeholder")}
