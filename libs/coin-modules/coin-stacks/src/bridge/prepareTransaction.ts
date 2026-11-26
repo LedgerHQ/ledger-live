@@ -36,8 +36,10 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     // Check if this is a token transaction
     const subAccount = getSubAccount(account, transaction);
 
-    // Create transaction
-    const tx = await createTransaction(transaction, address, xpub, subAccount);
+    // Same as buildUnsignedTx: a native memo is fixed-width, and an oversized one would throw
+    // here before getTransactionStatus can report StacksMemoTooLong.
+    const feeEstimateTransaction = subAccount ? transaction : { ...transaction, memo: undefined };
+    const tx = await createTransaction(feeEstimateTransaction, address, xpub, subAccount);
 
     const senderAddress = c32address(addressVersion, tx.auth.spendingCondition!.signer);
 

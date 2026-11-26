@@ -87,6 +87,23 @@ describe("prepareTransaction", () => {
     expect(newTx.nonce).toEqual(5);
   });
 
+  it("estimates a native transfer fee without an oversized memo and keeps the memo on the transaction", async () => {
+    const memo = "x".repeat(35);
+
+    const result = await prepareTransaction(mockAccount, { ...mockTransaction, memo });
+
+    expect(createTransactionSpy.mock.lastCall[0].memo).toBeUndefined();
+    expect(result.memo).toBe(memo);
+  });
+
+  it("keeps the memo in a token transfer fee estimate", async () => {
+    getSubAccountSpy.mockReturnValue({ spendableBalance: new BigNumber(500) });
+
+    await prepareTransaction(mockAccount, { ...mockTransaction, memo: "invoice-42" });
+
+    expect(createTransactionSpy.mock.lastCall[0].memo).toBe("invoice-42");
+  });
+
   it("should update amount when useAllAmount is true", async () => {
     const txWithUseAllAmount = {
       ...mockTransaction,
