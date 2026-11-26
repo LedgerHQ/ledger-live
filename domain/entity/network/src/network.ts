@@ -28,13 +28,19 @@ function assertKnownNetwork(id: string): void {
   if (!KNOWN_NETWORKS.has(id)) throw new UnknownNetworkError(`Unknown network "${id}"`);
 }
 
-/** Bridge from a network id to its currency id, the same string for now. */
+/**
+ * Bridge from a network id to its currency id (the same string for now).
+ *
+ * @deprecated The network → currency link is too weak for product logic (token-ness,
+ * family, receive UI, …). Prefer the asset id / `parentCurrencyId`, or account data.
+ * Keep only for legacy reconciliation at the edges — see the package README.
+ */
 export function currencyIdFromNetwork(network: NetworkId): CryptoCurrencyId {
   assertKnownNetwork(network);
   return CryptoCurrencyIdSchema.parse(network);
 }
 
-/** Bridge from a currency id to its network id, the same string for now. */
+/** Bridge from a known currency id to its network id (legacy / CAL currency → descriptor). */
 export function networkFromCurrencyId(currencyId: CryptoCurrencyId): NetworkId {
   assertKnownNetwork(currencyId);
   return NetworkIdSchema.parse(currencyId);

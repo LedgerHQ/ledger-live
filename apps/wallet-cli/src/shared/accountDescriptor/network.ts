@@ -79,6 +79,9 @@ export class UnsupportedNetworkError extends Error {
  *
  * Throws UnknownNetworkError if the resulting currencyId is not known.
  * Throws UnsupportedNetworkError if it is known but not supported by wallet-cli (e.g. "base").
+ *
+ * @deprecated Prefer the asset id / parentCurrencyId, or account data. Keep only for legacy
+ * reconciliation — see `@domain/entity-network`.
  */
 export function currencyIdFromNetwork(network: NetworkId): CryptoCurrencyId {
   const currencyId = currencyIdFromKnownNetwork(network);

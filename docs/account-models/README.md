@@ -43,7 +43,7 @@ Layers 1 to 3 are the UI model and layers 5 and 6 the implementations. The route
 
 **7. Writes are not reads.** Preparing, signing and broadcasting go through a `send` capability on the same sources, never through a kind. The only store write is the pending operation. This is still being explored (see [migration.md](./migration.md)).
 
-**8. Network data is not account data.** Validators, fee currency and network parameters are keyed by network, not by `AccountUUID`. Data only one coin family shows becomes a kind declared by that family's package, not a generic "resources" kind.
+**8. Network data is not account data.** Validators, fee currency and network parameters are keyed by network, not by `AccountUUID`. Data only one coin family shows becomes a kind declared by that family's package, not a generic "resources" kind. A `NetworkId` is not a currency: do not call `currencyIdFromNetwork` for product logic — see [`@domain/entity-network`](../../domain/entity/network).
 
 **9. Aggregates are selectors, not kinds.** Portfolio total, asset details and allocation combine the entities of every account with selectors. They are not stored per account.
 
