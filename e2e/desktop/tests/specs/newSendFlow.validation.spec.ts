@@ -38,13 +38,22 @@ const invalidAmounts: Array<{
   expectsGetFundsCta?: boolean;
 }> = [
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_3, "0.1", undefined, "noTag"),
+    transaction: new Transaction({
+      accountToDebit: Account.XRP_1,
+      accountToCredit: Account.XRP_3,
+      amount: "0.1",
+      memoTag: "noTag",
+    }),
     expectedErrorMessage: "Recipient address is inactive. Send at least 1 XRP to activate it",
     xrayTicket: "B2CQA-2571",
     expectsGetFundsCta: true,
   },
   {
-    transaction: new Transaction(Account.DOT_1, Account.DOT_3, "0.5"),
+    transaction: new Transaction({
+      accountToDebit: Account.DOT_1,
+      accountToCredit: Account.DOT_3,
+      amount: "0.5",
+    }),
     expectedErrorMessage: "Recipient address is inactive. Send at least 1 DOT to activate it",
     xrayTicket: "B2CQA-2570",
     // Buy lists "polkadot", not "assethub_polkadot": no Get DOT CTA, Review stays disabled.
@@ -95,7 +104,12 @@ const ethSendFlow = (scenario: SendScenario) =>
   });
 
 test.describe("Send - new flow - max amount", ethSendFlow(SendScenario.MAX_AMOUNT), () => {
-  const tx = new Transaction(Account.ETH_1, Account.ETH_2, "send max", Fee.MEDIUM);
+  const tx = new Transaction({
+    accountToDebit: Account.ETH_1,
+    accountToCredit: Account.ETH_2,
+    amount: "send max",
+    speed: Fee.MEDIUM,
+  });
 
   test.use({
     userdata: "skip-onboarding-with-last-seen-device",
@@ -141,7 +155,11 @@ const btcFeeStrategy = ownedBy(coinTeamOwner(Account.BTC_NATIVE_SEGWIT_1.currenc
 });
 
 test.describe("Send - new flow - fee strategy", btcFeeStrategy, () => {
-  const tx = new Transaction(Account.BTC_NATIVE_SEGWIT_1, Account.BTC_NATIVE_SEGWIT_2, "0.00001");
+  const tx = new Transaction({
+    accountToDebit: Account.BTC_NATIVE_SEGWIT_1,
+    accountToCredit: Account.BTC_NATIVE_SEGWIT_2,
+    amount: "0.00001",
+  });
 
   test.use({
     userdata: "skip-onboarding-with-last-seen-device",
@@ -185,7 +203,11 @@ test.describe(
   "Send - new flow - self-transfer and custom fees",
   ethSendFlow(SendScenario.FEE_STRATEGY),
   () => {
-    const tx = new Transaction(Account.ETH_1, Account.ETH_3, "0.0001");
+    const tx = new Transaction({
+      accountToDebit: Account.ETH_1,
+      accountToCredit: Account.ETH_3,
+      amount: "0.0001",
+    });
     tx.expectedFee = EIP1559_CUSTOM_FEES.expectedNetworkFee;
 
     test.use({
@@ -256,7 +278,12 @@ test.describe(
   "Send - new flow - invalid address",
   ethSendFlow(SendScenario.INVALID_ADDRESS),
   () => {
-    const tx = new Transaction(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.00001", Fee.MEDIUM);
+    const tx = new Transaction({
+      accountToDebit: Account.ETH_1,
+      accountToCredit: Account.BTC_NATIVE_SEGWIT_1,
+      amount: "0.00001",
+      speed: Fee.MEDIUM,
+    });
 
     test.use({
       userdata: "skip-onboarding-with-last-seen-device",
@@ -281,7 +308,12 @@ test.describe(
 );
 
 test.describe("Send - new flow - ENS address", ethSendFlow(SendScenario.ENS_ADDRESS), () => {
-  const tx = new Transaction(Account.ETH_1, Account.ETH_2_WITH_ENS, "0.0001", Fee.MEDIUM);
+  const tx = new Transaction({
+    accountToDebit: Account.ETH_1,
+    accountToCredit: Account.ETH_2_WITH_ENS,
+    amount: "0.0001",
+    speed: Fee.MEDIUM,
+  });
 
   test.use({
     userdata: "skip-onboarding-with-last-seen-device",

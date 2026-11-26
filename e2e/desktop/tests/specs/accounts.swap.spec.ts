@@ -68,7 +68,11 @@ test.describe("Swap - default currency and rejection", () => {
       if (!minAmount) {
         throw new Error("Test failed: No quotes retrieved from swap API.");
       }
-      const swap = new Swap(fromAccount, toAccount, minAmount);
+      const swap = new Swap({
+        accountToDebit: fromAccount,
+        accountToCredit: toAccount,
+        amount: minAmount,
+      });
 
       await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
@@ -101,7 +105,11 @@ interface SwapTestCase {
 
 const swapWithDifferentSeed: SwapTestCase[] = [
   {
-    swap: new Swap(Account.ETH_1, Account.SOL_1, "0.03"),
+    swap: new Swap({
+      accountToDebit: Account.ETH_1,
+      accountToCredit: Account.SOL_1,
+      amount: "0.03",
+    }),
     xrayTicket: "B2CQA-3089",
     errorMessage:
       "This sending account does not belong to the device you have connected. Please change and retry",
@@ -113,14 +121,22 @@ const swapWithDifferentSeed: SwapTestCase[] = [
     },
   },
   {
-    swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.002"),
+    swap: new Swap({
+      accountToDebit: Account.BTC_NATIVE_SEGWIT_1,
+      accountToCredit: Account.ETH_1,
+      amount: "0.002",
+    }),
     xrayTicket: "B2CQA-3090",
     errorMessage: null,
     addressFrom: Addresses.BTC_NATIVE_SEGWIT_1,
     addressTo: Addresses.ETH_OTHER_SEED,
   },
   {
-    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03"),
+    swap: new Swap({
+      accountToDebit: Account.ETH_1,
+      accountToCredit: Account.BTC_NATIVE_SEGWIT_1,
+      amount: "0.03",
+    }),
     xrayTicket: "B2CQA-3091",
     errorMessage:
       "This sending account does not belong to the device you have connected. Please change and retry",

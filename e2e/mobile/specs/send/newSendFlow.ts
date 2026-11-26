@@ -151,13 +151,13 @@ export function runNewSendMemoTest(options: RunNewSendMemoTestOptions) {
 
   const label = transaction.accountToDebit.currency.testLabel;
   // Same transaction but skipping the memo, so Speculos does not expect a memo on the device.
-  const noMemoTransaction = new Transaction(
-    transaction.accountToDebit,
-    transaction.accountToCredit,
-    transaction.amount,
-    transaction.speed,
-    "noTag",
-  );
+  const noMemoTransaction = new Transaction({
+    accountToDebit: transaction.accountToDebit,
+    accountToCredit: transaction.accountToCredit,
+    amount: transaction.amount,
+    speed: transaction.speed,
+    memoTag: "noTag",
+  });
 
   describe("Send - new flow - Memo", () => {
     beforeAll(async () => {

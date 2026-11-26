@@ -1,7 +1,12 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runSendInvalidAmountTest } from "@e2e/specs/send/send";
 
-const transaction = new Transaction(Account.XRP_1, Account.XRP_3, "0.1", undefined, "noTag");
+const transaction = new Transaction({
+  accountToDebit: Account.XRP_1,
+  accountToCredit: Account.XRP_3,
+  amount: "0.1",
+  memoTag: "noTag",
+});
 runSendInvalidAmountTest({
   transaction,
   expectedErrorMessage: "Minimum of 1 XRP needed to activate recipient address",

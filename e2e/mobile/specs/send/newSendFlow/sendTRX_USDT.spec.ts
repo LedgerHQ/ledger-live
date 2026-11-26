@@ -7,7 +7,11 @@ import { setEnv } from "@shared/env";
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 runNewSendFlowTokenTest({
-  transaction: new Transaction(TokenAccount.TRX_USDT, TokenAccount.TRX_USDT_2, "0.01"),
+  transaction: new Transaction({
+    accountToDebit: TokenAccount.TRX_USDT,
+    accountToCredit: TokenAccount.TRX_USDT_2,
+    amount: "0.01",
+  }),
   tmsLinks: ["B2CQA-6111"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@tron", "@family-tron"],
   featureFlags: { ...FF_NEW_SEND_FLOW_ENABLED },

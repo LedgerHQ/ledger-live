@@ -1,7 +1,12 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runSendTest } from "@e2e/specs/send/send";
 
-const transaction = new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag");
+const transaction = new Transaction({
+  accountToDebit: Account.XLM_1,
+  accountToCredit: Account.XLM_2,
+  amount: "0.0001",
+  memoTag: "noTag",
+});
 runSendTest({
   transaction,
   tmsLinks: ["B2CQA-2813"],

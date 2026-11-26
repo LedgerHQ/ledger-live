@@ -3,7 +3,11 @@ import { runSwapWithDifferentSeedTest } from "@e2e/specs/swap/otherTestCases/swa
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 
 runSwapWithDifferentSeedTest({
-  swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03"),
+  swap: new Swap({
+    accountToDebit: Account.ETH_1,
+    accountToCredit: Account.BTC_NATIVE_SEGWIT_1,
+    amount: "0.03",
+  }),
   tmsLinks: ["B2CQA-3091"],
   userData: "speculos-x-other-account",
   errorMessage:
