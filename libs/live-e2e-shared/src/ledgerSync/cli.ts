@@ -1,7 +1,7 @@
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { CloudSyncSDK, type UpdateEvent } from "@shared/cloud-sync";
-import { liveSlug } from "@features/platform-wallet-sync";
+import { liveSlug } from "@features/platform-wallet-sync/slug";
 import { isDistantDocument, type DistantDocument } from "@shared/cloud-sync-module";
 import type { LedgerKeyRingProtocolOpts, LedgerSyncOpts } from "../runCli";
 import { trustchainApiBaseUrl } from "./environment";

@@ -12,4 +12,4 @@ export const liveSchema = z.object({
 });
 
 export type DistantState = z.infer<typeof liveSchema>;
-export { liveSlug, trustchainLifecycle } from "@features/platform-wallet-sync";
+export { liveSlug } from "@features/platform-wallet-sync/slug";
