@@ -33,7 +33,7 @@
       "stakedBalance": "Staked Balance",
       "stakedBalanceTooltip": "The total amount of ICP tokens currently staked in neurons. Staked ICP earns voting rewards and can be used for governance.",
       "totalMaturity": "Total Maturity",
-      "totalMaturityTooltip": "The total accumulated rewards from staking, including both staked and liquid maturity. These rewards can be either staked again or claimed as liquid ICP."
+      "totalMaturityTooltip": "The total accumulated rewards from staking, including both staked and liquid maturity. These rewards can be staked again or spawned into a new neuron. Maturity is not ICP: the amount of ICP a spawned neuron receives depends on maturity modulation."
     },
     "duration": {
       "years_one": "{{count}} year",

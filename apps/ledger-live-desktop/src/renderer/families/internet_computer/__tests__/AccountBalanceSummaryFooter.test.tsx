@@ -54,6 +54,23 @@ describe("AccountBalanceSummaryFooter (internet_computer)", () => {
     expect(screen.getByText("maturity:0.5")).toBeInTheDocument();
   });
 
+  it("shows the ICP unit for the staked balance but not total maturity", () => {
+    const account = makeICPAccount({
+      neurons: [
+        makeNeuron({
+          cachedNeuronStakeE8s: STAKED_E8S,
+          maturityE8sEquivalent: MATURITY_E8S,
+        }),
+      ],
+    });
+    const formatCurrencyUnit = jest.spyOn(currencies, "formatCurrencyUnit");
+
+    render(<AccountBalanceSummaryFooter account={account} />);
+
+    expect(formatCurrencyUnit.mock.calls[0]?.[2]).toMatchObject({ showCode: true });
+    expect(formatCurrencyUnit.mock.calls[1]?.[2]).toMatchObject({ showCode: false });
+  });
+
   it("subtracts neuron fees from the staked balance and aggregates across neurons", () => {
     const account = makeICPAccount({
       neurons: [

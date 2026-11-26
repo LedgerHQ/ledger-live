@@ -70,10 +70,10 @@ const Footer = ({ account }: { account: ICPAccount }) => {
 
   if (totalStaked.isZero() && totalMaturity.isZero()) return null;
 
-  const format = (value: typeof totalStaked) =>
+  const format = (value: typeof totalStaked, showCode = true) =>
     formatCurrencyUnit(unit, value, {
       alwaysShowSign: false,
-      showCode: true,
+      showCode,
       discreet,
       locale,
     });
@@ -89,7 +89,7 @@ const Footer = ({ account }: { account: ICPAccount }) => {
       <Detail
         label="internetComputer.summaryFooter.totalMaturity"
         tooltip="internetComputer.summaryFooter.totalMaturityTooltip"
-        value={format(totalMaturity)}
+        value={format(totalMaturity, false)}
         testId="icp-total-maturity"
       />
     </Wrapper>
