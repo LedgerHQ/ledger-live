@@ -15,12 +15,13 @@ import { useOperation } from "@shared/observability-operations-react";
 const operation = useOperation("checkout", { operationKey: cartId });
 
 operation.start({ currency_id: currency.id });
+operation.annotate({ step: "payment" });
 operation.succeed({ items: 2 });
-operation.fail("ERROR", { error_name: error.name });
+operation.fail("ERROR", toErrorAttributes(error));
 ```
 
-`useOperation(name, { operationKey?, abandonOnUnmount = true })` returns `start`, `succeed`, `fail`
-and `isActive`, stable across renders.
+`useOperation(name, { operationKey?, abandonOnUnmount = true })` returns `start`, `annotate`,
+`succeed`, `fail` and `isActive`, stable across renders.
 
 - The handlers act on the operation this component started, with the name and key it was started
   with. Once that operation ended, they do nothing, even when another operation of the same name

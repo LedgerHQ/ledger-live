@@ -33,6 +33,12 @@ export type StopOperationOptions = {
   expectedId?: OperationId;
 };
 
+export type AnnotateOperationOptions = {
+  operationKey?: string;
+  attributes: OperationAttributes;
+  expectedId?: OperationId;
+};
+
 export type OperationQueryOptions = {
   operationKey?: string;
   expectedId?: OperationId;
@@ -41,6 +47,7 @@ export type OperationQueryOptions = {
 export type OperationTracker = {
   setSink(sink: OperationSink | null): void;
   start(name: string, options?: StartOperationOptions): OperationId | null;
+  annotate(name: string, options: AnnotateOperationOptions): boolean;
   succeed(name: string, options?: StopOperationOptions): boolean;
   fail(name: string, reason: OperationFailureReason, options?: StopOperationOptions): boolean;
   isActive(name: string, options?: OperationQueryOptions): boolean;

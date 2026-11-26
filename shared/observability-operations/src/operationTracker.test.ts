@@ -1,4 +1,5 @@
 import {
+  annotateOperation,
   createOperationTracker,
   failOperation,
   getOperationId,
@@ -112,6 +113,65 @@ describe("createOperationTracker", () => {
       currency_id: "bitcoin",
       attempt: 2,
       outcome: "nothing_to_add",
+    });
+  });
+
+  describe("annotations", () => {
+    it("should send the annotations with the stop, between the start and stop attributes", () => {
+      tracker.start("checkout", { attributes: { currency_id: "bitcoin", step: "start" } });
+
+      expect(tracker.annotate("checkout", { attributes: { step: "scanning", found: 1 } })).toBe(
+        true,
+      );
+      tracker.annotate("checkout", { attributes: { found: 3, stopped: undefined } });
+      tracker.fail("checkout", "ABANDONED", { attributes: { trigger: "close", found: 4 } });
+
+      expect(sink.fail.mock.calls[0][3]).toStrictEqual({
+        currency_id: "bitcoin",
+        step: "scanning",
+        found: 4,
+        trigger: "close",
+      });
+    });
+
+    it("should not send the annotations to the sink before the stop", () => {
+      tracker.start("checkout");
+      tracker.annotate("checkout", { attributes: { step: "scanning" } });
+
+      expect(sink.start).toHaveBeenCalledTimes(1);
+      expect(sink.start.mock.calls[0][2]).toStrictEqual({});
+      expect(sink.succeed).not.toHaveBeenCalled();
+    });
+
+    it("should not carry the annotations over to the next operation of the same name", () => {
+      tracker.start("checkout");
+      tracker.annotate("checkout", { attributes: { step: "scanning" } });
+      tracker.succeed("checkout");
+      tracker.start("checkout");
+      tracker.succeed("checkout");
+
+      expect(sink.succeed.mock.calls[1][2]).toStrictEqual({});
+    });
+
+    it("should annotate nothing without an active operation of that name and key", () => {
+      tracker.start("checkout", { operationKey: "a" });
+
+      expect(tracker.annotate("checkout", { attributes: { step: "scanning" } })).toBe(false);
+      expect(tracker.annotate("other", { attributes: { step: "scanning" } })).toBe(false);
+      expect(tracker.annotate("in valid", { attributes: { step: "scanning" } })).toBe(false);
+    });
+
+    it("should annotate only the operation of the expected id", () => {
+      const firstId = tracker.start("checkout") ?? undefined;
+      tracker.fail("checkout", "ABANDONED");
+      tracker.start("checkout");
+
+      expect(
+        tracker.annotate("checkout", { attributes: { step: "late" }, expectedId: firstId }),
+      ).toBe(false);
+      tracker.succeed("checkout");
+
+      expect(sink.succeed.mock.calls[0][2]).toStrictEqual({});
     });
   });
 
@@ -279,11 +339,14 @@ describe("app-wide tracker", () => {
       true,
     );
     startOperation("app_wide_checkout");
+    expect(annotateOperation("app_wide_checkout", { attributes: { step: "scanning" } })).toBe(true);
     expect(failOperation("app_wide_checkout", "ABANDONED")).toBe(true);
     setOperationSink(null);
 
     expect(sink.start).toHaveBeenCalledTimes(2);
     expect(sink.succeed).toHaveBeenCalledWith("app_wide_checkout", "k", {});
-    expect(sink.fail).toHaveBeenCalledWith("app_wide_checkout", undefined, "ABANDONED", {});
+    expect(sink.fail).toHaveBeenCalledWith("app_wide_checkout", undefined, "ABANDONED", {
+      step: "scanning",
+    });
   });
 });

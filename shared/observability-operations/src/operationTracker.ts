@@ -16,6 +16,7 @@ type ActiveOperation = {
   id: OperationId;
   sink: OperationSink;
   startAttributes: SentOperationAttributes;
+  annotations: SentOperationAttributes;
   startedAt: number;
 };
 
@@ -83,7 +84,7 @@ export function createOperationTracker({
     return operation;
   };
 
-  const take = (
+  const find = (
     name: string,
     operationKey: string | undefined,
     expectedId: OperationId | undefined,
@@ -91,9 +92,27 @@ export function createOperationTracker({
     if (!VALID_OPERATION_NAME.test(name)) return null;
     const operation = getActive(name, operationKey);
     if (!operation || (expectedId !== undefined && operation.id !== expectedId)) return null;
-    remove(name, operationKey);
     return operation;
   };
+
+  const take = (
+    name: string,
+    operationKey: string | undefined,
+    expectedId: OperationId | undefined,
+  ): ActiveOperation | null => {
+    const operation = find(name, operationKey, expectedId);
+    if (operation) remove(name, operationKey);
+    return operation;
+  };
+
+  const stopAttributes = (
+    operation: ActiveOperation,
+    attributes: OperationAttributes | undefined,
+  ): SentOperationAttributes => ({
+    ...operation.startAttributes,
+    ...operation.annotations,
+    ...compact(attributes),
+  });
 
   return {
     setSink(nextSink) {
@@ -113,6 +132,7 @@ export function createOperationTracker({
         id,
         sink: recordingSink,
         startAttributes: sent,
+        annotations: {},
         startedAt: now(),
       });
       activeByName.set(name, byKey);
@@ -120,10 +140,17 @@ export function createOperationTracker({
       return id;
     },
 
+    annotate(name, { operationKey, attributes, expectedId }) {
+      const operation = find(name, operationKey, expectedId);
+      if (!operation) return false;
+      operation.annotations = { ...operation.annotations, ...compact(attributes) };
+      return true;
+    },
+
     succeed(name, { operationKey, attributes, expectedId } = {}) {
       const operation = take(name, operationKey, expectedId);
       if (!operation) return false;
-      const sent = { ...operation.startAttributes, ...compact(attributes) };
+      const sent = stopAttributes(operation, attributes);
       callSinkIgnoringErrors(() => operation.sink.succeed(name, operationKey, sent));
       return true;
     },
@@ -131,15 +158,13 @@ export function createOperationTracker({
     fail(name, reason: OperationFailureReason, { operationKey, attributes, expectedId } = {}) {
       const operation = take(name, operationKey, expectedId);
       if (!operation) return false;
-      const sent = { ...operation.startAttributes, ...compact(attributes) };
+      const sent = stopAttributes(operation, attributes);
       callSinkIgnoringErrors(() => operation.sink.fail(name, operationKey, reason, sent));
       return true;
     },
 
     isActive(name, { operationKey, expectedId } = {}) {
-      if (!VALID_OPERATION_NAME.test(name)) return false;
-      const operation = getActive(name, operationKey);
-      return !!operation && (expectedId === undefined || operation.id === expectedId);
+      return find(name, operationKey, expectedId) !== null;
     },
 
     getId(name, operationKey) {
@@ -155,6 +180,9 @@ export const setOperationSink: OperationTracker["setSink"] = sink => tracker.set
 
 export const startOperation: OperationTracker["start"] = (name, options) =>
   tracker.start(name, options);
+
+export const annotateOperation: OperationTracker["annotate"] = (name, options) =>
+  tracker.annotate(name, options);
 
 export const succeedOperation: OperationTracker["succeed"] = (name, options) =>
   tracker.succeed(name, options);
