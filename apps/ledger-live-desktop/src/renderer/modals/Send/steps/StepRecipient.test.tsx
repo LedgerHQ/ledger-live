@@ -9,6 +9,8 @@ import type { Account } from "@ledgerhq/types-live";
 import { useLLDCoinFamily } from "~/renderer/families";
 import type { StepProps } from "../types";
 import StepRecipient, { StepRecipientFooter } from "./StepRecipient";
+import zcashSendRecipientFields from "~/renderer/families/zcash/SendRecipientFields";
+import { ZcashMemoTooLong } from "@ledgerhq/coin-zcash/types";
 
 jest.mock("~/renderer/families");
 
@@ -188,5 +190,34 @@ describe("StepRecipientFooter memo check", () => {
 
     expect(transitionTo).not.toHaveBeenCalled();
     expect(screen.getByText("send.info.needMemoTag.cta.addTag")).toBeVisible();
+  });
+});
+
+describe("StepRecipientFooter with a Zcash memo over its byte limit", () => {
+  const zcashAccount = genAccount("step-recipient-zcash", {
+    currency: getCryptoCurrencyById("zcash"),
+  });
+
+  it("keeps Continue disabled while the bridge reports ZcashMemoTooLong", () => {
+    mockUseLLDCoinFamily.mockReturnValue({
+      sendRecipientFields: zcashSendRecipientFields,
+    } as never);
+
+    render(
+      <StepRecipientFooter
+        {...({
+          t: mockTFunction,
+          account: zcashAccount,
+          parentAccount: null,
+          status: { errors: { transaction: new ZcashMemoTooLong(512) }, warnings: {} },
+          bridgePending: false,
+          transitionTo: jest.fn(),
+          transaction: { family: "zcash", recipient: "recipient", memo: "a".repeat(513) },
+        } as unknown as StepProps)}
+      />,
+      { initialState: withFlagOverrides({ lldMemoTag: { enabled: true } }) },
+    );
+
+    expect(screen.getByRole("button", { name: "common.continue" })).toBeDisabled();
   });
 });
