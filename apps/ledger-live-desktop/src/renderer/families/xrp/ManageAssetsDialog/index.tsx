@@ -5,7 +5,9 @@ import type { Account } from "@ledgerhq/types-live";
 import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
+import { FrozenTokensBanner } from "../components/FrozenTokensBanner";
 import { StepScreen } from "../components/StepScreen";
+import { isFrozenToken } from "../utils";
 import { AssetCard } from "./AssetCard";
 import { DeleteAsset } from "./DeleteAsset";
 import { EditAsset } from "./EditAsset";
@@ -22,6 +24,9 @@ export default function ManageAssetsDialog({ account, tokenAccounts, onClose }: 
   const editedTokenAccount = tokenAccounts.find(tokenAccount => tokenAccount.id === editedTokenId);
   const [deletedTokenAccount, setDeletedTokenAccount] = useState<XrpTokenAccount>();
   const isDeviceBlocked = useDeviceBlocked();
+  const frozenTokens = tokenAccounts
+    .filter(tokenAccount => isFrozenToken(tokenAccount, account))
+    .map(tokenAccount => tokenAccount.token);
 
   const close = () => {
     if (!isDeviceBlocked) onClose();
@@ -52,6 +57,7 @@ export default function ManageAssetsDialog({ account, tokenAccounts, onClose }: 
 
     return (
       <StepScreen title={t("xrp.manageAssets.title")} onBack={close} onClose={close}>
+        <FrozenTokensBanner tokens={frozenTokens} />
         {tokenAccounts.map(tokenAccount => (
           <AssetCard
             key={tokenAccount.id}

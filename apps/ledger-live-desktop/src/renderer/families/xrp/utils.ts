@@ -21,6 +21,15 @@ export const getXrpResources = (
   return (account as XrpTokenAccount).xrpResources;
 };
 
+export const isFrozenToken = (
+  account: AccountLike,
+  parentAccount: Account | null | undefined,
+): boolean => {
+  if (!parentAccount || !hasTokenStandardEnabled(parentAccount)) return false;
+
+  return !!getXrpResources(account)?.isLocked;
+};
+
 export function getRemoveAvailability(account: TokenAccount, parentAccount: Account, t: TFunction) {
   const blocker = getRemoveBlocker(parentAccount, account);
   if (blocker) {

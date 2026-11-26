@@ -16,6 +16,7 @@ import {
   DescriptionItemTrailing,
   DescriptionItemValue,
   Skeleton,
+  Tag,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -36,7 +37,7 @@ import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { LabelWithInfo } from "../components/LabelWithInfo";
 import { XrpAmount } from "../components/XrpAmount";
-import { getRemoveAvailability } from "../utils";
+import { getRemoveAvailability, isFrozenToken } from "../utils";
 
 type Props = Readonly<{
   account: Account;
@@ -140,7 +141,17 @@ export function AssetCard({ account, tokenAccount, onEdit, onDelete }: AssetCard
             size={48}
           />
           <CardContent>
-            <CardContentTitle>{token.name}</CardContentTitle>
+            <div className="flex items-center gap-8">
+              <CardContentTitle>{token.name}</CardContentTitle>
+              {isFrozenToken(tokenAccount, account) ? (
+                <Tag
+                  appearance="gray"
+                  size="sm"
+                  label={t("xrp.manageAssets.frozen")}
+                  data-testid="xrp-manage-assets-frozen-tag"
+                />
+              ) : null}
+            </div>
             <CardContentDescription>{formatAddress(account.freshAddress)}</CardContentDescription>
           </CardContent>
         </CardLeading>
@@ -214,7 +225,7 @@ export function AssetCard({ account, tokenAccount, onEdit, onDelete }: AssetCard
           {removeAvailability.tooltip ? (
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className="flex flex-1">{deleteButton}</span>
+                <span className="flex w-full">{deleteButton}</span>
               </TooltipTrigger>
               <TooltipContent>{removeAvailability.tooltip}</TooltipContent>
             </Tooltip>

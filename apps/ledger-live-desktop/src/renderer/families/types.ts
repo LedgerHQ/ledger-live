@@ -239,6 +239,8 @@ export type LLDCoinFamily<
     }>;
   };
 
+  isTransferDisabled?: (account: A | TokenAccount, parentAccount: A | null | undefined) => boolean;
+
   /**
    * allow to add buttons on account page header before swap and buy button
    */

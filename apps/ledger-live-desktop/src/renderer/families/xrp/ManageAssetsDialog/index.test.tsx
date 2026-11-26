@@ -113,6 +113,47 @@ describe("xrp ManageAssetsDialog", () => {
     expect(getCard(xrpRlusdToken.id).getByTestId("xrp-manage-assets-edit")).toBeEnabled();
   });
 
+  it("shows no frozen banner or tag when no token is frozen", () => {
+    renderDialog();
+
+    expect(screen.queryByTestId("xrp-frozen-tokens-banner")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("xrp-manage-assets-frozen-tag")).not.toBeInTheDocument();
+  });
+
+  it("names the one frozen token in the banner, and tags its card only", () => {
+    const frozenAccount = makeXrpTokenAccount({ isLocked: true });
+    renderDialog({ ...XRP_ACCOUNT, subAccounts: [frozenAccount, XRP_MPT_TOKEN_ACCOUNT] });
+    const banner = within(screen.getByTestId("xrp-frozen-tokens-banner"));
+
+    expect(banner.getByText("Your RLUSD has been frozen")).toBeVisible();
+    expect(
+      banner.getByText(
+        "The issuer has frozen this asset. You can't use it until the freeze is lifted.",
+      ),
+    ).toBeVisible();
+    expect(banner.getByRole("button", { name: "Learn more" })).toBeVisible();
+    expect(getCard(xrpRlusdToken.id).getByText("Frozen")).toBeVisible();
+    expect(getCard(xrpMptToken.id).queryByText("Frozen")).not.toBeInTheDocument();
+  });
+
+  it("names every frozen token in the banner", () => {
+    const frozenIouAccount = makeXrpTokenAccount({ isLocked: true });
+    const frozenMptAccount: XrpTokenAccount = {
+      ...XRP_MPT_TOKEN_ACCOUNT,
+      xrpResources: { isLocked: true },
+    };
+    renderDialog({ ...XRP_ACCOUNT, subAccounts: [frozenIouAccount, frozenMptAccount] });
+    const banner = within(screen.getByTestId("xrp-frozen-tokens-banner"));
+
+    expect(banner.getByText("Your RLUSD, TMPT have been frozen")).toBeVisible();
+    expect(
+      banner.getByText(
+        "The issuers have frozen these assets. You can't use them until the freeze is lifted.",
+      ),
+    ).toBeVisible();
+    expect(screen.getAllByTestId("xrp-manage-assets-frozen-tag")).toHaveLength(2);
+  });
+
   it("opens Edit details of the IOU, and goes back to the list", async () => {
     const { user } = renderDialog();
 
