@@ -53,25 +53,31 @@ function renderedSectionsOrder() {
 }
 
 describe("Portfolio Screen", () => {
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it("should render Portfolio", async () => {
     renderWithReactQuery(<PortfolioTest />);
 
     expect(await screen.findByTestId("PortfolioEmptyList")).toBeVisible();
   });
 
-  it("should run the storage migration when a user with accounts opens the portfolio", async () => {
-    const handleMigration = jest.spyOn(storage, "handleMigration");
+  describe("Storage migration", () => {
+    let handleMigration: jest.SpyInstance;
 
-    renderWithReactQuery(<PortfolioRootTest />, {
-      overrideInitialState: overrideInitialStateWithAccounts(),
+    beforeEach(() => {
+      handleMigration = jest.spyOn(storage, "handleMigration");
     });
 
-    expect(await screen.findByTestId("PortfolioAccountsList")).toBeVisible();
-    expect(handleMigration).toHaveBeenCalledTimes(1);
+    afterEach(() => {
+      handleMigration.mockRestore();
+    });
+
+    it("should run the storage migration when a user with accounts opens the portfolio", async () => {
+      renderWithReactQuery(<PortfolioRootTest />, {
+        overrideInitialState: overrideInitialStateWithAccounts(),
+      });
+
+      expect(await screen.findByTestId("PortfolioAccountsList")).toBeVisible();
+      expect(handleMigration).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("Portfolio Balance Section", () => {

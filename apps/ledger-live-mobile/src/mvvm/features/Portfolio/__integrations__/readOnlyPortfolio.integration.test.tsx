@@ -15,10 +15,6 @@ describe("ReadOnly Portfolio Screen", () => {
     resetLazyOnboardingBannerSession();
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it("should render ReadOnly Portfolio", async () => {
     renderWithReactQuery(<ReadOnlyPortfolioTest />);
 
@@ -78,15 +74,25 @@ describe("ReadOnly Portfolio Screen", () => {
     expect(await screen.findByText("Why millions choose Ledger?")).toBeVisible();
   });
 
-  it("should run the storage migration when a read-only user with no accounts opens the portfolio", async () => {
-    const handleMigration = jest.spyOn(storage, "handleMigration");
+  describe("Storage migration", () => {
+    let handleMigration: jest.SpyInstance;
 
-    renderWithReactQuery(<PortfolioRootTest />, {
-      overrideInitialState: state =>
-        overrideInitialStateWithNoAccounts(overrideInitialStateWithReadOnly(state)),
+    beforeEach(() => {
+      handleMigration = jest.spyOn(storage, "handleMigration");
     });
 
-    expect(await screen.findByTestId("PortfolioReadOnlyItems")).toBeVisible();
-    expect(handleMigration).toHaveBeenCalledTimes(1);
+    afterEach(() => {
+      handleMigration.mockRestore();
+    });
+
+    it("should run the storage migration when a read-only user with no accounts opens the portfolio", async () => {
+      renderWithReactQuery(<PortfolioRootTest />, {
+        overrideInitialState: state =>
+          overrideInitialStateWithNoAccounts(overrideInitialStateWithReadOnly(state)),
+      });
+
+      expect(await screen.findByTestId("PortfolioReadOnlyItems")).toBeVisible();
+      expect(handleMigration).toHaveBeenCalledTimes(1);
+    });
   });
 });
