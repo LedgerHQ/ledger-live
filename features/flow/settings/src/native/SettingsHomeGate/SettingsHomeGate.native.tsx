@@ -1,10 +1,10 @@
 import React, { type ReactNode } from "react";
-import { ScrollView } from "react-native";
 import { TrackScreen } from "@shared/analytics-react";
 import { HiddenSettingsProvider } from "../../components/HiddenSettingsProvider/HiddenSettingsProvider";
 import type { SettingsHomeSectionId } from "../../logic/settingsHomeSections";
 import { SettingsHome } from "../SettingsHome/SettingsHome";
 import type { SettingsHomeDevTools } from "../SettingsHome/SettingsHomeDevTools";
+import { SettingsScrollView } from "../SettingsScrollView/SettingsScrollView";
 import { useSettingsHomeGateViewModel } from "./useSettingsHomeGateViewModel";
 
 export type SettingsHomeGateProps = Readonly<{
@@ -33,9 +33,9 @@ export function SettingsHomeGate({
   return (
     <HiddenSettingsProvider rowsToHide={rowsToHide}>
       <TrackScreen category="Settings" />
-      <ScrollView>
+      <SettingsScrollView>
         <SettingsHome onSelectSection={onSelectSection} devTools={devTools} testID={testID} />
-      </ScrollView>
+      </SettingsScrollView>
     </HiddenSettingsProvider>
   );
 }

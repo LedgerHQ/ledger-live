@@ -25,6 +25,7 @@ The sections come with the next tickets of the
 | `SettingsHome`             | `/native` | Mobile home: one row per section, then the Developer and Debug rows the app gives (`devTools`) |
 | `SettingsHomeGate`         | `/native` | New home behind `newSettings` (tracks `Page Settings`), legacy home otherwise                  |
 | `useIsSettingsHomeEnabled` | `/native` | Whether the new home is on, for the header the app's navigator sets                            |
+| `SettingsScrollView`       | `/native` | Scroll view of a Settings screen, its content padded off the bottom safe area                  |
 
 A row's trailing element is a chevron, an external link, a toggle, a value, a select or a button.
 On mobile, the select opens its options in a bottom sheet (Lumen `SelectList`), like the web
