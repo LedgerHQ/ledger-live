@@ -14,7 +14,11 @@ import type {
   GenuineErrorKind,
   UpdateStep,
 } from "LLM/features/DeviceOnboarding/types";
-import { seededPages, seededScreen } from "@features/platform-device-onboarding-analytics";
+import {
+  onboardingPages,
+  onboardingScreen,
+  seededProps,
+} from "@features/platform-device-onboarding-analytics";
 import { ChecksScreen } from "./index";
 
 const mockNavigate = jest.fn();
@@ -147,7 +151,10 @@ function updateScreensFor(step: UpdateStep | null) {
     return [
       {
         key: "update:sheet",
-        tracking: seededScreen(seededPages.osUpdateRequired, DmkDeviceModelId.STAX),
+        tracking: onboardingScreen(
+          onboardingPages.osUpdateRequired,
+          seededProps(DmkDeviceModelId.STAX),
+        ),
       },
     ];
   }
@@ -155,7 +162,10 @@ function updateScreensFor(step: UpdateStep | null) {
     return [
       {
         key: "update:refusal",
-        tracking: seededScreen(seededPages.osUpdateRefusal, DmkDeviceModelId.STAX),
+        tracking: onboardingScreen(
+          onboardingPages.osUpdateRefusal,
+          seededProps(DmkDeviceModelId.STAX),
+        ),
       },
     ];
   }
@@ -910,7 +920,7 @@ describe("ChecksView", () => {
   });
 
   describe("with the seeded funnel page names", () => {
-    const seededDeviceType = DmkDeviceModelId.STAX;
+    const funnelProps = seededProps(DmkDeviceModelId.STAX);
     const seeded = {
       sourceFlow: "onboarding",
       "onboarding type": "seeded device",
@@ -923,7 +933,7 @@ describe("ChecksView", () => {
       jest.mocked(TrackScreen).mockClear();
       const { user, onRetry } = renderChecks("checking", {
         error: { kind: "declined" },
-        seededDeviceType,
+        funnelProps,
       });
 
       expect(jest.mocked(TrackScreen)).toHaveBeenCalledWith(
@@ -955,7 +965,7 @@ describe("ChecksView", () => {
 
     it("should name the error page in the drawer clicks when the device check fails", async () => {
       jest.mocked(track).mockClear();
-      const { user } = renderChecks("checking", { error: { kind: "unknown" }, seededDeviceType });
+      const { user } = renderChecks("checking", { error: { kind: "unknown" }, funnelProps });
 
       await user.press(
         within(screen.getByTestId(checksTestIds.unknownSheet)).getByRole("button", {
@@ -974,7 +984,7 @@ describe("ChecksView", () => {
       jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
       const { user } = renderChecks("checking", {
         error: { kind: "notGenuine" },
-        seededDeviceType,
+        funnelProps,
       });
 
       await user.press(
@@ -994,7 +1004,7 @@ describe("ChecksView", () => {
       jest.mocked(track).mockClear();
       const { user, onQuit } = renderChecks("checking", {
         error: { kind: "notGenuine" },
-        seededDeviceType,
+        funnelProps,
       });
 
       await user.press(screen.getByTestId(`${checksTestIds.notGenuineSheet}-header-close`));
@@ -1014,7 +1024,7 @@ describe("ChecksView", () => {
         device: nanoX,
         update: { current: "2.3.0", available: "2.5.0" },
         onUpdateSheetClosed,
-        seededDeviceType,
+        funnelProps,
       });
 
       await user.press(screen.getByText("Update now"));
@@ -1026,7 +1036,7 @@ describe("ChecksView", () => {
     it("should send the previous page as source with the drawer clicks", async () => {
       jest.mocked(track).mockClear();
       jest.mocked(getPreviousTrackingPage).mockReturnValueOnce("Page Check OS version");
-      const { user } = renderChecks("checking", { error: { kind: "unknown" }, seededDeviceType });
+      const { user } = renderChecks("checking", { error: { kind: "unknown" }, funnelProps });
 
       await user.press(
         within(screen.getByTestId(checksTestIds.unknownSheet)).getByRole("button", {
@@ -1044,7 +1054,7 @@ describe("ChecksView", () => {
       const onClosePressed = jest.fn();
       const { user, onQuit } = renderChecks("checking", {
         error: { kind: "unknown" },
-        seededDeviceType,
+        funnelProps,
         onClosePressed,
       });
 

@@ -1,7 +1,11 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useUnseededFunnelViewModel, type UnseededFunnelInput } from "./useUnseededFunnelViewModel";
+import {
+  useRestoreDismissal,
+  useUnseededFunnelViewModel,
+  type UnseededFunnelInput,
+} from "./useUnseededFunnelViewModel";
 
 const device = {
   deviceId: "device-id",
@@ -10,7 +14,7 @@ const device = {
   wired: false,
 } as Device;
 
-function input(machineState: string): UnseededFunnelInput {
+function input(machineState: string): Omit<UnseededFunnelInput, "restoreDismissal"> {
   return {
     machineState,
     liveMachineState: machineState,
@@ -36,6 +40,18 @@ function input(machineState: string): UnseededFunnelInput {
   };
 }
 
+type InputWithoutDismissal = Omit<UnseededFunnelInput, "restoreDismissal">;
+
+/** Owns the restore dismissal, as the funnel view model does. */
+function useFunnelOf(funnelInput: InputWithoutDismissal) {
+  const restoreDismissal = useRestoreDismissal(funnelInput.machineState);
+  return useUnseededFunnelViewModel({ ...funnelInput, restoreDismissal });
+}
+
+function useFunnel(machineState: string) {
+  return useFunnelOf(input(machineState));
+}
+
 function setupOf(model: ReturnType<typeof useUnseededFunnelViewModel>) {
   if (model?.status !== "setup") throw new Error(`expected setup, got ${model?.status}`);
   return model.setup;
@@ -43,16 +59,14 @@ function setupOf(model: ReturnType<typeof useUnseededFunnelViewModel>) {
 
 describe("useUnseededFunnelViewModel", () => {
   it("should show Recover restore while the device is on that step", () => {
-    const { result } = renderHook(() =>
-      useUnseededFunnelViewModel(input("deviceSetup.restoreRecover")),
-    );
+    const { result } = renderHook(() => useFunnel("deviceSetup.restoreRecover"));
 
     expect(result.current?.status).toBe("recoverRestore");
   });
 
   it("should show the restore choice after close, and the Recover screen again after the device leaves", () => {
     let machineState = "deviceSetup.restoreRecover";
-    const { result, rerender } = renderHook(() => useUnseededFunnelViewModel(input(machineState)));
+    const { result, rerender } = renderHook(() => useFunnel(machineState));
 
     act(() => {
       if (result.current?.status !== "recoverRestore") throw new Error(result.current?.status);
@@ -78,6 +92,15 @@ describe("useUnseededFunnelViewModel", () => {
     expect(result.current?.status).toBe("recoverRestore");
   });
 
+  it("should report the restore choice as the visible state once Recover restore is closed", () => {
+    const { result } = renderHook(() => useRestoreDismissal("deviceSetup.restoreRecover"));
+
+    expect(result.current.visibleState).toBe("deviceSetup.restoreRecover");
+    act(() => result.current.dismiss());
+
+    expect(result.current.visibleState).toBe("deviceSetup.restoreChoice");
+  });
+
   describe("on a Nano that updates its OS after setup", () => {
     const nanoX = {
       ...device,
@@ -87,8 +110,8 @@ describe("useUnseededFunnelViewModel", () => {
 
     function nanoInput(
       machineState: string,
-      overrides: Partial<UnseededFunnelInput> = {},
-    ): UnseededFunnelInput {
+      overrides: Partial<InputWithoutDismissal> = {},
+    ): InputWithoutDismissal {
       return {
         ...input(machineState),
         device: nanoX,
@@ -101,16 +124,14 @@ describe("useUnseededFunnelViewModel", () => {
     }
 
     it("should show the genuine check as the first of five steps", () => {
-      const { result } = renderHook(() =>
-        useUnseededFunnelViewModel(nanoInput("checks.genuineCheck.running")),
-      );
+      const { result } = renderHook(() => useFunnelOf(nanoInput("checks.genuineCheck.running")));
 
       expect(setupOf(result.current).stage).toMatchObject({ kind: "genuine", index: 0, total: 5 });
     });
 
     it("should show the held-back OS check as the fifth step once seeded", () => {
       const { result } = renderHook(() =>
-        useUnseededFunnelViewModel(
+        useFunnelOf(
           nanoInput("postSetupFirmware.firmwareUpdateOffered", {
             seeded: true,
             availableFirmwareVersion: "2.8.0",
@@ -127,9 +148,9 @@ describe("useUnseededFunnelViewModel", () => {
     });
 
     it("should keep five steps after the update moved the OS out of the held-back range", () => {
-      let overrides: Partial<UnseededFunnelInput> = { seeded: true };
+      let overrides: Partial<InputWithoutDismissal> = { seeded: true };
       const { result, rerender } = renderHook(() =>
-        useUnseededFunnelViewModel(nanoInput("postSetupFirmware.firmwareCheck", overrides)),
+        useFunnelOf(nanoInput("postSetupFirmware.firmwareCheck", overrides)),
       );
 
       overrides = { seeded: true, updateAfterSetup: false, firmwareVersion: "2.8.0" };
@@ -141,7 +162,7 @@ describe("useUnseededFunnelViewModel", () => {
     it("should keep the OS check while the updated device reboots and reconnects", () => {
       let machineState = "postSetupFirmware.firmwareUpdateDelegated";
       const { result, rerender } = renderHook(() =>
-        useUnseededFunnelViewModel(nanoInput(machineState, { seeded: true })),
+        useFunnelOf(nanoInput(machineState, { seeded: true })),
       );
 
       for (const state of ["awaitingSessionAfterFirmwareUpdate", "readingState", "routing"]) {
@@ -153,7 +174,7 @@ describe("useUnseededFunnelViewModel", () => {
 
     it("should not hold a stage while a touchscreen waits for its updated device", () => {
       const { result } = renderHook(() =>
-        useUnseededFunnelViewModel({
+        useFunnelOf({
           ...input("awaitingSessionAfterFirmwareUpdate"),
           seeded: true,
         }),
@@ -165,9 +186,7 @@ describe("useUnseededFunnelViewModel", () => {
     it("should skip a failed OS check after setup", () => {
       const send = jest.fn();
       const { result } = renderHook(() =>
-        useUnseededFunnelViewModel(
-          nanoInput("postSetupFirmware.firmwareCheckFailed", { seeded: true, send }),
-        ),
+        useFunnelOf(nanoInput("postSetupFirmware.firmwareCheckFailed", { seeded: true, send })),
       );
 
       setupOf(result.current).checks?.onSkipFirmwareCheck?.();
@@ -176,9 +195,7 @@ describe("useUnseededFunnelViewModel", () => {
     });
 
     it("should not offer to skip a failed check before setup", () => {
-      const { result } = renderHook(() =>
-        useUnseededFunnelViewModel(nanoInput("checks.firmwareCheckFailed")),
-      );
+      const { result } = renderHook(() => useFunnelOf(nanoInput("checks.firmwareCheckFailed")));
 
       expect(setupOf(result.current).checks?.onSkipFirmwareCheck).toBeUndefined();
     });

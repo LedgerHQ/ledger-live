@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { FunnelProps } from "@features/platform-device-onboarding-analytics";
 import {
   asChecksState,
   isFirmwareCheckFailed,
@@ -59,9 +60,26 @@ function isOsCheckAfterSetup(
   );
 }
 
+export type RestoreDismissal = Readonly<{
+  dismissed: boolean;
+  dismiss: () => void;
+  /** The state the screen shows: the restore choice once the Recover restore screen is closed. */
+  visibleState: string | null;
+}>;
+
+/** Closing the Recover restore screen shows the restore choice while the machine stays on Recover. */
+export function useRestoreDismissal(machineState: string | null): RestoreDismissal {
+  const [dismissed, setDismissed] = useState(false);
+  const dismiss = useCallback(() => setDismissed(true), []);
+  if (dismissed && machineState !== restoreRecoverState) setDismissed(false);
+  const showsChoice = dismissed && machineState === restoreRecoverState;
+  return { dismissed, dismiss, visibleState: showsChoice ? restoreChoiceState : machineState };
+}
+
 export type UnseededFunnelInput = {
   machineState: string | null;
   liveMachineState: string | null;
+  restoreDismissal: RestoreDismissal;
   onboardedOnEntry: boolean | null;
   /** The Nano holds its OS update until it is seeded, so it shows the OS check as its last step. */
   updateAfterSetup?: boolean;
@@ -84,6 +102,8 @@ export type UnseededFunnelInput = {
   returnsWithoutUpdate: number;
   reportsRecoveryKey: boolean;
   device: Device | null;
+  /** Set for a tracked unseeded funnel: the setup screen sends its sheet events with these. */
+  funnelProps?: FunnelProps | null;
   connectionError: string | null;
   suspendSheets: boolean;
   reconnect: () => void;
@@ -99,17 +119,17 @@ export type UnseededFunnelModel =
 
 export function useUnseededFunnelViewModel(input: UnseededFunnelInput): UnseededFunnelModel | null {
   const { device, machineState, liveMachineState, send } = input;
-  const [restoreDismissed, setRestoreDismissed] = useState(false);
-  const dismissRestore = useCallback(() => setRestoreDismissed(true), []);
-  if (restoreDismissed && machineState !== restoreRecoverState) setRestoreDismissed(false);
+  const {
+    dismissed: restoreDismissed,
+    dismiss: dismissRestore,
+    visibleState,
+  } = input.restoreDismissal;
 
   const unseeded = input.onboardedOnEntry === false && device !== null && machineState !== null;
   const updateAfterSetup = useLatched(unseeded && input.updateAfterSetup === true);
   const osCheck = isOsCheckAfterSetup(machineState, input.seeded === true, updateAfterSetup);
-  const stageState =
-    machineState === restoreRecoverState && restoreDismissed ? restoreChoiceState : machineState;
   const stage = unseeded
-    ? toUnseededStage(device, stageState, {
+    ? toUnseededStage(device, visibleState, {
         currentStep: input.currentStep,
         reportsRecoveryKey: input.reportsRecoveryKey,
         updateAfterSetup,
@@ -149,6 +169,7 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
       connection,
       firmwareDeclined: input.firmwareDeclined,
       checks: toChecks(input, machineState, confirmSkipUpdate, osCheck),
+      funnelProps: input.funnelProps ?? null,
       onQuit: input.onQuit,
     },
   };
