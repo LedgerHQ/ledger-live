@@ -7,7 +7,7 @@ import { log } from "@ledgerhq/logs";
 import type { Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getAccountListVerdict, isDecodedPltState } from "../network/plt";
-import { baseOperation, toOperation } from "./operations";
+import { baseOperation, paidFeeOf, toOperation } from "./operations";
 import type {
   ConcordiumAccount,
   ConcordiumOperation,
@@ -176,7 +176,7 @@ export function buildParentOperation(op: RawOperation, accountId: string): Conco
   const paysFee = fee.isGreaterThan(0);
 
   const parent = baseOperation(
-    op,
+    paysFee && op.type === "IN" ? paidFeeOf(op) : op,
     accountId,
     paysFee ? "FEES" : "NONE",
     // `FEES` is an outgoing type, so this value is what gets debited from CCD.
