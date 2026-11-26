@@ -6251,6 +6251,32 @@
       "launchOnboarding": "Device setup",
       "launchOnboardingDesc": "Set up a new device or restore an existing device. Accounts and settings are kept."
     },
+    "helpPage": {
+      "title": "Help",
+      "groups": {
+        "supportAndLearning": "Support and learning",
+        "more": "More"
+      },
+      "support": {
+        "title": "Ledger support",
+        "description": "Get help with our FAQs or chat"
+      },
+      "saveLogs": {
+        "description": "Saving logs may be needed for troubleshooting purposes."
+      },
+      "status": {
+        "title": "Ledger status"
+      },
+      "clearCache": {
+        "description": "Your network transactions will be scanned and your accounts will be recalculated."
+      },
+      "viewUserData": {
+        "description": "View the local data stored on this computer, including account settings and cached info."
+      },
+      "resetApp": {
+        "description": "Erase all local data from this computer. Your funds remain safe on the blockchain, but you will need to re-import your accounts."
+      }
+    },
     "help": {
       "version": "Version",
       "releaseNotesBtn": "Details",

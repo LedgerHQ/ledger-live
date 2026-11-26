@@ -88,7 +88,7 @@ describe("SettingsRoute", () => {
     expectSelectedTab("privacy");
   });
 
-  it.each(["/settings/help", "/settings/experimental", "/settings/developer/info-state-qa"])(
+  it.each(["/settings/experimental", "/settings/developer/info-state-qa"])(
     "keeps the legacy Settings for %s, not in the Settings page yet",
     route => {
       renderSettings(route, true);
@@ -96,6 +96,42 @@ describe("SettingsRoute", () => {
       expect(screen.getByText("Legacy settings")).toBeVisible();
     },
   );
+});
+
+describe("SettingsRoute, Help page", () => {
+  it("shows the Help page at /settings/help when the flag is on", () => {
+    renderSettings("/settings/help", true);
+
+    expect(screen.getByTestId("settings-help")).toBeVisible();
+    expect(screen.getByText("Ledger support")).toBeVisible();
+    expect(screen.getByText("Reset Ledger Wallet")).toBeVisible();
+    expect(screen.queryByTestId("settings-page")).not.toBeInTheDocument();
+    expect(screen.queryByText("Legacy settings")).not.toBeInTheDocument();
+  });
+
+  it("keeps the legacy Settings on the Help address when the flag is off", () => {
+    renderSettings("/settings/help", false);
+
+    expect(screen.getByText("Legacy settings")).toBeVisible();
+    expect(screen.queryByTestId("settings-help")).not.toBeInTheDocument();
+  });
+
+  it("asks for a confirmation before clearing the cache", async () => {
+    const { user } = renderSettings("/settings/help", true);
+
+    await user.click(screen.getByTestId("settings-help-clearCache-button"));
+
+    expect(screen.getByTestId("settings-help-confirm-button")).toBeVisible();
+  });
+
+  it("asks for a confirmation before resetting Ledger Wallet", async () => {
+    const { user } = renderSettings("/settings/help", true);
+
+    await user.click(screen.getByTestId("settings-help-resetApp-button"));
+
+    expect(screen.getByTestId("settings-help-confirm-button")).toBeVisible();
+    expect(screen.getByTestId("settings-help-cancel-button")).toBeVisible();
+  });
 });
 
 describe("SettingsRoute, Security section", () => {
