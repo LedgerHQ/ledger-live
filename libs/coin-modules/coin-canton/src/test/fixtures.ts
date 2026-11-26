@@ -4,8 +4,12 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-transfer.json";
-import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
-import type { Account } from "@ledgerhq/types-live";
+import {
+  CryptoCurrency,
+  CryptoCurrencyIdSchema,
+  type TokenCurrency,
+} from "@ledgerhq/ledger-wallet-framework/types";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonCoinConfig, CantonContext } from "../config";
 import type { CantonAccount, Transaction } from "../types";
@@ -127,6 +131,23 @@ export const createMockCantonAccount = (
 
   return baseAccount as CantonAccount;
 };
+
+export const createMockTokenAccount = (overrides: Partial<TokenAccount> = {}): TokenAccount =>
+  ({
+    type: "TokenAccount",
+    id: "canton-token-account",
+    parentId: "canton-account",
+    token: {
+      id: "canton_network/usdcx",
+      name: "USDCx",
+      contractAddress: "issuer::1220",
+    } as TokenCurrency,
+    balance: new BigNumber(0),
+    spendableBalance: new BigNumber(0),
+    operations: [],
+    pendingOperations: [],
+    ...overrides,
+  }) as TokenAccount;
 
 class MockCantonSigner implements CantonSigner {
   private readonly keyPair: CantonTestKeyPair;

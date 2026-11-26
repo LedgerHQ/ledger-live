@@ -4,7 +4,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonCoinConfig, CantonContext } from "../config";
-import { prepareTransferRequest, submit } from "../network/gateway";
+import { getCalTokensCached, prepareTransferRequest, submit } from "../network/gateway";
 import {
   createMockCantonAccount,
   createMockCantonSigner,
@@ -12,14 +12,17 @@ import {
   createMockContext,
   createMockPrepareTransferResponse,
   createMockSignerContext,
+  createMockTokenAccount,
   createMockTransaction,
 } from "../test/fixtures";
 import type { CantonSigner, Transaction } from "../types";
 import { broadcast } from "./broadcast";
+import { prepareTransaction } from "./prepareTransaction";
 import { buildSignOperation } from "./signOperation";
 
 jest.mock("../network/gateway", () => ({
   ...jest.requireActual("../network/gateway"),
+  getCalTokensCached: jest.fn(),
   prepareTransferRequest: jest.fn(),
   submit: jest.fn(),
 }));
@@ -92,6 +95,30 @@ describe("buildSignOperation", () => {
     await sign(createMockTransaction({ tokenId: "USDCx", instrumentAdmin: "issuer::1220" }));
 
     expect(preparedRequest()).toMatchObject({
+      instrument_id: "USDCx",
+      instrument_admin: "issuer::1220",
+    });
+  });
+
+  it("should sign a token Send max for the whole token balance with its instrument", async () => {
+    jest.mocked(getCalTokensCached).mockResolvedValue(new Map([["canton_network/usdcx", "USDCx"]]));
+    const tenthOfAToken = new BigNumber(10).pow(37);
+    const tokenAccount = createMockTokenAccount({ spendableBalance: tenthOfAToken });
+    const parent = { ...account, subAccounts: [tokenAccount] };
+    const prepared = await prepareTransaction(
+      createMockContext({ ...config, fee: 0 }),
+      parent,
+      createMockTransaction({
+        amount: new BigNumber(0),
+        useAllAmount: true,
+        subAccountId: tokenAccount.id,
+      }),
+    );
+
+    await sign(prepared, { signedAccount: parent });
+
+    expect(preparedRequest()).toMatchObject({
+      amount: tenthOfAToken.toFixed(),
       instrument_id: "USDCx",
       instrument_admin: "issuer::1220",
     });

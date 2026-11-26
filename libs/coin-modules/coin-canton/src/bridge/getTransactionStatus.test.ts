@@ -71,6 +71,11 @@ describe("getTransactionStatus", () => {
     ...mockAccount,
     cantonResources: { ...mockAccount.cantonResources, instrumentUtxoCounts },
   });
+  const accountWith = (balance: number, minReserve: number): CantonAccount => ({
+    ...mockAccount,
+    balance: new BigNumber(balance),
+    spendableBalance: BigNumber.max(0, new BigNumber(balance).minus(minReserve)),
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -276,6 +281,51 @@ describe("getTransactionStatus", () => {
     });
   });
 
+  describe("Send max", () => {
+    const fee = new BigNumber(10);
+    const sendMax = (amount: BigNumber): Transaction => ({
+      family: "canton",
+      amount,
+      useAllAmount: true,
+      recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
+      fee,
+      tokenId: "",
+    });
+    it("should return NotEnoughBalance when the fee leaves nothing to send", async () => {
+      mockConfig = { ...defaultConfig, minReserve: 0 };
+
+      const result = await getTransactionStatus(accountWith(5, 0), sendMax(new BigNumber(0)));
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+
+    it.each([0, 100])(
+      "should accept the spendable balance minus the fee with a reserve of %i",
+      async minReserve => {
+        mockConfig = { ...defaultConfig, minReserve };
+        const account = accountWith(1000, minReserve);
+
+        const result = await getTransactionStatus(
+          account,
+          sendMax(account.spendableBalance.minus(fee)),
+        );
+
+        expect(result.errors).toEqual({});
+      },
+    );
+
+    it("should keep refusing a maximum below the reserve a new recipient needs", async () => {
+      const account = accountWith(150, 100);
+
+      const result = await getTransactionStatus(
+        account,
+        sendMax(account.spendableBalance.minus(fee)),
+      );
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalanceBecauseDestinationNotCreated);
+    });
+  });
+
   describe("return values", () => {
     it("should return correct estimatedFees, amount, and totalSpent", async () => {
       const transaction: Transaction = {
@@ -474,6 +524,15 @@ describe("getTransactionStatus", () => {
         ],
       ])("blocks the send when its token account is gone, the account %s", async (_, account) => {
         const result = await getTransactionStatus(account as CantonAccount, tokenTransaction);
+
+        expect(result.errors.amount).toBeInstanceOf(InvalidTransactionError);
+      });
+
+      it("blocks a Send max whose token account is gone as an invalid send", async () => {
+        const result = await getTransactionStatus(
+          { ...mockAccount, subAccounts: [] },
+          { ...tokenTransaction, amount: new BigNumber(0), useAllAmount: true },
+        );
 
         expect(result.errors.amount).toBeInstanceOf(InvalidTransactionError);
       });

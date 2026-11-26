@@ -77,7 +77,7 @@ export const getTransactionStatus = async (
 
   if (amount.eq(0)) {
     // if the amount is 0, we prevent the user from sending the tx (even if it's technically feasible)
-    errors.amount = new AmountRequired();
+    errors.amount = transaction.useAllAmount ? new NotEnoughBalance() : new AmountRequired();
   }
 
   // For token transactions, check that parent account has enough native balance to pay fees
