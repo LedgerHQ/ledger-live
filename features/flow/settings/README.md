@@ -15,7 +15,7 @@ The sections come with the next tickets of the
 | Export                     | Entry     | Purpose                                                                                        |
 | -------------------------- | --------- | ---------------------------------------------------------------------------------------------- |
 | `SettingsPage`             | `/web`    | Desktop page: title and one tab per section; the app renders the content                       |
-| `SettingsGate`             | `/web`    | New page behind `newSettings`, legacy Settings otherwise and for Help, Experimental, Developer |
+| `SettingsGate`             | `/web`    | New page behind `newSettings`, legacy Settings otherwise and for Experimental, Developer       |
 | `SettingsSection`          | `.`       | Block of rows with an optional title                                                           |
 | `SettingsRow`              | `.`       | Icon, title, description with an optional link, and a trailing element                         |
 | `SETTINGS_SECTIONS`        | `.`       | General, Asset management, Security, Privacy, About                                            |
@@ -26,6 +26,11 @@ The sections come with the next tickets of the
 | `SettingsHomeGate`         | `/native` | New home behind `newSettings` (tracks `Page Settings`), legacy home otherwise                  |
 | `useIsSettingsHomeEnabled` | `/native` | Whether the new home is on, for the header the app's navigator sets                            |
 | `SettingsScrollView`       | `/native` | Scroll view of a Settings screen, its content padded off the bottom safe area                  |
+
+Help is a standalone page, not a section: with `newSettings` on, `getSettingsRoute` returns
+`standalonePage: "help"` for `/settings/help`, and `SettingsGate` renders what the app's
+`renderStandalonePage` gives, without the section tabs. It is the page of
+`@features/flow-settings-help`.
 
 A row's trailing element is a chevron, an external link, a toggle, a value, a select or a button.
 On mobile, the select opens its options in a bottom sheet (Lumen `SelectList`), like the web
@@ -38,7 +43,7 @@ A sheet opens on top of the Settings: a bottom sheet on mobile, a dialog on desk
 | Export                 | Entry | Purpose                                                                 |
 | ---------------------- | ----- | ----------------------------------------------------------------------- |
 | `SettingsSheet`        | `.`   | Title, optional description, close button and any content               |
-| `SettingsConfirmSheet` | `.`   | Confirm or cancel an action, `destructive` or `neutral`, disabled while it runs |
+| `SettingsConfirmSheet` | `.`   | Confirm or cancel an action, `destructive` or `neutral`, disabled while it runs; an `InfoState` dialog on desktop |
 
 On mobile, `SettingsSheet` goes through `QueuedBottomSheet`, so the app must render it under
 `QueuedBottomSheetsProvider` like any queued sheet.
