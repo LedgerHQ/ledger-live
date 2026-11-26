@@ -17,11 +17,12 @@ function scrollEventAt(offset: number) {
 }
 
 function setup() {
-  const store = createScrollCompactionStore();
+  const onApply = jest.fn();
+  const store = createScrollCompactionStore({ onApply });
   const onScroll = createScrollCompactionHandler(store);
   const scrollTo = (offsets: readonly number[]) =>
     offsets.forEach(offset => onScroll(scrollEventAt(offset)));
-  return { store, scrollTo };
+  return { store, scrollTo, onApply };
 }
 
 describe("createScrollCompactionHandler", () => {
@@ -60,5 +61,14 @@ describe("createScrollCompactionHandler", () => {
 
     expect(isCompactAfterOnePixel).toBe(false);
     expect(store.getIsCompact()).toBe(true);
+  });
+
+  it("should only update the store when the compact state changes", () => {
+    const { scrollTo, onApply } = setup();
+
+    scrollTo([MID_OFFSET, MID_OFFSET + 1, MID_OFFSET + 2, MID_OFFSET + 40, MID_OFFSET + 80]);
+
+    expect(onApply).toHaveBeenCalledTimes(1);
+    expect(onApply).toHaveBeenCalledWith(true);
   });
 });

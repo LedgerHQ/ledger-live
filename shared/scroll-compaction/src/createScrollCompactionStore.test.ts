@@ -41,7 +41,7 @@ describe("createScrollCompactionStore", () => {
     expect(listener).not.toHaveBeenCalled();
   });
 
-  it("should expand and move to a new reset generation on reset", () => {
+  it("should expand, mirror it and move to a new reset generation on reset", () => {
     const onReset = jest.fn();
     const onApply = jest.fn();
     const store = createScrollCompactionStore({ onReset, onApply });
@@ -55,15 +55,38 @@ describe("createScrollCompactionStore", () => {
     expect(onApply).toHaveBeenLastCalledWith(false);
   });
 
-  it("should drop an update computed before the last reset and restore the mirror", () => {
+  it("should mirror the expanded state on reset even when the store is already expanded", () => {
+    const onApply = jest.fn();
+    const store = createScrollCompactionStore({ onApply });
+
+    store.reset();
+
+    expect(onApply).toHaveBeenCalledWith(false);
+  });
+
+  it("should record an acknowledged state without writing it back to the mirror", () => {
+    const onApply = jest.fn();
+    const store = createScrollCompactionStore({ onApply });
+    const listener = jest.fn();
+    store.subscribe(listener);
+
+    store.acknowledgeCompact(true, store.getResetGeneration());
+
+    expect(store.getIsCompact()).toBe(true);
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(onApply).not.toHaveBeenCalled();
+  });
+
+  it("should drop an acknowledgement computed before the last reset", () => {
     const onApply = jest.fn();
     const store = createScrollCompactionStore({ onApply });
     const staleGeneration = store.getResetGeneration();
     store.reset();
+    onApply.mockClear();
 
-    store.setCompact(true, staleGeneration);
+    store.acknowledgeCompact(true, staleGeneration);
 
     expect(store.getIsCompact()).toBe(false);
-    expect(onApply).toHaveBeenLastCalledWith(false);
+    expect(onApply).not.toHaveBeenCalled();
   });
 });

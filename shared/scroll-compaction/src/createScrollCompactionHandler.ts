@@ -18,14 +18,15 @@ export function createScrollCompactionHandler(store: ScrollCompactionStore) {
   let tracking = INITIAL_SCROLL_COMPACTION_TRACKING;
 
   return ({ nativeEvent }: { readonly nativeEvent: ScrollMetrics }) => {
+    const wasCompact = store.getIsCompact();
     const resetGeneration = store.getResetGeneration();
     const { isCompact, ...nextTracking } = getNextScrollCompaction(tracking, {
       offset: nativeEvent.contentOffset.y,
       maxOffset: nativeEvent.contentSize.height - nativeEvent.layoutMeasurement.height,
-      isCompact: store.getIsCompact(),
+      isCompact: wasCompact,
       resetGeneration,
     });
     tracking = nextTracking;
-    store.setCompact(isCompact, resetGeneration);
+    if (isCompact !== wasCompact) store.setCompact(isCompact);
   };
 }

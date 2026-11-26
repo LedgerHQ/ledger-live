@@ -27,7 +27,9 @@ import {
 import { scrollToTopEvent } from "./scrollToTopEvent";
 import { resetTabBarDensity, useIsTabBarCompact } from "./tabBarDensityStore";
 
-type UseMainTabBarViewModelParams = Pick<BottomTabBarProps, "state" | "navigation">;
+type UseMainTabBarViewModelParams = Pick<BottomTabBarProps, "state" | "navigation"> & {
+  readonly hideTabBar?: boolean;
+};
 
 type UseMainTabBarViewModelReturn = Pick<
   MainTabBarViewProps,
@@ -69,6 +71,7 @@ function handleScrollToTop(activeRouteName: string) {
 export const useMainTabBarViewModel = ({
   state,
   navigation,
+  hideTabBar = false,
 }: UseMainTabBarViewModelParams): UseMainTabBarViewModelReturn => {
   const activeRouteName = state.routes[state.index].name;
   const { t } = useTranslation();
@@ -81,6 +84,14 @@ export const useMainTabBarViewModel = ({
     previousRouteName.current = activeRouteName;
     resetTabBarDensity();
   }, [activeRouteName]);
+
+  // A screen that hides the bar can still scroll and compact it, so it reappears expanded.
+  const wasTabBarHidden = useRef(hideTabBar);
+  useEffect(() => {
+    const isShownAgain = wasTabBarHidden.current && !hideTabBar;
+    wasTabBarHidden.current = hideTabBar;
+    if (isShownAgain) resetTabBarDensity();
+  }, [hideTabBar]);
 
   const tabItems: readonly TabItemConfig[] = useMemo(
     () =>
@@ -115,8 +126,8 @@ export const useMainTabBarViewModel = ({
       const targetRoute = state.routes.find(route => route.name === value);
       if (!targetRoute) return;
 
+      resetTabBarDensity();
       if (activeRouteName === value) {
-        resetTabBarDensity();
         handleScrollToTop(activeRouteName);
         return;
       }

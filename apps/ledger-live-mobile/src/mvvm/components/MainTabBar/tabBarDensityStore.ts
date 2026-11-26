@@ -17,6 +17,7 @@ export const tabBarDensity = createScrollCompactionStore({
 export const {
   getIsCompact: getIsTabBarCompact,
   setCompact: setTabBarCompact,
+  acknowledgeCompact: acknowledgeTabBarCompact,
   reset: resetTabBarDensity,
 } = tabBarDensity;
 

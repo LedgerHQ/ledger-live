@@ -3,7 +3,7 @@ import { renderHook, act } from "@tests/test-renderer";
 import { NavigatorName } from "~/const";
 import * as stakeLabelHelpers from "~/helpers/getStakeLabelLocaleBased";
 import { scrollToTopEvent } from "../scrollToTopEvent";
-import { resetTabBarDensity, setTabBarCompact } from "../tabBarDensityStore";
+import { getIsTabBarCompact, resetTabBarDensity, setTabBarCompact } from "../tabBarDensityStore";
 import { useMainTabBarViewModel } from "../useMainTabBarViewModel";
 
 jest.mock("~/helpers/getStakeLabelLocaleBased", () => ({
@@ -230,6 +230,56 @@ describe("useMainTabBarViewModel", () => {
       });
 
       expect(navigation.navigate).toHaveBeenCalledWith(NavigatorName.Earn);
+    });
+
+    it("should expand before navigating when another tab is pressed", () => {
+      const navigation = createNavigation();
+      const { result } = renderHook(() =>
+        useMainTabBarViewModel({ state: createState(0) as never, navigation: navigation as never }),
+      );
+      act(() => setTabBarCompact(true));
+      let densityWhenNavigating: string | undefined;
+      navigation.navigate.mockImplementation(() => {
+        densityWhenNavigating = getIsTabBarCompact() ? "compact" : "expanded";
+      });
+
+      act(() => {
+        result.current.onTabPress(NavigatorName.Earn);
+      });
+
+      expect(densityWhenNavigating).toBe("expanded");
+    });
+
+    it("should expand when the tab bar shows again after a hidden scroll compacted it", () => {
+      let hideTabBar = true;
+      const { result, rerender } = renderHook(() =>
+        useMainTabBarViewModel({
+          state: createState(1) as never,
+          navigation: createNavigation() as never,
+          hideTabBar,
+        }),
+      );
+      act(() => setTabBarCompact(true));
+
+      hideTabBar = false;
+      rerender({});
+
+      expect(result.current.density).toBe("expanded");
+    });
+
+    it("should stay compact while the tab bar stays visible", () => {
+      const { result, rerender } = renderHook(() =>
+        useMainTabBarViewModel({
+          state: createState(1) as never,
+          navigation: createNavigation() as never,
+          hideTabBar: false,
+        }),
+      );
+      act(() => setTabBarCompact(true));
+
+      rerender({});
+
+      expect(result.current.density).toBe("compact");
     });
   });
 });

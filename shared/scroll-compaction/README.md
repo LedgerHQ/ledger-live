@@ -8,7 +8,11 @@ Compacts a bar while the user scrolls down and expands it when they scroll back 
 ## Exports
 
 - `getNextScrollCompaction`: the pure rule, safe to run as a Reanimated worklet. The bar compacts after `SCROLL_COMPACTION_DIRECTION_THRESHOLD` px scrolled in one direction and expands after the same distance up or within `SCROLL_COMPACTION_TOP_OFFSET` px of the top. It ignores the bounce past the content end.
-- `createScrollCompactionStore`: a small external store for the compact state. `reset()` expands the bar and moves to a new reset generation: scroll tracking restarts from the current offset, and updates computed before the reset are dropped. The `onApply` and `onReset` options let the caller mirror the state, for example into Reanimated shared values.
+- `createScrollCompactionStore`: a small external store for the compact state.
+  - `setCompact` is for decisions taken on the store side, such as from a webview.
+  - `acknowledgeCompact` records a decision a mirror already applied, such as a UI-thread worklet. It never writes it back, so a late acknowledgement cannot overwrite a newer decision.
+  - `reset()` expands the bar and moves to a new reset generation. Scroll tracking restarts from the current offset, and acknowledgements computed before the reset are dropped.
+  - The `onApply` and `onReset` options let the caller mirror the state, for example into Reanimated shared values.
 - `createScrollCompactionHandler`: a JS-thread `onScroll` listener for scrollables without a UI-thread scroll handler, such as webviews.
 
 The package has no runtime dependency. Callers bind the store to React with `useSyncExternalStore`.

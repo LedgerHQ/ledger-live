@@ -1,5 +1,6 @@
 import { renderHook, act } from "@tests/test-renderer";
 import {
+  acknowledgeTabBarCompact,
   tabBarDensity,
   resetTabBarDensity,
   setTabBarCompact,
@@ -55,15 +56,24 @@ describe("tabBarDensityStore", () => {
     expect(tabBarResetGenerationOnUI.value).toBe(before + 1);
   });
 
-  it("should drop a compact update computed before the last reset", () => {
+  it("should drop a UI thread acknowledgement computed before the last reset", () => {
     const { result } = renderHook(() => useIsTabBarCompact());
     const staleGeneration = tabBarDensity.getResetGeneration();
     act(() => resetTabBarDensity());
-    tabBarCompactOnUI.value = true;
 
-    act(() => setTabBarCompact(true, staleGeneration));
+    act(() => acknowledgeTabBarCompact(true, staleGeneration));
 
     expect(result.current).toBe(false);
+  });
+
+  it("should not overwrite a newer UI thread decision with a late acknowledgement", () => {
+    const { result } = renderHook(() => useIsTabBarCompact());
+    const generation = tabBarDensity.getResetGeneration();
+    tabBarCompactOnUI.value = false;
+
+    act(() => acknowledgeTabBarCompact(true, generation));
+
+    expect(result.current).toBe(true);
     expect(tabBarCompactOnUI.value).toBe(false);
   });
 });

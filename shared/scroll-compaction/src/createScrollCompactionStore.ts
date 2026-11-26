@@ -1,7 +1,7 @@
 type Listener = () => void;
 
 export type ScrollCompactionStoreOptions = {
-  /** Called with the compact state each time it is applied or restored, e.g. to mirror it on the UI thread. */
+  /** Called when the store decides the compact state itself, e.g. to mirror it on the UI thread. */
   readonly onApply?: (isCompact: boolean) => void;
   readonly onReset?: (resetGeneration: number) => void;
 };
@@ -10,11 +10,12 @@ export type ScrollCompactionStore = {
   readonly subscribe: (listener: Listener) => () => void;
   readonly getIsCompact: () => boolean;
   readonly getResetGeneration: () => number;
+  readonly setCompact: (next: boolean) => void;
   /**
-   * `generation` is the reset generation the update was computed under: an update queued before a
-   * reset is dropped, so it cannot compact again without a new scroll.
+   * Records a state the mirror already applied, without writing it back: a late acknowledgement
+   * must not overwrite a newer mirror decision. Dropped when computed before the last reset.
    */
-  readonly setCompact: (next: boolean, generation?: number) => void;
+  readonly acknowledgeCompact: (next: boolean, generation: number) => void;
   readonly reset: () => void;
 };
 
@@ -26,12 +27,7 @@ export function createScrollCompactionStore({
   let isCompact = false;
   let resetGeneration = 0;
 
-  function setCompact(next: boolean, generation = resetGeneration) {
-    if (generation !== resetGeneration) {
-      onApply?.(isCompact);
-      return;
-    }
-    onApply?.(next);
+  function commit(next: boolean) {
     if (next === isCompact) return;
     isCompact = next;
     listeners.forEach(listener => listener());
@@ -46,11 +42,19 @@ export function createScrollCompactionStore({
     },
     getIsCompact: () => isCompact,
     getResetGeneration: () => resetGeneration,
-    setCompact,
+    setCompact(next) {
+      if (next !== isCompact) onApply?.(next);
+      commit(next);
+    },
+    acknowledgeCompact(next, generation) {
+      if (generation !== resetGeneration) return;
+      commit(next);
+    },
     reset() {
       resetGeneration += 1;
       onReset?.(resetGeneration);
-      setCompact(false);
+      onApply?.(false);
+      commit(false);
     },
   };
 }
