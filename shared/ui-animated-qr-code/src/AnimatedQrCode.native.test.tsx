@@ -1,6 +1,6 @@
 import React from "react";
 import { Text } from "react-native";
-import { act, fireEvent, render, screen } from "@testing-library/react-native";
+import { act, fireEvent, render, screen, userEvent } from "@testing-library/react-native";
 import { triggerHapticFeedback } from "@ledgerhq/lumen-ui-rnative";
 import * as reanimated from "../jest/mocks/react-native-reanimated";
 import { CENTER_POP } from "./animationTimeline";
@@ -114,32 +114,35 @@ describe("AnimatedQrCode", () => {
     expect(badgeStyle()).toMatchObject({ opacity: 1, transform: [{ scale: 1 }] });
   });
 
-  it("calls onPress on a tap", () => {
+  it("calls onPress on a tap", async () => {
+    const user = userEvent.setup();
     const onPress = jest.fn();
     renderQrCode({ onPress });
 
-    fireEvent.press(screen.getByTestId(TEST_ID));
+    await user.press(screen.getByTestId(TEST_ID));
 
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  it("plays its haptic feedback on a tap", () => {
+  it("plays its haptic feedback on a tap", async () => {
+    const user = userEvent.setup();
     renderQrCode({ onPress: jest.fn(), hapticFeedback: "soft" });
 
-    fireEvent.press(screen.getByTestId(TEST_ID));
+    await user.press(screen.getByTestId(TEST_ID));
 
     expect(triggerHapticFeedback).toHaveBeenCalledWith("soft");
   });
 
-  it("plays no haptic feedback on a touch that does not end as a press, without one, or without onPress", () => {
+  it("plays no haptic feedback on a touch that does not end as a press, without one, or without onPress", async () => {
+    const user = userEvent.setup();
     renderQrCode({ onPress: jest.fn(), hapticFeedback: "soft" });
     fireEvent(screen.getByTestId(TEST_ID), "pressIn");
 
     renderQrCode({ onPress: jest.fn(), testID: "other" });
-    fireEvent.press(screen.getByTestId("other"));
+    await user.press(screen.getByTestId("other"));
 
     renderQrCode({ hapticFeedback: "soft", testID: "not-pressable" });
-    fireEvent.press(screen.getByTestId("not-pressable"));
+    await user.press(screen.getByTestId("not-pressable"));
 
     expect(triggerHapticFeedback).not.toHaveBeenCalled();
   });
@@ -157,10 +160,11 @@ describe("AnimatedQrCode", () => {
     expect(screen.queryByRole("button")).toBeNull();
   });
 
-  it("plays the ripple and pops the badge on a confirmed press", () => {
+  it("plays the ripple and pops the badge on a confirmed press", async () => {
+    const user = userEvent.setup();
     renderQrCode({ onPress: jest.fn() });
 
-    fireEvent.press(screen.getByTestId(TEST_ID));
+    await user.press(screen.getByTestId(TEST_ID));
 
     expect(nativeView().props.pressCount).toBe(1);
     expect(popStarts()).toBe(1);
@@ -192,10 +196,11 @@ describe("AnimatedQrCode", () => {
     expect(placeholderStyle()).toMatchObject({ opacity: 1, backgroundColor: "rgb(233,233,233)" });
   });
 
-  it("plays no press while loading", () => {
+  it("plays no press while loading", async () => {
+    const user = userEvent.setup();
     renderQrCode({ animation: "loading", onPress: jest.fn() });
 
-    fireEvent.press(screen.getByTestId(TEST_ID));
+    await user.press(screen.getByTestId(TEST_ID));
 
     expect(nativeView().props.pressCount).toBe(0);
   });
@@ -215,11 +220,12 @@ describe("AnimatedQrCode", () => {
       expect(nativeView().props.animated).toBe(false);
     });
 
-    it("plays nothing on press or on trigger, but still calls onPress", () => {
+    it("plays nothing on press or on trigger, but still calls onPress", async () => {
+      const user = userEvent.setup();
       const onPress = jest.fn();
       const { rerender } = renderQrCode({ onPress });
 
-      fireEvent.press(screen.getByTestId(TEST_ID));
+      await user.press(screen.getByTestId(TEST_ID));
       act(() => rerender({ triggerKey: 1 }));
 
       expect(onPress).toHaveBeenCalledTimes(1);
