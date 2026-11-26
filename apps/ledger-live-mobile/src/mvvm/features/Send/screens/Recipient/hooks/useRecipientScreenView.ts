@@ -11,6 +11,7 @@ import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/re
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
+import { hasTypedMemo } from "@ledgerhq/live-common/flows/send/recipient/utils/hasTypedMemo";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
@@ -240,15 +241,38 @@ export function useRecipientScreenView({
     setPendingSkipMemoRecipient(null);
   }, []);
 
+  const getMemoForAddress = useCallback(
+    (address: string) => (state.recipient?.address === address ? state.recipient.memo : undefined),
+    [state.recipient],
+  );
+
+  const isAddressBlockedByMemo = useCallback(
+    (address: string) => {
+      if (!sendFeatures.hasMemoForRecipient(currency, address)) return false;
+      const memo = getMemoForAddress(address);
+      if (!memo) return false;
+      if (state.transaction.bridgePending) return hasTypedMemo(memo);
+      return state.transaction.status.errors.transaction instanceof Error;
+    },
+    [
+      currency,
+      getMemoForAddress,
+      state.transaction.bridgePending,
+      state.transaction.status.errors.transaction,
+    ],
+  );
+
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
+      if (isAddressBlockedByMemo(address)) return;
+
       const addressRequiresMemo = sendFeatures.hasMemoForRecipient(currency, address);
-      const memoForSelectedAddress =
-        state.recipient?.address === address ? state.recipient.memo : undefined;
+      const memoForSelectedAddress = getMemoForAddress(address);
       const hasFilledMemo = Boolean(
         memoForSelectedAddress &&
         (memoForSelectedAddress.type === "NO_MEMO" || memoForSelectedAddress.value.length > 0),
       );
+
       if (addressRequiresMemo && !hasFilledMemo) {
         if (doNotAskAgainSkipMemo) {
           committedRecipientRef.current = true;
@@ -270,7 +294,14 @@ export function useRecipientScreenView({
       committedRecipientRef.current = true;
       onAddressSelected(address, ensName, true);
     },
-    [currency, doNotAskAgainSkipMemo, markMemoSkipped, onAddressSelected, state.recipient],
+    [
+      currency,
+      doNotAskAgainSkipMemo,
+      getMemoForAddress,
+      isAddressBlockedByMemo,
+      markMemoSkipped,
+      onAddressSelected,
+    ],
   );
 
   const confirmSkipMemoConfirmation = useCallback(() => {
@@ -325,26 +356,36 @@ export function useRecipientScreenView({
 
   const handleContactSelect = useCallback(
     (contact: Contact) => {
+      const selectableAddresses = contact.addresses.filter(
+        ({ address }) => !isAddressBlockedByMemo(address),
+      );
+      if (selectableAddresses.length === 0) return;
       track("button_clicked", {
         button: "contact",
         page: "step recipient",
         myContact: contact.isMe,
-        addressCount: contact.addresses.length,
+        addressCount: selectableAddresses.length,
         flow_session_id: flowSessionId,
         ...getActiveWarningsTrackingProperties(getMessageIds(result.bridgeWarnings, "warning")),
         ...sendFlowTrackingProperties,
       });
-      openPicker(contact);
+      openPicker({ ...contact, addresses: selectableAddresses });
       void trackPage({
         category: "Modal send - select contact address",
         props: {
           ...sendFlowTrackingProperties,
-          addressCount: contact.addresses.length,
+          addressCount: selectableAddresses.length,
           myContact: contact.isMe,
         },
       });
     },
-    [flowSessionId, openPicker, result.bridgeWarnings, sendFlowTrackingProperties],
+    [
+      flowSessionId,
+      isAddressBlockedByMemo,
+      openPicker,
+      result.bridgeWarnings,
+      sendFlowTrackingProperties,
+    ],
   );
 
   const handleUnsupportedNetwork = useCallback(() => {

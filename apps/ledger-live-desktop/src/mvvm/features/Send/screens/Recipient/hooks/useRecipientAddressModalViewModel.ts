@@ -10,6 +10,7 @@ import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/featu
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
 import { pickContactAddressForCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/pickContactAddressForCurrency";
+import { isMemoValidationPending } from "@ledgerhq/live-common/flows/send/recipient/utils/isMemoValidationPending";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
@@ -189,10 +190,11 @@ export function useRecipientAddressModalViewModel({
   const memoDefaultOption = sendFeatures.getMemoDefaultOption(currency);
   const memoMaxLength = sendFeatures.getMemoMaxLength(currency);
 
+  const isStatusOutdated = state.transaction.bridgePending;
   const hasMemoValidationError = useMemo(() => {
-    if (!hasMemo) return false;
+    if (!hasMemo || isStatusOutdated) return false;
     return Boolean(state.transaction.status.errors.transaction);
-  }, [hasMemo, state.transaction.status.errors.transaction]);
+  }, [hasMemo, isStatusOutdated, state.transaction.status.errors.transaction]);
 
   const hasFilledMemo = useMemo(() => {
     if (!hasMemo) return true;
@@ -201,6 +203,14 @@ export function useRecipientAddressModalViewModel({
     if (memo.type === "NO_MEMO") return true;
     return memo.value.length > 0;
   }, [hasMemo, state.recipient?.memo]);
+
+  const isMemoPending = isMemoValidationPending({
+    hasMemo,
+    memo: state.recipient?.memo,
+    bridgePending: state.transaction.bridgePending,
+  });
+  const isRecipientContinuationBlocked =
+    isFamilyRecipientBlocked || isMemoPending || hasMemoValidationError;
 
   // Coming back to this step remounts the screen, which restarts the sanction and
   // bridge validations from scratch. Trust the recipient already stored in the flow
@@ -215,9 +225,9 @@ export function useRecipientAddressModalViewModel({
 
   const continueWithAddress = useCallback(
     (address: string, ensName?: string, contactId?: string) => {
-      // A family notice can block advancing (e.g. Zcash shielded sync not complete).
-      // Refuse to navigate so a private send can't reach amount/signature early.
-      if (isFamilyRecipientBlocked) return;
+      // A family notice (e.g. Zcash shielded sync) or a typed memo that is unvalidated or
+      // invalid blocks every route, since each one carries the memo to amount/signature.
+      if (isRecipientContinuationBlocked) return;
 
       if (hasMemo && !hasFilledMemo) {
         if (doNotAskAgainSkipMemo) {
@@ -236,7 +246,7 @@ export function useRecipientAddressModalViewModel({
       doNotAskAgainSkipMemo,
       hasFilledMemo,
       hasMemo,
-      isFamilyRecipientBlocked,
+      isRecipientContinuationBlocked,
       navigation,
       onAddressSelected,
     ],
@@ -244,6 +254,7 @@ export function useRecipientAddressModalViewModel({
 
   const handleAddressSelect = useCallback(
     (address: string, ensName?: string) => {
+      if (isRecipientContinuationBlocked) return;
       track("button_clicked", {
         button: "send",
         page: "step recipient",
@@ -260,6 +271,7 @@ export function useRecipientAddressModalViewModel({
       activeWarningsTrackingProperties,
       continueWithAddress,
       flowSessionId,
+      isRecipientContinuationBlocked,
       recipientResolution,
       sendFlowTrackingProperties,
       setRecipientResolution,
@@ -268,6 +280,7 @@ export function useRecipientAddressModalViewModel({
 
   const handleContactSelect = useCallback(
     (contact: Contact) => {
+      if (isRecipientContinuationBlocked) return;
       track("button_clicked", {
         button: "contact",
         page: "step recipient",
@@ -302,6 +315,7 @@ export function useRecipientAddressModalViewModel({
       activeWarningsTrackingProperties,
       currency.id,
       flowSessionId,
+      isRecipientContinuationBlocked,
       selectContact,
       sendFlowTrackingProperties,
       setRecipientResolution,
@@ -310,6 +324,7 @@ export function useRecipientAddressModalViewModel({
 
   const handleContactAddressSelect = useCallback(
     (address: ContactAddress, addressRank: number) => {
+      if (isRecipientContinuationBlocked) return;
       track("button_clicked", {
         button: "contact address",
         page: "select contact address",
@@ -331,6 +346,7 @@ export function useRecipientAddressModalViewModel({
       clearSelectedContact,
       continueWithAddress,
       flowSessionId,
+      isRecipientContinuationBlocked,
       mainAccount.currency.id,
       selectedContact?.isMe,
       selectedContact?.id,
@@ -490,7 +506,7 @@ export function useRecipientAddressModalViewModel({
     isContactsFeatureEnabled,
     hasAddressBook,
     addressBookFamilyName: mainAccount.currency.name,
-    isBlocked: isFamilyRecipientBlocked,
+    isBlocked: isRecipientContinuationBlocked,
   });
 
   return {

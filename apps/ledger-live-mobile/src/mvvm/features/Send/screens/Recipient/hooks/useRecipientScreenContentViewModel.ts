@@ -5,6 +5,7 @@ import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { isMemoValidationPending } from "@ledgerhq/live-common/flows/send/recipient/utils/isMemoValidationPending";
 import { useCallback, useEffect, useMemo } from "react";
 import type { KeyboardAvoidingViewProps } from "react-native";
 import { Platform } from "react-native";
@@ -12,6 +13,7 @@ import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackin
 import { shouldUseKeyboardAvoidance } from "~/logic/keyboardVisible";
 import { useMemoViewModel } from "../../../components/Memo/hooks/useMemoViewModel";
 import { useSendFlowTracking } from "../../../context/SendFlowTrackingContext";
+import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useSendFlowMessageTracking } from "../../../hooks/useSendFlowMessageTracking";
 import { getActiveWarningsTrackingProperties } from "../../../utils/tracking";
 import {
@@ -56,6 +58,7 @@ export function useRecipientScreenContentViewModel({
     recipientSupportsDomain,
   });
   const { flowSessionId, setRecipientResolution } = useSendFlowTracking();
+  const { state } = useSendFlowData();
   const sendFlowTrackingProperties = useSendFlowTrackingProperties();
   const trackingProperties = useMemo(
     () => ({
@@ -72,8 +75,14 @@ export function useRecipientScreenContentViewModel({
     address: showMemo ? resolvedAddress : "",
     hasMemo,
   });
-  const hasMemoValidationError = hasMemo && Boolean(memo.memoError);
+  const isStatusOutdated = state.transaction.bridgePending;
+  const hasMemoValidationError = hasMemo && !isStatusOutdated && Boolean(memo.memoError);
   const showMatched = recipient.showMatchedAddress && !hasMemoValidationError;
+  const isMemoPending = isMemoValidationPending({
+    hasMemo: showMemo,
+    memo: memo.memo,
+    bridgePending: state.transaction.bridgePending,
+  });
   const activeWarningsTrackingProperties = useMemo(
     () =>
       getActiveWarningsTrackingProperties(
@@ -85,6 +94,7 @@ export function useRecipientScreenContentViewModel({
   const handleAddressSelect = recipient.handleAddressSelect;
   const handleMatchedAddress = useCallback(
     (address: string, ensName?: string) => {
+      if (isMemoPending || hasMemoValidationError) return;
       track("button_clicked", {
         ...trackingProperties,
         button: "send",
@@ -103,6 +113,8 @@ export function useRecipientScreenContentViewModel({
       activeWarningsTrackingProperties,
       flowSessionId,
       handleAddressSelect,
+      hasMemoValidationError,
+      isMemoPending,
       recipient.recipientResolution,
       setRecipientResolution,
       trackingProperties,
@@ -210,6 +222,7 @@ export function useRecipientScreenContentViewModel({
     onAddContact: handleAddContact,
     onUnsupportedNetwork: recipient.handleUnsupportedNetwork,
     onDismissUnsupportedNetwork: recipient.handleDismissUnsupportedNetwork,
+    isBlocked: isMemoPending,
   });
 
   useEffect(() => {

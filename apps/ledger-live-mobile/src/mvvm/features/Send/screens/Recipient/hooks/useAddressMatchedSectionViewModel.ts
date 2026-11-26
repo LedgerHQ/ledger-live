@@ -25,6 +25,7 @@ type UseAddressMatchedSectionViewModelProps = Readonly<{
   onAddContact?: () => void;
   onUnsupportedNetwork?: () => void;
   onDismissUnsupportedNetwork?: () => void;
+  isBlocked?: boolean;
 }>;
 
 type AddressListItemSuggestion = Readonly<{
@@ -77,7 +78,39 @@ export type AddressMatchedSectionViewModel = Readonly<{
   showFirstInteractionWarning: boolean;
 }>;
 
-export function useAddressMatchedSectionViewModel({
+/**
+ * Keeps the matched address visible but disables its send/select actions, so the user
+ * can't advance while something still blocks the recipient step (e.g. memo validation).
+ */
+function applyRecipientBlock(
+  viewModel: AddressMatchedSectionViewModel,
+  isBlocked: boolean,
+): AddressMatchedSectionViewModel {
+  if (!isBlocked || !viewModel.suggestion) {
+    return viewModel;
+  }
+
+  switch (viewModel.suggestion.kind) {
+    case "recipient-card":
+      return { ...viewModel, suggestion: { ...viewModel.suggestion, isReady: false } };
+    case "matched-ledger-accounts":
+      return { ...viewModel, suggestion: { ...viewModel.suggestion, isDisabled: true } };
+    case "address-list-item":
+      return {
+        ...viewModel,
+        suggestion: { ...viewModel.suggestion, disabled: true, onSelect: undefined },
+      };
+  }
+}
+
+export function useAddressMatchedSectionViewModel(
+  props: UseAddressMatchedSectionViewModelProps,
+): AddressMatchedSectionViewModel {
+  const viewModel = useAddressMatchedSectionViewModelInternal(props);
+  return applyRecipientBlock(viewModel, props.isBlocked ?? false);
+}
+
+function useAddressMatchedSectionViewModelInternal({
   searchResult,
   searchValue,
   onSelect,

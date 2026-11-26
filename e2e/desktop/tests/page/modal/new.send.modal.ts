@@ -19,6 +19,7 @@ type Eip1559CustomFeesOptions = {
 };
 
 const NUMERIC_INPUT_VALUE = /^\d+([.,]\d+)?$/;
+const BLOCKED_ROW_CLASS = /cursor-not-allowed/;
 
 export class NewSendModal extends Modal {
   readonly dialog = this.page.getByRole("dialog");
@@ -190,6 +191,7 @@ export class NewSendModal extends Modal {
       ? this.matchedAddressButtons.filter({ hasText: label }).first()
       : this.matchedAddressButtons.first();
 
+    await expect(button).not.toHaveClass(BLOCKED_ROW_CLASS);
     await button.click();
   }
 
@@ -245,7 +247,7 @@ export class NewSendModal extends Modal {
     const row = this.matchedAddressButtons.filter({ hasText: label });
     await expect(row).toHaveCount(1);
     // A bridge error still renders the row, with the click removed and this class applied.
-    await expect(row).not.toHaveClass(/cursor-not-allowed/);
+    await expect(row).not.toHaveClass(BLOCKED_ROW_CLASS);
   }
 
   @step("Verify recipient validation error: $0")

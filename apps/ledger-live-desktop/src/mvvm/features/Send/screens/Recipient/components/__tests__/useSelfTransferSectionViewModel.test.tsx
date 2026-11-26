@@ -17,8 +17,12 @@ const mockSetRecipient = jest.fn();
 
 type MockState = {
   account: { account: { id: string; type: string; currency: unknown } | null };
-  transaction: { transaction: { id: string; sender?: string } | null };
-  recipient: { address: string; memo?: { value: string } } | null;
+  transaction: {
+    transaction: { id: string; sender?: string } | null;
+    bridgePending: boolean;
+    status: { errors: { transaction?: Error } };
+  };
+  recipient: { address: string; memo?: { value: string; type?: string } } | null;
 };
 
 let mockState: MockState;
@@ -40,10 +44,11 @@ jest.mock("../../../../context/RecipientContinuationContext", () => ({
 // The send descriptor is the only source of the destination pool; the view model must
 // never derive it from a coin-module.
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
-  sendFeatures: { getBalanceTypeConfig: jest.fn() },
+  sendFeatures: { getBalanceTypeConfig: jest.fn(), hasMemoForRecipient: jest.fn() },
 }));
 
 const mockedGetBalanceTypeConfig = jest.mocked(sendFeatures.getBalanceTypeConfig);
+const mockedHasMemoForRecipient = jest.mocked(sendFeatures.hasMemoForRecipient);
 const mockedUseRecipientContinuation = jest.mocked(useRecipientContinuation);
 
 const SHIELDED_TARGET: BalanceTypeSelfTransferTarget = {
@@ -80,6 +85,7 @@ describe("useSelfTransferSectionViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     stubBalanceTypeConfig(SHIELDED_TARGET);
+    mockedHasMemoForRecipient.mockReturnValue(true);
     mockedUseRecipientContinuation.mockReturnValue({
       isFamilyRecipientBlocked: false,
       setFamilyRecipientBlocked: jest.fn(),
@@ -87,7 +93,11 @@ describe("useSelfTransferSectionViewModel", () => {
 
     mockState = {
       account: { account: { id: "zcash-acc", type: "Account", currency: { id: "zcash" } } },
-      transaction: { transaction: { id: "tx1", sender: "public" } },
+      transaction: {
+        transaction: { id: "tx1", sender: "public" },
+        bridgePending: false,
+        status: { errors: {} },
+      },
       recipient: null,
     };
   });
@@ -155,5 +165,53 @@ describe("useSelfTransferSectionViewModel", () => {
 
     expect(mockSetRecipient).not.toHaveBeenCalled();
     expect(mockGoToNextStep).not.toHaveBeenCalled();
+  });
+
+  describe("with a memo typed for the previous recipient", () => {
+    beforeEach(() => {
+      mockState.recipient = { address: "u1typed", memo: { value: "note", type: "MEMO_TEXT" } };
+    });
+
+    it("blocks the shortcut while the memo is being validated", () => {
+      mockState.transaction.bridgePending = true;
+
+      const viewModel = renderViewModel();
+      viewModel?.onSelfTransfer("Private balance");
+
+      expect(viewModel?.isBlocked).toBe(true);
+      expect(mockSetRecipient).not.toHaveBeenCalled();
+      expect(mockGoToNextStep).not.toHaveBeenCalled();
+    });
+
+    it("blocks the shortcut when the memo is invalid", () => {
+      mockState.transaction.status.errors.transaction = new Error("invalid memo");
+
+      const viewModel = renderViewModel();
+      viewModel?.onSelfTransfer("Private balance");
+
+      expect(viewModel?.isBlocked).toBe(true);
+      expect(mockGoToNextStep).not.toHaveBeenCalled();
+    });
+
+    it("ignores the memo when the destination cannot carry one", () => {
+      mockedHasMemoForRecipient.mockReturnValue(false);
+      mockState.transaction.status.errors.transaction = new Error("invalid memo");
+
+      const viewModel = renderViewModel();
+      viewModel?.onSelfTransfer("Public balance");
+
+      expect(mockedHasMemoForRecipient).toHaveBeenCalledWith({ id: "zcash" }, "u1shielded");
+      expect(viewModel?.isBlocked).toBe(false);
+      expect(mockSetRecipient).toHaveBeenCalledWith(expect.objectContaining({ memo: undefined }));
+      expect(mockGoToNextStep).toHaveBeenCalledTimes(1);
+    });
+
+    it("keeps the shortcut available once the memo is validated", () => {
+      const viewModel = renderViewModel();
+      viewModel?.onSelfTransfer("Private balance");
+
+      expect(viewModel?.isBlocked).toBe(false);
+      expect(mockGoToNextStep).toHaveBeenCalledTimes(1);
+    });
   });
 });

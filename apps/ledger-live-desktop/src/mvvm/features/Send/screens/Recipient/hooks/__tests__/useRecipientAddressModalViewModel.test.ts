@@ -17,7 +17,7 @@ import {
   createMockCurrency,
   createMockTokenCurrency,
 } from "../../__integrations__/__fixtures__/accounts";
-import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
+import type { Memo, SendFlowState } from "@ledgerhq/live-common/flows/send/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
@@ -124,6 +124,41 @@ function createAddressSearchResult(
     matchedRecentAddress: undefined,
     ...overrides,
   };
+}
+
+function mockMemoState({
+  bridgePending,
+  transactionError,
+  memo = { value: "invalid-memo", type: "MEMO_TEXT" },
+}: {
+  bridgePending: boolean;
+  transactionError?: Error;
+  memo?: Memo;
+}) {
+  mockedSendFeatures.hasMemoForRecipient.mockReturnValue(true);
+  mockedUseSendFlowData.mockReturnValue({
+    recipientSearch: mockRecipientSearch,
+    state: {
+      recipient: { address: "new_address", memo },
+      transaction: {
+        bridgePending,
+        status: { errors: transactionError ? { transaction: transactionError } : {} },
+      },
+    } as unknown as SendFlowState,
+    uiConfig: {} as never,
+    isRecipientAddressComplete: false,
+  });
+}
+
+function renderViewModel(onAddressSelected: jest.Mock) {
+  return renderHook(() =>
+    useRecipientAddressModalViewModel({
+      account: mockAccount,
+      currency: mockAccount.currency,
+      onAddressSelected,
+      recipientSupportsDomain: true,
+    }),
+  );
 }
 
 describe("useRecipientAddressModalViewModel", () => {
@@ -777,6 +812,207 @@ describe("useRecipientAddressModalViewModel", () => {
 
     expect(onAddressSelected).not.toHaveBeenCalled();
     expect(goToStep).not.toHaveBeenCalled();
+  });
+
+  describe("while a typed memo is being validated", () => {
+    it("blocks the matched address and does not advance while validation is pending", () => {
+      const onAddressSelected = jest.fn();
+      mockMemoState({ bridgePending: true });
+
+      const { result } = renderViewModel(onAddressSelected);
+      act(() => result.current.handleAddressSelect("new_address"));
+
+      expect(onAddressSelected).not.toHaveBeenCalled();
+      expect(mockedUseAddressMatchedSectionViewModel).toHaveBeenLastCalledWith(
+        expect.objectContaining({ isBlocked: true }),
+      );
+    });
+
+    it("does not advance when the memo is invalid", () => {
+      const onAddressSelected = jest.fn();
+      mockMemoState({ bridgePending: false, transactionError: new Error("invalid memo") });
+
+      const { result } = renderViewModel(onAddressSelected);
+      act(() => result.current.handleAddressSelect("new_address"));
+
+      expect(onAddressSelected).not.toHaveBeenCalled();
+    });
+
+    it("keeps the matched address shown and blocked while a typed memo replaces an invalid one", () => {
+      const onAddressSelected = jest.fn();
+      mockMemoState({ bridgePending: true, transactionError: new Error("invalid memo") });
+
+      const { result } = renderViewModel(onAddressSelected);
+      act(() => result.current.handleAddressSelect("new_address"));
+
+      expect(result.current.hasMemoValidationError).toBe(false);
+      expect(onAddressSelected).not.toHaveBeenCalled();
+      expect(mockedUseAddressMatchedSectionViewModel).toHaveBeenLastCalledWith(
+        expect.objectContaining({ isBlocked: true }),
+      );
+    });
+
+    it("does not advance with an empty memo the recipient requires", () => {
+      const onAddressSelected = jest.fn();
+      mockMemoState({
+        bridgePending: false,
+        transactionError: new Error("memo required"),
+        memo: { value: "", type: "MEMO_TEXT" },
+      });
+
+      const { result } = renderViewModel(onAddressSelected);
+      act(() => result.current.handleAddressSelect("new_address"));
+
+      expect(result.current.hasMemoValidationError).toBe(true);
+      expect(onAddressSelected).not.toHaveBeenCalled();
+      expect(goToStep).not.toHaveBeenCalled();
+    });
+
+    it("asks to skip a cleared memo while the previous memo error is still set", () => {
+      const onAddressSelected = jest.fn();
+      mockMemoState({
+        bridgePending: true,
+        transactionError: new Error("invalid memo"),
+        memo: { value: "", type: "MEMO_TEXT" },
+      });
+
+      const { result } = renderViewModel(onAddressSelected);
+      act(() => result.current.handleAddressSelect("new_address"));
+
+      expect(goToStep).toHaveBeenCalledWith("SKIP_MEMO_CONFIRMATION");
+      expect(result.current.hasMemoValidationError).toBe(false);
+    });
+
+    it("advances with a skipped memo while the previous memo error is still set", () => {
+      const onAddressSelected = jest.fn();
+      mockMemoState({
+        bridgePending: true,
+        transactionError: new Error("invalid memo"),
+        memo: { value: "", type: "NO_MEMO" },
+      });
+
+      const { result } = renderViewModel(onAddressSelected);
+      act(() => result.current.handleAddressSelect("new_address"));
+
+      expect(onAddressSelected).toHaveBeenCalledWith(
+        "new_address",
+        undefined,
+        true,
+        undefined,
+        undefined,
+      );
+    });
+
+    it("advances once the memo is validated", () => {
+      const onAddressSelected = jest.fn();
+      mockMemoState({ bridgePending: false });
+
+      const { result } = renderViewModel(onAddressSelected);
+      act(() => result.current.handleAddressSelect("new_address"));
+
+      expect(onAddressSelected).toHaveBeenCalledWith(
+        "new_address",
+        undefined,
+        true,
+        undefined,
+        undefined,
+      );
+      expect(mockedUseAddressMatchedSectionViewModel).toHaveBeenLastCalledWith(
+        expect.objectContaining({ isBlocked: false }),
+      );
+    });
+
+    describe("through a contact", () => {
+      const contact = mockContact({
+        addresses: [
+          mockContactAddress({ id: "address-1", address: "0x123" }),
+          mockContactAddress({ id: "address-2", address: "0x456" }),
+        ],
+      });
+
+      it.each([
+        ["validation is pending", { bridgePending: true }],
+        [
+          "the memo is invalid",
+          { bridgePending: false, transactionError: new Error("invalid memo") },
+        ],
+      ])("does not advance from a contact while %s", (_label, memoState) => {
+        const onAddressSelected = jest.fn();
+        mockMemoState(memoState);
+        const { result } = renderViewModel(onAddressSelected);
+
+        act(() =>
+          result.current.handleContactSelect(
+            mockContact({ addresses: [mockContactAddress({ address: "0x123" })] }),
+          ),
+        );
+
+        expect(onAddressSelected).not.toHaveBeenCalled();
+      });
+
+      it.each([
+        ["validation is pending", { bridgePending: true }],
+        [
+          "the memo is invalid",
+          { bridgePending: false, transactionError: new Error("invalid memo") },
+        ],
+      ])("does not advance from a contact address while %s", (_label, memoState) => {
+        const onAddressSelected = jest.fn();
+        mockMemoState(memoState);
+        const clearSelectedContact = jest.fn();
+        mockedUseRecipientContactSelection.mockReturnValue({
+          selectedContact: contact,
+          selectContact: jest.fn(),
+          clearSelectedContact,
+        });
+        const { result } = renderViewModel(onAddressSelected);
+
+        act(() => result.current.handleContactAddressSelect(contact.addresses[1], 2));
+
+        expect(onAddressSelected).not.toHaveBeenCalled();
+        expect(clearSelectedContact).not.toHaveBeenCalled();
+      });
+
+      it("advances from a contact once the memo is validated", () => {
+        const onAddressSelected = jest.fn();
+        mockMemoState({ bridgePending: false });
+        const singleAddressContact = mockContact({
+          addresses: [mockContactAddress({ address: "0x123" })],
+        });
+        const { result } = renderViewModel(onAddressSelected);
+
+        act(() => result.current.handleContactSelect(singleAddressContact));
+
+        expect(onAddressSelected).toHaveBeenCalledWith(
+          "0x123",
+          undefined,
+          true,
+          undefined,
+          singleAddressContact.id,
+        );
+      });
+
+      it("advances from a contact address once the memo is validated", () => {
+        const onAddressSelected = jest.fn();
+        mockMemoState({ bridgePending: false });
+        mockedUseRecipientContactSelection.mockReturnValue({
+          selectedContact: contact,
+          selectContact: jest.fn(),
+          clearSelectedContact: jest.fn(),
+        });
+        const { result } = renderViewModel(onAddressSelected);
+
+        act(() => result.current.handleContactAddressSelect(contact.addresses[1], 2));
+
+        expect(onAddressSelected).toHaveBeenCalledWith(
+          "0x456",
+          undefined,
+          true,
+          undefined,
+          contact.id,
+        );
+      });
+    });
   });
 
   it("asks for confirmation before sending without a memo", () => {
