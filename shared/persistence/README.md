@@ -40,7 +40,8 @@ step from the previous version. `.next` returns new versions and does not change
   result. A step that throws gives a `RecordDecodeError`.
 - The encode writes the bare value at v0, and `{ $v: latest, data }` after v0.
 
-No error message contains the stored value.
+No error message contains a stored value or key: a schema mismatch gives the zod issue codes only,
+with no path.
 
 ## Tests
 

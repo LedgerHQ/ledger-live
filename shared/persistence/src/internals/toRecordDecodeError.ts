@@ -2,7 +2,7 @@ import type { z } from "zod";
 import { RecordDecodeError } from "../errors";
 
 const describeIssuesWithoutValues = (issues: ReadonlyArray<z.core.$ZodIssue>): string =>
-  issues.map(issue => `${issue.path.join(".") || "(root)"}: ${issue.code}`).join(", ");
+  Array.from(new Set(issues.map(issue => issue.code))).join(", ");
 
 export const toRecordDecodeError = (
   key: string,

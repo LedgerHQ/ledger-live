@@ -149,3 +149,38 @@ describe("a step that fails", () => {
     expect(() => versions.decode({ theme: "dark" }, KEY)).toThrow(RecordDecodeError);
   });
 });
+
+const decodeMessage = (codes: string) =>
+  `Stored value of record "${KEY}" v0 does not match its schema: ${codes}`;
+
+describe("a decode error message", () => {
+  const accountId = "js:2:ethereum:0x71C7656EC7ab88b098defB751B7401B5f6d8976F:";
+
+  it("should leave out the dictionary key when a dictionary value is invalid", () => {
+    const versions = recordVersions(z => z.record(z.string(), z.number()));
+
+    const error = caught(() => versions.decode({ [accountId]: "1", other: "2" }, KEY));
+
+    expect(error).toBeInstanceOf(RecordDecodeError);
+    expect(error).toHaveProperty("message", decodeMessage("invalid_type"));
+    expect(String(error)).not.toContain(accountId);
+  });
+
+  it("should leave out the dictionary key when the key does not match its schema", () => {
+    const versions = recordVersions(z => z.record(z.string().startsWith("js:"), z.number()));
+
+    const error = caught(() => versions.decode({ [`legacy:${accountId}`]: 1 }, KEY));
+
+    expect(error).toHaveProperty("message", decodeMessage("invalid_key"));
+    expect(String(error)).not.toContain(accountId);
+  });
+
+  it("should leave out the unknown key when a strict object has an unknown key", () => {
+    const versions = recordVersions(z => z.strictObject({ theme: z.string() }));
+
+    const error = caught(() => versions.decode({ theme: "dark", [accountId]: true }, KEY));
+
+    expect(error).toHaveProperty("message", decodeMessage("unrecognized_keys"));
+    expect(String(error)).not.toContain(accountId);
+  });
+});
