@@ -90,6 +90,22 @@ still count the Debug value with react-native-startup-time.
 Pairs are even and at least 6, half before and half after the device swap; fewer give no 95%
 interval.
 
+A run from develop gets develop's identity (OIDC): its build jobs hold it for JFrog, the develop
+cache role trusts it, and the run caches what they build (see "The cache"). So it builds only:
+
+- develop, release, main and hotfix, which only a merged pull request changes, besides the release
+  bot's commits (a hotfix check: `prod-vs-release` with `ref_b: hotfix`);
+- `live-mobile@X.Y.Z` tags whose commit is on main, or is the release bot's (`live-github-bot`)
+  hotfix release commit, committed and signed by GitHub, which a released hotfix's tag is on and
+  which stays off main's history. No rule protects the tags, so the plan checks this through the
+  GitHub API, for A, B and the accounts snapshot's release, whose E2E app
+  `build-snapshot-<platform>` builds. The bot also commits on Renovate branches, hence the commit
+  message. A call that fails with a network error, a rate limit (429, or 403 with no request left)
+  or a 5xx is tried again twice.
+
+To measure another branch, run the workflow from that branch: a run from any other branch gets the
+branch cache role, builds any ref and saves nothing.
+
 ## The build
 
 The E2E "production Firebase" build (`.env.mock.prerelease`): `detoxPreRelease` x86_64 APK on
