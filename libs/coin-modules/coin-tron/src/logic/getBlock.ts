@@ -1,5 +1,6 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import type {
+  AssetInfo,
   Block,
   BlockInfo,
   BlockOperation,
@@ -22,6 +23,7 @@ import {
   decodeTrc20TransferLog,
 } from "../network/utils";
 import type { TrongridTxInfo, TrongridTxType } from "../types";
+import { readInternalTransfers } from "./internalTransfers";
 
 type BlockTxInfo = TrongridTxInfo;
 
@@ -102,18 +104,44 @@ function toBlockTransaction(
   if (!txInfo) return null;
 
   const fee = txDetail?.fee ?? tx.ret?.[0]?.fee ?? 0;
+  const operations = toTransactionOperations(
+    txInfo,
+    tx.raw_data.contract[0]?.parameter.value.data,
+    txDetail,
+  );
+
+  // TRX (or TRC10) a contract sends during the call — a DEX payout, an exchange withdrawal, a
+  // refund — appears in neither `raw_data` nor the event logs, only in the receipt's internal
+  // transactions. A failed transaction reverts all of them, so they are only read for a success.
+  const internalOperations = txInfo.hasFailed ? [] : toInternalTransferOperations(logger, txDetail);
 
   return {
     hash: txInfo.txID,
     failed: txInfo.hasFailed,
     fees: BigInt(fee),
     feesPayer: txInfo.from,
-    operations: toTransactionOperations(
-      txInfo,
-      tx.raw_data.contract[0]?.parameter.value.data,
-      txDetail,
-    ),
+    operations: [...operations, ...internalOperations],
   };
+}
+
+/**
+ * The debit/credit pair of every value a contract moved during the transaction. No fee is
+ * attached: the transaction's fee payer already pays for the whole execution.
+ */
+function toInternalTransferOperations(
+  logger: Logger,
+  txDetail: TransactionInfoByBlockNumAPI | undefined,
+): BlockOperation[] {
+  return readInternalTransfers(logger, txDetail).flatMap(({ from, to, amount, tokenId }) => {
+    // A `tokenId` names the TRC10 token moved; without one the value is TRX.
+    const asset: AssetInfo = tokenId
+      ? { type: "trc10", assetReference: tokenId }
+      : { type: "native" };
+    return [
+      { type: "transfer" as const, address: from, peer: to, asset, amount: -amount },
+      { type: "transfer" as const, address: to, peer: from, asset, amount },
+    ];
+  });
 }
 
 function toTransactionOperations(

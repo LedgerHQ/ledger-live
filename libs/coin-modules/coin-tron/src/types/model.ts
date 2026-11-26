@@ -64,6 +64,12 @@ export type TrongridTxInfo = {
   memo?: string;
   senders?: string[];
   recipients?: string[];
+  /**
+   * Set on a value a contract moved during transaction `txID` (an internal transaction), to its
+   * position in the transaction's receipt. Such a transfer is not the transaction itself: it
+   * carries no fee and must not share the transaction's operation id.
+   */
+  internalIndex?: number;
 };
 
 export type TrongridExtraTxInfo = {

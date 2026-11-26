@@ -53,8 +53,10 @@ import { abiEncodeTrc20Transfer, hexToAscii, trc20ContractAddressFromLogs } from
 const getBaseApiUrl = (config: TronCoinConfig): string => config.explorer.url;
 
 function isValidNativeTx(tx: TransactionTronAPI): boolean {
-  // tx_id indicates a malformed/duplicated entry from TronGrid — these must be excluded.
-  // Transactions with internal_transactions are valid and should be included.
+  // tx_id indicates a malformed/duplicated entry from TronGrid — these must be excluded. TronGrid's
+  // internal-transaction entries (`tx_id` with no `txID`) never reach here: `isTransactionTronAPI`
+  // drops them first, and the TRX contracts move is read from the receipts of the page's contract
+  // calls instead (see `TxEndpointPage.contractCalls`).
   return !tx.tx_id;
 }
 
@@ -65,6 +67,10 @@ function formatTronError(error: unknown): string {
 
 function isSuccessfulTriggerSmartContract(tx: TrongridTxInfo): boolean {
   return tx.type === "TriggerSmartContract" && !tx.hasFailed;
+}
+
+function isSuccessfulContractCall(tx: TrongridTxInfo): boolean {
+  return (tx.type === "TriggerSmartContract" || tx.type === "CreateSmartContract") && !tx.hasFailed;
 }
 
 const BROADCAST_ENDPOINTS_NEVER_RESENT = new Set([
@@ -777,6 +783,12 @@ export type TxEndpoint = "native" | "trc20";
 export type TxEndpointPage = {
   rawTimestamps: number[];
   txs: TrongridTxInfo[];
+  /**
+   * The successful smart contract calls of the page, whether or not they are in `txs`: their
+   * receipts hold the TRX (or TRC10) the called contracts moved, which TronGrid's account
+   * endpoints never list. Absent means none.
+   */
+  contractCalls?: TrongridTxInfo[];
   next?: string;
 };
 
@@ -803,9 +815,11 @@ async function toNativePage(
         formatTrongridTxResponse(logger, tx, addr => accountNamesCache(logger, config, addr)),
       ),
   );
+  const txs = compact(formatted);
   return {
     rawTimestamps: results.map(tx => tx.block_timestamp),
-    txs: compact(formatted).filter(tx => !isSuccessfulTriggerSmartContract(tx)),
+    txs: txs.filter(tx => !isSuccessfulTriggerSmartContract(tx)),
+    contractCalls: txs.filter(isSuccessfulContractCall),
     next,
   };
 }
@@ -816,13 +830,13 @@ async function toTrc20Page(
   results: Trc20API[],
   next: string | undefined,
 ): Promise<TxEndpointPage> {
+  const txs = compact(results.map(tx => formatTrongridTrc20TxResponse(logger, tx)));
   return {
     rawTimestamps: results.map(tx => tx.block_timestamp),
-    txs: await resolveMissingTokenAddresses(
-      logger,
-      config,
-      compact(results.map(tx => formatTrongridTrc20TxResponse(logger, tx))),
-    ),
+    txs: await resolveMissingTokenAddresses(logger, config, txs),
+    // Every TRC20 record is a successful contract call — TronGrid only lists those — and the same
+    // call may pay TRX on top of the tokens, to this account or from it.
+    contractCalls: txs,
     next,
   };
 }
