@@ -28,13 +28,11 @@
   "peerDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
     "react": ">=19.0.0",
-    "react-redux": ">=9.0.0",
     "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@reduxjs/toolkit": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
@@ -50,7 +48,6 @@
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-redux": "catalog:",
     "rxjs": "catalog:",
     "typescript": "catalog:"
   }
