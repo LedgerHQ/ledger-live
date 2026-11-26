@@ -36,6 +36,8 @@
     "**/*.d.ts",
     "**/.eslintrc.guardrails.js",
     "**/.eslintrc.i18n.js",
+    "**/__spike_fixture__.ts",
+    "**/coin-families-spike.js",
     ".agents/**",
     ".koda/**"
   ],
