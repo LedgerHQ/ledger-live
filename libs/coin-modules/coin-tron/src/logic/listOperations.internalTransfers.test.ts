@@ -96,7 +96,8 @@ function nativeBalanceOf(operations: Operation[], address: string): bigint {
   const feesPaidByTx = new Map<string, bigint>();
   let moved = 0n;
   for (const { type, value, asset, tx } of operations) {
-    if (tx.feesPayer === address) feesPaidByTx.set(tx.hash, tx.fees);
+    // A transaction's fee is on one of its operations; the others, internal ones included, carry 0.
+    if (tx.feesPayer === address && tx.fees > 0n) feesPaidByTx.set(tx.hash, tx.fees);
     if (asset.type !== "native" || tx.failed) continue;
     if (type === "IN") moved += value;
     if (type === "OUT") moved -= value;
