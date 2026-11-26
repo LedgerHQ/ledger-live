@@ -72,8 +72,26 @@ type DriveOpts = Readonly<{
 
 type RenderForAccountOptions = Readonly<{
   contactsEnabled?: boolean;
+  contactFamilies?: string[];
   contacts?: State["contacts"]["contacts"];
 }>;
+
+// Contacts only support EVM and Tron today, neither of which has a memo. A test can turn on
+// Stellar contacts to cover reselecting a saved address that carries a memo.
+let mockStellarContactsEligible = false;
+jest.mock("@features/platform-contacts", () => {
+  const actual = jest.requireActual<typeof import("@features/platform-contacts")>(
+    "@features/platform-contacts",
+  );
+  return {
+    ...actual,
+    isEligibleAddressCurrency: (
+      ...args: Parameters<typeof actual.isEligibleAddressCurrency>
+    ): boolean =>
+      (mockStellarContactsEligible && args[1]?.id === "stellar") ||
+      actual.isEligibleAddressCurrency(...args),
+  };
+});
 
 jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () => ({
   useContactsAddressValidationAdapter: () => ({
@@ -190,7 +208,10 @@ describe("Send flow integration tests", () => {
               {
                 lwmContacts: {
                   enabled: true,
-                  params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+                  params: {
+                    newBadge: false,
+                    eligibleAddressFamilies: options.contactFamilies ?? ["evm"],
+                  },
                 },
               },
               withAccount,
@@ -680,6 +701,72 @@ describe("Send flow integration tests", () => {
 
       expect(await screen.findByTestId("send-memo-input")).toBeOnTheScreen();
       expect(screen.queryByText("Review")).toBeNull();
+    });
+
+    it("should bring back an invalid memo when its saved contact is reselected, until it is fixed", async () => {
+      const invalidMemo = "m".repeat(29);
+      const alice = mockContact({
+        id: "contact-alice",
+        name: "Alice",
+        addresses: [
+          mockContactAddress({
+            id: "address-alice-xlm",
+            currencyId: "stellar",
+            label: "Stellar Main",
+            address: VALID_STELLAR_RECIPIENT,
+          }),
+        ],
+      });
+      const bridge = (await getAccountBridge(accountStellar, null)) as unknown as {
+        prepareTransaction: (
+          account: unknown,
+          transaction: Record<string, unknown>,
+        ) => Promise<Record<string, unknown>>;
+      };
+      const originalPrepare = bridge.prepareTransaction;
+      let lastPrepared: Record<string, unknown> | undefined;
+      bridge.prepareTransaction = async (account, tx) => {
+        lastPrepared = await originalPrepare.call(bridge, account, tx);
+        return lastPrepared;
+      };
+
+      mockStellarContactsEligible = true;
+      try {
+        const { user } = renderForAccount(
+          accountStellar,
+          {},
+          { contactsEnabled: true, contactFamilies: ["stellar"], contacts: [alice] },
+        );
+
+        const recipientInput = await screen.findByPlaceholderText(/^Enter address/);
+        await user.paste(recipientInput, VALID_STELLAR_RECIPIENT);
+        await flushTimers();
+        await user.paste(await screen.findByTestId("send-memo-input"), invalidMemo);
+        await flushTimers();
+        expect(await screen.findByText("Memo format is wrong")).toBeVisible();
+
+        await user.clear(recipientInput);
+        await flushTimers();
+        await user.press(await screen.findByTestId("contacts-compact-row-contact-alice"));
+        expect(await screen.findByText("Select Alice's address")).toBeVisible();
+        await user.press(screen.getByLabelText(`Stellar Main, ${VALID_STELLAR_RECIPIENT}`));
+        await flushTimers();
+
+        expect(screen.queryByText("Review")).toBeNull();
+        expect(await screen.findByTestId("send-memo-input")).toHaveDisplayValue(invalidMemo);
+        expect(await screen.findByText("Memo format is wrong")).toBeVisible();
+
+        await user.clear(screen.getByTestId("send-memo-input"));
+        await user.paste(screen.getByTestId("send-memo-input"), MEMO_VALUE);
+        await flushTimers();
+        await user.press(await screen.findByTestId("send-recipient-card-send"));
+
+        expect(await screen.findByText("Review")).toBeVisible();
+        expect(lastPrepared?.memoValue).toBe(MEMO_VALUE);
+      } finally {
+        mockStellarContactsEligible = false;
+        bridge.prepareTransaction = originalPrepare;
+      }
     });
 
     it("should restore the memo field when going back from amount after skipping", async () => {
