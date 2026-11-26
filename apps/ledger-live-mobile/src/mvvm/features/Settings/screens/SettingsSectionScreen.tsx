@@ -6,11 +6,13 @@ import {
   type SettingsHomeSectionId,
 } from "@features/flow-settings";
 import { SettingsScrollView } from "@features/flow-settings/native";
+import { General } from "@features/flow-settings-general/native";
 import { NotificationsSettings } from "@features/flow-settings-notifications";
 import { Security } from "@features/flow-settings-security";
 import type { ScreenName } from "~/const";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { LedgerSyncActivationDrawer } from "../components/LedgerSyncActivationDrawer";
 import { useSettingsRowsToHide } from "../hooks/useSettingsRowsToHide";
 import { MobileSettingsPortProvider } from "../MobileSettingsPortProvider";
 import { useNotificationsSettingsAdapter } from "../sections/notifications";
@@ -31,6 +33,15 @@ function NotificationsSection() {
 
 function SectionContent({ section }: Readonly<{ section: SettingsHomeSectionId }>) {
   switch (section) {
+    case "general":
+      return (
+        <Box lx={{ paddingHorizontal: "s8" }}>
+          <MobileSettingsPortProvider>
+            <General testID="settings-general" />
+            <LedgerSyncActivationDrawer />
+          </MobileSettingsPortProvider>
+        </Box>
+      );
     case "security":
       return (
         <Box lx={{ paddingHorizontal: "s8" }}>

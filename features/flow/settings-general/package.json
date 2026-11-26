@@ -12,6 +12,7 @@
       "default": "./src/index.ts"
     },
     "./web": "./src/web/index.web.ts",
+    "./native": "./src/native/index.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -52,7 +53,8 @@
   },
   "dependencies": {
     "@features/flow-settings": "workspace:*",
-    "@shared/i18n": "workspace:*"
+    "@shared/i18n": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",

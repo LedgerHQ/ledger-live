@@ -1,6 +1,6 @@
 import React from "react";
 import { trackPage } from "@shared/analytics";
-import { render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import { renderWithReactQuery, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import SettingsNavigator from "~/components/RootNavigator/SettingsNavigator";
 
 jest.mock("@react-native-firebase/app", () => ({
@@ -22,7 +22,7 @@ const LEGACY_GENERAL_CARD = "Configure general Ledger Wallet settings.";
 const getNavBarTitle = () => screen.getAllByTestId("navigation-header-title")[0];
 
 function renderSettings(isSettingsHomeEnabled: boolean) {
-  return render(<SettingsNavigator />, {
+  return renderWithReactQuery(<SettingsNavigator />, {
     overrideInitialState: withFlagOverrides({ newSettings: { enabled: isSettingsHomeEnabled } }),
   });
 }
@@ -115,7 +115,7 @@ describe("Settings home developer tools", () => {
   });
 
   function renderSettingsHome({ isDebugUnlocked }: Readonly<{ isDebugUnlocked: boolean }>) {
-    return render(<SettingsNavigator />, {
+    return renderWithReactQuery(<SettingsNavigator />, {
       overrideInitialState: withFlagOverrides({ newSettings: { enabled: true } }, state => ({
         ...state,
         appstate: { ...state.appstate, debugMenuVisible: isDebugUnlocked },
