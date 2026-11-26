@@ -251,4 +251,15 @@ describe("ReceiveAddress (Native)", () => {
     expect(await screen.findByTestId("receive-address-error")).toBeTruthy();
     expect(screen.getByTestId("receive-address-help-card")).toBeTruthy();
   });
+
+  it("opens the memo bottom sheet from its card", async () => {
+    const receive = jest.fn(async () => mockAccountReceive({ memo: { type: "tag" } }));
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
+
+    fireEvent.press(await screen.findByTestId("receive-address-memo-card"));
+    expect(screen.getByTestId("receive-address-memo-panel")).toBeTruthy();
+
+    fireEvent.press(screen.getByText("Got it"));
+    expect(screen.queryByTestId("receive-address-memo-panel")).toBeNull();
+  });
 });

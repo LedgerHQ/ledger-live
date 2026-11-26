@@ -10,6 +10,7 @@ import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
 import { HelpPanel } from "./components/HelpPanel";
+import { MemoPanel } from "./components/MemoPanel";
 import { ReceiveAddressTitle } from "./components/ReceiveAddressTitle";
 import { Dimmed } from "./components/Dimmed";
 import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
@@ -32,6 +33,8 @@ export function ReceiveAddressView({
   serviceStatus,
   helpCard,
   helpPanel,
+  memoCard,
+  memoPanel,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -137,13 +140,14 @@ export function ReceiveAddressView({
               </>
             )}
             <Dimmed isDimmed={isHintOpen}>
-              <ReceiveAddressExtras helpCard={helpCard} />
+              <ReceiveAddressExtras memoCard={memoCard} helpCard={helpCard} />
             </Dimmed>
           </Box>
         </ScrollView>
       )}
       {serviceStatus ? <ServiceStatusPanel serviceStatus={serviceStatus} /> : null}
       {helpPanel ? <HelpPanel helpPanel={helpPanel} /> : null}
+      {memoPanel ? <MemoPanel memoPanel={memoPanel} /> : null}
     </Box>
   );
 }

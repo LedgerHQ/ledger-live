@@ -7,6 +7,7 @@ import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
 import { HelpPanel } from "./components/HelpPanel";
+import { MemoPanel } from "./components/MemoPanel";
 import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
 import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
 import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
@@ -25,6 +26,8 @@ export function ReceiveAddressView({
   serviceStatus,
   helpCard,
   helpPanel,
+  memoCard,
+  memoPanel,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -42,6 +45,14 @@ export function ReceiveAddressView({
       <DialogHeader density="compact" onClose={closeDialog} />
       <DialogBody>
         <ServiceStatusPanel serviceStatus={serviceStatus} />
+      </DialogBody>
+    </>
+  );
+  const memoContent = memoPanel && (
+    <>
+      <DialogHeader density="compact" onBack={memoPanel.onClose} onClose={closeDialog} />
+      <DialogBody>
+        <MemoPanel memoPanel={memoPanel} />
       </DialogBody>
     </>
   );
@@ -75,6 +86,7 @@ export function ReceiveAddressView({
         ) : null}
         <DialogBackgroundToneProvider>
           {incidentContent ??
+            memoContent ??
             helpContent ??
             (addressSelection ? (
               <>
@@ -131,7 +143,7 @@ export function ReceiveAddressView({
                       <ReceiveAddressNotices notices={notices} />
                     </>
                   )}
-                  <ReceiveAddressExtras helpCard={helpCard} />
+                  <ReceiveAddressExtras memoCard={memoCard} helpCard={helpCard} />
                 </DialogBody>
               </>
             ))}
