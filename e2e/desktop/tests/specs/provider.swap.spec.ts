@@ -80,7 +80,12 @@ for (const {
         await app.speculos.enableBlindSigningOnNanoS();
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         await ensureTokenApproval(fromAccount, provider, minAmount);
-        const swap = new Swap(fromAccount, toAccount, minAmount, provider);
+        const swap = new Swap({
+          accountToDebit: fromAccount,
+          accountToCredit: toAccount,
+          amount: minAmount,
+          provider,
+        });
 
         await performSwapUntilQuoteSelectionStep({ app, swap, minAmount, checkLandingPage });
         if (checkLandingPage) {

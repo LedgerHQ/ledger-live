@@ -29,7 +29,11 @@ const CARD_TRANSACTION_STATUS = /^(Confirmed|Pending|Declined|Reverted)$/;
 const CONTACT_ID = "e2e-pay-contact";
 const CONTACT_ADDRESS_ID = "e2e-pay-contact-main";
 const CONTACT_NAME = generateContactName();
-const transaction = new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "0.01");
+const transaction = new Transaction({
+  accountToDebit: TokenAccount.ETH_USDT_1,
+  accountToCredit: TokenAccount.ETH_USDT_3,
+  amount: "0.01",
+});
 const { currency } = transaction.accountToDebit;
 
 async function initPayTabApp(featureFlags?: PartialFeatures) {

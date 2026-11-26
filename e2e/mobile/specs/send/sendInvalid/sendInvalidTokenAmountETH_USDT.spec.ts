@@ -1,11 +1,11 @@
 import { runSendInvalidTokenAmountTest } from "@e2e/specs/send/send";
 
-const transaction = new Transaction(
-  TokenAccount.ETH_USDT_2,
-  TokenAccount.ETH_USDT_1,
-  "1",
-  Fee.FAST,
-);
+const transaction = new Transaction({
+  accountToDebit: TokenAccount.ETH_USDT_2,
+  accountToCredit: TokenAccount.ETH_USDT_1,
+  amount: "1",
+  speed: Fee.FAST,
+});
 runSendInvalidTokenAmountTest({
   transaction,
   expectedErrorMessage: new RegExp(

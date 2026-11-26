@@ -3,7 +3,7 @@ import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { runSwapHistoryOperationsTest } from "@e2e/specs/swap/otherTestCases/swap.other";
 
 const swapHistoryTestConfig = {
-  swap: new Swap(Account.SOL_1, Account.ETH_1, "0.07"),
+  swap: new Swap({ accountToDebit: Account.SOL_1, accountToCredit: Account.ETH_1, amount: "0.07" }),
   provider: SwapProvider.EXODUS,
   swapId: "wQ90NrWdvJz5dA4",
   tmsLinks: ["B2CQA-602"],

@@ -1,6 +1,6 @@
 # Shared E2E conventions
 
-Rules for desktop and mobile E2E tests. MUST and MUST NOT are required. SHOULD is the default, and the same section states any exception.
+Rules for desktop and mobile E2E tests and the shared code they use in `libs/live-e2e-shared`. MUST and MUST NOT are required. SHOULD is the default, and the same section states any exception.
 
 ## Test state
 

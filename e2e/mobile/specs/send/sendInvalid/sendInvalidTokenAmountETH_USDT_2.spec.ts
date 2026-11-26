@@ -1,6 +1,10 @@
 import { runSendInvalidTokenAmountTest } from "@e2e/specs/send/send";
 
-const transaction = new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_2, "10000");
+const transaction = new Transaction({
+  accountToDebit: TokenAccount.ETH_USDT_1,
+  accountToCredit: TokenAccount.ETH_USDT_2,
+  amount: "10000",
+});
 runSendInvalidTokenAmountTest({
   transaction,
   expectedErrorMessage: "Sorry, insufficient funds",
