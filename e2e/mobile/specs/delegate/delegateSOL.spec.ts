@@ -4,7 +4,11 @@ import { setEnv } from "@shared/env";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
-const delegation = new Delegate(Account.SOL_2, "1", "Ledger by Figment");
+const delegation = new Delegate({
+  account: Account.SOL_2,
+  amount: "1",
+  provider: "Ledger by Figment",
+});
 runDelegateTest({
   delegation,
   tmsLinks: ["B2CQA-2742"],
