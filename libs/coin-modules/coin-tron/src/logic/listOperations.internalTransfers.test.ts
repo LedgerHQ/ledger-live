@@ -307,7 +307,7 @@ describe("listOperations — value moved by contracts (internal transactions)", 
       ]);
     });
 
-    it("lists a TRC10 internal transfer with its TRC10 asset", async () => {
+    it("lists a TRC10 internal transfer as a plain operation of its TRC10 asset", async () => {
       serve({
         internal: page([internalRecord("tx1")]),
         receipts: {
@@ -328,6 +328,8 @@ describe("listOperations — value moved by contracts (internal transactions)", 
           { type: "trc10", assetReference: "1002000", assetOwner: account },
         ],
       ]);
+      // Not `internal`: consumers would count it in the native balance.
+      expect(items[0].details).toEqual({ ledgerOpType: "IN" });
     });
 
     it("lists an internal transfer sent by the account as OUT", async () => {
