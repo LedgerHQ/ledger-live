@@ -1,8 +1,8 @@
 import type { Job } from "@features/platform-device-intent";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import {
-  createSignOperationJob,
   createSignOperationJobWithResult,
+  createSignOperationJobWithSignedResult,
   type CreateSignOperationJobParams,
 } from "./createSignOperationJob";
 import type {
@@ -24,8 +24,9 @@ const signTransactionParams: CreateSignOperationJobParams<SignTransactionIntentI
 
 export const signTransactionIntentJob: Job<
   SignTransactionIntentJobState,
-  SignTransactionIntentInput
-> = createSignOperationJob(signTransactionParams);
+  SignTransactionIntentInput,
+  SignedOperation
+> = createSignOperationJobWithSignedResult(signTransactionParams);
 
 export const signTransactionIntentJobWithResult: Job<
   SignTransactionIntentWithResultJobState,

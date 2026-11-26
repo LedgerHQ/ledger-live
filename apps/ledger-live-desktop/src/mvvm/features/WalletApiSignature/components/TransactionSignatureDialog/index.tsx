@@ -17,6 +17,7 @@ function TransactionSignatureDialogComponent({
   onClose,
 }: TransactionSignatureDialogProps): React.ReactElement | null {
   const {
+    sourceFlow,
     deviceInitializationInput,
     signatureIntent,
     analyticsProperties,
@@ -35,7 +36,7 @@ function TransactionSignatureDialogComponent({
   return (
     <DeviceIntentExecutor
       enabled
-      sourceFlow="wallet_api"
+      sourceFlow={sourceFlow}
       analyticsProperties={analyticsProperties}
       deviceConnectionParams={deviceConnectionParams}
       deviceInitializationInput={deviceInitializationInput}

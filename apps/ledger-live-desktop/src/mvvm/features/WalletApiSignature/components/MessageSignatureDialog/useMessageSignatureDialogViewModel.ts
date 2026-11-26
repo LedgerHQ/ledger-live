@@ -7,8 +7,10 @@ import type {
   SignMessageIntentInput,
   SignMessageIntentJobState,
 } from "@ledgerhq/live-common/intents/signMessageIntent";
+import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { createIntent } from "@features/platform-device-intent";
 import {
+  getSignatureSourceFlow,
   useDeviceIntentSignRequest,
   type UseDeviceIntentSignRequestResult,
 } from "@features/platform-wallet-api-sign";
@@ -16,6 +18,7 @@ import type { DeviceIntentTrackingProperties } from "@ledgerhq/live-dmk-shared";
 import {
   buildDeviceInitializationInput,
   type InitializationInput,
+  type SourceFlow,
 } from "LLD/components/DeviceIntentExecutor";
 import { signMessageIntentLWDDefinition } from "./intentLWDDefinition";
 import type { WalletApiDeviceIntentSignMessageRequest } from "./types";
@@ -29,18 +32,19 @@ export type MessageSignatureDialogViewModel = UseDeviceIntentSignRequestResult<
   SignMessageIntentJobState,
   SignMessageIntentInput,
   undefined,
+  string,
   InitializationInput
 > &
   Readonly<{
+    sourceFlow: SourceFlow;
     analyticsProperties: DeviceIntentTrackingProperties;
   }>;
 
-function createMessageSignatureIntent(input: SignMessageIntentInput) {
-  return createIntent(signMessageIntentLWDDefinition, input);
-}
-
-function getSignedResult(jobState: SignMessageIntentJobState): string | undefined {
-  return jobState.type === "signed" ? jobState.signature : undefined;
+function createMessageSignatureIntent(
+  input: SignMessageIntentInput,
+  onResult: (signature: string) => void,
+) {
+  return createIntent(signMessageIntentLWDDefinition, input, { onResult });
 }
 
 async function prepareMessageSignRequest(
@@ -85,7 +89,6 @@ export function useMessageSignatureDialogViewModel({
     request,
     prepare,
     createSignatureIntent: createMessageSignatureIntent,
-    getSignedResult,
     onSuccess: request.onSuccess,
     onError: request.onError,
     onCancel: request.onCancel,
@@ -99,6 +102,7 @@ export function useMessageSignatureDialogViewModel({
 
   return {
     ...baseViewModel,
+    sourceFlow: getSignatureSourceFlow(request.manifestId, WC_ID),
     analyticsProperties,
   };
 }

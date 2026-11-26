@@ -83,12 +83,12 @@ function mockGetAccountBridgeResolvedValue(bridge: BridgeMock) {
     .mockResolvedValue(bridge as unknown as Awaited<ReturnType<typeof getAccountBridge>>);
 }
 
-function startJob() {
+function startJob(onResult: jest.Mock = jest.fn()) {
   return signTransactionIntentJob({
     deviceConnectionResult,
     deviceExtractedContext,
     input,
-    onResult: jest.fn(),
+    onResult,
   });
 }
 
@@ -245,6 +245,46 @@ describe("signTransactionIntentJob", () => {
 
     expect(states).toEqual([{ type: "pending", deviceModelId }]);
     expect(bridge.signOperation).not.toHaveBeenCalled();
+  });
+
+  it("should report the signed operation as the job result before completing", async () => {
+    mockGetAccountBridgeResolvedValue(
+      createBridgeMock(of({ type: "signed", signedOperation } as SignOperationEvent)),
+    );
+    const onResult = jest.fn();
+
+    await new Promise<void>((resolve, reject) => {
+      startJob(onResult).subscribe({ error: reject, complete: resolve });
+    });
+
+    expect(onResult).toHaveBeenCalledTimes(1);
+    expect(onResult).toHaveBeenCalledWith(signedOperation);
+  });
+
+  it("should report nothing when the user refuses on device", async () => {
+    mockGetAccountBridgeResolvedValue(
+      createBridgeMock(throwError(() => new UserRefusedOnDevice())),
+    );
+    const onResult = jest.fn();
+
+    const subscription = startJob(onResult).subscribe();
+    await flushPromises();
+
+    expect(onResult).not.toHaveBeenCalled();
+    subscription.unsubscribe();
+  });
+
+  it("should error the observable and report nothing when signing fails", async () => {
+    const signingError = new Error("signing failed");
+    mockGetAccountBridgeResolvedValue(createBridgeMock(throwError(() => signingError)));
+    const onResult = jest.fn();
+
+    await expect(
+      new Promise<void>((resolve, reject) => {
+        startJob(onResult).subscribe({ error: reject, complete: resolve });
+      }),
+    ).rejects.toEqual(signingError);
+    expect(onResult).not.toHaveBeenCalled();
   });
 });
 

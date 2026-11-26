@@ -69,12 +69,12 @@ describe("SwapWeb screen", () => {
     expect(lastCall?.inputs.lldWalletApiDeviceIntentSignEnabled).toBe("true");
   });
 
-  it("should pass lldWalletApiDeviceIntentSignEnabled=false when manifest is not allowlisted", () => {
+  it("should pass lldWalletApiDeviceIntentSignEnabled=false when the flag is disabled", () => {
     render(<Swap />, {
       initialState: withFlagOverrides({
         lldWalletApiDeviceIntentSign: {
-          enabled: true,
-          params: { variantId: "variant_a", enabledManifestIds: ["other-app"] },
+          enabled: false,
+          params: { variantId: "variant_a", enabledManifestIds: ["swapWeb"] },
         },
       }),
     });

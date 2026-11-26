@@ -558,7 +558,7 @@ const SwapWebView = ({
             ptxSwapLiveAppOnAsset: ptxSwapLiveAppOnAsset ? "true" : "false",
             isModularDrawer: isLldModularDrawer ? "true" : "false",
             lldWalletApiDeviceIntentSignVariant: deviceIntentSign.variantId,
-            lldWalletApiDeviceIntentSignEnabled: deviceIntentSign.active ? "true" : "false",
+            lldWalletApiDeviceIntentSignEnabled: deviceIntentSign.enabled ? "true" : "false",
             isEmbedded: isEmbedded ? "true" : "false",
             discreetMode: discreetMode ? "true" : "false",
             lwd40enabled: "true",

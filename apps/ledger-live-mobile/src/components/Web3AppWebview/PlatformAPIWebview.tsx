@@ -42,7 +42,7 @@ import useEnv from "@features/platform-env";
 import { NavigatorName, ScreenName } from "~/const";
 import { broadcastSignedTx } from "~/logic/screenTransactionHooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import prepareSignTransaction from "./liveSDKLogic";
+import { prepareSignTransaction } from "@ledgerhq/live-common/wallet-api/logic";
 import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { WebviewAPI, WebviewProps } from "./types";

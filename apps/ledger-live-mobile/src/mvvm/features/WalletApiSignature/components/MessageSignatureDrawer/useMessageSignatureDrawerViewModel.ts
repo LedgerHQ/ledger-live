@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import invariant from "invariant";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
@@ -7,8 +7,11 @@ import type {
   SignMessageIntentInput,
   SignMessageIntentJobState,
 } from "@ledgerhq/live-common/intents/signMessageIntent";
+import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
+import type { DeviceIntentTrackingProperties } from "@ledgerhq/live-dmk-shared";
 import { createIntent } from "@features/platform-device-intent";
 import {
+  getSignatureSourceFlow,
   useDeviceIntentSignRequest,
   type UseDeviceIntentSignRequestResult,
 } from "@features/platform-wallet-api-sign";
@@ -19,7 +22,6 @@ import {
 } from "LLM/components/DeviceIntentExecutor";
 import { signMessageIntentPlatformDefinition } from "./intentDefinition";
 import type { WalletApiDeviceIntentSignMessageRequest } from "./types";
-import { getSignatureSourceFlow } from "../../utils/getSignatureSourceFlow";
 
 type Props = Readonly<{
   request: WalletApiDeviceIntentSignMessageRequest;
@@ -30,18 +32,19 @@ export type MessageSignatureDrawerViewModel = UseDeviceIntentSignRequestResult<
   SignMessageIntentJobState,
   SignMessageIntentInput,
   undefined,
+  string,
   InitializationInput
 > &
   Readonly<{
     sourceFlow: SourceFlow;
+    analyticsProperties: DeviceIntentTrackingProperties;
   }>;
 
-function createMessageSignatureIntent(input: SignMessageIntentInput) {
-  return createIntent(signMessageIntentPlatformDefinition, input);
-}
-
-function getSignedResult(jobState: SignMessageIntentJobState): string | undefined {
-  return jobState.type === "signed" ? jobState.signature : undefined;
+function createMessageSignatureIntent(
+  input: SignMessageIntentInput,
+  onResult: (signature: string) => void,
+) {
+  return createIntent(signMessageIntentPlatformDefinition, input, { onResult });
 }
 
 async function prepareMessageSignRequest(
@@ -86,15 +89,20 @@ export function useMessageSignatureDrawerViewModel({
     request,
     prepare,
     createSignatureIntent: createMessageSignatureIntent,
-    getSignedResult,
     onSuccess: request.onSuccess,
     onError: request.onError,
     onCancel: request.onCancel,
     onClose,
   });
 
+  const analyticsProperties = useMemo<DeviceIntentTrackingProperties>(
+    () => ({ manifestId: request.manifestId, manifestName: request.manifestName }),
+    [request.manifestId, request.manifestName],
+  );
+
   return {
-    sourceFlow: getSignatureSourceFlow(request.manifestId),
+    sourceFlow: getSignatureSourceFlow(request.manifestId, WC_ID),
+    analyticsProperties,
     ...baseViewModel,
   };
 }

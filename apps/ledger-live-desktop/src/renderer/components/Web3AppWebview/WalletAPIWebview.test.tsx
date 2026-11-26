@@ -1,6 +1,5 @@
 import React from "react";
 import { act, render } from "@testing-library/react";
-import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { UiHook } from "@ledgerhq/live-common/wallet-api/react";
 import { app } from "~/renderer/bridge";
@@ -18,39 +17,49 @@ const mockAccept = jest.fn();
 let mockOnBridgeMessage: ((message: WebviewBridgeMessage) => void) | undefined;
 let mockOnCloseSessionUi: (() => void) | undefined;
 let mockFeatureFlags: Record<string, unknown> = {};
-const mockPrepareWalletApiTransaction = jest.fn(
+const mockPrepareSignTransaction = jest.fn(
   (_account: unknown, _parent: unknown, liveTx: Record<string, unknown>) =>
     Promise.resolve({ family: "ethereum", ...liveTx }),
 );
 
-jest.mock("LLD/features/WalletApiSignature/utils/prepareWalletApiTransaction", () => ({
-  prepareWalletApiTransaction: (
+jest.mock("@ledgerhq/live-common/wallet-api/logic", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/wallet-api/logic"),
+  prepareSignTransaction: (
     account: unknown,
     parentAccount: unknown,
     liveTx: Record<string, unknown>,
-  ) => mockPrepareWalletApiTransaction(account, parentAccount, liveTx),
+  ) => mockPrepareSignTransaction(account, parentAccount, liveTx),
 }));
 
 let capturedTxOnClose: Array<() => void> = [];
 let capturedMsgOnClose: Array<() => void> = [];
 
+type MockTxDialogProps = Readonly<{
+  request: { transaction: { recipient?: string } };
+  onClose: () => void;
+}>;
+type MockMsgDialogProps = Readonly<{
+  request: { message: { message: string } };
+  onClose: () => void;
+}>;
+
 jest.mock("LLD/features/WalletApiSignature/components/TransactionSignatureDialog", () => ({
-  TransactionSignatureDialog: ({ onClose }: { onClose: () => void }) => {
+  TransactionSignatureDialog: ({ request, onClose }: MockTxDialogProps) => {
     capturedTxOnClose.push(onClose);
     return (
       <button type="button" data-testid="tx-signature-dialog" onClick={onClose}>
-        tx-dialog
+        {request.transaction.recipient}
       </button>
     );
   },
 }));
 
 jest.mock("LLD/features/WalletApiSignature/components/MessageSignatureDialog", () => ({
-  MessageSignatureDialog: ({ onClose }: { onClose: () => void }) => {
+  MessageSignatureDialog: ({ request, onClose }: MockMsgDialogProps) => {
     capturedMsgOnClose.push(onClose);
     return (
       <button type="button" data-testid="msg-signature-dialog" onClick={onClose}>
-        msg-dialog
+        {request.message.message}
       </button>
     );
   },
@@ -314,6 +323,29 @@ describe("WalletAPIWebview load", () => {
 });
 
 describe("WalletAPIWebview Device Intent sign routing", () => {
+  const activeDeviceIntentSignFlag = {
+    lldWalletApiDeviceIntentSign: {
+      enabled: true,
+      params: { variantId: "variant_a", enabledManifestIds: [manifest.id] },
+    },
+  };
+
+  function requestTransactionSign(handlers: object, recipient: string) {
+    return (mockUiHook["transaction.sign"] as Handler)({
+      ...handlers,
+      account: { id: "acc-1", type: "Account" },
+      signFlowInfos: { canEditFees: false, hasFeesProvided: true, liveTx: { recipient } },
+    });
+  }
+
+  function requestMessageSign(handlers: object, message: string) {
+    return (mockUiHook["message.sign"] as Handler)({
+      ...handlers,
+      account: { id: "acc-1", type: "Account" },
+      message: { message },
+    });
+  }
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockFeatureFlags = {};
@@ -349,36 +381,24 @@ describe("WalletAPIWebview Device Intent sign routing", () => {
     expect(queryByTestId("tx-signature-dialog")).toBeNull();
   });
 
-  it("mounts TransactionSignatureDialog and MessageSignatureDialog when flag is active and clears on session reset", async () => {
-    mockFeatureFlags = {
-      lldWalletApiDeviceIntentSign: {
-        enabled: true,
-        params: { variantId: "variant_a", enabledManifestIds: [manifest.id] },
-      },
-    };
-    const { findByTestId, queryByTestId } = render(<WalletAPIWebview manifest={manifest} />);
+  it("shows one sign dialog at a time, first in first out, and clears them on session reset", async () => {
+    mockFeatureFlags = activeDeviceIntentSignFlag;
+    const { getByTestId, queryByTestId } = render(<WalletAPIWebview manifest={manifest} />);
 
     await act(async () => {
-      (mockUiHook["message.sign"] as Handler)({
-        ...callbacks,
-        account: { id: "acc-1", type: "Account" },
-        message: { message: "hi" },
-      });
-      await (mockUiHook["transaction.sign"] as Handler)({
-        ...callbacks,
-        account: { id: "acc-1", type: "Account" },
-        signFlowInfos: {
-          canEditFees: false,
-          hasFeesProvided: true,
-          liveTx: { recipient: "0xabc" },
-        },
-      });
+      requestMessageSign(callbacks, "hi");
+      await requestTransactionSign(callbacks, "0xabc");
     });
 
     expect(mockDispatch).not.toHaveBeenCalled();
-    expect(mockPrepareWalletApiTransaction).toHaveBeenCalledTimes(1);
-    expect(await findByTestId("msg-signature-dialog")).toBeVisible();
-    expect(await findByTestId("tx-signature-dialog")).toBeVisible();
+    expect(mockPrepareSignTransaction).toHaveBeenCalledTimes(1);
+    expect(getByTestId("msg-signature-dialog")).toHaveTextContent("hi");
+    expect(queryByTestId("tx-signature-dialog")).toBeNull();
+
+    act(() => capturedMsgOnClose.at(-1)?.());
+
+    expect(queryByTestId("msg-signature-dialog")).toBeNull();
+    expect(getByTestId("tx-signature-dialog")).toHaveTextContent("0xabc");
 
     act(() => {
       mockOnCloseSessionUi?.();
@@ -395,7 +415,7 @@ describe("WalletAPIWebview Device Intent sign routing", () => {
         params: { variantId: "variant_a", enabledManifestIds: [manifest.id] },
       },
     };
-    mockPrepareWalletApiTransaction.mockImplementationOnce(async () => {
+    mockPrepareSignTransaction.mockImplementationOnce(async () => {
       mockSession.isOpen = false;
       return { family: "ethereum" };
     });
@@ -413,143 +433,66 @@ describe("WalletAPIWebview Device Intent sign routing", () => {
     expect(queryByTestId("tx-signature-dialog")).toBeNull();
   });
 
-  it("rejects the earlier transaction.sign with UserRefusedOnDevice when a second request arrives", async () => {
-    mockFeatureFlags = {
-      lldWalletApiDeviceIntentSign: {
-        enabled: true,
-        params: { variantId: "variant_a", enabledManifestIds: [manifest.id] },
-      },
-    };
-    render(<WalletAPIWebview manifest={manifest} />);
-
+  it("queues a second transaction.sign without settling the first", async () => {
+    mockFeatureFlags = activeDeviceIntentSignFlag;
+    const { getByTestId } = render(<WalletAPIWebview manifest={manifest} />);
     const first = { onSuccess: jest.fn(), onError: jest.fn() };
     const second = { onSuccess: jest.fn(), onError: jest.fn() };
 
     await act(async () => {
-      await (mockUiHook["transaction.sign"] as Handler)({
-        ...first,
-        account: { id: "acc-1", type: "Account" },
-        signFlowInfos: { canEditFees: false, hasFeesProvided: true, liveTx: {} },
-      });
-      await (mockUiHook["transaction.sign"] as Handler)({
-        ...second,
-        account: { id: "acc-1", type: "Account" },
-        signFlowInfos: { canEditFees: false, hasFeesProvided: true, liveTx: {} },
-      });
+      await requestTransactionSign(first, "0xfirst");
+      await requestTransactionSign(second, "0xsecond");
     });
 
-    expect(first.onError).toHaveBeenCalledWith(expect.any(UserRefusedOnDevice));
+    expect(first.onError).not.toHaveBeenCalled();
     expect(second.onError).not.toHaveBeenCalled();
+    expect(getByTestId("tx-signature-dialog")).toHaveTextContent("0xfirst");
+
+    act(() => capturedTxOnClose.at(-1)?.());
+
+    expect(getByTestId("tx-signature-dialog")).toHaveTextContent("0xsecond");
   });
 
-  it("cancels the earlier message.sign when a second request arrives", async () => {
-    mockFeatureFlags = {
-      lldWalletApiDeviceIntentSign: {
-        enabled: true,
-        params: { variantId: "variant_a", enabledManifestIds: [manifest.id] },
-      },
-    };
-    render(<WalletAPIWebview manifest={manifest} />);
-
-    const first = { onSuccess: jest.fn(), onError: jest.fn(), onCancel: jest.fn() };
-    const second = { onSuccess: jest.fn(), onError: jest.fn(), onCancel: jest.fn() };
+  it("queues a message.sign sent during a transaction.sign without cancelling either", async () => {
+    mockFeatureFlags = activeDeviceIntentSignFlag;
+    const { getByTestId, queryByTestId } = render(<WalletAPIWebview manifest={manifest} />);
+    const transaction = { onSuccess: jest.fn(), onError: jest.fn() };
+    const message = { onSuccess: jest.fn(), onError: jest.fn(), onCancel: jest.fn() };
 
     await act(async () => {
-      (mockUiHook["message.sign"] as Handler)({
-        ...first,
-        account: { id: "acc-1", type: "Account" },
-        message: { message: "first" },
-      });
-      (mockUiHook["message.sign"] as Handler)({
-        ...second,
-        account: { id: "acc-1", type: "Account" },
-        message: { message: "second" },
-      });
+      await requestTransactionSign(transaction, "0xabc");
+      requestMessageSign(message, "hello");
     });
 
-    expect(first.onCancel).toHaveBeenCalledTimes(1);
-    expect(second.onCancel).not.toHaveBeenCalled();
+    expect(transaction.onError).not.toHaveBeenCalled();
+    expect(message.onCancel).not.toHaveBeenCalled();
+    expect(getByTestId("tx-signature-dialog")).toBeVisible();
+    expect(queryByTestId("msg-signature-dialog")).toBeNull();
+
+    act(() => capturedTxOnClose.at(-1)?.());
+
+    expect(queryByTestId("tx-signature-dialog")).toBeNull();
+    expect(getByTestId("msg-signature-dialog")).toHaveTextContent("hello");
   });
 
-  it("ignores a stale onClose from a replaced transaction.sign dialog", async () => {
-    mockFeatureFlags = {
-      lldWalletApiDeviceIntentSign: {
-        enabled: true,
-        params: { variantId: "variant_a", enabledManifestIds: [manifest.id] },
-      },
-    };
-    const { queryByTestId } = render(<WalletAPIWebview manifest={manifest} />);
+  it("does not drop the next request when a settled dialog closes again", async () => {
+    mockFeatureFlags = activeDeviceIntentSignFlag;
+    const { getByTestId, queryByTestId } = render(<WalletAPIWebview manifest={manifest} />);
 
     await act(async () => {
-      await (mockUiHook["transaction.sign"] as Handler)({
-        onSuccess: jest.fn(),
-        onError: jest.fn(),
-        account: { id: "acc-1", type: "Account" },
-        signFlowInfos: { canEditFees: false, hasFeesProvided: true, liveTx: {} },
-      });
+      await requestTransactionSign(callbacks, "0xfirst");
+      await requestTransactionSign(callbacks, "0xsecond");
     });
     const firstOnClose = capturedTxOnClose.at(-1);
 
-    await act(async () => {
-      await (mockUiHook["transaction.sign"] as Handler)({
-        onSuccess: jest.fn(),
-        onError: jest.fn(),
-        account: { id: "acc-1", type: "Account" },
-        signFlowInfos: { canEditFees: false, hasFeesProvided: true, liveTx: {} },
-      });
-    });
+    act(() => firstOnClose?.());
     const secondOnClose = capturedTxOnClose.at(-1);
+    act(() => firstOnClose?.());
 
-    act(() => {
-      firstOnClose?.();
-    });
-    expect(queryByTestId("tx-signature-dialog")).toBeVisible();
+    expect(getByTestId("tx-signature-dialog")).toHaveTextContent("0xsecond");
 
-    act(() => {
-      secondOnClose?.();
-    });
+    act(() => secondOnClose?.());
+
     expect(queryByTestId("tx-signature-dialog")).toBeNull();
-  });
-
-  it("ignores a stale onClose from a replaced message.sign dialog", async () => {
-    mockFeatureFlags = {
-      lldWalletApiDeviceIntentSign: {
-        enabled: true,
-        params: { variantId: "variant_a", enabledManifestIds: [manifest.id] },
-      },
-    };
-    const { queryByTestId } = render(<WalletAPIWebview manifest={manifest} />);
-
-    await act(async () => {
-      (mockUiHook["message.sign"] as Handler)({
-        onSuccess: jest.fn(),
-        onError: jest.fn(),
-        onCancel: jest.fn(),
-        account: { id: "acc-1", type: "Account" },
-        message: { message: "first" },
-      });
-    });
-    const firstOnClose = capturedMsgOnClose.at(-1);
-
-    await act(async () => {
-      (mockUiHook["message.sign"] as Handler)({
-        onSuccess: jest.fn(),
-        onError: jest.fn(),
-        onCancel: jest.fn(),
-        account: { id: "acc-1", type: "Account" },
-        message: { message: "second" },
-      });
-    });
-    const secondOnClose = capturedMsgOnClose.at(-1);
-
-    act(() => {
-      firstOnClose?.();
-    });
-    expect(queryByTestId("msg-signature-dialog")).toBeVisible();
-
-    act(() => {
-      secondOnClose?.();
-    });
-    expect(queryByTestId("msg-signature-dialog")).toBeNull();
   });
 });

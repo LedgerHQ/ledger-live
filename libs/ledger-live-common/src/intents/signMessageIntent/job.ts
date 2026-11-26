@@ -33,10 +33,11 @@ function normalizeSignError(error: unknown): Error {
   return error instanceof Error ? error : new Error(String(error));
 }
 
-export const signMessageIntentJob: Job<SignMessageIntentJobState, SignMessageIntentInput> = ({
-  deviceConnectionResult,
-  input,
-}) => {
+export const signMessageIntentJob: Job<
+  SignMessageIntentJobState,
+  SignMessageIntentInput,
+  string
+> = ({ deviceConnectionResult, input, onResult }) => {
   const device = buildSigningDevice(deviceConnectionResult);
 
   return new Observable<SignMessageIntentJobState>(subscriber => {
@@ -70,6 +71,7 @@ export const signMessageIntentJob: Job<SignMessageIntentJobState, SignMessageInt
           }
           if (result?.signature) {
             hasSigned = true;
+            onResult(result.signature);
             subscriber.next({ type: "signed", signature: result.signature });
           }
         },

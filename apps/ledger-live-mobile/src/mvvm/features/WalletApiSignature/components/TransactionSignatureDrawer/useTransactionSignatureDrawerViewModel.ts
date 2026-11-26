@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
@@ -7,10 +7,13 @@ import type {
   SignTransactionIntentInput,
   SignTransactionIntentJobState,
 } from "@ledgerhq/live-common/intents/signTransactionIntent";
+import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
+import type { DeviceIntentTrackingProperties } from "@ledgerhq/live-dmk-shared";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { createIntent } from "@features/platform-device-intent";
 import {
+  getSignatureSourceFlow,
   useDeviceIntentSignRequest,
   type UseDeviceIntentSignRequestResult,
 } from "@features/platform-wallet-api-sign";
@@ -24,7 +27,6 @@ import type {
   SignTransactionIntentComponentExtraProps,
   WalletApiDeviceIntentSignRequest,
 } from "./types";
-import { getSignatureSourceFlow } from "../../utils/getSignatureSourceFlow";
 
 type Props = Readonly<{
   request: WalletApiDeviceIntentSignRequest;
@@ -35,18 +37,20 @@ export type TransactionSignatureDrawerViewModel = UseDeviceIntentSignRequestResu
   SignTransactionIntentJobState,
   SignTransactionIntentInput,
   SignTransactionIntentComponentExtraProps,
+  SignedOperation,
   InitializationInput
 > &
   Readonly<{
     sourceFlow: SourceFlow;
+    analyticsProperties: DeviceIntentTrackingProperties;
+    intentComponentExtraProps: SignTransactionIntentComponentExtraProps;
   }>;
 
-function createTransactionSignatureIntent(input: SignTransactionIntentInput) {
-  return createIntent(signTransactionIntentPlatformDefinition, input);
-}
-
-function getSignedResult(jobState: SignTransactionIntentJobState): SignedOperation | undefined {
-  return jobState.type === "signed" ? jobState.signedOperation : undefined;
+function createTransactionSignatureIntent(
+  input: SignTransactionIntentInput,
+  onResult: (signedOperation: SignedOperation) => void,
+) {
+  return createIntent(signTransactionIntentPlatformDefinition, input, { onResult });
 }
 
 async function prepareTransactionSignRequest(request: WalletApiDeviceIntentSignRequest): Promise<{
@@ -100,15 +104,30 @@ export function useTransactionSignatureDrawerViewModel({
     request,
     prepare,
     createSignatureIntent: createTransactionSignatureIntent,
-    getSignedResult,
     onSuccess: request.onSuccess,
     onError: request.onError,
     onCancel,
     onClose,
   });
 
+  const analyticsProperties = useMemo<DeviceIntentTrackingProperties>(
+    () => ({ manifestId: request.manifestId, manifestName: request.manifestName }),
+    [request.manifestId, request.manifestName],
+  );
+
+  const intentComponentExtraProps = useMemo<SignTransactionIntentComponentExtraProps>(
+    () => ({
+      manifestId: request.manifestId,
+      manifestName: request.manifestName,
+      recipient: request.transaction.recipient,
+    }),
+    [request.manifestId, request.manifestName, request.transaction.recipient],
+  );
+
   return {
-    sourceFlow: getSignatureSourceFlow(request.manifestId),
+    sourceFlow: getSignatureSourceFlow(request.manifestId, WC_ID),
+    analyticsProperties,
+    intentComponentExtraProps,
     ...baseViewModel,
   };
 }

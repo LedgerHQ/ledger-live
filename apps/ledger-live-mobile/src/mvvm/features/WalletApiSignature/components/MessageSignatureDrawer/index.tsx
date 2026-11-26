@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from "react";
+import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import { DeviceIntentExecutor } from "LLM/components/DeviceIntentExecutor";
 import { useMessageSignatureDrawerViewModel } from "./useMessageSignatureDrawerViewModel";
@@ -22,6 +22,7 @@ const deviceConnectionParams = { acceptedDeviceModelIds: [] };
 function MessageSignatureDrawer({ request, onClose }: Props) {
   const {
     sourceFlow,
+    analyticsProperties,
     deviceInitializationInput,
     signatureIntent,
     onIntentJobStateChanged,
@@ -30,11 +31,6 @@ function MessageSignatureDrawer({ request, onClose }: Props) {
     onExecutorStateChanged,
     onUserCancel,
   } = useMessageSignatureDrawerViewModel({ request, onClose });
-
-  const analyticsProperties = useMemo(
-    () => ({ manifestId: request.manifestId, manifestName: request.manifestName }),
-    [request.manifestId, request.manifestName],
-  );
 
   if (!deviceInitializationInput || !signatureIntent) {
     return null;

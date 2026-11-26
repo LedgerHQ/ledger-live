@@ -4,7 +4,6 @@ import {
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/earn/stakePrograms/index";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { useDeviceIntentSignEnabled } from "LLD/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
 import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
 import type { ExtraInputs } from "./useLiveAppModalContentViewModel";
 import { computeEarnUiVersion } from "@ledgerhq/live-common/domain/computeEarnUiVersion";
@@ -13,16 +12,14 @@ export interface EarnLiveAppModalContentViewModel {
   extraInputs: ExtraInputs;
 }
 
-const useEarnLiveAppModalContentViewModel = (
-  manifestId: string,
-): EarnLiveAppModalContentViewModel => {
+const useEarnLiveAppModalContentViewModel = (): EarnLiveAppModalContentViewModel => {
   const {
     isEnabled: isLwd40Enabled,
     shouldDisplayEarnSimulator,
     shouldDisplayEarnUpselling,
   } = useWalletFeaturesConfig("desktop");
   const earnUiFlag = useFeature("ptxEarnUi");
-  const deviceIntentSignEnabled = useDeviceIntentSignEnabled(manifestId);
+  const deviceIntentSignEnabled = useFeature("lldWalletApiDeviceIntentSign")?.enabled ?? false;
   const computedUiVersion = computeEarnUiVersion({
     baseUiVersion: earnUiFlag?.params?.value ?? "v2",
     shouldDisplayEarnUpselling,

@@ -7,10 +7,12 @@ import type {
   SignTransactionIntentInput,
   SignTransactionIntentJobState,
 } from "@ledgerhq/live-common/intents/signTransactionIntent";
+import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { createIntent } from "@features/platform-device-intent";
 import {
+  getSignatureSourceFlow,
   useDeviceIntentSignRequest,
   type UseDeviceIntentSignRequestResult,
 } from "@features/platform-wallet-api-sign";
@@ -18,6 +20,7 @@ import type { DeviceIntentTrackingProperties } from "@ledgerhq/live-dmk-shared";
 import {
   buildDeviceInitializationInput,
   type InitializationInput,
+  type SourceFlow,
 } from "LLD/components/DeviceIntentExecutor";
 import { signTransactionIntentLWDDefinition } from "./intentLWDDefinition";
 import type {
@@ -34,19 +37,20 @@ export type TransactionSignatureDialogViewModel = UseDeviceIntentSignRequestResu
   SignTransactionIntentJobState,
   SignTransactionIntentInput,
   SignTransactionIntentComponentExtraProps,
+  SignedOperation,
   InitializationInput
 > &
   Readonly<{
+    sourceFlow: SourceFlow;
     analyticsProperties: DeviceIntentTrackingProperties;
     intentComponentExtraProps: SignTransactionIntentComponentExtraProps;
   }>;
 
-function createTransactionSignatureIntent(input: SignTransactionIntentInput) {
-  return createIntent(signTransactionIntentLWDDefinition, input);
-}
-
-function getSignedResult(jobState: SignTransactionIntentJobState): SignedOperation | undefined {
-  return jobState.type === "signed" ? jobState.signedOperation : undefined;
+function createTransactionSignatureIntent(
+  input: SignTransactionIntentInput,
+  onResult: (signedOperation: SignedOperation) => void,
+) {
+  return createIntent(signTransactionIntentLWDDefinition, input, { onResult });
 }
 
 async function prepareTransactionSignRequest(request: WalletApiDeviceIntentSignRequest): Promise<{
@@ -100,7 +104,6 @@ export function useTransactionSignatureDialogViewModel({
     request,
     prepare,
     createSignatureIntent: createTransactionSignatureIntent,
-    getSignedResult,
     onSuccess: request.onSuccess,
     onError: request.onError,
     onCancel,
@@ -123,6 +126,7 @@ export function useTransactionSignatureDialogViewModel({
 
   return {
     ...baseViewModel,
+    sourceFlow: getSignatureSourceFlow(request.manifestId, WC_ID),
     analyticsProperties,
     intentComponentExtraProps,
   };

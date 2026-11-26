@@ -70,7 +70,7 @@ const Swap = () => {
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
             lldWalletApiDeviceIntentSignVariant: deviceIntentSign.variantId,
-            lldWalletApiDeviceIntentSignEnabled: deviceIntentSign.active ? "true" : "false",
+            lldWalletApiDeviceIntentSignEnabled: deviceIntentSign.enabled ? "true" : "false",
             ...params,
           }}
           onStateChange={onStateChange}

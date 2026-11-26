@@ -26,7 +26,7 @@ describe("useEarnLiveAppModalContentViewModel (desktop)", () => {
   });
 
   it("returns computed uiVersion and lw40enabled=true when wallet 40 is enabled", () => {
-    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel("earn"), {
+    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel(), {
       initialState: withFlagOverrides({
         ptxEarnUi: { enabled: true, params: { value: "v2" } },
         lwdWallet40: { enabled: true },
@@ -57,8 +57,8 @@ describe("useEarnLiveAppModalContentViewModel (desktop)", () => {
     });
   });
 
-  it("forwards lldWalletApiDeviceIntentSignEnabled=true when the manifest is allowlisted", () => {
-    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel("earn"), {
+  it("forwards lldWalletApiDeviceIntentSignEnabled=true when the flag is enabled", () => {
+    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel(), {
       initialState: withFlagOverrides({
         lldWalletApiDeviceIntentSign: {
           enabled: true,
@@ -71,12 +71,12 @@ describe("useEarnLiveAppModalContentViewModel (desktop)", () => {
     expect(result.current.extraInputs?.lldWalletApiDeviceIntentSignEnabled).toBe("true");
   });
 
-  it("forwards lldWalletApiDeviceIntentSignEnabled=false when the flag is enabled for another manifest", () => {
-    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel("earn"), {
+  it("forwards lldWalletApiDeviceIntentSignEnabled=false when the flag is disabled", () => {
+    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel(), {
       initialState: withFlagOverrides({
         lldWalletApiDeviceIntentSign: {
-          enabled: true,
-          params: { variantId: "variant_a", enabledManifestIds: ["swap-live-app"] },
+          enabled: false,
+          params: { variantId: "variant_a", enabledManifestIds: ["earn"] },
         },
         stakePrograms: makeStakeProgramsFeature({}, []),
       }),
@@ -86,7 +86,7 @@ describe("useEarnLiveAppModalContentViewModel (desktop)", () => {
   });
 
   it("returns fallback v1 and lw40enabled=false when wallet 40 is disabled", () => {
-    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel("earn"), {
+    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel(), {
       initialState: withFlagOverrides({
         ptxEarnUi: { enabled: true, params: { value: "v2" } },
         lwdWallet40: { enabled: false },
@@ -99,7 +99,7 @@ describe("useEarnLiveAppModalContentViewModel (desktop)", () => {
   });
 
   it("returns v3 when earn upselling is enabled", () => {
-    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel("earn"), {
+    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel(), {
       initialState: withFlagOverrides({
         ptxEarnUi: { enabled: true, params: { value: "v1" } },
         lwdWallet40: { enabled: true, params: { earnUpselling: true } as never },
@@ -112,7 +112,7 @@ describe("useEarnLiveAppModalContentViewModel (desktop)", () => {
   });
 
   it("returns v4 when earn simulator is enabled", () => {
-    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel("earn"), {
+    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel(), {
       initialState: withFlagOverrides({
         ptxEarnUi: { enabled: true, params: { value: "v1" } },
         lwdWallet40: { enabled: true, params: { earnSimulator: true } as never },

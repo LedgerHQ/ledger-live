@@ -14,12 +14,18 @@ run through the Device Intent Executor.
 - **`resolveWalletApiTerms`** — looks up provider terms and privacy URLs from maps the app injects
   (the swap provider maps live in `live-common` and stay there).
 - **`useDeviceIntentSignRequest`** — prepares device initialization and the sign intent, stores the
-  signed result on the `signed` job state, and settles success on `onIntentJobComplete`.
-- **`useReplaceableSignRequests`** — tracks active transaction and message sign entries by request
-  id, settles replaced requests via app-injected callbacks, and ignores stale close events.
+  signed result reported through the intent's `onResult`, and settles success on
+  `onIntentJobComplete`. Closing on an executor error screen returns the job error, or the executor
+  failure when it counts as one, instead of a plain cancel.
+- **`useWalletApiSignatureQueue`** — queues transaction and message sign requests first in first out
+  and shows one at a time, so two requests never drive the device at once. A late close of a settled
+  request never drops the next one.
+- **`getSignatureSourceFlow`** — the analytics source flow of a request: `wallet_connect` for the
+  Wallet Connect live app, whose manifest id the app injects, else `wallet_api`.
 
 ## Consumers
 
 Ledger Wallet Desktop and Mobile webview hosts (`WalletApiSignature` drawers / dialogs) and their
 terms footers. Apps inject bridge, ensure-app-ready and the sign-intent platform definitions, which
-still live in `libs/ledger-live-common`.
+still live in `libs/ledger-live-common` (`signTransactionIntentDefinition`,
+`signMessageIntentDefinition`).

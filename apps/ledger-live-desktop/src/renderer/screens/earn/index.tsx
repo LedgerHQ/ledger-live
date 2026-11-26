@@ -28,7 +28,6 @@ import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
 import Box from "~/renderer/components/Box";
 import { computeEarnUiVersion } from "@ledgerhq/live-common/domain/computeEarnUiVersion";
-import { useDeviceIntentSignEnabled } from "LLD/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
 import { buildEarnGoToURL } from "./buildEarnGoToURL";
 
 const DEFAULT_MANIFEST_ID =
@@ -91,7 +90,7 @@ const Earn = () => {
     [stableSavingsFlag],
   );
   const { updateManifests } = useRemoteLiveAppContext();
-  const deviceIntentSignEnabled = useDeviceIntentSignEnabled(manifest?.id ?? earnManifestId ?? "");
+  const deviceIntentSignEnabled = useFeature("lldWalletApiDeviceIntentSign")?.enabled ?? false;
 
   const inputs = useMemo(() => {
     const routeState = (location.state as Record<string, string | undefined> | null) ?? {};

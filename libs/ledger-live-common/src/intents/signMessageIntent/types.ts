@@ -19,17 +19,20 @@ export type SignMessageIntentInput = {
 
 export type SignMessageIntentDefinition = IntentDefinition<
   SignMessageIntentJobState,
-  SignMessageIntentInput
+  SignMessageIntentInput,
+  string
 >;
 
 export type SignMessageIntentPlatformDefinition<ExtraProps = undefined> = IntentPlatformDefinition<
   SignMessageIntentJobState,
   SignMessageIntentInput,
-  ExtraProps
+  ExtraProps,
+  string
 >;
 
 export type SignMessageIntent<ExtraProps = undefined> = Intent<
   SignMessageIntentJobState,
   SignMessageIntentInput,
-  ExtraProps
+  ExtraProps,
+  string
 >;

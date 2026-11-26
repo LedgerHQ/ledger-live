@@ -1,12 +1,11 @@
 import { app } from "~/renderer/bridge";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import { useReplaceableSignRequests } from "@features/platform-wallet-api-sign";
+import { useWalletApiSignatureQueue } from "@features/platform-wallet-api-sign";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import type { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSession";
+import { prepareSignTransaction } from "@ledgerhq/live-common/wallet-api/logic";
 import type { WalletApiDeviceIntentSignMessageRequest } from "LLD/features/WalletApiSignature/components/MessageSignatureDialog/types";
 import type { WalletApiDeviceIntentSignRequest } from "LLD/features/WalletApiSignature/components/TransactionSignatureDialog/types";
-import { prepareWalletApiTransaction } from "LLD/features/WalletApiSignature/utils/prepareWalletApiTransaction";
 import {
   ExchangeType,
   UiHook,
@@ -195,7 +194,7 @@ function useUiHook({
         if (deviceIntentSignEnabled) {
           try {
             const session = bridgeSessionRef.current;
-            const transaction = await prepareWalletApiTransaction(
+            const transaction = await prepareSignTransaction(
               account,
               parentAccount ?? undefined,
               liveTx,
@@ -380,28 +379,23 @@ function useWebView(
   const mevProtected = useSelector(mevProtectionSelector);
 
   const {
-    deviceIntentSignEntry,
-    requestDeviceIntentSign,
-    clearDeviceIntentSignRequest,
-    deviceIntentSignMessageEntry,
-    requestDeviceIntentSignMessage,
-    clearDeviceIntentSignMessageRequest,
-    clearAllDeviceIntentSignRequests,
-  } = useReplaceableSignRequests<
+    currentSignature,
+    enqueueTransactionSignature,
+    enqueueMessageSignature,
+    closeCurrentSignature,
+    clearSignatures,
+  } = useWalletApiSignatureQueue<
     WalletApiDeviceIntentSignRequest,
     WalletApiDeviceIntentSignMessageRequest
-  >({
-    onReplaceTransaction: previous => previous.onError(new UserRefusedOnDevice()),
-    onReplaceMessage: previous => previous.onCancel(),
-  });
+  >();
 
   const bridgeSessionRef = useRef<BridgeSession | undefined>(undefined);
   const uiHook = useUiHook({
     manifest,
     tracking,
     bridgeSessionRef,
-    requestDeviceIntentSign,
-    requestDeviceIntentSignMessage,
+    requestDeviceIntentSign: enqueueTransactionSignature,
+    requestDeviceIntentSignMessage: enqueueMessageSignature,
   });
   const shareAnalytics = useSelector(shareAnalyticsSelector);
   const userId = useGetUserId();
@@ -420,11 +414,7 @@ function useWebView(
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const bridge = useWebviewBridgeSession(
-    webviewRef,
-    mainFrameUrl,
-    clearAllDeviceIntentSignRequests,
-  );
+  const bridge = useWebviewBridgeSession(webviewRef, mainFrameUrl, clearSignatures);
   useLayoutEffect(() => {
     bridgeSessionRef.current = bridge.session;
   }, [bridge.session]);
@@ -524,10 +514,8 @@ function useWebView(
     webviewStyle,
     noAccounts,
     isLoadingAccounts,
-    deviceIntentSignEntry,
-    clearDeviceIntentSignRequest,
-    deviceIntentSignMessageEntry,
-    clearDeviceIntentSignMessageRequest,
+    currentSignature,
+    closeCurrentSignature,
   };
 }
 
@@ -598,10 +586,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       widgetLoaded,
       noAccounts,
       isLoadingAccounts,
-      deviceIntentSignEntry,
-      clearDeviceIntentSignRequest,
-      deviceIntentSignMessageEntry,
-      clearDeviceIntentSignMessageRequest,
+      currentSignature,
+      closeCurrentSignature,
     } = useWebView(
       {
         manifest,
@@ -616,20 +602,6 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       serverRef,
       customWebviewStyle,
     );
-    const activeSignRequestId = deviceIntentSignEntry?.requestId;
-    const handleCloseDeviceIntentSign = useCallback(() => {
-      if (activeSignRequestId !== undefined) {
-        clearDeviceIntentSignRequest(activeSignRequestId);
-      }
-    }, [activeSignRequestId, clearDeviceIntentSignRequest]);
-
-    const activeSignMessageRequestId = deviceIntentSignMessageEntry?.requestId;
-    const handleCloseDeviceIntentSignMessage = useCallback(() => {
-      if (activeSignMessageRequestId !== undefined) {
-        clearDeviceIntentSignMessageRequest(activeSignMessageRequestId);
-      }
-    }, [activeSignMessageRequestId, clearDeviceIntentSignMessageRequest]);
-
     const isNetworkErrorVisible = !webviewState.loading && webviewState.isAppUnavailable;
     const displayedWebviewStyle = useMemo(
       () => (isNetworkErrorVisible ? { ...webviewStyle, display: "none" } : webviewStyle),
@@ -677,18 +649,18 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           {...webviewPartition}
         />
         {!hideLoader ? <Loader manifest={manifest} isLoading={!widgetLoaded} /> : null}
-        {deviceIntentSignEntry && (
+        {currentSignature?.type === "transaction" && (
           <TransactionSignatureDialog
-            key={deviceIntentSignEntry.requestId}
-            request={deviceIntentSignEntry.request}
-            onClose={handleCloseDeviceIntentSign}
+            key={currentSignature.id}
+            request={currentSignature.request}
+            onClose={closeCurrentSignature}
           />
         )}
-        {deviceIntentSignMessageEntry && (
+        {currentSignature?.type === "message" && (
           <MessageSignatureDialog
-            key={deviceIntentSignMessageEntry.requestId}
-            request={deviceIntentSignMessageEntry.request}
-            onClose={handleCloseDeviceIntentSignMessage}
+            key={currentSignature.id}
+            request={currentSignature.request}
+            onClose={closeCurrentSignature}
           />
         )}
       </>

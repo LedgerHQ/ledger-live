@@ -4,7 +4,10 @@ import TransactionSignatureDrawer from "../components/TransactionSignatureDrawer
 import MessageSignatureDrawer from "../components/MessageSignatureDrawer";
 import type { WalletApiDeviceIntentSignRequest } from "../components/TransactionSignatureDrawer";
 import type { WalletApiDeviceIntentSignMessageRequest } from "../components/MessageSignatureDrawer";
-import { useWalletApiSignatureQueue } from "../hooks/useWalletApiSignatureQueue";
+import {
+  useWalletApiSignatureQueue,
+  type UseWalletApiSignatureQueueResult,
+} from "@features/platform-wallet-api-sign";
 
 // The Device Intent Executor drives a real device connection + bottom sheet, which cannot
 // run in jest. We mock it to a marker view and capture its props, so this test focuses on
@@ -13,12 +16,12 @@ import { useWalletApiSignatureQueue } from "../hooks/useWalletApiSignatureQueue"
 type ExecutorProps = {
   sourceFlow: string;
   analyticsProperties?: Record<string, unknown>;
-  intent: unknown;
+  intent: { onResult?: (result: unknown) => void };
   intentComponentExtraProps?: Record<string, unknown>;
   onIntentJobStateChanged: (state: { type: string; [key: string]: unknown }) => void;
   onIntentJobComplete: () => void;
   onIntentJobError: (error: unknown) => void;
-  onUserCancel: () => void;
+  onUserCancel: (failure?: { failureType: string; countsAsFailure: boolean } | null) => void;
 };
 
 let mockExecutorProps: ExecutorProps | undefined;
@@ -37,11 +40,14 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => {
 });
 
 jest.mock("@features/platform-device-intent", () => ({
-  createIntent: jest.fn((definition: unknown, input: unknown) => ({
-    uuid: "intent-1",
-    definition,
-    input,
-  })),
+  createIntent: jest.fn(
+    (definition: unknown, input: unknown, listeners?: Record<string, unknown>) => ({
+      uuid: "intent-1",
+      definition,
+      input,
+      ...listeners,
+    }),
+  ),
 }));
 
 const mockPrepareTransaction = jest.fn((_account: unknown, tx: unknown) => Promise.resolve(tx));
@@ -86,11 +92,17 @@ function buildTransactionRequest(recipient: string) {
   return { request, onSuccess, onError };
 }
 
-type SignatureQueue = ReturnType<typeof useWalletApiSignatureQueue>;
+type SignatureQueue = UseWalletApiSignatureQueueResult<
+  WalletApiDeviceIntentSignRequest,
+  WalletApiDeviceIntentSignMessageRequest
+>;
 
 /** Renders the queued drawers the way the Wallet API webview does. */
 function SignatureQueueHost({ onQueue }: { onQueue: (queue: SignatureQueue) => void }) {
-  const queue = useWalletApiSignatureQueue();
+  const queue = useWalletApiSignatureQueue<
+    WalletApiDeviceIntentSignRequest,
+    WalletApiDeviceIntentSignMessageRequest
+  >();
   useEffect(() => {
     onQueue(queue);
   }, [onQueue, queue]);
@@ -159,7 +171,7 @@ describe("WalletApiSignature feature", () => {
     expect(mockPrepareTransaction).toHaveBeenCalledWith(account, transaction);
 
     const signedOperation = { operation: { id: "op-1" } };
-    act(() => mockExecutorProps!.onIntentJobStateChanged({ type: "signed", signedOperation }));
+    act(() => mockExecutorProps!.intent.onResult?.(signedOperation));
     expect(onSuccess).not.toHaveBeenCalled();
 
     act(() => mockExecutorProps!.onIntentJobComplete());
@@ -194,7 +206,7 @@ describe("WalletApiSignature feature", () => {
       manifestName: "Swap",
     });
 
-    act(() => mockExecutorProps!.onIntentJobStateChanged({ type: "signed", signature: "0xsig" }));
+    act(() => mockExecutorProps!.intent.onResult?.("0xsig"));
     expect(onSuccess).not.toHaveBeenCalled();
 
     act(() => mockExecutorProps!.onIntentJobComplete());
@@ -272,7 +284,7 @@ describe("WalletApiSignature feature", () => {
     expect(mockExecutorProps?.intentComponentExtraProps?.recipient).toBe("0xfirst");
 
     const signedOperation = { operation: { id: "op-1" } };
-    act(() => mockExecutorProps!.onIntentJobStateChanged({ type: "signed", signedOperation }));
+    act(() => mockExecutorProps!.intent.onResult?.(signedOperation));
     act(() => mockExecutorProps!.onIntentJobComplete());
     expect(first.onSuccess).toHaveBeenCalledWith(signedOperation);
 

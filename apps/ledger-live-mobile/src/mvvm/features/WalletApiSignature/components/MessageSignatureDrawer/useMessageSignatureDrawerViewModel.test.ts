@@ -5,7 +5,12 @@ import { useMessageSignatureDrawerViewModel } from "./useMessageSignatureDrawerV
 import type { WalletApiDeviceIntentSignMessageRequest } from "./types";
 
 jest.mock("@features/platform-device-intent", () => ({
-  createIntent: jest.fn(() => ({ uuid: "intent-1" })),
+  createIntent: jest.fn(
+    (_definition: unknown, _input: unknown, listeners?: Record<string, unknown>) => ({
+      uuid: "intent-1",
+      ...listeners,
+    }),
+  ),
 }));
 
 jest.mock("@ledgerhq/live-common/device-action/utils", () => ({
@@ -85,16 +90,17 @@ describe("useMessageSignatureDrawerViewModel", () => {
     expect(mockedCreateIntent).toHaveBeenCalledWith(
       { label: "Sign message" },
       expect.objectContaining({ account, message }),
+      { onResult: expect.any(Function) },
     );
-    expect(result.current.signatureIntent).toEqual({ uuid: "intent-1" });
+    expect(result.current.signatureIntent).toMatchObject({ uuid: "intent-1" });
   });
 
-  it("defers success until onIntentJobComplete after a signed job state", async () => {
+  it("defers success until onIntentJobComplete after the signed result is reported", async () => {
     const { result, onSuccess, onClose } = setup();
     await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
 
     act(() => {
-      result.current.onIntentJobStateChanged({ type: "signed", signature: "0xsignature" });
+      result.current.signatureIntent?.onResult?.("0xsignature");
     });
 
     expect(onSuccess).not.toHaveBeenCalled();
@@ -124,7 +130,7 @@ describe("useMessageSignatureDrawerViewModel", () => {
     await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
 
     act(() => {
-      result.current.onIntentJobStateChanged({ type: "signed", signature: "0xsignature" });
+      result.current.signatureIntent?.onResult?.("0xsignature");
     });
     act(() => {
       result.current.onUserCancel();

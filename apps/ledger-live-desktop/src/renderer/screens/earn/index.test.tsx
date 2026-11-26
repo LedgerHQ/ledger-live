@@ -296,7 +296,7 @@ describe("Earn screen", () => {
     expect(mockedUseEarnAppLifecycleMonitoring).toHaveBeenLastCalledWith(undefined);
   });
 
-  it("passes lldWalletApiDeviceIntentSignEnabled based on manifest allowlist activation", () => {
+  it("passes lldWalletApiDeviceIntentSignEnabled=true when the flag is enabled", () => {
     render(<Earn />, {
       initialState: withFlagOverrides({
         ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
@@ -315,13 +315,13 @@ describe("Earn screen", () => {
     expect(lastCall?.inputs?.lldWalletApiDeviceIntentSignEnabled).toBe("true");
   });
 
-  it("passes lldWalletApiDeviceIntentSignEnabled=false when flag is enabled for another manifest", () => {
+  it("passes lldWalletApiDeviceIntentSignEnabled=false when the flag is disabled", () => {
     render(<Earn />, {
       initialState: withFlagOverrides({
         ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
         lldWalletApiDeviceIntentSign: {
-          enabled: true,
-          params: { variantId: "variant_a", enabledManifestIds: ["swap-live-app"] },
+          enabled: false,
+          params: { variantId: "variant_a", enabledManifestIds: ["earn-manifest-id"] },
         },
         stakePrograms: { enabled: true, params: { list: [], redirects: {} } },
       }),

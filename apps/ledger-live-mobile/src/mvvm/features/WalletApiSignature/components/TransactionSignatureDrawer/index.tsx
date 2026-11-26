@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from "react";
+import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import { DeviceIntentExecutor } from "LLM/components/DeviceIntentExecutor";
 import { useTransactionSignatureDrawerViewModel } from "./useTransactionSignatureDrawerViewModel";
@@ -22,6 +22,8 @@ const deviceConnectionParams = { acceptedDeviceModelIds: [] };
 function TransactionSignatureDrawer({ request, onClose }: Props) {
   const {
     sourceFlow,
+    analyticsProperties,
+    intentComponentExtraProps,
     deviceInitializationInput,
     signatureIntent,
     onIntentJobStateChanged,
@@ -30,20 +32,6 @@ function TransactionSignatureDrawer({ request, onClose }: Props) {
     onExecutorStateChanged,
     onUserCancel,
   } = useTransactionSignatureDrawerViewModel({ request, onClose });
-
-  const analyticsProperties = useMemo(
-    () => ({ manifestId: request.manifestId, manifestName: request.manifestName }),
-    [request.manifestId, request.manifestName],
-  );
-
-  const intentComponentExtraProps = useMemo(
-    () => ({
-      manifestId: request.manifestId,
-      manifestName: request.manifestName,
-      recipient: request.transaction.recipient,
-    }),
-    [request.manifestId, request.manifestName, request.transaction.recipient],
-  );
 
   if (!deviceInitializationInput || !signatureIntent) {
     return null;
