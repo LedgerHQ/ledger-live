@@ -1,4 +1,11 @@
-export { getOperations, fetchLegacyHistory, fetchTransactionsPage } from "./indexer";
+export {
+  getOperations,
+  fetchLegacyHistory,
+  fetchTransactionsPage,
+  fetchReceiptsPage,
+  readReceiptTransfers,
+} from "./indexer";
+export type { NearAccountReceipt, NearReceiptTransfer } from "./sdk.types";
 export { getBlockHeaderAtHeight, getLastBlockHeader } from "./getBlock";
 export { getActionCosts, getProtocolConfig, type NearActionCosts } from "./protocolConfig";
 export {

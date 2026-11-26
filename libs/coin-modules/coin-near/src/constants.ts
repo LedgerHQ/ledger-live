@@ -71,3 +71,6 @@ export const LEGACY_HISTORY_MAX_PAGES = 10;
 export const DELEGATE_ACTION = "DELEGATE_ACTION";
 /** How long the history is read again after a state change it does not explain yet. */
 export const HISTORY_RECHECK_WINDOW_MS = 60 * 60 * 1000;
+export const RECEIPTS_PAGE_SIZE = 100;
+export const RECEIPTS_MAX_PAGES = 10;
+export const SYSTEM_ACCOUNT = "system";

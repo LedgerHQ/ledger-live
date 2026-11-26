@@ -111,3 +111,25 @@ export type NearRawValidator = {
   account_id: string;
   stake: string;
 };
+
+export type NearAccountReceipt = {
+  receipt_id: string;
+  transaction_hash: string;
+  predecessor_account_id: string;
+  receiver_account_id: string;
+  included_in_block_timestamp: string;
+  block?: { block_hash?: string; block_height?: string; block_timestamp?: string };
+  actions_agg?: { deposit: string };
+  actions?: { action: string; method: string | null }[];
+  outcome?: { status?: boolean };
+};
+
+export type NearReceiptTransfer = {
+  transactionHash: string;
+  sender: string;
+  /** Yocto. */
+  value: string;
+  blockHeight: number;
+  blockHash: string | undefined;
+  date: Date;
+};

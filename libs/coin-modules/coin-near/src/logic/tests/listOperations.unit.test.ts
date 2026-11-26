@@ -1,9 +1,12 @@
 import { mockNearContext } from "../../test/context";
-import { fetchTransactionsPage } from "../../network";
-import type { NearTransaction } from "../../network/sdk.types";
+import { fetchTransactionsPage, readReceiptTransfers } from "../../network";
+import type { NearReceiptTransfer, NearTransaction } from "../../network/sdk.types";
 import { listOperations, toOperation } from "../listOperations";
 
-jest.mock("../../network", () => ({ fetchTransactionsPage: jest.fn() }));
+jest.mock("../../network", () => ({
+  fetchTransactionsPage: jest.fn(),
+  readReceiptTransfers: jest.fn(),
+}));
 
 const ADDRESS = "delegator.near";
 const PEER = "recipient.near";
@@ -26,6 +29,27 @@ const transaction = (overrides: Overrides<NearTransaction> = {}): NearTransactio
     actions: [{ action: "TRANSFER", method: null }],
     ...overrides,
   }) as NearTransaction;
+
+const transfer = (overrides: Partial<NearReceiptTransfer> = {}): NearReceiptTransfer => ({
+  transactionHash: "payout-hash",
+  sender: "intents.near",
+  value: "7000000000000000000000000",
+  blockHeight: 140_000_005,
+  blockHash: "ReceiptBlock",
+  date: new Date(1_750_000_005_000),
+  ...overrides,
+});
+
+const mockReceipts = (transfers: NearReceiptTransfer[] = [], resumeCursor?: string) =>
+  (readReceiptTransfers as jest.Mock).mockResolvedValue({
+    transfers,
+    exhausted: resumeCursor === undefined,
+    ...(resumeCursor !== undefined && { resumeCursor }),
+  });
+
+const decode = (token: string | undefined) =>
+  JSON.parse(Buffer.from(token ?? "", "base64url").toString("utf8"));
+const encode = (cursor: object) => Buffer.from(JSON.stringify(cursor)).toString("base64url");
 
 const mockPage = (transactions: NearTransaction[], next?: string) =>
   (fetchTransactionsPage as jest.Mock).mockResolvedValue({ transactions, next });
@@ -185,7 +209,10 @@ describe("toOperation flags read by the sync", () => {
 });
 
 describe("listOperations", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockReceipts();
+  });
 
   it("rejects ascending order, since paging runs newest first", async () => {
     await expect(
@@ -193,12 +220,12 @@ describe("listOperations", () => {
     ).rejects.toThrow("ascending order is not supported");
   });
 
-  it("forwards the cursor and limit to the indexer and returns its next cursor", async () => {
+  it("forwards the transactions cursor and limit to the indexer and returns a next cursor", async () => {
     mockPage([transaction()], "cursor-2");
 
     const page = await listOperations(mockNearContext, ADDRESS, {
       minHeight: 0,
-      cursor: "cursor-1",
+      cursor: encode({ t: "cursor-1" }),
       limit: 10,
     });
 
@@ -206,7 +233,7 @@ describe("listOperations", () => {
       cursor: "cursor-1",
       limit: 10,
     });
-    expect(page.next).toBe("cursor-2");
+    expect(decode(page.next).t).toBe("cursor-2");
     expect(page.items).toHaveLength(1);
   });
 
@@ -249,5 +276,169 @@ describe("listOperations", () => {
 
     expect(page.items).toEqual([]);
     expect(page.next).toBeUndefined();
+  });
+});
+
+describe("listOperations receipt transfers", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockReceipts();
+  });
+
+  it("merges a receipt transfer into the page, newest first", async () => {
+    mockPage([
+      transaction({ block: { block_hash: "b2", block_height: "140000010" } }),
+      transaction({
+        transaction_hash: "older",
+        block: { block_hash: "b1", block_height: "140000001" },
+      }),
+    ]);
+    mockReceipts([transfer()]);
+
+    const page = await listOperations(mockNearContext, ADDRESS, { minHeight: 0 });
+
+    expect(page.items.map(item => item.tx.block.height)).toEqual([
+      140_000_010, 140_000_005, 140_000_001,
+    ]);
+    expect(page.items[1]).toEqual({
+      id: "payout-hash",
+      type: "IN",
+      senders: ["intents.near"],
+      recipients: [ADDRESS],
+      value: 7_000_000_000_000_000_000_000_000n,
+      asset: { type: "native" },
+      tx: {
+        hash: "payout-hash",
+        block: { height: 140_000_005, hash: "ReceiptBlock", time: new Date(1_750_000_005_000) },
+        fees: 0n,
+        date: new Date(1_750_000_005_000),
+        failed: false,
+      },
+    });
+  });
+
+  it("maps a receipt transfer with no block hash to an empty one", async () => {
+    mockPage([transaction()]);
+    mockReceipts([transfer({ blockHash: undefined })]);
+
+    const page = await listOperations(mockNearContext, ADDRESS, { minHeight: 0 });
+
+    expect(page.items.find(item => item.id === "payout-hash")?.tx.block.hash).toBe("");
+  });
+
+  it("tells the receipts read which transactions it already holds", async () => {
+    mockPage([transaction({ transaction_hash: "held" })]);
+
+    await listOperations(mockNearContext, ADDRESS, { minHeight: 0 });
+
+    expect(readReceiptTransfers).toHaveBeenCalledWith(
+      expect.anything(),
+      ADDRESS,
+      expect.objectContaining({ knownHashes: new Set(["held"]) }),
+    );
+  });
+
+  it("returns a composite next cursor and reads on from it", async () => {
+    mockPage(
+      [
+        transaction({ block: { block_height: "300" } }),
+        transaction({ block: { block_height: "250" } }),
+      ],
+      "txns-2",
+    );
+    mockReceipts([], "receipts-2");
+
+    const first = await listOperations(mockNearContext, ADDRESS, { minHeight: 0 });
+
+    expect(decode(first.next)).toEqual({ t: "txns-2", r: "receipts-2", u: 250 });
+
+    await listOperations(mockNearContext, ADDRESS, { minHeight: 0, cursor: first.next });
+
+    expect(fetchTransactionsPage).toHaveBeenLastCalledWith(
+      expect.anything(),
+      ADDRESS,
+      expect.objectContaining({ cursor: "txns-2" }),
+    );
+    expect(readReceiptTransfers).toHaveBeenLastCalledWith(
+      expect.anything(),
+      ADDRESS,
+      expect.objectContaining({ cursor: "receipts-2", upperHeight: 250 }),
+    );
+  });
+
+  it("omits the receipts cursor when the receipts read has none to resume", async () => {
+    mockPage([transaction({ block: { block_height: "300" } })], "txns-2");
+
+    const page = await listOperations(mockNearContext, ADDRESS, { minHeight: 0 });
+
+    expect(decode(page.next)).toEqual({ t: "txns-2", u: 300 });
+  });
+
+  it("windows the receipts at the lowest height of a page that has a next one", async () => {
+    mockPage(
+      [
+        transaction({ block: { block_height: "300" } }),
+        transaction({ block: { block_height: "250" } }),
+      ],
+      "txns-2",
+    );
+
+    await listOperations(mockNearContext, ADDRESS, { minHeight: 100 });
+
+    expect(readReceiptTransfers).toHaveBeenCalledWith(
+      expect.anything(),
+      ADDRESS,
+      expect.objectContaining({ floorHeight: 250 }),
+    );
+  });
+
+  it("windows the receipts down to minHeight on the last page", async () => {
+    mockPage([transaction({ block: { block_height: "300" } })]);
+
+    const page = await listOperations(mockNearContext, ADDRESS, { minHeight: 100 });
+
+    expect(readReceiptTransfers).toHaveBeenCalledWith(
+      expect.anything(),
+      ADDRESS,
+      expect.objectContaining({ floorHeight: 100 }),
+    );
+    expect(page.next).toBeUndefined();
+  });
+
+  it("drops receipt transfers below minHeight and stops paging at the floor", async () => {
+    mockPage(
+      [
+        transaction({ block: { block_height: "200" } }),
+        transaction({ block: { block_height: "100" } }),
+      ],
+      "txns-2",
+    );
+    mockReceipts([
+      transfer({ transactionHash: "kept", blockHeight: 180 }),
+      transfer({ transactionHash: "dropped", blockHeight: 120 }),
+    ]);
+
+    const page = await listOperations(mockNearContext, ADDRESS, { minHeight: 150 });
+
+    expect(page.items.map(item => item.id)).toEqual([
+      "GkQ7Uh8oPPGtVfyPz1yLKmqPqZ8ZyxvGtN5MmYq8mF1w",
+      "kept",
+    ]);
+    expect(page.next).toBeUndefined();
+    expect(readReceiptTransfers).toHaveBeenCalledWith(
+      expect.anything(),
+      ADDRESS,
+      expect.objectContaining({ floorHeight: 150 }),
+    );
+  });
+
+  it.each([
+    ["not base64url json", "!!!"],
+    ["not an object", Buffer.from("42").toString("base64url")],
+    ["a wrong field type", encode({ t: 5 })],
+  ])("rejects a cursor that is %s", async (_name, cursor) => {
+    await expect(
+      listOperations(mockNearContext, ADDRESS, { minHeight: 0, cursor }),
+    ).rejects.toThrow("invalid cursor");
   });
 });

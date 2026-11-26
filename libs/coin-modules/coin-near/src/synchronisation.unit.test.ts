@@ -147,6 +147,40 @@ describe("legacy getAccountShape", () => {
     expect(shape.nearResources).not.toHaveProperty("historyRecheckSince");
   });
 
+  it("stores a payout delivered by receipt as an unseen operation, opening no recheck window nor pool listing", async () => {
+    (getAccountStateFingerprint as jest.Mock).mockResolvedValue(NEW_FP);
+    const payout = {
+      ...operation("payout"),
+      type: "IN",
+      senders: ["intents.near"],
+      recipients: [ADDRESS],
+      fee: new BigNumber(0),
+    } as unknown as Operation;
+    (fetchLegacyHistory as jest.Mock).mockResolvedValue({ ...history([]), operations: [payout] });
+
+    const stored = storedAccount();
+    const shape = await runSync(stored);
+
+    expect(shape.operations?.map(op => op.hash)).toEqual(["payout", "old"]);
+    expect(shape.operations?.[0]).toMatchObject({ type: "IN", senders: ["intents.near"] });
+    expect(shape.nearResources?.accountStateFingerprint).toBe(NEW_FP);
+    expect(shape.nearResources).not.toHaveProperty("historyRecheckSince");
+
+    jest.spyOn(Date, "now").mockReturnValue(NOW + HISTORY_RECHECK_WINDOW_MS);
+    (fetchLegacyHistory as jest.Mock).mockClear();
+    const next = await runSync({
+      ...stored,
+      operations: shape.operations,
+      nearResources: shape.nearResources,
+    } as unknown as NearAccount);
+
+    // The one confirmation read every accepted change gets, which finds nothing more to explain.
+    expect(fetchLegacyHistory).toHaveBeenCalledTimes(1);
+    expect(next.nearResources).not.toHaveProperty("historyRecheckSince");
+    expect(next.nearResources).not.toHaveProperty("poolListingPending");
+    expect(stakingOptionsOfLastCall().listValidators).toBe(false);
+  });
+
   it("lists the pools for an unseen staking call to an unknown pool, naming it as a candidate", async () => {
     (getAccountStateFingerprint as jest.Mock).mockResolvedValue(NEW_FP);
     (fetchLegacyHistory as jest.Mock).mockResolvedValue(

@@ -25,6 +25,13 @@ describe("listOperations (MSW)", () => {
     mockServer.listen({ onUnhandledRequest: "error" });
   });
 
+  beforeEach(() =>
+    mockServer.use(
+      http.get(`${NEAR_BASE_URL_MOCKED}/v3/accounts/:address/receipts`, () =>
+        HttpResponse.json({ data: [] }),
+      ),
+    ),
+  );
   afterEach(() => mockServer.resetHandlers());
   afterAll(() => mockServer.close());
 
@@ -45,21 +52,27 @@ describe("listOperations (MSW)", () => {
     });
   });
 
-  it("forwards the indexer's opaque cursor unchanged on the next page", async () => {
-    const cursor = "eyJhY2NvdW50X2lkIjoid2Fja2F6b25nLnBvb2x2MS5uZWFyIn0=";
-    let requestedNext: string | null = null;
+  it("wraps the indexer's opaque cursor in its own token and unwraps it on the next page", async () => {
+    const indexerCursor = "eyJhY2NvdW50X2lkIjoid2Fja2F6b25nLnBvb2x2MS5uZWFyIn0=";
+    const requestedNext: (string | null)[] = [];
 
     mockServer.use(
       http.get(`${NEAR_BASE_URL_MOCKED}/v3/accounts/:address/txns`, ({ request }) => {
-        requestedNext = new URL(request.url).searchParams.get("next");
-        return HttpResponse.json({ data: [transaction()], meta: { next_page: cursor } });
+        requestedNext.push(new URL(request.url).searchParams.get("next"));
+        return HttpResponse.json({
+          data: [transaction()],
+          meta: { next_page: indexerCursor },
+        });
       }),
     );
 
-    const page = await listOperations(mockNearContext, ADDRESS, { cursor, minHeight: 0 });
+    const first = await listOperations(mockNearContext, ADDRESS, { minHeight: 0 });
+    await listOperations(mockNearContext, ADDRESS, { cursor: first.next, minHeight: 0 });
 
-    expect(requestedNext).toBe(cursor);
-    expect(page.next).toBe(cursor);
+    expect(JSON.parse(Buffer.from(first.next ?? "", "base64url").toString("utf8"))).toMatchObject({
+      t: indexerCursor,
+    });
+    expect(requestedNext).toEqual([null, indexerCursor]);
   });
 
   it("returns an empty page rather than undefined items when the indexer has no data", async () => {
