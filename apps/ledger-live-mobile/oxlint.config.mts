@@ -22,13 +22,61 @@ const MVVM_ALIAS = {
   message: "Use 'LLM' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLM' in your imports.",
 };
 
-const RESTRICTED_PATHS = [
+// Ledger Sync trust goes through the key ring packages: the v1 protocol stays behind them.
+const KEY_RING_SECRET_PATHS = [
+  {
+    name: "@domain/entity-key-ring",
+    importNames: ["selectKeyRingSecrets"],
+    message:
+      "The member key and the Ledger Sync key stay in @features/platform-key-ring. Read a meaning with selectIsLedgerSyncActive, selectIsKeyRingMember or selectKeyRingTreeId, or pass selectKeyRingSession to the key ring client.",
+  },
+  {
+    name: "@domain/entity-key-ring",
+    importNames: ["keyRingStateImported", "keyRingReset", "keyRingTreeSet", "keyRingMemberKeySet"],
+    message:
+      "Store key ring results through @features/platform-key-ring: importPersistedKeyRingState, resetKeyRingState, commitKeyRingTree, commitKeyRingMemberKey.",
+  },
+];
+// The persisted value is opaque; only the persistence files write it.
+const KEY_RING_PERSISTENCE_LENS_PATHS = [
+  "@features/platform-key-ring",
+  "@features/platform-key-ring/store",
+  "@features/platform-key-ring/persistence",
+].map(name => ({
+  name,
+  importNames: ["selectPersistedKeyRingState"],
+  message: "Only the app persistence files write the key ring state to disk.",
+}));
+const KEY_RING_PATHS = [...KEY_RING_SECRET_PATHS, ...KEY_RING_PERSISTENCE_LENS_PATHS];
+const KEY_RING_PERSISTENCE_FILES = [
+  "src/db.ts",
+  "src/components/DBSave.ts",
+  "src/context/LedgerStore.tsx",
+];
+const KEY_RING_PATTERNS = [
+  {
+    group: ["@ledgerhq/ledger-key-ring-protocol", "@ledgerhq/ledger-key-ring-protocol/*"],
+    message:
+      "Use @features/platform-key-ring (KeyRingClient, session, state actions, intents, identity provider) and @domain/entity-key-ring (slice, selectors).",
+  },
+  {
+    group: ["@ledgerhq/hw-ledger-key-ring-protocol", "@ledgerhq/hw-ledger-key-ring-protocol/*"],
+    message: "Use getKeyRingDeviceRequirement from @features/platform-key-ring.",
+  },
+  {
+    group: ["@features/platform-intent-wallet-sync"],
+    message: "The Ledger Sync device intents moved to @features/platform-key-ring.",
+  },
+];
+
+const BASE_RESTRICTED_PATHS = [
   LODASH,
   BIGNUMBER_NAMED_IMPORT,
   EXPO_CLIPBOARD,
   ...WALLET_FRAMEWORK_CURRENCY_TYPES,
   ...ACCOUNT_DESCRIPTOR,
 ];
+const RESTRICTED_PATHS = [...BASE_RESTRICTED_PATHS, ...KEY_RING_PATHS];
 
 // Test and debug files may import these directly.
 const APP_INSTANCE_PATHS = [
@@ -59,6 +107,7 @@ const APP_INSTANCE_PATHS = [
 ];
 
 const RESTRICTED_PATTERNS = [
+  ...KEY_RING_PATTERNS,
   LIVE_COMMON_LIB,
   MVVM_ALIAS,
   LIVE_COMMON_FEATURE_FLAGS,
@@ -137,6 +186,18 @@ export default defineConfig({
   },
   overrides: [
     {
+      files: KEY_RING_PERSISTENCE_FILES,
+      rules: {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            paths: [...BASE_RESTRICTED_PATHS, ...KEY_RING_SECRET_PATHS, ...APP_INSTANCE_PATHS],
+            patterns: RESTRICTED_PATTERNS,
+          },
+        ],
+      },
+    },
+    {
       files: ["**/*.test.{ts,tsx}", "**/__tests__/**", "e2e/**/*.{ts,tsx}"],
       env: { jest: true },
       plugins: ["jest"],
@@ -173,7 +234,12 @@ export default defineConfig({
     },
     {
       files: ACCOUNT_DATA_SETUP_FILES,
-      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+      rules: {
+        "eslint/no-restricted-imports": [
+          "error",
+          { paths: [BIGNUMBER_NAMED_IMPORT, ...KEY_RING_PATHS], patterns: KEY_RING_PATTERNS },
+        ],
+      },
     },
     {
       files: ["**/*.test.*", "**/__tests__/**", "**/__integrations__/**", "**/__mocks__/**"],
