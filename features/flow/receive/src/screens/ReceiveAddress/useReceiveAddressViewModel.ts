@@ -7,6 +7,7 @@ import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 import { useReceiveAddressActions } from "./useReceiveAddressActions";
 import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
 import { useReceiveAddressHelp } from "./useReceiveAddressHelp";
+import { useReceiveAddressMemo } from "./useReceiveAddressMemo";
 import { useReceiveAddressNotices } from "./useReceiveAddressNotices";
 import { useReceiveAddressSelection } from "./useReceiveAddressSelection";
 import { useReceiveAddressServiceStatus } from "./useReceiveAddressServiceStatus";
@@ -71,6 +72,11 @@ export function useReceiveAddressViewModel({
     onOpenUrl: openSupportUrl,
   });
   const { helpCard, helpPanel } = useReceiveAddressHelp({ copy, onOpenUrl: openSupportUrl });
+  const { memoCard, memoPanel } = useReceiveAddressMemo({
+    selected,
+    copy,
+    onOpenUrl: openSupportUrl,
+  });
   // The hint waits for the incident: it would lock a dialog that no longer shows the tiles.
   const shownActions = useMemo(
     () => (serviceStatus && actions.verifyHint ? { ...actions, verifyHint: undefined } : actions),
@@ -118,6 +124,8 @@ export function useReceiveAddressViewModel({
     serviceStatus,
     helpCard,
     helpPanel,
+    memoCard,
+    memoPanel,
     verification,
     title: header.title,
     networkLabel: header.networkLabel,

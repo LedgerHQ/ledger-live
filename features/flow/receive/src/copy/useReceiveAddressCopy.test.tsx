@@ -45,6 +45,10 @@ describe("useReceiveAddressCopy", () => {
         receiveFromExchange: "How to receive from exchanges?",
         receiveSecurely: "How to receive securely?",
       },
+      memoTitle: "Need a Tag/Memo?",
+      memoDescription:
+        "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+      memoGotIt: "Got it",
     });
   });
 });
