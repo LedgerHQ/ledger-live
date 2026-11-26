@@ -42,10 +42,7 @@
     "@shared/env": "workspace:*",
     "bignumber.js": "^9.1.2",
     "bip39": "catalog:",
-    "bs58": "catalog:",
-    "chalk": "catalog:",
-    "docker-compose": "^1.1.0",
-    "msw": "catalog:"
+    "bs58": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
