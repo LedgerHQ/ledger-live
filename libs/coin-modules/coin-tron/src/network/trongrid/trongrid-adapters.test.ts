@@ -71,37 +71,6 @@ describe("fromTrongridTxInfoToOperation", () => {
     expect(result.details).toMatchObject({ memo: "ledger-e2e" });
   });
 
-  it("sets a zero asset amount on a failed token transfer, keeping its attempted value", () => {
-    const result = fromTrongridTxInfoToOperation(
-      { ...mockTrongridTxInfo, hasFailed: true },
-      mockBlock,
-      mockUserAddress,
-    );
-
-    expect(result).toMatchObject({
-      type: "OUT",
-      value: BigInt(5000),
-      tx: expect.objectContaining({ failed: true }),
-      details: { ledgerOpType: "OUT", assetAmount: "0" },
-    });
-  });
-
-  it("sets no asset amount on a failed native transfer", () => {
-    const result = fromTrongridTxInfoToOperation(
-      {
-        ...mockTrongridTxInfo,
-        type: "TransferContract",
-        tokenType: undefined,
-        tokenAddress: undefined,
-        hasFailed: true,
-      },
-      mockBlock,
-      mockUserAddress,
-    );
-
-    expect(result.details).toBeUndefined();
-  });
-
   it("uses every sender and recipient of summed TRC20 transfers", () => {
     const result = fromTrongridTxInfoToOperation(
       { ...mockTrongridTxInfo, senders: ["from", "other"], recipients: ["to", "to2"] },

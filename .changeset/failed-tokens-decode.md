@@ -1,6 +1,7 @@
 ---
 "@ledgerhq/coin-tron": minor
 "@ledgerhq/live-common": minor
+"@ledgerhq/ledger-wallet-framework": minor
 ---
 
-Show a failed TRC20 transfer as a failed send to its recipient, with no effect on the token balance history
+Show a failed token transfer as a failed send of its attempted amount, without moving the token balance history

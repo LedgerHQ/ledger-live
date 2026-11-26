@@ -2,6 +2,7 @@ import { fromTrongridTxInfoToOperation } from "@ledgerhq/coin-tron/network/trong
 import type { TrongridTxInfo } from "@ledgerhq/coin-tron/types/index";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
+import { generateHistoryFromOperations } from "@ledgerhq/ledger-wallet-framework/account/balanceHistoryCache";
 import { getOperationAmountNumber } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -14,6 +15,7 @@ const recipient = "TBiNkpovzraTunRNcuqJXsocVXVg548XfZ";
 const usdtContract = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 const accountId = `js:2:tron:${sender}:`;
 const feeInSun = 345_000;
+const usdtBalance = 5_000_000_000n;
 
 const usdt: TokenCurrency = {
   type: "TokenCurrency",
@@ -53,31 +55,36 @@ async function syncFailedTransfer() {
   const [tokenAccount] = await buildSubAccounts({
     accountId,
     allTokenAssetsBalances: [
-      { value: 0n, asset: { type: "trc20", assetReference: usdtContract, assetOwner: sender } },
+      {
+        value: usdtBalance,
+        asset: { type: "trc20", assetReference: usdtContract, assetOwner: sender },
+      },
     ],
     syncConfig,
     operations: [nativeOperation],
     getTokenFromAsset: async () => usdt,
   });
-  return { nativeOperation, tokenOperation: tokenAccount.operations[0] };
+  return { nativeOperation, tokenAccount, tokenOperation: tokenAccount.operations[0] };
 }
 
 describe("a failed TRC20 transfer synced through the generic coin framework", () => {
-  it("shows as a failed send to its recipient on the token account", async () => {
+  it("shows as a failed send of its attempted amount to its recipient on the token account", async () => {
     const { tokenOperation } = await syncFailedTransfer();
 
     expect(tokenOperation).toMatchObject({
       type: "OUT",
       hasFailed: true,
       recipients: [recipient],
-      value: new BigNumber(0),
     });
+    expect(getOperationAmountNumber(tokenOperation)).toEqual(new BigNumber(-2_448_000_000));
   });
 
   it("leaves the token balance history unchanged", async () => {
-    const { tokenOperation } = await syncFailedTransfer();
+    const { tokenAccount } = await syncFailedTransfer();
 
-    expect(getOperationAmountNumber(tokenOperation).isZero()).toBe(true);
+    const { WEEK } = generateHistoryFromOperations(tokenAccount);
+
+    expect(new Set(WEEK.balances)).toEqual(new Set([Number(usdtBalance)]));
   });
 
   it("still debits the fee from the TRX account", async () => {

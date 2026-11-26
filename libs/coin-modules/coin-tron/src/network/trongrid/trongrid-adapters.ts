@@ -37,8 +37,6 @@ export function fromTrongridTxInfoToOperation(
   // sub-account operation; the amount already comes from `value`.
   if (asset.type !== "native") {
     operation.details = { ledgerOpType: type };
-    // A failed transfer moved no token: without it, the sub-account would take the native fee as amount.
-    if (trongridTxInfo.hasFailed) operation.details.assetAmount = "0";
   }
 
   // `familyExtra` is the framework's family-agnostic passthrough onto `Operation.extra`: the staking
