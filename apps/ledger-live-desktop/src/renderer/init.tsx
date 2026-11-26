@@ -206,6 +206,12 @@ async function init() {
       readStakePrograms: () => selectFeature(store.getState(), "stakePrograms"),
       resolveVersionedRedirects: getVersionedRedirects,
       readAppVersion: () => LiveConfig.instance.appVersion || "0.0.0",
+      readManifestId: () => {
+        const earnFlag = selectFeature(store.getState(), "ptxEarnLiveApp");
+        return earnFlag?.enabled
+          ? earnFlag.params?.manifest_id
+          : process.env.DEFAULT_EARN_MANIFEST_ID;
+      },
       apiBaseUrl: process.env.EARN_API_BASE_URL,
     }),
   );
