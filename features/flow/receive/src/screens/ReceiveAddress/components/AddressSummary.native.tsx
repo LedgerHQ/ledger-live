@@ -38,6 +38,7 @@ export function AddressSummary({ address, onCopy, copyLabel, copyKey }: AddressS
             size={QR_SIZE}
             animation="ripple"
             onPress={onCopy}
+            hapticFeedback="soft"
             accessibilityLabel={copyLabel}
             triggerKey={copyKey}
             testID="receive-address-qr-code"

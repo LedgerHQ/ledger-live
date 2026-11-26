@@ -80,6 +80,7 @@ export function AddressActions({ actions }: AddressActionsProps) {
                 lx={{ width: "full" }}
                 icon={tile.icon}
                 onPress={isDisabled ? undefined : tile.onPress}
+                hapticFeedback={tile.id === "copy" ? "soft" : undefined}
                 disabled={isDisabled}
                 testID={`receive-address-${tile.id}`}
                 accessibilityLabel={tile.label}

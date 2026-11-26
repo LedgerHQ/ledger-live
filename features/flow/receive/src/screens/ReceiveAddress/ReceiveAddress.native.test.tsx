@@ -41,18 +41,21 @@ jest.mock("@shared/ui-animated-qr-code/native", () => {
       value,
       animation,
       onPress,
+      hapticFeedback,
       triggerKey,
       testID,
     }: {
       value: string;
       animation: string;
       onPress?: () => void;
+      hapticFeedback?: string;
       triggerKey?: number;
       testID?: string;
     }) => (
       <Pressable onPress={onPress} testID={testID ?? `qr-code-${animation}`}>
         <Text>{`qr:${value}`}</Text>
         <Text>{`${animation}:${triggerKey ?? 0}`}</Text>
+        <Text>{`haptic:${hapticFeedback ?? "none"}`}</Text>
       </Pressable>
     ),
   };
@@ -165,6 +168,24 @@ describe("ReceiveAddress (Native)", () => {
     fireEvent.press(screen.getByTestId("receive-address-copy"));
     expect(await screen.findByText("ripple:1")).toBeTruthy();
     expect(onCopyAddress).toHaveBeenCalledTimes(2);
+  });
+
+  it("gives a soft haptic when Copy or the QR code is pressed, not on Share or Verify", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      onCopyAddress: jest.fn(async () => true),
+      onShareAddress: jest.fn(),
+      VerifyAddressExecutor,
+    });
+
+    // The verify hint opens first and hides the rest from screen readers.
+    await screen.findByTestId("receive-address-verify-hint");
+    const hapticOf = (testID: string) =>
+      screen.getByTestId(testID, { includeHiddenElements: true }).props.hapticFeedback;
+
+    expect(hapticOf("receive-address-copy")).toBe("soft");
+    expect(hapticOf("receive-address-share")).toBeUndefined();
+    expect(hapticOf("receive-address-verify")).toBeUndefined();
+    expect(screen.getByText("haptic:soft", { includeHiddenElements: true })).toBeTruthy();
   });
 
   it("points at Verify, hiding the rest from screen readers, until the hint is dismissed, then verifies", async () => {
