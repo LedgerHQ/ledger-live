@@ -11,8 +11,8 @@ import { HookResult } from "./useManageKeyDrawer";
 import {
   isNoTrustchainError,
   isUnauthorizedMemberError,
-  keyRingErrorForDisplayView,
-} from "../../utils/errors";
+  ledgerSyncErrorForDisplay,
+} from "@features/flow-ledger-sync";
 import { SpecificError } from "../../components/Error/SpecificError";
 import { ErrorReason } from "../../hooks/useSpecificError";
 
@@ -38,7 +38,7 @@ const ManageKeyDrawer = ({
       }
       return (
         <GenericErrorView
-          error={keyRingErrorForDisplayView(deleteMutation.error)}
+          error={ledgerSyncErrorForDisplay(deleteMutation.error)}
           withDescription
           withHelp
           hasExportLogButton

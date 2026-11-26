@@ -5,7 +5,7 @@ import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { useAddMember } from "../hooks/useAddMember";
 import { SceneKind } from "../hooks/useFollowInstructionDrawer";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import { AnalyticsEvents } from "../Analytics/enums";
+import { LedgerSyncAnalyticsEvent } from "@features/flow-ledger-sync";
 import { CONNECTION_TYPES } from "~/analytics/hooks/variables";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -144,7 +144,7 @@ describe("useAddMember", () => {
 
     await jest.advanceTimersByTimeAsync(100);
 
-    expect(track).toHaveBeenCalledWith(AnalyticsEvents.LedgerSyncRejectedOnDevice, {
+    expect(track).toHaveBeenCalledWith(LedgerSyncAnalyticsEvent.rejectedOnDevice, {
       page: "Ledger Sync",
       modelId: DeviceModelId.stax,
       connectionType: CONNECTION_TYPES.BLE,
@@ -160,7 +160,7 @@ describe("useAddMember", () => {
 
     await jest.advanceTimersByTimeAsync(100);
 
-    expect(track).toHaveBeenCalledWith(AnalyticsEvents.LedgerSyncRejectedOnDevice, {
+    expect(track).toHaveBeenCalledWith(LedgerSyncAnalyticsEvent.rejectedOnDevice, {
       page: "Ledger Sync",
       modelId: DeviceModelId.stax,
       connectionType: CONNECTION_TYPES.USB,

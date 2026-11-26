@@ -17,7 +17,7 @@ import { DeletionError } from "../../components/ManageInstances/DeletionError";
 import { DrawerProps, SceneKind } from "../../hooks/useFollowInstructionDrawer";
 import { SpecificError } from "../../components/Error/SpecificError";
 import { ErrorReason } from "../../hooks/useSpecificError";
-import { keyRingErrorForDisplayView } from "../../utils/errors";
+import { ledgerSyncErrorForDisplay } from "@features/flow-ledger-sync";
 
 type Props = DrawerProps & {
   isOpen: boolean;
@@ -77,7 +77,7 @@ const GenericFollowInstructionsDrawer = ({
       case SceneKind.GenericError:
         return (
           <GenericErrorView
-            error={keyRingErrorForDisplayView(scene.error)}
+            error={ledgerSyncErrorForDisplay(scene.error)}
             withDescription
             withHelp
             hasExportLogButton

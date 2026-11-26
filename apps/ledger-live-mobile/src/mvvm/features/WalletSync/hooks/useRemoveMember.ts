@@ -1,14 +1,12 @@
+import { useLedgerSyncMemberRemoval } from "@features/flow-ledger-sync";
 import {
   assertKeyRingMember,
-  classifyKeyRingError,
-  commitKeyRingTree,
   isSameKeyRingMember,
   selectKeyRingSession,
   type KeyRingMember,
-  type KeyRingTreeUpdate,
 } from "@features/platform-key-ring";
 import { selectIsKeyRingMember } from "@domain/entity-key-ring";
-import { useSelector, useDispatch } from "~/context/hooks";
+import { useSelector } from "~/context/hooks";
 import { useKeyRingClient } from "./useKeyRingClient";
 import { useCallback } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -24,47 +22,45 @@ type Props = {
 };
 
 export function useRemoveMember({ device, member }: Props): DrawerProps {
-  const dispatch = useDispatch();
   const client = useKeyRingClient();
   const session = useSelector(selectKeyRingSession);
   const isMember = useSelector(selectIsKeyRingMember);
   const memberKeySession = useSelector(selectKeyRingSession, isSameKeyRingMember);
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
+  const removeMember = useLedgerSyncMemberRemoval();
 
   const transitionToNextScreen = useCallback(
-    (newTree: KeyRingTreeUpdate) => {
-      if (!member) return;
-      dispatch(commitKeyRingTree(newTree));
+    (removedMember: KeyRingMember) => {
       navigation.navigate(ScreenName.WalletSyncManageInstancesSuccess, {
-        member,
+        member: removedMember,
       });
     },
-    [dispatch, member, navigation],
+    [navigation],
   );
 
   return useFollowInstructionDrawer(
     async setScene => {
-      try {
-        if (!member) return;
-        if (!device) return;
-        assertKeyRingMember(session);
-        const newTree = await client.removeMember(session, {
-          legacyDeviceId: device.deviceId,
-          member,
-          callbacks: {
-            onStartRequestUserInteraction: () =>
-              setScene({ kind: SceneKind.DeviceInstructions, device }),
-            onEndRequestUserInteraction: () => setScene({ kind: SceneKind.Loader }),
-          },
-        });
+      if (!member) return;
+      if (!device) return;
+      const outcome = await removeMember({
+        client,
+        session,
+        member,
+        legacyDeviceId: device.deviceId,
+        callbacks: {
+          onStartRequestUserInteraction: () =>
+            setScene({ kind: SceneKind.DeviceInstructions, device }),
+          onEndRequestUserInteraction: () => setScene({ kind: SceneKind.Loader }),
+        },
+        assertReady: () => assertKeyRingMember(session),
+        onRemoved: () => transitionToNextScreen(member),
+      });
+      if (outcome.type === "done") return;
 
-        transitionToNextScreen(newTree);
-      } catch (error) {
-        if (classifyKeyRingError(error) === "not-allowed") {
-          setScene({ kind: SceneKind.KeyError });
-        } else if (error instanceof Error) {
-          setScene({ kind: SceneKind.GenericError, error });
-        }
+      if (outcome.reason === "not-allowed") {
+        setScene({ kind: SceneKind.KeyError });
+      } else if (outcome.error instanceof Error) {
+        setScene({ kind: SceneKind.GenericError, error: outcome.error });
       }
     },
     [device, member, memberKeySession, client, transitionToNextScreen, !isMember],

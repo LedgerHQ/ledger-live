@@ -1,28 +1,28 @@
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { track } from "@shared/analytics";
+import {
+  buildAddMemberIntentInput,
+  trackLedgerSyncActivated,
+  trackLedgerSyncRejectedOnDevice,
+  useLedgerSyncResultAcceptance,
+} from "@features/flow-ledger-sync";
 import { createIntent, type DeviceConnectionResult } from "@features/platform-device-intent";
 import {
-  acceptLedgerSyncResult,
-  commitKeyRingTree,
   selectKeyRingSession,
   type AddMemberIntent,
-  type AddMemberIntentInput,
   type KeyRingActivation,
   type KeyRingSession,
 } from "@features/platform-key-ring";
 import { selectHasKeyRingMemberKey } from "@domain/entity-key-ring";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
-import { useDispatch, useSelector } from "~/context/hooks";
+import { useSelector } from "~/context/hooks";
 import { NavigatorName, ScreenName } from "~/const";
 import { hasCompletedOnboardingSelector, onboardingTypeSelector } from "~/reducers/settings";
 import { OnboardingType } from "~/reducers/types";
 import { CONNECTION_TYPES } from "~/analytics/hooks/variables";
-import { AnalyticsEvents } from "../../Analytics/enums";
 import { useWalletSyncTrackingFlow } from "../../hooks/useLedgerSyncAnalytics";
 import { addMemberIntentLWMDefinition } from "../../deviceIntents/addMemberIntent/intentLWMDefinition";
 import { useKeyRingClient } from "../../hooks/useKeyRingClient";
-import { ledgerSyncResultOrder } from "../../deviceIntents/ledgerSyncResultOrder";
 import {
   type LedgerSyncStepNavigation,
   useLedgerSyncIntentStep,
@@ -42,7 +42,6 @@ type Props = Readonly<{
 
 /** The add member step of the activation on DIE, with the outcomes of `useAddMember`. */
 export function useActivationDeviceIntentStepViewModel({ input, onClose, onActivated }: Props) {
-  const dispatch = useDispatch();
   const navigation = useNavigation<LedgerSyncStepNavigation>();
   const session = useSelector(selectKeyRingSession);
   const hasMemberKey = useSelector(selectHasKeyRingMemberKey);
@@ -55,8 +54,7 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
   const allowTreeCreation = onboardingType === OnboardingType.setupNew || hasCompletedOnboarding;
 
   const onDeviceRejected = useCallback((connectionResult: DeviceConnectionResult | undefined) => {
-    track(AnalyticsEvents.LedgerSyncRejectedOnDevice, {
-      page: "Ledger Sync",
+    trackLedgerSyncRejectedOnDevice({
       modelId: connectionResult
         ? dmkToLedgerDeviceIdMap[connectionResult.connectedDevice.modelId]
         : undefined,
@@ -66,7 +64,10 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
     });
   }, []);
 
-  const activatedRef = useRef<{ activation: KeyRingActivation; seededOffer: boolean } | null>(null);
+  const { resultRef: activatedRef, accept } = useLedgerSyncResultAcceptance<{
+    activation: KeyRingActivation;
+    seededOffer: boolean;
+  }>();
 
   const step = useLedgerSyncIntentStep<AddMemberIntent, ActivationStepInput>({
     input,
@@ -74,12 +75,7 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
     isReady: hasMemberKey,
     buildIntent: ({ seededOffer }) => {
       if (!hasMemberKey) throw new Error("memberCredentials is not set");
-      const intentInput: AddMemberIntentInput = {
-        session,
-        client,
-        resultOrder: ledgerSyncResultOrder,
-        allowTreeCreation,
-      };
+      const intentInput = buildAddMemberIntentInput({ session, client, allowTreeCreation });
       return createIntent(addMemberIntentLWMDefinition, intentInput, {
         onResult: activation => onResult(activation, seededOffer === true, session),
       });
@@ -93,15 +89,10 @@ export function useActivationDeviceIntentStepViewModel({ input, onClose, onActiv
     seededOffer: boolean,
     runSession: KeyRingSession,
   ) {
-    const isAccepted = dispatch(
-      acceptLedgerSyncResult(commitKeyRingTree(activation.tree), runSession),
-    );
-    if (!isAccepted) return;
     // A disconnected run and its Retry can both deliver: one activation, one event.
-    if (activatedRef.current === null) {
-      track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
-    }
-    activatedRef.current = { activation, seededOffer };
+    accept(activation.tree, runSession, { activation, seededOffer }, () =>
+      trackLedgerSyncActivated({ flow: trackingFlow }),
+    );
   }
 
   function onCompleted() {

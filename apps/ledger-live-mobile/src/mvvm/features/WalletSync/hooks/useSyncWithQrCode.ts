@@ -1,20 +1,63 @@
-import { track } from "@shared/analytics";
-import { useCallback, useState, useRef } from "react";
-import {
-  classifyKeyRingError,
-  commitKeyRingTree,
-  type KeyRingSession,
-} from "@features/platform-key-ring";
-import { selectIsKeyRingMember, selectKeyRingTreeId } from "@domain/entity-key-ring";
-import { useSelector, useDispatch } from "~/context/hooks";
+import { useCallback } from "react";
+import { useLedgerSyncPairingJoin } from "@features/flow-ledger-sync";
+import { classifyKeyRingError } from "@features/platform-key-ring";
+import { selectKeyRingTreeId } from "@domain/entity-key-ring";
+import { useSelector } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
-import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
 import { useWalletSyncTrackingFlow } from "./useLedgerSyncAnalytics";
 import { Steps } from "../types/Activation";
 import { NavigatorName, ScreenName } from "~/const";
 import { useInstanceName } from "./useInstanceName";
 import { useKeyRingClient } from "./useKeyRingClient";
 import { useCurrentStep } from "./useCurrentStep";
+
+export function useSyncWithQrCode() {
+  const { setCurrentStep } = useCurrentStep();
+  const instanceName = useInstanceName();
+  const treeId = useSelector(selectKeyRingTreeId);
+  const client = useKeyRingClient();
+
+  const navigation = useNavigation();
+  const trackingFlow = useWalletSyncTrackingFlow();
+
+  // Stable callbacks: `handleStart` changes identity with them.
+  const getActivatedEventProperties = useCallback(() => ({ flow: trackingFlow }), [trackingFlow]);
+
+  const onJoined = useCallback(() => {
+    navigation.navigate(NavigatorName.WalletSync, {
+      screen: ScreenName.WalletSyncLoading,
+      params: {
+        created: false,
+      },
+    });
+  }, [navigation]);
+
+  const onFailure = useCallback(
+    (error: unknown) => {
+      const errorStep = resolveSyncErrorStep(error, treeId);
+      if (!errorStep) return false;
+      setCurrentStep(errorStep);
+      return true;
+    },
+    [treeId, setCurrentStep],
+  );
+
+  const { digitsCount, input, start, sendDigits, setInput } = useLedgerSyncPairingJoin({
+    client,
+    memberName: instanceName,
+    getActivatedEventProperties,
+    onJoined,
+    onFailure,
+  });
+
+  return {
+    nbDigits: digitsCount,
+    input,
+    handleStart: start,
+    handleSendDigits: sendDigits,
+    setInput,
+  };
+}
 
 function resolveSyncErrorStep(error: unknown, treeId: string | null): Steps | undefined {
   switch (classifyKeyRingError(error)) {
@@ -37,82 +80,3 @@ function resolveSyncErrorStep(error: unknown, treeId: string | null): Steps | un
       return undefined;
   }
 }
-
-export const useSyncWithQrCode = () => {
-  const { setCurrentStep } = useCurrentStep();
-  const [nbDigits, setDigits] = useState<number | null>(null);
-  const [input, setInput] = useState<string | null>(null);
-  const instanceName = useInstanceName();
-  const isMember = useSelector(selectIsKeyRingMember);
-  const treeId = useSelector(selectKeyRingTreeId);
-  const client = useKeyRingClient();
-
-  const navigation = useNavigation();
-
-  const inputCallbackRef = useRef<((input: string) => void) | null>(null);
-  const dispatch = useDispatch();
-  const trackingFlow = useWalletSyncTrackingFlow();
-
-  const onRequestQRCodeInput = useCallback(
-    (config: { digits: number }, callback: (input: string) => void) => {
-      setDigits(config.digits);
-      inputCallbackRef.current = callback;
-    },
-    [],
-  );
-
-  const onSyncFinished = useCallback(() => {
-    setDigits(null);
-    setInput(null);
-    inputCallbackRef.current = null;
-    navigation.navigate(NavigatorName.WalletSync, {
-      screen: ScreenName.WalletSyncLoading,
-      params: {
-        created: false,
-      },
-    });
-  }, [navigation]);
-
-  const handleStart = useCallback(
-    async (url: string, session: KeyRingSession) => {
-      try {
-        const newTree = await client.joinPairing(session, {
-          memberName: instanceName,
-          scannedUrl: url,
-          onRequestPairingCode: onRequestQRCodeInput,
-        });
-        if (newTree) {
-          dispatch(commitKeyRingTree(newTree));
-          if (!isMember) track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
-        }
-        onSyncFinished();
-        return true;
-      } catch (e) {
-        const errorStep = resolveSyncErrorStep(e, treeId);
-        if (errorStep) {
-          setCurrentStep(errorStep);
-          return;
-        }
-        throw e;
-      }
-    },
-    [
-      instanceName,
-      onRequestQRCodeInput,
-      isMember,
-      treeId,
-      onSyncFinished,
-      client,
-      dispatch,
-      setCurrentStep,
-      trackingFlow,
-    ],
-  );
-
-  const handleSendDigits = useCallback(
-    (input: string) => (inputCallbackRef.current?.(input), true),
-    [],
-  );
-
-  return { nbDigits, input, handleStart, handleSendDigits, setInput };
-};

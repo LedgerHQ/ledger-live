@@ -22,7 +22,7 @@ import { useLedgerSyncStatus } from "../../hooks/useLedgerSyncStatus";
 import { useCustomTimeOut } from "../../hooks/useCustomTimeOut";
 import { useDispatch } from "~/context/hooks";
 import { blockPasswordLock } from "~/actions/appstate";
-import { isNoTrustchainError } from "../../utils/errors";
+import { isNoTrustchainError } from "@features/flow-ledger-sync";
 import { useFeature } from "@features/platform-feature-flags";
 
 const WalletSyncManage = () => {

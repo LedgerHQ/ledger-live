@@ -36,7 +36,7 @@ import ManageKeyDrawer from "../screens/ManageKey/ManageKeyDrawer";
 import { useManageKeyDrawer } from "../screens/ManageKey/useManageKeyDrawer";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Steps } from "../types/Activation";
-import { AnalyticsEvents } from "../Analytics/enums";
+import { LedgerSyncAnalyticsEvent } from "@features/flow-ledger-sync";
 
 const mockActivate = jest.fn();
 const mockRemoveMember = jest.fn();
@@ -70,10 +70,11 @@ jest.mock("../hooks/useDestroyTrustchain", () => ({
 }));
 
 // The tests create the member credentials themselves.
-jest.mock("../hooks/useInitMemberCredentials", () => ({
-  useInitMemberCredentials: () => ({
+jest.mock("@features/flow-ledger-sync", () => ({
+  ...jest.requireActual("@features/flow-ledger-sync"),
+  useInitMemberKey: () => ({
     memberCredentials: null,
-    generateMemberCredentials: jest.fn(),
+    generateMemberKey: jest.fn(),
   }),
 }));
 
@@ -648,7 +649,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
           expect.objectContaining({ allowTreeCreation: true }),
         );
         expect(treeOf(mockActivate.mock.calls[0][0])).toBeNull();
-        expect(track).toHaveBeenCalledWith(AnalyticsEvents.LedgerSyncActivated, {
+        expect(track).toHaveBeenCalledWith(LedgerSyncAnalyticsEvent.activated, {
           flow: "Ledger Sync",
         });
       },
@@ -750,7 +751,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       const { user } = await activateFromSettings();
 
       expect(await screen.findByText(/Operation rejected on Ledger device/)).toBeVisible();
-      expect(track).toHaveBeenCalledWith(AnalyticsEvents.LedgerSyncRejectedOnDevice, {
+      expect(track).toHaveBeenCalledWith(LedgerSyncAnalyticsEvent.rejectedOnDevice, {
         page: "Ledger Sync",
         modelId: "stax",
         connectionType: CONNECTION_TYPES.BLE,
@@ -864,7 +865,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       expect(
         jest
           .mocked(track)
-          .mock.calls.filter(([event]) => event === AnalyticsEvents.LedgerSyncActivated),
+          .mock.calls.filter(([event]) => event === LedgerSyncAnalyticsEvent.activated),
       ).toHaveLength(1);
     });
 
@@ -885,10 +886,7 @@ describe("Ledger Sync device steps on DIE, opened over the entry screen", () => 
       });
 
       expect(store.getState().trustchain.trustchain).toBeNull();
-      expect(track).not.toHaveBeenCalledWith(
-        AnalyticsEvents.LedgerSyncActivated,
-        expect.anything(),
-      );
+      expect(track).not.toHaveBeenCalledWith(LedgerSyncAnalyticsEvent.activated, expect.anything());
       expect(screen.getByText("entry screen")).toBeVisible();
       expect(screen.queryByText(/reached WalletSyncLoading/)).toBeNull();
     });

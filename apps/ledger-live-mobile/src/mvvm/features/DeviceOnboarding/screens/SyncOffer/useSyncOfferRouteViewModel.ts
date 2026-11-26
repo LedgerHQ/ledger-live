@@ -14,7 +14,7 @@ import { seededProps, trackSeededDone } from "@features/platform-device-onboardi
 import { useCompleteSeededOnboarding } from "LLM/features/DeviceOnboarding/hooks/useCompleteSeededOnboarding";
 import { closeOnboarding } from "LLM/features/DeviceOnboarding/utils/exitActions";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
-import { useWalletSyncUserState } from "LLM/features/WalletSync/components/WalletSyncContext";
+import { useWalletSyncUserState } from "@features/flow-ledger-sync";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { NavigatorName, ScreenName } from "~/const";
 import { setOnboardingType } from "~/actions/settings";

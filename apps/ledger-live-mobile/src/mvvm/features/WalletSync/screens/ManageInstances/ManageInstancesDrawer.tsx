@@ -11,7 +11,7 @@ import { DeletionError } from "../../components/ManageInstances/DeletionError";
 import { HookResult, Scene } from "./useManageInstanceDrawer";
 import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
 import { ErrorReason } from "../../hooks/useSpecificError";
-import { keyRingErrorForDisplayView } from "../../utils/errors";
+import { ledgerSyncErrorForDisplay } from "@features/flow-ledger-sync";
 
 const ManageInstancesDrawer = ({
   isDrawerVisible,
@@ -33,10 +33,10 @@ const ManageInstancesDrawer = ({
   const isLumenSheet = useFeature("lwmLedgerSyncDie")?.enabled === true;
 
   const getScene = () => {
-    if (isError) {
+    if (isError && error) {
       return (
         <GenericErrorView
-          error={keyRingErrorForDisplayView(error)}
+          error={ledgerSyncErrorForDisplay(error)}
           withDescription
           withHelp
           hasExportLogButton

@@ -2297,6 +2297,9 @@ importers:
       '@features/flow-lazy-onboarding-banner':
         specifier: workspace:^
         version: link:../../features/flow/lazy-onboarding-banner
+      '@features/flow-ledger-sync':
+        specifier: workspace:^
+        version: link:../../features/flow/ledger-sync
       '@features/flow-pay-balance':
         specifier: workspace:^
         version: link:../../features/flow/pay-balance

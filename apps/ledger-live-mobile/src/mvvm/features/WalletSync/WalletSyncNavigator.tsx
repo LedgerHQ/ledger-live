@@ -9,7 +9,8 @@ import WalletSyncActivation from "LLM/features/WalletSync/screens/Activation";
 import { ActivationProcess } from "./screens/Activation/ActivationProcess";
 import { ActivationSuccess } from "./screens/Activation/ActivationSuccess";
 import { ActivationLoading } from "./screens/Activation/ActivationLoading";
-import { useInitMemberCredentials } from "./hooks/useInitMemberCredentials";
+import { useInitMemberKey } from "@features/flow-ledger-sync";
+import { useKeyRingClient } from "./hooks/useKeyRingClient";
 import WalletSyncManage from "./screens/Manage";
 import { useTranslation } from "~/context/Locale";
 import { WalletSyncManageKeyDeletionSuccess } from "./screens/ManageKey/DeletionSuccess";
@@ -30,7 +31,8 @@ export default function WalletSyncNavigator() {
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
   const { t } = useTranslation();
-  useInitMemberCredentials();
+  const keyRingClient = useKeyRingClient();
+  useInitMemberKey(keyRingClient);
   const close = useClose();
 
   const onHeaderBackButtonPress = useCallback((navigation: { goBack: () => void }) => {

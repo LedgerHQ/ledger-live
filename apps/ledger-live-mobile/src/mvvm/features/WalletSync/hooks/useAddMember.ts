@@ -1,17 +1,15 @@
-import { track } from "@shared/analytics";
 import {
-  classifyKeyRingError,
-  commitKeyRingTree,
-  selectKeyRingSession,
-  type KeyRingActivation,
-} from "@features/platform-key-ring";
+  trackLedgerSyncActivated,
+  trackLedgerSyncRejectedOnDevice,
+  useLedgerSyncActivation,
+} from "@features/flow-ledger-sync";
+import { selectKeyRingSession, type KeyRingActivation } from "@features/platform-key-ring";
 import { selectHasKeyRingMemberKey } from "@domain/entity-key-ring";
-import { useSelector, useDispatch } from "~/context/hooks";
+import { useSelector } from "~/context/hooks";
 import { useKeyRingClient } from "./useKeyRingClient";
 import { useCallback, useRef } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
-import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
 import { useWalletSyncTrackingFlow } from "./useLedgerSyncAnalytics";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
@@ -23,7 +21,6 @@ import { CONNECTION_TYPES } from "~/analytics/hooks/variables";
 
 export function useAddMember({ device }: { device: Device | null }): DrawerProps {
   const session = useSelector(selectKeyRingSession);
-  const dispatch = useDispatch();
   const client = useKeyRingClient();
   const hasMemberKey = useSelector(selectHasKeyRingMemberKey);
   const hasMemberKeyRef = useRef(hasMemberKey);
@@ -37,11 +34,11 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const onboardingType = useSelector(onboardingTypeSelector);
   const trackingFlow = useWalletSyncTrackingFlow();
+  const activate = useLedgerSyncActivation();
 
   const transitionToNextScreen = useCallback(
     (activation: KeyRingActivation) => {
-      dispatch(commitKeyRingTree(activation.tree));
-      track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
+      trackLedgerSyncActivated({ flow: trackingFlow });
       if (seededOffer) {
         navigation.getParent()?.goBack();
         return;
@@ -50,48 +47,48 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
         created: activation.outcome === "created",
       });
     },
-    [dispatch, navigation, seededOffer, trackingFlow],
+    [navigation, seededOffer, trackingFlow],
   );
 
   return useFollowInstructionDrawer(
     async setScene => {
-      try {
-        if (!device) return;
-        if (!hasMemberKeyRef.current) {
-          throw new Error("memberCredentials is not set");
-        }
-        const activation = await client.activate(sessionRef.current, {
-          legacyDeviceId: device.deviceId,
-          callbacks: {
-            onStartRequestUserInteraction: () =>
-              setScene({ kind: SceneKind.DeviceInstructions, device }),
-            onEndRequestUserInteraction: () => setScene({ kind: SceneKind.Loader }),
-          },
-          allowTreeCreation: onboardingType === OnboardingType.setupNew || hasCompletedOnboarding,
-        });
-        if (activation) {
-          transitionToNextScreen(activation);
-        }
-      } catch (error) {
-        const category = classifyKeyRingError(error);
-        if (category === "not-allowed") {
-          setScene({ kind: SceneKind.KeyError });
-        } else if (category === "already-member") {
-          setScene({ kind: SceneKind.AlreadySecuredSameSeed });
-        } else if (category === "member-of-other-tree") {
-          setScene({ kind: SceneKind.AlreadySecuredOtherSeed });
-        } else if (category === "no-tree-for-seed") {
-          setScene({ kind: SceneKind.UnbackedError });
-        } else if (error instanceof Error) {
-          if (category === "user-refused") {
-            track(AnalyticsEvents.LedgerSyncRejectedOnDevice, {
-              page: "Ledger Sync",
-              modelId: device?.modelId,
-              connectionType: device?.wired ? CONNECTION_TYPES.USB : CONNECTION_TYPES.BLE,
-            });
+      if (!device) return;
+      const outcome = await activate({
+        client,
+        session: sessionRef.current,
+        legacyDeviceId: device.deviceId,
+        callbacks: {
+          onStartRequestUserInteraction: () =>
+            setScene({ kind: SceneKind.DeviceInstructions, device }),
+          onEndRequestUserInteraction: () => setScene({ kind: SceneKind.Loader }),
+        },
+        allowTreeCreation: onboardingType === OnboardingType.setupNew || hasCompletedOnboarding,
+        assertReady: () => {
+          if (!hasMemberKeyRef.current) {
+            throw new Error("memberCredentials is not set");
           }
-          setScene({ kind: SceneKind.GenericError, error });
+        },
+        onActivated: transitionToNextScreen,
+      });
+      if (outcome.type === "done") return;
+
+      const { reason, error } = outcome;
+      if (reason === "not-allowed") {
+        setScene({ kind: SceneKind.KeyError });
+      } else if (reason === "already-member") {
+        setScene({ kind: SceneKind.AlreadySecuredSameSeed });
+      } else if (reason === "member-of-other-tree") {
+        setScene({ kind: SceneKind.AlreadySecuredOtherSeed });
+      } else if (reason === "no-tree-for-seed") {
+        setScene({ kind: SceneKind.UnbackedError });
+      } else if (error instanceof Error) {
+        if (reason === "user-refused") {
+          trackLedgerSyncRejectedOnDevice({
+            modelId: device.modelId,
+            connectionType: device.wired ? CONNECTION_TYPES.USB : CONNECTION_TYPES.BLE,
+          });
         }
+        setScene({ kind: SceneKind.GenericError, error });
       }
     },
     [device, client, transitionToNextScreen, hasCompletedOnboarding],

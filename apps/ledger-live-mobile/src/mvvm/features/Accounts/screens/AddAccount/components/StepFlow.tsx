@@ -10,7 +10,8 @@ import { Options, Steps } from "LLM/features/WalletSync/types/Activation";
 import SyncError from "LLM/features/WalletSync/screens/Synchronize/SyncError";
 import PinCodeDisplay from "LLM/features/WalletSync/screens/Synchronize/PinCodeDisplay";
 import PinCodeInput from "LLM/features/WalletSync/screens/Synchronize/PinCodeInput";
-import { useInitMemberCredentials } from "LLM/features/WalletSync/hooks/useInitMemberCredentials";
+import { useInitMemberKey } from "@features/flow-ledger-sync";
+import { useKeyRingClient } from "LLM/features/WalletSync/hooks/useKeyRingClient";
 import { useSyncWithQrCode } from "LLM/features/WalletSync/hooks/useSyncWithQrCode";
 import { SpecificError } from "LLM/features/WalletSync/components/Error/SpecificError";
 import { ErrorReason } from "LLM/features/WalletSync/hooks/useSpecificError";
@@ -55,7 +56,8 @@ const StepFlow = ({
   onCloseAddAccountDrawer,
 }: Props) => {
   const { currentStep, setCurrentStep } = useCurrentStep();
-  const { hasMemberKey } = useInitMemberCredentials();
+  const keyRingClient = useKeyRingClient();
+  const { hasMemberKey } = useInitMemberKey(keyRingClient);
   const session = useSelector(selectKeyRingSession);
   const isLedgerSyncActive = useSelector(selectIsLedgerSyncActive);
 

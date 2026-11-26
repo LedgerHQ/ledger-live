@@ -3,7 +3,7 @@ import { useState, useCallback } from "react";
 import type React from "react";
 import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 import { useGetMembers } from "../../hooks/useGetMembers";
-import { UseQueryResult } from "@tanstack/react-query";
+import type { LedgerSyncMembers } from "@features/flow-ledger-sync";
 import {
   isCurrentKeyRingMember,
   selectKeyRingSession,
@@ -32,7 +32,7 @@ export type HookResult = {
   changeScene: (scene: Scene) => void;
   handleClose: () => void;
   onClickDelete: (scene: Scene) => void;
-  memberHook: UseQueryResult<KeyRingMember[] | undefined, Error>;
+  memberHook: LedgerSyncMembers;
   onClickInstance: (instance: KeyRingMember) => void;
   scene: Scene;
   isCurrentInstance: (memberId: KeyRingMemberId) => boolean;
