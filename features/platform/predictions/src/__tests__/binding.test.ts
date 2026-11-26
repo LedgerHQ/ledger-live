@@ -15,14 +15,20 @@ const signedBy =
   };
 
 describe("Predictions account binding", () => {
-  it("asks to confirm ownership of the account, with the delegation notice, on Polygon", () => {
+  it("asks to confirm ownership of the account, with the delegation notice, on Polygon, at the zero address its clear signing descriptor is keyed on", () => {
     expect(getBindingTypedData(wallet.address)).toEqual({
-      domain: { name: "Ledger Predictions", version: "1", chainId: 137 },
+      domain: {
+        name: "Ledger Predictions",
+        version: "1",
+        chainId: 137,
+        verifyingContract: "0x0000000000000000000000000000000000000000",
+      },
       types: {
         EIP712Domain: [
           { name: "name", type: "string" },
           { name: "version", type: "string" },
           { name: "chainId", type: "uint256" },
+          { name: "verifyingContract", type: "address" },
         ],
         ConfirmAccountOwnership: [
           { name: "action", type: "string" },
