@@ -29,6 +29,7 @@ import {
   getLastBlock,
   getNextVotingDate,
   getTransactionInfoByBlockNum,
+  getTransactionById,
   getTransactionInfoById,
   getTronAccountNetwork,
   getTronSuperRepresentativeData,
@@ -655,9 +656,33 @@ describe("getLastBlock / getBlock / getBlockWithTransactions / getTransactionInf
       getTransactionInfoById(mockLogger, mockConfig, "unknown"),
     ).resolves.toBeUndefined();
   });
+
+  it("getTransactionById returns a known transaction", async () => {
+    const tx = { txID: "tx1", ret: [{ contractRet: "SUCCESS" }], raw_data: { contract: [] } };
+    mockedNetwork.mockResolvedValueOnce(mockResponse(tx));
+
+    await expect(getTransactionById(mockLogger, mockConfig, "tx1")).resolves.toEqual(tx);
+    expect(mockedNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: `${TRON_BASE_URL}/wallet/gettransactionbyid`,
+        data: { value: "tx1" },
+      }),
+    );
+  });
+
+  it("getTransactionById returns undefined for the empty body of an unknown transaction", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({}));
+
+    await expect(getTransactionById(mockLogger, mockConfig, "unknown")).resolves.toBeUndefined();
+  });
 });
 
 describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
+  beforeEach(() => {
+    // The internal-transactions endpoint is requested last: unless a test queues its page, empty.
+    mockedNetwork.mockResolvedValue(mockResponse({ data: [], meta: {} }));
+  });
+
   const validNativeTx = {
     ret: [{ contractRet: "SUCCESS", fee: 0 }],
     signature: ["sig"],
@@ -862,6 +887,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       mockedNetwork
         .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
         .mockResolvedValueOnce(mockResponse({ data: [constructorMintTrc20Tx], meta: {} }))
+        .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
         .mockResolvedValueOnce(mockResponse(info));
     }
 
@@ -970,6 +996,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       mockedNetwork
         .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
         .mockResolvedValueOnce(mockResponse({ data: [constructorMintTrc20Tx], meta: {} }))
+        .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
         .mockRejectedValueOnce(new Error("trongrid is down"));
 
       const result = await fetchTronAccountTxsPage(mockLogger, mockConfig, deployerBase58, {
@@ -992,7 +1019,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         order: "asc",
       });
 
-      expect(mockedNetwork).toHaveBeenCalledTimes(2);
+      expect(mockedNetwork).toHaveBeenCalledTimes(3);
     });
   });
 
@@ -1011,6 +1038,58 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         url: expect.stringMatching(/max_timestamp=999/),
       }),
     );
+  });
+
+  it("fetchTronAccountTxsPage reads the account's internal transactions with the same query", async () => {
+    await fetchTronAccountTxsPage(mockLogger, mockConfig, senderBase58, {
+      limit: 10,
+      minTimestamp: 5,
+      order: "asc",
+      maxTimestamp: 999,
+    });
+
+    expect(mockedNetwork).toHaveBeenCalledWith({
+      url: `${TRON_BASE_URL}/v1/accounts/${senderBase58}/internal-transactions?limit=10&min_timestamp=5&max_timestamp=999&order_by=block_timestamp,asc`,
+    });
+  });
+
+  const internalRecord = (txID: string, block_timestamp: number, rejected = false) => ({
+    internal_tx_id: `${txID}-internal`,
+    tx_id: txID,
+    from_address: recipientHex,
+    to_address: senderHex,
+    block_timestamp,
+    data: { note: "call", rejected, call_value: { _: 5 } },
+  });
+
+  it("fetchTronAccountTxsEndpointPage lists the transactions of the internal-transactions page", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      mockResponse({
+        data: [
+          internalRecord("a", 3000),
+          internalRecord("b", 2000, true),
+          internalRecord("c", 1000),
+        ],
+        meta: { links: { next: "https://api.trongrid.io/v1/page-3" } },
+      }),
+    );
+
+    const page = await fetchTronAccountTxsEndpointPage(
+      mockLogger,
+      mockConfig,
+      "internal",
+      `${TRON_BASE_URL}/v1/page-2`,
+    );
+
+    expect(page).toEqual({
+      rawTimestamps: [3000, 2000, 1000],
+      txs: [],
+      internalTransferTxs: [
+        { txID: "a", date: new Date(3000) },
+        { txID: "c", date: new Date(1000) },
+      ],
+      next: `${TRON_BASE_URL}/v1/page-3`,
+    });
   });
 
   it("fetchTronAccountTxsEndpointPage reads the page a next link points to, per endpoint", async () => {

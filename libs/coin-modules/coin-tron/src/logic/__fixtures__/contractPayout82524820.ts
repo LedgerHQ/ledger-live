@@ -1,9 +1,9 @@
 // Recorded from Tron mainnet through TronGrid's API, for transaction
 // 65c351b2a787dd278b4d9425a67cefa41199b9110bfa82450d925fd29348148a (block 82524820): account
 // TQW9QLBUPF2pYvhxSjMeTwBCrhm3s1sn2a calls contract TTtiUacDYFYVuWp57DnvJPsUsfiQV73Hxi (selector
-// 224ee04f), which pays it 6 471.728420 TRX back through an internal transaction. TronGrid lists the
-// call alone for the account (no TRC20 record, no internal entry); only the receipt holds the TRX.
-// Signatures and `raw_data_hex` are trimmed.
+// 224ee04f), which pays it 6 471.728420 TRX back through an internal transaction. TronGrid's
+// transactions endpoint lists the call alone; its internal-transactions endpoint lists the payout,
+// and the receipt holds its position. Signatures and `raw_data_hex` are trimmed.
 
 /** `GET /v1/accounts/TQW9QLBUPF2pYvhxSjMeTwBCrhm3s1sn2a/transactions` at the call's timestamp. */
 export const nativePage = {
@@ -175,5 +175,54 @@ export const block = {
       witness_address: "41a4ce68cfcdd27884bde52cec653354048e0aa989",
       version: 34,
     },
+  },
+};
+
+/** `GET /v1/accounts/TQW9QLBUPF2pYvhxSjMeTwBCrhm3s1sn2a/internal-transactions` at the call's timestamp. */
+export const internalPage = {
+  data: [
+    {
+      internal_tx_id: "93cbd435a1375b3d3400e32068223f69ebae189998ef839a6849d838877ad5af",
+      data: {
+        note: "call",
+        rejected: false,
+        call_value: {
+          _: 6471728420,
+        },
+      },
+      block_timestamp: 1778242722000,
+      to_address: "419f6ba6d6084d49a7ff9bdbc5a2eaf9760a59f0d6",
+      tx_id: "65c351b2a787dd278b4d9425a67cefa41199b9110bfa82450d925fd29348148a",
+      from_address: "41c498c9d3060e7ee29629f4d6f4ce01e92d09125b",
+    },
+  ],
+  success: true,
+  meta: {
+    at: 0,
+    page_size: 1,
+  },
+};
+
+/** `POST /wallet/gettransactionbyid` of the call. */
+export const transaction = {
+  txID: "65c351b2a787dd278b4d9425a67cefa41199b9110bfa82450d925fd29348148a",
+  ret: [
+    {
+      contractRet: "SUCCESS",
+    },
+  ],
+  raw_data: {
+    contract: [
+      {
+        parameter: {
+          value: {
+            data: "224ee04f",
+            owner_address: "419f6ba6d6084d49a7ff9bdbc5a2eaf9760a59f0d6",
+            contract_address: "41c498c9d3060e7ee29629f4d6f4ce01e92d09125b",
+          },
+        },
+        type: "TriggerSmartContract",
+      },
+    ],
   },
 };

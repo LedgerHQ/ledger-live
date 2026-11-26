@@ -6,6 +6,7 @@ import {
   fetchTronAccountTxsPage,
   FetchTxsPageParams,
   getBlock,
+  getTransactionById,
   getTransactionInfoById,
   TxEndpoint,
   TxEndpointPage,
@@ -19,13 +20,14 @@ jest.mock("../network", () => ({
   fetchTronAccountTxsPage: jest.fn(),
   fetchTronAccountTxsEndpointPage: jest.fn(),
   getBlock: jest.fn(),
+  getTransactionById: jest.fn(),
   getTransactionInfoById: jest.fn(),
 }));
 
-// A contract call's receipt pays the account the amount its fake record names.
+// Every receipt pays the account 1 sun.
 jest.mock("./internalTransfers", () => ({
-  readInternalTransfers: jest.fn((_logger, receipt: { payout: number }) => [
-    { index: 0, from: "TContract", to: "tronExampleAddress", amount: BigInt(receipt.payout) },
+  readInternalTransfers: jest.fn(() => [
+    { index: 0, from: "TContract", to: "tronExampleAddress", amount: 1n },
   ]),
 }));
 
@@ -44,8 +46,6 @@ type FakeRecord = {
   ts: number;
   endpoint: TxEndpoint;
   filteredOut?: boolean;
-  /** Set on a successful contract call whose receipt pays the account this amount. */
-  payout?: number;
 };
 
 type FakeQuery = FetchTxsPageParams & { endpoint: TxEndpoint; offset: number };
@@ -55,10 +55,7 @@ function toTxInfo(record: FakeRecord): TrongridTxInfo {
     txID: record.id,
     date: new Date(record.ts),
     blockHeight: record.ts,
-    type:
-      record.endpoint === "trc20" || record.payout !== undefined
-        ? "TriggerSmartContract"
-        : "TransferContract",
+    type: record.endpoint === "trc20" ? "TriggerSmartContract" : "TransferContract",
     from: address,
     to: "TRecipient",
     value: new BigNumber(1),
@@ -79,10 +76,13 @@ function fakeTronGrid(records: FakeRecord[]) {
       .filter(r => query.maxTimestamp === undefined || r.ts <= query.maxTimestamp)
       .sort((a, b) => sign * (a.ts - b.ts));
     const slice = matching.slice(query.offset, query.offset + query.limit);
+    const isInternal = query.endpoint === "internal";
     return {
       rawTimestamps: slice.map(r => r.ts),
-      txs: slice.filter(r => !r.filteredOut).map(toTxInfo),
-      contractCalls: slice.filter(r => r.payout !== undefined).map(toTxInfo),
+      txs: isInternal ? [] : slice.filter(r => !r.filteredOut).map(toTxInfo),
+      ...(isInternal && {
+        internalTransferTxs: slice.map(r => ({ txID: r.id, date: new Date(r.ts) })),
+      }),
       next: isFullPageEvenIfNothingFollows(slice, query)
         ? JSON.stringify({ ...query, offset: query.offset + query.limit })
         : undefined,
@@ -93,6 +93,7 @@ function fakeTronGrid(records: FakeRecord[]) {
     async (_logger, _config, _address, params: FetchTxsPageParams) => ({
       native: pageOf({ ...params, endpoint: "native", offset: 0 }),
       trc20: pageOf({ ...params, endpoint: "trc20", offset: 0 }),
+      internal: pageOf({ ...params, endpoint: "internal", offset: 0 }),
     }),
   );
   (fetchTronAccountTxsEndpointPage as jest.Mock).mockImplementation(
@@ -111,14 +112,9 @@ const native = (id: string, ts: number, kept = true): FakeRecord => ({
   filteredOut: !kept,
 });
 const trc20 = (id: string, ts: number): FakeRecord => ({ id, ts, endpoint: "trc20" });
-// A successful native contract call: dropped as an operation, but its receipt is read.
-const contractCall = (id: string, ts: number): FakeRecord => ({
-  id,
-  ts,
-  endpoint: "native",
-  filteredOut: true,
-  payout: 1,
-});
+// A record of the internal-transactions endpoint: its transaction's receipt pays the account.
+const internal = (id: string, ts: number): FakeRecord => ({ id, ts, endpoint: "internal" });
+const emptyPage: TxEndpointPage = { rawTimestamps: [], txs: [] };
 
 async function walkLikePaginateOperations(
   options: Partial<ListOperationsOptions>,
@@ -161,7 +157,19 @@ describe("listOperations", () => {
     }));
     (getTransactionInfoById as jest.Mock).mockImplementation(async (_logger, _config, txID) => ({
       id: txID,
-      payout: 1,
+      blockNumber: 1,
+    }));
+    (getTransactionById as jest.Mock).mockImplementation(async (_logger, _config, txID) => ({
+      txID,
+      ret: [{ contractRet: "SUCCESS" }],
+      raw_data: {
+        contract: [
+          {
+            type: "TriggerSmartContract",
+            parameter: { value: { owner_address: "419e98493d2914612d9a3510d6f5af5f57aff89057" } },
+          },
+        ],
+      },
     }));
   });
 
@@ -307,18 +315,18 @@ describe("listOperations", () => {
     });
   });
 
-  describe("internal transfers of contract calls", () => {
-    it("lists each one once, on the page of its call, whatever the page cuts", async () => {
+  describe("internal transfers", () => {
+    it("lists each one once, on the page of its transaction, whatever the page cuts", async () => {
       fakeTronGrid([
         native("n9", 9000),
-        contractCall("c8", 8000),
+        internal("i8", 8000),
         native("n7", 7000),
-        contractCall("c6", 6000),
+        internal("i6", 6000),
         trc20("t5", 5000),
-        contractCall("c4", 4000),
+        internal("i4", 4000),
         native("n3", 3000),
       ]);
-      const expected = ["n9", "c8:internal", "n7", "c6:internal", "t5:trc20", "c4:internal", "n3"];
+      const expected = ["n9", "i8:internal", "n7", "i6:internal", "t5:trc20", "i4:internal", "n3"];
 
       expect(await walkLikePaginateOperations({ order: "desc" })).toEqual(expected);
       expect(await walkLikePaginateOperations({ order: "asc" })).toEqual([...expected].reverse());
@@ -331,7 +339,7 @@ describe("listOperations", () => {
         native("a", 5000),
         native("b", 5000),
         native("c", 5000),
-        contractCall("d", 5000),
+        internal("d", 5000),
         native("n1", 1000),
       ]);
 
@@ -345,15 +353,34 @@ describe("listOperations", () => {
       ]);
     });
 
-    it("reads one receipt per contract call over a whole walk", async () => {
-      fakeTronGrid([contractCall("c3", 3000), contractCall("c2", 2000), contractCall("c1", 1000)]);
+    it("cuts a page at the internal-transactions endpoint's records too", async () => {
+      fakeTronGrid([
+        internal("i9", 9000),
+        internal("i8", 8000),
+        internal("i7", 7000),
+        internal("i6", 6000),
+        native("n1", 1000),
+      ]);
 
-      await walkLikePaginateOperations({ order: "desc", limit: 1 });
+      const first = await listOperations(logger, config, address, {
+        limit: 3,
+        minTimestamp: 0,
+        order: "desc",
+      });
 
+      expect(first.items.map(op => op.id)).toEqual(["i9:internal", "i8:internal"]);
+      expect(first.next).toBe("7000");
+    });
+
+    it("reads each transaction once, however many of its records the endpoint lists", async () => {
+      fakeTronGrid([internal("a", 3000), internal("a", 3000), internal("b", 2000)]);
+
+      const ids = await walkLikePaginateOperations({ order: "desc", limit: 1 });
+
+      expect(ids).toEqual(["a:internal", "b:internal"]);
       expect((getTransactionInfoById as jest.Mock).mock.calls.map(call => call[2])).toEqual([
-        "c3",
-        "c2",
-        "c1",
+        "a",
+        "b",
       ]);
     });
   });
@@ -475,6 +502,7 @@ describe("listOperations", () => {
   it("throws TronPageServedTwice when a next link leads back to an already read page", async () => {
     const loop: TxEndpointPage = { rawTimestamps: [5000], txs: [], next: "page-2" };
     (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      internal: emptyPage,
       native: loop,
       trc20: { rawTimestamps: [], txs: [] },
     });
@@ -490,6 +518,7 @@ describe("listOperations", () => {
       "native-2": { rawTimestamps: [2000], txs: [toTxInfo(native("n2", 2000))] },
     };
     (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      internal: emptyPage,
       native: { rawTimestamps: [], txs: [], next: "native-2" },
       trc20: { rawTimestamps: [3000], txs: [toTxInfo(trc20("t3", 3000))] },
     });
@@ -516,6 +545,7 @@ describe("listOperations", () => {
       },
     };
     (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      internal: emptyPage,
       native: { rawTimestamps: [5000], txs: [toTxInfo(native("a", 5000))], next: "native-2" },
       trc20: { rawTimestamps: [], txs: [] },
     });
@@ -585,6 +615,7 @@ describe("listOperations", () => {
       tx("tx-unresolved-trc10", 1000, { tokenType: "trc10", tokenAddress: undefined }),
     ];
     (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      internal: emptyPage,
       native: { rawTimestamps: [], txs: [] },
       trc20: { rawTimestamps: txs.map(t => t.date.getTime()), txs },
     });
@@ -602,6 +633,7 @@ describe("listOperations", () => {
   it("fetches no block for a page of only unresolvable token operations", async () => {
     const unresolved = { ...toTxInfo(trc20("tx-unresolved", 1000)), tokenAddress: undefined };
     (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      internal: emptyPage,
       native: { rawTimestamps: [], txs: [] },
       trc20: { rawTimestamps: [1000], txs: [unresolved] },
     });
@@ -642,6 +674,7 @@ describe("listOperations", () => {
         next: undefined,
       });
       (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+        internal: emptyPage,
         native: pageOf(nativeTxs),
         trc20: pageOf(trc20Txs),
       });

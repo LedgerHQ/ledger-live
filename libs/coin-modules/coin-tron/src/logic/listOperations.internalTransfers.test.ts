@@ -1,9 +1,11 @@
+import type { Operation } from "@ledgerhq/coin-module-framework/api/index";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import network from "@ledgerhq/live-network";
 import type { TronCoinConfig } from "../config";
-import { decode58Check } from "../network/format";
+import { decode58Check, encode58Check } from "../network/format";
 import { TronMissingReceipt } from "../types/errors";
 import * as payout from "./__fixtures__/contractPayout82524820";
+import * as selfdestruct from "./__fixtures__/selfdestructPayouts";
 import { listOperations } from "./listOperations";
 
 // Only HTTP is faked: the TronGrid responses go through the real network layer and adapters.
@@ -44,17 +46,22 @@ const internalTx = (
 });
 
 type Routes = {
-  native: unknown;
-  trc20: unknown;
-  receipts: Record<string, unknown>;
+  native?: unknown;
+  trc20?: unknown;
+  internal?: unknown;
+  receipts?: Record<string, unknown>;
+  transactions?: Record<string, unknown>;
 };
 
-function serve({ native, trc20, receipts }: Routes) {
+function serve({ native, trc20, internal, receipts = {}, transactions = {} }: Routes) {
   mockedNetwork.mockImplementation((async ({ url, data }: Request) => {
-    if (url.includes("/transactions/trc20?")) return respond(trc20);
-    if (url.includes("/transactions?")) return respond(native);
+    if (url.includes("/transactions/trc20?")) return respond(trc20 ?? emptyPage);
+    if (url.includes("/transactions?")) return respond(native ?? emptyPage);
+    if (url.includes("/internal-transactions?")) return respond(internal ?? emptyPage);
     if (url.endsWith("/wallet/gettransactioninfobyid"))
       return respond(receipts[data?.value ?? ""] ?? {});
+    if (url.endsWith("/wallet/gettransactionbyid"))
+      return respond(transactions[data?.value ?? ""] ?? {});
     if (url.endsWith("/wallet/getblock")) {
       const height = Number(data?.id_or_num);
       return respond({
@@ -66,15 +73,68 @@ function serve({ native, trc20, receipts }: Routes) {
   }) as never);
 }
 
-const receiptRequests = () =>
-  mockedNetwork.mock.calls.filter(([{ url }]) => url?.endsWith("/wallet/gettransactioninfobyid"));
+const requestsTo = (endpoint: string) =>
+  mockedNetwork.mock.calls.filter(([{ url }]) => url?.endsWith(endpoint));
+const receiptRequests = () => requestsTo("/wallet/gettransactioninfobyid");
 
 const options = { limit: 50, minTimestamp: 0, order: "desc" as const };
 const emptyPage = page([]);
 
-describe("listOperations — TRX moved by contracts (internal transactions)", () => {
+async function walkHistory(account: string): Promise<Operation[]> {
+  const operations: Operation[] = [];
+  let cursor: string | undefined;
+  do {
+    const result = await listOperations(logger, config, account, { ...options, cursor });
+    operations.push(...result.items);
+    cursor = result.next;
+  } while (cursor);
+  return operations;
+}
+
+/** What the operations add up to in TRX: amounts moved, less the fees the account paid. */
+function nativeBalanceOf(operations: Operation[], address: string): bigint {
+  const feesPaidByTx = new Map<string, bigint>();
+  let moved = 0n;
+  for (const { type, value, asset, tx } of operations) {
+    if (tx.feesPayer === address) feesPaidByTx.set(tx.hash, tx.fees);
+    if (asset.type !== "native" || tx.failed) continue;
+    if (type === "IN") moved += value;
+    if (type === "OUT") moved -= value;
+  }
+  return [...feesPaidByTx.values()].reduce((balance, fees) => balance - fees, moved);
+}
+
+describe("listOperations — value moved by contracts (internal transactions)", () => {
   beforeEach(() => {
     mockedNetwork.mockReset();
+  });
+
+  describe("recorded: contracts destroyed with the account as beneficiary (BACK-11812)", () => {
+    beforeEach(() => {
+      mockedNetwork.mockImplementation((async ({ url, data }: Request) => {
+        const path = url.replace(config.explorer.url, "");
+        const exchange = selfdestruct.exchanges.find(
+          recorded =>
+            recorded.url === path && JSON.stringify(recorded.data) === JSON.stringify(data),
+        );
+        if (!exchange) throw new Error(`unrecorded request ${path} ${JSON.stringify(data)}`);
+        return respond(exchange.body);
+      }) as never);
+    });
+
+    it("lists every TRX payout of the destroyed contracts as an internal IN operation", async () => {
+      const internal = (await walkHistory(selfdestruct.address)).filter(op => op.details?.internal);
+
+      expect(internal).toHaveLength(12);
+      expect(internal.every(op => op.type === "IN" && op.tx.fees === 0n)).toBe(true);
+      expect(internal.reduce((total, op) => total + op.value, 0n)).toBe(4_104_742_878n);
+    });
+
+    it("gives operations whose TRX amounts and fees add up to the account's balance", async () => {
+      const operations = await walkHistory(selfdestruct.address);
+
+      expect(nativeBalanceOf(operations, selfdestruct.address)).toBe(selfdestruct.balance);
+    });
   });
 
   describe("recorded: a contract paying TRX back to its caller", () => {
@@ -86,7 +146,9 @@ describe("listOperations — TRX moved by contracts (internal transactions)", ()
       mockedNetwork.mockImplementation((async ({ url }: Request) => {
         if (url.includes("/transactions/trc20?")) return respond(payout.trc20Page);
         if (url.includes("/transactions?")) return respond(payout.nativePage);
+        if (url.includes("/internal-transactions?")) return respond(payout.internalPage);
         if (url.endsWith("/wallet/gettransactioninfobyid")) return respond(payout.receipt);
+        if (url.endsWith("/wallet/gettransactionbyid")) return respond(payout.transaction);
         if (url.endsWith("/wallet/getblock")) return respond(payout.block);
         throw new Error(`unexpected request ${url}`);
       }) as never);
@@ -120,15 +182,17 @@ describe("listOperations — TRX moved by contracts (internal transactions)", ()
       ]);
     });
 
-    it("reads the call's receipt once", async () => {
+    it("reads the call's receipt and transaction once", async () => {
       await listOperations(logger, config, account, options);
 
-      expect(receiptRequests()).toHaveLength(1);
-      expect(receiptRequests()[0][0].data).toEqual({ value: callTxId });
+      expect(receiptRequests().map(([{ data }]) => data)).toEqual([{ value: callTxId }]);
+      expect(requestsTo("/wallet/gettransactionbyid").map(([{ data }]) => data)).toEqual([
+        { value: callTxId },
+      ]);
     });
   });
 
-  describe("synthetic receipts", () => {
+  describe("synthetic responses", () => {
     const account = "TQW9QLBUPF2pYvhxSjMeTwBCrhm3s1sn2a";
     const accountHex = decode58Check(account);
     const sender = "TTtiUacDYFYVuWp57DnvJPsUsfiQV73Hxi";
@@ -139,8 +203,28 @@ describe("listOperations — TRX moved by contracts (internal transactions)", ()
     const otherHex = "419fb257078170a17a0500189d80031ac9a3fba6be";
     const ts = 1778242722000;
 
-    const nativeCall = (txID: string, contractRet = "SUCCESS") => ({
-      ret: [{ contractRet, fee: 1000 }],
+    const internalRecord = (txID: string, extra: { rejected?: boolean } = {}) => ({
+      internal_tx_id: `${txID}-record`,
+      tx_id: txID,
+      from_address: contractHex,
+      to_address: accountHex,
+      block_timestamp: ts,
+      data: { note: "call", rejected: false, ...extra },
+    });
+    const transactionOf = (txID: string, ownerHex = senderHex, contractRet = "SUCCESS") => ({
+      txID,
+      ret: [{ contractRet }],
+      raw_data: {
+        contract: [
+          {
+            type: "TriggerSmartContract",
+            parameter: { value: { owner_address: ownerHex, contract_address: contractHex } },
+          },
+        ],
+      },
+    });
+    const nativeCall = (txID: string) => ({
+      ret: [{ contractRet: "SUCCESS", fee: 1000 }],
       txID,
       blockNumber: 100,
       block_timestamp: ts,
@@ -180,13 +264,39 @@ describe("listOperations — TRX moved by contracts (internal transactions)", ()
       },
     });
 
-    it("lists TRX paid by a third party's call that TronGrid only lists as a TRC20 transfer", async () => {
+    it("lists TRX paid by a transaction only the internal-transactions endpoint lists", async () => {
       serve({
-        native: emptyPage,
-        trc20: page([trc20Record("tx1")]),
+        internal: page([internalRecord("tx1")]),
         receipts: {
           tx1: receiptOf("tx1", [internalTx(contractHex, accountHex, [{ callValue: 700 }])]),
         },
+        transactions: { tx1: transactionOf("tx1") },
+      });
+
+      const { items } = await listOperations(logger, config, account, options);
+
+      expect(items).toEqual([
+        expect.objectContaining({
+          id: "tx1-internal-0",
+          type: "IN",
+          value: 700n,
+          asset: { type: "native" },
+          senders: [encode58Check(contractHex)],
+          recipients: [account],
+          details: { internal: true },
+        }),
+      ]);
+      expect(items[0].tx).toMatchObject({ hash: "tx1", fees: 0n, feesPayer: sender });
+    });
+
+    it("lists TRX a TRC20 transfer also paid, next to the transfer", async () => {
+      serve({
+        trc20: page([trc20Record("tx1")]),
+        internal: page([internalRecord("tx1")]),
+        receipts: {
+          tx1: receiptOf("tx1", [internalTx(contractHex, accountHex, [{ callValue: 700 }])]),
+        },
+        transactions: { tx1: transactionOf("tx1") },
       });
 
       const { items } = await listOperations(logger, config, account, options);
@@ -195,21 +305,17 @@ describe("listOperations — TRX moved by contracts (internal transactions)", ()
         ["tx1", "IN", 5_000_000n, { type: "trc20", assetReference: usdt, assetOwner: account }],
         ["tx1-internal-0", "IN", 700n, { type: "native" }],
       ]);
-      const internal = items[1];
-      expect(internal.tx.fees).toBe(0n);
-      expect(internal.tx.feesPayer).toBe(sender);
-      expect(internal.details).toEqual({ internal: true });
     });
 
     it("lists a TRC10 internal transfer with its TRC10 asset", async () => {
       serve({
-        native: page([nativeCall("tx1")]),
-        trc20: emptyPage,
+        internal: page([internalRecord("tx1")]),
         receipts: {
           tx1: receiptOf("tx1", [
             internalTx(contractHex, accountHex, [{ callValue: 42, tokenId: "1002000" }]),
           ]),
         },
+        transactions: { tx1: transactionOf("tx1") },
       });
 
       const { items } = await listOperations(logger, config, account, options);
@@ -226,22 +332,23 @@ describe("listOperations — TRX moved by contracts (internal transactions)", ()
 
     it("lists an internal transfer sent by the account as OUT", async () => {
       serve({
-        native: page([nativeCall("tx1")]),
-        trc20: emptyPage,
+        internal: page([internalRecord("tx1")]),
         receipts: {
           tx1: receiptOf("tx1", [internalTx(accountHex, otherHex, [{ callValue: 9 }])]),
         },
+        transactions: { tx1: transactionOf("tx1", accountHex) },
       });
 
       const { items } = await listOperations(logger, config, account, options);
 
-      expect(items.map(op => [op.id, op.type, op.value])).toEqual([["tx1-internal-0", "OUT", 9n]]);
+      expect(items.map(op => [op.id, op.type, op.value, op.tx.feesPayer])).toEqual([
+        ["tx1-internal-0", "OUT", 9n, account],
+      ]);
     });
 
     it("ignores rejected, zero-value and other accounts' internal transfers", async () => {
       serve({
-        native: page([nativeCall("tx1")]),
-        trc20: emptyPage,
+        internal: page([internalRecord("tx1")]),
         receipts: {
           tx1: receiptOf("tx1", [
             internalTx(contractHex, accountHex, [{ callValue: 1 }], { rejected: true }),
@@ -251,6 +358,7 @@ describe("listOperations — TRX moved by contracts (internal transactions)", ()
             internalTx(contractHex, accountHex, [{ callValue: 3 }]),
           ]),
         },
+        transactions: { tx1: transactionOf("tx1") },
       });
 
       const { items } = await listOperations(logger, config, account, options);
@@ -258,32 +366,51 @@ describe("listOperations — TRX moved by contracts (internal transactions)", ()
       expect(items.map(op => [op.id, op.value])).toEqual([["tx1-internal-4", 3n]]);
     });
 
-    it("does not read the receipt of a failed call, whose revert undoes its internal transfers", async () => {
-      serve({ native: page([nativeCall("tx1", "REVERT")]), trc20: emptyPage, receipts: {} });
-
-      const { items } = await listOperations(logger, config, account, options);
-
-      expect(receiptRequests()).toHaveLength(0);
-      expect(items.map(op => [op.id, op.tx.failed])).toEqual([["tx1", true]]);
-    });
-
-    it("reads one receipt for a call listed by both endpoints", async () => {
+    it("lists nothing a failed transaction's contracts moved, which its revert undid", async () => {
       serve({
-        native: page([nativeCall("tx1")]),
-        trc20: page([trc20Record("tx1")]),
+        internal: page([internalRecord("tx1")]),
         receipts: {
           tx1: receiptOf("tx1", [internalTx(contractHex, accountHex, [{ callValue: 700 }])]),
         },
+        transactions: { tx1: transactionOf("tx1", senderHex, "REVERT") },
+      });
+
+      const { items } = await listOperations(logger, config, account, options);
+
+      expect(items).toEqual([]);
+    });
+
+    it("reads nothing for a record the endpoint marks rejected", async () => {
+      serve({ internal: page([internalRecord("tx1", { rejected: true })]) });
+
+      const { items } = await listOperations(logger, config, account, options);
+
+      expect(items).toEqual([]);
+      expect(receiptRequests()).toHaveLength(0);
+    });
+
+    it("reads a transaction once, however many records list it", async () => {
+      serve({
+        native: page([nativeCall("tx1")]),
+        internal: page([internalRecord("tx1"), internalRecord("tx1")]),
+        receipts: {
+          tx1: receiptOf("tx1", [
+            internalTx(contractHex, accountHex, [{ callValue: 700 }]),
+            internalTx(contractHex, accountHex, [{ callValue: 800 }]),
+          ]),
+        },
+        transactions: { tx1: transactionOf("tx1", accountHex) },
       });
 
       const { items } = await listOperations(logger, config, account, options);
 
       expect(receiptRequests()).toHaveLength(1);
-      expect(items.map(op => op.id)).toEqual(["tx1", "tx1-internal-0"]);
+      expect(requestsTo("/wallet/gettransactionbyid")).toHaveLength(1);
+      expect(items.map(op => op.id)).toEqual(["tx1-internal-0", "tx1-internal-1"]);
     });
 
-    it("fails the page with TronMissingReceipt when the node has no receipt for a listed call", async () => {
-      serve({ native: page([nativeCall("tx1")]), trc20: emptyPage, receipts: {} });
+    it("fails the page with TronMissingReceipt when the node does not know the transaction yet", async () => {
+      serve({ internal: page([internalRecord("tx1")]) });
 
       await expect(listOperations(logger, config, account, options)).rejects.toThrow(
         TronMissingReceipt,

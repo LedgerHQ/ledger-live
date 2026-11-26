@@ -33,6 +33,7 @@ import {
   formatTrongridTxResponse,
 } from "./format";
 import {
+  AccountInternalTransactionAPI,
   AccountTronAPI,
   Block,
   BlockWithTransactionsAPI,
@@ -53,10 +54,9 @@ import { abiEncodeTrc20Transfer, hexToAscii, trc20ContractAddressFromLogs } from
 const getBaseApiUrl = (config: TronCoinConfig): string => config.explorer.url;
 
 function isValidNativeTx(tx: TransactionTronAPI): boolean {
-  // tx_id indicates a malformed/duplicated entry from TronGrid — these must be excluded. TronGrid's
-  // internal-transaction entries (`tx_id` with no `txID`) never reach here: `isTransactionTronAPI`
-  // drops them first, and the TRX contracts move is read from the receipts of the page's contract
-  // calls instead (see `TxEndpointPage.contractCalls`).
+  // tx_id indicates a malformed/duplicated entry from TronGrid — these must be excluded.
+  // Transactions with internal_transactions are valid and should be included. The value their
+  // contracts move is read from the internal-transactions endpoint instead (`TxEndpoint`).
   return !tx.tx_id;
 }
 
@@ -67,10 +67,6 @@ function formatTronError(error: unknown): string {
 
 function isSuccessfulTriggerSmartContract(tx: TrongridTxInfo): boolean {
   return tx.type === "TriggerSmartContract" && !tx.hasFailed;
-}
-
-function isSuccessfulContractCall(tx: TrongridTxInfo): boolean {
-  return (tx.type === "TriggerSmartContract" || tx.type === "CreateSmartContract") && !tx.hasFailed;
 }
 
 const BROADCAST_ENDPOINTS_NEVER_RESENT = new Set([
@@ -629,6 +625,23 @@ export async function getTransactionInfoById(
   return info?.id ? info : undefined;
 }
 
+export type TransactionByIdAPI = Pick<TransactionTronAPI, "txID" | "ret" | "raw_data">;
+
+/** The transaction as signed, with its result, or undefined when the node does not know it yet. */
+export async function getTransactionById(
+  logger: Logger,
+  config: TronCoinConfig,
+  txId: string,
+): Promise<TransactionByIdAPI | undefined> {
+  const tx = await post<{ value: string }, TransactionByIdAPI>(
+    logger,
+    config,
+    `/wallet/gettransactionbyid`,
+    { value: txId },
+  );
+  return tx?.txID ? tx : undefined;
+}
+
 /**
  * A TRC20 transfer minted inside a contract's constructor reaches us with no token address at all:
  * TronGrid has no `token_info` for a contract created in that very transaction, and a
@@ -759,6 +772,27 @@ const getTrc20 = async (
   };
 };
 
+const getInternalTransactions = async (
+  logger: Logger,
+  config: TronCoinConfig,
+  url: string,
+): Promise<{
+  results: Array<AccountInternalTransactionAPI>;
+  nextUrl?: string;
+}> => {
+  const transactions = await fetchWithBaseUrl<
+    TransactionResponseTronAPI<AccountInternalTransactionAPI>
+  >(logger, url);
+
+  return {
+    results: transactions.data ?? [],
+    nextUrl: transactions.meta.links?.next?.replace(
+      /https:\/\/api(\.[a-z]*)?.trongrid.io/,
+      getBaseApiUrl(config),
+    ),
+  };
+};
+
 export type FetchTxsStopPredicate = (
   txs: Array<TransactionTronAPI | Trc20API | MalformedTransactionTronAPI>,
 ) => boolean;
@@ -778,17 +812,22 @@ export const defaultFetchParams: FetchParams = {
   order: "desc",
 } as const;
 
-export type TxEndpoint = "native" | "trc20";
+/**
+ * TronGrid's account endpoints: transactions, TRC20 transfers, and internal transactions — the TRX
+ * or TRC10 a contract moved to or from the account during a transaction, which the other two never
+ * list, even when the transaction does not otherwise involve the account (a contract's
+ * SELFDESTRUCT naming it as beneficiary, a DEX payout to a router's caller).
+ */
+export type TxEndpoint = "native" | "trc20" | "internal";
+
+/** A transaction that moved value to or from the account through its contracts. */
+export type InternalTransferTx = { txID: string; date: Date };
 
 export type TxEndpointPage = {
   rawTimestamps: number[];
   txs: TrongridTxInfo[];
-  /**
-   * The successful smart contract calls of the page, whether or not they are in `txs`: their
-   * receipts hold the TRX (or TRC10) the called contracts moved, which TronGrid's account
-   * endpoints never list. Absent means none.
-   */
-  contractCalls?: TrongridTxInfo[];
+  /** The internal-transactions endpoint's records: what they moved is read from the receipts. */
+  internalTransferTxs?: InternalTransferTx[];
   next?: string;
 };
 
@@ -815,11 +854,9 @@ async function toNativePage(
         formatTrongridTxResponse(logger, tx, addr => accountNamesCache(logger, config, addr)),
       ),
   );
-  const txs = compact(formatted);
   return {
     rawTimestamps: results.map(tx => tx.block_timestamp),
-    txs: txs.filter(tx => !isSuccessfulTriggerSmartContract(tx)),
-    contractCalls: txs.filter(isSuccessfulContractCall),
+    txs: compact(formatted).filter(tx => !isSuccessfulTriggerSmartContract(tx)),
     next,
   };
 }
@@ -830,13 +867,27 @@ async function toTrc20Page(
   results: Trc20API[],
   next: string | undefined,
 ): Promise<TxEndpointPage> {
-  const txs = compact(results.map(tx => formatTrongridTrc20TxResponse(logger, tx)));
   return {
     rawTimestamps: results.map(tx => tx.block_timestamp),
-    txs: await resolveMissingTokenAddresses(logger, config, txs),
-    // Every TRC20 record is a successful contract call — TronGrid only lists those — and the same
-    // call may pay TRX on top of the tokens, to this account or from it.
-    contractCalls: txs,
+    txs: await resolveMissingTokenAddresses(
+      logger,
+      config,
+      compact(results.map(tx => formatTrongridTrc20TxResponse(logger, tx))),
+    ),
+    next,
+  };
+}
+
+function toInternalPage(
+  results: AccountInternalTransactionAPI[],
+  next: string | undefined,
+): TxEndpointPage {
+  return {
+    rawTimestamps: results.map(tx => tx.block_timestamp),
+    txs: [],
+    internalTransferTxs: results
+      .filter(tx => !tx.data?.rejected)
+      .map(tx => ({ txID: tx.tx_id, date: new Date(tx.block_timestamp) })),
     next,
   };
 }
@@ -851,21 +902,29 @@ export async function fetchTronAccountTxsPage(
     params.maxTimestamp !== undefined ? `&max_timestamp=${params.maxTimestamp}` : "";
   const queryParams = `limit=${params.limit}&min_timestamp=${params.minTimestamp}${maxTimestampParam}&order_by=block_timestamp,${params.order}`;
 
-  const [native, trc20] = await Promise.all([
+  const accountUrl = `${getBaseApiUrl(config)}/v1/accounts/${addr}`;
+
+  const [native, trc20, internal] = await Promise.all([
     fetchTronAccountTxsEndpointPage(
       logger,
       config,
       "native",
-      `${getBaseApiUrl(config)}/v1/accounts/${addr}/transactions?${queryParams}`,
+      `${accountUrl}/transactions?${queryParams}`,
     ),
     fetchTronAccountTxsEndpointPage(
       logger,
       config,
       "trc20",
-      `${getBaseApiUrl(config)}/v1/accounts/${addr}/transactions/trc20?${queryParams}&get_detail=true`,
+      `${accountUrl}/transactions/trc20?${queryParams}&get_detail=true`,
+    ),
+    fetchTronAccountTxsEndpointPage(
+      logger,
+      config,
+      "internal",
+      `${accountUrl}/internal-transactions?${queryParams}`,
     ),
   ]);
-  return { native, trc20 };
+  return { native, trc20, internal };
 }
 
 export async function fetchTronAccountTxsEndpointPage(
@@ -877,6 +936,10 @@ export async function fetchTronAccountTxsEndpointPage(
   if (endpoint === "native") {
     const { results, nextUrl } = await getTransactions(logger, config, url);
     return toNativePage(logger, config, results, nextUrl);
+  }
+  if (endpoint === "internal") {
+    const { results, nextUrl } = await getInternalTransactions(logger, config, url);
+    return toInternalPage(results, nextUrl);
   }
   const { results, nextUrl } = await getTrc20(logger, config, url);
   return toTrc20Page(logger, config, results, nextUrl);
