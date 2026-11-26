@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import {
+  withDistinctOperationIds,
   adaptCoreOperationToLiveOperation,
   bigNumberToBigIntDeep,
   buildOptimisticOperation,
@@ -2347,6 +2348,31 @@ describe("coin-framework utils", () => {
         expect(isOperationType(type)).toBe(false);
       },
     );
+  });
+});
+
+const operationOf = (hash: string, type: string, accountId = "acc") =>
+  ({ id: `${accountId}-${hash}-${type}`, accountId, hash, type }) as any;
+
+describe("withDistinctOperationIds", () => {
+  it("keeps the first id and numbers each repeat of an account, transaction and type", () => {
+    expect(
+      withDistinctOperationIds([
+        operationOf("h1", "IN"),
+        operationOf("h1", "IN"),
+        operationOf("h1", "OUT"),
+        operationOf("h2", "IN"),
+        operationOf("h1", "IN"),
+      ]).map(({ id }) => id),
+    ).toEqual(["acc-h1-IN", "acc-h1-IN-i1", "acc-h1-OUT", "acc-h2-IN", "acc-h1-IN-i2"]);
+  });
+
+  it("leaves operations of other accounts apart", () => {
+    expect(
+      withDistinctOperationIds([operationOf("h1", "IN", "a"), operationOf("h1", "IN", "b")]).map(
+        ({ id }) => id,
+      ),
+    ).toEqual(["a-h1-IN", "b-h1-IN"]);
   });
 });
 

@@ -4,6 +4,11 @@ import { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/types";
 
+const usdtTransferIn = (assetAmount: string) => ({
+  hash: "tx-hash",
+  extra: { assetReference: "usdt", assetOwner: "owner", ledgerOpType: "IN", assetAmount },
+});
+
 describe("buildSubAccounts", () => {
   it("builds sub accounts from asset operations and balances, preserving operations order", async () => {
     const subAccounts = await buildSubAccounts({
@@ -234,6 +239,24 @@ describe("buildSubAccounts", () => {
         ],
         operationsCount: 2,
       },
+    ]);
+  });
+
+  it("gives two transfers of one token in one transaction distinct ids", async () => {
+    const [subAccount] = await buildSubAccounts({
+      accountId: "accountId",
+      allTokenAssetsBalances: [
+        { value: 3n, asset: { type: "token", assetReference: "usdt", assetOwner: "owner" } },
+      ],
+      syncConfig: { blacklistedTokenIds: [] } as unknown as SyncConfig,
+      operations: [usdtTransferIn("1"), usdtTransferIn("2")] as any,
+      getTokenFromAsset: async asset =>
+        asset.type === "token" ? ({ id: asset.assetReference } as TokenCurrency) : undefined,
+    });
+
+    expect(subAccount.operations.map(op => [op.id, op.value.toString()])).toEqual([
+      ["accountId+usdt-tx-hash-IN", "1"],
+      ["accountId+usdt-tx-hash-IN-i1", "2"],
     ]);
   });
 

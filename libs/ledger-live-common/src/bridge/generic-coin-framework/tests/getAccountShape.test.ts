@@ -1444,6 +1444,55 @@ describe("genericGetAccountShape", () => {
       expect((attachedInternalOp as any)?.extra?.internal).toBe(true);
     });
 
+    test("two internal transfers to the account in one transaction get distinct ids", async () => {
+      const hash = "two-internal-ins";
+      const parentOp = { hash, type: "OUT", height: 20, tx: { failed: false } };
+      const internalIn = (value: number) => ({
+        hash,
+        type: "IN",
+        height: 20,
+        value,
+        tx: { failed: false },
+      });
+
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+      listOperationsMock.mockResolvedValue({
+        items: [parentOp, internalIn(1), internalIn(2)],
+        next: undefined,
+      });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 123 });
+      adaptCoreOperationToLiveOperationMock.mockImplementation((accountId, op: any) => ({
+        id: `${accountId}-${op.hash}-${op.type}`,
+        accountId,
+        hash: op.hash,
+        type: op.type,
+        value: new BigNumber(op.value ?? 0),
+        blockHeight: op.height,
+        extra: op.type === "IN" ? { internal: true } : {},
+      }));
+      cleanedOperationMock.mockImplementation(operation => operation);
+      mergeOpsMock.mockImplementation((_oldOps, newOps) => newOps);
+      inferSubOperationsMock.mockReturnValue([]);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: `${currency.id}_addr_two_internal`,
+          initialAccount: undefined,
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      const internalOperations = result.operations?.[0]?.internalOperations ?? [];
+      const [firstId, secondId] = internalOperations.map(op => op.id);
+      expect(internalOperations.map(op => op.value.toNumber())).toEqual([1, 2]);
+      expect(secondId).toBe(`${firstId}-i1`);
+    });
+
     test("buildParentOperations: subOperations match inferSubOperations for a large account, order included", async () => {
       // Real inferSubOperations used as the oracle for what the (mocked) index-based path should
       // produce -- a full scan by construction cannot drift from itself, so this proves the
