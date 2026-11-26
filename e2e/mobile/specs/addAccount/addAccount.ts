@@ -32,7 +32,7 @@ export function runAddAccountTest(options: AddAccountTestOptions) {
     it(`[${currency.testLabel}] - Add account`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();
-      await app.modularDrawer.selectCurrencyByTicker(currency.ticker);
+      await app.modularDrawer.selectCurrency(currency);
       await app.modularDrawer.selectNetworkIfAsked(currency.name);
 
       const accountId = await app.addAccount.addAccountAtIndex({

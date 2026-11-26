@@ -20,7 +20,7 @@ import type { TestMetaOptions } from "@e2e/models/testOptions";
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 async function handleAssetSwap(asset: Account, hasAccount: boolean) {
-  await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
+  await app.modularDrawer.selectCurrency(asset.currency);
   const networkName = asset?.parentAccount
     ? asset.parentAccount.currency.name
     : asset.currency.speculosApp.name;
@@ -502,14 +502,14 @@ export function runSwapWithSendMaxTest(options: SwapAccountsTestOptions) {
     tags.forEach(tag => $Tag(tag));
     it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap max amount`, async () => {
       await app.swapLiveApp.tapFromCurrency();
-      await app.modularDrawer.selectCurrencyByTicker(fromAccount.currency.ticker);
+      await app.modularDrawer.selectCurrency(fromAccount.currency);
       let networkName = fromAccount?.parentAccount
         ? fromAccount.parentAccount.currency.name
         : fromAccount.currency.speculosApp.name;
       await app.modularDrawer.selectNetworkIfAsked(networkName);
       await app.modularDrawer.selectFirstAccount();
       await app.swapLiveApp.tapToCurrency();
-      await app.modularDrawer.selectCurrencyByTicker(toAccount.currency.ticker);
+      await app.modularDrawer.selectCurrency(toAccount.currency);
       networkName = toAccount?.parentAccount
         ? toAccount.parentAccount.currency.name
         : toAccount.currency.speculosApp.name;
