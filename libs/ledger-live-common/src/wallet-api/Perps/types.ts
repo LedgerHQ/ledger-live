@@ -64,6 +64,10 @@ export type Action =
       signatureChainId: HexString;
       user: Address;
       abstraction: "disabled" | "unifiedAccount" | "portfolioMargin";
+    }
+  | {
+      type: "setReferrer";
+      code: string;
     };
 export function convertAction(action: ActionWithNonce): SignerAction {
   return {
