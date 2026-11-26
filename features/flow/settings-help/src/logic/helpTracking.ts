@@ -10,6 +10,7 @@ export type HelpScreen = Readonly<{ category: string; name: string }>;
 /** The events of the legacy desktop Help buttons. */
 const DESKTOP_ITEM_EVENTS: Readonly<Partial<Record<HelpItemId, string>>> = {
   clearCache: "ClearCacheIntent",
+  viewUserData: "View user data",
   resetApp: "HardResetIntent",
   launchOnboarding: "Launch Onboarding from Settings",
 };

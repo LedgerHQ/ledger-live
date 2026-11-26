@@ -4,6 +4,7 @@ import { getHelpConfirmationScreen, getHelpItemEvent, HELP_SCREENS } from "./hel
 describe("getHelpItemEvent", () => {
   it.each([
     ["clearCache", "ClearCacheIntent"],
+    ["viewUserData", "View user data"],
     ["resetApp", "HardResetIntent"],
     ["launchOnboarding", "Launch Onboarding from Settings"],
   ] as const)("sends the legacy desktop event of %s", (id, event) => {
