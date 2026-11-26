@@ -22,9 +22,10 @@ export function GenericMemoTagInput<T extends Transaction>({
 
   const handleChange = (text: string) => {
     const value = textToValue?.(text) ?? text;
-    const patch = valueToTxPatch(value);
+    const error = getMemoTooLongError({ value, maxLength: maxByteLength });
+    const patch = valueToTxPatch(error ? "" : value);
     setValue(value);
-    onChange({ value, patch, error: getMemoTooLongError({ value, maxLength: maxByteLength }) });
+    onChange({ value, patch, error });
   };
 
   return (

@@ -35,4 +35,34 @@ describe("GenericMemoTagInput", () => {
   it("should accept a memo exactly at the byte limit", () => {
     expect(changeMemo("a".repeat(MAX_BYTE_LENGTH)).error).toBeUndefined();
   });
+
+  it("should leave an over-limit memo out of the transaction so fee estimation never sends it", () => {
+    const valueToTxPatch = jest.fn(() => (tx: never) => tx);
+    render(
+      <GenericMemoTagInput
+        onChange={onChange}
+        maxByteLength={MAX_BYTE_LENGTH}
+        valueToTxPatch={valueToTxPatch}
+      />,
+    );
+
+    fireEvent.changeText(screen.getByTestId("memo-tag-input"), "a".repeat(MAX_BYTE_LENGTH + 1));
+
+    expect(valueToTxPatch).toHaveBeenLastCalledWith("");
+  });
+
+  it("should put a memo within the limit into the transaction", () => {
+    const valueToTxPatch = jest.fn(() => (tx: never) => tx);
+    render(
+      <GenericMemoTagInput
+        onChange={onChange}
+        maxByteLength={MAX_BYTE_LENGTH}
+        valueToTxPatch={valueToTxPatch}
+      />,
+    );
+
+    fireEvent.changeText(screen.getByTestId("memo-tag-input"), "invoice-42");
+
+    expect(valueToTxPatch).toHaveBeenLastCalledWith("invoice-42");
+  });
 });
