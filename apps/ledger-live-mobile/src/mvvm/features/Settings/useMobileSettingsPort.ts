@@ -1,9 +1,12 @@
 import { useCallback, useMemo } from "react";
 import type { SettingsPort } from "@features/flow-settings";
-import type {
-  GeneralSettingsPort,
-  GeneralSettingsValues,
-  GeneralSettingUpdate,
+import {
+  isDateFormatUpdate,
+  type DateFormatSettingsValues,
+  type DateFormatUpdate,
+  type GeneralSettingsPort,
+  type GeneralSettingsValues,
+  type GeneralSettingUpdate,
 } from "@features/flow-settings-general";
 import {
   isSecurityUpdate,
@@ -11,15 +14,16 @@ import {
   type SecuritySettingsValues,
   type SecurityUpdate,
 } from "@features/flow-settings-security";
+import { useDateFormatSettingsAdapter } from "./sections/general/useDateFormatSettingsAdapter";
 import { useGeneralSettingsAdapter } from "./sections/general/useGeneralSettingsAdapter";
 import { useSecuritySettingsAdapter } from "./sections/security/useSecuritySettingsAdapter";
 import type { AppLockAdapter } from "./sections/security/types";
 
-type MobileSettingsUpdate = GeneralSettingUpdate | SecurityUpdate;
+type MobileSettingsUpdate = GeneralSettingUpdate | DateFormatUpdate | SecurityUpdate;
 
 /** The port of Ledger Wallet Mobile: the values and changes of every section, and their actions. */
 export type MobileSettingsPort = SettingsPort<
-  GeneralSettingsValues & SecuritySettingsValues,
+  GeneralSettingsValues & DateFormatSettingsValues & SecuritySettingsValues,
   MobileSettingsUpdate
 > &
   Pick<GeneralSettingsPort, "languages" | "currencies" | "ledgerSync"> &
@@ -33,22 +37,25 @@ export type MobileSettingsPort = SettingsPort<
  */
 export function useMobileSettingsPort(appLock: AppLockAdapter): MobileSettingsPort {
   const general = useGeneralSettingsAdapter();
+  const dateFormat = useDateFormatSettingsAdapter();
   const security = useSecuritySettingsAdapter(appLock);
 
   const values = useMemo(
-    () => ({ ...general.values, ...security.values }),
-    [general.values, security.values],
+    () => ({ ...general.values, ...dateFormat.values, ...security.values }),
+    [general.values, dateFormat.values, security.values],
   );
 
   const setValue = useCallback(
     (update: MobileSettingsUpdate) => {
       if (isSecurityUpdate(update)) {
         security.setValue(update);
+      } else if (isDateFormatUpdate(update)) {
+        dateFormat.setValue(update);
       } else {
         general.setValue(update);
       }
     },
-    [general, security],
+    [general, dateFormat, security],
   );
 
   const { languages, currencies, ledgerSync } = general;

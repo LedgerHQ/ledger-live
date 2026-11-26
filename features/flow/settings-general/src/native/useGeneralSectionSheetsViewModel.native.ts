@@ -1,11 +1,14 @@
 import { useCallback, useMemo, useState } from "react";
 import type { SettingsRowSelectOption } from "@features/flow-settings";
+import { useDateFormatLabels } from "../copy/useDateFormatLabels";
+import { isSettingsDateFormat, SETTINGS_DATE_FORMATS } from "../logic/dateFormat";
+import { useDateFormatSettingsPort } from "../useGeneralSettingsPort";
 import {
   useGeneralSectionViewModel,
   type GeneralSectionViewModel,
 } from "../useGeneralSectionViewModel";
 
-export type GeneralSheetId = "theme" | "language" | "currency";
+export type GeneralSheetId = "theme" | "language" | "dateFormat" | "currency";
 
 export type GeneralSheet = Readonly<{
   id: GeneralSheetId;
@@ -19,6 +22,8 @@ export type GeneralSheet = Readonly<{
 
 export type GeneralSectionSheetsViewModel = GeneralSectionViewModel &
   Readonly<{
+    /** The title of each row. */
+    rowTitles: Readonly<Record<GeneralSheetId, string>>;
     /** The label of each row's current value, shown as its description. */
     currentLabels: Readonly<Record<GeneralSheetId, string>>;
     openSheet: GeneralSheet | null;
@@ -35,6 +40,21 @@ export function useGeneralSectionSheetsViewModel(): GeneralSectionSheetsViewMode
   const section = useGeneralSectionViewModel();
   const [openSheetId, setOpenSheetId] = useState<GeneralSheetId | null>(null);
   const { labels, theme, language, currency } = section;
+  const dateFormatLabels = useDateFormatLabels();
+  const dateFormatPort = useDateFormatSettingsPort();
+  const dateFormat = dateFormatPort.values.dateFormat;
+  const setDateFormatValue = dateFormatPort.setValue;
+
+  const dateFormatOptions = useMemo(
+    () => SETTINGS_DATE_FORMATS.map(value => ({ value, label: dateFormatLabels.options[value] })),
+    [dateFormatLabels],
+  );
+  const onSelectDateFormat = useCallback(
+    (value: string) => {
+      if (isSettingsDateFormat(value)) setDateFormatValue({ key: "dateFormat", value });
+    },
+    [setDateFormatValue],
+  );
 
   const onOpenSheet = useCallback((id: GeneralSheetId) => setOpenSheetId(id), []);
   const onCloseSheet = useCallback(() => setOpenSheetId(null), []);
@@ -57,6 +77,14 @@ export function useGeneralSectionSheetsViewModel(): GeneralSectionSheetsViewMode
         hasSearch: true,
         onSelect: language.onSelect,
       },
+      dateFormat: {
+        id: "dateFormat",
+        title: dateFormatLabels.sheetTitle,
+        value: dateFormat,
+        options: dateFormatOptions,
+        hasSearch: false,
+        onSelect: onSelectDateFormat,
+      },
       currency: {
         id: "currency",
         title: labels.currency.sheetTitle,
@@ -66,14 +94,30 @@ export function useGeneralSectionSheetsViewModel(): GeneralSectionSheetsViewMode
         onSelect: currency.onSelect,
       },
     }),
-    [labels, theme, language, currency],
+    [
+      labels,
+      theme,
+      language,
+      currency,
+      dateFormat,
+      dateFormatLabels,
+      dateFormatOptions,
+      onSelectDateFormat,
+    ],
   );
 
   return {
     ...section,
+    rowTitles: {
+      theme: labels.theme.title,
+      language: labels.language.title,
+      dateFormat: dateFormatLabels.title,
+      currency: labels.currency.title,
+    },
     currentLabels: {
       theme: labelOf(theme.options, theme.value),
       language: labelOf(language.options, language.value),
+      dateFormat: labelOf(dateFormatOptions, dateFormat),
       currency: currency.value,
     },
     openSheet: openSheetId ? sheets[openSheetId] : null,

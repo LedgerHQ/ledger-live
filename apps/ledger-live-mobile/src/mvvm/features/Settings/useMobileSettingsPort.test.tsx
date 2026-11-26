@@ -145,6 +145,18 @@ describe("useMobileSettingsPort", () => {
     });
   });
 
+  it("reads the date format and stores a new one", () => {
+    const { result, store } = renderHook(() => useMobileSettingsPort(appLock()));
+
+    expect(result.current.values.dateFormat).toBe("default");
+    act(() => {
+      result.current.setValue({ key: "dateFormat", value: "DD/MM/YYYY" });
+    });
+
+    expect(store.getState().settings.dateFormat).toBe("DD/MM/YYYY");
+    expect(result.current.values.dateFormat).toBe("DD/MM/YYYY");
+  });
+
   it("opens the Ledger Sync activation drawer while Ledger Sync is not active", () => {
     const { result, store } = renderHook(() => useMobileSettingsPort(appLock()));
 
