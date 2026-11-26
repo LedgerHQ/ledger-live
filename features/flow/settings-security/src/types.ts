@@ -12,12 +12,16 @@ export type SecuritySettingsValues = Readonly<{
   autoLockTimeout: number;
   /** The biometrics the device offers, `null` when it has none. */
   biometricKind: BiometricKind | null;
+  /** Whether biometrics protects the app. */
+  biometricsEnabled: boolean;
+  /** Whether biometrics can only be turned on once a password is set. */
+  biometricsRequirePassword: boolean;
 }>;
 
 /** What the Security section can change through `setValue`. The password has its own flows. */
 export type EditableSecuritySettings = Pick<
   SecuritySettingsValues,
-  "hideBalance" | "mevProtection" | "autoLockTimeout"
+  "hideBalance" | "mevProtection" | "autoLockTimeout" | "biometricsEnabled"
 >;
 
 export type SecurityUpdate = UpdateOf<EditableSecuritySettings>;

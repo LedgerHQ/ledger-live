@@ -85,7 +85,8 @@ export const descriptor = descriptorOf(0);
 
 export const accountUUID: AccountUUID = computeAccountUUID(descriptor);
 
-const toyReducer = {
+/** The reducers of `makeStore`, for a test store that mounts more slices. */
+export const toyReducer = {
   accountData: accountDataSlice.reducer,
   counter: counterSlice.reducer,
   feed: feedSlice.reducer,

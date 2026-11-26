@@ -214,12 +214,12 @@ on:
         type: string
         default: ""
       native_fingerprint_ios:
-        description: "Expo fingerprint of the iOS native project (scripts/native-fingerprint.mjs); when set, it keys the iOS native build instead of hashFiles"
+        description: "Expo fingerprint of the iOS native project (scripts/native-fingerprint.mjs) that keys the iOS native build; computed in determine-builds when empty"
         required: false
         type: string
         default: ""
       native_fingerprint_android:
-        description: "Expo fingerprint of the Android native project (scripts/native-fingerprint.mjs); when set, it keys the Android native build instead of hashFiles"
+        description: "Expo fingerprint of the Android native project (scripts/native-fingerprint.mjs) that keys the Android native build; computed in determine-builds when empty"
         required: false
         type: string
         default: ""
@@ -328,7 +328,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    runs-on: ledger-wallet-1cpu-aws-public-cached
+    runs-on: ledger-wallet-4cpu-aws-public-cached
     outputs:
       plan: ${{ steps.plan.outputs.plan }}
     steps:
@@ -346,15 +346,6 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
           persist-credentials: false
-          sparse-checkout: |
-            apps/ledger-live-mobile
-            e2e/mobile
-            e2e/tooling/filter
-            libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json
-            pnpm-workspace.yaml
-            shared/native-performance
-            tools
-            .mise/tasks
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup the caches
@@ -373,6 +364,25 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: JFrog npm auth
+        if: ${{ !(inputs.js_bundle_hash_ios && inputs.js_bundle_hash_android && inputs.native_fingerprint_ios && inputs.native_fingerprint_android) }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Install dependencies for the root workspace and mobile
+        if: ${{ !(inputs.js_bundle_hash_ios && inputs.js_bundle_hash_android && inputs.native_fingerprint_ios && inputs.native_fingerprint_android) }}
+        run: pnpm i --frozen-lockfile --filter=live-mobile... --filter=ledger-live --ignore-scripts
+
+      - name: Compute the build hashes
+        id: hashes
+        uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-hashes@develop
+        with:
+          js_bundle_hash_ios: ${{ inputs.js_bundle_hash_ios }}
+          js_bundle_hash_android: ${{ inputs.js_bundle_hash_android }}
+          native_fingerprint_ios: ${{ inputs.native_fingerprint_ios }}
+          native_fingerprint_android: ${{ inputs.native_fingerprint_android }}
+
       - name: Plan the builds and shards
         id: plan
         uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-plan@develop
@@ -388,10 +398,10 @@ jobs:
           tests_type: ${{ inputs.tests_type }}
           production_firebase: ${{ inputs.production_firebase }}
           feature_flags_json: ${{ env.E2E_FEATURE_FLAGS_JSON }}
-          js_bundle_hash_ios: ${{ inputs.js_bundle_hash_ios }}
-          js_bundle_hash_android: ${{ inputs.js_bundle_hash_android }}
-          native_fingerprint_ios: ${{ inputs.native_fingerprint_ios }}
-          native_fingerprint_android: ${{ inputs.native_fingerprint_android }}
+          js_bundle_hash_ios: ${{ steps.hashes.outputs.js_bundle_hash_ios }}
+          js_bundle_hash_android: ${{ steps.hashes.outputs.js_bundle_hash_android }}
+          native_fingerprint_ios: ${{ steps.hashes.outputs.native_fingerprint_ios }}
+          native_fingerprint_android: ${{ steps.hashes.outputs.native_fingerprint_android }}
           cache_bucket: ${{ env.cache-bucket }}
           aws_region: ${{ secrets.AWS_CACHE_REGION }}
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -683,7 +693,7 @@ jobs:
           ENDPOINT: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           REGION: ${{ secrets.AWS_CACHE_REGION }}
           CACHE_BUCKET: ${{ env.cache-bucket }}
-          HASH: ${{ inputs.js_bundle_hash_ios }}
+          HASH: ${{ fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).js_bundle_hash_ios }}
         run: bash tools/scripts/fetch-nx-cached-file.sh "$HASH" apps/ledger-live-mobile/main.jsbundle
 
       - name: Copy JS build
@@ -934,7 +944,7 @@ jobs:
           NX_CACHE_KEY_PREFIX: ${{ fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).android_js_prefix }}
           REGION: ${{ secrets.AWS_CACHE_REGION }}
           CACHE_BUCKET: ${{ env.cache-bucket }}
-          HASH: ${{ inputs.js_bundle_hash_android }}
+          HASH: ${{ fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).js_bundle_hash_android }}
         run: bash tools/scripts/fetch-nx-cached-file.sh "$HASH" apps/ledger-live-mobile/main.jsbundle
 
       - name: Prepare APK

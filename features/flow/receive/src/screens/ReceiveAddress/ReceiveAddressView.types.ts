@@ -3,6 +3,7 @@ import type { AddressParts } from "../../logic/splitAddress";
 import type { ReceiveIcon } from "../../logic/toReceiveAddressData";
 import type { ReceiveAddressOptionId } from "../../logic/toReceiveAddressOptions";
 import type { ReceiveNoticeKind, ReceiveNoticeTone } from "../../logic/toReceiveNotices";
+import type { ReceiveGateType } from "../../types";
 
 /** The account data could not be read: Retry reads what failed again. */
 export type ReceiveAddressError = Readonly<{
@@ -74,10 +75,31 @@ export type ReceiveHelpPanelView = Readonly<{
   onClose: () => void;
 }>;
 
+/** "Need a Tag/Memo?", when senders can attach one to the address shown. */
+export type ReceiveMemoCardView = Readonly<{ title: string; onPress: () => void }>;
+
+/** Why an exchange may need a memo, over the address. */
+export type ReceiveMemoPanelView = Readonly<{
+  title: string;
+  description: string;
+  gotItLabel: string;
+  learnMore: ReceiveAddressAction;
+  onClose: () => void;
+}>;
+
+/** The account cannot receive yet: it shows why, in place of the address. */
+export type ReceiveGateView = Readonly<{
+  type: ReceiveGateType;
+  title: string;
+  description: string;
+  action?: ReceiveAddressAction;
+}>;
+
 export type ReceiveAddressViewProps = Readonly<{
   /** The address is not known yet: skeletons hold the place of the QR card and the address. */
   isLoading: boolean;
   error?: ReceiveAddressError;
+  gate?: ReceiveGateView;
   addressSelection?: ReceiveAddressSelectionView;
   /** Absent until the address is read, and while the user picks one. */
   address?: ReceiveAddressShown;
@@ -88,6 +110,9 @@ export type ReceiveAddressViewProps = Readonly<{
   serviceStatus?: ReceiveServiceStatusView;
   helpCard: ReceiveHelpCardView;
   helpPanel?: ReceiveHelpPanelView;
+  memoCard?: ReceiveMemoCardView;
+  /** Set while the memo panel is open. */
+  memoPanel?: ReceiveMemoPanelView;
   /** "Receive USDC" */
   title: string;
   /** "Ethereum network" */

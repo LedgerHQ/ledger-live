@@ -15,10 +15,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@bitcoin", "@family-bitcoin"],
 };
 
-runSellFlowTest(
-  testConfig.buySell,
-  testConfig.provider,
-  testConfig.paymentMethod,
-  testConfig.tmsLinks,
-  testConfig.tags,
-);
+runSellFlowTest(testConfig);

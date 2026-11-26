@@ -54,3 +54,5 @@ export type {
   AccountDiscoveryRun,
   AccountDiscoveryToolState,
 } from "./useAccountDiscoveryToolState";
+export { AccountRedactionProvider, useAccountRedaction } from "./accountRedaction";
+export type { AccountRedaction } from "./accountRedaction";

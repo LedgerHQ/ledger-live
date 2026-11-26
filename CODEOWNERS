@@ -57,6 +57,7 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /shared/env/                                             @ledgerhq/platform
 /shared/native-performance/                              @ledgerhq/platform
 /shared/device-locale/                                   @ledgerhq/platform
+/shared/storage/                                         @ledgerhq/platform
 
 # Platform — mobile
 apps/ledger-live-mobile/android/                         @ledgerhq/platform
@@ -149,8 +150,13 @@ features/flow/account-detail-notices/                    @ledgerhq/wallet-xp
 features/flow/account-detail-settings/                   @ledgerhq/wallet-xp
 features/flow/history-export/                            @ledgerhq/wallet-xp
 features/flow/settings/                                  @ledgerhq/wallet-xp
+features/flow/settings-asset-management/                 @ledgerhq/wallet-xp
+features/flow/settings-help/                             @ledgerhq/wallet-xp
 features/flow/settings-notifications/                    @ledgerhq/wallet-xp
+features/flow/settings-general/                          @ledgerhq/wallet-xp
+features/flow/settings-privacy/                          @ledgerhq/wallet-xp
 features/flow/settings-security/                         @ledgerhq/wallet-xp
+features/flow/settings-debug/                            @ledgerhq/wallet-xp
 features/platform/account-analytics/                     @ledgerhq/wallet-xp
 features/platform/quick-actions/                         @ledgerhq/wallet-xp
 

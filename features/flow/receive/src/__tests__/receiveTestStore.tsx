@@ -3,7 +3,11 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { accountDataExtra, type AccountDataSource } from "@domain/api-account-data";
 import { cryptoAssetsApi } from "@domain/api-currency-token";
-import { accountsSlice, remoteAccountsAdded } from "@domain/entity-account";
+import {
+  accountsSlice,
+  discoveredAccountsSlice,
+  remoteAccountsAdded,
+} from "@domain/entity-account";
 import { AccountDataSourceIdSchema, accountDataSlice } from "@domain/entity-account-data";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { accountReceivesSlice } from "@domain/entity-account-receive";
@@ -47,6 +51,7 @@ export function makeReceiveTestStore(reads: Partial<ReceiveReads> = {}) {
     reducer: {
       accountData: accountDataSlice.reducer,
       accountEntries: accountsSlice.reducer,
+      discoveredAccounts: discoveredAccountsSlice.reducer,
       accountReceives: accountReceivesSlice.reducer,
       accountStatus: accountStatusSlice.reducer,
       receiveVerifyHint: receiveVerifyHintSlice.reducer,
@@ -99,6 +104,26 @@ const receiveTestResources = {
           learnMore: "Learn more",
         },
         serviceStatus: { continue: "Continue" },
+        memoTag: {
+          title: "Need a Tag/Memo?",
+          description:
+            "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+          gotIt: "Got it",
+        },
+        gates: {
+          onboarding: {
+            title: "Set up your account first",
+            description:
+              "Your account must be onboarded on the {{network}} network before it can receive funds.",
+            action: "Onboard account",
+          },
+          activation: {
+            title: "Add {{asset}} to your account first",
+            description:
+              "Your account must enable {{asset}} on the {{network}} network before it can receive it. This may cost a small network fee.",
+            action: "Add {{asset}}",
+          },
+        },
         help: {
           cardTitle: "Need support? Get help",
           title: "Get help",

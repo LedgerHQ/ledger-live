@@ -1,15 +1,8 @@
-import { track } from "@shared/analytics";
-import React, { useCallback, useEffect, useState } from "react";
-import { Alert } from "react-native";
-import { useSelector, useDispatch } from "~/context/hooks";
+import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { Switch } from "@ledgerhq/native-ui";
-import { setPrivacyBiometrics } from "~/actions/settings";
-import { privacySelector } from "~/reducers/settings";
 import SettingsRow from "~/components/SettingsRow";
-import { useBiometricAuth } from "~/components/RequestBiometricAuth";
-import { ScreenName } from "~/const";
-import { isLockedSelector } from "~/reducers/auth";
+import { useLegacyBiometricsRow } from "LLM/features/AppLock/hooks/useLegacyBiometricsRow";
 
 type Props = {
   iconLeft?: React.ReactNode;
@@ -17,66 +10,10 @@ type Props = {
 
 export default function BiometricsRow({ iconLeft }: Props) {
   const { t } = useTranslation();
-
-  const dispatch = useDispatch();
-  const privacy = useSelector(privacySelector);
-  const isLocked = useSelector(isLockedSelector);
-
-  const [validationPending, setValidationPending] = useState(false);
-  const [biometricsEnabled, setBiometricsEnabled] = useState(
-    privacy?.biometricsEnabled || validationPending,
-  );
+  const { privacy, biometricsEnabled, onValueChange } = useLegacyBiometricsRow();
 
   const biometricsType =
     t(`auth.enableBiometrics.${privacy?.biometricsType?.toLowerCase()}`) ?? privacy?.biometricsType;
-
-  const onValueChange = useCallback(
-    async (biometricsEnabled: boolean) => {
-      track("toggle_clicked", {
-        toggle: "biometrics",
-        page: ScreenName.GeneralSettings,
-        enabled: !!privacy?.biometricsEnabled,
-      });
-
-      if (validationPending) return;
-      setValidationPending(true);
-      setBiometricsEnabled(biometricsEnabled);
-    },
-    [privacy?.biometricsEnabled, validationPending],
-  );
-
-  const onSuccess = useCallback(() => {
-    setValidationPending(false);
-    dispatch(setPrivacyBiometrics(biometricsEnabled));
-  }, [dispatch, biometricsEnabled]);
-
-  const onError = useCallback(
-    (error?: Error) => {
-      setValidationPending(false);
-      setBiometricsEnabled((val: boolean) => !val);
-      Alert.alert(t("auth.failed.title"), `${t("auth.failed.denied")}\n${String(error || "")}`);
-    },
-    [t],
-  );
-
-  const onCancel = useCallback(() => {
-    setValidationPending(false);
-    setBiometricsEnabled((val: boolean) => !val);
-  }, []);
-
-  useBiometricAuth({
-    disabled: !validationPending || isLocked,
-    onSuccess,
-    onError,
-    onCancel,
-  });
-
-  // Reset the switch state if user directly disable password
-  useEffect(() => {
-    if (!privacy?.hasPassword && biometricsEnabled) {
-      setBiometricsEnabled(false);
-    }
-  }, [privacy, biometricsEnabled]);
 
   return (
     <>

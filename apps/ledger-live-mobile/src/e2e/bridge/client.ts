@@ -1,4 +1,4 @@
-import { Platform, DeviceEventEmitter } from "react-native";
+import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "~/state-manager/configureStore";
@@ -23,12 +23,7 @@ import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { saveAccounts } from "~/db";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
-import {
-  addKnownBleDevice,
-  importBle,
-  removeKnownBleDevice,
-  removeKnownBleDevices,
-} from "~/actions/ble";
+import { addKnownBleDevice, removeKnownBleDevice, removeKnownBleDevices } from "~/actions/ble";
 import { LaunchArguments } from "react-native-launch-arguments";
 import logReport from "~/log-report";
 import { webviewLogStore } from "~/e2e/webviewLogStore";
@@ -238,10 +233,6 @@ async function onMessage(event: WebSocketMessageEvent) {
         store.dispatch(importSettings(msg.payload));
         break;
       }
-      case "importBle": {
-        store.dispatch(importBle(msg.payload));
-        break;
-      }
       case "importPostOnboarding": {
         store.dispatch(importPostOnboardingState({ newState: msg.payload }));
         break;
@@ -277,9 +268,6 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "navigate":
         navigate(msg.payload, {});
-        break;
-      case "addUSB":
-        DeviceEventEmitter.emit("onDeviceConnect", msg.payload);
         break;
       case "getLogs": {
         const payload = JSON.stringify({

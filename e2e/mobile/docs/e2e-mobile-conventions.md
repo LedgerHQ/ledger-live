@@ -97,7 +97,7 @@ The spec MUST pass the `B2CQA-XXXX` id and the test function MUST call `$TmsLink
 
 ```ts
 // spec
-runBrowseAndSearchContactsTest(["B2CQA-6240"], tags);
+runBrowseAndSearchContactsTest({ tmsLinks: ["B2CQA-6240"], tags });
 
 // test function
 setTeamOwner(Team.WALLET_XP);
@@ -162,7 +162,8 @@ iOS smart punctuation turns a typed `'` into `’`, so a straight apostrophe in 
 The test function calls `declareBroadcastAccounts`, `declareCliBroadcastAccounts` or `declareSharedResources` ([`helpers/exclusiveLock.ts`](../helpers/exclusiveLock.ts)) before its `describe`:
 
 ```ts
-export function runDelegateTest(delegation: DelegateType /* … */) {
+export function runDelegateTest(options: RunDelegateTestOptions) {
+  const { delegation /* … */ } = options;
   declareBroadcastAccounts(delegation.account);
   describe("Delegate", () => {
 ```

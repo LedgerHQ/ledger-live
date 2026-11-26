@@ -63,7 +63,7 @@ function renderActor(options: Partial<UseDeviceOnboardingActorOptions> = {}) {
         deviceId: "device",
         deviceModelId: DeviceModelId.STAX,
         offerSync: false,
-        hostsSeedSetup: true,
+        connectUnseededDevice: true,
       }),
     );
     await act(() => settle());

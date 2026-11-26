@@ -18,17 +18,36 @@
     "test": "jest",
     "coverage": "jest --coverage"
   },
+  "dependencies": {
+    "@features/flow-settings": "workspace:*",
+    "@shared/analytics": "workspace:*",
+    "@shared/analytics-react": "workspace:*",
+    "@shared/i18n": "workspace:*"
+  },
   "devDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@support/lint": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
+    "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
+    "@types/react": "catalog:",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:",
+    "react-test-renderer": "catalog:",
     "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:"
   }
 }

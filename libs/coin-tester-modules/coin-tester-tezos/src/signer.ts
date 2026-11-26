@@ -51,7 +51,7 @@ const TZ2_PREFIX = new Uint8Array([0x06, 0xa1, 0xa1]);
  * Key derivation deliberately skips SLIP-10 path derivation: the first 32
  * bytes of the BIP39 seed are used directly as the Ed25519 private key.
  * For testing purposes this is sufficient — the address is always valid and
- * the key can sign transactions that the local Flextesa node will accept.
+ * the key can sign transactions that the sandbox node will accept.
  *
  * `signTransaction` receives `rawTxHex` from `rawEncode`, which already
  * includes the `0x03` manager watermark prefix. We must NOT add it again.

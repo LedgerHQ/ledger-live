@@ -7,8 +7,12 @@ import type { SecurityViewProps } from "./Security.types";
 export function SecurityView({ rows, stateEvents, testID }: SecurityViewProps) {
   return (
     <SettingsSection testID={testID}>
-      {rows.map(({ id, ...row }) => (
-        <SettingsRow key={id} {...row} icon={<SecurityRowIcon id={id} />} />
+      {rows.map(({ id, biometricKind, ...row }) => (
+        <SettingsRow
+          key={id}
+          {...row}
+          icon={<SecurityRowIcon id={id} biometricKind={biometricKind} />}
+        />
       ))}
       <SecurityStateEvents events={stateEvents} />
     </SettingsSection>

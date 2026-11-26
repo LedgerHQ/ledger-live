@@ -65,6 +65,22 @@ import, as `features-flow` imports `@ledgerhq/lumen-lint-plugin`: Nx hashes that
 `lint`, and marks the package affected when it changes, only through that edge. Subtrees that keep their own config for now (the apps, the e2e
 suites, a few legacy `libs/` trees) are listed in the plugin's `exclusions.mjs`.
 
+## The account descriptor stays at the edges
+
+Code holds the `AccountUUID`. `@domain/entity-account-descriptor`, which carries the descriptor and
+its key, `@domain/entity-account/descriptor`, which computes the `AccountUUID` from it, and
+`@features/platform-account-discovery/descriptor`, whose results carry descriptors, are restricted
+by `ACCOUNT_DESCRIPTOR` in `restricted-imports.mts`. They are exact `paths` names, so
+tests keep the `./schema.mock` entries. `base` and `features-flow` list them, and so do the desktop
+and mobile app configs, their `src/config/account-data-setup` files aside.
+
+`ACCOUNT_DESCRIPTOR_EDGES` lists the packages allowed to import it, as paths from the repo root:
+the account data router (`domain/api/account-data`), the legacy bridge (`domain/entity/account`),
+`features/platform/account-data`, discovery and the account sources. `base` turns each into an
+override below its layer root; `features-flow` does the same for its entries, keeping its own
+restrictions. A temporary entry carries a comment naming the ticket that removes it.
+`devtools`, `libs/ledger-live-common` and `apps/wallet-cli` are edges too and stay unrestricted.
+
 ## Rules
 
 ### `suffix-imports/no-platform-suffix`
@@ -187,7 +203,8 @@ string or a template literal that has no substitution. A specifier built at run 
 (``require(`@ledgerhq/coin-${name}`)``) cannot be checked. It reports three kinds of
 specifier, each with its own message:
 
-- **`coin-package`**: a coin module or a live-signer, `@ledgerhq/coin-*` and `@ledgerhq/live-signer-*`, and their
+- **`coin-package`**: a coin module, a live-signer, a device signer kit or wallet-btc, `@ledgerhq/coin-*`,
+  `@ledgerhq/live-signer-*`, `@ledgerhq/device-signer-kit-*` and `@ledgerhq/wallet-btc`, and their
   subpaths. The exclusion is by full package name (`coin-module-framework`, `coin-framework`,
   `coin-modules-monitoring`, `coin-module-boilerplate`, `coin-tester*`), because the prefix alone
   would also take them.

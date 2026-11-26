@@ -5,4 +5,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@smoke"],
 };
 
-runUserCanExportLogsTest(testConfig.tmsLinks, testConfig.tags);
+runUserCanExportLogsTest(testConfig);

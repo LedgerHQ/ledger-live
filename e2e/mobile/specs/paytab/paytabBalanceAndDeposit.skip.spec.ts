@@ -5,4 +5,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
-runPayBalanceAndDepositTest(testConfig.tmsLinks, testConfig.tags);
+runPayBalanceAndDepositTest(testConfig);

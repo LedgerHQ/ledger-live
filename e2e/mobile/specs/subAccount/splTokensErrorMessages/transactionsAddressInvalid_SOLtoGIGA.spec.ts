@@ -3,7 +3,11 @@ import { runSendSPLAddressInvalid } from "@e2e/specs/subAccount/subAccount";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 
 const transactionE2E = {
-  tx: new Transaction(Account.SOL_1, TokenAccount.SOL_GIGA_2, "0.1", undefined),
+  tx: new Transaction({
+    accountToDebit: Account.SOL_1,
+    accountToCredit: TokenAccount.SOL_GIGA_2,
+    amount: "0.1",
+  }),
   recipient: Addresses.SOL_GIGA_2_ATA_ADDRESS,
   expectedErrorMessage: "This is a token account. Input a regular wallet address",
   scenario: "token account",

@@ -136,7 +136,11 @@ not call `registerNewSendFlowTests` again — the spec already does.
 
 ```typescript
 {
-  transaction: new Transaction(Account.NEWCOIN_1, Account.NEWCOIN_2, "0.001"),
+  transaction: new Transaction({
+    accountToDebit: Account.NEWCOIN_1,
+    accountToCredit: Account.NEWCOIN_2,
+    amount: "0.001",
+  }),
   xrayTicket: "B2CQA-XXXX",
 },
 ```

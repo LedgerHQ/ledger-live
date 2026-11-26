@@ -95,6 +95,8 @@ export function exitOutcome(
       return genuine ? "done" : "aborted";
     case "legacyFallback":
       if (context.isOnboarded !== true) return "legacy";
+      // The host cannot run seeded checks: the old seeded checks take over, whatever the verdict.
+      if (context.onboardedOnEntry === true && !context.connectSeededDevice) return "legacy";
       if (genuine) return "done";
       return firmwareNeedsLegacyFlow(context) ? "legacy" : "aborted";
   }

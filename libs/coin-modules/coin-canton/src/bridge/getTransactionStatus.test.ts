@@ -3,6 +3,8 @@ import {
   FeeNotLoaded,
   FeeTooHigh,
   InvalidAddress,
+  InvalidTransactionError,
+  NotEnoughBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughSpendableBalance,
   RecipientRequired,
@@ -18,6 +20,7 @@ import {
   TO_MANY_UTXOS_CRITICAL_COUNT,
   TO_MANY_UTXOS_WARNING_COUNT,
 } from "./getTransactionStatus";
+import { prepareTransaction } from "./prepareTransaction";
 
 jest.mock("../network/gateway", () => ({
   ...jest.requireActual("../network/gateway"),
@@ -55,9 +58,24 @@ describe("getTransactionStatus", () => {
       },
     },
   };
+  const withTokenAccount = (spendableBalance: number): CantonAccount => ({
+    ...mockAccount,
+    subAccounts: [
+      {
+        type: "TokenAccount",
+        id: "token-sub-account",
+        spendableBalance: new BigNumber(spendableBalance),
+      } as NonNullable<CantonAccount["subAccounts"]>[number],
+    ],
+  });
   const accountWithUtxoCounts = (instrumentUtxoCounts: Record<string, number>): CantonAccount => ({
     ...mockAccount,
     cantonResources: { ...mockAccount.cantonResources, instrumentUtxoCounts },
+  });
+  const accountWith = (balance: number, minReserve: number): CantonAccount => ({
+    ...mockAccount,
+    balance: new BigNumber(balance),
+    spendableBalance: BigNumber.max(0, new BigNumber(balance).minus(minReserve)),
   });
 
   beforeEach(() => {
@@ -264,6 +282,79 @@ describe("getTransactionStatus", () => {
     });
   });
 
+  describe("Send max", () => {
+    const fee = new BigNumber(10);
+    const sendMax = (amount: BigNumber): Transaction => ({
+      family: "canton",
+      amount,
+      useAllAmount: true,
+      recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
+      fee,
+      tokenId: "",
+    });
+    const statusOfSendMax = async (spendable: BigNumber) => {
+      mockConfig = { ...defaultConfig, minReserve: 0 };
+      const account = { ...mockAccount, balance: spendable, spendableBalance: spendable };
+      const prepared = await prepareTransaction(mockContext, account, sendMax(new BigNumber(0)));
+      return getTransactionStatus(account, prepared);
+    };
+    it("should return NotEnoughBalance when the fee leaves nothing to send", async () => {
+      mockConfig = { ...defaultConfig, minReserve: 0 };
+
+      const result = await getTransactionStatus(accountWith(5, 0), sendMax(new BigNumber(0)));
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+
+    it.each([0, 100])(
+      "should accept the spendable balance minus the fee with a reserve of %i",
+      async minReserve => {
+        mockConfig = { ...defaultConfig, minReserve };
+        const account = accountWith(1000, minReserve);
+
+        const result = await getTransactionStatus(
+          account,
+          sendMax(account.spendableBalance.minus(fee)),
+        );
+
+        expect(result.errors).toEqual({});
+      },
+    );
+
+    it("should keep refusing a maximum below the reserve a new recipient needs", async () => {
+      const account = accountWith(150, 100);
+
+      const result = await getTransactionStatus(
+        account,
+        sendMax(account.spendableBalance.minus(fee)),
+      );
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalanceBecauseDestinationNotCreated);
+    });
+
+    describe("prepared with the tiered fee", () => {
+      const CC = new BigNumber(10).pow(38);
+
+      it("should send a positive amount from 1.01 CC, warning that the fee is high", async () => {
+        const result = await statusOfSendMax(CC.times(1.01));
+
+        expect(result.amount.gt(0)).toBe(true);
+        expect(result.errors).toEqual({});
+        expect(result.warnings.feeTooHigh).toBeInstanceOf(FeeTooHigh);
+      });
+
+      it.each([
+        ["1 CC", CC],
+        ["0.5 CC", CC.div(2)],
+      ])("should return NotEnoughBalance from %s", async (_, spendable) => {
+        const result = await statusOfSendMax(spendable);
+
+        expect(result.amount).toEqual(new BigNumber(0));
+        expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+      });
+    });
+  });
+
   describe("return values", () => {
     it("should return correct estimatedFees, amount, and totalSpent", async () => {
       const transaction: Transaction = {
@@ -448,6 +539,40 @@ describe("getTransactionStatus", () => {
         const result = await getTransactionStatus(account, tokenTransaction);
 
         expect(result.warnings.tooManyUtxos).toBeUndefined();
+      });
+
+      it.each([
+        ["without token accounts", { ...mockAccount, subAccounts: undefined }],
+        ["with no token account", { ...mockAccount, subAccounts: [] }],
+        [
+          "holding another token account",
+          {
+            ...mockAccount,
+            subAccounts: [{ ...withTokenAccount(1_000).subAccounts?.[0], id: "other-token" }],
+          },
+        ],
+      ])("blocks the send when its token account is gone, the account %s", async (_, account) => {
+        const result = await getTransactionStatus(account as CantonAccount, tokenTransaction);
+
+        expect(result.errors.amount).toBeInstanceOf(InvalidTransactionError);
+      });
+
+      it("blocks a Send max whose token account is gone as an invalid send", async () => {
+        const result = await getTransactionStatus(
+          { ...mockAccount, subAccounts: [] },
+          { ...tokenTransaction, amount: new BigNumber(0), useAllAmount: true },
+        );
+
+        expect(result.errors.amount).toBeInstanceOf(InvalidTransactionError);
+      });
+
+      it("checks the amount against its token account", async () => {
+        expect((await getTransactionStatus(withTokenAccount(50), tokenTransaction)).errors).toEqual(
+          {},
+        );
+        expect(
+          (await getTransactionStatus(withTokenAccount(49), tokenTransaction)).errors.amount,
+        ).toBeInstanceOf(NotEnoughBalance);
       });
     });
   });

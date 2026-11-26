@@ -9,7 +9,10 @@ export function SettingsRowDescription({
 }: SettingsRowDescriptionProps) {
   return (
     <>
-      {description ? <ListItemDescription>{description}</ListItemDescription> : null}
+      {description ? (
+        // The Lumen list item has a fixed height: past two lines the description is clipped.
+        <ListItemDescription numberOfLines={2}>{description}</ListItemDescription>
+      ) : null}
       {link ? (
         <Link
           size="sm"

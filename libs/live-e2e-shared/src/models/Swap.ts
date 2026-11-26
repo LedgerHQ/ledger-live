@@ -5,17 +5,31 @@ import { SwapProvider } from "../enum/Provider";
 
 export type SwapType = Swap;
 
+type SwapOptions = {
+  accountToDebit: Account;
+  accountToCredit: Account;
+  amount: string;
+  provider?: SwapProvider;
+  speed?: Fee;
+  amountToReceive?: string;
+  feesAmount?: string;
+};
+
 export class Swap extends Transaction {
-  constructor(
-    accountToDebit: Account,
-    accountToCredit: Account,
-    amount: string,
-    public provider?: SwapProvider,
-    public speed?: Fee,
-    public amountToReceive?: string,
-    public feesAmount?: string,
-  ) {
-    super(accountToDebit, accountToCredit, amount);
+  public provider?: SwapProvider;
+  public amountToReceive?: string;
+  public feesAmount?: string;
+
+  constructor(options: SwapOptions) {
+    super({
+      accountToDebit: options.accountToDebit,
+      accountToCredit: options.accountToCredit,
+      amount: options.amount,
+      speed: options.speed,
+    });
+    this.provider = options.provider;
+    this.amountToReceive = options.amountToReceive;
+    this.feesAmount = options.feesAmount;
   }
 
   public setAmountToReceive(value: string) {

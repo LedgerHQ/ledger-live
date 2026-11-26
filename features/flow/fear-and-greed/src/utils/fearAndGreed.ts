@@ -6,17 +6,6 @@ export function isMoodIndexAvailable(region: string | null | undefined): boolean
   return !region || !MOOD_INDEX_RESTRICTED_REGIONS.has(region);
 }
 
-export const FEAR_AND_GREED_TRANSLATION_KEYS = {
-  fearPlus: "fearAndGreed.levels.fearPlus",
-  fear: "fearAndGreed.levels.fear",
-  neutral: "fearAndGreed.levels.neutral",
-  greed: "fearAndGreed.levels.greed",
-  greedPlus: "fearAndGreed.levels.greedPlus",
-} as const satisfies Record<FearAndGreedLevel, string>;
-
-export type FearAndGreedTranslationKey =
-  (typeof FEAR_AND_GREED_TRANSLATION_KEYS)[FearAndGreedLevel];
-
 export const FEAR_AND_GREED_COLORS = {
   fearPlus: "error",
   fear: "warning",
@@ -35,9 +24,8 @@ export function getFearAndGreedLevel(value: number): FearAndGreedLevel {
   return "greedPlus";
 }
 
-export function getFearAndGreedTranslationKey(value: number): FearAndGreedTranslationKey {
-  const level = getFearAndGreedLevel(value);
-  return FEAR_AND_GREED_TRANSLATION_KEYS[level];
+export function getFearAndGreedTranslationKey(value: number) {
+  return `fearAndGreed.levels.${getFearAndGreedLevel(value)}` as const;
 }
 
 export function getFearAndGreedColorKey(value: number): FearAndGreedColorKey {

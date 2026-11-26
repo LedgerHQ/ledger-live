@@ -331,6 +331,13 @@ export class PortfolioPage extends AppPage {
     await expect(this.borrowEntryPoint).toBeVisible();
   }
 
+  @step("Expect the $0 services entry point to be visible")
+  async expectServicesEntryPointVisible(service: ServiceEntryPoint) {
+    const entryPoint = this.servicesEntryPoint(service);
+    await entryPoint.scrollIntoViewIfNeeded();
+    await expect(entryPoint).toBeVisible();
+  }
+
   @step("Click the $0 services entry point")
   async clickServicesEntryPoint(service: ServiceEntryPoint) {
     await this.servicesEntryPoint(service).click();

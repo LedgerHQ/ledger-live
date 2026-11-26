@@ -3,11 +3,10 @@ import {
   abandonPendingDappTxLifecycle,
   clearPendingDappTxLifecycle,
   clearPendingTxLifecycle,
+  isTeardownAbandon,
   normalizeTxLifecycleBaseUrl,
-  type TxLifecyclePayload,
   type TxLifecyclePlatform,
   type TxLifecycleProduct,
-  type TxLifecycleSource,
 } from "./txLifecycle";
 
 /**
@@ -47,15 +46,6 @@ export function setBorrowTxLifecycleBaseUrl(baseUrl: string | undefined): void {
  * app cannot see: an attempt still pending when the Borrow screen went away (teardown).
  * Everything else, including modal-close and superseded abandons, would double count.
  */
-function isTeardownAbandon(payload: TxLifecyclePayload, source: TxLifecycleSource): boolean {
-  return (
-    source === "teardown" &&
-    payload.event === "tx_terminal" &&
-    payload.outcome === "failure" &&
-    payload.failure_class === "abandoned"
-  );
-}
-
 export const borrowLifecycleProduct: TxLifecycleProduct = {
   id: "borrow",
   pathOf: event => (isBorrowApp(event.manifestId) ? "borrow" : undefined),

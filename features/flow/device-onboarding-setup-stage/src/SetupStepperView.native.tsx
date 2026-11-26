@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Card,
+  Box,
   CardContent,
   CardContentDescription,
   CardContentTitle,
@@ -34,7 +34,15 @@ export function SetupStepperView({
   status,
 }: SetupStepperViewProps) {
   return (
-    <Card type="info" testID={setupStepperTestIds.stepper}>
+    <Box
+      testID={setupStepperTestIds.stepper}
+      lx={{
+        width: "full",
+        overflow: "hidden",
+        borderRadius: "lg",
+        backgroundColor: "surfaceTransparent",
+      }}
+    >
       <CardHeader>
         <CardLeading>
           <Stepper currentStep={completedSteps} totalSteps={totalSteps} label={label} />
@@ -47,6 +55,6 @@ export function SetupStepperView({
           <StageStatus status={status} />
         </CardTrailing>
       </CardHeader>
-    </Card>
+    </Box>
   );
 }

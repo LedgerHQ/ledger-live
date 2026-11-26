@@ -16,16 +16,39 @@ const cantonCoinTiers: FeeTier[] = [
   { limit: null, rateNumerator: 1n, rateDenominator: 100_000n }, // 0.001%
 ];
 
+// Add 1 CC as base fee
+const tieredFee = (amount: bigint): bigint =>
+  magnitude + calculateFeeWithTiers(amount, cantonCoinTiers);
+
 export async function estimateFees(context: CantonContext, amount: bigint): Promise<bigint> {
   const { fee: forcedValue } = await context.config();
+  return forcedValue === undefined ? tieredFee(amount) : BigInt(forcedValue) * magnitude;
+}
+
+/**
+ * The largest amount that fits in the balance with its fee, and that fee.
+ * When nothing fits: 0, with a fee above the balance.
+ */
+export async function estimateSendMax(
+  context: CantonContext,
+  balance: bigint,
+): Promise<{ amount: bigint; fee: bigint }> {
+  const { fee: forcedValue } = await context.config();
   if (forcedValue !== undefined) {
-    return Promise.resolve(BigInt(forcedValue) * magnitude);
-  } else {
-    return Promise.resolve(
-      // Add 1 CC as base fee
-      1n * magnitude + BigInt(calculateFeeWithTiers(amount, cantonCoinTiers)),
-    );
+    const fee = BigInt(forcedValue) * magnitude;
+    return { amount: balance > fee ? balance - fee : 0n, fee };
   }
+
+  // The cost only grows with the amount, so a binary search finds the largest amount that fits.
+  const fits = (amount: bigint) => amount + tieredFee(amount) <= balance;
+  let amount = 0n;
+  let tooMuch = balance + 1n;
+  while (tooMuch - amount > 1n) {
+    const middle = (amount + tooMuch) / 2n;
+    if (fits(middle)) amount = middle;
+    else tooMuch = middle;
+  }
+  return { amount, fee: tieredFee(amount) };
 }
 
 function calculateFeeWithTiers(value: bigint, tiers: FeeTier[]): bigint {
@@ -36,14 +59,13 @@ function calculateFeeWithTiers(value: bigint, tiers: FeeTier[]): bigint {
   for (const tier of tiers) {
     if (remaining <= 0n) break;
 
-    const currentLimit = tier.limit ?? BigInt(2 ** 62); // highest bigint value
-    const tierCap = currentLimit - lastLimit;
+    const tierCap = tier.limit === null ? remaining : tier.limit - lastLimit;
     const applicable = remaining < tierCap ? remaining : tierCap;
 
     fee += (applicable * tier.rateNumerator) / tier.rateDenominator;
 
     remaining -= applicable;
-    lastLimit = currentLimit;
+    lastLimit = tier.limit ?? lastLimit;
   }
 
   return fee;

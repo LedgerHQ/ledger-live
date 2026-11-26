@@ -11,7 +11,7 @@ export type SecurityLabels = Readonly<{
   changePassword: RowLabels & Readonly<{ action: string }>;
   autoLock: RowLabels &
     Readonly<{ options: readonly Readonly<{ value: string; label: string }>[] }>;
-  biometrics: RowLabels;
+  biometrics: RowLabels & Readonly<{ disabledDescription: string }>;
   mevProtection: RowLabels & Readonly<{ learnMore: string }>;
 }>;
 
@@ -46,6 +46,7 @@ export function useSecuritySettingsLabels(biometricKind: BiometricKind | null): 
       biometrics: {
         title: biometric,
         description: t("settings.security.biometrics.description", { biometric }),
+        disabledDescription: t("settings.security.biometrics.disabledDescription", { biometric }),
       },
       mevProtection: {
         title: t("settings.security.mevProtection.title"),

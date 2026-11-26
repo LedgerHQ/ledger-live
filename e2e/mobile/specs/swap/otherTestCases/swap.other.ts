@@ -176,7 +176,11 @@ export function runSwapLandingPageTest(options: RunSwapLandingPageTestOptions) {
     tags.forEach(tag => $Tag(tag));
     it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount({ fromAccount, toAccount });
-      const swap = new Swap(fromAccount, toAccount, minAmount);
+      const swap = new Swap({
+        accountToDebit: fromAccount,
+        accountToCredit: toAccount,
+        amount: minAmount,
+      });
 
       await performSwapUntilQuoteSelectionStep({
         accountToDebit: swap.accountToDebit,
@@ -370,7 +374,11 @@ export function runUserRefusesTransactionTest(options: SwapAccountsTestOptions) 
     it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap refused on device`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount({ fromAccount, toAccount });
       const rejectAmount = minAmount ? truncateSwapAmount(minAmount) : minAmount;
-      const rejectedSwap = new Swap(fromAccount, toAccount, rejectAmount);
+      const rejectedSwap = new Swap({
+        accountToDebit: fromAccount,
+        accountToCredit: toAccount,
+        amount: rejectAmount,
+      });
 
       await performSwapUntilQuoteSelectionStep({
         accountToDebit: rejectedSwap.accountToDebit,
@@ -527,7 +535,11 @@ export function runSwapWithSendMaxTest(options: SwapAccountsTestOptions) {
 
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
 
-      const swap = new Swap(fromAccount, toAccount, amountToSend);
+      const swap = new Swap({
+        accountToDebit: fromAccount,
+        accountToCredit: toAccount,
+        amount: amountToSend,
+      });
       await app.swap.verifyAmountsAndAcceptSwap(swap, amountToSend);
       await app.swap.waitForSuccessAndContinue();
     });

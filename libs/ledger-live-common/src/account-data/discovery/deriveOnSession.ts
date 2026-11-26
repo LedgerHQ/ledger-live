@@ -3,7 +3,10 @@ import { abortReason } from "@domain/api-account-data";
 import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
-import type { DeriveAccount, LookedUpAccount } from "@features/platform-account-discovery";
+import type {
+  DeriveAccount,
+  LookedUpAccount,
+} from "@features/platform-account-discovery/descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { currencyIdFromNetwork } from "@domain/entity-network";
 import { getAccountDescriptorType, loadSetupForFamily } from "../../coin-modules/registry";

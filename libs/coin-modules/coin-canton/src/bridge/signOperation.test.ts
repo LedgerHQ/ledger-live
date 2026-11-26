@@ -1,7 +1,10 @@
+import { addPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/pending";
+import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import type { Account, SignedOperation } from "@ledgerhq/types-live";
+import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import type { CantonCoinConfig, CantonContext } from "../config";
-import { prepareTransferRequest, submit } from "../network/gateway";
+import { getCalTokensCached, prepareTransferRequest, submit } from "../network/gateway";
 import {
   createMockCantonAccount,
   createMockCantonSigner,
@@ -9,14 +12,17 @@ import {
   createMockContext,
   createMockPrepareTransferResponse,
   createMockSignerContext,
+  createMockTokenAccount,
   createMockTransaction,
 } from "../test/fixtures";
 import type { CantonSigner, Transaction } from "../types";
 import { broadcast } from "./broadcast";
+import { prepareTransaction } from "./prepareTransaction";
 import { buildSignOperation } from "./signOperation";
 
 jest.mock("../network/gateway", () => ({
   ...jest.requireActual("../network/gateway"),
+  getCalTokensCached: jest.fn(),
   prepareTransferRequest: jest.fn(),
   submit: jest.fn(),
 }));
@@ -94,6 +100,30 @@ describe("buildSignOperation", () => {
     });
   });
 
+  it("should sign a token Send max for the whole token balance with its instrument", async () => {
+    jest.mocked(getCalTokensCached).mockResolvedValue(new Map([["canton_network/usdcx", "USDCx"]]));
+    const tenthOfAToken = new BigNumber(10).pow(37);
+    const tokenAccount = createMockTokenAccount({ spendableBalance: tenthOfAToken });
+    const parent = { ...account, subAccounts: [tokenAccount] };
+    const prepared = await prepareTransaction(
+      createMockContext({ ...config, fee: 0 }),
+      parent,
+      createMockTransaction({
+        amount: new BigNumber(0),
+        useAllAmount: true,
+        subAccountId: tokenAccount.id,
+      }),
+    );
+
+    await sign(prepared, { signedAccount: parent });
+
+    expect(preparedRequest()).toMatchObject({
+      amount: tenthOfAToken.toFixed(),
+      instrument_id: "USDCx",
+      instrument_admin: "issuer::1220",
+    });
+  });
+
   it("should send the memo as the transfer reason", async () => {
     await sign({ ...nativeTransaction, memo: "invoice 42" });
 
@@ -159,6 +189,7 @@ describe("buildSignOperation", () => {
     expect(broadcasted).toMatchObject({
       hash: "update-id",
       id: encodeOperationId(account.id, "update-id", "OUT"),
+      transactionSequenceNumber: signedOperation.operation.transactionSequenceNumber,
     });
     const { signature } = JSON.parse(signedOperation.signature);
     expect(mockedSubmit).toHaveBeenCalledWith(
@@ -167,6 +198,112 @@ describe("buildSignOperation", () => {
       createMockPrepareTransferResponse().serialized,
       signature,
     );
+  });
+
+  it("should give the optimistic operation a sequence number above the account's pending ones", async () => {
+    const pending = { transactionSequenceNumber: BigNumber(Date.now() + 60_000) } as Operation;
+
+    const { operation } = await sign(nativeTransaction, {
+      signedAccount: { ...account, pendingOperations: [pending] },
+    });
+
+    expect(operation.transactionSequenceNumber).toEqual(pending.transactionSequenceNumber?.plus(1));
+  });
+
+  it("should charge a native send's fee in its value, sent by the party", async () => {
+    const { operation } = await sign(nativeTransaction);
+
+    expect(operation).toMatchObject({
+      accountId: account.id,
+      type: "OUT",
+      value: BigNumber(110),
+      fee: BigNumber(10),
+      senders: [XPUB_PARTY],
+    });
+  });
+
+  describe("of a token send", () => {
+    const subAccountId = `${account.id}+token`;
+    const tokenAccount = {
+      ...account,
+      subAccounts: [{ type: "TokenAccount", id: subAccountId, pendingOperations: [] }],
+    } as unknown as Account;
+    const tokenTransaction = createMockTransaction({
+      tokenId: "USDCx",
+      instrumentAdmin: "issuer",
+      subAccountId,
+    });
+
+    it("should be a CC FEES operation on the parent, with the token's OUT as a sub-operation", async () => {
+      mockedSubmit.mockResolvedValue({ submission_id: "submission", update_id: "update-id" });
+      const signedOperation = await sign(tokenTransaction, { signedAccount: tokenAccount });
+      const operation = await broadcast(createMockContext(config), {
+        account: tokenAccount,
+        signedOperation,
+      });
+
+      expect(operation).toMatchObject({
+        id: encodeOperationId(account.id, "update-id", "FEES"),
+        accountId: account.id,
+        type: "FEES",
+        value: BigNumber(10),
+        fee: BigNumber(10),
+        subOperations: [
+          {
+            id: encodeOperationId(subAccountId, "update-id", "OUT"),
+            hash: "update-id",
+            accountId: subAccountId,
+            type: "OUT",
+            value: BigNumber(100),
+            fee: BigNumber(0),
+            transactionSequenceNumber: operation.transactionSequenceNumber,
+          },
+        ],
+      });
+    });
+
+    const send = async (sender: Account) =>
+      addPendingOperation(
+        sender,
+        (await sign(tokenTransaction, { signedAccount: sender })).operation,
+      );
+
+    it.each([
+      ["the token", tokenTransaction],
+      ["CC", createMockTransaction({ tokenId: config.nativeInstrumentId, subAccountId })],
+    ])("should refuse to sign %s for a token account that is gone", async (_, transaction) => {
+      await expect(sign(transaction)).rejects.toThrow(InvalidTransactionError);
+      expect(mockedPrepare).not.toHaveBeenCalled();
+    });
+
+    it("should charge the CC fee alone for a token sent without a token account", async () => {
+      const { subAccountId: _, ...withoutTokenAccount } = tokenTransaction;
+
+      const { operation } = await sign(withoutTokenAccount as Transaction);
+
+      expect(operation).toMatchObject({ type: "FEES", value: BigNumber(10), subOperations: [] });
+    });
+
+    it("should number the operation above a pending token operation", async () => {
+      const subPending = { transactionSequenceNumber: BigNumber(Date.now() + 60_000) };
+      const sender = {
+        ...tokenAccount,
+        subAccounts: [{ ...tokenAccount.subAccounts?.[0], pendingOperations: [subPending] }],
+      } as unknown as Account;
+
+      const { operation } = await sign(tokenTransaction, { signedAccount: sender });
+
+      expect(operation.transactionSequenceNumber).toEqual(
+        subPending.transactionSequenceNumber.plus(1),
+      );
+    });
+
+    it("should be pending on the token account, keeping an earlier token send", async () => {
+      const afterSecond = await send(await send(tokenAccount));
+
+      expect(afterSecond.pendingOperations).toHaveLength(2);
+      expect(afterSecond.subAccounts?.[0].pendingOperations).toHaveLength(2);
+    });
   });
 
   it("should fail the broadcast when the gateway returns no update id", async () => {

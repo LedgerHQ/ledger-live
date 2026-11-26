@@ -2,7 +2,7 @@
   "name": "@features/platform-device-onboarding-analytics",
   "version": "0.1.0",
   "private": true,
-  "description": "Tracking plan of the seeded device onboarding funnel",
+  "description": "Tracking plan of the device onboarding funnels",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {

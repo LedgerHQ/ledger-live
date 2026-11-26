@@ -50,6 +50,7 @@ export default function useSelectDeviceViewModel(
         ...meta,
         context,
         sourceScreenName: ScreenName.SelectDevice,
+        openedFromRouteKey: route.key,
       };
 
       const customFlow = currency ? getCustomAddAccountFlow(currency) : null;

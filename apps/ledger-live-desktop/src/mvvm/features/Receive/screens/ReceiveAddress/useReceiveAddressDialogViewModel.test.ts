@@ -58,12 +58,12 @@ describe("useReceiveAddressDialogViewModel", () => {
     const receiveAddressConfig = jest.fn(() => ({ notices: ["utxo" as const] }));
     jest.mocked(useLLDCoinFamily).mockReturnValue({ receiveAddressConfig });
     const { result } = renderViewModel();
-    const { descriptor, asset } = mockReceiveFamilyConfigInput();
+    const { asset } = mockReceiveFamilyConfigInput();
 
-    expect(result.current.getFamilyConfig?.({ descriptor, asset })).toEqual({ notices: ["utxo"] });
+    expect(result.current.getFamilyConfig?.({ asset })).toEqual({ notices: ["utxo"] });
     expect(useLLDCoinFamily).toHaveBeenCalledWith("evm");
     expect(receiveAddressConfig).toHaveBeenCalledWith(
-      expect.objectContaining({ descriptor, asset, legacyAccount: ethAccount }),
+      expect.objectContaining({ asset, legacyAccount: ethAccount }),
     );
   });
 

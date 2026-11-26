@@ -8,6 +8,9 @@ import { SettingsHomeGate } from "./SettingsHomeGate";
 
 jest.mock("@features/platform-feature-flags", () => ({ useFeature: jest.fn() }));
 jest.mock("@shared/analytics-react", () => ({ TrackScreen: jest.fn(() => null) }));
+jest.mock("react-native-safe-area-context", () => ({
+  useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+}));
 
 const mockUseFeature = jest.mocked(useFeature);
 

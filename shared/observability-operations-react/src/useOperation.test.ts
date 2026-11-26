@@ -33,6 +33,7 @@ describe("useOperation", () => {
 
     expect(result.current).toBe(first);
     expect(result.current.start).toBe(first.start);
+    expect(result.current.annotate).toBe(first.annotate);
     expect(result.current.succeed).toBe(first.succeed);
     expect(result.current.fail).toBe(first.fail);
     expect(result.current.isActive).toBe(first.isActive);
@@ -51,6 +52,35 @@ describe("useOperation", () => {
       trigger: "unmount",
     });
     expect(tracker.isActive("checkout")).toBe(false);
+  });
+
+  it("should send its annotations with the abandon on unmount", () => {
+    const { result, unmount } = renderHook(() => useOperation("checkout"));
+    act(() => {
+      result.current.start({ attempt: 1 });
+      result.current.annotate({ step: "selecting" });
+    });
+
+    unmount();
+
+    expect(sink.fail).toHaveBeenCalledWith("checkout", undefined, "ABANDONED", {
+      attempt: 1,
+      step: "selecting",
+      trigger: "unmount",
+    });
+  });
+
+  it("should annotate nothing once its operation ended", () => {
+    const { result } = renderHook(() => useOperation("checkout"));
+    act(() => {
+      result.current.start();
+      result.current.succeed();
+    });
+    tracker.start("checkout");
+
+    expect(result.current.annotate({ step: "late" })).toBe(false);
+    tracker.succeed("checkout");
+    expect(sink.succeed).toHaveBeenLastCalledWith("checkout", undefined, {});
   });
 
   it("should not abandon the operation when unmounted after a success", () => {

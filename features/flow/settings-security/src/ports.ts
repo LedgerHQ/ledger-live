@@ -6,14 +6,14 @@ export type SecuritySideEffects = Readonly<{
   setHideBalance(value: boolean): void;
   setMevProtection(value: boolean): void;
   setAutoLockTimeout(timeout: number): void;
+  setBiometricsEnabled(value: boolean): void;
 }>;
 
 /**
- * The port the app provides to the Security section: its values, its changes, and the two things
- * only the app can start, a password flow and the MEV protection page.
+ * The port the app provides to the Security section: its values, its changes, and the one thing
+ * only the app can start, a password flow.
  */
 export type SecuritySettingsPort = SettingsPort<SecuritySettingsValues, SecurityUpdate> &
   Readonly<{
     requestAppLock(action: AppLockAction): void;
-    openMevProtectionInfo(): void;
   }>;

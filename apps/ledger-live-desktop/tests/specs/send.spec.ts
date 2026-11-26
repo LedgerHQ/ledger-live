@@ -11,12 +11,12 @@ test.use({
 
 test("Blacklisted addresses", async ({ app }) => {
   await test.step("[Blacklist] Blocking transactions to sanctioned recipient addresses in send flow", async () => {
-    const transaction = new Transaction(
-      Account.ETH_1,
-      Account.SANCTIONED_ETH,
-      "0.00001",
-      Fee.MEDIUM,
-    );
+    const transaction = new Transaction({
+      accountToDebit: Account.ETH_1,
+      accountToCredit: Account.SANCTIONED_ETH,
+      amount: "0.00001",
+      speed: Fee.MEDIUM,
+    });
 
     await app.layout.goToAccounts();
     await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
@@ -32,12 +32,12 @@ test("Blacklisted addresses", async ({ app }) => {
   });
 
   await test.step("[Blacklist] Blocking transactions from sanctioned user addresses in send flow", async () => {
-    const transaction = new Transaction(
-      Account.SANCTIONED_ETH,
-      Account.ETH_1,
-      "0.00001",
-      Fee.MEDIUM,
-    );
+    const transaction = new Transaction({
+      accountToDebit: Account.SANCTIONED_ETH,
+      accountToCredit: Account.ETH_1,
+      amount: "0.00001",
+      speed: Fee.MEDIUM,
+    });
 
     await app.layout.goToAccounts();
     await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
@@ -57,12 +57,12 @@ test("Blacklisted addresses", async ({ app }) => {
   });
 
   await test.step("[Blacklist] Blocking transactions to and from sanctioned user addresses in send flow", async () => {
-    const transaction = new Transaction(
-      Account.SANCTIONED_ETH,
-      Account.SANCTIONED_ETH,
-      "0.00001",
-      Fee.MEDIUM,
-    );
+    const transaction = new Transaction({
+      accountToDebit: Account.SANCTIONED_ETH,
+      accountToCredit: Account.SANCTIONED_ETH,
+      amount: "0.00001",
+      speed: Fee.MEDIUM,
+    });
 
     await app.layout.goToAccounts();
     await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);

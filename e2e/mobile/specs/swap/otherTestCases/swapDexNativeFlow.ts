@@ -45,7 +45,12 @@ export function runSwapDexNativeFlow(options: RunSwapDexNativeFlowOptions) {
       if (amountToSwap === null) {
         throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
       }
-      const swap = new Swap(fromAccount, toAccount, amountToSwap.toString(), provider);
+      const swap = new Swap({
+        accountToDebit: fromAccount,
+        accountToCredit: toAccount,
+        amount: amountToSwap.toString(),
+        provider,
+      });
       await app.speculos.enableBlindSigningOnNanoS();
       await ensureTokenApproval({ fromAccount, provider, minAmount: amountToSwap.toString() });
 

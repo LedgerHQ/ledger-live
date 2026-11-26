@@ -8,6 +8,13 @@ type RetryUntilTimeoutOptions<T> = {
   messageOnError?: string;
 };
 
+type CancellableAttemptOptions<T> = {
+  fn: (signal: AbortSignal) => Promise<T>;
+  controller: AbortController;
+  deadline: number;
+  timeout: number;
+};
+
 export async function retryUntilTimeout<T>(options: RetryUntilTimeoutOptions<T>): Promise<T> {
   const {
     fn,
@@ -25,7 +32,7 @@ export async function retryUntilTimeout<T>(options: RetryUntilTimeoutOptions<T>)
 
     try {
       return cancellable
-        ? await runCancellableAttempt(fn, controller, deadline, timeout)
+        ? await runCancellableAttempt({ fn, controller, deadline, timeout })
         : await fn(controller.signal);
     } catch (err) {
       lastError = err;
@@ -54,12 +61,8 @@ export async function retryUntilTimeout<T>(options: RetryUntilTimeoutOptions<T>)
  * is left with a no-op catch so its eventual settlement can't surface as an unhandled
  * rejection later, during teardown or the next attempt.
  */
-async function runCancellableAttempt<T>(
-  fn: (signal: AbortSignal) => Promise<T>,
-  controller: AbortController,
-  deadline: number,
-  timeout: number,
-): Promise<T> {
+async function runCancellableAttempt<T>(options: CancellableAttemptOptions<T>): Promise<T> {
+  const { fn, controller, deadline, timeout } = options;
   let timer: ReturnType<typeof setTimeout> | undefined;
   const attempt = Promise.resolve().then(() => fn(controller.signal));
   attempt.catch(() => {});

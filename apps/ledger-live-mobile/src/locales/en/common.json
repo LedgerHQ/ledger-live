@@ -2465,11 +2465,28 @@
     "serviceStatus": {
       "continue": "Continue"
     },
+    "gates": {
+      "onboarding": {
+        "title": "Set up your account first",
+        "description": "Your account must be onboarded on the {{network}} network before it can receive funds.",
+        "action": "Onboard account"
+      },
+      "activation": {
+        "title": "Add {{asset}} to your account first",
+        "description": "Your account must enable {{asset}} on the {{network}} network before it can receive it. This may cost a small network fee.",
+        "action": "Add {{asset}}"
+      }
+    },
     "help": {
       "cardTitle": "Need support? Get help",
       "title": "Get help",
       "receiveFromExchange": "How to receive from exchanges?",
       "receiveSecurely": "How to receive securely?"
+    },
+    "memoTag": {
+      "title": "Need a Tag/Memo?",
+      "description": "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+      "gotIt": "Got it"
     }
   },
   "ratings": {
@@ -4206,6 +4223,7 @@
     "sending": "Sending...",
     "receiving": "Receiving...",
     "tokenOperations": "Token operations",
+    "tokenOperationsInfo": "About token operations",
     "subAccountOperations": "Subaccount operations",
     "internalOperations": "Internal operations",
     "tokenModal": {
@@ -4577,7 +4595,7 @@
     "security": {
       "hideBalance": {
         "title": "Hide balance",
-        "description": "Hide amounts for all balances. You can also access it from your top main navigation."
+        "description": "Hide amounts for all balances. Also accessible via a long press on your home balance amount."
       },
       "appLock": {
         "title": "App lock",
@@ -4601,6 +4619,7 @@
       },
       "biometrics": {
         "description": "Use {{biometric}} to open the app.",
+        "disabledDescription": "To enable {{biometric}}, turn on \"App lock\".",
         "kind": {
           "faceId": "Face ID",
           "touchId": "Touch ID",
@@ -4739,6 +4758,11 @@
         "desc": "{{platform}} is blocking notifications from Ledger Wallet. To get notifications on your phone, visit your device’s settings to turn on Ledger Wallet notifications.",
         "turnOnNotif": "Turn on notifications",
         "goToSettings": "Go to system settings"
+      },
+      "osPermissionBanner": {
+        "title": "Notifications are disabled",
+        "description": "To enable notifications, please go to your phone settings and turn on notifications for Ledger Wallet.",
+        "action": "Turn on notifications"
       },
       "allowed": {
         "title": "Allow notifications",

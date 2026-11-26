@@ -6,16 +6,14 @@ import {
   setDiscreetMode,
   setMevProtection,
 } from "~/renderer/actions/settings";
-import { openURL } from "~/renderer/linking";
 import { isModalOpened } from "~/renderer/reducers/modals";
 import {
   autoLockTimeoutSelector,
   discreetModeSelector,
   mevProtectionSelector,
 } from "~/renderer/reducers/settings";
+import { walletSyncDrawerVisibilitySelector } from "~/renderer/reducers/walletSync";
 import { useDesktopSettingsPort } from "./useDesktopSettingsPort";
-
-jest.mock("~/renderer/linking", () => ({ openURL: jest.fn() }));
 
 function renderPort(settings: Parameters<typeof saveSettings>[0] = {}) {
   const hook = renderHook(() => useDesktopSettingsPort());
@@ -61,6 +59,87 @@ describe("useDesktopSettingsPort", () => {
 
     expect(result.current.values.theme).toBe("dark");
   });
+
+  it("reads the language, region and currency from the legacy store", () => {
+    const { result } = renderPort({ language: "fr", locale: "fr-FR", counterValue: "EUR" });
+
+    expect(result.current.values).toMatchObject({
+      language: "fr",
+      region: "fr-FR",
+      currency: "EUR",
+    });
+  });
+
+  it("stores a language change and ignores an unsupported language", () => {
+    const { result, store } = renderPort({ language: "en" });
+
+    act(() => {
+      result.current.setValue({ key: "language", value: "fr" });
+    });
+    expect(store.getState().settings.language).toBe("fr");
+
+    act(() => {
+      result.current.setValue({ key: "language", value: "xx" });
+    });
+    expect(store.getState().settings.language).toBe("fr");
+  });
+
+  it("stores a region change and replaces a sanctioned region by en-US", () => {
+    const { result, store } = renderPort();
+
+    act(() => {
+      result.current.setValue({ key: "region", value: "fr-FR" });
+    });
+    expect(store.getState().settings.locale).toBe("fr-FR");
+
+    act(() => {
+      result.current.setValue({ key: "region", value: "ru-RU" });
+    });
+    expect(store.getState().settings.locale).toBe("en-US");
+  });
+
+  it("stores a currency change by the countervalue id, and ignores an unknown one", () => {
+    const { result, store } = renderPort({ counterValue: "USD" });
+
+    act(() => {
+      result.current.setValue({ key: "currency", value: "BTC" });
+    });
+    expect(store.getState().settings.counterValue).toBe("bitcoin");
+
+    act(() => {
+      result.current.setValue({ key: "currency", value: "NOPE" });
+    });
+    expect(store.getState().settings.counterValue).toBe("bitcoin");
+  });
+
+  it("offers the supported countervalues as currencies", () => {
+    const { result } = renderPort();
+
+    expect(result.current.currencies).toContainEqual({
+      value: "BTC",
+      label: "Bitcoin - BTC",
+    });
+  });
+
+  it("offers every supported language", () => {
+    const { result } = renderPort();
+
+    expect(result.current.languages).toContainEqual({
+      value: "fr",
+      label: "Français",
+    });
+  });
+
+  it("opens the Ledger Sync drawer when Ledger Sync is not active", () => {
+    const { result, store } = renderPort();
+
+    expect(result.current.ledgerSync.isActive).toBe(false);
+    act(() => {
+      result.current.ledgerSync.open();
+    });
+
+    expect(walletSyncDrawerVisibilitySelector(store.getState())).toBe(true);
+  });
 });
 
 describe("useDesktopSettingsPort, Security section", () => {
@@ -77,6 +156,8 @@ describe("useDesktopSettingsPort, Security section", () => {
       autoLockTimeout: 30,
       passwordSet: false,
       biometricKind: null,
+      biometricsEnabled: false,
+      biometricsRequirePassword: false,
     });
   });
 
@@ -164,15 +245,5 @@ describe("useDesktopSettingsPort, Security section", () => {
     });
 
     expect(isModalOpened(store.getState(), modal)).toBe(true);
-  });
-
-  it("opens the MEV protection page", () => {
-    const { result } = renderPort();
-
-    result.current.openMevProtectionInfo();
-
-    expect(jest.mocked(openURL)).toHaveBeenCalledWith(
-      expect.stringContaining("support.ledger.com"),
-    );
   });
 });

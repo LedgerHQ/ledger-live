@@ -2821,11 +2821,28 @@
     "serviceStatus": {
       "continue": "Continue"
     },
+    "gates": {
+      "onboarding": {
+        "title": "Set up your account first",
+        "description": "Your account must be onboarded on the {{network}} network before it can receive funds.",
+        "action": "Onboard account"
+      },
+      "activation": {
+        "title": "Add {{asset}} to your account first",
+        "description": "Your account must enable {{asset}} on the {{network}} network before it can receive it. This may cost a small network fee.",
+        "action": "Add {{asset}}"
+      }
+    },
     "help": {
       "cardTitle": "Need support? Get help",
       "title": "Get help",
       "receiveFromExchange": "How to receive from exchanges?",
       "receiveSecurely": "How to receive securely?"
+    },
+    "memoTag": {
+      "title": "Need a Tag/Memo?",
+      "description": "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+      "gotIt": "Got it"
     }
   },
   "send": {
@@ -5752,6 +5769,7 @@
       },
       "biometrics": {
         "description": "Use {{biometric}} to open the app.",
+        "disabledDescription": "To enable {{biometric}}, turn on \"App lock\".",
         "kind": {
           "faceId": "Face ID",
           "touchId": "Touch ID",
@@ -6232,6 +6250,32 @@
       "reportErrorsDesc": "Automatically send reports to help Ledger improve its products.",
       "launchOnboarding": "Device setup",
       "launchOnboardingDesc": "Set up a new device or restore an existing device. Accounts and settings are kept."
+    },
+    "helpPage": {
+      "title": "Help",
+      "groups": {
+        "supportAndLearning": "Support and learning",
+        "more": "More"
+      },
+      "support": {
+        "title": "Ledger support",
+        "description": "Get help with our FAQs or chat"
+      },
+      "saveLogs": {
+        "description": "Saving logs may be needed for troubleshooting purposes."
+      },
+      "status": {
+        "title": "Ledger status"
+      },
+      "clearCache": {
+        "description": "Your network transactions will be scanned and your accounts will be recalculated."
+      },
+      "viewUserData": {
+        "description": "View the local data stored on this computer, including account settings and cached info."
+      },
+      "resetApp": {
+        "description": "Erase all local data from this computer. Your funds remain safe on the blockchain, but you will need to re-import your accounts."
+      }
     },
     "help": {
       "version": "Version",

@@ -8,6 +8,11 @@ import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import type { AssetToPick } from "@e2e/page/drawer/transfer.drawer";
 import AccountDetailPage from "./accountDetail.page";
 
+type TokenAccountNameOptions = {
+  tokenName: string;
+  parentAccountName: string;
+};
+
 const ACCOUNT_GRAPH_PREFIX = "account-graph-";
 const ACCOUNT_NAME_PREFIX = "account-row-name-";
 const OPERATION_ROW_REGEXP = /operation-row-.*/;
@@ -63,8 +68,11 @@ export default class AccountPage {
   }
 
   /** With the flag on a token has no account screen of its own: its holding address opens the one of its parent. */
-  @Step("Wait for the account screen of the token {{{0}}} held by {{{1}}}")
-  async waitAndVerifyTokenAccountName(tokenName: string, parentAccountName: string) {
+  @Step(
+    "Wait for the account screen of the token {{{0.tokenName}}} held by {{{0.parentAccountName}}}",
+  )
+  async waitAndVerifyTokenAccountName(options: TokenAccountNameOptions) {
+    const { tokenName, parentAccountName } = options;
     if (isAccountDetailEnabled()) {
       await this.accountDetail.waitAndVerifyAccountName(parentAccountName);
       return;
@@ -325,7 +333,10 @@ export default class AccountPage {
   @Step("Expect the balance of sub account {{{0.accountName}}} to be visible")
   async expectSubAccountBalanceVisible(account: AccountType, subAccountId: string) {
     if (isAccountDetailEnabled()) {
-      await app.assetDetail.expectHoldingBalanceForTicker(subAccountId, account.currency.ticker);
+      await app.assetDetail.expectHoldingBalanceForTicker({
+        accountId: subAccountId,
+        ticker: account.currency.ticker,
+      });
       return;
     }
     await this.expectAccountBalanceVisible(subAccountId);
@@ -337,7 +348,7 @@ export default class AccountPage {
     received: { amount: string; ticker: string },
   ) {
     if (isAccountDetailEnabled()) {
-      await app.assetDetail.openReceivedTransaction(received.amount, received.ticker);
+      await app.assetDetail.openReceivedTransaction(received);
       return;
     }
     await this.scrollToHistoryAndClickOnLastOperation(operationType);

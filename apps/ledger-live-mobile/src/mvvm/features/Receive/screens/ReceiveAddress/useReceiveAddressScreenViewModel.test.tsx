@@ -91,7 +91,6 @@ describe("useReceiveAddressScreenViewModel", () => {
 
     expect(
       result.current.getFamilyConfig?.({
-        descriptor: tronEntry.descriptor,
         asset: { id: CryptoOrTokenCurrencyIdSchema.parse("tron"), type: "CryptoCurrency" },
         accountStatus: mockAccountStatus({ used: false }),
       }),

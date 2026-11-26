@@ -30,3 +30,15 @@ export const AccountsStateSchema = z.object({
 export type AccountsState = z.infer<typeof AccountsStateSchema>;
 
 export const initialAccountsState: AccountsState = { ids: [], entities: {}, byLegacyId: {} };
+
+/** An account discovery found and the user has not added: its descriptor only, so its data can be read. */
+export type DiscoveredAccountEntry = Pick<AccountEntry, "accountUUID" | "descriptor">;
+
+export const DiscoveredAccountsStateSchema = z.partialRecord(
+  AccountUUIDSchema,
+  AccountDescriptorSchema,
+);
+
+export type DiscoveredAccountsState = z.infer<typeof DiscoveredAccountsStateSchema>;
+
+export const initialDiscoveredAccountsState: DiscoveredAccountsState = {};

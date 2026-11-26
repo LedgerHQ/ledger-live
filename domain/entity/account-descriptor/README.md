@@ -16,7 +16,7 @@ What the rest of the code needs lives elsewhere:
 | Need | Package |
 | --- | --- |
 | `AccountUUID`, `AccountUUIDSchema` | [`@domain/entity-account`](../account); `computeAccountUUID` in `@domain/entity-account/descriptor` |
-| `NetworkId`, `Address`, the network bridges | [`@domain/entity-network`](../network) |
+| `NetworkId`, `Address`, `networkFromCurrencyId` (and deprecated `currencyIdFromNetwork`) | [`@domain/entity-network`](../network) — limit `currencyIdFromNetwork` to legacy reconciliation |
 | `DerivationPath`, the legacy path bridges | [`@domain/entity-derivation`](../derivation) |
 
 ## Format (version 2)

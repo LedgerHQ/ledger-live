@@ -10,10 +10,7 @@ type ThemeSelectOption = {
   value: string | null;
   label: string;
 };
-const themeLabels = {
-  light: "theme.light",
-  dark: "theme.dark",
-};
+const themes = ["light", "dark"] as const;
 const ThemeSelect = () => {
   const dispatch = useDispatch();
   const theme = useSelector(userThemeSelector);
@@ -35,10 +32,9 @@ const ThemeSelect = () => {
       },
     ];
     return xs.concat(
-      Object.keys(themeLabels).map(key => ({
+      themes.map(key => ({
         value: key,
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        label: t(themeLabels[key as keyof typeof themeLabels]),
+        label: t(`theme.${key}`),
       })),
     );
   }, [t]);

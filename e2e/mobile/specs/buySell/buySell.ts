@@ -5,8 +5,17 @@ import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
+
+type BuySellTestOptions = TestMetaOptions & { buySell: BuySell; paymentMethod: string };
+
+type SellFlowTestOptions = TestMetaOptions & {
+  buySell: Omit<BuySell, "amount">;
+  provider: BuySellProvider;
+  paymentMethod: string;
+};
 
 export async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
@@ -19,12 +28,8 @@ export async function beforeAllFunction(options: ApplicationOptions) {
   await app.mainNavigation.waitForWallet40Ready();
 }
 
-export function runNavigateToBuyFromPortfolioPageTest(
-  buySell: BuySell,
-  paymentMethod: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runNavigateToBuyFromPortfolioPageTest(options: BuySellTestOptions) {
+  const { buySell, paymentMethod, tmsLinks, tags } = options;
   describe("Buy and sell", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -44,12 +49,8 @@ export function runNavigateToBuyFromPortfolioPageTest(
   });
 }
 
-export function runNavigateToBuyFromAccountPageTest(
-  buySell: BuySell,
-  paymentMethod: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runNavigateToBuyFromAccountPageTest(options: BuySellTestOptions) {
+  const { buySell, paymentMethod, tmsLinks, tags } = options;
   describe("Buy and sell", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -74,12 +75,8 @@ export function runNavigateToBuyFromAccountPageTest(
   });
 }
 
-export function runNavigateToBuyFromMarketPageTest(
-  buySell: BuySell,
-  paymentMethod: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runNavigateToBuyFromMarketPageTest(options: BuySellTestOptions) {
+  const { buySell, paymentMethod, tmsLinks, tags } = options;
   describe("Buy and sell", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -107,12 +104,8 @@ export function runNavigateToBuyFromMarketPageTest(
   });
 }
 
-export function runNavigateToBuyFromAssetPageTest(
-  buySell: BuySell,
-  paymentMethod: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runNavigateToBuyFromAssetPageTest(options: BuySellTestOptions) {
+  const { buySell, paymentMethod, tmsLinks, tags } = options;
   describe("Buy and sell", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -141,13 +134,8 @@ export function runNavigateToBuyFromAssetPageTest(
   });
 }
 
-export function runSellFlowTest(
-  buySell: Omit<BuySell, "amount">,
-  provider: BuySellProvider,
-  paymentMethod: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runSellFlowTest(options: SellFlowTestOptions) {
+  const { buySell, provider, paymentMethod, tmsLinks, tags } = options;
   describe("Buy and sell", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -167,12 +155,8 @@ export function runSellFlowTest(
   });
 }
 
-export function runQueryParametersTest(
-  buySell: BuySell,
-  paymentMethod: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runQueryParametersTest(options: BuySellTestOptions) {
+  const { buySell, paymentMethod, tmsLinks, tags } = options;
   describe("Buy and sell", () => {
     beforeAll(async () => {
       await beforeAllFunction({

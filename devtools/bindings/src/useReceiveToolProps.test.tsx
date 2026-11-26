@@ -12,6 +12,7 @@ import {
   mockUtxoAccountDescriptor,
 } from "@domain/entity-account-descriptor/schema.mock";
 import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/feature-flags";
+import { receiveVerifyHintSlice } from "@features/flow-receive/state";
 import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { useReceiveToolProps, type ReceiveToolTrigger } from "./useReceiveToolProps";
 
@@ -44,6 +45,7 @@ function buildStore() {
   const store = configureStore({
     reducer: {
       featureFlags: featureFlagsReducer,
+      receiveVerifyHint: receiveVerifyHintSlice.reducer,
       accountEntries: accountsSlice.reducer,
       accountBalances: accountBalancesSlice.reducer,
       wallet: combineReducers({ accountNames: accountNamesSlice.reducer }),
@@ -223,5 +225,17 @@ describe("useReceiveToolProps", () => {
     expect(latest.onReceive).toHaveBeenCalledWith({ legacyAccountId: "eth", assetId: USDT });
     expect(latest.onPickAsset).toHaveBeenCalledTimes(1);
     expect(latest.onOpenDeeplink).toHaveBeenCalledWith("ledgerwallet://receive");
+  });
+
+  it("reads the verify hint as not seen, then marks it as seen and shows it again", () => {
+    const { store, result } = renderTool();
+    expect(result.current.verifyHint.hasSeen).toBe(false);
+
+    act(() => result.current.verifyHint.setHasSeen(true));
+    expect(store.getState().receiveVerifyHint.hasSeenReceiveVerifyHint).toBe(true);
+    expect(result.current.verifyHint.hasSeen).toBe(true);
+
+    act(() => result.current.verifyHint.setHasSeen(false));
+    expect(store.getState().receiveVerifyHint.hasSeenReceiveVerifyHint).toBe(false);
   });
 });

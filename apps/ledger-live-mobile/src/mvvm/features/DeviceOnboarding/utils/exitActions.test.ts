@@ -220,6 +220,11 @@ describe("exitActions", () => {
     ["legacyFallback", { genuine: true }, "done"],
     ["legacyFallback", { genuine: false }, "aborted"],
     ["legacyFallback", { genuine: false, firmwareVersion: null }, "legacy"],
+    [
+      "legacyFallback",
+      { genuine: true, onboardedOnEntry: true, connectSeededDevice: false },
+      "legacy",
+    ],
   ] as const)("should end the funnel on %s %o as %s", (reason, overrides, outcome) => {
     expect(exitOutcome(reason, exitContext(overrides))).toBe(outcome);
   });
@@ -364,10 +369,14 @@ function exitContext({
   genuine = false,
   seeded = true,
   firmwareVersion = "2.4.0",
+  onboardedOnEntry,
+  connectSeededDevice,
 }: {
   genuine?: boolean;
   seeded?: boolean;
   firmwareVersion?: string | null;
+  onboardedOnEntry?: boolean;
+  connectSeededDevice?: boolean;
 }): DeviceOnboardingContext {
   return {
     sessionId: "session-1",
@@ -375,5 +384,7 @@ function exitContext({
     firmwareVersion,
     deviceModelId: DmkDeviceModelId.STAX,
     genuineVerdict: { sessionId: "session-1", isGenuine: genuine },
+    onboardedOnEntry,
+    connectSeededDevice,
   } as DeviceOnboardingContext;
 }

@@ -1,14 +1,16 @@
 import React from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { InfoState } from "@shared/ui-info-state";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
+import { HelpPanel } from "./components/HelpPanel";
+import { MemoPanel } from "./components/MemoPanel";
+import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
 import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
+import { ReceiveAddressUnavailable } from "./components/ReceiveAddressUnavailable";
 import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
-import { ZonePlaceholder } from "./components/ZonePlaceholder";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
 export function ReceiveAddressView({
@@ -16,16 +18,22 @@ export function ReceiveAddressView({
   networkLabel,
   isLoading,
   error,
+  gate,
   addressSelection,
   address,
   actions,
   isVerifying,
   notices,
   serviceStatus,
+  helpCard,
+  helpPanel,
+  memoCard,
+  memoPanel,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
   const isHintOpen = !!actions.verifyHint;
+  const isUnavailable = !!error || !!gate;
   // The close button, Escape and a click outside all leave through here, once the hint is answered.
   const handleOpenChange = (open: boolean) => {
     if (!open && !isHintOpen) onClose();
@@ -39,6 +47,27 @@ export function ReceiveAddressView({
       <DialogHeader density="compact" onClose={closeDialog} />
       <DialogBody>
         <ServiceStatusPanel serviceStatus={serviceStatus} />
+      </DialogBody>
+    </>
+  );
+  const memoContent = memoPanel && (
+    <>
+      <DialogHeader density="compact" onBack={memoPanel.onClose} onClose={closeDialog} />
+      <DialogBody>
+        <MemoPanel memoPanel={memoPanel} />
+      </DialogBody>
+    </>
+  );
+  const helpContent = helpPanel && (
+    <>
+      <DialogHeader
+        density="expanded"
+        title={helpPanel.title}
+        onBack={helpPanel.onClose}
+        onClose={closeDialog}
+      />
+      <DialogBody>
+        <HelpPanel helpPanel={helpPanel} />
       </DialogBody>
     </>
   );
@@ -59,6 +88,8 @@ export function ReceiveAddressView({
         ) : null}
         <DialogBackgroundToneProvider>
           {incidentContent ??
+            memoContent ??
+            helpContent ??
             (addressSelection ? (
               <>
                 <DialogHeader
@@ -85,20 +116,8 @@ export function ReceiveAddressView({
                 <DialogBody
                   className={`flex flex-col gap-24 ${isHintOpen ? "overflow-visible" : "overflow-y-auto"}`}
                 >
-                  {error ? (
-                    <InfoState
-                      preset="error"
-                      size="hug"
-                      title={error.title}
-                      description={error.description}
-                      primaryCta={{
-                        label: error.retryLabel,
-                        onPress: error.onRetry,
-                        testID: "receive-address-retry",
-                      }}
-                      testID="receive-address-error"
-                    />
-                  ) : (
+                  <ReceiveAddressUnavailable error={error} gate={gate} />
+                  {isUnavailable ? null : (
                     <>
                       {isLoading || !address ? (
                         <AddressSummarySkeleton />
@@ -114,7 +133,7 @@ export function ReceiveAddressView({
                       <ReceiveAddressNotices notices={notices} />
                     </>
                   )}
-                  <ZonePlaceholder zone="extras" />
+                  <ReceiveAddressExtras memoCard={memoCard} helpCard={helpCard} />
                 </DialogBody>
               </>
             ))}

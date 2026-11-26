@@ -3,7 +3,7 @@ import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { runSwapWithDifferentSeedTest } from "@e2e/specs/swap/otherTestCases/swap.other";
 
 runSwapWithDifferentSeedTest({
-  swap: new Swap(Account.ETH_1, Account.SOL_1, "0.03"),
+  swap: new Swap({ accountToDebit: Account.ETH_1, accountToCredit: Account.SOL_1, amount: "0.03" }),
   tmsLinks: ["B2CQA-3089"],
   userData: "speculos-x-other-account",
   errorMessage:

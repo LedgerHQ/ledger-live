@@ -1,13 +1,7 @@
 import React, { type ComponentProps } from "react";
-import {
-  fireEvent,
-  render,
-  screen,
-  userEvent,
-  waitFor,
-  within,
-} from "@testing-library/react-native";
+import { render, screen, userEvent, waitFor, within } from "@testing-library/react-native";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
+import { mockAccountStatus } from "@domain/entity-account-status/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
   makeReceiveTestStore,
@@ -40,18 +34,21 @@ jest.mock("@shared/ui-animated-qr-code/native", () => {
       value,
       animation,
       onPress,
+      hapticFeedback,
       triggerKey,
       testID,
     }: {
       value: string;
       animation: string;
       onPress?: () => void;
+      hapticFeedback?: string;
       triggerKey?: number;
       testID?: string;
     }) => (
       <Pressable onPress={onPress} testID={testID ?? `qr-code-${animation}`}>
         <Text>{`qr:${value}`}</Text>
         <Text>{`${animation}:${triggerKey ?? 0}`}</Text>
+        <Text>{`haptic:${hapticFeedback ?? "none"}`}</Text>
       </Pressable>
     ),
   };
@@ -86,11 +83,12 @@ describe("ReceiveAddress (Native)", () => {
     expect(screen.getByText("icon:ethereum")).toBeTruthy();
   });
 
-  it("closes from the top bar", () => {
+  it("closes from the top bar", async () => {
+    const user = userEvent.setup();
     const onClose = jest.fn();
     renderScreen(onClose);
 
-    fireEvent.press(screen.getByTestId("receive-address-close"));
+    await user.press(screen.getByTestId("receive-address-close"));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
@@ -104,13 +102,14 @@ describe("ReceiveAddress (Native)", () => {
   });
 
   it("offers Retry when the address cannot be read, then shows it", async () => {
+    const user = userEvent.setup();
     const receive = jest
       .fn()
       .mockRejectedValueOnce(new Error("sync failed"))
       .mockResolvedValue(testReceive);
     renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
 
-    fireEvent.press(await screen.findByTestId("receive-address-retry"));
+    await user.press(await screen.findByTestId("receive-address-retry"));
 
     expect(await screen.findByTestId("receive-address-summary")).toBeTruthy();
     expect(screen.queryByTestId("receive-address-error")).toBeNull();
@@ -125,26 +124,28 @@ describe("ReceiveAddress (Native)", () => {
   });
 
   it("lets a Zcash account pick its private address, then go back to the choice", async () => {
+    const user = userEvent.setup();
     const shielded = "u1shieldedaddressexample0000000000000000000000000000";
     const receive = jest.fn(async () => mockAccountReceive({ shielded: { address: shielded } }));
     renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
 
-    fireEvent.press(await screen.findByTestId("receive-address-option-shielded"));
+    await user.press(await screen.findByTestId("receive-address-option-shielded"));
 
     expect(screen.getByText("Private address")).toBeTruthy();
     expect(screen.getByText(shielded.slice(0, 8))).toBeTruthy();
-    fireEvent.press(screen.getByTestId("receive-address-close"));
+    await user.press(screen.getByTestId("receive-address-close"));
     expect(screen.getByTestId("receive-address-options")).toBeTruthy();
   });
 
   it("copies the address, and shares it with the image of its card", async () => {
+    const user = userEvent.setup();
     const onCopyAddress = jest.fn(async () => true);
     const onShareAddress = jest.fn();
     renderScreen(jest.fn(), makeReceiveTestStore(), { onCopyAddress, onShareAddress });
 
     await screen.findByTestId("receive-address-summary");
-    fireEvent.press(screen.getByTestId("receive-address-share"));
-    fireEvent.press(screen.getByTestId("receive-address-copy"));
+    await user.press(screen.getByTestId("receive-address-share"));
+    await user.press(screen.getByTestId("receive-address-copy"));
 
     await waitFor(() =>
       expect(onShareAddress).toHaveBeenCalledWith(testReceive.address, "file://card.png"),
@@ -154,28 +155,48 @@ describe("ReceiveAddress (Native)", () => {
   });
 
   it("copies from a press on the QR code, and replays its animation from the Copy button", async () => {
+    const user = userEvent.setup();
     const onCopyAddress = jest.fn(async () => true);
     renderScreen(jest.fn(), makeReceiveTestStore(), { onCopyAddress });
 
-    fireEvent.press(await screen.findByTestId("receive-address-qr-code"));
+    await user.press(await screen.findByTestId("receive-address-qr-code"));
     expect(onCopyAddress).toHaveBeenCalledWith(testReceive.address);
     expect(screen.getByText("ripple:0")).toBeTruthy();
 
-    fireEvent.press(screen.getByTestId("receive-address-copy"));
+    await user.press(screen.getByTestId("receive-address-copy"));
     expect(await screen.findByText("ripple:1")).toBeTruthy();
     expect(onCopyAddress).toHaveBeenCalledTimes(2);
   });
 
+  it("gives a soft haptic when Copy or the QR code is pressed, not on Share or Verify", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      onCopyAddress: jest.fn(async () => true),
+      onShareAddress: jest.fn(),
+      VerifyAddressExecutor,
+    });
+
+    // The verify hint opens first and hides the rest from screen readers.
+    await screen.findByTestId("receive-address-verify-hint");
+    const hapticOf = (testID: string) =>
+      screen.getByTestId(testID, { includeHiddenElements: true }).props.hapticFeedback;
+
+    expect(hapticOf("receive-address-copy")).toBe("soft");
+    expect(hapticOf("receive-address-share")).toBeUndefined();
+    expect(hapticOf("receive-address-verify")).toBeUndefined();
+    expect(screen.getByText("haptic:soft", { includeHiddenElements: true })).toBeTruthy();
+  });
+
   it("points at Verify, hiding the rest from screen readers, until the hint is dismissed, then verifies", async () => {
+    const user = userEvent.setup();
     renderScreen(jest.fn(), makeReceiveTestStore(), { VerifyAddressExecutor });
 
     expect(await screen.findByTestId("receive-address-verify-hint")).toBeTruthy();
     expect(screen.queryByTestId("receive-address-close")).toBeNull();
-    fireEvent.press(screen.getByText("Got it"));
+    await user.press(screen.getByText("Got it"));
     expect(screen.queryByTestId("receive-address-verify-hint")).toBeNull();
     expect(screen.getByTestId("receive-address-close")).toBeTruthy();
 
-    fireEvent.press(screen.getByTestId("receive-address-verify"));
+    await user.press(screen.getByTestId("receive-address-verify"));
     expect(screen.getByTestId("verify-executor")).toBeTruthy();
   });
 
@@ -228,12 +249,56 @@ describe("ReceiveAddress (Native)", () => {
     expect(screen.queryByTestId("receive-address-service-status")).toBeNull();
   });
 
-  it("lays the zones out in screen order", async () => {
+  it("opens the help in a bottom sheet, each question opening its article, until closed", async () => {
     renderScreen();
-    await screen.findByTestId("receive-address-summary");
+    const user = userEvent.setup();
 
-    expect(screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.props.testID)).toEqual([
-      "receive-address-zone-extras",
-    ]);
+    await user.press(await screen.findByText("Need support? Get help"));
+    expect(screen.getByTestId("receive-address-help-panel")).toBeTruthy();
+
+    await user.press(screen.getByText("How to receive from exchanges?"));
+    expect(testOpenExternal).toHaveBeenCalledWith(RECEIVE_URLS.receiveFromExchange);
+
+    await user.press(screen.getByTestId("receive-address-help-sheet-dismiss"));
+    expect(screen.queryByTestId("receive-address-help-panel")).toBeNull();
+  });
+
+  it("shows the help card under an error too", async () => {
+    const receive = jest.fn(async () => {
+      throw new Error("offline");
+    });
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
+
+    expect(await screen.findByTestId("receive-address-error")).toBeTruthy();
+    expect(screen.getByTestId("receive-address-help-card")).toBeTruthy();
+  });
+
+  it("opens the memo bottom sheet from its card", async () => {
+    const user = userEvent.setup();
+    const receive = jest.fn(async () => mockAccountReceive({ memo: { type: "tag" } }));
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
+
+    await user.press(await screen.findByTestId("receive-address-memo-card"));
+    expect(screen.getByTestId("receive-address-memo-panel")).toBeTruthy();
+
+    await user.press(screen.getByText("Got it"));
+    expect(screen.queryByTestId("receive-address-memo-panel")).toBeNull();
+  });
+
+  it("asks to onboard the account in place of the address, then opens the app's flow", async () => {
+    const onResolveGate = jest.fn();
+    renderScreen(
+      jest.fn(),
+      makeReceiveTestStore({
+        accountStatus: async () => mockAccountStatus({ gate: { type: "onboarding" } }),
+      }),
+      { onResolveGate },
+    );
+
+    expect(await screen.findByTestId("receive-address-gate-onboarding")).toBeTruthy();
+    expect(screen.queryByTestId("receive-address-skeleton")).toBeNull();
+
+    await userEvent.setup().press(screen.getByText("Onboard account"));
+    expect(onResolveGate).toHaveBeenCalledTimes(1);
   });
 });

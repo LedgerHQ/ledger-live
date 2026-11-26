@@ -1,4 +1,6 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
+import { mockAccountStatus } from "@domain/entity-account-status/schema.mock";
+import { trackPage } from "@shared/analytics";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
   makeReceiveTestStore,
@@ -8,6 +10,8 @@ import {
 } from "../../__tests__/receiveTestStore";
 import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
 import { useReceiveAddressViewModel } from "./useReceiveAddressViewModel";
+
+jest.mock("@shared/analytics", () => ({ track: jest.fn(), trackPage: jest.fn() }));
 
 jest.mock("./useReceiveAddressHeader", () => {
   const actual = jest.requireActual("./useReceiveAddressHeader");
@@ -21,8 +25,8 @@ describe("useReceiveAddressViewModel", () => {
     const { useReceiveAddressHeader: actualHeader } = jest.requireActual(
       "./useReceiveAddressHeader",
     );
-    jest.mocked(useReceiveAddressHeader).mockImplementation((descriptor, assetId) => ({
-      ...actualHeader(descriptor, assetId),
+    jest.mocked(useReceiveAddressHeader).mockImplementation(assetId => ({
+      ...actualHeader(assetId),
       data: undefined,
     }));
 
@@ -105,5 +109,30 @@ describe("useReceiveAddressViewModel", () => {
     expect(openExternal).toHaveBeenCalledWith(
       "https://support.ledger.com/fr/article/4404389453841-zd",
     );
+  });
+
+  it("should record the gate page only once the help no longer covers it", async () => {
+    const { result } = renderHook(
+      () =>
+        useReceiveAddressViewModel({
+          accountUUID: testAccountUUID,
+          assetId: ETH,
+          onClose: jest.fn(),
+        }),
+      {
+        wrapper: receiveTestWrapper(
+          makeReceiveTestStore({
+            accountStatus: async () => mockAccountStatus({ gate: { type: "onboarding" } }),
+          }),
+        ),
+      },
+    );
+    act(() => result.current.helpCard.onPress());
+    await waitFor(() => expect(result.current.gate?.type).toBe("onboarding"));
+
+    const gatePage = expect.objectContaining({ category: "Receive - Onboarding Required" });
+    expect(trackPage).not.toHaveBeenCalledWith(gatePage);
+    act(() => result.current.helpPanel?.onClose());
+    expect(trackPage).toHaveBeenCalledWith(gatePage);
   });
 });

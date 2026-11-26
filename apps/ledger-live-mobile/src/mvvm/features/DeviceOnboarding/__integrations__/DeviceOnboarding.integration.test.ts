@@ -222,7 +222,7 @@ describe("useDeviceOnboarding", () => {
     await connectStax(result, device);
 
     expect(result.current.machineContext).toEqual(
-      expect.objectContaining({ hostsSeedSetup: true }),
+      expect.objectContaining({ connectUnseededDevice: true }),
     );
   });
 
@@ -235,7 +235,7 @@ describe("useDeviceOnboarding", () => {
     await connectStax(result, device);
 
     expect(result.current.machineContext).toEqual(
-      expect.objectContaining({ hostsSeedSetup: false }),
+      expect.objectContaining({ connectUnseededDevice: false }),
     );
   });
 
@@ -253,7 +253,7 @@ describe("useDeviceOnboarding", () => {
     await connectStax(result, device);
 
     expect(result.current.machineContext).toEqual(
-      expect.objectContaining({ hostsSeedSetup: false }),
+      expect.objectContaining({ connectUnseededDevice: false }),
     );
   });
 

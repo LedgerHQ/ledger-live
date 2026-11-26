@@ -18,7 +18,7 @@ shell package `@features/flow-settings`.
 | App lock         | both     | always                           | Shows whether a password is set, asks the app to start the set or remove flow |
 | Change password  | desktop  | a password is set                | Asks the app to start the change flow                |
 | Auto-lock        | desktop  | a password is set                | `autoLockTimeout`, in minutes, `-1` for never        |
-| Biometrics       | mobile   | the device has biometrics        | Disabled while no password is set; wording follows the device (Face ID, Touch ID, Biometrics). The mobile screen comes with its own task |
+| Biometrics       | mobile   | the device has biometrics        | `biometricsEnabled`; disabled while no password is set only where `biometricsRequirePassword` (the legacy App lock); wording follows the device (Face ID, Touch ID, Biometrics) |
 | MEV protection   | both     | always                           | `mevProtection`, with a link to the MEV protection page |
 
 ## Exports
@@ -31,7 +31,7 @@ shell package `@features/flow-settings`.
 | `applySecurityUpdate`         | Runs the side effect of one change, one call per setting             |
 | `isSecurityUpdate`            | Tells whether a change of the settings port belongs to this section  |
 | `useSecuritySettingsLabels`   | Wording of the section                                               |
-| `SecuritySettingsPort`        | What the app provides: values, `setValue`, `requestAppLock`, `openMevProtectionInfo` |
+| `SecuritySettingsPort`        | What the app provides: values, `setValue`, `requestAppLock`          |
 | `SecuritySideEffects`         | What a change does in the app, one method per setting                |
 
 ## How an app uses it
@@ -48,9 +48,11 @@ modals.
 ## Tracking
 
 The events of the legacy screens are kept: `button_clicked` for the discreet mode, `toggle_clicked`
-for MEV protection, and the `PasswordEnabled`, `PasswordDisabled`, `mev_activated` and
-`mev_disactivated` events when the state changes.
+for MEV protection, and the `mev_activated` and `mev_disactivated` events when the state changes.
+`PasswordEnabled` and `PasswordDisabled` are desktop's: the mobile screens never sent them. The
+password and biometrics events of mobile depend on the App lock version, so the app sends them
+from its side effects.
 
 ## Consumers
 
-Ledger Wallet Desktop. Ledger Wallet Mobile once its Security screen lands.
+Ledger Wallet Desktop and Ledger Wallet Mobile.

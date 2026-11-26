@@ -1,4 +1,3 @@
-import { mockUtxoAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import type { AccountReceive } from "@domain/entity-account-receive";
 import { mockReceiveFamilyConfigInput } from "@features/flow-receive/types.mock";
@@ -9,7 +8,6 @@ const SHIELDED_ADDRESS = "u1shieldedaddress";
 
 const zcashInput = ({ shielded, receive }: { shielded: boolean; receive?: AccountReceive }) =>
   mockReceiveFamilyConfigInput({
-    descriptor: mockUtxoAccountDescriptor({ network: "zcash", path: "m/44h/133h/0h" }),
     asset: { id: "zcash" },
     featureFlags: { zcashShielded: { enabled: shielded } },
     receive,
