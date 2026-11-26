@@ -52,6 +52,42 @@ describe("useReceiveScreenData", () => {
     await waitFor(() => expect(result.current.data).toEqual({ type: "activationRequired" }));
   });
 
+  it("should read the gate again, once the user may have activated the token", async () => {
+    const gate = jest.fn(async () => mockAssetStatus({ gate: { type: "activation" } }));
+    const { wrapper } = setup({
+      assetStatus: async (_target, query) => ({ assetId: query!.assetId, status: await gate() }),
+    });
+    const { result } = renderHook(() => useReceiveScreenData(accountUUID, USDC), { wrapper });
+    await waitFor(() => expect(result.current.data).toEqual({ type: "activationRequired" }));
+
+    gate.mockResolvedValue(mockAssetStatus());
+    act(() => result.current.refreshGate());
+
+    await waitFor(() => expect(result.current.data).toEqual({ type: "ready", receive }));
+  });
+
+  it("should keep reading the gate while it stays, then show the address once activated", async () => {
+    const gate = jest.fn(async () => mockAssetStatus({ gate: { type: "activation" } }));
+    const { wrapper } = setup({
+      assetStatus: async (_target, query) => ({ assetId: query!.assetId, status: await gate() }),
+    });
+    const { result } = renderHook(() => useReceiveScreenData(accountUUID, USDC), { wrapper });
+    await waitFor(() => expect(result.current.data).toEqual({ type: "activationRequired" }));
+    jest.useFakeTimers();
+
+    act(() => result.current.refreshGate());
+    await act(async () => {});
+    expect(result.current.data).toEqual({ type: "activationRequired" });
+
+    gate.mockResolvedValue(mockAssetStatus());
+    await act(async () => {
+      jest.advanceTimersByTime(10_000);
+    });
+    jest.useRealTimers();
+
+    await waitFor(() => expect(result.current.data).toEqual({ type: "ready", receive }));
+  });
+
   it("should ask to onboard the account", async () => {
     const { wrapper } = setup({
       accountStatus: async () => mockAccountStatus({ gate: { type: "onboarding" } }),

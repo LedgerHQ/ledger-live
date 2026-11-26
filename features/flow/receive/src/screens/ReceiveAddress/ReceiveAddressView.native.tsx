@@ -4,7 +4,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, IconButton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ArrowLeft, Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { captureView } from "@shared/share-sheet";
-import { InfoState } from "@shared/ui-info-state";
 import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
@@ -15,6 +14,7 @@ import { ReceiveAddressTitle } from "./components/ReceiveAddressTitle";
 import { Dimmed } from "./components/Dimmed";
 import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
 import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
+import { ReceiveAddressUnavailable } from "./components/ReceiveAddressUnavailable";
 import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
@@ -24,6 +24,7 @@ export function ReceiveAddressView({
   networkIcon,
   isLoading,
   error,
+  gate,
   addressSelection,
   address,
   closeLabel,
@@ -40,6 +41,7 @@ export function ReceiveAddressView({
 }: ReceiveAddressViewProps) {
   const { top, bottom } = useSafeAreaInsets();
   const isHintOpen = !!actions.verifyHint;
+  const isUnavailable = !!error || !!gate;
   const cardRef = useRef<View>(null);
   const { share } = actions;
   // Only this view holds the card: it captures it for Share.
@@ -103,7 +105,7 @@ export function ReceiveAddressView({
                   networkIcon={networkIcon}
                 />
               </Dimmed>
-              {error ? null : (
+              {isUnavailable ? null : (
                 <Dimmed isDimmed={isHintOpen}>
                   {isLoading || !address ? (
                     <AddressSummarySkeleton />
@@ -118,20 +120,8 @@ export function ReceiveAddressView({
                 </Dimmed>
               )}
             </Box>
-            {error ? (
-              <InfoState
-                preset="error"
-                size="hug"
-                title={error.title}
-                description={error.description}
-                primaryCta={{
-                  label: error.retryLabel,
-                  onPress: error.onRetry,
-                  testID: "receive-address-retry",
-                }}
-                testID="receive-address-error"
-              />
-            ) : (
+            <ReceiveAddressUnavailable error={error} gate={gate} />
+            {isUnavailable ? null : (
               <>
                 <AddressActions actions={actionsWithCard} />
                 <Dimmed isDimmed={isHintOpen}>

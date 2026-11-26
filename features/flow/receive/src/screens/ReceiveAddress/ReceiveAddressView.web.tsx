@@ -1,6 +1,5 @@
 import React from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { InfoState } from "@shared/ui-info-state";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
@@ -10,6 +9,7 @@ import { HelpPanel } from "./components/HelpPanel";
 import { MemoPanel } from "./components/MemoPanel";
 import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
 import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
+import { ReceiveAddressUnavailable } from "./components/ReceiveAddressUnavailable";
 import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
@@ -18,6 +18,7 @@ export function ReceiveAddressView({
   networkLabel,
   isLoading,
   error,
+  gate,
   addressSelection,
   address,
   actions,
@@ -32,6 +33,7 @@ export function ReceiveAddressView({
   onClose,
 }: ReceiveAddressViewProps) {
   const isHintOpen = !!actions.verifyHint;
+  const isUnavailable = !!error || !!gate;
   // The close button, Escape and a click outside all leave through here, once the hint is answered.
   const handleOpenChange = (open: boolean) => {
     if (!open && !isHintOpen) onClose();
@@ -114,20 +116,8 @@ export function ReceiveAddressView({
                 <DialogBody
                   className={`flex flex-col gap-24 ${isHintOpen ? "overflow-visible" : "overflow-y-auto"}`}
                 >
-                  {error ? (
-                    <InfoState
-                      preset="error"
-                      size="hug"
-                      title={error.title}
-                      description={error.description}
-                      primaryCta={{
-                        label: error.retryLabel,
-                        onPress: error.onRetry,
-                        testID: "receive-address-retry",
-                      }}
-                      testID="receive-address-error"
-                    />
-                  ) : (
+                  <ReceiveAddressUnavailable error={error} gate={gate} />
+                  {isUnavailable ? null : (
                     <>
                       {isLoading || !address ? (
                         <AddressSummarySkeleton />

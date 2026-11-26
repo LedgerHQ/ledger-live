@@ -13,7 +13,9 @@ export type ReceiveAddressButton =
   | "public address"
   | "private address"
   | "help"
-  | "memo tag info";
+  | "memo tag info"
+  | "onboard account"
+  | "activate asset";
 
 export function trackReceiveAddressButton(button: ReceiveAddressButton) {
   track("button_clicked", { button, ...RECEIVE_ADDRESS_PAGE });
