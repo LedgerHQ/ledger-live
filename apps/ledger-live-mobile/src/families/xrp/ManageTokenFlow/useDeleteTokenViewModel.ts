@@ -2,10 +2,10 @@ import { useCallback, useEffect } from "react";
 import type { Account } from "@ledgerhq/types-live";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { makeOptOutTransaction } from "@ledgerhq/live-common/families/xrp/tokens";
 import type { Transaction, XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
 import { useAccountName } from "~/reducers/wallet";
 import { useSignAndBroadcast } from "../components/SignAndBroadcast/useSignAndBroadcast";
-import { makeOptOutTransaction } from "../utils";
 
 export type Props = Readonly<{
   account: Account;

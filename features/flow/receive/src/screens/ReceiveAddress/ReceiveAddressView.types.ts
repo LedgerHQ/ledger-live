@@ -1,8 +1,8 @@
+import type { ReceiveHelpQuestionId } from "../../copy/useReceiveAddressCopy";
 import type { AddressParts } from "../../logic/splitAddress";
 import type { ReceiveIcon } from "../../logic/toReceiveAddressData";
 import type { ReceiveAddressOptionId } from "../../logic/toReceiveAddressOptions";
 import type { ReceiveNoticeKind, ReceiveNoticeTone } from "../../logic/toReceiveNotices";
-import type { ReceiveServiceIncident } from "../../types";
 
 /** The account data could not be read: Retry reads what failed again. */
 export type ReceiveAddressError = Readonly<{
@@ -57,16 +57,32 @@ export type ReceiveNoticeView = Readonly<{
   learnMore?: ReceiveAddressAction;
 }>;
 
-export type ReceiveServiceWarningView = Readonly<{
-  title: string;
-  ctaLabel: string;
-  onPress: () => void;
-}>;
+export type ReceiveIncidentTextPartView = Readonly<{ text: string; onPress?: () => void }>;
 
 export type ReceiveServiceStatusView = Readonly<{
   title: string;
-  incidents: readonly ReceiveServiceIncident[];
+  description?: readonly ReceiveIncidentTextPartView[];
+  continueLabel: string;
+  onContinue: () => void;
+}>;
+
+export type ReceiveHelpCardView = Readonly<{ title: string; onPress: () => void }>;
+
+export type ReceiveHelpPanelView = Readonly<{
+  title: string;
+  questions: readonly (ReceiveAddressAction & Readonly<{ id: ReceiveHelpQuestionId }>)[];
+  onClose: () => void;
+}>;
+
+/** "Need a Tag/Memo?", when senders can attach one to the address shown. */
+export type ReceiveMemoCardView = Readonly<{ title: string; onPress: () => void }>;
+
+/** Why an exchange may need a memo, over the address. */
+export type ReceiveMemoPanelView = Readonly<{
+  title: string;
+  description: string;
   gotItLabel: string;
+  learnMore: ReceiveAddressAction;
   onClose: () => void;
 }>;
 
@@ -81,9 +97,12 @@ export type ReceiveAddressViewProps = Readonly<{
   /** A device verification runs: on desktop, its own dialog takes the place of this one. */
   isVerifying: boolean;
   notices: readonly ReceiveNoticeView[];
-  serviceWarning?: ReceiveServiceWarningView;
-  noticesPlaceholderLabel: string;
   serviceStatus?: ReceiveServiceStatusView;
+  helpCard: ReceiveHelpCardView;
+  helpPanel?: ReceiveHelpPanelView;
+  memoCard?: ReceiveMemoCardView;
+  /** Set while the memo panel is open. */
+  memoPanel?: ReceiveMemoPanelView;
   /** "Receive USDC" */
   title: string;
   /** "Ethereum network" */

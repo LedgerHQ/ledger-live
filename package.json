@@ -132,6 +132,7 @@
     "coin:tester:casper": "pnpm --filter coin-tester-casper",
     "coin:tester:cosmos": "pnpm --filter coin-tester-cosmos",
     "coin:tester:evm": "pnpm --filter coin-tester-evm",
+    "coin:tester:filecoin": "pnpm --filter coin-tester-filecoin",
     "coin:tester:internet_computer": "pnpm --filter coin-tester-internet_computer",
     "coin:tester:polkadot": "pnpm --filter coin-tester-polkadot",
     "coin:tester:solana": "pnpm --filter coin-tester-solana",

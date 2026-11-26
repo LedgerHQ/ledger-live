@@ -18,6 +18,7 @@ import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { buildOnboardAccount, buildAuthorizePreapproval } from "./onboard";
+import { postSync } from "./postSync";
 import { prepareTransaction } from "./prepareTransaction";
 import { assignToAccountRaw, assignFromAccountRaw } from "./serialization";
 import { buildSignOperation } from "./signOperation";
@@ -48,6 +49,7 @@ export function createBridges(signerContext: SignerContext<CantonSigner>, contex
   const signOperation = buildSignOperation(signerContext, context);
   const sync = makeSync({
     getAccountShape: makeGetAccountShape(signerContext, context),
+    postSync,
     // getAccountShape merges the new operations with the stored ones, or replaces them on a
     // rebuild: merging again would bring the stale ones back.
     shouldMergeOps: false,

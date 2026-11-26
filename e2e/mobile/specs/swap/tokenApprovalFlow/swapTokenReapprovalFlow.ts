@@ -1,4 +1,4 @@
-import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import {
   ensureTokenApproval,
   performSwapUntilQuoteSelectionStep,
@@ -6,7 +6,7 @@ import {
 } from "@e2e/utils/swapUtils";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
+import { beforeAllFunctionSwap, SwapAccountsTestOptions } from "@e2e/specs/swap/swap.setup";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import BigNumber from "bignumber.js";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
@@ -16,13 +16,13 @@ import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 /** CLI revoke and partial approval, then an on-device revoke and re-approval: longer still. */
 const TOKEN_REAPPROVAL_TEST_TIMEOUT = 600_000;
 
-export function runSwapTokenReapprovalFlow(
-  fromAccount: TokenAccount,
-  toAccount: Account,
-  swapProviders: SwapProvider[],
-  tmsLinks: string[],
-  tags: string[],
-) {
+type RunSwapTokenReapprovalFlowOptions = SwapAccountsTestOptions & {
+  fromAccount: TokenAccount;
+  swapProviders: SwapProvider[];
+};
+
+export function runSwapTokenReapprovalFlow(options: RunSwapTokenReapprovalFlowOptions) {
+  const { fromAccount, toAccount, swapProviders, tmsLinks, tags } = options;
   declareBroadcastAccounts(fromAccount);
   const runHere = shouldRunBroadcastFlow(BroadcastFlow.REAPPROVAL);
   if (!runHere) {

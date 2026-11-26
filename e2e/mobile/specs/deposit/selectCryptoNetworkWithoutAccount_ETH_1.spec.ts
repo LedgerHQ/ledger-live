@@ -10,10 +10,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@ethereum`, `@family-evm`],
 };
 
-runSelectCryptoNetworkTest(
-  testConfig.account,
-  testConfig.networks,
-  testConfig.withAccount,
-  testConfig.tmsLinks,
-  testConfig.tags,
-);
+runSelectCryptoNetworkTest(testConfig);

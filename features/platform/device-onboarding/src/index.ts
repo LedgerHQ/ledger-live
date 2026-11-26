@@ -2,6 +2,7 @@ export * from "./types";
 export * from "./machine";
 export * from "./firmwareRules";
 export * from "./postSetupFirmware";
+export * from "./deviceReady";
 export * from "./retry";
 export * from "./actors/session";
 export * from "./actors/readDeviceState";

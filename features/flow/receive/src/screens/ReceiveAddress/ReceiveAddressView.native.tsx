@@ -9,9 +9,13 @@ import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
+import { HelpPanel } from "./components/HelpPanel";
+import { MemoPanel } from "./components/MemoPanel";
 import { ReceiveAddressTitle } from "./components/ReceiveAddressTitle";
 import { Dimmed } from "./components/Dimmed";
-import { ZonePlaceholder } from "./components/ZonePlaceholder";
+import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
+import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
+import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
 export function ReceiveAddressView({
@@ -25,7 +29,12 @@ export function ReceiveAddressView({
   closeLabel,
   backLabel,
   actions,
-  noticesPlaceholderLabel,
+  notices,
+  serviceStatus,
+  helpCard,
+  helpPanel,
+  memoCard,
+  memoPanel,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -126,16 +135,19 @@ export function ReceiveAddressView({
               <>
                 <AddressActions actions={actionsWithCard} />
                 <Dimmed isDimmed={isHintOpen}>
-                  <ZonePlaceholder zone="notices" label={noticesPlaceholderLabel} />
+                  <ReceiveAddressNotices notices={notices} />
                 </Dimmed>
               </>
             )}
             <Dimmed isDimmed={isHintOpen}>
-              <ZonePlaceholder zone="extras" />
+              <ReceiveAddressExtras memoCard={memoCard} helpCard={helpCard} />
             </Dimmed>
           </Box>
         </ScrollView>
       )}
+      {serviceStatus ? <ServiceStatusPanel serviceStatus={serviceStatus} /> : null}
+      {helpPanel ? <HelpPanel helpPanel={helpPanel} /> : null}
+      {memoPanel ? <MemoPanel memoPanel={memoPanel} /> : null}
     </Box>
   );
 }

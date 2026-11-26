@@ -19,6 +19,7 @@ function toResourcesRaw(r: CantonResources): CantonResourcesRaw {
     xpub,
     nativeInstrumentAdmin,
     replayTransactions,
+    scanCheckpoint,
   } = r;
   return {
     isOnboarded: isOnboarded,
@@ -28,6 +29,7 @@ function toResourcesRaw(r: CantonResources): CantonResourcesRaw {
     ...(xpub ? { xpub } : {}),
     ...(nativeInstrumentAdmin ? { nativeInstrumentAdmin } : {}),
     ...(replayTransactions?.length ? { replayTransactions } : {}),
+    ...(scanCheckpoint ? { scanCheckpoint } : {}),
   };
 }
 
@@ -40,6 +42,7 @@ function fromResourcesRaw(r: CantonResourcesRaw): CantonResources {
     ...(r.xpub ? { xpub: r.xpub } : {}),
     ...(r.nativeInstrumentAdmin ? { nativeInstrumentAdmin: r.nativeInstrumentAdmin } : {}),
     ...(r.replayTransactions?.length ? { replayTransactions: r.replayTransactions } : {}),
+    ...(r.scanCheckpoint ? { scanCheckpoint: r.scanCheckpoint } : {}),
   };
 }
 

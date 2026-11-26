@@ -305,8 +305,11 @@ describe("parseTransaction", () => {
   });
 
   it("should parse an incoming transfer", () => {
+    const { cost: _omitted, ...withoutCost } = baseTx;
     const tx: WalletProxyTransaction = {
-      ...baseTx,
+      ...withoutCost,
+      origin: { type: "account", address: VALID_ADDRESS_2 },
+      total: 2000000,
       details: {
         type: "transfer",
         outcome: "success",
@@ -325,18 +328,11 @@ describe("parseTransaction", () => {
     });
   });
 
-  it("should return null for non-transfer transactions", () => {
-    const tx: WalletProxyTransaction = {
-      ...baseTx,
-      details: { type: "bakingReward", outcome: "success" },
-    };
-
-    expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
-  });
-
   it("should return null when address is neither sender nor recipient", () => {
+    const { cost: _omitted, ...withoutCost } = baseTx;
     const tx: WalletProxyTransaction = {
-      ...baseTx,
+      ...withoutCost,
+      origin: { type: "account", address: VALID_ADDRESS_2 },
       details: {
         type: "transfer",
         outcome: "success",
@@ -543,7 +539,7 @@ describe("parseTransaction, PLT", () => {
   });
 
   it("returns null when the address is neither source nor destination", () => {
-    expect(parseTransaction(outgoingTx, "someone-else")).toBeNull();
+    expect(parseTransaction(incomingTx, "someone-else")).toBeNull();
   });
 
   const nonTransfer: WalletProxyTransaction = {
@@ -685,6 +681,457 @@ describe("parseTransaction, PLT", () => {
     it("leaves the cause absent on a successful transfer", () => {
       expect(parseTransaction(outgoingTx, VALID_ADDRESS)!.rejectCode).toBeUndefined();
     });
+  });
+});
+
+const sentTx = (
+  details: WalletProxyTransaction["details"],
+  overrides?: Partial<WalletProxyTransaction>,
+): WalletProxyTransaction => ({
+  id: 3012345,
+  blockTime: 1763000000.5,
+  blockHash: "aabb",
+  blockHeight: 51227394,
+  transactionHash: "83b1".repeat(16),
+  origin: { type: "self" },
+  cost: "4029312",
+  transactionCost: "4029312",
+  total: "-4029312",
+  details,
+  ...overrides,
+});
+
+describe("parseTransaction, other transaction types", () => {
+  const receivedTx = (
+    details: WalletProxyTransaction["details"],
+    overrides?: Partial<WalletProxyTransaction>,
+  ): WalletProxyTransaction => {
+    const { cost: _omitted, ...withoutCost } = sentTx(details);
+    return { ...withoutCost, origin: { type: "account", address: VALID_ADDRESS_2 }, ...overrides };
+  };
+
+  const THIRD_ADDRESS = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
+  const sponsorship = { sponsor: SPONSOR, cost: "4029312" };
+
+  beforeEach(() => {
+    const { decodeMemoFromCbor } = jest.requireMock("@ledgerhq/concordium-core");
+    decodeMemoFromCbor.mockReset();
+    decodeMemoFromCbor.mockReturnValue("decoded memo");
+  });
+
+  it.each([
+    ["registerData", {}],
+    ["deployModule", {}],
+    ["initContract", { subtotal: "0" }],
+    ["update", { subtotal: "0" }],
+    ["configureBaker", {}],
+    ["configureDelegation", {}],
+    ["updateAccountKeys", {}],
+    ["updateCredentials", {}],
+    ["encryptedAmountTransfer", {}],
+  ])("charges the sender the fee of a %s that moves no CCD", (type, amounts) => {
+    const tx = sentTx({ type, outcome: "success" }, amounts);
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "FEES",
+      sender: VALID_ADDRESS,
+      recipient: "",
+      amount: "0",
+      fee: "4029312",
+      value: "4029312",
+      transactionFee: "4029312",
+      feesPayer: VALID_ADDRESS,
+      failed: false,
+    });
+  });
+
+  it.each(["update", "initContract", "deployModule", "transferWithSchedule"])(
+    "charges the sender the fee of a rejected %s, as a failed operation",
+    type => {
+      const tx = sentTx({ type, outcome: "reject", rejectReason: "Rejected" });
+
+      expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+        type: "FEES",
+        amount: "0",
+        value: "4029312",
+        failed: true,
+      });
+    },
+  );
+
+  it.each([
+    ["update", "a deposit into a contract"],
+    ["initContract", "a deposit into a new contract"],
+    ["transferToEncrypted", "a shielded amount"],
+  ])("reads a sent %s as outgoing (%s)", type => {
+    const tx = sentTx({ type, outcome: "success" }, { subtotal: "-500000", total: "-4529312" });
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "OUT",
+      sender: VALID_ADDRESS,
+      recipient: "",
+      amount: "500000",
+      fee: "4029312",
+      value: "4529312",
+    });
+  });
+
+  it("reads a contract call that pays its sender back more than it sent as incoming", () => {
+    const tx = sentTx({ type: "update", outcome: "success" }, { subtotal: "7", total: "-4029305" });
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "IN",
+      sender: "",
+      recipient: VALID_ADDRESS,
+      amount: "7",
+      fee: "4029312",
+      value: "7",
+    });
+  });
+
+  it("reads an unshielded amount as incoming", () => {
+    const tx = sentTx(
+      { type: "transferToPublic", outcome: "success" },
+      { subtotal: "900", total: "-4028412" },
+    );
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "IN",
+      value: "900",
+      fee: "4029312",
+      feesPayer: VALID_ADDRESS,
+    });
+  });
+
+  it("reads numeric amounts as well as strings", () => {
+    const tx = sentTx(
+      { type: "update", outcome: "success" },
+      { cost: 100, transactionCost: 100, subtotal: -500, total: -600 },
+    );
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({ type: "OUT", value: "600" });
+  });
+
+  it("reads a contract payout as incoming, with no sender, as the caller did not send it", () => {
+    const tx = receivedTx({ type: "update", outcome: "success" }, { total: "1530000000" });
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "IN",
+      sender: "",
+      recipient: VALID_ADDRESS,
+      amount: "1530000000",
+      fee: "0",
+      value: "1530000000",
+      transactionFee: "4029312",
+      feesPayer: VALID_ADDRESS_2,
+    });
+  });
+
+  it("returns null for a contract call of another account that paid this one nothing", () => {
+    const tx = receivedTx({ type: "update", outcome: "success" }, { total: "0" });
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
+  });
+
+  it("returns null for an encrypted amount received, which moves no public CCD", () => {
+    const tx = receivedTx({ type: "encryptedAmountTransfer", outcome: "success" }, { total: "0" });
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
+  });
+
+  describe("scheduled transfers", () => {
+    const details = {
+      type: "transferWithScheduleAndMemo",
+      outcome: "success",
+      transferDestination: VALID_ADDRESS_2,
+      transferAmount: "1000000",
+      memo: "6b6465706f7369742d726566",
+    } as const;
+
+    it("reads a sent one as outgoing to its destination, with its memo", () => {
+      const tx = sentTx(details, { subtotal: "-1000000", total: "-5029312" });
+
+      expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+        type: "OUT",
+        sender: VALID_ADDRESS,
+        recipient: VALID_ADDRESS_2,
+        amount: "1000000",
+        value: "5029312",
+        memo: "decoded memo",
+      });
+    });
+
+    it("reads one received on another alias as incoming from its sender, with its memo", () => {
+      const tx = receivedTx(
+        { ...details, transferDestination: VALID_ADDRESS_ALIAS },
+        { total: "1000000" },
+      );
+
+      expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+        type: "IN",
+        sender: VALID_ADDRESS_2,
+        recipient: VALID_ADDRESS,
+        amount: "1000000",
+        fee: "0",
+        value: "1000000",
+        memo: "decoded memo",
+      });
+    });
+
+    it("charges a sponsor that is no party the fee alone, though the proxy counts it a receipt", () => {
+      const tx = receivedTx(
+        { ...details, transferDestination: THIRD_ADDRESS },
+        { cost: "4029312", sponsor: sponsorship, subtotal: "1000000", total: "-3029312" },
+      );
+
+      expect(parseTransaction(tx, SPONSOR)).toMatchObject({
+        type: "FEES",
+        amount: "0",
+        value: "4029312",
+        memo: undefined,
+      });
+    });
+  });
+
+  it("keeps the memo of a sent encrypted transfer on the fee it cost", () => {
+    const tx = sentTx({
+      type: "encryptedAmountTransferWithMemo",
+      outcome: "success",
+      memo: "6b6465706f7369742d726566",
+    });
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      type: "FEES",
+      memo: "decoded memo",
+    });
+  });
+
+  describe("sponsored by another account", () => {
+    it.each([
+      ["initContract", "-500", "-4029812"],
+      ["transferToPublic", "500", "-4028812"],
+    ])(
+      "charges the sponsor of a %s the fee alone, though the proxy counts the sender's amount",
+      (type, subtotal, total) => {
+        const tx = receivedTx(
+          { type, outcome: "success" },
+          { cost: "4029312", sponsor: sponsorship, subtotal, total },
+        );
+
+        expect(parseTransaction(tx, SPONSOR)).toMatchObject({
+          type: "FEES",
+          sender: SPONSOR,
+          amount: "0",
+          value: "4029312",
+          feesPayer: SPONSOR,
+        });
+      },
+    );
+
+    it("shows a sponsored contract deposit to its sender without a fee", () => {
+      const tx = sentTx(
+        { type: "update", outcome: "success" },
+        { cost: "0", sponsor: sponsorship, subtotal: "-500000", total: "-500000" },
+      );
+
+      expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+        type: "OUT",
+        amount: "500000",
+        fee: "0",
+        value: "500000",
+        feesPayer: SPONSOR,
+      });
+    });
+
+    it.each(["success", "reject"] as const)(
+      "returns null to the sender of a sponsored call that moved nothing (%s)",
+      outcome => {
+        const tx = sentTx(
+          { type: "update", outcome },
+          { cost: "0", sponsor: sponsorship, total: "0" },
+        );
+
+        expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
+      },
+    );
+
+    it("charges the sponsor the fee of a call that also pays it, and keeps the payout apart", () => {
+      const tx = receivedTx(
+        { type: "update", outcome: "success" },
+        { cost: "4029312", sponsor: sponsorship, subtotal: "10000", total: "-4019312" },
+      );
+
+      expect(parseTransaction(tx, SPONSOR)).toMatchObject({
+        type: "IN",
+        amount: "10000",
+        value: "10000",
+        fee: "4029312",
+        feesPayer: SPONSOR,
+      });
+    });
+  });
+
+  describe("sponsored by the queried account", () => {
+    const aliasSponsorship = { sponsor: VALID_ADDRESS_ALIAS, cost: "4029312" };
+    const details = {
+      transfer: {
+        type: "transfer",
+        outcome: "success",
+        transferSource: VALID_ADDRESS_2,
+        transferDestination: SPONSOR,
+        transferAmount: "1000000",
+      },
+      "token transfer": {
+        type: "tokenUpdate",
+        outcome: "success",
+        transferSource: VALID_ADDRESS_2,
+        transferDestination: SPONSOR,
+        tokenId: "trUSDT",
+        tokenTransferAmount: { value: "20000000", decimals: 6 },
+        memo: "6b6465706f7369742d726566",
+      },
+      "token update that is no transfer": { type: "tokenUpdate", outcome: "success" },
+      "rejected transfer": { type: "transfer", outcome: "reject" },
+      "rejected token update": { type: "tokenUpdate", outcome: "reject" },
+      "rejected contract call": { type: "update", outcome: "reject" },
+    } as const;
+
+    it.each(Object.keys(details) as (keyof typeof details)[])(
+      "charges the fee of another account's %s, as CCD",
+      kind => {
+        const tx = receivedTx(details[kind], {
+          cost: "4029312",
+          sponsor: aliasSponsorship,
+          total: "-4029312",
+        });
+        const result = parseTransaction(tx, VALID_ADDRESS);
+
+        expect(result).toMatchObject({
+          type: "FEES",
+          sender: VALID_ADDRESS,
+          recipient: "",
+          amount: "0",
+          fee: "4029312",
+          value: "4029312",
+          memo: undefined,
+          feesPayer: VALID_ADDRESS,
+          failed: details[kind].outcome === "reject",
+        });
+        expect(result).not.toHaveProperty("tokenId");
+      },
+    );
+
+    it("reads the fee off the sponsor on a proxy that leaves the cost out of its rows", () => {
+      const tx = receivedTx(details.transfer, { sponsor: aliasSponsorship, total: "0" });
+
+      expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+        type: "FEES",
+        fee: "4029312",
+        value: "4029312",
+      });
+    });
+
+    it("keeps a transfer it received incoming, and the fee it paid on it", () => {
+      const tx = receivedTx(
+        { ...details.transfer, transferDestination: VALID_ADDRESS },
+        { cost: "4029312", sponsor: aliasSponsorship, subtotal: "1000000", total: "-3029312" },
+      );
+
+      expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+        type: "IN",
+        value: "1000000",
+        fee: "4029312",
+        transactionFee: "4029312",
+        feesPayer: VALID_ADDRESS,
+      });
+    });
+
+    it("keeps a token transfer it received incoming, and the fee it paid on it", () => {
+      const tx = receivedTx(
+        { ...details["token transfer"], transferDestination: VALID_ADDRESS },
+        { cost: "4029312", sponsor: aliasSponsorship, total: "-4029312" },
+      );
+
+      expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+        type: "IN",
+        tokenId: "trUSDT",
+        value: "20000000",
+        fee: "4029312",
+        transactionFee: "4029312",
+        feesPayer: VALID_ADDRESS,
+      });
+    });
+  });
+
+  it.each([
+    ["total", "1.5"],
+    ["total", 2 ** 53],
+    ["subtotal", "1.5"],
+    ["subtotal", ""],
+  ] as const)("refuses a %s of %p, which is not an exact amount", (field, amount) => {
+    const build = field === "total" ? receivedTx : sentTx;
+    const tx = build({ type: "update", outcome: "success" }, { [field]: amount });
+
+    expect(() => parseTransaction(tx, VALID_ADDRESS)).toThrow("carries no readable amount");
+  });
+
+  it("refuses a payout with no total, rather than reading it as zero", () => {
+    const { total: _dropped, ...withoutTotal } = receivedTx({ type: "update", outcome: "success" });
+
+    expect(() => parseTransaction(withoutTotal as WalletProxyTransaction, VALID_ADDRESS)).toThrow(
+      "carries no readable amount",
+    );
+  });
+
+  it("refuses a scheduled transfer with no amount, rather than reading it as zero", () => {
+    const tx = sentTx({ type: "transferWithSchedule", outcome: "success" });
+
+    expect(() => parseTransaction(tx, VALID_ADDRESS)).toThrow("carries no readable amount");
+  });
+
+  const outsideAccounts: Omit<WalletProxyTransaction, "details"> = {
+    id: 3012346,
+    blockTime: 1763000000.5,
+    blockHash: "aabb",
+    blockHeight: 51227395,
+    origin: { type: "none" },
+    total: "0",
+  };
+
+  it.each<[string, WalletProxyTransaction]>([
+    [
+      "a reward",
+      {
+        ...outsideAccounts,
+        origin: { type: "reward" },
+        total: "5000",
+        details: { type: "bakingReward", outcome: "success" },
+      },
+    ],
+    [
+      "a validator event",
+      { ...outsideAccounts, details: { type: "validatorSuspended", outcome: "success" } },
+    ],
+    [
+      "a chain update",
+      {
+        ...outsideAccounts,
+        transactionHash: "e0d1".repeat(16),
+        transactionCost: "0",
+        details: { type: "chainUpdate", outcome: "success" },
+      },
+    ],
+  ])("returns null for %s", (_name, tx) => {
+    expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
+  });
+
+  it("returns null for a row with no hash to identify the operation", () => {
+    const { transactionHash: _dropped, ...tx } = sentTx({
+      type: "registerData",
+      outcome: "success",
+    });
+
+    expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
   });
 });
 
@@ -880,7 +1327,7 @@ describe("listOperations", () => {
     expect(result.next).toBe("1001");
   });
 
-  it("should filter non-transfer transactions", async () => {
+  it("should filter rewards", async () => {
     getTransactionsMock.mockResolvedValue({
       transactions: [
         {
@@ -888,7 +1335,6 @@ describe("listOperations", () => {
           blockTime: Date.now() / 1000,
           blockHash: "aabb",
           blockHeight: 1000,
-          transactionHash: "dd".repeat(32),
           origin: { type: "reward" },
           details: { type: "bakingReward", outcome: "success" },
           total: 5000,
@@ -907,6 +1353,44 @@ describe("listOperations", () => {
     );
 
     expect(result.items).toHaveLength(0);
+  });
+
+  it("keeps the cursor of a page that ends on a validator event, which has no hash", async () => {
+    getTransactionsMock.mockResolvedValue({
+      transactions: [
+        {
+          id: 12,
+          blockTime: 1763000000,
+          blockHeight: 1001,
+          transactionHash: "ab".repeat(32),
+          cost: "300",
+          origin: { type: "self" },
+          details: { type: "registerData", outcome: "success" },
+          total: "-300",
+        },
+        {
+          id: 11,
+          blockTime: 1763000000,
+          blockHeight: 1000,
+          origin: { type: "none" },
+          details: { type: "validatorPrimedForSuspension", outcome: "success" },
+          total: "0",
+        },
+      ],
+      count: 2,
+      limit: 2,
+      order: "descending",
+    });
+
+    const result = await listOperations(
+      config,
+      VALID_ADDRESS,
+      { minHeight: 0, limit: 2 },
+      "concordium_testnet",
+    );
+
+    expect(result.items.map(({ type, value }) => [type, value])).toEqual([["FEES", "300"]]);
+    expect(result.next).toBe("11");
   });
 
   it("reports a fetch failure rather than an empty page, which reads as the end", async () => {

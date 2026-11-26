@@ -51,7 +51,7 @@ type AleoCoinModuleImpl = CoinModuleImpl<
 
 // Not in `CoinModuleApi` yet.
 type AccountStatusCapability = {
-  getAccountStatus: (context: AleoContext, key: string) => Promise<{ used: boolean }>;
+  getAccountStatus: (context: AleoContext, address: string) => Promise<{ used: boolean }>;
 };
 
 function requireViewKey(context: AleoContext, action: string): string {
@@ -174,7 +174,7 @@ export function createApi(currencyId: string) {
       const config = await context.config();
       return getAccountInfo(config, provableId);
     },
-    getAccountStatus: (context: AleoContext, key: string) => getAccountStatus(context, key),
+    getAccountStatus: (context: AleoContext, address: string) => getAccountStatus(context, address),
     getBalance: (
       context: AleoContext,
       address: string,

@@ -28,6 +28,7 @@ type LaunchdJob = { pid: string; label: string };
 type HostProcess = { pid: string; ppid: string; command: string };
 type SampleSimulatorServiceOptions = { services: HostProcess[]; name: string; dir: string };
 type SimulatorLogOptions = { udid: string; dir: string };
+type AndroidThreadStacksOptions = { serial: string; pid: string };
 
 // The simulator services that launch, show, suspend and terminate apps for simctl.
 const IOS_LAUNCH_SERVICES = ["SpringBoard", "backboardd", "runningboardd", "CoreSimulatorBridge"];
@@ -69,7 +70,8 @@ async function iosAppPid(udid: string): Promise<string | undefined> {
   return jobs.find(({ label }) => label.includes(`UIKitApplication:${APP_ID_PREFIX}`))?.pid;
 }
 
-async function attachAndroidThreadStacks(serial: string, pid: string) {
+async function attachAndroidThreadStacks(options: AndroidThreadStacksOptions) {
+  const { serial, pid } = options;
   const adbRoot = ["-s", serial, ...ANDROID_ROOT_SHELL];
   await allure.attachment(
     "Native thread stacks",
@@ -100,7 +102,7 @@ export async function attachAppThreadStacks(): Promise<void> {
       log.warn("Could not capture app thread stacks: app process not found");
       return;
     }
-    if (isAndroid) await attachAndroidThreadStacks(device.id, pid);
+    if (isAndroid) await attachAndroidThreadStacks({ serial: device.id, pid });
     else await attachIosThreadStacks(pid);
   } catch (error) {
     log.warn(`Could not capture app thread stacks: ${sanitizeError(error)}`);

@@ -1998,6 +1998,7 @@
     "title": "Account settings",
     "menu": {
       "changeName": "Change name",
+      "manageAssets": "Manage assets",
       "viewAdvancedLogs": "View advanced logs",
       "viewExplorer": "View in explorer",
       "removeAccount": "Remove account from portfolio"
@@ -2462,10 +2463,19 @@
       "learnMore": "Learn more"
     },
     "serviceStatus": {
-      "cta": "See details",
-      "title": "Service incident"
+      "continue": "Continue"
     },
-    "gotIt": "Got it"
+    "help": {
+      "cardTitle": "Need support? Get help",
+      "title": "Get help",
+      "receiveFromExchange": "How to receive from exchanges?",
+      "receiveSecurely": "How to receive securely?"
+    },
+    "memoTag": {
+      "title": "Need a Tag/Memo?",
+      "description": "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+      "gotIt": "Got it"
+    }
   },
   "ratings": {
     "init": {
@@ -2863,6 +2873,15 @@
         "successDescription": "Your device is genuine and safe to use",
         "notUpToDateDescription": "Your device is not up-to-date"
       },
+      "genuine": {
+        "title": "Ledger Genuine Check",
+        "description": "Confirming Ledger OS is safe to use.",
+        "successDescription": "Ledger OS is genuine and safe to use."
+      },
+      "osCheck": {
+        "title": "Ledger OS version check",
+        "description": "Checking..."
+      },
       "naming": {
         "title": "Device name",
         "description": "Give your {{productName}} a unique name"
@@ -2872,7 +2891,7 @@
         "description": "It prevents unwanted access"
       },
       "setupChoice": {
-        "title": "Setup choice"
+        "title": "Set up choice"
       },
       "security": {
         "title": "Security setup",
@@ -2885,13 +2904,19 @@
       },
       "info": {
         "cards": {
-          "setupChoice": "Which setup method?",
+          "setupChoice": "Set up or restore?",
+          "pin": "Your Ledger signer’s PIN Code: Explained",
           "recoveryPhrase": "What’s a Secret Recovery Phrase?",
           "restoreChoice": "Choose a backup to restore from",
           "recoveryKey": "What’s a Recovery Key?",
           "restoreRecoveryKey": "What’s a Secret Recovery Key?"
         },
         "faq": "View complete FAQ",
+        "pin": {
+          "title": "Your Ledger signer’s PIN Code: Explained",
+          "description": "Your PIN code is the first layer of security on your Ledger signer. You can’t sign a transaction on a Ledger signer without it. You can’t even update the signer’s firmware.",
+          "lostSigner": "If you lose your Ledger signer, it’s stolen, or otherwise falls into the wrong hands, you don’t have to worry. Without your PIN code, nobody can access your signer. Moreover, if they try to guess your PIN code, your signer will factory reset after three incorrect attempts."
+        },
         "setupChoice": {
           "title": "Set up or restore?",
           "newDevice": {
@@ -2942,13 +2967,13 @@
         }
       },
       "updateOffer": {
-        "title": "Update OS™ to unlock full functionality",
+        "title": "Ledger OS update is ready",
         "versions": "OS {{current}} → OS {{available}}",
-        "description": "Get access to transaction check and the latest device features.",
+        "description": "A quick update gives you the latest security improvements, new features, and a smoother experience.",
         "updateCta": "Update Ledger OS™",
         "skip": {
-          "title": "Skip this update?",
-          "description": "You’ll miss the latest fixes and features for your Ledger device.",
+          "title": "Skip this Ledger OS update?",
+          "description": "Without this update, you won’t benefit from the latest security fixes and improvements.",
           "updateCta": "Update now",
           "skipCta": "Skip anyway"
         }
@@ -4550,8 +4575,49 @@
       "general": "General",
       "assetManagement": "Asset management",
       "security": "Security",
+      "notifications": "Notifications",
       "privacy": "Privacy",
       "about": "About"
+    },
+    "security": {
+      "hideBalance": {
+        "title": "Hide balance",
+        "description": "Hide amounts for all balances. Also accessible via a long press on your home balance amount."
+      },
+      "appLock": {
+        "title": "App lock",
+        "description": "Set a password to open the app."
+      },
+      "changePassword": {
+        "title": "Change password",
+        "description": "Replace the password that opens the app.",
+        "action": "Change"
+      },
+      "autoLock": {
+        "title": "Auto-lock",
+        "description": "Automatically lock Ledger Wallet when inactive.",
+        "options": {
+          "oneMinute": "1 minute",
+          "tenMinutes": "10 minutes",
+          "thirtyMinutes": "30 minutes",
+          "oneHour": "1 hour",
+          "never": "Never"
+        }
+      },
+      "biometrics": {
+        "description": "Use {{biometric}} to open the app.",
+        "disabledDescription": "To enable {{biometric}}, turn on \"App lock\".",
+        "kind": {
+          "faceId": "Face ID",
+          "touchId": "Touch ID",
+          "biometrics": "Biometrics"
+        }
+      },
+      "mevProtection": {
+        "title": "MEV protection",
+        "description": "Enable for more reliable transactions on Ethereum.",
+        "learnMore": "Learn more"
+      }
     },
     "header": "Settings",
     "resources": "Ledger resources",
@@ -4928,6 +4994,14 @@
           "stax": "Ledger Stax",
           "europa": "Ledger Flex",
           "apex": "Ledger Flex Plus"
+        }
+      },
+      "devTools": {
+        "appToggles": {
+          "simulateApolloDevice": {
+            "label": "Simulate an Apollo device",
+            "description": "Act as if the app ran on Apollo: the new Settings hide My Ledger provider and Mock app update."
+          }
         }
       }
     }
@@ -8657,9 +8731,6 @@
       "steps": {
         "token": {
           "title": "Choose a token",
-          "alreadyAddedTag": "Already added",
-          "alreadyAdded": "You've already added this token. Open its page to see or edit its settings.",
-          "openTokenPage": "Open token page",
           "empty": "No token is available for this account.",
           "loadError": "The token list couldn't load."
         },

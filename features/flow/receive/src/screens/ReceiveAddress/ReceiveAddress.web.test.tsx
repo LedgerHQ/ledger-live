@@ -5,11 +5,13 @@ import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
   makeReceiveTestStore,
+  testOpenExternal,
   receiveTestWrapper,
   testAccountUUID,
   testReceive,
 } from "../../__tests__/receiveTestStore";
 import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVerifyAddressExecutorViewModel";
+import { RECEIVE_URLS } from "../../urls";
 import { ReceiveAddress } from "./ReceiveAddress";
 
 const renderScreen = (
@@ -150,12 +152,119 @@ describe("ReceiveAddress (Web)", () => {
     expect(screen.queryByTestId("receive-address-verify-hint")).toBeNull();
   });
 
-  it("lays the zones out in screen order", async () => {
-    renderScreen();
-    await screen.findByTestId("receive-address-summary");
+  it("shows the family's notices and links them to their support article", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      getFamilyConfig: () => ({ notices: ["tronInactiveAccount"] }),
+    });
 
-    expect(
-      screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.dataset.testid),
-    ).toEqual(["receive-address-zone-notices", "receive-address-zone-extras"]);
+    const notice = await screen.findByTestId("receive-address-notice-tronInactiveAccount");
+    expect(notice).toHaveTextContent("Send at least 0.1 TRX");
+    await userEvent.setup().click(screen.getByRole("button", { name: "Learn more" }));
+    expect(testOpenExternal).toHaveBeenCalledWith(RECEIVE_URLS.tronInactiveAccount);
+  });
+
+  it("shows a service incident before the address, then the address on Continue", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      serviceIncidents: [
+        {
+          title: "Ethereum degraded",
+          description: [
+            { text: "Investigating. See " },
+            { text: "this article", url: "https://support.ledger.com/article" },
+          ],
+        },
+      ],
+    });
+    const user = userEvent.setup();
+
+    const incident = screen.getByTestId("receive-address-service-status");
+    expect(incident).toHaveTextContent("Ethereum degraded");
+    expect(incident).toHaveTextContent("Investigating. See this article");
+    expect(screen.queryByTestId("receive-address-summary")).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "this article" }));
+    expect(testOpenExternal).toHaveBeenCalledWith("https://support.ledger.com/article");
+
+    await user.click(screen.getByRole("button", { name: "Continue" }));
+    expect(await screen.findByTestId("receive-address-summary")).toBeVisible();
+  });
+
+  it("keeps the verify hint for after the incident, so the dialog still closes", async () => {
+    const onClose = jest.fn();
+    const receive = jest.fn(async () => mockAccountReceive());
+    renderScreen(onClose, makeReceiveTestStore({ receive }), {
+      VerifyAddressExecutor,
+      serviceIncidents: [{ title: "Ethereum degraded" }],
+    });
+    await waitFor(() => expect(receive).toHaveBeenCalled());
+
+    expect(screen.getByTestId("receive-address")).toHaveAttribute(
+      "aria-label",
+      "Ethereum degraded",
+    );
+    await userEvent.setup().click(screen.getByRole("button", { name: "Close" }));
+
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("shows the verify hint once the user continued past the incident", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      VerifyAddressExecutor,
+      serviceIncidents: [{ title: "Ethereum degraded" }],
+    });
+
+    await userEvent.setup().click(screen.getByRole("button", { name: "Continue" }));
+
+    expect(await screen.findByTestId("receive-address-verify-hint")).toBeVisible();
+  });
+
+  it("opens the help from its card, each question opening its article, then back to the address", async () => {
+    renderScreen();
+    const user = userEvent.setup();
+
+    await user.click(await screen.findByTestId("receive-address-help-card"));
+    expect(screen.getByRole("heading", { name: "Get help" })).toBeVisible();
+    expect(screen.queryByTestId("receive-address-summary")).toBeNull();
+
+    await user.click(screen.getByText("How to receive securely?"));
+    expect(testOpenExternal).toHaveBeenCalledWith(RECEIVE_URLS.receiveSecurely);
+
+    await user.click(screen.getByRole("button", { name: "Go back" }));
+    expect(screen.getByTestId("receive-address-summary")).toBeVisible();
+  });
+
+  it("shows the help card under an error too", async () => {
+    const receive = jest.fn(async () => {
+      throw new Error("offline");
+    });
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
+
+    expect(await screen.findByTestId("receive-address-error")).toBeVisible();
+    expect(screen.getByTestId("receive-address-help-card")).toHaveTextContent(
+      "Need support? Get help",
+    );
+  });
+
+  it("offers no memo card for an address without memo", async () => {
+    renderScreen();
+
+    await screen.findByTestId("receive-address-summary");
+    expect(screen.queryByTestId("receive-address-memo-card")).toBeNull();
+  });
+
+  it("opens the memo panel from its card, then goes back to the address", async () => {
+    const receive = jest.fn(async () => mockAccountReceive({ memo: { type: "tag" } }));
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
+    const user = userEvent.setup();
+
+    await user.click(await screen.findByTestId("receive-address-memo-card"));
+    expect(screen.getByTestId("receive-address-memo-panel")).toHaveTextContent(
+      "You might need a Tag/Memo",
+    );
+    await user.click(screen.getByRole("button", { name: "Learn more" }));
+    expect(testOpenExternal).toHaveBeenCalledWith(RECEIVE_URLS.memoTag);
+
+    await user.click(screen.getByRole("button", { name: "Got it" }));
+    expect(screen.getByTestId("receive-address-summary")).toBeVisible();
   });
 });

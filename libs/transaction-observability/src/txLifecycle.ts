@@ -3,7 +3,7 @@ import type { LogEvent } from "./logEvent";
 import { setTransactionObserver } from "./observer";
 
 export type TxLifecyclePlatform = "desktop" | "mobile";
-export type TxLifecyclePath = "native" | "dapp" | "borrow";
+export type TxLifecyclePath = "native" | "dapp" | "earn" | "borrow";
 export type TxLifecycleFailureClass =
   | "user_cancel"
   | "device_error"
@@ -178,11 +178,27 @@ export function normalizeTxLifecycleBaseUrl(baseUrl: string | undefined, fallbac
 
 /**
  * An attempt keeps the product that opened it, so a later config change cannot reroute it: its
- * terminal and its abandon both go to that product.
+ * terminal and its abandon both go to that product. `owner` is the webview monitor it belongs to.
  */
-type PendingAttempt = { product: TxLifecycleProduct; base: TxLifecyclePayloadBase };
+type PendingAttempt = {
+  product: TxLifecycleProduct;
+  base: TxLifecyclePayloadBase;
+  owner?: symbol;
+};
 
 const pendingLifecycle = new Map<string, PendingAttempt>();
+
+/** Live teardown monitors per manifest key and product, oldest first. */
+const liveMonitors = new Map<string, symbol[]>();
+
+function monitorsKey(key: string, productId: string): string {
+  return `${key}|${productId}`;
+}
+
+/** Events carry no webview identity: the newest mounted webview is the one in front, signing. */
+function newestMonitor(key: string, productId: string): symbol | undefined {
+  return liveMonitors.get(monitorsKey(key, productId))?.at(-1);
+}
 
 /**
  * Every path but `native` runs in a webview, so its attempt is keyed by manifest and not by path:
@@ -192,12 +208,16 @@ function isManifestPath(path: TxLifecyclePath): boolean {
   return path !== "native";
 }
 
+function manifestKey(platform: TxLifecyclePlatform, manifestId: string | undefined): string {
+  return `${platform}:manifest:${manifestId ?? "unknown"}`;
+}
+
 function lifecycleKey(
   payload: Pick<TxLifecyclePayloadBase, "path" | "platform">,
   manifestId?: string,
 ): string {
   return isManifestPath(payload.path)
-    ? `${payload.platform}:manifest:${manifestId ?? "unknown"}`
+    ? manifestKey(payload.platform, manifestId)
     : `${payload.platform}:${payload.path}`;
 }
 
@@ -260,6 +280,19 @@ function abandonPendingLifecycle(key: string, source: Exclude<TxLifecycleSource,
   );
 }
 
+/**
+ * For a product whose app reports its own terminals, the host only posts what the app cannot see:
+ * an attempt still pending when the screen hosting it went away. The rest would double count.
+ */
+export function isTeardownAbandon(payload: TxLifecyclePayload, source: TxLifecycleSource): boolean {
+  return (
+    source === "teardown" &&
+    payload.event === "tx_terminal" &&
+    payload.outcome === "failure" &&
+    payload.failure_class === "abandoned"
+  );
+}
+
 export function sendTxLifecycle(
   product: TxLifecycleProduct,
   payload: TxLifecyclePayload,
@@ -268,15 +301,23 @@ export function sendTxLifecycle(
   const key = lifecycleKey(payload, manifestId);
   if (payload.event === "tx_intent") {
     const next = lifecycleBase(payload);
-    const pending = pendingLifecycle.get(key)?.base;
-    const isManifestPending = !!pending && isManifestPath(pending.path);
-    const isDappPlaceholder = isManifestPending && pending.currency_family === "other";
+    const pending = pendingLifecycle.get(key);
+    const owner = newestMonitor(key, product.id);
+    const isManifestPending = !!pending && isManifestPath(pending.base.path);
+    const enrichesDappPlaceholder =
+      pending?.base.path === "dapp" &&
+      pending.base.currency_family === "other" &&
+      next.path === "dapp";
 
     // A dApp sign observable may resubscribe without representing another user attempt.
-    if (isManifestPending && sameLifecycleBase(pending, next)) return;
+    if (isManifestPending && sameLifecycleBase(pending.base, next)) {
+      if (owner && pending.product.id === product.id)
+        pendingLifecycle.set(key, { ...pending, owner });
+      return;
+    }
 
-    if (pending && !isDappPlaceholder) abandonPendingLifecycle(key, "superseded");
-    pendingLifecycle.set(key, { product, base: next });
+    if (pending && !enrichesDappPlaceholder) abandonPendingLifecycle(key, "superseded");
+    pendingLifecycle.set(key, { product, base: next, owner });
     postTxLifecycle(product, payload, "event");
     return;
   }
@@ -298,7 +339,7 @@ export function abandonPendingDappTxLifecycle(
   manifestId: string,
   productId?: string,
 ): void {
-  const key = lifecycleKey({ platform, path: "dapp" }, manifestId);
+  const key = manifestKey(platform, manifestId);
   if (ownsPendingDapp(key, productId)) abandonPendingLifecycle(key, "teardown");
 }
 
@@ -308,8 +349,46 @@ export function clearPendingDappTxLifecycle(
   manifestId: string,
   productId?: string,
 ): void {
-  const key = lifecycleKey({ platform, path: "dapp" }, manifestId);
+  const key = manifestKey(platform, manifestId);
   if (ownsPendingDapp(key, productId)) pendingLifecycle.delete(key);
+}
+
+/**
+ * Watches one webview showing `manifestId` for `product` and returns its teardown, which abandons
+ * only the attempt that webview started. An attempt no live webview owns is a leftover and is
+ * dropped on mount, as is any attempt of the product while its kill-switch is off.
+ */
+export function monitorManifestTeardown(
+  platform: TxLifecyclePlatform,
+  product: TxLifecycleProduct,
+  manifestId: string,
+  enabled: boolean,
+): (() => void) | undefined {
+  const key = manifestKey(platform, manifestId);
+  const monitors = monitorsKey(key, product.id);
+  const live = liveMonitors.get(monitors) ?? [];
+  const pending = pendingLifecycle.get(key);
+  if (pending?.product.id === product.id) {
+    const ownedByLiveWebview = !!pending.owner && live.includes(pending.owner);
+    if (!enabled || !ownedByLiveWebview) pendingLifecycle.delete(key);
+  }
+  if (!enabled) return;
+
+  const token = Symbol(monitors);
+  liveMonitors.set(monitors, [...live, token]);
+  let closed = false;
+  return () => {
+    if (closed) return;
+    closed = true;
+    const remaining = (liveMonitors.get(monitors) ?? []).filter(monitor => monitor !== token);
+    if (remaining.length > 0) liveMonitors.set(monitors, remaining);
+    else liveMonitors.delete(monitors);
+
+    const owned = pendingLifecycle.get(key);
+    if (owned?.product.id === product.id && owned.owner === token && product.isEnabled()) {
+      abandonPendingLifecycle(key, "teardown");
+    }
+  };
 }
 
 /** Drops one product's pending attempts, or every product's when none is named. */

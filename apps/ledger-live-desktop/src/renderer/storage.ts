@@ -75,6 +75,7 @@ type DatabaseValues = {
   featureFlags: Pick<FeatureFlagsState, "overrides" | "bannerVisible">;
   coinConfigOverrides: { overrides: Record<string, unknown> };
   identities: PersistedIdentities;
+  lldDatadog: { enabled: boolean; sessionSampleRate: number };
   history: { lastSeenOperationDate: string | null };
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;

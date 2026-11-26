@@ -4,11 +4,10 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { selectMarketBannerRanking, setMarketBannerRanking } from "~/reducers/marketBanner";
 import { starredMarketCoinsSelector } from "~/reducers/settings";
 import type { MarketBannerRanking } from "~/reducers/types";
-import { MARKET_BANNER_FILTER_LABEL_KEYS, PAGE_NAME, BANNER_NAME } from "../constants";
+import { PAGE_NAME, BANNER_NAME } from "../constants";
 
 export type MarketBannerFilterOption = {
   value: MarketBannerRanking;
-  labelKey: string;
   disabled?: boolean;
   descriptionKey?: string;
 };
@@ -30,12 +29,11 @@ export function useMarketBannerFilter(): MarketBannerFilterController {
 
   const options = useMemo<MarketBannerFilterOption[]>(
     () => [
-      { value: "trending", labelKey: MARKET_BANNER_FILTER_LABEL_KEYS.trending },
-      { value: "gainers", labelKey: MARKET_BANNER_FILTER_LABEL_KEYS.gainers },
-      { value: "losers", labelKey: MARKET_BANNER_FILTER_LABEL_KEYS.losers },
+      { value: "trending" },
+      { value: "gainers" },
+      { value: "losers" },
       {
         value: "favorites",
-        labelKey: MARKET_BANNER_FILTER_LABEL_KEYS.favorites,
         disabled: !hasStarredAssets,
         descriptionKey: hasStarredAssets ? undefined : "marketBanner.filter.noFavorites",
       },

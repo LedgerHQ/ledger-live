@@ -13,15 +13,9 @@ const eligibleProviders = [
 const swapTokenApprovalFlowTestConfig = {
   fromAccount: TokenAccount.ETH_USDC_1,
   toAccount: Account.ETH_1,
-  providers: eligibleProviders,
+  swapProviders: eligibleProviders,
   tmsLinks: ["B2CQA-5632"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
-runSwapTokenApprovalFlow(
-  swapTokenApprovalFlowTestConfig.fromAccount,
-  swapTokenApprovalFlowTestConfig.toAccount,
-  swapTokenApprovalFlowTestConfig.providers,
-  swapTokenApprovalFlowTestConfig.tmsLinks,
-  swapTokenApprovalFlowTestConfig.tags,
-);
+runSwapTokenApprovalFlow(swapTokenApprovalFlowTestConfig);

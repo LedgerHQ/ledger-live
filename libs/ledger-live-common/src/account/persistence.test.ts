@@ -249,6 +249,31 @@ describe("account persistence predicates", () => {
       expect(accountPersistedStateChanged(before, after)).toBe(true);
       expect(accountPersistedStateChanged(after, resynced)).toBe(false);
     });
+
+    it.each([
+      ["scanCheckpoint", { hash: "a", height: 5 }, { hash: "b", height: 9 }],
+      ["replayTransactions", [{ hash: "a", height: 5 }], [{ hash: "b", height: 9 }]],
+    ])("returns true when only the Canton %s is set, moved or removed", (field, value, moved) => {
+      const base = genAccount("seed", { currency: Ethereum });
+      const withResources = (resources: Record<string, unknown>) => ({
+        ...base,
+        cantonResources: {
+          isOnboarded: true,
+          instrumentUtxoCounts: {},
+          pendingTransferProposals: [],
+          ...resources,
+        },
+      });
+      const without = withResources({});
+      const before = withResources({ [field]: value });
+
+      expect(accountPersistedStateChanged(without, before)).toBe(true);
+      expect(accountPersistedStateChanged(before, withResources({ [field]: moved }))).toBe(true);
+      expect(accountPersistedStateChanged(before, without)).toBe(true);
+      expect(
+        accountPersistedStateChanged(before, withResources({ [field]: structuredClone(value) })),
+      ).toBe(false);
+    });
   });
 
   describe("accountsPersistedStateChanged", () => {

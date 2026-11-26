@@ -131,7 +131,8 @@
         "src/preloader/index.ts",
         "src/renderer/webworkers/workers/*.ts",
         "src/webviewPreloader/dappPreloader.ts",
-        "src/webviewPreloader/index.ts"
+        "src/webviewPreloader/index.ts",
+        "src/main/rendererBridge.ts"
       ],
       "ignore": [
         "src/renderer/mockServiceWorker.js",

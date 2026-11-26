@@ -76,7 +76,8 @@ const countResults = testResults => {
 
 // Folded in as each pass ends, without the specs it deferred or the time specs waited for broadcast
 // locks, so neither skews the shard timings; a pass that never finishes leaves no skipped stub.
-const foldPassOutput = async (pass, deferredSpecs, lockWaits) => {
+const foldPassOutput = async options => {
+  const { pass, deferredSpecs, lockWaits } = options;
   const output = await fs.readJson(fromE2eDir(passOutputFile(pass))).catch(() => undefined);
   if (!output) return;
   const previous =
@@ -97,8 +98,9 @@ const foldPassOutput = async (pass, deferredSpecs, lockWaits) => {
   });
 };
 
-const testOn = (configuration, args, env) =>
-  $({ cwd: E2E_DIR, env })`pnpm exec detox test\
+const testOn = options => {
+  const { configuration, args, env } = options;
+  return $({ cwd: E2E_DIR, env })`pnpm exec detox test\
       -c ${configuration} \
       --loglevel warn \
       --record-logs failing \
@@ -107,6 +109,7 @@ const testOn = (configuration, args, env) =>
       --headless \
       --retries 1 \
       ${args}`.nothrow();
+};
 
 const testWithLockDeferrals = async specArgs => {
   const { LOCK_DEFERRAL_PASSES, runWithDeferralPasses } = loadDeferralPasses();
@@ -118,13 +121,14 @@ const testWithLockDeferrals = async specArgs => {
       console.log(`Pass ${number}: ${items.length} spec(s) whose broadcast accounts were busy`);
     }
     const outputArgs = outputFile ? ["--json", `--outputFile=${passOutputFile(number)}`] : [];
-    const result = await testOn(configuration, [...(items ?? specArgs), ...outputArgs], {
-      ...process.env,
-      ...env,
+    const result = await testOn({
+      configuration,
+      args: [...(items ?? specArgs), ...outputArgs],
+      env: { ...process.env, ...env },
     });
     const deferred = mayDefer ? await takeDeferredSpecs() : [];
     const lockWaits = await takeExclusiveLockWaits();
-    if (outputFile) await foldPassOutput(number, deferred, lockWaits);
+    if (outputFile) await foldPassOutput({ pass: number, deferredSpecs: deferred, lockWaits });
     return { exitCode: result.exitCode, deferred };
   };
   process.exitCode = await runWithDeferralPasses(runPass, LOCK_DEFERRAL_PASSES);

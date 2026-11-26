@@ -3,4 +3,4 @@ import { runStakeTezos } from "@e2e/specs/stake/stake";
 
 // XTZ_2 (index 1) is DELEGATED + STAKED: Earn opens the stake amount step directly.
 const delegation = new Delegate(Account.XTZ_2, "0.005", "Ledger by Kiln");
-runStakeTezos(delegation, ["B2CQA-5917"]);
+runStakeTezos({ delegation, tmsLinks: ["B2CQA-5917"] });

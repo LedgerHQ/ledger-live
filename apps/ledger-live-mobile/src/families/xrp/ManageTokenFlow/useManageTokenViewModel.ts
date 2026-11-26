@@ -6,11 +6,14 @@ import {
   useGetIssuerFeeQuery,
   useGetNetworkReservesQuery,
 } from "@ledgerhq/live-common/families/xrp/state-manager/api";
+import {
+  formatIssuerFee,
+  getManagedTokenAccounts,
+} from "@ledgerhq/live-common/families/xrp/tokens";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { useLocale } from "~/context/Locale";
-import { formatIssuerFee, getManageableTokenAccounts } from "../utils";
 import type { XrpManageTokenFlowParamList } from "./types";
 
 export type Props = BaseComposite<
@@ -59,7 +62,7 @@ export function useManageTokenViewModel({ navigation, route }: Props) {
     deleting,
     onDeleteDone,
     onDeleteSuccess,
-    tokenAccounts: account ? getManageableTokenAccounts(account) : [],
+    tokenAccounts: account ? getManagedTokenAccounts(account) : [],
     onEdit,
     onDelete: setDeleting,
   };

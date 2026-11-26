@@ -39,6 +39,7 @@ export function BalanceLimitScreen({ settings, onClose }: Props) {
         appearance="base"
         size="lg"
         isFull
+        loading={settings.bridgePending}
         disabled={settings.isLimitConfirmDisabled}
         onClick={settings.onLimitConfirm}
         data-testid="xrp-trust-limit-confirm"

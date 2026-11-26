@@ -12,6 +12,8 @@
       "default": "./src/index.ts"
     },
     "./web": "./src/web/index.web.ts",
+    "./native": "./src/native/index.native.ts",
+    "./testing": "./src/ports/testing/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -25,6 +27,7 @@
   },
   "dependencies": {
     "@features/platform-feature-flags": "workspace:*",
+    "@shared/analytics-react": "workspace:*",
     "@shared/i18n": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*",
     "zod": "catalog:"
@@ -34,6 +37,8 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/feature-flags": "workspace:*",
     "@support/jest": "workspace:*",
     "@support/lint": "workspace:*",
     "@swc/core": "catalog:",
@@ -53,6 +58,8 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
+    "react-native-safe-area-context": "catalog:",
+    "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
     "typescript": "catalog:"
   },
@@ -61,10 +68,14 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
-    "react-native": "catalog:"
+    "react-native": "catalog:",
+    "react-native-safe-area-context": "catalog:"
   },
   "peerDependenciesMeta": {
     "react-native": {
+      "optional": true
+    },
+    "react-native-safe-area-context": {
       "optional": true
     },
     "@ledgerhq/lumen-ui-react": {

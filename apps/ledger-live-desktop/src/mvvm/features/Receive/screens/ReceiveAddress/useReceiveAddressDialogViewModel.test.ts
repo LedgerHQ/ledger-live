@@ -9,12 +9,16 @@ import {
 import { mockAccountEntry } from "@domain/entity-account/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { mockReceiveFamilyConfigInput } from "@features/flow-receive/types.mock";
+import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { renderHook } from "tests/testSetup";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { VerifyAddressExecutorLWD } from "../../verifyAddressIntent/VerifyAddressExecutorLWD";
 import { useReceiveAddressDialogViewModel } from "./useReceiveAddressDialogViewModel";
 
 jest.mock("~/renderer/families", () => ({ useLLDCoinFamily: jest.fn() }));
+jest.mock("@ledgerhq/live-common/notifications/ServiceStatusProvider/index", () => ({
+  useFilteredServiceStatus: jest.fn(() => ({ incidents: [] })),
+}));
 
 const entry = LegacyAccountEntrySchema.parse(mockAccountEntry());
 const ethAccount: Account = {
@@ -61,5 +65,47 @@ describe("useReceiveAddressDialogViewModel", () => {
     expect(receiveAddressConfig).toHaveBeenCalledWith(
       expect.objectContaining({ descriptor, asset, legacyAccount: ethAccount }),
     );
+  });
+
+  it("should give the incidents the app keeps for the network", () => {
+    jest.mocked(useLLDCoinFamily).mockReturnValue({});
+    jest.mocked(useFilteredServiceStatus).mockReturnValue({
+      incidents: [
+        { name: "Ethereum degraded", incident_updates: [{ body: "Investigating" }] },
+        { name: "Explorer down" },
+      ],
+    } as unknown as ReturnType<typeof useFilteredServiceStatus>);
+    const { result } = renderViewModel();
+
+    expect(useFilteredServiceStatus).toHaveBeenCalledWith({ tickers: ["ETH"], entryPoint: "flow" });
+    expect(result.current.serviceIncidents).toEqual([
+      { title: "Ethereum degraded", description: [{ text: "Investigating" }] },
+      { title: "Explorer down", description: undefined },
+    ]);
+  });
+
+  it("should keep the Ledger links of an incident update, and others as text", () => {
+    jest.mocked(useLLDCoinFamily).mockReturnValue({});
+    jest.mocked(useFilteredServiceStatus).mockReturnValue({
+      incidents: [
+        {
+          name: "Ethereum degraded",
+          incident_updates: [
+            {
+              body: 'Delays. See <a href="https://support.ledger.com/x">our article</a> or <a href="https://evil.example">this</a>.',
+            },
+          ],
+        },
+      ],
+    } as unknown as ReturnType<typeof useFilteredServiceStatus>);
+    const { result } = renderViewModel();
+
+    expect(result.current.serviceIncidents?.[0].description).toEqual([
+      { text: "Delays. See " },
+      { text: "our article", url: "https://support.ledger.com/x" },
+      { text: " or " },
+      { text: "this" },
+      { text: "." },
+    ]);
   });
 });

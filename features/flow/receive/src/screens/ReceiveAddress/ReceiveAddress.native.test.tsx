@@ -1,14 +1,28 @@
 import React, { type ComponentProps } from "react";
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react-native";
+import {
+  fireEvent,
+  render,
+  screen,
+  userEvent,
+  waitFor,
+  within,
+} from "@testing-library/react-native";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
   makeReceiveTestStore,
+  testOpenExternal,
   receiveTestWrapper,
   testAccountUUID,
   testReceive,
 } from "../../__tests__/receiveTestStore";
+import { RECEIVE_URLS } from "../../urls";
 import { ReceiveAddress } from "./ReceiveAddress";
+
+jest.mock("react-native", () => ({
+  ...jest.requireActual("react-native"),
+  useWindowDimensions: () => ({ width: 390, height: 844, scale: 3, fontScale: 1 }),
+}));
 
 jest.mock("@shared/share-sheet", () => ({
   captureView: jest.fn(async () => "file://card.png"),
@@ -181,13 +195,71 @@ describe("ReceiveAddress (Native)", () => {
     expect(within(card).getByText("Receive ETH")).toBeTruthy();
   });
 
-  it("lays the zones out in screen order", async () => {
-    renderScreen();
-    await screen.findByTestId("receive-address-summary");
+  it("shows the family's notices and links them to their support article", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      getFamilyConfig: () => ({ notices: ["tronInactiveAccount"] }),
+    });
+    const user = userEvent.setup();
 
-    expect(screen.getAllByTestId(/^receive-address-zone-/).map(zone => zone.props.testID)).toEqual([
-      "receive-address-zone-notices",
-      "receive-address-zone-extras",
-    ]);
+    expect(await screen.findByTestId("receive-address-notice-tronInactiveAccount")).toBeTruthy();
+    await user.press(screen.getByText("Learn more"));
+    expect(testOpenExternal).toHaveBeenCalledWith(RECEIVE_URLS.tronInactiveAccount);
+  });
+
+  it("shows a service incident in a bottom sheet over the screen, with its links, until Continue", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      serviceIncidents: [
+        {
+          title: "Ethereum degraded",
+          description: [
+            { text: "Investigating. See " },
+            { text: "this article", url: "https://support.ledger.com/article" },
+          ],
+        },
+      ],
+    });
+    const user = userEvent.setup();
+
+    expect(await screen.findByText("Ethereum degraded")).toBeTruthy();
+    await user.press(screen.getByText("this article"));
+    expect(testOpenExternal).toHaveBeenCalledWith("https://support.ledger.com/article");
+
+    await user.press(screen.getByText("Continue"));
+    expect(screen.queryByTestId("receive-address-service-status")).toBeNull();
+  });
+
+  it("opens the help in a bottom sheet, each question opening its article, until closed", async () => {
+    renderScreen();
+    const user = userEvent.setup();
+
+    await user.press(await screen.findByText("Need support? Get help"));
+    expect(screen.getByTestId("receive-address-help-panel")).toBeTruthy();
+
+    await user.press(screen.getByText("How to receive from exchanges?"));
+    expect(testOpenExternal).toHaveBeenCalledWith(RECEIVE_URLS.receiveFromExchange);
+
+    await user.press(screen.getByTestId("receive-address-help-sheet-dismiss"));
+    expect(screen.queryByTestId("receive-address-help-panel")).toBeNull();
+  });
+
+  it("shows the help card under an error too", async () => {
+    const receive = jest.fn(async () => {
+      throw new Error("offline");
+    });
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
+
+    expect(await screen.findByTestId("receive-address-error")).toBeTruthy();
+    expect(screen.getByTestId("receive-address-help-card")).toBeTruthy();
+  });
+
+  it("opens the memo bottom sheet from its card", async () => {
+    const receive = jest.fn(async () => mockAccountReceive({ memo: { type: "tag" } }));
+    renderScreen(jest.fn(), makeReceiveTestStore({ receive }));
+
+    fireEvent.press(await screen.findByTestId("receive-address-memo-card"));
+    expect(screen.getByTestId("receive-address-memo-panel")).toBeTruthy();
+
+    fireEvent.press(screen.getByText("Got it"));
+    expect(screen.queryByTestId("receive-address-memo-panel")).toBeNull();
   });
 });

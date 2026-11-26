@@ -6,7 +6,11 @@ import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
-import { ZonePlaceholder } from "./components/ZonePlaceholder";
+import { HelpPanel } from "./components/HelpPanel";
+import { MemoPanel } from "./components/MemoPanel";
+import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
+import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
+import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
 export function ReceiveAddressView({
@@ -18,7 +22,12 @@ export function ReceiveAddressView({
   address,
   actions,
   isVerifying,
-  noticesPlaceholderLabel,
+  notices,
+  serviceStatus,
+  helpCard,
+  helpPanel,
+  memoCard,
+  memoPanel,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
@@ -31,12 +40,42 @@ export function ReceiveAddressView({
     if (isHintOpen) event.preventDefault();
   };
   const closeDialog = () => handleOpenChange(false);
+  const incidentContent = serviceStatus && (
+    <>
+      <DialogHeader density="compact" onClose={closeDialog} />
+      <DialogBody>
+        <ServiceStatusPanel serviceStatus={serviceStatus} />
+      </DialogBody>
+    </>
+  );
+  const memoContent = memoPanel && (
+    <>
+      <DialogHeader density="compact" onBack={memoPanel.onClose} onClose={closeDialog} />
+      <DialogBody>
+        <MemoPanel memoPanel={memoPanel} />
+      </DialogBody>
+    </>
+  );
+  const helpContent = helpPanel && (
+    <>
+      <DialogHeader
+        density="expanded"
+        title={helpPanel.title}
+        onBack={helpPanel.onClose}
+        onClose={closeDialog}
+      />
+      <DialogBody>
+        <HelpPanel helpPanel={helpPanel} />
+      </DialogBody>
+    </>
+  );
 
   return (
     <Dialog open={!isVerifying} onOpenChange={handleOpenChange} height="fit">
       <DialogContent
         // The network label describes the dialog once known; until then there is no description.
         {...(!networkLabel && { "aria-describedby": undefined })}
+        {...(serviceStatus && { "aria-label": serviceStatus.title })}
         data-testid="receive-address"
         onPointerDownOutside={keepOpenWhileHint}
         onInteractOutside={keepOpenWhileHint}
@@ -46,65 +85,68 @@ export function ReceiveAddressView({
           <div aria-hidden className="absolute inset-0 z-table-header bg-canvas-overlay" />
         ) : null}
         <DialogBackgroundToneProvider>
-          {addressSelection ? (
-            <>
-              <DialogHeader
-                density="expanded"
-                title={addressSelection.title}
-                onClose={closeDialog}
-              />
-              <DialogBody>
-                <AddressOptionList
-                  options={addressSelection.options}
-                  onSelect={addressSelection.onSelect}
+          {incidentContent ??
+            memoContent ??
+            helpContent ??
+            (addressSelection ? (
+              <>
+                <DialogHeader
+                  density="expanded"
+                  title={addressSelection.title}
+                  onClose={closeDialog}
                 />
-              </DialogBody>
-            </>
-          ) : (
-            <>
-              <DialogHeader
-                density="compact"
-                title={title}
-                description={networkLabel}
-                onBack={onBack}
-                onClose={closeDialog}
-              />
-              <DialogBody
-                className={`flex flex-col gap-24 ${isHintOpen ? "overflow-visible" : "overflow-y-auto"}`}
-              >
-                {error ? (
-                  <InfoState
-                    preset="error"
-                    size="hug"
-                    title={error.title}
-                    description={error.description}
-                    primaryCta={{
-                      label: error.retryLabel,
-                      onPress: error.onRetry,
-                      testID: "receive-address-retry",
-                    }}
-                    testID="receive-address-error"
+                <DialogBody>
+                  <AddressOptionList
+                    options={addressSelection.options}
+                    onSelect={addressSelection.onSelect}
                   />
-                ) : (
-                  <>
-                    {isLoading || !address ? (
-                      <AddressSummarySkeleton />
-                    ) : (
-                      <AddressSummary
-                        address={address}
-                        onCopy={actions.copy?.onPressCode}
-                        copyLabel={actions.copy?.label}
-                        copyKey={actions.copy?.buttonPresses}
-                      />
-                    )}
-                    <AddressActions actions={actions} />
-                    <ZonePlaceholder zone="notices" label={noticesPlaceholderLabel} />
-                  </>
-                )}
-                <ZonePlaceholder zone="extras" />
-              </DialogBody>
-            </>
-          )}
+                </DialogBody>
+              </>
+            ) : (
+              <>
+                <DialogHeader
+                  density="compact"
+                  title={title}
+                  description={networkLabel}
+                  onBack={onBack}
+                  onClose={closeDialog}
+                />
+                <DialogBody
+                  className={`flex flex-col gap-24 ${isHintOpen ? "overflow-visible" : "overflow-y-auto"}`}
+                >
+                  {error ? (
+                    <InfoState
+                      preset="error"
+                      size="hug"
+                      title={error.title}
+                      description={error.description}
+                      primaryCta={{
+                        label: error.retryLabel,
+                        onPress: error.onRetry,
+                        testID: "receive-address-retry",
+                      }}
+                      testID="receive-address-error"
+                    />
+                  ) : (
+                    <>
+                      {isLoading || !address ? (
+                        <AddressSummarySkeleton />
+                      ) : (
+                        <AddressSummary
+                          address={address}
+                          onCopy={actions.copy?.onPressCode}
+                          copyLabel={actions.copy?.label}
+                          copyKey={actions.copy?.buttonPresses}
+                        />
+                      )}
+                      <AddressActions actions={actions} />
+                      <ReceiveAddressNotices notices={notices} />
+                    </>
+                  )}
+                  <ReceiveAddressExtras memoCard={memoCard} helpCard={helpCard} />
+                </DialogBody>
+              </>
+            ))}
         </DialogBackgroundToneProvider>
       </DialogContent>
     </Dialog>

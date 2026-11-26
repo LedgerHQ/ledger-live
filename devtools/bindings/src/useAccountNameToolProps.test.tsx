@@ -6,9 +6,10 @@ import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/en
 import { accountNamesSlice, setAccountName } from "@domain/entity-account-name";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { computeAccountUUID } from "@domain/entity-account/schema.mock";
+import { AccountRedactionProvider, type AccountRedaction } from "./accountRedaction";
 import { useAccountNameToolProps } from "./useAccountNameToolProps";
 
-function setup() {
+function setup(redaction?: AccountRedaction) {
   const ethereum = mockAddressAccountDescriptor();
   const accountUUID = computeAccountUUID(ethereum);
   const store = configureStore({
@@ -26,7 +27,13 @@ function setup() {
   store.dispatch(setAccountName({ accountId: "eth", name: "Savings" }));
   store.dispatch(setAccountName({ accountId: "eth+usdc", name: "Stables" }));
   const wrapper = ({ children }: PropsWithChildren) => (
-    <Provider store={store}>{children}</Provider>
+    <Provider store={store}>
+      {redaction ? (
+        <AccountRedactionProvider value={redaction}>{children}</AccountRedactionProvider>
+      ) : (
+        children
+      )}
+    </Provider>
   );
   const legacyAccounts = [
     { id: "eth", type: "Account", currency: { name: "Ethereum" }, index: 0 },
@@ -39,7 +46,7 @@ function setup() {
 describe("useAccountNameToolProps", () => {
   it("lists each account with its name or default, then the names of unlisted accounts", () => {
     const { result, accountUUID } = setup();
-    expect(result.current.names).toEqual([
+    expect(result.current.names.map(({ key: _key, ...row }) => row)).toEqual([
       { legacyId: "eth", accountUUID, name: "Savings", isDefault: false },
       { legacyId: "btc", accountUUID: undefined, name: "Bitcoin 2", isDefault: true },
       { legacyId: "eth+usdc", accountUUID: undefined, name: "Stables", isDefault: false },
@@ -50,5 +57,21 @@ describe("useAccountNameToolProps", () => {
     const { result, accountUUID } = setup();
     expect(result.current.nameOf(accountUUID)).toBe("Savings");
     expect(result.current.nameOf("not-a-uuid")).toBeUndefined();
+  });
+
+  it("shows the legacy ids through the host's redaction, still matching each account", () => {
+    const { result, accountUUID } = setup({ accountId: id => `hidden ${id}` });
+    expect(result.current.names.map(({ key: _key, ...row }) => row)).toEqual([
+      { legacyId: "hidden eth", accountUUID, name: "Savings", isDefault: false },
+      { legacyId: "hidden btc", accountUUID: undefined, name: "Bitcoin 2", isDefault: true },
+      { legacyId: "hidden eth+usdc", accountUUID: undefined, name: "Stables", isDefault: false },
+    ]);
+  });
+
+  it("keys each row apart when the redaction shows a parent and its tokens alike", () => {
+    const { result } = setup({ accountId: () => "hidden" });
+    const keys = result.current.names.map(({ key }) => key);
+    expect(new Set(keys).size).toBe(keys.length);
+    expect(keys.join()).not.toMatch(/eth|btc|usdc/);
   });
 });

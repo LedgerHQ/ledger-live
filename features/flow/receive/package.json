@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-receive",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Receive flow for Ledger Wallet",
   "main": "src/index.ts",
@@ -40,9 +40,11 @@
     "@shared/analytics": "workspace:*",
     "@shared/feature-flags": "workspace:*",
     "@shared/i18n": "workspace:*",
+    "@shared/linking": "workspace:*",
     "@shared/share-sheet": "workspace:*",
     "@shared/ui-animated-qr-code": "workspace:*",
-    "@shared/ui-info-state": "workspace:*"
+    "@shared/ui-info-state": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
     "@domain/api-account-data": "workspace:*",

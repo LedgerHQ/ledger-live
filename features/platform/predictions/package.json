@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-predictions",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "description": "Predictions live app id and the Wallet API custom handlers for its onboarding sheet, account binding and buy order signing",
   "main": "src/index.ts",

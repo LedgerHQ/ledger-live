@@ -309,6 +309,7 @@
     "title": "Account settings",
     "menu": {
       "changeName": "Change name",
+      "manageAssets": "Manage assets",
       "viewAdvancedLogs": "View advanced logs",
       "viewExplorer": "View in explorer",
       "removeAccount": "Remove account from portfolio"
@@ -2136,7 +2137,7 @@
     },
     "xrp": {
       "title": "Tokens",
-      "cta": "Add token",
+      "cta": "Add",
       "placeholder": "You can add tokens to your {{currencyName}} account.",
       "link": "Learn more about XRP Ledger tokens",
       "seeTokens": "Show tokens ({{tokenCount}})",
@@ -2818,10 +2819,19 @@
       "learnMore": "Learn more"
     },
     "serviceStatus": {
-      "cta": "See details",
-      "title": "Service incident"
+      "continue": "Continue"
     },
-    "gotIt": "Got it"
+    "help": {
+      "cardTitle": "Need support? Get help",
+      "title": "Get help",
+      "receiveFromExchange": "How to receive from exchanges?",
+      "receiveSecurely": "How to receive securely?"
+    },
+    "memoTag": {
+      "title": "Need a Tag/Memo?",
+      "description": "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+      "gotIt": "Got it"
+    }
   },
   "send": {
     "title": "Send",
@@ -4366,11 +4376,32 @@
   "xrp": {
     "addToken": {
       "title": "Add token",
+      "selectAsset": "Select asset",
+      "noAssets": "No assets available",
+      "review": {
+        "title": "Review asset details",
+        "account": "Account",
+        "asset": "Asset",
+        "viewIssuer": "View issuer in explorer",
+        "issuerFeeValue": "{{fee}} per transaction",
+        "networkFee": "Network fee",
+        "lockedAmountTooltip": "XRP amount added to your account's reserve to hold this asset.",
+        "notEnoughBalance": {
+          "title": "Not enough balance",
+          "description": "You need at least {{amount}} to add this asset.",
+          "swap": "Get XRP"
+        }
+      },
+      "result": {
+        "successTitle": "Asset added",
+        "successDescription": "You can now receive and use this asset.",
+        "errorTitle": "Failed to add asset"
+      },
       "steps": {
         "token": {
           "title": "Token",
           "selectLabel": "Choose a token",
-          "empty": "No token is available to add to this account.",
+          "empty": "You've already added all assets available on XRPL for this account.",
           "loadError": "The token list couldn't load.",
           "info": "Adding a token sends a transaction that pays a network fee and reserves XRP while you hold the token. It appears in your transaction history."
         },
@@ -4386,7 +4417,7 @@
           "token": "Token",
           "issuer": "Issuer",
           "issuerFee": "Issuer fee",
-          "issuerFeeTooltip": "The share of each transfer between holders that the issuer takes.",
+          "issuerFeeTooltip": "A percentage fee set by the asset's issuer, charged in this asset each time it's transferred.",
           "issuerFeeError": "Couldn't fetch issuer fee details.",
           "notEnoughReserve": "You need at least {{minimumAmount}} available to add this token.",
           "receive": "Receive"
@@ -4421,22 +4452,23 @@
       "cta": "Manage",
       "title": "Manage assets",
       "tokenType": "Token type",
-      "tokenTypeTooltip": "A trust line (IOU) has a balance limit and a rippling setting. A Multi Purpose Token (MPT) has no settings.",
-      "iou": "Trust Line (IOU)",
-      "mpt": "Multi Purpose Token",
-      "transferFee": "Transfer fee",
+      "tokenTypeTooltip": "The standard used to issue this asset on XRPL.",
+      "iou": "Trust Line",
+      "mpt": "Multi-Purpose Token (MPT)",
+      "issuerFee": "Issuer fee",
       "transferFeeUnavailable": "Couldn't load",
       "lockedAmount": "Locked amount",
       "lockedAmountUnavailable": "Couldn't load",
       "balanceLimit": "Balance limit",
-      "ripplingTooltip": "Rippling lets other users' payments move your balance between tokens with the same currency code.",
+      "balanceLimitTooltip": "The maximum amount of this asset your account can hold.",
+      "ripplingTooltip": "If activated, your balance can be used to route other users' payments, which may exchange it for the same asset from a different issuer.",
       "activated": "Activated",
       "deactivated": "Deactivated",
       "edit": "Edit",
       "delete": "Delete",
       "editAsset": {
         "title": "Edit details",
-        "limitDescription": "Select the maximum balance you can hold for this asset.",
+        "limitDescription": "Select the maximum amount of this asset your account can hold.",
         "setMax": "Set to maximum",
         "success": "Token settings updated",
         "gotIt": "Got it"
@@ -5694,8 +5726,49 @@
       "general": "General",
       "assetManagement": "Asset management",
       "security": "Security",
+      "notifications": "Notifications",
       "privacy": "Privacy",
       "about": "About"
+    },
+    "security": {
+      "hideBalance": {
+        "title": "Hide balance",
+        "description": "Hide amounts for all balances. You can also access it from your top main navigation."
+      },
+      "appLock": {
+        "title": "App lock",
+        "description": "Set a password to open the app."
+      },
+      "changePassword": {
+        "title": "Change password",
+        "description": "Replace the password that opens the app.",
+        "action": "Change"
+      },
+      "autoLock": {
+        "title": "Auto-lock",
+        "description": "Automatically lock Ledger Wallet when inactive.",
+        "options": {
+          "oneMinute": "1 minute",
+          "tenMinutes": "10 minutes",
+          "thirtyMinutes": "30 minutes",
+          "oneHour": "1 hour",
+          "never": "Never"
+        }
+      },
+      "biometrics": {
+        "description": "Use {{biometric}} to open the app.",
+        "disabledDescription": "To enable {{biometric}}, turn on \"App lock\".",
+        "kind": {
+          "faceId": "Face ID",
+          "touchId": "Touch ID",
+          "biometrics": "Biometrics"
+        }
+      },
+      "mevProtection": {
+        "title": "MEV protection",
+        "description": "Enable for more reliable transactions on Ethereum.",
+        "learnMore": "Learn more"
+      }
     },
     "discreet": "Toggle discreet mode",
     "tabs": {

@@ -1,4 +1,4 @@
-import { assertSafeUrl } from "./assertSafeUrl";
+import { assertSafeUrl, isSafeUrl } from "./assertSafeUrl";
 
 describe("assertSafeUrl", () => {
   it("allows https URLs", () => {
@@ -27,5 +27,17 @@ describe("assertSafeUrl", () => {
 
   it("throws on empty string", () => {
     expect(() => assertSafeUrl("")).toThrow("Invalid URL");
+  });
+});
+
+describe("isSafeUrl", () => {
+  it("accepts the URLs the opener accepts", () => {
+    expect(isSafeUrl("https://support.ledger.com")).toBe(true);
+    expect(isSafeUrl("mailto:support@ledger.com")).toBe(true);
+  });
+
+  it("rejects the others without throwing", () => {
+    expect(isSafeUrl("http://support.ledger.com")).toBe(false);
+    expect(isSafeUrl("not-a-url")).toBe(false);
   });
 });

@@ -65,6 +65,21 @@ import, as `features-flow` imports `@ledgerhq/lumen-lint-plugin`: Nx hashes that
 `lint`, and marks the package affected when it changes, only through that edge. Subtrees that keep their own config for now (the apps, the e2e
 suites, a few legacy `libs/` trees) are listed in the plugin's `exclusions.mjs`.
 
+## The account descriptor stays at the edges
+
+Code holds the `AccountUUID`. `@domain/entity-account-descriptor`, which carries the descriptor and
+its key, and `@domain/entity-account/descriptor`, which computes the `AccountUUID` from it, are
+restricted by `ACCOUNT_DESCRIPTOR` in `restricted-imports.mts`. They are exact `paths` names, so
+tests keep the `./schema.mock` entries. `base` and `features-flow` list them, and so do the desktop
+and mobile app configs, their `src/config/account-data-setup` files aside.
+
+`ACCOUNT_DESCRIPTOR_EDGES` lists the packages allowed to import it, as paths from the repo root:
+the account data router (`domain/api/account-data`), the legacy bridge (`domain/entity/account`),
+`features/platform/account-data`, discovery and the account sources. `base` turns each into an
+override below its layer root; `features-flow` does the same for its entries, keeping its own
+restrictions. A temporary entry carries a comment naming the ticket that removes it.
+`devtools`, `libs/ledger-live-common` and `apps/wallet-cli` are edges too and stay unrestricted.
+
 ## Rules
 
 ### `suffix-imports/no-platform-suffix`
@@ -217,6 +232,10 @@ eager, so importing it is reported like importing a family, `require("~/families
 other file of the folder is reported unless it is in `allow`. Without `familiesDir` only
 `coin-package` and `live-common-family` are checked.
 
+`coinFamilies.rules` holds the three rules of the plugin: `no-coin-specific-import`,
+`no-family-branch` and `no-currency-id-branch`. The two branch rules receive only `familiesDir`: their
+schema rejects `barrel` and `allow`.
+
 **Baseline.** An app starts from today's leaks with oxlint's own suppressions, from the app folder
 and with the paths `lint:ci` uses: `oxlint --suppress-all` writes `oxlint-suppressions.json`, one
 count per file and per rule. These behaviours are covered by the rule's tests (oxlint 1.93.0):
@@ -261,8 +280,8 @@ name, which keeps coin behaviour inside `families/`. A family name is a director
   shadowing variable of the same name is not told apart.
 
 Files inside the app's families folder are not checked, since narrowing on the family is what they are
-for. The option is the one of `no-coin-specific-import`: `["error", { familiesDir: "src/renderer/families" }]`.
-Without it every file is checked.
+for. The option is the `familiesDir` of `no-coin-specific-import`, which `coinFamiliesLint` passes on:
+`["error", { familiesDir: "src/renderer/families" }]`. Without it every file is checked.
 
 It does not report a comparison of two family expressions (`a.family === b.family`), a `typeof`
 check, a name that is not a family, or a lookup in an object keyed by family.

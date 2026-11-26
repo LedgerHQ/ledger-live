@@ -79,6 +79,7 @@ export {
   type ConnectKnownOrNewDeviceUseCaseInput,
   type ConnectKnownOrNewDeviceUseCaseOutput,
 } from "./connectKnownOrNewDevice/connectKnownOrNewDeviceUseCase";
+export { connectedDeviceToDevice } from "./connectKnownOrNewDevice/buildDeviceList";
 export { toDevice } from "./connectNewDevice/utils";
 export { activeDeviceSessionSubject } from "./config/activeDeviceSession";
 export { dmkToLedgerDeviceIdMap, ledgerToDmkDeviceIdMap } from "./config/dmkToLedgerDeviceIdMap";
@@ -91,6 +92,8 @@ export {
   DeviceFlowFailureType,
   getConnectDeviceFailure,
   getConnectDeviceSubError,
+  getConnectNewDeviceFailure,
+  getConnectivityErrorFailure,
   getDeviceDisconnectedFailure,
   getDeviceFlowFailureProperties,
   getDeviceflowCancelEventName,

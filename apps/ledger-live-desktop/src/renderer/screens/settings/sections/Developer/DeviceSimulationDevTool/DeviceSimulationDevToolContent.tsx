@@ -4,15 +4,6 @@ import { Button } from "@ledgerhq/lumen-ui-react";
 import { DeveloperToggleRow } from "../components/DeveloperToggleRow";
 import type { DeviceSimulationDevToolViewModel } from "./useDeviceSimulationDevToolViewModel";
 
-const DEVICE_LABEL_I18N_KEYS = {
-  nanoS: "settings.developer.deviceSimulationDevTool.devices.nanoS",
-  nanoSP: "settings.developer.deviceSimulationDevTool.devices.nanoSP",
-  nanoX: "settings.developer.deviceSimulationDevTool.devices.nanoX",
-  stax: "settings.developer.deviceSimulationDevTool.devices.stax",
-  europa: "settings.developer.deviceSimulationDevTool.devices.europa",
-  apex: "settings.developer.deviceSimulationDevTool.devices.apex",
-} as const;
-
 type Props = Readonly<
   DeviceSimulationDevToolViewModel & {
     expanded: boolean;
@@ -32,7 +23,9 @@ export function DeviceSimulationDevToolContent({
 
   const currentHistoryDisplay =
     currentHistoryLabels.length > 0
-      ? currentHistoryLabels.map(labelKey => t(DEVICE_LABEL_I18N_KEYS[labelKey])).join(", ")
+      ? currentHistoryLabels
+          .map(labelKey => t(`settings.developer.deviceSimulationDevTool.devices.${labelKey}`))
+          .join(", ")
       : t("settings.developer.deviceSimulationDevTool.none");
 
   return (
@@ -55,7 +48,7 @@ export function DeviceSimulationDevToolContent({
               <DeveloperToggleRow
                 key={model.id}
                 name={`device-simulation-${model.id}`}
-                label={t(DEVICE_LABEL_I18N_KEYS[model.labelKey])}
+                label={t(`settings.developer.deviceSimulationDevTool.devices.${model.labelKey}`)}
                 selected={isDeviceSeen(model.id)}
                 onChange={() => toggleDevice(model.id, !isDeviceSeen(model.id))}
               />

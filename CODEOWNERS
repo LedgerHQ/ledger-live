@@ -46,6 +46,8 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 # Platform — shared (explicit overrides)
 /shared/analytics/                                       @ledgerhq/platform
 /shared/analytics-react/                                 @ledgerhq/platform
+/shared/observability-operations/                        @ledgerhq/platform
+/shared/observability-operations-react/                  @ledgerhq/platform
 /shared/feature-flags                                    @ledgerhq/platform
 /shared/schema-primitives                                @ledgerhq/platform
 /shared/api-services/                                    @ledgerhq/platform
@@ -147,6 +149,8 @@ features/flow/account-detail-notices/                    @ledgerhq/wallet-xp
 features/flow/account-detail-settings/                   @ledgerhq/wallet-xp
 features/flow/history-export/                            @ledgerhq/wallet-xp
 features/flow/settings/                                  @ledgerhq/wallet-xp
+features/flow/settings-notifications/                    @ledgerhq/wallet-xp
+features/flow/settings-security/                         @ledgerhq/wallet-xp
 features/platform/account-analytics/                     @ledgerhq/wallet-xp
 features/platform/quick-actions/                         @ledgerhq/wallet-xp
 
@@ -214,6 +218,8 @@ apps/ledger-live-mobile/src/mvvm/contexts/__integrations__/WaitForAppReady.integ
 .github/workflows/test-coin-modules-integ.yml                       @ledgerhq/coin-integration
 .github/workflows/notify-e2e-required-reusable.yml                  @ledgerhq/coin-integration @ledgerhq/platform
 apps/**/families/                                                   @ledgerhq/coin-integration
+apps/ledger-live-desktop/oxlint-suppressions.json                   @ledgerhq/coin-integration
+apps/ledger-live-mobile/oxlint-suppressions.json                    @ledgerhq/coin-integration
 apps/ledger-live-mobile/src/components/DelegationDrawer.tsx         @ledgerhq/coin-integration
 apps/cli/src/commands/blockchain                                    @ledgerhq/coin-integration
 libs/coin-*/                                                        @ledgerhq/coin-integration
@@ -272,6 +278,8 @@ domain/api/market-index-fear-and-greed/                  @ledgerhq/wallet-xp
 domain/api/market-index-altcoin-season/                  @ledgerhq/wallet-xp
 domain/entity/market-index-global/                       @ledgerhq/wallet-xp
 domain/api/market-index-global/                          @ledgerhq/wallet-xp
+domain/entity/market-chart/                              @ledgerhq/wallet-xp
+domain/api/market-chart/                                 @ledgerhq/wallet-xp
 features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
 
 ### ... market trending categories => @ledgerhq/wallet-xp ... ###
@@ -486,6 +494,7 @@ libs/ledger-live-common/src/deviceSDK/                             @ledgerhq/liv
 libs/device-core/                                                  @ledgerhq/live-devices
 features/platform/device-onboarding/                               @ledgerhq/engagement
 features/flow/device-onboarding-setup-info/                        @ledgerhq/engagement
+features/flow/device-onboarding-setup-stage/                       @ledgerhq/engagement
 features/platform/device-onboarding-analytics/                     @ledgerhq/engagement
 features/platform/device-intent/                                   @ledgerhq/live-devices
 features/platform/device-action-content/                           @ledgerhq/live-devices

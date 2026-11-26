@@ -1,0 +1,169 @@
+{
+  "src/helpers/accountModel.ts": {
+    "coin-families/no-currency-id-branch": {
+      "count": 3
+    }
+  },
+  "src/main/index.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/mvvm/features/AccountDetail/components/AssetsSection/AssetsSectionHeader/useAddAssetViewModel.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/mvvm/features/AccountDetail/components/FamilySection/useFamilyBlocksViewModel.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/mvvm/features/Accounts/components/PerpsAccountBanner/usePerpsAccountBannerViewModel.ts": {
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/mvvm/features/AddAccountDrawer/screens/AccountsWarning/useWarningConfig.tsx": {
+    "coin-families/no-currency-id-branch": {
+      "count": 2
+    }
+  },
+  "src/mvvm/features/AddAccountDrawer/screens/ScanAccounts/hooks/concordium/useConcordiumCreatableAccounts.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/mvvm/features/MemoTag/utils.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 3
+    },
+    "coin-families/no-family-branch": {
+      "count": 6
+    }
+  },
+  "src/mvvm/features/Predictions/signingIntent/signingRequests.ts": {
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/preloader/bridge/zcash.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/renderer/App.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/renderer/Default.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 6
+    }
+  },
+  "src/renderer/actions/general.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    },
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/renderer/components/DeviceAction/rendering.tsx": {
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/renderer/components/TransactionConfirm/index.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/renderer/drawers/OperationDetails/index.tsx": {
+    "coin-families/no-family-branch": {
+      "count": 3
+    }
+  },
+  "src/renderer/init.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 2
+    }
+  },
+  "src/renderer/modals/Receive/steps/StepAccount.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/renderer/modals/Receive/steps/StepReceiveFunds.tsx": {
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/renderer/modals/Receive/steps/StepReceiveStakingFlow.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/renderer/modals/Send/SendRecipientFields.tsx": {
+    "coin-families/no-family-branch": {
+      "count": 2
+    }
+  },
+  "src/renderer/modals/Send/steps/StepConfirmation.tsx": {
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/renderer/modals/Send/steps/StepRecipient.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/renderer/reducers/accounts.ts": {
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/renderer/reducers/rtkQueryApi.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 3
+    }
+  },
+  "src/renderer/screens/account/AccountHeaderActions.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/renderer/screens/account/EmptyStateAccount.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/renderer/screens/account/TokensList.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 2
+    },
+    "coin-families/no-currency-id-branch": {
+      "count": 2
+    },
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/renderer/screens/exchange/config.ts": {
+    "coin-families/no-currency-id-branch": {
+      "count": 2
+    }
+  },
+  "src/renderer/zcash.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 2
+    }
+  }
+}

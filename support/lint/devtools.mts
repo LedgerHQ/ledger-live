@@ -1,5 +1,6 @@
 import { defineConfig } from "oxlint";
 import base from "./base.mts";
+import { BIGNUMBER_NAMED_IMPORT } from "./restricted-imports.mts";
 
 export default defineConfig({
   extends: [base],
@@ -12,6 +13,8 @@ export default defineConfig({
     // Devtools talk to the developer through the console; that is the product, not a slip.
     "eslint/no-console": "off",
     "redux-slices/selectors-in-slice": "off",
+    // devtools is an edge: its tools show and generate account descriptors.
+    "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }],
   },
   overrides: [
     {

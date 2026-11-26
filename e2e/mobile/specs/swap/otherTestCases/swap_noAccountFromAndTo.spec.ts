@@ -18,11 +18,11 @@ const noAccountFromAndToTestConfig = {
   ],
 };
 
-runSwapWithoutAccountTest(
-  noAccountFromAndToTestConfig.account1,
-  noAccountFromAndToTestConfig.account2,
-  noAccountFromAndToTestConfig.testTitle,
-  noAccountFromAndToTestConfig.tmsLinks,
-  "noAccountFromAndTo",
-  noAccountFromAndToTestConfig.tags,
-);
+runSwapWithoutAccountTest({
+  asset1: noAccountFromAndToTestConfig.account1,
+  asset2: noAccountFromAndToTestConfig.account2,
+  testTitle: noAccountFromAndToTestConfig.testTitle,
+  tmsLinks: noAccountFromAndToTestConfig.tmsLinks,
+  event: "noAccountFromAndTo",
+  tags: noAccountFromAndToTestConfig.tags,
+});

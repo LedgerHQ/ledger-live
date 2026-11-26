@@ -1,7 +1,6 @@
 import { Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
-import uniqBy from "lodash/uniqBy";
 import type { TronCoinConfig } from "../config";
 import {
   fetchTronAccountTxsEndpointPage,
@@ -25,6 +24,7 @@ import {
   walksBefore,
 } from "./cursor";
 import { TronEmptyPage, TronPageServedTwice } from "../types/errors";
+import { aggregateTrc20Transfers } from "./aggregateTrc20Transfers";
 
 // A page is cut only between block timestamps, so a transaction is never split across pages.
 
@@ -64,7 +64,8 @@ export async function listOperations(
   }
 
   const { txs, next } = await cutPage(logger, config, order, { native, trc20 });
-  return { items: await toOperations(logger, config, address, txs), next };
+  const summedTxs = aggregateTrc20Transfers(txs, address);
+  return { items: await toOperations(logger, config, address, summedTxs), next };
 }
 
 async function cutPage(
@@ -155,12 +156,9 @@ function mergeEndpoints(
   nativeTxs: TrongridTxInfo[],
   trc20Txs: TrongridTxInfo[],
 ): TrongridTxInfo[] {
-  const oneTrc20RecordPerTx = uniqBy(trc20Txs, tx => tx.txID);
-  const trc20TxIds = new Set(oneTrc20RecordPerTx.map(tx => tx.txID));
+  const trc20TxIds = new Set(trc20Txs.map(tx => tx.txID));
   const nativeTxsWithoutTrc20Record = nativeTxs.filter(tx => !trc20TxIds.has(tx.txID));
-  return [...nativeTxsWithoutTrc20Record, ...oneTrc20RecordPerTx].sort(
-    compareTxsByTimestamp(order),
-  );
+  return [...nativeTxsWithoutTrc20Record, ...trc20Txs].sort(compareTxsByTimestamp(order));
 }
 
 async function toOperations(

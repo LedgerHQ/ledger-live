@@ -21,6 +21,7 @@ import {
   findStakeDeRegistration,
   findWithdrawal,
   getOperationType,
+  isFailedTransaction,
 } from "../logic";
 import { getNetworkParameters } from "../networks";
 import {
@@ -62,7 +63,7 @@ function buildTransactionInfo(
     fees: safeBigInt(tx.fees),
     feesPayer: senders.length === 1 ? senders[0] : undefined,
     date: safeDate(tx.timestamp),
-    failed: false, // Cardano API only returns successful transactions
+    failed: isFailedTransaction(tx),
   };
 }
 

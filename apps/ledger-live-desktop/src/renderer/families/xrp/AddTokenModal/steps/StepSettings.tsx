@@ -5,6 +5,7 @@ import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { MAX_TRUST_LIMIT, isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { getLimitError, isLimitBelowBalance } from "@ledgerhq/live-common/families/xrp/tokens";
 import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { TrackScreen } from "@shared/analytics-react";
 import { useSelector } from "LLD/hooks/redux";
@@ -20,7 +21,7 @@ import Switch from "~/renderer/components/Switch";
 import Text from "~/renderer/components/Text";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { getLimitError, getXrpResources } from "../../utils";
+import { getXrpResources } from "../../utils";
 import type { StepProps } from "../types";
 
 export default function StepSettings({
@@ -49,7 +50,7 @@ export default function StepSettings({
   const isLimitStillZero = isCurrentLimitZero && transaction.amount.isZero();
 
   const balance = tokenAccount?.balance;
-  const isLimitBelowBalance = transaction.amount.gt(0) && transaction.amount.lt(balance ?? 0);
+  const isBelowBalance = !!balance && isLimitBelowBalance(transaction.amount, balance);
   const formattedBalance =
     balance && formatCurrencyUnit(unit, balance, { discreet, locale, showCode: true });
 
@@ -138,7 +139,7 @@ export default function StepSettings({
           <Trans i18nKey="xrp.tokenSettings.currentLimitZero" />
         </Alert>
       ) : null}
-      {isLimitBelowBalance ? (
+      {isBelowBalance ? (
         <Alert type="warning" mt={2}>
           <Trans
             i18nKey="xrp.tokenSettings.limitBelowBalance"

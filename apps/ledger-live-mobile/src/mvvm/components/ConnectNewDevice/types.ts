@@ -2,7 +2,7 @@ import type {
   ConnectNewDeviceUIState,
   ConnectNewDeviceUIStateTypes,
 } from "@ledgerhq/live-dmk-mobile";
-import type { DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
+import type { Device, DeviceConnectionResult, SourceFlow } from "@ledgerhq/live-dmk-shared";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 
 export type ConnectNewDeviceDelays = {
@@ -13,6 +13,8 @@ export type ConnectNewDeviceDelays = {
 };
 
 export type ConnectNewDeviceProps = {
+  /** The flow that shows the component. The component adds it to all its analytics events. */
+  sourceFlow: SourceFlow;
   /** Called once, after the success view, with everything needed to talk to the device. */
   onConnected: (result: DeviceConnectionResult) => void;
   /**
@@ -49,4 +51,6 @@ export type ConnectNewDeviceViewProps = {
   onDeviceNotFound?: () => void;
   /** Called on every close of the error sheet, also when `state` leaves an error. */
   onCloseErrorSheet: () => void;
+  /** Whether a device is not in the known devices, for the events about that device. */
+  checkIsNewDevice: (device: Device) => boolean;
 };

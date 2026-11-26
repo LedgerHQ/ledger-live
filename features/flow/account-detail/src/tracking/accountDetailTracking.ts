@@ -21,6 +21,7 @@ export const ACCOUNT_DETAIL_BUTTONS = {
   accountSettings: "account settings",
   editAccountName: "edit account name",
   validateEditAccountName: "validate edit account name",
+  manageAssets: "manage assets",
   viewLogs: "view logs",
   copyLogs: "copy logs",
   viewInExplorer: "view in explorer",

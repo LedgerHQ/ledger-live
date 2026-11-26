@@ -160,12 +160,6 @@ export async function fetchTx(config: ExplorerConfig, txid: string): Promise<Exp
   return tx;
 }
 
-/** Raw (serialized) transaction, hex. */
-export async function fetchTxHex(config: ExplorerConfig, txid: string): Promise<string> {
-  const data = await get<ExplorerTxHex>(`${explorerBaseUrl(config)}/tx/${txid}/hex`);
-  return data.hex;
-}
-
 /** True for an explorer answer saying the resource does not exist. */
 function isNotFound(error: unknown): boolean {
   return (
@@ -210,6 +204,20 @@ export async function fetchPendingTxHex(
     if (isNotFound(error)) return undefined;
     throw error;
   }
+}
+
+/** The unconfirmed transactions an address sends or receives in, as the explorer's mempool sees them. Not paginated. */
+export async function fetchPendingTxs(
+  config: ExplorerConfig,
+  address: string,
+): Promise<ExplorerTx[]> {
+  return get<ExplorerTx[]>(`${explorerBaseUrl(config)}/address/${address}/txs/pending`);
+}
+
+/** Raw (serialized) transaction, hex. */
+export async function fetchTxHex(config: ExplorerConfig, txid: string): Promise<string> {
+  const data = await get<ExplorerTxHex>(`${explorerBaseUrl(config)}/tx/${txid}/hex`);
+  return data.hex;
 }
 
 /** Outputs of an address created and spent by mempool transactions. */

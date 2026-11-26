@@ -6,4 +6,4 @@ const testConfig = {
   tags: ["@NanoSP", "@NanoX", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
-runRenameContactOnDeviceTest(testConfig.tmsLinks, testConfig.tags);
+runRenameContactOnDeviceTest(testConfig);

@@ -14,6 +14,7 @@ import { receiveVerifyHintSlice } from "../state";
 import { mockAccountStatus, mockAssetStatus } from "@domain/entity-account-status/schema.mock";
 import { calApiExtra } from "@shared/api-services";
 import { I18nTestProvider } from "@shared/i18n/testing";
+import { LinkingProvider, type LinkingConfig } from "@shared/linking";
 
 export const testDescriptor = mockAddressAccountDescriptor();
 export const testAccountUUID = computeAccountUUID(testDescriptor);
@@ -97,8 +98,19 @@ const receiveTestResources = {
             "Your Ledger device can't display this address. Check it on the explorer before sharing it.",
           learnMore: "Learn more",
         },
-        serviceStatus: { cta: "See details", title: "Service incident" },
-        gotIt: "Got it",
+        serviceStatus: { continue: "Continue" },
+        memoTag: {
+          title: "Need a Tag/Memo?",
+          description:
+            "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+          gotIt: "Got it",
+        },
+        help: {
+          cardTitle: "Need support? Get help",
+          title: "Get help",
+          receiveFromExchange: "How to receive from exchanges?",
+          receiveSecurely: "How to receive securely?",
+        },
         verifyHint: {
           message: "Verify your address on your Ledger device before sharing",
           gotIt: "Got it",
@@ -108,12 +120,18 @@ const receiveTestResources = {
   },
 };
 
-/** The test store and the receive wording, as a `render` wrapper. */
-export function receiveTestWrapper(store = makeReceiveTestStore()) {
+export const testOpenExternal = jest.fn();
+
+const testLinking: LinkingConfig = { openExternal: testOpenExternal };
+
+/** The test store, the receive wording and a link opener, as a `render` wrapper. */
+export function receiveTestWrapper(store = makeReceiveTestStore(), linking = testLinking) {
   return function ReceiveTestWrapper({ children }: { children: ReactNode }) {
     return (
       <Provider store={store}>
-        <I18nTestProvider resources={receiveTestResources}>{children}</I18nTestProvider>
+        <LinkingProvider config={linking}>
+          <I18nTestProvider resources={receiveTestResources}>{children}</I18nTestProvider>
+        </LinkingProvider>
       </Provider>
     );
   };

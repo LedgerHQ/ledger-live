@@ -10,7 +10,7 @@ import {
 } from "@react-navigation/native";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useFeature } from "@features/platform-feature-flags";
-import { trackSeededDone } from "@features/platform-device-onboarding-analytics";
+import { seededProps, trackSeededDone } from "@features/platform-device-onboarding-analytics";
 import { useCompleteSeededOnboarding } from "LLM/features/DeviceOnboarding/hooks/useCompleteSeededOnboarding";
 import { closeOnboarding } from "LLM/features/DeviceOnboarding/utils/exitActions";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
@@ -51,6 +51,7 @@ export function useSyncOfferRouteViewModel(): SyncOfferRouteViewModel {
     wasReadOnlyAtEntry,
     unseeded = false,
     seededResult,
+    unseededProps = null,
   } = useRoute<OfferRoute>().params;
   const hasTrustchain = Boolean(useSelector(trustchainSelector)?.rootId);
   const { visualPending } = useWalletSyncUserState();
@@ -146,7 +147,7 @@ export function useSyncOfferRouteViewModel(): SyncOfferRouteViewModel {
     onContinue: finishOnboarding,
     phase,
     showGlow: unseeded,
-    seededDeviceType: seededResult?.deviceType ?? null,
+    funnelProps: seededResult ? seededProps(seededResult.deviceType) : unseededProps,
     deviceIntentStepElement: deviceIntentStep.element,
   };
 }

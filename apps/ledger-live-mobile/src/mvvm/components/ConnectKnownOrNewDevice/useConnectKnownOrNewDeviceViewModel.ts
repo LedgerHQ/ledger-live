@@ -14,10 +14,25 @@ import {
   type ConnectKnownOrNewDevice,
   type ConnectKnownOrNewDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
-import { buildMockServerCompatDeviceId, type KnownDevice } from "@ledgerhq/live-dmk-shared";
+import {
+  buildMockServerCompatDeviceId,
+  getConnectivityErrorFailure,
+  type KnownDevice,
+} from "@ledgerhq/live-dmk-shared";
 import { BehaviorSubject } from "rxjs";
 import { isErrorState } from "LLM/components/ConnectNewDevice";
-import { useSaveConnectedDevice } from "LLM/components/DeviceConnection";
+import {
+  useCheckIsNewConnectedDevice,
+  useCheckIsNewDevice,
+  useSaveConnectedDevice,
+} from "LLM/components/DeviceConnection";
+import { useDeviceIntentTracking } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
+import {
+  getConnectedDeviceTrackingProperties,
+  getTrackingTransport,
+  trackDeviceConnected,
+  trackDeviceflowCanceled,
+} from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { removeKnownBleDevice } from "~/actions/ble";
 import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
 import useIsAppInBackground from "~/components/useIsAppInBackground";
@@ -30,9 +45,11 @@ import {
 } from "~/reducers/settings";
 import type {
   ConnectKnownOrNewDeviceDelays,
+  ConnectKnownOrNewDeviceErrorUIState,
   ConnectKnownOrNewDeviceProps,
   ConnectKnownOrNewDeviceViewProps,
 } from "./types";
+import { useConnectKnownOrNewDeviceTracking } from "./useConnectKnownOrNewDeviceTracking";
 import { assertNever } from "./utils/assertNever";
 
 const LOG_TYPE = "ConnectKnownOrNewDevice";
@@ -122,6 +139,7 @@ function getLastConnectedDeviceId({ transport, id }: KnownDevice): string {
 }
 
 export function useConnectKnownOrNewDeviceViewModel({
+  sourceFlow,
   onConnected,
   onAddModeChange,
   isPaused,
@@ -140,6 +158,9 @@ export function useConnectKnownOrNewDeviceViewModel({
   const knownDevices = useSelector(knownDevicesSelector);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const saveConnectedDevice = useSaveConnectedDevice();
+  const checkIsNewConnectedDevice = useCheckIsNewConnectedDevice();
+  const checkIsNewDevice = useCheckIsNewDevice();
+  const { analyticsProperties } = useDeviceIntentTracking();
   const isFocused = useIsFocused();
   const isAppInBackground = useIsAppInBackground({ includeInactive: false });
   const shouldPause = isPaused || !isFocused || isAppInBackground;
@@ -152,23 +173,29 @@ export function useConnectKnownOrNewDeviceViewModel({
 
   // The flow starts once per mount and per restart: the latest values are read from here.
   const latestRef = useRef({
+    sourceFlow,
     onConnected,
     onAddModeChange,
     onAddDevice,
     mockServerDevices,
     lastConnectedDevice,
     shouldPause,
+    checkIsNewConnectedDevice,
   });
   useLayoutEffect(() => {
     latestRef.current = {
+      sourceFlow,
       onConnected,
       onAddModeChange,
       onAddDevice,
       mockServerDevices,
       lastConnectedDevice,
       shouldPause,
+      checkIsNewConnectedDevice,
     };
   });
+  // The flow calls onConnected before it emits the state that follows the connection.
+  const lastStateTypeRef = useRef<ConnectKnownOrNewDeviceUIState["type"] | null>(null);
 
   useEffect(() => {
     knownDevices$.next(knownDevices);
@@ -200,7 +227,22 @@ export function useConnectKnownOrNewDeviceViewModel({
       knownDevices$,
       removeKnownDevice: removeDevice,
       onConnected: result => {
-        saveConnectedDevice(result.connectedDevice);
+        const { connectedDevice } = result;
+        // A tap on a connected device reuses its session: no new connection then.
+        const isNewConnection =
+          lastStateTypeRef.current === ConnectKnownOrNewDeviceUIStateTypes.Connecting ||
+          lastStateTypeRef.current === ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice;
+        if (isNewConnection) {
+          // Before the save, which makes every device known.
+          trackDeviceConnected({
+            sourceFlow: latestRef.current.sourceFlow,
+            ...getConnectedDeviceTrackingProperties(connectedDevice),
+            extraProperties: {
+              isNewDevice: latestRef.current.checkIsNewConnectedDevice(connectedDevice),
+            },
+          });
+        }
+        saveConnectedDevice(connectedDevice);
         dispatch(setReadOnlyMode(false));
         latestRef.current.onConnected(result);
       },
@@ -214,7 +256,10 @@ export function useConnectKnownOrNewDeviceViewModel({
     });
     flowRef.current = flow;
     const subscription = flow.uiStates.subscribe({
-      next: state => setViewState(previous => toNextViewState(previous, state)),
+      next: state => {
+        lastStateTypeRef.current = state.type;
+        setViewState(previous => toNextViewState(previous, state));
+      },
     });
 
     return () => {
@@ -241,6 +286,7 @@ export function useConnectKnownOrNewDeviceViewModel({
   }, [shouldPause]);
 
   const { state } = viewState;
+  useConnectKnownOrNewDeviceTracking(state);
   const isAdding = state.type === ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice;
 
   const wasAddingRef = useRef(false);
@@ -272,12 +318,22 @@ export function useConnectKnownOrNewDeviceViewModel({
   }, [handlesBackPress]);
 
   const onCloseErrorSheet = useCallback(() => {
+    // Every close of an error sheet ends the attempt, also when the screen loses focus.
+    const trackOutcome = (errorState: ConnectKnownOrNewDeviceErrorUIState) =>
+      trackDeviceflowCanceled({
+        sourceFlow,
+        extraProperties: analyticsProperties,
+        failure: getConnectivityErrorFailure(errorState, getTrackingTransport),
+      });
+
     switch (state.type) {
       case ConnectKnownOrNewDeviceUIStateTypes.DiscoveryError:
       case ConnectKnownOrNewDeviceUIStateTypes.ConnectionError:
+        trackOutcome(state);
         state.close();
         return;
       case ConnectKnownOrNewDeviceUIStateTypes.UnknownError:
+        trackOutcome(state);
         setRestartCount(count => count + 1);
         return;
       case ConnectKnownOrNewDeviceUIStateTypes.Discovering:
@@ -289,7 +345,26 @@ export function useConnectKnownOrNewDeviceViewModel({
       default:
         assertNever(state);
     }
-  }, [state]);
+  }, [analyticsProperties, sourceFlow, state]);
+
+  // The waiting and connecting sheet also closes once the state has left it, for instance for the
+  // Add mode: only a close while it shows ends the attempt.
+  const latestStateRef = useRef(state);
+  useLayoutEffect(() => {
+    latestStateRef.current = state;
+  });
+
+  const onCloseDeviceStateSheet = useCallback(() => {
+    const currentState = latestStateRef.current;
+    if (
+      currentState.type !== ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice &&
+      currentState.type !== ConnectKnownOrNewDeviceUIStateTypes.Connecting
+    ) {
+      return;
+    }
+    trackDeviceflowCanceled({ sourceFlow, extraProperties: analyticsProperties, failure: null });
+    currentState.close();
+  }, [analyticsProperties, sourceFlow]);
 
   const onCloseAddModeErrorSheet = useCallback(() => {
     if (state.type !== ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice) {
@@ -315,7 +390,9 @@ export function useConnectKnownOrNewDeviceViewModel({
     platform,
     onDeviceNotFound,
     onCloseErrorSheet,
+    onCloseDeviceStateSheet,
     onCloseAddModeErrorSheet,
+    checkIsNewDevice,
     listFooter,
     children,
   };

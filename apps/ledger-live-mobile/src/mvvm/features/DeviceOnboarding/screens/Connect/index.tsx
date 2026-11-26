@@ -21,6 +21,7 @@ export function DeviceOnboardingConnect() {
       <Box lx={{ flex: 1 }}>
         {showDeviceList ? (
           <ConnectNewDevice
+            sourceFlow="onboarding"
             onConnected={onConnected}
             onClose={onClose}
             onDeviceNotFound={onDeviceNotFound}

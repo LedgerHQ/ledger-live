@@ -23,11 +23,4 @@ const transactionE2E = {
   ],
 };
 
-runTooLowAmountForQuoteSwapsTest(
-  transactionE2E.swap,
-  transactionE2E.tmsLinks,
-  transactionE2E.errorMessage,
-  transactionE2E.ctaBanner,
-  transactionE2E.quotesVisible,
-  transactionE2E.tags,
-);
+runTooLowAmountForQuoteSwapsTest(transactionE2E);

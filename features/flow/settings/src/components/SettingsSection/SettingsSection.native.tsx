@@ -10,7 +10,7 @@ export function SettingsSection({ title, children, testID }: SettingsSectionProp
           <SectionHeaderTitle>{title}</SectionHeaderTitle>
         </SectionHeader>
       ) : null}
-      <Box lx={{ backgroundColor: "surface", borderRadius: "md", padding: "s8" }}>{children}</Box>
+      <Box lx={{ gap: "s4" }}>{children}</Box>
     </Box>
   );
 }

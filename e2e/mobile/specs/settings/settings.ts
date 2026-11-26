@@ -4,6 +4,9 @@ import { ApplicationOptions } from "@e2e/page/index";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { FF_PASSWORD_REVAMP } from "@e2e/utils/featureFlagUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
+
+type SettingsAccountTestOptions = TestMetaOptions & { account: Account };
 
 async function initApp(options: ApplicationOptions) {
   await app.init({
@@ -15,11 +18,8 @@ async function initApp(options: ApplicationOptions) {
   await app.mainNavigation.waitForWallet40Ready();
 }
 
-export function runUserClearApplicationCacheTest(
-  account: Account,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runUserClearApplicationCacheTest(options: SettingsAccountTestOptions) {
+  const { account, tmsLinks, tags } = options;
   describe("Settings", () => {
     beforeAll(async () => {
       await initApp({
@@ -54,7 +54,8 @@ export function runUserClearApplicationCacheTest(
   });
 }
 
-export function runUserCanExportLogsTest(tmsLinks: string[], tags: string[]) {
+export function runUserCanExportLogsTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   describe("Settings", () => {
     beforeAll(async () => {
       await initApp({ userdata: "skip-onboarding" });
@@ -73,7 +74,8 @@ export function runUserCanExportLogsTest(tmsLinks: string[], tags: string[]) {
   });
 }
 
-export function runUserCanAccessLedgerSupportTest(tmsLinks: string[], tags: string[]) {
+export function runUserCanAccessLedgerSupportTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   describe("Settings", () => {
     beforeAll(async () => {
       await initApp({ userdata: "skip-onboarding" });
@@ -91,10 +93,9 @@ export function runUserCanAccessLedgerSupportTest(tmsLinks: string[], tags: stri
 }
 
 export function runUserCanSelectCounterValueToDisplayAmountInLedgerLive(
-  account: Account,
-  tmsLinks: string[],
-  tags: string[],
+  options: SettingsAccountTestOptions,
 ) {
+  const { account, tmsLinks, tags } = options;
   describe("Settings", () => {
     beforeAll(async () => {
       await initApp({
@@ -134,7 +135,8 @@ async function initPasswordTest(featureFlags?: PartialFeatures) {
   await app.mainNavigation.waitForWallet40Ready();
 }
 
-export function runPasswordUnlockTest(tmsLinks: string[], tags: string[]) {
+export function runPasswordUnlockTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   const CORRECT_PASSWORD = "passWORD$123!";
 
   describe("Settings", () => {
@@ -158,7 +160,8 @@ export function runPasswordUnlockTest(tmsLinks: string[], tags: string[]) {
   });
 }
 
-export function runPasswordIncorrectTest(tmsLinks: string[], tags: string[]) {
+export function runPasswordIncorrectTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   const CORRECT_PASSWORD = "passWORD$123!";
 
   describe("Settings", () => {
@@ -181,7 +184,8 @@ export function runPasswordIncorrectTest(tmsLinks: string[], tags: string[]) {
   });
 }
 
-export function runRevampedPasswordUnlockTest(tmsLinks: string[], tags: string[]) {
+export function runRevampedPasswordUnlockTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   const CORRECT_PASSWORD = "passWORD$123!";
   const TOO_SHORT_PASSWORD = "pass1";
 
@@ -214,7 +218,8 @@ export function runRevampedPasswordUnlockTest(tmsLinks: string[], tags: string[]
   });
 }
 
-export function runRevampedPasswordIncorrectTest(tmsLinks: string[], tags: string[]) {
+export function runRevampedPasswordIncorrectTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   const CORRECT_PASSWORD = "passWORD$123!";
 
   describe("Settings", () => {

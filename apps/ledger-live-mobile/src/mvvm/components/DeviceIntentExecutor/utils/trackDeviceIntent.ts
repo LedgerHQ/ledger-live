@@ -19,6 +19,7 @@ export const PAGE_CONNECT_DEVICE = {
   Discovering: "Connect Device - Discovering",
   WaitingForSelectedDevice: "Connect Device - Waiting For Device",
   Connecting: "Connect Device - Connecting",
+  Connected: "Connect Device - Connected",
   DiscoveryError: "Connect Device - Discovery Error",
   ConnectionError: "Connect Device - Connection Error",
   UnknownError: "Connect Device - Unknown Error",
@@ -40,6 +41,8 @@ export const CONNECT_DEVICE_BUTTON = {
   AllowLocation: "Allow Location",
   TurnOnLocation: "Turn On Location",
   GetHelp: "Get Help",
+  Close: "Close",
+  DeviceNotFound: "I don't see my device",
 } as const;
 
 export const PAGE_CONNECT_APP = {
@@ -232,11 +235,14 @@ export const trackDeviceSelected = (params: {
 export const trackConnectDeviceButtonClicked = (params: {
   sourceFlow: SourceFlow;
   button: string;
+  /** The error of the sheet that shows the button. */
+  subError?: string;
   extraProperties: DeviceIntentTrackingProperties;
 }): void => {
   track("button_clicked", {
     ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
     button: params.button,
+    ...(params.subError === undefined ? {} : { subError: params.subError }),
   });
 };
 
