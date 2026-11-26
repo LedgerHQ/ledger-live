@@ -4747,6 +4747,11 @@
         "turnOnNotif": "Turn on notifications",
         "goToSettings": "Go to system settings"
       },
+      "osPermissionBanner": {
+        "title": "Notifications are disabled",
+        "description": "To enable notifications, please go to your phone settings and turn on notifications for Ledger Wallet.",
+        "action": "Turn on notifications"
+      },
       "allowed": {
         "title": "Allow notifications",
         "desc": "Receive notifications about your crypto assets, market trends and more"
