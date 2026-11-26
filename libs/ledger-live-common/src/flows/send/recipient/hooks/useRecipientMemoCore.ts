@@ -11,6 +11,8 @@ export type UseRecipientMemoCoreParams = Readonly<{
   onMemoChange: (memo: Memo) => void;
   onMemoSkip: () => void;
   resetKey: string;
+  /** Memo the flow already holds for the address behind a new resetKey, shown instead of the default. */
+  restoredMemo?: Memo;
   doNotAskAgainSkipMemo: boolean;
   setDoNotAskAgainSkipMemo: (value: boolean) => void;
 }>;
@@ -48,6 +50,7 @@ export function useRecipientMemoCore({
   onMemoChange,
   onMemoSkip,
   resetKey,
+  restoredMemo,
   doNotAskAgainSkipMemo,
   setDoNotAskAgainSkipMemo,
 }: UseRecipientMemoCoreParams): UseRecipientMemoCoreResult {
@@ -58,11 +61,11 @@ export function useRecipientMemoCore({
   useEffect(() => {
     if (lastResetKeyRef.current === resetKey) return;
     lastResetKeyRef.current = resetKey;
-    const nextDefaultMemo = buildDefaultMemo(memoDefaultOption);
-    setMemo(nextDefaultMemo);
+    const nextMemo = restoredMemo ?? buildDefaultMemo(memoDefaultOption);
+    setMemo(nextMemo);
     setSkipMemoState("propose");
-    onMemoChange(nextDefaultMemo);
-  }, [resetKey, memoDefaultOption, onMemoChange]);
+    onMemoChange(nextMemo);
+  }, [resetKey, memoDefaultOption, onMemoChange, restoredMemo]);
 
   const hasMemoTypeOptions = Boolean(memoType === "typed" && memoTypeOptions?.length);
 

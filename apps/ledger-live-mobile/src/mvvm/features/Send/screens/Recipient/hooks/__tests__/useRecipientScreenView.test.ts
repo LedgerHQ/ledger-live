@@ -825,7 +825,7 @@ describe("useRecipientScreenView", () => {
     expect(result.current.isSkipMemoConfirmationOpen).toBe(false);
   });
 
-  it("stays on the recipient step when the memo kept for the selected address fails validation", () => {
+  it("brings the address back into the search, on the recipient step, when its kept memo fails validation", () => {
     const onAddressSelected = jest.fn();
     mockedSendFeatures.hasMemoForRecipient.mockReturnValue(true);
     mockedUseSendFlowData.mockReturnValue({
@@ -852,6 +852,7 @@ describe("useRecipientScreenView", () => {
 
     act(() => result.current.handleAddressSelect("same_address"));
 
+    expect(mockRecipientSearch.setValue).toHaveBeenCalledWith("same_address");
     expect(onAddressSelected).toHaveBeenCalledWith("same_address", undefined, false);
     expect(result.current.isSkipMemoConfirmationOpen).toBe(false);
   });

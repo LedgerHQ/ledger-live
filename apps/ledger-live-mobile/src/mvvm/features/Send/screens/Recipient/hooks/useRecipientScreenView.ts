@@ -272,6 +272,7 @@ export function useRecipientScreenView({
         !!memoForSelectedAddress &&
         Boolean(state.transaction?.status?.errors?.transaction);
       if (keptMemoFailsValidation) {
+        recipientSearch.setValue(address);
         onAddressSelected(address, ensName, false);
         return;
       }
@@ -284,6 +285,7 @@ export function useRecipientScreenView({
       doNotAskAgainSkipMemo,
       markMemoSkipped,
       onAddressSelected,
+      recipientSearch,
       state.recipient,
       state.transaction?.status?.errors?.transaction,
     ],

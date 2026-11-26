@@ -143,4 +143,14 @@ describe("useRecipientMemoCore", () => {
     expect(result.current.memo).toEqual({ value: "", type: undefined });
     expect(result.current.skipMemoState).toBe("propose");
   });
+
+  it("restores the memo kept for the new address instead of the default when the resetKey changes", () => {
+    const keptMemo = { value: "x".repeat(65), type: undefined };
+    const { result, onMemoChange, rerender, initialProps } = setup();
+
+    rerender({ ...initialProps, resetKey: "acc|xrp|other", restoredMemo: keptMemo });
+
+    expect(result.current.memo).toEqual(keptMemo);
+    expect(onMemoChange).toHaveBeenLastCalledWith(keptMemo);
+  });
 });
