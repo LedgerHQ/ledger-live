@@ -155,6 +155,29 @@ describe("a step that fails", () => {
   });
 });
 
+describe("a schema that throws", () => {
+  it("should throw a RecordDecodeError with no stored value when a refinement throws", () => {
+    const secret = "do-not-log-this";
+    const versions = recordVersions(z => z.strictObject({ token: z.string() })).next(
+      z =>
+        z.strictObject({
+          token: z.string().refine(token => {
+            throw new SyntaxError(token);
+          }),
+        }),
+      v0 => v0,
+    );
+
+    const error = caught(() => versions.decode({ $v: 1, data: { token: secret } }, KEY));
+
+    expect(error).toBeInstanceOf(RecordDecodeError);
+    expect(error).toMatchObject({ key: KEY, version: 1 });
+    expect(error).not.toHaveProperty("cause");
+    expect(String(error)).toContain("the schema threw SyntaxError");
+    expect(String(error)).not.toContain(secret);
+  });
+});
+
 const decodeMessage = (codes: string) =>
   `Stored value of record "${KEY}" v0 does not match its schema: ${codes}`;
 

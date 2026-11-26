@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { NewerRecordVersionError, RecordDecodeError } from "./errors";
-import { toRecordDecodeError } from "./internals/toRecordDecodeError";
+import { toRecordDecodeError, toThrownRecordDecodeError } from "./internals/toRecordDecodeError";
 
 type SchemaFactory<Output, Input = unknown> = (zod: typeof z) => z.ZodType<Output, Input>;
 
@@ -26,8 +26,16 @@ type MigrationChain<Latest> = {
   upgrade: Upgrade<Latest>;
 };
 
+function runSchema<T>(schema: z.ZodType<T>, value: unknown, key: string, version: number) {
+  try {
+    return schema.safeParse(value);
+  } catch (error) {
+    throw toThrownRecordDecodeError(key, version, "the schema", error);
+  }
+}
+
 function parse<T>(schema: z.ZodType<T>, value: unknown, key: string, version: number): T {
-  const result = schema.safeParse(value);
+  const result = runSchema(schema, value, key, version);
   if (!result.success) throw toRecordDecodeError(key, version, result.error.issues);
   return result.data;
 }
@@ -41,8 +49,7 @@ function runStep<Previous, Next>(
   try {
     return step(previous);
   } catch (error) {
-    const name = error instanceof Error ? error.name : typeof error;
-    throw new RecordDecodeError(key, version, `the step to v${version} threw ${name}`);
+    throw toThrownRecordDecodeError(key, version, `the step to v${version}`, error);
   }
 }
 

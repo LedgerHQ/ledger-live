@@ -42,7 +42,7 @@ step from the previous version. `.next` returns new versions and does not change
 - The decode reads `$v` before any schema. A `$v` above the latest version throws
   `NewerRecordVersionError`. A `$v` that is not an integer from 1 throws `RecordDecodeError`.
 - The steps run in order from the stored version to the latest. Then the latest schema checks the
-  result. A step that throws gives a `RecordDecodeError`.
+  result. A step or a schema that throws gives a `RecordDecodeError`.
 - The encode writes the bare value at v0, and `{ $v: latest, data }` after v0.
 
 No error message contains a stored value or key: a schema mismatch gives the zod issue codes only,

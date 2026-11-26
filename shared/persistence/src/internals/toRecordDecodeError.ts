@@ -9,3 +9,12 @@ export const toRecordDecodeError = (
   version: number,
   issues: ReadonlyArray<z.core.$ZodIssue>,
 ): RecordDecodeError => new RecordDecodeError(key, version, describeIssuesWithoutValues(issues));
+
+const nameOf = (thrown: unknown): string => (thrown instanceof Error ? thrown.name : typeof thrown);
+
+export const toThrownRecordDecodeError = (
+  key: string,
+  version: number,
+  source: string,
+  thrown: unknown,
+): RecordDecodeError => new RecordDecodeError(key, version, `${source} threw ${nameOf(thrown)}`);

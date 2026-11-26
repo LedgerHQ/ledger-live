@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { RecordDecodeError } from "./errors";
+import { toThrownRecordDecodeError } from "./internals/toRecordDecodeError";
 import type { RecordVersions } from "./recordVersions";
 
 export type ValueCodec<Slice, Stored> = {
@@ -42,8 +42,7 @@ function runCodecDecode<Slice, Stored>(
   try {
     return codec.decode(latest);
   } catch (error) {
-    const name = error instanceof Error ? error.name : typeof error;
-    throw new RecordDecodeError(key, version, `the codec decode threw ${name}`);
+    throw toThrownRecordDecodeError(key, version, "the codec decode", error);
   }
 }
 
