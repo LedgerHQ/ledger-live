@@ -214,12 +214,12 @@ on:
         type: string
         default: ""
       native_fingerprint_ios:
-        description: "Expo fingerprint of the iOS native project (scripts/native-fingerprint.mjs); when set, it keys the iOS native build instead of hashFiles"
+        description: "Expo fingerprint of the iOS native project (scripts/native-fingerprint.mjs) that keys the iOS native build; computed in determine-builds when empty"
         required: false
         type: string
         default: ""
       native_fingerprint_android:
-        description: "Expo fingerprint of the Android native project (scripts/native-fingerprint.mjs); when set, it keys the Android native build instead of hashFiles"
+        description: "Expo fingerprint of the Android native project (scripts/native-fingerprint.mjs) that keys the Android native build; computed in determine-builds when empty"
         required: false
         type: string
         default: ""
