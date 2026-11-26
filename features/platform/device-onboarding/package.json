@@ -21,7 +21,6 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
-    "@shared/feature-flags": "workspace:^",
     "semver": "catalog:",
     "xstate": "catalog:"
   },

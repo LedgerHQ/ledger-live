@@ -19,7 +19,6 @@ import {
   isFirmwareCheckFailed,
   isFirmwareUpdateDelegated,
   isHeldBackUpdatePending,
-  isRecoverInOnboarding,
   SeedPath,
   updateWaitsForSeed,
   type DeviceOnboardingContext,
@@ -695,7 +694,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   });
   const { trackClick, trackAbort, trackExit } = seededTracking;
   const focused = useIsFocused();
-  const recoverInOnboarding = isRecoverInOnboarding(useFeature("deviceOnboarding"));
+  const recoverInOnboarding = useFeature("deviceOnboarding")?.params?.recover ?? true;
   const restoreDismissal = useRestoreDismissal(shownState, recoverInOnboarding);
   const unseededFunnel = useUnseededFunnelTracking({
     focused,

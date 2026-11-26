@@ -147,9 +147,6 @@ The session stays open after the exit, so the app can keep using it.
 - `ToggleEarlyCheckCommand` — the `e0 03` APDU, which DMK exposes no command for. Import DMK's own
   once it ships
 - `device/` — what two actors each share, kept out of `actors/` so those read as onboarding policy
-- `isRecoverInOnboarding` — whether the flow shows its Ledger Recover steps, from the
-  `deviceOnboarding` flag's `recover` param. The app passes the flag in. A saved flag value that
-  predates the param shows them
 - `./testing` — a test kit (a kit with only the methods a test needs, and streams a test can push to)
 
 ## Usage context

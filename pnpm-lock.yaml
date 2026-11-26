@@ -15819,9 +15819,6 @@ importers:
 
   features/platform/device-onboarding:
     dependencies:
-      '@shared/feature-flags':
-        specifier: workspace:^
-        version: link:../../../shared/feature-flags
       semver:
         specifier: 'catalog:'
         version: 7.8.5

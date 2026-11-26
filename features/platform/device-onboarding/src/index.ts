@@ -15,4 +15,3 @@ export * from "./actors/seedPolling";
 export * from "./host";
 export * from "./ports";
 export * from "./useDeviceOnboardingActor";
-export * from "./recoverInOnboarding";

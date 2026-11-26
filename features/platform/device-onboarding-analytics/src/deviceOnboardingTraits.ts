@@ -1,5 +1,4 @@
 import type { Features } from "@shared/feature-flags";
-import { isRecoverInOnboarding } from "@features/platform-device-onboarding";
 
 type DeviceOnboardingParam = keyof NonNullable<Features["deviceOnboarding"]["params"]>;
 
@@ -14,6 +13,6 @@ export function deviceOnboardingTraits(
     connectUnseededDevice: isOn("connectUnseededDevice"),
     offerLedgerSync: isOn("offerLedgerSync"),
     unifiedEntryPoints: isOn("unifiedEntryPoints"),
-    recover: flag?.enabled === true && isRecoverInOnboarding(flag),
+    recover: Boolean(flag?.enabled && (flag.params?.recover ?? true)),
   };
 }

@@ -2302,6 +2302,18 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(navigate).not.toHaveBeenCalled();
   });
 
+  it("should show the Recover pitch when a saved deviceOnboarding value predates the recover param", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel(), {
+      overrideInitialState: withFlagOverrides({
+        ...recoverEnabled,
+        deviceOnboarding: { enabled: true, params: { offerLedgerSync: false } },
+      }),
+    });
+
+    expect(result.current.status).toBe("recoverNewSeed");
+  });
+
   it("should move to the success karaoke when Recover is skipped", () => {
     useSession.mockReturnValue(doneWithSeed("newSeed"));
     const { result } = renderRecoverFunnel();
