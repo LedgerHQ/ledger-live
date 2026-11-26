@@ -122,8 +122,8 @@ const migrateTask = task("migrate")
     `Apply the Lumen migrations for this upgrade with the migrations CLI. In versions, \`-\` lines hold each @ledgerhq/lumen-* package's previous version and \`+\` lines its new one. Drop any leading ^ or ~, and when files disagree, use the lowest previous version.
 1. For each package, run \`${migrationsCli} list --package <name> --from <previous> --to <new> --json\`.
 2. For each migration listed, run \`${migrationsCli} show <id>\` and follow it (Before → after, Decide). A previous run on this branch may have applied some already: leave those as they are.
-3. For each package, run \`${migrationsCli} check --package <name> --from <previous> --to <new>\` from the repo root, so every package using Lumen is scanned. Exit code 1 means \`expect: none\` patterns still have hits: fix them and run it again. Hits listed as review are for a human: do not edit them.
-4. Write prBody: the template with <humanReview> replaced by a Markdown list of what you could not decide and every review hit, with the file paths, or by \`Nothing.\` when there is none. Change nothing else.`,
+3. For each package, run \`${migrationsCli} check --package <name> --from <previous> --to <new>\` from the repo root, so every package using Lumen is scanned. Exit code 1 means \`expect: none\` patterns still have hits: fix them and run it again. Review hits need a judgment: settle them with the migration's Decide when the repo answers it, and leave the rest to a human.
+4. Write prBody: the template with <humanReview> replaced by one bullet per migration with review hits or anything left undone. Each bullet is one or two plain sentences for a reviewer: the migration id, what you checked and decided, and what a person must still do, if anything. Name at most 3 files, then "and N more". Never paste command output, JSON or a list of hits. Write \`Nothing.\` when no migration needs a bullet. Change nothing else.`,
   )
   .with({ versions, template: literal(pullRequest.body) })
   .writes(prBody);
