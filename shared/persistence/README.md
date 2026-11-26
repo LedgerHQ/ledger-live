@@ -47,9 +47,9 @@ with no path.
 ## Tests
 
 `@shared/persistence/testing` gives `storedSchemaSnapshot(definition, version)`: the JSON schema
-of 1 stored version. Each record has 1 snapshot test for each version, so a change to a stored
-shape shows in review. [`recordVersions.test.ts`](./src/recordVersions.test.ts) shows a record
-with 3 versions.
+of the stored values that 1 version accepts. Each record has 1 snapshot test for each version,
+so a change to a stored shape shows in review. [`recordVersions.test.ts`](./src/recordVersions.test.ts)
+shows a record with 3 versions.
 
 When and how to add a version: the
 [record-versions-and-migrations](../../.agents/skills/record-versions-and-migrations/SKILL.md) skill.

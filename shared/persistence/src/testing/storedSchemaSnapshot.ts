@@ -9,5 +9,5 @@ export function storedSchemaSnapshot<State, Action>(
   if (schema === undefined) {
     throw new RangeError(`Record "${definition.key}" has no version ${version}`);
   }
-  return { key: definition.key, version, schema: z.toJSONSchema(schema) };
+  return { key: definition.key, version, schema: z.toJSONSchema(schema, { io: "input" }) };
 }
