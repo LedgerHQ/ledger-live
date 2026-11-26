@@ -11,10 +11,12 @@ export const getMaxTxQuery = (config: CantonCoinConfig): number =>
   Math.min(tuning(config.gateway?.maxTxQuery, DEFAULT_MAX_TX_QUERY, 1), GATEWAY_MAX_TX_QUERY);
 
 /**
- * The reserve kept out of the spendable balance. A numeric string is read as its number; a
- * non-finite or negative override reads as the default.
+ * The reserve kept out of the spendable balance, exact beyond 2^53. A numeric string is read as its
+ * number; a non-finite or negative override reads as the default.
  */
-export const getMinReserve = (config: CantonCoinConfig): number => {
+export const getMinReserve = (config: CantonCoinConfig): BigNumber => {
   const minReserve = new BigNumber(config.minReserve ?? DEFAULT_MIN_RESERVE);
-  return minReserve.isFinite() && minReserve.gte(0) ? minReserve.toNumber() : DEFAULT_MIN_RESERVE;
+  return minReserve.isFinite() && minReserve.gte(0)
+    ? minReserve
+    : new BigNumber(DEFAULT_MIN_RESERVE);
 };

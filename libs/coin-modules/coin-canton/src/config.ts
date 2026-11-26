@@ -13,7 +13,10 @@ export type CantonConfig = {
   /** A fixed fee in CC. Without it, the fee follows the tier schedule. */
   fee?: number;
   gateway?: {
-    /** Rows per operations request. @default DEFAULT_MAX_TX_QUERY (1000) */
+    /**
+     * Transactions per operations request of the sync, the account status and the newest-first
+     * `listOperations`. @default DEFAULT_MAX_TX_QUERY (1000)
+     */
     maxTxQuery?: number;
     /** @default DEFAULT_DSO_PARTY_CACHE_TTL_MS (900000) */
     dsoPartyCacheTtlMs?: number;

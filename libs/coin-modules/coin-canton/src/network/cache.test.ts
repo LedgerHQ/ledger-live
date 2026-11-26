@@ -48,27 +48,35 @@ describe("makeConfigurableLRUCache", () => {
     expect(fetch).toHaveBeenCalledTimes(2);
   });
 
-  it("clears the key under every TTL", async () => {
+  it("reads again when the TTL switches back, not the entry of the earlier TTL", async () => {
     const { fetch, cached } = makeCache();
+    fetch.mockResolvedValueOnce("old").mockResolvedValueOnce("new").mockResolvedValueOnce("newest");
+
     await cached(configWithTtl(60_000), "a");
     await cached(configWithTtl(120_000), "a");
+
+    await expect(cached(configWithTtl(60_000), "a")).resolves.toBe("newest");
+  });
+
+  it("clears the key", async () => {
+    const { fetch, cached } = makeCache();
+    await cached(configWithTtl(60_000), "a");
 
     cached.clear("a");
     await cached(configWithTtl(60_000), "a");
-    await cached(configWithTtl(120_000), "a");
 
-    expect(fetch).toHaveBeenCalledTimes(4);
+    expect(fetch).toHaveBeenCalledTimes(2);
   });
 
   it("drops the oldest TTL's cache beyond four TTLs", async () => {
     const { fetch, cached } = makeCache();
     for (const ttl of [10_000, 20_000, 30_000, 40_000, 50_000]) {
-      await cached(configWithTtl(ttl), "a");
+      await cached(configWithTtl(ttl), String(ttl));
     }
 
-    await cached(configWithTtl(50_000), "a");
-    await cached(configWithTtl(20_000), "a");
-    await cached(configWithTtl(10_000), "a");
+    await cached(configWithTtl(50_000), "50000");
+    await cached(configWithTtl(20_000), "20000");
+    await cached(configWithTtl(10_000), "10000");
 
     expect(fetch).toHaveBeenCalledTimes(6);
   });
@@ -76,12 +84,12 @@ describe("makeConfigurableLRUCache", () => {
   it("keeps a TTL in use when a fifth one arrives", async () => {
     const { fetch, cached } = makeCache();
     for (const ttl of [10_000, 20_000, 30_000, 40_000]) {
-      await cached(configWithTtl(ttl), "a");
+      await cached(configWithTtl(ttl), String(ttl));
     }
-    await cached(configWithTtl(10_000), "a");
+    await cached(configWithTtl(10_000), "10000");
 
-    await cached(configWithTtl(50_000), "a");
-    await cached(configWithTtl(10_000), "a");
+    await cached(configWithTtl(50_000), "50000");
+    await cached(configWithTtl(10_000), "10000");
 
     expect(fetch).toHaveBeenCalledTimes(5);
   });

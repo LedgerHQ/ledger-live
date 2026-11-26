@@ -222,7 +222,7 @@ export async function readPartyBalances(
   const unlockedAmount = new BigNumber((nativeBalance?.unlockedBalance ?? 0n).toString());
   const lockedAmount = new BigNumber((nativeBalance?.lockedBalance ?? 0n).toString());
   const totalBalance = unlockedAmount.plus(lockedAmount);
-  const reserveMin = new BigNumber(getMinReserve(config));
+  const reserveMin = getMinReserve(config);
   const spendableBalance = BigNumber.max(0, unlockedAmount.minus(reserveMin));
 
   const instrumentUtxoCounts: Record<string, number> = {};

@@ -184,6 +184,11 @@ describe("utils", () => {
       expect(minReserveOf({ ...createMockCoinConfigValue(), minReserve: 1e38 })).toBe(10n ** 38n);
     });
 
+    it("should read a numeric string beyond the float range exactly", () => {
+      const config = { ...createMockCoinConfigValue(), minReserve: "1e309" as unknown as number };
+      expect(minReserveOf(config)).toBe(10n ** 309n);
+    });
+
     it("should read an unset reserve as zero", () => {
       const config: CantonCoinConfig = createMockCoinConfigValue();
       delete config.minReserve;

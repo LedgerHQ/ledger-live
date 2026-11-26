@@ -41,7 +41,7 @@ export const getTransactionStatus = async (
   const warnings: Record<string, Error> = {};
 
   // reserveAmount is the minimum amount of currency that an account must hold in order to stay activated
-  const reserveAmount = new BigNumber(getMinReserve(await context.config(account.currency.id)));
+  const reserveAmount = getMinReserve(await context.config(account.currency.id));
   const estimatedFees = new BigNumber(transaction.fee || 0);
   const amount = new BigNumber(transaction.amount);
 

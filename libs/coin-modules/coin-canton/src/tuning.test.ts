@@ -39,20 +39,28 @@ describe("getMaxTxQuery", () => {
 
 describe("getMinReserve", () => {
   it.each([0, 12.5, 100])("reads a configured reserve of %p", minReserve => {
-    expect(getMinReserve(createMockCoinConfigValue({ minReserve }))).toBe(minReserve);
+    expect(getMinReserve(createMockCoinConfigValue({ minReserve })).toNumber()).toBe(minReserve);
   });
 
-  it("reads a numeric string", () => {
-    const config = { ...createMockCoinConfigValue(), minReserve: "100" as unknown as number };
-    expect(getMinReserve(config)).toBe(100);
-  });
+  it.each(["100", "123456789012345678901234567890", "1e309"])(
+    "reads the numeric string %p exactly",
+    minReserve => {
+      const config = {
+        ...createMockCoinConfigValue(),
+        minReserve: minReserve as unknown as number,
+      };
+      expect(getMinReserve(config).eq(minReserve)).toBe(true);
+    },
+  );
 
   it.each([Number.NaN, Number.POSITIVE_INFINITY, -1])("falls back for %p", minReserve => {
-    expect(getMinReserve(createMockCoinConfigValue({ minReserve }))).toBe(DEFAULT_MIN_RESERVE);
+    expect(getMinReserve(createMockCoinConfigValue({ minReserve })).toNumber()).toBe(
+      DEFAULT_MIN_RESERVE,
+    );
   });
 
   it("falls back when unset", () => {
     const { minReserve: _, ...config } = createMockCoinConfigValue();
-    expect(getMinReserve(config)).toBe(DEFAULT_MIN_RESERVE);
+    expect(getMinReserve(config).toNumber()).toBe(DEFAULT_MIN_RESERVE);
   });
 });

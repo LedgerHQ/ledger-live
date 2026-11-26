@@ -951,14 +951,17 @@ describe("getEnabledInstruments", () => {
     );
   });
 
-  it("should return empty Set on API failure (fail-safe) and log through the context logger", async () => {
-    mockNetwork.mockRejectedValue(new Error("Network error"));
+  it("should return empty Set on API failure (fail-safe) and log the message only", async () => {
+    const error = Object.assign(new Error("Network error"), {
+      config: { headers: { "X-Ledger-Canton-Api-Key": "secret" } },
+    });
+    mockNetwork.mockRejectedValue(error);
 
     const result = await getEnabledInstruments(mockConfig, logger);
 
     expect(result).toEqual(new Set());
     expect(logger).toHaveBeenCalledWith("canton/gateway", "Failed to fetch enabled instruments", {
-      error: expect.any(Error),
+      error: "Network error",
     });
   });
 

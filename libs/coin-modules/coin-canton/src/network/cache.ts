@@ -31,7 +31,13 @@ export function makeConfigurableLRUCache<A extends [CantonCoinConfig, ...unknown
     if (caches.size > MAX_TTLS) caches.delete(leastRecent);
     return cache;
   };
-  const cached = (...args: A): Promise<T> => cacheFor(ttlMsOf(args[0]))(...args);
+  const cached = (...args: A): Promise<T> => {
+    const cache = cacheFor(ttlMsOf(args[0]));
+    // A key left in another TTL's cache would serve a stale value if the TTL switches back.
+    const key = keyOf(...args);
+    caches.forEach(other => other !== cache && other.clear(key));
+    return cache(...args);
+  };
   cached.clear = (key: string): void => caches.forEach(cache => cache.clear(key));
   cached.reset = (): void => caches.clear();
   return cached;

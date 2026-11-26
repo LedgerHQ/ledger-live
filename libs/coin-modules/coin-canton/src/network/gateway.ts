@@ -260,7 +260,10 @@ export async function getEnabledInstruments(
     return await readEnabledInstruments(config);
   } catch (error) {
     // If API fails, return empty array (fail-safe: only native instrument will work)
-    logger("canton/gateway", "Failed to fetch enabled instruments", { error });
+    // The message only: a raw axios error carries the request headers, the API key among them.
+    logger("canton/gateway", "Failed to fetch enabled instruments", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return new Set();
   }
 }

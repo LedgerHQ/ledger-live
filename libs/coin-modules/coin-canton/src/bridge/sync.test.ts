@@ -1799,15 +1799,27 @@ describe("makeGetAccountShape", () => {
         expect(checkpointOf(shape)).toEqual({ hash: "later", height: 12 });
       });
 
-      it("reads by the configured page size", async () => {
+      it("reads every page by the configured page size", async () => {
         rows = [first, later];
-        const pagedConfig = { ...sampleConfig, gateway: { maxTxQuery: 50 } };
-        await syncFrom({ syncHash: SYNC_HASH, operations: [], cantonResources: {} as never }, {
-          ...fakeContext,
-          config: async () => pagedConfig,
-        } as unknown as CantonContext);
+        mockedGetOperations.mockImplementation(async (_config, _party, options) => {
+          const start = options?.cursor ?? options?.minOffset ?? 0;
+          const limit = options?.limit ?? Infinity;
+          const pending = rows.filter(({ block }) => block.height >= start);
+          const page = pending.slice(0, limit);
+          const unserved = pending[page.length];
+          return { operations: page, next: unserved ? unserved.block.height + 1 : -1 };
+        });
+        const pagedConfig = { ...sampleConfig, gateway: { maxTxQuery: 1 } };
+        const shape = await syncFrom(
+          { syncHash: SYNC_HASH, operations: [], cantonResources: {} as never },
+          { ...fakeContext, config: async () => pagedConfig } as unknown as CantonContext,
+        );
 
-        expect(readFrom()).toEqual([{ minOffset: 0, maxOffset: 12345, limit: 50 }]);
+        expect(readFrom()).toEqual([
+          { minOffset: 0, maxOffset: 12345, cursor: undefined, limit: 1 },
+          { minOffset: 0, maxOffset: 12345, cursor: 6, limit: 1 },
+        ]);
+        expect(hashesOf(shape)).toEqual(["later", "first"]);
       });
 
       it("reads the whole history again after the account is cleared", async () => {

@@ -313,17 +313,15 @@ describe("listOperations", () => {
   });
 
   describe("newest first", () => {
-    it("reads each window by the configured page size", async () => {
-      fakeGateway({ rows: rowsAt([10, 20]), ledgerEnd: 100 });
-      const paged = createMockContext(createMockCoinConfigValue({ gateway: { maxTxQuery: 50 } }));
+    it("reads every page of a window by the configured page size", async () => {
+      const rows = rowsAt([10, 20]);
+      fakeGateway({ rows, ledgerEnd: 100 });
+      const paged = createMockContext(createMockCoinConfigValue({ gateway: { maxTxQuery: 1 } }));
 
-      await listOperations(paged, PARTY, { minHeight: 0, order: "desc" });
+      const page = await listOperations(paged, PARTY, { minHeight: 0, order: "desc" });
 
-      expect(mockedGetOperations).toHaveBeenCalledWith(
-        expect.anything(),
-        PARTY,
-        expect.objectContaining({ limit: 50 }),
-      );
+      expect(page.items.map(op => op.id)).toEqual(newestFirstIds(rows));
+      expect(mockedGetOperations.mock.calls.map(([, , options]) => options?.limit)).toEqual([1, 1]);
     });
 
     it("stops at minHeight", async () => {

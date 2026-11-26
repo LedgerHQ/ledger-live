@@ -18,4 +18,4 @@ export function isRecipientValid(recipient: string): boolean {
 
 // Through BigNumber, as the bridge reads it: `BigInt(1e38)` is not 10^38.
 export const minReserveOf = (config: CantonCoinConfig): bigint =>
-  BigInt(new BigNumber(getMinReserve(config)).toFixed(0));
+  BigInt(getMinReserve(config).toFixed(0));

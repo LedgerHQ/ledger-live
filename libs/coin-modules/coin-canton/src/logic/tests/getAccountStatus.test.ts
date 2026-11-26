@@ -194,15 +194,17 @@ describe("getAccountStatus", () => {
     });
   });
 
-  it("pages the operations by the configured page size", async () => {
+  it("reads every page by the configured page size", async () => {
     chain({});
-    const paged = { ...config, gateway: { maxTxQuery: 50 } };
+    mockedGateway.getOperations
+      .mockResolvedValueOnce({ next: 3, operations: [operation(TOKEN_INSTRUMENT, TOKEN_ADMIN)] })
+      .mockResolvedValueOnce({ next: 6, operations: [operation()] });
+    const paged = { ...config, gateway: { maxTxQuery: 1 } };
     await getAccountStatus(createMockContext(paged), currency.id, "ab");
-    expect(mockedGateway.getOperations).toHaveBeenCalledWith(paged, "party", {
-      minOffset: 0,
-      cursor: undefined,
-      limit: 50,
-    });
+    expect(mockedGateway.getOperations.mock.calls).toEqual([
+      [paged, "party", { minOffset: 0, cursor: undefined, limit: 1 }],
+      [paged, "party", { minOffset: 0, cursor: 2, limit: 1 }],
+    ]);
   });
 
   it("reads the next pages until it finds a native operation", async () => {
