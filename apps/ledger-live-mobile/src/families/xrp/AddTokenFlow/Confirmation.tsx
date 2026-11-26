@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "@shared/analytics-react";
@@ -17,8 +18,10 @@ type Props = BaseComposite<
   StackNavigatorProps<XrpAddTokenFlowParamList, ScreenName.XrpAddTokenConfirmation>
 >;
 
-export default function Confirmation({ navigation, route }: Props) {
+export default function Confirmation() {
   const { t } = useTranslation();
+  const navigation = useNavigation<Props["navigation"]>();
+  const route = useRoute<Props["route"]>();
 
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();

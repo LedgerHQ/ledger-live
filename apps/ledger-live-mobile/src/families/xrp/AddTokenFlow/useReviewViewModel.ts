@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -32,7 +33,9 @@ function readErrorField(error: Error | undefined, field: string): string | undef
   return typeof value === "string" ? value : undefined;
 }
 
-export function useReviewViewModel({ navigation, route }: Props) {
+export function useReviewViewModel() {
+  const navigation = useNavigation<Props["navigation"]>();
+  const route = useRoute<Props["route"]>();
   const { t } = useTranslation();
   const { locale } = useLocale();
   const { account } = useAccountScreen(route);

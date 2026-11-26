@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { maticEth, usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { render, screen, within, withFlagOverrides } from "@tests/test-renderer";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -13,13 +13,6 @@ import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import AccountScreen from "../AccountScreen";
 import { ACCOUNT_DETAIL_TEST_IDS } from "../testIds";
-
-jest.mock("@ledgerhq/live-common/families/xrp/config", () => {
-  return {
-    ...jest.requireActual("@ledgerhq/live-common/families/xrp/config"),
-    getXrpEnabledTokenStandards: jest.fn().mockReturnValue([]),
-  };
-});
 
 function withBalance<T extends Account | TokenAccount>(account: T, balance: string): T {
   return { ...account, balance: new BigNumber(balance), spendableBalance: new BigNumber(balance) };
@@ -109,7 +102,24 @@ function renderAccount(
   );
 }
 
+function enableXrpTokenStandards(enabledTokenStandards: string[]) {
+  LiveConfig.setProvider({
+    getValueByKey: (key: string) =>
+      key === "config_currency_ripple_testnet" ? { enabledTokenStandards } : undefined,
+  });
+}
+
 describe("AccountDetail assets", () => {
+  let savedProvider: typeof LiveConfig.instance.provider;
+
+  beforeEach(() => {
+    savedProvider = LiveConfig.instance.provider;
+  });
+
+  afterEach(() => {
+    LiveConfig.instance.provider = savedProvider;
+  });
+
   it("lists the coin and its tokens with their balances", async () => {
     renderAccount(ethAccount);
 
@@ -176,7 +186,7 @@ describe("AccountDetail assets", () => {
   });
 
   it("offers to add an asset on an XRP account when a token standard is enabled", () => {
-    jest.mocked(getXrpEnabledTokenStandards).mockReturnValue(["iou"]);
+    enableXrpTokenStandards(["iou"]);
     renderAccount(xrpAccount);
 
     const section = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.assets);
@@ -184,7 +194,7 @@ describe("AccountDetail assets", () => {
   });
 
   it("does not offer to add an asset on an XRP account when every token standard is off", () => {
-    jest.mocked(getXrpEnabledTokenStandards).mockReturnValue([]);
+    enableXrpTokenStandards([]);
     renderAccount(xrpAccount);
 
     const section = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.assets);

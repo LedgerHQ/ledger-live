@@ -28,7 +28,7 @@ import { FullTextBanner } from "../components/FullTextBanner";
 import { InfoTooltip } from "../components/InfoTooltip";
 import { RipplingSheet } from "../components/RipplingSheet";
 import SignSheet from "./SignSheet";
-import { type Props, useReviewViewModel } from "./useReviewViewModel";
+import { useReviewViewModel } from "./useReviewViewModel";
 
 type RowProps = Readonly<{
   label: string;
@@ -88,9 +88,9 @@ function AmountWithCounterValue(props: Readonly<{ currency: CryptoCurrency; valu
   );
 }
 
-export default function Review(props: Props) {
+export default function Review() {
   const { t } = useTranslation();
-  const viewModel = useReviewViewModel(props);
+  const viewModel = useReviewViewModel();
   const { token, currency } = viewModel;
 
   return (
