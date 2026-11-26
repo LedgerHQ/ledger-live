@@ -2,7 +2,8 @@ import React, { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { HelpPage, type DesktopHelpPort, type HelpSlots } from "@features/flow-settings-help";
+import type { DesktopHelpPort } from "@features/flow-settings-help";
+import { HelpPageWithSlots, type HelpSlots } from "@features/flow-settings-help/web";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { track } from "@shared/analytics";
@@ -114,7 +115,7 @@ export function DesktopHelpPage() {
 
   return (
     <>
-      <HelpPage
+      <HelpPageWithSlots
         port={port}
         slots={slots}
         whileConfirming={<SyncSkipUnderPriority priority={999} />}

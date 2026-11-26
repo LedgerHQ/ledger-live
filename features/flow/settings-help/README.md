@@ -44,9 +44,9 @@ Each app keeps its translated keys: `copy/useHelpLabels.web.ts` reads the legacy
 
 | Export                                             | Purpose                                                                         |
 | -------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `HelpPage`                                         | The page: `port`, desktop `slots`, and `whileConfirming`                        |
+| `HelpPage`                                         | The page: `port` and `whileConfirming`                                          |
 | `HelpPort`                                         | `DesktopHelpPort` or `MobileHelpPort`, told apart by `platform`                 |
-| `HelpSlots`                                        | Desktop rows the app renders itself, because they run a legacy component        |
+| `HelpPageWithSlots` and `HelpSlots` (`/web`)       | The desktop page, with the rows the app renders itself through a legacy component |
 | `HELP_ITEM_IDS` and the types of `logic/helpItems` | The rows and their groups                                                       |
 
 `whileConfirming` is rendered while a confirmation is open. Desktop uses it to pause the sync, as
@@ -54,7 +54,7 @@ the legacy confirmation did.
 
 ## How an app uses it
 
-The app builds its port from its own hooks and renders `HelpPage`. The package never imports the
+The app builds its port from its own hooks and renders `HelpPage`, or `HelpPageWithSlots` from `/web` on desktop. The package never imports the
 app store.
 
 - Desktop renders it as the standalone page of `SettingsGate`, through its `renderStandalonePage`:
