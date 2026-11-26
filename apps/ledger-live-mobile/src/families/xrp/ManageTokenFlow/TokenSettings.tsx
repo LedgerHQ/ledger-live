@@ -17,7 +17,7 @@ import { useTranslation } from "~/context/Locale";
 import { ErrorBanner } from "../components/ErrorBanner";
 import { FullTextBanner } from "../components/FullTextBanner";
 import { InfoTooltip } from "../components/InfoTooltip";
-import { RipplingSheet } from "./RipplingSheet";
+import { RipplingSheet } from "../components/RipplingSheet";
 import SignTokenEditSheets from "./SignTokenEditSheets";
 import TokenAccountGate from "./TokenAccountGate";
 import { useTokenSettingsViewModel } from "./useTokenSettingsViewModel";
