@@ -22,8 +22,10 @@ import {
   setEnabledFn,
   setExtraPropsFn,
   setMandatoryExtraPropsFn,
+  setPropsFilter,
   track as sharedTrack,
 } from "@shared/analytics";
+import { scrubAccountDescriptorsFromRecord } from "@features/platform-observability-redaction";
 
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import {
@@ -618,6 +620,7 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
   setEnabledFn(() => trackingEnabledSelector(store.getState()));
   setExtraPropsFn(() => extraProperties(store));
   setMandatoryExtraPropsFn(() => getMandatoryProperties(store));
+  setPropsFilter(scrubAccountDescriptorsFromRecord);
 
   // Prime the OS notification permission cache and keep it fresh on every foreground, so that
   // `hasEnabledOsNotifications` reflects changes the user made in the phone settings.
@@ -694,7 +697,10 @@ export const updateIdentify = async (additionalProperties?: UserTraits, mandator
     : undefined;
   const overlayProperties = { userIdPresent: Boolean(segmentUserId) };
   try {
-    await segmentClient.identify(segmentUserId, allProperties);
+    await segmentClient.identify(
+      segmentUserId,
+      scrubAccountDescriptorsFromRecord(allProperties) as UserTraits,
+    );
     publishAnalyticsEvent({
       eventName: "[Identify]",
       eventProperties: overlayProperties,

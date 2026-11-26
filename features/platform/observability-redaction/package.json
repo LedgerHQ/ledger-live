@@ -2,7 +2,7 @@
   "name": "@features/platform-observability-redaction",
   "version": "0.1.0",
   "private": true,
-  "description": "Removes identifiers from URLs before they are reported to observability tools",
+  "description": "Removes identifiers from URLs and account descriptors before they are reported to observability tools",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {

@@ -76,6 +76,13 @@ describe("wallet-cli analytics privacy", () => {
     expect(trackCalls[0].context?.ip).toBe(STATIC_IP);
     expect(Object.keys(trackCalls[0].context ?? {})).toEqual(["ip"]);
   });
+
+  it("redacts account descriptors from event properties", async () => {
+    const descriptor = "account:2:utxo:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkC:m/84h/0h/0h";
+    await track("command_failed", { errorMessage: `Invalid ${descriptor}` });
+
+    expect(trackCalls[0].properties?.errorMessage).toBe("Invalid [redacted]");
+  });
 });
 
 const fakeClient = (closeAndFlush: (options?: { timeout?: number }) => Promise<void>) => () => ({

@@ -3,7 +3,11 @@ import { DatadogId, shouldUsePersistedId } from "@domain/entity-client-identity"
 import { app, crashReporter } from "electron";
 import { readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { scrubResourceUrl } from "@features/platform-observability-redaction";
+import {
+  containsAccountDescriptors,
+  scrubAccountDescriptorsInPlace,
+  scrubResourceUrl,
+} from "@features/platform-observability-redaction";
 import { log as ledgerLog } from "@ledgerhq/logs";
 import { shouldIgnoreErrorMessage } from "./ignoreErrors";
 
@@ -83,6 +87,7 @@ function scrubEvent(event: RumEvent, source: string): void {
   if (event.execution_context?.name) {
     event.execution_context.name = scrubResourceUrl(event.execution_context.name);
   }
+  scrubAccountDescriptorsInPlace(event);
 }
 
 const SCHEMA_FIELDS = new Set(["id", "type", "source", "service", "version", "_dd"]);
@@ -101,7 +106,10 @@ function blankStrings(value: unknown, depth = 0, seen = new Set<unknown>()): voi
 
 export const beforeSendMain: RumBeforeSend = (event, { source }) => {
   try {
-    const ignored = event.type === "error" && shouldIgnoreErrorMessage(event.error.message);
+    const ignored =
+      event.type === "error" &&
+      (shouldIgnoreErrorMessage(event.error.message) ||
+        containsAccountDescriptors([event.error.type, event.error.causes]));
     // Scrubbed even when ignored: crash events cannot be discarded.
     scrubEvent(event, source);
     return !ignored;

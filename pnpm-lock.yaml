@@ -3273,6 +3273,9 @@ importers:
       '@features/platform-device-intent':
         specifier: workspace:^
         version: link:../../features/platform/device-intent
+      '@features/platform-observability-redaction':
+        specifier: workspace:*
+        version: link:../../features/platform/observability-redaction
       '@ledgerhq/agent-intent-sdk':
         specifier: 0.2.0
         version: 0.2.0

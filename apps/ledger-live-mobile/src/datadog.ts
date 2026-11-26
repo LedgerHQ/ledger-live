@@ -32,7 +32,12 @@ import {
   toDatadogBroadcastLog,
   type LogEvent as TransactionLogEvent,
 } from "@ledgerhq/transaction-observability";
-import { containsIdentifiers, scrubResourceUrl } from "@features/platform-observability-redaction";
+import {
+  containsIdentifiers,
+  scrubResourceUrl,
+  scrubAccountDescriptors,
+  scrubAccountDescriptorsFromRecord,
+} from "@features/platform-observability-redaction";
 
 type DatadogRemoteParams = NonNullable<Features["llmDatadog"]["params"]>;
 type ErrorEventMapper = NonNullable<RumConfigurationOptions["errorEventMapper"]>;
@@ -181,14 +186,33 @@ const isExcludedErrorDescription = (errorDescription: string): boolean => {
   });
 };
 
+function redactText(value: string): string;
+function redactText(value: string | undefined): string | undefined;
+function redactText(value: string | undefined): string | undefined {
+  return typeof value === "string" ? scrubAccountDescriptors(value) : value;
+}
+
+/** The SDK sends the unmapped event when a mapper throws, so a mapper that throws drops it instead. */
+const failClosed =
+  <E, R>(mapper: (event: E) => R | null) =>
+  (event: E): R | null => {
+    try {
+      return mapper(event);
+    } catch {
+      return null;
+    }
+  };
+
 /**
  * The custom errorEventMapper function for Datadog RUM.
  * This function is called for every RUM error event before it is sent to Datadog.
  * @param event The RUMErrorEvent object.
  * @returns The modified RUMErrorEvent object, or null if the event should be dropped.
  */
-export const customErrorEventMapper: (disableErrorTracking: boolean) => ErrorEventMapper =
-  disableErrorTracking => event => {
+export const customErrorEventMapper: (
+  disableErrorTracking: boolean,
+) => ErrorEventMapper = disableErrorTracking =>
+  failClosed(event => {
     if (
       disableErrorTracking ||
       isExcludedErrorName(event.stacktrace) ||
@@ -196,47 +220,56 @@ export const customErrorEventMapper: (disableErrorTracking: boolean) => ErrorEve
     ) {
       return null; // Return null to drop the event
     }
-
     return {
       ...event,
+      message: redactText(event.message),
+      stacktrace: redactText(event.stacktrace),
+      fingerprint: redactText(event.fingerprint),
       context: {
-        ...event.context,
+        ...scrubAccountDescriptorsFromRecord(event.context),
         featureFlags: buildFeatureFlagTags(),
       },
     };
-  };
+  });
 
 /**
  * Custom event mapper for action events.
  * @param event The ActionEvent object to map.
  * @returns The mapped ActionEvent object.
  */
-export const customActionEventMapper: ActionEventMapper = event => {
+export const customActionEventMapper: ActionEventMapper = failClosed(event => {
   if (!event) return null;
+  // The SDK restores the original action name after the mapper: one holding a descriptor is dropped.
+  if (redactText(event.name) !== event.name) return null;
   return {
     ...event,
     context: {
-      ...event.context,
+      ...scrubAccountDescriptorsFromRecord(event.context),
       featureFlags: buildFeatureFlagTags(),
     },
   };
-};
+});
 
 /**
  * Custom event mapper for log events.
  * @param event The LogEvent object to map.
  * @returns The mapped LogEvent object.
  */
-export const customLogEventMapper: LogEventMapper = event => {
+export const customLogEventMapper: LogEventMapper = failClosed(event => {
   if (!event) return null;
   return {
     ...event,
+    message: redactText(event.message),
+    errorKind: redactText(event.errorKind),
+    errorMessage: redactText(event.errorMessage),
+    stacktrace: redactText(event.stacktrace),
+    fingerprint: redactText(event.fingerprint),
     context: {
-      ...event.context,
+      ...scrubAccountDescriptorsFromRecord(event.context),
       featureFlags: buildFeatureFlagTags(),
     },
   };
-};
+});
 
 type RequestType = typeof XMLHttpRequest;
 

@@ -1,4 +1,8 @@
-import { scrubResourceUrl } from "@features/platform-observability-redaction";
+import {
+  containsAccountDescriptors,
+  scrubAccountDescriptorsInPlace,
+  scrubResourceUrl,
+} from "@features/platform-observability-redaction";
 import anonymizer from "~/datadog/anonymizer";
 import { scrubViewUrlHash, scrubActionTargetName } from "./scrubRum";
 import { shouldIgnoreErrorMessage } from "./ignoreErrors";
@@ -67,15 +71,15 @@ function matchingOpenParen(frame: string): number {
   return -1;
 }
 
-function rewriteAsarUrlsRecursive(value: unknown, seen: Set<object>): void {
+function mapStringsRecursive(value: unknown, map: (text: string) => string, seen: Set<object>) {
   if (value === null || typeof value !== "object" || seen.has(value)) return;
   seen.add(value);
   const obj = value as Record<string, unknown>;
   for (const k in obj) {
     if (!Object.hasOwn(obj, k)) continue;
     const v = obj[k];
-    if (typeof v === "string") obj[k] = rewriteAsarUrls(v);
-    else rewriteAsarUrlsRecursive(v, seen);
+    if (typeof v === "string") obj[k] = map(v);
+    else mapStringsRecursive(v, map, seen);
   }
 }
 
@@ -104,7 +108,18 @@ export function buildBeforeSend(shouldSend: ShouldSendCallback) {
     }
 
     try {
-      rewriteAsarUrlsRecursive(ev, new Set());
+      // The SDK keeps its own copy of the fields a hook cannot edit, such as the error type and causes.
+      const error = ev.error as Record<string, unknown> | undefined;
+      if (containsAccountDescriptors([error?.type, error?.causes])) return false;
+      scrubAccountDescriptorsInPlace(ev);
+    } catch {
+      // Drop a half-scrubbed event; clear context if the SDK still forces it out.
+      Reflect.set(ev, "context", {});
+      return false;
+    }
+
+    try {
+      mapStringsRecursive(ev, rewriteAsarUrls, new Set());
     } catch (e) {
       console.warn("Datadog: asar URL rewrite failed (best-effort):", e);
     }

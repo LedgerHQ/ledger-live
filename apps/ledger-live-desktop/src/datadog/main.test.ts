@@ -446,6 +446,15 @@ describe("datadog main", () => {
       expect(asError(event).message).toBe("at $HOME/app");
     });
 
+    it("redacts account descriptors from the message, stack and context", () => {
+      const descriptor = "account:2:utxo:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkC:m/84h/0h/0h";
+      const event = errorEvent({ message: `Read failed for ${descriptor}` });
+      (event as unknown as { context: unknown }).context = { account: { descriptor } };
+      expect(beforeSendMain(event, { source: "main" })).toBe(true);
+      expect(JSON.stringify(event)).not.toContain("xpub6Bos");
+      expect(asError(event).message).toBe("Read failed for [redacted]");
+    });
+
     it("tags the process and git commit, and anonymizes the context", () => {
       const event = errorEvent({ message: "boom" });
       (event as unknown as { context: Record<string, unknown> }).context = {

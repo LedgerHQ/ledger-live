@@ -1,6 +1,7 @@
 import { Analytics } from "@segment/analytics-node";
 import os from "node:os";
-import { closeAndFlush, setAnalytics, setEnabledFn } from "@shared/analytics";
+import { scrubAccountDescriptorsFromRecord } from "@features/platform-observability-redaction";
+import { closeAndFlush, setAnalytics, setEnabledFn, setPropsFilter } from "@shared/analytics";
 import pkg from "../../package.json" with { type: "json" };
 
 export const WALLET_CLI_USER_ID = "f3c373cd-c661-46bb-8577-3bc2bce98b5b";
@@ -39,6 +40,7 @@ const unregisterAnalytics = (): void => {
   client = null;
   setAnalytics(undefined);
   setEnabledFn(undefined);
+  setPropsFilter(undefined);
 };
 
 /** `createClient` lets tests record what reaches Segment instead of sending it. */
@@ -49,6 +51,7 @@ export const startAnalytics = (createClient = createSegmentClient): void => {
     const segmentClient = createClient(WALLET_CLI_WRITE_KEY);
     client = segmentClient;
     setEnabledFn(() => true);
+    setPropsFilter(scrubAccountDescriptorsFromRecord);
     setAnalytics({
       track: (event, properties) =>
         segmentClient.track({
