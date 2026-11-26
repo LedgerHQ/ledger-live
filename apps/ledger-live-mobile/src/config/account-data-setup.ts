@@ -9,7 +9,15 @@ import {
 import { createCoinModuleSource } from "@features/platform-account-source-coin-module";
 import { countervaluesStateSelector } from "@features/platform-market-countervalues";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
+import {
+  accountContextOf,
+  fromLegacyAccount,
+} from "@ledgerhq/live-common/account/accountDescriptor";
+import { computeAccountUUID } from "@domain/entity-account/descriptor";
+import {
+  connectAccountContextsStore,
+  type AccountContextsReduxStore,
+} from "@domain/entity-account-context";
 import { createCoinModuleHost } from "@ledgerhq/live-common/account-data/coin-module/createCoinModuleHost";
 import {
   createFullSyncSource,
@@ -72,5 +80,15 @@ export function connectAccounts(store: AccountsReduxStore<State>) {
         error instanceof Error ? (error.stack ?? "") : "",
       );
     },
+  });
+}
+
+/** Mirrors the account context the legacy accounts keep (Aleo: the view key) into the account context slice. */
+export function connectAccountContexts(store: AccountContextsReduxStore<State>) {
+  return connectAccountContextsStore(store, {
+    selectLegacyAccounts: accountsSelector,
+    toAccountUUID: account => computeAccountUUID(fromLegacyAccount(account)),
+    toContext: accountContextOf,
+    onError: error => console.warn("Account context left out of the account context slice", error),
   });
 }

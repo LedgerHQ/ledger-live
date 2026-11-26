@@ -97,6 +97,7 @@
     "@domain/api-push-devices": "workspace:*",
     "@domain/entity-account": "workspace:^",
     "@domain/entity-account-balance": "workspace:*",
+    "@domain/entity-account-context": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-name": "workspace:^",
     "@domain/entity-account-operation": "workspace:*",

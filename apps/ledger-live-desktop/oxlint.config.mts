@@ -127,6 +127,46 @@ export default defineConfig({
       rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
     },
     {
+      files: ["src/mvvm/features/DevTools/AccountDiscovery/**"],
+      rules: {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            paths: [
+              LODASH,
+              BIGNUMBER_NAMED_IMPORT,
+              EXPO_CLIPBOARD,
+              ELECTRON_CLIPBOARD,
+              {
+                name: "react-redux",
+                importNames: ["useSelector", "useDispatch", "useStore"],
+                message:
+                  "Import typed hooks from 'LLD/hooks/redux' instead of 'react-redux' to ensure proper TypeScript typing.",
+              },
+              {
+                name: "i18next",
+                importNames: ["default", "t", "i18n"],
+                message:
+                  "The app no longer initialises the i18next global singleton. Import the app instance (or its 't') from '~/renderer/i18n/init'.",
+              },
+              ...WALLET_FRAMEWORK_CURRENCY_TYPES,
+            ],
+            patterns: [
+              LIVE_COMMON_LIB,
+              {
+                group: ["~/mvvm/**"],
+                message:
+                  "Use 'LLD' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLD' in your imports.",
+              },
+              LIVE_COMMON_FEATURE_FLAGS,
+              LIVE_COMMON_CURRENCY_ACCESSORS,
+              ACCOUNT_DATA_SOURCES,
+            ],
+          },
+        ],
+      },
+    },
+    {
       files: ["src/renderer/families/**"],
       rules: {
         "eslint/no-restricted-imports": [

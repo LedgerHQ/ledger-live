@@ -38,6 +38,7 @@ import type { SupportedFiatsState } from "@domain/entity-currency-fiat";
 import type { ContactsState } from "@domain/entity-contact";
 import type { AccountDataState } from "@domain/entity-account-data";
 import type { AccountReceivesState } from "@domain/entity-account-receive";
+import type { AccountContextState } from "@domain/entity-account-context";
 import type { AccountStatusState } from "@domain/entity-account-status";
 import type { AccountBalancesState } from "@domain/entity-account-balance";
 import type { AccountOperationsState } from "@domain/entity-account-operation";
@@ -533,6 +534,7 @@ export type State = LLMRTKApiState & {
   accountData: AccountDataState;
   accountReceives: AccountReceivesState;
   accountStatus: AccountStatusState;
+  accountContext: AccountContextState;
   accountBalances: AccountBalancesState;
   accountOperations: AccountOperationsState;
   accountBalanceHistories: AccountBalanceHistoriesState;

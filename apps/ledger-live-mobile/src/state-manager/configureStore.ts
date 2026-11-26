@@ -19,10 +19,18 @@ import { setIdentitiesStore } from "@ledgerhq/live-common/device/firmwareDistrib
 import { recentAddressesSelector } from "~/reducers/wallet";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { accountDataExtra } from "@domain/api-account-data";
-import { accountDataSources, connectAccounts } from "~/config/account-data-setup";
+import {
+  accountDataSources,
+  connectAccounts,
+  connectAccountContexts,
+} from "~/config/account-data-setup";
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector } from "~/reducers/settings";
 import { getEnv } from "@shared/env";
+import {
+  redactAccountContextAction,
+  redactAccountContextState,
+} from "@domain/entity-account-context";
 import { cardApi, redactCardApiAction, redactCardApiState } from "@shared/api-services";
 import { configureCardSessionRenewal } from "@features/platform-card";
 import { setSignedIn } from "@features/flow-pay-card-auth/state";
@@ -35,7 +43,10 @@ import { createMobileAuthMiddleware } from "./middleware/auth";
 export const store = configureStore({
   reducer: reducers,
   devTools: Config.DEBUG_RNDEBUGGER
-    ? { actionSanitizer: redactCardApiAction, stateSanitizer: redactCardApiState }
+    ? {
+        actionSanitizer: action => redactAccountContextAction(redactCardApiAction(action)),
+        stateSanitizer: state => redactAccountContextState(redactCardApiState(state)),
+      }
     : false,
   middleware: getDefaultMiddleware =>
     applyLlmRTKApiMiddlewares(
@@ -106,6 +117,7 @@ setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) =>
 );
 connectRecentAddressesStore(store, recentAddressesSelector);
 connectAccounts(store);
+connectAccountContexts(store);
 setupCryptoAssetsStore(store);
 setupRateLookups();
 setSwapQuotesStore(store.dispatch);

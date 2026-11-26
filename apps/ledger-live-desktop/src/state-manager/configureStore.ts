@@ -5,6 +5,10 @@ import { createAppConfigMiddleware } from "@shared/app-config";
 import { createLiveConfigOverridesMiddleware } from "@shared/live-config-overrides";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import {
+  redactAccountContextAction,
+  redactAccountContextState,
+} from "@domain/entity-account-context";
+import {
   cardApi,
   redactCardApiAction,
   redactCardApiState,
@@ -105,8 +109,10 @@ const customCreateStore = ({
         .concat(accountDataTaps.middleware),
     devTools: __DEV__
       ? {
-          actionSanitizer: action => redactPortfolioApiAction(redactCardApiAction(action)),
-          stateSanitizer: state => redactPortfolioApiState(redactCardApiState(state)),
+          actionSanitizer: action =>
+            redactAccountContextAction(redactPortfolioApiAction(redactCardApiAction(action))),
+          stateSanitizer: state =>
+            redactAccountContextState(redactPortfolioApiState(redactCardApiState(state))),
         }
       : false,
   });

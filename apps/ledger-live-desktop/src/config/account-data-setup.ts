@@ -1,4 +1,12 @@
 import { createDynamicMiddleware, type Middleware } from "@reduxjs/toolkit";
+import type { Account } from "@ledgerhq/types-live";
+import { type AccountDescriptor } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account/descriptor";
+import {
+  connectAccountContextsStore,
+  selectAccountContext,
+  type AccountContextsReduxStore,
+} from "@domain/entity-account-context";
 import type { AccountDataSource } from "@domain/api-account-data";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { withCountervalues, type CountervaluesHost } from "@domain/api-market-countervalues";
@@ -10,8 +18,12 @@ import {
 import { createCoinModuleSource } from "@features/platform-account-source-coin-module";
 import { countervaluesStateSelector } from "@features/platform-market-countervalues";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
+import {
+  accountContextOf,
+  fromLegacyAccount,
+} from "@ledgerhq/live-common/account/accountDescriptor";
 import { createCoinModuleHost } from "@ledgerhq/live-common/account-data/coin-module/createCoinModuleHost";
+import { syncDetached } from "@ledgerhq/live-common/account-data/full-sync/syncDetached";
 import {
   createFullSyncSource,
   type FullSyncHost,
@@ -110,6 +122,36 @@ export function connectAccounts(store: AccountsReduxStore<{ accounts: AccountsSt
   });
 }
 
+/** Mirrors the account context the legacy accounts keep (Aleo: the view key) into the account context slice. */
+export function connectAccountContexts(
+  store: AccountContextsReduxStore<{ accounts: AccountsState }>,
+) {
+  return connectAccountContextsStore(store, {
+    selectLegacyAccounts: accountsSelector,
+    toAccountUUID: account => computeAccountUUID(fromLegacyAccount(account)),
+    toContext: accountContextOf,
+    onError: error =>
+      logger.critical(error, "Account context left out of the account context slice"),
+  });
+}
+
 /** Account discovery on the Device Intent session, with the legacy scan rules: UI reaches account data only through this file. */
 export { deriveOnSession } from "@ledgerhq/live-common/account-data/discovery/deriveOnSession";
 export { legacyScanRules } from "@ledgerhq/live-common/account-data/discovery/legacyScanRules";
+export {
+  completeOnSession,
+  needsCompletion,
+} from "@ledgerhq/live-common/account-data/discovery/completeOnSession";
+export { heldAccountMatcher } from "@ledgerhq/live-common/account-data/discovery/heldAccounts";
+
+export function syncDiscoveredAccount(
+  descriptor: AccountDescriptor,
+  getState: () => State,
+): Promise<Account> {
+  return syncDetached(
+    descriptor,
+    { prepareCurrency, blacklistedTokenIds: blacklistedTokenIdsSelector(getState()) },
+    undefined,
+    selectAccountContext(getState(), computeAccountUUID(descriptor)),
+  );
+}
