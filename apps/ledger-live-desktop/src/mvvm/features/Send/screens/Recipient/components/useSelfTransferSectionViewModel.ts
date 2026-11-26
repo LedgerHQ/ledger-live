@@ -1,5 +1,6 @@
 import { useMemo, useCallback } from "react";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import type { BalanceTypeSelfTransferTarget } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
@@ -29,9 +30,15 @@ export function useSelfTransferSectionViewModel(): SelfTransferSectionViewModel 
     );
   }, [account, state.transaction.transaction, state.account.parentAccount]);
 
+  const memoValidationFails =
+    !!target &&
+    sendFeatures.hasMemoForRecipient(state.account.currency ?? undefined, target.address) &&
+    Boolean(state.transaction.status.errors.transaction);
+  const isBlocked = isFamilyRecipientBlocked || memoValidationFails;
+
   const onSelfTransfer = useCallback(
     (displayLabel: string) => {
-      if (!target || isFamilyRecipientBlocked) return;
+      if (!target || isBlocked) return;
       transaction.setRecipient({
         ...state.recipient,
         address: target.address,
@@ -43,10 +50,10 @@ export function useSelfTransferSectionViewModel(): SelfTransferSectionViewModel 
       });
       navigation.goToNextStep();
     },
-    [isFamilyRecipientBlocked, target, transaction, state.recipient, navigation],
+    [isBlocked, target, transaction, state.recipient, navigation],
   );
 
   if (!target) return null;
 
-  return { target, onSelfTransfer, isBlocked: isFamilyRecipientBlocked };
+  return { target, onSelfTransfer, isBlocked };
 }
