@@ -203,7 +203,8 @@ string or a template literal that has no substitution. A specifier built at run 
 (``require(`@ledgerhq/coin-${name}`)``) cannot be checked. It reports three kinds of
 specifier, each with its own message:
 
-- **`coin-package`**: a coin module or a live-signer, `@ledgerhq/coin-*` and `@ledgerhq/live-signer-*`, and their
+- **`coin-package`**: a coin module, a live-signer, a device signer kit or wallet-btc, `@ledgerhq/coin-*`,
+  `@ledgerhq/live-signer-*`, `@ledgerhq/device-signer-kit-*` and `@ledgerhq/wallet-btc`, and their
   subpaths. The exclusion is by full package name (`coin-module-framework`, `coin-framework`,
   `coin-modules-monitoring`, `coin-module-boilerplate`, `coin-tester*`), because the prefix alone
   would also take them.

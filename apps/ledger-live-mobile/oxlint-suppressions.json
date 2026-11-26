@@ -173,6 +173,11 @@
       "count": 1
     }
   },
+  "src/screens/Settings/Debug/Features/DeviceIntentExecutor/intents/getEthAddressDMKSignerDemoIntent/job.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
   "src/screens/SignMessage/01-Summary.tsx": {
     "coin-families/no-coin-specific-import": {
       "count": 1

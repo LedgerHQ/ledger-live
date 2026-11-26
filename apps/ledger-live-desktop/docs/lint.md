@@ -21,6 +21,15 @@ These files are Electron process plumbing for the Zcash native host, not coin lo
 
 `src/bridge/contract.ts` declares the `ZcashBridge` type for the same channel. No rule reports it, since it imports no coin package.
 
+## Baselined, to burn down
+
+These leaks are in the baseline until their owner fixes them. Fixing one means pruning the baseline (see above).
+
+| File | Why | Owner |
+| --- | --- | --- |
+| `src/renderer/webworkers/workers/publicKeyTweakAdd.ts` | The worker imports `@ledgerhq/wallet-btc/crypto/secp256k1`. A family cannot expose its own web worker yet (see the TODO in the file), so it cannot move under `families/bitcoin/`. | `@ledgerhq/coin-integration` |
+| `src/renderer/screens/settings/sections/Developer/DeviceIntentExecutorDevTool/intents/getEthAddressDMKSignerDemoIntent/job.ts` | Developer demo that builds a `SignerEthBuilder` from `@ledgerhq/device-signer-kit-ethereum`. | `@ledgerhq/live-devices` |
+
 ## Temporary exceptions
 
 No rule reports these, so they are not in the baseline. They stay until the flags are removed.
