@@ -241,6 +241,7 @@ export default function SendSelectRecipient({ route }: Props) {
   if (!account || !transaction) return null;
 
   const error = withoutHiddenError(status.errors.recipient);
+  const memoTagError = memoTag?.error ?? status.errors.transaction;
   const warning = status.warnings.recipient;
   const isSomeIncomingTxPending = account.operations?.some(
     (op: Operation) =>
@@ -403,10 +404,11 @@ export default function SendSelectRecipient({ route }: Props) {
                   autoFocus={focusMemoInput}
                   onChange={memoTag.handleChange}
                   error={
-                    status.errors.transaction
-                      ? t(`errors.${status.errors.transaction.name}.title`, {
+                    memoTagError
+                      ? t(`errors.${memoTagError.name}.title`, {
+                          ...memoTagError,
                           defaultValue: t("errors.generic.title", {
-                            message: status.errors.transaction.message,
+                            message: memoTagError.message,
                           }),
                         })
                       : undefined

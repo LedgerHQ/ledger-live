@@ -1,5 +1,5 @@
 import React from "react";
-import { screen, render } from "@tests/test-renderer";
+import { screen, render, fireEvent, withFlagOverrides } from "@tests/test-renderer";
 import SendSelectRecipient from "./02-SelectRecipient";
 import { Account } from "@ledgerhq/types-live";
 import * as useBridgeTransactionModule from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -225,5 +225,49 @@ describe("SendSelectRecipient — transaction mirrored from a later step", () =>
 
     expect(setTransaction).toHaveBeenCalledTimes(1);
     expect(setTransaction).toHaveBeenCalledWith(editedTransaction);
+  });
+});
+
+describe("SendSelectRecipient — memo longer than the chain allows", () => {
+  const cardanoAccountState = withFlagOverrides({ llmMemoTag: { enabled: true } }, state => ({
+    ...state,
+    accounts: {
+      active: [
+        {
+          id: "parentId",
+          type: "Account",
+          currency: { units: [], family: "cardano", id: "cardano" },
+          subAccounts: [],
+          operations: [],
+          operationsCount: 0,
+          balance: { gt: () => true },
+          spendableBalance: { gt: () => true },
+        } as unknown as Account,
+      ],
+    },
+  }));
+
+  it("shows the memo size against the limit and keeps Continue disabled", () => {
+    mockBridgeTransaction({
+      transaction: { recipient: "addr1-recipient", family: "cardano" },
+      setTransaction: jest.fn(),
+    });
+    render(
+      <SendSelectRecipient
+        route={
+          { params: { accountId: "parentId" } } as unknown as RouteProp<
+            SendFundsNavigatorStackParamList,
+            ScreenName.SendSelectRecipient
+          >
+        }
+      />,
+      { overrideInitialState: cardanoAccountState },
+    );
+
+    fireEvent.changeText(screen.getByTestId("memo-tag-input"), "a".repeat(65));
+
+    expect(screen.getByTestId("memo-tag-input")).toHaveDisplayValue("a".repeat(65));
+    expect(screen.getByText("Memo is too long (65/64 bytes)")).toBeVisible();
+    expect(screen.getByTestId("disabled-recipient-continue-button")).toBeVisible();
   });
 });
