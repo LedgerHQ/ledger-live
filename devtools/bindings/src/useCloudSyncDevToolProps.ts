@@ -1,4 +1,8 @@
 import { useSelector } from "react-redux";
+import {
+  selectDebugKeyRingMemberKey,
+  selectDebugKeyRingTree,
+} from "@features/platform-key-ring/devtools";
 import type { DevToolsConfig } from "@devtools/registry";
 
 type CloudSyncDevToolProps = Extract<DevToolsConfig[number], { id: "cloud-sync" }>["config"];
@@ -10,10 +14,8 @@ export function useCloudSyncDevToolProps(
   useProd?: boolean,
   setUseProd?: (v: boolean) => void,
 ): CloudSyncDevToolProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const trustchain = useSelector((s: any) => s.trustchain?.trustchain ?? null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const memberCredentials = useSelector((s: any) => s.trustchain?.memberCredentials ?? null);
+  const trustchain = useSelector(selectDebugKeyRingTree);
+  const memberCredentials = useSelector(selectDebugKeyRingMemberKey);
 
   return {
     liveState: { trustchain, memberCredentials },
