@@ -2,7 +2,12 @@ import React from "react";
 import { Text } from "react-native";
 import { act, render, screen } from "@testing-library/react-native";
 import { configureStore } from "@reduxjs/toolkit";
-import { combineReducers, type Store } from "redux";
+import { combineReducers } from "redux";
+import keyRingReducer, {
+  keyRingInitialState,
+  selectHasKeyRingMemberKey,
+} from "@domain/entity-key-ring";
+import { keyRingRuntimeExtra } from "@features/platform-key-ring/store";
 import { payCardAuthSlice, selectCardAuthStatus } from "@features/flow-pay-card-auth/state";
 import { getCardSessionToken } from "@features/platform-card";
 import { featureFlagsReducer, setCachedFlagsSettled } from "@shared/feature-flags";
@@ -74,22 +79,36 @@ jest.mock("@features/platform-card", () => ({
   getCardSessionToken: jest.fn(async () => null),
 }));
 
+// The app store's thunk extra holds the key ring runtime the boot import reads.
+const KEY_RING_EXTRA = keyRingRuntimeExtra({
+  getState: () => ({ trustchain: keyRingInitialState }),
+});
+
 // A store without the feature-flags middleware, so the test decides when the cache settles.
-const createStore = () => configureStore({ reducer: { featureFlags: featureFlagsReducer } });
+const createStore = () =>
+  configureStore({
+    reducer: { featureFlags: featureFlagsReducer },
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({ thunk: { extraArgument: KEY_RING_EXTRA } }),
+  });
 const createStoreWithOverrides = () =>
   configureStore({
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({ thunk: { extraArgument: KEY_RING_EXTRA } }),
     reducer: { featureFlags: featureFlagsReducer, liveConfigOverrides: liveConfigOverridesReducer },
   });
 
 const createStoreWithReceiveVerifyHint = () =>
   configureStore({
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({ thunk: { extraArgument: KEY_RING_EXTRA } }),
     reducer: {
       featureFlags: featureFlagsReducer,
       receiveVerifyHint: receiveVerifyHintSlice.reducer,
     },
   });
 
-const renderProvider = (store: Store) =>
+const renderProvider = (store: React.ComponentProps<typeof LedgerStoreProvider>["store"]) =>
   render(
     <LedgerStoreProvider store={store} onInitFinished={() => {}}>
       {({ ready }) => <Text>{ready ? "ready" : "loading"}</Text>}
@@ -154,6 +173,8 @@ describe("LedgerStoreProvider", () => {
     async storedSettings => {
       mockGetSettings.mockResolvedValueOnce(storedSettings);
       const store = configureStore({
+        middleware: getDefaultMiddleware =>
+          getDefaultMiddleware({ thunk: { extraArgument: KEY_RING_EXTRA } }),
         reducer: combineReducers({ featureFlags: featureFlagsReducer, settings: settingsReducer }),
       });
       store.dispatch(setCachedFlagsSettled());
@@ -174,6 +195,8 @@ describe("LedgerStoreProvider", () => {
       }),
     );
     const store = configureStore({
+      middleware: getDefaultMiddleware =>
+        getDefaultMiddleware({ thunk: { extraArgument: KEY_RING_EXTRA } }),
       reducer: { featureFlags: featureFlagsReducer, payCardAuth: payCardAuthSlice.reducer },
     });
     store.dispatch(setCachedFlagsSettled());
@@ -358,5 +381,36 @@ describe("LedgerStoreProvider", () => {
 
       expect(store.getState().receiveVerifyHint.hasSeenReceiveVerifyHint).toBe(false);
     });
+  });
+
+  it("should store the member key before the app renders ready or a subscriber reads it", async () => {
+    const store = configureStore({
+      reducer: { featureFlags: featureFlagsReducer, trustchain: keyRingReducer },
+      middleware: getDefaultMiddleware =>
+        getDefaultMiddleware({ thunk: { extraArgument: KEY_RING_EXTRA } }),
+    });
+    store.dispatch(setCachedFlagsSettled());
+    const keyAtNotification: boolean[] = [];
+    store.subscribe(() => {
+      const trustchainChanged = store.getState().trustchain !== keyRingInitialState;
+      if (trustchainChanged) keyAtNotification.push(selectHasKeyRingMemberKey(store.getState()));
+    });
+    const keyAtReadyRender: boolean[] = [];
+
+    render(
+      <LedgerStoreProvider store={store} onInitFinished={() => {}}>
+        {({ ready }) => {
+          if (ready) keyAtReadyRender.push(selectHasKeyRingMemberKey(store.getState()));
+          return <Text>{ready ? "ready" : "loading"}</Text>;
+        }}
+      </LedgerStoreProvider>,
+    );
+    await act(() => jest.runAllTimersAsync());
+
+    expect(screen.getByText("ready")).toBeOnTheScreen();
+    expect(keyAtReadyRender.length).toBeGreaterThan(0);
+    expect(keyAtReadyRender.every(Boolean)).toBe(true);
+    expect(keyAtNotification.length).toBeGreaterThan(0);
+    expect(keyAtNotification.every(Boolean)).toBe(true);
   });
 });

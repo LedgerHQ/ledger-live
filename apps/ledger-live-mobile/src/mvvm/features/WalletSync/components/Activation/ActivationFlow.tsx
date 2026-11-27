@@ -2,6 +2,7 @@ import { TrackScreen } from "@shared/analytics-react";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { useSelector } from "~/context/hooks";
+import { selectKeyRingSession } from "@features/platform-key-ring";
 import Activation from ".";
 import ActivationModal from "./ActivationModal";
 import { useFeature } from "@features/platform-feature-flags";
@@ -21,7 +22,8 @@ import PinCodeInput from "../../screens/Synchronize/PinCodeInput";
 import SyncError from "../../screens/Synchronize/SyncError";
 import ScannedInvalidQrCode from "../../screens/Synchronize/ScannedInvalidQrCode";
 import ScannedOldImportQrCode from "../../screens/Synchronize/ScannedOldImportQrCode";
-import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
+import { useInitMemberKey } from "@features/platform-ledger-sync";
+import { useKeyRingClient } from "../../hooks/useKeyRingClient";
 import { useSyncWithQrCode } from "../../hooks/useSyncWithQrCode";
 import { SpecificError } from "../Error/SpecificError";
 import { ErrorReason } from "../../hooks/useSpecificError";
@@ -54,14 +56,16 @@ const ActivationFlow = ({
   onCreateKey,
 }: Props) => {
   const { currentStep, setCurrentStep } = useCurrentStep();
-  const { memberCredentials } = useInitMemberCredentials();
+  const keyRingClient = useKeyRingClient();
+  const { hasMemberKey } = useInitMemberKey(keyRingClient);
+  const session = useSelector(selectKeyRingSession);
   const lwmLedgerSyncOptimisation = useFeature("lwmLedgerSyncOptimisation");
 
   const { handleStart, handleSendDigits, nbDigits } = useSyncWithQrCode();
 
   const handleQrCodeScanned = (data: string) => {
     onQrCodeScanned();
-    if (memberCredentials) handleStart(data, memberCredentials);
+    if (hasMemberKey) handleStart(data, session);
   };
 
   const handlePinCodeSubmit = useCallback(

@@ -1,4 +1,4 @@
-import type { TrustchainMemberId } from "@features/platform-intent-wallet-sync";
+import type { KeyRingMemberId } from "@features/platform-key-ring";
 
 /** The Ledger Sync operation a log row belongs to. */
 export type WalletSyncIntentToolOperation = "add-member" | "remove-member";
@@ -16,7 +16,7 @@ export interface WalletSyncIntentToolLogRow {
 
 /** A trustchain member the tool can remove, never this instance. */
 export interface WalletSyncIntentToolMember {
-  readonly id: TrustchainMemberId;
+  readonly id: KeyRingMemberId;
   readonly name: string;
 }
 
@@ -32,7 +32,7 @@ export interface WalletSyncIntentToolProps {
   readonly members: readonly WalletSyncIntentToolMember[] | null;
   readonly log: readonly WalletSyncIntentToolLogRow[];
   readonly onAddMember: () => void;
-  readonly onRemoveMember: (memberId: TrustchainMemberId) => void;
+  readonly onRemoveMember: (memberId: KeyRingMemberId) => void;
   readonly onRefreshMembers: () => void;
   readonly onClearLog: () => void;
 }

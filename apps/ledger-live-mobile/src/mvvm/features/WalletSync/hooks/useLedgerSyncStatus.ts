@@ -1,41 +1,18 @@
-import { useQueries, UseQueryResult } from "@tanstack/react-query";
-import { QueryKey } from "./type.hooks";
-import getTrustchainApi, {
-  StatusAPIResponse as TrustchainStatus,
-} from "@ledgerhq/ledger-key-ring-protocol/api";
-import { getCloudSyncApi, StatusAPIResponse as CloudSyncStatus } from "@shared/cloud-sync";
+import {
+  useLedgerSyncBackends,
+  useLedgerSyncServiceStatus,
+  type LedgerSyncServiceStatus,
+} from "@features/platform-ledger-sync";
 import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { useKeyRingClient } from "./useKeyRingClient";
 
-export function useLedgerSyncStatus() {
+export function useLedgerSyncStatus(): LedgerSyncServiceStatus {
   const featureWalletSync = useFeature("llmWalletSync");
-  const isWalletSyncEnabled = featureWalletSync?.enabled === true;
-  const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
-  const QUERIES = [
-    {
-      queryKey: [QueryKey.fetchTrustchainStatus],
-      queryFn: () => getTrustchainApi(trustchainApiBaseUrl).fetchStatus(),
-      enabled: isWalletSyncEnabled,
-    },
-    {
-      queryKey: [QueryKey.fetchCloudSyncStatus],
-      queryFn: () => getCloudSyncApi(cloudSyncApiBaseUrl).fetchStatus(),
-      enabled: isWalletSyncEnabled,
-    },
-  ];
+  const { cloudSyncApiBaseUrl } = useLedgerSyncBackends();
 
-  return useQueries({
-    queries: QUERIES,
-    combine: combineData,
+  return useLedgerSyncServiceStatus({
+    client: useKeyRingClient(),
+    cloudSyncApiBaseUrl,
+    enabled: featureWalletSync?.enabled === true,
   });
-}
-
-function combineData(results: UseQueryResult<TrustchainStatus | CloudSyncStatus, Error>[]) {
-  return {
-    error: results.find(result => result.isError)?.error || null,
-    isLoading: results.some(result => result.isLoading),
-    isError: results.some(result => result.isError),
-  };
 }

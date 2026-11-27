@@ -1,4 +1,4 @@
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import {
@@ -88,7 +88,7 @@ export function getWelcomeScreenFlow({
 
 export const useFlows = () => {
   const dispatch = useDispatch();
-  const trustchain = useSelector(trustchainSelector);
+  const isLedgerSyncActive = useSelector(selectIsLedgerSyncActive);
   const currentFlow = useSelector(walletSyncFlowSelector);
   const currentStep = useSelector(walletSyncStepSelector);
 
@@ -110,12 +110,12 @@ export const useFlows = () => {
 
   const goToWelcomeScreenWalletSync = (onboardingNewDevice?: boolean) => {
     dispatch(
-      setFlow(getWelcomeScreenFlow({ hasTrustchain: !!trustchain?.rootId, onboardingNewDevice })),
+      setFlow(getWelcomeScreenFlow({ hasTrustchain: isLedgerSyncActive, onboardingNewDevice })),
     );
   };
 
   const goToSyncMethodScreenWalletSync = () => {
-    if (trustchain?.rootId) {
+    if (isLedgerSyncActive) {
       dispatch(setFlow({ flow: Flow.LedgerSyncActivated, step: Step.LedgerSyncActivated }));
     } else {
       dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));

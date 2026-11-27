@@ -4,42 +4,43 @@ import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type { KeyRingMember, KeyRingMemberId } from "@features/platform-key-ring";
 import { TinyCard } from "../TinyCard";
 import { Scene } from "../../screens/ManageInstances/useManageInstanceDrawer";
 import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 
 type Props = {
-  onClickInstance: (member: TrustchainMember) => void;
-  members?: TrustchainMember[];
-  currentInstance?: string;
+  onClickInstance: (member: KeyRingMember) => void;
+  members?: KeyRingMember[];
+  isCurrentInstance: (memberId: KeyRingMemberId) => boolean;
   changeScene: (scene: Scene) => void;
 };
 
-export function ListInstances({ onClickInstance, changeScene, members, currentInstance }: Props) {
+export function ListInstances({ onClickInstance, changeScene, members, isCurrentInstance }: Props) {
   const { t } = useTranslation();
 
-  const handleAutoRemove = () => changeScene(Scene.AutoRemove);
+  function handleAutoRemove() {
+    changeScene(Scene.AutoRemove);
+  }
 
-  const handleGoDeleteInstance = (instance: TrustchainMember) => onClickInstance(instance);
+  function handleGoDeleteInstance(instance: KeyRingMember) {
+    onClickInstance(instance);
+  }
 
-  const renderItem = ({ item }: ListRenderItemInfo<TrustchainMember>) => {
+  function renderItem({ item }: ListRenderItemInfo<KeyRingMember>) {
     const instance = item;
+    const isCurrent = isCurrentInstance(instance.id);
     return (
       <TinyCard
         key={instance.id}
         testID={`walletSync-manage-instance-${instance.id}`}
         text={instance.name}
         cta={t("walletSync.walletSyncActivated.manageInstances.remove")}
-        onClick={
-          currentInstance === instance.id
-            ? handleAutoRemove
-            : () => handleGoDeleteInstance(instance)
-        }
-        currentInstance={currentInstance === instance.id}
+        onClick={isCurrent ? handleAutoRemove : () => handleGoDeleteInstance(instance)}
+        currentInstance={isCurrent}
       />
     );
-  };
+  }
 
   return (
     <Flex pb={4}>

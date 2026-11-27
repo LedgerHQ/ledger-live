@@ -2,20 +2,18 @@ import React from "react";
 import { render, screen, waitFor } from "@tests/test-renderer";
 import { WalletSyncSettingsNavigator } from "./shared";
 import { State } from "~/reducers/types";
-import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { KeyRingMemberSchema } from "@features/platform-key-ring";
 
-const INSTANCES: Array<TrustchainMember> = [
+const INSTANCES = KeyRingMemberSchema.array().parse([
   {
     id: "currentInstance",
     name: "macOS",
-    permissions: 112,
   },
   {
     id: "2",
     name: "Ipone 15",
-    permissions: 112,
   },
-];
+]);
 
 const trustchain = {
   rootId: "rootId",

@@ -1,13 +1,9 @@
-import {
-  memberCredentialsSelector,
-  setTrustchain,
-  trustchainSelector,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
+import { useLedgerSyncActivation } from "@features/platform-ledger-sync";
+import { selectKeyRingSession, type KeyRingActivation } from "@features/platform-key-ring";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { useTrustchainSdk } from "./useTrustchainSdk";
-import { TrustchainResult } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnalyticsPage } from "./useLedgerSyncAnalytics";
 import { useOnTrustchainJoined } from "./useOnTrustchainJoined";
@@ -20,26 +16,22 @@ export function useAddMember({
   sourcePage?: AnalyticsPage;
 }) {
   const dispatch = useDispatch();
-  const sdk = useTrustchainSdk();
-  const memberCredentials = useSelector(memberCredentialsSelector);
-  const trustchain = useSelector(trustchainSelector);
+  const sdk = useKeyRingClient();
+  const session = useSelector(selectKeyRingSession);
+  const activate = useLedgerSyncActivation();
   const [error, setError] = useState<Error | null>(null);
 
   const [userDeviceInteraction, setUserDeviceInteraction] = useState(false);
 
   const sdkRef = useRef(sdk);
   const deviceRef = useRef(device);
-  const trustchainRef = useRef(trustchain);
-  const memberCredentialsRef = useRef(memberCredentials);
+  const sessionRef = useRef(session);
 
   const onTrustchainJoined = useOnTrustchainJoined(sourcePage);
 
-  const transitionToNextScreen = useCallback(
-    (trustchainResult: TrustchainResult) => {
-      dispatch(setTrustchain(trustchainResult.trustchain));
-      onTrustchainJoined(trustchainResult, device);
-    },
-    [device, dispatch, onTrustchainJoined],
+  const onActivated = useCallback(
+    (activation: KeyRingActivation) => onTrustchainJoined(activation, device),
+    [device, onTrustchainJoined],
   );
 
   const handleMissingDevice = useCallback(() => {
@@ -56,40 +48,33 @@ export function useAddMember({
   };
 
   useEffect(() => {
-    const addMember = async () => {
-      try {
-        if (!deviceRef.current) {
-          return handleMissingDevice();
-        }
-        if (!memberCredentialsRef.current) {
-          throw new Error("memberCredentials is not set");
-        }
-        const trustchainResult = await sdkRef.current.getOrCreateTrustchain(
-          deviceRef.current.deviceId,
-          memberCredentialsRef.current,
-          {
-            onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
-            onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
-          },
-          undefined,
-          trustchainRef.current ?? undefined,
-        );
-
-        transitionToNextScreen(trustchainResult);
-      } catch (error) {
-        const eName = (error as { name?: string })?.name;
-        if (eName === "TrustchainAlreadyInitialized") {
-          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredSameSeed }));
-        } else if (eName === "TrustchainAlreadyInitializedWithOtherSeed") {
-          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredOtherSeed }));
-        } else {
-          setError(error as Error);
-        }
+    async function addMember() {
+      if (!deviceRef.current) {
+        return handleMissingDevice();
       }
-    };
+      const outcome = await activate({
+        client: sdkRef.current,
+        session: sessionRef.current,
+        legacyDeviceId: deviceRef.current.deviceId,
+        callbacks: {
+          onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
+          onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
+        },
+        onActivated,
+      });
+      if (outcome.type === "done") return;
+
+      if (outcome.reason === "already-member") {
+        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredSameSeed }));
+      } else if (outcome.reason === "member-of-other-tree") {
+        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredOtherSeed }));
+      } else {
+        setError(outcome.error as Error);
+      }
+    }
 
     addMember();
-  }, [dispatch, handleMissingDevice, transitionToNextScreen]);
+  }, [activate, dispatch, handleMissingDevice, onActivated]);
 
   return { error, userDeviceInteraction, handleMissingDevice, onRetry };
 }

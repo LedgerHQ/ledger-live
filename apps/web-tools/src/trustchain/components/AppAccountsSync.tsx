@@ -13,11 +13,8 @@ import {
   type NonImportedAccountInfo,
 } from "@ledgerhq/live-wallet/accounts";
 import { createAggregator } from "@shared/cloud-sync-module";
-import {
-  createWalletSyncWatchLoop,
-  makeSaveNewUpdate,
-  makeLocalIncrementalUpdate,
-} from "@features/platform-wallet-sync";
+import { makeSaveNewUpdate, makeLocalIncrementalUpdate } from "@features/platform-wallet-sync";
+import { createWalletSyncWatchLoop } from "@features/platform-wallet-sync/legacy";
 import {
   recentAddressesSyncModule,
   type RecentAddressesState,

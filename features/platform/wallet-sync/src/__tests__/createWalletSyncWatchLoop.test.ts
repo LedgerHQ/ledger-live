@@ -1,11 +1,8 @@
 import { z } from "zod";
 import { CloudSyncDataManager } from "@shared/cloud-sync-module";
-import { createWalletSyncWatchLoop } from "../createWalletSyncWatchLoop";
-import type {
-  CreateWalletSyncWatchLoopParams,
-  VisualConfig,
-  WatchConfig,
-} from "../createWalletSyncWatchLoop";
+import { createWalletSyncWatchLoop } from "../legacy/createWalletSyncWatchLoop";
+import type { CreateWalletSyncWatchLoopParams } from "../legacy/createWalletSyncWatchLoop";
+import type { VisualConfig, WatchConfig } from "../watchLoop/types";
 
 type LocalState = { value: string };
 type Update = { newValue: string };

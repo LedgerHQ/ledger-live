@@ -12,21 +12,19 @@ export function CheckerLedgerSync() {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
-  const { walletState, trustchain } = useLedgerSyncInfo();
+  const { walletState, treeId, streamPath } = useLedgerSyncInfo();
 
   const elements = [
     {
       key: t("settings.developer.debugWalletSync.modal.check.trustchain.name"),
-      value:
-        trustchain?.rootId ??
-        t("settings.developer.debugWalletSync.modal.check.trustchain.emptyId"),
+      value: treeId ?? t("settings.developer.debugWalletSync.modal.check.trustchain.emptyId"),
       copy: true,
       tiny: true,
     },
     {
       key: t("settings.developer.debugWalletSync.modal.check.trustchain.applicationPath"),
       value:
-        trustchain?.applicationPath ??
+        streamPath ??
         t("settings.developer.debugWalletSync.modal.check.trustchain.emptyApplicationPath"),
       copy: true,
       tiny: false,

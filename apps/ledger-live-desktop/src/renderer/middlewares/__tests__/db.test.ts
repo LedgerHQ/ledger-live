@@ -1,5 +1,8 @@
 import type { Dispatch, MiddlewareAPI, UnknownAction } from "@reduxjs/toolkit";
 import { LARGE_SCREEN_UPSELL_MODAL } from "@features/flow-large-screen-upsell";
+import { mockKeyRingTreeRecord } from "@domain/entity-key-ring/schema.mock";
+import { commitKeyRingTree } from "@features/platform-key-ring";
+import { keyRingTreeUpdateFixture } from "@features/platform-key-ring/testing";
 import {
   cryptoAssetsApi,
   extractPersistedCALFromState,
@@ -43,11 +46,6 @@ jest.mock("~/renderer/reducers/wallet", () => ({
   accountUserDataExportSelector: jest.fn(() => null),
   walletStateExportShouldDiffer: jest.fn(() => false),
   exportWalletState: jest.fn(s => s),
-}));
-
-jest.mock("@ledgerhq/ledger-key-ring-protocol/store", () => ({
-  trustchainStoreActionTypePrefix: "TRUSTCHAIN_STORE_",
-  trustchainStoreSelector: jest.fn(state => state.trustchain),
 }));
 
 jest.mock("@domain/api-currency-token", () => ({
@@ -415,18 +413,20 @@ describe("DBMiddleware - liveConfigOverrides branch", () => {
   });
 });
 
+const KEY_RING_ACTION = commitKeyRingTree(keyRingTreeUpdateFixture(mockKeyRingTreeRecord()));
+
 describe("DBMiddleware - trustchain branch", () => {
   beforeEach(() => {
     mockedSetKey.mockReset();
   });
 
-  it("persists the trustchain on TRUSTCHAIN_STORE_* actions when the app is unlocked", () => {
+  it("persists the trustchain on key ring actions when the app is unlocked", () => {
     const state: FakeState = {
       ...baseState(),
       trustchain: { trustchain: { rootId: "root-id" }, memberCredentials: { pubkey: "ab" } },
     };
 
-    runMiddleware([state, state], { type: "TRUSTCHAIN_STORE_IMPORT_STATE" });
+    runMiddleware([state, state], KEY_RING_ACTION);
 
     expect(mockedSetKey).toHaveBeenCalledWith("app", "trustchain", state.trustchain);
   });
@@ -438,7 +438,7 @@ describe("DBMiddleware - trustchain branch", () => {
       trustchain: { trustchain: null, memberCredentials: { pubkey: "ab" } },
     };
 
-    runMiddleware([state, state], { type: "TRUSTCHAIN_STORE_IMPORT_STATE" });
+    runMiddleware([state, state], KEY_RING_ACTION);
 
     expect(mockedSetKey).not.toHaveBeenCalled();
   });

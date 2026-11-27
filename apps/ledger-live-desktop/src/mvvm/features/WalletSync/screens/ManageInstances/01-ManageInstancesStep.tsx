@@ -5,39 +5,42 @@ import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSync
 import { TrackScreen } from "@shared/analytics-react";
 import { TinyCard } from "../../components/TinyCard";
 import { useInstances } from "./useInstances";
-import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import {
+  isCurrentKeyRingMember,
+  selectKeyRingSession,
+  type KeyRingMember,
+} from "@features/platform-key-ring";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { memberCredentialsSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import styled from "styled-components";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 
 type Props = {
-  goToDeleteInstance: (instance: TrustchainMember) => void;
+  goToDeleteInstance: (instance: KeyRingMember) => void;
 };
 
 export default function ManageInstancesStep({ goToDeleteInstance }: Props) {
   const { t } = useTranslation();
-  const memberCredentials = useSelector(memberCredentialsSelector);
+  const session = useSelector(selectKeyRingSession);
   const { instances } = useInstances();
 
   const dispatch = useDispatch();
 
   const { onClickTrack } = useLedgerSyncAnalytics();
 
-  const handleGoDeleteInstance = (instance: TrustchainMember) => {
+  function handleGoDeleteInstance(instance: KeyRingMember) {
     onClickTrack({ button: "remove instance", page: AnalyticsPage.ManageInstances });
     goToDeleteInstance(instance);
-  };
+  }
 
-  const handleAutoRemove = () => {
+  function handleAutoRemove() {
     dispatch(
       setFlow({
         flow: Flow.ManageInstances,
         step: Step.AutoRemoveInstance,
       }),
     );
-  };
+  }
 
   return (
     <Flex
@@ -61,11 +64,11 @@ export default function ManageInstancesStep({ goToDeleteInstance }: Props) {
             text={instance.name}
             cta={t("walletSync.manageInstances.remove")}
             onClick={
-              memberCredentials?.pubkey === instance.id
+              isCurrentKeyRingMember(session, instance.id)
                 ? handleAutoRemove
                 : () => handleGoDeleteInstance(instance)
             }
-            currentInstance={memberCredentials?.pubkey == instance.id}
+            currentInstance={isCurrentKeyRingMember(session, instance.id)}
           />
         ))}
       </List>

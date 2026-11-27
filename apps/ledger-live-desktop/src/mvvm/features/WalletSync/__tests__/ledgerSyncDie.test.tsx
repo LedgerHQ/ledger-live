@@ -4,16 +4,16 @@
 import React from "react";
 import { act, render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import type { Intent } from "@features/platform-device-intent";
-import type {
-  LedgerSyncFailureReason,
-  LedgerSyncJobState,
-} from "@features/platform-intent-wallet-sync";
+import type { KeyRingTreeRecord } from "@domain/entity-key-ring";
 import {
-  type Trustchain,
-  type TrustchainResult,
-  TrustchainResultType,
-} from "@ledgerhq/ledger-key-ring-protocol/types";
-import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+  resetKeyRingState,
+  selectKeyRingSession,
+  type KeyRingActivation,
+  type KeyRingActivationOutcome,
+  type LedgerSyncFailureReason,
+  type LedgerSyncJobState,
+} from "@features/platform-key-ring";
+import { keyRingTreeUpdateFixture } from "@features/platform-key-ring/testing";
 import { track } from "@shared/analytics";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setDrawerVisibility, setFlow } from "~/renderer/actions/walletSync";
@@ -21,14 +21,16 @@ import { useDispatch } from "LLD/hooks/redux";
 import { Flow, initialStateWalletSync, Step } from "~/renderer/reducers/walletSync";
 import { LedgerSyncDeviceIntentExecutorLWD } from "../deviceIntents/LedgerSyncDeviceIntentExecutorLWD";
 import { buildDeviceConnection } from "../deviceIntents/__tests__/ledgerSyncIntentTestKit";
-import { ledgerSyncResultOrder } from "../deviceIntents/ledgerSyncResultOrder";
+import { ledgerSyncResultOrder } from "@features/platform-ledger-sync";
 import { addMemberIntentLWDDefinition } from "../deviceIntents/addMemberIntent/intentLWDDefinition";
 import { removeMemberIntentLWDDefinition } from "../deviceIntents/removeMemberIntent/intentLWDDefinition";
 import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
+import { useKeyRingClient } from "../hooks/useKeyRingClient";
 import { useFlows } from "../hooks/useFlows";
 import WalletSyncDrawer from "../components/Drawer";
 import OpenOrInstallTrustChainApp from "../screens/DeviceActions/openOrInstall";
 import { INSTANCES, lldWalletSyncFeatureFlag } from "./shared";
+import type { AppDispatch } from "~/state-manager/configureStore";
 
 jest.mock("../deviceIntents/LedgerSyncDeviceIntentExecutorLWD", () => ({
   LedgerSyncDeviceIntentExecutorLWD: jest.fn(() =>
@@ -38,9 +40,10 @@ jest.mock("../deviceIntents/LedgerSyncDeviceIntentExecutorLWD", () => ({
   ),
 }));
 
-jest.mock("../deviceIntents/useCreateSessionSdk", () => ({
-  useCreateSessionSdk: () => mockCreateSessionSdk,
-}));
+jest.mock("../hooks/useKeyRingClient", () => {
+  const actual = jest.requireActual("../hooks/useKeyRingClient");
+  return { useKeyRingClient: jest.fn(actual.useKeyRingClient) };
+});
 
 jest.mock("../screens/DeviceActions/openOrInstall", () => jest.fn(() => null));
 
@@ -53,21 +56,30 @@ jest.mock("../hooks/useGetMembers", () => ({
   useGetMembers: () => ({ isMembersLoading: false, instances: INSTANCES, isError: false }),
 }));
 
-const mockCreateSessionSdk = jest.fn();
-
 type AnyLedgerSyncIntent = Intent<LedgerSyncJobState, unknown, undefined, unknown>;
 type WalletSyncState = typeof initialStateWalletSync;
 
 const MEMBER_CREDENTIALS = { pubkey: "currentInstance", privatekey: "privatekey" };
-const TRUSTCHAIN: Trustchain = {
+const TRUSTCHAIN: KeyRingTreeRecord = {
   rootId: "rootId",
   applicationPath: "m/0'/16'/0'",
   walletSyncEncryptionKey: "key",
 };
-const NEW_TRUSTCHAIN: Trustchain = { ...TRUSTCHAIN, walletSyncEncryptionKey: "rotated" };
+const NEW_TRUSTCHAIN: KeyRingTreeRecord = { ...TRUSTCHAIN, walletSyncEncryptionKey: "rotated" };
 const MEMBER_TO_REMOVE = INSTANCES[1];
 // The side panel keeps its content mounted for its exit animation.
 const PANEL_EXIT = { timeout: 3000 };
+
+function activation(
+  outcome: KeyRingActivationOutcome,
+  record: KeyRingTreeRecord,
+): KeyRingActivation {
+  return { outcome, tree: keyRingTreeUpdateFixture(record) };
+}
+
+function appKeyRingClient() {
+  return jest.mocked(useKeyRingClient).mock.results.at(-1)?.value;
+}
 
 function mountedIntents(): AnyLedgerSyncIntent[] {
   return jest
@@ -123,7 +135,7 @@ type RenderDrawerOptions = {
   dieEnabled?: boolean;
   currentPage?: AnalyticsPage;
   walletSync?: Partial<WalletSyncState>;
-  trustchain?: Trustchain | null;
+  trustchain?: KeyRingTreeRecord | null;
   children?: React.ReactNode;
 };
 
@@ -209,25 +221,23 @@ describe("Ledger Sync device steps on DIE", () => {
 
   describe("activation", () => {
     it.each([
-      [TrustchainResultType.created, Step.ActivationFinal, true],
-      [TrustchainResultType.restored, Step.SynchronizationFinal, false],
-    ])(
+      ["created", Step.ActivationFinal, true],
+      ["restored", Step.SynchronizationFinal, false],
+    ] as const)(
       "should store the trustchain and bring the panel back on the final step after a %s trustchain",
-      async (type, nextStep, hasTrustchainBeenCreated) => {
+      async (outcome, nextStep, hasTrustchainBeenCreated) => {
         const { store } = await startActivationFromSettings();
 
         expect(OpenOrInstallTrustChainApp).not.toHaveBeenCalled();
         const intent = lastIntent();
         expect(intent.label).toBe(addMemberIntentLWDDefinition.label);
         expect(intent.input).toEqual({
-          memberCredentials: MEMBER_CREDENTIALS,
-          currentTrustchain: undefined,
-          createSessionSdk: mockCreateSessionSdk,
+          session: selectKeyRingSession(store.getState()),
+          client: appKeyRingClient(),
           resultOrder: ledgerSyncResultOrder,
         });
 
-        const result: TrustchainResult = { type, trustchain: TRUSTCHAIN };
-        deliver(result);
+        deliver(activation(outcome, TRUSTCHAIN));
         expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN);
         expect(store.getState().walletSync.step).toBe(Step.DeviceAction);
 
@@ -282,7 +292,7 @@ describe("Ledger Sync device steps on DIE", () => {
     it("should track one activation when the result arrives before completed", async () => {
       await startActivationFromSettings();
 
-      deliver({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN });
+      deliver(activation("created", TRUSTCHAIN));
       emit({ type: "completed" });
 
       expect(activationEvents()).toEqual([["ledgersync_activated", { flow: "Ledger Sync" }]]);
@@ -292,8 +302,8 @@ describe("Ledger Sync device steps on DIE", () => {
       const { store } = await startActivationFromSettings();
       const intent = lastIntent();
 
-      deliver({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN }, intent);
-      deliver({ type: TrustchainResultType.restored, trustchain: NEW_TRUSTCHAIN }, intent);
+      deliver(activation("created", TRUSTCHAIN), intent);
+      deliver(activation("restored", NEW_TRUSTCHAIN), intent);
       emit({ type: "completed" }, intent);
 
       expect(store.getState().trustchain.trustchain).toEqual(NEW_TRUSTCHAIN);
@@ -309,7 +319,7 @@ describe("Ledger Sync device steps on DIE", () => {
         store.dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
       });
       await waitFor(() => expect(deviceIntentDialog()).not.toBeInTheDocument());
-      deliver({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN }, intent);
+      deliver(activation("created", TRUSTCHAIN), intent);
 
       expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN);
       expect(store.getState().walletSync).toMatchObject({
@@ -324,9 +334,10 @@ describe("Ledger Sync device steps on DIE", () => {
       const intent = lastIntent();
 
       act(() => {
-        store.dispatch(resetTrustchainStore());
+        const dispatch: AppDispatch = store.dispatch;
+        void dispatch(resetKeyRingState());
       });
-      deliver({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN }, intent);
+      deliver(activation("created", TRUSTCHAIN), intent);
       emit({ type: "completed" }, intent);
 
       expect(store.getState().trustchain.trustchain).toBeNull();
@@ -358,7 +369,7 @@ describe("Ledger Sync device steps on DIE", () => {
       expect(deviceIntentDialog()).toBeInTheDocument();
 
       emit({ type: "pending" });
-      deliver({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN });
+      deliver(activation("created", TRUSTCHAIN));
       emit({ type: "completed" });
 
       expect(new Set(mountedIntents().map(({ uuid }) => uuid))).toEqual(new Set([intent.uuid]));
@@ -387,10 +398,11 @@ describe("Ledger Sync device steps on DIE", () => {
     });
 
     it("should restore the known trustchain instead of creating one", async () => {
-      renderDrawer({ trustchain: TRUSTCHAIN });
+      const { store } = renderDrawer({ trustchain: TRUSTCHAIN });
 
       await expectDeviceStepWithoutPanel();
-      expect(lastIntent().input).toMatchObject({ currentTrustchain: TRUSTCHAIN });
+      expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN);
+      expect(lastIntent().input).toMatchObject({ session: selectKeyRingSession(store.getState()) });
     });
   });
 
@@ -410,7 +422,7 @@ describe("Ledger Sync device steps on DIE", () => {
       await expectDeviceStepWithoutPanel();
       expect(lastIntent().label).toBe(addMemberIntentLWDDefinition.label);
 
-      deliver({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN });
+      deliver(activation("created", TRUSTCHAIN));
       emit({ type: "completed" });
 
       expect(store.getState().trustchain.trustchain).toEqual(TRUSTCHAIN);
@@ -429,7 +441,7 @@ describe("Ledger Sync device steps on DIE", () => {
           connectionResult: buildDeviceConnection("session-1"),
         }),
       );
-      deliver({ type: TrustchainResultType.created, trustchain: TRUSTCHAIN });
+      deliver(activation("created", TRUSTCHAIN));
       emit({ type: "completed" });
 
       expect(store.getState().settings).toMatchObject({
@@ -452,14 +464,13 @@ describe("Ledger Sync device steps on DIE", () => {
       expect(OpenOrInstallTrustChainApp).not.toHaveBeenCalled();
       expect(lastIntent().label).toBe(removeMemberIntentLWDDefinition.label);
       expect(lastIntent().input).toEqual({
-        trustchain: TRUSTCHAIN,
-        memberCredentials: MEMBER_CREDENTIALS,
+        session: selectKeyRingSession(store.getState()),
         member: MEMBER_TO_REMOVE,
-        createSessionSdk: mockCreateSessionSdk,
+        client: appKeyRingClient(),
         resultOrder: ledgerSyncResultOrder,
       });
 
-      deliver(NEW_TRUSTCHAIN);
+      deliver(keyRingTreeUpdateFixture(NEW_TRUSTCHAIN));
       emit({ type: "completed" });
 
       expect(store.getState().trustchain.trustchain).toEqual(NEW_TRUSTCHAIN);
@@ -476,7 +487,7 @@ describe("Ledger Sync device steps on DIE", () => {
         store.dispatch(setDrawerVisibility(false));
       });
       await waitFor(() => expect(deviceIntentDialog()).not.toBeInTheDocument());
-      deliver(NEW_TRUSTCHAIN, intent);
+      deliver(keyRingTreeUpdateFixture(NEW_TRUSTCHAIN), intent);
 
       expect(store.getState().trustchain.trustchain).toEqual(NEW_TRUSTCHAIN);
       expect(store.getState().walletSync).toMatchObject({
@@ -491,9 +502,10 @@ describe("Ledger Sync device steps on DIE", () => {
       const intent = lastIntent();
 
       act(() => {
-        store.dispatch(resetTrustchainStore());
+        const dispatch: AppDispatch = store.dispatch;
+        void dispatch(resetKeyRingState());
       });
-      deliver(NEW_TRUSTCHAIN, intent);
+      deliver(keyRingTreeUpdateFixture(NEW_TRUSTCHAIN), intent);
       emit({ type: "completed" }, intent);
 
       expect(store.getState().trustchain.trustchain).toBeNull();

@@ -1,17 +1,15 @@
-import { track } from "@shared/analytics";
 import {
-  memberCredentialsSelector,
-  setTrustchain,
-  trustchainSelector,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useSelector, useDispatch } from "~/context/hooks";
-import { useTrustchainSdk } from "./useTrustchainSdk";
-import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
+  trackLedgerSyncActivated,
+  trackLedgerSyncRejectedOnDevice,
+  useLedgerSyncActivation,
+} from "@features/platform-ledger-sync";
+import { selectKeyRingSession, type KeyRingActivation } from "@features/platform-key-ring";
+import { selectHasKeyRingMemberKey } from "@domain/entity-key-ring";
+import { useSelector } from "~/context/hooks";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { useCallback, useRef } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
-import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
 import { useWalletSyncTrackingFlow } from "./useLedgerSyncAnalytics";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
@@ -22,12 +20,11 @@ import { OnboardingType } from "~/reducers/types";
 import { CONNECTION_TYPES } from "~/analytics/hooks/variables";
 
 export function useAddMember({ device }: { device: Device | null }): DrawerProps {
-  const trustchain = useSelector(trustchainSelector);
-  const dispatch = useDispatch();
-  const sdk = useTrustchainSdk();
-  const memberCredentials = useSelector(memberCredentialsSelector);
-  const memberCredentialsRef = useRef(memberCredentials);
-  const trustchainRef = useRef(trustchain);
+  const session = useSelector(selectKeyRingSession);
+  const client = useKeyRingClient();
+  const hasMemberKey = useSelector(selectHasKeyRingMemberKey);
+  const hasMemberKeyRef = useRef(hasMemberKey);
+  const sessionRef = useRef(session);
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
   const { params } =
     useRoute<
@@ -37,74 +34,63 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const onboardingType = useSelector(onboardingTypeSelector);
   const trackingFlow = useWalletSyncTrackingFlow();
+  const activate = useLedgerSyncActivation();
 
   const transitionToNextScreen = useCallback(
-    (trustchainResult: TrustchainResult) => {
-      dispatch(setTrustchain(trustchainResult.trustchain));
-      track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
+    (activation: KeyRingActivation) => {
+      trackLedgerSyncActivated({ flow: trackingFlow });
       if (seededOffer) {
         navigation.getParent()?.goBack();
         return;
       }
       navigation.navigate(ScreenName.WalletSyncLoading, {
-        created: trustchainResult.type === TrustchainResultType.created,
+        created: activation.outcome === "created",
       });
     },
-    [dispatch, navigation, seededOffer, trackingFlow],
+    [navigation, seededOffer, trackingFlow],
   );
 
   return useFollowInstructionDrawer(
     async setScene => {
-      try {
-        if (!device) return;
-        if (!memberCredentialsRef.current) {
-          throw new Error("memberCredentials is not set");
-        }
-        const trustchainResult = await sdk.getOrCreateTrustchain(
-          device.deviceId,
-          memberCredentialsRef.current,
-          {
-            onInitialResponse: trustchains => {
-              if (
-                onboardingType === OnboardingType.setupNew ||
-                hasCompletedOnboarding ||
-                Object.keys(trustchains).length > 0
-              )
-                return;
-              else throw new NoTrustchainInitialized();
-            },
-            onStartRequestUserInteraction: () =>
-              setScene({ kind: SceneKind.DeviceInstructions, device }),
-            onEndRequestUserInteraction: () => setScene({ kind: SceneKind.Loader }),
-          },
-          undefined,
-          trustchainRef.current ?? undefined,
-        );
-        if (trustchainResult) {
-          transitionToNextScreen(trustchainResult);
-        }
-      } catch (error) {
-        const eName = (error as { name?: string })?.name;
-        if (eName === "TrustchainNotAllowed") {
-          setScene({ kind: SceneKind.KeyError });
-        } else if (eName === "TrustchainAlreadyInitialized") {
-          setScene({ kind: SceneKind.AlreadySecuredSameSeed });
-        } else if (eName === "TrustchainAlreadyInitializedWithOtherSeed") {
-          setScene({ kind: SceneKind.AlreadySecuredOtherSeed });
-        } else if (eName === "NoTrustchainInitialized") {
-          setScene({ kind: SceneKind.UnbackedError });
-        } else if (error instanceof Error) {
-          if (eName === "UserRefusedOnDevice") {
-            track(AnalyticsEvents.LedgerSyncRejectedOnDevice, {
-              page: "Ledger Sync",
-              modelId: device?.modelId,
-              connectionType: device?.wired ? CONNECTION_TYPES.USB : CONNECTION_TYPES.BLE,
-            });
+      if (!device) return;
+      const outcome = await activate({
+        client,
+        session: sessionRef.current,
+        legacyDeviceId: device.deviceId,
+        callbacks: {
+          onStartRequestUserInteraction: () =>
+            setScene({ kind: SceneKind.DeviceInstructions, device }),
+          onEndRequestUserInteraction: () => setScene({ kind: SceneKind.Loader }),
+        },
+        allowTreeCreation: onboardingType === OnboardingType.setupNew || hasCompletedOnboarding,
+        assertReady: () => {
+          if (!hasMemberKeyRef.current) {
+            throw new Error("memberCredentials is not set");
           }
-          setScene({ kind: SceneKind.GenericError, error });
+        },
+        onActivated: transitionToNextScreen,
+      });
+      if (outcome.type === "done") return;
+
+      const { reason, error } = outcome;
+      if (reason === "not-allowed") {
+        setScene({ kind: SceneKind.KeyError });
+      } else if (reason === "already-member") {
+        setScene({ kind: SceneKind.AlreadySecuredSameSeed });
+      } else if (reason === "member-of-other-tree") {
+        setScene({ kind: SceneKind.AlreadySecuredOtherSeed });
+      } else if (reason === "no-tree-for-seed") {
+        setScene({ kind: SceneKind.UnbackedError });
+      } else if (error instanceof Error) {
+        if (reason === "user-refused") {
+          trackLedgerSyncRejectedOnDevice({
+            modelId: device.modelId,
+            connectionType: device.wired ? CONNECTION_TYPES.USB : CONNECTION_TYPES.BLE,
+          });
         }
+        setScene({ kind: SceneKind.GenericError, error });
       }
     },
-    [device, sdk, transitionToNextScreen, hasCompletedOnboarding],
+    [device, client, transitionToNextScreen, hasCompletedOnboarding],
   );
 }

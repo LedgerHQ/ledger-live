@@ -56,7 +56,7 @@ import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetF
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { EnableSync } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/EnableSync";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import useLedgerSyncEntryPointViewModel from "LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import { walletSyncDrawerVisibilitySelector } from "~/renderer/reducers/walletSync";
@@ -280,8 +280,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
   const isOnboardingSyncFlow = useSelector(onboardingIsSyncFlowSelector);
   const isOnboardingReceiveSuccess = useSelector(onboardingReceiveSuccessSelector);
-  const trustchain = useSelector(trustchainSelector);
-  const isLedgerSyncActive = Boolean(trustchain?.rootId);
+  const isLedgerSyncActive = useSelector(selectIsLedgerSyncActive);
   const nanoOnboardingEnableSyncFeature = useFeature("lldOnboardingEnableSync")?.params?.nanos;
   const initialIsLedgerSyncActive = useRef(isLedgerSyncActive);
   const hasSyncStep = nanoOnboardingEnableSyncFeature && !initialIsLedgerSyncActive.current;

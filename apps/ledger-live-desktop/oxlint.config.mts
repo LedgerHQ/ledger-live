@@ -16,6 +16,99 @@ import {
 import { SUFFIX_IMPORTS_PLUGIN } from "@support/lint/plugins";
 import { coinFamiliesLint } from "@support/lint/coin-families";
 
+// Ledger Sync trust goes through the key ring packages: the v1 protocol stays behind them.
+const KEY_RING_SECRET_PATHS = [
+  {
+    name: "@domain/entity-key-ring",
+    importNames: ["selectKeyRingSecrets"],
+    message:
+      "The member key and the Ledger Sync key stay in @features/platform-key-ring. Read a meaning with selectIsLedgerSyncActive, selectIsKeyRingMember or selectKeyRingTreeId, or pass selectKeyRingSession to the key ring client.",
+  },
+  {
+    name: "@domain/entity-key-ring",
+    importNames: ["keyRingStateImported", "keyRingReset", "keyRingTreeSet", "keyRingMemberKeySet"],
+    message:
+      "Store key ring results through @features/platform-key-ring: importPersistedKeyRingState, resetKeyRingState, commitKeyRingTree, commitKeyRingMemberKey.",
+  },
+];
+// The persisted value is opaque; only the persistence files write it.
+const KEY_RING_PERSISTENCE_LENS_PATHS = [
+  "@features/platform-key-ring",
+  "@features/platform-key-ring/store",
+  "@features/platform-key-ring/persistence",
+].map(name => ({
+  name,
+  importNames: ["selectPersistedKeyRingState"],
+  message: "Only the app persistence files write the key ring state to disk.",
+}));
+// @features/platform-ledger-sync owns these key ring operations: screens go through it.
+const KEY_RING_FLOW_PATHS = [
+  {
+    name: "@features/platform-key-ring",
+    importNames: [
+      "acceptLedgerSyncResult",
+      "isKeyRingError",
+      "keyRingErrorForDisplay",
+      "KeyRingPairingClosedError",
+    ],
+    message:
+      "Use @features/platform-ledger-sync: useLedgerSyncResultAcceptance, useLedgerSyncServiceStatus, ledgerSyncErrorForDisplay and its pairing and recovery hooks.",
+  },
+];
+const KEY_RING_PATHS = [
+  ...KEY_RING_SECRET_PATHS,
+  ...KEY_RING_PERSISTENCE_LENS_PATHS,
+  ...KEY_RING_FLOW_PATHS,
+];
+const KEY_RING_PERSISTENCE_FILES = [
+  "src/renderer/middlewares/db.ts",
+  "src/renderer/storage.ts",
+  "src/main/db/index.ts",
+];
+const KEY_RING_PATTERNS = [
+  {
+    group: ["@ledgerhq/ledger-key-ring-protocol", "@ledgerhq/ledger-key-ring-protocol/*"],
+    message:
+      "Use @features/platform-key-ring (KeyRingClient, session, state actions, intents, identity provider) and @domain/entity-key-ring (slice, selectors).",
+  },
+  {
+    group: ["@ledgerhq/hw-ledger-key-ring-protocol", "@ledgerhq/hw-ledger-key-ring-protocol/*"],
+    message: "Use getKeyRingDeviceRequirement from @features/platform-key-ring.",
+  },
+];
+
+const APP_PATHS = [
+  LODASH,
+  BIGNUMBER_NAMED_IMPORT,
+  EXPO_CLIPBOARD,
+  ELECTRON_CLIPBOARD,
+  {
+    name: "react-redux",
+    importNames: ["useSelector", "useDispatch", "useStore"],
+    message:
+      "Import typed hooks from 'LLD/hooks/redux' instead of 'react-redux' to ensure proper TypeScript typing.",
+  },
+  {
+    name: "i18next",
+    importNames: ["default", "t", "i18n"],
+    message:
+      "The app no longer initialises the i18next global singleton. Import the app instance (or its 't') from '~/renderer/i18n/init'.",
+  },
+  ...WALLET_FRAMEWORK_CURRENCY_TYPES,
+  ...ACCOUNT_DESCRIPTOR,
+];
+const APP_PATTERNS = [
+  LIVE_COMMON_LIB,
+  {
+    group: ["~/mvvm/**"],
+    message: "Use 'LLD' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLD' in your imports.",
+  },
+  LIVE_COMMON_FEATURE_FLAGS,
+  LIVE_COMMON_CURRENCY_ACCESSORS,
+  ACCOUNT_DATA_SOURCES,
+  ...KEY_RING_PATTERNS,
+];
+
 const coinFamilies = coinFamiliesLint({
   familiesDir: "src/renderer/families",
   barrel: "contract",
@@ -77,61 +170,52 @@ export default defineConfig({
     "import/no-named-as-default": "off",
     "eslint/no-restricted-imports": [
       "error",
-      {
-        paths: [
-          LODASH,
-          BIGNUMBER_NAMED_IMPORT,
-          EXPO_CLIPBOARD,
-          ELECTRON_CLIPBOARD,
-          {
-            name: "react-redux",
-            importNames: ["useSelector", "useDispatch", "useStore"],
-            message:
-              "Import typed hooks from 'LLD/hooks/redux' instead of 'react-redux' to ensure proper TypeScript typing.",
-          },
-          {
-            name: "i18next",
-            importNames: ["default", "t", "i18n"],
-            message:
-              "The app no longer initialises the i18next global singleton. Import the app instance (or its 't') from '~/renderer/i18n/init'.",
-          },
-          ...WALLET_FRAMEWORK_CURRENCY_TYPES,
-          ...ACCOUNT_DESCRIPTOR,
-        ],
-        patterns: [
-          LIVE_COMMON_LIB,
-          {
-            group: ["~/mvvm/**"],
-            message:
-              "Use 'LLD' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLD' in your imports.",
-          },
-          LIVE_COMMON_FEATURE_FLAGS,
-          LIVE_COMMON_CURRENCY_ACCESSORS,
-          ACCOUNT_DATA_SOURCES,
-        ],
-      },
+      { paths: [...APP_PATHS, ...KEY_RING_PATHS], patterns: APP_PATTERNS },
     ],
   },
   overrides: [
+    {
+      files: KEY_RING_PERSISTENCE_FILES,
+      rules: {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            paths: [...APP_PATHS, ...KEY_RING_SECRET_PATHS, ...KEY_RING_FLOW_PATHS],
+            patterns: APP_PATTERNS,
+          },
+        ],
+      },
+    },
     {
       files: ["src/main/systemHandlers.ts", "src/main/systemHandlers.test.ts"],
       rules: {
         "eslint/no-restricted-imports": [
           "error",
-          { paths: [BIGNUMBER_NAMED_IMPORT, ...ACCOUNT_DESCRIPTOR] },
+          {
+            paths: [BIGNUMBER_NAMED_IMPORT, ...ACCOUNT_DESCRIPTOR, ...KEY_RING_PATHS],
+            patterns: KEY_RING_PATTERNS,
+          },
         ],
       },
     },
     {
       files: ACCOUNT_DATA_SETUP_FILES,
-      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+      rules: {
+        "eslint/no-restricted-imports": [
+          "error",
+          { paths: [BIGNUMBER_NAMED_IMPORT, ...KEY_RING_PATHS], patterns: KEY_RING_PATTERNS },
+        ],
+      },
     },
     {
       files: ["src/renderer/families/**"],
       rules: {
         "eslint/no-restricted-imports": [
           "error",
-          { paths: [BIGNUMBER_NAMED_IMPORT, ...ACCOUNT_DESCRIPTOR] },
+          {
+            paths: [BIGNUMBER_NAMED_IMPORT, ...ACCOUNT_DESCRIPTOR, ...KEY_RING_PATHS],
+            patterns: KEY_RING_PATTERNS,
+          },
         ],
       },
     },

@@ -1,5 +1,5 @@
 import { track } from "@shared/analytics";
-import type { Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { mockKeyRingTreeRecord } from "@domain/entity-key-ring/schema.mock";
 import BigNumber from "bignumber.js";
 import { renderHook, waitFor, act } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -81,11 +81,11 @@ describe("useOnboardingWidgetViewModel", () => {
       postOnboardingInProgress: true,
     });
 
-    const minimalTrustchain = {
+    const minimalTrustchain = mockKeyRingTreeRecord({
       rootId: "test-root",
       walletSyncEncryptionKey: "",
       applicationPath: "",
-    } as Trustchain;
+    });
 
     const { result } = renderHook(() => useOnboardingWidgetViewModel(), {
       overrideInitialState: s => ({

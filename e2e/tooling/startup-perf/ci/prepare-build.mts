@@ -28,7 +28,11 @@ const DETOX_BRIDGE_BLOCK = [
   "  };",
 ];
 export const JS_START_LINE = 'logStartupEvent("Before js imports");';
-const TRUSTCHAIN_LENSE = "    lense: trustchainStoreSelector,";
+// Refs older than the key ring packages still name the v1 selector.
+const TRUSTCHAIN_LENSES = new Set([
+  "    lense: selectPersistedKeyRingState,",
+  "    lense: trustchainStoreSelector,",
+]);
 const SAVE_AT_START = "    saveAtStart: true,";
 const SWAP_API_BASE = 'SWAP_API_BASE="https://swap.ledger.com/v5"';
 // Keys no store env file has.
@@ -43,7 +47,7 @@ const isE2eBuildWithDetox = (line: string) =>
 const indexesOf = (lines: string[], matches: (index: number) => boolean): number[] =>
   lines.flatMap((_, index) => (matches(index) ? [index] : []));
 const savesTrustchainAtStart = (lines: string[], index: number) =>
-  index > 0 && lines[index - 1] === TRUSTCHAIN_LENSE && lines[index] === SAVE_AT_START;
+  index > 0 && TRUSTCHAIN_LENSES.has(lines[index - 1]) && lines[index] === SAVE_AT_START;
 
 /**
  * Starts the E2E bridge only on the launch that passes `wsPort` (the injection), `delayMs` after

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, ReactNode, useCallback } from "react";
 import { Provider } from "react-redux";
 import { Store } from "redux";
+import type { KeyRingDispatch } from "@features/platform-key-ring";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import { restorePredictionsState } from "@domain/entity-predictions";
@@ -59,7 +60,7 @@ import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
 import { importMarket } from "~/actions/market";
 import { importMarketListConfig } from "~/reducers/market";
 import { importMarketBannerState } from "~/reducers/marketBanner";
-import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { importPersistedKeyRingState } from "@features/platform-key-ring/store";
 import { importWalletState } from "~/reducers/wallet";
 import { restoreAccountAnalyticsIntroductionFromStorage } from "LLM/features/AccountDetail/analyticsIntroductionStorage";
 import { hasOnboardedWithDeviceSelector } from "LLM/features/AccountDetail/utils/hasOnboardedWithDevice";
@@ -78,7 +79,8 @@ import { startCountervaluesWhenReady } from "./startCountervaluesWhenReady";
 interface Props {
   onInitFinished: () => void;
   children: (props: { ready: boolean; currencyInitialized: boolean }) => ReactNode;
-  store: Store;
+  /** The app store: its dispatch runs the key ring thunks with the runtime of its thunk extra. */
+  store: Store & { dispatch: KeyRingDispatch };
 }
 
 const MAX_RETRIES = 3;
@@ -293,7 +295,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(restoreReceiveVerifyHint(receiveVerifyHintState));
       }
 
-      store.dispatch(importTrustchainStoreState(trustchainStore));
+      void store.dispatch(importPersistedKeyRingState(trustchainStore));
 
       if (walletStore) {
         importWalletState(walletStore)(store.dispatch);

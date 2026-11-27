@@ -1,42 +1,38 @@
-import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { DeviceManagementKitBuilder, DeviceModelId } from "@ledgerhq/device-management-kit";
 import { createIntent, type DeviceConnectionResult } from "@features/platform-device-intent";
+import { mockKeyRingState } from "@domain/entity-key-ring/slice.mock";
 import {
   createLedgerSyncResultOrder,
+  KeyRingMemberIdSchema,
+  selectKeyRingSession,
   type AddMemberIntent,
   type AddMemberIntentInput,
+  type KeyRingMember,
   type RemoveMemberIntent,
   type RemoveMemberIntentInput,
-} from "@features/platform-intent-wallet-sync";
-import type {
-  MemberCredentials,
-  Trustchain,
-  TrustchainMember,
-} from "@ledgerhq/ledger-key-ring-protocol/types";
+} from "@features/platform-key-ring";
+import { fakeKeyRingClient } from "@features/platform-key-ring/testing";
 import type { InitializationInput } from "LLD/components/DeviceIntentExecutor";
 import { addMemberIntentLWDDefinition } from "../addMemberIntent/intentLWDDefinition";
 import { removeMemberIntentLWDDefinition } from "../removeMemberIntent/intentLWDDefinition";
 
 export const INITIALIZATION_INPUT: InitializationInput = {
-  appName: TRUSTCHAIN_APP_NAME,
+  appName: "Ledger Sync",
   dependencies: [],
   requireLatestFirmware: false,
 };
 
-const MEMBER_CREDENTIALS: MemberCredentials = { pubkey: "pubkey", privatekey: "privatekey" };
+const SESSION = selectKeyRingSession({ trustchain: mockKeyRingState() });
 
-const TRUSTCHAIN: Trustchain = {
-  rootId: "root",
-  applicationPath: "m/0'/16'/0'",
-  walletSyncEncryptionKey: "key",
+const OTHER_MEMBER: KeyRingMember = {
+  id: KeyRingMemberIdSchema.parse("member-2"),
+  name: "Mobile",
 };
-
-const OTHER_MEMBER: TrustchainMember = { id: "member-2", name: "Mobile", permissions: 1 };
 
 export function buildAddMemberIntent(): AddMemberIntent {
   const input: AddMemberIntentInput = {
-    memberCredentials: MEMBER_CREDENTIALS,
-    createSessionSdk: jest.fn(),
+    session: SESSION,
+    client: fakeKeyRingClient(),
     resultOrder: createLedgerSyncResultOrder(),
   };
   return createIntent(addMemberIntentLWDDefinition, input);
@@ -44,10 +40,9 @@ export function buildAddMemberIntent(): AddMemberIntent {
 
 export function buildRemoveMemberIntent(): RemoveMemberIntent {
   const input: RemoveMemberIntentInput = {
-    trustchain: TRUSTCHAIN,
-    memberCredentials: MEMBER_CREDENTIALS,
+    session: SESSION,
     member: OTHER_MEMBER,
-    createSessionSdk: jest.fn(),
+    client: fakeKeyRingClient(),
     resultOrder: createLedgerSyncResultOrder(),
   };
   return createIntent(removeMemberIntentLWDDefinition, input);

@@ -1,8 +1,14 @@
 # 6 · The watch loop
 
-> How everything above runs continuously inside a Ledger Wallet instance. Code:
-> [`features/platform/wallet-sync/src/createWalletSyncWatchLoop.ts`](../../features/platform/wallet-sync/src/createWalletSyncWatchLoop.ts) ·
-> [`features/platform/wallet-sync/src/incrementalUpdates.ts`](../../features/platform/wallet-sync/src/incrementalUpdates.ts).
+> How everything above runs continuously inside a Ledger Wallet instance. Code, in
+> [`features/platform/wallet-sync/src`](../../features/platform/wallet-sync/src):
+> [`hooks/useWalletSyncWatcher.ts`](../../features/platform/wallet-sync/src/hooks/useWalletSyncWatcher.ts)
+> (what both apps run) ·
+> [`internals/watchLoop.ts`](../../features/platform/wallet-sync/src/internals/watchLoop.ts) (one
+> cycle, shared with the v1-shaped
+> [`legacy/createWalletSyncWatchLoop.ts`](../../features/platform/wallet-sync/src/legacy/createWalletSyncWatchLoop.ts)
+> that the web-tools playground uses) ·
+> [`watchLoop/incrementalUpdates.ts`](../../features/platform/wallet-sync/src/watchLoop/incrementalUpdates.ts).
 
 The watch loop is the lifecycle that ties [CloudSyncSDK](./04-cloud-sync-sdk.md) and the
 [CloudSyncDataManager](./05-wallet-sync-data-manager.md) together so the app stays in sync
@@ -14,12 +20,14 @@ The watch loop is the lifecycle that ties [CloudSyncSDK](./04-cloud-sync-sdk.md)
 flowchart TB
     s([Start Ledger Wallet]) --> q{Trustchain<br/>initialized?}
     q -->|No| e([END — nothing to sync])
-    q -->|"Yes (Trustchain + MemberCredentials)"| w["start watch loop<br/><i>after initialTimeout</i>"]
+    q -->|"Yes (key ring stream open)"| w["start watch loop<br/><i>after initialTimeout</i>"]
     w --> loop[["unified watch loop<br/>(repeats every pollingInterval)"]]
 ```
 
 The loop only starts when the [Ledger Sync feature flag](./07-app-integration.md#feature-flags--entry-points)
-is enabled **and** a `trustchain` + `memberCredentials` exist.
+is enabled **and** this instance is a key ring member: `keyRing.openStream(session)` returns a
+stream (the instance has a member key and a key tree). In the apps, every pull and push runs on
+that stream through `createKeyRingCloudSync`, which authenticates and encrypts with the key ring.
 
 > [!NOTE]
 > Timing is configurable via `watchConfig`. Code defaults: `initialTimeout` 1 s,
@@ -31,21 +39,23 @@ One iteration, guarded by a `pending` flag so iterations never overlap:
 
 ```mermaid
 flowchart TB
-    start([loop tick]) --> pull["PULL — walletSyncSdk.pull()<br/><i>incoming data → saveNewUpdate</i>"]
+    start([loop tick]) --> pull["PULL: cloudSync.pull(stream)<br/><i>incoming data → saveNewUpdate</i>"]
     pull --> local["localIncrementalUpdate()<br/><i>resolve any pending local work</i>"]
     local --> diff["diffLocalToDistant(local, latestDistant)"]
     diff --> has{hasChanges?}
     has -->|No| done([up to date — nothing to push])
-    has -->|Yes| push["PUSH — walletSyncSdk.push(diff.nextState)<br/><i>→ saveNewUpdate</i>"]
+    has -->|Yes| push["PUSH: cloudSync.push(stream, diff.nextState)<br/><i>→ saveNewUpdate</i>"]
     push --> done2([done])
     pull -. error .-> err[[Error handlers]]
     local -. error .-> err
     push -. error .-> err
 ```
 
-**Error handling**: `TrustchainEjected` / `TrustchainOutdated` trigger
-`onTrustchainRefreshNeeded` (which [restores or empties the trustchain](./02-trustchain-sdk.md#errors--automatic-recovery));
-any other error goes to `onError`.
+**Error handling**: an error that `classifyKeyRingError` puts in `member-removed` or `outdated`
+(v1 `TrustchainEjected` / `TrustchainOutdated`) triggers `onRefreshNeeded`, which
+[restores or empties the trustchain](./02-trustchain-sdk.md#errors--automatic-recovery); any
+other error goes to `onError`. The watcher then resets Ledger Sync on a `member-removed` or
+`not-allowed` error.
 
 > [!TIP]
 > A **user intent** (rename, manual refresh, …) calls `onUserRefreshIntent()`, which reschedules

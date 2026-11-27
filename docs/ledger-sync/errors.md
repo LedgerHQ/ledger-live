@@ -2,8 +2,31 @@
 
 Errors a user can actually **see** during Ledger Sync, and where. Source of truth:
 [`ts-libs/libs/ledger-key-ring-protocol/src/errors.ts`](https://github.com/LedgerHQ/ts-libs/blob/develop/libs/ledger-key-ring-protocol/src/errors.ts);
-the user-facing copy lives in the apps' i18n and is mapped to UI steps in the WalletSync hooks
-(LWD `useQRCode.ts` / `walletSync.hooks.ts`, LWM `useSyncWithQrCode.ts` / `useWatchWalletSync.ts`).
+the user-facing copy lives in the apps' i18n, keyed by these names, and is mapped to UI steps in
+the WalletSync hooks (LWD `useQRCode.ts` / `walletSync.hooks.ts`, LWM `useSyncWithQrCode.ts` /
+`useLifeCycle.ts`) and in the shared watcher of `@features/platform-wallet-sync`.
+
+The key ring client throws typed `KeyRingError`s that keep these errors' messages and hold them
+as `cause`. Code branches on the category with `classifyKeyRingError(error)` or
+`isKeyRingError(error, category)` from `@features/platform-key-ring`. Error screens show
+`keyRingErrorForDisplay(error)`, which hands back the error named below, so the translations and
+texts stay the same.
+
+| Error | Category |
+|---|---|
+| `TrustchainEjected` | `member-removed` |
+| `TrustchainNotAllowed` | `not-allowed` |
+| `TrustchainNotFound` | `tree-not-found` |
+| `LedgerAPI4xx` saying "No such trustchain" | `tree-not-found` |
+| `LedgerAPI4xx` saying "Not a member of trustchain" or "You are not member" | `not-member` |
+| `NoTrustchainInitialized` | `no-tree-for-seed` |
+| `TrustchainOutdated` | `outdated` |
+| `TrustchainAlreadyInitialized` | `already-member` |
+| `TrustchainAlreadyInitializedWithOtherSeed` | `member-of-other-tree` |
+| `QRCodeWSClosed` | `pairing-closed` |
+| `InvalidDigitsError` | `pairing-invalid-code` |
+| `QRCodeProtocolError` | `pairing-protocol` |
+| `ScannedOldImportQrCode` / `ScannedNewImportQrCode` / `ScannedInvalidQrCode` | `pairing-outdated-qr-code` / `pairing-newer-qr-code` / `pairing-invalid-qr-code` |
 
 > [!NOTE]
 > Conventions:

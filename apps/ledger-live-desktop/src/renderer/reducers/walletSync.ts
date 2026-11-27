@@ -1,6 +1,6 @@
 import { handleActions } from "redux-actions";
 import { Handlers } from "./types";
-import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type { KeyRingMember } from "@features/platform-key-ring";
 
 export enum Flow {
   Activation = "Activation",
@@ -55,7 +55,7 @@ export type WalletSyncState = {
   step: Step;
   nextStep: Step | null;
   hasTrustchainBeenCreated: boolean | null;
-  instances: TrustchainMember[];
+  instances: KeyRingMember[];
   hasBeenfaked: boolean;
   qrCodeUrl: string | null;
   qrCodePinCode: string | null;
@@ -86,7 +86,7 @@ export type ChangeFlowPayload = {
 type HandlersPayloads = {
   WALLET_SYNC_CHANGE_DRAWER_VISIBILITY: boolean;
   WALLET_SYNC_CHANGE_FLOW: ChangeFlowPayload;
-  WALLET_SYNC_CHANGE_ADD_INSTANCE: TrustchainMember;
+  WALLET_SYNC_CHANGE_ADD_INSTANCE: KeyRingMember;
   WALLET_SYNC_RESET: undefined;
   WALLET_SYNC_FAKED: boolean;
   WALLET_SYNC_CHANGE_QRCODE_URL: string | null;
@@ -129,7 +129,7 @@ const handlers: WalletSyncHandlers = {
   }),
   WALLET_SYNC_CHANGE_ADD_INSTANCE: (
     state: WalletSyncState,
-    { payload }: { payload: TrustchainMember },
+    { payload }: { payload: KeyRingMember },
   ) => ({
     ...state,
     instances: [...state.instances, payload],

@@ -20,9 +20,10 @@ import { Steps } from "../../types/Activation";
 import { AlertLedgerSyncDown } from "../../components/AlertLedgerSyncDown";
 import { useLedgerSyncStatus } from "../../hooks/useLedgerSyncStatus";
 import { useCustomTimeOut } from "../../hooks/useCustomTimeOut";
-import { useDispatch } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
 import { blockPasswordLock } from "~/actions/appstate";
-import { isNoTrustchainError } from "../../utils/errors";
+import { selectIsKeyRingMember } from "@domain/entity-key-ring";
+import { isLedgerSyncTreeGone } from "@features/platform-ledger-sync";
 import { useFeature } from "@features/platform-feature-flags";
 
 const WalletSyncManage = () => {
@@ -44,6 +45,7 @@ const WalletSyncManage = () => {
 
   const { onClickTrack } = useLedgerSyncAnalytics();
   const dispatch = useDispatch();
+  const isKeyRingMember = useSelector(selectIsKeyRingMember);
 
   const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false);
 
@@ -104,7 +106,7 @@ const WalletSyncManage = () => {
   );
 
   const getTopContent = () => {
-    if (error && !isNoTrustchainError(error)) {
+    if (error && !isLedgerSyncTreeGone(error, isKeyRingMember)) {
       if (isLedgerSyncError) {
         return <AlertLedgerSyncDown />;
       }

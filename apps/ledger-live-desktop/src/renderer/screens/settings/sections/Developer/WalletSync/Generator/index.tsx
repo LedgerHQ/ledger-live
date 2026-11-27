@@ -13,14 +13,14 @@ import {
 } from "~/renderer/actions/walletSync";
 import { useNavigate } from "react-router";
 import styled, { useTheme } from "styled-components";
-import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { KeyRingMemberIdSchema, type KeyRingMember } from "@features/platform-key-ring";
 import { FlowOptions } from "LLD/features/WalletSync/hooks/useFlows";
 import { useTranslation } from "react-i18next";
 
 type State = {
   flow: Flow;
   step: Step | null;
-  instances: TrustchainMember[];
+  instances: KeyRingMember[];
 };
 
 export function GeneratorLedgerSync() {
@@ -75,10 +75,9 @@ export function GeneratorLedgerSync() {
     }
     const instances = Array.from(
       { length: Math.floor(Math.random() * 5) },
-      (_, index): TrustchainMember => ({
-        id: String(index),
+      (_, index): KeyRingMember => ({
+        id: KeyRingMemberIdSchema.parse(String(index)),
         name: index % 2 === 0 ? `Iphone ${index + 1}` : "macOS",
-        permissions: index % 2 === 0 ? 1 : 2,
       }),
     );
 

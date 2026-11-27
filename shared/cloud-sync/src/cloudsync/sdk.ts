@@ -6,7 +6,7 @@ import {
   TrustchainOutdated,
 } from "../trustchain-types";
 import { getCloudSyncApi } from "./api";
-import { Observable } from "rxjs";
+import type { Observable } from "rxjs";
 import { Cipher, makeCipher } from "./cipher";
 
 export class CloudSyncInvalidPayload extends Error {

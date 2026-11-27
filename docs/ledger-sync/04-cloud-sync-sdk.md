@@ -21,6 +21,11 @@ It is constructed with a `slug` (e.g. `"live"`), the Zod `schema` for `Data`, a 
 a `getCurrentVersion()` accessor and a `saveNewUpdate` callback — the callback is how the
 generic SDK hands results back to the [wallet-sync layer](./05-wallet-sync-data-manager.md).
 
+Ledger Wallet does not call it with trustchain objects: `createKeyRingCloudSync` in
+`@features/platform-wallet-sync` wraps it so each operation takes a `KeyRingStream` from the key
+ring client, which authenticates and encrypts. The member key and the Ledger Sync key never reach
+the Cloud Sync code.
+
 > [!IMPORTANT]
 > The decoupling is intentional: `CloudSyncSDK` is a thin layer over the Cloud Sync API, but it
 > still owns **atomicity**. The processing of pulled data happens *inside* `pull()` (via

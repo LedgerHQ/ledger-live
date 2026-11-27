@@ -43,7 +43,7 @@ explicitly if your schema transforms, since that is what the hooks actually rece
    `incoming` being *content-equal* to local.** The reference check alone only covers
    `makeLocalIncrementalUpdate`, which passes one object as both args every tick; every pull hands you
    a freshly decrypted one
-   ([`incrementalUpdates.ts`](../../../features/platform/wallet-sync/src/incrementalUpdates.ts),
+   ([`incrementalUpdates.ts`](../../../features/platform/wallet-sync/src/watchLoop/incrementalUpdates.ts),
    `makeSaveNewUpdate`). Without the content check, an unchanged pull dispatches → re-renders → pushes,
    forever.
 2. **`diffLocalToDistant(emptyLocal, null)` → `hasChanges: false`**, or every user who never touched

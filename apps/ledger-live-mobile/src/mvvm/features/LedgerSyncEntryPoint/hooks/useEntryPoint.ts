@@ -1,7 +1,7 @@
 import { track } from "@shared/analytics";
 import { useSelector } from "~/context/hooks";
 import { useFeature } from "@features/platform-feature-flags";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { EntryPoint, EntryPointsData } from "../types";
@@ -14,14 +14,12 @@ import SendFlowEntryPoint from "../components/SendFlowEntryPoint";
 export function useEntryPoint(entryPoint: EntryPoint, variant?: "v4") {
   const featureLedgerSyncEntryPoints = useFeature("llmLedgerSyncEntryPoints");
   const featureWalletSync = useFeature("llmWalletSync");
-  const trustchain = useSelector(trustchainSelector);
+  const isLedgerSyncActivated = useSelector(selectIsLedgerSyncActive);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const lwmLedgerSyncOptimisation = useFeature("lwmLedgerSyncOptimisation");
 
   const isLedgerSyncEnabled = featureWalletSync?.enabled ?? false;
   const areEntryPointsEnabled = featureLedgerSyncEntryPoints?.enabled ?? false;
-
-  const isLedgerSyncActivated = Boolean(trustchain && trustchain?.rootId);
 
   const isDeviceEligible =
     lastSeenDevice !== null && lastSeenDevice.modelId !== DeviceModelId.nanoS;

@@ -11,11 +11,12 @@ import { DeletionError } from "../../components/ManageInstances/DeletionError";
 import { HookResult, Scene } from "./useManageInstanceDrawer";
 import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
 import { ErrorReason } from "../../hooks/useSpecificError";
+import { ledgerSyncErrorForDisplay } from "@features/platform-ledger-sync";
 
 const ManageInstancesDrawer = ({
   isDrawerVisible,
   handleClose,
-  memberCredentials,
+  isCurrentInstance,
   memberHook,
   scene,
   changeScene,
@@ -32,8 +33,15 @@ const ManageInstancesDrawer = ({
   const isLumenSheet = useFeature("lwmLedgerSyncDie")?.enabled === true;
 
   const getScene = () => {
-    if (isError) {
-      return <GenericErrorView error={error} withDescription withHelp hasExportLogButton />;
+    if (isError && error) {
+      return (
+        <GenericErrorView
+          error={ledgerSyncErrorForDisplay(error)}
+          withDescription
+          withHelp
+          hasExportLogButton
+        />
+      );
     }
 
     if (isLoading) {
@@ -49,7 +57,7 @@ const ManageInstancesDrawer = ({
           changeScene={changeScene}
           onClickInstance={onClickInstance}
           members={data}
-          currentInstance={memberCredentials?.pubkey}
+          isCurrentInstance={isCurrentInstance}
         />
       );
     }

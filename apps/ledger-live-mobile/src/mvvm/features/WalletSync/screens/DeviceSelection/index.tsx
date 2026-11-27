@@ -15,7 +15,12 @@ import {
 import { useAppDeviceAction, useSelectDevice } from "~/hooks/deviceActions";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
-import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
+import {
+  getKeyRingDeviceInitialization,
+  ledgerSyncDeviceUnsupportedFailure,
+} from "@features/platform-key-ring";
+import { ledgerSyncErrorForDisplay } from "@features/platform-ledger-sync";
+import GenericErrorView from "~/components/GenericErrorView";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
@@ -43,10 +48,6 @@ type ChooseDeviceProps = Props & {
   defaultDevice?: Device;
 };
 
-const request = {
-  appName: TRUSTCHAIN_APP_NAME,
-};
-
 const DEVICE_LIST_EDGES = ["left", "right", "top"] as const;
 const PAIRING_FLOW_EDGES = ["left", "right", "top", "bottom"] as const;
 
@@ -55,6 +56,7 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
   defaultDevice,
 }) => {
   const isFocused = useIsFocused();
+  const [initialization] = useState(getKeyRingDeviceInitialization);
   const action = useAppDeviceAction();
   const { device, selectDevice, registerDeviceSelection } = useSelectDevice(defaultDevice);
   const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
@@ -107,6 +109,18 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
 
   if (!isFocused) return null;
 
+  if (initialization.kind === "os-feature") {
+    const { error } = ledgerSyncDeviceUnsupportedFailure(initialization);
+    return (
+      <GenericErrorView
+        error={ledgerSyncErrorForDisplay(error)}
+        withDescription
+        withHelp
+        hasExportLogButton
+      />
+    );
+  }
+
   return (
     <SafeAreaView
       edges={isHeaderOverridden ? PAIRING_FLOW_EDGES : DEVICE_LIST_EDGES}
@@ -132,7 +146,7 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
         device={device}
         onResult={onResult}
         action={action}
-        request={request}
+        request={initialization.appRequest}
         onError={onError}
         registerDeviceSelection={registerDeviceSelection}
         location={HOOKS_TRACKING_LOCATIONS.ledgerSyncFlow}

@@ -1,4 +1,4 @@
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import type { ContactsLedgerSyncStatus } from "@features/flow-contacts-introduction";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
@@ -6,7 +6,7 @@ import { useLedgerSyncStatus } from "LLM/features/WalletSync/hooks/useLedgerSync
 
 export function useContactsLedgerSyncStatus(): ContactsLedgerSyncStatus {
   const walletSyncFeature = useFeature("llmWalletSync");
-  const trustchain = useSelector(trustchainSelector);
+  const isLedgerSyncActive = useSelector(selectIsLedgerSyncActive);
   const { isError, isLoading } = useLedgerSyncStatus();
 
   if (!walletSyncFeature?.enabled || isError) {
@@ -17,5 +17,5 @@ export function useContactsLedgerSyncStatus(): ContactsLedgerSyncStatus {
     return "checking";
   }
 
-  return trustchain?.rootId ? "ready" : "inactive";
+  return isLedgerSyncActive ? "ready" : "inactive";
 }

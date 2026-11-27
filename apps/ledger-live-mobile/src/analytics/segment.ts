@@ -40,6 +40,7 @@ import { getEnv } from "@shared/env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
 import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
 import { selectContacts } from "@domain/entity-contact";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import { buildContactsGlobalProperties } from "@features/platform-contacts";
 import { getContentAbTestTracking } from "@features/platform-content-ab-tests";
 import { getAppLockAttributes } from "./getAppLockAttributes";
@@ -239,7 +240,7 @@ const getLedgerSyncAttributes = (state: State) => {
 
   return {
     hasLedgerSync: !!ledgerSync?.enabled,
-    ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
+    ledgerSyncActivated: selectIsLedgerSyncActive(state),
     ledger_sync_revamp: !!ledgerSyncOptimisation?.enabled,
     ledger_sync_die: !!ledgerSyncDie?.enabled,
   };

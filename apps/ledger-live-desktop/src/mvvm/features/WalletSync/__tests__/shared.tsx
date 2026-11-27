@@ -1,24 +1,27 @@
 import React from "react";
-import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { keyRingInitialState } from "@domain/entity-key-ring";
+import {
+  createKeyRingClient,
+  keyRingRuntimeExtra,
+  KeyRingMemberIdSchema,
+  type KeyRingMember,
+} from "@features/platform-key-ring";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
-import { EMPTY } from "rxjs";
 import { Flow, initialStateWalletSync, Step } from "~/renderer/reducers/walletSync";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
 import { useActivationDrawer } from "../../LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import WalletSyncDrawer from "../components/Drawer";
+import { keyRingDeviceBridge } from "../keyRingDeviceBridge";
 
-export const INSTANCES: Array<TrustchainMember> = [
+export const INSTANCES: Array<KeyRingMember> = [
   {
-    id: "currentInstance",
+    id: KeyRingMemberIdSchema.parse("currentInstance"),
     name: "macOS",
-    permissions: 112,
   },
   {
-    id: "2",
+    id: KeyRingMemberIdSchema.parse("2"),
     name: "Ipone 15",
-    permissions: 112,
   },
 ];
 
@@ -37,15 +40,14 @@ export const lldWalletSyncFeatureFlag = {
   },
 };
 
-export const mockedSdk = getSdk(
-  true,
-  {
-    applicationId: 12,
-    name: "LLD Integration",
-    apiBaseUrl: getWalletSyncEnvironmentParams("STAGING").trustchainApiBaseUrl,
-  },
-  () => () => EMPTY,
-);
+export const mockedSdk = createKeyRingClient({
+  mock: true,
+  instanceName: "LLD Integration",
+  apiBaseUrl: getWalletSyncEnvironmentParams("STAGING").trustchainApiBaseUrl,
+  deviceBridge: keyRingDeviceBridge,
+  runtime: keyRingRuntimeExtra({ getState: () => ({ trustchain: keyRingInitialState }) })
+    .keyRingRuntime,
+});
 
 export const walletSyncActivatedState = {
   ...initialStateWalletSync,

@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import type { GeneralSettingsData } from "@features/flow-settings-general";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
@@ -12,7 +12,7 @@ import { walletSyncFakedSelector } from "~/renderer/reducers/walletSync";
 /** Opens the Ledger Sync activation drawer, or the Ledger Sync drawer once activated. */
 export function useLedgerSync(): GeneralSettingsData["ledgerSync"] {
   const dispatch = useDispatch();
-  const trustchain = useSelector(trustchainSelector);
+  const isActive = useSelector(selectIsLedgerSyncActive);
   const hasBeenFaked = useSelector(walletSyncFakedSelector);
   const { shouldDisplayEntryPoint } = useEntryPoint(EntryPoint.settings);
   const { goToWelcomeScreenWalletSync } = useFlows();
@@ -33,8 +33,5 @@ export function useLedgerSync(): GeneralSettingsData["ledgerSync"] {
     dispatch,
   ]);
 
-  return useMemo(
-    () => ({ isActive: Boolean(trustchain?.rootId), open }),
-    [trustchain?.rootId, open],
-  );
+  return useMemo(() => ({ isActive, open }), [isActive, open]);
 }

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { makeSaveNewUpdate, makeLocalIncrementalUpdate } from "../incrementalUpdates";
+import { makeSaveNewUpdate, makeLocalIncrementalUpdate } from "../watchLoop/incrementalUpdates";
 import { CloudSyncDataManager } from "@shared/cloud-sync-module";
 
 type SimpleState = { value: string };

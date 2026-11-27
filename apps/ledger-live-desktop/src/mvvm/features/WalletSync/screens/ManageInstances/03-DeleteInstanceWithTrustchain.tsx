@@ -1,12 +1,13 @@
 import React from "react";
-import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type { KeyRingMember } from "@features/platform-key-ring";
 import FollowStepsOnDevice from "../DeviceActions/FollowStepsOnDevice";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import { ledgerSyncErrorForDisplay } from "@features/platform-ledger-sync";
 import { useRemoveMember } from "LLD/features/WalletSync/hooks/useRemoveMember";
 import { InfiniteLoader } from "@ledgerhq/react-ui";
 
 type Props = {
-  instance: TrustchainMember | null;
+  instance: KeyRingMember | null;
   device: Device | null;
 };
 
@@ -14,7 +15,9 @@ export default function DeleteInstanceWithTrustchain({ instance, device }: Props
   const { error, userDeviceInteraction, onRetry } = useRemoveMember({ device, member: instance });
 
   if (error) {
-    return <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />;
+    return (
+      <ErrorDisplay error={ledgerSyncErrorForDisplay(error)} withExportLogs onRetry={onRetry} />
+    );
   }
   if (userDeviceInteraction && device) {
     return <FollowStepsOnDevice modelId={device.modelId} />;

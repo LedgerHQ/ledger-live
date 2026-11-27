@@ -37,7 +37,7 @@ import { AppRestoreTrustchain } from "./AppRestoreTrustchain";
 import { AppWalletSync } from "./AppCloudSync";
 import { AppSetCloudSyncAPIEnv } from "./AppSetCloudSyncAPIEnv";
 import { DeviceInteractionLayer } from "./DeviceInteractionLayer";
-import { trustchainLifecycle } from "./walletSync";
+import { trustchainLifecycle } from "@features/platform-wallet-sync/legacy";
 import type { DistantDocument } from "@shared/cloud-sync-module";
 import { contactsInitialState } from "@domain/entity-contact";
 import { Loading } from "./Loading";

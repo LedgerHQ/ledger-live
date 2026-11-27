@@ -8,12 +8,9 @@ import {
   INSTANCES,
 } from "./shared";
 
-jest.mock("../hooks/useTrustchainSdk", () => ({
-  useTrustchainSdk: () => ({
-    getMembers: (mockedSdk.getMembers = jest.fn()),
-    removeMember: (mockedSdk.removeMember = jest.fn()),
-    initMemberCredentials: (mockedSdk.initMemberCredentials = jest.fn()),
-  }),
+jest.mock("../hooks/useKeyRingClient", () => ({
+  useKeyRingClient: () =>
+    Object.assign(mockedSdk, { listMembers: jest.fn(), removeMember: jest.fn() }),
 }));
 
 jest.mock("../hooks/useGetMembers", () => ({

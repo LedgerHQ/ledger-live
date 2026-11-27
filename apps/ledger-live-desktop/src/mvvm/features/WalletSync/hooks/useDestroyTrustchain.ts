@@ -1,42 +1,21 @@
-import { useTrustchainSdk } from "./useTrustchainSdk";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
-import {
-  trustchainSelector,
-  resetTrustchainStore,
-  memberCredentialsSelector,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useMutation } from "@tanstack/react-query";
+import { useDestroyLedgerSync } from "@features/platform-ledger-sync";
+import { useDispatch } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { QueryKey } from "./type.hooks";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { useCloudSyncSDK } from "./useWatchWalletSync";
-import { walletSyncUpdate } from "@domain/entity-wallet-sync";
-import { track } from "@shared/analytics";
 
 export function useDestroyTrustchain() {
   const dispatch = useDispatch();
-  const sdk = useTrustchainSdk();
-  const cloudSyncSDK = useCloudSyncSDK();
-  const trustchain = useSelector(trustchainSelector);
-  const memberCredentials = useSelector(memberCredentialsSelector);
+  const client = useKeyRingClient();
+  const cloudSync = useCloudSyncSDK();
 
-  const deleteMutation = useMutation({
-    mutationFn: async () => {
-      if (!trustchain || !memberCredentials) {
-        return;
-      }
-      await cloudSyncSDK.destroy(trustchain, memberCredentials);
-      await sdk.destroyApplication(trustchain, memberCredentials);
-    },
-    mutationKey: [QueryKey.destroyTrustchain, trustchain],
-    onSuccess: () => {
-      dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.BackupDeleted }));
-      dispatch(resetTrustchainStore());
-      track("ledgersync_deactivated");
-      dispatch(walletSyncUpdate({ data: null, version: 0 }));
-    },
+  const { destroy, isPending, error } = useDestroyLedgerSync({
+    client,
+    cloudSync,
+    onBeforeReset: () => dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.BackupDeleted })),
     onError: () => dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.BackupDeletionError })),
   });
 
-  return { deleteMutation };
+  return { deleteMutation: { mutateAsync: destroy, isPending, error } };
 }

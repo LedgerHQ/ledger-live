@@ -1,14 +1,17 @@
 import { sleep } from "@ledgerhq/live-e2e-shared";
-import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
-import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
-import { getFlags } from "@e2e/bridge/server";
+import {
+  cloudSyncApiBaseUrl,
+  ledgerSyncEnvironment,
+  trustchainApiBaseUrl,
+} from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
+import { getAppConfig } from "@e2e/bridge/server";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 
 import type { PartialFeatures } from "@shared/feature-flags";
 
 /**
- * Every suite that boots into a pre-seeded trustchain needs this flag on: the app reads the
- * environment from it to build its trustchain SDK, and Ledger Sync stays unavailable without it.
+ * Every suite that boots into a pre-seeded trustchain needs this flag on: Ledger Sync stays
+ * unavailable without it. The backends come from the `appConfig` launch argument, not from it.
  */
 export const LEDGER_SYNC_FEATURE_FLAGS: PartialFeatures = {
   llmWalletSync: {
@@ -59,32 +62,36 @@ export function withLedgerSyncDie(flags: PartialFeatures, onDie: boolean): Parti
 const ENVIRONMENT_READ_TIMEOUT_MS = TIMEOUT.xlarge;
 const ENVIRONMENT_READ_POLL_MS = INTERVAL.medium;
 
-/** `getFlags` returns "" when the bridge has not connected yet, so poll before believing it. */
-async function readAppLedgerSyncEnvironment() {
+type AppLedgerSyncBackends = { trustchainApiBaseUrl?: unknown; cloudSyncApiBaseUrl?: unknown };
+
+/** `getAppConfig` returns "" when the bridge has not connected yet, so poll before believing it. */
+async function readAppLedgerSyncBackends(): Promise<AppLedgerSyncBackends> {
   const deadline = Date.now() + ENVIRONMENT_READ_TIMEOUT_MS;
 
   while (Date.now() < deadline) {
-    const rawFlags = await getFlags();
-    if (rawFlags) {
-      return parseExtraFeatureFlags<PartialFeatures>(rawFlags).llmWalletSync?.params?.environment;
-    }
+    const rawAppConfig = await getAppConfig();
+    if (rawAppConfig) return JSON.parse(rawAppConfig);
     await sleep(ENVIRONMENT_READ_POLL_MS);
   }
 
   throw new Error(
-    `Ledger Sync: the app never answered \`getFlags\` within ${ENVIRONMENT_READ_TIMEOUT_MS / 1_000}s, ` +
-      "so its environment could not be checked. " +
+    `Ledger Sync: the app never answered \`getAppConfig\` within ${ENVIRONMENT_READ_TIMEOUT_MS / 1_000}s, ` +
+      "so its backends could not be checked. " +
       "The bridge is down — look for a launch or connection failure above.",
   );
 }
 
-/** Call before `app.init`: once a suite has pushed its own flags, this reads them back to itself. */
+/** Call before `app.init`: reads back the backends the app resolved from its `appConfig` at launch. */
 export async function verifyLedgerSyncEnvironment() {
-  const appEnvironment = await readAppLedgerSyncEnvironment();
+  const appBackends = await readAppLedgerSyncBackends();
 
-  if (appEnvironment !== ledgerSyncEnvironment) {
+  if (
+    appBackends.trustchainApiBaseUrl !== trustchainApiBaseUrl ||
+    appBackends.cloudSyncApiBaseUrl !== cloudSyncApiBaseUrl
+  ) {
     throw new Error(
-      `Ledger Sync: the app booted on ${appEnvironment}, the e2e CLI targets ${ledgerSyncEnvironment}. ` +
+      `Ledger Sync: the app booted on ${appBackends.trustchainApiBaseUrl} and ${appBackends.cloudSyncApiBaseUrl}, ` +
+        `the e2e CLI targets ${ledgerSyncEnvironment} (${trustchainApiBaseUrl} and ${cloudSyncApiBaseUrl}). ` +
         "Both sides must share a backend: the trustchain mints the JWT cloud-sync validates.",
     );
   }

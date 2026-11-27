@@ -2,16 +2,16 @@ import React, { type PropsWithChildren } from "react";
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
+import keyRingReducer, { keyRingInitialState, type KeyRingState } from "@domain/entity-key-ring";
 import { useCloudSyncDevToolProps } from "./useCloudSyncDevToolProps";
 
 const TRUSTCHAIN = { rootId: "root", walletSyncEncryptionKey: "key", applicationPath: "path" };
 const MEMBER_CREDENTIALS = { pubkey: "pub", privatekey: "priv" };
 
-function buildStore(trustchainState?: { trustchain: unknown; memberCredentials: unknown }) {
+function buildStore(trustchainState: KeyRingState = keyRingInitialState) {
   return configureStore({
-    reducer: {
-      trustchain: (state = trustchainState ?? null) => state,
-    },
+    reducer: { trustchain: keyRingReducer },
+    preloadedState: { trustchain: trustchainState },
   });
 }
 
@@ -22,7 +22,7 @@ function withStore(store: ReturnType<typeof buildStore>) {
 const mockCreateSdk = jest.fn(() => ({}) as never);
 
 describe("useCloudSyncDevToolProps", () => {
-  it("should return null trustchain and memberCredentials when store has no values", () => {
+  it("should return null trustchain and memberCredentials on a fresh instance", () => {
     const store = buildStore();
     const { result } = renderHook(
       () =>

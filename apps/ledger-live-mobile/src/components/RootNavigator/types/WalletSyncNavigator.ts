@@ -1,4 +1,4 @@
-import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type { KeyRingMember } from "@features/platform-key-ring";
 import { ScreenName } from "~/const";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
@@ -25,10 +25,10 @@ export type WalletSyncNavigatorStackParamList = {
   [ScreenName.WalletSyncUnSynchSuccess]: undefined;
 
   [ScreenName.WalletSyncManageInstancesProcess]: {
-    member: TrustchainMember;
+    member: KeyRingMember;
   };
 
   [ScreenName.WalletSyncManageInstancesSuccess]: {
-    member: TrustchainMember;
+    member: KeyRingMember;
   };
 };

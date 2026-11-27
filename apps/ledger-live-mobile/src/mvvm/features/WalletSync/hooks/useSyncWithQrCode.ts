@@ -1,69 +1,29 @@
-import { track } from "@shared/analytics";
-import { useCallback, useState, useRef } from "react";
-import { MemberCredentials, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import { setTrustchain, trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useSelector, useDispatch } from "~/context/hooks";
+import { useCallback } from "react";
+import { useLedgerSyncPairingJoin } from "@features/platform-ledger-sync";
+import { classifyKeyRingError } from "@features/platform-key-ring";
+import { selectKeyRingTreeId } from "@domain/entity-key-ring";
+import { useSelector } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
-import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
 import { useWalletSyncTrackingFlow } from "./useLedgerSyncAnalytics";
 import { Steps } from "../types/Activation";
 import { NavigatorName, ScreenName } from "~/const";
 import { useInstanceName } from "./useInstanceName";
-import { useTrustchainSdk } from "./useTrustchainSdk";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { useCurrentStep } from "./useCurrentStep";
 
-function resolveSyncErrorStep(error: unknown, trustchainRootId?: string): Steps | undefined {
-  const errorName = (error as { name?: string })?.name;
-
-  switch (errorName) {
-    case "ScannedOldImportQrCode":
-      return Steps.ScannedOldImportQrCode;
-    case "ScannedInvalidQrCode":
-      return Steps.ScannedInvalidQrCode;
-    case "InvalidDigitsError":
-    case "QRCodeProtocolError":
-      return Steps.SyncError;
-    case "NoTrustchainInitialized":
-      return Steps.UnbackedError;
-    case "TrustchainAlreadyInitialized":
-      return (error as Error)?.message === trustchainRootId
-        ? Steps.AlreadyBacked
-        : Steps.BackedWithDifferentSeeds;
-    case "TrustchainAlreadyInitializedWithOtherSeed":
-      return Steps.BackedWithDifferentSeeds;
-    default:
-      return undefined;
-  }
-}
-
-export const useSyncWithQrCode = () => {
+export function useSyncWithQrCode() {
   const { setCurrentStep } = useCurrentStep();
-  const [nbDigits, setDigits] = useState<number | null>(null);
-  const [input, setInput] = useState<string | null>(null);
   const instanceName = useInstanceName();
-  const trustchain = useSelector(trustchainSelector);
-  const sdk = useTrustchainSdk();
+  const treeId = useSelector(selectKeyRingTreeId);
+  const client = useKeyRingClient();
 
   const navigation = useNavigation();
-
-  const inputCallbackRef = useRef<((input: string) => void) | null>(null);
-  const dispatch = useDispatch();
   const trackingFlow = useWalletSyncTrackingFlow();
 
-  const onRequestQRCodeInput = useCallback(
-    (config: { digits: number }, callback: (input: string) => void) => {
-      setDigits(config.digits);
-      inputCallbackRef.current = callback;
-    },
-    [],
-  );
+  // Stable callbacks: `handleStart` changes identity with them.
+  const getActivatedEventProperties = useCallback(() => ({ flow: trackingFlow }), [trackingFlow]);
 
-  const onSyncFinished = useCallback(() => {
-    setDigits(null);
-    setInput(null);
-    inputCallbackRef.current = null;
+  const onJoined = useCallback(() => {
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncLoading,
       params: {
@@ -72,54 +32,51 @@ export const useSyncWithQrCode = () => {
     });
   }, [navigation]);
 
-  const handleStart = useCallback(
-    async (url: string, memberCredentials: MemberCredentials) => {
-      try {
-        const newTrustchain = await createQRCodeCandidateInstance({
-          memberCredentials,
-          scannedUrl: url,
-          memberName: instanceName,
-          onRequestQRCodeInput,
-          addMember: async (member: TrustchainMember) => {
-            if (trustchain) {
-              await sdk.addMember(trustchain, memberCredentials, member);
-              return trustchain;
-            }
-            throw new NoTrustchainInitialized();
-          },
-          initialTrustchainId: trustchain?.rootId,
-        });
-        if (newTrustchain) {
-          dispatch(setTrustchain(newTrustchain));
-          if (!trustchain) track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
-        }
-        onSyncFinished();
-        return true;
-      } catch (e) {
-        const errorStep = resolveSyncErrorStep(e, trustchain?.rootId);
-        if (errorStep) {
-          setCurrentStep(errorStep);
-          return;
-        }
-        throw e;
-      }
+  const onFailure = useCallback(
+    (error: unknown) => {
+      const errorStep = resolveSyncErrorStep(error, treeId);
+      if (!errorStep) return false;
+      setCurrentStep(errorStep);
+      return true;
     },
-    [
-      instanceName,
-      onRequestQRCodeInput,
-      trustchain,
-      onSyncFinished,
-      sdk,
-      dispatch,
-      setCurrentStep,
-      trackingFlow,
-    ],
+    [treeId, setCurrentStep],
   );
 
-  const handleSendDigits = useCallback(
-    (input: string) => (inputCallbackRef.current?.(input), true),
-    [],
-  );
+  const { digitsCount, input, start, sendDigits, setInput } = useLedgerSyncPairingJoin({
+    client,
+    memberName: instanceName,
+    getActivatedEventProperties,
+    onJoined,
+    onFailure,
+  });
 
-  return { nbDigits, input, handleStart, handleSendDigits, setInput };
-};
+  return {
+    nbDigits: digitsCount,
+    input,
+    handleStart: start,
+    handleSendDigits: sendDigits,
+    setInput,
+  };
+}
+
+function resolveSyncErrorStep(error: unknown, treeId: string | null): Steps | undefined {
+  switch (classifyKeyRingError(error)) {
+    case "pairing-outdated-qr-code":
+      return Steps.ScannedOldImportQrCode;
+    case "pairing-invalid-qr-code":
+      return Steps.ScannedInvalidQrCode;
+    case "pairing-invalid-code":
+    case "pairing-protocol":
+      return Steps.SyncError;
+    case "no-tree-for-seed":
+      return Steps.UnbackedError;
+    case "already-member":
+      return (error as Error)?.message === (treeId ?? undefined)
+        ? Steps.AlreadyBacked
+        : Steps.BackedWithDifferentSeeds;
+    case "member-of-other-tree":
+      return Steps.BackedWithDifferentSeeds;
+    default:
+      return undefined;
+  }
+}

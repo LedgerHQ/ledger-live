@@ -1,21 +1,9 @@
-import { useCallback, useState } from "react";
-import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useDispatch, useSelector, useStore } from "LLD/hooks/redux";
+import { useCallback } from "react";
+import { useLedgerSyncPairingHost } from "@features/platform-ledger-sync";
+import { useDispatch, useStore } from "LLD/hooks/redux";
 import { setDrawerVisibility, setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
 import { Flow, Step, walletSyncStepSelector } from "~/renderer/reducers/walletSync";
-import {
-  trustchainSelector,
-  memberCredentialsSelector,
-  setTrustchain,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useTrustchainSdk } from "./useTrustchainSdk";
-import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { track } from "@shared/analytics";
-import { QueryKey } from "./type.hooks";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { useInstanceName } from "./useInstanceName";
 import {
   AnalyticsFlow,
@@ -25,81 +13,27 @@ import {
 import { saveSettings } from "~/renderer/actions/settings";
 import { useNavigate } from "react-router";
 
-const MIN_TIME_TO_REFRESH = 30_000;
-
 export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const trustchain = useSelector(trustchainSelector);
-  const memberCredentials = useSelector(memberCredentialsSelector);
   const store = useStore();
-  const sdk = useTrustchainSdk();
-  const featureWalletSync = useFeature("lldWalletSync");
-  const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
-  const [url, setUrl] = useState<string | null>(null);
+  const client = useKeyRingClient();
   const memberName = useInstanceName();
 
   const goToActivation = useCallback(() => {
     dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
   }, [dispatch]);
 
-  const { mutate, isPending, error } = useMutation({
-    mutationFn: (memberCredentials: MemberCredentials) =>
-      createQRCodeHostInstance({
-        trustchainApiBaseUrl,
-        onDisplayQRCode: url => {
-          setUrl(url);
-        },
-        onDisplayDigits: digits => {
-          dispatch(setQrCodePinCode(digits));
-          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCode }));
-        },
-        addMember: async member => {
-          if (trustchain) {
-            await sdk.addMember(trustchain, memberCredentials, member);
-            return trustchain;
-          }
-          throw new NoTrustchainInitialized();
-        },
-        memberCredentials,
-        memberName,
-        initialTrustchainId: trustchain?.rootId,
-      }),
-
-    // Don't use retry here because it always uses a delay despite setting it to 0
-    onError(e) {
-      if (e?.name === "QRCodeWSClosed") {
-        const { time } = e as unknown as { time: number };
-        if (time >= MIN_TIME_TO_REFRESH) startQRCodeProcessing();
-      }
-      if (e?.name === "InvalidDigitsError") {
-        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCodeError }));
-      }
-      if (e?.name === "QRCodeProtocolError") {
-        if (walletSyncStepSelector(store.getState()) === Step.SynchronizeWithQRCode) {
-          startQRCodeProcessing();
-        } else {
-          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
-        }
-      }
-      if (e?.name === "NoTrustchainInitialized") {
-        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.UnbackedError }));
-      }
-      if (e?.name === "TrustchainAlreadyInitialized") {
-        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
-      }
+  const { url, error, isLoading, start } = useLedgerSyncPairingHost({
+    client,
+    memberName,
+    startBinding: "session",
+    notifyPaired: "before-members-refresh",
+    onDisplayDigits: digits => {
+      dispatch(setQrCodePinCode(digits));
+      dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCode }));
     },
-
-    onSuccess(newTrustchain) {
-      if (newTrustchain) {
-        dispatch(setTrustchain(newTrustchain));
-        if (!trustchain) {
-          track("ledgersync_activated", walletSyncEntryFlowProperties(AnalyticsFlow));
-        }
-      }
+    onPaired: () => {
       if (sourcePage === AnalyticsPage.Onboarding) {
         dispatch(saveSettings({ hasCompletedOnboarding: true }));
         navigate("/");
@@ -114,21 +48,36 @@ export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
           }),
         );
       }
-      queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
-      setUrl(null);
-      dispatch(setQrCodePinCode(null));
+    },
+    onDigitsCleared: () => dispatch(setQrCodePinCode(null)),
+    getActivatedEventProperties: () => walletSyncEntryFlowProperties(AnalyticsFlow),
+    onFailure: ({ category, restart }) => {
+      switch (category) {
+        case "pairing-invalid-code":
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCodeError }));
+          break;
+        case "pairing-protocol":
+          if (walletSyncStepSelector(store.getState()) === Step.SynchronizeWithQRCode) {
+            restart();
+          } else {
+            dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
+          }
+          break;
+        case "no-tree-for-seed":
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.UnbackedError }));
+          break;
+        case "already-member":
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
+          break;
+      }
     },
   });
-
-  const startQRCodeProcessing = useCallback(() => {
-    if (memberCredentials) mutate(memberCredentials);
-  }, [mutate, memberCredentials]);
 
   return {
     url,
     error,
-    isLoading: isPending,
-    startQRCodeProcessing,
+    isLoading,
+    startQRCodeProcessing: start,
     goToActivation,
   };
 }

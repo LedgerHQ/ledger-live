@@ -28,7 +28,7 @@
     "lint": "oxlint src jest"
   },
   "dependencies": {
-    "@features/platform-intent-wallet-sync": "workspace:*"
+    "@features/platform-key-ring": "workspace:*"
   },
   "devDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",

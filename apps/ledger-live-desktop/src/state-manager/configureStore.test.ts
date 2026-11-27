@@ -1,14 +1,17 @@
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { getAuthProvider } from "@shared/auth";
-import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
-import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
-import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
+import type { KeyRingMemberKeyRecord } from "@domain/entity-key-ring";
+import { importPersistedKeyRingState } from "@features/platform-key-ring";
+import {
+  keyRingAttestationFixture,
+  keyRingAuthChallengeFixture,
+} from "@features/platform-key-ring/testing";
 import { setOverride } from "@shared/feature-flags";
 import { getEnv } from "@shared/env";
-import customCreateStore from "./configureStore";
+import { readOnlyConfigStorage } from "@shared/app-config";
+import { loadAppConfig } from "~/setup";
+import customCreateStore, { type AppDispatch } from "./configureStore";
 
 jest.mock("@shared/env", () => {
   const actual = jest.requireActual<typeof import("@shared/env")>("@shared/env");
@@ -54,16 +57,36 @@ describe("customCreateStore", () => {
         SWAP_API_BASE: 0,
       });
     });
+
+    it("carries the Ledger Sync backends of the app config it is created with", () => {
+      const store = customCreateStore({
+        fetchRemoteFlags: null,
+        appConfig: loadAppConfig({
+          selections: readOnlyConfigStorage(() => ({ ledgerKeyRing: "staging" })),
+          devValues: readOnlyConfigStorage(() => ({})),
+        }),
+      });
+
+      const dispatch: AppDispatch = store.dispatch;
+      const extra = dispatch((_dispatch, _getState, extraArgument) => extraArgument);
+
+      expect(extra).toMatchObject({
+        ledgerSyncBackends: {
+          keyRingApiBaseUrl: "https://trustchain-backend.api.aws.stg.ldg-tech.com",
+          cloudSyncApiBaseUrl: "https://cloud-sync-backend.api.aws.stg.ldg-tech.com",
+        },
+      });
+    });
   });
 
   describe("auth provider flow", () => {
-    const MEMBER_CREDENTIALS: MemberCredentials = {
+    const MEMBER_CREDENTIALS: KeyRingMemberKeyRecord = {
       pubkey: "02e3311a12c450604725f02d1a775ef5cdb4a1b832eb41ac6b1302adbe92a612fc",
       privatekey: "873f500bd20783224f7e78d4f8cce3d2bf69eb8008fbd697d20bbea31a721a03",
     };
 
     const TRUSTCHAIN_ID = "ROOTID";
-    const ATTESTATION = crypto.to_hex(liveAuthentication(TRUSTCHAIN_ID));
+    const ATTESTATION = keyRingAttestationFixture(TRUSTCHAIN_ID);
 
     const LKRP_TOKEN = makeJwt({ sub: "idp", exp: 4102444800 });
     const KEYCLOAK_JWT = makeJwt({ sub: "keycloak", exp: 4102444800 });
@@ -79,9 +102,18 @@ describe("customCreateStore", () => {
     const server = setupServer(
       // Any host and realm: which Keycloak the config resolves to is covered by the setup tests.
       http.get("*/realms/:realm/protocol/openid-connect/auth", endpoints.keycloakAuth),
-      http.post(`https://${CHALLENGE.json.host}/openid/v1/authenticate`, endpoints.lkrpAuth),
-      http.post(`https://${CHALLENGE.json.host}/openid/v1/token`, endpoints.lkrpToken),
-      http.post(`https://${CHALLENGE.json.host}/openid/v1/exchange`, endpoints.tokenExchange),
+      http.post(
+        `https://${keyRingAuthChallengeFixture.json.host}/openid/v1/authenticate`,
+        endpoints.lkrpAuth,
+      ),
+      http.post(
+        `https://${keyRingAuthChallengeFixture.json.host}/openid/v1/token`,
+        endpoints.lkrpToken,
+      ),
+      http.post(
+        `https://${keyRingAuthChallengeFixture.json.host}/openid/v1/exchange`,
+        endpoints.tokenExchange,
+      ),
     );
 
     beforeAll(() => {
@@ -108,7 +140,10 @@ describe("customCreateStore", () => {
 
     it("should authenticate with attestation when trustchain store has a root id", async () => {
       endpoints.keycloakAuth.mockReturnValue(
-        HttpResponse.json({ tlv: CHALLENGE.tlv, json: CHALLENGE.json }),
+        HttpResponse.json({
+          tlv: keyRingAuthChallengeFixture.tlv,
+          json: keyRingAuthChallengeFixture.json,
+        }),
       );
       endpoints.lkrpAuth.mockReturnValue(HttpResponse.json("auth-code-xyz"));
       endpoints.lkrpToken.mockReturnValue(
@@ -120,8 +155,9 @@ describe("customCreateStore", () => {
 
       const store = customCreateStore({ fetchRemoteFlags: null });
       store.dispatch(setOverride({ key: "lwdAuth", value: { enabled: true } }));
-      store.dispatch(
-        importTrustchainStoreState({
+      const dispatch: AppDispatch = store.dispatch;
+      void dispatch(
+        importPersistedKeyRingState({
           trustchain: {
             rootId: TRUSTCHAIN_ID,
             walletSyncEncryptionKey: "wallet-sync-encryption-key",

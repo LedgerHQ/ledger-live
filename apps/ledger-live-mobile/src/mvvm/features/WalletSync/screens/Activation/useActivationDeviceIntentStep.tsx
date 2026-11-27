@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useFeature } from "@features/platform-feature-flags";
-import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
+import { useInitMemberKey } from "@features/platform-ledger-sync";
+import { useKeyRingClient } from "../../hooks/useKeyRingClient";
 import { LedgerSyncIntentStepLWM } from "../../deviceIntents/LedgerSyncIntentStepLWM";
 import {
   type ActivationStepInput,
@@ -21,7 +22,8 @@ type ActivationDeviceIntentStepOptions = Readonly<{
 }>;
 
 function MemberCredentialsInitializer() {
-  useInitMemberCredentials();
+  const keyRingClient = useKeyRingClient();
+  useInitMemberKey(keyRingClient);
   return null;
 }
 

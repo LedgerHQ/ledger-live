@@ -8,13 +8,13 @@ import DeviceActionInstanceStep from "./02-DeviceActionInstanceStep";
 import DeleteInstanceWithTrustchain from "./03-DeleteInstanceWithTrustchain";
 import DeletionFinalStep from "./04-DeletionFinalStep";
 import { DeletionError, ErrorReason } from "./04-DeletionError";
-import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type { KeyRingMember } from "@features/platform-key-ring";
 import DeletionErrorFinalStep from "./04-DeletionFinalErrorStep";
 
 type Props = Readonly<{
   // Kept by the drawer: the DIE device step runs while this screen is unmounted.
-  selectedInstance: TrustchainMember | null;
-  onSelectInstance: (instance: TrustchainMember) => void;
+  selectedInstance: KeyRingMember | null;
+  onSelectInstance: (instance: KeyRingMember) => void;
 }>;
 
 const WalletSyncManageInstances = forwardRef<BackRef, Props>(
@@ -32,25 +32,25 @@ const WalletSyncManageInstances = forwardRef<BackRef, Props>(
       goBack,
     }));
 
-    const goBack = () => {
+    function goBack() {
       if (currentStep === FlowOptions[Flow.ManageInstances].steps[1]) {
         goToWelcomeScreenWalletSync();
       } else {
         goToPreviousScene();
       }
-    };
+    }
 
-    const goToDeleteInstance = (instance: TrustchainMember) => {
+    function goToDeleteInstance(instance: KeyRingMember) {
       onSelectInstance(instance);
       goToNextScene();
-    };
+    }
 
-    const goToDeleteInstanceWithTrustchain = (device: Device) => {
+    function goToDeleteInstanceWithTrustchain(device: Device) {
       setDevice(device);
       goToNextScene();
-    };
+    }
 
-    const getStep = () => {
+    function getStep() {
       switch (currentStep) {
         default:
         case Step.SynchronizedInstances:
@@ -68,7 +68,7 @@ const WalletSyncManageInstances = forwardRef<BackRef, Props>(
         case Step.AutoRemoveInstance:
           return <DeletionError error={ErrorReason.AUTO_REMOVE} />;
       }
-    };
+    }
 
     const isStepImpacted = useMemo(
       () =>

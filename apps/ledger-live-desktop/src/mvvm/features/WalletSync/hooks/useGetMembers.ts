@@ -1,57 +1,19 @@
-import {
-  memberCredentialsSelector,
-  trustchainSelector,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useSelector } from "LLD/hooks/redux";
-import { useTrustchainSdk } from "./useTrustchainSdk";
-import { QueryKey } from "./type.hooks";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useLedgerSyncMembers } from "@features/platform-ledger-sync";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { useLifeCycle } from "./walletSync.hooks";
-import { TrustchainNotFound } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
 export function useGetMembers() {
-  const sdk = useTrustchainSdk();
-  const trustchain = useSelector(trustchainSelector);
-  const memberCredentials = useSelector(memberCredentialsSelector);
+  const client = useKeyRingClient();
   const { handleError } = useLifeCycle();
-
-  function fetchMembers() {
-    if (!memberCredentials) {
-      return;
-    }
-    if (!trustchain) {
-      throw new TrustchainNotFound();
-    }
-
-    return sdk.getMembers(trustchain, memberCredentials);
-  }
-
-  const {
-    isLoading: isMembersLoading,
-    data: instances,
-    isError: isErrorGetMembers,
-    error: getMembersError,
-  } = useQuery({
-    queryKey: [QueryKey.getMembers, trustchain],
-    queryFn: () => fetchMembers(),
-    refetchOnMount: true,
-    refetchOnReconnect: true,
-    refetchOnWindowFocus: true,
-    retry: false,
-    enabled: !!trustchain && !!memberCredentials,
+  const { isLoading, data, isError, error } = useLedgerSyncMembers({
+    client,
+    onError: handleError,
   });
 
-  useEffect(() => {
-    if (isErrorGetMembers) {
-      handleError(getMembersError);
-    }
-  }, [handleError, getMembersError, isErrorGetMembers]);
-
   return {
-    isMembersLoading: isMembersLoading,
-    instances,
-    isError: isErrorGetMembers,
-    error: getMembersError,
+    isMembersLoading: isLoading,
+    instances: data,
+    isError,
+    error,
   };
 }

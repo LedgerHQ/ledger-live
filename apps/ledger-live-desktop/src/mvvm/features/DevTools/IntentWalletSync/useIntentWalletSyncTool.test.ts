@@ -1,22 +1,18 @@
 import { renderHook } from "tests/testSetup";
-import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
+import { createKeyRingClient, commitKeyRingTree } from "@features/platform-key-ring";
 import { useIntentWalletSyncToolState } from "@devtools/bindings";
-import { ledgerSyncResultOrder } from "../../WalletSync/deviceIntents/ledgerSyncResultOrder";
+import { ledgerSyncResultOrder } from "@features/platform-ledger-sync";
 import { useIntentWalletSyncTool } from "./useIntentWalletSyncTool";
 
-const mockAppSdk = { name: "app SDK" };
-const mockCreateSessionSdk = jest.fn();
+const mockAppClient = { name: "app client" };
 
-jest.mock("@ledgerhq/ledger-key-ring-protocol/index", () => ({
-  ...jest.requireActual("@ledgerhq/ledger-key-ring-protocol/index"),
-  getSdk: jest.fn(),
+jest.mock("@features/platform-key-ring", () => ({
+  ...jest.requireActual("@features/platform-key-ring"),
+  createKeyRingClient: jest.fn(),
 }));
 jest.mock("@devtools/bindings", () => ({ useIntentWalletSyncToolState: jest.fn(() => ({})) }));
-jest.mock("../../WalletSync/hooks/useTrustchainSdk", () => ({
-  useTrustchainSdk: () => mockAppSdk,
-}));
-jest.mock("../../WalletSync/deviceIntents/useCreateSessionSdk", () => ({
-  useCreateSessionSdk: () => mockCreateSessionSdk,
+jest.mock("../../WalletSync/hooks/useKeyRingClient", () => ({
+  useKeyRingClient: () => mockAppClient,
 }));
 
 function lastToolParams() {
@@ -26,15 +22,15 @@ function lastToolParams() {
 }
 
 describe("useIntentWalletSyncTool", () => {
-  it("should list members with the app SDK and run intents with the session SDK, building no SDK", () => {
+  it("should list members and run intents with the app client, building no client", () => {
     const { rerender } = renderHook(() => useIntentWalletSyncTool());
     rerender({});
 
     expect(lastToolParams()).toMatchObject({
-      sdk: mockAppSdk,
-      createSessionSdk: mockCreateSessionSdk,
+      keyRing: mockAppClient,
+      commitKeyRingTree,
     });
-    expect(getSdk).not.toHaveBeenCalled();
+    expect(createKeyRingClient).not.toHaveBeenCalled();
   });
 
   it("should pass the app's result order, the one its Ledger Sync screens use", () => {

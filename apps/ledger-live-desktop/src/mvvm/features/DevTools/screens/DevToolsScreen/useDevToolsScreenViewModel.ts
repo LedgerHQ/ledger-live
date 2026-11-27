@@ -3,14 +3,12 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { useNavigate } from "react-router";
-import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
+import { resetKeyRingState } from "@features/platform-key-ring";
 import {
-  setTrustchain,
-  setMemberCredentials,
-  resetTrustchainStore,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
-import type { Trustchain, MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+  createKeyRingDebugSdk,
+  setDebugKeyRingMemberKey,
+  setDebugKeyRingTree,
+} from "@features/platform-key-ring/devtools";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import {
   useFeatureFlagsToolProps,
@@ -46,12 +44,11 @@ import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useReceiveDevToolTrigger } from "./useReceiveDevToolTrigger";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useIntentWalletSyncTool } from "../../IntentWalletSync/useIntentWalletSyncTool";
+import { keyRingDeviceBridge } from "LLD/features/WalletSync/keyRingDeviceBridge";
 import { useAppTogglesTool } from "../../AppToggles/useAppTogglesTool";
 import { useAccountDataRecorder } from "../../accountDataRecorder";
 import { getPortfolioServiceUrl } from "~/config/portfolioService";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
-
-const APPLICATION_ID = 16;
 
 const getLiveConfigValue = (key: string): unknown => LiveConfig.getValueByKey(key);
 const getLiveConfigDefaultValue = (key: string): unknown => LiveConfig.getDefaultValueByKey(key);
@@ -75,37 +72,39 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
 
   const createTrustchainSdk = useCallback<Parameters<typeof useTrustchainDevToolProps>[0]>(
     ({ trustchainApiBaseUrl }) =>
-      getSdk(
-        false,
-        { applicationId: APPLICATION_ID, name: "DevTools", apiBaseUrl: trustchainApiBaseUrl },
-        withDevice,
-      ),
+      createKeyRingDebugSdk({
+        apiBaseUrl: trustchainApiBaseUrl,
+        deviceBridge: keyRingDeviceBridge,
+      }),
     [],
   );
 
   const createCloudSyncSdk = useCallback<Parameters<typeof useCloudSyncDevToolProps>[0]>(
     ({ trustchainApiBaseUrl }) =>
-      getSdk(
-        false,
-        { applicationId: APPLICATION_ID, name: "DevTools", apiBaseUrl: trustchainApiBaseUrl },
-        withDevice,
-      ),
+      createKeyRingDebugSdk({
+        apiBaseUrl: trustchainApiBaseUrl,
+        deviceBridge: keyRingDeviceBridge,
+      }),
     [],
   );
 
-  const onTrustchainChange = useCallback(
-    (tc: Trustchain | null) => {
-      if (tc !== null) dispatch(setTrustchain(tc));
+  const onTrustchainChange = useCallback<
+    NonNullable<Parameters<typeof useTrustchainDevToolProps>[2]>
+  >(
+    tc => {
+      if (tc !== null) dispatch(setDebugKeyRingTree(tc));
       // null = devtool cleared trustchain locally; no Redux dispatch to avoid
-      // silently rotating memberCredentials via resetTrustchainStore.
+      // silently rotating memberCredentials via resetKeyRingState.
     },
     [dispatch],
   );
 
-  const onMemberCredentialsChange = useCallback(
-    (mc: MemberCredentials | null) => {
-      if (mc !== null) dispatch(setMemberCredentials(mc));
-      else dispatch(resetTrustchainStore());
+  const onMemberCredentialsChange = useCallback<
+    NonNullable<Parameters<typeof useTrustchainDevToolProps>[3]>
+  >(
+    mc => {
+      if (mc !== null) dispatch(setDebugKeyRingMemberKey(mc));
+      else dispatch(resetKeyRingState());
     },
     [dispatch],
   );

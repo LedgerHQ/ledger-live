@@ -1,25 +1,33 @@
-import { EMPTY } from "rxjs";
 import { getEnv, setEnv } from "@shared/env";
 import { makeCipher } from "@shared/cloud-sync";
-import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
-import type { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
+import {
+  keyRingInitialState,
+  type KeyRingMemberKeyRecord,
+  type KeyRingTreeRecord,
+} from "@domain/entity-key-ring";
+import {
+  createKeyRingClient,
+  keyRingRuntimeExtra,
+  selectKeyRingSession,
+} from "@features/platform-key-ring";
 import { accountsSyncModule } from "@ledgerhq/live-wallet/accounts";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { HttpResponse, http, server } from "tests/server";
 import { renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
 import { useWatchWalletSync } from "../hooks/useWatchWalletSync";
+import { keyRingDeviceBridge } from "../keyRingDeviceBridge";
 import type { Account } from "@ledgerhq/types-live";
 
 const originalMockEnv = getEnv("MOCK");
 const cloudSyncApiBaseUrl = getEnv("CLOUD_SYNC_API_PROD");
 
-const trustchain: Trustchain = {
+const trustchain: KeyRingTreeRecord = {
   rootId: "mock-root-id-cursor-regression",
   applicationPath: "m/0'/16'/0'",
   walletSyncEncryptionKey: "1".padStart(64, "0"),
 };
 
-const memberCredentials: MemberCredentials = {
+const memberCredentials: KeyRingMemberKeyRecord = {
   pubkey: "mock-pub-key-cursor-regression",
   privatekey: "mock-private-key-cursor-regression",
 };
@@ -304,22 +312,30 @@ function descriptorsFor(accounts: Account[]) {
   ).nextState;
 }
 
-function encrypt(targetTrustchain: Trustchain, payload: unknown): Promise<string> {
-  return makeCipher(
-    getSdk(
-      true,
-      { applicationId: 16, name: "Cursor regression", apiBaseUrl: "foo" },
-      () => () => EMPTY,
-    ),
-  ).encrypt(targetTrustchain, payload);
+function cipherOf(targetTrustchain: KeyRingTreeRecord) {
+  const client = createKeyRingClient({
+    mock: true,
+    instanceName: "Cursor regression",
+    apiBaseUrl: "foo",
+    deviceBridge: keyRingDeviceBridge,
+    runtime: keyRingRuntimeExtra({ getState: () => ({ trustchain: keyRingInitialState }) })
+      .keyRingRuntime,
+  });
+  const stream = client.openStream(
+    selectKeyRingSession({ trustchain: { trustchain: targetTrustchain, memberCredentials } }),
+  );
+  if (!stream) throw new Error("the key ring state has no stream");
+  return makeCipher({
+    withAuth: () => Promise.reject(new Error("the cipher never authenticates")),
+    encryptUserData: (_locator, data) => stream.encrypt(data),
+    decryptUserData: (_locator, data) => stream.decrypt(data),
+  });
 }
 
-function decrypt(targetTrustchain: Trustchain, payload: string): Promise<unknown> {
-  return makeCipher(
-    getSdk(
-      true,
-      { applicationId: 16, name: "Cursor regression", apiBaseUrl: "foo" },
-      () => () => EMPTY,
-    ),
-  ).decrypt(targetTrustchain, payload);
+function encrypt(targetTrustchain: KeyRingTreeRecord, payload: unknown): Promise<string> {
+  return cipherOf(targetTrustchain).encrypt(targetTrustchain, payload);
+}
+
+function decrypt(targetTrustchain: KeyRingTreeRecord, payload: string): Promise<unknown> {
+  return cipherOf(targetTrustchain).decrypt(targetTrustchain, payload);
 }

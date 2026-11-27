@@ -1,27 +1,34 @@
 import { EMPTY } from "rxjs";
 import { getEnv, setEnv } from "@shared/env";
 import { makeCipher } from "@shared/cloud-sync";
-import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
-import type { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { keyRingInitialState, type KeyRingState } from "@domain/entity-key-ring";
+import {
+  createKeyRingClient,
+  keyRingRuntimeExtra,
+  selectKeyRingSession,
+} from "@features/platform-key-ring";
+import { createKeyRingV1DeviceBridge } from "@features/platform-key-ring/v1";
 import { accountsSyncModule } from "@ledgerhq/live-wallet/accounts";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
 import { HttpResponse, http, server } from "@tests/server";
 import { renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import { appConfig } from "~/setup";
 import { useWatchWalletSync } from "../hooks/useWatchWalletSync";
 
 const originalMockEnv = getEnv("MOCK");
-const cloudSyncApiBaseUrl = getEnv("CLOUD_SYNC_API_PROD");
+const { cloudSyncApiBaseUrl } = appConfig;
 
-const trustchain: Trustchain = {
-  rootId: "mock-root-id-cursor-regression",
-  applicationPath: "m/0'/16'/0'",
-  walletSyncEncryptionKey: "1".padStart(64, "0"),
-};
-
-const memberCredentials: MemberCredentials = {
-  pubkey: "mock-pub-key-cursor-regression",
-  privatekey: "mock-private-key-cursor-regression",
+const keyRingState: KeyRingState = {
+  trustchain: {
+    rootId: "mock-root-id-cursor-regression",
+    applicationPath: "m/0'/16'/0'",
+    walletSyncEncryptionKey: "1".padStart(64, "0"),
+  },
+  memberCredentials: {
+    pubkey: "mock-pub-key-cursor-regression",
+    privatekey: "mock-private-key-cursor-regression",
+  },
 };
 
 const accountA = genAccount("cursor-regression-account-a");
@@ -35,7 +42,7 @@ const endpoints = {
   push: jest.fn<EndpointResult, EndpointParams>(),
 };
 
-describe("useWatchWalletSync PROD cursor synchronization", () => {
+describe("useWatchWalletSync cursor synchronization", () => {
   beforeAll(() => {
     jest.useRealTimers();
   });
@@ -58,22 +65,22 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     jest.useFakeTimers();
   });
 
-  it("should apply PROD data when its cursor is newer than the local cursor", async () => {
+  it("should apply backend data when its cursor is newer than the local cursor", async () => {
     /**
      * GIVEN
      * - Local wallet: accounts [A, B].
      * - Cached distant state: version 7, accounts [A, B].
-     * - PROD backend: version 10, accounts [A].
+     * - Backend: version 10, accounts [A].
      *
      * WHEN the Wallet Sync loop runs.
      *
-     * THEN PROD is pulled and account B is removed locally.
+     * THEN the backend is pulled and account B is removed locally.
      */
     endpoints.pull.mockReturnValue(
       HttpResponse.json({
         status: "out-of-sync",
         version: 10,
-        payload: await encrypt(trustchain, {
+        payload: await encrypt({
           accounts: descriptorsFor([accountA]),
         }),
         date: "2026-09-17T00:00:00.000Z",
@@ -100,16 +107,16 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     });
   });
 
-  it("should keep local data when the PROD cursor is older than the local cursor", async () => {
+  it("should keep local data when the backend cursor is older than the local cursor", async () => {
     /**
      * GIVEN
      * - Local wallet: accounts [A, B].
      * - Cached distant state: version 10, accounts [A, B].
-     * - PROD backend: version 7, accounts [A].
+     * - Backend: version 7, accounts [A].
      *
      * WHEN the Wallet Sync loop runs.
      *
-     * THEN PROD reports that the cursor is up to date and local data remains unchanged.
+     * THEN the backend reports that the cursor is up to date and local data remains unchanged.
      */
     endpoints.pull.mockReturnValue(HttpResponse.json({ status: "up-to-date" }));
     endpoints.push.mockReturnValue(HttpResponse.json({ status: "updated" }));
@@ -137,16 +144,16 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     });
   });
 
-  it("should overwrite PROD from local data when both cursors have the same version", async () => {
+  it("should overwrite the backend from local data when both cursors have the same version", async () => {
     /**
      * GIVEN
      * - Local wallet: accounts [A].
      * - Cached distant state: version 7, accounts [A, B].
-     * - PROD backend: version 7, accounts [A, C].
+     * - Backend: version 7, accounts [A, C].
      *
      * WHEN the Wallet Sync loop runs.
      *
-     * THEN PROD reports that the cursor is up to date and is overwritten with accounts [A].
+     * THEN the backend reports that the cursor is up to date and is overwritten with accounts [A].
      */
     endpoints.pull.mockReturnValue(HttpResponse.json({ status: "up-to-date" }));
     endpoints.push.mockReturnValue(HttpResponse.json({ status: "updated" }));
@@ -171,17 +178,17 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     const { payload } = (await endpoints.push.mock.calls[0][0].request.json()) as {
       payload: string;
     };
-    expect(await decrypt(trustchain, payload)).toMatchObject({
+    expect(await decrypt(payload)).toMatchObject({
       accounts: descriptorsFor([accountA]),
     });
   });
 
-  it("should reset the local cursor when PROD has no data", async () => {
+  it("should reset the local cursor when the backend has no data", async () => {
     /**
      * GIVEN
      * - Local wallet: accounts [A, B].
      * - Cached distant state: version 7, accounts [A, B].
-     * - PROD backend: no data.
+     * - Backend: no data.
      *
      * WHEN the Wallet Sync loop runs.
      *
@@ -213,16 +220,16 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     ]);
   });
 
-  it("should push local data when PROD and the local cursor have no data", async () => {
+  it("should push local data when the backend and the local cursor have no data", async () => {
     /**
      * GIVEN
      * - Local wallet: accounts [A, B].
      * - Cached distant state: version 0, no data.
-     * - PROD backend: no data.
+     * - Backend: no data.
      *
      * WHEN the Wallet Sync loop runs.
      *
-     * THEN local accounts are pushed to PROD as version 1.
+     * THEN local accounts are pushed to the backend as version 1.
      */
     endpoints.pull.mockReturnValue(HttpResponse.json({ status: "no-data" }));
     endpoints.push.mockReturnValue(HttpResponse.json({ status: "updated" }));
@@ -247,7 +254,7 @@ describe("useWatchWalletSync PROD cursor synchronization", () => {
     const { payload } = (await endpoints.push.mock.calls[0][0].request.json()) as {
       payload: string;
     };
-    expect(await decrypt(trustchain, payload)).toMatchObject({
+    expect(await decrypt(payload)).toMatchObject({
       accounts: descriptorsFor([accountA, accountB]),
     });
   });
@@ -283,7 +290,7 @@ function renderWalletSync({
           ...state.accounts,
           active: localAccounts,
         },
-        trustchain: { trustchain, memberCredentials },
+        trustchain: keyRingState,
         wallet: {
           ...state.wallet,
           walletSync: {
@@ -319,22 +326,38 @@ function descriptorsFor(accounts: Account[]) {
   ).nextState;
 }
 
-function encrypt(targetTrustchain: Trustchain, payload: unknown): Promise<string> {
-  return makeCipher(
-    getSdk(
-      true,
-      { applicationId: 16, name: "Cursor regression", apiBaseUrl: "foo" },
-      () => () => EMPTY,
-    ),
-  ).encrypt(targetTrustchain, payload);
+function streamCipher() {
+  const client = createKeyRingClient({
+    mock: true,
+    instanceName: "Cursor regression",
+    apiBaseUrl: "foo",
+    deviceBridge: createKeyRingV1DeviceBridge({
+      withDevice: () => () => EMPTY,
+      createSessionTransport: () => {
+        throw new Error("No device session in this test");
+      },
+    }),
+    runtime: keyRingRuntimeExtra({ getState: () => ({ trustchain: keyRingInitialState }) })
+      .keyRingRuntime,
+  });
+  const stream = client.openStream(selectKeyRingSession({ trustchain: keyRingState }));
+  if (!stream) throw new Error("the key ring state has no stream");
+  const locator = keyRingState.trustchain;
+  if (!locator) throw new Error("the key ring state has no key tree");
+  const cipher = makeCipher<unknown>({
+    withAuth: () => Promise.reject(new Error("the cipher never authenticates")),
+    encryptUserData: (_tree, data) => stream.encrypt(data),
+    decryptUserData: (_tree, data) => stream.decrypt(data),
+  });
+  return { cipher, locator };
 }
 
-function decrypt(targetTrustchain: Trustchain, payload: string): Promise<unknown> {
-  return makeCipher(
-    getSdk(
-      true,
-      { applicationId: 16, name: "Cursor regression", apiBaseUrl: "foo" },
-      () => () => EMPTY,
-    ),
-  ).decrypt(targetTrustchain, payload);
+function encrypt(payload: unknown): Promise<string> {
+  const { cipher, locator } = streamCipher();
+  return cipher.encrypt(locator, payload);
+}
+
+function decrypt(payload: string): Promise<unknown> {
+  const { cipher, locator } = streamCipher();
+  return cipher.decrypt(locator, payload);
 }

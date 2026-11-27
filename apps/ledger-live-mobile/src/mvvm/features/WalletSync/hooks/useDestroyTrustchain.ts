@@ -1,43 +1,19 @@
-import { track } from "@shared/analytics";
-import { useTrustchainSdk } from "./useTrustchainSdk";
-import { useSelector, useDispatch } from "~/context/hooks";
-import {
-  trustchainSelector,
-  resetTrustchainStore,
-  memberCredentialsSelector,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useMutation } from "@tanstack/react-query";
-import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
-import { QueryKey } from "./type.hooks";
+import { useDestroyLedgerSync } from "@features/platform-ledger-sync";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { useCloudSyncSDK } from "./useWatchWalletSync";
-import { walletSyncUpdate } from "@domain/entity-wallet-sync";
 import { useCurrentStep } from "./useCurrentStep";
 import { Steps } from "../types/Activation";
 
 export function useDestroyTrustchain() {
-  const dispatch = useDispatch();
-  const cloudSyncSDK = useCloudSyncSDK();
-  const sdk = useTrustchainSdk();
-  const trustchain = useSelector(trustchainSelector);
-  const memberCredentials = useSelector(memberCredentialsSelector);
+  const cloudSync = useCloudSyncSDK();
+  const client = useKeyRingClient();
   const { setCurrentStep } = useCurrentStep();
 
-  const deleteMutation = useMutation({
-    mutationFn: async () => {
-      if (!trustchain || !memberCredentials) {
-        return;
-      }
-      await cloudSyncSDK.destroy(trustchain, memberCredentials);
-      await sdk.destroyApplication(trustchain, memberCredentials);
-    },
-    mutationKey: [QueryKey.destroyTrustchain, trustchain],
-    onSuccess: () => {
-      dispatch(resetTrustchainStore());
-      track(AnalyticsEvents.LedgerSyncDeactivated);
-      dispatch(walletSyncUpdate({ data: null, version: 0 }));
-      setCurrentStep(Steps.Activation);
-    },
+  const { destroy, isPending, error } = useDestroyLedgerSync({
+    client,
+    cloudSync,
+    onAfterReset: () => setCurrentStep(Steps.Activation),
   });
 
-  return { deleteMutation };
+  return { deleteMutation: { mutateAsync: destroy, isPending, error } };
 }

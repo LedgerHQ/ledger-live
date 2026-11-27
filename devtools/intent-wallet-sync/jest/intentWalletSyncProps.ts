@@ -1,8 +1,9 @@
-import { TrustchainMemberId } from "@features/platform-intent-wallet-sync";
+import type { KeyRingMemberId } from "@features/platform-key-ring";
 import type { WalletSyncIntentToolProps } from "../src/types";
 
-export function memberId(id: string): TrustchainMemberId {
-  return TrustchainMemberId.parse(id);
+// A runtime import of the key ring barrel loads the device crypto, which this preset cannot load.
+export function memberId(id: string): KeyRingMemberId {
+  return id as KeyRingMemberId;
 }
 
 export function buildProps(

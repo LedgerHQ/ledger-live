@@ -2,10 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { BackHandler } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { DeviceConnectionResult, ExecutorState } from "@features/platform-device-intent";
-import type {
-  LedgerSyncFailureReason,
-  LedgerSyncJobState,
-} from "@features/platform-intent-wallet-sync";
+import type { LedgerSyncFailureReason, LedgerSyncJobState } from "@features/platform-key-ring";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { NavigatorName, ScreenName } from "~/const";
@@ -62,6 +59,7 @@ function sceneOfFailure(reason: LedgerSyncFailureReason, error: Error): Scene {
       return { kind: SceneKind.UnbackedError };
     case "not-allowed":
       return { kind: SceneKind.KeyError };
+    case "device-unsupported":
     case "unknown":
       return { kind: SceneKind.GenericError, error };
   }

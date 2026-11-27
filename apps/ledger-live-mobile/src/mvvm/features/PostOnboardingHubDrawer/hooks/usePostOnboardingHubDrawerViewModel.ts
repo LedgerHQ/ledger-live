@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
 import { useCompletePostOnboarding } from "~/logic/postOnboarding/useCompletePostOnboarding";
@@ -17,7 +17,7 @@ export function usePostOnboardingHubDrawerViewModel() {
   const completePostOnboarding = useCompletePostOnboarding();
 
   const { actionsState, deviceModelId } = usePostOnboardingHubState();
-  const isLedgerSyncActive = Boolean(useSelector(trustchainSelector)?.rootId);
+  const isLedgerSyncActive = useSelector(selectIsLedgerSyncActive);
   const accounts = useSelector(accountsSelector);
 
   const { isActivationDrawerVisible, closeActivationDrawer, openActivationDrawer } =

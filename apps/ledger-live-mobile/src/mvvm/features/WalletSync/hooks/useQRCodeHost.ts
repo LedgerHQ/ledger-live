@@ -1,28 +1,12 @@
-import { track } from "@shared/analytics";
-import { useCallback, useEffect, useState } from "react";
-import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useSelector, useDispatch } from "~/context/hooks";
-import {
-  trustchainSelector,
-  memberCredentialsSelector,
-  setTrustchain,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
-import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
+import { useEffect, useState } from "react";
+import { useLedgerSyncPairingHost } from "@features/platform-ledger-sync";
 import { useWalletSyncTrackingFlow } from "./useLedgerSyncAnalytics";
-import { useTrustchainSdk } from "./useTrustchainSdk";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { Options, Steps } from "../types/Activation";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import { useFeature } from "@features/platform-feature-flags";
-import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { QueryKey } from "./type.hooks";
 import { useInstanceName } from "./useInstanceName";
 import { useCurrentStep } from "./useCurrentStep";
-
-const MIN_TIME_TO_REFRESH = 30_000;
 
 interface Props {
   currentOption: Options;
@@ -30,94 +14,55 @@ interface Props {
 
 export function useQRCodeHost({ currentOption }: Props) {
   const { currentStep, setCurrentStep } = useCurrentStep();
-  const queryClient = useQueryClient();
-  const trustchain = useSelector(trustchainSelector);
-  const memberCredentials = useSelector(memberCredentialsSelector);
-  const sdk = useTrustchainSdk();
-  const dispatch = useDispatch();
+  const client = useKeyRingClient();
 
-  const featureWalletSync = useFeature("llmWalletSync");
-  const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(
-    featureWalletSync?.params?.environment,
-  );
   const memberName = useInstanceName();
 
-  const [url, setUrl] = useState<string | null>(null);
   const [pinCode, setPinCode] = useState<string | null>(null);
 
   const navigation = useNavigation();
   const trackingFlow = useWalletSyncTrackingFlow();
 
-  const { mutate, isPending, error } = useMutation({
-    mutationFn: (memberCredentials: MemberCredentials) =>
-      createQRCodeHostInstance({
-        trustchainApiBaseUrl,
-        onDisplayQRCode: url => {
-          setUrl(url);
-        },
-        onDisplayDigits: digits => {
-          setPinCode(digits);
-          setCurrentStep(Steps.PinDisplay);
-        },
-        addMember: async member => {
-          if (trustchain) {
-            await sdk.addMember(trustchain, memberCredentials, member);
-            return trustchain;
-          }
-          throw new NoTrustchainInitialized();
-        },
-        memberCredentials,
-        memberName,
-        initialTrustchainId: trustchain?.rootId,
-      }),
-
-    onSuccess: newTrustchain => {
-      if (newTrustchain) {
-        dispatch(setTrustchain(newTrustchain));
-        if (!trustchain) track(AnalyticsEvents.LedgerSyncActivated, { flow: trackingFlow });
-      }
-      queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
+  const { url, error, isLoading, start } = useLedgerSyncPairingHost({
+    client,
+    memberName,
+    // Restarts when the member key changes, not when the key tree does.
+    startBinding: "member-key",
+    notifyPaired: "after-members-refresh",
+    onDisplayDigits: digits => {
+      setPinCode(digits);
+      setCurrentStep(Steps.PinDisplay);
+    },
+    onPaired: () =>
       navigation.navigate(NavigatorName.WalletSync, {
         screen: ScreenName.WalletSyncLoading,
         params: {
           created: false,
         },
-      });
-
-      setUrl(null);
-      setPinCode(null);
-    },
-
-    // Don't use retry here because it always uses a delay despite setting it to 0
-    onError: e => {
-      if (e?.name === "QRCodeWSClosed") {
-        const { time } = e as unknown as { time: number };
-        if (time >= MIN_TIME_TO_REFRESH) startQRCodeProcessing();
-      }
-      if (e?.name === "InvalidDigitsError" || e?.name === "QRCodeProtocolError") {
+      }),
+    onDigitsCleared: () => setPinCode(null),
+    getActivatedEventProperties: () => ({ flow: trackingFlow }),
+    onFailure: ({ category }) => {
+      if (category === "pairing-invalid-code" || category === "pairing-protocol") {
         setCurrentStep(Steps.SyncError);
       }
-      if (e?.name === "NoTrustchainInitialized") {
+      if (category === "no-tree-for-seed") {
         setCurrentStep(Steps.UnbackedError);
       }
     },
   });
 
-  const startQRCodeProcessing = useCallback(() => {
-    if (memberCredentials) mutate(memberCredentials);
-  }, [mutate, memberCredentials]);
-
   useEffect(() => {
     if (currentStep === Steps.QrCodeMethod && currentOption === Options.SHOW_QR) {
-      startQRCodeProcessing();
+      start();
     }
-  }, [currentOption, currentStep, startQRCodeProcessing]);
+  }, [currentOption, currentStep, start]);
 
   return {
     url,
     error,
-    isLoading: isPending,
-    startQRCodeProcessing,
+    isLoading,
+    startQRCodeProcessing: start,
     pinCode,
   };
 }

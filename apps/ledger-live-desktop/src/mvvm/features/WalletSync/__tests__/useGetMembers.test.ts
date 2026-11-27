@@ -1,21 +1,26 @@
 import { renderHook, waitFor } from "tests/testSetup";
 import { useGetMembers } from "../hooks/useGetMembers";
-import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { KeyRingMemberIdSchema, type KeyRingMember } from "@features/platform-key-ring";
 import { simpleTrustChain } from "./shared";
 
-const mockInstances: TrustchainMember[] = [
-  { id: "1", name: "Desktop", permissions: 112 },
-  { id: "2", name: "Mobile", permissions: 112 },
+const mockInstances: KeyRingMember[] = [
+  { id: KeyRingMemberIdSchema.parse("1"), name: "Desktop" },
+  { id: KeyRingMemberIdSchema.parse("2"), name: "Mobile" },
 ];
 
 const Mocks = {
-  getMembers: jest.fn().mockResolvedValue(mockInstances),
+  listMembers: jest.fn().mockResolvedValue(mockInstances),
   handleError: jest.fn(),
 };
 
-jest.mock("../hooks/useTrustchainSdk", () => ({
-  useTrustchainSdk: () => ({ getMembers: Mocks.getMembers }),
-}));
+jest.mock("../hooks/useKeyRingClient", () => {
+  const { fakeKeyRingClient } = jest.requireActual("@features/platform-key-ring/testing");
+  const client = fakeKeyRingClient({
+    listMembers: (...args: unknown[]) => Mocks.listMembers(...args),
+    openStream: () => null,
+  });
+  return { useKeyRingClient: () => client };
+});
 
 jest.mock("../hooks/walletSync.hooks", () => ({
   useLifeCycle: () => ({ handleError: Mocks.handleError }),
@@ -31,7 +36,7 @@ const initialStateWithTrustchain = {
 describe("useGetMembers", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    Mocks.getMembers.mockResolvedValue(mockInstances);
+    Mocks.listMembers.mockResolvedValue(mockInstances);
   });
 
   it("should return instances when query succeeds", async () => {
@@ -47,7 +52,7 @@ describe("useGetMembers", () => {
 
   it("should call handleError when query fails", async () => {
     const err = new Error("Trustchain not found");
-    Mocks.getMembers.mockRejectedValue(err);
+    Mocks.listMembers.mockRejectedValue(err);
 
     const { result } = renderHook(() => useGetMembers(), {
       initialState: initialStateWithTrustchain,
@@ -64,6 +69,6 @@ describe("useGetMembers", () => {
     });
 
     await waitFor(() => expect(result.current.isMembersLoading).toBe(false));
-    expect(Mocks.getMembers).not.toHaveBeenCalled();
+    expect(Mocks.listMembers).not.toHaveBeenCalled();
   });
 });

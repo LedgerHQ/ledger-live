@@ -1208,6 +1208,9 @@ importers:
       '@domain/entity-interest-rate':
         specifier: workspace:*
         version: link:../../domain/entity/interest-rate
+      '@domain/entity-key-ring':
+        specifier: workspace:^
+        version: link:../../domain/entity/key-ring
       '@domain/entity-market-countervalues':
         specifier: workspace:^
         version: link:../../domain/entity/market-countervalues
@@ -1412,9 +1415,12 @@ importers:
       '@features/platform-intent-verify-address':
         specifier: workspace:^
         version: link:../../features/platform/intent-verify-address
-      '@features/platform-intent-wallet-sync':
+      '@features/platform-key-ring':
         specifier: workspace:^
-        version: link:../../features/platform/intent-wallet-sync
+        version: link:../../features/platform/key-ring
+      '@features/platform-ledger-sync':
+        specifier: workspace:^
+        version: link:../../features/platform/ledger-sync
       '@features/platform-market-countervalues':
         specifier: workspace:^
         version: link:../../features/platform/market-countervalues
@@ -1508,15 +1514,9 @@ importers:
       '@ledgerhq/ethereum-provider':
         specifier: workspace:^
         version: link:../../libs/ethereum-provider
-      '@ledgerhq/hw-ledger-key-ring-protocol':
-        specifier: 'catalog:'
-        version: 1.1.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/hw-transport':
         specifier: 6.37.0
         version: 6.37.0
-      '@ledgerhq/ledger-key-ring-protocol':
-        specifier: 'catalog:'
-        version: 1.2.2(@typescript/typescript6@6.0.2)(axios@1.21.1(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -2173,6 +2173,9 @@ importers:
       '@domain/entity-interest-rate':
         specifier: workspace:*
         version: link:../../domain/entity/interest-rate
+      '@domain/entity-key-ring':
+        specifier: workspace:^
+        version: link:../../domain/entity/key-ring
       '@domain/entity-market-countervalues':
         specifier: workspace:^
         version: link:../../domain/entity/market-countervalues
@@ -2416,9 +2419,12 @@ importers:
       '@features/platform-intent-verify-address':
         specifier: workspace:^
         version: link:../../features/platform/intent-verify-address
-      '@features/platform-intent-wallet-sync':
+      '@features/platform-key-ring':
         specifier: workspace:^
-        version: link:../../features/platform/intent-wallet-sync
+        version: link:../../features/platform/key-ring
+      '@features/platform-ledger-sync':
+        specifier: workspace:^
+        version: link:../../features/platform/ledger-sync
       '@features/platform-market-countervalues':
         specifier: workspace:^
         version: link:../../features/platform/market-countervalues
@@ -2506,9 +2512,6 @@ importers:
       '@ledgerhq/ethereum-provider':
         specifier: workspace:^
         version: link:../../libs/ethereum-provider
-      '@ledgerhq/hw-ledger-key-ring-protocol':
-        specifier: 'catalog:'
-        version: 1.1.0(@typescript/typescript6@6.0.2)
       '@ledgerhq/hw-transport':
         specifier: 6.37.0
         version: 6.37.0
@@ -2518,9 +2521,6 @@ importers:
       '@ledgerhq/icons-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/icons
-      '@ledgerhq/ledger-key-ring-protocol':
-        specifier: 'catalog:'
-        version: 1.2.2(@typescript/typescript6@6.0.2)(axios@1.21.1(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -4811,6 +4811,9 @@ importers:
       '@domain/entity-derivation':
         specifier: workspace:*
         version: link:../../domain/entity/derivation
+      '@domain/entity-key-ring':
+        specifier: workspace:*
+        version: link:../../domain/entity/key-ring
       '@domain/entity-network':
         specifier: workspace:*
         version: link:../../domain/entity/network
@@ -4859,9 +4862,9 @@ importers:
       '@features/platform-intent-scan-accounts':
         specifier: workspace:*
         version: link:../../features/platform/intent-scan-accounts
-      '@features/platform-intent-wallet-sync':
+      '@features/platform-key-ring':
         specifier: workspace:*
-        version: link:../../features/platform/intent-wallet-sync
+        version: link:../../features/platform/key-ring
       '@features/platform-predictions':
         specifier: workspace:*
         version: link:../../features/platform/predictions
@@ -4893,9 +4896,6 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.13.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
-      '@ledgerhq/ledger-key-ring-protocol':
-        specifier: 'catalog:'
-        version: 1.2.2(@typescript/typescript6@6.0.2)(axios@1.21.1(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -5547,9 +5547,9 @@ importers:
 
   devtools/intent-wallet-sync:
     dependencies:
-      '@features/platform-intent-wallet-sync':
+      '@features/platform-key-ring':
         specifier: workspace:*
-        version: link:../../features/platform/intent-wallet-sync
+        version: link:../../features/platform/key-ring
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
@@ -8627,6 +8627,46 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  domain/entity/key-ring:
+    dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@support/jest':
+        specifier: workspace:*
+        version: link:../../../support/jest
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.24)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.24))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.2(@types/node@24.12.4)(babel-plugin-macros@3.1.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.79.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.94.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   domain/entity/market-chart:
     dependencies:
       zod:
@@ -9142,9 +9182,6 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:^
         version: link:../../domain/entity/currency-crypto
-      '@features/platform-wallet-sync':
-        specifier: workspace:^
-        version: link:../../features/platform/wallet-sync
       '@jest/reporters':
         specifier: 'catalog:'
         version: 30.5.2
@@ -16611,11 +16648,23 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
-  features/platform/intent-wallet-sync:
+  features/platform/key-ring:
     dependencies:
+      '@domain/entity-key-ring':
+        specifier: workspace:^
+        version: link:../../../domain/entity/key-ring
       '@features/platform-device-intent':
         specifier: workspace:^
         version: link:../device-intent
+      '@ledgerhq/auth':
+        specifier: 'catalog:'
+        version: 0.2.0
+      '@ledgerhq/hw-ledger-key-ring-protocol':
+        specifier: 'catalog:'
+        version: 1.1.0(@typescript/typescript6@6.0.2)
+      '@ledgerhq/ledger-key-ring-protocol':
+        specifier: 'catalog:'
+        version: 1.2.2(@typescript/typescript6@6.0.2)(axios@1.21.1(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -16623,21 +16672,21 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.13.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
-      '@ledgerhq/ledger-key-ring-protocol':
-        specifier: 'catalog:'
-        version: 1.2.2(@typescript/typescript6@6.0.2)(axios@1.21.1(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
-        version: 1.15.11(@swc/helpers@0.5.23)
+        version: 1.15.11(@swc/helpers@0.5.24)
       '@swc/jest':
         specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.24))
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
@@ -16647,6 +16696,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.4)(babel-plugin-macros@3.1.0)
+      msw:
+        specifier: 'catalog:'
+        version: 2.7.3(@types/node@24.12.4)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
         version: 0.79.0
@@ -16656,6 +16708,97 @@ importers:
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  features/platform/ledger-sync:
+    dependencies:
+      '@domain/entity-key-ring':
+        specifier: workspace:^
+        version: link:../../../domain/entity/key-ring
+      '@domain/entity-wallet-sync':
+        specifier: workspace:^
+        version: link:../../../domain/entity/wallet-sync
+      '@features/platform-key-ring':
+        specifier: workspace:^
+        version: link:../key-ring
+      '@features/platform-wallet-sync':
+        specifier: workspace:^
+        version: link:../wallet-sync
+      '@ledgerhq/logs':
+        specifier: 'catalog:'
+        version: 6.20.0
+      '@shared/analytics':
+        specifier: workspace:^
+        version: link:../../../shared/analytics
+      '@shared/cloud-sync':
+        specifier: workspace:^
+        version: link:../../../shared/cloud-sync
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.13.0(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+      '@support/jest':
+        specifier: workspace:*
+        version: link:../../../support/jest
+      '@support/lint':
+        specifier: workspace:*
+        version: link:../../../support/lint
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.24)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.24))
+      '@tanstack/react-query':
+        specifier: 5.28.9
+        version: 5.28.9(react@19.1.4)
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.2(@types/node@24.12.4)(babel-plugin-macros@3.1.0)
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      msw:
+        specifier: 'catalog:'
+        version: 2.7.3(@types/node@24.12.4)(@typescript/typescript6@6.0.2)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.79.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.94.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -16966,6 +17109,12 @@ importers:
 
   features/platform/wallet-sync:
     dependencies:
+      '@domain/entity-wallet-sync':
+        specifier: workspace:^
+        version: link:../../../domain/entity/wallet-sync
+      '@features/platform-key-ring':
+        specifier: workspace:^
+        version: link:../key-ring
       '@shared/cloud-sync':
         specifier: workspace:^
         version: link:../../../shared/cloud-sync
@@ -16979,30 +17128,54 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
+      '@support/jest':
+        specifier: workspace:*
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.4
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.2(@types/node@24.12.4)(babel-plugin-macros@3.1.0)
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.2(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      msw:
+        specifier: 'catalog:'
+        version: 2.7.3(@types/node@24.12.4)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
         version: 0.79.0
       oxlint:
         specifier: 'catalog:'
         version: 1.94.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'

@@ -4,14 +4,12 @@ import { WalletSyncTestApp, mockedSdk, simpleTrustChain, walletSyncActivatedStat
 
 import * as ReactQuery from "@tanstack/react-query";
 
-jest.mock("../hooks/useTrustchainSdk", () => ({
-  useTrustchainSdk: () => ({
-    destroyApplication: (mockedSdk.destroyApplication = jest
-      .fn()
-      .mockResolvedValue({ trustchainDestroyed: true })),
-    getMembers: (mockedSdk.getMembers = jest.fn()),
-    initMemberCredentials: (mockedSdk.initMemberCredentials = jest.fn()),
-  }),
+jest.mock("../hooks/useKeyRingClient", () => ({
+  useKeyRingClient: () =>
+    Object.assign(mockedSdk, {
+      destroy: jest.fn().mockResolvedValue({ treeDestroyed: true }),
+      listMembers: jest.fn(),
+    }),
 }));
 
 jest.mock("@tanstack/react-query", () => {

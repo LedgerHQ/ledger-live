@@ -132,15 +132,20 @@ describe("logJsStartEpoch", () => {
 describe("readdLive36190", () => {
   it("stops saving the trustchain at start, and only the trustchain", () => {
     const dbSave = textOf([
-      "    lense: trustchainStoreSelector,",
+      "    lense: selectPersistedKeyRingState,",
       "    saveAtStart: true,",
       "    lense: walletStoreSelector,",
       "    saveAtStart: true,",
     ]);
     assert.deepEqual(linesOf(readdLive36190(dbSave)), [
-      "    lense: trustchainStoreSelector,",
+      "    lense: selectPersistedKeyRingState,",
       "    lense: walletStoreSelector,",
       "    saveAtStart: true,",
     ]);
+  });
+
+  it("also finds the trustchain of a ref older than the key ring packages", () => {
+    const dbSave = textOf(["    lense: trustchainStoreSelector,", "    saveAtStart: true,"]);
+    assert.deepEqual(linesOf(readdLive36190(dbSave)), ["    lense: trustchainStoreSelector,"]);
   });
 });

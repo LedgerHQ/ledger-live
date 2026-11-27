@@ -1,12 +1,12 @@
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
-import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { getAuthProvider } from "@shared/auth";
-import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
-import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
+import type { KeyRingMemberKeyRecord } from "@domain/entity-key-ring";
+import {
+  keyRingAttestationFixture,
+  keyRingAuthChallengeFixture,
+} from "@features/platform-key-ring/testing";
 import { setOverride } from "@shared/feature-flags";
 
 jest.mock("~/config/bridge-setup", () => ({
@@ -42,13 +42,13 @@ jest.mock("~/firebase/remoteConfig", () => ({
 
 describe("mobile store", () => {
   describe("auth provider flow", () => {
-    const MEMBER_CREDENTIALS: MemberCredentials = {
+    const MEMBER_CREDENTIALS: KeyRingMemberKeyRecord = {
       pubkey: "02e3311a12c450604725f02d1a775ef5cdb4a1b832eb41ac6b1302adbe92a612fc",
       privatekey: "873f500bd20783224f7e78d4f8cce3d2bf69eb8008fbd697d20bbea31a721a03",
     };
 
     const TRUSTCHAIN_ID = "ROOTID";
-    const ATTESTATION = crypto.to_hex(liveAuthentication(TRUSTCHAIN_ID));
+    const ATTESTATION = keyRingAttestationFixture(TRUSTCHAIN_ID);
 
     const LKRP_TOKEN = makeJwt({ sub: "idp", exp: 4102444800 });
     const KEYCLOAK_JWT = makeJwt({ sub: "keycloak", exp: 4102444800 });
@@ -64,9 +64,18 @@ describe("mobile store", () => {
     const server = setupServer(
       // Any host and realm: which Keycloak the config resolves to is covered by the setup tests.
       http.get("*/realms/:realm/protocol/openid-connect/auth", endpoints.keycloakAuth),
-      http.post(`https://${CHALLENGE.json.host}/openid/v1/authenticate`, endpoints.lkrpAuth),
-      http.post(`https://${CHALLENGE.json.host}/openid/v1/token`, endpoints.lkrpToken),
-      http.post(`https://${CHALLENGE.json.host}/openid/v1/exchange`, endpoints.tokenExchange),
+      http.post(
+        `https://${keyRingAuthChallengeFixture.json.host}/openid/v1/authenticate`,
+        endpoints.lkrpAuth,
+      ),
+      http.post(
+        `https://${keyRingAuthChallengeFixture.json.host}/openid/v1/token`,
+        endpoints.lkrpToken,
+      ),
+      http.post(
+        `https://${keyRingAuthChallengeFixture.json.host}/openid/v1/exchange`,
+        endpoints.tokenExchange,
+      ),
     );
 
     beforeAll(() => {
@@ -94,7 +103,10 @@ describe("mobile store", () => {
 
     it("should authenticate with attestation when trustchain store has a root id", async () => {
       endpoints.keycloakAuth.mockImplementation(() =>
-        HttpResponse.json({ tlv: CHALLENGE.tlv, json: CHALLENGE.json }),
+        HttpResponse.json({
+          tlv: keyRingAuthChallengeFixture.tlv,
+          json: keyRingAuthChallengeFixture.json,
+        }),
       );
       endpoints.lkrpAuth.mockImplementation(() => HttpResponse.json("auth-code-xyz"));
       endpoints.lkrpToken.mockImplementation(() =>
@@ -105,9 +117,11 @@ describe("mobile store", () => {
       );
 
       const { store } = require("./configureStore");
+      // The runtime of the store is known to the key ring module loaded with it.
+      const { importPersistedKeyRingState } = freshKeyRingModule();
       store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
       store.dispatch(
-        importTrustchainStoreState({
+        importPersistedKeyRingState({
           trustchain: {
             rootId: TRUSTCHAIN_ID,
             walletSyncEncryptionKey: "wallet-sync-encryption-key",
@@ -191,6 +205,51 @@ describe("mobile store", () => {
         expect.objectContaining({ ledgerClientVersion: "set-before-store-creation" }),
       );
     });
+
+    it("carries the key ring runtime the key ring thunks read", () => {
+      const { store } = require("./configureStore") as typeof import("./configureStore");
+      const { readKeyRingRuntime } = freshKeyRingModule();
+
+      expect(readKeyRingRuntime(readExtra(store))).toEqual({ kind: "KeyRingRuntime" });
+    });
+
+    it("carries the Ledger Sync backends of the session app config", () => {
+      const { store } = require("./configureStore") as typeof import("./configureStore");
+      const { appConfig } = require("~/setup") as typeof import("~/setup");
+
+      expect(readExtra(store)).toEqual(
+        expect.objectContaining({
+          ledgerSyncBackends: {
+            keyRingApiBaseUrl: appConfig.trustchainApiBaseUrl,
+            cloudSyncApiBaseUrl: appConfig.cloudSyncApiBaseUrl,
+          },
+        }),
+      );
+    });
+  });
+
+  describe("key ring boot", () => {
+    beforeEach(() => {
+      jest.resetModules();
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("LEDGER_CLIENT_VERSION", "jest");
+    });
+
+    it("should store the member key in the dispatch of the boot import, before any reader", () => {
+      const { store } = require("./configureStore") as typeof import("./configureStore");
+      const { importPersistedKeyRingState } = freshKeyRingModule();
+      const { selectHasKeyRingMemberKey } =
+        require("@domain/entity-key-ring") as typeof import("@domain/entity-key-ring");
+      const hasKeyAtNotification: boolean[] = [];
+      store.subscribe(() => hasKeyAtNotification.push(selectHasKeyRingMemberKey(store.getState())));
+      expect(selectHasKeyRingMemberKey(store.getState())).toBe(false);
+
+      const stored = store.dispatch(importPersistedKeyRingState(undefined));
+
+      expect(selectHasKeyRingMemberKey(store.getState())).toBe(true);
+      expect(hasKeyAtNotification).toEqual([true]);
+      return expect(stored).resolves.toBeUndefined();
+    });
   });
 
   describe("env reads at store creation", () => {
@@ -263,6 +322,11 @@ function isThunkDispatch(
   dispatch: unknown,
 ): dispatch is ThunkDispatch<unknown, unknown, UnknownAction> {
   return typeof dispatch === "function";
+}
+
+// After `jest.resetModules`, the store holds the runtime of the key ring module loaded with it.
+function freshKeyRingModule() {
+  return require("@features/platform-key-ring") as typeof import("@features/platform-key-ring");
 }
 
 function readExtra({ dispatch }: { dispatch: unknown }): unknown {

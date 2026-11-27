@@ -1,12 +1,13 @@
+import { useLedgerSyncMemberRemoval } from "@features/platform-ledger-sync";
 import {
-  memberCredentialsSelector,
-  setTrustchain,
-  trustchainSelector,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useSelector, useDispatch } from "~/context/hooks";
-import { useTrustchainSdk } from "./useTrustchainSdk";
-import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import { TrustchainMember, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
+  assertKeyRingMember,
+  isSameKeyRingMember,
+  selectKeyRingSession,
+  type KeyRingMember,
+} from "@features/platform-key-ring";
+import { selectIsKeyRingMember } from "@domain/entity-key-ring";
+import { useSelector } from "~/context/hooks";
+import { useKeyRingClient } from "./useKeyRingClient";
 import { useCallback } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation } from "@react-navigation/native";
@@ -17,56 +18,51 @@ import { DrawerProps, SceneKind, useFollowInstructionDrawer } from "./useFollowI
 
 type Props = {
   device: Device | null;
-  member: TrustchainMember | null;
+  member: KeyRingMember | null;
 };
 
 export function useRemoveMember({ device, member }: Props): DrawerProps {
-  const dispatch = useDispatch();
-  const sdk = useTrustchainSdk();
-  const trustchain = useSelector(trustchainSelector);
-  const memberCredentials = useSelector(memberCredentialsSelector);
+  const client = useKeyRingClient();
+  const session = useSelector(selectKeyRingSession);
+  const isMember = useSelector(selectIsKeyRingMember);
+  const memberKeySession = useSelector(selectKeyRingSession, isSameKeyRingMember);
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
+  const removeMember = useLedgerSyncMemberRemoval();
 
   const transitionToNextScreen = useCallback(
-    (trustchainResult: Trustchain) => {
-      if (!member) return;
-      dispatch(setTrustchain(trustchainResult));
+    (removedMember: KeyRingMember) => {
       navigation.navigate(ScreenName.WalletSyncManageInstancesSuccess, {
-        member,
+        member: removedMember,
       });
     },
-    [dispatch, member, navigation],
+    [navigation],
   );
 
   return useFollowInstructionDrawer(
     async setScene => {
-      try {
-        if (!member) return;
-        if (!device) return;
-        if (!trustchain || !memberCredentials) {
-          throw new TrustchainEjected("trustchain or memberCredentials is not set");
-        }
-        const newTrustchain = await sdk.removeMember(
-          device.deviceId,
-          trustchain,
-          memberCredentials,
-          member,
-          {
-            onStartRequestUserInteraction: () =>
-              setScene({ kind: SceneKind.DeviceInstructions, device }),
-            onEndRequestUserInteraction: () => setScene({ kind: SceneKind.Loader }),
-          },
-        );
+      if (!member) return;
+      if (!device) return;
+      const outcome = await removeMember({
+        client,
+        session,
+        member,
+        legacyDeviceId: device.deviceId,
+        callbacks: {
+          onStartRequestUserInteraction: () =>
+            setScene({ kind: SceneKind.DeviceInstructions, device }),
+          onEndRequestUserInteraction: () => setScene({ kind: SceneKind.Loader }),
+        },
+        assertReady: () => assertKeyRingMember(session),
+        onRemoved: () => transitionToNextScreen(member),
+      });
+      if (outcome.type === "done") return;
 
-        transitionToNextScreen(newTrustchain);
-      } catch (error) {
-        if ((error as { name?: string })?.name === "TrustchainNotAllowed") {
-          setScene({ kind: SceneKind.KeyError });
-        } else if (error instanceof Error) {
-          setScene({ kind: SceneKind.GenericError, error });
-        }
+      if (outcome.reason === "not-allowed") {
+        setScene({ kind: SceneKind.KeyError });
+      } else if (outcome.error instanceof Error) {
+        setScene({ kind: SceneKind.GenericError, error: outcome.error });
       }
     },
-    [device, member, memberCredentials, sdk, transitionToNextScreen, !trustchain],
+    [device, member, memberKeySession, client, transitionToNextScreen, !isMember],
   );
 }

@@ -2,7 +2,11 @@ import React from "react";
 import { screen } from "@testing-library/react-native";
 import { render, withFlagOverrides } from "@tests/test-renderer";
 import { WalletSyncSettingsNavigator } from "./shared";
-import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
+import {
+  mockKeyRingMemberKeyRecord,
+  mockKeyRingTreeRecord,
+} from "@domain/entity-key-ring/schema.mock";
+import { mockKeyRingState } from "@domain/entity-key-ring/slice.mock";
 
 jest.mock("../hooks/useDestroyTrustchain", () => ({
   useDestroyTrustchain: () => ({
@@ -16,7 +20,6 @@ jest.mock("../hooks/useDestroyTrustchain", () => ({
 
 describe("ManageKey", () => {
   it("Should open ManageKey flow and delete trustchain", async () => {
-    const keypair = await crypto.randomKeypair();
     const { user } = render(<WalletSyncSettingsNavigator />, {
       overrideInitialState: withFlagOverrides(
         {
@@ -38,18 +41,15 @@ describe("ManageKey", () => {
             ...state.settings,
             readOnlyModeEnabled: false,
           },
-          trustchain: {
-            ...state.trustchain,
-            trustchain: {
+          trustchain: mockKeyRingState({
+            trustchain: mockKeyRingTreeRecord({
               rootId: "000c9ec1a1ab774f7eaeff2b0d4ad695f1fa07ea28d33f5d34126cb1152d6d83f6",
-              applicationPath: "m/0'/16'/0'",
-              walletSyncEncryptionKey: crypto.to_hex(keypair.privateKey),
-            },
-            memberCredentials: {
-              privatekey: crypto.to_hex(keypair.privateKey),
+            }),
+            // A member of the key tree the Ledger Sync handlers serve.
+            memberCredentials: mockKeyRingMemberKeyRecord({
               pubkey: "03d682b0be923a68e2aa077c3b49c79be57d447d8dca615628f5adceb2ccd175be",
-            },
-          },
+            }),
+          }),
         }),
       ),
     });

@@ -173,7 +173,11 @@ features/flow/agent-intent-entry-points/                 @ledgerhq/wallet-xp
 # Wallet — Intents
 features/platform/intent-scan-accounts/                  @ledgerhq/wallet-xp
 features/platform/intent-verify-address/                 @ledgerhq/wallet-xp
-features/platform/intent-wallet-sync/                    @ledgerhq/wallet-xp
+
+# Wallet: Ledger Sync key ring
+domain/entity/key-ring/                                  @ledgerhq/wallet-xp
+features/platform/key-ring/                              @ledgerhq/wallet-xp
+features/platform/ledger-sync/                               @ledgerhq/wallet-xp
 
 # Wallet — App lock
 features/platform/app-lock/                              @ledgerhq/wallet-xp

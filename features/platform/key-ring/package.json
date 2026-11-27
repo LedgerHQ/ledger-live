@@ -1,0 +1,54 @@
+{
+  "name": "@features/platform-key-ring",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ledger Sync trust: the key ring client port, its v1 adapter, device intents, API auth identity and lifecycle",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./store": "./src/store.ts",
+    "./persistence": "./src/persistence.ts",
+    "./v1": "./src/v1.ts",
+    "./devtools": "./src/devtools.ts",
+    "./testing": "./src/testing.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "lint": "oxlint src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@domain/entity-key-ring": "workspace:^",
+    "@features/platform-device-intent": "workspace:^",
+    "@ledgerhq/auth": "catalog:",
+    "@ledgerhq/hw-ledger-key-ring-protocol": "catalog:",
+    "@ledgerhq/ledger-key-ring-protocol": "catalog:",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
+    "rxjs": "catalog:"
+  },
+  "devDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "@support/jest": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "msw": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "rxjs": "catalog:",
+    "typescript": "catalog:"
+  }
+}

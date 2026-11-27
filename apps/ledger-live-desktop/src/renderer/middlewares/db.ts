@@ -14,10 +14,8 @@ import {
   walletStateExportShouldDiffer,
   exportWalletState,
 } from "~/renderer/reducers/wallet";
-import {
-  trustchainStoreActionTypePrefix,
-  trustchainStoreSelector,
-} from "@ledgerhq/ledger-key-ring-protocol/store";
+import { isKeyRingAction } from "@domain/entity-key-ring";
+import { selectPersistedKeyRingState } from "@features/platform-key-ring/persistence";
 import {
   cryptoAssetsApi,
   extractPersistedCALFromState,
@@ -105,11 +103,11 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     return res;
   }
 
-  if (action.type.startsWith(trustchainStoreActionTypePrefix)) {
+  if (isKeyRingAction(action)) {
     const res = next(action);
     const state = store.getState();
     if (!state.application.isLocked) {
-      setKey("app", "trustchain", trustchainStoreSelector(state));
+      setKey("app", "trustchain", selectPersistedKeyRingState(state));
     }
     return res;
   }

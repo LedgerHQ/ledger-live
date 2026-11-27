@@ -7,7 +7,6 @@ import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/ty
 import { NavigatorName, ScreenName } from "~/const";
 import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 import { useDestroyTrustchain } from "../../hooks/useDestroyTrustchain";
-import { UseMutationResult } from "@tanstack/react-query";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { setWallectSyncManageKeyDrawer } from "~/actions/walletSync";
 import { manageKeyDrawerSelector } from "~/reducers/walletSync";
@@ -23,7 +22,7 @@ export type HookResult = {
   closeDrawer: () => void;
   handleClose: () => void;
   onClickConfirm: () => Promise<void>;
-  deleteMutation: UseMutationResult<void, Error, void, unknown>;
+  deleteMutation: ReturnType<typeof useDestroyTrustchain>["deleteMutation"];
   handleCancel: () => void;
   onCreateKey: () => void;
   /** Rendered by the screen outside the drawer: the step outlives it. */

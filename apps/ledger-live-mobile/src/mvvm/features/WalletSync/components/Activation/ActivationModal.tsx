@@ -2,7 +2,8 @@ import React from "react";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
-import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
+import { useInitMemberKey } from "@features/platform-ledger-sync";
+import { useKeyRingClient } from "../../hooks/useKeyRingClient";
 import { useFeature } from "@features/platform-feature-flags";
 import { Linking } from "react-native";
 import IconsHeader from "./IconsHeader";
@@ -15,7 +16,8 @@ const ActivationModal: React.FC<Props> = ({ onSyncMethodPress }) => {
   const walletSyncFF = useFeature("llmWalletSync");
   const learnMoreLink = walletSyncFF?.params?.learnMoreLink;
 
-  useInitMemberCredentials();
+  const keyRingClient = useKeyRingClient();
+  useInitMemberKey(keyRingClient);
 
   const onPressLearnMore = () => {
     if (learnMoreLink) {

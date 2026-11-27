@@ -16,8 +16,7 @@ import marketBanner, { MarketBannerState } from "./marketBanner";
 import wallet from "./wallet";
 import type { WalletState } from "./wallet";
 import walletSync, { WalletSyncState } from "./walletSync";
-import trustchain from "./trustchain";
-import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import trustchain, { type KeyRingState } from "@domain/entity-key-ring";
 import { getEnv } from "@shared/env";
 import {
   countervaluesReducer,
@@ -123,7 +122,7 @@ export type State = LLDRTKApiState & {
   postOnboarding: PostOnboardingState;
   predictions: PredictionsState;
   settings: SettingsState;
-  trustchain: TrustchainStore;
+  trustchain: KeyRingState;
   UI: UIState;
   wallet: WalletState;
   walletSync: WalletSyncState;

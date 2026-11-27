@@ -1,36 +1,16 @@
-import { track } from "@shared/analytics";
-import { useCallback } from "react";
-import { useDispatch } from "~/context/hooks";
 import {
-  MemberCredentials,
-  Trustchain,
-  TrustchainSDK,
-} from "@ledgerhq/ledger-key-ring-protocol/types";
-import { setTrustchain, resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { log } from "@ledgerhq/logs";
-import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
+  useOnKeyRingRefreshNeeded,
+  type KeyRingRefreshOptions,
+} from "@features/platform-ledger-sync";
+import type { KeyRingClient, KeyRingSession } from "@features/platform-key-ring";
 
 export function useOnTrustchainRefreshNeeded(
-  trustchainSdk: TrustchainSDK,
-  memberCredentials: MemberCredentials | null,
-): (trustchain: Trustchain) => Promise<void> {
-  const dispatch = useDispatch();
-  const onTrustchainRefreshNeeded = useCallback(
-    async (trustchain: Trustchain) => {
-      try {
-        if (!memberCredentials) return;
-        log("walletsync", "onTrustchainRefreshNeeded " + trustchain.rootId);
-        const newTrustchain = await trustchainSdk.restoreTrustchain(trustchain, memberCredentials);
-        dispatch(setTrustchain(newTrustchain));
-      } catch (e) {
-        const eName = (e as { name?: string })?.name;
-        if (eName === "TrustchainEjected" || eName === "TrustchainNotAllowed") {
-          dispatch(resetTrustchainStore());
-          track(AnalyticsEvents.LedgerSyncDeactivated);
-        }
-      }
-    },
-    [dispatch, trustchainSdk, memberCredentials],
-  );
-  return onTrustchainRefreshNeeded;
+  client: KeyRingClient,
+): (session: KeyRingSession) => Promise<void> {
+  return useOnKeyRingRefreshNeeded(client, REFRESH_OPTIONS);
 }
+
+const REFRESH_OPTIONS: KeyRingRefreshOptions = {
+  resetOnCategories: ["member-removed", "not-allowed"],
+  readTreeIdAt: "render",
+};

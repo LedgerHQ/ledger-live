@@ -90,6 +90,8 @@ type TestFixtures = {
   };
   /** Coin-config keys merged over the default and remote config, as Developer settings would. */
   coinConfigOverrides?: Record<string, unknown>;
+  /** App config selections by switch id, which the app resolves at boot instead of its stored ones. */
+  appConfig?: Record<string, "prod" | "staging" | "dev">;
   teamOwner?: Team;
   teamOwnerLabel: void;
   annotationLinks: void;
@@ -121,6 +123,7 @@ export const test = base.extend<TestFixtures>({
   localManifestOverride: undefined,
   webviewLocalStorage: undefined,
   coinConfigOverrides: undefined,
+  appConfig: undefined,
   teamOwner: undefined,
   speculosForSetupOnly: false,
   lockDeclaration: {},
@@ -171,7 +174,7 @@ export const test = base.extend<TestFixtures>({
   },
 
   userdataDestinationPath: async (
-    { userdataOriginalFile, settings, localManifestOverride, coinConfigOverrides },
+    { userdataOriginalFile, settings, localManifestOverride, coinConfigOverrides, appConfig },
     use,
   ) => {
     const userdataDestinationPath = path.join(__dirname, "../artifacts/userdata", randomUUID());
@@ -198,6 +201,9 @@ export const test = base.extend<TestFixtures>({
     if (coinConfigOverrides) {
       // Over any overrides the userdata file already carries, not in place of them.
       merge(userData, { data: { coinConfigOverrides: { overrides: coinConfigOverrides } } });
+    }
+    if (appConfig) {
+      merge(userData, { data: { PLAYWRIGHT_RUN: { appConfig } } });
     }
     await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
     await use(userdataDestinationPath);

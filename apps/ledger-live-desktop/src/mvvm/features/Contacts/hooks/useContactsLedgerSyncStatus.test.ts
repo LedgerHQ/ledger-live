@@ -21,13 +21,8 @@ function renderContactsLedgerSyncStatus({
 } = {}) {
   mockedUseLedgerSyncInfo.mockReturnValue({
     statusQuery: { error: isError ? new Error("Sync failed") : null, isError, isLoading },
-    trustchain: rootId
-      ? {
-          rootId,
-          applicationPath: "applicationPath",
-          walletSyncEncryptionKey: "walletSyncEncryptionKey",
-        }
-      : null,
+    treeId: rootId ?? null,
+    streamPath: rootId ? "applicationPath" : null,
     walletState: {},
   } as ReturnType<typeof useLedgerSyncInfo>);
 

@@ -4,7 +4,7 @@ import { payCardBalanceInitialState } from "@features/flow-pay-balance/state";
 import { payCardFeatureTourInitialState } from "@features/flow-pay-feature-tour/state";
 import { receiveVerifyHintInitialState } from "@features/flow-receive/state";
 import { initialIdentitiesState } from "@domain/entity-client-identity";
-import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { keyRingInitialState } from "@domain/entity-key-ring";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { countervaluesInitialState as COUNTERVALUES_INITIAL_STATE } from "@features/platform-market-countervalues";
 import type { CountervaluesSettings } from "@domain/entity-market-countervalues";
@@ -61,6 +61,10 @@ import { FEATURE_FLAGS_INITIAL_STATE, FEATURE_FLAGS_DEFAULTS } from "@shared/fea
 import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feature-flags";
 import { getEnv } from "@shared/env";
 import { calApiExtra, coinMarketCapApiExtra, cvsApiExtra } from "@shared/api-services";
+import { ledgerSyncBackendsExtra } from "@features/platform-ledger-sync";
+import { keyRingRuntimeExtra } from "@features/platform-key-ring/store";
+import type { KeyRingState } from "@domain/entity-key-ring";
+import { appConfig } from "~/setup";
 import { LinkingProvider } from "@shared/linking";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
@@ -103,7 +107,7 @@ const INITIAL_STATE: State = {
   receiveVerifyHint: receiveVerifyHintInitialState,
   settings: SETTINGS_INITIAL_STATE,
   toasts: TOASTS_INITIAL_STATE,
-  trustchain: TRUSTCHAIN_INITIAL_STATE,
+  trustchain: keyRingInitialState,
   wallet: WALLET_INITIAL_STATE,
   walletconnect: WALLET_CONNECT_INITIAL_STATE,
   walletSync: WALLETSYNC_INITIAL_STATE,
@@ -149,7 +153,10 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
     },
   };
 
-  return configureStore({
+  const keyRing = keyRingRuntimeExtra({
+    getState: (): { trustchain: KeyRingState } => store.getState(),
+  });
+  const store = configureStore({
     reducer: reducers,
     middleware: getDefaultMiddleware =>
       applyLlmRTKApiMiddlewares(
@@ -166,6 +173,11 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
                 getCountervaluesServiceUrl: () => getEnv("LEDGER_COUNTERVALUES_API"),
               }),
               ...coinMarketCapApiExtra({ coinMarketCapApiUrl: getEnv("CMC_API_URL") }),
+              ...ledgerSyncBackendsExtra({
+                keyRingApiBaseUrl: appConfig.trustchainApiBaseUrl,
+                cloudSyncApiBaseUrl: appConfig.cloudSyncApiBaseUrl,
+              }),
+              ...keyRing,
             },
           },
         }),
@@ -174,6 +186,7 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
     preloadedState: state,
     devTools: false,
   });
+  return store;
 }
 
 export type ReduxStore = ReturnType<typeof createStore>;

@@ -37,6 +37,7 @@ import invariant from "invariant";
 import type * as Redux from "redux";
 import { v4 as uuid } from "uuid";
 import { userIdSelector } from "@domain/entity-client-identity";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
 import { getDistributionChannel } from "~/helpers/distributionChannel";
 import { osRelease as getOsRelease, osType as getOsType } from "~/system";
@@ -112,7 +113,7 @@ const getLedgerSyncAttributes = (state: State) => {
 
   return {
     hasLedgerSync: !!walletSync?.enabled,
-    ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
+    ledgerSyncActivated: selectIsLedgerSyncActive(state),
     ledger_sync_revamp: !!ledgerSyncOptimisation?.enabled,
     ledger_sync_die: !!ledgerSyncDie?.enabled,
   };

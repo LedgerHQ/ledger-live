@@ -1,24 +1,16 @@
+import React from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { track } from "@shared/analytics";
-import { renderHook } from "@tests/test-renderer";
+import { mockKeyRingState } from "@domain/entity-key-ring/slice.mock";
+import { LedgerSyncMembersUnresolvedError } from "@features/platform-ledger-sync";
+import { renderHook, waitFor } from "@tests/test-renderer";
 import { useLifeCycle } from "../useLifeCycle";
-import {
-  TrustchainEjected,
-  TrustchainNotAllowed,
-  TrustchainOutdated,
-} from "@ledgerhq/ledger-key-ring-protocol/errors";
-import { ErrorType } from "../type.hooks";
 
-const mockDispatch = jest.fn();
 const mockNavigationDispatch = jest.fn();
-const mockInvalidateJwt = jest.fn();
-const mockRefetch = jest.fn();
-const mockResetTrustchainStore = jest.fn();
+const mockInvalidateAuth = jest.fn();
+const mockRestore = jest.fn();
+const mockResetKeyRingState = jest.fn();
 const mockedTrack = jest.mocked(track);
-
-jest.mock("~/context/hooks", () => ({
-  ...jest.requireActual("~/context/hooks"),
-  useDispatch: () => mockDispatch,
-}));
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
@@ -26,82 +18,103 @@ jest.mock("@react-navigation/native", () => ({
   StackActions: { replace: jest.fn((...args: unknown[]) => ({ type: "REPLACE", ...args })) },
 }));
 
-jest.mock("@ledgerhq/ledger-key-ring-protocol/store", () => ({
-  ...jest.requireActual("@ledgerhq/ledger-key-ring-protocol/store"),
-  resetTrustchainStore: () => mockResetTrustchainStore(),
+jest.mock("@features/platform-key-ring", () => ({
+  ...jest.requireActual("@features/platform-key-ring"),
+  resetKeyRingState: () => {
+    mockResetKeyRingState();
+    return { type: "test/resetKeyRingState" };
+  },
 }));
 
-jest.mock("../useTrustchainSdk", () => ({
-  useTrustchainSdk: () => ({ invalidateJwt: mockInvalidateJwt }),
+jest.mock("../useKeyRingClient", () => ({
+  useKeyRingClient: () => ({ invalidateAuth: mockInvalidateAuth, restore: mockRestore }),
 }));
 
-jest.mock("../useRestoreTrustchain", () => ({
-  useRestoreTrustchain: () => ({ refetch: mockRefetch }),
-}));
+function QueryClientWrapper({ children }: { children?: React.ReactNode }) {
+  const [queryClient] = React.useState(() => new QueryClient());
+  return React.createElement(QueryClientProvider, { client: queryClient }, children);
+}
+
+function renderLifeCycle() {
+  return renderHook(() => useLifeCycle(), {
+    innerWrapper: QueryClientWrapper,
+    overrideInitialState: state => ({ ...state, trustchain: mockKeyRingState() }),
+  });
+}
+
+// The v1 SDK errors reach the app unchanged: only their name identifies them.
+function keyRingSdkError(name: string): Error {
+  const error = new Error();
+  error.name = name;
+  return error;
+}
 
 describe("useLifeCycle", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockRestore.mockReturnValue(new Promise(() => {}));
   });
 
   it("should expose handleError function", () => {
-    const { result } = renderHook(() => useLifeCycle());
+    const { result } = renderLifeCycle();
     expect(result.current.handleError).toBeInstanceOf(Function);
   });
 
   it("should reset on TrustchainEjected", () => {
-    const { result } = renderHook(() => useLifeCycle());
-    result.current.handleError(new TrustchainEjected());
+    const { result } = renderLifeCycle();
+    result.current.handleError(keyRingSdkError("TrustchainEjected"));
 
-    expect(mockResetTrustchainStore).toHaveBeenCalled();
+    expect(mockResetKeyRingState).toHaveBeenCalled();
     expect(mockedTrack).toHaveBeenCalledWith("ledgersync_deactivated");
     expect(mockNavigationDispatch).toHaveBeenCalled();
-    expect(mockInvalidateJwt).toHaveBeenCalled();
+    expect(mockInvalidateAuth).toHaveBeenCalled();
   });
 
   it("should reset on TrustchainNotAllowed", () => {
-    const { result } = renderHook(() => useLifeCycle());
-    result.current.handleError(new TrustchainNotAllowed());
+    const { result } = renderLifeCycle();
+    result.current.handleError(keyRingSdkError("TrustchainNotAllowed"));
 
-    expect(mockResetTrustchainStore).toHaveBeenCalled();
+    expect(mockResetKeyRingState).toHaveBeenCalled();
     expect(mockedTrack).toHaveBeenCalledWith("ledgersync_deactivated");
     expect(mockNavigationDispatch).toHaveBeenCalled();
-    expect(mockInvalidateJwt).toHaveBeenCalled();
+    expect(mockInvalidateAuth).toHaveBeenCalled();
   });
 
-  it("should call restoreTrustchain on TrustchainOutdated", () => {
-    const { result } = renderHook(() => useLifeCycle());
-    result.current.handleError(new TrustchainOutdated());
+  it("should call restoreTrustchain on TrustchainOutdated", async () => {
+    const { result } = renderLifeCycle();
+    result.current.handleError(keyRingSdkError("TrustchainOutdated"));
 
-    expect(mockRefetch).toHaveBeenCalled();
-    expect(mockResetTrustchainStore).not.toHaveBeenCalled();
+    await waitFor(() => expect(mockRestore).toHaveBeenCalled());
+    expect(mockResetKeyRingState).not.toHaveBeenCalled();
   });
 
-  it("should reset when error message includes NO_TRUSTCHAIN", () => {
-    const { result } = renderHook(() => useLifeCycle());
-    result.current.handleError(new Error(ErrorType.NO_TRUSTCHAIN));
+  it("should reset when the backend lost the key tree of this instance", () => {
+    const { result } = renderLifeCycle();
+    result.current.handleError(
+      Object.assign(new Error("No such trustchain"), { name: "LedgerAPI4xx" }),
+    );
 
-    expect(mockResetTrustchainStore).toHaveBeenCalled();
+    expect(mockResetKeyRingState).toHaveBeenCalled();
     expect(mockedTrack).toHaveBeenCalledWith("ledgersync_deactivated");
     expect(mockNavigationDispatch).toHaveBeenCalled();
-    expect(mockInvalidateJwt).toHaveBeenCalled();
+    expect(mockInvalidateAuth).toHaveBeenCalled();
   });
 
-  it("should reset when error message includes NULL query key pattern", () => {
-    const { result } = renderHook(() => useLifeCycle());
-    result.current.handleError(new Error(ErrorType.NULL));
+  it("should reset when the members query resolved no members", () => {
+    const { result } = renderLifeCycle();
+    result.current.handleError(new LedgerSyncMembersUnresolvedError(["useGetMembers", null]));
 
-    expect(mockResetTrustchainStore).toHaveBeenCalled();
+    expect(mockResetKeyRingState).toHaveBeenCalled();
     expect(mockedTrack).toHaveBeenCalledWith("ledgersync_deactivated");
-    expect(mockInvalidateJwt).toHaveBeenCalled();
+    expect(mockInvalidateAuth).toHaveBeenCalled();
   });
 
   it("should not reset for unknown errors", () => {
-    const { result } = renderHook(() => useLifeCycle());
+    const { result } = renderLifeCycle();
     result.current.handleError(new Error("some random error"));
 
-    expect(mockResetTrustchainStore).not.toHaveBeenCalled();
+    expect(mockResetKeyRingState).not.toHaveBeenCalled();
     expect(mockedTrack).not.toHaveBeenCalledWith("ledgersync_deactivated");
-    expect(mockRefetch).not.toHaveBeenCalled();
+    expect(mockRestore).not.toHaveBeenCalled();
   });
 });

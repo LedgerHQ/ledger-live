@@ -58,6 +58,20 @@ several members in one scenario — see `_template.ts`.)
 The recorder/replayer glue (< 200 LoC) is in `tests/test-helpers/`. See
 [behaviour scenarios](./scenarios.md) for the catalogue of what these cover.
 
+## Ledger Wallet integration tests
+
+The key ring packages test the integration without a device, the backends faked with `msw`:
+
+- [`domain/entity/key-ring`](../../domain/entity/key-ring/src): the slice reducers and selectors.
+- [`features/platform/key-ring`](../../features/platform/key-ring/src): the v1 adapter against a
+  fake TrustchainSDK, persisted desktop and mobile states reloading to the same JSON as the v1
+  store, error categories, the identity provider signing a real challenge, the lifecycle, the
+  device intents, and a DIE session client joining a key tree on a software device
+  (`client/keyRingClient.session.test.ts`).
+- [`features/platform/wallet-sync`](../../features/platform/wallet-sync/src/__tests__): the
+  watch loop on a key ring stream (remote update stored, local change pushed, refresh on an
+  outdated tree) and the rotation re-encryption.
+
 ## CloudSyncDataManager unit tests
 
 The [CloudSyncDataManager](./05-wallet-sync-data-manager.md) is tested per module:

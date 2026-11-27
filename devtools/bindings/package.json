@@ -44,6 +44,7 @@
     "@domain/entity-currency-fiat": "workspace:*",
     "@domain/entity-derivation": "workspace:*",
     "@domain/entity-currency-unit": "workspace:*",
+    "@domain/entity-key-ring": "workspace:*",
     "@domain/entity-network": "workspace:*",
     "@domain/entity-predictions": "workspace:*",
     "@features/flow-account-detail-analytics-notice": "workspace:*",
@@ -60,7 +61,7 @@
     "@features/platform-device-onboarding": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
     "@features/platform-intent-scan-accounts": "workspace:*",
-    "@features/platform-intent-wallet-sync": "workspace:*",
+    "@features/platform-key-ring": "workspace:*",
     "@features/platform-predictions": "workspace:*",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@reduxjs/toolkit": "catalog:",
@@ -73,12 +74,10 @@
   },
   "peerDependencies": {
     "react": ">=19.0.0",
-    "react-redux": ">=9.0.0",
-    "@ledgerhq/ledger-key-ring-protocol": "catalog:"
+    "react-redux": ">=9.0.0"
   },
   "devDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/ledger-key-ring-protocol": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/api-services": "workspace:*",
     "@swc/core": "catalog:",

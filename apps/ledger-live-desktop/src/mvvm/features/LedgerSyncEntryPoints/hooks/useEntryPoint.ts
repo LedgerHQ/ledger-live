@@ -1,7 +1,7 @@
 import { useSelector } from "LLD/hooks/redux";
 import { useNavigate } from "react-router";
 import { useFeature } from "@features/platform-feature-flags";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import { lastSeenDeviceSelector, lastOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { track } from "@shared/analytics";
@@ -22,13 +22,12 @@ export function useEntryPoint(entryPoint: EntryPoint, needEligibleDevice = true,
   const navigate = useNavigate();
   const featureLedgerSyncEntryPoints = useFeature("lldLedgerSyncEntryPoints");
   const featureWalletSync = useFeature("lldWalletSync");
-  const trustchain = useSelector(trustchainSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const lastOnboardedDevice = useSelector(lastOnboardedDeviceSelector);
 
   const isLedgerSyncEnabled = featureWalletSync?.enabled ?? false;
   const areEntryPointsEnabled = featureLedgerSyncEntryPoints?.enabled ?? false;
-  const isLedgerSyncActivated = Boolean(trustchain && trustchain?.rootId);
+  const isLedgerSyncActivated = useSelector(selectIsLedgerSyncActive);
   const isDeviceEligible =
     isEligibleModelId(lastSeenDevice?.modelId) || isEligibleModelId(lastOnboardedDevice?.modelId);
   const isOptimisationEnabled = useFeature("lwdLedgerSyncOptimisation");

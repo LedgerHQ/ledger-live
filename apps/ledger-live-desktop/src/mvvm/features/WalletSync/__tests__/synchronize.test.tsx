@@ -1,7 +1,8 @@
 import React from "react";
 import { render, screen, act } from "tests/testSetup";
-import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import { WalletSyncTestApp, simpleTrustChain, walletSyncActivatedState } from "./shared";
+import { WalletSyncTestApp, mockedSdk, simpleTrustChain, walletSyncActivatedState } from "./shared";
+
+const mockHostPairing = jest.fn();
 
 jest.mock("../hooks/useGetMembers", () => ({
   useGetMembers: () => ({
@@ -12,8 +13,8 @@ jest.mock("../hooks/useGetMembers", () => ({
   }),
 }));
 
-jest.mock("@ledgerhq/ledger-key-ring-protocol/qrcode/index", () => ({
-  createQRCodeHostInstance: jest.fn(),
+jest.mock("../hooks/useKeyRingClient", () => ({
+  useKeyRingClient: () => Object.assign(mockedSdk, { hostPairing: mockHostPairing }),
 }));
 
 describe("Synchronize flow", () => {
@@ -32,7 +33,7 @@ describe("Synchronize flow", () => {
     const mockPromiseQRCodeCandidate = new Promise(resolve => {
       resolveQRCodeFlowPromise = resolve;
     });
-    (createQRCodeHostInstance as jest.Mock).mockImplementation(({ onDisplayDigits }) => {
+    mockHostPairing.mockImplementation((_session, { onDisplayDigits }) => {
       requestDisplayDigits = onDisplayDigits;
       return mockPromiseQRCodeCandidate;
     });
@@ -98,7 +99,7 @@ describe("Synchronize flow", () => {
     it("requests a new QR code", async () => {
       const rejects: ((error: unknown) => void)[] = [];
       const onDisplayDigitsCalls: ((digits: string) => void)[] = [];
-      (createQRCodeHostInstance as jest.Mock).mockImplementation(({ onDisplayDigits }) => {
+      mockHostPairing.mockImplementation((_session, { onDisplayDigits }) => {
         onDisplayDigitsCalls.push(onDisplayDigits);
         return new Promise((_resolve, reject) => rejects.push(reject));
       });
@@ -108,7 +109,7 @@ describe("Synchronize flow", () => {
       await user.click(screen.getByRole("button", { name: "Manage" }));
       await user.click(await screen.findByTestId("walletSync-synchronize"));
       await screen.findByText(/Sync with the Ledger Wallet app on another phone/i);
-      expect(createQRCodeHostInstance).toHaveBeenCalledTimes(1);
+      expect(mockHostPairing).toHaveBeenCalledTimes(1);
 
       if (displayDigitsFirst) {
         act(() => onDisplayDigitsCalls[0]("321"));
@@ -119,7 +120,7 @@ describe("Synchronize flow", () => {
         rejects[0](Object.assign(new Error("boom"), { name: "QRCodeProtocolError" }));
       });
 
-      expect(createQRCodeHostInstance).toHaveBeenCalledTimes(2);
+      expect(mockHostPairing).toHaveBeenCalledTimes(2);
       await screen.findByText(/Sync with the Ledger Wallet app on another phone/i);
     });
   });

@@ -29,7 +29,7 @@ import {
 } from "./reducers/knownDevices";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { LiveConfigOverridesState } from "@shared/live-config-overrides";
-import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import type { KeyRingPersistedState } from "@features/platform-key-ring/persistence";
 import { ExportedWalletState } from "~/reducers/wallet";
 import { type PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@domain/entity-client-identity";
@@ -364,11 +364,11 @@ export async function saveAccountAnalyticsIntroductionState(
   await storage.save("accountAnalyticsIntroduction", obj);
 }
 
-export function getTrustchainState(): Promise<TrustchainStore> {
-  return storage.get("trustchain") as Promise<TrustchainStore>;
+export function getTrustchainState(): Promise<KeyRingPersistedState> {
+  return storage.get("trustchain") as Promise<KeyRingPersistedState>;
 }
 
-export async function saveTrustchainState(obj: TrustchainStore): Promise<void> {
+export async function saveTrustchainState(obj: KeyRingPersistedState): Promise<void> {
   await storage.save("trustchain", obj);
 }
 

@@ -1,6 +1,9 @@
 import { AuthSDK } from "@ledgerhq/auth";
-import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
-import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import {
+  createKeyRingIdentityProvider,
+  selectKeyRingSession,
+  type KeyRingRuntime,
+} from "@features/platform-key-ring/store";
 import { createAuthMiddleware } from "@shared/auth";
 import { selectFeature } from "@shared/feature-flags";
 import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
@@ -12,18 +15,19 @@ type KeycloakConfig = Pick<
   "keycloakClientId" | "keycloakBaseUrl" | "keycloakRealm"
 >;
 
-export function createMobileAuthMiddleware({
-  keycloakClientId,
-  keycloakBaseUrl,
-  keycloakRealm,
-}: KeycloakConfig) {
+export function createMobileAuthMiddleware(
+  { keycloakClientId, keycloakBaseUrl, keycloakRealm }: KeycloakConfig,
+  keyRingRuntime: KeyRingRuntime,
+) {
   return createAuthMiddleware<State>({
     isFeatureEnabled: (state): boolean => selectFeature(state, "lwmAuth").enabled ?? false,
     createAuthProvider: getState =>
       new AuthSDK(
         { clientId: keycloakClientId, keycloakBaseUrl, keycloakRealm, disablePkce: true },
         {
-          provider: new LkrpIdentityProvider((): TrustchainStore => getState().trustchain),
+          provider: createKeyRingIdentityProvider(keyRingRuntime, () =>
+            selectKeyRingSession(getState()),
+          ),
           createPkcePair: createPkcePairWithExpoCrypto,
         },
       ),

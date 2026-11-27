@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
-import type { LedgerSyncJobState } from "@features/platform-intent-wallet-sync";
+import type { LedgerSyncJobState } from "@features/platform-key-ring";
 import { LedgerSyncJobStateLWM } from "./LedgerSyncJobStateLWM";
 
 const TEST_ID = "wallet-sync-intent";

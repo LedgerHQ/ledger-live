@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { selectIsLedgerSyncActive } from "@domain/entity-key-ring";
 import { useFeature } from "@features/platform-feature-flags";
 import type { Account } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
@@ -14,7 +14,7 @@ export type PostOnboardingHubCompletionContext = {
 };
 
 export function usePostOnboardingHubCompletionContext(): PostOnboardingHubCompletionContext {
-  const trustchain = useSelector(trustchainSelector);
+  const isLedgerSyncActive = useSelector(selectIsLedgerSyncActive);
   const accounts = useSelector(accountsSelector);
   const productTourCompleted = useSelector(productTourCompletedSelector);
 
@@ -23,11 +23,11 @@ export function usePostOnboardingHubCompletionContext(): PostOnboardingHubComple
 
   return useMemo(
     () => ({
-      isLedgerSyncActive: Boolean(trustchain?.rootId),
+      isLedgerSyncActive,
       accounts,
       protectId,
       productTourCompleted,
     }),
-    [trustchain, accounts, protectId, productTourCompleted],
+    [isLedgerSyncActive, accounts, protectId, productTourCompleted],
   );
 }

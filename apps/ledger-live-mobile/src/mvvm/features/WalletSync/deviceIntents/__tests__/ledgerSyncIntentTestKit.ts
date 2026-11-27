@@ -1,4 +1,3 @@
-import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { DeviceManagementKitBuilder, DeviceModelId } from "@ledgerhq/device-management-kit";
 import {
   createIntent,
@@ -7,22 +6,26 @@ import {
 } from "@features/platform-device-intent";
 import {
   createLedgerSyncResultOrder,
+  getKeyRingDeviceInitialization,
+  KeyRingMemberIdSchema,
+  selectKeyRingSession,
   type AddMemberIntent,
   type AddMemberIntentInput,
+  type KeyRingMember,
   type RemoveMemberIntent,
   type RemoveMemberIntentInput,
-} from "@features/platform-intent-wallet-sync";
-import type {
-  MemberCredentials,
-  Trustchain,
-  TrustchainMember,
-} from "@ledgerhq/ledger-key-ring-protocol/types";
+} from "@features/platform-key-ring";
+import { fakeKeyRingClient } from "@features/platform-key-ring/testing";
+import { mockKeyRingMemberKeyRecord } from "@domain/entity-key-ring/schema.mock";
+import { mockKeyRingState } from "@domain/entity-key-ring/slice.mock";
 import type { InitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { addMemberIntentLWMDefinition } from "../addMemberIntent/intentLWMDefinition";
 import { removeMemberIntentLWMDefinition } from "../removeMemberIntent/intentLWMDefinition";
 
+const KEY_RING_APP_NAME = keyRingAppName();
+
 export const INITIALIZATION_INPUT: InitializationInput = {
-  appName: TRUSTCHAIN_APP_NAME,
+  appName: KEY_RING_APP_NAME,
   dependencies: [],
   requireLatestFirmware: false,
 };
@@ -30,24 +33,28 @@ export const INITIALIZATION_INPUT: InitializationInput = {
 export const EXTRACTED_CONTEXT: DeviceExtractedContext = {
   currentOsVersion: "2.0.0",
   osUpdateAvailable: false,
-  currentAppName: TRUSTCHAIN_APP_NAME,
+  currentAppName: KEY_RING_APP_NAME,
   currentAppVersion: "1.0.0",
 };
 
-const MEMBER_CREDENTIALS: MemberCredentials = { pubkey: "pubkey", privatekey: "privatekey" };
+const MEMBER_SESSION = selectKeyRingSession({
+  trustchain: mockKeyRingState({
+    trustchain: null,
+    memberCredentials: mockKeyRingMemberKeyRecord(),
+  }),
+});
 
-const TRUSTCHAIN: Trustchain = {
-  rootId: "root",
-  applicationPath: "m/0'/16'/0'",
-  walletSyncEncryptionKey: "key",
+const TREE_MEMBER_SESSION = selectKeyRingSession({ trustchain: mockKeyRingState() });
+
+const OTHER_MEMBER: KeyRingMember = {
+  id: KeyRingMemberIdSchema.parse("member-2"),
+  name: "Desktop",
 };
-
-const OTHER_MEMBER: TrustchainMember = { id: "member-2", name: "Desktop", permissions: 1 };
 
 export function buildAddMemberIntent(): AddMemberIntent {
   const input: AddMemberIntentInput = {
-    memberCredentials: MEMBER_CREDENTIALS,
-    createSessionSdk: jest.fn(),
+    session: MEMBER_SESSION,
+    client: fakeKeyRingClient(),
     resultOrder: createLedgerSyncResultOrder(),
   };
   return createIntent(addMemberIntentLWMDefinition, input);
@@ -55,10 +62,9 @@ export function buildAddMemberIntent(): AddMemberIntent {
 
 export function buildRemoveMemberIntent(): RemoveMemberIntent {
   const input: RemoveMemberIntentInput = {
-    trustchain: TRUSTCHAIN,
-    memberCredentials: MEMBER_CREDENTIALS,
+    session: TREE_MEMBER_SESSION,
     member: OTHER_MEMBER,
-    createSessionSdk: jest.fn(),
+    client: fakeKeyRingClient(),
     resultOrder: createLedgerSyncResultOrder(),
   };
   return createIntent(removeMemberIntentLWMDefinition, input);
@@ -80,4 +86,10 @@ export function buildDeviceConnection(sessionId: string): DeviceConnectionResult
     compatDeviceName: "Ledger Stax",
     compatDeviceWired: false,
   };
+}
+
+function keyRingAppName(): string {
+  const initialization = getKeyRingDeviceInitialization();
+  if (initialization.kind !== "app") throw new Error("The key ring runs in an app on v1");
+  return initialization.appRequest.appName;
 }
