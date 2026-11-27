@@ -12,16 +12,20 @@ type SettingsNavigation = StackNavigatorNavigation<
   ScreenName.SettingsScreen
 >;
 
-/** Developer and Debug rows of the Settings home: Debug in dev builds or once unlocked. */
+/** Developer and Debug rows of the Settings home: both in dev builds or once unlocked from About. */
 export function useSettingsDevTools(navigation: SettingsNavigation): SettingsHomeDevTools {
   const isDebugUnlocked = useSelector(isDebugMenuVisible);
-  const isDebugVisible = __DEV__ || isDebugUnlocked || Boolean(Config.FORCE_DEBUG_VISIBLE);
+  const isDevToolsVisible = __DEV__ || isDebugUnlocked || Boolean(Config.FORCE_DEBUG_VISIBLE);
 
   return useMemo(
     () => ({
-      onOpenDeveloper: () => navigation.navigate(ScreenName.DeveloperSettings),
-      onOpenDebug: isDebugVisible ? () => navigation.navigate(ScreenName.DebugSettings) : undefined,
+      onOpenDeveloper: isDevToolsVisible
+        ? () => navigation.navigate(ScreenName.DeveloperSettings)
+        : undefined,
+      onOpenDebug: isDevToolsVisible
+        ? () => navigation.navigate(ScreenName.DebugSettings)
+        : undefined,
     }),
-    [navigation, isDebugVisible],
+    [navigation, isDevToolsVisible],
   );
 }
