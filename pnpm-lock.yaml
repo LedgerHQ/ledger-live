@@ -1083,11 +1083,11 @@ importers:
         specifier: 6.4.0
         version: 6.4.0
       '@datadog/browser-logs':
-        specifier: 6.30.1
-        version: 6.30.1(@datadog/browser-rum@6.30.1)
+        specifier: 7.19.0
+        version: 7.19.0(@datadog/browser-rum@7.19.0)
       '@datadog/browser-rum':
-        specifier: 6.30.1
-        version: 6.30.1(@datadog/browser-logs@6.30.1)
+        specifier: 7.19.0
+        version: 7.19.0(@datadog/browser-logs@7.19.0)
       '@datadog/electron-sdk':
         specifier: 1.0.0
         version: 1.0.0(electron@45.3.4)
@@ -29991,24 +29991,24 @@ packages:
   '@dabh/diagnostics@2.0.3':
     resolution: {integrity: sha512-hrlQOIi7hAfzsMqlGSFyVucrx38O+j6wiGOf//H2ecvIEqYN4ADBSS2iLMh5UFyDunCNniUIPk/q3riFv45xRA==}
 
-  '@datadog/browser-core@6.30.1':
-    resolution: {integrity: sha512-udXaUdjFld/UkdaH69oVWzDYILRqTdSXobVGnmcsqPvC5VBqdhunl0cR+t1k0oJgJndabqCFY/zluJ+joTOdaA==}
+  '@datadog/browser-core@7.19.0':
+    resolution: {integrity: sha512-Ubxx8kg1eH892fE/skMUD9AAzlyjs6MsGOzewVdATbU44IXIJuIFufCsm+bY7a2+nB0zX85g8u26LW1T2YIvqQ==}
 
-  '@datadog/browser-logs@6.30.1':
-    resolution: {integrity: sha512-FhV1xY60U9wyaX+uQm8z7yN1Jn8XeI+1bF+LOL+tn1zuaJkOnLbSYz/tvDWsVk8LsJ1/gOHMht5D9JXHbDxexA==}
+  '@datadog/browser-logs@7.19.0':
+    resolution: {integrity: sha512-gGzo/kzL/KzyLs+gc3Nwq3RLUNxCM51+n1ca0tVk+oDqZd6qAX1z+IpqdwxrWNQlXDfAgJrLPbLPU6Ni91rK8Q==}
     peerDependencies:
-      '@datadog/browser-rum': 6.30.1
+      '@datadog/browser-rum': 7.19.0
     peerDependenciesMeta:
       '@datadog/browser-rum':
         optional: true
 
-  '@datadog/browser-rum-core@6.30.1':
-    resolution: {integrity: sha512-U7TxRz5MuvLACfuskP4gGZk3ghSniEzkrhDNJeUXdA9+TZZLyrsZYBT9n6NuZTL1qTM5NNeK89e49kLUVI3Tiw==}
+  '@datadog/browser-rum-core@7.19.0':
+    resolution: {integrity: sha512-knyAaaiQpibS7rDDh1kTT7s2beP1xML5svHa9aGCNDWlP3Qsb+YYpFWKjSBdk4bKS53vf12/ZGN81I900htzpQ==}
 
-  '@datadog/browser-rum@6.30.1':
-    resolution: {integrity: sha512-XwY+BQZ1Zh+zFHIX9E14O8w0asuAaI/K15qFvX7psdVfeTf27WCzlJpzhaYJC+qXn3Pys0uR5ioPWgRcliAFjw==}
+  '@datadog/browser-rum@7.19.0':
+    resolution: {integrity: sha512-bM7uezxt89EPbItIxwUNIf44vF0sJ3tInky3ftJkZlqNDbu9LLq4BVkxcn4bUoEmRBQWTDgRSnRvAZMPgobkIQ==}
     peerDependencies:
-      '@datadog/browser-logs': 6.30.1
+      '@datadog/browser-logs': 7.19.0
     peerDependenciesMeta:
       '@datadog/browser-logs':
         optional: true
@@ -30020,6 +30020,9 @@ packages:
 
   '@datadog/flagging-core@2.0.2':
     resolution: {integrity: sha512-2+oWyqz/EMNXtsgyW3NtueFgL0TciWInyMg/6bEUZhfr7UgPzCQ88Nag9FGoPCig19F/tHXE5hLiQccjkRUMWQ==}
+
+  '@datadog/js-core@0.0.23':
+    resolution: {integrity: sha512-AaDluda54W3mCsRGkjUEO2LjQQP3iwQKi5Lei1WDmGGV7kSb46GnAi6kEUN5PsgOZcQfdDIXEi3Qv27eMJoEDw==}
 
   '@datadog/libdatadog@0.9.4':
     resolution: {integrity: sha512-55wHHAuhHOOrBGoWV+fRuEDypN6PMJZq4LTOwExnhoDMvVcZKtqYT05xea/toRs0o75+A1IeNAQHsRLbJMf5oA==}
@@ -48411,24 +48414,29 @@ snapshots:
       enabled: 2.0.0
       kuler: 2.0.0
 
-  '@datadog/browser-core@6.30.1': {}
-
-  '@datadog/browser-logs@6.30.1(@datadog/browser-rum@6.30.1)':
+  '@datadog/browser-core@7.19.0':
     dependencies:
-      '@datadog/browser-core': 6.30.1
+      '@datadog/js-core': 0.0.23
+
+  '@datadog/browser-logs@7.19.0(@datadog/browser-rum@7.19.0)':
+    dependencies:
+      '@datadog/browser-core': 7.19.0
+      '@datadog/js-core': 0.0.23
     optionalDependencies:
-      '@datadog/browser-rum': 6.30.1(@datadog/browser-logs@6.30.1)
+      '@datadog/browser-rum': 7.19.0(@datadog/browser-logs@7.19.0)
 
-  '@datadog/browser-rum-core@6.30.1':
+  '@datadog/browser-rum-core@7.19.0':
     dependencies:
-      '@datadog/browser-core': 6.30.1
+      '@datadog/browser-core': 7.19.0
+      '@datadog/js-core': 0.0.23
 
-  '@datadog/browser-rum@6.30.1(@datadog/browser-logs@6.30.1)':
+  '@datadog/browser-rum@7.19.0(@datadog/browser-logs@7.19.0)':
     dependencies:
-      '@datadog/browser-core': 6.30.1
-      '@datadog/browser-rum-core': 6.30.1
+      '@datadog/browser-core': 7.19.0
+      '@datadog/browser-rum-core': 7.19.0
+      '@datadog/js-core': 0.0.23
     optionalDependencies:
-      '@datadog/browser-logs': 6.30.1(@datadog/browser-rum@6.30.1)
+      '@datadog/browser-logs': 7.19.0(@datadog/browser-rum@7.19.0)
 
   '@datadog/electron-sdk@1.0.0(electron@45.3.4)':
     dependencies:
@@ -48440,6 +48448,8 @@ snapshots:
   '@datadog/flagging-core@2.0.2':
     dependencies:
       spark-md5: 3.0.2
+
+  '@datadog/js-core@0.0.23': {}
 
   '@datadog/libdatadog@0.9.4':
     optional: true

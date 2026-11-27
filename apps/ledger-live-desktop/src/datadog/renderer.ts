@@ -131,6 +131,7 @@ export async function initDatadog(
       enablePrivacyForActionName: true,
       traceSampleRate: params?.traceSampleRate ?? 100,
       allowedTracingUrls,
+      propagateTraceBaggage: false,
       ...(profilingSampleRate !== undefined && { profilingSampleRate }),
       trackViewsManually: true,
       trackUserInteractions: params?.trackUserInteractions ?? true,

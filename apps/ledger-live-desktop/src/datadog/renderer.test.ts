@@ -248,6 +248,7 @@ describe("datadog renderer", () => {
           service: "ledger-live-desktop",
           trackViewsManually: true,
           enablePrivacyForActionName: true,
+          propagateTraceBaggage: false,
         }),
       );
       expect(datadogRum.startView).toHaveBeenCalledWith({ name: "portfolio" });
