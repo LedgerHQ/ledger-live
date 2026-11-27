@@ -12113,42 +12113,6 @@
       "deposit": "Add stablecoin",
       "request": "Request"
     },
-    "request": {
-      "title": "Request {{asset}}",
-      "networkLabel": "{{network}} network",
-      "actions": {
-        "share": "Share",
-        "copy": "Copy",
-        "copied": "Copied",
-        "save": "Save",
-        "verify": "Verify"
-      },
-      "verifyHint": {
-        "message": "Verify your address on\nyour Ledger device\nbefore sharing",
-        "gotIt": "Got it"
-      },
-      "verifyAddress": {
-        "introTitle": "Verify your address",
-        "introDescription": "To protect against address replacement attacks, verify your address on your Ledger device's Secure Screen.",
-        "verifyCta": "Verify address",
-        "successTitle": "Address displayed on the device's Secure Screen",
-        "nextStepsLabel": "Next steps",
-        "nextStepKeepDisplayed": "Keep your address displayed on your Ledger device. Don’t confirm it yet.",
-        "nextStepPaste": "Tap “Got it,” then paste your address into the app you’re sharing it with.",
-        "nextStepCheckMatch": "Before sending, check that it matches the one on your Ledger device.",
-        "gotItCta": "Got it",
-        "device": {
-          "cancelledTitle": "Address verification cancelled",
-          "cancelledDescription": "You declined the address on your device. You can display it again to verify it.",
-          "mismatchTitle": "Addresses don't match",
-          "mismatchDescription": "The address shown on your device is different from the requested one. Do not share this address.",
-          "unsupportedTitle": "Verification not available",
-          "unsupportedDescription": "This device app can't display the address for on-device verification.",
-          "retryCta": "Show address again",
-          "closeCta": "Close"
-        }
-      }
-    },
     "deposit": {
       "title": "Add stablecoins",
       "options": {
