@@ -33,6 +33,8 @@ test.describe("Perps open position", { lock: lock.names }, () => {
   test.skip(!IS_PERPS_LIVE_APP_STAGING, "Perps feature flags are not on PRD yet");
   skipSharedAccountOnSecondaryLeg("Perps open", PERPS_REAL_BROADCAST_ENV);
 
+  // One shard for both sides; the lock serializes them anyway.
+  test.describe.configure({ mode: "default" });
   test.use(lock.fixtures);
   test.use({
     teamOwner: Team.PERPS,
