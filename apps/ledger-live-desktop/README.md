@@ -34,12 +34,7 @@ mise install
 pnpm install
 ```
 
-USB/HID native dependencies for Linux:
-
-```bash
-sudo apt-get update
-sudo apt-get install libudev-dev libusb-1.0-0-dev
-```
+On Linux, install the Ledger [udev rules](https://github.com/LedgerHQ/udev-rules) so your user can open the device. No system USB library is needed.
 
 ## Development
 

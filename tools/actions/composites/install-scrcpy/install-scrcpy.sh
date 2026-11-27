@@ -7,6 +7,8 @@ readonly ARCHIVE="scrcpy-linux-x86_64-v${SCRCPY_VERSION}.tar.gz"
 readonly ARCHIVE_SHA256="0305d98c06178c67e12427bbf340c436d0d58c9e2a39bf9ffbbf8f54d7ef95a5"
 readonly RELEASE_URL="https://github.com/Genymobile/scrcpy/releases/download/v${SCRCPY_VERSION}/${ARCHIVE}"
 readonly RELEASE_DIRECTORY="scrcpy-linux-x86_64-v${SCRCPY_VERSION}"
+# The release binary links FFmpeg, SDL and libusb statically and only loads glibc and
+# libudev1, so it needs no apt package. videokitten runs it with --no-window (no X server).
 
 # Runner images that bake scrcpy in (the Android E2E image) already have this version.
 # sed reads the whole output, so scrcpy never hits a closed pipe under pipefail.
