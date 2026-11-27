@@ -42,7 +42,7 @@ export function runSelectCryptoNetworkTest(options: SelectCryptoNetworkTestOptio
       await app.portfolio.pressQuickActionTransferButton();
       await app.portfolio.pressTransferBottomSheetReceiveButton();
 
-      await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
+      await app.modularDrawer.selectCurrency(account.currency);
       await app.modularDrawer.validateNetworksScreen(networks);
       await app.modularDrawer.selectNetwork(account.currency.networks[0]);
       const accountName = account.parentAccount?.accountName ?? account.accountName;
@@ -68,7 +68,7 @@ export function runSelectCryptoWithoutNetworkAndAccountTest(options: DepositTest
       await app.portfolio.pressTransferBottomSheetReceiveButton();
 
       await app.modularDrawer.validateAssetsScreen([account.currency.ticker]);
-      await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
+      await app.modularDrawer.selectCurrency(account.currency);
       await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
       await app.receive.expectDeviceConnectionScreen();
     });

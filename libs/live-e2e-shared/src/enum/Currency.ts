@@ -147,6 +147,7 @@ export class Currency {
       Network.SCROLL,
     ],
     "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    "USD Coin",
   );
   static readonly ETH_WBTC = new Currency(
     "Wrapped Bitcoin",
@@ -171,9 +172,15 @@ export class Currency {
     [Network.ETHEREUM],
     "0x972a7A92D92796a98801A8818bcF91f1648f2F68",
   );
-  static readonly XLM_USDC = new Currency("USDC", "USDC", "stellar", AppInfos.STELLAR, [
-    Network.STELLAR,
-  ]);
+  static readonly XLM_USDC = new Currency(
+    "USDC",
+    "USDC",
+    "stellar",
+    AppInfos.STELLAR,
+    [Network.STELLAR],
+    undefined,
+    "USD Coin",
+  );
   static readonly ALGO_USDT = new Currency("Tether USDt", "USDT", "algorand", AppInfos.ALGORAND, [
     Network.ALGORAND,
   ]);
@@ -262,6 +269,7 @@ export class Currency {
     AppInfos.SUI,
     [Network.SUI],
     "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7",
+    "USD Coin",
   );
 
   static readonly ALEO = new Currency("Aleo", "ALEO", "aleo", AppInfos.ALEO, [Network.ALEO]);
