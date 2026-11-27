@@ -474,5 +474,12 @@
     "ws": "catalog:",
     "rimraf": "catalog:",
     "zx": "catalog:"
+  },
+  "expo": {
+    "autolinking": {
+      "exclude": [
+        "@expo/dom-webview"
+      ]
+    }
   }
 }
