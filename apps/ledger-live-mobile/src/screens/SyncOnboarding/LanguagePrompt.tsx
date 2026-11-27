@@ -31,8 +31,6 @@ export const LanguagePrompt: React.FC<LanguagePromptProps> = ({ device, onDone }
     deviceId: device.deviceId,
     deviceName: device.deviceName ?? null,
   });
-  const { availableLanguages, loaded: availableLanguagesLoaded } =
-    useAvailableLanguagesForDevice(deviceInfo);
 
   const [deviceLanguagePromptDismissed, setDeviceLanguagePromptDismissed] =
     useState<boolean>(false);
@@ -49,6 +47,9 @@ export const LanguagePrompt: React.FC<LanguagePromptProps> = ({ device, onDone }
     appLanguage !== undefined &&
     deviceLanguageId !== undefined &&
     idsToLanguage[deviceLanguageId] !== appLanguage;
+  const { availableLanguages, loaded: availableLanguagesLoaded } = useAvailableLanguagesForDevice(
+    needsAppLanguage ? deviceInfo : null,
+  );
   const languagesDiffer = needsAppLanguage && availableLanguages.includes(appLanguage);
 
   const checkDone =

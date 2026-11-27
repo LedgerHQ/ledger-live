@@ -97,7 +97,9 @@ function renderPrompt(onDone: jest.Mock) {
 }
 
 describe("LanguagePrompt", () => {
+  // The catalog answers through MSW in real time; fake timers would end `findBy` waits too early.
   beforeEach(() => {
+    jest.useRealTimers();
     useManagerApi();
   });
 
@@ -144,6 +146,7 @@ describe("LanguagePrompt", () => {
   });
 
   it("should be done when the check takes too long", () => {
+    jest.useFakeTimers();
     mockUseGetDeviceInfo.mockReturnValue(deviceInfoState());
     const onDone = jest.fn();
 
