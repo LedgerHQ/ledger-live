@@ -14,7 +14,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadTransaction: () => import("@ledgerhq/coin-aleo/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-aleo/deviceTransactionConfig").then(m => m.default),
-    loadBridgeExtensions: () => import("../families/aleo/bridgeExtensions").then(m => m.default),
   },
   {
     family: "algorand",
@@ -532,7 +531,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadTransaction: () => import("@ledgerhq/coin-zcash/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-zcash/deviceTransactionConfig").then(m => m.default),
-    loadBridgeExtensions: () => import("../families/zcash/bridgeExtensions").then(m => m.default),
     loadMockBridge: () => import("../families/zcash/bridge/mock").then(m => m.default),
   },
 ];

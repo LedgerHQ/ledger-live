@@ -5,8 +5,7 @@ import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/m
 import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { UnsupportedMaxSpendableFilter } from "@ledgerhq/ledger-wallet-framework/errors";
 import { serializeAccount } from "@ledgerhq/wallet-api-core";
-import aleoExtensions from "../families/aleo/bridgeExtensions";
-import zcashExtensions from "../families/zcash/bridgeExtensions";
+import { defaultBridgeExtensions } from "../bridge/defaultBridgeExtensions";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import "../__tests__/test-helpers/setup";
@@ -226,16 +225,6 @@ describe("resolveWalletApiSpendableBalance", () => {
     );
   });
 });
-
-// `spendableBalance` is the transparent + private total the coin module writes, so a
-// shielded-only account (no UTXOs) still has a positive one.
-const makeZcashAccount = (utxoValues: number[]): AccountLike =>
-  ({
-    type: "Account",
-    currency: { id: "zcash", family: "zcash" },
-    spendableBalance: new BigNumber(5_000_000),
-    bitcoinResources: { utxos: utxoValues.map(value => ({ value: new BigNumber(value) })) },
-  }) as unknown as AccountLike;
 
 const pendingOut = (value: number, fee: number) =>
   ({ type: "OUT", value: new BigNumber(value), fee: new BigNumber(fee) }) as Operation;
@@ -484,35 +473,9 @@ describe("resolveWalletApiMaxSpendable", () => {
       );
     });
   });
-
-  describe("zcash", () => {
-    beforeEach(() => {
-      mockEstimateBridge(new BigNumber(0), account =>
-        zcashExtensions.getWalletApiSpendableBalance?.(account),
-      );
-    });
-
-    it("keeps a zero estimate when every fund is shielded", async () => {
-      const result = await resolveWalletApiMaxSpendable(makeZcashAccount([]));
-
-      expect(result).toEqual(new BigNumber(0));
-      expect(mockLog).not.toHaveBeenCalled();
-    });
-
-    it("omits a zero estimate when transparent funds remain", async () => {
-      const result = await resolveWalletApiMaxSpendable(makeZcashAccount([500]));
-
-      expect(result).toBeUndefined();
-      expect(mockLog).toHaveBeenCalledWith(
-        "wallet-api/converters",
-        expect.stringContaining("omitting ambiguous zero maxSpendable"),
-        { walletApiSpendableBalance: "500", pendingSpent: "0" },
-      );
-    });
-  });
 });
 
-// The crash this guards against only shows up once the three real pieces are chained: the family
+// The crash this guards against only shows up once the three real pieces are chained: the bridge
 // extension, the converter funnel, and the wallet-api serializer that calls .toString() on what
 // they produce. Each one alone is green. Only the bridge lookup is stubbed, with the real
 // extension behind it.
@@ -524,7 +487,7 @@ describe("wallet-api serialization of a drawer-built token account", () => {
       parentAccount,
       mockTokenCurrency({ parentCurrencyId: getCryptoCurrencyById("aleo").id }),
     );
-    mockGetAccountBridge.mockResolvedValue(aleoExtensions as never);
+    mockGetAccountBridge.mockResolvedValue(defaultBridgeExtensions as never);
 
     // When: the account.request / account.list handler shape (see react.ts)
     const spendableBalance = await resolveWalletApiSpendableBalance(tokenAccount, parentAccount);

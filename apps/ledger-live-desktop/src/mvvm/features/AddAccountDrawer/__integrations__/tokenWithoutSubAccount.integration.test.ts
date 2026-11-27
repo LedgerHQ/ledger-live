@@ -4,7 +4,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import BigNumber from "bignumber.js";
 import { resolveWalletApiSpendableBalance } from "@ledgerhq/live-common/wallet-api/converters";
-import aleoExtensions from "@ledgerhq/live-common/families/aleo/bridgeExtensions";
+import { defaultBridgeExtensions } from "@ledgerhq/live-common/bridge/defaultBridgeExtensions";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { act, renderHook } from "tests/testSetup";
 import { useAddAccountFlowNavigation } from "../useAddAccountFlowNavigation";
@@ -63,7 +63,7 @@ describe("selecting an Aleo ARC-22 token with no sub-account", () => {
   });
 
   beforeEach(() => {
-    jest.mocked(getAccountBridge).mockReturnValue(aleoExtensions as never);
+    jest.mocked(getAccountBridge).mockReturnValue(defaultBridgeExtensions as never);
   });
 
   it.each([
