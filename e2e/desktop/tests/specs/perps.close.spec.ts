@@ -13,7 +13,7 @@ import {
   closePerpsPositionsOpenedByTest,
   openPerpsFromPortfolio,
   openPerpsPositionThroughDriver,
-  readPerpsPositions,
+  readPerpsMarketsInUse,
   PERPS_REAL_BROADCAST_ENV,
 } from "tests/utils/perpsPositionFlows";
 import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
@@ -44,11 +44,11 @@ test.describe("Perps close position", { lock: lock.names }, () => {
   });
 
   // Unset until read, so cleanup never closes foreign positions.
-  let positionsAtStart: ProviderPosition[] | undefined;
+  let marketsAtStart: ProviderPosition[] | undefined;
   let position: ProviderPosition;
 
   test.beforeEach(async ({ app, speculos, userdataFile }) => {
-    positionsAtStart = undefined;
+    marketsAtStart = undefined;
     await closePerpsLeftovers({
       account,
       userdataFile,
@@ -56,7 +56,7 @@ test.describe("Perps close position", { lock: lock.names }, () => {
       restoreApp: AppInfos.ETHEREUM.name,
       relaunchSpeculos: speculos.relaunch,
     });
-    positionsAtStart = await readPerpsPositions({ account, userdataFile });
+    marketsAtStart = await readPerpsMarketsInUse({ account, userdataFile });
     position = await openPerpsPositionThroughDriver({
       account,
       userdataFile,
@@ -70,11 +70,11 @@ test.describe("Perps close position", { lock: lock.names }, () => {
 
   // Closes the real position if the UI close fails.
   test.afterEach(async ({ speculos, userdataFile }) => {
-    if (!positionsAtStart) return;
+    if (!marketsAtStart) return;
     await closePerpsPositionsOpenedByTest({
       account,
       userdataFile,
-      positionsAtStart,
+      marketsAtStart,
       relaunchSpeculos: speculos.relaunch,
     });
   });

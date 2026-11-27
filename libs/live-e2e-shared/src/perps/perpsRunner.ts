@@ -53,7 +53,11 @@ export class PerpsRunner {
     this.options = resolveRunOptions(options);
   }
 
-  async run(request: PerpsActionRequest, { allowOpen = false } = {}): Promise<void> {
+  async run(request: PerpsActionRequest): Promise<void> {
+    await this.submit(request, false);
+  }
+
+  private async submit(request: PerpsActionRequest, allowOpen: boolean): Promise<void> {
     const dryRun = this.options.dryRun ?? false;
     assertSubmittable(request.action, dryRun, allowOpen);
     console.log(`→ ${request.action} ${JSON.stringify(request.args)}`);
@@ -102,7 +106,7 @@ export class PerpsRunner {
 
   /** Opens one small position for a test setup, then waits for it. */
   async openPosition(order: PerpsOpenOrder): Promise<void> {
-    await this.run(openRequest(this.options.address, order), { allowOpen: true });
+    await this.submit(openRequest(this.options.address, order), true);
     if (this.options.dryRun) return;
     if (await this.waitForPositions([order.marketId], true)) return;
     throw new Error(`No position opened on ${order.marketId} for ${this.options.address}`);

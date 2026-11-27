@@ -12,7 +12,7 @@ import {
   closePerpsLeftovers,
   closePerpsPositionsOpenedByTest,
   openPerpsFromPortfolio,
-  readPerpsPositions,
+  readPerpsMarketsInUse,
   ORDER_LEVERAGE,
   ORDER_MARGIN_USD,
   PERPS_REAL_BROADCAST_ENV,
@@ -50,10 +50,10 @@ test.describe("Perps open position", { lock: lock.names }, () => {
   });
 
   // Unset until read, so cleanup never closes foreign positions.
-  let positionsAtStart: ProviderPosition[] | undefined;
+  let marketsAtStart: ProviderPosition[] | undefined;
 
   test.beforeEach(async ({ app, speculos, userdataFile }) => {
-    positionsAtStart = undefined;
+    marketsAtStart = undefined;
     await closePerpsLeftovers({
       account,
       userdataFile,
@@ -62,16 +62,16 @@ test.describe("Perps open position", { lock: lock.names }, () => {
       relaunchSpeculos: speculos.relaunch,
     });
     await openPerpsFromPortfolio(app);
-    positionsAtStart = await readPerpsPositions({ account, userdataFile });
+    marketsAtStart = await readPerpsMarketsInUse({ account, userdataFile });
   });
 
   // Closes the real position even when the test fails.
   test.afterEach(async ({ speculos, userdataFile }) => {
-    if (!positionsAtStart) return;
+    if (!marketsAtStart) return;
     await closePerpsPositionsOpenedByTest({
       account,
       userdataFile,
-      positionsAtStart,
+      marketsAtStart,
       relaunchSpeculos: speculos.relaunch,
     });
   });
@@ -85,7 +85,7 @@ test.describe("Perps open position", { lock: lock.names }, () => {
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app, speculos }) => {
-        await app.perpsOrder.openFirstMarketWithoutPosition(market, positionsAtStart ?? []);
+        await app.perpsOrder.openFirstMarketWithoutPosition(market, marketsAtStart ?? []);
         // The order form opens on Long.
         if (side === "short") await app.perpsOrder.selectSide(side);
         await app.perpsOrder.setLeverage(ORDER_LEVERAGE);

@@ -47,19 +47,24 @@ export async function openPerpsPositionThroughDriver({
   return { marketId, symbol: await new PerpsApi().getMarketSymbol(marketId) };
 }
 
-// Reads the Perps API, so a broken webview cannot block.
-export async function readPerpsPositions({
+async function marketsInUse(api: PerpsApi, address: string): Promise<string[]> {
+  const [positions, orders] = await Promise.all([
+    api.getPositions(address),
+    api.getOrders(address),
+  ]);
+  return [...new Set([...positions, ...orders].map(({ marketId }) => marketId))];
+}
+
+// Markets with a position or an open order, read through the API.
+export async function readPerpsMarketsInUse({
   account,
   userdataFile,
 }: PerpsAccount): Promise<ProviderPosition[]> {
   const api = new PerpsApi();
   const address = await getSavedAccountAddress(userdataFile, account);
-  const positions = await api.getPositions(address);
+  const marketIds = await marketsInUse(api, address);
   return Promise.all(
-    positions.map(async ({ marketId }) => ({
-      marketId,
-      symbol: await api.getMarketSymbol(marketId),
-    })),
+    marketIds.map(async marketId => ({ marketId, symbol: await api.getMarketSymbol(marketId) })),
   );
 }
 
@@ -74,8 +79,7 @@ async function closePerpsMarketsMatching(
 ): Promise<boolean> {
   const api = new PerpsApi();
   const address = await getSavedAccountAddress(userdataFile, account);
-  const targets = async () =>
-    (await api.getPositions(address)).map(({ marketId }) => marketId).filter(isTarget);
+  const targets = async () => (await marketsInUse(api, address)).filter(isTarget);
   let closed = false;
   let lastError: unknown;
   for (let attempt = 1; attempt <= CLEANUP_ATTEMPTS; attempt++) {
@@ -97,7 +101,9 @@ async function closePerpsMarketsMatching(
   }
   const left = await targets();
   if (left.length > 0) {
-    throw new Error(`Perps positions still open on ${left.join(", ")}`, { cause: lastError });
+    throw new Error(`Perps positions or orders still open on ${left.join(", ")}`, {
+      cause: lastError,
+    });
   }
   return closed;
 }
@@ -116,9 +122,9 @@ export async function closePerpsLeftovers({
 
 // Closes markets the test opened, through the API and Speculos.
 export async function closePerpsPositionsOpenedByTest({
-  positionsAtStart,
+  marketsAtStart,
   ...options
-}: CleanupOptions & { positionsAtStart: ProviderPosition[] }) {
-  const known = new Set(positionsAtStart.map(({ marketId }) => marketId));
+}: CleanupOptions & { marketsAtStart: ProviderPosition[] }) {
+  const known = new Set(marketsAtStart.map(({ marketId }) => marketId));
   await closePerpsMarketsMatching(options, marketId => !known.has(marketId));
 }

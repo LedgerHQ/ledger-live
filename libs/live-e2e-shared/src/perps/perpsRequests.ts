@@ -48,7 +48,7 @@ export function openRequest(
   };
 }
 
-/** `allowOpen` is set by `PerpsRunner.openPosition` only. */
+/** `allowOpen` comes only from `PerpsRunner.openPosition`. */
 export function assertSubmittable(
   action: PerpsActionType,
   dryRun: boolean,

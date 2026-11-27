@@ -211,9 +211,15 @@ export async function approveContractTransaction() {
   return approveContractTransactionButtonDevice();
 }
 
+function throwIfGivenUp(giveUpWhen?: GiveUpCheck) {
+  const reason = giveUpWhen?.();
+  if (reason) throw new Error(`Stopped signing before confirming: ${reason}`);
+}
+
 async function signMessageTouchDevices(reviewLabel: DeviceLabels, giveUpWhen?: GiveUpCheck) {
   await waitFor(reviewLabel, { giveUpWhen });
   await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
+  throwIfGivenUp(giveUpWhen);
   await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
 }
 
@@ -222,6 +228,7 @@ const signMessageButtonDevice = withDeviceController(
     async (reviewLabel: DeviceLabels, giveUpWhen?: GiveUpCheck) => {
       await waitFor(reviewLabel, { giveUpWhen });
       await pressUntilTextFound(DeviceLabels.SIGN_TYPED_MESSAGE);
+      throwIfGivenUp(giveUpWhen);
       await getButtonsController().both();
     },
 );
