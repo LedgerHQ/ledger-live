@@ -185,10 +185,12 @@ describe("createApi against the gateway", () => {
       expect(max.amount + max.fee).toBeLessThanOrEqual(spendable);
     });
 
-    it("should return the spendable balance less a fixed fee", async () => {
+    it("should return a fixed fee alone, without reading the balance", async () => {
+      server.use(http.get(`${partyUrl}/balance`, () => HttpResponse.error()));
+
       await expect(
         api.estimateFees(createMockContext({ ...config, fee: 2 }), sendMax({ type: "native" })),
-      ).resolves.toEqual({ value: 2n * MAGNITUDE, parameters: { amount: 7n * MAGNITUDE } });
+      ).resolves.toEqual({ value: 2n * MAGNITUDE });
     });
 
     it("should quote a token Send max on its amount, since the parent pays the fee", async () => {

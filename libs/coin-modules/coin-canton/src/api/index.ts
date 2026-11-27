@@ -24,12 +24,17 @@ type AccountStatusCapability<C> = {
   getAccountStatus: (context: C, key: string) => Promise<CantonAccountStatus>;
 };
 
-// A native Send max fee depends on the amount the balance allows, so the balance is read.
+/**
+ * A tiered native Send max fee depends on the amount the balance allows, so the balance is read.
+ * The caller must put the returned `parameters.amount` in the intent: `validateIntent` checks that amount.
+ * A fixed fee needs no read: the caller fills its own spendable balance minus the fee.
+ */
 async function estimateIntentFees(
   context: CantonContext,
   intent: TransactionIntent<CantonMemo>,
 ): Promise<FeeEstimation> {
-  if (!intent.useAllAmount || intent.asset.type !== "native") {
+  const { fee: fixedFee } = await context.config();
+  if (!intent.useAllAmount || intent.asset.type !== "native" || fixedFee !== undefined) {
     return { value: await estimateFees(context, intent.amount) };
   }
   const native = (await getBalance(context, intent.sender)).find(
