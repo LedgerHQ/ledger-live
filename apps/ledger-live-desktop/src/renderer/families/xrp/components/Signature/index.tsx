@@ -102,7 +102,11 @@ export function SignatureSteps({
   if (phase === "success" && operation) {
     const onViewDetails = () => {
       onClose();
-      setDrawer(OperationDetails, { operationId: operation.id, accountId: operation.accountId });
+      setDrawer(OperationDetails, {
+        operationId: operation.id,
+        hash: operation.hash,
+        accountId: operation.accountId,
+      });
     };
 
     return (

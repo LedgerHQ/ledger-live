@@ -138,6 +138,7 @@ export function useConfirmationViewModel() {
         OperationDetails,
         {
           operationId: concernedOperation.id,
+          hash: concernedOperation.hash,
           accountId: account.id,
           parentId: parentAccount?.id,
         },

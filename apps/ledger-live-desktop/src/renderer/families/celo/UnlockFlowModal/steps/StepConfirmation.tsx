@@ -42,6 +42,7 @@ export const StepConfirmationFooter = ({
             if (account && optimisticOperation) {
               setDrawer(OperationDetails, {
                 operationId: optimisticOperation.id,
+                hash: optimisticOperation.hash,
                 accountId: account.id,
               });
             }

@@ -123,6 +123,7 @@ describe("Aleo bond StepConfirmationFooter", () => {
     expect(props.onClose).toHaveBeenCalledTimes(1);
     expect(mockSetDrawer).toHaveBeenCalledWith(expect.anything(), {
       operationId: mockBroadcastedOperation.id,
+      hash: mockBroadcastedOperation.hash,
       accountId: ALEO_MAIN_ACCOUNT.id,
     });
   });
@@ -140,6 +141,7 @@ describe("Aleo bond StepConfirmationFooter", () => {
 
     expect(mockSetDrawer).toHaveBeenCalledWith(expect.anything(), {
       operationId: "sub-op-1",
+      hash: mockBroadcastedOperation.hash,
       accountId: ALEO_MAIN_ACCOUNT.id,
     });
   });

@@ -84,6 +84,7 @@ export function usePaySuccessViewModel(): PaySuccessProps {
         OperationDetails,
         {
           operationId: concernedOperation.id,
+          hash: concernedOperation.hash,
           accountId: account.id,
           parentId: parentAccount?.id,
         },

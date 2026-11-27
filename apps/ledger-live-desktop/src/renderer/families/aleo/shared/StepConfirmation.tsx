@@ -151,6 +151,7 @@ export function createStepConfirmation({ flow, trackField }: StakingConfirmation
               if (account) {
                 setDrawer(OperationDetails, {
                   operationId: concernedOperation.id,
+                  hash: concernedOperation.hash,
                   accountId: account.id,
                 });
               }

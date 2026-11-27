@@ -103,6 +103,7 @@ const StepConfirmationFooter = (props: StepProps) => {
             if (account && concernedOperation) {
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
+                hash: concernedOperation.hash,
                 accountId: account.id,
               });
             }

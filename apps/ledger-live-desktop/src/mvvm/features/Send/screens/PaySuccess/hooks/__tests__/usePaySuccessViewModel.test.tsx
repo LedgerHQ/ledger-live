@@ -111,7 +111,8 @@ describe("usePaySuccessViewModel", () => {
       buildFlowState({
         optimisticOperation: {
           id: "op-root",
-          subOperations: [{ id: "op-child" }],
+          hash: "root-hash",
+          subOperations: [{ id: "op-child", hash: "child-hash" }],
         } as Operation,
       }),
     );
@@ -121,7 +122,7 @@ describe("usePaySuccessViewModel", () => {
     expect(mockClose).toHaveBeenCalled();
     expect(setDrawer).toHaveBeenCalledWith(
       OperationDetails,
-      { operationId: "op-child", accountId: account.id, parentId: undefined },
+      { operationId: "op-child", hash: "child-hash", accountId: account.id, parentId: undefined },
       expect.objectContaining({ onRequestClose: expect.any(Function) }),
     );
   });

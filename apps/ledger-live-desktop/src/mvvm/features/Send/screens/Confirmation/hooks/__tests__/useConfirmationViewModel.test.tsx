@@ -239,7 +239,8 @@ describe("useConfirmationViewModel", () => {
         signed: true,
         optimisticOperation: {
           id: "opRoot",
-          subOperations: [{ id: "child1" }, { id: "child2" }],
+          hash: "root-hash",
+          subOperations: [{ id: "child1", hash: "child-hash" }, { id: "child2" }],
         },
         transactionError: null,
       },
@@ -274,7 +275,7 @@ describe("useConfirmationViewModel", () => {
     });
     expect(setDrawer).toHaveBeenCalledWith(
       OperationDetails,
-      { operationId: "child1", accountId: "acc1", parentId: "parent1" },
+      { operationId: "child1", hash: "child-hash", accountId: "acc1", parentId: "parent1" },
       expect.objectContaining({ onRequestClose: expect.any(Function) }),
     );
   });
@@ -333,7 +334,7 @@ describe("useConfirmationViewModel", () => {
       },
       operation: {
         signed: true,
-        optimisticOperation: { id: "opSingle" },
+        optimisticOperation: { id: "opSingle", hash: "single-hash" },
         transactionError: null,
       },
     });
@@ -345,7 +346,7 @@ describe("useConfirmationViewModel", () => {
 
     expect(setDrawer).toHaveBeenCalledWith(
       OperationDetails,
-      { operationId: "opSingle", accountId: "acc1", parentId: undefined },
+      { operationId: "opSingle", hash: "single-hash", accountId: "acc1", parentId: undefined },
       expect.objectContaining({ onRequestClose: expect.any(Function) }),
     );
   });
