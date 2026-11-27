@@ -72,6 +72,8 @@ const BALANCE_ERROR_NAMES = new Set([
   "NotEnoughBalance",
   "NotEnoughGas",
   "NotEnoughBalanceInParentAccount",
+  "SolanaNotEnoughSolForTokenTransfer",
+  "SolanaNotEnoughSolForRecipientTokenAccount",
 ]);
 
 function isBalanceError(error: unknown): boolean {

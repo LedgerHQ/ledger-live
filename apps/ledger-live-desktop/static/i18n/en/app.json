@@ -8646,6 +8646,12 @@
     "SolanaRecipientMemoIsRequired": {
       "title": "Memo is required for recipient address"
     },
+    "SolanaNotEnoughSolForRecipientTokenAccount": {
+      "title": "Add {{missingAmount}} {{ticker}} to send: {{accountDeposit}} {{ticker}} to open the recipient's token account + {{networkFee}} {{ticker}} fee, with {{lockedReserve}} {{ticker}} kept in reserve."
+    },
+    "SolanaNotEnoughSolForTokenTransfer": {
+      "title": "Add {{missingAmount}} {{ticker}} to pay the {{networkFee}} {{ticker}} fee, with {{lockedReserve}} {{ticker}} kept in reserve."
+    },
     "SolanaTokenNonTransferable": {
       "title": "Token is non-transferable",
       "description": "Such tokens are \"soul-bound\" and cannot be transferred"
