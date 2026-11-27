@@ -16,6 +16,9 @@ const THROTTLE_RETRY_ATTEMPTS = 6;
 const THROTTLE_RETRY_BASE_DELAY_MS = 4_000;
 const SUBMIT_RETRY_ATTEMPTS = 30;
 const SUBMIT_RETRY_DELAY_MS = 2_000;
+const SUBMIT_EDGE_REJECTION_DELAY_MS = 4_000;
+/** Below undici's 300 s `headersTimeout`, so a hung connection costs one attempt, not the budget. */
+const REQUEST_TIMEOUT_MS = 15_000;
 
 /** This driver targets Ethereum mainnet only. */
 export const ETHEREUM_NETWORK = "ethereum";
@@ -67,12 +70,15 @@ function isRetriableSubmit(status: number): boolean {
 
 type PostOptions = { pathname: string; body: unknown; retryOn5xx?: boolean };
 
-function postOnce(options: Omit<PostOptions, "retryOn5xx">): Promise<Response> {
-  const { pathname, body } = options;
+type PostOnceOptions = Omit<PostOptions, "retryOn5xx"> & { signal?: AbortSignal };
+
+function postOnce(options: PostOnceOptions): Promise<Response> {
+  const { pathname, body, signal } = options;
   return fetch(`${BASE_URL}${pathname}`, {
     method: "POST",
     headers: JSON_HEADERS,
     body: JSON.stringify(body),
+    signal,
   });
 }
 
@@ -242,8 +248,9 @@ type SubmitTransactionOptions = { transactionId: string; txHash: string };
 
 /**
  * The partner leaves an action at `created` until it is given each step's hash, so every transient
- * failure, network errors included, is retried under one budget of `SUBMIT_RETRY_ATTEMPTS`. Not
- * thrown: the step is already confirmed on chain, and `pollAction` names an action left unsettled.
+ * failure, network errors and timeouts included, is retried under one budget of
+ * `SUBMIT_RETRY_ATTEMPTS`, each logged so CI shows how close a submission came to it. Not thrown:
+ * the step is already confirmed on chain, and `pollAction` names an action left unsettled.
  */
 export async function submitTransaction(options: SubmitTransactionOptions): Promise<void> {
   const { transactionId, txHash } = options;
@@ -251,15 +258,28 @@ export async function submitTransaction(options: SubmitTransactionOptions): Prom
   const request = `POST ${pathname}`;
   let lastFailure = "";
   for (let attempt = 1; attempt <= SUBMIT_RETRY_ATTEMPTS; attempt++) {
-    if (attempt > 1) await new Promise(resolve => setTimeout(resolve, SUBMIT_RETRY_DELAY_MS));
+    let outcome = "";
+    let delayMs = SUBMIT_RETRY_DELAY_MS;
     try {
-      const res = await postOnce({ pathname, body: { txHash } });
+      const res = await postOnce({
+        pathname,
+        body: { txHash },
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      });
       if (res.ok) return;
       lastFailure = (await failedRequest(request, res)).message;
       if (!isRetriableSubmit(res.status)) break;
+      outcome = String(res.status);
+      if (isEdgeRejection(res.status)) delayMs = SUBMIT_EDGE_REJECTION_DELAY_MS;
     } catch (error) {
       lastFailure = `${request} failed: ${String(error)}`;
+      outcome = String(error);
     }
+    if (attempt === SUBMIT_RETRY_ATTEMPTS) break;
+    console.warn(
+      `    api: ${outcome} on ${pathname}, retrying (${attempt}/${SUBMIT_RETRY_ATTEMPTS - 1})`,
+    );
+    await new Promise(resolve => setTimeout(resolve, delayMs));
   }
   console.warn(`    api: ${lastFailure}`);
 }
@@ -270,7 +290,10 @@ async function pollActionStatus(actionId: string): Promise<ActionPoll> {
   const request = `GET /v1/actions/${actionId}`;
   let res: Response;
   try {
-    res = await fetch(`${BASE_URL}/v1/actions/${actionId}`, { headers: JSON_HEADERS });
+    res = await fetch(`${BASE_URL}/v1/actions/${actionId}`, {
+      headers: JSON_HEADERS,
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
   } catch (error) {
     return { retryReason: `${request} failed: ${String(error)}` };
   }
