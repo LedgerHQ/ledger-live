@@ -27107,6 +27107,43 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  shared/persistence:
+    dependencies:
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
+      '@support/jest':
+        specifier: workspace:*
+        version: link:../../support/jest
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.24)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.24))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.2(@types/node@24.12.4)(babel-plugin-macros@3.1.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.79.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.94.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   shared/schema-primitives:
     dependencies:
       zod:

@@ -76,7 +76,8 @@ explicitly if your schema transforms, since that is what the hooks actually rece
   `diffLocalToDistant` produced (the idempotence case runs one back through `schema.parse()`), never
   the legacy payload an older version actually wrote.
 - **No migrations, ever.** The wire format is permanent and shared across app versions: add optional
-  fields only, never rename, repurpose or require a key. Rebuilding `nextState` from scratch
+  fields only, never rename, repurpose or require a key. (Records stored on the device are versioned
+  instead: see `record-versions-and-migrations`.) Rebuilding `nextState` from scratch
   (account-name, recent-addresses) is safe only while your subtree is a total function of LocalState —
   once it can carry a field you don't own, apply your diff on top of `latest` as accounts does, or you
   silently delete the other version's data. recent-addresses already violates this: it drops the
