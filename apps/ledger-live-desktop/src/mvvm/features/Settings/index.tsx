@@ -6,6 +6,7 @@ import {
   type SettingsStandalonePage,
 } from "@features/flow-settings";
 import { SettingsGate } from "@features/flow-settings/web";
+import { AssetManagement } from "@features/flow-settings-asset-management";
 import { General } from "@features/flow-settings-general/web";
 import { Security } from "@features/flow-settings-security";
 import { DesktopSettingsPortProvider } from "./DesktopSettingsPortProvider";
@@ -18,6 +19,8 @@ function renderSection(section: SettingsSectionId) {
   switch (section) {
     case "general":
       return <General testID="settings-general" />;
+    case "assetManagement":
+      return <AssetManagement testID="settings-asset-management" />;
     case "security":
       return <Security testID="settings-security" />;
     default:

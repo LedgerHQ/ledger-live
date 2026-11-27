@@ -10,6 +10,8 @@ import { isModalOpened } from "~/renderer/reducers/modals";
 import {
   autoLockTimeoutSelector,
   discreetModeSelector,
+  filterTokenOperationsZeroAmountSelector,
+  hideEmptyTokenAccountsSelector,
   mevProtectionSelector,
 } from "~/renderer/reducers/settings";
 import { walletSyncDrawerVisibilitySelector } from "~/renderer/reducers/walletSync";
@@ -246,5 +248,35 @@ describe("useDesktopSettingsPort, Security section", () => {
     });
 
     expect(isModalOpened(store.getState(), modal)).toBe(true);
+  });
+  it("reads the Asset management toggles from the legacy store", () => {
+    const { result } = renderPort({
+      hideEmptyTokenAccounts: true,
+      filterTokenOperationsZeroAmount: false,
+    });
+
+    expect(result.current.values).toMatchObject({
+      hideEmptyTokenAccounts: true,
+      filterTokenOperationsZeroAmount: false,
+    });
+  });
+
+  it("stores each Asset management toggle and nothing else", () => {
+    const { result, store } = renderPort({
+      hideEmptyTokenAccounts: false,
+      filterTokenOperationsZeroAmount: false,
+      theme: "dark",
+    });
+
+    act(() => {
+      result.current.setValue({ key: "hideEmptyTokenAccounts", value: true });
+    });
+    act(() => {
+      result.current.setValue({ key: "filterTokenOperationsZeroAmount", value: true });
+    });
+
+    expect(hideEmptyTokenAccountsSelector(store.getState())).toBe(true);
+    expect(filterTokenOperationsZeroAmountSelector(store.getState())).toBe(true);
+    expect(store.getState().settings.theme).toBe("dark");
   });
 });
