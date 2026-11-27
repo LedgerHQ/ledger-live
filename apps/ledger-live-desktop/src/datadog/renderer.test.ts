@@ -256,12 +256,6 @@ describe("datadog renderer", () => {
       expect(datadogRum.setUser).toHaveBeenCalledWith({ id: "test-dd-id" });
     });
 
-    it("should enable the RUM feature operations", () => {
-      expect(datadogRum.init).toHaveBeenCalledWith(
-        expect.objectContaining({ enableExperimentalFeatures: ["feature_operation_vital"] }),
-      );
-    });
-
     it("isDatadogRecording should follow the user consent and the lldDatadog flag", async () => {
       let consent = true;
       __resetDatadogForTesting();

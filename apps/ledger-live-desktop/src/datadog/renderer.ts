@@ -139,7 +139,6 @@ export async function initDatadog(
       trackResources: params?.trackResources ?? true,
       beforeSend: buildBeforeSend(shouldSend),
       sessionPersistence: "local-storage",
-      enableExperimentalFeatures: ["feature_operation_vital"],
     });
 
     currentViewName = toDatadogViewName(hashRoutePath());
