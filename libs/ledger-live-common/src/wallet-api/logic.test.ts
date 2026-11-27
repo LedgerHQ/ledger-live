@@ -863,18 +863,42 @@ describe("signMessageLogic with a path", () => {
     },
   );
 
-  it("rejects a path for a non-bitcoin account", async () => {
-    // Given
-    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce("js:2:ethereum:0x011:");
+  it.each(["m/44'/60'/0'/0/0", "44'/60'/0'/0/0"])(
+    "signs as without a path when %s is the non-bitcoin account's own path",
+    async path => {
+      // Given
+      mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce("js:2:ethereum:0x011:");
+      mockedPrepareMessageToSign.mockResolvedValueOnce(createMessageData());
 
-    // When
-    await expect(
-      signMessageLogic(context, walletAccountId, messageToSign, uiNavigation, "m/84'/0'/0'/0/5"),
-    ).rejects.toThrow("path is only supported for bitcoin family accounts");
+      // When
+      await signMessageLogic(context, walletAccountId, messageToSign, uiNavigation, path);
 
-    // Then
-    expect(uiNavigation).toHaveBeenCalledTimes(0);
-  });
+      // Then
+      expect(mockedPrepareMessageToSign).toHaveBeenCalledWith(
+        expect.objectContaining({ id: "js:2:ethereum:0x011:" }),
+        messageToSign,
+        undefined,
+      );
+      expect(uiNavigation).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it.each(["m/44'/60'/0'/0/1", "m/84'/0'/0'/0/5"])(
+    "rejects %s on a non-bitcoin account",
+    async path => {
+      // Given
+      mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce("js:2:ethereum:0x011:");
+
+      // When
+      await expect(
+        signMessageLogic(context, walletAccountId, messageToSign, uiNavigation, path),
+      ).rejects.toThrow("path must be the account's own path for non-bitcoin accounts");
+
+      // Then
+      expect(uiNavigation).toHaveBeenCalledTimes(0);
+      expect(mockWalletAPISignMessageFail).toHaveBeenCalledTimes(1);
+    },
+  );
 });
 
 jest.mock("@ledgerhq/coin-bitcoin/getWalletAccount", () => ({

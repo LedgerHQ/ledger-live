@@ -222,13 +222,17 @@ export async function broadcastTransactionLogic(
   return uiNavigation(signerAccount, parentAccount, signedOperation);
 }
 
-function getBitcoinAccountAddressPath(account: Account, path: string): string {
+function getMessageSignPath(account: Account, path: string): string | undefined {
+  const addressPath = path.startsWith("m/") ? path.slice(2) : path;
   if (account.currency.family !== "bitcoin") {
-    throw new Error("path is only supported for bitcoin family accounts");
+    if (addressPath !== account.freshAddressPath) {
+      throw new Error("path must be the account's own path for non-bitcoin accounts");
+    }
+    // Same address as without a path, so sign as before.
+    return undefined;
   }
   const { path: rootPath, index: accountIndex } = getWalletAccount(account).params;
   const accountPath = `${rootPath}/${accountIndex}'/`;
-  const addressPath = path.startsWith("m/") ? path.slice(2) : path;
   if (
     !addressPath.startsWith(accountPath) ||
     !/^[01]\/\d+$/.test(addressPath.slice(accountPath.length))
@@ -266,7 +270,7 @@ export async function signMessageLogic(
         formattedMessage = await prepareMessageToSign(
           account,
           message,
-          path === undefined ? undefined : getBitcoinAccountAddressPath(account, path),
+          path === undefined ? undefined : getMessageSignPath(account, path),
         );
       } else {
         throw new Error("account provided should be the main one");
