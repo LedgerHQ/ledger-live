@@ -22,7 +22,7 @@ All new UI uses Lumen, in `src/mvvm/` and everywhere else. These take no new usa
 - the desktop V2 kit: `~/renderer/components/Box`, `~/renderer/components/Text`
 - `styled-components`, also banned in `shared/`, `domain/`, `features/` and `support/` (`@features/platform-style` excepted)
 
-The `legacy-ui` oxlint rules report a new usage: `legacy-ui/no-legacy-import` flags an import of a legacy module in a file that is not waived, and `legacy-ui/no-banned-component` flags banned components even in waived files. The waivers live in `support/lint/src/legacy-ui-waivers.js` (`FILE_WAIVERS`, `FOLDER_WAIVERS`), and the list only shrinks: new code never gets an entry, and a PR that migrates or deletes a waived file deletes its entry in the same change. `pnpm lint:legacy-ui-waivers` fails on a stale entry. Rationale and details: [`legacy-ui` in the lint README](../../../support/lint/README.md#legacy-ui).
+The `legacy-ui` oxlint rules `legacy-ui/no-legacy-import` and `legacy-ui/no-banned-component` report new usages; their wording is the `MESSAGES` table in [`legacy-ui.js`](../../../support/lint/src/legacy-ui.js), and the plugin is described in [`legacy-ui` in the lint README](../../../support/lint/README.md#legacy-ui). New code never gets an entry in `support/lint/src/legacy-ui-waivers.js`, and a PR that migrates or deletes a waived file deletes its entry.
 
 ## Map the contract onto Lumen
 
