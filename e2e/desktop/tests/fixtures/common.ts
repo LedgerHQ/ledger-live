@@ -46,6 +46,8 @@ import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export type { CliCommand };
 
+const SIGNED_IN_CARD_SESSION_ENV = "CARD_SESSION_BOOTSTRAP";
+
 /** Mutable Speculos handle: {@link current} is always the latest device for teardown and env. */
 type SpeculosFixtureHandle = {
   get current(): SpeculosDevice;
@@ -304,6 +306,7 @@ export const test = base.extend<TestFixtures>({
       },
       env,
     );
+    delete env[SIGNED_IN_CARD_SESSION_ENV];
 
     // launch app
     const windowSize = { width: 1024, height: 768 };
