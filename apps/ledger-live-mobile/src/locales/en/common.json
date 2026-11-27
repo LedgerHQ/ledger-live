@@ -2789,12 +2789,12 @@
       },
       "recover": {
         "tooManyBackups": "There’s no such thing as too many backups.",
-        "encryptedBackup": "Especially an encrypted digital backup.",
-        "thereWhenYouNeedIt": "A digital backup that’s there when you need it.",
-        "title": "Protect access to your wallet with Ledger Recover.",
+        "encryptedBackup": "Especially an encrypted backup.",
+        "thereWhenYouNeedIt": "A backup that’s there when you need it.",
+        "title": "Restore access to your wallet with Ledger Recover",
         "description": "Physical recovery sheets get lost or damaged. Ledger Recover keeps an encrypted backup linked to your identity.",
-        "price": "First month free then start at $9.99/month. Cancel anytime. T&Cs apply",
-        "protect": "Protect my wallet",
+        "price": "Service provided by Coincover. First month free then $9.99/month. Cancel anytime. T&Cs apply.",
+        "protect": "Start your free trial",
         "skip": "Skip for now",
         "sheet": {
           "title": "How does Ledger Recover work?",
@@ -2804,20 +2804,20 @@
           },
           "security": {
             "title": "Enhanced digital security",
-            "description": "Encrypted, fragmented and never stored in one place."
+            "description": "Keys encrypted and split into three pieces securely stored."
           },
           "legacy": {
-            "title": "Futureproof your digital legacy",
-            "description": "Add someone you trust to help secure your backup."
+            "title": "Recover anytime, anywhere",
+            "description": "Restore your entire wallet with your ID and a Ledger device."
           },
           "start": "Get started now (~10min)",
           "remindLater": "Remind me later"
         }
       },
       "success": {
-        "allSet": "You’re all set",
-        "timeToExplore": "Time to explore",
-        "cta": "Explore now",
+        "allSet": "You’re in control.",
+        "timeToExplore": "Time to explore your portfolio.",
+        "cta": "Start exploring",
         "ready": "You’re all set.",
         "walletReady": "Your wallet is ready."
       }
@@ -2826,7 +2826,7 @@
       "restore": {
         "title": "Continuing with Ledger Recover",
         "description": "You’ll sign in with your Ledger Recover credentials to complete your restore.",
-        "identity": "Ledger Recover will verify your identity to unlock your recovery",
+        "identity": "Ledger Recover will verify your identity to unlock your restore",
         "phrase": "Once verified, your Secret Recovery Phrase will be securely restored to your device",
         "cta": "Continue to Ledger Recover"
       }
@@ -2933,7 +2933,7 @@
           "recoveryPhrase": "What’s a Secret Recovery Phrase?",
           "restoreChoice": "Choose a backup to restore from",
           "recoveryKey": "What’s a Recovery Key?",
-          "restoreRecoveryKey": "What’s a Secret Recovery Key?"
+          "restoreRecoveryKey": "What’s a Ledger Recovery Key?"
         },
         "faq": "View complete FAQ",
         "pin": {
@@ -2955,7 +2955,7 @@
         },
         "recoveryPhrase": {
           "title": "Secret Recovery Phrase",
-          "description": "Your Secret Recovery Phrase is a unique list of 12, 18 or 24 words. It is the master backup of your wallet and can restore access to your accounts if your device is lost, damaged, or replaced."
+          "description": "Your Secret Recovery Phrase is a unique list of 24 words generated securely by your Ledger device. It is a backup of your wallet and can restore access to your accounts if your device is lost, damaged, or replaced."
         },
         "restoreChoice": {
           "recoveryPhrase": {
@@ -2972,8 +2972,8 @@
           }
         },
         "recoveryKey": {
-          "title": "Recovery Key",
-          "description": "Keep a private spare key to your wallet. Your Secret Recovery Phrase is encrypted and backed up completely offline on a PIN-protected card, so you can restore access with a tap if your Ledger device is lost or replaced.",
+          "title": "Ledger Recovery Key",
+          "description": "Keep a private spare key to your wallet. Your Secret Recovery Phrase is encrypted and backed up completely offline on a PIN-protected card, so you can restore access with a tap if your Ledger device is lost, damaged or replaced.",
           "inTheBox": "A Recovery Key is included in the box of your device.",
           "learnHowToUse": "Learn how to use"
         }

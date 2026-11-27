@@ -415,7 +415,7 @@ describe("device onboarding flow navigation", () => {
     expect(seededEvents()).not.toContain("onboarding_done");
 
     await user.press(screen.getByTestId(karaokeTestIds.advance));
-    await user.press(await screen.findByRole("button", { name: "Explore now" }));
+    await user.press(await screen.findByRole("button", { name: "Start exploring" }));
 
     expect(await screen.findByText("portfolio")).toBeVisible();
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
