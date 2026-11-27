@@ -220,7 +220,7 @@ const signMessageButtonDevice = withDeviceController(
     },
 );
 
-/** Signs a message whose review the device app opens with the `reviewLabel` screen. */
+/** Signs a message whose review opens on `reviewLabel`. */
 async function signMessage(reviewLabel: DeviceLabels) {
   if (isTouchDevice()) {
     return signMessageTouchDevices(reviewLabel);
@@ -249,7 +249,7 @@ export const signTypedMessageNanoS = withDeviceController(
     },
 );
 
-/** The Hyperliquid app reviews an order as "Review message to open long" and signs it as a message. */
+/** Hyperliquid reviews orders as messages, e.g. "Review message". */
 export async function signHyperliquidMessage() {
   await signMessage(DeviceLabels.REVIEW_MESSAGE);
 }

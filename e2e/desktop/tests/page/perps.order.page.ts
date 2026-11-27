@@ -1,10 +1,8 @@
-import { expect, type Page } from "@playwright/test";
+import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { WebViewAppPage } from "tests/page/webViewApp.page";
-import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
-import type { PerpsMarketGroup } from "tests/utils/perpsMarkets";
-
-export type PerpsOrderSide = "long" | "short";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import type { PerpsMarketGroup, PerpsOrderSide, ProviderPosition } from "tests/utils/perpsMarkets";
 
 type AutoCloseOffsets = { takeProfit: string; stopLoss: string };
 
@@ -17,8 +15,6 @@ const AUTO_CLOSE_OFFSETS = {
 const MIN_ORDER_NOTIONAL_USD = 12;
 const MARGIN_TOLERANCE_USD = 0.5;
 
-export type ProviderPosition = { marketId: string; symbol: string };
-
 const autoCloseSummary = /Take profit \$([\d,.]+), Stop loss \$([\d,.]+)/;
 
 const usdAmount = /\$([\d,.]+)/;
@@ -27,10 +23,8 @@ const offsetToFactor = (offset: string) => 1 + Number.parseFloat(offset) / 100;
 
 const parseAmount = (text: string) => Number.parseFloat(text.replaceAll(",", ""));
 
-// NaN while the button shows no amount yet, so a poll keeps waiting.
+// NaN until the button shows an amount, so polls wait.
 const readUsdAmount = (text: string) => parseAmount(usdAmount.exec(text)?.[1] ?? "");
-
-const escapeRegExp = (text: string) => text.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 
 export class PerpsOrderPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "perps";
@@ -153,7 +147,7 @@ export class PerpsOrderPage extends WebViewAppPage {
     await expect(webview.getByRole("button", { name: /^Leverage/ })).toContainText(`${leverage}x`);
     const margin = webview.getByRole("button", { name: /^Margin/ });
     const shownMargin = async () => readUsdAmount(await margin.innerText());
-    // The exchange rounds the size down, so the margin can fall below the request.
+    // The exchange rounds the size down, lowering the margin.
     await expect.poll(shownMargin).toBeGreaterThanOrEqual(MIN_ORDER_NOTIONAL_USD / leverage);
     await expect.poll(shownMargin).toBeLessThanOrEqual(marginUsd + MARGIN_TOLERANCE_USD);
     await this.expectPositionAutoClose(side);
@@ -187,83 +181,6 @@ export class PerpsOrderPage extends WebViewAppPage {
   async clickTradeAgainOnCloseRecap() {
     const webview = await this.getWebView();
     await webview.getByTestId(this.closeRecapCtaTestId).click();
-  }
-
-  @step("Read the open positions of every provider")
-  async getProviderPositions(address: string): Promise<ProviderPosition[]> {
-    const webview = await this.getWebView();
-    const positions: unknown = await webview.evaluate(async walletAddress => {
-      const fetchJson = async (url: string, init?: RequestInit) => {
-        const response = await fetch(url, init);
-        if (!response.ok) throw new Error(`The Perps provider answered ${response.status}`);
-        return response.json();
-      };
-      const providers: { id: string }[] = await fetchJson("/proxy/perps/v1/providers");
-      const perProvider = await Promise.all(
-        providers.map(async ({ id: providerId }) => {
-          const open: { marketId: string }[] = await fetchJson("/proxy/perps/v1/positions", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ address: walletAddress, providerId }),
-          });
-          return Promise.all(
-            open.map(async ({ marketId }) => {
-              const market = await fetchJson(
-                `/proxy/perps/v1/markets/${encodeURIComponent(marketId)}`,
-              );
-              return { marketId, symbol: market.baseAsset.symbol };
-            }),
-          );
-        }),
-      );
-      return perProvider.flat();
-    }, address);
-    if (!Array.isArray(positions))
-      throw new TypeError("The Perps provider returned no position list");
-    return positions.map(position => {
-      if (typeof position?.marketId !== "string" || typeof position?.symbol !== "string") {
-        throw new TypeError("A provider position has no market id or symbol");
-      }
-      return { marketId: position.marketId, symbol: position.symbol };
-    });
-  }
-
-  @step("Verify the provider reports no new position")
-  async expectNoNewProviderPositions(address: string, knownMarketIds: string[]) {
-    const known = new Set(knownMarketIds);
-    await expect
-      .poll(
-        async () =>
-          (await this.getProviderPositions(address)).filter(({ marketId }) => !known.has(marketId))
-            .length,
-        { timeout: TIMEOUT.xxlarge, intervals: [INTERVAL.medium] },
-      )
-      .toBe(0);
-  }
-
-  @step("Open the position of the market from the positions list")
-  async openPositionFromList(position: ProviderPosition) {
-    const webview = await this.getWebView();
-    const row = this.positionRow(webview, position);
-    await expect(
-      row,
-      `The provider reports a position on ${position.marketId} that the positions list does not show`,
-    ).toBeVisible({ timeout: TIMEOUT.xxlarge });
-    await row.click();
-  }
-
-  @step("Verify the positions list no longer shows the market")
-  async expectPositionRowHidden(position: ProviderPosition) {
-    const webview = await this.getWebView();
-    await expect(this.positionRow(webview, position)).toBeHidden({ timeout: TIMEOUT.xxlarge });
-  }
-
-  // The list shows the symbol without its dex prefix, then the side and leverage.
-  private positionRow(webview: Page, { symbol: providerSymbol }: ProviderPosition) {
-    const symbol = escapeRegExp(providerSymbol.replace(/^.*:/, ""));
-    return webview.getByRole("button", {
-      name: new RegExp(String.raw`(?<![\w-])${symbol}\s+(Long|Short) \d+x`),
-    });
   }
 
   private async expectPositionAutoClose(side: PerpsOrderSide) {

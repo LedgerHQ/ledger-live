@@ -9,7 +9,7 @@ import { isAppBroadcastEnabled, type TestEnv } from "tests/utils/exclusiveLock";
  * that reach the chain collide, so the second leg is given up when broadcasting is on and keeps its
  * coverage otherwise. The scheduled runs pick a single device, hence never reach this.
  *
- * Pass the flow's own `env` when it overrides the runner's broadcast setting.
+ * @param env The flow's `env`, when it overrides broadcasting.
  */
 export function skipSharedAccountOnSecondaryLeg(flowName: string, env?: TestEnv): void {
   test.skip(

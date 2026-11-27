@@ -7,8 +7,7 @@ import { FF_PERPS_DESKTOP, IS_PERPS_LIVE_APP_STAGING } from "tests/utils/feature
 import { buildTags } from "tests/utils/tagsUtils";
 import { getPerpsLiveAppStorage } from "tests/utils/perpsLiveAppStorage";
 import { exclusiveLockFor } from "tests/utils/exclusiveLock";
-import { HIP3_MARKETS } from "tests/utils/perpsMarkets";
-import type { ProviderPosition } from "tests/page/perps.order.page";
+import { HIP3_MARKETS, type ProviderPosition } from "tests/utils/perpsMarkets";
 import {
   closePerpsPosition,
   closePerpsPositionsOpenedByTest,
@@ -44,13 +43,13 @@ test.describe("Perps close position", { lock: lock.names }, () => {
     env: PERPS_REAL_BROADCAST_ENV,
   });
 
-  // Unset until the provider is read, so a failed setup never closes a position it did not open.
+  // Unset until read, so cleanup never closes foreign positions.
   let positionsAtStart: ProviderPosition[] | undefined;
 
   test.beforeEach(async ({ app, speculos, userdataFile }) => {
     positionsAtStart = undefined;
     await openPerpsFromPortfolio(app);
-    positionsAtStart = await readPerpsPositions(app, { account, userdataFile });
+    positionsAtStart = await readPerpsPositions({ account, userdataFile });
     await openPerpsPosition(app, {
       market,
       side: "long",
@@ -59,10 +58,10 @@ test.describe("Perps close position", { lock: lock.names }, () => {
     });
   });
 
-  // Keeps the real position from staying open if the close fails.
-  test.afterEach(async ({ app, speculos, userdataFile }) => {
+  // Closes the real position if the UI close fails.
+  test.afterEach(async ({ speculos, userdataFile }) => {
     if (!positionsAtStart) return;
-    await closePerpsPositionsOpenedByTest(app, {
+    await closePerpsPositionsOpenedByTest({
       account,
       userdataFile,
       positionsAtStart,
@@ -71,8 +70,9 @@ test.describe("Perps close position", { lock: lock.names }, () => {
   });
 
   test(
-    `Close a ${market.label} position`,
+    `Close position - ${market.label}`,
     {
+      // The Hyperliquid app has no Nano S build.
       tag: buildTags({ currencyId: account.currency.id, skipLNS: true }),
       annotation: { type: "TMS", description: xrayTicket },
     },

@@ -13,6 +13,11 @@ const SUBCOMMANDS: Subcommand[] = [
     run: async argv => (await import("./borrow.js")).runBorrowCommand(argv),
   },
   {
+    name: "perps",
+    describe: "Read, sweep or sign-check Perps positions (Perps API + Speculos)",
+    run: async argv => (await import("./perps.js")).runPerpsCommand(argv),
+  },
+  {
     name: "check-exclusive-lock",
     describe:
       "CI: lock across machines while R2 takes lock writes, on this machine only when it fails",

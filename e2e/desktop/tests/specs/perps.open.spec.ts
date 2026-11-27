@@ -7,7 +7,7 @@ import { FF_PERPS_DESKTOP, IS_PERPS_LIVE_APP_STAGING } from "tests/utils/feature
 import { buildTags } from "tests/utils/tagsUtils";
 import { getPerpsLiveAppStorage } from "tests/utils/perpsLiveAppStorage";
 import { exclusiveLockFor } from "tests/utils/exclusiveLock";
-import { HIP3_MARKETS } from "tests/utils/perpsMarkets";
+import { HIP3_MARKETS, type PerpsOrderSide, type ProviderPosition } from "tests/utils/perpsMarkets";
 import {
   closePerpsPositionsOpenedByTest,
   openPerpsFromPortfolio,
@@ -17,7 +17,6 @@ import {
   PERPS_REAL_BROADCAST_ENV,
 } from "tests/utils/perpsPositionFlows";
 import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
-import type { PerpsOrderSide, ProviderPosition } from "tests/page/perps.order.page";
 
 const account = Account.HYPERCORE_1;
 const market = HIP3_MARKETS;
@@ -47,19 +46,19 @@ test.describe("Perps open position", { lock: lock.names }, () => {
     env: PERPS_REAL_BROADCAST_ENV,
   });
 
-  // Unset until the provider is read, so a failed setup never closes a position it did not open.
+  // Unset until read, so cleanup never closes foreign positions.
   let positionsAtStart: ProviderPosition[] | undefined;
 
   test.beforeEach(async ({ app, userdataFile }) => {
     positionsAtStart = undefined;
     await openPerpsFromPortfolio(app);
-    positionsAtStart = await readPerpsPositions(app, { account, userdataFile });
+    positionsAtStart = await readPerpsPositions({ account, userdataFile });
   });
 
-  // The position is a real one, so it is closed even when the test fails.
-  test.afterEach(async ({ app, speculos, userdataFile }) => {
+  // Closes the real position even when the test fails.
+  test.afterEach(async ({ speculos, userdataFile }) => {
     if (!positionsAtStart) return;
-    await closePerpsPositionsOpenedByTest(app, {
+    await closePerpsPositionsOpenedByTest({
       account,
       userdataFile,
       positionsAtStart,
@@ -69,8 +68,9 @@ test.describe("Perps open position", { lock: lock.names }, () => {
 
   for (const { side, xrayTicket } of orders) {
     test(
-      `Open a ${market.label} ${side} position with margin, take profit and stop loss`,
+      `Open position - ${market.label} ${side} with margin, take profit and stop loss`,
       {
+        // The Hyperliquid app has no Nano S build.
         tag: buildTags({ currencyId: account.currency.id, skipLNS: true }),
         annotation: { type: "TMS", description: xrayTicket },
       },

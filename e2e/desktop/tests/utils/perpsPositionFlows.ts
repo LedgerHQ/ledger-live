@@ -1,9 +1,11 @@
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { closePerpsMarkets } from "@ledgerhq/live-e2e-shared/perps/perpsFlow";
+import { PerpsApi } from "@ledgerhq/live-e2e-shared/perps/perpsApi";
+import type { SpeculosDevice } from "@ledgerhq/live-e2e-shared/speculos";
 import type { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import type { Application } from "tests/page";
 import { getSavedAccountAddress } from "tests/utils/userdata";
-import type { PerpsOrderSide, ProviderPosition } from "tests/page/perps.order.page";
-import type { PerpsMarketGroup } from "tests/utils/perpsMarkets";
+import type { PerpsMarketGroup, PerpsOrderSide, ProviderPosition } from "tests/utils/perpsMarkets";
 
 // Real broadcast, overriding any host value.
 export const PERPS_REAL_BROADCAST_ENV = { DISABLE_TRANSACTION_BROADCAST: "0" };
@@ -12,7 +14,7 @@ export const PERPS_REAL_BROADCAST_ENV = { DISABLE_TRANSACTION_BROADCAST: "0" };
 export const ORDER_MARGIN_USD = 5;
 export const ORDER_LEVERAGE = 3;
 
-type RelaunchSpeculos = (appName: string) => Promise<unknown>;
+type RelaunchSpeculos = (appName: string) => Promise<SpeculosDevice>;
 
 export async function openPerpsFromPortfolio(app: Application) {
   await app.portfolio.clickPerpsEntryPoint();
@@ -65,48 +67,45 @@ export async function closePerpsPosition(
   await app.perpsOrder.expectPositionClosed();
 }
 
-export async function readPerpsPositions(
-  app: Application,
-  { account, userdataFile }: { account: Account; userdataFile: string },
-) {
+type PerpsAccount = { account: Account; userdataFile: string };
+
+// Reads the Perps API, so a broken webview cannot block.
+export async function readPerpsPositions({
+  account,
+  userdataFile,
+}: PerpsAccount): Promise<ProviderPosition[]> {
+  const api = new PerpsApi();
   const address = await getSavedAccountAddress(userdataFile, account);
-  return app.perpsOrder.getProviderPositions(address);
-}
-
-async function closeOpenedPosition(
-  app: Application,
-  {
-    position,
-    relaunchSpeculos,
-  }: { position: ProviderPosition; relaunchSpeculos: RelaunchSpeculos },
-) {
-  await app.perpsOrder.openPositionFromList(position);
-  await closePerpsPosition(app, { relaunchSpeculos });
-  await app.perpsOrder.expectPositionRowHidden(position);
-}
-
-// Closes only what the test opened, on any market: positions not listed at the start.
-export async function closePerpsPositionsOpenedByTest(
-  app: Application,
-  {
-    account,
-    userdataFile,
-    positionsAtStart,
-    relaunchSpeculos,
-  }: {
-    account: Account;
-    userdataFile: string;
-    positionsAtStart: ProviderPosition[];
-    relaunchSpeculos: RelaunchSpeculos;
-  },
-) {
-  const known = positionsAtStart.map(({ marketId }) => marketId);
-  const opened = (await readPerpsPositions(app, { account, userdataFile })).filter(
-    ({ marketId }) => !known.includes(marketId),
+  const positions = await api.getPositions(address);
+  return Promise.all(
+    positions.map(async ({ marketId }) => ({
+      marketId,
+      symbol: await api.getMarketSymbol(marketId),
+    })),
   );
-  for (const position of opened) {
-    await closeOpenedPosition(app, { position, relaunchSpeculos }); // NOSONAR: closes share one device
-  }
+}
+
+// Closes markets the test opened, through the API and Speculos.
+export async function closePerpsPositionsOpenedByTest({
+  account,
+  userdataFile,
+  positionsAtStart,
+  relaunchSpeculos,
+}: PerpsAccount & {
+  positionsAtStart: ProviderPosition[];
+  relaunchSpeculos: RelaunchSpeculos;
+}) {
+  const known = new Set(positionsAtStart.map(({ marketId }) => marketId));
   const address = await getSavedAccountAddress(userdataFile, account);
-  await app.perpsOrder.expectNoNewProviderPositions(address, known);
+  const opened = (await new PerpsApi().getPositions(address))
+    .map(({ marketId }) => marketId)
+    .filter(marketId => !known.has(marketId));
+  if (opened.length === 0) return;
+  const device = await relaunchSpeculos(AppInfos.HYPERLIQUID.name);
+  await closePerpsMarkets({
+    address,
+    marketIds: opened,
+    speculosApiPort: device.port,
+    derivationPath: account.accountPath,
+  });
 }

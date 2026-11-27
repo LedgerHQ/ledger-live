@@ -1,8 +1,11 @@
+export type PerpsOrderSide = "long" | "short";
+
+export type ProviderPosition = { marketId: string; symbol: string };
+
 export type PerpsMarketGroup = {
   label: string;
-  // Test id of the market rows in the live app list.
+  // Test id of the live app market rows.
   marketTestId: RegExp;
-  // Live app feature flags the group needs.
   liveAppFlags: Record<string, boolean>;
 };
 

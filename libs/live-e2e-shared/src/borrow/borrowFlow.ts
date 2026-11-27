@@ -1,14 +1,6 @@
-import { getEnv, setEnv } from "@shared/env";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
-import { Account } from "../enum/Account";
-import {
-  enableBlindSigning,
-  specs,
-  startSpeculos,
-  stopSpeculos,
-  type SpeculosDevice,
-} from "../speculos";
-import { waitForSpeculosReady } from "../speculosCI";
+import { enableBlindSigning, stopSpeculos, type SpeculosDevice } from "../speculos";
+import { resolveDriverAccount, startDriverSpeculos, setSpeculosApiPort } from "../speculosDriver";
 import {
   DEFAULT_MARKET_ID,
   ETHEREUM_CHAIN_ID,
@@ -58,17 +50,6 @@ export interface BorrowFlowOptions {
 export type BorrowFlowOptionsWithoutAddress = Omit<BorrowFlowOptions, "returnAddress">;
 
 const positive = (v?: string): boolean => v != null && Number.parseFloat(v) > 0;
-
-function resolveAccount(name: string): { path: string; specKey: string } {
-  const account: unknown = Reflect.get(Account, name);
-  if (!(account instanceof Account) || !account.accountPath) {
-    throw new Error(`Unknown account "${name}" (expected e.g. ETH_4)`);
-  }
-  return {
-    path: account.accountPath,
-    specKey: account.currency.speculosApp.name.replaceAll(" ", "_"),
-  };
-}
 
 /** Posts an action and signs+broadcasts each returned step on Speculos. */
 async function runAction(
@@ -214,30 +195,6 @@ async function close(
   console.log(`✔ ${opts.flow} complete (${loans.length} position(s))`);
 }
 
-async function startOwnSpeculos(
-  options: BorrowFlowOptions,
-  specKey: string,
-): Promise<SpeculosDevice> {
-  if (!process.env.SEED) throw new Error("Missing SEED env (Speculos seed)");
-  setEnv("MOCK", "");
-  process.env.MOCK = "";
-  setEnv("PLAYWRIGHT_RUN", true);
-  // The Speculos app-version catalog is read via live-env; default it to the
-  // checked-in desktop catalog unless the caller already set one.
-  if (options.nanoAppCatalogPath) {
-    setEnv("E2E_NANO_APP_VERSION_PATH", options.nanoAppCatalogPath);
-  } else if (!getEnv("E2E_NANO_APP_VERSION_PATH")) {
-    throw new Error(
-      "Missing Speculos app-version catalog: pass nanoAppCatalogPath or set E2E_NANO_APP_VERSION_PATH",
-    );
-  }
-  const spec = specs[specKey];
-  if (!spec) throw new Error(`No Speculos spec for "${specKey}"`);
-  const device = await startSpeculos(`borrow-${options.flow}`, spec, { suite: "borrow" });
-  if (!device) throw new Error("Speculos not started");
-  return device;
-}
-
 /**
  * Runs a Borrow flow end-to-end, signing on Speculos. Safe to call from
  * Playwright `beforeAll` / `afterAll` hooks — it never calls `process.exit`,
@@ -253,7 +210,7 @@ export function runBorrow(
 export function runBorrow(options: BorrowFlowOptionsWithoutAddress): Promise<void>;
 export async function runBorrow(options: BorrowFlowOptions): Promise<string | void> {
   // SEED is sourced from the environment only — never a CLI flag, never logged.
-  const { path, specKey } = resolveAccount(options.account ?? "ETH_4");
+  const { path, specKey } = resolveDriverAccount(options.account ?? "ETH_4");
 
   const ownSpeculos = options.speculosApiPort === undefined;
   let device: SpeculosDevice | undefined;
@@ -261,16 +218,16 @@ export async function runBorrow(options: BorrowFlowOptions): Promise<string | vo
 
   try {
     if (ownSpeculos) {
-      device = await startOwnSpeculos(options, specKey);
-      // /acquire returns 202 with a sentinel port; the readiness poll is what publishes
-      // SPECULOS_ADDRESS, without which everything resolves against 127.0.0.1.
-      if (process.env.REMOTE_SPECULOS === "true") await waitForSpeculosReady(device.id);
+      device = await startDriverSpeculos({
+        name: `borrow-${options.flow}`,
+        suite: "borrow",
+        specKey,
+        nanoAppCatalogPath: options.nanoAppCatalogPath,
+      });
       apiPort = device.port;
     }
     if (apiPort === undefined) throw new Error("Speculos API port unavailable");
-    // The shared device helpers resolve the device from this env, not from a parameter.
-    setEnv("SPECULOS_API_PORT", apiPort);
-    process.env.SPECULOS_API_PORT = String(apiPort);
+    setSpeculosApiPort(apiPort);
 
     // Morpho calldata has no clear-signing descriptor, so the app answers 6a80 until this is
     // on. Only for a device we booted; a caller that passed its own port owns its settings.
