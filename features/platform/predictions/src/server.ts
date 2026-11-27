@@ -10,6 +10,7 @@ import {
   type PredictionsOrderReport,
 } from "./order";
 import { placeOrderTypedDataJsonSchema } from "./placeOrderTypedData";
+import { sellPositionTypedDataJsonSchema } from "./sellPositionTypedData";
 import type { PredictionsTypedData } from "./typedData";
 import { PREDICTIONS_SETUP_FAILURE_REASONS, type PredictionsSetupOutcome } from "./setup";
 import { UnsupportedOnboardingVersion } from "./errors";
@@ -87,8 +88,9 @@ export type PredictionsUiHooks = {
   /** Resolves once the user closes the setup, or right away when none is open. */
   "binding.reportSetup": (setup: PredictionsSetupOutcome) => Promise<void>;
   /**
-   * Signs a checked place order authorization with the account. Rejects with `UserRefusedOnDevice`
-   * when the prompt closes unsigned. Once signed, the order shows as placing until `order.report`.
+   * Signs a checked buy (`PlaceOrder`) or sale (`SellPosition`) authorization with the account.
+   * Rejects with `UserRefusedOnDevice` when the prompt closes unsigned. Once signed, the order shows
+   * as placing until `order.report`.
    */
   "order.sign": (
     accountId: string,
@@ -180,7 +182,7 @@ const orderDisplaySchema = z.strictObject({
 
 const signOrderSchema = z.strictObject({
   accountId: z.string().min(1),
-  typedData: placeOrderTypedDataJsonSchema,
+  typedData: z.union([placeOrderTypedDataJsonSchema, sellPositionTypedDataJsonSchema]),
   display: orderDisplaySchema,
 });
 
@@ -192,6 +194,12 @@ const reportOrderSchema = z.union([
     status: z.literal("filled"),
     shares: z.number().positive(),
     price: z.number().positive(),
+  }),
+  z.strictObject({
+    walletOrderId,
+    status: z.literal("filled"),
+    shares: z.number().positive(),
+    received: z.number().positive(),
   }),
   z.strictObject({ walletOrderId, status: z.literal("filled") }),
   z.strictObject({ walletOrderId, status: z.literal("not-filled") }),

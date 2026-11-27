@@ -7,7 +7,7 @@ import type {
 import type { Observable } from "rxjs";
 import type { PredictionsTypedData } from "../typedData";
 
-export type PredictionsSigningPurpose = "binding" | "order";
+export type PredictionsSigningPurpose = "binding" | "order" | "sale";
 
 /** The device asks the user to confirm, once its context is loaded, then signs. */
 export type PredictionsSigningEvent =
