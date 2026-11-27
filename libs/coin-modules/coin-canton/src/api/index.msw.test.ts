@@ -2,7 +2,6 @@ import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-module-framewo
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { estimateSendMax } from "../logic/estimateFees";
-import { minReserveOf } from "../logic/utils";
 import { createFrameworkSigner } from "../signer/frameworkSigner";
 import {
   createMockCantonSigner,
@@ -11,6 +10,7 @@ import {
   createMockInstrumentBalances,
   createMockOnboardingPrepareResponse,
   createMockPrepareTransferResponse,
+  createSwitchingContext,
 } from "../test/fixtures";
 import { TooManyUtxosWarning, TopologyChangeError } from "../types/errors";
 import type { CantonMemo } from "../types/transaction";
@@ -161,7 +161,7 @@ describe("createApi against the gateway", () => {
 
   describe("estimateFees on Send max", () => {
     const spendable = 9n * MAGNITUDE;
-    const heldWithLockedReserve = spendable + minReserveOf(config);
+    const heldWithLockedReserve = spendable + BigInt(config.minReserve);
 
     beforeEach(() => {
       server.use(
@@ -173,6 +173,21 @@ describe("createApi against the gateway", () => {
             : unknownRequest(),
         ),
       );
+    });
+
+    it("should read the balance and the fee from one config", async () => {
+      const switching = createSwitchingContext(config, {
+        ...config,
+        gatewayUrl: "https://other-gateway.test",
+        fee: 2,
+      });
+      const max = await estimateSendMax(context, spendable);
+
+      await expect(api.estimateFees(switching, sendMax({ type: "native" }))).resolves.toEqual({
+        value: max.fee,
+        parameters: { amount: max.amount },
+      });
+      expect(switching.config).toHaveBeenCalledTimes(1);
     });
 
     it("should return the fee and amount of the largest native send that fits", async () => {

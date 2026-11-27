@@ -204,7 +204,7 @@ export async function validateIntent(
   const native = holdingOf(balances.filter(({ asset }) => asset.type === "native"));
   const sent = isToken ? tokenHolding(balances, target, config.nativeInstrumentId) : native;
   const { amount, fees } = isSendMax
-    ? await sendMaxOf(context, intent, sent, customFees, isToken)
+    ? await sendMaxOf(pinned, intent, sent, customFees, isToken)
     : { amount: intent.amount, fees: customFees?.value ?? 0n };
   const spend: Spend = {
     amount,

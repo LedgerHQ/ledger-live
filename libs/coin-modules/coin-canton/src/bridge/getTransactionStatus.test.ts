@@ -28,8 +28,10 @@ jest.mock("../network/gateway", () => ({
 }));
 const mockedGateway = gateway as jest.Mocked<typeof gateway>;
 
+// Without the shipped `fee: 0`, so fees follow the tier schedule.
+const { fee: _fixedFee, ...tieredDefaults } = cantonDefaults.canton_network;
 const defaultConfig: CantonCoinConfig = {
-  ...cantonDefaults.canton_network,
+  ...tieredDefaults,
   gatewayUrl: "https://canton-gateway.example.com",
   nodeId: "test-node",
   minReserve: 100,
