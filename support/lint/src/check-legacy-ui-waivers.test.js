@@ -27,6 +27,10 @@ const REPO = fixture({
   "apps/mobile/src/Legacy.tsx": 'import { Flex } from "@ledgerhq/native-ui";\n',
   "apps/mobile/src/Reexport.ts": 'export * from "styled-components/native";\n',
   "apps/mobile/src/Migrated.tsx": 'import { Box } from "@ledgerhq/lumen-ui-rnative";\n',
+  "apps/mobile/src/Required.ts": 'export const ui = () => require("@ledgerhq/native-ui");\n',
+  "apps/mobile/src/Dynamic.ts": 'export const ui = () => import("@ledgerhq/native-ui");\n',
+  "apps/mobile/src/TypeOnly.ts": 'export type T = import("styled-components").DefaultTheme;\n',
+  "apps/mobile/src/Mocked.test.ts": 'jest.mock("styled-components/native");\n',
   "apps/mobile/src/screens/Settings/General.tsx": 'import styled from "styled-components";\n',
   "apps/desktop/src/Other.tsx": 'import { Flex } from "@ledgerhq/react-ui";\n',
 });
@@ -52,6 +56,20 @@ test("a clean list has no problem", () => {
     check({
       fileWaivers: { "apps/mobile/src/Legacy.tsx": REASON, "apps/mobile/src/Reexport.ts": REASON },
       folderWaivers: { "apps/mobile/src/screens/Settings/**": REASON },
+    }),
+    [],
+  );
+});
+
+test("a file that loads a legacy module through require, import(), an import type or a jest mock is not stale", () => {
+  assert.deepEqual(
+    check({
+      fileWaivers: {
+        "apps/mobile/src/Dynamic.ts": REASON,
+        "apps/mobile/src/Mocked.test.ts": REASON,
+        "apps/mobile/src/Required.ts": REASON,
+        "apps/mobile/src/TypeOnly.ts": REASON,
+      },
     }),
     [],
   );

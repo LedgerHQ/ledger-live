@@ -342,8 +342,9 @@ pre-Lumen design systems (`@ledgerhq/native-ui`, `@ledgerhq/react-ui`), `styled-
 Desktop `Box` and `Text` components. It has two rules:
 
 - **`legacy-ui/no-legacy-import`**: reports [`MESSAGES.legacyImport`](src/legacy-ui.js) once per
-  `import` or `export ... from` declaration of a legacy module, `import type` included. It skips the
-  waived files. Outside them it catches every use: a component or a `styled` definition needs its
+  `import` or `export ... from` declaration of a legacy module, `import type` included, and once per
+  `require()`, `import()`, `import("...")` type, `import x = require()` and jest mocking call
+  ([`specifier-calls.js`](src/specifier-calls.js)) that names one. It skips the waived files. Outside them it catches every use: a component or a `styled` definition needs its
   import first.
 - **`legacy-ui/no-banned-component`**: reports [`MESSAGES.bannedComponent`](src/legacy-ui.js) on
   each import and JSX element of a component listed in `bannedComponents`, imported from a legacy

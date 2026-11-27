@@ -191,6 +191,32 @@ test("no-legacy-import reports each import and re-export declaration, import typ
   ]);
 });
 
+test("no-legacy-import reports require, import(), import types and jest mocks of a legacy module", () => {
+  const reports = lint(
+    {
+      "src/A.ts": [
+        'const ui = require("@ledgerhq/native-ui");',
+        'export const load = () => import("styled-components/native");',
+        'export type Theme = import("styled-components").DefaultTheme;',
+        'import native = require("@ledgerhq/native-ui");',
+        'jest.mock("styled-components");',
+        'const lumen = require("@ledgerhq/lumen-ui-rnative");',
+        "export { ui, native, lumen };",
+        "",
+      ].join("\n"),
+    },
+    MOBILE,
+  );
+
+  assert.deepEqual(reports, [
+    "no-legacy-import app/src/A.ts:1",
+    "no-legacy-import app/src/A.ts:2",
+    "no-legacy-import app/src/A.ts:3",
+    "no-legacy-import app/src/A.ts:4",
+    "no-legacy-import app/src/A.ts:5",
+  ]);
+});
+
 test("no-legacy-import reports a relative import of the desktop Box", () => {
   const reports = lint(
     {

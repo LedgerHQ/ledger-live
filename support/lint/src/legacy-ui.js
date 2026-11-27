@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 
 import { appRoot } from "./families-folder.js";
 import { FILE_WAIVERS, FOLDER_WAIVERS } from "./legacy-ui-waivers.js";
+import { isSpecifierCall } from "./specifier-calls.js";
 
 const LUMEN =
   "Use Lumen instead: .agents/skills/ldls-native/SKILL.md (Mobile), .agents/skills/ldls-web/SKILL.md (Desktop).";
@@ -340,9 +341,9 @@ function legacyUiRule(waivers, honoursFileWaivers, createOnce) {
 function createLegacyUiPlugin(waivers) {
   const realWaivers = { ...waivers, repoRoot: realpath(waivers.repoRoot) };
   const noLegacyImport = legacyUiRule(realWaivers, true, (context, state) => {
-    /** @param {{ source?: { value?: unknown } | null }} node */
-    function check(node) {
-      const specifier = node.source?.value;
+    /** @param {{ value?: unknown } | null | undefined} literal @param {object} node */
+    function check(literal, node) {
+      const specifier = literal?.value;
       if (isLegacyModule(specifier, context.filename, state.options.modules)) {
         context.report({
           message: MESSAGES.legacyImport(specifier),
@@ -350,10 +351,26 @@ function createLegacyUiPlugin(waivers) {
         });
       }
     }
+
+    /** @param {{ source?: { value?: unknown } | null }} node */
+    function checkSource(node) {
+      check(node.source, node);
+    }
+
     return {
-      ImportDeclaration: check,
-      ExportNamedDeclaration: check,
-      ExportAllDeclaration: check,
+      ImportDeclaration: checkSource,
+      ExportNamedDeclaration: checkSource,
+      ExportAllDeclaration: checkSource,
+      ImportExpression: checkSource,
+      TSImportType: checkSource,
+      /** @param {{ expression?: { value?: unknown } }} node */
+      TSExternalModuleReference(node) {
+        check(node.expression, node);
+      },
+      /** @param {Parameters<typeof isSpecifierCall>[0] & { arguments?: { value?: unknown }[] }} node */
+      CallExpression(node) {
+        if (isSpecifierCall(node)) check(node.arguments?.[0], node);
+      },
     };
   });
 

@@ -8,6 +8,7 @@ import { pathToFileURL } from "node:url";
 
 import { globToRegExp, isLegacyModule, repoPath } from "./legacy-ui.js";
 import { FILE_WAIVERS, FOLDER_WAIVERS } from "./legacy-ui-waivers.js";
+import { isSpecifierCall } from "./specifier-calls.js";
 
 const WAIVERS_FILE = "support/lint/src/legacy-ui-waivers.js";
 const RULE = "legacy-ui/no-legacy-import";
@@ -43,19 +44,61 @@ const ts = require("typescript");
 
 /**
  * @param {string} file an absolute path
- * @returns {string[]} the specifiers of the file's top-level import and `export ... from` declarations, the
- *   nodes `no-legacy-import` checks
+ * @returns {string[]} the specifiers of the nodes `no-legacy-import` checks: import and `export ... from`
+ *   declarations, `import()`, `import("...")` types, `import x = require()` and the specifier calls
  */
 function importSpecifiers(file) {
   const source = ts.createSourceFile(file, fs.readFileSync(file, "utf8"), ts.ScriptTarget.Latest);
   const specifiers = [];
-  for (const statement of source.statements) {
-    const isImportOrReexport =
-      ts.isImportDeclaration(statement) || ts.isExportDeclaration(statement);
-    const specifier = isImportOrReexport ? statement.moduleSpecifier : undefined;
+  /** @param {import("typescript").Node} node */
+  function visit(node) {
+    const specifier = specifierOf(node);
     if (specifier && ts.isStringLiteral(specifier)) specifiers.push(specifier.text);
+    ts.forEachChild(node, visit);
   }
+  visit(source);
   return specifiers;
+}
+
+/**
+ * @param {import("typescript").Node} node
+ * @returns {import("typescript").Node | undefined} the specifier node, when `node` takes one
+ */
+function specifierOf(node) {
+  if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) return node.moduleSpecifier;
+  if (ts.isExternalModuleReference(node)) return node.expression;
+  if (ts.isImportTypeNode(node) && ts.isLiteralTypeNode(node.argument)) {
+    return node.argument.literal;
+  }
+  if (ts.isCallExpression(node) && isSpecifierCall(estreeCallee(node))) return node.arguments[0];
+  return undefined;
+}
+
+/**
+ * @param {import("typescript").CallExpression} call
+ * @returns {Parameters<typeof isSpecifierCall>[0]} the call's callee in the ESTree shape `isSpecifierCall` reads,
+ *   with `import()` read as a `require()`
+ */
+function estreeCallee(call) {
+  const callee = call.expression;
+  if (callee.kind === ts.SyntaxKind.ImportKeyword) {
+    return { callee: { type: "Identifier", name: "require" } };
+  }
+  if (ts.isIdentifier(callee)) return { callee: { type: "Identifier", name: callee.text } };
+  if (
+    ts.isPropertyAccessExpression(callee) &&
+    ts.isIdentifier(callee.expression) &&
+    ts.isIdentifier(callee.name)
+  ) {
+    return {
+      callee: {
+        type: "MemberExpression",
+        object: { type: "Identifier", name: callee.expression.text },
+        property: { type: "Identifier", name: callee.name.text },
+      },
+    };
+  }
+  return { callee: undefined };
 }
 
 /**
