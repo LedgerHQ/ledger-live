@@ -15,11 +15,21 @@ import {
 } from "@support/lint/restricted-imports";
 import { SUFFIX_IMPORTS_PLUGIN } from "@support/lint/plugins";
 import { coinFamiliesLint } from "@support/lint/coin-families";
+import { legacyUiLint } from "@support/lint/legacy-ui";
 
 const coinFamilies = coinFamiliesLint({
   familiesDir: "src/renderer/families",
   barrel: "contract",
   allow: ["modals-loaders"],
+});
+
+const legacyUi = legacyUiLint({
+  modules: [
+    "@ledgerhq/react-ui",
+    "styled-components",
+    "~/renderer/components/Box",
+    "~/renderer/components/Text",
+  ],
 });
 
 export default defineConfig({
@@ -39,7 +49,7 @@ export default defineConfig({
   },
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest"],
-  jsPlugins: [SUFFIX_IMPORTS_PLUGIN, ...coinFamilies.jsPlugins],
+  jsPlugins: [SUFFIX_IMPORTS_PLUGIN, ...coinFamilies.jsPlugins, ...legacyUi.jsPlugins],
   ignorePatterns: ["*.min.js", "src/mvvm/hooks/redux.ts", "tests/artifacts/**"],
   rules: {
     "eslint/no-unused-vars": "warn",
@@ -74,6 +84,7 @@ export default defineConfig({
     "import/no-duplicates": "error",
     "suffix-imports/no-platform-suffix": "error",
     ...coinFamilies.rules,
+    ...legacyUi.rules,
     "import/no-named-as-default": "off",
     "eslint/no-restricted-imports": [
       "error",

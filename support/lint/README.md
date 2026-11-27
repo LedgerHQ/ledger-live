@@ -54,6 +54,8 @@ which the presets and the `.mts` configs import and which writes the JSON fragme
 `derivation-mirror` JS plugins. `base` puts them in
 `jsPlugins`; a config that does not extend a preset,
 such as an app config, imports it by package name, as it imports `@support/lint/restricted-imports`.
+It also exports `COIN_FAMILIES_PLUGIN` and `LEGACY_UI_PLUGIN`, which the apps reach through
+`coinFamiliesLint` and `legacyUiLint`.
 
 ## Conformance
 
@@ -332,5 +334,54 @@ lives in the app's `coin-families-exceptions.json` (`apps/ledger-live-desktop`, 
 the baseline no longer holds for the file (remove it from the entry when the leak is fixed), on a missing field and
 on a file listed twice. It does not ask a reason for each baseline entry: the rest of the baseline is debt, tracked
 by its tickets.
+
+### `legacy-ui`
+
+[`src/legacy-ui.js`](src/legacy-ui.js) stops the growth of the legacy UI stack in the apps: the
+pre-Lumen design systems (`@ledgerhq/native-ui`, `@ledgerhq/react-ui`), `styled-components` and the
+Desktop `Box` and `Text` components. Each app starts from a baseline of today's usage, so a count can
+only shrink. It has four rules:
+
+- **`legacy-ui/no-legacy-import`**: one report per `import` or `export ... from` declaration of a
+  legacy module, `import type` included.
+- **`legacy-ui/no-legacy-element`**: one report per JSX element whose name, or the root object of a
+  member name (`<Icons.Close />`), is a binding imported from a legacy module. The message names the
+  component.
+- **`legacy-ui/no-styled-definition`**: one report per `styled.tag`, `styled(X)` or chained
+  `.attrs(...)` definition, counted once, where `styled` is the default import of
+  `styled-components` or `styled-components/native`.
+- **`legacy-ui/no-banned-component`**: reports each import and JSX element of a component listed in
+  `bannedComponents`, imported from a legacy module. A component goes on the list once its count
+  reaches zero, so the rule never enters a baseline.
+
+An app turns them on with `legacyUiLint` from `@support/lint/legacy-ui` and spreads each key into
+its config, next to `coinFamilies`:
+
+```ts
+const legacyUi = legacyUiLint({
+  modules: ["@ledgerhq/native-ui", "styled-components"],
+  exemptPaths: [{ glob: "src/screens/Settings/**", reason: "newSettings" }],
+});
+// jsPlugins: [..., ...legacyUi.jsPlugins],
+// rules: { ..., ...legacyUi.rules },
+```
+
+Every rule reads the same options:
+
+- **`modules`**: a specifier matches an entry or a subpath of it (`styled-components` covers
+  `styled-components/native`). An entry starting with `~/` also matches a relative import that
+  resolves to the same path; the files of that entry may import each other.
+- **`exemptPaths`**: `{ glob, reason }` entries, globs relative to the app root (the nearest folder
+  with a `package.json`). No rule checks a matching file. `reason` names the feature flag whose
+  cleanup deletes the folder, or `dev-only`.
+- **`bannedComponents`**: component names, the imported name of a named import or the local name
+  of a default import. It ships empty.
+
+**Baseline.** Each app's `oxlint-suppressions.json` holds the `legacy-ui/*` counts next to the
+`coin-families/*` ones, written by `oxlint --suppress-all` from the app folder with the paths of
+`lint:ci`. The suppression behaviours described for `no-coin-specific-import` apply. A PR that
+removes legacy usage runs `oxlint --prune-suppressions` from the app folder, with the same paths, to
+lower the counts. The suppressions files hold the `coin-families/*` baseline too, so a change to
+them needs a review by Coin Integration.
 
 Run the rules' tests with `nx run @support/lint:test`.

@@ -14,8 +14,32 @@ import {
 } from "@support/lint/restricted-imports";
 import { SUFFIX_IMPORTS_PLUGIN } from "@support/lint/plugins";
 import { coinFamiliesLint } from "@support/lint/coin-families";
+import { legacyUiLint } from "@support/lint/legacy-ui";
 
 const coinFamilies = coinFamiliesLint({ familiesDir: "src/families", barrel: "forbidden" });
+
+const legacyUi = legacyUiLint({
+  modules: ["@ledgerhq/native-ui", "styled-components"],
+  exemptPaths: [
+    { glob: "src/screens/Settings/Debug/**", reason: "dev-only" },
+    { glob: "src/screens/Settings/Developer/**", reason: "dev-only" },
+    { glob: "src/screens/Settings/**", reason: "newSettings" },
+    { glob: "src/screens/ReceiveFunds/**", reason: "newReceiveFlow" },
+    { glob: "src/components/RootNavigator/ReceiveFundsNavigator.tsx", reason: "newReceiveFlow" },
+    { glob: "src/screens/SendFunds/**", reason: "newSendFlow" },
+    { glob: "src/families/celo/SendSelectRecipient.tsx", reason: "newSendFlow" },
+    { glob: "src/families/hedera/SendSelectRecipient.tsx", reason: "newSendFlow" },
+    { glob: "src/families/solana/SendRowsCustom.tsx", reason: "newSendFlow" },
+    { glob: "src/families/solana/SendRowsFee.tsx", reason: "newSendFlow" },
+    { glob: "src/families/vechain/SendRowsFee.tsx", reason: "newSendFlow" },
+    { glob: "src/families/aleo/Send/QuickAmountSelector.tsx", reason: "newSendFlow" },
+    { glob: "src/screens/Account/**", reason: "accountDetail" },
+    { glob: "src/screens/Discover/**", reason: "web3hub" },
+    { glob: "src/screens/Platform/v2/Catalog/**", reason: "web3hub" },
+    { glob: "src/screens/Platform/Catalog/**", reason: "web3hub" },
+    { glob: "src/context/AuthPass/**", reason: "lwmPasswordRevamp" },
+  ],
+});
 
 const MVVM_ALIAS = {
   group: ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
@@ -71,7 +95,7 @@ export default defineConfig({
   globals: { __DEV__: "readonly", __REDUX_DEVTOOLS_EXTENSION__: "readonly" },
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest", "jsx-a11y"],
-  jsPlugins: [SUFFIX_IMPORTS_PLUGIN, ...coinFamilies.jsPlugins],
+  jsPlugins: [SUFFIX_IMPORTS_PLUGIN, ...coinFamilies.jsPlugins, ...legacyUi.jsPlugins],
   ignorePatterns: [
     "*.min.js",
     "node_modules",
@@ -108,6 +132,7 @@ export default defineConfig({
     "import/no-duplicates": "error",
     "suffix-imports/no-platform-suffix": "error",
     ...coinFamilies.rules,
+    ...legacyUi.rules,
     "import/no-named-as-default": "off",
     "typescript/no-explicit-any": "error",
     "typescript/no-non-null-assertion": "off",
