@@ -70,7 +70,7 @@ function setupSeededFunnel(options: SeededFunnelOptions): void {
   afterAll(async () => {
     if (!session) return;
     try {
-      await disposeMockServerSession(session.baseUrl, session.token);
+      await disposeMockServerSession(session);
     } catch {
       // The session expires on its own. A failed dispose must not hide the spec result.
     }

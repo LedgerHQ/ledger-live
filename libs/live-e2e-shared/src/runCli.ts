@@ -110,7 +110,10 @@ function parseGetAddressCliOutput(output: string): GetAddressResult {
 
 const CLI_ERROR_LABEL = "🧾 CLI Error :";
 
-function parseCliFlag(command: string, flag: string): string | undefined {
+type CliFlagOptions = { command: string; flag: string };
+
+function parseCliFlag(options: CliFlagOptions): string | undefined {
+  const { command, flag } = options;
   const parts = command.split("+");
   const idx = parts.findIndex(p => p === `--${flag}`);
   return idx !== -1 && idx + 1 < parts.length ? parts[idx + 1] : undefined;
@@ -169,8 +172,8 @@ export function runCliCommand(command: string, signal?: AbortSignal): Promise<st
       if (code === 0) {
         resolve(output);
       } else {
-        const currency = parseCliFlag(command, "currency");
-        const index = parseCliFlag(command, "index");
+        const currency = parseCliFlag({ command, flag: "currency" });
+        const index = parseCliFlag({ command, flag: "index" });
         const indexText = index && index !== "undefined" ? index : "N/A";
 
         const errorDetails = [
@@ -192,13 +195,15 @@ export function runCliCommand(command: string, signal?: AbortSignal): Promise<st
   });
 }
 
+type CliRetryOptions = { retries?: number; delayMs?: number };
+
 export async function runCliCommandWithRetry(
   command: string,
-  retries: number = 3,
-  delayMs: number = 3000,
+  options: CliRetryOptions = {},
 ): Promise<string> {
+  const { retries = 3, delayMs = 3000 } = options;
   let lastError: Error | null = null;
-  const currency = parseCliFlag(command, "currency");
+  const currency = parseCliFlag({ command, flag: "currency" });
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {

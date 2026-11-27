@@ -28,7 +28,7 @@ export const delegateOsmosis = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getDelegateEvents(delegatingAccount);
-      expectSpeculosEventsContain(toUosmo(delegatingAccount.amount), events);
+      expectSpeculosEventsContain({ substring: toUosmo(delegatingAccount.amount), events });
 
       if (isTouchDevice()) {
         await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
@@ -45,12 +45,12 @@ export const sendOsmosis = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getSendEvents(tx);
-      expectSpeculosEventsContain(toUosmo(tx.amount), events);
+      expectSpeculosEventsContain({ substring: toUosmo(tx.amount), events });
 
       if (!tx.accountToCredit.address) {
         throw new Error("Recipient address is not set");
       }
-      expectSpeculosEventsContain(tx.accountToCredit.address, events);
+      expectSpeculosEventsContain({ substring: tx.accountToCredit.address, events });
       expectMemoTagInEvents(tx, events);
 
       if (isTouchDevice()) {

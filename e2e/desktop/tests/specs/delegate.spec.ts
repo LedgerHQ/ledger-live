@@ -91,46 +91,54 @@ type DelegateScenario = {
 
 const delegateScenarios: DelegateScenario[] = [
   {
-    delegate: new Delegate(Account.ATOM_1, "0.001", "Ledger"),
+    delegate: new Delegate({ account: Account.ATOM_1, amount: "0.001", provider: "Ledger" }),
     xrayTicket: "B2CQA-2740",
     transactionType: "Delegated",
     providerStep: "preselected",
   },
   {
-    delegate: new Delegate(Account.NEAR_1, "0.01", "ledgerbyfigment.poolv1.near"),
+    delegate: new Delegate({
+      account: Account.NEAR_1,
+      amount: "0.01",
+      provider: "ledgerbyfigment.poolv1.near",
+    }),
     xrayTicket: "B2CQA-2741",
     transactionType: "Staked",
     providerStep: "preselected",
   },
   {
-    delegate: new Delegate(Account.INJ_1, "0.0000001", "Ledger by Bitwise"),
+    delegate: new Delegate({
+      account: Account.INJ_1,
+      amount: "0.0000001",
+      provider: "Ledger by Bitwise",
+    }),
     xrayTicket: "B2CQA-3021",
     transactionType: "Delegated",
     providerStep: "preselected",
     requiresExpertMode: true,
   },
   {
-    delegate: new Delegate(Account.OSMO_1, "0.0001", "polkachu.com"),
+    delegate: new Delegate({ account: Account.OSMO_1, amount: "0.0001", provider: "polkachu.com" }),
     xrayTicket: "B2CQA-3022",
     transactionType: "Delegated",
     providerStep: "search",
   },
   {
-    delegate: new Delegate(Account.BABY_1, "0.001", "Figment"),
+    delegate: new Delegate({ account: Account.BABY_1, amount: "0.001", provider: "Figment" }),
     xrayTicket: "B2CQA-6679",
     transactionType: "Delegated",
     providerStep: "search",
     featureFlags: FF_BABYLON_STAKING_ENABLED,
   },
   {
-    delegate: new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG"),
+    delegate: new Delegate({ account: Account.SUI_1, amount: "1", provider: "Ledger by P2P.ORG" }),
     xrayTicket: "B2CQA-6115",
     transactionType: "Delegated",
     providerStep: "preselected",
     supportsLNS: false,
   },
   {
-    delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Figment"),
+    delegate: new Delegate({ account: Account.MULTIVERS_X_1, amount: "1", provider: "Figment" }),
     xrayTicket: "B2CQA-3020",
     transactionType: "Delegated",
     providerStep: "search",
@@ -139,7 +147,7 @@ const delegateScenarios: DelegateScenario[] = [
     disableBroadcast: true,
   },
   {
-    delegate: new Delegate(Account.SOL_2, "1", "Ledger by Figment"),
+    delegate: new Delegate({ account: Account.SOL_2, amount: "1", provider: "Ledger by Figment" }),
     xrayTicket: "B2CQA-2742",
     transactionType: "Delegated",
     providerStep: "pickByName",
@@ -220,7 +228,11 @@ for (const scenario of delegateScenarios) {
 }
 
 test.describe("Delegate", delegateFolder(Account.ADA_1.currency), () => {
-  const delegation = new Delegate(Account.ADA_1, "0.01", "Ledger by Figment 3");
+  const delegation = new Delegate({
+    account: Account.ADA_1,
+    amount: "0.01",
+    provider: "Ledger by Figment 3",
+  });
   const { currency } = delegation.account;
   useDelegateFixtures(currency, {
     cliCommands: [liveDataCommand(delegation.account)],
@@ -256,7 +268,11 @@ const seiLock = exclusiveLockFor({ broadcastAccounts: [Account.SEI_EVM_1] });
 const seiDetails = { lock: seiLock.names, ...delegateFolder(Account.SEI_EVM_1.currency) };
 
 test.describe("Delegate", seiDetails, () => {
-  const seiDelegation = new Delegate(Account.SEI_EVM_1, "1", "first-available");
+  const seiDelegation = new Delegate({
+    account: Account.SEI_EVM_1,
+    amount: "1",
+    provider: "first-available",
+  });
   const { currency } = seiDelegation.account;
   test.use(seiLock.fixtures);
   useDelegateFixtures(currency, {
@@ -314,7 +330,7 @@ test.describe("Delegate", seiDetails, () => {
   );
 });
 
-const celoStaking = new Delegate(Account.CELO_1, "0.001", "N/A");
+const celoStaking = new Delegate({ account: Account.CELO_1, amount: "0.001", provider: "N/A" });
 const celoLock = exclusiveLockFor({ broadcastAccounts: [celoStaking.account] });
 
 // Lock and Vote spend from the same account, and the Celo bridge reads its nonce from the latest
@@ -404,38 +420,50 @@ type ValidatorSelectionScenario = {
 
 const validatorSelectionScenarios: ValidatorSelectionScenario[] = [
   {
-    delegate: new Delegate(Account.ATOM_2, "0.001", "Ledger"),
+    delegate: new Delegate({ account: Account.ATOM_2, amount: "0.001", provider: "Ledger" }),
     xrayTicket: "B2CQA-2731",
     selection: "preselected",
   },
   {
-    delegate: new Delegate(Account.SOL_3, "0.001", "Ledger by Figment"),
+    delegate: new Delegate({
+      account: Account.SOL_3,
+      amount: "0.001",
+      provider: "Ledger by Figment",
+    }),
     xrayTicket: "B2CQA-2764",
     selection: "listedByName",
   },
   {
-    delegate: new Delegate(Account.NEAR_2, "0.01", "ledgerbyfigment.poolv1.near"),
+    delegate: new Delegate({
+      account: Account.NEAR_2,
+      amount: "0.01",
+      provider: "ledgerbyfigment.poolv1.near",
+    }),
     xrayTicket: "B2CQA-2732, B2CQA-2765",
     selection: "preselected",
   },
   {
-    delegate: new Delegate(Account.ADA_2, "0.01", "Ledger by Figment"),
+    delegate: new Delegate({
+      account: Account.ADA_2,
+      amount: "0.01",
+      provider: "Ledger by Figment",
+    }),
     xrayTicket: "B2CQA-2766",
     selection: "asyncPreselected",
   },
   {
-    delegate: new Delegate(Account.MULTIVERS_X_2, "1", "1"),
+    delegate: new Delegate({ account: Account.MULTIVERS_X_2, amount: "1", provider: "1" }),
     xrayTicket: "B2CQA-2767",
     selection: "listedByRow",
     supportsLNS: false,
   },
   {
-    delegate: new Delegate(Account.OSMO_2, "1", "polkachu.com"),
+    delegate: new Delegate({ account: Account.OSMO_2, amount: "1", provider: "polkachu.com" }),
     xrayTicket: "B2CQA-2768",
     selection: "searchable",
   },
   {
-    delegate: new Delegate(Account.BABY_2, "1", "Figment"),
+    delegate: new Delegate({ account: Account.BABY_2, amount: "1", provider: "Figment" }),
     xrayTicket: "B2CQA-6678",
     selection: "searchable",
     featureFlags: FF_BABYLON_STAKING_ENABLED,
@@ -520,7 +548,11 @@ for (const scenario of validatorSelectionScenarios) {
 }
 
 test.describe("Delegate from market", delegateFolder(Account.ATOM_1.currency), () => {
-  const delegation = new Delegate(Account.ATOM_1, "0.001", "Ledger by Bitwise");
+  const delegation = new Delegate({
+    account: Account.ATOM_1,
+    amount: "0.001",
+    provider: "Ledger by Bitwise",
+  });
   const { currency } = delegation.account;
   useDelegateFixtures(currency, { cliCommands: [liveDataCommand(delegation.account)] });
 
@@ -553,11 +585,11 @@ test.describe("Delegate from market", delegateFolder(Account.ATOM_1.currency), (
 
 const stakingLiveAppScenarios = [
   {
-    delegate: new Delegate(Account.TRX_1, "1", "yield.xyz"),
+    delegate: new Delegate({ account: Account.TRX_1, amount: "1", provider: "yield.xyz" }),
     xrayTicket: "B2CQA-3025",
   },
   {
-    delegate: new Delegate(Account.DOT_1, "1", "yield.xyz"),
+    delegate: new Delegate({ account: Account.DOT_1, amount: "1", provider: "yield.xyz" }),
     xrayTicket: "B2CQA-3026",
   },
 ];
@@ -614,7 +646,12 @@ test.describe.skip("Delegate - MINA", minaDelegateDetails, () => {
       const { account } = await pickMinaAccountToDelegate();
       const validator = await pickMinaValidator();
       // Mina delegates the whole balance, so the flow carries no amount.
-      const delegation = new Delegate(account, "N/A", validator.name, validator.address);
+      const delegation = new Delegate({
+        account,
+        amount: "N/A",
+        provider: validator.name,
+        validatorAddress: validator.address,
+      });
 
       await openAccount(app, account);
 
@@ -669,7 +706,12 @@ test.describe.skip("Redelegate - MINA", minaRedelegateDetails, () => {
     async ({ app }) => {
       const { account, validatorAddress } = await pickMinaRedelegation();
       const validator = await pickMinaValidator(validatorAddress);
-      const delegation = new Delegate(account, "N/A", validator.name, validator.address);
+      const delegation = new Delegate({
+        account,
+        amount: "N/A",
+        provider: validator.name,
+        validatorAddress: validator.address,
+      });
 
       await openAccount(app, account);
 

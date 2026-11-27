@@ -218,7 +218,12 @@ export function runMinaDelegateTest(options: TestMetaOptions) {
       async () => {
         const { account } = await pickMinaAccountToDelegate();
         const validator = await pickMinaValidator();
-        const delegation = new Delegate(account, "N/A", validator.name, validator.address);
+        const delegation = new Delegate({
+          account,
+          amount: "N/A",
+          provider: validator.name,
+          validatorAddress: validator.address,
+        });
         const amountWithCode = delegation.amount + " " + Currency.MINA.ticker;
         const currencyId = Currency.MINA.id;
 
@@ -254,7 +259,12 @@ export function runMinaRedelegateTest(options: TestMetaOptions) {
       async () => {
         const { account, validatorAddress } = await pickMinaRedelegation();
         const validator = await pickMinaValidator(validatorAddress);
-        const delegation = new Delegate(account, "N/A", validator.name, validator.address);
+        const delegation = new Delegate({
+          account,
+          amount: "N/A",
+          provider: validator.name,
+          validatorAddress: validator.address,
+        });
         const currencyId = Currency.MINA.id;
 
         await app.portfolio.openCryptoAddresses();
@@ -292,7 +302,12 @@ export function runMinaUndelegateTest(options: TestMetaOptions) {
         // Undelegating is a delegation to the account itself, so the account's own address is the
         // target the device renders and the speculos helper asserts against.
         const { account, address } = await pickMinaAccountToUndelegate();
-        const delegation = new Delegate(account, "N/A", "N/A", address);
+        const delegation = new Delegate({
+          account,
+          amount: "N/A",
+          provider: "N/A",
+          validatorAddress: address,
+        });
 
         await app.portfolio.openCryptoAddresses();
         await app.common.goToAccountByName(account.accountName);

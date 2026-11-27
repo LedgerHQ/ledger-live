@@ -69,7 +69,11 @@ test.describe("Swap - token approval", { lock: approvalLock.names }, () => {
       ],
     },
     async ({ app }) => {
-      const provider = await pickRotatingProvider(eligibleProviders, fromAccount, toAccount);
+      const provider = await pickRotatingProvider({
+        eligibleProviders,
+        accountFrom: fromAccount,
+        accountTo: toAccount,
+      });
       test.setTimeout(APPROVAL_TEST_TIMEOUT_MS);
       await app.swap.logSelectedProvider(provider.uiName);
       await app.speculos.enableBlindSigningOnNanoS();

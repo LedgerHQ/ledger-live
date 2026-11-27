@@ -79,11 +79,11 @@ export async function ensureTokenApproval(options: TokenApprovalOptions) {
   // A short allowance is revoked first, as USDT rejects a change from one non-zero allowance to another.
   await revokeTokenApproval(fromAccount, provider);
   await withTemporarySpeculos(fromAccount.currency.speculosApp.name, async () => {
-    const result = await approveTokenCommand(
-      fromAccount,
-      provider.contractAddress,
-      new BigNumber(minAmount).times(12).div(10).toFixed(),
-    );
+    const result = await approveTokenCommand({
+      account: fromAccount,
+      spender: provider.contractAddress,
+      approveAmount: new BigNumber(minAmount).times(12).div(10).toFixed(),
+    });
     allure.descriptionHtml(
       `<p>Token approval result for ${escapeHtml(provider.uiName)}:</p><pre>${escapeHtml(result)}</pre>`,
     );
@@ -94,11 +94,11 @@ export async function isTokenApprovalExpected(options: TokenApprovalOptions): Pr
   const { fromAccount, provider, minAmount } = options;
   if (!needsTokenAllowance(fromAccount, provider)) return false;
 
-  const sufficientAllowance = await isTokenAllowanceSufficientCommand(
-    fromAccount,
-    provider.contractAddress,
+  const sufficientAllowance = await isTokenAllowanceSufficientCommand({
+    account: fromAccount,
+    spenderAddress: provider.contractAddress,
     minAmount,
-  );
+  });
   return !sufficientAllowance;
 }
 

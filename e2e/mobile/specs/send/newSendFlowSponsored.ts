@@ -164,11 +164,11 @@ export function runNewSendFlowSponsoredTest(options: SponsoredTestOptions) {
       await app.newSend.waitForSignature();
       await app.speculos.signSendTransaction(transaction);
       await app.newSend.waitForSuccessConfirmation();
-      await expectUsdtTransferBroadcastToFake(
+      await expectUsdtTransferBroadcastToFake({
         fake,
-        transaction.accountToCredit.address,
-        transaction.amount,
-      );
+        recipient: transaction.accountToCredit.address,
+        amount: transaction.amount,
+      });
     },
   });
 }
