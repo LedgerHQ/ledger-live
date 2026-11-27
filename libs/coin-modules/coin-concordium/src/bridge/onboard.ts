@@ -23,6 +23,7 @@ import {
   withConfig,
 } from "../types";
 import { submitCredential } from "../network/proxyClient";
+import { nonEmptyString } from "../tuning";
 
 /**
  * Wraps a promise with a 5-minute timeout that automatically cleans up when settled.
@@ -191,12 +192,11 @@ export const buildPairWalletConnect =
           }
 
           const config = await context.config(currencyId);
-          const { relayUrl, projectId } = config.walletConnect ?? {};
-          if (!relayUrl || !projectId) {
-            throw new Error(
-              `concordium: no walletConnect.relayUrl or projectId in the coin config of ${currencyId}`,
-            );
-          }
+          const relayUrl = nonEmptyString("walletConnect.relayUrl", config.walletConnect?.relayUrl);
+          const projectId = nonEmptyString(
+            "walletConnect.projectId",
+            config.walletConnect?.projectId,
+          );
           const network = config.networkType;
           const chainId = CONCORDIUM_CHAIN_IDS[network];
 

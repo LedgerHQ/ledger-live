@@ -1,4 +1,10 @@
-import { boolean, ConcordiumInvalidConfigError, nonNegativeInt, positiveInt } from "./tuning";
+import {
+  boolean,
+  ConcordiumInvalidConfigError,
+  nonEmptyString,
+  nonNegativeInt,
+  positiveInt,
+} from "./tuning";
 
 describe("positiveInt", () => {
   it("takes an integer of at least 1", () => {
@@ -21,6 +27,18 @@ describe("nonNegativeInt", () => {
 
   it.each([undefined, -1, 0.5])("rejects %p", value => {
     expect(() => nonNegativeInt("gateway.retries", value)).toThrow(ConcordiumInvalidConfigError);
+  });
+});
+
+describe("nonEmptyString", () => {
+  it("takes a non-empty string", () => {
+    expect(nonEmptyString("walletConnect.projectId", "abc")).toBe("abc");
+  });
+
+  it.each(["", undefined, null, 42])("rejects %p", value => {
+    expect(() => nonEmptyString("walletConnect.projectId", value)).toThrow(
+      ConcordiumInvalidConfigError,
+    );
   });
 });
 

@@ -15,6 +15,13 @@ export const positiveInt = (field: string, value: unknown): number => integer(fi
 
 export const nonNegativeInt = (field: string, value: unknown): number => integer(field, value, 0);
 
+export function nonEmptyString(field: string, value: unknown): string {
+  if (typeof value === "string" && value !== "") return value;
+  throw new ConcordiumInvalidConfigError(
+    `concordium: coin config ${field} must be a non-empty string, got ${String(value)}`,
+  );
+}
+
 /** For a feature switch: a remote `"false"` or `1` must not read as on. */
 export function boolean(field: string, value: unknown): boolean {
   if (typeof value === "boolean") return value;

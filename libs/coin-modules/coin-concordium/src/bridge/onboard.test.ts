@@ -13,6 +13,7 @@ import {
   CRED_ID,
 } from "../test/fixtures";
 import { buildOnboardAccount, buildPairWalletConnect } from "./onboard";
+import { ConcordiumInvalidConfigError } from "../tuning";
 import {
   createFixtureSigner,
   createFixtureSignerContext,
@@ -352,20 +353,28 @@ describe("onboard", () => {
     });
 
     it.each([
-      ["absent", undefined],
-      ["empty", { relayUrl: "" }],
-    ])("should fail before pairing when the relay URL is %s", async (_case, walletConnect) => {
-      const config = { ...createFixtureConfig(), walletConnect } as never;
-      const pairWalletConnect = buildPairWalletConnect({
-        config: async () => config,
-        logger: () => {},
-      });
+      ["relayUrl", "absent", undefined],
+      ["relayUrl", "empty", { relayUrl: "", projectId: "p" }],
+      ["projectId", "absent", { relayUrl: "wss://r" }],
+      ["projectId", "empty", { relayUrl: "wss://r", projectId: "" }],
+      ["projectId", "not a string", { relayUrl: "wss://r", projectId: 42 }],
+    ])(
+      "should fail before pairing when walletConnect.%s is %s",
+      async (field, _case, walletConnect) => {
+        const config = { ...createFixtureConfig(), walletConnect } as never;
+        const pairWalletConnect = buildPairWalletConnect({
+          config: async () => config,
+          logger: () => {},
+        });
 
-      await expect(
-        firstValueFrom(pairWalletConnect("concordium_testnet", "test-device").pipe(toArray())),
-      ).rejects.toThrow("no walletConnect.relayUrl");
-      expect(mockInitiatePairing).not.toHaveBeenCalled();
-    });
+        const result = firstValueFrom(
+          pairWalletConnect("concordium_testnet", "test-device").pipe(toArray()),
+        );
+        await expect(result).rejects.toThrow(ConcordiumInvalidConfigError);
+        await expect(result).rejects.toThrow(`walletConnect.${field}`);
+        expect(mockInitiatePairing).not.toHaveBeenCalled();
+      },
+    );
 
     it("should throw error when WalletConnect is not available", async () => {
       // GIVEN
