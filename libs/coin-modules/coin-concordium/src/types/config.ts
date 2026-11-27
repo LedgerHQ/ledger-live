@@ -72,4 +72,4 @@ export type ConcordiumBridgeContext = Context<ConcordiumBridgeConfig>;
 export const withConfig = <C extends ConcordiumCoinConfig>(
   context: Context<C>,
   config: C,
-): Context<C> => ({ ...context, config: async () => config });
+): Context<C> => ({ ...context, config: () => Promise.resolve(config) });

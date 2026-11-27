@@ -62,7 +62,7 @@ function createProxyClient(config: ConcordiumCoinConfig): ProxyClient {
 export async function withClient<T>(
   context: ConcordiumContext,
   execute: (client: ProxyClient) => Promise<T>,
-  { retries, signal }: { retries?: number; signal?: AbortSignal | undefined } = {},
+  { retries, signal }: { retries?: number; signal?: AbortSignal } = {},
 ): Promise<T> {
   const config = await context.config();
   const client = createProxyClient(config);
@@ -153,7 +153,7 @@ export function getAccountsByPublicKey(
         method: "GET",
         url: `/v0/keyAccounts/${publicKey}`,
       }),
-    { signal },
+    signal ? { signal } : {},
   );
 }
 
