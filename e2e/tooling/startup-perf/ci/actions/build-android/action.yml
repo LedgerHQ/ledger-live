@@ -23,18 +23,6 @@ inputs:
   artifactory-maven-url:
     description: "vars.ARTIFACTORY_MAVEN_URL"
     required: true
-  card-baanx-api-url:
-    description: "secrets.CARD_BAANX_API_URL"
-    required: true
-  card-baanx-client-key:
-    description: "secrets.CARD_BAANX_CLIENT_KEY"
-    required: true
-  card-baanx-hosted-ui:
-    description: "secrets.CARD_BAANX_HOSTED_UI"
-    required: true
-  card-oauth-redirect-uri:
-    description: "secrets.CARD_OAUTH_REDIRECT_URI"
-    required: true
 runs:
   using: composite
   steps:
@@ -86,10 +74,6 @@ runs:
       shell: bash
       env:
         E2E_ANDROID_ABI: x86_64
-        CARD_BAANX_API_URL: ${{ inputs.card-baanx-api-url }}
-        CARD_BAANX_CLIENT_KEY: ${{ inputs.card-baanx-client-key }}
-        CARD_BAANX_HOSTED_UI: ${{ inputs.card-baanx-hosted-ui }}
-        CARD_OAUTH_REDIRECT_URI: ${{ inputs.card-oauth-redirect-uri }}
       run: pnpm mobile e2e:build -c android.emu.prerelease
 
     - name: Collect the APK
