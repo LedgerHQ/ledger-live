@@ -666,10 +666,10 @@ export function runSwapDiscreetModeTest(options: RunSwapDiscreetModeTestOptions)
     tags.forEach(tag => $Tag(tag));
 
     it("Swap amount is hidden in the asset drawer in discreet mode", async () => {
-      const tickers = accounts.map(account => account.currency.ticker);
+      const currencies = accounts.map(account => account.currency);
       await app.swapLiveApp.tapFromCurrency();
       await app.modularDrawer.checkSelectAssetPage();
-      await app.modularDrawer.checkAssetAmountsAreDiscreet(tickers);
+      await app.modularDrawer.checkAssetAmountsAreDiscreet(currencies);
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));

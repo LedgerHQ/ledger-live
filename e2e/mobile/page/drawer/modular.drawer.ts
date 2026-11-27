@@ -94,14 +94,18 @@ export default class ModularDrawer {
     await assetItem.tap();
   }
 
-  @Step("Check asset {{{0}}} amount is masked in discreet mode")
-  private async checkAssetAmountIsDiscreet(ticker: string): Promise<void> {
+  @Step("Check asset {{{0.ticker}}} {{{0.aggregatedName}}} amount is masked in discreet mode")
+  private async checkAssetAmountIsDiscreet(currency: Currency): Promise<void> {
+    const { ticker, aggregatedName } = currency;
+    const assetItem = aggregatedName
+      ? this.assetItemByName({ ticker, assetName: aggregatedName })
+      : this.assetItem(ticker);
     await this.performSearchByTicker(ticker);
-    await this.assetItem(ticker).waitVisible();
-    await this.assetItem(ticker).expectVisible();
+    await assetItem.waitVisible();
+    await assetItem.expectVisible();
 
     // The pattern can match several rows: check both masks on the first one.
-    const assetItemId = await this.assetItem(ticker).getIdentifier();
+    const assetItemId = await assetItem.getIdentifier();
     await this.assetItemWithText(assetItemId, /\$\*\*\*/).expectVisible();
     await this.assetItemWithText(
       assetItemId,
@@ -109,10 +113,10 @@ export default class ModularDrawer {
     ).expectVisible();
   }
 
-  @Step("Check listed asset amounts are masked in discreet mode {{{0}}}")
-  async checkAssetAmountsAreDiscreet(tickers: string[]): Promise<void> {
-    for (const ticker of tickers) {
-      await this.checkAssetAmountIsDiscreet(ticker);
+  @Step("Check listed asset amounts are masked in discreet mode")
+  async checkAssetAmountsAreDiscreet(currencies: Currency[]): Promise<void> {
+    for (const currency of currencies) {
+      await this.checkAssetAmountIsDiscreet(currency);
     }
   }
 
