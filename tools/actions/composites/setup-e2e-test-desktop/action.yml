@@ -8,9 +8,6 @@ inputs:
     description: "whether to use the ':testing' suffix for the build command"
     required: false
     default: "testing"
-  install_node_gyp:
-    description: "install node-gyp"
-    required: false
   step_summary:
     description: "Let Nx write its run report to the job summary ('false' writes it to $RUNNER_TEMP/nx-run-report.md instead)"
     required: false
@@ -19,11 +16,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install node-gyp globally
-      if: ${{ inputs.install_node_gyp }}
-      run: |
-        pnpm add -g node-gyp@3.8.0
-      shell: bash
     - name: Install App dependencies
       env:
         LANG: en_US.UTF-8

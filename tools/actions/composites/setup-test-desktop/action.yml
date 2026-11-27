@@ -11,9 +11,6 @@ inputs:
     description: "whether to use the ':testing' suffix for the build command"
     required: false
     default: "testing"
-  install_node_gyp:
-    description: "install node-gyp"
-    required: false
   install_playwright:
     description: "install playwright"
     required: false
@@ -21,20 +18,10 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install system dependencies (Linux)
-      if: runner.os == 'Linux'
-      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
-      with:
-        packages: libudev-dev build-essential
     - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
       if: ${{ !inputs.skip_ruby }}
       with:
         ruby-version: 3.3.0
-    - name: Install node-gyp globally
-      if: ${{ inputs.install_node_gyp }}
-      run: |
-        pnpm add -g node-gyp@3.8.0
-      shell: bash
     - name: Install dependencies
       env:
         LANG: en_US.UTF-8

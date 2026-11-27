@@ -52,12 +52,9 @@ As an alternative, you can install [Webstorm](https://www.jetbrains.com/fr-fr/we
 
 ### Ubuntu/Debian requirements
 
-First, you need to install these packages :
+First, you need to install ruby and ruby-dev to install Bundler:
 
-- libudev and libusb to communicate with the devices on your system, in our case the Nano.
--  ruby and ruby-dev to install Bundler.
-
-`sudo  apt-get  update  &&  sudo  apt-get  install  libudev-dev  libusb-1.0-0-dev ruby-dev ruby`
+`sudo  apt-get  update  &&  sudo  apt-get  install  ruby-dev ruby`
 
 Then you need to install [bundler](https://bundler.io/), that will be used to install gem packages
 
