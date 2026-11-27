@@ -165,3 +165,28 @@ test("signTransactions aborts the device signing when the approval fails", async
   );
   assert.equal(device.signal?.aborted, true);
 });
+
+test("signTransactions stops the approval before failing on a signing error", async () => {
+  let approvalStopped = false;
+  const device = fakeDevice({
+    signActions: async () => {
+      throw new Error("Device locked");
+    },
+    approveReview: signal =>
+      new Promise((_resolve, reject) =>
+        signal.addEventListener("abort", () => {
+          approvalStopped = true;
+          reject(new Error("Approval stopped"));
+        }),
+      ),
+  });
+  await assert.rejects(
+    signTransactions(device, {
+      address: wallet.address,
+      signedMetadata: "0x01",
+      transactions: txs,
+    }),
+    /Device locked/,
+  );
+  assert.equal(approvalStopped, true);
+});

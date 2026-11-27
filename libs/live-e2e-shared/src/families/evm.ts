@@ -8,6 +8,7 @@ import {
   waitFor,
   waitUntilScreenLeavesIdle,
   SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS,
+  type GiveUpCheck,
 } from "../speculos";
 import { getSpeculosModel, isTouchDevice } from "../speculosAppVersion";
 import {
@@ -205,27 +206,27 @@ export async function approveContractTransaction() {
   return approveContractTransactionButtonDevice();
 }
 
-async function signMessageTouchDevices(reviewLabel: DeviceLabels) {
-  await waitFor(reviewLabel);
+async function signMessageTouchDevices(reviewLabel: DeviceLabels, giveUpWhen?: GiveUpCheck) {
+  await waitFor(reviewLabel, undefined, { giveUpWhen });
   await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
   await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
 }
 
 const signMessageButtonDevice = withDeviceController(
   ({ getButtonsController }) =>
-    async (reviewLabel: DeviceLabels) => {
-      await waitFor(reviewLabel);
+    async (reviewLabel: DeviceLabels, giveUpWhen?: GiveUpCheck) => {
+      await waitFor(reviewLabel, undefined, { giveUpWhen });
       await pressUntilTextFound(DeviceLabels.SIGN_TYPED_MESSAGE);
       await getButtonsController().both();
     },
 );
 
 /** Signs a message whose review opens on `reviewLabel`. */
-async function signMessage(reviewLabel: DeviceLabels) {
+async function signMessage(reviewLabel: DeviceLabels, giveUpWhen?: GiveUpCheck) {
   if (isTouchDevice()) {
-    return signMessageTouchDevices(reviewLabel);
+    return signMessageTouchDevices(reviewLabel, giveUpWhen);
   }
-  return signMessageButtonDevice(reviewLabel);
+  return signMessageButtonDevice(reviewLabel, giveUpWhen);
 }
 
 export async function signTypedMessageTouchDevices() {
@@ -250,8 +251,8 @@ export const signTypedMessageNanoS = withDeviceController(
 );
 
 /** Hyperliquid reviews orders as messages, e.g. "Review message". */
-export async function signHyperliquidMessage() {
-  await signMessage(DeviceLabels.REVIEW_MESSAGE);
+export async function signHyperliquidMessage(giveUpWhen?: GiveUpCheck) {
+  await signMessage(DeviceLabels.REVIEW_MESSAGE, giveUpWhen);
 }
 
 export async function signTypedMessage() {

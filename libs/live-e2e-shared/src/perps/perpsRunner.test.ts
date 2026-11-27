@@ -19,7 +19,14 @@ function fakeApi({
   positions = [],
   orders = [],
   sticky = false,
-}: { positions?: PerpsPosition[]; orders?: PerpsOrder[]; sticky?: boolean } = {}) {
+  opens,
+}: {
+  positions?: PerpsPosition[];
+  orders?: PerpsOrder[];
+  sticky?: boolean;
+  /** Listed once an action completes, as after an open. */
+  opens?: PerpsPosition;
+} = {}) {
   const calls: Call[] = [];
   let open = [...positions];
   const api: PerpsRunnerApi = {
@@ -46,7 +53,8 @@ function fakeApi({
     },
     waitForAction: async (...args) => {
       calls.push({ method: "waitForAction", args });
-      if (!sticky) open = [];
+      if (opens) open = [opens];
+      else if (!sticky) open = [];
     },
   };
   return { api, calls };
@@ -157,5 +165,46 @@ test("closeMarkets fails when a position stays open", async () => {
 test("closeMarkets with no market touches nothing", async () => {
   const { api, calls } = fakeApi({ positions: [position] });
   await new PerpsRunner(api, signer, { flow: "sweep", address: ADDRESS }).closeMarkets([]);
+  assert.deepEqual(calls, []);
+});
+
+const openOrder = { marketId: XYZ_MARKET, side: "long", marginUsd: 5, leverage: 3 } as const;
+
+test("openPosition submits the open order and waits for the position", async () => {
+  const { api, calls } = fakeApi({ opens: position });
+  await new PerpsRunner(
+    api,
+    signer,
+    { flow: "sweep", address: ADDRESS },
+    FAST_POLLING,
+  ).openPosition(openOrder);
+  assert.deepEqual(methods(calls), [
+    "createAction",
+    "submitTransaction",
+    "waitForAction",
+    "getPositions",
+  ]);
+  assert.equal((calls[0].args[0] as { action: string }).action, "open");
+});
+
+test("openPosition fails when no position appears", async () => {
+  const { api } = fakeApi();
+  await assert.rejects(
+    new PerpsRunner(api, signer, { flow: "sweep", address: ADDRESS }, FAST_POLLING).openPosition(
+      openOrder,
+    ),
+    /No position opened on hyperliquid-xyz-xyz:gold-usdc/,
+  );
+});
+
+test("openPosition refuses a margin above the cap before signing", async () => {
+  const { api, calls } = fakeApi();
+  await assert.rejects(
+    new PerpsRunner(api, signer, { flow: "sweep", address: ADDRESS }).openPosition({
+      ...openOrder,
+      marginUsd: 50,
+    }),
+    RangeError,
+  );
   assert.deepEqual(calls, []);
 });

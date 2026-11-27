@@ -1,5 +1,5 @@
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
-import { closePerpsMarkets } from "@ledgerhq/live-e2e-shared/perps/perpsFlow";
+import { closePerpsMarkets, openPerpsPosition } from "@ledgerhq/live-e2e-shared/perps/perpsFlow";
 import { PerpsApi } from "@ledgerhq/live-e2e-shared/perps/perpsApi";
 import type { SpeculosDevice } from "@ledgerhq/live-e2e-shared/speculos";
 import type { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -21,53 +21,31 @@ export async function openPerpsFromPortfolio(app: Application) {
   await app.perps.expectFundedAccountBalance();
 }
 
-export async function openPerpsPosition(
-  app: Application,
-  {
-    market,
-    side,
-    positions,
-    relaunchSpeculos,
-    marginUsd = ORDER_MARGIN_USD,
-    leverage = ORDER_LEVERAGE,
-  }: {
-    market: PerpsMarketGroup;
-    side: PerpsOrderSide;
-    positions: ProviderPosition[];
-    relaunchSpeculos: RelaunchSpeculos;
-    marginUsd?: number;
-    leverage?: number;
-  },
-) {
-  await app.perpsOrder.openFirstMarketWithoutPosition(market, positions);
-  // The order form opens on Long.
-  if (side === "short") await app.perpsOrder.selectSide(side);
-  await app.perpsOrder.setLeverage(leverage);
-  await app.perpsOrder.expectLeverage(leverage);
-  await app.perpsOrder.enterMargin(marginUsd);
-  await app.perpsOrder.setAutoClose(side);
-  await app.perpsOrder.expectAutoCloseSet();
-  await relaunchSpeculos(AppInfos.HYPERLIQUID.name);
-  await app.perpsOrder.clickOpenPosition();
-  await app.speculos.signHyperliquidMessage();
-  await app.perpsOrder.expectOrderPlaced();
-  await app.perpsOrder.clickContinueAfterOrderPlaced();
-  await app.perpsOrder.expectOpenedPosition({ side, leverage, marginUsd });
-}
-
-export async function closePerpsPosition(
-  app: Application,
-  { relaunchSpeculos }: { relaunchSpeculos: RelaunchSpeculos },
-) {
-  await relaunchSpeculos(AppInfos.HYPERLIQUID.name);
-  await app.perpsOrder.startClosePosition();
-  await app.speculos.signHyperliquidMessage();
-  await app.perpsOrder.expectCloseRecap();
-  await app.perpsOrder.clickTradeAgainOnCloseRecap();
-  await app.perpsOrder.expectPositionClosed();
-}
-
 type PerpsAccount = { account: Account; userdataFile: string };
+
+// Opens through the API, so a broken UI cannot block setup.
+export async function openPerpsPositionThroughDriver({
+  account,
+  userdataFile,
+  market,
+  side,
+  relaunchSpeculos,
+}: PerpsAccount & {
+  market: PerpsMarketGroup;
+  side: PerpsOrderSide;
+  relaunchSpeculos: RelaunchSpeculos;
+}): Promise<ProviderPosition> {
+  const address = await getSavedAccountAddress(userdataFile, account);
+  const device = await relaunchSpeculos(AppInfos.HYPERLIQUID.name);
+  const marketId = market.setupMarketId;
+  await openPerpsPosition({
+    address,
+    speculosApiPort: device.port,
+    derivationPath: account.accountPath,
+    order: { marketId, side, marginUsd: ORDER_MARGIN_USD, leverage: ORDER_LEVERAGE },
+  });
+  return { marketId, symbol: await new PerpsApi().getMarketSymbol(marketId) };
+}
 
 // Reads the Perps API, so a broken webview cannot block.
 export async function readPerpsPositions({

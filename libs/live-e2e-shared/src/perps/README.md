@@ -1,7 +1,8 @@
 # Perps driver (Perps API + Speculos)
 
 Headless driver for the Perps live app's API. It closes the positions and cancels the orders
-that the Perps e2e tests leave, without the Ledger Wallet UI.
+that the Perps e2e tests leave, and opens the position a close test starts from, without the
+Ledger Wallet UI.
 
 It signs with the **Hyperliquid** app on Speculos through the same call as Ledger Wallet
 (`signActionsOnSession` in `@ledgerhq/live-common/wallet-api/Perps/server`), so no extra key is
@@ -12,8 +13,9 @@ needed: the Speculos seed signs, as in the UI tests.
 
 ## Safety
 
-- Only `close` and `cancelOrder` are ever submitted. Any other action, `open` included, is
-  signed in a dry run only ([`perpsRequests.ts`](./perpsRequests.ts)).
+- `close` and `cancelOrder` are submitted. `open` is submitted only through
+  `PerpsRunner.openPosition`, with a margin of at most 10 USD; anywhere else, `open` included,
+  it is signed in a dry run only ([`perpsRequests.ts`](./perpsRequests.ts)). The CLI never opens.
 - Every signature must recover to `--address` before it is submitted
   ([`perpsSignature.ts`](./perpsSignature.ts)).
 - Signing refuses to start while the device already shows a review.
@@ -45,6 +47,10 @@ own Speculos, then waits until the API lists no position there. The desktop Perp
 from `afterEach` through `closePerpsPositionsOpenedByTest`
 ([`perpsPositionFlows.ts`](../../../../e2e/desktop/tests/utils/perpsPositionFlows.ts)), for the
 markets that had no position when the test started.
+
+`openPerpsPosition` opens one small isolated market order on the test's own Speculos, then waits
+until the API lists the position. The close spec calls it from `beforeEach` through
+`openPerpsPositionThroughDriver`, so only the close itself goes through the UI.
 
 ## Required environment
 

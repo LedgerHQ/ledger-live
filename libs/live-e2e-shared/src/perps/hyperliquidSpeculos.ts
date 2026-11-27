@@ -79,8 +79,8 @@ export class HyperliquidSpeculosSigner implements HyperliquidDevice {
     }
   }
 
-  approveReview(): Promise<void> {
-    return signHyperliquidMessage();
+  approveReview(signal: AbortSignal): Promise<void> {
+    return signHyperliquidMessage(() => (signal.aborted ? "the device signing failed" : null));
   }
 
   sign(request: SignRequest): Promise<string[]> {

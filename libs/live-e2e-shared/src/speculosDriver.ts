@@ -1,6 +1,6 @@
 import { getEnv, setEnv } from "@shared/env";
 import { Account } from "./enum/Account";
-import { specs, startSpeculos, type SpeculosDevice } from "./speculos";
+import { specs, startSpeculos, stopSpeculos, type SpeculosDevice } from "./speculos";
 import { waitForSpeculosReady } from "./speculosCI";
 
 export type DriverAccount = { path: string; specKey: string };
@@ -47,8 +47,16 @@ export async function startDriverSpeculos({
   if (!spec) throw new Error(`No Speculos spec for "${specKey}"`);
   const device = await startSpeculos(name, spec, { suite });
   if (!device) throw new Error("Speculos not started");
-  // The readiness poll publishes SPECULOS_ADDRESS for a remote device.
-  if (process.env.REMOTE_SPECULOS === "true") await waitForSpeculosReady(device.id);
+  if (process.env.REMOTE_SPECULOS === "true") {
+    try {
+      // The readiness poll publishes SPECULOS_ADDRESS for a remote device.
+      await waitForSpeculosReady(device.id);
+    } catch (error) {
+      // The caller never gets this device, so free its Speculinho slot.
+      await stopSpeculos(device.id);
+      throw error;
+    }
+  }
   return device;
 }
 

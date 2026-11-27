@@ -9,11 +9,10 @@ import { getPerpsLiveAppStorage } from "tests/utils/perpsLiveAppStorage";
 import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 import { HIP3_MARKETS, type ProviderPosition } from "tests/utils/perpsMarkets";
 import {
-  closePerpsPosition,
   closePerpsLeftovers,
   closePerpsPositionsOpenedByTest,
-  openPerpsPosition,
   openPerpsFromPortfolio,
+  openPerpsPositionThroughDriver,
   readPerpsPositions,
   PERPS_REAL_BROADCAST_ENV,
 } from "tests/utils/perpsPositionFlows";
@@ -46,6 +45,7 @@ test.describe("Perps close position", { lock: lock.names }, () => {
 
   // Unset until read, so cleanup never closes foreign positions.
   let positionsAtStart: ProviderPosition[] | undefined;
+  let position: ProviderPosition;
 
   test.beforeEach(async ({ app, speculos, userdataFile }) => {
     positionsAtStart = undefined;
@@ -56,14 +56,16 @@ test.describe("Perps close position", { lock: lock.names }, () => {
       restoreApp: AppInfos.ETHEREUM.name,
       relaunchSpeculos: speculos.relaunch,
     });
-    await openPerpsFromPortfolio(app);
     positionsAtStart = await readPerpsPositions({ account, userdataFile });
-    await openPerpsPosition(app, {
+    position = await openPerpsPositionThroughDriver({
+      account,
+      userdataFile,
       market,
       side: "long",
-      positions: positionsAtStart,
       relaunchSpeculos: speculos.relaunch,
     });
+    await speculos.relaunch(AppInfos.ETHEREUM.name);
+    await openPerpsFromPortfolio(app);
   });
 
   // Closes the real position if the UI close fails.
@@ -85,7 +87,13 @@ test.describe("Perps close position", { lock: lock.names }, () => {
       annotation: { type: "TMS", description: xrayTicket },
     },
     async ({ app, speculos }) => {
-      await closePerpsPosition(app, { relaunchSpeculos: speculos.relaunch });
+      await app.perpsOrder.openPositionFromList(position.symbol);
+      await speculos.relaunch(AppInfos.HYPERLIQUID.name);
+      await app.perpsOrder.startClosePosition();
+      await app.speculos.signHyperliquidMessage();
+      await app.perpsOrder.expectCloseRecap();
+      await app.perpsOrder.clickTradeAgainOnCloseRecap();
+      await app.perpsOrder.expectPositionClosed();
     },
   );
 });

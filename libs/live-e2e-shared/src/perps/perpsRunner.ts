@@ -1,5 +1,12 @@
 import type { PerpsActionRequest, PerpsApi, PerpsPolling } from "./perpsApi";
-import { assertSubmittable, cancelRequests, closeRequests, providerOf } from "./perpsRequests";
+import {
+  assertSubmittable,
+  cancelRequests,
+  closeRequests,
+  openRequest,
+  providerOf,
+  type PerpsOpenOrder,
+} from "./perpsRequests";
 import type { SignRequest } from "./perpsSigning";
 
 export type PerpsFlow = "status" | "sweep" | "sign-check";
@@ -28,7 +35,7 @@ export type PerpsRunnerApi = Pick<
 
 export const SIGN_CHECK_MARKET_ID = "hyperliquid-xyz-xyz:xyz100-usdc";
 const SIGN_CHECK_AMOUNT_USD = "11";
-const CLOSED_POLLING: PerpsPolling = { intervalMs: 3_000, attempts: 20 };
+const POSITION_POLLING: PerpsPolling = { intervalMs: 3_000, attempts: 20 };
 
 /** `sign-check` signs a real order, so it never submits. */
 export const resolveRunOptions = (options: PerpsFlowOptions): PerpsFlowOptions =>
@@ -41,18 +48,18 @@ export class PerpsRunner {
     private readonly api: PerpsRunnerApi,
     private readonly signer: PerpsSigner,
     options: PerpsFlowOptions,
-    private readonly closedPolling = CLOSED_POLLING,
+    private readonly positionPolling = POSITION_POLLING,
   ) {
     this.options = resolveRunOptions(options);
   }
 
-  async run(request: PerpsActionRequest): Promise<void> {
+  async run(request: PerpsActionRequest, { allowOpen = false } = {}): Promise<void> {
     const dryRun = this.options.dryRun ?? false;
-    assertSubmittable(request.action, dryRun);
+    assertSubmittable(request.action, dryRun, allowOpen);
     console.log(`→ ${request.action} ${JSON.stringify(request.args)}`);
     const action = await this.api.createAction(request);
     if (typeof action.signedMetadata !== "string") {
-      throw new Error(`Action ${action.id} has no signed metadata`);
+      throw new TypeError(`Action ${action.id} has no signed metadata`);
     }
     const signatures = await this.signer.sign({
       address: this.options.address,
@@ -89,12 +96,27 @@ export class PerpsRunner {
     if (marketIds.length === 0) return;
     await this.sweep(marketIds);
     if (this.options.dryRun) return;
+    if (await this.waitForPositions(marketIds, false)) return;
+    throw new Error(`Positions still open on ${marketIds.join(", ")} for ${this.options.address}`);
+  }
+
+  /** Opens one small position for a test setup, then waits for it. */
+  async openPosition(order: PerpsOpenOrder): Promise<void> {
+    await this.run(openRequest(this.options.address, order), { allowOpen: true });
+    if (this.options.dryRun) return;
+    if (await this.waitForPositions([order.marketId], true)) return;
+    throw new Error(`No position opened on ${order.marketId} for ${this.options.address}`);
+  }
+
+  /** True once `marketIds` hold a position, or none, as `held` asks. */
+  private async waitForPositions(marketIds: readonly string[], held: boolean): Promise<boolean> {
     const { address } = this.options;
-    for (let attempt = 0; attempt < this.closedPolling.attempts; attempt++) {
-      if ((await this.api.getPositions(address, marketIds)).length === 0) return;
-      await new Promise(resolve => setTimeout(resolve, this.closedPolling.intervalMs));
+    for (let attempt = 0; attempt < this.positionPolling.attempts; attempt++) {
+      const positions = await this.api.getPositions(address, marketIds);
+      if (positions.length > 0 === held) return true;
+      await new Promise(resolve => setTimeout(resolve, this.positionPolling.intervalMs));
     }
-    throw new Error(`Positions still open on ${marketIds.join(", ")} for ${address}`);
+    return false;
   }
 
   async signCheck(): Promise<void> {

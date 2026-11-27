@@ -10,7 +10,8 @@ export type HyperliquidDevice = {
     rawPayloads: Record<string, unknown>[],
     signal: AbortSignal,
   ): Promise<HyperliquidSignature[]>;
-  approveReview(): Promise<void>;
+  /** Gives up once `signal` aborts. */
+  approveReview(signal: AbortSignal): Promise<void>;
 };
 
 export type SignRequest = {
@@ -40,13 +41,18 @@ export async function signTransactions(
     throw new Error("The device already shows a review the driver did not start");
   }
   const controller = new AbortController();
-  const [signatures] = await Promise.all([
-    device.signActions(signedMetadata, rawPayloads, controller.signal),
-    device.approveReview().catch((error: unknown) => {
-      controller.abort();
-      throw error;
-    }),
+  const abortOnFailure = (error: unknown): never => {
+    controller.abort(error);
+    throw error;
+  };
+  const [signing, approval] = await Promise.allSettled([
+    device.signActions(signedMetadata, rawPayloads, controller.signal).catch(abortOnFailure),
+    device.approveReview(controller.signal).catch(abortOnFailure),
   ]);
+  // Both branches have stopped, so a retry cannot meet a stale approval.
+  if (signing.status === "rejected") throw signing.reason;
+  if (approval.status === "rejected") throw approval.reason;
+  const signatures = signing.value;
   if (signatures.length !== transactions.length) {
     throw new Error(`Expected ${transactions.length} signatures, got ${signatures.length}`);
   }

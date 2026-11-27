@@ -59,6 +59,17 @@ export class PerpsOrderPage extends WebViewAppPage {
     ).toBeVisible();
   }
 
+  @step("Open the $0 position from the position list")
+  async openPositionFromList(symbol: string) {
+    const webview = await this.getWebView();
+    // The position row has no test id.
+    await webview
+      .locator('[data-track-button="see position"]')
+      .filter({ hasText: symbol.replace(/^[^:]+:/, "") })
+      .click();
+    await expect(webview.getByTestId(this.closePositionButtonTestId)).toBeVisible();
+  }
+
   @step("Select the $0 order side")
   async selectSide(side: PerpsOrderSide) {
     const webview = await this.getWebView();
