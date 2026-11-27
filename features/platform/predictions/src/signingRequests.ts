@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SIGNING_PURPOSES } from "./signingIntent/purposes";
+import { SIGNING_PURPOSES, type PredictionsSigningPurposeDetails } from "./signingIntent/purposes";
 import type { PredictionsSigningPurpose } from "./signingIntent/types";
 import type { PredictionsSignedTypedData, PredictionsTypedData } from "./typedData";
 
@@ -68,6 +68,7 @@ export function createPredictionsSigner<Account>({
   requests,
   purpose,
   findAccount,
+  addressOf,
   onSigned,
   refusal,
 }: Readonly<{
@@ -75,6 +76,7 @@ export function createPredictionsSigner<Account>({
   purpose: PredictionsSigningPurpose;
   /** Throws when the account can't sign, e.g. `PredictionsAccountNotFound`. */
   findAccount: (walletAccountId: string) => Account;
+  addressOf: (account: Account) => string;
   /** Runs before `sign` answers, e.g. to open the setup the live app reports to. */
   onSigned?: () => void;
   /** What `sign` rejects with when the prompt closes unsigned, e.g. `UserRefusedOnDevice`. */
@@ -85,8 +87,11 @@ export function createPredictionsSigner<Account>({
     sign: (walletAccountId, typedDataFor) => {
       const account = findAccount(walletAccountId);
       const typedData = typedDataFor(account);
+      const { primaryType, checkTypedData }: PredictionsSigningPurposeDetails =
+        SIGNING_PURPOSES[purpose];
       // A ZodError reaches the live app as INVALID_PARAMS.
-      z.literal(SIGNING_PURPOSES[purpose].primaryType).parse(typedData.primaryType);
+      z.literal(primaryType).parse(typedData.primaryType);
+      checkTypedData?.(typedData, addressOf(account));
       return new Promise((resolve, reject) => {
         // A signature landing after a cancel, e.g. while the sheet closes, mustn't open a sheet no
         // live app will report to.

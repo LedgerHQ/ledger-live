@@ -8,18 +8,24 @@ function renderIsNewSettingsPage(pathname: string, isFlagEnabled: boolean) {
 }
 
 describe("useIsNewSettingsPage", () => {
-  it.each(["/settings", "/settings/", "/settings/security", "/settings/general/foo"])(
-    "is true for %s when the flag is ON",
+  it.each([
+    "/settings",
+    "/settings/",
+    "/settings/security",
+    "/settings/general/foo",
+    "/settings/help",
+  ])("is true for %s when the flag is ON", pathname => {
+    expect(renderIsNewSettingsPage(pathname, true)).toBe(true);
+  });
+
+  it.each(["/settings", "/settings/security", "/settings/help"])(
+    "is false for %s when the flag is OFF",
     pathname => {
-      expect(renderIsNewSettingsPage(pathname, true)).toBe(true);
+      expect(renderIsNewSettingsPage(pathname, false)).toBe(false);
     },
   );
 
-  it.each(["/settings", "/settings/security"])("is false for %s when the flag is OFF", pathname => {
-    expect(renderIsNewSettingsPage(pathname, false)).toBe(false);
-  });
-
-  it.each(["/settings/help", "/settings/experimental", "/settings/developer"])(
+  it.each(["/settings/experimental", "/settings/developer"])(
     "is false for %s which still uses the legacy settings",
     pathname => {
       expect(renderIsNewSettingsPage(pathname, true)).toBe(false);

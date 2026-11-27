@@ -1,7 +1,6 @@
 import { isDeviceDisconnectedError, type Job } from "@features/platform-device-intent";
 import { Observable, type Subscription } from "rxjs";
-import { PredictionsOrderExpired } from "../errors";
-import { isPlaceOrderExpired } from "../placeOrderTypedData";
+import { isOrderExpired } from "../orderTypedData.internals";
 import { isTypedDataSigner } from "../typedData";
 import { SIGNING_PURPOSES } from "./purposes";
 import type {
@@ -33,17 +32,17 @@ export const predictionsSigningJob: Job<
       });
     };
 
+    const endIfExpired = (): boolean => {
+      if (purpose === "binding" || !isOrderExpired(typedData, Date.now())) return false;
+      onResult({ type: "expired", error: SIGNING_PURPOSES[purpose].expiredError() });
+      subscriber.complete();
+      return true;
+    };
+
     const sign = () => {
       signing?.unsubscribe();
       // Checked on every attempt: a retry or a reconnect can come after the order expired.
-      if (purpose === "order" && isPlaceOrderExpired(typedData, Date.now())) {
-        onResult({
-          type: "expired",
-          error: new PredictionsOrderExpired("The order expired before it was signed"),
-        });
-        subscriber.complete();
-        return;
-      }
+      if (endIfExpired()) return;
       let isAwaitingConfirmation = false;
       showSigning(isAwaitingConfirmation);
       signing = signTypedData(deviceConnectionResult, typedData).subscribe({
@@ -62,6 +61,7 @@ export const predictionsSigningJob: Job<
             subscriber.complete();
             return;
           }
+          if (endIfExpired()) return;
           onResult({ type: "signed", signature: event.signature });
           subscriber.complete();
         },

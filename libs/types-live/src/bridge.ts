@@ -264,11 +264,12 @@ interface SerializationAccountBridge<
   /**
    * This function mutates the 'account' object in-place to add any extra fields that the coin may need to set.
    * It is called during the deserialization mechanism, for instance bitcoinResources need to be deserialized.
+   * Deserialization awaits a returned promise, so the hook may read async state such as the coin config.
    *
    * @param {AccountRaw} accountRaw - The account in its serialized form.
    * @param {Account} account - The original account object.
    */
-  assignFromAccountRaw: (accountRaw: R, account: A) => void;
+  assignFromAccountRaw: (accountRaw: R, account: A) => void | Promise<void>;
   /**
    * This function mutates the 'tokenAccountRaw' object in-place to add any extra fields that the coin may need to set.
    * It is called during the serialization mechanism

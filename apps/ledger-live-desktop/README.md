@@ -68,7 +68,7 @@ pnpm desktop lint:guardrails                             # security focused lint
 pnpm desktop typecheck                                   # typecheck
 ```
 
-The coin-family lint baseline and its accepted exceptions are in [docs/lint.md](docs/lint.md).
+The coin-family lint baseline and its accepted exceptions are in [docs/lint.md](docs/lint.md). The Zcash native host (Electron main, preload and renderer IPC client) is an accepted exception, listed in [coin-families-exceptions.json](coin-families-exceptions.json).
 
 ### E2E Testing
 

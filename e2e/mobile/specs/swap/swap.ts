@@ -41,7 +41,7 @@ type RunSwapTestOptions = TestMetaOptions & {
 export function runSwapTest(options: RunSwapTestOptions) {
   const { accountToDebit, accountToCredit, tmsLinks, tags, fee = Fee.MEDIUM } = options;
   // The amount is resolved at runtime from the provider minimum and set on `swap` inside the test.
-  const swap = new Swap(accountToDebit, accountToCredit, "", undefined, fee);
+  const swap = new Swap({ accountToDebit, accountToCredit, amount: "", speed: fee });
 
   const describeOnDevice = describeIfNanoSSupports(
     (accountToDebit.parentAccount ?? accountToDebit).currency.id,

@@ -1,25 +1,29 @@
-import { mockUtxoAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockReceiveFamilyConfigInput } from "@features/flow-receive/types.mock";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import { receiveAddressConfig } from "../receiveAddressConfig";
+
+const bitcoinAccount = (derivationMode: DerivationMode): Account => ({
+  ...genAccount("bitcoin-receive", { currency: getCryptoCurrencyById("bitcoin") }),
+  derivationMode,
+});
 
 describe("bitcoin receiveAddressConfig", () => {
   it("should show the utxo notice on a native segwit account", () => {
-    expect(receiveAddressConfig(mockReceiveFamilyConfigInput())).toEqual({ notices: ["utxo"] });
+    const input = mockReceiveFamilyConfigInput({ legacyAccount: bitcoinAccount("native_segwit") });
+
+    expect(receiveAddressConfig(input)).toEqual({ notices: ["utxo"] });
   });
 
   it("should show the taproot notice on a taproot account", () => {
-    const input = mockReceiveFamilyConfigInput({
-      descriptor: mockUtxoAccountDescriptor({ path: "m/86h/0h/0h" }),
-    });
+    const input = mockReceiveFamilyConfigInput({ legacyAccount: bitcoinAccount("taproot") });
 
     expect(receiveAddressConfig(input)).toEqual({ notices: ["utxo", "taproot"] });
   });
 
   it("should show the staking notice on a Dash account", () => {
-    const input = mockReceiveFamilyConfigInput({
-      descriptor: mockUtxoAccountDescriptor({ network: "dash", path: "m/44h/5h/0h" }),
-      asset: { id: "dash" },
-    });
+    const input = mockReceiveFamilyConfigInput<Account>({ asset: { id: "dash" } });
 
     expect(receiveAddressConfig(input)).toEqual({ notices: ["utxo", "dashStaking"] });
   });

@@ -68,8 +68,9 @@ suites, a few legacy `libs/` trees) are listed in the plugin's `exclusions.mjs`.
 ## The account descriptor stays at the edges
 
 Code holds the `AccountUUID`. `@domain/entity-account-descriptor`, which carries the descriptor and
-its key, and `@domain/entity-account/descriptor`, which computes the `AccountUUID` from it, are
-restricted by `ACCOUNT_DESCRIPTOR` in `restricted-imports.mts`. They are exact `paths` names, so
+its key, `@domain/entity-account/descriptor`, which computes the `AccountUUID` from it, and
+`@features/platform-account-discovery/descriptor`, whose results carry descriptors, are restricted
+by `ACCOUNT_DESCRIPTOR` in `restricted-imports.mts`. They are exact `paths` names, so
 tests keep the `./schema.mock` entries. `base` and `features-flow` list them, and so do the desktop
 and mobile app configs, their `src/config/account-data-setup` files aside.
 
@@ -202,7 +203,8 @@ string or a template literal that has no substitution. A specifier built at run 
 (``require(`@ledgerhq/coin-${name}`)``) cannot be checked. It reports three kinds of
 specifier, each with its own message:
 
-- **`coin-package`**: a coin module or a live-signer, `@ledgerhq/coin-*` and `@ledgerhq/live-signer-*`, and their
+- **`coin-package`**: a coin module, a live-signer, a device signer kit or wallet-btc, `@ledgerhq/coin-*`,
+  `@ledgerhq/live-signer-*`, `@ledgerhq/device-signer-kit-*` and `@ledgerhq/wallet-btc`, and their
   subpaths. The exclusion is by full package name (`coin-module-framework`, `coin-framework`,
   `coin-modules-monitoring`, `coin-module-boilerplate`, `coin-tester*`), because the prefix alone
   would also take them.
@@ -313,5 +315,22 @@ The `familiesDir` option and the exemption of the families folder are the ones o
 
 The blind spots of `no-family-branch` apply, and one more: a currency compared without `.id`
 (`route.currency !== "tezos"`) is not a currency id expression, so it is not reported.
+
+### `coin-families-exceptions`
+
+A baseline entry is debt, owned by the burn-down. A file that stays on purpose is an exception, and its reason
+lives in the app's `coin-families-exceptions.json` (`apps/ledger-live-desktop`, `apps/ledger-live-mobile`), because
+`oxlint-suppressions.json` cannot hold one and oxlint rewrites it when it prunes. An entry is
+`{ file, kind, owner, reason, ticket?, rules? }`:
+
+- **`accepted`**: stays for good; `owner` and `reason` are required.
+- **`temporary`**: goes away with a flag or a ticket; `reason` or `ticket` is required.
+- **`rules`**: the `coin-families/*` rules that report the file, absent when none does (URL data, a local list).
+
+[`src/check-coin-families-exceptions.js`](src/check-coin-families-exceptions.js), run by
+`pnpm lint:coin-families-exceptions` and part of `pnpm lint:arch`, fails on a file that no longer exists, on a rule
+the baseline no longer holds for the file (remove it from the entry when the leak is fixed), on a missing field and
+on a file listed twice. It does not ask a reason for each baseline entry: the rest of the baseline is debt, tracked
+by its tickets.
 
 Run the rules' tests with `nx run @support/lint:test`.

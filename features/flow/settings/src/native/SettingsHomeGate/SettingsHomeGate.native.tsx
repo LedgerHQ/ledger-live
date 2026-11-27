@@ -15,6 +15,8 @@ export type SettingsHomeGateProps = Readonly<{
   rowsToHide: unknown;
   /** Rows to the developer tools, after the sections. */
   devTools?: SettingsHomeDevTools;
+  /** Last row of the new home, back to the legacy Settings. No row without it. */
+  onSwitchToLegacySettings?: () => void;
   testID?: string;
 }>;
 
@@ -24,6 +26,7 @@ export function SettingsHomeGate({
   legacySettings,
   rowsToHide,
   devTools,
+  onSwitchToLegacySettings,
   testID,
 }: SettingsHomeGateProps) {
   const { showLegacySettings } = useSettingsHomeGateViewModel();
@@ -34,7 +37,12 @@ export function SettingsHomeGate({
     <HiddenSettingsProvider rowsToHide={rowsToHide}>
       <TrackScreen category="Settings" />
       <SettingsScrollView>
-        <SettingsHome onSelectSection={onSelectSection} devTools={devTools} testID={testID} />
+        <SettingsHome
+          onSelectSection={onSelectSection}
+          devTools={devTools}
+          onSwitchToLegacySettings={onSwitchToLegacySettings}
+          testID={testID}
+        />
       </SettingsScrollView>
     </HiddenSettingsProvider>
   );

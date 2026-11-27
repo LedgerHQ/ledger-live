@@ -2,7 +2,11 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { runNewSendFlowContactsTest } from "@e2e/specs/send/newSendFlowContacts";
 
-const transaction = new Transaction(Account.TRX_1, Account.TRX_2, "0.01");
+const transaction = new Transaction({
+  accountToDebit: Account.TRX_1,
+  accountToCredit: Account.TRX_2,
+  amount: "0.01",
+});
 
 runNewSendFlowContactsTest({
   transaction,

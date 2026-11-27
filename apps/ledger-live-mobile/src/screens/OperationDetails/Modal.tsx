@@ -20,6 +20,7 @@ export type Props = {
 
 function Modal({ isOpened, onClose, currency }: Props) {
   const { colors } = useTheme();
+  const supportLink = getTokenSupportLink(currency);
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
       <SafeAreaView style={styles.modal}>
@@ -37,16 +38,15 @@ function Modal({ isOpened, onClose, currency }: Props) {
             containerStyle={styles.modalBtn}
             onPress={onClose}
           />
-          <Button
-            event="TokenOperationsModalLearnMore"
-            type="primary"
-            title={<Trans i18nKey="common.learnMore" />}
-            containerStyle={[styles.modalBtn, styles.learnMore]}
-            onPress={() => {
-              const supportLink = getTokenSupportLink(currency);
-              if (supportLink) Linking.openURL(supportLink);
-            }}
-          />
+          {supportLink ? (
+            <Button
+              event="TokenOperationsModalLearnMore"
+              type="primary"
+              title={<Trans i18nKey="common.learnMore" />}
+              containerStyle={[styles.modalBtn, styles.learnMore]}
+              onPress={() => Linking.openURL(supportLink)}
+            />
+          ) : null}
         </View>
       </SafeAreaView>
     </QueuedDrawer>

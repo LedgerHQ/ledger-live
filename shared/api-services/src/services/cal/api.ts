@@ -75,9 +75,24 @@ function isTimeoutError(error: unknown): boolean {
   );
 }
 
-/** {@link timedFetchBaseQuery} wrapped in `retry`. A timed-out attempt is not retried. */
+const PROXY_DENIAL_STATUSES = new Set([403, 407]);
+
+function isProxyDenial(error: unknown): boolean {
+  if (typeof error !== "object" || error === null || !("status" in error)) return false;
+  const status =
+    error.status === "PARSING_ERROR" && "originalStatus" in error
+      ? error.originalStatus
+      : error.status;
+  return typeof status === "number" && PROXY_DENIAL_STATUSES.has(status);
+}
+
+/**
+ * {@link timedFetchBaseQuery} wrapped in `retry`. A timed-out attempt is not retried, nor a 403 or
+ * 407: a proxy that denies the host, such as an agent sandbox, answers the same way every time.
+ */
 const calBaseQuery = retry(timedFetchBaseQuery, {
-  retryCondition: (error, _args, { attempt }) => !isTimeoutError(error) && attempt <= MAX_RETRIES,
+  retryCondition: (error, _args, { attempt }) =>
+    !isTimeoutError(error) && !isProxyDenial(error) && attempt <= MAX_RETRIES,
 });
 
 /**

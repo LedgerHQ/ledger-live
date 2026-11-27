@@ -54,13 +54,11 @@ inputs:
     required: false
     default: ""
   native_fingerprint_ios:
-    description: "Expo fingerprint of the iOS native project, empty to key the native build on hashFiles"
-    required: false
-    default: ""
+    description: "Expo fingerprint of the iOS native project (mobile-e2e-hashes), which keys the iOS native build"
+    required: true
   native_fingerprint_android:
-    description: "Expo fingerprint of the Android native project, empty to key the native build on hashFiles"
-    required: false
-    default: ""
+    description: "Expo fingerprint of the Android native project (mobile-e2e-hashes), which keys the Android native build"
+    required: true
   cache_bucket:
     description: "S3 bucket holding the Nx cache, the native builds and the timing data"
     required: true
@@ -182,11 +180,13 @@ runs:
         if [ "$REF_NAME" = "develop" ]; then
           PREFIX="develop/"
         fi
-        IOS_NATIVE_HASH="${IOS_FINGERPRINT:+fp-$IOS_FINGERPRINT}"
-        ANDROID_NATIVE_HASH="${ANDROID_FINGERPRINT:+fp-$ANDROID_FINGERPRINT}"
+        if [ -z "$IOS_FINGERPRINT" ] || [ -z "$ANDROID_FINGERPRINT" ]; then
+          echo "::error::Missing native fingerprint: pass both, see mobile-e2e-hashes"
+          exit 1
+        fi
         {
-          echo "ios_native_key=${PREFIX}longterm-${IOS_NATIVE_HASH:-${{ hashFiles('apps/ledger-live-mobile/ios', 'shared/native-performance/ios', 'shared/native-performance/SharedNativePerformance.podspec', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'pnpm-workspace.yaml') }}}-detox-native-ios-${{ inputs.production_firebase == 'true' && 'prod-3' || '4' }}"
-          echo "android_native_key=${PREFIX}longterm-${ANDROID_NATIVE_HASH:-${{ hashFiles('apps/ledger-live-mobile/android', 'shared/native-performance/android', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'pnpm-workspace.yaml') }}}-detox-native-android-${{ inputs.production_firebase == 'true' && 'prod-2' || '3' }}"
+          echo "ios_native_key=${PREFIX}longterm-fp-${IOS_FINGERPRINT}-detox-native-ios-${{ inputs.production_firebase == 'true' && 'prod-3' || '4' }}"
+          echo "android_native_key=${PREFIX}longterm-fp-${ANDROID_FINGERPRINT}-detox-native-android-${{ inputs.production_firebase == 'true' && 'prod-2' || '3' }}"
           HEAD_SHA=$(git rev-parse HEAD)
           echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios"
           echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android"

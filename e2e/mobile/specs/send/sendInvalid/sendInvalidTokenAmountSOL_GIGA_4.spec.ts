@@ -1,13 +1,12 @@
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runSendInvalidTokenAmountTest } from "@e2e/specs/send/send";
 
-const transaction = new Transaction(
-  TokenAccount.SOL_GIGA_4,
-  TokenAccount.SOL_GIGA_1,
-  "0.5",
-  undefined,
-  "noTag",
-);
+const transaction = new Transaction({
+  accountToDebit: TokenAccount.SOL_GIGA_4,
+  accountToCredit: TokenAccount.SOL_GIGA_1,
+  amount: "0.5",
+  memoTag: "noTag",
+});
 runSendInvalidTokenAmountTest({
   transaction,
   expectedErrorMessage: new RegExp(

@@ -40,8 +40,8 @@ env:
         "robinhood": { "flags": "--node nitro@3.12.2 --indexer blockscout@12.0.3" },
         "arc": { "flags": "--node arc-node@0.8.1 --indexer blockscout@12.0.3" },
         "core": { "flags": "--node geth@1.0.27" },
-        "alpen_testnet": { "flags": "--node alpen-client@0.4.0 --indexer blockscout@12.0.3" },
-        "alpen": { "flags": "--node alpen-client@0.4.0 --indexer blockscout@12.0.3" }
+        "alpen_testnet": { "flags": "--node reth@2.2.0 --indexer blockscout@12.0.3" },
+        "alpen": { "flags": "--node reth@2.2.0 --indexer blockscout@12.0.3" }
       },
       "bitcoin": { "bitcoin_regtest": { "flags": "--node bitcoin-core@31.1 --indexer atlas@2.38.24" } },
       "cosmos": {
@@ -50,7 +50,8 @@ env:
         "gonka": { "flags": "--node inference-chain@0.2.16" }
       },
       "xrp": { "ripple": { "flags": "--node xrpld@3.4.1", "pull": false } },
-      "filecoin": { "filecoin": { "flags": "--node lotus@1.39.1 --indexer filecoin-api-stub" } }
+      "filecoin": { "filecoin": { "flags": "--node lotus@1.39.1 --indexer filecoin-api-stub" } },
+      "tezos": { "tezos": { "flags": "--node octez@25.3 --indexer tzkt@1.17.5" } }
     }
 
 jobs:

@@ -25,6 +25,7 @@ jest.mock("@features/flow-predictions/native", () => ({
 const ORDER_ID = 7;
 const RESULT = {
   order: {
+    side: "buy",
     display: { marketTitle: "Fed decision in December?", outcomeLabel: "Yes" },
     amountPaid: 2,
   },

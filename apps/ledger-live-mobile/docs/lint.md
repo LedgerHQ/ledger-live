@@ -4,11 +4,9 @@
 
 `oxlint.config.mts` turns on the `coin-families/*` rules of `@support/lint` for the whole app (see the [support/lint README](../../../support/lint/README.md#coin-familiesno-coin-specific-import)). Violations that already existed are recorded in `oxlint-suppressions.json`, owned by `@ledgerhq/coin-integration`. A new leak fails the lint and is never silenced with an inline disable.
 
-## Accepted exceptions
+- Run `pnpm mobile lint:ci`: oxlint reads the baseline from the folder it runs in.
+- Fixing a baselined leak makes the lint fail until the baseline is pruned: run `pnpm exec oxlint src --prune-suppressions` from `apps/ledger-live-mobile`.
 
-No rule reports these, so they are not in the baseline.
+## Exceptions
 
-| File | Why |
-| --- | --- |
-| `src/analytics/segment.ts` | The `ldmkSolanaSigner`, `ldmkCosmosSigner`, `ldmkPolkadotSigner` and `ldmkTronSigner` flags are sent as user properties. Their names are kept, and they go away with the flags. |
-| `src/utils/constants.ts` | `EXCLUDED_LOGS_ERROR_NAME` lists coin error names (tron, solana, evm, vechain, hedera) as strings, so Datadog filtering needs no coin import. |
+A baseline entry is debt unless it is listed in [`coin-families-exceptions.json`](../coin-families-exceptions.json), which gives the reason and the owner of each exception. See [the rule README](../../../support/lint/README.md#coin-families-exceptions).

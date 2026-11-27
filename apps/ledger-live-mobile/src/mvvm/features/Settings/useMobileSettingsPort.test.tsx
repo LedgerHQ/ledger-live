@@ -1,5 +1,12 @@
 import { act, renderHook } from "@tests/test-renderer";
-import { setDiscreetMode, setMevProtection, setTheme } from "~/actions/settings";
+import {
+  setCountervalue,
+  setDiscreetMode,
+  setLanguage,
+  setMevProtection,
+  setTheme,
+} from "~/actions/settings";
+import { activateDrawerSelector } from "~/reducers/walletSync";
 import type { AppLockAdapter } from "./sections/security/types";
 import { useMobileSettingsPort } from "./useMobileSettingsPort";
 
@@ -80,5 +87,72 @@ describe("useMobileSettingsPort", () => {
 
     expect(lock.setBiometricsEnabled).toHaveBeenCalledWith(false);
     expect(lock.requestAppLock).toHaveBeenCalledWith("remove");
+  });
+
+  it("reads the language and currency from the legacy store", () => {
+    const { result, store } = renderHook(() => useMobileSettingsPort(appLock()));
+
+    act(() => {
+      store.dispatch(setLanguage("fr"));
+      store.dispatch(setCountervalue("EUR"));
+    });
+
+    expect(result.current.values).toMatchObject({
+      language: "fr",
+      currency: "EUR",
+    });
+  });
+
+  it("stores a language change and ignores an unsupported language", () => {
+    const { result, store } = renderHook(() => useMobileSettingsPort(appLock()));
+
+    act(() => {
+      result.current.setValue({ key: "language", value: "fr" });
+    });
+    expect(store.getState().settings.language).toBe("fr");
+
+    act(() => {
+      result.current.setValue({ key: "language", value: "xx" });
+    });
+    expect(store.getState().settings.language).toBe("fr");
+  });
+
+  it("stores a currency change by the countervalue id, and ignores an unknown one", () => {
+    const { result, store } = renderHook(() => useMobileSettingsPort(appLock()));
+
+    act(() => {
+      result.current.setValue({ key: "currency", value: "BTC" });
+    });
+    expect(store.getState().settings.counterValue).toBe("bitcoin");
+
+    act(() => {
+      result.current.setValue({ key: "currency", value: "NOPE" });
+    });
+    expect(store.getState().settings.counterValue).toBe("bitcoin");
+  });
+
+  it("offers the supported languages and countervalues", () => {
+    const { result } = renderHook(() => useMobileSettingsPort(appLock()));
+
+    expect(result.current.languages).toContainEqual({
+      value: "fr",
+      label: "Français",
+    });
+    expect(result.current.currencies).toContainEqual({
+      value: "BTC",
+      label: "Bitcoin",
+      description: "BTC",
+    });
+  });
+
+  it("opens the Ledger Sync activation drawer while Ledger Sync is not active", () => {
+    const { result, store } = renderHook(() => useMobileSettingsPort(appLock()));
+
+    expect(result.current.ledgerSync.isActive).toBe(false);
+    act(() => {
+      result.current.ledgerSync.open();
+    });
+
+    expect(activateDrawerSelector(store.getState())).toBe(true);
   });
 });

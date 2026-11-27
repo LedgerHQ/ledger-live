@@ -7,7 +7,6 @@ import {
   makeReceiveTestStore,
   receiveTestWrapper,
   testAccountUUID as accountUUID,
-  testDescriptor as descriptor,
   testReceive as receive,
 } from "../../__tests__/receiveTestStore";
 import { useReceiveScreenData } from "./useReceiveScreenData";
@@ -28,16 +27,18 @@ describe("useReceiveScreenData", () => {
 
     expect(result.current.data).toEqual({ type: "loading" });
     await waitFor(() => expect(result.current.data).toEqual({ type: "ready", receive }));
-    expect(result.current.descriptor).toEqual(descriptor);
   });
 
-  it("should read no asset status for the native coin", async () => {
-    const assetStatus = jest.fn();
+  it("should read the asset status of the native coin too, the source answering no gate", async () => {
+    const assetStatus = jest.fn(async (_target, query) => ({
+      assetId: query!.assetId,
+      status: mockAssetStatus(),
+    }));
     const { wrapper } = setup({ assetStatus });
     const { result } = renderHook(() => useReceiveScreenData(accountUUID, ETH), { wrapper });
 
     await waitFor(() => expect(result.current.data.type).toBe("ready"));
-    expect(assetStatus).not.toHaveBeenCalled();
+    expect(assetStatus).toHaveBeenCalledWith(expect.anything(), { assetId: ETH });
   });
 
   it("should ask to activate a token the account must opt in to", async () => {
@@ -50,6 +51,42 @@ describe("useReceiveScreenData", () => {
     const { result } = renderHook(() => useReceiveScreenData(accountUUID, USDC), { wrapper });
 
     await waitFor(() => expect(result.current.data).toEqual({ type: "activationRequired" }));
+  });
+
+  it("should read the gate again, once the user may have activated the token", async () => {
+    const gate = jest.fn(async () => mockAssetStatus({ gate: { type: "activation" } }));
+    const { wrapper } = setup({
+      assetStatus: async (_target, query) => ({ assetId: query!.assetId, status: await gate() }),
+    });
+    const { result } = renderHook(() => useReceiveScreenData(accountUUID, USDC), { wrapper });
+    await waitFor(() => expect(result.current.data).toEqual({ type: "activationRequired" }));
+
+    gate.mockResolvedValue(mockAssetStatus());
+    act(() => result.current.refreshGate());
+
+    await waitFor(() => expect(result.current.data).toEqual({ type: "ready", receive }));
+  });
+
+  it("should keep reading the gate while it stays, then show the address once activated", async () => {
+    const gate = jest.fn(async () => mockAssetStatus({ gate: { type: "activation" } }));
+    const { wrapper } = setup({
+      assetStatus: async (_target, query) => ({ assetId: query!.assetId, status: await gate() }),
+    });
+    const { result } = renderHook(() => useReceiveScreenData(accountUUID, USDC), { wrapper });
+    await waitFor(() => expect(result.current.data).toEqual({ type: "activationRequired" }));
+    jest.useFakeTimers();
+
+    act(() => result.current.refreshGate());
+    await act(async () => {});
+    expect(result.current.data).toEqual({ type: "activationRequired" });
+
+    gate.mockResolvedValue(mockAssetStatus());
+    await act(async () => {
+      jest.advanceTimersByTime(10_000);
+    });
+    jest.useRealTimers();
+
+    await waitFor(() => expect(result.current.data).toEqual({ type: "ready", receive }));
   });
 
   it("should ask to onboard the account", async () => {
@@ -88,6 +125,5 @@ describe("useReceiveScreenData", () => {
     const { result } = renderHook(() => useReceiveScreenData(unknownUUID, ETH), { wrapper });
 
     expect(result.current.data.type).toBe("error");
-    expect(result.current.descriptor).toBeUndefined();
   });
 });

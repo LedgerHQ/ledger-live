@@ -1,5 +1,5 @@
 import { abortable, throwIfAborted } from "@ledgerhq/coin-module-framework/promises";
-import type { CantonCoinConfig, CantonContext } from "../config";
+import { pinConfig, type CantonContext } from "../config";
 import {
   getEnabledInstrumentsStrictCached,
   getPartyByPubKey,
@@ -17,9 +17,9 @@ const isNoParty = (error: unknown) =>
     "status" in error &&
     error.status === 404);
 
-async function partyOf(config: CantonCoinConfig, publicKey: string): Promise<string | undefined> {
+async function partyOf(context: CantonContext, publicKey: string): Promise<string | undefined> {
   try {
-    const { party_id } = await getPartyByPubKey(config, publicKey);
+    const { party_id } = await getPartyByPubKey(context, publicKey);
     return party_id || undefined;
   } catch (error) {
     if (isNoParty(error)) return undefined;
@@ -39,15 +39,16 @@ export function getAccountStatus(
   return abortable(signal, async () => {
     const config = await context.config();
     throwIfAborted(signal);
-    const partyId = await partyOf(config, publicKey);
+    const pinned = pinConfig(context, config);
+    const partyId = await partyOf(pinned, publicKey);
     if (!partyId) return { activated: false, used: false };
     throwIfAborted(signal);
     const { totalBalance, pendingTransferProposals, calTokens, tokenBalances } =
-      await readPartyBalances(context, currencyId, partyId, undefined, signal);
+      await readPartyBalances(pinned, currencyId, partyId, undefined, signal);
     throwIfAborted(signal);
     const hasEnabledToken = async () => {
       if (tokenBalances.length === 0) return false;
-      const enabledInstruments = await getEnabledInstrumentsStrictCached(config);
+      const enabledInstruments = await getEnabledInstrumentsStrictCached(pinned);
       return tokenBalances.some(({ token }) =>
         isTokenEnabled(token, calTokens, enabledInstruments),
       );
@@ -57,7 +58,7 @@ export function getAccountStatus(
       !totalBalance.isZero() ||
       pendingTransferProposals.length > 0 ||
       (await hasEnabledToken()) ||
-      (await hasNativeOperation(config, partyId, pendingTransferProposals, signal));
+      (await hasNativeOperation(pinned, partyId, pendingTransferProposals, signal));
     return { activated: true, used };
   });
 }

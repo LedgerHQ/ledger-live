@@ -4,22 +4,27 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonCoinConfig, CantonContext } from "../config";
-import { prepareTransferRequest, submit } from "../network/gateway";
+import { getCalTokensCached, prepareTransferRequest, submit } from "../network/gateway";
 import {
+  configOfCall,
   createMockCantonAccount,
   createMockCantonSigner,
   createMockCoinConfigValue,
   createMockContext,
   createMockPrepareTransferResponse,
   createMockSignerContext,
+  createMockTokenAccount,
   createMockTransaction,
 } from "../test/fixtures";
 import type { CantonSigner, Transaction } from "../types";
+import { CantonInvalidConfigError } from "../types/errors";
 import { broadcast } from "./broadcast";
+import { prepareTransaction } from "./prepareTransaction";
 import { buildSignOperation } from "./signOperation";
 
 jest.mock("../network/gateway", () => ({
   ...jest.requireActual("../network/gateway"),
+  getCalTokensCached: jest.fn(),
   prepareTransferRequest: jest.fn(),
   submit: jest.fn(),
 }));
@@ -64,7 +69,7 @@ describe("buildSignOperation", () => {
   it("should prepare a native transfer expiring in one day when no expiry is set", async () => {
     await sign(nativeTransaction);
 
-    expect(mockedPrepare).toHaveBeenCalledWith(config, XPUB_PARTY, {
+    expect(mockedPrepare).toHaveBeenCalledWith(expect.anything(), XPUB_PARTY, {
       type: "token-transfer-request",
       recipient: nativeTransaction.recipient,
       amount: "100",
@@ -97,6 +102,30 @@ describe("buildSignOperation", () => {
     });
   });
 
+  it("should sign a token Send max for the whole token balance with its instrument", async () => {
+    jest.mocked(getCalTokensCached).mockResolvedValue(new Map([["canton_network/usdcx", "USDCx"]]));
+    const tenthOfAToken = new BigNumber(10).pow(37);
+    const tokenAccount = createMockTokenAccount({ spendableBalance: tenthOfAToken });
+    const parent = { ...account, subAccounts: [tokenAccount] };
+    const prepared = await prepareTransaction(
+      createMockContext({ ...config, fee: 0 }),
+      parent,
+      createMockTransaction({
+        amount: new BigNumber(0),
+        useAllAmount: true,
+        subAccountId: tokenAccount.id,
+      }),
+    );
+
+    await sign(prepared, { signedAccount: parent });
+
+    expect(preparedRequest()).toMatchObject({
+      amount: tenthOfAToken.toFixed(),
+      instrument_id: "USDCx",
+      instrument_admin: "issuer::1220",
+    });
+  });
+
   it("should send the memo as the transfer reason", async () => {
     await sign({ ...nativeTransaction, memo: "invoice 42" });
 
@@ -124,7 +153,10 @@ describe("buildSignOperation", () => {
 
     await sign(nativeTransaction, { context });
 
-    expect(mockedPrepare.mock.calls[0][0]).toBe(accountCurrencyConfig);
+    await expect(configOfCall(mockedPrepare.mock.calls[0])).resolves.toBe(accountCurrencyConfig);
+    await expect(mockedPrepare.mock.calls[0][0].config("other")).resolves.toBe(
+      accountCurrencyConfig,
+    );
   });
 
   it("should hand the device the split transaction, never a string", async () => {
@@ -166,7 +198,7 @@ describe("buildSignOperation", () => {
     });
     const { signature } = JSON.parse(signedOperation.signature);
     expect(mockedSubmit).toHaveBeenCalledWith(
-      config,
+      expect.anything(),
       XPUB_PARTY,
       createMockPrepareTransferResponse().serialized,
       signature,
@@ -301,5 +333,19 @@ describe("buildSignOperation", () => {
     await sign(nativeTransaction, { context });
 
     expect(preparedRequest().instrument_id).toBe(config.nativeInstrumentId);
+  });
+
+  it("should keep the class of an invalid config error", async () => {
+    mockedPrepare.mockRejectedValue(new CantonInvalidConfigError("canton: coin config gatewayUrl"));
+
+    await expect(sign(nativeTransaction)).rejects.toThrow(CantonInvalidConfigError);
+  });
+
+  it("should still wrap a device error by its result message", async () => {
+    mockedPrepare.mockRejectedValue(
+      Object.assign(new Error("generic"), { data: { resultMessage: "device message" } }),
+    );
+
+    await expect(sign(nativeTransaction)).rejects.toThrow("device message");
   });
 });

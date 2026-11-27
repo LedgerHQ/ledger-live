@@ -8,12 +8,14 @@ What an account needs beside its `AccountDescriptor` to be read in full. The des
 ## Scope
 
 - **Holds** `AccountContext`: `viewKey`, the Aleo view key the device gives once the user approves it, so the account's private records can be read.
-- **Meant to be written by** the account discovery completion step, once the device gave the data.
-- **Meant to be read by** what rebuilds or reads the full account, such as the legacy `Account`, a coin module's account status read or the portfolio API.
-- **Out of scope**: persistence. The slice is in memory until a store owns it.
+- **Written by** `connectAccountContextsStore`, which mirrors the held legacy accounts' contexts as `connectAccountsStore` mirrors their descriptors. Meant to be written by the account discovery completion step too, for an account not added yet, once the device gave the data.
+- **Read by** what rebuilds the full account, such as the legacy `Account`, whose id keeps the view key as custom data. Later, other reads that need it, such as the portfolio API.
+- **Out of scope**: persistence. The legacy `Account` id is the persisted copy; the slice mirrors it.
 
 ## Model
 
 - `AccountContext`: every field optional, named for what it is, not for a family. A new field is data a read needs that the descriptor must not hold.
 - The slice keys each `AccountUUID` to its context. `accountContextReceived` merges into it, `accountContextRemoved` drops it.
-- `selectAccountContext(state, accountUUID)`. Apps mount the slice at `accountContext` when they adopt it.
+- `legacyAccountContextsSynced` replaces the contexts of the held accounts and drops those of removed ones, leaving a candidate's context alone. Each legacy account converts once; one that fails is retried once it changes, and reported once.
+- `selectAccountContext(state, accountUUID)`. Apps mount the slice at `accountContext` when they adopt it, and call `connectAccountContextsStore` next to `connectAccountsStore`.
+- `redactAccountContextAction` / `redactAccountContextState` replace each context field with `[REDACTED]` for Redux DevTools and action logs.

@@ -57,6 +57,7 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /shared/env/                                             @ledgerhq/platform
 /shared/native-performance/                              @ledgerhq/platform
 /shared/device-locale/                                   @ledgerhq/platform
+/shared/storage/                                         @ledgerhq/platform
 
 # Platform — mobile
 apps/ledger-live-mobile/android/                         @ledgerhq/platform
@@ -129,7 +130,6 @@ features/flow/pay-balance/                               @ledgerhq/wallet-xp
 features/flow/pay-deposit/                               @ledgerhq/wallet-xp
 features/flow/pay-bank-transfer/                         @ledgerhq/wallet-xp
 features/flow/pay-feature-tour/                          @ledgerhq/wallet-xp
-features/flow/pay-request/                               @ledgerhq/wallet-xp
 features/flow/pay-card-details/                          @ledgerhq/wallet-xp
 features/flow/pay-card-assets/                           @ledgerhq/wallet-xp
 features/flow/pay-card-wallets/                          @ledgerhq/wallet-xp
@@ -149,8 +149,15 @@ features/flow/account-detail-notices/                    @ledgerhq/wallet-xp
 features/flow/account-detail-settings/                   @ledgerhq/wallet-xp
 features/flow/history-export/                            @ledgerhq/wallet-xp
 features/flow/settings/                                  @ledgerhq/wallet-xp
+features/flow/settings-asset-management/                 @ledgerhq/wallet-xp
+features/flow/settings-help/                             @ledgerhq/wallet-xp
 features/flow/settings-notifications/                    @ledgerhq/wallet-xp
+features/flow/settings-general/                          @ledgerhq/wallet-xp
+features/flow/settings-privacy/                          @ledgerhq/wallet-xp
 features/flow/settings-security/                         @ledgerhq/wallet-xp
+features/flow/settings-debug/                            @ledgerhq/wallet-xp
+features/flow/settings-developer/                        @ledgerhq/wallet-xp
+features/flow/settings-about/                            @ledgerhq/wallet-xp
 features/platform/account-analytics/                     @ledgerhq/wallet-xp
 features/platform/quick-actions/                         @ledgerhq/wallet-xp
 
@@ -220,6 +227,8 @@ apps/ledger-live-mobile/src/mvvm/contexts/__integrations__/WaitForAppReady.integ
 apps/**/families/                                                   @ledgerhq/coin-integration
 apps/ledger-live-desktop/oxlint-suppressions.json                   @ledgerhq/coin-integration
 apps/ledger-live-mobile/oxlint-suppressions.json                    @ledgerhq/coin-integration
+apps/ledger-live-desktop/coin-families-exceptions.json                @ledgerhq/coin-integration
+apps/ledger-live-mobile/coin-families-exceptions.json                 @ledgerhq/coin-integration
 apps/ledger-live-mobile/src/components/DelegationDrawer.tsx         @ledgerhq/coin-integration
 apps/cli/src/commands/blockchain                                    @ledgerhq/coin-integration
 libs/coin-*/                                                        @ledgerhq/coin-integration

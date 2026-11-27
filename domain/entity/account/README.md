@@ -21,6 +21,17 @@ The `accounts` slice is meant to become the source of truth of the account list.
 
 While the legacy store holds `accounts`, each app mounts the slice under another key and binds its selectors there with `accountsSlice.getSelectors`.
 
+## Discovered accounts
+
+The `discoveredAccounts` slice registers the accounts discovery found and the user has not added: `AccountUUID → AccountDescriptor`, nothing else. It lets `@features/platform-account-data` read their data (a balance on the scan screen) while the flow holds only `AccountUUID`s.
+
+- `discoveredAccountsRegistered` — dispatched at the edge by `registerDiscoveredAccounts` (`@features/platform-account-discovery/descriptor`) for UUIDs not already in the accounts slice.
+- `discoveredAccountsCleared` — dispatched by the flow when it ends or its scan restarts.
+- `selectDiscoveredAccountDescriptor` — the descriptor of a discovered account, for the edges.
+- An account added to the `accounts` slice (`legacyAccountsSynced`, `remoteAccountsAdded`) leaves the register: its data, keyed by the same `AccountUUID`, stays where it is.
+
+Each app mounts it at `discoveredAccounts`, its name.
+
 ## Legacy (`src/legacy/`)
 
 A compatibility layer for the migration, kept until the legacy `Account` is gone. Avoid it in new code: with the account models rework, an account is identified by its `AccountDescriptor` and `AccountUUID`.
@@ -36,11 +47,12 @@ What an account *has* — a name, a balance, a history, a star — lives in its 
 ```ts
 import { AccountIdSchema, accountsSlice } from "@domain/entity-account";
 
-const { selectAccountEntry, selectAccountUUIDByLegacyId } = accountsSlice.getSelectors(
-  (state: State) => state.accountEntries,
-);
+const { selectAccountEntry, selectAccountLegacyId, selectAccountUUIDByLegacyId } =
+  accountsSlice.getSelectors((state: State) => state.accountEntries);
 
 const entry = selectAccountEntry(state, accountUUID); // { accountUUID, descriptor, legacyId? }
+// The legacy account behind it, for the app code that still reads one:
+const legacyId = selectAccountLegacyId(state, accountUUID);
 // Only at the boundary with a legacy screen:
 const uuid = selectAccountUUIDByLegacyId(state, AccountIdSchema.parse(legacyAccount.id));
 ```

@@ -1,6 +1,7 @@
 import {
   createPredictionsSigner,
   getBindingTypedData,
+  isSellPosition,
   handlers as predictionsHandlers,
 } from "@features/platform-predictions";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
@@ -32,6 +33,7 @@ export function usePredictionsHandlers(onClose?: () => void) {
         findAccount: walletAccountId =>
           findPredictionsAccount(accountsSelector(store.getState()), walletAccountId),
         onSigned: setupHooks.startSetup,
+        addressOf: account => account.freshAddress,
         refusal: () => new UserRefusedOnDevice(),
       }),
     [store, setupHooks],
@@ -43,6 +45,19 @@ export function usePredictionsHandlers(onClose?: () => void) {
         purpose: "order",
         findAccount: walletAccountId =>
           findPredictionsAccount(accountsSelector(store.getState()), walletAccountId),
+        addressOf: account => account.freshAddress,
+        refusal: () => new UserRefusedOnDevice(),
+      }),
+    [store],
+  );
+  const saleSigner = useMemo(
+    () =>
+      createPredictionsSigner({
+        requests: predictionsSigningRequests,
+        purpose: "sale",
+        findAccount: walletAccountId =>
+          findPredictionsAccount(accountsSelector(store.getState()), walletAccountId),
+        addressOf: account => account.freshAddress,
         refusal: () => new UserRefusedOnDevice(),
       }),
     [store],
@@ -50,6 +65,7 @@ export function usePredictionsHandlers(onClose?: () => void) {
 
   useEffect(() => bindingSigner.cancelOpened, [bindingSigner]);
   useEffect(() => orderSigner.cancelOpened, [orderSigner]);
+  useEffect(() => saleSigner.cancelOpened, [saleSigner]);
 
   return useMemo<WalletAPICustomHandlers>(
     () =>
@@ -65,12 +81,13 @@ export function usePredictionsHandlers(onClose?: () => void) {
             ),
           "binding.reportSetup": setupHooks["binding.reportSetup"],
           "order.sign": async (walletAccountId, typedData, display) => {
-            const { signature } = await orderSigner.sign(walletAccountId, () => typedData);
+            const signer = isSellPosition(typedData) ? saleSigner : orderSigner;
+            const { signature } = await signer.sign(walletAccountId, () => typedData);
             return { signature, walletOrderId: orderHooks.startOrder(typedData, display) };
           },
           "order.report": orderHooks["order.report"],
         },
       }),
-    [onClose, sheetHooks, setupHooks, orderHooks, store, bindingSigner, orderSigner],
+    [onClose, sheetHooks, setupHooks, orderHooks, store, bindingSigner, orderSigner, saleSigner],
   );
 }

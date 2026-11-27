@@ -16,6 +16,7 @@ const resources = {
         },
         developer: { title: "Developer" },
         debug: { title: "Debug" },
+        switchToLegacy: "Back to previous Settings",
       },
     },
   },

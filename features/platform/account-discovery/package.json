@@ -7,6 +7,7 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./descriptor": "./src/descriptor.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -21,6 +22,8 @@
   },
   "dependencies": {
     "@domain/api-account-data": "workspace:*",
+    "@domain/entity-account": "workspace:*",
+    "@domain/entity-account-context": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-account-status": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
@@ -29,6 +32,7 @@
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

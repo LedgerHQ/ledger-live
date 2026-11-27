@@ -6,12 +6,10 @@ import { usePayTabContacts } from "./hooks/usePayTabContacts";
 import { usePayTabDepositOptions } from "./hooks/usePayTabDepositOptions";
 import { usePayTabRequestReceive } from "./hooks/usePayTabRequestReceive";
 import { usePayTabNewPayment } from "./hooks/usePayTabNewPayment";
-import { usePayTabVerifyAddress } from "./hooks/usePayTabVerifyAddress";
 
 export function usePayTabViewModel() {
   const balance = usePayCardBalance();
-  const verify = usePayTabVerifyAddress();
-  const request = usePayTabRequestReceive(verify.openIntro);
+  const request = usePayTabRequestReceive();
   const deposit = usePayTabDepositOptions(request.open);
   const newPayment = usePayTabNewPayment();
   const actionTiles = usePayTabActionTiles(deposit.open, request.open, newPayment.open);
@@ -26,16 +24,11 @@ export function usePayTabViewModel() {
     actionTiles,
     depositOptions: deposit.depositOptions,
     bankTransferIntro: deposit.bankTransferIntro,
-    requestReceive: request.requestReceive,
-    verifyPhase: verify.phase,
-    verifyAddress: verify.verifyAddress,
-    deviceIntent: verify.deviceIntent,
     contacts,
     ledgerSyncIntroduction,
     contactAddressPicker,
     isContactsEnabled,
     cardDisclaimer,
-    trackRequestAddressVerification: verify.phase === "intro",
     trackRecipientAddressSelection: isContactsEnabled && contactAddressPicker.isOpen,
   };
 }

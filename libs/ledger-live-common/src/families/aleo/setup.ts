@@ -15,6 +15,7 @@ import type Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
 import { createResolver, executeWithSigner, type CreateSigner } from "../../bridge/setup";
 import { getCurrencyConfiguration } from "../../config";
+import { createCompleteAccountDescriptors } from "./completeAccountDescriptors";
 import { createViewKeyResolver } from "./hw/getViewKey/resolver";
 
 type TransportWithDmk = Transport &
@@ -41,5 +42,6 @@ const bridge: Bridge<AleoTransaction> = createBridges(
 
 const resolver = createResolver(createSigner, aleoAddressResolver);
 const viewKeyResolver = createViewKeyResolver(createSigner, aleoViewKeyResolver);
+const completeAccountDescriptors = createCompleteAccountDescriptors(viewKeyResolver, resolver);
 
-export { bridge, resolver, viewKeyResolver };
+export { bridge, resolver, viewKeyResolver, completeAccountDescriptors };

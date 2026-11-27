@@ -2,6 +2,7 @@ import React, { type ComponentProps } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
+import { mockAccountStatus } from "@domain/entity-account-status/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
   makeReceiveTestStore,
@@ -266,5 +267,25 @@ describe("ReceiveAddress (Web)", () => {
 
     await user.click(screen.getByRole("button", { name: "Got it" }));
     expect(screen.getByTestId("receive-address-summary")).toBeVisible();
+  });
+
+  it("asks to onboard the account in place of the address, then opens the app's flow", async () => {
+    const onResolveGate = jest.fn();
+    renderScreen(
+      jest.fn(),
+      makeReceiveTestStore({
+        accountStatus: async () => mockAccountStatus({ gate: { type: "onboarding" } }),
+      }),
+      { onResolveGate },
+    );
+
+    expect(await screen.findByTestId("receive-address-gate-onboarding")).toHaveTextContent(
+      "Set up your account first",
+    );
+    expect(screen.queryByTestId("receive-address-skeleton")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Copy" })).toBeNull();
+
+    await userEvent.setup().click(screen.getByRole("button", { name: "Onboard account" }));
+    expect(onResolveGate).toHaveBeenCalledTimes(1);
   });
 });

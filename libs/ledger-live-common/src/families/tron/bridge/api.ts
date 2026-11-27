@@ -217,6 +217,7 @@ export default function tronBridge(currency: CryptoCurrency): BridgeApi {
     // `FeeEstimation.value`; `estimateFees` publishes it as `parameters.feeLimit` (LIVE-36865).
     forwardsFeeParametersToCraft: true,
     // Resync to recover dropped history: LIVE-41088, LIVE-41093
-    syncVersion: "1",
+    // and to decode failed TRC20 transfers: LIVE-41633
+    syncVersion: "2",
   };
 }

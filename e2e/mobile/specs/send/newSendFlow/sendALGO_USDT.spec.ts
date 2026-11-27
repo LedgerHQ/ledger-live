@@ -3,13 +3,12 @@ import { runNewSendFlowTokenTest } from "@e2e/specs/send/newSendFlow";
 import { FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
 
 runNewSendFlowTokenTest({
-  transaction: new Transaction(
-    TokenAccount.ALGO_USDT_1,
-    TokenAccount.ALGO_USDT_2,
-    "0.01",
-    undefined,
-    "noTag",
-  ),
+  transaction: new Transaction({
+    accountToDebit: TokenAccount.ALGO_USDT_1,
+    accountToCredit: TokenAccount.ALGO_USDT_2,
+    amount: "0.01",
+    memoTag: "noTag",
+  }),
   tmsLinks: ["B2CQA-6111"],
   tags: [
     "@NanoSP",

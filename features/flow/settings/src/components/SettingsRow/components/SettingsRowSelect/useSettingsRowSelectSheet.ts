@@ -10,7 +10,12 @@ export function useSettingsRowSelectSheet({
 }: SettingsRowSelectProps["trailing"]) {
   const [isOpen, setIsOpen] = useState(false);
   const items = useMemo(
-    () => options.map(option => ({ value: option.value, label: option.label })),
+    () =>
+      options.map(({ value: optionValue, label, description }) => ({
+        value: optionValue,
+        label,
+        description,
+      })),
     [options],
   );
   const open = useCallback(() => setIsOpen(true), []);

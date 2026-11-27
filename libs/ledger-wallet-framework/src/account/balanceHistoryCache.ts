@@ -4,8 +4,10 @@ import type {
   BalanceHistoryDataCache,
   AccountLike,
   Account,
+  Operation,
   TokenAccount,
 } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { getOperationAmountNumberWithInternals } from "../operation";
 
 export const createEmptyHistoryCache = () => ({
@@ -58,6 +60,16 @@ const granularities = {
   },
 };
 
+/**
+ * A failed transaction moves no token: on a token account, only a fee charged in that token (a
+ * `FEES` operation) changes the balance. The operation still shows its attempted amount.
+ */
+function getBalanceChange(account: AccountLike, operation: Operation): BigNumber {
+  const failedTokenMovement =
+    account.type === "TokenAccount" && operation.hasFailed && operation.type !== "FEES";
+  return failedTokenMovement ? new BigNumber(0) : getOperationAmountNumberWithInternals(operation);
+}
+
 function generateHistoryFromOperationsG(
   account: AccountLike,
   g: GranularityId,
@@ -80,7 +92,7 @@ function generateHistoryFromOperationsG(
       // FIXME: added valueOf here to make typescript happy
       account.operations[i].date.valueOf() > date
     ) {
-      balance = balance.minus(getOperationAmountNumberWithInternals(account.operations[i]));
+      balance = balance.minus(getBalanceChange(account, account.operations[i]));
       i++;
     }
 
@@ -128,7 +140,7 @@ function refreshHistoryFromOperationsG(
     if (regenerationEndedEarlier) return generateHistoryFromOperationsG(account, g);
     const date = savedDate + period * increment;
     while (i < operations.length && operations[i].date.valueOf() > date) {
-      balance = balance.minus(getOperationAmountNumberWithInternals(operations[i]));
+      balance = balance.minus(getBalanceChange(account, operations[i]));
       i++;
     }
     sinceSavedDate[period] = Math.max(balance.toNumber(), 0);

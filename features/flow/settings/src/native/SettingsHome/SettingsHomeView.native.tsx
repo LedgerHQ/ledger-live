@@ -8,6 +8,7 @@ import {
   LedgerLogo,
   Lock,
   Mobile,
+  RefreshBack,
   ShieldMore,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { SettingsRow } from "../../components/SettingsRow/SettingsRow";
@@ -33,6 +34,7 @@ type SettingsHomeViewProps = SettingsHomeViewModel & Readonly<{ testID?: string 
 export function SettingsHomeView({
   rows,
   devToolRows,
+  switchToLegacyRow,
   onSelectSection,
   testID,
 }: SettingsHomeViewProps) {
@@ -62,6 +64,14 @@ export function SettingsHomeView({
           />
         );
       })}
+      {switchToLegacyRow && (
+        <SettingsRow
+          title={switchToLegacyRow.label}
+          icon={<RefreshBack size={24} color="base" />}
+          trailing={{ type: "chevron", onSelect: switchToLegacyRow.onSelect }}
+          testID="settings-home-switch-to-legacy"
+        />
+      )}
     </Box>
   );
 }

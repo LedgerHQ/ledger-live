@@ -110,7 +110,7 @@ async function blockTransactionOf({ events }: Kind, isSponsored: boolean) {
       result: events ? { outcome: "success", events } : { outcome: "reject" },
     },
   ]);
-  const { transactions } = await getBlock(createFixtureConfig(), 1000, "concordium_testnet");
+  const { transactions } = await getBlock(createFixtureConfig(), 1000);
   return transactions[0];
 }
 

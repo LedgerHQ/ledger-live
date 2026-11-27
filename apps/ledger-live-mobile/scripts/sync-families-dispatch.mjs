@@ -40,6 +40,7 @@ const targets = [
   "ReceiveConfirmationPostAlert",
   "ReceiveConfirmationTokenAlert",
   "ReceiveAddressConfig",
+  "ReceiveGateAction",
   "shouldCreateEmptyTokenAccount",
   "ConnectDevice",
   "VerifyAddress",

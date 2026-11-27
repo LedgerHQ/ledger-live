@@ -10,7 +10,8 @@ import { mockAccountEntry } from "@domain/entity-account/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { mockReceiveFamilyConfigInput } from "@features/flow-receive/types.mock";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
-import { renderHook } from "tests/testSetup";
+import { http, HttpResponse, server } from "tests/server";
+import { renderHook, waitFor } from "tests/testSetup";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { VerifyAddressExecutorLWD } from "../../verifyAddressIntent/VerifyAddressExecutorLWD";
 import { useReceiveAddressDialogViewModel } from "./useReceiveAddressDialogViewModel";
@@ -30,11 +31,32 @@ const target = {
   assetId: CryptoOrTokenCurrencyIdSchema.parse("ethereum"),
 };
 
-const renderViewModel = () =>
-  renderHook(() => useReceiveAddressDialogViewModel(target), {
+const USDC_ID = CryptoOrTokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin");
+
+const serveUsdc = () =>
+  server.use(
+    http.get("*/v1/tokens", () =>
+      HttpResponse.json([
+        {
+          id: USDC_ID,
+          contract_address: "0xA0b86991c6218b36c1D19D4a2e9Eb0cE3606eB48",
+          standard: "erc20",
+          decimals: 6,
+          delisted: false,
+          name: "USD Coin",
+          ticker: "USDC",
+          units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
+        },
+      ]),
+    ),
+  );
+
+const renderViewModel = (assetId = target.assetId) =>
+  renderHook(() => useReceiveAddressDialogViewModel({ ...target, assetId }), {
     initialState: {
       accountEntries: accountsSlice.reducer(undefined, legacyAccountsSynced([entry])),
       accounts: [ethAccount],
+      receiveAddressDialog: { target },
     },
   });
 
@@ -49,6 +71,7 @@ describe("useReceiveAddressDialogViewModel", () => {
         VerifyAddressExecutor: VerifyAddressExecutorLWD,
         onCopyAddress: expect.any(Function),
         getFamilyConfig: undefined,
+        onResolveGate: undefined,
       }),
     );
     expect(result.current.onShareAddress).toBeUndefined();
@@ -58,12 +81,12 @@ describe("useReceiveAddressDialogViewModel", () => {
     const receiveAddressConfig = jest.fn(() => ({ notices: ["utxo" as const] }));
     jest.mocked(useLLDCoinFamily).mockReturnValue({ receiveAddressConfig });
     const { result } = renderViewModel();
-    const { descriptor, asset } = mockReceiveFamilyConfigInput();
+    const { asset } = mockReceiveFamilyConfigInput();
 
-    expect(result.current.getFamilyConfig?.({ descriptor, asset })).toEqual({ notices: ["utxo"] });
+    expect(result.current.getFamilyConfig?.({ asset })).toEqual({ notices: ["utxo"] });
     expect(useLLDCoinFamily).toHaveBeenCalledWith("evm");
     expect(receiveAddressConfig).toHaveBeenCalledWith(
-      expect.objectContaining({ descriptor, asset, legacyAccount: ethAccount }),
+      expect.objectContaining({ asset, legacyAccount: ethAccount }),
     );
   });
 
@@ -107,5 +130,42 @@ describe("useReceiveAddressDialogViewModel", () => {
       { text: "this" },
       { text: "." },
     ]);
+  });
+
+  it("should close the dialog, then open the family flow the account needs to receive", () => {
+    const receiveGateAction = jest.fn();
+    jest.mocked(useLLDCoinFamily).mockReturnValue({ receiveGateAction });
+    const { result, store } = renderViewModel();
+
+    result.current.onResolveGate?.(jest.fn());
+
+    expect(store.getState().receiveAddressDialog.target).toBeNull();
+    expect(receiveGateAction).toHaveBeenCalledWith({
+      account: ethAccount,
+      token: undefined,
+      dispatch: store.dispatch,
+    });
+  });
+
+  it("should give the family flow the token the dialog receives", async () => {
+    serveUsdc();
+    const receiveGateAction = jest.fn();
+    jest.mocked(useLLDCoinFamily).mockReturnValue({ receiveGateAction });
+    const { result, store } = renderViewModel(USDC_ID);
+
+    // Pressed again until the token is loaded: the family action gets it from then on.
+    await waitFor(() => {
+      result.current.onResolveGate?.(jest.fn());
+      expect(receiveGateAction).toHaveBeenLastCalledWith(
+        expect.objectContaining({ token: expect.anything() }),
+      );
+    });
+
+    expect(store.getState().receiveAddressDialog.target).toBeNull();
+    expect(receiveGateAction).toHaveBeenLastCalledWith({
+      account: ethAccount,
+      token: expect.objectContaining({ id: USDC_ID, ticker: "USDC" }),
+      dispatch: store.dispatch,
+    });
   });
 });
