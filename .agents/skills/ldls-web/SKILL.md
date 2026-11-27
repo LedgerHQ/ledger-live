@@ -14,6 +14,16 @@ The file exists once `pnpm i` has run. pnpm links `@ledgerhq/lumen-ui-react` und
 depend on it, not at the repo root. If the path is missing, open `ai-rules/RULES.md` in the installed
 `@ledgerhq/lumen-ui-react` package of any web consumer.
 
+## Legacy UI is deprecated
+
+All new UI uses Lumen, in `src/mvvm/` and everywhere else. These take no new usage:
+
+- `@ledgerhq/react-ui`
+- the desktop V2 kit: `~/renderer/components/Box`, `~/renderer/components/Text`
+- `styled-components`, also banned in `shared/`, `domain/`, `features/` and `support/` (`@features/platform-style` excepted)
+
+The `legacy-ui` oxlint rules (`no-legacy-import`, `no-legacy-element`, `no-styled-definition`, `no-banned-component`) count existing usages against a baseline in `apps/ledger-live-desktop/oxlint-suppressions.json`. The baseline only shrinks: never add an entry. After you remove a usage, run `oxlint --prune-suppressions` from the app folder (commands in the [Desktop lint doc](../../../apps/ledger-live-desktop/docs/lint.md)). Changes to that file need a Coin Integration review.
+
 ## Map the contract onto Lumen
 
 The rules both platforms follow are in
