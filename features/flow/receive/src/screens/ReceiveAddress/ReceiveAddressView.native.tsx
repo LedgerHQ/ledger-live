@@ -132,9 +132,11 @@ export function ReceiveAddressView({
                 </Dimmed>
               </>
             )}
-            <Dimmed isDimmed={isHintOpen}>
-              <ReceiveAddressExtras memoCard={memoCard} helpCard={helpCard} />
-            </Dimmed>
+            <Box style={{ marginTop: "auto" }}>
+              <Dimmed isDimmed={isHintOpen}>
+                <ReceiveAddressExtras memoCard={memoCard} helpCard={helpCard} />
+              </Dimmed>
+            </Box>
           </Box>
         </ScrollView>
       )}
