@@ -16,7 +16,7 @@ jest.mock("@ledgerhq/coin-hedera/network/api", () => ({
 
 LiveConfig.setConfig(hederaConfig);
 const hedera = getCryptoCurrencyById("hedera");
-const PUBLIC_KEY = "302a300506032b6570032100aa";
+const PUBLIC_KEY = "f381f94b116a99518739e1bb394d1c8de281055d48b01dbc1625eebb06021ce5";
 const transport: Transport = Object.create(Transport.prototype);
 const newScan = (): RunOnTransport => job => job(transport, new AbortController().signal);
 const deriveAt = (runOnTransport: ReturnType<typeof newScan>, index: number) =>
@@ -31,14 +31,18 @@ beforeEach(() => {
 });
 
 describe("hedera deriveAccountDescriptor", () => {
-  it("is the index-th account the mirror node lists for the key, at the legacy path", async () => {
+  it("is the index-th account the mirror node lists for the key, at the legacy path, keyed on the account id and the device key", async () => {
     const scan = newScan();
     await expect(deriveAt(scan, 0)).resolves.toEqual({
-      descriptor: expect.objectContaining({ type: "address", key: "0.0.11", path: "m/44/3030" }),
+      descriptor: expect.objectContaining({
+        type: "address",
+        key: `0.0.11:${PUBLIC_KEY}`,
+        path: "m/44/3030",
+      }),
       keyHasMoreAccounts: true,
     });
     await expect(deriveAt(scan, 1)).resolves.toEqual({
-      descriptor: expect.objectContaining({ key: "0.0.22", path: "m/44/3030" }),
+      descriptor: expect.objectContaining({ key: `0.0.22:${PUBLIC_KEY}`, path: "m/44/3030" }),
       keyHasMoreAccounts: false,
     });
     expect(getPublicKey).toHaveBeenCalledWith("44/3030");
@@ -77,6 +81,8 @@ describe("hedera deriveAccountDescriptor", () => {
     const scan = newScan();
     getAccountsForPublicKey.mockRejectedValueOnce(new Error("mirror down"));
     await expect(deriveAt(scan, 0)).rejects.toThrow("mirror down");
-    await expect(deriveAt(scan, 0)).resolves.toMatchObject({ descriptor: { key: "0.0.11" } });
+    await expect(deriveAt(scan, 0)).resolves.toMatchObject({
+      descriptor: { key: `0.0.11:${PUBLIC_KEY}` },
+    });
   });
 });

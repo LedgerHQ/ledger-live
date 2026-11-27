@@ -1,6 +1,7 @@
 import { isGenericCoinFrameworkFamily } from "../bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import type { CoinModuleLoader, FamilySetup } from "./types";
 import { aleoLegacyAccountContext } from "../families/aleo/legacyAccountContext";
+import { hederaAccountKey } from "../families/hedera/accountKey";
 
 export const coinModuleLoaders: CoinModuleLoader[] = [
   {
@@ -267,6 +268,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "hedera",
     supportedCoins: ["hedera", "hedera_testnet"],
     accountDescriptorType: "address",
+    compositeAccountKey: hederaAccountKey,
     loadSetup: () => import("../families/hedera/setup"),
     loadAccountReceive: () => import("../families/hedera/accountReceive").then(m => m.default),
     loadAssetStatus: () => import("../families/hedera/assetStatus").then(m => m.default),

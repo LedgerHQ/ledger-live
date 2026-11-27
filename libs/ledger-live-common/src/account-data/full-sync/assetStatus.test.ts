@@ -23,6 +23,7 @@ const accountOf = (currencyId: string, fields: Partial<Account> = {}): Account =
   ...genAccount(currencyId, { currency: getCryptoCurrencyById("ethereum") }),
   currency: getCryptoCurrencyById(currencyId),
   subAccounts: [],
+  ...(currencyId === "hedera" && { freshAddress: "0.0.751515", seedIdentifier: "ab".repeat(32) }),
   ...fields,
 });
 
