@@ -24,7 +24,7 @@ describe("Settings General (mobile)", () => {
   it("shows the General rows with their current values", async () => {
     await renderGeneral();
 
-    for (const row of ["ledgerSync", "theme", "language", "currency"]) {
+    for (const row of ["ledgerSync", "theme", "language", "dateFormat", "currency"]) {
       expect(screen.getByTestId(`settings-general-${row}`)).toBeVisible();
     }
     expect(screen.getByText("English")).toBeVisible();
@@ -54,5 +54,14 @@ describe("Settings General (mobile)", () => {
     await user.press(await screen.findByText("Light"));
 
     expect(store.getState().settings.theme).toBe("light");
+  });
+
+  it("stores the date format picked in its sheet", async () => {
+    const { user, store } = await renderGeneral();
+
+    await user.press(screen.getByTestId("settings-general-dateFormat"));
+    await user.press(await screen.findByText("DD/MM/YYYY"));
+
+    expect(store.getState().settings.dateFormat).toBe("DD/MM/YYYY");
   });
 });

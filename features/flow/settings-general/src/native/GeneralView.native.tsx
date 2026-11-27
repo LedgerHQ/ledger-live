@@ -1,6 +1,6 @@
 import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { Coins, Language, Refresh, ThemeFill } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Calendar, Coins, Language, Refresh, ThemeFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { SettingsRow } from "@features/flow-settings";
 import { GeneralChoiceSheet } from "./GeneralChoiceSheet";
 import type {
@@ -11,16 +11,18 @@ import type {
 const ROW_ICONS: Readonly<Record<GeneralSheetId, typeof Refresh>> = {
   theme: ThemeFill,
   language: Language,
+  dateFormat: Calendar,
   currency: Coins,
 };
 
-const PICKER_ROWS: readonly GeneralSheetId[] = ["theme", "language", "currency"];
+const PICKER_ROWS: readonly GeneralSheetId[] = ["theme", "language", "dateFormat", "currency"];
 
 type GeneralViewProps = GeneralSectionSheetsViewModel & Readonly<{ testID?: string }>;
 
 export function GeneralView({
   labels,
   ledgerSync,
+  rowTitles,
   currentLabels,
   openSheet,
   onOpenSheet,
@@ -42,7 +44,7 @@ export function GeneralView({
         return (
           <SettingsRow
             key={id}
-            title={labels[id].title}
+            title={rowTitles[id]}
             description={currentLabels[id]}
             icon={<Icon size={24} color="base" />}
             trailing={{ type: "chevron", onSelect: () => onOpenSheet(id) }}
