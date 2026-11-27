@@ -46,6 +46,7 @@
     "apps/web-tools",
     "e2e/desktop",
     "e2e/mobile",
+    "e2e/mobile-v2",
     "libs/asset-aggregation",
     "libs/asset-detail",
     "libs/coin-modules-monitoring",
