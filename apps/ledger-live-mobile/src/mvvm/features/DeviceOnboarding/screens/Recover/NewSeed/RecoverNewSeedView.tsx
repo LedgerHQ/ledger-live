@@ -159,7 +159,10 @@ function DetailSheet({
       contentHasBottomSpace
       testID={recoverNewSeedTestIds.sheet}
     >
-      <BottomSheetView style={{ paddingBottom: bottom + 16 }}>
+      <BottomSheetView
+        testID={recoverNewSeedTestIds.sheetContent}
+        style={{ paddingBottom: bottom + 16 }}
+      >
         <BottomSheetHeader />
         <Box lx={{ gap: "s24", paddingHorizontal: "s16" }}>
           <Text typography="heading3SemiBold" lx={{ color: "base" }}>

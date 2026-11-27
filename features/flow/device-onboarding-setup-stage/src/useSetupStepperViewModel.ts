@@ -1,8 +1,10 @@
 import { useTranslation } from "@shared/i18n";
 import type { SetupStepperProps } from "./SetupStepper.types";
-import type { SetupIndicator, SetupStage } from "./toSetupStage";
+import type { SetupIndicator, SetupStage, SetupStageDetail } from "./toSetupStage";
 
 export type SetupStepperViewProps = Readonly<{
+  stageKind: SetupStage["kind"];
+  stageDetail?: SetupStageDetail;
   label: string;
   completedSteps: number;
   totalSteps: number;
@@ -69,6 +71,8 @@ export function useSetupStepperViewModel({
       : stageDescriptionKey(stage, status, firmwareDeclined);
 
   return {
+    stageKind: stage.kind,
+    ...(stage.detail ? { stageDetail: stage.detail } : {}),
     label: `${stage.index + 1}/${stage.total}`,
     completedSteps: stage.index,
     totalSteps: stage.total,

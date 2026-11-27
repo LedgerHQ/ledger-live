@@ -10,6 +10,7 @@ export const recoverNewSeedTestIds = {
   protect: "device-onboarding-recover-protect",
   skip: "device-onboarding-recover-skip",
   sheet: "device-onboarding-recover-sheet",
+  sheetContent: "device-onboarding-recover-sheet-content",
   sheetStart: "device-onboarding-recover-sheet-start",
   sheetRemind: "device-onboarding-recover-sheet-remind",
 } as const;

@@ -69,7 +69,10 @@ const CounterfeitWarningContent = ({
 }: CounterfeitWarningContentProps) => {
   const bottomInset = useBottomSheetBottomInset();
   return (
-    <BottomSheetView style={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}>
+    <BottomSheetView
+      testID="counterfeit-warning-drawer-content"
+      style={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}
+    >
       <BottomSheetHeader />
       <Box lx={{ paddingHorizontal: "s16" }}>
         <InfoState
@@ -85,7 +88,11 @@ const CounterfeitWarningContent = ({
               }}
             />
           }
-          primaryCta={{ label: primaryCtaLabel, onPress: onProceed }}
+          primaryCta={{
+            label: primaryCtaLabel,
+            onPress: onProceed,
+            testID: "counterfeit-warning-drawer-proceed",
+          }}
           secondaryCta={{ label: secondaryCtaLabel, onPress: onConcern }}
         />
       </Box>

@@ -69,4 +69,10 @@ describe("CounterfeitWarningDrawerView", () => {
     await user.press(screen.getByText("secondary-key-resolved"));
     expect(onConcern).toHaveBeenCalledTimes(1);
   });
+
+  it("should expose the proceed button to the E2E tests", () => {
+    render(<CounterfeitWarningDrawerView {...defaultProps} />);
+
+    expect(screen.getByTestId("counterfeit-warning-drawer-proceed")).toBeVisible();
+  });
 });
