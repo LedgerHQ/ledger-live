@@ -18,7 +18,7 @@ export default class ModularDrawer {
   private readonly drawerCloseButton = byId("bottom-sheet-header-close-button");
   private readonly drawerBackButton = byId("bottom-sheet-header-back-button");
   private readonly accountItemName = (name: string) => byId(`account-item-name-${name}`);
-  private readonly assetItem = (ticker: string) => byId(new RegExp(`asset-item-${ticker}`, "i"));
+  private readonly assetItem = (ticker: string) => byId(new RegExp(`^asset-item-${ticker}$`, "i"));
   private readonly assetItemWithText = (assetItemId: string, text: RegExp) =>
     byIdWithDescendantText({ id: assetItemId, text });
   private readonly assetItemByName = ({ ticker, assetName }: AssetItemByNameOptions) =>
