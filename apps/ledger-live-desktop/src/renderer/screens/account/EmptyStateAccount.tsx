@@ -19,6 +19,7 @@ import { setTrackingSource } from "@shared/analytics";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useTokenTypes } from "~/renderer/families/useTokenTypes";
+import { useLLDCoinFamily } from "~/renderer/families";
 import { useOpenReceiveFlow } from "LLD/features/Receive";
 type OwnProps = {
   account: AccountLike;
@@ -32,6 +33,7 @@ function EmptyStateAccount({ t, account, parentAccount }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
   const tokenTypes = useTokenTypes(mainAccount.currency);
+  const { isTransferDisabled } = useLLDCoinFamily(mainAccount.currency.family);
   const { isCurrencyAvailable } = useRampCatalog();
   const navigate = useNavigate();
   const location = useLocation();
@@ -106,7 +108,7 @@ function EmptyStateAccount({ t, account, parentAccount }: Props) {
               </Box>
             </Button>
           ) : null}
-          {canReceive(mainAccount, undefined) ? (
+          {canReceive(mainAccount, undefined) && !isTransferDisabled?.(account, parentAccount) ? (
             <Button
               mt={5}
               primary

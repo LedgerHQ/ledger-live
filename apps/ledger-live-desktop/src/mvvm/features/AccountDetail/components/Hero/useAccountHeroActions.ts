@@ -9,6 +9,7 @@ import {
 import { track } from "@shared/analytics";
 import { useDispatch } from "LLD/hooks/redux";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
+import { importLLDCoinFamily } from "~/renderer/families";
 import { getAccountTrackingFacts } from "../../utils/accountTracking";
 import type { AccountAsset, AccountAssetsByAction } from "./types";
 import { useInvestActions } from "./useInvestActions";
@@ -46,7 +47,13 @@ export function useAccountHeroActions(
           dispatch(openReceiveFlow({ account, sourcePage: ACCOUNT_DETAIL_PAGES.account }));
           return;
         case "send":
-          pickAsset(assets, openSend, id);
+          void importLLDCoinFamily(account.currency.family).then(({ isTransferDisabled }) =>
+            pickAsset(
+              assets.filter(asset => !isTransferDisabled?.(asset.account, asset.parentAccount)),
+              openSend,
+              id,
+            ),
+          );
           return;
         case "buy":
         case "sell":

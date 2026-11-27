@@ -20,6 +20,8 @@ type Props = {
   accountActionsTestId?: string;
 };
 
+type SendReceiveProps = { onClick: () => void; disabled?: boolean };
+
 export const ActionDefault = ({
   onClick,
   iconComponent,
@@ -42,17 +44,19 @@ export const ActionDefault = ({
     </Flex>
   </Button>
 );
-export const SendActionDefault = ({ onClick }: { onClick: () => void }) => (
+export const SendActionDefault = ({ onClick, disabled }: SendReceiveProps) => (
   <ActionDefault
     onClick={onClick}
+    disabled={disabled}
     iconComponent={<IconSend size={14} />}
     labelComponent={<Trans i18nKey="send.title" />}
     accountActionsTestId={"send-button"}
   />
 );
-export const ReceiveActionDefault = ({ onClick }: { onClick: () => void }) => (
+export const ReceiveActionDefault = ({ onClick, disabled }: SendReceiveProps) => (
   <ActionDefault
     onClick={onClick}
+    disabled={disabled}
     iconComponent={<IconReceive size={14} />}
     labelComponent={<Trans i18nKey="receive.title" />}
     accountActionsTestId="receive-account-action-button"

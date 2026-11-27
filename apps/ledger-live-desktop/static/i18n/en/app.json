@@ -4439,6 +4439,7 @@
       "ripplingTooltip": "If activated, your balance can be used to route other users' payments, which may exchange it for the same asset from a different issuer.",
       "activated": "Activated",
       "deactivated": "Deactivated",
+      "frozen": "Frozen",
       "edit": "Edit",
       "delete": "Delete",
       "editAsset": {
@@ -4503,6 +4504,12 @@
     "tokenAccount": {
       "trustLimit": "Trust limit",
       "trustLimitTooltip": "The most of this token your account accepts to hold."
+    },
+    "frozenBanner": {
+      "title_one": "Your {{tickers}} has been frozen",
+      "title_other": "Your {{tickers}} have been frozen",
+      "description_one": "The issuer has frozen this asset. You can't use it until the freeze is lifted.",
+      "description_other": "The issuers have frozen these assets. You can't use them until the freeze is lifted."
     },
     "rippling": {
       "label": "Rippling",
