@@ -1,1 +1,2 @@
-export * from "./settingsPrivacy";
+export * from "./exports";
+export type * from "./Privacy.types";
