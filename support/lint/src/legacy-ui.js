@@ -178,24 +178,26 @@ function realpath(file) {
 }
 
 /**
- * Whether a specifier loads an alias entry, as the app's TypeScript resolver sees it. The files of the entry
- * itself do not count: they are the legacy module, not one of its consumers.
+ * Whether a specifier loads an alias entry, spelled as the entry or as anything the app's TypeScript resolver
+ * resolves to it. The files of the entry itself do not count, whatever the spelling: they are the legacy
+ * module, not one of its consumers.
  *
  * @param {string} specifier
  * @param {string} filename
  * @param {string} entry
  * @returns {boolean}
  */
-function resolvesToAliasEntry(specifier, filename, entry) {
+function isAliasEntryImport(specifier, filename, entry) {
+  const direct = specifier === entry || specifier.startsWith(`${entry}/`);
   // A specifier that reaches the entry from outside it names the entry's last segment, so others skip resolution.
-  if (!specifier.includes(path.posix.basename(entry))) return false;
+  if (!direct && !specifier.includes(path.posix.basename(entry))) return false;
   const root = appRoot(path.dirname(filename));
   const resolver = root && appResolver(root);
-  if (!root || !resolver) return false;
-  const target = aliasTarget(resolver, root, entry);
-  if (target === null) return false;
+  const target = root && resolver ? aliasTarget(resolver, root, entry) : null;
+  if (!resolver || target === null) return direct;
   const importer = realpath(filename);
   if (isAtOrBelow(importer, target)) return false;
+  if (direct) return true;
   const resolved = resolver.resolve(specifier, importer);
   return resolved !== null && isAtOrBelow(resolved, target);
 }
@@ -209,12 +211,10 @@ function resolvesToAliasEntry(specifier, filename, entry) {
 function isLegacyModule(specifier, filename, modules = []) {
   if (typeof specifier !== "string") return false;
   return modules.some(entry => {
-    if (specifier === entry || specifier.startsWith(`${entry}/`)) return true;
-    return (
-      entry.startsWith(ALIAS_PREFIX) &&
-      typeof filename === "string" &&
-      resolvesToAliasEntry(specifier, filename, entry)
-    );
+    if (entry.startsWith(ALIAS_PREFIX) && typeof filename === "string") {
+      return isAliasEntryImport(specifier, filename, entry);
+    }
+    return specifier === entry || specifier.startsWith(`${entry}/`);
   });
 }
 
@@ -366,8 +366,14 @@ const noStyledDefinition = legacyUiRule({
     /** @type {string | null} */
     let styled = null;
 
-    /** @param {{ type?: string, name?: string } | undefined} node */
-    const isStyled = node => styled !== null && node?.type === "Identifier" && node.name === styled;
+    /**
+     * @param {{ type?: string, name?: string } | undefined} node
+     * @returns {boolean} whether the node is the `styled` import, not a local that shadows it
+     */
+    function isStyled(node) {
+      if (styled === null || node?.type !== "Identifier" || node.name !== styled) return false;
+      return refersToImport(context, node, styled);
+    }
 
     /** @param {object} node */
     function report(node) {

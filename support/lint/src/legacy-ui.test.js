@@ -95,6 +95,8 @@ test("a ~/ entry matches any specifier the app's tsconfig resolves to it", () =>
 test("the files of a ~/ entry may import each other", () => {
   const file = desktop("renderer/components/Box/Card.tsx");
   assert.equal(isLegacyModule("./Box", file, DESKTOP.modules), false);
+  assert.equal(isLegacyModule("~/renderer/components/Box/Box", file, DESKTOP.modules), false);
+  assert.equal(isLegacyModule("@ledgerhq/react-ui", file, DESKTOP.modules), true);
 });
 
 test("a glob spans folders with ** and stays within one with *", () => {
@@ -273,6 +275,14 @@ test("no-styled-definition counts each definition once, attrs chains included", 
         "",
       ].join("\n"),
       "src/C.tsx": "const styled = { div: 1 };\nexport const A = styled.div;\n",
+      "src/D.tsx": [
+        'import styled from "styled-components";',
+        "export function render(styled) {",
+        "  return [styled.div, styled(Object)];",
+        "}",
+        "export const A = styled.div`color: red;`;",
+        "",
+      ].join("\n"),
     },
     MOBILE,
   ).filter(line => line.startsWith("no-styled-definition"));
@@ -283,6 +293,7 @@ test("no-styled-definition counts each definition once, attrs chains included", 
     "no-styled-definition app/src/A.tsx:5",
     "no-styled-definition app/src/A.tsx:6",
     "no-styled-definition app/src/B.tsx:2",
+    "no-styled-definition app/src/D.tsx:5",
   ]);
 });
 
