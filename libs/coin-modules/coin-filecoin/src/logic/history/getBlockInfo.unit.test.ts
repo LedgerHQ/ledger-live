@@ -1,51 +1,74 @@
 import {
   InvalidBlockHeightError,
   BlockNotFoundError,
+  NoBlockAtHeightError,
 } from "@ledgerhq/coin-module-framework/errors";
 import { fetchBlockscoutBlock } from "../../network/blockscout";
+import { fetchFinalizedHeight } from "../../network/lotus";
 import { createMockFilecoinContext, mockFilecoinConfig } from "../../test/context";
 import { getBlockInfo } from "./getBlockInfo";
 
 jest.mock("../../network/blockscout");
+jest.mock("../../network/lotus");
 
 const mockedFetch = jest.mocked(fetchBlockscoutBlock);
+const mockedFinalizedHeight = jest.mocked(fetchFinalizedHeight);
 const context = createMockFilecoinContext();
+const INDEXER_URL = mockFilecoinConfig.indexer.url;
+const NODE_URL = mockFilecoinConfig.node.url;
+const FINALIZED_HEIGHT = 6582170;
 
-const parent = {
-  height: 6558811,
-  hash: "0x6f37",
-  parent_hash: "0x1a49",
-  timestamp: "2026-11-18T20:00:00.000000Z",
-};
-const block = {
-  height: 6558813,
-  hash: "0xb419",
-  parent_hash: parent.hash,
-  timestamp: "2026-11-18T20:01:00.000000Z",
-};
+type IndexedBlock = Awaited<ReturnType<typeof fetchBlockscoutBlock>>;
+
+function indexedBlock(height: number, parentHeight: number): IndexedBlock {
+  return {
+    height,
+    hash: `0x${height}`,
+    parent_hash: `0x${parentHeight}`,
+    timestamp: "2026-11-18T20:01:00.000000Z",
+  };
+}
+
+/** Blockscout holds these blocks, and answers 404 (BlockNotFoundError) for any other height or hash. */
+function indexerHolds(...blocks: IndexedBlock[]) {
+  mockedFetch.mockImplementation(async (_url, heightOrHash) => {
+    const block = blocks.find(b => b.height === heightOrHash || b.hash === heightOrHash);
+    if (!block) throw new BlockNotFoundError(`Block ${heightOrHash} not found on the indexer`);
+    return block;
+  });
+}
 
 describe("getBlockInfo", () => {
-  beforeEach(() => jest.resetAllMocks());
+  beforeEach(() => {
+    jest.resetAllMocks();
+    mockedFinalizedHeight.mockResolvedValue(FINALIZED_HEIGHT);
+  });
 
   it("maps the block, and takes the parent height from the parent block (null round)", async () => {
-    mockedFetch.mockResolvedValueOnce(block).mockResolvedValueOnce(parent);
+    indexerHolds(indexedBlock(6558811, 6558810), indexedBlock(6558813, 6558811));
 
     const info = await getBlockInfo(context, 6558813);
 
     expect(info).toEqual({
       height: 6558813,
-      hash: "0xb419",
+      hash: "0x6558813",
       time: new Date("2026-11-18T20:01:00.000000Z"),
-      parent: { height: 6558811, hash: "0x6f37" },
+      parent: { height: 6558811, hash: "0x6558811" },
     });
-    expect(mockedFetch).toHaveBeenNthCalledWith(1, mockFilecoinConfig.indexer.url, 6558813);
-    expect(mockedFetch).toHaveBeenNthCalledWith(2, mockFilecoinConfig.indexer.url, "0x6f37");
+    expect(mockedFetch).toHaveBeenNthCalledWith(1, INDEXER_URL, 6558813);
+    expect(mockedFetch).toHaveBeenNthCalledWith(2, INDEXER_URL, "0x6558811");
+  });
+
+  it("does not ask the node for a height that has a block", async () => {
+    indexerHolds(indexedBlock(6558811, 6558810), indexedBlock(6558813, 6558811));
+
+    await getBlockInfo(context, 6558813);
+
+    expect(mockedFinalizedHeight).not.toHaveBeenCalled();
   });
 
   it("omits the parent when it is not indexed (first indexed block)", async () => {
-    mockedFetch
-      .mockResolvedValueOnce({ ...block, height: 2683348 })
-      .mockRejectedValueOnce(new BlockNotFoundError());
+    indexerHolds(indexedBlock(2683348, 2683347));
 
     const info = await getBlockInfo(context, 2683348);
 
@@ -53,17 +76,91 @@ describe("getBlockInfo", () => {
     expect(info).not.toHaveProperty("parent");
   });
 
-  it("throws BlockNotFoundError for a height the indexer does not hold", async () => {
-    mockedFetch.mockRejectedValueOnce(new BlockNotFoundError());
-
-    await expect(getBlockInfo(context, 2683340)).rejects.toBeInstanceOf(BlockNotFoundError);
-  });
-
   it("rethrows a parent lookup failure that is not a 404", async () => {
     const failure = new Error("Bad gateway");
-    mockedFetch.mockResolvedValueOnce(block).mockRejectedValueOnce(failure);
+    mockedFetch
+      .mockResolvedValueOnce(indexedBlock(6558813, 6558811))
+      .mockRejectedValueOnce(failure);
 
     await expect(getBlockInfo(context, 6558813)).rejects.toBe(failure);
+  });
+
+  describe("on a height that Blockscout does not hold", () => {
+    it("throws NoBlockAtHeightError for a null round below the finalized tipset", async () => {
+      indexerHolds(indexedBlock(6573822, 6573821), indexedBlock(6573824, 6573822));
+
+      const failure = getBlockInfo(context, 6573823);
+
+      await expect(failure).rejects.toBeInstanceOf(NoBlockAtHeightError);
+      await expect(failure).rejects.toHaveProperty("cause", expect.any(BlockNotFoundError));
+      expect(mockedFinalizedHeight).toHaveBeenCalledWith(NODE_URL);
+    });
+
+    it("throws NoBlockAtHeightError for each round of consecutive null rounds", async () => {
+      indexerHolds(indexedBlock(6573820, 6573819), indexedBlock(6573823, 6573820));
+
+      await expect(getBlockInfo(context, 6573821)).rejects.toBeInstanceOf(NoBlockAtHeightError);
+      await expect(getBlockInfo(context, 6573822)).rejects.toBeInstanceOf(NoBlockAtHeightError);
+    });
+
+    it("throws BlockNotFoundError for a null round above the finalized tipset", async () => {
+      const height = FINALIZED_HEIGHT + 1;
+      indexerHolds(indexedBlock(height - 1, height - 2), indexedBlock(height + 1, height - 1));
+
+      await expect(getBlockInfo(context, height)).rejects.toBeInstanceOf(BlockNotFoundError);
+    });
+
+    it("throws BlockNotFoundError for the finalized height, which always has a tipset", async () => {
+      indexerHolds(indexedBlock(FINALIZED_HEIGHT + 1, FINALIZED_HEIGHT));
+
+      await expect(getBlockInfo(context, FINALIZED_HEIGHT)).rejects.toBeInstanceOf(
+        BlockNotFoundError,
+      );
+    });
+
+    it("throws BlockNotFoundError when the next block has the missing height as parent", async () => {
+      indexerHolds(indexedBlock(6573822, 6573821), indexedBlock(6573824, 6573823));
+
+      await expect(getBlockInfo(context, 6573823)).rejects.toBeInstanceOf(BlockNotFoundError);
+    });
+
+    it("throws BlockNotFoundError when Blockscout holds no block above the missing height", async () => {
+      indexerHolds(indexedBlock(6573822, 6573821));
+
+      await expect(getBlockInfo(context, 6573823)).rejects.toBeInstanceOf(BlockNotFoundError);
+    });
+
+    it("throws BlockNotFoundError for a height before the FEVM upgrade", async () => {
+      indexerHolds(indexedBlock(2683348, 2683347));
+
+      await expect(getBlockInfo(context, 2683340)).rejects.toBeInstanceOf(BlockNotFoundError);
+      await expect(getBlockInfo(context, 2683347)).rejects.toBeInstanceOf(BlockNotFoundError);
+    });
+
+    it("rethrows a failure of the node", async () => {
+      const nodeFailure = new Error("Lotus Filecoin.ChainGetTipSet failed");
+      indexerHolds(indexedBlock(6573822, 6573821), indexedBlock(6573824, 6573822));
+      mockedFinalizedHeight.mockRejectedValueOnce(nodeFailure);
+
+      await expect(getBlockInfo(context, 6573823)).rejects.toBe(nodeFailure);
+    });
+
+    it("rethrows a failure of Blockscout while it looks for the next block", async () => {
+      const indexerFailure = new Error("Bad gateway");
+      mockedFetch
+        .mockRejectedValueOnce(new BlockNotFoundError())
+        .mockRejectedValueOnce(indexerFailure);
+
+      await expect(getBlockInfo(context, 6573823)).rejects.toBe(indexerFailure);
+    });
+  });
+
+  it("does not ask the node when Blockscout fails with another error", async () => {
+    const indexerFailure = new Error("Bad gateway");
+    mockedFetch.mockRejectedValueOnce(indexerFailure);
+
+    await expect(getBlockInfo(context, 6573823)).rejects.toBe(indexerFailure);
+    expect(mockedFinalizedHeight).not.toHaveBeenCalled();
   });
 
   it.each([0, -1, 1.5, Number.NaN])("rejects the invalid height %p", async height => {

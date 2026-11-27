@@ -2,16 +2,20 @@ import type { BlockTransaction } from "@ledgerhq/coin-module-framework/api/index
 import {
   BlockNotFoundError,
   InvalidBlockHeightError,
+  NoBlockAtHeightError,
 } from "@ledgerhq/coin-module-framework/errors";
 import { fetchBlockscoutBlock, fetchBlockscoutBlockTransactions } from "../../network/blockscout";
+import { fetchFinalizedHeight } from "../../network/lotus";
 import { createMockFilecoinContext, mockFilecoinConfig } from "../../test/context";
 import { getBlock } from "./getBlock";
 import { getBlockInfo } from "./getBlockInfo";
 
 jest.mock("../../network/blockscout");
+jest.mock("../../network/lotus");
 
 const mockedFetchBlock = jest.mocked(fetchBlockscoutBlock);
 const mockedFetchTransactions = jest.mocked(fetchBlockscoutBlockTransactions);
+const mockedFinalizedHeight = jest.mocked(fetchFinalizedHeight);
 const context = createMockFilecoinContext();
 
 const parent = {
@@ -81,8 +85,22 @@ describe("getBlock", () => {
 
   it("throws BlockNotFoundError for a height the indexer does not hold", async () => {
     mockedFetchBlock.mockRejectedValue(new BlockNotFoundError());
+    mockedFinalizedHeight.mockResolvedValueOnce(6582170);
 
     await expect(getBlock(context, 2683340)).rejects.toBeInstanceOf(BlockNotFoundError);
+    expect(mockedFetchTransactions).not.toHaveBeenCalled();
+  });
+
+  it("throws NoBlockAtHeightError for a finalized null round", async () => {
+    const next = { ...block, height: 6573824, hash: "0xnext", parent_hash: parent.hash };
+    mockedFetchBlock.mockImplementation(async (_url, heightOrHash) => {
+      if (heightOrHash === 6573824) return next;
+      if (heightOrHash === parent.hash) return { ...parent, height: 6573822 };
+      throw new BlockNotFoundError();
+    });
+    mockedFinalizedHeight.mockResolvedValueOnce(6582170);
+
+    await expect(getBlock(context, 6573823)).rejects.toBeInstanceOf(NoBlockAtHeightError);
     expect(mockedFetchTransactions).not.toHaveBeenCalled();
   });
 

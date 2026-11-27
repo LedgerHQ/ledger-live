@@ -12,6 +12,10 @@ export type FilecoinConfig = {
     url: string;
     maxPage: number;
   };
+  /** A Lotus node that serves the JSON-RPC API v2, with F3 finality (Lotus v1.33 or later) */
+  node: {
+    url: string;
+  };
 };
 
 export type FilecoinCoinConfig = CurrencyConfig & FilecoinConfig;
@@ -35,5 +39,6 @@ export const filecoinDefaults = {
     name: "Filecoin",
     unit: { name: "FIL", code: "FIL", magnitude: 18 },
     indexer: { url: "https://proxyblockscout.api.live.ledger.com/314/api/v2", maxPage: 100 },
+    node: { url: "https://api.node.glif.io/rpc/v2" },
   },
 } satisfies Record<string, FilecoinCoinConfig>;
