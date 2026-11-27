@@ -339,14 +339,15 @@ by its tickets.
 
 [`src/legacy-ui.js`](src/legacy-ui.js) stops the growth of the legacy UI stack in the apps: the
 pre-Lumen design systems (`@ledgerhq/native-ui`, `@ledgerhq/react-ui`), `styled-components` and the
-Desktop `Box` and `Text` components. A file that is not waived may not import them. It has two rules:
+Desktop `Box` and `Text` components. It has two rules:
 
-- **`legacy-ui/no-legacy-import`**: one report per `import` or `export ... from` declaration of a
-  legacy module, `import type` included, in a file that is not waived. Outside the waived files it
-  catches every use: a component or a `styled` definition needs its import first.
-- **`legacy-ui/no-banned-component`**: reports each import and JSX element of a component listed in
-  `bannedComponents`, imported from a legacy module, waived files included, so a component that
-  reached zero cannot come back anywhere. It ships empty.
+- **`legacy-ui/no-legacy-import`**: reports [`MESSAGES.legacyImport`](src/legacy-ui.js) once per
+  `import` or `export ... from` declaration of a legacy module, `import type` included. It skips the
+  waived files. Outside them it catches every use: a component or a `styled` definition needs its
+  import first.
+- **`legacy-ui/no-banned-component`**: reports [`MESSAGES.bannedComponent`](src/legacy-ui.js) on
+  each import and JSX element of a component listed in `bannedComponents`, imported from a legacy
+  module. It checks the files of `FILE_WAIVERS` too. `bannedComponents` ships empty.
 
 An app turns them on with `legacyUiLint` from `@support/lint/legacy-ui` and spreads each key into
 its config, next to `coinFamilies`. The app config is the one place that lists its legacy modules:
@@ -375,9 +376,8 @@ root, the files allowed to keep their legacy imports:
 - **`FOLDER_WAIVERS`**: globs of Mobile folders deleted whole by a feature flag cleanup, the reason
   naming the flag, and of dev-only screens. Neither rule checks them.
 
-The list only shrinks. New code never gets an entry: write it with Lumen. To clear an entry, migrate
-the file until it no longer imports a legacy module, then delete its line in the same PR. A file you
-delete loses its line too.
+The list only shrinks: new code never gets an entry. Delete an entry in the PR that migrates or
+deletes its file.
 
 [`src/check-legacy-ui-waivers.js`](src/check-legacy-ui-waivers.js), run by `pnpm lint:legacy-ui-waivers`,
 `pnpm lint:arch` and CI, reads each app's modules from its `oxlint.config.mts` and fails on each problem
