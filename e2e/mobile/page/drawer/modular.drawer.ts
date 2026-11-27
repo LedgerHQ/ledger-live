@@ -1,9 +1,8 @@
 import { Step } from "jest-allure2-reporter/api";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { byId, byIdWithDescendantText, byTextInRowWithText } from "@e2e/helpers/elements/native";
+import { byId, byTextWithAncestorId } from "@e2e/helpers/elements/native";
 
-type AssetItemByNameOptions = { ticker: string; assetName: string };
 type MaskedAmountOptions = { currency: Currency; mask: RegExp };
 
 export default class ModularDrawer {
@@ -21,16 +20,14 @@ export default class ModularDrawer {
   private readonly accountItemName = (name: string) => byId(`account-item-name-${name}`);
   private readonly assetItemId = (ticker: string) => new RegExp(`^asset-item-${ticker}$`, "i");
   private readonly assetItem = (ticker: string) => byId(this.assetItemId(ticker));
-  private readonly assetItemByName = ({ ticker, assetName }: AssetItemByNameOptions) =>
-    byIdWithDescendantText({ id: this.assetItemId(ticker), text: assetName });
+  /** The meta id row is unique; the ticker row is not for shared tickers. */
+  private readonly currencyRowId = (currency: Currency) =>
+    currency.metaCurrencyId
+      ? `asset-item-meta-${currency.metaCurrencyId}`
+      : this.assetItemId(currency.ticker);
+  private readonly currencyRow = (currency: Currency) => byId(this.currencyRowId(currency));
   private readonly maskedAmount = ({ currency, mask }: MaskedAmountOptions) =>
-    currency.aggregatedName
-      ? byTextInRowWithText({
-          id: this.assetItemId(currency.ticker),
-          rowText: currency.aggregatedName,
-          text: mask,
-        })
-      : byIdWithDescendantText({ id: this.assetItemId(currency.ticker), text: mask });
+    byTextWithAncestorId({ id: this.currencyRowId(currency), text: mask });
   private readonly networkItem = (networkId: string) =>
     byId(new RegExp(`network-item-${networkId}`, "i"));
 
@@ -87,27 +84,22 @@ export default class ModularDrawer {
     await assetItem.tap();
   }
 
-  @Step("Select currency in modular drawer {{{0.ticker}}} {{{0.aggregatedName}}}")
+  @Step("Select currency in modular drawer {{{0.ticker}}} {{{0.metaCurrencyId}}}")
   async selectCurrency(currency: Currency): Promise<void> {
-    if (!currency.aggregatedName) {
+    if (!currency.metaCurrencyId) {
       await this.selectCurrencyByTicker(currency.ticker);
       return;
     }
-    const assetItem = this.assetItemByName({
-      ticker: currency.ticker,
-      assetName: currency.aggregatedName,
-    });
+    const assetItem = this.currencyRow(currency);
     await this.performSearchByTicker(currency.ticker);
     await assetItem.scrollTo(this.selectCryptoScrollView);
     await assetItem.tap();
   }
 
-  @Step("Check asset {{{0.ticker}}} {{{0.aggregatedName}}} amount is masked in discreet mode")
+  @Step("Check asset {{{0.ticker}}} {{{0.metaCurrencyId}}} amount is masked in discreet mode")
   private async checkAssetAmountIsDiscreet(currency: Currency): Promise<void> {
-    const { ticker, aggregatedName } = currency;
-    const assetItem = aggregatedName
-      ? this.assetItemByName({ ticker, assetName: aggregatedName })
-      : this.assetItem(ticker);
+    const { ticker } = currency;
+    const assetItem = this.currencyRow(currency);
     await this.performSearchByTicker(ticker);
     await assetItem.waitVisible();
     await assetItem.expectVisible();

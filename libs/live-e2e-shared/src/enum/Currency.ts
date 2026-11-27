@@ -50,6 +50,11 @@ export class Currency {
     return CURRENCY_TEST_LABELS.get(this) ?? this.ticker;
   }
 
+  /** DADA meta-currency id of the drawer row, for tickers shared by several rows. */
+  get metaCurrencyId(): string | undefined {
+    return META_CURRENCY_IDS.get(this);
+  }
+
   /** Name the CLI resolves to this currency; the Speculos app name when it has no entry. */
   get cliKeyword(): string {
     return CLI_CURRENCY_KEYWORDS.get(this) ?? this.speculosApp.name;
@@ -489,6 +494,16 @@ export class Currency {
     networks: [Network.SEI],
   });
 }
+
+const USD_COIN_META_ID = "urn:crypto:meta-currency:usd_coin";
+
+// Drawer rows that share their ticker with another row.
+const META_CURRENCY_IDS = new Map<Currency, string>([
+  [Currency.ETH_USDC, USD_COIN_META_ID],
+  [Currency.XLM_USDC, USD_COIN_META_ID],
+  [Currency.SUI_USDC, USD_COIN_META_ID],
+  [Currency.POL_DAI, "urn:crypto:meta-currency:dai_stablecoin"],
+]);
 
 // Currencies that derive through another coin's app, so the app name is not their CLI name.
 const CLI_CURRENCY_KEYWORDS = new Map<Currency, string>([[Currency.HYPERCORE, "hypercore"]]);
