@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
 import type {
   StakePositionAmount,
+  StakePositionApyAppearance,
   StakePositionExitAction,
   StakePositionNotice,
+  StakePositionRate,
   StakePositionRewardsHeadline,
   StakePositionState,
 } from "../../types";
@@ -19,10 +21,14 @@ export type StakePositionDetailsProps = Readonly<{
   /** The rewards headline in the counter value. Without it, the crypto amount leads. */
   rewardsHeadline?: StakePositionRewardsHeadline;
   currentBalance?: StakePositionAmount;
-  /** Web only, like its design. */
-  initialDeposit?: StakePositionAmount;
-  /** The validator APY, formatted, such as "7.81%". */
-  apy?: string;
+  /** @platform web The initial deposit, formatted with its ticker, like the web design. */
+  initialDepositCrypto?: string;
+  /** @platform web The counter value of the initial deposit, next to it. */
+  initialDepositFiat?: string;
+  /** The rate of the position, as the Earn dashboard shows it, such as "7.12%" and "APY". */
+  apy?: StakePositionRate;
+  /** The tone of the rate tag, which the app decides from the user's region. */
+  apyAppearance: StakePositionApyAppearance;
   validator?: Readonly<{ name: string; imageUrl?: string }>;
   /** The name of the account holding the position. The address row hides without it. */
   accountName?: string;

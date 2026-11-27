@@ -144,6 +144,19 @@ function renderSurface({
 
 const header = () => screen.getByTestId("dialog-header");
 
+const hidingSurface = (isOpen: boolean, onHidden: () => void) => (
+  <StakePositionSurface
+    isOpen={isOpen}
+    heading={DETAILS}
+    ticker="SOL"
+    onDismiss={jest.fn()}
+    onHidden={onHidden}
+    isDismissible
+  >
+    <p>Step content</p>
+  </StakePositionSurface>
+);
+
 describe("StakePositionSurface (web)", () => {
   it("should render nothing while closed", () => {
     renderSurface({ isOpen: false });
@@ -198,6 +211,31 @@ describe("StakePositionSurface (web)", () => {
     });
 
     expect(screen.getByTestId("dialog-status-gradient-success")).toBeInTheDocument();
+  });
+
+  describe("when the dialog hides", () => {
+    it("should tell the app once its content is gone", () => {
+      const onHidden = jest.fn();
+      const { rerender } = render(hidingSurface(true, onHidden), { wrapper: I18nWrapper });
+      expect(onHidden).not.toHaveBeenCalled();
+
+      rerender(hidingSurface(false, onHidden));
+
+      expect(onHidden).toHaveBeenCalledTimes(1);
+      expect(screen.queryByText("Step content")).not.toBeInTheDocument();
+    });
+
+    it("should tell the latest handler the app passes", () => {
+      const first = jest.fn();
+      const latest = jest.fn();
+      const { rerender } = render(hidingSurface(true, first), { wrapper: I18nWrapper });
+      rerender(hidingSurface(true, latest));
+
+      rerender(hidingSurface(false, latest));
+
+      expect(first).not.toHaveBeenCalled();
+      expect(latest).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("once the transaction is signed", () => {

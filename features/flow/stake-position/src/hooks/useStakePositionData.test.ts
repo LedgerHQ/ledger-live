@@ -1,16 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import type { z } from "zod";
-import {
-  useGetEarnPositionsQuery,
-  useGetSolanaValidatorApyQuery,
-  useRefreshEarnPositions,
-  type SolanaValidatorApyByVoteAccount,
-} from "@domain/api-earn-positions";
-import {
-  ApyFractionSchema,
-  type EarnPositionSchema,
-  type EarnPositions,
-} from "@domain/entity-earn-position";
+import { useGetEarnPositionsQuery, useRefreshEarnPositions } from "@domain/api-earn-positions";
+import type { EarnPositionSchema, EarnPositions } from "@domain/entity-earn-position";
 import { mockEarnPosition, mockEarnPositions } from "@domain/entity-earn-position/schema.mock";
 import { abandonStakePosition } from "../stakePositionRequestStore";
 import {
@@ -21,6 +12,7 @@ import { markStakePositionTransacted } from "../stakePositionTransactions";
 import {
   POLL_INTERVAL_MS,
   POLL_TIMEOUT_MS,
+  STALE_REREAD_DELAY_MS,
   TRANSACTED_WINDOW_MS,
   clearStakePositionTransaction,
 } from "../stakePositionTransactions.internals";
@@ -29,42 +21,50 @@ import { useStakePositionData, type UseStakePositionDataInput } from "./useStake
 
 jest.mock("@domain/api-earn-positions", () => ({
   useGetEarnPositionsQuery: jest.fn(),
-  useGetSolanaValidatorApyQuery: jest.fn(),
   useRefreshEarnPositions: jest.fn(),
-  selectSolanaValidatorApy: (lookup: Record<string, number> | undefined, voteAccount: string) =>
-    voteAccount ? lookup?.[voteAccount] : undefined,
 }));
 
 const NETWORK = "solana";
 const OWNER_ADDRESS = "Wa11etTestAddress1111111111111111111111111111";
 const POSITION_ID = "StakeAccountA1111111111111111111111111111111";
 const VALIDATOR = "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx";
-const VALIDATOR_APY = ApyFractionSchema.parse(0.078107);
-const NEXT_VALIDATOR_APY = ApyFractionSchema.parse(0.06);
 const POSITION = { ownerAddress: OWNER_ADDRESS, positionId: POSITION_ID };
+const NOW = 1_000_000;
+/** The time of a read that ended before the surface opened. */
+const BEFORE_OPEN = NOW - 60_000;
 
-type PositionsQueryState = { data?: EarnPositions; isError: boolean };
-type ApyQueryState = { data?: SolanaValidatorApyByVoteAccount };
-type ApyQueryOptions = {
-  skip?: boolean;
-  selectFromResult: (result: ApyQueryState) => unknown;
+type PositionsQueryState = {
+  data?: EarnPositions;
+  isError: boolean;
+  isFetching?: boolean;
+  startedTimeStamp?: number;
+  /** When the cached data was read. Defaults to now: a read of this open. */
+  fulfilledTimeStamp?: number;
 };
 
 const refetch = jest.fn();
 const refreshEarnPositions = jest.fn();
 let positionsQuery: PositionsQueryState;
-let apyQuery: ApyQueryState;
 
 const mockPositionsQuery = jest.mocked(useGetEarnPositionsQuery);
-const mockApyQuery = jest.mocked(useGetSolanaValidatorApyQuery);
 
 const positionsWith = (overrides?: Partial<z.input<typeof EarnPositionSchema>>) =>
   mockEarnPositions({
     positions: [mockEarnPosition({ id: POSITION_ID, validatorAddress: VALIDATOR, ...overrides })],
   });
 
+const stale = (overrides?: Partial<z.input<typeof EarnPositionSchema>>) => ({
+  ...positionsWith(overrides),
+  isStale: true,
+});
 const lastPositionsQueryCall = () => mockPositionsQuery.mock.lastCall;
-const lastApyQueryOptions = () => mockApyQuery.mock.lastCall?.[1] as ApyQueryOptions | undefined;
+
+const INPUT: UseStakePositionDataInput = {
+  request: { id: -1, origin: "account", positionId: POSITION_ID },
+  isOpen: true,
+  network: NETWORK,
+  ownerAddress: OWNER_ADDRESS,
+};
 
 function openRequest(origin: StakePositionOrigin) {
   const onResult = jest.fn();
@@ -79,33 +79,39 @@ function openRequest(origin: StakePositionOrigin) {
 }
 
 function renderData(overrides: Partial<UseStakePositionDataInput> = {}) {
-  const input: UseStakePositionDataInput = {
-    request: { id: -1, origin: "account", positionId: POSITION_ID },
-    isOpen: true,
-    network: NETWORK,
-    ownerAddress: OWNER_ADDRESS,
-    ...overrides,
-  };
-  return renderHook((props: UseStakePositionDataInput) => useStakePositionData(props), {
+  const input: UseStakePositionDataInput = { ...INPUT, ...overrides };
+  const hook = renderHook((props: UseStakePositionDataInput) => useStakePositionData(props), {
     initialProps: input,
   });
+  const rerenderWith = (state: PositionsQueryState) => {
+    positionsQuery = state;
+    hook.rerender(input);
+  };
+  return { ...hook, rerenderWith };
 }
 
-const flushPromises = () => act(() => new Promise<void>(resolve => setTimeout(resolve, 0)));
+const flushPromises = () => act(() => jest.advanceTimersByTimeAsync(0));
 
 describe("useStakePositionData", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers({ now: NOW });
     positionsQuery = { data: positionsWith(), isError: false };
-    apyQuery = { data: { [VALIDATOR]: VALIDATOR_APY } };
     mockPositionsQuery.mockImplementation((() => ({
+      isFetching: false,
+      fulfilledTimeStamp: Date.now(),
       ...positionsQuery,
       refetch,
     })) as unknown as typeof useGetEarnPositionsQuery);
-    mockApyQuery.mockImplementation(((_arg: unknown, options: ApyQueryOptions) =>
-      options.selectFromResult({
-        data: options.skip ? undefined : apyQuery.data,
-      })) as unknown as typeof useGetSolanaValidatorApyQuery);
+    // Like the query: a read again keeps the data it has and starts fetching.
+    refetch.mockImplementation(() => {
+      positionsQuery = {
+        fulfilledTimeStamp: NOW,
+        ...positionsQuery,
+        isFetching: true,
+        startedTimeStamp: Date.now(),
+      };
+    });
     jest.mocked(useRefreshEarnPositions).mockReturnValue(refreshEarnPositions);
   });
 
@@ -126,86 +132,28 @@ describe("useStakePositionData", () => {
   });
 
   it("should be loading until the positions arrive", () => {
-    positionsQuery = { data: undefined, isError: false };
+    positionsQuery = { data: undefined, isError: false, isFetching: true };
 
     const { result } = renderData();
 
     expect(result.current).toEqual({ kind: "loading" });
   });
 
-  it("should show the position with the APY of its validator", () => {
+  it("should show the position with its own rate", () => {
     const { result } = renderData();
 
     expect(result.current).toMatchObject({
       kind: "ready",
       status: "active",
-      validatorApy: VALIDATOR_APY,
+      position: { interest: { type: "APY", value: 0.0712 } },
       isStale: false,
       isPolling: false,
-    });
-    expect(lastApyQueryOptions()?.skip).toBe(false);
-  });
-
-  describe("the validator APY never holds the position back", () => {
-    it("should show the position while the APY loads", () => {
-      apyQuery = { data: undefined };
-
-      const { result } = renderData();
-
-      expect(result.current).toMatchObject({ kind: "ready", validatorApy: undefined });
-    });
-
-    it("should show the position when the APY fails", () => {
-      apyQuery = { data: undefined };
-      mockApyQuery.mockImplementation(((_arg: unknown, options: ApyQueryOptions) =>
-        options.selectFromResult({
-          data: undefined,
-        })) as unknown as typeof useGetSolanaValidatorApyQuery);
-
-      const { result } = renderData();
-
-      expect(result.current).toMatchObject({ kind: "ready", validatorApy: undefined });
-    });
-
-    it("should show the position without an APY when the validator is not listed", () => {
-      apyQuery = { data: { OtherValidatorVoteAccount: NEXT_VALIDATOR_APY } };
-
-      const { result } = renderData();
-
-      expect(result.current).toMatchObject({ kind: "ready", validatorApy: undefined });
-    });
-
-    it("should not read the APY of a position without a validator", () => {
-      positionsQuery = { data: positionsWith({ validatorAddress: "" }), isError: false };
-
-      const { result } = renderData();
-
-      expect(lastApyQueryOptions()?.skip).toBe(true);
-      expect(result.current).toMatchObject({ kind: "ready", validatorApy: undefined });
-    });
-
-    it("should look the APY up by the validator the current row names", () => {
-      const { result, rerender } = renderData();
-      positionsQuery = {
-        data: positionsWith({ validatorAddress: "NextValidatorVoteAccount" }),
-        isError: false,
-      };
-      apyQuery = { data: { NextValidatorVoteAccount: NEXT_VALIDATOR_APY } };
-
-      rerender({
-        request: { id: -1, origin: "account", positionId: POSITION_ID },
-        isOpen: true,
-        network: NETWORK,
-        ownerAddress: OWNER_ADDRESS,
-      });
-
-      expect(result.current).toMatchObject({ kind: "ready", validatorApy: NEXT_VALIDATOR_APY });
     });
   });
 
   describe("on a wallet screen", () => {
     it("should fail with a retry that reads the positions again", () => {
-      positionsQuery = { data: undefined, isError: true };
+      positionsQuery = { data: undefined, isError: true, startedTimeStamp: NOW };
       const { result } = renderData();
 
       expect(result.current).toMatchObject({ kind: "error" });
@@ -226,11 +174,24 @@ describe("useStakePositionData", () => {
       expect(request.onResult).not.toHaveBeenCalled();
       expect(getStakePositionRequest()?.phase).toBe("open");
     });
+
+    it("should fail, not miss the position, when the read of this open fails on older positions without it", () => {
+      positionsQuery = {
+        data: mockEarnPositions({ positions: [] }),
+        isError: true,
+        startedTimeStamp: NOW,
+        fulfilledTimeStamp: BEFORE_OPEN,
+      };
+
+      const { result } = renderData();
+
+      expect(result.current).toMatchObject({ kind: "error" });
+    });
   });
 
   describe("for the Earn live app", () => {
     it.each([
-      ["fails to load", { data: undefined, isError: true }],
+      ["fails to load", { data: undefined, isError: true, startedTimeStamp: NOW }],
       ["is not reported", { data: mockEarnPositions({ positions: [] }), isError: false }],
       [
         "is missing behind a provider failure",
@@ -273,6 +234,136 @@ describe("useStakePositionData", () => {
     });
   });
 
+  describe("a conclusion waits for a read of this open", () => {
+    const CACHED_WITHOUT_ROW: PositionsQueryState = {
+      data: mockEarnPositions({ positions: [] }),
+      isError: false,
+      fulfilledTimeStamp: BEFORE_OPEN,
+      startedTimeStamp: BEFORE_OPEN,
+    };
+
+    it("should keep loading, without answering Earn, while the read of this open runs", async () => {
+      const request = openRequest("earn");
+      positionsQuery = { ...CACHED_WITHOUT_ROW, isFetching: true, startedTimeStamp: NOW };
+
+      const { result, rerenderWith } = renderData({
+        request: { id: request.id, origin: "earn", positionId: POSITION_ID },
+      });
+      await flushPromises();
+
+      expect(result.current).toEqual({ kind: "loading" });
+      expect(request.onResult).not.toHaveBeenCalled();
+
+      rerenderWith({ data: positionsWith(), isError: false, fulfilledTimeStamp: NOW + 1 });
+
+      expect(result.current).toMatchObject({ kind: "ready" });
+      expect(request.onResult).not.toHaveBeenCalled();
+    });
+
+    it("should read again, then conclude, when positions cached before this open lack the position", async () => {
+      const request = openRequest("earn");
+      positionsQuery = CACHED_WITHOUT_ROW;
+
+      const { result, rerenderWith } = renderData({
+        request: { id: request.id, origin: "earn", positionId: POSITION_ID },
+      });
+      await flushPromises();
+
+      expect(refetch).toHaveBeenCalledTimes(1);
+      expect(result.current).toEqual({ kind: "loading" });
+      expect(request.onResult).not.toHaveBeenCalled();
+
+      rerenderWith({ ...CACHED_WITHOUT_ROW, isFetching: true, startedTimeStamp: NOW });
+      rerenderWith({ ...CACHED_WITHOUT_ROW, fulfilledTimeStamp: NOW, startedTimeStamp: NOW });
+      await flushPromises();
+
+      expect(refetch).toHaveBeenCalledTimes(1);
+      expect(request.onResult).toHaveBeenCalledWith({ action: null, reason: "unavailable" });
+    });
+
+    it("should show cached positions that hold the position at once, without reading again", () => {
+      positionsQuery = { ...CACHED_WITHOUT_ROW, data: positionsWith() };
+
+      const { result } = renderData();
+
+      expect(result.current).toMatchObject({ kind: "ready" });
+      expect(refetch).not.toHaveBeenCalled();
+    });
+
+    it("should not read again while the surface is closed", () => {
+      positionsQuery = CACHED_WITHOUT_ROW;
+
+      renderData({ isOpen: false });
+
+      expect(refetch).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("a stale snapshot", () => {
+    it("should be read once more a few seconds later, and no more", () => {
+      positionsQuery = { data: stale(), isError: false };
+      const { result, rerenderWith } = renderData();
+
+      expect(result.current).toMatchObject({ kind: "ready", isStale: true });
+      act(() => jest.advanceTimersByTime(STALE_REREAD_DELAY_MS - 1));
+      expect(refetch).not.toHaveBeenCalled();
+      act(() => jest.advanceTimersByTime(1));
+      expect(refetch).toHaveBeenCalledTimes(1);
+
+      rerenderWith({ data: stale(), isError: false, fulfilledTimeStamp: Date.now() + 1 });
+      act(() => jest.advanceTimersByTime(STALE_REREAD_DELAY_MS * 2));
+
+      expect(refetch).toHaveBeenCalledTimes(1);
+    });
+
+    it("should stop saying the position is updating once the read again is fresh", () => {
+      positionsQuery = { data: stale(), isError: false };
+      const { result, rerenderWith } = renderData();
+      act(() => jest.advanceTimersByTime(STALE_REREAD_DELAY_MS));
+
+      rerenderWith({ data: positionsWith(), isError: false, fulfilledTimeStamp: Date.now() + 1 });
+
+      expect(result.current).toMatchObject({ kind: "ready", isStale: false });
+    });
+
+    it("should keep loading a stale snapshot without the position until its second read", async () => {
+      const request = openRequest("earn");
+      const staleWithoutRow = { ...mockEarnPositions({ positions: [] }), isStale: true };
+      positionsQuery = { data: staleWithoutRow, isError: false, fulfilledTimeStamp: NOW };
+      const { result, rerenderWith } = renderData({
+        request: { id: request.id, origin: "earn", positionId: POSITION_ID },
+      });
+      await flushPromises();
+
+      expect(result.current).toEqual({ kind: "loading" });
+      act(() => jest.advanceTimersByTime(STALE_REREAD_DELAY_MS));
+      expect(refetch).toHaveBeenCalledTimes(1);
+      expect(result.current).toEqual({ kind: "loading" });
+      expect(request.onResult).not.toHaveBeenCalled();
+
+      rerenderWith({ data: positionsWith(), isError: false, fulfilledTimeStamp: Date.now() });
+      await flushPromises();
+
+      expect(result.current).toMatchObject({ kind: "ready" });
+      expect(request.onResult).not.toHaveBeenCalled();
+    });
+
+    it("should conclude once its second read still lacks the position", async () => {
+      const request = openRequest("earn");
+      const staleWithoutRow = { ...mockEarnPositions({ positions: [] }), isStale: true };
+      positionsQuery = { data: staleWithoutRow, isError: false, fulfilledTimeStamp: NOW };
+      const { rerenderWith } = renderData({
+        request: { id: request.id, origin: "earn", positionId: POSITION_ID },
+      });
+      act(() => jest.advanceTimersByTime(STALE_REREAD_DELAY_MS));
+
+      rerenderWith({ data: staleWithoutRow, isError: false, fulfilledTimeStamp: Date.now() });
+      await flushPromises();
+
+      expect(request.onResult).toHaveBeenCalledWith({ action: null, reason: "unavailable" });
+    });
+  });
+
   describe("after the user's own transaction", () => {
     it("should read fresh positions and poll them while the backend shows the position as before", () => {
       markStakePositionTransacted({ ...POSITION, action: "deactivate" });
@@ -286,17 +377,24 @@ describe("useStakePositionData", () => {
       expect(result.current).toMatchObject({ kind: "ready", isPolling: true });
     });
 
+    it("should read fresh and poll once the transaction is recorded while the surface shows the position", () => {
+      const { result } = renderData();
+      expect(lastPositionsQueryCall()?.[0]).toMatchObject({ fresh: false });
+
+      act(() => markStakePositionTransacted({ ...POSITION, action: "deactivate" }));
+
+      expect(lastPositionsQueryCall()).toEqual([
+        { network: NETWORK, address: OWNER_ADDRESS, fresh: true },
+        { refetchOnMountOrArgChange: 30, pollingInterval: POLL_INTERVAL_MS },
+      ]);
+      expect(result.current).toMatchObject({ kind: "ready", isPolling: true });
+    });
+
     it("should stop polling, forget the transaction and drop the cached positions once the backend shows it", () => {
       markStakePositionTransacted({ ...POSITION, action: "deactivate" });
-      const { result, rerender } = renderData();
-      positionsQuery = { data: positionsWith({ status: "deactivating" }), isError: false };
+      const { result, rerenderWith } = renderData();
 
-      rerender({
-        request: { id: -1, origin: "account", positionId: POSITION_ID },
-        isOpen: true,
-        network: NETWORK,
-        ownerAddress: OWNER_ADDRESS,
-      });
+      rerenderWith({ data: positionsWith({ status: "deactivating" }), isError: false });
 
       expect(result.current).toMatchObject({
         kind: "ready",
@@ -305,7 +403,21 @@ describe("useStakePositionData", () => {
       });
       expect(refreshEarnPositions).toHaveBeenCalledWith(OWNER_ADDRESS);
       expect(lastPositionsQueryCall()?.[1]).toMatchObject({ pollingInterval: 0 });
+      expect(lastPositionsQueryCall()?.[0]).toMatchObject({ fresh: false });
+    });
+
+    it("should keep polling a withdrawal while the backend snapshot that lacks the row is stale", () => {
+      markStakePositionTransacted({ ...POSITION, action: "withdraw" });
+      const { rerenderWith } = renderData();
+
+      rerenderWith({
+        data: { ...mockEarnPositions({ positions: [] }), isStale: true },
+        isError: false,
+      });
+
+      expect(refreshEarnPositions).not.toHaveBeenCalled();
       expect(lastPositionsQueryCall()?.[0]).toMatchObject({ fresh: true });
+      expect(lastPositionsQueryCall()?.[1]).toMatchObject({ pollingInterval: POLL_INTERVAL_MS });
     });
 
     it("should not wait on the next open once the backend has shown it", () => {
@@ -322,7 +434,6 @@ describe("useStakePositionData", () => {
     });
 
     it("should stop polling after a minute, and wait again on the next open", () => {
-      jest.useFakeTimers();
       markStakePositionTransacted({ ...POSITION, action: "deactivate" });
       const { result, unmount } = renderData();
 
@@ -330,10 +441,25 @@ describe("useStakePositionData", () => {
 
       expect(result.current).toMatchObject({ kind: "ready", isPolling: false });
       expect(lastPositionsQueryCall()?.[1]).toMatchObject({ pollingInterval: 0 });
+      expect(lastPositionsQueryCall()?.[0]).toMatchObject({ fresh: true });
 
       unmount();
       renderData();
       expect(lastPositionsQueryCall()?.[1]).toMatchObject({ pollingInterval: POLL_INTERVAL_MS });
+    });
+
+    it("should wait a minute again for a second transaction recorded in the same open", () => {
+      markStakePositionTransacted({ ...POSITION, action: "deactivate" });
+      const { result } = renderData();
+      act(() => jest.advanceTimersByTime(POLL_TIMEOUT_MS));
+      expect(result.current).toMatchObject({ isPolling: false });
+
+      act(() => markStakePositionTransacted({ ...POSITION, action: "deactivate" }));
+
+      expect(result.current).toMatchObject({ kind: "ready", isPolling: true });
+      expect(lastPositionsQueryCall()?.[1]).toMatchObject({ pollingInterval: POLL_INTERVAL_MS });
+      act(() => jest.advanceTimersByTime(POLL_TIMEOUT_MS));
+      expect(result.current).toMatchObject({ isPolling: false });
     });
 
     it("should not poll while the surface is closed", () => {
@@ -345,9 +471,8 @@ describe("useStakePositionData", () => {
     });
 
     it("should not wait for a transaction older than the window", () => {
-      jest.useFakeTimers({ now: 1_000_000 });
       markStakePositionTransacted({ ...POSITION, action: "deactivate" });
-      jest.setSystemTime(1_000_000 + TRANSACTED_WINDOW_MS + 1);
+      jest.setSystemTime(NOW + TRANSACTED_WINDOW_MS + 1);
 
       const { result } = renderData();
 

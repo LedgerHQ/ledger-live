@@ -1,5 +1,5 @@
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
-import type { ApyFraction, EarnPosition } from "@domain/entity-earn-position";
+import type { EarnInterestType, EarnPosition } from "@domain/entity-earn-position";
 
 /** The surface that asked for the position: the Earn live app, or an account screen of the wallet. */
 export type StakePositionOrigin = "earn" | "account";
@@ -62,6 +62,16 @@ export type StakePositionAmount = Readonly<{
   fiat?: string;
 }>;
 
+/** The reward rate of the position, formatted, and the kind of rate the backend names. */
+export type StakePositionRate = Readonly<{
+  /** The rate as a percentage, such as "7.12%". */
+  value: string;
+  type: EarnInterestType;
+}>;
+
+/** The tone of the rate tag: gray where a rate may not be shown in green, success elsewhere. */
+export type StakePositionApyAppearance = "success" | "gray";
+
 /** The rewards headline: their counter value, which `AmountDisplay` draws. */
 export type StakePositionRewardsHeadline = Readonly<{
   /** The counter value, in the unit `formatter` expects. */
@@ -77,11 +87,11 @@ export type StakePositionFormatter = Readonly<{
   amount: (baseUnits: string) => StakePositionAmount;
   /** The counter value headline of an amount in the smallest unit. Undefined without a rate. */
   rewardsHeadline: (baseUnits: string) => StakePositionRewardsHeadline | undefined;
-  /** A fraction as a percentage: 0.0781 as "7.81%". */
+  /** A fraction as a percentage with two decimals: 0.046 as "4.60%". */
   percent: (fraction: number) => string;
 }>;
 
-export type StakePositionPhase = "open" | "committed" | "settled";
+export type StakePositionPhase = "open" | "signing" | "committed" | "settled";
 
 export type StakePositionRequestInput = Readonly<{
   /** The host account id, which the app resolves from the Wallet API id. */
@@ -104,8 +114,6 @@ export type ReadyStakePositionData = Readonly<{
   position: EarnPosition;
   /** The backend status, as the details show it. */
   status: StakePositionState;
-  /** The APY of the validator the position is delegated to now. Unknown hides its row. */
-  validatorApy?: ApyFraction;
   /** Some backend rows were missing or past their time to live when it answered. */
   isStale: boolean;
   /** The backend has not shown the user's own transaction on this position yet. */

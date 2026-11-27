@@ -63,6 +63,7 @@ export function StakePositionDetailsView({
   balance,
   initialDeposit,
   apyBadge,
+  apyAppearance,
   status,
   account,
   validator,
@@ -118,7 +119,7 @@ export function StakePositionDetailsView({
               ) : null}
               {apyBadge ? (
                 <PositionRow label={labels.apy}>
-                  <Tag size="sm" appearance="success" label={apyBadge} />
+                  <Tag size="sm" appearance={apyAppearance} label={apyBadge} />
                 </PositionRow>
               ) : null}
               <PositionRow label={labels.status}>

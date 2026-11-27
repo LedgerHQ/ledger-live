@@ -1,7 +1,9 @@
 import {
   ApyFractionSchema,
   BaseUnitAmountSchema,
+  EarnInterestTypeSchema,
   EarnPositionIdSchema,
+  EarnPositionInterestSchema,
   EarnPositionSchema,
   EarnPositionStatusSchema,
   EarnPositionsSchema,
@@ -84,6 +86,37 @@ describe("ApyFractionSchema", () => {
   });
 });
 
+describe("EarnInterestTypeSchema", () => {
+  it("accepts every kind of rate the backend reports", () => {
+    for (const type of ["APY", "APR", "NRR", "GRR"]) {
+      expect(EarnInterestTypeSchema.safeParse(type).success).toBe(true);
+    }
+  });
+
+  it("rejects a kind of rate it does not know, whatever its case", () => {
+    expect(EarnInterestTypeSchema.safeParse("apy").success).toBe(false);
+    expect(EarnInterestTypeSchema.safeParse("Yield").success).toBe(false);
+  });
+});
+
+describe("EarnPositionInterestSchema", () => {
+  it("carries the rate with its kind", () => {
+    expect(EarnPositionInterestSchema.parse({ type: "APR", value: 0.068 })).toEqual({
+      type: "APR",
+      value: 0.068,
+    });
+  });
+
+  it("accepts a zero rate, which the display decides to hide", () => {
+    expect(EarnPositionInterestSchema.safeParse({ type: "APY", value: 0 }).success).toBe(true);
+  });
+
+  it("rejects a rate without its kind, or a percentage", () => {
+    expect(EarnPositionInterestSchema.safeParse({ value: 0.068 }).success).toBe(false);
+    expect(EarnPositionInterestSchema.safeParse({ type: "APY", value: 6.8 }).success).toBe(false);
+  });
+});
+
 describe("EarnPositionIdSchema", () => {
   it("trims the stake account address", () => {
     expect(EarnPositionIdSchema.parse(` ${position.id} `)).toBe(position.id);
@@ -124,7 +157,9 @@ describe("EarnPositionSchema", () => {
 
   it("rejects an amount or a rate the entity cannot carry", () => {
     expect(EarnPositionSchema.safeParse({ ...position, balance: "-5" }).success).toBe(false);
-    expect(EarnPositionSchema.safeParse({ ...position, positionApy: 7.2 }).success).toBe(false);
+    expect(
+      EarnPositionSchema.safeParse({ ...position, interest: { type: "APY", value: 7.2 } }).success,
+    ).toBe(false);
   });
 });
 
