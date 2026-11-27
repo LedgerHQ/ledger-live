@@ -5,60 +5,35 @@ export type ConcordiumNetwork = "mainnet" | "testnet";
 export type ConcordiumConfig = {
   networkType: ConcordiumNetwork;
   proxyUrl: string;
-  /**
-   * @default DEFAULT_MIN_RESERVE (0)
-   */
-  minReserve?: number;
+  /** Microccd kept out of the spendable balance. */
+  minReserve: number;
   /**
    * Gates PLT token sub-accounts. Off means the wallet syncs exactly as it did
    * before tokens existed, so history and send validation can land behind it
    * without a user ever seeing a balance they cannot spend.
-   * @default DEFAULT_ENABLE_TOKENS (false)
    */
-  enableTokens?: boolean;
-  gateway?: {
-    /**
-     * @default DEFAULT_GATEWAY_TIMEOUT_MS (30000)
-     */
-    timeoutMs?: number;
-    /**
-     * @default DEFAULT_GATEWAY_RETRIES (2)
-     */
-    retries?: number;
-    /**
-     * @default DEFAULT_GATEWAY_RETRY_DELAY_MS (1000)
-     */
-    retryDelayMs?: number;
-    /**
-     * Page size of the bridge history walk. The proxy clamps anything larger to 1000.
-     * @default DEFAULT_MAX_TX_QUERY (1000)
-     */
-    maxTxQuery?: number;
-    /**
-     * @default DEFAULT_PLT_MODULE_STATE_CACHE_TTL_MS (300000)
-     */
-    pltModuleStateCacheTtlMs?: number;
-    /**
-     * @default DEFAULT_ACCOUNT_TOKENS_CACHE_TTL_MS (30000)
-     */
-    accountTokensCacheTtlMs?: number;
+  enableTokens: boolean;
+  gateway: {
+    timeoutMs: number;
+    retries: number;
+    retryDelayMs: number;
+    /** Page size of the bridge history walk. The proxy clamps anything larger to 1000. */
+    maxTxQuery: number;
+    pltModuleStateCacheTtlMs: number;
+    accountTokensCacheTtlMs: number;
   };
-  fees?: {
+  fees: {
+    /** Fee in microCCD returned when the proxy cannot estimate a CCD transfer. */
+    defaultCost: number;
     /**
-     * Fee in microCCD returned when the proxy cannot estimate a CCD transfer.
-     * @default DEFAULT_FEES_DEFAULT_COST (1000000)
+     * Buffer added to the energy of a PLT fee estimate, as a percentage. The fee is then priced
+     * from the buffered energy. Energy is a ceiling, not a charge: the chain bills actual
+     * execution, so the buffer costs nothing while absorbing drift before submission.
      */
-    defaultCost?: number;
-    /**
-     * @default DEFAULT_PLT_ENERGY_BUFFER_PERCENT (20)
-     */
-    pltEnergyBufferPercent?: number;
+    pltEnergyBufferPercent: number;
   };
-  tokens?: {
-    /**
-     * @default DEFAULT_CAL_LOOKUP_CONCURRENCY (4)
-     */
-    calLookupConcurrency?: number;
+  tokens: {
+    calLookupConcurrency: number;
   };
   /** Supplied by coin-service; no reader in this module. */
   grpcUrl?: string;
@@ -72,15 +47,29 @@ export type ConcordiumCoinConfig = CurrencyConfig & ConcordiumConfig;
 export type ConcordiumBridgeConfig = ConcordiumCoinConfig & {
   walletConnect: {
     relayUrl: string;
+    projectId: string;
   };
 };
 
 /**
  * The {@link Context} threaded through the coin-concordium bridge and API layers (ADR-019).
  *
- * Each consumer resolves its coin configuration from `context.config()` at call time and threads
- * it explicitly into the network/logic layers.
+ * It is the injection argument of the bridge, logic and network layers. Each function reads the
+ * coin configuration from `context.config()` at call time and logs through `context.logger`.
+ * WalletConnect is the exception: the apps create it without a context, so pairing passes it the
+ * settings and the logger.
  */
 export type ConcordiumContext = Context<ConcordiumCoinConfig>;
 
 export type ConcordiumBridgeContext = Context<ConcordiumBridgeConfig>;
+
+/**
+ * Pins `context` to one resolved `config`, whatever currency id a consumer asks for.
+ *
+ * Use it where one operation must see a single configuration, and before handing a context to a
+ * layer that calls `context.config()` without a currency id.
+ */
+export const withConfig = <C extends ConcordiumCoinConfig>(
+  context: Context<C>,
+  config: C,
+): Context<C> => ({ ...context, config: async () => config });

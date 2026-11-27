@@ -316,10 +316,11 @@ describe("onboard", () => {
       await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
-      expect(submitCredential).toHaveBeenCalledWith(mainnetConfig, {
-        v: 0,
-        value: { test: "data" },
-      });
+      expect(submitCredential).toHaveBeenCalledWith(
+        expect.objectContaining({ logger: context.logger }),
+        { v: 0, value: { test: "data" } },
+      );
+      await expect(submitCredential.mock.calls[0][0].config()).resolves.toBe(mainnetConfig);
     });
   });
 

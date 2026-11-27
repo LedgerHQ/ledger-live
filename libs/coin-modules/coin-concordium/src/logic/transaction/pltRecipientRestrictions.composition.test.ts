@@ -4,8 +4,8 @@ import {
   ConcordiumRecipientNotFound,
   ConcordiumRecipientRestrictionsUnverified,
 } from "../../types/errors";
-import type { ConcordiumCoinConfig } from "../../types";
 import { checkRecipientRestrictions } from "./pltRecipientRestrictions";
+import { createFixtureContext } from "../../test/fixtures";
 
 // Only the wire is mocked. Every layer above it — the cached readers, the entry
 // lookup, the chain rule and the error mapping — runs for real, because the
@@ -18,7 +18,7 @@ jest.mock("../../network/proxyClient", () => ({
 
 const { getAccountBalance, getPltTokenInfo } = jest.requireMock("../../network/proxyClient");
 
-const config = {} as ConcordiumCoinConfig;
+const context = createFixtureContext();
 
 // The readers cache on `${proxyUrl}:${token}` and `${proxyUrl}:${address}`,
 // so each case needs its own pair rather than a cache reset it cannot reach.
@@ -29,7 +29,7 @@ const nextIds = () => {
 };
 
 const check = (over: { tokenId: string; recipient: string }) =>
-  checkRecipientRestrictions({ config, ticker: "TOK", ...over });
+  checkRecipientRestrictions(context, { ticker: "TOK", ...over });
 
 /** Shapes the proxy responses the way testnet actually returns them. */
 const givenChain = ({

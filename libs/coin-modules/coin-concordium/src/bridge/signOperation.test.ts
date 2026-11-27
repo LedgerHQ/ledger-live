@@ -8,12 +8,13 @@ import BigNumber from "bignumber.js";
 import { firstValueFrom, toArray } from "rxjs";
 import { AccountAddress } from "@ledgerhq/concordium-core";
 import {
+  VALID_ADDRESS,
   createFixtureAccount,
+  createFixtureConfig,
+  createFixtureContext,
+  createFixtureOperation,
   createFixtureTokenAccount,
   createFixtureTransaction,
-  createFixtureOperation,
-  createFixtureContext,
-  VALID_ADDRESS,
 } from "../test/fixtures";
 import { buildSignOperation } from "./signOperation";
 import { createFixtureSigner, createFixtureSignerContext } from "./bridge.fixture";
@@ -69,6 +70,35 @@ const sign = async (
   );
   return { mockSigner, events };
 };
+
+describe("signOperation context", () => {
+  it("reads the sequence and the fee against the config of the account's currency", async () => {
+    const { getNextValidSequence, estimateFees } = jest.requireMock("../logic");
+    getNextValidSequence.mockClear();
+    estimateFees.mockClear();
+    const config = jest.fn(async (currencyId?: string) =>
+      createFixtureConfig({ proxyUrl: `https://${currencyId ?? "default"}.test` }),
+    );
+    const signOperation = buildSignOperation(createFixtureSignerContext(createFixtureSigner()), {
+      ...context,
+      config,
+    });
+
+    await firstValueFrom(
+      signOperation({
+        account: createFixtureAccount(),
+        deviceId: "device-1",
+        transaction: createFixtureTransaction({ fee: new BigNumber(1000) }),
+      }).pipe(toArray()),
+    );
+
+    for (const [lowerContext] of [getNextValidSequence.mock.calls[0], estimateFees.mock.calls[0]]) {
+      await expect(lowerContext.config()).resolves.toMatchObject({
+        proxyUrl: "https://concordium_testnet.test",
+      });
+    }
+  });
+});
 
 /** A parent carrying its PLT sub-account, which is what marks a transfer as a token send. */
 const withTokenSubAccount = () => {

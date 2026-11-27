@@ -2,14 +2,7 @@ import BigNumber from "bignumber.js";
 import { encodeAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { type GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Operation } from "@ledgerhq/types-live";
-import { log } from "@ledgerhq/logs";
-import {
-  DEFAULT_CAL_LOOKUP_CONCURRENCY,
-  DEFAULT_ENABLE_TOKENS,
-  DEFAULT_MAX_TX_QUERY,
-  DEFAULT_MIN_RESERVE,
-} from "../constants";
-import { tuning } from "../tuning";
+import { nonNegativeInt, positiveInt, boolean } from "../tuning";
 import {
   getAccountBalance,
   getAccountsByPublicKey,
@@ -19,7 +12,7 @@ import { listOperations } from "../logic/history/listOperations";
 import { paginateOperations } from "../logic/history/paginate";
 import type {
   ConcordiumAccount,
-  ConcordiumCoinConfig,
+  ConcordiumContext,
   ConcordiumResources,
   PltAccountToken,
   RawOperation,
@@ -64,7 +57,7 @@ const valueToBigNumber = (value?: string | number): BigNumber => {
  * sub-accounts on a single bad response.
  */
 export async function getBalance(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   address: string,
 ): Promise<{
   balance: BigNumber;
@@ -72,15 +65,20 @@ export async function getBalance(
   accountTokens: PltAccountToken[] | undefined;
 }> {
   const { finalizedBalance: { accountAmount, accountAtDisposal, accountTokens } = {} } =
-    await getAccountBalance(config, address).catch(error => {
-      log("concordium-sync", `Error fetching balance for account with address ${address}`, {
-        error,
-      });
+    await getAccountBalance(context, address).catch(error => {
+      context.logger(
+        "concordium-sync",
+        `Error fetching balance for account with address ${address}`,
+        {
+          error,
+        },
+      );
       return { finalizedBalance: undefined };
     });
 
   const balance = valueToBigNumber(accountAmount);
-  const minReserve = config.minReserve ?? DEFAULT_MIN_RESERVE;
+  const config = await context.config();
+  const minReserve = nonNegativeInt("minReserve", config.minReserve);
 
   let spendableBalance = accountAtDisposal
     ? valueToBigNumber(accountAtDisposal)
@@ -128,6 +126,7 @@ const REFETCH_SYNC_HASH = "refetch-pending";
  * invalidating on an outage.
  */
 async function computeSyncHash(
+  context: ConcordiumContext,
   currencyId: string,
   enableTokens: boolean,
   blacklistedTokenIds: string[] | undefined,
@@ -138,7 +137,9 @@ async function computeSyncHash(
   try {
     return `${await getSyncHash(currencyId, blacklistedTokenIds)}:tokens=on:${HISTORY_VERSION}`;
   } catch (error) {
-    log("concordium-sync", "Could not read the CAL sync hash, keeping the stored one", { error });
+    context.logger("concordium-sync", "Could not read the CAL sync hash, keeping the stored one", {
+      error,
+    });
     return previous ?? TOKENS_OFF_SYNC_HASH;
   }
 }
@@ -155,7 +156,7 @@ async function computeSyncHash(
  * their fee; `syncHash` covers the flag, so turning it on re-reads from zero.
  */
 export async function syncOperations(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   address: string,
   accountId: string,
   oldOperations: Operation[],
@@ -167,9 +168,10 @@ export async function syncOperations(
   const fromScratch = refetchAll || lastBlockHeight === 0;
   const minHeight = fromScratch ? 0 : lastBlockHeight + 1;
 
-  const limit = tuning(config.gateway?.maxTxQuery, DEFAULT_MAX_TX_QUERY, 1);
+  const config = await context.config();
+  const limit = positiveInt("gateway.maxTxQuery", config.gateway?.maxTxQuery);
   const items = await paginateOperations(cursor =>
-    listOperations(config, address, {
+    listOperations(context, address, {
       minHeight,
       limit,
       order: "desc",
@@ -198,9 +200,9 @@ export async function syncOperations(
   return { operations: mergeOps(fromScratch ? [] : oldOperations, newOperations), pltOperations };
 }
 
-/** Takes the config resolved once for this sync, shared with `postSync`. */
+/** Takes a context pinned to the config resolved once for this sync, shared with `postSync`. */
 export const makeGetAccountShape =
-  (config: ConcordiumCoinConfig): GetAccountShape<ConcordiumAccount> =>
+  (context: ConcordiumContext): GetAccountShape<ConcordiumAccount> =>
   async (info, syncConfig) => {
     const { currency, derivationMode, derivationPath, index, initialAccount, rest = {} } = info;
 
@@ -214,10 +216,11 @@ export const makeGetAccountShape =
       derivationMode,
     });
 
-    const enableTokens = (config.enableTokens ?? DEFAULT_ENABLE_TOKENS) === true;
+    const config = await context.config();
+    const enableTokens = boolean("enableTokens", config.enableTokens);
 
     try {
-      const accountsResponse = await getAccountsByPublicKey(config, publicKey);
+      const accountsResponse = await getAccountsByPublicKey(context, publicKey);
 
       if (!accountsResponse?.length) {
         // An account that does not exist on chain holds no tokens, so this is
@@ -254,6 +257,7 @@ export const makeGetAccountShape =
       const account = accountsResponse[0];
 
       const syncHash = await computeSyncHash(
+        context,
         currency.id,
         enableTokens,
         syncConfig?.blacklistedTokenIds,
@@ -267,23 +271,22 @@ export const makeGetAccountShape =
         { operations, pltOperations },
         blockHeight,
       ] = await Promise.all([
-        getBalance(config, account.address),
-        syncOperations(config, account.address, accountId, initialAccount?.operations ?? [], {
+        getBalance(context, account.address),
+        syncOperations(context, account.address, accountId, initialAccount?.operations ?? [], {
           enableTokens,
           refetchAll,
         }),
-        getConsensusInfo(config)
+        getConsensusInfo(context)
           .then(consensus => consensus.lastFinalizedBlockHeight)
           .catch(() => 0),
       ]);
 
-      const resolvedTokens = await resolveTokenSubAccounts({
+      const resolvedTokens = await resolveTokenSubAccounts(context, {
         enableTokens,
         // A batch of zero would look up nothing and drop every stored token.
-        calLookupConcurrency: tuning(
+        calLookupConcurrency: positiveInt(
+          "tokens.calLookupConcurrency",
           config.tokens?.calLookupConcurrency,
-          DEFAULT_CAL_LOOKUP_CONCURRENCY,
-          1,
         ),
         currencyId: currency.id,
         accountId,
@@ -326,7 +329,13 @@ export const makeGetAccountShape =
         xpub: publicKey,
       };
     } catch (error) {
-      log("concordium-sync", `Error fetching account shape for public key ${publicKey}`, { error });
+      context.logger(
+        "concordium-sync",
+        `Error fetching account shape for public key ${publicKey}`,
+        {
+          error,
+        },
+      );
 
       throw error;
     }

@@ -6,15 +6,17 @@ import {
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { defer, from, mergeMap } from "rxjs";
-import { CONCORDIUM_DUMMY_ADDRESS, DEFAULT_ENABLE_TOKENS } from "../constants";
+import { CONCORDIUM_DUMMY_ADDRESS } from "../constants";
 import resolver from "../signer";
-import type {
-  ConcordiumAccount,
-  ConcordiumBridgeContext,
-  ConcordiumCoinConfig,
-  ConcordiumCurrencyBridge,
-  ConcordiumSigner,
-  Transaction,
+import { boolean } from "../tuning";
+import {
+  withConfig,
+  type ConcordiumAccount,
+  type ConcordiumBridgeContext,
+  type ConcordiumCoinConfig,
+  type ConcordiumCurrencyBridge,
+  type ConcordiumSigner,
+  type Transaction,
 } from "../types";
 import { buildBroadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
@@ -38,7 +40,7 @@ import { validateAddress } from "./validateAddress";
 const makePostSync =
   (config: ConcordiumCoinConfig) =>
   (_initial: ConcordiumAccount, synced: ConcordiumAccount): ConcordiumAccount =>
-    (config.enableTokens ?? DEFAULT_ENABLE_TOKENS) === true ? synced : stripSubAccounts(synced);
+    boolean("enableTokens", config.enableTokens) ? synced : stripSubAccounts(synced);
 
 export function createBridges(
   signerContext: SignerContext<ConcordiumSigner>,
@@ -52,7 +54,7 @@ export function createBridges(
     defer(() => from(context.config(arg.currency.id))).pipe(
       mergeMap(config =>
         makeScanAccounts({
-          getAccountShape: makeGetAccountShape(config),
+          getAccountShape: makeGetAccountShape(withConfig(context, config)),
           getAddressFn: getAddress,
           postSync: makePostSync(config),
         })(arg),
@@ -78,7 +80,7 @@ export function createBridges(
         // would undo the discard a re-read depends on and drop every refetched
         // operation older than the oldest stored one.
         makeSync({
-          getAccountShape: makeGetAccountShape(config),
+          getAccountShape: makeGetAccountShape(withConfig(context, config)),
           postSync: makePostSync(config),
           shouldMergeOps: false,
         })(account, syncConfig),
@@ -91,7 +93,11 @@ export function createBridges(
     updateTransaction,
     prepareTransaction,
     getTransactionStatus,
-    estimateMaxSpendable: buildEstimateMaxSpendable(prepareTransaction, getTransactionStatus),
+    estimateMaxSpendable: buildEstimateMaxSpendable(
+      context,
+      prepareTransaction,
+      getTransactionStatus,
+    ),
     getEstimationRecipient: () => CONCORDIUM_DUMMY_ADDRESS,
     sync,
     receive,

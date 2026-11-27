@@ -1,25 +1,32 @@
 import { makeLRUCache, type CacheRes } from "@ledgerhq/live-network/cache";
+import { positiveInt } from "../tuning";
 import {
-  DEFAULT_ACCOUNT_TOKENS_CACHE_TTL_MS,
-  DEFAULT_PLT_MODULE_STATE_CACHE_TTL_MS,
-} from "../constants";
-import { tuning } from "../tuning";
-import type { ConcordiumCoinConfig, PltAccountToken, PltModuleState } from "../types";
+  withConfig,
+  type ConcordiumCoinConfig,
+  type ConcordiumContext,
+  type PltAccountToken,
+  type PltModuleState,
+} from "../types";
 import { readAccountTokens, readPltState } from "./plt";
 import { getAccountBalance, getPltTokenInfo } from "./proxyClient";
 
-type TokenQuery = { config: ConcordiumCoinConfig; tokenId: string };
-type AccountQuery = { config: ConcordiumCoinConfig; address: string };
+type TokenQuery = { context: ConcordiumContext; tokenId: string };
+type AccountQuery = { context: ConcordiumContext; address: string };
+type Resolved<Q> = Q & { config: ConcordiumCoinConfig };
 
-/** One LRU cache per configured TTL, keyed by endpoint so no proxy answers for another. */
-function makeTtlCache<Q extends { config: ConcordiumCoinConfig }, R>(
-  fetch: (query: Q) => Promise<R>,
+/**
+ * One LRU cache per configured TTL, keyed by endpoint so no proxy answers for another.
+ * The context only resolves the configuration and never enters the cache key.
+ */
+function makeTtlCache<Q extends { context: ConcordiumContext }, R>(
+  fetch: (query: Resolved<Q>) => Promise<R>,
   keyOf: (query: Q) => string,
   ttlMsOf: (config: ConcordiumCoinConfig) => number,
 ): (query: Q) => Promise<R> {
-  const caches = new Map<number, CacheRes<[Q], R>>();
-  return query => {
-    const ttl = ttlMsOf(query.config);
+  const caches = new Map<number, CacheRes<[Resolved<Q>], R>>();
+  return async query => {
+    const config = await query.context.config();
+    const ttl = ttlMsOf(config);
     let cache = caches.get(ttl);
     if (!cache) {
       cache = makeLRUCache(fetch, q => `${q.config.proxyUrl}:${keyOf(q)}`, {
@@ -28,7 +35,7 @@ function makeTtlCache<Q extends { config: ConcordiumCoinConfig }, R>(
       });
       caches.set(ttl, cache);
     }
-    return cache(query);
+    return cache({ ...query, config });
   };
 }
 
@@ -65,13 +72,17 @@ export type RecipientTokens =
  * here. The pause check belongs to the sender and comes from synced resources.
  */
 export const fetchPltModuleState = makeTtlCache(
-  async ({ config, tokenId }: TokenQuery): Promise<PltModuleState | undefined> => {
-    const info = await getPltTokenInfo(config, tokenId);
+  async ({
+    context,
+    config,
+    tokenId,
+  }: Resolved<TokenQuery>): Promise<PltModuleState | undefined> => {
+    const info = await getPltTokenInfo(withConfig(context, config), tokenId);
     return readPltState(info?.tokenState?.moduleState);
   },
   ({ tokenId }) => tokenId,
   config =>
-    tuning(config.gateway?.pltModuleStateCacheTtlMs, DEFAULT_PLT_MODULE_STATE_CACHE_TTL_MS, 1),
+    positiveInt("gateway.pltModuleStateCacheTtlMs", config.gateway?.pltModuleStateCacheTtlMs),
 );
 
 /**
@@ -91,13 +102,13 @@ export const fetchPltModuleState = makeTtlCache(
  * cannot (CIS-7 fixes both flags at creation).
  */
 export const fetchAccountTokens = makeTtlCache(
-  async ({ config, address }: AccountQuery): Promise<RecipientTokens> => {
-    const { finalizedBalance } = await getAccountBalance(config, address);
+  async ({ context, config, address }: Resolved<AccountQuery>): Promise<RecipientTokens> => {
+    const { finalizedBalance } = await getAccountBalance(withConfig(context, config), address);
     if (!finalizedBalance) return { status: "absent" };
 
     const entries = readAccountTokens(finalizedBalance.accountTokens);
     return entries ? { status: "readable", entries } : { status: "unreadable" };
   },
   ({ address }) => address,
-  config => tuning(config.gateway?.accountTokensCacheTtlMs, DEFAULT_ACCOUNT_TOKENS_CACHE_TTL_MS, 1),
+  config => positiveInt("gateway.accountTokensCacheTtlMs", config.gateway?.accountTokensCacheTtlMs),
 );

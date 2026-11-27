@@ -2,9 +2,10 @@ import { concordiumDefaults } from "../../config";
 import { blockEffect, listedEffect } from "../../test/historyParity";
 import { getBlock } from "./getBlock";
 import { listOperations } from "./listOperations";
+import { createFixtureContext } from "../../test/fixtures";
 
 const MAINNET = "concordium";
-const config = concordiumDefaults[MAINNET];
+const context = createFixtureContext(concordiumDefaults[MAINNET]);
 
 describe("listOperations and getBlock report a transaction alike", () => {
   it.each([
@@ -94,8 +95,8 @@ describe("listOperations and getBlock report a transaction alike", () => {
     },
   ] as const)("$kind", async ({ account, height, type, hash }) => {
     const [page, block] = await Promise.all([
-      listOperations(config, account, { minHeight: height, order: "asc", limit: 20 }),
-      getBlock(config, height),
+      listOperations(context, account, { minHeight: height, order: "asc", limit: 20 }),
+      getBlock(context, height),
     ]);
 
     const listed = page.items.find(op => op.hash === hash);

@@ -1,14 +1,14 @@
 import BigNumber from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import type { Transaction } from "../types";
+import type { ConcordiumContext, Transaction } from "../types";
 import { CONCORDIUM_DUMMY_ADDRESS } from "../constants";
 import { createTransaction } from "./createTransaction";
 
 export const buildEstimateMaxSpendable =
   (
+    context: ConcordiumContext,
     prepareTransaction: AccountBridge<Transaction>["prepareTransaction"],
     getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"],
   ): AccountBridge<Transaction>["estimateMaxSpendable"] =>
@@ -47,7 +47,7 @@ export const buildEstimateMaxSpendable =
       // reject at all, the native estimate having swallowed its own failures.
       // Zero rather than a partial figure, so a failed estimate can never read as
       // more spendable than it is.
-      log("concordium", "estimateMaxSpendable failed", { error });
+      context.logger("concordium", "estimateMaxSpendable failed", { error });
       return new BigNumber(0);
     }
   };

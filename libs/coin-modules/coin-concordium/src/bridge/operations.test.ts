@@ -2,13 +2,16 @@ import BigNumber from "bignumber.js";
 import { getOperationAmountNumber } from "@ledgerhq/ledger-wallet-framework/operation";
 import { parseTransaction } from "../logic/history/listOperations";
 import {
-  createFixtureOperation,
-  createFixtureTokenAccount,
   VALID_ADDRESS,
   VALID_ADDRESS_2,
+  createFixtureContext,
+  createFixtureOperation,
+  createFixtureTokenAccount,
 } from "../test/fixtures";
 import type { WalletProxyTransaction } from "../types";
 import { attachSubOperations, splitPaidFee, toOperation } from "./operations";
+
+const context = createFixtureContext();
 
 type AccountView = Pick<
   WalletProxyTransaction,
@@ -62,7 +65,7 @@ describe("the operations of a native row", () => {
       { ...sponsored, subtotal: "1000", total: "-3000", details: transfer },
     ],
   ])("add up to the proxy's total, for %s", (_kind, view) => {
-    const operation = parseTransaction({ ...row, ...view }, VALID_ADDRESS);
+    const operation = parseTransaction(context, { ...row, ...view }, VALID_ADDRESS);
     const operations = splitPaidFee(operation!).map(op => toOperation(op, "account-id"));
 
     expect(

@@ -471,6 +471,10 @@ describe("assignFromAccountRaw and the token flag", () => {
       },
     ],
     ["the flag is absent from the config", async () => ({}) as unknown as ConcordiumCoinConfig],
+    [
+      "the flag is a non-boolean truthy value",
+      async () => ({ enableTokens: "false" }) as unknown as ConcordiumCoinConfig,
+    ],
   ])("fails closed and strips tokens when %s", async (_case, impl) => {
     // An unreadable flag must not expose token UI for a feature that is off by
     // default. Sub-accounts are rebuilt from chain on the next sync.

@@ -10,7 +10,7 @@ import type {
   TransactionEvent,
   ConcordiumEventAddress,
   TransferMemoEvent,
-  ConcordiumCoinConfig,
+  ConcordiumContext,
 } from "../../types";
 import { getBlockInfo } from "./getBlockInfo";
 import { decodeMemo } from "./memo";
@@ -29,20 +29,23 @@ interface Movement {
  * `info` reuses the getBlockInfo logic (height → hash → info); transactions come
  * from the per-block events endpoint and are mapped tag-by-tag.
  */
-export async function getBlock(config: ConcordiumCoinConfig, height: number): Promise<Block> {
-  const info = await getBlockInfo(config, height);
-  const summaries = await getBlockTransactionEvents(config, info.hash);
+export async function getBlock(context: ConcordiumContext, height: number): Promise<Block> {
+  const info = await getBlockInfo(context, height);
+  const summaries = await getBlockTransactionEvents(context, info.hash);
 
   return {
     info,
-    transactions: summaries.map(toBlockTransaction),
+    transactions: summaries.map(summary => toBlockTransaction(context, summary)),
   };
 }
 
-function toBlockTransaction(summary: BlockTransactionSummary): BlockTransaction {
+function toBlockTransaction(
+  context: ConcordiumContext,
+  summary: BlockTransactionSummary,
+): BlockTransaction {
   const { operations, memo } =
     summary.result.outcome === "success"
-      ? mapEventsToOperations(summary.result.events, summary)
+      ? mapEventsToOperations(context, summary.result.events, summary)
       : { operations: [] as BlockOperation[], memo: undefined };
 
   // The sender's `cost` is 0 when a sponsor paid; the sponsor's share is then the whole cost.
@@ -60,6 +63,7 @@ function toBlockTransaction(summary: BlockTransactionSummary): BlockTransaction 
 }
 
 function mapEventsToOperations(
+  context: ConcordiumContext,
   events: TransactionEvent[],
   { hash, sender }: BlockTransactionSummary,
 ): { operations: BlockOperation[]; memo: string | undefined } {
@@ -71,7 +75,7 @@ function mapEventsToOperations(
     if (isBalanceEvent(event)) {
       movements.push(movementOf(event, sender));
     } else if (isTransferMemoEvent(event)) {
-      memo = decodeMemo(event.memo, hash);
+      memo = decodeMemo(context, event.memo, hash);
     }
   }
 

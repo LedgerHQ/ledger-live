@@ -1,7 +1,10 @@
 import type { SessionTypes } from "@walletconnect/types";
 import { CONCORDIUM_CHAIN_IDS } from "../constants";
+import { noopLogger } from "../test/fixtures";
 
 const RELAY_URL = "wss://relay.walletconnect.com";
+const PROJECT_ID = "test-project-id";
+const SETTINGS = { relayUrl: RELAY_URL, projectId: PROJECT_ID };
 
 type WalletConnectModule = typeof import("./walletConnect");
 
@@ -25,10 +28,6 @@ jest.mock("@walletconnect/sign-client", () => ({
   default: {
     init: (options: unknown) => mockSignClientInit(options),
   },
-}));
-
-jest.mock("@ledgerhq/live-env", () => ({
-  getEnv: jest.fn().mockReturnValue("test-project-id"),
 }));
 
 const createMockSession = (overrides: Partial<SessionTypes.Struct> = {}): SessionTypes.Struct =>
@@ -56,7 +55,8 @@ const approveSessions = async (
     const { approval } = await wc.initiatePairing(
       "mainnet",
       CONCORDIUM_CHAIN_IDS.mainnet,
-      RELAY_URL,
+      SETTINGS,
+      noopLogger,
     );
     await approval();
   }
@@ -86,7 +86,7 @@ describe("walletConnect", () => {
     describe("getClient", () => {
       it("should initialize SignClient", async () => {
         const wc = new ConcordiumWalletConnect();
-        await wc.getClient(RELAY_URL);
+        await wc.getClient(SETTINGS, noopLogger);
 
         expect(mockSignClientInit).toHaveBeenCalledWith(
           expect.objectContaining({ relayUrl: RELAY_URL }),
@@ -95,8 +95,8 @@ describe("walletConnect", () => {
 
       it("should return cached client on subsequent calls", async () => {
         const wc = new ConcordiumWalletConnect();
-        const client1 = await wc.getClient(RELAY_URL);
-        const client2 = await wc.getClient(RELAY_URL);
+        const client1 = await wc.getClient(SETTINGS, noopLogger);
+        const client2 = await wc.getClient(SETTINGS, noopLogger);
 
         expect(client1).toBe(client2);
         expect(mockSignClientInit).toHaveBeenCalledTimes(1);
@@ -106,7 +106,7 @@ describe("walletConnect", () => {
         mockSignClientInit.mockRejectedValueOnce(new Error("Init failed"));
         const wc = new ConcordiumWalletConnect();
 
-        await expect(wc.getClient(RELAY_URL)).rejects.toThrow("Init failed");
+        await expect(wc.getClient(SETTINGS, noopLogger)).rejects.toThrow("Init failed");
         expect(wc.client).toBeNull();
       });
 
@@ -114,15 +114,15 @@ describe("walletConnect", () => {
         mockSignClientInit.mockRejectedValueOnce(new Error("Init failed"));
         const wc = new ConcordiumWalletConnect();
 
-        await expect(wc.getClient(RELAY_URL)).rejects.toThrow("Init failed");
-        await expect(wc.getClient(RELAY_URL)).resolves.toBeDefined();
+        await expect(wc.getClient(SETTINGS, noopLogger)).rejects.toThrow("Init failed");
+        await expect(wc.getClient(SETTINGS, noopLogger)).resolves.toBeDefined();
         expect(mockSignClientInit).toHaveBeenCalledTimes(2);
       });
 
       it("should share one SignClient across instances", async () => {
         const [client1, client2] = await Promise.all([
-          new ConcordiumWalletConnect().getClient(RELAY_URL),
-          new ConcordiumWalletConnect().getClient(RELAY_URL),
+          new ConcordiumWalletConnect().getClient(SETTINGS, noopLogger),
+          new ConcordiumWalletConnect().getClient(SETTINGS, noopLogger),
         ]);
 
         expect(client1).toBe(client2);
@@ -130,8 +130,11 @@ describe("walletConnect", () => {
       });
 
       it("should keep the first relay until restart", async () => {
-        await new ConcordiumWalletConnect().getClient(RELAY_URL);
-        await new ConcordiumWalletConnect().getClient("wss://other.example");
+        await new ConcordiumWalletConnect().getClient(SETTINGS, noopLogger);
+        await new ConcordiumWalletConnect().getClient(
+          { ...SETTINGS, relayUrl: "wss://other.example" },
+          noopLogger,
+        );
 
         expect(mockSignClientInit).toHaveBeenCalledTimes(1);
         expect(mockSignClientInit).toHaveBeenCalledWith(
@@ -139,10 +142,55 @@ describe("walletConnect", () => {
         );
       });
 
+      it("should init the SignClient with the project id from the settings", async () => {
+        await new ConcordiumWalletConnect().getClient(SETTINGS, noopLogger);
+
+        expect(mockSignClientInit).toHaveBeenCalledWith({
+          projectId: PROJECT_ID,
+          relayUrl: RELAY_URL,
+        });
+      });
+
+      it("should keep the first project id and log the ignored change", async () => {
+        const logger = jest.fn();
+        const client1 = await new ConcordiumWalletConnect().getClient(SETTINGS, logger);
+        const other = { ...SETTINGS, projectId: "other-project-id" };
+
+        const client2 = await new ConcordiumWalletConnect().getClient(other, logger);
+
+        expect(client2).toBe(client1);
+        expect(mockSignClientInit).toHaveBeenCalledTimes(1);
+        expect(mockSignClientInit).toHaveBeenCalledWith({
+          projectId: PROJECT_ID,
+          relayUrl: RELAY_URL,
+        });
+        expect(logger).toHaveBeenCalledWith(
+          "concordium-onboarding",
+          "Ignoring a WalletConnect settings change until restart",
+          { active: SETTINGS, requested: other },
+        );
+      });
+
+      it("should log a settings change on the same instance too", async () => {
+        const logger = jest.fn();
+        const wc = new ConcordiumWalletConnect();
+        await wc.getClient(SETTINGS, logger);
+        const other = { ...SETTINGS, projectId: "other-project-id" };
+
+        await wc.getClient(other, logger);
+
+        expect(mockSignClientInit).toHaveBeenCalledTimes(1);
+        expect(logger).toHaveBeenCalledWith(
+          "concordium-onboarding",
+          "Ignoring a WalletConnect settings change until restart",
+          { active: SETTINGS, requested: other },
+        );
+      });
+
       it("should keep the SignClient when onboarding reopens", async () => {
-        const client1 = await setWalletConnect().getClient(RELAY_URL);
+        const client1 = await setWalletConnect().getClient(SETTINGS, noopLogger);
         clearWalletConnect();
-        const client2 = await setWalletConnect().getClient(RELAY_URL);
+        const client2 = await setWalletConnect().getClient(SETTINGS, noopLogger);
 
         expect(client2).toBe(client1);
         expect(mockSignClientInit).toHaveBeenCalledTimes(1);
@@ -163,7 +211,8 @@ describe("walletConnect", () => {
           await setWalletConnect().initiatePairing(
             "mainnet",
             CONCORDIUM_CHAIN_IDS.mainnet,
-            RELAY_URL,
+            SETTINGS,
+            noopLogger,
           )
         ).approval();
         clearWalletConnect();
@@ -204,7 +253,7 @@ describe("walletConnect", () => {
       it("should return null when no sessions exist", async () => {
         mockSessionGetAll.mockReturnValue([]);
         const wc = new ConcordiumWalletConnect();
-        await wc.getClient(RELAY_URL);
+        await wc.getClient(SETTINGS, noopLogger);
 
         const session = await wc.getSession("mainnet");
 
@@ -235,7 +284,7 @@ describe("walletConnect", () => {
       it("should ignore sessions not approved through this instance", async () => {
         mockSessionGetAll.mockReturnValue([createMockSession({ topic: "foreign" })]);
         const wc = new ConcordiumWalletConnect();
-        await wc.getClient(RELAY_URL);
+        await wc.getClient(SETTINGS, noopLogger);
 
         const session = await wc.getSession("mainnet");
 
@@ -334,7 +383,7 @@ describe("walletConnect", () => {
       it("should do nothing when no sessions exist", async () => {
         mockSessionGetAll.mockReturnValue([]);
         const wc = new ConcordiumWalletConnect();
-        await wc.getClient(RELAY_URL);
+        await wc.getClient(SETTINGS, noopLogger);
 
         await wc.disconnectAllSessions();
 
@@ -349,7 +398,7 @@ describe("walletConnect", () => {
         mockSessionGetAll.mockReturnValue(sessions);
         mockDisconnect.mockResolvedValue(undefined);
         const wc = new ConcordiumWalletConnect();
-        await wc.getClient(RELAY_URL);
+        await wc.getClient(SETTINGS, noopLogger);
 
         await wc.disconnectAllSessions();
 
@@ -367,10 +416,26 @@ describe("walletConnect", () => {
         mockSessionGetAll.mockReturnValue(sessions);
         mockDisconnect.mockRejectedValue(new Error("Disconnect failed"));
         const wc = new ConcordiumWalletConnect();
-        await wc.getClient(RELAY_URL);
+        await wc.getClient(SETTINGS, noopLogger);
 
         // Should not throw
         await expect(wc.disconnectAllSessions()).resolves.not.toThrow();
+      });
+
+      it("should log a failed disconnect through the pairing logger after onboarding reopens", async () => {
+        mockSessionGetAll.mockReturnValue([createMockSession({ topic: "session1" })]);
+        mockDisconnect.mockRejectedValue(new Error("Disconnect failed"));
+        const logger = jest.fn();
+        await setWalletConnect().getClient(SETTINGS, logger);
+        clearWalletConnect();
+
+        await setWalletConnect().disconnectAllSessions();
+
+        expect(logger).toHaveBeenCalledWith(
+          "concordium-onboarding",
+          "Failed to disconnect Wallet Connect session session1",
+          expect.any(Error),
+        );
       });
     });
 
@@ -395,7 +460,7 @@ describe("walletConnect", () => {
         };
         mockRequest.mockResolvedValue(mockResponse);
         const wc = new ConcordiumWalletConnect();
-        await wc.getClient(RELAY_URL);
+        await wc.getClient(SETTINGS, noopLogger);
 
         const params = {
           topic: "test-topic",
@@ -445,7 +510,7 @@ describe("walletConnect", () => {
         mockConnect.mockResolvedValue({ uri: "wc:test", approval: jest.fn() });
         const wc = new ConcordiumWalletConnect();
 
-        await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet, RELAY_URL);
+        await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet, SETTINGS, noopLogger);
 
         expect(mockPairingDelete).toHaveBeenCalledWith("expired-pairing", {
           code: 6001,
@@ -462,7 +527,7 @@ describe("walletConnect", () => {
         mockConnect.mockResolvedValue({ uri: "wc:test", approval: jest.fn() });
         const wc = new ConcordiumWalletConnect();
 
-        await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet, RELAY_URL);
+        await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet, SETTINGS, noopLogger);
 
         expect(mockPairingDelete).not.toHaveBeenCalled();
       });
@@ -471,7 +536,12 @@ describe("walletConnect", () => {
         mockConnect.mockResolvedValue({ uri: "wc:test-uri", approval: jest.fn() });
         const wc = new ConcordiumWalletConnect();
 
-        const result = await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet, RELAY_URL);
+        const result = await wc.initiatePairing(
+          "mainnet",
+          CONCORDIUM_CHAIN_IDS.mainnet,
+          SETTINGS,
+          noopLogger,
+        );
 
         expect(result.uri).toBe("wc:test-uri");
         expect(mockConnect).toHaveBeenCalledWith({
@@ -490,7 +560,7 @@ describe("walletConnect", () => {
         const wc = new ConcordiumWalletConnect();
 
         await expect(
-          wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet, RELAY_URL),
+          wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet, SETTINGS, noopLogger),
         ).rejects.toThrow("Connect failed");
       });
     });

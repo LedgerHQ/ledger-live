@@ -3,7 +3,7 @@ import { isPltRejectReason } from "../../network/plt";
 import { getTransactions } from "../../network/proxyClient";
 import { isSameAccount } from "../account/sameAccount";
 import type {
-  ConcordiumCoinConfig,
+  ConcordiumContext,
   RawOperation,
   TransactionQueryParams,
   WalletProxyTransaction,
@@ -84,12 +84,13 @@ function paidCost(tx: WalletProxyTransaction, address: string): bigint {
   return isSentByAccount(tx) ? BigInt(tx.cost || 0) : 0n;
 }
 
-function nativeMemo(tx: HashedTransaction): string | undefined {
-  return tx.details.memo ? decodeMemo(tx.details.memo, tx.transactionHash) : undefined;
+function nativeMemo(context: ConcordiumContext, tx: HashedTransaction): string | undefined {
+  return tx.details.memo ? decodeMemo(context, tx.details.memo, tx.transactionHash) : undefined;
 }
 
 /** The fee the account paid for a transaction that moved none of its CCD, if it paid one. */
 function feesOperation(
+  context: ConcordiumContext,
   tx: HashedTransaction,
   address: string,
   failed: boolean,
@@ -105,18 +106,22 @@ function feesOperation(
     amount: "0",
     fee: String(fee),
     value: String(fee),
-    memo: isSentByAccount(tx) ? nativeMemo(tx) : undefined,
+    memo: isSentByAccount(tx) ? nativeMemo(context, tx) : undefined,
     failed,
   };
 }
 
-function parseNativeTransfer(tx: HashedTransaction, address: string): RawOperation | null {
+function parseNativeTransfer(
+  context: ConcordiumContext,
+  tx: HashedTransaction,
+  address: string,
+): RawOperation | null {
   // A rejection carries none of the transfer fields, so neither party can be
   // read off it and only the sender's and the sponsor's rows exist at all.
   if (tx.details.outcome === "reject") {
     return isSentByAccount(tx)
       ? sentWithoutTransfer(tx, address, true)
-      : feesOperation(tx, address, true);
+      : feesOperation(context, tx, address, true);
   }
 
   const sender = tx.details.transferSource || "";
@@ -128,7 +133,7 @@ function parseNativeTransfer(tx: HashedTransaction, address: string): RawOperati
   const isIncoming = isSameAccount(recipient, address);
 
   if (!isOutgoing && !isIncoming) {
-    return feesOperation(tx, address, false);
+    return feesOperation(context, tx, address, false);
   }
 
   // Between two aliases of the account the amount never leaves it: only the fee does.
@@ -143,7 +148,7 @@ function parseNativeTransfer(tx: HashedTransaction, address: string): RawOperati
     amount,
     fee: String(fee),
     value: isOutgoing ? String(BigInt(amount) + fee) : amount,
-    memo: nativeMemo(tx),
+    memo: nativeMemo(context, tx),
     failed: false,
   };
 }
@@ -186,8 +191,12 @@ function sentWithoutTransfer(
 }
 
 /** A rejection carries none of the transfer fields, and only the payer moved anything. */
-function parseRejectedTokenUpdate(tx: HashedTransaction, address: string): RawOperation | null {
-  if (!isSentByAccount(tx)) return feesOperation(tx, address, true);
+function parseRejectedTokenUpdate(
+  context: ConcordiumContext,
+  tx: HashedTransaction,
+  address: string,
+): RawOperation | null {
+  if (!isSentByAccount(tx)) return feesOperation(context, tx, address, true);
 
   const operation = sentWithoutTransfer(tx, address, true, rejectedTokenId(tx));
   const rejectCode = pltRejectCode(tx.details.rawRejectReason);
@@ -209,9 +218,13 @@ function isTokenDecimals(decimals: unknown): decimals is number {
  * account-to-account `TokenTransfer`; a mint, burn, list update, pause or batch
  * carries only the type and outcome, so none of them are defaulted here.
  */
-function parseTokenUpdate(tx: HashedTransaction, address: string): RawOperation | null {
+function parseTokenUpdate(
+  context: ConcordiumContext,
+  tx: HashedTransaction,
+  address: string,
+): RawOperation | null {
   if (tx.details.outcome === "reject") {
-    return parseRejectedTokenUpdate(tx, address);
+    return parseRejectedTokenUpdate(context, tx, address);
   }
 
   const { transferSource, transferDestination, tokenId, tokenTransferAmount } = tx.details;
@@ -227,13 +240,13 @@ function parseTokenUpdate(tx: HashedTransaction, address: string): RawOperation 
     // payer's account, and dropping it would show up as an unexplained debit.
     return isSentByAccount(tx)
       ? sentWithoutTransfer(tx, address, false)
-      : feesOperation(tx, address, false);
+      : feesOperation(context, tx, address, false);
   }
 
   const isOutgoing = isSameAccount(transferSource, address);
   const isIncoming = isSameAccount(transferDestination, address);
   if (!isOutgoing && !isIncoming) {
-    return feesOperation(tx, address, false);
+    return feesOperation(context, tx, address, false);
   }
 
   const amount = isOutgoing && isIncoming ? "0" : tokenTransferAmount.value;
@@ -248,7 +261,7 @@ function parseTokenUpdate(tx: HashedTransaction, address: string): RawOperation 
     // The token amount alone: the fee is CCD and belongs to the parent
     // operation, so folding it in here would put µCCD into a token balance.
     value: amount,
-    memo: tx.details.memo ? decodePltMemo(tx.details.memo, tx.transactionHash) : undefined,
+    memo: tx.details.memo ? decodePltMemo(context, tx.details.memo, tx.transactionHash) : undefined,
     failed: false,
     tokenId,
     decimals: tokenTransferAmount.decimals,
@@ -281,17 +294,21 @@ function movedAmount(tx: HashedTransaction, address: string): bigint {
   return tx.cost === undefined ? microCcd(tx.total, tx) : microCcd(tx.subtotal ?? 0, tx);
 }
 
-function parseOtherTransaction(tx: HashedTransaction, address: string): RawOperation | null {
-  if (tx.details.outcome === "reject") return feesOperation(tx, address, true);
+function parseOtherTransaction(
+  context: ConcordiumContext,
+  tx: HashedTransaction,
+  address: string,
+): RawOperation | null {
+  if (tx.details.outcome === "reject") return feesOperation(context, tx, address, true);
 
   const moved = movedAmount(tx, address);
-  if (moved === 0n) return feesOperation(tx, address, false);
+  if (moved === 0n) return feesOperation(context, tx, address, false);
 
   const fee = paidCost(tx, address);
   const common = {
     ...transactionFields(tx, address),
     fee: String(fee),
-    memo: nativeMemo(tx),
+    memo: nativeMemo(context, tx),
     failed: false,
   };
 
@@ -318,12 +335,16 @@ function parseOtherTransaction(tx: HashedTransaction, address: string): RawOpera
   };
 }
 
-export function parseTransaction(tx: WalletProxyTransaction, address: string): RawOperation | null {
+export function parseTransaction(
+  context: ConcordiumContext,
+  tx: WalletProxyTransaction,
+  address: string,
+): RawOperation | null {
   if (!hasHash(tx)) return null;
-  if (tx.details.type === TOKEN_UPDATE_DETAILS_TYPE) return parseTokenUpdate(tx, address);
-  if (NATIVE_TRANSFER_TYPES.has(tx.details.type)) return parseNativeTransfer(tx, address);
+  if (tx.details.type === TOKEN_UPDATE_DETAILS_TYPE) return parseTokenUpdate(context, tx, address);
+  if (NATIVE_TRANSFER_TYPES.has(tx.details.type)) return parseNativeTransfer(context, tx, address);
 
-  return parseOtherTransaction(tx, address);
+  return parseOtherTransaction(context, tx, address);
 }
 
 /**
@@ -334,7 +355,7 @@ export function parseTransaction(tx: WalletProxyTransaction, address: string): R
  * the sync watermark past the gap for good.
  */
 export async function listOperations(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   address: string,
   options: ListOperationsOptions,
 ): Promise<RawOperationPage> {
@@ -360,7 +381,7 @@ export async function listOperations(
     params.from = options.cursor;
   }
 
-  const response = await getTransactions(config, address, params);
+  const response = await getTransactions(context, address, params);
 
   if (!("transactions" in response) || !Array.isArray(response.transactions)) {
     // Reporting this as an empty page would read as the end of the history, and
@@ -369,7 +390,7 @@ export async function listOperations(
   }
 
   const items = response.transactions
-    .map(tx => parseTransaction(tx, address))
+    .map(tx => parseTransaction(context, tx, address))
     .filter((op): op is RawOperation => op !== null);
 
   // A short page proves the end. Counted from the rows themselves rather than

@@ -1,6 +1,6 @@
 import { lastValueFrom } from "rxjs";
 import type { ConcordiumAccount, ConcordiumBridgeContext } from "../types";
-import { createFixtureConfig } from "../test/fixtures";
+import { PUBLIC_KEY, createFixtureConfig } from "../test/fixtures";
 import { createBridges } from ".";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers", () => ({
@@ -9,6 +9,12 @@ jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers", () => ({
   makeScanAccounts: jest.fn(() => jest.fn(() => jest.requireActual("rxjs").EMPTY)),
   mergeOps: jest.fn(),
 }));
+
+jest.mock("../network/proxyClient", () => ({
+  getAccountsByPublicKey: jest.fn(),
+}));
+
+const { getAccountsByPublicKey } = jest.requireMock("../network/proxyClient");
 
 const { makeSync, makeScanAccounts } = jest.requireMock(
   "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers",
@@ -151,4 +157,52 @@ describe("createBridges token visibility wiring", () => {
     expect(mainnetPostSync(account(), synced)).toBe(synced);
     expect("subAccounts" in testnetPostSync(account(), synced)).toBe(false);
   });
+
+  it.each([
+    [
+      "sync",
+      async (bridges: ReturnType<typeof createBridges>) =>
+        lastValueFrom(bridges.accountBridge.sync(account(), {} as never), {
+          defaultValue: undefined,
+        }),
+      () => makeSync.mock.calls[0][0].getAccountShape,
+    ],
+    [
+      "scan",
+      async (bridges: ReturnType<typeof createBridges>) =>
+        lastValueFrom(
+          bridges.currencyBridge.scanAccounts({ currency: { id: "concordium_testnet" } } as never),
+          { defaultValue: undefined },
+        ),
+      () => makeScanAccounts.mock.calls[0][0].getAccountShape,
+    ],
+  ])(
+    "hands the %s shape a context pinned to the currency's config",
+    async (_name, run, pickShape) => {
+      jest.clearAllMocks();
+      mockConfig.mockImplementation(async (currencyId?: string) =>
+        createFixtureConfig({ proxyUrl: `https://${currencyId}.test` }),
+      );
+      getAccountsByPublicKey.mockResolvedValue([]);
+      await run(createBridges(undefined as never, context));
+
+      await pickShape()(
+        {
+          currency: { id: "concordium_testnet" },
+          derivationMode: "",
+          derivationPath: "44'/1'/0'/0'/0'/0'",
+          index: 0,
+          rest: { publicKey: PUBLIC_KEY },
+        },
+        undefined,
+      );
+
+      const [lowerContext] = getAccountsByPublicKey.mock.calls[0];
+      expect(lowerContext.logger).toBe(context.logger);
+      await expect(lowerContext.config()).resolves.toMatchObject({
+        proxyUrl: "https://concordium_testnet.test",
+      });
+      expect(mockConfig).toHaveBeenCalledTimes(1);
+    },
+  );
 });

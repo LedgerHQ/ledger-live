@@ -5,7 +5,12 @@ import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { AccountBridge, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
-import type { ConcordiumContext, ConcordiumSigner, Transaction } from "../types";
+import {
+  withConfig,
+  type ConcordiumContext,
+  type ConcordiumSigner,
+  type Transaction,
+} from "../types";
 import {
   ConcordiumInvalidPltPayloadError,
   ConcordiumTokenAccountUnavailable,
@@ -60,8 +65,8 @@ export const buildSignOperation =
           type: "device-signature-requested",
         });
 
-        const config = await context.config(account.currency.id);
-        const nextSequenceNumber = await getNextValidSequence(config, account.freshAddress);
+        const pinned = withConfig(context, await context.config(account.currency.id));
+        const nextSequenceNumber = await getNextValidSequence(pinned, account.freshAddress);
 
         // Fails closed: the alternative is a signed CCD transfer. Typed rather
         // than an invariant because a user can reach this, so it needs to reach
@@ -86,7 +91,7 @@ export const buildSignOperation =
         const estimation =
           tokenAccount && transaction.energy !== undefined
             ? { cost: BigInt(fee.toString()), energy: BigInt(transaction.energy) }
-            : await estimateFees(config, transaction.memo);
+            : await estimateFees(pinned, transaction.memo);
 
         const signature = await signerContext(deviceId, async signer => {
           const { freshAddressPath: derivationPath } = account;

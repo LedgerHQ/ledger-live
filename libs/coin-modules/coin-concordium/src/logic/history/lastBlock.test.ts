@@ -1,5 +1,5 @@
 import { lastBlock } from "./lastBlock";
-import { createFixtureConfig } from "../../test/fixtures";
+import { createFixtureContext } from "../../test/fixtures";
 
 jest.mock("../../network/proxyClient", () => ({
   getConsensusInfo: jest.fn(),
@@ -7,7 +7,7 @@ jest.mock("../../network/proxyClient", () => ({
 
 const { getConsensusInfo: getConsensusInfoMock } = jest.requireMock("../../network/proxyClient");
 
-const config = createFixtureConfig();
+const context = createFixtureContext();
 
 describe("lastBlock", () => {
   beforeEach(() => {
@@ -24,10 +24,10 @@ describe("lastBlock", () => {
     });
 
     // WHEN
-    const result = await lastBlock(config);
+    const result = await lastBlock(context);
 
     // THEN
-    expect(getConsensusInfoMock).toHaveBeenCalledWith(config);
+    expect(getConsensusInfoMock).toHaveBeenCalledWith(context);
     expect(result).toEqual({
       height: 12345,
       hash: "abc123hash",

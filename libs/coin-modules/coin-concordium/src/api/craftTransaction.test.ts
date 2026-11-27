@@ -1,13 +1,7 @@
-import {
-  createFixtureConfig,
-  createFixtureContext,
-  VALID_ADDRESS,
-  VALID_ADDRESS_2,
-} from "../test/fixtures";
+import { createFixtureContext, VALID_ADDRESS, VALID_ADDRESS_2 } from "../test/fixtures";
 import { createApi } from ".";
 
 const context = createFixtureContext();
-const config = createFixtureConfig();
 
 jest.mock("../logic", () => ({
   craftTransaction: jest.fn(),
@@ -51,7 +45,7 @@ describe("api/craftTransaction", () => {
 
     const result = await api.craftTransaction(context, transactionIntent);
 
-    expect(getNextValidSequenceMock).toHaveBeenCalledWith(config, transactionIntent.sender);
+    expect(getNextValidSequenceMock).toHaveBeenCalledWith(context, transactionIntent.sender);
     expect(craftTransactionMock).toHaveBeenCalledWith(
       { address: transactionIntent.sender, nextSequenceNumber: 5 },
       expect.objectContaining({

@@ -1,5 +1,5 @@
 import { decodeMemoFromCbor } from "@ledgerhq/concordium-core";
-import { log } from "@ledgerhq/logs";
+import type { ConcordiumContext } from "../../types";
 
 const HEX_PAIRS = /^(?:[0-9a-fA-F]{2})+$/;
 
@@ -11,9 +11,16 @@ const HEX_PAIRS = /^(?:[0-9a-fA-F]{2})+$/;
  * rather than an error. The proxy's response is not schema-checked, so without
  * this a malformed memo reaches the user as a shortened one.
  */
-function decodeHex(hex: string, txHash: string, kind: string): Buffer | undefined {
+function decodeHex(
+  context: ConcordiumContext,
+  hex: string,
+  txHash: string,
+  kind: string,
+): Buffer | undefined {
   if (!HEX_PAIRS.test(hex)) {
-    log("concordium", `Failed to decode ${kind} for tx ${txHash}`, { reason: "not hex" });
+    context.logger("concordium", `Failed to decode ${kind} for tx ${txHash}`, {
+      reason: "not hex",
+    });
     return undefined;
   }
 
@@ -30,9 +37,14 @@ function decodeHex(hex: string, txHash: string, kind: string): Buffer | undefine
  * Applies to whatever either decoder returns, not only to the raw-text
  * fallback: a CBOR text string can hold these just as bare bytes can.
  */
-function printableOrUndefined(text: string, txHash: string, kind: string): string | undefined {
+function printableOrUndefined(
+  context: ConcordiumContext,
+  text: string,
+  txHash: string,
+  kind: string,
+): string | undefined {
   if (/\p{C}/u.test(text)) {
-    log("concordium", `Failed to decode ${kind} for tx ${txHash}`, {
+    context.logger("concordium", `Failed to decode ${kind} for tx ${txHash}`, {
       reason: "control or format character in the text",
     });
     return undefined;
@@ -45,14 +57,18 @@ function printableOrUndefined(text: string, txHash: string, kind: string): strin
  * Decodes a hex-encoded CBOR memo. Returns undefined (and logs) when the bytes
  * do not decode, or when the text they hold is not safe to render.
  */
-export function decodeMemo(hex: string, txHash: string): string | undefined {
-  const bytes = decodeHex(hex, txHash, "memo");
+export function decodeMemo(
+  context: ConcordiumContext,
+  hex: string,
+  txHash: string,
+): string | undefined {
+  const bytes = decodeHex(context, hex, txHash, "memo");
   if (!bytes) return undefined;
 
   try {
-    return printableOrUndefined(decodeMemoFromCbor(bytes), txHash, "memo");
+    return printableOrUndefined(context, decodeMemoFromCbor(bytes), txHash, "memo");
   } catch (error) {
-    log("concordium", `Failed to decode memo for tx ${txHash}`, { error });
+    context.logger("concordium", `Failed to decode memo for tx ${txHash}`, { error });
     return undefined;
   }
 }
@@ -84,14 +100,18 @@ export function decodeMemo(hex: string, txHash: string): string | undefined {
  * on screen. Either branch's text then goes through
  * {@link printableOrUndefined}.
  */
-export function decodePltMemo(hex: string, txHash: string): string | undefined {
-  const bytes = decodeHex(hex, txHash, "PLT memo");
+export function decodePltMemo(
+  context: ConcordiumContext,
+  hex: string,
+  txHash: string,
+): string | undefined {
+  const bytes = decodeHex(context, hex, txHash, "PLT memo");
   if (!bytes) return undefined;
 
   let cborError: unknown;
   try {
     const decoded = decodeMemoFromCbor(bytes, { allowIntegers: false });
-    return printableOrUndefined(decoded, txHash, "PLT memo");
+    return printableOrUndefined(context, decoded, txHash, "PLT memo");
   } catch (error) {
     // Kept for the log below: the fallback decides, but if it also fails this
     // says whether the sender wrote raw bytes or malformed CBOR.
@@ -100,12 +120,12 @@ export function decodePltMemo(hex: string, txHash: string): string | undefined {
 
   const text = bytes.toString("utf8");
   if (!Buffer.from(text, "utf8").equals(bytes)) {
-    log("concordium", `Failed to decode PLT memo for tx ${txHash}`, {
+    context.logger("concordium", `Failed to decode PLT memo for tx ${txHash}`, {
       reason: "neither CBOR nor valid UTF-8",
       cborError,
     });
     return undefined;
   }
 
-  return printableOrUndefined(text, txHash, "PLT memo");
+  return printableOrUndefined(context, text, txHash, "PLT memo");
 }

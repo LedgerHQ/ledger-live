@@ -7,7 +7,7 @@ import {
   MAX_MEMO_LENGTH,
   PLT_MAX_DECIMALS,
 } from "@ledgerhq/concordium-core";
-import type { ConcordiumCoinConfig, ConcordiumContext, Transaction } from "../types";
+import { withConfig, type ConcordiumContext, type Transaction } from "../types";
 import { estimateFees, estimateTokenFees } from "../logic";
 import type { FeeEstimation } from "../logic/transaction/estimateFees";
 import { CONCORDIUM_DUMMY_ADDRESS } from "../constants";
@@ -50,7 +50,7 @@ function recipientForEstimation(recipient: string): AccountAddress {
  * fee unset instead, so `getTransactionStatus` runs and names the real problem.
  */
 async function estimatePltFees(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   subAccount: TokenAccount,
   transaction: Transaction,
 ): Promise<FeeEstimation | undefined> {
@@ -67,7 +67,7 @@ async function estimatePltFees(
     ...(memo ? { memo } : {}),
   });
 
-  return estimateTokenFees(config, {
+  return estimateTokenFees(context, {
     tokenId: subAccount.token.contractAddress,
     listOperationsSize: operations.length,
   });
@@ -76,7 +76,7 @@ async function estimatePltFees(
 export const buildPrepareTransaction =
   (context: ConcordiumContext): AccountBridge<Transaction>["prepareTransaction"] =>
   async (account, transaction) => {
-    const config = await context.config(account.currency.id);
+    const pinned = withConfig(context, await context.config(account.currency.id));
     const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
 
     // Leaving the fee unset is what lets status report the stale reference.
@@ -85,7 +85,7 @@ export const buildPrepareTransaction =
     }
 
     if (subAccount?.type === "TokenAccount") {
-      const estimation = await estimatePltFees(config, subAccount, transaction);
+      const estimation = await estimatePltFees(pinned, subAccount, transaction);
       if (!estimation) return transaction;
 
       const fee = new BigNumber(estimation.cost.toString());
@@ -100,7 +100,7 @@ export const buildPrepareTransaction =
       return { ...transaction, fee, energy };
     }
 
-    const estimation = await estimateFees(config, transaction.memo);
+    const estimation = await estimateFees(pinned, transaction.memo);
     const fee = new BigNumber(estimation.cost.toString());
 
     // Only the PLT path persists `energy`, so one arriving here belonged to a

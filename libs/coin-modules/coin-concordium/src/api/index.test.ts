@@ -1,10 +1,10 @@
 import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
 import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
-import { createFixtureConfig, createFixtureContext, VALID_ADDRESS } from "../test/fixtures";
+import { createFixtureContext, VALID_ADDRESS } from "../test/fixtures";
 import { createApi } from ".";
 
-const context = createFixtureContext();
-const config = createFixtureConfig();
+const logger = jest.fn();
+const context = { ...createFixtureContext(), logger };
 
 jest.mock("../logic", () => ({
   broadcast: jest.fn(),
@@ -78,7 +78,7 @@ describe("api/index", () => {
 
       const result = await api.broadcast(context, "signed-tx-data");
 
-      expect(broadcastMock).toHaveBeenCalledWith(config, "signed-tx-data");
+      expect(broadcastMock).toHaveBeenCalledWith(context, "signed-tx-data");
       expect(result).toBe("tx-hash-123");
     });
   });
@@ -91,7 +91,7 @@ describe("api/index", () => {
 
       const result = await api.getBalance(context, VALID_ADDRESS);
 
-      expect(getBalanceMock).toHaveBeenCalledWith(config, VALID_ADDRESS);
+      expect(getBalanceMock).toHaveBeenCalledWith(context, VALID_ADDRESS);
       expect(result).toEqual(mockBalances);
     });
 
@@ -111,7 +111,7 @@ describe("api/index", () => {
 
       const result = await api.lastBlock(context);
 
-      expect(lastBlockMock).toHaveBeenCalledWith(config);
+      expect(lastBlockMock).toHaveBeenCalledWith(context);
       expect(result).toEqual(mockBlockInfo);
     });
   });
@@ -145,7 +145,7 @@ describe("api/index", () => {
 
       const result = await api.listOperations(context, VALID_ADDRESS, pagination);
 
-      expect(listOperationsMock).toHaveBeenCalledWith(config, VALID_ADDRESS, pagination);
+      expect(listOperationsMock).toHaveBeenCalledWith(context, VALID_ADDRESS, pagination);
       expect(result.items).toHaveLength(1);
       expect(result.items[0].type).toBe("OUT");
       expect(result.items[0].value).toBe(BigInt(1000000));
@@ -162,7 +162,7 @@ describe("api/index", () => {
 
       const result = await api.getBlockInfo(context, 600);
 
-      expect(getBlockInfoMock).toHaveBeenCalledWith(config, 600);
+      expect(getBlockInfoMock).toHaveBeenCalledWith(context, 600);
       expect(result).toEqual(mockBlockInfo);
     });
   });
@@ -178,7 +178,7 @@ describe("api/index", () => {
 
       const result = await api.getBlock(context, 600);
 
-      expect(getBlockMock).toHaveBeenCalledWith(config, 600);
+      expect(getBlockMock).toHaveBeenCalledWith(context, 600);
       expect(result).toEqual(mockBlock);
     });
   });

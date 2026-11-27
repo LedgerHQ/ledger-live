@@ -1,14 +1,15 @@
 import { concordiumDefaults } from "../../config";
 import { getBalance } from "./getBalance";
+import { createFixtureContext } from "../../test/fixtures";
 
 describe("getBalance", () => {
-  const config = concordiumDefaults.concordium_testnet;
+  const context = createFixtureContext(concordiumDefaults.concordium_testnet);
 
   it("fetches native balance for account with funds", async () => {
     // Account with some balance on testnet
     const address = "3U6m951FWryY56SKFFHgMLGVHtJtk4VaxN7V2F9hjkR7Sg1FUx";
 
-    const balances = await getBalance(config, address);
+    const balances = await getBalance(context, address);
 
     expect(balances).toBeInstanceOf(Array);
     expect(balances.length).toBeGreaterThanOrEqual(1);
@@ -21,7 +22,7 @@ describe("getBalance", () => {
     // Pristine account with no transactions
     const address = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
 
-    const result = await getBalance(config, address);
+    const result = await getBalance(context, address);
 
     expect(result).toEqual([{ asset: { type: "native" }, value: BigInt(0) }]);
   });

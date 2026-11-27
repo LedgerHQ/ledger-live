@@ -6,7 +6,7 @@ import type {
   ConcordiumResources,
   RawOperation,
 } from "../types";
-import { DEFAULT_ENABLE_TOKENS } from "../constants";
+import { boolean } from "../tuning";
 import { toOperation } from "./operations";
 import { applyTokensToResources } from "./tokens";
 
@@ -63,7 +63,7 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): vo
  */
 async function tokensEnabled(context: ConcordiumContext, currencyId: string): Promise<boolean> {
   try {
-    return ((await context.config(currencyId)).enableTokens ?? DEFAULT_ENABLE_TOKENS) === true;
+    return boolean("enableTokens", (await context.config(currencyId)).enableTokens);
   } catch {
     return false;
   }

@@ -1,15 +1,16 @@
 import type { RawOperation } from "../../types";
 import { concordiumDefaults } from "../../config";
 import { listOperations } from "./listOperations";
+import { createFixtureContext } from "../../test/fixtures";
 
 describe("listOperations", () => {
-  const config = concordiumDefaults.concordium_testnet;
+  const context = createFixtureContext(concordiumDefaults.concordium_testnet);
   const ADDRESS_WITH_BALANCE = "3U6m951FWryY56SKFFHgMLGVHtJtk4VaxN7V2F9hjkR7Sg1FUx";
   const ADDRESS_PRISTINE = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
 
   describe("Account with no transactions", () => {
     it("should return empty array for pristine account", async () => {
-      const { items: operations, next: cursor } = await listOperations(config, ADDRESS_PRISTINE, {
+      const { items: operations, next: cursor } = await listOperations(context, ADDRESS_PRISTINE, {
         minHeight: 0,
       });
 
@@ -24,7 +25,7 @@ describe("listOperations", () => {
     let cursor: string | undefined;
 
     beforeAll(async () => {
-      const page = await listOperations(config, ADDRESS_WITH_BALANCE, { minHeight: 0 });
+      const page = await listOperations(context, ADDRESS_WITH_BALANCE, { minHeight: 0 });
       operations = page.items;
       cursor = page.next;
     });
@@ -91,7 +92,7 @@ describe("listOperations", () => {
     let operations: RawOperation[];
 
     beforeAll(async () => {
-      const page = await listOperations(config, ADDRESS_WITH_BALANCE, { minHeight: 0 });
+      const page = await listOperations(context, ADDRESS_WITH_BALANCE, { minHeight: 0 });
       operations = page.items;
     });
 

@@ -1,4 +1,4 @@
-import { VALID_ADDRESS, PUBLIC_KEY } from "../test/fixtures";
+import { PUBLIC_KEY, VALID_ADDRESS } from "../test/fixtures";
 import { createFixtureSigner, createFixtureSignerContext } from "../bridge/bridge.fixture";
 import { getAddress } from "./getAddress";
 import { getPublicKey } from "./getPublicKey";

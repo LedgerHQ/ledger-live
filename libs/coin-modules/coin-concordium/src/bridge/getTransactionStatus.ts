@@ -18,17 +18,17 @@ import {
   PLT_TOKEN_ID_MAX_LENGTH,
   PLT_TOKEN_ID_MIN_LENGTH,
 } from "@ledgerhq/concordium-core";
-import { DEFAULT_MIN_RESERVE } from "../constants";
+import { nonNegativeInt } from "../tuning";
 import { resolveSendAmount } from "./amount";
 import { effectivePltAmount } from "./tokens";
 import { checkRecipientRestrictions } from "../logic/transaction/pltRecipientRestrictions";
-import type {
-  ConcordiumAccount,
-  ConcordiumCoinConfig,
-  ConcordiumContext,
-  ConcordiumTokenResources,
-  Transaction,
-  TransactionStatus,
+import {
+  withConfig,
+  type ConcordiumAccount,
+  type ConcordiumContext,
+  type ConcordiumTokenResources,
+  type Transaction,
+  type TransactionStatus,
 } from "../types";
 import {
   ConcordiumAccountDenied,
@@ -235,7 +235,7 @@ function validatePayloadSize(
  * `prepareTransaction`.
  */
 async function getTokenTransactionStatus(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   account: Account,
   transaction: Transaction,
   subAccount: TokenAccount,
@@ -265,8 +265,7 @@ async function getTokenTransactionStatus(
   // reported under `sender`.
   const restrictionsError = recipientError
     ? undefined
-    : await checkRecipientRestrictions({
-        config,
+    : await checkRecipientRestrictions(context, {
         recipient: transaction.recipient,
         tokenId,
         ticker: subAccount.token.ticker,
@@ -367,14 +366,15 @@ export const buildGetTransactionStatus =
     const warnings: Record<string, Error> = {};
 
     const config = await context.config(account.currency.id);
+    const pinned = withConfig(context, config);
     // reserveAmount is the minimum amount of currency that an account must hold in order to stay activated
-    const reserveAmount = new BigNumber(config.minReserve ?? DEFAULT_MIN_RESERVE);
+    const reserveAmount = new BigNumber(nonNegativeInt("minReserve", config.minReserve));
     const estimatedFees = new BigNumber(transaction.fee || 0);
 
     const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
     if (subAccount?.type === "TokenAccount") {
       return getTokenTransactionStatus(
-        config,
+        pinned,
         account,
         transaction,
         subAccount,

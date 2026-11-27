@@ -1,11 +1,11 @@
 import { submitTransfer } from "../../network/proxyClient";
 import { buildSubmitTransferData } from "../../network/utils";
-import type { ConcordiumCoinConfig } from "../../types";
+import type { ConcordiumContext } from "../../types";
 
-export async function broadcast(config: ConcordiumCoinConfig, signedTx: string): Promise<string> {
+export async function broadcast(context: ConcordiumContext, signedTx: string): Promise<string> {
   const { transactionBody, signature } = JSON.parse(signedTx);
   const data = buildSubmitTransferData(transactionBody, signature);
 
-  const result = await submitTransfer(config, data);
+  const result = await submitTransfer(context, data);
   return result.submissionId;
 }

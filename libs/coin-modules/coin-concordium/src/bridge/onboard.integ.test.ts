@@ -262,14 +262,12 @@ describe("onboard (testnet integration)", () => {
     it("should handle credential submission with mocked network", async () => {
       mockSubmitCredential.mockResolvedValue({ submissionId: "test-submission-123" });
 
-      const currency = createFixtureCurrency();
       const mockData = { v: 0, value: {} } as never;
-      const config = await context.config(currency.id);
 
-      const result = await submitCredential(config, mockData);
+      const result = await submitCredential(context, mockData);
 
       expect(result).toEqual({ submissionId: "test-submission-123" });
-      expect(mockSubmitCredential).toHaveBeenCalledWith(config, mockData);
+      expect(mockSubmitCredential).toHaveBeenCalledWith(context, mockData);
     }, 15000);
 
     it("should use correct testnet configuration", async () => {
