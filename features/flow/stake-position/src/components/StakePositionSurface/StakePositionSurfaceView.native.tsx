@@ -28,6 +28,7 @@ export function StakePositionSurfaceView({
   title,
   isTitleInHeader,
   onDismiss,
+  onHidden,
   isDismissible,
   children,
   testID,
@@ -51,7 +52,10 @@ export function StakePositionSurfaceView({
       onHeaderClosePressed={isDismissible ? onDismiss : undefined}
       onBackdropPress={isDismissible ? onDismiss : undefined}
       onOpened={() => setIsPresented(true)}
-      onModalHide={() => setIsPresented(false)}
+      onModalHide={() => {
+        setIsPresented(false);
+        onHidden?.();
+      }}
       enablePanDownToClose={false}
       // A lock or another screen only hides the sheet: the request still waits for the user.
       restoreOnFocus

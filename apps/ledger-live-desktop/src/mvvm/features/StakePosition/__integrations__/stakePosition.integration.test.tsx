@@ -43,6 +43,7 @@ import {
 } from "@features/flow-stake-position";
 import { track, trackPage } from "@shared/analytics";
 import { setOverride } from "@shared/feature-flags";
+import { buildDeviceInitializationInput } from "LLD/components/DeviceIntentExecutor";
 import { selectIsBuyDeviceOpen } from "LLD/features/BuyDevice/buyDeviceDialog";
 import { removeAccount, updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
@@ -145,6 +146,20 @@ jest.mock("@ledgerhq/live-common/hooks/useBroadcast", () => ({
   useBroadcast: () => mockBroadcast,
 }));
 
+// The region of the device locale decides the appearance of the rate.
+let mockDeviceRegion: string | undefined;
+jest.mock("~/helpers/systemLocale", () => {
+  const locale =
+    jest.requireActual<typeof import("~/helpers/systemLocale")>("~/helpers/systemLocale");
+  return {
+    ...locale,
+    getParsedSystemDeviceLocale: () => {
+      const parsed = locale.getParsedSystemDeviceLocale();
+      return mockDeviceRegion === undefined ? parsed : { ...parsed, region: mockDeviceRegion };
+    },
+  };
+});
+
 jest.mock("~/renderer/drawers/Provider", () => ({
   __esModule: true,
   ...jest.requireActual("~/renderer/drawers/Provider"),
@@ -162,7 +177,6 @@ const VALIDATOR = "FakeVote1111111111111111111111111111111111";
 const STAKE_ACCOUNT = "FakeStake111111111111111111111111111111111";
 const SOL = 1_000_000_000;
 const STAKES_URL = "https://earn.api.live.ledger.com/v3/stakes";
-const VALIDATORS_SUMMARY_URL = "https://earn.api.live.ledger.com/figment/solana/validators_summary";
 const FIGMENT_LOGO = "https://validators.example/figment.png";
 
 const SOL_AT_150_USD = {
@@ -176,7 +190,6 @@ type StakesRequestItem = Readonly<{ network: string; address: string; fresh?: bo
 
 const endpoints = {
   stakes: jest.fn<Response | Promise<Response>, [{ request: Request }]>(),
-  summary: jest.fn<Response, [{ request: Request }]>(),
 };
 const stakesRequests: StakesRequestItem[][] = [];
 
@@ -186,6 +199,8 @@ type StakeRowOptions = Readonly<{
   rewards?: number;
   deposited?: number;
   protocolName?: string;
+  /** `null` sends no rate. */
+  interest?: Readonly<{ type: string; value: string }> | null;
 }>;
 
 /** A `/v3/stakes` row of the requested wallet, shaped like the Earn backend's. */
@@ -197,6 +212,7 @@ function stakeRow(
     rewards = SOL,
     deposited = 9.75 * SOL,
     protocolName = "Ledger by Figment",
+    interest = { type: "APY", value: "0.0712" },
   }: StakeRowOptions = {},
 ) {
   return {
@@ -206,7 +222,7 @@ function stakeRow(
       provider: "prv_ledger_by_figment",
       protocol_name: protocolName,
       currency: "solana",
-      interest: { type: "APY", value: "0.0712", currency: "solana" },
+      interest: interest === null ? undefined : { ...interest, currency: "solana" },
       logo: FIGMENT_LOGO,
       staked_balance: String(stakedBalance),
       status,
@@ -473,6 +489,7 @@ describe("Stake position dialog", () => {
     mockSignedTransactions.length = 0;
     stakesRequests.length = 0;
     mockDeviceError = new Error("The device disconnected");
+    mockDeviceRegion = undefined;
     mockBroadcast.mockReset().mockImplementation(signed => Promise.resolve(signed.operation));
     serveStakes(address => [stakeRow(address)]);
     endpoints.stakes.mockReset().mockImplementation(async ({ request }) => {
@@ -483,17 +500,7 @@ describe("Stake position dialog", () => {
         meta: { is_stale: false, responded_at: "2026-11-18T12:00:01Z" },
       });
     });
-    endpoints.summary
-      .mockReset()
-      .mockImplementation(() =>
-        HttpResponse.json([
-          { address: VALIDATOR, delegator_apy: 0.078107, name: "Ledger by Figment" },
-        ]),
-      );
-    server.use(
-      http.post(STAKES_URL, endpoints.stakes),
-      http.get(VALIDATORS_SUMMARY_URL, endpoints.summary),
-    );
+    server.use(http.post(STAKES_URL, endpoints.stakes));
   });
 
   afterEach(() => {
@@ -586,7 +593,7 @@ describe("Stake position dialog", () => {
       expect(within(dialog).getByText("9.75 SOL")).toBeVisible();
       expect(within(dialog).getByText("Active")).toBeVisible();
       expect(within(dialog).getByText("Ledger by Figment")).toBeVisible();
-      expect(await within(dialog).findByText("7.81% APY")).toBeVisible();
+      expect(within(dialog).getByText("7.12% APY")).toBeVisible();
       expect(within(dialog).getByText(`Solana ${account.index + 1}`)).toBeVisible();
       expect(screen.getByRole("button", { name: "Deactivate" })).toBeEnabled();
       expect(screen.getByRole("button", { name: "Earn more" })).toBeEnabled();
@@ -771,8 +778,22 @@ describe("Stake position dialog", () => {
       expect(screen.queryByRole("button", { name: "Earn more" })).not.toBeInTheDocument();
     });
 
-    it("should hide the APY row while the validator APY is unknown, never showing the position APY", async () => {
-      endpoints.summary.mockImplementation(() => HttpResponse.json([]));
+    it("should show the rate of the position with two decimals and its type", async () => {
+      serveStakes(address => [stakeRow(address, { interest: { type: "APR", value: "0.065" } })]);
+      const { open } = setup();
+
+      void open();
+
+      const dialog = await findDetails();
+      expect(within(dialog).getByText("Current APY")).toBeVisible();
+      expect(within(dialog).getByText("6.50% APR")).toBeVisible();
+    });
+
+    it.each([
+      ["sends no rate", { interest: null }],
+      ["sends a zero rate", { interest: { type: "APY", value: "0" } }],
+    ])("should hide the APY row when the backend %s", async (_case, options) => {
+      serveStakes(address => [stakeRow(address, options)]);
       const { open } = setup();
 
       void open();
@@ -780,6 +801,21 @@ describe("Stake position dialog", () => {
       const dialog = await findDetails();
       expect(within(dialog).queryByText("Current APY")).not.toBeInTheDocument();
       expect(within(dialog).queryByText(/APY$/)).not.toBeInTheDocument();
+    });
+
+    it.each([
+      ["in green", "US", "success"],
+      ["in gray where green rates are not allowed", "GB", "gray"],
+    ])("should show the rate %s", async (_case, region, appearance) => {
+      mockDeviceRegion = region;
+      const { open } = setup();
+
+      void open();
+
+      const dialog = await findDetails();
+      expect(within(dialog).getByText("7.12% APY").parentElement).toHaveClass(
+        `text-${appearance === "gray" ? "muted" : "success"}`,
+      );
     });
 
     it("should name a validator the backend does not name by its shortened vote account", async () => {
@@ -883,6 +919,25 @@ describe("Stake position dialog", () => {
       await findDialog();
 
       expect(sync).not.toHaveBeenCalled();
+    });
+
+    it("should hold the confirmation while a sync of the account runs", async () => {
+      const { account, open, setSyncState, user } = setup();
+
+      const answer = open();
+      await findDetails();
+      const confirmation = await goToConfirmation(user, "Deactivate");
+      setSyncState({ [account.id]: { pending: true, error: null } });
+
+      await waitFor(() => expect(confirmation).toBeDisabled());
+      await user.click(confirmation);
+      expect(screen.queryByTestId("device-intent-executor")).not.toBeInTheDocument();
+
+      setSyncState({ [account.id]: { pending: false, error: null } });
+      await waitFor(() => expect(confirmation).toBeEnabled());
+      await user.click(confirmation);
+      expect(await screen.findByTestId("device-intent-executor")).toBeInTheDocument();
+      expect(await isPending(answer)).toBe(true);
     });
 
     it("should disable the exit, but not Earn more, while the account syncs", async () => {
@@ -1089,6 +1144,7 @@ describe("Stake position dialog", () => {
       await signOnDevice(user);
 
       const dialog = await findDialog("Deactivate your SOL");
+      expect(within(dialog).getByText("Deactivate transaction in progress")).toBeVisible();
       expect(within(dialog).getByText("This can take a few minutes.")).toBeVisible();
       expect(screen.queryByTestId("device-intent-executor")).not.toBeInTheDocument();
       expect(screen.queryByRole("button", { name: "Close" })).not.toBeInTheDocument();
@@ -1161,6 +1217,7 @@ describe("Stake position dialog", () => {
 
     it("should close the result from its header and leave nothing shown", async () => {
       const { open, store, user } = setup();
+      const shown = renderHook(() => useShownStakePosition());
 
       void open();
       await findDetails();
@@ -1170,6 +1227,7 @@ describe("Stake position dialog", () => {
 
       await dialogIsClosed();
       expect(selectIsStakePositionDialogOpen(store.getState())).toBe(false);
+      await waitFor(() => expect(shown.result.current).toEqual({ request: null, phase: "closed" }));
     });
 
     it("should report its pages and buttons, never the transaction", async () => {
@@ -1191,36 +1249,92 @@ describe("Stake position dialog", () => {
       ]);
     });
 
-    it("should let the user try again after refusing on the device, without logging it", async () => {
-      const critical = jest.spyOn(logger, "critical");
+    it("should refuse a new request while the device shows the exit", async () => {
       const { open, user } = setup();
 
-      void open();
+      const answer = open();
       await findDetails();
       await user.click(await goToConfirmation(user, "Deactivate"));
-      await user.click(await screen.findByRole("button", { name: "Refuse on device" }));
-      const failure = await screen.findByTestId("stake-position-failure");
-      expect(within(failure).getByText("Transaction failed")).toBeVisible();
-      await user.click(within(failure).getByRole("button", { name: "Try again" }));
+      await screen.findByTestId("device-intent-executor");
 
-      const confirmation = await findDialog("Deactivate your SOL");
-      expect(within(confirmation).getByRole("button", { name: "Deactivate" })).toBeVisible();
-      expect(critical).not.toHaveBeenCalled();
+      await expect(open()).rejects.toMatchObject({ name: "StakePositionBusy" });
+      expect(await isPending(answer)).toBe(true);
+      expect(screen.getByTestId("device-intent-executor")).toBeInTheDocument();
     });
 
-    it("should answer null when the user closes a failed transaction", async () => {
-      const critical = jest.spyOn(logger, "critical").mockImplementation(() => undefined);
+    it.each([
+      ["refusing on the device", "Refuse on device"],
+      ["a device error", "Fail on device"],
+    ])(
+      "should keep the device step after %s, for its retry, without logging it",
+      async (_case, outcome) => {
+        const critical = jest.spyOn(logger, "critical");
+        const { open, user } = setup();
+
+        const answer = open();
+        await findDetails();
+        await user.click(await goToConfirmation(user, "Deactivate"));
+        await user.click(await screen.findByRole("button", { name: outcome }));
+
+        expect(screen.getByTestId("device-intent-executor")).toBeInTheDocument();
+        expect(screen.queryByTestId("stake-position-failure")).not.toBeInTheDocument();
+        expect(critical).not.toHaveBeenCalled();
+        await user.click(screen.getByRole("button", { name: "Sign on device" }));
+
+        await expect(answer).resolves.toEqual({ action: "deactivate" });
+      },
+    );
+
+    it("should answer null when the user leaves the device step after a device error", async () => {
       const { open, user } = setup();
 
       const answer = open();
       await findDetails();
       await user.click(await goToConfirmation(user, "Deactivate"));
       await user.click(await screen.findByRole("button", { name: "Fail on device" }));
+      await user.click(screen.getByRole("button", { name: "Leave the device step" }));
+
+      await expect(answer).resolves.toEqual({ action: null });
+      await dialogIsClosed();
+      expect(mockBroadcast).not.toHaveBeenCalled();
+    });
+
+    it("should show the failure, open to a new request, when the device step cannot start", async () => {
+      const critical = jest.spyOn(logger, "critical").mockImplementation(() => undefined);
+      const failure = new Error("No app for this currency");
+      jest.mocked(buildDeviceInitializationInput).mockRejectedValueOnce(failure);
+      const { open, user } = setup();
+
+      const answer = open();
+      await findDetails();
+      await user.click(await goToConfirmation(user, "Deactivate"));
+      const result = await screen.findByTestId("stake-position-failure");
+      expect(within(result).getByText("Transaction failed")).toBeVisible();
+      expect(critical).toHaveBeenCalledWith(failure);
+      expect(await isPending(answer)).toBe(true);
+
+      const next = open();
+
+      await expect(answer).resolves.toEqual({ action: null });
+      await findDetails();
+      expect(await isPending(next)).toBe(true);
+    });
+
+    it("should answer null when the user closes a failure before the signature", async () => {
+      jest.spyOn(logger, "critical").mockImplementation(() => undefined);
+      jest
+        .mocked(buildDeviceInitializationInput)
+        .mockRejectedValueOnce(new Error("No app for this currency"));
+      const { open, user } = setup();
+
+      const answer = open();
+      await findDetails();
+      await user.click(await goToConfirmation(user, "Deactivate"));
       await screen.findByTestId("stake-position-failure");
       await user.click(screen.getByRole("button", { name: "Close" }));
 
       await expect(answer).resolves.toEqual({ action: null });
-      expect(critical).toHaveBeenCalledWith(mockDeviceError);
+      await dialogIsClosed();
     });
 
     it("should warn, and let the user close or try again, when a signed transaction fails to broadcast", async () => {

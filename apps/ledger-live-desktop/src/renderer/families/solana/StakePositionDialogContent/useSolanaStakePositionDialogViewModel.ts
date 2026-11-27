@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { findSolanaStakingPosition } from "@ledgerhq/live-common/families/solana/logic";
+import { getApyAppearance } from "@ledgerhq/live-common/modularDrawer/utils/getApyAppearance";
 import type {
   SolanaAccount,
   SolanaStakingPosition,
@@ -13,13 +14,16 @@ import {
   getExitAction,
   getExitAmount,
   getStakePositionValidatorName,
+  releaseStakePosition,
   reopenStakePosition,
+  startSigningStakePosition,
   toChainExit,
   toStakePositionDetailsProps,
   useStakePositionData,
   useStakePositionSteps,
   useStakePositionTracking,
   type ReadyStakePositionData,
+  type StakePositionApyAppearance,
   type StakePositionData,
   type StakePositionDetailsProps,
   type StakePositionExitAction,
@@ -32,6 +36,7 @@ import {
 } from "@features/flow-stake-position";
 import { openBuyDevice } from "LLD/features/BuyDevice/buyDeviceDialog";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
@@ -93,6 +98,7 @@ type BodyActions = Readonly<{
   accountName: string | undefined;
   accountCurrency: StakePositionAccountCurrency;
   format: StakePositionFormatter;
+  apyAppearance: StakePositionApyAppearance;
   isSyncing: boolean;
   dismiss: () => void;
   earnMore: () => void;
@@ -231,6 +237,7 @@ function detailsPropsOf(
 ): StakePositionDetailsProps {
   return {
     ...toStakePositionDetailsProps(data, toChainExit(snapshot, actions.isSyncing), actions.format),
+    apyAppearance: actions.apyAppearance,
     ticker: actions.ticker,
     accountName: actions.accountName,
     onEarnMore: actions.earnMore,
@@ -255,6 +262,7 @@ function transactionPropsOf(
     amount: actions.format.amount(exitAmount.toString()).crypto,
     validatorName: exit.validatorName,
     accountName: actions.accountName,
+    isSyncing: actions.isSyncing,
     onConfirm: actions.confirmExit,
     onCancel: actions.dismiss,
     onSigned: actions.markSigned,
@@ -323,6 +331,8 @@ export function useSolanaStakePositionDialogViewModel({
   const [operation, setOperation] = useState<Operation | null>(null);
   const isSyncing = useStakePositionSyncOnOpen(account);
   const format = useStakePositionFormatter(account);
+  const { region } = getParsedSystemDeviceLocale();
+  const apyAppearance = useMemo(() => getApyAppearance(region), [region]);
   const ticker = account.currency.ticker;
   const accountName = useMaybeAccountName(account);
   const { trackStep, trackButton } = useStakePositionTracking({ origin: request.origin, ticker });
@@ -356,16 +366,17 @@ export function useSolanaStakePositionDialogViewModel({
   const isUnavailableToEarn = request.origin === "earn" && shownContent.view === "notFound";
   const content = isUnavailableToEarn ? LOADING : shownContent;
   const trackedStep = isClosed ? null : trackedStepOf(content);
-  const isSignedFailure = content.view === "failure" && content.isSigned;
+  const isFailure = content.view === "failure";
 
   useEffect(() => {
     if (isUnavailableToEarn) answerStakePositionUnavailable(requestId);
   }, [isUnavailableToEarn, requestId]);
 
-  // A result has no close button of its own: a signed request opens again so the header closes it.
+  // A result has no close button of its own: a signing or signed request opens again, so the
+  // header closes it and a new request is no longer refused.
   useEffect(() => {
-    if (isSignedFailure) reopenStakePosition(requestId);
-  }, [isSignedFailure, requestId]);
+    if (isFailure) reopenStakePosition(requestId);
+  }, [isFailure, requestId]);
 
   useEffect(() => {
     if (step.name === "confirm" && step.action !== exitAction) dispatchStep({ type: "back" });
@@ -394,7 +405,8 @@ export function useSolanaStakePositionDialogViewModel({
   };
 
   const confirmExit = () => {
-    if (content.view !== "transaction") return;
+    // The sync may still change the position: the user confirms the exit of the synced one.
+    if (content.view !== "transaction" || isSyncing) return;
     trackPageButton("confirm");
     if (!hasOnboardedDevice) {
       dismissStakePosition(requestId);
@@ -402,6 +414,7 @@ export function useSolanaStakePositionDialogViewModel({
       dispatch(openBuyDevice());
       return;
     }
+    startSigningStakePosition(requestId);
     setExitToSign(content.exit);
     dispatchStep({ type: "confirm" });
   };
@@ -447,6 +460,7 @@ export function useSolanaStakePositionDialogViewModel({
     accountName,
     accountCurrency: { ledgerId: account.currency.id, ticker },
     format,
+    apyAppearance,
     isSyncing,
     dismiss,
     earnMore,
@@ -467,6 +481,7 @@ export function useSolanaStakePositionDialogViewModel({
       ticker,
       currencyName: account.currency.name,
       onDismiss: dismiss,
+      onHidden: () => releaseStakePosition(requestId),
       isDismissible: phase !== "committed",
       testID: "stake-position-dialog",
     },

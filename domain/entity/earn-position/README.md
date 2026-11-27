@@ -11,11 +11,13 @@ consumer is the Solana position modal of `@features/flow-stake-position`.
 
 | Export | Holds |
 | --- | --- |
-| `EarnPositionSchema`, `EarnPosition` | One position: `id` (the stake account address), `network`, `ownerAddress`, `validatorAddress`, `status`, and the optional `validatorName`, `validatorLogoUrl`, `balance`, `deposited`, `totalRewards`, `positionApy`, `updatedAt` |
+| `EarnPositionSchema`, `EarnPosition` | One position: `id` (the stake account address), `network`, `ownerAddress`, `validatorAddress`, `status`, and the optional `validatorName`, `validatorLogoUrl`, `balance`, `deposited`, `totalRewards`, `interest`, `updatedAt` |
 | `EarnPositionsSchema`, `EarnPositions` | The result for one address: `positions`, `failures`, `isStale` and the optional `respondedAt` |
 | `EarnPositionStatusSchema`, `EarnPositionStatus` | `activated`, `activating`, `deactivating`, `deactivated`, `archived`, `unknown` |
 | `BaseUnitAmountSchema`, `BaseUnitAmount` | An amount in the smallest unit of its currency, as a digit string. A number is accepted only while it is a safe integer |
 | `ApyFractionSchema`, `ApyFraction` | A yearly rate as a finite fraction from 0 to 1 |
+| `EarnPositionInterestSchema`, `EarnPositionInterest` | The reward rate of a position: its `type` and its `value`, an `ApyFraction` |
+| `EarnInterestTypeSchema`, `EarnInterestType` | The kind of rate: `APY`, `APR`, `NRR` (net reward rate) or `GRR` (gross reward rate) |
 | `EarnPositionIdSchema`, `EarnPositionsFailureSchema` | The id of a position, and a failure a provider reported for the address |
 
 Mock factories, out of the barrel: `mockEarnPosition(overrides)` and `mockEarnPositions(overrides)`
@@ -29,10 +31,11 @@ from `@domain/entity-earn-position/schema.mock`.
   `positions` may still exist. Do not read it as "no position".
 
 Every optional field may be absent, and a display hides its row then. Nothing is computed from other
-fields: `deposited` is never `balance` minus `totalRewards`. `positionApy` is the reward rate of the
-position, not the APY of its validator. `validatorAddress` is empty while the stake account is not
-delegated. `isStale` says that some rows were missing or past their time to live when the backend read
-them, not that the chain changed since.
+fields: `deposited` is never `balance` minus `totalRewards`. `interest` is the reward rate of the
+position, as the Earn dashboard shows it, not the APY of its validator: a display names its `type`
+next to its value. `validatorAddress` is empty while the stake account is not delegated. `isStale`
+says that some rows were missing or past their time to live when the backend read them, not that the
+chain changed since.
 
 ```ts
 import { mockEarnPositions } from "@domain/entity-earn-position/schema.mock";

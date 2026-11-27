@@ -50,6 +50,8 @@ export type ExitTransactionStepProps = Readonly<{
   amount: string;
   validatorName: string;
   accountName: string | undefined;
+  /** The account sync the dialog started may still change the position: the exit waits for it. */
+  isSyncing: boolean;
   onConfirm: () => void;
   /** The user left the device step before the transaction was signed. */
   onCancel: () => void;
@@ -86,6 +88,7 @@ export function ExitTransactionStep({
   amount,
   validatorName,
   accountName,
+  isSyncing,
   onConfirm,
   onCancel,
   onSigned,
@@ -169,7 +172,7 @@ export function ExitTransactionStep({
     return (
       <DialogBody>
         <SyncSkipUnderPriority priority={100} />
-        <StakePositionProcessing testID="stake-position-broadcasting" />
+        <StakePositionProcessing action={action} testID="stake-position-broadcasting" />
       </DialogBody>
     );
   }
@@ -185,7 +188,7 @@ export function ExitTransactionStep({
         validatorName={validatorName}
         accountName={accountName}
         errorContent={error ? <TranslatedError error={error} /> : undefined}
-        isPending={bridgePending || isSigning}
+        isPending={bridgePending || isSigning || isSyncing}
         isConfirmDisabled={!transaction || error !== undefined}
         onConfirm={onConfirm}
         testID="stake-position-confirm"
@@ -197,6 +200,7 @@ export function ExitTransactionStep({
             account={account}
             transaction={transaction}
             status={status}
+            action={action}
             onSigned={handleSigned}
             onFailed={handleFailed}
             onCancel={onCancel}

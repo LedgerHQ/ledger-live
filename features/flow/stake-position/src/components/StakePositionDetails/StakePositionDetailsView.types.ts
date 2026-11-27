@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
 import type { StakePositionDetailsLabels } from "../../copy/useStakePositionLabels";
-import type { StakePositionAmount, StakePositionRewardsHeadline } from "../../types";
+import type {
+  StakePositionAmount,
+  StakePositionApyAppearance,
+  StakePositionRewardsHeadline,
+} from "../../types";
 
 export type StakePositionNoticeAppearance = "info" | "warning";
 
@@ -9,8 +13,9 @@ export type StakePositionDetailsViewProps = Readonly<{
   rewards?: Readonly<{ amount: StakePositionAmount; headline?: StakePositionRewardsHeadline }>;
   balance?: StakePositionAmount;
   initialDeposit?: StakePositionAmount;
-  /** The APY badge, such as "7.81% APY". */
+  /** The rate tag, such as "7.12% APY". */
   apyBadge?: string;
+  apyAppearance: StakePositionApyAppearance;
   status: string;
   account?: Readonly<{ name: string; icon?: ReactNode }>;
   validator?: Readonly<{ name: string; imageUrl?: string; initial: string }>;
