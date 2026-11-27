@@ -9295,6 +9295,9 @@ importers:
       '@domain/entity-contact':
         specifier: workspace:^
         version: link:../../domain/entity/contact
+      '@ledgerhq/live-cli':
+        specifier: workspace:^
+        version: link:../../apps/cli/dist
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
