@@ -1,4 +1,5 @@
 // Files and folders allowed to keep their legacy UI imports, keyed by posix path from the repo root.
+// The list only shrinks: never add an entry for new code; delete an entry in the PR that migrates or deletes its file.
 // See `PROBLEMS` in check-legacy-ui-waivers.js. Rationale: support/lint/README.md#legacy-ui.
 
 const LEGACY_IMPORT =
