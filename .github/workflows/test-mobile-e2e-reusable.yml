@@ -349,7 +349,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-test/deps-gha-sonar-github
         id: setup-caches
         with:
           use-mise: true
@@ -366,7 +366,7 @@ jobs:
 
       - name: JFrog npm auth
         if: ${{ !(inputs.js_bundle_hash_ios && inputs.js_bundle_hash_android && inputs.native_fingerprint_ios && inputs.native_fingerprint_android) }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-test/deps-gha-sonar-github
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -376,7 +376,7 @@ jobs:
 
       - name: Compute the build hashes
         id: hashes
-        uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-hashes@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-hashes@ci-test/deps-gha-sonar-github
         with:
           js_bundle_hash_ios: ${{ inputs.js_bundle_hash_ios }}
           js_bundle_hash_android: ${{ inputs.js_bundle_hash_android }}
@@ -385,7 +385,7 @@ jobs:
 
       - name: Plan the builds and shards
         id: plan
-        uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-plan@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-plan@ci-test/deps-gha-sonar-github
         with:
           ref: ${{ inputs.ref || github.ref_name }}
           event_name: ${{ inputs.ci_smoke && 'workflow_call' || github.event_name }}
@@ -449,7 +449,7 @@ jobs:
     name: "iOS Build"
     needs: [determine-builds]
     if: ${{ !cancelled() && !failure() && inputs.tests_type != 'Android Only' && fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@ci-test/deps-gha-sonar-github
     permissions:
       id-token: write
       contents: read
@@ -479,7 +479,7 @@ jobs:
     name: "Android Build"
     needs: [determine-builds]
     if: ${{ !cancelled() && !failure() && inputs.tests_type != 'iOS Only' && fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@ci-test/deps-gha-sonar-github
     permissions:
       id-token: write
       contents: read
@@ -512,7 +512,7 @@ jobs:
     steps:
       # Same version determine-builds loaded the configuration from, so the AVD matches its key.
       - name: Setup Android AVDs
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@ci-test/deps-gha-sonar-github
         with:
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
@@ -537,7 +537,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-test/deps-gha-sonar-github
         with:
           skip-pod-cache: "true"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -549,7 +549,7 @@ jobs:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-test/deps-gha-sonar-github
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -567,7 +567,7 @@ jobs:
           echo "pod-lockfile-validated=true" > pod-lockfile-cache.txt
 
       - name: Write cache
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@ci-test/deps-gha-sonar-github
         with:
           path: pod-lockfile-cache.txt
           key: ${{ fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).pod_check_key }}
@@ -624,7 +624,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-test/deps-gha-sonar-github
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -644,7 +644,7 @@ jobs:
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-test/deps-gha-sonar-github
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -653,7 +653,7 @@ jobs:
         run: pnpm i --filter="ledger-live-mobile-e2e-tests..." --frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Boot iOS Simulator in Background
-        uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@ci-test/deps-gha-sonar-github
         with:
           worker_count: 3
           artifacts_root: ${{ env.MOBILE_ARTIFACTS_ROOT }}
@@ -664,7 +664,7 @@ jobs:
         run: GITHUB_STEP_SUMMARY=/dev/null pnpm exec nx run ledger-live-mobile-e2e-tests:build:ios:framework-cache
 
       - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@ci-test/deps-gha-sonar-github
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).ios_native_key }}
@@ -676,7 +676,7 @@ jobs:
 
       - name: Download JS Build
         if: ${{ fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).ios_js_exists != 'true' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@ci-test/deps-gha-sonar-github
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).ios_js_key }}
@@ -702,7 +702,7 @@ jobs:
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@ci-test/deps-gha-sonar-github
         with:
           enable_broadcast: ${{ env.IOS_BROADCAST_ENABLED }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
@@ -738,11 +738,11 @@ jobs:
       - name: Check iOS simulators are ready
         # 10 minutes for the simulator checks, plus up to 6 for the trust store update wait.
         timeout-minutes: 16
-        uses: LedgerHQ/ledger-live/tools/actions/composites/check-ios-simulators@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/check-ios-simulators@ci-test/deps-gha-sonar-github
 
       - name: Check the exclusive lock store (R2)
         id: exclusive-lock
-        uses: LedgerHQ/ledger-live/tools/actions/composites/check-exclusive-lock@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/check-exclusive-lock@ci-test/deps-gha-sonar-github
         with:
           r2_endpoint: ${{ secrets.R2_ENDPOINT }}
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -782,7 +782,7 @@ jobs:
       - name: Add workflow inputs to Allure environment
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled') && matrix.shard == 1
         continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/add-allure-run-context@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/add-allure-run-context@ci-test/deps-gha-sonar-github
         with:
           path: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           context: |
@@ -859,7 +859,7 @@ jobs:
       - name: Start resource usage sampler
         id: start-sampler
         continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/start-usage-sampler@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/start-usage-sampler@ci-test/deps-gha-sonar-github
 
       # On the Android E2E runner image the AVD sits on a disk whose first read can be slow: copying
       # it in "Duplicate AVDs" has taken up to 94 s. Read it now in the background, so that read
@@ -882,12 +882,12 @@ jobs:
           persist-credentials: false
 
       - name: Load AVD configuration
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@ci-test/deps-gha-sonar-github
         with:
           config_only: "true"
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-test/deps-gha-sonar-github
         id: setup-caches
         with:
           use-mise: true
@@ -902,7 +902,7 @@ jobs:
       - name: Install scrcpy
         timeout-minutes: 10
         continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/install-scrcpy@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/install-scrcpy@ci-test/deps-gha-sonar-github
 
       - name: Set shard test files from pre-computed matrix
         run: |
@@ -912,13 +912,13 @@ jobs:
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - name: Setup Android Environment
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@ci-test/deps-gha-sonar-github
         with:
           # The shard runs no sdkmanager: adb, build-tools and the emulator are already here.
           install_sdk: "false"
 
       - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@ci-test/deps-gha-sonar-github
         with:
           key: ${{ fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).android_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -929,7 +929,7 @@ jobs:
 
       - name: Download JS Bundle
         if: ${{ fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).android_js_exists != 'true' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@ci-test/deps-gha-sonar-github
         with:
           key: ${{ fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).android_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -958,7 +958,7 @@ jobs:
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" sign --ks ${{ secrets.ANDROID_KEYSTORE_PATH }} --ks-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --ks-key-alias staging --key-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} ${{ env.ANDROID_APK_PATH }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-test/deps-gha-sonar-github
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -968,7 +968,7 @@ jobs:
 
       - name: Prepare the AVD
         timeout-minutes: 10
-        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@ci-test/deps-gha-sonar-github
         with:
           cache_key: ${{ fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).avd_cache_key }}
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -976,7 +976,7 @@ jobs:
           r2_endpoint: ${{ secrets.R2_ENDPOINT }}
 
       - name: Duplicate AVDs for parallel testing
-        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@ci-test/deps-gha-sonar-github
         with:
           source_avd_name: ${{ env.AVD_NAME }}
           target_suffixes: "_2,_3"
@@ -1018,7 +1018,7 @@ jobs:
         shell: bash
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@ci-test/deps-gha-sonar-github
         with:
           enable_broadcast: ${{ env.ANDROID_BROADCAST_ENABLED }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
@@ -1052,7 +1052,7 @@ jobs:
 
       - name: Check the exclusive lock store (R2)
         id: exclusive-lock
-        uses: LedgerHQ/ledger-live/tools/actions/composites/check-exclusive-lock@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/check-exclusive-lock@ci-test/deps-gha-sonar-github
         with:
           r2_endpoint: ${{ secrets.R2_ENDPOINT }}
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -1060,7 +1060,7 @@ jobs:
 
       - name: Check Android emulators are ready
         timeout-minutes: 2
-        uses: LedgerHQ/ledger-live/tools/actions/composites/check-android-emulators@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/check-android-emulators@ci-test/deps-gha-sonar-github
 
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
@@ -1220,7 +1220,7 @@ jobs:
       - name: Stop resource usage sampler
         if: always()
         continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/stop-usage-sampler@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/stop-usage-sampler@ci-test/deps-gha-sonar-github
         with:
           sampler_pid: ${{ steps.start-sampler.outputs.sampler_pid }}
           csv_path: ${{ steps.start-sampler.outputs.csv_path }}
@@ -1229,7 +1229,7 @@ jobs:
       - name: Add workflow inputs to Allure environment
         if: (!cancelled() || steps.run-android.outcome == 'cancelled') && matrix.shard == 1
         continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/add-allure-run-context@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/add-allure-run-context@ci-test/deps-gha-sonar-github
         with:
           path: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           context: |
@@ -1290,11 +1290,11 @@ jobs:
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@ci-test/deps-gha-sonar-github
         with:
           allure-results-path: ios-test-artifacts
           platform: iOS
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@ci-test/deps-gha-sonar-github
         if: ${{ !cancelled() }}
         id: upload
         with:
@@ -1309,7 +1309,7 @@ jobs:
         if: ${{ !cancelled() && !inputs.ci_smoke }}
         continue-on-error: true
         timeout-minutes: 15
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@ci-test/deps-gha-sonar-github
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ios-test-artifacts-qaa
@@ -1322,7 +1322,7 @@ jobs:
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate
-        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@ci-test/deps-gha-sonar-github
         with:
           total_shards: ${{ fromJSON(fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).matrix_ios)[0].total }}
           status_1: ${{ needs.detox-tests-ios.outputs.status_1 }}
@@ -1353,7 +1353,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@ci-test/deps-gha-sonar-github
         with:
           results-path: ios-test-artifacts
           runner: detox
@@ -1411,11 +1411,11 @@ jobs:
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@ci-test/deps-gha-sonar-github
         with:
           allure-results-path: android-test-artifacts
           platform: android
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@ci-test/deps-gha-sonar-github
         id: upload
         if: ${{ !cancelled() }}
         with:
@@ -1430,7 +1430,7 @@ jobs:
         if: ${{ !cancelled() && !inputs.ci_smoke }}
         continue-on-error: true
         timeout-minutes: 15
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@ci-test/deps-gha-sonar-github
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: android-test-artifacts-qaa
@@ -1444,7 +1444,7 @@ jobs:
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate
-        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@ci-test/deps-gha-sonar-github
         with:
           total_shards: ${{ fromJSON(fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).matrix_android)[0].total }}
           status_1: ${{ needs.detox-tests-android.outputs.status_1 }}
@@ -1475,7 +1475,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@ci-test/deps-gha-sonar-github
         with:
           results-path: android-test-artifacts
           runner: detox
@@ -1523,7 +1523,7 @@ jobs:
     steps:
       - name: Report e2e results to Slack
         if: ${{ env.SLACK_TOKEN != '' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-slack-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-slack-report@ci-test/deps-gha-sonar-github
         with:
           token: ${{ env.SLACK_TOKEN }}
           channel: CTMQ0S5SB
@@ -1568,7 +1568,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@ci-test/deps-gha-sonar-github
         with:
           artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).ios_timing_cache_key }}
@@ -1600,7 +1600,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@ci-test/deps-gha-sonar-github
         with:
           artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).android_timing_cache_key }}

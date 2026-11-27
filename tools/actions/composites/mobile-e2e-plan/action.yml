@@ -163,7 +163,7 @@ runs:
 
     - name: Load AVD configuration
       id: avd-config
-      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@ci-test/deps-gha-sonar-github
       with:
         config_only: "true"
 
@@ -185,8 +185,8 @@ runs:
           exit 1
         fi
         {
-          echo "ios_native_key=${PREFIX}longterm-fp-${IOS_FINGERPRINT}-detox-native-ios-${{ inputs.production_firebase == 'true' && 'prod-3' || '4' }}"
-          echo "android_native_key=${PREFIX}longterm-fp-${ANDROID_FINGERPRINT}-detox-native-android-${{ inputs.production_firebase == 'true' && 'prod-2' || '3' }}"
+          echo "ios_native_key=${PREFIX}longterm-fp-${IOS_FINGERPRINT}-detox-native-ios-${{ inputs.production_firebase == 'true' && 'prod-3' || '4-ci-test' }}"
+          echo "android_native_key=${PREFIX}longterm-fp-${ANDROID_FINGERPRINT}-detox-native-android-${{ inputs.production_firebase == 'true' && 'prod-2' || '3-ci-test' }}"
           HEAD_SHA=$(git rev-parse HEAD)
           echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios"
           echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android"
@@ -214,7 +214,7 @@ runs:
 
     - name: Generate shards matrix and test files
       id: generate-shards
-      uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@ci-test/deps-gha-sonar-github
       with:
         test_directory: e2e/mobile
         test_filter: ${{ steps.test-filter.outputs.runner_filter }}
@@ -274,7 +274,7 @@ runs:
     - name: Check if Android AVD cache exists
       id: check-avd
       if: ${{ inputs.tests_type != 'iOS Only' }}
-      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@ci-test/deps-gha-sonar-github
       with:
         key: ${{ steps.cache-keys.outputs.avd_cache_key }}
         accessKey: ${{ inputs.r2_access_key }}

@@ -15,15 +15,15 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-test/deps-gha-sonar-github
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-test/deps-gha-sonar-github
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@ci-test/deps-gha-sonar-github
         id: monitoring
         timeout-minutes: 120
         with:

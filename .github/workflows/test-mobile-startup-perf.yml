@@ -187,7 +187,7 @@ jobs:
       - name: Resolve the cache role
         id: profile
         continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@ci-test/deps-gha-sonar-github
         with:
           develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -532,7 +532,7 @@ jobs:
       - name: Resolve the cache role
         id: profile
         continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@ci-test/deps-gha-sonar-github
         with:
           develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -607,25 +607,25 @@ jobs:
           persist-credentials: false
 
       - name: Load AVD configuration
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@ci-test/deps-gha-sonar-github
         with:
           config_only: "true"
 
       # No cache role: this job runs an app another job of the run uploaded.
       - name: Set up the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-test/deps-gha-sonar-github
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-nx-cache: "true"
 
       - name: Set up the Android environment
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@ci-test/deps-gha-sonar-github
         with:
           install_sdk: "false"
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-test/deps-gha-sonar-github
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -638,7 +638,7 @@ jobs:
 
       - name: Prepare the AVD
         timeout-minutes: 40
-        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@ci-test/deps-gha-sonar-github
         with:
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
@@ -716,7 +716,7 @@ jobs:
 
       # No cache role: this job runs an app another job of the run uploaded.
       - name: Set up the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-test/deps-gha-sonar-github
         with:
           use-mise: true
           skip-pod-cache: "true"
@@ -724,7 +724,7 @@ jobs:
           skip-nx-cache: "true"
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-test/deps-gha-sonar-github
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -814,12 +814,12 @@ jobs:
           ' >> "$log" 2>&1 &
 
       - name: Load AVD configuration
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@ci-test/deps-gha-sonar-github
         with:
           config_only: "true"
 
       - name: Set up the Android environment
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@ci-test/deps-gha-sonar-github
         with:
           # adb, build-tools and the emulator are on the image.
           install_sdk: "false"
@@ -827,7 +827,7 @@ jobs:
       - name: Prepare the AVD
         id: avd
         timeout-minutes: 40
-        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/prepare-android-avd@ci-test/deps-gha-sonar-github
         with:
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
@@ -893,7 +893,7 @@ jobs:
         run: cat "${RUNNER_TEMP}/avd-read-ahead.log" 2>/dev/null || echo "No preinstalled AVD to read ahead."
 
       - name: Duplicate the AVD for the second emulator
-        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@ci-test/deps-gha-sonar-github
         with:
           source_avd_name: ${{ env.AVD_NAME }}
           target_suffixes: "_2"

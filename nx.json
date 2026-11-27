@@ -4,5 +4,6 @@
   "analytics": false,
   "affected": {
     "legacy": true
-  }
+  },
+  "ciTestFanOut": 1
 }

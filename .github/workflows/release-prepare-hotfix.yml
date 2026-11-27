@@ -40,7 +40,7 @@ jobs:
           permission-workflows: write
 
       - name: Generate ref/tag version to use when running changeset status
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@ci-test/deps-gha-sonar-github
         id: format-app-tag
         with:
           tag_version: ${{ github.event.inputs.tag_version }}
@@ -55,10 +55,10 @@ jobs:
           filter: blob:none
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@ci-test/deps-gha-sonar-github
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-test/deps-gha-sonar-github
         id: setup-caches
         with:
           use-mise: true
@@ -66,7 +66,7 @@ jobs:
           skip-nx-cache: "true"
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-test/deps-gha-sonar-github
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -111,7 +111,7 @@ jobs:
           gh pr create --title ":rotating_light: Hotfix merge conflicts" -F .github/templates/hotfix-conflicts.md --base develop --head support/hotfix-merge-conflicts
 
       - name: merge into release if present
-        uses: LedgerHQ/ledger-live/tools/actions/composites/merge-branch@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/merge-branch@ci-test/deps-gha-sonar-github
         continue-on-error: true
         id: release-merge
         if: ${{ github.event.inputs.tag_version == 'latest' }}
@@ -133,7 +133,7 @@ jobs:
           gh pr create --title ":rotating_light: Hotfix Release merge conflicts" -F .github/templates/hotfix-release-conflicts.md --base release --head support/hotfix-release-merge-conflicts
 
       - name: Merge into main
-        uses: LedgerHQ/ledger-live/tools/actions/composites/merge-branch@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/merge-branch@ci-test/deps-gha-sonar-github
         if: ${{ github.event.inputs.tag_version == 'latest' }}
         with:
           base-branch: "main"
@@ -155,7 +155,7 @@ jobs:
       pull-requests: write
       packages: write
       id-token: write
-    uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@ci-test/deps-gha-sonar-github
     with:
       # release from main if hotfixing the latest version, otherwise from the hotfix branch
       # For more info about why we do this, see this doc:

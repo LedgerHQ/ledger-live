@@ -111,7 +111,7 @@ jobs:
       # Node and pnpm come from mise.toml, so the versions this job runs cannot drift from the
       # ones the repo pins. This also writes nx.cache-config.json.
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-test/deps-gha-sonar-github
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -123,7 +123,7 @@ jobs:
 
       # Before the install so every package is fetched through JFrog, not public npm.
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-test/deps-gha-sonar-github
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -158,7 +158,7 @@ jobs:
 
       - name: Get affected packages and paths
         id: nx-affected
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@ci-test/deps-gha-sonar-github
         with:
           base: ${{ steps.merge-parent.outputs.sha || steps.clean-refs.outputs.base_ref }}
           head: HEAD
@@ -166,14 +166,14 @@ jobs:
       - name: Compute mobile e2e hashes
         id: mobile-e2e-hashes
         if: ${{ contains(steps.nx-affected.outputs.paths, 'ledger-live-mobile') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-hashes@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-hashes@ci-test/deps-gha-sonar-github
 
       # Replaces the e2e workflow's determine-builds job, which still runs if this fails.
       - name: Plan the mobile e2e builds and shards
         id: mobile-e2e-plan
         if: ${{ inputs.mobile_e2e_plan && contains(steps.nx-affected.outputs.paths, 'ledger-live-mobile') }}
         continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-plan@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/mobile-e2e-plan@ci-test/deps-gha-sonar-github
         with:
           ref: ${{ github.ref_name }}
           event_name: workflow_call

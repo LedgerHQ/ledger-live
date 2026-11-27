@@ -60,7 +60,7 @@ runs:
       id: download
       if: steps.preinstalled.outputs.found != 'true'
       continue-on-error: true
-      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@ci-test/deps-gha-sonar-github
       with:
         key: ${{ inputs.cache_key || env.AVD_CACHE_KEY }}
         accessKey: ${{ inputs.r2_access_key }}
@@ -83,7 +83,7 @@ runs:
     # Not uploaded: the setup-android-avd jobs that hold R2 write credentials do that.
     - name: Create the AVD (not on the image nor in R2)
       if: steps.preinstalled.outputs.found != 'true' && steps.download.outcome != 'success' && inputs.create_if_missing == 'true'
-      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@ci-test/deps-gha-sonar-github
 
     - name: Report the AVD in use
       id: report

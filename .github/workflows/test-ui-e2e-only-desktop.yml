@@ -439,7 +439,7 @@ jobs:
 
       - name: Setup caches
         id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-test/deps-gha-sonar-github
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -451,12 +451,12 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-test/deps-gha-sonar-github
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies and build LLD
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@ci-test/deps-gha-sonar-github
         id: setup-test-desktop
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
@@ -464,7 +464,7 @@ jobs:
           step_summary: false
 
       - name: Configure test environment (API endpoints, broadcast settings)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@ci-test/deps-gha-sonar-github
         with:
           enable_broadcast: ${{ env.E2E_BROADCAST_ENABLED }}
           build_type: ${{ inputs.build_type }}
@@ -521,7 +521,7 @@ jobs:
 
       - name: Check the exclusive lock store (R2)
         id: exclusive-lock
-        uses: LedgerHQ/ledger-live/tools/actions/composites/check-exclusive-lock@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/check-exclusive-lock@ci-test/deps-gha-sonar-github
         with:
           r2_endpoint: ${{ secrets.R2_ENDPOINT }}
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -532,7 +532,7 @@ jobs:
         # Every run can also wait up to 30 minutes for a busy exclusive lock: without broadcast, tests
         # still lock the Pay card and the accounts CLI token approvals broadcast from.
         timeout-minutes: 70
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@ci-test/deps-gha-sonar-github
         with:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
           test_filter: ${{ needs.prepare-devices.outputs.runner_filter }}
@@ -570,7 +570,7 @@ jobs:
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}
         continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/add-allure-run-context@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/add-allure-run-context@ci-test/deps-gha-sonar-github
         with:
           path: e2e/desktop/allure-results
           context: |
@@ -687,7 +687,7 @@ jobs:
 
       - name: Setup caches
         id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-test/deps-gha-sonar-github
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -700,19 +700,19 @@ jobs:
 
       - name: JFrog npm auth
         if: ${{ matrix.os == 'macos' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-test/deps-gha-sonar-github
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies and build LLD
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@ci-test/deps-gha-sonar-github
         id: setup-test-desktop
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
           step_summary: false
 
       - name: Configure test environment (API endpoints, broadcast settings)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@ci-test/deps-gha-sonar-github
         with:
           enable_broadcast: ${{ env.E2E_BROADCAST_ENABLED }}
           build_type: ${{ inputs.build_type }}
@@ -765,7 +765,7 @@ jobs:
 
       - name: Check the exclusive lock store (R2)
         id: exclusive-lock
-        uses: LedgerHQ/ledger-live/tools/actions/composites/check-exclusive-lock@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/check-exclusive-lock@ci-test/deps-gha-sonar-github
         with:
           r2_endpoint: ${{ secrets.R2_ENDPOINT }}
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -774,7 +774,7 @@ jobs:
       - name: Run Playwright E2E tests
         id: run-playwright
         timeout-minutes: 70
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@ci-test/deps-gha-sonar-github
         with:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
           test_filter: ${{ needs.prepare-devices.outputs.runner_filter }}
@@ -802,7 +802,7 @@ jobs:
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}
         continue-on-error: true
-        uses: LedgerHQ/ledger-live/tools/actions/composites/add-allure-run-context@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/add-allure-run-context@ci-test/deps-gha-sonar-github
         with:
           path: e2e/desktop/allure-results
           context: |
@@ -870,7 +870,7 @@ jobs:
       - name: Extract test summary for Slack notification
         if: ${{ !cancelled() }}
         id: summary
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@ci-test/deps-gha-sonar-github
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
           platform: ${{ needs.prepare-devices.outputs.is_dual == 'true' && format('linux-{0}', needs.prepare-devices.outputs.device_1) || 'linux' }}
@@ -878,7 +878,7 @@ jobs:
       - name: Aggregate shard results
         if: ${{ !cancelled() }}
         id: aggregate
-        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@ci-test/deps-gha-sonar-github
         with:
           total_shards: ${{ needs.prepare-devices.outputs.shard_total }}
           status_1: ${{ needs.e2e-tests.outputs.status_1 }}
@@ -889,7 +889,7 @@ jobs:
       - name: Publish report to Allure Server
         id: allure-server
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@ci-test/deps-gha-sonar-github
         with:
           platform: ${{ github.event_name == 'schedule' && 'linux-speculos-nightly' || (inputs.smoke_tests && 'linux-speculos-smoke' || 'linux-speculos') }}
           login: ${{ vars.ALLURE_USERNAME }}
@@ -902,7 +902,7 @@ jobs:
         if: ${{ !cancelled() }}
         continue-on-error: true
         timeout-minutes: 15
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@ci-test/deps-gha-sonar-github
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ${{ env.ALLURE_RESULTS }}-qaa
@@ -930,14 +930,14 @@ jobs:
 
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@ci-test/deps-gha-sonar-github
         with:
           results-path: ${{ env.ALLURE_RESULTS }}
           runner: playwright
 
       - name: Write shard diagnostics
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-shard-diagnostics@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-shard-diagnostics@ci-test/deps-gha-sonar-github
         with:
           legs: "-shard-*"
 
@@ -971,7 +971,7 @@ jobs:
       - name: Extract test summary for Slack notification
         if: ${{ !cancelled() }}
         id: summary
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@ci-test/deps-gha-sonar-github
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
           platform: linux-${{ needs.prepare-devices.outputs.device_2 }}
@@ -979,7 +979,7 @@ jobs:
       - name: Aggregate shard results
         if: ${{ !cancelled() }}
         id: aggregate
-        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@ci-test/deps-gha-sonar-github
         with:
           total_shards: ${{ needs.prepare-devices.outputs.shard_total }}
           status_1: ${{ needs.e2e-tests.outputs.device2_status_1 }}
@@ -990,7 +990,7 @@ jobs:
       - name: Publish report to Allure Server
         id: allure-server
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@ci-test/deps-gha-sonar-github
         with:
           platform: linux-speculos-${{ needs.prepare-devices.outputs.device_2 }}
           login: ${{ vars.ALLURE_USERNAME }}
@@ -1003,7 +1003,7 @@ jobs:
         if: ${{ !cancelled() }}
         continue-on-error: true
         timeout-minutes: 15
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@ci-test/deps-gha-sonar-github
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ${{ env.ALLURE_RESULTS }}-qaa
@@ -1031,14 +1031,14 @@ jobs:
 
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@ci-test/deps-gha-sonar-github
         with:
           results-path: ${{ env.ALLURE_RESULTS }}
           runner: playwright
 
       - name: Write shard diagnostics
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-shard-diagnostics@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-shard-diagnostics@ci-test/deps-gha-sonar-github
         with:
           legs: "-${{ needs.prepare-devices.outputs.device_2 }}-shard-*"
 
@@ -1077,7 +1077,7 @@ jobs:
       - name: Extract test summary for Slack notification
         if: ${{ !cancelled() }}
         id: summary
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@ci-test/deps-gha-sonar-github
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
           platform: ${{ matrix.os }}
@@ -1085,7 +1085,7 @@ jobs:
       - name: Publish report to Allure Server
         id: allure-server
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@ci-test/deps-gha-sonar-github
         with:
           platform: ${{ matrix.os }}-speculos${{ inputs.smoke_tests && '-smoke' || '' }}
           login: ${{ vars.ALLURE_USERNAME }}
@@ -1098,7 +1098,7 @@ jobs:
         if: ${{ !cancelled() }}
         continue-on-error: true
         timeout-minutes: 15
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@ci-test/deps-gha-sonar-github
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ${{ env.ALLURE_RESULTS }}-qaa
@@ -1124,14 +1124,14 @@ jobs:
 
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@ci-test/deps-gha-sonar-github
         with:
           results-path: ${{ env.ALLURE_RESULTS }}
           runner: playwright
 
       - name: Write shard diagnostics
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-shard-diagnostics@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-shard-diagnostics@ci-test/deps-gha-sonar-github
         with:
           legs: "-${{ matrix.os }}"
 
@@ -1167,7 +1167,7 @@ jobs:
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
       - name: Report e2e results to Slack
-        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-slack-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-slack-report@ci-test/deps-gha-sonar-github
         with:
           token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
           channel: C05FKJ7DFAP

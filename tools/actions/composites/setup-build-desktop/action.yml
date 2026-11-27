@@ -17,7 +17,7 @@ runs:
   steps:
     - name: Install system dependencies (Linux)
       if: runner.os == 'Linux'
-      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@ci-test/deps-gha-sonar-github
       with:
         packages: build-essential pkg-config
     - name: install dependencies
@@ -28,12 +28,12 @@ runs:
         CPU_FLAGS: ${{ runner.os == 'macOS' && '--cpu=arm64 --cpu=x64' || '' }}
       run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --unsafe-perm $CPU_FLAGS
       shell: bash
-    - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+    - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@ci-test/deps-gha-sonar-github
       id: version
       with:
         path: ${{ github.workspace }}/apps/ledger-live-desktop
     - name: set beta name
-      uses: LedgerHQ/ledger-live/tools/actions/change-product-name@develop
+      uses: LedgerHQ/ledger-live/tools/actions/change-product-name@ci-test/deps-gha-sonar-github
       with:
         path: ${{ github.workspace }}/apps/ledger-live-desktop
     - name: make local version (workflow dispatch)
@@ -54,7 +54,7 @@ runs:
         VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
       run: cd apps/ledger-live-desktop && npm version $VERSION
       shell: bash
-    - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+    - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@ci-test/deps-gha-sonar-github
       id: post-version
       with:
         path: ${{ github.workspace }}/apps/ledger-live-desktop

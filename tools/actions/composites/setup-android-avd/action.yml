@@ -41,7 +41,7 @@ runs:
 
     - name: Setup Android Environment
       if: inputs.config_only != 'true'
-      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@ci-test/deps-gha-sonar-github
 
     # Don't upload leftovers of an AVD already on the runner.
     - name: Remove any existing AVD and emulator
@@ -96,7 +96,7 @@ runs:
 
     - name: Cache android emulator
       if: inputs.config_only != 'true' && inputs.r2_access_key != ''
-      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@ci-test/deps-gha-sonar-github
       with:
         path: |
           /home/runner/.android/

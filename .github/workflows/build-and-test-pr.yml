@@ -40,7 +40,7 @@ jobs:
       id-token: write
     needs: determine-renovate-dirty
     if: ${{ !github.event.pull_request.head.repo.fork && needs.determine-renovate-dirty.outputs.dirty != 'true' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@ci-test/deps-gha-sonar-github
     with:
       head_branch: ${{ github.event.pull_request.head.ref }}
       base_branch: ${{ github.event.pull_request.base.ref }}
@@ -67,7 +67,7 @@ jobs:
       contents: read
     needs: [determine-affected]
     if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -87,7 +87,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       ALLURE_LEDGER_LIVE_PASSWORD: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -111,7 +111,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -128,7 +128,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -144,7 +144,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       ALLURE_LEDGER_LIVE_PASSWORD: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
       ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -189,7 +189,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'libs') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -207,7 +207,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'features') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -223,7 +223,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'shared') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -239,7 +239,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'domain') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -255,7 +255,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'devtools') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -271,7 +271,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'support') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-support-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-support-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -287,7 +287,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{ !github.event.pull_request.head.repo.fork && github.event.pull_request.base.ref == 'develop' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -303,7 +303,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'libs/ui') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -320,7 +320,7 @@ jobs:
       pull-requests: write
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -341,7 +341,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/cli') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -357,7 +357,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/wallet-cli') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -370,7 +370,7 @@ jobs:
     name: "Test Additional"
     needs: determine-renovate-dirty
     if: ${{ !github.event.pull_request.head.repo.fork && needs.determine-renovate-dirty.outputs.dirty != 'true' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@ci-test/deps-gha-sonar-github
     permissions:
       security-events: write
       contents: read
@@ -383,7 +383,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork && (contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'e2e/mobile') || contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-mobile'))}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -399,7 +399,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork && contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'e2e/desktop')}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -419,7 +419,7 @@ jobs:
       actions: read
     needs: determine-affected
     if: ${{ (contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-desktop') || contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/ledger-live-mobile')) && !github.event.pull_request.head.repo.fork }}
-    uses: LedgerHQ/ledger-live/.github/workflows/rsdoctor-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/rsdoctor-reusable.yml@ci-test/deps-gha-sonar-github
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -467,7 +467,7 @@ jobs:
       pull-requests: write
     needs: determine-affected
     if: ${{ always() && needs.determine-affected.result == 'success' && github.event_name == 'pull_request' && github.event.pull_request.draft == false && !github.event.pull_request.head.repo.fork }}
-    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@ci-test/deps-gha-sonar-github
     with:
       affected_paths: ${{ needs.determine-affected.outputs.paths }}
 
@@ -486,7 +486,7 @@ jobs:
       - test-devtools
       - build-wallet-cli
       - determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@ci-test/deps-gha-sonar-github
     if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && !contains(needs.*.result, 'failure') && (needs.codecheck-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || needs.test-features.result == 'success' || needs.test-shared.result == 'success' || needs.test-domain.result == 'success' || needs.test-devtools.result == 'success' || needs.build-wallet-cli.result == 'success' || (needs.determine-affected.result == 'success' && contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'e2e'))) }}
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

@@ -70,12 +70,12 @@ jobs:
           token: ${{ steps.coin-modules-token.outputs.token }}
           persist-credentials: false
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-test/deps-gha-sonar-github
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-test/deps-gha-sonar-github
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 

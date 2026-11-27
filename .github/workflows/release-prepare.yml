@@ -37,10 +37,10 @@ jobs:
           filter: blob:none
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@ci-test/deps-gha-sonar-github
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-test/deps-gha-sonar-github
         id: setup-caches
         with:
           use-mise: true
@@ -48,7 +48,7 @@ jobs:
           skip-nx-cache: "true"
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-test/deps-gha-sonar-github
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -88,7 +88,7 @@ jobs:
           git fetch origin develop main
 
       - name: Merge into main
-        uses: LedgerHQ/ledger-live/tools/actions/composites/merge-branch@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/merge-branch@ci-test/deps-gha-sonar-github
         with:
           base-branch: "main"
           head-branch: "${{ inputs.ref }}"
@@ -113,7 +113,7 @@ jobs:
       pull-requests: write
       packages: write
       id-token: write
-    uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@ci-test/deps-gha-sonar-github
     with:
       ref: main
       caller: release-prepare

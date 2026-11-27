@@ -64,7 +64,7 @@ jobs:
       pull-requests: read
     steps:
       - name: Run live-common-affected
-        uses: LedgerHQ/ledger-live/tools/actions/composites/live-common-affected@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/live-common-affected@ci-test/deps-gha-sonar-github
         id: affected
 
       - name: Build matrix from affected paths or manual input
@@ -142,7 +142,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci-test/deps-gha-sonar-github
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -167,12 +167,12 @@ jobs:
           password: ${{ steps.jfrog-login.outputs.oidc-token }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci-test/deps-gha-sonar-github
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Setup environment
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@ci-test/deps-gha-sonar-github
 
       # TODO: the deploy key below is NOT the final way to authenticate. It is a stopgap until the GitHub App behind
       # GH_BOT_* is installed on LedgerHQ/coin-sandbox. Then uncomment this step, use its token in the checkout
@@ -257,7 +257,7 @@ jobs:
           key: ${{ runner.os }}-${{ runner.arch }}-clarinet-${{ hashFiles('libs/coin-tester-modules/coin-tester-stacks/docker/clarinet/**') }}
 
       - name: Run Coin Tester
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@ci-test/deps-gha-sonar-github
         with:
           chain: ${{ matrix.chain }}
 
