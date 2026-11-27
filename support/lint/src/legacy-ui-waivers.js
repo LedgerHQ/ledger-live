@@ -1,13 +1,9 @@
 // Files and folders allowed to keep their legacy UI imports, keyed by posix path from the repo root.
-// Every entry is a file that used the legacy UI stack when the `legacy-ui` plugin landed. The list
-// only shrinks: never add an entry for new code, write it with Lumen instead. `pnpm
-// lint:legacy-ui-waivers` fails on an entry whose file is gone or no longer imports a legacy module,
-// and on a folder glob that matches no file.
-// Rationale: support/lint/README.md#legacy-ui.
+// See `PROBLEMS` in check-legacy-ui-waivers.js. Rationale: support/lint/README.md#legacy-ui.
 
 const LEGACY_IMPORT =
-  "TEMPORARY. Imports a legacy UI kit or styled-components. Exit condition: migrate the file to " +
-  "Lumen, then delete this entry.";
+  "TEMPORARY. Imports a module listed in its app's `legacyUiLint({ modules })`. Exit condition: " +
+  "migrate the file to Lumen, then delete this entry.";
 
 /**
  * @param {string} flag

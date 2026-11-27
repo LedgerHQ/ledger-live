@@ -11,6 +11,14 @@ import { FILE_WAIVERS, FOLDER_WAIVERS } from "./legacy-ui-waivers.js";
 const LUMEN =
   "Use Lumen instead: .agents/skills/ldls-native/SKILL.md (Mobile), .agents/skills/ldls-web/SKILL.md (Desktop).";
 
+const MESSAGES = {
+  /** @param {unknown} specifier */
+  legacyImport: specifier => `Legacy UI module "${String(specifier)}": do not import it. ${LUMEN}`,
+  /** @param {string} component */
+  bannedComponent: component =>
+    `Legacy UI component ${component} reached zero uses and is banned. ${LUMEN}`,
+};
+
 const REPO_ROOT = fileURLToPath(new URL("../../..", import.meta.url));
 const ALIAS_PREFIX = "~/";
 
@@ -337,7 +345,7 @@ function createLegacyUiPlugin(waivers) {
       const specifier = node.source?.value;
       if (isLegacyModule(specifier, context.filename, state.options.modules)) {
         context.report({
-          message: `Legacy UI module "${String(specifier)}": do not import it. ${LUMEN}`,
+          message: MESSAGES.legacyImport(specifier),
           node,
         });
       }
@@ -358,7 +366,7 @@ function createLegacyUiPlugin(waivers) {
     /** @param {string} component @param {object} node */
     function report(component, node) {
       context.report({
-        message: `Legacy UI component ${component} reached zero uses and is banned. ${LUMEN}`,
+        message: MESSAGES.bannedComponent(component),
         node,
       });
     }

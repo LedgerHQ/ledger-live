@@ -379,10 +379,10 @@ The list only shrinks. New code never gets an entry: write it with Lumen. To cle
 the file until it no longer imports a legacy module, then delete its line in the same PR. A file you
 delete loses its line too.
 
-[`src/check-legacy-ui-waivers.js`](src/check-legacy-ui-waivers.js), run by `pnpm lint:legacy-ui-waivers`
-and in CI, reads each app's modules from its `oxlint.config.mts` and fails on a file entry whose file is
-gone, no longer imports a legacy module (same matching code as the rule) or sits under a folder waiver,
-on unsorted file entries, on a folder glob that matches no file, and on a `legacy-ui/*` rule in an
-app's `oxlint-suppressions.json`: `oxlint --suppress-all` must not hide a new import.
+[`src/check-legacy-ui-waivers.js`](src/check-legacy-ui-waivers.js), run by `pnpm lint:legacy-ui-waivers`,
+`pnpm lint:arch` and CI, reads each app's modules from its `oxlint.config.mts` and fails on each problem
+its [`PROBLEMS`](src/check-legacy-ui-waivers.js) table lists. A stale entry fails so the list keeps shrinking. A `legacy-ui/*` rule in an
+app's `oxlint-suppressions.json` fails because the waivers replace oxlint's baseline for this plugin:
+`oxlint --suppress-all` must not hide a new import.
 
 Run the rules' tests with `nx run @support/lint:test`.

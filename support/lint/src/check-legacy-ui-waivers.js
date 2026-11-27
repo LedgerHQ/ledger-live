@@ -15,6 +15,19 @@ const RULE_PREFIX = "legacy-ui/";
 const SUPPRESSIONS_FILE = "oxlint-suppressions.json";
 const SKIPPED_FOLDERS = new Set(["node_modules", ".git"]);
 
+/** What the check fails on, by problem kind: each builds the line after `path: `. */
+export const PROBLEMS = {
+  unsorted: () => "out of order, keep the file waivers sorted",
+  emptyFolderGlob: () => "the folder waiver matches no file, delete its entry",
+  outsideApps: () => "not in a checked app",
+  missingFile: () => "the file does not exist, delete its entry",
+  coveredByFolder: () => "a folder waiver already covers it, delete its entry",
+  noLegacyImport: () => "no longer imports a legacy UI module, delete its entry",
+  /** @param {string} suppressionsFile */
+  suppressed: suppressionsFile =>
+    `${suppressionsFile} suppresses a legacy-ui rule, remove it and use Lumen`,
+};
+
 const require = createRequire(import.meta.url);
 /** @type {typeof import("typescript")} */
 const ts = require("typescript");
@@ -78,12 +91,12 @@ export function findProblems({ repoRoot, fileWaivers, folderWaivers, apps }) {
   const files = Object.keys(fileWaivers);
   const firstUnsorted = files.findIndex((file, index) => index > 0 && file < files[index - 1]);
   if (firstUnsorted !== -1) {
-    problems.push(`${files[firstUnsorted]}: out of order, keep the file waivers sorted`);
+    problems.push(`${files[firstUnsorted]}: ${PROBLEMS.unsorted()}`);
   }
 
   for (const glob of Object.keys(folderWaivers)) {
     if (!globMatchesAFile(repoRoot, glob)) {
-      problems.push(`${glob}: the folder waiver matches no file, delete its entry`);
+      problems.push(`${glob}: ${PROBLEMS.emptyFolderGlob()}`);
     }
   }
 
@@ -91,13 +104,13 @@ export function findProblems({ repoRoot, fileWaivers, folderWaivers, apps }) {
     const app = Object.keys(apps).find(dir => file.startsWith(`${dir}/`));
     const full = path.join(repoRoot, file);
     if (app === undefined) {
-      problems.push(`${file}: not in a checked app`);
+      problems.push(`${file}: ${PROBLEMS.outsideApps()}`);
     } else if (!fs.existsSync(full)) {
-      problems.push(`${file}: the file does not exist, delete its entry`);
+      problems.push(`${file}: ${PROBLEMS.missingFile()}`);
     } else if (Object.keys(folderWaivers).some(glob => globToRegExp(glob).test(file))) {
-      problems.push(`${file}: a folder waiver already covers it, delete its entry`);
+      problems.push(`${file}: ${PROBLEMS.coveredByFolder()}`);
     } else if (!importSpecifiers(full).some(s => isLegacyModule(s, full, apps[app]))) {
-      problems.push(`${file}: no longer imports a legacy UI module, delete its entry`);
+      problems.push(`${file}: ${PROBLEMS.noLegacyImport()}`);
     }
   }
   return [...problems, ...suppressedFiles(repoRoot, Object.keys(apps))];
@@ -119,7 +132,7 @@ function suppressedFiles(repoRoot, appDirs) {
     for (const [suppressed, rules] of Object.entries(suppressions)) {
       if (Object.keys(rules).some(rule => rule.startsWith(RULE_PREFIX))) {
         problems.push(
-          `${appDir}/${suppressed}: ${appDir}/${SUPPRESSIONS_FILE} suppresses a legacy-ui rule, remove it and use Lumen`,
+          `${appDir}/${suppressed}: ${PROBLEMS.suppressed(`${appDir}/${SUPPRESSIONS_FILE}`)}`,
         );
       }
     }
