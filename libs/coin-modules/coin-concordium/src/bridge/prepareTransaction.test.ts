@@ -11,12 +11,12 @@ import {
   createFixtureTokenCurrency,
   createFixtureTransaction,
   PLT_TOKEN_ID,
-  setupTestnetCoinConfig,
+  createFixtureContext,
   VALID_ADDRESS,
   VALID_ADDRESS_2,
 } from "../test/fixtures";
 import { CONCORDIUM_DUMMY_ADDRESS } from "../constants";
-import { prepareTransaction } from "./prepareTransaction";
+import { buildPrepareTransaction } from "./prepareTransaction";
 
 jest.mock("../logic", () => ({
   estimateFees: jest.fn(),
@@ -25,6 +25,7 @@ jest.mock("../logic", () => ({
 
 const { estimateFees, estimateTokenFees } = jest.requireMock("../logic");
 const config = createFixtureConfig();
+const prepareTransaction = buildPrepareTransaction(createFixtureContext());
 
 /** The real encoder, so the expected size is derived rather than asserted as a magic number. */
 const blobSize = (recipient: string, amount: number | bigint, decimals = 6, memo?: string) =>
@@ -47,7 +48,6 @@ const withTokenSubAccount = () => {
 describe("prepareTransaction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    setupTestnetCoinConfig();
     // Default mock: fee estimation returns 500 microCCD
     estimateFees.mockResolvedValue({ cost: BigInt(500), energy: BigInt(501) });
   });
@@ -104,7 +104,7 @@ describe("prepareTransaction", () => {
       await prepareTransaction(account, tx);
 
       // THEN
-      expect(estimateFees).toHaveBeenCalledWith(config, account.currency.id, undefined);
+      expect(estimateFees).toHaveBeenCalledWith(config, undefined);
     });
 
     it("should call estimateFees with memo when memo is present", async () => {
@@ -116,7 +116,7 @@ describe("prepareTransaction", () => {
       await prepareTransaction(account, tx);
 
       // THEN
-      expect(estimateFees).toHaveBeenCalledWith(config, account.currency.id, "test memo");
+      expect(estimateFees).toHaveBeenCalledWith(config, "test memo");
     });
   });
 
@@ -171,7 +171,7 @@ describe("prepareTransaction", () => {
       await prepareTransaction(account, tx);
 
       expect(estimateFees).not.toHaveBeenCalled();
-      expect(estimateTokenFees).toHaveBeenCalledWith(config, account.currency.id, {
+      expect(estimateTokenFees).toHaveBeenCalledWith(config, {
         tokenId: PLT_TOKEN_ID,
         listOperationsSize: blobSize(VALID_ADDRESS_2, 1500000),
       });
@@ -185,7 +185,7 @@ describe("prepareTransaction", () => {
 
       await prepareTransaction(account, tx);
 
-      const [, , params] = estimateTokenFees.mock.calls[0];
+      const [, params] = estimateTokenFees.mock.calls[0];
       expect(params.tokenId).toBe(PLT_TOKEN_ID);
       expect(params.tokenId).not.toBe(subAccount.token.id);
     });
@@ -237,7 +237,7 @@ describe("prepareTransaction", () => {
       });
 
       await expect(prepareTransaction(account, tx)).resolves.toBeDefined();
-      expect(estimateTokenFees).toHaveBeenCalledWith(config, account.currency.id, {
+      expect(estimateTokenFees).toHaveBeenCalledWith(config, {
         tokenId: PLT_TOKEN_ID,
         listOperationsSize: blobSize(CONCORDIUM_DUMMY_ADDRESS, 1500000),
       });
@@ -298,7 +298,7 @@ describe("prepareTransaction", () => {
 
       await prepareTransaction(account, tx);
 
-      const [, , params] = estimateTokenFees.mock.calls[0];
+      const [, params] = estimateTokenFees.mock.calls[0];
       expect(params.listOperationsSize).toBe(blobSize(VALID_ADDRESS_2, 1500000, 6, memo));
       expect(params.listOperationsSize).toBeGreaterThan(blobSize(VALID_ADDRESS_2, 1500000));
     });
@@ -315,7 +315,7 @@ describe("prepareTransaction", () => {
 
       await prepareTransaction(account, tx);
 
-      const [, , params] = estimateTokenFees.mock.calls[0];
+      const [, params] = estimateTokenFees.mock.calls[0];
       expect(params.listOperationsSize).toBe(
         blobSize(VALID_ADDRESS_2, BigInt(subAccount.spendableBalance.toFixed(0))),
       );

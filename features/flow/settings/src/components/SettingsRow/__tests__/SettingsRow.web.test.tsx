@@ -106,6 +106,22 @@ describe("SettingsRow", () => {
     expect(onSelect).toHaveBeenCalledTimes(1);
   });
 
+  it("opens the picker of the row, named with its value", async () => {
+    const user = userEvent.setup();
+    const onSelect = jest.fn();
+    render(
+      <SettingsRow
+        title="Region"
+        trailing={{ type: "picker", label: "France (French)", onSelect }}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Region, France (French)" }));
+
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("France (French)")).toBeVisible();
+  });
+
   it("is not rendered when the app hides it", () => {
     render(
       <HiddenSettingsProvider rowsToHide={["mockAppUpdate"]}>

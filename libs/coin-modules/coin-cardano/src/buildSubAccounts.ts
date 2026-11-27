@@ -13,7 +13,7 @@ import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
 import { APITransaction } from "./api/api-types";
-import { getAccountChange, getMemoFromTx, isHexString } from "./logic";
+import { getAccountChange, getMemoFromTx, isFailedTransaction, isHexString } from "./logic";
 import { CardanoOperation, CardanoOperationExtra, PaymentCredential, Token } from "./types";
 
 export const getTokenAssetId = ({
@@ -97,6 +97,7 @@ const mapTxToTokenAccountOperation = async ({
         ),
         blockHeight: tx.blockHeight,
         date: new Date(tx.timestamp),
+        hasFailed: isFailedTransaction(tx),
         extra,
         blockHash: undefined,
       };

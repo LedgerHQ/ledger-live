@@ -48,6 +48,9 @@ export const accountsSlice = createSlice({
     selectAccountUUIDs: (state): AccountUUID[] => state.ids,
     selectAccountEntry: (state, accountUUID: AccountUUID): AccountEntry | undefined =>
       adapterSelectors.selectById(state, accountUUID),
+    /** The legacy account id behind an account, absent for a remote-only one: the boundary with legacy code. */
+    selectAccountLegacyId: (state, accountUUID: AccountUUID): AccountId | undefined =>
+      state.entities[accountUUID]?.legacyId,
     /** The account behind a legacy account id, for the boundary with legacy screens. */
     selectAccountUUIDByLegacyId: (state, legacyId: AccountId): AccountUUID | undefined =>
       state.byLegacyId[legacyId],

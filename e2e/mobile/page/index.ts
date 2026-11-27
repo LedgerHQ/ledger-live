@@ -12,6 +12,7 @@ import LedgerSyncPage from "@e2e/page/settings/ledgerSync.page";
 import TrustchainPage from "@e2e/page/trustchain.page";
 import ManagerPage from "@e2e/page/manager/manager.page";
 import MarketPage from "@e2e/page/market/market.page";
+import DeviceOnboardingPage from "@e2e/page/onboarding/deviceOnboarding.page";
 import OnboardingStepsPage from "@e2e/page/onboarding/onboardingSteps.page";
 import PostOnboardingHubPage from "@e2e/page/postOnboarding/postOnboardingHub.page";
 import OperationDetailsPage from "@e2e/page/trade/operationDetails.page";
@@ -81,6 +82,7 @@ export class Application {
   private managerPageInstance = lazyInit(ManagerPage);
   private marketPageInstance = lazyInit(MarketPage);
   private onboardingPageInstance = lazyInit(OnboardingStepsPage);
+  private readonly deviceOnboardingPageInstance = lazyInit(DeviceOnboardingPage);
   private postOnboardingHubPageInstance = lazyInit(PostOnboardingHubPage);
   private operationDetailsPageInstance = lazyInit(OperationDetailsPage);
   private passwordEntryPageInstance = lazyInit(PasswordEntryPage);
@@ -125,7 +127,7 @@ export class Application {
     const userdataPath = getUserdataPath(userdataSpeculos);
     fs.copyFileSync(getUserdataPath(options.userdata || "skip-onboarding"), userdataPath);
     try {
-      await InitializationManager.initialize(options, userdataPath, userdataSpeculos);
+      await InitializationManager.initialize({ ...options, userdataPath, userdataSpeculos });
     } finally {
       fs.unlinkSync(userdataPath);
     }
@@ -185,6 +187,10 @@ export class Application {
 
   public get onboarding() {
     return this.onboardingPageInstance();
+  }
+
+  public get deviceOnboarding() {
+    return this.deviceOnboardingPageInstance();
   }
 
   public get postOnboardingHub() {

@@ -1,21 +1,31 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
+import { useOpenLink, useUrlLocalizer } from "@shared/linking";
 import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVerifyAddressExecutorViewModel";
 import { splitAddress } from "../../logic/splitAddress";
 import type { ReceiveAddressProps } from "./ReceiveAddress.types";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
+import type { ReceiveGateType } from "../../types";
 import { useReceiveAddressActions } from "./useReceiveAddressActions";
+import { useReceiveAddressGate } from "./useReceiveAddressGate";
 import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
+import { useReceiveAddressHelp } from "./useReceiveAddressHelp";
+import { useReceiveAddressMemo } from "./useReceiveAddressMemo";
 import { useReceiveAddressNotices } from "./useReceiveAddressNotices";
-import { useReceiveAddressPanel } from "./useReceiveAddressPanel";
 import { useReceiveAddressSelection } from "./useReceiveAddressSelection";
+import { useReceiveAddressServiceStatus } from "./useReceiveAddressServiceStatus";
 import { useReceiveFamilyConfig } from "./useReceiveFamilyConfig";
-import { useReceiveScreenData } from "./useReceiveScreenData";
+import { useReceiveScreenData, type ReceiveScreenData } from "./useReceiveScreenData";
 
 export type ReceiveAddressViewModel = ReceiveAddressViewProps &
   Readonly<{
     /** The device verification to mount, while one runs. */
     verification: UseVerifyAddressExecutorViewModelParams | undefined;
   }>;
+
+const GATE_OF_STATE: Partial<Record<ReceiveScreenData["type"], ReceiveGateType>> = {
+  onboardingRequired: "onboarding",
+  activationRequired: "activation",
+};
 
 export function useReceiveAddressViewModel({
   accountUUID,
@@ -26,15 +36,14 @@ export function useReceiveAddressViewModel({
   VerifyAddressExecutor,
   getFamilyConfig,
   serviceIncidents,
-  onOpenUrl,
+  onResolveGate,
 }: ReceiveAddressProps): ReceiveAddressViewModel {
-  const { descriptor, data, accountStatus } = useReceiveScreenData(accountUUID, assetId);
-  const header = useReceiveAddressHeader(descriptor, assetId);
+  const { data, accountStatus, refreshGate } = useReceiveScreenData(accountUUID, assetId);
+  const header = useReceiveAddressHeader(assetId);
   const receive = data.type === "ready" ? data.receive : undefined;
   const selection = useReceiveAddressSelection(receive);
   const familyConfig = useReceiveFamilyConfig({
     getFamilyConfig,
-    descriptor,
     asset: header.asset,
     receive,
     accountStatus,
@@ -52,20 +61,41 @@ export function useReceiveAddressViewModel({
     onShareAddress,
   });
 
-  const { panel, openPanel, closePanel } = useReceiveAddressPanel();
-  const openServiceStatus = useCallback(() => openPanel("serviceStatus"), [openPanel]);
-  const hasIncidents = !!serviceIncidents?.length;
-  useEffect(() => {
-    if (!hasIncidents) closePanel();
-  }, [hasIncidents, closePanel]);
-  const { notices, serviceWarning } = useReceiveAddressNotices({
+  const openLink = useOpenLink();
+  const localizeUrl = useUrlLocalizer();
+  const openSupportUrl = useCallback(
+    (url: string) => openLink(localizeUrl(url)),
+    [openLink, localizeUrl],
+  );
+  const serviceStatus = useReceiveAddressServiceStatus({
+    serviceIncidents,
+    continueLabel: copy.continueLabel,
+    onOpenUrl: openLink,
+  });
+  const notices = useReceiveAddressNotices({
     familyConfig,
     selected,
-    serviceIncidents,
     copy,
-    onOpenUrl,
-    openServiceStatus,
+    onOpenUrl: openSupportUrl,
   });
+  const { helpCard, helpPanel } = useReceiveAddressHelp({ copy, onOpenUrl: openSupportUrl });
+  const gate = useReceiveAddressGate({
+    gateType: GATE_OF_STATE[data.type],
+    isVisible: !serviceStatus && !helpPanel,
+    copy,
+    onResolveGate,
+    refreshGate,
+  });
+  const { memoCard, memoPanel } = useReceiveAddressMemo({
+    selected,
+    copy,
+    onOpenUrl: openSupportUrl,
+  });
+  // The hint waits for the incident: it would lock a dialog that no longer shows the tiles.
+  const shownActions = useMemo(
+    () => (serviceStatus && actions.verifyHint ? { ...actions, verifyHint: undefined } : actions),
+    [serviceStatus, actions],
+  );
 
   const address = useMemo(
     () =>
@@ -96,29 +126,21 @@ export function useReceiveAddressViewModel({
         onSelect: selection.select,
       }
     : undefined;
-  const noticesPlaceholderLabel = [serviceWarning?.title, ...notices.map(notice => notice.text)]
-    .filter(Boolean)
-    .join(" · ");
 
   return {
     isLoading: data.type === "loading",
     error,
+    gate,
     addressSelection,
     address,
-    actions,
+    actions: shownActions,
     isVerifying: verification !== undefined,
     notices,
-    serviceWarning,
-    noticesPlaceholderLabel,
-    serviceStatus:
-      panel === "serviceStatus" && serviceIncidents && hasIncidents
-        ? {
-            title: copy.serviceStatusTitle,
-            incidents: serviceIncidents,
-            gotItLabel: copy.gotItLabel,
-            onClose: closePanel,
-          }
-        : undefined,
+    serviceStatus,
+    helpCard,
+    helpPanel,
+    memoCard,
+    memoPanel,
     verification,
     title: header.title,
     networkLabel: header.networkLabel,

@@ -1,6 +1,5 @@
 import type { ComponentType } from "react";
 import type { DeviceModelId } from "@ledgerhq/device-management-kit";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { AccountReceive, ReceiveVerification } from "@domain/entity-account-receive";
 import type { AccountStatus } from "@domain/entity-account-status";
 import type { CryptoOrTokenCurrency, CryptoOrTokenCurrencyId } from "@domain/entity-currency";
@@ -32,7 +31,6 @@ export type ReceiveFamilyConfig = Readonly<{
  * for what no account data kind serves yet.
  */
 export type ReceiveFamilyConfigInput<A = unknown> = Readonly<{
-  descriptor: AccountDescriptor;
   asset: Pick<CryptoOrTokenCurrency, "id" | "type">;
   featureFlags: PartialFeatures;
   /** The account's `receive` data, absent until it is read. */
@@ -55,15 +53,20 @@ export type ReceiveFamilyConfigPort = (
   input: Omit<ReceiveFamilyConfigInput, "featureFlags" | "legacyAccount">,
 ) => Partial<ReceiveFamilyConfig>;
 
+/** What the account must do on its network before it can receive: register it, or enable the token. */
+export type ReceiveGateType = "onboarding" | "activation";
+
+/** A piece of an incident's text: a link when it has a `url`. */
+export type ReceiveIncidentTextPart = Readonly<{ text: string; url?: string }>;
+
 export type ReceiveServiceIncident = Readonly<{
   title: string;
-  description?: string;
+  description?: readonly ReceiveIncidentTextPart[];
 }>;
 
 /** The account and the asset a receive flow shows the address of. */
 export type ReceiveTarget = Readonly<{
   accountUUID: AccountUUID;
-  descriptor: AccountDescriptor;
   assetId: CryptoOrTokenCurrencyId;
 }>;
 

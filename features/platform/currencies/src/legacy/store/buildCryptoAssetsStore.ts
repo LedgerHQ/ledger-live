@@ -102,16 +102,24 @@ export function buildCryptoAssetsStore({
 export function remapRtkQueryError(error: FetchBaseQueryError | SerializedError): Error {
   if ("status" in error) {
     const { status } = error;
-    if (typeof status === "number") {
-      if (status >= 400 && status < 500) return new LedgerAPI4xx();
-      if (status >= 500 && status < 600) return new LedgerAPI5xx();
-      return new NetworkDown();
+    const httpStatus = httpStatusOf(error);
+    if (httpStatus !== undefined && httpStatus >= 400 && httpStatus < 500) {
+      return new LedgerAPI4xx(httpStatus);
     }
-    if (status === "FETCH_ERROR") return new NetworkDown();
-    // PARSING_ERROR / TIMEOUT_ERROR / CUSTOM_ERROR — surface the message.
+    if (httpStatus !== undefined && httpStatus >= 500 && httpStatus < 600) {
+      return new LedgerAPI5xx(httpStatus);
+    }
+    if (typeof status === "number" || status === "FETCH_ERROR") return new NetworkDown();
+    // PARSING_ERROR of a 2xx / TIMEOUT_ERROR / CUSTOM_ERROR — surface the message.
     return new Error("error" in error ? toErrorMessage(error.error, status) : String(status));
   }
   return new Error(error.message ?? "Unknown crypto-assets store error");
+}
+
+// An error page that is not JSON arrives as PARSING_ERROR; its HTTP status is on `originalStatus`.
+function httpStatusOf(error: FetchBaseQueryError): number | undefined {
+  if (typeof error.status === "number") return error.status;
+  return error.status === "PARSING_ERROR" ? error.originalStatus : undefined;
 }
 
 function toErrorMessage(rawError: unknown, status: string): string {

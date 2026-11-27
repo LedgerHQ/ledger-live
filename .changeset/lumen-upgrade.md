@@ -6,7 +6,6 @@
 "@features/flow-pay-balance": patch
 "@features/flow-pay-card-assets": patch
 "@features/flow-pay-contact": patch
-"@features/flow-pay-request": patch
 "@features/platform-assets-table": patch
 "@features/platform-style": patch
 "@ledgerhq/web-tools": patch

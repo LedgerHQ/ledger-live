@@ -1,5 +1,11 @@
 import { act, renderHook } from "@testing-library/react";
-import { ORDER_DETAILS, ORDER_TYPED_DATA } from "./__tests__/orderDetails";
+import type { PredictionsTypedData } from "@features/platform-predictions";
+import {
+  ORDER_DETAILS,
+  ORDER_TYPED_DATA,
+  SALE_DETAILS,
+  SALE_TYPED_DATA,
+} from "./__tests__/orderDetails";
 import { MIN_LOADING_DISPLAY_MS } from "./pendingResultStore.internals";
 import { PredictionsOrderPlayerClosed, usePredictionsOrderHooks } from "./predictionsOrderStore";
 import {
@@ -10,12 +16,12 @@ import {
   usePredictionsOrder,
 } from "./predictionsOrderStore.internals";
 
-function startShownOrder() {
+function startShownOrder(typedData: PredictionsTypedData = ORDER_TYPED_DATA) {
   const order = renderHook(() => usePredictionsOrder());
   const player = renderHook(() => usePredictionsOrderHooks());
   let walletOrderId = "";
   act(() => {
-    walletOrderId = player.result.current.startOrder(ORDER_TYPED_DATA, ORDER_DETAILS.display);
+    walletOrderId = player.result.current.startOrder(typedData, ORDER_DETAILS.display);
     markPredictionsOrderPresented();
   });
   return { order, player, walletOrderId };
@@ -38,6 +44,17 @@ describe("usePredictionsOrderHooks", () => {
       PredictionsOrderPlayerClosed,
     );
     expect(order.result.current.isOpen).toBe(false);
+  });
+
+  it("keeps a sale's shares from its signed amount", () => {
+    const order = renderHook(() => usePredictionsOrder());
+    const player = renderHook(() => usePredictionsOrderHooks());
+
+    act(() => {
+      player.result.current.startOrder(SALE_TYPED_DATA, SALE_DETAILS.display);
+    });
+
+    expect(order.result.current.shownOrder?.context).toEqual(SALE_DETAILS);
   });
 
   it("owns only the order its player started last", () => {
@@ -70,6 +87,42 @@ describe("usePredictionsOrderHooks", () => {
       price: 0.54,
     });
   });
+
+  it("shows a sale reported with what it paid out", () => {
+    const { order, player, walletOrderId } = startShownOrder(SALE_TYPED_DATA);
+
+    act(() => {
+      void player.result.current["order.report"](walletOrderId, {
+        status: "filled",
+        shares: 16.12,
+        received: 4.3,
+      });
+      jest.advanceTimersByTime(MIN_LOADING_DISPLAY_MS);
+    });
+
+    expect(order.result.current.shownOrder?.result).toEqual({
+      status: "filled",
+      shares: 16.12,
+      received: 4.3,
+    });
+  });
+
+  it.each([
+    ["sale", SALE_TYPED_DATA, { status: "filled", shares: 16.12, price: 0.27 }],
+    ["buy", ORDER_TYPED_DATA, { status: "filled", shares: 3.7, received: 2 }],
+  ] as const)(
+    "refuses a %s reported with the other side's amount, and keeps placing",
+    async (_side, typedData, report) => {
+      const { order, player, walletOrderId } = startShownOrder(typedData);
+
+      await expect(
+        player.result.current["order.report"](walletOrderId, report),
+      ).rejects.toMatchObject({ name: "ZodError" });
+      act(() => jest.advanceTimersByTime(MIN_LOADING_DISPLAY_MS));
+
+      expect(order.result.current.shownOrder?.result).toBeNull();
+    },
+  );
 
   it.each([
     ["close", closePredictionsOrder],

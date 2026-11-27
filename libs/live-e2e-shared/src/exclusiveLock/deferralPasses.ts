@@ -32,17 +32,20 @@ export function runWithDeferralPasses<Item>(
   runPass: RunPass<Item>,
   deferralPasses: number = LOCK_DEFERRAL_PASSES,
 ): Promise<number> {
-  return runPassesFrom(runPass, deferralPasses, 1, undefined);
+  return runPassesFrom({ runPass, deferralPasses, number: 1 });
 }
 
 type RunPass<Item> = (pass: DeferralPass<Item>) => Promise<DeferralPassResult<Item>>;
 
-async function runPassesFrom<Item>(
-  runPass: RunPass<Item>,
-  deferralPasses: number,
-  number: number,
-  items: readonly Item[] | undefined,
-): Promise<number> {
+type RunPassesOptions<Item> = {
+  runPass: RunPass<Item>;
+  deferralPasses: number;
+  number: number;
+  items?: readonly Item[];
+};
+
+async function runPassesFrom<Item>(options: RunPassesOptions<Item>): Promise<number> {
+  const { runPass, deferralPasses, number, items } = options;
   const mayDefer = number <= deferralPasses;
   const { exitCode, deferred } = await runPass({
     number,
@@ -51,6 +54,11 @@ async function runPassesFrom<Item>(
     env: { [EXCLUSIVE_LOCK_DEFER_ENV]: mayDefer ? "1" : "0" },
   });
   if (!mayDefer || deferred.length === 0) return exitCode;
-  const laterExitCode = await runPassesFrom(runPass, deferralPasses, number + 1, deferred);
+  const laterExitCode = await runPassesFrom({
+    runPass,
+    deferralPasses,
+    number: number + 1,
+    items: deferred,
+  });
   return exitCode || laterExitCode;
 }

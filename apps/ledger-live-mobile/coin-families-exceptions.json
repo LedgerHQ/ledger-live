@@ -1,0 +1,50 @@
+[
+  {
+    "file": "src/logic/accountModel.ts",
+    "kind": "accepted",
+    "owner": "@ledgerhq/wallet-xp",
+    "rules": [
+      "no-currency-id-branch"
+    ],
+    "reason": "Legacy account-data migrations (evm, xrp, aptos, cosmos), versioned by array index: moving them risks the order. New coin migrations go to family code."
+  },
+  {
+    "file": "src/const/navigation.ts",
+    "kind": "accepted",
+    "owner": "@ledgerhq/wallet-xp",
+    "reason": "ScreenName and NavigatorName enums with coin-prefixed members. An enum cannot be split across files (about 434 members); revisit with lazy family navigators."
+  },
+  {
+    "file": "src/screens/Settings/Developer/CustomCALRefInput.tsx",
+    "kind": "accepted",
+    "owner": "@ledgerhq/wallet-xp",
+    "reason": "Developer tool that refreshes the solana currency after a custom CAL ref change. No rule reports it: the currency id sits in a local list."
+  },
+  {
+    "file": "src/utils/urls.tsx",
+    "kind": "accepted",
+    "owner": "@ledgerhq/wallet-xp",
+    "reason": "URL constants keyed by coin, accepted as data (decided 2026-11-23): no family branch and no coin import. A caller that picks an entry by testing a family or a currency id is a leak of that caller."
+  },
+  {
+    "file": "src/screens/Settings/Debug/Features/DeviceIntentExecutor/intents/getEthAddressDMKSignerDemoIntent/job.ts",
+    "kind": "accepted",
+    "owner": "@ledgerhq/live-devices",
+    "rules": [
+      "no-coin-specific-import"
+    ],
+    "reason": "Debug demo of a DMK signer kit device action (SignerEthBuilder from device-signer-kit-ethereum), reached only from Settings > Debug."
+  },
+  {
+    "file": "src/analytics/segment.ts",
+    "kind": "temporary",
+    "owner": "@ledgerhq/engagement",
+    "reason": "The ldmkSolanaSigner, ldmkCosmosSigner, ldmkPolkadotSigner and ldmkTronSigner flags are sent as user properties. Their names are kept, and they go away with the flags."
+  },
+  {
+    "file": "src/utils/constants.ts",
+    "kind": "accepted",
+    "owner": "@ledgerhq/wallet-xp",
+    "reason": "EXCLUDED_LOGS_ERROR_NAME lists coin error names (tron, solana, evm, vechain, hedera) as strings, so Datadog filtering needs no coin import."
+  }
+]

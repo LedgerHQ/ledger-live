@@ -1,6 +1,8 @@
 import type { SessionTypes } from "@walletconnect/types";
 import { CONCORDIUM_CHAIN_IDS } from "../constants";
 
+const RELAY_URL = "wss://relay.walletconnect.com";
+
 type WalletConnectModule = typeof import("./walletConnect");
 
 // The SignClient is process-wide, so each test loads a fresh module.
@@ -21,7 +23,7 @@ const mockPairingDelete = jest.fn();
 jest.mock("@walletconnect/sign-client", () => ({
   __esModule: true,
   default: {
-    init: () => mockSignClientInit(),
+    init: (options: unknown) => mockSignClientInit(options),
   },
 }));
 
@@ -51,7 +53,11 @@ const approveSessions = async (
 ) => {
   for (const session of sessions) {
     mockConnect.mockResolvedValueOnce({ uri: "wc:test", approval: () => Promise.resolve(session) });
-    const { approval } = await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet);
+    const { approval } = await wc.initiatePairing(
+      "mainnet",
+      CONCORDIUM_CHAIN_IDS.mainnet,
+      RELAY_URL,
+    );
     await approval();
   }
 };
@@ -80,15 +86,17 @@ describe("walletConnect", () => {
     describe("getClient", () => {
       it("should initialize SignClient", async () => {
         const wc = new ConcordiumWalletConnect();
-        await wc.getClient();
+        await wc.getClient(RELAY_URL);
 
-        expect(mockSignClientInit).toHaveBeenCalled();
+        expect(mockSignClientInit).toHaveBeenCalledWith(
+          expect.objectContaining({ relayUrl: RELAY_URL }),
+        );
       });
 
       it("should return cached client on subsequent calls", async () => {
         const wc = new ConcordiumWalletConnect();
-        const client1 = await wc.getClient();
-        const client2 = await wc.getClient();
+        const client1 = await wc.getClient(RELAY_URL);
+        const client2 = await wc.getClient(RELAY_URL);
 
         expect(client1).toBe(client2);
         expect(mockSignClientInit).toHaveBeenCalledTimes(1);
@@ -98,7 +106,7 @@ describe("walletConnect", () => {
         mockSignClientInit.mockRejectedValueOnce(new Error("Init failed"));
         const wc = new ConcordiumWalletConnect();
 
-        await expect(wc.getClient()).rejects.toThrow("Init failed");
+        await expect(wc.getClient(RELAY_URL)).rejects.toThrow("Init failed");
         expect(wc.client).toBeNull();
       });
 
@@ -106,25 +114,35 @@ describe("walletConnect", () => {
         mockSignClientInit.mockRejectedValueOnce(new Error("Init failed"));
         const wc = new ConcordiumWalletConnect();
 
-        await expect(wc.getClient()).rejects.toThrow("Init failed");
-        await expect(wc.getClient()).resolves.toBeDefined();
+        await expect(wc.getClient(RELAY_URL)).rejects.toThrow("Init failed");
+        await expect(wc.getClient(RELAY_URL)).resolves.toBeDefined();
         expect(mockSignClientInit).toHaveBeenCalledTimes(2);
       });
 
       it("should share one SignClient across instances", async () => {
         const [client1, client2] = await Promise.all([
-          new ConcordiumWalletConnect().getClient(),
-          new ConcordiumWalletConnect().getClient(),
+          new ConcordiumWalletConnect().getClient(RELAY_URL),
+          new ConcordiumWalletConnect().getClient(RELAY_URL),
         ]);
 
         expect(client1).toBe(client2);
         expect(mockSignClientInit).toHaveBeenCalledTimes(1);
       });
 
+      it("should keep the first relay until restart", async () => {
+        await new ConcordiumWalletConnect().getClient(RELAY_URL);
+        await new ConcordiumWalletConnect().getClient("wss://other.example");
+
+        expect(mockSignClientInit).toHaveBeenCalledTimes(1);
+        expect(mockSignClientInit).toHaveBeenCalledWith(
+          expect.objectContaining({ relayUrl: RELAY_URL }),
+        );
+      });
+
       it("should keep the SignClient when onboarding reopens", async () => {
-        const client1 = await setWalletConnect().getClient();
+        const client1 = await setWalletConnect().getClient(RELAY_URL);
         clearWalletConnect();
-        const client2 = await setWalletConnect().getClient();
+        const client2 = await setWalletConnect().getClient(RELAY_URL);
 
         expect(client2).toBe(client1);
         expect(mockSignClientInit).toHaveBeenCalledTimes(1);
@@ -142,7 +160,11 @@ describe("walletConnect", () => {
           approval: () => new Promise(resolve => (approveAbandoned = resolve)),
         });
         const pendingAbandoned = (
-          await setWalletConnect().initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet)
+          await setWalletConnect().initiatePairing(
+            "mainnet",
+            CONCORDIUM_CHAIN_IDS.mainnet,
+            RELAY_URL,
+          )
         ).approval();
         clearWalletConnect();
 
@@ -182,6 +204,7 @@ describe("walletConnect", () => {
       it("should return null when no sessions exist", async () => {
         mockSessionGetAll.mockReturnValue([]);
         const wc = new ConcordiumWalletConnect();
+        await wc.getClient(RELAY_URL);
 
         const session = await wc.getSession("mainnet");
 
@@ -212,6 +235,7 @@ describe("walletConnect", () => {
       it("should ignore sessions not approved through this instance", async () => {
         mockSessionGetAll.mockReturnValue([createMockSession({ topic: "foreign" })]);
         const wc = new ConcordiumWalletConnect();
+        await wc.getClient(RELAY_URL);
 
         const session = await wc.getSession("mainnet");
 
@@ -298,9 +322,19 @@ describe("walletConnect", () => {
     });
 
     describe("disconnectAllSessions", () => {
+      it("should return without initializing the client when none exists", async () => {
+        const wc = new ConcordiumWalletConnect();
+
+        await expect(wc.disconnectAllSessions()).resolves.toBeUndefined();
+
+        expect(mockSignClientInit).not.toHaveBeenCalled();
+        expect(mockDisconnect).not.toHaveBeenCalled();
+      });
+
       it("should do nothing when no sessions exist", async () => {
         mockSessionGetAll.mockReturnValue([]);
         const wc = new ConcordiumWalletConnect();
+        await wc.getClient(RELAY_URL);
 
         await wc.disconnectAllSessions();
 
@@ -315,6 +349,7 @@ describe("walletConnect", () => {
         mockSessionGetAll.mockReturnValue(sessions);
         mockDisconnect.mockResolvedValue(undefined);
         const wc = new ConcordiumWalletConnect();
+        await wc.getClient(RELAY_URL);
 
         await wc.disconnectAllSessions();
 
@@ -332,6 +367,7 @@ describe("walletConnect", () => {
         mockSessionGetAll.mockReturnValue(sessions);
         mockDisconnect.mockRejectedValue(new Error("Disconnect failed"));
         const wc = new ConcordiumWalletConnect();
+        await wc.getClient(RELAY_URL);
 
         // Should not throw
         await expect(wc.disconnectAllSessions()).resolves.not.toThrow();
@@ -339,12 +375,27 @@ describe("walletConnect", () => {
     });
 
     describe("requestCreateAccount", () => {
+      it("should throw without initializing the client when none exists", async () => {
+        const wc = new ConcordiumWalletConnect();
+
+        await expect(
+          wc.requestCreateAccount({
+            topic: "test-topic",
+            chainId: CONCORDIUM_CHAIN_IDS.mainnet,
+            params: { message: { publicKey: "aa".repeat(32), reason: "create account" } },
+          }),
+        ).rejects.toThrow("WalletConnect client is not initialized");
+
+        expect(mockSignClientInit).not.toHaveBeenCalled();
+      });
+
       it("should send create_account request", async () => {
         const mockResponse = {
           address: "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w",
         };
         mockRequest.mockResolvedValue(mockResponse);
         const wc = new ConcordiumWalletConnect();
+        await wc.getClient(RELAY_URL);
 
         const params = {
           topic: "test-topic",
@@ -394,7 +445,7 @@ describe("walletConnect", () => {
         mockConnect.mockResolvedValue({ uri: "wc:test", approval: jest.fn() });
         const wc = new ConcordiumWalletConnect();
 
-        await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet);
+        await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet, RELAY_URL);
 
         expect(mockPairingDelete).toHaveBeenCalledWith("expired-pairing", {
           code: 6001,
@@ -411,7 +462,7 @@ describe("walletConnect", () => {
         mockConnect.mockResolvedValue({ uri: "wc:test", approval: jest.fn() });
         const wc = new ConcordiumWalletConnect();
 
-        await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet);
+        await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet, RELAY_URL);
 
         expect(mockPairingDelete).not.toHaveBeenCalled();
       });
@@ -420,7 +471,7 @@ describe("walletConnect", () => {
         mockConnect.mockResolvedValue({ uri: "wc:test-uri", approval: jest.fn() });
         const wc = new ConcordiumWalletConnect();
 
-        const result = await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet);
+        const result = await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet, RELAY_URL);
 
         expect(result.uri).toBe("wc:test-uri");
         expect(mockConnect).toHaveBeenCalledWith({
@@ -438,9 +489,9 @@ describe("walletConnect", () => {
         mockConnect.mockRejectedValue(new Error("Connect failed"));
         const wc = new ConcordiumWalletConnect();
 
-        await expect(wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet)).rejects.toThrow(
-          "Connect failed",
-        );
+        await expect(
+          wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet, RELAY_URL),
+        ).rejects.toThrow("Connect failed");
       });
     });
   });

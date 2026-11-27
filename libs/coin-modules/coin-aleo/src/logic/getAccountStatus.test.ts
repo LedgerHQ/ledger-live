@@ -3,7 +3,6 @@ import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import {
   getMockedAccountPublicTransactions,
   testnetAddress as address,
-  testnetViewKey,
 } from "../__tests__/fixtures/api.fixture";
 import type { AleoContext } from "../types";
 import { getAccountStatus } from "./getAccountStatus";
@@ -43,16 +42,6 @@ describe("getAccountStatus", () => {
     mockGetAccountPublicTransactions.mockResolvedValue(transactionsPage(1));
 
     await expect(getAccountStatus(context, address)).resolves.toEqual({ used: true });
-  });
-
-  it("reads the address part of a key holding the view key", async () => {
-    mockGetAccountBalance.mockResolvedValue(null);
-    mockGetAccountPublicTransactions.mockResolvedValue(transactionsPage(0));
-
-    await getAccountStatus(context, `${address}.${testnetViewKey}`);
-
-    expect(mockGetAccountBalance).toHaveBeenCalledWith(config, address);
-    expect(mockGetAccountPublicTransactions).toHaveBeenCalledWith({ config, address, limit: 1 });
   });
 
   it("asks nothing once aborted", async () => {

@@ -20,6 +20,7 @@ import {
   isFirmwareUpdateDelegated,
   isHeldBackUpdatePending,
   SeedPath,
+  updateWaitsForSeed,
   type DeviceOnboardingContext,
   type DeviceOnboardingExitReason,
 } from "@features/platform-device-onboarding";
@@ -47,11 +48,17 @@ import { useFirmwareUpdateHandover } from "LLM/features/DeviceOnboarding/hooks/u
 import { useOfferSync } from "LLM/features/DeviceOnboarding/hooks/useOfferSync";
 import { useReconnectWhileDeviceOff } from "LLM/features/DeviceOnboarding/hooks/useReconnectWhileDeviceOff";
 import type { SetupScreenProps } from "LLM/features/DeviceOnboarding/screens/Setup/types";
-import { seededButtons } from "@features/platform-device-onboarding-analytics";
+import { onboardingButtons } from "@features/platform-device-onboarding-analytics";
+import { useSeededFunnelTracking } from "LLM/features/DeviceOnboarding/analytics/useSeededFunnelTracking";
 import {
-  useSeededFunnelTracking,
-  type SeededFunnelTracking,
-} from "LLM/features/DeviceOnboarding/analytics/useSeededFunnelTracking";
+  unseededChecksTracking,
+  type ChecksTracking,
+} from "LLM/features/DeviceOnboarding/analytics/checksTracking";
+import {
+  useUnseededFunnelTracking,
+  type UnseededFunnel,
+} from "LLM/features/DeviceOnboarding/analytics/useUnseededFunnelTracking";
+import { useUnseededDoneTracking } from "LLM/features/DeviceOnboarding/analytics/useUnseededDoneTracking";
 import type { UnseededIntroKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
 import type { UnseededSuccessKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededSuccessKaraoke";
 import type { RecoverNewSeedScreenProps } from "LLM/features/DeviceOnboarding/screens/Recover/NewSeed";
@@ -72,7 +79,11 @@ import {
   toDeviceUnlockSheetProps,
 } from "LLM/features/DeviceOnboarding/utils/deviceLocked";
 import { selectPairedKnownDevices } from "LLM/features/DeviceOnboarding/utils/pairedDevice";
-import { useUnseededFunnelViewModel, type UnseededFunnelModel } from "./useUnseededFunnelViewModel";
+import {
+  useRestoreDismissal,
+  useUnseededFunnelViewModel,
+  type UnseededFunnelModel,
+} from "./useUnseededFunnelViewModel";
 
 /** Dedicated so Braze can tell a deferred Recover from a plain skip. The tracking-plan name is still open. */
 const recoverDeferredEvent = "recover_deferred_from_new_seed";
@@ -105,7 +116,13 @@ export type DeviceOnboardingFunnelModel = (
       powerOnSheet: PowerOnSheetModel | null;
       reconnectSheet: ReconnectSheetProps | null;
     }
-  | { status: "setup"; setup: SetupScreenProps; unlockSheet: DeviceUnlockSheetProps | null }
+  | {
+      status: "setup";
+      setup: SetupScreenProps;
+      unlockSheet: DeviceUnlockSheetProps | null;
+      powerOnSheet: PowerOnSheetModel | null;
+      reconnectSheet: ReconnectSheetProps | null;
+    }
   | {
       status: "recoverRestore";
       recoverRestore: RecoverRestoreScreenProps;
@@ -239,13 +256,13 @@ type ScreenActions = {
   firmwareUpToDate: boolean;
   genuineFailureKind: string | null;
   tracking: ChecksTracking;
+  unseededFunnel: UnseededFunnel | null;
+  trackUnseededDone: () => void;
   markUpdateAccepted: () => void;
   /** Wraps a close button's action so it also sends the `close` click. */
   withCloseClick: (quit: () => void) => () => void;
   updateAfterSetup: boolean;
 };
-
-type ChecksTracking = Pick<SeededFunnelTracking, "seededDeviceType" | "trackClick" | "screensFor">;
 
 function failedScreen(
   copy: ScreenCopy,
@@ -284,7 +301,10 @@ function successScreen(actions: ScreenActions): DeviceOnboardingFunnelModel | nu
   }
   return {
     status: "unseededSuccessKaraoke",
-    unseededSuccessKaraoke: { wasReadOnlyAtEntry: actions.wasReadOnlyAtEntry },
+    unseededSuccessKaraoke: {
+      wasReadOnlyAtEntry: actions.wasReadOnlyAtEntry,
+      onDone: actions.trackUnseededDone,
+    },
     quitConfirmation: null,
   };
 }
@@ -373,11 +393,36 @@ function checksQuit(actions: ScreenActions): () => void {
   return actions.leaveFromHeader;
 }
 
+/**
+ * Leaving the wait for the updated device stops the reconnect, as on the checks screen. Otherwise,
+ * mid-setup, leaving asks first; once only the held-back update is left, the update handover has its
+ * own way out.
+ */
+function setupQuit(
+  actions: Readonly<{
+    confirmsQuit: boolean;
+    liveState: string | null;
+    state: string | null;
+    requestQuit: () => void;
+    leaveFirmwareReconnect: () => void;
+    closeFirmwareHandover: () => void;
+    quitMachine: () => void;
+  }>,
+): () => void {
+  // The update reboots the device and drops its genuine verdict: the wait still has its own way out.
+  if (actions.liveState === awaitingSessionAfterFirmwareUpdateState) {
+    return actions.leaveFirmwareReconnect;
+  }
+  if (actions.confirmsQuit) return actions.requestQuit;
+  if (isFirmwareUpdateDelegated(actions.state)) return actions.closeFirmwareHandover;
+  return actions.quitMachine;
+}
+
 function genuineCheckCompleted(context: DeviceOnboardingSession["context"]): boolean {
   return context?.verdictMatchesSession === true;
 }
 
-/** When leaving asks first, and whether the held-back update still keeps the checks screen. */
+/** When leaving asks first, and whether the held-back update still waits for an answer. */
 function leaveRules(
   flat: DeviceOnboardingSession["context"],
   machine: NonNullable<DeviceOnboardingSession["snapshot"]>["context"] | undefined,
@@ -447,7 +492,8 @@ function checksWhileDeviceOff(
   built: DeviceOnboardingFunnelModel,
   { active, device, quitConfirmationOpen, onQuit, onRetry }: DeviceOffOverlay,
 ): DeviceOnboardingFunnelModel {
-  if (!active || built.status !== "checks") return built;
+  // The OS check held back until setup shows on Setup: it recovers like the checks screen.
+  if (!active || (built.status !== "checks" && built.status !== "setup")) return built;
   if (onRetry) {
     return {
       ...built,
@@ -483,6 +529,7 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
       status: "unseededIntroKaraoke",
       unseededIntroKaraoke: {
         deviceModelId: device.modelId,
+        funnelProps: actions.unseededFunnel?.props ?? null,
         suspendSheets: actions.suspendSheets,
         onFinish: () => actions.send({ type: "CONTINUE" }),
         onClose: actions.requestQuit,
@@ -511,7 +558,7 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
           : null,
       firmwareUpToDate: actions.firmwareUpToDate,
       onStart: () => {
-        tracking.trackClick(seededButtons.initiateGenuineCheck);
+        tracking.trackClick(onboardingButtons.initiateGenuineCheck);
         actions.send({ type: startEvent });
       },
       onRetry: () => actions.send({ type: "RETRY" }),
@@ -522,26 +569,26 @@ function checksScreen(actions: ScreenActions): DeviceOnboardingFunnelModel {
       onCloseSheet: () => actions.send({ type: "CLOSE" }),
       onAcceptUpdate: () => actions.send({ type: "USER_ACCEPT" }),
       onDeclineUpdate: () => {
-        tracking.trackClick(seededButtons.skipUpdate);
+        tracking.trackClick(onboardingButtons.skipUpdate);
         actions.send({ type: "USER_DECLINE" });
       },
       onUpdatePressed: () => {
-        tracking.trackClick(seededButtons.continue);
+        tracking.trackClick(onboardingButtons.continue);
         actions.markUpdateAccepted();
       },
-      onInstallUpdate: () => tracking.trackClick(seededButtons.installUpdate),
-      onUpdateSheetClosed: () => tracking.trackClick(seededButtons.close),
+      onInstallUpdate: () => tracking.trackClick(onboardingButtons.installUpdate),
+      onUpdateSheetClosed: () => tracking.trackClick(onboardingButtons.close),
       screensFor: tracking.screensFor,
-      seededDeviceType: tracking.seededDeviceType,
+      funnelProps: tracking.funnelProps,
       onContinue:
         actions.state === "checks.checksSucceeded"
           ? () => {
-              tracking.trackClick(seededButtons.continue);
+              tracking.trackClick(onboardingButtons.continue);
               actions.send({ type: "CONTINUE" });
             }
           : undefined,
       onQuit: checksQuit(actions),
-      onClosePressed: () => tracking.trackClick(seededButtons.close),
+      onClosePressed: () => tracking.trackClick(onboardingButtons.close),
     },
   };
 }
@@ -651,6 +698,29 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     firmwareUpdateStarted,
   });
   const { trackClick, trackAbort, trackExit } = seededTracking;
+  const focused = useIsFocused();
+  const recoverInOnboarding = useFeature("deviceOnboarding")?.params?.recover ?? true;
+  const restoreDismissal = useRestoreDismissal(shownState, recoverInOnboarding);
+  const unseededFunnel = useUnseededFunnelTracking({
+    focused,
+    machineState: restoreDismissal.visibleState,
+    machineContext: onboarding.snapshot?.context ?? null,
+  });
+  const trackUnseededDone = useUnseededDoneTracking({
+    funnel: unseededFunnel,
+    firmwareKind: onboarding.snapshot?.context.firmware?.kind ?? null,
+  });
+  const checksTracking = useMemo<ChecksTracking>(
+    () =>
+      unseededFunnel
+        ? unseededChecksTracking(unseededFunnel.props)
+        : {
+            funnelProps: seededTracking.funnelProps,
+            trackClick,
+            screensFor: seededTracking.screensFor,
+          },
+    [unseededFunnel, seededTracking.funnelProps, seededTracking.screensFor, trackClick],
+  );
   const onLeave = useCallback(
     (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => {
       allowLeave.current = true;
@@ -880,9 +950,8 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const recoverFeature = useFeature("protectServicesMobile");
-  const recoverAvailable = recoverFeature?.enabled === true;
+  const recoverAvailable = recoverInOnboarding && recoverFeature?.enabled === true;
   const protectId = recoverFeature?.params?.protectId ?? defaultProtectId;
-  const focused = useIsFocused();
   const [pastRecover, setPastRecover] = useState(false);
   const awaitingRecoverReturn = useRef(false);
 
@@ -894,12 +963,13 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
 
   const finishUnseeded = useCallback(
     (sawRecoverPitch: boolean) => {
+      trackUnseededDone();
       completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
       if (sawRecoverPitch) dispatch(setHasBeenUpsoldProtect(true));
       allowLeave.current = true;
       resetToPortfolio(navigation);
     },
-    [dispatch, hasCompletedOnboarding, navigation, wasReadOnlyAtEntry],
+    [dispatch, hasCompletedOnboarding, navigation, trackUnseededDone, wasReadOnlyAtEntry],
   );
 
   const syncOfferDecided = useRef(false);
@@ -916,8 +986,17 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       wasReadOnlyAtEntry,
       unseeded: true,
       seededResult: null,
+      ...(unseededFunnel ? { unseededProps: unseededFunnel.props } : {}),
     });
-  }, [focused, liveDevice, navigation, offerSync, readyForKaraoke, wasReadOnlyAtEntry]);
+  }, [
+    focused,
+    liveDevice,
+    navigation,
+    offerSync,
+    readyForKaraoke,
+    unseededFunnel,
+    wasReadOnlyAtEntry,
+  ]);
 
   const continueRestore = useRestoreRecoverHandoff({
     focused,
@@ -932,6 +1011,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
 
   const openRecover = useCallback(() => {
     if (!recoverAvailable) return;
+    trackUnseededDone();
     awaitingRecoverReturn.current = true;
     navigation.navigate(NavigatorName.Base, {
       screen: ScreenName.DeviceOnboardingRecover,
@@ -940,7 +1020,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         device: onboarding.liveDevice ?? undefined,
       },
     });
-  }, [navigation, onboarding.liveDevice, protectId, recoverAvailable]);
+  }, [navigation, onboarding.liveDevice, protectId, recoverAvailable, trackUnseededDone]);
 
   const remindRecoverLater = useCallback(() => {
     dispatch(addPostOnboardingAction({ actionId: PostOnboardingActionId.recover }));
@@ -951,8 +1031,11 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const unseededSetup = useUnseededFunnelViewModel({
     machineState: shownState,
     liveMachineState: machineState,
+    restoreDismissal,
     onboardedOnEntry,
-    heldBackUpdatePending,
+    updateAfterSetup: holdsUpdateUntilSetup(onboarding.snapshot?.context),
+    seeded: onboarding.snapshot?.context.isOnboarded === true,
+    funnelRecoversDrop: deviceOffDuringChecks,
     currentStep: onboarding.context?.currentOnboardingStep ?? null,
     seedPath,
     pastRecover,
@@ -971,11 +1054,20 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       readString(onboarding.context?.firmwareVersion) ?? "",
     ),
     device: onboarding.liveDevice,
+    funnelProps: unseededFunnel?.props ?? null,
     connectionError: onboarding.error,
     suspendSheets,
     reconnect: reconnectToLiveDevice,
     send,
-    onQuit: requestQuit,
+    onQuit: setupQuit({
+      confirmsQuit,
+      liveState: machineState,
+      state: onboarding.state,
+      requestQuit,
+      leaveFirmwareReconnect,
+      closeFirmwareHandover,
+      quitMachine,
+    }),
   });
   dismissRestoreRef.current = restoreDismiss(unseededSetup);
 
@@ -1010,14 +1102,12 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     availableFirmwareVersion: readString(onboarding.context?.availableFirmwareVersion),
     firmwareUpToDate: onboarding.context?.firmwareUpToDate === true,
     genuineFailureKind: readString(onboarding.context?.genuineFailureKind),
-    tracking: {
-      seededDeviceType: seededTracking.seededDeviceType,
-      trackClick,
-      screensFor: seededTracking.screensFor,
-    },
+    tracking: checksTracking,
+    unseededFunnel,
+    trackUnseededDone,
     markUpdateAccepted: () => setFirmwareUpdateStarted(true),
     withCloseClick: (quit: () => void) => () => {
-      trackClick(seededButtons.close);
+      checksTracking.trackClick(onboardingButtons.close);
       quit();
     },
     updateAfterSetup,
@@ -1027,6 +1117,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     screenForUnseeded(unseededSetup, {
       quitConfirmation,
       suspendSheets,
+      unseededFunnel,
       deviceType: device?.modelId ?? null,
       deviceVersion: readString(onboarding.context?.firmwareVersion),
       onSkip: () => setPastRecover(true),
@@ -1072,6 +1163,7 @@ function screenForUnseeded(
   actions: Readonly<{
     quitConfirmation: QuitConfirmationModel | null;
     suspendSheets: boolean;
+    unseededFunnel: UnseededFunnel | null;
     deviceType: string | null;
     deviceVersion: string | null;
     onSkip: () => void;
@@ -1101,6 +1193,8 @@ function screenForUnseeded(
       setup: flow.setup,
       quitConfirmation: actions.quitConfirmation,
       unlockSheet: null,
+      powerOnSheet: null,
+      reconnectSheet: null,
     };
   }
   if (flow?.status === "recoverNewSeed") {
@@ -1109,6 +1203,7 @@ function screenForUnseeded(
       quitConfirmation: actions.quitConfirmation,
       unlockSheet: null,
       recoverNewSeed: {
+        funnel: actions.unseededFunnel,
         suspendSheets: actions.suspendSheets,
         onSkip: actions.onSkip,
         onRemindLater: actions.onRemindLater,
@@ -1127,6 +1222,20 @@ function screenForUnseeded(
     };
   }
   return null;
+}
+
+/** An unseeded Nano whose OS can only update once it is seeded. */
+function holdsUpdateUntilSetup(
+  context: NonNullable<DeviceOnboardingSession["snapshot"]>["context"] | undefined,
+): boolean {
+  if (!context) return false;
+  if (context.updateAfterSetup) return true;
+  if (context.firmwareVersion === null || context.onboardedOnEntry !== false) return false;
+  return updateWaitsForSeed({
+    currentVersion: context.firmwareVersion,
+    deviceModelId: context.deviceModelId,
+    isOnboarded: false,
+  });
 }
 
 function readString(value: unknown): string | null {

@@ -21,7 +21,7 @@ export function PredictionsOrderSheetView({
     <PendingResultSheetView
       isOpen={isOpen}
       contentKey={shownOrder?.key}
-      title={shownOrder ? t(orderTitleKey(shownOrder.result)) : undefined}
+      title={shownOrder ? t(orderTitleKey(shownOrder.context.side, shownOrder.result)) : undefined}
       isLocked={shownOrder?.result === null}
       onPresented={onPresented}
       onDismiss={onClose}

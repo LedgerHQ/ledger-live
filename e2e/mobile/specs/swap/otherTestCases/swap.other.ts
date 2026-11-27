@@ -6,7 +6,7 @@ import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@shared/env";
-import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
+import { beforeAllFunctionSwap, SwapAccountsTestOptions } from "@e2e/specs/swap/swap.setup";
 import { swapSetup } from "@e2e/bridge/server";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 import {
@@ -15,11 +15,12 @@ import {
 } from "@ledgerhq/live-e2e-shared/data/numberFormat";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import type { SwapTransactionStatusDetails } from "@e2e/page/drawer/swapTransactionStatus.drawer";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 async function handleAssetSwap(asset: Account, hasAccount: boolean) {
-  await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
+  await app.modularDrawer.selectCurrency(asset.currency);
   const networkName = asset?.parentAccount
     ? asset.parentAccount.currency.name
     : asset.currency.speculosApp.name;
@@ -37,14 +38,15 @@ async function handleAssetSwap(asset: Account, hasAccount: boolean) {
   }
 }
 
-export function runSwapWithoutAccountTest(
-  asset1: Account,
-  asset2: Account,
-  testTitle: string,
-  tmsLinks: string[],
-  event: "noAccountTo" | "noAccountFrom" | "noAccountFromAndTo",
-  tags: string[],
-) {
+type RunSwapWithoutAccountTestOptions = TestMetaOptions & {
+  asset1: Account;
+  asset2: Account;
+  testTitle: string;
+  event: "noAccountTo" | "noAccountFrom" | "noAccountFromAndTo";
+};
+
+export function runSwapWithoutAccountTest(options: RunSwapWithoutAccountTestOptions) {
+  const { asset1, asset2, testTitle, tmsLinks, event, tags } = options;
   const debitCurrency = (event === "noAccountFrom" ? asset2 : asset1).currency;
   const creditCurrency = (event === "noAccountFrom" ? asset1 : asset2).currency;
 
@@ -81,16 +83,18 @@ export function runSwapWithoutAccountTest(
   });
 }
 
-export function runSwapWithDifferentSeedTest(
-  swap: SwapType,
-  userData: string,
-  errorMessage: string | null,
-  addressFrom: string,
-  addressTo: string,
-  tmsLinks: string[],
-  tags: string[],
-  lnsErrorMessage?: string,
-) {
+type RunSwapWithDifferentSeedTestOptions = TestMetaOptions & {
+  swap: SwapType;
+  userData: string;
+  errorMessage: string | null;
+  addressFrom: string;
+  addressTo: string;
+  lnsErrorMessage?: string;
+};
+
+export function runSwapWithDifferentSeedTest(options: RunSwapWithDifferentSeedTestOptions) {
+  const { swap, userData, errorMessage, addressFrom, addressTo, tmsLinks, tags, lnsErrorMessage } =
+    options;
   // LNS is frozen on Exchange 3.4.1, which rejects a payout address from another seed (0x6a83)
   // instead of showing the "Receive address does not belong" warning added in 4.3.0. The payout
   // check runs before the refund check, so LNS reports the receiving account first.
@@ -142,12 +146,12 @@ export function runSwapWithDifferentSeedTest(
   });
 }
 
-export function runSwapLandingPageTest(
-  fromAccount: Account,
-  toAccount: Account,
-  tmsLinks: { landingPage: string[]; formatting: string[] },
-  tags: string[],
-) {
+type RunSwapLandingPageTestOptions = Omit<SwapAccountsTestOptions, "tmsLinks"> & {
+  tmsLinks: { landingPage: string[]; formatting: string[] };
+};
+
+export function runSwapLandingPageTest(options: RunSwapLandingPageTestOptions) {
+  const { fromAccount, toAccount, tmsLinks, tags } = options;
   setTeamOwner(Team.SWAP);
   describe("Swap - landing page", () => {
     beforeAll(async () => {
@@ -172,7 +176,11 @@ export function runSwapLandingPageTest(
     tags.forEach(tag => $Tag(tag));
     it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount({ fromAccount, toAccount });
-      const swap = new Swap(fromAccount, toAccount, minAmount);
+      const swap = new Swap({
+        accountToDebit: fromAccount,
+        accountToCredit: toAccount,
+        amount: minAmount,
+      });
 
       await performSwapUntilQuoteSelectionStep({
         accountToDebit: swap.accountToDebit,
@@ -218,11 +226,14 @@ export function runSwapLandingPageTest(
   });
 }
 
-async function setupSwapAccounts(
-  fromAccount: Account,
-  toAccount: Account,
-  userdata = "skip-onboarding",
-) {
+type SetupSwapAccountsOptions = {
+  fromAccount: Account;
+  toAccount: Account;
+  userdata?: string;
+};
+
+async function setupSwapAccounts(options: SetupSwapAccountsOptions) {
+  const { fromAccount, toAccount, userdata = "skip-onboarding" } = options;
   await app.speculos.setExchangeDependencies(fromAccount, toAccount);
   await beforeAllFunctionSwap({
     userdata,
@@ -240,18 +251,21 @@ async function setupSwapAccounts(
   });
 }
 
-export function runSwapLnsNotSupportedBannerTest(
-  fromAccount: Account,
-  toAccount: Account,
-  unsupportedProvider: SwapProvider,
-  tmsLinks: string[],
-  tags: string[],
-) {
+type RunSwapLnsNotSupportedBannerTestOptions = SwapAccountsTestOptions & {
+  unsupportedProvider: SwapProvider;
+};
+
+export function runSwapLnsNotSupportedBannerTest(options: RunSwapLnsNotSupportedBannerTestOptions) {
+  const { fromAccount, toAccount, unsupportedProvider, tmsLinks, tags } = options;
   (process.env.SPECULOS_DEVICE === Device.LNS.name ? describe : describe.skip)(
     "Swap - LNS not supported banner",
     () => {
       beforeAll(async () => {
-        await setupSwapAccounts(fromAccount, toAccount, "skip-onboarding-with-last-seen-device");
+        await setupSwapAccounts({
+          fromAccount,
+          toAccount,
+          userdata: "skip-onboarding-with-last-seen-device",
+        });
       });
 
       setTeamOwner(Team.SWAP);
@@ -276,14 +290,15 @@ export function runSwapLnsNotSupportedBannerTest(
   );
 }
 
-export function runTooLowAmountForQuoteSwapsTest(
-  swap: SwapType,
-  tmsLinks: string[],
-  errorMessage: string | RegExp,
-  ctaBanner: boolean,
-  quotesVisible: boolean,
-  tags: string[],
-) {
+type RunTooLowAmountForQuoteSwapsTestOptions = TestMetaOptions & {
+  swap: SwapType;
+  errorMessage: string | RegExp;
+  ctaBanner: boolean;
+  quotesVisible: boolean;
+};
+
+export function runTooLowAmountForQuoteSwapsTest(options: RunTooLowAmountForQuoteSwapsTestOptions) {
+  const { swap, tmsLinks, errorMessage, ctaBanner, quotesVisible, tags } = options;
   describe("Swap - too low amount", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
@@ -333,12 +348,8 @@ export function runTooLowAmountForQuoteSwapsTest(
   });
 }
 
-export function runUserRefusesTransactionTest(
-  fromAccount: Account,
-  toAccount: Account,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runUserRefusesTransactionTest(options: SwapAccountsTestOptions) {
+  const { fromAccount, toAccount, tmsLinks, tags } = options;
   describe("Swap - rejected on device", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
@@ -363,7 +374,11 @@ export function runUserRefusesTransactionTest(
     it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap refused on device`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount({ fromAccount, toAccount });
       const rejectAmount = minAmount ? truncateSwapAmount(minAmount) : minAmount;
-      const rejectedSwap = new Swap(fromAccount, toAccount, rejectAmount);
+      const rejectedSwap = new Swap({
+        accountToDebit: fromAccount,
+        accountToCredit: toAccount,
+        amount: rejectAmount,
+      });
 
       await performSwapUntilQuoteSelectionStep({
         accountToDebit: rejectedSwap.accountToDebit,
@@ -379,14 +394,18 @@ export function runUserRefusesTransactionTest(
   });
 }
 
-export function runSwapHistoryOperationsTest(
-  swap: SwapType,
-  provider: SwapProvider,
-  swapId: string,
-  tmsLinks: string[],
-  tags: string[],
-  details: SwapTransactionStatusDetails,
-) {
+type SwapHistoryTestOptions = TestMetaOptions & {
+  swap: SwapType;
+  provider: SwapProvider;
+  swapId: string;
+};
+
+type RunSwapHistoryOperationsTestOptions = SwapHistoryTestOptions & {
+  details: SwapTransactionStatusDetails;
+};
+
+export function runSwapHistoryOperationsTest(options: RunSwapHistoryOperationsTestOptions) {
+  const { swap, provider, swapId, tmsLinks, tags, details } = options;
   describe("Swap - history", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
@@ -412,15 +431,15 @@ export function runSwapHistoryOperationsTest(
   });
 }
 
+type RunExportSwapHistoryOperationsTestOptions = SwapHistoryTestOptions & {
+  addressFrom: string;
+  addressTo: string;
+};
+
 export function runExportSwapHistoryOperationsTest(
-  swap: SwapType,
-  provider: SwapProvider,
-  swapId: string,
-  addressFrom: string,
-  addressTo: string,
-  tmsLinks: string[],
-  tags: string[],
+  options: RunExportSwapHistoryOperationsTestOptions,
 ) {
+  const { swap, provider, swapId, addressFrom, addressTo, tmsLinks, tags } = options;
   describe("Swap - history", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
@@ -443,7 +462,8 @@ export function runExportSwapHistoryOperationsTest(
   });
 }
 
-export function runSwapHistoryFeedbackTest(tmsLinks: string[], tags: string[]) {
+export function runSwapHistoryFeedbackTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   const swapHistoryFeedbackFormUrl =
     "https://form.typeform.com/to/FIHc3fk2?typeform-source=ledger.typeform.com#source=mobile";
   describe("Swap - history", () => {
@@ -464,12 +484,8 @@ export function runSwapHistoryFeedbackTest(tmsLinks: string[], tags: string[]) {
   });
 }
 
-export function runSwapWithSendMaxTest(
-  fromAccount: Account,
-  toAccount: Account,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runSwapWithSendMaxTest(options: SwapAccountsTestOptions) {
+  const { fromAccount, toAccount, tmsLinks, tags } = options;
   describe("Swap - send max", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
@@ -494,14 +510,14 @@ export function runSwapWithSendMaxTest(
     tags.forEach(tag => $Tag(tag));
     it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap max amount`, async () => {
       await app.swapLiveApp.tapFromCurrency();
-      await app.modularDrawer.selectCurrencyByTicker(fromAccount.currency.ticker);
+      await app.modularDrawer.selectCurrency(fromAccount.currency);
       let networkName = fromAccount?.parentAccount
         ? fromAccount.parentAccount.currency.name
         : fromAccount.currency.speculosApp.name;
       await app.modularDrawer.selectNetworkIfAsked(networkName);
       await app.modularDrawer.selectFirstAccount();
       await app.swapLiveApp.tapToCurrency();
-      await app.modularDrawer.selectCurrencyByTicker(toAccount.currency.ticker);
+      await app.modularDrawer.selectCurrency(toAccount.currency);
       networkName = toAccount?.parentAccount
         ? toAccount.parentAccount.currency.name
         : toAccount.currency.speculosApp.name;
@@ -519,14 +535,24 @@ export function runSwapWithSendMaxTest(
 
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
 
-      const swap = new Swap(fromAccount, toAccount, amountToSend);
+      const swap = new Swap({
+        accountToDebit: fromAccount,
+        accountToCredit: toAccount,
+        amount: amountToSend,
+      });
       await app.swap.verifyAmountsAndAcceptSwap(swap, amountToSend);
       await app.swap.waitForSuccessAndContinue();
     });
   });
 }
 
-async function validateSwapAssetsPage(accountFrom: string, accountTo: string) {
+type ValidateSwapAssetsPageOptions = {
+  accountFrom: string;
+  accountTo: string;
+};
+
+async function validateSwapAssetsPage(options: ValidateSwapAssetsPageOptions) {
+  const { accountFrom, accountTo } = options;
   await app.swapLiveApp.expectSwapLiveApp();
   await app.swapLiveApp.checkAssetFrom({ currency: accountFrom, amount: "" });
   await app.swapLiveApp.checkAssetTo({ currency: accountTo, amount: "0" });
@@ -537,7 +563,12 @@ async function openSwapFromPortfolioEntryPoint() {
   await app.mainNavigation.tapWallet40Tab("swap");
 }
 
-export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: string[]) {
+type RunSwapEntryPointsOptions = TestMetaOptions & {
+  account: Account;
+};
+
+export function runSwapEntryPoints(options: RunSwapEntryPointsOptions) {
+  const { account, tmsLinks, tags } = options;
   describe("Swap - entry points", () => {
     beforeAll(async () => {
       await beforeAllFunctionSwap({
@@ -551,27 +582,30 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
     tags.forEach(tag => $Tag(tag));
     it(`[${account.currency.testLabel}] - Swap entry points`, async () => {
       await openSwapFromPortfolioEntryPoint();
-      await validateSwapAssetsPage(account.currency.ticker, "");
+      await validateSwapAssetsPage({ accountFrom: account.currency.ticker, accountTo: "" });
 
       await app.account.openViaDeeplink();
       await app.account.goToAccountByName(account.accountName);
       await app.account.tapSwap();
-      await validateSwapAssetsPage("", account.currency.ticker);
+      await validateSwapAssetsPage({ accountFrom: "", accountTo: account.currency.ticker });
 
       await app.mainNavigation.openPortfolioViaDeeplink();
       await app.portfolio.goToSpecificAsset(account.currency.name);
       await app.assetAccountsPage.tapOnAssetQuickActionButton("swap");
-      await validateSwapAssetsPage("", account.currency.ticker);
+      await validateSwapAssetsPage({ accountFrom: "", accountTo: account.currency.ticker });
     });
   });
 }
 
+type RunSwapNetworkFeesAboveAccountBalanceTestOptions = TestMetaOptions & {
+  swap: SwapType;
+  errorMessage: string | RegExp;
+};
+
 export function runSwapNetworkFeesAboveAccountBalanceTest(
-  swap: SwapType,
-  errorMessage: string | RegExp,
-  tmsLinks: string[],
-  tags: string[],
+  options: RunSwapNetworkFeesAboveAccountBalanceTestOptions,
 ) {
+  const { swap, errorMessage, tmsLinks, tags } = options;
   describe("Swap - network fees above balance", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
@@ -615,12 +649,13 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
   });
 }
 
-export function runSwapDiscreetModeTest(
-  accounts: AccountType[],
-  balanceCheckAccount: AccountType,
-  tmsLinks: string[],
-  tags: string[],
-) {
+type RunSwapDiscreetModeTestOptions = TestMetaOptions & {
+  accounts: AccountType[];
+  balanceCheckAccount: AccountType;
+};
+
+export function runSwapDiscreetModeTest(options: RunSwapDiscreetModeTestOptions) {
+  const { accounts, balanceCheckAccount, tmsLinks, tags } = options;
   setTeamOwner(Team.SWAP);
   describe("Swap - discreet mode", () => {
     beforeAll(async () => {
@@ -643,10 +678,10 @@ export function runSwapDiscreetModeTest(
     tags.forEach(tag => $Tag(tag));
 
     it("Swap amount is hidden in the asset drawer in discreet mode", async () => {
-      const tickers = accounts.map(account => account.currency.ticker);
+      const currencies = accounts.map(account => account.currency);
       await app.swapLiveApp.tapFromCurrency();
       await app.modularDrawer.checkSelectAssetPage();
-      await app.modularDrawer.checkAssetAmountsAreDiscreet(tickers);
+      await app.modularDrawer.checkAssetAmountsAreDiscreet(currencies);
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));

@@ -55,6 +55,8 @@ function setupScreen(screen: DeviceOnboardingFunnelModel) {
     return (
       <>
         <SetupScreen {...screen.setup} />
+        {screen.powerOnSheet ? <PowerOnSheet {...screen.powerOnSheet} /> : null}
+        {screen.reconnectSheet ? <ReconnectSheet {...screen.reconnectSheet} /> : null}
         {screen.unlockSheet ? <DeviceUnlockSheet {...screen.unlockSheet} /> : null}
       </>
     );

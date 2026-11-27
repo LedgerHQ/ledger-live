@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "38.8.0",
+  "version": "38.9.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -114,12 +114,14 @@
     "@domain/api-account-data": "workspace:^",
     "@domain/api-aggregated-assets": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
+    "@domain/api-market-chart": "workspace:*",
     "@domain/api-market-countervalues": "workspace:*",
     "@domain/api-swap-quotes": "workspace:^",
     "@domain/entity-account": "workspace:^",
     "@domain/entity-account-balance": "workspace:^",
     "@domain/entity-account-balance-history": "workspace:^",
     "@domain/entity-account-data": "workspace:^",
+    "@domain/entity-account-context": "workspace:^",
     "@domain/entity-account-descriptor": "workspace:^",
     "@domain/entity-account-name": "workspace:^",
     "@domain/entity-account-operation": "workspace:^",

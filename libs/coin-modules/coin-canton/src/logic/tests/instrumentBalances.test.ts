@@ -44,12 +44,13 @@ describe("getInstrumentBalances", () => {
 
     mockedGetBalanceFromNetwork.mockResolvedValue(mockInstruments);
 
-    const result = await getInstrumentBalances(createMockContext(config), "test-party-id", {
+    const context = createMockContext(config);
+    const result = await getInstrumentBalances(context, "test-party-id", {
       instrumentId: "native-id",
       instrumentAdmin: "AmuletAdmin",
     });
 
-    expect(mockedGetBalanceFromNetwork).toHaveBeenCalledWith(config, "test-party-id");
+    expect(mockedGetBalanceFromNetwork).toHaveBeenCalledWith(context, "test-party-id");
     expect(result).toEqual([
       {
         value: BigInt(1000),

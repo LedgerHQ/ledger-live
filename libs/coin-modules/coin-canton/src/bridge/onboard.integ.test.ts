@@ -29,8 +29,7 @@ describe("onboard (devnet)", () => {
     id: CryptoCurrencyIdSchema.parse("canton_network_devnet"),
   };
   const mockAccount = createMockCantonAccount({ currency: mockCurrency });
-  const mockConfig = cantonDefaults.canton_network_devnet;
-  const mockContext = createMockContext(mockConfig);
+  const mockContext = createMockContext(cantonDefaults.canton_network_devnet);
 
   let onboardedAccount: {
     keyPair: ReturnType<typeof generateMockKeyPair>;
@@ -82,7 +81,7 @@ describe("onboard (devnet)", () => {
       // We retry a few times with a small delay to account for this.
       let result: Awaited<ReturnType<typeof isAccountOnboarded>> = { isOnboarded: false };
       for (let i = 0; i < 10; i++) {
-        result = await isAccountOnboarded(mockConfig, keyPair.publicKeyHex);
+        result = await isAccountOnboarded(mockContext, keyPair.publicKeyHex);
         if (result.isOnboarded && result.partyId) {
           break;
         }
@@ -110,7 +109,7 @@ describe("onboard (devnet)", () => {
       const keyPair = generateMockKeyPair();
 
       // WHEN
-      const result = await isAccountOnboarded(mockConfig, keyPair.publicKeyHex);
+      const result = await isAccountOnboarded(mockContext, keyPair.publicKeyHex);
 
       // THEN
       expect(result).toEqual({ isOnboarded: false });
@@ -121,7 +120,7 @@ describe("onboard (devnet)", () => {
       const keyPair = generateMockKeyPair();
 
       // WHEN
-      const result = await isAccountOnboarded(mockConfig, keyPair.publicKeyHex);
+      const result = await isAccountOnboarded(mockContext, keyPair.publicKeyHex);
 
       // THEN
       expect(result).toEqual({ isOnboarded: false });
@@ -251,18 +250,18 @@ describe("onboard (devnet)", () => {
 
       // Verify account is accessible on devnet node
       const isTopologyChangeRequiredOnDevnet = await isTopologyChangeRequiredCached(
-        mockConfig,
+        mockContext,
         keyPair.publicKeyHex,
       );
       expect(isTopologyChangeRequiredOnDevnet).toBe(false);
 
       // WHEN: Switch to different node
       setEnv("CANTON_NODE_ID_OVERRIDE", "devnet-replicated");
-      clearIsTopologyChangeRequiredCache(mockConfig, keyPair.publicKeyHex);
+      await clearIsTopologyChangeRequiredCache(mockContext, keyPair.publicKeyHex);
 
       // THEN: Verify topology change is required
       const isTopologyChangeRequiredOnReplicated = await isTopologyChangeRequiredCached(
-        mockConfig,
+        mockContext,
         keyPair.publicKeyHex,
       );
       expect(isTopologyChangeRequiredOnReplicated).toBe(true);

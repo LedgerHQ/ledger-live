@@ -2,12 +2,14 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { I18nWrapper, onLinkOpened, openExternal } from "../../__tests__/i18nWrapper";
 import { AccountSettingsMenu } from "./AccountSettingsMenu";
+import type { AccountSettingsMenuProps } from "./types";
 
-function renderMenu() {
+function renderMenu(overrides: Partial<AccountSettingsMenuProps> = {}) {
   const handlers = {
     onChangeName: jest.fn(),
     onViewAdvancedLogs: jest.fn(),
     onRemoveAccount: jest.fn(),
+    ...overrides,
   };
   render(<AccountSettingsMenu accountName="Ethereum 1" {...handlers} />, { wrapper: I18nWrapper });
   return handlers;
@@ -65,6 +67,30 @@ describe("AccountSettingsMenu (Native)", () => {
       expect(openExternal).toHaveBeenCalledWith("https://explorer.test/address/0xabc");
       expect(onLinkOpened).toHaveBeenCalledWith("https://explorer.test");
       expect(onLinkOpened).not.toHaveBeenCalledWith(expect.stringContaining("0xabc"));
+    });
+  });
+
+  describe("Manage assets", () => {
+    it("is hidden without a manage assets handler", () => {
+      renderMenu();
+
+      expect(screen.queryByTestId("account-settings-manage-assets")).toBeNull();
+    });
+
+    it("sends the manageAssets event, then calls the handler when pressed", () => {
+      const onEvent = jest.fn();
+      const onManageAssets = jest.fn();
+      renderMenu({ onEvent, onManageAssets });
+
+      expect(screen.getByText("Manage assets")).toBeVisible();
+      fireEvent.press(screen.getByTestId("account-settings-manage-assets"));
+
+      expect(onEvent).toHaveBeenCalledTimes(1);
+      expect(onEvent).toHaveBeenCalledWith("manageAssets");
+      expect(onManageAssets).toHaveBeenCalledTimes(1);
+      expect(onEvent.mock.invocationCallOrder[0]).toBeLessThan(
+        onManageAssets.mock.invocationCallOrder[0],
+      );
     });
   });
 });

@@ -6,11 +6,11 @@ import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { makeChangeTrustTransaction } from "@ledgerhq/live-common/families/xrp/tokens";
 import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import { makeChangeTrustTransaction } from "../utils";
 import type { XrpAddTokenFlowParamList } from "./types";
 
 export type Props = BaseComposite<
@@ -32,7 +32,11 @@ export function useSettingsViewModel({ navigation, route }: Props) {
   const { transaction, updateTransaction, status, bridgePending } =
     useBridgeTransaction<Transaction>(bridge, () => ({
       account,
-      transaction: makeChangeTrustTransaction(bridge, account, token, new BigNumber(0), true),
+      transaction: makeChangeTrustTransaction(bridge, account, {
+        token,
+        limit: new BigNumber(0),
+        noRipple: true,
+      }),
     }));
 
   const [isMaximum, setIsMaximum] = useState(false);

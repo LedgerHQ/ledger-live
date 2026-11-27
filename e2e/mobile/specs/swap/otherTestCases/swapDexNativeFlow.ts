@@ -1,9 +1,8 @@
-import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { ensureTokenApproval, performSwapUntilQuoteSelectionStep } from "@e2e/utils/swapUtils";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@shared/env";
-import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
+import { beforeAllFunctionSwap, SwapAccountsTestOptions } from "@e2e/specs/swap/swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-e2e-shared/currencyUtils";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
@@ -12,13 +11,12 @@ import { needsTokenAllowance } from "@ledgerhq/live-e2e-shared/swap";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
-export function runSwapDexNativeFlow(
-  fromAccount: Account,
-  toAccount: Account,
-  provider: SwapProvider,
-  tmsLinks: string[],
-  tags: string[],
-) {
+type RunSwapDexNativeFlowOptions = SwapAccountsTestOptions & {
+  provider: SwapProvider;
+};
+
+export function runSwapDexNativeFlow(options: RunSwapDexNativeFlowOptions) {
+  const { fromAccount, toAccount, provider, tmsLinks, tags } = options;
   if (needsTokenAllowance(fromAccount, provider)) declareCliBroadcastAccounts(fromAccount);
   (provider.availableOnLns ? describe : describeIfNotNanoS)("Swap - DEX native flow", () => {
     beforeAll(async () => {
@@ -47,7 +45,12 @@ export function runSwapDexNativeFlow(
       if (amountToSwap === null) {
         throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
       }
-      const swap = new Swap(fromAccount, toAccount, amountToSwap.toString(), provider);
+      const swap = new Swap({
+        accountToDebit: fromAccount,
+        accountToCredit: toAccount,
+        amount: amountToSwap.toString(),
+        provider,
+      });
       await app.speculos.enableBlindSigningOnNanoS();
       await ensureTokenApproval({ fromAccount, provider, minAmount: amountToSwap.toString() });
 

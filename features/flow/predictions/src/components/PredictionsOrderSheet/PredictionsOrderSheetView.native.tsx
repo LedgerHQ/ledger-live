@@ -24,7 +24,7 @@ export function PredictionsOrderSheetView({
       onDismiss={onClose}
       testID="predictions-order-sheet"
     >
-      <OrderPlacing />
+      {shownOrder ? <OrderPlacing side={shownOrder.context.side} /> : null}
     </PendingResultSheetView>
   );
 }

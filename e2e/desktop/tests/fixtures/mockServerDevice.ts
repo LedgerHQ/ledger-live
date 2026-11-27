@@ -51,7 +51,7 @@ export const test = base.extend<MockServerFixtures>({
       expect(token, "the app published no mock server session token").not.toBe("");
     }).toPass({ timeout: SESSION_TOKEN_TIMEOUT_MS });
 
-    await use(new MockServerDevicePage(mockServerBaseUrl(), token));
+    await use(new MockServerDevicePage({ baseUrl: mockServerBaseUrl(), token }));
   },
 
   env: async ({ mockDevice, catalogProvider }, use) => {

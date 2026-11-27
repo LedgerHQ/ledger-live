@@ -1,5 +1,17 @@
 # @ledgerhq/react-ui
 
+## 0.57.0
+
+### Minor Changes
+
+- [#24972](https://github.com/LedgerHQ/ledger-live/pull/24972) [`f3de33e`](https://github.com/LedgerHQ/ledger-live/commit/f3de33e5a7f9ea0865863b40170a7165449e479c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump color to v5, which ships its own types, and drop @types/color
+
+## 0.57.0-next.0
+
+### Minor Changes
+
+- [#24972](https://github.com/LedgerHQ/ledger-live/pull/24972) [`f3de33e`](https://github.com/LedgerHQ/ledger-live/commit/f3de33e5a7f9ea0865863b40170a7165449e479c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump color to v5, which ships its own types, and drop @types/color
+
 ## 0.56.0
 
 ### Minor Changes

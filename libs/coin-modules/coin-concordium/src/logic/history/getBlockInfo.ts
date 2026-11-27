@@ -5,15 +5,14 @@ import type { ConcordiumCoinConfig } from "../../types";
 export async function getBlockInfo(
   config: ConcordiumCoinConfig,
   height: number,
-  currencyId: string,
 ): Promise<BlockInfo> {
-  const blockHashes = await getBlocksAtHeight(config, currencyId, height);
+  const blockHashes = await getBlocksAtHeight(config, height);
 
   if (blockHashes.length === 0) {
     throw new Error(`No blocks found at height ${height}`);
   }
 
-  const info = await getBlockInfoByHash(config, currencyId, blockHashes[0]);
+  const info = await getBlockInfoByHash(config, blockHashes[0]);
   const result: BlockInfo = {
     height: info.blockHeight,
     hash: info.blockHash,
@@ -21,7 +20,7 @@ export async function getBlockInfo(
   };
 
   if (info.blockHeight > 0 && info.blockParent) {
-    const parentInfo = await getBlockInfoByHash(config, currencyId, info.blockParent);
+    const parentInfo = await getBlockInfoByHash(config, info.blockParent);
     result.parent = {
       height: parentInfo.blockHeight,
       hash: parentInfo.blockHash,

@@ -3,12 +3,14 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { I18nWrapper, onLinkOpened, openExternal } from "../../__tests__/i18nWrapper";
 import { AccountSettingsMenu } from "./AccountSettingsMenu";
+import type { AccountSettingsMenuProps } from "./types";
 
-function renderMenu() {
+function renderMenu(overrides: Partial<AccountSettingsMenuProps> = {}) {
   const handlers = {
     onChangeName: jest.fn(),
     onViewAdvancedLogs: jest.fn(),
     onRemoveAccount: jest.fn(),
+    ...overrides,
   };
   render(<AccountSettingsMenu accountName="Ethereum 1" {...handlers} />, { wrapper: I18nWrapper });
   return handlers;
@@ -61,6 +63,46 @@ describe("AccountSettingsMenu (Web)", () => {
       expect(openExternal).toHaveBeenCalledWith("https://explorer.test/address/0xabc");
       expect(onLinkOpened).toHaveBeenCalledWith("https://explorer.test");
       expect(onLinkOpened).not.toHaveBeenCalledWith(expect.stringContaining("0xabc"));
+    });
+  });
+
+  describe("Manage assets", () => {
+    it("is hidden without a manage assets handler", () => {
+      renderMenu();
+
+      expect(screen.queryByTestId("account-settings-manage-assets")).toBeNull();
+    });
+
+    it("shows between Change name and View advanced logs", () => {
+      renderMenu({ onManageAssets: jest.fn() });
+
+      const items = screen.getAllByTestId(
+        /^account-settings-(change-name|manage-assets|advanced-logs)$/,
+      );
+      const itemIds = items.map(item => item.dataset.testid);
+      expect(itemIds).toEqual([
+        "account-settings-change-name",
+        "account-settings-manage-assets",
+        "account-settings-advanced-logs",
+      ]);
+
+      const manageAssetsItem = screen.getByTestId("account-settings-manage-assets");
+      expect(manageAssetsItem).toHaveTextContent("Manage assets");
+    });
+
+    it("sends the manageAssets event, then calls the handler", async () => {
+      const onEvent = jest.fn();
+      const onManageAssets = jest.fn();
+      renderMenu({ onEvent, onManageAssets });
+
+      await userEvent.setup().click(screen.getByTestId("account-settings-manage-assets"));
+
+      expect(onEvent).toHaveBeenCalledTimes(1);
+      expect(onEvent).toHaveBeenCalledWith("manageAssets");
+      expect(onManageAssets).toHaveBeenCalledTimes(1);
+      expect(onEvent.mock.invocationCallOrder[0]).toBeLessThan(
+        onManageAssets.mock.invocationCallOrder[0],
+      );
     });
   });
 });

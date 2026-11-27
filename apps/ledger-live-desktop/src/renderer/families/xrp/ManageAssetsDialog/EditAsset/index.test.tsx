@@ -1,34 +1,25 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import { render, screen } from "tests/testSetup";
+import { render, screen, within } from "tests/testSetup";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { MAX_TRUST_LIMIT } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
 import type { UserEvent } from "@testing-library/user-event";
-import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { EditAsset } from "./index";
 import { XRP_ACCOUNT, makeXrpTokenAccount } from "../../__mocks__/account.mock";
+import {
+  makeNamedError,
+  mockBroadcast,
+  mockSignedInput,
+  signedOperation,
+} from "../../__mocks__/signing.mock";
 
-const mockBroadcast = jest.fn<Promise<Operation>, [SignedOperation]>();
-const mockSignedInput = jest.fn();
 const mockStatus = { errors: {} as Record<string, Error>, warnings: {} };
 const mockBridge: { pending: boolean; error: Error | null } = { pending: false, error: null };
-const signedOperation = {
-  signature: "signature",
-  operation: {
-    id: "op-edit",
-    accountId: XRP_ACCOUNT.id,
-    hash: "",
-    type: "OPT_EDIT",
-  },
-} as unknown as SignedOperation;
 
-jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
-  useAccountBridge: () => ({
-    createTransaction: () => ({ family: "xrp" }),
-    updateTransaction: (tx: object, patch: object) => ({ ...tx, ...patch }),
-  }),
-}));
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () =>
+  require("../../__mocks__/signing.mock"),
+);
 jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => {
   const { useState } = jest.requireActual("react");
   return {
@@ -45,46 +36,20 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => {
     },
   };
 });
-jest.mock("@ledgerhq/live-common/hooks/useBroadcast", () => ({
-  useBroadcast: () => mockBroadcast,
-}));
+jest.mock("@ledgerhq/live-common/hooks/useBroadcast", () =>
+  require("../../__mocks__/signing.mock"),
+);
 jest.mock("@features/platform-device-intent", () => ({
   ...jest.requireActual("@features/platform-device-intent"),
-  createIntent: (_: unknown, input: unknown, callbacks: unknown) => {
-    mockSignedInput(input);
-    return { input, callbacks };
-  },
+  createIntent: require("../../__mocks__/signing.mock").createIntent,
 }));
-jest.mock("LLD/components/DeviceIntentExecutor", () => ({
-  buildDeviceInitializationInput: async () => ({}),
-  DeviceIntentExecutor: (props: {
-    intent: { callbacks: { onResult: (result: SignedOperation) => void } };
-    onIntentJobComplete: () => void;
-    onUserCancel: () => void;
-  }) => (
-    <>
-      <button
-        onClick={() => {
-          props.intent.callbacks.onResult(signedOperation);
-          props.onIntentJobComplete();
-        }}
-      >
-        Sign on device
-      </button>
-      <button onClick={props.onUserCancel}>Cancel on device</button>
-    </>
-  ),
-}));
+jest.mock("LLD/components/DeviceIntentExecutor", () => require("../../__mocks__/signing.mock"));
 
 const ONE_RLUSD = new BigNumber(1).shiftedBy(38);
 const tokenAccount: XrpTokenAccount = {
   ...makeXrpTokenAccount({ limit: ONE_RLUSD.times(1000), isRippling: false }),
   balance: ONE_RLUSD.times(10),
 };
-
-function makeNamedError(name: string) {
-  return Object.assign(new Error(name), { name });
-}
 
 function renderEditAsset(editedAccount: XrpTokenAccount = tokenAccount) {
   const onBack = jest.fn();
@@ -270,7 +235,7 @@ describe("xrp EditAsset", () => {
       await user.click(getLimitRow());
 
       expect(screen.getByRole("dialog", { name: "Balance limit" })).toHaveAccessibleDescription(
-        "Select the maximum balance you can hold for this asset.",
+        "Select the maximum amount of this asset your account can hold.",
       );
       expect(getLimitInput()).toHaveValue("1000");
     });
@@ -336,6 +301,16 @@ describe("xrp EditAsset", () => {
 
       expect(screen.queryByText("The limit must be above 0")).not.toBeInTheDocument();
       expect(getLimitConfirm()).toBeDisabled();
+    });
+
+    it("shows Confirm loading while the new status loads", async () => {
+      mockBridge.pending = true;
+      const { user } = renderEditAsset();
+
+      await typeLimit(user, "500");
+
+      expect(getLimitConfirm()).toBeDisabled();
+      expect(within(getLimitConfirm()).getByRole("img", { name: /loading/i })).toBeVisible();
     });
 
     it("blocks Confirm for a limit error of the status", async () => {

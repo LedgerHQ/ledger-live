@@ -38,9 +38,31 @@ describe("useReceiveAddressCopy", () => {
           "Your Ledger device can't display this address. Check it on the explorer before sharing it.",
       },
       learnMoreLabel: "Learn more",
-      serviceWarningCta: "See details",
-      serviceStatusTitle: "Service incident",
-      gotItLabel: "Got it",
+      continueLabel: "Continue",
+      helpCardTitle: "Need support? Get help",
+      helpTitle: "Get help",
+      helpQuestions: {
+        receiveFromExchange: "How to receive from exchanges?",
+        receiveSecurely: "How to receive securely?",
+      },
+      memoTitle: "Need a Tag/Memo?",
+      memoDescription:
+        "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+      memoGotIt: "Got it",
+      gates: {
+        onboarding: {
+          title: "Set up your account first",
+          description:
+            "Your account must be onboarded on the Ethereum network before it can receive funds.",
+          actionLabel: "Onboard account",
+        },
+        activation: {
+          title: "Add USDC to your account first",
+          description:
+            "Your account must enable USDC on the Ethereum network before it can receive it. This may cost a small network fee.",
+          actionLabel: "Add USDC",
+        },
+      },
     });
   });
 });

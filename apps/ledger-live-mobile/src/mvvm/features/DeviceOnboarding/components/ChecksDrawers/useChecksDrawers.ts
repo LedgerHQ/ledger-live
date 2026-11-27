@@ -1,17 +1,17 @@
 import { useCallback, useMemo, useState } from "react";
 import { Linking, Platform } from "react-native";
-import { getPreviousTrackingPage, track } from "@shared/analytics";
+import { track } from "@shared/analytics";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useLocale } from "~/context/Locale";
 import { urls } from "~/utils/urls";
 import {
-  seededButtons,
-  seededPages,
-  seededProps,
-  type DeviceModelId,
-  type SeededPage,
+  onboardingButtons,
+  onboardingPages,
+  withSource,
+  type FunnelProps,
+  type OnboardingPage,
   type TrackingProps,
 } from "@features/platform-device-onboarding-analytics";
 import { useInitializerActions } from "LLM/components/DeviceIntentExecutor/ContextInitializer/hooks/useInitializerActions";
@@ -102,8 +102,8 @@ type ChecksErrorDrawersInput = Readonly<{
   onSkipFirmwareCheck?: () => void;
   onAllowDismiss: () => void;
   onNotGenuineClose: () => void;
-  /** Set only in the seeded funnel: the drawers then send the seeded page names. */
-  seededDeviceType?: DeviceModelId | null;
+  /** Set in a tracked funnel: the drawers then send the funnel page names with these props. */
+  funnelProps?: FunnelProps | null;
   suspendSheets?: boolean;
 }>;
 
@@ -141,46 +141,41 @@ function trackRecoverableButton(
   button: string,
   page: string,
   kind: RecoverableErrorKind,
-  seededDeviceType: DeviceModelId | null | undefined,
+  funnelProps: FunnelProps | null | undefined,
 ) {
-  if (!seededDeviceType) {
+  if (!funnelProps) {
     track("button_clicked", { button, page });
     return;
   }
-  trackSeededDrawerClick(button, seededErrorPage(kind), seededDeviceType);
+  trackFunnelDrawerClick(button, funnelErrorPage(kind), funnelProps);
 }
 
 /** A drawer does not become the current page, so its clicks name it as `page`. */
-function trackSeededDrawerClick(button: string, page: SeededPage, deviceType: DeviceModelId) {
-  track("button_clicked", { ...withSource(seededProps(deviceType)), button, page });
+function trackFunnelDrawerClick(button: string, page: OnboardingPage, funnelProps: FunnelProps) {
+  track("button_clicked", { ...withSource(funnelProps), button, page });
 }
 
-function withSource(props: TrackingProps): TrackingProps {
-  const source = getPreviousTrackingPage();
-  return source ? { source, ...props } : props;
-}
-
-function seededErrorPage(kind: RecoverableErrorKind) {
-  return kind === "declined" ? seededPages.genuineCheckRefused : seededPages.genuineCheckError;
+function funnelErrorPage(kind: RecoverableErrorKind) {
+  return kind === "declined"
+    ? onboardingPages.genuineCheckRefused
+    : onboardingPages.genuineCheckError;
 }
 
 function errorDrawerTracking(
   kind: RecoverableErrorKind,
-  seededDeviceType: DeviceModelId | null | undefined,
+  funnelProps: FunnelProps | null | undefined,
 ): DrawerTracking {
-  if (!seededDeviceType) {
+  if (!funnelProps) {
     return { trackName: kind === "provider" ? providerErrorPage : recoverableErrorPage };
   }
-  return { trackCategory: seededErrorPage(kind), trackProps: seededProps(seededDeviceType) };
+  return { trackCategory: funnelErrorPage(kind), trackProps: funnelProps };
 }
 
-function notGenuineDrawerTracking(
-  seededDeviceType: DeviceModelId | null | undefined,
-): DrawerTracking {
-  if (!seededDeviceType) return { trackCategory: "Device not genuine" };
+function notGenuineDrawerTracking(funnelProps: FunnelProps | null | undefined): DrawerTracking {
+  if (!funnelProps) return { trackCategory: "Device not genuine" };
   return {
-    trackCategory: seededPages.genuineCheckError,
-    trackProps: seededProps(seededDeviceType),
+    trackCategory: onboardingPages.genuineCheckError,
+    trackProps: funnelProps,
   };
 }
 
@@ -303,7 +298,7 @@ export function useChecksErrorDrawers({
   onSkipFirmwareCheck,
   onAllowDismiss,
   onNotGenuineClose,
-  seededDeviceType,
+  funnelProps,
   suspendSheets = false,
 }: ChecksErrorDrawersInput): Pick<
   ChecksDrawerProps,
@@ -325,20 +320,20 @@ export function useChecksErrorDrawers({
   }
   const errorDrawerKind = recoverableKind ?? retainedRecoverableKind ?? "unknown";
   const retry = useCallback(() => {
-    const retryAfterRefusal = seededDeviceType && errorDrawerKind === "declined";
-    const button = retryAfterRefusal ? seededButtons.retryGenuineCheck : "Try again";
-    trackRecoverableButton(button, recoverableErrorPage, errorDrawerKind, seededDeviceType);
+    const retryAfterRefusal = funnelProps && errorDrawerKind === "declined";
+    const button = retryAfterRefusal ? onboardingButtons.retryGenuineCheck : "Try again";
+    trackRecoverableButton(button, recoverableErrorPage, errorDrawerKind, funnelProps);
     onRetry();
-  }, [errorDrawerKind, onRetry, seededDeviceType]);
+  }, [errorDrawerKind, onRetry, funnelProps]);
   const cancel = useCallback(() => {
     trackRecoverableButton(
       "Cancel",
       errorDrawerKind === "provider" ? providerErrorPage : recoverableErrorPage,
       errorDrawerKind,
-      seededDeviceType,
+      funnelProps,
     );
     onErrorCancel();
-  }, [errorDrawerKind, onErrorCancel, seededDeviceType]);
+  }, [errorDrawerKind, onErrorCancel, funnelProps]);
   const skip = useMemo(
     () =>
       onSkipFirmwareCheck
@@ -347,44 +342,39 @@ export function useChecksErrorDrawers({
               "Skip Ledger OS update",
               recoverableErrorPage,
               errorDrawerKind,
-              seededDeviceType,
+              funnelProps,
             );
             onSkipFirmwareCheck();
           }
         : undefined,
-    [errorDrawerKind, onSkipFirmwareCheck, seededDeviceType],
+    [errorDrawerKind, onSkipFirmwareCheck, funnelProps],
   );
   const onContactSupport = useCallback(() => {
     trackRecoverableButton(
       "Contact Ledger Support",
       recoverableErrorPage,
       errorDrawerKind,
-      seededDeviceType,
+      funnelProps,
     );
     openSupport();
-  }, [errorDrawerKind, openSupport, seededDeviceType]);
+  }, [errorDrawerKind, openSupport, funnelProps]);
   const onContactNotGenuineSupport = useCallback(() => {
     const button = "Contacting support about non genuine device";
-    if (seededDeviceType) {
-      trackSeededDrawerClick(button, seededPages.genuineCheckError, seededDeviceType);
+    if (funnelProps) {
+      trackFunnelDrawerClick(button, onboardingPages.genuineCheckError, funnelProps);
     } else {
       track("button_clicked", { button });
     }
     openUrl(contactSupportWebviewUrl(locale));
-  }, [locale, seededDeviceType]);
+  }, [locale, funnelProps]);
   const onNotGenuineClosePressed = useCallback(() => {
-    if (!seededDeviceType) return;
-    trackSeededDrawerClick(seededButtons.close, seededPages.genuineCheckError, seededDeviceType);
-  }, [seededDeviceType]);
+    if (!funnelProps) return;
+    trackFunnelDrawerClick(onboardingButtons.close, onboardingPages.genuineCheckError, funnelProps);
+  }, [funnelProps]);
   const onGoToSettings = useCallback(() => {
-    trackRecoverableButton(
-      "Go to settings",
-      providerSettingsPage,
-      errorDrawerKind,
-      seededDeviceType,
-    );
+    trackRecoverableButton("Go to settings", providerSettingsPage, errorDrawerKind, funnelProps);
     openExperimentalSettings();
-  }, [errorDrawerKind, openExperimentalSettings, seededDeviceType]);
+  }, [errorDrawerKind, openExperimentalSettings, funnelProps]);
   const [allowClosed, setAllowClosed] = useState(false);
   if ((state !== "awaitingAllow" || suspendSheets) && allowClosed) setAllowClosed(false);
   const allowOpen = state === "awaitingAllow" && !allowClosed && !suspendSheets;
@@ -404,7 +394,7 @@ export function useChecksErrorDrawers({
     errorDrawer: {
       isOpen: sheetOpen(recoverableKind !== null, suspendSheets),
       kind: errorDrawerKind,
-      tracking: errorDrawerTracking(errorDrawerKind, seededDeviceType),
+      tracking: errorDrawerTracking(errorDrawerKind, funnelProps),
       productName,
       onRetry: retry,
       onCancel: cancel,
@@ -415,7 +405,7 @@ export function useChecksErrorDrawers({
     },
     notGenuineDrawer: {
       isOpen: sheetOpen(error?.kind === "notGenuine", suspendSheets),
-      tracking: notGenuineDrawerTracking(seededDeviceType),
+      tracking: notGenuineDrawerTracking(funnelProps),
       productName,
       onClose: () => dismissIfOpen(suspendSheets, error?.kind === "notGenuine", onNotGenuineClose),
       onClosePressed: onNotGenuineClosePressed,

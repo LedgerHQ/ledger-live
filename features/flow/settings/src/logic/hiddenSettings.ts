@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const SETTING_IDS = ["myLedgerProvider", "mockAppUpdate"] as const;
+export const SETTING_IDS = ["myLedgerProvider", "mockAppUpdate", "ledgerSync"] as const;
 
 const SettingIdSchema = z.enum(SETTING_IDS);
 

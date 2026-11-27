@@ -241,6 +241,9 @@ export default function evmBridge(currency: CryptoCurrency): BridgeApi {
     balanceOptions: getBalanceOptions(currency),
     enrichStakingResources: (c, addr, ops, sr) => enrichStakingResources(c, addr, ops, sr),
     validateTransaction: (signature: string) => validateTransaction(currency, { signature }),
+    // coin-evm `estimateFees` rejects a failed gas estimation (e.g. a token amount above the
+    // balance) instead of returning a 0 gas limit: `validateIntent` names the cause.
+    validatesRefusedEstimation: true,
     ...(getStakingContract(currency.id) ? { stakingSupported: true } : {}),
     // Only Sei has an activation concept; elsewhere readiness stays undefined (= ready).
     ...(currency.id === "sei_evm" ? { getAccountReadiness } : {}),

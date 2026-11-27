@@ -122,7 +122,7 @@ export function useChecksScreenViewModel({
   onInstallUpdate,
   onUpdateSheetClosed,
   screensFor,
-  seededDeviceType,
+  funnelProps,
   suspendSheets = false,
   updateAfterSetup = false,
 }: ChecksScreenProps): ChecksViewProps {
@@ -146,7 +146,7 @@ export function useChecksScreenViewModel({
     onNotGenuineClose: quit,
     onUpdatePressed,
     onUpdateSheetClosed,
-    seededDeviceType,
+    funnelProps,
     suspendSheets,
     updateAfterSetup,
   });

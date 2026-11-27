@@ -160,7 +160,10 @@ export type DeviceOnboardingInput = {
   deviceId: string;
   deviceModelId: DeviceModelId;
   offerSync: boolean;
-  hostsSeedSetup?: boolean;
+  /** The host runs the new flow for unseeded devices. Without it, they go to legacy. */
+  connectUnseededDevice?: boolean;
+  /** The host runs the new flow for seeded devices. Without it, they go to legacy. */
+  connectSeededDevice?: boolean;
 };
 
 export type AvailableFirmwareUpdate = NonNullable<FirmwareUpdateContext["availableUpdate"]>;
@@ -173,8 +176,12 @@ export type FirmwareCheck =
   | { kind: "deferred" }
   | { kind: "offered"; update: AvailableFirmwareUpdate };
 
-export type DeviceOnboardingContext = Omit<DeviceOnboardingInput, "hostsSeedSetup"> & {
-  hostsSeedSetup: boolean;
+export type DeviceOnboardingContext = Omit<
+  DeviceOnboardingInput,
+  "connectUnseededDevice" | "connectSeededDevice"
+> & {
+  connectUnseededDevice: boolean;
+  connectSeededDevice: boolean;
   lastDeviceState: DeviceOnboardingState | null;
   firmwareVersion: string | null;
   hasStarted: boolean;

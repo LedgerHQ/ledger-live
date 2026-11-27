@@ -24,7 +24,7 @@ import { Item } from "./Graph/types";
 import { Merge } from "~/types/helpers";
 import { GraphPlaceholder } from "./Graph/Placeholder";
 import CurrencyIcon from "./CurrencyIcon";
-import { tokensWithUnsupportedGraph } from "./Graph/tokensWithUnsupportedGraph";
+import { hasUnsupportedGraph } from "@ledgerhq/live-common/currencies/hasUnsupportedGraph";
 
 const Placeholder = styled(Flex).attrs({
   backgroundColor: "neutral.c40",
@@ -215,7 +215,7 @@ function AssetCentricGraphCard({
       </Flex>
       {accountsEmpty ? null : (
         <>
-          {currency.type === "TokenCurrency" && tokensWithUnsupportedGraph.includes(currency.id) ? (
+          {currency.type === "TokenCurrency" && hasUnsupportedGraph(currency.id) ? (
             <GraphPlaceholder />
           ) : (
             <>

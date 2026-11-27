@@ -5,6 +5,10 @@
 
 Account discovery as a stream: `discoverAccounts(host, { currencyId })` is an `Observable<DiscoveredAccount>`, in the order of the legacy `scanAccounts`. It answers "which accounts does this seed have on this currency", and nothing else: no `Account`, no sync, no store.
 
+Each `DiscoveredAccount` carries a descriptor, so `discoverAccounts`, the host types, `registerDiscoveredAccounts` and completion (`completion.ts`) come from `@features/platform-account-discovery/descriptor`, which lint keeps to the edges (`ACCOUNT_DESCRIPTOR`, see [`docs/account-models`](../../../docs/account-models)). The root entry holds the errors and `ScannedAccount`, what the UI holds.
+
+`registerDiscoveredAccounts(dispatch, isHeld)` is the operator the edge pipes the scan through: it registers each descriptor in the `discoveredAccounts` slice of [`@domain/entity-account`](../../../domain/entity/account), so `useAccountData` reads the account before it is added, and emits a `ScannedAccount` (`{ accountUUID, candidate, status }`). `isHeld` skips UUIDs already in the accounts slice, so a rediscovered saved account does not re-enter the register after promotion. The flow dispatches `discoveredAccountsCleared` when it ends or rescans.
+
 ```mermaid
 flowchart LR
   D["@domain/entity-derivation<br/>candidateOf(currency, mode, index)"] --> S[discoverAccounts]
@@ -12,7 +16,9 @@ flowchart LR
   H1 -- AccountDescriptor --> S
   S -- "readStatus(descriptor)" --> R["account data router<br/>kind: accountStatus"]
   R --> X1[full sync source]
-  S -- DiscoveredAccount --> U[UI / add account flow]
+  S -- DiscoveredAccount --> REG[registerDiscoveredAccounts]
+  REG -- descriptor --> DA["discoveredAccounts slice"]
+  REG -- ScannedAccount --> U[UI / add account flow]
 ```
 
 ## What the host gives
@@ -38,3 +44,13 @@ Each mode is scanned in order, one derivation at a time. While an account's stat
 
 - The legacy env scan rules (`KEYCHAIN_OBSERVABLE_RANGE`, `SHOW_LEGACY_NEW_ACCOUNT`) are `ScanRules` the host passes in the options.
 - Parity with the legacy scan also depends on the host: its `derive` must give the descriptor the legacy scan would store, and its `readStatus` the `used` the legacy scan would compute.
+
+## Completion
+
+Some families cannot add a discovered account as it is: its sync needs data the device gives only once the user approves it. Completion is the optional device step after the user selected accounts; it is exported from `/descriptor` because it takes and returns descriptors. That data never enters the descriptor: it is the account's context (`@domain/entity-account-context`).
+
+- `splitSelection(selected, needsCompletion)` splits a selection into the accounts ready to add and those needing the step. `needsCompletion` comes from the host (the coin module loader's `accountCompletion`), so this package never names a family.
+- `CompleteAccounts(selected)` streams an `AccountCompletionEvent` per account: `waiting`, `awaiting-approval`, then `completed` with the account context the device gave, or `refused`, or `failed` when the device derives another account on that path (not settled: a new run asks it again). The descriptor stays as discovered. Any other error, a disconnect included, errors the stream: the Device Intent decides whether to retry.
+- `completionStates(selected, events)` folds the events, keyed by the descriptor as discovered. `failPending` and `dropPending` settle the accounts a failed or stopped batch did not reach, keeping the approved ones. `mergeCompletionStates` lays a retry's states over the previous attempt's: a settled account is never prompted again.
+
+A completed state carries a secret: never log or display it. The host hands it to the sync that adds the account.

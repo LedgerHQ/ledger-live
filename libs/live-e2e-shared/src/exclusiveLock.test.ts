@@ -135,9 +135,12 @@ test(
       const spec = await acquireExclusiveLock([Account.ETH_1], "ios approval.spec.ts", {
         allowNested: true,
       });
-      await runWithExclusiveLock([TokenAccount.ETH_USDT_1], "token approve", async () => {
-        steps.push("nested");
-      });
+      await runWithExclusiveLock(
+        { targets: [TokenAccount.ETH_USDT_1], label: "token approve" },
+        async () => {
+          steps.push("nested");
+        },
+      );
       await spec.release();
     });
 
@@ -154,11 +157,14 @@ test("waits for broadcasts nested in a lock before releasing it", { timeout: 10_
     });
     const approvalStarted = deferred();
     const approvalMayFinish = deferred();
-    const approval = runWithExclusiveLock([TokenAccount.ETH_USDT_1], "token approve", async () => {
-      approvalStarted.resolve();
-      await approvalMayFinish.promise;
-      steps.push("approval done");
-    });
+    const approval = runWithExclusiveLock(
+      { targets: [TokenAccount.ETH_USDT_1], label: "token approve" },
+      async () => {
+        approvalStarted.resolve();
+        await approvalMayFinish.promise;
+        steps.push("approval done");
+      },
+    );
     await approvalStarted.promise;
 
     const specReleased = spec.release().then(() => steps.push("spec released"));
@@ -183,14 +189,12 @@ test(
       const approvalStarted = deferred();
       const approvalMayFinish = deferred();
       const approval = runWithExclusiveLock(
-        [TokenAccount.ETH_USDT_1],
-        "token approve",
+        { targets: [TokenAccount.ETH_USDT_1], label: "token approve", waitsForConfirmation: true },
         async () => {
           approvalStarted.resolve();
           await approvalMayFinish.promise;
           steps.push("approval done");
         },
-        { waitsForConfirmation: true },
       );
       await approvalStarted.promise;
 
@@ -216,13 +220,19 @@ test(
       });
       const revokeStarted = deferred();
       const revokeMayContinue = deferred();
-      const revoke = runWithExclusiveLock([TokenAccount.ETH_USDT_1], "token revoke", async () => {
-        revokeStarted.resolve();
-        await revokeMayContinue.promise;
-        await runWithExclusiveLock([TokenAccount.ETH_USDT_1], "token approve", async () => {
-          steps.push("approval");
-        });
-      });
+      const revoke = runWithExclusiveLock(
+        { targets: [TokenAccount.ETH_USDT_1], label: "token revoke" },
+        async () => {
+          revokeStarted.resolve();
+          await revokeMayContinue.promise;
+          await runWithExclusiveLock(
+            { targets: [TokenAccount.ETH_USDT_1], label: "token approve" },
+            async () => {
+              steps.push("approval");
+            },
+          );
+        },
+      );
       await revokeStarted.promise;
 
       const specReleased = spec.release().then(() => steps.push("spec released"));
@@ -242,9 +252,12 @@ test("does not let a call join a lock whose release has started", { timeout: 10_
       allowNested: true,
     });
     const specAbandoned = spec.abandon().then(() => steps.push("spec abandoned"));
-    await runWithExclusiveLock([TokenAccount.ETH_USDT_1], "late approval", async () => {
-      steps.push("late approval");
-    });
+    await runWithExclusiveLock(
+      { targets: [TokenAccount.ETH_USDT_1], label: "late approval" },
+      async () => {
+        steps.push("late approval");
+      },
+    );
     await specAbandoned;
   });
 
@@ -261,7 +274,10 @@ test(
         "could not be locked by ios borrow.spec.ts",
       );
       await assert.rejects(
-        runWithExclusiveLock([TokenAccount.ETH_USDT_4], "token revoke", async () => {}),
+        runWithExclusiveLock(
+          { targets: [TokenAccount.ETH_USDT_4], label: "token revoke" },
+          async () => {},
+        ),
         {
           name: "ExclusiveLockRefusedError",
           message: /could not be locked by ios borrow\.spec\.ts/,
@@ -269,7 +285,10 @@ test(
       );
       await refusal.release();
 
-      await runWithExclusiveLock([TokenAccount.ETH_USDT_4], "token revoke", async () => {});
+      await runWithExclusiveLock(
+        { targets: [TokenAccount.ETH_USDT_4], label: "token revoke" },
+        async () => {},
+      );
     });
   },
 );
@@ -330,7 +349,7 @@ test("locks each on-chain account once when several share it", { timeout: 10_000
     await lease.abandon();
     await lease.abandon();
 
-    await runWithExclusiveLock([Account.ETH_1], "next flow", async () => {});
+    await runWithExclusiveLock({ targets: [Account.ETH_1], label: "next flow" }, async () => {});
   });
 });
 
@@ -361,7 +380,7 @@ test("locks on this machine only, even on CI, when told to", async () => {
   const r2 = mockR2();
   try {
     await withEnv({ ...REMOTE_LOCK, CI: "true", E2E_EXCLUSIVE_LOCK_MODE: "local" }, async () => {
-      await runWithExclusiveLock([Account.DOT_1], "R2 down", async () => {});
+      await runWithExclusiveLock({ targets: [Account.DOT_1], label: "R2 down" }, async () => {});
     });
     assert.equal(r2.requests.length, 0);
   } finally {
@@ -746,7 +765,10 @@ test("claims and releases the account in R2 with high priority", async () => {
   const r2 = mockR2();
   try {
     await withEnv({ ...REMOTE_LOCK, E2E_EXCLUSIVE_LOCK_PRIORITY: "high" }, async () => {
-      await runWithExclusiveLock([Account.XRP_1], "Send XRP from release", async () => {});
+      await runWithExclusiveLock(
+        { targets: [Account.XRP_1], label: "Send XRP from release" },
+        async () => {},
+      );
     });
   } finally {
     r2.restore();
@@ -762,7 +784,7 @@ test("claims and releases the account in R2 when remote locking is configured", 
   const r2 = mockR2();
   try {
     await withEnv(REMOTE_LOCK, async () => {
-      await runWithExclusiveLock([Account.XRP_1], "Send XRP", async () => {});
+      await runWithExclusiveLock({ targets: [Account.XRP_1], label: "Send XRP" }, async () => {});
     });
   } finally {
     r2.restore();
@@ -787,7 +809,10 @@ test("keeps the settle window when abandoning a lock a nested call released", as
       const lease = await acquireExclusiveLock([Account.ETH_1], "desktop provider.swap", {
         allowNested: true,
       });
-      await runWithExclusiveLock([TokenAccount.ETH_USDT_1], "token approve", async () => {});
+      await runWithExclusiveLock(
+        { targets: [TokenAccount.ETH_USDT_1], label: "token approve" },
+        async () => {},
+      );
       await lease.abandon();
     });
   } finally {
@@ -816,9 +841,10 @@ test("hands the account back without the settle window after a confirmed broadca
   const r2 = mockR2();
   try {
     await withEnv(REMOTE_LOCK, async () => {
-      await runWithExclusiveLock([Account.ETH_1], "token approve", async () => {}, {
-        waitsForConfirmation: true,
-      });
+      await runWithExclusiveLock(
+        { targets: [Account.ETH_1], label: "token approve", waitsForConfirmation: true },
+        async () => {},
+      );
     });
   } finally {
     r2.restore();
@@ -836,12 +862,10 @@ test("keeps the settle window when a broadcast meant to be confirmed fails", asy
     await withEnv(REMOTE_LOCK, async () => {
       await assert.rejects(
         runWithExclusiveLock(
-          [Account.ETH_1],
-          "token approve",
+          { targets: [Account.ETH_1], label: "token approve", waitsForConfirmation: true },
           async () => {
             throw new Error("not confirmed in time");
           },
-          { waitsForConfirmation: true },
         ),
         /not confirmed in time/,
       );
@@ -863,9 +887,10 @@ test("abandons a lock without the settle window when its nested broadcasts were 
       const lease = await acquireExclusiveLock([Account.ETH_1], "android swap.spec.ts", {
         allowNested: true,
       });
-      await runWithExclusiveLock([TokenAccount.ETH_USDT_1], "token approve", async () => {}, {
-        waitsForConfirmation: true,
-      });
+      await runWithExclusiveLock(
+        { targets: [TokenAccount.ETH_USDT_1], label: "token approve", waitsForConfirmation: true },
+        async () => {},
+      );
       await lease.abandon();
     });
   } finally {
@@ -1031,7 +1056,10 @@ test("joins a lock this process is holding without asking R2 again", async () =>
       const spec = await acquireExclusiveLock([Account.ETH_4], "ios borrow.spec.ts", {
         allowNested: true,
       });
-      await runWithExclusiveLock([TokenAccount.ETH_USDT_4], "token revoke", async () => {});
+      await runWithExclusiveLock(
+        { targets: [TokenAccount.ETH_USDT_4], label: "token revoke" },
+        async () => {},
+      );
       await spec.release();
     });
   } finally {
@@ -1049,7 +1077,10 @@ test("does not join a hold once it has been released", async () => {
         allowNested: true,
       });
       await spec.release();
-      await runWithExclusiveLock([Account.SOL_1], "later approval", async () => {});
+      await runWithExclusiveLock(
+        { targets: [Account.SOL_1], label: "later approval" },
+        async () => {},
+      );
     });
   } finally {
     r2.restore();

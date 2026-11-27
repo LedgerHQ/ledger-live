@@ -117,7 +117,7 @@ function renderRun(observe: (event: OnboardingInspectionEvent) => void = () => u
         deviceId: "device",
         deviceModelId: DeviceModelId.STAX,
         offerSync: false,
-        hostsSeedSetup: true,
+        connectUnseededDevice: true,
       }),
     );
     await act(() => settle());

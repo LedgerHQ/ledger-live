@@ -30,8 +30,15 @@ export interface ReceiveTriggerSectionProps {
   readonly onOpenDeeplink: (url: string) => void;
 }
 
+/** Whether the user has seen the hint pointing at Verify, shown once on the address screen. */
+export interface ReceiveVerifyHintSectionProps {
+  readonly hasSeen: boolean;
+  readonly setHasSeen: (hasSeen: boolean) => void;
+}
+
 /** One key per section, so a new receive control adds a key without touching the others. */
 export interface ReceiveToolProps {
   readonly flag: ReceiveFlagSectionProps;
   readonly trigger: ReceiveTriggerSectionProps;
+  readonly verifyHint: ReceiveVerifyHintSectionProps;
 }

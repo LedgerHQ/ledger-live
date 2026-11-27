@@ -50,6 +50,7 @@ export {
   setTxLifecycleBaseUrl,
   startDappLifecycleMonitoring,
   startDappTxLifecycle,
+  startEarnAppLifecycleMonitoring,
 } from "./earnLifecycleHost";
 
 export { isBorrowApp, setBorrowManifestIdReader } from "./borrowApps";

@@ -17,3 +17,10 @@ export type SolanaFieldComponentProps = FieldComponentProps<
   Transaction,
   TransactionStatus
 >;
+
+export type StakeAccountBannerParams = {
+  solana?: {
+    redelegate: boolean;
+    delegate: boolean;
+  };
+};

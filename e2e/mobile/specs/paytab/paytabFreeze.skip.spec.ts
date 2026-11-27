@@ -5,4 +5,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
-runPayFreezeTest(testConfig.tmsLinks, testConfig.tags);
+runPayFreezeTest(testConfig);

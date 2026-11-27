@@ -5,7 +5,12 @@ import { FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
 // Stellar rejects a new transaction while a previous one is still pending, so we broadcast a
 // single transaction (with memo) rather than both a with- and without-memo transaction.
 runNewSendMemoTest({
-  transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.01", undefined, "memoText"),
+  transaction: new Transaction({
+    accountToDebit: Account.XLM_1,
+    accountToCredit: Account.XLM_2,
+    amount: "0.01",
+    memoTag: "memoText",
+  }),
   tmsLinks: ["B2CQA-6038"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@stellar", "@family-stellar"],
   featureFlags: FF_NEW_SEND_FLOW_ENABLED,

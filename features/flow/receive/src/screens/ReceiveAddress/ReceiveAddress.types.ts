@@ -18,6 +18,9 @@ export type ReceiveAddressProps = Readonly<{
   getFamilyConfig?: ReceiveFamilyConfigPort;
   /** Open incidents, already filtered by the app for the asset received. Without it, no warning. */
   serviceIncidents?: readonly ReceiveServiceIncident[];
-  /** Opens a support link outside the app. Without it, no Learn more. */
-  onOpenUrl?: (url: string) => void;
+  /**
+   * Opens the family flow the account needs before it can receive. Call `refreshGate` once it is
+   * over, while the screen is still open. Without it, no button.
+   */
+  onResolveGate?: (refreshGate: () => void) => void;
 }>;

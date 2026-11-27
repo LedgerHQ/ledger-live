@@ -12,16 +12,29 @@ export interface CoinFamiliesOptions {
   allow?: string[];
 }
 
+interface BranchRuleOptions {
+  familiesDir: string;
+}
+
 /**
- * The `jsPlugins` and `rules` entries that turn the coin-family rules on for an app. An app config
+ * The `jsPlugins` and `rules` entries that turn the three coin-family rules on for an app. An app config
  * does not extend the base preset, so it spreads each key into its own: `jsPlugins: [..., ...f.jsPlugins]`
  * and `rules: { ..., ...f.rules }`.
  */
 export function coinFamiliesLint(options: CoinFamiliesOptions) {
+  const branchRuleOptions: BranchRuleOptions = { familiesDir: options.familiesDir };
   return {
     jsPlugins: [COIN_FAMILIES_PLUGIN],
     rules: {
       "coin-families/no-coin-specific-import": ["error", options] as ["error", CoinFamiliesOptions],
+      "coin-families/no-family-branch": ["error", branchRuleOptions] as [
+        "error",
+        BranchRuleOptions,
+      ],
+      "coin-families/no-currency-id-branch": ["error", branchRuleOptions] as [
+        "error",
+        BranchRuleOptions,
+      ],
     },
   };
 }

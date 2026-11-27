@@ -1,5 +1,27 @@
 # @domain/entity-market-countervalues
 
+## 0.6.0
+
+### Minor Changes
+
+- [#24982](https://github.com/LedgerHQ/ledger-live/pull/24982) [`b770536`](https://github.com/LedgerHQ/ledger-live/commit/b77053689b942642434c55e0de68fc987cbb661c) Thanks [@ysitbon](https://github.com/ysitbon)! - Give the countervalues rates slice its own selectors for the stored state and its cache
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-currency@0.5.1
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#24982](https://github.com/LedgerHQ/ledger-live/pull/24982) [`b770536`](https://github.com/LedgerHQ/ledger-live/commit/b77053689b942642434c55e0de68fc987cbb661c) Thanks [@ysitbon](https://github.com/ysitbon)! - Give the countervalues rates slice its own selectors for the stored state and its cache
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-currency@0.5.1-next.0
+
 ## 0.5.0
 
 ### Minor Changes

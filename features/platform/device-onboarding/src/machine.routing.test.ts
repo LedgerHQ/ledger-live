@@ -119,8 +119,8 @@ describe("routing", () => {
   });
 
   it.each([
-    ["the host says nothing", { omitHostsSeedSetup: true }],
-    ["the host cannot set the seed up", { hostsSeedSetup: false }],
+    ["the host says nothing", { omitConnectUnseededDevice: true }],
+    ["the host cannot set the seed up", { connectUnseededDevice: false }],
   ] as const)(
     "sends an unseeded device to legacy before any check when %s",
     async (_case, overrides) => {
@@ -138,11 +138,46 @@ describe("routing", () => {
   it("keeps a seeded device on the checks when the host cannot set the seed up", async () => {
     const { actor, fake } = await start(
       { osVersion: [os(seeded)], ...passingChecks },
-      { hostsSeedSetup: false },
+      { connectUnseededDevice: false },
     );
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
     expect(fake.earlyCheckToggles()).toEqual([]);
+  });
+
+  describe("when the host cannot run seeded checks", () => {
+    it.each([
+      ["a touchscreen", DeviceModelId.STAX, seeded],
+      ["a nano x on an old firmware", DeviceModelId.NANO_X, { ...seeded, seVersion: "0.9.0" }],
+    ])("sends a seeded %s to legacy before any check", async (_case, deviceModelId, state) => {
+      const { actor, fake } = await launch(
+        { osVersion: [os(state)], ...passingChecks },
+        { deviceModelId, connectSeededDevice: false },
+      );
+
+      expect(exitOf(actor)).toMatchObject({ reason: "legacyFallback" });
+      expect(fake.genuineCheckRuns()).toBe(0);
+    });
+
+    it("keeps a seeded nano x on an old firmware on the checks when the host can run them", async () => {
+      const { actor, fake } = await start(
+        { osVersion: [os({ ...seeded, seVersion: "0.9.0" })], ...passingChecks },
+        { deviceModelId: DeviceModelId.NANO_X, connectSeededDevice: true },
+      );
+
+      expect(fake.genuineCheckRuns()).toBe(1);
+      expect(stateOf(actor)).toBe("done");
+    });
+
+    it("keeps an unseeded nano x on the setup", async () => {
+      const { actor } = await launch(
+        { osVersion: [os({ ...unseeded, seVersion: "2.4.0" })], ...passingChecks },
+        { deviceModelId: DeviceModelId.NANO_X, connectSeededDevice: false },
+      );
+
+      expect(stateOf(actor)).toBe("awaitingStart");
+      actor.stop();
+    });
   });
 });
 

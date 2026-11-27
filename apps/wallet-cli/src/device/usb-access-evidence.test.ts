@@ -13,6 +13,24 @@ describe("usbAccessEvidence", () => {
       "device_unreachable",
     ],
     ["LIBUSB_ERROR_NOT_SUPPORTED", "LIBUSB_ERROR_NOT_SUPPORTED", "other"],
+    ["open error: permission denied (errno 13)", "errno 13", "access_denied"],
+    ["open error: failed to open device (error 5)", "error 5", "access_denied"],
+    ["open error: failed to open device (error 0xe00002c1)", "error 0xe00002c1", "access_denied"],
+    ["claimInterface error: interface is busy (errno 16)", "interface is busy", "busy"],
+    [
+      "claimInterface error: could not open interface for exclusive access (error 0xe00002c5)",
+      "error 0xe00002c5",
+      "busy",
+    ],
+    ["open error: device disconnected (errno 19)", "device disconnected", "device_unreachable"],
+    ["open error: failed to open device (error 31)", "error 31", "device_unreachable"],
+    [
+      "open error: failed to open device (error 0xe00002c0)",
+      "error 0xe00002c0",
+      "device_unreachable",
+    ],
+    ["open error: failed to open device (errno 5)", "errno 5", "other"],
+    ["open error: failed to open device (error 0xe00002bc)", "error 0xe00002bc", "other"],
   ] as const)("%s → %s (%s)", (message, error, kind) => {
     expect(usbAccessEvidence(new Error(message))).toEqual({ error, kind });
   });

@@ -41,13 +41,17 @@ const FORBIDDEN = { familiesDir: "src/renderer/families", barrel: "forbidden" };
 const classify = (specifier, file = generic, options = CONTRACT) =>
   classifyImport(specifier, file, options);
 
-test("coin-package: reports a coin module or a live-signer, and their subpaths", () => {
+test("coin-package: reports a coin module, a live-signer, a device signer kit or wallet-btc, and their subpaths", () => {
   for (const specifier of [
     "@ledgerhq/coin-evm",
     "@ledgerhq/coin-evm/types",
     "@ledgerhq/coin-evm/lib/api",
     "@ledgerhq/live-signer-evm",
     "@ledgerhq/live-signer-tron/something",
+    "@ledgerhq/device-signer-kit-ethereum",
+    "@ledgerhq/device-signer-kit-solana/internal",
+    "@ledgerhq/wallet-btc",
+    "@ledgerhq/wallet-btc/crypto/secp256k1",
   ]) {
     assert.equal(classify(specifier), "coin-package", specifier);
   }
@@ -65,6 +69,8 @@ test("coin-package: excludes by full package name, not by the prefix capture", (
     "@ledgerhq/coin-tester-evm",
     "@ledgerhq/live-common/currencies",
     "@ledgerhq/hw-app-eth",
+    "@ledgerhq/device-management-kit",
+    "@ledgerhq/wallet-api-client",
     "react",
   ]) {
     assert.equal(classify(specifier), null, specifier);
@@ -416,6 +422,26 @@ test("reports the real leaks listed as fixtures", () => {
   );
 });
 
+test("reports the baselined wallet-btc and device-signer-kit leaks", () => {
+  const walletBtc = "@ledgerhq/wallet-btc/crypto/secp256k1";
+  const signerKit = "@ledgerhq/device-signer-kit-ethereum";
+  const desktopDemo =
+    "renderer/screens/settings/sections/Developer/DeviceIntentExecutorDevTool/intents/getEthAddressDMKSignerDemoIntent/job.ts";
+  const mobileDemo =
+    "screens/Settings/Debug/Features/DeviceIntentExecutor/intents/getEthAddressDMKSignerDemoIntent/job.ts";
+
+  assert.equal(
+    classifyImport(
+      walletBtc,
+      desktop("renderer/webworkers/workers/publicKeyTweakAdd.ts"),
+      CONTRACT,
+    ),
+    "coin-package",
+  );
+  assert.equal(classifyImport(signerKit, desktop(desktopDemo), CONTRACT), "coin-package");
+  assert.equal(classifyImport(signerKit, mobile(mobileDemo), MOBILE), "coin-package");
+});
+
 test("passes the negative fixtures: Desktop barrel, modals-loaders, framework, tester, families files", () => {
   const init = desktop("renderer/init.tsx");
 
@@ -436,6 +462,14 @@ test("passes the negative fixtures: Desktop barrel, modals-loaders, framework, t
   );
   assert.equal(
     classifyImport("@ledgerhq/coin-aptos", mobile("families/aptos/index.ts"), MOBILE),
+    null,
+  );
+  assert.equal(
+    classifyImport(
+      "@ledgerhq/wallet-btc/crypto/secp256k1",
+      desktop("renderer/families/bitcoin/live-common-setup.ts"),
+      CONTRACT,
+    ),
     null,
   );
 });

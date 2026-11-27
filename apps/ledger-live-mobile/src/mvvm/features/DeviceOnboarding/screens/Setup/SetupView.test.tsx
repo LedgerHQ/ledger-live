@@ -386,7 +386,7 @@ describe("SetupView", () => {
   it("should show the setup choice stage without a description", () => {
     renderSetup({ stage: { index: 3, total: 5, kind: "setupChoice", indicator: "none" } });
 
-    expect(screen.getByText("Setup choice")).toBeVisible();
+    expect(screen.getByText("Set up choice")).toBeVisible();
     expect(screen.queryByTestId(setupTestIds.stageLoading)).toBeNull();
     expect(screen.queryByTestId(setupTestIds.stageSuccess)).toBeNull();
   });
@@ -403,7 +403,7 @@ describe("SetupView", () => {
   it("should show no info card while the genuine check runs", () => {
     renderSetup();
 
-    expect(screen.queryByText("Which setup method?")).toBeNull();
+    expect(screen.queryByText("Set up or restore?")).toBeNull();
   });
 
   it("should open the stage's info card without touching the device", async () => {
@@ -418,9 +418,9 @@ describe("SetupView", () => {
         },
       });
 
-    await user.press(screen.getByText("Which setup method?"));
+    await user.press(screen.getByTestId(infoCardTestId));
 
-    expect(screen.getByText("Set up or restore?")).toBeVisible();
+    expect(infoSheetOpen()).toBe(true);
     for (const callback of [
       onQuit,
       onStart,
@@ -433,6 +433,14 @@ describe("SetupView", () => {
     }
   });
 });
+
+const infoCardTestId = "device-onboarding-setup-info-card";
+const infoSheetTestId = "device-onboarding-setup-info-sheet";
+
+/** The card label and the sheet title share their wording: find the sheet by its id. */
+function infoSheetOpen() {
+  return screen.getByTestId(infoSheetTestId).props.accessibilityState?.expanded;
+}
 
 function sheetOpen(text: string) {
   let node = screen.getByText(text).parent;
@@ -452,15 +460,15 @@ describe("SetupView connection sheets", () => {
       infoCard: "setupChoice",
     } as const;
     const { user, rerender, props } = renderSetup({ stage });
-    await user.press(screen.getByText("Which setup method?"));
-    expect(sheetOpen("Set up or restore?")).toBe(true);
+    await user.press(screen.getByTestId(infoCardTestId));
+    expect(infoSheetOpen()).toBe(true);
 
     rerender(<SetupScreen {...props} connection={{ state: "reconnecting", retry: jest.fn() }} />);
-    expect(sheetOpen("Set up or restore?")).toBe(false);
+    expect(infoSheetOpen()).toBe(false);
     expect(sheetOpen("Reconnecting to your Ledger Stax")).toBe(true);
 
     rerender(<SetupScreen {...props} connection={null} />);
-    expect(sheetOpen("Set up or restore?")).toBe(true);
+    expect(infoSheetOpen()).toBe(true);
   });
 
   it("should show the reconnecting sheet over the current stage", () => {

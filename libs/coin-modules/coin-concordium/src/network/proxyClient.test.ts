@@ -23,7 +23,6 @@ jest.mock("@ledgerhq/live-network", () => ({
   default: (...args: unknown[]) => mockNetwork(...args),
 }));
 
-const currencyId = "concordium_testnet";
 const config = {
   proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
 } as ConcordiumCoinConfig;
@@ -38,7 +37,7 @@ describe("proxyClient", () => {
     it("should execute function with client", async () => {
       mockNetwork.mockResolvedValue({ data: "result" });
 
-      const result = await withClient(config, currencyId, async client => {
+      const result = await withClient(config, async client => {
         return client.request({ method: "GET", url: "/test" });
       });
 
@@ -52,7 +51,6 @@ describe("proxyClient", () => {
 
       const result = await withClient(
         config,
-        currencyId,
         async client => client.request({ method: "GET", url: "/test" }),
         { retries: 1 },
       );
@@ -65,12 +63,9 @@ describe("proxyClient", () => {
       mockNetwork.mockRejectedValue(new Error("Always fails"));
 
       await expect(
-        withClient(
-          config,
-          currencyId,
-          async client => client.request({ method: "GET", url: "/test" }),
-          { retries: 1 },
-        ),
+        withClient(config, async client => client.request({ method: "GET", url: "/test" }), {
+          retries: 1,
+        }),
       ).rejects.toThrow("Always fails");
       expect(mockNetwork).toHaveBeenCalledTimes(2);
     }, 10000);
@@ -79,9 +74,7 @@ describe("proxyClient", () => {
       mockNetwork.mockRejectedValue(new Error("Fails"));
 
       await expect(
-        withClient(config, currencyId, async client =>
-          client.request({ method: "GET", url: "/test" }),
-        ),
+        withClient(config, async client => client.request({ method: "GET", url: "/test" })),
       ).rejects.toThrow("Fails");
       expect(mockNetwork).toHaveBeenCalledTimes(3); // DEFAULT_RETRIES = 2
     }, 10000);
@@ -96,7 +89,6 @@ describe("proxyClient", () => {
 
       const result = withClient(
         config,
-        currencyId,
         async client => client.request({ method: "GET", url: "/test" }),
         { signal: controller.signal },
       );
@@ -111,28 +103,40 @@ describe("proxyClient", () => {
 
     it("should throw when URL is not provided", async () => {
       await expect(
-        withClient(config, currencyId, async client => client.request({ method: "GET" } as any)),
+        withClient(config, async client => client.request({ method: "GET" } as any)),
       ).rejects.toThrow("URL is required for proxy client requests");
     });
 
-    it("should cache client by currency id", async () => {
+    it("sends each call to the proxy of the config it is given", async () => {
       mockNetwork.mockResolvedValue({ data: "result" });
+      const other = { ...config, proxyUrl: "https://proxy.example.com" };
 
-      await withClient(config, currencyId, async client =>
-        client.request({ method: "GET", url: "/test1" }),
-      );
-      await withClient(config, currencyId, async client =>
-        client.request({ method: "GET", url: "/test2" }),
-      );
+      await withClient(config, async client => client.request({ method: "GET", url: "/a" }));
+      await withClient(other, async client => client.request({ method: "GET", url: "/b" }));
 
-      // Both calls should use same base URL (client was cached)
-      expect(mockNetwork).toHaveBeenCalledTimes(2);
       expect(mockNetwork.mock.calls[0][0].url).toBe(
-        "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/test1",
+        "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/a",
       );
-      expect(mockNetwork.mock.calls[1][0].url).toBe(
-        "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/test2",
-      );
+      expect(mockNetwork.mock.calls[1][0].url).toBe("https://proxy.example.com/b");
+    });
+
+    it("applies the configured timeout", async () => {
+      mockNetwork.mockResolvedValue({ data: "result" });
+      const tuned = { ...config, gateway: { timeoutMs: 1234 } };
+
+      await withClient(tuned, async client => client.request({ method: "GET", url: "/test" }));
+
+      expect(mockNetwork).toHaveBeenCalledWith(expect.objectContaining({ timeout: 1234 }));
+    });
+
+    it("retries as many times as the config sets", async () => {
+      mockNetwork.mockRejectedValue(new Error("Fails"));
+      const tuned = { ...config, gateway: { retries: 1, retryDelayMs: 0 } };
+
+      await expect(
+        withClient(tuned, async client => client.request({ method: "GET", url: "/test" })),
+      ).rejects.toThrow("Fails");
+      expect(mockNetwork).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -154,7 +158,7 @@ describe("proxyClient", () => {
       };
       mockNetwork.mockResolvedValue({ data: mockResponse });
 
-      const result = await getConsensusInfo(config, currencyId);
+      const result = await getConsensusInfo(config);
 
       expect(result).toEqual(mockResponse);
       expect(mockNetwork).toHaveBeenCalledWith(
@@ -178,7 +182,7 @@ describe("proxyClient", () => {
       };
       mockNetwork.mockResolvedValue({ data: mockResponse });
 
-      const result = await getBlockInfoByHash(config, currencyId, "abc123");
+      const result = await getBlockInfoByHash(config, "abc123");
 
       expect(result).toEqual(mockResponse);
       expect(mockNetwork).toHaveBeenCalledWith(
@@ -195,7 +199,7 @@ describe("proxyClient", () => {
       const mockResponse = ["abc123", "def456"];
       mockNetwork.mockResolvedValue({ data: mockResponse });
 
-      const result = await getBlocksAtHeight(config, currencyId, 1000);
+      const result = await getBlocksAtHeight(config, 1000);
 
       expect(result).toEqual(mockResponse);
       expect(mockNetwork).toHaveBeenCalledWith(
@@ -219,7 +223,7 @@ describe("proxyClient", () => {
       ];
       mockNetwork.mockResolvedValue({ data: mockResponse });
 
-      const result = await getBlockTransactionEvents(config, currencyId, "abc123");
+      const result = await getBlockTransactionEvents(config, "abc123");
 
       expect(result).toEqual(mockResponse);
       expect(mockNetwork).toHaveBeenCalledWith(
@@ -236,7 +240,7 @@ describe("proxyClient", () => {
       const mockResponse = [{ address: "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w" }];
       mockNetwork.mockResolvedValue({ data: mockResponse });
 
-      const result = await getAccountsByPublicKey(config, currencyId, "aa".repeat(32));
+      const result = await getAccountsByPublicKey(config, "aa".repeat(32));
 
       expect(result).toEqual(mockResponse);
       expect(mockNetwork).toHaveBeenCalledWith(
@@ -258,7 +262,7 @@ describe("proxyClient", () => {
       };
       mockNetwork.mockResolvedValue({ data: mockResponse });
 
-      const result = await getAccountBalance(config, currencyId, "test-address");
+      const result = await getAccountBalance(config, "test-address");
 
       expect(result).toEqual(mockResponse);
       expect(mockNetwork).toHaveBeenCalledWith(
@@ -275,7 +279,7 @@ describe("proxyClient", () => {
       const mockResponse = { nonce: 5 };
       mockNetwork.mockResolvedValue({ data: mockResponse });
 
-      const result = await getAccountNonce(config, currencyId, "test-address");
+      const result = await getAccountNonce(config, "test-address");
 
       expect(result).toEqual({ nonce: 5 });
       expect(mockNetwork).toHaveBeenCalledWith(
@@ -302,7 +306,7 @@ describe("proxyClient", () => {
       ];
       mockNetwork.mockResolvedValue({ data: mockResponse });
 
-      const result = await getPltTokens(config, currencyId);
+      const result = await getPltTokens(config);
 
       expect(result).toEqual(mockResponse);
       expect(mockNetwork).toHaveBeenCalledWith(
@@ -327,7 +331,7 @@ describe("proxyClient", () => {
       };
       mockNetwork.mockResolvedValue({ data: mockResponse });
 
-      const result = await getPltTokenInfo(config, currencyId, "PLT");
+      const result = await getPltTokenInfo(config, "PLT");
 
       expect(result).toEqual(mockResponse);
       expect(mockNetwork).toHaveBeenCalledWith(
@@ -341,7 +345,7 @@ describe("proxyClient", () => {
     it("should escape a token id that is not URL-safe", async () => {
       mockNetwork.mockResolvedValue({ data: {} });
 
-      await getPltTokenInfo(config, currencyId, "a/b c");
+      await getPltTokenInfo(config, "a/b c");
 
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -356,7 +360,7 @@ describe("proxyClient", () => {
       const mockResponse = { transactions: [] };
       mockNetwork.mockResolvedValue({ data: mockResponse });
 
-      const result = await getTransactions(config, currencyId, "test-address");
+      const result = await getTransactions(config, "test-address");
 
       expect(result).toEqual({ transactions: [] });
       expect(mockNetwork).toHaveBeenCalledWith(
@@ -371,7 +375,7 @@ describe("proxyClient", () => {
       const mockResponse = { transactions: [] };
       mockNetwork.mockResolvedValue({ data: mockResponse });
 
-      await getTransactions(config, currencyId, "test-address", { limit: 50, order: "d" });
+      await getTransactions(config, "test-address", { limit: 50, order: "d" });
 
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -385,7 +389,7 @@ describe("proxyClient", () => {
     it("should fetch transaction cost", async () => {
       mockNetwork.mockResolvedValue({ data: { cost: "1000", energy: "500" } });
 
-      const result = await getTransactionCost(config, currencyId, {
+      const result = await getTransactionCost(config, {
         type: "simpleTransfer",
         numSignatures: 1,
       });
@@ -403,7 +407,7 @@ describe("proxyClient", () => {
     it("omits memoSize when there is no memo", async () => {
       mockNetwork.mockResolvedValue({ data: { cost: "1000", energy: "500" } });
 
-      await getTransactionCost(config, currencyId, { type: "simpleTransfer", numSignatures: 1 });
+      await getTransactionCost(config, { type: "simpleTransfer", numSignatures: 1 });
 
       const { params } = mockNetwork.mock.calls[0][0];
       expect(params).not.toHaveProperty("memoSize");
@@ -412,7 +416,7 @@ describe("proxyClient", () => {
     it("passes memoSize through for a memo transfer", async () => {
       mockNetwork.mockResolvedValue({ data: { cost: "1200", energy: "600" } });
 
-      await getTransactionCost(config, currencyId, {
+      await getTransactionCost(config, {
         type: "simpleTransfer",
         numSignatures: 1,
         memoSize: 12,
@@ -430,7 +434,7 @@ describe("proxyClient", () => {
     it("serializes tokenOperationTypeCount as JSON", async () => {
       mockNetwork.mockResolvedValue({ data: { cost: "3000", energy: "900" } });
 
-      const result = await getTransactionCost(config, currencyId, {
+      const result = await getTransactionCost(config, {
         type: "tokenUpdate",
         numSignatures: 1,
         tokenId: "t-USDT",
@@ -457,7 +461,7 @@ describe("proxyClient", () => {
     it("never sends memoSize on a tokenUpdate", async () => {
       mockNetwork.mockResolvedValue({ data: { cost: "3000", energy: "900" } });
 
-      await getTransactionCost(config, currencyId, {
+      await getTransactionCost(config, {
         type: "tokenUpdate",
         numSignatures: 1,
         tokenId: "t-USDT",
@@ -474,7 +478,7 @@ describe("proxyClient", () => {
     it("should submit transfer transaction", async () => {
       mockNetwork.mockResolvedValue({ data: { submissionId: "tx-123" } });
 
-      const result = await submitTransfer(config, currencyId, {
+      const result = await submitTransfer(config, {
         transaction: "transaction-body-hex",
         signatures: { "0": { "0": "signature-hex" } },
       });
@@ -504,7 +508,7 @@ describe("proxyClient", () => {
         credential: { value: { credential: {} } },
       } as any;
 
-      const result = await submitCredential(config, currencyId, credentialData);
+      const result = await submitCredential(config, credentialData);
 
       expect(result).toEqual({ submissionId: "cred-123" });
       expect(mockNetwork).toHaveBeenCalledWith(

@@ -65,6 +65,22 @@ import, as `features-flow` imports `@ledgerhq/lumen-lint-plugin`: Nx hashes that
 `lint`, and marks the package affected when it changes, only through that edge. Subtrees that keep their own config for now (the apps, the e2e
 suites, a few legacy `libs/` trees) are listed in the plugin's `exclusions.mjs`.
 
+## The account descriptor stays at the edges
+
+Code holds the `AccountUUID`. `@domain/entity-account-descriptor`, which carries the descriptor and
+its key, `@domain/entity-account/descriptor`, which computes the `AccountUUID` from it, and
+`@features/platform-account-discovery/descriptor`, whose results carry descriptors, are restricted
+by `ACCOUNT_DESCRIPTOR` in `restricted-imports.mts`. They are exact `paths` names, so
+tests keep the `./schema.mock` entries. `base` and `features-flow` list them, and so do the desktop
+and mobile app configs, their `src/config/account-data-setup` files aside.
+
+`ACCOUNT_DESCRIPTOR_EDGES` lists the packages allowed to import it, as paths from the repo root:
+the account data router (`domain/api/account-data`), the legacy bridge (`domain/entity/account`),
+`features/platform/account-data`, discovery and the account sources. `base` turns each into an
+override below its layer root; `features-flow` does the same for its entries, keeping its own
+restrictions. A temporary entry carries a comment naming the ticket that removes it.
+`devtools`, `libs/ledger-live-common` and `apps/wallet-cli` are edges too and stay unrestricted.
+
 ## Rules
 
 ### `suffix-imports/no-platform-suffix`
@@ -187,7 +203,8 @@ string or a template literal that has no substitution. A specifier built at run 
 (``require(`@ledgerhq/coin-${name}`)``) cannot be checked. It reports three kinds of
 specifier, each with its own message:
 
-- **`coin-package`**: a coin module or a live-signer, `@ledgerhq/coin-*` and `@ledgerhq/live-signer-*`, and their
+- **`coin-package`**: a coin module, a live-signer, a device signer kit or wallet-btc, `@ledgerhq/coin-*`,
+  `@ledgerhq/live-signer-*`, `@ledgerhq/device-signer-kit-*` and `@ledgerhq/wallet-btc`, and their
   subpaths. The exclusion is by full package name (`coin-module-framework`, `coin-framework`,
   `coin-modules-monitoring`, `coin-module-boilerplate`, `coin-tester*`), because the prefix alone
   would also take them.
@@ -216,6 +233,10 @@ contract, so importing it stays legal, as does each entry named in `allow`; `for
 eager, so importing it is reported like importing a family, `require("~/families")` included. Every
 other file of the folder is reported unless it is in `allow`. Without `familiesDir` only
 `coin-package` and `live-common-family` are checked.
+
+`coinFamilies.rules` holds the three rules of the plugin: `no-coin-specific-import`,
+`no-family-branch` and `no-currency-id-branch`. The two branch rules receive only `familiesDir`: their
+schema rejects `barrel` and `allow`.
 
 **Baseline.** An app starts from today's leaks with oxlint's own suppressions, from the app folder
 and with the paths `lint:ci` uses: `oxlint --suppress-all` writes `oxlint-suppressions.json`, one
@@ -261,8 +282,8 @@ name, which keeps coin behaviour inside `families/`. A family name is a director
   shadowing variable of the same name is not told apart.
 
 Files inside the app's families folder are not checked, since narrowing on the family is what they are
-for. The option is the one of `no-coin-specific-import`: `["error", { familiesDir: "src/renderer/families" }]`.
-Without it every file is checked.
+for. The option is the `familiesDir` of `no-coin-specific-import`, which `coinFamiliesLint` passes on:
+`["error", { familiesDir: "src/renderer/families" }]`. Without it every file is checked.
 
 It does not report a comparison of two family expressions (`a.family === b.family`), a `typeof`
 check, a name that is not a family, or a lookup in an object keyed by family.
@@ -294,5 +315,22 @@ The `familiesDir` option and the exemption of the families folder are the ones o
 
 The blind spots of `no-family-branch` apply, and one more: a currency compared without `.id`
 (`route.currency !== "tezos"`) is not a currency id expression, so it is not reported.
+
+### `coin-families-exceptions`
+
+A baseline entry is debt, owned by the burn-down. A file that stays on purpose is an exception, and its reason
+lives in the app's `coin-families-exceptions.json` (`apps/ledger-live-desktop`, `apps/ledger-live-mobile`), because
+`oxlint-suppressions.json` cannot hold one and oxlint rewrites it when it prunes. An entry is
+`{ file, kind, owner, reason, ticket?, rules? }`:
+
+- **`accepted`**: stays for good; `owner` and `reason` are required.
+- **`temporary`**: goes away with a flag or a ticket; `reason` or `ticket` is required.
+- **`rules`**: the `coin-families/*` rules that report the file, absent when none does (URL data, a local list).
+
+[`src/check-coin-families-exceptions.js`](src/check-coin-families-exceptions.js), run by
+`pnpm lint:coin-families-exceptions` and part of `pnpm lint:arch`, fails on a file that no longer exists, on a rule
+the baseline no longer holds for the file (remove it from the entry when the leak is fixed), on a missing field and
+on a file listed twice. It does not ask a reason for each baseline entry: the rest of the baseline is debt, tracked
+by its tickets.
 
 Run the rules' tests with `nx run @support/lint:test`.

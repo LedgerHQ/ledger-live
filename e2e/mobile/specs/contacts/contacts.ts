@@ -29,6 +29,7 @@ import { TIMEOUT } from "@e2e/utils/timeouts";
 
 import type { ApplicationOptions } from "@e2e/page/index";
 import type { PartialFeatures } from "@shared/feature-flags";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 // Pinned: the Contacts entry point lives on My Wallet, which the Q1 preset turns off.
 const CONTACTS_FEATURE_FLAGS: PartialFeatures = {
@@ -47,7 +48,8 @@ const CONTACTS_USERDATA = "contacts";
 const CONTACT_NAME = generateContactName();
 const RENAMED_CONTACT_NAME = generateContactName();
 
-function tagContactsScenario(tmsLinks: string[], tags: string[]) {
+function tagContactsScenario(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   setTeamOwner(Team.WALLET_XP);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -113,7 +115,8 @@ async function initAppWithContactDevice() {
  * in the test itself: Contacts blocks create/rename/delete until Ledger Sync reports "ready", and
  * pre-seeding is what gets it there without the in-app activation prompt.
  */
-export function runCreateRenameDeleteContactTest(tmsLinks: string[], tags: string[]) {
+export function runCreateRenameDeleteContactTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   describeIfNotNanoS("Contacts", () => {
     setupLedgerSyncSeed();
     cleanupLedgerSyncAfterAll();
@@ -170,7 +173,8 @@ export function runCreateRenameDeleteContactTest(tmsLinks: string[], tags: strin
  * B2CQA-6240. Contacts are pulled from a pre-seeded Ledger Sync document rather than created in
  * the UI, so browse/search starts from a populated list the app must sort alphabetically.
  */
-export function runBrowseAndSearchContactsTest(tmsLinks: string[], tags: string[]) {
+export function runBrowseAndSearchContactsTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   describeIfNotNanoS("Contacts", () => {
     setupLedgerSyncSeed();
     cleanupLedgerSyncAfterAll();
@@ -223,7 +227,8 @@ const ETHEREUM_ADDRESS = CONTACT_ADDRESS_DATASET.find(
   row => row.networkId === "ethereum" && !row.isEns,
 );
 
-export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[]) {
+export function runRenameContactOnDeviceTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   describeIfContactsDeviceSupported("Contacts - rename with an address (mock server)", () => {
     if (!ETHEREUM_ADDRESS) {
       throw new Error("No Ethereum address in the contact dataset");
@@ -258,7 +263,7 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
         apps,
       };
       session = await provisionMockServerSession([config]);
-      mockServer = new MockServerDevicePage(session.baseUrl, session.token);
+      mockServer = new MockServerDevicePage(session);
 
       const port = await launchApp({
         newInstance: true,
@@ -289,13 +294,13 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
     afterAll(async () => {
       if (!session) return;
       try {
-        await disposeMockServerSession(session.baseUrl, session.token);
+        await disposeMockServerSession(session);
       } catch {
         // The session expires on its own. A failed dispose must not hide the spec result.
       }
     });
 
-    tagContactsScenario(tmsLinks, tags);
+    tagContactsScenario({ tmsLinks, tags });
 
     it("Register an address and rename the contact on the device", async () => {
       const contactRowId = await addContactAndOpenIt(CONTACT_NAME);
@@ -328,7 +333,8 @@ export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[])
   });
 }
 
-export function runCreateDeleteContactWithAddressesTest(tmsLinks: string[], tags: string[]) {
+export function runCreateDeleteContactWithAddressesTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   describeIfContactsDeviceSupported("Contacts", () => {
     setupLedgerSyncSeed();
     cleanupLedgerSyncAfterAll();
@@ -337,7 +343,7 @@ export function runCreateDeleteContactWithAddressesTest(tmsLinks: string[], tags
       await initAppWithContactDevice();
     });
 
-    tagContactsScenario(tmsLinks, tags);
+    tagContactsScenario({ tmsLinks, tags });
 
     it("Create and delete a contact with addresses", async () => {
       const contactRowId = await addContactAndOpenIt(CONTACT_NAME);

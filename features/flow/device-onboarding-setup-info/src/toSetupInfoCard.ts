@@ -2,6 +2,7 @@ import type { SetupInfoCard } from "./SetupInfo.types";
 
 const cardByState = new Map<string, SetupInfoCard>([
   ["deviceSetup.setupChoice", "setupChoice"],
+  ["deviceSetup.pin", "pin"],
   ["deviceSetup.newSeed", "recoveryPhrase"],
   ["deviceSetup.backupRecoveryKey", "recoveryKey"],
   ["deviceSetup.restoreChoice", "restoreChoice"],

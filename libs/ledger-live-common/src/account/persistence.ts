@@ -22,13 +22,18 @@ function swapHistoryChanged(
   });
 }
 
-/** Canton: the DSO party that tells native CC offers apart. */
-const cantonNativeInstrumentAdmin = (account: Account): unknown =>
-  "cantonResources" in account &&
-  typeof account.cantonResources === "object" &&
-  account.cantonResources !== null &&
-  "nativeInstrumentAdmin" in account.cantonResources
-    ? account.cantonResources.nativeInstrumentAdmin
+const CANTON_PERSISTED_KEYS = [
+  "nativeInstrumentAdmin",
+  "scanCheckpoint",
+  "replayTransactions",
+  "hash",
+  "height",
+];
+
+/** Canton: the DSO party that tells native CC offers apart, and where the history is read from. */
+const cantonPersistedResources = (account: Account): string | undefined =>
+  "cantonResources" in account
+    ? JSON.stringify(account.cantonResources, CANTON_PERSISTED_KEYS)
     : undefined;
 
 /**
@@ -107,7 +112,7 @@ export function accountPersistedStateChanged(prev: Account, next: Account): bool
       return true;
   }
 
-  if (cantonNativeInstrumentAdmin(prev) !== cantonNativeInstrumentAdmin(next)) return true;
+  if (cantonPersistedResources(prev) !== cantonPersistedResources(next)) return true;
 
   // sub accounts
   if ((prev.subAccounts?.length ?? 0) !== (next.subAccounts?.length ?? 0)) return true;

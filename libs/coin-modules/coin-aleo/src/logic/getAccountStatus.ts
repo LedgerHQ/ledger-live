@@ -1,5 +1,4 @@
 import { abortable } from "@ledgerhq/coin-module-framework/promises";
-import { splitAccountKey } from "../accountKey";
 import { apiClient } from "../network/api";
 import type { AleoContext } from "../types";
 import { getPublicBalance } from "./getPublicBalance";
@@ -7,9 +6,8 @@ import { getPublicBalance } from "./getPublicBalance";
 /** Read on the public state only: an account holding nothing but private records reads as unused. */
 export async function getAccountStatus(
   context: AleoContext,
-  key: string,
+  address: string,
 ): Promise<{ used: boolean }> {
-  const { address } = splitAccountKey(key);
   const config = await context.config();
   const [balances, { transactions }] = await abortable(context.signal, () =>
     Promise.all([

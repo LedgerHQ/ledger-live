@@ -6,7 +6,6 @@ import React from "react";
 import { cleanup, render, screen, waitFor } from "tests/testSetup";
 import { server } from "tests/server";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import coinConfig from "@ledgerhq/coin-concordium/config";
 import OnboardModal from "../index";
 import {
   createConcordiumAccount,
@@ -160,20 +159,6 @@ describe("OnboardModal Integration", () => {
   const creatableAccount = createConcordiumAccount(currency, { used: false });
   const defaultProps = createDefaultProps(currency, creatableAccount);
   const initialState = createInitialState(mockDevice);
-
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: { type: "active" },
-      name: "Concordium",
-      unit: { name: "ccd", code: "CCD", magnitude: 6 },
-      networkType: "mainnet",
-      grpcUrl: "https://ccd-node-mainnet.coin.ledger.com",
-      grpcPort: 443,
-      proxyUrl: "https://ccd-wallet-proxy-mainnet.coin.ledger.com",
-      minReserve: 0,
-      enableTokens: false,
-    }));
-  });
 
   beforeEach(() => {
     jest.clearAllMocks();

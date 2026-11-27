@@ -2,10 +2,12 @@ import type { Device } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
 import { FilterByDeviceModelId } from "../../BleDevicePairingFlow/BleDevicesScanning";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { SettingsHomeSectionId } from "@features/flow-settings";
 import { LargeMoverLandingPageParams } from "./LandingPagesNavigator";
 
 export type SettingsNavigatorStackParamList = {
   [ScreenName.SettingsScreen]: undefined;
+  [ScreenName.SettingsSection]: { section: SettingsHomeSectionId };
   [ScreenName.CountervalueSettings]: undefined;
   [ScreenName.GeneralSettings]: undefined;
   [ScreenName.AnalyticsPreferencesSettings]: { initialTogglesOff?: boolean } | undefined;

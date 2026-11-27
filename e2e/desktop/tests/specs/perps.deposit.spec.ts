@@ -21,6 +21,7 @@ test.describe("Perps deposit", () => {
   // Remove once the Perps feature flags are on PRD.
   test.skip(!IS_PERPS_LIVE_APP_STAGING, "Perps feature flags are not on PRD yet");
 
+  // Forces broadcast off, overriding any host DISABLE_TRANSACTION_BROADCAST value.
   setupEnv(true);
 
   // Must run before the app fixture starts Speculos.

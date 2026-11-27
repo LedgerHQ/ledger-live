@@ -1,6 +1,6 @@
 services:
   yaci:
-    image: bloxbean/yaci-cli:0.10.6@sha256:054643c8a2b6610c40beee492505344e87761860ef60c3abadd02102fac06a03
+    image: bloxbean/yaci-cli:0.12.0@sha256:da19478266ec2ff2c82bf5211ca8a2f5f18692f871d50ebce1c86d9d48e2e38d
     container_name: coin-tester-cardano
     # The image's default entrypoint (`sh /app/yaci-cli.sh`) uses bash-only syntax, so call the native
     # binary directly. `up` is refused in Docker mode; `create-node --start` is its Docker equivalent.
@@ -12,6 +12,9 @@ services:
       ogmios_enabled: "false"
       kupo_enabled: "false"
       IS_DOCKER: "true"
+      # Until yaci-devkit#184 is fixed, the image's default haskell-only mode cannot build faucet txs on
+      # protocol 11: https://github.com/bloxbean/yaci-devkit/issues/184
+      nodeMode: companion
     # Host loopback only: the admin API is unauthenticated.
     ports:
       - "127.0.0.1:8080:8080" # yaci-store (reads)

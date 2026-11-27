@@ -53,8 +53,8 @@ function mapNativeOperations(
         type: opType,
         senders: [from],
         recipients: [to],
-        // OUT: value = amount + fees (bridge convention)
-        value: value + fee,
+        // The amount only: the generic bridge adds the fee it reads from `tx.fees`
+        value,
         asset: { type: "native" },
         tx: { hash, block, fees: fee, date, failed },
       });

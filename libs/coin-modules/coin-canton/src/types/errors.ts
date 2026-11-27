@@ -37,3 +37,12 @@ export class TransferOfferExpiredError extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+/** A coin-config value that breaks an invariant of its reader, such as a zero TTL or page size. */
+export class CantonInvalidConfigError extends Error {
+  override name = "CantonInvalidConfigError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "CantonInvalidConfigError");
+    if (fields) Object.assign(this, fields);
+  }
+}

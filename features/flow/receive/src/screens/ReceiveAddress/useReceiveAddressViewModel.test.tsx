@@ -1,8 +1,17 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
+import { mockAccountStatus } from "@domain/entity-account-status/schema.mock";
+import { trackPage } from "@shared/analytics";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
-import { receiveTestWrapper, testAccountUUID, testReceive } from "../../__tests__/receiveTestStore";
+import {
+  makeReceiveTestStore,
+  receiveTestWrapper,
+  testAccountUUID,
+  testReceive,
+} from "../../__tests__/receiveTestStore";
 import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
 import { useReceiveAddressViewModel } from "./useReceiveAddressViewModel";
+
+jest.mock("@shared/analytics", () => ({ track: jest.fn(), trackPage: jest.fn() }));
 
 jest.mock("./useReceiveAddressHeader", () => {
   const actual = jest.requireActual("./useReceiveAddressHeader");
@@ -16,8 +25,8 @@ describe("useReceiveAddressViewModel", () => {
     const { useReceiveAddressHeader: actualHeader } = jest.requireActual(
       "./useReceiveAddressHeader",
     );
-    jest.mocked(useReceiveAddressHeader).mockImplementation((descriptor, assetId) => ({
-      ...actualHeader(descriptor, assetId),
+    jest.mocked(useReceiveAddressHeader).mockImplementation(assetId => ({
+      ...actualHeader(assetId),
       data: undefined,
     }));
 
@@ -35,7 +44,7 @@ describe("useReceiveAddressViewModel", () => {
     expect(result.current.address?.assetIcon).toBeUndefined();
   });
 
-  it("should list the service warning, then the notices", async () => {
+  it("should list the notices", async () => {
     const { result } = renderHook(
       () =>
         useReceiveAddressViewModel({
@@ -43,61 +52,87 @@ describe("useReceiveAddressViewModel", () => {
           assetId: ETH,
           onClose: jest.fn(),
           getFamilyConfig: () => ({ notices: ["utxo"] }),
-          serviceIncidents: [{ title: "Ethereum degraded" }],
         }),
       { wrapper: receiveTestWrapper() },
     );
 
-    await waitFor(() =>
-      expect(result.current.noticesPlaceholderLabel).toMatch(/^Ethereum degraded · ./),
-    );
+    await waitFor(() => expect(result.current.notices.map(notice => notice.id)).toEqual(["utxo"]));
   });
 
-  it("should open the incidents from the warning, then close them", async () => {
+  it("should show the service incident before the address, until the user continues", async () => {
     const { result } = renderHook(
       () =>
         useReceiveAddressViewModel({
           accountUUID: testAccountUUID,
           assetId: ETH,
           onClose: jest.fn(),
-          serviceIncidents: [{ title: "Ethereum degraded", description: "Investigating" }],
+          serviceIncidents: [
+            { title: "Ethereum degraded", description: [{ text: "Investigating" }] },
+          ],
         }),
       { wrapper: receiveTestWrapper() },
     );
 
-    await waitFor(() => expect(result.current.serviceWarning).toBeDefined());
-    act(() => result.current.serviceWarning?.onPress());
-    expect(result.current.serviceStatus?.incidents).toEqual([
-      { title: "Ethereum degraded", description: "Investigating" },
-    ]);
+    expect(result.current.serviceStatus).toEqual(
+      expect.objectContaining({
+        title: "Ethereum degraded",
+        description: [{ text: "Investigating" }],
+      }),
+    );
 
-    act(() => result.current.serviceStatus?.onClose());
+    act(() => result.current.serviceStatus?.onContinue());
+
     expect(result.current.serviceStatus).toBeUndefined();
+    await waitFor(() => expect(result.current.address).toBeDefined());
   });
 
-  it("should keep the incidents closed once resolved, even when new ones arrive", async () => {
-    const { result, rerender } = renderHook(
-      ({ incidents }: { incidents: { title: string }[] }) =>
+  it("should open the support articles in the user's language", () => {
+    const openExternal = jest.fn();
+    const { result } = renderHook(
+      () =>
         useReceiveAddressViewModel({
           accountUUID: testAccountUUID,
           assetId: ETH,
           onClose: jest.fn(),
-          serviceIncidents: incidents,
         }),
       {
-        wrapper: receiveTestWrapper(),
-        initialProps: { incidents: [{ title: "Ethereum degraded" }] },
+        wrapper: receiveTestWrapper(makeReceiveTestStore(), {
+          openExternal,
+          localization: { currentLanguage: "fr", defaultLanguage: "en", languages: { fr: "fr" } },
+        }),
       },
     );
 
-    await waitFor(() => expect(result.current.serviceWarning).toBeDefined());
-    act(() => result.current.serviceWarning?.onPress());
-    rerender({ incidents: [] });
+    act(() => result.current.helpCard.onPress());
+    act(() => result.current.helpPanel?.questions[1].onPress());
 
-    expect(result.current.serviceStatus).toBeUndefined();
+    expect(openExternal).toHaveBeenCalledWith(
+      "https://support.ledger.com/fr/article/4404389453841-zd",
+    );
+  });
 
-    rerender({ incidents: [{ title: "Ethereum degraded again" }] });
+  it("should record the gate page only once the help no longer covers it", async () => {
+    const { result } = renderHook(
+      () =>
+        useReceiveAddressViewModel({
+          accountUUID: testAccountUUID,
+          assetId: ETH,
+          onClose: jest.fn(),
+        }),
+      {
+        wrapper: receiveTestWrapper(
+          makeReceiveTestStore({
+            accountStatus: async () => mockAccountStatus({ gate: { type: "onboarding" } }),
+          }),
+        ),
+      },
+    );
+    act(() => result.current.helpCard.onPress());
+    await waitFor(() => expect(result.current.gate?.type).toBe("onboarding"));
 
-    expect(result.current.serviceStatus).toBeUndefined();
+    const gatePage = expect.objectContaining({ category: "Receive - Onboarding Required" });
+    expect(trackPage).not.toHaveBeenCalledWith(gatePage);
+    act(() => result.current.helpPanel?.onClose());
+    expect(trackPage).toHaveBeenCalledWith(gatePage);
   });
 });

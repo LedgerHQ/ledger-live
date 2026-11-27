@@ -11,12 +11,12 @@ export const sendPolkadot = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getSendEvents(tx);
-      expectSpeculosEventsContain(tx.amount, events);
+      expectSpeculosEventsContain({ substring: tx.amount, events });
 
       if (!tx.accountToCredit.address) {
         throw new Error("Recipient address is not set");
       }
-      expectSpeculosEventsContain(tx.accountToCredit.address, events);
+      expectSpeculosEventsContain({ substring: tx.accountToCredit.address, events });
 
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);

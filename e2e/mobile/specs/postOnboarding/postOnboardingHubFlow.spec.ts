@@ -5,4 +5,4 @@ const testConfig = {
   tags: ["@postOnboarding", "@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
-runPostOnboardingHubFlowTest(testConfig.tmsLinks, testConfig.tags);
+runPostOnboardingHubFlowTest(testConfig);

@@ -95,8 +95,9 @@ Then run `pnpm lint:arch` once more, since it stopped at the first failing check
 
 ## 6. Skills and docs
 
-When the change touches `.agents/` or `docs/`, and the root `package.json` defines a
-`skills:check` script, run it:
+When the change touches `.agents/` or `docs/`, or moves, renames or deletes any file, and the root
+`package.json` defines a `skills:check` script, run it. It catches skills and docs that still point
+at the old path:
 
 ```bash
 pnpm skills:check

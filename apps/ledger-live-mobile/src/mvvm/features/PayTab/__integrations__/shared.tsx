@@ -9,7 +9,6 @@ import {
 import {
   countervaluesTestUserSettings,
   createStore,
-  render,
   renderWithReactQuery,
   screen,
   withFlagOverrides,
@@ -20,6 +19,9 @@ import { mockStablecoinsResponse } from "@domain/api-aggregated-assets/mock/stab
 import { cardApiExtra } from "@shared/api-services";
 import { getEnv } from "@shared/env";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
+import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
 import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
@@ -30,10 +32,8 @@ import type { State } from "~/reducers/types";
 import type { Contact } from "@domain/entity-contact";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import PayTabNavigator from "LLM/features/PayTab";
-import { PayTabRequestReceiveScreen } from "LLM/features/PayTab/screens/RequestReceive";
 import OperationsHistoryNavigator from "LLM/features/OperationsHistory/Navigator";
 import SendWorkflow from "LLM/features/Send";
-import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import { ModularDrawerWrapper } from "LLM/features/ModularDrawer";
 import reducers from "~/reducers";
 import { applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
@@ -66,14 +66,35 @@ const uni = TokenCurrencySchema.parse({
   units: [{ name: "Uniswap", code: "UNI", magnitude: 18 }],
 });
 export const payTabEthAccount = genAccount("pay-tab-eth", { currency: ethereum });
+const payTabEthDescriptor = fromLegacyAccount(payTabEthAccount);
+export const payTabEthAccountUUID = computeAccountUUID(payTabEthDescriptor);
+const payTabAccountEntries = accountsSlice.reducer(
+  undefined,
+  legacyAccountsSynced([
+    {
+      accountUUID: payTabEthAccountUUID,
+      descriptor: payTabEthDescriptor,
+      legacyId: AccountIdSchema.parse(payTabEthAccount.id),
+    },
+  ]),
+);
 const payTabUsdcAccount = genTokenAccount(0, payTabEthAccount, usdc);
 const payTabUniAccount = genTokenAccount(0, payTabEthAccount, uni);
 
 type TestStackParamList = {
   PayTabTest: undefined;
-  [NavigatorName.ReceiveFunds]: {
-    screen: ScreenName.ReceiveProvider;
-    params: { manifestId: string; fromMenu: boolean; noahAuth?: "createAccount" | "logIn" };
+  [NavigatorName.ReceiveFunds]:
+    | {
+        screen: ScreenName.ReceiveProvider;
+        params: { manifestId: string; fromMenu: boolean; noahAuth?: "createAccount" | "logIn" };
+      }
+    | {
+        screen: ScreenName.ReceiveConfirmation;
+        params: { accountId: string; parentId?: string };
+      };
+  [NavigatorName.Receive]: {
+    screen: ScreenName.ReceiveAddress;
+    params: { accountUUID: string; assetId: string };
   };
   [NavigatorName.MyWallet]:
     | {
@@ -110,14 +131,26 @@ type TestStackParamList = {
 };
 
 const Stack = createNativeStackNavigator<TestStackParamList>();
-const RequestStack = createNativeStackNavigator<PayTabNavigatorParamList>();
 
 function ReceiveFundsScreen({
   route,
 }: NativeStackScreenProps<TestStackParamList, NavigatorName.ReceiveFunds>) {
   return (
     <Text testID="receive-funds-screen">
-      {route.params.screen}:{route.params.params.manifestId}
+      {route.params.screen}:
+      {"manifestId" in route.params.params
+        ? route.params.params.manifestId
+        : route.params.params.accountId}
+    </Text>
+  );
+}
+
+function ReceiveAddressScreen({
+  route,
+}: NativeStackScreenProps<TestStackParamList, NavigatorName.Receive>) {
+  return (
+    <Text testID="receive-address-screen">
+      {route.params.params.accountUUID}:{route.params.params.assetId}
     </Text>
   );
 }
@@ -294,6 +327,7 @@ function getPayTabRenderInput({
       <Stack.Navigator screenOptions={{ headerShown: false, animation: "none" }}>
         <Stack.Screen name="PayTabTest" component={PayTabNavigator} />
         <Stack.Screen name={NavigatorName.ReceiveFunds} component={ReceiveFundsScreen} />
+        <Stack.Screen name={NavigatorName.Receive} component={ReceiveAddressScreen} />
         <Stack.Screen name={NavigatorName.MyWallet} component={MyWalletContactsScreen} />
         <Stack.Screen name={NavigatorName.SendFunds} component={SendFundsScreen} />
         <Stack.Screen name={NavigatorName.SendFlow} component={SendWorkflow} />
@@ -329,6 +363,7 @@ function getPayTabRenderInput({
       const next: State = {
         ...state,
         payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour },
+        accountEntries: payTabAccountEntries,
         ...(signedInCard
           ? {
               payCardAuth: {
@@ -395,26 +430,4 @@ export async function selectUsdcOnEthereum(user: Awaited<ReturnType<typeof rende
   await user.press(await screen.findByTestId("network-item-Ethereum"));
   expect(await screen.findByText(/select account/i)).toBeVisible();
   await user.press(await screen.findByTestId("account-item"));
-}
-
-export function renderRequestReceive(
-  params: PayTabNavigatorParamList[typeof ScreenName.PayTabRequestReceive] = {
-    accountId: payTabEthAccount.id,
-    parentId: payTabEthAccount.id,
-    currency: usdc,
-  },
-) {
-  return render(
-    <RequestStack.Navigator
-      screenOptions={{ headerShown: false, animation: "none" }}
-      initialRouteName={ScreenName.PayTabRequestReceive}
-    >
-      <RequestStack.Screen
-        name={ScreenName.PayTabRequestReceive}
-        component={PayTabRequestReceiveScreen}
-        initialParams={params}
-      />
-    </RequestStack.Navigator>,
-    { overrideInitialState: withUsdcHoldings },
-  );
 }

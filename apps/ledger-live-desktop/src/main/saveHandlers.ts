@@ -76,18 +76,3 @@ ipcMain.handle(
     }
   },
 );
-
-ipcMain.handle(
-  CHANNELS.savePng,
-  async (_event, options: Electron.SaveDialogOptions, base64: string): Promise<SaveOutcome> => {
-    if (!base64) return "failed";
-    try {
-      const target = await resolveSaveTarget({ options });
-      if (!target) return "canceled";
-      await fs.writeFile(target, Buffer.from(base64, "base64"));
-      return "saved";
-    } catch {
-      return "failed";
-    }
-  },
-);

@@ -12,7 +12,7 @@ import type { XrpAccountInfo, XrpTxData } from "@ledgerhq/coin-xrp/types";
 import { getCoinModuleApi } from "../../../bridge/generic-coin-framework/api";
 import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
 import { getXrpEnabledTokenStandards } from "../config";
-import { heldXrpTokenIds } from "../tokenHolding";
+import { heldXrpTokenIds } from "../tokens";
 import type { XrpTokenResources } from "../types";
 
 export const IOU_HEX_CODE = /^[0-9A-F]{40}$/;

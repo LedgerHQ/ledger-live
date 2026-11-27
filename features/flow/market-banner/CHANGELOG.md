@@ -238,24 +238,4 @@
 
 - [#14908](https://github.com/LedgerHQ/ledger-live/pull/14908) [`b4cc7b3`](https://github.com/LedgerHQ/ledger-live/commit/b4cc7b3c80267c45fa70cec5c294b15ef8d2404b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - connect features folder to SonarCloud coverage pipeline
 
-## 0.3.0
-
-### Minor Changes
-
-- [#14616](https://github.com/LedgerHQ/ledger-live/pull/14616) [`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate to React 19.
-
-- [#14742](https://github.com/LedgerHQ/ledger-live/pull/14742) [`85e3e3e`](https://github.com/LedgerHQ/ledger-live/commit/85e3e3ed96e6298a6fa7dd162d19226b99012647) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix import duplicates eslint rule
-
-- [#14135](https://github.com/LedgerHQ/ledger-live/pull/14135) [`9d5c4c6`](https://github.com/LedgerHQ/ledger-live/commit/9d5c4c6a0baec0292720d522b3d827a9c2c55247) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore(lwd): update lwd and dependent libs to react 19
-
-## 0.3.0-next.0
-
-### Minor Changes
-
-- [#14616](https://github.com/LedgerHQ/ledger-live/pull/14616) [`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate to React 19.
-
-- [#14742](https://github.com/LedgerHQ/ledger-live/pull/14742) [`85e3e3e`](https://github.com/LedgerHQ/ledger-live/commit/85e3e3ed96e6298a6fa7dd162d19226b99012647) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix import duplicates eslint rule
-
-- [#14135](https://github.com/LedgerHQ/ledger-live/pull/14135) [`9d5c4c6`](https://github.com/LedgerHQ/ledger-live/commit/9d5c4c6a0baec0292720d522b3d827a9c2c55247) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore(lwd): update lwd and dependent libs to react 19
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

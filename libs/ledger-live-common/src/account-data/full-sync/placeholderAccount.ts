@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountContext } from "@domain/entity-account-context";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import {
   emptyHistoryCache,
@@ -10,10 +11,13 @@ import { fromDescriptorPath } from "@domain/entity-derivation";
 import { addressFromKey, toLegacyAccount } from "../../account/accountDescriptor";
 import { usesMockBridges } from "../../bridge/mockMode";
 
-/** An account the store does not hold, from its descriptor (the mock scan's own in mock mode). */
-export async function placeholderAccount(descriptor: AccountDescriptor): Promise<Account> {
-  const { currencyId, derivationMode, index, xpub, freshAddress, publicKey } =
-    toLegacyAccount(descriptor);
+/** An account the store does not hold, from its descriptor and its context (the mock scan's own in mock mode). */
+export async function placeholderAccount(
+  descriptor: AccountDescriptor,
+  context?: AccountContext,
+): Promise<Account> {
+  const { currencyId, derivationMode, index, xpub, freshAddress, publicKey, customData } =
+    toLegacyAccount(descriptor, context);
   const currency = getCryptoCurrencyById(currencyId);
   // A public-key family's sync reads its key from the account id (TON, ICP, Aptos, Stacks).
   const xpubOrAddress = xpub ?? publicKey ?? freshAddress ?? "";
@@ -32,6 +36,7 @@ export async function placeholderAccount(descriptor: AccountDescriptor): Promise
       currencyId,
       xpubOrAddress,
       derivationMode,
+      customData,
     }),
     seedIdentifier: xpubOrAddress,
     derivationMode,

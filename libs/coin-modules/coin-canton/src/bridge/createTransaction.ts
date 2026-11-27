@@ -6,6 +6,7 @@ import { Transaction } from "../types";
 export const createTransaction: AccountBridge<Transaction>["createTransaction"] = () => ({
   family: "canton",
   amount: new BigNumber(0),
+  useAllAmount: false,
   recipient: "",
   fee: null,
   memo: "",

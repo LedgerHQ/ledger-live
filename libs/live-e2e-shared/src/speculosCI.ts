@@ -51,7 +51,10 @@ async function claimSessionTokenDir(): Promise<boolean> {
   }
 }
 
-async function persistSessionToken(runId: string, token: string): Promise<void> {
+type SessionTokenOptions = { runId: string; token: string };
+
+async function persistSessionToken(options: SessionTokenOptions): Promise<void> {
+  const { runId, token } = options;
   const file = sessionTokenPath(runId);
   if (!file) {
     console.warn(
@@ -160,14 +163,17 @@ function speculinhoOrigin(suite: string): string {
   return `ledger-live/${suite}`;
 }
 
-function buildAcquirePayload(
-  deviceParams: DeviceParams,
-  runId: string,
-  seed: string,
-  origin: string,
-  protectedSession: boolean,
-  vnc: boolean,
-) {
+type AcquirePayloadOptions = {
+  deviceParams: DeviceParams;
+  runId: string;
+  seed: string;
+  origin: string;
+  protectedSession: boolean;
+  vnc: boolean;
+};
+
+function buildAcquirePayload(options: AcquirePayloadOptions) {
+  const { deviceParams, runId, seed, origin, protectedSession, vnc } = options;
   const { model, firmware, appName, appVersion, dependencies, pki } = deviceParams;
   const device = reverseModelMap[model];
   if (!device) {
@@ -297,8 +303,11 @@ function capacityRetryDelayMs(retryAfter: unknown): number {
   return CAPACITY_RETRY_MIN_MS + Math.random() * (CAPACITY_RETRY_MAX_MS - CAPACITY_RETRY_MIN_MS);
 }
 
+type PostAcquireOptions = { speculinhoUrl: string; payload: object; capacityDeadline: number };
+
 /** POSTs /acquire, waiting out HTTP 429 until `capacityDeadline`. A 429 creates no instance. */
-async function postAcquire(speculinhoUrl: string, payload: object, capacityDeadline: number) {
+async function postAcquire(options: PostAcquireOptions) {
+  const { speculinhoUrl, payload, capacityDeadline } = options;
   const res = await axios.post<SpeculinhoAcquireResponse>(`${speculinhoUrl}/acquire`, payload, {
     headers: { "Content-Type": "application/json" },
     timeout: 30_000,
@@ -311,7 +320,7 @@ async function postAcquire(speculinhoUrl: string, payload: object, capacityDeadl
     `[speculosCI] ${formatAcquireFailure(res.status, res.data)}: retrying in ${Math.ceil(delayMs / 1_000)}s`,
   );
   await new Promise(resolve => setTimeout(resolve, delayMs));
-  return postAcquire(speculinhoUrl, payload, capacityDeadline);
+  return postAcquire({ speculinhoUrl, payload, capacityDeadline });
 }
 
 function formatAcquireFailure(status: number, data: unknown): string {
@@ -319,13 +328,16 @@ function formatAcquireFailure(status: number, data: unknown): string {
   return `Speculinho POST /acquire failed with HTTP ${status}${body ? `: ${body}` : ""}`;
 }
 
+type SpeculinhoAcquireErrorOptions = { message: string; runId: string };
+
 /**
  * Error thrown when Speculinho `/acquire` fails.
  * Carries the `run_id` so we can still fetch `/status` and `/logs`.
  */
 export class SpeculinhoAcquireError extends Error {
   readonly runId: string;
-  constructor(message: string, runId: string) {
+  constructor(options: SpeculinhoAcquireErrorOptions) {
+    const { message, runId } = options;
     super(message);
     this.name = "SpeculinhoAcquireError";
     this.runId = runId;
@@ -352,7 +364,7 @@ async function rememberSession(runId: string, data?: SpeculinhoAcquireResponse):
     warnUnprotectedSession("the operator did not grant a protected session (operator < 2.0.0?)");
   }
   sessionTokens.set(runId, token);
-  if (token) await persistSessionToken(runId, token);
+  if (token) await persistSessionToken({ runId, token });
   if (data?.vnc_url && data.vnc_password) {
     registerSpeculosScreen(runId, {
       vnc: { kind: "websocket", url: data.vnc_url, password: data.vnc_password, token },
@@ -382,22 +394,22 @@ export async function createSpeculosDeviceCI(
   const capacityDeadline = Date.now() + CAPACITY_WAIT_MS;
 
   for (let attempt = 0; attempt < 5; attempt++) {
-    const payload = buildAcquirePayload(
+    const payload = buildAcquirePayload({
       deviceParams,
       runId,
       seed,
-      speculinhoOrigin(suite),
+      origin: speculinhoOrigin(suite),
       protectedSession,
       vnc,
-    );
+    });
     let res;
     try {
-      res = await postAcquire(speculinhoUrl, payload, capacityDeadline);
+      res = await postAcquire({ speculinhoUrl, payload, capacityDeadline });
     } catch (error: unknown) {
-      throw new SpeculinhoAcquireUnconfirmedError(
-        `[speculosCI] Speculinho /acquire transport error (${speculinhoUrl}): ${sanitizeError(error)}`,
+      throw new SpeculinhoAcquireUnconfirmedError({
+        message: `[speculosCI] Speculinho /acquire transport error (${speculinhoUrl}): ${sanitizeError(error)}`,
         runId,
-      );
+      });
     }
 
     if (res.status === 202) {
@@ -431,13 +443,16 @@ export async function createSpeculosDeviceCI(
       continue;
     }
 
-    throw new SpeculinhoAcquireError(formatAcquireFailure(res.status, res.data), runId);
+    throw new SpeculinhoAcquireError({
+      message: formatAcquireFailure(res.status, res.data),
+      runId,
+    });
   }
 
-  throw new SpeculinhoAcquireError(
-    `[speculosCI] Speculinho /acquire failed after retries (run_id collisions). Last run_id: ${runId}`,
+  throw new SpeculinhoAcquireError({
+    message: `[speculosCI] Speculinho /acquire failed after retries (run_id collisions). Last run_id: ${runId}`,
     runId,
-  );
+  });
 }
 
 /** Resolves to whether Speculinho confirmed the release or reported no such instance. */

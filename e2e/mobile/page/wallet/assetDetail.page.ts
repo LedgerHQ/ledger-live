@@ -10,6 +10,16 @@ type HoldingAddressExpectation = {
   addressFragment?: string;
 };
 
+type HoldingBalanceOptions = {
+  accountId: string;
+  ticker: string;
+};
+
+type ReceivedTransactionOptions = {
+  amount: string;
+  ticker: string;
+};
+
 // Allows half a unit of the last decimal each displayed value.
 const displayRoundingTolerance = (text: string) => {
   const decimals = /\.(\d+)/.exec(text)?.[1].length ?? 0;
@@ -132,16 +142,17 @@ export default class AssetDetailPage {
   async expectTotalBalanceCryptoForTicker(ticker: string) {
     await this.totalBalance.scrollTo(await this.scrollView());
     await this.totalBalanceCrypto.expectVisible();
-    jestExpect(parseTickerAmount(await this.totalBalanceCrypto.getText(), ticker)).toBeGreaterThan(
-      0,
-    );
+    jestExpect(
+      parseTickerAmount({ text: await this.totalBalanceCrypto.getText(), ticker }),
+    ).toBeGreaterThan(0);
   }
 
-  @Step("Expect holding account {{{0}}} to hold {{{1}}}")
-  async expectHoldingBalanceForTicker(accountId: string, ticker: string) {
+  @Step("Expect holding account {{{0.accountId}}} to hold {{{0.ticker}}}")
+  async expectHoldingBalanceForTicker(options: HoldingBalanceOptions) {
+    const { accountId, ticker } = options;
     await this.scrollToAddressItem(accountId);
     const balanceText = await this.addressItemBalance(accountId).getText();
-    jestExpect(parseTickerAmount(balanceText, ticker)).toBeGreaterThan(0);
+    jestExpect(parseTickerAmount({ text: balanceText, ticker })).toBeGreaterThan(0);
   }
 
   @Step("Expect Asset Detail balance, addresses and transaction sections")
@@ -174,14 +185,14 @@ export default class AssetDetailPage {
   async expectHoldingAddressBalancesSumToTotal(accountIds: string[], ticker: string) {
     await this.totalBalance.scrollTo(await this.scrollView());
     const totalText = await this.totalBalanceCrypto.getText();
-    const totalBalance = parseTickerAmount(totalText, ticker);
+    const totalBalance = parseTickerAmount({ text: totalText, ticker });
 
     let holdingBalance = 0;
     let tolerance = displayRoundingTolerance(totalText);
     for (const accountId of accountIds) {
       await this.scrollToAddressItem(accountId);
       const balanceText = await this.addressItemBalance(accountId).getText();
-      const accountBalance = parseTickerAmount(balanceText, ticker);
+      const accountBalance = parseTickerAmount({ text: balanceText, ticker });
       jestExpect(accountBalance).toBeGreaterThan(0);
       holdingBalance += accountBalance;
       tolerance += displayRoundingTolerance(balanceText);
@@ -220,8 +231,9 @@ export default class AssetDetailPage {
   }
 
   /** The page only previews three transactions of all its holders: the history has them all. */
-  @Step("Open the received transaction of {{{0}}} {{{1}}} from the history")
-  async openReceivedTransaction(amount: string, ticker: string) {
+  @Step("Open the received transaction of {{{0.amount}}} {{{0.ticker}}} from the history")
+  async openReceivedTransaction(options: ReceivedTransactionOptions) {
+    const { amount, ticker } = options;
     await this.openTransactionsHistory();
     await app.operation.expectOperationsListVisible();
     await app.operation.openOperationWithAmount(

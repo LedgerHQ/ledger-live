@@ -338,7 +338,10 @@ describe("useSyncOfferRouteViewModel", () => {
   it("should track the offer as the seeded device", () => {
     const { result } = renderOffer(false);
 
-    expect(result.current.seededDeviceType).toBe("stax");
+    expect(result.current.funnelProps).toMatchObject({
+      "onboarding type": "seeded device",
+      deviceType: "stax",
+    });
   });
 
   it("should not complete when activation starts without a trustchain", () => {

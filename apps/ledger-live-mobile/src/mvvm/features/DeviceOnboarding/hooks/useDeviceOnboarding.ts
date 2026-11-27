@@ -117,9 +117,9 @@ export function useDeviceOnboarding({
   const [liveDevice, setLiveDevice] = useState<Device | null>(null);
   const feature = useFeature("deviceOnboarding");
   // A saved value can predate a new param, so the param falls back to its default.
-  const hostsSeedSetup = Boolean(
-    feature?.enabled && { ...defaultFlagParams, ...feature.params }.connectUnseededDevice,
-  );
+  const flagParams = { ...defaultFlagParams, ...feature?.params };
+  const connectUnseededDevice = Boolean(feature?.enabled && flagParams.connectUnseededDevice);
+  const connectSeededDevice = Boolean(feature?.enabled && flagParams.connectSeededDevice);
   const leaveOnboarding = useLeaveOnboarding({
     device: liveDevice,
     navigateOnExit,
@@ -313,7 +313,8 @@ export function useDeviceOnboarding({
             deviceId: result.compatDeviceId,
             deviceModelId: session.deviceModelId,
             offerSync,
-            hostsSeedSetup,
+            connectUnseededDevice,
+            connectSeededDevice,
           },
           {
             beforeStart: () => startSessionListener(result, nextPorts.currentSessionId()),
@@ -330,7 +331,8 @@ export function useDeviceOnboarding({
     },
     [
       actorRef,
-      hostsSeedSetup,
+      connectUnseededDevice,
+      connectSeededDevice,
       offerSync,
       portsRef,
       send,
