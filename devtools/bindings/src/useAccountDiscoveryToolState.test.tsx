@@ -237,7 +237,11 @@ describe("useAccountDiscoveryToolState", () => {
     act(() => run.intent.onJobError?.(new Error("late")));
     await runToEnd(run.intent);
     expect(result.current.run).toBe(next);
-    expect(result.current.toolProps.state.status).toBe("scanning");
+    expect(result.current.toolProps.state).toMatchObject({
+      status: "scanning",
+      rows: [],
+      counters: { derivations: 0, statusReads: 0 },
+    });
   });
 
   describe("completion and add", () => {

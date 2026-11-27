@@ -314,21 +314,22 @@ export function useAccountDiscoveryToolState({
         statusThroughRouter(getAccountDataRuntime(extra).router),
       );
       const options = { ...scanRules?.(), currencyId };
+      const isCurrent = () => runRef.current?.intent === intent;
       const input: Input = {
         // The executor calls it again on its retry after a disconnect: the list restarts.
         startScan: connection => {
-          apply({ type: "attempt" });
+          if (isCurrent()) apply({ type: "attempt" });
           return discoverAccounts(
-            countingHost({ derive: createDerive(connection), readStatus }, counter =>
-              apply({ type: "count", counter }),
-            ),
+            countingHost({ derive: createDerive(connection), readStatus }, counter => {
+              if (isCurrent()) apply({ type: "count", counter });
+            }),
             options,
           );
         },
       };
       const intent = createIntent(intentDefinition, input, {
         onJobStateChanged: jobState => {
-          if (runRef.current?.intent !== intent) return;
+          if (!isCurrent()) return;
           setDiscovered(jobState.items);
           apply({ type: "found", items: jobState.items });
           if (jobState.type !== "scanning") {
@@ -337,8 +338,7 @@ export function useAccountDiscoveryToolState({
         },
         // A disconnect keeps the executor on its Disconnected screen, which retries the scan.
         onJobError: error => {
-          if (runRef.current?.intent === intent && !isDeviceDisconnectedError(error))
-            end("error", error);
+          if (isCurrent() && !isDeviceDisconnectedError(error)) end("error", error);
         },
       });
       apply({ type: "scan", currencyId });
