@@ -9,10 +9,13 @@ import {
   AGENT_INTENT_ERROR_TYPES,
   AGENT_INTENT_PAGE_SIZES,
   AGENT_INTENT_STATUSES,
+  type AgentIntentAsset as SdkAgentIntentAsset,
   type AgentIntentCraft as SdkAgentIntentCraft,
   type AgentIntentRecord as SdkAgentIntentRecord,
+  type AgentIntentSendOperation as SdkAgentIntentSendOperation,
   type AgentIntentSignatureReceipt as SdkAgentIntentSignatureReceipt,
   type AgentIntentStats as SdkAgentIntentStats,
+  type AgentIntentSwapOperation as SdkAgentIntentSwapOperation,
   type AgentProfileFields as SdkAgentProfileFields,
   type AgentProfileRecord as SdkAgentProfileRecord,
   type AgentProfileUpdate as SdkAgentProfileUpdate,
@@ -40,7 +43,7 @@ export const AgentIntentAssetSchema = z.object({
   type: z.string().min(1),
   assetReference: z.string().min(1).optional(),
   assetOwner: z.string().min(1).optional(),
-});
+}) satisfies z.ZodType<SdkAgentIntentAsset>;
 
 /** `amount` is in the asset's smallest unit (wei, lamports, token base units). */
 export const AgentIntentSendOperationSchema = z.object({
@@ -53,9 +56,9 @@ export const AgentIntentSendOperationSchema = z.object({
   feeStrategy: z.string().min(1).optional(),
   memo: z.string().min(1).optional(),
   description: z.string().min(1).optional(),
-});
+}) satisfies z.ZodType<SdkAgentIntentSendOperation>;
 
-const POSITIVE_DECIMAL = /^(?!0(?:\.0+)?$)(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/;
+const POSITIVE_DECIMAL = /^(?!0(?:\.0+)?$)(?:0|[1-9]\d*)(?:\.\d+)?$/;
 
 /** Amounts are in the assets' human units, as the agent signed them. */
 export const AgentIntentSwapOperationSchema = z.object({
@@ -68,7 +71,7 @@ export const AgentIntentSwapOperationSchema = z.object({
   toAmount: z.string().regex(POSITIVE_DECIMAL, "Expected a positive decimal amount"),
   provider: z.string().min(1),
   description: z.string().min(1).optional(),
-});
+}) satisfies z.ZodType<SdkAgentIntentSwapOperation>;
 
 const KNOWN_OPERATION_TYPES: ReadonlySet<string> = new Set([
   AgentIntentSendOperationSchema.shape.type.value,
