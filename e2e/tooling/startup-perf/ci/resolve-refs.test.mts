@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  checkReleaseTags,
+  type GitHubGet,
   inputsOf,
+  isRateLimited,
   latestProdTag,
   type LsRemote,
   NIGHTLY,
@@ -9,8 +12,10 @@ import {
   planBuilds,
   type PlanInputs,
   resolveRef,
+  retried,
   summaryOf,
 } from "./resolve-refs.mts";
+import { StepFailure } from "./step.mts";
 
 const SHA = (n: number) => String(n).repeat(40).slice(0, 40);
 
@@ -49,7 +54,6 @@ const INPUTS: PlanInputs = {
   pairs: "20",
   thresholdMs: "100",
   scenarios: "no-accounts,accounts",
-  accountsUserdata: "speculos-x-other-account,swap-history",
   read: "log",
   branchSha: SHA(9),
   branchName: "ci/branch",
@@ -181,12 +185,54 @@ describe("planBuilds", () => {
     );
   });
 
-  it("saves to the cache only from develop, when B is develop, release, main or A's own", () => {
+  it("builds only reviewed branches and release tags in a run from develop", () => {
     const refs = fakeLsRemote([
       ...REFS,
       [SHA(8), "refs/heads/main"],
-      [SHA(9), "refs/heads/feat/x"],
+      [SHA(8), "refs/heads/feat/x"],
     ]);
+    const plan = (inputs: Partial<PlanInputs>) =>
+      planBuilds({ ...INPUTS, branchName: "develop", ...inputs }, refs);
+    assert.equal(plan({ preset: "prod-vs-develop", refA: "", refB: "" }).shaB, SHA(1));
+    assert.equal(plan({ preset: "prod-vs-release", refA: "", refB: "" }).shaB, SHA(2));
+    assert.equal(plan({ refA: "live-mobile@4.27.0", refB: "main" }).shaB, SHA(8));
+    assert.equal(plan({ preset: "aa-noise", refA: "" }).shaA, SHA(9));
+    for (const inputs of [
+      { preset: "prod-vs-develop", refA: "", refB: "feat/x" },
+      { refA: "feat/x", refB: "develop" },
+      { refA: "live-mobile@4.28.0-nightly.1" },
+      { preset: "known-regression", refA: "feat/x" },
+    ]) {
+      assert.throws(
+        () => plan(inputs),
+        /a run from develop builds only develop, release, main, hotfix and live-mobile@X\.Y\.Z tags, as its jobs get develop's identity: to measure '[^']+', run the workflow from it/,
+      );
+    }
+    // A run from another branch gets the branch cache role: it builds any branch.
+    assert.equal(plan({ branchName: "release", refB: "feat/x" }).shaB, SHA(8));
+    const fromTheBranch = planBuilds({ ...INPUTS, branchName: "feat/x", refB: "feat/x" }, refs);
+    assert.equal(fromTheBranch.shaB, SHA(8));
+  });
+
+  it("builds hotfix in a run from develop, as a reviewed branch", () => {
+    const refs = fakeLsRemote([...REFS, [SHA(8), "refs/heads/hotfix"]]);
+    const hotfixCheck = {
+      ...INPUTS,
+      preset: "prod-vs-release",
+      refA: "",
+      refB: "hotfix",
+      scenarios: "no-accounts",
+      branchName: "develop",
+    };
+    const plan = planBuilds(hotfixCheck, refs);
+    assert.equal(plan.shaB, SHA(8));
+    // Only a merged pull request changes it: only A's tag is vetted, and the run saves.
+    assert.deepEqual(plan.tagsToCheck, [{ ref: "live-mobile@4.27.1", sha: SHA(5) }]);
+    assert.equal(plan.save, true);
+  });
+
+  it("saves to the cache only from develop, when B is develop, release, main or A's own", () => {
+    const refs = fakeLsRemote([...REFS, [SHA(8), "refs/heads/main"]]);
     const save = (inputs: Partial<PlanInputs>) =>
       planBuilds({ ...INPUTS, branchName: "develop", ...inputs }, refs).save;
     const nightly = { preset: "prod-vs-develop", refA: "", refB: "" };
@@ -195,11 +241,9 @@ describe("planBuilds", () => {
     assert.equal(save({ refB: "main" }), true);
     assert.equal(save({ preset: "aa-noise" }), true);
     assert.equal(save({ preset: "known-regression" }), true);
-    // A single-commit run builds B from A's commit: reviewed only when A's ref is.
+    // A single-commit run builds B from A's commit, which a run from develop only takes reviewed.
     assert.equal(save({ preset: "aa-noise", refA: "release" }), true);
     assert.equal(save({ preset: "known-regression", refA: "live-mobile@4.27.1" }), true);
-    assert.equal(save({ preset: "aa-noise", refA: "feat/x" }), false);
-    assert.equal(save({ preset: "known-regression", refA: "feat/x" }), false);
     assert.equal(save({ refB: "live-mobile@4.27.1" }), false);
     // Only develop's role writes develop/, which every run restores from.
     assert.equal(save({ ...nightly, branchName: "release" }), false);
@@ -211,12 +255,51 @@ describe("planBuilds", () => {
       planBuilds({ ...INPUTS, branchName: "develop", ...inputs }, fakeLsRemote());
     const nightly = plan({ preset: "prod-vs-develop", refA: "", refB: "" });
     assert.deepEqual([nightly.restore, nightly.cacheA, nightly.save], [true, true, true]);
-    // B is reviewed, so the run may save, but its A is no release's: nothing to restore or save.
+    // B is reviewed, so the run may save, but its A is no release's: only its snapshot is cached.
     const developTwice = plan({ refA: "develop", refB: "develop" });
     assert.deepEqual(
       [developTwice.restore, developTwice.cacheA, developTwice.save],
-      [false, false, true],
+      [true, false, true],
     );
+  });
+
+  it("makes and restores the accounts snapshot only for the accounts scenario", () => {
+    const plan = (scenarios: string) =>
+      planBuilds({ ...INPUTS, refA: "develop", refB: "develop", scenarios }, fakeLsRemote());
+    const withAccounts = plan("no-accounts,accounts");
+    assert.deepEqual([withAccounts.snapshot, withAccounts.restore], [true, true]);
+    assert.equal(withAccounts.snapshotRelease, "live-mobile@4.27.1");
+    const withoutAccounts = plan("no-accounts");
+    assert.deepEqual(
+      [withoutAccounts.snapshot, withoutAccounts.restore, withoutAccounts.snapshotRelease],
+      [false, false, ""],
+    );
+  });
+
+  it("gives each build matrix entry its commit, and B of known-regression its regression", () => {
+    const builds = (inputs: Partial<PlanInputs>) =>
+      planBuilds({ ...INPUTS, ...inputs }, fakeLsRemote()).builds;
+    assert.deepEqual(builds({}), [
+      { side: "a", ref: SHA(6), regression: "" },
+      { side: "b", ref: SHA(1), regression: "" },
+    ]);
+    assert.deepEqual(builds({ preset: "known-regression", refA: "develop" }), [
+      { side: "a", ref: SHA(1), regression: "" },
+      { side: "b", ref: SHA(1), regression: "LIVE-36190" },
+    ]);
+    assert.deepEqual(builds({ preset: "aa-noise", refA: "develop" }), [
+      { side: "a", ref: SHA(1), regression: "" },
+    ]);
+  });
+
+  it("says which platforms the run measures", () => {
+    const flags = (platforms: string) => {
+      const plan = planBuilds({ ...INPUTS, platforms }, fakeLsRemote());
+      return [plan.android, plan.ios];
+    };
+    assert.deepEqual(flags("Android & iOS"), [true, true]);
+    assert.deepEqual(flags("Android Only"), [true, false]);
+    assert.deepEqual(flags("iOS Only"), [false, true]);
   });
 
   for (const pairs of ["4", "7", "x", ""]) {
@@ -233,6 +316,214 @@ describe("planBuilds", () => {
   });
 });
 
+describe("checkReleaseTags", () => {
+  const BOT = {
+    author: { login: "live-github-bot[bot]" },
+    committer: { login: "web-flow" },
+    commit: {
+      message: "chore(hotfix): :fire: hotfix release [skip ci]",
+      verification: { verified: true },
+    },
+  };
+  const HUMAN = { ...BOT, author: { login: "someone" } };
+  const RENOVATE_SYNC = {
+    ...BOT,
+    commit: { ...BOT.commit, message: "chore(deps): sync Podfile.lock and changeset" },
+  };
+  const fakeGitHub = (commit: object, status = "diverged") => {
+    const paths: string[] = [];
+    const get: GitHubGet = async path => {
+      paths.push(path);
+      return path.startsWith("commits/") ? commit : { status };
+    };
+    return { get, paths };
+  };
+  const fromDevelop = planBuilds(
+    { ...INPUTS, preset: "prod-vs-develop", refA: "", refB: "", branchName: "develop" },
+    fakeLsRemote(),
+  );
+
+  it("checks A's and B's tags in a run from develop, and the snapshot's in every run", () => {
+    assert.deepEqual(fromDevelop.tagsToCheck, [{ ref: "live-mobile@4.27.1", sha: SHA(5) }]);
+    const fromRelease = planBuilds(
+      { ...INPUTS, refA: "live-mobile@4.27.0", refB: "develop", branchName: "release" },
+      fakeLsRemote(),
+    );
+    // The snapshot job runs the release's app next to the E2E seed, whichever branch runs it.
+    const snapshotTag = [{ ref: "live-mobile@4.27.1", sha: SHA(5) }];
+    assert.deepEqual(fromRelease.tagsToCheck, snapshotTag);
+    assert.deepEqual(planBuilds(INPUTS, fakeLsRemote()).tagsToCheck, snapshotTag);
+    const noAccounts = { ...INPUTS, scenarios: "no-accounts" };
+    assert.deepEqual(planBuilds(noAccounts, fakeLsRemote()).tagsToCheck, []);
+    const aaFromDevelop = {
+      ...INPUTS,
+      preset: "aa-noise",
+      refA: "",
+      branchName: "develop",
+      scenarios: "no-accounts",
+    };
+    assert.deepEqual(planBuilds(aaFromDevelop, fakeLsRemote()).tagsToCheck, []);
+  });
+
+  it("checks the accounts snapshot's release too, once when it is also build A", () => {
+    const tags = (inputs: Partial<PlanInputs>) =>
+      planBuilds({ ...INPUTS, branchName: "develop", ...inputs }, fakeLsRemote()).tagsToCheck;
+    const snapshotOnly = { preset: "aa-noise", refA: "", scenarios: "accounts" };
+    assert.deepEqual(tags(snapshotOnly), [{ ref: "live-mobile@4.27.1", sha: SHA(5) }]);
+    assert.deepEqual(tags({ refA: "live-mobile@4.27.0", refB: "develop" }), [
+      { ref: "live-mobile@4.27.0", sha: SHA(6) },
+      { ref: "live-mobile@4.27.1", sha: SHA(5) },
+    ]);
+    assert.deepEqual(tags({ refA: "live-mobile@4.27.0", scenarios: "no-accounts" }), [
+      { ref: "live-mobile@4.27.0", sha: SHA(6) },
+    ]);
+  });
+
+  it("checks each commit a release tag resolved to, should it move between A and the snapshot", () => {
+    const peeled = "refs/tags/live-mobile@4.27.1^{}";
+    const moved = fakeLsRemote(
+      REFS.map(([sha, name]): [string, string] => [name === peeled ? SHA(8) : sha, name]),
+    );
+    let resolvedOnce = false;
+    const moving: LsRemote = (options, patterns) => {
+      const refs = resolvedOnce ? moved : fakeLsRemote();
+      if (patterns.includes(peeled)) resolvedOnce = true;
+      return refs(options, patterns);
+    };
+    const nightly = { preset: "prod-vs-develop", refA: "", refB: "", branchName: "develop" };
+    const plan = planBuilds({ ...INPUTS, ...nightly }, moving);
+    assert.deepEqual([plan.shaA, plan.snapshotSha], [SHA(5), SHA(8)]);
+    assert.deepEqual(plan.tagsToCheck, [
+      { ref: "live-mobile@4.27.1", sha: SHA(5) },
+      { ref: "live-mobile@4.27.1", sha: SHA(8) },
+    ]);
+  });
+
+  it("refuses a snapshot release that became a branch after the tags were listed", () => {
+    const tag = "refs/tags/live-mobile@4.27.1";
+    const replaced = fakeLsRemote([
+      ...REFS.filter(([, name]) => !name.startsWith(tag)),
+      [SHA(8), "refs/heads/live-mobile@4.27.1"],
+    ]);
+    const replacing = (): LsRemote => {
+      let listed = false;
+      return (options, patterns) => {
+        const refs = listed ? replaced : fakeLsRemote();
+        if (options.includes("--tags")) listed = true;
+        return refs(options, patterns);
+      };
+    };
+    const snapshotOnly = { preset: "aa-noise", refA: "", scenarios: "accounts" };
+    for (const branchName of ["develop", "ci/branch"]) {
+      assert.throws(
+        () => planBuilds({ ...INPUTS, ...snapshotOnly, branchName }, replacing()),
+        /live-mobile@4\.27\.1 is no longer a release tag of this repository/,
+      );
+    }
+  });
+
+  it("refuses a tag on the release bot's signed hotfix prerelease, which no release is on", async () => {
+    const prerelease = {
+      ...BOT,
+      commit: {
+        ...BOT.commit,
+        message:
+          "chore(hotfix): :fire: hotfix prerelease [LLD(4.27.1-hotfix.0), LLM(4.27.1-hotfix.0)] [skip ci]",
+      },
+    };
+    await assert.rejects(
+      checkReleaseTags(fromDevelop, fakeGitHub(prerelease).get),
+      /live-mobile@4\.27\.1 \(5555555555\) is neither on main nor a signed hotfix release commit/,
+    );
+  });
+
+  it("builds a tag on the release bot's signed hotfix release, without asking where it is", async () => {
+    const github = fakeGitHub(BOT);
+    await checkReleaseTags(fromDevelop, github.get);
+    assert.deepEqual(github.paths, [`commits/${SHA(5)}?per_page=1`]);
+  });
+
+  for (const [name, commit] of [
+    ["someone else's", HUMAN],
+    ["the bot's renovate-sync", RENOVATE_SYNC],
+  ] as const) {
+    for (const status of ["ahead", "identical"]) {
+      it(`builds a tag on ${name} commit on main's history (compare: ${status})`, async () => {
+        const github = fakeGitHub(commit, status);
+        await checkReleaseTags(fromDevelop, github.get);
+        assert.deepEqual(github.paths, [
+          `commits/${SHA(5)}?per_page=1`,
+          `compare/${SHA(5)}...main?per_page=1`,
+        ]);
+      });
+    }
+  }
+
+  for (const [name, commit] of [
+    ["someone else's", HUMAN],
+    ["the bot's renovate-sync", RENOVATE_SYNC],
+    [
+      "the bot's unsigned",
+      { ...BOT, commit: { ...BOT.commit, verification: { verified: false } } },
+    ],
+    ["the bot's, not committed by GitHub,", { ...BOT, committer: { login: "someone" } }],
+    ["a commit with no GitHub user", { author: null, committer: null, commit: {} }],
+  ] as const) {
+    it(`refuses a tag on ${name} commit off main`, async () => {
+      await assert.rejects(
+        checkReleaseTags(fromDevelop, fakeGitHub(commit).get),
+        /live-mobile@4\.27\.1 \(5555555555\) is neither on main nor a signed hotfix release commit of live-github-bot\[bot\]/,
+      );
+    });
+  }
+});
+
+describe("retried", () => {
+  const waits: number[] = [];
+  const wait = async (ms: number) => waits.push(ms);
+
+  it("tries a network error or a 5xx again after 1 s and 2 s", async () => {
+    waits.length = 0;
+    let calls = 0;
+    const flaky = async () => {
+      calls++;
+      if (calls < 3) throw new Error("HTTP 502");
+      return "ok";
+    };
+    assert.equal(await retried(flaky, wait), "ok");
+    assert.deepEqual([calls, waits], [3, [1000, 2000]]);
+  });
+
+  it("gives up after 3 attempts, and at once on a StepFailure", async () => {
+    waits.length = 0;
+    let calls = 0;
+    const down = async () => {
+      calls++;
+      throw new Error("fetch failed");
+    };
+    await assert.rejects(retried(down, wait), /fetch failed/);
+    assert.equal(calls, 3);
+    let refusals = 0;
+    const refused = async () => {
+      refusals++;
+      throw new StepFailure("HTTP 404");
+    };
+    await assert.rejects(retried(refused, wait), /HTTP 404/);
+    assert.equal(refusals, 1);
+  });
+});
+
+describe("isRateLimited", () => {
+  it("tries a 429 or a rate-limited 403 again, not a permission denied", () => {
+    const headers = (entries: Record<string, string> = {}) => new Headers(entries);
+    assert.equal(isRateLimited(429, headers()), true);
+    assert.equal(isRateLimited(403, headers({ "x-ratelimit-remaining": "0" })), true);
+    assert.equal(isRateLimited(403, headers({ "retry-after": "60" })), true);
+    assert.equal(isRateLimited(403, headers({ "x-ratelimit-remaining": "42" })), false);
+    assert.equal(isRateLimited(404, headers({ "retry-after": "60" })), false);
+  });
+});
+
 describe("inputsOf", () => {
   const DISPATCH = {
     PRESET: "custom",
@@ -242,7 +533,6 @@ describe("inputsOf", () => {
     PAIRS: "",
     THRESHOLD: "100",
     SCENARIOS: "accounts",
-    ACCOUNTS_USERDATA: "swap-history",
     READ: "both",
     BRANCH_SHA: SHA(9),
     GITHUB_REF_NAME: "ci/branch",
@@ -270,10 +560,10 @@ describe("inputsOf", () => {
 });
 
 describe("outputsOf and summaryOf", () => {
-  for (const accountsUserdata of [`swap-history\nref_a=${SHA(7)}`, "swap-history\r"]) {
-    it(`refuses an output that spans lines: ${JSON.stringify(accountsUserdata)}`, () => {
-      const plan = planBuilds({ ...INPUTS, accountsUserdata }, fakeLsRemote());
-      assert.throws(() => outputsOf(plan), /accounts_userdata must be on one line/);
+  for (const read of [`log\nref_a=${SHA(7)}`, "log\r"]) {
+    it(`refuses an output that spans lines: ${JSON.stringify(read)}`, () => {
+      const plan = planBuilds({ ...INPUTS, read }, fakeLsRemote());
+      assert.throws(() => outputsOf(plan), /read must be on one line/);
     });
   }
 
@@ -283,6 +573,10 @@ describe("outputsOf and summaryOf", () => {
       outputsOf(plan),
       [
         'sides=["a","b"]',
+        `builds=[{"side":"a","ref":"${SHA(6)}","regression":""},{"side":"b","ref":"${SHA(1)}","regression":""}]`,
+        "snapshot=true",
+        "android=true",
+        "ios=true",
         'scenarios=["no-accounts","accounts"]',
         `ref_a=${SHA(6)}`,
         `ref_b=${SHA(1)}`,
@@ -295,8 +589,9 @@ describe("outputsOf and summaryOf", () => {
         "platforms=Android & iOS",
         "pairs=20",
         "threshold_ms=100",
-        "accounts_userdata=speculos-x-other-account,swap-history",
         "read=log",
+        "snapshot_release=live-mobile@4.27.1",
+        `snapshot_ref=${SHA(5)}`,
         "",
       ].join("\n"),
     );
@@ -304,6 +599,13 @@ describe("outputsOf and summaryOf", () => {
       summaryOf(plan, INPUTS, "4"),
       /^### Startup performance: custom\n\n- A: `live-mobile@4\.27\.0/,
     );
+    assert.match(summaryOf(plan, INPUTS, "4"), /- Accounts: the snapshot live-mobile@4\.27\.1's/);
+  });
+
+  it("names no snapshot release when the run has no accounts scenario", () => {
+    const plan = planBuilds({ ...INPUTS, scenarios: "no-accounts" }, fakeLsRemote());
+    assert.match(outputsOf(plan), /\nsnapshot_release=\nsnapshot_ref=\n$/);
+    assert.doesNotMatch(summaryOf(plan, INPUTS, "4"), /Accounts:/);
   });
 
   it("says in the summary why nothing is saved to the cache", () => {
@@ -313,7 +615,7 @@ describe("outputsOf and summaryOf", () => {
     assert.doesNotMatch(summary(fromDevelop), /not saved|Nothing/);
     assert.match(
       summary({ ...fromDevelop, refB: "live-mobile@4.27.1" }),
-      /- Nothing this run makes is saved to the cache: B is not develop, release or main\n/,
+      /- Nothing this run makes is saved to the cache: B is not develop, release, main or hotfix\n/,
     );
     assert.match(
       summary(INPUTS),
