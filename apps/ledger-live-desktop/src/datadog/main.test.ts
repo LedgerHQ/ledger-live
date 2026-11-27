@@ -239,17 +239,31 @@ describe("datadog main", () => {
   });
 
   describe("parseMainDatadogSettings", () => {
-    it("leaves both unknown when nothing was persisted", () => {
+    it("leaves every setting unknown when nothing was persisted", () => {
       expect(parseMainDatadogSettings(undefined)).toEqual({
         enabled: undefined,
         sessionSampleRate: undefined,
+        profilingSampleRate: undefined,
       });
     });
 
     it("drops invalid values, as an out-of-range rate would abort init()", () => {
-      expect(parseMainDatadogSettings({ enabled: "yes", sessionSampleRate: 101 })).toEqual({
+      expect(
+        parseMainDatadogSettings({
+          enabled: "yes",
+          sessionSampleRate: 101,
+          profilingSampleRate: -1,
+        }),
+      ).toEqual({
         enabled: undefined,
         sessionSampleRate: undefined,
+        profilingSampleRate: undefined,
+      });
+    });
+
+    it("keeps the profiling rate the renderer persisted", () => {
+      expect(parseMainDatadogSettings({ enabled: true, profilingSampleRate: 25 })).toMatchObject({
+        profilingSampleRate: 25,
       });
     });
   });
@@ -501,6 +515,16 @@ describe("datadog main", () => {
       [{ crashReporting: true }, "not-granted"],
     ])("derives the boot consent from the gate %j: %s", (gate, consent) => {
       expect(createDatadogMainState(gateDir(gate)).consent()).toBe(consent);
+    });
+
+    it.each([
+      [{ lldDatadog: { enabled: true, profilingSampleRate: 10 } }, true],
+      [{ lldDatadog: { enabled: true, profilingSampleRate: 0 } }, false],
+      [{ lldDatadog: { enabled: true } }, false],
+      [{ lldDatadog: { enabled: false, profilingSampleRate: 10 } }, false],
+      [{ lldDatadog: { enabled: true, profilingSampleRate: 10 }, crashReporting: false }, false],
+    ])("profiles the renderer from the gate %j: %s", (gate, profiles) => {
+      expect(createDatadogMainState(gateDir(gate)).profilesRenderer()).toBe(profiles);
     });
 
     it("follows the renderer's writes and keeps them in the gate for the next boot", () => {

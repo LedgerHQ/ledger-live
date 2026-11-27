@@ -3,6 +3,7 @@ export * from "./logic/deviceLanguagePrompt";
 export * from "./logic/region/regionChoices";
 export * from "./logic/region/regionLocales";
 export * from "./logic/region/regionUpdate";
+export * from "./logic/dateFormat";
 export * from "./useGeneralSettingsPort";
 export * from "./copy/useGeneralSectionLabels";
 export * from "./useGeneralSectionViewModel";

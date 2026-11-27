@@ -6,15 +6,18 @@ import type {
   GeneralSettingUpdate,
   RegionSettingsValues,
   RegionUpdate,
+  DateFormatSettingsValues,
+  DateFormatUpdate,
 } from "../ports";
 
-type FakeValues = GeneralSettingsValues & RegionSettingsValues;
+type FakeValues = GeneralSettingsValues & RegionSettingsValues & DateFormatSettingsValues;
 
 const DEFAULT_VALUES: FakeValues = {
   theme: "system",
   language: "en",
   currency: "USD",
   region: "en-US",
+  dateFormat: "default",
 };
 
 type FakeData = Partial<Omit<GeneralSettingsData, "ledgerSync">> &
@@ -27,7 +30,7 @@ type FakeData = Partial<Omit<GeneralSettingsData, "ledgerSync">> &
 export function createFakeGeneralPort(initial?: Partial<FakeValues>, data?: FakeData) {
   const { port: valuesPort, updates } = createFakePort<
     FakeValues,
-    GeneralSettingUpdate | RegionUpdate
+    GeneralSettingUpdate | RegionUpdate | DateFormatUpdate
   >(DEFAULT_VALUES, initial);
   const ledgerSyncOpenings = { count: 0 };
 

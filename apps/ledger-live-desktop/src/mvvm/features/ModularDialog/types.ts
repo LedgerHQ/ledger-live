@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { NetworkHelp } from "./hooks/useNetworkHelp";
 
 export type AssetType = {
   name: string;
@@ -41,6 +42,8 @@ export type ModularDialogFlowRenderProps = Readonly<{
   hasBackButton: boolean;
   isOpen: boolean;
   navigationDirection: NavigationDirection;
+  /** The receive flow's "How to select the network?", on its network step. */
+  networkHelp?: NetworkHelp;
   onBack?: () => void;
   onClose: () => void;
 }>;

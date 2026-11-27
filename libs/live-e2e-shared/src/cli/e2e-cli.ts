@@ -23,6 +23,11 @@ const SUBCOMMANDS: Subcommand[] = [
       "CI: lock across machines while R2 takes lock writes, on this machine only when it fails",
     run: async () => (await import("./checkExclusiveLock.js")).runCheckExclusiveLockCommand(),
   },
+  {
+    name: "speculos",
+    describe: "Start a Speculos for one app and write where it is, or stop one",
+    run: async argv => (await import("./speculosSession.js")).runSpeculosCommand(argv),
+  },
 ];
 
 function usage(): string {

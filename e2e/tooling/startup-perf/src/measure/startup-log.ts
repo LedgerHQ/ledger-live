@@ -2,9 +2,8 @@
 // line per startup event, then the App startup time (writeStartupToDeviceLog.ts, from #24576 on):
 //   [startup] App started (x2): 1650 ms
 //   [startup] App startup time: 1650 ms, 13 events
-import type { Side } from "../types.ts";
+import type { StartupEvent } from "../types.ts";
 import { sleep } from "./exec.ts";
-import type { PerformanceRead } from "./performance-screen.ts";
 import type { Platform } from "./types.ts";
 
 export const STARTUP_LOG_MARKER = "[startup] ";
@@ -13,10 +12,16 @@ const EVENT_LINE = /\[startup\] (.+) \(x(\d+)\): (-?\d+) ms$/;
 const LAST_LINE = /\[startup\] App startup time: (-?\d+) ms, (\d+) events$/;
 const POLL_MS = 1000;
 
+/** A launch's startup lines: the App startup time, and each event by name. */
+export interface StartupRead {
+  appStartupTime: number;
+  events: Record<string, StartupEvent>;
+}
+
 /** The startup of the last complete set of lines in `log`, or null before its last line came. */
-export function parseStartupLog(log: string): PerformanceRead | null {
-  let events: PerformanceRead["events"] = {};
-  let read: PerformanceRead | null = null;
+export function parseStartupLog(log: string): StartupRead | null {
+  let events: StartupRead["events"] = {};
+  let read: StartupRead | null = null;
   for (const line of log.split(/\r?\n/).map(l => l.trimEnd())) {
     const last = LAST_LINE.exec(line);
     if (last) {
@@ -44,7 +49,7 @@ export function createStartupLogReader(P: Platform) {
     device: string,
     pid: number,
     timeoutMs: number,
-  ): Promise<PerformanceRead | null> {
+  ): Promise<StartupRead | null> {
     const deadline = Date.now() + timeoutMs;
     // A timer can end a millisecond before Date.now() reaches the deadline: the last wait ends it.
     let lastWait = false;
@@ -55,21 +60,5 @@ export function createStartupLogReader(P: Platform) {
       lastWait = left <= POLL_MS;
       await sleep(Math.min(POLL_MS, left));
     }
-  };
-}
-
-/**
- * The builds known to write startup lines in a scenario, readable or not. A read with no lines
- * switches the scenario to the Debug screen only when its build is not one of them (before #24576).
- */
-export function createStartupLineWriters() {
-  const writers = new Set<Side>();
-  return {
-    clear: () => writers.clear(),
-    /** Records a read: the lines (null when none came, an error when unreadable). */
-    switchesToScreen(side: Side, fromLog: PerformanceRead | string | null): boolean {
-      if (fromLog !== null) writers.add(side);
-      return !writers.has(side);
-    },
   };
 }

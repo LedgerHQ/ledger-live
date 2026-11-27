@@ -252,4 +252,61 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
 
     await waitFor(() => expect(screen.getByText(/no assets found/i)).toBeVisible());
   });
+
+  describe("network help", () => {
+    const openNetworkStep = async (flow: string) => {
+      const view = render(<ModularDialogFlowManager />, {
+        initialState: { modularDialog: { ...dialogParamsMockCurrencies, flow } },
+      });
+      await waitForSkeletonToBeRemoved();
+      await view.user.click(screen.getByText(/ethereum/i));
+      return view;
+    };
+
+    it("should explain the network choice on the receive flow, the help closing back to the networks each time", async () => {
+      const { user } = await openNetworkStep("receive_flow");
+
+      expect(screen.getByTestId("receive-network-help-description")).toHaveTextContent(
+        "Select the same network you're using to send your ETH. Learn more",
+      );
+
+      const networkStep = screen.getByTestId("modular-dialog-screen-NETWORK_SELECTION");
+      await user.click(screen.getByRole("link", { name: "Learn more" }));
+      expect(screen.getByTestId("receive-network-help")).toBeVisible();
+      expect(screen.getAllByText("How to select the network?")[0]).toBeVisible();
+
+      expect(screen.getByRole("link", { name: "visit our FAQ page" })).toBeVisible();
+
+      await user.click(screen.getByRole("button", { name: /close/i }));
+      expect(screen.queryByTestId("receive-network-help")).not.toBeInTheDocument();
+      expect(screen.getByText(/arbitrum/i)).toBeVisible();
+      // The step was never mounted again: its slide-in does not replay.
+      expect(screen.getByTestId("modular-dialog-screen-NETWORK_SELECTION")).toBe(networkStep);
+
+      await user.click(screen.getByRole("link", { name: "Learn more" }));
+      await user.click(screen.getByRole("button", { name: /close/i }));
+      expect(screen.queryByTestId("receive-network-help")).not.toBeInTheDocument();
+      expect(screen.getByText(/arbitrum/i)).toBeVisible();
+    });
+
+    it("should move the focus into the help, and back to Learn more once it closes", async () => {
+      const { user } = await openNetworkStep("receive_flow");
+      const learnMore = screen.getByRole("link", { name: "Learn more" });
+
+      learnMore.focus();
+      await user.keyboard("{Enter}");
+      expect(screen.getByTestId("receive-network-help").parentElement).toHaveFocus();
+
+      await user.keyboard("{Escape}");
+      expect(screen.queryByTestId("receive-network-help")).not.toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "Learn more" })).toHaveFocus();
+    });
+
+    it("should not explain the network choice on another flow", async () => {
+      await openNetworkStep("send");
+
+      expect(screen.getByText(/arbitrum/i)).toBeVisible();
+      expect(screen.queryByTestId("receive-network-help-description")).not.toBeInTheDocument();
+    });
+  });
 });

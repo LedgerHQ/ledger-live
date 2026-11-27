@@ -4,7 +4,7 @@ import type { DomainCheckViolation } from "@ledgerhq/live-common/wallet-api/mani
 
 /** Bump on every shape change of `LedgerBridge` or `Bootstrap` respectively. */
 export const BRIDGE_VERSION = 9;
-export const BOOTSTRAP_VERSION = 2;
+export const BOOTSTRAP_VERSION = 3;
 
 export type Serializable =
   | null
@@ -28,6 +28,7 @@ export type Bootstrap = {
     userData: string;
     home: string;
   };
+  appDirname: string;
   distributionChannel: "mac-app-store" | "windows-store" | "direct";
   store: Record<string, unknown>;
 };

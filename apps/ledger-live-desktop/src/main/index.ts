@@ -35,6 +35,7 @@ import {
 } from "@ledgerhq/coin-zcash/network/ipc/main-host";
 import { setupWebviewHandlers } from "./webviewHandlers";
 import { setupExplorerSessionAffinity } from "./explorerSessionAffinity";
+import { allowRendererProfiling } from "./rendererProfiling";
 import { CHANNELS } from "~/bridge/contract";
 // End import timing, start initialization
 console.timeEnd("T-imports");
@@ -103,6 +104,7 @@ app.on("will-finish-launching", () => {
 app.on("ready", async () => {
   console.timeEnd("T-init");
   app.dirname = __dirname;
+  if (!__DEV__ && datadog.profilesRenderer()) allowRendererProfiling(__dirname);
 
   app.on("render-process-gone", (_event, webContents, details) => {
     if (!isQuitting) reportRenderProcessGoneMain(webContents.getType(), details);

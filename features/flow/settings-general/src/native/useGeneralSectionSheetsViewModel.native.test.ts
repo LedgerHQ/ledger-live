@@ -17,11 +17,13 @@ describe("useGeneralSectionSheetsViewModel", () => {
       theme: "dark",
       language: "fr",
       currency: "EUR",
+      dateFormat: "DD/MM/YYYY",
     });
 
     expect(result.current.currentLabels).toEqual({
       theme: "Dark",
       language: "Français",
+      dateFormat: "DD/MM/YYYY",
       currency: "EUR",
     });
   });
@@ -35,6 +37,7 @@ describe("useGeneralSectionSheetsViewModel", () => {
   it.each([
     ["theme", "Select theme", false],
     ["language", "Select language", true],
+    ["dateFormat", "Select date format", false],
     ["currency", "Select currency", true],
   ] as const)("opens the %s sheet with its title and search", (id, title, hasSearch) => {
     const { result } = renderViewModel();
@@ -51,6 +54,24 @@ describe("useGeneralSectionSheetsViewModel", () => {
     act(() => result.current.openSheet?.onSelect("light"));
 
     expect(updates).toEqual([{ key: "theme", value: "light" }]);
+  });
+
+  it("offers the three date formats and stores the picked one", () => {
+    const { result, updates } = renderViewModel();
+
+    act(() => result.current.onOpenSheet("dateFormat"));
+
+    expect(result.current.openSheet?.options).toEqual([
+      { value: "default", label: "Default" },
+      { value: "DD/MM/YYYY", label: "DD/MM/YYYY" },
+      { value: "MM/DD/YYYY", label: "MM/DD/YYYY" },
+    ]);
+    expect(result.current.currentLabels.dateFormat).toBe("Default");
+
+    act(() => result.current.openSheet?.onSelect("MM/DD/YYYY"));
+    act(() => result.current.openSheet?.onSelect("YYYY"));
+
+    expect(updates).toEqual([{ key: "dateFormat", value: "MM/DD/YYYY" }]);
   });
 
   it("closes the sheet", () => {

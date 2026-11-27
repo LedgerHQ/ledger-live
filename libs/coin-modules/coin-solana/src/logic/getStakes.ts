@@ -132,7 +132,7 @@ export async function computeUnstakeReserve(
   api: ChainAPI,
   config: SolanaCoinConfig,
   address: string,
-  stakeAccounts: StakeAccount[],
+  stakeAccounts: ReadonlyArray<{ activation: { state: string } }>,
 ): Promise<number> {
   if (stakeAccounts.length === 0) return 0;
 

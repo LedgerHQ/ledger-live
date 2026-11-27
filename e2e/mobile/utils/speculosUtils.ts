@@ -15,6 +15,7 @@ import {
   fetchSpeculinhoStatus,
   getSpeculinhoRunIdFromError,
 } from "@ledgerhq/live-e2e-shared/speculosCI";
+import { knownSpeculosAddress } from "@ledgerhq/live-e2e-shared/speculosAddress";
 import { isSpeculosRemote } from "@e2e/helpers/commonHelpers";
 import { addKnownSpeculos, getEnvs, removeKnownSpeculos } from "@e2e/bridge/server";
 import { CLI } from "@e2e/utils/cliUtils";
@@ -375,21 +376,6 @@ export async function withTemporarySpeculos<T>(
   }
 }
 
-function getKnownSpeculosAddress(speculosPort: number): string {
-  const configuredAddress = process.env.SPECULOS_ADDRESS?.trim();
-  if (!configuredAddress) {
-    return `http://127.0.0.1:${speculosPort}`;
-  }
-
-  const normalizedAddress = configuredAddress.startsWith("http")
-    ? configuredAddress
-    : `http://${configuredAddress}`;
-  const withoutTrailingSlash = normalizedAddress.replace(/\/+$/, "");
-  return /:\d+$/.test(withoutTrailingSlash)
-    ? withoutTrailingSlash
-    : `${withoutTrailingSlash}:${speculosPort}`;
-}
-
 /** How long the app may take to report an env value the test just pushed over the bridge. */
 const BRIDGE_ENV_SYNC_TIMEOUT = 15_000;
 
@@ -430,7 +416,7 @@ async function waitForBridgeEnv(options: WaitForBridgeEnvOptions): Promise<void>
 }
 
 export async function registerKnownSpeculos(speculosPort: number) {
-  const address = getKnownSpeculosAddress(speculosPort);
+  const address = knownSpeculosAddress(process.env.SPECULOS_ADDRESS, speculosPort);
   await addKnownSpeculos(address);
   await waitForBridgeEnv({ key: "DEVICE_PROXY_URL", expectedValue: address });
 }
@@ -452,7 +438,7 @@ export async function removeSpeculosAndDeregisterKnownSpeculos(deviceId?: string
         log.warn(`unreverseTcpPort(${speculosPort}) failed: ${sanitizeError(e)}`);
       }
     }
-    await removeKnownSpeculos(getKnownSpeculosAddress(speculosPort));
+    await removeKnownSpeculos(knownSpeculosAddress(process.env.SPECULOS_ADDRESS, speculosPort));
     await waitForBridgeEnv({ key: "DEVICE_PROXY_URL", expectedValue: "" });
   }
 }
