@@ -14,6 +14,10 @@ import {
 import { signTransactionIntentPlatformDefinition } from "./intentDefinition";
 import type { WalletApiDeviceIntentSignRequest } from "./types";
 import { getSignatureSourceFlow } from "../../utils/getSignatureSourceFlow";
+import { useDeviceIntentFeeSelectionEnabled } from "../../hooks/useDeviceIntentSignEnabled";
+import type { FeeSelectionStepProps } from "../FeeSelectionStep";
+
+type SignatureStep = "fees" | "device";
 
 type Props = {
   request: WalletApiDeviceIntentSignRequest;
@@ -33,14 +37,34 @@ function normalizeError(error: unknown): Error {
 }
 
 export function useTransactionSignatureDrawerViewModel({ request, onClose }: Props) {
-  const { account, parentAccount, transaction, appName, dependencies, onSuccess, onError } =
-    request;
+  const {
+    account,
+    parentAccount,
+    transaction,
+    canEditFees,
+    hasFeesProvided,
+    appName,
+    dependencies,
+    manifestId,
+    manifestName,
+    onSuccess,
+    onError,
+  } = request;
+  const sourceFlow = getSignatureSourceFlow(manifestId);
+
+  const isFeeSelectionEnabled = useDeviceIntentFeeSelectionEnabled(manifestId);
+  // Decided once per request, so a flag update never removes a step the user is on.
+  const [hasFeeStep] = useState(() => isFeeSelectionEnabled && canEditFees);
+  const [step, setStep] = useState<SignatureStep>(hasFeeStep ? "fees" : "device");
+  const stepRef = useRef(step);
+  const [isFeeSheetMounted, setIsFeeSheetMounted] = useState(hasFeeStep);
 
   const [deviceInitializationInput, setDeviceInitializationInput] =
     useState<InitializationInput | null>(null);
   // The wallet-api transaction is not fee-prepared (the legacy summary screen used to do
   // that). We prepare it here so gas/fees are estimated before signing directly on device,
   // which lets us skip the buffer screen. Provided fees (feesStrategy "custom") are kept.
+  // With a fee step, that step prepares it with the fees the user chose.
   const [preparedTransaction, setPreparedTransaction] = useState<Transaction | null>(null);
   // The wallet-api promise is settled once: success, failure and dismiss race each other.
   const isSettledRef = useRef(false);
@@ -54,7 +78,7 @@ export function useTransactionSignatureDrawerViewModel({ request, onClose }: Pro
     let cancelled = false;
     isSettledRef.current = false;
     lastJobErrorRef.current = null;
-    setPreparedTransaction(null);
+    if (!hasFeeStep) setPreparedTransaction(null);
     setDeviceInitializationInput(null);
 
     // Resolve the main account inside the async chain (rather than in render) so an
@@ -63,9 +87,11 @@ export function useTransactionSignatureDrawerViewModel({ request, onClose }: Pro
     const prepare = async () => {
       const mainAccount = getMainAccount(account, parentAccount ?? undefined);
       const [prepared, input] = await Promise.all([
-        getAccountBridge(mainAccount).then(bridge =>
-          bridge.prepareTransaction(mainAccount, transaction),
-        ),
+        hasFeeStep
+          ? null
+          : getAccountBridge(mainAccount).then(bridge =>
+              bridge.prepareTransaction(mainAccount, transaction),
+            ),
         buildDeviceInitializationInput({
           appRequest: {
             account: mainAccount,
@@ -82,7 +108,7 @@ export function useTransactionSignatureDrawerViewModel({ request, onClose }: Pro
     prepare()
       .then(({ prepared, input }) => {
         if (cancelled) return;
-        setPreparedTransaction(prepared);
+        if (prepared) setPreparedTransaction(prepared);
         setDeviceInitializationInput(input);
       })
       .catch(error => {
@@ -95,7 +121,17 @@ export function useTransactionSignatureDrawerViewModel({ request, onClose }: Pro
     return () => {
       cancelled = true;
     };
-  }, [account, parentAccount, tokenCurrency, transaction, appName, dependencies, onError, onClose]);
+  }, [
+    account,
+    parentAccount,
+    tokenCurrency,
+    transaction,
+    appName,
+    dependencies,
+    hasFeeStep,
+    onError,
+    onClose,
+  ]);
 
   const signatureIntent = useMemo(
     () =>
@@ -144,8 +180,58 @@ export function useTransactionSignatureDrawerViewModel({ request, onClose }: Pro
     onClose();
   }, [onError, onClose]);
 
+  const onFeesConfirmed = useCallback((feeTransaction: Transaction) => {
+    stepRef.current = "device";
+    setPreparedTransaction(feeTransaction);
+    setStep("device");
+  }, []);
+
+  // The sheet also reports the close that follows a confirmation: only a close of the fee step
+  // itself is a rejection.
+  const onFeeStepRejected = useCallback(() => {
+    if (stepRef.current !== "fees") return;
+    onUserCancel();
+  }, [onUserCancel]);
+
+  const onFeeSheetHidden = useCallback(() => setIsFeeSheetMounted(false), []);
+
+  const feeStep = useMemo<FeeSelectionStepProps | null>(
+    () =>
+      isFeeSheetMounted
+        ? {
+            account,
+            parentAccount,
+            transaction,
+            hasFeesProvided,
+            manifestId,
+            manifestName,
+            sourceFlow,
+            isOpen: step === "fees",
+            onConfirm: onFeesConfirmed,
+            onReject: onFeeStepRejected,
+            onHidden: onFeeSheetHidden,
+          }
+        : null,
+    [
+      account,
+      hasFeesProvided,
+      isFeeSheetMounted,
+      manifestId,
+      manifestName,
+      onFeeSheetHidden,
+      onFeeStepRejected,
+      onFeesConfirmed,
+      parentAccount,
+      sourceFlow,
+      step,
+      transaction,
+    ],
+  );
+
   return {
-    sourceFlow: getSignatureSourceFlow(request.manifestId),
+    sourceFlow,
+    feeStep,
+    isDeviceStep: step === "device",
     deviceInitializationInput,
     signatureIntent,
     onIntentJobStateChanged,

@@ -5779,6 +5779,12 @@
         "close": "Close",
         "retry": "Retry"
       }
+    },
+    "fees": {
+      "amount": "Amount",
+      "total": "Total",
+      "continue": "Continue",
+      "providedByApp": "Fees from {{appName}}"
     }
   },
   "sync": {

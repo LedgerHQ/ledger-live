@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
-import { render, waitFor, act } from "@tests/test-renderer";
+import BigNumber from "bignumber.js";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { render, waitFor, act, withFlagOverrides } from "@tests/test-renderer";
 import TransactionSignatureDrawer from "../components/TransactionSignatureDrawer";
 import MessageSignatureDrawer from "../components/MessageSignatureDrawer";
 import type { WalletApiDeviceIntentSignRequest } from "../components/TransactionSignatureDrawer";
@@ -44,8 +46,76 @@ jest.mock("@features/platform-device-intent", () => ({
 }));
 
 const mockPrepareTransaction = jest.fn((_account: unknown, tx: unknown) => Promise.resolve(tx));
+const mockGetTransactionStatus = jest.fn((_account: unknown, _tx: unknown) =>
+  Promise.resolve({
+    errors: {},
+    warnings: {},
+    amount: new BigNumber(0),
+    estimatedFees: new BigNumber("21000000000000"),
+    totalSpent: new BigNumber("21000000000000"),
+  }),
+);
+const mockBridge = {
+  prepareTransaction: mockPrepareTransaction,
+  getTransactionStatus: mockGetTransactionStatus,
+  createTransaction: jest.fn(() => ({ family: "evm" })),
+  updateTransaction: jest.fn((tx: object, patch: object) => ({ ...tx, ...patch })),
+};
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: jest.fn(() => Promise.resolve({ prepareTransaction: mockPrepareTransaction })),
+  getAccountBridge: jest.fn(() => Promise.resolve(mockBridge)),
+}));
+
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: jest.fn(() => mockBridge),
+}));
+
+jest.mock("@shared/analytics", () => ({
+  track: jest.fn(),
+  trackPage: jest.fn(),
+}));
+
+jest.mock("@ledgerhq/live-common/flows/send/uiConfig", () => ({
+  getSendUiConfig: jest.fn(() => ({
+    hasFeePresets: true,
+    hasCustomFees: true,
+    hasCoinControl: false,
+    hasDefaultStrategy: false,
+    hasFiatAmountInput: false,
+  })),
+}));
+
+jest.mock("@ledgerhq/live-common/flows/send/effects/hooks/useFlowEffects", () => ({
+  useFlowEffects: jest.fn(() => ({ loading: false, error: null })),
+}));
+
+// The presets estimation is covered in live-common: here, a preset only patches the transaction,
+// which the fee step prepares again.
+type MockNetworkFeesCoreParams = {
+  transaction: { feesStrategy?: string };
+  transactionActions: { updateTransaction: (updater: (tx: object) => object) => void };
+};
+jest.mock("@ledgerhq/live-common/flows/send/hooks/useNetworkFeesCore", () => ({
+  useNetworkFeesCore: ({ transaction, transactionActions }: MockNetworkFeesCoreParams) => ({
+    feesRowValue: "0.000021 ETH",
+    feesRowSecondaryValue: null,
+    selectedFeeStrategy: transaction.feesStrategy ?? null,
+    selectedFeeStrategyId: transaction.feesStrategy ?? "medium",
+    feeStrategyOptions: ["slow", "medium", "fast"].map(id => ({
+      id,
+      kind: "preset",
+      sublabelFiat: null,
+      sublabelCrypto: `${id} ETH`,
+      sublabelLegend: null,
+    })),
+    onSelectFeeStrategyId: (id: string) =>
+      transactionActions.updateTransaction(tx => ({ ...tx, feesStrategy: id })),
+    hasCustomFees: true,
+    hasCoinControl: false,
+  }),
+}));
+
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
+  sendFeatures: { hasFeeRateLegend: jest.fn(() => false) },
 }));
 
 jest.mock("@ledgerhq/live-common/device-action/utils", () => ({
@@ -66,7 +136,25 @@ jest.mock("../components/MessageSignatureDrawer/intentDefinition", () => ({
   signMessageIntentPlatformDefinition: { label: "Sign message" },
 }));
 
-const account = { id: "js:2:ethereum:0xabc:", type: "Account", currency: { name: "Ethereum" } };
+const account = {
+  id: "js:2:ethereum:0xabc:",
+  type: "Account",
+  currency: {
+    type: "CryptoCurrency",
+    id: "ethereum",
+    family: "evm",
+    name: "Ethereum",
+    ticker: "ETH",
+    units: [{ name: "ether", code: "ETH", magnitude: 18 }],
+  },
+};
+
+const withFeeSelection = withFlagOverrides({
+  llmWalletApiDeviceIntentSign: {
+    enabled: true,
+    params: { feeSelectionManifestIds: ["ledger-wallet-connect"] },
+  },
+});
 
 function buildTransactionRequest(recipient: string) {
   const onSuccess = jest.fn();
@@ -78,6 +166,33 @@ function buildTransactionRequest(recipient: string) {
     appName: undefined,
     dependencies: undefined,
     manifestId: "ledger-wallet-connect",
+    manifestName: "WalletConnect",
+    onSuccess,
+    onError,
+  } as unknown as WalletApiDeviceIntentSignRequest;
+  return { request, onSuccess, onError };
+}
+
+function buildFeeRequest({
+  manifestId = "ledger-wallet-connect",
+  canEditFees = true,
+  hasFeesProvided = false,
+}: { manifestId?: string; canEditFees?: boolean; hasFeesProvided?: boolean } = {}) {
+  const onSuccess = jest.fn();
+  const onError = jest.fn();
+  const request = {
+    account,
+    parentAccount: undefined,
+    transaction: {
+      family: "evm",
+      recipient: "0x111111125421ca6dc452d289314280a0f8842a65",
+      ...(hasFeesProvided ? { feesStrategy: "custom" } : {}),
+    },
+    canEditFees,
+    hasFeesProvided,
+    appName: undefined,
+    dependencies: undefined,
+    manifestId,
     manifestName: "WalletConnect",
     onSuccess,
     onError,
@@ -241,6 +356,90 @@ describe("WalletApiSignature feature", () => {
 
     await waitFor(() => expect(getByTestId("device-intent-executor")).toBeTruthy());
     expect(mockExecutorProps?.sourceFlow).toBe("wallet_connect");
+  });
+
+  describe("fee step", () => {
+    it("signs a Wallet Connect transaction with the fees chosen before the device step", async () => {
+      const { request, onSuccess } = buildFeeRequest();
+      const onClose = jest.fn();
+
+      const { getByTestId, queryByTestId, user } = render(
+        <TransactionSignatureDrawer request={request} onClose={onClose} />,
+        { overrideInitialState: withFeeSelection },
+      );
+
+      await waitFor(() => expect(getByTestId("wallet-api-fee-step")).toBeTruthy());
+      expect(queryByTestId("device-intent-executor")).toBeNull();
+      expect(getByTestId("wallet-api-fee-step-total")).toHaveTextContent("0.000021 ETH");
+
+      await user.press(getByTestId("wallet-api-fee-option-fast"));
+      await waitFor(() =>
+        expect(mockPrepareTransaction).toHaveBeenLastCalledWith(
+          expect.anything(),
+          expect.objectContaining({ feesStrategy: "fast" }),
+        ),
+      );
+      await waitFor(() => expect(getByTestId("wallet-api-fee-step-continue")).not.toBeDisabled());
+
+      await user.press(getByTestId("wallet-api-fee-step-continue"));
+
+      await waitFor(() => expect(getByTestId("device-intent-executor")).toBeTruthy());
+      expect(mockExecutorProps?.sourceFlow).toBe("wallet_connect");
+      expect(mockExecutorProps?.intent).toEqual(
+        expect.objectContaining({
+          input: expect.objectContaining({
+            transaction: expect.objectContaining({ feesStrategy: "fast" }),
+          }),
+        }),
+      );
+
+      const signedOperation = { operation: { id: "op-1" } };
+      act(() => mockExecutorProps!.onIntentJobStateChanged({ type: "signed", signedOperation }));
+      expect(onSuccess).toHaveBeenCalledWith(signedOperation);
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it("selects the live app's fees by default when it provides them", async () => {
+      const { request } = buildFeeRequest({ hasFeesProvided: true });
+
+      const { getByTestId, getByText } = render(
+        <TransactionSignatureDrawer request={request} onClose={jest.fn()} />,
+        { overrideInitialState: withFeeSelection },
+      );
+
+      await waitFor(() => expect(getByTestId("wallet-api-fee-step")).toBeTruthy());
+      expect(getByText("Fees from WalletConnect")).toBeTruthy();
+      expect(getByTestId("wallet-api-fee-option-custom")).toBeSelected();
+    });
+
+    it("rejects the request like the device step does when the fee step is closed", async () => {
+      const { request, onError } = buildFeeRequest();
+      const onClose = jest.fn();
+
+      const { getByTestId, getByLabelText, user } = render(
+        <TransactionSignatureDrawer request={request} onClose={onClose} />,
+        { overrideInitialState: withFeeSelection },
+      );
+
+      await waitFor(() => expect(getByTestId("wallet-api-fee-step")).toBeTruthy());
+      await user.press(getByLabelText(/close/i));
+
+      await waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
+      expect(onError.mock.calls[0][0]).toBeInstanceOf(UserRefusedOnDevice);
+      expect(onClose).toHaveBeenCalled();
+    });
+
+    it("goes straight to the device for a live app outside the fee selection allowlist", async () => {
+      const { request } = buildFeeRequest({ manifestId: "swap-live-app" });
+
+      const { getByTestId, queryByTestId } = render(
+        <TransactionSignatureDrawer request={request} onClose={jest.fn()} />,
+        { overrideInitialState: withFeeSelection },
+      );
+
+      await waitFor(() => expect(getByTestId("device-intent-executor")).toBeTruthy());
+      expect(queryByTestId("wallet-api-fee-step")).toBeNull();
+    });
   });
 
   it("signs concurrent requests one after the other and rejects with the real signing error", async () => {
