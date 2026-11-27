@@ -50,6 +50,7 @@ import { HistoryPage } from "tests/page/history.page";
 import { MainNavigationPage } from "tests/page/mainNavigation.page";
 import { PayTabPage } from "tests/page/payTab.page";
 import { SwapTransactionStatusDialog } from "tests/page/dialog/swap.transaction.status.dialog";
+import { StakePositionDialog } from "tests/page/dialog/stakePosition.dialog";
 import { TezosStakeModal } from "tests/page/modal/tezos.stake.modal";
 import { TezosEarningChoiceModal } from "tests/page/modal/tezos.earning.choice.modal";
 import { TezosUnstakeModal } from "tests/page/modal/tezos.unstake.modal";
@@ -119,6 +120,7 @@ export class Application extends PageHolder {
   public contacts = new ContactsPage(this.page);
   public fearAndGreedDialog = new FearAndGreedDialog(this.page);
   public swapTransactionStatusDialog = new SwapTransactionStatusDialog(this.page);
+  public stakePositionDialog = new StakePositionDialog(this.page);
   private trustchainPage: TrustchainPage | undefined;
 
   /**
