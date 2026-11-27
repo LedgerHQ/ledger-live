@@ -9,7 +9,7 @@ export async function listOperations(
   logger: Logger,
   config: PolkadotCoinConfig,
   addr: string,
-  { limit, startAt }: { limit: number; startAt?: number | undefined },
+  { limit, startAt }: { limit?: number | undefined; startAt?: number | undefined },
   currency?: CryptoCurrency,
 ): Promise<[Operation[], number]> {
   //The accountId is used to map Operations to Live types.
@@ -37,7 +37,7 @@ const convertToCoreOperation = (operation: PolkadotOperation): Operation => {
     asset: { type: "native" },
     tx: {
       hash,
-      fees: BigInt(fee.toString()),
+      fees: BigInt(fee.toFixed()),
       block: {
         height: blockHeight ?? 0,
         hash: operation.blockHash ?? "",
@@ -47,7 +47,7 @@ const convertToCoreOperation = (operation: PolkadotOperation): Operation => {
       failed: operation.hasFailed ?? false,
     },
     type,
-    value: BigInt(value.toString()),
+    value: BigInt(value.toFixed()),
     senders,
     recipients,
   };

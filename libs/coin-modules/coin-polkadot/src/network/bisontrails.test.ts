@@ -87,4 +87,23 @@ describe("getOperations", () => {
       "Unknown operation type foo.bar - fallback to FEES",
     );
   });
+
+  it.each([
+    ["successful fee-free extrinsic", "staking", "pruneEraStep", true],
+    ["failed fee-free extrinsic", "staking", "pruneEraStep", false],
+    ["transfer to self", "balances", "transferKeepAlive", true],
+  ])("uses a zero fee when the indexer omits it on a %s", async (_, section, method, isSuccess) => {
+    const { partialFee: _partialFee, ...withoutFee } = extrinsic(section, method, 1);
+    mockNetwork.mockResolvedValue(page([{ ...withoutFee, isSuccess }]));
+
+    const [operation] = await getOperations(
+      logger,
+      polkadotMainnetConfigValue,
+      "accountId",
+      address,
+    );
+
+    expect(operation.fee.toFixed()).toBe("0");
+    expect(operation.value.toFixed()).toBe("0");
+  });
 });
