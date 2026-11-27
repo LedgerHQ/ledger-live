@@ -225,8 +225,8 @@ catalogs:
       specifier: 12.3.2
       version: 12.3.2
     '@ledgerhq/coin-tezos':
-      specifier: 14.3.1
-      version: 14.3.1
+      specifier: 14.3.3
+      version: 14.3.3
     '@ledgerhq/coin-xrp':
       specifier: 13.10.0
       version: 13.10.0
@@ -22030,7 +22030,7 @@ importers:
         version: link:../coin-modules/coin-sui
       '@ledgerhq/coin-tezos':
         specifier: 'catalog:'
-        version: 14.3.1(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(encoding@0.1.13)
+        version: 14.3.3(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(encoding@0.1.13)
       '@ledgerhq/coin-ton':
         specifier: workspace:^
         version: link:../coin-modules/coin-ton
@@ -31244,13 +31244,16 @@ packages:
   '@ledgerhq/coin-module-framework@13.3.0':
     resolution: {integrity: sha512-f4anD8B0rtZmlb+XcVhhNrqPgQ9ici9nVA2iy/bg/O5980l0UuMRF7Y5N1Goi+rOfQfNAPiBur/wMpoqIx5qwg==}
 
+  '@ledgerhq/coin-module-framework@13.4.0':
+    resolution: {integrity: sha512-foxPqklQGj4fvJB+H5dow5zw40cOW0D4rrug4Qw8toAclpRRBaBuLTXymgq5H4xSt53I//N02MBmW7pD5lVPtQ==}
+
   '@ledgerhq/coin-stellar@12.3.2':
     resolution: {integrity: sha512-GQIvzGnYllC8AAoccAi3nPexiVXq5qPmHd7jWlzbWhdQZXop7jk34cWxGXB/HY4n8skurSblebXuSezChNAuRg==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
-  '@ledgerhq/coin-tezos@14.3.1':
-    resolution: {integrity: sha512-n2yQa7F42O9M9bfReR/2Y/t1wEBOQhLPUT7WxAEgpBlVxChASc+L89MkLHrlydH+Ien97FE/qwMJuwpnhn7xVA==}
+  '@ledgerhq/coin-tezos@14.3.3':
+    resolution: {integrity: sha512-sCJfkY51AeL8yNuWur8ggBXBHnhSR6mVWqE0AJdcUfTga4KzPlzeUugYCcos2ABZmEcz7BAn/knOgvppr41vdg==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
@@ -50139,6 +50142,10 @@ snapshots:
     dependencies:
       bignumber.js: 9.1.2
 
+  '@ledgerhq/coin-module-framework@13.4.0':
+    dependencies:
+      bignumber.js: 9.1.2
+
   '@ledgerhq/coin-stellar@12.3.2(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(debug@4.4.3)':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
@@ -50149,9 +50156,9 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@ledgerhq/coin-tezos@14.3.1(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(encoding@0.1.13)':
+  '@ledgerhq/coin-tezos@14.3.3(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(encoding@0.1.13)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 13.3.0
+      '@ledgerhq/coin-module-framework': 13.4.0
       '@ledgerhq/live-network': 3.4.1(axios@1.21.1(debug@4.4.3))
       '@taquito/ledger-signer': 23.0.1(encoding@0.1.13)
       '@taquito/rpc': 23.0.1(encoding@0.1.13)
