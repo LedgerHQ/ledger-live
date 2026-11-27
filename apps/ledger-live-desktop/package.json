@@ -150,6 +150,7 @@
     "@features/flow-settings": "workspace:^",
     "@features/flow-settings-general": "workspace:^",
     "@features/flow-settings-help": "workspace:^",
+    "@features/flow-settings-privacy": "workspace:^",
     "@features/flow-settings-security": "workspace:^",
     "@features/platform-account-analytics": "workspace:^",
     "@features/platform-account-source-coin-module": "workspace:^",

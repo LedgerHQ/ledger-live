@@ -9,8 +9,11 @@ import {
 import { isModalOpened } from "~/renderer/reducers/modals";
 import {
   autoLockTimeoutSelector,
+  crashReportingSelector,
   discreetModeSelector,
   mevProtectionSelector,
+  shareAnalyticsSelector,
+  sharePersonalizedRecommendationsSelector,
 } from "~/renderer/reducers/settings";
 import { walletSyncDrawerVisibilitySelector } from "~/renderer/reducers/walletSync";
 import { useDesktopSettingsPort } from "./useDesktopSettingsPort";
@@ -246,5 +249,64 @@ describe("useDesktopSettingsPort, Security section", () => {
     });
 
     expect(isModalOpened(store.getState(), modal)).toBe(true);
+  });
+});
+
+describe("useDesktopSettingsPort, Privacy section", () => {
+  it("reads the Privacy values from the legacy store", () => {
+    const { result } = renderPort({
+      crashReporting: false,
+      shareAnalytics: true,
+      sharePersonalizedRecommandations: false,
+    });
+
+    expect(result.current.values).toMatchObject({
+      bugReports: false,
+      analytics: true,
+      personalizedRecommendations: false,
+      separateAnalyticsConsents: false,
+    });
+  });
+
+  it("stores each consent where the legacy General screen stores it", () => {
+    const { result, store } = renderPort();
+
+    act(() => {
+      result.current.setValue({ key: "bugReports", value: false });
+      result.current.setValue({ key: "analytics", value: true });
+    });
+
+    expect(crashReportingSelector(store.getState())).toBe(false);
+    expect(shareAnalyticsSelector(store.getState())).toBe(true);
+    expect(sharePersonalizedRecommendationsSelector(store.getState())).toBe(false);
+
+    act(() => {
+      result.current.setValue({ key: "personalizedRecommendations", value: true });
+    });
+    expect(sharePersonalizedRecommendationsSelector(store.getState())).toBe(true);
+  });
+
+  it("stores both consents from the shared Analytics toggle", () => {
+    const { result, store } = renderPort({
+      shareAnalytics: true,
+      sharePersonalizedRecommandations: true,
+    });
+
+    act(() => {
+      result.current.setValue({ key: "analyticsAndRecommendations", value: false });
+    });
+
+    expect(shareAnalyticsSelector(store.getState())).toBe(false);
+    expect(sharePersonalizedRecommendationsSelector(store.getState())).toBe(false);
+  });
+
+  it("does not touch the Security settings when a consent changes", () => {
+    const { result, store } = renderPort({ discreetMode: false });
+
+    act(() => {
+      result.current.setValue({ key: "bugReports", value: false });
+    });
+
+    expect(discreetModeSelector(store.getState())).toBe(false);
   });
 });

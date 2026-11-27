@@ -1352,6 +1352,9 @@ importers:
       '@features/flow-settings-help':
         specifier: workspace:^
         version: link:../../features/flow/settings-help
+      '@features/flow-settings-privacy':
+        specifier: workspace:^
+        version: link:../../features/flow/settings-privacy
       '@features/flow-settings-security':
         specifier: workspace:^
         version: link:../../features/flow/settings-security
