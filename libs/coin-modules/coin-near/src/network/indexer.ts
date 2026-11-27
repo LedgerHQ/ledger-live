@@ -104,7 +104,7 @@ const isIncomingTransferNode = (node: NearReceiptNode, address: string): boolean
 
 const nodeHeight = (node: NearReceiptNode): number => Number(node.block?.block_height ?? NaN);
 
-/** Undefined when `/txns` lists the transaction for the account, or while one of its transfers has no outcome. */
+/** Undefined when `/txns` lists the transaction for the account, or while any receipt, which may still send a transfer, has no outcome. */
 export const receiptOnlyTransfer = (
   tree: NearReceiptNode,
   transactionHash: string,
@@ -112,8 +112,9 @@ export const receiptOnlyTransfer = (
 ): NearReceiptTransfer | undefined => {
   const listedByTxns =
     tree.predecessor_account_id === address || tree.receiver_account_id === address;
-  const incoming = receiptNodes(tree).filter(node => isIncomingTransferNode(node, address));
-  const settled = incoming.every(node => typeof node.outcome?.status === "boolean");
+  const nodes = receiptNodes(tree);
+  const incoming = nodes.filter(node => isIncomingTransferNode(node, address));
+  const settled = nodes.every(node => typeof node.outcome?.status === "boolean");
   const credited = incoming.filter(node => node.outcome.status === true);
   if (listedByTxns || !settled || credited.length === 0) return undefined;
 
@@ -191,7 +192,10 @@ export const readReceiptTransfers = async (
     if (next === undefined || reachedStored) break;
     const unboundedWindow = floorHeight === undefined;
     if (unboundedWindow && page >= RECEIPTS_MAX_PAGES) {
-      truncatedAtHeight = Math.min(...receipts.map(receiptHeight).filter(h => !Number.isNaN(h)));
+      const lowestBlockMayContinueOnNextPage = Math.min(
+        ...receipts.map(receiptHeight).filter(h => !Number.isNaN(h)),
+      );
+      truncatedAtHeight = lowestBlockMayContinueOnNextPage + 1;
       log("Near", `receipts of ${address}: read stopped after ${page} pages`);
       break;
     }

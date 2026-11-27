@@ -685,9 +685,27 @@ describe("getOperations", () => {
       const { transfers, resumeCursor, truncatedAtHeight } = await read();
 
       expect(cursors).toHaveLength(10);
-      expect(truncatedAtHeight).toBe(491);
+      expect(truncatedAtHeight).toBe(492);
       expect(resumeCursor).toBeUndefined();
-      expect(transfers.every(t => t.blockHeight >= 491)).toBe(true);
+      expect(transfers.map(t => t.blockHeight)).toEqual([
+        500, 499, 498, 497, 496, 495, 494, 493, 492,
+      ]);
+    });
+
+    it("at the page bound, drops the lowest block read, whose receipts may continue on the next page", async () => {
+      const { cursors } = respondWithReceiptPages([
+        [receipt({ transaction_hash: "above", block: { block_height: "300" } })],
+        ...Array.from({ length: 9 }, (_, index) => [
+          receipt({ transaction_hash: `same${index}`, block: { block_height: "200" } }),
+        ]),
+        [receipt({ transaction_hash: "unread", block: { block_height: "200" } })],
+      ]);
+
+      const { transfers, truncatedAtHeight } = await read();
+
+      expect(cursors).toHaveLength(10);
+      expect(truncatedAtHeight).toBe(201);
+      expect(transfers.map(t => t.transactionHash)).toEqual(["above"]);
     });
 
     it("with a floor, reads past the page bound until the floor, so no payout of the window is lost", async () => {
@@ -750,6 +768,22 @@ describe("getOperations", () => {
       respondWithParties({}, undefined, {
         "payout-hash": [
           { ...receiptNode(receipt({ receipt_id: "r-pending" })), outcome: {} as never },
+        ],
+      });
+
+      expect((await read()).transfers).toEqual([]);
+    });
+
+    it("skips a payout while another of its receipts has no outcome yet, as it may still send one", async () => {
+      respondWithReceipts([receipt()]);
+      respondWithParties({}, undefined, {
+        "payout-hash": [
+          {
+            predecessor_account_id: INTENTS,
+            receiver_account_id: INTENTS,
+            actions: [{ action: "FUNCTION_CALL", method: "ft_resolve_transfer" }],
+            outcome: {} as never,
+          },
         ],
       });
 
