@@ -3,7 +3,7 @@ import { openDeeplink } from "@e2e/helpers/commonHelpers";
 import { byId, byText } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
-type Wallet40TabName = "home" | "swap" | "earn" | "card" | "paytab";
+type Wallet40TabName = "home" | "swap" | "earn" | "card";
 
 export default class MainNavigationPage {
   // --- Wallet 4.0 bottom tabs ---

@@ -548,11 +548,6 @@ jobs:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
-          BAANX_TEST_CLIENT_KEY: ${{ secrets.BAANX_TEST_CLIENT_KEY }}
-          BAANX_TEST_USER_EMAIL: ${{ secrets.BAANX_TEST_USER_EMAIL }}
-          BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
-          BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
-          BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
           E2E_EXCLUSIVE_LOCK_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           E2E_EXCLUSIVE_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
           E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -787,11 +782,6 @@ jobs:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
-          BAANX_TEST_CLIENT_KEY: ${{ secrets.BAANX_TEST_CLIENT_KEY }}
-          BAANX_TEST_USER_EMAIL: ${{ secrets.BAANX_TEST_USER_EMAIL }}
-          BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
-          BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
-          BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
           E2E_EXCLUSIVE_LOCK_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           E2E_EXCLUSIVE_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
           E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}

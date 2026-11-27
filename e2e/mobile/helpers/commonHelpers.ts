@@ -8,11 +8,9 @@ import { isCurrencyUnsupportedOnLNS } from "@ledgerhq/live-e2e-shared/nanoSSuppo
 import { readFile } from "fs/promises";
 import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { INTERVAL } from "@e2e/utils/timeouts";
-import { isPaytabSpec, paytabCardSession } from "@e2e/utils/paytab";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import { FAKE_TRONIFY_PORT } from "@ledgerhq/live-e2e-shared/tronify/constants";
-import { CARD_SESSION_BOOTSTRAP_ENV } from "@ledgerhq/baanx-test-client";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -124,10 +122,6 @@ function createDetoxURLBlacklistRegex(): string {
 export const isAppBroadcastDisabled = () => Boolean(getEnv("DISABLE_TRANSACTION_BROADCAST"));
 
 export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) {
-  const cardSession = isPaytabSpec()
-    ? { [CARD_SESSION_BOOTSTRAP_ENV]: await paytabCardSession() }
-    : {};
-
   const port = await findFreePort();
   await closeBridge();
   const wsToken = initBridge(port);
@@ -141,7 +135,6 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       disable_broadcast: isAppBroadcastDisabled() && !broadcastsReachOnlyFakeNodes ? 1 : 0,
       ledger_sync_environment: ledgerSyncEnvironment,
       IS_TEST: true,
-      ...cardSession,
       ...extraLaunchArgs,
     },
     languageAndLocale: {

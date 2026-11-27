@@ -686,9 +686,6 @@ catalogs:
     nx:
       specifier: 24.0.6
       version: 24.0.6
-    otpauth:
-      specifier: 9.5.1
-      version: 9.5.1
     oxfmt:
       specifier: 0.79.0
       version: 0.79.0
@@ -9035,9 +9032,6 @@ importers:
       '@features/platform-assets-table':
         specifier: workspace:*
         version: link:../../features/platform/assets-table
-      '@ledgerhq/baanx-test-client':
-        specifier: workspace:^
-        version: link:../tooling/baanx-test-client
       '@ledgerhq/device-mockserver-client':
         specifier: 'catalog:'
         version: 1.4.0(@ledgerhq/device-management-kit@1.13.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
@@ -9160,9 +9154,6 @@ importers:
       '@jest/types':
         specifier: 30.5.1
         version: 30.5.1
-      '@ledgerhq/baanx-test-client':
-        specifier: workspace:^
-        version: link:../tooling/baanx-test-client
       '@ledgerhq/devices':
         specifier: 8.19.0
         version: 8.19.0
@@ -9283,49 +9274,6 @@ importers:
       zx:
         specifier: 'catalog:'
         version: 8.8.5
-
-  e2e/tooling/baanx-test-client:
-    dependencies:
-      otpauth:
-        specifier: 'catalog:'
-        version: 9.5.1
-    devDependencies:
-      '@jest/globals':
-        specifier: 'catalog:'
-        version: 30.5.2
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11(@swc/helpers@0.5.23)
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.4
-      '@typescript/native':
-        specifier: 'catalog:'
-        version: typescript@7.0.2
-      jest:
-        specifier: 'catalog:'
-        version: 30.5.2(@types/node@24.12.4)(babel-plugin-macros@3.1.0)
-      jest-sonar:
-        specifier: 0.2.16
-        version: 0.2.16
-      oxfmt:
-        specifier: 'catalog:'
-        version: 0.79.0
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.94.0
-      tsx:
-        specifier: 'catalog:'
-        version: 4.20.6
-      typescript:
-        specifier: 'catalog:'
-        version: '@typescript/typescript6@6.0.2'
 
   e2e/tooling/filter:
     devDependencies:
@@ -42342,9 +42290,6 @@ packages:
     resolution: {integrity: sha512-D2FR03Vir7FIu45XBY20mTb+/ZSWB00sjU9jdQXt83gDrI4Ztz5Fs7/yy74g2N5SVQY4xY1qDr4rNddwYRVX0g==}
     engines: {node: '>=0.10.0'}
 
-  otpauth@9.5.1:
-    resolution: {integrity: sha512-fJmDAHc8wImfqqqOXIlBvT1dEKrZK0Cmb2VEgScpNTolCz0PHh6ExUZGv4sLtOsWNaHCQlD+rRqaPgnoxFoZjQ==}
-
   outdent@0.5.0:
     resolution: {integrity: sha512-/jHxFIzoMXdqPzTaCpFzAAWhpkSjZPF4Vsn6jAfNpmbH/ymsmd7Qc6VE9BGn0L6YMj6uwpQLxCECpus4ukKS9Q==}
 
@@ -63216,10 +63161,6 @@ snapshots:
   os-browserify@0.3.0: {}
 
   os-tmpdir@1.0.2: {}
-
-  otpauth@9.5.1:
-    dependencies:
-      '@noble/hashes': 2.2.0
 
   outdent@0.5.0: {}
 

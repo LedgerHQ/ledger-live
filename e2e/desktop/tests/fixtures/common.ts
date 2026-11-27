@@ -18,7 +18,7 @@ import {
   attachMergedFeatureFlags,
   attachSpeculinhoLogs,
 } from "tests/utils/allureUtils";
-import { isLastRetry, isPaytabTest } from "tests/utils/testInfoUtils";
+import { isLastRetry } from "tests/utils/testInfoUtils";
 import { PageLogCollector } from "tests/utils/pageLogCollector";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
@@ -43,12 +43,10 @@ import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
-import {
-  CARD_SESSION_BOOTSTRAP_ENV,
-  resolveCardSessionBootstrap,
-} from "@ledgerhq/baanx-test-client";
 
 export type { CliCommand };
+
+const SIGNED_IN_CARD_SESSION_ENV = "CARD_SESSION_BOOTSTRAP";
 
 /** Mutable Speculos handle: {@link current} is always the latest device for teardown and env. */
 type SpeculosFixtureHandle = {
@@ -308,15 +306,7 @@ export const test = base.extend<TestFixtures>({
       },
       env,
     );
-    delete env[CARD_SESSION_BOOTSTRAP_ENV];
-
-    if (isPaytabTest(testInfo)) {
-      const { BAANX_TEST_API_URL, BAANX_TEST_CLIENT_KEY } = process.env;
-      env["CARD_BAANX_API_URL"] = BAANX_TEST_API_URL || "https://dev.api.baanx.com";
-      env["CARD_BAANX_CLIENT_KEY"] =
-        BAANX_TEST_CLIENT_KEY || "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6";
-      env[CARD_SESSION_BOOTSTRAP_ENV] = await resolveCardSessionBootstrap();
-    }
+    delete env[SIGNED_IN_CARD_SESSION_ENV];
 
     // launch app
     const windowSize = { width: 1024, height: 768 };

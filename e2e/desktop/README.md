@@ -97,15 +97,6 @@ Tests run on a local Docker Speculos by default. To run them on remote Speculos 
 To watch the device screen during a local run, on Docker or Speculinho, set `SPECULOS_SCREEN`: see
 [Watch the device](../../libs/live-e2e-shared/SPECULINHO.md#watch-the-device).
 
-## Pay tab
-
-Pay tab specs need `BAANX_TEST_CLIENT_KEY`, `BAANX_TEST_USER_EMAIL`, `BAANX_TEST_USER_PASSWORD`, and `BAANX_TEST_USER_TOTP_SECRET` environment variables. See [@ledgerhq/baanx-test-client](../tooling/baanx-test-client/README.md).
-
-A spec that needs an injected Card session must live under `tests/specs/paytab/`. The card-session reporter
-mints once before workers when a selected spec path contains `/paytab/`. `--grep` is already applied,
-so a smoke run that does not select that spec does not log in. The fixture injects the session when
-the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed out.
-
 ## Feature Flags
 
 ### E2E_FEATURE_FLAGS_JSON

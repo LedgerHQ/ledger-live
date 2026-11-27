@@ -13,9 +13,7 @@ import {
 } from "@ledgerhq/live-e2e-shared/exclusiveLock";
 import { isExclusiveLockDeferralPass } from "@ledgerhq/live-e2e-shared/exclusiveLock/deferralPasses";
 import type { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { resolveCardSessionBootstrap } from "@ledgerhq/baanx-test-client";
 import { EXCLUSIVE_LOCK_DEFERRED_REASON } from "tests/utils/lockDeferrals";
-import { isPaytabTest } from "tests/utils/testInfoUtils";
 
 export const EXCLUSIVE_LOCK_FIXTURE_TIMEOUT =
   EXCLUSIVE_LOCK_ACQUIRE_TIMEOUT_MS + EXCLUSIVE_LOCK_NESTED_DRAIN_MS + 2 * 60_000;
@@ -68,14 +66,6 @@ export function exclusiveLockFor(declaration: LockDeclaration) {
 }
 
 /**
- * A Pay tab test gets its card session before waiting for its locks, or right after trying them,
- * so a Baanx failure never holds them and a test deferred for busy locks does not log in.
- */
-const resolvePaytabCardSession = async (testInfo: TestInfo) => {
-  if (isPaytabTest(testInfo)) await resolveCardSessionBootstrap();
-};
-
-/**
  * Locks what the test declares before its app starts, across every CI machine. On a deferring pass
  * a first attempt that finds them busy is skipped so a later pass runs it; otherwise it waits.
  * CLI broadcasts wait for their confirmation, so only an app broadcast leaves a settle window.
@@ -100,18 +90,9 @@ async function acquireDeclaredTargets(
   const label = `desktop ${path.basename(testInfo.file)} › ${testInfo.title}`;
   if (testInfo.retry === 0 && isExclusiveLockDeferralPass()) {
     const lease = await tryAcquireExclusiveLock(targets, label, { allowNested: true });
-    if (lease) {
-      try {
-        await resolvePaytabCardSession(testInfo);
-      } catch (error) {
-        await lease.abandon();
-        throw error;
-      }
-      return lease;
-    }
+    if (lease) return lease;
     console.warn(`${EXCLUSIVE_LOCK_DEFERRED_REASON} (${label})`);
     testInfo.skip(true, EXCLUSIVE_LOCK_DEFERRED_REASON);
   }
-  await resolvePaytabCardSession(testInfo);
   return acquireExclusiveLock(targets, label, { allowNested: true });
 }
