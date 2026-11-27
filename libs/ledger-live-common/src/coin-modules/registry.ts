@@ -76,6 +76,10 @@ export function isCoinModuleRegistered(family: string): boolean {
   return loaders.has(family);
 }
 
+export function getAccountCompletion(family: string): CoinModuleLoader["accountCompletion"] {
+  return loaders.get(family)?.accountCompletion;
+}
+
 export function getAccountDescriptorType(family: string): AccountDescriptor["type"] {
   return getLoader(family).accountDescriptorType;
 }
