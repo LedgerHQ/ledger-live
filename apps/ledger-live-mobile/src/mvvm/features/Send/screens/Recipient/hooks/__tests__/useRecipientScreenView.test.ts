@@ -15,6 +15,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { createMockAccount, createMockCurrency } from "./accounts";
 import { useRecipientContactSelection } from "../../../../context/RecipientContactSelectionContext";
@@ -86,7 +87,32 @@ const mockRecipientSearch = {
 
 const mockSendFlowState = {
   account: { account: mockAccount, parentAccount: null, currency: mockAccount.currency },
+  transaction: { bridgePending: false, status: { errors: {} } },
 };
+
+function mockFilledMemoState({
+  bridgePending,
+  transactionError,
+  memo = { type: "MEMO", value: "note-1" },
+}: {
+  bridgePending: boolean;
+  transactionError?: Error;
+  memo?: Memo;
+}) {
+  mockedSendFeatures.hasMemoForRecipient.mockReturnValue(true);
+  mockedUseSendFlowData.mockReturnValue({
+    recipientSearch: mockRecipientSearch,
+    state: {
+      ...mockSendFlowState,
+      recipient: { address: "0xeth", memo },
+      transaction: {
+        bridgePending,
+        status: { errors: transactionError ? { transaction: transactionError } : {} },
+      },
+    } as never,
+    uiConfig: {} as never,
+  });
+}
 
 const idleResult: AddressSearchResult = {
   status: "idle",
@@ -497,7 +523,7 @@ describe("useRecipientScreenView", () => {
 
     act(() => result.current.handleContactSelect(contact));
 
-    expect(result.current.contactAddressPicker.contact).toBe(contact);
+    expect(result.current.contactAddressPicker.contact).toEqual(contact);
     expect(onAddressSelected).not.toHaveBeenCalled();
   });
 
@@ -533,7 +559,7 @@ describe("useRecipientScreenView", () => {
       category: "Modal send - select contact address",
       props: expect.objectContaining({ addressCount: 2 }),
     });
-    expect(result.current.contactAddressPicker.contact).toBe(contact);
+    expect(result.current.contactAddressPicker.contact).toEqual(contact);
     expect(onAddressSelected).not.toHaveBeenCalled();
   });
 
@@ -572,6 +598,116 @@ describe("useRecipientScreenView", () => {
     expect(setRecipientResolution).toHaveBeenCalledWith("contact address match", "contact");
     expect(onAddressSelected).toHaveBeenCalledWith("0xeth", undefined, true);
     expect(result.current.contactAddressPicker.contact).toBeNull();
+  });
+
+  describe("when the address picked in the contact sheet carries a typed memo", () => {
+    const contact = mockContact({
+      addresses: [
+        mockContactAddress({ id: "address-eth", currencyId: "ethereum", address: "0xeth" }),
+      ],
+    });
+
+    function renderScreenView(onAddressSelected: jest.Mock) {
+      const { result } = renderHook(() =>
+        useRecipientScreenView({
+          account: mockAccount,
+          currency: createMockCurrency({ id: "ethereum" }),
+          onAddressSelected,
+          recipientSupportsDomain: true,
+        }),
+      );
+      return result;
+    }
+
+    function pickContactAddress(onAddressSelected: jest.Mock) {
+      const result = renderScreenView(onAddressSelected);
+      act(() => result.current.handleContactSelect(contact));
+      act(() => result.current.contactAddressPicker.onSelectAddress(contact.addresses[0]));
+      return result;
+    }
+
+    it.each([
+      ["the memo is being validated", { bridgePending: true }],
+      ["the memo is invalid", { bridgePending: false, transactionError: new Error("invalid") }],
+    ])("keeps the contact sheet closed and does not advance while %s", (_label, memoState) => {
+      const onAddressSelected = jest.fn();
+      mockFilledMemoState(memoState);
+      const result = renderScreenView(onAddressSelected);
+
+      act(() => result.current.handleContactSelect(contact));
+
+      expect(result.current.contactAddressPicker.contact).toBeNull();
+      expect(onAddressSelected).not.toHaveBeenCalled();
+      expect(result.current.isSkipMemoConfirmationOpen).toBe(false);
+    });
+
+    it("keeps the contact sheet closed when the recipient requires the empty memo", () => {
+      const onAddressSelected = jest.fn();
+      mockFilledMemoState({
+        bridgePending: false,
+        transactionError: new Error("memo required"),
+        memo: { value: "", type: "MEMO" },
+      });
+      const result = renderScreenView(onAddressSelected);
+
+      act(() => result.current.handleContactSelect(contact));
+
+      expect(result.current.contactAddressPicker.contact).toBeNull();
+      expect(result.current.isSkipMemoConfirmationOpen).toBe(false);
+    });
+
+    it("offers only the addresses that are not blocked by the memo", () => {
+      const onAddressSelected = jest.fn();
+      mockFilledMemoState({ bridgePending: false, transactionError: new Error("invalid memo") });
+      const contactWithFreeAddress = mockContact({
+        addresses: [
+          mockContactAddress({ id: "address-eth", currencyId: "ethereum", address: "0xeth" }),
+          mockContactAddress({ id: "address-other", currencyId: "ethereum", address: "0xother" }),
+        ],
+      });
+      const result = renderScreenView(onAddressSelected);
+
+      act(() => result.current.handleContactSelect(contactWithFreeAddress));
+
+      expect(result.current.contactAddressPicker.contact?.addresses.map(({ id }) => id)).toEqual([
+        "address-other",
+      ]);
+    });
+
+    it("asks to skip a cleared memo while the previous memo error is still set", () => {
+      const onAddressSelected = jest.fn();
+      mockFilledMemoState({
+        bridgePending: true,
+        transactionError: new Error("invalid memo"),
+        memo: { value: "", type: "MEMO" },
+      });
+
+      const result = pickContactAddress(onAddressSelected);
+
+      expect(result.current.isSkipMemoConfirmationOpen).toBe(true);
+    });
+
+    it("advances with a skipped memo while the previous memo error is still set", () => {
+      const onAddressSelected = jest.fn();
+      mockFilledMemoState({
+        bridgePending: true,
+        transactionError: new Error("invalid memo"),
+        memo: { value: "", type: "NO_MEMO" },
+      });
+
+      pickContactAddress(onAddressSelected);
+
+      expect(onAddressSelected).toHaveBeenCalledWith("0xeth", undefined, true);
+    });
+
+    it("advances once the memo is validated", () => {
+      const onAddressSelected = jest.fn();
+      mockFilledMemoState({ bridgePending: false });
+
+      pickContactAddress(onAddressSelected);
+
+      expect(onAddressSelected).toHaveBeenCalledWith("0xeth", undefined, true);
+    });
   });
 
   it("shows an exact contact search result when its network address is ambiguous", () => {

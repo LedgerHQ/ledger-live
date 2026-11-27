@@ -132,6 +132,7 @@ function AddressMatchedSectionContainer({
   addressBookFamilyName = "Ethereum",
   onSelect = jest.fn(),
   onAddContact = jest.fn(),
+  isBlocked = false,
 }: Readonly<{
   result: AddressSearchResult;
   isContactsFeatureEnabled?: boolean;
@@ -139,6 +140,7 @@ function AddressMatchedSectionContainer({
   addressBookFamilyName?: string;
   onSelect?: (address: string, ensName?: string) => void;
   onAddContact?: () => void;
+  isBlocked?: boolean;
 }>) {
   const viewModel = useAddressMatchedSectionViewModel({
     searchResult: result,
@@ -149,6 +151,7 @@ function AddressMatchedSectionContainer({
     hasAddressBook,
     addressBookFamilyName,
     onAddContact,
+    isBlocked,
   });
 
   return <AddressMatchedSection viewModel={viewModel} />;
@@ -163,6 +166,27 @@ describe("AddressMatchedSection", () => {
     render(<AddressMatchedSectionContainer result={searchResult} />);
 
     expect(screen.getByTestId("new-send-flow-address-confirm")).toBeVisible();
+  });
+
+  it("does not select a matched address while the recipient step is blocked", () => {
+    const onSelect = jest.fn();
+    render(<AddressMatchedSectionContainer result={searchResult} onSelect={onSelect} isBlocked />);
+
+    fireEvent.press(screen.getByTestId("new-send-flow-address-confirm"));
+
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it("disables the recipient card send button while the recipient step is blocked", () => {
+    render(
+      <AddressMatchedSectionContainer
+        result={{ ...searchResult, resolvedAddress: address }}
+        isContactsFeatureEnabled
+        isBlocked
+      />,
+    );
+
+    expect(screen.getByTestId("send-recipient-card-send")).toBeDisabled();
   });
 
   it("shows the recipient card with contact avatar when contacts are enabled", () => {

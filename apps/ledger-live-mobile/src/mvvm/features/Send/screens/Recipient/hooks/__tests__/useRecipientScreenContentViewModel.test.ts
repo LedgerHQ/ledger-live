@@ -2,6 +2,7 @@ import { track } from "@shared/analytics";
 import { act, renderHook } from "@testing-library/react-native";
 import { useMemoViewModel } from "../../../../components/Memo/hooks/useMemoViewModel";
 import { useSendFlowTracking } from "../../../../context/SendFlowTrackingContext";
+import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { useAddressMatchedSectionViewModel } from "../useAddressMatchedSectionViewModel";
 import { useRecipientScreenView } from "../useRecipientScreenView";
 import { createMockAccount } from "./accounts";
@@ -11,6 +12,7 @@ import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/featu
 import { useSendFlowMessageTracking } from "../../../../hooks/useSendFlowMessageTracking";
 
 jest.mock("../../../../context/SendFlowTrackingContext");
+jest.mock("../../../../context/SendFlowContext");
 jest.mock("../../../../hooks/useSendFlowMessageTracking");
 jest.mock("../../../../components/Memo/hooks/useMemoViewModel");
 jest.mock("../useRecipientScreenView");
@@ -33,6 +35,7 @@ const mockedUseMemoViewModel = jest.mocked(useMemoViewModel);
 const mockedUseRecipientScreenView = jest.mocked(useRecipientScreenView);
 const mockedUseAddressMatchedSectionViewModel = jest.mocked(useAddressMatchedSectionViewModel);
 const mockedUseSendFlowTracking = jest.mocked(useSendFlowTracking);
+const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedSendFeatures = jest.mocked(sendFeatures);
 const mockedUseSettleRecipientInputFocus = jest.mocked(useSettleRecipientInputFocus);
 const mockedUseSendFlowMessageTracking = jest.mocked(useSendFlowMessageTracking);
@@ -102,11 +105,18 @@ const addressMatchedSectionViewModel = {
   showFirstInteractionWarning: false,
 };
 
+function mockBridgePending(bridgePending: boolean) {
+  mockedUseSendFlowData.mockReturnValue({
+    state: { transaction: { bridgePending } },
+  } as never);
+}
+
 describe("useRecipientScreenContentViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedSendFeatures.hasMemoForRecipient.mockReturnValue(true);
     mockedUseRecipientScreenView.mockReturnValue(recipientViewModel);
+    mockBridgePending(false);
     mockedUseMemoViewModel.mockReturnValue(memoViewModel);
     mockedUseAddressMatchedSectionViewModel.mockReturnValue(
       addressMatchedSectionViewModel as never,
@@ -273,6 +283,50 @@ describe("useRecipientScreenContentViewModel", () => {
     expect(onAddContact).toHaveBeenCalledTimes(1);
   });
 
+  it("blocks the matched address and does not advance while the memo is being validated", () => {
+    mockBridgePending(true);
+
+    renderViewModel();
+    const { onSelect, isBlocked } = mockedUseAddressMatchedSectionViewModel.mock.calls[0][0];
+
+    act(() => {
+      onSelect("destination");
+    });
+
+    expect(isBlocked).toBe(true);
+    expect(handleAddressSelect).not.toHaveBeenCalled();
+  });
+
+  it("hides the matched address and does not advance when the memo is invalid", () => {
+    mockedUseMemoViewModel.mockReturnValue({
+      ...(memoViewModel as object),
+      memoError: new Error("invalid memo"),
+    } as never);
+
+    const { result } = renderViewModel();
+    const { onSelect } = mockedUseAddressMatchedSectionViewModel.mock.calls[0][0];
+
+    act(() => {
+      onSelect("destination");
+    });
+
+    expect(result.current.showMatched).toBe(false);
+    expect(handleAddressSelect).not.toHaveBeenCalled();
+  });
+
+  it("does not block an empty memo, which goes through the skip-memo confirmation", () => {
+    mockBridgePending(true);
+    mockedUseMemoViewModel.mockReturnValue({
+      memo: { value: "", type: "MEMO_TEXT" },
+      hasFilledMemo: false,
+      memoError: undefined,
+    } as never);
+
+    renderViewModel();
+
+    expect(mockedUseAddressMatchedSectionViewModel.mock.calls[0][0].isBlocked).toBe(false);
+  });
+
   it("shows the matched address even when the memo is empty", () => {
     mockedUseMemoViewModel.mockReturnValue({
       memo: { value: "", type: "MEMO_TEXT" },
@@ -283,6 +337,50 @@ describe("useRecipientScreenContentViewModel", () => {
     const { result } = renderViewModel();
 
     expect(result.current.showMatched).toBe(true);
+  });
+
+  it("keeps the matched address shown and blocked while a typed memo replaces an invalid one", () => {
+    mockBridgePending(true);
+    mockedUseMemoViewModel.mockReturnValue({
+      ...(memoViewModel as object),
+      memoError: new Error("invalid memo"),
+    } as never);
+
+    const { result } = renderViewModel();
+
+    expect(result.current.showMatched).toBe(true);
+    expect(mockedUseAddressMatchedSectionViewModel.mock.calls[0][0].isBlocked).toBe(true);
+  });
+
+  it("hides the matched address when the recipient requires the empty memo", () => {
+    mockedUseMemoViewModel.mockReturnValue({
+      memo: { value: "", type: "MEMO_TEXT" },
+      hasFilledMemo: false,
+      memoError: new Error("memo required"),
+    } as never);
+
+    const { result } = renderViewModel();
+
+    expect(result.current.showMatched).toBe(false);
+  });
+
+  it("lets a cleared memo advance while the previous memo error is still set", () => {
+    mockBridgePending(true);
+    mockedUseMemoViewModel.mockReturnValue({
+      memo: { value: "", type: "MEMO_TEXT" },
+      hasFilledMemo: false,
+      memoError: new Error("invalid memo"),
+    } as never);
+
+    const { result } = renderViewModel();
+    const { onSelect } = mockedUseAddressMatchedSectionViewModel.mock.calls[0][0];
+
+    act(() => {
+      onSelect("destination");
+    });
+
+    expect(result.current.showMatched).toBe(true);
+    expect(handleAddressSelect).toHaveBeenCalled();
   });
 
   it("does not request message tracking when nothing is displayed", () => {

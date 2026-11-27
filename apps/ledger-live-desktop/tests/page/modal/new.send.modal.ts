@@ -7,6 +7,8 @@ export type StellarMemoType = "NO_MEMO" | "MEMO_TEXT" | "MEMO_ID" | "MEMO_HASH" 
 
 type FeePreset = "slow" | "medium" | "fast";
 
+const DISABLED_ROW_CLASS = /cursor-not-allowed/;
+
 export class NewSendModal extends Modal {
   // ========== Dialog container ==========
   readonly dialog = this.page.getByRole("dialog");
@@ -147,6 +149,7 @@ export class NewSendModal extends Modal {
     await this.visibleSendToButton.waitFor({ state: "visible", timeout: 30000 });
     // Bridge async validation may cause re-renders; wait for DOM to stabilize
     await this.page.waitForTimeout(500);
+    await expect(this.visibleSendToButton).not.toHaveClass(DISABLED_ROW_CLASS, { timeout: 10000 });
     await this.visibleSendToButton.scrollIntoViewIfNeeded();
     await this.visibleSendToButton.click();
   }
