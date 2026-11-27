@@ -16,7 +16,10 @@ export function agentIntentApiExtra(extra: AgentIntentApiExtra): AgentIntentApiE
   return AgentIntentApiExtraSchema.parse(extra);
 }
 
-/** Not wrapped in `retry`: signing, rejecting and profile writes are not idempotent. */
+/**
+ * Not wrapped in `retry`: writes aren't idempotent. The auth base query still refreshes the token
+ * and resends after a 401, which the BFF answers before it runs the request.
+ */
 const agentIntentBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = (
   args,
   api,

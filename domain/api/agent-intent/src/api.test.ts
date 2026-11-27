@@ -1,4 +1,5 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, type SerializedError } from "@reduxjs/toolkit";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import type { AgentIntentSignature } from "@domain/entity-agent-intent";
 import {
   mockAgentIntentRecord,
@@ -99,6 +100,9 @@ async function settleRunningQueries(store: Store): Promise<void> {
   await new Promise(resolve => setTimeout(resolve, 0));
   await Promise.all(store.dispatch(agentIntentApi.util.getRunningQueriesThunk()));
 }
+
+const subscribeToIntents = (store: Store) => store.dispatch(endpoints.getAgentIntents.initiate({}));
+const subscribeToProfiles = (store: Store) => store.dispatch(endpoints.getAgentProfiles.initiate());
 
 describe("agentIntentReviewerApi", () => {
   it("should inject into the Agent Intent service api", () => {
@@ -273,6 +277,18 @@ describe("craftAgentIntent", () => {
     expect(result.data).toEqual(mockEvmAgentIntentCraft());
   });
 
+  it("should refetch the intent lists after crafting", async () => {
+    routes.listIntents.mockImplementation(() => HttpResponse.json([]));
+    routes.craft.mockImplementation(() => HttpResponse.json(mockEvmAgentIntentCraft()));
+    const store = makeStore();
+    await store.dispatch(endpoints.getAgentIntents.initiate({ status: ["crafted"] }));
+
+    await store.dispatch(endpoints.craftAgentIntent.initiate(intentId));
+    await settleRunningQueries(store);
+
+    expect(routes.listIntents).toHaveBeenCalledTimes(2);
+  });
+
   it("should tell a stale revision apart", async () => {
     routes.craft.mockImplementation(() =>
       agentIntentErrorResponse(409, "Stale revision.", "stale_revision"),
@@ -327,6 +343,21 @@ describe("submitAgentIntentSignature", () => {
     routes.listIntents.mockImplementation(() => HttpResponse.json([intent]));
     routes.stats.mockImplementation(() => HttpResponse.json(mockAgentIntentStats()));
     routes.signature.mockImplementation(() => HttpResponse.json(mockAgentIntentSignatureReceipt()));
+    const store = makeStore();
+    await store.dispatch(endpoints.getAgentIntents.initiate({}));
+    await store.dispatch(endpoints.getAgentIntentStats.initiate());
+
+    await store.dispatch(endpoints.submitAgentIntentSignature.initiate(submission));
+    await settleRunningQueries(store);
+
+    expect(routes.listIntents).toHaveBeenCalledTimes(2);
+    expect(routes.stats).toHaveBeenCalledTimes(2);
+  });
+
+  it("should still refetch them after a failure the BFF may have acted on", async () => {
+    routes.listIntents.mockImplementation(() => HttpResponse.json([intent]));
+    routes.stats.mockImplementation(() => HttpResponse.json(mockAgentIntentStats()));
+    routes.signature.mockImplementation(() => agentIntentErrorResponse(502, "Bad gateway."));
     const store = makeStore();
     await store.dispatch(endpoints.getAgentIntents.initiate({}));
     await store.dispatch(endpoints.getAgentIntentStats.initiate());
@@ -467,5 +498,89 @@ describe("agent profile writes", () => {
 
     expect(routes.deleteProfile).toHaveBeenCalledTimes(1);
     expect(routes.listProfiles).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("a refused argument", () => {
+  type Missing = null | undefined;
+  type Refusal = {
+    name: string;
+    refuse: (
+      store: Store,
+      missing: Missing,
+    ) => Promise<{ error?: FetchBaseQueryError | SerializedError }>;
+    route: Route;
+    list: Route;
+    subscribe: (store: Store) => Promise<unknown>;
+  };
+
+  const refusals: Refusal[] = [
+    {
+      name: "craftAgentIntent",
+      refuse: (store, missing) =>
+        store.dispatch(endpoints.craftAgentIntent.initiate(missing as never)),
+      route: routes.craft,
+      list: routes.listIntents,
+      subscribe: subscribeToIntents,
+    },
+    {
+      name: "submitAgentIntentSignature",
+      refuse: (store, missing) =>
+        store.dispatch(endpoints.submitAgentIntentSignature.initiate(missing as never)),
+      route: routes.signature,
+      list: routes.listIntents,
+      subscribe: subscribeToIntents,
+    },
+    {
+      name: "rejectAgentIntent",
+      refuse: (store, missing) =>
+        store.dispatch(endpoints.rejectAgentIntent.initiate(missing as never)),
+      route: routes.reject,
+      list: routes.listIntents,
+      subscribe: subscribeToIntents,
+    },
+    {
+      name: "createAgentProfile",
+      refuse: (store, missing) =>
+        store.dispatch(endpoints.createAgentProfile.initiate(missing as never)),
+      route: routes.createProfile,
+      list: routes.listProfiles,
+      subscribe: subscribeToProfiles,
+    },
+    {
+      name: "updateAgentProfile",
+      refuse: (store, missing) =>
+        store.dispatch(endpoints.updateAgentProfile.initiate(missing as never)),
+      route: routes.updateProfile,
+      list: routes.listProfiles,
+      subscribe: subscribeToProfiles,
+    },
+    {
+      name: "deleteAgentProfile",
+      refuse: (store, missing) =>
+        store.dispatch(endpoints.deleteAgentProfile.initiate(missing as never)),
+      route: routes.deleteProfile,
+      list: routes.listProfiles,
+      subscribe: subscribeToProfiles,
+    },
+  ];
+
+  describe.each([null, undefined])("%s", missing => {
+    it.each(refusals)(
+      "should refuse it in $name without a request or a refetch",
+      async ({ refuse, route: refusedRoute, list, subscribe }) => {
+        routes.listIntents.mockImplementation(() => HttpResponse.json([intent]));
+        routes.listProfiles.mockImplementation(() => HttpResponse.json([profile]));
+        const store = makeStore();
+        await subscribe(store);
+
+        const result = await refuse(store, missing);
+        await settleRunningQueries(store);
+
+        expect(readAgentIntentFailure(result.error)).toMatchObject({ kind: "invalid-request" });
+        expect(refusedRoute).not.toHaveBeenCalled();
+        expect(list).toHaveBeenCalledTimes(1);
+      },
+    );
   });
 });

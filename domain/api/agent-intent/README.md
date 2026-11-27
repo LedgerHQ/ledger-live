@@ -47,8 +47,16 @@ it has loaded.
 - `invalid-request`: the argument failed its schema and nothing was sent;
 - `network`, `unknown`.
 
-After submitting a signature, any failure other than `http` can mean the BFF holds it: read the
-intent again before asking the user to sign again.
+A failed signature submission can still have reached the BFF: a gateway's 502 or 504, or a network
+failure, can come after the BFF took the signature. Read the intent again before asking the user to
+sign again. Two `http` failures are already settled:
+
+- `stale_revision`: the intent was crafted again since; craft again, once, and sign the new
+  transaction;
+- `broadcast_rejected`: the BFF took the signature and the network refused the transaction; the
+  review ends there, so don't ask to sign again.
+
+After `invalid-request`, nothing was sent.
 
 `getAgentProfile` gives `null` when the agent has no profile. A 404 from a gateway stays an error.
 

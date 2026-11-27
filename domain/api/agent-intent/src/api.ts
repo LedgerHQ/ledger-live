@@ -12,9 +12,11 @@ import {
   type AgentProfileRecord,
   type AgentPubkey,
 } from "@domain/entity-agent-intent";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { agentIntentApi } from "@shared/api-services";
 import { z } from "zod";
 import { AGENT_INTENT_TAGS } from "./constants";
+import { readAgentIntentFailure } from "./failure";
 import { parseEach } from "./internals/parseEach";
 import { describeSchemaFailure } from "./internals/schemaFailure";
 import {
@@ -91,6 +93,15 @@ function isMissingProfile(response: Response, body: unknown): boolean {
   return response.status === 404 && MissingAgentProfileBodySchema.safeParse(body).success;
 }
 
+/** RTK Query runs `invalidatesTags` with the raw argument even when `argSchema` refused it. */
+function tagsIfSent<Arg, Tag>(
+  error: FetchBaseQueryError | undefined,
+  arg: Arg,
+  tags: (sent: Arg) => Tag[],
+): Tag[] {
+  return readAgentIntentFailure(error)?.kind === "invalid-request" ? [] : tags(arg);
+}
+
 export const agentIntentReviewerApi = agentIntentApi
   .enhanceEndpoints({ addTagTypes: AGENT_INTENT_TAGS })
   .injectEndpoints({
@@ -136,7 +147,8 @@ export const agentIntentReviewerApi = agentIntentApi
         rawResponseSchema: AgentIntentCraftSchema,
         transformResponse: (craft: AgentIntentCraft) => craft,
         catchSchemaFailure: describeSchemaFailure,
-        invalidatesTags: (_result, _error, intentId) => [{ type: "AgentIntent", id: intentId }],
+        invalidatesTags: (_result, error, intentId) =>
+          tagsIfSent(error, intentId, id => [{ type: "AgentIntent", id }, INTENT_LIST]),
       }),
 
       submitAgentIntentSignature: build.mutation<
@@ -152,22 +164,24 @@ export const agentIntentReviewerApi = agentIntentApi
         rawResponseSchema: AgentIntentSignatureReceiptSchema,
         transformResponse: (receipt: AgentIntentSignatureReceipt) => receipt,
         catchSchemaFailure: describeSchemaFailure,
-        invalidatesTags: (_result, _error, { intentId }) => [
-          { type: "AgentIntent", id: intentId },
-          INTENT_LIST,
-          "AgentIntentStats",
-        ],
+        invalidatesTags: (_result, error, submission) =>
+          tagsIfSent(error, submission, ({ intentId }) => [
+            { type: "AgentIntent", id: intentId },
+            INTENT_LIST,
+            "AgentIntentStats",
+          ]),
       }),
 
       rejectAgentIntent: build.mutation<void, AgentIntentId>({
         query: intentId => ({ url: intentPath(intentId, "reject"), method: "POST" }),
         argSchema: AgentIntentIdArgSchema,
         catchSchemaFailure: describeSchemaFailure,
-        invalidatesTags: (_result, _error, intentId) => [
-          { type: "AgentIntent", id: intentId },
-          INTENT_LIST,
-          "AgentIntentStats",
-        ],
+        invalidatesTags: (_result, error, intentId) =>
+          tagsIfSent(error, intentId, id => [
+            { type: "AgentIntent", id },
+            INTENT_LIST,
+            "AgentIntentStats",
+          ]),
       }),
 
       getAgentProfiles: build.query<AgentProfileList, void>({
@@ -208,10 +222,11 @@ export const agentIntentReviewerApi = agentIntentApi
         }),
         argSchema: CreateAgentProfileArgsSchema,
         catchSchemaFailure: describeSchemaFailure,
-        invalidatesTags: (_result, _error, { agentPubkey }) => [
-          PROFILE_LIST,
-          { type: "AgentProfile", id: agentPubkey },
-        ],
+        invalidatesTags: (_result, error, args) =>
+          tagsIfSent(error, args, ({ agentPubkey }) => [
+            PROFILE_LIST,
+            { type: "AgentProfile", id: agentPubkey },
+          ]),
       }),
 
       updateAgentProfile: build.mutation<void, UpdateAgentProfileArgs>({
@@ -222,20 +237,19 @@ export const agentIntentReviewerApi = agentIntentApi
         }),
         argSchema: UpdateAgentProfileArgsSchema,
         catchSchemaFailure: describeSchemaFailure,
-        invalidatesTags: (_result, _error, { agentPubkey }) => [
-          PROFILE_LIST,
-          { type: "AgentProfile", id: agentPubkey },
-        ],
+        invalidatesTags: (_result, error, args) =>
+          tagsIfSent(error, args, ({ agentPubkey }) => [
+            PROFILE_LIST,
+            { type: "AgentProfile", id: agentPubkey },
+          ]),
       }),
 
       deleteAgentProfile: build.mutation<void, AgentPubkey>({
         query: agentPubkey => ({ url: profilePath(agentPubkey), method: "DELETE" }),
         argSchema: AgentPubkeyArgSchema,
         catchSchemaFailure: describeSchemaFailure,
-        invalidatesTags: (_result, _error, agentPubkey) => [
-          PROFILE_LIST,
-          { type: "AgentProfile", id: agentPubkey },
-        ],
+        invalidatesTags: (_result, error, agentPubkey) =>
+          tagsIfSent(error, agentPubkey, id => [PROFILE_LIST, { type: "AgentProfile", id }]),
       }),
     }),
   });
