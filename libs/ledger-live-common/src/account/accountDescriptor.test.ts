@@ -100,7 +100,12 @@ const ACCOUNT_CURRENCY_IDS = listCryptoCurrencies(true)
   .filter(c => isCoinModuleRegistered(c.family))
   .map(c => c.id);
 
-type Subject = { xpub: string } | { freshAddress: string } | { publicKey: string };
+type Subject =
+  | { xpub: string }
+  | { freshAddress: string; seedIdentifier?: string }
+  | { publicKey: string };
+
+const HEDERA_ACCOUNT = { freshAddress: "0.0.751515", seedIdentifier: "ab".repeat(32) };
 
 /** A legacy account whose id holds its public key, its xpub or its address, as the coin modules encode it. */
 const account = (
@@ -125,6 +130,7 @@ const account = (
     index,
     xpub,
     freshAddress,
+    ...("seedIdentifier" in subject && { seedIdentifier: subject.seedIdentifier }),
     ...(publicKey && { cantonResources: { publicKey } }),
   };
 };
@@ -136,6 +142,7 @@ function subjectOf(currencyId: string): { subject: Subject; back: Record<string,
     const { publicKey } = PUBLIC_KEYS[family];
     return { subject: { publicKey }, back: { publicKey } };
   }
+  if (family === "hedera") return { subject: HEDERA_ACCOUNT, back: HEDERA_ACCOUNT };
   return descriptorTypeOf(currencyId) === "utxo"
     ? { subject: { xpub: XPUB }, back: { xpub: XPUB } }
     : { subject: { freshAddress: ETH_ADDR }, back: { freshAddress: ETH_ADDR } };
@@ -272,7 +279,12 @@ describe("descriptor -> legacy -> descriptor over generated descriptors", () => 
     const network = networkFromCurrencyId(currencyId);
     const isUtxo = descriptorTypeOf(currencyId) === "utxo";
     const { subject } = subjectOf(currencyId);
-    const key = "publicKey" in subject ? subject.publicKey : ETH_ADDR;
+    const key =
+      "publicKey" in subject
+        ? subject.publicKey
+        : "seedIdentifier" in subject
+          ? `${subject.freshAddress}:${subject.seedIdentifier}`
+          : ETH_ADDR;
     const problems: string[] = [];
     for (const mode of getDerivationModesForCurrency(currency)) {
       const scheme = getDerivationScheme({ derivationMode: mode, currency });
@@ -313,6 +325,7 @@ describe("descriptor -> legacy -> descriptor over generated descriptors", () => 
             ),
             xpub: legacy.xpub,
             freshAddress: legacy.freshAddress ?? "",
+            seedIdentifier: legacy.seedIdentifier,
           });
           // node and address are not restored, so an address descriptor comes back normalized
           const expected = isUtxo ? descriptor : { ...descriptor, path: pathOf({}) };
@@ -340,6 +353,7 @@ type RealAccount = {
   freshAddress: string;
   xpub?: string;
   publicKey?: string;
+  seedIdentifier?: string;
 };
 
 // real accounts taken from the coin modules' bridge datasets
@@ -384,6 +398,7 @@ const REAL_ACCOUNTS: RealAccount[] = [
     derivationMode: "hederaBip44",
     index: 0,
     freshAddress: "0.0.751515",
+    seedIdentifier: "f381f94b116a99518739e1bb394d1c8de281055d48b01dbc1625eebb06021ce5",
   },
   ...Object.values(PUBLIC_KEYS).map(({ currencyId, derivationMode, publicKey, address }) => ({
     currencyId,
@@ -396,27 +411,32 @@ const REAL_ACCOUNTS: RealAccount[] = [
 
 describe("legacy -> descriptor -> legacy over real accounts", () => {
   it.each(REAL_ACCOUNTS)("$currencyId $derivationMode", async real => {
-    const { currencyId, derivationMode, index, freshAddress, xpub, publicKey } = real;
+    const { currencyId, derivationMode, index, freshAddress, xpub, publicKey, seedIdentifier } =
+      real;
     const legacy = account(
       currencyId,
       derivationMode,
       index,
       publicKey ? { publicKey } : { freshAddress },
     );
-    const back = toLegacyAccount(fromLegacyAccount({ ...legacy, freshAddress, xpub }));
+    const descriptor = fromLegacyAccount({ ...legacy, freshAddress, xpub, seedIdentifier });
+    const back = toLegacyAccount(descriptor);
     const identity =
       descriptorTypeOf(currencyId) === "utxo"
         ? { xpub }
         : publicKey
           ? { publicKey }
-          : { freshAddress };
+          : { freshAddress, ...(seedIdentifier && { seedIdentifier }) };
     expect(back).toEqual({
       currencyId,
       derivationMode: real.restoredMode ?? derivationMode,
       index,
       ...identity,
     });
-    const address = addressFromKey(currencyId, publicKey ?? freshAddress);
+    const address = addressFromKey(
+      currencyId,
+      publicKey ?? (seedIdentifier ? descriptor.key : freshAddress),
+    );
     if (familyOf(currencyId) === "canton" || familyOf(currencyId) === "concordium") {
       await expect(address).rejects.toThrow(UnsupportedAddressFromKeyError);
     } else {
@@ -704,5 +724,48 @@ describe("toLegacyAccount", () => {
         path: DerivationPathSchema.parse(path),
       }),
     ).toThrow("hardened segments");
+  });
+});
+
+describe("a Hedera account, keyed on its account id and its device public key", () => {
+  const accountId = "0.0.10096335";
+  const publicKey = "f381f94b116a99518739e1bb394d1c8de281055d48b01dbc1625eebb06021ce5";
+  const legacy = {
+    ...account("hedera", "hederaBip44", 0, { freshAddress: accountId }),
+    freshAddress: accountId,
+    seedIdentifier: publicKey,
+  };
+
+  it("holds both in the descriptor key", () => {
+    expect(fromLegacyAccount(legacy)).toMatchObject({
+      type: "address",
+      key: `${accountId}:${publicKey}`,
+    });
+  });
+
+  it("gives the account id back as the address and the public key back as the seed identifier", () => {
+    expect(toLegacyAccount(fromLegacyAccount(legacy))).toEqual({
+      currencyId: "hedera",
+      derivationMode: "hederaBip44",
+      index: 0,
+      freshAddress: accountId,
+      seedIdentifier: publicKey,
+    });
+  });
+
+  it("reads the account at its id, whatever the public key", async () => {
+    expect(await addressFromKey("hedera", `${accountId}:${publicKey}`)).toBe(accountId);
+  });
+
+  it("rejects an account whose seed identifier is not a public key", () => {
+    expect(() => fromLegacyAccount({ ...legacy, seedIdentifier: accountId })).toThrow(
+      MissingAccountPublicKeyError,
+    );
+  });
+
+  it("rejects a key that is only the account id", () => {
+    expect(() => toLegacyAccount({ ...fromLegacyAccount(legacy), key: accountId })).toThrow(
+      InvalidAccountKeyError,
+    );
   });
 });

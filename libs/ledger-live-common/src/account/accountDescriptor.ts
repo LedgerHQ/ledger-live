@@ -1,6 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { AccountDescriptorSchema, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { AccountContext } from "@domain/entity-account-context";
+import type { CompositeAccountKey } from "../coin-modules/types";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import {
@@ -22,6 +23,7 @@ import {
 import { fromDescriptorPath, toDescriptorPath } from "@domain/entity-derivation";
 import {
   getAccountDescriptorType,
+  getCompositeAccountKey,
   getLegacyAccountContext,
   loadAddressFromKeyForFamily,
 } from "../coin-modules/registry";
@@ -40,6 +42,8 @@ const PUBLIC_KEY_FAMILIES = new Set([
 export type LegacyAccountIdentity = Pick<Account, "id" | "derivationMode" | "index" | "xpub"> & {
   currency: Pick<Account["currency"], "id">;
   freshAddress: string;
+  /** Hedera keeps its device public key here, which its descriptor key holds beside the account id. */
+  seedIdentifier?: string;
   /** Canton keeps its public key here: its legacy id holds the party id. */
   cantonResources?: { publicKey?: string };
 };
@@ -54,6 +58,8 @@ export type LegacyAccountFields = {
   customData?: string;
   /** The key of a family keyed on its public key, in place of `freshAddress`: see `addressFromKey`. */
   publicKey?: string;
+  /** The seed identifier of a family whose descriptor key holds it beside the address (Hedera: the device public key). */
+  seedIdentifier?: string;
 };
 
 export class UnsupportedDescriptorPathError extends Error {
@@ -104,6 +110,9 @@ export class UnsupportedAddressFromKeyError extends Error {
 /** The address an account is read at: its key, or the address its family computes from its public key. */
 export async function addressFromKey(currencyId: string, key: string): Promise<Address> {
   const family = getCryptoCurrencyById(currencyId).family;
+  const compositeKey = getCompositeAccountKey(family);
+  if (compositeKey)
+    return AddressSchema.parse(compositeKeyParts(compositeKey, key, currencyId).freshAddress);
   if (!PUBLIC_KEY_FAMILIES.has(family)) return AddressSchema.parse(key);
   assertPublicKey(key, currencyId);
   const derive = await loadAddressFromKeyForFamily(family);
@@ -111,6 +120,20 @@ export async function addressFromKey(currencyId: string, key: string): Promise<A
     throw new UnsupportedAddressFromKeyError(`${currencyId} computes no address from its key`);
   }
   return AddressSchema.parse(derive(key));
+}
+
+function compositeKeyParts(
+  compositeKey: CompositeAccountKey,
+  key: string,
+  currencyId: string,
+): { freshAddress: string; seedIdentifier: string } {
+  const parts = compositeKey.partsOf(key);
+  if (!parts) {
+    throw new InvalidAccountKeyError(
+      `${currencyId} accounts are keyed on their address and public key`,
+    );
+  }
+  return parts;
 }
 
 /** The key of a derived account's descriptor: its public key for a family keyed on it, else its address. */
@@ -160,6 +183,26 @@ export function fromLegacyAccount(account: LegacyAccountIdentity): AccountDescri
   return AccountDescriptorSchema.parse(buildDescriptor(account));
 }
 
+function descriptorKeyOf(
+  account: LegacyAccountIdentity,
+  family: string,
+  currencyId: string,
+): string {
+  const compositeKey = getCompositeAccountKey(family);
+  if (compositeKey) {
+    const key = compositeKey.keyOf(account);
+    if (!key) {
+      throw new MissingAccountPublicKeyError(
+        `${currencyId} account has no public key to identify it`,
+      );
+    }
+    return key;
+  }
+  return PUBLIC_KEY_FAMILIES.has(family)
+    ? publicKeyOf(account, family, currencyId)
+    : account.freshAddress;
+}
+
 function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
   const currency = getCryptoCurrencyById(account.currency.id);
   const network = networkFromCurrencyId(CryptoCurrencyIdSchema.parse(account.currency.id));
@@ -187,9 +230,7 @@ function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
     version: "2",
     type: "address",
     network,
-    key: PUBLIC_KEY_FAMILIES.has(family)
-      ? publicKeyOf(account, family, currency.id)
-      : account.freshAddress,
+    key: descriptorKeyOf(account, family, currency.id),
     path: toDescriptorPath(
       runDerivationScheme(scheme, { coinType: currency.coinType }, { account: account.index }),
     ),
@@ -223,9 +264,17 @@ export function toLegacyAccount(
     if (index < getDerivationModeStartsAt(derivationMode)) continue;
     if (descriptor.type === "utxo")
       return { currencyId, derivationMode, index, xpub: descriptor.key };
-    const fields = keyedOnPublicKey
-      ? { currencyId, derivationMode, index, publicKey: descriptor.key }
-      : { currencyId, derivationMode, index, freshAddress: descriptor.key };
+    const compositeKey = getCompositeAccountKey(family);
+    const fields = compositeKey
+      ? {
+          currencyId,
+          derivationMode,
+          index,
+          ...compositeKeyParts(compositeKey, descriptor.key, currencyId),
+        }
+      : keyedOnPublicKey
+        ? { currencyId, derivationMode, index, publicKey: descriptor.key }
+        : { currencyId, derivationMode, index, freshAddress: descriptor.key };
     return customData ? { ...fields, customData } : fields;
   }
   throw new UnsupportedDescriptorPathError(

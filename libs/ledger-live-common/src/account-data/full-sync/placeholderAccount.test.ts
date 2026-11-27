@@ -39,6 +39,15 @@ describe("placeholderAccount", () => {
     });
   });
 
+  it("starts a Hedera account on the public key its descriptor key holds, at its account id", async () => {
+    const publicKey = "f381f94b116a99518739e1bb394d1c8de281055d48b01dbc1625eebb06021ce5";
+    const account = await placeholderAccount(
+      address("hedera", `0.0.10096335:${publicKey}`, "m/44/3030"),
+    );
+    expect(account).toMatchObject({ freshAddress: "0.0.10096335", seedIdentifier: publicKey });
+    expect(account.id).toBe("js:2:hedera:0.0.10096335:hederaBip44");
+  });
+
   it("is an empty account of the descriptor's currency, mode and index", async () => {
     const account = await placeholderAccount(
       address("ethereum", "0x0000000000000000000000000000000000000001", "m/44h/60h/1h/0/0"),
@@ -108,7 +117,10 @@ describe("placeholderAccount", () => {
   });
 
   it("is a Hedera account at the account id of its descriptor, with the legacy id", async () => {
-    const account = await placeholderAccount(address("hedera", "0.0.751515", "m/44/3030"));
+    const publicKey = "f381f94b116a99518739e1bb394d1c8de281055d48b01dbc1625eebb06021ce5";
+    const account = await placeholderAccount(
+      address("hedera", `0.0.751515:${publicKey}`, "m/44/3030"),
+    );
     expect(account).toMatchObject({
       id: "js:2:hedera:0.0.751515:hederaBip44",
       freshAddress: "0.0.751515",

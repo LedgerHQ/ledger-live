@@ -179,6 +179,14 @@ export type LegacyAccountContext = {
   fromCustomData(customData: string): AccountContext;
 };
 
+/** A family whose descriptor key holds the legacy account's address and its seed identifier (Hedera: the account id and the device public key). */
+export type CompositeAccountKey = {
+  /** `undefined` when the seed identifier is not what the key holds. */
+  keyOf(parts: { freshAddress: string; seedIdentifier?: string | undefined }): string | undefined;
+  /** `undefined` for a key this family does not write. */
+  partsOf(key: string): { freshAddress: string; seedIdentifier: string } | undefined;
+};
+
 export type CoinModuleLoader<
   T extends TransactionCommon = any,
   A extends Account = any,
@@ -196,6 +204,8 @@ export type CoinModuleLoader<
   accountDescriptorType: AccountDescriptor["type"];
   /** Synchronous: for a family whose legacy id keeps its account context as custom data. */
   legacyAccountContext?: LegacyAccountContext;
+  /** Synchronous: for a family whose descriptor key holds more than the address. */
+  compositeAccountKey?: CompositeAccountKey;
   loadSetup: () => Promise<FamilySetup<T, A, U, O, R>>;
   /** Set when the family's setup has `completeAccountDescriptors`. */
   accountCompletion?: AccountCompletionMeta;
