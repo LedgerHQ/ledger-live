@@ -27,6 +27,7 @@ General screen does. Mobile always has separate consents.
 
 | Export                     | Purpose                                                                |
 | -------------------------- | ---------------------------------------------------------------------- |
+| `Privacy`                  | The section, to render in the Settings page                            |
 | `getPrivacyRowIds`         | Rows to show for a state                                               |
 | `getPrivacyToggleValue`    | Value of a toggle row                                                  |
 | `toPrivacyUpdate`          | Change a toggle row sends                                              |
@@ -56,9 +57,10 @@ The events of the legacy screens are kept, per platform:
 | Personalized recommendations state                           | —                                            | `EnablePersonalizedRecommendations` / `DisablePersonalizedRecommendations` |
 | Analytics state, mandatory, shared toggle only               | `AnalyticsEnabled` / `AnalyticsDisabled`     | —                                       |
 
-State events are sent each time the state changes, not on mount.
+State events are sent each time the state changes, not on mount. Desktop also sends `OpenURL`
+for the privacy policy, through its linking provider.
 
 ## Consumers
 
-None yet: the views and the desktop screen come next, Ledger Wallet Mobile with
+None yet: the desktop screen comes next, Ledger Wallet Mobile with
 [LIVE-41839](https://ledgerhq.atlassian.net/browse/LIVE-41839).
