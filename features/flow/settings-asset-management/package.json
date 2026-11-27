@@ -23,6 +23,8 @@
     "coverage": "jest --coverage"
   },
   "devDependencies": {
+    "@ledgerhq/crypto-icons": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@support/lint": "workspace:*",
@@ -31,6 +33,7 @@
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
     "@typescript/native": "catalog:",
@@ -44,9 +47,20 @@
   },
   "dependencies": {
     "@features/flow-settings": "workspace:*",
+    "@shared/analytics-react": "workspace:*",
     "@shared/i18n": "workspace:*"
   },
   "peerDependencies": {
+    "@ledgerhq/crypto-icons": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
     "react": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@ledgerhq/crypto-icons": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    }
   }
 }
