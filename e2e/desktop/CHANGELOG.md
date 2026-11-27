@@ -401,21 +401,4 @@
   - @ledgerhq/live-cli@26.6.0
   - @ledgerhq/baanx-test-client@0.3.0
 
-## 0.43.0-next.2
-
-### Patch Changes
-
-- Updated dependencies [[`fe55ea3`](https://github.com/LedgerHQ/ledger-live/commit/fe55ea349a8227d398bd570e68a8756392a4dd21)]:
-  - @shared/feature-flags@0.25.0-next.1
-  - @ledgerhq/live-common@38.2.0-next.1
-  - @ledgerhq/live-e2e-shared@0.14.0-next.2
-  - @ledgerhq/live-cli@26.6.0-next.1
-
-## 0.43.0-next.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/live-e2e-shared@0.14.0-next.1
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

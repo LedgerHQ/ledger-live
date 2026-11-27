@@ -1,26 +1,26 @@
 ---
-"@ledgerhq/coin-tester": patch
-"@ledgerhq/coin-tester-aleo": patch
-"@ledgerhq/coin-tester-bitcoin": patch
-"@ledgerhq/coin-tester-cardano": patch
-"@ledgerhq/coin-tester-casper": patch
-"@ledgerhq/coin-tester-cosmos": patch
-"@ledgerhq/coin-tester-evm": patch
-"@ledgerhq/coin-tester-kaspa": patch
-"@ledgerhq/coin-tester-multiversx": patch
-"@ledgerhq/coin-tester-near": patch
-"@ledgerhq/coin-tester-solana": patch
-"@ledgerhq/coin-tester-stacks": patch
-"@ledgerhq/coin-tester-stellar": patch
-"@ledgerhq/coin-tester-tezos": patch
-"@ledgerhq/coin-tester-vechain": patch
-"@ledgerhq/coin-tester-zcash": patch
-"@ledgerhq/coin-ton": patch
-"@ledgerhq/live-cli": patch
-"@ledgerhq/wallet-cli": patch
-"@ledgerhq/web-tools": patch
+"@ledgerhq/coin-tester": minor
+"@ledgerhq/coin-tester-aleo": minor
+"@ledgerhq/coin-tester-bitcoin": minor
+"@ledgerhq/coin-tester-cardano": minor
+"@ledgerhq/coin-tester-casper": minor
+"@ledgerhq/coin-tester-cosmos": minor
+"@ledgerhq/coin-tester-evm": minor
+"@ledgerhq/coin-tester-kaspa": minor
+"@ledgerhq/coin-tester-multiversx": minor
+"@ledgerhq/coin-tester-near": minor
+"@ledgerhq/coin-tester-solana": minor
+"@ledgerhq/coin-tester-stacks": minor
+"@ledgerhq/coin-tester-stellar": minor
+"@ledgerhq/coin-tester-tezos": minor
+"@ledgerhq/coin-tester-vechain": minor
+"@ledgerhq/coin-tester-zcash": minor
+"@ledgerhq/coin-ton": minor
+"@ledgerhq/live-cli": minor
+"@ledgerhq/wallet-cli": minor
+"@ledgerhq/web-tools": minor
 "ledger-live-desktop": minor
-"ledger-live-desktop-e2e-tests": patch
+"ledger-live-desktop-e2e-tests": minor
 "live-mobile": minor
 ---
 

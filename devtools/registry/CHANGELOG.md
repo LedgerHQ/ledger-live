@@ -372,20 +372,4 @@
   - @devtools/pay-card@0.6.0
   - @devtools/feature-flags@0.9.2
 
-## 0.4.3-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`799219e`](https://github.com/LedgerHQ/ledger-live/commit/799219e262e80a339272113ea164fa506243b438), [`41f7dc9`](https://github.com/LedgerHQ/ledger-live/commit/41f7dc963ac7329e5ec07236c85e322a56476be7), [`fbfdc3f`](https://github.com/LedgerHQ/ledger-live/commit/fbfdc3f5767a4dfbbf79de16fe9bcc61f9b5b941), [`cef83ae`](https://github.com/LedgerHQ/ledger-live/commit/cef83ae58ffc5529bebda292737502e78e3b7522), [`fcc2ac4`](https://github.com/LedgerHQ/ledger-live/commit/fcc2ac4c5ed270fb63df4c0079068ad6dac94612), [`eddc89e`](https://github.com/LedgerHQ/ledger-live/commit/eddc89e7b86a13aeedfc0ae4956c2dcd08494e5f)]:
-  - @devtools/pay-card@0.6.0-next.0
-  - @devtools/feature-flags@0.9.2-next.0
-
-## 0.4.2
-
-### Patch Changes
-
-- Updated dependencies [[`81aa729`](https://github.com/LedgerHQ/ledger-live/commit/81aa7294c94ef114e6e82ec4c277f0a6c0038c92), [`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44), [`ef29f07`](https://github.com/LedgerHQ/ledger-live/commit/ef29f0711ecec104e4dd9c9d86d4e4d41c4ddee3), [`d6b290b`](https://github.com/LedgerHQ/ledger-live/commit/d6b290b37b8ad6f677ab382bef53bf05cd394ca2), [`0a02a32`](https://github.com/LedgerHQ/ledger-live/commit/0a02a325f99033c086864b0778a8f81c3b4178ae), [`66c7569`](https://github.com/LedgerHQ/ledger-live/commit/66c7569dcfae90739b369ffb3a92cee75dd2e9cd), [`543b17d`](https://github.com/LedgerHQ/ledger-live/commit/543b17d7a6b49728001c0311c184c665e8c9bbb2), [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6), [`760dab2`](https://github.com/LedgerHQ/ledger-live/commit/760dab246a27d62f0feaa349122164e1c48aa6e4)]:
-  - @devtools/pay-card@0.5.0
-  - @devtools/feature-flags@0.9.1
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

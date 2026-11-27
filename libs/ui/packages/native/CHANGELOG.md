@@ -144,18 +144,4 @@
 
 - [#16050](https://github.com/LedgerHQ/ledger-live/pull/16050) [`748b03a`](https://github.com/LedgerHQ/ledger-live/commit/748b03a3508caa3c48a950b5df2a1a78ac524c90) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore: replace eslint/prettier with oxlint/oxfmt in libs/ui
 
-## 0.60.0
-
-### Minor Changes
-
-- [#14458](https://github.com/LedgerHQ/ledger-live/pull/14458) [`175471d`](https://github.com/LedgerHQ/ledger-live/commit/175471d9420ba21bba9245c21f5c8c5dbece418e) Thanks [@cseille](https://github.com/cseille)! - Display APY in green for non-UK users in Modular Asset Drawer.
-  Remove temporary APY indicator from pre-ldls, react-ui and native-ui components
-
-## 0.60.0-next.0
-
-### Minor Changes
-
-- [#14458](https://github.com/LedgerHQ/ledger-live/pull/14458) [`175471d`](https://github.com/LedgerHQ/ledger-live/commit/175471d9420ba21bba9245c21f5c8c5dbece418e) Thanks [@cseille](https://github.com/cseille)! - Display APY in green for non-UK users in Modular Asset Drawer.
-  Remove temporary APY indicator from pre-ldls, react-ui and native-ui components
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

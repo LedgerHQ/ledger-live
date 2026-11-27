@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-tester-tron": patch
-"@ledgerhq/coin-tron": patch
+"@ledgerhq/coin-tester-tron": minor
+"@ledgerhq/coin-tron": minor
 ---
 
 fix(deps): update dependency tronweb to v6.5.2

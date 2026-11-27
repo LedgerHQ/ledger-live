@@ -160,20 +160,4 @@
   - @ledgerhq/coin-internet_computer@1.30.0
   - @ledgerhq/ledger-wallet-framework@3.4.0
 
-## 0.1.6-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`0c413f3`](https://github.com/LedgerHQ/ledger-live/commit/0c413f3dcf65071bf963933f446fc24c9711a996), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9), [`c6a569d`](https://github.com/LedgerHQ/ledger-live/commit/c6a569d5848e6c0fd7973cb5ab7241b39d47f77b)]:
-  - @ledgerhq/coin-internet_computer@1.30.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.4.0-next.0
-
-## 0.1.5
-
-### Patch Changes
-
-- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215)]:
-  - @ledgerhq/ledger-wallet-framework@3.3.0
-  - @ledgerhq/coin-internet_computer@1.29.4
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -40,8 +40,4 @@
 
 ## 2.10.0
 
-## 2.10.0-next.0
-
-## 2.9.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

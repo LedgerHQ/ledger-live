@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-tester": patch
+"@ledgerhq/coin-tester": minor
 ---
 
 Accept the preparing status of a coin-sandbox instance (images being pulled or built) and keep waiting for it.

@@ -1,15 +1,15 @@
 ---
-"@features/flow-account-detail-hero": patch
-"@features/flow-contacts-detail": patch
-"@features/flow-contacts-list": patch
-"@features/flow-history-export": patch
-"@features/flow-pay-balance": patch
-"@features/flow-pay-card-assets": patch
-"@features/flow-pay-contact": patch
-"@features/platform-assets-table": patch
-"@features/platform-style": patch
-"@ledgerhq/web-tools": patch
-"@shared/ui-info-state": patch
+"@features/flow-account-detail-hero": minor
+"@features/flow-contacts-detail": minor
+"@features/flow-contacts-list": minor
+"@features/flow-history-export": minor
+"@features/flow-pay-balance": minor
+"@features/flow-pay-card-assets": minor
+"@features/flow-pay-contact": minor
+"@features/platform-assets-table": minor
+"@features/platform-style": minor
+"@ledgerhq/web-tools": minor
+"@shared/ui-info-state": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
 ---

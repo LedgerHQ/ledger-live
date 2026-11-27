@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/live-cli": patch
-"@ledgerhq/wallet-cli": patch
-"@ledgerhq/web-tools": patch
+"@ledgerhq/live-cli": minor
+"@ledgerhq/wallet-cli": minor
+"@ledgerhq/web-tools": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
 ---
