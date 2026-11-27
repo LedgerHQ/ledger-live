@@ -33,6 +33,11 @@ export function trackPrivacyToggle(
   );
 }
 
+/** Same event as the legacy mobile privacy policy row. Desktop sends `OpenURL` through its linking. */
+export function trackPrivacyPolicyOpen(platform: PrivacyPlatform): void {
+  if (platform === "mobile") track("PrivacyPolicyRow");
+}
+
 /** The events the legacy General screens send each time a Privacy state changes. */
 export function getPrivacyStateEvents(
   values: PrivacySettingsValues,

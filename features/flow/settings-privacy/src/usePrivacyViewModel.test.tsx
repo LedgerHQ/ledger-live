@@ -120,6 +120,7 @@ describe("usePrivacyViewModel", () => {
 
     expect(trailing?.type).toBe("externalLink");
     expect(openExternal.mock.calls).toEqual([[PRIVACY_URLS.privacyPolicy.desktop]]);
+    expect(track).not.toHaveBeenCalled();
   });
 
   it("names the desktop state events", () => {

@@ -59,9 +59,9 @@ The events of the legacy screens are kept, per platform:
 | Bug reports state                                            | `ReportBugsEnabled` / `ReportBugsDisabled`   | `EnableReportBug` / `DisableReportBug`  |
 | Personalized recommendations state                           | —                                            | `EnablePersonalizedRecommendations` / `DisablePersonalizedRecommendations` |
 | Analytics state, mandatory, shared toggle only               | `AnalyticsEnabled` / `AnalyticsDisabled`     | —                                       |
+| Privacy policy opened                                        | `OpenURL`, from the linking provider          | `PrivacyPolicyRow`, and `OpenURL` from the linking provider |
 
-State events are sent each time the state changes, not on mount. Desktop also sends `OpenURL`
-for the privacy policy, through its linking provider.
+State events are sent each time the state changes, not on mount.
 
 ## Consumers
 

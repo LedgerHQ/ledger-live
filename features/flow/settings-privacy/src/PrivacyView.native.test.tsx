@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { SettingsPortProvider } from "@features/flow-settings";
+import { track } from "@shared/analytics";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
 import { createFakeLinking } from "./__tests__/fakeLinking";
 import { createFakePrivacyPort } from "./__tests__/fakePrivacyPort";
@@ -35,11 +36,12 @@ describe("Privacy on mobile", () => {
     expect(screen.getByText("Privacy policy")).toBeVisible();
   });
 
-  it("opens the mobile privacy policy", async () => {
+  it("opens the mobile privacy policy and sends the legacy row event", async () => {
     const { user, openExternal } = renderPrivacy();
 
     await user.press(screen.getByText("Privacy policy"));
 
     expect(openExternal.mock.calls).toEqual([[PRIVACY_URLS.privacyPolicy.mobile]]);
+    expect(track).toHaveBeenCalledWith("PrivacyPolicyRow");
   });
 });
