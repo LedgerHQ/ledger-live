@@ -1,19 +1,17 @@
 import { useCallback, useState } from "react";
 import BigNumber from "bignumber.js";
-import invariant from "invariant";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { MAX_TRUST_LIMIT, isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import { isLimitBelowBalance } from "@ledgerhq/live-common/families/xrp/tokens";
-import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { ScreenName } from "~/const";
 import { useLocale, useTranslation } from "~/context/Locale";
-import type { XrpManageTokenFlowParamList } from "./types";
 
-type Props = BaseComposite<
-  StackNavigatorProps<XrpManageTokenFlowParamList, ScreenName.XrpManageTokenBalanceLimit>
->;
+type Props = Readonly<{
+  token: TokenCurrency;
+  limit: string;
+  balance?: BigNumber;
+  onConfirm: (limit: BigNumber) => void;
+}>;
 
 // Typing after the label keeps what follows it, deleting into the label clears it,
 // and a replacement of the whole text keeps all of it
@@ -38,24 +36,18 @@ function toLimitText(text: string, magnitude: number) {
   return `${integer}.${fraction.slice(0, magnitude)}`;
 }
 
-export function useBalanceLimitViewModel() {
-  const navigation = useNavigation<Props["navigation"]>();
-  const route = useRoute<Props["route"]>();
+export function useBalanceLimitViewModel(props: Props) {
+  const { token, limit: initialLimitText, balance, onConfirm } = props;
   const { t } = useTranslation();
   const { locale } = useLocale();
-  const { account: tokenAccount } = useAccountScreen(route);
-  invariant(tokenAccount?.type === "TokenAccount", "xrp: token account required");
 
-  const { accountId, parentId, balanceLimit } = route.params;
-  const { token } = tokenAccount;
   const unit = token.units[0];
   const maximumText = t("xrp.tokenSettings.maximum");
+  const initialLimit = new BigNumber(initialLimitText);
 
-  const [isMaximum, setIsMaximum] = useState(() =>
-    isMaxTrustLimit(new BigNumber(balanceLimit.limit)),
-  );
+  const [isMaximum, setIsMaximum] = useState(() => isMaxTrustLimit(initialLimit));
   const [limitText, setLimitText] = useState(() =>
-    isMaximum ? "" : new BigNumber(balanceLimit.limit).shiftedBy(-unit.magnitude).toFixed(),
+    isMaximum ? "" : initialLimit.shiftedBy(-unit.magnitude).toFixed(),
   );
 
   const typedLimit = parseCurrencyUnit(unit, limitText);
@@ -79,28 +71,18 @@ export function useBalanceLimitViewModel() {
     setLimitText("");
   }, []);
 
-  const onConfirm = useCallback(() => {
-    navigation.popTo(
-      ScreenName.XrpManageTokenSettings,
-      {
-        accountId,
-        parentId,
-        balanceLimit: { limit: limit.toFixed() },
-      },
-      { merge: true },
-    );
-  }, [accountId, limit, navigation, parentId]);
+  const onConfirmLimit = useCallback(() => onConfirm(limit), [limit, onConfirm]);
 
   const isLimitZero = hasTypedLimit && typedLimit.isZero();
   const isLimitPositive = limit.gt(0);
-  const isBelowBalance = isLimitBelowBalance(limit, tokenAccount.balance);
+  const heldBalance = balance && isLimitBelowBalance(limit, balance) ? balance : undefined;
 
   const errorText = (() => {
     if (isLimitZero) return t("errors.XrpTrustLimitZero.title");
-    if (!isBelowBalance) return undefined;
+    if (!heldBalance) return undefined;
 
     return t("xrp.tokenSettings.limitBelowBalance", {
-      balance: formatCurrencyUnit(unit, tokenAccount.balance, { showCode: true, locale }),
+      balance: formatCurrencyUnit(unit, heldBalance, { showCode: true, locale }),
     });
   })();
 
@@ -109,9 +91,9 @@ export function useBalanceLimitViewModel() {
     isMaximum,
     onChangeLimitText,
     onSetMaximum,
-    onConfirm,
     errorText,
+    onConfirm: onConfirmLimit,
     inputText: isMaximum ? maximumText : limitText,
-    isConfirmDisabled: !isLimitPositive || isBelowBalance,
+    isConfirmDisabled: !isLimitPositive || Boolean(heldBalance),
   };
 }

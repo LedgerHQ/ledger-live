@@ -320,7 +320,7 @@ describe("XRP edit token flow (integration)", () => {
     it("has no Edit button on an MPT card", async () => {
       renderManageAssets({ ...XRP_ACCOUNT, subAccounts: [XRP_MPT_TOKEN_ACCOUNT] });
 
-      await screen.findByText("Multi Purpose Token");
+      await screen.findByText("Multi-Purpose Token (MPT)");
 
       expect(screen.queryByTestId(`xrp-manage-asset-edit-${xrpMptToken.id}`)).toBeNull();
     });
