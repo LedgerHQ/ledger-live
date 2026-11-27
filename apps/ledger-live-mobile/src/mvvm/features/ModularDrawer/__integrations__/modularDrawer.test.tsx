@@ -114,6 +114,21 @@ describe.each(DRAWER_VARIANTS)(
       expect(getByText(/Connect Device/i)).toBeVisible();
     });
 
+    it("should give each asset row a testID from its meta-currency id", async () => {
+      const { getByText, getByTestId, user } = render(
+        <ModularDrawerSharedNavigator />,
+        renderOptions,
+      );
+
+      await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+      advanceTimers();
+
+      const ethereumRow = getByTestId("asset-item-meta-urn:crypto:meta-currency:ethereum");
+      expect(ethereumRow).toBeVisible();
+      expect(ethereumRow).toContainElement(getByTestId("asset-item-ETH"));
+      expect(getByTestId("asset-item-meta-bitcoin")).toBeVisible();
+    });
+
     it("should allow searching for assets", async () => {
       const { getByText, queryByText, getByPlaceholderText, user } = render(
         <ModularDrawerSharedNavigator />,

@@ -18,6 +18,7 @@ export type AssetRowData = {
   id: string;
   name: string;
   ticker: string;
+  metaCurrencyId?: string;
   leftElement?: React.ReactNode;
   rightElement?: React.ReactNode;
   disabled?: boolean;
@@ -35,6 +36,7 @@ export const AssetRow = ({
   id,
   name,
   ticker,
+  metaCurrencyId,
   leftElement,
   rightElement,
   onClick,
@@ -43,24 +45,29 @@ export const AssetRow = ({
   onDisabledPress,
 }: Props) => {
   const listItem = (
-    <ListItem
-      disabled={disabled}
-      onPress={disabled ? undefined : () => onClick({ id, name, ticker, disabled })}
-      testID={`asset-item-${ticker}`}
+    <Box
+      testID={metaCurrencyId ? `asset-item-meta-${metaCurrencyId}` : undefined}
+      collapsable={false}
       lx={NEGATIVE_MARGIN_OFFSET}
     >
-      <ListItemLeading>
-        <Icon ledgerId={id} ticker={ticker} size={48} />
-        <ListItemContent style={{ flex: 1, minWidth: 0 }}>
-          <ListItemTitle numberOfLines={1}>{name}</ListItemTitle>
-          <ListItemContentRow>
-            <ListItemDescription numberOfLines={1}>{ticker}</ListItemDescription>
-            {leftElement}
-          </ListItemContentRow>
-        </ListItemContent>
-      </ListItemLeading>
-      {rightElement ? <ListItemTrailing>{rightElement}</ListItemTrailing> : null}
-    </ListItem>
+      <ListItem
+        disabled={disabled}
+        onPress={disabled ? undefined : () => onClick({ id, name, ticker, disabled })}
+        testID={`asset-item-${ticker}`}
+      >
+        <ListItemLeading>
+          <Icon ledgerId={id} ticker={ticker} size={48} />
+          <ListItemContent style={{ flex: 1, minWidth: 0 }}>
+            <ListItemTitle numberOfLines={1}>{name}</ListItemTitle>
+            <ListItemContentRow>
+              <ListItemDescription numberOfLines={1}>{ticker}</ListItemDescription>
+              {leftElement}
+            </ListItemContentRow>
+          </ListItemContent>
+        </ListItemLeading>
+        {rightElement ? <ListItemTrailing>{rightElement}</ListItemTrailing> : null}
+      </ListItem>
+    </Box>
   );
 
   if (!disabled || !disabledExplanation || !onDisabledPress) return listItem;

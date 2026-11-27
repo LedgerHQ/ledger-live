@@ -100,6 +100,10 @@ const AssetSelection = ({
   };
 
   const assetsMap = groupCurrenciesByAsset(assetsSorted || []);
+  const metaCurrencyIdByAssetId = useMemo(
+    () => new Map(assetsSorted?.map(({ asset }) => [asset.id, asset.metaCurrencyId])),
+    [assetsSorted],
+  );
   const selectableNetworkIdSet = useMemo(
     () => (selectableNetworkIds === undefined ? undefined : new Set(selectableNetworkIds)),
     [selectableNetworkIds],
@@ -113,7 +117,11 @@ const AssetSelection = ({
     balanceItem,
     assetsMap,
     ...assetsConfiguration,
-  }).map(asset => {
+  }).map(configuredAsset => {
+    const asset = {
+      ...configuredAsset,
+      metaCurrencyId: metaCurrencyIdByAssetId.get(configuredAsset.id),
+    };
     if (selectableNetworkIdSet === undefined) return asset;
 
     const isSelectable = assetsMap.get(asset.id)?.currencies.some(network => {
