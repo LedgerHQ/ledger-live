@@ -28,13 +28,25 @@
     "@support/lint": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
+    "@types/react": "catalog:",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@features/flow-settings": "workspace:*",
+    "@shared/i18n": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "catalog:"
   }
 }

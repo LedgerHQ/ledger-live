@@ -1,1 +1,1 @@
-export * from "./settingsAssetManagement";
+export * from "./exports";
