@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // The plan job: resolves the refs of builds A and B to commits, and gives the jobs their matrices
-// and settings. Reads the workflow's inputs from the environment, or the nightly's settings on a
-// scheduled run; writes GITHUB_OUTPUT and the job summary.
+// and settings. Reads the workflow's inputs from the environment, or the nightly's or the anchor's
+// settings on a scheduled run; writes GITHUB_OUTPUT and the job summary.
 import { appendFileSync } from "node:fs";
 import { setTimeout as sleep } from "node:timers/promises";
 import { pathToFileURL } from "node:url";
@@ -20,7 +20,10 @@ export interface PlanInputs {
   branchName: string;
 }
 
-/** What a scheduled run measures, as it has no inputs: develop against production. */
+/** The nightly's schedule, as in the workflow: a scheduled run on another cron than this and
+ * ANCHOR_CRON fails (inputsOf). */
+export const NIGHTLY_CRON = "17 3 * * 1-5";
+/** What the nightly's scheduled run measures, as it has no inputs: develop against production. */
 export const NIGHTLY: Omit<PlanInputs, "branchSha" | "branchName"> = {
   preset: "prod-vs-develop",
   refA: "",
@@ -30,6 +33,16 @@ export const NIGHTLY: Omit<PlanInputs, "branchSha" | "branchName"> = {
   thresholdMs: "100",
   scenarios: "no-accounts,accounts",
 };
+
+/**
+ * A fixed older release the anchor run measures develop against: the whole drift since that
+ * release, which a nightly against each new release cannot show. Moved on by pull request.
+ */
+export const ANCHOR_TAG = "live-mobile@4.29.0";
+/** The anchor's schedule: after the nightly's, whose iOS jobs then go first in the pool's queue. */
+export const ANCHOR_CRON = "47 3 * * 1-5";
+/** What the anchor's scheduled run measures: the nightly's settings, with ANCHOR_TAG as A. */
+export const ANCHOR: typeof NIGHTLY = { ...NIGHTLY, preset: "anchor" };
 
 interface Builds {
   sides: Array<"a" | "b">;
@@ -72,7 +85,7 @@ export interface Plan extends Builds {
   scenarios: string[];
   /**
    * The release whose E2E build makes the accounts scenario's snapshot (src/snapshot/run.ts), and
-   * its commit: none without that scenario.
+   * its commit: A's when A is a release tag's, else the latest; none without that scenario.
    */
   snapshotRelease: string;
   snapshotSha: string;
@@ -201,12 +214,16 @@ export function latestProdTag(lsRemote: LsRemote): string {
   return latest;
 }
 
-/** The latest prod tag (or ref_a) against `refB`. */
-function againstProd(inputs: PlanInputs, lsRemote: LsRemote, refB: string): Builds {
-  const refA = inputs.refA || latestProdTag(lsRemote);
+/** `refA` against `refB`, with a warning when they are the same commit. */
+function against(inputs: PlanInputs, lsRemote: LsRemote, refA: string, refB: string): Builds {
   const builds = twoRefs(inputs, lsRemote, refA, refB);
   if (builds.shaA === builds.shaB) builds.warnings.push(`${refA} and ${refB} are the same commit`);
   return builds;
+}
+
+/** The latest prod tag (or ref_a) against `refB`. */
+function againstProd(inputs: PlanInputs, lsRemote: LsRemote, refB: string): Builds {
+  return against(inputs, lsRemote, inputs.refA || latestProdTag(lsRemote), refB);
 }
 
 function prodVsRelease(inputs: PlanInputs, lsRemote: LsRemote): Builds {
@@ -247,6 +264,8 @@ function buildsFor(inputs: PlanInputs, lsRemote: LsRemote): Builds {
       return prodVsRelease(inputs, lsRemote);
     case "prod-vs-develop":
       return againstProd(inputs, lsRemote, inputs.refB || "develop");
+    case "anchor":
+      return against(inputs, lsRemote, inputs.refA || ANCHOR_TAG, inputs.refB || "develop");
     case "custom":
       return custom(inputs, lsRemote);
     case "aa-noise":
@@ -270,7 +289,10 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
   const builds = buildsFor(inputs, lsRemote);
   const withSha = (label: string, sha: string) => `${label} (${sha.slice(0, 10)})`;
   const scenarios = inputs.scenarios.split(",");
-  const snapshotRelease = scenarios.includes("accounts") ? latestProdTag(lsRemote) : "";
+  // A's release when it is one: A never reads the storage of a newer app than itself, and B starts
+  // from the storage of the release it is compared with, as a user who updates from it.
+  const releaseA = builds.cacheA ? builds.refs[0].ref : "";
+  const snapshotRelease = scenarios.includes("accounts") ? releaseA || latestProdTag(lsRemote) : "";
   // The snapshot job runs this release's E2E app with the E2E seed in its environment, in every run:
   // its tag is checked in every run, and must still be a tag (it may have given way to a branch of
   // its name since the tags were listed). A and B only in a run from develop (resolveForRun).
@@ -424,10 +446,28 @@ export function summaryOf(plan: Plan, inputs: PlanInputs, avdCores: string): str
   ].join("\n");
 }
 
-/** The workflow's inputs; on a scheduled run, which has none, the nightly's settings. */
+/**
+ * A schedule's settings, from its cron. Another cron fails rather than run the nightly's settings
+ * under a run name the workflow may give another run: the name and the dashboard tell the anchor
+ * from the nightly by it.
+ */
+function scheduledSettings(cron: string): typeof NIGHTLY {
+  if (cron === NIGHTLY_CRON) return NIGHTLY;
+  if (cron === ANCHOR_CRON) return ANCHOR;
+  throw new StepFailure(
+    `no settings for the schedule '${cron}': the workflow's crons must be NIGHTLY_CRON (${NIGHTLY_CRON}) or ANCHOR_CRON (${ANCHOR_CRON}) of ci/resolve-refs.mts`,
+  );
+}
+
+/**
+ * The workflow's inputs; on a scheduled run, which has none, its schedule's settings (the cron, in
+ * `SCHEDULE`): the nightly's or the anchor's.
+ */
 export function inputsOf(env: NodeJS.ProcessEnv): PlanInputs {
   const branch = { branchSha: env.BRANCH_SHA ?? "", branchName: env.GITHUB_REF_NAME ?? "" };
-  if (env.GITHUB_EVENT_NAME === "schedule") return { ...NIGHTLY, ...branch };
+  if (env.GITHUB_EVENT_NAME === "schedule") {
+    return { ...scheduledSettings(env.SCHEDULE ?? ""), ...branch };
+  }
   return {
     preset: env.PRESET ?? "",
     refA: env.REF_A ?? "",

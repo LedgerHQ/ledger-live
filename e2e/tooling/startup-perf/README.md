@@ -57,6 +57,7 @@ and `flows/` the snapshot's Maestro flow. Each test sits next to its module.
 | ------------------ | ------------------------------ | -------------------------- | --------------------------------- |
 | `prod-vs-release`  | latest `live-mobile@X.Y.Z` tag | `release` branch           | B is slower by > threshold_ms     |
 | `prod-vs-develop`  | latest `live-mobile@X.Y.Z` tag | `develop` or `ref_b`       | same                              |
+| `anchor`           | `ANCHOR_TAG` or `ref_a`        | `develop` or `ref_b`       | same                              |
 | `custom`           | any branch or tag              | any branch or tag          | same                              |
 | `aa-noise`         | one build                      | the same binary            | `Not enough pairs`                |
 | `known-regression` | this branch or `ref_a`         | A with LIVE-36190 re-added | B is not slower by > threshold_ms |
@@ -70,16 +71,29 @@ Every weekday at 03:17 UTC the workflow runs `prod-vs-develop` with the settings
 `ci/resolve-refs.mts` (both platforms and scenarios, 20 pairs, 100 ms), as a scheduled run has no
 inputs; the plan job passes the settings on to the other jobs.
 
+Every weekday at 03:47 UTC, after the nightly, it runs `anchor` with the settings of `ANCHOR`:
+develop against `ANCHOR_TAG`, a fixed older release (`live-mobile@4.29.0`, the oldest ref a run
+builds). The nightly compares develop with the newest release, so a slowdown spread over several
+releases can pass each of them; the anchor run measures the whole drift since that release, against
+the same threshold. Move `ANCHOR_TAG` on by pull request, to a release whose startup time is
+understood. The plan job tells the two schedules apart by their cron (`NIGHTLY_CRON` or
+`ANCHOR_CRON`, in `SCHEDULE`) and fails on any other, and the run's name says `Anchor` instead of
+`Nightly`, which the QAA KPI dashboard reads to keep its own series. A test checks the workflow's
+crons and run name against them; the workflow is one of its inputs, so a change to it alone runs
+the test. Its iOS jobs wait behind the nightly's in the performance pool's
+queue.
+
 As for the mobile E2E runs, every run posts its result to their Slack results channel, passed or
-failed, and the nightly or a dispatch with `slack_notif` ticked to #live-repo-health too: each
+failed, and a scheduled run or a dispatch with `slack_notif` ticked to #live-repo-health too: each
 platform and scenario's Debug screen verdict and B − A, or why it has none (a build that did not
-finish, a measurement that timed out). The header gives the pairs per scenario, and a line its own
-count when it has fewer. A measurement that stopped after enough pairs is named on its scenario's
-line, from the `measurement.txt` each measure job adds to its results. A verdict whose interval
-contains the threshold shows as ⚠️ "Probably within" or "Probably slower by more than" the
-threshold and turns the bar yellow, unless another line is ❌; the run still fails on "Probably
-slower", as the gate is on the estimate. A post Slack rejects fails the Slack job; a run cancelled
-by hand posts nothing.
+finish, a measurement that timed out). A scheduled run's header says nightly or anchor, from its
+cron, even when its plan failed. The header gives the pairs per scenario, and a line its own count
+when it has fewer. A measurement that stopped after enough pairs is named on its scenario's line,
+from the `measurement.txt` each measure job adds to its results. A verdict whose interval contains
+the threshold shows as ⚠️ "Probably within" or "Probably slower by more than" the threshold and
+turns the bar yellow, unless another line is ❌; the run still fails on "Probably slower", as the
+gate is on the estimate. A post Slack rejects fails the Slack job; a run cancelled by hand posts
+nothing.
 
 Refs are branches or tags only: a raw SHA could be a fork's commit, run with the workflow's secrets.
 A name that is both a branch and a tag is refused: the release tags are lightweight, so git would
@@ -169,8 +183,11 @@ this run may write it (`save`).
 
 The accounts scenario starts from accounts added through the app's UI, as a user adds them:
 
-- **Made**: by `src/snapshot/run.ts` on the E2E build of the latest `live-mobile@X.Y.Z` release, as
-  built for E2E (not made prod-like), one snapshot per platform. It writes the no-accounts userdata
+- **Made**: by `src/snapshot/run.ts` on the E2E build of A's `live-mobile@X.Y.Z` release, or of the
+  latest one when A is not a release tag, as built for E2E (not made prod-like), one snapshot per
+  platform. So A never reads the storage of a newer app than itself (the anchor's A is older than
+  the latest release), and B starts from the storage of the release it is compared with, as a user
+  who updates from it. It writes the no-accounts userdata
   (`skip-onboarding`) with the release's tours marked as seen (their sheet would cover the deep
   link, and a user who adds accounts has seen them), then launches the app with `wsPort`, `wsToken`
   and `mock=0` (the build has `MOCK`, whose bridges would add mock accounts). For Bitcoin, Ethereum

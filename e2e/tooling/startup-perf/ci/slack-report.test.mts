@@ -14,6 +14,7 @@ import {
   resultsIn,
   type RunReport,
 } from "./slack-report.mts";
+import { ANCHOR_CRON, NIGHTLY_CRON } from "./resolve-refs.mts";
 
 const row = (
   platform: string,
@@ -32,6 +33,7 @@ const ROWS: ResultRow[] = [
 
 const GREEN: RunReport = {
   event: "schedule",
+  schedule: NIGHTLY_CRON,
   preset: "prod-vs-develop",
   thresholdMs: "100",
   pairs: "20",
@@ -174,6 +176,36 @@ describe("messageOf", () => {
     assert.match(header, /^:ledger-logo: Ledger Live Mobile startup performance results on /);
     assert.equal(lines.length, 2);
     assert.ok(lines.every(line => line.includes("iOS")));
+  });
+
+  it("calls a scheduled run of an unknown cron, whose plan fails, neither nightly nor anchor", () => {
+    const unknown = { ...GREEN, schedule: "48 3 * * 1-5", preset: "" };
+    assert.equal(
+      messageOf({ ...unknown, jobs: { ...GREEN.jobs, plan: "failure" } }).header,
+      ":ledger-logo: Ledger Live Mobile startup performance scheduled results",
+    );
+  });
+
+  it("calls a scheduled anchor run the anchor, not the nightly, in its header", () => {
+    const anchor = {
+      ...GREEN,
+      schedule: ANCHOR_CRON,
+      preset: "anchor",
+      labelA: "live-mobile@4.29.0 (6464646464)",
+    };
+    assert.equal(
+      messageOf(anchor).header,
+      ":ledger-logo: Ledger Live Mobile startup performance anchor results on develop (1111111111) - vs live-mobile@4.29.0 (6464646464) · 20 pairs",
+    );
+    assert.ok(
+      messageOf(anchor).footer.startsWith("anchor · fails when B is slower by more than 100 ms"),
+    );
+    // A failed plan writes no preset: the run's cron still names it.
+    const failedPlan = { ...anchor, preset: "", jobs: { ...anchor.jobs, plan: "failure" } };
+    assert.equal(
+      messageOf(failedPlan).header,
+      ":ledger-logo: Ledger Live Mobile startup performance anchor results",
+    );
   });
 
   it("reports a plan failure on its own", () => {

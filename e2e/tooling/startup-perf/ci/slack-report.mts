@@ -5,6 +5,7 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { ANCHOR_CRON, NIGHTLY_CRON } from "./resolve-refs.mts";
 import {
   insideWorkingDir,
   isFailingVerdict,
@@ -39,6 +40,8 @@ interface PlatformJobs {
 
 export interface RunReport {
   event: string;
+  /** A scheduled run's cron: the nightly's or the anchor's; the plan fails on any other. */
+  schedule: string;
   preset: string;
   thresholdMs: string;
   /** The pairs per scenario the plan asked for, which the header gives. */
@@ -219,11 +222,16 @@ function gateOf(preset: string, thresholdMs: string): string {
 // Slack cuts a plain_text header at this length.
 const HEADER_MAX = 150;
 
+// A scheduled run is named by its cron, which a failed plan, writing no preset, does not lose: the
+// nightly, the anchor against a fixed older release, or a schedule the plan refused.
+const SCHEDULED: Partial<Record<string, string>> = {
+  [NIGHTLY_CRON]: " nightly",
+  [ANCHOR_CRON]: " anchor",
+};
+
 function headerOf(report: RunReport): string {
-  const run =
-    report.event === "schedule"
-      ? ":ledger-logo: Ledger Live Mobile startup performance nightly"
-      : ":ledger-logo: Ledger Live Mobile startup performance";
+  const kind = report.event === "schedule" ? (SCHEDULED[report.schedule] ?? " scheduled") : "";
+  const run = `:ledger-logo: Ledger Live Mobile startup performance${kind}`;
   if (report.jobs.plan !== "success") return `${run} results`;
   const pairs = report.pairs ? ` · ${report.pairs} pairs` : "";
   // A/A measures one build twice: there is no B to name.
@@ -341,6 +349,7 @@ export function resultsIn(dir: string): Results {
 export function reportOf(env: NodeJS.ProcessEnv, { rows, measurements }: Results): RunReport {
   return {
     event: env.GITHUB_EVENT_NAME ?? "",
+    schedule: env.SCHEDULE ?? "",
     preset: env.PRESET ?? "",
     thresholdMs: env.THRESHOLD ?? "",
     pairs: env.PAIRS ?? "",
