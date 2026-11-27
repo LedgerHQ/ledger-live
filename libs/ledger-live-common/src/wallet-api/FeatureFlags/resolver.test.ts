@@ -1,6 +1,6 @@
 import { getFeatureFlagsForLiveApp } from "./resolver";
 import { LiveAppManifest } from "../../platform/types";
-import type { Feature, FeatureId } from "@shared/feature-flags";
+import { FEATURE_FLAGS_DEFAULTS, type Feature, type FeatureId } from "@shared/feature-flags";
 
 describe("getFeatureFlagsForLiveApp", () => {
   const createMockManifest = (featureFlags?: string[] | "*"): LiveAppManifest => {
@@ -163,5 +163,57 @@ describe("getFeatureFlagsForLiveApp", () => {
       flag4: mockFeature,
     });
     expect(mockGetFeature).toHaveBeenCalledTimes(4);
+  });
+
+  describe("the earnSolanaHighlightedValidators flag", () => {
+    const FLAG = "earnSolanaHighlightedValidators";
+    const configured: Feature<unknown> = {
+      enabled: true,
+      params: {
+        validators: [
+          { voteAccount: "ExampleVoteAccountA11111111111111111111111", provider: "Provider A" },
+        ],
+      },
+    };
+
+    it("reaches a live app whose manifest lists every flag, with its disabled default", () => {
+      const result = getFeatureFlagsForLiveApp({
+        requestedFeatureFlagIds: [FLAG],
+        manifest: createMockManifest("*"),
+        getFeature: id => FEATURE_FLAGS_DEFAULTS[id],
+      });
+
+      expect(result).toEqual({ [FLAG]: { enabled: false, params: { validators: [] } } });
+    });
+
+    it("reaches a live app whose manifest lists every flag, with the validators that are set", () => {
+      const result = getFeatureFlagsForLiveApp({
+        requestedFeatureFlagIds: [FLAG],
+        manifest: createMockManifest("*"),
+        getFeature: () => configured,
+      });
+
+      expect(result).toEqual({ [FLAG]: configured });
+    });
+
+    it("stays hidden from a manifest that lists other flags only", () => {
+      const result = getFeatureFlagsForLiveApp({
+        requestedFeatureFlagIds: [FLAG],
+        manifest: createMockManifest(["earnWithdrawV2"]),
+        getFeature: () => configured,
+      });
+
+      expect(result).toEqual({});
+    });
+
+    it("reaches a manifest that lists it", () => {
+      const result = getFeatureFlagsForLiveApp({
+        requestedFeatureFlagIds: [FLAG],
+        manifest: createMockManifest([FLAG]),
+        getFeature: () => configured,
+      });
+
+      expect(result).toEqual({ [FLAG]: configured });
+    });
   });
 });

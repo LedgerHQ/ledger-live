@@ -165,7 +165,7 @@ describe("toTxLifecyclePayload", () => {
     expect(toTxLifecyclePayload(event, "desktop")).toBeNull();
   });
 
-  it.each(["earn", "earn-stg", "earn-prd-eks"])(
+  it.each(["earn", "earn-stg", "earn-stg-eks", "earn-prd-eks"])(
     "maps an Earn live app sign on %s onto the earn path",
     manifestId => {
       const event = {
@@ -380,7 +380,7 @@ describe("sendTxLifecycle", () => {
     });
   });
 
-  it.each(["generic-dapp", "earn", "earn-stg", "earn-prd-eks", undefined])(
+  it.each(["generic-dapp", "earn", "earn-stg", "earn-stg-eks", "earn-prd-eks", undefined])(
     "does not start lifecycle monitoring for %s",
     manifestId => {
       startDappTxLifecycle("desktop", manifestId);

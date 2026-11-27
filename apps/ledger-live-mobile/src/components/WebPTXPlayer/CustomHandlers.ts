@@ -6,6 +6,7 @@ import {
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
+import { handlers as stakeDepositHandlers } from "@ledgerhq/live-common/wallet-api/StakeDeposit/server";
 import {
   WalletAPICustomHandlers,
   AccountIdFormatsResponse,
@@ -336,6 +337,7 @@ export function useCustomExchangeHandlers({
       "custom.bottomSheet.info": createOpenInfoBottomSheetHandler(dispatch),
       "custom.bottomSheet.menu": createOpenMenuBottomSheetHandler(dispatch),
       "custom.dialog.confirmation": createOpenActionDialogHandler(dispatch),
+      ...stakeDepositHandlers({ accounts }),
     };
 
     return {

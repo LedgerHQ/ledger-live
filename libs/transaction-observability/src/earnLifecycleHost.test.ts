@@ -176,7 +176,9 @@ describe("earn live app lifecycle", () => {
   });
 
   it("recognises the known manifests and the one the flag configures", () => {
-    expect(["earn", "earn-stg", "earn-prd-eks"].every(id => isEarnApp(id))).toBe(true);
+    expect(["earn", "earn-stg", "earn-stg-eks", "earn-prd-eks"].every(id => isEarnApp(id))).toBe(
+      true,
+    );
     expect(isEarnApp("earn-canary")).toBe(false);
     setEarnManifestIdReader(() => "earn-canary");
     expect(isEarnApp("earn-canary")).toBe(true);

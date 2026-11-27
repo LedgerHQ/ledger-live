@@ -1,4 +1,5 @@
 import React from "react";
+import BigNumber from "bignumber.js";
 import { render, screen, waitFor } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -53,12 +54,23 @@ jest.mock("@ledgerhq/live-common/walletConnect/index", () => ({
   isWalletConnectSupported: () => false,
 }));
 
+const mockStake = {
+  nativeFlow: false,
+  platformApp: false,
+  route: null as { pathname: string; state: Record<string, unknown> } | null,
+};
 jest.mock("LLD/hooks/useStake", () => ({
   useStake: () => ({
-    getCanStakeUsingLedgerLive: () => false,
-    getCanStakeUsingPlatformApp: () => false,
-    getRouteToPlatformApp: () => null,
+    getCanStakeUsingLedgerLive: () => mockStake.nativeFlow,
+    getCanStakeUsingPlatformApp: () => mockStake.platformApp,
+    getRouteToPlatformApp: () => mockStake.route,
   }),
+}));
+
+const mockNavigate = jest.fn();
+jest.mock("react-router", () => ({
+  ...jest.requireActual("react-router"),
+  useNavigate: () => mockNavigate,
 }));
 
 jest.mock("LLD/features/Send/hooks/useOpenSendFlow", () => ({
@@ -83,6 +95,7 @@ const account = genAccount("test-btc-account", { currency: btc }) as Account;
 beforeEach(() => {
   jest.clearAllMocks();
   mockSwappableIds.length = 0;
+  Object.assign(mockStake, { nativeFlow: false, platformApp: false, route: null });
 });
 
 describe("AccountHeaderActions — family slot / fallback logic", () => {
@@ -143,5 +156,77 @@ describe("AccountHeaderActions — family slot / fallback logic", () => {
       expect(screen.queryByTestId("account-buttons-group")).not.toBeInTheDocument(),
     );
     expect(screen.queryByTestId("swap-account-action-button")).not.toBeInTheDocument();
+  });
+});
+
+const solanaAccount = (spendableLamports: number) =>
+  ({
+    ...genAccount("test-solana-account", {
+      currency: getCryptoCurrencyById("solana"),
+      operationsSize: 0,
+      subAccountsCount: 0,
+    }),
+    balance: new BigNumber(spendableLamports),
+    spendableBalance: new BigNumber(spendableLamports),
+  }) as Account;
+
+describe("AccountHeaderActions: the stake button of a platform app, as the Earn redirect of Solana", () => {
+  const earnRoute = {
+    pathname: "/earn",
+    state: { appId: "earn", intent: "deposit", cryptoAssetId: "solana", accountId: "wallet-id" },
+  };
+  const nativeStakeAction = {
+    key: "Stake",
+    label: "Native stake",
+    onClick: jest.fn(),
+    icon: () => <span />,
+    accountActionsTestId: "native-stake-button",
+  };
+
+  it("stays on the page, disabled, and goes nowhere when nothing is spendable", async () => {
+    mockFamily.mockReturnValue({} as never);
+    Object.assign(mockStake, { platformApp: true, route: null });
+
+    const { user } = render(
+      <AccountHeaderActions account={solanaAccount(0)} parentAccount={undefined} />,
+    );
+    const button = await screen.findByTestId("stake-button");
+    await user.click(button);
+
+    expect(button).toBeDisabled();
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("opens the route of the platform app when funds are spendable", async () => {
+    mockFamily.mockReturnValue({} as never);
+    Object.assign(mockStake, { platformApp: true, route: earnRoute });
+
+    const { user } = render(
+      <AccountHeaderActions account={solanaAccount(5_000_000_000)} parentAccount={undefined} />,
+    );
+    const button = await screen.findByTestId("stake-button");
+    await user.click(button);
+
+    expect(button).toBeEnabled();
+    expect(mockNavigate).toHaveBeenCalledWith("/earn", { state: earnRoute.state });
+  });
+
+  it("replaces the native stake action of the family, which stays for a host without the redirect", async () => {
+    mockFamily.mockReturnValue({ accountHeaderManageActions: () => [nativeStakeAction] } as never);
+    Object.assign(mockStake, { nativeFlow: true, platformApp: true, route: earnRoute });
+    const { unmount } = render(
+      <AccountHeaderActions account={solanaAccount(5_000_000_000)} parentAccount={undefined} />,
+    );
+    await screen.findByTestId("stake-button");
+    expect(screen.queryByTestId("native-stake-button")).not.toBeInTheDocument();
+    unmount();
+
+    Object.assign(mockStake, { nativeFlow: true, platformApp: false, route: null });
+    render(
+      <AccountHeaderActions account={solanaAccount(5_000_000_000)} parentAccount={undefined} />,
+    );
+
+    expect(await screen.findByTestId("native-stake-button")).toBeVisible();
+    expect(screen.queryByTestId("stake-button")).not.toBeInTheDocument();
   });
 });

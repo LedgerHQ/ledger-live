@@ -3,6 +3,7 @@ import {
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
+import { handlers as stakeDepositHandlers } from "@ledgerhq/live-common/wallet-api/StakeDeposit/server";
 import {
   WalletAPICustomHandlers,
   AccountIdFormatsResponse,
@@ -254,6 +255,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           },
         },
       }),
+      ...stakeDepositHandlers({ accounts }),
       "custom.navigate": async request => {
         const { action } = request.params || {};
 
