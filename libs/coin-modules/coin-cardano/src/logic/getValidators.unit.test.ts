@@ -72,6 +72,15 @@ describe("getValidators", () => {
     expect(next).toBeUndefined();
   });
 
+  it("pages by the configured batch size", async () => {
+    paginate([pool({ poolId: "pool1" }), pool({ poolId: "pool2" }), pool({ poolId: "pool3" })], 2);
+
+    const { items } = await getValidators({ ...config, validators: { batchSize: 2 } });
+
+    expect(mockFetchPoolList.mock.calls.map(c => c[3])).toEqual([2, 2]);
+    expect(items).toHaveLength(3);
+  });
+
   it("returns a single page without extra calls when all pools fit in one fetch", async () => {
     paginate([pool({ poolId: "pool1" }), pool({ poolId: "pool2" })], 100);
 

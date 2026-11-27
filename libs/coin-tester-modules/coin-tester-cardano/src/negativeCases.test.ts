@@ -2,7 +2,13 @@ import { CardanoMinAmountError } from "@ledgerhq/coin-cardano/errors";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { CARDANO_TESTNET, FRESH_ADDRESS_PATH, makeAccount, MOCK_ENDPOINTS } from "./fixtures";
+import {
+  CARDANO_TESTNET,
+  FRESH_ADDRESS_PATH,
+  makeAccount,
+  MOCK_ENDPOINTS,
+  TUNING,
+} from "./fixtures";
 import { getBridges, TESTNET } from "./helpers";
 import { buildSigner } from "./signer";
 import { resetDevnet, sleep, topup } from "./yaci";
@@ -75,6 +81,7 @@ describe("Cardano negative cases (Yaci devnet)", () => {
           unit: { name: "ada", code: "tADA", magnitude: 6 },
           maxFeesWarning: 0,
           maxFeesError: 0,
+          ...TUNING,
           testnet: true,
           ...MOCK_ENDPOINTS,
         },

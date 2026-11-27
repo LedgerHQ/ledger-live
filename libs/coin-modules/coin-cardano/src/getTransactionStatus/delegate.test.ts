@@ -1,14 +1,12 @@
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
 import { buildTransaction } from "../buildTransaction";
-import coinConfig from "../config";
 import {
   CardanoInvalidPoolId,
   CardanoNotEnoughFunds,
   CardanoStakeKeyDepositError,
 } from "../errors";
 import { getCardanoAccountFixture } from "../fixtures/accounts";
-import { cardanoCoinConfig, cardanoTestnetCoinConfig } from "../fixtures/config";
 import { getDelegationFixture } from "../fixtures/delegation";
 import { getProtocolParamsFixture } from "../fixtures/protocolParams";
 import type { Transaction } from "../types";
@@ -45,12 +43,6 @@ const buildAccount = ({ registered }: { registered: boolean }) => {
 };
 
 describe("getDelegateTransactionStatus", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(currencyId =>
-      currencyId === "cardano_testnet" ? cardanoTestnetCoinConfig : cardanoCoinConfig,
-    );
-  });
-
   beforeEach(() => {
     mockedBuildTransaction.mockClear();
   });

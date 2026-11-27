@@ -14,6 +14,7 @@ import {
   TEST_TOKEN_POLICY_ID,
   makeAccount,
   MOCK_ENDPOINTS,
+  TUNING,
 } from "../fixtures";
 import { getBridges } from "../helpers";
 import { fundToken, initMSW, resetLedger } from "../indexer";
@@ -47,6 +48,7 @@ export const scenarioCardanoToken: Scenario<GenericTransaction, Account> = {
           unit: { name: "ada", code: "ADA", magnitude: 6 },
           maxFeesWarning: 0,
           maxFeesError: 0,
+          ...TUNING,
           testnet: false,
           ...MOCK_ENDPOINTS,
         },

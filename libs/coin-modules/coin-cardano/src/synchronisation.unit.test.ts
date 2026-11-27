@@ -15,19 +15,12 @@ import { buildSubAccounts } from "./buildSubAccounts";
 import { CardanoSigner } from "./signer";
 import { makeGetAccountShape, mapTxToAccountOperation } from "./synchronisation";
 import { BipPath, CardanoAccount, CardanoDelegation, PaymentCredential } from "./types";
-import coinConfig from "./config";
-import { cardanoCoinConfig, cardanoTestnetCoinConfig } from "./fixtures/config";
+import { createMockContext } from "./fixtures/config";
 
 jest.mock("./buildSubAccounts");
 jest.mock("./api/getTransactions");
 jest.mock("./api/getNetworkInfo");
 jest.mock("./api/getDelegationInfo");
-
-beforeAll(() => {
-  coinConfig.setCoinConfig(currencyId =>
-    currencyId === "cardano_testnet" ? cardanoTestnetCoinConfig : cardanoCoinConfig,
-  );
-});
 
 describe("makeGetAccountShape", () => {
   let signerContext: SignerContext<CardanoSigner>;
@@ -47,7 +40,7 @@ describe("makeGetAccountShape", () => {
       getPublicKey: jest.fn().mockResolvedValue(pubKeyMock),
     };
     signerContext = <T>(_: string, fn: (signer: CardanoSigner) => Promise<T>) => fn(fakeSigner);
-    shape = makeGetAccountShape(signerContext);
+    shape = makeGetAccountShape(signerContext, createMockContext());
     accountShapeInfo = {
       currency: { id: "cardano" } as any,
       address: "add",

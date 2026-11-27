@@ -1,8 +1,8 @@
 import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
 import {
-  LEDGER_POOL_IDS,
   StakePool,
   fetchPoolDetails,
+  getLedgerPoolIds,
 } from "@ledgerhq/live-common/families/cardano/staking";
 import { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
@@ -31,7 +31,7 @@ type Props = {
 
 export function concatUserAndLedgerPoolIds(
   userLastUsedPool: string | undefined,
-  ledgerPoolIds: string[],
+  ledgerPoolIds: readonly string[],
 ): string[] {
   return userLastUsedPool ? [userLastUsedPool, ...ledgerPoolIds] : [...ledgerPoolIds];
 }
@@ -45,7 +45,10 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
   const { pools, searchQuery, setSearchQuery, onScrollEndReached, isSearching, isPaginating } =
     useCardanoFamilyPools(account.currency);
 
-  const userAndLedgerPoolIds = concatUserAndLedgerPoolIds(delegation?.poolId, LEDGER_POOL_IDS);
+  const userAndLedgerPoolIds = concatUserAndLedgerPoolIds(
+    delegation?.poolId,
+    getLedgerPoolIds(account.currency),
+  );
 
   useEffect(() => {
     setUserAndLedgerPoolsLoading(true);

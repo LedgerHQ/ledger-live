@@ -89,3 +89,12 @@ export class ValAddressRequired extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+/** A coin-config value that breaks an invariant of its reader, such as a zero page size. */
+export class CardanoInvalidConfigError extends Error {
+  override name = "CardanoInvalidConfigError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message ?? "CardanoInvalidConfigError");
+    if (fields) Object.assign(this, fields);
+  }
+}

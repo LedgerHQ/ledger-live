@@ -1,9 +1,8 @@
 import type { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import coinConfig from "./config";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { buildEstimateMaxSpendable } from "./estimateMaxSpendable";
 import { getCardanoAccountFixture } from "./fixtures/accounts";
-import { cardanoCoinConfig, cardanoTestnetCoinConfig } from "./fixtures/config";
+import { createMockContext } from "./fixtures/config";
 import { getProtocolParamsFixture } from "./fixtures/protocolParams";
 import type { CardanoAccount, Transaction } from "./types";
 
@@ -19,11 +18,7 @@ const buildAccount = (): CardanoAccount => {
 const withProtocolParams = { protocolParams: getProtocolParamsFixture() } as Partial<Transaction>;
 
 describe("estimateMaxSpendable", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(currencyId =>
-      currencyId === "cardano_testnet" ? cardanoTestnetCoinConfig : cardanoCoinConfig,
-    );
-  });
+  const estimateMaxSpendable = buildEstimateMaxSpendable(createMockContext());
 
   it("returns zero when the account has no utxo", async () => {
     const account = buildAccount();

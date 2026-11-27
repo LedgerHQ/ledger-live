@@ -3,9 +3,8 @@ import type { CardanoCoinConfig } from "../config";
 import { EpochInfo, StakePool } from "../api/api-types";
 import { fetchEpochInfo } from "../api/getEpochInfo";
 import { fetchPoolList } from "../api/getPools";
+import { getValidatorsBatchSize } from "../tuning";
 import { computePoolApy } from "./computePoolApy";
-
-const PAGE_LIMIT = 100;
 
 function toValidator(pool: StakePool, epoch: EpochInfo | undefined): Validator | undefined {
   // Skip a pool whose liveStake can't be parsed rather than letting one bad row throw and
@@ -39,8 +38,9 @@ async function fetchAllPools(config: CardanoCoinConfig): Promise<StakePool[]> {
   const pools: StakePool[] = [];
   let pageNo = 1;
   let total = 0;
+  const batchSize = getValidatorsBatchSize(config);
   do {
-    const res = await fetchPoolList(config, "", pageNo, PAGE_LIMIT);
+    const res = await fetchPoolList(config, "", pageNo, batchSize);
     pools.push(...res.pools);
     total = res.count;
     pageNo += 1;

@@ -45,7 +45,7 @@ function StepSummary(props: StepProps) {
               </Text>
               <Ellipsis mt={2}>
                 <Box horizontal alignItems="center">
-                  <CardanoLedgerPoolIcon validator={selectedPool} />
+                  <CardanoLedgerPoolIcon validator={selectedPool} currency={account.currency} />
                   <Text
                     ff="Inter"
                     color="neutral.c100"

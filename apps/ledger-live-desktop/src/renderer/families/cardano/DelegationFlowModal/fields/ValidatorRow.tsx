@@ -43,7 +43,7 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency }: Props) {
         ...pool,
         address: pool.poolId,
       }}
-      icon={<LedgerPoolIcon validator={pool} />}
+      icon={<LedgerPoolIcon validator={pool} currency={currency} />}
       title={pool.name || pool.poolId}
       onExternalLink={onExternalLink}
       unit={unit}

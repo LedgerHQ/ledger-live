@@ -1,3 +1,4 @@
+import { cardanoDefaults } from "@ledgerhq/coin-cardano/config";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
@@ -16,6 +17,12 @@ export const MOCK_API = "https://cardano-coin-tester.mock";
 export const MOCK_ENDPOINTS = {
   api: { url: MOCK_API },
   epochParams: { url: `${MOCK_API}/epoch-params` },
+};
+
+/** The required `fees` and `validators` fields of the coin config, at their registered values. */
+export const TUNING = {
+  fees: cardanoDefaults.cardano.fees,
+  validators: cardanoDefaults.cardano.validators,
 };
 
 // A Cardano native asset used by the token-send scenario. policyId is a 28-byte (56 hex) hash and

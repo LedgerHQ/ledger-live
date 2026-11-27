@@ -8,9 +8,8 @@ import {
 import BigNumber from "bignumber.js";
 import { CardanoMinAmountError } from "../errors";
 import { getCardanoAccountFixture } from "../fixtures/accounts";
-import { cardanoTestnetCoinConfig, cardanoCoinConfig } from "../fixtures/config";
+import { createMockContext } from "../fixtures/config";
 import { getProtocolParamsFixture } from "../fixtures/protocolParams";
-import coinConfig from "../config";
 import type { Transaction } from "../types";
 import { getSendTransactionStatus } from "./send";
 
@@ -38,14 +37,10 @@ const buildAccount = () => {
 };
 
 describe("getSendTransactionStatus (real transaction builder)", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(currencyId =>
-      currencyId === "cardano_testnet" ? cardanoTestnetCoinConfig : cardanoCoinConfig,
-    );
-  });
+  const context = createMockContext();
 
   it("reports no error for a send above the minimum amount", async () => {
-    const status = await getSendTransactionStatus(buildAccount(), buildTransaction());
+    const status = await getSendTransactionStatus(context, buildAccount(), buildTransaction());
 
     expect({
       errors: status.errors,
@@ -56,6 +51,7 @@ describe("getSendTransactionStatus (real transaction builder)", () => {
 
   it("requires a recipient", async () => {
     const status = await getSendTransactionStatus(
+      context,
       buildAccount(),
       buildTransaction({ recipient: "", amount: new BigNumber(0) }),
     );
@@ -65,6 +61,7 @@ describe("getSendTransactionStatus (real transaction builder)", () => {
 
   it("rejects an invalid address", async () => {
     const status = await getSendTransactionStatus(
+      context,
       buildAccount(),
       buildTransaction({ recipient: "invalidADDRESS", amount: new BigNumber(0) }),
     );
@@ -74,6 +71,7 @@ describe("getSendTransactionStatus (real transaction builder)", () => {
 
   it("requires an amount", async () => {
     const status = await getSendTransactionStatus(
+      context,
       buildAccount(),
       buildTransaction({ amount: new BigNumber(0) }),
     );
@@ -83,6 +81,7 @@ describe("getSendTransactionStatus (real transaction builder)", () => {
 
   it("requires the fees to be loaded", async () => {
     const status = await getSendTransactionStatus(
+      context,
       buildAccount(),
       buildTransaction({ fees: undefined }),
     );
@@ -92,6 +91,7 @@ describe("getSendTransactionStatus (real transaction builder)", () => {
 
   it("reports CardanoMinAmountError for an amount below the minimum utxo amount", async () => {
     const status = await getSendTransactionStatus(
+      context,
       buildAccount(),
       buildTransaction({ amount: new BigNumber(0.1e6) }),
     );
@@ -105,6 +105,7 @@ describe("getSendTransactionStatus (real transaction builder)", () => {
 
   it("reports NotEnoughBalance when the amount exceeds the spendable balance", async () => {
     const status = await getSendTransactionStatus(
+      context,
       buildAccount(),
       buildTransaction({ amount: new BigNumber(100e6) }),
     );
@@ -114,6 +115,7 @@ describe("getSendTransactionStatus (real transaction builder)", () => {
 
   it("reports a send max leaving the fees without error", async () => {
     const status = await getSendTransactionStatus(
+      context,
       buildAccount(),
       buildTransaction({ amount: new BigNumber(0), useAllAmount: true }),
     );

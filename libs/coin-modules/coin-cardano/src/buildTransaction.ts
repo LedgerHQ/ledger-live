@@ -15,7 +15,6 @@ import {
   getTTL,
   mergeTokens,
   isProtocolParamsValid,
-  isTestnet,
   toTyphonProtocolParams,
 } from "./logic";
 import { getNetworkParameters } from "./networks";
@@ -27,7 +26,6 @@ import {
   Token,
   Transaction,
 } from "./types";
-import coinConfig from "./config";
 
 function sortByAdaDesc(a: CardanoOutput, b: CardanoOutput): number {
   const diff = b.amount.minus(a.amount);
@@ -68,9 +66,7 @@ function getRewardWithdrawalCertificate(account: CardanoAccount): TyphonTypes.Wi
     bipPath: stakeCredential.path,
   };
 
-  const networkId = isTestnet(coinConfig.getCoinConfig(account.currency.id))
-    ? TyphonTypes.NetworkId.TESTNET
-    : TyphonTypes.NetworkId.MAINNET;
+  const { networkId } = getNetworkParameters(account.currency.id);
   const rewardAddress = new TyphonAddress.RewardAddress(networkId, stakeKeyHashCredential);
   const rewardsWithdrawalCertificate: TyphonTypes.Withdrawal = {
     rewardAccount: rewardAddress,

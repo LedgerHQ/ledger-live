@@ -10,71 +10,75 @@ import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
+import { pinConfig, type CardanoContext } from "../config";
 import { validateMemo } from "../logic/validateMemo";
+import { getMaxFees } from "../tuning";
 import type { CardanoAccount, CardanoOutput, Transaction, TransactionStatus } from "../types";
 import { getTransactionStatusByTransactionMode } from "./handler";
 
-export const getTransactionStatus: AccountBridge<
-  Transaction,
-  CardanoAccount,
-  TransactionStatus
->["getTransactionStatus"] = async (account, transaction) => {
-  if (account.pendingOperations.length > 0) {
-    throw new AccountAwaitingSendPendingOperations();
-  }
+export const buildGetTransactionStatus =
+  (
+    context: CardanoContext,
+  ): AccountBridge<Transaction, CardanoAccount, TransactionStatus>["getTransactionStatus"] =>
+  async (account, transaction) => {
+    if (account.pendingOperations.length > 0) {
+      throw new AccountAwaitingSendPendingOperations();
+    }
 
-  const isStakingWithoutUtxo =
-    account.cardanoResources.utxos.length === 0 && transaction.mode !== "send";
-  if (isStakingWithoutUtxo) {
-    const errors = {
-      amount: new CardanoNotEnoughFunds(),
-    };
-    return Promise.resolve({
-      errors,
-      warnings: {},
-      estimatedFees: new BigNumber(0),
-      amount: new BigNumber(transaction.amount),
-      totalSpent: new BigNumber(transaction.amount),
-    });
-  }
+    const isStakingWithoutUtxo =
+      account.cardanoResources.utxos.length === 0 && transaction.mode !== "send";
+    if (isStakingWithoutUtxo) {
+      const errors = {
+        amount: new CardanoNotEnoughFunds(),
+      };
+      return Promise.resolve({
+        errors,
+        warnings: {},
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(transaction.amount),
+        totalSpent: new BigNumber(transaction.amount),
+      });
+    }
 
-  const sanctionedAddressesOnUtxos = await findSanctionedAddressesOnUtxos(
-    account.currency,
-    account.cardanoResources.utxos,
-  );
-  if (sanctionedAddressesOnUtxos.length > 0) {
-    const errors = {
-      sender: new AddressesSanctionedError("AddressesSanctionedError", {
-        addresses: sanctionedAddressesOnUtxos,
-      }),
-    };
-    return Promise.resolve({
-      errors,
-      warnings: {},
-      estimatedFees: new BigNumber(0),
-      amount: new BigNumber(transaction.amount),
-      totalSpent: new BigNumber(transaction.amount),
-    });
-  }
+    const sanctionedAddressesOnUtxos = await findSanctionedAddressesOnUtxos(
+      account.currency,
+      account.cardanoResources.utxos,
+    );
+    if (sanctionedAddressesOnUtxos.length > 0) {
+      const errors = {
+        sender: new AddressesSanctionedError("AddressesSanctionedError", {
+          addresses: sanctionedAddressesOnUtxos,
+        }),
+      };
+      return Promise.resolve({
+        errors,
+        warnings: {},
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(transaction.amount),
+        totalSpent: new BigNumber(transaction.amount),
+      });
+    }
 
-  const txStatus = await getTransactionStatusByTransactionMode(account, transaction);
-  const { maxFeesWarning: MAX_FEES_WARN, maxFeesError: MAX_FEES_THROW } = coinConfig.getCoinConfig(
-    account.currency.id,
-  );
+    const config = await context.config(account.currency.id);
+    const maxFees = getMaxFees(config);
+    const txStatus = await getTransactionStatusByTransactionMode(
+      pinConfig(context, config),
+      account,
+      transaction,
+    );
 
-  if (txStatus.estimatedFees.gt(MAX_FEES_THROW)) {
-    throw new CardanoFeeTooHigh();
-  } else if (txStatus.estimatedFees.gt(MAX_FEES_WARN)) {
-    txStatus.warnings.feeTooHigh = new CardanoFeeHigh();
-  }
+    if (txStatus.estimatedFees.gt(maxFees.error)) {
+      throw new CardanoFeeTooHigh();
+    } else if (txStatus.estimatedFees.gt(maxFees.warning)) {
+      txStatus.warnings.feeTooHigh = new CardanoFeeHigh();
+    }
 
-  if (!validateMemo(transaction.memo)) {
-    txStatus.errors.transaction = new CardanoMemoExceededSizeError();
-  }
+    if (!validateMemo(transaction.memo)) {
+      txStatus.errors.transaction = new CardanoMemoExceededSizeError();
+    }
 
-  return txStatus;
-};
+    return txStatus;
+  };
 
 async function findSanctionedAddressesOnUtxos(
   currency: CryptoCurrency,
