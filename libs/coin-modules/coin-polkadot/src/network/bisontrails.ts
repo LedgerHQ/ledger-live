@@ -171,22 +171,25 @@ const getExtra = (type: OperationType, extrinsic: ExplorerExtrinsic): PolkadotOp
  * @returns {BigNumber}
  */
 const getValue = (extrinsic: any, type: OperationType): BigNumber => {
+  // The indexer omits `partialFee` on extrinsics that pay no fee, such as `staking.pruneEraStep`.
+  const fee = new BigNumber(extrinsic.partialFee || 0);
+
   if (!extrinsic.isSuccess) {
-    return type === "IN" ? new BigNumber(0) : new BigNumber(extrinsic.partialFee || 0);
+    return type === "IN" ? new BigNumber(0) : fee;
   }
 
   switch (type) {
     case "OUT":
       return extrinsic.signer !== extrinsic.affectedAddress1
-        ? new BigNumber(extrinsic.amount).plus(extrinsic.partialFee)
-        : new BigNumber(extrinsic.partialFee);
+        ? new BigNumber(extrinsic.amount).plus(fee)
+        : fee;
 
     case "IN":
     case "SLASH":
       return new BigNumber(extrinsic.amount);
 
     default:
-      return new BigNumber(extrinsic.partialFee);
+      return fee;
   }
 };
 

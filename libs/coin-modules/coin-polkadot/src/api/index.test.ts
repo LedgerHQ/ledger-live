@@ -190,12 +190,21 @@ describe("index", () => {
   });
 
   describe("listOperations", () => {
-    it("should return operations", async () => {
+    it("returns every operation in a single page", async () => {
       const api = generateApi();
 
       mockListOperations.mockResolvedValue([[], 2]);
       const result = await api.listOperations(context, "some random address", { minHeight: 0 });
-      expect(result).toEqual({ items: [], next: "2" });
+      expect(result).toEqual({ items: [] });
+    });
+
+    it("lets the indexer client choose the page size, as the indexer rejects zero", async () => {
+      const api = generateApi();
+      mockListOperations.mockResolvedValue([[], 0]);
+
+      await api.listOperations(context, "some random address", { minHeight: 42, limit: 0 });
+
+      expect(mockListOperations.mock.lastCall[3]).toEqual({ startAt: 42 });
     });
 
     it("passes the context logger to the logic layer", async () => {

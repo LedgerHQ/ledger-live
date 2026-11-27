@@ -127,10 +127,8 @@ async function operations(
   { minHeight }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
   const config = await context.config();
-  // FIXME Options are ignored here
-  const [items, nextHeight] = await listOperations(context.logger, config, address, {
-    limit: 0,
-    startAt: minHeight,
-  });
-  return { items, next: nextHeight !== null ? JSON.stringify(nextHeight) : undefined };
+  // The indexer client fetches every page from `minHeight`, so the result is never paginated.
+  // `limit`, `cursor` and `order` are not supported.
+  const [items] = await listOperations(context.logger, config, address, { startAt: minHeight });
+  return { items };
 }

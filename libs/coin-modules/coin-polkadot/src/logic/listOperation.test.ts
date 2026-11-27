@@ -128,6 +128,31 @@ describe("listOperations", () => {
     expect(mockOperationsLogger).toHaveBeenCalledWith(logger);
   });
 
+  it("converts amounts too large for the exponential notation of BigNumber", async () => {
+    const amount = "123456789012345678901234";
+    mockGetOperations.mockResolvedValue([
+      {
+        id: "1",
+        hash: "hash1",
+        type: "IN",
+        value: new BigNumber(amount),
+        fee: new BigNumber(amount),
+        senders: ["sender1"],
+        recipients: ["recipient1"],
+        blockHeight: 10,
+        blockHash: "blockHash1",
+        date: new Date("2025-03-13T00:00:00Z"),
+        accountId: "accountId1",
+        extra: { index: 1 } as PolkadotOperationExtra,
+      },
+    ]);
+
+    const [[operation]] = await listOperations(logger, config, fakeAddress, { startAt: 0 });
+
+    expect(operation.value).toBe(BigInt(amount));
+    expect(operation.tx.fees).toBe(BigInt(amount));
+  });
+
   it("should handle empty operations array", async () => {
     const limit = 5;
     const startAt = 0;
