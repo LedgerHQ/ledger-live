@@ -1,7 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { byId, byIdWithDescendantText } from "@e2e/helpers/elements/native";
+import { byId, byIdWithDescendantText, byTextInRowWithText } from "@e2e/helpers/elements/native";
 
 type AssetItemByNameOptions = { ticker: string; assetName: string };
 
@@ -18,11 +18,10 @@ export default class ModularDrawer {
   private readonly drawerCloseButton = byId("bottom-sheet-header-close-button");
   private readonly drawerBackButton = byId("bottom-sheet-header-back-button");
   private readonly accountItemName = (name: string) => byId(`account-item-name-${name}`);
-  private readonly assetItem = (ticker: string) => byId(new RegExp(`^asset-item-${ticker}$`, "i"));
-  private readonly assetItemWithText = (assetItemId: string, text: RegExp) =>
-    byIdWithDescendantText({ id: assetItemId, text });
+  private readonly assetItemId = (ticker: string) => new RegExp(`^asset-item-${ticker}$`, "i");
+  private readonly assetItem = (ticker: string) => byId(this.assetItemId(ticker));
   private readonly assetItemByName = ({ ticker, assetName }: AssetItemByNameOptions) =>
-    byIdWithDescendantText({ id: new RegExp(`^asset-item-${ticker}$`, "i"), text: assetName });
+    byIdWithDescendantText({ id: this.assetItemId(ticker), text: assetName });
   private readonly networkItem = (networkId: string) =>
     byId(new RegExp(`network-item-${networkId}`, "i"));
 
@@ -104,13 +103,13 @@ export default class ModularDrawer {
     await assetItem.waitVisible();
     await assetItem.expectVisible();
 
-    // The pattern can match several rows: check both masks on the first one.
-    const assetItemId = await assetItem.getIdentifier();
-    await this.assetItemWithText(assetItemId, /\$\*\*\*/).expectVisible();
-    await this.assetItemWithText(
-      assetItemId,
-      new RegExp(String.raw`\*\*\*\s+${ticker}`, "i"),
-    ).expectVisible();
+    const masks = [/\$\*\*\*/, new RegExp(String.raw`\*\*\*\s+${ticker}`, "i")];
+    for (const mask of masks) {
+      const maskedAmount = aggregatedName
+        ? byTextInRowWithText({ id: this.assetItemId(ticker), rowText: aggregatedName, text: mask })
+        : byIdWithDescendantText({ id: this.assetItemId(ticker), text: mask });
+      await maskedAmount.expectVisible();
+    }
   }
 
   @Step("Check listed asset amounts are masked in discreet mode")
