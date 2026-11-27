@@ -29,6 +29,7 @@ import {
 } from "../../test/fixtures";
 import { TooManyUtxosCritical, TooManyUtxosWarning, TopologyChangeError } from "../../types/errors";
 import type { CantonMemo } from "../../types/transaction";
+import { estimateFees, estimateSendMax } from "../estimateFees";
 import { validateIntent } from "../validateIntent";
 
 jest.mock("../../network/gateway", () => ({
@@ -70,6 +71,7 @@ const native = (value: bigint, locked?: bigint): Balance => ({
   value,
   ...(locked === undefined ? {} : { locked }),
 });
+const withLockedReserve = (spendable: bigint) => [native(spendable + reserve, reserve)];
 const token = (value: bigint, asset: AssetInfo = TOKEN): Balance => ({ asset, value, locked: 0n });
 
 // Gateway balance rows, alternating unlocked and locked.
@@ -374,13 +376,85 @@ describe("validateIntent", () => {
   });
 
   describe("send-max", () => {
-    it("should send the spendable native balance less the fee", async () => {
-      const { errors, amount, totalSpent } = await validate({ useAllAmount: true, amount: 0n }, [
-        native(1000n, 100n),
-      ]);
+    const sendMax = (spendable: bigint, amount = 0n, ctx = context) =>
+      validateIntent(ctx, intent({ useAllAmount: true, amount }), withLockedReserve(spendable), {
+        value: ONE_CC,
+      });
+
+    it("should fill the same amount and fee as the bridge, within the spendable balance", async () => {
+      const spendable = 9n * ONE_CC;
+      const max = await estimateSendMax(context, spendable);
+
+      const { errors, amount, estimatedFees, totalSpent } = await sendMax(spendable);
 
       expect(errors).toEqual({});
-      expect({ amount, totalSpent }).toEqual({ amount: 890n, totalSpent: 900n });
+      expect({ amount, estimatedFees }).toEqual({ amount: max.amount, estimatedFees: max.fee });
+      expect(amount).toBeLessThan(8n * ONE_CC);
+      expect(totalSpent).toBeLessThanOrEqual(spendable);
+    });
+
+    it("should fill a positive amount just above the 1 CC base fee", async () => {
+      const spendable = 101n * (ONE_CC / 100n);
+
+      const { errors, amount, totalSpent } = await sendMax(spendable);
+
+      expect(errors).toEqual({});
+      expect(amount).toBeGreaterThan(0n);
+      expect(totalSpent).toBeLessThanOrEqual(spendable);
+    });
+
+    it.each([ONE_CC, ONE_CC / 2n])(
+      "should fill 0 and return NotEnoughBalance with %s spendable",
+      async spendable => {
+        const { errors, amount } = await sendMax(spendable);
+
+        expect(amount).toBe(0n);
+        expect(errors.amount).toBeInstanceOf(NotEnoughBalance);
+      },
+    );
+
+    it("should send the spendable balance less a fixed fee", async () => {
+      const fixed = createMockContext({ ...config, fee: 2 });
+
+      const { errors, amount, estimatedFees } = await sendMax(9n * ONE_CC, 0n, fixed);
+
+      expect(errors).toEqual({});
+      expect({ amount, estimatedFees }).toEqual({
+        amount: 7n * ONE_CC,
+        estimatedFees: 2n * ONE_CC,
+      });
+    });
+
+    it("should keep a prepared amount that fits, since it is the amount crafted, with its own fee", async () => {
+      const prepared = 5n * ONE_CC;
+
+      const { errors, amount, estimatedFees } = await sendMax(9n * ONE_CC, prepared);
+
+      expect(errors).toEqual({});
+      expect({ amount, estimatedFees }).toEqual({
+        amount: prepared,
+        estimatedFees: await estimateFees(context, prepared),
+      });
+    });
+
+    it("should return NotEnoughBalance for a prepared 0, which the estimate's amount marks", async () => {
+      const { errors, amount } = await validateIntent(
+        context,
+        intent({ useAllAmount: true, amount: 0n }),
+        withLockedReserve(9n * ONE_CC),
+        { value: ONE_CC, parameters: { amount: "0" } },
+      );
+
+      expect(amount).toBe(0n);
+      expect(errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+
+    it("should return NotEnoughBalance when the prepared amount exceeds the maximum", async () => {
+      const max = await estimateSendMax(context, 9n * ONE_CC);
+
+      const { errors } = await sendMax(9n * ONE_CC, max.amount + 1n);
+
+      expect(errors.amount).toBeInstanceOf(NotEnoughBalance);
     });
 
     it("should send the whole spendable token holding, whose fee the parent pays", async () => {
@@ -391,18 +465,6 @@ describe("validateIntent", () => {
 
       expect(errors).toEqual({});
       expect({ amount, totalSpent }).toEqual({ amount: 700n, totalSpent: 700n });
-    });
-
-    it("should replace a stale amount with the maximum", async () => {
-      const { amount } = await validate({ useAllAmount: true, amount: 5n }, [native(1000n, 100n)]);
-
-      expect(amount).toBe(890n);
-    });
-
-    it("should return NotEnoughBalance, not AmountRequired, when the fee leaves nothing to send", async () => {
-      const { errors } = await validate({ useAllAmount: true, amount: 0n }, [native(5n, 0n)]);
-
-      expect(errors.amount).toBeInstanceOf(NotEnoughBalance);
     });
   });
 

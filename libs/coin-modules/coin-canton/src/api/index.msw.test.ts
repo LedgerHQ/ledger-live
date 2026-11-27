@@ -1,6 +1,8 @@
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
+import { estimateSendMax } from "../logic/estimateFees";
+import { minReserveOf } from "../logic/utils";
 import { createFrameworkSigner } from "../signer/frameworkSigner";
 import {
   createMockCantonSigner,
@@ -52,6 +54,8 @@ const transfer = (asset: AssetInfo) =>
     amount: 100n,
     asset,
   }) as TransactionIntent<CantonMemo>;
+
+const sendMax = (asset: AssetInfo) => ({ ...transfer(asset), amount: 0n, useAllAmount: true });
 
 const unknownRequest = () => HttpResponse.json({ message: "unexpected request" }, { status: 400 });
 
@@ -153,6 +157,49 @@ describe("createApi against the gateway", () => {
     await expect(
       api.estimateFees(createMockContext({ ...config, fee: 2 }), transfer({ type: "native" })),
     ).resolves.toEqual({ value: 2n * MAGNITUDE });
+  });
+
+  describe("estimateFees on Send max", () => {
+    const spendable = 9n * MAGNITUDE;
+    const heldWithLockedReserve = spendable + minReserveOf(config);
+
+    beforeEach(() => {
+      server.use(
+        http.get(`${partyUrl}/balance`, ({ params }) =>
+          params.party === SENDER
+            ? HttpResponse.json(
+                createMockInstrumentBalances(1, { amount: heldWithLockedReserve.toString() }),
+              )
+            : unknownRequest(),
+        ),
+      );
+    });
+
+    it("should return the fee and amount of the largest native send that fits", async () => {
+      const max = await estimateSendMax(context, spendable);
+
+      await expect(api.estimateFees(context, sendMax({ type: "native" }))).resolves.toEqual({
+        value: max.fee,
+        parameters: { amount: max.amount },
+      });
+      expect(max.amount + max.fee).toBeLessThanOrEqual(spendable);
+    });
+
+    it("should return a fixed fee alone, without reading the balance", async () => {
+      server.use(http.get(`${partyUrl}/balance`, () => HttpResponse.error()));
+
+      await expect(
+        api.estimateFees(createMockContext({ ...config, fee: 2 }), sendMax({ type: "native" })),
+      ).resolves.toEqual({ value: 2n * MAGNITUDE });
+    });
+
+    it("should quote a token Send max on its amount, since the parent pays the fee", async () => {
+      const token = { type: "token", assetReference: "USDCx", assetOwner: "issuer::1220" } as const;
+
+      await expect(api.estimateFees(context, { ...sendMax(token), amount: 100n })).resolves.toEqual(
+        { value: MAGNITUDE + 1n },
+      );
+    });
   });
 
   describe("validateIntent", () => {
