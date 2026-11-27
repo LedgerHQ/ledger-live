@@ -7,5 +7,6 @@ export type ReceiveNavigatorParamList = {
   [ScreenName.ReceiveAddress]: {
     accountUUID: AccountUUID;
     assetId: CryptoOrTokenCurrencyId;
+    source?: string;
   };
 };

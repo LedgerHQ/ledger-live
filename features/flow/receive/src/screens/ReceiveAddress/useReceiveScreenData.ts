@@ -9,6 +9,7 @@ import {
 } from "@domain/entity-account-status";
 import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import { useAccountData, type UseAccountDataResult } from "@features/platform-account-data";
+import { toReceiveReadFailure, type ReceiveReadFailure } from "../../logic/toReceiveReadFailure";
 import {
   toReceiveScreenState,
   type ReceiveKindRead,
@@ -23,7 +24,7 @@ type ReceiveScreenRootState = WithAccountReceives & {
 /** The screen state; on `error`, `retry` reads the failed kinds again. */
 export type ReceiveScreenData =
   | Exclude<ReceiveScreenState, { type: "error" }>
-  | Readonly<{ type: "error"; retry: () => void }>;
+  | (Readonly<{ type: "error"; retry: () => void }> & ReceiveReadFailure);
 
 export type UseReceiveScreenDataResult = Readonly<{
   data: ReceiveScreenData;
@@ -81,6 +82,17 @@ export function useReceiveScreenData(
     assetStatus: kindRead(assetStatus, assetStatusRead),
   };
   const state = hasAccount ? toReceiveScreenState(reads) : ({ type: "error" } as const);
+  const screenState =
+    state.type === "error"
+      ? {
+          ...state,
+          ...toReceiveReadFailure(hasAccount, {
+            receive: { failed: reads.receive.failed, error: receiveRead.error },
+            accountStatus: { failed: reads.accountStatus.failed, error: accountStatusRead.error },
+            assetStatus: { failed: reads.assetStatus.failed, error: assetStatusRead.error },
+          }),
+        }
+      : state;
 
   const isReceiveFailed = reads.receive.failed;
   const isAccountStatusFailed = reads.accountStatus.failed;
@@ -123,7 +135,7 @@ export function useReceiveScreenData(
   }, [isGated, followUps, readGateAgain]);
 
   return {
-    data: state.type === "error" ? { type: "error", retry } : state,
+    data: screenState.type === "error" ? { ...screenState, retry } : screenState,
     accountStatus,
     refreshGate,
   };

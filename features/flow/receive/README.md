@@ -65,19 +65,26 @@ displayed" asks the user to compare it with the address once pasted or shared, a
 (or closing) goes back to the address screen to copy it. If the user approves on the device first
 and it returns another address, `AddressMismatch` warns them off it instead.
 
-| Ending                                                   | Outcome       | Event                              |
-| -------------------------------------------------------- | ------------- | ---------------------------------- |
-| Address shown on the device, then **Got it** or closed   | `displayed`   | `button_clicked` `Got it` on Got it |
-| Device returned another address, mismatch screen closed  | `mismatch`    | the screen's `button_clicked`      |
-| Unsupported, before or by the device                     | `unsupported` | `receive_verification_unsupported` |
-| Job error, or a failing executor error screen closed     | `failed`      | none                               |
-| Preparation failed (account, token, init input)          | `failed`      | none                               |
-| Left before the address was shown, or on a fixable error | `dismissed`   | `receive_verification_dismiss`     |
+| Ending                                                   | Outcome       | Event                              | Operation                                  |
+| -------------------------------------------------------- | ------------- | ---------------------------------- | ------------------------------------------ |
+| Address shown on the device, then **Got it** or closed   | `displayed`   | `button_clicked` `Got it` on Got it | succeeds                                   |
+| Device returned another address, mismatch screen closed  | `mismatch`    | the screen's `button_clicked`      | `ERROR`, `outcome: mismatch`               |
+| Unsupported, before or by the device                     | `unsupported` | `receive_verification_unsupported` | succeeds, `outcome: unsupported`           |
+| Job error, or a failing executor error screen closed     | `failed`      | none                               | `ERROR`, with the error or `failure_type`  |
+| Preparation failed (account, token, init input)          | `failed`      | none                               | `ERROR`, `step: prepare`                   |
+| Left before the address was shown, or on a fixable error | `dismissed`   | `receive_verification_dismiss`     | `ABANDONED`                                |
 
 Every ending goes back to the address screen. Approved and refused on the device are neither shown
 nor tracked, and no answer event is sent: the user usually goes back before answering on the device.
 A terminal result wins over a later error screen. Each attempt forgets the previous refusal, job
 error and shown address.
+
+Two Datadog RUM operations, through `@shared/observability-operations`, time the flow:
+`receive_address` from the address screen's mount until an address is shown (an expected dead
+end, such as a gate or a sanctioned address, succeeds with an `outcome`; a read error ends it only
+when the user retries or leaves), and
+`receive_verify_address` from **Verify** until the verification ends, as in the table above. Unlike
+the events, the operation records a refusal on the device: `ABANDONED` with `outcome: refused`.
 
 The executor stays locked while the address is requested (`verifying`), then lets the user leave.
 

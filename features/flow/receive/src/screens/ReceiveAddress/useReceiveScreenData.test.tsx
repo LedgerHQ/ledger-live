@@ -99,7 +99,7 @@ describe("useReceiveScreenData", () => {
     await waitFor(() => expect(result.current.data).toEqual({ type: "onboardingRequired" }));
   });
 
-  it("should fail, then read the failed kind again on retry", async () => {
+  it("should fail with the failed kind and its read error, then read it again on retry", async () => {
     const readReceive = jest
       .fn<Promise<typeof receive>, []>()
       .mockRejectedValueOnce(new Error("sync failed"))
@@ -108,6 +108,12 @@ describe("useReceiveScreenData", () => {
     const { result } = renderHook(() => useReceiveScreenData(accountUUID, ETH), { wrapper });
 
     await waitFor(() => expect(result.current.data.type).toBe("error"));
+    expect(result.current.data).toEqual(
+      expect.objectContaining({
+        failedKinds: ["receive"],
+        readError: { name: "Error", message: "sync failed" },
+      }),
+    );
     const { data } = result.current;
     act(() => {
       if (data.type === "error") data.retry();
@@ -117,13 +123,15 @@ describe("useReceiveScreenData", () => {
     expect(readReceive).toHaveBeenCalledTimes(2);
   });
 
-  it("should fail for an account the account model does not hold", () => {
+  it("should fail on the account, with no read error, when the account model does not hold it", () => {
     const { wrapper } = setup({});
     const unknownUUID = computeAccountUUID(
       mockAddressAccountDescriptor({ key: "0x0000000000000000000000000000000000000001" }),
     );
     const { result } = renderHook(() => useReceiveScreenData(unknownUUID, ETH), { wrapper });
 
-    expect(result.current.data.type).toBe("error");
+    expect(result.current.data).toEqual(
+      expect.objectContaining({ type: "error", failedKinds: ["account"], readError: undefined }),
+    );
   });
 });

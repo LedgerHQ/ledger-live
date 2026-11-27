@@ -22,7 +22,7 @@ const onAccountSelected =
       hideBackButton: true,
     };
 
-    navigationRef.current?.navigate(...getReceiveRoute(confirmationParams, getState()));
+    navigationRef.current?.navigate(...getReceiveRoute(confirmationParams, getState(), "deeplink"));
   };
 
 /**

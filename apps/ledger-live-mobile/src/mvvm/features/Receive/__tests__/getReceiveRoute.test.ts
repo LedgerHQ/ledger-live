@@ -81,6 +81,20 @@ describe("getReceiveRoute", () => {
     );
   });
 
+  it("should give the new screen the entry point the user opened it from", () => {
+    expect(getReceiveRoute({ accountId: ethAccount.id }, makeState(), "Portfolio")).toStrictEqual(
+      newFlow({ accountUUID: entry.accountUUID, assetId: "ethereum", source: "Portfolio" }),
+    );
+  });
+
+  it("should keep the entry point out of the ReceiveConfirmation params", () => {
+    const params = { accountId: ethAccount.id };
+
+    expect(getReceiveRoute(params, makeState({ enabled: false }), "Portfolio")).toStrictEqual(
+      legacy(params),
+    );
+  });
+
   describe("should keep ReceiveConfirmation, with the same params", () => {
     it("when the flag is off", () => {
       const params = { accountId: ethAccount.id, hideBackButton: true };

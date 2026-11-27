@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import type { VerifyAddressIntentResult } from "@features/platform-intent-verify-address";
 import { track } from "@shared/analytics";
 import type {
@@ -6,6 +7,8 @@ import type {
   VerifyAddressOutcome,
   VerifyAddressTracking,
 } from "../types";
+import type { VerifyAddressStage } from "../logic/toVerifyAddressOperationResult";
+import { useVerifyAddressOperation, type VerifyAddressEndCause } from "./useVerifyAddressOperation";
 
 type ResultOutcome = Extract<
   VerifyAddressOutcome,
@@ -32,6 +35,7 @@ const RESULT_OUTCOME: Record<VerifyAddressIntentResult["type"], ResultOutcome> =
 };
 
 export type UseVerifyAddressSessionParams = Readonly<{
+  assetId: CryptoOrTokenCurrencyId;
   /** Absent until the asset and network are known. */
   tracking: VerifyAddressTracking | undefined;
   onExit: (outcome: VerifyAddressOutcome) => void;
@@ -39,22 +43,27 @@ export type UseVerifyAddressSessionParams = Readonly<{
 
 export type VerifyAddressSession = Readonly<{
   /** Ends the verification before the device: `unsupported` sends its event, `failed` none. */
-  exitEarly: (outcome: EarlyOutcome, tracking?: VerifyAddressTracking) => void;
+  exitEarly: (outcome: EarlyOutcome, tracking?: VerifyAddressTracking, error?: unknown) => void;
   /** Each device request of the job, retries included: forgets the refusal and the job error. */
   onAttemptStart: () => void;
   /** The device shows the address: leaving now goes back to it, whatever the device answers. */
   onAddressDisplayed: () => void;
   onResult: (result: VerifyAddressIntentResult) => void;
-  onJobError: () => void;
+  onJobError: (error: unknown) => void;
   /** The executor's `onUserCancel`, with the error screen the user closed, if any. */
   onUserCancel: (failure?: VerifyAddressDeviceFlowFailure | null) => void;
 }>;
 
 /** Tracks a receive address verification and reports how it ended, once. */
 export function useVerifyAddressSession({
+  assetId,
   tracking,
   onExit,
 }: UseVerifyAddressSessionParams): VerifyAddressSession {
+  const { annotateNetwork, noteAttemptStart, noteJobError, end } = useVerifyAddressOperation(
+    assetId,
+    tracking?.network,
+  );
   const resultOutcomeRef = useRef<ResultOutcome | undefined>(undefined);
   const jobFailedRef = useRef(false);
   const addressDisplayedRef = useRef(false);
@@ -74,19 +83,28 @@ export function useVerifyAddressSession({
     [],
   );
 
-  const exit = useCallback((outcome: VerifyAddressOutcome) => {
-    if (exitedRef.current) return;
-    exitedRef.current = true;
-    onExitRef.current(outcome);
-  }, []);
+  const exit = useCallback(
+    (
+      outcome: VerifyAddressOutcome,
+      stage: VerifyAddressStage = "device",
+      cause?: VerifyAddressEndCause,
+    ) => {
+      if (exitedRef.current) return;
+      exitedRef.current = true;
+      end(outcome, stage, cause);
+      onExitRef.current(outcome);
+    },
+    [end],
+  );
 
   const exitEarly = useCallback(
-    (outcome: EarlyOutcome, earlyTracking?: VerifyAddressTracking) => {
+    (outcome: EarlyOutcome, earlyTracking?: VerifyAddressTracking, error?: unknown) => {
       if (exitedRef.current) return;
       if (outcome === "unsupported") trackOutcome(outcome, earlyTracking);
-      exit(outcome);
+      if (earlyTracking) annotateNetwork(earlyTracking.network);
+      exit(outcome, "prepare", { error });
     },
-    [exit, trackOutcome],
+    [exit, trackOutcome, annotateNetwork],
   );
 
   const onResult = useCallback(
@@ -104,15 +122,20 @@ export function useVerifyAddressSession({
     if (resultOutcomeRef.current === "cancelled") resultOutcomeRef.current = undefined;
     jobFailedRef.current = false;
     addressDisplayedRef.current = false;
-  }, []);
+    noteAttemptStart();
+  }, [noteAttemptStart]);
 
   const onAddressDisplayed = useCallback(() => {
     addressDisplayedRef.current = true;
   }, []);
 
-  const onJobError = useCallback(() => {
-    jobFailedRef.current = true;
-  }, []);
+  const onJobError = useCallback(
+    (error: unknown) => {
+      jobFailedRef.current = true;
+      noteJobError(error);
+    },
+    [noteJobError],
+  );
 
   const outcomeOnLeave = useCallback(
     (failure: VerifyAddressDeviceFlowFailure | null | undefined): VerifyAddressOutcome => {
@@ -132,7 +155,7 @@ export function useVerifyAddressSession({
   const onUserCancel = useCallback(
     (failure?: VerifyAddressDeviceFlowFailure | null) => {
       if (exitedRef.current) return;
-      exit(outcomeOnLeave(failure));
+      exit(outcomeOnLeave(failure), "device", { failure });
     },
     [exit, outcomeOnLeave],
   );

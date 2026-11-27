@@ -7,6 +7,7 @@ import type { ReceiveFamilyConfigPort, ReceiveServiceIncident } from "../../type
 export type ReceiveAddressProps = Readonly<{
   accountUUID: AccountUUID;
   assetId: CryptoOrTokenCurrencyId;
+  source?: string;
   onClose: () => void;
   /** Copies the address; resolves `false` when the clipboard refused it. Without it, no Copy. */
   onCopyAddress?: (address: string) => Promise<boolean>;
