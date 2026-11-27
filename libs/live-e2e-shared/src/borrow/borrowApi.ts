@@ -14,8 +14,8 @@ const POLL_INTERVAL_MS = 3_000;
 const POLL_MAX_ATTEMPTS = 60;
 const THROTTLE_RETRY_ATTEMPTS = 6;
 const THROTTLE_RETRY_BASE_DELAY_MS = 4_000;
-const LOOKUP_FLAP_RETRY_ATTEMPTS = 30;
-const LOOKUP_FLAP_RETRY_DELAY_MS = 2_000;
+const SUBMIT_RETRY_ATTEMPTS = 30;
+const SUBMIT_RETRY_DELAY_MS = 2_000;
 
 /** This driver targets Ethereum mainnet only. */
 export const ETHEREUM_NETWORK = "ethereum";
@@ -60,17 +60,27 @@ function isLookupFlap(status: number): boolean {
   return status === 404;
 }
 
+/** A repeat sends the same hash for the same transaction, so it cannot leave anything behind. */
+function isRetriableSubmit(status: number): boolean {
+  return isEdgeRejection(status) || isLookupFlap(status) || status >= 500;
+}
+
 type PostOptions = { pathname: string; body: unknown; retryOn5xx?: boolean };
+
+function postOnce(options: Omit<PostOptions, "retryOn5xx">): Promise<Response> {
+  const { pathname, body } = options;
+  return fetch(`${BASE_URL}${pathname}`, {
+    method: "POST",
+    headers: JSON_HEADERS,
+    body: JSON.stringify(body),
+  });
+}
 
 /** `retryOn5xx` is for the endpoints that only read, where a repeat cannot create anything. */
 async function post(options: PostOptions): Promise<Response> {
   const { pathname, body, retryOn5xx = false } = options;
   for (let attempt = 1; ; attempt++) {
-    const res = await fetch(`${BASE_URL}${pathname}`, {
-      method: "POST",
-      headers: JSON_HEADERS,
-      body: JSON.stringify(body),
-    });
+    const res = await postOnce({ pathname, body });
     const retriable = isEdgeRejection(res.status) || (retryOn5xx && res.status >= 500);
     if (!retriable || attempt >= THROTTLE_RETRY_ATTEMPTS) return res;
     console.log(
@@ -231,28 +241,27 @@ export async function resolveRepaySpender(options: RepaySpenderOptions): Promise
 type SubmitTransactionOptions = { transactionId: string; txHash: string };
 
 /**
- * The partner leaves an action at `created` until it is given each step's hash. Resending the same
- * hash for the same transaction cannot leave anything behind, so 5xx and 404 are retried. Not
+ * The partner leaves an action at `created` until it is given each step's hash, so every transient
+ * failure, network errors included, is retried under one budget of `SUBMIT_RETRY_ATTEMPTS`. Not
  * thrown: the step is already confirmed on chain, and `pollAction` names an action left unsettled.
  */
 export async function submitTransaction(options: SubmitTransactionOptions): Promise<void> {
   const { transactionId, txHash } = options;
   const pathname = `/v1/transactions/${transactionId}/submit`;
   const request = `POST ${pathname}`;
-  try {
-    for (let attempt = 1; ; attempt++) {
-      const res = await post({ pathname, body: { txHash }, retryOn5xx: true });
+  let lastFailure = "";
+  for (let attempt = 1; attempt <= SUBMIT_RETRY_ATTEMPTS; attempt++) {
+    if (attempt > 1) await new Promise(resolve => setTimeout(resolve, SUBMIT_RETRY_DELAY_MS));
+    try {
+      const res = await postOnce({ pathname, body: { txHash } });
       if (res.ok) return;
-      if (!isLookupFlap(res.status) || attempt >= LOOKUP_FLAP_RETRY_ATTEMPTS) {
-        const failure = await failedRequest(request, res);
-        console.warn(`    api: ${failure.message}`);
-        return;
-      }
-      await new Promise(resolve => setTimeout(resolve, LOOKUP_FLAP_RETRY_DELAY_MS));
+      lastFailure = (await failedRequest(request, res)).message;
+      if (!isRetriableSubmit(res.status)) break;
+    } catch (error) {
+      lastFailure = `${request} failed: ${String(error)}`;
     }
-  } catch (error) {
-    console.warn(`    api: ${request} failed:`, error);
   }
+  console.warn(`    api: ${lastFailure}`);
 }
 
 type ActionPoll = { status: string } | { retryReason: string };
