@@ -1,7 +1,7 @@
 import { parseArgs } from "util";
-import { build, clearUpdaterCache, installFromFeed, openApp } from "./builds.mts";
+import { build, clearUpdaterCache, feedBinaryName, installFromFeed, openApp } from "./builds.mts";
 import { generatePrivateKey, getPub } from "./crypto.mts";
-import { serveFeed } from "./serveFeed.mts";
+import { type FeedListeners, serveFeed } from "./serveFeed.mts";
 import { signFeed } from "./signFeed.mts";
 
 type AutoUpgradeOptions = ReturnType<typeof parseAutoUpgradeOptions>;
@@ -12,20 +12,27 @@ export function parseAutoUpgradeOptions() {
       "from-feed": { type: "boolean", default: false },
       "update-from-feed": { type: "boolean", default: false },
       "bad-signature": { type: "boolean", default: false },
+      "corrupted-update": { type: "boolean", default: false },
       "download-speed": { type: "string" },
     },
   });
+  if (values["corrupted-update"] && values["bad-signature"]) {
+    throw new Error(
+      "Use --corrupted-update or --bad-signature, not both: a bad signature stops the download",
+    );
+  }
   return {
     fromFeed: values["from-feed"],
     updateFromFeed: values["update-from-feed"],
     badSignature: values["bad-signature"],
+    corruptedUpdate: values["corrupted-update"],
     downloadSpeed: parseDownloadSpeed(values["download-speed"]),
   };
 }
 
 export async function startAutoUpgrade(
-  { fromFeed, updateFromFeed, badSignature, downloadSpeed }: AutoUpgradeOptions,
-  onServe?: (file: string) => void,
+  { fromFeed, updateFromFeed, badSignature, corruptedUpdate, downloadSpeed }: AutoUpgradeOptions,
+  feedListeners: FeedListeners = {},
 ) {
   const trustedKey = generatePrivateKey();
 
@@ -34,19 +41,24 @@ export async function startAutoUpgrade(
   // Like an attacker's feed: the update is signed, but not with the key the app trusts.
   signFeed(badSignature ? generatePrivateKey() : trustedKey);
 
-  const feedUrl = await serveFeed(onServe, downloadSpeed);
+  const corrupted = corruptedUpdate ? new Set([feedBinaryName(update.version)]) : undefined;
+  const feedUrl = await serveFeed({ ...feedListeners, downloadSpeed, corrupted });
   const installedApp = await installFromFeed(base.version);
   // A download left by an earlier run would be reused, and look staged before the app checks it.
   clearUpdaterCache();
   // The builds embed no key, so the app trusts only this one.
-  const openInstalledApp = () =>
-    openApp(installedApp, {
-      UPDATE_FEED_URL: feedUrl,
-      UPDATE_CHECK_FEED: feedUrl,
-      UPDATE_CHECK_PUBKEY: getPub(trustedKey),
-    });
+  const openInstalledApp = (args: string[] = []) =>
+    openApp(
+      installedApp,
+      {
+        UPDATE_FEED_URL: feedUrl,
+        UPDATE_CHECK_FEED: feedUrl,
+        UPDATE_CHECK_PUBKEY: getPub(trustedKey),
+      },
+      args,
+    );
 
-  return { base, update, app: openInstalledApp(), openInstalledApp };
+  return { base, update, openInstalledApp };
 }
 
 function parseDownloadSpeed(value: string | undefined) {

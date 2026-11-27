@@ -2,6 +2,7 @@ import { spawn } from "child_process";
 import fs from "fs";
 import os from "os";
 import path from "path";
+import { fileURLToPath } from "url";
 import { build as electronBuild } from "electron-builder";
 import { execa } from "execa";
 import semver, { type ReleaseType } from "semver";
@@ -14,6 +15,7 @@ const feedDir = path.join(lldRoot, "dist", "feed");
 const installDir = path.join(lldRoot, "dist", "installed");
 const updaterPendingDir = path.join(appCacheDir(), `${pkg.name}-updater`, "pending");
 const macArch = process.arch === "x64" ? "x64" : "arm64";
+const macBundleId = "com.ledger.live";
 const releaseTypes: ReadonlySet<string> = new Set(semver.RELEASE_TYPES);
 
 // process.exit() runs the "exit" listener that restores package.json.
@@ -37,6 +39,9 @@ type PlatformBuild = {
   feedBinary: (version: string) => string;
   install: (binaryPath: string) => Promise<void> | void;
   executable: (app: string) => string;
+  isInstalled: (version: string) => Promise<boolean> | boolean;
+  // True once the updater has a validated download it installs on quit.
+  isUpdateStaged: (since: number) => boolean;
 };
 
 export async function build(
@@ -93,9 +98,13 @@ export async function installFromFeed(version: string) {
   return installedApp;
 }
 
-export function openApp(appPath: string, env: Record<string, string> = {}) {
+export function feedBinaryName(version: string) {
+  return path.basename(platformBuild().feedBinary(version));
+}
+
+export function openApp(appPath: string, env: Record<string, string> = {}, args: string[] = []) {
   if (!fs.existsSync(appPath)) throw new Error(`No app at ${appPath}`);
-  const app = spawn(platformBuild().executable(appPath), {
+  const app = spawn(platformBuild().executable(appPath), args, {
     detached: true,
     stdio: "ignore",
     env: { ...process.env, ...env },
@@ -144,7 +153,7 @@ function findFeedIssue(version: string, latest: boolean) {
   return undefined;
 }
 
-function platformBuild(): PlatformBuild {
+export function platformBuild(): PlatformBuild {
   switch (process.platform) {
     case "darwin": {
       const installedApp = path.join(installDir, `${pkg.productName}.app`);
@@ -158,6 +167,8 @@ function platformBuild(): PlatformBuild {
         feedBinary: version => path.join(feedDir, `${pkg.name}-${version}-mac.zip`),
         install: zip => unzipApp(zip, installedApp),
         executable: app => path.join(app, "Contents", "MacOS", pkg.productName),
+        isInstalled: version => bundleVersion(installedApp) === version,
+        isUpdateStaged: since => isStagedByShipIt(installedApp, since),
       };
     }
     case "linux": {
@@ -172,6 +183,8 @@ function platformBuild(): PlatformBuild {
         feedBinary,
         install: appImage => replaceFile(appImage, installedApp),
         executable: app => app,
+        isInstalled: version => sha512(installedApp, "hex") === sha512(feedBinary(version), "hex"),
+        isUpdateStaged: isInUpdaterCache,
       };
     }
     case "win32":
@@ -182,6 +195,8 @@ function platformBuild(): PlatformBuild {
         feedBinary: version => path.join(feedDir, `${pkg.name}-${version}-win-x64.exe`),
         install: runInstaller,
         executable: app => app,
+        isInstalled: async version => (await registeredVersion()) === version,
+        isUpdateStaged: isInUpdaterCache,
       };
     default:
       throw new Error(`Local builds are not supported on ${process.platform}`);
@@ -217,6 +232,26 @@ async function runInstaller(installer: string) {
   );
 }
 
+function bundleVersion(app: string) {
+  const plist = fs.readFileSync(path.join(app, "Contents", "Info.plist"), "utf8");
+  return /<key>CFBundleShortVersionString<\/key>\s*<string>([^<]*)<\/string>/.exec(plist)?.[1];
+}
+
+// ShipIt records the update it staged for an app, and installs it once that app quits.
+function isStagedByShipIt(app: string, since: number) {
+  const shipItDir = path.join(os.homedir(), "Library", "Caches", `${macBundleId}.ShipIt`);
+  const statePath = path.join(shipItDir, "ShipItState.plist");
+  const stats = fs.statSync(statePath, { throwIfNoEntry: false });
+  if (!stats || stats.mtimeMs < since) return false;
+  const { targetBundleURL } = JSON.parse(fs.readFileSync(statePath, "utf8"));
+  return path.resolve(fileURLToPath(targetBundleURL)) === app;
+}
+
+// electron-updater writes update-info.json once the download matches the update's sha512.
+function isInUpdaterCache() {
+  return fs.existsSync(path.join(updaterPendingDir, "update-info.json"));
+}
+
 // The folder electron-updater caches downloads in, as its getAppCacheDir() finds it.
 function appCacheDir() {
   if (process.platform === "win32") {
@@ -224,6 +259,22 @@ function appCacheDir() {
   }
   if (process.platform === "darwin") return path.join(os.homedir(), "Library", "Caches");
   return process.env.XDG_CACHE_HOME || path.join(os.homedir(), ".cache");
+}
+
+// The installer records the installed version in the uninstall entry pointing at installDir.
+async function registeredVersion() {
+  const uninstallEntries = "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*";
+  const { stdout } = await execa(
+    "powershell.exe",
+    [
+      "-NoProfile",
+      "-NonInteractive",
+      "-Command",
+      `(Get-ItemProperty '${uninstallEntries}' | Where-Object { "$($_.UninstallString)".Contains($env:INSTALL_DIR) }).DisplayVersion`,
+    ],
+    { env: { INSTALL_DIR: installDir } },
+  );
+  return stdout.trim().split(/\r?\n/)[0];
 }
 
 // electron-builder writes the top-level path and sha512 as copies of files[0].
