@@ -111,7 +111,7 @@ jobs:
         run: pnpm lint:coin-families-disables
 
       - name: Check coin-families exceptions
-        # Guard until release and hotfix have support/lint/src/check-coin-families-exceptions.js.
+        # Guard until release and hotfix have support/lint/src/check-coin-families-exceptions.js. Remove in LIVE-42515.
         if: hashFiles('support/lint/src/check-coin-families-exceptions.js') != ''
         run: pnpm lint:coin-families-exceptions
 
