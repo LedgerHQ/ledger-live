@@ -14,6 +14,7 @@ import type {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { AccountContext } from "@domain/entity-account-context";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { AccountReceive } from "@domain/entity-account-receive";
 import type { AccountStatus, AssetStatus } from "@domain/entity-account-status";
@@ -156,6 +157,12 @@ export type ValidateAddressFn = (
   parameters: Partial<AddressValidationCurrencyParameters>,
 ) => Promise<boolean>;
 
+/** How a family keeps its account context in the legacy id's custom data (Aleo: the view key). */
+export type LegacyAccountContext = {
+  toCustomData(context: AccountContext): string | undefined;
+  fromCustomData(customData: string): AccountContext;
+};
+
 export type CoinModuleLoader<
   T extends TransactionCommon = any,
   A extends Account = any,
@@ -171,6 +178,8 @@ export type CoinModuleLoader<
   supportedCoins: string[]; // TO BE REPLACED soon by branded id
   /** How an account of this family is identified as an AccountDescriptor. */
   accountDescriptorType: AccountDescriptor["type"];
+  /** Synchronous: for a family whose legacy id keeps its account context as custom data. */
+  legacyAccountContext?: LegacyAccountContext;
   loadSetup: () => Promise<FamilySetup<T, A, U, O, R>>;
   loadTransaction: () => Promise<TransactionModule<T, U, A, TRaw, URaw>>;
   loadDeviceTxConfig?: () => Promise<DeviceTransactionConfigFn<T, any, A>>;
