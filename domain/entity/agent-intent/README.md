@@ -30,8 +30,8 @@ breaks no reader.
 
 ## Types shared with the SDK
 
-The record, craft, receipt, stats and profile schemas are checked against the matching types of
-`@ledgerhq/agent-intent-sdk` (`satisfies z.ZodType<…>`), so a field the SDK requires and the schema
-lacks fails the typecheck. The status, error type and page size values and the profile name and
-description limits come from the SDK too. Until the SDK release that holds them, all of these are a
-copy in `src/internals/agentIntentSdk.ts`.
+The record, send, swap, asset, craft, receipt, stats and profile schemas are each checked against
+the matching types of `@ledgerhq/agent-intent-sdk` (`satisfies z.ZodType<…>`), so a field the SDK
+requires and the schema lacks fails the typecheck. The status, error type and page size values and
+the profile name and description limits come from the SDK too. Until the SDK release that holds
+them, all of these are a copy in `src/internals/agentIntentSdk.ts`.
