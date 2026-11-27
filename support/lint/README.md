@@ -384,6 +384,7 @@ deletes its file.
 `pnpm lint:arch` and CI, reads each app's modules from its `oxlint.config.mts` and fails on each problem
 its [`PROBLEMS`](src/check-legacy-ui-waivers.js) table lists. A stale entry fails so the list keeps shrinking. A `legacy-ui/*` rule in an
 app's `oxlint-suppressions.json` fails because the waivers replace oxlint's baseline for this plugin:
-`oxlint --suppress-all` must not hide a new import.
+`oxlint --suppress-all` must not hide a new import. An inline `oxlint-disable` or `eslint-disable` of a
+`legacy-ui/*` rule fails for the same reason.
 
 Run the rules' tests with `nx run @support/lint:test`.

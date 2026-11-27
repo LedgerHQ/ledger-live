@@ -119,6 +119,23 @@ test("a file under a folder waiver, outside the checked apps or out of order is 
   );
 });
 
+test("an inline disable of a legacy-ui rule is reported, one of another rule is not", () => {
+  const repoRoot = fixture({
+    "apps/mobile/src/New.tsx": [
+      "// oxlint-disable-next-line legacy-ui/no-legacy-import",
+      'import { Flex } from "@ledgerhq/native-ui";',
+      "/* eslint-disable coin-families/no-family-branch, legacy-ui/no-banned-component */",
+      "// oxlint-disable-next-line coin-families/no-family-branch",
+      "",
+    ].join("\n"),
+    "apps/mobile/node_modules/pkg/index.js": "// oxlint-disable legacy-ui/no-legacy-import\n",
+  });
+  assert.deepEqual(findProblems({ repoRoot, fileWaivers: {}, folderWaivers: {}, apps: APPS }), [
+    "apps/mobile/src/New.tsx:1: an inline disable silences a legacy-ui rule, remove it and use Lumen",
+    "apps/mobile/src/New.tsx:3: an inline disable silences a legacy-ui rule, remove it and use Lumen",
+  ]);
+});
+
 test("a legacy-ui rule in the app's suppressions file is reported", () => {
   const repoRoot = fixture({
     "apps/mobile/oxlint-suppressions.json": JSON.stringify({

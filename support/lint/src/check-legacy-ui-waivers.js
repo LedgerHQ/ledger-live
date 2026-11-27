@@ -27,7 +27,12 @@ export const PROBLEMS = {
   /** @param {string} suppressionsFile */
   suppressed: suppressionsFile =>
     `${suppressionsFile} suppresses a legacy-ui rule, remove it and use Lumen`,
+  inlineDisable: () => "an inline disable silences a legacy-ui rule, remove it and use Lumen",
 };
+
+const SOURCE = /\.[cm]?[jt]sx?$/;
+// Matched on the whole text, not on parsed comments: a string spelling a directive is rare enough.
+const LEGACY_UI_DISABLE = /\b(?:eslint|oxlint)-disable(?:-next-line|-line)?\b[^\n]*?\blegacy-ui\//g;
 
 const require = createRequire(import.meta.url);
 /** @type {typeof import("typescript")} */
@@ -156,7 +161,48 @@ export function findProblems({ repoRoot, fileWaivers, folderWaivers, apps }) {
       problems.push(`${file}: ${PROBLEMS.noLegacyImport()}`);
     }
   }
-  return [...problems, ...suppressedFiles(repoRoot, Object.keys(apps))];
+  return [
+    ...problems,
+    ...suppressedFiles(repoRoot, Object.keys(apps)),
+    ...inlineDisables(repoRoot, Object.keys(apps)),
+  ];
+}
+
+/**
+ * @param {string} dir an absolute folder
+ * @returns {Generator<string>} the source files below `dir`, outside `node_modules` and dot folders
+ */
+function* sourceFiles(dir) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (SKIPPED_FOLDERS.has(entry.name) || entry.name.startsWith(".")) continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) yield* sourceFiles(full);
+    else if (entry.isFile() && SOURCE.test(entry.name)) yield full;
+  }
+}
+
+/**
+ * An inline disable would let a file outside the waivers import a legacy module.
+ *
+ * @param {string} repoRoot
+ * @param {string[]} appDirs
+ * @returns {string[]} one line per inline disable of a legacy-ui rule, `path:line: what`
+ */
+function inlineDisables(repoRoot, appDirs) {
+  const problems = [];
+  for (const appDir of appDirs) {
+    const root = path.join(repoRoot, appDir);
+    if (!fs.existsSync(root)) continue;
+    for (const file of sourceFiles(root)) {
+      const text = fs.readFileSync(file, "utf8");
+      if (!text.includes("legacy-ui/")) continue;
+      for (const match of text.matchAll(LEGACY_UI_DISABLE)) {
+        const line = text.slice(0, match.index).split("\n").length;
+        problems.push(`${repoPath(repoRoot, file)}:${line}: ${PROBLEMS.inlineDisable()}`);
+      }
+    }
+  }
+  return problems;
 }
 
 /**
