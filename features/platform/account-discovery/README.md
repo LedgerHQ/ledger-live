@@ -47,10 +47,10 @@ Each mode is scanned in order, one derivation at a time. While an account's stat
 
 ## Completion
 
-Some families cannot add a discovered account as it is: Aleo's private sync needs the account's view key, and the device gives it only once the user approves it. Completion is the optional device step after the user selected accounts; it is exported from `/descriptor` because it takes and returns descriptors. The view key never enters the descriptor — it goes to `@domain/entity-account-context`:
+Some families cannot add a discovered account as it is: its sync needs data the device gives only once the user approves it. Completion is the optional device step after the user selected accounts; it is exported from `/descriptor` because it takes and returns descriptors. That data never enters the descriptor: it is the account's context (`@domain/entity-account-context`).
 
 - `splitSelection(selected, needsCompletion)` splits a selection into the accounts ready to add and those needing the step. `needsCompletion` comes from the host (the coin module loader's `accountCompletion`), so this package never names a family.
-- `CompleteAccounts(selected)` streams an `AccountCompletionEvent` per account: `waiting`, `awaiting-approval`, then `completed` with the account context the device gave (Aleo: `{ viewKey }`), or `refused`, or `failed` when the device derives another account on that path (not settled: a new run asks it again). The descriptor stays as discovered. Any other error, a disconnect included, errors the stream: the Device Intent decides whether to retry.
+- `CompleteAccounts(selected)` streams an `AccountCompletionEvent` per account: `waiting`, `awaiting-approval`, then `completed` with the account context the device gave, or `refused`, or `failed` when the device derives another account on that path (not settled: a new run asks it again). The descriptor stays as discovered. Any other error, a disconnect included, errors the stream: the Device Intent decides whether to retry.
 - `completionStates(selected, events)` folds the events, keyed by the descriptor as discovered. `failPending` and `dropPending` settle the accounts a failed or stopped batch did not reach, keeping the approved ones. `mergeCompletionStates` lays a retry's states over the previous attempt's: a settled account is never prompted again.
 
-A completed state carries a secret (Aleo: the view key): never log or display it. The host keeps it in the `@domain/entity-account-context` slice.
+A completed state carries a secret: never log or display it. The host hands it to the sync that adds the account.

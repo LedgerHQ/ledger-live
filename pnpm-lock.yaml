@@ -1160,6 +1160,9 @@ importers:
       '@domain/entity-account-balance-history':
         specifier: workspace:*
         version: link:../../domain/entity/account-balance-history
+      '@domain/entity-account-context':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-context
       '@domain/entity-account-data':
         specifier: workspace:*
         version: link:../../domain/entity/account-data
@@ -4763,6 +4766,9 @@ importers:
       '@domain/entity-account-balance-history':
         specifier: workspace:*
         version: link:../../domain/entity/account-balance-history
+      '@domain/entity-account-context':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-context
       '@domain/entity-account-data':
         specifier: workspace:*
         version: link:../../domain/entity/account-data
@@ -4938,6 +4944,9 @@ importers:
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
