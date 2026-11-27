@@ -694,7 +694,8 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   });
   const { trackClick, trackAbort, trackExit } = seededTracking;
   const focused = useIsFocused();
-  const restoreDismissal = useRestoreDismissal(shownState);
+  const recoverInOnboarding = useFeature("deviceOnboarding")?.params?.recover ?? true;
+  const restoreDismissal = useRestoreDismissal(shownState, recoverInOnboarding);
   const unseededFunnel = useUnseededFunnelTracking({
     focused,
     machineState: restoreDismissal.visibleState,
@@ -940,7 +941,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const recoverFeature = useFeature("protectServicesMobile");
-  const recoverAvailable = recoverFeature?.enabled === true;
+  const recoverAvailable = recoverInOnboarding && recoverFeature?.enabled === true;
   const protectId = recoverFeature?.params?.protectId ?? defaultProtectId;
   const [pastRecover, setPastRecover] = useState(false);
   const awaitingRecoverReturn = useRef(false);

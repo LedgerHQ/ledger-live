@@ -14,7 +14,10 @@ const device = {
   wired: false,
 } as Device;
 
-function input(machineState: string): Omit<UnseededFunnelInput, "restoreDismissal"> {
+function input(
+  machineState: string,
+  overrides: Partial<InputWithoutDismissal> = {},
+): InputWithoutDismissal {
   return {
     machineState,
     liveMachineState: machineState,
@@ -37,14 +40,15 @@ function input(machineState: string): Omit<UnseededFunnelInput, "restoreDismissa
     reconnect: jest.fn(),
     send: jest.fn(),
     onQuit: jest.fn(),
+    ...overrides,
   };
 }
 
 type InputWithoutDismissal = Omit<UnseededFunnelInput, "restoreDismissal">;
 
 /** Owns the restore dismissal, as the funnel view model does. */
-function useFunnelOf(funnelInput: InputWithoutDismissal) {
-  const restoreDismissal = useRestoreDismissal(funnelInput.machineState);
+function useFunnelOf(funnelInput: InputWithoutDismissal, recoverRestoreAvailable = true) {
+  const restoreDismissal = useRestoreDismissal(funnelInput.machineState, recoverRestoreAvailable);
   return useUnseededFunnelViewModel({ ...funnelInput, restoreDismissal });
 }
 
@@ -90,6 +94,23 @@ describe("useUnseededFunnelViewModel", () => {
     machineState = "deviceSetup.restoreRecover";
     rerender(undefined);
     expect(result.current?.status).toBe("recoverRestore");
+  });
+
+  it("should show the restore choice instead of Recover restore when the flag hides Recover", () => {
+    const { result } = renderHook(() => useFunnelOf(input("deviceSetup.restoreRecover"), false));
+
+    expect(setupOf(result.current).stage).toMatchObject({
+      kind: "restore",
+      infoCard: "restoreChoice",
+    });
+  });
+
+  it("should skip the Recover pitch after a new seed when Recover is unavailable", () => {
+    const { result } = renderHook(() =>
+      useFunnelOf(input("done", { seedPath: "newSeed", recoverAvailable: false })),
+    );
+
+    expect(result.current).toEqual({ status: "success", sawRecoverPitch: false });
   });
 
   it("should report the restore choice as the visible state once Recover restore is closed", () => {
