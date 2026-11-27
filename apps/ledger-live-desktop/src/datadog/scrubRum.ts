@@ -1,23 +1,46 @@
 import { scrubAccountId } from "~/renderer/helpers/scrubAccountId";
 
-/**
- * Scrubs wallet addresses from Datadog RUM view.url_hash.
- *
- * The hash fragment holds the React Router route, which on account pages is
- * /account/js:2:{chain}:{address}:{derivation} — the full account ID.
- * Present on every event type (view, action, resource, error).
- */
-export function scrubViewUrlHash(hash: string): string {
-  return scrubAccountId(hash);
+const REDACTED = "[redacted]";
+const XPUB_JSON_VALUE = /"xpub"\s*:\s*"[^"]*"/g;
+const DIGIT = /\d/;
+const MIDDLE_ELLIPSIS = /[\dA-Za-z](?:\.{2,}|…)[\dA-Za-z]/;
+const WHITESPACE_RUN = /(\s+)/;
+const ADJACENT_REDACTIONS = /\[redacted\](?:\s+\[redacted\])+/g;
+
+const ACCOUNT_ROUTE_SEGMENT = "account";
+
+const withoutQuery = (urlPart: string): string => urlPart.split("?")[0];
+
+function scrubRoute(route: string): string {
+  const segments = route.split("/");
+  const accountSegment = segments.indexOf(ACCOUNT_ROUTE_SEGMENT);
+  const isAccountReference = (segment: string, index: number) =>
+    accountSegment !== -1 && index > accountSegment && DIGIT.test(segment);
+  return scrubAccountId(
+    segments
+      .map((segment, index) => (isAccountReference(segment, index) ? REDACTED : segment))
+      .join("/"),
+  );
 }
 
-/**
- * Scrubs wallet addresses from Datadog RUM action.target.name.
- *
- * The Browser SDK captures the visible text of clicked elements; account data
- * serialized as JSON produces strings like: {"xpub":"xpub6C8aARQ2…","index":0,…}
- * The "xpub" key holds the address for all chain types (EVM stores the 0x address there).
- */
+export function scrubViewUrl(url: string): string {
+  const routeStart = url.indexOf("#");
+  if (routeStart === -1) return withoutQuery(url);
+  const page = url.slice(0, routeStart);
+  const route = url.slice(routeStart);
+  return withoutQuery(page) + scrubRoute(withoutQuery(route));
+}
+
 export function scrubActionTargetName(name: string): string {
-  return name.replace(/"xpub"\s*:\s*"[^"]*"/g, '"xpub": "[redacted]"');
+  return name.replace(XPUB_JSON_VALUE, `"xpub": "${REDACTED}"`);
+}
+
+const isIdentifyingWord = (word: string): boolean => DIGIT.test(word) || MIDDLE_ELLIPSIS.test(word);
+
+export function scrubAutoActionName(name: string): string {
+  return scrubActionTargetName(name)
+    .split(WHITESPACE_RUN)
+    .map(word => (isIdentifyingWord(word) ? REDACTED : word))
+    .join("")
+    .replace(ADJACENT_REDACTIONS, REDACTED);
 }

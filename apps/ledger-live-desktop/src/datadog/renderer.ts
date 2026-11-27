@@ -3,6 +3,7 @@ import { datadogIdSelector, isDummyDatadogId } from "@domain/entity-client-ident
 import { getOperatingSystemSupportStatus } from "~/support/os";
 import { getDistributionChannel } from "~/helpers/distributionChannel";
 import { getDatadogBuildConfig, buildBeforeSend } from "./config";
+import { toDatadogViewName } from "./viewName";
 import type { Store } from "redux";
 import type { State } from "~/renderer/reducers";
 
@@ -51,13 +52,17 @@ let initialized = false;
 let shouldSendNow: (() => boolean) | undefined;
 /** The `lldDatadog` kill switch: RUM stays initialized once started, custom actions stop. */
 let actionsEnabled = true;
+let currentViewName: string | undefined;
 
 /** Reset module state for tests so suites are order-independent. Do not use in production. */
 export function __resetDatadogForTesting(): void {
   initialized = false;
   shouldSendNow = undefined;
   actionsEnabled = true;
+  currentViewName = undefined;
 }
+
+const hashRoutePath = () => globalThis.location?.hash.replace(/^#/, "") ?? "";
 
 /** Follows the `lldDatadog` feature flag (see `addAction`). */
 export function setDatadogActionsEnabled(enabled: boolean): void {
@@ -113,6 +118,7 @@ export async function initDatadog(
       sessionSampleRate: params?.sessionSampleRate ?? 100,
       sessionReplaySampleRate: params?.sessionReplaySampleRate ?? 0,
       defaultPrivacyLevel: normalizeDefaultPrivacyLevel(params?.defaultPrivacyLevel),
+      enablePrivacyForActionName: true,
       traceSampleRate: params?.traceSampleRate ?? 100,
       allowedTracingUrls,
       ...(profilingSampleRate !== undefined && { profilingSampleRate }),
@@ -123,7 +129,8 @@ export async function initDatadog(
       sessionPersistence: "local-storage",
     });
 
-    datadogRum.startView("main");
+    currentViewName = toDatadogViewName(hashRoutePath());
+    datadogRum.startView({ name: currentViewName });
 
     const datadogId = datadogIdSelector(store.getState());
     if (!isDummyDatadogId(datadogId)) {
@@ -142,6 +149,17 @@ export async function initDatadog(
   } catch (e) {
     console.error("Datadog RUM init failed", e);
     return false;
+  }
+}
+
+export function startDatadogRouteView(routePath: string): void {
+  const name = toDatadogViewName(routePath);
+  if (!initialized || name === currentViewName) return;
+  currentViewName = name;
+  try {
+    datadogRum.startView({ name });
+  } catch {
+    // no-op
   }
 }
 
