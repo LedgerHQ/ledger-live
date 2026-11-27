@@ -60,11 +60,17 @@ import { INITIAL_STATE as RECOVER_STATE_INITIAL_STATE } from "~/reducers/recover
 import { FEATURE_FLAGS_INITIAL_STATE, FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feature-flags";
 import { getEnv } from "@shared/env";
-import { calApiExtra, coinMarketCapApiExtra, cvsApiExtra } from "@shared/api-services";
+import {
+  calApiExtra,
+  coinMarketCapApiExtra,
+  cvsApiExtra,
+  earnApiExtra,
+} from "@shared/api-services";
 import { LinkingProvider } from "@shared/linking";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { llmRtkApiInitialStates, applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
+import { getEarnApiBaseUrl } from "~/config/earnService";
 
 const INITIAL_STATE: State = {
   accounts: ACCOUNTS_INITIAL_STATE,
@@ -166,6 +172,7 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
                 getCountervaluesServiceUrl: () => getEnv("LEDGER_COUNTERVALUES_API"),
               }),
               ...coinMarketCapApiExtra({ coinMarketCapApiUrl: getEnv("CMC_API_URL") }),
+              ...earnApiExtra({ earnApiBaseUrl: getEarnApiBaseUrl() }),
             },
           },
         }),

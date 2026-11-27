@@ -4,6 +4,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import RatingsModal from "../RatingsModal";
 import useRatings from "~/logic/ratings";
 import DebugAppLevelDrawer from "LLM/components/QueuedDrawer/DebugAppLevelDrawer";
+import { StakePositionSheetRoot } from "LLM/features/StakePosition";
 
 const getCurrentRouteName = (
   state: NavigationState | Required<NavigationState["routes"][0]>["state"],
@@ -48,6 +49,7 @@ const Modals = () => {
     <>
       {ratingsFeature?.enabled && <RatingsModal />}
       <DebugAppLevelDrawer />
+      <StakePositionSheetRoot />
     </>
   );
 };

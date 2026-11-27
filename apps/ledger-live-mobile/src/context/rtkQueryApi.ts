@@ -11,6 +11,7 @@ import {
   cvsService,
   dadaService,
   defineApiServices,
+  earnService,
   pushDevicesService,
   swapService,
   type ApiServicesState,
@@ -22,6 +23,7 @@ import {
   readCardSession,
   refreshCardSession,
 } from "@features/platform-card";
+import { getEarnApiBaseUrl } from "~/config/earnService";
 
 /** Matches the `SWAP_API_BASE` default in `shared/env`, kept here at the point of use. */
 const SWAP_API_BASE_DEFAULT = "https://swap.ledger.com/v5";
@@ -43,6 +45,7 @@ export const apiServices = defineApiServices([
   coinMarketCapService(() => ({ coinMarketCapApiUrl: getEnv("CMC_API_URL") })),
   cvsService(() => ({ getCountervaluesServiceUrl: () => getEnv("LEDGER_COUNTERVALUES_API") })),
   dadaService(),
+  earnService(() => ({ earnApiBaseUrl: getEarnApiBaseUrl() })),
   pushDevicesService(() => ({ pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL") })),
   swapService(() => ({
     // `Config`, not `getEnv`: the `@shared/env` copy only lands after

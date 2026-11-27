@@ -23,7 +23,7 @@ import { accountDataSources, connectAccounts } from "~/config/account-data-setup
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector } from "~/reducers/settings";
 import { getEnv } from "@shared/env";
-import { cardApi, redactCardApiAction, redactCardApiState } from "@shared/api-services";
+import { cardApi } from "@shared/api-services";
 import { configureCardSessionRenewal } from "@features/platform-card";
 import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import { appConfig, appConfigSession } from "~/setup";
@@ -31,12 +31,11 @@ import { sleepingListener } from "./sleepingListener";
 import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
 import { createMobileCountervaluesMiddleware } from "./middleware/countervalues";
 import { createMobileAuthMiddleware } from "./middleware/auth";
+import { devToolsSanitizers } from "./devToolsSanitizers";
 
 export const store = configureStore({
   reducer: reducers,
-  devTools: Config.DEBUG_RNDEBUGGER
-    ? { actionSanitizer: redactCardApiAction, stateSanitizer: redactCardApiState }
-    : false,
+  devTools: Config.DEBUG_RNDEBUGGER ? devToolsSanitizers : false,
   middleware: getDefaultMiddleware =>
     applyLlmRTKApiMiddlewares(
       getDefaultMiddleware({
@@ -80,7 +79,7 @@ export const store = configureStore({
     const enhancers = getDefaultEnhancers();
     // Type assertion needed due to Redux version compatibility types between v4 and v5
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return enhancers.concat(rozeniteDevToolsEnhancer() as StoreEnhancer);
+    return enhancers.concat(rozeniteDevToolsEnhancer(devToolsSanitizers) as StoreEnhancer);
   },
 });
 
