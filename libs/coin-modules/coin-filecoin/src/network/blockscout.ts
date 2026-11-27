@@ -86,6 +86,18 @@ export async function fetchBlockscoutBlock(
   }
 }
 
+/** The height of the latest block that Blockscout indexed. */
+export async function fetchBlockscoutHeadHeight(indexerUrl: string): Promise<number> {
+  const { data } = await network<BlockscoutPage<BlockscoutBlock>>({
+    method: "GET",
+    url: `${indexerUrl}/blocks`,
+    params: { type: "block" },
+  });
+  const [head] = data.items;
+  if (!head) throw new GetBlockError(`No block on the indexer at ${indexerUrl}`);
+  return head.height;
+}
+
 async function fetchAllPages<T>(url: string, maxPage: number): Promise<T[]> {
   const items: T[] = [];
   let params: BlockscoutPage<T>["next_page_params"] = null;

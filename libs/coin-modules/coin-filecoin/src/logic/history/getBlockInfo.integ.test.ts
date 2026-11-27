@@ -1,4 +1,4 @@
-import { BlockNotFoundError } from "@ledgerhq/coin-module-framework/errors";
+import { BlockNotFoundError, NoBlockAtHeightError } from "@ledgerhq/coin-module-framework/errors";
 import { filecoinDefaults } from "../../config";
 import { createMockFilecoinContext } from "../../test/context";
 import { getBlockInfo } from "./getBlockInfo";
@@ -24,5 +24,19 @@ describe("getBlockInfo (integration)", () => {
 
   it("throws BlockNotFoundError before the FEVM upgrade", async () => {
     await expect(getBlockInfo(context, 2683340)).rejects.toBeInstanceOf(BlockNotFoundError);
+  });
+
+  it("throws NoBlockAtHeightError for a finalized null round", async () => {
+    await expect(getBlockInfo(context, 6573823)).rejects.toBeInstanceOf(NoBlockAtHeightError);
+  });
+
+  it("throws NoBlockAtHeightError for an old null round", async () => {
+    await expect(getBlockInfo(context, 6400084)).rejects.toBeInstanceOf(NoBlockAtHeightError);
+  });
+
+  it("returns the block after a null round, with the parent before the null round", async () => {
+    const info = await getBlockInfo(context, 6573824);
+
+    expect(info.parent?.height).toBe(6573822);
   });
 });
