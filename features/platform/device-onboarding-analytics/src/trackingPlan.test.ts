@@ -15,6 +15,7 @@ import {
   trackSeededAborted,
   trackSeededDone,
   trackSeededStarted,
+  trackUnseededDone,
   trackUnseededSetupFinished,
   trackUnseededStarted,
   unseededProps,
@@ -149,6 +150,7 @@ describe("onboarding tracking plan", () => {
     trackUnseededSetupFinished(afterChoice, status);
     trackRecoverOffered(afterChoice, status);
     trackKaraokePage(karaokes.recover, afterChoice, 3);
+    trackUnseededDone(afterChoice, status, { ledgerSyncDone: true, firmwareUpdateDone: false });
 
     expect(sentPlan()).toEqual([
       "Page Pin setup | deviceType, onboarding type, sourceFlow",
@@ -158,6 +160,7 @@ describe("onboarding tracking plan", () => {
       "karaoke_completed | deviceType, karaokeType, onboarding type, source, sourceFlow",
       `onboarding_device_setup_finished | ${milestone("seedConfiguration, ")}`,
       `onboarding_Ledger_Recover | ${milestone("seedConfiguration, ")}`,
+      "onboarding_done | deviceType, firmware_update_availability, firmware_update_done, ledger_sync_done, ledger_sync_eligibility, onboarding type, seedConfiguration, source, sourceFlow",
     ]);
   });
 });
