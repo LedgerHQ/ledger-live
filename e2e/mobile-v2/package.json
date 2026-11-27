@@ -30,6 +30,8 @@
     "eslint-plugin-wdio": "10.2.0",
     "expect-webdriverio": "8.1.0",
     "lodash": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "rxjs": "catalog:",
     "typescript": "catalog:",
     "uuid": "14.0.3",
