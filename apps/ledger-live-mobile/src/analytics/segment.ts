@@ -166,7 +166,6 @@ const getFeatureFlagProperties = () => {
     );
     const lwmNotificationsOptInFlag = analyticsFeatureFlagMethod("lwmNotificationsOptIn");
     const lwmMyWalletDeviceListFlag = analyticsFeatureFlagMethod("lwmMyWalletDeviceList");
-    const deviceOnboardingFlag = analyticsFeatureFlagMethod("deviceOnboarding");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -224,7 +223,6 @@ const getFeatureFlagProperties = () => {
       lwmAnalyticsConsentOnboarding,
       lwmNotificationsOptIn,
       lwmMyWalletDeviceList,
-      ...deviceOnboardingTraits(deviceOnboardingFlag),
     });
   })();
 };
@@ -585,6 +583,7 @@ const extraProperties = async (store: AppStore) => {
     newSettings,
     recoverV2,
     ...remoteABTestingAttributes,
+    ...deviceOnboardingTraits(analyticsFeatureFlagMethod?.("deviceOnboarding")),
   };
 };
 

@@ -19,7 +19,7 @@ The app owns the screens and decides when to track. This package owns what is se
   the karaoke events.
 - `setupPage`, `setupSuccessPages`: the device setup pages read from the onboarding machine state.
 - `toSeededResult`, `toFirmwareUpdateAvailability`: the funnel result read from the onboarding machine context.
-- `deviceOnboardingTraits`: the `deviceOnboarding` flag params sent as user properties.
+- `deviceOnboardingTraits`: the `deviceOnboarding` flag (`enabled` and each param) sent as user properties.
 
 All events are sent with `@shared/analytics`.
 
