@@ -1,6 +1,7 @@
 import React, { memo, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { DeviceIntentExecutor } from "LLM/components/DeviceIntentExecutor";
+import { FeeSelectionStep } from "../FeeSelectionStep";
 import { useTransactionSignatureDrawerViewModel } from "./useTransactionSignatureDrawerViewModel";
 import type { WalletApiDeviceIntentSignRequest } from "./types";
 
@@ -16,13 +17,15 @@ const deviceConnectionParams = { acceptedDeviceModelIds: [] };
 const noop = () => undefined;
 
 /**
- * Hosts the wallet-api signature step (the Device Intent Executor and the bottom sheet
- * it owns) directly inside the webview subtree, so the drawer floats over the live app
- * instead of a dedicated full-screen navigation route.
+ * Hosts the wallet-api signature steps (the optional fee step, then the Device Intent Executor
+ * and the bottom sheet it owns) directly inside the webview subtree, so the drawer floats over
+ * the live app instead of a dedicated full-screen navigation route.
  */
 function TransactionSignatureDrawer({ request, onClose }: Props) {
   const {
     sourceFlow,
+    feeStep,
+    isDeviceStep,
     deviceInitializationInput,
     signatureIntent,
     onIntentJobStateChanged,
@@ -45,7 +48,9 @@ function TransactionSignatureDrawer({ request, onClose }: Props) {
     [request.manifestId, request.manifestName, request.transaction.recipient],
   );
 
-  if (!deviceInitializationInput || !signatureIntent) {
+  const isDeviceStepReady = isDeviceStep && !!deviceInitializationInput && !!signatureIntent;
+
+  if (!feeStep && !isDeviceStepReady) {
     return null;
   }
 
@@ -55,21 +60,24 @@ function TransactionSignatureDrawer({ request, onClose }: Props) {
       pointerEvents="box-none"
       testID="wallet-api-signature-step"
     >
-      <DeviceIntentExecutor
-        enabled
-        sourceFlow={sourceFlow}
-        analyticsProperties={analyticsProperties}
-        deviceConnectionParams={deviceConnectionParams}
-        deviceInitializationInput={deviceInitializationInput}
-        intent={signatureIntent}
-        intentComponentExtraProps={intentComponentExtraProps}
-        onExecutorStateChanged={onExecutorStateChanged}
-        onIntentJobStateChanged={onIntentJobStateChanged}
-        onIntentJobComplete={noop}
-        onIntentJobError={onIntentJobError}
-        cancelIntentRequestId={undefined}
-        onUserCancel={onUserCancel}
-      />
+      {feeStep ? <FeeSelectionStep {...feeStep} /> : null}
+      {isDeviceStep && deviceInitializationInput && signatureIntent ? (
+        <DeviceIntentExecutor
+          enabled
+          sourceFlow={sourceFlow}
+          analyticsProperties={analyticsProperties}
+          deviceConnectionParams={deviceConnectionParams}
+          deviceInitializationInput={deviceInitializationInput}
+          intent={signatureIntent}
+          intentComponentExtraProps={intentComponentExtraProps}
+          onExecutorStateChanged={onExecutorStateChanged}
+          onIntentJobStateChanged={onIntentJobStateChanged}
+          onIntentJobComplete={noop}
+          onIntentJobError={onIntentJobError}
+          cancelIntentRequestId={undefined}
+          onUserCancel={onUserCancel}
+        />
+      ) : null}
     </View>
   );
 }

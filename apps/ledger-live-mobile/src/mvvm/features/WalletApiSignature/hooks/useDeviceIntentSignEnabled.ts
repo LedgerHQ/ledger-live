@@ -29,3 +29,12 @@ export function useDeviceIntentSignAssignment(manifestId: string): DeviceIntentS
 export function useDeviceIntentSignEnabled(manifestId: string): boolean {
   return useDeviceIntentSignAssignment(manifestId).active;
 }
+
+/** Whether the device-intent sign drawer lets the user edit fees for the given live-app. */
+export function useDeviceIntentFeeSelectionEnabled(manifestId: string): boolean {
+  const deviceIntentSignFlag = useFeature("llmWalletApiDeviceIntentSign");
+  const feeSelectionManifestIds = deviceIntentSignFlag?.params?.feeSelectionManifestIds;
+  return (
+    (deviceIntentSignFlag?.enabled ?? false) && (feeSelectionManifestIds ?? []).includes(manifestId)
+  );
+}

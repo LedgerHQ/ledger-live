@@ -5,6 +5,7 @@ import { createIntent } from "@features/platform-device-intent";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { useTransactionSignatureDrawerViewModel } from "./useTransactionSignatureDrawerViewModel";
 import type { WalletApiDeviceIntentSignRequest } from "./types";
+import { useDeviceIntentFeeSelectionEnabled } from "../../hooks/useDeviceIntentSignEnabled";
 
 jest.mock("@features/platform-device-intent", () => ({
   createIntent: jest.fn(() => ({ uuid: "intent-1" })),
@@ -33,8 +34,13 @@ jest.mock("./intentDefinition", () => ({
   signTransactionIntentPlatformDefinition: { label: "Sign transaction" },
 }));
 
+jest.mock("../../hooks/useDeviceIntentSignEnabled", () => ({
+  useDeviceIntentFeeSelectionEnabled: jest.fn(() => false),
+}));
+
 const mockedBuildInput = jest.mocked(buildDeviceInitializationInput);
 const mockedCreateIntent = jest.mocked(createIntent);
+const mockedFeeSelectionEnabled = jest.mocked(useDeviceIntentFeeSelectionEnabled);
 
 const account = {
   id: "js:2:ethereum:0xabc:",
@@ -43,7 +49,13 @@ const account = {
 };
 const signedOperation = { operation: { id: "op-1" } } as unknown as SignedOperation;
 
-function setup(overrides?: { onSuccess?: jest.Mock; onError?: jest.Mock; onClose?: jest.Mock }) {
+function setup(overrides?: {
+  onSuccess?: jest.Mock;
+  onError?: jest.Mock;
+  onClose?: jest.Mock;
+  canEditFees?: boolean;
+  hasFeesProvided?: boolean;
+}) {
   const onSuccess = overrides?.onSuccess ?? jest.fn();
   const onError = overrides?.onError ?? jest.fn();
   const onClose = overrides?.onClose ?? jest.fn();
@@ -52,6 +64,8 @@ function setup(overrides?: { onSuccess?: jest.Mock; onError?: jest.Mock; onClose
     account,
     parentAccount: undefined,
     transaction: { family: "ethereum" },
+    canEditFees: overrides?.canEditFees ?? false,
+    hasFeesProvided: overrides?.hasFeesProvided ?? false,
     appName: undefined,
     dependencies: undefined,
     manifestId: "swap-live-app",
@@ -215,6 +229,119 @@ describe("useTransactionSignatureDrawerViewModel", () => {
       expect(onError.mock.calls[0][0]).toBeInstanceOf(UserRefusedOnDevice);
     },
   );
+
+  describe("fee step", () => {
+    beforeEach(() => {
+      mockedFeeSelectionEnabled.mockReturnValue(true);
+    });
+
+    afterEach(() => {
+      mockedFeeSelectionEnabled.mockReturnValue(false);
+    });
+
+    it("starts on the fee step and leaves the preparation to it", async () => {
+      const { result } = setup({ canEditFees: true, hasFeesProvided: true });
+      await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+
+      expect(result.current.isDeviceStep).toBe(false);
+      expect(result.current.feeStep).toEqual(
+        expect.objectContaining({
+          isOpen: true,
+          hasFeesProvided: true,
+          sourceFlow: "wallet_api",
+          transaction: { family: "ethereum" },
+        }),
+      );
+      expect(result.current.signatureIntent).toBeNull();
+      expect(mockPrepareTransaction).not.toHaveBeenCalled();
+    });
+
+    it("signs the transaction prepared with the chosen fees", async () => {
+      const { result } = setup({ canEditFees: true });
+      await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+      const feeTransaction = { family: "ethereum", feesStrategy: "fast" };
+
+      act(() => {
+        result.current.feeStep!.onConfirm(
+          feeTransaction as unknown as WalletApiDeviceIntentSignRequest["transaction"],
+        );
+      });
+
+      expect(result.current.isDeviceStep).toBe(true);
+      expect(result.current.feeStep?.isOpen).toBe(false);
+      expect(mockedCreateIntent).toHaveBeenCalledWith(
+        { label: "Sign transaction" },
+        expect.objectContaining({ transaction: feeTransaction }),
+      );
+      expect(result.current.signatureIntent).toEqual({ uuid: "intent-1" });
+      expect(mockPrepareTransaction).not.toHaveBeenCalled();
+    });
+
+    it("rejects with UserRefusedOnDevice and closes when the fee step is closed", async () => {
+      const { result, onError, onClose } = setup({ canEditFees: true });
+      await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+
+      act(() => {
+        result.current.feeStep!.onReject();
+      });
+
+      expect(onError).toHaveBeenCalledTimes(1);
+      expect(onError.mock.calls[0][0]).toBeInstanceOf(UserRefusedOnDevice);
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it("ignores the fee sheet close that follows the fee confirmation", async () => {
+      const { result, onError, onClose } = setup({ canEditFees: true });
+      await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+      const { onConfirm, onReject } = result.current.feeStep!;
+
+      act(() => {
+        onConfirm({
+          family: "ethereum",
+        } as unknown as WalletApiDeviceIntentSignRequest["transaction"]);
+      });
+      act(() => {
+        onReject();
+      });
+
+      expect(onError).not.toHaveBeenCalled();
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
+    it("unmounts the fee sheet once it is hidden", async () => {
+      const { result } = setup({ canEditFees: true });
+      await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+
+      act(() => {
+        result.current.feeStep!.onConfirm({
+          family: "ethereum",
+        } as unknown as WalletApiDeviceIntentSignRequest["transaction"]);
+      });
+      act(() => {
+        result.current.feeStep!.onHidden();
+      });
+
+      expect(result.current.feeStep).toBeNull();
+      expect(result.current.signatureIntent).toEqual({ uuid: "intent-1" });
+    });
+
+    it("keeps the live app's fees without a fee step when the fees cannot be edited", async () => {
+      const { result } = setup({ canEditFees: false, hasFeesProvided: true });
+      await waitFor(() => expect(result.current.signatureIntent).not.toBeNull());
+
+      expect(result.current.feeStep).toBeNull();
+      expect(result.current.isDeviceStep).toBe(true);
+      expect(mockPrepareTransaction).toHaveBeenCalledWith(account, { family: "ethereum" });
+    });
+
+    it("has no fee step for a live app outside the fee selection allowlist", async () => {
+      mockedFeeSelectionEnabled.mockReturnValue(false);
+      const { result } = setup({ canEditFees: true });
+      await waitFor(() => expect(result.current.signatureIntent).not.toBeNull());
+
+      expect(result.current.feeStep).toBeNull();
+    });
+  });
 
   it("keeps the signing error while the executor shows its error screens", async () => {
     const { result, onError } = setup();

@@ -781,7 +781,7 @@ export function useUiHook({
       "transaction.sign": async ({
         account,
         parentAccount,
-        signFlowInfos: { liveTx },
+        signFlowInfos: { liveTx, canEditFees, hasFeesProvided },
         options,
         onSuccess,
         onError,
@@ -792,15 +792,16 @@ export function useUiHook({
           // The main frame changed origin while the transaction was prepared.
           if (session && !session.isOpen) return;
 
-          // When enabled, skip the recap/fee "buffer" screen and connect to the device
-          // directly through the DeviceIntentExecutor, surfaced as a bottom-sheet drawer
-          // over the live app (see TransactionSignatureDrawer). Fees are estimated as part
-          // of preparing the transaction there, so no in-app fee editing step is needed.
+          // When enabled, skip the recap "buffer" screen and connect to the device directly
+          // through the DeviceIntentExecutor, surfaced as a bottom-sheet drawer over the live
+          // app (see TransactionSignatureDrawer), which hosts the fee step when there is one.
           if (deviceIntentSignEnabled) {
             requestDeviceIntentSign({
               account,
               parentAccount,
               transaction: tx,
+              canEditFees,
+              hasFeesProvided,
               appName: options?.hwAppId,
               dependencies: options?.dependencies,
               manifestId: manifest.id,
