@@ -794,6 +794,15 @@ describe("HumanCommandOutput", () => {
       expect(out).toContain("key store: plaintext-file");
     });
 
+    it("agentIntentEnrolled says account access was not shared when it has no environment", () => {
+      createCommandOutput("human", ctx).agentIntentEnrolled({
+        profileId: "test-agent",
+        trustchainId: "tc-1",
+        keyStore: "os-keychain",
+      });
+      expect(writes.join("")).toContain("(account access: not shared, key store: os-keychain)");
+    });
+
     it("agentIntentRecoveryPending prints the URL, fingerprint and the keep-running hint", () => {
       createCommandOutput("human", ctx).agentIntentRecoveryPending({
         profileId: "test-agent",

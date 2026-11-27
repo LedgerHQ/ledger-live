@@ -156,6 +156,16 @@ describe("agent-intent wait", () => {
     });
   });
 
+  it("omits the access environment for a profile enrolled without account access", async () => {
+    profileReads = [{ ...ENROLLED, accountAccess: undefined }];
+
+    const { code, line } = await runWaitJson(stdout);
+
+    expect(code).toBe(0);
+    expect(line).toMatchObject({ enrolled: true, trustchainId: "app18-root" });
+    expect(line).not.toHaveProperty("accountAccessEnvironment");
+  });
+
   it("reports a profile with a recovery in flight as enrolled", async () => {
     profileReads = [
       { ...ENROLLED, pendingRecovery: { expiresAt: new Date(Date.now() + 60_000).toISOString() } },

@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from "bun:test";
 import {
   AGENT_KEYCLOAK_ENVIRONMENTS,
   createSoftwareAgentIdentity,
+  type AgentEnrollmentCompletion,
   type AgentEnrollmentCompletionV2,
   type AgentKeycloakConfig,
 } from "@ledgerhq/agent-intent-sdk";
@@ -80,7 +81,7 @@ function makeDependencies(): CompletionAuthDependencies {
 }
 
 function authenticate(
-  completion = makeCompletion(),
+  completion: AgentEnrollmentCompletion = makeCompletion(),
   overrides: { environment?: "staging" | "production"; keycloak?: AgentKeycloakConfig } = {},
 ) {
   return authenticateEnrollmentCompletion(
@@ -118,6 +119,22 @@ describe("authenticateEnrollmentCompletion", () => {
       credentials: { pubkey: identity.publicKey, privatekey: identity.exportSecretKey() },
     });
     expect(withAuthCalled).toBe(true);
+  });
+
+  it("accepts a version-1 completion on App-18 membership alone, without touching App-16", async () => {
+    await authenticate({ version: 1, agentPubkey: identity.publicKey, trustchainId: "app18-root" });
+
+    expect(tokenProviderInputs[0]).toMatchObject({ identity, trustchainId: "app18-root" });
+    expect(ledgerSyncEnvironments).toEqual([]);
+    expect(withAuthCalled).toBe(false);
+  });
+
+  it("rejects a version-1 completion when no App-18 token can be acquired", async () => {
+    tokenError = new Error("not a member");
+
+    await expect(
+      authenticate({ version: 1, agentPubkey: identity.publicKey, trustchainId: "app18-root" }),
+    ).rejects.toThrow("not a member");
   });
 
   it("uses the keycloak override when one is given", async () => {

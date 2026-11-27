@@ -71,18 +71,18 @@ wallet-cli holds two kinds of credentials for the human. Each comes from its own
 | This machine holds | member key of LKRP application 17 | one software secp256k1 key per profile, created on this machine |
 | Created by | `ring init`, approved on the device | `agent-intent enroll` with no device; the human approves the link on their Ledger |
 | At rest | OS keychain, wrapped with the human's password (`WALLET_PASS`) | OS keychain, no password; on Linux without a usable one, and only after the human agrees, an unencrypted 0600 key file in the state dir |
-| Grants | per-name keys that encrypt and decrypt files and text | membership of the agent's own Trustchain (LKRP application 18): signing in to the Agent Intent service, proposing payments and swaps, and reading or cancelling its own proposals; plus read access to the human's Ledger Sync stream (application 16): the synced account list, public data only |
+| Grants | per-name keys that encrypt and decrypt files and text | membership of the agent's own Trustchain (LKRP application 18): signing in to the Agent Intent service, proposing payments and swaps, and reading or cancelling its own proposals; plus, when the human shared account access, read access to their Ledger Sync stream (application 16): the synced account list, public data only |
 | Teardown | `ring destroy` | no CLI command |
 
 What keeps them apart:
 
 - **Separate keychain entries** under the `ledger-wallet-cli` service (`member-private-key-…`, `agent-intent-key-…`); agent key files live in their own `agent-intent-keys/` directory. No destroy or reset flow of one touches the other, and `session reset` keeps both.
-- **Separate LKRP applications.** The agent key is added to application 18 and, at enrollment, to the human's application 16 stream. It never receives `ring`'s application 17 domain keys, so it cannot decrypt `ring` data.
-- **Nothing trusted from the relay alone.** The approval reaches `enroll` over an encrypted relay, and wallet-cli proves it before saving: the agent key must obtain an application 18 access token for the claimed Trustchain and authenticate to the claimed application 16 stream with the expected permission. Only then are the Trustchain ID and the non-secret account access references written.
+- **Separate LKRP applications.** The agent key is added to application 18 and, when the human shares account access at enrollment, to their application 16 stream. It never receives `ring`'s application 17 domain keys, so it cannot decrypt `ring` data.
+- **Nothing trusted from the relay alone.** The approval reaches `enroll` over an encrypted relay, and wallet-cli proves it before saving: the agent key must obtain an application 18 access token for the claimed Trustchain and, when the human shared account access, authenticate to the claimed application 16 stream with the expected permission. Only then are the Trustchain ID and any non-secret account access references written.
 - **Pinned environments.** Each Agent Intent profile records `staging` or `production`, and `enroll` rejects an approval for the other one.
 - **The seed stays on the Ledger** in both. The keys rest differently on Linux without a Secret Service provider. `ring`'s keychain entry is not pinned to the Secret Service, so its member key lands in the kernel keyring instead, where any process under the same uid can read it and a reboot loses it. The agent key is pinned: `enroll` checks for a Secret Service before it saves the key and stops with `keychain_unavailable`, and the key file it writes only after the human agrees (agent-intent.md, step 2) is readable by any process under the same uid too.
 
-The result: a leaked agent key lets someone propose payments and swaps as the agent, read or cancel its proposals, and read the human's synced account list, but not decrypt `ring` data. Neither key can sign a transaction.
+The result: a leaked agent key lets someone propose payments and swaps as the agent, read or cancel its proposals, and, when account access was shared, read the human's synced account list, but not decrypt `ring` data. Neither key can sign a transaction.
 
 To cut an agent off, the human removes it from their Ledger Sync instances in Ledger Wallet, which ends its account list access (`sync` then reports "no longer has Ledger Sync access"), and stops approving its intents. No wallet-cli command revokes a profile.
 

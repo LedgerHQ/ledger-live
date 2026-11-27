@@ -28,17 +28,19 @@ const AGENT_PUBLIC_KEY = "0236cb7ebc1a324bd02abac533f7904f9579cc581c772285fecc6f
 const HOST_PUBLIC_KEY = "03a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90";
 
 type Profile = Record<string, unknown>;
-type Completion = {
-  version: 2;
-  agentPubkey: string;
-  trustchainId: string;
-  accountAccess: {
-    mode: "direct-app16-key-reader";
-    environment: "staging" | "production";
-    trustchainId: string;
-    applicationPath: string;
-  };
-};
+type Completion =
+  | { version: 1; agentPubkey: string; trustchainId: string }
+  | {
+      version: 2;
+      agentPubkey: string;
+      trustchainId: string;
+      accountAccess: {
+        mode: "direct-app16-key-reader";
+        environment: "staging" | "production";
+        trustchainId: string;
+        applicationPath: string;
+      };
+    };
 type WaitInput = {
   request: Record<string, unknown>;
   authenticate: (completion: Completion) => Promise<void>;
@@ -880,6 +882,27 @@ describe("agent-intent enroll", () => {
         accountAccessEnvironment: "production",
         enrolled: true,
       });
+    });
+
+    it("persists a version-1 completion without account access and reports none in json mode", async () => {
+      hostWait = input =>
+        relayDelivers(input, {
+          version: 1,
+          agentPubkey: AGENT_PUBLIC_KEY,
+          trustchainId: "app18-root",
+        });
+
+      await runEnroll({ output: "json" });
+
+      expect(storedProfile).toMatchObject({ profileId: "test-agent", trustchainId: "app18-root" });
+      expect(storedProfile).not.toHaveProperty("accountAccess");
+      const enrolled = JSON.parse(stdout.join("").trim().split("\n")[1]);
+      expect(enrolled).toMatchObject({
+        status: "success",
+        trustchainId: "app18-root",
+        enrolled: true,
+      });
+      expect(enrolled).not.toHaveProperty("accountAccessEnvironment");
     });
 
     it("authenticates with the --keycloak-url override and persists it on the profile", async () => {

@@ -7,6 +7,7 @@ import {
   formatAgentPublicKeyFingerprint,
   SUPPORTED_AGENT_SOURCES,
   AGENT_ENROLLMENT_CHANNEL_VERSION,
+  AGENT_ENROLLMENT_WITH_ACCOUNT_ACCESS_VERSION,
   AGENT_INTENT_FRONTEND_URLS,
   AGENT_NAME_MAX_LENGTH,
   AGENT_DESCRIPTION_MAX_LENGTH,
@@ -561,20 +562,20 @@ const enrollCommand = defineCommand({
                         "approval; refusing to record the completion.",
                     );
                   }
-                  const {
-                    mode,
-                    environment: accessEnvironment,
-                    trustchainId,
-                    applicationPath,
-                  } = relayed.accountAccess;
+                  const access =
+                    relayed.version === AGENT_ENROLLMENT_WITH_ACCOUNT_ACCESS_VERSION
+                      ? relayed.accountAccess
+                      : undefined;
                   session.updateAgentIntentProfile(profileId, {
                     trustchainId: relayed.trustchainId,
-                    accountAccess: {
-                      mode,
-                      environment: accessEnvironment,
-                      trustchainId,
-                      applicationPath,
-                    },
+                    ...(access && {
+                      accountAccess: {
+                        mode: access.mode,
+                        environment: access.environment,
+                        trustchainId: access.trustchainId,
+                        applicationPath: access.applicationPath,
+                      },
+                    }),
                   });
                   session.write();
                 }),
@@ -592,7 +593,9 @@ const enrollCommand = defineCommand({
           out.agentIntentEnrolled({
             profileId,
             trustchainId: completion.trustchainId,
-            accountAccessEnvironment: completion.accountAccess.environment,
+            ...(completion.version === AGENT_ENROLLMENT_WITH_ACCOUNT_ACCESS_VERSION && {
+              accountAccessEnvironment: completion.accountAccess.environment,
+            }),
             keyStore,
           });
         } finally {

@@ -1,6 +1,8 @@
 import {
+  AGENT_ENROLLMENT_WITH_ACCOUNT_ACCESS_VERSION,
   AGENT_KEYCLOAK_ENVIRONMENTS,
   createAgentTokenProvider,
+  type AgentEnrollmentCompletion,
   type AgentEnrollmentCompletionV2,
   type AgentIntentEnvironment,
   type AgentRecoveryCompletion,
@@ -23,7 +25,7 @@ export type CompletionAuthDependencies = {
 };
 
 export type CompletionAuthInput = {
-  completion: AgentEnrollmentCompletionV2;
+  completion: AgentEnrollmentCompletion;
   identity: SoftwareAgentIdentity;
   environment: AgentIntentEnvironment;
   keycloak?: AgentKeycloakConfig;
@@ -31,13 +33,18 @@ export type CompletionAuthInput = {
 
 /**
  * Proves the relayed completion is real before anything is persisted: the agent key must be a
- * member of the claimed App-18 Trustchain and hold the expected App-16 permission. Fetches no data.
+ * member of the claimed App-18 Trustchain and, when the human shared account access (version 2),
+ * hold the expected App-16 permission. Fetches no data.
  */
 export async function authenticateEnrollmentCompletion(
   input: CompletionAuthInput,
   dependencies: CompletionAuthDependencies = {},
 ): Promise<void> {
-  const { accountAccess } = input.completion;
+  const { completion } = input;
+  if (completion.version !== AGENT_ENROLLMENT_WITH_ACCOUNT_ACCESS_VERSION) {
+    return authenticateApp18Membership(input, dependencies.createTokenProvider);
+  }
+  const { accountAccess } = completion;
   if (accountAccess.environment !== input.environment) {
     throw new Error(
       `Completion is for the ${accountAccess.environment} environment but the profile was ` +
@@ -45,7 +52,7 @@ export async function authenticateEnrollmentCompletion(
     );
   }
   await authenticateApp18Membership(input, dependencies.createTokenProvider);
-  await verifyLedgerSyncAccess(input, dependencies.createLedgerSyncSdk);
+  await verifyLedgerSyncAccess(completion, input.identity, dependencies.createLedgerSyncSdk);
 }
 
 /**
@@ -76,7 +83,8 @@ function authenticateApp18Membership(
 }
 
 async function verifyLedgerSyncAccess(
-  { completion, identity }: CompletionAuthInput,
+  completion: AgentEnrollmentCompletionV2,
+  identity: SoftwareAgentIdentity,
   createLedgerSyncSdk: (
     environment: AgentIntentEnvironment,
   ) => LedgerSyncSdk = createAgentLedgerSyncSdk,
