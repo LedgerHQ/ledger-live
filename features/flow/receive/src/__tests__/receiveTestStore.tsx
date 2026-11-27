@@ -80,6 +80,15 @@ const receiveTestResources = {
       receiveAddress: {
         title: "Receive {{asset}}",
         networkLabel: "{{network}} network",
+        networkHelp: {
+          description:
+            "Select the same network you're using to send your {{asset}}. <0>Learn more</0>",
+          title: "How to select the network?",
+          choose:
+            "When sending crypto from another wallet or exchange, you'll be asked to choose a network.",
+          testAmount: "If you're unsure, consider sending a small test amount first.",
+          faq: "For more details, please <0>visit our FAQ page</0>.",
+        },
         close: "Close",
         back: "Back",
         selectAddress: { title: "Select address" },
