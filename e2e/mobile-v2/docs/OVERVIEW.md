@@ -1,5 +1,9 @@
 # High Level Overview:
 
+## Infographic
+
+![Overview](./resources/parallel-e2e-architecture.png)
+
 ## Mermaid JS
 
 ```mermaid
@@ -47,7 +51,3 @@ flowchart TB
   RUN --> WS
 
 ```
-
-## Infographic
-
-![Overview](./resources/parallel-e2e-architecture.png)
