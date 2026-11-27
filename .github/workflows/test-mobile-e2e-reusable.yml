@@ -796,7 +796,7 @@ jobs:
 
       - name: Upload iOS artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         id: "test-artifacts"
         with:
           name: ios-test-artifacts-${{ matrix.shard }}
@@ -805,7 +805,7 @@ jobs:
 
       - name: Setup iOS Shard timing artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled') && steps.run-ios.outcome != 'skipped'
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           path: ${{ env.MOBILE_ARTIFACTS_ROOT }}/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
           name: ${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}
@@ -1243,7 +1243,7 @@ jobs:
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         id: "test-artifacts"
         with:
           name: android-test-artifacts-${{ matrix.shard }}
@@ -1252,7 +1252,7 @@ jobs:
 
       - name: Setup Android Shard timing artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled') && steps.run-android.outcome != 'skipped'
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           path: ${{ env.MOBILE_ARTIFACTS_ROOT }}/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
           name: ${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}
@@ -1373,7 +1373,7 @@ jobs:
         run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
       - name: Upload iOS AI artifact
         if: ${{ !cancelled() && (env.NIGHTLY_RUN == 'true' || inputs.generate_ai_artifacts == true) }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ios-ai-analysis
           path: ios-ai
@@ -1495,7 +1495,7 @@ jobs:
         run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
       - name: Upload Android AI artifact
         if: ${{ !cancelled() && (env.NIGHTLY_RUN == 'true' || inputs.generate_ai_artifacts == true) }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: android-ai-analysis
           path: android-ai

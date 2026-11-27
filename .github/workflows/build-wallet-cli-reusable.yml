@@ -92,31 +92,31 @@ jobs:
       - name: Upload wallet-cli unit test coverage
         id: generate_coverage
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: coverage-wallet-cli
           path: ${{ github.workspace }}/apps/wallet-cli/coverage
 
       - name: Upload darwin-arm64 binary
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: wallet-cli-darwin-arm64
           path: ${{ github.workspace }}/apps/wallet-cli/npm/darwin-arm64/bin/wallet-cli
 
       - name: Upload linux-x64 binary
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: wallet-cli-linux-x64
           path: ${{ github.workspace }}/apps/wallet-cli/npm/linux-x64/bin/wallet-cli
 
       - name: Upload linux-arm64 binary
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: wallet-cli-linux-arm64
           path: ${{ github.workspace }}/apps/wallet-cli/npm/linux-arm64/bin/wallet-cli
 
       - name: Upload windows-x64 binary
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: wallet-cli-windows-x64
           path: ${{ github.workspace }}/apps/wallet-cli/npm/windows-x64/bin/wallet-cli.exe

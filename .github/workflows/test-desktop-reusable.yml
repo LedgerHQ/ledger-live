@@ -163,7 +163,7 @@ jobs:
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
         continue-on-error: true
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: allure-results-speculos-smoke
           path: "e2e/desktop/allure-results"
@@ -251,7 +251,7 @@ jobs:
       - name: Upload mitmproxy logs
         continue-on-error: true
         if: ${{ !cancelled() && steps.stop-mitmproxy.outputs.mitmproxy_logs_archive != '' }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: mitmproxy-logs
           path: ${{ steps.stop-mitmproxy.outputs.mitmproxy_logs_archive }}
@@ -269,12 +269,12 @@ jobs:
 
       - name: upload ci suggested screenshots
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: images
           path: images-linux.json
       - name: Upload playwright test results
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ !cancelled() }}
         with:
           if-no-files-found: ignore
@@ -485,7 +485,7 @@ jobs:
           token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         name: upload summary
         with:
           name: summary-test-desktop.json

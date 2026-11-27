@@ -590,14 +590,14 @@ jobs:
       - name: Upload Allure test results artifact
         id: upload-allure
         if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: allure-results${{ matrix.artifact_suffix }}-shard-${{ matrix.shard }}
           path: "e2e/desktop/allure-results"
 
       - name: Upload Remote Config capture proxy logs
         if: ${{ !cancelled() && steps.capture-proxy.outputs.status == 'on' }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: firebase-capture-logs${{ matrix.artifact_suffix }}-shard-${{ matrix.shard }}
           path: ${{ runner.temp }}/firebase-capture*
@@ -605,7 +605,7 @@ jobs:
 
       - name: Upload Playwright and Nx logs for the shard diagnostics
         if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: e2e-logs${{ matrix.artifact_suffix }}-shard-${{ matrix.shard }}
           path: |
@@ -819,14 +819,14 @@ jobs:
 
       - name: Upload Allure test results artifact
         if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: allure-results-${{ matrix.os }}
           path: "e2e/desktop/allure-results"
 
       - name: Upload Playwright and Nx logs for the shard diagnostics
         if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: e2e-logs-${{ matrix.os }}
           path: |

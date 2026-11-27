@@ -675,14 +675,14 @@ jobs:
             --app builds/snapshot/signed.apk --app-id "$APP_ID" --release "$RELEASE" \
             --out-dir "$SNAPSHOT_DIR" --debug-dir "$SNAPSHOT_DEBUG_DIR"
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: startup-perf-snapshot-android
           path: ${{ env.SNAPSHOT_DIR }}/
           retention-days: 7
           overwrite: true
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ always() }}
         with:
           name: startup-perf-snapshot-debug-android
@@ -769,14 +769,14 @@ jobs:
             --app builds/snapshot/ledgerlivemobile.app --app-id "$APP_ID" --release "$RELEASE" \
             --out-dir "$SNAPSHOT_DIR" --debug-dir "$SNAPSHOT_DEBUG_DIR"
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: startup-perf-snapshot-ios
           path: ${{ env.SNAPSHOT_DIR }}/
           retention-days: 7
           overwrite: true
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ always() }}
         with:
           name: startup-perf-snapshot-debug-ios
@@ -941,7 +941,7 @@ jobs:
             --json "$RESULTS_DIR/android/summary.json" \
             --run-json "$RESULTS_DIR/android/run.json"
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ always() }}
         with:
           name: startup-perf-results-android-${{ matrix.scenario }}
@@ -1050,7 +1050,7 @@ jobs:
             --json "$RESULTS_DIR/ios/summary.json" \
             --run-json "$RESULTS_DIR/ios/run.json"
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ always() }}
         with:
           name: startup-perf-results-ios

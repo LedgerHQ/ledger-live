@@ -66,14 +66,14 @@ jobs:
           pnpm common ci-test-integration-weekly
           git diff --exit-code libs/ledger-live-common/src
       - name: (On Failure) Upload live-common snapshots and source
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with:
           name: ${{ format('live-common-src-{0}', matrix.os) }}
           path: |
             libs/ledger-live-common/src
       - name: (On Failure) Upload logs
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with:
           name: logs.txt

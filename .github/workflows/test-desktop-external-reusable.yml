@@ -116,12 +116,12 @@ jobs:
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
       - name: upload ci suggested screenshots
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: images
           path: images-linux.json
       - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure() && !cancelled()
         with:
           name: playwright-results-linux
@@ -133,7 +133,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/logs
       - name: Upload Allure Report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: allure-results-linux
           path: apps/ledger-live-desktop/allure-results

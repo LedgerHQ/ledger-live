@@ -77,7 +77,7 @@ jobs:
       - name: Upload unit test coverage (native)
         id: generate_coverage_native
         if: ${{ !cancelled() && hashFiles('libs/ui/packages/native/coverage/**') != '' }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: coverage-ui-native
           path: ${{ github.workspace }}/libs/ui/packages/native/coverage
@@ -91,7 +91,7 @@ jobs:
           script: |
             const fs = require("fs");
             fs.writeFileSync("summary-ui-ubuntu.txt", "${{ steps.test-ui.outcome }}", "utf-8");
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ !cancelled() }}
         with:
           name: outputs-test-ui

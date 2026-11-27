@@ -144,7 +144,7 @@ jobs:
         shell: bash
 
       - name: (On Failure) Upload live-common snapshots and source
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with:
           name: live-common-src
@@ -158,14 +158,14 @@ jobs:
             const fs = require("fs");
             fs.writeFileSync("summary-tests.txt", "${{ steps.test-libs.outcome }}", "utf-8");
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ !cancelled() }}
         id: generate_coverage
         with:
           name: coverage-libs
           path: ${{ github.workspace }}/coverage
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ !cancelled() }}
         with:
           name: outputs-test-libraries
@@ -210,7 +210,7 @@ jobs:
         with:
           projects: tag:scope:libs
           emit-summaries: "true"
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ !cancelled() }}
         with:
           name: outputs-codecheck
@@ -277,7 +277,7 @@ jobs:
             };
 
             fs.writeFileSync("summary-libraries.json", JSON.stringify(output), "utf-8");
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         name: Upload output
         with:
           path: ${{ github.workspace }}/summary-libraries.json
