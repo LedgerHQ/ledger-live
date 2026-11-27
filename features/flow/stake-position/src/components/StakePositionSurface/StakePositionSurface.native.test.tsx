@@ -191,6 +191,29 @@ describe("StakePositionSurface (native)", () => {
     });
   });
 
+  it("should tell the app once the sheet is hidden", () => {
+    const onHidden = jest.fn();
+    render(
+      <StakePositionSurface
+        isOpen={false}
+        heading={DETAILS}
+        ticker="SOL"
+        onDismiss={jest.fn()}
+        onHidden={onHidden}
+        isDismissible
+        testID={SHEET_TEST_ID}
+      >
+        <Text>Step content</Text>
+      </StakePositionSurface>,
+      { wrapper: I18nWrapper },
+    );
+    expect(onHidden).not.toHaveBeenCalled();
+
+    fireEvent.press(screen.getByTestId(`${SHEET_TEST_ID}-hidden`));
+
+    expect(onHidden).toHaveBeenCalledTimes(1);
+  });
+
   describe("height", () => {
     it("should grow up to the full height under the status bar on iOS", () => {
       renderSurface();

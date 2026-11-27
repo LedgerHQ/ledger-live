@@ -8,10 +8,33 @@
 export type TransactionLike = { family?: string } & Record<string, unknown>;
 
 /**
+ * The dotted kind of each Solana staking `mode`, as the generic coin framework's Solana bridge
+ * maps it (`computeIntentType` in live-common, which this package cannot depend on). Only the
+ * staking modes: a send or a token mode reads as no action.
+ */
+const SOLANA_STAKING_KINDS: Record<string, string> = {
+  stake: "stake.createAccount",
+  delegate: "stake.delegate",
+  undelegate: "stake.undelegate",
+  unstake: "stake.withdraw",
+  split: "stake.split",
+};
+
+function solanaKindOf(tx: TransactionLike): string | undefined {
+  const kind = (tx.model as { kind?: string } | undefined)?.kind;
+  if (kind !== undefined) return kind;
+  const mode = tx.mode;
+  return typeof mode === "string" && Object.hasOwn(SOLANA_STAKING_KINDS, mode)
+    ? SOLANA_STAKING_KINDS[mode]
+    : undefined;
+}
+
+/**
  * Reads the family-specific staking action off a transaction, at the sign stage.
  *
  * Almost every family exposes it as `mode`; Solana is the exception and uses a dotted
- * `model.kind`. EVM is deliberately *not* special-cased: its native staking flows set a
+ * `model.kind`, or, on the generic coin framework, a `mode` read as the same dotted kind.
+ * EVM is deliberately *not* special-cased: its native staking flows set a
  * `mode` alongside `valAddress`, while a plain send or a dApp call has none — so falling
  * through to `mode` scopes this to in-app staking without inspecting call data.
  *
@@ -20,7 +43,7 @@ export type TransactionLike = { family?: string } & Record<string, unknown>;
  */
 export function getRawTransactionType(tx: TransactionLike | undefined | null): string | undefined {
   if (!tx) return undefined;
-  if (tx.family === "solana") return (tx.model as { kind?: string } | undefined)?.kind;
+  if (tx.family === "solana") return solanaKindOf(tx);
   // Only the type: a comment payload's text is user-written.
   if (tx.family === "ton") return signedTonPayload(tx)?.type;
   return tx.mode as string | undefined;

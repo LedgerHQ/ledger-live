@@ -10,7 +10,7 @@ export const STAKE_POSITION_COPY = {
     sectionTitle: "Details",
     initialDeposit: "Initial deposit",
     apy: "Current APY",
-    apyBadge: "{{apy}} APY",
+    apyBadge: "{{apy}} {{type}}",
     status: "Transaction status",
     account: "Address",
     validator: "Validator",

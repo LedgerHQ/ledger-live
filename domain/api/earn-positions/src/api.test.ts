@@ -2,14 +2,9 @@ import { configureStore } from "@reduxjs/toolkit";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { earnApi, earnApiExtra } from "@shared/api-services";
+import { EARN_POSITIONS_TAG, earnPositionsApi, useGetEarnPositionsQuery } from "./api";
+import { UNREADABLE_ROW_FAILURE } from "./internals/stakes";
 import {
-  EARN_POSITIONS_TAG,
-  earnPositionsApi,
-  useGetEarnPositionsQuery,
-  useGetSolanaValidatorApyQuery,
-} from "./api";
-import {
-  LEDGER_BY_BITWISE_VOTE_ACCOUNT,
   LEDGER_BY_FIGMENT_VOTE_ACCOUNT,
   OTHER_OWNER_ADDRESS,
   OWNER_ADDRESS,
@@ -21,17 +16,15 @@ import {
   solanaStake,
   stakeFailure,
   stakesV3Response,
-  validatorsSummary,
 } from "./internals/wire.mock";
 
 const BASE_URL = "https://earn.test";
 const STAKES_URL = `${BASE_URL}/v3/stakes`;
-const VALIDATORS_SUMMARY_URL = `${BASE_URL}/figment/solana/validators_summary`;
 /** The timeout of the Earn service for a request that sets none. */
 const DEFAULT_TIMEOUT_MS = 10_000;
 
 const owner = { network: "solana", address: OWNER_ADDRESS };
-const { getEarnPositions, getSolanaValidatorApy } = earnPositionsApi.endpoints;
+const { getEarnPositions } = earnPositionsApi.endpoints;
 
 // Wired the way the apps wire it: the store registers the service api, and the endpoints only exist
 // because importing this package injected them.
@@ -45,11 +38,8 @@ function makeStore(earnApiBaseUrl = BASE_URL) {
   });
 }
 
-const endpoints = { stakes: jest.fn(), validatorsSummary: jest.fn() };
-const server = setupServer(
-  http.post(STAKES_URL, endpoints.stakes),
-  http.get(VALIDATORS_SUMMARY_URL, endpoints.validatorsSummary),
-);
+const endpoints = { stakes: jest.fn() };
+const server = setupServer(http.post(STAKES_URL, endpoints.stakes));
 
 beforeAll(() => {
   server.listen({ onUnhandledRequest: "error" });
@@ -63,9 +53,6 @@ beforeEach(() => {
       }),
     ),
   );
-  endpoints.validatorsSummary
-    .mockReset()
-    .mockImplementation(() => HttpResponse.json(validatorsSummary()));
 });
 
 afterEach(() => {
@@ -92,11 +79,10 @@ describe("earnPositionsApi configuration", () => {
     expect(earnPositionsApi.reducerPath).toBe("earnApi");
   });
 
-  it("exposes both endpoints and their hooks", () => {
+  it("exposes the positions endpoint and its hook, and nothing else", () => {
     expect(getEarnPositions).toBeDefined();
-    expect(getSolanaValidatorApy).toBeDefined();
     expect(useGetEarnPositionsQuery).toBeInstanceOf(Function);
-    expect(useGetSolanaValidatorApyQuery).toBeInstanceOf(Function);
+    expect(Object.keys(earnPositionsApi.endpoints)).toEqual(["getEarnPositions"]);
   });
 });
 
@@ -114,6 +100,7 @@ describe("getEarnPositions", () => {
       balance: "10000000000",
       deposited: "9750000000",
       totalRewards: "250000000",
+      interest: { type: "APY", value: 0.0712 },
     });
     expect(result.data?.isStale).toBe(true);
     expect(result.data?.respondedAt).toBe("2026-11-18T12:00:01Z");
@@ -187,19 +174,35 @@ describe("getEarnPositions", () => {
     });
   });
 
-  it("turns a SOL row without its stake account into a query error", async () => {
+  it("turns a null data into a query error, never into an address with no position", async () => {
+    endpoints.stakes.mockImplementation(() =>
+      HttpResponse.json({ data: null, meta: { is_stale: false } }),
+    );
+
+    const result = await makeStore().dispatch(getEarnPositions.initiate(owner));
+
+    expect(result.data).toBeUndefined();
+    expect(result.error).toEqual({
+      status: "CUSTOM_ERROR",
+      error: expect.stringContaining("data: Invalid input"),
+    });
+  });
+
+  it("reads a SOL row without its stake account as a failure, and keeps the other rows", async () => {
     endpoints.stakes.mockImplementation(() =>
       HttpResponse.json(
-        stakesV3Response([batchStakeView(solanaStake({}, { stake_account: undefined }))]),
+        stakesV3Response([
+          batchStakeView(solanaStake({}, { stake_account: undefined })),
+          batchStakeView(bitwiseSolanaStake()),
+        ]),
       ),
     );
 
     const result = await makeStore().dispatch(getEarnPositions.initiate(owner));
 
-    expect(result.error).toEqual({
-      status: "CUSTOM_ERROR",
-      error: expect.stringContaining("rawResponseSchema rejected the response"),
-    });
+    expect(result.error).toBeUndefined();
+    expect(result.data?.positions.map(position => position.id)).toEqual([STAKE_ACCOUNT_B]);
+    expect(result.data?.failures).toEqual([UNREADABLE_ROW_FAILURE]);
   });
 
   it("fails softly, without a request, when the Earn base URL is empty", async () => {
@@ -296,78 +299,5 @@ describe("getEarnPositions", () => {
 
       expect(stakesRequest().signal.aborted).toBe(false);
     });
-  });
-});
-
-describe("getSolanaValidatorApy", () => {
-  it("reads the APY of each vote account from the validators summary of the Earn service", async () => {
-    const result = await makeStore().dispatch(getSolanaValidatorApy.initiate());
-
-    expect(endpoints.validatorsSummary.mock.calls[0][0].request.method).toBe("GET");
-    expect(result.data).toEqual({
-      [LEDGER_BY_FIGMENT_VOTE_ACCOUNT]: 0.078107,
-      [LEDGER_BY_BITWISE_VOTE_ACCOUNT]: 0.076512,
-    });
-  });
-
-  it("drops an entry whose APY is not a number from 0 to 1, and keeps the others", async () => {
-    endpoints.validatorsSummary.mockImplementation(() =>
-      HttpResponse.json([
-        {
-          address: LEDGER_BY_FIGMENT_VOTE_ACCOUNT,
-          delegator_apy: 0.078107,
-          name: "Ledger by Figment",
-        },
-        {
-          address: LEDGER_BY_BITWISE_VOTE_ACCOUNT,
-          delegator_apy: 7.6512,
-          name: "Ledger by Bitwise",
-        },
-        {
-          address: "VoteAccountString11111111111111111111111111",
-          delegator_apy: "0.05",
-          name: "A",
-        },
-      ]),
-    );
-
-    const result = await makeStore().dispatch(getSolanaValidatorApy.initiate());
-
-    expect(result.data).toEqual({ [LEDGER_BY_FIGMENT_VOTE_ACCOUNT]: 0.078107 });
-  });
-
-  it("reads an empty list as an empty lookup", async () => {
-    endpoints.validatorsSummary.mockImplementation(() => HttpResponse.json([]));
-
-    const result = await makeStore().dispatch(getSolanaValidatorApy.initiate());
-
-    expect(result.data).toEqual({});
-  });
-
-  it("turns a payload that is not a list into a query error", async () => {
-    endpoints.validatorsSummary.mockImplementation(() =>
-      HttpResponse.json({ validators: validatorsSummary() }),
-    );
-
-    const result = await makeStore().dispatch(getSolanaValidatorApy.initiate());
-
-    expect(result.error).toEqual({
-      status: "CUSTOM_ERROR",
-      error: expect.stringContaining("rawResponseSchema rejected the response"),
-    });
-  });
-
-  it("fails on its own, without failing the positions", async () => {
-    endpoints.validatorsSummary.mockImplementation(() =>
-      HttpResponse.json({ msg: "Not found" }, { status: 404 }),
-    );
-    const store = makeStore();
-
-    const apy = await store.dispatch(getSolanaValidatorApy.initiate());
-    const positions = await store.dispatch(getEarnPositions.initiate(owner));
-
-    expect(apy.error).toMatchObject({ status: 404 });
-    expect(positions.error).toBeUndefined();
-    expect(positions.data?.positions).toHaveLength(2);
   });
 });

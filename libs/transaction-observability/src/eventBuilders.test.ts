@@ -11,6 +11,7 @@ import {
 import { TransactionDataSource, TransactionPathway, TransactionStage } from "./logEvent";
 import { ErrorCategory } from "./errorCategory";
 import type { TransactionLike } from "./transactionShape";
+import { clearPendingTxLifecycle, sendTxLifecycle, toTxLifecyclePayload } from "./txLifecycle";
 
 const account = (currency: { id: string; family: string; ticker: string }) =>
   ({ id: "account-id", type: "Account", currency }) as unknown as Account;
@@ -18,6 +19,7 @@ const account = (currency: { id: string; family: string; ticker: string }) =>
 const cardano = account({ id: "cardano", family: "cardano", ticker: "ADA" });
 const cosmos = account({ id: "cosmos", family: "cosmos", ticker: "ATOM" });
 const sei = account({ id: "sei_evm", family: "evm", ticker: "SEI" });
+const solana = account({ id: "solana", family: "solana", ticker: "SOL" });
 
 const tx = (fields: Record<string, unknown>): TransactionLike => fields;
 const signed = (op: Record<string, unknown>) =>
@@ -81,6 +83,62 @@ describe("buildSignCommonEvent", () => {
       transaction: tx({ family: "cosmos", mode: "delegate", useAllAmount: true }),
     });
     expect(common.isSendMax).toBe(true);
+  });
+
+  // The stake position exits sign a generic coin framework transaction: a mode, no model.
+  describe("for a Solana exit signed with a mode", () => {
+    const STAKE_ACCOUNT = "StakeAccountA1111111111111111111111111111111";
+    let fetchSpy: jest.SpiedFunction<typeof fetch>;
+
+    beforeEach(() => {
+      clearPendingTxLifecycle("desktop");
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null));
+    });
+
+    afterEach(() => {
+      clearPendingTxLifecycle("desktop");
+      fetchSpy.mockRestore();
+    });
+
+    const exitOf = (mode: string) =>
+      buildSignCommonEvent({
+        ...attribution(solana),
+        transaction: tx({ family: "solana", mode, recipient: STAKE_ACCOUNT, useAllAmount: true }),
+      });
+
+    it.each([
+      ["undelegate", "undelegate", "stake.undelegate"],
+      ["unstake", "withdraw", "stake.withdraw"],
+    ])("should name the %s exit %s", (mode, earnTransactionType, rawTransactionType) => {
+      expect(exitOf(mode)).toMatchObject({ earnTransactionType, rawTransactionType });
+    });
+
+    it("should report no delegation target, never the stake account", () => {
+      expect(exitOf("undelegate").validators).toBeUndefined();
+    });
+
+    it("should leave a Solana send out of the funnel", () => {
+      expect(exitOf("send").earnTransactionType).toBeUndefined();
+    });
+
+    it.each(["undelegate", "unstake"])(
+      "should send a native intent then its outcome for the %s exit",
+      mode => {
+        const common = exitOf(mode);
+        const intent = toTxLifecyclePayload(buildTransactionIntentEvent(common), "desktop");
+        const outcome = toTxLifecyclePayload(buildTransactionSuccessEvent(common), "desktop");
+        expect(intent).toMatchObject({ event: "tx_intent", path: "native", network: "solana" });
+        expect(outcome).toMatchObject({ event: "tx_terminal", path: "native", outcome: "success" });
+
+        if (intent) sendTxLifecycle(intent);
+        if (outcome) sendTxLifecycle(outcome);
+
+        const sentEvents = fetchSpy.mock.calls.map(
+          ([, init]) => (JSON.parse(String(init?.body)) as { event: string }).event,
+        );
+        expect(sentEvents).toEqual(["tx_intent", "tx_terminal"]);
+      },
+    );
   });
 });
 

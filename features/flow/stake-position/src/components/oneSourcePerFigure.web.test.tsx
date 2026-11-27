@@ -35,7 +35,6 @@ const READY: ReadyStakePositionData = {
   kind: "ready",
   position: BACKEND_POSITION,
   status: "active",
-  validatorApy: undefined,
   isStale: false,
   isPolling: false,
 };
@@ -54,6 +53,7 @@ describe("one source per figure", () => {
       <StakePositionDetails
         ticker="SOL"
         {...toStakePositionDetailsProps(READY, toChainExit(CHAIN_SNAPSHOT, false), FORMAT)}
+        apyAppearance="success"
         onEarnMore={jest.fn()}
         onSelectExitAction={jest.fn()}
       />,

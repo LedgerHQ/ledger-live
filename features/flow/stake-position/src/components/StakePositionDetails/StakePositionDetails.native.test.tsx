@@ -21,8 +21,10 @@ const PROPS: DataProps = {
   status: "active",
   totalRewards: { crypto: "0.42 SOL", fiat: "$63.00" },
   currentBalance: { crypto: "12.5 SOL", fiat: "$1,875.00" },
-  initialDeposit: { crypto: "12.08 SOL", fiat: "$1,812.00" },
-  apy: "7.81%",
+  initialDepositCrypto: "12.08 SOL",
+  initialDepositFiat: "$1,812.00",
+  apy: { value: "7.12%", type: "APY" },
+  apyAppearance: "success",
   validator: { name: "Ledger by Figment", imageUrl: "https://validators.example/ledger.png" },
   accountName: "Solana 1",
   exitAction: "deactivate",
@@ -69,7 +71,7 @@ describe("StakePositionDetails (native)", () => {
     expect(screen.getByText("0.42 SOL")).toBeTruthy();
     expect(screen.getByText("12.5 SOL")).toBeTruthy();
     expect(screen.getByText(STAKE_POSITION_COPY.details.currentBalance)).toBeTruthy();
-    expect(screen.getByText("7.81% APY")).toBeTruthy();
+    expect(screen.getByText("7.12% APY")).toBeTruthy();
     expect(screen.getByText("Solana 1")).toBeTruthy();
     expect(screen.getByText("account-icon")).toBeTruthy();
     expect(screen.getByText("Ledger by Figment")).toBeTruthy();
@@ -82,10 +84,17 @@ describe("StakePositionDetails (native)", () => {
     expect(screen.queryByText("12.08 SOL")).toBeNull();
   });
 
-  it("should hide the APY row while the validator APY is unknown", () => {
+  it("should hide the APY row when the position has no rate", () => {
     renderDetails({ apy: undefined });
 
     expect(screen.queryByText(STAKE_POSITION_COPY.details.apy)).toBeNull();
+  });
+
+  it("should name the type of the rate the backend sends", () => {
+    renderDetails({ apy: { value: "5.45%", type: "APR" } });
+
+    expect(screen.getByText("5.45% APR")).toBeTruthy();
+    expect(screen.queryByText("5.45% APY")).toBeNull();
   });
 
   it("should hide the rewards when they are unknown", () => {

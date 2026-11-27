@@ -19,7 +19,7 @@ export function mockEarnPosition(
     balance: "10000000000",
     deposited: "9750000000",
     totalRewards: "250000000",
-    positionApy: 0.0712,
+    interest: { type: "APY", value: 0.0712 },
     updatedAt: "2026-11-18T12:00:00Z",
     ...overrides,
   });

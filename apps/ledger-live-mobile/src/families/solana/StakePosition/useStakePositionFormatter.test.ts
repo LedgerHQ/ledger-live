@@ -62,7 +62,18 @@ describe("useStakePositionFormatter", () => {
     expect(format.rewardsHeadline(ONE_SOL)?.hidden).toBe(true);
   });
 
-  it("should show a fraction as a percentage with two decimals at most", () => {
-    expect(renderFormatter().percent(0.078107)).toBe("7.81%");
-  });
+  it.each([
+    ["rounds to two decimals", 0.078107, "7.81%"],
+    ["rounds up", 0.07129, "7.13%"],
+    ["keeps a rate that has two decimals", 0.0712, "7.12%"],
+    ["pads a rate with one decimal", 0.065, "6.50%"],
+    ["pads a whole rate", 0.07, "7.00%"],
+    ["shows a zero rate", 0, "0.00%"],
+    ["shows the upper bound of a fraction", 1, "100.00%"],
+  ])(
+    "should show a fraction as a percentage with two decimals: %s",
+    (_case, fraction, expected) => {
+      expect(renderFormatter().percent(fraction)).toBe(expected);
+    },
+  );
 });

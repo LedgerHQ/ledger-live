@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createIntent, type ExecutorState } from "@features/platform-device-intent";
-import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import type { StakePositionExitAction } from "@features/flow-stake-position";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import type { SignatureRequest } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
@@ -20,11 +20,15 @@ export type StakePositionSignatureProps = Readonly<{
   account: Account;
   transaction: Transaction;
   status: TransactionStatus;
-  /** False once the signature is over: its sheet animates out, then `onDismissed`. */
+  action: StakePositionExitAction;
+  /** False once the signature is handed over: its sheet animates out, then `onDismissed`. */
   isOpen: boolean;
   /** Called once with the signed transaction, which the caller broadcasts. */
   onSigned: (signedOperation: SignedOperation) => void;
-  /** A refusal on the device, or a failure before the transaction is signed. */
+  /**
+   * The device step could not start. A refusal or a device error is not a failure: the executor
+   * shows it, with a retry and a close that calls `onCancel`.
+   */
   onFailed: (error: Error) => void;
   /** The user left the device step before the transaction was signed. */
   onCancel: () => void;
@@ -44,6 +48,7 @@ export function useStakePositionSignatureViewModel({
   account,
   transaction,
   status,
+  action,
   isOpen,
   onSigned,
   onFailed,
@@ -136,21 +141,15 @@ export function useStakePositionSignatureViewModel({
           notePromptShown();
           return;
         case "signed":
-          noteSettled();
-          return;
         case "cancelled":
-          noteSettled();
-          fail(new UserRefusedOnDevice());
-          return;
         case "error":
           noteSettled();
-          fail(jobState.error);
           return;
         default:
           return;
       }
     },
-    [beginAttempt, fail, notePromptShown, noteSettled],
+    [beginAttempt, notePromptShown, noteSettled],
   );
 
   const onExecutorStateChanged = useCallback(
@@ -178,8 +177,8 @@ export function useStakePositionSignatureViewModel({
   }, [isOpen, onCancel]);
 
   const extraProps = useMemo<StakePositionSignatureExtraProps>(
-    () => ({ deviceName }),
-    [deviceName],
+    () => ({ deviceName, action }),
+    [action, deviceName],
   );
 
   return {

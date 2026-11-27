@@ -4,6 +4,7 @@ import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { SignTransactionIntentWithResultJobState } from "@ledgerhq/live-common/intents/signTransactionIntent";
 import type { SignedOperation } from "@ledgerhq/types-live";
+import type { StakePositionExitAction } from "@features/flow-stake-position";
 import { isModalLockedSelector } from "~/reducers/appstate";
 import { StakePositionSignatureComponentLWM } from "../componentLWM";
 
@@ -11,21 +12,28 @@ const COPY = {
   continueOnDevice: "Continue on your Ledger Flex",
   secureScreen: /Follow the instructions displayed on your Secure.Screen/,
   processing: "This can take a few minutes.",
+  deactivating: "Deactivate transaction in progress",
+  withdrawing: "Withdraw transaction in progress",
+  refused: "Operation rejected on Ledger device",
+  lockedTitle: "Your device is locked",
+  lockedDescription: "Unlock your device and try again.",
+  retry: "Retry",
+  close: "Close",
 } as const;
-
-const retry = () => undefined;
 
 function renderComponent(
   jobState: SignTransactionIntentWithResultJobState | undefined,
-  deviceName = "Lily's Ledger",
+  { deviceName = "Lily's Ledger", action = "deactivate" as StakePositionExitAction } = {},
 ) {
-  return render(
+  const onClose = jest.fn();
+  const view = render(
     <StakePositionSignatureComponentLWM
       jobState={jobState}
-      extraProps={{ deviceName }}
-      onClose={jest.fn()}
+      extraProps={{ deviceName, action }}
+      onClose={onClose}
     />,
   );
+  return { ...view, onClose };
 }
 
 const isBackConsumed = (addBackListener: jest.SpyInstance) =>
@@ -49,7 +57,7 @@ describe("StakePositionSignatureComponentLWM", () => {
   });
 
   it("should name no device before the executor knows it", () => {
-    renderComponent({ type: "pending", deviceModelId: DeviceModelId.europa }, "");
+    renderComponent({ type: "pending", deviceModelId: DeviceModelId.europa }, { deviceName: "" });
 
     expect(screen.getByText(COPY.continueOnDevice)).toBeVisible();
     expect(screen.queryByText("Lily's Ledger")).toBeNull();
@@ -62,10 +70,18 @@ describe("StakePositionSignatureComponentLWM", () => {
       { type: "device-signature-granted", deviceModelId: DeviceModelId.europa } as const,
     ],
     ["signed", { type: "signed", signedOperation: {} as SignedOperation } as const],
-  ])("should say the transaction is being processed when the job is %s", (_, jobState) => {
+  ])("should say the deactivation is being processed when the job is %s", (_, jobState) => {
     renderComponent(jobState);
 
+    expect(screen.getByText(COPY.deactivating)).toBeVisible();
     expect(screen.getByText(COPY.processing)).toBeVisible();
+  });
+
+  it("should say the withdrawal is being processed", () => {
+    renderComponent({ type: "device-streaming", progress: 0.5 }, { action: "withdraw" });
+
+    expect(screen.getByText(COPY.withdrawing)).toBeVisible();
+    expect(screen.queryByText(COPY.deactivating)).toBeNull();
   });
 
   it.each([
@@ -81,18 +97,74 @@ describe("StakePositionSignatureComponentLWM", () => {
     addBackListener.mockRestore();
   });
 
-  it.each([
-    ["undefined", undefined],
-    ["cancelled", { type: "cancelled", retry } as const],
-    ["error", { type: "error", error: new Error("boom"), retry } as const],
-  ])(
-    "should show nothing, and lock nothing, when the job is %s: the stake position sheet takes over",
-    (_, jobState) => {
-      const { store } = renderComponent(jobState);
+  it("should show nothing, and lock nothing, before the job starts", () => {
+    const { store } = renderComponent(undefined);
 
-      expect(screen.queryByText(COPY.continueOnDevice)).toBeNull();
+    expect(screen.queryByText(COPY.continueOnDevice)).toBeNull();
+    expect(screen.queryByText(COPY.processing)).toBeNull();
+    expect(isModalLockedSelector(store.getState())).toBe(false);
+  });
+
+  describe("when the user refuses on the device", () => {
+    it("should show the refusal, lock nothing and retry the signature on the device", async () => {
+      const retry = jest.fn();
+      const { store, user, onClose } = renderComponent({ type: "cancelled", retry });
+
+      expect(screen.getByText(COPY.refused)).toBeVisible();
       expect(screen.queryByText(COPY.processing)).toBeNull();
       expect(isModalLockedSelector(store.getState())).toBe(false);
-    },
-  );
+      await user.press(screen.getByRole("button", { name: COPY.retry }));
+
+      expect(retry).toHaveBeenCalledTimes(1);
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
+    it("should close the device step", async () => {
+      const retry = jest.fn();
+      const { user, onClose } = renderComponent({ type: "cancelled", retry });
+
+      await user.press(screen.getByRole("button", { name: COPY.close }));
+
+      expect(onClose).toHaveBeenCalledTimes(1);
+      expect(retry).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("when the signature fails", () => {
+    const error = Object.assign(new Error("The device is locked"), { name: "LockedDeviceError" });
+
+    it("should explain the error, lock nothing and retry the signature on the device", async () => {
+      const retry = jest.fn();
+      const { store, user, onClose } = renderComponent({ type: "error", error, retry });
+
+      expect(screen.getByTestId("stake-position-signature-error")).toBeVisible();
+      expect(screen.getByText(COPY.lockedTitle)).toBeVisible();
+      expect(screen.getByText(COPY.lockedDescription)).toBeVisible();
+      expect(isModalLockedSelector(store.getState())).toBe(false);
+      await user.press(screen.getByTestId("stake-position-signature-error-retry"));
+
+      expect(retry).toHaveBeenCalledTimes(1);
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
+    it("should close the device step", async () => {
+      const retry = jest.fn();
+      const { user, onClose } = renderComponent({ type: "error", error, retry });
+
+      await user.press(screen.getByTestId("stake-position-signature-error-close"));
+
+      expect(onClose).toHaveBeenCalledTimes(1);
+      expect(retry).not.toHaveBeenCalled();
+    });
+
+    it("should name an error the app has no wording for by its message", () => {
+      renderComponent({
+        type: "error",
+        error: new Error("Something odd happened"),
+        retry: jest.fn(),
+      });
+
+      expect(screen.getByText("Something odd happened")).toBeVisible();
+    });
+  });
 });

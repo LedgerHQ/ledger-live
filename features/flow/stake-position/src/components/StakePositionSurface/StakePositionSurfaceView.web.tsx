@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import type { StakePositionSurfaceViewProps } from "./StakePositionSurfaceView.types";
@@ -16,11 +16,22 @@ function SurfaceHeader({
   return <DialogHeader density="expanded" title={title} />;
 }
 
+// The dialog keeps its content mounted until the exit animation ends: that unmount ends the hide.
+function HiddenSignal({ onHidden }: Readonly<{ onHidden?: () => void }>) {
+  const onHiddenRef = useRef(onHidden);
+  useEffect(() => {
+    onHiddenRef.current = onHidden;
+  }, [onHidden]);
+  useEffect(() => () => onHiddenRef.current?.(), []);
+  return null;
+}
+
 export function StakePositionSurfaceView({
   isOpen,
   title,
   isTitleInHeader,
   onDismiss,
+  onHidden,
   isDismissible,
   children,
   testID,
@@ -43,6 +54,7 @@ export function StakePositionSurfaceView({
         onInteractOutside={preventWhileLocked}
         data-testid={testID}
       >
+        <HiddenSignal onHidden={onHidden} />
         {/* Draws the glow the confirmation and the results ask for. */}
         <DialogBackgroundToneProvider>
           <SurfaceHeader

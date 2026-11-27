@@ -4,8 +4,10 @@ import {
   answerStakePositionUnavailable,
   commitStakePosition,
   dismissStakePosition,
+  releaseStakePosition,
   reopenStakePosition,
   settleStakePosition,
+  startSigningStakePosition,
   useIsStakePositionShown,
   useShownStakePosition,
   useStakePositionOpener,
@@ -270,8 +272,93 @@ describe("stakePositionRequestStore", () => {
     });
   });
 
+  describe("while the device shows the exit", () => {
+    it("should refuse a new request, without touching the one being signed", async () => {
+      const signing = open();
+      act(() => startSigningStakePosition(signing.id));
+
+      const refused = open();
+      await flushPromises();
+
+      expect(refused.onError).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "StakePositionBusy" }),
+      );
+      expect(getStakePositionRequest()?.shown.id).toBe(signing.id);
+      expect(phaseOf()).toBe("signing");
+      expect(signing.onResult).not.toHaveBeenCalled();
+    });
+
+    it("should answer null and remove the request when the user dismisses it", async () => {
+      const request = open();
+      act(() => startSigningStakePosition(request.id));
+
+      act(() => dismissStakePosition(request.id));
+      await flushPromises();
+
+      expect(request.onResult).toHaveBeenCalledWith({ action: null });
+      expect(phaseOf()).toBe("removed");
+    });
+
+    it("should commit the request once the transaction is signed", () => {
+      const request = open();
+      act(() => startSigningStakePosition(request.id));
+
+      act(() => commitStakePosition(request.id));
+
+      expect(phaseOf()).toBe("committed");
+    });
+
+    it("should reopen the request when the device step ends without a signature", async () => {
+      const request = open();
+      act(() => startSigningStakePosition(request.id));
+
+      act(() => reopenStakePosition(request.id));
+      expect(phaseOf()).toBe("open");
+
+      const next = open();
+      await flushPromises();
+
+      expect(request.onResult).toHaveBeenCalledWith({ action: null });
+      expect(getStakePositionRequest()?.shown.id).toBe(next.id);
+    });
+
+    it.each([
+      ["committed", (id: number) => commitStakePosition(id)],
+      ["settled", (id: number) => settleStakePosition(id, "deactivate")],
+    ])("should not start signing a %s request", (phase, moveTo) => {
+      const request = open();
+      act(() => moveTo(request.id));
+
+      act(() => startSigningStakePosition(request.id));
+
+      expect(phaseOf()).toBe(phase);
+    });
+
+    it("should not reopen an open request", () => {
+      const { result } = renderHook(() => useShownStakePosition());
+      const request = open();
+      const shown = result.current;
+
+      act(() => reopenStakePosition(request.id));
+
+      expect(result.current).toBe(shown);
+    });
+
+    it("should keep the request going when the host cannot show the position", async () => {
+      const request = open("earn");
+      act(() => startSigningStakePosition(request.id));
+
+      act(() => answerStakePositionUnavailable(request.id));
+      await flushPromises();
+
+      expect(request.onResult).not.toHaveBeenCalled();
+      expect(phaseOf()).toBe("signing");
+    });
+  });
+
   it.each([
     ["dismissStakePosition", (id: number) => dismissStakePosition(id)],
+    ["startSigningStakePosition", (id: number) => startSigningStakePosition(id)],
     ["commitStakePosition", (id: number) => commitStakePosition(id)],
     ["reopenStakePosition", (id: number) => reopenStakePosition(id)],
     ["settleStakePosition", (id: number) => settleStakePosition(id, "deactivate")],
@@ -329,6 +416,21 @@ describe("stakePositionRequestStore", () => {
 
       expect(onResult).not.toHaveBeenCalled();
       expect(phaseOf()).toBe("committed");
+    });
+
+    it("should dismiss its own request being signed when its player unmounts", async () => {
+      const player = renderHook(() => useStakePositionRequester("earn"));
+      const onResult = jest.fn();
+      act(() => {
+        void player.result.current(INPUT).then(onResult);
+      });
+      act(() => startSigningStakePosition(getStakePositionRequest()?.shown.id ?? -1));
+
+      player.unmount();
+      await flushPromises();
+
+      expect(onResult).toHaveBeenCalledWith({ action: null });
+      expect(phaseOf()).toBe("removed");
     });
 
     it("should leave the request of another player when its player unmounts", async () => {
@@ -443,6 +545,82 @@ describe("stakePositionRequestStore", () => {
       const { result } = renderHook(() => useShownStakePosition("earn"));
 
       expect(result.current).toEqual({ request: null, phase: "closed" });
+    });
+
+    it("should show the following phases of the request being signed", () => {
+      const { result } = renderHook(() => useShownStakePosition("earn"));
+      const request = open();
+
+      act(() => startSigningStakePosition(request.id));
+      expect(result.current.phase).toBe("signing");
+
+      act(() => commitStakePosition(request.id));
+      expect(result.current.phase).toBe("committed");
+    });
+
+    describe("once its surface is hidden", () => {
+      it("should forget the closed request it released", () => {
+        const { result } = renderHook(() => useShownStakePosition("earn"));
+        const request = open();
+        act(() => dismissStakePosition(request.id));
+
+        act(() => releaseStakePosition(request.id));
+
+        expect(result.current).toEqual({ request: null, phase: "closed" });
+      });
+
+      it("should keep a request still held", () => {
+        const { result } = renderHook(() => useShownStakePosition("earn"));
+        const request = open();
+
+        act(() => releaseStakePosition(request.id));
+
+        expect(result.current).toEqual({
+          request: expect.objectContaining({ id: request.id }),
+          phase: "open",
+        });
+      });
+
+      it("should keep the closed request when it releases a former one", () => {
+        const { result } = renderHook(() => useShownStakePosition("earn"));
+        const former = open();
+        const latest = open();
+        act(() => dismissStakePosition(latest.id));
+
+        act(() => releaseStakePosition(former.id));
+
+        expect(result.current).toEqual({
+          request: expect.objectContaining({ id: latest.id }),
+          phase: "closed",
+        });
+      });
+
+      it("should ignore the id of a request that was never made", () => {
+        const { result } = renderHook(() => useShownStakePosition("earn"));
+        const request = open();
+        act(() => dismissStakePosition(request.id));
+
+        act(() => releaseStakePosition(request.id + 1));
+
+        expect(result.current).toEqual({
+          request: expect.objectContaining({ id: request.id }),
+          phase: "closed",
+        });
+      });
+
+      it("should show the next request after a release", () => {
+        const { result } = renderHook(() => useShownStakePosition("earn"));
+        const first = open();
+        act(() => dismissStakePosition(first.id));
+        act(() => releaseStakePosition(first.id));
+
+        const next = open();
+
+        expect(result.current).toEqual({
+          request: expect.objectContaining({ id: next.id }),
+          phase: "open",
+        });
+      });
     });
   });
 

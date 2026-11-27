@@ -25,6 +25,15 @@ export const BaseUnitAmountSchema = z
 /** A yearly rate as a finite fraction between 0 and 1: 0.072 is 7.2%. */
 export const ApyFractionSchema = z.number().min(0).max(1).brand<"ApyFraction">();
 
+/** The kind of yearly rate the Earn backend reports: yield or rate, net or gross reward rate. */
+export const EarnInterestTypeSchema = z.enum(["APY", "APR", "NRR", "GRR"]);
+
+/** The reward rate of a position, and the kind of rate it is, as the Earn dashboard shows it. */
+export const EarnPositionInterestSchema = z.object({
+  type: EarnInterestTypeSchema,
+  value: ApyFractionSchema,
+});
+
 /** The address of the position's stake account: one position per stake account. */
 export const EarnPositionIdSchema = z.string().trim().min(1).brand<"EarnPositionId">();
 
@@ -42,7 +51,7 @@ export const EarnPositionSchema = z.object({
   deposited: BaseUnitAmountSchema.optional(),
   totalRewards: BaseUnitAmountSchema.optional(),
   /** The reward rate of this position, not the APY of its validator. */
-  positionApy: ApyFractionSchema.optional(),
+  interest: EarnPositionInterestSchema.optional(),
   updatedAt: DateTimeIsoSchema.optional(),
 });
 

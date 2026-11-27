@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Account } from "@ledgerhq/types-live";
 import { useAccountSyncState, useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
-import { isPositionDataStale } from "@features/flow-stake-position";
-
-// The bridge drops a queued sync when another one of the same priority is scheduled: past this
-// wait, the sheet stops waiting for it rather than block the position for good.
-export const STAKE_POSITION_SYNC_WAIT_MS = 20_000;
+import { isPositionDataStale, STAKE_POSITION_SYNC_WAIT_MS } from "@features/flow-stake-position";
 
 type SyncError = Error | null | undefined;
 
@@ -52,6 +48,8 @@ export function useStakePositionAccountSync(
     });
   }, [opening.isStale, accountId, sync]);
 
+  // The bridge drops a queued sync when another one of the same priority is scheduled: past the
+  // shared wait, the sheet stops waiting for it rather than block the position for good.
   useEffect(() => {
     if (!opening.isStale) return;
     const timer = setTimeout(() => setHasTimedOut(true), STAKE_POSITION_SYNC_WAIT_MS);

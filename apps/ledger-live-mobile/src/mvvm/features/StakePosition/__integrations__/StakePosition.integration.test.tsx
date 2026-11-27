@@ -6,6 +6,7 @@ import {
   createNativeStackNavigator,
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
+import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
@@ -33,8 +34,10 @@ import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
 import { track, trackPage } from "@shared/analytics";
 import { setOverride } from "@shared/feature-flags";
+import type { ExecutorState } from "@features/platform-device-intent";
 import {
   abandonStakePosition,
+  STAKE_POSITION_SYNC_WAIT_MS,
   useShownStakePosition,
   useStakePositionOpener,
   type StakePositionOpenResult,
@@ -47,15 +50,23 @@ import {
   screen,
   waitFor,
   withFlagOverrides,
+  within,
 } from "@tests/test-renderer";
 import { HttpResponse, http, server } from "@tests/server";
 import { deleteAccount, updateAccountWithUpdater } from "~/actions/accounts";
 import { NavigatorName, ScreenName } from "~/const";
+import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import logger from "~/logger";
 import type { State } from "~/reducers/types";
 import Modals from "~/screens/Modals";
+import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { useStakePositionHandlers } from "LLM/features/StakePosition";
-import { STAKE_POSITION_SYNC_WAIT_MS } from "../hooks/useStakePositionAccountSync";
+
+// The region of the user decides the appearance of the rate.
+jest.mock("~/helpers/getStakeLabelLocaleBased", () => {
+  const actual = jest.requireActual("~/helpers/getStakeLabelLocaleBased");
+  return { ...actual, getCountryLocale: jest.fn(actual.getCountryLocale) };
+});
 
 jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   ...jest.requireActual("@shared/ui-queued-bottom-sheet"),
@@ -90,6 +101,7 @@ type MockExecutorProps = Readonly<{
     onResult?: (signedOperation: SignedOperation) => void;
   }>;
   isRequestingToBeOpened?: boolean;
+  onExecutorStateChanged?: (executorState: ExecutorState) => void;
   onIntentJobStateChanged?: (jobState: SignTransactionIntentWithResultJobState) => void;
   onIntentJobComplete?: () => void;
   onUserCancel: () => void;
@@ -98,6 +110,10 @@ type MockExecutorProps = Readonly<{
 
 const mockSignedTransactions: Transaction[] = [];
 let mockDeviceError: Error = new Error("The device disconnected");
+const mockDisconnectedState = {
+  type: "deviceDisconnected",
+  device: {},
+} as unknown as ExecutorState;
 
 const mockSignedOperation = (account: AccountLike): SignedOperation => ({
   signature: "stake-position-signature",
@@ -120,9 +136,12 @@ const mockSignedOperation = (account: AccountLike): SignedOperation => ({
 function mockRetry() {}
 
 // The device intent executor drives a real device in its own sheet: it is replaced by its outcomes,
-// and by the link to another screen a device step can offer.
+// by the link to another screen a device step can offer, and by the way a lost device asks to
+// reconnect, then to sign again. The controls of the device only show while its sheet is open; the
+// two test hooks (a lost device, a sheet that finished hiding) work whatever the sheet shows.
 jest.mock("LLM/components/DeviceIntentExecutor", () => {
   const RN = jest.requireActual<typeof import("react-native")>("react-native");
+  const { useState } = jest.requireActual<typeof import("react")>("react");
   const { useNavigation } = jest.requireActual<typeof import("@react-navigation/native")>(
     "@react-navigation/native",
   );
@@ -131,17 +150,24 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => {
     DeviceIntentExecutor: function MockDeviceIntentExecutor({
       intent,
       isRequestingToBeOpened,
+      onExecutorStateChanged,
       onIntentJobStateChanged,
       onIntentJobComplete,
       onUserCancel,
       onDeviceSheetDismissed,
     }: MockExecutorProps) {
       const navigation = useNavigation<NavigationProp<ParamListBase>>();
+      const [isDeviceLost, setIsDeviceLost] = useState(false);
       mockSignedTransactions.push(intent.input.transaction);
       const isOpen = isRequestingToBeOpened === true;
       return (
         <RN.View testID="device-step" accessibilityState={{ expanded: isOpen }}>
-          {isOpen ? (
+          {isOpen && isDeviceLost ? (
+            <RN.Pressable accessibilityRole="button" onPress={() => setIsDeviceLost(false)}>
+              <RN.Text>Reconnect the device</RN.Text>
+            </RN.Pressable>
+          ) : null}
+          {isOpen && !isDeviceLost ? (
             <>
               <RN.Pressable
                 accessibilityRole="button"
@@ -181,6 +207,13 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => {
               </RN.Pressable>
             </>
           ) : null}
+          <RN.Pressable
+            testID="device-step-disconnect"
+            onPress={() => {
+              setIsDeviceLost(true);
+              onExecutorStateChanged?.(mockDisconnectedState);
+            }}
+          />
           <RN.Pressable testID="device-step-hidden" onPress={onDeviceSheetDismissed} />
         </RN.View>
       );
@@ -201,6 +234,7 @@ const SOL = 1_000_000_000;
 const VALIDATOR = "FakeVote1111111111111111111111111111111111";
 const STAKE_ACCOUNT = "FakeStake111111111111111111111111111111111";
 const STAKES_URL = "https://earn.api.live.ledger.com/v3/stakes";
+// The endpoint of the validator rate, which the sheet no longer reads.
 const VALIDATORS_SUMMARY_URL = "https://earn.api.live.ledger.com/figment/solana/validators_summary";
 const FIGMENT_LOGO = "https://validators.example/figment.png";
 const SHEET = "stake-position-sheet";
@@ -214,7 +248,6 @@ type StakesRequestItem = Readonly<{ network: string; address: string; fresh?: bo
 
 const endpoints = {
   stakes: jest.fn<Response | Promise<Response>, [{ request: Request }]>(),
-  summary: jest.fn<Response, [{ request: Request }]>(),
 };
 const stakesRequests: StakesRequestItem[][] = [];
 
@@ -224,6 +257,8 @@ type StakeRowOptions = Readonly<{
   rewards?: number;
   deposited?: number;
   protocolName?: string;
+  /** `null` sends no rate. */
+  interest?: Readonly<{ type: string; value: string }> | null;
 }>;
 
 /** A `/v3/stakes` row of the requested wallet, shaped like the Earn backend's. */
@@ -235,6 +270,7 @@ function stakeRow(
     rewards = SOL,
     deposited = 9.75 * SOL,
     protocolName = "Ledger by Figment",
+    interest = { type: "APY", value: "0.0712" },
   }: StakeRowOptions = {},
 ) {
   return {
@@ -244,7 +280,7 @@ function stakeRow(
       provider: "prv_ledger_by_figment",
       protocol_name: protocolName,
       currency: "solana",
-      interest: { type: "APY", value: "0.0712", currency: "solana" },
+      interest: interest === null ? undefined : { ...interest, currency: "solana" },
       logo: FIGMENT_LOGO,
       staked_balance: String(stakedBalance),
       status,
@@ -259,7 +295,7 @@ function stakeRow(
         balance: stakedBalance,
         activated_epoch: 812,
         activated_at: "2026-01-12T09:30:00Z",
-        net_apy: 0.0712,
+        net_apy: 0.0689,
         validator_address: VALIDATOR,
         updated_at: "2026-11-18T11:58:00Z",
         deposited_balance: String(deposited),
@@ -426,6 +462,9 @@ function setup({
     }),
   );
   const accountScreen = renderHook(() => useStakePositionOpener("account"));
+  // Reads the request of the sheet from before it opens, as a surface does: it keeps it as closed
+  // while the sheet animates out, until the sheet is hidden.
+  const shown = renderHook(() => useShownStakePosition());
   const view = render(<Harness />, {
     overrideInitialState: (state: State): State => ({
       ...state,
@@ -479,6 +518,7 @@ function setup({
     account,
     earnPlayer,
     otherEarnPlayers,
+    shown,
     open,
     openWith,
     openFromAccount,
@@ -502,6 +542,19 @@ const isPending = async (answer: Promise<unknown>) => {
   });
   return !isSettled;
 };
+
+/** The priority under which the bridge skips syncs, as the sheet last asked for it. */
+const syncSkipPriority = () =>
+  mockSync.mock.calls
+    .map(([action]) => action as { type: string; priority?: number })
+    .filter(({ type }) => type === "SET_SKIP_UNDER_PRIORITY")
+    .at(-1)?.priority;
+
+/** Lets every request the sheet started answer, for a test that proves one was never made. */
+const settleRequests = () =>
+  act(async () => {
+    await jest.advanceTimersByTimeAsync(1_000);
+  });
 
 /** The answer, once the backend reads it waits for are over, retries included. */
 async function settledAnswer(answer: Promise<StakePositionOpenResult>) {
@@ -571,6 +624,7 @@ describe("StakePosition", () => {
     mockSignedTransactions.length = 0;
     stakesRequests.length = 0;
     mockDeviceError = new Error("The device disconnected");
+    jest.mocked(getCountryLocale).mockReturnValue("US");
     mockBroadcast.mockReset().mockImplementation(signed => Promise.resolve(signed.operation));
     serveStakes(address => [stakeRow(address)]);
     endpoints.stakes.mockReset().mockImplementation(async ({ request }) => {
@@ -581,17 +635,7 @@ describe("StakePosition", () => {
         meta: { is_stale: false, responded_at: "2026-11-18T12:00:01Z" },
       });
     });
-    endpoints.summary
-      .mockReset()
-      .mockImplementation(() =>
-        HttpResponse.json([
-          { address: VALIDATOR, delegator_apy: 0.078107, name: "Ledger by Figment" },
-        ]),
-      );
-    server.use(
-      http.post(STAKES_URL, endpoints.stakes),
-      http.get(VALIDATORS_SUMMARY_URL, endpoints.summary),
-    );
+    server.use(http.post(STAKES_URL, endpoints.stakes));
   });
 
   afterEach(() => {
@@ -714,7 +758,7 @@ describe("StakePosition", () => {
       expect(screen.getByText("Current balance")).toBeVisible();
       expect(screen.getByText("Active")).toBeVisible();
       expect(screen.getByText("Ledger by Figment")).toBeVisible();
-      expect(await screen.findByText("7.81% APY")).toBeVisible();
+      expect(screen.getByText("7.12% APY")).toBeVisible();
       expect(screen.getByText(`Solana ${account.index + 1}`)).toBeVisible();
       expect(screen.getByRole("button", { name: "Deactivate" })).toBeEnabled();
       expect(screen.getByRole("button", { name: "Earn more" })).toBeEnabled();
@@ -740,16 +784,66 @@ describe("StakePosition", () => {
       expect(screen.queryByText("999\u00a0SOL")).toBeNull();
     });
 
-    it("should hide the APY row while the validator APY is unknown, never showing the position APY", async () => {
-      endpoints.summary.mockImplementation(() => HttpResponse.json([]));
+    it("should show the rate of the position with two decimals and its type", async () => {
+      serveStakes(address => [stakeRow(address, { interest: { type: "APR", value: "0.065" } })]);
       const { open } = setup();
 
       void open();
 
       await findDetails();
-      await waitFor(() => expect(endpoints.summary).toHaveBeenCalled());
+      expect(screen.getByText("Current APY")).toBeVisible();
+      expect(screen.getByText("6.50% APR")).toBeVisible();
+      expect(screen.queryByText("6.50% APY")).toBeNull();
+      expect(screen.queryByText("7.12% APY")).toBeNull();
+    });
+
+    it("should show the rate of the position, never the rate of its validator", async () => {
+      const validatorRate = jest.fn(() =>
+        HttpResponse.json([
+          { address: VALIDATOR, delegator_apy: 0.078107, name: "Ledger by Figment" },
+        ]),
+      );
+      server.use(http.get(VALIDATORS_SUMMARY_URL, validatorRate));
+      const { open } = setup();
+
+      void open();
+
+      await findDetails();
+      await settleRequests();
+      expect(screen.getByText("7.12% APY")).toBeVisible();
+      expect(screen.queryByText("7.81% APY")).toBeNull();
+      expect(screen.queryByText("6.89% APY")).toBeNull();
+      expect(validatorRate).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ["sends no rate", { interest: null }],
+      ["sends a zero rate", { interest: { type: "APY", value: "0" } }],
+    ])("should hide the APY row when the backend %s", async (_case, options) => {
+      serveStakes(address => [stakeRow(address, options)]);
+      const { open } = setup();
+
+      void open();
+
+      await findDetails();
       expect(screen.queryByText("Current APY")).toBeNull();
       expect(screen.queryByText(/APY$/)).toBeNull();
+    });
+
+    it.each([
+      ["in green", "US", "success"],
+      ["in green for another region", "FR", "success"],
+      ["in gray where green rates are not allowed", "GB", "muted"],
+    ] as const)("should show the rate %s", async (_case, region, tone) => {
+      jest.mocked(getCountryLocale).mockReturnValue(region);
+      const { open } = setup();
+
+      void open();
+
+      await findDetails();
+      expect(screen.getByText("7.12% APY")).toHaveStyle({
+        color: ledgerLiveThemes.dark.colors.text[tone],
+      });
     });
 
     it("should name a validator the backend does not name by its shortened vote account", async () => {
@@ -1047,6 +1141,28 @@ describe("StakePosition", () => {
       expect(screen.getByRole("button", { name: "Earn more" })).toBeEnabled();
     });
 
+    it("should hold the confirmation while a sync of the account runs, then sign the synced exit", async () => {
+      const { account, open, user } = setup();
+      const answer = open();
+      await findDetails();
+      await goToConfirmation(user, "Deactivate");
+
+      setSyncState({ [account.id]: { pending: true, error: null } });
+
+      await waitFor(() =>
+        expect(screen.getByRole("button", { name: "Deactivate" })).toBeDisabled(),
+      );
+      await user.press(screen.getByRole("button", { name: "Deactivate" }));
+      expect(screen.queryByTestId("device-step")).toBeNull();
+      expect(await isPending(answer)).toBe(true);
+
+      setSyncState({ [account.id]: { pending: false, error: null } });
+      await waitFor(() => expect(screen.getByRole("button", { name: "Deactivate" })).toBeEnabled());
+      await user.press(screen.getByRole("button", { name: "Deactivate" }));
+      expect(await screen.findByRole("button", { name: "Sign on device" })).toBeVisible();
+      expect(isDeviceStepOpen()).toBe(true);
+    });
+
     it("should release the exit when the sync fails", async () => {
       const account = solanaAccount({ lastSyncDate: syncedSecondsAgo(120) });
       const { open } = setup({ account });
@@ -1171,7 +1287,114 @@ describe("StakePosition", () => {
       expect(mockBroadcast).not.toHaveBeenCalled();
     });
 
-    it("should keep the device step on screen, and the request locked, while the signed transaction is broadcast", async () => {
+    it("should leave nothing shown once the sheets of the request the user left have hidden", async () => {
+      const { open, shown, user } = setup();
+      void open();
+      await findDetails();
+      await user.press(await goToConfirmation(user, "Deactivate"));
+      // The sheet of the position hid when it stepped aside for the device.
+      await user.press(screen.getByTestId(`${SHEET}-hidden`));
+      await user.press(await screen.findByRole("button", { name: "Leave the device step" }));
+      expect(shown.result.current).toMatchObject({
+        phase: "closed",
+        request: { id: expect.any(Number) },
+      });
+      expect(screen.getByTestId(SHEET)).toBeOnTheScreen();
+
+      await user.press(screen.getByTestId("device-step-hidden"));
+
+      expect(shown.result.current).toEqual({ request: null, phase: "closed" });
+      expect(screen.queryByTestId(SHEET)).toBeNull();
+    });
+
+    it("should refuse a new request while the device shows the exit, and keep its executor", async () => {
+      const { open, user } = setup();
+      const answer = open();
+      await findDetails();
+      await user.press(await goToConfirmation(user, "Deactivate"));
+      await screen.findByRole("button", { name: "Sign on device" });
+
+      await expect(open()).rejects.toMatchObject({ name: "StakePositionBusy" });
+
+      expect(await isPending(answer)).toBe(true);
+      expect(isDeviceStepOpen()).toBe(true);
+      expect(screen.getByRole("button", { name: "Sign on device" })).toBeVisible();
+    });
+
+    it.each([
+      ["refusing on the device", "Refuse on device"],
+      ["a device error", "Fail on device"],
+    ])(
+      "should keep the device step after %s, for its retry, and the request locked, without logging it",
+      async (_case, outcome) => {
+        const critical = jest.spyOn(logger, "critical");
+        suiteSpies.push(critical);
+        const { open, user } = setup();
+        const answer = open();
+        await findDetails();
+        await user.press(await goToConfirmation(user, "Deactivate"));
+
+        await user.press(await screen.findByRole("button", { name: outcome }));
+
+        expect(isDeviceStepOpen()).toBe(true);
+        expect(isSheetOpen()).toBe(false);
+        expect(screen.queryByTestId("stake-position-failure")).toBeNull();
+        expect(critical).not.toHaveBeenCalled();
+        await expect(open()).rejects.toMatchObject({ name: "StakePositionBusy" });
+        expect(await isPending(answer)).toBe(true);
+        await user.press(screen.getByRole("button", { name: "Sign on device" }));
+
+        await expect(answer).resolves.toEqual({ action: "deactivate" });
+      },
+    );
+
+    it("should answer null when the user leaves the device step after a device error", async () => {
+      const { open, user } = setup();
+      const answer = open();
+      await findDetails();
+      await user.press(await goToConfirmation(user, "Deactivate"));
+      await user.press(await screen.findByRole("button", { name: "Fail on device" }));
+
+      await user.press(screen.getByRole("button", { name: "Leave the device step" }));
+
+      await expect(answer).resolves.toEqual({ action: null });
+      expect(isDeviceStepOpen()).toBe(false);
+      expect(isSheetOpen()).toBe(false);
+      expect(mockBroadcast).not.toHaveBeenCalled();
+    });
+
+    it("should answer null and take the device step down when the Earn player unmounts during it", async () => {
+      const { earnPlayer, open, user } = setup();
+      const answer = open();
+      await findDetails();
+      await user.press(await goToConfirmation(user, "Deactivate"));
+      await screen.findByRole("button", { name: "Sign on device" });
+
+      act(() => earnPlayer.unmount());
+
+      await expect(answer).resolves.toEqual({ action: null });
+      expect(isDeviceStepOpen()).toBe(false);
+      expect(isSheetOpen()).toBe(false);
+      expect(mockBroadcast).not.toHaveBeenCalled();
+    });
+
+    it("should offer to reconnect, then to sign, when the device disconnects before the signature", async () => {
+      const { open, user } = setup();
+      const answer = open();
+      await findDetails();
+      await user.press(await goToConfirmation(user, "Deactivate"));
+      await screen.findByRole("button", { name: "Sign on device" });
+
+      await user.press(screen.getByTestId("device-step-disconnect"));
+
+      expect(isDeviceStepOpen()).toBe(true);
+      expect(screen.queryByRole("button", { name: "Sign on device" })).toBeNull();
+      await user.press(screen.getByRole("button", { name: "Reconnect the device" }));
+      await user.press(await screen.findByRole("button", { name: "Sign on device" }));
+      await expect(answer).resolves.toEqual({ action: "deactivate" });
+    });
+
+    it("should show the processing in the sheet, and keep the request locked, while the signed transaction is broadcast", async () => {
       const broadcast = createDeferred<Operation>();
       mockBroadcast.mockReturnValueOnce(broadcast.promise);
       const { open, user } = setup();
@@ -1180,10 +1403,60 @@ describe("StakePosition", () => {
 
       await signOnDevice(user);
 
-      expect(isDeviceStepOpen()).toBe(true);
-      expect(isSheetOpen()).toBe(false);
+      expect(isDeviceStepOpen()).toBe(false);
+      expect(isSheetOpen()).toBe(true);
+      const processing = screen.getByTestId("stake-position-broadcasting");
+      expect(within(processing).getByText("Deactivate transaction in progress")).toBeVisible();
+      expect(within(processing).getByText("This can take a few minutes.")).toBeVisible();
+      expect(screen.queryByTestId(`${SHEET}-header-close`)).toBeNull();
+      expect(screen.queryByTestId(`${SHEET}-backdrop`)).toBeNull();
       expect(await isPending(answer)).toBe(true);
       await expect(open()).rejects.toMatchObject({ name: "StakePositionBusy" });
+      expect(syncSkipPriority()).toBe(100);
+
+      broadcast.resolve(mockBroadcast.mock.calls[0][0].operation);
+
+      await expect(answer).resolves.toEqual({ action: "deactivate" });
+      await screen.findByTestId("stake-position-success");
+      expect(syncSkipPriority()).toBe(-1);
+    });
+
+    it("should not offer to sign again when the device disconnects once the signature is handed over", async () => {
+      const broadcast = createDeferred<Operation>();
+      mockBroadcast.mockReturnValueOnce(broadcast.promise);
+      const { open, user } = setup();
+      void open();
+      await findDetails();
+      await signOnDevice(user);
+
+      await user.press(screen.getByTestId("device-step-disconnect"));
+
+      expect(isDeviceStepOpen()).toBe(false);
+      expect(screen.queryByRole("button", { name: "Reconnect the device" })).toBeNull();
+      expect(screen.queryByRole("button", { name: "Sign on device" })).toBeNull();
+      expect(screen.getByText("Deactivate transaction in progress")).toBeVisible();
+      expect(mockBroadcast).toHaveBeenCalledTimes(1);
+    });
+
+    it("should name the withdrawal in the processing of a withdrawal", async () => {
+      const broadcast = createDeferred<Operation>();
+      mockBroadcast.mockReturnValueOnce(broadcast.promise);
+      serveStakes(address => [
+        stakeRow(address, { status: "deactivated", stakedBalance: 1.5 * SOL }),
+      ]);
+      const { open, user } = setup({
+        account: solanaAccount({ delegations: [], unbondings: [deactivatedPosition()] }),
+      });
+      void open();
+      await findDetails();
+      await user.press(await goToConfirmation(user, "Withdraw"));
+
+      await user.press(await screen.findByRole("button", { name: "Sign on device" }));
+
+      expect(await screen.findByText("Withdraw transaction in progress")).toBeVisible();
+      expect(screen.queryByText("Deactivate transaction in progress")).toBeNull();
+      expect(isSheetOpen()).toBe(true);
+      expect(isDeviceStepOpen()).toBe(false);
     });
 
     it("should answer the action once broadcast, with the pending operation in the account, and show the result in the sheet", async () => {
@@ -1233,6 +1506,20 @@ describe("StakePosition", () => {
       expect(screen.getByTestId("stake-position-success")).toBeVisible();
     });
 
+    it("should keep the device step while the exit is still to sign, whatever its sheet reports", async () => {
+      const { open, user } = setup();
+      const answer = open();
+      await findDetails();
+      await user.press(await goToConfirmation(user, "Deactivate"));
+      await screen.findByRole("button", { name: "Sign on device" });
+
+      await user.press(screen.getByTestId("device-step-hidden"));
+
+      expect(isDeviceStepOpen()).toBe(true);
+      await user.press(screen.getByRole("button", { name: "Sign on device" }));
+      await expect(answer).resolves.toEqual({ action: "deactivate" });
+    });
+
     it("should read the backend fresh the next time the position opens after the transaction", async () => {
       const { open, user } = setup();
       void open();
@@ -1269,8 +1556,8 @@ describe("StakePosition", () => {
       );
     });
 
-    it("should close the result from its header and leave nothing shown", async () => {
-      const { open, user } = setup();
+    it("should close the result from its header and leave nothing shown once its sheet has hidden", async () => {
+      const { open, shown, user } = setup();
       void open();
       await findDetails();
       await signOnDevice(user);
@@ -1279,9 +1566,16 @@ describe("StakePosition", () => {
       await pressSheetControl(user, "header-close");
 
       expect(isSheetOpen()).toBe(false);
-      const shown = renderHook(() => useShownStakePosition());
-      expect(shown.result.current.phase).toBe("closed");
-      shown.unmount();
+      expect(shown.result.current).toMatchObject({
+        phase: "closed",
+        request: { id: expect.any(Number) },
+      });
+      expect(screen.getByTestId(SHEET)).toBeOnTheScreen();
+
+      await user.press(screen.getByTestId(`${SHEET}-hidden`));
+
+      expect(shown.result.current).toEqual({ request: null, phase: "closed" });
+      expect(screen.queryByTestId(SHEET)).toBeNull();
     });
 
     it("should report its pages and buttons, never the transaction", async () => {
@@ -1317,39 +1611,64 @@ describe("StakePosition", () => {
       );
     });
 
-    it("should show the failure in the sheet after a refusal on the device, and let the user try again, without logging it", async () => {
-      const critical = jest.spyOn(logger, "critical");
-      suiteSpies.push(critical);
-      const { open, user } = setup();
-      void open();
-      await findDetails();
-      await user.press(await goToConfirmation(user, "Deactivate"));
-
-      await user.press(await screen.findByRole("button", { name: "Refuse on device" }));
-
-      expect(await screen.findByTestId("stake-position-failure")).toBeVisible();
-      expect(screen.getByText("Transaction failed")).toBeVisible();
-      expect(isSheetOpen()).toBe(true);
-      expect(isDeviceStepOpen()).toBe(false);
-      await user.press(screen.getByRole("button", { name: "Try again" }));
-      expect(await screen.findByText("Deactivate your SOL")).toBeVisible();
-      expect(critical).not.toHaveBeenCalled();
-    });
-
-    it("should answer null when the user closes a failed transaction, and log the failure", async () => {
+    it("should show the failure in the sheet when the device step cannot start, and let the user try again", async () => {
       const critical = jest.spyOn(logger, "critical").mockImplementation(() => undefined);
       suiteSpies.push(critical);
+      const failure = new Error("No app for this currency");
+      jest.mocked(buildDeviceInitializationInput).mockRejectedValueOnce(failure);
       const { open, user } = setup();
       const answer = open();
       await findDetails();
       await user.press(await goToConfirmation(user, "Deactivate"));
 
-      await user.press(await screen.findByRole("button", { name: "Fail on device" }));
+      const result = await screen.findByTestId("stake-position-failure");
+
+      expect(within(result).getByText("Transaction failed")).toBeVisible();
+      expect(isSheetOpen()).toBe(true);
+      expect(isDeviceStepOpen()).toBe(false);
+      expect(critical).toHaveBeenCalledWith(failure);
+      await user.press(screen.getByRole("button", { name: "Try again" }));
+      expect(await screen.findByText("Deactivate your SOL")).toBeVisible();
+      await waitFor(() => expect(screen.getByRole("button", { name: "Deactivate" })).toBeEnabled());
+      await user.press(screen.getByRole("button", { name: "Deactivate" }));
+      await user.press(await screen.findByRole("button", { name: "Sign on device" }));
+      await expect(answer).resolves.toEqual({ action: "deactivate" });
+    });
+
+    it("should open a failure the user sees to a new request, since the device never showed the exit", async () => {
+      suiteSpies.push(jest.spyOn(logger, "critical").mockImplementation(() => undefined));
+      jest
+        .mocked(buildDeviceInitializationInput)
+        .mockRejectedValueOnce(new Error("No app for this currency"));
+      const { open, user } = setup();
+      const answer = open();
+      await findDetails();
+      await user.press(await goToConfirmation(user, "Deactivate"));
       await screen.findByTestId("stake-position-failure");
+      expect(await isPending(answer)).toBe(true);
+
+      const next = open();
+
+      await expect(answer).resolves.toEqual({ action: null });
+      await findDetails();
+      expect(await isPending(next)).toBe(true);
+    });
+
+    it("should answer null when the user closes the failure of a device step that could not start", async () => {
+      suiteSpies.push(jest.spyOn(logger, "critical").mockImplementation(() => undefined));
+      jest
+        .mocked(buildDeviceInitializationInput)
+        .mockRejectedValueOnce(new Error("No app for this currency"));
+      const { open, user } = setup();
+      const answer = open();
+      await findDetails();
+      await user.press(await goToConfirmation(user, "Deactivate"));
+      await screen.findByTestId("stake-position-failure");
+
       await pressSheetControl(user, "header-close");
 
       await expect(answer).resolves.toEqual({ action: null });
-      expect(critical).toHaveBeenCalledWith(mockDeviceError);
+      expect(isSheetOpen()).toBe(false);
     });
 
     it("should warn, and let the user close or try again, when a signed transaction fails to broadcast", async () => {

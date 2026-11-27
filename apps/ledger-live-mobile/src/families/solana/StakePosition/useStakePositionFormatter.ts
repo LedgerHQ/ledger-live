@@ -12,7 +12,10 @@ import { useSelector } from "~/context/hooks";
 import { useLocale } from "~/context/Locale";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 
-/** The account's unit, the locale, the counter value and discreet mode, for the package's figures. */
+/**
+ * The account's unit, the locale, the counter value and discreet mode, for the package's figures.
+ * A rate keeps two decimals, as on the Earn dashboard.
+ */
 export function useStakePositionFormatter(account: Account): StakePositionFormatter {
   const unit = useAccountUnit(account);
   const { locale } = useLocale();
@@ -30,6 +33,7 @@ export function useStakePositionFormatter(account: Account): StakePositionFormat
       formatCurrencyUnitFragment(fiatUnit, new BigNumber(value), { locale, showCode: true });
     const percentFormat = new Intl.NumberFormat(locale, {
       style: "percent",
+      minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
 
