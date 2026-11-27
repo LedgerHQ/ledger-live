@@ -31,8 +31,9 @@ export const PROBLEMS = {
 };
 
 const SOURCE = /\.[cm]?[jt]sx?$/;
-// Matched on the whole text, not on parsed comments: a string spelling a directive is rare enough.
-const LEGACY_UI_DISABLE = /\b(?:eslint|oxlint)-disable(?:-next-line|-line)?\b[^\n]*?\blegacy-ui\//g;
+// Comment-shaped spans of the raw text, not parsed comments: a string spelling one is rare enough.
+const COMMENT = /\/\/[^\n]*|\/\*[\s\S]*?\*\//g;
+const DISABLE_DIRECTIVE = /^(?:\/\/|\/\*)\s*(?:eslint|oxlint)-disable(?:-next-line|-line)?\b/;
 
 const require = createRequire(import.meta.url);
 /** @type {typeof import("typescript")} */
@@ -196,7 +197,8 @@ function inlineDisables(repoRoot, appDirs) {
     for (const file of sourceFiles(root)) {
       const text = fs.readFileSync(file, "utf8");
       if (!text.includes("legacy-ui/")) continue;
-      for (const match of text.matchAll(LEGACY_UI_DISABLE)) {
+      for (const match of text.matchAll(COMMENT)) {
+        if (!DISABLE_DIRECTIVE.test(match[0]) || !match[0].includes("legacy-ui/")) continue;
         const line = text.slice(0, match.index).split("\n").length;
         problems.push(`${repoPath(repoRoot, file)}:${line}: ${PROBLEMS.inlineDisable()}`);
       }
