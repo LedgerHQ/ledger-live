@@ -76,6 +76,7 @@ describe("Cardano negative cases (Yaci devnet)", () => {
           maxFeesWarning: 0,
           maxFeesError: 0,
           testnet: true,
+          keychainObservableRange: 20,
           ...MOCK_ENDPOINTS,
         },
       },

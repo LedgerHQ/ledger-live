@@ -62,6 +62,7 @@ export const scenarioCardano: Scenario<GenericTransaction, Account> = {
           maxFeesWarning: 0,
           maxFeesError: 0,
           testnet: false,
+          keychainObservableRange: 20,
           ...MOCK_ENDPOINTS,
         },
       },

@@ -1,3 +1,4 @@
+import { getSyncHash } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   AccountShapeInfo,
@@ -181,6 +182,109 @@ describe("makeGetAccountShape", () => {
       const result = await shape(accountShapeInfo, { paginationConfig: {} });
       // spendable balance = 5 (utxo), rewards should be excluded
       expect(result.spendableBalance).toEqual(new BigNumber(5));
+    });
+  });
+
+  describe("keychainObservableRange change", () => {
+    const syncedBlockHeight = 1000;
+    const stableUtxo = {
+      hash: "stableTx",
+      index: 0,
+      address: "addr",
+      amount: new BigNumber(3),
+      tokens: [],
+      paymentCredential: { key: "key0", path: { index: 0 } as BipPath },
+    };
+    const olderPaymentBeyondPreviousRange = {
+      hash: "olderTx",
+      fees: "0",
+      timestamp: new Date(),
+      blockHeight: 500,
+      inputs: [],
+      outputs: [{ address: "addr", value: "7", tokens: [], paymentKey: "key25" }],
+      certificate: { stakeRegistrations: [], stakeDeRegistrations: [], stakeDelegations: [] },
+    } as unknown as APITransaction;
+    let defaultRangeSyncHash: string;
+
+    beforeAll(async () => {
+      setCryptoAssetsStore({
+        findTokenById: async () => undefined,
+        findTokenByAddressInCurrency: async () => undefined,
+        getTokensSyncHash: async () => "tokens_hash",
+      });
+      defaultRangeSyncHash = await getSyncHash("cardano", []);
+    });
+
+    afterAll(() => {
+      coinConfig.setCoinConfig(currencyId =>
+        currencyId === "cardano_testnet" ? cardanoTestnetCoinConfig : cardanoCoinConfig,
+      );
+    });
+
+    beforeEach(() => {
+      accountShapeInfo = {
+        ...accountShapeInfo,
+        initialAccount: {
+          syncHash: defaultRangeSyncHash,
+          operations: [
+            { hash: "latestTx", blockHeight: syncedBlockHeight },
+            { hash: "stableTx", blockHeight: 800 },
+          ],
+          cardanoResources: { utxos: [stableUtxo] },
+        } as unknown as CardanoAccount,
+      };
+      getTransactionsMock.mockResolvedValue({
+        blockHeight: syncedBlockHeight + 1,
+        transactions: [olderPaymentBeyondPreviousRange],
+        externalCredentials: [
+          { isUsed: true, key: "key0", path: { index: 0 } as BipPath },
+          { isUsed: true, key: "key25", path: { index: 25 } as BipPath },
+          { isUsed: false, key: "", path: { index: 26 } as BipPath },
+        ],
+        internalCredentials: [],
+      });
+      getDelegationInfoMock.mockResolvedValue({ rewards: new BigNumber(0) } as CardanoDelegation);
+    });
+
+    it("resyncs from genesis and discovers an older payment beyond the previous range when the range increases", async () => {
+      const increasedRangeConfig = { ...cardanoCoinConfig, keychainObservableRange: 30 };
+      coinConfig.setCoinConfig(() => increasedRangeConfig);
+
+      const result = await shape(accountShapeInfo, {
+        blacklistedTokenIds: [],
+        paginationConfig: {},
+      });
+
+      expect(getTransactionsMock).toHaveBeenCalledWith(
+        increasedRangeConfig,
+        "publicKeyHexchainCodeHex",
+        0,
+        accountShapeInfo.initialAccount,
+        0,
+      );
+      expect(result.syncHash).toEqual(`${defaultRangeSyncHash}:range=30`);
+      expect(result.cardanoResources?.utxos.map(u => u.hash)).toEqual(["olderTx"]);
+      expect(result.balance).toEqual(new BigNumber(7));
+    });
+
+    it("keeps the incremental cursor and the stable utxos when the range stays the default one", async () => {
+      coinConfig.setCoinConfig(() => cardanoCoinConfig);
+
+      const result = await shape(accountShapeInfo, {
+        blacklistedTokenIds: [],
+        paginationConfig: {},
+      });
+
+      expect(getTransactionsMock).toHaveBeenCalledWith(
+        cardanoCoinConfig,
+        "publicKeyHexchainCodeHex",
+        0,
+        accountShapeInfo.initialAccount,
+        syncedBlockHeight + 1 - 90,
+      );
+      expect(result.syncHash).toEqual(defaultRangeSyncHash);
+      expect(result.cardanoResources?.utxos.map(u => u.hash)).toEqual(["stableTx", "olderTx"]);
+      expect(result.balance).toEqual(new BigNumber(10));
     });
   });
 

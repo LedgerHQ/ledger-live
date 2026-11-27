@@ -24,9 +24,8 @@ import type {
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import type { Resolver } from "../../hw/getAddress/types";
 import signerSerializer from "./signerSerializer";
-import { getCurrencyConfiguration } from "../../config";
-import { CardanoCoinConfig } from "@ledgerhq/coin-cardano/config";
 import { createDeriveAccountDescriptor } from "./deriveAccountDescriptor";
+import { getCardanoCoinConfig } from "./config";
 
 function findNetwork(networkParams: CardanoLikeNetworkParameters) {
   return networkParams.networkId === Networks.Mainnet.networkId
@@ -86,7 +85,7 @@ const createSigner: CreateSigner<CardanoSigner> = (transport: Transport) => {
 
 const getCurrencyConfig = (currencyId?: string) => {
   invariant(currencyId, "cardano: currencyId is required in getCurrencyConfig");
-  return getCurrencyConfiguration<CardanoCoinConfig>(currencyId);
+  return getCardanoCoinConfig(currencyId);
 };
 
 const bridge: Bridge<Transaction, CardanoAccount, TransactionStatus> = createBridges(

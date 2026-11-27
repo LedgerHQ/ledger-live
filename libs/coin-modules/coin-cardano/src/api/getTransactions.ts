@@ -1,8 +1,7 @@
-import { getEnv } from "@ledgerhq/live-env";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
 import chunk from "lodash/chunk";
 import range from "lodash/range";
-import type { CardanoCoinConfig } from "../config";
+import { type CardanoCoinConfig, getKeychainObservableRange } from "../config";
 import { getBipPath, getCredentialKey, getExtendedPublicKeyFromHex } from "../logic";
 import { CardanoAccount, PaymentChain, PaymentCredential } from "../types";
 import * as ApiTypes from "./api-types";
@@ -15,13 +14,12 @@ async function getSyncedTransactionsByChain(
   chainType: PaymentChain,
   blockHeight: number,
   initialPaymentCredentials: Array<PaymentCredential>,
+  keychainObservableRange: number,
 ): Promise<{
   transactions: Array<ApiTypes.APITransaction>;
   latestBlockHeight: number;
   paymentCredentials: Array<PaymentCredential>;
 }> {
-  const keyChainRange = getEnv("KEYCHAIN_OBSERVABLE_RANGE") || 20;
-
   // credentialsMap for efficient use
   const initialPaymentCredentialMap: Record<string, PaymentCredential> = {};
   let maxUsedKeyIndex = -1;
@@ -35,7 +33,7 @@ async function getSyncedTransactionsByChain(
 
   // fetch transactions for existing keys
   const trxsRes = await Promise.all(
-    chunk(Object.keys(initialPaymentCredentialMap), keyChainRange).map(keys =>
+    chunk(Object.keys(initialPaymentCredentialMap), keychainObservableRange).map(keys =>
       getAllTransactionsByKeys(config, keys, blockHeight),
     ),
   );
@@ -49,8 +47,8 @@ async function getSyncedTransactionsByChain(
   let lastSyncedKeyIndex = initialPaymentCredentials.length
     ? initialPaymentCredentials[initialPaymentCredentials.length - 1].path.index
     : -1;
-  let syncToKeyIndex = maxUsedKeyIndex + keyChainRange;
-  while (syncToKeyIndex !== lastSyncedKeyIndex) {
+  let syncToKeyIndex = maxUsedKeyIndex + keychainObservableRange;
+  while (syncToKeyIndex > lastSyncedKeyIndex) {
     const currentPaymentKeysMap: Record<string, PaymentCredential> = {};
     range(lastSyncedKeyIndex + 1, syncToKeyIndex + 1, 1).forEach(keyIndex => {
       const keyPath = getCredentialKey(
@@ -81,12 +79,12 @@ async function getSyncedTransactionsByChain(
       (maxIndexA, { inputs, outputs }) =>
         [...inputs, ...outputs].reduce(
           (maxIndexB, io) =>
-            Math.max(newPaymentCredentialsMap[io.paymentKey]?.path.index || -1, maxIndexB),
+            Math.max(newPaymentCredentialsMap[io.paymentKey]?.path.index ?? -1, maxIndexB),
           maxIndexA,
         ),
       maxUsedKeyIndex,
     );
-    syncToKeyIndex = maxUsedKeyIndex + keyChainRange;
+    syncToKeyIndex = maxUsedKeyIndex + keychainObservableRange;
   }
 
   const availablePaymentCredentialsMap = {
@@ -126,6 +124,7 @@ export async function getTransactions(
   const accountPubKey = getExtendedPublicKeyFromHex(xpub);
   const oldExternalCredentials = initialAccount?.cardanoResources?.externalCredentials || [];
   const oldInternalCredentials = initialAccount?.cardanoResources?.internalCredentials || [];
+  const keychainObservableRange = getKeychainObservableRange(config);
 
   const [
     {
@@ -146,6 +145,7 @@ export async function getTransactions(
       PaymentChain.external,
       blockHeight,
       oldExternalCredentials,
+      keychainObservableRange,
     ),
     getSyncedTransactionsByChain(
       config,
@@ -154,6 +154,7 @@ export async function getTransactions(
       PaymentChain.internal,
       blockHeight,
       oldInternalCredentials,
+      keychainObservableRange,
     ),
   ]);
 

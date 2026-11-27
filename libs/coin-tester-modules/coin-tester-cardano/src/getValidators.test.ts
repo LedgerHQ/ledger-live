@@ -10,6 +10,7 @@ const config: CardanoConfig = {
   maxFeesWarning: 0,
   maxFeesError: 0,
   testnet: true,
+  keychainObservableRange: 20,
   ...MOCK_ENDPOINTS,
 };
 // createApi() is context-driven (framework v6); the getValidators impl ignores the context, but the

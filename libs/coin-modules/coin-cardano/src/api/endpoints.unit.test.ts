@@ -68,6 +68,13 @@ describe("cardanoDefaults", () => {
     },
   );
 
+  it.each(Object.entries(cardanoDefaults))(
+    "gives %s the BIP44 gap limit as keychain observable range",
+    (_currencyId, defaults) => {
+      expect(defaults.keychainObservableRange).toBe(20);
+    },
+  );
+
   it("points the testnet at other endpoints than the mainnet", () => {
     expect(cardanoDefaults.cardano_testnet.api.url).not.toBe(cardanoDefaults.cardano.api.url);
     expect(cardanoDefaults.cardano_testnet.epochParams.url).not.toBe(
