@@ -2,13 +2,14 @@ import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanc
 import * as sanction from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import coinConfig, { CardanoCoinConfig } from "../config";
-import { CardanoMemoExceededSizeError } from "../errors";
+import type { CardanoCoinConfig } from "../config";
+import { CardanoInvalidConfigError, CardanoMemoExceededSizeError } from "../errors";
 import { getCardanoAccountFixture } from "../fixtures/accounts";
+import { cardanoCoinConfig, createMockContext } from "../fixtures/config";
 import { getProtocolParamsFixture } from "../fixtures/protocolParams";
 import * as logicValidateMemo from "../logic/validateMemo";
 import { CardanoAccount, CardanoOutput, Transaction } from "../types";
-import { getTransactionStatus } from "./getTransactionStatus";
+import { buildGetTransactionStatus } from "./getTransactionStatus";
 import * as handler from "./handler";
 
 jest.mock("../logic/validateMemo");
@@ -25,13 +26,13 @@ describe("getTransactionStatus", () => {
   const spiedGetTransactionStatusByTransactionMode =
     handler.getTransactionStatusByTransactionMode as jest.Mock;
   const spiedIsAddressSanctioned = jest.spyOn(sanction, "isAddressSanctioned");
-  const spiedGetCoinConfig = jest.spyOn(coinConfig, "getCoinConfig");
+  let config: CardanoCoinConfig;
+  const getTransactionStatus = buildGetTransactionStatus(createMockContext(() => config));
 
   beforeEach(() => {
     spiedValidateMemo.mockClear();
     spiedGetTransactionStatusByTransactionMode.mockClear();
     spiedIsAddressSanctioned.mockClear();
-    spiedGetCoinConfig.mockClear();
 
     spiedValidateMemo.mockReturnValue(true);
     spiedIsAddressSanctioned.mockResolvedValue(false);
@@ -42,11 +43,7 @@ describe("getTransactionStatus", () => {
       totalSpent: BigNumber(0),
       estimatedFees: BigNumber(0),
     });
-    spiedGetCoinConfig.mockReturnValue({
-      maxFeesWarning: BigNumber(0),
-      maxFeesError: BigNumber(0),
-      testnet: false,
-    } as unknown as CardanoCoinConfig);
+    config = { ...cardanoCoinConfig, maxFeesWarning: 0, maxFeesError: 0 };
   });
 
   it("should return not enough funds error for staking flows when there are no utxos", async () => {
@@ -82,10 +79,7 @@ describe("getTransactionStatus", () => {
     spiedGetTransactionStatusByTransactionMode.mockImplementation(
       jest.requireActual("./handler").getTransactionStatusByTransactionMode,
     );
-    spiedGetCoinConfig.mockReturnValue({
-      maxFeesWarning: BigNumber(5e6),
-      maxFeesError: BigNumber(10e6),
-    } as unknown as CardanoCoinConfig);
+    config = { ...cardanoCoinConfig, maxFeesWarning: 5e6, maxFeesError: 10e6 };
     const account = getCardanoAccountFixture({
       delegation: { dRepHex: "drepHex", rewards: BigNumber(17.4e6) },
       utxos: [],
@@ -106,6 +100,57 @@ describe("getTransactionStatus", () => {
     });
 
     expect(status.errors.amount?.name).toBe("NotEnoughBalance");
+  });
+
+  describe("fee thresholds", () => {
+    const account = getCardanoAccountFixture({ utxos: [{} as CardanoOutput] });
+    const transaction = { mode: "send" } as Transaction;
+    const statusWithFees = (fees: number) => ({
+      errors: {},
+      warnings: {},
+      amount: BigNumber(0),
+      totalSpent: BigNumber(0),
+      estimatedFees: BigNumber(fees),
+    });
+    const thresholds = { ...cardanoCoinConfig, maxFeesWarning: 5e6, maxFeesError: 10e6 };
+
+    it("warns and fails on the thresholds of the account's currency config", async () => {
+      const resolve = jest.fn(() => thresholds);
+      const getStatus = buildGetTransactionStatus(createMockContext(resolve));
+
+      spiedGetTransactionStatusByTransactionMode.mockResolvedValueOnce(statusWithFees(6e6));
+      const warned = await getStatus(account, transaction);
+      expect(warned.warnings.feeTooHigh?.name).toBe("CardanoFeeHigh");
+      expect(resolve).toHaveBeenCalledWith(account.currency.id);
+
+      spiedGetTransactionStatusByTransactionMode.mockResolvedValueOnce(statusWithFees(11e6));
+      await expect(getStatus(account, transaction)).rejects.toThrow("CardanoFeeTooHigh");
+    });
+
+    it("resolves the config once and hands the mode handler a context pinned to it", async () => {
+      const resolve = jest
+        .fn<CardanoCoinConfig, [string?]>()
+        .mockReturnValueOnce(thresholds)
+        .mockReturnValue({ ...thresholds, maxFeesWarning: 1, maxFeesError: 1 });
+      const getStatus = buildGetTransactionStatus(createMockContext(resolve));
+      spiedGetTransactionStatusByTransactionMode.mockResolvedValueOnce(statusWithFees(2));
+
+      const status = await getStatus(account, transaction);
+
+      expect(status.warnings).toEqual({});
+      expect(resolve).toHaveBeenCalledTimes(1);
+      const [pinned] = spiedGetTransactionStatusByTransactionMode.mock.calls[0];
+      await expect(pinned.config("cardano_testnet")).resolves.toBe(thresholds);
+    });
+
+    it("rejects a warning threshold above the error threshold before building the status", async () => {
+      const getStatus = buildGetTransactionStatus(
+        createMockContext(() => ({ ...thresholds, maxFeesWarning: 11e6 })),
+      );
+
+      await expect(getStatus(account, transaction)).rejects.toThrow(CardanoInvalidConfigError);
+      expect(spiedGetTransactionStatusByTransactionMode).not.toHaveBeenCalled();
+    });
   });
 
   it("should return as sender error only sanctioned utxo addresses", async () => {

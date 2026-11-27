@@ -4,8 +4,8 @@ import { useTranslation } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import type { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
-import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/staking";
-import { Currency } from "@domain/entity-currency";
+import { getLedgerPoolIds } from "@ledgerhq/live-common/families/cardano/staking";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Unit } from "@domain/entity-currency-unit";
 import CounterValue from "~/components/CounterValue";
 import ArrowRight from "~/icons/ArrowRight";
@@ -17,7 +17,7 @@ import BigNumber from "bignumber.js";
 type Props = {
   balance: BigNumber;
   delegation: CardanoDelegation;
-  currency: Currency;
+  currency: CryptoCurrency;
   unit: Unit;
   onPress: (delegation: CardanoDelegation) => void;
   isLast?: boolean;
@@ -47,7 +47,7 @@ export default function DelegationRow({
       <View style={[styles.icon]}>
         <PoolImage
           size={42}
-          isLedger={LEDGER_POOL_IDS.includes(delegation?.poolId as string)}
+          isLedger={getLedgerPoolIds(currency).includes(delegation?.poolId as string)}
           name={delegation?.name ?? delegation.poolId ?? ""}
         />
       </View>

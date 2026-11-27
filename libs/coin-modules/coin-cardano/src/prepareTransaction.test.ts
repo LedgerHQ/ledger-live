@@ -1,8 +1,13 @@
 import BigNumber from "bignumber.js";
 import { getCardanoAccountFixture } from "./fixtures/accounts";
 import { getProtocolParamsFixture } from "./fixtures/protocolParams";
-import { prepareTransaction } from "./prepareTransaction";
+import { fetchNetworkInfo } from "./api/getNetworkInfo";
+import { cardanoCoinConfig, cardanoTestnetCoinConfig, createMockContext } from "./fixtures/config";
+import { buildPrepareTransaction } from "./prepareTransaction";
 import type { Transaction } from "./types";
+
+jest.mock("./api/getNetworkInfo");
+const mockFetchNetworkInfo = jest.mocked(fetchNetworkInfo);
 
 // Passing protocolParams on the transaction makes prepareTransaction skip its network fetch.
 const baseTransaction = (): Transaction => ({
@@ -16,6 +21,7 @@ const baseTransaction = (): Transaction => ({
 });
 
 describe("prepareTransaction", () => {
+  const prepareTransaction = buildPrepareTransaction(createMockContext());
   const buildFundedAccount = () => {
     const account = getCardanoAccountFixture({ delegation: undefined });
     account.balance = new BigNumber(100e6);
@@ -23,6 +29,19 @@ describe("prepareTransaction", () => {
     account.cardanoResources.protocolParams = getProtocolParamsFixture();
     return account;
   };
+
+  it.each([
+    ["cardano", cardanoCoinConfig],
+    ["cardano_testnet", cardanoTestnetCoinConfig],
+  ])("reads the protocol params from the %s config at call time", async (id, config) => {
+    mockFetchNetworkInfo.mockResolvedValue({ protocolParams: getProtocolParamsFixture() });
+    const account = buildFundedAccount();
+    account.currency = { ...account.currency, id };
+
+    await prepareTransaction(account, { ...baseTransaction(), protocolParams: undefined });
+
+    expect(mockFetchNetworkInfo).toHaveBeenLastCalledWith(config);
+  });
 
   it("loads the fees and the amount of a send", async () => {
     const prepared = await prepareTransaction(buildFundedAccount(), {

@@ -4,21 +4,26 @@ import { getProtocolParamsFixture } from "../fixtures/protocolParams";
 import { getCardanoAccountFixture } from "../fixtures/accounts";
 import { buildTransaction } from "../buildTransaction";
 import { CardanoMinAmountError } from "../errors";
-import { estimateMaxSpendable } from "../estimateMaxSpendable";
+import { createMockContext } from "../fixtures/config";
 import type { Transaction } from "../types";
 import { getSendTransactionStatus } from "./send";
 
 jest.mock("../buildTransaction", () => ({
   buildTransaction: jest.fn(),
 }));
+const mockEstimateMaxSpendable = jest.fn();
 jest.mock("../estimateMaxSpendable", () => ({
-  estimateMaxSpendable: jest.fn(),
+  buildEstimateMaxSpendable: () => mockEstimateMaxSpendable,
 }));
 
 const mockedBuildTransaction = jest.mocked(buildTransaction);
-const mockedEstimateMaxSpendable = jest.mocked(estimateMaxSpendable);
 
 const FEES = new BigNumber(170_000);
+
+const context = createMockContext();
+type Args = Parameters<typeof getSendTransactionStatus>;
+const sendStatus = (account: Args[1], transaction: Args[2]) =>
+  getSendTransactionStatus(context, account, transaction);
 
 const buildTransactionInput = (): Transaction => ({
   family: "cardano",
@@ -36,7 +41,7 @@ describe("getSendTransactionStatus", () => {
 
   beforeEach(() => {
     mockedBuildTransaction.mockReset();
-    mockedEstimateMaxSpendable.mockReset();
+    mockEstimateMaxSpendable.mockReset();
     account = getCardanoAccountFixture({});
     account.balance = new BigNumber(100e6);
     account.spendableBalance = new BigNumber(100e6);
@@ -50,7 +55,7 @@ describe("getSendTransactionStatus", () => {
   ])("maps the build error %p to an amount error instead of re-throwing", async message => {
     mockedBuildTransaction.mockRejectedValueOnce(new Error(message));
 
-    const status = await getSendTransactionStatus(account, buildTransactionInput());
+    const status = await sendStatus(account, buildTransactionInput());
 
     expect(status.errors.amount?.name).toBe("CardanoNotEnoughFunds");
   });
@@ -58,7 +63,7 @@ describe("getSendTransactionStatus", () => {
   it("maps a thrown CardanoMinAmountError to an amount error instead of re-throwing", async () => {
     mockedBuildTransaction.mockRejectedValueOnce(new CardanoMinAmountError("", { amount: "1" }));
 
-    const status = await getSendTransactionStatus(account, buildTransactionInput());
+    const status = await sendStatus(account, buildTransactionInput());
 
     expect(status.errors.amount?.name).toBe("CardanoNotEnoughFunds");
   });
@@ -73,7 +78,7 @@ describe("getSendTransactionStatus", () => {
       account.balance = new BigNumber(balance);
       account.spendableBalance = new BigNumber(spendableBalance);
 
-      const status = await getSendTransactionStatus(account, {
+      const status = await sendStatus(account, {
         ...buildTransactionInput(),
         amount: new BigNumber(amount),
       });
@@ -87,7 +92,7 @@ describe("getSendTransactionStatus", () => {
     account.balance = new BigNumber(110e6);
     account.spendableBalance = new BigNumber(100e6);
 
-    const status = await getSendTransactionStatus(account, {
+    const status = await sendStatus(account, {
       ...buildTransactionInput(),
       amount: new BigNumber(100e6).minus(FEES),
     });
@@ -97,9 +102,9 @@ describe("getSendTransactionStatus", () => {
 
   it("leaves a Send Max to the builder when the real fee exceeds the estimated one", async () => {
     mockedBuildTransaction.mockResolvedValueOnce({} as never);
-    mockedEstimateMaxSpendable.mockResolvedValueOnce(new BigNumber(100e6 - 168_000));
+    mockEstimateMaxSpendable.mockResolvedValueOnce(new BigNumber(100e6 - 168_000));
 
-    const status = await getSendTransactionStatus(account, {
+    const status = await sendStatus(account, {
       ...buildTransactionInput(),
       useAllAmount: true,
     });
@@ -110,7 +115,7 @@ describe("getSendTransactionStatus", () => {
   it("re-throws unexpected build errors", async () => {
     mockedBuildTransaction.mockRejectedValueOnce(new Error("Unexpected programming error"));
 
-    await expect(getSendTransactionStatus(account, buildTransactionInput())).rejects.toThrow(
+    await expect(sendStatus(account, buildTransactionInput())).rejects.toThrow(
       "Unexpected programming error",
     );
   });
@@ -124,7 +129,7 @@ describe("getSendTransactionStatus", () => {
       Buffer.from(account.cardanoResources.utxos[0].address, "hex"),
     ).getBech32();
 
-    const status = await getSendTransactionStatus(account, {
+    const status = await sendStatus(account, {
       ...buildTransactionInput(),
       recipient: ownAddress,
     });

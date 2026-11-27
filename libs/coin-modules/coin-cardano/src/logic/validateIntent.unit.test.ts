@@ -182,6 +182,16 @@ describe("validateIntent", () => {
     expect(res.warnings.feeTooHigh?.name).toBe("FeeTooHigh");
   });
 
+  it("reads the feeTooHigh ratio from the config", async () => {
+    const res = await validateIntent(
+      { ...config, fees: { tooHighRatio: 4 } },
+      intent({ amount: 5_000_000n }),
+      balances(10_000_000n),
+      { value: 1_000_000n },
+    );
+    expect(res.warnings.feeTooHigh).toBeUndefined();
+  });
+
   it("flags a native amount below the min-UTXO floor", async () => {
     const res = await validateIntent(config, intent({ amount: 100_000n }), balances(10_000_000n), {
       value: 200_000n,

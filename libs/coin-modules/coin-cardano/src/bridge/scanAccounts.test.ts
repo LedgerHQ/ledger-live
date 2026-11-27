@@ -8,7 +8,7 @@ import type { APITransaction } from "../api/api-types";
 import { getTransactions } from "../api/getTransactions";
 import { getDelegationInfo } from "../api/getDelegationInfo";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
-import { cardanoTestnetCoinConfig } from "../fixtures/config";
+import { cardanoTestnetCoinConfig, createMockContext } from "../fixtures/config";
 import { getDelegationFixture } from "../fixtures/delegation";
 import { getProtocolParamsFixture } from "../fixtures/protocolParams";
 import {
@@ -163,7 +163,11 @@ const signer: CardanoSigner = {
 const signerContext = ((_deviceId: string, fn: (signer: CardanoSigner) => unknown) =>
   fn(signer)) as unknown as SignerContext<CardanoSigner>;
 
-const bridges = () => createBridges(signerContext, () => cardanoTestnetCoinConfig);
+const bridges = () =>
+  createBridges(
+    signerContext,
+    createMockContext(() => cardanoTestnetCoinConfig),
+  );
 
 const serveChain = (fundedTransactions: APITransaction[] = [SEND_TX, RECEIVE_TX]) => {
   mockGetTransactions.mockImplementation(async (_config, xpub, _accountIndex, _initial, from) =>

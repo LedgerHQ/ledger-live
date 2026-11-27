@@ -1,6 +1,6 @@
 import { createApi } from "@ledgerhq/coin-cardano/api/index";
 import { type CardanoConfig } from "@ledgerhq/coin-cardano/config";
-import { MOCK_ENDPOINTS } from "./fixtures";
+import { MOCK_ENDPOINTS, TUNING } from "./fixtures";
 import { initYaciIndexer } from "./yaciIndexer";
 
 // getValidators reads /v1/pool/list + the epoch-params endpoint, neither of which Yaci provides — the
@@ -9,6 +9,7 @@ import { initYaciIndexer } from "./yaciIndexer";
 const config: CardanoConfig = {
   maxFeesWarning: 0,
   maxFeesError: 0,
+  ...TUNING,
   testnet: true,
   ...MOCK_ENDPOINTS,
 };

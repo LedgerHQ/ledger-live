@@ -6,13 +6,13 @@ import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "rea
 import { Trans, useTranslation } from "~/context/Locale";
 import { Animated, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import {
-  LEDGER_POOL_IDS,
   fetchPoolDetails,
+  getLedgerPoolIds,
   type APIGetPoolsDetail,
   type StakePool,
 } from "@ledgerhq/live-common/families/cardano/staking";
@@ -65,15 +65,19 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const [isFetchingPoolDetails, setIsFetchingPoolDetails] = useState(false);
   const [ledgerPools, setLedgerPools] = useState<Array<StakePool>>([]);
+  const ledgerPoolIds = useMemo(
+    () => getLedgerPoolIds(getMainAccount(account, parentAccount).currency),
+    [account, parentAccount],
+  );
 
   useEffect(() => {
-    if (LEDGER_POOL_IDS.includes(currentDelegation?.poolId ?? "")) {
+    if (ledgerPoolIds.includes(currentDelegation?.poolId ?? "")) {
       setIsFetchingPoolDetails(false);
       return;
     }
 
     if (account.type === "Account")
-      fetchPoolDetails(account.currency, LEDGER_POOL_IDS)
+      fetchPoolDetails(account.currency, [...ledgerPoolIds])
         .then((apiRes: APIGetPoolsDetail) => {
           setLedgerPools(apiRes.pools);
         })
@@ -193,6 +197,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
             onChangePool={onChangePool}
             isFetchingPoolDetails={isFetchingPoolDetails}
             chosenPool={chosenPool ?? undefined}
+            ledgerPoolIds={ledgerPoolIds}
             account={account}
             status={status}
             transaction={transaction}
@@ -350,6 +355,7 @@ const styles = StyleSheet.create({
 
 function SummaryWords({
   chosenPool,
+  ledgerPoolIds,
   account,
   currentDelegation,
   isFetchingPoolDetails,
@@ -358,6 +364,7 @@ function SummaryWords({
   transaction,
 }: {
   chosenPool?: StakePool;
+  ledgerPoolIds: readonly string[];
   account: AccountLike;
   currentDelegation?: CardanoDelegation;
   isFetchingPoolDetails: boolean;
@@ -429,8 +436,8 @@ function SummaryWords({
                 style={[styles.poolCircle, { borderColor: colors.primary, borderStyle: "solid" }]}
               >
                 <PoolImage
-                  size={LEDGER_POOL_IDS.includes(currentDelegation?.poolId) ? 40 : 50}
-                  isLedger={LEDGER_POOL_IDS.includes(currentDelegation?.poolId)}
+                  size={ledgerPoolIds.includes(currentDelegation?.poolId) ? 40 : 50}
+                  isLedger={ledgerPoolIds.includes(currentDelegation?.poolId)}
                   name={currentDelegation?.name ?? currentDelegation?.poolId}
                 />
               </Circle>
@@ -488,8 +495,8 @@ function SummaryWords({
                   >
                     {chosenPool ? (
                       <PoolImage
-                        size={LEDGER_POOL_IDS.includes(chosenPool?.poolId) ? 40 : 50}
-                        isLedger={LEDGER_POOL_IDS.includes(chosenPool?.poolId)}
+                        size={ledgerPoolIds.includes(chosenPool?.poolId) ? 40 : 50}
+                        isLedger={ledgerPoolIds.includes(chosenPool?.poolId)}
                         name={chosenPool?.name ?? chosenPool?.poolId}
                       />
                     ) : (

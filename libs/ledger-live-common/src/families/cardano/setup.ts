@@ -3,7 +3,6 @@
 import Ada, { Networks, AddressType } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
 import Transport from "@ledgerhq/hw-transport";
-import invariant from "invariant";
 import type { Bridge } from "@ledgerhq/types-live";
 import { createBridges } from "@ledgerhq/coin-cardano/bridge";
 import cardanoResolver from "@ledgerhq/coin-cardano/hw-getAddress";
@@ -24,8 +23,8 @@ import type {
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import type { Resolver } from "../../hw/getAddress/types";
 import signerSerializer from "./signerSerializer";
-import { getCurrencyConfiguration } from "../../config";
-import { CardanoCoinConfig } from "@ledgerhq/coin-cardano/config";
+import type { CardanoCoinConfig } from "@ledgerhq/coin-cardano/config";
+import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import { createDeriveAccountDescriptor } from "./deriveAccountDescriptor";
 
 function findNetwork(networkParams: CardanoLikeNetworkParameters) {
@@ -84,14 +83,9 @@ const createSigner: CreateSigner<CardanoSigner> = (transport: Transport) => {
   };
 };
 
-const getCurrencyConfig = (currencyId?: string) => {
-  invariant(currencyId, "cardano: currencyId is required in getCurrencyConfig");
-  return getCurrencyConfiguration<CardanoCoinConfig>(currencyId);
-};
-
 const bridge: Bridge<Transaction, CardanoAccount, TransactionStatus> = createBridges(
   executeWithSigner(createSigner),
-  getCurrencyConfig,
+  buildContext<CardanoCoinConfig>("cardano"),
 );
 
 const resolver: Resolver = createResolver(createSigner, cardanoResolver);

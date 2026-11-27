@@ -7,7 +7,7 @@ import type {
   CardanoAccount,
   CardanoDelegation,
 } from "@ledgerhq/live-common/families/cardano/types";
-import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/staking";
+import { getLedgerPoolIds } from "@ledgerhq/live-common/families/cardano/staking";
 import { getDefaultExplorerView, getStakePoolExplorer } from "@domain/entity-currency-crypto";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -243,7 +243,7 @@ function Delegations({ account }: Props) {
         account={account}
         ValidatorImage={({ size }) => (
           <PoolImage
-            isLedger={LEDGER_POOL_IDS.includes(delegation?.poolId as string)}
+            isLedger={getLedgerPoolIds(account.currency).includes(delegation?.poolId as string)}
             name={delegation?.name ?? delegation?.poolId ?? ""}
             size={size}
           />

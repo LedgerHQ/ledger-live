@@ -2,21 +2,17 @@ import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operat
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { submitTransaction } from "./api/submitTransaction";
 import { Transaction } from "./types";
-import coinConfig from "./config";
+import type { CardanoContext } from "./config";
 
-/**
- * Broadcast the signed transaction
- * @param {signature: string, operation: string} signedOperation
- */
-export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
-  signedOperation,
-  account,
-}) => {
-  const signedTx = signedOperation.signature;
-  const pendingTransaction = await submitTransaction({
-    transaction: signedTx,
-    config: coinConfig.getCoinConfig(account.currency.id),
-  });
+/** Builds the bridge `broadcast`, resolving the coin config from `context` per call. */
+export const buildBroadcast =
+  (context: CardanoContext): AccountBridge<Transaction>["broadcast"] =>
+  async ({ signedOperation, account }) => {
+    const signedTx = signedOperation.signature;
+    const pendingTransaction = await submitTransaction({
+      transaction: signedTx,
+      config: await context.config(account.currency.id),
+    });
 
-  return patchOperationWithHash(signedOperation.operation, pendingTransaction.hash);
-};
+    return patchOperationWithHash(signedOperation.operation, pendingTransaction.hash);
+  };

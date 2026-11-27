@@ -5,7 +5,7 @@ import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-co
 import type { Scenario } from "@ledgerhq/coin-tester/main";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { CARDANO, FRESH_ADDRESS_PATH, makeAccount, MOCK_ENDPOINTS } from "../fixtures";
+import { CARDANO, FRESH_ADDRESS_PATH, makeAccount, MOCK_ENDPOINTS, TUNING } from "../fixtures";
 import { getBridges } from "../helpers";
 import { fund, initMSW, resetLedger } from "../indexer";
 import { buildSigner } from "../signer";
@@ -61,6 +61,7 @@ export const scenarioCardano: Scenario<GenericTransaction, Account> = {
           unit: { name: "ada", code: "ADA", magnitude: 6 },
           maxFeesWarning: 0,
           maxFeesError: 0,
+          ...TUNING,
           testnet: false,
           ...MOCK_ENDPOINTS,
         },

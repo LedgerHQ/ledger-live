@@ -7,7 +7,13 @@ import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { TokenCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { CARDANO_TESTNET, FRESH_ADDRESS_PATH, makeAccount, MOCK_ENDPOINTS } from "../fixtures";
+import {
+  CARDANO_TESTNET,
+  FRESH_ADDRESS_PATH,
+  makeAccount,
+  MOCK_ENDPOINTS,
+  TUNING,
+} from "../fixtures";
 import { getBridges, TESTNET } from "../helpers";
 import { computePolicyId, mintToken } from "../mintToken";
 import { buildSigner } from "../signer";
@@ -45,6 +51,7 @@ export const scenarioCardanoTokenYaci: Scenario<GenericTransaction, Account> = {
           unit: { name: "ada", code: "tADA", magnitude: 6 },
           maxFeesWarning: 0,
           maxFeesError: 0,
+          ...TUNING,
           testnet: true,
           ...MOCK_ENDPOINTS,
         },

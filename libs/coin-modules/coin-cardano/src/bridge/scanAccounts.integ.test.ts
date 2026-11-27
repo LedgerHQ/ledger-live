@@ -5,7 +5,7 @@ import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { ScanAccountEvent } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { lastValueFrom, toArray } from "rxjs";
-import { cardanoTestnetCoinConfig } from "../fixtures/config";
+import { cardanoTestnetCoinConfig, createMockContext } from "../fixtures/config";
 import type { CardanoSigner } from "../signer";
 import { ACCOUNT_KEYS } from "../test/fixtures";
 import type { CardanoAccount } from "../types";
@@ -99,7 +99,10 @@ const signerContext = ((_deviceId: string, fn: (signer: CardanoSigner) => unknow
 
 const scan = async (): Promise<CardanoAccount[]> => {
   const events = await lastValueFrom(
-    createBridges(signerContext, () => cardanoTestnetCoinConfig)
+    createBridges(
+      signerContext,
+      createMockContext(() => cardanoTestnetCoinConfig),
+    )
       .currencyBridge.scanAccounts({
         currency: getCryptoCurrencyById("cardano_testnet"),
         deviceId: "device",

@@ -6,13 +6,12 @@ import {
   address as TyphonAddress,
   types as TyphonTypes,
 } from "@stricahq/typhonjs";
-import { broadcast } from "./broadcast";
-import coinConfig, { cardanoDefaults } from "./config";
+import { buildBroadcast } from "./broadcast";
+import { cardanoDefaults } from "./config";
+import { createMockContext } from "./fixtures/config";
 
 describe("Broadcast", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => cardanoDefaults.cardano);
-  });
+  const broadcast = buildBroadcast(createMockContext(() => cardanoDefaults.cardano));
   it("throws when broadcasting a transaction spending nonexistent inputs", async () => {
     const privKey = await Bip32PrivateKey.fromEntropy(randomBytes(64));
     const pubKeyBytes = privKey.toBip32PublicKey().toPublicKey().toBytes();

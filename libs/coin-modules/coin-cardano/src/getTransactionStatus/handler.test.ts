@@ -1,3 +1,4 @@
+import { createMockContext } from "../fixtures/config";
 import { CardanoAccount, Transaction } from "../types";
 import * as delegate from "./delegate";
 import { getTransactionStatusByTransactionMode } from "./handler";
@@ -14,15 +15,24 @@ describe("getTransactionStatusByMode on Cardano", () => {
   const undelegateMock = undelegate.getUndelegateTransactionStatus as jest.Mock;
 
   describe("should redirect to the correct mode handler", () => {
+    const account = {} as unknown as CardanoAccount;
+    const context = createMockContext();
+
+    it("for send, with the context", async () => {
+      const transaction = { mode: "send" } as unknown as Transaction;
+
+      await getTransactionStatusByTransactionMode(context, account, transaction);
+
+      expect(sendMock).toHaveBeenCalledWith(context, account, transaction);
+    });
+
     test.each([
-      ["send", sendMock],
       ["delegate", delegateMock],
       ["undelegate", undelegateMock],
     ])("for %s", async (mode, mock) => {
-      const account = {} as unknown as CardanoAccount;
       const transaction = { mode: mode } as unknown as Transaction;
 
-      await getTransactionStatusByTransactionMode(account, transaction);
+      await getTransactionStatusByTransactionMode(context, account, transaction);
 
       expect(mock).toHaveBeenCalledWith(account, transaction);
     });

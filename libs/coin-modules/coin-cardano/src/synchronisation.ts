@@ -44,10 +44,13 @@ import {
   ProtocolParams,
   StakeCredential,
 } from "./types";
-import coinConfig from "./config";
+import type { CardanoContext } from "./config";
 
 export const makeGetAccountShape =
-  (signerContext: SignerContext<CardanoSigner>): GetAccountShape<CardanoAccount> =>
+  (
+    signerContext: SignerContext<CardanoSigner>,
+    context: CardanoContext,
+  ): GetAccountShape<CardanoAccount> =>
   async (info, { blacklistedTokenIds }) => {
     const {
       currency,
@@ -97,7 +100,7 @@ export const makeGetAccountShape =
         ? lastBlockHeight - requiredConfirmations
         : 0;
 
-    const config = coinConfig.getCoinConfig(currency.id);
+    const config = await context.config(currency.id);
     const {
       transactions: newTransactions,
       blockHeight,

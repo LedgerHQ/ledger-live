@@ -12,13 +12,15 @@ import { decodeTokenAssetId, decodeTokenCurrencyId } from "../buildSubAccounts";
 import { buildTransaction } from "../buildTransaction";
 import { CARDANO_MAX_SUPPLY } from "../constants";
 import { CardanoMinAmountError, CardanoNotEnoughFunds } from "../errors";
-import { estimateMaxSpendable } from "../estimateMaxSpendable";
+import type { CardanoContext } from "../config";
+import { buildEstimateMaxSpendable } from "../estimateMaxSpendable";
 import { getPaymentCredentialKeyHash, isValidAddress } from "../logic";
 import { getNetworkParameters } from "../networks";
 import type { CardanoAccount, Token, Transaction, TransactionStatus } from "../types";
 import { isRecoverableBuildError } from "./buildErrors";
 
 export async function getSendTransactionStatus(
+  context: CardanoContext,
   account: CardanoAccount,
   transaction: Transaction,
 ): Promise<TransactionStatus> {
@@ -61,7 +63,7 @@ export async function getSendTransactionStatus(
   } else {
     // ADA transaction
     amount = transaction.useAllAmount
-      ? await estimateMaxSpendable({ account: account, transaction: transaction })
+      ? await buildEstimateMaxSpendable(context)({ account: account, transaction: transaction })
       : amount;
     totalSpent = amount.plus(estimatedFees);
   }

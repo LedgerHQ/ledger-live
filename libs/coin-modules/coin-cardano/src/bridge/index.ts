@@ -1,4 +1,3 @@
-import { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
@@ -9,15 +8,15 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { broadcast } from "../broadcast";
-import cardanoCoinConfig, { CardanoCoinConfig } from "../config";
+import { buildBroadcast } from "../broadcast";
+import type { CardanoContext } from "../config";
 import { CARDANO_DUMMY_ADDRESS } from "../constants";
 import { createTransaction } from "../createTransaction";
-import { estimateMaxSpendable } from "../estimateMaxSpendable";
-import { getTransactionStatus } from "../getTransactionStatus/getTransactionStatus";
+import { buildEstimateMaxSpendable } from "../estimateMaxSpendable";
+import { buildGetTransactionStatus } from "../getTransactionStatus/getTransactionStatus";
 import resolver from "../hw-getAddress";
 import { postSyncPatch } from "../postSyncPatch";
-import { prepareTransaction } from "../prepareTransaction";
+import { buildPrepareTransaction } from "../prepareTransaction";
 import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
 import { buildSignOperation } from "../signOperation";
 import { CardanoSigner } from "../signer";
@@ -25,10 +24,13 @@ import { makeGetAccountShape } from "../synchronisation";
 import type { CardanoAccount, Transaction, TransactionStatus } from "../types";
 import { validateAddress } from "../validateAddress";
 
-export function buildCurrencyBridge(signerContext: SignerContext<CardanoSigner>): CurrencyBridge {
+export function buildCurrencyBridge(
+  signerContext: SignerContext<CardanoSigner>,
+  context: CardanoContext,
+): CurrencyBridge {
   const getAddress = resolver(signerContext);
   const scanAccounts = makeScanAccounts({
-    getAccountShape: makeGetAccountShape(signerContext),
+    getAccountShape: makeGetAccountShape(signerContext, context),
     getAddressFn: getAddressWrapper(getAddress),
     postSync: postSyncPatch,
   });
@@ -40,9 +42,10 @@ export function buildCurrencyBridge(signerContext: SignerContext<CardanoSigner>)
 
 export function buildAccountBridge(
   signerContext: SignerContext<CardanoSigner>,
+  context: CardanoContext,
 ): AccountBridge<Transaction, CardanoAccount, TransactionStatus> {
   const sync = makeSync({
-    getAccountShape: makeGetAccountShape(signerContext),
+    getAccountShape: makeGetAccountShape(signerContext, context),
     postSync: postSyncPatch,
   });
 
@@ -51,18 +54,18 @@ export function buildAccountBridge(
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
 
   return {
-    estimateMaxSpendable,
+    estimateMaxSpendable: buildEstimateMaxSpendable(context),
     createTransaction,
     updateTransaction,
-    getTransactionStatus,
-    prepareTransaction,
+    getTransactionStatus: buildGetTransactionStatus(context),
+    prepareTransaction: buildPrepareTransaction(context),
     sync,
     receive,
     signOperation: buildSignOperation(signerContext),
     signRawOperation: () => {
       throw new Error("signRawOperation is not supported");
     },
-    broadcast,
+    broadcast: buildBroadcast(context),
     assignToAccountRaw,
     assignFromAccountRaw,
     getSerializedAddressParameters,
@@ -73,11 +76,10 @@ export function buildAccountBridge(
 
 export function createBridges(
   signerContext: SignerContext<CardanoSigner>,
-  coinConfig: CoinConfig<CardanoCoinConfig>,
+  context: CardanoContext,
 ) {
-  cardanoCoinConfig.setCoinConfig(coinConfig);
   return {
-    currencyBridge: buildCurrencyBridge(signerContext),
-    accountBridge: buildAccountBridge(signerContext),
+    currencyBridge: buildCurrencyBridge(signerContext, context),
+    accountBridge: buildAccountBridge(signerContext, context),
   };
 }

@@ -24,11 +24,9 @@ import { CARDANO_MAX_SUPPLY } from "../constants";
 import { CardanoMemoExceededSizeError, CardanoMinAmountError, ValAddressRequired } from "../errors";
 import { getPaymentCredentialKeyHash, isTestnet, isTokenAsset, isValidAddress } from "../logic";
 import { validateMemo } from "./validateMemo";
+import { getFeeTooHighRatio } from "../tuning";
 
 type Intent = TransactionIntent<StringMemo | MemoNotSupported>;
-
-// Fees are flagged "too high" once they exceed 1/RATIO of the sent amount (i.e. 10%).
-const FEE_TOO_HIGH_RATIO = 10n;
 
 /**
  * Validate a transfer intent (native ADA or a native token) and compute its amount / total
@@ -90,7 +88,7 @@ export async function validateIntent(
   // feeTooHigh compares the ADA fee to the ADA amount sent, so it only makes sense for native
   // transfers; a token `amount` is in token base units and is not comparable to a lovelace fee.
   if (!isTokenTransfer) {
-    checkFeeTooHigh(amount, estimatedFees, warnings);
+    checkFeeTooHigh(amount, estimatedFees, getFeeTooHighRatio(config), warnings);
   }
 
   // Token transfers spend tokens for `amount` and ADA only for fees; native transfers spend
@@ -222,9 +220,10 @@ function validateAmount(
 function checkFeeTooHigh(
   amount: bigint,
   estimatedFees: bigint,
+  ratio: bigint,
   warnings: Record<string, Error>,
 ): void {
-  if (amount > 0n && estimatedFees * FEE_TOO_HIGH_RATIO > amount) {
+  if (amount > 0n && estimatedFees * ratio > amount) {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 }
