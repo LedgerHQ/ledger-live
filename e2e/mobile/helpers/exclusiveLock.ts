@@ -14,7 +14,6 @@ import {
 import type { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { isAppBroadcastDisabled } from "@e2e/helpers/commonHelpers";
 import { SPEC_EXCLUSIVE_LOCK, type SpecExclusiveLock } from "@e2e/utils/lockDeferrals";
-import { isPaytabSpec, paytabCardSession } from "@e2e/utils/paytab";
 
 export const EXCLUSIVE_LOCK_ACQUIRE_HOOK_TIMEOUT = EXCLUSIVE_LOCK_ACQUIRE_TIMEOUT_MS + 2 * 60_000;
 export const EXCLUSIVE_LOCK_RELEASE_HOOK_TIMEOUT = EXCLUSIVE_LOCK_NESTED_DRAIN_MS + 60_000;
@@ -72,25 +71,11 @@ export function declareSharedResources(...resources: SharedResource[]): void {
   declaredResources.push(...resources);
 }
 
-/**
- * A Pay tab spec gets its card session before waiting for its locks, or right after trying them,
- * so a Baanx failure never holds them and a spec deferred for busy locks does not log in.
- */
-const resolvePaytabCardSession = async () => {
-  if (isPaytabSpec()) await paytabCardSession();
-};
-
 async function tryLockDeclaredTargets(): Promise<boolean> {
   const targets = targetsToLock();
   if (targets.length === 0 || lease) return true;
   const acquired = await tryAcquireExclusiveLock(targets, holderLabel(), lockOptions);
   if (!acquired) return false;
-  try {
-    await resolvePaytabCardSession();
-  } catch (error) {
-    await acquired.abandon();
-    throw error;
-  }
   lease = specLease(acquired);
   return true;
 }
@@ -98,7 +83,6 @@ async function tryLockDeclaredTargets(): Promise<boolean> {
 export async function lockDeclaredTargets(): Promise<void> {
   const targets = targetsToLock();
   if (targets.length === 0 || lease) return;
-  await resolvePaytabCardSession();
   const label = holderLabel();
   let acquired: AbandonableLease;
   try {

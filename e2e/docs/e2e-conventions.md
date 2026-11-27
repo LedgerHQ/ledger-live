@@ -110,10 +110,6 @@ It MUST declare the debited account, e.g. `accountToDebit` or `delegation.accoun
 
 See [Desktop](../desktop/docs/e2e-desktop-conventions.md#tests-that-broadcast-or-change-shared-state-must-lock-with-exclusivelockfor) and [Mobile](../mobile/docs/e2e-mobile-conventions.md#tests-that-broadcast-or-change-shared-state-must-declare-it-before-their-describe) for how each client declares them, and [Exclusive lock](exclusive-lock.md) for how the lock works and how to read its logs.
 
-### Paytab specs MUST live under paytab
-
-Paytab specs MUST live under the `paytab` directory so they automatically opt in to an injected Card session. Injection differs by client. See [Desktop](../desktop/README.md#pay-tab) and [Mobile](../mobile/README.md#pay-tab).
-
 ### Ambiguous parameters MUST use one options object
 
 A function or constructor MUST take a single options object instead of positional parameters when it has any of:

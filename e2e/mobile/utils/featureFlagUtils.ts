@@ -84,17 +84,6 @@ export const FF_CONTACTS_ENABLED = {
   },
 } satisfies PartialFeatures;
 
-export const FF_PAY_TAB = {
-  lwmPayTab: {
-    enabled: true,
-    params: {
-      card_native: true,
-      card_live_app: false,
-      card_disclaimer: false,
-    },
-  },
-} satisfies PartialFeatures;
-
 export const getMergedFeatureFlags = ({
   testFlags,
 }: { testFlags?: PartialFeatures } = {}): PartialFeatures => {

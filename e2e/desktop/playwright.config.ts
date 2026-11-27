@@ -26,7 +26,6 @@ const config: PlaywrightTestConfig = {
   workers: process.env.E2E_WORKERS ? Number(process.env.E2E_WORKERS) : "100%",
   reporter: process.env.CI
     ? [
-        ["./tests/reporters/cardSessionReporter.ts"],
         ["./tests/reporters/lockDeferralReporter.ts"],
         ["github"],
         ["list"],
@@ -49,7 +48,6 @@ const config: PlaywrightTestConfig = {
         ],
       ]
     : [
-        ["./tests/reporters/cardSessionReporter.ts"],
         ["./tests/reporters/lockDeferralReporter.ts"],
         ["allure-playwright", { detail: false, suiteTitle: false }],
       ],

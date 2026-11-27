@@ -227,18 +227,6 @@ export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
 } satisfies PartialFeatures;
 
-export const FF_LWD_PAY_TAB = {
-  lwdPayTab: {
-    enabled: true,
-    params: {
-      card_native: true,
-      card_live_app: false,
-      card_disclaimer: false,
-      legacyTopUp: false,
-    },
-  },
-} satisfies PartialFeatures;
-
 export const FF_LWD_CONTACTS_ENABLED = {
   lwdContacts: {
     enabled: true,
