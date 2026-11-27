@@ -4,9 +4,8 @@ import userEvent from "@testing-library/user-event";
 import { SettingsPortProvider } from "@features/flow-settings";
 import { createFakeAssetManagementPort } from "./__tests__/fakeAssetManagementPort";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
-import { AssetManagementView } from "./AssetManagementView";
+import { AssetManagement } from "./AssetManagement";
 import type { AssetManagementSettingsValues, HiddenTokenGroup } from "./types";
-import { useAssetManagementViewModel } from "./useAssetManagementViewModel";
 
 jest.mock("@shared/analytics-react", () => ({ Track: () => null, TrackScreen: () => null }));
 
@@ -21,10 +20,6 @@ const HIDDEN_TOKENS: readonly HiddenTokenGroup[] = [
   },
 ];
 
-function AssetManagementSection() {
-  return <AssetManagementView {...useAssetManagementViewModel({ testID: "settings-assets" })} />;
-}
-
 function renderSection(
   initial?: Partial<AssetManagementSettingsValues>,
   hiddenTokens?: readonly HiddenTokenGroup[],
@@ -33,7 +28,7 @@ function renderSection(
   render(
     <I18nWrapper>
       <SettingsPortProvider value={fake.port}>
-        <AssetManagementSection />
+        <AssetManagement testID="settings-assets" />
       </SettingsPortProvider>
     </I18nWrapper>,
   );
@@ -45,7 +40,7 @@ async function openHiddenTokens(user: ReturnType<typeof userEvent.setup>) {
   return screen.findByTestId("settings-asset-management-hidden-tokens");
 }
 
-describe("AssetManagementView (web)", () => {
+describe("AssetManagement (web)", () => {
   it("shows the three rows with their descriptions", () => {
     renderSection();
 
