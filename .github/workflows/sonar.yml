@@ -199,6 +199,6 @@ jobs:
           cat libs/coverage/sonar-executionTests-report.xml features/coverage/sonar-executionTests-report.xml shared/coverage/sonar-executionTests-report.xml domain/coverage/sonar-executionTests-report.xml devtools/coverage/sonar-executionTests-report.xml apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml > ./sonar-executionTests-report.xml
 
       - name: Sonarqube Scan
-        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6
+        uses: SonarSource/sonarqube-scan-action@e805d875275f728fac1885b413934be6d7c63f65 # v8.4.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
