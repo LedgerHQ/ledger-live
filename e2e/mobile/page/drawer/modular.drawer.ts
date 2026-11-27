@@ -84,7 +84,7 @@ export default class ModularDrawer {
     await assetItem.tap();
   }
 
-  @Step("Select currency in modular drawer {{{0.ticker}}} {{{0.name}}}")
+  @Step("Select currency in modular drawer {{{0.ticker}}} {{{0.metaCurrencyId}}}")
   async selectCurrency(currency: Currency): Promise<void> {
     if (!currency.metaCurrencyId) {
       await this.selectCurrencyByTicker(currency.ticker);
@@ -96,7 +96,7 @@ export default class ModularDrawer {
     await assetItem.tap();
   }
 
-  @Step("Check asset {{{0.ticker}}} {{{0.name}}} amount is masked in discreet mode")
+  @Step("Check asset {{{0.ticker}}} {{{0.metaCurrencyId}}} amount is masked in discreet mode")
   private async checkAssetAmountIsDiscreet(currency: Currency): Promise<void> {
     const { ticker } = currency;
     const assetItem = this.currencyRow(currency);
