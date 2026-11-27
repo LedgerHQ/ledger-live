@@ -3,6 +3,8 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { byId, byIdWithDescendantText } from "@e2e/helpers/elements/native";
 
+type AssetItemByNameOptions = { ticker: string; assetName: string };
+
 export default class ModularDrawer {
   private readonly accountItem = byId("account-item");
   private readonly searchBar = byId("modular-drawer-search-input");
@@ -19,7 +21,7 @@ export default class ModularDrawer {
   private readonly assetItem = (ticker: string) => byId(new RegExp(`asset-item-${ticker}`, "i"));
   private readonly assetItemWithText = (assetItemId: string, text: RegExp) =>
     byIdWithDescendantText({ id: assetItemId, text });
-  private readonly assetItemByName = (ticker: string, assetName: string) =>
+  private readonly assetItemByName = ({ ticker, assetName }: AssetItemByNameOptions) =>
     byIdWithDescendantText({ id: new RegExp(`^asset-item-${ticker}$`, "i"), text: assetName });
   private readonly networkItem = (networkId: string) =>
     byId(new RegExp(`network-item-${networkId}`, "i"));
@@ -77,18 +79,18 @@ export default class ModularDrawer {
     await assetItem.tap();
   }
 
-  /** Picks the row by its aggregated name when several assets share the ticker. */
-  @Step("Select currency in modular drawer {{{0.name}}} ({{{0.ticker}}})")
+  @Step("Select currency in modular drawer {{{0.ticker}}} {{{0.aggregatedName}}}")
   async selectCurrency(currency: Currency): Promise<void> {
     if (!currency.aggregatedName) {
       await this.selectCurrencyByTicker(currency.ticker);
       return;
     }
-    const assetItem = this.assetItemByName(currency.ticker, currency.aggregatedName);
-    if (!(await assetItem.isVisible())) {
-      await this.performSearchByTicker(currency.ticker);
-      await assetItem.scrollTo(this.selectCryptoScrollView);
-    }
+    const assetItem = this.assetItemByName({
+      ticker: currency.ticker,
+      assetName: currency.aggregatedName,
+    });
+    await this.performSearchByTicker(currency.ticker);
+    await assetItem.scrollTo(this.selectCryptoScrollView);
     await assetItem.tap();
   }
 

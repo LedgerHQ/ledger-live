@@ -56,8 +56,6 @@ export class Currency {
     "hypercore",
     AppInfos.ETHEREUM,
     [],
-    undefined,
-    "Hyperliquid",
   );
   static readonly HBAR = new Currency("Hedera", "HBAR", "hedera", AppInfos.HEDERA, [
     Network.HEDERA,
