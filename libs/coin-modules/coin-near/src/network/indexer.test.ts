@@ -1083,6 +1083,33 @@ describe("getOperations", () => {
         expect(operations.every(operation => (operation.blockHeight ?? 0) >= 491)).toBe(true);
         expect(isFullPage).toBe(true);
       });
+
+      it.each([
+        ["a stored history it did not reach", new Set(["stored-payout"]), true],
+        ["nothing stored", new Set<string>(), false],
+      ])(
+        "reports a gap when the receipts read stops at its bound with %s",
+        async (_, knownHashes, gap) => {
+          respondWith([txn({ transaction_hash: "recent", block: { block_height: "495" } })]);
+          respondWithReceiptPages(
+            Array.from({ length: 12 }, (_, index) => [
+              receipt({
+                transaction_hash: `p${index}`,
+                block: { block_height: String(500 - index) },
+              }),
+            ]),
+          );
+
+          const history = await fetchLegacyHistory(
+            mockNearConfig,
+            ACCOUNT_ID,
+            ADDRESS,
+            knownHashes,
+          );
+
+          expect(history.gap).toBe(gap);
+        },
+      );
     });
 
     describe("paging", () => {

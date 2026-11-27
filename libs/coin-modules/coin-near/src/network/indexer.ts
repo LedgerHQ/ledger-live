@@ -501,7 +501,7 @@ export const fetchLegacyHistory = async (
     operations,
     stakingPoolsCalled,
     isFullPage: hasOlder || truncatedAtHeight !== undefined,
-    gap,
+    gap: gap || (truncatedAtHeight !== undefined && knownHashes.size > 0),
     outcomePendingHashes: keptTransactions.filter(isOutcomePending).map(t => t.transaction_hash),
     relayedHashes: keptTransactions
       .filter(transaction => isRelayedCall(transaction, address))
