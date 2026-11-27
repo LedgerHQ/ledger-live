@@ -197,6 +197,7 @@
     "@features/platform-observability-redaction": "workspace:^",
     "@features/platform-pay-analytics": "workspace:^",
     "@features/platform-predictions": "workspace:^",
+    "@features/platform-wallet-api-operation-details": "workspace:^",
     "@features/platform-quick-actions": "workspace:^",
     "@features/platform-style": "workspace:^",
     "@features/platform-intent-verify-address": "workspace:^",

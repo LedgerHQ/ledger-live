@@ -56,6 +56,7 @@ import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { useWalletFeaturesConfig, useFeatureFlags } from "@features/platform-feature-flags";
 import { DrawerClosedError, exchangeDeviceSession } from "LLM/features/WalletApiExchange/session";
 import { useDeviceIntentExchangeEnabled } from "LLM/features/WalletApiExchange/hooks/useDeviceIntentExchangeEnabled";
+import { useOperationDetailsHandlers } from "LLM/features/OperationDetails/hooks/useOperationDetailsHandlers";
 import type { Feature, FeatureId } from "@shared/feature-flags";
 
 const drawerClosedError = new DrawerClosedError();
@@ -105,6 +106,7 @@ export function useCustomExchangeHandlers({
 }: CustomExchangeHandlersHookType) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const route = useRoute();
+  const operationDetailsHandlers = useOperationDetailsHandlers(accounts);
   // When on, the device steps run in the Device Intent Executor drawer of the webview (see
   // WalletApiExchange) instead of the PlatformStartExchange / PlatformCompleteExchange screens.
   const deviceIntentExchangeEnabled = useDeviceIntentExchangeEnabled(manifest.id);
@@ -336,6 +338,7 @@ export function useCustomExchangeHandlers({
       "custom.bottomSheet.info": createOpenInfoBottomSheetHandler(dispatch),
       "custom.bottomSheet.menu": createOpenMenuBottomSheetHandler(dispatch),
       "custom.dialog.confirmation": createOpenActionDialogHandler(dispatch),
+      ...operationDetailsHandlers,
     };
 
     return {
@@ -630,6 +633,7 @@ export function useCustomExchangeHandlers({
     route.name,
     returnToPreviousScreenOnClose,
     deviceIntentExchangeEnabled,
+    operationDetailsHandlers,
   ]);
 }
 

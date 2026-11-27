@@ -367,6 +367,7 @@ features/platform/card/                                                  @ledger
 features/platform/intent-hyperliquid-sign/                               @ledgerhq/ptx
 libs/live-signer-hyperliquid/                                            @ledgerhq/ptx
 features/platform/predictions/                                           @ledgerhq/ptx
+features/platform/wallet-api-operation-details/                           @ledgerhq/ptx
 domain/entity/predictions/                                               @ledgerhq/ptx
 devtools/predictions/                                                    @ledgerhq/ptx
 domain/api/card-management/                                              @ledgerhq/ptx

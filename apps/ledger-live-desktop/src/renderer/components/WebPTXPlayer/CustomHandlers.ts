@@ -51,10 +51,12 @@ import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validati
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
 import { createOpenActionDialogHandler } from "./actionDialogStore";
 import { createOpenActionMenuDialogHandler } from "./actionMenuDialogStore";
+import { useOperationDetailsHandlers } from "LLD/features/OperationDetails/hooks/useOperationDetailsHandlers";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
+  const operationDetailsHandlers = useOperationDetailsHandlers(accounts);
   const { getRouteToPlatformApp } = useStake();
   const navigate = useNavigate();
   const { isEnabled } = useWalletFeaturesConfig("desktop");
@@ -403,6 +405,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         return Promise.resolve();
       },
       "custom.dialog.info": createDialogInfoHandler(dispatch),
+      ...operationDetailsHandlers,
     };
   }, [
     accounts,
@@ -420,6 +423,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
     getManifestById,
     getAccount,
     syncAccountsById,
+    operationDetailsHandlers,
   ]);
 }
 
