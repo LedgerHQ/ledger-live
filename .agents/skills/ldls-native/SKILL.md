@@ -14,6 +14,15 @@ The file exists once `pnpm i` has run. pnpm links `@ledgerhq/lumen-ui-rnative` u
 depend on it, not at the repo root. If the path is missing, open `ai-rules/RULES.md` in the installed
 `@ledgerhq/lumen-ui-rnative` package of any native consumer.
 
+## Legacy UI is deprecated
+
+All new UI uses Lumen, in `src/mvvm/` and everywhere else. These take no new usage:
+
+- `@ledgerhq/native-ui`
+- `styled-components`, also banned in `shared/`, `domain/`, `features/` and `support/` (`@features/platform-style` excepted)
+
+The `legacy-ui` oxlint rules `legacy-ui/no-legacy-import` and `legacy-ui/no-banned-component` report new usages; their wording is the `MESSAGES` table in [`legacy-ui.js`](../../../support/lint/src/legacy-ui.js), and the plugin is described in [`legacy-ui` in the lint README](../../../support/lint/README.md#legacy-ui). New code never gets an entry in `support/lint/src/legacy-ui-waivers.js`, and a PR that migrates or deletes a waived file deletes its entry.
+
 ## Map the contract onto Lumen
 
 The rules both platforms follow are in

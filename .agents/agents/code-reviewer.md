@@ -25,8 +25,8 @@ Architecture and placement (read before you question a package location or a dua
 Also pay special attention to:
 
 - `.agents/skills/mvvm-architecture/SKILL.md`: MVVM compliance is a key review concern for code in `apps/*/src/mvvm/`
-- `.agents/skills/ldls-web/SKILL.md` — Lumen UI for desktop (`src/mvvm/`)
-- `.agents/skills/ldls-native/SKILL.md` — Lumen UI for mobile (`src/mvvm/`)
+- `.agents/skills/ldls-web/SKILL.md`: Lumen UI for desktop and web (`src/mvvm/`, `features/`, any new UI), and the deprecated legacy kits
+- `.agents/skills/ldls-native/SKILL.md`: Lumen UI for mobile and native (`src/mvvm/`, `features/`, any new UI), and the deprecated legacy kits
 - `.agents/skills/testing/SKILL.md` — Jest mock patterns for test files (avoids flaky tests and mock conflicts)
 - `.agents/skills/coin-modules/SKILL.md` — Module layout, Coin Module API path, and import rules for `libs/coin-modules/`
 - `.agents/skills/client-ids/SKILL.md` — Privacy rules for sensitive identifiers (DeviceId, UserId, DatadogId)
@@ -50,7 +50,7 @@ By default, review unstaged changes from `git diff`. The user may specify differ
 
 When the diff touches **`shared/`**, **`domain/`**, **`features/`**, **`support/`**, or **`devtools/`**, apply `structure-flow`, `flow-package`, `universal-components`, `domain-data`, `package-public-api`, `wrap-third-party-libs`, and **only the gaps** captured in `review-rules.md` (not the list `pnpm lint:arch` already prints).
 
-When the diff touches **`apps/*/src/mvvm/`**, apply `mvvm-architecture` and the Lumen skills as before.
+When the diff touches **`apps/*/src/mvvm/`**, apply `mvvm-architecture` and the Lumen skills. When it touches UI in **`features/`**, apply the Lumen skills too.
 
 ## Core Review Responsibilities
 
@@ -73,7 +73,7 @@ When the diff touches **`apps/*/src/mvvm/`**, apply `mvvm-architecture` and the 
 - Sonar issues: complexity, duplication, security hotspots
 - Missing integration tests for new features under `src/mvvm/` (required by the mvvm-architecture skill)
 - **Frozen desktop mock Playwright suite:** flag any new spec file or new `test(` under `apps/ledger-live-desktop/tests/specs/`; ask for Jest + `e2e/desktop` coverage instead. Fixes, updates and deletions there are fine.
-- Lumen UI compliance: verify new UI in `src/mvvm/` uses design-system components
+- **Lumen UI compliance:** verify new UI in `src/mvvm/` and `features/` uses Lumen components. Anywhere in the diff, flag a new import of `@ledgerhq/native-ui`, `@ledgerhq/react-ui`, the desktop V2 kit (`~/renderer/components/Box`, `Text`) or `styled-components`, and a new entry in `support/lint/src/legacy-ui-waivers.js`: the waiver list only shrinks.
 - **Coin-families contract:** In generic code (outside `families/<family>/`), flag new `if (family === "…")` or coin-specific hooks; suggest extending the families contract and implementing in the family folder instead. Also flag a new entry in `oxlint-suppressions.json` or `coin-families-exceptions.json` of Desktop or Mobile: the baseline only shrinks, and an exception needs a reason that is not a plan to move the code (see the skill).
 - **Cross-team files:** When a PR touches a file owned by multiple teams, suggest the team-split convention: split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; one file or small set per team; index re-exports all. CODEOWNERS defines the allowed `team-*` slugs.
 - **Dead-code tooling — explicit exports + knip (new packages):** For a **new** package, flag a `./*` wildcard in `package.json#exports`. New packages must enumerate explicit, minimal `exports` (no `./*`, so knip can detect unused files) and run `knip`. Also flag a new `knip.json` `workspaces` entry that defines an explicit `entry` list — knip derives entry files from `package.json`, so registering a package there is the exception, not the rule. See `.agents/skills/knip-migration/SKILL.md`.

@@ -54,10 +54,11 @@ Workspace packages get **inferred tags** from their path (and a few well-known p
 | `type:feature-platform` | `type:feature-platform`, `scope:domain`, `scope:shared`, `scope:support` |
 | `type:feature-flow` | `type:feature-flow`, `type:feature-platform`, `scope:domain`, `scope:shared`, `scope:support` |
 
-Packages without these tags (`libs/`, `apps/`, `e2e/`, `tools/`) are unconstrained. Two more rules apply:
+Packages without these tags (`libs/`, `apps/`, `e2e/`, `tools/`) are unconstrained. Three more rules apply:
 
 - **No legacy imports.** `LEGACY_IMPORT_RULE` in [`constraints.js`](../tools/nx-plugins/enforce-boundaries/constraints.js) states the rule. The same file lists the roots it covers (`LEGACY_SOURCE_ROOTS`), the legacy packages on top of every `scope:libs` package (`LEGACY_PACKAGES`) and its exceptions (`BOUNDARY_EXCEPTIONS`).
 - **No React in `domain/entity`.** `BANNED_EXTERNALS_BY_TAG` keeps `react` and `react-native` out of `type:domain-entity` packages, in their manifest and in their source imports. `domain/api` may expose RTK Query hooks, so it is not concerned.
+- **No `styled-components` in the new layers.** `BANNED_EXTERNALS_BY_TAG` also keeps `styled-components` out of `scope:shared`, `scope:domain`, `scope:features` and `scope:support` packages. `@features/platform-style` is the one exception: an entry's `exceptProjects` field lists the projects it skips. New UI uses Lumen.
 
 ## Example commands
 

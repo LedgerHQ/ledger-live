@@ -36,7 +36,9 @@ Existing app dependencies predate this rule and are migrated over time; do not a
 
 ## Exceptions
 
-Keep a direct app dependency for libraries that must be a singleton across the bundle (react, react-dom, redux, react-router, styled-components, i18next), for the design system (`@ledgerhq/lumen-*`), and for build or tooling packages. Anything else goes behind a package; if you think it is an exception, ask in the PR before adding it.
+Keep a direct app dependency for libraries that must be a singleton across the bundle (react, react-dom, redux, react-router, i18next), for the design system (`@ledgerhq/lumen-*`), and for build or tooling packages. Anything else goes behind a package; if you think it is an exception, ask in the PR before adding it.
+
+`styled-components` is deprecated: new UI uses Lumen, and it is banned in `shared/`, `domain/`, `features/` and `support/` (`@features/platform-style` excepted). See the Lumen skills, [`ldls-web`](../ldls-web/SKILL.md#legacy-ui-is-deprecated) and [`ldls-native`](../ldls-native/SKILL.md#legacy-ui-is-deprecated).
 
 ## Review
 

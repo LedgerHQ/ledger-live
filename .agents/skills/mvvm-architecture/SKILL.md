@@ -120,10 +120,11 @@ A ViewModel in `src/mvvm` calls their hooks; it does not define endpoints. See
 
 ## Design System
 
-New UI in `src/mvvm/` must use Lumen:
+New UI in `src/mvvm/` must use Lumen. The legacy kits and `styled-components` are deprecated: see
+"Legacy UI is deprecated" in the skill for your platform.
 
-- **Desktop**: [`ldls-web`](../ldls-web/SKILL.md) skill
-- **Mobile**: [`ldls-native`](../ldls-native/SKILL.md) skill
+- **Desktop**: [`ldls-web`](../ldls-web/SKILL.md#legacy-ui-is-deprecated) skill
+- **Mobile**: [`ldls-native`](../ldls-native/SKILL.md#legacy-ui-is-deprecated) skill
 
 ## Testing
 
