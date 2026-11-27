@@ -23,4 +23,6 @@ export type ReceiveAddressProps = Readonly<{
    * over, while the screen is still open. Without it, no button.
    */
   onResolveGate?: (refreshGate: () => void) => void;
+  /** Whether the address is on the sanctions list: the screen never shows a listed address. Without it, no check. */
+  checkAddressSanctioned?: (address: string) => Promise<boolean>;
 }>;

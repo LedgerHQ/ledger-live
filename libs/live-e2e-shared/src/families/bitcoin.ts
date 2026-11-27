@@ -31,18 +31,21 @@ export const sendBTCBasedCoin = withDeviceController(
 
       if (isTouchDevice()) {
         const events = await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
-        expectSpeculosEventsContain(tx.amount, events);
-        expectSpeculosEventsContain(tx.accountToCredit.address, events);
+        expectSpeculosEventsContain({ substring: tx.amount, events });
+        expectSpeculosEventsContain({ substring: tx.accountToCredit.address, events });
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
       } else {
         const amountStep = await pressUntilTextFound(DeviceLabels.AMOUNT);
-        expectSpeculosEventsContain(tx.amount, amountStep);
+        expectSpeculosEventsContain({ substring: tx.amount, events: amountStep });
 
         const legacyApp = usesLegacyBitcoinApp(currencyId);
         const stepsThroughAllAddressPages = await pressUntilTextFound(
           legacyApp ? DeviceLabels.ACCEPT : DeviceLabels.SIGN_TRANSACTION,
         );
-        expectSpeculosEventsContain(tx.accountToCredit.address, stepsThroughAllAddressPages);
+        expectSpeculosEventsContain({
+          substring: tx.accountToCredit.address,
+          events: stepsThroughAllAddressPages,
+        });
 
         if (legacyApp) {
           await buttons.both();
@@ -62,12 +65,12 @@ export const sendBTC = withDeviceController(
 
       try {
         const events = await getSendEvents(tx);
-        expectSpeculosEventsContain(tx.amount, events);
+        expectSpeculosEventsContain({ substring: tx.amount, events });
 
         if (!tx.accountToCredit.address) {
           throw new Error("Recipient address is not set");
         }
-        expectSpeculosEventsContain(tx.accountToCredit.address, events);
+        expectSpeculosEventsContain({ substring: tx.accountToCredit.address, events });
 
         if (isTouchDevice()) {
           await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);

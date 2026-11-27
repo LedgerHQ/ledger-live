@@ -246,9 +246,12 @@ export default class SwapLiveAppPage {
   @Step("Get minimum amount for swap")
   async getMinimumAmount(options: GetMinimumAmountOptions) {
     const { fromAccount, toAccount, providersWhitelist } = options;
-    return (
-      (await getMinimumSwapAmount(fromAccount, toAccount, providersWhitelist))?.toString() ?? ""
-    );
+    const amount = await getMinimumSwapAmount({
+      accountFrom: fromAccount,
+      accountTo: toAccount,
+      providersWhitelist,
+    });
+    return amount?.toString() ?? "";
   }
 
   @Step("Get provider list")

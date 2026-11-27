@@ -57,9 +57,9 @@ jest.mock("@ledgerhq/live-common/wallet-api/Exchange/intents/shared/signTypedDat
 // The account's key signs the binding message of its address; signatures computed with ethers.
 const OWNER_ADDRESS = "0x19E7E376E7C213B7E7e7e46cc70A5dD086DAff2A";
 const OWNER_SIGNATURE =
-  "0x5070512975e65565cd35d3b151be4f4ad856f92d8226d8d365f4c51f4c87edf94da11308979ebfc2cd941ecd4338fd8dc8232332b7e30d1e8529f5c958e6b67e1c";
+  "0x163ceea464f0a0cc871bb01609b69ebdf8139007be26c0a426e4ce53ec595e22384f911684d42e60398cfc4cfb55e95b916663667b2f7d3fa38cae84e2e6cf071c";
 const OTHER_KEY_SIGNATURE =
-  "0x05ef3689708c7e9182ca339900f52ce7c551c1eb6de06c26388814346eeb5f4453533a433c2224e230fb120f1e94b1c3de524216d5157afdbfd07afb54ca417b1b";
+  "0x6cb7cd13a0da52e27ab9b12ea3acd560914e4dc7edcb811223b42f8af0b3f9312c68f09d3fe9b054557722af7416d43a78a7ed4b1a6df2a6b98d7620edb1f60f1b";
 
 const account = {
   ...genAccount("predictions-binding", { currency: getCryptoCurrencyById("polygon") }),

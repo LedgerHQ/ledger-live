@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { HiddenSettingsProvider } from "../../HiddenSettingsProvider/HiddenSettingsProvider";
+import { matchesSettingsOption } from "../../../logic/settingsOptionSearch";
 import { SettingsRow } from "../SettingsRow";
 
 describe("SettingsRow", () => {
@@ -138,6 +139,41 @@ describe("SettingsRow", () => {
     expect(screen.getByTestId("queued-bottom-sheet")).toHaveProp("accessibilityState", {
       expanded: false,
     });
+  });
+
+  it("gives a long select its search, empty state, ticker filter and option descriptions", async () => {
+    const user = userEvent.setup();
+    render(
+      <SettingsRow
+        title="Currency"
+        trailing={{
+          type: "select",
+          value: "EUR",
+          options: [
+            { value: "EUR", label: "Euro", description: "EUR" },
+            { value: "BTC", label: "Bitcoin", description: "BTC" },
+          ],
+          onSelectOption: jest.fn(),
+          search: { placeholder: "Search", emptyLabel: "No results" },
+        }}
+      />,
+    );
+
+    await user.press(screen.getByLabelText("Currency"));
+
+    expect(screen.UNSAFE_getByProps({ placeholder: "Search" })).toBeTruthy();
+    expect(screen.UNSAFE_getByProps({ title: "No results" })).toBeTruthy();
+    expect(screen.UNSAFE_getByProps({ filter: matchesSettingsOption })).toBeTruthy();
+
+    const list = screen.UNSAFE_getByProps({ value: "EUR", filter: matchesSettingsOption });
+    expect(list.props.items).toContainEqual({ value: "BTC", label: "Bitcoin", description: "BTC" });
+    const [content] = screen.UNSAFE_root.findAll(
+      (node: Readonly<{ props: Readonly<{ renderItem?: unknown }> }>) =>
+        typeof node.props.renderItem === "function",
+    );
+    render(content.props.renderItem({ value: "BTC", label: "Bitcoin", description: "BTC" }));
+    expect(screen.getByText("Bitcoin")).toBeVisible();
+    expect(screen.getByText("BTC")).toBeVisible();
   });
 
   it("runs the button action", async () => {

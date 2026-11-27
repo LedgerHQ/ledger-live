@@ -288,4 +288,35 @@ describe("ReceiveAddress (Web)", () => {
     await userEvent.setup().click(screen.getByRole("button", { name: "Onboard account" }));
     expect(onResolveGate).toHaveBeenCalledTimes(1);
   });
+
+  it("never shows an address on the sanctions list", async () => {
+    const onClose = jest.fn();
+    const checkAddressSanctioned = jest.fn(async () => true);
+    renderScreen(onClose, makeReceiveTestStore(), {
+      checkAddressSanctioned,
+      onCopyAddress: jest.fn(async () => true),
+    });
+    const user = userEvent.setup();
+
+    expect(await screen.findByTestId("receive-address-sanctioned")).toHaveTextContent(
+      "Keeping you safe",
+    );
+    expect(checkAddressSanctioned).toHaveBeenCalledWith(testReceive.address);
+    expect(screen.queryByTestId("receive-address-summary")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Copy" })).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Learn more" }));
+    expect(testOpenExternal).toHaveBeenCalledWith(RECEIVE_URLS.sanctionedAddress);
+    await user.click(screen.getByTestId("receive-address-sanctioned-close"));
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("keeps the skeletons while the sanctions check runs", async () => {
+    renderScreen(jest.fn(), makeReceiveTestStore(), {
+      checkAddressSanctioned: () => new Promise<boolean>(() => {}),
+    });
+
+    await waitFor(() => expect(screen.queryByTestId("receive-address-summary")).toBeNull());
+    expect(screen.getByTestId("receive-address-skeleton")).toBeVisible();
+  });
 });

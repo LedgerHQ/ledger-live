@@ -2,9 +2,11 @@ import { useCallback, useMemo } from "react";
 import { useOpenLink, useUrlLocalizer } from "@shared/linking";
 import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVerifyAddressExecutorViewModel";
 import { splitAddress } from "../../logic/splitAddress";
+import { RECEIVE_URLS } from "../../urls";
 import type { ReceiveAddressProps } from "./ReceiveAddress.types";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 import type { ReceiveGateType } from "../../types";
+import { useAddressSanctionCheck } from "./useAddressSanctionCheck";
 import { useReceiveAddressActions } from "./useReceiveAddressActions";
 import { useReceiveAddressGate } from "./useReceiveAddressGate";
 import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
@@ -37,23 +39,23 @@ export function useReceiveAddressViewModel({
   getFamilyConfig,
   serviceIncidents,
   onResolveGate,
+  checkAddressSanctioned,
 }: ReceiveAddressProps): ReceiveAddressViewModel {
-  const { descriptor, data, accountStatus, refreshGate } = useReceiveScreenData(
-    accountUUID,
-    assetId,
-  );
-  const header = useReceiveAddressHeader(descriptor, assetId);
+  const { data, accountStatus, refreshGate } = useReceiveScreenData(accountUUID, assetId);
+  const header = useReceiveAddressHeader(assetId);
   const receive = data.type === "ready" ? data.receive : undefined;
   const selection = useReceiveAddressSelection(receive);
   const familyConfig = useReceiveFamilyConfig({
     getFamilyConfig,
-    descriptor,
     asset: header.asset,
     receive,
     accountStatus,
   });
   const { copy } = header;
-  const { selected } = selection;
+  const { selected: picked } = selection;
+  const sanctionStatus = useAddressSanctionCheck(picked?.address, checkAddressSanctioned);
+  // A listed address is never shown, copied or verified.
+  const selected = sanctionStatus === "clear" ? picked : undefined;
   const { actions, verification } = useReceiveAddressActions({
     accountUUID,
     assetId,
@@ -131,8 +133,23 @@ export function useReceiveAddressViewModel({
       }
     : undefined;
 
+  const sanctioned =
+    picked && sanctionStatus === "sanctioned"
+      ? {
+          title: copy.sanctionedTitle,
+          description: copy.sanctionedDescription(picked.address),
+          closeLabel: copy.closeLabel,
+          onClose,
+          learnMore: {
+            label: copy.learnMoreLabel,
+            onPress: () => openSupportUrl(RECEIVE_URLS.sanctionedAddress),
+          },
+        }
+      : undefined;
+
   return {
-    isLoading: data.type === "loading",
+    isLoading: data.type === "loading" || (!!picked && sanctionStatus === "checking"),
+    sanctioned,
     error,
     gate,
     addressSelection,

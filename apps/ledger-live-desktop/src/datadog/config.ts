@@ -1,9 +1,12 @@
 import { scrubResourceUrl } from "@features/platform-observability-redaction";
 import anonymizer from "~/datadog/anonymizer";
-import { scrubViewUrlHash, scrubActionTargetName } from "./scrubRum";
+import { scrubActionTargetName, scrubAutoActionName, scrubViewUrl } from "./scrubRum";
 import { shouldIgnoreErrorMessage } from "./ignoreErrors";
 
 export type ShouldSendCallback = () => boolean;
+
+const VIEW_URL_KEYS = ["url", "referrer"] as const;
+const LOCAL_APP_URL = /^(?:file:|https:\/\/app\.asar\/)/;
 
 function getEventMessage(ev: Record<string, unknown>): string {
   if (ev.error && typeof ev.error === "object") {
@@ -111,18 +114,24 @@ export function buildBeforeSend(shouldSend: ShouldSendCallback) {
 
     const resource = ev.resource as Record<string, unknown> | undefined;
     if (resource && typeof resource.url === "string") {
-      resource.url = scrubResourceUrl(resource.url);
+      resource.url = LOCAL_APP_URL.test(resource.url)
+        ? scrubViewUrl(resource.url)
+        : scrubResourceUrl(resource.url);
     }
 
     const action = ev.action as Record<string, unknown> | undefined;
     const target = action?.target as Record<string, unknown> | undefined;
     if (target && typeof target.name === "string") {
-      target.name = scrubActionTargetName(target.name);
+      const isCustomAction = action?.type === "custom";
+      target.name = isCustomAction
+        ? scrubActionTargetName(target.name)
+        : scrubAutoActionName(target.name);
     }
 
     const view = ev.view as Record<string, unknown> | undefined;
-    if (view && typeof view.url_hash === "string") {
-      view.url_hash = scrubViewUrlHash(view.url_hash);
+    for (const key of VIEW_URL_KEYS) {
+      const viewUrl = view?.[key];
+      if (view && typeof viewUrl === "string") view[key] = scrubViewUrl(viewUrl);
     }
 
     return true;

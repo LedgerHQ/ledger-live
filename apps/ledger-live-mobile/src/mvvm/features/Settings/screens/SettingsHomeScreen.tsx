@@ -7,6 +7,7 @@ import type { SettingsNavigatorStackParamList } from "~/components/RootNavigator
 import Settings from "~/screens/Settings";
 import { useSettingsDevTools } from "../hooks/useSettingsDevTools";
 import { useSettingsRowsToHide } from "../hooks/useSettingsRowsToHide";
+import { useSwitchToLegacySettings } from "../hooks/useSwitchToLegacySettings";
 
 type SettingsHomeScreenProps = StackNavigatorProps<
   SettingsNavigatorStackParamList,
@@ -21,6 +22,7 @@ export function SettingsHomeScreen({ navigation, route }: SettingsHomeScreenProp
     [navigation],
   );
   const devTools = useSettingsDevTools(navigation);
+  const onSwitchToLegacySettings = useSwitchToLegacySettings();
 
   return (
     <SettingsHomeGate
@@ -28,6 +30,7 @@ export function SettingsHomeScreen({ navigation, route }: SettingsHomeScreenProp
       legacySettings={<Settings navigation={navigation} route={route} />}
       rowsToHide={rowsToHide}
       devTools={devTools}
+      onSwitchToLegacySettings={onSwitchToLegacySettings}
       testID="settings-home"
     />
   );

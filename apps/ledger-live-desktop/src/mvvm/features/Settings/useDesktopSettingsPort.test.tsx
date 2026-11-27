@@ -9,9 +9,13 @@ import {
 import { isModalOpened } from "~/renderer/reducers/modals";
 import {
   autoLockTimeoutSelector,
+  crashReportingSelector,
   discreetModeSelector,
   mevProtectionSelector,
+  shareAnalyticsSelector,
+  sharePersonalizedRecommendationsSelector,
 } from "~/renderer/reducers/settings";
+import { walletSyncDrawerVisibilitySelector } from "~/renderer/reducers/walletSync";
 import { useDesktopSettingsPort } from "./useDesktopSettingsPort";
 
 function renderPort(settings: Parameters<typeof saveSettings>[0] = {}) {
@@ -57,6 +61,88 @@ describe("useDesktopSettingsPort", () => {
     });
 
     expect(result.current.values.theme).toBe("dark");
+  });
+
+  it("reads the language, region and currency from the legacy store", () => {
+    const { result } = renderPort({ language: "fr", locale: "fr-FR", counterValue: "EUR" });
+
+    expect(result.current.values).toMatchObject({
+      language: "fr",
+      region: "fr-FR",
+      currency: "EUR",
+    });
+  });
+
+  it("stores a language change and ignores an unsupported language", () => {
+    const { result, store } = renderPort({ language: "en" });
+
+    act(() => {
+      result.current.setValue({ key: "language", value: "fr" });
+    });
+    expect(store.getState().settings.language).toBe("fr");
+
+    act(() => {
+      result.current.setValue({ key: "language", value: "xx" });
+    });
+    expect(store.getState().settings.language).toBe("fr");
+  });
+
+  it("stores a region change and replaces a sanctioned region by en-US", () => {
+    const { result, store } = renderPort();
+
+    act(() => {
+      result.current.setValue({ key: "region", value: "fr-FR" });
+    });
+    expect(store.getState().settings.locale).toBe("fr-FR");
+
+    act(() => {
+      result.current.setValue({ key: "region", value: "ru-RU" });
+    });
+    expect(store.getState().settings.locale).toBe("en-US");
+  });
+
+  it("stores a currency change by the countervalue id, and ignores an unknown one", () => {
+    const { result, store } = renderPort({ counterValue: "USD" });
+
+    act(() => {
+      result.current.setValue({ key: "currency", value: "BTC" });
+    });
+    expect(store.getState().settings.counterValue).toBe("bitcoin");
+
+    act(() => {
+      result.current.setValue({ key: "currency", value: "NOPE" });
+    });
+    expect(store.getState().settings.counterValue).toBe("bitcoin");
+  });
+
+  it("offers the supported countervalues as currencies", () => {
+    const { result } = renderPort();
+
+    expect(result.current.currencies).toContainEqual({
+      value: "BTC",
+      label: "Bitcoin",
+      description: "BTC",
+    });
+  });
+
+  it("offers every supported language", () => {
+    const { result } = renderPort();
+
+    expect(result.current.languages).toContainEqual({
+      value: "fr",
+      label: "Français",
+    });
+  });
+
+  it("opens the Ledger Sync drawer when Ledger Sync is not active", () => {
+    const { result, store } = renderPort();
+
+    expect(result.current.ledgerSync.isActive).toBe(false);
+    act(() => {
+      result.current.ledgerSync.open();
+    });
+
+    expect(walletSyncDrawerVisibilitySelector(store.getState())).toBe(true);
   });
 });
 
@@ -163,5 +249,64 @@ describe("useDesktopSettingsPort, Security section", () => {
     });
 
     expect(isModalOpened(store.getState(), modal)).toBe(true);
+  });
+});
+
+describe("useDesktopSettingsPort, Privacy section", () => {
+  it("reads the Privacy values from the legacy store", () => {
+    const { result } = renderPort({
+      crashReporting: false,
+      shareAnalytics: true,
+      sharePersonalizedRecommandations: false,
+    });
+
+    expect(result.current.values).toMatchObject({
+      bugReports: false,
+      analytics: true,
+      personalizedRecommendations: false,
+      separateAnalyticsConsents: false,
+    });
+  });
+
+  it("stores each consent where the legacy General screen stores it", () => {
+    const { result, store } = renderPort();
+
+    act(() => {
+      result.current.setValue({ key: "bugReports", value: false });
+      result.current.setValue({ key: "analytics", value: true });
+    });
+
+    expect(crashReportingSelector(store.getState())).toBe(false);
+    expect(shareAnalyticsSelector(store.getState())).toBe(true);
+    expect(sharePersonalizedRecommendationsSelector(store.getState())).toBe(false);
+
+    act(() => {
+      result.current.setValue({ key: "personalizedRecommendations", value: true });
+    });
+    expect(sharePersonalizedRecommendationsSelector(store.getState())).toBe(true);
+  });
+
+  it("stores both consents from the shared Analytics toggle", () => {
+    const { result, store } = renderPort({
+      shareAnalytics: true,
+      sharePersonalizedRecommandations: true,
+    });
+
+    act(() => {
+      result.current.setValue({ key: "analyticsAndRecommendations", value: false });
+    });
+
+    expect(shareAnalyticsSelector(store.getState())).toBe(false);
+    expect(sharePersonalizedRecommendationsSelector(store.getState())).toBe(false);
+  });
+
+  it("does not touch the Security settings when a consent changes", () => {
+    const { result, store } = renderPort({ discreetMode: false });
+
+    act(() => {
+      result.current.setValue({ key: "bugReports", value: false });
+    });
+
+    expect(discreetModeSelector(store.getState())).toBe(false);
   });
 });

@@ -9,22 +9,6 @@
 - A new leak fails the lint. Never silence it with an inline disable: `pnpm lint:coin-families-disables` rejects it.
 - Test files (`*.test.*`, `__tests__`, `__integrations__`, `__mocks__`, `tests/`) are not checked.
 
-## Accepted exceptions
+## Exceptions
 
-These files are Electron process plumbing for the Zcash native host, not coin logic in generic UI. They live in `main`, `preloader` and the renderer root, outside `src/renderer/families/`, so the families contract cannot apply. They stay in the baseline for good.
-
-| File | Why |
-| --- | --- |
-| `src/main/index.ts` | The main process starts and stops the `coin-zcash` utility process host (`setupZcashNativeHost`, `cleanupZcashNativeHost`). |
-| `src/preloader/bridge/zcash.ts` | The preload only forwards the IPC channels listed in `ZCASH_IPC`, which comes from the `coin-zcash` contract. |
-| `src/renderer/zcash.ts` | The renderer wraps the `coin-zcash` IPC client over the `zcash` bridge. |
-
-`src/bridge/contract.ts` declares the `ZcashBridge` type for the same channel. No rule reports it, since it imports no coin package.
-
-## Temporary exceptions
-
-No rule reports these, so they are not in the baseline. They stay until the flags are removed.
-
-| File | Why |
-| --- | --- |
-| `src/renderer/analytics/segment.ts` | The `ldmkSolanaSigner`, `ldmkCosmosSigner`, `ldmkPolkadotSigner` and `ldmkTronSigner` flags are sent as user properties. Their names are kept, and they go away with the flags. |
+A baseline entry is debt unless it is listed in [`coin-families-exceptions.json`](../coin-families-exceptions.json), which gives the reason and the owner of each exception. See [the rule README](../../../support/lint/README.md#coin-families-exceptions). The Electron process plumbing of the Zcash native host (`src/main`, `src/preloader`, `src/renderer/zcash.ts`) stays for good, since it lives outside `src/renderer/families/`.

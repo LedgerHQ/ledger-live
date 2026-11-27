@@ -390,6 +390,7 @@ describe("device onboarding flow navigation", () => {
   it("should end a restore on the success karaoke and complete onboarding on its last tap", async () => {
     answerWelcome(device);
     const { user, store } = renderApp({ firstLaunch: true });
+    jest.mocked(track).mockClear();
 
     await user.press(await screen.findByTestId("onboarding-setupLedger"));
     showStax(device);
@@ -411,12 +412,14 @@ describe("device onboarding flow navigation", () => {
     ).toBeVisible();
     expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
     expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+    expect(seededEvents()).not.toContain("onboarding_done");
 
     await user.press(screen.getByTestId(karaokeTestIds.advance));
     await user.press(await screen.findByRole("button", { name: "Explore now" }));
 
     expect(await screen.findByText("portfolio")).toBeVisible();
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+    expect(seededEvents().filter(event => event === "onboarding_done")).toHaveLength(1);
   });
 
   it("should open Ledger Sync from the sync offer after the checks", async () => {

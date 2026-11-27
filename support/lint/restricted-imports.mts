@@ -131,8 +131,8 @@ export const ACCOUNT_DESCRIPTOR = [
   name,
   message:
     "Hold the AccountUUID; the descriptor stays at the edges (ACCOUNT_DESCRIPTOR_EDGES in " +
-    "support/lint, wallet-cli, devtools). Read view data (network, path) from " +
-    "@domain/entity-account selectors. See docs/account-models.",
+    "support/lint, wallet-cli, devtools). Take the network from the asset, and have the edge " +
+    "answer what a descriptor field would tell. See docs/account-models.",
 }));
 
 // Paths from the repo root, turned into overrides by the base preset; unrestricted layers are not listed.
@@ -142,8 +142,6 @@ export const ACCOUNT_DESCRIPTOR_EDGES = [
   "features/platform/account-data",
   "features/platform/account-discovery",
   "features/platform/account-source-*",
-  // LIVE-42227: the receive flow selects accounts by AccountUUID.
-  "features/flow/receive",
 ];
 
 export const COIN_MODULE_CREATE_API = {

@@ -1,6 +1,7 @@
 import React from "react";
-import { Button } from "@ledgerhq/lumen-ui-react";
-import { SettingsSheet } from "../SettingsSheet/SettingsSheet";
+import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
+import { InfoState } from "@shared/ui-info-state";
+import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import type { SettingsConfirmSheetProps } from "./SettingsConfirmSheet.types";
 
 export function SettingsConfirmSheet({
@@ -14,38 +15,38 @@ export function SettingsConfirmSheet({
   confirmTestID,
   cancelTestID,
 }: SettingsConfirmSheetProps) {
+  const onOpenChange = (open: boolean) => {
+    if (!open && !isConfirming) onCancel();
+  };
+
   return (
-    <SettingsSheet
-      isOpen={isOpen}
-      title={labels.title}
-      description={labels.description}
-      onClose={onCancel}
-      canClose={!isConfirming}
-      testID={testID}
-    >
-      <div className="flex w-full gap-16">
-        <Button
-          appearance="gray"
-          size="lg"
-          isFull
-          onClick={onCancel}
-          disabled={isConfirming}
-          data-testid={cancelTestID}
-        >
-          {labels.cancel}
-        </Button>
-        <Button
-          appearance={tone === "destructive" ? "red" : "base"}
-          size="lg"
-          isFull
-          loading={isConfirming}
-          disabled={isConfirming}
-          onClick={onConfirm}
-          data-testid={confirmTestID}
-        >
-          {labels.confirm}
-        </Button>
-      </div>
-    </SettingsSheet>
+    <Dialog open={isOpen} onOpenChange={onOpenChange} height="fit">
+      <DialogContent aria-describedby={undefined} data-testid={testID}>
+        <DialogBackgroundToneProvider>
+          <DialogHeader density="compact" onClose={isConfirming ? undefined : onCancel} />
+          <DialogBody>
+            <InfoState
+              preset={tone === "destructive" ? "error" : "info"}
+              size="hug"
+              title={labels.title}
+              description={labels.description}
+              primaryCta={{
+                label: labels.confirm,
+                onPress: onConfirm,
+                testID: confirmTestID,
+                loading: isConfirming,
+                disabled: isConfirming,
+              }}
+              secondaryCta={{
+                label: labels.cancel,
+                onPress: onCancel,
+                testID: cancelTestID,
+                disabled: isConfirming,
+              }}
+            />
+          </DialogBody>
+        </DialogBackgroundToneProvider>
+      </DialogContent>
+    </Dialog>
   );
 }

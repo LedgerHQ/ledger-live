@@ -1244,43 +1244,6 @@
           "description": "Every transfer approved with your Ledger signer."
         }
       }
-    },
-    "request": {
-      "title": "Request {{asset}}",
-      "networkLabel": "{{network}} network",
-      "saveDialogTitle": "Save request card",
-      "actions": {
-        "share": "Share",
-        "copy": "Copy",
-        "copied": "Copied",
-        "save": "Save",
-        "verify": "Verify"
-      },
-      "verifyHint": {
-        "message": "Verify your address on\nyour Ledger device\nbefore sharing",
-        "gotIt": "Got it"
-      },
-      "verifyAddress": {
-        "introTitle": "Verify your address",
-        "introDescription": "To protect against address replacement attacks, verify your address on your Ledger device's Secure Screen.",
-        "verifyCta": "Verify address",
-        "successTitle": "Address displayed on the device's Secure Screen",
-        "nextStepsLabel": "Next steps",
-        "nextStepKeepDisplayed": "Keep your address displayed on your Ledger device. Don’t confirm it yet.",
-        "nextStepPaste": "Click “Got it,” then paste your address into the app you’re sharing it with.",
-        "nextStepCheckMatch": "Before sending, check that it matches the one on your Ledger device.",
-        "gotItCta": "Got it",
-        "device": {
-          "cancelledTitle": "Address verification cancelled",
-          "cancelledDescription": "You declined the address on your device. You can display it again to verify it.",
-          "mismatchTitle": "Addresses don't match",
-          "mismatchDescription": "The address shown on your device is different from the requested one. Do not share this address.",
-          "unsupportedTitle": "Verification not available",
-          "unsupportedDescription": "This device app can't display the address for on-device verification.",
-          "retryCta": "Show address again",
-          "closeCta": "Close"
-        }
-      }
     }
   },
   "lend": {
@@ -2843,6 +2806,10 @@
       "title": "Need a Tag/Memo?",
       "description": "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
       "gotIt": "Got it"
+    },
+    "sanctioned": {
+      "title": "Keeping you safe",
+      "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n{{address}}"
     }
   },
   "send": {
@@ -5782,6 +5749,66 @@
         "learnMore": "Learn more"
       }
     },
+    "privacy": {
+      "bugReports": {
+        "title": "Bug reports",
+        "description": "Automatically send reports to help Ledger improve its products."
+      },
+      "appPerformance": {
+        "title": "App performance",
+        "description": "Enable Ledger to collect app usage to enhance the experience"
+      },
+      "personalizedExperience": {
+        "title": "Personalized experience",
+        "description": "Enable Ledger to collect app usage to provide personalized recommendations"
+      },
+      "analytics": {
+        "title": "Analytics",
+        "description": "Enable analytics to help Ledger improve user experience. This includes clicks, page visits, redirections, actions (send, receive, lock, etc), end of page scrolls, (un)installing and app version, number of accounts, crypto assets and operations, session durations, the Ledger device type and firmware."
+      },
+      "privacyPolicy": {
+        "title": "Privacy policy",
+        "description": "See what personal data are collected, why and how they are used"
+      }
+    },
+    "general": {
+      "ledgerSync": {
+        "title": "Ledger Sync",
+        "description": "Keep your wallet up to date on all your devices",
+        "manage": "Manage",
+        "activate": "Sync"
+      },
+      "theme": {
+        "title": "Theme",
+        "description": "Select your app theme",
+        "sheetTitle": "Select theme",
+        "options": {
+          "system": "System",
+          "light": "Light",
+          "dark": "Dark"
+        }
+      },
+      "language": {
+        "title": "Language",
+        "description": "Select the app language",
+        "sheetTitle": "Select language"
+      },
+      "region": {
+        "title": "Region",
+        "description": "Select the format of dates, times and numbers",
+        "dialogTitle": "Select your region",
+        "dialogDescription": "Choose region to update formats of dates, time and currencies"
+      },
+      "currency": {
+        "title": "Currency",
+        "description": "Select the currency displayed in the app",
+        "sheetTitle": "Select currency"
+      },
+      "search": {
+        "placeholder": "Search",
+        "emptyLabel": "No results"
+      }
+    },
     "discreet": "Toggle discreet mode",
     "tabs": {
       "display": "General",
@@ -6250,6 +6277,32 @@
       "reportErrorsDesc": "Automatically send reports to help Ledger improve its products.",
       "launchOnboarding": "Device setup",
       "launchOnboardingDesc": "Set up a new device or restore an existing device. Accounts and settings are kept."
+    },
+    "helpPage": {
+      "title": "Help",
+      "groups": {
+        "supportAndLearning": "Support and learning",
+        "more": "More"
+      },
+      "support": {
+        "title": "Ledger support",
+        "description": "Get help with our FAQs or chat"
+      },
+      "saveLogs": {
+        "description": "Saving logs may be needed for troubleshooting purposes."
+      },
+      "status": {
+        "title": "Ledger status"
+      },
+      "clearCache": {
+        "description": "Your network transactions will be scanned and your accounts will be recalculated."
+      },
+      "viewUserData": {
+        "description": "View the local data stored on this computer, including account settings and cached info."
+      },
+      "resetApp": {
+        "description": "Erase all local data from this computer. Your funds remain safe on the blockchain, but you will need to re-import your accounts."
+      }
     },
     "help": {
       "version": "Version",
@@ -10163,6 +10216,39 @@
         "description": "Check your positions before trying again."
       },
       "tryAgain": "Try again"
+    },
+    "sale": {
+      "preparing": "Preparing the signature",
+      "title": "Continue on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "mismatch": {
+        "title": "This signature doesn't match the account",
+        "description": "Connect the Ledger that holds this account, with the same passphrase if you use one, then try again."
+      },
+      "placing": "Selling your shares",
+      "filled": {
+        "title": "Sale complete",
+        "fill_one": "You sold {{shares}} share for {{amount}}",
+        "fill_other": "You sold {{shares}} shares for {{amount}}",
+        "sold_one": "You sold {{shares}} share",
+        "sold_other": "You sold {{shares}} shares"
+      },
+      "notFilled": {
+        "title": "Sale not filled",
+        "description": "Nothing was sold. Try again with a fresh quote."
+      },
+      "rejected": {
+        "title": "Sale not placed",
+        "expired-signature": "The sale's authorization expired before it was sent.",
+        "insufficient-balance": "You don't hold enough shares for this sale.",
+        "invalid-tick-size": "The market's price increments changed.",
+        "market-closed": "This market is closed.",
+        "not-accepted": "MoonPay couldn't place the sale."
+      },
+      "unconfirmed": {
+        "title": "We couldn't confirm your sale",
+        "description": "Check your positions before trying again."
+      }
     },
     "onboarding": {
       "intro": {

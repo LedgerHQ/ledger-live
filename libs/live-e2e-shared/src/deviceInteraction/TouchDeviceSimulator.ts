@@ -12,13 +12,15 @@ function getSpeculosInfo(): {
   return { speculosApiPort, speculosAddress };
 }
 
-export async function pressAndRelease(deviceLabel: string, x?: number, y?: number) {
+type TouchPoint = { x: number; y: number };
+
+export async function pressAndRelease(deviceLabel: string, point?: TouchPoint) {
   const { speculosApiPort, speculosAddress } = getSpeculosInfo();
   let xCoord: number;
   let yCoord: number;
-  if (x && y) {
-    xCoord = x;
-    yCoord = y;
+  if (point?.x && point?.y) {
+    xCoord = point.x;
+    yCoord = point.y;
   } else {
     const coords = await getDeviceLabelCoordinates(deviceLabel, speculosApiPort);
     xCoord = coords.x;

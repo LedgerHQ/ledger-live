@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
 import { accountsSlice } from "@domain/entity-account";
-import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import {
   buildHtmlDisplaySegments,
   type HtmlLinkSegment,
@@ -11,14 +10,15 @@ import {
   type ReceiveAddressProps,
   type ReceiveAddressDialogTarget,
   type ReceiveFamilyConfigPort,
+  useReceiveNetwork,
 } from "@features/flow-receive";
 import { useFeatureFlags } from "@features/platform-feature-flags";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useCopyToClipboard } from "LLD/hooks/useCopyToClipboard";
 import { useLLDCoinFamily } from "~/renderer/families";
 import type { State } from "~/renderer/reducers";
 import { accountSelector } from "~/renderer/reducers/accounts";
-import { currencyIdFromNetwork } from "@domain/entity-network";
 import { VerifyAddressExecutorLWD } from "../../verifyAddressIntent/VerifyAddressExecutorLWD";
 
 const toIncidentTextPart = (segment: HtmlLinkSegment) =>
@@ -27,7 +27,9 @@ const toIncidentTextPart = (segment: HtmlLinkSegment) =>
 const toIncidentTextParts = (html: string | undefined) =>
   html === undefined ? undefined : buildHtmlDisplaySegments(html).map(toIncidentTextPart);
 
-const { selectAccountEntry } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountLegacyId } = accountsSlice.getSelectors(
+  (state: State) => state.accountEntries,
+);
 
 /** What only the desktop app gives the receive address screen. */
 export function useReceiveAddressDialogViewModel({
@@ -38,14 +40,13 @@ export function useReceiveAddressDialogViewModel({
   const onClose = useCallback(() => dispatch(closeReceiveAddressDialog()), [dispatch]);
   const onCopyAddress = useCopyToClipboard();
 
-  const entry = useSelector(state => selectAccountEntry(state, accountUUID));
+  const legacyId = useSelector(state => selectAccountLegacyId(state, accountUUID));
   const legacyAccount = useSelector(state =>
-    entry?.legacyId ? accountSelector(state, { accountId: entry.legacyId }) : undefined,
+    legacyId ? accountSelector(state, { accountId: legacyId }) : undefined,
   );
-  const network = entry
-    ? CRYPTO_CURRENCIES_REGISTRY[currencyIdFromNetwork(entry.descriptor.network)]
-    : undefined;
-  const { receiveAddressConfig } = useLLDCoinFamily(network?.family);
+  const { asset, network } = useReceiveNetwork(assetId);
+  const token = asset?.type === "TokenCurrency" ? asset : undefined;
+  const { receiveAddressConfig, receiveGateAction } = useLLDCoinFamily(network?.family);
   const { incidents } = useFilteredServiceStatus({
     tickers: network ? [network.ticker] : [],
     entryPoint: "flow",
@@ -58,6 +59,11 @@ export function useReceiveAddressDialogViewModel({
       })),
     [incidents],
   );
+  const accountCurrency = legacyAccount?.currency;
+  const checkAddressSanctioned = useMemo(
+    () => accountCurrency && ((address: string) => isAddressSanctioned(accountCurrency, address)),
+    [accountCurrency],
+  );
   const featureFlags = useFeatureFlags();
 
   const getFamilyConfig = useMemo<ReceiveFamilyConfigPort | undefined>(
@@ -65,6 +71,17 @@ export function useReceiveAddressDialogViewModel({
       receiveAddressConfig &&
       (input => receiveAddressConfig({ ...input, featureFlags, legacyAccount })),
     [receiveAddressConfig, featureFlags, legacyAccount],
+  );
+
+  const onResolveGate = useMemo(
+    () =>
+      receiveGateAction && legacyAccount
+        ? () => {
+            onClose();
+            receiveGateAction({ account: legacyAccount, token, dispatch });
+          }
+        : undefined,
+    [receiveGateAction, legacyAccount, onClose, token, dispatch],
   );
 
   return {
@@ -75,5 +92,7 @@ export function useReceiveAddressDialogViewModel({
     VerifyAddressExecutor: VerifyAddressExecutorLWD,
     getFamilyConfig,
     serviceIncidents,
+    onResolveGate,
+    checkAddressSanctioned,
   };
 }

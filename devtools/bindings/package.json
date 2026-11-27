@@ -30,6 +30,7 @@
     "@domain/api-currency-token": "workspace:*",
     "@domain/entity-account": "workspace:*",
     "@domain/entity-account-balance": "workspace:*",
+    "@domain/entity-account-context": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-account-name": "workspace:*",
@@ -97,6 +98,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-redux": "catalog:",
+    "rxjs": "catalog:",
     "typescript": "catalog:"
   }
 }

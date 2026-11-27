@@ -1,3 +1,4 @@
+import { ZeroAddress } from "ethers";
 import type { PredictionsSignedTypedData, PredictionsTypedData } from "./typedData";
 
 const PREDICTIONS_BINDING_ACTION = "Confirm account ownership";
@@ -13,12 +14,18 @@ export type PredictionsBindingAnswer = PredictionsSignedTypedData;
  */
 export function getBindingTypedData(address: string): PredictionsTypedData {
   return {
-    domain: { name: "Ledger Predictions", version: "1", chainId: 137 },
+    domain: {
+      name: "Ledger Predictions",
+      version: "1",
+      chainId: 137,
+      verifyingContract: ZeroAddress,
+    },
     types: {
       EIP712Domain: [
         { name: "name", type: "string" },
         { name: "version", type: "string" },
         { name: "chainId", type: "uint256" },
+        { name: "verifyingContract", type: "address" },
       ],
       ConfirmAccountOwnership: [
         { name: "action", type: "string" },

@@ -163,29 +163,59 @@ describe("datadog config", () => {
       const beforeSend = buildBeforeSend(() => true);
       const event = {
         action: {
+          type: "click",
           target: {
-            name: 'click on { "xpub": "xpub6C8aARQ2jRGKeZsDxLWMZfS8oVnrFGw1b61Pzeiub4H98DRSXdBJ65ctCYoJ1vUjLvFzcFvt2znVZvASmxm9M", "index": 0 }',
+            name: 'click on { "xpub": "xpub6ExampleExampleExample1", "index": 0 }',
           },
         },
       };
       beforeSend(event, undefined);
       expect(
         ((event.action as Record<string, unknown>).target as Record<string, unknown>).name,
-      ).toBe('click on { "xpub": "[redacted]", "index": 0 }');
+      ).toBe('click on { "xpub": "[redacted]", "index": [redacted] }');
     });
 
-    it("scrubs account ID from view.url_hash", () => {
+    it("removes the query string from the resource url of the app page", () => {
       const beforeSend = buildBeforeSend(() => true);
       const event = {
-        view: {
-          url_hash:
-            "/account/js:2:bitcoin:xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy:segwit",
+        resource: {
+          url: "https://app.asar/.webpack/index.html?theme=dark&appDirname=%2Fopt%2Fexample",
         },
       };
       beforeSend(event, undefined);
-      expect((event.view as Record<string, unknown>).url_hash).toBe(
-        "/account/js:2:bitcoin:[redacted]:segwit",
-      );
+      expect(event.resource.url).toBe("https://app.asar/.webpack/index.html");
+    });
+
+    it("redacts the words holding a digit or a shortened value from the name of a click", () => {
+      const beforeSend = buildBeforeSend(() => true);
+      const event = {
+        action: { type: "click", target: { name: "Bitcoin 2 Legacy 1abCd...wXyZ9 $1,234.56" } },
+      };
+      beforeSend(event, undefined);
+      expect(event.action.target.name).toBe("Bitcoin [redacted] Legacy [redacted]");
+    });
+
+    it("keeps the name of a custom action", () => {
+      const beforeSend = buildBeforeSend(() => true);
+      const event = { action: { type: "custom", target: { name: "WalletAPI SignTransaction 2" } } };
+      beforeSend(event, undefined);
+      expect(event.action.target.name).toBe("WalletAPI SignTransaction 2");
+    });
+
+    it("keeps only the page and the route of view.url and view.referrer", () => {
+      const beforeSend = buildBeforeSend(() => true);
+      const page = "https://app.asar/.webpack/index.html";
+      const event = {
+        view: {
+          url: `${page}?theme=dark&appDirname=%2Fopt%2Fexample#/account/js:2:bitcoin:xpubExample1:segwit`,
+          referrer: `${page}?theme=dark#/cryptos`,
+        },
+      };
+      beforeSend(event, undefined);
+      expect(event.view).toEqual({
+        url: `${page}#/account/[redacted]`,
+        referrer: `${page}#/cryptos`,
+      });
     });
   });
 

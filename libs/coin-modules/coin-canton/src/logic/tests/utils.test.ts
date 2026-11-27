@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { CantonCoinConfig } from "../../config";
-import { createMockCoinConfigValue } from "../../test/fixtures";
+import { createMockCoinConfigValue, createMockContext } from "../../test/fixtures";
+import { CantonInvalidConfigError } from "../../types/errors";
 import { isRecipientValid, minReserveOf, validateTag } from "../utils";
 
 const VALID_HEX_68 = "1220691e945dc1b210f3b6be9fbad73efaf642bfb96022552f66c9e2b83b00cb20e8";
@@ -180,15 +181,25 @@ describe("utils", () => {
   });
 
   describe("minReserveOf", () => {
-    it("should read a reserve beyond the exact float range as written, where BigInt(1e38) would not", () => {
-      expect(minReserveOf({ ...createMockCoinConfigValue(), minReserve: 1e38 })).toBe(10n ** 38n);
+    it("should read a reserve beyond the exact float range as written, where BigInt(1e38) would not", async () => {
+      const context = createMockContext(createMockCoinConfigValue({ minReserve: 1e38 }));
+
+      await expect(minReserveOf(context)).resolves.toBe(10n ** 38n);
     });
 
-    it("should read an unset reserve as zero", () => {
-      const config: CantonCoinConfig = createMockCoinConfigValue();
-      delete config.minReserve;
+    it("should read a numeric string beyond the float range exactly", async () => {
+      const context = createMockContext(
+        createMockCoinConfigValue({ minReserve: "1e309" as unknown as number }),
+      );
 
-      expect(minReserveOf(config)).toBe(0n);
+      await expect(minReserveOf(context)).resolves.toBe(10n ** 309n);
+    });
+
+    it("should throw when the reserve is unset", async () => {
+      const { minReserve: _, ...config } = createMockCoinConfigValue();
+      const context = createMockContext(config as CantonCoinConfig);
+
+      await expect(minReserveOf(context)).rejects.toThrow(CantonInvalidConfigError);
     });
   });
 });

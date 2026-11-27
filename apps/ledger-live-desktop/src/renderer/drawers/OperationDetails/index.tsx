@@ -12,7 +12,6 @@ import {
 } from "@domain/entity-currency-crypto";
 import { useFeature } from "@features/platform-feature-flags";
 import {
-  findOperationInAccount,
   getOperationAmountNumber,
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
@@ -68,6 +67,7 @@ import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings
 import { getMarketColor } from "~/renderer/styles/helpers";
 import { setDrawer } from "../Provider";
 import AmountDetails from "./AmountDetails";
+import { findOperationByIdOrHash } from "./findOperation";
 import {
   GradientHover,
   HashContainer,
@@ -119,7 +119,7 @@ const mapStateToProps = (
         currency: mainCurrency,
       })
     : 0;
-  const operation = account ? findOperationInAccount(account, operationId) : null;
+  const operation = account ? findOperationByIdOrHash(account, operationId) : null;
   return {
     account,
     parentAccount,

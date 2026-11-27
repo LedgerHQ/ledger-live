@@ -418,7 +418,7 @@ export default class BorrowPage {
     const address = this.chainAccount;
     if (!address) return MAINNET_FUNDING_HINT;
     try {
-      const { latest, pending } = await readAccountNonces(address);
+      const { latest, pending } = await readAccountNonces({ address });
       if (pending > latest) {
         return (
           `Account ${address} is at nonce ${latest} with ${pending - latest} transaction(s) in ` +

@@ -161,6 +161,16 @@
       "count": 2
     }
   },
+  "src/renderer/screens/settings/sections/Developer/DeviceIntentExecutorDevTool/intents/getEthAddressDMKSignerDemoIntent/job.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/renderer/webworkers/workers/publicKeyTweakAdd.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
   "src/renderer/zcash.ts": {
     "coin-families/no-coin-specific-import": {
       "count": 2

@@ -110,6 +110,11 @@ jobs:
         if: hashFiles('support/lint/src/check-coin-families-disables.js') != ''
         run: pnpm lint:coin-families-disables
 
+      - name: Check coin-families exceptions
+        # Guard until release and hotfix have support/lint/src/check-coin-families-exceptions.js. Remove in LIVE-42515.
+        if: hashFiles('support/lint/src/check-coin-families-exceptions.js') != ''
+        run: pnpm lint:coin-families-exceptions
+
       # The knip steps skip older branches (e.g. release), which call this workflow from develop without the monorepo knip configs.
       - name: Knip (packages without platform configs)
         if: ${{ !cancelled() && steps.install.outcome == 'success' && hashFiles('support/knip/web.config.mjs') != '' }}

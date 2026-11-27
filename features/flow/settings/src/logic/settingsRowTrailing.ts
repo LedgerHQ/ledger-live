@@ -15,5 +15,6 @@ export function getSelectedOptionLabel(
   options: readonly SettingsRowSelectOption[],
   value: string,
 ): string | undefined {
-  return options.find(option => option.value === value)?.label;
+  const selected = options.find(option => option.value === value);
+  return selected?.shortLabel ?? selected?.label;
 }

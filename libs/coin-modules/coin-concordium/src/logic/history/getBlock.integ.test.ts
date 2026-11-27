@@ -3,18 +3,17 @@ import { getBlock } from "./getBlock";
 import { getBlockInfo } from "./getBlockInfo";
 import { lastBlock } from "./lastBlock";
 
-const CURRENCY = "concordium_testnet";
 const config = concordiumDefaults.concordium_testnet;
 
 describe("getBlock", () => {
   it("returns block info matching getBlockInfo and a well-formed transactions array", async () => {
     // A recent finalized block, backed off from the tip to avoid the not-yet-finalized head.
-    const tip = await lastBlock(config, CURRENCY);
+    const tip = await lastBlock(config);
     const height = tip.height - 10;
 
     const [block, info] = await Promise.all([
-      getBlock(config, height, CURRENCY),
-      getBlockInfo(config, height, CURRENCY),
+      getBlock(config, height),
+      getBlockInfo(config, height),
     ]);
 
     expect(block.info).toEqual(info);

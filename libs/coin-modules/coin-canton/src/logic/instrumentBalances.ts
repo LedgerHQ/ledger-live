@@ -33,7 +33,7 @@ export async function getInstrumentBalances(
 ): Promise<CantonBalance[]> {
   const config = await context.config();
   if (isGatewayEnabled(config)) {
-    const balances = await gatewayGetBalance(config, partyId);
+    const balances = await gatewayGetBalance(context, partyId);
     return balances.map(instrument => adaptInstrument(native, instrument));
   } else throw new Error("Not implemented");
 }

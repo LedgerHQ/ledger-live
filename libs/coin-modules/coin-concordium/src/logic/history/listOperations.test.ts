@@ -1167,14 +1167,9 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    const result = await listOperations(
-      config,
-      VALID_ADDRESS,
-      { minHeight: 0 },
-      "concordium_testnet",
-    );
+    const result = await listOperations(config, VALID_ADDRESS, { minHeight: 0 });
 
-    expect(getTransactionsMock).toHaveBeenCalledWith(config, "concordium_testnet", VALID_ADDRESS, {
+    expect(getTransactionsMock).toHaveBeenCalledWith(config, VALID_ADDRESS, {
       limit: 100,
       order: "d",
       includeRawRejectReason: true,
@@ -1201,10 +1196,10 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    await listOperations(config, VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
+    await listOperations(config, VALID_ADDRESS, { minHeight: 0 });
 
     // The proxy tests the parameter for presence, so `false` would enable it.
-    const [, , , params] = getTransactionsMock.mock.calls[0];
+    const [, , params] = getTransactionsMock.mock.calls[0];
     expect(params.includeRawRejectReason).toBe(true);
   });
 
@@ -1216,9 +1211,9 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    await listOperations(config, VALID_ADDRESS, { minHeight: 500 }, "concordium_testnet");
+    await listOperations(config, VALID_ADDRESS, { minHeight: 500 });
 
-    expect(getTransactionsMock).toHaveBeenCalledWith(config, "concordium_testnet", VALID_ADDRESS, {
+    expect(getTransactionsMock).toHaveBeenCalledWith(config, VALID_ADDRESS, {
       limit: 100,
       order: "d",
       includeRawRejectReason: true,
@@ -1235,14 +1230,9 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    await listOperations(
-      config,
-      VALID_ADDRESS,
-      { minHeight: 0, cursor: "42" },
-      "concordium_testnet",
-    );
+    await listOperations(config, VALID_ADDRESS, { minHeight: 0, cursor: "42" });
 
-    expect(getTransactionsMock).toHaveBeenCalledWith(config, "concordium_testnet", VALID_ADDRESS, {
+    expect(getTransactionsMock).toHaveBeenCalledWith(config, VALID_ADDRESS, {
       limit: 100,
       order: "d",
       includeRawRejectReason: true,
@@ -1277,12 +1267,7 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    const result = await listOperations(
-      config,
-      VALID_ADDRESS,
-      { minHeight: 0 },
-      "concordium_testnet",
-    );
+    const result = await listOperations(config, VALID_ADDRESS, { minHeight: 0 });
 
     expect(result.next).toBe("101");
   });
@@ -1315,14 +1300,9 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    const result = await listOperations(
-      config,
-      VALID_ADDRESS,
-      { minHeight: 0, limit: 2000 },
-      "concordium_testnet",
-    );
+    const result = await listOperations(config, VALID_ADDRESS, { minHeight: 0, limit: 2000 });
 
-    expect(getTransactionsMock.mock.calls[0][3]).toMatchObject({ limit: 2000 });
+    expect(getTransactionsMock.mock.calls[0][2]).toMatchObject({ limit: 2000 });
     expect(result.items).toHaveLength(1000);
     expect(result.next).toBe("1001");
   });
@@ -1345,12 +1325,7 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    const result = await listOperations(
-      config,
-      VALID_ADDRESS,
-      { minHeight: 0 },
-      "concordium_testnet",
-    );
+    const result = await listOperations(config, VALID_ADDRESS, { minHeight: 0 });
 
     expect(result.items).toHaveLength(0);
   });
@@ -1382,12 +1357,7 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    const result = await listOperations(
-      config,
-      VALID_ADDRESS,
-      { minHeight: 0, limit: 2 },
-      "concordium_testnet",
-    );
+    const result = await listOperations(config, VALID_ADDRESS, { minHeight: 0, limit: 2 });
 
     expect(result.items.map(({ type, value }) => [type, value])).toEqual([["FEES", "300"]]);
     expect(result.next).toBe("11");
@@ -1396,16 +1366,16 @@ describe("listOperations", () => {
   it("reports a fetch failure rather than an empty page, which reads as the end", async () => {
     getTransactionsMock.mockRejectedValue(new Error("network error"));
 
-    await expect(
-      listOperations(config, VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet"),
-    ).rejects.toThrow("network error");
+    await expect(listOperations(config, VALID_ADDRESS, { minHeight: 0 })).rejects.toThrow(
+      "network error",
+    );
   });
 
   it("excludes rewards, which the parser drops and which dominate a staking account", async () => {
     getTransactionsMock.mockResolvedValue({ transactions: [], count: 0, limit: 100 });
 
-    await listOperations(config, VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
+    await listOperations(config, VALID_ADDRESS, { minHeight: 0 });
 
-    expect(getTransactionsMock.mock.calls[0][3]).toMatchObject({ includeRewards: "none" });
+    expect(getTransactionsMock.mock.calls[0][2]).toMatchObject({ includeRewards: "none" });
   });
 });

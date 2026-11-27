@@ -15,8 +15,7 @@ import { createApi } from ".";
 const MAX_WINDOW = 20_000;
 const PAGE_LIMIT = 20;
 
-const config = cantonDefaults.canton_network_devnet;
-const context = createMockContext(config);
+const context = createMockContext(cantonDefaults.canton_network_devnet);
 const api = createApi();
 
 async function walk(
@@ -66,10 +65,10 @@ describe("listOperations (devnet)", () => {
   let rawRows: OperationView[];
 
   beforeAll(async () => {
-    partyId = await getDevnetValidatorParty(config);
-    highestOffset = await getLedgerEnd(config);
+    partyId = await getDevnetValidatorParty(context);
+    highestOffset = await getLedgerEnd(context);
     ({ lowestOffset, rows: rawRows } = await readRawWindow(
-      config,
+      context,
       partyId,
       highestOffset,
       MAX_WINDOW,

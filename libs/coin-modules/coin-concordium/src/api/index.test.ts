@@ -36,13 +36,13 @@ describe("api/index", () => {
 
   // Absent, raising "<name> is not supported" through the resolver — exhaustive by `toEqual`.
   it("omits the capabilities the chain has none of", async () => {
-    await expect(capabilityReport(createApi("concordium_testnet"), context)).resolves.toEqual({
+    await expect(capabilityReport(createApi(), context)).resolves.toEqual({
       supported: ["craftRawTransaction", "getBlock", "getBlockInfo", "validateAddress"],
       inconsistent: [],
     });
   });
   it("declares every method the chain supports", () => {
-    expect(createApi("concordium_testnet")).toEqual({
+    expect(createApi()).toEqual({
       broadcast: expect.any(Function),
       combine: expect.any(Function),
       craftRawTransaction: expect.any(Function),
@@ -66,40 +66,37 @@ describe("api/index", () => {
       controller.abort(reason);
 
       await expect(
-        createApi("concordium_testnet").getAccountStatus(
-          { ...context, signal: controller.signal },
-          "ab",
-        ),
+        createApi().getAccountStatus({ ...context, signal: controller.signal }, "ab"),
       ).rejects.toBe(reason);
     });
   });
 
   describe("broadcast", () => {
     it("should call broadcast with transaction and currency", async () => {
-      const api = createApi("concordium_testnet");
+      const api = createApi();
       broadcastMock.mockResolvedValue("tx-hash-123");
 
       const result = await api.broadcast(context, "signed-tx-data");
 
-      expect(broadcastMock).toHaveBeenCalledWith(config, "signed-tx-data", "concordium_testnet");
+      expect(broadcastMock).toHaveBeenCalledWith(config, "signed-tx-data");
       expect(result).toBe("tx-hash-123");
     });
   });
 
   describe("getBalance", () => {
     it("should call getBalance with address and currency", async () => {
-      const api = createApi("concordium_testnet");
+      const api = createApi();
       const mockBalances = [{ asset: { type: "native" }, value: BigInt(5000000) }];
       getBalanceMock.mockResolvedValue(mockBalances);
 
       const result = await api.getBalance(context, VALID_ADDRESS);
 
-      expect(getBalanceMock).toHaveBeenCalledWith(config, VALID_ADDRESS, "concordium_testnet");
+      expect(getBalanceMock).toHaveBeenCalledWith(config, VALID_ADDRESS);
       expect(result).toEqual(mockBalances);
     });
 
     it("should throw an exception when options is provided", async () => {
-      const api = createApi("concordium_testnet");
+      const api = createApi();
       await expect(
         api.getBalance(context, "random address", {} as unknown as BalanceOptions),
       ).rejects.toMatchObject({ name: "InvalidParameterError" });
@@ -108,20 +105,20 @@ describe("api/index", () => {
 
   describe("lastBlock", () => {
     it("should call lastBlock with currency", async () => {
-      const api = createApi("concordium_testnet");
+      const api = createApi();
       const mockBlockInfo = { height: 1000, hash: "block-hash", time: new Date() };
       lastBlockMock.mockResolvedValue(mockBlockInfo);
 
       const result = await api.lastBlock(context);
 
-      expect(lastBlockMock).toHaveBeenCalledWith(config, "concordium_testnet");
+      expect(lastBlockMock).toHaveBeenCalledWith(config);
       expect(result).toEqual(mockBlockInfo);
     });
   });
 
   describe("listOperations", () => {
     it("should call listOperations with address, pagination and currency", async () => {
-      const api = createApi("concordium_testnet");
+      const api = createApi();
       const mockRawPage = {
         items: [
           {
@@ -148,12 +145,7 @@ describe("api/index", () => {
 
       const result = await api.listOperations(context, VALID_ADDRESS, pagination);
 
-      expect(listOperationsMock).toHaveBeenCalledWith(
-        config,
-        VALID_ADDRESS,
-        pagination,
-        "concordium_testnet",
-      );
+      expect(listOperationsMock).toHaveBeenCalledWith(config, VALID_ADDRESS, pagination);
       expect(result.items).toHaveLength(1);
       expect(result.items[0].type).toBe("OUT");
       expect(result.items[0].value).toBe(BigInt(1000000));
@@ -164,20 +156,20 @@ describe("api/index", () => {
 
   describe("getBlockInfo", () => {
     it("should call getBlockInfo with height and currency", async () => {
-      const api = createApi("concordium_testnet");
+      const api = createApi();
       const mockBlockInfo = { height: 600, hash: "block-600", time: new Date() };
       getBlockInfoMock.mockResolvedValue(mockBlockInfo);
 
       const result = await api.getBlockInfo(context, 600);
 
-      expect(getBlockInfoMock).toHaveBeenCalledWith(config, 600, "concordium_testnet");
+      expect(getBlockInfoMock).toHaveBeenCalledWith(config, 600);
       expect(result).toEqual(mockBlockInfo);
     });
   });
 
   describe("getBlock", () => {
     it("should call getBlock with height and currency", async () => {
-      const api = createApi("concordium_testnet");
+      const api = createApi();
       const mockBlock = {
         info: { height: 600, hash: "block-600", time: new Date() },
         transactions: [],
@@ -186,7 +178,7 @@ describe("api/index", () => {
 
       const result = await api.getBlock(context, 600);
 
-      expect(getBlockMock).toHaveBeenCalledWith(config, 600, "concordium_testnet");
+      expect(getBlockMock).toHaveBeenCalledWith(config, 600);
       expect(result).toEqual(mockBlock);
     });
   });

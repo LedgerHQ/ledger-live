@@ -4,8 +4,9 @@ import type {
   Page,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { InvalidParameterError } from "@ledgerhq/coin-module-framework/errors";
-import type { CantonCoinConfig, CantonContext } from "../config";
+import { pinConfig, type CantonContext } from "../config";
 import { getLedgerEnd, getOperations, isGatewayEnabled } from "../network/gateway";
+import { getMaxTxQuery } from "../tuning";
 import type { OperationView } from "../types/gateway";
 import {
   decodeAscendingCursor,
@@ -17,10 +18,9 @@ import { toOperation } from "./toOperation";
 
 const DEFAULT_PAGE_SIZE = 100;
 const INITIAL_WINDOW_WIDTH = 10_000;
-const GATEWAY_PAGE_SIZE = 1_000;
 
 type Query = {
-  config: CantonCoinConfig;
+  context: CantonContext;
   partyId: string;
   minHeight: number;
   pageSize: number;
@@ -44,13 +44,13 @@ export function resumeOffset(start: number, rows: OperationView[], next: number)
 }
 
 async function ascendingPage(
-  { config, partyId, minHeight }: Query,
+  { context, partyId, minHeight }: Query,
   cursor: string | undefined,
   limit: number | undefined,
 ): Promise<Page<OperationView>> {
   const start = Math.max(minHeight, cursor === undefined ? 0 : decodeAscendingCursor(cursor));
-  if (start > (await getLedgerEnd(config))) return { items: [] };
-  const { operations, next } = await getOperations(config, partyId, { minOffset: start, limit });
+  if (start > (await getLedgerEnd(context))) return { items: [] };
+  const { operations, next } = await getOperations(context, partyId, { minOffset: start, limit });
   return {
     items: operations,
     next: next < 0 ? undefined : String(resumeOffset(start, operations, next)),
@@ -78,18 +78,19 @@ function keepNewest(buffer: NewestRows, rows: OperationView[], pageSize: number)
 }
 
 async function readWindow(
-  { config, partyId, pageSize }: Query,
+  { context, partyId, pageSize }: Query,
   lowestOffset: number,
   highestOffset: number,
 ): Promise<NewestRows> {
   const buffer: NewestRows = { offsetGroups: [], rowCount: 0, evicted: false };
+  const limit = getMaxTxQuery(await context.config());
   let cursor: number | undefined;
   for (;;) {
-    const { operations, next } = await getOperations(config, partyId, {
+    const { operations, next } = await getOperations(context, partyId, {
       minOffset: lowestOffset,
       maxOffset: highestOffset,
       cursor,
-      limit: GATEWAY_PAGE_SIZE,
+      limit,
     });
     keepNewest(buffer, operations, pageSize);
     if (next < 0) return buffer;
@@ -127,7 +128,7 @@ async function descendingPage(
 ): Promise<Page<OperationView>> {
   const { highestOffset, windowWidth }: DescendingCursor =
     cursor === undefined
-      ? { highestOffset: await getLedgerEnd(query.config), windowWidth: INITIAL_WINDOW_WIDTH }
+      ? { highestOffset: await getLedgerEnd(query.context), windowWidth: INITIAL_WINDOW_WIDTH }
       : decodeDescendingCursor(cursor);
   if (query.minHeight > highestOffset) return { items: [] };
 
@@ -152,7 +153,12 @@ export async function listOperations(
   const config = await context.config();
   if (!isGatewayEnabled(config)) throw new Error("Not implemented");
 
-  const query: Query = { config, partyId, minHeight, pageSize: limit ?? DEFAULT_PAGE_SIZE };
+  const query: Query = {
+    context: pinConfig(context, config),
+    partyId,
+    minHeight,
+    pageSize: limit ?? DEFAULT_PAGE_SIZE,
+  };
   const page =
     order === "desc"
       ? await descendingPage(query, cursor)

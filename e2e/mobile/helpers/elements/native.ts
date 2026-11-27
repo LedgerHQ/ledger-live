@@ -541,3 +541,14 @@ export const byTextWithAncestorId = (options: IdAndTextOptions): NativeHandle =>
     description: `"${text}" inside #${id}`,
   });
 };
+
+type TextInRowWithTextOptions = IdAndTextOptions & { rowText: string | RegExp };
+
+/** Matches a text inside the `testID` row that also shows `rowText`. */
+export const byTextInRowWithText = (options: TextInRowWithTextOptions): NativeHandle => {
+  const { id, text, rowText } = options;
+  return new NativeHandle({
+    createMatcher: () => by.text(text).withAncestor(by.id(id).withDescendant(by.text(rowText))),
+    description: `"${text}" inside #${id} containing "${rowText}"`,
+  });
+};

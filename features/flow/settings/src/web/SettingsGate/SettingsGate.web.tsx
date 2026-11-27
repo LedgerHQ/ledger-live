@@ -1,6 +1,7 @@
 import React, { type ReactNode } from "react";
 import { HiddenSettingsProvider } from "../../components/HiddenSettingsProvider/HiddenSettingsProvider";
 import type { SettingsSectionId } from "../../logic/settingsSections";
+import type { SettingsStandalonePage } from "../../logic/settingsRoute";
 import { SettingsPage } from "../SettingsPage/SettingsPage";
 import { useSettingsGateViewModel } from "./useSettingsGateViewModel";
 
@@ -17,6 +18,8 @@ export type SettingsGateProps = Readonly<{
    * imports one. Empty while a section has no content yet.
    */
   renderSection?: (section: SettingsSectionId) => ReactNode;
+  /** Content of a standalone page such as Help, shown instead of the section tabs. */
+  renderStandalonePage?: (page: SettingsStandalonePage) => ReactNode;
   testID?: string;
 }>;
 
@@ -27,11 +30,20 @@ export function SettingsGate({
   legacySettings,
   rowsToHide,
   renderSection,
+  renderStandalonePage,
   testID,
 }: SettingsGateProps) {
-  const { showLegacySettings, selectedSection } = useSettingsGateViewModel(subPath);
+  const { showLegacySettings, selectedSection, standalonePage } = useSettingsGateViewModel(subPath);
 
   if (showLegacySettings) return <>{legacySettings}</>;
+
+  if (standalonePage) {
+    return (
+      <HiddenSettingsProvider rowsToHide={rowsToHide}>
+        {renderStandalonePage?.(standalonePage) ?? null}
+      </HiddenSettingsProvider>
+    );
+  }
 
   return (
     <HiddenSettingsProvider rowsToHide={rowsToHide}>

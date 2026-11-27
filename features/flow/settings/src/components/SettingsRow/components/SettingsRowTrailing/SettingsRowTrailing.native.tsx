@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Switch, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Button, Pressable, Switch, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ChevronRight, ExternalLink } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { SettingsRowSelect } from "../SettingsRowSelect/SettingsRowSelect";
 import type { SettingsRowTrailingProps } from "./SettingsRowTrailing.types";
@@ -38,6 +38,23 @@ export function SettingsRowTrailing({
         <Button appearance="gray" size="sm" onPress={trailing.onSelect} disabled={disabled}>
           {trailing.label}
         </Button>
+      );
+    case "picker":
+      return (
+        <Pressable
+          onPress={trailing.onSelect}
+          disabled={disabled}
+          accessibilityRole="button"
+          accessibilityLabel={rowTitle}
+          accessibilityValue={{ text: trailing.label }}
+        >
+          <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}>
+            <Text typography="body2" lx={{ color: "muted" }}>
+              {trailing.label}
+            </Text>
+            <ChevronRight size={24} color="muted" />
+          </Box>
+        </Pressable>
       );
   }
 }

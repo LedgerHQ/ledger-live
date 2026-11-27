@@ -15,6 +15,7 @@ import {
   UnsupportedDescriptorPathError,
   fromLegacyAccount,
   redactAccountId,
+  accountContextOf,
   toLegacyAccount,
   type LegacyAccountIdentity,
 } from "./accountDescriptor";
@@ -535,6 +536,64 @@ describe("redactAccountId", () => {
     expect(redactAccountId(`js:2:aleo:${address}:unknownmode:${viewKey}`)).toBe(
       `js:2:aleo:${address}:unknownmode:[redacted]`,
     );
+  });
+});
+
+describe("an Aleo account, keyed on its address, its view key kept as its context", () => {
+  // The coin-aleo testnet fixture account.
+  const address = "aleo1uhf67fhy46jvv5hadf586pkdarax6ppuzq8xtpk7jdk9hhujku8sfa39ml";
+  const viewKey = "AViewKey1jyaKC65RhaGN3b6h79hLdwTBk3YAMbRL1MMeCArLDJ6E";
+  const legacy: LegacyAccountIdentity = {
+    id: encodeAccountId({
+      type: "js",
+      version: "2",
+      currencyId: "aleo",
+      xpubOrAddress: address,
+      derivationMode: "aleo",
+      customData: viewKey,
+    }),
+    currency: { id: "aleo" },
+    derivationMode: "aleo",
+    index: 2,
+    freshAddress: address,
+  };
+
+  it("keys the account on its address alone", () => {
+    expect(fromLegacyAccount(legacy)).toMatchObject({
+      type: "address",
+      key: address,
+      path: "m/44h/683h/2h/0h",
+    });
+  });
+
+  it("reads the view key of the legacy id as the account context", () => {
+    expect(accountContextOf(legacy)).toEqual({ viewKey });
+  });
+
+  it("gives the context's view key back as the legacy id's custom data", () => {
+    expect(toLegacyAccount(fromLegacyAccount(legacy), { viewKey })).toEqual({
+      currencyId: "aleo",
+      derivationMode: "aleo",
+      index: 2,
+      freshAddress: address,
+      customData: viewKey,
+    });
+  });
+
+  it("has no custom data without a context", () => {
+    expect(toLegacyAccount(fromLegacyAccount(legacy))).not.toHaveProperty("customData");
+  });
+
+  it("has no context for a family that keeps none in its legacy id", () => {
+    expect(
+      accountContextOf({ id: "js:2:ethereum:0x01::extra", currency: { id: "ethereum" } }),
+    ).toBeUndefined();
+  });
+
+  it("never decodes the id of a family that keeps no context", () => {
+    expect(
+      accountContextOf({ id: "not a legacy id", currency: { id: "ethereum" } }),
+    ).toBeUndefined();
   });
 });
 

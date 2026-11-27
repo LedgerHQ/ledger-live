@@ -5,15 +5,16 @@ import type { Account } from "@ledgerhq/types-live";
 import type { AccountSettingsEventHandler } from "@features/flow-account-detail-settings";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { useSelector } from "~/context/hooks";
 import { useMaybeAccountName } from "~/reducers/wallet";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { NavigatorName, ScreenName } from "~/const";
-import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import type {
-  RootNavigationComposite,
-  StackNavigatorNavigation,
-} from "~/components/RootNavigator/types/helpers";
 import type { AccountDetailNavigatorParamsList } from "../../types";
 import { useAccountSettingsTracking } from "../../hooks/useAccountSettingsTracking";
+import {
+  getManageAssetsAction,
+  type AccountDetailNavigation,
+} from "../../utils/manageAssetsAction";
 import { useAccountRefresh, type AccountRefresh } from "./useAccountRefresh";
 import { useDeferredAccountRemoval } from "./useDeferredAccountRemoval";
 
@@ -34,6 +35,7 @@ export type AccountDetailViewModel = Readonly<{
   onCloseSettings: () => void;
   onSettingsHidden: () => void;
   onChangeName: () => void;
+  onManageAssets: (() => void) | undefined;
   onViewAdvancedLogs: () => void;
   onConfirmRemove: () => void;
   onSettingsEvent: AccountSettingsEventHandler;
@@ -42,9 +44,6 @@ export type AccountDetailViewModel = Readonly<{
 type SettingsScreen = ScreenName.AccountDetailEditName | ScreenName.AccountDetailAdvancedLogs;
 
 type AccountDetailRoute = RouteProp<AccountDetailNavigatorParamsList, ScreenName.AccountDetail>;
-type AccountDetailNavigation = RootNavigationComposite<
-  StackNavigatorNavigation<BaseNavigatorStackParamList>
->;
 type AccountDetailStackNavigation = NativeStackNavigationProp<
   AccountDetailNavigatorParamsList,
   ScreenName.AccountDetail
@@ -89,17 +88,24 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
     setIsSettingsOpen(true);
   }, [onSettingsOpened]);
   const onCloseSettings = useCallback(() => setIsSettingsOpen(false), []);
-  const screenToOpenAfterSettings = useRef<SettingsScreen | undefined>(undefined);
-  const openSettingsScreen = useCallback((screen: SettingsScreen) => {
-    screenToOpenAfterSettings.current = screen;
+  const actionAfterSettings = useRef<(() => void) | undefined>(undefined);
+  const closeSettingsThen = useCallback((action: () => void) => {
+    actionAfterSettings.current = action;
     setIsSettingsOpen(false);
   }, []);
   const onSettingsHidden = useCallback(() => {
-    const screen = screenToOpenAfterSettings.current;
-    screenToOpenAfterSettings.current = undefined;
-    if (!screen || !mainAccount) return;
-    stackNavigation.navigate(screen, { accountId: mainAccount.id });
-  }, [mainAccount, stackNavigation]);
+    const action = actionAfterSettings.current;
+    actionAfterSettings.current = undefined;
+    action?.();
+  }, []);
+  const openSettingsScreen = useCallback(
+    (screen: SettingsScreen) => {
+      closeSettingsThen(() => {
+        if (mainAccount) stackNavigation.navigate(screen, { accountId: mainAccount.id });
+      });
+    },
+    [closeSettingsThen, mainAccount, stackNavigation],
+  );
   const onChangeName = useCallback(
     () => openSettingsScreen(ScreenName.AccountDetailEditName),
     [openSettingsScreen],
@@ -108,6 +114,18 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
     () => openSettingsScreen(ScreenName.AccountDetailAdvancedLogs),
     [openSettingsScreen],
   );
+
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const onManageAssets = useMemo(() => {
+    if (!mainAccount || readOnlyModeEnabled) return undefined;
+
+    const manageAssetsAction = getManageAssetsAction(mainAccount.currency.family);
+    if (!manageAssetsAction?.canManage(mainAccount)) return undefined;
+
+    return () => {
+      closeSettingsThen(() => manageAssetsAction.open({ account: mainAccount, navigation }));
+    };
+  }, [closeSettingsThen, mainAccount, navigation, readOnlyModeEnabled]);
 
   const onConfirmRemove = useCallback(() => {
     setIsSettingsOpen(false);
@@ -124,6 +142,7 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
     onCloseSettings,
     onSettingsHidden,
     onChangeName,
+    onManageAssets,
     onViewAdvancedLogs,
     onConfirmRemove,
     onSettingsEvent,

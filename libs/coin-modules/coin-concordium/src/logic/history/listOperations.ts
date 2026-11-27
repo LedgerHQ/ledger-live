@@ -337,7 +337,6 @@ export async function listOperations(
   config: ConcordiumCoinConfig,
   address: string,
   options: ListOperationsOptions,
-  currencyId: string,
 ): Promise<RawOperationPage> {
   const limit = options.limit || DEFAULT_PAGE_SIZE;
 
@@ -361,7 +360,7 @@ export async function listOperations(
     params.from = options.cursor;
   }
 
-  const response = await getTransactions(config, currencyId, address, params);
+  const response = await getTransactions(config, address, params);
 
   if (!("transactions" in response) || !Array.isArray(response.transactions)) {
     // Reporting this as an empty page would read as the end of the history, and

@@ -5,6 +5,7 @@ describe("getSettingsRoute", () => {
     expect(getSettingsRoute("security", false)).toEqual({
       showLegacySettings: true,
       selectedSection: "security",
+      standalonePage: null,
     });
   });
 
@@ -12,6 +13,7 @@ describe("getSettingsRoute", () => {
     expect(getSettingsRoute("", true)).toEqual({
       showLegacySettings: false,
       selectedSection: "general",
+      standalonePage: null,
     });
   });
 
@@ -23,10 +25,23 @@ describe("getSettingsRoute", () => {
     expect(getSettingsRoute("unknown", true)).toEqual({
       showLegacySettings: false,
       selectedSection: "general",
+      standalonePage: null,
     });
   });
 
-  it.each(["help", "experimental", "developer", "developer/info-state-qa"])(
+  it("shows the Help standalone page while the new Settings are on", () => {
+    expect(getSettingsRoute("help", true)).toEqual({
+      showLegacySettings: false,
+      selectedSection: "general",
+      standalonePage: "help",
+    });
+  });
+
+  it("keeps the legacy Settings for Help while the new ones are off", () => {
+    expect(getSettingsRoute("help", false).showLegacySettings).toBe(true);
+  });
+
+  it.each(["experimental", "developer", "developer/info-state-qa"])(
     "keeps the legacy Settings for %s, not in the new Settings yet",
     subPath => {
       expect(getSettingsRoute(subPath, true).showLegacySettings).toBe(true);

@@ -2289,6 +2289,31 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(store.getState().postOnboarding.actionsToComplete).not.toContain("recover");
   });
 
+  it("should skip the Recover pitch when the deviceOnboarding flag hides Recover", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel(), {
+      overrideInitialState: withFlagOverrides({
+        ...recoverEnabled,
+        deviceOnboarding: { enabled: true, params: { offerLedgerSync: false, recover: false } },
+      }),
+    });
+
+    expect(result.current.status).toBe("success");
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it("should show the Recover pitch when a saved deviceOnboarding value predates the recover param", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel(), {
+      overrideInitialState: withFlagOverrides({
+        ...recoverEnabled,
+        deviceOnboarding: { enabled: true, params: { offerLedgerSync: false } },
+      }),
+    });
+
+    expect(result.current.status).toBe("recoverNewSeed");
+  });
+
   it("should move to the success karaoke when Recover is skipped", () => {
     useSession.mockReturnValue(doneWithSeed("newSeed"));
     const { result } = renderRecoverFunnel();
@@ -2341,6 +2366,61 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
     expect(store.getState().settings.hasBeenUpsoldProtect).toBe(true);
     expect(resetNavigation).toHaveBeenCalled();
+  });
+
+  describe("onboarding_done of a new seed", () => {
+    const doneEvents = () => events().filter(event => event === "onboarding_done");
+
+    beforeEach(() => {
+      useSession.mockReturnValue(
+        session({
+          state: "done",
+          context: {
+            onboardedOnEntry: false,
+            checksPaused: false,
+          } as DeviceOnboardingSession["context"],
+          snapshot: {
+            context: {
+              onboardedOnEntry: false,
+              deviceModelId: DmkDeviceModelId.STAX,
+              offerSync: false,
+              firmware: null,
+              seedPath: SeedPath.NewSeed,
+            },
+          } as unknown as DeviceOnboardingSession["snapshot"],
+        }),
+      );
+    });
+
+    it("should send it when the user opens Recover, and not again on the success tap", () => {
+      const { result, rerender } = renderRecoverFunnel();
+
+      act(() => recoverOf(result.current).onOpenLiveApp());
+      expect(doneEvents()).toHaveLength(1);
+      expect(track).toHaveBeenCalledWith(
+        "onboarding_done",
+        expect.objectContaining({ seedConfiguration: "new_seed", ledger_sync_done: "no" }),
+      );
+
+      jest.mocked(useIsFocused).mockReturnValue(false);
+      rerender(undefined);
+      jest.mocked(useIsFocused).mockReturnValue(true);
+      rerender(undefined);
+      act(() => successOf(result.current).onFinish());
+
+      expect(doneEvents()).toHaveLength(1);
+    });
+
+    it("should send it once on the success tap when the user skips Recover", () => {
+      const { result } = renderRecoverFunnel();
+
+      act(() => recoverOf(result.current).onSkip());
+      expect(doneEvents()).toHaveLength(0);
+
+      act(() => successOf(result.current).onFinish());
+
+      expect(doneEvents()).toHaveLength(1);
+    });
   });
 
   it("should show the success karaoke when an unseeded restore reaches done", () => {
@@ -2899,6 +2979,24 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(closeFirmwareHandover).toHaveBeenCalledTimes(1);
     expect(send).toHaveBeenCalledTimes(1);
     expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+  });
+
+  it("should show the restore step on Setup when the deviceOnboarding flag hides Recover", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreRecover",
+        context: unseededContext({ currentOnboardingStep: "restore-recover-backup" }),
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel(), {
+      overrideInitialState: withFlagOverrides({
+        deviceOnboarding: { enabled: true, params: { offerLedgerSync: false, recover: false } },
+      }),
+    });
+
+    expect(result.current.status).toBe("setup");
+    expect(send).not.toHaveBeenCalledWith({ type: "PAUSE_POLLING" });
   });
 
   it("should show Recover restore while that step is on the device", () => {

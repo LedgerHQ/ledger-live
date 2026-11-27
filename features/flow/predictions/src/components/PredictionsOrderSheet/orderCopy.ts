@@ -3,25 +3,40 @@ import type {
   PredictionsOrderReport,
   PredictionsOrderRejectionReason,
 } from "@features/platform-predictions";
+import type { PredictionsOrderDetails } from "../../predictionsOrderStore.internals";
 
-type OrderTitleKey =
-  | "predictions.order.placing"
-  | "predictions.order.filled.title"
-  | "predictions.order.notFilled.title"
-  | "predictions.order.rejected.title"
-  | "predictions.order.unconfirmed.title";
+export type OrderSide = PredictionsOrderDetails["side"];
 
-export function orderTitleKey(report: PredictionsOrderReport | null): OrderTitleKey {
-  if (report === null) return "predictions.order.placing";
+const COPY_SCOPES = { buy: "order", sale: "sale" } as const satisfies Record<OrderSide, string>;
+
+export type OrderCopyScope = (typeof COPY_SCOPES)[OrderSide];
+
+export function orderCopyScope(side: OrderSide): OrderCopyScope {
+  return COPY_SCOPES[side];
+}
+
+type OrderTitleKey = `predictions.${OrderCopyScope}.${
+  | "placing"
+  | "filled.title"
+  | "notFilled.title"
+  | "rejected.title"
+  | "unconfirmed.title"}`;
+
+export function orderTitleKey(
+  side: OrderSide,
+  report: PredictionsOrderReport | null,
+): OrderTitleKey {
+  const scope = orderCopyScope(side);
+  if (report === null) return `predictions.${scope}.placing`;
   switch (report.status) {
     case "filled":
-      return "predictions.order.filled.title";
+      return `predictions.${scope}.filled.title`;
     case "not-filled":
-      return "predictions.order.notFilled.title";
+      return `predictions.${scope}.notFilled.title`;
     case "rejected":
-      return "predictions.order.rejected.title";
+      return `predictions.${scope}.rejected.title`;
     case "unconfirmed":
-      return "predictions.order.unconfirmed.title";
+      return `predictions.${scope}.unconfirmed.title`;
   }
 }
 

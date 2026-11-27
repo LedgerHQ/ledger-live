@@ -38,4 +38,10 @@ describe("getSelectedOptionLabel", () => {
   it("returns undefined for an unknown value", () => {
     expect(getSelectedOptionLabel(options, "system")).toBeUndefined();
   });
+
+  it("returns the short label of the selected option when it has one", () => {
+    expect(
+      getSelectedOptionLabel([{ value: "EUR", label: "Euro", shortLabel: "EUR" }], "EUR"),
+    ).toBe("EUR");
+  });
 });

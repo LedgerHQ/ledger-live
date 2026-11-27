@@ -128,6 +128,48 @@ const ORDER_TYPED_DATA = {
   },
 };
 
+const PROXY_WALLET = "0x6e0c80c90ea6c15917308F820Eac91Ce2724B5b5";
+
+const SALE_TYPED_DATA = {
+  domain: { name: "BoxPolymarketSellPosition", version: "1", chainId: "137" },
+  types: {
+    EIP712Domain: ORDER_TYPED_DATA.types.EIP712Domain,
+    SellPosition: [
+      { name: "proxyWallet", type: "string" },
+      { name: "tokenID", type: "string" },
+      { name: "side", type: "string" },
+      { name: "orderType", type: "string" },
+      { name: "tickSize", type: "string" },
+      { name: "negRisk", type: "bool" },
+      { name: "amount", type: "uint256" },
+      { name: "slippage", type: "uint256" },
+      { name: "dstTokenAddress", type: "string" },
+      { name: "dstTokenChainId", type: "string" },
+      { name: "dstWalletAddress", type: "string" },
+      { name: "expiration", type: "uint256" },
+    ],
+  },
+  primaryType: "SellPosition",
+  message: {
+    proxyWallet: PROXY_WALLET,
+    tokenID: "90234889617199443673709150877675264639",
+    side: "SELL",
+    orderType: "FOK",
+    tickSize: "0.01",
+    negRisk: true,
+    amount: "16120000",
+    slippage: "100",
+    dstTokenAddress: "0xC011a7E12a19f7B1f670d46F03B03f3342E82DFB", // gitleaks:allow
+    dstTokenChainId: "137",
+    dstWalletAddress: PROXY_WALLET,
+    expiration: "1790000000",
+  },
+};
+
+// SALE_TYPED_DATA signed by the account's key, computed with ethers.
+const OWNER_SALE_SIGNATURE =
+  "0x6ca6f86a5a38c6e1ccce7c5c56a21bd84d85bc3145eecc12d3ce42bf1572fe4c47eeb4402f3a4c00c859faa3cdcd6ab959b836ab839d4d89feefd5c723e293a81b";
+
 // The order expires a minute after this, within the 300 s MoonPay accepts.
 const NOW_MS = 1_789_999_940_000;
 
@@ -490,5 +532,46 @@ describe("Predictions buy order", () => {
       }),
     ).rejects.toMatchObject({ name: "ZodError" });
     expect(isExecutorOpen()).toBe(false);
+  });
+});
+
+describe("Predictions sale", () => {
+  afterEach(() => jest.restoreAllMocks());
+
+  it("signs the sale on the device prompt, then shows its proceeds once filled", async () => {
+    const { signOrder, reportOrder, device, user } = setup();
+
+    const signing = signOrder(SALE_TYPED_DATA);
+    await screen.findByText(preparingTitle);
+    device.askToConfirm();
+    expect(screen.getByText("Continue on your Ledger Stax")).toBeOnTheScreen();
+    device.sign(OWNER_SALE_SIGNATURE);
+    await expect(signing).resolves.toMatchObject({ signature: OWNER_SALE_SIGNATURE });
+    finishClosingExecutor();
+    expect(screen.getByText("Selling your shares")).toBeOnTheScreen();
+
+    const report = reportOrder({ status: "filled", shares: 16.12, received: 4.3 });
+    await openResultPage();
+
+    expect(screen.getByText("Sale complete")).toBeOnTheScreen();
+    expect(screen.getByText("You sold 16.12 shares for $4.30")).toBeOnTheScreen();
+    await user.press(screen.getByText("Close"));
+    await expect(report).resolves.toEqual({ action: "close" });
+  });
+
+  it("refuses a sale that would pay out to the account itself, without opening anything", async () => {
+    const { signOrder } = setup();
+    const toAccount = {
+      ...SALE_TYPED_DATA,
+      message: {
+        ...SALE_TYPED_DATA.message,
+        proxyWallet: OWNER_ADDRESS,
+        dstWalletAddress: OWNER_ADDRESS,
+      },
+    };
+
+    await expect(signOrder(toAccount)).rejects.toMatchObject({ name: "ZodError" });
+    expect(isExecutorOpen()).toBe(false);
+    expect(runSignTypedDataEvm).not.toHaveBeenCalled();
   });
 });
