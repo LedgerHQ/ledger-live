@@ -3,7 +3,7 @@ import { I18nTestProvider } from "@shared/i18n/testing";
 import { render, renderHook, screen, within } from "@testing-library/react-native";
 import { SetupStepper } from "./SetupStepper";
 import type { SetupStepperProps } from "./SetupStepper.types";
-import { setupStepperTestIds, stageTitleTestId } from "./internals";
+import { setupStepperTestIds, stageDescriptionTestId, stageTitleTestId } from "./internals";
 import type { SetupStage } from "./toSetupStage";
 import { useSetupStepperViewModel } from "./useSetupStepperViewModel";
 
@@ -22,6 +22,8 @@ const COPY = {
       "deviceOnboarding.setup.naming.title": "Device name",
       "deviceOnboarding.setup.naming.description": "Give your {{productName}} a unique name",
       "deviceOnboarding.setup.pin.title": "PIN creation",
+      "deviceOnboarding.setup.restore.title": "Restore",
+      "deviceOnboarding.setup.restore.recoveryPhraseDescription": "Enter your recovery phrase",
       "earlySecurityCheck.genuineCheckNonGenuineDrawer.title": "Device not genuine",
     },
   },
@@ -77,6 +79,14 @@ describe("SetupStepper", () => {
     renderStepper({ stage: stage({ index: 2, kind: "pin" }) });
 
     expect(screen.getByTestId(stageTitleTestId("pin"))).toHaveTextContent("PIN creation");
+  });
+
+  it("should tag the description with the stage detail", () => {
+    renderStepper({ stage: stage({ index: 3, kind: "restore", detail: "recoveryPhrase" }) });
+
+    expect(
+      screen.getByTestId(stageDescriptionTestId("restore", "recoveryPhrase")),
+    ).toHaveTextContent("Enter your recovery phrase");
   });
 
   it("should show the genuine check alone with its progress", () => {

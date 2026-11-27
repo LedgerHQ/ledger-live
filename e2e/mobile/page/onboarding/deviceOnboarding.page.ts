@@ -8,6 +8,7 @@ import SetupPage from "@e2e/page/onboarding/deviceOnboarding/setup.page";
 import SuccessKaraokePage from "@e2e/page/onboarding/deviceOnboarding/successKaraoke.page";
 import SyncOfferPage from "@e2e/page/onboarding/deviceOnboarding/syncOffer.page";
 import FirmwareUpdateOfferDrawer from "@e2e/page/drawer/firmwareUpdateOffer.drawer";
+import CounterfeitWarningDrawer from "@e2e/page/drawer/counterfeitWarning.drawer";
 import RecoverDetailsDrawer from "@e2e/page/drawer/recoverDetails.drawer";
 import QuitConfirmationDrawer from "@e2e/page/drawer/quitConfirmation.drawer";
 import SkipSyncDrawer from "@e2e/page/drawer/skipSync.drawer";
@@ -24,6 +25,7 @@ export default class DeviceOnboardingPage {
   firmwareUpdate = new FirmwareUpdatePage();
   syncOffer = new SyncOfferPage();
   firmwareUpdateOfferDrawer = new FirmwareUpdateOfferDrawer();
+  counterfeitWarningDrawer = new CounterfeitWarningDrawer();
   recoverDetailsDrawer = new RecoverDetailsDrawer();
   quitConfirmationDrawer = new QuitConfirmationDrawer();
   skipSyncDrawer = new SkipSyncDrawer();

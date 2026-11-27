@@ -11,7 +11,7 @@ import {
   Stepper,
 } from "@ledgerhq/lumen-ui-rnative";
 import { CheckmarkCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { setupStepperTestIds, stageTitleTestId } from "./internals";
+import { setupStepperTestIds, stageDescriptionTestId, stageTitleTestId } from "./internals";
 import type { SetupIndicator } from "./toSetupStage";
 import type { SetupStepperViewProps } from "./useSetupStepperViewModel";
 
@@ -27,6 +27,7 @@ function StageStatus({ status }: Readonly<{ status: SetupIndicator }>) {
 
 export function SetupStepperView({
   stageKind,
+  stageDetail,
   label,
   completedSteps,
   totalSteps,
@@ -49,7 +50,11 @@ export function SetupStepperView({
           <Stepper currentStep={completedSteps} totalSteps={totalSteps} label={label} />
           <CardContent>
             <CardContentTitle testID={stageTitleTestId(stageKind)}>{title}</CardContentTitle>
-            {description ? <CardContentDescription>{description}</CardContentDescription> : null}
+            {description ? (
+              <CardContentDescription testID={stageDescriptionTestId(stageKind, stageDetail)}>
+                {description}
+              </CardContentDescription>
+            ) : null}
           </CardContent>
         </CardLeading>
         <CardTrailing>

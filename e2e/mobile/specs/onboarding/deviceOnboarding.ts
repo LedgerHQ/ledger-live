@@ -46,12 +46,14 @@ function seededFunnelFlags({
 }
 
 type UnseededFunnelOptions = {
+  counterfeitWarning?: boolean;
   offerLedgerSync?: boolean;
   recoverPitch?: boolean;
   recoverDetailsSheet?: boolean;
 };
 
 function unseededFunnelFlags({
+  counterfeitWarning = false,
   offerLedgerSync = false,
   recoverPitch = false,
   recoverDetailsSheet = false,
@@ -66,6 +68,7 @@ function unseededFunnelFlags({
         unifiedEntryPoints: false,
       },
     },
+    lwmOnboardingCounterfeitWarning: { enabled: counterfeitWarning },
     protectServicesMobile: { enabled: recoverPitch },
     recoverDetailedDrawerOnboarding: { enabled: recoverDetailsSheet },
     lwmNotificationsOptIn: { enabled: false },
@@ -331,11 +334,15 @@ async function connectUnseededDevice() {
   await app.deviceOnboarding.introKaraoke.expectVisible();
 }
 
-async function startUnseededSetup() {
+async function reachUnseededIntroAction() {
   await openStartingOptionsFromColdStart();
   await openConnectScreen("setupLedger");
   await connectUnseededDevice();
   await app.deviceOnboarding.introKaraoke.readUntilAction();
+}
+
+async function startUnseededSetup() {
+  await reachUnseededIntroAction();
   await app.deviceOnboarding.introKaraoke.start();
 }
 
@@ -379,9 +386,14 @@ async function reachRestoreChoice(mockServer: MockServerDevicePage) {
   await chooseToRestore(mockServer);
 }
 
-async function restoreOnDevice(mockServer: MockServerDevicePage, restoreStep: number) {
-  await mockServer.moveToOnboardingStep(restoreStep);
-  await app.deviceOnboarding.setup.expectStage("restore");
+async function restoreWithRecoveryPhraseOnDevice(mockServer: MockServerDevicePage) {
+  await mockServer.moveToOnboardingStep(ONBOARDING_STEP.restoreSeed);
+  await app.deviceOnboarding.setup.expectRecoveryPhraseRestore();
+  await finishSetupOnDevice(mockServer);
+}
+
+async function restoreWithRecoveryKeyOnDevice(mockServer: MockServerDevicePage) {
+  await mockServer.moveToOnboardingStep(ONBOARDING_STEP.restoreCharon);
   await finishSetupOnDevice(mockServer);
 }
 
@@ -399,6 +411,28 @@ export function runUnseededNewSeedTest(tmsLinks: string[], tags: string[]) {
 
     it("Sets up a factory device from Set up your Ledger and lands on the portfolio", async () => {
       await setUpNewSeedOnDevice(mockServer());
+      await app.deviceOnboarding.successKaraoke.expectVisible();
+      await app.deviceOnboarding.successKaraoke.readToEnd();
+      await expectOnboardedFromReadOnly();
+    });
+  });
+}
+
+export function runUnseededCounterfeitWarningTest(tmsLinks: string[], tags: string[]) {
+  setTeamOwner(Team.ENGAGEMENT);
+  describeUnseededFunnel("Unseeded device onboarding - counterfeit warning", () => {
+    const mockServer = setupUnseededFunnel({ counterfeitWarning: true });
+    tagFunnelScenario(tmsLinks, tags);
+
+    it("Acknowledges the counterfeit warning, sets up a new seed and lands on the portfolio", async () => {
+      await reachUnseededIntroAction();
+      await app.deviceOnboarding.introKaraoke.start();
+      await app.deviceOnboarding.counterfeitWarningDrawer.expectVisible();
+      await app.deviceOnboarding.counterfeitWarningDrawer.proceed();
+      await passUnseededChecks();
+      await createPin(mockServer());
+      await generateNewSeed(mockServer());
+      await finishSetupOnDevice(mockServer());
       await app.deviceOnboarding.successKaraoke.expectVisible();
       await app.deviceOnboarding.successKaraoke.readToEnd();
       await expectOnboardedFromReadOnly();
@@ -490,7 +524,7 @@ export function runUnseededRestorePhraseTest(tmsLinks: string[], tags: string[])
 
     it("Restores a factory device with its recovery phrase and lands on the portfolio", async () => {
       await reachRestoreChoice(mockServer());
-      await restoreOnDevice(mockServer(), ONBOARDING_STEP.restoreSeed);
+      await restoreWithRecoveryPhraseOnDevice(mockServer());
       await finishRestoreFromSuccessKaraoke();
     });
   });
@@ -509,7 +543,7 @@ export function runUnseededRestoreRecoverTest(tmsLinks: string[], tags: string[]
       await app.deviceOnboarding.recoverRestore.close();
       await app.deviceOnboarding.recoverRestore.expectClosed();
       await app.deviceOnboarding.setup.expectStage("restore");
-      await restoreOnDevice(mockServer(), ONBOARDING_STEP.restoreSeed);
+      await restoreWithRecoveryPhraseOnDevice(mockServer());
       await finishRestoreFromSuccessKaraoke();
     });
   });
@@ -523,7 +557,7 @@ export function runUnseededRestoreRecoveryKeyTest(tmsLinks: string[], tags: stri
 
     it("Restores a factory device with a Recovery Key and lands on the portfolio", async () => {
       await reachRestoreChoice(mockServer());
-      await restoreOnDevice(mockServer(), ONBOARDING_STEP.restoreCharon);
+      await restoreWithRecoveryKeyOnDevice(mockServer());
       await finishRestoreFromSuccessKaraoke();
     });
   });
