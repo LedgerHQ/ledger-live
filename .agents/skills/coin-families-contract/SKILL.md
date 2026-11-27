@@ -48,6 +48,15 @@ description: |
 
 When you need **new** coin-specific behavior in a generic flow (e.g. post-add-account navigation, custom empty state): **extend the contract** (add a new optional slot and document it), implement it in the relevant family folder, and have the generic code only read from the contract. Do not add new `if (family === "…")` branches in shared UI.
 
+## Lint guardrails
+
+Three rules of `@support/lint` keep generic code on the contract: `coin-families/no-coin-specific-import`, `no-family-branch` and `no-currency-id-branch`. Their shapes and blind spots (maps keyed by family, lists imported from another module, duck typing) are in the [support/lint README](../../../support/lint/README.md#coin-familiesno-coin-specific-import); a currency-id check is rule D, not a family check.
+
+- **The baseline only shrinks.** Violations that existed are in `oxlint-suppressions.json` of each app. Never add one: fix the leak, then run `pnpm exec oxlint ... --prune-suppressions` from the app folder (commands in the [Desktop](../../../apps/ledger-live-desktop/docs/lint.md) and [Mobile](../../../apps/ledger-live-mobile/docs/lint.md) lint docs).
+- **No inline disable.** `pnpm lint:coin-families-disables` rejects `oxlint-disable` and `eslint-disable` comments that name these rules.
+- **A file that stays on purpose is an exception**, with its reason and owner in `coin-families-exceptions.json` of the app (Desktop: Electron process plumbing for the Zcash native host, which lives outside `families/`). `pnpm lint:coin-families-exceptions` keeps that file from going stale. Add an entry only for a reason that is not a plan to move the code.
+- **The slots** are the optional properties of the contract: `LLDCoinFamily` in `apps/ledger-live-desktop/src/renderer/families/types.ts` for Desktop, the files of `apps/ledger-live-mobile/src/generated/` for Mobile. Read them there rather than from a list.
+
 ## Paths
 
 - **Desktop:** `apps/ledger-live-desktop/src/renderer/families/`: contract in `types.ts`, implementations per family, one dynamic import per family in `loaders.ts`, lookup through `useLLDCoinFamily`; generic code under `renderer/`, `mvvm/`.
