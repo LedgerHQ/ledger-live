@@ -158,6 +158,7 @@ features/flow/settings-privacy/                          @ledgerhq/wallet-xp
 features/flow/settings-security/                         @ledgerhq/wallet-xp
 features/flow/settings-debug/                            @ledgerhq/wallet-xp
 features/flow/settings-developer/                        @ledgerhq/wallet-xp
+features/flow/settings-about/                            @ledgerhq/wallet-xp
 features/platform/account-analytics/                     @ledgerhq/wallet-xp
 features/platform/quick-actions/                         @ledgerhq/wallet-xp
 
