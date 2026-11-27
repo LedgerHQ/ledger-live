@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
+import { Spot } from "@ledgerhq/lumen-ui-rnative";
 import { SettingsConfirmSheet } from "./SettingsConfirmSheet";
 
 const labels = {
@@ -25,10 +26,28 @@ describe("SettingsConfirmSheet", () => {
       />,
     );
 
-    expect(screen.getByTestId("reset-sheet-header")).toHaveProp("title", "Reset Ledger Wallet?");
+    expect(screen.getByText("Reset Ledger Wallet?")).toBeVisible();
+    expect(screen.getByText("This deletes the app data on this phone.")).toBeVisible();
     await user.press(screen.getByTestId("confirm"));
 
     expect(onConfirm).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ["destructive", "error"],
+    ["neutral", "muted"],
+  ] as const)("shows the spot of a %s confirmation", (tone, appearance) => {
+    render(
+      <SettingsConfirmSheet
+        isOpen
+        tone={tone}
+        labels={labels}
+        onConfirm={jest.fn()}
+        onCancel={jest.fn()}
+      />,
+    );
+
+    expect(screen.UNSAFE_getByType(Spot).props.appearance).toBe(appearance);
   });
 
   it("reports the cancel", async () => {

@@ -30,7 +30,7 @@ The sections come with the next tickets of the
 Help is a standalone page, not a section: with `newSettings` on, `getSettingsRoute` returns
 `standalonePage: "help"` for `/settings/help`, and `SettingsGate` renders what the app's
 `renderStandalonePage` gives, without the section tabs. It is the page of
-`@features/flow-settings-help`.
+`@features/flow-settings-help`, which mobile also renders as its My Wallet Help screen.
 
 A row's trailing element is a chevron, an external link, a toggle, a value, a select or a button.
 On mobile, the select opens its options in a bottom sheet (Lumen `SelectList`), like the web
@@ -43,7 +43,7 @@ A sheet opens on top of the Settings: a bottom sheet on mobile, a dialog on desk
 | Export                 | Entry | Purpose                                                                 |
 | ---------------------- | ----- | ----------------------------------------------------------------------- |
 | `SettingsSheet`        | `.`   | Title, optional description, close button and any content               |
-| `SettingsConfirmSheet` | `.`   | Confirm or cancel an action, `destructive` or `neutral`, disabled while it runs; an `InfoState` dialog on desktop |
+| `SettingsConfirmSheet` | `.`   | Confirm or cancel an action, `destructive` or `neutral`, disabled while it runs. Both apps render an `InfoState` with the error or info spot: in a dialog on desktop, in a bottom sheet on mobile |
 
 On mobile, `SettingsSheet` goes through `QueuedBottomSheet`, so the app must render it under
 `QueuedBottomSheetsProvider` like any queued sheet.

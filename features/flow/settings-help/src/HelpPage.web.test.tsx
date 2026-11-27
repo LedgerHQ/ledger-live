@@ -4,7 +4,8 @@ import userEvent from "@testing-library/user-event";
 import { track } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
 import { HelpPage } from "./HelpPage";
-import type { HelpPageProps } from "./HelpPage.types";
+import { HelpPageWithSlots } from "./HelpPageWithSlots";
+import type { HelpSlots } from "./types";
 import { createFakeHelpPort, FAKE_HELP_LINKS } from "./__tests__/fakeHelpPort";
 import { createFakeLinking } from "./__tests__/fakeLinking";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
@@ -22,22 +23,26 @@ beforeEach(() => {
 
 const WHILE_CONFIRMING = <span data-testid="while-confirming" />;
 
-const SLOTS: HelpPageProps["slots"] = {
+const SLOTS: HelpSlots = {
   saveLogs: <button type="button">Save logs slot</button>,
   repairDevice: <button type="button">Repair slot</button>,
 };
 
-function renderHelpPage(port = createFakeHelpPort()) {
+function renderHelpPage(port = createFakeHelpPort(), withSlots = true) {
   const { openExternal, LinkingWrapper } = createFakeLinking();
   render(
     <I18nWrapper>
       <LinkingWrapper>
-        <HelpPage
-          port={port}
-          slots={SLOTS}
-          whileConfirming={WHILE_CONFIRMING}
-          testID="settings-help"
-        />
+        {withSlots ? (
+          <HelpPageWithSlots
+            port={port}
+            slots={SLOTS}
+            whileConfirming={WHILE_CONFIRMING}
+            testID="settings-help"
+          />
+        ) : (
+          <HelpPage port={port} whileConfirming={WHILE_CONFIRMING} testID="settings-help" />
+        )}
       </LinkingWrapper>
     </I18nWrapper>,
   );
@@ -104,10 +109,17 @@ describe("HelpPage", () => {
   });
 
   it("renders the app slots in the rows of save logs and repair", () => {
-    renderHelpPage();
+    renderHelpPage(createFakeHelpPort());
 
     expect(screen.getByRole("button", { name: "Save logs slot" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Repair slot" })).toBeVisible();
+  });
+
+  it("leaves the slot rows empty without the slots", () => {
+    renderHelpPage(createFakeHelpPort(), false);
+
+    expect(screen.queryByRole("button", { name: "Save logs slot" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Repair slot" })).not.toBeInTheDocument();
   });
 
   it("asks for a confirmation before clearing the cache", async () => {

@@ -1,6 +1,7 @@
 import React from "react";
-import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
-import { SettingsSheet } from "../SettingsSheet/SettingsSheet";
+import { BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
+import { InfoState } from "@shared/ui-info-state";
+import { SettingsBottomSheet } from "../SettingsSheet/SettingsBottomSheet";
 import type { SettingsConfirmSheetProps } from "./SettingsConfirmSheet.types";
 
 export function SettingsConfirmSheet({
@@ -15,37 +16,32 @@ export function SettingsConfirmSheet({
   cancelTestID,
 }: SettingsConfirmSheetProps) {
   return (
-    <SettingsSheet
+    <SettingsBottomSheet
       isOpen={isOpen}
-      title={labels.title}
-      description={labels.description}
       onClose={onCancel}
       canClose={!isConfirming}
       testID={testID}
     >
-      <Box lx={{ gap: "s8" }}>
-        <Button
-          appearance={tone === "destructive" ? "red" : "base"}
-          size="lg"
-          isFull
-          loading={isConfirming}
-          disabled={isConfirming}
-          onPress={onConfirm}
-          testID={confirmTestID}
-        >
-          {labels.confirm}
-        </Button>
-        <Button
-          appearance="gray"
-          size="lg"
-          isFull
-          disabled={isConfirming}
-          onPress={onCancel}
-          testID={cancelTestID}
-        >
-          {labels.cancel}
-        </Button>
-      </Box>
-    </SettingsSheet>
+      <BottomSheetHeader testID={testID && `${testID}-header`} />
+      <InfoState
+        preset={tone === "destructive" ? "error" : "info"}
+        size="hug"
+        title={labels.title}
+        description={labels.description}
+        primaryCta={{
+          label: labels.confirm,
+          onPress: onConfirm,
+          testID: confirmTestID,
+          loading: isConfirming,
+          disabled: isConfirming,
+        }}
+        secondaryCta={{
+          label: labels.cancel,
+          onPress: onCancel,
+          testID: cancelTestID,
+          disabled: isConfirming,
+        }}
+      />
+    </SettingsBottomSheet>
   );
 }

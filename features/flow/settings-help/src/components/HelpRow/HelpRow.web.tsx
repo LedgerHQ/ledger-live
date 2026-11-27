@@ -19,9 +19,8 @@ import {
   LedgerDevices,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import type { HelpItemId } from "../../logic/helpItems";
-import type { HelpSlots } from "../../types";
-import type { HelpRowViewModel } from "../../useHelpViewModel";
 import { HelpRowTrailing } from "../HelpRowTrailing/HelpRowTrailing";
+import type { HelpRowProps } from "./HelpRow.types";
 
 const ROW_ICONS = {
   support: Question,
@@ -34,8 +33,6 @@ const ROW_ICONS = {
   launchOnboarding: LedgerDevices,
   resetApp: Trash,
 } as const satisfies Record<HelpItemId, unknown>;
-
-export type HelpRowProps = Readonly<{ row: HelpRowViewModel; slots: HelpSlots }>;
 
 export function HelpRow({ row, slots }: HelpRowProps) {
   const Icon = ROW_ICONS[row.id];

@@ -54,8 +54,37 @@ const resources = {
           descSettings: "Use this to restore your Ledger device.",
           button: "Repair",
         },
+        help: {
+          clearCache: "Clear cache",
+          clearCacheModalDesc:
+            "A fresh and complete scan of transactions on the network will be done.",
+          clearCacheButton: "Clear",
+        },
+      },
+      myWallet: {
+        help: {
+          title: "Help",
+          sections: { supportAndLearning: "Support and learning", more: "More" },
+          rows: {
+            ledgerSupport: {
+              title: "Ledger Support",
+              description: "Get help with our FAQs or chat",
+            },
+            ledgerAcademy: { title: "Ledger Academy", description: "Learn crypto" },
+            saveLogs: {
+              title: "Save logs",
+              description: "Save Ledger Wallet logs for troubleshooting",
+            },
+            ledgerStatus: { title: "Ledger Status", description: "Check our system status" },
+            clearCache: {
+              title: "Clear cache",
+              description: "Scan transactions and recalculate balances",
+            },
+          },
+        },
       },
       help: {
+        chatbot: "Ledger Chatbot",
         ledgerAcademy: { title: "Ledger Academy", desc: "Learn crypto" },
         status: { desc: "Check our system status" },
       },

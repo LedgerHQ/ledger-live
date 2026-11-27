@@ -4,5 +4,4 @@ export default createDualPlatformKnipConfig({
   packagePath: "features/flow/settings",
   platform: "native",
   entry: [],
-  additionalIgnoreDependencies: ["@shared/ui-info-state"],
 });
