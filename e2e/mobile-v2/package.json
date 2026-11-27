@@ -32,7 +32,6 @@
     "rxjs": "catalog:",
     "typescript": "catalog:",
     "uuid": "14.0.3",
-    "wdio-video-reporter": "6.2.0",
     "webdriverio": "10.2.0",
     "ws": "catalog:"
   },

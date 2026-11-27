@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  BRIDGE_CONDITIONS,
+  bridgeBlock,
   BRIDGE_IMPORT,
   bundleWithoutDetox,
   DETOX_BRIDGE_BLOCK,
@@ -87,6 +89,9 @@ describe("startsBridgeOnlyWithDetox", () => {
 
   it("accepts the bridge started in onInitFinished's DETOX block, whatever other inits run", () => {
     assert.equal(startsBridgeOnlyWithDetox(index(DETOX_BRIDGE_BLOCK)), true);
+    for (const condition of BRIDGE_CONDITIONS) {
+      assert.equal(startsBridgeOnlyWithDetox(index(bridgeBlock(condition))), true);
+    }
     const sentry = "  componentDidMount() { Sentry.init(); }";
     assert.equal(startsBridgeOnlyWithDetox(index([...DETOX_BRIDGE_BLOCK, sentry])), true);
   });
@@ -97,5 +102,7 @@ describe("startsBridgeOnlyWithDetox", () => {
     const again = "  componentDidMount() { init(); }";
     assert.equal(startsBridgeOnlyWithDetox(index([...DETOX_BRIDGE_BLOCK, again])), false);
     assert.equal(startsBridgeOnlyWithDetox(index(DETOX_BRIDGE_BLOCK, [])), false);
+    assert.equal(startsBridgeOnlyWithDetox(index(bridgeBlock("Config.E2E"))), false);
+    assert.equal(startsBridgeOnlyWithDetox(index(bridgeBlock("Config.E2E || Config.MOCK"))), false);
   });
 });

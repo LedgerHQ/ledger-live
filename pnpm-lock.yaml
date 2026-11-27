@@ -9385,9 +9385,6 @@ importers:
       uuid:
         specifier: 14.0.3
         version: 14.0.3
-      wdio-video-reporter:
-        specifier: 6.2.0
-        version: 6.2.0(allure-playwright@3.13.0(@playwright/test@1.63.0))(expect-webdriverio@8.1.0(@wdio/types@10.2.0)(webdriverio@10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0)))(webdriverio@10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0))
       webdriverio:
         specifier: 10.2.0
         version: 10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0)
@@ -30823,49 +30820,6 @@ packages:
   '@fastify/sensible@6.0.4':
     resolution: {integrity: sha512-1vxcCUlPMew6WroK8fq+LVOwbsLtX+lmuRuqpcp6eYqu6vmkLwbKTdBWAZwbeaSgCfW4tzUpTIHLLvTiQQ1BwQ==}
 
-  '@ffmpeg-installer/darwin-arm64@4.1.5':
-    resolution: {integrity: sha512-hYqTiP63mXz7wSQfuqfFwfLOfwwFChUedeCVKkBtl/cliaTM7/ePI9bVzfZ2c+dWu3TqCwLDRWNSJ5pqZl8otA==}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@ffmpeg-installer/darwin-x64@4.1.0':
-    resolution: {integrity: sha512-Z4EyG3cIFjdhlY8wI9aLUXuH8nVt7E9SlMVZtWvSPnm2sm37/yC2CwjUzyCQbJbySnef1tQwGG2Sx+uWhd9IAw==}
-    cpu: [x64]
-    os: [darwin]
-
-  '@ffmpeg-installer/ffmpeg@1.1.0':
-    resolution: {integrity: sha512-Uq4rmwkdGxIa9A6Bd/VqqYbT7zqh1GrT5/rFwCwKM70b42W5gIjWeVETq6SdcL0zXqDtY081Ws/iJWhr1+xvQg==}
-
-  '@ffmpeg-installer/linux-arm64@4.1.4':
-    resolution: {integrity: sha512-dljEqAOD0oIM6O6DxBW9US/FkvqvQwgJ2lGHOwHDDwu/pX8+V0YsDL1xqHbj1DMX/+nP9rxw7G7gcUvGspSoKg==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@ffmpeg-installer/linux-arm@4.1.3':
-    resolution: {integrity: sha512-NDf5V6l8AfzZ8WzUGZ5mV8O/xMzRag2ETR6+TlGIsMHp81agx51cqpPItXPib/nAZYmo55Bl2L6/WOMI3A5YRg==}
-    cpu: [arm]
-    os: [linux]
-
-  '@ffmpeg-installer/linux-ia32@4.1.0':
-    resolution: {integrity: sha512-0LWyFQnPf+Ij9GQGD034hS6A90URNu9HCtQ5cTqo5MxOEc7Rd8gLXrJvn++UmxhU0J5RyRE9KRYstdCVUjkNOQ==}
-    cpu: [ia32]
-    os: [linux]
-
-  '@ffmpeg-installer/linux-x64@4.1.0':
-    resolution: {integrity: sha512-Y5BWhGLU/WpQjOArNIgXD3z5mxxdV8c41C+U15nsE5yF8tVcdCGet5zPs5Zy3Ta6bU7haGpIzryutqCGQA/W8A==}
-    cpu: [x64]
-    os: [linux]
-
-  '@ffmpeg-installer/win32-ia32@4.1.0':
-    resolution: {integrity: sha512-FV2D7RlaZv/lrtdhaQ4oETwoFUsUjlUiasiZLDxhEUPdNDWcH1OU9K1xTvqz+OXLdsmYelUDuBS/zkMOTtlUAw==}
-    cpu: [ia32]
-    os: [win32]
-
-  '@ffmpeg-installer/win32-x64@4.1.0':
-    resolution: {integrity: sha512-Drt5u2vzDnIONf4ZEkKtFlbvwj6rI3kxw1Ck9fpudmtgaZIHD4ucsWB2lCZBXRxJgXR+2IMSti+4rtM4C4rXgg==}
-    cpu: [x64]
-    os: [win32]
-
   '@firebase/app@0.16.2':
     resolution: {integrity: sha512-fyCLPahl3r0Zb7Wzm+JLWcOOH3SaDgAyJzJ8EWIDiv51aNiv+2Pjbpa6myEuP7iXxjmJqrcbVm0GUF7h229T1Q==}
     engines: {node: '>=20.0.0'}
@@ -36826,9 +36780,6 @@ packages:
   '@types/node@18.19.26':
     resolution: {integrity: sha512-+wiMJsIwLOYCvUqSdKTrfkS8mpTp+MPINe6+Np4TAGFWWRWiBQ5kSq9nZGCSPkzx9mvT+uEukzpX4MOSCydcvw==}
 
-  '@types/node@20.19.43':
-    resolution: {integrity: sha512-6oYBAi5ikg4Pl+kGsoYtawUMBT2zZMCvPNF7pVLnHZfd1zf38DRiWn/gT01RYCdUqkv7Fhr+C9ot4/tb+2sVvA==}
-
   '@types/node@22.20.5':
     resolution: {integrity: sha512-U2+DNr+wSjpsTS/wZGYHq7GcwfuSmKiKvoPvK22zwTlRhU91yOniN4qRR5KhIjvif7ysw/dz/hKmfDH0Ris4aA==}
 
@@ -37380,10 +37331,6 @@ packages:
     resolution: {integrity: sha512-UcsvuymffxfAutb51QyO4LibGJqTXdarisFQ/ETeqb9tqnzxapYKE/Ung3VLikmD+iHSWOZtl2R37cFaz/umEQ==}
     engines: {node: '>=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1'}
 
-  '@wdio/allure-reporter@9.33.1':
-    resolution: {integrity: sha512-7CJaaFNsczxYlWWOdNq8kr8SJYTY2Dw3kjdVi8NAKg3FNojxTXbxs9xzPRSBZixvD5tK+quhB5F54SRPAySMeA==}
-    engines: {node: '>=18.20.8 <19 || >=20.20.2 <21 || >=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1'}
-
   '@wdio/appium-service@10.2.0':
     resolution: {integrity: sha512-8tJ5CrLyPEPJPBKV3kEMa53qhGqRAtFZiJ8YlHq4nydjMKtpNpr8WsFCMuMGnqaEyIWGTYPMN+EGtsYpZSkcLg==}
     engines: {node: '>=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1'}
@@ -37418,13 +37365,6 @@ packages:
       expect-webdriverio: ^8.0.0
       webdriverio: ^10.0.0
 
-  '@wdio/globals@9.33.1':
-    resolution: {integrity: sha512-b9YYoD44dCJTw3r49wL67+7lOz4YlpD2495dXGBsv9MjtVj5LQ8xhwQzRem1sGovSQiF5A7S90w3CWlpK1jyyQ==}
-    engines: {node: '>=18.20.8 <19 || >=20.20.2 <21 || >=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1'}
-    peerDependencies:
-      expect-webdriverio: ^7.0.1
-      webdriverio: ^9.31.5
-
   '@wdio/local-runner@10.2.0':
     resolution: {integrity: sha512-Ce8k+B0TulUzi/EkTmr2TXlTce2InLw6oRifdD63Q9bJevJaXf3TM/9r6yM/mE453TokiGfZ4uOGdRi1WrM3IQ==}
     engines: {node: '>=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1'}
@@ -37432,10 +37372,6 @@ packages:
   '@wdio/logger@10.2.0':
     resolution: {integrity: sha512-C7qpFSA+Zuu/6xbx+ALoEeOiyIWlD02/Llb8ufjypCOpe9rAy77JgAHeQlKYWg7aitRQRt7aG2oeix0mNhTk5A==}
     engines: {node: '>=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1'}
-
-  '@wdio/logger@9.33.1':
-    resolution: {integrity: sha512-f2H2lK283MW/ATsWNyE8pEEeIOXUMlpzkVrdbjCYL0lEvj5FEdZG3s+0hnst2R5CM4YWoPj7CIJa1HaSw1W6zQ==}
-    engines: {node: '>=18.20.8 <19 || >=20.20.2 <21 || >=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1'}
 
   '@wdio/mocha-framework@10.2.0':
     resolution: {integrity: sha512-ZuA1VRKudRA3T7losHmJg36w5KudHsVWXruJn7zMVCvstMBTs4e4CV77nuwR5kR3bx21/BNmxf0yXFVC7wf7Ng==}
@@ -37452,10 +37388,6 @@ packages:
   '@wdio/reporter@10.2.0':
     resolution: {integrity: sha512-Cd3b9F3uUKEjICh9ClCJZ6x7MNcA5lX9GquylAtAwcSaJ1qmL0P2plVwRexyhybA9TM6sXWAe+0UK9kAS3SDVw==}
     engines: {node: '>=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1'}
-
-  '@wdio/reporter@9.33.1':
-    resolution: {integrity: sha512-tdR5nCl/GMYo/766DKcm/Ky+wJ3h3X8FAQSEAjG+S/+FEVkbwxFpuPHr7LneFfBIKKb5OBSuzDNIIuDlGhG3cA==}
-    engines: {node: '>=18.20.8 <19 || >=20.20.2 <21 || >=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1'}
 
   '@wdio/runner@10.2.0':
     resolution: {integrity: sha512-By72HtgEhr4IlRPSyV78r+2z3QxF7Fbp7r0kfOLoLUwhXHR4RJIYA6nu5jYh4lHjV2NduhrKqnIiRJ1YPnTu+g==}
@@ -37500,10 +37432,6 @@ packages:
   '@wdio/types@10.2.0':
     resolution: {integrity: sha512-a9qwqHzf0t2ctrXs+qUEhobH/VK0PmeoErCBWdN6DRxhTP8YiXQco4wjTj1z7H4k5xwZYxMT0KC0QzN/e4B73Q==}
     engines: {node: '>=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1'}
-
-  '@wdio/types@9.33.1':
-    resolution: {integrity: sha512-2DbbcxiErZR/w0+ssuFmlOLMRsl+/Mktde6HvmBFQR+B7K0PIO3mt4l65oL+EYc6MgLHcKVFhPPCf/2KN+dUdw==}
-    engines: {node: '>=18.20.8 <19 || >=20.20.2 <21 || >=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1'}
 
   '@wdio/utils@10.2.0':
     resolution: {integrity: sha512-C4ok/WatCBV3gHmIYGjj4Aa43tQTD53eTFs3okpKxuc1wmFy/1zDFOYLDjeTq4xSFygoRBI+ZMyc9LBEiok3ng==}
@@ -46575,9 +46503,6 @@ packages:
   wcwidth@1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
 
-  wdio-video-reporter@6.2.0:
-    resolution: {integrity: sha512-b/LHQFluxIcP7foWW0gJ/5W6x1NsTVzJ2yiZZ+W4ETtYBUFU0Xfd2fYVC3q3Uxb3He6QkuNT+h0xCefJSZRyVg==}
-
   web-streams-polyfill@3.3.3:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
@@ -50711,41 +50636,6 @@ snapshots:
       http-errors: 2.0.1
       type-is: 2.1.0
       vary: 1.1.2
-
-  '@ffmpeg-installer/darwin-arm64@4.1.5':
-    optional: true
-
-  '@ffmpeg-installer/darwin-x64@4.1.0':
-    optional: true
-
-  '@ffmpeg-installer/ffmpeg@1.1.0':
-    optionalDependencies:
-      '@ffmpeg-installer/darwin-arm64': 4.1.5
-      '@ffmpeg-installer/darwin-x64': 4.1.0
-      '@ffmpeg-installer/linux-arm': 4.1.3
-      '@ffmpeg-installer/linux-arm64': 4.1.4
-      '@ffmpeg-installer/linux-ia32': 4.1.0
-      '@ffmpeg-installer/linux-x64': 4.1.0
-      '@ffmpeg-installer/win32-ia32': 4.1.0
-      '@ffmpeg-installer/win32-x64': 4.1.0
-
-  '@ffmpeg-installer/linux-arm64@4.1.4':
-    optional: true
-
-  '@ffmpeg-installer/linux-arm@4.1.3':
-    optional: true
-
-  '@ffmpeg-installer/linux-ia32@4.1.0':
-    optional: true
-
-  '@ffmpeg-installer/linux-x64@4.1.0':
-    optional: true
-
-  '@ffmpeg-installer/win32-ia32@4.1.0':
-    optional: true
-
-  '@ffmpeg-installer/win32-x64@4.1.0':
-    optional: true
 
   '@firebase/app@0.16.2':
     dependencies:
@@ -57561,10 +57451,6 @@ snapshots:
     dependencies:
       undici-types: 5.26.5
 
-  '@types/node@20.19.43':
-    dependencies:
-      undici-types: 6.21.0
-
   '@types/node@22.20.5':
     dependencies:
       undici-types: 6.21.0
@@ -58275,18 +58161,6 @@ snapshots:
     transitivePeerDependencies:
       - allure-playwright
 
-  '@wdio/allure-reporter@9.33.1(allure-playwright@3.13.0(@playwright/test@1.63.0))':
-    dependencies:
-      '@types/node': 20.19.43
-      '@wdio/reporter': 9.33.1
-      '@wdio/types': 9.33.1
-      allure-js-commons: 3.13.0(allure-playwright@3.13.0(@playwright/test@1.63.0))
-      csv-stringify: 6.9.0
-      html-entities: 2.6.0
-      strip-ansi: 7.1.2
-    transitivePeerDependencies:
-      - allure-playwright
-
   '@wdio/appium-service@10.2.0(appium@4.0.1(bufferutil@4.1.0)(debug@4.4.3)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0)':
     dependencies:
       '@wdio/config': 10.2.0(yauzl@3.4.0)
@@ -58376,11 +58250,6 @@ snapshots:
       expect-webdriverio: 8.1.0(@wdio/types@10.2.0)(webdriverio@10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0))
       webdriverio: 10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0)
 
-  '@wdio/globals@9.33.1(expect-webdriverio@8.1.0(@wdio/types@10.2.0)(webdriverio@10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0)))(webdriverio@10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0))':
-    dependencies:
-      expect-webdriverio: 8.1.0(@wdio/types@10.2.0)(webdriverio@10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0))
-      webdriverio: 10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0)
-
   '@wdio/local-runner@10.2.0(appium@4.0.1(bufferutil@4.1.0)(debug@4.4.3)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(tsx@4.20.6)(utf-8-validate@6.0.6)(webdriverio@10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0))(yauzl@3.4.0)':
     dependencies:
       '@types/node': 22.20.5
@@ -58414,14 +58283,6 @@ snapshots:
       safe-regex2: 5.1.1
       strip-ansi: 7.1.2
 
-  '@wdio/logger@9.33.1':
-    dependencies:
-      chalk: 5.6.2
-      loglevel: 1.9.2
-      loglevel-plugin-prefix: 0.8.4
-      safe-regex2: 5.1.1
-      strip-ansi: 7.1.2
-
   '@wdio/mocha-framework@10.2.0(yauzl@3.4.0)':
     dependencies:
       '@types/mocha': 10.0.10
@@ -58445,14 +58306,6 @@ snapshots:
       '@types/node': 22.20.5
       '@wdio/types': 10.2.0
       diff: 9.0.0
-      object-inspect: 1.13.4
-
-  '@wdio/reporter@9.33.1':
-    dependencies:
-      '@types/node': 20.19.43
-      '@wdio/logger': 9.33.1
-      '@wdio/types': 9.33.1
-      diff: 8.0.2
       object-inspect: 1.13.4
 
   '@wdio/runner@10.2.0(appium@4.0.1(bufferutil@4.1.0)(debug@4.4.3)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(expect-webdriverio@8.1.0(@wdio/types@10.2.0)(webdriverio@10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0)))(tsx@4.20.6)(utf-8-validate@6.0.6)(webdriverio@10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0))(yauzl@3.4.0)':
@@ -58523,10 +58376,6 @@ snapshots:
   '@wdio/types@10.2.0':
     dependencies:
       '@types/node': 22.20.5
-
-  '@wdio/types@9.33.1':
-    dependencies:
-      '@types/node': 20.19.43
 
   '@wdio/utils@10.2.0(yauzl@3.4.0)':
     dependencies:
@@ -68964,20 +68813,6 @@ snapshots:
   wcwidth@1.0.1:
     dependencies:
       defaults: 1.0.4
-
-  wdio-video-reporter@6.2.0(allure-playwright@3.13.0(@playwright/test@1.63.0))(expect-webdriverio@8.1.0(@wdio/types@10.2.0)(webdriverio@10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0)))(webdriverio@10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0)):
-    dependencies:
-      '@ffmpeg-installer/ffmpeg': 1.1.0
-      '@wdio/allure-reporter': 9.33.1(allure-playwright@3.13.0(@playwright/test@1.63.0))
-      '@wdio/globals': 9.33.1(expect-webdriverio@8.1.0(@wdio/types@10.2.0)(webdriverio@10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0)))(webdriverio@10.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)(yauzl@3.4.0))
-      '@wdio/logger': 9.33.1
-      '@wdio/reporter': 9.33.1
-      '@wdio/types': 9.33.1
-      glob: 11.0.2
-    transitivePeerDependencies:
-      - allure-playwright
-      - expect-webdriverio
-      - webdriverio
 
   web-streams-polyfill@3.3.3: {}
 

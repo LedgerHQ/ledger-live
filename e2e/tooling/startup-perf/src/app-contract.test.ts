@@ -128,7 +128,7 @@ describe("the mobile app of this checkout", () => {
     });
   });
 
-  it("starts the E2E bridge only with DETOX, which the prepared env file no longer sets", () => {
+  it("starts the E2E bridge only with E2E or DETOX, which the prepared env file no longer sets", () => {
     assert.ok(startsBridgeOnlyWithDetox(read(APP, "src/index.tsx")));
   });
 
