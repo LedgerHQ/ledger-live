@@ -1,5 +1,7 @@
 // Rationale and options: support/lint/README.md#legacy-ui.
 
+import fs from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
 
 import { appRoot } from "./families-folder.js";
@@ -8,13 +10,17 @@ const LUMEN =
   "Use Lumen instead: .agents/skills/ldls-native/SKILL.md (Mobile), .agents/skills/ldls-web/SKILL.md (Desktop).";
 
 const STYLED_COMPONENTS = new Set(["styled-components", "styled-components/native"]);
-const SRC_ALIAS = "~/";
-const SOURCE_EXTENSION = /\.[cm]?[jt]sx?$/;
+const ALIAS_PREFIX = "~/";
+
+// Loaded on the first `~/` entry only, so an app without one never parses a tsconfig.
+const require = createRequire(import.meta.url);
+/** @type {typeof import("typescript")} */
+let ts;
 
 /**
  * @typedef {object} LegacyUiOptions
  * @property {string[]} modules the legacy modules: a specifier matches an entry or a subpath of it. An entry
- *   starting with `~/` also matches a relative import that resolves to the same path.
+ *   starting with `~/` also matches any specifier the app's tsconfig resolves to the same file or folder.
  * @property {{ glob: string, reason: string }[]} [exemptPaths] files, relative to the app root, that no rule
  *   checks
  * @property {string[]} [bannedComponents] components that reached zero
@@ -79,6 +85,76 @@ function isExempt(filename, exemptPaths = []) {
 }
 
 /**
+ * @typedef {object} AppResolver
+ * @property {(specifier: string, containingFile: string) => string | null} resolve the file a specifier loads,
+ *   through the app's tsconfig `paths` and module resolution
+ * @property {Map<string, string | null>} targets each alias entry's resolved file, or its folder when it
+ *   resolves to an index file
+ */
+
+/** @type {Map<string, AppResolver | null>} */
+const resolverCache = new Map();
+
+/**
+ * @param {string} root an app root
+ * @returns {AppResolver | null} the app's resolver, built once from its tsconfig.json
+ */
+function appResolver(root) {
+  if (resolverCache.has(root)) return /** @type {AppResolver | null} */ (resolverCache.get(root));
+  let resolver = null;
+  const configFile = path.join(root, "tsconfig.json");
+  if (fs.existsSync(configFile)) {
+    ts ??= require("typescript");
+    const { config } = ts.readConfigFile(configFile, ts.sys.readFile);
+    const { options } = ts.parseJsonConfigFileContent(
+      config ?? {},
+      ts.sys,
+      root,
+      undefined,
+      configFile,
+    );
+    const cache = ts.createModuleResolutionCache(root, name => name, options);
+    /** @type {Map<string, string | null>} */
+    const resolutions = new Map();
+    resolver = {
+      resolve(specifier, containingFile) {
+        const key = `${path.dirname(containingFile)}\0${specifier}`;
+        if (!resolutions.has(key)) {
+          const { resolvedModule } = ts.resolveModuleName(
+            specifier,
+            containingFile,
+            options,
+            ts.sys,
+            cache,
+          );
+          const file = resolvedModule?.resolvedFileName;
+          resolutions.set(key, file === undefined ? null : realpath(file));
+        }
+        return /** @type {string | null} */ (resolutions.get(key));
+      },
+      targets: new Map(),
+    };
+  }
+  resolverCache.set(root, resolver);
+  return resolver;
+}
+
+/**
+ * @param {AppResolver} resolver
+ * @param {string} root
+ * @param {string} entry
+ * @returns {string | null} the file the entry resolves to, or its folder when that file is an index
+ */
+function aliasTarget(resolver, root, entry) {
+  if (!resolver.targets.has(entry)) {
+    const file = resolver.resolve(entry, path.join(root, "package.json"));
+    const isIndex = file !== null && path.basename(file).startsWith("index.");
+    resolver.targets.set(entry, file !== null && isIndex ? path.dirname(file) : file);
+  }
+  return /** @type {string | null} */ (resolver.targets.get(entry));
+}
+
+/**
  * @param {string} resolved an absolute path
  * @param {string} target an absolute path
  * @returns {boolean} whether `resolved` is `target` or below it
@@ -88,8 +164,20 @@ function isAtOrBelow(resolved, target) {
 }
 
 /**
- * Whether a relative specifier lands on a `~/` entry. The files of the entry itself do not count: they are the
- * legacy module, not one of its consumers.
+ * @param {string} file
+ * @returns {string} the file with its symlinks resolved, so an importer and a resolution compare equal
+ */
+function realpath(file) {
+  try {
+    return fs.realpathSync.native(file);
+  } catch {
+    return file;
+  }
+}
+
+/**
+ * Whether a specifier loads an alias entry, as the app's TypeScript resolver sees it. The files of the entry
+ * itself do not count: they are the legacy module, not one of its consumers.
  *
  * @param {string} specifier
  * @param {string} filename
@@ -97,12 +185,17 @@ function isAtOrBelow(resolved, target) {
  * @returns {boolean}
  */
 function resolvesToAliasEntry(specifier, filename, entry) {
+  // A specifier that reaches the entry from outside it names the entry's last segment, so others skip resolution.
+  if (!specifier.includes(path.posix.basename(entry))) return false;
   const root = appRoot(path.dirname(filename));
-  if (!root) return false;
-  const target = path.join(root, "src", entry.slice(SRC_ALIAS.length));
-  if (isAtOrBelow(filename, target)) return false;
-  const resolved = path.resolve(path.dirname(filename), specifier).replace(SOURCE_EXTENSION, "");
-  return isAtOrBelow(resolved, target);
+  const resolver = root && appResolver(root);
+  if (!root || !resolver) return false;
+  const target = aliasTarget(resolver, root, entry);
+  if (target === null) return false;
+  const importer = realpath(filename);
+  if (isAtOrBelow(importer, target)) return false;
+  const resolved = resolver.resolve(specifier, importer);
+  return resolved !== null && isAtOrBelow(resolved, target);
 }
 
 /**
@@ -116,8 +209,7 @@ function isLegacyModule(specifier, filename, modules = []) {
   return modules.some(entry => {
     if (specifier === entry || specifier.startsWith(`${entry}/`)) return true;
     return (
-      entry.startsWith(SRC_ALIAS) &&
-      specifier.startsWith(".") &&
+      entry.startsWith(ALIAS_PREFIX) &&
       typeof filename === "string" &&
       resolvesToAliasEntry(specifier, filename, entry)
     );
@@ -237,6 +329,7 @@ const noStyledDefinition = legacyUiRule({
     /** @param {{ type?: string, name?: string } | undefined} node */
     const isStyled = node => styled !== null && node?.type === "Identifier" && node.name === styled;
 
+    /** @param {object} node */
     function report(node) {
       context.report({
         message: `styled-components definition: do not add styled components. ${LUMEN}`,

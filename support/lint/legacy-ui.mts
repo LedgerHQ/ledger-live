@@ -3,7 +3,7 @@ import { LEGACY_UI_PLUGIN } from "./plugins.mts";
 export interface LegacyUiOptions {
   /**
    * The legacy modules. A specifier matches an entry or a subpath of it; an entry starting with `~/` also
-   * matches a relative import that resolves to the same path.
+   * matches any specifier the app's tsconfig resolves to the same file or folder.
    */
   modules: string[];
   /**

@@ -32,11 +32,30 @@ const DESKTOP = {
   ],
 };
 
+const TSCONFIG = JSON.stringify({
+  compilerOptions: {
+    module: "esnext",
+    moduleResolution: "bundler",
+    allowImportingTsExtensions: true,
+    paths: { "*": ["./*"], "~/*": ["./src/*"] },
+  },
+});
+
 const APPS = fixture({
   "apps/ledger-live-desktop/package.json": "{}",
+  "apps/ledger-live-desktop/tsconfig.json": TSCONFIG,
+  "apps/ledger-live-desktop/src/renderer/components/Box/index.ts": "export default 1;\n",
+  "apps/ledger-live-desktop/src/renderer/components/Box/Box.ts": "export default 1;\n",
+  "apps/ledger-live-desktop/src/renderer/components/Box/Card.tsx": "export default 1;\n",
+  "apps/ledger-live-desktop/src/renderer/components/Text.ts": "export default 1;\n",
+  "apps/ledger-live-desktop/src/renderer/components/BoxedValue.tsx": "export default 1;\n",
+  "apps/ledger-live-desktop/src/renderer/components/TextArea.tsx": "export default 1;\n",
+  "apps/ledger-live-desktop/src/renderer/screens/Home.tsx": "export default 1;\n",
   "apps/ledger-live-mobile/package.json": "{}",
 });
+/** @param {string} file @returns {string} */
 const desktop = file => path.join(APPS, "apps/ledger-live-desktop/src", file);
+/** @param {string} file @returns {string} */
 const mobile = file => path.join(APPS, "apps/ledger-live-mobile/src", file);
 
 test("a module matches itself and its subpaths, not a package that shares its prefix", () => {
@@ -49,11 +68,13 @@ test("a module matches itself and its subpaths, not a package that shares its pr
   assert.equal(isLegacyModule(undefined, file, MOBILE.modules), false);
 });
 
-test("a ~/ entry matches its alias and a relative import that resolves to it", () => {
+test("a ~/ entry matches any specifier the app's tsconfig resolves to it", () => {
   const file = desktop("renderer/screens/Home.tsx");
   for (const specifier of [
     "~/renderer/components/Box",
     "~/renderer/components/Box/Box",
+    "src/renderer/components/Box",
+    "src/renderer/components/Text",
     "../components/Box",
     "../components/Box/index.ts",
     "../components/Text",
@@ -61,7 +82,12 @@ test("a ~/ entry matches its alias and a relative import that resolves to it", (
   ]) {
     assert.equal(isLegacyModule(specifier, file, DESKTOP.modules), true, specifier);
   }
-  for (const specifier of ["../components/BoxedValue", "../components/TextArea", "./Box"]) {
+  for (const specifier of [
+    "../components/BoxedValue",
+    "../components/TextArea",
+    "./Box",
+    "src/renderer/components/BoxedValue",
+  ]) {
     assert.equal(isLegacyModule(specifier, file, DESKTOP.modules), false, specifier);
   }
 });
@@ -109,7 +135,7 @@ test("every rule skips an exempt file", () => {
   }
 });
 
-// The end-to-end tests run the real binary, which the agent sandbox does not allow.
+// The end-to-end tests spawn the oxlint binary on a temporary app.
 const OXLINT = fileURLToPath(new URL("../node_modules/.bin/oxlint", import.meta.url));
 const PLUGIN = fileURLToPath(new URL("./legacy-ui.js", import.meta.url));
 
@@ -126,6 +152,7 @@ function lint(files, options) {
   const root = fixture({
     ".oxlintrc.json": JSON.stringify({ plugins: [], jsPlugins: [PLUGIN], rules }),
     "app/package.json": "{}",
+    "app/tsconfig.json": TSCONFIG,
     ...app,
   });
   const { stdout } = spawnSync(OXLINT, ["--format", "unix", "app"], {

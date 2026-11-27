@@ -369,8 +369,9 @@ const legacyUi = legacyUiLint({
 Every rule reads the same options:
 
 - **`modules`**: a specifier matches an entry or a subpath of it (`styled-components` covers
-  `styled-components/native`). An entry starting with `~/` also matches a relative import that
-  resolves to the same path; the files of that entry may import each other.
+  `styled-components/native`). An entry starting with `~/` also matches any specifier that the app's
+  `tsconfig.json` resolves to the same file or folder (a relative path, `src/...` through `paths`); the
+  files of that entry may import each other.
 - **`exemptPaths`**: `{ glob, reason }` entries, globs relative to the app root (the nearest folder
   with a `package.json`). No rule checks a matching file. `reason` names the feature flag whose
   cleanup deletes the folder, or `dev-only`.
