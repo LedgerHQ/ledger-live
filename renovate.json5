@@ -84,6 +84,17 @@
       ],
     },
     {
+      description: 'Docker images (coin testers)',
+      matchManagers: [
+        'dockerfile',
+        'docker-compose',
+      ],
+      labels: [
+        'dependencies',
+        'docker',
+      ],
+    },
+    {
       description: 'Lumen linked updates: off, the Lumen upgrade plan (.koda/plans/lumen-upgrade.ts) opens them',
       matchPackageNames: [
         '@ledgerhq/lumen-*',
@@ -255,5 +266,7 @@
   enabledManagers: [
     'npm',
     'github-actions',
+    'dockerfile',
+    'docker-compose',
   ],
 }
