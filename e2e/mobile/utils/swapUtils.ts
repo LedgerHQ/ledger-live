@@ -39,22 +39,15 @@ export function truncateSwapAmount(amount: string): string {
 
 async function selectCurrency(options: SelectCurrencyOptions) {
   const { account, isFromCurrency = true } = options;
-  // Check the appropriate field based on whether we're selecting FROM or TO
-  const currentCurrencyText = isFromCurrency
-    ? await app.swapLiveApp.getFromCurrencyTexts()
-    : await app.swapLiveApp.getToCurrencyTexts();
-
-  if (currentCurrencyText.includes(account.currency.ticker)) {
-    return;
-  }
   if (isFromCurrency) {
     await app.swapLiveApp.tapFromCurrency();
+    await app.modularDrawer.selectAssetAndAccount(account);
+    await app.swapLiveApp.checkAssetFromMatchesAccount(account);
   } else {
     await app.swapLiveApp.tapToCurrency();
+    await app.modularDrawer.selectAssetAndAccount(account);
+    await app.swapLiveApp.checkAssetToMatchesAccount(account);
   }
-
-  await app.modularDrawer.selectAsset(account);
-  await app.swapLiveApp.verifyCurrencyIsSelected(account.currency.ticker, isFromCurrency);
 }
 
 export async function performSwapUntilQuoteSelectionStep(

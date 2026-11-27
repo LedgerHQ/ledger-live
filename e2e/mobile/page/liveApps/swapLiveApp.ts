@@ -126,25 +126,9 @@ export default class SwapLiveAppPage {
     await this.toSelector.expectExist();
   }
 
-  @Step("Check if the from currency is already selected")
-  async getFromCurrencyTexts() {
-    return await this.fromSelector.getText();
-  }
-
-  @Step("Check if the to currency is already selected")
-  async getToCurrencyTexts() {
-    return await this.toSelector.getText();
-  }
-
   @Step("Tap from currency")
   async tapFromCurrency() {
     await this.fromSelector.tap();
-  }
-
-  @Step("Verify currency {{{0}}} is selected")
-  async verifyCurrencyIsSelected(ticker: string, isFromCurrency: boolean) {
-    const selector = isFromCurrency ? this.fromSelector : this.toSelector;
-    await selector.expectText(ticker, { containing: true });
   }
 
   @Step("Tap to currency")

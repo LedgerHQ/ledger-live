@@ -56,7 +56,10 @@ export function useAssets({
     });
 
   const assetsSorted = useMemo(
-    () => (data ? buildAssetsSorted(data, { networkIds: resolvedNetworkIds }) : undefined),
+    () =>
+      data
+        ? buildAssetsSorted(data, { includeMetaCurrencyId: true, networkIds: resolvedNetworkIds })
+        : undefined,
     [data, resolvedNetworkIds],
   );
 

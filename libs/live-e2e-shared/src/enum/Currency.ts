@@ -14,7 +14,10 @@ type CurrencyOptions = {
   contractAddress?: string;
   aggregatedName?: string;
   market?: CurrencyMarket;
+  metaCurrencyId?: string;
 };
+
+const USD_COIN_META_ID = "urn:crypto:meta-currency:usd_coin";
 
 export class Currency {
   public readonly name: string;
@@ -25,6 +28,8 @@ export class Currency {
   public readonly contractAddress?: string;
   public readonly aggregatedName?: string;
   public readonly market?: CurrencyMarket;
+  /** DADA drawer row id, only for tickers shared by rows. */
+  public readonly metaCurrencyId?: string;
 
   constructor(options: CurrencyOptions) {
     this.name = options.name;
@@ -35,6 +40,7 @@ export class Currency {
     this.contractAddress = options.contractAddress;
     this.aggregatedName = options.aggregatedName;
     this.market = options.market;
+    this.metaCurrencyId = options.metaCurrencyId;
   }
 
   toString(): string {
@@ -271,6 +277,7 @@ export class Currency {
     ],
     contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
     aggregatedName: "USD Coin",
+    metaCurrencyId: USD_COIN_META_ID,
   });
   static readonly ETH_WBTC = new Currency({
     name: "Wrapped Bitcoin",
@@ -302,6 +309,7 @@ export class Currency {
     speculosApp: AppInfos.STELLAR,
     networks: [Network.STELLAR],
     aggregatedName: "USD Coin",
+    metaCurrencyId: USD_COIN_META_ID,
   });
   static readonly ALGO_USDT = new Currency({
     name: "Tether USDt",
@@ -338,6 +346,7 @@ export class Currency {
     speculosApp: AppInfos.POLYGON,
     networks: [Network.POLYGON],
     aggregatedName: "Dai Stablecoin v2.0",
+    metaCurrencyId: "urn:crypto:meta-currency:dai_stablecoin",
   });
   static readonly POL_UNI = new Currency({
     name: "Uniswap (PoS)",
@@ -455,6 +464,7 @@ export class Currency {
     networks: [Network.SUI],
     contractAddress: "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7",
     aggregatedName: "USD Coin",
+    metaCurrencyId: USD_COIN_META_ID,
   });
 
   static readonly ALEO = new Currency({

@@ -38,12 +38,8 @@ describe("useAssets", () => {
     expect(result.current.loadingStatus).toBe(LoadingStatus.Success);
 
     const assets = result.current.assetsSorted?.map(a => a.asset);
-    const expectedAssetsWithoutMetaCurrencyId = expectedAssetsSortedFromMock.map(asset => {
-      const { metaCurrencyId: _metaCurrencyId, ...assetWithoutMetaCurrencyId } = asset;
-      return assetWithoutMetaCurrencyId;
-    });
 
-    expect(assets).toEqual(expectedAssetsWithoutMetaCurrencyId);
+    expect(assets).toEqual(expectedAssetsSortedFromMock);
 
     expect(result.current.sortedCryptoCurrencies.length).toBeGreaterThan(0);
     expect(result.current.sortedCryptoCurrencies[0].id).toBe("bitcoin");
