@@ -23,7 +23,7 @@ jobs:
       JEST_MAX_WORKERS: "6"
     runs-on: [ledger-wallet-8cpu-aws-public-cached]
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -199,6 +199,6 @@ jobs:
           cat libs/coverage/sonar-executionTests-report.xml features/coverage/sonar-executionTests-report.xml shared/coverage/sonar-executionTests-report.xml domain/coverage/sonar-executionTests-report.xml devtools/coverage/sonar-executionTests-report.xml apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml > ./sonar-executionTests-report.xml
 
       - name: Sonarqube Scan
-        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6
+        uses: SonarSource/sonarqube-scan-action@e805d875275f728fac1885b413934be6d7c63f65 # v8.4.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

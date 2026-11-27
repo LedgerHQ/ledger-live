@@ -272,7 +272,7 @@ jobs:
       # Everything e2e/tooling/filter reads: the specs and their imports, the generic coin framework
       # families (resolve.mjs) and the currency definitions (generatedTags.mjs, silent when missing).
       - name: Checkout E2E specs and filter tooling
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -421,7 +421,7 @@ jobs:
     steps:
       - name: Generate GitHub App token
         id: generate-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
           client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
@@ -429,7 +429,7 @@ jobs:
           permission-contents: read
 
       - name: Checkout ledger-live monorepo (shallow clone)
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -590,14 +590,14 @@ jobs:
       - name: Upload Allure test results artifact
         id: upload-allure
         if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: allure-results${{ matrix.artifact_suffix }}-shard-${{ matrix.shard }}
           path: "e2e/desktop/allure-results"
 
       - name: Upload Remote Config capture proxy logs
         if: ${{ !cancelled() && steps.capture-proxy.outputs.status == 'on' }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: firebase-capture-logs${{ matrix.artifact_suffix }}-shard-${{ matrix.shard }}
           path: ${{ runner.temp }}/firebase-capture*
@@ -605,7 +605,7 @@ jobs:
 
       - name: Upload Playwright and Nx logs for the shard diagnostics
         if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: e2e-logs${{ matrix.artifact_suffix }}-shard-${{ matrix.shard }}
           path: |
@@ -663,7 +663,7 @@ jobs:
     steps:
       - name: Generate GitHub App token
         id: generate-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
           client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
@@ -678,7 +678,7 @@ jobs:
           git config --global core.eol lf
 
       - name: Checkout ledger-live monorepo (shallow clone)
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -819,14 +819,14 @@ jobs:
 
       - name: Upload Allure test results artifact
         if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: allure-results-${{ matrix.os }}
           path: "e2e/desktop/allure-results"
 
       - name: Upload Playwright and Nx logs for the shard diagnostics
         if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: e2e-logs-${{ matrix.os }}
           path: |
@@ -856,7 +856,7 @@ jobs:
       ALLURE_RESULTS: "allure-results"
     steps:
       - name: Download Allure results from test job
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: allure-results-shard-*
           merge-multiple: true
@@ -957,7 +957,7 @@ jobs:
       ALLURE_RESULTS: "allure-results-device2"
     steps:
       - name: Download Allure results from device2 test job
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: allure-results-${{ needs.prepare-devices.outputs.device_2 }}-shard-*
           merge-multiple: true
@@ -1064,7 +1064,7 @@ jobs:
       ALLURE_RESULTS: "allure-results-${{ matrix.os }}"
     steps:
       - name: Download Allure results from ${{ matrix.label }} test job
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: allure-results-${{ matrix.os }}
           path: ${{ env.ALLURE_RESULTS }}

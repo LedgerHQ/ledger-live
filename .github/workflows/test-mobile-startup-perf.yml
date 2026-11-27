@@ -93,13 +93,13 @@ jobs:
       snapshot_ref: ${{ steps.plan.outputs.snapshot_ref }}
     steps:
       # This workflow's scripts only.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           sparse-checkout: /e2e/tooling/startup-perf/ci/
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
 
@@ -154,7 +154,7 @@ jobs:
     steps:
       # The files of the keys, this folder's restore action and sides.mts, and what the cache
       # profile's script reads.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           sparse-checkout: |
             /.github/workflows/test-mobile-startup-perf.yml
@@ -178,7 +178,7 @@ jobs:
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
 
@@ -321,14 +321,14 @@ jobs:
       # Pods report the host CPU count; cap Gradle workers to the runner size.
       GRADLE_OPTS: -Dorg.gradle.workers.max=8
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ matrix.ref }}
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
       # This workflow's ci/, its build composite included: the commit being built may predate it.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: .startup-perf
           # Only ci/: the package.json beside it would clash in Nx with the ref's own copy.
@@ -368,14 +368,14 @@ jobs:
       # Pods report the host CPU count; cap Gradle workers to the runner size.
       GRADLE_OPTS: -Dorg.gradle.workers.max=8
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.plan.outputs.snapshot_ref }}
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
       # This workflow's ci/, its build composite included: the commit being built may predate it.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: .startup-perf
           # Only ci/: the package.json beside it would clash in Nx with the ref's own copy.
@@ -417,14 +417,14 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ matrix.ref }}
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
       # This workflow's ci/, its build composite included: the commit being built may predate it.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: .startup-perf
           # Only ci/: the package.json beside it would clash in Nx with the ref's own copy.
@@ -465,14 +465,14 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.plan.outputs.snapshot_ref }}
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
       # This workflow's ci/, its build composite included: the commit being built may predate it.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: .startup-perf
           # Only ci/: the package.json beside it would clash in Nx with the ref's own copy.
@@ -513,7 +513,7 @@ jobs:
     timeout-minutes: 45
     steps:
       # This folder's save action, and what the cache profile's script reads.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           sparse-checkout: |
             /e2e/tooling/startup-perf/ci/actions/
@@ -523,7 +523,7 @@ jobs:
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
 
@@ -602,7 +602,7 @@ jobs:
       SNAPSHOT_DIR: snapshot/android
       SNAPSHOT_DEBUG_DIR: startup-perf-snapshot-debug/android
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -645,7 +645,7 @@ jobs:
           r2_endpoint: ${{ secrets.R2_ENDPOINT }}
           create_if_missing: "true"
 
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: startup-perf-android-snapshot
           path: builds/snapshot
@@ -675,14 +675,14 @@ jobs:
             --app builds/snapshot/signed.apk --app-id "$APP_ID" --release "$RELEASE" \
             --out-dir "$SNAPSHOT_DIR" --debug-dir "$SNAPSHOT_DEBUG_DIR"
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: startup-perf-snapshot-android
           path: ${{ env.SNAPSHOT_DIR }}/
           retention-days: 7
           overwrite: true
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ always() }}
         with:
           name: startup-perf-snapshot-debug-android
@@ -710,7 +710,7 @@ jobs:
       SNAPSHOT_DIR: snapshot/ios
       SNAPSHOT_DEBUG_DIR: startup-perf-snapshot-debug/ios
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -736,12 +736,12 @@ jobs:
         run: GITHUB_STEP_SUMMARY=/dev/null pnpm exec nx run @ledgerhq/live-e2e-shared:typecheck
 
       # Maestro needs a JDK.
-      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+      - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
         with:
           distribution: "zulu"
           java-version: "17"
 
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: startup-perf-ios-snapshot
           path: builds/snapshot
@@ -769,14 +769,14 @@ jobs:
             --app builds/snapshot/ledgerlivemobile.app --app-id "$APP_ID" --release "$RELEASE" \
             --out-dir "$SNAPSHOT_DIR" --debug-dir "$SNAPSHOT_DEBUG_DIR"
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: startup-perf-snapshot-ios
           path: ${{ env.SNAPSHOT_DIR }}/
           retention-days: 7
           overwrite: true
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ always() }}
         with:
           name: startup-perf-snapshot-debug-ios
@@ -846,7 +846,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       # staging.kstr is the keystore that secrets.ANDROID_KEYSTORE_PATH points to.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           sparse-checkout-cone-mode: false
@@ -856,22 +856,22 @@ jobs:
             /e2e/mobile/userdata/
             /apps/ledger-live-mobile/android/app/staging.kstr
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
 
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: startup-perf-android-a
           path: builds/a
 
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         if: ${{ contains(needs.plan.outputs.sides, 'b') }}
         with:
           name: startup-perf-android-b
           path: builds/b
 
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         if: ${{ matrix.scenario == 'accounts' }}
         with:
           name: startup-perf-snapshot-android
@@ -941,7 +941,7 @@ jobs:
             --json "$RESULTS_DIR/android/summary.json" \
             --run-json "$RESULTS_DIR/android/run.json"
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ always() }}
         with:
           name: startup-perf-results-android-${{ matrix.scenario }}
@@ -965,29 +965,29 @@ jobs:
     runs-on: ["qaa", macOS, ARM64, "performance-pool"]
     timeout-minutes: 300
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           sparse-checkout: |
             e2e/tooling/startup-perf
             e2e/mobile/userdata
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
 
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: startup-perf-ios-a
           path: builds/a
 
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         if: ${{ contains(needs.plan.outputs.sides, 'b') }}
         with:
           name: startup-perf-ios-b
           path: builds/b
 
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         if: ${{ contains(fromJSON(needs.plan.outputs.scenarios), 'accounts') }}
         with:
           name: startup-perf-snapshot-ios
@@ -1050,7 +1050,7 @@ jobs:
             --json "$RESULTS_DIR/ios/summary.json" \
             --run-json "$RESULTS_DIR/ios/run.json"
 
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ always() }}
         with:
           name: startup-perf-results-ios
@@ -1066,18 +1066,18 @@ jobs:
     if: ${{ !cancelled() && needs.plan.result != 'skipped' }}
     runs-on: ledger-wallet-1cpu-aws-public-cached
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           sparse-checkout: /e2e/tooling/startup-perf/ci/
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
 
       # None when no measure job reached its analysis: the message then says why.
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         continue-on-error: true
         with:
           pattern: startup-perf-results-*

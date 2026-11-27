@@ -1,77 +1,111 @@
 desktop:
-  - apps/ledger-live-desktop/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - apps/ledger-live-desktop/**/*
 
 mobile:
-  - apps/ledger-live-mobile/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - apps/ledger-live-mobile/**/*
 
 common:
-  - libs/ledger-live-common/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - libs/ledger-live-common/**/*
 
 ui:
-  - libs/ui/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - libs/ui/**/*
 
 ledgerjs:
-  - libs/ledgerjs/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - libs/ledgerjs/**/*
 
 tools:
-  - tools/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - tools/**/*
 
 devtools:
-  - devtools/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - devtools/**/*
 
 automation:
-  - .github/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**/*
 
 cli:
-  - apps/cli/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - apps/cli/**/*
 
 wallet-cli:
-  - apps/wallet-cli/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - apps/wallet-cli/**/*
 
 translations:
-  - apps/ledger-live-desktop/static/i18n/**/*
-  - apps/ledger-live-mobile/src/locales/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - apps/ledger-live-desktop/static/i18n/**/*
+          - apps/ledger-live-mobile/src/locales/**/*
 
 screenshots:
-  - apps/ledger-live-desktop/tests/specs/**/*.png
+  - changed-files:
+      - any-glob-to-any-file:
+          - apps/ledger-live-desktop/tests/specs/**/*.png
 
 coin-modules-api:
- - libs/coin-framework/src/api/**
- - libs/coin-modules/*/src/api/**
+  - changed-files:
+      - any-glob-to-any-file:
+          - libs/coin-framework/src/api/**
+          - libs/coin-modules/*/src/api/**
 
 coin-modules:
- - libs/coin-framework/**/*
- - libs/coin-modules/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - libs/coin-framework/**/*
+          - libs/coin-modules/**/*
 
 shared-lib:
-  - libs/asset-aggregation/**/*
-  - libs/client-ids/**/*
-  - libs/coin-modules-monitoring/**/*
-  - libs/coin-tester/**/*
-  - libs/coin-tester-modules/**/*
-  - libs/concordium-core/**/*
-  - libs/deeplink-module/**/*
-  - libs/device-core/**/*
-  - libs/device-react/**/*
-  - libs/disable-network-setup/**/*
-  - libs/ethereum-provider/**/*
-  - libs/exchange-module/**/*
-  - libs/feature-flag-module/**/*
-  - libs/ledger-services/**/*
-  - libs/live-dmk-shared/**/*
-  - libs/live-dmk-speculos/**/*
-  - libs/live-signer-aleo/**/*
-  - libs/live-signer-canton/**/*
-  - libs/live-signer-evm/**/*
-  - libs/live-signer-solana/**/*
-  - libs/live-signer-tron/**/*
-  - libs/live-signer-xrp/**/*
-  - libs/live-wallet/**/*
-  - libs/speculos-transport/**/*
-  - libs/test-utils/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - libs/asset-aggregation/**/*
+          - libs/client-ids/**/*
+          - libs/coin-modules-monitoring/**/*
+          - libs/coin-tester/**/*
+          - libs/coin-tester-modules/**/*
+          - libs/concordium-core/**/*
+          - libs/deeplink-module/**/*
+          - libs/device-core/**/*
+          - libs/device-react/**/*
+          - libs/disable-network-setup/**/*
+          - libs/ethereum-provider/**/*
+          - libs/exchange-module/**/*
+          - libs/feature-flag-module/**/*
+          - libs/ledger-services/**/*
+          - libs/live-dmk-shared/**/*
+          - libs/live-dmk-speculos/**/*
+          - libs/live-signer-aleo/**/*
+          - libs/live-signer-canton/**/*
+          - libs/live-signer-evm/**/*
+          - libs/live-signer-solana/**/*
+          - libs/live-signer-tron/**/*
+          - libs/live-signer-xrp/**/*
+          - libs/live-wallet/**/*
+          - libs/speculos-transport/**/*
+          - libs/test-utils/**/*
 
 desktop-lib:
-  - libs/live-dmk-desktop/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - libs/live-dmk-desktop/**/*
 
 mobile-lib:
-  - libs/live-dmk-mobile/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - libs/live-dmk-mobile/**/*

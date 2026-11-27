@@ -26,9 +26,9 @@ jobs:
     steps:
       - name: generate token
         id: generate-token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
-          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          client-id: ${{ secrets.GH_BOT_APP_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
           permission-contents: write
           permission-pull-requests: write
@@ -41,7 +41,7 @@ jobs:
           tag_version: ${{ github.event.inputs.tag_version }}
           application: ${{ github.event.inputs.application }}
 
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           token: ${{ steps.generate-token.outputs.token }}
           ref: ${{ steps.format-app-tag.outputs.main_ref }}

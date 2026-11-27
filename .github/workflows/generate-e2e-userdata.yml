@@ -52,7 +52,7 @@ jobs:
       BASE_USERDATA: e2e/desktop/tests/userdata/skip-onboarding-with-last-seen-device.json
       CACHE_PREFIX: e2e-userdata-desktop
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -186,7 +186,7 @@ jobs:
       BASE_USERDATA: e2e/mobile/userdata/skip-onboarding.json
       CACHE_PREFIX: e2e-userdata-mobile
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
