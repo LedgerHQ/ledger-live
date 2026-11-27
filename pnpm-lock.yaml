@@ -2356,6 +2356,9 @@ importers:
       '@features/flow-settings-notifications':
         specifier: workspace:^
         version: link:../../features/flow/settings-notifications
+      '@features/flow-settings-privacy':
+        specifier: workspace:^
+        version: link:../../features/flow/settings-privacy
       '@features/flow-settings-security':
         specifier: workspace:^
         version: link:../../features/flow/settings-security
