@@ -2,7 +2,7 @@ import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { openModalWithReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
+import { openModalWithReceiveFlow, openReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import { importLLDCoinFamily } from "~/renderer/families";
 import { DeeplinkHandler, DeeplinkHandlerContext } from "../types";
 import { getAccountsOrSubAccountsByCurrency } from "../utils";
@@ -27,6 +27,7 @@ import { getAccountsOrSubAccountsByCurrency } from "../utils";
  * 4. **Currency found with existing accounts**
  *    - Opens modal with first matching account pre-selected
  *    - For tokens: includes both token account and parent account
+ *    - Receive: the new flow lets the user pick among the currency's accounts
  *
  * @example Basic flows
  * ledgerwallet://send                    // Open send modal, no pre-selection
@@ -122,15 +123,25 @@ async function handleTransactionFlow(
   }
 
   const [selectedAccount] = matchingAccounts;
+  const parentAccount =
+    selectedAccount?.type === "Account"
+      ? undefined
+      : accounts.find(acc => acc.id === selectedAccount?.parentId);
+  if (!selectedAccount || (selectedAccount.type !== "Account" && !parentAccount)) return;
 
-  if (selectedAccount?.type === "Account") {
-    openModalWithAccount(selectedAccount);
-  } else {
-    const parentAccount = accounts.find(acc => acc.id === selectedAccount?.parentId);
-    if (parentAccount && selectedAccount) {
-      openModalWithAccount(selectedAccount, parentAccount);
-    }
+  if (flowType === "receive") {
+    dispatch(
+      openReceiveFlow({
+        shouldUseReceiveOptions: false,
+        sourcePage: "deeplink",
+        currencyIds: [foundCurrency.id],
+        legacyAccount: { account: selectedAccount, parentAccount },
+      }),
+    );
+    return;
   }
+
+  openModalWithAccount(selectedAccount, parentAccount);
 }
 
 export const sendHandler: DeeplinkHandler<"send"> = async (route, context) => {
