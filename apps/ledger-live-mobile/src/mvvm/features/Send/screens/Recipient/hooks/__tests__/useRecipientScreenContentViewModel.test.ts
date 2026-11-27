@@ -9,6 +9,7 @@ import { useRecipientScreenContentViewModel } from "../useRecipientScreenContent
 import { useSettleRecipientInputFocus } from "../useSettleRecipientInputFocus";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useSendFlowMessageTracking } from "../../../../hooks/useSendFlowMessageTracking";
+import { MemoTooLong } from "@ledgerhq/live-common/errors";
 
 jest.mock("../../../../context/SendFlowTrackingContext");
 jest.mock("../../../../hooks/useSendFlowMessageTracking");
@@ -283,6 +284,18 @@ describe("useRecipientScreenContentViewModel", () => {
     const { result } = renderViewModel();
 
     expect(result.current.showMatched).toBe(true);
+  });
+
+  it("hides the matched address while the memo is too long", () => {
+    mockedUseMemoViewModel.mockReturnValue({
+      memo: { value: "é".repeat(17), type: undefined },
+      hasFilledMemo: true,
+      memoError: new MemoTooLong(34, 32),
+    } as never);
+
+    const { result } = renderViewModel();
+
+    expect(result.current.showMatched).toBe(false);
   });
 
   it("does not request message tracking when nothing is displayed", () => {

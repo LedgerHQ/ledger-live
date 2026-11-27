@@ -18,6 +18,7 @@ import {
   createMockTokenCurrency,
 } from "../../__integrations__/__fixtures__/accounts";
 import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
+import { MemoTooLong } from "@ledgerhq/live-common/errors";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
@@ -830,6 +831,33 @@ describe("useRecipientAddressModalViewModel", () => {
       },
       undefined,
     );
+  });
+
+  it("reports a memo validation error while the flow flags the memo as too long", () => {
+    const tooLongMemo = "a".repeat(40);
+    mockedSendFeatures.hasMemoForRecipient.mockReturnValue(true);
+    mockedUseSendFlowData.mockReturnValue({
+      recipientSearch: { ...mockRecipientSearch, value: "new_address" },
+      state: {
+        recipient: { address: "new_address", memo: { value: tooLongMemo } },
+        transaction: {
+          status: { errors: { transaction: new MemoTooLong(tooLongMemo.length, 32) } },
+        },
+      } as unknown as SendFlowState,
+      uiConfig: {} as never,
+      isRecipientAddressComplete: true,
+    });
+
+    const { result } = renderHook(() =>
+      useRecipientAddressModalViewModel({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.hasMemoValidationError).toBe(true);
   });
 
   it("passes the current transaction to address validation", () => {

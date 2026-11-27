@@ -16,8 +16,11 @@ jest.mock("LLD/features/FlowWizard/FlowWizardContext", () => ({
 const mockSetRecipient = jest.fn();
 
 type MockState = {
-  account: { account: { id: string; type: string; currency: unknown } | null };
-  transaction: { transaction: { id: string; sender?: string } | null };
+  account: { account: { id: string; type: string; currency: unknown } | null; currency?: unknown };
+  transaction: {
+    transaction: { id: string; sender?: string } | null;
+    status: { errors: Record<string, Error> };
+  };
   recipient: { address: string; memo?: { value: string } } | null;
 };
 
@@ -40,10 +43,11 @@ jest.mock("../../../../context/RecipientContinuationContext", () => ({
 // The send descriptor is the only source of the destination pool; the view model must
 // never derive it from a coin-module.
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
-  sendFeatures: { getBalanceTypeConfig: jest.fn() },
+  sendFeatures: { getBalanceTypeConfig: jest.fn(), hasMemoForRecipient: jest.fn() },
 }));
 
 const mockedGetBalanceTypeConfig = jest.mocked(sendFeatures.getBalanceTypeConfig);
+const mockedHasMemoForRecipient = jest.mocked(sendFeatures.hasMemoForRecipient);
 const mockedUseRecipientContinuation = jest.mocked(useRecipientContinuation);
 
 const SHIELDED_TARGET: BalanceTypeSelfTransferTarget = {
@@ -87,9 +91,10 @@ describe("useSelfTransferSectionViewModel", () => {
 
     mockState = {
       account: { account: { id: "zcash-acc", type: "Account", currency: { id: "zcash" } } },
-      transaction: { transaction: { id: "tx1", sender: "public" } },
+      transaction: { transaction: { id: "tx1", sender: "public" }, status: { errors: {} } },
       recipient: null,
     };
+    mockedHasMemoForRecipient.mockReturnValue(false);
   });
 
   afterEach(() => {
@@ -155,5 +160,27 @@ describe("useSelfTransferSectionViewModel", () => {
 
     expect(mockSetRecipient).not.toHaveBeenCalled();
     expect(mockGoToNextStep).not.toHaveBeenCalled();
+  });
+
+  it("does not advance while the memo the destination carries fails validation", () => {
+    mockedHasMemoForRecipient.mockReturnValue(true);
+    mockState.transaction.status.errors = { transaction: new Error("MemoTooLong") };
+
+    const viewModel = renderViewModel();
+    viewModel?.onSelfTransfer("Private balance");
+
+    expect(viewModel?.isBlocked).toBe(true);
+    expect(mockSetRecipient).not.toHaveBeenCalled();
+    expect(mockGoToNextStep).not.toHaveBeenCalled();
+  });
+
+  it("advances despite a transaction error when the destination carries no memo", () => {
+    mockState.transaction.status.errors = { transaction: new Error("MemoTooLong") };
+
+    const viewModel = renderViewModel();
+    viewModel?.onSelfTransfer("Private balance");
+
+    expect(viewModel?.isBlocked).toBe(false);
+    expect(mockGoToNextStep).toHaveBeenCalledTimes(1);
   });
 });

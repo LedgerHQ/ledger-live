@@ -54,6 +54,7 @@ const AnimatedInputSelect = (
       )}
       placeholder={placeholder}
       onChange={onChange}
+      error={error}
       {...rest}
     />
   );

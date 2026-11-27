@@ -46,6 +46,17 @@ describe("useRecipientMemoCore", () => {
     expect(result.current.showMemoValueInput).toBe(true);
   });
 
+  it("forwards a pasted memo whole so the flow can flag it as too long", () => {
+    const pastedMemo = "exchange-deposit-memo-".repeat(30);
+    const { result, onMemoChange } = setup();
+
+    act(() => result.current.onMemoValueChange(pastedMemo));
+
+    expect(onMemoChange).toHaveBeenLastCalledWith({ value: pastedMemo, type: undefined });
+    expect(result.current.memo.value).toBe(pastedMemo);
+    expect(result.current.hasFilledMemo).toBe(true);
+  });
+
   it("resets the value when the memo type changes", () => {
     const { result, onMemoChange } = setup({
       memoType: "typed",
@@ -131,5 +142,15 @@ describe("useRecipientMemoCore", () => {
     expect(onMemoChange).toHaveBeenLastCalledWith({ value: "", type: undefined });
     expect(result.current.memo).toEqual({ value: "", type: undefined });
     expect(result.current.skipMemoState).toBe("propose");
+  });
+
+  it("restores the memo kept for the new address instead of the default when the resetKey changes", () => {
+    const keptMemo = { value: "x".repeat(65), type: undefined };
+    const { result, onMemoChange, rerender, initialProps } = setup();
+
+    rerender({ ...initialProps, resetKey: "acc|xrp|other", restoredMemo: keptMemo });
+
+    expect(result.current.memo).toEqual(keptMemo);
+    expect(onMemoChange).toHaveBeenLastCalledWith(keptMemo);
   });
 });

@@ -1,3 +1,5 @@
+import { MemoTooLong } from "../../../../errors";
+
 type SanitizeMemoValueArgs = Readonly<{
   value: string;
   /** Memo input kind coming from the send descriptor (ex "tag" restricts to digits). */
@@ -24,4 +26,26 @@ export function sanitizeMemoValue({
   const maxBig = BigInt(memoMaxValue);
   const valueBig = BigInt(digitsOnly);
   return valueBig > maxBig ? String(memoMaxValue) : digitsOnly;
+}
+
+type GetMemoTooLongErrorArgs = Readonly<{
+  value: string;
+  /** Max memo size from the send descriptor, in UTF-8 bytes as chains measure it. */
+  maxLength?: number;
+  memoType?: string;
+}>;
+
+/**
+ * Flags a memo larger than the descriptor allows, so the flow can block it instead of
+ * truncating it. Tag memos are bounded by memoMaxValue in sanitizeMemoValue instead.
+ */
+export function getMemoTooLongError({
+  value,
+  maxLength,
+  memoType,
+}: GetMemoTooLongErrorArgs): MemoTooLong | undefined {
+  if (memoType === "tag" || maxLength === undefined) return undefined;
+  const memoByteLength = Buffer.byteLength(value, "utf8");
+  if (memoByteLength <= maxLength) return undefined;
+  return new MemoTooLong(memoByteLength, maxLength);
 }

@@ -267,10 +267,28 @@ export function useRecipientScreenView({
         return;
       }
 
+      const keptMemoFailsValidation =
+        addressRequiresMemo &&
+        !!memoForSelectedAddress &&
+        Boolean(state.transaction?.status?.errors?.transaction);
+      if (keptMemoFailsValidation) {
+        recipientSearch.setValue(address);
+        onAddressSelected(address, ensName, false);
+        return;
+      }
+
       committedRecipientRef.current = true;
       onAddressSelected(address, ensName, true);
     },
-    [currency, doNotAskAgainSkipMemo, markMemoSkipped, onAddressSelected, state.recipient],
+    [
+      currency,
+      doNotAskAgainSkipMemo,
+      markMemoSkipped,
+      onAddressSelected,
+      recipientSearch,
+      state.recipient,
+      state.transaction?.status?.errors?.transaction,
+    ],
   );
 
   const confirmSkipMemoConfirmation = useCallback(() => {

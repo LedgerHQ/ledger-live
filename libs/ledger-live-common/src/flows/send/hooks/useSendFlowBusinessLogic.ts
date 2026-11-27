@@ -5,6 +5,8 @@ import { useSendFlowAccount } from "./useSendFlowAccount";
 import { useSyncSendFlowAccount } from "./useSyncSendFlowAccount";
 import { getSendUiConfig } from "../uiConfig";
 import { canSkipRecipientStep } from "../types";
+import { getMemoTooLongError } from "../recipient/utils/memoValue";
+import { sendFeatures } from "../../../bridge/descriptor/send/features";
 import type {
   SendFlowState,
   SendFlowInitParams,
@@ -129,12 +131,35 @@ export function useSendFlowBusinessLogic({
     onAccountRefreshed: handleAccountRefreshed,
   });
 
+  const currency = accountHook.state.currency ?? undefined;
+  const getApplicableMemoTooLongError = useCallback(
+    (candidate: RecipientData | null) => {
+      if (
+        !candidate?.memo ||
+        !sendFeatures.hasMemoForRecipient(currency, candidate.address ?? "")
+      ) {
+        return undefined;
+      }
+      return getMemoTooLongError({
+        value: candidate.memo.value,
+        maxLength: uiConfig.memoMaxLength,
+        memoType: uiConfig.memoType,
+      });
+    },
+    [currency, uiConfig.memoMaxLength, uiConfig.memoType],
+  );
+
   const handleRecipientSet = useCallback(
     (newRecipient: RecipientData) => {
       setRecipient(newRecipient);
-      transactionHook.actions.setRecipient(newRecipient);
+      const rejectedMemo = getApplicableMemoTooLongError(newRecipient)
+        ? newRecipient.memo
+        : undefined;
+      transactionHook.actions.setRecipient(
+        rejectedMemo ? { ...newRecipient, memo: { ...rejectedMemo, value: "" } } : newRecipient,
+      );
     },
-    [transactionHook.actions],
+    [transactionHook.actions, getApplicableMemoTooLongError],
   );
 
   const resetRecipient = useCallback(() => {
@@ -178,16 +203,33 @@ export function useSendFlowBusinessLogic({
     [recipientSearchValue],
   );
 
+  const memoTooLongError = useMemo(
+    () => getApplicableMemoTooLongError(recipient),
+    [getApplicableMemoTooLongError, recipient],
+  );
+
+  const transactionState: SendFlowTransactionState = useMemo(() => {
+    const bridgeState = transactionHook.state;
+    if (!memoTooLongError) return bridgeState;
+    return {
+      ...bridgeState,
+      status: {
+        ...bridgeState.status,
+        errors: { ...bridgeState.status.errors, transaction: memoTooLongError },
+      },
+    };
+  }, [transactionHook.state, memoTooLongError]);
+
   const state: SendFlowState = useMemo(
     () => ({
       account: accountHook.state,
-      transaction: transactionHook.state,
+      transaction: transactionState,
       recipient,
       operation: operationHook.state,
-      isLoading: transactionHook.state.bridgePending,
+      isLoading: transactionState.bridgePending,
       flowStatus,
     }),
-    [accountHook.state, transactionHook.state, recipient, operationHook.state, flowStatus],
+    [accountHook.state, transactionState, recipient, operationHook.state, flowStatus],
   );
 
   const statusActions = useMemo(

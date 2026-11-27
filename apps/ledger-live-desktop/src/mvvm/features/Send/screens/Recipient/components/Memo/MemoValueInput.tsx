@@ -10,7 +10,6 @@ type MemoValueInputProps = Readonly<{
   /** Ticker shown in the help text (ex "ZEC"). Falls back to the currency id. */
   currencyTicker?: string;
   value: string;
-  maxLength?: number;
   /** When "tag", input is restricted to digits only (ex XRP, Casper). */
   memoType?: string;
   /** Max numeric value when memoType is "tag" (ex XRP UINT32_MAX, Casper UINT64_MAX). */
@@ -26,7 +25,6 @@ function MemoValueInputComponent({
   currencyId,
   currencyTicker,
   value,
-  maxLength,
   memoType,
   memoMaxValue,
   transactionError,
@@ -73,7 +71,6 @@ function MemoValueInputComponent({
       }
       className="w-full"
       value={value}
-      maxLength={isTagType ? undefined : maxLength}
       helperText={errorMessage}
       status={errorMessage ? "error" : undefined}
     />

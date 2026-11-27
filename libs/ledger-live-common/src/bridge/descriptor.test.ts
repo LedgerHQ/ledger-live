@@ -6,6 +6,7 @@ import { resolveFeeUnitLabel, sendFeatures } from "./descriptor/send/features";
 import { applyMemoToTransaction } from "./descriptor/send/memo";
 import * as configModule from "../config/index";
 import { genAccount } from "../mock/account";
+import { MAX_MEMO_LENGTH as SOLANA_MAX_MEMO_LENGTH } from "../families/solana/logic";
 import { isZcashShieldedEnabled, setZcashShieldedEnabled } from "./zcashRouting";
 
 jest.mock("../config/index");
@@ -102,7 +103,7 @@ describe("getDescriptor", () => {
         inputs: {
           memo: {
             type: "text",
-            maxLength: 32,
+            maxLength: 500,
           },
         },
         fees: {
@@ -539,9 +540,14 @@ describe("sendFeatures", () => {
     expect(sendFeatures.getMemoType(solana)).toBe("text");
   });
 
-  it("should get memo max length", () => {
+  it("should cap the solana memo at the limit the coin module validates", () => {
     const solana = getCryptoCurrencyById("solana");
-    expect(sendFeatures.getMemoMaxLength(solana)).toBe(32);
+    expect(sendFeatures.getMemoMaxLength(solana)).toBe(SOLANA_MAX_MEMO_LENGTH);
+  });
+
+  it("should allow solana memos up to 500 bytes", () => {
+    const solana = getCryptoCurrencyById("solana");
+    expect(sendFeatures.getMemoMaxLength(solana)).toBe(500);
   });
 
   it("should get memo default option", () => {

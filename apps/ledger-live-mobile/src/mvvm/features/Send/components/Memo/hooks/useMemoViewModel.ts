@@ -53,6 +53,12 @@ export function useMemoViewModel({ address, hasMemo }: UseMemoViewModelProps) {
     [transaction, address],
   );
 
+  const keptMemo =
+    address && state.recipient?.address === address ? state.recipient.memo : undefined;
+  const keptMemoFailsValidation =
+    !!keptMemo?.value && Boolean(state.transaction.status?.errors?.transaction);
+  const memoToFix = keptMemoFailsValidation ? keptMemo : undefined;
+
   const memo = useRecipientMemo({
     hasMemo,
     memoDefaultOption,
@@ -61,6 +67,7 @@ export function useMemoViewModel({ address, hasMemo }: UseMemoViewModelProps) {
     onMemoChange: handleMemoChange,
     onMemoSkip: () => {},
     resetKey: `${state.account.account?.id ?? ""}|${currencyId}|${address}`,
+    restoredMemo: memoToFix,
   });
 
   useEffect(

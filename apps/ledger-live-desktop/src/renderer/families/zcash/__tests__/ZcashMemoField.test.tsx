@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { BitcoinAccount, Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import { ZcashMemoTooLong } from "@ledgerhq/coin-zcash/types";
 import ZcashMemoField from "../ZcashMemoField";
 
 // The bridge's updateTransaction merges the patch onto the transaction.
@@ -52,30 +53,33 @@ describe("ZcashMemoField", () => {
     expect(byteLength(changedMemo(onChange))).toBe(512);
   });
 
-  it("truncates multi-byte input to whole characters that fit within 512 bytes", () => {
+  it("keeps a memo over 512 bytes intact so the bridge can reject it", () => {
     const { onChange, input } = renderField();
-    // "あ" is 3 bytes in UTF-8; 200 of them = 600 bytes, over the 512-byte budget.
     const memo = "あ".repeat(200);
 
     fireEvent.change(input, { target: { value: memo } });
 
-    const result = changedMemo(onChange);
-    expect(byteLength(result)).toBeLessThanOrEqual(512);
-    // 170 chars = 510 bytes fit; a 171st (513 bytes) would overflow.
-    expect(result).toBe("あ".repeat(170));
+    expect(changedMemo(onChange)).toBe(memo);
+    expect(byteLength(changedMemo(onChange))).toBe(600);
   });
 
-  it("does not split surrogate-pair characters at the byte boundary", () => {
-    const { onChange, input } = renderField();
-    // "😀" is 4 bytes in UTF-8; 128 of them = 512 bytes exactly.
-    const memo = "😀".repeat(200);
+  it("does not cap the input length natively", () => {
+    const { input } = renderField();
 
-    fireEvent.change(input, { target: { value: memo } });
+    expect(input).not.toHaveAttribute("maxlength");
+  });
 
-    const result = changedMemo(onChange);
-    expect(byteLength(result)).toBe(512);
-    expect(result).toBe("😀".repeat(128));
-    // No lone surrogate: every code point is above the BMP.
-    expect([...result].every(char => (char.codePointAt(0) ?? 0) > 0xffff)).toBe(true);
+  it("shows the bridge error for a memo over 512 bytes", () => {
+    const memo = "a".repeat(513);
+    render(
+      <ZcashMemoField
+        account={account as never}
+        transaction={{ family: "bitcoin", memo } as never}
+        status={{ errors: { transaction: new ZcashMemoTooLong(512) }, warnings: {} } as never}
+        onChange={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByText("Memo must not exceed 512 bytes")).toBeVisible();
   });
 });

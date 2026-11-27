@@ -16,6 +16,7 @@ import { validateAddress } from "../common-logic";
 import { findNextNonce, getAddress } from "./utils/misc";
 import { getSubAccount } from "./utils/token";
 import { createTransaction } from "./utils/transactions";
+import { validateMemo } from "../logic/validateMemo";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,
@@ -36,8 +37,14 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     // Check if this is a token transaction
     const subAccount = getSubAccount(account, transaction);
 
-    // Create transaction
-    const tx = await createTransaction(transaction, address, xpub, subAccount);
+    // A native memo is fixed-width (as in buildUnsignedTx), and an oversized memo would throw
+    // here before getTransactionStatus can report StacksMemoTooLong.
+    const memoSizesTheEstimate =
+      !!subAccount && (!transaction.memo || validateMemo(transaction.memo));
+    const feeEstimateTransaction = memoSizesTheEstimate
+      ? transaction
+      : { ...transaction, memo: undefined };
+    const tx = await createTransaction(feeEstimateTransaction, address, xpub, subAccount);
 
     const senderAddress = c32address(addressVersion, tx.auth.spendingCondition!.signer);
 

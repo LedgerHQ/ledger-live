@@ -80,5 +80,5 @@ const m = connect(
 )(SendRecipientFields);
 export default {
   component: m,
-  fields: ["memo"],
+  fields: ["memo", "transaction"],
 };

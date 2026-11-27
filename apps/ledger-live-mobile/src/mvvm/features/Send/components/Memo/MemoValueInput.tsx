@@ -18,7 +18,6 @@ type MemoValueInputProps = Readonly<{
   currencyId: string;
   memoLabel: string;
   value: string;
-  maxLength?: number;
   memoType?: string;
   memoMaxValue?: number | bigint;
   transactionError?: Error;
@@ -29,7 +28,6 @@ function MemoValueInputComponent({
   currencyId,
   memoLabel,
   value,
-  maxLength,
   memoType,
   memoMaxValue,
   transactionError,
@@ -64,7 +62,6 @@ function MemoValueInputComponent({
         value={value}
         onChangeText={handleChangeText}
         keyboardType={isTagType ? "number-pad" : "default"}
-        maxLength={isTagType ? undefined : maxLength}
         helperText={errorMessage}
         status={errorMessage ? "error" : undefined}
         suffix={

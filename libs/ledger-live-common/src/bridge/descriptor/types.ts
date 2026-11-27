@@ -21,6 +21,7 @@ export type InputFieldType = "text" | "number" | "tag" | "typed";
  */
 export type InputDescriptor = Readonly<{
   type: InputFieldType;
+  /** Maximum memo size in UTF-8 bytes, the unit chains measure memos in. */
   maxLength?: number;
   maxValue?: number | bigint;
   options?: readonly string[];
