@@ -410,12 +410,14 @@ export class SwapPage extends WebViewAppPage {
   @step("Click Exchange button")
   async clickExchangeButton(provider: string) {
     const webview = await this.getWebView();
-    await webview
+    const executeButton = webview
       .locator(this.providerContainerSelector(provider))
       .getByTestId(this.swapBtn)
       // 'first' as workaround for changely showing float AND fixed in the list
-      .first()
-      .click();
+      .first();
+    await expect(executeButton).toBeVisible();
+    await expect(executeButton).toBeEnabled();
+    await executeButton.click();
   }
 
   @step("Click Execute Swap button")
