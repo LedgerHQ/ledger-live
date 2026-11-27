@@ -4,6 +4,7 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { byId, byIdWithDescendantText, byTextInRowWithText } from "@e2e/helpers/elements/native";
 
 type AssetItemByNameOptions = { ticker: string; assetName: string };
+type MaskedAmountOptions = { currency: Currency; mask: RegExp };
 
 export default class ModularDrawer {
   private readonly accountItem = byId("account-item");
@@ -22,6 +23,14 @@ export default class ModularDrawer {
   private readonly assetItem = (ticker: string) => byId(this.assetItemId(ticker));
   private readonly assetItemByName = ({ ticker, assetName }: AssetItemByNameOptions) =>
     byIdWithDescendantText({ id: this.assetItemId(ticker), text: assetName });
+  private readonly maskedAmount = ({ currency, mask }: MaskedAmountOptions) =>
+    currency.aggregatedName
+      ? byTextInRowWithText({
+          id: this.assetItemId(currency.ticker),
+          rowText: currency.aggregatedName,
+          text: mask,
+        })
+      : byIdWithDescendantText({ id: this.assetItemId(currency.ticker), text: mask });
   private readonly networkItem = (networkId: string) =>
     byId(new RegExp(`network-item-${networkId}`, "i"));
 
@@ -105,10 +114,7 @@ export default class ModularDrawer {
 
     const masks = [/\$\*\*\*/, new RegExp(String.raw`\*\*\*\s+${ticker}`, "i")];
     for (const mask of masks) {
-      const maskedAmount = aggregatedName
-        ? byTextInRowWithText({ id: this.assetItemId(ticker), rowText: aggregatedName, text: mask })
-        : byIdWithDescendantText({ id: this.assetItemId(ticker), text: mask });
-      await maskedAmount.expectVisible();
+      await this.maskedAmount({ currency, mask }).expectVisible();
     }
   }
 
