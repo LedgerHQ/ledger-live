@@ -1,14 +1,21 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
+import { useFeature } from "@features/platform-feature-flags";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setLedgerSyncActivateDrawer } from "~/actions/walletSync";
 import { activateDrawerSelector } from "~/reducers/walletSync";
-import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
 import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 
-/** The Ledger Sync activation drawer, opened from the store. */
-export function LedgerSyncActivationDrawer() {
+export type LedgerSyncActivationDrawerViewModel = Readonly<{
+  isAvailable: boolean;
+  isOpen: boolean;
+  onClose: () => void;
+}>;
+
+/** The activation drawer opens from the store, and only while `llmWalletSync` is on. */
+export function useLedgerSyncActivationDrawerViewModel(): LedgerSyncActivationDrawerViewModel {
   const dispatch = useDispatch();
+  const isAvailable = useFeature("llmWalletSync")?.enabled ?? false;
   const isOpen = useSelector(activateDrawerSelector);
   const { setCurrentStep } = useCurrentStep();
 
@@ -17,5 +24,5 @@ export function LedgerSyncActivationDrawer() {
     setCurrentStep(Steps.Activation);
   }, [dispatch, setCurrentStep]);
 
-  return <ActivationDrawer startingStep={Steps.Activation} isOpen={isOpen} handleClose={onClose} />;
+  return { isAvailable, isOpen, onClose };
 }
