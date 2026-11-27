@@ -3,6 +3,10 @@ import {
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/earn/stakePrograms/index";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import {
+  NATIVE_STAKE_POSITION_INPUT_KEY,
+  NATIVE_STAKE_POSITION_INPUT_VALUE,
+} from "@features/flow-stake-position";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import {
   useRemoteLiveAppContext,
@@ -32,6 +36,18 @@ import { buildEarnGoToURL } from "./buildEarnGoToURL";
 
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_EARN_MANIFEST_ID || FEATURE_FLAGS_DEFAULTS.ptxEarnLiveApp.params?.manifest_id;
+
+/**
+ * Only the `earnNativeStakePosition` flag tells Earn this host opens stake positions: a value in
+ * the route state is dropped, whether it claims the capability or denies it.
+ */
+function withoutNativeStakePositionInput(
+  routeState: Record<string, string | undefined>,
+): Record<string, string | undefined> {
+  return Object.fromEntries(
+    Object.entries(routeState).filter(([key]) => key !== NATIVE_STAKE_POSITION_INPUT_KEY),
+  );
+}
 
 const Earn = () => {
   const location = useLocation();
@@ -89,10 +105,13 @@ const Earn = () => {
         : undefined,
     [stableSavingsFlag],
   );
+  const nativeStakePositionEnabled = useFeature("earnNativeStakePosition")?.enabled ?? false;
   const { updateManifests } = useRemoteLiveAppContext();
 
   const inputs = useMemo(() => {
-    const routeState = (location.state as Record<string, string | undefined> | null) ?? {};
+    const routeState = withoutNativeStakePositionInput(
+      (location.state as Record<string, string | undefined> | null) ?? {},
+    );
     const { customDappUrl, ...earnRouteParams } = routeState;
 
     const earnInitParams = {
@@ -110,13 +129,16 @@ const Earn = () => {
       ethDepositCohort,
       swapToEarn: swapToEarnParam,
       stableSavings: stableSavingsParam,
+      ...(nativeStakePositionEnabled && {
+        [NATIVE_STAKE_POSITION_INPUT_KEY]: NATIVE_STAKE_POSITION_INPUT_VALUE,
+      }),
     };
 
     return {
       ...earnInitParams,
       ...earnRouteParams,
       devMode,
-      routerState: JSON.stringify(location.state ?? {}),
+      routerState: JSON.stringify(routeState),
       goToURL: customDappUrl ? buildEarnGoToURL(customDappUrl, earnInitParams) : undefined,
     };
   }, [
@@ -134,6 +156,7 @@ const Earn = () => {
     ethDepositCohort,
     swapToEarnParam,
     stableSavingsParam,
+    nativeStakePositionEnabled,
   ]);
 
   if (!manifest) {
