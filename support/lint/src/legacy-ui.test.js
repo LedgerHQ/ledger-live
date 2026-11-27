@@ -231,6 +231,28 @@ test("no-legacy-element reports a JSX element of a legacy binding, member names 
   ]);
 });
 
+test("no-legacy-element skips a JSX name that a local binding shadows", () => {
+  const reports = lint(
+    {
+      "src/A.tsx": [
+        'import { Text } from "@ledgerhq/native-ui";',
+        "export function Render(Text) {",
+        "  return <Text />;",
+        "}",
+        "export const B = () => {",
+        "  const Text = () => null;",
+        "  return <Text />;",
+        "};",
+        "export const C = () => <Text />;",
+        "",
+      ].join("\n"),
+    },
+    MOBILE,
+  ).filter(line => line.startsWith("no-legacy-element"));
+
+  assert.deepEqual(reports, ["no-legacy-element app/src/A.tsx:9"]);
+});
+
 test("no-styled-definition counts each definition once, attrs chains included", () => {
   const reports = lint(
     {
@@ -283,6 +305,32 @@ test("no-banned-component reports the import and the JSX of a banned component o
   assert.deepEqual(reports, [
     "no-banned-component app/src/A.tsx:1",
     "no-banned-component app/src/A.tsx:3",
+  ]);
+});
+
+test("no-banned-component reports a member of a namespace import, not a shadowed name", () => {
+  const reports = lint(
+    {
+      "src/A.tsx": [
+        'import * as UI from "@ledgerhq/native-ui";',
+        'import { Flex } from "@ledgerhq/native-ui";',
+        "export const A = () => (",
+        "  <UI.Flex>",
+        "    <UI.Text />",
+        "  </UI.Flex>",
+        ");",
+        "export function Render(Flex) {",
+        "  return <Flex />;",
+        "}",
+        "",
+      ].join("\n"),
+    },
+    { ...MOBILE, bannedComponents: ["Flex"] },
+  ).filter(line => line.startsWith("no-banned-component"));
+
+  assert.deepEqual(reports, [
+    "no-banned-component app/src/A.tsx:2",
+    "no-banned-component app/src/A.tsx:4",
   ]);
 });
 

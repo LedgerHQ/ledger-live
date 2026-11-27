@@ -219,15 +219,21 @@ function isLegacyModule(specifier, filename, modules = []) {
 }
 
 /**
- * The local bindings a file imports from the legacy modules, keyed by local name, with the name of the
- * component each one stands for: the imported name, or the local name of a default or namespace import.
+ * @typedef {object} LegacyBinding
+ * @property {string} component the imported name, or the local name of a default import
+ * @property {boolean} namespace whether it is a namespace import, whose members are the components
+ */
+
+/**
+ * The local bindings a file imports from the legacy modules, keyed by local name.
  *
  * @param {{ body?: any[] }} program
  * @param {string | undefined} filename
  * @param {string[]} modules
- * @returns {Map<string, string>}
+ * @returns {Map<string, LegacyBinding>}
  */
 function legacyBindings(program, filename, modules) {
+  /** @type {Map<string, LegacyBinding>} */
   const bindings = new Map();
   for (const statement of program.body ?? []) {
     if (statement.type !== "ImportDeclaration") continue;
@@ -235,11 +241,37 @@ function legacyBindings(program, filename, modules) {
     for (const specifier of statement.specifiers ?? []) {
       const local = specifier.local?.name;
       if (!local) continue;
-      const imported = specifier.type === "ImportSpecifier" ? importedName(specifier) : local;
-      bindings.set(local, imported);
+      const component = specifier.type === "ImportSpecifier" ? importedName(specifier) : local;
+      bindings.set(local, {
+        component,
+        namespace: specifier.type === "ImportNamespaceSpecifier",
+      });
     }
   }
   return bindings;
+}
+
+/**
+ * @param {LegacyBinding} binding the binding of a JSX name's root
+ * @param {string[]} rest the member path below the root
+ * @returns {string[]} the component path: `<UI.Flex />` of a namespace import is `Flex`
+ */
+function componentPath(binding, rest) {
+  return binding.namespace ? rest : [binding.component, ...rest];
+}
+
+/**
+ * @param {any} context
+ * @param {object} node
+ * @param {string} name
+ * @returns {boolean} whether `name`, seen from `node`, is an import binding and not a local that shadows it
+ */
+function refersToImport(context, node, name) {
+  for (let scope = context.sourceCode.getScope(node); scope; scope = scope.upper) {
+    const variable = scope.set.get(name);
+    if (variable) return variable.defs.some(def => def.type === "ImportBinding");
+  }
+  return false;
 }
 
 /** @param {{ imported?: { name?: string, value?: string } }} specifier */
@@ -307,7 +339,7 @@ const noLegacyImport = legacyUiRule({
 
 const noLegacyElement = legacyUiRule({
   createOnce(context, state) {
-    /** @type {Map<string, string>} */
+    /** @type {Map<string, LegacyBinding>} */
     let bindings = new Map();
     return {
       /** @param {{ body?: any[] }} program */
@@ -318,6 +350,7 @@ const noLegacyElement = legacyUiRule({
       JSXOpeningElement(node) {
         const name = splitJsxName(node.name);
         if (!name || !bindings.has(name.root)) return;
+        if (!refersToImport(context, node, name.root)) return;
         const component = [name.root, ...name.rest].join(".");
         context.report({
           message: `Legacy UI component <${component} />: do not add uses of it. ${LUMEN}`,
@@ -371,7 +404,7 @@ const noStyledDefinition = legacyUiRule({
 
 const noBannedComponent = legacyUiRule({
   createOnce(context, state) {
-    /** @type {Map<string, string>} */
+    /** @type {Map<string, LegacyBinding>} */
     let bindings = new Map();
     /** @type {Set<string>} */
     let banned = new Set();
@@ -395,17 +428,20 @@ const noBannedComponent = legacyUiRule({
         for (const statement of program.body ?? []) {
           if (statement.type !== "ImportDeclaration") continue;
           for (const specifier of statement.specifiers ?? []) {
-            const component = bindings.get(specifier.local?.name);
-            if (component && banned.has(component)) report(component, specifier);
+            const binding = bindings.get(specifier.local?.name);
+            if (binding && !binding.namespace && banned.has(binding.component)) {
+              report(binding.component, specifier);
+            }
           }
         }
       },
       /** @param {{ name: any }} node */
       JSXOpeningElement(node) {
         const name = splitJsxName(node.name);
-        const component = name && bindings.get(name.root);
-        if (!component) return;
-        const full = [component, ...name.rest].join(".");
+        const binding = name && bindings.get(name.root);
+        if (!name || !binding || !refersToImport(context, node, name.root)) return;
+        const [component, ...rest] = componentPath(binding, name.rest);
+        const full = [component, ...rest].join(".");
         if (banned.has(component)) report(component, node);
         else if (banned.has(full)) report(full, node);
       },
