@@ -14447,6 +14447,13 @@ importers:
         version: '@typescript/typescript6@6.0.2'
 
   features/flow/settings-asset-management:
+    dependencies:
+      '@features/flow-settings':
+        specifier: workspace:*
+        version: link:../settings
+      '@shared/i18n':
+        specifier: workspace:*
+        version: link:../../../shared/i18n
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -14463,12 +14470,21 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.24))
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
       '@testing-library/jest-dom':
         specifier: 'catalog:'
         version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
@@ -14484,6 +14500,12 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.94.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
