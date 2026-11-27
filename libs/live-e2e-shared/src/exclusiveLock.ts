@@ -498,12 +498,13 @@ export async function runWithExclusiveLock<T>(
 ): Promise<T> {
   const { targets, label, waitsForConfirmation = false } = options;
   const lease = await acquireExclusiveLock(targets, label);
-  let confirmed = false;
+  let result: T;
   try {
-    const result = await fn();
-    confirmed = waitsForConfirmation;
-    return result;
-  } finally {
-    await (confirmed ? lease.abandon() : lease.release());
+    result = await fn();
+  } catch (error) {
+    await lease.release();
+    throw error;
   }
+  await (waitsForConfirmation ? lease.abandon() : lease.release());
+  return result;
 }
