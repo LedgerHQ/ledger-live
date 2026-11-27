@@ -5,6 +5,7 @@ import type {
 } from "@ledgerhq/device-management-kit";
 import {
   createSessionEventsActor,
+  isFirmwareUpdateDelegated,
   stateValueToString,
   useDeviceOnboardingActor,
   type DeviceOnboardingActorSession,
@@ -16,10 +17,7 @@ import {
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { createDeviceOnboardingPorts } from "../utils/ports";
-import {
-  firmwareUpdateDelegatedState,
-  useFirmwareUpdateHandover,
-} from "./useFirmwareUpdateHandover";
+import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 
 type DeviceOnboardingStatus = "idle" | "connecting" | "running" | "exited";
 
@@ -62,7 +60,7 @@ function ledgerDevice(
 }
 
 function inFirmwareHandover(actor: { getSnapshot(): { value: unknown } }) {
-  return stateValueToString(actor.getSnapshot().value) === firmwareUpdateDelegatedState;
+  return isFirmwareUpdateDelegated(stateValueToString(actor.getSnapshot().value));
 }
 
 export function useDeviceOnboarding({
@@ -174,8 +172,7 @@ export function useDeviceOnboarding({
       const previousState = previous ? stateValueToString(previous.value) : null;
       const nextState = stateValueToString(next.value);
       const leftFirmwareHandover =
-        previousState === firmwareUpdateDelegatedState &&
-        nextState !== firmwareUpdateDelegatedState;
+        isFirmwareUpdateDelegated(previousState) && !isFirmwareUpdateDelegated(nextState);
       const actorAtSnapshot = actorRef.current;
       syncLockListener();
 

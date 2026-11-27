@@ -13,6 +13,7 @@ import { SetupScreen } from "LLM/features/DeviceOnboarding/screens/Setup";
 import { UnseededIntroKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
 import { UnseededSuccessKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/UnseededSuccessKaraoke";
 import { RecoverNewSeedScreen } from "LLM/features/DeviceOnboarding/screens/Recover/NewSeed";
+import { RecoverRestoreScreen } from "LLM/features/DeviceOnboarding/screens/Recover/Restore";
 import { SuccessKaraokeScreen } from "LLM/features/DeviceOnboarding/screens/SuccessKaraoke";
 import {
   useDeviceOnboardingFunnelViewModel,
@@ -21,6 +22,10 @@ import {
 } from "./useDeviceOnboardingFunnelViewModel";
 
 function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }>) {
+  return <>{openingScreen(screen) ?? setupScreen(screen)}</>;
+}
+
+function openingScreen(screen: DeviceOnboardingFunnelModel) {
   if (screen.status === "unseededIntroKaraoke") {
     return (
       <>
@@ -42,10 +47,24 @@ function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }
       </>
     );
   }
+  return null;
+}
+
+function setupScreen(screen: DeviceOnboardingFunnelModel) {
   if (screen.status === "setup") {
     return (
       <>
         <SetupScreen {...screen.setup} />
+        {screen.powerOnSheet ? <PowerOnSheet {...screen.powerOnSheet} /> : null}
+        {screen.reconnectSheet ? <ReconnectSheet {...screen.reconnectSheet} /> : null}
+        {screen.unlockSheet ? <DeviceUnlockSheet {...screen.unlockSheet} /> : null}
+      </>
+    );
+  }
+  if (screen.status === "recoverRestore") {
+    return (
+      <>
+        <RecoverRestoreScreen {...screen.recoverRestore} />
         {screen.unlockSheet ? <DeviceUnlockSheet {...screen.unlockSheet} /> : null}
       </>
     );
@@ -56,6 +75,7 @@ function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }
   if (screen.status === "success") {
     return <SuccessKaraokeScreen {...screen.success} />;
   }
+  if (screen.status !== "connecting" && screen.status !== "failed") return null;
 
   return (
     <Box lx={{ flex: 1, justifyContent: "center", gap: "s16", padding: "s16" }}>

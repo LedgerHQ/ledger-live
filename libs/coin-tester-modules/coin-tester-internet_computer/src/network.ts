@@ -91,7 +91,7 @@ const waitForIndexedBalance = (address: string, expected: bigint): Promise<bigin
 /**
  * Waits until the index canister has read every ledger block. The account sync takes the ledger tip
  * as its height but reads history from the index, and the local ledger only grows when a test
- * transfers: a sync that ran before the index caught up would skip the tip's transaction for good.
+ * transfers: a sync that ran before the index caught up would miss the tip's transaction.
  */
 export async function waitForIndexSynced(): Promise<void> {
   const index: IndexActor = Actor.createActor(indexIdlFactory, {

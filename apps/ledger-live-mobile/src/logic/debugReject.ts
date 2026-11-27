@@ -20,21 +20,3 @@ export const rejectionOp =
             s2.unsubscribe();
           };
         });
-// usage: hookRejections(promise)
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-export const hookRejections = <T>(
-  p: Promise<T>,
-  createError: () => Error = defaultErrorCreator,
-): Promise<T> =>
-  !Config.MOCK
-    ? p
-    : Promise.race<T>([
-        p,
-        new Promise((_, rej) => {
-          const sub = rejections.subscribe(() => {
-            sub.unsubscribe();
-            rej(createError());
-          });
-        }),
-      ]);

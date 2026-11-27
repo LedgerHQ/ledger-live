@@ -9,7 +9,7 @@ import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { genAccount } from "../../mock/account";
 import { fromLegacyAccount } from "../../account/accountDescriptor";
 import { registerAllCoins } from "../../coin-modules/load-all-coins";
@@ -110,10 +110,7 @@ describe("toAssetStatus", () => {
   });
 
   it("requires the association of an HTS token the Hedera account does not hold", async () => {
-    await expect(assetGateOf(accountOf("hedera"), hts)).resolves.toEqual({
-      type: "activation",
-      method: "association",
-    });
+    await expect(assetGateOf(accountOf("hedera"), hts)).resolves.toEqual({ type: "activation" });
     await expect(assetGateOf(holding(accountOf("hedera"), hts), hts)).resolves.toBeNull();
   });
 
@@ -130,17 +127,13 @@ describe("toAssetStatus", () => {
   });
 
   it("requires the opt-in of an ASA the Algorand account does not hold", async () => {
-    await expect(assetGateOf(accountOf("algorand"), asa)).resolves.toEqual({
-      type: "activation",
-      method: "optIn",
-    });
+    await expect(assetGateOf(accountOf("algorand"), asa)).resolves.toEqual({ type: "activation" });
     await expect(assetGateOf(holding(accountOf("algorand"), asa, zero), asa)).resolves.toBeNull();
   });
 
   it("requires a trustline for a Stellar asset the account does not hold", async () => {
     await expect(assetGateOf(accountOf("stellar"), stellarUsdc)).resolves.toEqual({
       type: "activation",
-      method: "trustline",
     });
     await expect(
       assetGateOf(holding(accountOf("stellar"), stellarUsdc), stellarUsdc),
@@ -225,7 +218,6 @@ describe("toAssetStatus of an XRP token", () => {
   it("requires a trust line for an IOU whose token account has no xrpResources", async () => {
     await expect(assetGateOf(holding(accountOf("ripple"), rlusd), rlusd)).resolves.toEqual({
       type: "activation",
-      method: "trustline",
     });
     await expect(
       assetGateOf(
@@ -236,10 +228,7 @@ describe("toAssetStatus of an XRP token", () => {
   });
 
   it("requires the authorization of an MPT whose token account has no xrpResources", async () => {
-    await expect(assetGateOf(accountOf("ripple"), mpt)).resolves.toEqual({
-      type: "activation",
-      method: "authorize",
-    });
+    await expect(assetGateOf(accountOf("ripple"), mpt)).resolves.toEqual({ type: "activation" });
     await expect(
       assetGateOf(holding(accountOf("ripple"), mpt, { xrpResources: { isLocked: false } }), mpt),
     ).resolves.toBeNull();

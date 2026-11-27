@@ -6,7 +6,7 @@ import {
   TEST_PUBLIC_KEY,
   TEST_SIGNATURE,
   TEST_SERIALIZED_CDT,
-  COIN_CONFIG,
+  COIN_CONTEXT,
   currency,
   creatableAccount,
   createSession,
@@ -69,7 +69,7 @@ export const signerModule = {
 
 export function createBridgeModule() {
   const { createBridges } = jest.requireActual("@ledgerhq/coin-concordium/bridge/index");
-  const { currencyBridge } = createBridges(jest.fn(), COIN_CONFIG);
+  const { currencyBridge } = createBridges(jest.fn(), COIN_CONTEXT);
   return { getCurrencyBridge: () => currencyBridge };
 }
 

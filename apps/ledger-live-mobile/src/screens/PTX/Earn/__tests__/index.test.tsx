@@ -12,6 +12,7 @@ import {
   NATIVE_STAKE_POSITION_INPUT_VALUE,
 } from "@features/flow-stake-position";
 import { ScreenName } from "~/const";
+import { useEarnAppLifecycleMonitoring } from "~/analytics/useEarnAppLifecycleMonitoring";
 import { EarnScreen } from "../index";
 import type { EarnV2Webview } from "../EarnV2Webview";
 
@@ -25,6 +26,14 @@ jest.mock("../EarnV2Webview", () => ({
     capturedProps.current = props;
     return null;
   },
+}));
+
+jest.mock("../EarnWebview", () => ({
+  EarnWebview: () => null,
+}));
+
+jest.mock("~/analytics/useEarnAppLifecycleMonitoring", () => ({
+  useEarnAppLifecycleMonitoring: jest.fn(),
 }));
 
 jest.mock("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index", () => ({
@@ -253,5 +262,35 @@ describe("EarnScreen canvas background wiring", () => {
       expect(goToURL.searchParams.has(KEY)).toBe(false);
       expect(inputs).not.toHaveProperty(KEY);
     });
+  });
+});
+
+describe("EarnScreen lifecycle monitoring wiring", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.mocked(useLocalLiveAppManifest).mockReturnValue(undefined);
+    jest.mocked(useRemoteLiveAppManifest).mockReturnValue(STUB_MANIFEST);
+    jest.mocked(useRemoteLiveAppContext).mockReturnValue({
+      state: { isLoading: false },
+    } as ReturnType<typeof useRemoteLiveAppContext>);
+    jest.mocked(useVersionedStakePrograms).mockReturnValue(null);
+  });
+
+  it("should monitor the manifest the V1 webview renders, and nothing once it is gone", () => {
+    const { rerender } = renderEarnScreen("deposit", { lwmWallet40: { enabled: false } });
+    expect(jest.mocked(useEarnAppLifecycleMonitoring)).toHaveBeenLastCalledWith("earn-test");
+
+    jest.mocked(useRemoteLiveAppManifest).mockReturnValue(undefined);
+    rerender(<EarnScreen {...makeProps("deposit")} />);
+    expect(jest.mocked(useEarnAppLifecycleMonitoring)).toHaveBeenLastCalledWith(undefined);
+  });
+
+  it("should keep monitoring the last known manifest the V2 webview still renders", () => {
+    const { rerender } = renderEarnScreen("deposit", { lwmWallet40: { enabled: true } });
+    expect(jest.mocked(useEarnAppLifecycleMonitoring)).toHaveBeenLastCalledWith("earn-test");
+
+    jest.mocked(useRemoteLiveAppManifest).mockReturnValue(undefined);
+    rerender(<EarnScreen {...makeProps("deposit")} />);
+    expect(jest.mocked(useEarnAppLifecycleMonitoring)).toHaveBeenLastCalledWith("earn-test");
   });
 });

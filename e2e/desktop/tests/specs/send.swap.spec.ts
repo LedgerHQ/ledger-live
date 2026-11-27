@@ -233,7 +233,11 @@ for (const {
       },
       async ({ app, speculos }) => {
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
-        const swap = new Swap(fromAccount, toAccount, minAmount);
+        const swap = new Swap({
+          accountToDebit: fromAccount,
+          accountToCredit: toAccount,
+          amount: minAmount,
+        });
 
         await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
         const provider = await app.swap.selectExchangeWithoutKyc(swap);

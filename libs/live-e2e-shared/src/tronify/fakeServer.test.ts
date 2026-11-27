@@ -600,9 +600,14 @@ test("should keep each broadcast's raw data until the scenario changes", async (
   assert.deepEqual(fake.broadcasts(), [
     { txid: data.transaction.txID, rawDataHex: data.transaction.raw_data_hex },
   ]);
-  await expectUsdtTransferBroadcastToFake(fake, payee, data.payCoinAmt, 300);
+  await expectUsdtTransferBroadcastToFake({
+    fake,
+    recipient: payee,
+    amount: data.payCoinAmt,
+    timeoutMs: 300,
+  });
   await assert.rejects(
-    expectUsdtTransferBroadcastToFake(fake, payee, "1", 300),
+    expectUsdtTransferBroadcastToFake({ fake, recipient: payee, amount: "1", timeoutMs: 300 }),
     /no broadcast of 1 USDT/,
   );
 

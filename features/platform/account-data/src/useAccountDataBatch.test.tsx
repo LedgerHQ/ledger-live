@@ -11,22 +11,21 @@ import {
   type FeedQuery,
   descriptorOf,
   indexOf,
-  makeStore,
   sourceIdOf,
 } from "@domain/api-account-data/testing";
-import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account";
+import { accounts as held, makeStoreWithAccounts, uuidOf } from "./testStore.mock";
 import { useAccountDataBatch } from "./useAccountDataBatch";
 
 function setup(source: Omit<AccountDataSource, "id" | "supports">) {
-  const store = makeStore([{ id: sourceIdOf("s"), supports: () => true, ...source }]);
+  const store = makeStoreWithAccounts([{ id: sourceIdOf("s"), supports: () => true, ...source }]);
   const wrapper = ({ children }: { children: ReactNode }) => (
     <Provider store={store}>{children}</Provider>
   );
   return { store, wrapper };
 }
 
-const accounts = [descriptorOf(0), descriptorOf(1), descriptorOf(2)];
-const uuids = accounts.map(computeAccountUUID);
+const accounts = [uuidOf(0), uuidOf(1), uuidOf(2)];
 
 const settled = (targets: readonly AccountTarget[]) =>
   targets.map(target => ({ status: "fulfilled" as const, value: indexOf(target) }));
@@ -40,13 +39,13 @@ describe("useAccountDataBatch", () => {
     await waitFor(() => expect(result.current.pending).toBe(false));
     expect(counter).toHaveBeenCalledTimes(1);
     expect(counter.mock.calls[0][0]).toHaveLength(3);
-    expect(uuids.map(uuid => store.getState().counter[uuid])).toEqual([0, 1, 2]);
+    expect(accounts.map(uuid => store.getState().counter[uuid])).toEqual([0, 1, 2]);
   });
 
-  it("exposes the UUIDs in the order of the descriptors", async () => {
+  it("exposes the UUIDs in the order given", async () => {
     const { wrapper } = setup({ read: { counter: async target => indexOf(target) } });
     const { result } = renderHook(() => useAccountDataBatch("counter", accounts), { wrapper });
-    expect(result.current.accountUUIDs).toEqual(uuids);
+    expect(result.current.accountUUIDs).toEqual(accounts);
     await waitFor(() => expect(result.current.pending).toBe(false));
   });
 
@@ -60,16 +59,11 @@ describe("useAccountDataBatch", () => {
     expect(counter).not.toHaveBeenCalled();
   });
 
-  it("does not read again on a re-render with equal descriptors in a new array", async () => {
+  it("does not read again on a re-render with the same accounts in a new array", async () => {
     const counter = jest.fn(async (target: AccountTarget) => indexOf(target));
     const { wrapper } = setup({ read: { counter } });
     const { result, rerender } = renderHook(
-      () =>
-        useAccountDataBatch(
-          "counter",
-          accounts.map(d => ({ ...d })),
-          { maxAge: 0 },
-        ),
+      () => useAccountDataBatch("counter", [...accounts], { maxAge: 0 }),
       { wrapper },
     );
     await waitFor(() => expect(result.current.pending).toBe(false));
@@ -81,21 +75,20 @@ describe("useAccountDataBatch", () => {
     const counter = jest.fn(async (target: AccountTarget) => indexOf(target));
     const { wrapper } = setup({ read: { counter } });
     const { result, rerender } = renderHook(
-      ({ list }: { list: AccountDescriptor[] }) => useAccountDataBatch("counter", list),
+      ({ list }: { list: AccountUUID[] }) => useAccountDataBatch("counter", list),
       { wrapper, initialProps: { list: accounts.slice(0, 2) } },
     );
     await waitFor(() => expect(result.current.pending).toBe(false));
     rerender({ list: accounts });
     await waitFor(() => expect(counter).toHaveBeenCalledTimes(3));
-    expect(counter.mock.lastCall?.[0].descriptor).toEqual(accounts[2]);
+    expect(counter.mock.lastCall?.[0].descriptor).toEqual(held[2]);
   });
 
   it("reads only the new account when one is added, even with no freshness", async () => {
     const counter = jest.fn(async (target: AccountTarget) => indexOf(target));
     const { wrapper } = setup({ read: { counter } });
     const { result, rerender } = renderHook(
-      ({ list }: { list: AccountDescriptor[] }) =>
-        useAccountDataBatch("counter", list, { maxAge: 0 }),
+      ({ list }: { list: AccountUUID[] }) => useAccountDataBatch("counter", list, { maxAge: 0 }),
       { wrapper, initialProps: { list: accounts.slice(0, 2) } },
     );
     await waitFor(() => expect(result.current.pending).toBe(false));
@@ -110,29 +103,43 @@ describe("useAccountDataBatch", () => {
     const counter = jest.fn(async (target: AccountTarget) => indexOf(target));
     const { wrapper } = setup({ read: { counter } });
     const { result, rerender } = renderHook(
-      ({ list }: { list: AccountDescriptor[] }) =>
-        useAccountDataBatch("counter", list, { maxAge: 0 }),
+      ({ list }: { list: AccountUUID[] }) => useAccountDataBatch("counter", list, { maxAge: 0 }),
       { wrapper, initialProps: { list: accounts } },
     );
     await waitFor(() => expect(result.current.pending).toBe(false));
     expect(counter).toHaveBeenCalledTimes(3);
 
     rerender({ list: accounts.slice(0, 2) });
-    expect(result.current.accountUUIDs).toEqual(uuids.slice(0, 2));
+    expect(result.current.accountUUIDs).toEqual(accounts.slice(0, 2));
     await waitFor(() => expect(result.current.pending).toBe(false));
     expect(counter).toHaveBeenCalledTimes(3);
 
     rerender({ list: accounts });
     await waitFor(() => expect(counter).toHaveBeenCalledTimes(4));
-    expect(counter.mock.lastCall?.[0].descriptor).toEqual(accounts[2]);
+    expect(counter.mock.lastCall?.[0].descriptor).toEqual(held[2]);
+  });
+
+  it("reads the accounts discovery found in the same batch as the added ones", async () => {
+    const counter = jest.fn(async (targets: readonly AccountTarget[]) => settled(targets));
+    const source = { id: sourceIdOf("s"), supports: () => true, readBatch: { counter } };
+    const store = makeStoreWithAccounts([source], held.slice(0, 1), [descriptorOf(8)]);
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <Provider store={store}>{children}</Provider>
+    );
+    const list = [uuidOf(0), uuidOf(8), uuidOf(9)];
+    const { result } = renderHook(() => useAccountDataBatch("counter", list), { wrapper });
+    expect(result.current.accountUUIDs).toEqual([uuidOf(0), uuidOf(8)]);
+    await waitFor(() => expect(result.current.pending).toBe(false));
+    expect(counter).toHaveBeenCalledTimes(1);
+    expect(store.getState().counter[uuidOf(8)]).toBe(8);
   });
 
   it("reads and lists a duplicated account once", async () => {
     const counter = jest.fn(async (target: AccountTarget) => indexOf(target));
     const { wrapper } = setup({ read: { counter } });
-    const list = [accounts[0], { ...accounts[0] }, accounts[1]];
+    const list = [accounts[0], accounts[0], accounts[1]];
     const { result } = renderHook(() => useAccountDataBatch("counter", list), { wrapper });
-    expect(result.current.accountUUIDs).toEqual(uuids.slice(0, 2));
+    expect(result.current.accountUUIDs).toEqual(accounts.slice(0, 2));
     await waitFor(() => expect(result.current.pending).toBe(false));
     expect(counter).toHaveBeenCalledTimes(2);
   });
@@ -174,8 +181,8 @@ describe("useAccountDataBatch", () => {
   it("reads every account into a store that replaces the mounted one", async () => {
     const counter = jest.fn(async (target: AccountTarget) => indexOf(target));
     const source = { id: sourceIdOf("s"), supports: () => true, read: { counter } };
-    const first = makeStore([source]);
-    const second = makeStore([source]);
+    const first = makeStoreWithAccounts([source]);
+    const second = makeStoreWithAccounts([source]);
     let store = first;
     const wrapper = ({ children }: { children: ReactNode }) => (
       <Provider store={store}>{children}</Provider>
@@ -188,7 +195,7 @@ describe("useAccountDataBatch", () => {
     rerender();
     await waitFor(() => expect(counter).toHaveBeenCalledTimes(6));
     await waitFor(() =>
-      expect(uuids.map(uuid => second.getState().counter[uuid])).toEqual([0, 1, 2]),
+      expect(accounts.map(uuid => second.getState().counter[uuid])).toEqual([0, 1, 2]),
     );
   });
 
@@ -208,7 +215,7 @@ describe("useAccountDataBatch", () => {
 
     let more: Promise<void> = Promise.resolve();
     act(() => {
-      more = store.dispatch(fetchMoreAccountData("feed", list[0]));
+      more = store.dispatch(fetchMoreAccountData("feed", held[0]));
     });
     await waitFor(() => expect(deferred).toHaveLength(1));
     expect(result.current.pending).toBe(false);
@@ -239,7 +246,7 @@ describe("useAccountDataBatch", () => {
     const { result } = renderHook(() => useAccountDataBatch("counter", accounts), { wrapper });
     await waitFor(() =>
       expect(result.current.errors).toEqual([
-        { accountUUID: uuids[1], error: { name: "RangeError", message: "down" } },
+        { accountUUID: accounts[1], error: { name: "RangeError", message: "down" } },
       ]),
     );
   });

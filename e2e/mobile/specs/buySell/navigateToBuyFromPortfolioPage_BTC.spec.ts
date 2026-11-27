@@ -22,4 +22,9 @@ const tags = [
   "@family-bitcoin",
 ];
 
-runNavigateToBuyFromPortfolioPageTest(btcBuySell, paymentMethod, ["B2CQA-3520"], tags);
+runNavigateToBuyFromPortfolioPageTest({
+  buySell: btcBuySell,
+  paymentMethod,
+  tmsLinks: ["B2CQA-3520"],
+  tags,
+});

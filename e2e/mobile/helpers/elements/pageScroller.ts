@@ -29,14 +29,42 @@ const swipeDirectionFor = (direction: Direction): Direction => {
  */
 type ElementFactory = () => NativeElement;
 
+type PerformScrollOptions = {
+  target: ElementFactory;
+  scrollView?: ElementFactory;
+  pixels?: number;
+  initialDirection?: Direction;
+  timeout?: number;
+};
+
+type ScrollByPixelsOptions = {
+  scrollView?: ElementFactory;
+  pixels: number;
+  direction?: Direction;
+};
+
+type ScrollOnceOptions = {
+  scrollContainer: Detox.IndexableNativeElement | Detox.NativeElement;
+  direction: Direction;
+  pixels: number;
+};
+
+type NextDirectionOptions = {
+  currentDirection: Direction;
+  stallCount: number;
+  bottomReached: boolean;
+  topReached: boolean;
+};
+
 export class PageScroller {
-  async performScroll(
-    target: ElementFactory,
-    scrollView?: ElementFactory,
-    pixels = 300,
-    initialDirection: Direction = "down",
-    timeout = TIMEOUT.xxxsmall,
-  ): Promise<void> {
+  async performScroll(options: PerformScrollOptions): Promise<void> {
+    const {
+      target,
+      scrollView,
+      pixels = 300,
+      initialDirection = "down",
+      timeout = TIMEOUT.xxxsmall,
+    } = options;
     if (await this.isVisible(target, timeout)) {
       return;
     }
@@ -49,14 +77,19 @@ export class PageScroller {
     let topReached = false;
 
     for (let attempt = 0; attempt < MAX_ATTEMPTS_PER_DIRECTION * 2; attempt++) {
-      await this.scrollOnce(scrollContainer, direction, pixels);
+      await this.scrollOnce({ scrollContainer, direction, pixels });
 
       if (await this.isVisible(target, timeout)) {
         await this.waitForScrollToSettle();
         return;
       }
 
-      const decision = this.decideNextDirection(direction, stallCount, bottomReached, topReached);
+      const decision = this.decideNextDirection({
+        currentDirection: direction,
+        stallCount,
+        bottomReached,
+        topReached,
+      });
       direction = decision.nextDirection;
       bottomReached = decision.bottomReached;
       topReached = decision.topReached;
@@ -75,13 +108,10 @@ export class PageScroller {
    * Useful to add extra "slack" so a located element is not stuck at the edge of the viewport
    * (e.g. hidden behind a sticky footer) before interacting with it.
    */
-  async scrollByPixels(
-    scrollView: ElementFactory | undefined,
-    pixels: number,
-    direction: Direction = "down",
-  ): Promise<void> {
+  async scrollByPixels(options: ScrollByPixelsOptions): Promise<void> {
+    const { scrollView, pixels, direction = "down" } = options;
     const scrollContainer = await this.getScrollElement(scrollView);
-    await this.scrollOnce(scrollContainer, direction, pixels);
+    await this.scrollOnce({ scrollContainer, direction, pixels });
     await this.waitForScrollToSettle();
   }
 
@@ -109,11 +139,8 @@ export class PageScroller {
     return element(by.type(type)).atIndex(0);
   }
 
-  private async scrollOnce(
-    scrollContainer: Detox.IndexableNativeElement | Detox.NativeElement,
-    direction: Direction,
-    pixels: number,
-  ): Promise<void> {
+  private async scrollOnce(options: ScrollOnceOptions): Promise<void> {
+    const { scrollContainer, direction, pixels } = options;
     const isHorizontal = direction === "left" || direction === "right";
     const swipeDirection = swipeDirectionFor(direction);
 
@@ -145,17 +172,14 @@ export class PageScroller {
     }
   }
 
-  private decideNextDirection(
-    currentDirection: Direction,
-    stallCount: number,
-    bottomReached: boolean,
-    topReached: boolean,
-  ): {
+  private decideNextDirection(options: NextDirectionOptions): {
     nextDirection: Direction;
     bottomReached: boolean;
     topReached: boolean;
     resetStall: boolean;
   } {
+    const { currentDirection, stallCount } = options;
+    let { bottomReached, topReached } = options;
     if (stallCount >= SCROLL_STALL_THRESHOLD) {
       let flipped: Direction;
 

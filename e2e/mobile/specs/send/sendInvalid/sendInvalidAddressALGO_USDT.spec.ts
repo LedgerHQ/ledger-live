@@ -1,13 +1,12 @@
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runSendInvalidAddressTest } from "@e2e/specs/send/send";
 
-const transaction = new Transaction(
-  TokenAccount.ALGO_USDT_1,
-  Account.ALGO_3,
-  "0.1",
-  undefined,
-  "noTag",
-);
+const transaction = new Transaction({
+  accountToDebit: TokenAccount.ALGO_USDT_1,
+  accountToCredit: Account.ALGO_3,
+  amount: "0.1",
+  memoTag: "noTag",
+});
 runSendInvalidAddressTest({
   transaction,
   expectedErrorMessage: "Recipient account has not opted in the selected ASA.",

@@ -33,18 +33,18 @@ function shouldSkipRecipientDisplayValidation(tx: Transaction): boolean {
 }
 
 function validateTransactionData(tx: Transaction, events: string[]) {
-  expectSpeculosEventsContain(
-    tx.amount,
+  expectSpeculosEventsContain({
+    substring: tx.amount,
     events,
-    "Expected amount to be displayed on Speculos device",
-  );
+    message: "Expected amount to be displayed on Speculos device",
+  });
 
   if (tx.expectedFee) {
-    expectSpeculosEventsContainExactly(
-      tx.expectedFee,
+    expectSpeculosEventsContainExactly({
+      substring: tx.expectedFee,
       events,
-      "Expected fee to be displayed on Speculos device",
-    );
+      message: "Expected fee to be displayed on Speculos device",
+    });
   }
 
   if (tx.accountToDebit instanceof TokenAccount) {
@@ -52,11 +52,11 @@ function validateTransactionData(tx: Transaction, events: string[]) {
     // name — it is { contractAddress, ticker, decimals, chainId, signature } (see hw-app-eth
     // services/ledger/erc20.ts, provided via provideERC20TokenInformation) — so the ticker is
     // the only token identity the device can render.
-    expectSpeculosEventsContainExactly(
-      tx.accountToDebit.currency.ticker,
+    expectSpeculosEventsContainExactly({
+      substring: tx.accountToDebit.currency.ticker,
       events,
-      "Expected the token ticker to be displayed on Speculos device",
-    );
+      message: "Expected the token ticker to be displayed on Speculos device",
+    });
   }
 
   if (shouldSkipRecipientDisplayValidation(tx)) {
@@ -64,20 +64,20 @@ function validateTransactionData(tx: Transaction, events: string[]) {
   }
 
   if (tx.accountToCredit.ensName && process.env.SPECULOS_DEVICE !== Device.LNS.name) {
-    expectSpeculosEventsContain(
-      tx.accountToCredit.ensName,
+    expectSpeculosEventsContain({
+      substring: tx.accountToCredit.ensName,
       events,
-      "Expected ENS name to be displayed on Speculos device",
-    );
+      message: "Expected ENS name to be displayed on Speculos device",
+    });
   } else {
     if (!tx.accountToCredit.address) {
       throw new Error("Recipient address is not set");
     }
-    expectSpeculosEventsContain(
-      tx.accountToCredit.address,
+    expectSpeculosEventsContain({
+      substring: tx.accountToCredit.address,
       events,
-      "Expected recipient address to be displayed on Speculos device",
-    );
+      message: "Expected recipient address to be displayed on Speculos device",
+    });
   }
 }
 
@@ -135,16 +135,19 @@ async function getEnsScreenTexts(ensName: string): Promise<string[]> {
   await waitFor(ensName);
   events.push(...(await pressUntilTextFound(ensName)));
   const { x: ensX, y: ensY } = getDeviceCoordinates("ensArrowOpen");
-  await pressAndRelease(">", ensX, ensY);
+  await pressAndRelease(">", { x: ensX, y: ensY });
   const ensScreenTexts = await fetchCurrentScreenTexts(getEnv("SPECULOS_API_PORT"));
   events.push(...ensScreenTexts);
   const { x: backX, y: backY } = getDeviceCoordinates("arrowBack");
-  await pressAndRelease("<", backX, backY);
+  await pressAndRelease("<", { x: backX, y: backY });
   return events;
 }
 
 export async function approveTokenTouchDevices() {
-  await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS, { matchFullEvents: true });
+  await waitForReviewTransaction({
+    maxAttempts: SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS,
+    matchFullEvents: true,
+  });
   await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
   await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
 }
@@ -152,7 +155,8 @@ export async function approveTokenTouchDevices() {
 export const approveTokenButtonDevice = withDeviceController(
   ({ getButtonsController }) =>
     async () => {
-      await waitFor(DeviceLabels.REVIEW_TRANSACTION_TO, SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS, {
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION_TO, {
+        maxAttempts: SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS,
         matchFullEvents: true,
       });
       await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
@@ -190,7 +194,8 @@ export async function approveToken() {
 export const approveContractTransactionButtonDevice = withDeviceController(
   ({ getButtonsController }) =>
     async () => {
-      await waitFor(DeviceLabels.REVIEW_TRANSACTION, SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS, {
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION, {
+        maxAttempts: SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS,
         matchFullEvents: true,
       });
       await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);

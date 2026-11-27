@@ -63,6 +63,17 @@ node e2e/tooling/filter/resolve.mjs --list-teams --check-dir e2e/desktop/tests -
 node e2e/tooling/filter/format-summary.mjs "$RESOLVED_FILTER"
 ```
 
+## Tests
+
+`resolve.test.mjs` pins the desktop `test_count` rules (`node --test`, no install). CI runs them in
+the "E2E Tooling Checks" job with the other `scope:e2e-tooling` projects:
+
+```bash
+pnpm --filter @ledgerhq/e2e-test-filter test
+```
+
+The scripts themselves still run with plain `node`: the workflows call them before `pnpm install`.
+
 ## Keep in sync
 
 `tools/actions/composites/get-failed-tests-summary/action.yml` re-implements the same

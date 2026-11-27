@@ -11,6 +11,7 @@ import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
 import { describeIfNanoSSupports } from "@e2e/helpers/commonHelpers";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -31,15 +32,16 @@ const beforeAllFunction = async (swap: SwapType) => {
   });
 };
 
-export function runSwapTest(
-  accountToDebit: Account,
-  accountToCredit: Account,
-  tmsLinks: string[],
-  tags: string[],
-  fee: Fee = Fee.MEDIUM,
-) {
+type RunSwapTestOptions = TestMetaOptions & {
+  accountToDebit: Account;
+  accountToCredit: Account;
+  fee?: Fee;
+};
+
+export function runSwapTest(options: RunSwapTestOptions) {
+  const { accountToDebit, accountToCredit, tmsLinks, tags, fee = Fee.MEDIUM } = options;
   // The amount is resolved at runtime from the provider minimum and set on `swap` inside the test.
-  const swap = new Swap(accountToDebit, accountToCredit, "", undefined, fee);
+  const swap = new Swap({ accountToDebit, accountToCredit, amount: "", speed: fee });
 
   const describeOnDevice = describeIfNanoSSupports(
     (accountToDebit.parentAccount ?? accountToDebit).currency.id,
@@ -54,14 +56,25 @@ export function runSwapTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`[${accountToDebit.currency.testLabel}-${accountToCredit.currency.testLabel}] - Swap`, async () => {
-      const minAmount = await app.swapLiveApp.getMinimumAmount(accountToDebit, accountToCredit);
+      const minAmount = await app.swapLiveApp.getMinimumAmount({
+        fromAccount: accountToDebit,
+        toAccount: accountToCredit,
+      });
       const swapAmount = minAmount ? truncateSwapAmount(minAmount) : minAmount;
       swap.amount = swapAmount;
 
-      await performSwapUntilQuoteSelectionStep(accountToDebit, accountToCredit, swapAmount);
+      await performSwapUntilQuoteSelectionStep({
+        accountToDebit,
+        accountToCredit,
+        amount: swapAmount,
+      });
 
       const provider = await app.swapLiveApp.selectExchange();
-      const approvalRequired = await isTokenApprovalExpected(accountToDebit, provider, swapAmount);
+      const approvalRequired = await isTokenApprovalExpected({
+        fromAccount: accountToDebit,
+        provider,
+        minAmount: swapAmount,
+      });
       await app.swapLiveApp.checkQuoteCardCtaPresence(provider.uiName);
       if (approvalRequired) {
         console.warn(

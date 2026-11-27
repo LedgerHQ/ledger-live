@@ -1,9 +1,11 @@
 import {
+  DeviceActionStatus,
   DeviceDisconnectedWhileSendingError,
   DeviceLockedError,
   DeviceModelId,
   DeviceStatus,
   DmkResultStatus,
+  GlobalCommandError,
   UnknownDAError,
   type ConnectedDevice,
   type DeviceManagementKit,
@@ -57,6 +59,7 @@ const RECONNECTED_DEVICE: ConnectedDevice = {
 };
 
 const DASHBOARD_APP = { name: "BOLOS", version: "2.2.3" };
+const ETHEREUM_APP = { name: "Ethereum", version: "1.10.4" };
 
 /** DMK keeps `DeviceSessionNotFound` internal, so it can only be matched by tag. */
 const DEVICE_SESSION_NOT_FOUND = { _tag: "DeviceSessionNotFound" };
@@ -79,6 +82,7 @@ describe("checkErrorCauseStateMachine", () => {
   let hostRef: DeviceSituationActorRef;
   let dmk: DeviceManagementKit;
   let actor: Actor<typeof checkErrorCauseStateMachine>;
+  let deviceActionRuns: Subject<unknown>[];
 
   /** Flushes the microtask queue without firing any of the machine's delays. */
   const settle = async () => {
@@ -120,7 +124,31 @@ describe("checkErrorCauseStateMachine", () => {
   const recovered = (connectedDevice: ConnectedDevice = CONNECTED_DEVICE) => ({
     result: CheckErrorCauseResult.Recovered,
     connectedDevice,
+    isUnexplained: false,
   });
+
+  const latestDeviceActionRun = () => deviceActionRuns[deviceActionRuns.length - 1];
+
+  const completeDeviceAction = async (output: unknown) => {
+    const run = latestDeviceActionRun();
+    run.next({ status: DeviceActionStatus.Completed, output });
+    run.complete();
+    await settle();
+  };
+
+  const failDeviceAction = async (error: unknown) => {
+    const run = latestDeviceActionRun();
+    run.next({ status: DeviceActionStatus.Error, error });
+    run.complete();
+    await settle();
+  };
+
+  /** The original failure stays unexplained until the settle timeout probe answers. */
+  const probeAfterSettleTimeout = async () => {
+    await emitSessionStatus(DeviceStatus.CONNECTED);
+    await jest.advanceTimersByTimeAsync(SESSION_SETTLE_TIMEOUT_MS);
+    await settle();
+  };
 
   const situations = () => hostEvents.map(event => event.situation);
 
@@ -141,6 +169,7 @@ describe("checkErrorCauseStateMachine", () => {
 
   beforeEach(() => {
     jest.useFakeTimers();
+    deviceActionRuns = [];
     getAppAndVersion = () => success(DASHBOARD_APP);
     sendCommand = jest.fn(async ({ command }) => {
       if (command.name !== "getAppAndVersion") {
@@ -181,6 +210,11 @@ describe("checkErrorCauseStateMachine", () => {
     hostActor.start();
     hostRef = hostActor as unknown as DeviceSituationActorRef;
     dmk = {
+      executeDeviceAction: jest.fn(() => {
+        const run = new Subject<unknown>();
+        deviceActionRuns.push(run);
+        return { observable: run.asObservable(), cancel: jest.fn() };
+      }),
       sendCommand,
       getDeviceSessionState,
       connect,
@@ -658,15 +692,90 @@ describe("checkErrorCauseStateMachine", () => {
     });
   });
 
-  describe("resolution", () => {
-    it("should resolve Recovered when the settle timeout probe succeeds", async () => {
+  describe("open app", () => {
+    it.each([
+      ["CLA", "6e00"],
+      ["INS", "6d00"],
+    ] as const)(
+      "should go to the dashboard right away when an app rejected the command as %s not supported",
+      async (_, errorCode) => {
+        getAppAndVersion = () => success(ETHEREUM_APP);
+        await start({
+          error: new GlobalCommandError({ errorCode, message: "rejected by the app" }),
+        });
+
+        expect(actor.getSnapshot().value).toBe("GoToDashboard");
+        expect(getDeviceSessionState).not.toHaveBeenCalled();
+        expect(hostEvents).toHaveLength(0);
+
+        await completeDeviceAction(undefined);
+
+        expect(actor.getSnapshot().output).toEqual(recovered());
+      },
+    );
+
+    it("should resolve an unexplained Recovered when the dashboard itself rejected the command", async () => {
+      await start({
+        error: new GlobalCommandError({ errorCode: "6d00", message: "rejected by the OS" }),
+      });
+
+      expect(actor.getSnapshot().output).toEqual({ ...recovered(), isUnexplained: true });
+      expect(deviceActionRuns).toHaveLength(0);
+      expect(getDeviceSessionState).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("app answering the probe", () => {
+    beforeEach(() => {
+      getAppAndVersion = () => success(ETHEREUM_APP);
+    });
+
+    it("should go to the dashboard when the settle timeout probe is answered by an app", async () => {
       await start();
 
-      await emitSessionStatus(DeviceStatus.CONNECTED);
-      await jest.advanceTimersByTimeAsync(SESSION_SETTLE_TIMEOUT_MS);
-      await settle();
+      await probeAfterSettleTimeout();
+
+      expect(actor.getSnapshot().value).toBe("GoToDashboard");
+      expect(deviceActionRuns).toHaveLength(1);
+    });
+
+    it("should resolve Recovered once the app is closed", async () => {
+      await start();
+      await probeAfterSettleTimeout();
+
+      await completeDeviceAction(undefined);
 
       expect(actor.getSnapshot().output).toEqual(recovered());
+    });
+
+    it("should wait for the unlock when the device locks while going to the dashboard", async () => {
+      await start();
+      await probeAfterSettleTimeout();
+
+      await failDeviceAction(new DeviceLockedError());
+
+      expect(actor.getSnapshot().value).toEqual({ AwaitingDeviceUnlock: "Waiting" });
+      expect(situations()).toEqual([DeviceSituation.LOCKED]);
+    });
+
+    it("should resolve Unrecoverable when going to the dashboard fails with neither a lock nor a disconnect", async () => {
+      await start();
+      await probeAfterSettleTimeout();
+
+      await failDeviceAction(new UnknownDAError("boom"));
+
+      expect(actor.getSnapshot().output).toEqual({ result: CheckErrorCauseResult.Unrecoverable });
+    });
+  });
+
+  describe("resolution", () => {
+    it("should resolve an unexplained Recovered without leaving the dashboard when the settle timeout probe answers from it", async () => {
+      await start();
+
+      await probeAfterSettleTimeout();
+
+      expect(actor.getSnapshot().output).toEqual({ ...recovered(), isUnexplained: true });
+      expect(deviceActionRuns).toHaveLength(0);
       expect(hostEvents).toHaveLength(0);
     });
 

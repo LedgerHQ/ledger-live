@@ -40,7 +40,7 @@ function formatNear(value: BigNumber): string {
   return formatCurrencyUnit(NEAR_UNIT, value, { showCode: true });
 }
 
-/** Spendable native balance: the account total minus its non-spendable part (staking and reserve). */
+/** Spendable native balance: the liquid funds minus the storage reserve. Staking entries are apart. */
 function spendable(balances: Balance[]): bigint {
   const native = balances.find(b => b.asset.type === "native" && b.stake === undefined);
 

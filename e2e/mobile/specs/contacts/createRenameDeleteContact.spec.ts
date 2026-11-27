@@ -5,4 +5,4 @@ const testConfig = {
   tags: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
-runCreateRenameDeleteContactTest(testConfig.tmsLinks, testConfig.tags);
+runCreateRenameDeleteContactTest(testConfig);

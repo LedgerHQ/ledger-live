@@ -1,5 +1,6 @@
 import {
   BlockTransactionsMismatch,
+  CosmosTooManyValidators,
   GetBlockError,
   GetBlockInfoError,
   InvalidBlockMessage,
@@ -12,6 +13,7 @@ describe.each([
   InvalidBlockMessage,
   GetBlockError,
   GetBlockInfoError,
+  CosmosTooManyValidators,
 ])("%p", ErrorClass => {
   it("falls back to its name as message", () => {
     const error = new ErrorClass();

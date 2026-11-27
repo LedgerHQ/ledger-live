@@ -23,7 +23,10 @@ describe("Receive - create an account", () => {
     await app.receive.continueCreateAccount();
     await app.receive.doNotVerifyAddress();
 
-    await app.receive.expectReceivePageIsDisplayed("ETH", Account.BASE_1.accountName);
+    await app.receive.expectReceivePageIsDisplayed({
+      tickerName: "ETH",
+      accountName: Account.BASE_1.accountName,
+    });
     const address = await getAccountAddress(Account.BASE_1);
     await app.receive.verifyAddress(address);
     await app.common.closePage();

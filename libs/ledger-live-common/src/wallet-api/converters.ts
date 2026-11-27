@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike, MaxSpendableFilters } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { v5 as uuidv5 } from "uuid";
@@ -19,6 +19,11 @@ import {
   WalletAPISupportedCurrency,
 } from "./types";
 import { FAMILIES_MAPPING_LL_TO_WAPI, FAMILIES_MAPPING_WAPI_TO_LL } from "./constants";
+import {
+  selectMaxSpendableRows,
+  spendableOfRows,
+} from "@ledgerhq/ledger-wallet-framework/account/balances";
+import { UnsupportedMaxSpendableFilter } from "@ledgerhq/ledger-wallet-framework/errors";
 
 const familyLiveToWalletApi: Partial<Record<string, string>> = FAMILIES_MAPPING_LL_TO_WAPI;
 const familyWalletApiToLive: Partial<Record<string, string>> = FAMILIES_MAPPING_WAPI_TO_LL;
@@ -67,6 +72,7 @@ export function accountToWalletAPIAccount(
       currency: account.token.id,
       spendableBalance: account.spendableBalance,
       readiness: parentAccount.readiness,
+      ...(account.balances && { balances: account.balances }),
     };
   }
   const name = accountNameWithDefaultSelector(accountNames, account);
@@ -81,6 +87,7 @@ export function accountToWalletAPIAccount(
     blockHeight: account.blockHeight,
     lastSyncDate: account.lastSyncDate,
     readiness: account.readiness,
+    ...(account.balances && { balances: account.balances }),
   };
 }
 
@@ -189,24 +196,41 @@ export async function resolveWalletApiSpendableBalance(
  * the whole token balance. Native pending-operation values have family-specific fee semantics,
  * so they are deliberately excluded from this check. Otherwise, zero is treated as an
  * ambiguous failure and omitted. Send-flow callers still receive the raw `0` from those bridges.
+ *
+ * With `filters`, the bridge funds the estimate from the selected balance rows only, and the zero
+ * check compares against the spendable part of those rows instead. A filter the bridge cannot
+ * honour rejects with `UnsupportedMaxSpendableFilter` rather than being reported as a failure. On an
+ * account whose rows are a real partition (a row carries a pool or a private flag), a filtered zero
+ * is kept: the bridges that produce such rows honour the filters and return zero only when the
+ * selected funds cannot pay for a send.
  */
 export async function resolveWalletApiMaxSpendable(
   account: AccountLike,
   parentAccount?: Account | null,
+  filters?: MaxSpendableFilters,
 ): Promise<BigNumber | undefined> {
   try {
     const bridge = await getAccountBridge(account, parentAccount);
-    const maxSpendable = await bridge.estimateMaxSpendable({ account, parentAccount });
+    const maxSpendable = await bridge.estimateMaxSpendable({
+      account,
+      parentAccount,
+      ...(filters && { filters }),
+    });
 
-    const walletApiSpendableBalance =
-      bridge.getWalletApiSpendableBalance(account) ?? account.spendableBalance;
+    const walletApiSpendableBalance = filters
+      ? spendableOfRows(selectMaxSpendableRows(account, filters))
+      : (bridge.getWalletApiSpendableBalance(account) ?? account.spendableBalance);
     const pendingSpent =
       account.type === "TokenAccount"
         ? getPendingTokenSpent(account.pendingOperations ?? [])
         : new BigNumber(0);
     const availableBalance = BigNumber.max(0, walletApiSpendableBalance.minus(pendingSpent));
 
-    if (maxSpendable.isZero() && !availableBalance.isZero()) {
+    const filtersHonoured =
+      filters !== undefined &&
+      (account.balances ?? []).some(row => row.pool !== undefined || row.private !== undefined);
+
+    if (maxSpendable.isZero() && !availableBalance.isZero() && !filtersHonoured) {
       log(
         "wallet-api/converters",
         "resolveWalletApiMaxSpendable: omitting ambiguous zero maxSpendable",
@@ -220,6 +244,7 @@ export async function resolveWalletApiMaxSpendable(
 
     return maxSpendable;
   } catch (error) {
+    if (error instanceof UnsupportedMaxSpendableFilter) throw error;
     log("wallet-api/converters", "resolveWalletApiMaxSpendable: omitting maxSpendable", {
       error: error instanceof Error ? error.message : String(error),
     });

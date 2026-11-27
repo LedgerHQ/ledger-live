@@ -15,8 +15,7 @@ Wallet sync for the account list. This package is scoped to that single concern:
 ## Why it still lives here
 
 Everything else about account user data already sits in `domain/` — account names in
-[`domain/entity/account-name`](../../domain/entity/account-name), starred state in
-[`domain/entity/starred-account`](../../domain/entity/starred-account), recent receive addresses in
+[`domain/entity/account-name`](../../domain/entity/account-name), recent receive addresses in
 [`domain/entity/recent-addresses`](../../domain/entity/recent-addresses).
 
 The account list cannot follow yet: syncing it means turning a synced descriptor into a real

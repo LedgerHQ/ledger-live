@@ -1,10 +1,11 @@
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
+import type { CantonContext } from "../config";
 import * as signTransactionModule from "./sign";
 import type { PrepareTransferResponse } from "../network/gateway";
 import * as gateway from "../network/gateway";
-import { createMockCoinConfigValue, createMockContext } from "../test/fixtures";
+import { configOfCall, createMockCoinConfigValue, createMockContext } from "../test/fixtures";
 import type { CantonAccount } from "../types";
 import { TopologyChangeError } from "../types/errors";
 import type { CantonSignature, CantonSigner } from "../types/signer";
@@ -27,6 +28,7 @@ describe("acceptOffer", () => {
   } as unknown as CryptoCurrency;
   const mockConfig = createMockCoinConfigValue();
   const mockContext = createMockContext(mockConfig);
+  const pinnedContext = expect.objectContaining({ logger: mockContext.logger });
 
   const mockAccount = {
     id: "test-account-id",
@@ -129,7 +131,7 @@ describe("acceptOffer", () => {
 
       // THEN
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalledWith(
-        mockConfig,
+        pinnedContext,
         mockPartyId,
         {
           type: "accept-transfer-instruction",
@@ -142,7 +144,7 @@ describe("acceptOffer", () => {
         mockPreparedTransaction,
       );
       expect(mockedGateway.submitTransferInstruction).toHaveBeenCalledWith(
-        mockConfig,
+        pinnedContext,
         mockPartyId,
         mockPreparedTransaction.serialized,
         mockSignature.signature,
@@ -168,7 +170,7 @@ describe("acceptOffer", () => {
 
       // THEN
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalledWith(
-        mockConfig,
+        pinnedContext,
         mockPartyId,
         {
           type: "accept-transfer-instruction",
@@ -182,7 +184,7 @@ describe("acceptOffer", () => {
         mockPreparedTransaction,
       );
       expect(mockedGateway.submitTransferInstruction).toHaveBeenCalledWith(
-        mockConfig,
+        pinnedContext,
         mockPartyId,
         mockPreparedTransaction.serialized,
         mockSignature.signature,
@@ -205,7 +207,7 @@ describe("acceptOffer", () => {
 
       // THEN
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalledWith(
-        mockConfig,
+        pinnedContext,
         mockPartyId,
         {
           type: "reject-transfer-instruction",
@@ -232,7 +234,7 @@ describe("acceptOffer", () => {
 
       // THEN
       expect(mockedGateway.prepareTransferInstruction).toHaveBeenCalledWith(
-        mockConfig,
+        pinnedContext,
         mockPartyId,
         {
           type: "withdraw-transfer-instruction",
@@ -241,6 +243,35 @@ describe("acceptOffer", () => {
       );
       expect(mockedSignTransaction.signTransaction).toHaveBeenCalled();
       expect(mockedGateway.submitTransferInstruction).toHaveBeenCalled();
+    });
+
+    it("should hand the gateway a context pinned to the config of the account's currency", async () => {
+      // GIVEN
+      const currencyConfig = { ...mockConfig, gatewayUrl: "https://currency.test" };
+      const context: CantonContext = {
+        config: async currencyId =>
+          currencyId === mockCurrency.id ? currencyConfig : createMockCoinConfigValue(),
+        logger: mockContext.logger,
+      };
+
+      // WHEN
+      await buildTransferInstruction(mockSignerContext, context)(
+        mockCurrency,
+        mockDeviceId,
+        mockAccount,
+        mockPartyId,
+        mockContractId,
+        "accept-transfer-instruction",
+      );
+
+      // THEN
+      for (const call of [
+        mockedGateway.prepareTransferInstruction.mock.calls[0],
+        mockedGateway.submitTransferInstruction.mock.calls[0],
+      ]) {
+        await expect(configOfCall(call)).resolves.toBe(currencyConfig);
+        await expect((call[0] as CantonContext).config("other")).resolves.toBe(currencyConfig);
+      }
     });
 
     it("should handle errors from prepareTransferInstruction", async () => {

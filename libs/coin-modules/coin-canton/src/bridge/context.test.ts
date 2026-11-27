@@ -1,7 +1,7 @@
 import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
-import type { CantonCoinConfig, CantonContext } from "../config";
+import { pinConfig, type CantonCoinConfig, type CantonContext } from "../config";
 import { createMockCantonCurrency, createMockCoinConfigValue } from "../test/fixtures";
-import { getCurrencyContext, pinConfig } from "./context";
+import { getCurrencyContext } from "./context";
 
 const mainnet = createMockCantonCurrency();
 const devnet = { ...mainnet, id: CryptoCurrencyIdSchema.parse("canton_network_devnet") };
@@ -29,11 +29,19 @@ const cases = [
 
 describe("getCurrencyContext", () => {
   it.each(cases)("resolves the config of $currency.id", async ({ currency, expected }) => {
-    await expect(getCurrencyContext(bridgeContext, currency).config()).resolves.toBe(expected);
+    const context = await getCurrencyContext(bridgeContext, currency);
+
+    await expect(context.config()).resolves.toBe(expected);
   });
 
-  it("keeps the bridge logger", () => {
-    expect(getCurrencyContext(bridgeContext, mainnet).logger).toBe(logger);
+  it("resolves the config once, whatever currency is asked for later", async () => {
+    const context = await getCurrencyContext(bridgeContext, mainnet);
+
+    await expect(context.config(devnet.id)).resolves.toBe(mainnetConfig);
+  });
+
+  it("keeps the bridge logger", async () => {
+    expect((await getCurrencyContext(bridgeContext, mainnet)).logger).toBe(logger);
   });
 });
 

@@ -41,8 +41,19 @@ function useUnlockScreenViewModel(): UnlockScreenViewModel {
   const keyboardHeight = useKeyboardInset();
   const [hasFailed, setHasFailed] = useState(false);
   const [isAwaitingBiometrics, setIsAwaitingBiometrics] = useState(biometricsEnabled);
+  const [wasBiometricsEnabled, setWasBiometricsEnabled] = useState(biometricsEnabled);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
   const isPromptingRef = useRef(false);
+
+  // Biometrics can turn on under a mounted screen: finishing a half-recorded legacy migration
+  // carries them over after the hydration has already locked the app.
+  if (biometricsEnabled !== wasBiometricsEnabled) {
+    setWasBiometricsEnabled(biometricsEnabled);
+
+    if (biometricsEnabled) {
+      setIsAwaitingBiometrics(true);
+    }
+  }
 
   // Asked for before the screen draws a field: biometrics first, the password as the fallback.
   useEffect(() => {

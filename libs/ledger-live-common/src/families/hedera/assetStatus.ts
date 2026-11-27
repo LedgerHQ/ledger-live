@@ -8,9 +8,5 @@ export default function hederaAssetStatus(
   account: HederaAccount,
   token: TokenCurrency,
 ): AssetStatus {
-  return {
-    gate: isTokenAssociationRequired(account, token)
-      ? { type: "activation", method: "association" }
-      : null,
-  };
+  return { gate: isTokenAssociationRequired(account, token) ? { type: "activation" } : null };
 }

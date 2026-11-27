@@ -1,14 +1,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import { ContextModuleBuilder } from "@ledgerhq/context-module";
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
+import { SignerXrpBuilder } from "@ledgerhq/device-signer-kit-xrp";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
+import { getEnv } from "@ledgerhq/live-env";
 import { of, throwError } from "rxjs";
 import { DmkSignerXrp } from "../src/DmkSignerXrp";
 
+jest.mock("@ledgerhq/context-module", () => {
+  class MockContextModuleBuilder {
+    setAppSource() {
+      return this;
+    }
+    setChain() {
+      return this;
+    }
+    setCalConfig() {
+      return this;
+    }
+    build() {
+      return "contextModule";
+    }
+  }
+  return {
+    ContextModuleBuilder: MockContextModuleBuilder,
+    ContextModuleChainID: { Xrp: "xrp" },
+  };
+});
+
+jest.mock("@ledgerhq/live-env", () => ({ getEnv: jest.fn() }));
+
 jest.mock("@ledgerhq/device-signer-kit-xrp", () => ({
-  SignerXrpBuilder: jest.fn().mockImplementation(() => ({
-    build: () => ({}),
-  })),
+  SignerXrpBuilder: jest.fn().mockImplementation(() => {
+    const builder = { withContextModule: jest.fn(() => builder), build: () => ({}) };
+    return builder;
+  }),
 }));
 
 const PATH = "44'/144'/0'/0/0";
@@ -31,7 +58,48 @@ describe("DmkSignerXrp", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.mocked(getEnv).mockReturnValue("https://global.api.prd.ledger.com/cal" as never);
     signer = new DmkSignerXrp({} as any, "sessionId");
+  });
+
+  describe("constructor", () => {
+    let setChainSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      setChainSpy = jest.spyOn(ContextModuleBuilder.prototype, "setChain");
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("gives the kit an XRP context module and the origin token, to load MPT descriptors", () => {
+      new DmkSignerXrp({} as any, "sessionId");
+
+      const builder = jest.mocked(SignerXrpBuilder).mock.results.at(-1)?.value;
+      expect(setChainSpy).toHaveBeenCalledWith("xrp");
+      expect(setChainSpy).toHaveBeenCalledTimes(1);
+      expect(builder.withContextModule).toHaveBeenCalledWith("contextModule");
+      expect(builder.withContextModule).toHaveBeenCalledTimes(1);
+
+      expect(SignerXrpBuilder).toHaveBeenLastCalledWith(
+        expect.objectContaining({ originToken: expect.any(String) }),
+      );
+    });
+
+    it.each([
+      ["prod", "https://global.api.prd.ledger.com/cal"],
+      ["test", "https://global.api.stg.ledger-test.com/cal"],
+      ["test", "https://global.api.stg.example.com/cal"],
+    ])("reads descriptors from CAL_SERVICE_URL in %s mode for %s", (mode, url) => {
+      const setCalConfigSpy = jest.spyOn(ContextModuleBuilder.prototype, "setCalConfig");
+      jest.mocked(getEnv).mockReturnValue(url as never);
+
+      new DmkSignerXrp({} as any, "sessionId");
+
+      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode, branch: "main" });
+      expect(setCalConfigSpy).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("getAddress", () => {

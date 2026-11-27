@@ -31,7 +31,6 @@ const EXPLORER_IDS: Record<string, string> = {
   litecoin: "ltc",
   qtum: "qtum",
   zcash: "zec",
-  zencash: "zen",
 };
 
 export const walletBtcCurrency = (id: string, explorerId?: string): WalletBtcCurrency => ({

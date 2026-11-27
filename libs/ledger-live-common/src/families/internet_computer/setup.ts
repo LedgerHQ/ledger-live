@@ -1,6 +1,7 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
 import { createBridges } from "@ledgerhq/coin-internet_computer/bridge/index";
+import type { IcpCurrencyConfig } from "@ledgerhq/coin-internet_computer/config";
 import Transport from "@ledgerhq/hw-transport";
 import icpResolver from "@ledgerhq/coin-internet_computer/signer/index";
 import { signMessage } from "@ledgerhq/coin-internet_computer/hw-signMessage";
@@ -11,6 +12,7 @@ import {
   createResolver,
   executeWithSigner,
 } from "../../bridge/setup";
+import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import { Resolver } from "../../hw/getAddress/types";
 import {
   ICPAccount,
@@ -36,7 +38,10 @@ const bridge: Bridge<
   TransactionStatus,
   InternetComputerOperation,
   ICPAccountRaw
-> = createBridges(executeWithSigner(createSigner));
+> = createBridges(
+  executeWithSigner(createSigner),
+  buildContext<IcpCurrencyConfig>("internet_computer"),
+);
 
 const messageSigner = {
   signMessage: createMessageSigner(createSigner, signMessage),

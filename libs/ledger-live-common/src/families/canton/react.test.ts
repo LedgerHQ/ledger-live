@@ -318,6 +318,12 @@ describe("useCantonOfferTokens", () => {
     await waitFor(() => expect(result.current.get(instrumentKey("CBTC", CBTC_ADMIN))).toBe(CBTC));
     expect(result.current.size).toBe(1);
     expect(findTokenById).toHaveBeenCalledTimes(1);
+    expect(mockedGetCalTokens).toHaveBeenCalledWith(
+      expect.objectContaining({ config: expect.any(Function) }),
+      "canton_network",
+    );
+    const [context] = mockedGetCalTokens.mock.calls[0];
+    await expect(context.config()).resolves.toEqual({ nativeInstrumentId: "Amulet" });
   });
 
   test("reads nothing from CAL when the account has no offers", () => {

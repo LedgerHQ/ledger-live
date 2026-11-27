@@ -10,6 +10,7 @@ import {
   ChevronRight,
   Globe,
   PenEditWriting,
+  SettingsAlt2,
   Shapes,
   Trash,
 } from "@ledgerhq/lumen-ui-react/symbols";
@@ -19,6 +20,7 @@ export function AccountSettingsMenuView({
   accountName,
   labels,
   onChangeName,
+  onManageAssets,
   onViewAdvancedLogs,
   onViewExplorer,
   onRemoveAccount,
@@ -39,6 +41,19 @@ export function AccountSettingsMenuView({
           <ChevronRight size={16} className="text-muted" />
         </ListItemTrailing>
       </ListItem>
+      {onManageAssets ? (
+        <ListItem onClick={onManageAssets} data-testid="account-settings-manage-assets">
+          <ListItemLeading>
+            <SettingsAlt2 size={20} />
+            <ListItemContent>
+              <ListItemTitle>{labels.manageAssets}</ListItemTitle>
+            </ListItemContent>
+          </ListItemLeading>
+          <ListItemTrailing>
+            <ChevronRight size={16} className="text-muted" />
+          </ListItemTrailing>
+        </ListItem>
+      ) : null}
       <ListItem onClick={onViewAdvancedLogs} data-testid="account-settings-advanced-logs">
         <ListItemLeading>
           <Shapes size={20} />

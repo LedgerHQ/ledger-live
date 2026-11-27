@@ -29,7 +29,7 @@ import { ensureContrast } from "../colors";
 import { StackNavigatorNavigation } from "./RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import { GraphPlaceholder } from "./Graph/Placeholder";
-import { tokensWithUnsupportedGraph } from "./Graph/tokensWithUnsupportedGraph";
+import { hasUnsupportedGraph } from "@ledgerhq/live-common/currencies/hasUnsupportedGraph";
 import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { getFreshAccountAddress } from "~/utils/address";
@@ -156,7 +156,7 @@ function AccountGraphCard({
         currency={currency}
       />
       {belowHeader}
-      {account.type === "TokenAccount" && tokensWithUnsupportedGraph.includes(account.token.id) ? (
+      {account.type === "TokenAccount" && hasUnsupportedGraph(account.token.id) ? (
         <GraphPlaceholder />
       ) : (
         <>

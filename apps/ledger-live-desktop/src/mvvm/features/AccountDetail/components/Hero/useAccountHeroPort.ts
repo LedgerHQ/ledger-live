@@ -1,7 +1,11 @@
 import { useCallback } from "react";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import { canReceive, isSendDisabledForFamily } from "@ledgerhq/live-common/account/index";
+import {
+  canReceive,
+  isSendDisabledForFamily,
+  isSwapDisabledForFamily,
+} from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import {
   useAccountCountervalue,
@@ -53,6 +57,7 @@ export function useAccountHeroPort(account: Account): AccountHeroPortResult {
     isCurrencySupported: !deactivatedCurrencyIds.has(account.currency.id),
     isSendSupported: !isSendDisabledForFamily(account.currency.family),
     isReceiveSupported: canReceive(account, undefined),
+    isSwapSupported: !isSwapDisabledForFamily(account.currency.family),
   });
 
   return {

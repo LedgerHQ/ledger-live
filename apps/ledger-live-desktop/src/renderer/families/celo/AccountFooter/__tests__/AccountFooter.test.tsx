@@ -95,7 +95,6 @@ const mockMainAccount = {
   freshAddressPath: "44'/52'/0'/0/0",
   freshAddresses: [],
   name: "Celo Account",
-  starred: false,
   used: true,
   balance: new BigNumber("1000000000000000000"),
   spendableBalance: new BigNumber("1000000000000000000"),

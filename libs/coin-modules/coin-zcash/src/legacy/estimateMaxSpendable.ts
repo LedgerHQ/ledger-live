@@ -7,15 +7,26 @@ import type { Transaction, ZcashAccount } from "../types/bridge";
 import { marginalFeeFor } from "../logic/coin-selection";
 import { zcashSafeFeePerByte } from "./fees";
 import { resolveWalletAccount } from "./buildTransaction";
+import { UnsupportedMaxSpendableFilter } from "@ledgerhq/ledger-wallet-framework/errors";
+import { resolveFilteredPool } from "../bridge/estimateMaxSpendable";
+import { TRANSPARENT_POOL } from "../bridge/accountBalances";
+import { pendingSpentInputs } from "../bridge/statusHelpers";
 
 /**
  * Max spendable by a transparent send, priced at the rate that covers ZIP-317 for
  * any layout (the same rate the build starts from, so the two cannot disagree).
+ *
+ * With filters, only the transparent pool can fund the send while the shielded engine is off, and
+ * the outputs pending operations already spend are left out.
  */
 export const buildLegacyEstimateMaxSpendable =
   (context: ZcashContext): AccountBridge<Transaction, ZcashAccount>["estimateMaxSpendable"] =>
-  async ({ account, parentAccount, transaction }) => {
+  async ({ account, parentAccount, transaction, filters }) => {
     const mainAccount = getMainAccount(account, parentAccount) as ZcashAccount;
+    const pool = filters && resolveFilteredPool(filters);
+    if (pool !== undefined && pool !== TRANSPARENT_POOL) {
+      throw new UnsupportedMaxSpendableFilter(`Pool "${pool}" cannot fund a transparent-only send`);
+    }
     const walletAccount = await resolveWalletAccount(context, mainAccount);
     const { zip2009 } = await context.config(mainAccount.currency.id);
     const feePerByte = zcashSafeFeePerByte(
@@ -28,7 +39,7 @@ export const buildLegacyEstimateMaxSpendable =
       context.logger,
       walletAccount,
       feePerByte.toNumber(), //!\ wallet-btc handles fees as a JS number
-      [],
+      pool === TRANSPARENT_POOL ? pendingSpentInputs(mainAccount) : [],
       transaction?.recipient ? [transaction.recipient] : [],
     );
 

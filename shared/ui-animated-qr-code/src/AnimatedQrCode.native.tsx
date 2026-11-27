@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { Pressable } from "@ledgerhq/lumen-ui-rnative";
+import { Pressable, triggerHapticFeedback } from "@ledgerhq/lumen-ui-rnative";
 import { requireNativeComponent, type ViewProps } from "react-native";
 import { useReducedMotion } from "react-native-reanimated";
 import { AnimatedCenter } from "./AnimatedCenter";
@@ -37,6 +37,7 @@ export function AnimatedQrCode({
   animation,
   centerContent,
   onPress,
+  hapticFeedback,
   accessibilityLabel,
   triggerKey = 0,
   testID,
@@ -53,8 +54,9 @@ export function AnimatedQrCode({
   // On a confirmed press, not on touch down: the start of a scroll over the code plays nothing.
   const handlePress = useCallback(() => {
     press();
+    if (hapticFeedback && onPress) triggerHapticFeedback(hapticFeedback);
     onPress?.();
-  }, [press, onPress]);
+  }, [press, hapticFeedback, onPress]);
 
   return (
     <Pressable

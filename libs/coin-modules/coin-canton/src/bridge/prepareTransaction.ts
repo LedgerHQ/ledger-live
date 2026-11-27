@@ -1,7 +1,7 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CantonContext } from "../config";
-import { estimateFees } from "../logic/estimateFees";
+import { estimateFees, estimateSendMax } from "../logic/estimateFees";
 import { getCalTokensCached } from "../network/gateway";
 import { Transaction } from "../types";
 import { getCurrencyContext } from "./context";
@@ -11,40 +11,52 @@ type CantonTokenAccount = TokenAccount & {
   cantonResources: { instrumentAdmin: string };
 };
 
+const estimateFee = async (context: CantonContext, amount: BigNumber): Promise<BigNumber> =>
+  BigNumber((await estimateFees(context, BigInt(amount.toFixed()))).toString());
+
 export const prepareTransaction = async (
   context: CantonContext,
   account: Account,
   transaction: Transaction,
 ): Promise<Transaction> => {
-  const amount = transaction.amount || BigNumber(0);
-  const fee = BigNumber(
-    (
-      await estimateFees(getCurrencyContext(context, account.currency), BigInt(amount.toFixed()))
-    ).toString(),
-  );
+  const currencyContext = await getCurrencyContext(context, account.currency);
+  const isTokenTransaction = !!transaction.subAccountId;
+  const subAccount = isTokenTransaction
+    ? account.subAccounts?.find(
+        (sub): sub is CantonTokenAccount =>
+          sub.type === "TokenAccount" && sub.id === transaction.subAccountId,
+      )
+    : undefined;
+
+  let amount = transaction.amount || BigNumber(0);
+  let fee: BigNumber;
+  if (transaction.useAllAmount && !isTokenTransaction) {
+    const max = await estimateSendMax(currencyContext, BigInt(account.spendableBalance.toFixed()));
+    amount = BigNumber(max.amount.toString());
+    fee = BigNumber(max.fee.toString());
+  } else {
+    // The parent account pays a token's fee in CC, so a token's Send max is its whole balance.
+    if (transaction.useAllAmount) amount = subAccount?.spendableBalance ?? BigNumber(0);
+    fee = await estimateFee(currencyContext, amount);
+  }
 
   let tokenId = transaction.tokenId;
   let instrumentAdmin: string | undefined;
-  if (transaction.subAccountId && account.subAccounts) {
-    const subAccount = account.subAccounts.find(
-      (sub): sub is CantonTokenAccount =>
-        sub.type === "TokenAccount" && sub.id === transaction.subAccountId,
-    );
-    if (subAccount) {
-      const calTokens = await getCalTokensCached(account.currency.id);
-      tokenId = calTokens.get(subAccount.token.id) || subAccount.token.name;
-      instrumentAdmin = subAccount.token.contractAddress;
-    }
+  if (subAccount) {
+    const calTokens = await getCalTokensCached(currencyContext, account.currency.id);
+    tokenId = calTokens.get(subAccount.token.id) || subAccount.token.name;
+    instrumentAdmin = subAccount.token.contractAddress;
   }
 
-  // Default to native instrument if no tokenId set
-  if (!tokenId) {
-    tokenId = (await context.config(account.currency.id)).nativeInstrumentId;
+  // Native when no token is chosen. A token account that is gone sets no asset: the status and the signing block the send.
+  if (!tokenId && !transaction.subAccountId) {
+    tokenId = (await currencyContext.config()).nativeInstrumentId;
   }
 
   return updateTransaction(transaction, {
     fee,
     tokenId,
     ...(instrumentAdmin ? { instrumentAdmin } : {}),
+    ...(transaction.useAllAmount ? { amount } : {}),
   });
 };

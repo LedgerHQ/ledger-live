@@ -19,9 +19,11 @@ import { combine } from "./combine";
 import { craftTransaction } from "./craftTransaction";
 import { estimateFees } from "./estimateFees";
 import { makeGetBalance } from "./getBalance";
+import { makeGetBlock } from "./getBlock";
 import { getRewards } from "./getRewards";
 import { getStakes } from "./getStakes";
 import { getValidators } from "./getValidators";
+import { makeListOperations } from "./listOperations";
 import { isCeloStakingIntent } from "./stakingIntent";
 import { validateStakingIntent } from "./validateStakingIntent";
 
@@ -38,7 +40,9 @@ const prefixHex = (hex: string): `0x${string}` =>
 /**
  * Celo CoinModuleApi. Celo is an EVM chain, so generic methods delegate to
  * `@ledgerhq/coin-evm`; the CIP-64/`viem/celo`-sensitive methods are overridden
- * (`craftTransaction`, `estimateFees`, `combine`, `broadcast`). Staking uses
+ * (`craftTransaction`, `estimateFees`, `combine`, `broadcast`). `getBalance`,
+ * `listOperations` and `getBlock` report CELO as the native asset only, never as
+ * GoldToken, its ERC-20 interface. Staking uses
  * Celo's real LockedGold + Election model (not coin-evm's governance shim):
  * `getStakes`/`getValidators` read live state, staking is crafted via `celo.*`
  * intents, `getRewards` is unsupported (no discrete on-chain reward events), and
@@ -90,6 +94,8 @@ export function createApi() {
     getBalance: makeGetBalance((_context: CeloContext, address: string, options) =>
       typedEvmApi.getBalance(_context, address, options),
     ),
+    listOperations: makeListOperations(evmApi.listOperations),
+    getBlock: makeGetBlock(evmApi.getBlock),
     getStakes: (_context: CeloContext, address: string, _options?: { cursor?: Cursor }) =>
       getStakes(address),
     getRewards: (_context: CeloContext, address: string, _options?: { cursor?: Cursor }) =>

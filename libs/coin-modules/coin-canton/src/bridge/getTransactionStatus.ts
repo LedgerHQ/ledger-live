@@ -4,6 +4,7 @@ import {
   FeeNotLoaded,
   FeeTooHigh,
   InvalidAddress,
+  InvalidTransactionError,
   NotEnoughBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughBalanceInParentAccount,
@@ -18,6 +19,8 @@ import {
   TO_MANY_UTXOS_WARNING_COUNT,
 } from "../constants";
 import { isRecipientValid } from "../logic/utils";
+import { getMinReserve } from "../tuning";
+import { getCurrencyContext } from "./context";
 import { getKey, isTopologyChangeRequiredCached } from "../network/gateway";
 import {
   Transaction,
@@ -26,7 +29,7 @@ import {
   TooManyUtxosCritical,
   TooManyUtxosWarning,
 } from "../types";
-import { TopologyChangeError } from "../types/errors";
+import { CantonInvalidConfigError, TopologyChangeError } from "../types/errors";
 
 export { TO_MANY_UTXOS_CRITICAL_COUNT, TO_MANY_UTXOS_WARNING_COUNT };
 
@@ -39,7 +42,7 @@ export const getTransactionStatus = async (
   const warnings: Record<string, Error> = {};
 
   // reserveAmount is the minimum amount of currency that an account must hold in order to stay activated
-  const reserveAmount = new BigNumber((await context.config(account.currency.id)).minReserve || 0);
+  const reserveAmount = getMinReserve(await context.config(account.currency.id));
   const estimatedFees = new BigNumber(transaction.fee || 0);
   const amount = new BigNumber(transaction.amount);
 
@@ -47,14 +50,13 @@ export const getTransactionStatus = async (
   // For token transactions, fees are paid from parent account, so totalSpent is just amount
   const totalSpent = isTokenTransaction ? amount : amount.plus(estimatedFees);
 
+  const subAccount = account.subAccounts?.find(
+    sub => sub.type === "TokenAccount" && sub.id === transaction.subAccountId,
+  );
   // Get the account balance to check against (subAccount for tokens, main account for native)
-  let accountBalance = account.spendableBalance;
-  if (isTokenTransaction && account.subAccounts) {
-    const subAccount = account.subAccounts.find(
-      sub => sub.type === "TokenAccount" && sub.id === transaction.subAccountId,
-    );
-    accountBalance = subAccount?.spendableBalance ?? new BigNumber(0);
-  }
+  const accountBalance = isTokenTransaction
+    ? (subAccount?.spendableBalance ?? new BigNumber(0))
+    : account.spendableBalance;
 
   if (amount.gt(0) && estimatedFees.times(10).gt(amount) && !isTokenTransaction) {
     // if the fee is more than 10 times the amount, we warn the user that fee is high compared to what he is sending
@@ -77,12 +79,17 @@ export const getTransactionStatus = async (
 
   if (amount.eq(0)) {
     // if the amount is 0, we prevent the user from sending the tx (even if it's technically feasible)
-    errors.amount = new AmountRequired();
+    errors.amount = transaction.useAllAmount ? new NotEnoughBalance() : new AmountRequired();
   }
 
   // For token transactions, check that parent account has enough native balance to pay fees
   if (isTokenTransaction && estimatedFees.gt(account.balance)) {
     errors.amount = new NotEnoughBalanceInParentAccount();
+  }
+
+  // A token account gone since the flow started, e.g. its token disabled: never send another asset.
+  if (isTokenTransaction && !subAccount) {
+    errors.amount = new InvalidTransactionError();
   }
 
   // Check if total spent exceeds available balance
@@ -176,7 +183,7 @@ export async function validateTopology(
 
   try {
     const isTopologyChangeRequired = await isTopologyChangeRequiredCached(
-      await context.config(account.currency.id),
+      await getCurrencyContext(context, account.currency),
       publicKey,
     );
 
@@ -185,7 +192,8 @@ export async function validateTopology(
     }
 
     return new TopologyChangeError("Topology change detected. Re-onboarding required.");
-  } catch {
+  } catch (error) {
+    if (error instanceof CantonInvalidConfigError) throw error;
     // If topology check fails, don't block the transaction
     return null;
   }

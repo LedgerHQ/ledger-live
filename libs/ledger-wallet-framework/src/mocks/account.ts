@@ -99,7 +99,6 @@ const hardcodedMarketcap = [
   "ethereum/erc20/elf_token",
   "factom",
   "ethereum/erc20/pchain",
-  "zencash",
   "ethereum/erc20/stasis_eurs_token",
   "ethereum/erc20/revian",
   "ethereum/erc20/odem_token",

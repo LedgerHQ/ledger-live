@@ -17,7 +17,6 @@ export type SendRowsFeeProps<T extends Transaction = Transaction> = {
   account: AccountLike;
   parentAccount?: Account | null;
   setTransaction: Result<T>["setTransaction"];
-  shouldPrefillEvmGasOptions?: boolean;
   transactionToUpdate?: T;
   status?: TransactionStatusCommon;
 } & CompositeScreenProps<

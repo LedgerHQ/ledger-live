@@ -25,7 +25,8 @@ import {
 } from "../logic";
 import { MAX_MEMO_LENGTH, validateMemo } from "./validateMemo";
 import {
-  NotEnoughGas,
+  SolanaNotEnoughSolForRecipientTokenAccount,
+  SolanaNotEnoughSolForTokenTransfer,
   SolanaStakeAccountAmountTooLow,
   SolanaAccountNotFunded,
   SolanaRecipientAccountNotFunded,
@@ -61,8 +62,11 @@ import {
   getMaybeTokenMint,
   getMaybeVoteAccount,
   getStakeAccountMinimumBalanceForRentExemption,
+  type ParsedOnChainMintWithInfo,
 } from "../network/chain/web3";
+import { getAtaDataLengthForMint } from "../helpers/token";
 import { unstakeReserve } from "./estimateFees";
+import { computeUnstakeReserve } from "./getStakes";
 import type {
   SolanaTokenAccount,
   SolanaTokenProgram,
@@ -113,6 +117,7 @@ export async function validateIntent(
       balances,
       estimatedFees,
       currencyName,
+      customFees,
     );
   }
 
@@ -141,7 +146,16 @@ export async function validateIntent(
   );
 
   if (isTokenTransfer && transactionIntent.recipient && !errors.recipient) {
-    await validateTokenTransfer(api, transactionIntent, balances, estimatedFees, errors, warnings);
+    await validateTokenTransfer(
+      api,
+      config,
+      transactionIntent,
+      balances,
+      estimatedFees,
+      errors,
+      warnings,
+      customFees,
+    );
   }
 
   if (!isTokenTransfer) {
@@ -197,11 +211,13 @@ function validateTransactionMemo(
 
 async function validateTokenTransfer(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   intent: TransactionIntent<StringMemo | MemoNotSupported>,
   balances: Balance[],
   estimatedFees: bigint,
   errors: Record<string, Error>,
   warnings: Record<string, Error>,
+  customFees?: FeeEstimation,
 ): Promise<void> {
   const mintAddress = "assetReference" in intent.asset ? intent.asset.assetReference : undefined;
   if (!mintAddress) return;
@@ -250,11 +266,35 @@ async function validateTokenTransfer(
   const spendable = spendableBalance(balances);
 
   if (spendable < requiredSol || spendable === 0n) {
-    errors.gasPrice = new NotEnoughGas(undefined, {
+    const recipientHasNoTokenAccount = descriptor.shouldCreateAsAssociatedTokenAccount;
+    // The estimation sums the deposit into the fee; it is split back out so it is not shown as one.
+    const [tokenAccountDeposit, reserve] = await Promise.all([
+      recipientHasNoTokenAccount
+        ? recipientTokenAccountDeposit(api, mintOrError, customFees)
+        : Promise.resolve(0n),
+      senderReserve(api, config, intent.sender, balances),
+    ]);
+    const deposit = minBigInt(tokenAccountDeposit, requiredSol);
+    const breakdown = lamportBreakdown({
+      fee: requiredSol - deposit,
+      deposit,
+      balances,
+      required: requiredSol,
+      reserve,
+    });
+    const InsufficientSolError = recipientHasNoTokenAccount
+      ? SolanaNotEnoughSolForRecipientTokenAccount
+      : SolanaNotEnoughSolForTokenTransfer;
+    errors.gasPrice = new InsufficientSolError(undefined, {
+      ...breakdown,
+      networkFee: formatAPIValue(breakdown.fee),
+      accountDeposit: formatAPIValue(breakdown.deposit),
+      lockedReserve: formatAPIValue(breakdown.locked),
+      missingAmount: formatAPIValue(breakdown.missing),
+      recipientHasNoTokenAccount,
       fees: formatAPIValue(requiredSol),
       ticker: solanaUnit.code,
       cryptoName: solanaUnit.name,
-      links: ["ledgerlive://buy?"],
     });
   }
 }
@@ -314,6 +354,7 @@ async function validateTokenAuthorityIntent(
   balances: Balance[],
   estimatedFees: bigint,
   currencyName: string,
+  customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -336,7 +377,21 @@ async function validateTokenAuthorityIntent(
   }
 
   await validateOwnerTokenAccountState(api, intent, errors);
-  validateFeeCoverage(estimatedFees, spendableBalance(balances), errors);
+  if (estimatedFees > spendableBalance(balances)) {
+    const deposit =
+      intent.type === "token.createATA"
+        ? minBigInt(tokenAccountDepositOf(customFees), estimatedFees)
+        : 0n;
+    errors.fee = new NotEnoughBalance(
+      undefined,
+      lamportBreakdown({
+        fee: estimatedFees - deposit,
+        deposit,
+        balances,
+        required: estimatedFees,
+      }),
+    );
+  }
 
   return {
     errors,
@@ -373,7 +428,7 @@ async function validateStakingIntent(
         api,
         config,
         intent,
-        available,
+        balances,
         estimatedFees,
         errors,
       );
@@ -591,10 +646,11 @@ async function computeCreateAccountAmount(
   api: ChainAPI,
   config: SolanaCoinConfig,
   intent: TransactionIntent,
-  available: bigint,
+  balances: Balance[],
   estimatedFees: bigint,
   errors: Record<string, Error>,
 ): Promise<{ amount: bigint; rent: bigint }> {
+  const available = spendableBalance(balances);
   if (!intent.recipient) {
     errors.recipient = new RecipientRequired();
   }
@@ -645,7 +701,15 @@ async function computeCreateAccountAmount(
   if (intent.amount <= 0n) {
     errors.amount = new AmountRequired();
   } else if (intent.amount + estimatedFees + reserve + rent > available) {
-    errors.amount = new NotEnoughBalance();
+    errors.amount = new NotEnoughBalance(
+      undefined,
+      lamportBreakdown({
+        fee: estimatedFees,
+        deposit: rent,
+        balances,
+        required: intent.amount + estimatedFees + reserve + rent,
+      }),
+    );
   } else {
     const stakeMinimumDelegation = await fetchStakeMinimumDelegation();
     if (stakeMinimumDelegation !== null && intent.amount < stakeMinimumDelegation) {
@@ -659,6 +723,88 @@ function tokenAmountLeavingTheAccount(amount: bigint, customFees?: FeeEstimation
   const transferFee = customFees?.parameters?.transferFee as TransferFeeCalculated | undefined;
   if (!transferFee?.feeBps || transferFee.transferAmountIncludingFee === undefined) return amount;
   return BigInt(transferFee.transferAmountIncludingFee);
+}
+
+/** The rent a token account the transaction opens holds, as the estimation reported it. */
+function tokenAccountDepositOf(customFees?: FeeEstimation): bigint {
+  const value = customFees?.parameters?.tokenAccountDeposit;
+  if (typeof value === "bigint") return value;
+  if (typeof value === "number" || typeof value === "string") {
+    try {
+      return BigInt(value);
+    } catch {
+      return 0n;
+    }
+  }
+  return 0n;
+}
+
+async function recipientTokenAccountDeposit(
+  api: ChainAPI,
+  mint: ParsedOnChainMintWithInfo,
+  customFees?: FeeEstimation,
+): Promise<bigint> {
+  const reportedDeposit = tokenAccountDepositOf(customFees);
+  if (reportedDeposit > 0n) return reportedDeposit;
+  try {
+    return BigInt(await api.getMinimumBalanceForRentExemption(getAtaDataLengthForMint(mint)));
+  } catch {
+    return 0n;
+  }
+}
+
+/** `locked` is capped at the balance, so an account below its reserve understates it. */
+async function senderReserve(
+  api: ChainAPI,
+  config: SolanaCoinConfig,
+  sender: string,
+  balances: Balance[],
+): Promise<bigint> {
+  const native = balances.find(b => b.asset.type === "native" && !b.stake);
+  const locked = native?.locked ?? 0n;
+  const isLockedCappedAtBalance = locked >= (native?.value ?? 0n);
+  if (!isLockedCappedAtBalance) return locked;
+  const stakeActivations = balances.flatMap(b =>
+    b.stake ? [{ activation: { state: b.stake.state } }] : [],
+  );
+  try {
+    const [rentExemptMinimum, stakesUnstakeReserve] = await Promise.all([
+      api.getMinimumBalanceForRentExemption(0),
+      computeUnstakeReserve(api, config, sender, stakeActivations),
+    ]);
+    const fullReserve = BigInt(rentExemptMinimum) + BigInt(stakesUnstakeReserve);
+    return locked > fullReserve ? locked : fullReserve;
+  } catch {
+    return locked;
+  }
+}
+
+/** Lamport strings: an error crosses the IPC bridge as JSON, which a bigint does not survive. */
+function lamportBreakdown({
+  fee,
+  deposit,
+  balances,
+  required,
+  reserve,
+}: {
+  fee: bigint;
+  deposit: bigint;
+  balances: Balance[];
+  required: bigint;
+  reserve?: bigint;
+}): { fee: string; deposit: string; locked: string; missing: string } {
+  const native = balances.find(b => b.asset.type === "native");
+  const locked = reserve ?? native?.locked ?? 0n;
+  return {
+    fee: fee.toString(),
+    deposit: deposit.toString(),
+    locked: locked.toString(),
+    missing: clampPositive(required - ((native?.value ?? 0n) - locked)).toString(),
+  };
+}
+
+function minBigInt(a: bigint, b: bigint): bigint {
+  return a < b ? a : b;
 }
 
 function spendableBalance(balances: Balance[]): bigint {

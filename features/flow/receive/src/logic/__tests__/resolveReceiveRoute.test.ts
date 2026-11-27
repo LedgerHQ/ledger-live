@@ -31,7 +31,6 @@ describe("resolveReceiveRoute", () => {
   it("should open the new flow on the account and the asset when the account model holds it", () => {
     expect(resolveReceiveRoute(input)).toEqual({
       accountUUID: entry.accountUUID,
-      descriptor: entry.descriptor,
       assetId: "ethereum",
     });
   });
@@ -52,13 +51,12 @@ describe("resolveReceiveRoute", () => {
     expect(resolveReceiveRoute({ ...input, ...overrides })).toBeUndefined();
   });
 
-  it("should give the family config the account's descriptor and the legacy account", () => {
+  it("should give the family config the asset and the legacy account", () => {
     const familyConfig = jest.fn(() => ({}));
 
     resolveReceiveRoute({ ...input, familyConfig });
 
     expect(familyConfig).toHaveBeenCalledWith({
-      descriptor: entry.descriptor,
       asset: ETH,
       featureFlags: {},
       legacyAccount: input.legacyAccount,

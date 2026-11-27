@@ -47,7 +47,13 @@ static readonly NEWCOIN = new AppInfos("NewCoin");
 **Ask user for:** name, ticker, currency_id
 
 ```typescript
-static readonly NEWCOIN = new Currency("NewCoin", "TICKER", "currency_id", AppInfos.NEWCOIN, [Network.NEWCOIN]);
+static readonly NEWCOIN = new Currency({
+  name: "NewCoin",
+  ticker: "TICKER",
+  id: "currency_id",
+  speculosApp: AppInfos.NEWCOIN,
+  networks: [Network.NEWCOIN],
+});
 ```
 
 ### Step 4: Set the owning team
@@ -136,7 +142,11 @@ not call `registerNewSendFlowTests` again — the spec already does.
 
 ```typescript
 {
-  transaction: new Transaction(Account.NEWCOIN_1, Account.NEWCOIN_2, "0.001"),
+  transaction: new Transaction({
+    accountToDebit: Account.NEWCOIN_1,
+    accountToCredit: Account.NEWCOIN_2,
+    amount: "0.001",
+  }),
   xrayTicket: "B2CQA-XXXX",
 },
 ```

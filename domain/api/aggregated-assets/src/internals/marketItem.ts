@@ -30,7 +30,6 @@ export type MarketItemResponse = {
   priceChangePercentage7d: number;
   priceChangePercentage6m?: number;
   priceChangePercentage1y: number;
-  sparkline: number[];
   ticker: string;
   totalSupply: number;
   totalVolume: number;

@@ -51,6 +51,7 @@ export function PlainCryptoTableBody<TData extends RowData>({
           clickable={clickable}
           onClick={clickable ? handleRowClick(row) : undefined}
           data-testid={getRowTestId?.(row)}
+          data-dd-action-name="Crypto table row"
         >
           {row.getVisibleCells().map(cell => {
             const meta = cell.column.columnDef.meta;

@@ -4,11 +4,8 @@ import type { PlatformName } from "../types.ts";
 import type { Maestro } from "./types.ts";
 
 export const FLOWS_DIR = path.join(import.meta.dirname, "..", "..", "flows");
-export const MAESTRO_FLOW_TIMEOUT_MS = 120_000;
-export const MAESTRO_SCROLL_TIMEOUT_MS = 60_000;
-export const MAESTRO_HIERARCHY_TIMEOUT_MS = 60_000;
 
-// One per simulator, so the calls of a read reuse one driver.
+// One per simulator, so the calls of a flow reuse one driver.
 const IOS_DRIVER_PORT = 22087;
 
 export function createMaestro({
@@ -29,11 +26,9 @@ export function createMaestro({
     }).filter(([key]) => platform !== "ios" || !(key === "ANDROID" || key.startsWith("ANDROID_"))),
   );
   return {
-    calls: [],
     async invoke({ device, command, args = [], timeoutMs }) {
       const port = platform === "ios" ? IOS_DRIVER_PORT + devices.indexOf(device) : null;
-      const startedAt = Date.now();
-      const result = await run(
+      return run(
         binary,
         [
           ...(port === null ? [] : ["--driver-host-port", String(port)]),
@@ -45,15 +40,6 @@ export function createMaestro({
         ],
         { timeoutMs, allowFail: true, env },
       );
-      this.calls.push({
-        command,
-        flow: args[0] ? path.basename(args[0]) : null,
-        ms: Date.now() - startedAt,
-        ...(result.failed
-          ? { error: `${result.stdout}\n${result.stderr}`.trim().slice(-400) }
-          : {}),
-      });
-      return result;
     },
   };
 }

@@ -9,6 +9,13 @@ function makeStatus(amountError?: { name: string }): TransactionStatus {
   } as TransactionStatus;
 }
 
+function makeFeeStatus(name: string): TransactionStatus {
+  const status: Partial<TransactionStatus> = {
+    errors: { gasPrice: Object.assign(new Error(name), { name }) },
+  };
+  return status as TransactionStatus;
+}
+
 describe("getMaxAvailable", () => {
   it("returns 0 when account is null", () => {
     expect(getMaxAvailable(null, new BigNumber(10))).toStrictEqual(new BigNumber(0));
@@ -120,6 +127,17 @@ describe("isInsufficientFundsAmountError", () => {
     expect(isInsufficientFundsAmountError(makeStatus({ name: "InsufficientLiquidity" }))).toBe(
       true,
     );
+  });
+
+  it.each(["SolanaNotEnoughSolForTokenTransfer", "SolanaNotEnoughSolForRecipientTokenAccount"])(
+    "returns true for a %s fee error",
+    name => {
+      expect(isInsufficientFundsAmountError(makeFeeStatus(name))).toBe(true);
+    },
+  );
+
+  it("returns false for a NotEnoughGas fee error", () => {
+    expect(isInsufficientFundsAmountError(makeFeeStatus("NotEnoughGas"))).toBe(false);
   });
 
   it("returns false for AmountRequired", () => {

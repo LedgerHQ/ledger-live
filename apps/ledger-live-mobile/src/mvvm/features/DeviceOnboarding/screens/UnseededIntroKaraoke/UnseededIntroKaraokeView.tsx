@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
+import { TrackScreen } from "@shared/analytics-react";
 import CounterfeitWarningDrawer from "LLM/features/Onboarding/components/CounterfeitWarningDrawer";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { Karaoke } from "@shared/ui-karaoke/native";
@@ -11,6 +12,8 @@ export function UnseededIntroKaraokeView({
   tapLabel,
   actionLabel,
   closeLabel,
+  screenTracking,
+  onAdvance,
   onAction,
   onClose,
   counterfeitWarning,
@@ -19,6 +22,7 @@ export function UnseededIntroKaraokeView({
     <Karaoke.Root
       phrases={phrases}
       tapLabel={tapLabel}
+      onAdvance={onAdvance}
       testID={unseededIntroKaraokeTestIds.screen}
       action={
         <Button
@@ -32,6 +36,7 @@ export function UnseededIntroKaraokeView({
         </Button>
       }
     >
+      {screenTracking ? <TrackScreen {...screenTracking} /> : null}
       <Karaoke.Sequence />
       <DeviceOnboardingCloseBar
         label={closeLabel}

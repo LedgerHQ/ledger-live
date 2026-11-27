@@ -41,6 +41,13 @@ describe("DatadogId", () => {
     });
   });
 
+  describe("exportDatadogIdForElectronMain", () => {
+    it("should return raw id", () => {
+      const id = new DatadogId("electron-main-id");
+      expect(id.exportDatadogIdForElectronMain()).toBe("electron-main-id");
+    });
+  });
+
   describe("equals", () => {
     it("should return true for same ID", () => {
       const id1 = new DatadogId("same");

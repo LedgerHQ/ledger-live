@@ -8,6 +8,7 @@ import AccountDetailBalanceSummary from "./AccountDetailBalanceSummary";
 import StakeBanner from "./StakeBanner";
 import StepSummaryAdditionalRows from "./StepSummaryAdditionalRows";
 import { SolanaFamily } from "./types";
+import { hidesSummaryAmount } from "./hidesSummaryAmount";
 import operationDetails from "./operationDetails";
 import sendAmountFields from "./SendAmountFields";
 import transactionConfirmFields from "./TransactionConfirmFields";
@@ -21,6 +22,7 @@ const family: SolanaFamily = {
   AccountBalanceSummaryFooter,
   AccountDetailBalanceSummary,
   StepSummaryAdditionalRows,
+  hidesSummaryAmount,
   StakeBanner,
   operationDetails,
   sendAmountFields,

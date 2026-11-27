@@ -1,3 +1,4 @@
+import { DerivationPathSchema } from "@domain/entity-derivation";
 import { checksumAddress } from "../encoding";
 import { balanceRow } from "../kinds/balance";
 import { randomAmount, randomBytes } from "../random";
@@ -21,7 +22,7 @@ export const evm: MockFamily = {
     type: "address",
     network,
     key: checksumAddress(randomBytes(random, 20)),
-    path: `m/44h/${currency.coinType}h/${index}h/0/0`,
+    path: DerivationPathSchema.parse(`m/44h/${currency.coinType}h/${index}h/0/0`),
   }),
   address: (_currency, random) => checksumAddress(randomBytes(random, 20)),
   tokenMagnitude: assetId =>

@@ -26,6 +26,11 @@ jest.mock("../network/Cosmos", () => ({
   })),
 }));
 
+jest.mock("../logic/transaction/estimateFees", () => ({
+  estimateFees: jest.fn().mockResolvedValue({ value: 6250n, parameters: { gasLimit: "250000" } }),
+}));
+
+import { estimateFees } from "../logic/transaction/estimateFees";
 import { createApi } from "./index";
 
 const config = {
@@ -176,5 +181,23 @@ describe("api/createApi", () => {
     const osmosisApi = createApi("osmosis");
     await osmosisApi.lastBlock(makeContext(osmosisConfig));
     expect(CosmosAPI).toHaveBeenLastCalledWith("osmosis", undefined, osmosisConfig);
+  });
+
+  it("hands the resolved config, the currency and the custom fee parameters to the fee estimation", async () => {
+    const api = createApi("cosmos");
+    const customFeesParameters = { gasLimit: "300000" };
+
+    const result = await api.estimateFees(context, sendIntent, { customFeesParameters });
+
+    expect({ result, call: jest.mocked(estimateFees).mock.calls.at(-1) }).toEqual({
+      result: { value: 6250n, parameters: { gasLimit: "250000" } },
+      call: [config, "cosmos", sendIntent, customFeesParameters],
+    });
+  });
+
+  it("reports no transaction data for a send", () => {
+    const api = createApi("cosmos");
+
+    expect(api.craftTransactionData(context, sendIntent)).toEqual({ type: "none" });
   });
 });

@@ -4,8 +4,7 @@ import type { ConcordiumCoinConfig } from "../../types";
 export async function getNextValidSequence(
   config: ConcordiumCoinConfig,
   address: string,
-  currencyId: string,
 ): Promise<number> {
-  const result = await getAccountNonce(config, currencyId, address);
+  const result = await getAccountNonce(config, address);
   return result.nonce;
 }

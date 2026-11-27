@@ -1,0 +1,29 @@
+import React, { useEffect } from "react";
+import type { ZcashAccount, Transaction } from "@ledgerhq/coin-zcash/types";
+import { useZcashShieldedSync } from "./useZcashShieldedSync";
+import { isZcashCurrencyId } from "@ledgerhq/live-common/bridge/zcashRouting";
+
+type Props = Readonly<{
+  account: ZcashAccount;
+  transaction: Transaction;
+}>;
+
+/**
+ * Starts the shielded resync as soon as the Amount step is entered with a
+ * private source pool, so the note set is fresh by the time the user reaches
+ * signing. Inert for every other currency and for a transparent-pool Zcash
+ * send. Mirrors the legacy `SendAmountFields` trigger: keyed on the account and
+ * the chosen pool only, so a keystroke in the amount field never restarts it.
+ */
+export function ZcashAmountStepSync({ account, transaction }: Props) {
+  const isZcash = isZcashCurrencyId(account.currency.id);
+  const sender = transaction.sender;
+  const { startShieldedSync } = useZcashShieldedSync(account);
+
+  useEffect(() => {
+    if (isZcash && sender === "private") startShieldedSync();
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [account.id, sender]);
+
+  return null;
+}

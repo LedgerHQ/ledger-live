@@ -19,12 +19,13 @@ export function checkAccountSupported(account: Account): Error | null | undefine
   return checkAccountDerivationSupported(account);
 }
 
-// Send/Receive capability per family on Ledger Wallet. Defaults to both supported; only exceptions
-// are listed.
-type TransferCapability = { send: boolean; receive: boolean };
-const DEFAULT_TRANSFER_CAPABILITY: TransferCapability = { send: true, receive: true };
+// Send/Receive/Swap capability per family on Ledger Wallet. Defaults to all supported; only
+// exceptions are listed.
+type TransferCapability = { send: boolean; receive: boolean; swap: boolean };
+const DEFAULT_TRANSFER_CAPABILITY: TransferCapability = { send: true, receive: true, swap: true };
 const FAMILY_TRANSFER_CAPABILITY: Partial<Record<CryptoCurrency["family"], TransferCapability>> = {
-  hypercore: { send: false, receive: false },
+  // Swap stays enabled backend-side for the Perps Live App, but the Swap Live App does not support it.
+  hypercore: { send: false, receive: false, swap: false },
 };
 
 const transferCapability = (family: CryptoCurrency["family"]): TransferCapability =>
@@ -35,6 +36,9 @@ export const isSendDisabledForFamily = (family: CryptoCurrency["family"]): boole
 
 export const isReceiveDisabledForFamily = (family: CryptoCurrency["family"]): boolean =>
   !transferCapability(family).receive;
+
+export const isSwapDisabledForFamily = (family: CryptoCurrency["family"]): boolean =>
+  !transferCapability(family).swap;
 
 export { isNonTransferableToken } from "./nonTransferableTokens";
 

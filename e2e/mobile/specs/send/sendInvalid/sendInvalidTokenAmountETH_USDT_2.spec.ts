@@ -1,9 +1,13 @@
 import { runSendInvalidTokenAmountTest } from "@e2e/specs/send/send";
 
-const transaction = new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_2, "10000");
-runSendInvalidTokenAmountTest(
+const transaction = new Transaction({
+  accountToDebit: TokenAccount.ETH_USDT_1,
+  accountToCredit: TokenAccount.ETH_USDT_2,
+  amount: "10000",
+});
+runSendInvalidTokenAmountTest({
   transaction,
-  "Sorry, insufficient funds",
-  ["B2CQA-3043"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
-);
+  expectedErrorMessage: "Sorry, insufficient funds",
+  tmsLinks: ["B2CQA-3043"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+});

@@ -3,28 +3,14 @@ import { describe, it } from "node:test";
 import {
   BRIDGE_IMPORT,
   bundleWithoutDetox,
-  gateBridgeOnWsPort,
-  JS_START_LINE,
-  logJsStartEpoch,
+  DETOX_BRIDGE_BLOCK,
   prodLikeEnv,
   readdLive36190,
   realBlur,
   RSPACK_LINE,
+  startsBridgeOnlyWithDetox,
 } from "./prepare-build.mts";
 import { linesOf, textOf } from "./step.mts";
-
-const INDEX = textOf([
-  'import Config from "react-native-config";',
-  BRIDGE_IMPORT,
-  "",
-  "class Root {",
-  "  onInitFinished = () => {",
-  "    if (Config.DETOX) {",
-  "      init();",
-  "    }",
-  "  };",
-  "}",
-]);
 
 describe("linesOf and textOf", () => {
   it("read lines as awk does and end every line with a newline", () => {
@@ -32,43 +18,6 @@ describe("linesOf and textOf", () => {
     assert.deepEqual(linesOf("a\nb"), ["a", "b"]);
     assert.deepEqual(linesOf(""), []);
     assert.equal(textOf(linesOf("a\nb")), "a\nb\n");
-  });
-});
-
-describe("gateBridgeOnWsPort", () => {
-  it("starts the bridge only on a launch with wsPort, after the delay", () => {
-    const lines = linesOf(gateBridgeOnWsPort(INDEX, 20000));
-    assert.equal(lines[2], 'import { LaunchArguments } from "react-native-launch-arguments";');
-    assert.deepEqual(lines.slice(5, 16), [
-      "  onInitFinished = () => {",
-      "    if (Config.DETOX) {",
-      "      init();",
-      "    } else {",
-      "      // startup-perf prod-like: the E2E bridge only on the injection launch (wsPort),",
-      "      // after the measured startup, so measured launches run no bridge code.",
-      "      setTimeout(() => {",
-      '        if (LaunchArguments.value()["wsPort"]) init();',
-      "      }, 20000);",
-      "    }",
-      "  };",
-    ]);
-    assert.equal(lines.at(-1), "}");
-  });
-
-  it("does not import LaunchArguments twice", () => {
-    const source = INDEX.replace(
-      BRIDGE_IMPORT,
-      `${BRIDGE_IMPORT}\nimport { LaunchArguments } from "react-native-launch-arguments";`,
-    );
-    const lines = linesOf(gateBridgeOnWsPort(source, 20000));
-    assert.equal(lines.filter(line => line.includes("react-native-launch-arguments")).length, 1);
-  });
-
-  it("fails when the DETOX block changed", () => {
-    assert.throws(
-      () => gateBridgeOnWsPort(INDEX.replace("      init();", "      init(true);"), 20000),
-      /found 1 bridge import\(s\), 0 onInitFinished DETOX block\(s\)/,
-    );
   });
 });
 
@@ -105,27 +54,14 @@ describe("prodLikeEnv", () => {
     const result = prodLikeEnv(env);
     assert.equal(
       result.text,
-      textOf([
-        "FORCE_DEBUG_VISIBLE=1",
-        'SWAP_API_BASE="https://swap.ledger.com/v5"',
-        "API_KEY=secret",
-      ]),
+      textOf(['SWAP_API_BASE="https://swap.ledger.com/v5"', "API_KEY=secret"]),
     );
-    assert.deepEqual(result.removed, ["MOCK", "DETOX", "SIMCTL_CHILD_FOO"]);
+    assert.deepEqual(result.removed, ["MOCK", "DETOX", "FORCE_DEBUG_VISIBLE", "SIMCTL_CHILD_FOO"]);
     assert.equal(result.swap, true);
   });
 
   it("fails when a test mode is still set another way", () => {
     assert.throws(() => prodLikeEnv("export MOCK = 1\n"), /still sets MOCK, DETOX/);
-  });
-});
-
-describe("logJsStartEpoch", () => {
-  it("logs the wall clock of the JS start", () => {
-    assert.deepEqual(linesOf(logJsStartEpoch(`${JS_START_LINE}\n`)), [
-      'const startupPerfJsStart = logStartupEvent("Before js imports");',
-      "logStartupEvent(`JS start epoch ${startupPerfJsStart.time}`); // startup-perf: JS start wall clock",
-    ]);
   });
 });
 
@@ -142,5 +78,24 @@ describe("readdLive36190", () => {
       "    lense: walletStoreSelector,",
       "    saveAtStart: true,",
     ]);
+  });
+});
+
+describe("startsBridgeOnlyWithDetox", () => {
+  const index = (body: string[], imports = [BRIDGE_IMPORT]) =>
+    textOf([...imports, "export default class Root {", ...body, "}"]);
+
+  it("accepts the bridge started in onInitFinished's DETOX block, whatever other inits run", () => {
+    assert.equal(startsBridgeOnlyWithDetox(index(DETOX_BRIDGE_BLOCK)), true);
+    const sentry = "  componentDidMount() { Sentry.init(); }";
+    assert.equal(startsBridgeOnlyWithDetox(index([...DETOX_BRIDGE_BLOCK, sentry])), true);
+  });
+
+  it("refuses a bridge started without DETOX, twice, or not imported", () => {
+    const unguarded = ["  onInitFinished = () => {", "    init();", "  };"];
+    assert.equal(startsBridgeOnlyWithDetox(index(unguarded)), false);
+    const again = "  componentDidMount() { init(); }";
+    assert.equal(startsBridgeOnlyWithDetox(index([...DETOX_BRIDGE_BLOCK, again])), false);
+    assert.equal(startsBridgeOnlyWithDetox(index(DETOX_BRIDGE_BLOCK, [])), false);
   });
 });

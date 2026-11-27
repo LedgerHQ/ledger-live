@@ -1,15 +1,20 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { describe, it } from "node:test";
+import { realBlur, RSPACK_LINE } from "./prepare-build.mts";
 import {
   BUILD_CONFIG_MARKERS,
   type BuildCounts,
   countMarkers,
   DOT_ENV_MARKERS,
+  isPrepared,
   judge,
   RES_VALUES_MARKERS,
 } from "./verify-build.mts";
 
-const PROD_LIKE: BuildCounts = { mock: 0, detox: 0, debug: 1, blurMock: 0, blurReal: 1 };
+const PROD_LIKE: BuildCounts = { mock: 0, detox: 0, debug: 0, blurMock: 0, blurReal: 1 };
 
 describe("countMarkers", () => {
   it("counts the lines of BuildConfig.java that set a test mode", () => {
@@ -42,9 +47,9 @@ describe("judge", () => {
   });
 
   for (const [change, error] of [
-    [{ debug: 0 }, /FORCE_DEBUG_VISIBLE=1 is not in the generated config/],
-    [{ mock: 1 }, /MOCK or DETOX is still in the generated config/],
-    [{ detox: 1 }, /MOCK or DETOX is still in the generated config/],
+    [{ mock: 1 }, /MOCK, DETOX or FORCE_DEBUG_VISIBLE is still in the generated config/],
+    [{ detox: 1 }, /MOCK, DETOX or FORCE_DEBUG_VISIBLE is still in the generated config/],
+    [{ debug: 1 }, /MOCK, DETOX or FORCE_DEBUG_VISIBLE is still in the generated config/],
     [{ blurMock: 1 }, /still has the E2E blur mock/],
   ] as const) {
     it(`fails on ${JSON.stringify(change)}`, () => {
@@ -56,5 +61,20 @@ describe("judge", () => {
     const { error, warning } = judge({ ...PROD_LIKE, blurReal: 0 });
     assert.equal(error, null);
     assert.match(warning ?? "", /no ReactNativeBlurView string/);
+  });
+});
+
+describe("isPrepared", () => {
+  it("sees the mark prepare-build.mts leaves in the rspack config, and only it", () => {
+    const app = mkdtempSync(path.join(tmpdir(), "startup-perf-verify-"));
+    try {
+      assert.equal(isPrepared(app), false);
+      writeFileSync(path.join(app, "rspack.config.mjs"), "const isDetoxBuild = true;\n");
+      assert.equal(isPrepared(app), false);
+      writeFileSync(path.join(app, "rspack.config.mjs"), realBlur(`${RSPACK_LINE}\n`));
+      assert.equal(isPrepared(app), true);
+    } finally {
+      rmSync(app, { recursive: true, force: true });
+    }
   });
 });

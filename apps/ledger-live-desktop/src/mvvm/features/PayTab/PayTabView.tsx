@@ -5,12 +5,10 @@ import { ContactAddressPicker } from "@features/flow-pay-contact";
 import { ContactsLedgerSyncIntroductionDialog } from "@features/flow-contacts-introduction/web";
 import { DepositOptions } from "@features/flow-pay-deposit";
 import { BankTransferIntro } from "@features/flow-pay-bank-transfer";
-import { RequestReceive, VerifyAddress } from "@features/flow-pay-request";
 import { FeatureTour } from "@features/flow-pay-feature-tour";
 import { TrackScreen } from "@shared/analytics-react";
 import PayTabHeader from "./components/PayTabHeader";
 import { PayCardDisclaimer } from "./components/PayCardDisclaimer";
-import { VerifyAddressExecutorLWD } from "./verifyAddressIntent/VerifyAddressExecutorLWD";
 import type { PayTabViewModel } from "./usePayTabViewModel";
 
 export function PayTabView({
@@ -18,15 +16,11 @@ export function PayTabView({
   actionTiles,
   depositOptions,
   bankTransferIntro,
-  requestReceive,
-  verifyAddress,
-  deviceIntent,
   contacts,
   ledgerSyncIntroduction,
   contactAddressPicker,
   isContactsEnabled,
   cardDisclaimer,
-  trackRequestAddressVerification,
   trackRecipientAddressSelection,
 }: Readonly<PayTabViewModel>) {
   const [initialBalanceFilter] = useState(balance.filter);
@@ -34,15 +28,6 @@ export function PayTabView({
   return (
     <div className="flex flex-col pb-32" data-testid="paytab-screen">
       <TrackScreen category="Pay" balance_filter={initialBalanceFilter} />
-      {requestReceive.isOpen && requestReceive.address ? (
-        <TrackScreen
-          category="Request complete"
-          flow="request"
-          asset={requestReceive.asset.ticker}
-          network={requestReceive.network}
-        />
-      ) : null}
-      {trackRequestAddressVerification && <TrackScreen category="Request Address Verification" />}
       <div className="flex flex-col gap-24">
         <PayTabHeader />
         <Balance {...balance} actionTiles={actionTiles} />
@@ -63,16 +48,6 @@ export function PayTabView({
 
       <DepositOptions {...depositOptions} />
       <BankTransferIntro {...bankTransferIntro} />
-      <RequestReceive {...requestReceive} />
-
-      <VerifyAddress {...verifyAddress} />
-      {deviceIntent.active && deviceIntent.selection && (
-        <VerifyAddressExecutorLWD
-          selection={deviceIntent.selection}
-          onReady={deviceIntent.onReady}
-          onExit={deviceIntent.onExit}
-        />
-      )}
       <FeatureTour />
     </div>
   );

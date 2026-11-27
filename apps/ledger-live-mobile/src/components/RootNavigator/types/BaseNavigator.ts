@@ -397,6 +397,7 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.PerpsDeposit]: PerpsDepositUiParams;
   [ScreenName.PerpsWithdraw]: PerpsWithdrawUiParams;
   [ScreenName.PerpsTransactionSigned]: PerpsTransactionSignedParams;
+  [ScreenName.PredictionsOrderResult]: { orderId: number };
   [ScreenName.DeeplinkInstallAppDeviceSelection]: {
     appKey: string;
   };

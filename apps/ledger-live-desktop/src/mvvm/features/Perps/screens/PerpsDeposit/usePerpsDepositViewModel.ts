@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
-import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import {
   useCalculateCountervalueCallback,
@@ -11,6 +11,7 @@ import { calculate } from "@domain/entity-market-countervalues";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import type { PerpsDepositUiParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import { useDefaultDepositAccount } from "@ledgerhq/live-common/wallet-api/Perps/deposit/useDefaultDepositAccount";
 import { getDepositMaxBuffer } from "@ledgerhq/live-common/wallet-api/Perps/deposit/maxBuffer";
 import { useFeature } from "@features/platform-feature-flags";
 import { track } from "@shared/analytics";
@@ -137,22 +138,12 @@ export function usePerpsDepositViewModel(
     [setAmountText],
   );
 
-  /** The USDC funding account with the highest spendable balance, used as the default. */
-  const defaultDepositAccount = useMemo(
-    () =>
-      accounts
-        .filter(
-          (acc): acc is TokenAccount =>
-            acc.type === "TokenAccount" &&
-            acc.token.id === PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID &&
-            acc.spendableBalance.gt(0),
-        )
-        .reduce<TokenAccount | undefined>(
-          (best, acc) => (!best || acc.spendableBalance.gt(best.spendableBalance) ? acc : best),
-          undefined,
-        ),
-    [accounts],
-  );
+  const receiverAccount = data.receiverAccount;
+  const defaultDepositAccount = useDefaultDepositAccount({
+    accounts,
+    receiverAccount,
+    counterValueCurrency,
+  });
 
   /** Read from the store so balances stay live while the form is open. */
   const depositAccount = useMemo(
@@ -160,7 +151,6 @@ export function usePerpsDepositViewModel(
     [accounts, depositAccountId, defaultDepositAccount],
   );
 
-  const receiverAccount = data.receiverAccount;
   const receiverCurrency = useMemo(() => getAccountCurrency(receiverAccount), [receiverAccount]);
   const depositCurrency = useMemo(
     () => (depositAccount ? getAccountCurrency(depositAccount) : undefined),

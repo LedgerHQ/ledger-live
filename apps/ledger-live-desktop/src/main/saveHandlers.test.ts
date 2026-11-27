@@ -25,7 +25,6 @@ const options = { defaultPath: "export" };
 const saves: Array<[string, unknown[]]> = [
   [CHANNELS.saveLogs, [{ options }, "[]"]],
   [CHANNELS.exportOperations, [{ options }, "a,b"]],
-  [CHANNELS.savePng, [options, "aGVsbG8="]],
 ];
 
 describe("save handlers", () => {
@@ -84,11 +83,8 @@ describe("save handlers", () => {
     expect(fs.writeFile).not.toHaveBeenCalled();
   });
 
-  it.each([
-    [CHANNELS.exportOperations, [{ options }, ""]],
-    [CHANNELS.savePng, [options, ""]],
-  ])("%s should not open the dialog for an empty payload", async (channel, args) => {
-    await expect(invoke(channel, ...args)).resolves.toBe("failed");
+  it("should not open the dialog for empty operations", async () => {
+    await expect(invoke(CHANNELS.exportOperations, { options }, "")).resolves.toBe("failed");
     expect(dialog.showSaveDialog).not.toHaveBeenCalled();
   });
 

@@ -1,6 +1,13 @@
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+import type { AccountUUID } from "./accountUUID";
+import { computeAccountUUID as computeUUID } from "./descriptor/computeAccountUUID";
 import { AccountEntrySchema, type AccountEntry } from "./schema";
+
+/** Tests build an AccountUUID from a mock descriptor; production code receives it. */
+export function computeAccountUUID(descriptor: AccountDescriptor): AccountUUID {
+  return computeUUID(descriptor);
+}
 
 export function mockAccountEntry(overrides?: Partial<AccountEntry>): AccountEntry {
   const descriptor = overrides?.descriptor ?? mockAddressAccountDescriptor();

@@ -27,7 +27,12 @@ export type OnboardingInspectionEvent = InspectionEvent;
 
 export type StartOnboardingActorInput = Pick<
   DeviceOnboardingInput,
-  "dmk" | "deviceId" | "deviceModelId" | "offerSync" | "hostsSeedSetup"
+  | "dmk"
+  | "deviceId"
+  | "deviceModelId"
+  | "offerSync"
+  | "connectUnseededDevice"
+  | "connectSeededDevice"
 >;
 
 export type UseDeviceOnboardingActorOptions = {
@@ -175,7 +180,8 @@ export function useDeviceOnboardingActor({
           deviceId: input.deviceId,
           deviceModelId: input.deviceModelId,
           offerSync: input.offerSync,
-          hostsSeedSetup: input.hostsSeedSetup,
+          connectUnseededDevice: input.connectUnseededDevice,
+          connectSeededDevice: input.connectSeededDevice,
         },
         // Each snapshot update carries the event that led to it, including the ones child
         // actors send back.

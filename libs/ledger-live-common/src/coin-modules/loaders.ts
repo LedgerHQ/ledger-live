@@ -1,12 +1,16 @@
 import { isGenericCoinFrameworkFamily } from "../bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import type { CoinModuleLoader, FamilySetup } from "./types";
+import { aleoLegacyAccountContext } from "../families/aleo/legacyAccountContext";
 
 export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     family: "aleo",
     supportedCoins: ["aleo", "aleo_testnet"],
+    accountCompletion: { kind: "viewKey" },
     accountDescriptorType: "address",
+    legacyAccountContext: aleoLegacyAccountContext,
     loadSetup: () => import("../families/aleo/setup"),
+    loadLocalApi: () => import("../families/aleo/coinModuleApi").then(m => m.createLocalAleoApi),
     loadTransaction: () => import("@ledgerhq/coin-aleo/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-aleo/deviceTransactionConfig").then(m => m.default),
@@ -47,7 +51,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "qtum",
       "bitcoin_gold",
       "komodo",
-      "zencash",
       "bitcoin_testnet",
       "bitcoin_regtest",
       "bitcoin_signet",
@@ -63,6 +66,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadPlatformAdapter: () => import("../families/bitcoin/platformAdapter").then(m => m.default),
     loadAccount: () => import("@ledgerhq/coin-bitcoin/account").then(m => m.default),
     loadMockBridge: () => import("../families/bitcoin/bridge/mock").then(m => m.default),
+    loadBridgeApi: () => import("../families/bitcoin/bridge/api").then(m => m.default),
     loadBridgeExtensions: () => import("../families/bitcoin/bridgeExtensions").then(m => m.default),
   },
   {
@@ -126,6 +130,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadSetup: () => import("../families/concordium/setup"),
     loadAccountReceive: () => import("../families/concordium/accountReceive").then(m => m.default),
     loadAccountStatus: () => import("../families/concordium/accountStatus").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/concordium/coinModuleApi").then(m => m.createLocalConcordiumApi),
     loadTransaction: () => import("@ledgerhq/coin-concordium/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-concordium/deviceTransactionConfig").then(m => m.default),

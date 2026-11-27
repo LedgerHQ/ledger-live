@@ -30,7 +30,6 @@ function declareDep(name: string, dep: string): void {
   ["LBRY", "Bitcoin"],
   ["Ravencoin", "Bitcoin"],
   ["Resistance", "Bitcoin"],
-  ["ZenCash", "Bitcoin"],
   ["[ L ] Market", "Ethereum"],
   ["1inch", "Ethereum"],
   ["Aave", "Ethereum"],

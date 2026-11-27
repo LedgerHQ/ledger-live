@@ -8,7 +8,10 @@ import {
   fakeDevice,
   fakePorts,
 } from "../__tests__/verifyAddressPorts";
-import { buildVerifyAddressIntentInput } from "./buildVerifyAddressIntentInput";
+import {
+  buildVerifyAddressIntentInput,
+  type VerifyAddressDeviceListeners,
+} from "./buildVerifyAddressIntentInput";
 
 const OPTIONS = { path: "44'/60'/0'/0/0" };
 
@@ -21,8 +24,8 @@ function deferred<T>() {
   return { promise, resolve };
 }
 
-function startVerification(ports = fakePorts()) {
-  const input = buildVerifyAddressIntentInput(ACCOUNT, SELECTION.verification, ports)!;
+function startVerification(ports = fakePorts(), listeners?: VerifyAddressDeviceListeners) {
+  const input = buildVerifyAddressIntentInput(ACCOUNT, SELECTION.verification, ports, listeners)!;
   const { connection, sendApdu } = fakeDevice();
   const { observable, cancel } = input.startAddressVerification(connection);
   const states: VerifyAddressDeviceState[] = [];
@@ -34,7 +37,7 @@ function startVerification(ports = fakePorts()) {
 
 const flushPromises = () => new Promise(resolve => setTimeout(resolve));
 
-function askThroughApdus(...apdus: Uint8Array[]) {
+function askThroughApdus(apdus: readonly Uint8Array[], listeners?: VerifyAddressDeviceListeners) {
   const gate = deferred<void>();
   const ports = fakePorts({
     getAddress: jest.fn(async ({ dmk, sessionId }) => {
@@ -46,7 +49,7 @@ function askThroughApdus(...apdus: Uint8Array[]) {
     }),
   });
 
-  return { ...startVerification(ports), releaseNextApdu: gate.resolve };
+  return { ...startVerification(ports, listeners), releaseNextApdu: gate.resolve };
 }
 
 describe("buildVerifyAddressIntentInput", () => {
@@ -77,12 +80,9 @@ describe("buildVerifyAddressIntentInput", () => {
 
   it("should report each attempt the job starts", () => {
     const onAttemptStart = jest.fn();
-    const input = buildVerifyAddressIntentInput(
-      ACCOUNT,
-      SELECTION.verification,
-      fakePorts(),
+    const input = buildVerifyAddressIntentInput(ACCOUNT, SELECTION.verification, fakePorts(), {
       onAttemptStart,
-    )!;
+    })!;
     const { connection } = fakeDevice();
 
     input.startAddressVerification(connection);
@@ -92,10 +92,10 @@ describe("buildVerifyAddressIntentInput", () => {
   });
 
   it("should report the device request on the first APDU that is not the app-and-version query", async () => {
-    const { releaseNextApdu, states, subscription } = askThroughApdus(
+    const { releaseNextApdu, states, subscription } = askThroughApdus([
       GET_APP_AND_VERSION_APDU,
       GET_ADDRESS_APDU,
-    );
+    ]);
 
     await flushPromises();
     expect(states).toEqual([]);
@@ -107,6 +107,23 @@ describe("buildVerifyAddressIntentInput", () => {
       { type: "awaiting-confirmation" },
       { type: "confirmed", address: ADDRESS },
     ]);
+    subscription.unsubscribe();
+  });
+
+  it("should report the address displayed once the device request is sent, not before", async () => {
+    const onAddressDisplayed = jest.fn();
+    const { releaseNextApdu, subscription } = askThroughApdus(
+      [GET_APP_AND_VERSION_APDU, GET_ADDRESS_APDU],
+      { onAddressDisplayed },
+    );
+
+    await flushPromises();
+    expect(onAddressDisplayed).not.toHaveBeenCalled();
+
+    releaseNextApdu();
+    await flushPromises();
+
+    expect(onAddressDisplayed).toHaveBeenCalledTimes(1);
     subscription.unsubscribe();
   });
 
@@ -126,12 +143,12 @@ describe("buildVerifyAddressIntentInput", () => {
       subscription.unsubscribe();
     });
 
-    it("should stop the signer's next APDU from reaching the device", async () => {
+    it("should stop the signer before its first request reaches the device", async () => {
       const gate = deferred<void>();
       const signerError = jest.fn();
       const ports = fakePorts({
         getAddress: jest.fn(async ({ dmk, sessionId }) => {
-          await dmk.sendApdu({ sessionId, apdu: GET_ADDRESS_APDU });
+          await dmk.sendApdu({ sessionId, apdu: GET_APP_AND_VERSION_APDU });
           await gate.promise;
           try {
             await dmk.sendApdu({ sessionId, apdu: GET_ADDRESS_APDU });
@@ -154,6 +171,31 @@ describe("buildVerifyAddressIntentInput", () => {
         expect.objectContaining({ name: "DeviceRequestAbortedError" }),
       );
       expect(sendApdu).toHaveBeenCalledTimes(1);
+      expect(states).toEqual([]);
+      expect(error).not.toHaveBeenCalled();
+      subscription.unsubscribe();
+    });
+
+    it("should let a signer that started on the device show the address, like Bitcoin after its silent requests", async () => {
+      const silentRequests = [GET_ADDRESS_APDU, GET_ADDRESS_APDU, GET_ADDRESS_APDU];
+      const gate = deferred<void>();
+      const ports = fakePorts({
+        getAddress: jest.fn(async ({ dmk, sessionId }) => {
+          await dmk.sendApdu({ sessionId, apdu: silentRequests[0] });
+          await gate.promise;
+          for (const apdu of silentRequests.slice(1)) await dmk.sendApdu({ sessionId, apdu });
+          await dmk.sendApdu({ sessionId, apdu: GET_ADDRESS_APDU });
+          return { address: ADDRESS };
+        }),
+      });
+      const { cancel, error, sendApdu, states, subscription } = startVerification(ports);
+      await flushPromises();
+
+      cancel();
+      gate.resolve();
+      await flushPromises();
+
+      expect(sendApdu).toHaveBeenCalledTimes(silentRequests.length + 1);
       expect(states).toEqual([{ type: "awaiting-confirmation" }]);
       expect(error).not.toHaveBeenCalled();
       subscription.unsubscribe();

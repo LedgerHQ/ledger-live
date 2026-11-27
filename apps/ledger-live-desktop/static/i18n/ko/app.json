@@ -2774,10 +2774,36 @@
     }
   },
   "receiveAddress" : {
+    "title" : "{{asset}} 받기",
+    "networkLabel" : "{{network}} 네트워크",
     "addressDisplayed" : {
       "title" : "주소가 안전하게 표시됩니다.",
-      "description" : "붙여넣거나 공유한 주소가 Ledger 장치에 표시된 주소와 일치하는지 확인하세요.",
-      "gotItCta" : "확인"
+      "description" : "붙여넣거나 공유한 주소가 Ledger 장치에 표시된 주소와 일치하는지 확인하세요."
+    },
+    "addressVerified" : {
+      "title" : "주소 확인 완료",
+      "description" : "Ledger Wallet에 표시되는 주소가 Ledger 장치의 주소와 일치합니다.",
+      "doneCta" : "완료"
+    },
+    "addressMismatch" : {
+      "title" : "이 주소는 Ledger 장치 주소와 일치하지 않습니다",
+      "description" : "이 주소를 사용하지 마세요. 해당 계정으로 설정되지 않은 Ledger 장치를 사용 중일 수 있습니다. 올바른 장치를 연결하고 다시 확인해 주세요. 여전히 일치하지 않는다면 Ledger 고객지원에 문의하시기 바랍니다.",
+      "contactSupportCta" : "Ledger 지원팀으로 문의하기",
+      "closeCta" : "닫기"
+    },
+    "selectAddress" : {
+      "title" : "주소 선택"
+    },
+    "addressOptions" : {
+      "transparent" : "공개 주소",
+      "shielded" : "비공개 주소"
+    },
+    "close" : "닫기",
+    "back" : "뒤로",
+    "error" : {
+      "title" : "이 주소를 불러올 수 없습니다.",
+      "description" : "인터넷 연결을 확인하고 다시 시도하세요.",
+      "retry" : "다시 시도"
     }
   },
   "send" : {
@@ -3061,7 +3087,7 @@
     },
     "sponsoredPolling" : {
       "title" : "에너지 전송 중",
-      "waiting" : "일반적으로 최대 30초가 소요됩니다.",
+      "waiting" : "최대 1 분 정도 소요될 수 있습니다.",
       "elapsed" : "경과 시간: {{time}}"
     },
     "sponsoredFailure" : {
@@ -4308,7 +4334,7 @@
         "token" : {
           "title" : "토큰",
           "selectLabel" : "토큰을 선택하세요",
-          "allAdded" : "이 계정에 이미 사용 가능한 모든 토큰을 추가했습니다.",
+          "empty" : "이 계정에 추가할 수 있는 토큰이 없습니다.",
           "loadError" : "토큰 목록을 불러오지 못했습니다.",
           "info" : "토큰 추가 시 네트워크 수수료가 지불되며, 토큰 보유 기간 동안 XRP가 예치됩니다. 관련 작업은 트랜잭션 내역에서 확인할 수 있습니다."
         },
@@ -4316,12 +4342,18 @@
           "title" : "설정",
           "limit" : "보유 한도",
           "max" : "최대",
-          "limitInfo" : "보유 한도는 계정에서 보유할 수 있는 {{token}}의 최대 수량입니다."
+          "limitInfo" : "보유 한도는 계정에서 보유할 수 있는 {{token}}의 최대 수량입니다. XRP Ledger가 허용하는 최대 한도를 사용하려면 Max(최대) 버튼을 켜 주세요.",
+          "maximum" : "최대"
         },
         "review" : {
           "title" : "검토",
           "token" : "토큰",
-          "issuer" : "발행자"
+          "issuer" : "발행자",
+          "issuerFee" : "발행자 수수료",
+          "issuerFeeTooltip" : "보유자 간 이체 시 발행자가 가져가는 수수료 비율입니다.",
+          "issuerFeeError" : "발행자 수수료 상세 정보를 가져오지 못했습니다.",
+          "notEnoughReserve" : "이 토큰을 추가하려면 최소 {{minimumAmount}}의 가용 잔액을 보유하고 있어야 합니다.",
+          "receive" : "받기"
         },
         "connectDevice" : {
           "title" : "장치"
@@ -4329,8 +4361,8 @@
         "confirmation" : {
           "title" : "확인",
           "success" : {
-            "title" : "{{token}} 토큰이 성공적으로 추가되었습니다",
-            "text" : "이제 XRP 계정에서 <0>{{token}}</0> 자산을 받을 수 있습니다.",
+            "title" : "{{token}} 추가 요청이 전송되었습니다",
+            "text" : "네트워크에서 트랜잭션 확인이 완료되면 적용됩니다.",
             "cta" : "상세 내역 보기"
           },
           "broadcastError" : "트랜잭션이 실패했을 수 있습니다. 잠시 후 트랜잭션 내역을 확인한 뒤 다시 시도해 주세요."
@@ -4344,14 +4376,59 @@
       "steps" : {
         "confirmation" : {
           "success" : {
-            "title" : "{{token}} 보유 한도 업데이트",
-            "text" : "이제 XRP 계정에서 새로운 한도까지 <0>{{token}}</0> 자산을 보유할 수 있습니다."
+            "title" : "{{token}} 업데이트 요청이 전송되었습니다"
+          }
+        }
+      }
+    },
+    "manageAssets" : {
+      "cta" : "관리",
+      "title" : "자산 관리",
+      "tokenType" : "토큰 유형",
+      "tokenTypeTooltip" : "트러스트라인(IOU)에는 잔액 한도 및 리플링(rippling) 설정이 존재합니다. 반면, 다목적 토큰(MPT)에는 별도의 설정이 없습니다.",
+      "iou" : "트러스트 라인(IOU)",
+      "mpt" : "다목적 토큰",
+      "transferFee" : "전송 수수료",
+      "lockedAmount" : "잠긴 수량",
+      "balanceLimit" : "보유 한도",
+      "ripplingTooltip" : "리플링(Rippling) 기능을 활성화하면, 다른 사용자의 결제(송금) 트랜잭션 과정에서 내 지갑에 있는 같은 종류의 토큰끼리 잔액이 바뀔 수 있습니다.",
+      "activated" : "활성화",
+      "deactivated" : "비활성화",
+      "edit" : "편집",
+      "delete" : "삭제"
+    },
+    "manageToken" : {
+      "title" : "토큰 관리",
+      "settings" : {
+        "title" : "고급 설정",
+        "description" : "보유 한도 또는 리플링을 변경합니다."
+      },
+      "remove" : {
+        "description" : "이 트러스트 라인을 닫고 XRP 예치금을 돌려받습니다."
+      }
+    },
+    "removeToken" : {
+      "title" : "토큰 제거",
+      "pending" : "삭제 대기 중",
+      "frozen" : "이 토큰은 동결되었습니다",
+      "steps" : {
+        "review" : {
+          "unlocked" : "{{amount}}의 잠금이 해제되어 다시 사용할 수 있게 됩니다.",
+          "info" : "더 이상 이 토큰을 받을 수 없습니다. 나중에 다시 추가할 수 있습니다(이때 {{amount}}의 토큰이 다시 잠금 처리됩니다).",
+          "balanceLeft" : "여전히 {{balance}}의 토큰을 보유 중입니다. 이 토큰 계정을 삭제하려면 먼저 남은 잔액을 모두 전송하세요.",
+          "send" : "보내기"
+        },
+        "connectDevice" : {
+          "limitZero" : "장치 화면에 보유 한도가 0으로 표시됩니다. 이는 XRP Ledger에서 토큰을 삭제하는 정상적인 방식입니다."
+        },
+        "confirmation" : {
+          "success" : {
+            "title" : "{{token}} 제거 요청이 전송되었습니다"
           }
         }
       }
     },
     "tokenAccount" : {
-      "editSettings" : "설정 편집",
       "trustLimit" : "보유 한도",
       "trustLimitTooltip" : "계정에서 보유할 수 있는 해당 토큰의 최대 수량입니다."
     },
@@ -4360,6 +4437,9 @@
       "on" : "켜짐",
       "off" : "꺼짐",
       "warning" : "이 기능을 켜면 다른 사용자의 결제 트랜잭션 과정에서 내 지갑에 있는 같은 종류의 토큰끼리 잔액이 바뀔 수 있습니다. 기능의 의미를 확실히 아는 경우에만 켜두세요."
+    },
+    "send" : {
+      "issuerFee" : "발행자 수수료"
     },
     "receive" : {
       "addToken" : "토큰 추가",
@@ -5615,7 +5695,14 @@
       },
       "devTools" : {
         "rowTitle" : "개발자 도구",
-        "rowDesc" : "DevTools 셸 열기(기능 플래그 및 개발 도구 패널)"
+        "rowDesc" : "DevTools 셸 열기(기능 플래그 및 개발 도구 패널)",
+        "appToggles" : {
+          "hideNightlyLayer" : {
+            "label" : "사전 릴리스 오버레이 숨기기",
+            "description" : "깔끔한 스크린샷 캡처 등을 위해 야간 빌드(Nightly Build)에 표시되는 '사전 릴리스(PRERELEASE)' 워터마크를 숨깁니다.",
+            "lockedReason" : "이 오버레이는 야간 빌드에서만 표시됩니다."
+          }
+        }
       },
       "brazeTools" : {
         "title" : "브레이즈 도구",
@@ -7156,6 +7243,9 @@
         "expiresAt" : "만료 시간",
         "expiresIn" : "만료 날짜",
         "amount" : "수량",
+        "unknownToken" : "알 수 없는 토큰",
+        "instrumentId" : "인스트루먼트 ID",
+        "instrumentAdmin" : "인스트루먼트 관리자",
         "transaction" : "트랜잭션",
         "viewTransaction" : "트랜잭션 보기",
         "action" : "동작",
@@ -8091,7 +8181,8 @@
       "description" : "문제가 발생했습니다. 확실하지 않을 경우 다시 시도하거나 Ledger 지원 부서에 연락하세요."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "이더리움 앱에서 블라인드 서명 또는 컨트랙트 데이터를 활성화하세요"
+      "title" : "이더리움 앱에서 블라인드 서명 또는 컨트랙트 데이터를 활성화하세요",
+      "description" : "장치의 이더리움 앱 설정에서 Blind signing(블라인드 서명)을 활성화한 후 다시 시도해 주세요."
     },
     "CeloAppPleaseEnableContractData" : {
       "title" : "Celo 앱 설정에서 컨트랙트 데이터를 활성화하세요"
@@ -8114,11 +8205,11 @@
       "description" : "토큰 홀딩을 중단하려면 삭제해 주세요."
     },
     "XrpTokenFrozen" : {
-      "title" : "이 토큰을 보낼 수 없습니다.",
+      "title" : "토큰이 동결되었습니다",
       "description" : "발행자가 해당 토큰을 동결했습니다."
     },
     "XrpTokenNotAuthorized" : {
-      "title" : "이 토큰을 보낼 수 없습니다.",
+      "title" : "계정이 승인되지 않았습니다",
       "description" : "발행자가 사용자 계정의 토큰 홀딩을 승인하지 않았습니다."
     },
     "XrpTokenCannotReceive" : {
@@ -8143,6 +8234,54 @@
     "XrpReserveIncrease" : {
       "title" : "이 토큰이 추가되어 있는 동안 계정에 {{amount}}의 자산이 잠금 처리됩니다.",
       "description" : "토큰을 삭제하면 예치된 자산을 다시 돌려받습니다."
+    },
+    "XrpAccountNotActivated" : {
+      "title" : "계정이 아직 활성화되지 않았습니다",
+      "description" : "계정을 활성화하고 이 토큰을 추가하려면 최소 {{amount}} 이상 수신해야 합니다. 여기에는 계정 활성화 및 토큰 추가 시 묶이는 XRP 예치금이 포함되어 있습니다."
+    },
+    "XrpTrustLimitTooHigh" : {
+      "title" : "한도가 최대 수량을 초과했습니다",
+      "description" : "최고 한도로 설정하려면 '최대(Max)'를 선택하세요."
+    },
+    "XrpTrustSetUnchanged" : {
+      "title" : "이미 적용된 설정입니다",
+      "description" : "이 토큰을 업데이트하려면 한도 또는 리플링을 변경하세요."
+    },
+    "XrpRecipientNotActivated" : {
+      "title" : "이 계정이 활성화되지 않았습니다",
+      "description" : "토큰을 받을 수 없습니다."
+    },
+    "XrpRecipientTokenNotAdded" : {
+      "title" : "해당 수신자는 아직 이 토큰을 받을 수 없습니다.",
+      "description" : "수신자에게 먼저 토큰을 추가하도록 요청하세요."
+    },
+    "XrpRecipientLimitTooLow" : {
+      "title" : "수신 한도가 너무 낮습니다",
+      "description" : "수신자가 받을 수 있는 이 토큰의 최대 수량은 {{maxAmount}}입니다."
+    },
+    "XrpSendToIssuer" : {
+      "title" : "토큰 발행자에게 전송 중",
+      "description" : "전송된 토큰은 소각되며 누구의 계정에도 입금되지 않습니다."
+    },
+    "XrpOptOutBalanceNotZero" : {
+      "title" : "이 토큰의 수량이 0이어야 합니다",
+      "description" : "토큰을 삭제하려면 남은 잔액을 모두 전송하세요."
+    },
+    "XrpOptOutTokenInEscrow" : {
+      "title" : "이 토큰 중 일부가 에스크로에 묶여 있습니다.",
+      "description" : "에스크로가 완료되거나 취소되면 토큰을 삭제하세요."
+    },
+    "XrpOptOutTokenFrozen" : {
+      "title" : "{{assetCode}} 삭제가 불가능합니다.",
+      "description" : "발행자가 귀하의 계정에서 해당 자산을 동결했습니다."
+    },
+    "XrpOptOutIncomplete" : {
+      "title" : "이 토큰은 삭제할 수 없습니다.",
+      "description" : "XRP Ledger 정책상 해당 토큰은 삭제되지 않으며, 잠금 처리된 XRP와 함께 계정에 유지됩니다."
+    },
+    "XrpReserveRelease" : {
+      "title" : "이 토큰을 위해 묶여 있던 {{amount}} 잠금이 해제됩니다.",
+      "description" : "토큰 삭제 후 해당 금액을 사용할 수 있습니다."
     },
     "InvalidExplorerResponse" : {
       "title" : "{{currencyName}} 탐색기의 응답이 유효하지 않습니다"
@@ -8274,6 +8413,10 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+    },
+    "SolanaTxBlockhashExpired" : {
+      "title" : "트랜잭션이 만료되었습니다.",
+      "description" : "네트워크에서 이 트랜잭션을 더 이상 수락하지 않습니다. 다시 시도하여 새로 생성해 주세요."
     },
     "SolanaRecipientMemoIsRequired" : {
       "title" : "수령인 주소에 메모가 필요합니다"
@@ -8674,6 +8817,22 @@
     "SuiAddressBalanceAppUpdateRequired" : {
       "title" : "SUI 앱을 업데이트하세요",
       "description" : "현재 Ledger Sui 앱으로는 SUI 송금 트랜잭션에 서명할 수 없습니다. Ledger 장치에서 SUI 앱을 업데이트하고 다시 시도하세요."
+    },
+    "SuiRawTransactionInvalid" : {
+      "title" : "읽을 수 없는 SUI 트랜잭션",
+      "description" : "앱에서 Ledger Wallet™이 읽을 수 없는 SUI 트랜잭션을 전송했습니다. 앱에서 다시 시도하거나 해당 앱의 고객 지원 센터로 문의하세요."
+    },
+    "SuiRawTransactionSenderMismatch" : {
+      "title" : "잘못된 SUI 계정",
+      "description" : "이 트랜잭션은 다른 Sui 계정용으로 생성되었습니다. 앱에 연결된 계정을 선택한 후 다시 시도해 주세요."
+    },
+    "SuiRawTransactionResolutionFailed" : {
+      "title" : "SUI 트랜잭션을 생성할 수 없음",
+      "description" : "트랜잭션에 필요한 자산이 남아 있는지, 계정에 네트워크 수수료를 지불할 잔액이 충분한지 확인한 후 앱에서 다시 시도하세요."
+    },
+    "SuiSponsoredTransactionBroadcastUnsupported" : {
+      "title" : "스폰서 SUI 트랜잭션",
+      "description" : "이 트랜잭션은 네트워크 수수료가 대납(스폰서)되는 방식이므로 Ledger Wallet에서 직접 전송할 수 없습니다. 연결된 앱 자체에서 트랜잭션을 전송해야 합니다. 문제가 계속되면 해당 앱의 고객 지원팀에 문의해 주세요."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "사용 가능한(스테이킹되지 않은) 잔액은 현재 {{currentBalance}}이며, {{assetName}} 언스테이킹에 필요한 네트워크 수수료를 지불하기에 부족합니다.",

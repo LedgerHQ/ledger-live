@@ -45,7 +45,7 @@ jobs:
       contents: read
     needs: is-affected
     if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-22.04' || 'ledger-wallet-4cpu-aws-public' }}
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-22.04' || 'ledger-wallet-4cpu-aws-public-cached' }}
     outputs:
       failed_packages: ${{ steps.test-scheduled.outputs.failed_packages }}
 

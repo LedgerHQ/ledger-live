@@ -15,6 +15,11 @@ const INSUFFICIENT_FUNDS_AMOUNT_ERROR_NAMES = [
   "NotEnoughBalanceToDelegate",
 ] as const;
 
+const INSUFFICIENT_FEE_FUNDS_ERROR_NAMES = new Set([
+  "SolanaNotEnoughSolForTokenTransfer",
+  "SolanaNotEnoughSolForRecipientTokenAccount",
+]);
+
 /**
  * Maximum amount the user can send (spendable/balance minus estimated fees).
  * Returns zero if account is missing or balance would be negative.
@@ -42,10 +47,12 @@ export function getMaxAvailable(
 }
 
 /**
- * Returns true if the transaction status has an amount error that indicates
+ * Returns true if the transaction status has an amount error, or a native fee error, that indicates
  * insufficient funds (so the CTA can show "Get funds" instead of "Review").
  */
 export function isInsufficientFundsAmountError(status: TransactionStatus): boolean {
+  const feeErrorName = status.errors?.gasPrice?.name;
+  if (feeErrorName && INSUFFICIENT_FEE_FUNDS_ERROR_NAMES.has(feeErrorName)) return true;
   const amountError = status.errors?.amount;
   if (!amountError) return false;
   const errorName = amountError.name;

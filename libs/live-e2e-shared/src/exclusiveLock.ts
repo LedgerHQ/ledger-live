@@ -202,13 +202,13 @@ async function checkLockStore(store: LockStore): Promise<void> {
       `[exclusiveLock] R2 ignored If-None-Match: it created "${STORE_CHECK_KEY}" twice`,
     );
   }
-  if (await store.replace(STORE_CHECK_KEY, record, UNKNOWN_ETAG)) {
+  if (await store.replace({ key: STORE_CHECK_KEY, record, etag: UNKNOWN_ETAG })) {
     throw new Error(
       `[exclusiveLock] R2 ignored If-Match: it replaced "${STORE_CHECK_KEY}" at ETag ${UNKNOWN_ETAG}`,
     );
   }
   const current = await readCheckKey("right after writing it");
-  if (await store.replace(STORE_CHECK_KEY, record, current.etag)) return;
+  if (await store.replace({ key: STORE_CHECK_KEY, record, etag: current.etag })) return;
   const after = await readCheckKey("after rejecting its replacement");
   if (after.etag === current.etag) {
     throw new Error(
@@ -248,11 +248,12 @@ export async function exclusiveLockStoreFailure({
 
 let warnedMachineLocal = false;
 
+type MachineLocalLockOptions = { key: string; settleMs: number; acquireTimeoutMs: number };
+
 async function acquireMachineLocalLock(
-  key: string,
-  settleMs: number,
-  acquireTimeoutMs: number,
+  options: MachineLocalLockOptions,
 ): Promise<AbandonableLease> {
+  const { key, settleMs, acquireTimeoutMs } = options;
   const localMode = isMachineLocalMode();
   if (process.env.CI && !localMode) {
     throw new ExclusiveLockConfigError(
@@ -312,11 +313,10 @@ type KeyLockOptions = {
   readonly sharedResourceKeys: ReadonlySet<string>;
 };
 
-async function acquireKey(
-  key: string,
-  label: string,
-  { allowNested, deadline, giveUpIfHeld, sharedResourceKeys }: KeyLockOptions,
-): Promise<AbandonableLease> {
+type AcquireKeyOptions = KeyLockOptions & { key: string; label: string };
+
+async function acquireKey(options: AcquireKeyOptions): Promise<AbandonableLease> {
+  const { key, label, allowNested, deadline, giveUpIfHeld, sharedResourceKeys } = options;
   const holds = liveHolds();
   const outer = holds[key];
   if (outer?.refusedBecause && !allowNested) {
@@ -351,7 +351,7 @@ async function acquireKey(
         log: consoleLogger,
         onLost: forget,
       })
-    : await acquireMachineLocalLock(key, settleMs, acquireTimeoutMs);
+    : await acquireMachineLocalLock({ key, settleMs, acquireTimeoutMs });
   if (allowNested) holds[key] = hold;
 
   // Calls made while nested ones still run can join, e.g. a nested call locking the account
@@ -420,17 +420,19 @@ export async function tryAcquireExclusiveLock(
   }
 }
 
+type AcquireInOrderOptions = KeyLockOptions & {
+  keys: readonly string[];
+  label: string;
+  leases: AbandonableLease[];
+};
+
 /** One at a time, in the same order everywhere, so two holders of several keys never deadlock. */
-async function acquireInOrder(
-  keys: readonly string[],
-  label: string,
-  options: KeyLockOptions,
-  leases: AbandonableLease[],
-): Promise<void> {
+async function acquireInOrder(options: AcquireInOrderOptions): Promise<void> {
+  const { keys, label, leases, ...lockOptions } = options;
   const [key, ...rest] = keys;
   if (key === undefined) return;
-  leases.push(await acquireKey(key, label, options));
-  await acquireInOrder(rest, label, options, leases);
+  leases.push(await acquireKey({ ...lockOptions, key, label }));
+  await acquireInOrder({ ...lockOptions, keys: rest, label, leases });
 }
 
 async function lockTargets(
@@ -446,7 +448,7 @@ async function lockTargets(
   const deadline = startedAt + EXCLUSIVE_LOCK_ACQUIRE_TIMEOUT_MS;
   const leases: AbandonableLease[] = [];
   try {
-    await acquireInOrder(keys, label, { ...options, deadline, sharedResourceKeys }, leases);
+    await acquireInOrder({ ...options, deadline, sharedResourceKeys, keys, label, leases });
   } catch (error) {
     await Promise.allSettled(leases.map(lease => lease.abandon()));
     throw error;
@@ -480,23 +482,29 @@ export function refuseExclusiveLocks(targets: readonly LockTarget[], reason: str
   };
 }
 
+type ExclusiveLockRunOptions = {
+  readonly targets: readonly LockTarget[];
+  readonly label: string;
+  readonly waitsForConfirmation?: boolean;
+};
+
 /**
  * Runs `fn` under the lock of `targets`. With `waitsForConfirmation`, `fn` only returns once its
  * transactions are confirmed, so on success the targets are handed back without the settle window.
  */
 export async function runWithExclusiveLock<T>(
-  targets: readonly LockTarget[],
-  label: string,
+  options: ExclusiveLockRunOptions,
   fn: () => Promise<T>,
-  { waitsForConfirmation = false }: { readonly waitsForConfirmation?: boolean } = {},
 ): Promise<T> {
+  const { targets, label, waitsForConfirmation = false } = options;
   const lease = await acquireExclusiveLock(targets, label);
-  let confirmed = false;
+  let result: T;
   try {
-    const result = await fn();
-    confirmed = waitsForConfirmation;
-    return result;
-  } finally {
-    await (confirmed ? lease.abandon() : lease.release());
+    result = await fn();
+  } catch (error) {
+    await lease.release();
+    throw error;
   }
+  await (waitsForConfirmation ? lease.abandon() : lease.release());
+  return result;
 }

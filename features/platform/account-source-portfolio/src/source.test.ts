@@ -1,4 +1,4 @@
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import {
   BTC,
   DOT,

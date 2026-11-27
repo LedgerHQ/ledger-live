@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import type { Account, AccountLike, DistributionItem } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -16,6 +16,11 @@ import { MAD_SOURCE_PAGES } from "LLD/features/ModularDialog/analytics/modularDi
 import { buildMainAccountByIdMap } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
+import {
+  accountChainPageKey,
+  assetChainPageKey,
+  useAssetAccountChainNavigate,
+} from "LLD/utils/assetAccountChain";
 import { useReceiveNetworkLedgerIds } from "LLD/features/AssetDetail/hooks/useReceiveNetworkLedgerIds";
 import { MAX_ADDRESSES_PREVIEW } from "../constants";
 
@@ -27,7 +32,9 @@ const getAccountFiatEntry = (account: AccountLike) => ({
 export function useAddressListViewModel(distributionItem: DistributionItem) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const navigateInChain = useAssetAccountChainNavigate();
   const { pathname: assetDetailPath } = useLocation();
+  const { "*": routeAssetId = "" } = useParams<{ "*": string }>();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const nestedAccounts = useSelector(accountsSelector);
 
@@ -108,9 +115,13 @@ export function useAddressListViewModel(distributionItem: DistributionItem) {
       navigate(ACCOUNTS_SIDEBAR_PATH);
       return;
     }
-    navigate(
+    navigateInChain(
       getAccountUrl(account.id, account.type === "TokenAccount" ? parentAccount?.id : undefined),
-      buildNavigationBackState("accountBackPath", assetDetailPath),
+      {
+        from: assetChainPageKey(routeAssetId),
+        to: accountChainPageKey(account.type === "TokenAccount" ? account.parentId : account.id),
+        state: buildNavigationBackState("accountBackPath", assetDetailPath).state,
+      },
     );
   };
 

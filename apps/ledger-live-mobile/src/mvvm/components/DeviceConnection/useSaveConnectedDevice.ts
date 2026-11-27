@@ -1,28 +1,20 @@
 import { useCallback } from "react";
 import type { ConnectedDevice } from "@ledgerhq/device-management-kit";
-import { mockserverIdentifier } from "@ledgerhq/live-dmk-mobile";
-import { buildMockServerCompatDeviceId, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import { buildMobileCompatDeviceId } from "@ledgerhq/live-dmk-mobile";
+import { connectedDeviceToDevice } from "@ledgerhq/live-dmk-shared";
 import { type SavedDevice, useSaveDevice } from "./useSaveDevice";
 
 function mapConnectedDeviceToSavedDevice(connectedDevice: ConnectedDevice): SavedDevice {
-  const deviceModelId = dmkToLedgerDeviceIdMap[connectedDevice.modelId];
-  const isMockServerDevice = connectedDevice.transport === mockserverIdentifier;
+  const knownDevice = connectedDeviceToDevice(connectedDevice);
 
   return {
     lastConnectedDevice: {
-      deviceId: isMockServerDevice
-        ? buildMockServerCompatDeviceId(connectedDevice.id)
-        : connectedDevice.id,
+      deviceId: buildMobileCompatDeviceId(connectedDevice),
       deviceName: connectedDevice.name,
-      modelId: deviceModelId,
+      modelId: knownDevice.deviceModelId,
       wired: connectedDevice.type === "USB",
     },
-    knownDevice: {
-      id: connectedDevice.id,
-      name: connectedDevice.name,
-      deviceModelId,
-      transport: connectedDevice.transport,
-    },
+    knownDevice,
   };
 }
 
