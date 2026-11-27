@@ -16,6 +16,7 @@ import { LedgerSyncActivationDrawer } from "../components/LedgerSyncActivationDr
 import { useSectionRowsToHide } from "../hooks/useSectionRowsToHide";
 import { MobileSettingsPortProvider } from "../MobileSettingsPortProvider";
 import { useNotificationsSettingsAdapter } from "../sections/notifications";
+import { AboutSection } from "../sections/about/AboutSection";
 
 type SettingsSectionScreenProps = StackNavigatorProps<
   SettingsNavigatorStackParamList,
@@ -52,6 +53,8 @@ function SectionContent({ section }: Readonly<{ section: SettingsHomeSectionId }
       );
     case "notifications":
       return <NotificationsSection />;
+    case "about":
+      return <AboutSection />;
     default:
       return null;
   }

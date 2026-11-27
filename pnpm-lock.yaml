@@ -2350,6 +2350,9 @@ importers:
       '@features/flow-settings':
         specifier: workspace:^
         version: link:../../features/flow/settings
+      '@features/flow-settings-about':
+        specifier: workspace:^
+        version: link:../../features/flow/settings-about
       '@features/flow-settings-general':
         specifier: workspace:^
         version: link:../../features/flow/settings-general

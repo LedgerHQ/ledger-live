@@ -12,6 +12,8 @@ const resources = {
             description:
               "By using Ledger Wallet you are deemed to have accepted our terms and conditions",
           },
+          feedback: { title: "Give us feedback on the app" },
+          rate: { title: "Rate us on {{storeName}}" },
           connect: {
             title: "Connect with us",
             x: "Follow us on X",

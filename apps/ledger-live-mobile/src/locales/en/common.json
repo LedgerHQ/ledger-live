@@ -4832,6 +4832,25 @@
         "desc": "Give us your feedback on the app",
         "ios": "Review in the App Store",
         "android": "Review in the Google Play store"
+      },
+      "version": {
+        "title": "Version"
+      },
+      "terms": {
+        "title": "Terms and conditions",
+        "description": "By using Ledger Wallet you are deemed to have accepted our terms and conditions"
+      },
+      "feedback": {
+        "title": "Give us feedback on the app"
+      },
+      "rate": {
+        "title": "Rate us on {{storeName}}"
+      },
+      "connect": {
+        "title": "Connect with us",
+        "x": "Follow us on X",
+        "instagram": "Follow us on Instagram",
+        "github": "Review our Github"
       }
     },
     "notifications": {
