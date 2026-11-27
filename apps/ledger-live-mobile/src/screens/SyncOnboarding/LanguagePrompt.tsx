@@ -44,13 +44,16 @@ export const LanguagePrompt: React.FC<LanguagePromptProps> = ({ device, onDone }
   const { locale: currentLocale } = useLocale();
 
   const appLanguage = localeIdToDeviceLanguage[currentLocale];
-  const languagesDiffer =
+  const deviceLanguageId = deviceInfo?.languageId;
+  const needsAppLanguage =
     appLanguage !== undefined &&
-    availableLanguages.includes(appLanguage) &&
-    deviceInfo?.languageId !== undefined &&
-    idsToLanguage[deviceInfo.languageId] !== appLanguage;
+    deviceLanguageId !== undefined &&
+    idsToLanguage[deviceLanguageId] !== appLanguage;
+  const languagesDiffer = needsAppLanguage && availableLanguages.includes(appLanguage);
 
-  const checkDone = deviceInfoError !== null || (deviceInfo !== null && availableLanguagesLoaded);
+  const checkDone =
+    deviceInfoError !== null ||
+    (deviceInfo !== null && (!needsAppLanguage || availableLanguagesLoaded));
   const isDeviceLanguagePromptOpen = languagesDiffer && !deviceLanguagePromptDismissed;
   const done = checkDone && !isDeviceLanguagePromptOpen;
 

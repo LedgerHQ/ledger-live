@@ -101,14 +101,14 @@ describe("LanguagePrompt", () => {
     useManagerApi();
   });
 
-  it("should be done without a drawer when the device already has the app language", async () => {
+  it("should be done at once when the device already has the app language", () => {
+    server.use(http.get("*/language-package", () => new Promise<never>(() => {})));
     mockUseGetDeviceInfo.mockReturnValue(deviceInfoState({ deviceInfo: deviceInfo(0x01) }));
     const onDone = jest.fn();
 
     renderPrompt(onDone);
 
-    expect(onDone).not.toHaveBeenCalled();
-    await waitFor(() => expect(onDone).toHaveBeenCalled());
+    expect(onDone).toHaveBeenCalled();
     expect(screen.queryByTestId("modal-close-button")).toBeNull();
   });
 
