@@ -22,7 +22,8 @@ There is no release notes button, no Privacy policy row and no feedback row on d
 
 ## Port
 
-The app provides a `SettingsAboutPort`: `version`, `termsUrl` (the localized terms page) and
+The app provides the About part of the shared settings port (read through `useSettingsAboutPort`,
+like the other sections): `values.version`, `values.termsUrl` (the localized terms page) and
 `unlockDeveloperTools()`. The package never imports the app store. Its social links (X, Instagram,
 GitHub) live in the package's own `src/urls.ts`, an internal file like the other flows' `urls.ts`,
 so the app does not carry them.
@@ -32,16 +33,18 @@ the legacy About does, and shows its toast. The setting is saved to disk, so it 
 
 ## Exports
 
-| Export               | Purpose                                      |
-| -------------------- | -------------------------------------------- |
-| `SettingsAbout`      | The section: `port` and `testID`             |
-| `SettingsAboutPort`  | What the app provides (type)                 |
+| Export                 | Purpose                                    |
+| ---------------------- | ------------------------------------------ |
+| `SettingsAbout`        | The section: `testID`                      |
+| `SettingsAboutPort`    | What the app provides (type)               |
+| `SettingsAboutValues`  | The values the app provides (type)         |
+| `useSettingsAboutPort` | Reads the About part of the settings port  |
 
 ## Tracking
 
-The app tracks the screen: desktop sends `Settings` / `About`.
+The section tracks its screen: `Settings` / `About`.
 
 ## Consumers
 
-Ledger Wallet Desktop, in `apps/ledger-live-desktop/src/mvvm/features/Settings/sections/about.tsx`.
+Ledger Wallet Desktop, through the adapter in `apps/ledger-live-desktop/src/mvvm/features/Settings/sections/about.ts`.
 Ledger Wallet Mobile, once its About screen lands.

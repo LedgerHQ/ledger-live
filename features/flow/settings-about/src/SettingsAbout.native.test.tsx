@@ -1,9 +1,12 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
+import { SettingsPortProvider } from "@features/flow-settings";
 import { createFakeLinking } from "./__tests__/fakeLinking";
 import { createFakeSettingsAboutPort } from "./__tests__/fakeSettingsAboutPort";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
 import { SettingsAbout } from "./SettingsAbout";
+
+jest.mock("@shared/analytics-react", () => ({ TrackScreen: () => null }));
 
 const { LinkingWrapper } = createFakeLinking();
 
@@ -12,7 +15,9 @@ describe("SettingsAbout on mobile", () => {
     render(
       <I18nWrapper>
         <LinkingWrapper>
-          <SettingsAbout port={createFakeSettingsAboutPort()} testID="settings-about" />
+          <SettingsPortProvider value={createFakeSettingsAboutPort()}>
+            <SettingsAbout testID="settings-about" />
+          </SettingsPortProvider>
         </LinkingWrapper>
       </I18nWrapper>,
     );

@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import type { SettingsPort } from "@features/flow-settings";
+import type { SettingsAboutPort, SettingsAboutValues } from "@features/flow-settings-about";
 import {
   isRegionUpdate,
   type GeneralSettingsPort,
@@ -19,6 +20,7 @@ import {
   type SecuritySettingsValues,
   type SecurityUpdate,
 } from "@features/flow-settings-security";
+import { useAboutSettingsAdapter } from "./sections/about";
 import { useGeneralSettingsAdapter } from "./sections/general/useGeneralSettingsAdapter";
 import { useRegionSettingsAdapter } from "./sections/general/useRegionSettingsAdapter";
 import { usePrivacySettingsAdapter } from "./sections/privacy";
@@ -28,11 +30,16 @@ type DesktopSettingsUpdate = GeneralSettingUpdate | RegionUpdate | SecurityUpdat
 
 /** The port of Ledger Wallet Desktop: the values and changes of every section, and their actions. */
 export type DesktopSettingsPort = SettingsPort<
-  GeneralSettingsValues & RegionSettingsValues & SecuritySettingsValues & PrivacySettingsValues,
+  GeneralSettingsValues &
+    RegionSettingsValues &
+    SecuritySettingsValues &
+    PrivacySettingsValues &
+    SettingsAboutValues,
   DesktopSettingsUpdate
 > &
   Pick<GeneralSettingsPort, "languages" | "currencies" | "ledgerSync"> &
-  Pick<SecuritySettingsPort, "requestAppLock">;
+  Pick<SecuritySettingsPort, "requestAppLock"> &
+  Pick<SettingsAboutPort, "unlockDeveloperTools">;
 
 /**
  * Builds the settings port of Ledger Wallet Desktop from the legacy settings store. Each section
@@ -44,10 +51,17 @@ export function useDesktopSettingsPort(): DesktopSettingsPort {
   const region = useRegionSettingsAdapter();
   const security = useSecuritySettingsAdapter();
   const privacy = usePrivacySettingsAdapter();
+  const about = useAboutSettingsAdapter();
 
   const values = useMemo(
-    () => ({ ...general.values, ...region.values, ...security.values, ...privacy.values }),
-    [general.values, region.values, security.values, privacy.values],
+    () => ({
+      ...general.values,
+      ...region.values,
+      ...security.values,
+      ...privacy.values,
+      ...about.values,
+    }),
+    [general.values, region.values, security.values, privacy.values, about.values],
   );
 
   const setValue = useCallback(
@@ -67,9 +81,18 @@ export function useDesktopSettingsPort(): DesktopSettingsPort {
 
   const { languages, currencies, ledgerSync } = general;
   const { requestAppLock } = security;
+  const { unlockDeveloperTools } = about;
 
   return useMemo(
-    () => ({ values, setValue, languages, currencies, ledgerSync, requestAppLock }),
-    [values, setValue, languages, currencies, ledgerSync, requestAppLock],
+    () => ({
+      values,
+      setValue,
+      languages,
+      currencies,
+      ledgerSync,
+      requestAppLock,
+      unlockDeveloperTools,
+    }),
+    [values, setValue, languages, currencies, ledgerSync, requestAppLock, unlockDeveloperTools],
   );
 }

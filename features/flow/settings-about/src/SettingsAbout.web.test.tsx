@@ -1,11 +1,14 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { SettingsPortProvider } from "@features/flow-settings";
 import { createFakeLinking } from "./__tests__/fakeLinking";
 import { createFakeSettingsAboutPort, FAKE_TERMS_URL } from "./__tests__/fakeSettingsAboutPort";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
 import { SettingsAbout } from "./SettingsAbout";
 import { socialUrls } from "./urls";
+
+jest.mock("@shared/analytics-react", () => ({ TrackScreen: () => null }));
 
 const { openExternal, LinkingWrapper } = createFakeLinking();
 
@@ -13,7 +16,9 @@ function renderAbout(port = createFakeSettingsAboutPort()) {
   render(
     <I18nWrapper>
       <LinkingWrapper>
-        <SettingsAbout port={port} testID="settings-about" />
+        <SettingsPortProvider value={port}>
+          <SettingsAbout testID="settings-about" />
+        </SettingsPortProvider>
       </LinkingWrapper>
     </I18nWrapper>,
   );

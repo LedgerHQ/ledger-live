@@ -6,8 +6,8 @@ export function createFakeSettingsAboutPort(): SettingsAboutPort & {
   unlockDeveloperTools: jest.Mock;
 } {
   return {
-    version: "1.2.3",
-    termsUrl: FAKE_TERMS_URL,
+    values: { version: "1.2.3", termsUrl: FAKE_TERMS_URL },
+    setValue: jest.fn(),
     unlockDeveloperTools: jest.fn(),
   };
 }

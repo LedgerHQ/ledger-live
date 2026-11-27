@@ -14397,6 +14397,9 @@ importers:
       '@features/flow-settings':
         specifier: workspace:*
         version: link:../settings
+      '@shared/analytics-react':
+        specifier: workspace:*
+        version: link:../../../shared/analytics-react
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n

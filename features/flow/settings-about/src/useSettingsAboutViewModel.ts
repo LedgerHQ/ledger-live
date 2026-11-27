@@ -4,11 +4,11 @@ import { useSettingsAboutLabels } from "./copy/useSettingsAboutLabels";
 import { nextVersionTapState } from "./logic/versionTaps";
 import type { SettingsAboutProps, SettingsAboutViewProps } from "./SettingsAbout.types";
 import { socialUrls } from "./urls";
+import { useSettingsAboutPort } from "./useSettingsAboutPort";
 
-export function useSettingsAboutViewModel({
-  port,
-  testID,
-}: SettingsAboutProps): SettingsAboutViewProps {
+export function useSettingsAboutViewModel({ testID }: SettingsAboutProps): SettingsAboutViewProps {
+  const port = useSettingsAboutPort();
+  const { version, termsUrl } = port.values;
   const labels = useSettingsAboutLabels();
   const openLink = useOpenLink();
   const [taps, setTaps] = useState(0);
@@ -33,7 +33,7 @@ export function useSettingsAboutViewModel({
           {
             id: "version",
             title: labels.version.title,
-            description: port.version,
+            description: version,
             onSelect: onVersionPress,
             testID: "settings-about-version",
           },
@@ -41,7 +41,7 @@ export function useSettingsAboutViewModel({
             id: "terms",
             title: labels.terms.title,
             description: labels.terms.description,
-            trailing: externalLink(port.termsUrl),
+            trailing: externalLink(termsUrl),
             testID: "settings-about-terms",
           },
         ],

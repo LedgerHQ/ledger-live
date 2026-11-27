@@ -1,5 +1,6 @@
 import React from "react";
 import { act, renderHook } from "@testing-library/react";
+import { SettingsPortProvider } from "@features/flow-settings";
 import { createFakeLinking } from "./__tests__/fakeLinking";
 import { createFakeSettingsAboutPort, FAKE_TERMS_URL } from "./__tests__/fakeSettingsAboutPort";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
@@ -8,16 +9,17 @@ import { useSettingsAboutViewModel } from "./useSettingsAboutViewModel";
 
 const { openExternal, LinkingWrapper } = createFakeLinking();
 
-function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <I18nWrapper>
-      <LinkingWrapper>{children}</LinkingWrapper>
-    </I18nWrapper>
-  );
-}
-
 function renderViewModel(port = createFakeSettingsAboutPort()) {
-  const { result } = renderHook(() => useSettingsAboutViewModel({ port }), { wrapper: Wrapper });
+  function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
+    return (
+      <I18nWrapper>
+        <LinkingWrapper>
+          <SettingsPortProvider value={port}>{children}</SettingsPortProvider>
+        </LinkingWrapper>
+      </I18nWrapper>
+    );
+  }
+  const { result } = renderHook(() => useSettingsAboutViewModel({}), { wrapper: Wrapper });
   return { result, port };
 }
 

@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "@features/flow-settings": "workspace:*",
+    "@shared/analytics-react": "workspace:*",
     "@shared/i18n": "workspace:*",
     "@shared/linking": "workspace:*"
   },

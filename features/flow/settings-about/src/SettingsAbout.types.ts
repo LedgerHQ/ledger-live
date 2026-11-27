@@ -1,6 +1,4 @@
 import type { SettingsRowProps } from "@features/flow-settings";
-import type { SettingsAboutPort } from "./ports";
-
 export type SettingsAboutRowId = "version" | "terms" | "x" | "instagram" | "github";
 
 export type SettingsAboutSectionId = "legal" | "social";
@@ -18,4 +16,4 @@ export type SettingsAboutViewProps = Readonly<{
   testID?: string;
 }>;
 
-export type SettingsAboutProps = Readonly<{ port: SettingsAboutPort; testID?: string }>;
+export type SettingsAboutProps = Readonly<{ testID?: string }>;
