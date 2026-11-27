@@ -6,7 +6,6 @@ export const mockFilecoinConfig: FilecoinCoinConfig = {
   name: "Filecoin",
   unit: { name: "FIL", code: "FIL", magnitude: 18 },
   indexer: { url: "https://mock.blockscout/api/v2", maxPage: 100 },
-  node: { url: "https://mock.lotus/rpc/v2" },
 };
 
 /** A {@link FilecoinContext} backed by the mocked config, for api tests. */

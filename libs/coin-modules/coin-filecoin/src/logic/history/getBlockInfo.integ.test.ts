@@ -30,7 +30,7 @@ describe("getBlockInfo (integration)", () => {
     await expect(getBlockInfo(context, 6573823)).rejects.toBeInstanceOf(NoBlockAtHeightError);
   });
 
-  it("throws NoBlockAtHeightError for a null round older than the lookback limit of the node", async () => {
+  it("throws NoBlockAtHeightError for an old null round", async () => {
     await expect(getBlockInfo(context, 6400084)).rejects.toBeInstanceOf(NoBlockAtHeightError);
   });
 

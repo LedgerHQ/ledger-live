@@ -1,6 +1,10 @@
 import { BlockNotFoundError, GetBlockError } from "@ledgerhq/coin-module-framework/errors";
 import network from "@ledgerhq/live-network";
-import { fetchBlockscoutBlock, fetchBlockscoutBlockTransactions } from "./blockscout";
+import {
+  fetchBlockscoutBlock,
+  fetchBlockscoutBlockTransactions,
+  fetchBlockscoutHeadHeight,
+} from "./blockscout";
 
 jest.mock("@ledgerhq/live-network");
 
@@ -397,5 +401,41 @@ describe("fetchBlockscoutBlockTransactions", () => {
     mockedNetwork.mockRejectedValueOnce(failure);
 
     await expect(fetchBlockscoutBlockTransactions(INDEXER, BLOCK_HASH)).rejects.toBe(failure);
+  });
+});
+
+describe("fetchBlockscoutHeadHeight", () => {
+  beforeEach(() => jest.resetAllMocks());
+
+  it("returns the height of the latest block", async () => {
+    answerWith(({ url, params }) => {
+      expect(url).toBe(`${INDEXER_URL}/blocks`);
+      expect(params).toEqual({ type: "block" });
+      return {
+        items: [
+          {
+            height: 6583056,
+            hash: "0x96d7",
+            parent_hash: "0xc084",
+            timestamp: "2026-11-27T16:48:00Z",
+          },
+          {
+            height: 6583055,
+            hash: "0xc084",
+            parent_hash: "0x1a49",
+            timestamp: "2026-11-27T16:47:30Z",
+          },
+        ],
+        next_page_params: { block_number: 6583006 },
+      };
+    });
+
+    await expect(fetchBlockscoutHeadHeight(INDEXER_URL)).resolves.toBe(6583056);
+  });
+
+  it("throws GetBlockError when the indexer has no block", async () => {
+    answerWith(() => ({ items: [], next_page_params: null }));
+
+    await expect(fetchBlockscoutHeadHeight(INDEXER_URL)).rejects.toBeInstanceOf(GetBlockError);
   });
 });

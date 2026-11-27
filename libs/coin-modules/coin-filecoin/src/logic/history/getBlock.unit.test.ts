@@ -4,18 +4,20 @@ import {
   InvalidBlockHeightError,
   NoBlockAtHeightError,
 } from "@ledgerhq/coin-module-framework/errors";
-import { fetchBlockscoutBlock, fetchBlockscoutBlockTransactions } from "../../network/blockscout";
-import { fetchFinalizedHeight } from "../../network/lotus";
+import {
+  fetchBlockscoutBlock,
+  fetchBlockscoutBlockTransactions,
+  fetchBlockscoutHeadHeight,
+} from "../../network/blockscout";
 import { createMockFilecoinContext, mockFilecoinConfig } from "../../test/context";
 import { getBlock } from "./getBlock";
 import { getBlockInfo } from "./getBlockInfo";
 
 jest.mock("../../network/blockscout");
-jest.mock("../../network/lotus");
 
 const mockedFetchBlock = jest.mocked(fetchBlockscoutBlock);
 const mockedFetchTransactions = jest.mocked(fetchBlockscoutBlockTransactions);
-const mockedFinalizedHeight = jest.mocked(fetchFinalizedHeight);
+const mockedHeadHeight = jest.mocked(fetchBlockscoutHeadHeight);
 const context = createMockFilecoinContext();
 
 const parent = {
@@ -85,7 +87,7 @@ describe("getBlock", () => {
 
   it("throws BlockNotFoundError for a height the indexer does not hold", async () => {
     mockedFetchBlock.mockRejectedValue(new BlockNotFoundError());
-    mockedFinalizedHeight.mockResolvedValueOnce(6582170);
+    mockedHeadHeight.mockResolvedValueOnce(6583056);
 
     await expect(getBlock(context, 2683340)).rejects.toBeInstanceOf(BlockNotFoundError);
     expect(mockedFetchTransactions).not.toHaveBeenCalled();
@@ -98,7 +100,7 @@ describe("getBlock", () => {
       if (heightOrHash === parent.hash) return { ...parent, height: 6573822 };
       throw new BlockNotFoundError();
     });
-    mockedFinalizedHeight.mockResolvedValueOnce(6582170);
+    mockedHeadHeight.mockResolvedValueOnce(6583056);
 
     await expect(getBlock(context, 6573823)).rejects.toBeInstanceOf(NoBlockAtHeightError);
     expect(mockedFetchTransactions).not.toHaveBeenCalled();
