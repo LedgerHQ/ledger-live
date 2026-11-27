@@ -42,7 +42,7 @@ function buildCurrencyBridge(signerContext: SignerContext<AptosSigner>): Currenc
   };
 }
 
-const sync = makeSync({ getAccountShape });
+const sync = makeSync({ getAccountShape, shouldMergeOps: false });
 
 function buildAccountBridge(
   signerContext: SignerContext<AptosSigner>,
