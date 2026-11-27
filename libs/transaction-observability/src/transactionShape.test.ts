@@ -19,6 +19,33 @@ describe("getRawTransactionType", () => {
     );
   });
 
+  // The generic coin framework's Solana transaction carries a mode and no model.
+  it.each([
+    ["stake", "stake.createAccount"],
+    ["delegate", "stake.delegate"],
+    ["undelegate", "stake.undelegate"],
+    ["unstake", "stake.withdraw"],
+    ["split", "stake.split"],
+  ])("reads solana's %s mode as the kind its bridge signs", (mode, kind) => {
+    expect(getRawTransactionType(tx({ family: "solana", mode }))).toBe(kind);
+  });
+
+  it("reads no action from a solana send, a token mode or an unknown mode", () => {
+    expect(getRawTransactionType(tx({ family: "solana", mode: "send" }))).toBeUndefined();
+    expect(getRawTransactionType(tx({ family: "solana", mode: "opt-in" }))).toBeUndefined();
+    expect(getRawTransactionType(tx({ family: "solana", mode: "toString" }))).toBeUndefined();
+    expect(getRawTransactionType(tx({ family: "solana", mode: 1 }))).toBeUndefined();
+    expect(getRawTransactionType(tx({ family: "solana" }))).toBeUndefined();
+  });
+
+  it("prefers solana's model.kind over its mode", () => {
+    expect(
+      getRawTransactionType(
+        tx({ family: "solana", mode: "undelegate", model: { kind: "stake.withdraw" } }),
+      ),
+    ).toBe("stake.withdraw");
+  });
+
   // EVM native staking sets a mode; a plain send and a dApp call do not. That is what scopes
   // this to in-app staking without inspecting call data.
   it("reads mode for EVM native staking and nothing for other EVM transactions", () => {
