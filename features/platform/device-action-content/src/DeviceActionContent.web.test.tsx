@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { ThemeProvider } from "styled-components";
+import { StyleProvider } from "@features/platform-style/web";
 import * as animationModule from "./getDeviceActionAnimation";
 import { DeviceActionContent } from "./DeviceActionContent";
 
@@ -80,13 +80,13 @@ describe("DeviceActionContent (web)", () => {
 
   it("resolves the animation from the mounted provider when no theme prop is given", () => {
     render(
-      <ThemeProvider theme={{ theme: "dark" } as never}>
+      <StyleProvider theme={{ theme: "dark" } as never}>
         <DeviceActionContent
           deviceName="Ledger Flex CDA1"
           deviceModelId="europa"
           action="continue"
         />
-      </ThemeProvider>,
+      </StyleProvider>,
     );
 
     expect(animationModule.getDeviceActionAnimation).toHaveBeenLastCalledWith({
