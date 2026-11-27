@@ -3,12 +3,13 @@ import { useTranslation } from "@shared/i18n";
 import type { SettingsTheme } from "@features/flow-settings";
 
 type RowLabels = Readonly<{ title: string; description: string }>;
+type PickerRowLabels = RowLabels & Readonly<{ sheetTitle: string }>;
 
 export type GeneralSectionLabels = Readonly<{
   ledgerSync: RowLabels & Readonly<{ manage: string; activate: string }>;
-  theme: RowLabels & Readonly<{ options: Readonly<Record<SettingsTheme, string>> }>;
-  language: RowLabels;
-  currency: RowLabels;
+  theme: PickerRowLabels & Readonly<{ options: Readonly<Record<SettingsTheme, string>> }>;
+  language: PickerRowLabels;
+  currency: PickerRowLabels;
   search: Readonly<{ placeholder: string; emptyLabel: string }>;
 }>;
 
@@ -25,6 +26,7 @@ export function useGeneralSectionLabels(): GeneralSectionLabels {
       theme: {
         title: t("settings.general.theme.title"),
         description: t("settings.general.theme.description"),
+        sheetTitle: t("settings.general.theme.sheetTitle"),
         options: {
           system: t("settings.general.theme.options.system"),
           light: t("settings.general.theme.options.light"),
@@ -34,10 +36,12 @@ export function useGeneralSectionLabels(): GeneralSectionLabels {
       language: {
         title: t("settings.general.language.title"),
         description: t("settings.general.language.description"),
+        sheetTitle: t("settings.general.language.sheetTitle"),
       },
       currency: {
         title: t("settings.general.currency.title"),
         description: t("settings.general.currency.description"),
+        sheetTitle: t("settings.general.currency.sheetTitle"),
       },
       search: {
         placeholder: t("settings.general.search.placeholder"),

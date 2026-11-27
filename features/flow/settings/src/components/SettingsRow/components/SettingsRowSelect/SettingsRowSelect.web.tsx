@@ -10,10 +10,8 @@ import {
   SelectSearch,
   SelectTrigger,
 } from "@ledgerhq/lumen-ui-react";
-import {
-  getSelectedOptionLabel,
-  matchesSettingsOption,
-} from "../../../../logic/settingsRowTrailing";
+import { matchesSettingsOption } from "../../../../logic/settingsOptionSearch";
+import { getSelectedOptionLabel } from "../../../../logic/settingsRowTrailing";
 import type { SettingsRowSelectProps } from "./SettingsRowSelect.types";
 
 export function SettingsRowSelect({ trailing, rowTitle, disabled }: SettingsRowSelectProps) {

@@ -5755,6 +5755,7 @@
       "theme": {
         "title": "Theme",
         "description": "Select your app theme",
+        "sheetTitle": "Select theme",
         "options": {
           "system": "System",
           "light": "Light",
@@ -5763,7 +5764,8 @@
       },
       "language": {
         "title": "Language",
-        "description": "Select the app language"
+        "description": "Select the app language",
+        "sheetTitle": "Select language"
       },
       "region": {
         "title": "Region",
@@ -5773,7 +5775,8 @@
       },
       "currency": {
         "title": "Currency",
-        "description": "Select the currency displayed in the app"
+        "description": "Select the currency displayed in the app",
+        "sheetTitle": "Select currency"
       },
       "search": {
         "placeholder": "Search",

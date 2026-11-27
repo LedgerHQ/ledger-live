@@ -15,16 +15,25 @@ const resources = {
           theme: {
             title: "Theme",
             description: "Select your app theme",
+            sheetTitle: "Select theme",
             options: { system: "System", light: "Light", dark: "Dark" },
           },
-          language: { title: "Language", description: "Select the app language" },
+          language: {
+            title: "Language",
+            description: "Select the app language",
+            sheetTitle: "Select language",
+          },
           region: {
             title: "Region",
             description: "Select the format of dates, times and numbers",
             dialogTitle: "Select your region",
             dialogDescription: "Choose region to update formats of dates, time and currencies",
           },
-          currency: { title: "Currency", description: "Select the currency displayed in the app" },
+          currency: {
+            title: "Currency",
+            description: "Select the currency displayed in the app",
+            sheetTitle: "Select currency",
+          },
           search: { placeholder: "Search", emptyLabel: "No results" },
         },
       },

@@ -17,7 +17,7 @@ import {
 import { ChevronDown } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { useBottomSheetKeyboardAwareInput } from "@shared/ui-queued-bottom-sheet/keyboard";
-import { matchesSettingsOption } from "../../../../logic/settingsRowTrailing";
+import { matchesSettingsOption } from "../../../../logic/settingsOptionSearch";
 import type { SettingsRowSearch } from "../../SettingsRow.types";
 import type { SettingsRowSelectProps } from "./SettingsRowSelect.types";
 import { useSettingsRowSelectSheet } from "./useSettingsRowSelectSheet";
