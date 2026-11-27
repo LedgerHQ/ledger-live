@@ -471,14 +471,39 @@ describe("assignFromAccountRaw and the token flag", () => {
       },
     ],
     ["the flag is absent from the config", async () => ({}) as unknown as ConcordiumCoinConfig],
+    [
+      "the flag is a non-boolean truthy value",
+      async () => ({ enableTokens: "false" }) as unknown as ConcordiumCoinConfig,
+    ],
   ])("fails closed and strips tokens when %s", async (_case, impl) => {
     // An unreadable flag must not expose token UI for a feature that is off by
-    // default. Sub-accounts are rebuilt from chain on the next sync.
-    const target = account();
+    // default. The marker makes the first sync after the fix re-read the history.
+    const target = { ...account(), syncHash: "0xabc:tokens=on:history=3" } as Account;
 
     await expect(
       makeAssignFromAccountRaw(contextWith(impl))(raw(), target),
     ).resolves.toBeUndefined();
     expect(target.subAccounts).toBeUndefined();
+    expect(target.syncHash).toBe("refetch-pending");
+  });
+
+  it("keeps a current tokens-off hash, so a tokens-off account does not re-read at each start", async () => {
+    const target = { ...account(), syncHash: "tokens=off:history=3" } as Account;
+
+    await makeAssignFromAccountRaw(createFixtureContext({ enableTokens: false }))(raw(), target);
+
+    expect(target.syncHash).toBe("tokens=off:history=3");
+  });
+
+  it.each([
+    ["a tokens-on history", "0xabc:tokens=on:history=3"],
+    ["an older tokens-off history", "tokens=off:history=2"],
+    ["no recorded history", undefined],
+  ])("marks %s for a re-read rather than as current", async (_case, syncHash) => {
+    const target = { ...account(), syncHash } as Account;
+
+    await makeAssignFromAccountRaw(createFixtureContext({ enableTokens: false }))(raw(), target);
+
+    expect(target.syncHash).toBe("refetch-pending");
   });
 });

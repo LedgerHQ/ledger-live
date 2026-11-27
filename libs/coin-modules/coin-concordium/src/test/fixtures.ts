@@ -20,6 +20,7 @@ import type {
   ConcordiumConfig,
   Transaction,
 } from "../types";
+import { concordiumDefaults } from "../config";
 
 // Valid Concordium addresses for testing
 export const VALID_ADDRESS = "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w";
@@ -33,9 +34,7 @@ export const CRED_ID = "cc".repeat(48);
 
 export const TESTNET_COIN_CONFIG: ConcordiumConfig & Pick<ConcordiumBridgeConfig, "walletConnect"> =
   {
-    networkType: "testnet",
-    proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
-    walletConnect: { relayUrl: "wss://relay.walletconnect.com" },
+    ...concordiumDefaults.concordium_testnet,
     minReserve: 100000,
     // Matches the shipped default. Token tests opt in through `createFixtureContext`.
     enableTokens: false,
@@ -53,6 +52,8 @@ export function createFixtureConfig(
     ...overrides,
   };
 }
+
+export const noopLogger = (): void => {};
 
 /** Builds a {@link ConcordiumBridgeContext} resolving to the testnet coin config. */
 export function createFixtureContext(

@@ -6,8 +6,9 @@ import type {
   ConcordiumResources,
   RawOperation,
 } from "../types";
-import { DEFAULT_ENABLE_TOKENS } from "../constants";
+import { boolean } from "../tuning";
 import { toOperation } from "./operations";
+import { REFETCH_SYNC_HASH, TOKENS_OFF_SYNC_HASH } from "./syncHash";
 import { applyTokensToResources } from "./tokens";
 
 export function isConcordiumAccount(account: Account): account is ConcordiumAccount {
@@ -63,7 +64,7 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): vo
  */
 async function tokensEnabled(context: ConcordiumContext, currencyId: string): Promise<boolean> {
   try {
-    return ((await context.config(currencyId)).enableTokens ?? DEFAULT_ENABLE_TOKENS) === true;
+    return boolean("enableTokens", (await context.config(currencyId)).enableTokens);
   } catch {
     return false;
   }
@@ -87,6 +88,11 @@ export const makeAssignFromAccountRaw =
         kind: "cleared",
       });
       delete account.subAccounts;
+      // Only a current tokens-off hash describes the history kept here. Any other
+      // one (tokens-on, an older history version) must force the next sync to
+      // re-read, including the one that follows a malformed flag being fixed,
+      // since a sync under that flag fails and records nothing.
+      if (account.syncHash !== TOKENS_OFF_SYNC_HASH) account.syncHash = REFETCH_SYNC_HASH;
       return;
     }
 

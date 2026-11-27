@@ -1,14 +1,17 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
-import { log } from "@ledgerhq/logs";
 import { getAccountBalance } from "../../network/proxyClient";
-import type { ConcordiumCoinConfig, PltAccountToken } from "../../types";
+import type { ConcordiumContext, PltAccountToken } from "../../types";
 
 /**
  * The bridge guards the same fields through `isUsableEntry`. This surface reads
  * the same unvalidated response and needs its own guard, or one malformed entry
  * would throw and discard the native CCD balance with it.
  */
-function toPltBalance(entry: PltAccountToken, address: string): Balance | undefined {
+function toPltBalance(
+  context: ConcordiumContext,
+  entry: PltAccountToken,
+  address: string,
+): Balance | undefined {
   const tokenId = entry?.token?.tokenId;
   const rawValue = entry?.tokenAccountState?.balance?.value;
 
@@ -18,7 +21,7 @@ function toPltBalance(entry: PltAccountToken, address: string): Balance | undefi
   try {
     value = BigInt(rawValue);
   } catch {
-    log("concordium-api", `PLT ${tokenId} has an unusable balance, omitting it`);
+    context.logger("concordium-api", `PLT ${tokenId} has an unusable balance, omitting it`);
     return undefined;
   }
 
@@ -28,11 +31,8 @@ function toPltBalance(entry: PltAccountToken, address: string): Balance | undefi
   };
 }
 
-export async function getBalance(
-  config: ConcordiumCoinConfig,
-  address: string,
-): Promise<Balance[]> {
-  const balanceResponse = await getAccountBalance(config, address);
+export async function getBalance(context: ConcordiumContext, address: string): Promise<Balance[]> {
+  const balanceResponse = await getAccountBalance(context, address);
 
   // Reporting a zero native balance for an address that does not exist matches
   // what the chain holds for it, where throwing would surface as an
@@ -50,7 +50,7 @@ export async function getBalance(
   if (!Array.isArray(accountTokens)) return [native];
 
   const plt = accountTokens
-    .map(entry => toPltBalance(entry, address))
+    .map(entry => toPltBalance(context, entry, address))
     .filter((balance): balance is Balance => balance !== undefined);
 
   return [native, ...plt];

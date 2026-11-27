@@ -1,5 +1,5 @@
 import { getBlockInfo } from "./getBlockInfo";
-import { createFixtureConfig } from "../../test/fixtures";
+import { createFixtureContext } from "../../test/fixtures";
 
 jest.mock("../../network/proxyClient", () => ({
   getBlocksAtHeight: jest.fn(),
@@ -9,7 +9,7 @@ jest.mock("../../network/proxyClient", () => ({
 const { getBlocksAtHeight: getBlocksAtHeightMock, getBlockInfoByHash: getBlockInfoByHashMock } =
   jest.requireMock("../../network/proxyClient");
 
-const config = createFixtureConfig();
+const context = createFixtureContext();
 
 describe("getBlockInfo", () => {
   beforeEach(() => {
@@ -34,13 +34,13 @@ describe("getBlockInfo", () => {
       });
 
     // WHEN
-    const result = await getBlockInfo(config, 2000);
+    const result = await getBlockInfo(context, 2000);
 
     // THEN
     expect(getBlocksAtHeightMock).toHaveBeenCalledTimes(1);
-    expect(getBlocksAtHeightMock).toHaveBeenCalledWith(config, 2000);
-    expect(getBlockInfoByHashMock).toHaveBeenCalledWith(config, "abc123");
-    expect(getBlockInfoByHashMock).toHaveBeenCalledWith(config, "parent123");
+    expect(getBlocksAtHeightMock).toHaveBeenCalledWith(context, 2000);
+    expect(getBlockInfoByHashMock).toHaveBeenCalledWith(context, "abc123");
+    expect(getBlockInfoByHashMock).toHaveBeenCalledWith(context, "parent123");
     expect(result).toEqual({
       height: 2000,
       hash: "abc123",
@@ -60,7 +60,7 @@ describe("getBlockInfo", () => {
     });
 
     // WHEN
-    const result = await getBlockInfo(config, 0);
+    const result = await getBlockInfo(context, 0);
 
     // THEN
     expect(getBlockInfoByHashMock).toHaveBeenCalledTimes(1);
@@ -72,6 +72,6 @@ describe("getBlockInfo", () => {
     getBlocksAtHeightMock.mockResolvedValue([]);
 
     // WHEN / THEN
-    await expect(getBlockInfo(config, 9999)).rejects.toThrow("No blocks found at height 9999");
+    await expect(getBlockInfo(context, 9999)).rejects.toThrow("No blocks found at height 9999");
   });
 });

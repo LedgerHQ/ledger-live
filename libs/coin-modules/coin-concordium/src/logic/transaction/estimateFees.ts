@@ -1,13 +1,8 @@
-import { log } from "@ledgerhq/logs";
 import { memoEncodedSize } from "@ledgerhq/concordium-core";
-import {
-  CONCORDIUM_ENERGY,
-  DEFAULT_FEES_DEFAULT_COST,
-  DEFAULT_PLT_ENERGY_BUFFER_PERCENT,
-} from "../../constants";
+import { CONCORDIUM_ENERGY } from "../../constants";
 import { getTransactionCost } from "../../network/proxyClient";
-import { tuning } from "../../tuning";
-import type { ConcordiumCoinConfig } from "../../types";
+import { ConcordiumInvalidConfigError, nonNegativeInt, positiveInt } from "../../tuning";
+import type { ConcordiumContext } from "../../types";
 
 export interface FeeEstimation {
   cost: bigint;
@@ -34,11 +29,11 @@ export function applyEnergyBuffer(value: bigint, bufferPercent: number): bigint 
 }
 
 export async function estimateFees(
-  config: ConcordiumCoinConfig,
-  memo?: string,
+  context: ConcordiumContext,
+  memo: string | undefined,
 ): Promise<FeeEstimation> {
   try {
-    const result = await getTransactionCost(config, {
+    const result = await getTransactionCost(context, {
       type: "simpleTransfer",
       numSignatures: 1,
       ...(memo ? { memoSize: memoEncodedSize(memo) } : {}),
@@ -49,10 +44,13 @@ export async function estimateFees(
       energy: BigInt(result.energy),
     };
   } catch (error) {
-    log("concordium", "estimateFees error", { error });
+    // A broken coin config is not a proxy outage: a fallback fee would hide it.
+    if (error instanceof ConcordiumInvalidConfigError) throw error;
+    context.logger("concordium", "estimateFees error", { error });
+    const config = await context.config();
 
     return {
-      cost: BigInt(tuning(config.fees?.defaultCost, DEFAULT_FEES_DEFAULT_COST, 1)),
+      cost: BigInt(positiveInt("fees.defaultCost", config.fees?.defaultCost)),
       energy: memo ? CONCORDIUM_ENERGY.TRANSFER_WITH_MEMO_MAX : CONCORDIUM_ENERGY.DEFAULT,
     };
   }
@@ -73,10 +71,10 @@ export async function estimateFees(
  * so it catches on its own behalf.
  */
 export async function estimateTokenFees(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   { tokenId, listOperationsSize }: PltFeeParams,
 ): Promise<FeeEstimation> {
-  const result = await getTransactionCost(config, {
+  const result = await getTransactionCost(context, {
     type: "tokenUpdate",
     numSignatures: 1,
     tokenId,
@@ -84,11 +82,12 @@ export async function estimateTokenFees(
     tokenOperationTypeCount: { transfer: 1 },
   });
 
+  const config = await context.config();
   const energy = BigInt(result.energy);
   const cost = BigInt(result.cost);
-  const bufferPercent = tuning(
+  const bufferPercent = nonNegativeInt(
+    "fees.pltEnergyBufferPercent",
     config.fees?.pltEnergyBufferPercent,
-    DEFAULT_PLT_ENERGY_BUFFER_PERCENT,
   );
   const bufferedEnergy = applyEnergyBuffer(energy, bufferPercent);
 

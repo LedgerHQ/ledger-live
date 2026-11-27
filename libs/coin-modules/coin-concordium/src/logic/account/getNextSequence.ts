@@ -1,10 +1,10 @@
 import { getAccountNonce } from "../../network/proxyClient";
-import type { ConcordiumCoinConfig } from "../../types";
+import type { ConcordiumContext } from "../../types";
 
 export async function getNextValidSequence(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   address: string,
 ): Promise<number> {
-  const result = await getAccountNonce(config, address);
+  const result = await getAccountNonce(context, address);
   return result.nonce;
 }

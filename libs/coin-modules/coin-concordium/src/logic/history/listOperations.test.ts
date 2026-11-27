@@ -1,8 +1,8 @@
-import { VALID_ADDRESS, VALID_ADDRESS_2, createFixtureConfig } from "../../test/fixtures";
+import { VALID_ADDRESS, VALID_ADDRESS_2, createFixtureContext } from "../../test/fixtures";
 import type { WalletProxyTransaction } from "../../types";
 import { listOperations, parseTransaction } from "./listOperations";
 
-const config = createFixtureConfig();
+const context = createFixtureContext();
 const SPONSOR = "2zJ1DNrhhdrcNN4XAGaWq3Ziw2pKvKgUC1Ua67aZVGg4A111PX";
 
 // Aliases 1 and 2 of VALID_ADDRESS: the same account, as the chain reports it.
@@ -44,7 +44,7 @@ describe("parseTransaction", () => {
       },
     };
 
-    const result = parseTransaction(tx, VALID_ADDRESS);
+    const result = parseTransaction(context, tx, VALID_ADDRESS);
 
     expect(result).toMatchObject({
       hash: "cc".repeat(32),
@@ -74,7 +74,7 @@ describe("parseTransaction", () => {
       },
     };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "OUT",
       amount: "0",
       fee: "500",
@@ -98,7 +98,7 @@ describe("parseTransaction", () => {
       },
     };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "IN",
       sender: VALID_ADDRESS_2,
       recipient: VALID_ADDRESS_ALIAS,
@@ -119,7 +119,7 @@ describe("parseTransaction", () => {
       },
     };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "OUT",
       sender: VALID_ADDRESS_ALIAS,
       recipient: VALID_ADDRESS_2,
@@ -142,7 +142,7 @@ describe("parseTransaction", () => {
       },
     };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "OUT",
       sender: VALID_ADDRESS_ALIAS,
       recipient: VALID_ADDRESS_ALIAS_2,
@@ -165,7 +165,7 @@ describe("parseTransaction", () => {
       },
     };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "OUT",
       amount: "0",
       value: "500",
@@ -186,7 +186,7 @@ describe("parseTransaction", () => {
       },
     };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "IN",
       fee: "0",
       feesPayer: VALID_ADDRESS_2,
@@ -208,7 +208,7 @@ describe("parseTransaction", () => {
       },
     };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "IN",
       fee: "0",
       transactionFee: "1373330",
@@ -229,7 +229,7 @@ describe("parseTransaction", () => {
       },
     };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       fee: "500",
       transactionFee: "500",
     });
@@ -250,7 +250,7 @@ describe("parseTransaction", () => {
       },
     };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "OUT",
       fee: "0",
       transactionFee: "800",
@@ -278,11 +278,11 @@ describe("parseTransaction", () => {
       origin: { type: "account", address: VALID_ADDRESS },
     };
 
-    expect(parseTransaction(senderView, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, senderView, VALID_ADDRESS)).toMatchObject({
       fee: "0",
       transactionFee: "800",
     });
-    expect(parseTransaction(recipientView, VALID_ADDRESS_2)).toMatchObject({
+    expect(parseTransaction(context, recipientView, VALID_ADDRESS_2)).toMatchObject({
       fee: "0",
       transactionFee: "800",
     });
@@ -301,7 +301,7 @@ describe("parseTransaction", () => {
       },
     } as WalletProxyTransaction;
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).not.toHaveProperty("feesPayer");
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).not.toHaveProperty("feesPayer");
   });
 
   it("should parse an incoming transfer", () => {
@@ -319,7 +319,7 @@ describe("parseTransaction", () => {
       },
     };
 
-    const result = parseTransaction(tx, VALID_ADDRESS);
+    const result = parseTransaction(context, tx, VALID_ADDRESS);
 
     expect(result).toMatchObject({
       type: "IN",
@@ -342,7 +342,7 @@ describe("parseTransaction", () => {
       },
     };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toBeNull();
   });
 
   // A rejection is reported without any of the transfer fields, and only to the
@@ -356,7 +356,7 @@ describe("parseTransaction", () => {
     }) as WalletProxyTransaction;
 
   it("charges the sender for a rejected transfer, which reports no counterparty", () => {
-    const result = parseTransaction(rejectedTx(), VALID_ADDRESS);
+    const result = parseTransaction(context, rejectedTx(), VALID_ADDRESS);
 
     expect(result).toMatchObject({
       type: "OUT",
@@ -372,7 +372,7 @@ describe("parseTransaction", () => {
   it("returns null for a rejected transfer the account did not pay for", () => {
     const paidByAnother = rejectedTx({ origin: { type: "account", address: VALID_ADDRESS_2 } });
 
-    expect(parseTransaction(paidByAnother, VALID_ADDRESS)).toBeNull();
+    expect(parseTransaction(context, paidByAnother, VALID_ADDRESS)).toBeNull();
   });
 
   it("should return memo as undefined when CBOR decoding fails", () => {
@@ -393,7 +393,7 @@ describe("parseTransaction", () => {
       },
     };
 
-    const result = parseTransaction(tx, VALID_ADDRESS);
+    const result = parseTransaction(context, tx, VALID_ADDRESS);
 
     expect(result).not.toBeNull();
     expect(result!.memo).toBeUndefined();
@@ -448,7 +448,7 @@ describe("parseTransaction, PLT", () => {
   });
 
   it("parses an outgoing PLT transfer, carrying the token and its denomination", () => {
-    expect(parseTransaction(outgoingTx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, outgoingTx, VALID_ADDRESS)).toMatchObject({
       type: "OUT",
       sender: VALID_ADDRESS,
       recipient: VALID_ADDRESS_2,
@@ -462,11 +462,11 @@ describe("parseTransaction, PLT", () => {
   });
 
   it("values an outgoing PLT transfer at the token amount, never the amount plus the fee", () => {
-    expect(parseTransaction(outgoingTx, VALID_ADDRESS)!.value).toBe("3000000");
+    expect(parseTransaction(context, outgoingTx, VALID_ADDRESS)!.value).toBe("3000000");
   });
 
   it("parses an incoming PLT transfer with no fee, since the recipient paid none", () => {
-    expect(parseTransaction(incomingTx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, incomingTx, VALID_ADDRESS)).toMatchObject({
       type: "IN",
       value: "20000000",
       fee: "0",
@@ -481,7 +481,7 @@ describe("parseTransaction, PLT", () => {
       details: { ...incomingTx.details, transferDestination: VALID_ADDRESS_ALIAS },
     };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "IN",
       recipient: VALID_ADDRESS_ALIAS,
       value: "20000000",
@@ -499,7 +499,7 @@ describe("parseTransaction, PLT", () => {
       },
     };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "OUT",
       sender: VALID_ADDRESS_ALIAS,
       recipient: VALID_ADDRESS_ALIAS_2,
@@ -515,13 +515,13 @@ describe("parseTransaction, PLT", () => {
     // an operation id embeds its type, so the correction could not replace it.
     const withCost = { ...incomingTx, cost: 595400 } as WalletProxyTransaction;
 
-    expect(parseTransaction(withCost, VALID_ADDRESS)!.fee).toBe("0");
+    expect(parseTransaction(context, withCost, VALID_ADDRESS)!.fee).toBe("0");
   });
 
   it("decodes a PLT memo, which is CBOR exactly as a CCD memo is", () => {
     const tx = { ...outgoingTx, details: { ...outgoingTx.details, memo: "78ab31" } };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)!.memo).toBe("decoded memo");
+    expect(parseTransaction(context, tx, VALID_ADDRESS)!.memo).toBe("decoded memo");
   });
 
   // Only the PLT decoder has this fallback, so this is what pins the PLT path to
@@ -535,11 +535,11 @@ describe("parseTransaction, PLT", () => {
     const memo = Buffer.from("invoice 42", "utf8").toString("hex");
     const tx = { ...outgoingTx, details: { ...outgoingTx.details, memo } };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)!.memo).toBe("invoice 42");
+    expect(parseTransaction(context, tx, VALID_ADDRESS)!.memo).toBe("invoice 42");
   });
 
   it("returns null when the address is neither source nor destination", () => {
-    expect(parseTransaction(incomingTx, "someone-else")).toBeNull();
+    expect(parseTransaction(context, incomingTx, "someone-else")).toBeNull();
   });
 
   const nonTransfer: WalletProxyTransaction = {
@@ -550,27 +550,30 @@ describe("parseTransaction, PLT", () => {
   it("charges the payer for a tokenUpdate that is not a transfer, rather than losing it", () => {
     // A mint, burn, pause or batch: nothing token-side is readable, but the CCD
     // left the account and would otherwise show as an unexplained debit.
-    expect(parseTransaction(nonTransfer, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, nonTransfer, VALID_ADDRESS)).toMatchObject({
       type: "OUT",
       value: "595400",
       fee: "595400",
       feesPayer: VALID_ADDRESS,
       failed: false,
     });
-    expect(parseTransaction(nonTransfer, VALID_ADDRESS)).not.toHaveProperty("tokenId");
+    expect(parseTransaction(context, nonTransfer, VALID_ADDRESS)).not.toHaveProperty("tokenId");
   });
 
   it("returns null for a non-transfer tokenUpdate the account did not pay for", () => {
     const paidByAnother = { ...nonTransfer, origin: { type: "account" } } as WalletProxyTransaction;
 
-    expect(parseTransaction(paidByAnother, VALID_ADDRESS)).toBeNull();
+    expect(parseTransaction(context, paidByAnother, VALID_ADDRESS)).toBeNull();
   });
 
   it("does not read an absent transfer amount as zero", () => {
     const { tokenTransferAmount: _dropped, ...detailsWithoutAmount } = outgoingTx.details;
     const tx: WalletProxyTransaction = { ...outgoingTx, details: detailsWithoutAmount };
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({ amount: "0", value: "595400" });
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
+      amount: "0",
+      value: "595400",
+    });
   });
 
   it("refuses a denomination that is not a whole non-negative count of decimals", () => {
@@ -582,7 +585,9 @@ describe("parseTransaction, PLT", () => {
       },
     } as WalletProxyTransaction;
 
-    expect(parseTransaction(withBadDecimals, VALID_ADDRESS)).not.toHaveProperty("decimals");
+    expect(parseTransaction(context, withBadDecimals, VALID_ADDRESS)).not.toHaveProperty(
+      "decimals",
+    );
   });
 
   describe("rejected", () => {
@@ -600,7 +605,7 @@ describe("parseTransaction, PLT", () => {
     };
 
     it("keeps the operation on its token, worth nothing, when the reason names one", () => {
-      expect(parseTransaction(rejectedTx, VALID_ADDRESS)).toMatchObject({
+      expect(parseTransaction(context, rejectedTx, VALID_ADDRESS)).toMatchObject({
         type: "OUT",
         tokenId: "trUSDT",
         value: "0",
@@ -618,7 +623,7 @@ describe("parseTransaction, PLT", () => {
         },
       };
 
-      expect(parseTransaction(tx, VALID_ADDRESS)!.tokenId).toBe("trUSDT");
+      expect(parseTransaction(context, tx, VALID_ADDRESS)!.tokenId).toBe("trUSDT");
     });
 
     it("degrades to a plain CCD cost when the reason names no token", () => {
@@ -630,7 +635,7 @@ describe("parseTransaction, PLT", () => {
         },
       };
 
-      const result = parseTransaction(tx, VALID_ADDRESS);
+      const result = parseTransaction(context, tx, VALID_ADDRESS);
 
       expect(result!.tokenId).toBeUndefined();
       expect(result!.value).toBe("595400");
@@ -642,7 +647,7 @@ describe("parseTransaction, PLT", () => {
         origin: { type: "account", address: VALID_ADDRESS_2 },
       };
 
-      expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
+      expect(parseTransaction(context, tx, VALID_ADDRESS)).toBeNull();
     });
 
     it("carries the cause the reason narrows to", () => {
@@ -657,11 +662,11 @@ describe("parseTransaction, PLT", () => {
         },
       };
 
-      expect(parseTransaction(tx, VALID_ADDRESS)!.rejectCode).toBe("insufficientBalance");
+      expect(parseTransaction(context, tx, VALID_ADDRESS)!.rejectCode).toBe("insufficientBalance");
     });
 
     it("carries the generic cause for a module reason it cannot narrow", () => {
-      expect(parseTransaction(rejectedTx, VALID_ADDRESS)!.rejectCode).toBe("rejected");
+      expect(parseTransaction(context, rejectedTx, VALID_ADDRESS)!.rejectCode).toBe("rejected");
     });
 
     // `failed` already says the transfer did not happen. A PLT cause on a
@@ -675,11 +680,11 @@ describe("parseTransaction, PLT", () => {
         },
       };
 
-      expect(parseTransaction(tx, VALID_ADDRESS)!.rejectCode).toBeUndefined();
+      expect(parseTransaction(context, tx, VALID_ADDRESS)!.rejectCode).toBeUndefined();
     });
 
     it("leaves the cause absent on a successful transfer", () => {
-      expect(parseTransaction(outgoingTx, VALID_ADDRESS)!.rejectCode).toBeUndefined();
+      expect(parseTransaction(context, outgoingTx, VALID_ADDRESS)!.rejectCode).toBeUndefined();
     });
   });
 });
@@ -732,7 +737,7 @@ describe("parseTransaction, other transaction types", () => {
   ])("charges the sender the fee of a %s that moves no CCD", (type, amounts) => {
     const tx = sentTx({ type, outcome: "success" }, amounts);
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "FEES",
       sender: VALID_ADDRESS,
       recipient: "",
@@ -750,7 +755,7 @@ describe("parseTransaction, other transaction types", () => {
     type => {
       const tx = sentTx({ type, outcome: "reject", rejectReason: "Rejected" });
 
-      expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
         type: "FEES",
         amount: "0",
         value: "4029312",
@@ -766,7 +771,7 @@ describe("parseTransaction, other transaction types", () => {
   ])("reads a sent %s as outgoing (%s)", type => {
     const tx = sentTx({ type, outcome: "success" }, { subtotal: "-500000", total: "-4529312" });
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "OUT",
       sender: VALID_ADDRESS,
       recipient: "",
@@ -779,7 +784,7 @@ describe("parseTransaction, other transaction types", () => {
   it("reads a contract call that pays its sender back more than it sent as incoming", () => {
     const tx = sentTx({ type: "update", outcome: "success" }, { subtotal: "7", total: "-4029305" });
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "IN",
       sender: "",
       recipient: VALID_ADDRESS,
@@ -795,7 +800,7 @@ describe("parseTransaction, other transaction types", () => {
       { subtotal: "900", total: "-4028412" },
     );
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "IN",
       value: "900",
       fee: "4029312",
@@ -809,13 +814,16 @@ describe("parseTransaction, other transaction types", () => {
       { cost: 100, transactionCost: 100, subtotal: -500, total: -600 },
     );
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({ type: "OUT", value: "600" });
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
+      type: "OUT",
+      value: "600",
+    });
   });
 
   it("reads a contract payout as incoming, with no sender, as the caller did not send it", () => {
     const tx = receivedTx({ type: "update", outcome: "success" }, { total: "1530000000" });
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "IN",
       sender: "",
       recipient: VALID_ADDRESS,
@@ -830,13 +838,13 @@ describe("parseTransaction, other transaction types", () => {
   it("returns null for a contract call of another account that paid this one nothing", () => {
     const tx = receivedTx({ type: "update", outcome: "success" }, { total: "0" });
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toBeNull();
   });
 
   it("returns null for an encrypted amount received, which moves no public CCD", () => {
     const tx = receivedTx({ type: "encryptedAmountTransfer", outcome: "success" }, { total: "0" });
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toBeNull();
   });
 
   describe("scheduled transfers", () => {
@@ -851,7 +859,7 @@ describe("parseTransaction, other transaction types", () => {
     it("reads a sent one as outgoing to its destination, with its memo", () => {
       const tx = sentTx(details, { subtotal: "-1000000", total: "-5029312" });
 
-      expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
         type: "OUT",
         sender: VALID_ADDRESS,
         recipient: VALID_ADDRESS_2,
@@ -867,7 +875,7 @@ describe("parseTransaction, other transaction types", () => {
         { total: "1000000" },
       );
 
-      expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
         type: "IN",
         sender: VALID_ADDRESS_2,
         recipient: VALID_ADDRESS,
@@ -884,7 +892,7 @@ describe("parseTransaction, other transaction types", () => {
         { cost: "4029312", sponsor: sponsorship, subtotal: "1000000", total: "-3029312" },
       );
 
-      expect(parseTransaction(tx, SPONSOR)).toMatchObject({
+      expect(parseTransaction(context, tx, SPONSOR)).toMatchObject({
         type: "FEES",
         amount: "0",
         value: "4029312",
@@ -900,7 +908,7 @@ describe("parseTransaction, other transaction types", () => {
       memo: "6b6465706f7369742d726566",
     });
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
       type: "FEES",
       memo: "decoded memo",
     });
@@ -918,7 +926,7 @@ describe("parseTransaction, other transaction types", () => {
           { cost: "4029312", sponsor: sponsorship, subtotal, total },
         );
 
-        expect(parseTransaction(tx, SPONSOR)).toMatchObject({
+        expect(parseTransaction(context, tx, SPONSOR)).toMatchObject({
           type: "FEES",
           sender: SPONSOR,
           amount: "0",
@@ -934,7 +942,7 @@ describe("parseTransaction, other transaction types", () => {
         { cost: "0", sponsor: sponsorship, subtotal: "-500000", total: "-500000" },
       );
 
-      expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
         type: "OUT",
         amount: "500000",
         fee: "0",
@@ -951,7 +959,7 @@ describe("parseTransaction, other transaction types", () => {
           { cost: "0", sponsor: sponsorship, total: "0" },
         );
 
-        expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
+        expect(parseTransaction(context, tx, VALID_ADDRESS)).toBeNull();
       },
     );
 
@@ -961,7 +969,7 @@ describe("parseTransaction, other transaction types", () => {
         { cost: "4029312", sponsor: sponsorship, subtotal: "10000", total: "-4019312" },
       );
 
-      expect(parseTransaction(tx, SPONSOR)).toMatchObject({
+      expect(parseTransaction(context, tx, SPONSOR)).toMatchObject({
         type: "IN",
         amount: "10000",
         value: "10000",
@@ -1004,7 +1012,7 @@ describe("parseTransaction, other transaction types", () => {
           sponsor: aliasSponsorship,
           total: "-4029312",
         });
-        const result = parseTransaction(tx, VALID_ADDRESS);
+        const result = parseTransaction(context, tx, VALID_ADDRESS);
 
         expect(result).toMatchObject({
           type: "FEES",
@@ -1024,7 +1032,7 @@ describe("parseTransaction, other transaction types", () => {
     it("reads the fee off the sponsor on a proxy that leaves the cost out of its rows", () => {
       const tx = receivedTx(details.transfer, { sponsor: aliasSponsorship, total: "0" });
 
-      expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
         type: "FEES",
         fee: "4029312",
         value: "4029312",
@@ -1037,7 +1045,7 @@ describe("parseTransaction, other transaction types", () => {
         { cost: "4029312", sponsor: aliasSponsorship, subtotal: "1000000", total: "-3029312" },
       );
 
-      expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
         type: "IN",
         value: "1000000",
         fee: "4029312",
@@ -1052,7 +1060,7 @@ describe("parseTransaction, other transaction types", () => {
         { cost: "4029312", sponsor: aliasSponsorship, total: "-4029312" },
       );
 
-      expect(parseTransaction(tx, VALID_ADDRESS)).toMatchObject({
+      expect(parseTransaction(context, tx, VALID_ADDRESS)).toMatchObject({
         type: "IN",
         tokenId: "trUSDT",
         value: "20000000",
@@ -1072,21 +1080,25 @@ describe("parseTransaction, other transaction types", () => {
     const build = field === "total" ? receivedTx : sentTx;
     const tx = build({ type: "update", outcome: "success" }, { [field]: amount });
 
-    expect(() => parseTransaction(tx, VALID_ADDRESS)).toThrow("carries no readable amount");
+    expect(() => parseTransaction(context, tx, VALID_ADDRESS)).toThrow(
+      "carries no readable amount",
+    );
   });
 
   it("refuses a payout with no total, rather than reading it as zero", () => {
     const { total: _dropped, ...withoutTotal } = receivedTx({ type: "update", outcome: "success" });
 
-    expect(() => parseTransaction(withoutTotal as WalletProxyTransaction, VALID_ADDRESS)).toThrow(
-      "carries no readable amount",
-    );
+    expect(() =>
+      parseTransaction(context, withoutTotal as WalletProxyTransaction, VALID_ADDRESS),
+    ).toThrow("carries no readable amount");
   });
 
   it("refuses a scheduled transfer with no amount, rather than reading it as zero", () => {
     const tx = sentTx({ type: "transferWithSchedule", outcome: "success" });
 
-    expect(() => parseTransaction(tx, VALID_ADDRESS)).toThrow("carries no readable amount");
+    expect(() => parseTransaction(context, tx, VALID_ADDRESS)).toThrow(
+      "carries no readable amount",
+    );
   });
 
   const outsideAccounts: Omit<WalletProxyTransaction, "details"> = {
@@ -1122,7 +1134,7 @@ describe("parseTransaction, other transaction types", () => {
       },
     ],
   ])("returns null for %s", (_name, tx) => {
-    expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toBeNull();
   });
 
   it("returns null for a row with no hash to identify the operation", () => {
@@ -1131,7 +1143,7 @@ describe("parseTransaction, other transaction types", () => {
       outcome: "success",
     });
 
-    expect(parseTransaction(tx, VALID_ADDRESS)).toBeNull();
+    expect(parseTransaction(context, tx, VALID_ADDRESS)).toBeNull();
   });
 });
 
@@ -1167,9 +1179,9 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    const result = await listOperations(config, VALID_ADDRESS, { minHeight: 0 });
+    const result = await listOperations(context, VALID_ADDRESS, { minHeight: 0 });
 
-    expect(getTransactionsMock).toHaveBeenCalledWith(config, VALID_ADDRESS, {
+    expect(getTransactionsMock).toHaveBeenCalledWith(context, VALID_ADDRESS, {
       limit: 100,
       order: "d",
       includeRawRejectReason: true,
@@ -1196,7 +1208,7 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    await listOperations(config, VALID_ADDRESS, { minHeight: 0 });
+    await listOperations(context, VALID_ADDRESS, { minHeight: 0 });
 
     // The proxy tests the parameter for presence, so `false` would enable it.
     const [, , params] = getTransactionsMock.mock.calls[0];
@@ -1211,9 +1223,9 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    await listOperations(config, VALID_ADDRESS, { minHeight: 500 });
+    await listOperations(context, VALID_ADDRESS, { minHeight: 500 });
 
-    expect(getTransactionsMock).toHaveBeenCalledWith(config, VALID_ADDRESS, {
+    expect(getTransactionsMock).toHaveBeenCalledWith(context, VALID_ADDRESS, {
       limit: 100,
       order: "d",
       includeRawRejectReason: true,
@@ -1230,9 +1242,9 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    await listOperations(config, VALID_ADDRESS, { minHeight: 0, cursor: "42" });
+    await listOperations(context, VALID_ADDRESS, { minHeight: 0, cursor: "42" });
 
-    expect(getTransactionsMock).toHaveBeenCalledWith(config, VALID_ADDRESS, {
+    expect(getTransactionsMock).toHaveBeenCalledWith(context, VALID_ADDRESS, {
       limit: 100,
       order: "d",
       includeRawRejectReason: true,
@@ -1267,7 +1279,7 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    const result = await listOperations(config, VALID_ADDRESS, { minHeight: 0 });
+    const result = await listOperations(context, VALID_ADDRESS, { minHeight: 0 });
 
     expect(result.next).toBe("101");
   });
@@ -1300,7 +1312,7 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    const result = await listOperations(config, VALID_ADDRESS, { minHeight: 0, limit: 2000 });
+    const result = await listOperations(context, VALID_ADDRESS, { minHeight: 0, limit: 2000 });
 
     expect(getTransactionsMock.mock.calls[0][2]).toMatchObject({ limit: 2000 });
     expect(result.items).toHaveLength(1000);
@@ -1325,7 +1337,7 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    const result = await listOperations(config, VALID_ADDRESS, { minHeight: 0 });
+    const result = await listOperations(context, VALID_ADDRESS, { minHeight: 0 });
 
     expect(result.items).toHaveLength(0);
   });
@@ -1357,7 +1369,7 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    const result = await listOperations(config, VALID_ADDRESS, { minHeight: 0, limit: 2 });
+    const result = await listOperations(context, VALID_ADDRESS, { minHeight: 0, limit: 2 });
 
     expect(result.items.map(({ type, value }) => [type, value])).toEqual([["FEES", "300"]]);
     expect(result.next).toBe("11");
@@ -1366,7 +1378,7 @@ describe("listOperations", () => {
   it("reports a fetch failure rather than an empty page, which reads as the end", async () => {
     getTransactionsMock.mockRejectedValue(new Error("network error"));
 
-    await expect(listOperations(config, VALID_ADDRESS, { minHeight: 0 })).rejects.toThrow(
+    await expect(listOperations(context, VALID_ADDRESS, { minHeight: 0 })).rejects.toThrow(
       "network error",
     );
   });
@@ -1374,7 +1386,7 @@ describe("listOperations", () => {
   it("excludes rewards, which the parser drops and which dominate a staking account", async () => {
     getTransactionsMock.mockResolvedValue({ transactions: [], count: 0, limit: 100 });
 
-    await listOperations(config, VALID_ADDRESS, { minHeight: 0 });
+    await listOperations(context, VALID_ADDRESS, { minHeight: 0 });
 
     expect(getTransactionsMock.mock.calls[0][2]).toMatchObject({ includeRewards: "none" });
   });

@@ -1,19 +1,53 @@
-import { tuning } from "./tuning";
+import {
+  boolean,
+  ConcordiumInvalidConfigError,
+  nonEmptyString,
+  nonNegativeInt,
+  positiveInt,
+} from "./tuning";
 
-describe("tuning", () => {
-  it("takes an integer override at or above the minimum", () => {
-    expect(tuning(0, 5)).toBe(0);
-    expect(tuning(3, 5, 1)).toBe(3);
+describe("positiveInt", () => {
+  it("takes an integer of at least 1", () => {
+    expect(positiveInt("gateway.timeoutMs", 1)).toBe(1);
   });
 
-  it.each([undefined, null, "10", 12.5, Number.NaN, Infinity, -1])(
-    "falls back to the default for %p",
-    value => {
-      expect(tuning(value, 5)).toBe(5);
-    },
-  );
+  it.each([undefined, null, "10", 12.5, Number.NaN, Infinity, 0, -1])("rejects %p", value => {
+    expect(() => positiveInt("gateway.timeoutMs", value)).toThrow(
+      new ConcordiumInvalidConfigError(
+        `concordium: coin config gateway.timeoutMs must be an integer >= 1, got ${String(value)}`,
+      ),
+    );
+  });
+});
 
-  it("falls back below the minimum", () => {
-    expect(tuning(0, 5, 1)).toBe(5);
+describe("nonNegativeInt", () => {
+  it("takes zero", () => {
+    expect(nonNegativeInt("gateway.retries", 0)).toBe(0);
+  });
+
+  it.each([undefined, -1, 0.5])("rejects %p", value => {
+    expect(() => nonNegativeInt("gateway.retries", value)).toThrow(ConcordiumInvalidConfigError);
+  });
+});
+
+describe("nonEmptyString", () => {
+  it("takes a non-empty string", () => {
+    expect(nonEmptyString("walletConnect.projectId", "abc")).toBe("abc");
+  });
+
+  it.each(["", undefined, null, 42])("rejects %p", value => {
+    expect(() => nonEmptyString("walletConnect.projectId", value)).toThrow(
+      ConcordiumInvalidConfigError,
+    );
+  });
+});
+
+describe("boolean", () => {
+  it.each([true, false])("takes %p", value => {
+    expect(boolean("enableTokens", value)).toBe(value);
+  });
+
+  it.each(["false", "true", 1, 0, null, undefined])("rejects %p", value => {
+    expect(() => boolean("enableTokens", value)).toThrow(ConcordiumInvalidConfigError);
   });
 });

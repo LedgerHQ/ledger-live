@@ -29,39 +29,3 @@ export const CONCORDIUM_ENERGY = {
   /** Maximum energy for TransferWithMemo: 503 (base) + 256 (max memo with CBOR) = 759 */
   TRANSFER_WITH_MEMO_MAX: BigInt(759),
 } as const;
-
-export const DEFAULT_MIN_RESERVE = 0;
-
-export const DEFAULT_ENABLE_TOKENS = false;
-
-export const DEFAULT_GATEWAY_TIMEOUT_MS = 30_000;
-
-export const DEFAULT_GATEWAY_RETRIES = 2;
-
-export const DEFAULT_GATEWAY_RETRY_DELAY_MS = 1_000;
-
-/** The proxy's documented ceiling; anything larger is silently clamped to it. */
-export const DEFAULT_MAX_TX_QUERY = 1_000;
-
-export const DEFAULT_PLT_MODULE_STATE_CACHE_TTL_MS = 300_000;
-
-export const DEFAULT_ACCOUNT_TOKENS_CACHE_TTL_MS = 30_000;
-
-/** Fallback fee in microCCD when the proxy cannot estimate a CCD transfer. */
-export const DEFAULT_FEES_DEFAULT_COST = 1_000_000;
-
-/**
- * Buffer added to the energy of a PLT fee estimate, as a percentage. The fee is
- * then priced from the buffered energy rather than buffered in its own right —
- * see `estimateTokenFees`.
- *
- * Energy is a ceiling, not a charge: the chain bills actual execution, so the
- * buffer costs the user nothing while absorbing any drift between preparing the
- * transaction and submitting it.
- *
- * A percentage rather than a float multiplier because the energy is a bigint,
- * and a float would need rounding rules of its own.
- */
-export const DEFAULT_PLT_ENERGY_BUFFER_PERCENT = 20;
-
-export const DEFAULT_CAL_LOOKUP_CONCURRENCY = 4;

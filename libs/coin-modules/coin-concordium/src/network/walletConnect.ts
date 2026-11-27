@@ -1,8 +1,8 @@
-import { getEnv } from "@ledgerhq/live-env";
+import type { Logger } from "@ledgerhq/coin-module-framework/config";
 import SignClient from "@walletconnect/sign-client";
 import type { SessionTypes } from "@walletconnect/types";
-import { log } from "@ledgerhq/logs";
 import type {
+  ConcordiumBridgeConfig,
   ConcordiumNetwork,
   IDAppCreateAccountParams,
   IDAppCreateAccountResponse,
@@ -11,33 +11,41 @@ import { CONCORDIUM_CHAIN_IDS } from "../constants";
 
 const REQUEST_CREATE_ACCOUNT_EXPIRY = 7 * 24 * 60 * 60; // 7 days in seconds
 
-const PROJECT_ID = getEnv("WALLETCONNECT_PROJECT_ID");
+export type WalletConnectSettings = ConcordiumBridgeConfig["walletConnect"];
 
 /**
  * One SignClient per process, outliving clearWalletConnect(). WalletConnect Core is a
  * process-wide singleton, and on each heartbeat every SignClient unsubscribes the shared
  * relayer topics that are not its own sessions, its own pending sessions, a pairing or its
  * auth response topic. Two SignClients would drop each other's session topics.
- * The first pairing therefore fixes the relay until restart.
+ * The first pairing therefore fixes the relay and the project id until restart.
  */
 let sharedSignClient: Promise<SignClient> | null = null;
-let sharedRelayUrl: string | null = null;
+let sharedSettings: WalletConnectSettings | null = null;
+/** The logger of the last pairing, which cleanup reuses: apps create instances without a context. */
+let sharedLogger: Logger = () => {};
 
-function getSharedSignClient(relayUrl: string): Promise<SignClient> {
-  if (sharedSignClient && relayUrl !== sharedRelayUrl) {
-    log("concordium-onboarding", "Ignoring a relay URL change until restart", {
-      active: sharedRelayUrl,
-      requested: relayUrl,
+function getSharedSignClient(settings: WalletConnectSettings, logger: Logger): Promise<SignClient> {
+  sharedLogger = logger;
+  if (
+    sharedSettings &&
+    (settings.relayUrl !== sharedSettings.relayUrl ||
+      settings.projectId !== sharedSettings.projectId)
+  ) {
+    logger("concordium-onboarding", "Ignoring a WalletConnect settings change until restart", {
+      active: sharedSettings,
+      requested: settings,
     });
   }
-  sharedRelayUrl ??= relayUrl;
-  sharedSignClient ??= SignClient.init({ projectId: PROJECT_ID, relayUrl }).catch(
-    (error: unknown) => {
-      sharedSignClient = null;
-      sharedRelayUrl = null;
-      throw error;
-    },
-  );
+  sharedSettings ??= settings;
+  sharedSignClient ??= SignClient.init({
+    projectId: settings.projectId,
+    relayUrl: settings.relayUrl,
+  }).catch((error: unknown) => {
+    sharedSignClient = null;
+    sharedSettings = null;
+    throw error;
+  });
 
   return sharedSignClient;
 }
@@ -54,19 +62,15 @@ export class ConcordiumWalletConnect {
    */
   private readonly approvedTopics = new Set<string>();
 
-  /** Initializes the shared client on first use. Only pairing calls this. */
-  async getClient(relayUrl: string): Promise<SignClient> {
-    if (this.client) {
-      return this.client;
-    }
-
+  /** Initializes the shared client on first use, and reports a settings change on every call. */
+  async getClient(settings: WalletConnectSettings, logger: Logger): Promise<SignClient> {
     try {
-      this.client = await getSharedSignClient(relayUrl);
+      this.client = await getSharedSignClient(settings, logger);
 
       return this.client;
     } catch (error) {
       this.client = null;
-      log("concordium-onboarding", "Failed to initialize WalletConnect client", { error });
+      logger("concordium-onboarding", "Failed to initialize WalletConnect client", { error });
       throw error;
     }
   }
@@ -139,7 +143,7 @@ export class ConcordiumWalletConnect {
               },
             });
           } catch (error) {
-            log(
+            sharedLogger(
               "concordium-onboarding",
               `Failed to disconnect Wallet Connect session ${session.topic}`,
               error,
@@ -148,7 +152,9 @@ export class ConcordiumWalletConnect {
         }),
       );
     } catch (error) {
-      log("concordium-onboarding", "Failed to disconnect all Wallet Connect sessions", { error });
+      sharedLogger("concordium-onboarding", "Failed to disconnect all Wallet Connect sessions", {
+        error,
+      });
     }
   }
 
@@ -174,13 +180,14 @@ export class ConcordiumWalletConnect {
   async initiatePairing(
     _network: ConcordiumNetwork,
     chainId: string,
-    relayUrl: string,
+    settings: WalletConnectSettings,
+    logger: Logger,
   ): Promise<{
     uri?: string;
     approval: () => Promise<SessionTypes.Struct>;
   }> {
     try {
-      const client = await this.getClient(relayUrl);
+      const client = await this.getClient(settings, logger);
 
       const expiredPairings = client.pairing
         .getAll({ active: true })
@@ -214,7 +221,7 @@ export class ConcordiumWalletConnect {
         },
       };
     } catch (error) {
-      log("concordium-onboarding", "Failed to initiate Wallet Connect pairing", { error });
+      logger("concordium-onboarding", "Failed to initiate Wallet Connect pairing", { error });
       throw error;
     }
   }

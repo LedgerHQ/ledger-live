@@ -7,6 +7,7 @@ import type {
   BlocksAtHeightResponse,
   BlockTransactionEventsResponse,
   ConcordiumCoinConfig,
+  ConcordiumContext,
   ConsensusInfoResponse,
   GetTransactionCostParams,
   PltTokenInfo,
@@ -16,12 +17,7 @@ import type {
   SubmitTransferData,
   TransactionQueryParams,
 } from "../types";
-import {
-  DEFAULT_GATEWAY_RETRIES,
-  DEFAULT_GATEWAY_RETRY_DELAY_MS,
-  DEFAULT_GATEWAY_TIMEOUT_MS,
-} from "../constants";
-import { tuning } from "../tuning";
+import { nonNegativeInt, positiveInt } from "../tuning";
 
 interface ProxyClient {
   baseUrl: string;
@@ -30,7 +26,7 @@ interface ProxyClient {
 
 function createProxyClient(config: ConcordiumCoinConfig): ProxyClient {
   const baseUrl = config.proxyUrl;
-  const timeout = tuning(config.gateway?.timeoutMs, DEFAULT_GATEWAY_TIMEOUT_MS, 1);
+  const timeout = positiveInt("gateway.timeoutMs", config.gateway?.timeoutMs);
 
   const request = async <TResponse, TRequest = unknown>(
     requestConfig: LiveNetworkRequest<TRequest>,
@@ -55,27 +51,25 @@ function createProxyClient(config: ConcordiumCoinConfig): ProxyClient {
 }
 
 /**
- * Executes a function with a proxy client built from `config`, retrying on failure.
+ * Executes a function with a proxy client built from `context.config()`, retrying on failure.
  *
- * @param config - The Concordium coin configuration
+ * @param context - The Concordium context
  * @param execute - Function to execute with the client
  * @param options.retries - Number of retries (default: `config.gateway.retries`)
  * @param options.signal - Stops retrying and rejects with its reason once aborted
  * @returns Result of the execute function
  */
 export async function withClient<T>(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   execute: (client: ProxyClient) => Promise<T>,
-  {
-    retries = tuning(config.gateway?.retries, DEFAULT_GATEWAY_RETRIES),
-    signal,
-  }: { retries?: number; signal?: AbortSignal | undefined } = {},
+  { retries, signal }: { retries?: number; signal?: AbortSignal } = {},
 ): Promise<T> {
+  const config = await context.config();
   const client = createProxyClient(config);
 
   return retry(() => execute(client), {
-    maxRetry: retries,
-    interval: tuning(config.gateway?.retryDelayMs, DEFAULT_GATEWAY_RETRY_DELAY_MS),
+    maxRetry: retries ?? nonNegativeInt("gateway.retries", config.gateway?.retries),
+    interval: nonNegativeInt("gateway.retryDelayMs", config.gateway?.retryDelayMs),
     intervalMultiplicator: 1,
     signal,
   });
@@ -85,8 +79,8 @@ export async function withClient<T>(
  * Get consensus info from the Concordium network.
  * GET /v0/consensusInfo
  */
-export function getConsensusInfo(config: ConcordiumCoinConfig): Promise<ConsensusInfoResponse> {
-  return withClient(config, async client =>
+export function getConsensusInfo(context: ConcordiumContext): Promise<ConsensusInfoResponse> {
+  return withClient(context, async client =>
     client.request<ConsensusInfoResponse>({
       method: "GET",
       url: "/v0/consensusInfo",
@@ -99,10 +93,10 @@ export function getConsensusInfo(config: ConcordiumCoinConfig): Promise<Consensu
  * GET /v0/blockInfo/{blockHash}
  */
 export function getBlockInfoByHash(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   blockHash: string,
 ): Promise<BlockInfoResponse> {
-  return withClient(config, async client =>
+  return withClient(context, async client =>
     client.request<BlockInfoResponse>({
       method: "GET",
       url: `/v0/blockInfo/${blockHash}`,
@@ -115,10 +109,10 @@ export function getBlockInfoByHash(
  * GET /v0/blocksAtHeight/{blockHeight}
  */
 export function getBlocksAtHeight(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   height: number,
 ): Promise<BlocksAtHeightResponse> {
-  return withClient(config, async client =>
+  return withClient(context, async client =>
     client.request<BlocksAtHeightResponse>({
       method: "GET",
       url: `/v0/blocksAtHeight/${height}`,
@@ -132,10 +126,10 @@ export function getBlocksAtHeight(
  * Returns an empty array for blocks with no transactions.
  */
 export function getBlockTransactionEvents(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   blockHash: string,
 ): Promise<BlockTransactionEventsResponse> {
-  return withClient(config, async client =>
+  return withClient(context, async client =>
     client.request<BlockTransactionEventsResponse>({
       method: "GET",
       url: `/v0/blockTransactionEvents/${blockHash}`,
@@ -148,18 +142,18 @@ export function getBlockTransactionEvents(
  * GET /v0/keyAccounts/{publicKey}
  */
 export function getAccountsByPublicKey(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   publicKey: string,
   signal?: AbortSignal,
 ): Promise<PublicKeyAccountsResponse> {
   return withClient(
-    config,
+    context,
     async client =>
       client.request<PublicKeyAccountsResponse>({
         method: "GET",
         url: `/v0/keyAccounts/${publicKey}`,
       }),
-    { signal },
+    signal ? { signal } : {},
   );
 }
 
@@ -168,10 +162,10 @@ export function getAccountsByPublicKey(
  * GET /v2/accBalance/{address}
  */
 export async function getAccountBalance(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   accountAddress: string,
 ): Promise<AccountBalanceResponse> {
-  return withClient(config, async client =>
+  return withClient(context, async client =>
     client.request<AccountBalanceResponse>({
       method: "GET",
       url: `/v2/accBalance/${accountAddress}`,
@@ -186,8 +180,8 @@ export async function getAccountBalance(
  * Returns full token info, not just identifiers: the proxy resolves each id
  * before responding.
  */
-export async function getPltTokens(config: ConcordiumCoinConfig): Promise<PltTokenInfo[]> {
-  return withClient(config, async client =>
+export async function getPltTokens(context: ConcordiumContext): Promise<PltTokenInfo[]> {
+  return withClient(context, async client =>
     client.request<PltTokenInfo[]>({
       method: "GET",
       url: "/v0/plt/tokens",
@@ -200,10 +194,10 @@ export async function getPltTokens(config: ConcordiumCoinConfig): Promise<PltTok
  * GET /v0/plt/tokenInfo/{tokenId}
  */
 export async function getPltTokenInfo(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   tokenId: string,
 ): Promise<PltTokenInfo> {
-  return withClient(config, async client =>
+  return withClient(context, async client =>
     client.request<PltTokenInfo>({
       method: "GET",
       url: `/v0/plt/tokenInfo/${encodeURIComponent(tokenId)}`,
@@ -216,10 +210,10 @@ export async function getPltTokenInfo(
  * GET /v0/accNonce/{address}
  */
 export async function getAccountNonce(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   accountAddress: string,
 ): Promise<{ nonce: number }> {
-  return withClient(config, async client =>
+  return withClient(context, async client =>
     client.request<{ nonce: number }>({
       method: "GET",
       url: `/v0/accNonce/${accountAddress}`,
@@ -232,11 +226,11 @@ export async function getAccountNonce(
  * GET /v3/accTransactions/{address}
  */
 export async function getTransactions(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   accountAddress: string,
   params?: TransactionQueryParams,
 ): Promise<TransactionsResponse> {
-  return withClient(config, async client =>
+  return withClient(context, async client =>
     client.request<TransactionsResponse>({
       method: "GET",
       url: `/v3/accTransactions/${accountAddress}`,
@@ -277,10 +271,10 @@ function toCostQueryParams(params: GetTransactionCostParams): Record<string, str
  * amount the chain will bill.
  */
 export async function getTransactionCost(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   params: GetTransactionCostParams,
 ): Promise<{ cost: string; energy: number }> {
-  return withClient(config, async client =>
+  return withClient(context, async client =>
     client.request<{ cost: string; energy: number }>({
       method: "GET",
       url: "/v0/transactionCost",
@@ -293,15 +287,15 @@ export async function getTransactionCost(
  * Submit a signed transfer transaction to the network
  * PUT /v0/submitTransfer
  *
- * @param config - The Concordium coin configuration
+ * @param context - The Concordium context
  * @param data - The transfer payload (hex-encoded transaction body and signatures)
  * @returns Submission ID
  */
 export async function submitTransfer(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   data: SubmitTransferData,
 ): Promise<{ submissionId: string }> {
-  return withClient(config, async client => {
+  return withClient(context, async client => {
     const request: LiveNetworkRequest<SubmitTransferData> = {
       method: "PUT",
       url: "/v0/submitTransfer",
@@ -315,15 +309,15 @@ export async function submitTransfer(
  * Submit a credential deployment transaction to the network
  * PUT /v0/submitCredential
  *
- * @param config - The Concordium coin configuration
+ * @param context - The Concordium context
  * @param data - The credential deployment data in proxy format
  * @returns Submission ID
  */
 export async function submitCredential(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   data: SubmitCredentialData,
 ): Promise<{ submissionId: string }> {
-  return withClient(config, async client => {
+  return withClient(context, async client => {
     const request: LiveNetworkRequest<SubmitCredentialData> = {
       method: "PUT",
       url: "/v0/submitCredential",

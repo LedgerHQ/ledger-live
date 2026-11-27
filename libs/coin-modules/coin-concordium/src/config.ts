@@ -8,7 +8,26 @@ export type {
   ConcordiumContext,
 } from "./types/config";
 
-// `enableTokens` repeats its default so the developer coin-config screen shows the toggle.
+const tuning = {
+  minReserve: 0,
+  enableTokens: false,
+  gateway: {
+    timeoutMs: 30_000,
+    retries: 2,
+    retryDelayMs: 1_000,
+    maxTxQuery: 1_000,
+    pltModuleStateCacheTtlMs: 300_000,
+    accountTokensCacheTtlMs: 30_000,
+  },
+  fees: { defaultCost: 1_000_000, pltEnergyBufferPercent: 20 },
+  tokens: { calLookupConcurrency: 4 },
+};
+
+const walletConnect = {
+  relayUrl: "wss://relay.walletconnect.com",
+  projectId: "053f3301d5f72cf59dbab8ebeab71f23",
+};
+
 export const concordiumDefaults = {
   concordium: {
     status: { type: "active" },
@@ -16,8 +35,8 @@ export const concordiumDefaults = {
     unit: { name: "ccd", code: "CCD", magnitude: 6 },
     networkType: "mainnet",
     proxyUrl: "https://ccd-wallet-proxy-mainnet.coin.ledger.com",
-    enableTokens: false,
-    walletConnect: { relayUrl: "wss://relay.walletconnect.com" },
+    ...tuning,
+    walletConnect,
   },
   concordium_testnet: {
     status: { type: "active" },
@@ -25,7 +44,7 @@ export const concordiumDefaults = {
     unit: { name: "ccd", code: "CCD", magnitude: 6 },
     networkType: "testnet",
     proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
-    enableTokens: false,
-    walletConnect: { relayUrl: "wss://relay.walletconnect.com" },
+    ...tuning,
+    walletConnect,
   },
 } satisfies Record<string, ConcordiumBridgeConfig>;

@@ -2,7 +2,6 @@ import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { LockedDeviceError } from "../errors";
 import { ConcordiumPairingExpiredError, ConcordiumSessionExpiredError } from "../types/errors";
-import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { CONCORDIUM_CHAIN_IDS, CONCORDIUM_ID_APP_MOBILE_HOST } from "../constants";
@@ -21,8 +20,10 @@ import {
   type ConcordiumPairingProgress,
   AccountOnboardStatus,
   ConcordiumPairingStatus,
+  withConfig,
 } from "../types";
 import { submitCredential } from "../network/proxyClient";
+import { nonEmptyString } from "../tuning";
 
 /**
  * Wraps a promise with a 5-minute timeout that automatically cleans up when settled.
@@ -127,7 +128,7 @@ export const buildOnboardAccount =
 
           const data = buildSubmitCredentialData(credentialDeploymentTransaction, signature);
 
-          await submitCredential(config, data);
+          await submitCredential(withConfig(context, config), data);
 
           const onboardResult: ConcordiumOnboardResult = {
             account: {
@@ -151,7 +152,7 @@ export const buildOnboardAccount =
 
           o.next(onboardResult);
         } catch (error: unknown) {
-          log("concordium-onboarding", "Failed to onboard account", { error });
+          context.logger("concordium-onboarding", "Failed to onboard account", { error });
           throw error;
         }
       }
@@ -191,19 +192,19 @@ export const buildPairWalletConnect =
           }
 
           const config = await context.config(currencyId);
-          const relayUrl = config.walletConnect?.relayUrl;
-          if (!relayUrl) {
-            throw new Error(
-              `concordium: no walletConnect.relayUrl in the coin config of ${currencyId}`,
-            );
-          }
+          const relayUrl = nonEmptyString("walletConnect.relayUrl", config.walletConnect?.relayUrl);
+          const projectId = nonEmptyString(
+            "walletConnect.projectId",
+            config.walletConnect?.projectId,
+          );
           const network = config.networkType;
           const chainId = CONCORDIUM_CHAIN_IDS[network];
 
           const { uri: encodedUri, approval } = await walletConnect.initiatePairing(
             network,
             chainId,
-            relayUrl,
+            { relayUrl, projectId },
+            context.logger,
           );
 
           if (!encodedUri) {
@@ -217,7 +218,9 @@ export const buildPairWalletConnect =
 
           o.next({ status: ConcordiumPairingStatus.SUCCESS, sessionTopic: session.topic });
         } catch (error: unknown) {
-          log("concordium-onboarding", "Failed to pair Wallet Connect session", { error });
+          context.logger("concordium-onboarding", "Failed to pair Wallet Connect session", {
+            error,
+          });
           throw error;
         }
       }

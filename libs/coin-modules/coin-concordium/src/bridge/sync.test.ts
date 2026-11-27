@@ -5,19 +5,20 @@ import {
   getOperationAmountNumber,
 } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
-  createFixtureConfig,
+  PLT_TOKEN_ID,
+  PUBLIC_KEY,
+  VALID_ADDRESS,
+  VALID_ADDRESS_2,
+  createFixtureContext,
   createFixtureCurrency,
   createFixtureOperation,
   createFixtureTokenAccount,
   createFixtureTokenCurrency,
-  PLT_TOKEN_ID,
-  VALID_ADDRESS,
-  VALID_ADDRESS_2,
-  PUBLIC_KEY,
 } from "../test/fixtures";
 import type { Operation } from "@ledgerhq/types-live";
 import { createTestConcordiumAccount } from "../test/testHelpers";
 import type { ConcordiumAccount } from "../types";
+import { ConcordiumInvalidConfigError } from "../tuning";
 import { makeGetAccountShape, getBalance, syncOperations } from "./sync";
 
 jest.mock("../network/proxyClient", () => ({
@@ -53,8 +54,8 @@ const { listOperations } = jest.requireMock("../logic/history/listOperations");
 
 const CURRENCY_ID = "concordium_testnet";
 const ACCOUNT_ID = "js:2:concordium_testnet:test:";
-const config = createFixtureConfig({ minReserve: 100000 });
-const getAccountShape = makeGetAccountShape(config) as any;
+const context = createFixtureContext({ minReserve: 100000 });
+const getAccountShape = makeGetAccountShape(context) as any;
 
 function createRawOpFixture(overrides?: Record<string, unknown>) {
   return {
@@ -93,7 +94,7 @@ describe("getBalance token list authority", () => {
       finalizedBalance: { accountAmount: "1", accountAtDisposal: "1", accountTokens },
     });
 
-    const result = await getBalance(config, VALID_ADDRESS);
+    const result = await getBalance(context, VALID_ADDRESS);
 
     expect(result.accountTokens).toBe(accountTokens);
     expect(getAccountBalance).toHaveBeenCalledTimes(1);
@@ -102,7 +103,7 @@ describe("getBalance token list authority", () => {
   it("reports no token list when the request fails, so the caller can tell that apart from empty", async () => {
     getAccountBalance.mockRejectedValue(new Error("network error"));
 
-    const result = await getBalance(config, VALID_ADDRESS);
+    const result = await getBalance(context, VALID_ADDRESS);
 
     // A zeroed balance is synthetic here; treating an absent list as authoritative
     // would delete the account's token sub-accounts on one bad response.
@@ -115,7 +116,7 @@ describe("getBalance token list authority", () => {
       finalizedBalance: { accountAmount: "1", accountAtDisposal: "1", accountTokens: null },
     });
 
-    const result = await getBalance(config, VALID_ADDRESS);
+    const result = await getBalance(context, VALID_ADDRESS);
 
     // Normalised at this boundary so the declared type holds for every caller.
     expect(result.accountTokens).toBeUndefined();
@@ -126,7 +127,7 @@ describe("getBalance token list authority", () => {
       finalizedBalance: { accountAmount: "1", accountAtDisposal: "1" },
     });
 
-    const result = await getBalance(config, VALID_ADDRESS);
+    const result = await getBalance(context, VALID_ADDRESS);
 
     expect(result.accountTokens).toBeUndefined();
   });
@@ -142,7 +143,7 @@ describe("getBalances", () => {
       finalizedBalance: { accountAmount: "10000000", accountAtDisposal: "9900000" },
     });
 
-    const result = await getBalance(config, VALID_ADDRESS);
+    const result = await getBalance(context, VALID_ADDRESS);
 
     expect(result.balance).toEqual(new BigNumber(10000000));
     expect(result.spendableBalance).toEqual(new BigNumber(9900000));
@@ -153,9 +154,27 @@ describe("getBalances", () => {
       finalizedBalance: { accountAmount: "10000000" },
     });
 
-    const result = await getBalance(config, VALID_ADDRESS);
+    const result = await getBalance(context, VALID_ADDRESS);
 
     expect(result.spendableBalance).toEqual(new BigNumber(9900000));
+  });
+
+  it("ignores an invalid minReserve when the proxy reports accountAtDisposal", async () => {
+    getAccountBalance.mockResolvedValue({
+      finalizedBalance: { accountAmount: "10000000", accountAtDisposal: "9900000" },
+    });
+
+    const result = await getBalance(createFixtureContext({ minReserve: -1 }), VALID_ADDRESS);
+
+    expect(result.spendableBalance).toEqual(new BigNumber(9900000));
+  });
+
+  it("rejects an invalid minReserve when it is read", async () => {
+    getAccountBalance.mockResolvedValue({ finalizedBalance: { accountAmount: "10000000" } });
+
+    await expect(
+      getBalance(createFixtureContext({ minReserve: -1 }), VALID_ADDRESS),
+    ).rejects.toThrow(ConcordiumInvalidConfigError);
   });
 
   it("should clamp negative spendableBalance to 0", async () => {
@@ -163,7 +182,7 @@ describe("getBalances", () => {
       finalizedBalance: { accountAmount: "50000" },
     });
 
-    const result = await getBalance(config, VALID_ADDRESS);
+    const result = await getBalance(context, VALID_ADDRESS);
 
     expect(result.spendableBalance).toEqual(new BigNumber(0));
   });
@@ -171,7 +190,7 @@ describe("getBalances", () => {
   it("should return zero balances on network error", async () => {
     getAccountBalance.mockRejectedValue(new Error("network error"));
 
-    const result = await getBalance(config, VALID_ADDRESS);
+    const result = await getBalance(context, VALID_ADDRESS);
 
     expect(result.balance).toEqual(new BigNumber(0));
     expect(result.spendableBalance).toEqual(new BigNumber(0));
@@ -182,7 +201,7 @@ describe("getBalances", () => {
       finalizedBalance: { accountAmount: "invalid" },
     });
 
-    const result = await getBalance(config, VALID_ADDRESS);
+    const result = await getBalance(context, VALID_ADDRESS);
 
     expect(result.balance).toEqual(new BigNumber(0));
   });
@@ -195,11 +214,11 @@ describe("syncOperations", () => {
   });
 
   it("should fetch with minHeight 0 when no old operations", async () => {
-    const result = await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [], {
+    const result = await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [], {
       enableTokens: false,
     });
 
-    expect(listOperations).toHaveBeenCalledWith(config, VALID_ADDRESS, {
+    expect(listOperations).toHaveBeenCalledWith(context, VALID_ADDRESS, {
       minHeight: 0,
       limit: 1000,
       order: "desc",
@@ -210,11 +229,11 @@ describe("syncOperations", () => {
   it("should use blockHeight + 1 from newest old operation as minHeight", async () => {
     const oldOp = createFixtureOperation({ blockHeight: 500 });
 
-    await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [oldOp], {
+    await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [oldOp], {
       enableTokens: false,
     });
 
-    expect(listOperations).toHaveBeenCalledWith(config, VALID_ADDRESS, {
+    expect(listOperations).toHaveBeenCalledWith(context, VALID_ADDRESS, {
       minHeight: 501,
       limit: 1000,
       order: "desc",
@@ -224,11 +243,11 @@ describe("syncOperations", () => {
   it("should use minHeight 0 when newest operation has blockHeight 0", async () => {
     const oldOp = createFixtureOperation({ blockHeight: 0 });
 
-    await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [oldOp], {
+    await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [oldOp], {
       enableTokens: false,
     });
 
-    expect(listOperations).toHaveBeenCalledWith(config, VALID_ADDRESS, {
+    expect(listOperations).toHaveBeenCalledWith(context, VALID_ADDRESS, {
       minHeight: 0,
       limit: 1000,
       order: "desc",
@@ -251,7 +270,7 @@ describe("syncOperations", () => {
 
     const syncOne = async (item: object) => {
       listOperations.mockResolvedValue({ items: [item], next: undefined });
-      const { operations } = await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [], {
+      const { operations } = await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [], {
         enableTokens: false,
       });
       return operations;
@@ -307,7 +326,7 @@ describe("syncOperations", () => {
       next: undefined,
     });
 
-    const result = await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [oldOp], {
+    const result = await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [oldOp], {
       enableTokens: false,
     });
 
@@ -320,7 +339,7 @@ describe("syncOperations", () => {
     listOperations.mockRejectedValue(new Error("network error"));
 
     await expect(
-      syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [], { enableTokens: false }),
+      syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [], { enableTokens: false }),
     ).rejects.toThrow("network error");
   });
 
@@ -330,7 +349,7 @@ describe("syncOperations", () => {
       .mockResolvedValueOnce({ items: [createRawOpFixture()], next: "101" })
       .mockResolvedValueOnce({ items: [older], next: undefined });
 
-    const result = await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [], {
+    const result = await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [], {
       enableTokens: false,
     });
 
@@ -345,7 +364,7 @@ describe("syncOperations", () => {
     listOperations.mockResolvedValue({ items: [createRawOpFixture()], next: "101" });
 
     await expect(
-      syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [], { enableTokens: false }),
+      syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [], { enableTokens: false }),
     ).rejects.toThrow("was served twice");
   });
 
@@ -355,11 +374,11 @@ describe("syncOperations", () => {
       .mockResolvedValueOnce({ items: [createRawOpFixture()], next: "9" })
       .mockResolvedValueOnce({ items: [], next: undefined });
 
-    await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [stored], {
+    await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [stored], {
       enableTokens: false,
     });
 
-    expect(listOperations).toHaveBeenNthCalledWith(2, config, VALID_ADDRESS, {
+    expect(listOperations).toHaveBeenNthCalledWith(2, context, VALID_ADDRESS, {
       minHeight: 501,
       limit: 1000,
       order: "desc",
@@ -373,7 +392,7 @@ describe("syncOperations", () => {
       .mockResolvedValueOnce({ items: [], next: "101" })
       .mockResolvedValueOnce({ items: [older], next: undefined });
 
-    const result = await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [], {
+    const result = await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [], {
       enableTokens: false,
     });
 
@@ -395,7 +414,7 @@ describe("syncOperations", () => {
     it("hands the token half back unmapped, for the sub-account to claim", async () => {
       listOperations.mockResolvedValue({ items: [pltOp], next: undefined });
 
-      const result = await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [], {
+      const result = await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [], {
         enableTokens: true,
       });
 
@@ -405,7 +424,7 @@ describe("syncOperations", () => {
     it("leaves only the CCD fee on the parent account", async () => {
       listOperations.mockResolvedValue({ items: [pltOp], next: undefined });
 
-      const result = await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [], {
+      const result = await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [], {
         enableTokens: true,
       });
 
@@ -420,7 +439,7 @@ describe("syncOperations", () => {
         next: undefined,
       });
 
-      const result = await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [], {
+      const result = await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [], {
         enableTokens: true,
       });
 
@@ -431,12 +450,12 @@ describe("syncOperations", () => {
       listOperations.mockResolvedValue({ items: [], next: undefined });
       const oldOp = createFixtureOperation({ blockHeight: 500 });
 
-      await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [oldOp], {
+      await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [oldOp], {
         enableTokens: true,
         refetchAll: true,
       });
 
-      expect(listOperations).toHaveBeenCalledWith(config, VALID_ADDRESS, {
+      expect(listOperations).toHaveBeenCalledWith(context, VALID_ADDRESS, {
         minHeight: 0,
         limit: 1000,
         order: "desc",
@@ -447,7 +466,7 @@ describe("syncOperations", () => {
       const stale = createFixtureOperation({ id: "stale-op", blockHeight: 10 });
       listOperations.mockResolvedValue({ items: [], next: undefined });
 
-      const result = await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [stale], {
+      const result = await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [stale], {
         enableTokens: true,
         refetchAll: true,
       });
@@ -460,7 +479,7 @@ describe("syncOperations", () => {
       const older = { ...pltOp, date: new Date("2020-01-01") };
       listOperations.mockResolvedValue({ items: [older], next: undefined });
 
-      const result = await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [stored], {
+      const result = await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [stored], {
         enableTokens: true,
         refetchAll: true,
       });
@@ -473,7 +492,7 @@ describe("syncOperations", () => {
       const stored = createFixtureOperation({ id: "kept-op", blockHeight: 10 });
       listOperations.mockResolvedValue({ items: [], next: undefined });
 
-      const result = await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [stored], {
+      const result = await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [stored], {
         enableTokens: true,
       });
 
@@ -485,7 +504,7 @@ describe("syncOperations", () => {
       const older = { ...pltOp, date: new Date("2020-01-01") };
       listOperations.mockResolvedValue({ items: [older, older], next: undefined });
 
-      const result = await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [stored], {
+      const result = await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [stored], {
         enableTokens: true,
         refetchAll: true,
       });
@@ -497,7 +516,7 @@ describe("syncOperations", () => {
     it("discards PLT transfers entirely when tokens are off", async () => {
       listOperations.mockResolvedValue({ items: [pltOp], next: undefined });
 
-      const result = await syncOperations(config, VALID_ADDRESS, ACCOUNT_ID, [], {
+      const result = await syncOperations(context, VALID_ADDRESS, ACCOUNT_ID, [], {
         enableTokens: false,
       });
 
@@ -647,7 +666,7 @@ describe("getAccountShape", () => {
       initialAccount,
     });
 
-    expect(getAccountsByPublicKey).toHaveBeenCalledWith(config, PUBLIC_KEY);
+    expect(getAccountsByPublicKey).toHaveBeenCalledWith(context, PUBLIC_KEY);
   });
 
   it("should preserve derivationMode, derivationPath, and index", async () => {
@@ -717,7 +736,7 @@ describe("getAccountShape", () => {
 
     expect(getAccountBalance).toHaveBeenCalled();
     expect(listOperations).toHaveBeenCalled();
-    expect(getConsensusInfo).toHaveBeenCalledWith(config);
+    expect(getConsensusInfo).toHaveBeenCalledWith(context);
   });
 });
 
@@ -789,8 +808,25 @@ describe("getAccountShape with tokens disabled", () => {
     expect(result.syncHash).toBe("tokens=off:history=3");
   });
 
-  it.each(["tokens=off", "tokens=off:history=2"])(
-    "should re-read from zero a history stored under the older version %s",
+  it("ignores an invalid CAL concurrency, which only a token lookup reads", async () => {
+    const result = await makeGetAccountShape(
+      createFixtureContext({ minReserve: 100000, tokens: { calLookupConcurrency: 0 } }),
+    )(
+      {
+        currency: createFixtureCurrency(),
+        derivationMode: "",
+        derivationPath: "44'/1'/0'/0'/0'/0'",
+        index: 0,
+        rest: { publicKey: PUBLIC_KEY },
+      } as any,
+      undefined as any,
+    );
+
+    expect(result.syncHash).toBe("tokens=off:history=3");
+  });
+
+  it.each(["tokens=off", "tokens=off:history=2", "refetch-pending"])(
+    "should re-read from zero a history stored as %s",
     async syncHash => {
       const result = await getAccountShape({
         currency: createFixtureCurrency(),
@@ -801,7 +837,7 @@ describe("getAccountShape with tokens disabled", () => {
         rest: { publicKey: PUBLIC_KEY },
       });
 
-      expect(listOperations).toHaveBeenCalledWith(config, VALID_ADDRESS, {
+      expect(listOperations).toHaveBeenCalledWith(context, VALID_ADDRESS, {
         minHeight: 0,
         limit: 1000,
         order: "desc",
@@ -940,7 +976,7 @@ describe("getAccountShape with tokens disabled", () => {
       rest: { publicKey: PUBLIC_KEY },
     });
 
-    expect(listOperations).toHaveBeenCalledWith(config, VALID_ADDRESS, {
+    expect(listOperations).toHaveBeenCalledWith(context, VALID_ADDRESS, {
       minHeight: 0,
       limit: 1000,
       order: "desc",
@@ -959,7 +995,7 @@ describe("getAccountShape with tokens disabled", () => {
       rest: { publicKey: PUBLIC_KEY },
     });
 
-    expect(listOperations).toHaveBeenCalledWith(config, VALID_ADDRESS, {
+    expect(listOperations).toHaveBeenCalledWith(context, VALID_ADDRESS, {
       minHeight: 0,
       limit: 1000,
       order: "desc",
@@ -982,7 +1018,7 @@ describe("getAccountShape with tokens disabled", () => {
       rest: { publicKey: PUBLIC_KEY },
     });
 
-    expect(listOperations).toHaveBeenCalledWith(config, VALID_ADDRESS, {
+    expect(listOperations).toHaveBeenCalledWith(context, VALID_ADDRESS, {
       minHeight: 501,
       limit: 1000,
       order: "desc",
@@ -993,8 +1029,8 @@ describe("getAccountShape with tokens disabled", () => {
 describe("getAccountShape with tokens enabled", () => {
   const TOKEN = createFixtureTokenCurrency();
   const SUB_ACCOUNT_ID = encodeTokenAccountId("js:2:concordium_testnet:" + PUBLIC_KEY + ":", TOKEN);
-  const tokensOnConfig = { ...config, enableTokens: true };
-  const getTokensOnShape = makeGetAccountShape(tokensOnConfig) as any;
+  const tokensOnContext = createFixtureContext({ minReserve: 100000, enableTokens: true });
+  const getTokensOnShape = makeGetAccountShape(tokensOnContext) as any;
 
   const PLT_ENTRY = {
     token: { tokenId: PLT_TOKEN_ID, tokenState: { decimals: 6, moduleState: {} } },
@@ -1062,25 +1098,35 @@ describe("getAccountShape with tokens enabled", () => {
   });
 
   it.each([0, -1, 1.5])(
-    "still resolves token sub-accounts with a CAL concurrency override of %s",
+    "rejects a CAL concurrency override of %s and logs the failure",
     async calLookupConcurrency => {
+      const logger = jest.fn();
       const getShape = makeGetAccountShape({
-        ...tokensOnConfig,
-        tokens: { calLookupConcurrency },
+        ...createFixtureContext({
+          minReserve: 100000,
+          enableTokens: true,
+          tokens: { calLookupConcurrency },
+        }),
+        logger,
       }) as any;
 
-      const result = await getShape(
-        {
-          currency: createFixtureCurrency(),
-          derivationMode: "",
-          derivationPath: "44'/1'/0'/0'/0'/0'",
-          index: 0,
-          rest: { publicKey: PUBLIC_KEY },
-        },
-        undefined,
+      await expect(
+        getShape(
+          {
+            currency: createFixtureCurrency(),
+            derivationMode: "",
+            derivationPath: "44'/1'/0'/0'/0'/0'",
+            index: 0,
+            rest: { publicKey: PUBLIC_KEY },
+          },
+          undefined,
+        ),
+      ).rejects.toThrow(ConcordiumInvalidConfigError);
+      expect(logger).toHaveBeenCalledWith(
+        "concordium-sync",
+        `Error fetching account shape for public key ${PUBLIC_KEY}`,
+        { error: expect.any(ConcordiumInvalidConfigError) },
       );
-
-      expect(result.subAccounts?.map((a: { id: string }) => a.id)).toEqual([SUB_ACCOUNT_ID]);
     },
   );
 
@@ -1155,7 +1201,7 @@ describe("getAccountShape with tokens enabled", () => {
       getTokensSyncHash.mockRejectedValueOnce(new Error("CAL down"));
       const duringOutage = await shape(storedAccount({ syncHash: legacy }));
       expect(duringOutage.syncHash).toBe(legacy);
-      expect(listOperations).toHaveBeenLastCalledWith(tokensOnConfig, VALID_ADDRESS, {
+      expect(listOperations).toHaveBeenLastCalledWith(tokensOnContext, VALID_ADDRESS, {
         minHeight: 501,
         limit: 1000,
         order: "desc",
@@ -1163,14 +1209,14 @@ describe("getAccountShape with tokens enabled", () => {
 
       const recovered = await shape(storedAccount({ syncHash: legacy }));
       expect(recovered.syncHash).toBe(current);
-      expect(listOperations).toHaveBeenLastCalledWith(tokensOnConfig, VALID_ADDRESS, {
+      expect(listOperations).toHaveBeenLastCalledWith(tokensOnContext, VALID_ADDRESS, {
         minHeight: 0,
         limit: 1000,
         order: "desc",
       });
 
       await shape(storedAccount({ syncHash: current }));
-      expect(listOperations).toHaveBeenLastCalledWith(tokensOnConfig, VALID_ADDRESS, {
+      expect(listOperations).toHaveBeenLastCalledWith(tokensOnContext, VALID_ADDRESS, {
         minHeight: 501,
         limit: 1000,
         order: "desc",
@@ -1188,7 +1234,7 @@ describe("getAccountShape with tokens enabled", () => {
   it("re-reads from zero when the flag has just been turned on", async () => {
     await shape(storedAccount({ syncHash: "tokens=off" }));
 
-    expect(listOperations).toHaveBeenCalledWith(tokensOnConfig, VALID_ADDRESS, {
+    expect(listOperations).toHaveBeenCalledWith(tokensOnContext, VALID_ADDRESS, {
       minHeight: 0,
       limit: 1000,
       order: "desc",
@@ -1204,7 +1250,7 @@ describe("getAccountShape with tokens enabled", () => {
     const result = await shape(storedAccount({ syncHash: stored.syncHash }));
 
     expect(result.syncHash).toBe(stored.syncHash);
-    expect(listOperations).toHaveBeenLastCalledWith(tokensOnConfig, VALID_ADDRESS, {
+    expect(listOperations).toHaveBeenLastCalledWith(tokensOnContext, VALID_ADDRESS, {
       minHeight: 501,
       limit: 1000,
       order: "desc",
@@ -1233,7 +1279,7 @@ describe("getAccountShape with tokens enabled", () => {
   it("re-reads from zero on the first healthy sync after transfers went unattributed", async () => {
     await shape(storedAccount({ syncHash: "refetch-pending" }));
 
-    expect(listOperations).toHaveBeenLastCalledWith(tokensOnConfig, VALID_ADDRESS, {
+    expect(listOperations).toHaveBeenLastCalledWith(tokensOnContext, VALID_ADDRESS, {
       minHeight: 0,
       limit: 1000,
       order: "desc",
@@ -1259,7 +1305,7 @@ describe("getAccountShape with tokens enabled", () => {
     const result = await shape(storedAccount({ syncHash: "refetch-pending" }));
 
     expect(result.syncHash).toBe("refetch-pending");
-    expect(listOperations).toHaveBeenLastCalledWith(tokensOnConfig, VALID_ADDRESS, {
+    expect(listOperations).toHaveBeenLastCalledWith(tokensOnContext, VALID_ADDRESS, {
       minHeight: 501,
       limit: 1000,
       order: "desc",

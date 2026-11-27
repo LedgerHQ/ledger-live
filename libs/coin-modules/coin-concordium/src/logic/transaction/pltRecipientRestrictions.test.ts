@@ -6,13 +6,13 @@ import {
   ConcordiumRecipientRestrictionsUnverified,
 } from "../../types/errors";
 import type {
-  ConcordiumCoinConfig,
   PltAccountModuleState,
   PltAccountToken,
   PltEncodedState,
   PltModuleState,
 } from "../../types";
 import { checkRecipientRestrictions } from "./pltRecipientRestrictions";
+import { createFixtureContext } from "../../test/fixtures";
 
 jest.mock("../../network/pltRecipient", () => ({
   fetchPltModuleState: jest.fn(),
@@ -26,11 +26,10 @@ const TOKEN_ID = "UPEU";
 const TICKER = "UPEU";
 const RECIPIENT = "4fWTMJSAymJoFeTbohJzwejT6Wzh1dAa2BtnbDicgjQrc94TgW";
 
-const config = { proxyUrl: "https://proxy.test" } as ConcordiumCoinConfig;
+const context = createFixtureContext();
 
 const check = () =>
-  checkRecipientRestrictions({
-    config,
+  checkRecipientRestrictions(context, {
     recipient: RECIPIENT,
     tokenId: TOKEN_ID,
     ticker: TICKER,

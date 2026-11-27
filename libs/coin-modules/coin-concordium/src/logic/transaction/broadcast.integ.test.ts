@@ -1,8 +1,9 @@
 import { concordiumDefaults } from "../../config";
 import { broadcast } from "./broadcast";
+import { createFixtureContext } from "../../test/fixtures";
 
 describe("Broadcast", () => {
-  const config = concordiumDefaults.concordium_testnet;
+  const context = createFixtureContext(concordiumDefaults.concordium_testnet);
 
   it("throws when broadcasting a valid tx with an invalid signature", async () => {
     const signedTx = JSON.stringify({
@@ -17,6 +18,6 @@ describe("Broadcast", () => {
       signature: "00".repeat(64),
     });
 
-    await expect(broadcast(config, signedTx)).rejects.toThrow(/^1$/);
+    await expect(broadcast(context, signedTx)).rejects.toThrow(/^1$/);
   });
 });

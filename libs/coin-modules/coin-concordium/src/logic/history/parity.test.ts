@@ -1,8 +1,10 @@
-import { createFixtureConfig, VALID_ADDRESS, VALID_ADDRESS_2 } from "../../test/fixtures";
+import { VALID_ADDRESS, VALID_ADDRESS_2, createFixtureContext } from "../../test/fixtures";
 import { blockEffect, listedEffect } from "../../test/historyParity";
 import type { WalletProxyTransaction } from "../../types";
 import { getBlock } from "./getBlock";
 import { parseTransaction } from "./listOperations";
+
+const context = createFixtureContext();
 
 jest.mock("./getBlockInfo", () => ({ getBlockInfo: async () => ({ hash: "block-hash" }) }));
 
@@ -110,7 +112,7 @@ async function blockTransactionOf({ events }: Kind, isSponsored: boolean) {
       result: events ? { outcome: "success", events } : { outcome: "reject" },
     },
   ]);
-  const { transactions } = await getBlock(createFixtureConfig(), 1000);
+  const { transactions } = await getBlock(createFixtureContext(), 1000);
   return transactions[0];
 }
 
@@ -133,7 +135,7 @@ function rowOf(
 }
 
 function listedEffectOf(row: WalletProxyTransaction, address: string) {
-  const operation = parseTransaction(row, address);
+  const operation = parseTransaction(context, row, address);
   return operation && listedEffect(operation);
 }
 

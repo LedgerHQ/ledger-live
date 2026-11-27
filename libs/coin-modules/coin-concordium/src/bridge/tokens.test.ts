@@ -22,6 +22,7 @@ import type {
   PltModuleState,
   RawOperation,
 } from "../types";
+import { createFixtureContext } from "../test/fixtures";
 
 const CURRENCY_ID = "concordium";
 const ACCOUNT_ID = "js:2:concordium:pubkey:";
@@ -76,8 +77,8 @@ const useStore = (tokens: Record<string, TokenCurrency | undefined>) =>
     findTokenByAddressInCurrency: jest.fn(async (address: string) => tokens[address]),
   });
 
-const resolve = (over: Partial<Parameters<typeof resolveTokenSubAccounts>[0]> = {}) =>
-  resolveTokenSubAccounts({
+const resolve = (over: Partial<Parameters<typeof resolveTokenSubAccounts>[1]> = {}) =>
+  resolveTokenSubAccounts(createFixtureContext(), {
     enableTokens: true,
     currencyId: CURRENCY_ID,
     accountId: ACCOUNT_ID,

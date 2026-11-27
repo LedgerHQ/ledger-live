@@ -12,7 +12,6 @@ import type {
   TransactionIntent,
   AddressValidationCurrencyParameters,
 } from "@ledgerhq/coin-module-framework/api/index";
-import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import {
   serializeTransfer,
@@ -37,10 +36,17 @@ import {
   listOperations as listOperationsLogic,
 } from "../logic";
 import { getAccountStatus, type ConcordiumAccountStatus } from "../logic/account/getAccountStatus";
-import type { ConcordiumCoinConfig, ConcordiumMemo } from "../types";
+import {
+  withConfig,
+  type ConcordiumCoinConfig,
+  type ConcordiumContext,
+  type ConcordiumMemo,
+} from "../types";
 import { mapRawOperationToApiOperation } from "./utils";
 
-type ConcordiumApiContext = Context<ConcordiumCoinConfig>;
+/** Resolves the config once per call, so every request of the call reaches the same proxy. */
+const pin = async (context: ConcordiumContext): Promise<ConcordiumContext> =>
+  withConfig(context, await context.config());
 
 // Not in `CoinModuleApi` yet.
 type AccountStatusCapability<C> = {
@@ -48,10 +54,10 @@ type AccountStatusCapability<C> = {
 };
 
 /**
- * In the {@link Context}-based API (ADR-019) the coin configuration is resolved per call from
- * `context.config()` and threaded explicitly (as the required first argument) into the concordium
- * network/logic layers; the config alone selects the chain. The classic bridge resolves the same
- * config from the `Context` it receives and threads it the same way.
+ * In the {@link Context}-based API (ADR-019) each method resolves the coin configuration once and
+ * hands the concordium network/logic layers, which take the `Context` as their first argument, a
+ * context pinned to it; the config alone selects the chain. The classic bridge threads the
+ * `Context` it receives the same way, pinned to the config of the account's currency.
  *
  * Checked against {@link CoinModuleImpl} with `satisfies` rather than annotated as it, so the
  * precise shape survives and a caller sees exactly which methods exist.
@@ -66,55 +72,34 @@ type AccountStatusCapability<C> = {
  */
 export function createApi() {
   return {
-    broadcast: async (context, tx, _options?) => {
-      const config = await context.config();
-      return broadcast(config, tx);
-    },
+    broadcast: async (context, tx, _options?) => broadcast(await pin(context), tx),
     combine: (_context, tx, signature, _options?) => combine(tx, signature),
-    craftTransaction: async (context, transactionIntent, _options?) => {
-      const config = await context.config();
-      return craftTransaction(config, transactionIntent);
-    },
-    craftRawTransaction: async (_context, transaction, sender, publicKey, sequence) => {
-      return craftRawTransaction(transaction, sender, publicKey, sequence);
-    },
-    estimateFees: async (context, transactionIntent, _options?) => {
-      const config = await context.config();
-      return estimateFees(config, transactionIntent);
-    },
-    getAccountStatus: async (context: ConcordiumApiContext, publicKey: string) => {
+    craftTransaction: async (context, transactionIntent, _options?) =>
+      craftTransaction(await pin(context), transactionIntent),
+    craftRawTransaction: async (context, transaction, sender, publicKey, sequence) =>
+      craftRawTransaction(await pin(context), transaction, sender, publicKey, sequence),
+    estimateFees: async (context, transactionIntent, _options?) =>
+      estimateFees(await pin(context), transactionIntent),
+    getAccountStatus: async (context: ConcordiumContext, publicKey: string) => {
       const signal = context.signal instanceof AbortSignal ? context.signal : undefined;
-      const config = await context.config();
-      return getAccountStatus(config, publicKey, signal);
+      return getAccountStatus(await pin(context), publicKey, signal);
     },
-    getBalance: async (context, address: string, options?: BalanceOptions): Promise<Balance[]> => {
-      const config = await context.config();
-      return rejectBalanceOptions(() => getBalance(config, address), options);
-    },
-    lastBlock: async (context): Promise<BlockInfo> => {
-      const config = await context.config();
-      return lastBlock(config);
-    },
-    listOperations: async (context, address, options): Promise<Page<Operation>> => {
-      const config = await context.config();
-      return listOperations(config, address, options);
-    },
-    getBlock: async (context, height): Promise<Block> => {
-      const config = await context.config();
-      return getBlock(config, height);
-    },
-    getBlockInfo: async (context, height): Promise<BlockInfo> => {
-      const config = await context.config();
-      return getBlockInfo(config, height);
-    },
+    getBalance: (context, address: string, options?: BalanceOptions): Promise<Balance[]> =>
+      rejectBalanceOptions(async () => getBalance(await pin(context), address), options),
+    lastBlock: async (context): Promise<BlockInfo> => lastBlock(await pin(context)),
+    listOperations: async (context, address, options): Promise<Page<Operation>> =>
+      listOperations(await pin(context), address, options),
+    getBlock: async (context, height): Promise<Block> => getBlock(await pin(context), height),
+    getBlockInfo: async (context, height): Promise<BlockInfo> =>
+      getBlockInfo(await pin(context), height),
     validateAddress: async (
-      _context: ConcordiumApiContext,
+      _context: ConcordiumContext,
       address: string,
       parameters: Partial<AddressValidationCurrencyParameters>,
     ): Promise<boolean> => validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
   } satisfies CoinModuleImpl<ConcordiumCoinConfig, ConcordiumMemo> &
-    AccountStatusCapability<ConcordiumApiContext>;
+    AccountStatusCapability<ConcordiumContext>;
 }
 
 /**
@@ -132,12 +117,12 @@ function assertNativeAsset(transactionIntent: TransactionIntent<ConcordiumMemo>)
 }
 
 async function craftTransaction(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   transactionIntent: TransactionIntent<ConcordiumMemo>,
 ): Promise<CraftedTransaction> {
   assertNativeAsset(transactionIntent);
 
-  const nextSequenceNumber = await getNextValidSequence(config, transactionIntent.sender);
+  const nextSequenceNumber = await getNextValidSequence(context, transactionIntent.sender);
   const memo =
     "memo" in transactionIntent && transactionIntent.memo?.type === "string"
       ? transactionIntent.memo.value
@@ -158,7 +143,7 @@ async function craftTransaction(
 }
 
 async function estimateFees(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   transactionIntent: TransactionIntent<ConcordiumMemo>,
 ): Promise<FeeEstimation> {
   // Rejected here too, or a caller gets a plausible native fee for a send that
@@ -170,17 +155,17 @@ async function estimateFees(
       ? transactionIntent.memo.value
       : undefined;
 
-  const estimation = await estimateFeesLogic(config, memo);
+  const estimation = await estimateFeesLogic(context, memo);
 
   return { value: estimation.cost };
 }
 
 async function listOperations(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   address: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation>> {
-  const { items, next } = await listOperationsLogic(config, address, options);
+  const { items, next } = await listOperationsLogic(context, address, options);
 
   return {
     items: items.map(op => mapRawOperationToApiOperation(op, address)),

@@ -1,10 +1,13 @@
 import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
 import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import { createFixtureConfig, createFixtureContext, VALID_ADDRESS } from "../test/fixtures";
+import type { ConcordiumContext } from "../types";
 import { createApi } from ".";
 
-const context = createFixtureContext();
-const config = createFixtureConfig();
+const logger = jest.fn();
+const context = { ...createFixtureContext(), logger };
+/** The logic receives a context pinned to the resolved config, not the caller's own. */
+const pinned = expect.objectContaining({ logger, config: expect.any(Function) });
 
 jest.mock("../logic", () => ({
   broadcast: jest.fn(),
@@ -78,7 +81,7 @@ describe("api/index", () => {
 
       const result = await api.broadcast(context, "signed-tx-data");
 
-      expect(broadcastMock).toHaveBeenCalledWith(config, "signed-tx-data");
+      expect(broadcastMock).toHaveBeenCalledWith(pinned, "signed-tx-data");
       expect(result).toBe("tx-hash-123");
     });
   });
@@ -91,7 +94,7 @@ describe("api/index", () => {
 
       const result = await api.getBalance(context, VALID_ADDRESS);
 
-      expect(getBalanceMock).toHaveBeenCalledWith(config, VALID_ADDRESS);
+      expect(getBalanceMock).toHaveBeenCalledWith(pinned, VALID_ADDRESS);
       expect(result).toEqual(mockBalances);
     });
 
@@ -111,7 +114,7 @@ describe("api/index", () => {
 
       const result = await api.lastBlock(context);
 
-      expect(lastBlockMock).toHaveBeenCalledWith(config);
+      expect(lastBlockMock).toHaveBeenCalledWith(pinned);
       expect(result).toEqual(mockBlockInfo);
     });
   });
@@ -145,7 +148,7 @@ describe("api/index", () => {
 
       const result = await api.listOperations(context, VALID_ADDRESS, pagination);
 
-      expect(listOperationsMock).toHaveBeenCalledWith(config, VALID_ADDRESS, pagination);
+      expect(listOperationsMock).toHaveBeenCalledWith(pinned, VALID_ADDRESS, pagination);
       expect(result.items).toHaveLength(1);
       expect(result.items[0].type).toBe("OUT");
       expect(result.items[0].value).toBe(BigInt(1000000));
@@ -162,7 +165,7 @@ describe("api/index", () => {
 
       const result = await api.getBlockInfo(context, 600);
 
-      expect(getBlockInfoMock).toHaveBeenCalledWith(config, 600);
+      expect(getBlockInfoMock).toHaveBeenCalledWith(pinned, 600);
       expect(result).toEqual(mockBlockInfo);
     });
   });
@@ -178,8 +181,24 @@ describe("api/index", () => {
 
       const result = await api.getBlock(context, 600);
 
-      expect(getBlockMock).toHaveBeenCalledWith(config, 600);
+      expect(getBlockMock).toHaveBeenCalledWith(pinned, 600);
       expect(result).toEqual(mockBlock);
+    });
+
+    it("hands the logic a context pinned to the config resolved once for the call", async () => {
+      const first = createFixtureConfig({ proxyUrl: "https://first.example" });
+      const config = jest
+        .fn()
+        .mockResolvedValueOnce(first)
+        .mockResolvedValue(createFixtureConfig({ proxyUrl: "https://second.example" }));
+      getBlockMock.mockImplementation(async (logicContext: ConcordiumContext) => {
+        await expect(logicContext.config()).resolves.toBe(first);
+        await expect(logicContext.config("other")).resolves.toBe(first);
+      });
+
+      await createApi().getBlock({ config, logger }, 600);
+
+      expect(config).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -10,13 +10,13 @@ import {
 import BigNumber from "bignumber.js";
 import { MAX_MEMO_LENGTH, PLT_MAX_DECIMALS } from "@ledgerhq/concordium-core";
 import {
+  VALID_ADDRESS,
+  VALID_ADDRESS_2,
   createFixtureAccount,
+  createFixtureContext,
   createFixtureTokenAccount,
   createFixtureTokenCurrency,
   createFixtureTransaction,
-  createFixtureContext,
-  VALID_ADDRESS,
-  VALID_ADDRESS_2,
 } from "../test/fixtures";
 import {
   ConcordiumAccountDenied,
@@ -101,8 +101,12 @@ const tokenTx = (subAccountId: string, over = {}) =>
 
 describe("getTransactionStatus", () => {
   let getTransactionStatus: ReturnType<typeof buildGetTransactionStatus>;
+  const logger = jest.fn();
   const useConfig = (overrides: Parameters<typeof createFixtureContext>[0]) => {
-    getTransactionStatus = buildGetTransactionStatus(createFixtureContext(overrides));
+    getTransactionStatus = buildGetTransactionStatus({
+      ...createFixtureContext(overrides),
+      logger,
+    });
   };
 
   beforeEach(() => {
@@ -923,6 +927,7 @@ describe("getTransactionStatus", () => {
         await getTransactionStatus(account, tokenTx(subAccount.id));
 
         expect(mockedRecipientRestrictions).toHaveBeenCalledWith(
+          expect.objectContaining({ logger }),
           expect.objectContaining({
             recipient: VALID_ADDRESS_2,
             tokenId: PLT_ID,

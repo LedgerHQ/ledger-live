@@ -1,4 +1,3 @@
-import { log } from "@ledgerhq/logs";
 import { findAccountTokenEntry, getListVerdict } from "../../network/plt";
 import { fetchAccountTokens, fetchPltModuleState } from "../../network/pltRecipient";
 import {
@@ -7,10 +6,9 @@ import {
   ConcordiumRecipientNotFound,
   ConcordiumRecipientRestrictionsUnverified,
 } from "../../types/errors";
-import type { ConcordiumCoinConfig } from "../../types";
+import type { ConcordiumContext } from "../../types";
 
 type RecipientCheck = {
-  config: ConcordiumCoinConfig;
   recipient: string;
   tokenId: string;
   /** Interpolated into every message this returns, so the user is told which token refused. */
@@ -40,12 +38,15 @@ type RecipientCheck = {
  * transport blip would otherwise present as a refusal.
  */
 export async function checkRecipientRestrictions(
+  context: ConcordiumContext,
   check: RecipientCheck,
 ): Promise<Error | undefined> {
   try {
-    return await resolveRestrictions(check);
+    return await resolveRestrictions(context, check);
   } catch (error) {
-    log("concordium-plt", "Could not resolve the recipient's token restrictions", { error });
+    context.logger("concordium-plt", "Could not resolve the recipient's token restrictions", {
+      error,
+    });
     return new ConcordiumRecipientRestrictionsUnverified("", { ticker: check.ticker });
   }
 }
@@ -62,19 +63,17 @@ export async function checkRecipientRestrictions(
  * token that already forces the read; for a list-free token the send proceeds
  * and the chain reports `addressNotFound` after signing.
  */
-async function resolveRestrictions({
-  config,
-  recipient,
-  tokenId,
-  ticker,
-}: RecipientCheck): Promise<Error | undefined> {
-  const moduleState = await fetchPltModuleState({ config, tokenId });
+async function resolveRestrictions(
+  context: ConcordiumContext,
+  { recipient, tokenId, ticker }: RecipientCheck,
+): Promise<Error | undefined> {
+  const moduleState = await fetchPltModuleState({ context, tokenId });
   if (!moduleState) return new ConcordiumRecipientRestrictionsUnverified("", { ticker });
 
   // Neither list declared: no recipient can be refused, so no recipient read.
   if (moduleState.allowList !== true && moduleState.denyList !== true) return undefined;
 
-  const account = await fetchAccountTokens({ config, address: recipient });
+  const account = await fetchAccountTokens({ context, address: recipient });
   if (account.status === "unreadable") {
     return new ConcordiumRecipientRestrictionsUnverified("", { ticker });
   }

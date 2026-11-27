@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import {
   createFixtureAccount,
+  createFixtureContext,
   createFixtureTokenAccount,
   createFixtureTransaction,
 } from "../test/fixtures";
@@ -16,7 +17,11 @@ const getTransactionStatus = jest.fn().mockResolvedValue({
   warnings: {},
 });
 
-const estimateMaxSpendable = buildEstimateMaxSpendable(prepareTransaction, getTransactionStatus);
+const estimateMaxSpendable = buildEstimateMaxSpendable(
+  createFixtureContext(),
+  prepareTransaction,
+  getTransactionStatus,
+);
 
 jest.mock("./createTransaction", () => ({
   createTransaction: jest.fn().mockReturnValue({

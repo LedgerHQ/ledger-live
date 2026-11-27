@@ -1,5 +1,5 @@
-import { log } from "@ledgerhq/logs";
 import type { CraftedTransaction } from "@ledgerhq/coin-module-framework/api/index";
+import type { ConcordiumContext } from "../../types";
 import {
   type Transaction,
   AccountAddress,
@@ -17,6 +17,7 @@ import {
  * This function updates the transaction header (nonce) with the provided sequence number.
  */
 export async function craftRawTransaction(
+  context: ConcordiumContext,
   transaction: string,
   sender: string,
   _publicKey: string,
@@ -43,7 +44,7 @@ export async function craftRawTransaction(
 
     return { transaction: serializeTransaction(updatedTransaction).toString("hex") };
   } catch (error) {
-    log("concordium", "craftRawTransaction", { error });
+    context.logger("concordium", "craftRawTransaction", { error });
     throw new Error(
       `Failed to craft raw transaction: ${error instanceof Error ? error.message : String(error)}`,
     );

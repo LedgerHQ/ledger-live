@@ -1,14 +1,14 @@
 import { getAccountsByPublicKey } from "../../network/proxyClient";
-import type { ConcordiumCoinConfig } from "../../types";
+import type { ConcordiumContext } from "../../types";
 
 export type ConcordiumAccountStatus = { activated: boolean; used: boolean };
 
 export async function getAccountStatus(
-  config: ConcordiumCoinConfig,
+  context: ConcordiumContext,
   publicKey: string,
   signal?: AbortSignal,
 ): Promise<ConcordiumAccountStatus> {
-  const accounts = await getAccountsByPublicKey(config, publicKey, signal);
+  const accounts = await getAccountsByPublicKey(context, publicKey, signal);
   const onChain = !!accounts?.length;
   return { activated: onChain, used: onChain };
 }

@@ -3,7 +3,7 @@ import { TransactionType } from "@ledgerhq/concordium-core";
 import { craftTransaction } from "./craftTransaction";
 import { combine } from "./combine";
 import { broadcast } from "./broadcast";
-import { createFixtureConfig } from "../../test/fixtures";
+import { createFixtureContext } from "../../test/fixtures";
 
 // Mock network calls
 jest.mock("../../network/proxyClient", () => ({
@@ -11,7 +11,7 @@ jest.mock("../../network/proxyClient", () => ({
 }));
 
 const VALID_ADDRESS = "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w";
-const config = createFixtureConfig();
+const context = createFixtureContext();
 
 describe("logic/transaction", () => {
   beforeEach(() => {
@@ -205,10 +205,10 @@ describe("logic/transaction", () => {
         signature: "11223344",
       });
 
-      const result = await broadcast(config, signedTx);
+      const result = await broadcast(context, signedTx);
 
       expect(result).toBe("test-submission-id");
-      expect(submitTransfer).toHaveBeenCalledWith(config, {
+      expect(submitTransfer).toHaveBeenCalledWith(context, {
         transaction: "aabbccdd",
         signatures: { "0": { "0": "11223344" } },
       });
@@ -221,16 +221,16 @@ describe("logic/transaction", () => {
         signature: "cafebabe",
       });
 
-      await broadcast(config, signedTx);
+      await broadcast(context, signedTx);
 
-      expect(submitTransfer).toHaveBeenCalledWith(config, {
+      expect(submitTransfer).toHaveBeenCalledWith(context, {
         transaction: "deadbeef",
         signatures: { "0": { "0": "cafebabe" } },
       });
     });
 
     it("should throw on invalid JSON", async () => {
-      await expect(broadcast(config, "not-json")).rejects.toThrow();
+      await expect(broadcast(context, "not-json")).rejects.toThrow();
     });
 
     it("should propagate network errors", async () => {
@@ -242,7 +242,7 @@ describe("logic/transaction", () => {
         signature: "11223344",
       });
 
-      await expect(broadcast(config, signedTx)).rejects.toThrow("Network error");
+      await expect(broadcast(context, signedTx)).rejects.toThrow("Network error");
     });
   });
 });

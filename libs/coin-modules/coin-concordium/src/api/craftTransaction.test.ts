@@ -7,7 +7,6 @@ import {
 import { createApi } from ".";
 
 const context = createFixtureContext();
-const config = createFixtureConfig();
 
 jest.mock("../logic", () => ({
   craftTransaction: jest.fn(),
@@ -51,7 +50,14 @@ describe("api/craftTransaction", () => {
 
     const result = await api.craftTransaction(context, transactionIntent);
 
-    expect(getNextValidSequenceMock).toHaveBeenCalledWith(config, transactionIntent.sender);
+    // A copy pinned to the resolved config, not `context` itself.
+    expect(getNextValidSequenceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ logger: context.logger }),
+      transactionIntent.sender,
+    );
+    await expect(getNextValidSequenceMock.mock.lastCall[0].config()).resolves.toEqual(
+      createFixtureConfig(),
+    );
     expect(craftTransactionMock).toHaveBeenCalledWith(
       { address: transactionIntent.sender, nextSequenceNumber: 5 },
       expect.objectContaining({

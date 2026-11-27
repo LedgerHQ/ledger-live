@@ -3,13 +3,14 @@ import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/ledger-wallet
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
-import { log } from "@ledgerhq/logs";
 import type { Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getAccountListVerdict, isDecodedPltState } from "../network/plt";
+import { positiveInt } from "../tuning";
 import { baseOperation, paidFeeOf, toOperation } from "./operations";
 import type {
   ConcordiumAccount,
+  ConcordiumContext,
   ConcordiumOperation,
   ConcordiumResources,
   ConcordiumTokenResources,
@@ -291,6 +292,7 @@ type ResolvedEntry =
  * all, which is an absence rather than a disagreement, and passes.
  */
 function operationsForToken(
+  context: ConcordiumContext,
   pltOperations: RawOperation[],
   tokenId: string,
   token: TokenCurrency,
@@ -303,7 +305,7 @@ function operationsForToken(
       if (op.tokenId !== tokenId) return false;
 
       if (op.decimals !== undefined && op.decimals !== magnitude) {
-        log(
+        context.logger(
           "concordium-sync",
           `PLT ${tokenId} operation ${op.hash} is denominated in ${op.decimals} decimals, not the curated ${magnitude}, skipping it`,
         );
@@ -319,25 +321,31 @@ function operationsForToken(
  * Resolves to `undefined` when the lookup itself failed, which is distinct from
  * an entry resolving to `undefined` because the token is not curated.
  */
-function resolveEntries({
-  accountTokens,
-  currencyId,
-  accountId,
-  blacklistedTokenIds,
-  calLookupConcurrency,
-}: {
-  accountTokens: PltAccountToken[];
-  currencyId: string;
-  accountId: string;
-  blacklistedTokenIds: string[];
-  calLookupConcurrency: number;
-}): Promise<ResolvedEntry[] | undefined> {
+function resolveEntries(
+  context: ConcordiumContext,
+  {
+    accountTokens,
+    currencyId,
+    accountId,
+    blacklistedTokenIds,
+    calLookupConcurrency,
+  }: {
+    accountTokens: PltAccountToken[];
+    currencyId: string;
+    accountId: string;
+    blacklistedTokenIds: string[];
+    calLookupConcurrency: number;
+  },
+): Promise<ResolvedEntry[] | undefined> {
   return promiseAllBatched(
     calLookupConcurrency,
     accountTokens,
     async (entry: PltAccountToken): Promise<ResolvedEntry> => {
       if (!isUsableEntry(entry)) {
-        log("concordium-sync", "PLT entry is malformed, skipping it and continuing the sync");
+        context.logger(
+          "concordium-sync",
+          "PLT entry is malformed, skipping it and continuing the sync",
+        );
         return undefined;
       }
 
@@ -345,7 +353,7 @@ function resolveEntries({
       const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, currencyId);
 
       if (!token) {
-        log("concordium-sync", `PLT ${tokenId} is not in the CAL, skipping`);
+        context.logger("concordium-sync", `PLT ${tokenId} is not in the CAL, skipping`);
         return undefined;
       }
 
@@ -363,7 +371,7 @@ function resolveEntries({
       const calMagnitude = token.units[0]?.magnitude;
 
       if (calMagnitude === undefined) {
-        log(
+        context.logger(
           "concordium-sync",
           `PLT ${tokenId} has no CAL unit to denominate it, keeping the previous sub-account`,
         );
@@ -371,7 +379,7 @@ function resolveEntries({
       }
 
       if (calMagnitude !== chainDecimals) {
-        log(
+        context.logger(
           "concordium-sync",
           `PLT ${tokenId} decimals mismatch: CAL ${calMagnitude}, chain ${chainDecimals}, keeping the previous sub-account`,
         );
@@ -383,7 +391,7 @@ function resolveEntries({
       // as an error.
       const balance = new BigNumber(entry.tokenAccountState?.balance?.value);
       if (!balance.isFinite()) {
-        log(
+        context.logger(
           "concordium-sync",
           `PLT ${tokenId} has an unusable balance, keeping the previous sub-account`,
         );
@@ -393,7 +401,9 @@ function resolveEntries({
       return { entry, token, tokenId, balance };
     },
   ).catch((error: unknown) => {
-    log("concordium-sync", "PLT metadata lookup failed, keeping known tokens", { error });
+    context.logger("concordium-sync", "PLT metadata lookup failed, keeping known tokens", {
+      error,
+    });
     return undefined;
   });
 }
@@ -402,17 +412,20 @@ function resolveEntries({
  * Turns the resolved entries into the sub-accounts and per-token state one sync
  * produces, plus the ids `mergeSubAccounts` must keep despite building none.
  */
-function absorbEntries({
-  resolved,
-  accountId,
-  pltOperations,
-  initialAccount,
-}: {
-  resolved: ResolvedEntry[];
-  accountId: string;
-  pltOperations: RawOperation[];
-  initialAccount: ConcordiumAccount | undefined;
-}): {
+function absorbEntries(
+  context: ConcordiumContext,
+  {
+    resolved,
+    accountId,
+    pltOperations,
+    initialAccount,
+  }: {
+    resolved: ResolvedEntry[];
+    accountId: string;
+    pltOperations: RawOperation[];
+    initialAccount: ConcordiumAccount | undefined;
+  },
+): {
   newSubAccounts: TokenAccount[];
   tokens: Record<string, ConcordiumTokenResources>;
   keepIds: Set<string>;
@@ -442,7 +455,10 @@ function absorbEntries({
     // A duplicate id would otherwise produce two sub-accounts for one token,
     // which the merge cannot reconcile. Only a malformed snapshot can cause it.
     if (seenIds.has(subAccountId)) {
-      log("concordium-sync", `PLT ${tokenId} appears more than once, ignoring the repeat`);
+      context.logger(
+        "concordium-sync",
+        `PLT ${tokenId} appears more than once, ignoring the repeat`,
+      );
       continue;
     }
     seenIds.add(subAccountId);
@@ -455,7 +471,7 @@ function absorbEntries({
         balance,
         // Through `mergeOps` so a fresh sub-account is deduped and ordered the
         // same way an existing one is when this sync's operations reach it.
-        mergeOps([], operationsForToken(pltOperations, tokenId, token, subAccountId)),
+        mergeOps([], operationsForToken(context, pltOperations, tokenId, token, subAccountId)),
       ),
     );
 
@@ -489,42 +505,50 @@ function unattributed(pltOperations: RawOperation[]): { unattributedOperations?:
  * nothing, and reading that as empty would delete every sub-account and its
  * operations.
  */
-export async function resolveTokenSubAccounts({
-  enableTokens,
-  currencyId,
-  accountId,
-  accountTokens,
-  initialAccount,
-  pltOperations = [],
-  blacklistedTokenIds = [],
-  refetchAll = false,
-  calLookupConcurrency,
-}: {
-  enableTokens: boolean;
-  currencyId: string;
-  accountId: string;
-  accountTokens: PltAccountToken[] | undefined;
-  initialAccount: ConcordiumAccount | undefined;
-  pltOperations?: RawOperation[];
-  blacklistedTokenIds?: string[];
-  refetchAll?: boolean;
-  calLookupConcurrency: number;
-}): Promise<ResolvedTokens> {
+export async function resolveTokenSubAccounts(
+  context: ConcordiumContext,
+  {
+    enableTokens,
+    currencyId,
+    accountId,
+    accountTokens,
+    initialAccount,
+    pltOperations = [],
+    blacklistedTokenIds = [],
+    refetchAll = false,
+    calLookupConcurrency,
+  }: {
+    enableTokens: boolean;
+    currencyId: string;
+    accountId: string;
+    accountTokens: PltAccountToken[] | undefined;
+    initialAccount: ConcordiumAccount | undefined;
+    pltOperations?: RawOperation[];
+    blacklistedTokenIds?: string[];
+    refetchAll?: boolean;
+    /** Validated here, so a bad value fails only the syncs that look tokens up. */
+    calLookupConcurrency: unknown;
+  },
+): Promise<ResolvedTokens> {
   if (!enableTokens) {
     return { kind: "cleared" };
   }
 
   if (!Array.isArray(accountTokens)) {
-    log("concordium-sync", "PLT token list absent from the balance response, keeping known tokens");
+    context.logger(
+      "concordium-sync",
+      "PLT token list absent from the balance response, keeping known tokens",
+    );
     return { kind: "unchanged", ...unattributed(pltOperations) };
   }
 
-  const resolved = await resolveEntries({
+  const resolved = await resolveEntries(context, {
     accountTokens,
     currencyId,
     accountId,
     blacklistedTokenIds,
-    calLookupConcurrency,
+    // A batch of zero would look up nothing and drop every stored token.
+    calLookupConcurrency: positiveInt("tokens.calLookupConcurrency", calLookupConcurrency),
   });
 
   // A CAL query error rejects rather than returning undefined, and one rejection
@@ -535,7 +559,7 @@ export async function resolveTokenSubAccounts({
     return { kind: "unchanged", ...unattributed(pltOperations) };
   }
 
-  const { newSubAccounts, tokens, keepIds } = absorbEntries({
+  const { newSubAccounts, tokens, keepIds } = absorbEntries(context, {
     resolved,
     accountId,
     pltOperations,
