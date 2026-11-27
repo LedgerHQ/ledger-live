@@ -1,6 +1,6 @@
 import { WebViewAppPage } from "tests/page/webViewApp.page";
 import { step } from "tests/misc/reporters/step";
-import { expect, Page, test } from "@playwright/test";
+import { expect, Page, test, type ElementHandle } from "@playwright/test";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { sendDeepLink } from "tests/utils/deeplink";
 import { ChooseAssetDrawer } from "tests/page/drawer/choose.asset.drawer";
@@ -405,6 +405,37 @@ export class SwapPage extends WebViewAppPage {
     await this.softExpect(soft => {
       soft(bestOffer?.quote).toMatch(quoteContainers[0]);
     });
+  }
+
+  @step("Wait for quote card to settle: $0")
+  async waitForQuoteCardToSettle(provider: string) {
+    const webview = await this.getWebView();
+    const swapButton = webview
+      .locator(this.providerContainerSelector(provider))
+      .getByTestId(this.swapBtn)
+      .first();
+    const swapButtonSelector = `${this.providerContainerSelector(provider)} [data-testid="${this.swapBtn}"]`;
+    let previousSwapButton: ElementHandle<HTMLElement | SVGElement> | null = null;
+
+    await expect
+      .poll(
+        async () => {
+          const currentSwapButton = await swapButton.elementHandle();
+          if (!currentSwapButton) return false;
+
+          const isUnchanged =
+            previousSwapButton !== null &&
+            (await previousSwapButton.evaluate(
+              (button, selector) => button === document.querySelector(selector),
+              swapButtonSelector,
+            ));
+          previousSwapButton = currentSwapButton;
+
+          return isUnchanged;
+        },
+        { intervals: [INTERVAL.medium], timeout: TIMEOUT.large },
+      )
+      .toBe(true);
   }
 
   @step("Click Exchange button")

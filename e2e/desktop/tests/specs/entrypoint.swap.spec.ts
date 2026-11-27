@@ -231,6 +231,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
           amount: amountToSend,
         });
 
+        await app.swap.waitForQuoteCardToSettle(provider.name);
         await app.swap.clickExchangeButton(provider.name);
         await app.speculos.verifyAmountsAndAcceptSwap(swap, amountToSend);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
