@@ -2,7 +2,11 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createFakeLinking } from "./__tests__/fakeLinking";
-import { createFakeSettingsAboutPort, FAKE_TERMS_URL } from "./__tests__/fakeSettingsAboutPort";
+import {
+  createFakeMobileSettingsAboutPort,
+  createFakeSettingsAboutPort,
+  FAKE_TERMS_URL,
+} from "./__tests__/fakeSettingsAboutPort";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
 import { SettingsAbout } from "./SettingsAbout";
 import { socialUrls } from "./urls";
@@ -62,5 +66,15 @@ describe("SettingsAbout on desktop", () => {
 
     await user.click(version);
     expect(port.unlockDeveloperTools).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows the feedback row and opens the feedback flow when the app provides it", async () => {
+    const port = createFakeMobileSettingsAboutPort();
+    const { user } = renderAbout(port);
+
+    expect(screen.getByText("Give us feedback on the app")).toBeInTheDocument();
+
+    await user.click(screen.getByTestId("settings-about-feedback"));
+    expect(port.feedback).toHaveBeenCalledTimes(1);
   });
 });

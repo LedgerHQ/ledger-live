@@ -1,7 +1,14 @@
 import type { SettingsRowProps } from "@features/flow-settings";
 import type { SettingsAboutPort } from "./ports";
 
-export type SettingsAboutRowId = "version" | "terms" | "x" | "instagram" | "github";
+export type SettingsAboutRowId =
+  | "version"
+  | "terms"
+  | "feedback"
+  | "rate"
+  | "x"
+  | "instagram"
+  | "github";
 
 export type SettingsAboutSectionId = "legal" | "social";
 

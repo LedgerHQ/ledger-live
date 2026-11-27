@@ -4,6 +4,8 @@ import { useTranslation } from "@shared/i18n";
 export type SettingsAboutLabels = Readonly<{
   version: Readonly<{ title: string }>;
   terms: Readonly<{ title: string; description: string }>;
+  feedback: Readonly<{ title: string }>;
+  rate: Readonly<{ title: (storeName: string) => string }>;
   connect: Readonly<{
     title: string;
     x: string;
@@ -20,6 +22,10 @@ export function useSettingsAboutLabels(): SettingsAboutLabels {
       terms: {
         title: t("settings.about.terms.title"),
         description: t("settings.about.terms.description"),
+      },
+      feedback: { title: t("settings.about.feedback.title") },
+      rate: {
+        title: (storeName: string) => t("settings.about.rate.title", { storeName }),
       },
       connect: {
         title: t("settings.about.connect.title"),
