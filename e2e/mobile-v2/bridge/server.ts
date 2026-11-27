@@ -179,7 +179,7 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
   await navigate(NAVIGATOR_NAME_BASE);
 
   if (data.accounts?.length) {
-    postMessage({ type: "importAccounts", id: uuid(), payload: data.accounts });
+    await postMessage({ type: "importAccounts", id: uuid(), payload: data.accounts });
   }
 
   // Written by LedgerSyncCliHelper.saveTrustchainToUserdata, so the app boots already a member

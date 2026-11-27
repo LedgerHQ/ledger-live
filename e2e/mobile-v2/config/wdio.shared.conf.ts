@@ -150,7 +150,7 @@ export const baseConfig: WebdriverIO.Config = {
   // Test reporter for stdout.
   // The only one supported by default is 'dot'
   // see also: https://webdriver.io/docs/dot-reporter
-  reporters: [],
+  reporters: [["allure", { outputDir: "artifacts" }]],
 
   // Options to be passed to Mocha.
   // See the full list at http://mochajs.org/
@@ -314,10 +314,13 @@ export const baseConfig: WebdriverIO.Config = {
    * @param {Array.<String>} specs List of spec file paths that ran
    */
   after: async function (result, capabilities, specs) {
-    const flagsData = formatFlagsData(JSON.parse(await getFlags()));
-    const envsData = formatEnvData(JSON.parse(await getEnvs()));
-    await appendFile(path.resolve("artifacts/environment.properties"), flagsData + envsData);
-    await SpeculosUtils.removeSpeculosAndDeregisterKnownSpeculos();
+    try {
+      const flagsData = formatFlagsData(JSON.parse(await getFlags()));
+      const envsData = formatEnvData(JSON.parse(await getEnvs()));
+      await appendFile(path.resolve("artifacts/environment.properties"), flagsData + envsData);
+    } finally {
+      await SpeculosUtils.removeSpeculosAndDeregisterKnownSpeculos();
+    }
   },
   /**
    * Gets executed right after terminating the webdriver session.
