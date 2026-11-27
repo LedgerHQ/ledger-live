@@ -1,9 +1,17 @@
+import BigNumber from "bignumber.js";
 import { http, HttpResponse } from "msw";
 import { setCoinConfig } from "../config";
-import { fetchLegacyHistory, fetchTransactionsPage, getOperations } from "./indexer";
+import {
+  fetchLegacyHistory,
+  fetchReceiptsPage,
+  fetchTransactionsPage,
+  getOperations,
+  isReceiptTransferCandidate,
+  readReceiptTransfers,
+} from "./indexer";
 import { mockNearConfig } from "../test/context";
 import { mockServer, NEAR_BASE_URL_MOCKED } from "./node.mock";
-import { NearTransaction } from "./sdk.types";
+import { NearAccountReceipt, NearReceiptNode, NearTransaction } from "./sdk.types";
 
 const ACCOUNT_ID = "accountId";
 const ADDRESS = "sender.near";
@@ -36,6 +44,106 @@ const respondWith = (data: NearTransaction[] | null): void => {
   );
 };
 
+const INTENTS = "intents.near";
+const PAYOUT = "10000000000000000000000000";
+
+const receipt = (overrides: Partial<NearAccountReceipt> = {}): NearAccountReceipt => ({
+  receipt_id: "receipt-1",
+  transaction_hash: "payout-hash",
+  predecessor_account_id: INTENTS,
+  receiver_account_id: ADDRESS,
+  included_in_block_timestamp: "1755192310610741506",
+  block: {
+    block_hash: "ReceiptBlockHash",
+    block_height: "159618980",
+    block_timestamp: "1755192310610741506",
+  },
+  actions_agg: { deposit: PAYOUT },
+  actions: [{ action: "TRANSFER", method: null }],
+  outcome: { status: true },
+  ...overrides,
+});
+
+let lastReceiptsUrl: URL | undefined;
+let partiesLookups: string[] = [];
+let servedReceipts: NearAccountReceipt[] = [];
+
+type Parties = { signer_account_id: string; receiver_account_id: string };
+
+const serve = (rows: NearAccountReceipt[] | null): void => {
+  servedReceipts.push(...(rows ?? []));
+};
+
+const respondWithReceipts = (data: NearAccountReceipt[] | null, nextPage?: string): void => {
+  serve(data);
+  mockServer.use(
+    http.get(`${NEAR_BASE_URL_MOCKED}/v3/accounts/:address/receipts`, ({ request }) => {
+      lastReceiptsUrl = new URL(request.url);
+      return HttpResponse.json({ data, ...(nextPage && { meta: { next_page: nextPage } }) });
+    }),
+  );
+};
+
+/** Serves receipt pages by cursor: the first with no cursor, each next as `page-<index>`. */
+const respondWithReceiptPages = (pages: NearAccountReceipt[][]): { cursors: string[] } => {
+  pages.forEach(serve);
+  const cursors: string[] = [];
+  mockServer.use(
+    http.get(`${NEAR_BASE_URL_MOCKED}/v3/accounts/:address/receipts`, ({ request }) => {
+      const cursor = new URL(request.url).searchParams.get("next") ?? "";
+      cursors.push(cursor);
+      const index = cursor === "" ? 0 : Number(cursor.replace("page-", ""));
+      return HttpResponse.json({
+        data: pages[index],
+        ...(index + 1 < pages.length && { meta: { next_page: `page-${index + 1}` } }),
+      });
+    }),
+  );
+  return { cursors };
+};
+
+const receiptNode = (row: NearAccountReceipt): NearReceiptNode => ({
+  predecessor_account_id: row.predecessor_account_id,
+  receiver_account_id: row.receiver_account_id,
+  actions: (row.actions ?? []).map(action => ({
+    ...action,
+    args: { deposit: row.actions_agg?.deposit ?? "0" },
+  })),
+  outcome: row.outcome as NearReceiptNode["outcome"],
+  ...(row.block && { block: row.block }),
+});
+
+/** Serves each transaction's receipt tree: its parties at the root, the served rows of that hash below. */
+const respondWithParties = (
+  parties: Record<string, Parties | null> = {},
+  fallback: Parties = { signer_account_id: INTENTS, receiver_account_id: INTENTS },
+  extraNodes: Record<string, NearReceiptNode[]> = {},
+): void => {
+  mockServer.use(
+    http.get(`${NEAR_BASE_URL_MOCKED}/v3/txns/:hash/receipts`, ({ params }) => {
+      const hash = String(params.hash);
+      partiesLookups.push(hash);
+      const root = hash in parties ? parties[hash] : fallback;
+      if (!root) return HttpResponse.json({ data: null });
+      return HttpResponse.json({
+        data: {
+          predecessor_account_id: root.signer_account_id,
+          receiver_account_id: root.receiver_account_id,
+          actions: [{ action: "FUNCTION_CALL", method: "execute_intents" }],
+          outcome: { status: true },
+          receipts: [
+            ...servedReceipts.filter(row => row.transaction_hash === hash).map(receiptNode),
+            ...(extraNodes[hash] ?? []),
+          ],
+        },
+      });
+    }),
+  );
+};
+
+const read = (options: Partial<Parameters<typeof readReceiptTransfers>[2]> = {}) =>
+  readReceiptTransfers(mockNearConfig, ADDRESS, { knownHashes: new Set(), ...options });
+
 describe("getOperations", () => {
   beforeAll(() => {
     setCoinConfig(() => ({
@@ -53,9 +161,17 @@ describe("getOperations", () => {
     mockServer.listen({ onUnhandledRequest: "error" });
   });
 
+  beforeEach(() => {
+    servedReceipts = [];
+    respondWithReceipts([]);
+    respondWithParties();
+  });
+
   afterEach(() => {
     mockServer.resetHandlers();
     lastRequestUrl = undefined;
+    lastReceiptsUrl = undefined;
+    partiesLookups = [];
   });
 
   afterAll(() => {
@@ -408,6 +524,381 @@ describe("getOperations", () => {
     });
   });
 
+  describe("fetchReceiptsPage", () => {
+    it("sends the limit and the cursor, and returns the rows with the next cursor", async () => {
+      respondWithReceipts([receipt()], "more");
+
+      const page = await fetchReceiptsPage(mockNearConfig, ADDRESS, { cursor: "abc", limit: 100 });
+
+      expect(lastReceiptsUrl?.pathname).toBe(`/v3/accounts/${ADDRESS}/receipts`);
+      expect(lastReceiptsUrl?.searchParams.get("limit")).toBe("100");
+      expect(lastReceiptsUrl?.searchParams.get("next")).toBe("abc");
+      expect(page).toEqual({ receipts: [receipt()], next: "more" });
+    });
+
+    it("sends no params by default and returns no rows for null data", async () => {
+      respondWithReceipts(null);
+
+      const page = await fetchReceiptsPage(mockNearConfig, ADDRESS);
+
+      expect(lastReceiptsUrl?.search).toBe("");
+      expect(page).toEqual({ receipts: [] });
+    });
+  });
+
+  describe("isReceiptTransferCandidate", () => {
+    it("accepts a transfer with a deposit from another account", () => {
+      expect(isReceiptTransferCandidate(receipt(), ADDRESS)).toBe(true);
+    });
+
+    it.each([
+      ["a gas refund from the system", { predecessor_account_id: "system" }],
+      ["a receipt the account sent itself", { predecessor_account_id: ADDRESS }],
+      ["a receipt for another account", { receiver_account_id: "other.near" }],
+      ["a zero deposit", { actions_agg: { deposit: "0" } }],
+      ["no deposit", { actions_agg: undefined }],
+      ["a call that is not a transfer", { actions: [{ action: "FUNCTION_CALL", method: "x" }] }],
+      ["no actions", { actions: undefined }],
+      ["a failed outcome", { outcome: { status: false } }],
+      ["a pending outcome", { outcome: {} }],
+    ] as [string, Partial<NearAccountReceipt>][])("rejects %s", (_name, overrides) => {
+      expect(isReceiptTransferCandidate(receipt(overrides), ADDRESS)).toBe(false);
+    });
+  });
+
+  describe("readReceiptTransfers", () => {
+    it("keeps a payout and maps it", async () => {
+      respondWithReceipts([receipt()]);
+
+      const { transfers, truncatedAtHeight } = await read();
+
+      expect(transfers).toEqual([
+        {
+          transactionHash: "payout-hash",
+          sender: INTENTS,
+          value: PAYOUT,
+          blockHeight: 159618980,
+          blockHash: "ReceiptBlockHash",
+          date: new Date(1755192310610.7415),
+        },
+      ]);
+      expect(truncatedAtHeight).toBeUndefined();
+      expect(partiesLookups).toEqual(["payout-hash"]);
+    });
+
+    it("makes no lookup for a transaction it already knows", async () => {
+      respondWithReceipts([receipt()]);
+
+      const { transfers } = await read({ knownHashes: new Set(["payout-hash"]) });
+
+      expect(transfers).toEqual([]);
+      expect(partiesLookups).toEqual([]);
+    });
+
+    it("drops a candidate whose transaction the account signed", async () => {
+      respondWithReceipts([receipt()]);
+      respondWithParties({
+        "payout-hash": { signer_account_id: ADDRESS, receiver_account_id: "pool.near" },
+      });
+
+      expect((await read()).transfers).toEqual([]);
+    });
+
+    it("drops a candidate whose transaction was addressed to the account", async () => {
+      respondWithReceipts([receipt()]);
+      respondWithParties({
+        "payout-hash": { signer_account_id: "peer.near", receiver_account_id: ADDRESS },
+      });
+
+      expect((await read()).transfers).toEqual([]);
+    });
+
+    it("sums the receipts of one transaction into one transfer", async () => {
+      respondWithReceipts([receipt({ receipt_id: "r1" }), receipt({ receipt_id: "r2" })]);
+
+      const { transfers } = await read();
+
+      expect(transfers).toHaveLength(1);
+      expect(transfers[0].value).toBe("20000000000000000000000000");
+      expect(partiesLookups).toEqual(["payout-hash"]);
+    });
+
+    it("skips rows at or above the upper height", async () => {
+      respondWithReceipts([
+        receipt({ transaction_hash: "above", block: { block_height: "200" } }),
+        receipt({ transaction_hash: "at", block: { block_height: "150" } }),
+        receipt({ transaction_hash: "below", block: { block_height: "149" } }),
+      ]);
+
+      const { transfers } = await read({ upperHeight: 150 });
+
+      expect(transfers.map(t => t.transactionHash)).toEqual(["below"]);
+    });
+
+    it("skips rows without a block height", async () => {
+      const withoutBlock = receipt();
+      delete withoutBlock.block;
+      respondWithReceipts([withoutBlock]);
+
+      expect((await read()).transfers).toEqual([]);
+    });
+
+    it("stops below the floor and returns the cursor of the page it stopped in", async () => {
+      const { cursors } = respondWithReceiptPages([
+        [receipt({ transaction_hash: "a", block: { block_height: "300" } })],
+        [
+          receipt({ transaction_hash: "b", block: { block_height: "200" } }),
+          receipt({ transaction_hash: "c", block: { block_height: "90" } }),
+        ],
+        [receipt({ transaction_hash: "d", block: { block_height: "50" } })],
+      ]);
+
+      const { transfers, resumeCursor, truncatedAtHeight } = await read({ floorHeight: 100 });
+
+      expect(cursors).toEqual(["", "page-1"]);
+      expect(transfers.map(t => t.transactionHash)).toEqual(["a", "b"]);
+      expect(resumeCursor).toBe("page-1");
+      expect(truncatedAtHeight).toBeUndefined();
+    });
+
+    it("keeps a row at the floor height", async () => {
+      respondWithReceipts([receipt({ block: { block_height: "100" } })]);
+
+      expect((await read({ floorHeight: 100 })).transfers).toHaveLength(1);
+    });
+
+    it("reads from the given cursor", async () => {
+      respondWithReceipts([]);
+
+      await read({ cursor: "resume" });
+
+      expect(lastReceiptsUrl?.searchParams.get("next")).toBe("resume");
+      expect(lastReceiptsUrl?.searchParams.get("limit")).toBe("100");
+    });
+
+    it("without a floor, stops at the page bound and reports the height it read down to", async () => {
+      const pages = Array.from({ length: 12 }, (_, index) => [
+        receipt({ transaction_hash: `x${index}`, block: { block_height: String(500 - index) } }),
+      ]);
+      const { cursors } = respondWithReceiptPages(pages);
+
+      const { transfers, resumeCursor, truncatedAtHeight } = await read();
+
+      expect(cursors).toHaveLength(10);
+      expect(truncatedAtHeight).toBe(492);
+      expect(resumeCursor).toBeUndefined();
+      expect(transfers.map(t => t.blockHeight)).toEqual([
+        500, 499, 498, 497, 496, 495, 494, 493, 492,
+      ]);
+    });
+
+    it("at the page bound, drops the lowest block read, whose receipts may continue on the next page", async () => {
+      const { cursors } = respondWithReceiptPages([
+        [receipt({ transaction_hash: "above", block: { block_height: "300" } })],
+        ...Array.from({ length: 9 }, (_, index) => [
+          receipt({ transaction_hash: `same${index}`, block: { block_height: "200" } }),
+        ]),
+        [receipt({ transaction_hash: "unread", block: { block_height: "200" } })],
+      ]);
+
+      const { transfers, truncatedAtHeight } = await read();
+
+      expect(cursors).toHaveLength(10);
+      expect(truncatedAtHeight).toBe(201);
+      expect(transfers.map(t => t.transactionHash)).toEqual(["above"]);
+    });
+
+    it("with a floor, reads past the page bound until the floor, so no payout of the window is lost", async () => {
+      const pages = Array.from({ length: 12 }, (_, index) => [
+        receipt({ transaction_hash: `x${index}`, block: { block_height: String(500 - index) } }),
+      ]);
+      const { cursors } = respondWithReceiptPages(pages);
+
+      const { transfers, truncatedAtHeight } = await read({ floorHeight: 0 });
+
+      expect(cursors).toHaveLength(12);
+      expect(transfers).toHaveLength(12);
+      expect(truncatedAtHeight).toBeUndefined();
+    });
+
+    it("stops at the first page that holds a stored transaction", async () => {
+      const { cursors } = respondWithReceiptPages([
+        [receipt({ transaction_hash: "new", block: { block_height: "300" } })],
+        [receipt({ transaction_hash: "stored", block: { block_height: "200" } })],
+        [receipt({ transaction_hash: "older", block: { block_height: "100" } })],
+      ]);
+
+      const { transfers } = await read({
+        knownHashes: new Set(["stored"]),
+        stopAtHashes: new Set(["stored"]),
+      });
+
+      expect(cursors).toEqual(["", "page-1"]);
+      expect(transfers.map(t => t.transactionHash)).toEqual(["new"]);
+    });
+
+    it("with a floor, reads past a late receipt of a stored transaction down to the floor", async () => {
+      const { cursors } = respondWithReceiptPages([
+        [receipt({ transaction_hash: "stored", block: { block_height: "250" } })],
+        [receipt({ transaction_hash: "unseen", block: { block_height: "220" } })],
+        [receipt({ transaction_hash: "below", block: { block_height: "90" } })],
+      ]);
+
+      const { transfers } = await read({
+        floorHeight: 100,
+        knownHashes: new Set(["stored"]),
+        stopAtHashes: new Set(["stored"]),
+      });
+
+      expect(cursors).toEqual(["", "page-1", "page-2"]);
+      expect(transfers.map(t => t.transactionHash)).toEqual(["unseen"]);
+    });
+
+    it("with a floor and a page budget, stops at the budget and resumes from the page it stopped on", async () => {
+      const pages = Array.from({ length: 12 }, (_, index) => [
+        receipt({ transaction_hash: `x${index}`, block: { block_height: String(500 - index) } }),
+      ]);
+      const { cursors } = respondWithReceiptPages(pages);
+
+      const { transfers, resumeCursor, truncatedAtHeight } = await read({
+        floorHeight: 0,
+        pageBudget: 10,
+      });
+
+      expect(cursors).toHaveLength(10);
+      expect(truncatedAtHeight).toBe(492);
+      expect(resumeCursor).toBe("page-9");
+      expect(transfers.map(t => t.blockHeight)).toEqual([
+        500, 499, 498, 497, 496, 495, 494, 493, 492,
+      ]);
+    });
+
+    it("reads past the page budget when stopping would return nothing new", async () => {
+      const pages = Array.from({ length: 12 }, (_, index) => [
+        receipt({ transaction_hash: `x${index}`, block: { block_height: "400" } }),
+      ]);
+      const { cursors } = respondWithReceiptPages(pages);
+
+      const { truncatedAtHeight } = await read({
+        floorHeight: 0,
+        upperHeight: 401,
+        pageBudget: 10,
+      });
+
+      expect(cursors).toHaveLength(12);
+      expect(truncatedAtHeight).toBeUndefined();
+    });
+
+    it("rejects when the indexer serves a cursor it already served", async () => {
+      mockServer.use(
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/accounts/:address/receipts`, () =>
+          HttpResponse.json({ data: [receipt()], meta: { next_page: "same" } }),
+        ),
+      );
+
+      await expect(read({ floorHeight: 0 })).rejects.toThrow("cursor does not advance");
+    });
+
+    it("looks up at most ten transaction trees at a time", async () => {
+      respondWithReceipts(
+        Array.from({ length: 25 }, (_, index) => receipt({ transaction_hash: `p${index}` })),
+      );
+      let inFlight = 0;
+      let peak = 0;
+      mockServer.use(
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/txns/:hash/receipts`, async () => {
+          inFlight++;
+          peak = Math.max(peak, inFlight);
+          await new Promise(resolve => setTimeout(resolve, 5));
+          inFlight--;
+          return HttpResponse.json({
+            data: {
+              predecessor_account_id: INTENTS,
+              receiver_account_id: INTENTS,
+              actions: [],
+              outcome: { status: true },
+            },
+          });
+        }),
+      );
+
+      await read();
+      expect(peak).toBe(10);
+    });
+
+    it("values a payout from its whole transaction, including a receipt outside the window", async () => {
+      respondWithReceipts([receipt({ block: { block_height: "260" } })]);
+      respondWithParties({}, undefined, {
+        "payout-hash": [
+          receiptNode(receipt({ receipt_id: "r-older", block: { block_height: "240" } })),
+        ],
+      });
+
+      const { transfers } = await read({ floorHeight: 250 });
+
+      expect(transfers).toHaveLength(1);
+      expect(transfers[0].value).toBe("20000000000000000000000000");
+      expect(transfers[0].blockHeight).toBe(260);
+    });
+
+    it("reports a payout only in the window that holds its newest receipt", async () => {
+      respondWithReceipts([receipt({ block: { block_height: "240" } })]);
+      respondWithParties({}, undefined, {
+        "payout-hash": [
+          receiptNode(receipt({ receipt_id: "r-newer", block: { block_height: "260" } })),
+        ],
+      });
+
+      expect((await read({ upperHeight: 250 })).transfers).toEqual([]);
+    });
+
+    it("rejects the read while a transfer of a payout has no outcome yet, so it is read again", async () => {
+      respondWithReceipts([receipt()]);
+      respondWithParties({}, undefined, {
+        "payout-hash": [
+          { ...receiptNode(receipt({ receipt_id: "r-pending" })), outcome: {} as never },
+        ],
+      });
+
+      await expect(read()).rejects.toThrow("payout-hash");
+    });
+
+    it("rejects the read while another receipt of a payout has no outcome yet, as it may still send one", async () => {
+      respondWithReceipts([receipt()]);
+      respondWithParties({}, undefined, {
+        "payout-hash": [
+          {
+            predecessor_account_id: INTENTS,
+            receiver_account_id: INTENTS,
+            actions: [{ action: "FUNCTION_CALL", method: "ft_resolve_transfer" }],
+            outcome: {} as never,
+          },
+        ],
+      });
+
+      await expect(read()).rejects.toThrow("payout-hash");
+    });
+
+    it("ignores gas refunds and failed transfers in the transaction's receipts", async () => {
+      respondWithReceipts([receipt()]);
+      respondWithParties({}, undefined, {
+        "payout-hash": [
+          receiptNode(receipt({ receipt_id: "refund", predecessor_account_id: "system" })),
+          { ...receiptNode(receipt({ receipt_id: "failed" })), outcome: { status: false } },
+        ],
+      });
+
+      expect((await read()).transfers[0].value).toBe(PAYOUT);
+    });
+
+    it("rejects when a lookup fails", async () => {
+      respondWithReceipts([receipt()]);
+      respondWithParties({ "payout-hash": null });
+
+      await expect(read()).rejects.toThrow("no receipts indexed");
+    });
+  });
+
   describe("fetchLegacyHistory", () => {
     const stakingTxn = (overrides: Partial<NearTransaction> = {}): NearTransaction =>
       txn({
@@ -482,6 +973,143 @@ describe("getOperations", () => {
 
       expect(history.isFullPage).toBe(isFullPage);
       expect(history.operations).toHaveLength(count);
+    });
+
+    describe("incoming transfers delivered by receipt", () => {
+      it("adds a payout the transactions listing lacks, and nothing for what it lists or refunds", async () => {
+        respondWith([
+          txn({
+            transaction_hash: "direct",
+            signer_account_id: "peer.near",
+            receiver_account_id: ADDRESS,
+          }),
+        ]);
+        respondWithReceipts([
+          receipt({ transaction_hash: "payout-hash" }),
+          receipt({ transaction_hash: "refund-hash", predecessor_account_id: "system" }),
+          receipt({ transaction_hash: "direct", predecessor_account_id: "peer.near" }),
+        ]);
+
+        const { operations } = await fetchLegacyHistory(mockNearConfig, ACCOUNT_ID, ADDRESS);
+
+        expect(operations).toHaveLength(2);
+        const payout = operations.find(operation => operation.hash === "payout-hash");
+        expect(payout).toMatchObject({
+          type: "IN",
+          value: new BigNumber(PAYOUT),
+          fee: new BigNumber(0),
+          senders: [INTENTS],
+          recipients: [ADDRESS],
+          blockHeight: 159618980,
+          blockHash: "ReceiptBlockHash",
+          hasFailed: false,
+        });
+        expect(payout?.date).toEqual(new Date(1755192310610.7415));
+        expect(partiesLookups).toEqual(["payout-hash"]);
+      });
+
+      it("makes no transaction lookup when every receipt is already known", async () => {
+        respondWith([txn({ transaction_hash: "newer" }), txn({ transaction_hash: "stored" })]);
+        respondWithReceipts([receipt({ transaction_hash: "stored" })]);
+
+        const { operations } = await fetchLegacyHistory(
+          mockNearConfig,
+          ACCOUNT_ID,
+          ADDRESS,
+          new Set(["stored"]),
+        );
+
+        expect(operations).toHaveLength(2);
+        expect(partiesLookups).toEqual([]);
+      });
+
+      it("reads receipts only down to the oldest transaction read once a known one was reached", async () => {
+        respondWith([
+          txn({ transaction_hash: "newer", block: { block_height: "300" } }),
+          txn({ transaction_hash: "stored", block: { block_height: "200" } }),
+        ]);
+        respondWithReceipts([
+          receipt({ transaction_hash: "in-window", block: { block_height: "250" } }),
+          receipt({ transaction_hash: "older", block: { block_height: "100" } }),
+        ]);
+
+        const { operations } = await fetchLegacyHistory(
+          mockNearConfig,
+          ACCOUNT_ID,
+          ADDRESS,
+          new Set(["stored"]),
+        );
+
+        expect(operations.map(operation => operation.hash).sort()).toEqual([
+          "in-window",
+          "newer",
+          "stored",
+        ]);
+      });
+
+      it("reads receipts to the end of the list when the transactions ended without a known one", async () => {
+        respondWith([txn({ transaction_hash: "only", block: { block_height: "300" } })]);
+        respondWithReceipts([
+          receipt({ transaction_hash: "old-payout", block: { block_height: "100" } }),
+        ]);
+
+        const { operations } = await fetchLegacyHistory(mockNearConfig, ACCOUNT_ID, ADDRESS);
+
+        expect(operations.map(operation => operation.hash).sort()).toEqual(["old-payout", "only"]);
+      });
+
+      it("keeps a contiguous newest window when the receipts read stops at its bound", async () => {
+        respondWith([
+          txn({ transaction_hash: "recent", block: { block_height: "495" } }),
+          txn({ transaction_hash: "old", block: { block_height: "100" } }),
+        ]);
+        respondWithReceiptPages(
+          Array.from({ length: 12 }, (_, index) => [
+            receipt({
+              transaction_hash: `p${index}`,
+              block: { block_height: String(500 - index) },
+            }),
+          ]),
+        );
+
+        const { operations, isFullPage } = await fetchLegacyHistory(
+          mockNearConfig,
+          ACCOUNT_ID,
+          ADDRESS,
+        );
+
+        expect(operations.map(operation => operation.hash)).not.toContain("old");
+        expect(operations.map(operation => operation.hash)).toContain("recent");
+        expect(operations.every(operation => (operation.blockHeight ?? 0) >= 491)).toBe(true);
+        expect(isFullPage).toBe(true);
+      });
+
+      it.each([
+        ["a stored history it did not reach", new Set(["stored-payout"]), true],
+        ["nothing stored", new Set<string>(), false],
+      ])(
+        "reports a gap when the receipts read stops at its bound with %s",
+        async (_, knownHashes, gap) => {
+          respondWith([txn({ transaction_hash: "recent", block: { block_height: "495" } })]);
+          respondWithReceiptPages(
+            Array.from({ length: 12 }, (_, index) => [
+              receipt({
+                transaction_hash: `p${index}`,
+                block: { block_height: String(500 - index) },
+              }),
+            ]),
+          );
+
+          const history = await fetchLegacyHistory(
+            mockNearConfig,
+            ACCOUNT_ID,
+            ADDRESS,
+            knownHashes,
+          );
+
+          expect(history.gap).toBe(gap);
+        },
+      );
     });
 
     describe("paging", () => {

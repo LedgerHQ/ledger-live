@@ -3,6 +3,11 @@ import { getOperations } from "./indexer";
 import { getGasPrice, getStakingPositions, getValidators } from "./node";
 
 const ACCOUNT_WITH_HISTORY = "nearkat.near";
+/** Payouts bulksender.near delivered to ACCOUNT_WITH_HISTORY by receipt: its `/txns` listing lacks them. */
+const RECEIPT_PAYOUTS = [
+  "3U2GqtozhWVjTbh1XnMwrSLmG8jbtwTqhau8APFMSmJm",
+  "2y88bKogynWNGeAsnQD9GqMp6yf5CmjKfmG2G4jDcTxx",
+];
 const DELEGATOR = "81afe80a9d91c82f66122c35ef400da709bde01eada5aae8d7a63bbf68f42040";
 
 const integConfig: NearConfig = nearDefaults.near;
@@ -15,8 +20,12 @@ describe("NearBlocks indexer (integration)", () => {
   it("maps a real account history into operations", async () => {
     const operations = await getOperations(integConfig, "accountId", ACCOUNT_WITH_HISTORY);
 
-    expect(operations.length).toBeGreaterThan(0);
-    expect(operations.length).toBeLessThanOrEqual(25);
+    const fromTxns = operations.filter(operation => !RECEIPT_PAYOUTS.includes(operation.hash));
+    expect(fromTxns.length).toBeGreaterThan(0);
+    expect(fromTxns.length).toBeLessThanOrEqual(25);
+    expect(operations.map(operation => operation.hash)).toEqual(
+      expect.arrayContaining(RECEIPT_PAYOUTS),
+    );
 
     operations.forEach(operation => {
       expect(operation.hash).toMatch(/\S/);

@@ -21,6 +21,13 @@ const NODE = config.infra.API_NEAR_PRIVATE_NODE;
 const INDEXER = config.infra.API_NEARBLOCKS_INDEXER;
 
 const ACCOUNT_WITH_HISTORY = "nearkat.near";
+/** Payouts bulksender.near delivered to ACCOUNT_WITH_HISTORY by receipt: its `/txns` listing lacks them. */
+const RECEIPT_PAYOUTS = [
+  "3U2GqtozhWVjTbh1XnMwrSLmG8jbtwTqhau8APFMSmJm",
+  "2y88bKogynWNGeAsnQD9GqMp6yf5CmjKfmG2G4jDcTxx",
+];
+/** Mainnet has blocks whose chunks hold no transaction: a search for one with transactions. */
+const MAX_BLOCKS_SEARCHED = 20;
 const DELEGATOR = "c351fce3fadaff7902f04aefcc5f519c87923a734ba5c0867f690d226a33c0a1";
 const IMPLICIT_RECIPIENT = "4e7de0a21d8a20f970c86b6edf407906d7ba9e205979c3268270eef80a286e2d";
 const NAMED_RECIPIENT = "recipient.near";
@@ -101,9 +108,13 @@ describe("CoinModuleApi (integration)", () => {
     describe("getBlock", () => {
       it("reads a recent block with its transactions, fees and fee payer", async () => {
         const head = await api.lastBlock(context);
-        const height = head.height - 30;
-
-        const block = await api.getBlock(context, height);
+        let height = head.height - 30;
+        let block = await api.getBlock(context, height);
+        for (let searched = 1; block.transactions.length === 0; searched++) {
+          if (searched >= MAX_BLOCKS_SEARCHED) throw new Error("no recent block with transactions");
+          height -= 1;
+          block = await api.getBlock(context, height);
+        }
 
         expect(block.info.height).toBe(height);
         expect(block.info.hash).toMatch(/^[1-9A-HJ-NP-Za-km-z]{43,44}$/);
@@ -254,7 +265,11 @@ describe("CoinModuleApi (integration)", () => {
         limit: 10,
       });
 
-      expect(first.items).toHaveLength(10);
+      const ids = first.items.map(operation => operation.id);
+      const heights = first.items.map(operation => operation.tx.block.height);
+      expect(ids.filter(id => !RECEIPT_PAYOUTS.includes(id))).toHaveLength(10);
+      expect(ids).toEqual(expect.arrayContaining(RECEIPT_PAYOUTS));
+      expect(heights).toEqual([...heights].sort((a, b) => b - a));
       expect(first.next).toMatch(/\S/);
 
       const second = await api.listOperations(context, ACCOUNT_WITH_HISTORY, {

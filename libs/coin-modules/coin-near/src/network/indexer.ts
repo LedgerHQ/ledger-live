@@ -1,4 +1,6 @@
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { log } from "@ledgerhq/logs";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { type NearConfig } from "../config";
@@ -6,10 +8,20 @@ import {
   DELEGATE_ACTION,
   LEGACY_HISTORY_MAX_PAGES,
   LEGACY_HISTORY_PAGE_SIZE,
+  RECEIPTS_MAX_PAGES,
+  RECEIPTS_PAGE_SIZE,
   STAKING_POOL_METHODS,
+  SYSTEM_ACCOUNT,
 } from "../constants";
+import { fetchTransactionReceipts } from "./blockTransactions";
 import { fetchNearblocks } from "./nearblocks";
-import { NearTransaction, NearV3Response } from "./sdk.types";
+import {
+  NearAccountReceipt,
+  NearReceiptNode,
+  NearReceiptTransfer,
+  NearTransaction,
+  NearV3Response,
+} from "./sdk.types";
 
 /**
  * One page of account transactions. `next` is the indexer's own opaque cursor, forwarded as-is so
@@ -42,6 +54,264 @@ export const fetchTransactionsPage = async (
   };
 };
 
+export const fetchReceiptsPage = async (
+  config: NearConfig,
+  address: string,
+  options: { cursor?: string; limit?: number } = {},
+): Promise<{ receipts: NearAccountReceipt[]; next?: string }> => {
+  const params = new URLSearchParams();
+  if (options.limit !== undefined) {
+    params.set("limit", String(options.limit));
+  }
+  if (options.cursor) {
+    params.set("next", options.cursor);
+  }
+  const query = params.toString();
+  const querySuffix = query ? `?${query}` : "";
+
+  const body = await fetchNearblocks<NearV3Response<NearAccountReceipt[]>>(
+    config,
+    `/v3/accounts/${address}/receipts${querySuffix}`,
+  );
+
+  const next = body.meta?.next_page;
+
+  return {
+    receipts: body.data ?? [],
+    ...(next !== undefined && { next }),
+  };
+};
+
+const TRANSACTION_TREE_LOOKUP_BATCH = 10;
+
+const receiptHeight = (receipt: NearAccountReceipt): number =>
+  receipt.block?.block_height !== undefined ? Number(receipt.block.block_height) : Number.NaN;
+
+export const isReceiptTransferCandidate = (receipt: NearAccountReceipt, address: string): boolean =>
+  receipt.actions?.some(action => action.action === "TRANSFER") === true &&
+  new BigNumber(receipt.actions_agg?.deposit || 0).gt(0) &&
+  receipt.receiver_account_id === address &&
+  receipt.outcome?.status === true &&
+  receipt.predecessor_account_id !== SYSTEM_ACCOUNT &&
+  receipt.predecessor_account_id !== address;
+
+const receiptNodes = (node: NearReceiptNode): NearReceiptNode[] => [
+  node,
+  ...(node.receipts ?? []).flatMap(receiptNodes),
+];
+
+const isIncomingTransferNode = (node: NearReceiptNode, address: string): boolean =>
+  node.receiver_account_id === address &&
+  node.predecessor_account_id !== SYSTEM_ACCOUNT &&
+  node.predecessor_account_id !== address &&
+  node.actions.some(action => action.action === "TRANSFER");
+
+const nodeHeight = (node: NearReceiptNode): number =>
+  Number(node.block?.block_height ?? Number.NaN);
+
+const isListedByTxns = (tree: NearReceiptNode, address: string): boolean =>
+  tree.predecessor_account_id === address || tree.receiver_account_id === address;
+
+const isSettled = (tree: NearReceiptNode): boolean =>
+  receiptNodes(tree).every(node => typeof node.outcome?.status === "boolean");
+
+/** Undefined when `/txns` lists the transaction for the account, or while any receipt, which may still send a transfer, has no outcome. */
+export const receiptOnlyTransfer = (
+  tree: NearReceiptNode,
+  transactionHash: string,
+  address: string,
+): NearReceiptTransfer | undefined => {
+  const nodes = receiptNodes(tree);
+  const incoming = nodes.filter(node => isIncomingTransferNode(node, address));
+  const credited = incoming.filter(node => node.outcome.status === true);
+  if (isListedByTxns(tree, address) || !isSettled(tree) || credited.length === 0) return undefined;
+
+  const [first, ...rest] = credited;
+  const newest = rest.reduce((a, b) => (nodeHeight(b) > nodeHeight(a) ? b : a), first);
+  const value = credited
+    .flatMap(node => node.actions)
+    .filter(action => action.action === "TRANSFER")
+    .reduce((sum, action) => sum.plus(action.args?.deposit ?? 0), new BigNumber(0));
+
+  return {
+    transactionHash,
+    sender: newest.predecessor_account_id,
+    value: value.toFixed(),
+    blockHeight: nodeHeight(newest),
+    blockHash: newest.block?.block_hash,
+    date: new Date(Number.parseFloat(newest.block?.block_timestamp ?? "0") / 1e6),
+  };
+};
+
+type ReceiptWindow = { floorHeight: number | undefined; upperHeight: number | undefined };
+
+const isWithin = (height: number, { floorHeight, upperHeight }: ReceiptWindow): boolean =>
+  (upperHeight === undefined || height < upperHeight) &&
+  (floorHeight === undefined || height >= floorHeight);
+
+const transferCandidateHashes = (
+  receipts: NearAccountReceipt[],
+  address: string,
+  window: ReceiptWindow,
+  knownHashes: ReadonlySet<string>,
+): string[] =>
+  receipts
+    .filter(
+      receipt =>
+        !Number.isNaN(receiptHeight(receipt)) &&
+        isWithin(receiptHeight(receipt), window) &&
+        !knownHashes.has(receipt.transaction_hash) &&
+        isReceiptTransferCandidate(receipt, address),
+    )
+    .map(receipt => receipt.transaction_hash);
+
+const lowestHeight = (receipts: NearAccountReceipt[]): number =>
+  Math.min(...receipts.map(receiptHeight).filter(height => !Number.isNaN(height)));
+
+type ReadStop = { resumeCursor?: string; truncatedAtHeight?: number };
+
+/** Undefined while the read goes on after this page. */
+const readStop = ({
+  receipts,
+  page,
+  hasNext,
+  requestCursor,
+  window,
+  stopAtHashes,
+  pageBudget,
+}: {
+  receipts: NearAccountReceipt[];
+  page: number;
+  hasNext: boolean;
+  requestCursor: string | undefined;
+  window: ReceiptWindow;
+  stopAtHashes: ReadonlySet<string> | undefined;
+  pageBudget: number | undefined;
+}): ReadStop | undefined => {
+  const { floorHeight, upperHeight } = window;
+  const resume = requestCursor === undefined ? {} : { resumeCursor: requestCursor };
+  if (floorHeight !== undefined && receipts.some(receipt => receiptHeight(receipt) < floorHeight)) {
+    return resume;
+  }
+  const unboundedWindow = floorHeight === undefined;
+  if (unboundedWindow && receipts.some(receipt => stopAtHashes?.has(receipt.transaction_hash))) {
+    return {};
+  }
+  const pageCap = unboundedWindow ? RECEIPTS_MAX_PAGES : pageBudget;
+  if (!hasNext || pageCap === undefined || page < pageCap) return undefined;
+
+  const lowestBlockMayContinueOnNextPage = lowestHeight(receipts);
+  const readWholeAbove = lowestBlockMayContinueOnNextPage + 1;
+  if (unboundedWindow) return { truncatedAtHeight: readWholeAbove };
+  const makesProgress = upperHeight === undefined || readWholeAbove < upperHeight;
+  return makesProgress ? { ...resume, truncatedAtHeight: readWholeAbove } : undefined;
+};
+
+/**
+ * Incoming transfers the account received by receipt in a transaction its `/txns` listing lacks,
+ * each reported once, by the window holding its newest receipt.
+ */
+export const readReceiptTransfers = async (
+  config: NearConfig,
+  address: string,
+  options: {
+    floorHeight?: number;
+    upperHeight?: number;
+    cursor?: string;
+    knownHashes: ReadonlySet<string>;
+    stopAtHashes?: ReadonlySet<string>;
+    /** Pages a floored read may take before it reports a part of its window to resume. */
+    pageBudget?: number;
+  },
+): Promise<{
+  transfers: NearReceiptTransfer[];
+  resumeCursor?: string;
+  truncatedAtHeight?: number;
+}> => {
+  const { knownHashes, stopAtHashes, pageBudget } = options;
+  const window: ReceiptWindow = {
+    floorHeight: options.floorHeight,
+    upperHeight: options.upperHeight,
+  };
+  const candidateHashes: string[] = [];
+  const seenCursors = new Set<string>();
+  let requestCursor = options.cursor;
+  let stop: ReadStop | undefined;
+
+  for (let page = 1; ; page++) {
+    const { receipts, next } = await fetchReceiptsPage(config, address, {
+      limit: RECEIPTS_PAGE_SIZE,
+      ...(requestCursor !== undefined && { cursor: requestCursor }),
+    });
+    candidateHashes.push(...transferCandidateHashes(receipts, address, window, knownHashes));
+
+    stop = readStop({
+      receipts,
+      page,
+      hasNext: next !== undefined,
+      requestCursor,
+      window,
+      stopAtHashes,
+      pageBudget,
+    });
+    if (stop !== undefined || next === undefined) break;
+    if (seenCursors.has(next)) {
+      throw new Error(`Near: the indexer cursor does not advance for receipts of ${address}`);
+    }
+    seenCursors.add(next);
+    requestCursor = next;
+  }
+
+  const truncatedAtHeight = stop?.truncatedAtHeight;
+  if (truncatedAtHeight !== undefined) {
+    log("Near", `receipts of ${address}: read stopped at height ${truncatedAtHeight}`);
+  }
+  const transfers = await promiseAllBatched(
+    TRANSACTION_TREE_LOOKUP_BATCH,
+    [...new Set(candidateHashes)],
+    async hash => {
+      const tree = await fetchTransactionReceipts(config, hash);
+      // A read that skipped it would move the history past a payout it never reads again.
+      if (!isListedByTxns(tree, address) && !isSettled(tree)) {
+        throw new Error(`Near: the receipts of ${hash} for ${address} have no outcome yet`);
+      }
+      return receiptOnlyTransfer(tree, hash, address);
+    },
+  );
+  const reportedWindow: ReceiptWindow = {
+    floorHeight: truncatedAtHeight,
+    upperHeight: window.upperHeight,
+  };
+
+  return {
+    transfers: transfers.filter(
+      (transfer): transfer is NearReceiptTransfer =>
+        transfer !== undefined && isWithin(transfer.blockHeight, reportedWindow),
+    ),
+    ...stop,
+  };
+};
+
+const receiptTransferToOperation = (
+  accountId: string,
+  address: string,
+  transfer: NearReceiptTransfer,
+): Operation => ({
+  id: encodeOperationId(accountId, transfer.transactionHash, "IN"),
+  accountId,
+  fee: new BigNumber(0),
+  value: new BigNumber(transfer.value),
+  type: "IN",
+  hash: transfer.transactionHash,
+  blockHash: transfer.blockHash,
+  blockHeight: transfer.blockHeight,
+  date: transfer.date,
+  extra: {},
+  senders: [transfer.sender],
+  recipients: [address],
+  hasFailed: false,
+});
+
 /**
  * The newest transactions, page after page until one the caller already knows, and until every
  * hash in `unsettledHashes` was read: a transaction listed before its outcome was indexed may sit
@@ -54,7 +324,12 @@ const fetchTransactions = async (
   address: string,
   knownHashes: ReadonlySet<string>,
   unsettledHashes: ReadonlySet<string>,
-): Promise<{ transactions: NearTransaction[]; hasOlder: boolean; gap: boolean }> => {
+): Promise<{
+  transactions: NearTransaction[];
+  hasOlder: boolean;
+  gap: boolean;
+  exhausted: boolean;
+}> => {
   const transactions: NearTransaction[] = [];
   const unread = new Set(unsettledHashes);
   let reachedKnown = false;
@@ -76,15 +351,18 @@ const fetchTransactions = async (
         transactions,
         hasOlder: full && !reachedKnown && knownHashes.size === 0,
         gap: false,
+        exhausted: !full || next === undefined,
       };
     }
-    if (knownHashes.size === 0) return { transactions, hasOlder: true, gap: false };
+    if (knownHashes.size === 0) {
+      return { transactions, hasOlder: true, gap: false, exhausted: false };
+    }
     cursor = next;
   }
 
   // The bound stopped the read above the known transactions: what lies between was not read. Once
   // a known one was reached the read joins the stored history, even if an unsettled one lies below.
-  return { transactions, hasOlder: true, gap: !reachedKnown };
+  return { transactions, hasOlder: true, gap: !reachedKnown, exhausted: false };
 };
 
 /** The indexer lists a transaction before it records its outcome: its fee and status are not final. */
@@ -193,10 +471,27 @@ export const fetchLegacyHistory = async (
     transactions: rawTransactions,
     hasOlder,
     gap,
+    exhausted,
   } = await fetchTransactions(config, address, knownHashes, unsettledHashes);
 
+  const reachedKnown = rawTransactions.some(t => knownHashes.has(t.transaction_hash));
+  const heights = rawTransactions
+    .map(t => (t.block?.block_height !== undefined ? Number(t.block.block_height) : Number.NaN))
+    .filter(height => !Number.isNaN(height));
+  const floorHeight =
+    (exhausted && !reachedKnown) || heights.length === 0 ? undefined : Math.min(...heights);
+  const { transfers, truncatedAtHeight } = await readReceiptTransfers(config, address, {
+    ...(floorHeight !== undefined && { floorHeight }),
+    knownHashes: new Set([...knownHashes, ...rawTransactions.map(t => t.transaction_hash)]),
+    stopAtHashes: knownHashes,
+  });
+  const keptTransactions =
+    truncatedAtHeight === undefined
+      ? rawTransactions
+      : rawTransactions.filter(t => Number(t.block?.block_height ?? 0) >= truncatedAtHeight);
+
   const stakingPoolsCalled = new Map<string, string>();
-  for (const transaction of rawTransactions) {
+  for (const transaction of keptTransactions) {
     if (
       isSender(transaction, address) &&
       transaction.actions?.some(action => isStakingPoolMethod(action.method))
@@ -205,15 +500,20 @@ export const fetchLegacyHistory = async (
     }
   }
 
+  const operations = await Promise.all(
+    keptTransactions.map(transaction => transactionToOperation(accountId, address, transaction)),
+  );
+  operations.push(
+    ...transfers.map(transfer => receiptTransferToOperation(accountId, address, transfer)),
+  );
+
   return {
-    operations: await Promise.all(
-      rawTransactions.map(transaction => transactionToOperation(accountId, address, transaction)),
-    ),
+    operations,
     stakingPoolsCalled,
-    isFullPage: hasOlder,
-    gap,
-    outcomePendingHashes: rawTransactions.filter(isOutcomePending).map(t => t.transaction_hash),
-    relayedHashes: rawTransactions
+    isFullPage: hasOlder || truncatedAtHeight !== undefined,
+    gap: gap || (truncatedAtHeight !== undefined && knownHashes.size > 0),
+    outcomePendingHashes: keptTransactions.filter(isOutcomePending).map(t => t.transaction_hash),
+    relayedHashes: keptTransactions
       .filter(transaction => isRelayedCall(transaction, address))
       .map(t => t.transaction_hash),
   };

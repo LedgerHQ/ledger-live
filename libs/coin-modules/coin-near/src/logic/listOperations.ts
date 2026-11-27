@@ -5,14 +5,15 @@ import type {
   Page,
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { NearContext } from "../config";
-import { fetchTransactionsPage } from "../network";
+import { RECEIPTS_MAX_PAGES } from "../constants";
+import { fetchTransactionsPage, readReceiptTransfers } from "../network";
 import {
   getOperationType,
   isOutcomePending,
   isRelayedCall,
   isStakingPoolMethod,
 } from "../network/indexer";
-import type { NearTransaction } from "../network/sdk.types";
+import type { NearReceiptTransfer, NearTransaction } from "../network/sdk.types";
 
 /** The indexer defaults to 25 and 422s on anything outside this range. */
 const MIN_PAGE_SIZE = 1;
@@ -64,8 +65,77 @@ export function toOperation(transaction: NearTransaction, address: string): Oper
   };
 }
 
-// Paginated, newest-first history. The cursor is the indexer's own opaque token, forwarded
-// unchanged; paging is forward-only newest-to-oldest, so ascending order can't be honoured across pages.
+/**
+ * `t`: transactions cursor, `r`: receipts cursor to resume from, `u`: upper height of the next
+ * receipts window, `h`: height from which the transactions of page `t` were already returned.
+ */
+type Cursor = { t?: string; r?: string; u?: number; h?: number };
+
+// URL-safe base64 by hand: the `buffer` polyfill mobile installs as `Buffer` has no "base64url".
+const withoutPadding = (base64: string): string => {
+  let end = base64.length;
+  while (end > 0 && base64[end - 1] === "=") end--;
+  return base64.slice(0, end);
+};
+
+const encodeCursor = (cursor: Cursor): string =>
+  withoutPadding(
+    Buffer.from(JSON.stringify(cursor))
+      .toString("base64")
+      .replaceAll("+", "-")
+      .replaceAll("/", "_"),
+  );
+
+const fromUrlSafeBase64 = (token: string): Buffer =>
+  Buffer.from(token.replaceAll("-", "+").replaceAll("_", "/"), "base64");
+
+function decodeCursor(token: string): Cursor {
+  try {
+    const parsed: unknown = JSON.parse(fromUrlSafeBase64(token).toString("utf8"));
+    if (typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)) {
+      const { t, r, u, h } = parsed as Record<string, unknown>;
+      if (
+        (t === undefined || typeof t === "string") &&
+        (r === undefined || typeof r === "string") &&
+        (u === undefined || typeof u === "number") &&
+        (h === undefined || typeof h === "number")
+      ) {
+        return {
+          ...(t !== undefined && { t }),
+          ...(r !== undefined && { r }),
+          ...(u !== undefined && { u }),
+          ...(h !== undefined && { h }),
+        };
+      }
+    }
+  } catch {
+    // falls through to the invalid cursor error
+  }
+  throw new Error("invalid cursor");
+}
+
+export function toReceiptOperation(
+  transfer: NearReceiptTransfer,
+  address: string,
+): Operation<MemoNotSupported> {
+  return {
+    id: transfer.transactionHash,
+    type: "IN",
+    senders: [transfer.sender],
+    recipients: [address],
+    value: BigInt(transfer.value),
+    asset: { type: "native" },
+    tx: {
+      hash: transfer.transactionHash,
+      block: { height: transfer.blockHeight, hash: transfer.blockHash ?? "", time: transfer.date },
+      fees: 0n,
+      date: transfer.date,
+      failed: false,
+    },
+  };
+}
+
+// Forward-only newest-to-oldest paging, so ascending order can't be honoured across pages.
 export async function listOperations(
   context: NearContext,
   address: string,
@@ -80,8 +150,10 @@ export async function listOperations(
   // out-of-range request is clamped rather than forwarded and turned into a network error.
   const limit = Math.min(Math.max(options.limit ?? MAX_PAGE_SIZE, MIN_PAGE_SIZE), MAX_PAGE_SIZE);
 
+  const cursor = options.cursor !== undefined ? decodeCursor(options.cursor) : {};
+
   const { transactions, next } = await fetchTransactionsPage(config, address, {
-    ...(options.cursor !== undefined && { cursor: options.cursor }),
+    ...(cursor.t !== undefined && { cursor: cursor.t }),
     limit,
   });
 
@@ -89,13 +161,57 @@ export async function listOperations(
   // Pages run newest-first, so a transaction below the floor means everything after it is older:
   // drop it and stop advertising a next cursor.
   const reachedFloor = transactions.some(transaction => blockHeight(transaction) < minHeight);
+  const hasNext = !reachedFloor && next !== undefined;
 
-  const items = transactions
-    .filter(transaction => blockHeight(transaction) >= minHeight)
-    .map(transaction => toOperation(transaction, address));
+  const windowFloor =
+    hasNext && transactions.length > 0 ? Math.min(...transactions.map(blockHeight)) : minHeight;
+
+  const { transfers, resumeCursor, truncatedAtHeight } = await readReceiptTransfers(
+    config,
+    address,
+    {
+      floorHeight: windowFloor,
+      ...(cursor.u !== undefined && { upperHeight: cursor.u }),
+      ...(cursor.r !== undefined && { cursor: cursor.r }),
+      knownHashes: new Set(transactions.map(transaction => transaction.transaction_hash)),
+      pageBudget: RECEIPTS_MAX_PAGES,
+    },
+  );
+
+  const isUnreturned = (height: number): boolean =>
+    height >= minHeight &&
+    (cursor.h === undefined || height < cursor.h) &&
+    (truncatedAtHeight === undefined || height >= truncatedAtHeight);
+
+  const items = [
+    ...transactions
+      .filter(transaction => isUnreturned(blockHeight(transaction)))
+      .map(transaction => toOperation(transaction, address)),
+    ...transfers
+      .filter(transfer => transfer.blockHeight >= minHeight)
+      .map(transfer => toReceiptOperation(transfer, address)),
+  ].sort((a, b) => b.tx.block.height - a.tx.block.height);
+
+  if (truncatedAtHeight !== undefined) {
+    return {
+      items,
+      next: encodeCursor({
+        ...(cursor.t !== undefined && { t: cursor.t }),
+        ...(resumeCursor !== undefined && { r: resumeCursor }),
+        u: truncatedAtHeight,
+        h: truncatedAtHeight,
+      }),
+    };
+  }
 
   return {
     items,
-    next: reachedFloor ? undefined : next,
+    next: hasNext
+      ? encodeCursor({
+          t: next,
+          ...(resumeCursor !== undefined && { r: resumeCursor }),
+          u: windowFloor,
+        })
+      : undefined,
   };
 }

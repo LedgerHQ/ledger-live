@@ -25,6 +25,13 @@ describe("listOperations (MSW)", () => {
     mockServer.listen({ onUnhandledRequest: "error" });
   });
 
+  beforeEach(() =>
+    mockServer.use(
+      http.get(`${NEAR_BASE_URL_MOCKED}/v3/accounts/:address/receipts`, () =>
+        HttpResponse.json({ data: [] }),
+      ),
+    ),
+  );
   afterEach(() => mockServer.resetHandlers());
   afterAll(() => mockServer.close());
 
@@ -45,21 +52,27 @@ describe("listOperations (MSW)", () => {
     });
   });
 
-  it("forwards the indexer's opaque cursor unchanged on the next page", async () => {
-    const cursor = "eyJhY2NvdW50X2lkIjoid2Fja2F6b25nLnBvb2x2MS5uZWFyIn0=";
-    let requestedNext: string | null = null;
+  it("wraps the indexer's opaque cursor in its own token and unwraps it on the next page", async () => {
+    const indexerCursor = "eyJhY2NvdW50X2lkIjoid2Fja2F6b25nLnBvb2x2MS5uZWFyIn0=";
+    const requestedNext: (string | null)[] = [];
 
     mockServer.use(
       http.get(`${NEAR_BASE_URL_MOCKED}/v3/accounts/:address/txns`, ({ request }) => {
-        requestedNext = new URL(request.url).searchParams.get("next");
-        return HttpResponse.json({ data: [transaction()], meta: { next_page: cursor } });
+        requestedNext.push(new URL(request.url).searchParams.get("next"));
+        return HttpResponse.json({
+          data: [transaction()],
+          meta: { next_page: indexerCursor },
+        });
       }),
     );
 
-    const page = await listOperations(mockNearContext, ADDRESS, { cursor, minHeight: 0 });
+    const first = await listOperations(mockNearContext, ADDRESS, { minHeight: 0 });
+    await listOperations(mockNearContext, ADDRESS, { cursor: first.next, minHeight: 0 });
 
-    expect(requestedNext).toBe(cursor);
-    expect(page.next).toBe(cursor);
+    expect(JSON.parse(Buffer.from(first.next ?? "", "base64url").toString("utf8"))).toMatchObject({
+      t: indexerCursor,
+    });
+    expect(requestedNext).toEqual([null, indexerCursor]);
   });
 
   it("returns an empty page rather than undefined items when the indexer has no data", async () => {
@@ -113,5 +126,76 @@ describe("listOperations (MSW)", () => {
     await expect(
       listOperations(mockNearContext, ADDRESS, { order: "asc", minHeight: 0 }),
     ).rejects.toThrow("ascending order is not supported");
+  });
+
+  it("spreads a long receipt history over bounded calls, whole and newest first", async () => {
+    const payoutHeights = Array.from({ length: 15 }, (_, index) => 1000 - index * 10);
+    const receiptRequests: string[] = [];
+    mockServer.use(
+      http.get(`${NEAR_BASE_URL_MOCKED}/v3/accounts/:address/txns`, () =>
+        HttpResponse.json({
+          data: [
+            transaction({ transaction_hash: "newest", block: { block_height: "1100" } }),
+            transaction({ transaction_hash: "oldest", block: { block_height: "500" } }),
+          ],
+        }),
+      ),
+      http.get(`${NEAR_BASE_URL_MOCKED}/v3/accounts/:address/receipts`, ({ request }) => {
+        const cursor = new URL(request.url).searchParams.get("next") ?? "page-0";
+        receiptRequests.push(cursor);
+        const index = Number(cursor.replace("page-", ""));
+        const height = String(payoutHeights[index]);
+        return HttpResponse.json({
+          data: [
+            {
+              receipt_id: `r${index}`,
+              transaction_hash: `payout-${height}`,
+              predecessor_account_id: "intents.near",
+              receiver_account_id: ADDRESS,
+              actions: [{ action: "TRANSFER", method: null }],
+              actions_agg: { deposit: "1" },
+              outcome: { status: true },
+              block: { block_height: height, block_hash: `b${height}`, block_timestamp: "0" },
+            },
+          ],
+          ...(index + 1 < payoutHeights.length && { meta: { next_page: `page-${index + 1}` } }),
+        });
+      }),
+      http.get(`${NEAR_BASE_URL_MOCKED}/v3/txns/:hash/receipts`, ({ params }) => {
+        const height = String(params.hash).replace("payout-", "");
+        return HttpResponse.json({
+          data: {
+            predecessor_account_id: "intents.near",
+            receiver_account_id: "intents.near",
+            actions: [],
+            outcome: { status: true },
+            receipts: [
+              {
+                predecessor_account_id: "intents.near",
+                receiver_account_id: ADDRESS,
+                actions: [{ action: "TRANSFER", args: { deposit: "1" } }],
+                outcome: { status: true },
+                block: { block_height: height, block_hash: `b${height}`, block_timestamp: "0" },
+              },
+            ],
+          },
+        });
+      }),
+    );
+
+    const first = await listOperations(mockNearContext, ADDRESS, { minHeight: 0 });
+    const requestsOfFirstCall = receiptRequests.length;
+    const second = await listOperations(mockNearContext, ADDRESS, {
+      minHeight: 0,
+      cursor: first.next,
+    });
+
+    expect(requestsOfFirstCall).toBe(10);
+    expect(second.next).toBeUndefined();
+    expect([...first.items, ...second.items].map(item => item.tx.block.height)).toEqual([
+      1100,
+      ...payoutHeights,
+      500,
+    ]);
   });
 });
