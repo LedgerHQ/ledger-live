@@ -101,6 +101,7 @@ const resolverCache = new Map();
  */
 function appResolver(root) {
   if (resolverCache.has(root)) return /** @type {AppResolver | null} */ (resolverCache.get(root));
+  /** @type {AppResolver | null} */
   let resolver = null;
   const configFile = path.join(root, "tsconfig.json");
   if (fs.existsSync(configFile)) {
@@ -117,6 +118,7 @@ function appResolver(root) {
     /** @type {Map<string, string | null>} */
     const resolutions = new Map();
     resolver = {
+      /** @param {string} specifier @param {string} containingFile */
       resolve(specifier, containingFile) {
         const key = `${path.dirname(containingFile)}\0${specifier}`;
         if (!resolutions.has(key)) {
@@ -267,6 +269,7 @@ function splitJsxName(name) {
 function legacyUiRule(rule) {
   return {
     meta: { schema: SCHEMA },
+    /** @param {any} context */
     createOnce(context) {
       const state = { options: /** @type {LegacyUiOptions} */ ({ modules: [] }) };
       const visitors = rule.createOnce(context, state);
@@ -304,11 +307,14 @@ const noLegacyImport = legacyUiRule({
 
 const noLegacyElement = legacyUiRule({
   createOnce(context, state) {
+    /** @type {Map<string, string>} */
     let bindings = new Map();
     return {
+      /** @param {{ body?: any[] }} program */
       Program(program) {
         bindings = legacyBindings(program, context.filename, state.options.modules);
       },
+      /** @param {{ name: any }} node */
       JSXOpeningElement(node) {
         const name = splitJsxName(node.name);
         if (!name || !bindings.has(name.root)) return;
@@ -324,6 +330,7 @@ const noLegacyElement = legacyUiRule({
 
 const noStyledDefinition = legacyUiRule({
   createOnce(context) {
+    /** @type {string | null} */
     let styled = null;
 
     /** @param {{ type?: string, name?: string } | undefined} node */
@@ -338,6 +345,7 @@ const noStyledDefinition = legacyUiRule({
     }
 
     return {
+      /** @param {{ body?: any[] }} program */
       Program(program) {
         styled = null;
         for (const statement of program.body ?? []) {
@@ -349,9 +357,11 @@ const noStyledDefinition = legacyUiRule({
           if (defaultImport) styled = defaultImport.local.name;
         }
       },
+      /** @param {{ object: any }} node */
       MemberExpression(node) {
         if (isStyled(node.object)) report(node);
       },
+      /** @param {{ callee: any }} node */
       CallExpression(node) {
         if (isStyled(node.callee)) report(node);
       },
@@ -361,7 +371,9 @@ const noStyledDefinition = legacyUiRule({
 
 const noBannedComponent = legacyUiRule({
   createOnce(context, state) {
+    /** @type {Map<string, string>} */
     let bindings = new Map();
+    /** @type {Set<string>} */
     let banned = new Set();
 
     /** @param {string} component @param {object} node */
@@ -373,6 +385,7 @@ const noBannedComponent = legacyUiRule({
     }
 
     return {
+      /** @param {{ body?: any[] }} program */
       Program(program) {
         banned = new Set(state.options.bannedComponents ?? []);
         bindings =
@@ -387,6 +400,7 @@ const noBannedComponent = legacyUiRule({
           }
         }
       },
+      /** @param {{ name: any }} node */
       JSXOpeningElement(node) {
         const name = splitJsxName(node.name);
         const component = name && bindings.get(name.root);
