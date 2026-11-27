@@ -12,6 +12,7 @@ import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import type { Operation, ResolvedAccountBridge, SignedOperation } from "@ledgerhq/types-live";
 import {
   commitStakePosition,
+  releaseStakePosition,
   settleStakePosition,
   useMarkStakePositionTransacted,
   type StakePositionExitAction,
@@ -168,14 +169,17 @@ export function useExitTransactionViewModel({
     [broadcast, handleBroadcasted, handleFailed, onSigned, requestId],
   );
 
-  // The device step stays on screen while the network takes the signed transaction, and stays
-  // mounted while its sheet animates out.
-  const isSignatureRequested = stage === "signing" || stage === "broadcasting";
-  const [isSignatureShown, setIsSignatureShown] = useState(isSignatureRequested);
-  if (isSignatureRequested && !isSignatureShown) setIsSignatureShown(true);
+  // The device sheet closes once the signature is handed over, and stays mounted while it animates
+  // out: the network takes the signed transaction without the device, which must not offer to
+  // sign it again if it disconnects.
+  const isSigning = stage === "signing";
+  const [isSignatureShown, setIsSignatureShown] = useState(isSigning);
+  if (isSigning && !isSignatureShown) setIsSignatureShown(true);
   const onSignatureDismissed = useCallback(() => {
-    if (!isSignatureRequested) setIsSignatureShown(false);
-  }, [isSignatureRequested]);
+    // A request closed while its position sheet was already hidden has no hide left to release it.
+    releaseStakePosition(requestId);
+    if (!isSigning) setIsSignatureShown(false);
+  }, [isSigning, requestId]);
 
   const signature: StakePositionSignatureProps | null =
     isSignatureShown && transaction
@@ -183,7 +187,8 @@ export function useExitTransactionViewModel({
           account,
           transaction,
           status,
-          isOpen: isSignatureRequested,
+          action,
+          isOpen: isSigning,
           onSigned: handleSigned,
           onFailed: handleFailed,
           onCancel,
@@ -191,5 +196,6 @@ export function useExitTransactionViewModel({
         }
       : null;
 
-  return { isSyncSkipped: isSignatureRequested, signature };
+  // Syncing waits until the exit is broadcast, whoever shows it.
+  return { isSyncSkipped: isSigning || stage === "broadcasting", signature };
 }

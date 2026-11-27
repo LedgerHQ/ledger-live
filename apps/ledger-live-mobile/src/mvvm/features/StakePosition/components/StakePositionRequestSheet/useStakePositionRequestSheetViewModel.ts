@@ -38,7 +38,8 @@ export function useStakePositionRequestSheetViewModel({
   const [requestedAccount] = useState(storedAccount);
   const account = storedAccount ?? requestedAccount;
   const Sheet = account ? stakePositionSheetOf(account.currency.family) : undefined;
-  const isOpen = phase === "open";
+  // A request on the device step is still unsigned: the sheet only steps aside for it.
+  const isOpen = phase === "open" || phase === "signing";
   const isSyncing = useStakePositionAccountSync(storedAccount, isOpen);
 
   // The sheet lives above the navigators: the stake flow opens from the root navigation.

@@ -15,7 +15,8 @@ const noop = () => undefined;
 
 /**
  * The device step of the exit, in the executor's own sheet. Only one sheet shows at a time: the
- * stake position sheet steps aside while it is open, and shows the result once it is gone.
+ * stake position sheet steps aside while it is open, and takes over once the signature is handed
+ * over, to show the exit being processed and its result.
  */
 export function StakePositionSignature(props: StakePositionSignatureProps) {
   const {

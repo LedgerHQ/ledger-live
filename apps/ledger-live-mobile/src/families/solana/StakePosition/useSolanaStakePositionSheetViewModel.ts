@@ -6,6 +6,7 @@ import type {
   SolanaAccount,
   SolanaStakingPosition,
 } from "@ledgerhq/live-common/families/solana/types";
+import { getApyAppearance } from "@ledgerhq/live-common/modularDrawer/utils/getApyAppearance";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Operation } from "@ledgerhq/types-live";
 import {
@@ -14,13 +15,16 @@ import {
   getExitAction,
   getExitAmount,
   getStakePositionValidatorName,
+  releaseStakePosition,
   reopenStakePosition,
+  startSigningStakePosition,
   toChainExit,
   toStakePositionDetailsProps,
   useStakePositionData,
   useStakePositionSteps,
   useStakePositionTracking,
   type ReadyStakePositionData,
+  type StakePositionApyAppearance,
   type StakePositionConfirmProps,
   type StakePositionData,
   type StakePositionDetailsProps,
@@ -37,6 +41,7 @@ import {
 import type { StakePositionSheetProps } from "LLM/features/StakePosition";
 import type { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
 import { NavigatorName, ScreenName } from "~/const";
+import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import type { ExitTransactionProps, ExitTransactionStage, PreparedExit } from "./ExitTransaction";
 import { toStakePositionSnapshot } from "./solanaStakePosition";
@@ -92,7 +97,7 @@ export type SolanaStakePositionSheetBody =
       confirm: Omit<StakePositionConfirmProps, "errorContent">;
       error: Error | undefined;
     }>
-  | Readonly<{ kind: "processing" }>
+  | Readonly<{ kind: "processing"; action: StakePositionExitAction }>
   | Readonly<{
       kind: "success";
       result: Extract<StakePositionResultProps, { outcome: "success" }>;
@@ -111,6 +116,7 @@ type BodyActions = Readonly<{
   accountName: string | undefined;
   currency: CryptoCurrency;
   format: StakePositionFormatter;
+  apyAppearance: StakePositionApyAppearance;
   isSyncing: boolean;
   prepared: PreparedExit | null;
   dismiss: () => void;
@@ -251,21 +257,25 @@ function headingOf(content: SheetContent): StakePositionHeading {
   }
 }
 
+/** The device sheet shows the exit and this one steps aside, until the signature is handed over. */
 const isOnDeviceStep = (content: SheetContent) =>
-  content.view === "transaction" && content.stage !== "confirm";
+  content.view === "transaction" && content.stage === "signing";
 
 function detailsBodyOf(
   { data, snapshot }: Extract<SheetContent, { view: "details" }>,
   actions: BodyActions,
 ): SolanaStakePositionSheetBody {
+  // The mobile design has no initial deposit row: its two web only props stay behind.
+  const {
+    initialDepositCrypto: _crypto,
+    initialDepositFiat: _fiat,
+    ...details
+  } = toStakePositionDetailsProps(data, toChainExit(snapshot, actions.isSyncing), actions.format);
   return {
     kind: "details",
     details: {
-      ...toStakePositionDetailsProps(
-        data,
-        toChainExit(snapshot, actions.isSyncing),
-        actions.format,
-      ),
+      ...details,
+      apyAppearance: actions.apyAppearance,
       ticker: actions.ticker,
       accountName: actions.accountName,
       onEarnMore: actions.earnMore,
@@ -280,7 +290,7 @@ function confirmBodyOf(
   { exit, action, stage }: Extract<SheetContent, { view: "transaction" }>,
   actions: BodyActions,
 ): SolanaStakePositionSheetBody {
-  if (stage === "broadcasting") return { kind: "processing" };
+  if (stage === "broadcasting") return { kind: "processing", action };
   const { prepared } = actions;
   const exitAmount = getExitAmount(toStakePositionSnapshot(exit.position), action);
   const preparedExit = prepared?.transactionKey === exit.transactionKey ? prepared : null;
@@ -292,7 +302,9 @@ function confirmBodyOf(
       amount: actions.format.amount(exitAmount.toString()).crypto,
       validatorName: exit.validatorName,
       accountName: actions.accountName,
-      isPending: !preparedExit || preparedExit.isPending || stage === "signing",
+      // The sync may still change the position: the exit waits for it.
+      isPending:
+        !preparedExit || preparedExit.isPending || stage === "signing" || actions.isSyncing,
       isConfirmDisabled: !preparedExit?.isReady || preparedExit.error !== undefined,
       onConfirm: actions.confirmExit,
       testID: "stake-position-confirm",
@@ -337,7 +349,8 @@ function bodyOf(content: SheetContent, actions: BodyActions): SolanaStakePositio
  * One SOL stake position, from its details to its full deactivation or withdrawal signed on the
  * device. Every figure of the details comes from the Earn backend; the account state builds,
  * gates and signs the exit, found by the stake account of the request. The device step shows in
- * its own sheet, while this one steps aside, and the result comes back to this one.
+ * its own sheet, while this one steps aside. This one comes back once the signature is handed
+ * over, to show the exit being processed, then its result.
  */
 export function useSolanaStakePositionSheetViewModel({
   account: requestAccount,
@@ -355,6 +368,7 @@ export function useSolanaStakePositionSheetViewModel({
   const [attempt, setAttempt] = useState(0);
   const [operation, setOperation] = useState<Operation | null>(null);
   const format = useStakePositionFormatter(account);
+  const apyAppearance = getApyAppearance(getCountryLocale());
   const ticker = account.currency.ticker;
   const accountName = useMaybeAccountName(account);
   const { trackStep, trackButton } = useStakePositionTracking({ origin: request.origin, ticker });
@@ -392,16 +406,17 @@ export function useSolanaStakePositionSheetViewModel({
     request.origin === "earn" && !isAccountRemoved && shownContent.view === "notFound";
   const content = isUnavailableToEarn ? LOADING : shownContent;
   const trackedStep = isClosed ? null : trackedStepOf(content);
-  const isSignedFailure = content.view === "failure" && content.isSigned;
+  const isFailure = content.view === "failure";
 
   useEffect(() => {
     if (isUnavailableToEarn) answerStakePositionUnavailable(requestId);
   }, [isUnavailableToEarn, requestId]);
 
-  // A result has no close button of its own: a signed request opens again so the header closes it.
+  // A result has no close button of its own: a signing or signed request opens again, so the
+  // header closes it and a new request is no longer refused.
   useEffect(() => {
-    if (isSignedFailure) reopenStakePosition(requestId);
-  }, [isSignedFailure, requestId]);
+    if (isFailure) reopenStakePosition(requestId);
+  }, [isFailure, requestId]);
 
   useEffect(() => {
     if (step.name === "confirm" && step.action !== exitAction) dispatchStep({ type: "back" });
@@ -430,8 +445,10 @@ export function useSolanaStakePositionSheetViewModel({
   };
 
   const confirmExit = () => {
-    if (content.view !== "transaction" || content.stage !== "confirm") return;
+    // The sync may still change the position: the user confirms the exit of the synced one.
+    if (content.view !== "transaction" || content.stage !== "confirm" || isSyncing) return;
     trackPageButton("confirm");
+    startSigningStakePosition(requestId);
     setExitToSign(content.exit);
     dispatchStep({ type: "confirm" });
   };
@@ -479,6 +496,7 @@ export function useSolanaStakePositionSheetViewModel({
     accountName,
     currency: account.currency,
     format,
+    apyAppearance,
     isSyncing,
     prepared,
     dismiss,
@@ -508,6 +526,7 @@ export function useSolanaStakePositionSheetViewModel({
       ticker,
       currencyName: account.currency.name,
       onDismiss: dismiss,
+      onHidden: () => releaseStakePosition(requestId),
       isDismissible: phase !== "committed",
       testID: "stake-position-sheet",
     },

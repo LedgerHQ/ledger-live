@@ -50,7 +50,7 @@ function SheetBody({ body }: Readonly<{ body: SolanaStakePositionSheetBody }>) {
         />
       );
     case "processing":
-      return <StakePositionProcessing testID="stake-position-broadcasting" />;
+      return <StakePositionProcessing action={body.action} testID="stake-position-broadcasting" />;
     case "success":
       return <StakePositionResult {...body.result} />;
     case "failure":
