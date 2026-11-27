@@ -21,7 +21,7 @@ All new UI uses Lumen, in `src/mvvm/` and everywhere else. These take no new usa
 - `@ledgerhq/native-ui`
 - `styled-components`, also banned in `shared/`, `domain/`, `features/` and `support/` (`@features/platform-style` excepted)
 
-The `legacy-ui` oxlint rules (`no-legacy-import`, `no-legacy-element`, `no-styled-definition`, `no-banned-component`) count existing usages against a baseline in `apps/ledger-live-mobile/oxlint-suppressions.json`. The baseline only shrinks: never add an entry. After you remove a usage, run `oxlint --prune-suppressions` from the app folder (plugin and pruning in the [lint README](../../../support/lint/README.md)). Changes to that file need a Coin Integration review.
+The `legacy-ui` oxlint rules report a new usage: `legacy-ui/no-legacy-import` flags an import of a legacy module in a file that is not waived, and `legacy-ui/no-banned-component` flags banned components even in waived files. The waivers live in `support/lint/src/legacy-ui-waivers.js` (`FILE_WAIVERS`, `FOLDER_WAIVERS`), and the list only shrinks: new code never gets an entry, and a PR that migrates or deletes a waived file deletes its entry in the same change. `pnpm lint:legacy-ui-waivers` fails on a stale entry. Rationale and details: [`legacy-ui` in the lint README](../../../support/lint/README.md#legacy-ui).
 
 ## Map the contract onto Lumen
 
