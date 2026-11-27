@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { StakePositionBusy } from "./errors";
 import {
+  getReleasedStakePositionRequestId,
   getStakePositionRequest,
+  releaseStakePositionRequest,
   requestStakePosition,
   setStakePositionRequest,
   subscribeToStakePositionRequest,
@@ -9,9 +11,11 @@ import {
 } from "./stakePositionRequestStore.internals";
 import type {
   ShownStakePosition,
+  ShownStakePositionRequest,
   StakePositionAction,
   StakePositionOpenResult,
   StakePositionOrigin,
+  StakePositionPhase,
   StakePositionRequestInput,
 } from "./types";
 
@@ -20,27 +24,40 @@ function findRequest(id: number) {
   return request?.shown.id === id ? request : null;
 }
 
+const isBeforeSignature = (phase: StakePositionPhase) => phase === "open" || phase === "signing";
+
 /** The user closed the surface. A committed request keeps going: only its result closes it. */
 export function dismissStakePosition(id: number): void {
   const request = findRequest(id);
   if (request === null || request.phase === "committed") return;
 
   setStakePositionRequest(null);
-  if (request.phase === "open") request.resolve({ action: null });
+  if (isBeforeSignature(request.phase)) request.resolve({ action: null });
+}
+
+/** The confirmation hands the exit over to the device: a new request is refused until it ends. */
+export function startSigningStakePosition(id: number): void {
+  const request = findRequest(id);
+  if (request?.phase !== "open") return;
+
+  setStakePositionRequest({ ...request, phase: "signing" });
 }
 
 /** The transaction is signed or handed off: the surface can no longer be dismissed. */
 export function commitStakePosition(id: number): void {
   const request = findRequest(id);
-  if (request?.phase !== "open") return;
+  if (request === null || !isBeforeSignature(request.phase)) return;
 
   setStakePositionRequest({ ...request, phase: "committed" });
 }
 
-/** A committed transaction failed in a way the user can retry, or dismiss again. */
+/**
+ * The device step ended without a signature, or a committed transaction failed in a way the user
+ * can retry: the request is open again, for a retry or a dismissal.
+ */
 export function reopenStakePosition(id: number): void {
   const request = findRequest(id);
-  if (request?.phase !== "committed") return;
+  if (request?.phase !== "signing" && request?.phase !== "committed") return;
 
   setStakePositionRequest({ ...request, phase: "open" });
 }
@@ -77,21 +94,32 @@ export function abandonStakePosition(id: number): void {
   if (request.phase !== "settled") request.resolve({ action: null });
 }
 
-function dismissOpenRequestOf(owner: symbol) {
+/**
+ * Forgets a closed request that its surface kept while it animated out: call it once the surface
+ * is hidden, so its content unmounts. A request still held is never released.
+ */
+export function releaseStakePosition(id: number): void {
+  releaseStakePositionRequest(id);
+}
+
+function dismissOwnRequestOf(owner: symbol) {
   const request = getStakePositionRequest();
-  if (request?.owner === owner && request.phase === "open") dismissStakePosition(request.shown.id);
+  if (request?.owner === owner && isBeforeSignature(request.phase)) {
+    dismissStakePosition(request.shown.id);
+  }
 }
 
 /**
  * The request function a live app player hands to its Wallet API handlers. Unmounting the player
- * dismisses the open request it made, but leaves a committed or settled one and another player's.
+ * dismisses the request it made while it is open or signing, but leaves a committed or settled one
+ * and another player's.
  */
 export function useStakePositionRequester(
   origin: StakePositionOrigin,
 ): (input: StakePositionRequestInput) => Promise<StakePositionOpenResult> {
   const [owner] = useState(() => Symbol("stake position requester"));
 
-  useEffect(() => () => dismissOpenRequestOf(owner), [owner]);
+  useEffect(() => () => dismissOwnRequestOf(owner), [owner]);
 
   return useCallback(input => requestStakePosition({ ...input, origin }, owner), [origin, owner]);
 }
@@ -126,6 +154,12 @@ function isForOrigin(
 
 const NOTHING_SHOWN: ShownStakePosition = { request: null, phase: "closed" };
 
+/** The last request, kept as closed while its surface animates out, until the app releases it. */
+function closedRequestOf(request: ShownStakePositionRequest | null): ShownStakePosition {
+  const isKept = request !== null && request.id > getReleasedStakePositionRequestId();
+  return isKept ? { request, phase: "closed" } : NOTHING_SHOWN;
+}
+
 function createShownReader(origin: StakePositionOrigin | undefined) {
   let shown = NOTHING_SHOWN;
 
@@ -133,7 +167,7 @@ function createShownReader(origin: StakePositionOrigin | undefined) {
     const request = getStakePositionRequest();
     const next: ShownStakePosition = isForOrigin(request, origin)
       ? { request: request.shown, phase: request.phase }
-      : { request: shown.request, phase: "closed" };
+      : closedRequestOf(shown.request);
     if (next.request !== shown.request || next.phase !== shown.phase) shown = next;
     return shown;
   };

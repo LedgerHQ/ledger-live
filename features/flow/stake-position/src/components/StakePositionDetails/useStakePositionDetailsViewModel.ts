@@ -20,8 +20,10 @@ export function useStakePositionDetailsViewModel({
   totalRewards,
   rewardsHeadline,
   currentBalance,
-  initialDeposit,
+  initialDepositCrypto,
+  initialDepositFiat,
   apy,
+  apyAppearance,
   validator,
   accountName,
   accountIcon,
@@ -43,8 +45,12 @@ export function useStakePositionDetailsViewModel({
     labels: copy.labels,
     rewards: totalRewards && { amount: totalRewards, headline: rewardsHeadline },
     balance: currentBalance,
-    initialDeposit,
+    initialDeposit:
+      initialDepositCrypto === undefined
+        ? undefined
+        : { crypto: initialDepositCrypto, fiat: initialDepositFiat },
     apyBadge: copy.apyBadge,
+    apyAppearance,
     status: copy.state,
     account: accountName ? { name: accountName, icon: accountIcon } : undefined,
     validator: validator && { ...validator, initial: initialOf(validator.name) },

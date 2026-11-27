@@ -1,11 +1,10 @@
 import type { z } from "zod";
-import type { ApyFraction, EarnPositionSchema } from "@domain/entity-earn-position";
+import type { EarnPositionSchema } from "@domain/entity-earn-position";
 import { mockEarnPosition, mockEarnPositions } from "@domain/entity-earn-position/schema.mock";
 import { resolveStakePositionData, type StakePositionDataInput } from "./stakePositionData";
 
 const POSITION_ID = "StakeAccountA1111111111111111111111111111111";
 const OTHER_POSITION_ID = "StakeAccountB2222222222222222222222222222222";
-const VALIDATOR_APY = 0.078107 as ApyFraction;
 const retry = jest.fn();
 
 const position = (overrides?: Partial<z.input<typeof EarnPositionSchema>>) =>
@@ -16,7 +15,6 @@ function resolve(overrides: Partial<StakePositionDataInput> = {}) {
     positions: mockEarnPositions({ positions: [position()] }),
     isError: false,
     positionId: POSITION_ID,
-    validatorApy: VALIDATOR_APY,
     isPolling: false,
     retry,
     ...overrides,
@@ -37,7 +35,6 @@ describe("resolveStakePositionData", () => {
       kind: "ready",
       position: position(),
       status: "active",
-      validatorApy: VALIDATOR_APY,
       isStale: false,
       isPolling: false,
     });
@@ -56,11 +53,13 @@ describe("resolveStakePositionData", () => {
     expect(data).toMatchObject({ kind: "ready", isStale: true, isPolling: true });
   });
 
-  it("should be ready without the validator APY while it is unknown", () => {
-    expect(resolve({ validatorApy: undefined })).toMatchObject({
-      kind: "ready",
-      validatorApy: undefined,
+  it("should fail, not miss the position, when the latest read failed and the row is missing", () => {
+    const data = resolve({
+      positions: mockEarnPositions({ positions: [position({ id: OTHER_POSITION_ID })] }),
+      isError: true,
     });
+
+    expect(data).toEqual({ kind: "error", retry });
   });
 
   it("should pick the row of the stake account among the positions of the address", () => {

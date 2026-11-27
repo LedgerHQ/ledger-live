@@ -1,4 +1,4 @@
-import type { ApyFraction, EarnPosition, EarnPositions } from "@domain/entity-earn-position";
+import type { EarnPosition, EarnPositions } from "@domain/entity-earn-position";
 import type { StakePositionData } from "../types";
 import { toDisplayedState } from "./positionRules";
 import { UNKNOWN_STATUS_READS_AS } from "./productRules";
@@ -21,20 +21,19 @@ export type StakePositionDataInput = Readonly<{
   /** The latest read failed. */
   isError: boolean;
   positionId: string;
-  validatorApy: ApyFraction | undefined;
   isPolling: boolean;
   retry: () => void;
 }>;
 
 /**
  * What the details can show of the position. A provider failure is an error, never "no position":
- * the row may exist behind it. A closed (`archived`) row is not found.
+ * the row may exist behind it, as it may behind a failed read of older positions. A closed
+ * (`archived`) row is not found.
  */
 export function resolveStakePositionData({
   positions,
   isError,
   positionId,
-  validatorApy,
   isPolling,
   retry,
 }: StakePositionDataInput): StakePositionData {
@@ -43,7 +42,9 @@ export function resolveStakePositionData({
 
   const row = findStakePositionRow(positions, positionId);
   if (row.kind === "duplicate") return error;
-  if (row.kind === "none") return positions.failures.length > 0 ? error : { kind: "notFound" };
+  if (row.kind === "none") {
+    return positions.failures.length > 0 || isError ? error : { kind: "notFound" };
+  }
 
   const { position } = row;
   const status = toDisplayedState(position.status);
@@ -51,5 +52,5 @@ export function resolveStakePositionData({
     const isUnknownError = position.status === "unknown" && UNKNOWN_STATUS_READS_AS === "error";
     return isUnknownError ? error : { kind: "notFound" };
   }
-  return { kind: "ready", position, status, validatorApy, isStale: positions.isStale, isPolling };
+  return { kind: "ready", position, status, isStale: positions.isStale, isPolling };
 }

@@ -4,6 +4,7 @@ import type {
   StakePositionExitAction,
   StakePositionHeading,
   StakePositionNotice,
+  StakePositionRate,
   StakePositionState,
 } from "../types";
 
@@ -48,7 +49,7 @@ type DetailsVariant = Readonly<{
   status: StakePositionState;
   exitAction: StakePositionExitAction | null;
   notice: StakePositionNotice | null;
-  apy?: string;
+  apy?: StakePositionRate;
 }>;
 
 export function useStakePositionDetailsCopy({
@@ -59,6 +60,8 @@ export function useStakePositionDetailsCopy({
   apy,
 }: DetailsVariant): StakePositionDetailsCopy {
   const { t } = useTranslation();
+  const rate = apy?.value;
+  const rateType = apy?.type;
 
   return useMemo(
     () => ({
@@ -75,9 +78,13 @@ export function useStakePositionDetailsCopy({
       state: t(`stakePosition.status.${status}`),
       exitAction: exitAction === null ? null : t(`stakePosition.actions.${exitAction}`),
       notice: notice === null ? null : t(`stakePosition.notice.${notice}`, { ticker }),
-      apyBadge: apy === undefined ? undefined : t("stakePosition.details.apyBadge", { apy }),
+      // The kind of rate shows as the backend names it, like on the Earn dashboard.
+      apyBadge:
+        rate === undefined
+          ? undefined
+          : t("stakePosition.details.apyBadge", { apy: rate, type: rateType }),
     }),
-    [t, ticker, status, exitAction, notice, apy],
+    [t, ticker, status, exitAction, notice, rate, rateType],
   );
 }
 

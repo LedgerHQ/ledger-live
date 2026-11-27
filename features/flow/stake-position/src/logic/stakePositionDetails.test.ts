@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { ApyFraction, EarnPositionSchema } from "@domain/entity-earn-position";
+import type { EarnPositionSchema } from "@domain/entity-earn-position";
 import { mockEarnPosition } from "@domain/entity-earn-position/schema.mock";
 import type {
   ReadyStakePositionData,
@@ -10,7 +10,6 @@ import { getStakePositionValidatorName, toStakePositionDetailsProps } from "./st
 
 const LAMPORTS_PER_SOL = 1_000_000_000n;
 const VALIDATOR = "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx";
-const VALIDATOR_APY = 0.078107 as ApyFraction;
 
 const sol = (lamports: string) => `${Number(BigInt(lamports)) / Number(LAMPORTS_PER_SOL)} SOL`;
 
@@ -45,7 +44,6 @@ function ready(
     kind: "ready",
     position: mockEarnPosition({ validatorAddress: VALIDATOR, ...overrides }),
     status: "active",
-    validatorApy: VALIDATOR_APY,
     isStale: false,
     isPolling: false,
     ...data,
@@ -64,8 +62,9 @@ describe("toStakePositionDetailsProps", () => {
       status: "active",
       currentBalance: { crypto: "10 SOL", fiat: "$10 SOL" },
       totalRewards: { crypto: "0.25 SOL" },
-      initialDeposit: { crypto: "9.75 SOL" },
-      apy: "7.81%",
+      initialDepositCrypto: "9.75 SOL",
+      initialDepositFiat: "$9.75 SOL",
+      apy: { value: "7.12%", type: "APY" },
       validator: {
         name: "Ledger by Figment",
         imageUrl: "https://example.com/validators/ledger-by-figment.png",
@@ -87,7 +86,9 @@ describe("toStakePositionDetailsProps", () => {
   it.each([
     ["the total rewards", { totalRewards: undefined }, "totalRewards"],
     ["the balance", { balance: undefined }, "currentBalance"],
-    ["the deposited amount", { deposited: undefined }, "initialDeposit"],
+    ["the deposited amount in crypto", { deposited: undefined }, "initialDepositCrypto"],
+    ["the deposited amount in fiat", { deposited: undefined }, "initialDepositFiat"],
+    ["the rate", { interest: undefined }, "apy"],
   ] as const)("should hide a row when the backend sends no %s", (_figure, overrides, prop) => {
     const details = toStakePositionDetailsProps(ready(overrides), ACTIVE_EXIT, FORMAT);
 
@@ -101,14 +102,44 @@ describe("toStakePositionDetailsProps", () => {
     ).toBeUndefined();
   });
 
-  it("should hide the APY row while the validator APY is unknown, never showing the position APY", () => {
+  it("should show the rate of the position with the type the backend sends", () => {
     const details = toStakePositionDetailsProps(
-      ready({ positionApy: 0.0712 }, { validatorApy: undefined }),
+      ready({ interest: { type: "APR", value: 0.0545 } }),
+      ACTIVE_EXIT,
+      FORMAT,
+    );
+
+    expect(details.apy).toEqual({ value: "5.45%", type: "APR" });
+  });
+
+  it("should hide the APY row for a zero rate, as the Earn dashboard does", () => {
+    const details = toStakePositionDetailsProps(
+      ready({ interest: { type: "APY", value: 0 } }),
       ACTIVE_EXIT,
       FORMAT,
     );
 
     expect(details.apy).toBeUndefined();
+  });
+
+  it("should show the smallest rate above zero", () => {
+    const details = toStakePositionDetailsProps(
+      ready({ interest: { type: "APY", value: 0.0001 } }),
+      ACTIVE_EXIT,
+      FORMAT,
+    );
+
+    expect(details.apy).toEqual({ value: "0.01%", type: "APY" });
+  });
+
+  it("should show the rate of an inactive position", () => {
+    const details = toStakePositionDetailsProps(
+      ready({ status: "deactivated" }, { status: "inactive" }),
+      { state: "inactive", action: "withdraw", notice: null, isPending: false },
+      FORMAT,
+    );
+
+    expect(details.apy).toEqual({ value: "7.12%", type: "APY" });
   });
 
   it("should name the validator by its shortened vote account when the backend sends no name", () => {

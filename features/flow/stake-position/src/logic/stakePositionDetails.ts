@@ -4,6 +4,8 @@ import type {
   ReadyStakePositionData,
   StakePositionChainExit,
   StakePositionFormatter,
+  StakePositionRate,
+  StakePositionState,
 } from "../types";
 import { middleEllipsis } from "./display";
 import { isStatusConsistent } from "./positionRules";
@@ -12,6 +14,7 @@ import {
   EARN_MORE_STATES,
   EXIT_WAITS_FOR_POLLING,
   SHOWS_INITIAL_DEPOSIT,
+  SHOWS_ZERO_RATE,
   STALE_SHOWS_UPDATING,
   selectNotice,
 } from "./productRules";
@@ -23,7 +26,8 @@ export type StakePositionDetailsData = Pick<
   | "totalRewards"
   | "rewardsHeadline"
   | "currentBalance"
-  | "initialDeposit"
+  | "initialDepositCrypto"
+  | "initialDepositFiat"
   | "apy"
   | "validator"
   | "exitAction"
@@ -44,16 +48,29 @@ export function getStakePositionValidatorName(position: EarnPosition): string {
   return validatorOf(position)?.name ?? middleEllipsis(position.id);
 }
 
+/** The rate of the position as the Earn dashboard shows it: none for a status without the row. */
+function rateOf(
+  { interest }: EarnPosition,
+  status: StakePositionState,
+  format: StakePositionFormatter,
+): StakePositionRate | undefined {
+  if (interest === undefined || !APY_ROW_STATES.has(status)) return undefined;
+  if (interest.value === 0 && !SHOWS_ZERO_RATE) return undefined;
+  return { value: format.percent(interest.value), type: interest.type };
+}
+
 /**
  * The details of a position: every figure from the backend position, the exit from the chain
- * only. No figure falls back to the chain, the caller or the position APY.
+ * only. No figure falls back to the chain or the caller.
  */
 export function toStakePositionDetailsProps(
-  { position, status, validatorApy, isStale, isPolling }: ReadyStakePositionData,
+  { position, status, isStale, isPolling }: ReadyStakePositionData,
   chainExit: StakePositionChainExit,
   format: StakePositionFormatter,
 ): StakePositionDetailsData {
   const { totalRewards, balance, deposited } = position;
+  const initialDeposit =
+    SHOWS_INITIAL_DEPOSIT && deposited !== undefined ? format.amount(deposited) : undefined;
   const isOutOfDate =
     (STALE_SHOWS_UPDATING && isStale) || !isStatusConsistent(position.status, chainExit.state);
 
@@ -62,12 +79,9 @@ export function toStakePositionDetailsProps(
     totalRewards: totalRewards === undefined ? undefined : format.amount(totalRewards),
     rewardsHeadline: totalRewards === undefined ? undefined : format.rewardsHeadline(totalRewards),
     currentBalance: balance === undefined ? undefined : format.amount(balance),
-    initialDeposit:
-      SHOWS_INITIAL_DEPOSIT && deposited !== undefined ? format.amount(deposited) : undefined,
-    apy:
-      validatorApy !== undefined && APY_ROW_STATES.has(status)
-        ? format.percent(validatorApy)
-        : undefined,
+    initialDepositCrypto: initialDeposit?.crypto,
+    initialDepositFiat: initialDeposit?.fiat,
+    apy: rateOf(position, status, format),
     validator: validatorOf(position),
     exitAction: chainExit.action,
     isExitActionPending: chainExit.isPending || (EXIT_WAITS_FOR_POLLING && isPolling),

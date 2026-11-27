@@ -11,6 +11,13 @@ import { CONFIRM_AMOUNT, EXIT_ACTION_BY_STATE } from "./productRules";
 /** Older account data is synced before the exit action can be used. */
 export const STAKE_POSITION_MAX_DATA_AGE_MS = 60_000;
 
+/**
+ * How long a surface waits for the sync it asked for on open. The bridge drops a queued sync when
+ * another one of the same priority is scheduled: past this wait, the surface stops waiting for it
+ * rather than block the position for good.
+ */
+export const STAKE_POSITION_SYNC_WAIT_MS = 20_000;
+
 const DISPLAYED_STATE = {
   activated: "active",
   activating: "activating",
