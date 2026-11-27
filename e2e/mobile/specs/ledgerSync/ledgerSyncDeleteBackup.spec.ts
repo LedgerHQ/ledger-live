@@ -1,3 +1,6 @@
 import { runLedgerSyncDeleteBackupTest } from "@e2e/specs/ledgerSync/ledgerSync";
 
-runLedgerSyncDeleteBackupTest(["B2CQA-2296"], ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"]);
+runLedgerSyncDeleteBackupTest({
+  tmsLinks: ["B2CQA-2296"],
+  tags: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+});

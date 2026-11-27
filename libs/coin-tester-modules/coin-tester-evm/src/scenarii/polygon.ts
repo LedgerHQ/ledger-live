@@ -116,6 +116,7 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
       },
       gasTracker: {
         type: "ledger",
+        compatibility: { eip1559: true },
         explorerId: "matic",
       },
       explorer: {

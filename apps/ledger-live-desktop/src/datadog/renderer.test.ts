@@ -7,9 +7,12 @@ import {
   captureException,
   addBreadcrumb,
   addAction,
+  isDatadogRecording,
   setDatadogActionsEnabled,
+  setDatadogTrackingConsent,
   setTags,
   setUser,
+  startDatadogRouteView,
 } from "./renderer";
 
 jest.mock("./config", () => ({
@@ -30,6 +33,7 @@ jest.mock("@datadog/browser-rum", () => ({
     setGlobalContext: jest.fn(),
     setGlobalContextProperty: jest.fn(),
     setUser: jest.fn(),
+    setTrackingConsent: jest.fn(),
   },
 }));
 
@@ -119,10 +123,23 @@ describe("datadog renderer", () => {
     });
   });
 
+  describe("setDatadogTrackingConsent", () => {
+    it("should not touch the SDK consent when not initialized", () => {
+      setDatadogTrackingConsent(false);
+      expect(datadogRum.setTrackingConsent).not.toHaveBeenCalled();
+    });
+  });
+
   describe("addBreadcrumb", () => {
     it("should not call datadogRum.addAction when not initialized", () => {
       addBreadcrumb({ message: "test", category: "track" });
       expect(datadogRum.addAction).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("isDatadogRecording", () => {
+    it("should not record when not initialized", () => {
+      expect(isDatadogRecording()).toBe(false);
     });
   });
 
@@ -230,11 +247,36 @@ describe("datadog renderer", () => {
           site: "datadoghq.eu",
           service: "ledger-live-desktop",
           trackViewsManually: true,
+          enablePrivacyForActionName: true,
+          propagateTraceBaggage: false,
         }),
       );
-      expect(datadogRum.startView).toHaveBeenCalledWith("main");
+      expect(datadogRum.startView).toHaveBeenCalledWith({ name: "portfolio" });
       expect(datadogRum.setGlobalContext).toHaveBeenCalled();
       expect(datadogRum.setUser).toHaveBeenCalledWith({ id: "test-dd-id" });
+    });
+
+    it("isDatadogRecording should follow the user consent and the lldDatadog flag", async () => {
+      let consent = true;
+      __resetDatadogForTesting();
+      await initDatadog(() => consent, undefined, createMockStore());
+      expect(isDatadogRecording()).toBe(true);
+
+      consent = false;
+      expect(isDatadogRecording()).toBe(false);
+
+      consent = true;
+      setDatadogActionsEnabled(false);
+      expect(isDatadogRecording()).toBe(false);
+    });
+
+    it("should propagate trace baggage only when the flag param turns it on", async () => {
+      __resetDatadogForTesting();
+      datadogRum.init.mockClear();
+      await initDatadog(() => true, { propagateTraceBaggage: true }, createMockStore());
+      expect(datadogRum.init).toHaveBeenCalledWith(
+        expect.objectContaining({ propagateTraceBaggage: true }),
+      );
     });
 
     it("when already initialized should return true without calling init again", async () => {
@@ -294,6 +336,12 @@ describe("datadog renderer", () => {
       expect(datadogRum.addAction).toHaveBeenCalledTimes(1);
     });
 
+    it("should hand an opt-out and a new opt-in to the SDK tracking consent", () => {
+      setDatadogTrackingConsent(false);
+      setDatadogTrackingConsent(true);
+      expect(datadogRum.setTrackingConsent.mock.calls).toEqual([["not-granted"], ["granted"]]);
+    });
+
     it("addAction should send nothing, and say so, while the lldDatadog flag is off", () => {
       setDatadogActionsEnabled(false);
       expect(addAction("live_app_domain_check_violation", {})).toBe(false);
@@ -313,6 +361,57 @@ describe("datadog renderer", () => {
     it("setUser should call datadogRum.setUser when initialized", () => {
       setUser("user-456");
       expect(datadogRum.setUser).toHaveBeenCalledWith({ id: "user-456" });
+    });
+  });
+
+  describe("route views", () => {
+    beforeEach(() => {
+      getDatadogBuildConfig.mockReturnValue({
+        applicationId: "app-id",
+        clientToken: "token",
+        site: "datadoghq.eu",
+        service: "ledger-live-desktop",
+        env: "production",
+      });
+    });
+
+    afterEach(() => {
+      globalThis.location.hash = "";
+    });
+
+    it("should name the first view after the route shown at init", async () => {
+      globalThis.location.hash = "#/accounts";
+
+      await initDatadog(() => true, undefined, createMockStore());
+
+      expect(datadogRum.startView).toHaveBeenCalledTimes(1);
+      expect(datadogRum.startView).toHaveBeenCalledWith({ name: "accounts" });
+    });
+
+    it("should start no view before Datadog is initialized", () => {
+      startDatadogRouteView("/accounts");
+
+      expect(datadogRum.startView).not.toHaveBeenCalled();
+    });
+
+    it("should start a view when the route changes screen", async () => {
+      await initDatadog(() => true, undefined, createMockStore());
+      datadogRum.startView.mockClear();
+
+      startDatadogRouteView("/manager");
+
+      expect(datadogRum.startView).toHaveBeenCalledWith({ name: "manager" });
+    });
+
+    it("should keep the current view when the route stays on the same screen", async () => {
+      globalThis.location.hash = "#/account/account-1";
+      await initDatadog(() => true, undefined, createMockStore());
+      datadogRum.startView.mockClear();
+
+      startDatadogRouteView("/account/account-1");
+      startDatadogRouteView("/account/account-2/history");
+
+      expect(datadogRum.startView).not.toHaveBeenCalled();
     });
   });
 });

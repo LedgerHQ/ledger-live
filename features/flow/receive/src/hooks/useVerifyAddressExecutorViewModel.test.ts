@@ -131,6 +131,7 @@ describe("useVerifyAddressExecutorViewModel", () => {
     expect(ports.buildInitializationInput).toHaveBeenCalledWith({
       account: ACCOUNT,
       tokenCurrency: undefined,
+      verification: SELECTION.verification,
     });
     expect(executor().intent.input.expectedAddress).toBe(ADDRESS);
     expect(executor().intent.component).toBe(ports.intentComponent);
@@ -144,6 +145,7 @@ describe("useVerifyAddressExecutorViewModel", () => {
     expect(ports.buildInitializationInput).toHaveBeenCalledWith({
       account: ACCOUNT,
       tokenCurrency: TOKEN,
+      verification: SELECTION.verification,
     });
     expect(executor().analyticsProperties).toEqual({ asset: "USDT", network: "ethereum" });
   });

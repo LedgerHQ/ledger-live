@@ -120,7 +120,7 @@ export class BorrowPage extends WebViewAppPage {
     const address = peekBorrowAddress();
     if (!address) return FUNDING_HINT;
     try {
-      const { latest, pending } = await readAccountNonces(address);
+      const { latest, pending } = await readAccountNonces({ address });
       if (pending > latest) {
         return (
           `Account ${address} is at nonce ${latest} with ${pending - latest} transaction(s) in ` +

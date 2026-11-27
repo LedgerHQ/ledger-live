@@ -19,6 +19,7 @@ const family: TezosFamily = {
   receiveAddressConfig,
   AccountBodyHeader,
   AccountBalanceSummaryFooter,
+  delegateDeeplinkModal: "MODAL_DELEGATE",
   modalsToPreload: [
     "MODAL_DELEGATE",
     "MODAL_TEZOS_EARNING_CHOICE",

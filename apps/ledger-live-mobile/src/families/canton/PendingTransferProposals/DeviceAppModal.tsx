@@ -19,24 +19,6 @@ type Props = {
   onClose?: () => void;
 };
 
-const translations = {
-  action: {
-    accept: "canton.pendingTransactions.accept",
-    reject: "canton.pendingTransactions.reject",
-    withdraw: "canton.pendingTransactions.withdraw",
-  },
-  successTitle: {
-    accept: "canton.pendingTransactions.deviceAppModal.success.accept.title",
-    reject: "canton.pendingTransactions.deviceAppModal.success.reject.title",
-    withdraw: "canton.pendingTransactions.deviceAppModal.success.withdraw.title",
-  },
-  successDescription: {
-    accept: "canton.pendingTransactions.deviceAppModal.success.accept.description",
-    reject: "canton.pendingTransactions.deviceAppModal.success.reject.description",
-    withdraw: "canton.pendingTransactions.deviceAppModal.success.withdraw.description",
-  },
-};
-
 type ViewProps = DeviceAppModalViewModel & {
   isOpen: boolean;
   action: TransferProposalAction;
@@ -68,10 +50,10 @@ export function View({
             iconSize={24}
           />
           <Text variant="h4" fontWeight="semiBold" mt={6} textAlign="center">
-            {t(translations.successTitle[action])}
+            {t(`canton.pendingTransactions.deviceAppModal.success.${action}.title`)}
           </Text>
           <Text variant="body" color="neutral.c70" mt={8} textAlign="center">
-            {t(translations.successDescription[action])}
+            {t(`canton.pendingTransactions.deviceAppModal.success.${action}.description`)}
           </Text>
           <Button type="main" onPress={onClose} mt={8} alignSelf="stretch">
             <Trans i18nKey="common.close" />

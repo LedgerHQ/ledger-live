@@ -22,10 +22,12 @@ const noop = () => undefined;
  */
 function TransactionSignatureDrawer({ request, onClose }: Props) {
   const {
+    sourceFlow,
     deviceInitializationInput,
     signatureIntent,
     onIntentJobStateChanged,
     onIntentJobError,
+    onExecutorStateChanged,
     onUserCancel,
   } = useTransactionSignatureDrawerViewModel({ request, onClose });
 
@@ -55,13 +57,13 @@ function TransactionSignatureDrawer({ request, onClose }: Props) {
     >
       <DeviceIntentExecutor
         enabled
-        sourceFlow="wallet_api"
+        sourceFlow={sourceFlow}
         analyticsProperties={analyticsProperties}
         deviceConnectionParams={deviceConnectionParams}
         deviceInitializationInput={deviceInitializationInput}
         intent={signatureIntent}
         intentComponentExtraProps={intentComponentExtraProps}
-        onExecutorStateChanged={noop}
+        onExecutorStateChanged={onExecutorStateChanged}
         onIntentJobStateChanged={onIntentJobStateChanged}
         onIntentJobComplete={noop}
         onIntentJobError={onIntentJobError}

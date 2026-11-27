@@ -1,9 +1,9 @@
 import { from, map } from "rxjs";
 import { AccountDescriptorSchema } from "@domain/entity-account-descriptor";
 import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
+import { fromDescriptorPath } from "@domain/entity-derivation";
 import type { Resolver } from "../../hw/getAddress/types";
 import type { DeriveAccountDescriptor } from "../../coin-modules/types";
-import { toLegacyPath } from "../../account/accountDescriptor";
 
 /** The legacy scan reads one key per account, at the account path; its sync takes it as the xpub. */
 export const createDeriveAccountDescriptor =
@@ -13,7 +13,7 @@ export const createDeriveAccountDescriptor =
       from(
         resolver(transport, {
           currency,
-          path: toLegacyPath(candidate.accountPath),
+          path: fromDescriptorPath(candidate.accountPath),
           derivationMode: asDerivationMode(candidate.derivationMode),
         }),
       ),

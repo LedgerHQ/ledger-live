@@ -25,6 +25,10 @@ import { checkErrorCauseStateMachine } from "../shared/checkErrorCauseStateMachi
 import { POLL_INTERVAL_MS } from "../shared/constants";
 import { DeviceSituationEventType, isRecovered } from "../shared/types";
 import {
+  hasUnexplainedRecoveryAfter,
+  isRepeatedUnexplainedRecovery,
+} from "../shared/utils/unexplainedRecovery";
+import {
   CHARGING_MODE_NONE,
   DEVICE_MODELS_WITH_BATTERY,
   MIN_BATTERY_PERCENTAGE,
@@ -162,6 +166,7 @@ export const preChecksStateMachine = setup({
     ...input,
     lastSentState: null,
     lastAction: null,
+    hasUnexplainedRecovery: false,
     batteryPercentage: 0,
     osVersion: null,
     error: null,
@@ -190,7 +195,9 @@ export const preChecksStateMachine = setup({
           sessionId: context.connectedDevice.sessionId,
         }),
         onDone: {
-          actions: assign({ osVersion: ({ event }) => event.output }),
+          actions: assign({
+            osVersion: ({ event }) => event.output,
+          }),
           target: "CheckOsVersion",
         },
         onError: {
@@ -248,6 +255,8 @@ export const preChecksStateMachine = setup({
           {
             guard: ({ event }) =>
               event.output.map(({ name }) => isDashboardName(name)).orDefault(false),
+            // Ends the chain resumed from GetOsVersion: its success alone would not clear the flag.
+            actions: assign({ hasUnexplainedRecovery: false }),
             target: "CheckOsUpdates",
           },
           {
@@ -357,12 +366,14 @@ export const preChecksStateMachine = setup({
               event.output.percentage >= MIN_BATTERY_PERCENTAGE || event.output.isCharging,
             actions: assign({
               nextAction: PreChecksNextAction.CreateBackup,
+              hasUnexplainedRecovery: false,
             }),
             target: "Done",
           },
           {
             actions: assign({
               batteryPercentage: ({ event }) => event.output.percentage,
+              hasUnexplainedRecovery: false,
             }),
             target: "AwaitingChargingMode",
           },
@@ -404,10 +415,17 @@ export const preChecksStateMachine = setup({
         }),
         onDone: [
           {
+            guard: ({ context, event }) =>
+              isRepeatedUnexplainedRecovery(context.hasUnexplainedRecovery, event.output),
+            target: "UnrecoverableError",
+          },
+          {
             guard: ({ event }) => isRecovered(event.output),
             actions: assign({
               connectedDevice: ({ context, event }) =>
                 isRecovered(event.output) ? event.output.connectedDevice : context.connectedDevice,
+              hasUnexplainedRecovery: ({ context, event }) =>
+                hasUnexplainedRecoveryAfter(context.hasUnexplainedRecovery, event.output),
             }),
             target: "ResumeLastAction",
           },

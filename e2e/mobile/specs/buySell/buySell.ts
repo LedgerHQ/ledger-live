@@ -5,8 +5,17 @@ import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
+
+type BuySellTestOptions = TestMetaOptions & { buySell: BuySell; paymentMethod: string };
+
+type SellFlowTestOptions = TestMetaOptions & {
+  buySell: Omit<BuySell, "amount">;
+  provider: BuySellProvider;
+  paymentMethod: string;
+};
 
 export async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
@@ -19,12 +28,8 @@ export async function beforeAllFunction(options: ApplicationOptions) {
   await app.mainNavigation.waitForWallet40Ready();
 }
 
-export function runNavigateToBuyFromPortfolioPageTest(
-  buySell: BuySell,
-  paymentMethod: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runNavigateToBuyFromPortfolioPageTest(options: BuySellTestOptions) {
+  const { buySell, paymentMethod, tmsLinks, tags } = options;
   describe("Buy and sell", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -39,17 +44,13 @@ export function runNavigateToBuyFromPortfolioPageTest(
     tags.forEach(tag => $Tag(tag));
     test(`[${buySell.crypto.currency.testLabel}] - Buy from portfolio page`, async () => {
       await app.portfolio.pressQuickActionBuyButton();
-      await app.buySell.handleBuyFlow(buySell, paymentMethod);
+      await app.buySell.handleBuyFlow({ buySell, paymentMethod });
     });
   });
 }
 
-export function runNavigateToBuyFromAccountPageTest(
-  buySell: BuySell,
-  paymentMethod: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runNavigateToBuyFromAccountPageTest(options: BuySellTestOptions) {
+  const { buySell, paymentMethod, tmsLinks, tags } = options;
   describe("Buy and sell", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -69,17 +70,13 @@ export function runNavigateToBuyFromAccountPageTest(
         await app.account.navigateToTokenInAccount(buySell.crypto);
       }
       await app.account.tapBuy();
-      await app.buySell.handleBuyFlow(buySell, paymentMethod);
+      await app.buySell.handleBuyFlow({ buySell, paymentMethod });
     });
   });
 }
 
-export function runNavigateToBuyFromMarketPageTest(
-  buySell: BuySell,
-  paymentMethod: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runNavigateToBuyFromMarketPageTest(options: BuySellTestOptions) {
+  const { buySell, paymentMethod, tmsLinks, tags } = options;
   describe("Buy and sell", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -102,17 +99,13 @@ export function runNavigateToBuyFromMarketPageTest(
         app.modularDrawer.getNetworkNameForAccount(buySell.crypto),
       );
       await app.modularDrawer.selectFirstAccountIfAsked();
-      await app.buySell.handleBuyFlow(buySell, paymentMethod);
+      await app.buySell.handleBuyFlow({ buySell, paymentMethod });
     });
   });
 }
 
-export function runNavigateToBuyFromAssetPageTest(
-  buySell: BuySell,
-  paymentMethod: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runNavigateToBuyFromAssetPageTest(options: BuySellTestOptions) {
+  const { buySell, paymentMethod, tmsLinks, tags } = options;
   describe("Buy and sell", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -127,27 +120,22 @@ export function runNavigateToBuyFromAssetPageTest(
     tags.forEach(tag => $Tag(tag));
     test(`[${buySell.crypto.currency.testLabel}] - Buy entry point from asset page`, async () => {
       await app.portfolio.goToSpecificAsset(buySell.crypto.currency.name);
-      await app.assetAccountsPage.waitForAccountPageToLoad(
-        buySell.crypto.currency.name,
-        buySell.crypto.currency.id,
-      );
+      await app.assetAccountsPage.waitForAccountPageToLoad({
+        assetName: buySell.crypto.currency.name,
+        currencyId: buySell.crypto.currency.id,
+      });
       await app.assetAccountsPage.tapOnAssetQuickActionButton("buy");
       await app.modularDrawer.selectNetworkIfAsked(
         app.modularDrawer.getNetworkNameForAccount(buySell.crypto),
       );
       await app.modularDrawer.selectFirstAccountIfAsked();
-      await app.buySell.handleBuyFlow(buySell, paymentMethod);
+      await app.buySell.handleBuyFlow({ buySell, paymentMethod });
     });
   });
 }
 
-export function runSellFlowTest(
-  buySell: Omit<BuySell, "amount">,
-  provider: BuySellProvider,
-  paymentMethod: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runSellFlowTest(options: SellFlowTestOptions) {
+  const { buySell, provider, paymentMethod, tmsLinks, tags } = options;
   describe("Buy and sell", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -162,17 +150,13 @@ export function runSellFlowTest(
     tags.forEach(tag => $Tag(tag));
     test(`[${buySell.crypto.currency.testLabel}] - Sell`, async () => {
       await app.buySell.openViaDeeplink(buySell.operation);
-      await app.buySell.handleSellFlow(buySell, paymentMethod, provider);
+      await app.buySell.handleSellFlow({ buySell, paymentMethod, provider });
     });
   });
 }
 
-export function runQueryParametersTest(
-  buySell: BuySell,
-  paymentMethod: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runQueryParametersTest(options: BuySellTestOptions) {
+  const { buySell, paymentMethod, tmsLinks, tags } = options;
   describe("Buy and sell", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -187,7 +171,7 @@ export function runQueryParametersTest(
     tags.forEach(tag => $Tag(tag));
     test(`[${buySell.crypto.currency.testLabel}] - Buy and sell query parameters`, async () => {
       await app.buySell.openViaDeeplink(buySell.operation);
-      await app.buySell.handleBuyFlow(buySell, paymentMethod, true);
+      await app.buySell.handleBuyFlow({ buySell, paymentMethod, skipQuickAmountVerify: true });
     });
   });
 }

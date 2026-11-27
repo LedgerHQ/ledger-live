@@ -2,9 +2,11 @@ import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/inde
 import { InvalidParameterError } from "@ledgerhq/coin-module-framework/errors";
 import { prepareTransferRequest } from "../../network/gateway";
 import {
+  configOfCall,
   createMockCoinConfigValue,
   createMockContext,
   createMockPrepareTransferResponse,
+  createSwitchingContext,
 } from "../../test/fixtures";
 import type { CantonMemo } from "../../types/transaction";
 import { craftTransaction } from "../craftTransaction";
@@ -42,7 +44,7 @@ describe("craftTransaction", () => {
   it("should prepare a native transfer under the sender party", async () => {
     await craftTransaction(context, intent());
 
-    expect(mockedPrepare).toHaveBeenCalledWith(config, SENDER, {
+    expect(mockedPrepare).toHaveBeenCalledWith(expect.anything(), SENDER, {
       type: "token-transfer-request",
       recipient: RECIPIENT,
       amount: "100",
@@ -151,5 +153,17 @@ describe("craftTransaction", () => {
       InvalidParameterError,
     );
     expect(mockedPrepare).not.toHaveBeenCalled();
+  });
+
+  it("should select the instrument and prepare against one config", async () => {
+    const first = createMockCoinConfigValue({ nativeInstrumentId: "AmuletA", nodeId: "a" });
+    const later = createMockCoinConfigValue({ nativeInstrumentId: "AmuletB", nodeId: "b" });
+    const switching = createSwitchingContext(first, later);
+
+    await craftTransaction(switching, intent());
+
+    expect(switching.config).toHaveBeenCalledTimes(1);
+    expect(preparedRequest().instrument_id).toBe("AmuletA");
+    expect(await configOfCall(mockedPrepare.mock.calls[0])).toBe(first);
   });
 });

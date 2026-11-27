@@ -67,11 +67,55 @@ type Entry = {
   deviceId: string;
 };
 
-async function executeCliCommand(
-  cmd: CliCommand,
-  userdataPath?: string,
-  speculosAddress?: string,
-): Promise<unknown> {
+type InitializeOptions = InitOptions & {
+  userdataPath: string;
+  userdataSpeculos: string;
+};
+
+type ExecuteCliCommandOptions = {
+  cmd: CliCommand;
+  userdataPath?: string;
+  speculosAddress?: string;
+};
+
+type SpeculosDeviceReadyOptions = {
+  appName: string;
+  entryMap: Record<string, Entry>;
+  deadline: number;
+};
+
+type AppCommandsWithRetryOptions = {
+  app: SpeculosAppType;
+  cmds: CliCommand[];
+  entryMap: Record<string, Entry>;
+  userdataPath: string;
+  deadline: number;
+};
+
+type CliCommandsOnAppOptions = {
+  commandsByApp: Array<{ app: SpeculosAppType; cmds: CliCommand[] }>;
+  entryMap: Record<string, Entry>;
+  userdataPath: string;
+  deadline: number;
+  mainApp?: SpeculosAppType;
+};
+
+type MainSpeculosAppOptions = {
+  speculosApp: SpeculosAppType;
+  entryMap: Record<string, Entry>;
+  deadline: number;
+};
+
+type CliCommandsOptions = {
+  cliCommands: CliCommand[];
+  userdataPath: string;
+  deadline: number;
+  speculosApp?: SpeculosAppType;
+  entryMap?: Record<string, Entry>;
+};
+
+async function executeCliCommand(options: ExecuteCliCommandOptions): Promise<unknown> {
+  const { cmd, userdataPath, speculosAddress } = options;
   const resultOrPromise = await cmd(userdataPath, speculosAddress);
 
   let result: unknown;
@@ -141,7 +185,9 @@ async function waitForSpeculosDevicesReady(
   deadline: number,
 ): Promise<void> {
   const results = await Promise.allSettled(
-    Object.keys(entryMap).map(appName => waitForSpeculosDeviceReady(appName, entryMap, deadline)),
+    Object.keys(entryMap).map(appName =>
+      waitForSpeculosDeviceReady({ appName, entryMap, deadline }),
+    ),
   );
   const failures = results.flatMap(result => (result.status === "rejected" ? [result.reason] : []));
 
@@ -150,11 +196,8 @@ async function waitForSpeculosDevicesReady(
   }
 }
 
-async function waitForSpeculosDeviceReady(
-  appName: string,
-  entryMap: Record<string, Entry>,
-  deadline: number,
-): Promise<void> {
+async function waitForSpeculosDeviceReady(options: SpeculosDeviceReadyOptions): Promise<void> {
+  const { appName, entryMap, deadline } = options;
   const maxRetries = 3;
   let attempt = 0;
   let lastError: unknown;
@@ -192,69 +235,70 @@ async function waitForSpeculosDeviceReady(
   );
 }
 
+// Run the commands of one app, recreating its Speculos instance between attempts
+async function runAppCommandsWithRetry(options: AppCommandsWithRetryOptions): Promise<void> {
+  const { app, cmds, entryMap, userdataPath, deadline } = options;
+  const maxRetries = 3;
+  let attempt = 0;
+  let lastError: unknown;
+
+  while (attempt < maxRetries) {
+    checkTestFailed();
+    attempt++;
+    const { speculosPort, deviceId } = entryMap[app.name];
+
+    try {
+      log.info(
+        `\n🔄 [${app.name}] Attempt ${attempt}/${maxRetries} - Running ${cmds.length} command(s)`,
+      );
+
+      if (isSpeculosRemote()) await waitForSpeculosWithinBudget(deviceId, deadline);
+      await registerSpeculos(speculosPort);
+
+      for (let i = 0; i < cmds.length; i++) {
+        log.info(`  📝 [${app.name}] Executing command ${i + 1}/${cmds.length}`);
+        await executeCliCommand({ cmd: cmds[i], userdataPath, speculosAddress: deviceId });
+      }
+
+      lastError = undefined;
+      log.info(
+        `✅ [${app.name}] All ${cmds.length} command(s) executed successfully on attempt ${attempt}`,
+      );
+      break;
+    } catch (err) {
+      lastError = err;
+      if (attempt >= maxRetries || !hasRetryBudget(deadline)) break;
+
+      checkTestFailed();
+
+      // Create fresh instance for next retry attempt
+      await deleteSpeculos(deviceId);
+      const device = await launchSpeculos(app.name);
+
+      entryMap[app.name] = {
+        name: app.name,
+        speculosPort: device.port,
+        deviceId: device.id,
+      };
+    }
+  }
+
+  if (lastError) {
+    throw new Error(
+      `❌ [${app.name}] Failed to setup account after ${attempt} attempt(s): ${sanitizeError(lastError)}`,
+    );
+  }
+}
+
 // Execute commands for each app with retry mechanism
-async function executeCliCommandsOnApp(
-  commandsByApp: Array<{ app: SpeculosAppType; cmds: CliCommand[] }>,
-  entryMap: Record<string, Entry>,
-  userdataPath: string,
-  deadline: number,
-  mainApp?: SpeculosAppType,
-): Promise<void> {
+async function executeCliCommandsOnApp(options: CliCommandsOnAppOptions): Promise<void> {
+  const { commandsByApp, entryMap, userdataPath, deadline, mainApp } = options;
   for (const { app, cmds } of commandsByApp) {
     if (!entryMap[app.name]) {
       throw new Error(`No entry found for app: ${app.name}`);
     }
 
-    const maxRetries = 3;
-    let attempt = 0;
-    let lastError: unknown;
-
-    while (attempt < maxRetries) {
-      checkTestFailed();
-      attempt++;
-      const { speculosPort, deviceId } = entryMap[app.name];
-
-      try {
-        log.info(
-          `\n🔄 [${app.name}] Attempt ${attempt}/${maxRetries} - Running ${cmds.length} command(s)`,
-        );
-
-        if (isSpeculosRemote()) await waitForSpeculosWithinBudget(deviceId, deadline);
-        await registerSpeculos(speculosPort);
-
-        for (let i = 0; i < cmds.length; i++) {
-          log.info(`  📝 [${app.name}] Executing command ${i + 1}/${cmds.length}`);
-          await executeCliCommand(cmds[i], userdataPath, deviceId);
-        }
-
-        lastError = undefined;
-        log.info(
-          `✅ [${app.name}] All ${cmds.length} command(s) executed successfully on attempt ${attempt}`,
-        );
-        break;
-      } catch (err) {
-        lastError = err;
-        if (attempt >= maxRetries || !hasRetryBudget(deadline)) break;
-
-        checkTestFailed();
-
-        // Create fresh instance for next retry attempt
-        await deleteSpeculos(deviceId);
-        const device = await launchSpeculos(app.name);
-
-        entryMap[app.name] = {
-          name: app.name,
-          speculosPort: device.port,
-          deviceId: device.id,
-        };
-      }
-    }
-
-    if (lastError) {
-      throw new Error(
-        `❌ [${app.name}] Failed to setup account after ${attempt} attempt(s): ${sanitizeError(lastError)}`,
-      );
-    }
+    await runAppCommandsWithRetry({ app, cmds, entryMap, userdataPath, deadline });
 
     if (mainApp?.name !== app.name) {
       await deleteSpeculos(entryMap[app.name].deviceId);
@@ -263,11 +307,8 @@ async function executeCliCommandsOnApp(
 }
 
 // Retry logic for main Speculos app setup with instance recreation
-async function setupMainSpeculosApp(
-  speculosApp: SpeculosAppType,
-  entryMap: Record<string, Entry>,
-  deadline: number,
-): Promise<void> {
+async function setupMainSpeculosApp(options: MainSpeculosAppOptions): Promise<void> {
+  const { speculosApp, entryMap, deadline } = options;
   if (!entryMap[speculosApp.name]) {
     throw new Error(`No entry found for main speculos app: ${speculosApp.name}`);
   }
@@ -324,13 +365,8 @@ async function setupMainSpeculosApp(
 // Execute global commands after all app-specific setup is complete
 // On any failure (after per-command retries), delete and re-setup the main Speculos app
 // and restart the full set of commands from the beginning.
-async function executeCliCommands(
-  cliCommands: CliCommand[],
-  userdataPath: string,
-  deadline: number,
-  speculosApp?: SpeculosAppType,
-  entryMap?: Record<string, Entry>,
-): Promise<void> {
+async function executeCliCommands(options: CliCommandsOptions): Promise<void> {
+  const { cliCommands, userdataPath, deadline, speculosApp, entryMap } = options;
   const maxRetries = 3;
   let attempt = 0;
   let lastError: unknown;
@@ -341,7 +377,7 @@ async function executeCliCommands(
     log.info(`\n🔄 [Global CLI] Attempt ${attempt}/${maxRetries}`);
     try {
       for (const cmd of cliCommands) {
-        await executeCliCommand(() => cmd(userdataPath));
+        await executeCliCommand({ cmd: () => cmd(userdataPath) });
       }
       lastError = undefined;
       log.info(`✅ [Global CLI] Full run succeeded on attempt ${attempt}`);
@@ -362,7 +398,7 @@ async function executeCliCommands(
           speculosPort: device.port,
           deviceId: device.id,
         };
-        await setupMainSpeculosApp(speculosApp, entryMap, deadline);
+        await setupMainSpeculosApp({ speculosApp, entryMap, deadline });
       }
 
       log.info(`[Global CLI] Retrying full command run (attempt ${attempt + 1}/${maxRetries})`);
@@ -377,17 +413,15 @@ async function executeCliCommands(
 }
 
 export class InitializationManager {
-  static async initialize(
-    options: InitOptions,
-    userdataPath: string,
-    userdataSpeculos: string,
-  ): Promise<void> {
+  static async initialize(options: InitializeOptions): Promise<void> {
     const {
       speculosApp,
       cliCommands = [],
       cliCommandsOnApp = [],
       featureFlags = {},
       speculosForSetupOnly,
+      userdataPath,
+      userdataSpeculos,
     } = options;
     const deadline = Date.now() + SPECULOS_SETUP_BUDGET_MS;
 
@@ -401,7 +435,7 @@ export class InitializationManager {
       cliCommands.every(cmd => cmd.canUseGeneratedUserdata?.() ?? false);
 
     if (skipSpeculos) {
-      await executeCliCommands(cliCommands, userdataPath, deadline);
+      await executeCliCommands({ cliCommands, userdataPath, deadline });
       await InitializationManager.finalizeSetup(userdataSpeculos);
       return;
     }
@@ -431,17 +465,17 @@ export class InitializationManager {
     if (isSpeculosRemote()) await waitForSpeculosDevicesReady(speculosDevices, deadline);
 
     // Execute app-specific commands with retry logic
-    await executeCliCommandsOnApp(
+    await executeCliCommandsOnApp({
       commandsByApp,
-      speculosDevices,
+      entryMap: speculosDevices,
       userdataPath,
       deadline,
-      speculosApp,
-    );
+      mainApp: speculosApp,
+    });
 
     // Setup main Speculos app if specified
     if (speculosApp) {
-      await setupMainSpeculosApp(speculosApp, speculosDevices, deadline);
+      await setupMainSpeculosApp({ speculosApp, entryMap: speculosDevices, deadline });
       const mainEntry = speculosDevices[speculosApp.name];
       log.info(
         `✅ Main Speculos app [${speculosApp.name}] setup complete. Port: ${mainEntry.speculosPort}, Device: ${mainEntry.deviceId}`,
@@ -449,7 +483,13 @@ export class InitializationManager {
     }
 
     // Execute global commands with internal full-run retry and Speculos re-initialization
-    await executeCliCommands(cliCommands, userdataPath, deadline, speculosApp, speculosDevices);
+    await executeCliCommands({
+      cliCommands,
+      userdataPath,
+      deadline,
+      speculosApp,
+      entryMap: speculosDevices,
+    });
 
     await InitializationManager.finalizeSetup(userdataSpeculos);
   }

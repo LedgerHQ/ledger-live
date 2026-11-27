@@ -10,12 +10,8 @@ import {
   type AccountDataQuery,
   type AccountDataRootState,
 } from "@domain/entity-account-data";
-import {
-  accountDescriptorKey,
-  computeAccountUUID,
-  type AccountDescriptor,
-  type AccountUUID,
-} from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account";
+import { selectAccountDescriptor, type WithAccountEntries } from "./internals/accountEntries";
 import { useHeldByKey } from "./internals/useHeldByKey";
 
 export type UseAccountDataOptions<K extends AccountDataKind> = {
@@ -24,7 +20,7 @@ export type UseAccountDataOptions<K extends AccountDataKind> = {
 };
 
 export type UseAccountDataResult = {
-  /** What the entity slices key the account by. */
+  /** What the entity slices key the account by; absent until a slice holds its descriptor (the accounts, or the accounts discovery found). */
   accountUUID: AccountUUID | undefined;
   /** A read is in flight. */
   pending: boolean;
@@ -38,27 +34,29 @@ export type UseAccountDataResult = {
   loadMore: () => Promise<void>;
 };
 
-/** Keeps one kind of data of one account read while mounted; the data is read with the entity's selectors. */
+/** Keeps one kind of data of one account read while mounted; the descriptor never leaves the hook. */
 export function useAccountData<K extends AccountDataKind>(
   kind: K,
-  descriptor: AccountDescriptor | undefined,
+  accountUUID: AccountUUID | undefined,
   { maxAge, query }: UseAccountDataOptions<K> = {},
 ): UseAccountDataResult {
   const dispatch = useDispatch<ThunkDispatch<AccountDataRootState, unknown, UnknownAction>>();
-  // By value: a new object for the same account, or an inline query, must not read again.
+  const descriptor = useSelector((state: WithAccountEntries) =>
+    accountUUID ? selectAccountDescriptor(state, accountUUID) : undefined,
+  );
+  // By value: an inline query must not read again; an account is its AccountUUID.
   const queryKey = accountDataQueryKey(query);
-  const account = useHeldByKey(descriptor, descriptor && accountDescriptorKey(descriptor));
+  const account = useHeldByKey(descriptor, descriptor && accountUUID);
   const accountQuery = useHeldByKey(query, queryKey);
-
-  const accountUUID = useMemo(() => (account ? computeAccountUUID(account) : undefined), [account]);
 
   useEffect(() => {
     if (!account) return;
     void dispatch(fetchAccountData(kind, account, { maxAge, query: accountQuery }));
   }, [dispatch, kind, account, maxAge, accountQuery]);
 
+  const heldUUID = account ? accountUUID : undefined;
   const status = useSelector((state: AccountDataRootState) =>
-    accountUUID ? selectAccountDataStatus(state, kind, accountUUID, accountQuery) : undefined,
+    heldUUID ? selectAccountDataStatus(state, kind, heldUUID, accountQuery) : undefined,
   );
 
   const refresh = useCallback(async () => {
@@ -75,7 +73,7 @@ export function useAccountData<K extends AccountDataKind>(
   const error = status?.error;
   const hasMore = status?.nextCursor !== undefined;
   return useMemo(
-    () => ({ accountUUID, pending, error, hasMore, refresh, loadMore }),
-    [accountUUID, pending, error, hasMore, refresh, loadMore],
+    () => ({ accountUUID: heldUUID, pending, error, hasMore, refresh, loadMore }),
+    [heldUUID, pending, error, hasMore, refresh, loadMore],
   );
 }

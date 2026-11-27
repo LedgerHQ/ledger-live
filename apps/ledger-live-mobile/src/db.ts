@@ -41,7 +41,6 @@ import type { PayCardOnboardingWidgetPersistedState } from "@features/flow-pay-c
 import type { AccountAnalyticsIntroductionState } from "@features/flow-account-detail-analytics-notice/state";
 
 export type PayCardPersistedState = PayCardFeatureTourState &
-  ReceiveVerifyHintState &
   PayCardBalanceState &
   PayCardLoginIntroState &
   PayCardOnboardingWidgetPersistedState;
@@ -150,6 +149,8 @@ export async function saveKnownDevices(obj: PersistedKnownDevicesState): Promise
   await storage.save("knownDevices", obj);
 }
 
+type StoredAccount = { data: AccountRaw; version: number };
+
 const formatAccountDBKey = (id: string): string => `${ACCOUNTS_DB_PREFIX}${id}`;
 
 /** get Db accounts keys */
@@ -159,7 +160,7 @@ function onlyAccountsKeys(keys: string[]): Array<string> {
 
 // get accounts specific method to aggregate all account keys into the correct format
 async function unsafeGetAccounts(): Promise<{
-  active: { data: AccountRaw }[];
+  active: StoredAccount[];
 }> {
   await migrateAccountsIfNecessary();
   const keys = await storage.keys();
@@ -167,12 +168,13 @@ async function unsafeGetAccounts(): Promise<{
 
   // if some account keys, we retrieve them and return
   if (accountKeys && accountKeys.length > 0) {
-    let active = (await storage.get(accountKeys)) as { data: AccountRaw }[];
+    const stored = await storage.get<StoredAccount>(accountKeys);
+    let active = Array.isArray(stored) ? stored : [];
 
     if (keys.includes(ACCOUNTS_KEY_SORT)) {
       const ids = (await storage.get(ACCOUNTS_KEY_SORT)) as string[];
       active = active
-        .map<[{ data: AccountRaw }, number]>(a => [a, ids.indexOf(a.data.id)])
+        .map<[StoredAccount, number]>(a => [a, ids.indexOf(a.data.id)])
         .sort((a, b) => a[1] - b[1])
         .map(a => a[0]);
     }
@@ -193,7 +195,7 @@ async function unsafeSaveAccounts(
   {
     active: newAccounts,
   }: {
-    active: { data: AccountRaw }[];
+    active: StoredAccount[];
   },
   stats?:
     | {
@@ -207,13 +209,9 @@ async function unsafeSaveAccounts(
   const currentAccountKeys = onlyAccountsKeys(keys);
 
   /** format data for DB persist */
-  const dbData: [string, { data: AccountRaw; version: number }][] = newAccounts.map(({ data }) => [
+  const dbData: [string, StoredAccount][] = newAccounts.map(({ data, version }) => [
     formatAccountDBKey(data.id),
-    {
-      data,
-      // FIXME: IS THIS VERSION THE MIGRATION VERSION ?
-      version: 1,
-    },
+    { data, version },
   ]);
 
   /** Find current DB accounts keys diff with app state to remove them */
@@ -227,10 +225,10 @@ async function unsafeSaveAccounts(
     : dbData.filter(([_key, { data }]) => stats.changed.includes(data.id));
 
   /** persist store data to DB */
-  await storage.save([
+  await storage.save<StoredAccount | string[]>([
     ...dbDataWithOnlyChanges, // also store an index of ids to keep sort in memory
     [ACCOUNTS_KEY_SORT, newAccounts.map(a => a.data.id)],
-  ] as [string, string | { data: AccountRaw; version: number }][]);
+  ]);
 
   /** then delete potential removed keys */
   if (deletedKeys.length > 0) {
@@ -346,6 +344,14 @@ export function getPayCardState(): Promise<PayCardPersistedState | null> {
 
 export async function savePayCardState(obj: PayCardPersistedState): Promise<void> {
   await storage.save("payCard", obj);
+}
+
+export function getReceiveVerifyHintState(): Promise<ReceiveVerifyHintState | null> {
+  return storage.get("receiveVerifyHint") as Promise<ReceiveVerifyHintState | null>;
+}
+
+export async function saveReceiveVerifyHintState(obj: ReceiveVerifyHintState): Promise<void> {
+  await storage.save("receiveVerifyHint", obj);
 }
 
 export function getAccountAnalyticsIntroductionState(): Promise<unknown> {

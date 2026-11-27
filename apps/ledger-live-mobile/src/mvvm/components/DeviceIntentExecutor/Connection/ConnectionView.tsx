@@ -1,14 +1,16 @@
 import React from "react";
 import { ConnectDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
+import {
+  TrackedConnectingState,
+  TrackedConnectionErrorState,
+  TrackedDiscoveryErrorState,
+  TrackedUnknownErrorState,
+  TrackedWaitingForSelectedDeviceState,
+} from "LLM/components/DeviceConnection";
 import { LoadingState } from "./components/LoadingState";
 import { NoKnownDeviceState } from "./components/NoKnownDeviceState";
 import { DiscoveringState } from "./components/DiscoveringState";
-import { WaitingForSelectedDeviceState } from "./components/WaitingForSelectedDeviceState";
-import { DiscoveryErrorState } from "./components/DiscoveryErrorState";
-import { ConnectingState } from "./components/ConnectingState";
 import { ConnectedState } from "./components/ConnectedState";
-import { ConnectionErrorState } from "./components/ConnectionErrorState";
-import { UnknownErrorState } from "./components/UnknownErrorState";
 import type { ConnectionViewModel } from "./useConnectionViewModel";
 
 function assertNever(value: never): never {
@@ -37,22 +39,22 @@ export function ConnectionView({
       return <DiscoveringState state={state} />;
 
     case ConnectDeviceUIStateTypes.WaitingForSelectedDevice:
-      return <WaitingForSelectedDeviceState state={state} />;
+      return <TrackedWaitingForSelectedDeviceState device={state.device} />;
 
     case ConnectDeviceUIStateTypes.DiscoveryError:
-      return <DiscoveryErrorState state={state} platform={platform} />;
+      return <TrackedDiscoveryErrorState state={state} platform={platform} />;
 
     case ConnectDeviceUIStateTypes.Connecting:
-      return <ConnectingState state={state} />;
+      return <TrackedConnectingState device={state.device} />;
 
     case ConnectDeviceUIStateTypes.ConnectionError:
-      return <ConnectionErrorState state={state} />;
+      return <TrackedConnectionErrorState state={state} />;
 
     case ConnectDeviceUIStateTypes.Connected:
       return <ConnectedState />;
 
     case ConnectDeviceUIStateTypes.UnknownError:
-      return <UnknownErrorState state={state} />;
+      return <TrackedUnknownErrorState state={state} />;
 
     default:
       return assertNever(state);

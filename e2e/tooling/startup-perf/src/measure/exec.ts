@@ -19,18 +19,19 @@ export interface RunOptions {
   timeoutMs?: number;
   allowFail?: boolean;
   env?: NodeJS.ProcessEnv;
+  cwd?: string;
 }
 
 export function run(
   cmd: string,
   args: string[],
-  { timeoutMs = 120_000, allowFail = false, env }: RunOptions = {},
+  { timeoutMs = 120_000, allowFail = false, env, cwd }: RunOptions = {},
 ): Promise<RunResult> {
   return new Promise((resolve, reject) => {
     execFile(
       cmd,
       args,
-      { timeout: timeoutMs, maxBuffer: 64 * 1024 * 1024, ...(env ? { env } : {}) },
+      { timeout: timeoutMs, maxBuffer: 64 * 1024 * 1024, ...(env ? { env } : {}), cwd },
       (error, stdout, stderr) => {
         const result = { failed: !!error, stdout: String(stdout), stderr: String(stderr) };
         if (error && !allowFail) {

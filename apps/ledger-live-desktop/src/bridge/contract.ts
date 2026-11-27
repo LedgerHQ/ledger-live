@@ -3,8 +3,8 @@
 import type { DomainCheckViolation } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
 
 /** Bump on every shape change of `LedgerBridge` or `Bootstrap` respectively. */
-export const BRIDGE_VERSION = 8;
-export const BOOTSTRAP_VERSION = 2;
+export const BRIDGE_VERSION = 9;
+export const BOOTSTRAP_VERSION = 3;
 
 export type Serializable =
   | null
@@ -28,6 +28,7 @@ export type Bootstrap = {
     userData: string;
     home: string;
   };
+  appDirname: string;
   distributionChannel: "mac-app-store" | "windows-store" | "direct";
   store: Record<string, unknown>;
 };
@@ -44,6 +45,8 @@ export type DbBridge = {
   resetAll(): Promise<void>;
   reload(): Promise<void>;
   cleanCache(): Promise<void>;
+  /** Main waits until `callback` settles, or until its timeout, before the app quits. */
+  onFlushRequest(callback: () => Promise<void>): Unsubscribe;
 };
 
 /** A closure: listener identity does not survive the bridge, so removeListener would no-op. */
@@ -105,7 +108,6 @@ export type FilesBridge = {
   /** Pre-stringified: the logs hold circular references the bridge cannot carry. */
   saveLogs(request: SaveRequest, logsJson: string): Promise<SaveOutcome>;
   exportOperations(request: SaveRequest, csv: string): Promise<SaveOutcome>;
-  savePng(options: Electron.SaveDialogOptions, base64: string): Promise<SaveOutcome>;
   openUserDataDirectory(): Promise<unknown>;
 };
 
@@ -174,6 +176,8 @@ export const CHANNELS = {
   resetAll: "resetAll",
   reload: "reload",
   cleanCache: "cleanCache",
+  flushWrites: "flushWrites",
+  flushWritesDone: "flushWritesDone",
   updater: "updater",
   deepLinking: "deep-linking",
   webviewDomainCheckViolation: "webview:domain-check-violation",
@@ -183,7 +187,6 @@ export const CHANNELS = {
   showApp: "show-app",
   saveLogs: "save-logs",
   exportOperations: "export-operations",
-  savePng: "save-png",
   openUserDataDirectory: "openUserDataDirectory",
   keepScreenAwake: "activate-keep-screen-awake",
   releaseScreenAwake: "deactivate-keep-screen-awake",

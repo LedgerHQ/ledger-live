@@ -1,6 +1,7 @@
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
+import { estimateSendMax } from "../logic/estimateFees";
 import { createFrameworkSigner } from "../signer/frameworkSigner";
 import {
   createMockCantonSigner,
@@ -9,6 +10,7 @@ import {
   createMockInstrumentBalances,
   createMockOnboardingPrepareResponse,
   createMockPrepareTransferResponse,
+  createSwitchingContext,
 } from "../test/fixtures";
 import { TooManyUtxosWarning, TopologyChangeError } from "../types/errors";
 import type { CantonMemo } from "../types/transaction";
@@ -53,6 +55,8 @@ const transfer = (asset: AssetInfo) =>
     asset,
   }) as TransactionIntent<CantonMemo>;
 
+const sendMax = (asset: AssetInfo) => ({ ...transfer(asset), amount: 0n, useAllAmount: true });
+
 const unknownRequest = () => HttpResponse.json({ message: "unexpected request" }, { status: 400 });
 
 // Each case uses its own party, so the gateway's party and topology caches cannot leak between them.
@@ -62,7 +66,7 @@ function gatewayFor(party: string, topologyChangeRequired: boolean) {
   server.use(
     http.get(`${partyUrl}/balance`, ({ params }) =>
       params.party === party
-        ? HttpResponse.json(createMockInstrumentBalances(1, { utxo_count: 11 }))
+        ? HttpResponse.json(createMockInstrumentBalances(1, { utxo_count: 7 }))
         : unknownRequest(),
     ),
     http.get(partyUrl, ({ params }) =>
@@ -153,6 +157,64 @@ describe("createApi against the gateway", () => {
     await expect(
       api.estimateFees(createMockContext({ ...config, fee: 2 }), transfer({ type: "native" })),
     ).resolves.toEqual({ value: 2n * MAGNITUDE });
+  });
+
+  describe("estimateFees on Send max", () => {
+    const spendable = 9n * MAGNITUDE;
+    const heldWithLockedReserve = spendable + BigInt(config.minReserve);
+
+    beforeEach(() => {
+      server.use(
+        http.get(`${partyUrl}/balance`, ({ params }) =>
+          params.party === SENDER
+            ? HttpResponse.json(
+                createMockInstrumentBalances(1, { amount: heldWithLockedReserve.toString() }),
+              )
+            : unknownRequest(),
+        ),
+      );
+    });
+
+    it("should read the balance and the fee from one config", async () => {
+      const switching = createSwitchingContext(config, {
+        ...config,
+        gatewayUrl: "https://other-gateway.test",
+        fee: 2,
+      });
+      const max = await estimateSendMax(context, spendable);
+
+      await expect(api.estimateFees(switching, sendMax({ type: "native" }))).resolves.toEqual({
+        value: max.fee,
+        parameters: { amount: max.amount },
+      });
+      expect(switching.config).toHaveBeenCalledTimes(1);
+    });
+
+    it("should return the fee and amount of the largest native send that fits", async () => {
+      const max = await estimateSendMax(context, spendable);
+
+      await expect(api.estimateFees(context, sendMax({ type: "native" }))).resolves.toEqual({
+        value: max.fee,
+        parameters: { amount: max.amount },
+      });
+      expect(max.amount + max.fee).toBeLessThanOrEqual(spendable);
+    });
+
+    it("should return a fixed fee alone, without reading the balance", async () => {
+      server.use(http.get(`${partyUrl}/balance`, () => HttpResponse.error()));
+
+      await expect(
+        api.estimateFees(createMockContext({ ...config, fee: 2 }), sendMax({ type: "native" })),
+      ).resolves.toEqual({ value: 2n * MAGNITUDE });
+    });
+
+    it("should quote a token Send max on its amount, since the parent pays the fee", async () => {
+      const token = { type: "token", assetReference: "USDCx", assetOwner: "issuer::1220" } as const;
+
+      await expect(api.estimateFees(context, { ...sendMax(token), amount: 100n })).resolves.toEqual(
+        { value: MAGNITUDE + 1n },
+      );
+    });
   });
 
   describe("validateIntent", () => {

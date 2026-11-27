@@ -4,6 +4,7 @@ import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { parseV1 } from "../shared/accountDescriptor";
+import { findFailedRequest } from "../shared/failed-request";
 import { WalletAdapter } from "../wallet";
 import { BalanceSchema, toTokenInfo, type TokenInfo } from "../wallet/models";
 import {
@@ -245,6 +246,36 @@ describe("findTokensByTicker", () => {
     respond = response;
 
     await expect(findTokensByTicker("ethereum", "USDC")).rejects.toThrow(message);
+  });
+
+  it.each([
+    [() => new Response("", { status: 403 }), 403],
+    [
+      (): Response => {
+        throw new TypeError("fetch failed");
+      },
+      undefined,
+    ],
+  ])("names the CAL host of a failed lookup (%#)", async (response, status) => {
+    respond = response;
+
+    const error = await findTokensByTicker("ethereum", "USDC").catch((e: unknown) => e);
+
+    expect(findFailedRequest(error)).toEqual({ host: "global.api.prd.ledger.com", status });
+  });
+
+  it("says a slow CAL did not answer in time instead of asking to allow it", async () => {
+    respond = (): Response => {
+      throw new DOMException("The operation timed out.", "TimeoutError");
+    };
+
+    const error = await findTokensByTicker("ethereum", "USDC").catch((e: unknown) => e);
+
+    expect(findFailedRequest(error)).toEqual({
+      host: "global.api.prd.ledger.com",
+      status: undefined,
+      noAnswerCause: { kind: "timeout", code: "TimeoutError" },
+    });
   });
 });
 

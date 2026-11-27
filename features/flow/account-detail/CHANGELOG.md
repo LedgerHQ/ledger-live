@@ -1,5 +1,25 @@
 # @features/flow-account-detail
 
+## 0.5.1
+
+### Patch Changes
+
+- Updated dependencies [[`15c9095`](https://github.com/LedgerHQ/ledger-live/commit/15c9095eb614c8bda7b5c47f18031667b3047a4a), [`27f3e4e`](https://github.com/LedgerHQ/ledger-live/commit/27f3e4eb74ac31f0f53aa55803ad7f082f669fe3), [`fe1f525`](https://github.com/LedgerHQ/ledger-live/commit/fe1f5257edcee5b92db6153e9f7d619104446294), [`c47814c`](https://github.com/LedgerHQ/ledger-live/commit/c47814c94967febb435d0dcb77cc2f8de7f2c3f7), [`36284d6`](https://github.com/LedgerHQ/ledger-live/commit/36284d633c1961face1500f58fa2fc271cfb8ab5), [`de9c09c`](https://github.com/LedgerHQ/ledger-live/commit/de9c09c26ebca7c2dbceb9494de70a2c16c75a70)]:
+  - @features/flow-account-detail-hero@0.5.0
+  - @shared/feature-flags@0.32.0
+  - @features/flow-account-detail-settings@0.3.3
+  - @features/platform-feature-flags@0.13.1
+
+## 0.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`15c9095`](https://github.com/LedgerHQ/ledger-live/commit/15c9095eb614c8bda7b5c47f18031667b3047a4a), [`27f3e4e`](https://github.com/LedgerHQ/ledger-live/commit/27f3e4eb74ac31f0f53aa55803ad7f082f669fe3), [`fe1f525`](https://github.com/LedgerHQ/ledger-live/commit/fe1f5257edcee5b92db6153e9f7d619104446294), [`c47814c`](https://github.com/LedgerHQ/ledger-live/commit/c47814c94967febb435d0dcb77cc2f8de7f2c3f7), [`36284d6`](https://github.com/LedgerHQ/ledger-live/commit/36284d633c1961face1500f58fa2fc271cfb8ab5), [`de9c09c`](https://github.com/LedgerHQ/ledger-live/commit/de9c09c26ebca7c2dbceb9494de70a2c16c75a70)]:
+  - @features/flow-account-detail-hero@0.5.0-next.0
+  - @shared/feature-flags@0.32.0-next.0
+  - @features/flow-account-detail-settings@0.3.3-next.0
+  - @features/platform-feature-flags@0.13.1-next.0
+
 ## 0.5.0
 
 ### Minor Changes

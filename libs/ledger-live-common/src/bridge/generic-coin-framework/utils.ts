@@ -4,8 +4,13 @@ import {
   OPERATION_TYPE_STAKE_FAMILY,
 } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import {
+  type AccountBalancesResult,
+  clampLocked,
+} from "@ledgerhq/ledger-wallet-framework/account/balances";
 import type {
   Account,
+  AccountBalance,
   Operation,
   OperationExtra,
   OperationExtraRaw,
@@ -393,36 +398,114 @@ function numericDetailEntry(
   return { [key]: fitsInADouble ? value.toNumber() : value.toFixed() };
 }
 
-export function extractBalances(
+/** Whether the rows are a pool breakdown, not the default single row. */
+export function hasPoolRows(rows: AccountBalance[] | undefined): rows is AccountBalance[] {
+  return !!rows?.some(row => row.pool !== undefined || row.private !== undefined);
+}
+
+export function toAccountBalance(balance: Balance): AccountBalance {
+  return {
+    value: new BigNumber(balance.value.toString()),
+    ...(balance.locked !== undefined && { locked: new BigNumber(balance.locked.toString()) }),
+    ...(balance.pool !== undefined && { pool: balance.pool }),
+    ...(balance.private !== undefined && { private: balance.private }),
+  };
+}
+
+/**
+ * The account rows for a module's pool rows. When the family partitions its native balance, the
+ * stake rows count in `balance` too: their total goes to the first public row, as both value and
+ * locked, so the rows still sum to `balance`. Without a public row, it becomes one.
+ */
+export function toAccountPoolRows(poolRows: Balance[], stakeRows: Balance[]): AccountBalance[] {
+  const rows = poolRows.map(toAccountBalance);
+  const staked = stakeRows.reduce((sum, row) => sum.plus(row.value.toString()), new BigNumber(0));
+  if (staked.isZero()) return rows;
+  const target = rows.findIndex(row => !row.private);
+  if (target === -1) return [...rows, { value: staked, locked: staked }];
+  const row = rows[target];
+  rows[target] = {
+    ...row,
+    value: row.value.plus(staked),
+    locked: (row.locked ?? new BigNumber(0)).plus(staked),
+  };
+  return rows;
+}
+
+/**
+ * The rows the shape put on the account, as they are: they hold the chain locks only. The funds
+ * committed to pending operations are applied at extraction, so they never go stale. Without pool
+ * rows, the default single row applies.
+ */
+export function genericAccountBalances(account: Account): AccountBalancesResult {
+  const rows = account.balances;
+  return hasPoolRows(rows) ? { account: rows } : {};
+}
+
+function nativeBalanceEntry(
   account: Account,
-  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined,
+  stakes: Balance[],
   partitionsNativeBalance?: boolean,
-  getHeldNativeAmount?: (position: StakingDelegation | StakingUnbonding) => BigNumber,
-): Balance[] {
+): Balance {
   const nativeReserve = BigInt(
     BigNumber.max(account.balance.minus(account.spendableBalance), 0).toFixed(),
   );
   const nativePending = BigInt(getPendingNativeSpent(account.pendingOperations ?? []).toFixed());
-  const stakes = stakingBalances(account, getHeldNativeAmount);
   const staked = partitionsNativeBalance
     ? stakes.reduce((sum, stake) => sum + stake.value, 0n)
     : 0n;
   const total = BigInt(account.balance.toFixed());
   const nativeValue = total > staked ? total - staked : 0n;
   const nativeLocked = (nativeReserve > staked ? nativeReserve - staked : 0n) + nativePending;
-  const balances: Balance[] = [
-    {
-      // `value` is the total balance, `locked` is the non-spendable part of it.
-      // Consumers must compute available funds as `value - locked`.
-      // We lock the chain reserve plus any funds already committed to pending
-      // (optimistic, not-yet-synced) transactions, capped at the total balance.
-      // When the family partitions its native balance, the staking positions are carved out
-      // of it, as `getBalance` reports them.
-      value: nativeValue,
-      asset: { type: "native" },
-      locked: nativeLocked > nativeValue ? nativeValue : nativeLocked,
-    },
-  ];
+  return {
+    // `value` is the total balance, `locked` is the non-spendable part of it.
+    // Consumers must compute available funds as `value - locked`.
+    // We lock the chain reserve plus any funds already committed to pending
+    // (optimistic, not-yet-synced) transactions, capped at the total balance.
+    // When the family partitions its native balance, the staking positions are carved out
+    // of it, as `getBalance` reports them.
+    value: nativeValue,
+    asset: { type: "native" },
+    locked: nativeLocked > nativeValue ? nativeValue : nativeLocked,
+  };
+}
+
+function toPoolBalance(row: AccountBalance): Balance {
+  return {
+    value: BigInt(row.value.toFixed()),
+    asset: { type: "native" },
+    ...(row.locked && !row.locked.isZero() && { locked: BigInt(row.locked.toFixed()) }),
+    ...(row.pool !== undefined && { pool: row.pool }),
+    ...(row.private !== undefined && { private: row.private }),
+  };
+}
+
+export function extractBalances(
+  account: Account,
+  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined,
+  partitionsNativeBalance?: boolean,
+  getHeldNativeAmount?: (position: StakingDelegation | StakingUnbonding) => BigNumber,
+): Balance[] {
+  const stakes = stakingBalances(account, getHeldNativeAmount);
+  const poolRows = hasPoolRows(account.balances) ? account.balances : undefined;
+  const pendingSpent = getPendingNativeSpent(account.pendingOperations ?? []);
+  // The pending spend is added once, to the first public row. That row also holds the stake when
+  // the family partitions its balance (see `toAccountPoolRows`); the stake entries are appended
+  // below, so it is taken out of the row first.
+  const pendingTarget = poolRows ? poolRows.findIndex(row => !row.private) : -1;
+  const foldedStake = partitionsNativeBalance
+    ? stakes.reduce((sum, stake) => sum.plus(stake.value.toString()), new BigNumber(0))
+    : new BigNumber(0);
+  const balances: Balance[] = poolRows
+    ? poolRows.flatMap((row, i): Balance[] => {
+        if (i !== pendingTarget) return [toPoolBalance(row)];
+        const value = BigNumber.max(row.value.minus(foldedStake), 0);
+        if (value.isZero() && row.pool === undefined && !foldedStake.isZero()) return [];
+        const chainLocked = BigNumber.max((row.locked ?? new BigNumber(0)).minus(foldedStake), 0);
+        const locked = clampLocked(value, chainLocked.plus(pendingSpent));
+        return [toPoolBalance({ ...row, value, locked: locked.isZero() ? undefined : locked })];
+      })
+    : [nativeBalanceEntry(account, stakes, partitionsNativeBalance)];
 
   balances.push(
     ...(partitionsNativeBalance
@@ -898,8 +981,13 @@ export function adaptCoreOperationToLiveOperation(
   // sync charges it once, as a FEES operation of the fee token (`tokenFeeOperations`).
   const bnFees = new BigNumber(extra.feeAsset ? 0 : op.tx.fees.toString());
   const hasFailed = op.tx.failed;
-  // A failed transaction's only effect is its fee: a token amount would replace the 0 value in the
-  // sub-account (`buildSubAccounts`).
+  // A failed token operation shows the amount it attempted: `value` below is its native fee, which
+  // `buildSubAccounts` would otherwise put on the token sub-account. Balance history moves no token
+  // for it (`balanceHistoryCache`).
+  if (hasFailed && op.asset?.type !== "native" && extra.assetAmount === undefined) {
+    extra.assetAmount = op.value.toString();
+  }
+  // A fee paid in the token is charged by its own FEES operation, and the failed one keeps its 0 value.
   if (extra.feeAsset && hasFailed) delete extra.assetAmount;
   const value = computeOperationValue(op, opType, bnFees, hasFailed, feesPayerRule);
 
@@ -1018,6 +1106,7 @@ export function transactionToIntent(
         ? BigInt(transaction.nonce.toString())
         : undefined,
     ...getDelegationIntentFields(delegationMode, transaction),
+    ...(transaction.pool !== undefined && { pool: transaction.pool }),
   };
   if (transaction.assetReference && transaction.assetOwner) {
     const { subAccountId } = transaction;

@@ -1,13 +1,7 @@
+import { parseURL } from "./url.internals";
+
 type LinkParams = Readonly<Record<string, string | undefined>>;
 type HostInputs = Readonly<Record<string, string>>;
-
-function parseURL(value: string): URL | undefined {
-  try {
-    return new URL(value);
-  } catch {
-    return undefined;
-  }
-}
 
 /**
  * The inputs of the Predictions webview: the deep link's params, then the host context (theme,

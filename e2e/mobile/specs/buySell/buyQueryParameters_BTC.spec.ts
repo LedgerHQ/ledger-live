@@ -14,9 +14,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@bitcoin`, `@family-bitcoin`],
 };
 
-runQueryParametersTest(
-  testConfig.buySell,
-  testConfig.paymentMethod,
-  testConfig.tmsLinks,
-  testConfig.tags,
-);
+runQueryParametersTest(testConfig);

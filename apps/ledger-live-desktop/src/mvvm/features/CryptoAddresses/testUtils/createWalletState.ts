@@ -5,7 +5,6 @@ export function createWalletState(accountNames: Map<string, string>): { wallet: 
   return {
     wallet: {
       accountNames: new Map([...accountNames].map(([id, name]) => [parseAnyAccountId(id), name])),
-      starredAccountIds: new Set(),
       walletSync: { walletSyncState: { data: null, version: 0 } },
       nonImportedAccountInfos: [],
       recentAddresses: {},

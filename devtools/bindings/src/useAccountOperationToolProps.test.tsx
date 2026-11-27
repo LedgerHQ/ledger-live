@@ -9,7 +9,6 @@ import {
   accountDataQueryKey,
   accountDataSlice,
 } from "@domain/entity-account-data";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import {
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
@@ -22,6 +21,7 @@ import {
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { mockAccountOperation } from "@domain/entity-account-operation/schema.mock";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { useAccountOperationToolProps } from "./useAccountOperationToolProps";
 
 const ethereum = mockAddressAccountDescriptor();

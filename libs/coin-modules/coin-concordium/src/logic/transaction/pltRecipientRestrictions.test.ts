@@ -31,7 +31,6 @@ const config = { proxyUrl: "https://proxy.test" } as ConcordiumCoinConfig;
 const check = () =>
   checkRecipientRestrictions({
     config,
-    currencyId: "concordium_testnet",
     recipient: RECIPIENT,
     tokenId: TOKEN_ID,
     ticker: TICKER,

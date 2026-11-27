@@ -17,6 +17,7 @@ import type {
   VerifyAddressTracking,
 } from "../types";
 import { buildVerifyAddressIntentInput } from "./buildVerifyAddressIntentInput";
+import { canVerifyOnDevice } from "./canVerifyOnDevice";
 
 export type PreparedVerifyAddress<InitInput> = Readonly<{
   deviceConnectionParams: DeviceConnectionParams;
@@ -36,6 +37,7 @@ export type VerifyAddressPreparation<InitInput> =
 export type VerifyAddressAttemptListeners = Readonly<{
   onResult: (result: VerifyAddressIntentResult) => void;
   onAttemptStart: () => void;
+  onAddressDisplayed: () => void;
 }>;
 
 function acceptedDeviceModelIdsOrNone(
@@ -59,7 +61,7 @@ export async function prepareVerifyAddress<
   account: Account,
   { assetId, verification }: VerifyAddressSelection,
   unsupportedDeviceModelIds: readonly DeviceModelId[] | undefined,
-  { onResult, onAttemptStart }: VerifyAddressAttemptListeners,
+  { onResult, onAttemptStart, onAddressDisplayed }: VerifyAddressAttemptListeners,
   ports: VerifyAddressExecutorPorts<Account, Token, Options, InitInput>,
 ): Promise<VerifyAddressPreparation<InitInput>> {
   const isToken = assetId !== account.currency.id;
@@ -70,15 +72,19 @@ export async function prepareVerifyAddress<
     asset: (tokenCurrency ?? account.currency).ticker,
     network: account.currency.id,
   };
-  const intentInput = buildVerifyAddressIntentInput(account, verification, ports, onAttemptStart);
+  const intentInput = buildVerifyAddressIntentInput(account, verification, ports, {
+    onAttemptStart,
+    onAddressDisplayed,
+  });
   const acceptedDeviceModelIds = acceptedDeviceModelIdsOrNone(unsupportedDeviceModelIds);
-  if (!intentInput || !acceptedDeviceModelIds) {
+  if (!intentInput || !acceptedDeviceModelIds || !canVerifyOnDevice(verification)) {
     return { type: "exit", outcome: "unsupported", tracking };
   }
 
   const deviceInitializationInput = await ports.buildInitializationInput({
     account,
     tokenCurrency,
+    verification,
   });
   const definition = {
     ...verifyAddressIntentDefinitionWithResult,

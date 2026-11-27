@@ -1,116 +1,46 @@
-import { scrubResourceUrl, scrubViewUrlHash, scrubActionTargetName } from "./scrubRum";
+import { scrubActionTargetName, scrubAutoActionName, scrubViewUrl } from "./scrubRum";
 
-describe("scrubResourceUrl", () => {
-  describe("address path segment", () => {
-    it("redacts the address segment after /address/", () => {
-      expect(scrubResourceUrl("https://api.ledger.com/blockchain/v4/eth/address/0xFoo/txs")).toBe(
-        "https://api.ledger.com/blockchain/v4/eth/address/[redacted]/txs",
-      );
-    });
+const PAGE = "https://app.asar/.webpack/index.html";
 
-    it("is case-insensitive on the /address/ prefix", () => {
-      expect(
-        scrubResourceUrl("https://api.ledger.com/blockchain/v4/btc/Address/xpubFoo/utxo"),
-      ).toBe("https://api.ledger.com/blockchain/v4/btc/Address/[redacted]/utxo");
-    });
-
-    it("redacts the address segment after /addresses/ (plural)", () => {
-      expect(scrubResourceUrl("https://api.ledger.com/addresses/0xFoo/balance")).toBe(
-        "https://api.ledger.com/addresses/[redacted]/balance",
-      );
-    });
-
-    it("leaves URLs without /address/ unchanged", () => {
-      const url = "https://api.ledger.com/blockchain/v4/eth/fees";
-      expect(scrubResourceUrl(url)).toBe(url);
-    });
-  });
-
-  describe("reverse-resolve path segment", () => {
-    it("redacts the address segment after /reverse-resolve/", () => {
-      expect(scrubResourceUrl("https://api.ledger.com/ens/reverse-resolve/0xFoo")).toBe(
-        "https://api.ledger.com/ens/reverse-resolve/[redacted]",
-      );
-    });
-
-    it("is case-insensitive on the /reverse-resolve/ prefix", () => {
-      expect(scrubResourceUrl("https://api.ledger.com/ens/Reverse-Resolve/0xFoo")).toBe(
-        "https://api.ledger.com/ens/Reverse-Resolve/[redacted]",
-      );
-    });
-  });
-
-  describe("query param account ID", () => {
-    it("scrubs a URL-encoded account ID in a query param", () => {
-      expect(
-        scrubResourceUrl(
-          "https://crypto-assets-service.api.ledger.com/v1/tokens?id=js%3A2%3Abitcoin%3AxpubFoo%3Asegwit",
-        ),
-      ).toBe(
-        "https://crypto-assets-service.api.ledger.com/v1/tokens?id=js%3A2%3Abitcoin%3A%5Bredacted%5D%3Asegwit",
-      );
-    });
-
-    it("leaves non-account-id query params unchanged", () => {
-      const url = "https://api.ledger.com/v1/tokens?currency=bitcoin&limit=10";
-      expect(scrubResourceUrl(url)).toBe(url);
-    });
-  });
-
-  describe("edge cases", () => {
-    it("returns an invalid URL as-is", () => {
-      expect(scrubResourceUrl("not a url")).toBe("not a url");
-    });
-
-    it("handles a URL with both a path leak and a query param leak", () => {
-      expect(
-        scrubResourceUrl(
-          "https://api.ledger.com/blockchain/v4/eth/address/0xFoo/txs?accountId=js%3A2%3Aethereum%3A0xFoo%3A",
-        ),
-      ).toBe(
-        "https://api.ledger.com/blockchain/v4/eth/address/[redacted]/txs?accountId=js%3A2%3Aethereum%3A%5Bredacted%5D%3A",
-      );
-    });
-  });
-
-  describe("portfolio account", () => {
-    it("redacts the portfolio id, which links every account of a wallet", () => {
-      expect(
-        scrubResourceUrl("https://svc.example/v1/portfolio/ledger-live-1234/balance?size=100"),
-      ).toBe("https://svc.example/v1/portfolio/[redacted]/balance?size=100");
-    });
-
-    it("redacts the account id before /addresses", () => {
-      expect(
-        scrubResourceUrl("https://svc.example/v1/portfolio/p/accounts/base%3A0xFoo/addresses"),
-      ).toBe("https://svc.example/v1/portfolio/[redacted]/accounts/[redacted]/addresses");
-    });
-
-    it("redacts a portfolio account id in the account query", () => {
-      expect(
-        scrubResourceUrl(
-          "https://svc.example/v1/portfolio/p/balance?account=base%3A0xFoo&currency=usd",
-        ),
-      ).toBe(
-        "https://svc.example/v1/portfolio/[redacted]/balance?account=%5Bredacted%5D&currency=usd",
-      );
-    });
-  });
-});
-
-describe("scrubViewUrlHash", () => {
-  it("scrubs the account ID from a hash-router account route", () => {
-    expect(scrubViewUrlHash("/account/js:2:bitcoin:xpubFoo:segwit")).toBe(
-      "/account/js:2:bitcoin:[redacted]:segwit",
+describe("scrubViewUrl", () => {
+  it("removes the query string of the page", () => {
+    expect(scrubViewUrl(`${PAGE}?theme=dark&appDirname=%2Fopt%2Fexample#/cryptos`)).toBe(
+      `${PAGE}#/cryptos`,
     );
   });
 
-  it("leaves a hash without an account ID unchanged", () => {
-    expect(scrubViewUrlHash("/cryptos")).toBe("/cryptos");
+  it("redacts the account ID of an account route", () => {
+    expect(scrubViewUrl(`${PAGE}#/account/js:2:bitcoin:xpubExample1:segwit/history`)).toBe(
+      `${PAGE}#/account/[redacted]/history`,
+    );
+  });
+
+  it("redacts the account aliases of an account route", () => {
+    expect(
+      scrubViewUrl(
+        `${PAGE}#/account/00000000-0000-5000-8000-000000000001/00000000-0000-5000-8000-000000000002`,
+      ),
+    ).toBe(`${PAGE}#/account/[redacted]/[redacted]`);
+  });
+
+  it("keeps the currency of an asset route", () => {
+    expect(scrubViewUrl(`${PAGE}#/asset/bitcoin`)).toBe(`${PAGE}#/asset/bitcoin`);
+  });
+
+  it("removes the query string of the route", () => {
+    expect(scrubViewUrl(`${PAGE}#/swap?from=example`)).toBe(`${PAGE}#/swap`);
   });
 
   it("leaves the portfolio route unchanged", () => {
-    expect(scrubViewUrlHash("/")).toBe("/");
+    expect(scrubViewUrl(`${PAGE}#/`)).toBe(`${PAGE}#/`);
+  });
+
+  it("removes the query string of a url without a route", () => {
+    expect(scrubViewUrl(`${PAGE}?theme=dark`)).toBe(PAGE);
+  });
+
+  it("leaves an empty referrer empty", () => {
+    expect(scrubViewUrl("")).toBe("");
   });
 });
 
@@ -133,5 +63,38 @@ describe("scrubActionTargetName", () => {
 
   it("leaves action names without a xpub field unchanged", () => {
     expect(scrubActionTargetName("click on portfolio tab")).toBe("click on portfolio tab");
+  });
+});
+
+describe("scrubAutoActionName", () => {
+  it("redacts the words holding a digit", () => {
+    expect(scrubAutoActionName("Bitcoin 2 Legacy")).toBe("Bitcoin [redacted] Legacy");
+  });
+
+  it("redacts an amount", () => {
+    expect(scrubAutoActionName("Total $1,234.56")).toBe("Total [redacted]");
+  });
+
+  it("redacts a shortened value", () => {
+    expect(scrubAutoActionName("Savings abcd...wxyz")).toBe("Savings [redacted]");
+    expect(scrubAutoActionName("Savings abcd…wxyz")).toBe("Savings [redacted]");
+  });
+
+  it("merges adjacent redactions", () => {
+    expect(scrubAutoActionName("Bitcoin 2 Legacy 1abCd...wXyZ9 $1,234.56")).toBe(
+      "Bitcoin [redacted] Legacy [redacted]",
+    );
+  });
+
+  it("keeps a trailing ellipsis", () => {
+    expect(scrubAutoActionName("Loading...")).toBe("Loading...");
+  });
+
+  it("keeps a name made of plain words", () => {
+    expect(scrubAutoActionName("Add account")).toBe("Add account");
+  });
+
+  it('redacts a "xpub" JSON key-value', () => {
+    expect(scrubAutoActionName('{ "xpub": "xpubFoo" }')).toBe('{ "xpub": "[redacted]" }');
   });
 });

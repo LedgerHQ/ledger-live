@@ -33,10 +33,15 @@ export function useOpenLink(): OpenLink {
   );
 }
 
-export function useLocalizedUrl(url: string): string {
-  const config = useContext(LinkingContext);
-  return useMemo(
-    () => (config?.localization ? localizeUrl(url, config.localization) : url),
-    [url, config?.localization],
+export function useUrlLocalizer(): (url: string) => string {
+  const localization = useContext(LinkingContext)?.localization;
+  return useCallback(
+    (url: string) => (localization ? localizeUrl(url, localization) : url),
+    [localization],
   );
+}
+
+export function useLocalizedUrl(url: string): string {
+  const localize = useUrlLocalizer();
+  return useMemo(() => localize(url), [localize, url]);
 }

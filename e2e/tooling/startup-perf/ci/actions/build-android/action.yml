@@ -1,0 +1,118 @@
+name: "Build the startup measurement's Android app"
+description: "Builds the checked-out ref's detoxPreRelease APK (x86_64, JS bundled), prod-like unless told otherwise, and uploads it as startup-perf-android-<side>"
+# Runs after two checkouts: the ref to build at the workspace root, and this workflow's ci/ at
+# .startup-perf, as the ref may predate it. Composites read no secrets or vars: the job passes them.
+# No remote Nx, pnpm or Gradle cache: they would be written with develop's role for another ref.
+inputs:
+  side:
+    description: "a, b or snapshot: the artifact's suffix"
+    required: true
+  prod-like:
+    description: "Make the build prod-like and check it (prepare-build.mts, verify-build.mts); false for the snapshot's E2E build"
+    required: true
+  regression:
+    description: "The regression build B re-adds (known-regression), or empty"
+    required: false
+    default: ""
+  gh-token:
+    description: "GITHUB_TOKEN, for setup-caches"
+    required: true
+  artifactory-url:
+    description: "vars.ARTIFACTORY_URL"
+    required: true
+  artifactory-maven-url:
+    description: "vars.ARTIFACTORY_MAVEN_URL"
+    required: true
+  card-baanx-api-url:
+    description: "secrets.CARD_BAANX_API_URL"
+    required: true
+  card-baanx-client-key:
+    description: "secrets.CARD_BAANX_CLIENT_KEY"
+    required: true
+  card-baanx-hosted-ui:
+    description: "secrets.CARD_BAANX_HOSTED_UI"
+    required: true
+  card-oauth-redirect-uri:
+    description: "secrets.CARD_OAUTH_REDIRECT_URI"
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Set up the caches
+      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+      with:
+        use-mise: true
+        gh-token: ${{ inputs.gh-token }}
+        skip-nx-cache: "true"
+
+    - name: JFrog npm auth
+      uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+      with:
+        registry: ${{ inputs.artifactory-url }}
+
+    - name: JFrog Maven auth
+      uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-maven-auth@develop
+      with:
+        url: ${{ inputs.artifactory-maven-url }}
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+      with:
+        distribution: "zulu"
+        java-version: "17"
+
+    - name: Set up the Android SDK
+      uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
+      with:
+        packages: "platform-tools"
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm i --frozen-lockfile --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
+
+    - name: Build mobile dependencies
+      shell: bash
+      # Nx adds its run report to the job summary, with no setting to turn it off.
+      run: GITHUB_STEP_SUMMARY=/dev/null pnpm build:llm:deps
+
+    - name: Prepare the prod-like build
+      if: ${{ inputs.prod-like == 'true' }}
+      shell: bash
+      env:
+        STARTUP_PERF_REGRESSION: ${{ inputs.regression }}
+      run: node "$GITHUB_ACTION_PATH/../../prepare-build.mts"
+
+    - name: Build detoxPreRelease APK (x86_64, JS bundled)
+      shell: bash
+      env:
+        E2E_ANDROID_ABI: x86_64
+        CARD_BAANX_API_URL: ${{ inputs.card-baanx-api-url }}
+        CARD_BAANX_CLIENT_KEY: ${{ inputs.card-baanx-client-key }}
+        CARD_BAANX_HOSTED_UI: ${{ inputs.card-baanx-hosted-ui }}
+        CARD_OAUTH_REDIRECT_URI: ${{ inputs.card-oauth-redirect-uri }}
+      run: pnpm mobile e2e:build -c android.emu.prerelease
+
+    - name: Collect the APK
+      shell: bash
+      env:
+        PROD_LIKE: ${{ inputs.prod-like }}
+      run: |
+        set -euo pipefail
+        ci_dir="$GITHUB_ACTION_PATH/../.."
+        mkdir -p out
+        APK=$(find apps/ledger-live-mobile/android/app/build/outputs/apk/detoxPreRelease -name "*x86_64*.apk" | head -1)
+        [[ -n "$APK" ]] || { echo "::error::no x86_64 detoxPreRelease APK found"; exit 1; }
+        [[ "$PROD_LIKE" != true ]] || node "$ci_dir/verify-build.mts" android "$APK"
+        cp "$APK" out/app.apk
+        git rev-parse HEAD > out/sha.txt
+        bash "$ci_dir/toolchain.sh" record out/toolchain.txt
+        ls -la out
+
+    # A restore that failed partway may have published this name already.
+    - name: Upload the APK
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      with:
+        name: startup-perf-android-${{ inputs.side }}
+        path: out/
+        retention-days: 7
+        overwrite: true

@@ -34,7 +34,7 @@ type Props = {
   title?: React.ReactNode;
   withoutAppData?: boolean;
   accounts?: Account[];
-  customComponent?: React.FC<() => Promise<void>>;
+  renderCustomComponent?: (onExport: () => Promise<void>) => React.ReactNode;
 } & RestProps;
 /** When true, we're outside Redux Provider (e.g. crash screen); omit userId from export meta. */
 const ExportLogsBtnWithoutStore = (args: Props) => {
@@ -67,7 +67,7 @@ const ExportLogsBtnInner = ({
   small = true,
   title,
   accounts = [],
-  customComponent,
+  renderCustomComponent,
   userId,
   ...rest
 }: PropsWithUserId) => {
@@ -114,10 +114,10 @@ const ExportLogsBtnInner = ({
       setExporting(false);
     }
   }, [exporting, setExporting, exportLogs]);
-  useCtrlShortcut("e", handleExportLogs, Boolean(hookToShortcut) && !customComponent);
+  useCtrlShortcut("e", handleExportLogs, Boolean(hookToShortcut) && !renderCustomComponent);
   const text = title || t("settings.exportLogs.btn");
-  if (customComponent) {
-    return customComponent(handleExportLogs);
+  if (renderCustomComponent) {
+    return renderCustomComponent(handleExportLogs);
   }
   return hookToShortcut ? null : (
     <Button

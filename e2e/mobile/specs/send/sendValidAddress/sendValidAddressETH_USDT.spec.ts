@@ -1,15 +1,15 @@
 import { runSendValidAddressTest } from "@e2e/specs/send/send";
 
-const transaction = new Transaction(
-  TokenAccount.ETH_USDT_1,
-  TokenAccount.ETH_USDT_2,
-  "1",
-  Fee.MEDIUM,
-);
-runSendValidAddressTest(
+const transaction = new Transaction({
+  accountToDebit: TokenAccount.ETH_USDT_1,
+  accountToCredit: TokenAccount.ETH_USDT_2,
+  amount: "1",
+  speed: Fee.MEDIUM,
+});
+runSendValidAddressTest({
   transaction,
-  ["B2CQA-2703"],
-  "recipient and amount",
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
-  transaction.accountToDebit.currency.name,
-);
+  tmsLinks: ["B2CQA-2703"],
+  scenario: "recipient and amount",
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+  accountName: transaction.accountToDebit.currency.name,
+});

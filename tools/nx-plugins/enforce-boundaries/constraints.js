@@ -90,11 +90,21 @@ const LEGACY_PACKAGES = [
 ];
 
 /**
- * Third-party packages a tagged source may neither declare in its manifest nor import.
+ * Third-party packages a tagged source may neither declare in its manifest nor import:
+ * { sourceTag, packages, exceptProjects? }. `exceptProjects` lists graph node names the entry skips.
  * Entities hold schemas, types and state: no UI framework.
+ * `styled-components` stays behind `@features/platform-style` in the new layers.
  */
 const BANNED_EXTERNALS_BY_TAG = [
   { sourceTag: "type:domain-entity", packages: ["react", "react-native"] },
+  { sourceTag: "scope:shared", packages: ["styled-components"] },
+  { sourceTag: "scope:domain", packages: ["styled-components"] },
+  {
+    sourceTag: "scope:features",
+    packages: ["styled-components"],
+    exceptProjects: ["@features/platform-style"],
+  },
+  { sourceTag: "scope:support", packages: ["styled-components"] },
 ];
 
 /**

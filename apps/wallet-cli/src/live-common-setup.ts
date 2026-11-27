@@ -17,9 +17,10 @@ import {
 } from "@domain/entity-currency-crypto";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { calApiConfig } from "./shared/cal-config";
+import { calApiConfig, withCalServiceUrlOnFailure } from "./shared/cal-config";
 import { ledgerClientVersion } from "./shared/client-version";
 import { withDefaultUserAgent } from "./shared/default-user-agent";
+import { withRefusedTunnelAsResponse } from "./shared/refused-tunnel";
 import { applySwapApiBaseOverride } from "./shared/swap-api-base";
 
 /**
@@ -32,7 +33,9 @@ if (!process.env.USER_ID) {
 setEnv("LEDGER_CLIENT_VERSION", ledgerClientVersion);
 process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
 applySwapApiBaseOverride(process.env);
-globalThis.fetch = withDefaultUserAgent(globalThis.fetch, ledgerClientVersion);
+globalThis.fetch = withRefusedTunnelAsResponse(
+  withDefaultUserAgent(globalThis.fetch, ledgerClientVersion),
+);
 bridgeEnvToNetworkState();
 
 setCurrenciesResolver({
@@ -45,5 +48,10 @@ setCurrenciesResolver({
 setWalletAPIVersion(WALLET_API_VERSION);
 registerCoinModules(walletCliLoaders);
 LiveConfig.setConfig(walletCliConfig);
-setFrameworkCryptoAssetsStore(buildStandaloneCryptoAssetsStore(calApiConfig));
+setFrameworkCryptoAssetsStore(
+  withCalServiceUrlOnFailure(
+    buildStandaloneCryptoAssetsStore(calApiConfig),
+    calApiConfig.calServiceUrl,
+  ),
+);
 registerWalletCliDmkTransport();

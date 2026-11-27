@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import { useCallback, useState } from "react";
-import { useGlobalMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import { useGetGlobalMarketDataQuery } from "@domain/api-market-index-global";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
@@ -9,6 +9,9 @@ import { counterValueFormatter } from "LLM/features/Market/utils";
 import type { MarketCapCardViewModel } from "./types";
 
 const BUTTON_NAME = "market_cap_definition";
+
+/** Polling cadence of the market cap card: 3 minutes. */
+const MARKET_CAP_REFRESH_INTERVAL_MS = 180_000;
 
 function trackDefinitionPressed() {
   track("button_clicked", {
@@ -22,7 +25,10 @@ export function useMarketCapCardViewModel(): MarketCapCardViewModel {
   const { locale } = useLocale();
   const counterCurrency = useSelector(counterValueCurrencySelector).ticker.toLowerCase();
 
-  const { data, isLoading, isError } = useGlobalMarketData({ counterCurrency: "usd" });
+  const { data, isLoading, isError } = useGetGlobalMarketDataQuery(
+    { counterCurrency: "usd" },
+    { pollingInterval: MARKET_CAP_REFRESH_INTERVAL_MS },
+  );
   const { rate, status: rateStatus } = useUsdToFiatRate(counterCurrency);
 
   const handleOpenDrawer = useCallback(() => {

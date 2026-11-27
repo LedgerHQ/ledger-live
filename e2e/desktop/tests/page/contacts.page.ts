@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { AppPage } from "tests/page/abstractClasses";
 import { ContactDetailPage } from "tests/page/contactDetail.page";
 import { ContactAddDialog } from "tests/page/dialog/contactAdd.dialog";
@@ -45,18 +46,26 @@ export class ContactsPage extends AppPage {
 
   @step("Expect Me contact displayed")
   async expectMeContactDisplayed() {
-    await expect(this.meName).toHaveText(ME_CONTACT_DISPLAY_NAME);
+    await expect(this.meName).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.meName).toHaveText(ME_CONTACT_DISPLAY_NAME);
+    });
   }
 
   /** Me only survives a search when it matches the query itself — see `createContactsSearchViewModel`. */
   @step("Expect Me contact hidden")
   async expectMeContactHidden() {
-    await expect(this.meRow).toBeHidden();
+    await this.softExpect(async soft => {
+      await soft(this.meRow).toBeHidden();
+    });
   }
 
   @step("Expect Me contact address count to show $0")
   async expectMeAddressCount(expectedLabel: string) {
-    await expect(this.meAddressCount).toHaveText(expectedLabel);
+    await expect(this.meAddressCount).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.meAddressCount).toHaveText(expectedLabel);
+    });
   }
 
   @step("Open the Add contact dialog")
@@ -72,6 +81,7 @@ export class ContactsPage extends AppPage {
     await this.addDialog.confirm();
   }
 
+  @step("Read the saved contact id of $0")
   async getSavedContactId(name: string): Promise<string> {
     const nameLocator = this.savedContactName(name);
     await expect(nameLocator).toBeVisible();
@@ -94,8 +104,11 @@ export class ContactsPage extends AppPage {
 
   @step("Expect contact $0 address count to show $1")
   async expectSavedContactAddressCount(name: string, expectedLabel: string) {
-    const contactId = await this.getSavedContactId(name);
-    await expect(this.savedContactAddressCount(contactId)).toHaveText(expectedLabel);
+    const addressCount = this.savedContactAddressCount(await this.getSavedContactId(name));
+    await expect(addressCount).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(addressCount).toHaveText(expectedLabel);
+    });
   }
 
   @step("Open the contact row $0")
@@ -112,7 +125,13 @@ export class ContactsPage extends AppPage {
 
   @step("Expect contact row $0 to be named $1")
   async expectSavedContactRowName(contactId: string, name: string) {
-    await expect(this.savedContactRowName(contactId)).toHaveText(name);
+    await expect(this.savedContactRowName(contactId)).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(this.savedContactRowName(contactId)).toHaveText(name);
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Expect contact row $0 removed")

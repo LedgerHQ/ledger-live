@@ -2,24 +2,20 @@
 
 In the [MVVM](../../.agents/skills/mvvm-architecture/SKILL.md) split, the view model does two things per kind it shows, and the view only receives plain data:
 
-- **`useAccountData(kind, descriptor, { query })`** keeps that kind of that account read while mounted, and gives `pending`, `error`, `refresh`, and `hasMore` and `loadMore` for paged kinds. It returns no data.
-- **`useAccountDataBatch(kind, descriptors, { query })`** keeps that kind of many accounts read, with a different return: `accountUUIDs` in the order of the descriptors, `errors` (one `{ accountUUID, error }` per failed account), `pending` on first reads and refreshes only, and `refresh`. It has no `hasMore` or `loadMore`: page an account with `useAccountData`.
+- **`useAccountData(kind, accountUUID, { query })`** keeps that kind of that account read while mounted, and gives `pending`, `error`, `refresh`, and `hasMore` and `loadMore` for paged kinds. It returns no data.
+- **`useAccountDataBatch(kind, accountUUIDs, { query })`** keeps that kind of many accounts read, with a different return: `accountUUIDs` in the order given, `errors` (one `{ accountUUID, error }` per failed account), `pending` on first reads and refreshes only, and `refresh`. It has no `hasMore` or `loadMore`: page an account with `useAccountData`.
 - **The entity's selector** reads the data from its slice, by `AccountUUID` and the same query.
 
-The snippets type the store as `State`, the app's root state. Each app mounts the `accounts` slice at `accountEntries`.
+The snippets type the store as `State`, the app's root state. Each app mounts the `accounts` slice at `accountEntries`, and the `discoveredAccounts` slice at its name.
 
-## Find the descriptor
+## Hold the AccountUUID
+
+A screen holds the `AccountUUID`, for example from a route parameter, and passes it to the hooks: they resolve the descriptor from the slices that hold one, so the descriptor stays at the edges (the account data router and sources, discovery, the legacy bridge, wallet-cli, devtools), since its key is sensitive: the `accounts` slice, then the `discoveredAccounts` register of the accounts a scan found and the user has not added ([data layer](./data-layer.md#accounts-not-added-yet)). An account neither holds is not read.
 
 ```ts
-const { selectAccountEntry, selectAccountUUIDByLegacyId } = accountsSlice.getSelectors(
+const { selectAccountUUIDByLegacyId } = accountsSlice.getSelectors(
   (state: State) => state.accountEntries,
 );
-```
-
-From an `AccountUUID`, for example a route parameter:
-
-```ts
-const descriptor = useSelector((state: State) => selectAccountEntry(state, accountUUID))?.descriptor;
 ```
 
 Only at the boundary with a legacy screen that still holds an `Account`, get its `AccountUUID` first:
@@ -33,8 +29,8 @@ const accountUUID = useSelector((state: State) =>
 ## One kind of one account
 
 ```ts
-export function useAccountBalanceViewModel(descriptor: AccountDescriptor) {
-  const { accountUUID, pending, error, refresh } = useAccountData("balance", descriptor);
+export function useAccountBalanceViewModel(uuid: AccountUUID) {
+  const { accountUUID, pending, error, refresh } = useAccountData("balance", uuid);
   const balances = useSelector((state: State) =>
     accountUUID ? selectAccountBalances(state, accountUUID) : undefined,
   );
@@ -49,10 +45,10 @@ export function useAccountBalanceViewModel(descriptor: AccountDescriptor) {
 A token page shows the token's balance row and its operations, valued in the user's fiat, page by page. Each kind is its own read, with its own status; the view model combines them:
 
 ```ts
-export function useTokenPageViewModel(descriptor: AccountDescriptor, assetId: CryptoOrTokenCurrencyId, fiat: FiatCurrencyTicker) {
+export function useTokenPageViewModel(uuid: AccountUUID, assetId: CryptoOrTokenCurrencyId, fiat: FiatCurrencyTicker) {
   const query: AccountOperationsQuery = { filterAsset: assetId, countervalue: fiat, limit: 20 };
-  const balance = useAccountData("balance", descriptor);
-  const operations = useAccountData("operations", descriptor, { query });
+  const balance = useAccountData("balance", uuid);
+  const operations = useAccountData("operations", uuid, { query });
   const { accountUUID } = balance;
 
   const assetBalance = useSelector((state: State) =>
@@ -84,17 +80,17 @@ A cross-account figure is a selector over each account's entity, never a kind. H
 > This example needs [#24309](https://github.com/LedgerHQ/ledger-live/pull/24309) (`balanceHistory` valued in a fiat), not merged yet: on develop `balanceHistory` takes no `countervalue` and its points have no `countervalues`.
 
 ```ts
-const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+const { selectAccountUUIDs } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
 export const selectWalletBalanceHistory = createSelector(
   [
-    selectAccountEntries,
+    selectAccountUUIDs,
     (state: State) => state.accountBalanceHistories,
     (_: State, range: BalanceHistoryRange) => range,
     (_: State, _range: BalanceHistoryRange, fiat: CountervalueTicker) => fiat,
   ],
-  (entries, histories, range, fiat) => {
-    const read = entries.map(({ accountUUID }) => histories[accountUUID]?.[range]);
+  (accountUUIDs, histories, range, fiat) => {
+    const read = accountUUIDs.map(accountUUID => histories[accountUUID]?.[range]);
     // An account not read yet would pass a partial sum for the total.
     if (!read.every(history => history !== undefined)) return undefined;
     const series = read
@@ -118,8 +114,8 @@ const bucketOf = (date: string, range: BalanceHistoryRange) => date.slice(0, ran
 
 export function useWalletBalanceViewModel(range: BalanceHistoryRange, fiatTicker: FiatCurrencyTicker) {
   const fiat = CountervalueTickerSchema.parse(fiatTicker); // from @domain/entity-account-balance, the brand balanceHistory keys by
-  const descriptors = useSelector((state: State) => selectAccountEntries(state).map(e => e.descriptor), shallowEqual);
-  const { pending, errors, refresh } = useAccountDataBatch("balanceHistory", descriptors, { query: { range, countervalue: fiat } });
+  const accountUUIDs = useSelector(selectAccountUUIDs);
+  const { pending, errors, refresh } = useAccountDataBatch("balanceHistory", accountUUIDs, { query: { range, countervalue: fiat } });
   const series = useSelector((state: State) => selectWalletBalanceHistory(state, range, fiat));
   const latest = series?.length === 0 ? { value: BigInt(0) } : series?.at(-1); // no point at all: a known zero
   const total = pending || errors.length > 0 ? undefined : latest?.value; // in the fiat's smallest unit

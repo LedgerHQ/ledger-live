@@ -372,6 +372,18 @@ describe("logic/history/listOperations", () => {
     expect(page.items.map(o => o.tx.hash)).toEqual(["AAA", "BBB"]);
   });
 
+  it.each([
+    ["ascending", ["AAA", "BBB", "CCC"]],
+    ["descending", ["CCC", "BBB", "AAA"]],
+    ["shuffled", ["BBB", "CCC", "AAA"]],
+  ])("orders three equal-height operations by hash when fetched %s", async (_name, hashes) => {
+    const api = apiWith(hashes.map(txhash => makeTx({ txhash, height: "100" })));
+
+    const page = await listOperations(config, api, ADDR, { minHeight: 0 });
+
+    expect(page.items.map(o => o.tx.hash)).toEqual(["AAA", "BBB", "CCC"]);
+  });
+
   describe("failed transactions", () => {
     const makeFailedTx = (txhash = "FAILED"): CosmosTx =>
       ({ ...makeTx({ txhash }), code: 5 }) as unknown as CosmosTx;

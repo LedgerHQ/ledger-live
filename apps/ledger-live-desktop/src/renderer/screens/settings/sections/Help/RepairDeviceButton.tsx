@@ -1,19 +1,20 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useRef, useEffect, type ReactNode } from "react";
 import { useNavigate } from "react-router";
 import repairFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { useTranslation } from "react-i18next";
 import logger from "~/renderer/logger";
 import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import RepairModal from "~/renderer/modals/RepairModal";
-import { setTrackingSource } from "@shared/analytics";
+import { setTrackingSource, track } from "@shared/analytics";
 import { Subscription } from "rxjs";
 
 type Props = {
   buttonProps?: ButtonProps;
   onRepair?: (a: boolean) => void;
+  renderCustomComponent?: (onOpen: () => void) => ReactNode;
 };
 
-function RepairDeviceButton({ buttonProps, onRepair }: Readonly<Props>) {
+function RepairDeviceButton({ buttonProps, onRepair, renderCustomComponent }: Readonly<Props>) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [opened, setOpened] = useState(false);
@@ -86,11 +87,20 @@ function RepairDeviceButton({ buttonProps, onRepair }: Readonly<Props>) {
     [isLoading, navigate, onRepair],
   );
 
+  const handleOpen = useCallback(() => {
+    track("RepairDeviceButton");
+    open();
+  }, [open]);
+
   return (
     <>
-      <Button {...buttonProps} primary onClick={open} event="RepairDeviceButton">
-        {t("settings.repairDevice.button")}
-      </Button>
+      {renderCustomComponent ? (
+        renderCustomComponent(handleOpen)
+      ) : (
+        <Button {...buttonProps} primary onClick={handleOpen}>
+          {t("settings.repairDevice.button")}
+        </Button>
+      )}
 
       <RepairModal
         cancellable

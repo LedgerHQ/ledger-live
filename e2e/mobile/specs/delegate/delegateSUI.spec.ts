@@ -1,9 +1,13 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runSuiDelegateTest } from "@e2e/specs/delegate/delegate";
 
-const delegation = new Delegate(Account.SUI_1, "1", "Ledger by Figment");
-runSuiDelegateTest(
+const delegation = new Delegate({
+  account: Account.SUI_1,
+  amount: "1",
+  provider: "Ledger by Figment",
+});
+runSuiDelegateTest({
   delegation,
-  ["B2CQA-387"],
-  ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@sui`, `@family-sui`],
-);
+  tmsLinks: ["B2CQA-387"],
+  tags: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@sui`, `@family-sui`],
+});

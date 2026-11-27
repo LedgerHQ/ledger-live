@@ -11,18 +11,25 @@ import { AccountsActionTypes } from "./types";
 import logger from "../logger";
 import { getDefaultAccountName, initFromUserData } from "@domain/entity-account-name";
 import { checkAccountSupported } from "@ledgerhq/live-common/account/index";
-import { initStarredFromIds } from "@domain/entity-starred-account";
 import type { Dispatch } from "redux";
 
-const version = 0; // FIXME this needs to come from user data
+type StoredAccount = { data: AccountRaw; version?: number };
 
-export const importStore = async (rawAccounts: { active: { data: AccountRaw }[] }) => {
+const LEGACY_UNKNOWN_VERSION = 1;
+
+function migrationVersionOf({ version }: StoredAccount): number {
+  if (version === undefined || version === LEGACY_UNKNOWN_VERSION) return 0;
+  return version;
+}
+
+export const importStore = async (rawAccounts: { active: StoredAccount[] }) => {
   const decodePromises: Array<Promise<[Account, AccountUserData] | null>> = [];
 
   if (rawAccounts && Array.isArray(rawAccounts.active)) {
-    for (const { data } of rawAccounts.active) {
+    for (const storedAccount of rawAccounts.active) {
+      const { data } = storedAccount;
       decodePromises.push(
-        accountModel.decode({ data, version }).catch(error => {
+        accountModel.decode({ data, version: migrationVersionOf(storedAccount) }).catch(error => {
           if (error instanceof Error) {
             logger.critical(error);
             console.error(`Critical: Failed to decode account ${data.id}:`, error.message);
@@ -54,7 +61,6 @@ export const importStore = async (rawAccounts: { active: { data: AccountRaw }[] 
       payload: { accounts, accountsUserData },
     });
     dispatch(initFromUserData(accountsUserData.map(({ id, name }) => ({ id, name }))));
-    dispatch(initStarredFromIds(supported.flatMap(([, userData]) => userData.starredIds)));
   };
 };
 export const reorderAccounts = createAction<AccountsReorderPayload>(

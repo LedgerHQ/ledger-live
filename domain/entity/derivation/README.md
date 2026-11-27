@@ -7,6 +7,8 @@ The derivation modes of a currency, as data: which modes an account scan goes th
 
 - `derivationModesOf(currency)`, `scanOf(currency, mode, rules)`, `offersNewAccount(currency, mode, rules)`.
 - `candidateOf(currency, mode, index)`: an `AccountCandidate`, the network, `AccountPath` and `AddressPath` of one account. The device turns it into an `AccountDescriptor` by deriving its key.
+- `DerivationPathSchema`: branded `DerivationPath`, a full BIP32 path read with `h` hardened markers (`'` and `H` are read as `h`, the `canonicalPath` spelling the descriptor key uses too).
+- `toDescriptorPath` / `fromDescriptorPath` / `LegacyDerivationPathSchema`: the only bridges from and to the legacy path spelling (`44'/60'/0'/0/0`) that ledgerjs signers and derivation schemes read.
 - No string in the tables: a scheme goes through `derivationScheme("44'/<coin_type>'/…")`, checked when typed; currency ids through `byCurrency({…})` or `currencies(…)`, branded `CryptoCurrencyId`.
 
 ## A mirror of `derivation.ts`

@@ -97,9 +97,13 @@ export async function estimateFees(
   if (TOKEN_AUTHORITY_TYPES.has(intent.type)) {
     const ownerTokenAccount = mint && (await ownerAssociatedTokenAccount(intent, mint));
     const ataRent = intent.type === "token.createATA" && mint ? await ownerAtaRent(api, mint) : 0n;
+    const parameters = {
+      ...(ownerTokenAccount ? { ownerTokenAccount } : {}),
+      ...(ataRent > 0n ? { tokenAccountDeposit: ataRent } : {}),
+    };
     return {
       value: BigInt(fee) + ataRent,
-      ...(ownerTokenAccount ? { parameters: { ownerTokenAccount } } : {}),
+      ...(Object.keys(parameters).length > 0 ? { parameters } : {}),
     };
   }
 
@@ -137,6 +141,7 @@ export async function estimateFees(
             ? { recipientWalletAddress: destination.walletAddress }
             : {}),
           userInputType: destination.userInputType,
+          ...(destination.ataRent > 0n ? { tokenAccountDeposit: destination.ataRent } : {}),
         }
       : {}),
   };

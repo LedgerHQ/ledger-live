@@ -4,9 +4,21 @@ import userEvent from "@testing-library/user-event";
 import AccountName from "./AccountName";
 
 const names = [
-  { legacyId: "js:2:ethereum:0xabc:", accountUUID: "uuid-1", name: "Savings", isDefault: false },
-  { legacyId: "js:2:bitcoin:xpub:", accountUUID: "uuid-2", name: "Bitcoin 1", isDefault: true },
-  { legacyId: "js:2:ethereum:0xabc:+usdc", name: "Stables", isDefault: false },
+  {
+    key: "k1",
+    legacyId: "js:2:ethereum:0xabc:",
+    accountUUID: "uuid-1",
+    name: "Savings",
+    isDefault: false,
+  },
+  {
+    key: "k2",
+    legacyId: "js:2:bitcoin:xpub:",
+    accountUUID: "uuid-2",
+    name: "Bitcoin 1",
+    isDefault: true,
+  },
+  { key: "k3", legacyId: "js:2:ethereum:0xabc:+usdc", name: "Stables", isDefault: false },
 ];
 
 const nameOf = (accountUUID: string) => (accountUUID === "uuid-1" ? "Savings" : undefined);

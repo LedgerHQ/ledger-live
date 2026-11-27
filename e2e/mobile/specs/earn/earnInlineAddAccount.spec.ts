@@ -7,4 +7,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
-runInlineAddAccountTest(testConfig.account, testConfig.tmsLinks, testConfig.tags);
+runInlineAddAccountTest(testConfig);

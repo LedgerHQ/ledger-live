@@ -9,7 +9,7 @@ import {
 import { DeviceActionStoppedError } from "../device/deviceAction";
 import { isCatalogueUnreachable } from "../device/errors";
 import { createRetryPolicy } from "../retry";
-import { runActor, settle } from "../tests/actorHarness";
+import { runActor, settle } from "../__tests__/actorHarness";
 import { createFakeDeviceActionDmk, type FakeDeviceActionDmk } from "../tests/fakeDmk";
 import type { AvailableFirmwareUpdate } from "../types";
 import { firmwareCheck, mapFirmwareMetadata, type FirmwareCheckEvent } from "./firmwareCheck";

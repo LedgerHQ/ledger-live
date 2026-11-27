@@ -2,16 +2,15 @@ import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ledgerhq/lumen-ui-react";
 import { Information } from "@ledgerhq/lumen-ui-react/symbols";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getParentAccount } from "@ledgerhq/live-common/account/helpers";
-import { isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
+import { formatTrustLimit } from "@ledgerhq/live-common/families/xrp/tokens";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { formatLongTrustLimit, getXrpResources, hasTokenStandardEnabled } from "./utils";
+import { getXrpResources, hasTokenStandardEnabled } from "./utils";
 
 const AccountBalanceSummaryFooter = ({ account }: { account: Account | TokenAccount }) => {
   const discreet = useDiscreetMode();
@@ -27,10 +26,13 @@ const AccountBalanceSummaryFooter = ({ account }: { account: Account | TokenAcco
   const limit = xrpResources?.limit;
   if (!limit || !hasTokenStandardEnabled(parentAccount)) return null;
 
-  const formattedLimit = isMaxTrustLimit(limit)
-    ? t("xrp.addToken.steps.settings.maximum")
-    : (formatLongTrustLimit(limit, unit, locale) ??
-      formatCurrencyUnit(unit, limit, { discreet, locale, showCode: true }));
+  const formattedLimit = formatTrustLimit({
+    limit,
+    unit,
+    locale,
+    discreet,
+    maximumLabel: t("xrp.addToken.steps.settings.maximum"),
+  });
 
   return (
     <div className="mt-20 flex items-center border-t border-muted-subtle px-32 pt-32">

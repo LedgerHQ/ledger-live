@@ -5,7 +5,19 @@
 
 ## Why
 
-The account descriptor (see the [ADR](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7599489111/ADR+Account+descriptor+as+the+common+account+identity)) is the common identity of an account. This package holds it as a shared entity.
+The account descriptor (see the [ADR](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7599489111/ADR+Account+descriptor+as+the+common+account+identity)) is the common identity of an account. This package holds it for the edges only.
+
+## Edges only; hold the AccountUUID from `@domain/entity-account`
+
+The `key` is sensitive: an xpub reveals the whole history of an account, an address is personal data. Code holds the `AccountUUID` of [`@domain/entity-account`](../account); only the edges import this package: the account data router (`domain/api/account-data`) and hooks (`features/platform/account-data`), the data sources (`features/platform/account-source-*`), discovery, the legacy bridge in live-common, `apps/wallet-cli` and `devtools/`. `@domain/entity-account` keeps it in `AccountEntry`; `features/flow/receive` still reads it until it moves to the `AccountUUID`. Show a key with `maskAccountKey` (`xpub6B…WNzh`), never in full.
+
+What the rest of the code needs lives elsewhere:
+
+| Need | Package |
+| --- | --- |
+| `AccountUUID`, `AccountUUIDSchema` | [`@domain/entity-account`](../account); `computeAccountUUID` in `@domain/entity-account/descriptor` |
+| `NetworkId`, `Address`, `networkFromCurrencyId` (and deprecated `currencyIdFromNetwork`) | [`@domain/entity-network`](../network) — limit `currencyIdFromNetwork` to legacy reconciliation |
+| `DerivationPath`, the legacy path bridges | [`@domain/entity-derivation`](../derivation) |
 
 ## Format (version 2)
 
@@ -33,13 +45,5 @@ mock:2:address:ethereum:0x0000000000000000000000000000000000000001:m/44h/60h/0h/
 | `AccountDescriptorSchema` | zod union of `utxo` (xpub, hardened-only path) and `address` descriptors; `'` and `H` hardened markers are read as `h` |
 | `serializeAccountDescriptor` / `parseAccountDescriptor` | `<purpose>:2:<type>:<network_id>:<key>:<path>`; a parsed descriptor always has `h` markers |
 | `accountDescriptorKey` | canonical key: the serialized descriptor, normalized (see `key.ts`): `h` markers, lowercase network, lowercase `0x` address or hex public key |
-| `computeAccountUUID` | uuid v5 of the canonical key; same on every device, carries no account key |
-| `NetworkIdSchema` / `NetworkId` | branded network id; parsed and deserialized descriptors carry it |
-| `AddressSchema` / `Address` | an address on a network, branded so analytics can refuse it |
-| `DerivationPathSchema` | a full BIP32 path, read with `h` hardened markers |
-| `toNetworkId` | a `NetworkId` from a string; throws `UnknownNetworkError` for an empty or malformed id |
-| `networkFromCurrencyId` / `currencyIdFromNetwork` | the only bridge between `NetworkId` and `CryptoCurrencyId` |
-
-## NetworkId vs CryptoCurrencyId
-
-A `NetworkId` names the chain a descriptor lives on; a `CryptoCurrencyId` (`@domain/entity-currency-crypto`) names a currency. Both are branded, so one cannot be passed for the other. They hold the same string for now, but `networkFromCurrencyId` and `currencyIdFromNetwork` are the only way to convert, and they throw `UnknownNetworkError` for an unknown id. Keep their call sites few: carry a `NetworkId` where code is about the network, and get a `NetworkId` from `NetworkIdSchema.parse` or a parsed descriptor.
+| `maskAccountKey` | the one display form of a key or an address: `xpub6B…WNzh`; devtools only |
+| `InvalidAccountDescriptorError` | thrown by `parseAccountDescriptor` |

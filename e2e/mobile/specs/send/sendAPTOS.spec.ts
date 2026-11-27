@@ -1,9 +1,13 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runSendTest } from "@e2e/specs/send/send";
 
-const transaction = new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001");
-runSendTest(
+const transaction = new Transaction({
+  accountToDebit: Account.APTOS_1,
+  accountToCredit: Account.APTOS_2,
+  amount: "0.0001",
+});
+runSendTest({
   transaction,
-  ["B2CQA-2920"],
-  ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@aptos", "@family-aptos"],
-);
+  tmsLinks: ["B2CQA-2920"],
+  tags: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@aptos", "@family-aptos"],
+});

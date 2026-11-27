@@ -1,5 +1,6 @@
 import { TypedDataEncoder, Wallet, type TypedDataDomain } from "ethers";
-import { getBindingTypedData, isBindingSigner, type PredictionsTypedData } from "../binding";
+import { getBindingTypedData } from "../binding";
+import { isTypedDataSigner, type PredictionsTypedData } from "../typedData";
 
 const wallet = new Wallet(`0x${"11".repeat(32)}`);
 
@@ -14,14 +15,20 @@ const signedBy =
   };
 
 describe("Predictions account binding", () => {
-  it("asks to confirm ownership of the account, with the delegation notice, on Polygon", () => {
+  it("asks to confirm ownership of the account, with the delegation notice, on Polygon, at the zero address its clear signing descriptor is keyed on", () => {
     expect(getBindingTypedData(wallet.address)).toEqual({
-      domain: { name: "Ledger Predictions", version: "1", chainId: 137 },
+      domain: {
+        name: "Ledger Predictions",
+        version: "1",
+        chainId: 137,
+        verifyingContract: "0x0000000000000000000000000000000000000000",
+      },
       types: {
         EIP712Domain: [
           { name: "name", type: "string" },
           { name: "version", type: "string" },
           { name: "chainId", type: "uint256" },
+          { name: "verifyingContract", type: "address" },
         ],
         ConfirmAccountOwnership: [
           { name: "action", type: "string" },
@@ -42,20 +49,20 @@ describe("Predictions account binding", () => {
   it("accepts a signature from the account", () => {
     const typedData = getBindingTypedData(wallet.address);
 
-    expect(isBindingSigner(wallet.address, typedData, signedBy(wallet)(typedData))).toBe(true);
+    expect(isTypedDataSigner(wallet.address, typedData, signedBy(wallet)(typedData))).toBe(true);
   });
 
   it("rejects a signature from another account", () => {
     const typedData = getBindingTypedData(wallet.address);
     const otherWallet = new Wallet(`0x${"22".repeat(32)}`);
 
-    expect(isBindingSigner(wallet.address, typedData, signedBy(otherWallet)(typedData))).toBe(
+    expect(isTypedDataSigner(wallet.address, typedData, signedBy(otherWallet)(typedData))).toBe(
       false,
     );
   });
 
   it("rejects a signature that can't be recovered", () => {
-    expect(isBindingSigner(wallet.address, getBindingTypedData(wallet.address), "0x1234")).toBe(
+    expect(isTypedDataSigner(wallet.address, getBindingTypedData(wallet.address), "0x1234")).toBe(
       false,
     );
   });

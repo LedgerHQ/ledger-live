@@ -256,14 +256,17 @@ export default withRozeniteUrlFix(
               "src/getRandomValuesPolyfill.ts",
             ),
             // RNFB modules import it through `exports`, whose `*.js` target skips platform
-            // resolution and pulls in the web build, which needs the uninstalled `firebase` SDK
-            "@react-native-firebase/app/dist/module/internal/nativeModule$": resolvePackageFile(
-              "@react-native-firebase/app",
-              "dist",
-              "module",
-              "internal",
-              `nativeModule.${platform}.js`,
-            ),
+            // resolution and pulls in the web build, which needs the uninstalled `firebase` SDK.
+            // Tools that load this config without a platform (knip) skip it.
+            ...(platform && {
+              "@react-native-firebase/app/dist/module/internal/nativeModule$": resolvePackageFile(
+                "@react-native-firebase/app",
+                "dist",
+                "module",
+                "internal",
+                `nativeModule.${platform}.js`,
+              ),
+            }),
           },
           fallback: {
             ...require("node-libs-react-native"),

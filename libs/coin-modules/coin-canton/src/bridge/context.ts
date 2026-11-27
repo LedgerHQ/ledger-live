@@ -1,16 +1,9 @@
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { CantonCoinConfig, CantonContext } from "../config";
+import { pinConfig, type CantonContext } from "../config";
 
-// logic/ calls `context.config()` without an id, so pin it to the account's currency.
-export const getCurrencyContext = (
+// logic/ and network/ call `context.config()` without an id, so pin it to the account's currency.
+// Resolved once, so one operation sees one config.
+export const getCurrencyContext = async (
   context: CantonContext,
   currency: CryptoCurrency,
-): CantonContext => ({
-  ...context,
-  config: () => context.config(currency.id),
-});
-
-export const pinConfig = (context: CantonContext, config: CantonCoinConfig): CantonContext => ({
-  ...context,
-  config: () => Promise.resolve(config),
-});
+): Promise<CantonContext> => pinConfig(context, await context.config(currency.id));

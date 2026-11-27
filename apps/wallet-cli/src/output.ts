@@ -10,8 +10,8 @@
 
 import type { Spinner } from "yocto-spinner";
 import { z } from "zod";
-import type { Address } from "@domain/entity-account-descriptor";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import type { Address } from "@domain/entity-network";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { type DeviceState, isTerminalDeviceState, renderDeviceState } from "./device/device-state";
 import { type UsbAccessEvidence, usbAccessHint } from "./device/usb-access-evidence";
@@ -20,6 +20,7 @@ import { KeychainUnavailableError } from "./key-ring/keychain-unavailable-error"
 import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
 import { makeEnvelope } from "./shared/response";
+import { failedRequestHint, findFailedRequest } from "./shared/failed-request";
 import {
   spinner,
   colors,
@@ -442,6 +443,7 @@ class HumanCommandOutput implements CommandOutput {
       const displayText = HumanCommandOutput._formatErrorForSpinner(err);
       this._activeSpin?.error(displayText);
       this._activeSpin = null;
+      HumanCommandOutput._writeFailedRequestHint(err);
       throw err;
     }
   }
@@ -461,6 +463,11 @@ class HumanCommandOutput implements CommandOutput {
     return HumanFormatter.formatError(err);
   }
 
+  private static _writeFailedRequestHint(err: unknown): void {
+    const failedRequest = findFailedRequest(err);
+    if (failedRequest) writeStderr(failedRequestHint(failedRequest) + "\n");
+  }
+
   private _exitWithDeviceError(err: WalletCliDeviceError): never {
     const displayText = HumanCommandOutput._formatErrorForSpinner(err);
     if (isInteractive() && this._activeSpin) {
@@ -472,6 +479,8 @@ class HumanCommandOutput implements CommandOutput {
     if (err.state.code === "unknown" && err.state.usbAccess) {
       writeStderr(colors.dim(`    ${describeUsbAccess(err.state.usbAccess)}`) + "\n");
     }
+    // account discover maps every failure, an explorer request too, to a device error.
+    HumanCommandOutput._writeFailedRequestHint(err);
     throw new CliProcessExitError(err.exitCode);
   }
 
@@ -1234,6 +1243,10 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   private _errorEnvelope(e: unknown): Record<string, unknown> {
+    const failedRequest = findFailedRequest(e);
+    const failedRequestFields = failedRequest
+      ? { host: failedRequest.host, hint: failedRequestHint(failedRequest) }
+      : {};
     if (e instanceof WalletCliDeviceError) {
       const { message } = renderDeviceState(e.state);
       return {
@@ -1244,7 +1257,7 @@ class JsonCommandOutput implements CommandOutput {
           message,
           ...(e.state.code === "unknown" && e.state.usbAccess
             ? usbAccessFields(e.state.usbAccess)
-            : {}),
+            : failedRequestFields),
         },
       };
     }
@@ -1264,6 +1277,7 @@ class JsonCommandOutput implements CommandOutput {
         ...(e instanceof CodedCommandError ? { code: e.code } : {}),
         message: HumanFormatter.formatError(e),
         ...(typeof httpStatus === "number" ? { http_status: httpStatus } : {}),
+        ...failedRequestFields,
       },
     };
   }
@@ -1333,7 +1347,7 @@ class JsonCommandOutput implements CommandOutput {
 
   async operations(items: Operation[], currencyId: string, nextCursor?: string): Promise<void> {
     const operations = await this._jsonFmt.operations(items, currencyId, this._ctx.account ?? "");
-    this._writeNdjson(this._envelope({ operations, nextCursor }));
+    this._writeNdjson(this._envelope({ operations, nextCursor: nextCursor ?? null }));
   }
 
   address(addr: Address, verified: boolean): void {

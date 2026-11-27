@@ -25,10 +25,9 @@ export function View({
   onDeviceConfirm,
   onModalClose,
 }: PendingTransferProposalsViewModel) {
-  if (incomingCount === 0 && outgoingCount === 0) {
-    return null;
-  }
+  const hasProposals = incomingCount > 0 || outgoingCount > 0;
 
+  // The modal outlives the list: unmounted while open, it would reopen on the next offer and replay its action
   return (
     <>
       <DeviceAppModal
@@ -38,24 +37,28 @@ export function View({
         onClose={onModalClose}
         appName={appName}
       />
-      <ProposalsTable
-        proposals={groupedIncoming}
-        count={incomingCount}
-        titleKey="families.canton.pendingTransactions.incoming.title"
-        isIncomingTable={true}
-        unit={unit}
-        onRowClick={onRowClick}
-        onOpenModal={onOpenModal}
-      />
-      <ProposalsTable
-        proposals={groupedOutgoing}
-        count={outgoingCount}
-        titleKey="families.canton.pendingTransactions.outgoing.title"
-        isIncomingTable={false}
-        unit={unit}
-        onRowClick={onRowClick}
-        onOpenModal={onOpenModal}
-      />
+      {hasProposals && (
+        <>
+          <ProposalsTable
+            proposals={groupedIncoming}
+            count={incomingCount}
+            titleKey="families.canton.pendingTransactions.incoming.title"
+            isIncomingTable={true}
+            unit={unit}
+            onRowClick={onRowClick}
+            onOpenModal={onOpenModal}
+          />
+          <ProposalsTable
+            proposals={groupedOutgoing}
+            count={outgoingCount}
+            titleKey="families.canton.pendingTransactions.outgoing.title"
+            isIncomingTable={false}
+            unit={unit}
+            onRowClick={onRowClick}
+            onOpenModal={onOpenModal}
+          />
+        </>
+      )}
     </>
   );
 }

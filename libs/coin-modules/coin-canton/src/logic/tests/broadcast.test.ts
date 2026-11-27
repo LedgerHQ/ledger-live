@@ -1,6 +1,6 @@
 import { InvalidTransactionError } from "@ledgerhq/coin-module-framework/errors";
 import { isGatewayEnabled, submit } from "../../network/gateway";
-import { createMockCoinConfigValue, createMockContext } from "../../test/fixtures";
+import { configOfCall, createMockCoinConfigValue, createMockContext } from "../../test/fixtures";
 import { broadcast } from "../broadcast";
 
 jest.mock("../../network/gateway", () => ({
@@ -31,7 +31,13 @@ describe("broadcast", () => {
 
     const result = await broadcast(mockContext, signedTx);
 
-    expect(mockedSubmit).toHaveBeenCalledWith(mockConfig, PARTY, "serialized-data", "signature");
+    expect(mockedSubmit).toHaveBeenCalledWith(
+      expect.anything(),
+      PARTY,
+      "serialized-data",
+      "signature",
+    );
+    expect(await configOfCall(mockedSubmit.mock.calls[0])).toBe(mockConfig);
     expect(result).toEqual("test-update-id");
   });
 

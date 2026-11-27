@@ -11,6 +11,7 @@ export const lldDatadog = flagWith(
     profilingSampleRate: z.number().optional(),
     trackUserInteractions: z.boolean().optional(),
     trackResources: z.boolean().optional(),
+    propagateTraceBaggage: z.boolean().optional(),
   },
   {
     enabled: false,
@@ -23,6 +24,7 @@ export const lldDatadog = flagWith(
       profilingSampleRate: 25,
       trackUserInteractions: true,
       trackResources: true,
+      propagateTraceBaggage: false,
     },
   },
 );

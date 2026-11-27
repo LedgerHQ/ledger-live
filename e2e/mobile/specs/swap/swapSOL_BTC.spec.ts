@@ -1,11 +1,11 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runSwapTest } from "@e2e/specs/swap/swap";
 
-runSwapTest(
-  Account.SOL_1,
-  Account.BTC_NATIVE_SEGWIT_1,
-  ["B2CQA-2776"],
-  [
+runSwapTest({
+  accountToDebit: Account.SOL_1,
+  accountToCredit: Account.BTC_NATIVE_SEGWIT_1,
+  tmsLinks: ["B2CQA-2776"],
+  tags: [
     "@NanoSP",
     "@LNS",
     "@NanoX",
@@ -17,4 +17,4 @@ runSwapTest(
     "@bitcoin",
     "@family-bitcoin",
   ],
-);
+});

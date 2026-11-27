@@ -1,6 +1,6 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { InvalidParameterError } from "@ledgerhq/coin-module-framework/errors";
-import type { CantonContext } from "../config";
+import { pinConfig, type CantonContext } from "../config";
 import { prepareTransferRequest } from "../network/gateway";
 import type { PrepareTransferRequest } from "../types/gateway";
 import type { CantonCraftedEnvelope, CantonMemo } from "../types/transaction";
@@ -37,6 +37,7 @@ export async function craftTransaction(
   }
   const reason = reasonOf(intent);
   const config = await context.config();
+  const pinned = pinConfig(context, config);
   const { instrumentId, instrumentAdmin } = instrumentOf(intent.asset, config.nativeInstrumentId);
 
   const params: PrepareTransferRequest = {
@@ -48,7 +49,7 @@ export async function craftTransaction(
     ...(reason ? { reason } : {}),
     ...(instrumentAdmin ? { instrument_admin: instrumentAdmin } : {}),
   };
-  const { serialized, json, hash } = await prepareTransferRequest(config, intent.sender, params);
+  const { serialized, json, hash } = await prepareTransferRequest(pinned, intent.sender, params);
 
   const envelope: CantonCraftedEnvelope = { party: intent.sender, serialized, json };
   return { transaction: JSON.stringify(envelope), details: { hash } };

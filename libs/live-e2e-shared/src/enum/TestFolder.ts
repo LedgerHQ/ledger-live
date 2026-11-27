@@ -17,7 +17,6 @@ export function sendFolder(accountToDebit: { parentAccount?: unknown }): TestFol
 // The scenario under a send folder (Team / Send folder / Scenario / test), the same on both apps.
 export enum SendScenario {
   TRANSACTION = "Transaction",
-  VALID_ADDRESS = "Valid Address",
   INVALID_ADDRESS = "Invalid Address",
   ENS_ADDRESS = "ENS Address",
   INVALID_AMOUNT = "Invalid Amount",

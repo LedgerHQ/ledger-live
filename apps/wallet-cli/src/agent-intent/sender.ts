@@ -1,6 +1,6 @@
+import type { Address } from "@domain/entity-network";
 import { resolveAccountDescriptorV1 } from "../commands/inputs";
 import { addressOfV1, type AccountDescriptorV1 } from "../shared/accountDescriptor";
-import type { Address } from "@domain/entity-account-descriptor";
 import { parseEvmAddress } from "./evm";
 
 const MAINNET_ACCOUNT = {

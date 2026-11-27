@@ -1,6 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
 import { LocalTracer, TraceContext } from "@ledgerhq/logs";
-import WS from "isomorphic-ws";
 import { Observable, Subject } from "rxjs";
 import {
   DisconnectedDeviceDuringOperation,
@@ -72,7 +71,7 @@ export function createDeviceSocket(
     let inBulkMode = false; // we have an array of apdus to exchange, without the need of more WS messages.
     let allowSecureChannelTimeout: NodeJS.Timeout | null = null; // allows to delay/cancel the user confirmation event
     let deviceIdCaptured = false; // track if we've already captured the device id
-    const ws = new WS(url);
+    const ws = new WebSocket(url);
 
     ws.onopen = () => {
       tracer.trace("Socket opened", { url: safeUrl });
@@ -86,9 +85,12 @@ export function createDeviceSocket(
       if (inBulkMode) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
 
       o.error(
-        new WebsocketConnectionError(e.message, {
-          url: safeUrl,
-        }),
+        new WebsocketConnectionError(
+          "message" in e && typeof e.message === "string" ? e.message : undefined,
+          {
+            url: safeUrl,
+          },
+        ),
       );
     };
 
@@ -416,7 +418,7 @@ export function createDeviceSocket(
         }
       }
 
-      if (ws.readyState === 1) {
+      if (ws.readyState === WebSocket.OPEN) {
         // connection still active. we close it from client (e.g. user unsubscribe)
         ws.close();
       }

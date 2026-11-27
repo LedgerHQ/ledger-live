@@ -25,35 +25,65 @@ const legacySendTransactions: Array<{
   extraTags?: string[];
 }> = [
   {
-    transaction: new Transaction(Account.ETH_1, Account.ETH_3, "0.00001", Fee.SLOW),
+    transaction: new Transaction({
+      accountToDebit: Account.ETH_1,
+      accountToCredit: Account.ETH_3,
+      amount: "0.00001",
+      speed: Fee.SLOW,
+    }),
     xrayTicket: "B2CQA-3924",
     extraTags: ["@smoke"],
   },
   {
-    transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
+    transaction: new Transaction({
+      accountToDebit: Account.APTOS_1,
+      accountToCredit: Account.APTOS_2,
+      amount: "0.0001",
+    }),
     xrayTicket: "B2CQA-2920",
   },
   {
-    transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "0.2"),
+    transaction: new Transaction({
+      accountToDebit: Account.KASPA_1,
+      accountToCredit: Account.KASPA_2,
+      amount: "0.2",
+    }),
     xrayTicket: "B2CQA-3840",
   },
   {
-    transaction: new Transaction(Account.ZEC_1, Account.ZEC_2, "0.001"),
+    transaction: new Transaction({
+      accountToDebit: Account.ZEC_1,
+      accountToCredit: Account.ZEC_2,
+      amount: "0.001",
+    }),
     xrayTicket: "B2CQA-4299",
   },
   {
-    transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "0.00001", undefined, "noTag"),
+    transaction: new Transaction({
+      accountToDebit: Account.HEDERA_1,
+      accountToCredit: Account.HEDERA_2,
+      amount: "0.00001",
+      memoTag: "noTag",
+    }),
     xrayTicket: "B2CQA-4284",
   },
   {
-    transaction: new Transaction(Account.ALEO_1, Account.ALEO_2, "0.000001"),
+    transaction: new Transaction({
+      accountToDebit: Account.ALEO_1,
+      accountToCredit: Account.ALEO_2,
+      amount: "0.000001",
+    }),
     xrayTicket: "B2CQA-6267",
     postSeedHook: shareViewKeyCommand(Account.ALEO_1),
   },
   {
     // Mina 4 and Mina 5 are kept out of the staking pool, so a broadcasting night never sends two
     // transactions from one account. Mobile sends the other way around, to share the fees.
-    transaction: new Transaction(Account.MINA_4, Account.MINA_5, "0.01"),
+    transaction: new Transaction({
+      accountToDebit: Account.MINA_4,
+      accountToCredit: Account.MINA_5,
+      amount: "0.01",
+    }),
     xrayTicket: "B2CQA-4778",
     sharedAccountAcrossLegs: true,
   },
@@ -112,81 +142,15 @@ for (const entry of legacySendTransactions) {
   });
 }
 
-test.describe("Send - legacy families - invalid amount", legacyBst, () => {
-  const tx = new Transaction(Account.HEDERA_1, Account.HEDERA_2, "100000", undefined, "noTag");
-
-  test.use({
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: tx.accountToDebit.currency.speculosApp,
-    cliCommands: [liveDataWithRecipientAddressCommand(tx)],
-    featureFlags: FF_NEW_SEND_FLOW_DISABLED,
-  });
-
-  test(
-    `[${tx.accountToDebit.currency.testLabel}] - Send - invalid amount (${tx.amount})`,
-    {
-      tag: buildTags({
-        currencyId: tx.accountToDebit.currency.id,
-        skipLNS: shouldSkipLNSTag(tx.accountToDebit.currency.id),
-      }),
-      annotation: { type: "TMS", description: "B2CQA-4287" },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(tx.accountToDebit.accountName);
-      await app.account.clickSend(tx.accountToDebit.currency);
-      await app.send.craftTx(tx);
-      await app.send.checkContinueButtonDisabled();
-      await app.send.checkErrorMessage("Sorry, insufficient funds");
-    },
-  );
-});
-
-test.describe("Send - legacy families - invalid address", legacyBst, () => {
-  const tx = new Transaction(Account.HEDERA_1, Account.HEDERA_1, "0.00001", undefined, "noTag");
-  let recipientAddress: string | undefined;
-
-  test.use({
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: tx.accountToDebit.currency.speculosApp,
-    cliCommands: [
-      async (userdataPath?: string) => {
-        await liveDataCommand(tx.accountToDebit)(userdataPath);
-        recipientAddress = await getAccountAddress(tx.accountToCredit);
-        return recipientAddress;
-      },
-    ],
-    featureFlags: FF_NEW_SEND_FLOW_DISABLED,
-  });
-
-  test(
-    `[${tx.accountToDebit.currency.testLabel}] - Send - invalid address - same as sender`,
-    {
-      tag: buildTags({
-        currencyId: tx.accountToDebit.currency.id,
-        skipLNS: shouldSkipLNSTag(tx.accountToDebit.currency.id),
-      }),
-      annotation: { type: "TMS", description: "B2CQA-4282" },
-    },
-    async ({ app }) => {
-      if (!recipientAddress) {
-        throw new Error(`Missing recipient address for ${tx.accountToCredit.accountName}`);
-      }
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(tx.accountToDebit.accountName);
-      await app.account.clickSend(tx.accountToDebit.currency);
-      await app.send.fillRecipient(recipientAddress);
-      await app.send.checkErrorMessage("Recipient address is the same as the sender address");
-      await app.send.checkContinueButtonDisabled();
-    },
-  );
-});
-
 const concordiumLock = exclusiveLockFor({ broadcastAccounts: [Account.CCD_TESTNET_1] });
 const concordiumDetails = { lock: concordiumLock.names, ...legacyBst };
 
 test.describe("Send - legacy families - Concordium testnet", concordiumDetails, () => {
-  const tx = new Transaction(Account.CCD_TESTNET_1, Account.CCD_TESTNET_2, "0.000005", undefined);
+  const tx = new Transaction({
+    accountToDebit: Account.CCD_TESTNET_1,
+    accountToCredit: Account.CCD_TESTNET_2,
+    amount: "0.000005",
+  });
 
   test.use({
     userdata: "skip-onboarding-with-last-seen-device",

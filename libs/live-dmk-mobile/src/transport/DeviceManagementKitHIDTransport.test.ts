@@ -25,6 +25,7 @@ function createMockDMK(): DeviceManagementKit {
     connect: jest.fn(),
     disconnect: jest.fn(),
     listenToAvailableDevices: jest.fn(),
+    listConnectedDevices: jest.fn(() => []),
     listenToConnectedDevice: jest.fn(),
     sendApdu: jest.fn(),
   };
@@ -59,132 +60,6 @@ describe("DeviceManagementKitHIDTransport", () => {
   });
 
   describe("open", () => {
-    it("should return the active transport", async () => {
-      // given
-      const mockDMK = createMockDMK();
-      const deviceSessionState = aMockedDeviceSessionState;
-      jest.mocked(mockDMK.getDeviceSessionState).mockReturnValue(
-        new Observable(subscriber => {
-          subscriber.next(deviceSessionState);
-        }),
-      );
-      const activeTransport = new DeviceManagementKitHIDTransport(mockDMK, "sessionId");
-      jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
-        transport: activeTransport,
-      });
-      const connectedDevice: ConnectedDevice = {
-        id: "deviceId",
-        type: "USB",
-        transport: rnHidTransportIdentifier,
-        sessionId: "sessionId",
-        modelId: DMKDeviceModelId.FLEX,
-        name: "FLEX",
-      };
-      jest.mocked(mockDMK.getConnectedDevice).mockReturnValue(connectedDevice);
-
-      // when
-      const transport = await DeviceManagementKitHIDTransport.open(
-        "deviceId",
-        undefined,
-        undefined,
-        mockDMK,
-      );
-
-      // then
-      expect(transport).toEqual(activeTransport);
-    });
-
-    describe("given there is an an active session", () => {
-      it("when it is in a connected state, it should return the associated transport", async () => {
-        // given
-        const mockDMK = createMockDMK();
-
-        jest.mocked(mockDMK.getDeviceSessionState).mockReturnValue(
-          new BehaviorSubject({
-            ...aMockedDeviceSessionState,
-            deviceStatus: DeviceStatus.CONNECTED,
-          }).asObservable(),
-        );
-        const activeTransport = new DeviceManagementKitHIDTransport(mockDMK, "sessionId");
-        jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
-          transport: activeTransport,
-        });
-
-        jest.mocked(mockDMK.getConnectedDevice).mockReturnValue({
-          id: "deviceId",
-          type: "USB",
-          transport: rnHidTransportIdentifier,
-          sessionId: "sessionId",
-          modelId: DMKDeviceModelId.FLEX,
-          name: "FLEX",
-        });
-
-        // when
-        const transport = await DeviceManagementKitHIDTransport.open(
-          "",
-          undefined,
-          undefined,
-          mockDMK,
-        );
-
-        // then
-        expect(transport).toEqual(activeTransport);
-      });
-
-      it("when it is in a NOT_CONNECTED state, it should wait for a new device to be available and return a new transport", async () => {
-        // given
-        const mockDMK = createMockDMK();
-        jest.mocked(mockDMK.getDeviceSessionState).mockReturnValue(
-          new BehaviorSubject({
-            ...aMockedDeviceSessionState,
-            deviceStatus: DeviceStatus.NOT_CONNECTED,
-          }).asObservable(),
-        );
-        const activeTransport = new DeviceManagementKitHIDTransport(mockDMK, "sessionIdA");
-        jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
-          transport: activeTransport,
-        });
-
-        jest.mocked(mockDMK.getConnectedDevice).mockReturnValue({
-          id: "deviceId",
-          type: "USB",
-          transport: rnHidTransportIdentifier,
-          sessionId: "sessionId",
-          modelId: DMKDeviceModelId.FLEX,
-          name: "FLEX",
-        });
-
-        const mockedDiscoveredDevice = createMockDiscoveredDevice();
-        const mockedListenToAvailableDevices = jest.mocked(mockDMK.listenToAvailableDevices);
-        mockedListenToAvailableDevices.mockReturnValue(
-          new Observable(subscriber => {
-            subscriber.next([mockedDiscoveredDevice]);
-          }),
-        );
-        const mockedConnect = jest.mocked(mockDMK.connect);
-        mockedConnect.mockResolvedValue("sessionIdB");
-
-        // when
-        const transport = await DeviceManagementKitHIDTransport.open(
-          "",
-          undefined,
-          undefined,
-          mockDMK,
-        );
-
-        // then
-        expect(transport).not.toEqual(activeTransport);
-        expect(transport.sessionId).toEqual("sessionIdB");
-        expect(mockedListenToAvailableDevices).toHaveBeenCalledWith({
-          transport: rnHidTransportIdentifier,
-        });
-        expect(mockedConnect).toHaveBeenCalledWith({
-          device: mockedDiscoveredDevice,
-          sessionRefresherOptions: { isRefresherDisabled: true },
-        });
-      });
-    });
-
     it("given there is no active session, it should wait for a new device to be available and return a new transport", async () => {
       // given
       const mockDMK = createMockDMK();
@@ -223,6 +98,120 @@ describe("DeviceManagementKitHIDTransport", () => {
       expect(mockedConnect).toHaveBeenCalledWith({
         device: mockedDiscoveredDevice,
         sessionRefresherOptions: { isRefresherDisabled: true },
+      });
+    });
+
+    describe("with a connected device", () => {
+      const connectedDevice: ConnectedDevice = {
+        id: "deviceId",
+        type: "USB",
+        transport: rnHidTransportIdentifier,
+        sessionId: "connectedSessionId",
+        modelId: DMKDeviceModelId.FLEX,
+        name: "FLEX",
+      };
+
+      const createMockDMKWithConnectedDevice = () => {
+        const mockDMK = createMockDMK();
+        jest.mocked(mockDMK.listConnectedDevices).mockReturnValue([connectedDevice]);
+        jest
+          .mocked(mockDMK.getDeviceSessionState)
+          .mockReturnValue(new BehaviorSubject(aMockedDeviceSessionState).asObservable());
+        return mockDMK;
+      };
+
+      beforeEach(() => {
+        jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue(null);
+        jest.spyOn(activeDeviceSessionSubject, "next");
+      });
+
+      it("GIVEN the published session is the session of the connected USB device, WHEN opening its id, THEN it should return the published transport", async () => {
+        // GIVEN
+        const mockDMK = createMockDMKWithConnectedDevice();
+        const publishedTransport = new DeviceManagementKitHIDTransport(
+          mockDMK,
+          "connectedSessionId",
+        );
+        jest
+          .spyOn(activeDeviceSessionSubject, "getValue")
+          .mockReturnValue({ transport: publishedTransport });
+
+        // WHEN
+        const transport = await DeviceManagementKitHIDTransport.open(
+          "usb|deviceId",
+          undefined,
+          undefined,
+          mockDMK,
+        );
+
+        // THEN
+        expect(transport).toBe(publishedTransport);
+        expect(activeDeviceSessionSubject.next).not.toHaveBeenCalled();
+      });
+
+      it("GIVEN a published session that is no longer connected, WHEN opening an id, THEN it should connect to the first available device", async () => {
+        // GIVEN
+        const mockDMK = createMockDMK();
+        jest.mocked(mockDMK.getDeviceSessionState).mockReturnValue(new Observable());
+        jest.spyOn(activeDeviceSessionSubject, "getValue").mockReturnValue({
+          transport: new DeviceManagementKitHIDTransport(mockDMK, "staleSessionId"),
+        });
+        const discoveredDevice = createMockDiscoveredDevice();
+        jest
+          .mocked(mockDMK.listenToAvailableDevices)
+          .mockReturnValue(new Observable(subscriber => subscriber.next([discoveredDevice])));
+        jest.mocked(mockDMK.connect).mockResolvedValue("newSessionId");
+
+        // WHEN
+        const transport = await DeviceManagementKitHIDTransport.open(
+          "usb|deviceId",
+          undefined,
+          undefined,
+          mockDMK,
+        );
+
+        // THEN
+        expect(transport.sessionId).toEqual("newSessionId");
+        expect(mockDMK.connect).toHaveBeenCalledWith({
+          device: discoveredDevice,
+          sessionRefresherOptions: { isRefresherDisabled: true },
+        });
+      });
+
+      it("GIVEN a connected USB device with the same id, WHEN opening its id, THEN it should reuse its session without connecting", async () => {
+        // GIVEN
+        const mockDMK = createMockDMKWithConnectedDevice();
+
+        // WHEN
+        const transport = await DeviceManagementKitHIDTransport.open(
+          "usb|deviceId",
+          undefined,
+          undefined,
+          mockDMK,
+        );
+
+        // THEN
+        expect(transport.sessionId).toEqual("connectedSessionId");
+        expect(activeDeviceSessionSubject.next).toHaveBeenCalledWith({ transport });
+        expect(mockDMK.listenToAvailableDevices).not.toHaveBeenCalled();
+        expect(mockDMK.connect).not.toHaveBeenCalled();
+      });
+
+      it("GIVEN a connected USB device with another id, WHEN opening an id, THEN it should reuse its session", async () => {
+        // GIVEN
+        const mockDMK = createMockDMKWithConnectedDevice();
+
+        // WHEN
+        const transport = await DeviceManagementKitHIDTransport.open(
+          "usb|otherDeviceId",
+          undefined,
+          undefined,
+          mockDMK,
+        );
+
+        // THEN
+        expect(transport.sessionId).toEqual("connectedSessionId");
+        expect(mockDMK.connect).not.toHaveBeenCalled();
       });
     });
   });

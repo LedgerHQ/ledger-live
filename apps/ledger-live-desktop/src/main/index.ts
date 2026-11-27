@@ -15,7 +15,14 @@ import db from "./db";
 import { createKeyAttemptThrottle, type KeyAttemptOutcome } from "./db/keyAttemptThrottle";
 import { assertRendererNamespace } from "./db/rendererNamespaces";
 import { UserDataCleanup } from "./cleanupUserData";
-import debounce from "lodash/debounce";
+import { flushThen, setupFlushOnQuit } from "./flushOnQuit";
+import {
+  createDatadogMainState,
+  initDatadogMain,
+  reportRenderProcessGoneMain,
+  skipDatadogMain,
+  startCrashReporterMain,
+} from "~/datadog/main";
 import type { SettingsState } from "~/renderer/reducers/settings";
 import {
   installExtension,
@@ -28,6 +35,7 @@ import {
 } from "@ledgerhq/coin-zcash/network/ipc/main-host";
 import { setupWebviewHandlers } from "./webviewHandlers";
 import { setupExplorerSessionAffinity } from "./explorerSessionAffinity";
+import { allowRendererProfiling } from "./rendererProfiling";
 import { CHANNELS } from "~/bridge/contract";
 // End import timing, start initialization
 console.timeEnd("T-imports");
@@ -37,9 +45,17 @@ setUserDataPath();
 
 const SUPPORTED_SCHEMES = ["ledgerlive", "ledgerwallet"];
 
+let isQuitting = false;
+
 const gotLock = app.requestSingleInstanceLock();
 const { LEDGER_CONFIG_DIRECTORY } = process.env;
 const userDataDirectory = LEDGER_CONFIG_DIRECTORY || app.getPath("userData");
+
+const datadog = createDatadogMainState(userDataDirectory);
+// Only on a flag persisted by an earlier launch; otherwise no SDK, and no dumps kept.
+// Not in dev, where the SDK's process listeners would swallow main crashes.
+const initDatadogAtBoot = gotLock && !__DEV__ && datadog.consent() === "granted";
+if (initDatadogAtBoot) startCrashReporterMain();
 
 if (!gotLock) {
   app.quit();
@@ -88,6 +104,11 @@ app.on("will-finish-launching", () => {
 app.on("ready", async () => {
   console.timeEnd("T-init");
   app.dirname = __dirname;
+  if (!__DEV__ && datadog.profilesRenderer()) allowRendererProfiling(__dirname);
+
+  app.on("render-process-gone", (_event, webContents, details) => {
+    if (!isQuitting) reportRenderProcessGoneMain(webContents.getType(), details);
+  });
 
   // Measure window creation time
   console.time("T-window");
@@ -100,6 +121,7 @@ app.on("ready", async () => {
   });
   await userDataCleanup.cleanup();
   db.init(userDataDirectory);
+  setupFlushOnQuit(window, db.flush);
 
   // Defer extension installation to not block startup
   if (__DEV__) {
@@ -111,7 +133,19 @@ app.on("ready", async () => {
   // Measure database initialization and first reads
   console.time("T-db");
   const settings = (await db.getKey("app", "settings")) as SettingsState;
+  datadog.setIdentities(await db.getKey("app", "identities"));
   console.timeEnd("T-db");
+  // The gate may predate an opt-out made in a build without it: the db setting wins.
+  if (typeof settings?.crashReporting === "boolean") {
+    datadog.onAppKeyWritten("settings.crashReporting", settings.crashReporting);
+  }
+  if (initDatadogAtBoot && datadog.consent() === "granted") {
+    void initDatadogMain(datadog.consent, datadog.settings, datadog.user).then(
+      ok => ok || skipDatadogMain(),
+    );
+  } else {
+    skipDatadogMain();
+  }
 
   // Set up ZCash native host: lazy-spawn a UtilityProcess hosting the
   // napi-rs engine, bridged to the renderer via IPC. The engine is the one of
@@ -123,9 +157,10 @@ app.on("ready", async () => {
     assertRendererNamespace(ns);
     return db.getKey(ns, keyPath, defaultValue);
   });
-  ipcMain.handle(CHANNELS.setKey, (event, { ns, keyPath, value }) => {
+  ipcMain.handle(CHANNELS.setKey, async (event, { ns, keyPath, value }) => {
     assertRendererNamespace(ns);
-    return db.setKey(ns, keyPath, value);
+    await db.setKey(ns, keyPath, value);
+    if (ns === "app") datadog.onAppKeyWritten(keyPath, value);
   });
   ipcMain.handle(CHANNELS.hasEncryptionKey, () => {
     return db.hasEncryptionKey();
@@ -154,18 +189,21 @@ app.on("ready", async () => {
   ipcMain.handle(CHANNELS.hasBeenDecrypted, () => {
     return db.hasBeenDecrypted();
   });
-  ipcMain.handle(CHANNELS.resetAll, () => {
-    return db.resetAll();
+  ipcMain.handle(CHANNELS.resetAll, async () => {
+    await db.resetAll();
+    datadog.setIdentities(undefined);
+    datadog.onAppKeyWritten("lldDatadog", undefined);
   });
-  ipcMain.handle(CHANNELS.reload, () => {
-    return db.reload();
+  ipcMain.handle(CHANNELS.reload, async () => {
+    await db.reload();
+    datadog.setIdentities(await db.getKey("app", "identities").catch(() => undefined));
   });
   ipcMain.handle(CHANNELS.cleanCache, () => {
     return db.cleanCache();
   });
   ipcMain.handle(CHANNELS.reloadRenderer, () => {
     console.log("reloading renderer ...");
-    loadWindow();
+    void flushThen(() => void loadWindow());
   });
   setupWebviewHandlers(SUPPORTED_SCHEMES);
   setupExplorerSessionAffinity(session.defaultSession);
@@ -178,28 +216,16 @@ app.on("ready", async () => {
   await applyWindowParams(windowParams, settings);
 
   // Setup window event handlers
-  window.on(
-    "resize",
-    debounce(() => {
-      if (!window || window.isDestroyed()) return;
-      const [width, height] = window.getSize();
-      db.setKey("windowParams", `${window.name}.dimensions`, {
-        width,
-        height,
-      });
-    }, 300),
-  );
-  window.on(
-    "move",
-    debounce(() => {
-      if (!window || window.isDestroyed()) return;
-      const [x, y] = window.getPosition();
-      db.setKey("windowParams", `${window.name}.positions`, {
-        x,
-        y,
-      });
-    }, 300),
-  );
+  window.on("resize", () => {
+    if (!window || window.isDestroyed()) return;
+    const [width, height] = window.getSize();
+    void db.setKey("windowParams", `${window.name}.dimensions`, { width, height });
+  });
+  window.on("move", () => {
+    if (!window || window.isDestroyed()) return;
+    const [x, y] = window.getPosition();
+    void db.setKey("windowParams", `${window.name}.positions`, { x, y });
+  });
 
   if (__DEV__ || process.env.PLAYWRIGHT_RUN) {
     // Catch ledgerlive:// deep-link requests in dev mode from the app or live-apps
@@ -222,6 +248,10 @@ app.on("ready", async () => {
   }
 
   await clearSessionCache(window.webContents.session);
+});
+
+app.on("before-quit", () => {
+  isQuitting = true;
 });
 
 app.on("window-all-closed", () => {
@@ -252,9 +282,7 @@ ipcMain.on(CHANNELS.deepLinking, (_, l) => {
 
 ipcMain.on(CHANNELS.appReload, () => {
   const w = getMainWindow();
-  if (w) {
-    w.reload();
-  }
+  if (w) void flushThen(() => w.reload());
 });
 ipcMain.on(CHANNELS.showApp, () => {
   const w = getMainWindow();

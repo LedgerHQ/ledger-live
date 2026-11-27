@@ -8,9 +8,4 @@ const swapTestConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
-runSwapLandingPageTest(
-  swapTestConfig.fromAccount,
-  swapTestConfig.toAccount,
-  swapTestConfig.tmsLinks,
-  swapTestConfig.tags,
-);
+runSwapLandingPageTest(swapTestConfig);

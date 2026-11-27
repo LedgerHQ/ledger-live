@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/live-common/families/multiversx/banner";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import React from "react";
-import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
+import { StakeAccountBannerParams } from "./types";
 import { useMultiversXPreloadData } from "@ledgerhq/live-common/families/multiversx/react";
 import {
   MultiversXAccount,

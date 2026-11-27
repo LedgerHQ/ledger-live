@@ -328,7 +328,9 @@ describe("useDeepLinkHandler", () => {
         await waitFor(() => {
           expect(mockCloseAllModal).toHaveBeenCalled();
           expect(mockOpenModal).toHaveBeenCalledWith(modalName, {
-            ...(flow === "receive" ? { shouldUseReceiveOptions: false } : {}),
+            ...(flow === "receive"
+              ? { shouldUseReceiveOptions: false, sourcePage: "deeplink" }
+              : {}),
             recipient: undefined,
             account: mockAccount,
             parentAccount: undefined,

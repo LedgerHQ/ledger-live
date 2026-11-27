@@ -21,6 +21,8 @@ export const OsuFirmwareSchema = BaseFirmwareSchema.extend({
 });
 
 export const FinalFirmwareSchema = BaseFirmwareSchema.extend({
+  /** The version shown to users, with its provider suffix (`1.2.1-il3`, `-rc`, `-pr`). */
+  name: z.string(),
   version: z.string(),
   bytes: z.number().nullable(),
   firmware: z.string().nullable(),

@@ -25,6 +25,7 @@ import type {
   SettingsBlacklistTokenPayload,
   SettingsDismissBannerPayload,
   SettingsHideEmptyTokenAccountsPayload,
+  SettingsSetSimulateApolloDevicePayload,
   SettingsFilterTokenOperationsZeroAmountPayload,
   SettingsImportPayload,
   SettingsSetHasInstalledAnyAppPayload,
@@ -116,6 +117,7 @@ export const INITIAL_STATE: SettingsState = {
   countervalueFirst: true,
   graphCountervalueFirst: true,
   hideEmptyTokenAccounts: false,
+  simulateApolloDevice: false,
   filterTokenOperationsZeroAmount: true,
   hideSmallValueTokenOperations: false,
   blacklistedTokenIds: [],
@@ -397,6 +399,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS]: (state, action) => ({
     ...state,
     hideEmptyTokenAccounts: (action as Action<SettingsHideEmptyTokenAccountsPayload>).payload,
+  }),
+
+  [SettingsActionTypes.SETTINGS_SET_SIMULATE_APOLLO_DEVICE]: (state, action) => ({
+    ...state,
+    simulateApolloDevice: (action as Action<SettingsSetSimulateApolloDevicePayload>).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT]: (state, action) => ({
@@ -872,6 +879,7 @@ export const exportSettingsSelector = createSelector(
 );
 export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
+export const simulateApolloDeviceSelector = (state: State) => state.settings.simulateApolloDevice;
 export const filterTokenOperationsZeroAmountEnabledSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
 export const hideSmallValueTokenOperationsEnabledSelector = (state: State) =>

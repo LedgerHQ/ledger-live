@@ -15,6 +15,8 @@ export type AnimatedQrCodeProps = Readonly<{
   centerContent?: React.ReactNode;
   /** Called on a tap, for example to copy the value. */
   onPress?: () => void;
+  /** Native only: Lumen haptic played with onPress. Not Lumen's type: web reads this file. */
+  hapticFeedback?: "light" | "medium" | "heavy" | "soft" | "rigid";
   /** Read by screen readers when the code is pressable, e.g. "Copy address". */
   accessibilityLabel?: string;
   /** Plays the press animation each time it changes, e.g. from a separate button. */

@@ -230,14 +230,4 @@ export const bitcoinDefaults = {
     unit: { name: "qtum", code: "QTUM", magnitude: 8 },
     explorer: { url: "https://explorers.api.live.ledger.com" },
   },
-  zencash: {
-    explorerId: "zen",
-    status: {
-      type: "active",
-      features: [{ id: "blockchain_txs", status: "active" }],
-    },
-    name: "Horizen",
-    unit: { name: "zencash", code: "ZEN", magnitude: 8 },
-    explorer: { url: "https://explorers.api.live.ledger.com" },
-  },
 } satisfies Record<string, BitcoinCoinConfig>;

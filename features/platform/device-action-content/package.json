@@ -32,8 +32,7 @@
     "react-native": ">=0.70.0",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "react-native-config": "catalog:",
-    "styled-components": ">=6"
+    "react-native-config": "catalog:"
   },
   "peerDependenciesMeta": {
     "react-native": {
@@ -73,7 +72,6 @@
     "react-native": "catalog:",
     "react-native-config": "catalog:",
     "react-test-renderer": "catalog:",
-    "styled-components": "catalog:",
     "typescript": "catalog:"
   }
 }

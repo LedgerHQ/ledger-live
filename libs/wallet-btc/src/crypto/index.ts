@@ -3,7 +3,6 @@ export { default as BitcoinCash } from "./bitcoincash";
 export { default as Litecoin } from "./litecoin";
 export { default as Digibyte } from "./digibyte";
 export { default as Zec } from "./zec";
-export { default as Zen } from "./zen";
 export { default as Dash } from "./dash";
 export { default as Komodo } from "./komodo";
 export { default as BitcoinGold } from "./bitcoingold";

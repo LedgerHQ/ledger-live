@@ -1,5 +1,21 @@
 # @features/flow-contacts-edit-contact
 
+## 0.9.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-contacts@0.13.1
+  - @domain/entity-contact@0.13.1
+
+## 0.9.3-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-contacts@0.13.1-next.0
+  - @domain/entity-contact@0.13.1-next.0
+
 ## 0.9.2
 
 ### Patch Changes
@@ -215,51 +231,5 @@
 - Updated dependencies [[`16a454f`](https://github.com/LedgerHQ/ledger-live/commit/16a454fa79be46df6aec3c50ad40407f36dfdea9), [`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d), [`632dd93`](https://github.com/LedgerHQ/ledger-live/commit/632dd9368616a97581d037f1503b2b16f567c02a), [`5b60a96`](https://github.com/LedgerHQ/ledger-live/commit/5b60a968d3292b3897380f2c74c472a51b81e35d)]:
   - @features/platform-contacts@0.7.0
   - @domain/entity-contact@0.9.0
-
-## 0.5.0-next.0
-
-### Minor Changes
-
-- [#21920](https://github.com/LedgerHQ/ledger-live/pull/21920) [`b49d5b5`](https://github.com/LedgerHQ/ledger-live/commit/b49d5b573e84bd63ac460ae398657f1035613141) Thanks [@ysitbon](https://github.com/ysitbon)! - Give each dual-platform feature package its own web and native TypeScript project
-
-  These packages keep `.web.*` and `.native.*` sources side by side but typechecked both
-  in a single program, so `tsc` resolved suffix-free imports without knowing which
-  platform it was checking. Each package now carries a solution-style `tsconfig.json`
-  that owns no files and references one project per platform it targets, as described in
-  `docs/tsconfig-in-ddd.md`. The web project sets `moduleSuffixes: [".web", ""]` and
-  excludes the native sources, the native project does the reverse and also excludes the
-  unsuffixed web barrel, and `typecheck` runs both passes. `@features/flow-large-screen-upsell`
-  is web-only and gets a web project on its own.
-
-  Separating the two programs surfaced cross-platform leaks that a single program could
-  not see, so this also fixes them. Barrels that hard-pinned one platform's file, in the
-  Contacts button and the Market banner, now import suffix-free and let `moduleSuffixes`
-  choose, which makes their parallel `index.native.ts` barrels redundant. The three
-  packages whose web entry was `src/web.ts` now expose it as `src/index.ts`, so a native
-  program resolving the package can find the `index.native.ts` beside it instead of
-  falling through to the web barrel and dragging web components into the native program.
-  `@features/platform-style` gives its web implementations the `.web` suffix they were
-  missing, which stops its native program from typechecking web code against native
-  components. One web test reached for `require`, which only resolved because React
-  Native's global typings were leaking in from the native files sharing its program, and
-  now imports normally.
-
-### Patch Changes
-
-- Updated dependencies [[`16a454f`](https://github.com/LedgerHQ/ledger-live/commit/16a454fa79be46df6aec3c50ad40407f36dfdea9), [`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d), [`632dd93`](https://github.com/LedgerHQ/ledger-live/commit/632dd9368616a97581d037f1503b2b16f567c02a), [`5b60a96`](https://github.com/LedgerHQ/ledger-live/commit/5b60a968d3292b3897380f2c74c472a51b81e35d)]:
-  - @features/platform-contacts@0.7.0-next.0
-  - @domain/entity-contact@0.9.0-next.0
-
-## 0.4.0
-
-### Minor Changes
-
-- [#21401](https://github.com/LedgerHQ/ledger-live/pull/21401) [`8c40cc1`](https://github.com/LedgerHQ/ledger-live/commit/8c40cc1c2054d12fc546e341a18e966d6ab23986) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Skip the extra confirmation modal when editing a contact or address name. Apply changes now starts the device action directly when needed, and the Apply CTA shows the Ledger logo in that case.
-
-### Patch Changes
-
-- Updated dependencies [[`5b79eb3`](https://github.com/LedgerHQ/ledger-live/commit/5b79eb3c5b1e2e7aca86fb0a8c4b7af085e57f9d), [`0089a4b`](https://github.com/LedgerHQ/ledger-live/commit/0089a4b80512c2c8f8eb3a03b9e3245492380647), [`9672658`](https://github.com/LedgerHQ/ledger-live/commit/967265820c38ad0b2f8f45fd0a892ca07c58d23a), [`a55d4ca`](https://github.com/LedgerHQ/ledger-live/commit/a55d4ca3a804f6ab27f039926255f2c410ef7221), [`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`08ae9c2`](https://github.com/LedgerHQ/ledger-live/commit/08ae9c2bf7b2b509fa23d9b4bf33360f18f7f39f)]:
-  - @features/platform-contacts@0.6.0
-  - @domain/entity-contact@0.8.2
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

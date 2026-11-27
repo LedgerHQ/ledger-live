@@ -5,4 +5,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
-runPasswordIncorrectTest(testConfig.tmsLinks, testConfig.tags);
+runPasswordIncorrectTest(testConfig);

@@ -7,6 +7,7 @@ export const deviceOnboarding = flagWith(
     connectSeededDevice: z.boolean().default(false),
     connectUnseededDevice: z.boolean().default(false),
     unifiedEntryPoints: z.boolean().default(false),
+    recover: z.boolean().default(true),
   },
   {
     enabled: false,
@@ -15,6 +16,7 @@ export const deviceOnboarding = flagWith(
       connectSeededDevice: false,
       connectUnseededDevice: false,
       unifiedEntryPoints: false,
+      recover: true,
     },
   },
 );

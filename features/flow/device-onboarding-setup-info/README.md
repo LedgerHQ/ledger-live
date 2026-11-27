@@ -3,8 +3,8 @@
 > [!CAUTION]
 > **Status: UNSTABLE**. New package, in active development.
 
-The info card of the unseeded device setup screen in Ledger Wallet Mobile. From the setup choice on,
-a card above the stepper names the current step; tapping it opens a bottom sheet that explains it.
+The info card of the unseeded device setup screen in Ledger Wallet Mobile. From the PIN on, a card
+above the stepper names the current step; tapping it opens a bottom sheet that explains it.
 The card and its sheets are local: they send nothing to the device.
 
 ## Exports
