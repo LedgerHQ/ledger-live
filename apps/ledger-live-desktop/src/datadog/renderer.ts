@@ -100,6 +100,7 @@ export async function initDatadog(
         profilingSampleRate?: number;
         trackUserInteractions?: boolean;
         trackResources?: boolean;
+        propagateTraceBaggage?: boolean;
       }
     | undefined,
   store: Store<State>,
@@ -131,7 +132,7 @@ export async function initDatadog(
       enablePrivacyForActionName: true,
       traceSampleRate: params?.traceSampleRate ?? 100,
       allowedTracingUrls,
-      propagateTraceBaggage: false,
+      propagateTraceBaggage: params?.propagateTraceBaggage ?? false,
       ...(profilingSampleRate !== undefined && { profilingSampleRate }),
       trackViewsManually: true,
       trackUserInteractions: params?.trackUserInteractions ?? true,

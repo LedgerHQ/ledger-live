@@ -120,6 +120,7 @@ export const ConnectEnvsToDatadog = () => {
         profilingSampleRate: lldDatadog.params?.profilingSampleRate,
         trackUserInteractions: lldDatadog.params?.trackUserInteractions,
         trackResources: lldDatadog.params?.trackResources,
+        propagateTraceBaggage: lldDatadog.params?.propagateTraceBaggage,
       },
       store,
     ).then(done => {

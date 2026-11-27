@@ -276,6 +276,15 @@ describe("datadog renderer", () => {
       expect(isDatadogRecording()).toBe(false);
     });
 
+    it("should propagate trace baggage only when the flag param turns it on", async () => {
+      __resetDatadogForTesting();
+      datadogRum.init.mockClear();
+      await initDatadog(() => true, { propagateTraceBaggage: true }, createMockStore());
+      expect(datadogRum.init).toHaveBeenCalledWith(
+        expect.objectContaining({ propagateTraceBaggage: true }),
+      );
+    });
+
     it("when already initialized should return true without calling init again", async () => {
       const store = createMockStore();
       datadogRum.init.mockClear();
