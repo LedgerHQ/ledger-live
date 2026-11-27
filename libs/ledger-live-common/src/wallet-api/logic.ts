@@ -233,9 +233,12 @@ function getMessageSignPath(account: Account, path: string): string | undefined 
   }
   const { path: rootPath, index: accountIndex } = getWalletAccount(account).params;
   const accountPath = `${rootPath}/${accountIndex}'/`;
+  const addressPart = addressPath.slice(accountPath.length);
   if (
     !addressPath.startsWith(accountPath) ||
-    !/^[01]\/\d+$/.test(addressPath.slice(accountPath.length))
+    !/^[01]\/\d+$/.test(addressPart) ||
+    // Indices from 2^31 are hardened, so they are not receive or change addresses.
+    Number(addressPart.slice(2)) >= 0x80000000
   ) {
     throw new Error("path does not belong to the account");
   }

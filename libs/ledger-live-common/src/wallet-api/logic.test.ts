@@ -826,7 +826,7 @@ describe("signMessageLogic with a path", () => {
     uiNavigation.mockClear();
   });
 
-  it.each(["m/84'/0'/0'/0/5", "84'/0'/0'/1/0"])(
+  it.each(["m/84'/0'/0'/0/5", "84'/0'/0'/1/0", "m/84'/0'/0'/0/2147483647"])(
     "passes %s to prepareMessageToSign without the m/ prefix",
     async path => {
       // Given
@@ -846,22 +846,26 @@ describe("signMessageLogic with a path", () => {
     },
   );
 
-  it.each(["m/84'/0'/1'/0/5", "m/44'/0'/0'/0/5", "m/84'/0'/0'/2/5", "m/84'/0'/0'/0/5/1"])(
-    "rejects %s, which does not belong to the account",
-    async path => {
-      // Given
-      mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(bitcoinAccountId);
+  it.each([
+    "m/84'/0'/1'/0/5",
+    "m/44'/0'/0'/0/5",
+    "m/84'/0'/0'/2/5",
+    "m/84'/0'/0'/0/5/1",
+    "m/84'/0'/0'/0/2147483648",
+    "m/84'/0'/0'/1/4294967296",
+  ])("rejects %s, which does not belong to the account", async path => {
+    // Given
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(bitcoinAccountId);
 
-      // When
-      await expect(
-        signMessageLogic(context, walletAccountId, messageToSign, uiNavigation, path),
-      ).rejects.toThrow("path does not belong to the account");
+    // When
+    await expect(
+      signMessageLogic(context, walletAccountId, messageToSign, uiNavigation, path),
+    ).rejects.toThrow("path does not belong to the account");
 
-      // Then
-      expect(uiNavigation).toHaveBeenCalledTimes(0);
-      expect(mockWalletAPISignMessageFail).toHaveBeenCalledTimes(1);
-    },
-  );
+    // Then
+    expect(uiNavigation).toHaveBeenCalledTimes(0);
+    expect(mockWalletAPISignMessageFail).toHaveBeenCalledTimes(1);
+  });
 
   it.each(["m/44'/60'/0'/0/0", "44'/60'/0'/0/0"])(
     "signs as without a path when %s is the non-bitcoin account's own path",
