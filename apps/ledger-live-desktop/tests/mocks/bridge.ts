@@ -78,7 +78,6 @@ export const app: jest.Mocked<AppBridge> = {
 export const files: jest.Mocked<FilesBridge> = {
   saveLogs: jest.fn().mockResolvedValue("saved"),
   exportOperations: jest.fn().mockResolvedValue("saved"),
-  savePng: jest.fn().mockResolvedValue("saved"),
   openUserDataDirectory: jest.fn().mockResolvedValue(undefined),
 };
 

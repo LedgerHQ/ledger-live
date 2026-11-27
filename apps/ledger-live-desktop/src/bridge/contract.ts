@@ -107,7 +107,6 @@ export type FilesBridge = {
   /** Pre-stringified: the logs hold circular references the bridge cannot carry. */
   saveLogs(request: SaveRequest, logsJson: string): Promise<SaveOutcome>;
   exportOperations(request: SaveRequest, csv: string): Promise<SaveOutcome>;
-  savePng(options: Electron.SaveDialogOptions, base64: string): Promise<SaveOutcome>;
   openUserDataDirectory(): Promise<unknown>;
 };
 
@@ -187,7 +186,6 @@ export const CHANNELS = {
   showApp: "show-app",
   saveLogs: "save-logs",
   exportOperations: "export-operations",
-  savePng: "save-png",
   openUserDataDirectory: "openUserDataDirectory",
   keepScreenAwake: "activate-keep-screen-awake",
   releaseScreenAwake: "deactivate-keep-screen-awake",
