@@ -23,10 +23,7 @@ import { EthAppPleaseEnableContractData } from "./errors";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import type { EvmAddress, EvmSigner, EvmSignerEvent } from "./types";
 import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/services/types";
-import {
-  buildDefaultHttpBlindSigningReporter,
-  liveBlindSigningReporter,
-} from "@ledgerhq/live-dmk-shared";
+import { buildDefaultHttpSignReporter, liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import { evmAddressBookProvider } from "./addressBook/evmAddressBookProvider";
 
 export type DAError =
@@ -48,18 +45,14 @@ export class DmkSignerEth implements EvmSigner {
   ) {
     const originToken = "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5"; // gitleaks:allow
     liveBlindSigningReporter.setInner(
-      buildDefaultHttpBlindSigningReporter(
-        originToken,
-        ContextModuleChainID.Ethereum,
-        "ledger-wallet",
-      ),
+      buildDefaultHttpSignReporter(originToken, ContextModuleChainID.Ethereum, "ledger-wallet"),
     );
     liveBlindSigningReporter.setContext({ sessionId });
     const calUrl = getEnv("CAL_SERVICE_URL");
     const calMode = calUrl.includes("ledger-test") || calUrl.includes(".stg.") ? "test" : "prod";
     const contextModule = new ContextModuleBuilder({ originToken })
       .setAppSource("ledger-wallet")
-      .setBlindSigningReporter(liveBlindSigningReporter)
+      .setSignReporter(liveBlindSigningReporter)
       .setChain(ContextModuleChainID.Ethereum)
       .setCalConfig({ url: `${calUrl}/v1`, mode: calMode, branch: "main" })
       .build();
