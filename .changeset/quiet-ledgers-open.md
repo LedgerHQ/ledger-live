@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-common": minor
+"@features/platform-wallet-api-operation-details": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
 ---

@@ -1,22 +1,7 @@
-import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import {
-  getWalletApiIdFromAccountId,
-  setWalletApiIdForAccountId,
-} from "@ledgerhq/live-common/wallet-api/converters";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
-import { createDialogInfoHandler, createOpenOperationDetailsHandler } from "../CustomHandlers";
+import { createDialogInfoHandler } from "../CustomHandlers";
 import { resolveActionDialog, createOpenActionDialogHandler } from "../actionDialogStore";
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
 import { setActionDialog } from "~/renderer/reducers/actionDialog";
-import { OperationDetails } from "~/renderer/drawers/OperationDetails";
-
-function exposeToLiveApp(accountId: string): string {
-  setWalletApiIdForAccountId(accountId);
-  return getWalletApiIdFromAccountId(accountId);
-}
 
 describe("createDialogInfoHandler", () => {
   it("should dispatch setPtxInfoDialog with validated params", async () => {
@@ -157,102 +142,5 @@ describe("createOpenActionDialogHandler", () => {
       "Invalid params for custom.dialog.confirmation: params are required.",
     );
     expect(dispatch).not.toHaveBeenCalled();
-  });
-});
-
-describe("createOpenOperationDetailsHandler", () => {
-  const DEPOSIT_HASH = "0x5c504ed432cb51138bcf09aa5e8a410dd4a1e204ef84bfed1be16dfba1b22060";
-  const account = genAccount("earn-deposit-account", {
-    currency: getCryptoCurrencyById("ethereum"),
-    operationsSize: 3,
-  });
-  const tokenAccount = genTokenAccount(0, account, usdcToken);
-
-  function withDepositHash(template: Operation, type: OperationType): Operation {
-    return {
-      ...template,
-      id: encodeOperationId(template.accountId, DEPOSIT_HASH, type),
-      hash: DEPOSIT_HASH,
-      type,
-    };
-  }
-
-  it("should open the OperationDetails drawer without a parent when the hash matches on a main account", async () => {
-    const deposit = withDepositHash(account.operations[0], "OUT");
-    const setDrawer = jest.fn();
-    const handler = createOpenOperationDetailsHandler(
-      [{ ...account, pendingOperations: [deposit] }],
-      setDrawer,
-    );
-
-    await handler({
-      params: { accountId: exposeToLiveApp(account.id), transactionHash: DEPOSIT_HASH },
-    });
-
-    expect(setDrawer).toHaveBeenCalledWith(OperationDetails, {
-      operationId: deposit.id,
-      accountId: account.id,
-      parentId: undefined,
-    });
-  });
-
-  it("should open the OperationDetails drawer with the parent id when the account is a token account", async () => {
-    const tokenDeposit = withDepositHash(tokenAccount.operations[0], "OUT");
-    const setDrawer = jest.fn();
-    const handler = createOpenOperationDetailsHandler(
-      [account, { ...tokenAccount, operations: [tokenDeposit] }],
-      setDrawer,
-    );
-
-    await handler({
-      params: { accountId: exposeToLiveApp(tokenAccount.id), transactionHash: DEPOSIT_HASH },
-    });
-
-    expect(setDrawer).toHaveBeenCalledWith(OperationDetails, {
-      operationId: tokenDeposit.id,
-      accountId: tokenAccount.id,
-      parentId: account.id,
-    });
-  });
-
-  it("should open the confirmed fees operation when a sync replaced the pending operation of the hash", async () => {
-    const confirmedDeposit = withDepositHash(account.operations[0], "FEES");
-    const setDrawer = jest.fn();
-    const handler = createOpenOperationDetailsHandler(
-      [{ ...account, operations: [confirmedDeposit, ...account.operations] }],
-      setDrawer,
-    );
-
-    await handler({
-      params: { accountId: exposeToLiveApp(account.id), transactionHash: DEPOSIT_HASH },
-    });
-
-    expect(setDrawer).toHaveBeenCalledWith(OperationDetails, {
-      operationId: confirmedDeposit.id,
-      accountId: account.id,
-      parentId: undefined,
-    });
-  });
-
-  it("should reject without opening a drawer when the params are invalid", async () => {
-    const setDrawer = jest.fn();
-    const handler = createOpenOperationDetailsHandler([account], setDrawer);
-
-    await expect(handler({ params: { accountId: exposeToLiveApp(account.id) } })).rejects.toThrow(
-      "Invalid params for custom.openOperationDetails",
-    );
-    expect(setDrawer).not.toHaveBeenCalled();
-  });
-
-  it("should reject without opening a drawer when no operation has the hash", async () => {
-    const setDrawer = jest.fn();
-    const handler = createOpenOperationDetailsHandler([account], setDrawer);
-
-    await expect(
-      handler({
-        params: { accountId: exposeToLiveApp(account.id), transactionHash: DEPOSIT_HASH },
-      }),
-    ).rejects.toThrow("Operation not found");
-    expect(setDrawer).not.toHaveBeenCalled();
   });
 });

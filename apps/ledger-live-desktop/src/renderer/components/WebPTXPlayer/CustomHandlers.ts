@@ -14,8 +14,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/UI";
 import { getTrackingRouteLiveAppSource } from "../Web3AppWebview/analytics";
 import { track } from "@shared/analytics";
-import { context, type ContextValue } from "~/renderer/drawers/Provider";
-import { OperationDetails } from "~/renderer/drawers/OperationDetails";
+import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewErrorDrawer";
 import { WebviewProps } from "../Web3AppWebview/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
@@ -49,14 +48,15 @@ import { useWalletFeaturesConfig, useFeatureFlags } from "@features/platform-fea
 import type { Feature, FeatureId } from "@shared/feature-flags";
 import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
-import { resolveOperationDetailsTarget } from "@ledgerhq/live-common/wallet-api/resolveOperationDetailsTarget";
 import { setPtxInfoDialog } from "~/renderer/reducers/ptxInfoDialog";
 import { createOpenActionDialogHandler } from "./actionDialogStore";
 import { createOpenActionMenuDialogHandler } from "./actionMenuDialogStore";
+import { useOperationDetailsHandlers } from "LLD/features/OperationDetails/hooks/useOperationDetailsHandlers";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
+  const operationDetailsHandlers = useOperationDetailsHandlers(accounts);
   const { getRouteToPlatformApp } = useStake();
   const navigate = useNavigate();
   const { isEnabled } = useWalletFeaturesConfig("desktop");
@@ -405,7 +405,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         return Promise.resolve();
       },
       "custom.dialog.info": createDialogInfoHandler(dispatch),
-      "custom.openOperationDetails": createOpenOperationDetailsHandler(accounts, setDrawer),
+      ...operationDetailsHandlers,
     };
   }, [
     accounts,
@@ -423,6 +423,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
     getManifestById,
     getAccount,
     syncAccountsById,
+    operationDetailsHandlers,
   ]);
 }
 
@@ -430,18 +431,5 @@ export function createDialogInfoHandler(dispatch: Dispatch) {
   return async (request: { params?: InfoDialogParams }) => {
     const validated = validateInfoDialogParams(request.params, "custom.dialog.info");
     dispatch(setPtxInfoDialog(validated));
-  };
-}
-
-export function createOpenOperationDetailsHandler(
-  accounts: AccountLike[],
-  setDrawer: ContextValue["setDrawer"],
-) {
-  return async (request: { params?: unknown }) => {
-    const { accountId, parentId, operation } = resolveOperationDetailsTarget(
-      request.params,
-      accounts,
-    );
-    setDrawer(OperationDetails, { operationId: operation.id, accountId, parentId });
   };
 }

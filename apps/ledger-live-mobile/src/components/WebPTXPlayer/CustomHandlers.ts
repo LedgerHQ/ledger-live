@@ -43,7 +43,6 @@ import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/uti
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
-import { resolveOperationDetailsTarget } from "@ledgerhq/live-common/wallet-api/resolveOperationDetailsTarget";
 import { makeSetEarnInfoBottomSheetAction, makeSetEarnMenuBottomSheetAction } from "~/actions/earn";
 import { createOpenActionDialogHandler } from "./actionDialogStore";
 import type { Dispatch } from "redux";
@@ -57,6 +56,7 @@ import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { useWalletFeaturesConfig, useFeatureFlags } from "@features/platform-feature-flags";
 import { DrawerClosedError, exchangeDeviceSession } from "LLM/features/WalletApiExchange/session";
 import { useDeviceIntentExchangeEnabled } from "LLM/features/WalletApiExchange/hooks/useDeviceIntentExchangeEnabled";
+import { useOperationDetailsHandlers } from "LLM/features/OperationDetails/hooks/useOperationDetailsHandlers";
 import type { Feature, FeatureId } from "@shared/feature-flags";
 
 const drawerClosedError = new DrawerClosedError();
@@ -106,6 +106,7 @@ export function useCustomExchangeHandlers({
 }: CustomExchangeHandlersHookType) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const route = useRoute();
+  const operationDetailsHandlers = useOperationDetailsHandlers(accounts);
   // When on, the device steps run in the Device Intent Executor drawer of the webview (see
   // WalletApiExchange) instead of the PlatformStartExchange / PlatformCompleteExchange screens.
   const deviceIntentExchangeEnabled = useDeviceIntentExchangeEnabled(manifest.id);
@@ -337,9 +338,7 @@ export function useCustomExchangeHandlers({
       "custom.bottomSheet.info": createOpenInfoBottomSheetHandler(dispatch),
       "custom.bottomSheet.menu": createOpenMenuBottomSheetHandler(dispatch),
       "custom.dialog.confirmation": createOpenActionDialogHandler(dispatch),
-      "custom.openOperationDetails": createOpenOperationDetailsHandler(accounts, params =>
-        navigation.navigate(ScreenName.OperationDetails, params),
-      ),
+      ...operationDetailsHandlers,
     };
 
     return {
@@ -634,6 +633,7 @@ export function useCustomExchangeHandlers({
     route.name,
     returnToPreviousScreenOnClose,
     deviceIntentExchangeEnabled,
+    operationDetailsHandlers,
   ]);
 }
 
@@ -648,19 +648,6 @@ export function usePTXCustomHandlers(
     sendAppReady: sendEarnLiveAppReady,
     returnToPreviousScreenOnClose,
   });
-}
-
-export function createOpenOperationDetailsHandler(
-  accounts: AccountLike[],
-  openOperationDetails: (params: BaseNavigatorStackParamList[ScreenName.OperationDetails]) => void,
-) {
-  return async (request: { params?: unknown }) => {
-    const { accountId, parentId, operation } = resolveOperationDetailsTarget(
-      request.params,
-      accounts,
-    );
-    openOperationDetails({ accountId, parentId, operation });
-  };
 }
 
 export function createOpenInfoBottomSheetHandler(dispatch: Dispatch) {

@@ -1,16 +1,6 @@
-import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import {
-  getWalletApiIdFromAccountId,
-  setWalletApiIdForAccountId,
-} from "@ledgerhq/live-common/wallet-api/converters";
-import type { Operation } from "@ledgerhq/types-live";
 import {
   createOpenInfoBottomSheetHandler,
   createOpenMenuBottomSheetHandler,
-  createOpenOperationDetailsHandler,
   handlePTXCustomClose,
 } from "../CustomHandlers";
 import { createOpenActionDialogHandler, resolveActionDialog } from "../actionDialogStore";
@@ -20,11 +10,6 @@ import {
   makeSetEarnActionDialogAction,
 } from "~/actions/earn";
 import { NavigatorName, ScreenName } from "~/const";
-
-function exposeToLiveApp(accountId: string): string {
-  setWalletApiIdForAccountId(accountId);
-  return getWalletApiIdFromAccountId(accountId);
-}
 
 describe("handlePTXCustomClose", () => {
   it("should go back when closing an exchange screen with navigation history", () => {
@@ -266,83 +251,5 @@ describe("createOpenActionDialogHandler", () => {
     resolveActionDialog(true);
 
     expect(dispatch).toHaveBeenCalledWith(makeSetEarnActionDialogAction(undefined));
-  });
-});
-
-describe("createOpenOperationDetailsHandler", () => {
-  const DEPOSIT_HASH = "0x5c504ed432cb51138bcf09aa5e8a410dd4a1e204ef84bfed1be16dfba1b22060";
-  const account = genAccount("earn-deposit-account", {
-    currency: getCryptoCurrencyById("ethereum"),
-    operationsSize: 3,
-  });
-  const tokenAccount = genTokenAccount(0, account, usdcToken);
-
-  function withDepositHash(template: Operation): Operation {
-    return {
-      ...template,
-      id: encodeOperationId(template.accountId, DEPOSIT_HASH, "OUT"),
-      hash: DEPOSIT_HASH,
-      type: "OUT",
-    };
-  }
-
-  it("should open the operation details without a parent when the hash matches on a main account", async () => {
-    const deposit = withDepositHash(account.operations[0]);
-    const openOperationDetails = jest.fn();
-    const handler = createOpenOperationDetailsHandler(
-      [{ ...account, pendingOperations: [deposit] }],
-      openOperationDetails,
-    );
-
-    await handler({
-      params: { accountId: exposeToLiveApp(account.id), transactionHash: DEPOSIT_HASH },
-    });
-
-    expect(openOperationDetails).toHaveBeenCalledWith({
-      accountId: account.id,
-      parentId: undefined,
-      operation: deposit,
-    });
-  });
-
-  it("should open the operation details with the parent id when the account is a token account", async () => {
-    const tokenDeposit = withDepositHash(tokenAccount.operations[0]);
-    const openOperationDetails = jest.fn();
-    const handler = createOpenOperationDetailsHandler(
-      [account, { ...tokenAccount, operations: [tokenDeposit] }],
-      openOperationDetails,
-    );
-
-    await handler({
-      params: { accountId: exposeToLiveApp(tokenAccount.id), transactionHash: DEPOSIT_HASH },
-    });
-
-    expect(openOperationDetails).toHaveBeenCalledWith({
-      accountId: tokenAccount.id,
-      parentId: account.id,
-      operation: tokenDeposit,
-    });
-  });
-
-  it("should reject without opening the operation details when the params are invalid", async () => {
-    const openOperationDetails = jest.fn();
-    const handler = createOpenOperationDetailsHandler([account], openOperationDetails);
-
-    await expect(handler({ params: { transactionHash: DEPOSIT_HASH } })).rejects.toThrow(
-      "Invalid params for custom.openOperationDetails",
-    );
-    expect(openOperationDetails).not.toHaveBeenCalled();
-  });
-
-  it("should reject without opening the operation details when no operation has the hash", async () => {
-    const openOperationDetails = jest.fn();
-    const handler = createOpenOperationDetailsHandler([account], openOperationDetails);
-
-    await expect(
-      handler({
-        params: { accountId: exposeToLiveApp(account.id), transactionHash: DEPOSIT_HASH },
-      }),
-    ).rejects.toThrow("Operation not found");
-    expect(openOperationDetails).not.toHaveBeenCalled();
   });
 });
