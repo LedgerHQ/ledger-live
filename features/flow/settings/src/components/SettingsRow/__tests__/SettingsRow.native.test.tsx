@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { HiddenSettingsProvider } from "../../HiddenSettingsProvider/HiddenSettingsProvider";
-import { matchesSettingsOption } from "../../../logic/settingsRowTrailing";
+import { matchesSettingsOption } from "../../../logic/settingsOptionSearch";
 import { SettingsRow } from "../SettingsRow";
 
 describe("SettingsRow", () => {
