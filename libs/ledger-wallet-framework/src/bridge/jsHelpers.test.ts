@@ -531,6 +531,34 @@ describe("makeSync", () => {
 
       expect(calls).toEqual(["shouldMergeOps", "getAccountShape"]);
     });
+
+    it("respects explicit used: false from getAccountShape even when subAccounts are present", async () => {
+      const initial = createAccount({ id: "js:2:bitcoin::", used: false });
+      const sync$ = makeSync({
+        getAccountShape: () =>
+          Promise.resolve({
+            used: false,
+            subAccounts: [
+              {
+                type: "TokenAccount",
+                id: "token-1",
+                parentId: initial.id,
+                balance: new BigNumber(0),
+                spendableBalance: new BigNumber(0),
+                operationsCount: 0,
+                operations: [],
+                pendingOperations: [],
+                creationDate: new Date(),
+                balanceHistoryCache: createEmptyHistoryCache(),
+                swapHistory: [],
+              } as unknown as NonNullable<Account["subAccounts"]>[number],
+            ],
+          }),
+      })(initial, {} as SyncConfig);
+
+      const updater = await firstValueFrom(sync$);
+      expect(updater(initial).used).toBe(false);
+    });
   });
 });
 

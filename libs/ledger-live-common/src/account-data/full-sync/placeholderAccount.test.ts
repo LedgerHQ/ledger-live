@@ -4,6 +4,7 @@ import { toNetworkId } from "@domain/entity-network";
 import { fromLegacyAccount } from "../../account/accountDescriptor";
 import { genScannedMockAccount } from "../../bridge/mockHelpers";
 import { placeholderAccount } from "./placeholderAccount";
+import { clearDerivedLegacyHints, recordDerivedLegacyHints } from "../discovery/derivedLegacyHints";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 
 const mockUsesMockBridges = jest.fn(() => false);
@@ -23,7 +24,10 @@ const ZCASH_XPUB =
   "xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz";
 const EXTENDED_KEY = `${"35".repeat(32)}${"47".repeat(32)}`;
 
-beforeEach(() => mockUsesMockBridges.mockReturnValue(false));
+beforeEach(() => {
+  mockUsesMockBridges.mockReturnValue(false);
+  clearDerivedLegacyHints();
+});
 
 describe("placeholderAccount", () => {
   it("keeps the view key of an Aleo account's context in its legacy id, the descriptor key being its address", async () => {
@@ -114,5 +118,64 @@ describe("placeholderAccount", () => {
       freshAddress: "0.0.751515",
       freshAddressPath: "44/3030",
     });
+  });
+
+  it("restores seedIdentifier and generic-coin-framework xpub from derived legacy hints", async () => {
+    const eth = address(
+      "ethereum",
+      "0x0000000000000000000000000000000000000001",
+      "m/44h/60h/0h/0/0",
+    );
+    recordDerivedLegacyHints(eth, { seedIdentifier: "04seed", publicKey: "04acc" });
+    const ethAccount = await placeholderAccount(eth);
+    expect(ethAccount.seedIdentifier).toBe("04seed");
+    expect(ethAccount.xpub).toBe("04acc");
+
+    const algo = address(
+      "algorand",
+      "2CDLK2MZHRQF5AET7FH6IXAXSTNAEEBAXL3GB43NGHWJSSQ3XVWN4SRWYE",
+      "m/44h/283h/0h/0/0",
+    );
+    recordDerivedLegacyHints(algo, { seedIdentifier: "d086b5", publicKey: "d086b5" });
+    const algoAccount = await placeholderAccount(algo);
+    expect(algoAccount.seedIdentifier).toBe("d086b5");
+    expect(algoAccount.xpub).toBeUndefined();
+  });
+
+  it("preserves an explicit empty seedIdentifier from derived legacy hints", async () => {
+    const aleo = address(
+      "aleo",
+      "aleo1nk709jp4t82f63vhznv4nxl8745y7vedr3v2k8su92ycvy742v8sj63mn8",
+      "m/44h/683h/0h/0h",
+    );
+    recordDerivedLegacyHints(aleo, { seedIdentifier: "", publicKey: "" });
+    const aleoAccount = await placeholderAccount(aleo);
+    expect(aleoAccount.seedIdentifier).toBe("");
+    expect(aleoAccount.xpub).toBeUndefined();
+  });
+
+  it("falls back to derived address hint when addressFromKey is unsupported (Canton, Concordium)", async () => {
+    const publicKey = "cd".repeat(32);
+    const canton = address("canton_network", publicKey, "m/44h/6767h/0h/0h/0h");
+    recordDerivedLegacyHints(canton, {
+      seedIdentifier: publicKey,
+      publicKey,
+      address: "canton_5123e908",
+    });
+    const cantonAccount = await placeholderAccount(canton);
+    expect(cantonAccount.freshAddress).toBe("canton_5123e908");
+    expect(cantonAccount.id).toBe(`js:2:canton_network:${publicKey}:canton`);
+    expect(
+      (cantonAccount as { cantonResources?: { publicKey?: string } }).cantonResources?.publicKey,
+    ).toBe(publicKey);
+
+    const concordiumPub = "ab".repeat(32);
+    const concordium = address("concordium", concordiumPub, "m/44h/919h/0h/0h/0h/0h");
+    const concordiumAccount = await placeholderAccount(concordium);
+    expect(concordiumAccount.xpub).toBe(concordiumPub);
+    expect(
+      (concordiumAccount as { concordiumResources?: { publicKey?: string } }).concordiumResources
+        ?.publicKey,
+    ).toBe(concordiumPub);
   });
 });
