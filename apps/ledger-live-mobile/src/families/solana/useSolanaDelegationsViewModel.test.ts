@@ -1,14 +1,16 @@
 import { Linking } from "react-native";
 import BigNumber from "bignumber.js";
-import { act, renderHook } from "@tests/test-renderer";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { listSolanaStakingPositions } from "@ledgerhq/live-common/families/solana/logic";
 import type { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 import type { AccountDelegationsProps } from "@features/flow-account-detail-delegations";
+import { abandonStakePosition, useShownStakePosition } from "@features/flow-stake-position";
 import type { StakingDelegation, StakingResources, StakingUnbonding } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
 import { useSolanaDelegationsViewModel } from "./useSolanaDelegationsViewModel";
+import { VIEW_STAKE_POSITION_DETAILS } from "./useViewStakePositionDetails";
 
 const mockNavigate = jest.fn();
 
@@ -48,14 +50,14 @@ const unbonding = (overrides: Partial<StakingUnbonding> = {}): StakingUnbonding 
   ...overrides,
 });
 
-const accountWith = (stakes: {
-  delegations?: StakingDelegation[];
-  unbondings?: StakingUnbonding[];
-}): SolanaAccount =>
+const accountWith = (
+  stakes: { delegations?: StakingDelegation[]; unbondings?: StakingUnbonding[] },
+  currencyId = "solana",
+): SolanaAccount =>
   ({
     type: "Account",
     id: "solana-account",
-    currency: getCryptoCurrencyById("solana"),
+    currency: getCryptoCurrencyById(currencyId),
     spendableBalance: new BigNumber(0),
     stakingResources: {
       delegations: stakes.delegations ?? [],
@@ -75,10 +77,17 @@ const metaFor = (
       })),
   );
 
-const getProps = (account: SolanaAccount) =>
-  renderHook(() => useSolanaDelegationsViewModel(account)).result.current;
+type Flags = ReturnType<typeof withFlagOverrides>;
 
-const actionIds = (account: SolanaAccount) => getProps(account).rows[0]?.actions.map(a => a.id);
+const getProps = (account: SolanaAccount, overrideInitialState?: Flags) =>
+  renderHook(() => useSolanaDelegationsViewModel(account), { overrideInitialState }).result.current;
+
+const actionIds = (account: SolanaAccount, overrideInitialState?: Flags) =>
+  getProps(account, overrideInitialState).rows[0]?.actions.map(a => a.id);
+
+const ACCOUNT_PAGE_ON = withFlagOverrides({
+  earnNativeStakePosition: { enabled: true, params: { accountPage: true } },
+});
 
 describe("useSolanaDelegationsViewModel", () => {
   let openURL: jest.SpyInstance;
@@ -279,6 +288,101 @@ describe("useSolanaDelegationsViewModel", () => {
         screen: ScreenName.DelegationSummary,
         params: { accountId: "solana-account", delegationAction: { kind: "new" } },
       });
+    });
+  });
+
+  describe("View details", () => {
+    afterEach(() => {
+      const { result, unmount } = renderHook(() => useShownStakePosition());
+      const { request } = result.current;
+      if (request) act(() => abandonStakePosition(request.id));
+      unmount();
+    });
+
+    it("comes first in the row actions once the flag opens the account page entry", () => {
+      const props = getProps(
+        accountWith({ delegations: [delegation()], unbondings: [unbonding()] }),
+        ACCOUNT_PAGE_ON,
+      );
+
+      expect(props.rows.map(row => row.actions.map(action => action.label))).toEqual([
+        ["View details", "Deactivate"],
+        ["View details", "Withdraw", "Activate"],
+      ]);
+    });
+
+    it("opens the stake position sheet for the row, and no legacy flow", () => {
+      const props = getProps(accountWith({ delegations: [delegation()] }), ACCOUNT_PAGE_ON);
+      const shown = renderHook(() => useShownStakePosition());
+      const [viewDetails] = props.rows[0]?.actions ?? [];
+
+      act(() => props.onSelectRowAction("stake-bonded", viewDetails?.id ?? ""));
+
+      expect(shown.result.current.request).toMatchObject({
+        origin: "account",
+        accountId: "solana-account",
+        positionId: "stake-bonded",
+      });
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it("keeps opening the legacy flow for the other actions of the row", () => {
+      const props = getProps(accountWith({ delegations: [delegation()] }), ACCOUNT_PAGE_ON);
+      const shown = renderHook(() => useShownStakePosition());
+
+      act(() => props.onSelectRowAction("stake-bonded", "deactivate"));
+
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SolanaDelegationFlow, {
+        screen: ScreenName.DelegationSummary,
+        params: {
+          accountId: "solana-account",
+          delegationAction: expect.objectContaining({ kind: "change", stakeAction: "deactivate" }),
+        },
+      });
+      expect(shown.result.current.request).toBeNull();
+    });
+
+    it("opens nothing for a stake without its stake account address", () => {
+      const props = getProps(
+        accountWith({ delegations: [delegation({ positionId: undefined })] }),
+        ACCOUNT_PAGE_ON,
+      );
+      const shown = renderHook(() => useShownStakePosition());
+
+      act(() => props.onSelectRowAction("0", VIEW_STAKE_POSITION_DETAILS));
+
+      expect(shown.result.current.request).toBeNull();
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ["the flag is off", withFlagOverrides({ earnNativeStakePosition: { enabled: false } })],
+      [
+        "the flag opens Earn only, as its existing values do",
+        withFlagOverrides({ earnNativeStakePosition: { enabled: true } }),
+      ],
+      [
+        "the account page param is off",
+        withFlagOverrides({
+          earnNativeStakePosition: { enabled: true, params: { accountPage: false } },
+        }),
+      ],
+    ])("is not offered when %s", (_case, flags) => {
+      expect(actionIds(accountWith({ delegations: [delegation()] }), flags)).toEqual([
+        "deactivate",
+      ]);
+    });
+
+    it.each(["solana_devnet", "solana_testnet"])("is not offered on %s", currencyId => {
+      const account = accountWith({ delegations: [delegation()] }, currencyId);
+
+      expect(actionIds(account, ACCOUNT_PAGE_ON)).toEqual(["deactivate"]);
+    });
+
+    it("is not offered for a stake without its stake account address", () => {
+      const account = accountWith({ delegations: [delegation({ positionId: undefined })] });
+
+      expect(actionIds(account, ACCOUNT_PAGE_ON)).toEqual([]);
     });
   });
 
