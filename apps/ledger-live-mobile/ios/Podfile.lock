@@ -3986,10 +3986,10 @@ DEPENDENCIES:
   - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@57.0.2_expo@57.0.31_patch_hash=_e38a6cd9500dd1509aef9ed5ba6a2bec/node_modules/expo-keep-awake/ios`)"
   - "ExpoLocalization (from `../../../node_modules/.pnpm/expo-localization@57.0.2_expo@57.0.31_patch_has_26aed837f6c35ea2b173cd0e76d7a7ba/node_modules/expo-localization/ios`)"
   - "ExpoLogBox (from `../../../node_modules/.pnpm/@expo+log-box@57.0.5_expo@57.0.31_patch_hash=62_e90b331624d4b9edc5db21bb2d23fd06/node_modules/@expo/log-box`)"
-  - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@57.0.24_react-native-worklets_43b126d5aaf5a193e1350d45ba770f9f/node_modules/expo-modules-core`)"
+  - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@57.0.24_patch_hash=ae493cafb7_6ac5761ae4e57f8dc6fc37dc307aca7d/node_modules/expo-modules-core`)"
   - "ExpoModulesJSI (from `../../../node_modules/.pnpm/expo-modules-jsi@57.1.3_react-native@0.86.3_pat_1f06159a64136bac74b381724952b7b2/node_modules/expo-modules-jsi/apple`)"
-  - "ExpoModulesWorklets (from `../../../node_modules/.pnpm/expo-modules-core@57.0.24_react-native-worklets_43b126d5aaf5a193e1350d45ba770f9f/node_modules/expo-modules-core`)"
-  - "ExpoModulesWorkletsAdapter (from `../../../node_modules/.pnpm/expo-modules-core@57.0.24_react-native-worklets_43b126d5aaf5a193e1350d45ba770f9f/node_modules/expo-modules-core`)"
+  - "ExpoModulesWorklets (from `../../../node_modules/.pnpm/expo-modules-core@57.0.24_patch_hash=ae493cafb7_6ac5761ae4e57f8dc6fc37dc307aca7d/node_modules/expo-modules-core`)"
+  - "ExpoModulesWorkletsAdapter (from `../../../node_modules/.pnpm/expo-modules-core@57.0.24_patch_hash=ae493cafb7_6ac5761ae4e57f8dc6fc37dc307aca7d/node_modules/expo-modules-core`)"
   - "ExpoNetwork (from `../../../node_modules/.pnpm/expo-network@57.0.3_expo@57.0.31_patch_hash=62f_5ca877e69f16c39d02f202ac7534578b/node_modules/expo-network/ios`)"
   - "ExpoSplashScreen (from `../../../node_modules/.pnpm/expo-splash-screen@57.0.10_@typescript+typescri_0326c3cd0b71efd2810c527675f6900d/node_modules/expo-splash-screen/ios`)"
   - "ExpoWebBrowser (from `../../../node_modules/.pnpm/expo-web-browser@57.0.3_expo@57.0.31_patch_hash_54dddc2f6c18ff05168b28375dd954ec/node_modules/expo-web-browser/ios`)"
@@ -4198,13 +4198,13 @@ EXTERNAL SOURCES:
   ExpoLogBox:
     :path: "../../../node_modules/.pnpm/@expo+log-box@57.0.5_expo@57.0.31_patch_hash=62_e90b331624d4b9edc5db21bb2d23fd06/node_modules/@expo/log-box"
   ExpoModulesCore:
-    :path: "../../../node_modules/.pnpm/expo-modules-core@57.0.24_react-native-worklets_43b126d5aaf5a193e1350d45ba770f9f/node_modules/expo-modules-core"
+    :path: "../../../node_modules/.pnpm/expo-modules-core@57.0.24_patch_hash=ae493cafb7_6ac5761ae4e57f8dc6fc37dc307aca7d/node_modules/expo-modules-core"
   ExpoModulesJSI:
     :path: "../../../node_modules/.pnpm/expo-modules-jsi@57.1.3_react-native@0.86.3_pat_1f06159a64136bac74b381724952b7b2/node_modules/expo-modules-jsi/apple"
   ExpoModulesWorklets:
-    :path: "../../../node_modules/.pnpm/expo-modules-core@57.0.24_react-native-worklets_43b126d5aaf5a193e1350d45ba770f9f/node_modules/expo-modules-core"
+    :path: "../../../node_modules/.pnpm/expo-modules-core@57.0.24_patch_hash=ae493cafb7_6ac5761ae4e57f8dc6fc37dc307aca7d/node_modules/expo-modules-core"
   ExpoModulesWorkletsAdapter:
-    :path: "../../../node_modules/.pnpm/expo-modules-core@57.0.24_react-native-worklets_43b126d5aaf5a193e1350d45ba770f9f/node_modules/expo-modules-core"
+    :path: "../../../node_modules/.pnpm/expo-modules-core@57.0.24_patch_hash=ae493cafb7_6ac5761ae4e57f8dc6fc37dc307aca7d/node_modules/expo-modules-core"
   ExpoNetwork:
     :path: "../../../node_modules/.pnpm/expo-network@57.0.3_expo@57.0.31_patch_hash=62f_5ca877e69f16c39d02f202ac7534578b/node_modules/expo-network/ios"
   ExpoSplashScreen:

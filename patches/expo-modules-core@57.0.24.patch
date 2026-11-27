@@ -1,0 +1,617 @@
+diff --git a/ios/Api/Factories/ClassFactories.swift b/ios/Api/Factories/ClassFactories.swift
+index b120311..8da15bf 100644
+--- a/ios/Api/Factories/ClassFactories.swift
++++ b/ios/Api/Factories/ClassFactories.swift
+@@ -34,7 +34,7 @@ public func Class(
+  Creates the definition describing a JavaScript class with an associated native shared object class.
+  */
+ public func Class<SharedObjectType: SharedObject>(
+-  _ name: String = String(describing: SharedObjectType.self),
++  _ name: String = _typeName(SharedObjectType.self, qualified: false),
+   _ sharedObjectType: SharedObjectType.Type,
+   @ClassDefinitionBuilder<SharedObjectType> @_implicitSelfCapture _ elements: () -> [AnyClassDefinitionElement]
+ ) -> ClassDefinition {
+@@ -49,5 +49,5 @@ public func Class<SharedObjectType: SharedObject>(
+   _ sharedObjectType: SharedObjectType.Type,
+   @ClassDefinitionBuilder<SharedObjectType> @_implicitSelfCapture _ elements: () -> [AnyClassDefinitionElement]
+ ) -> ClassDefinition {
+-  return ClassDefinition(name: String(describing: SharedObjectType.self), associatedType: SharedObjectType.self, elements: elements())
++  return ClassDefinition(name: _typeName(SharedObjectType.self, qualified: false), associatedType: SharedObjectType.self, elements: elements())
+ }
+diff --git a/ios/Core/Classes/ClassDefinition.swift b/ios/Core/Classes/ClassDefinition.swift
+index ee9c729..4cab2b6 100644
+--- a/ios/Core/Classes/ClassDefinition.swift
++++ b/ios/Core/Classes/ClassDefinition.swift
+@@ -6,6 +6,10 @@ import ExpoModulesJSI
+  Represents a JavaScript class.
+  */
+ public final class ClassDefinition: ObjectDefinition {
++  public override var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.klass(self))
++  }
++
+   /**
+    Name of the class.
+    */
+diff --git a/ios/Core/EventListener.swift b/ios/Core/EventListener.swift
+index 234f7d0..105443f 100644
+--- a/ios/Core/EventListener.swift
++++ b/ios/Core/EventListener.swift
+@@ -2,6 +2,10 @@
+  Represents a listener for the specific event.
+  */
+ internal struct EventListener: AnyDefinition {
++  var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.eventListener(self))
++  }
++
+   let name: EventName
+   let call: (Any?, Any?) throws -> Void
+ 
+diff --git a/ios/Core/Events/EventObservingDefinition.swift b/ios/Core/Events/EventObservingDefinition.swift
+index 7cfc6cf..17218a4 100644
+--- a/ios/Core/Events/EventObservingDefinition.swift
++++ b/ios/Core/Events/EventObservingDefinition.swift
+@@ -16,6 +16,10 @@ internal protocol AnyEventObservingDefinition: AnyDefinition, Sendable {
+ }
+ 
+ public final class EventObservingDefinition: AnyEventObservingDefinition, @unchecked Sendable {
++  public var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.eventObserver(self))
++  }
++
+   public typealias ClosureType = () -> Void
+ 
+   let type: EventObservingType
+diff --git a/ios/Core/Functions/AsyncFunctionDefinition.swift b/ios/Core/Functions/AsyncFunctionDefinition.swift
+index 20ea9e4..2f1a6b9 100644
+--- a/ios/Core/Functions/AsyncFunctionDefinition.swift
++++ b/ios/Core/Functions/AsyncFunctionDefinition.swift
+@@ -23,6 +23,10 @@ private let defaultQueue = DispatchQueue(label: "expo.modules.AsyncFunctionQueue
+  Represents a function that can only be called asynchronously, thus its JavaScript equivalent returns a Promise.
+  */
+ public class AsyncFunctionDefinition<Args, FirstArgType, ReturnType>: AnyAsyncFunctionDefinition, @unchecked Sendable {
++  public var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.function(self))
++  }
++
+   typealias ClosureType = (Args) throws -> ReturnType
+ 
+   /**
+diff --git a/ios/Core/Functions/ConcurrentFunctionDefinition.swift b/ios/Core/Functions/ConcurrentFunctionDefinition.swift
+index 74d3e9b..7cc39a0 100644
+--- a/ios/Core/Functions/ConcurrentFunctionDefinition.swift
++++ b/ios/Core/Functions/ConcurrentFunctionDefinition.swift
+@@ -17,6 +17,10 @@ internal protocol AnyConcurrentFunctionDefinition: AnyFunctionDefinition {
+  As opposed to `AsyncFunctionDefinition`, it can leverage the new Swift's concurrency model and take the async/await closure.
+  */
+ public class ConcurrentFunctionDefinition<Args, FirstArgType, ReturnType>: AnyConcurrentFunctionDefinition, @unchecked Sendable {
++  public var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.function(self))
++  }
++
+   typealias ClosureType = @Sendable (Args) async throws -> sending ReturnType
+ 
+   let body: ClosureType
+diff --git a/ios/Core/Functions/OptimizedAsyncFunctionDefinition.swift b/ios/Core/Functions/OptimizedAsyncFunctionDefinition.swift
+index d6d187f..26d8a23 100644
+--- a/ios/Core/Functions/OptimizedAsyncFunctionDefinition.swift
++++ b/ios/Core/Functions/OptimizedAsyncFunctionDefinition.swift
+@@ -9,6 +9,10 @@ import ExpoModulesJSI
+  The async variant creates a JS Promise and dispatches the block invocation to a background queue.
+  */
+ public struct OptimizedAsyncFunctionDefinition: AnyAsyncFunctionDefinition, @unchecked Sendable {
++  public var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.function(self))
++  }
++
+   public let name: String
+   public let typeEncoding: String
+   public let argsCount: Int
+diff --git a/ios/Core/Functions/OptimizedSyncFunctionDefinition.swift b/ios/Core/Functions/OptimizedSyncFunctionDefinition.swift
+index 70c943e..1e7879e 100644
+--- a/ios/Core/Functions/OptimizedSyncFunctionDefinition.swift
++++ b/ios/Core/Functions/OptimizedSyncFunctionDefinition.swift
+@@ -7,6 +7,10 @@ import ExpoModulesJSI
+  This is used by the `@OptimizedFunction` macro with specific type signatures.
+  */
+ public struct OptimizedSyncFunctionDefinition: AnySyncFunctionDefinition, @unchecked Sendable {
++  public var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.function(self))
++  }
++
+   public let name: String
+   public let typeEncoding: String
+   public let argsCount: Int
+diff --git a/ios/Core/Functions/StaticFunctionDefinition.swift b/ios/Core/Functions/StaticFunctionDefinition.swift
+index f1a9b61..0fba041 100644
+--- a/ios/Core/Functions/StaticFunctionDefinition.swift
++++ b/ios/Core/Functions/StaticFunctionDefinition.swift
+@@ -15,6 +15,10 @@ internal protocol AnyStaticFunctionDefinition: AnyFunctionDefinition {
+  */
+ public final class StaticSyncFunctionDefinition<Args, FirstArgType, ReturnType>:
+   SyncFunctionDefinition<Args, FirstArgType, ReturnType>, AnyStaticFunctionDefinition, @unchecked Sendable {
++  public override var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.staticFunction(self))
++  }
++
+   let isStatic = true
+ }
+ 
+@@ -23,6 +27,10 @@ public final class StaticSyncFunctionDefinition<Args, FirstArgType, ReturnType>:
+  */
+ public final class StaticAsyncFunctionDefinition<Args, FirstArgType, ReturnType>:
+   AsyncFunctionDefinition<Args, FirstArgType, ReturnType>, AnyStaticFunctionDefinition, @unchecked Sendable {
++  public override var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.staticFunction(self))
++  }
++
+   let isStatic = true
+ }
+ 
+@@ -31,5 +39,9 @@ public final class StaticAsyncFunctionDefinition<Args, FirstArgType, ReturnType>
+  */
+ public final class StaticConcurrentFunctionDefinition<Args, FirstArgType, ReturnType>:
+   ConcurrentFunctionDefinition<Args, FirstArgType, ReturnType>, AnyStaticFunctionDefinition, @unchecked Sendable {
++  public override var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.staticFunction(self))
++  }
++
+   let isStatic = true
+ }
+diff --git a/ios/Core/Functions/SyncFunctionDefinition.swift b/ios/Core/Functions/SyncFunctionDefinition.swift
+index bd9c6a2..58cbffb 100644
+--- a/ios/Core/Functions/SyncFunctionDefinition.swift
++++ b/ios/Core/Functions/SyncFunctionDefinition.swift
+@@ -34,6 +34,10 @@ internal protocol AnySyncFunctionDefinition: AnyFunctionDefinition, ~Copyable {
+  Represents a function that can only be called synchronously.
+  */
+ public class SyncFunctionDefinition<Args, FirstArgType, ReturnType>: AnySyncFunctionDefinition, @unchecked Sendable {
++  public var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.function(self))
++  }
++
+   typealias ClosureType = (Args) throws -> ReturnType
+ 
+   /**
+diff --git a/ios/Core/Modules/ModuleDefinition.swift b/ios/Core/Modules/ModuleDefinition.swift
+index 740d7f1..d595599 100644
+--- a/ios/Core/Modules/ModuleDefinition.swift
++++ b/ios/Core/Modules/ModuleDefinition.swift
+@@ -40,26 +40,52 @@ public final class ModuleDefinition: ObjectDefinition {
+   override init(definitions: [AnyDefinition]) {
+     self.rawDefinitions = definitions
+ 
+-    self.name = definitions
+-      .compactMap { $0 as? ModuleNameDefinition }
+-      .last?
+-      .name ?? ""
+-
+-    self.eventListeners = definitions.compactMap { $0 as? EventListener }
++    var name: String?
++    var eventListeners = [EventListener]()
++    var viewDefinitions = [AnyViewDefinition]()
++    var eventNames = [String]()
++    var eventObservers = [AnyEventObservingDefinition]()
++
++    for definition in definitions {
++      switch definition.definitionClassification.kind {
++      case .moduleName(let nameDefinition):
++        name = nameDefinition.name
++      case .eventListener(let listener):
++        eventListeners.append(listener)
++      case .view(let view):
++        viewDefinitions.append(view)
++      case .events(let events):
++        eventNames.append(contentsOf: events.names)
++      case .eventObserver(let observer):
++        eventObservers.append(observer)
++      case .unknown:
++        if let nameDefinition = definition as? ModuleNameDefinition {
++          name = nameDefinition.name
++        }
++        if let listener = definition as? EventListener {
++          eventListeners.append(listener)
++        }
++        if let view = definition as? AnyViewDefinition {
++          viewDefinitions.append(view)
++        }
++        if let events = definition as? EventsDefinition {
++          eventNames.append(contentsOf: events.names)
++        }
++        if let observer = definition as? AnyEventObservingDefinition {
++          eventObservers.append(observer)
++        }
++      default:
++        break
++      }
++    }
+ 
+-    let viewDefinitions: [AnyViewDefinition] = definitions
+-      .compactMap { $0 as? AnyViewDefinition }
++    self.name = name ?? ""
++    self.eventListeners = eventListeners
+     var viewsDict = Dictionary(uniqueKeysWithValues: viewDefinitions.map { ($0.name, $0) })
+     viewsDict[DEFAULT_MODULE_VIEW] = viewDefinitions.first
+     self.views = viewsDict
+-    self.eventNames = Array(
+-      definitions
+-        .compactMap { ($0 as? EventsDefinition)?.names }
+-        .joined()
+-    )
+-
+-    self.eventObservers = definitions
+-      .compactMap { $0 as? AnyEventObservingDefinition }
++    self.eventNames = eventNames
++    self.eventObservers = eventObservers
+ 
+     super.init(definitions: definitions)
+   }
+@@ -73,7 +99,7 @@ public final class ModuleDefinition: ObjectDefinition {
+ 
+     // Use the type name if the name is not in the definition or was defined empty.
+     if name.isEmpty {
+-      name = String(describing: type)
++      name = _typeName(type, qualified: false)
+     }
+     return self
+   }
+@@ -109,6 +135,10 @@ public final class ModuleDefinition: ObjectDefinition {
+  Module's name definition. Returned by `name()` in module's definition.
+  */
+ internal struct ModuleNameDefinition: AnyDefinition {
++  var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.moduleName(self))
++  }
++
+   let name: String
+ }
+ 
+@@ -116,6 +146,10 @@ internal struct ModuleNameDefinition: AnyDefinition {
+  A definition for module's constants. Returned by `constants(() -> SomeType)` in module's definition.
+  */
+ internal struct ConstantsDefinition: AnyDefinition {
++  var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.legacyConstants(self))
++  }
++
+   let body: () -> [String: Any?]
+ }
+ 
+@@ -123,5 +157,9 @@ internal struct ConstantsDefinition: AnyDefinition {
+  A definition for module's events that can be sent to JavaScript.
+  */
+ public struct EventsDefinition: AnyDefinition {
++  public var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.events(self))
++  }
++
+   let names: [String]
+ }
+diff --git a/ios/Core/Objects/ConstantDefinition.swift b/ios/Core/Objects/ConstantDefinition.swift
+index 07a3acb..c607400 100644
+--- a/ios/Core/Objects/ConstantDefinition.swift
++++ b/ios/Core/Objects/ConstantDefinition.swift
+@@ -21,6 +21,10 @@ protocol AnyConstantDefinition {
+ }
+ 
+ public final class ConstantDefinition<ReturnType: AnyArgument>: AnyDefinition, AnyConstantDefinition {
++  public var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.constant(self))
++  }
++
+   typealias ClosureType = () throws -> ReturnType
+ 
+   /**
+diff --git a/ios/Core/Objects/ObjectDefinition.swift b/ios/Core/Objects/ObjectDefinition.swift
+index 7fa7d92..9582a8d 100644
+--- a/ios/Core/Objects/ObjectDefinition.swift
++++ b/ios/Core/Objects/ObjectDefinition.swift
+@@ -6,6 +6,10 @@ import ExpoModulesJSI
+  Base class for other definitions representing an object, such as `ModuleDefinition`.
+  */
+ public class ObjectDefinition: AnyDefinition, JavaScriptObjectBuilder {
++  public var definitionClassification: DefinitionClassification {
++    return .unknown
++  }
++
+   /**
+    A dictionary of functions defined by the object.
+    */
+@@ -40,39 +44,57 @@ public class ObjectDefinition: AnyDefinition, JavaScriptObjectBuilder {
+    Default initializer receiving children definitions from the result builder.
+    */
+   init(definitions: [AnyDefinition]) {
+-    self.functions = definitions
+-      .compactMap { $0 as? AnyFunctionDefinition }
+-      .filter { !($0 is AnyStaticFunctionDefinition) }
+-      .reduce(into: [String: AnyFunctionDefinition]()) { dict, function in
+-        dict[function.name] = function
+-      }
+-
+-    self.staticFunctions = definitions
+-      .compactMap { $0 as? AnyStaticFunctionDefinition }
+-      .reduce(into: [String: AnyFunctionDefinition]()) { dict, function in
+-        dict[function.name] = function
+-      }
+-
+-    self.legacyConstants = definitions
+-      .compactMap { $0 as? ConstantsDefinition }
+-
+-    self.constants = definitions
+-      .compactMap { $0 as? AnyConstantDefinition }
+-      .reduce(into: [String: AnyConstantDefinition]()) { dict, constant in
+-        dict[constant.name] = constant
+-      }
+-
+-    self.properties = definitions
+-      .compactMap { $0 as? AnyPropertyDefinition }
+-      .reduce(into: [String: AnyPropertyDefinition]()) { dict, property in
+-        dict[property.name] = property
++    var functions = [String: AnyFunctionDefinition]()
++    var staticFunctions = [String: AnyFunctionDefinition]()
++    var legacyConstants = [ConstantsDefinition]()
++    var constants = [String: AnyConstantDefinition]()
++    var properties = [String: AnyPropertyDefinition]()
++    var classes = [String: ClassDefinition]()
++
++    for definition in definitions {
++      switch definition.definitionClassification.kind {
++      case .function(let function):
++        functions[function.name] = function
++      case .staticFunction(let function):
++        staticFunctions[function.name] = function
++      case .legacyConstants(let constantsDefinition):
++        legacyConstants.append(constantsDefinition)
++      case .constant(let constant):
++        constants[constant.name] = constant
++      case .property(let property):
++        properties[property.name] = property
++      case .klass(let klass):
++        classes[klass.name] = klass
++      case .unknown:
++        if let function = definition as? AnyFunctionDefinition, !(function is AnyStaticFunctionDefinition) {
++          functions[function.name] = function
++        }
++        if let function = definition as? AnyStaticFunctionDefinition {
++          staticFunctions[function.name] = function
++        }
++        if let constantsDefinition = definition as? ConstantsDefinition {
++          legacyConstants.append(constantsDefinition)
++        }
++        if let constant = definition as? AnyConstantDefinition {
++          constants[constant.name] = constant
++        }
++        if let property = definition as? AnyPropertyDefinition {
++          properties[property.name] = property
++        }
++        if let klass = definition as? ClassDefinition {
++          classes[klass.name] = klass
++        }
++      default:
++        break
+       }
++    }
+ 
+-    self.classes = definitions
+-      .compactMap { $0 as? ClassDefinition }
+-      .reduce(into: [String: ClassDefinition]()) { dict, klass in
+-        dict[klass.name] = klass
+-      }
++    self.functions = functions
++    self.staticFunctions = staticFunctions
++    self.legacyConstants = legacyConstants
++    self.constants = constants
++    self.properties = properties
++    self.classes = classes
+   }
+ 
+   /**
+diff --git a/ios/Core/Objects/PropertyDefinition.swift b/ios/Core/Objects/PropertyDefinition.swift
+index 19c3cc3..af40332 100644
+--- a/ios/Core/Objects/PropertyDefinition.swift
++++ b/ios/Core/Objects/PropertyDefinition.swift
+@@ -23,6 +23,10 @@ protocol AnyPropertyDefinition {
+ }
+ 
+ public final class PropertyDefinition<OwnerType>: AnyDefinition, AnyPropertyDefinition, @unchecked Sendable {
++  public var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.property(self))
++  }
++
+   /**
+    Name of the property.
+    */
+diff --git a/ios/Core/Protocols/AnyDefinition.swift b/ios/Core/Protocols/AnyDefinition.swift
+index e37bbd3..5d6ebfc 100644
+--- a/ios/Core/Protocols/AnyDefinition.swift
++++ b/ios/Core/Protocols/AnyDefinition.swift
+@@ -1,4 +1,47 @@
+ /**
+  A protocol that must be implemented to be a part of module's definition and the module definition itself.
+  */
+-public protocol AnyDefinition: ~Copyable {}
++public protocol AnyDefinition: ~Copyable {
++  /**
++   The definition's role, resolved through dynamic dispatch. Definition containers switch on it
++   because a protocol cast that misses the runtime cache scans every conformance record in the process.
++   */
++  var definitionClassification: DefinitionClassification { get }
++}
++
++extension AnyDefinition where Self: ~Copyable {
++  public var definitionClassification: DefinitionClassification { .unknown }
++}
++
++/**
++ Classification of a definition element. Containers fall back to protocol casts for `unknown` elements.
++ */
++public struct DefinitionClassification {
++  internal enum Kind {
++    case unknown
++    case function(AnyFunctionDefinition)
++    case staticFunction(AnyStaticFunctionDefinition)
++    case legacyConstants(ConstantsDefinition)
++    case constant(AnyConstantDefinition)
++    case property(AnyPropertyDefinition)
++    case klass(ClassDefinition)
++    case moduleName(ModuleNameDefinition)
++    case eventListener(EventListener)
++    case events(EventsDefinition)
++    case eventObserver(AnyEventObservingDefinition)
++    case view(AnyViewDefinition)
++    case viewProp(AnyViewProp)
++    case viewName(ViewNameDefinition)
++    case viewLifecycle(AnyViewLifecycleMethod)
++  }
++
++  internal let kind: Kind
++
++  internal init(_ kind: Kind) {
++    self.kind = kind
++  }
++
++  public static var unknown: DefinitionClassification {
++    return DefinitionClassification(.unknown)
++  }
++}
+diff --git a/ios/Core/Protocols/AnyModule.swift b/ios/Core/Protocols/AnyModule.swift
+index 31a8544..fe59cd8 100644
+--- a/ios/Core/Protocols/AnyModule.swift
++++ b/ios/Core/Protocols/AnyModule.swift
+@@ -53,7 +53,7 @@ public protocol AnyModule: AnyObject, AnyArgument {
+ 
+ extension AnyModule {
+   public static var _jsName: String {
+-    return String(describing: self)
++    return _typeName(self, qualified: false)
+   }
+ 
+   /// An empty definition by default, so `@ExpoModule`-macro modules that describe their whole surface
+diff --git a/ios/Core/Views/ConcreteViewProp.swift b/ios/Core/Views/ConcreteViewProp.swift
+index 028a853..ef22303 100644
+--- a/ios/Core/Views/ConcreteViewProp.swift
++++ b/ios/Core/Views/ConcreteViewProp.swift
+@@ -4,6 +4,10 @@
+  Specialized class for the view prop. Specifies the prop name and its setter.
+  */
+ public final class ConcreteViewProp<ViewType: UIView, PropType: AnyArgument>: AnyViewProp, @unchecked Sendable {
++  public var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.viewProp(self))
++  }
++
+   public typealias SetterType = @MainActor (ViewType, PropType) -> Void
+ 
+   /**
+diff --git a/ios/Core/Views/SwiftUI/SwiftUIViewDefinition.swift b/ios/Core/Views/SwiftUI/SwiftUIViewDefinition.swift
+index 13a946d..e6c3b23 100644
+--- a/ios/Core/Views/SwiftUI/SwiftUIViewDefinition.swift
++++ b/ios/Core/Views/SwiftUI/SwiftUIViewDefinition.swift
+@@ -87,7 +87,7 @@ extension ExpoSwiftUI {
+ 
+     convenience init(_ viewType: ViewType.Type) {
+       // We assume SwiftUI views are exported as named views under the class name
+-      let nameDefinitionElement = ViewNameDefinition(name: String(describing: viewType))
++      let nameDefinitionElement = ViewNameDefinition(name: _typeName(viewType, qualified: false))
+       self.init(viewType, elements: [nameDefinitionElement])
+     }
+ 
+diff --git a/ios/Core/Views/ViewDefinition.swift b/ios/Core/Views/ViewDefinition.swift
+index f4f2ddd..c08e79a 100644
+--- a/ios/Core/Views/ViewDefinition.swift
++++ b/ios/Core/Views/ViewDefinition.swift
+@@ -6,6 +6,10 @@ import ExpoModulesJSI
+  A definition representing the native view to export to React.
+  */
+ public class ViewDefinition<ViewType>: ObjectDefinition, AnyViewDefinition, @unchecked Sendable {
++  public override var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.view(self))
++  }
++
+   /**
+    An array of view props definitions.
+    */
+@@ -30,22 +34,43 @@ public class ViewDefinition<ViewType>: ObjectDefinition, AnyViewDefinition, @unc
+    Default initializer receiving children definitions from the result builder.
+    */
+   init(_ viewType: ViewType.Type, elements: [AnyViewDefinitionElement]) {
+-    self.props = elements
+-      .compactMap { $0 as? AnyViewProp }
+-
+-    self.name = elements
+-      .compactMap { $0 as? ViewNameDefinition }
+-      .last?
+-      .name ?? String(describing: viewType)
+-
+-    self.eventNames = Array(
+-      elements
+-        .compactMap { ($0 as? EventsDefinition)?.names }
+-        .joined()
+-    )
++    var props = [any AnyViewProp]()
++    var name: String?
++    var eventNames = [String]()
++    var lifecycleMethods = [AnyViewLifecycleMethod]()
++
++    for element in elements {
++      switch element.definitionClassification.kind {
++      case .viewProp(let prop):
++        props.append(prop)
++      case .viewName(let nameDefinition):
++        name = nameDefinition.name
++      case .events(let events):
++        eventNames.append(contentsOf: events.names)
++      case .viewLifecycle(let method):
++        lifecycleMethods.append(method)
++      case .unknown:
++        if let prop = element as? AnyViewProp {
++          props.append(prop)
++        }
++        if let nameDefinition = element as? ViewNameDefinition {
++          name = nameDefinition.name
++        }
++        if let events = element as? EventsDefinition {
++          eventNames.append(contentsOf: events.names)
++        }
++        if let method = element as? AnyViewLifecycleMethod {
++          lifecycleMethods.append(method)
++        }
++      default:
++        break
++      }
++    }
+ 
+-    self.lifecycleMethods = elements
+-      .compactMap { $0 as? AnyViewLifecycleMethod }
++    self.props = props
++    self.name = name ?? _typeName(viewType, qualified: false)
++    self.eventNames = eventNames
++    self.lifecycleMethods = lifecycleMethods
+ 
+     super.init(definitions: elements)
+   }
+@@ -127,5 +152,9 @@ extension UIView: @MainActor AnyArgument {
+ }
+ 
+ public struct ViewNameDefinition: AnyViewDefinitionElement {
++  public var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.viewName(self))
++  }
++
+   let name: String
+ }
+diff --git a/ios/Core/Views/ViewLifecycleMethod.swift b/ios/Core/Views/ViewLifecycleMethod.swift
+index 7afe259..6c165bf 100644
+--- a/ios/Core/Views/ViewLifecycleMethod.swift
++++ b/ios/Core/Views/ViewLifecycleMethod.swift
+@@ -27,6 +27,10 @@ internal protocol AnyViewLifecycleMethod: AnyDefinition {
+  Element of the view definition that represents a lifecycle method, such as `OnViewDidUpdateProps`.
+  */
+ public final class ViewLifecycleMethod<ViewType>: AnyViewLifecycleMethod {
++  public var definitionClassification: DefinitionClassification {
++    return DefinitionClassification(.viewLifecycle(self))
++  }
++
+   public typealias Closure = @MainActor (ViewType) -> Void
+ 
+   /**

@@ -364,6 +364,7 @@ patchedDependencies:
   "@callstack/repack@5.4.2": "patches/@callstack__repack@5.4.2.patch"
   "bigint-buffer@1.1.5": "patches/bigint-buffer@1.1.5.patch"
   "expo@57.0.31": "patches/expo@57.0.31.patch"
+  "expo-modules-core@57.0.24": "patches/expo-modules-core@57.0.24.patch"
   "@gorhom/bottom-sheet@5.2.7": "patches/@gorhom__bottom-sheet@5.2.7.patch"
   "react-native-reanimated@4.5.1": "patches/react-native-reanimated@4.5.1.patch"
 
