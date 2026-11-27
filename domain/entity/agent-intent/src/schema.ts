@@ -20,7 +20,10 @@ import {
 
 export const AgentIntentIdSchema = z.uuid().brand<"AgentIntentId">();
 
-export const AgentPubkeySchema = z.string().min(1).brand<"AgentPubkey">();
+export const AgentPubkeySchema = z
+  .string()
+  .regex(/^[0-9a-fA-F]+$/, "Expected a hex public key")
+  .brand<"AgentPubkey">();
 
 export const AgentIntentStatusSchema = z.enum(AGENT_INTENT_STATUSES);
 

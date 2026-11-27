@@ -56,6 +56,15 @@ describe("AgentIntentRecordSchema", () => {
     }
   });
 
+  it("should accept a hex agent key and reject one that could be read as a path", () => {
+    expect(AgentIntentRecordSchema.safeParse(wireRecord({ agentPubkey: "03ABcd" })).success).toBe(
+      true,
+    );
+    for (const agentPubkey of ["..", ".", "02ab/cd", ""]) {
+      expect(AgentIntentRecordSchema.safeParse(wireRecord({ agentPubkey })).success).toBe(false);
+    }
+  });
+
   it("should keep a status added by a newer BFF", () => {
     const record = AgentIntentRecordSchema.parse(wireRecord({ status: "paused" }));
 
