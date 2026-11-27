@@ -3,6 +3,7 @@ import { useLocation } from "react-router";
 import type { Account } from "@ledgerhq/types-live";
 import {
   dismissStakePosition,
+  releaseStakePosition,
   settleStakePosition,
   useIsStakePositionShown,
   useShownStakePosition,
@@ -32,6 +33,7 @@ export type StakePositionDialogRootViewModel =
       ticker: string;
       currencyName: string;
       onDismiss: () => void;
+      onHidden: () => void;
     }>;
 
 /** Mirrors the request in the dialogs slice, so the app knows a global dialog is open. */
@@ -85,9 +87,10 @@ function useDismissRequestWithoutAccount(
   phase: ShownStakePosition["phase"],
   hasAccount: boolean,
 ) {
+  const isUnsigned = phase === "open" || phase === "signing";
   useEffect(() => {
-    if (requestId !== undefined && phase === "open" && !hasAccount) dismissStakePosition(requestId);
-  }, [hasAccount, phase, requestId]);
+    if (requestId !== undefined && isUnsigned && !hasAccount) dismissStakePosition(requestId);
+  }, [hasAccount, isUnsigned, requestId]);
 }
 
 export function useStakePositionDialogRootViewModel(): StakePositionDialogRootViewModel {
@@ -113,6 +116,10 @@ export function useStakePositionDialogRootViewModel(): StakePositionDialogRootVi
     if (request) dismissStakePosition(request.id);
   }, [request]);
 
+  const onHidden = useCallback(() => {
+    if (request) releaseStakePosition(request.id);
+  }, [request]);
+
   if (!request || !account || !StakePositionDialogContent) return { kind: "hidden" };
 
   const isSigned = phase === "committed" || phase === "settled";
@@ -123,6 +130,7 @@ export function useStakePositionDialogRootViewModel(): StakePositionDialogRootVi
       ticker: account.currency.ticker,
       currencyName: account.currency.name,
       onDismiss,
+      onHidden,
     };
   }
 

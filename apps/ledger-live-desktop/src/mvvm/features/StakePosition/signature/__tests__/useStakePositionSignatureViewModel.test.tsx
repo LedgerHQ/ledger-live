@@ -1,5 +1,4 @@
 import { act, renderHook, waitFor } from "tests/testSetup";
-import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { ExecutorState } from "@features/platform-device-intent";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Account, SignedOperation } from "@ledgerhq/types-live";
@@ -29,10 +28,11 @@ const SIGNED_OPERATION = { signature: "signed", operation: { id: "op" } } as Sig
 const DISCONNECTED = { type: "deviceDisconnected", device: {} } as unknown as ExecutorState;
 
 function setup(overrides: Partial<StakePositionSignatureProps> = {}) {
-  const props = {
+  const props: StakePositionSignatureProps = {
     account: ACCOUNT,
     transaction: TRANSACTION,
     status: STATUS,
+    action: "deactivate",
     onSigned: jest.fn(),
     onFailed: jest.fn(),
     onCancel: jest.fn(),
@@ -106,21 +106,34 @@ describe("useStakePositionSignatureViewModel", () => {
     expect(props.onSigned).toHaveBeenCalledWith(SIGNED_OPERATION);
   });
 
-  it("fails with a refusal when the user refuses on the device", () => {
+  it.each([
+    ["the user refuses on the device", { type: "cancelled", retry: jest.fn() } as const],
+    [
+      "the signature fails",
+      {
+        type: "error",
+        error: new Error("The device answered an error"),
+        retry: jest.fn(),
+      } as const,
+    ],
+  ])("stays on the device step when %s, for its retry", (_, jobState) => {
+    const { result, props } = setup();
+
+    act(() => result.current.onIntentJobStateChanged(jobState));
+
+    expect(props.onFailed).not.toHaveBeenCalled();
+    expect(props.onCancel).not.toHaveBeenCalled();
+    expect(props.onSigned).not.toHaveBeenCalled();
+  });
+
+  it("signs the retry after a refusal", () => {
     const { result, props } = setup();
 
     act(() => result.current.onIntentJobStateChanged({ type: "cancelled", retry: jest.fn() }));
+    act(() => result.current.intent.onResult?.(SIGNED_OPERATION));
+    act(() => result.current.onIntentJobComplete());
 
-    expect(props.onFailed).toHaveBeenCalledWith(expect.any(UserRefusedOnDevice));
-  });
-
-  it("fails with the error of the signature", () => {
-    const error = new Error("The device answered an error");
-    const { result, props } = setup();
-
-    act(() => result.current.onIntentJobStateChanged({ type: "error", error, retry: jest.fn() }));
-
-    expect(props.onFailed).toHaveBeenCalledWith(error);
+    expect(props.onSigned).toHaveBeenCalledWith(SIGNED_OPERATION);
   });
 
   it("names the device the executor connects to", () => {
@@ -133,7 +146,16 @@ describe("useStakePositionSignatureViewModel", () => {
       } as unknown as ExecutorState),
     );
 
-    expect(result.current.extraProps).toEqual({ deviceName: "Lily's Ledger" });
+    expect(result.current.extraProps).toEqual({
+      deviceName: "Lily's Ledger",
+      action: "deactivate",
+    });
+  });
+
+  it("names the exit being signed", () => {
+    const { result } = setup({ action: "withdraw" });
+
+    expect(result.current.extraProps).toEqual({ deviceName: "", action: "withdraw" });
   });
 
   it("cancels only while nothing is signed", () => {

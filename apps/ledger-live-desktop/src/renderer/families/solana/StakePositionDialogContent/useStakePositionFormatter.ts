@@ -10,7 +10,10 @@ import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 
-/** The account's unit, the locale, the counter value and discreet mode, for the package's figures. */
+/**
+ * The account's unit, the locale, the counter value and discreet mode, for the package's figures.
+ * A rate keeps two decimals, as on the Earn dashboard.
+ */
 export function useStakePositionFormatter(account: SolanaAccount): StakePositionFormatter {
   const unit = useAccountUnit(account);
   const locale = useSelector(localeSelector);
@@ -25,6 +28,7 @@ export function useStakePositionFormatter(account: SolanaAccount): StakePosition
       calculateCountervalue(currency, new BigNumber(baseUnits));
     const percentFormat = new Intl.NumberFormat(locale, {
       style: "percent",
+      minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
 

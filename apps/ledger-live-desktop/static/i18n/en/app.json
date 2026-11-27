@@ -11679,7 +11679,7 @@
       "sectionTitle": "Details",
       "initialDeposit": "Initial deposit",
       "apy": "Current APY",
-      "apyBadge": "{{apy}} APY",
+      "apyBadge": "{{apy}} {{type}}",
       "status": "Transaction status",
       "account": "Address",
       "validator": "Validator"
@@ -11731,6 +11731,10 @@
       "close": "Close"
     },
     "signature": {
+      "processingTitle": {
+        "deactivate": "Deactivate transaction in progress",
+        "withdraw": "Withdraw transaction in progress"
+      },
       "processing": "This can take a few minutes."
     }
   },

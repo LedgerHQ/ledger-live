@@ -23,6 +23,7 @@ function StakePositionDialogRootView(props: StakePositionDialogRootViewModel) {
           ticker={props.ticker}
           currencyName={props.currencyName}
           onDismiss={props.onDismiss}
+          onHidden={props.onHidden}
           isDismissible
         >
           <StakePositionUnavailable reason="notFound" onDismiss={props.onDismiss} />
