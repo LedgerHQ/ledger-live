@@ -28,14 +28,6 @@ export default function BalanceLimitScreen({ trackCategory, ...input }: Props) {
         contentContainerStyle={{ flexGrow: 1, padding: 16, gap: 16 }}
         keyboardShouldPersistTaps="handled"
       >
-        <Box lx={{ gap: "s8" }}>
-          <Text typography="heading3SemiBold" lx={{ color: "base" }}>
-            {balanceLimitLabel}
-          </Text>
-          <Text typography="body2" lx={{ color: "muted" }}>
-            {t("xrp.tokenSettings.balanceLimitDescription")}
-          </Text>
-        </Box>
         <TextInput
           label={balanceLimitLabel}
           value={viewModel.inputText}

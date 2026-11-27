@@ -274,9 +274,6 @@ export default function ManageToken(props: Props) {
     <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
       <TrackScreen category="XrpManageTokenFlow" name="ManageToken" />
       <ScrollView contentContainerStyle={styles.list}>
-        <Text typography="heading3SemiBold" lx={{ color: "base" }}>
-          {t("xrp.manageAssets.title")}
-        </Text>
         {tokenAccounts.length === 0 ? (
           <Text typography="body2" lx={{ color: "muted" }}>
             {t("xrp.manageAssets.empty")}

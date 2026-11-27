@@ -1,38 +1,33 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useTheme } from "@react-navigation/native";
-import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
-import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import {
+  createLumenNativeStackNavigator,
+  getStackNavigationConfigV4,
+} from "LLM/components/Navigation";
 import { ScreenName } from "~/const";
-import { bridgeSuspenseScreenLayout, getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { useTranslation } from "~/context/Locale";
+import { bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import BalanceLimit from "./BalanceLimit";
 import ManageToken from "./ManageToken";
 import TokenSettings from "./TokenSettings";
 import type { XrpManageTokenFlowParamList } from "./types";
 
-const Stack = createNativeStackNavigator<XrpManageTokenFlowParamList>();
+const Stack = createLumenNativeStackNavigator<XrpManageTokenFlowParamList>();
 
 const options = {
   headerShown: false,
 };
 
-function renderBackButton() {
-  return <NavigationHeaderBackButton />;
-}
-
 function ManageTokenFlow() {
-  const { colors } = useTheme();
-  const { theme } = useLumenTheme();
-  const canvas = { backgroundColor: theme.colors.bg.canvas };
-  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
+  const { t } = useTranslation();
+  const { theme } = useTheme();
+  const stackNavigationConfig = useMemo(() => getStackNavigationConfigV4(theme), [theme]);
 
   return (
     <Stack.Navigator
       screenOptions={{
         ...stackNavigationConfig,
-        contentStyle: canvas,
-        headerStyle: canvas,
         gestureEnabled: Platform.OS === "ios",
       }}
       screenLayout={bridgeSuspenseScreenLayout}
@@ -41,24 +36,27 @@ function ManageTokenFlow() {
         name={ScreenName.XrpManageTokenList}
         component={ManageToken}
         options={{
-          headerLeft: renderBackButton,
-          headerTitle: "",
+          title: t("xrp.manageAssets.title"),
+          lumenNavBar: { density: "expanded" },
         }}
       />
       <Stack.Screen
         name={ScreenName.XrpManageTokenSettings}
         component={TokenSettings}
         options={{
-          headerLeft: renderBackButton,
-          headerTitle: "",
+          title: t("xrp.tokenSettings.editTitle"),
+          lumenNavBar: { density: "expanded" },
         }}
       />
       <Stack.Screen
         name={ScreenName.XrpManageTokenBalanceLimit}
         component={BalanceLimit}
         options={{
-          headerLeft: renderBackButton,
-          headerTitle: "",
+          title: t("xrp.tokenSettings.balanceLimit"),
+          lumenNavBar: {
+            density: "expanded",
+            description: t("xrp.tokenSettings.balanceLimitDescription"),
+          },
         }}
       />
     </Stack.Navigator>

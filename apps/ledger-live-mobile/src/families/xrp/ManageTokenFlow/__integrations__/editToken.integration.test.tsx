@@ -849,7 +849,7 @@ describe("XRP edit token flow (integration)", () => {
       await user.press(screen.getByText("Close"));
 
       await waitFor(() => expect(screen.queryByTestId("xrp-settings-continue")).toBeNull());
-      const manageAssetsTitle = await screen.findByText("Manage assets");
+      const [manageAssetsTitle] = await screen.findAllByText("Manage assets");
 
       expect(manageAssetsTitle).toBeVisible();
     });

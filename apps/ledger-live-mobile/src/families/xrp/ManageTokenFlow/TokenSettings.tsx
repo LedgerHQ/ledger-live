@@ -42,9 +42,6 @@ function TokenSettingsContent() {
     <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
       <TrackScreen category="XrpManageTokenFlow" name="TokenSettings" />
       <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16, gap: 16 }}>
-        <Text typography="heading3SemiBold" lx={{ color: "base" }}>
-          {t("xrp.tokenSettings.editTitle")}
-        </Text>
         {viewModel.isCurrentLimitZero ? (
           <FullTextBanner
             appearance="warning"
