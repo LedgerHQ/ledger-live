@@ -556,10 +556,10 @@ describe("PortfolioView", () => {
       );
     });
 
-    it("should track the click on a service", async () => {
+    it("should track the click on Crypto Loan", async () => {
       const { user } = renderPortfolioWithServices();
 
-      await user.click(await screen.findByText("Loans"));
+      await user.click(await screen.findByText("Crypto Loan"));
 
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "borrow_entry_point",
@@ -568,10 +568,10 @@ describe("PortfolioView", () => {
       });
     });
 
-    it("should navigate to borrow with the return path when clicking loans", async () => {
+    it("should navigate to borrow with the return path when clicking Crypto Loan", async () => {
       const { user } = renderPortfolioWithServices();
 
-      await user.click(await screen.findByText("Loans"));
+      await user.click(await screen.findByText("Crypto Loan"));
 
       expect(mockNavigate).toHaveBeenCalledWith("/borrow", {
         state: { returnTo: expect.any(String) },

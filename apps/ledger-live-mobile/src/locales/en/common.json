@@ -3970,7 +3970,7 @@
       "description": "Trade with leverage"
     },
     "borrowEntry": {
-      "title": "Crypto loans",
+      "title": "Crypto Loan",
       "cardTitle": "Borrow stablecoins",
       "cardDescription": "Borrow at competitive rates",
       "cta": "Explore"
@@ -4040,7 +4040,7 @@
       "description": "Invest with leverage"
     },
     "borrow": {
-      "title": "Loans",
+      "title": "Crypto Loan",
       "description": "Borrow stablecoins"
     },
     "predictions": {
