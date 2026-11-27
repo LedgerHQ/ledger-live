@@ -26,6 +26,7 @@ import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLo
 import IconCoins from "~/renderer/icons/Coins";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
+import { useLLDCoinFamily } from "~/renderer/families";
 
 import { openReceiveFlow } from "LLD/features/Receive";
 type Props = {
@@ -45,13 +46,17 @@ export default function AccountContextMenu({ leftClick, children, account, paren
   const stakeLabel = useGetStakeLabelLocaleBased();
   const walletState = useSelector(walletSelector);
   const openSendFlow = useOpenSendFlow();
+  const { isTransferDisabled } = useLLDCoinFamily(
+    getMainAccount(account, parentAccount).currency.family,
+  );
 
   const menuItems = useMemo(() => {
     const currency = getAccountCurrency(account);
     const mainAccount = getMainAccount(account, parentAccount);
     const family = mainAccount.currency.family;
+    const transferDisabled = !!isTransferDisabled?.(account, parentAccount);
     const items: ContextMenuItemType[] = [];
-    if (!isSendDisabledForFamily(family)) {
+    if (!isSendDisabledForFamily(family) && !transferDisabled) {
       items.push({
         label: "accounts.contextMenu.send",
         Icon: IconSend,
@@ -62,7 +67,7 @@ export default function AccountContextMenu({ leftClick, children, account, paren
           }),
       });
     }
-    if (!isReceiveDisabledForFamily(family)) {
+    if (!isReceiveDisabledForFamily(family) && !transferDisabled) {
       items.push({
         label: "accounts.contextMenu.receive",
         Icon: IconReceive,
@@ -183,6 +188,7 @@ export default function AccountContextMenu({ leftClick, children, account, paren
     stakeLabel,
     openSendFlow,
     location.pathname,
+    isTransferDisabled,
   ]);
   const currency = getAccountCurrency(account);
   return (

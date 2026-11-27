@@ -242,6 +242,9 @@ export const urls = {
   aleo: {
     learnMore: "https://support.ledger.com/article/Aleo-ALEO",
   },
+  xrp: {
+    learnMore: "https://support.ledger.com/article/115005177349-zd",
+  },
   concordium: {
     learnMore: "https://support.ledger.com/article/Concordium-CCD",
   },

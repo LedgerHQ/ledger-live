@@ -1,5 +1,7 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
+import { urls } from "~/config/urls";
+import { openURL } from "~/renderer/linking";
 import AccountSubHeader from "./AccountSubHeader";
 import { XRP_ACCOUNT, XRP_IOU_TOKEN_ACCOUNT, makeXrpTokenAccount } from "./__mocks__/account.mock";
 
@@ -7,6 +9,8 @@ jest.mock("@ledgerhq/live-common/families/xrp/config", () => ({
   ...jest.requireActual("@ledgerhq/live-common/families/xrp/config"),
   getXrpEnabledTokenStandards: () => ["iou", "mpt"],
 }));
+
+jest.mock("~/renderer/linking", () => ({ openURL: jest.fn() }));
 
 describe("xrp AccountSubHeader", () => {
   it("shows the frozen banner on a frozen token page", () => {
@@ -24,6 +28,19 @@ describe("xrp AccountSubHeader", () => {
       ),
     ).toBeVisible();
     expect(screen.getByRole("button", { name: "Learn more" })).toBeVisible();
+  });
+
+  it("opens the XRP support article from Learn more", async () => {
+    const { user } = render(
+      <AccountSubHeader
+        account={makeXrpTokenAccount({ isLocked: true })}
+        parentAccount={XRP_ACCOUNT}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Learn more" }));
+
+    expect(openURL).toHaveBeenCalledWith(urls.xrp.learnMore);
   });
 
   it("shows nothing on an unfrozen token page", () => {
