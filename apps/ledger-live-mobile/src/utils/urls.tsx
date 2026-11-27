@@ -152,6 +152,10 @@ export const urls = {
         main: "https://li.fi/",
         tos: "https://li.fi/legal/terms-and-conditions/",
       },
+      lifi_intents: {
+        main: "https://li.fi/",
+        tos: "https://li.fi/legal/terms-and-conditions",
+      },
       uniswap: {
         main: "https://uniswap.org/",
         tos: "https://support.uniswap.org/hc/en-us/articles/30935100859661-Uniswap-Labs-Terms-of-Service",

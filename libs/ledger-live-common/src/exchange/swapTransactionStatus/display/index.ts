@@ -101,6 +101,10 @@ const PROVIDER_EXPLORERS: Record<string, ProviderExplorer> = {
     requiresOperationHash: true,
     buildUrl: ({ operationHash }) => `https://scan.li.fi/tx/${operationHash}`,
   },
+  lifi_intents: {
+    requiresOperationHash: true,
+    buildUrl: ({ operationHash }) => `https://scan.li.fi/tx/${operationHash}`,
+  },
   thorswap: {
     requiresOperationHash: true,
     buildUrl: ({ operationHash }) => `https://runescan.io/tx/${operationHash}`,
