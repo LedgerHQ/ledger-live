@@ -70,8 +70,8 @@ test("writes a distinct body on every renewal so a stale If-Match cannot match i
     () => new Response(null, { status: 200, headers: { etag: '"etag-1"' } }),
   );
 
-  await store.replace("key", record, '"etag-0"');
-  await store.replace("key", record, '"etag-1"');
+  await store.replace({ key: "key", record, etag: '"etag-0"' });
+  await store.replace({ key: "key", record, etag: '"etag-1"' });
 
   assert.notEqual(requests[0].body, requests[1].body);
 });
@@ -85,7 +85,7 @@ test("reports a held lock instead of failing when the create precondition is not
 test("replaces only the version it read, with If-Match", async () => {
   const { store, requests } = createStore(() => new Response("Conflict", { status: 409 }));
 
-  assert.equal(await store.replace("key", record, '"etag-1"'), undefined);
+  assert.equal(await store.replace({ key: "key", record, etag: '"etag-1"' }), undefined);
   assert.equal(requests[0].headers["if-match"], '"etag-1"');
 });
 
@@ -216,7 +216,9 @@ test("gives up on a request that stalls past its timeout", async () => {
     fetchImpl: stalledFetch,
   });
 
-  await assert.rejects(store.replace("key", record, '"etag-1"'), { name: "TimeoutError" });
+  await assert.rejects(store.replace({ key: "key", record, etag: '"etag-1"' }), {
+    name: "TimeoutError",
+  });
 });
 
 test("accepts an endpoint given with its scheme", async () => {

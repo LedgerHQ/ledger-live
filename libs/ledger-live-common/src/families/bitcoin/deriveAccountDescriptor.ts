@@ -4,9 +4,9 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { AccountDescriptorSchema } from "@domain/entity-account-descriptor";
 import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { getNetworkParameters } from "@ledgerhq/coin-bitcoin/networks";
+import { fromDescriptorPath } from "@domain/entity-derivation";
 import type { Resolver } from "../../hw/getAddress/types";
 import type { DeriveAccountDescriptor } from "../../coin-modules/types";
-import { toLegacyPath } from "../../account/accountDescriptor";
 
 type BtcSigner = {
   getWalletXpub(options: { path: string; xpubVersion: number }): Promise<string>;
@@ -20,13 +20,13 @@ export const createDeriveAccountDescriptor =
   ): DeriveAccountDescriptor =>
   (runOnTransport, currency, candidate) => {
     const xpubVersion = getNetworkParameters(currency.id).xpubVersion.readUInt32BE(0);
-    const path = toLegacyPath(candidate.accountPath);
+    const path = fromDescriptorPath(candidate.accountPath);
     // Resolver first (rejects a mode the app can't address), then the xpub unless aborted meanwhile.
     const readXpub = (transport: Transport, signal: AbortSignal) =>
       from(
         resolver(transport, {
           currency,
-          path: toLegacyPath(candidate.addressPath),
+          path: fromDescriptorPath(candidate.addressPath),
           derivationMode: asDerivationMode(candidate.derivationMode),
         }),
       ).pipe(

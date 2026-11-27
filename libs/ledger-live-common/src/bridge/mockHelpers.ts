@@ -10,6 +10,7 @@ import { loadMockAccountForFamily } from "../coin-modules/registry";
 import { genAccount } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
 import { delay } from "../promise";
+import { withAccountBalances } from "@ledgerhq/ledger-wallet-framework/account/balances";
 import { type GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 const MOCK_DATA_SEED = "MOCK";
 const broadcasted: Record<string, Operation[]> = {};
@@ -38,8 +39,7 @@ export const sync: AccountBridge<any>["sync"] = initialAccount =>
           spendableBalance: balance,
         };
         const postSyncAccount = perFamilyOperation?.postSyncAccount;
-        if (postSyncAccount) return postSyncAccount(nextAcc);
-        return nextAcc;
+        return withAccountBalances(postSyncAccount ? postSyncAccount(nextAcc) : nextAcc);
       });
       o.complete();
     };

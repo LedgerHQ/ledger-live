@@ -14,7 +14,7 @@ import { _setTestSpinner, installOutputCapture } from "./shared/ui";
 import { FakeSpinners } from "./testing/fake-spinner";
 import { resetTestSeams } from "./shared/test-seam";
 import { ETH_ADDR, SOL_ADDR } from "./shared/accountDescriptor/test-fixtures";
-import { NetworkIdSchema } from "./shared/accountDescriptor";
+import { DerivationPathSchema, NetworkIdSchema } from "./shared/accountDescriptor";
 import type { SendIntentSummary } from "./agent-intent/send-intent";
 import type { SwapIntentSummary } from "./agent-intent/swap-intent";
 
@@ -453,7 +453,7 @@ describe("HumanCommandOutput", () => {
       type: "utxo",
       network: NetworkIdSchema.parse("bitcoin"),
       key: XPUB,
-      path: "m/84h/0h/0h",
+      path: DerivationPathSchema.parse("m/84h/0h/0h"),
     } as const;
     try {
       const out = createCommandOutput("human", {
@@ -977,6 +977,10 @@ describe("output command handling", () => {
     import.meta.dir,
     "./testing/human-device-error-exit.ts",
   );
+  const HUMAN_DEVICE_ERROR_WITH_REQUEST = path.resolve(
+    import.meta.dir,
+    "./testing/human-device-error-with-request.ts",
+  );
   const OUTPUT_LOADS_SOLANA_SDK = path.resolve(
     import.meta.dir,
     "./testing/output-loads-solana-sdk.ts",
@@ -1009,6 +1013,20 @@ describe("output command handling", () => {
     expect(exitCode).toBe(DEVICE_EXIT_CODES.timeout);
     expect(await new Response(proc.stderr).text()).toContain(
       new WalletCliDeviceError({ code: "timeout" }).message,
+    );
+  });
+
+  it("names the host of a failed request behind a device error", async () => {
+    const proc = Bun.spawn(["bun", "--cwd", ROOT, HUMAN_DEVICE_ERROR_WITH_REQUEST], {
+      env: { ...process.env, CLAUDECODE: "1", NO_COLOR: "1" },
+      stdin: "ignore",
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    expect(await proc.exited).not.toBe(0);
+    expect(await new Response(proc.stderr).text()).toContain(
+      "Could not reach explorers.api.live.ledger.com. If wallet-cli runs in a sandbox, allow explorers.api.live.ledger.com in its network allowlist.",
     );
   });
 });

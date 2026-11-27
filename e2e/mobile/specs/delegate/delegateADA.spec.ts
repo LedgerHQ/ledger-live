@@ -4,9 +4,13 @@ import { setEnv } from "@shared/env";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
-const delegation = new Delegate(Account.ADA_1, "0.01", "LBF3 - Ledger by Figment 3");
-runDelegateTest(
+const delegation = new Delegate({
+  account: Account.ADA_1,
+  amount: "0.01",
+  provider: "LBF3 - Ledger by Figment 3",
+});
+runDelegateTest({
   delegation,
-  ["B2CQA-3023"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@cardano`, `@family-cardano`],
-);
+  tmsLinks: ["B2CQA-3023"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@cardano`, `@family-cardano`],
+});

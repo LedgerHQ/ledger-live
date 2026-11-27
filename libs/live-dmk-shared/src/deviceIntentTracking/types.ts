@@ -11,10 +11,12 @@ export type SourceFlow =
   | "earn"
   | "add_account"
   | "my_ledger"
+  | "my_wallet"
   | "wallet_connect"
   | "wallet_api"
   | "onboarding"
   | "contacts"
+  | "manage_assets"
   | "ledger_sync"
   | "debug";
 

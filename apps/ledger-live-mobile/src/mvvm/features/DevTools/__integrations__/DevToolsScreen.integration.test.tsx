@@ -126,6 +126,12 @@ describe("DevToolsScreen", () => {
       { id: "receive", config: { marker: "receive-props" } },
       { id: "predictions", config: { marker: "predictions-props" } },
       { id: "intent-wallet-sync", config: { marker: "intent-wallet-sync-props" } },
+      {
+        id: "app-toggles",
+        config: {
+          toggles: [expect.objectContaining({ id: "simulate-apollo-device", isOn: false })],
+        },
+      },
     ]);
     expect(props.screenOptions.contentStyle).toEqual([expect.anything(), { paddingBottom: 34 }]);
   });

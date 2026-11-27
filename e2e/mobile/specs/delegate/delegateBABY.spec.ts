@@ -1,9 +1,9 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runDelegateTest } from "@e2e/specs/delegate/delegate";
 
-const delegation = new Delegate(Account.BABY_1, "0.001", "Figment");
-runDelegateTest(
+const delegation = new Delegate({ account: Account.BABY_1, amount: "0.001", provider: "Figment" });
+runDelegateTest({
   delegation,
-  ["B2CQA-6679"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@babylon`, `@family-cosmos`],
-);
+  tmsLinks: ["B2CQA-6679"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@babylon`, `@family-cosmos`],
+});

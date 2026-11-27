@@ -103,7 +103,6 @@ const mockUSDCTokenAccount: TokenAccount = {
 
 const walletState: WalletState = {
   accountNames: new Map(),
-  starredAccountIds: new Set(),
   walletSync: { walletSyncState: { data: null, version: 0 } },
   nonImportedAccountInfos: [],
   recentAddresses: {},

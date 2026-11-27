@@ -39,10 +39,30 @@ test("re-encodes the June Tronify payment byte for byte", () => {
 test("tells a USDT transfer by its recipient and amount", () => {
   const { payeeHex, amountBaseUnits, ownerHex } = JUNE_PAYMENT;
 
-  assert.equal(isUsdtTransfer(JUNE_PAYMENT_HEX, payeeHex, amountBaseUnits), true);
-  assert.equal(isUsdtTransfer(JUNE_PAYMENT_HEX, ownerHex, amountBaseUnits), false);
-  assert.equal(isUsdtTransfer(JUNE_PAYMENT_HEX, payeeHex, amountBaseUnits + 1n), false);
-  assert.equal(isUsdtTransfer(JUNE_PAYMENT_HEX.slice(0, -100), payeeHex, amountBaseUnits), false);
+  assert.equal(
+    isUsdtTransfer({ rawDataHex: JUNE_PAYMENT_HEX, toHex: payeeHex, amountBaseUnits }),
+    true,
+  );
+  assert.equal(
+    isUsdtTransfer({ rawDataHex: JUNE_PAYMENT_HEX, toHex: ownerHex, amountBaseUnits }),
+    false,
+  );
+  assert.equal(
+    isUsdtTransfer({
+      rawDataHex: JUNE_PAYMENT_HEX,
+      toHex: payeeHex,
+      amountBaseUnits: amountBaseUnits + 1n,
+    }),
+    false,
+  );
+  assert.equal(
+    isUsdtTransfer({
+      rawDataHex: JUNE_PAYMENT_HEX.slice(0, -100),
+      toHex: payeeHex,
+      amountBaseUnits,
+    }),
+    false,
+  );
 });
 
 test("puts a memo in raw_data field 10", () => {

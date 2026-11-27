@@ -72,9 +72,26 @@ describe("fetchBlockHeight", () => {
 });
 
 describe("fetchTxns", () => {
-  it("short-circuits without querying when start <= stop", async () => {
+  it("short-circuits without querying when start < stop", async () => {
     expect(await fetchTxns(HOST, "addr", 5n, 10n)).toEqual([]);
     expect(mockQuery).not.toHaveBeenCalled();
+  });
+
+  it("reads the newest page alone when start equals stop", async () => {
+    mockQuery.mockResolvedValue(replied());
+    mockDecode.mockReturnValueOnce([{ Ok: { transactions: [{ id: 9n }, { id: 4n }] } }]);
+    expect(await fetchTxns(HOST, "addr", 10n, 10n)).toEqual([{ id: 9n }, { id: 4n }]);
+    expect(mockQuery).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ["at the stop", 4n],
+    ["at block 0", 0n],
+  ])("reads no further than a page that ends %s", async (_, oldest) => {
+    mockQuery.mockResolvedValue(replied());
+    mockDecode.mockReturnValueOnce([{ Ok: { transactions: [{ id: 9n }, { id: oldest }] } }]);
+    expect(await fetchTxns(HOST, "addr", 10n, oldest)).toEqual([{ id: 9n }, { id: oldest }]);
+    expect(mockQuery).toHaveBeenCalledTimes(1);
   });
 
   it("returns an empty list when the account has no transactions", async () => {

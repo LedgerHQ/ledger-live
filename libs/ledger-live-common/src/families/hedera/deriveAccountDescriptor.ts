@@ -1,7 +1,7 @@
 import { defer, from, map, of, switchMap, tap } from "rxjs";
 import { AccountDescriptorSchema } from "@domain/entity-account-descriptor";
+import { fromDescriptorPath } from "@domain/entity-derivation";
 import type { DeriveAccountDescriptor, RunOnTransport } from "../../coin-modules/types";
-import { toLegacyPath } from "../../account/accountDescriptor";
 import { getAddressesForPublicKey } from "./bridge/api";
 import { createSigner as createFrameworkSigner } from "./signer";
 
@@ -14,7 +14,7 @@ export const deriveAccountDescriptor: DeriveAccountDescriptor = (
   currency,
   candidate,
 ) => {
-  const path = toLegacyPath(candidate.addressPath);
+  const path = fromDescriptorPath(candidate.addressPath);
   const cacheKey = `${currency.id}:${path}`;
   const scanCache = accountIdsByScan.get(runOnTransport) ?? new Map<string, string[]>();
   accountIdsByScan.set(runOnTransport, scanCache);

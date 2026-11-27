@@ -51,6 +51,12 @@ type ExpectAmountOptions = {
   tolerance?: number;
 };
 
+type WaitUntilOptions = {
+  wait: Promise<unknown>;
+  timeout: number;
+  state: string;
+};
+
 const scroller = new PageScroller();
 
 /** How far past the viewport edge `revealForTap` pushes an element, so a sticky header or footer cannot take the tap. */
@@ -94,25 +100,29 @@ export class NativeHandle implements ElementHandle {
       });
       return;
     }
-    await this.waitUntil(waitFor(this.raw).toBeVisible().withTimeout(timeout), timeout, "visible");
+    await this.waitUntil({
+      wait: waitFor(this.raw).toBeVisible().withTimeout(timeout),
+      timeout,
+      state: "visible",
+    });
   }
 
   /** Waits until 100% of the element is visible. Use it for bottom sheets: they pass 75% while still sliding. */
   async waitFullyVisible(timeout = TIMEOUT.xxlarge): Promise<void> {
-    await this.waitUntil(
-      waitFor(this.raw).toBeVisible(100).withTimeout(timeout),
+    await this.waitUntil({
+      wait: waitFor(this.raw).toBeVisible(100).withTimeout(timeout),
       timeout,
-      "fully visible",
-    );
+      state: "fully visible",
+    });
   }
 
   /** Waits until the element is no longer visible. Throws if it is still visible after the timeout. */
   async waitNotVisible(timeout = TIMEOUT.xxlarge): Promise<void> {
-    await this.waitUntil(
-      waitFor(this.raw).not.toBeVisible().withTimeout(timeout),
+    await this.waitUntil({
+      wait: waitFor(this.raw).not.toBeVisible().withTimeout(timeout),
       timeout,
-      "hidden",
-    );
+      state: "hidden",
+    });
   }
 
   /**
@@ -120,7 +130,11 @@ export class NativeHandle implements ElementHandle {
    * still block taps once it is no longer visible.
    */
   async waitNotExist(timeout = TIMEOUT.xxlarge): Promise<void> {
-    await this.waitUntil(waitFor(this.raw).not.toExist().withTimeout(timeout), timeout, "removed");
+    await this.waitUntil({
+      wait: waitFor(this.raw).not.toExist().withTimeout(timeout),
+      timeout,
+      state: "removed",
+    });
   }
 
   /** Waits for visibility, then taps. */
@@ -154,7 +168,11 @@ export class NativeHandle implements ElementHandle {
       });
       return;
     }
-    await this.waitUntil(waitFor(this.raw).toExist().withTimeout(timeout), timeout, "present");
+    await this.waitUntil({
+      wait: waitFor(this.raw).toExist().withTimeout(timeout),
+      timeout,
+      state: "present",
+    });
   }
 
   /** Waits for visibility, then focuses the field, replaces its content and presses Enter. */
@@ -180,7 +198,7 @@ export class NativeHandle implements ElementHandle {
   async getAttributes(timeout = TIMEOUT.xxlarge): Promise<ElementAttributes> {
     await this.waitVisible(timeout);
     const attributes = await withHardTimeout(
-      retryUntilTimeout(() => this.raw.getAttributes(), timeout),
+      retryUntilTimeout({ fn: () => this.raw.getAttributes(), timeout }),
       waitHardTimeout(timeout),
     );
     return "elements" in attributes ? attributes.elements[0] : attributes;
@@ -293,12 +311,12 @@ export class NativeHandle implements ElementHandle {
   async scrollTo(container?: NativeHandle, options: ScrollOptions = {}): Promise<void> {
     const { pixels, direction } = options;
     try {
-      await scroller.performScroll(
-        () => this.raw,
-        container && (() => container.raw),
+      await scroller.performScroll({
+        target: () => this.raw,
+        scrollView: container && (() => container.raw),
         pixels,
-        direction,
-      );
+        initialDirection: direction,
+      });
     } catch (error) {
       const details = error instanceof Error ? error.message : String(error);
       const scrollView = container?.description ?? "the first scroll view";
@@ -320,11 +338,11 @@ export class NativeHandle implements ElementHandle {
   ): Promise<void> {
     const { direction = "down" } = options;
     await this.scrollTo(container, { direction });
-    await scroller.scrollByPixels(
-      container && (() => container.raw),
-      EDGE_CLEARANCE_PIXELS,
+    await scroller.scrollByPixels({
+      scrollView: container && (() => container.raw),
+      pixels: EDGE_CLEARANCE_PIXELS,
       direction,
-    );
+    });
   }
 
   /** Waits for visibility, then swipes on the element, e.g. down on a bottom sheet to close it. */
@@ -376,7 +394,7 @@ export class NativeHandle implements ElementHandle {
       await withHardTimeout(detoxExpect(this.raw).toHaveText(text));
       return;
     }
-    compareText(await this.getText(), text, options);
+    compareText({ actual: await this.getText(), expected: text, ...options });
   }
 
   /** Waits for visibility, then asserts the element is enabled. */
@@ -392,7 +410,7 @@ export class NativeHandle implements ElementHandle {
   async expectAccessibilityValue(text: string, options: ExpectTextOptions = {}): Promise<void> {
     const { value, label } = await this.getAttributes();
     const accessibilityValue = device.getPlatform() === "ios" ? value : label;
-    compareText(String(accessibilityValue ?? ""), text, options);
+    compareText({ actual: String(accessibilityValue ?? ""), expected: text, ...options });
   }
 
   /**
@@ -401,7 +419,7 @@ export class NativeHandle implements ElementHandle {
    * options.
    */
   async expectLabel(text: string, options: ExpectTextOptions = {}): Promise<void> {
-    compareText(await this.getLabel(), text, options);
+    compareText({ actual: await this.getLabel(), expected: text, ...options });
   }
 
   /**
@@ -437,16 +455,16 @@ export class NativeHandle implements ElementHandle {
   private async waitUnlessError(options: WaitUnlessErrorOptions): Promise<void> {
     const { isFound, errorElement, timeout, state } = options;
     const errorShown = await withHardTimeout(
-      retryUntilTimeout<boolean>(
-        async () => {
+      retryUntilTimeout<boolean>({
+        fn: async () => {
           if (await isFound()) return false;
           if (await errorElement.isVisible(TIMEOUT.xxxsmall)) return true;
           throw new Error(`${this.description} is not ${state} yet`);
         },
         timeout,
-        INTERVAL.short,
-        { messageOnError: `${this.description} did not become ${state} within ${timeout}ms` },
-      ),
+        interval: INTERVAL.short,
+        messageOnError: `${this.description} did not become ${state} within ${timeout}ms`,
+      }),
       waitHardTimeout(timeout),
     );
     if (errorShown) {
@@ -458,7 +476,8 @@ export class NativeHandle implements ElementHandle {
   }
 
   /** Names the element in the failure and keeps the Detox message, hard timeout marker included. */
-  private async waitUntil(wait: Promise<unknown>, timeout: number, state: string): Promise<void> {
+  private async waitUntil(options: WaitUntilOptions): Promise<void> {
+    const { wait, timeout, state } = options;
     try {
       await withHardTimeout(wait, waitHardTimeout(timeout));
     } catch (error) {
@@ -520,5 +539,16 @@ export const byTextWithAncestorId = (options: IdAndTextOptions): NativeHandle =>
   return new NativeHandle({
     createMatcher: () => by.text(text).withAncestor(by.id(id)),
     description: `"${text}" inside #${id}`,
+  });
+};
+
+type TextInRowWithTextOptions = IdAndTextOptions & { rowText: string | RegExp };
+
+/** Matches a text inside the `testID` row that also shows `rowText`. */
+export const byTextInRowWithText = (options: TextInRowWithTextOptions): NativeHandle => {
+  const { id, text, rowText } = options;
+  return new NativeHandle({
+    createMatcher: () => by.text(text).withAncestor(by.id(id).withDescendant(by.text(rowText))),
+    description: `"${text}" inside #${id} containing "${rowText}"`,
   });
 };

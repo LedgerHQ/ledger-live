@@ -7,7 +7,7 @@ import { log } from "@ledgerhq/logs";
 import type { Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getAccountListVerdict, isDecodedPltState } from "../network/plt";
-import { baseOperation, toOperation } from "./operations";
+import { baseOperation, paidFeeOf, toOperation } from "./operations";
 import type {
   ConcordiumAccount,
   ConcordiumOperation,
@@ -18,8 +18,6 @@ import type {
   RawOperation,
   Transaction,
 } from "../types";
-
-const CAL_LOOKUP_CONCURRENCY = 4;
 
 /**
  * Result of one sync's token resolution.
@@ -176,7 +174,7 @@ export function buildParentOperation(op: RawOperation, accountId: string): Conco
   const paysFee = fee.isGreaterThan(0);
 
   const parent = baseOperation(
-    op,
+    paysFee && op.type === "IN" ? paidFeeOf(op) : op,
     accountId,
     paysFee ? "FEES" : "NONE",
     // `FEES` is an outgoing type, so this value is what gets debited from CCD.
@@ -326,14 +324,16 @@ function resolveEntries({
   currencyId,
   accountId,
   blacklistedTokenIds,
+  calLookupConcurrency,
 }: {
   accountTokens: PltAccountToken[];
   currencyId: string;
   accountId: string;
   blacklistedTokenIds: string[];
+  calLookupConcurrency: number;
 }): Promise<ResolvedEntry[] | undefined> {
   return promiseAllBatched(
-    CAL_LOOKUP_CONCURRENCY,
+    calLookupConcurrency,
     accountTokens,
     async (entry: PltAccountToken): Promise<ResolvedEntry> => {
       if (!isUsableEntry(entry)) {
@@ -498,6 +498,7 @@ export async function resolveTokenSubAccounts({
   pltOperations = [],
   blacklistedTokenIds = [],
   refetchAll = false,
+  calLookupConcurrency,
 }: {
   enableTokens: boolean;
   currencyId: string;
@@ -507,6 +508,7 @@ export async function resolveTokenSubAccounts({
   pltOperations?: RawOperation[];
   blacklistedTokenIds?: string[];
   refetchAll?: boolean;
+  calLookupConcurrency: number;
 }): Promise<ResolvedTokens> {
   if (!enableTokens) {
     return { kind: "cleared" };
@@ -522,6 +524,7 @@ export async function resolveTokenSubAccounts({
     currencyId,
     accountId,
     blacklistedTokenIds,
+    calLookupConcurrency,
   });
 
   // A CAL query error rejects rather than returning undefined, and one rejection

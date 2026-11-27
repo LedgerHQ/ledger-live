@@ -1,8 +1,9 @@
-import { openModal } from "~/renderer/actions/modals";
+import { AccountIdSchema } from "@domain/entity-account";
 import type { XrpFamily } from "./types";
+import { openXrpDialog } from "./xrpDialog";
 
 const addAssetAction: NonNullable<XrpFamily["addAssetAction"]> = ({ account, dispatch }) => {
-  dispatch(openModal("MODAL_XRP_ADD_TOKEN", { account }));
+  dispatch(openXrpDialog(AccountIdSchema.parse(account.id), { screen: "addAsset" }));
 };
 
 export default addAssetAction;

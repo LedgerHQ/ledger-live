@@ -3,7 +3,7 @@ import {
   CryptoOrTokenCurrencyIdSchema,
   type CryptoOrTokenCurrencyId,
 } from "@domain/entity-currency";
-import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
+import { AccountUUIDSchema } from "@domain/entity-account";
 
 /** An on-chain step the account must take before it transacts, whatever the asset. */
 export const AccountGateSchema = z.discriminatedUnion("type", [
@@ -22,21 +22,8 @@ export const AccountStatusSchema = z.object({
 
 export type AccountStatus = z.infer<typeof AccountStatusSchema>;
 
-/** How a token is activated on its network: XRP MPTs are `authorize`d, its IOUs need a `trustline`. */
-export const AssetActivationMethodSchema = z.enum([
-  "association",
-  "optIn",
-  "trustline",
-  "authorize",
-]);
-
-export type AssetActivationMethod = z.infer<typeof AssetActivationMethodSchema>;
-
-/** What the account must do before it holds the asset (Hedera, Algorand, Stellar, XRP). */
-export const AssetGateSchema = z.object({
-  type: z.literal("activation"),
-  method: AssetActivationMethodSchema,
-});
+/** The account must activate the asset before it holds it (Hedera, Algorand, Stellar, XRP); how is the family's. */
+export const AssetGateSchema = z.object({ type: z.literal("activation") });
 
 export type AssetGate = z.infer<typeof AssetGateSchema>;
 

@@ -1,6 +1,6 @@
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import {
   closeReceiveAddressDialog,
   openReceiveAddressDialog,

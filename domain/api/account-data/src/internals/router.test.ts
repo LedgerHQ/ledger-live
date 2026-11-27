@@ -1,3 +1,4 @@
+import type { DerivationPath } from "@domain/entity-derivation";
 import { NoAccountDataSourceError } from "../errors";
 import type { AccountDataSource, AccountTarget } from "../source";
 import { descriptorOf, indexOf, sourceIdOf } from "../testing";
@@ -154,7 +155,7 @@ describe("collectTargets", () => {
   it("gives a read whose descriptor throws its own failure slot", () => {
     const broken = {
       ...descriptorOf(0),
-      get path(): string {
+      get path(): DerivationPath {
         throw new Error("unreadable descriptor");
       },
     };

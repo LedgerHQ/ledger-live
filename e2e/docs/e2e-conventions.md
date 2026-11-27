@@ -1,6 +1,6 @@
 # Shared E2E conventions
 
-Rules for desktop and mobile E2E tests. MUST and MUST NOT are required. SHOULD is the default, and the same section states any exception.
+Rules for desktop and mobile E2E tests and the shared code they use in `libs/live-e2e-shared`. MUST and MUST NOT are required. SHOULD is the default, and the same section states any exception.
 
 ## Test state
 
@@ -51,6 +51,18 @@ Specs MUST NOT repeat selector or test-id string literals.
 ### Selectors MUST be non-public and readonly
 
 Selectors MUST be `private readonly`. A selector that is part of a subclass contract MUST be `protected readonly`. A selector MUST NOT be public.
+
+### A value used in a locator MUST be the product's id for that entity
+
+When a locator builds a testID from test data, the value MUST be the id the product renders for that entity, for every value callers pass. When a fixture field holds another entity's id, such as a token whose `id` is its chain's, the locator MUST use or add a separate field. The existing field MUST NOT change, since other code (`coinTeamOwner`) relies on it.
+
+```ts
+// BAD: XLM_USDC.id is "stellar", the XLM row's id
+byId(`transfer-asset-picker-${currency.id}`);
+
+// GOOD: assetId, a field to add, holds the token row's id
+byId(`transfer-asset-picker-${currency.assetId}`);
+```
 
 ### Page objects MUST own atomic UI actions
 
@@ -113,3 +125,9 @@ A function or constructor MUST take a single options object instead of positiona
 Keep 1–2 obvious parameters positional.
 
 Declare an `XxxOptions` type, take `options: XxxOptions` and destructure it on the first line. In a constructor, declare the fields and assign each one explicitly rather than `Object.assign(this, options)`, so strict checks still cover every field. Callers pass only the fields they need. Keep `""` where it is a real value: it is not the same as omitting the field.
+
+## Reviews
+
+### A review MUST check the test's product claims against product code
+
+A test encodes claims about the product: the field a testID is built from, the screens a branch expects, the ids an enum or fixture passes. A review MUST check each claim the diff adds against the source that decides it: the product code that renders it (search `apps/` and `features/` for the testID or its constant), the fixture or enum definition, and the call sites. The test's own comments are not evidence. The review MUST check every value reachable callers pass, not only the one in the diff. A mismatch MUST cite the changed test line, the decisive product, fixture or caller line, and the reachable input or path that shows it. When no such path can be shown, the review MUST raise it as a question that names the source to check, not drop it.

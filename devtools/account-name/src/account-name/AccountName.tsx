@@ -52,11 +52,8 @@ function AccountName({ names, nameOf }: AccountNameToolProps) {
             </tr>
           </thead>
           <tbody className="text-base">
-            {names.map(({ legacyId, accountUUID: uuid, name, isDefault }) => (
-              <tr
-                key={legacyId}
-                className={`border-b border-base ${isDefault ? "text-muted" : ""}`}
-              >
+            {names.map(({ key, legacyId, accountUUID: uuid, name, isDefault }) => (
+              <tr key={key} className={`border-b border-base ${isDefault ? "text-muted" : ""}`}>
                 <td className={CELL}>{name}</td>
                 <td className={CELL}>{uuid ?? "—"}</td>
                 <td className={`${CELL} text-muted`}>{legacyId}</td>

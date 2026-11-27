@@ -22,6 +22,7 @@ import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppPro
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { themeSelector } from "./actions/general";
 import { ConnectEnvsToDatadog } from "~/renderer/components/ConnectEnvsToDatadog";
+import { DatadogRouteViews } from "~/datadog/DatadogRouteViews";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { BrazeProvider } from "LLD/features/DynamicContent/components/BrazeProvider";
 import { useResetTimeRangeOnGraphRework } from "LLD/hooks/useResetTimeRangeOnGraphRework";
@@ -98,6 +99,7 @@ const InnerApp = () => {
                   <ToastProvider>
                     <ServiceStatusProviderWrapper>
                       <Router>
+                        <DatadogRouteViews />
                         <PostOnboardingProviderWrapped>
                           <PlatformAppProviderWrapper>
                             <DrawerProvider>

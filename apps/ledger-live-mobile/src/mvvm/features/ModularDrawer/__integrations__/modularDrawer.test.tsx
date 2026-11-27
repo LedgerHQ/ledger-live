@@ -102,6 +102,42 @@ describe.each(DRAWER_VARIANTS)(
       expect(getByText(/Connect Device/i)).toBeVisible();
     });
 
+    it("should explain the network choice on the receive flow, with its help in a sheet of its own", async () => {
+      const { getByText, getByTestId, getByRole, user } = render(
+        <ModularDrawerSharedNavigator flow="receive_flow" />,
+        renderOptions,
+      );
+
+      await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+      advanceTimers();
+      await user.press(getByText(/ethereum/i));
+      advanceTimers();
+
+      expect(getByTestId("receive-network-help-description")).toHaveTextContent(
+        "Select the same network you're using to send your ETH. Learn more",
+      );
+
+      await user.press(getByRole("link", { name: "Learn more" }));
+      advanceTimers();
+      expect(getByText("How to select the network?")).toBeVisible();
+      expect(getByTestId("receive-network-help")).toBeVisible();
+    });
+
+    it("should not explain the network choice on another flow", async () => {
+      const { getByText, queryByTestId, user } = render(
+        <ModularDrawerSharedNavigator />,
+        renderOptions,
+      );
+
+      await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+      advanceTimers();
+      await user.press(getByText(/ethereum/i));
+      advanceTimers();
+
+      expect(getByText(/select network/i)).toBeVisible();
+      expect(queryByTestId("receive-network-help-description")).toBeNull();
+    });
+
     it("should go directly to Device selection for Bitcoin", async () => {
       const { getByText, user } = render(<ModularDrawerSharedNavigator />, renderOptions);
 

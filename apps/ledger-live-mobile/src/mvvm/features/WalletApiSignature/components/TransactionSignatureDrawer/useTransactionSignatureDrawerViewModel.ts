@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import { createIntent } from "@features/platform-device-intent";
+import { createIntent, type ExecutorState } from "@features/platform-device-intent";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
@@ -13,12 +13,20 @@ import {
 } from "LLM/components/DeviceIntentExecutor";
 import { signTransactionIntentPlatformDefinition } from "./intentDefinition";
 import type { WalletApiDeviceIntentSignRequest } from "./types";
+import { getSignatureSourceFlow } from "../../utils/getSignatureSourceFlow";
 
 type Props = {
   request: WalletApiDeviceIntentSignRequest;
   /** Dismiss the drawer (clears the pending request in the webview host). */
   onClose: () => void;
 };
+
+// A retry reconnects or restarts the job, which can take a while before the next job state.
+const RETRY_STARTED_STATE_TYPES = new Set<ExecutorState["type"]>([
+  "connectingDevice",
+  "initializingDeviceContext",
+  "executingIntent",
+]);
 
 function normalizeError(error: unknown): Error {
   return error instanceof Error ? error : new Error(String(error));
@@ -34,15 +42,18 @@ export function useTransactionSignatureDrawerViewModel({ request, onClose }: Pro
   // that). We prepare it here so gas/fees are estimated before signing directly on device,
   // which lets us skip the buffer screen. Provided fees (feesStrategy "custom") are kept.
   const [preparedTransaction, setPreparedTransaction] = useState<Transaction | null>(null);
-  // Guards the dismiss handler so a successful signing (which also closes the drawer)
-  // does not additionally reject the wallet-api promise via onError.
-  const isSigningCompletedRef = useRef(false);
+  // The wallet-api promise is settled once: success, failure and dismiss race each other.
+  const isSettledRef = useRef(false);
+  // The failure of the last signing attempt, returned to the dApp when the user closes its
+  // error screen. A retry starts a new attempt, whose job states clear it.
+  const lastJobErrorRef = useRef<Error | null>(null);
 
   const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
 
   useEffect(() => {
     let cancelled = false;
-    isSigningCompletedRef.current = false;
+    isSettledRef.current = false;
+    lastJobErrorRef.current = null;
     setPreparedTransaction(null);
     setDeviceInitializationInput(null);
 
@@ -75,7 +86,8 @@ export function useTransactionSignatureDrawerViewModel({ request, onClose }: Pro
         setDeviceInitializationInput(input);
       })
       .catch(error => {
-        if (cancelled) return;
+        if (cancelled || isSettledRef.current) return;
+        isSettledRef.current = true;
         onError(normalizeError(error));
         onClose();
       });
@@ -100,35 +112,45 @@ export function useTransactionSignatureDrawerViewModel({ request, onClose }: Pro
 
   const onIntentJobStateChanged = useCallback(
     (jobState: SignTransactionIntentJobState) => {
-      if (jobState.type === "signed") {
-        isSigningCompletedRef.current = true;
-        onSuccess(jobState.signedOperation);
-        onClose();
-      }
+      lastJobErrorRef.current = null;
+      if (jobState.type !== "signed" || isSettledRef.current) return;
+      isSettledRef.current = true;
+      onSuccess(jobState.signedOperation);
+      onClose();
     },
     [onSuccess, onClose],
   );
 
-  // Dismiss semantics mirror the Send flow's DIE integration (Send's useSignatureViewModel):
-  // a dismiss is intentionally treated as a user cancellation. onIntentJobError is a
-  // deliberate no-op so a non-refusal signing failure keeps the executor's generic
-  // IntentError screen open (Retry / Close) with the real, translated error visible to the
-  // user — exactly what Send does. Send can simply close the overlay on dismiss, but a
-  // wallet-api request must settle its promise; since transaction.sign has no cancel
-  // channel, UserRefusedOnDevice is the conventional "user backed out" signal.
-  const onIntentJobError = useCallback(() => {}, []);
+  // A signing failure keeps the executor's error screen open (Retry / Close), like Send does.
+  // A refusal is a `cancelled` job state, not a job error.
+  const onIntentJobError = useCallback((error: unknown) => {
+    lastJobErrorRef.current = normalizeError(error);
+  }, []);
 
+  // A retry that reconnects the device emits no job state before it is closed: the failure
+  // it replaces must not be returned for a close made during the reconnection.
+  const onExecutorStateChanged = useCallback((executorState: ExecutorState) => {
+    if (RETRY_STARTED_STATE_TYPES.has(executorState.type)) {
+      lastJobErrorRef.current = null;
+    }
+  }, []);
+
+  // transaction.sign has no cancel channel: a dismiss without a failure is reported as
+  // UserRefusedOnDevice, the conventional "user backed out" signal.
   const onUserCancel = useCallback(() => {
-    if (isSigningCompletedRef.current) return;
-    onError(new UserRefusedOnDevice());
+    if (isSettledRef.current) return;
+    isSettledRef.current = true;
+    onError(lastJobErrorRef.current ?? new UserRefusedOnDevice());
     onClose();
   }, [onError, onClose]);
 
   return {
+    sourceFlow: getSignatureSourceFlow(request.manifestId),
     deviceInitializationInput,
     signatureIntent,
     onIntentJobStateChanged,
     onIntentJobError,
+    onExecutorStateChanged,
     onUserCancel,
   };
 }

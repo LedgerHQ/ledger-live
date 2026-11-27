@@ -5,8 +5,8 @@ import {
   type AccountTarget,
 } from "@domain/api-account-data";
 import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
-import type { AccountUUID } from "@domain/entity-account-descriptor";
 import { getEnv } from "@shared/env";
+import type { AccountUUID } from "@domain/entity-account";
 import { FullSyncAccountNotFoundError } from "./errors";
 import { toAccountReceive } from "./receive";
 import { toAccountBalances } from "./balance";

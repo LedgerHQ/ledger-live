@@ -25,13 +25,9 @@ const row = (
 
 const ROWS: ResultRow[] = [
   row("android", "no-accounts", "Debug screen", [-12.4, -40.2, 18.1]),
-  row("android", "no-accounts", "With native start", [-8, -30, 15]),
   row("android", "accounts", "Debug screen", [4, -20, 30]),
-  row("android", "accounts", "With native start", [5, -21, 31]),
   row("ios", "no-accounts", "Debug screen", [-21.6, -36.1, 6.5]),
-  row("ios", "no-accounts", "With native start", [-21, -36, 7]),
   row("ios", "accounts", "Debug screen", [-15.8, -38.6, 14.1]),
-  row("ios", "accounts", "With native start", [-15.7, -38.6, 14.1]),
 ];
 
 const GREEN: RunReport = {
@@ -78,23 +74,6 @@ describe("messageOf", () => {
     );
   });
 
-  it("adds the native start's result when its verdict differs, and fails the run", () => {
-    const fail = "FAIL: B is slower by more than 100 ms";
-    const rows = ROWS.map(r =>
-      r.platform === "ios" && r.scenario === "accounts" && r.measure === "Debug screen"
-        ? { ...r, hl: { estimate: 130, low: 105, high: 160 }, verdict: fail }
-        : r,
-    );
-    const { outcome, lines } = messageOf(
-      withJobs({ ios: { build: "success", measure: "failure" } }, rows),
-    );
-    assert.equal(outcome, "failed");
-    assert.equal(
-      lines.at(-1),
-      `🍏 iOS · accounts : ❌ ${fail} · B − A +130 ms [+105, +160] · With native start: ✅ PASS · B − A -16 ms [-39, +14]`,
-    );
-  });
-
   const inconclusive = (verdict: string, [low, high]: [number, number]) =>
     `${verdict} (inconclusive: [${low}, ${high}] contains 100 ms)`;
 
@@ -103,7 +82,6 @@ describe("messageOf", () => {
       inconclusive("FAIL: B is slower by more than 100 ms", interval);
     const rows = [
       row("android", "no-accounts", "Debug screen", [181, 40, 478], fail([40, 478])),
-      row("android", "no-accounts", "With native start", [172, 32, 485], fail([32, 485])),
     ].map(r => ({ ...r, pairs: 6 }));
     const report = withJobs(
       {
@@ -133,7 +111,7 @@ describe("messageOf", () => {
     assert.equal(outcome, "inconclusive");
     assert.equal(
       lines[1],
-      "🤖 Android · accounts : ⚠️ Probably within 100 ms · B − A +41 ms [-29, +109] · With native start: ✅ PASS · B − A +5 ms [-21, +31]",
+      "🤖 Android · accounts : ⚠️ Probably within 100 ms · B − A +41 ms [-29, +109]",
     );
   });
 
@@ -148,17 +126,6 @@ describe("messageOf", () => {
     assert.equal(outcomeOf(report), "failed");
   });
 
-  it("names the measure shown when the Debug screen row counts from the JS start", () => {
-    const rows = ROWS.map(r =>
-      r.measure === "Debug screen" ? { ...r, measure: "Debug screen, from JS start" } : r,
-    );
-    const { lines } = messageOf(withJobs({}, rows));
-    assert.equal(
-      lines[0],
-      "🤖 Android · no-accounts : ✅ PASS · B − A -12 ms [-40, +18] (Debug screen, from JS start)",
-    );
-  });
-
   it("says a build did not finish instead of listing its scenarios", () => {
     const report = withJobs(
       { android: { build: "failure", measure: "skipped" } },
@@ -168,6 +135,19 @@ describe("messageOf", () => {
     assert.equal(outcome, "failed");
     assert.equal(lines[0], "🤖 Android : ❌ the build did not finish, so nothing was measured");
     assert.equal(lines.length, 3);
+  });
+
+  it("says the accounts snapshot failed instead of listing the scenarios it held back", () => {
+    const report = withJobs(
+      { ios: { build: "success", snapshot: "failure", measure: "skipped" } },
+      ROWS.filter(r => r.platform === "android"),
+    );
+    const { outcome, lines } = messageOf(report);
+    assert.equal(outcome, "failed");
+    assert.equal(
+      lines.at(-1),
+      "🍏 iOS : ❌ the accounts snapshot could not be made, so nothing was measured",
+    );
   });
 
   it("says which scenario has no result when a measure job timed out", () => {
@@ -498,17 +478,17 @@ describe("resultsIn", () => {
   it("reads every artifact's summary.json and measurement.txt", () => {
     const dir = resultsDir("all", {
       "startup-perf-results-android-no-accounts": {
-        "summary.json": JSON.stringify(ROWS.slice(0, 2)),
+        "summary.json": JSON.stringify(ROWS.slice(0, 1)),
         "measurement.txt": "android no-accounts failure\n",
         "samples.jsonl": "{}\n",
       },
       "startup-perf-results-ios": {
-        "summary.json": JSON.stringify(ROWS.slice(4)),
+        "summary.json": JSON.stringify(ROWS.slice(2)),
         "measurement.txt": "ios no-accounts,accounts success\n",
       },
     });
     const { rows, measurements } = resultsIn(dir);
-    assert.equal(rows.length, 6);
+    assert.equal(rows.length, 3);
     assert.deepEqual(
       measurements.sort((a, b) => a.platform.localeCompare(b.platform)),
       [
@@ -524,12 +504,12 @@ describe("resultsIn", () => {
         "summary.json": '[{"platform": "android"',
         "measurement.txt": "android\n",
       },
-      "startup-perf-results-ios": { "summary.json": JSON.stringify(ROWS.slice(4)) },
+      "startup-perf-results-ios": { "summary.json": JSON.stringify(ROWS.slice(2)) },
       "startup-perf-results-android-no-accounts": { "summary.json": "{}" },
     });
     const log = t.mock.method(console, "log", () => {});
     const { rows, measurements } = resultsIn(dir);
-    assert.equal(rows.length, 4);
+    assert.equal(rows.length, 2);
     assert.deepEqual(measurements, []);
     const warnings = log.mock.calls.map(call => String(call.arguments[0]));
     assert.equal(warnings.length, 3);
@@ -574,8 +554,10 @@ describe("reportOf", () => {
         RUN_URL: "url",
         PLAN: "success",
         ANDROID_BUILD: "success",
+        ANDROID_SNAPSHOT: "success",
         ANDROID_MEASURE: "cancelled",
         IOS_BUILD: "skipped",
+        IOS_SNAPSHOT: "skipped",
         IOS_MEASURE: "skipped",
       },
       { rows: [], measurements: [] },
@@ -584,8 +566,8 @@ describe("reportOf", () => {
     assert.equal(report.pairs, "20");
     assert.deepEqual(report.jobs, {
       plan: "success",
-      android: { build: "success", measure: "cancelled" },
-      ios: { build: "skipped", measure: "skipped" },
+      android: { build: "success", snapshot: "success", measure: "cancelled" },
+      ios: { build: "skipped", snapshot: "skipped", measure: "skipped" },
     });
   });
 

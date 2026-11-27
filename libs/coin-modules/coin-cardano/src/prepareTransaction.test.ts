@@ -16,6 +16,53 @@ const baseTransaction = (): Transaction => ({
 });
 
 describe("prepareTransaction", () => {
+  const buildFundedAccount = () => {
+    const account = getCardanoAccountFixture({ delegation: undefined });
+    account.balance = new BigNumber(100e6);
+    account.spendableBalance = new BigNumber(100e6);
+    account.cardanoResources.protocolParams = getProtocolParamsFixture();
+    return account;
+  };
+
+  it("loads the fees and the amount of a send", async () => {
+    const prepared = await prepareTransaction(buildFundedAccount(), {
+      ...baseTransaction(),
+      amount: new BigNumber(2e6),
+    });
+
+    expect({ amount: prepared.amount.toString(), feesArePositive: prepared.fees?.gt(0) }).toEqual({
+      amount: "2000000",
+      feesArePositive: true,
+    });
+  });
+
+  it("sets the maximum spendable amount for a send max", async () => {
+    const prepared = await prepareTransaction(buildFundedAccount(), {
+      ...baseTransaction(),
+      useAllAmount: true,
+    });
+
+    expect({
+      amount: prepared.amount.toString(),
+      fees: prepared.fees?.toString(),
+      total: prepared.amount.plus(prepared.fees ?? 0).toString(),
+    }).toEqual({ amount: "99834631", fees: "165369", total: "100000000" });
+  });
+
+  it("returns the same result when an already prepared transaction is prepared again or in parallel", async () => {
+    const account = buildFundedAccount();
+    const transaction = { ...baseTransaction(), amount: new BigNumber(2e6) };
+
+    const first = await prepareTransaction(account, { ...transaction });
+    const second = await prepareTransaction(account, { ...first });
+    const [parallelA, parallelB] = await Promise.all([
+      prepareTransaction(account, { ...transaction }),
+      prepareTransaction(account, { ...first }),
+    ]);
+
+    expect([second, parallelA, parallelB]).toEqual([first, first, first]);
+  });
+
   it("reports the real network fee, not the whole balance, on a low-balance account with no amount entered (LIVE-33176)", async () => {
     const account = getCardanoAccountFixture({ delegation: undefined });
     account.balance = new BigNumber(1e6);

@@ -1,7 +1,6 @@
 import {
   findSubAccountById,
   getAccountCurrency,
-  getFeesCurrency,
   getFeesUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
@@ -13,12 +12,15 @@ import {
 } from "@domain/entity-currency-crypto";
 import { useFeature } from "@features/platform-feature-flags";
 import {
-  findOperationInAccount,
   getOperationAmountNumber,
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
 } from "@ledgerhq/live-common/operation";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import {
+  resolveFeeDisplay,
+  useOperationFeeCurrency,
+} from "@ledgerhq/live-common/bridge/generic-coin-framework/operationFee";
 import { getEnv } from "@shared/env";
 import { Account, AccountLike, Operation, OperationType } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
@@ -65,6 +67,7 @@ import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings
 import { getMarketColor } from "~/renderer/styles/helpers";
 import { setDrawer } from "../Provider";
 import AmountDetails from "./AmountDetails";
+import { findOperationByIdOrHash } from "./findOperation";
 import {
   GradientHover,
   HashContainer,
@@ -116,7 +119,7 @@ const mapStateToProps = (
         currency: mainCurrency,
       })
     : 0;
-  const operation = account ? findOperationInAccount(account, operationId) : null;
+  const operation = account ? findOperationByIdOrHash(account, operationId) : null;
   return {
     account,
     parentAccount,
@@ -389,15 +392,24 @@ const OperationD = (props: Props) => {
   // operationDetails implementation.
   const useFeesCurrencyOverride = specific?.operationDetails?.useFeesCurrency;
   const customFeesCurrency = useFeesCurrencyOverride?.(operation, mainAccount);
-  // null: the fee is in a currency not resolved yet, so it is not shown in another unit
-  const isFeesCurrencyUnresolved = customFeesCurrency === null;
-  const feesCurrency = customFeesCurrency ?? getFeesCurrency(mainAccount);
-  const feesUnit = useMemo(() => getFeesUnit(feesCurrency), [feesCurrency]);
+  const tokenFee = useOperationFeeCurrency(operation, mainAccount);
   const getDisplayFeeOverride = specific?.operationDetails?.getDisplayFee;
-  const displayFee = useMemo(
-    () => (fee ? (getDisplayFeeOverride?.(operation, mainAccount, feesCurrency) ?? fee) : fee),
-    [getDisplayFeeOverride, operation, mainAccount, feesCurrency, fee],
+  const {
+    currency: feesCurrency,
+    amount: displayFee,
+    isUnresolved: isFeesCurrencyUnresolved,
+  } = useMemo(
+    () =>
+      resolveFeeDisplay({
+        operation,
+        account: mainAccount,
+        familyCurrency: customFeesCurrency,
+        tokenFee,
+        getDisplayFee: getDisplayFeeOverride,
+      }),
+    [operation, mainAccount, customFeesCurrency, tokenFee, getDisplayFeeOverride],
   );
+  const feesUnit = useMemo(() => getFeesUnit(feesCurrency), [feesCurrency]);
 
   return (
     <Box flow={3} px={20} mt={20}>

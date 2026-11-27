@@ -120,6 +120,7 @@ describe("getBlock", () => {
         ],
         fees: 1000n,
         feesPayer: ALICE,
+        feesAsset: NATIVE,
         details: { txType: "pay" },
       },
     ]);
@@ -179,6 +180,26 @@ describe("getBlock", () => {
       address: ALICE,
       asset: USDC,
       ledgerOpType: "OPT_IN",
+    });
+  });
+
+  it("adds the transaction note as memo to its OPT_IN operation", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        note: "b3B0LWlu",
+        "tx-type": "axfer",
+        "asset-transfer-transaction": assetTransfer({ amount: 0, receiver: ALICE }),
+      }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    expect(transactions[0].operations).toContainEqual({
+      type: "other",
+      address: ALICE,
+      asset: USDC,
+      ledgerOpType: "OPT_IN",
+      memo: { type: "string", kind: "note", value: "b3B0LWlu" },
     });
   });
   it("does not add an OPT_IN operation to a zero clawback self-transfer", async () => {
@@ -248,6 +269,7 @@ describe("getBlock", () => {
         ],
         fees: 1000n,
         feesPayer: ALICE,
+        feesAsset: NATIVE,
         details: { txType: "appl" },
       },
     ]);
@@ -267,6 +289,7 @@ describe("getBlock", () => {
         operations: [],
         fees: 1000n,
         feesPayer: ALICE,
+        feesAsset: NATIVE,
         details: { txType: "keyreg" },
       },
     ]);
@@ -292,6 +315,183 @@ describe("getBlock", () => {
       ]),
     );
     expect(transactions[0].operations).toHaveLength(7);
+  });
+
+  it("gives the note of the transaction in its details", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({ note: "aW52b2ljZSA0Mg==", "payment-transaction": payment(100, BOB) }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    expect(transactions[0].details).toEqual({
+      txType: "pay",
+      memo: { type: "string", kind: "note", value: "aW52b2ljZSA0Mg==" },
+    });
+  });
+
+  // An application call and its inner transactions each have their own note: listOperations gives every row the note
+  // of the transaction it comes from, and the inner transfers are flattened into the root.
+  it("gives the note of each inner transfer apart from the note of the root", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        id: "APPL",
+        note: "cm9vdA==",
+        "tx-type": "appl",
+        "inner-txns": [
+          innerTransaction({
+            sender: "APP",
+            "tx-type": "axfer",
+            "asset-transfer-transaction": assetTransfer({ amount: 1, receiver: ALICE }),
+          }),
+          innerTransaction({
+            sender: "APP",
+            note: "aW5uZXI=",
+            "tx-type": "pay",
+            "payment-transaction": payment(5, ALICE, { amount: 7, to: CAROL }),
+          }),
+        ],
+      }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    const inner = { type: "string", kind: "note", value: "aW5uZXI=" };
+    expect(transactions[0].details).toEqual({
+      txType: "appl",
+      memo: { type: "string", kind: "note", value: "cm9vdA==" },
+      innerNotes: [
+        { from: "APP", to: ALICE, asset: NATIVE, memo: inner, operationIndex: 2 },
+        { from: "APP", to: CAROL, asset: NATIVE, memo: inner, operationIndex: 4 },
+      ],
+    });
+  });
+
+  it("tells apart the noted transfer among transfers between the same accounts", async () => {
+    const pay = (amount: number, note?: string) =>
+      innerTransaction({
+        sender: "APP",
+        ...(note ? { note } : {}),
+        "tx-type": "pay",
+        "payment-transaction": payment(amount, ALICE),
+      });
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        id: "APPL",
+        "tx-type": "appl",
+        "inner-txns": [pay(5), pay(7, "c2Vjb25k"), pay(7)],
+      }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    const { operations, details } = transactions[0];
+    expect(details?.innerNotes).toEqual([
+      {
+        from: "APP",
+        to: ALICE,
+        asset: NATIVE,
+        memo: { type: "string", kind: "note", value: "c2Vjb25k" },
+        operationIndex: 2,
+      },
+    ]);
+    expect(operations.slice(2, 4)).toEqual([
+      { type: "transfer", address: "APP", peer: ALICE, asset: NATIVE, amount: -7n },
+      { type: "transfer", address: ALICE, peer: "APP", asset: NATIVE, amount: 7n },
+    ]);
+  });
+
+  it("points the note of an inner opt-in at its transfer, before its OPT operation", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        id: "APPL",
+        "tx-type": "appl",
+        "inner-txns": [
+          innerTransaction({
+            sender: ALICE,
+            note: "b3B0LWlu",
+            "tx-type": "axfer",
+            "asset-transfer-transaction": assetTransfer({ amount: 0, receiver: ALICE }),
+          }),
+        ],
+      }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    const { operations, details } = transactions[0];
+    expect(details?.innerNotes).toEqual([
+      expect.objectContaining({ from: ALICE, to: ALICE, operationIndex: 0 }),
+    ]);
+    expect(operations.map(({ type }) => type)).toEqual(["transfer", "transfer", "other"]);
+  });
+
+  it("gives the note of an inner transfer nested under an inner transaction without note", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        id: "APPL",
+        "tx-type": "appl",
+        "inner-txns": [
+          innerTransaction({
+            sender: "APP",
+            "tx-type": "appl",
+            "inner-txns": [
+              innerTransaction({
+                sender: "APP2",
+                note: "bmVzdGVk",
+                "tx-type": "pay",
+                "payment-transaction": payment(3, BOB),
+              }),
+            ],
+          }),
+        ],
+      }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    expect(transactions[0].details).toEqual({
+      txType: "appl",
+      innerNotes: [
+        {
+          from: "APP2",
+          to: BOB,
+          asset: NATIVE,
+          memo: { type: "string", kind: "note", value: "bmVzdGVk" },
+          operationIndex: 0,
+        },
+      ],
+    });
+  });
+
+  it("lists the participation rewards with the note of the transaction that pays them", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        note: "cm9vdA==",
+        "payment-transaction": payment(100, BOB),
+        "sender-rewards": 1,
+        "receiver-rewards": 2,
+        "inner-txns": [innerTransaction({ sender: CAROL, "sender-rewards": 3 })],
+      }),
+    ]);
+
+    const { transactions } = await getBlock(mockAlgorandContext, HEIGHT);
+
+    const memo = { type: "string", kind: "note", value: "cm9vdA==" };
+    const { operations, details } = transactions[0];
+    expect(details?.participationRewards).toEqual([
+      { address: ALICE, amount: 1n, memo, operationIndex: 2 },
+      { address: BOB, amount: 2n, memo, operationIndex: 3 },
+      { address: CAROL, amount: 3n, operationIndex: 4 },
+    ]);
+    for (const { address, amount, operationIndex } of details?.participationRewards ?? []) {
+      expect(operations[operationIndex]).toEqual({
+        type: "transfer",
+        address,
+        asset: NATIVE,
+        amount,
+      });
+    }
   });
 
   it("keeps the exact value of an amount above the safe integer range", async () => {
@@ -344,11 +544,12 @@ describe("getBlock", () => {
     ]);
   });
 
-  it("keeps signed list operation amounts consistent with block transfers by address and asset", async () => {
+  it("keeps signed list operation amounts, rewards included, consistent with block transfers by address and asset", async () => {
     mockGetBlockTransactions.mockResolvedValue([
       transaction({
         id: "PAY",
         "payment-transaction": payment(100, ALICE, { amount: 900, to: CAROL }),
+        "sender-rewards": 7,
       }),
       transaction({
         id: "ASA",
@@ -359,15 +560,28 @@ describe("getBlock", () => {
           "close-to": CAROL,
         }),
       }),
+      transaction({
+        id: "APPL",
+        "tx-type": "appl",
+        "inner-txns": [
+          innerTransaction({
+            sender: "APP",
+            "tx-type": "pay",
+            "payment-transaction": payment(50, ALICE),
+          }),
+        ],
+      }),
     ]);
     mockGetAccountTransactions.mockResolvedValue({
       nextToken: undefined,
       transactions: [
         {
           id: "PAY",
+          rootId: "PAY",
           type: "pay",
           senderAddress: ALICE,
-          senderRewards: new BigNumber(0),
+          feesPayer: ALICE,
+          senderRewards: new BigNumber(7),
           recipientRewards: new BigNumber(0),
           closeRewards: undefined,
           closeAmount: undefined,
@@ -384,8 +598,10 @@ describe("getBlock", () => {
         },
         {
           id: "ASA",
+          rootId: "ASA",
           type: "axfer",
           senderAddress: ALICE,
+          feesPayer: ALICE,
           senderRewards: new BigNumber(0),
           recipientRewards: new BigNumber(0),
           closeRewards: undefined,
@@ -401,6 +617,27 @@ describe("getBlock", () => {
             assetId: "31566704",
             assetRecipientAddress: BOB,
             assetSenderAddress: undefined,
+          },
+        },
+        {
+          id: "APPL-inner-0",
+          rootId: "APPL",
+          type: "pay",
+          senderAddress: "APP",
+          feesPayer: ALICE,
+          senderRewards: new BigNumber(0),
+          recipientRewards: new BigNumber(0),
+          closeRewards: undefined,
+          closeAmount: undefined,
+          fee: new BigNumber(1000),
+          timestamp: "1793724956",
+          round: HEIGHT,
+          note: "",
+          details: {
+            amount: new BigNumber(50),
+            closeAmount: undefined,
+            closeToAddress: undefined,
+            recipientAddress: ALICE,
           },
         },
       ],
@@ -428,6 +665,90 @@ describe("getBlock", () => {
     }, new Map<string, bigint>());
 
     expect(listAmounts).toEqual(blockAmounts);
+  });
+
+  it("gives an OPT list operation the asset of the block OPT operation and its other fields as details", async () => {
+    mockGetBlockTransactions.mockResolvedValue([
+      transaction({
+        id: "OPTIN",
+        note: "b3B0LWlu",
+        "tx-type": "axfer",
+        "asset-transfer-transaction": assetTransfer({ amount: 0, receiver: ALICE }),
+      }),
+      transaction({
+        id: "OPTOUT",
+        note: "b3B0LW91dA==",
+        "tx-type": "axfer",
+        "asset-transfer-transaction": assetTransfer({
+          amount: 250,
+          "close-amount": 750,
+          "close-to": CAROL,
+        }),
+      }),
+    ]);
+    const listTransaction = {
+      type: "axfer",
+      senderAddress: ALICE,
+      feesPayer: ALICE,
+      senderRewards: new BigNumber(0),
+      recipientRewards: new BigNumber(0),
+      closeRewards: undefined,
+      closeAmount: undefined,
+      fee: new BigNumber(1000),
+      timestamp: "1793724956",
+      round: HEIGHT,
+    };
+    mockGetAccountTransactions.mockResolvedValue({
+      nextToken: undefined,
+      transactions: [
+        {
+          ...listTransaction,
+          id: "OPTIN",
+          rootId: "OPTIN",
+          note: "b3B0LWlu",
+          details: {
+            assetAmount: new BigNumber(0),
+            assetCloseAmount: undefined,
+            assetCloseToAddress: undefined,
+            assetId: "31566704",
+            assetRecipientAddress: ALICE,
+            assetSenderAddress: undefined,
+          },
+        },
+        {
+          ...listTransaction,
+          id: "OPTOUT",
+          rootId: "OPTOUT",
+          note: "b3B0LW91dA==",
+          details: {
+            assetAmount: new BigNumber(250),
+            assetCloseAmount: new BigNumber(750),
+            assetCloseToAddress: CAROL,
+            assetId: "31566704",
+            assetRecipientAddress: BOB,
+            assetSenderAddress: undefined,
+          },
+        },
+      ],
+    });
+
+    const [block, { items }] = await Promise.all([
+      getBlock(mockAlgorandContext, HEIGHT),
+      listOperations(mockAlgorandContext, ALICE, { order: "asc" }),
+    ]);
+    const blockOptEvents = block.transactions.map(blockTransaction =>
+      blockTransaction.operations
+        .filter(operation => operation.type === "other")
+        .map(({ type: _type, address: _address, asset, ...details }) => ({ asset, details })),
+    );
+    const listOptEvents = ["OPTIN", "OPTOUT"].map(hash =>
+      items
+        .filter(item => item.tx.hash === hash && item.type.startsWith("OPT_"))
+        .map(({ asset, details }) => ({ asset, details })),
+    );
+
+    expect(listOptEvents).toEqual(blockOptEvents);
+    expect(listOptEvents.flat()).toHaveLength(2);
   });
   it("does not query the indexer for a round the node does not know", async () => {
     mockGetBlockHash.mockRejectedValue(new Error("failed to retrieve information from the ledger"));

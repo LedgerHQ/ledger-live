@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.64.0",
+  "version": "0.65.0",
   "private": true,
   "engines": {
     "node": "24.x"
@@ -84,9 +84,7 @@
     "bufferutil": "^4.1.0",
     "class-variance-authority": "catalog:",
     "encoding": "^0.1.13",
-    "prop-types": "^15.8.1",
     "qrcode": "^1.5.4",
-    "re-resizable": "^6.11.2",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-dropzone": "^14.3.8",
@@ -94,7 +92,6 @@
     "react-redux": "catalog:",
     "react-router-dom": "^6.30.3",
     "react-select": "^5.10.2",
-    "react-table": "^6.11.4",
     "react-tooltip": "^5.30.0",
     "rxjs": "catalog:",
     "semver": "catalog:",

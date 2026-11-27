@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import DeviceAction from "./index";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { DeviceDeprecationRules } from "@ledgerhq/live-common/hw/connectApp";
@@ -257,5 +257,52 @@ describe("DeviceAction - Deprecation", () => {
     );
 
     expect(screen.getByText("Ledger Nano S™ does not support this feature")).toBeVisible();
+  });
+});
+
+describe("DeviceAction - Nano S deprecation by currency", () => {
+  const renderSendOnNanoS = (params: { currencies?: string[] } | undefined) => {
+    const mockAction = {
+      useHook: jest.fn(() => ({ deviceDeprecationRules: null, device: nanoS })),
+      mapResult: jest.fn(),
+    };
+
+    return render(
+      <DeviceAction
+        action={mockAction}
+        request={{ account: ETH_ACCOUNT }}
+        device={nanoS}
+        location={HOOKS_TRACKING_LOCATIONS.sendFlow}
+      />,
+      {
+        overrideInitialState: withFlagOverrides({
+          llmNanoSDeprecation: { enabled: true, params },
+        }),
+      },
+    );
+  };
+
+  it("shows the error screen when the currency is listed in the flag params", () => {
+    renderSendOnNanoS({ currencies: ["Ethereum"] });
+
+    expect(screen.getByText("Ledger Nano S™ does not support this feature")).toBeVisible();
+  });
+
+  it("does not show the error screen when the currency is not listed in the flag params", () => {
+    renderSendOnNanoS({ currencies: ["Hedera"] });
+
+    expect(screen.queryByText("Ledger Nano S™ does not support this feature")).toBeNull();
+  });
+
+  it("does not show the error screen when the flag has no params", () => {
+    renderSendOnNanoS(undefined);
+
+    expect(screen.queryByText("Ledger Nano S™ does not support this feature")).toBeNull();
+  });
+
+  it("does not show the error screen when the flag params have no currencies", () => {
+    renderSendOnNanoS({});
+
+    expect(screen.queryByText("Ledger Nano S™ does not support this feature")).toBeNull();
   });
 });

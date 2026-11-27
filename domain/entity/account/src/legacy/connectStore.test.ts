@@ -1,5 +1,5 @@
 import { configureStore, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import {
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
@@ -8,6 +8,7 @@ import { connectAccountsStore } from "./connectStore";
 import { AccountIdSchema } from "./schema";
 import { initialAccountsState, type AccountsState } from "../schema";
 import { accountsSlice } from "../slice";
+import { computeAccountUUID } from "../schema.mock";
 
 type LegacyAccount = {
   id: string;

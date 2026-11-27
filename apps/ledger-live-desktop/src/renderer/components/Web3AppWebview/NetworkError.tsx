@@ -70,7 +70,7 @@ export const NetworkErrorScreen = ({
         {t("common.tryAgain")}
       </Button>
       <ExportLogsButton
-        customComponent={(handleSaveLogPress: () => Promise<void>) => (
+        renderCustomComponent={(handleSaveLogPress: () => Promise<void>) => (
           <Link
             size="large"
             Icon={() => <Icon name="Import" />}

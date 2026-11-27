@@ -249,6 +249,7 @@ export function useModularDrawerState({
   return {
     accountCurrency,
     selectedAssetName: asset?.name,
+    selectedAssetTicker: asset?.ticker,
     network,
     availableNetworks,
     shouldShowBackButton,

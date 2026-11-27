@@ -47,6 +47,9 @@ const request = {
   appName: TRUSTCHAIN_APP_NAME,
 };
 
+const DEVICE_LIST_EDGES = ["left", "right", "top"] as const;
+const PAIRING_FLOW_EDGES = ["left", "right", "top", "bottom"] as const;
+
 const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
   goToFollowInstructions,
   defaultDevice,
@@ -105,7 +108,10 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
   if (!isFocused) return null;
 
   return (
-    <SafeAreaView edges={["left", "right", "top"]} style={{ flex: 1 }}>
+    <SafeAreaView
+      edges={isHeaderOverridden ? PAIRING_FLOW_EDGES : DEVICE_LIST_EDGES}
+      style={{ flex: 1 }}
+    >
       <TrackScreen category="Manager" name="ChooseDevice" />
       {!isHeaderOverridden ? (
         <Flex px={16} pb={8}>

@@ -91,7 +91,10 @@ export class HistoryPage extends AppPage {
 
   @step("Expect the Crypto history tab")
   async expectCryptoHistoryTab() {
-    await expect(this.cryptoHistoryTab).toBeVisible();
+    await expect(this.historyPage).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.cryptoHistoryTab).toBeVisible();
+    });
   }
 
   @step("Expect the Card history tab")

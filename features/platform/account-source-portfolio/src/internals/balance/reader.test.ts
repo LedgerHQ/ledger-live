@@ -1,9 +1,9 @@
 import type { BalanceGroup, Portfolio } from "@domain/api-account-portfolio";
-import {
-  computeAccountUUID,
-  type AccountDescriptor,
-  type AddressAccountDescriptor,
+import type {
+  AccountDescriptor,
+  AddressAccountDescriptor,
 } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import {
   ETH,
   depsOf,

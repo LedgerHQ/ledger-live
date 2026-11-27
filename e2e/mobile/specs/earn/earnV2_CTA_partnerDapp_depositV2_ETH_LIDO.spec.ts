@@ -10,11 +10,11 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
-runPartnerDappCTATest(
-  testConfig.account,
-  testConfig.provider.name,
-  testConfig.dappUrlSubstring,
-  testConfig.tmsLinks,
-  testConfig.tags,
-  { preset: "50" },
-);
+runPartnerDappCTATest({
+  account: testConfig.account,
+  providerId: testConfig.provider.name,
+  dappUrlSubstring: testConfig.dappUrlSubstring,
+  tmsLinks: testConfig.tmsLinks,
+  tags: testConfig.tags,
+  depositV2Amount: { preset: "50" },
+});

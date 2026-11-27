@@ -4,8 +4,10 @@ import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { ConcordiumSessionExpiredError } from "../types";
 import { firstValueFrom, toArray } from "rxjs";
 import { AccountOnboardStatus, ConcordiumPairingStatus } from "../types";
+import type { ConcordiumBridgeContext } from "../types";
 import {
   createFixtureAccount,
+  createFixtureConfig,
   createFixtureCurrency,
   VALID_ADDRESS,
   CRED_ID,
@@ -16,6 +18,10 @@ import {
   createFixtureSignerContext,
   createFixtureIdAppResponse,
 } from "./bridge.fixture";
+
+const mainnetConfig = createFixtureConfig({ networkType: "mainnet" });
+const mockConfig = jest.fn(async (_currencyId?: string) => mainnetConfig);
+const context: ConcordiumBridgeContext = { config: mockConfig, logger: () => {} };
 
 // Mock dependencies
 const mockGetSession = jest.fn();
@@ -35,13 +41,6 @@ jest.mock("../signer", () => ({
   getPublicKey: jest.fn().mockResolvedValue("aa".repeat(32)),
   // 128 hex chars = 64 bytes, Ed25519 signature
   signCredentialDeployment: jest.fn().mockResolvedValue("bb".repeat(64)),
-}));
-
-jest.mock("../config", () => ({
-  __esModule: true,
-  default: {
-    getCoinConfig: jest.fn().mockReturnValue({ networkType: "mainnet" }),
-  },
 }));
 
 jest.mock("../network/utils", () => ({
@@ -78,7 +77,7 @@ describe("onboard", () => {
       setupSuccessfulMocks();
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
@@ -100,7 +99,7 @@ describe("onboard", () => {
       setupSuccessfulMocks();
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
@@ -127,7 +126,7 @@ describe("onboard", () => {
       getWalletConnect.mockReturnValueOnce(null);
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
@@ -145,7 +144,7 @@ describe("onboard", () => {
       mockGetSession.mockResolvedValue(null);
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
@@ -167,7 +166,7 @@ describe("onboard", () => {
       });
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
@@ -189,7 +188,7 @@ describe("onboard", () => {
       });
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
@@ -209,7 +208,7 @@ describe("onboard", () => {
       signCredentialDeployment.mockResolvedValueOnce("");
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
@@ -230,7 +229,7 @@ describe("onboard", () => {
       signCredentialDeployment.mockRejectedValueOnce(transportError);
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
@@ -249,7 +248,7 @@ describe("onboard", () => {
       signCredentialDeployment.mockRejectedValueOnce(transportError);
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
@@ -268,7 +267,7 @@ describe("onboard", () => {
       signCredentialDeployment.mockRejectedValueOnce(transportError);
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
@@ -287,7 +286,7 @@ describe("onboard", () => {
       const { getPublicKey } = jest.requireMock("../signer");
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
       account.freshAddressPath = "44'/1'/0'/0'/0'/5'";
@@ -308,7 +307,7 @@ describe("onboard", () => {
       buildSubmitCredentialData.mockReturnValue({ v: 0, value: { test: "data" } });
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
@@ -317,7 +316,7 @@ describe("onboard", () => {
       await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
-      expect(submitCredential).toHaveBeenCalledWith({ networkType: "mainnet" }, currency.id, {
+      expect(submitCredential).toHaveBeenCalledWith(mainnetConfig, {
         v: 0,
         value: { test: "data" },
       });
@@ -331,7 +330,7 @@ describe("onboard", () => {
         uri: encodeURIComponent("wc:test-uri"),
         approval: jest.fn().mockResolvedValue({ topic: "session-topic-123" }),
       });
-      const pairWalletConnect = buildPairWalletConnect();
+      const pairWalletConnect = buildPairWalletConnect(context);
       const currency = createFixtureCurrency();
 
       // WHEN
@@ -351,11 +350,27 @@ describe("onboard", () => {
       });
     });
 
+    it.each([
+      ["absent", undefined],
+      ["empty", { relayUrl: "" }],
+    ])("should fail before pairing when the relay URL is %s", async (_case, walletConnect) => {
+      const config = { ...createFixtureConfig(), walletConnect } as never;
+      const pairWalletConnect = buildPairWalletConnect({
+        config: async () => config,
+        logger: () => {},
+      });
+
+      await expect(
+        firstValueFrom(pairWalletConnect("concordium_testnet", "test-device").pipe(toArray())),
+      ).rejects.toThrow("no walletConnect.relayUrl");
+      expect(mockInitiatePairing).not.toHaveBeenCalled();
+    });
+
     it("should throw error when WalletConnect is not available", async () => {
       // GIVEN
       const { getWalletConnect } = jest.requireMock("../network/walletConnect");
       getWalletConnect.mockReturnValueOnce(null);
-      const pairWalletConnect = buildPairWalletConnect();
+      const pairWalletConnect = buildPairWalletConnect(context);
       const currency = createFixtureCurrency();
 
       // WHEN
@@ -373,7 +388,7 @@ describe("onboard", () => {
         uri: null,
         approval: jest.fn(),
       });
-      const pairWalletConnect = buildPairWalletConnect();
+      const pairWalletConnect = buildPairWalletConnect(context);
       const currency = createFixtureCurrency();
 
       // WHEN
@@ -389,7 +404,7 @@ describe("onboard", () => {
       // GIVEN
       const { getWalletConnect } = jest.requireMock("../network/walletConnect");
       getWalletConnect.mockReturnValueOnce(null);
-      const pairWalletConnect = buildPairWalletConnect();
+      const pairWalletConnect = buildPairWalletConnect(context);
       const currency = createFixtureCurrency();
 
       // WHEN
@@ -416,7 +431,7 @@ describe("onboard", () => {
         uri: encodedUri,
         approval: jest.fn().mockResolvedValue({ topic: "topic" }),
       });
-      const pairWalletConnect = buildPairWalletConnect();
+      const pairWalletConnect = buildPairWalletConnect(context);
       const currency = createFixtureCurrency();
 
       // WHEN
@@ -433,14 +448,13 @@ describe("onboard", () => {
       expect(prepareEvent.walletConnectUri).toContain(`encodedUri=${encodedUri}`);
     });
 
-    it("should call coinConfig.getCoinConfig with currencyId", async () => {
+    it("should resolve the coin config for the currencyId", async () => {
       // GIVEN
       mockInitiatePairing.mockResolvedValue({
         uri: "wc:test",
         approval: jest.fn().mockResolvedValue({ topic: "topic" }),
       });
-      const coinConfig = jest.requireMock("../config").default;
-      const pairWalletConnect = buildPairWalletConnect();
+      const pairWalletConnect = buildPairWalletConnect(context);
       const currency = createFixtureCurrency();
 
       // WHEN
@@ -448,7 +462,7 @@ describe("onboard", () => {
       await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
-      expect(coinConfig.getCoinConfig).toHaveBeenCalledWith(currency.id);
+      expect(mockConfig).toHaveBeenCalledWith(currency.id);
     });
   });
 });

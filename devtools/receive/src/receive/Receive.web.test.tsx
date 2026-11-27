@@ -28,6 +28,7 @@ const renderTool = ({
   enabled = false,
   excludedFamilies = [] as readonly string[],
   assets = [ETHEREUM, USDC] as readonly ReceiveToolAsset[],
+  hasSeenVerifyHint = true,
 } = {}) => {
   const flag = { enabled, excludedFamilies, setEnabled: jest.fn(), setExcludedFamilies: jest.fn() };
   const trigger = {
@@ -36,8 +37,9 @@ const renderTool = ({
     onPickAsset: jest.fn(),
     onOpenDeeplink: jest.fn(),
   };
-  render(<Receive flag={flag} trigger={trigger} />);
-  return { flag, trigger };
+  const verifyHint = { hasSeen: hasSeenVerifyHint, setHasSeen: jest.fn() };
+  render(<Receive flag={flag} trigger={trigger} verifyHint={verifyHint} />);
+  return { flag, trigger, verifyHint };
 };
 
 describe("Receive", () => {
@@ -116,5 +118,25 @@ describe("Receive", () => {
     expect(screen.getByText("Not a valid URL.")).toBeVisible();
     expect(screen.getByRole("button", { name: "Open" })).toBeDisabled();
     expect(trigger.onOpenDeeplink).not.toHaveBeenCalled();
+  });
+
+  it("shows the deeplink before the receive list, with the verify hint between", () => {
+    renderTool();
+
+    expect(screen.getAllByRole("heading").map(heading => heading.textContent)).toEqual([
+      "Feature flag",
+      "Deeplink",
+      "Verify hint",
+      "Receive list",
+    ]);
+  });
+
+  it("shows the verify hint again on the next receive, or marks it as seen", async () => {
+    const { verifyHint } = renderTool({ hasSeenVerifyHint: true });
+    const hint = screen.getByRole("switch", { name: "Show the hint on the next receive" });
+
+    expect(hint).not.toBeChecked();
+    await userEvent.click(hint);
+    expect(verifyHint.setHasSeen).toHaveBeenCalledWith(false);
   });
 });

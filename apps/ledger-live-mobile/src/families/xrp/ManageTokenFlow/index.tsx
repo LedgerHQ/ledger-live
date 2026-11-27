@@ -6,7 +6,9 @@ import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { ScreenName } from "~/const";
 import { bridgeSuspenseScreenLayout, getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import BalanceLimit from "./BalanceLimit";
 import ManageToken from "./ManageToken";
+import TokenSettings from "./TokenSettings";
 import type { XrpManageTokenFlowParamList } from "./types";
 
 const Stack = createNativeStackNavigator<XrpManageTokenFlowParamList>();
@@ -38,6 +40,22 @@ function ManageTokenFlow() {
       <Stack.Screen
         name={ScreenName.XrpManageTokenList}
         component={ManageToken}
+        options={{
+          headerLeft: renderBackButton,
+          headerTitle: "",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.XrpManageTokenSettings}
+        component={TokenSettings}
+        options={{
+          headerLeft: renderBackButton,
+          headerTitle: "",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.XrpManageTokenBalanceLimit}
+        component={BalanceLimit}
         options={{
           headerLeft: renderBackButton,
           headerTitle: "",

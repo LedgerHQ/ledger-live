@@ -17,7 +17,12 @@ export type AddressListItemViewProps = Readonly<{
 
 export function AddressListItemView({ vm }: AddressListItemViewProps) {
   return (
-    <ListItem onClick={vm.onClick} className="bg-surface" data-testid={vm.rowTestId}>
+    <ListItem
+      onClick={vm.onClick}
+      className="bg-surface"
+      data-testid={vm.rowTestId}
+      data-dd-action-name="Address row"
+    >
       <ListItemLeading>
         <ListItemContent>
           <div className="flex min-w-0 items-center gap-8">

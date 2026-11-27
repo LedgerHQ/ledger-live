@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  act,
   renderWithMockedCounterValuesProvider,
   fireEvent,
   screen,
@@ -10,8 +9,6 @@ import {
   withFlagOverrides,
 } from "tests/testSetup";
 import { useNavigate } from "react-router";
-import type { VerifyAddressIntentJobState } from "@features/platform-intent-verify-address";
-import { buildDeviceInitializationInput } from "LLD/components/DeviceIntentExecutor";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/hooks/useOpenAssetAndAccount";
 import { track, trackPage } from "@shared/analytics";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
@@ -26,7 +23,6 @@ import {
   EMPTY_TITLE,
   FEATURE_TOUR_CTA,
   FEATURE_TOUR_ROW,
-  INIT_INPUT,
   USDC_TOKEN,
   defaultPayStablecoins,
   fundedState,
@@ -87,42 +83,17 @@ async function openBankTransferIntro() {
   return user;
 }
 
-type CapturedExecutor = {
-  sourceFlow: string;
-  intent: { input: { expectedAddress: string } };
-  onIntentJobStateChanged: (jobState: VerifyAddressIntentJobState) => void;
-};
-
-let capturedExecutor: CapturedExecutor | undefined;
-
-jest.mock("LLD/components/DeviceIntentExecutor", () => ({
-  buildDeviceInitializationInput: jest.fn(),
-  DeviceIntentExecutor: (props: CapturedExecutor) => {
-    capturedExecutor = props;
-    return <div data-testid="device-intent-executor" />;
-  },
-}));
-
 jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetAndAccount", () => ({
   useOpenAssetAndAccount: jest.fn(),
 }));
 
-const mockedBuildInit = jest.mocked(buildDeviceInitializationInput);
 const mockedUseOpenAssetAndAccount = jest.mocked(useOpenAssetAndAccount);
 
 let openAssetAndAccount: jest.Mock;
 
-const VERIFY_HINT_COPY = "Verify your address on your Ledger device before sharing";
-
-async function openRequestReceive(user: { click: (element: HTMLElement) => Promise<void> }) {
-  await user.click(await screen.findByRole("button", { name: "Request" }));
-  expect(await screen.findByTestId("pay-request-receive")).toBeVisible();
-}
-
 describe("PayTab integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    capturedExecutor = undefined;
     mockPayStablecoins();
     mockedUseNavigate.mockReturnValue(mockNavigate);
     openAssetAndAccount = jest.fn(({ onSuccess }) => {
@@ -132,7 +103,6 @@ describe("PayTab integration", () => {
       openAssetAndAccount,
       openAssetAndAccountPromise: jest.fn(),
     });
-    mockedBuildInit.mockResolvedValue(INIT_INPUT);
   });
 
   it("should show the feature tour on first visit", () => {
@@ -250,7 +220,7 @@ describe("PayTab integration", () => {
     expect(screen.getByTestId("pay-card-deposit-option-swap")).toBeVisible();
   });
 
-  it("should open the request card when Crypto address is selected", async () => {
+  it("should open the receive address dialog on the picked stablecoin when Crypto address is selected", async () => {
     mockFundedPayStablecoins();
     const { user, store } = renderWithMockedCounterValuesProvider(<PayTab />, {
       initialState: fundedState,
@@ -259,11 +229,13 @@ describe("PayTab integration", () => {
     await user.click(await screen.findByRole("button", { name: "Add stablecoin" }));
     await user.click(await screen.findByTestId("pay-card-deposit-option-receive"));
 
-    expect(await screen.findByTestId("pay-request-receive")).toBeVisible();
     expect(openAssetAndAccount).toHaveBeenCalledWith(
       expect.objectContaining({ categories: [AssetCategory.Stablecoins] }),
     );
-    expect(store.getState().modularDialog.flow).toBe("request");
+    expect(store.getState().modularDialog.flow).toBe("receive_flow");
+    expect(store.getState().receiveAddressDialog.target).toEqual(
+      expect.objectContaining({ assetId: USDC_TOKEN.token.id, source: "pay" }),
+    );
     expect(store.getState().modals.MODAL_RECEIVE?.isOpened).toBeFalsy();
   });
 
@@ -400,131 +372,6 @@ describe("PayTab integration", () => {
     expect(mockedTrackScreen.mock.calls.filter(([event]) => event.category === "Pay")).toHaveLength(
       1,
     );
-  });
-
-  it("should mount the DIE on verify and restore the request card once the address is confirmed", async () => {
-    mockFundedPayStablecoins();
-    const { user } = renderWithMockedCounterValuesProvider(<PayTab />, {
-      initialState: fundedState,
-    });
-
-    await openRequestReceive(user);
-    await user.click(await screen.findByTestId("pay-request-receive-verify"));
-    await user.click(await screen.findByTestId("pay-card-verify-address-verify-cta"));
-
-    await waitFor(() => expect(screen.getByTestId("device-intent-executor")).toBeVisible());
-    expect(capturedExecutor?.sourceFlow).toBe("receive");
-    expect(capturedExecutor?.intent.input.expectedAddress).toBe(ETH_ACCOUNT_WITH_USDC.freshAddress);
-
-    act(() => {
-      capturedExecutor!.onIntentJobStateChanged({
-        type: "verified",
-        address: ETH_ACCOUNT_WITH_USDC.freshAddress,
-      });
-    });
-
-    expect(await screen.findByTestId("pay-request-receive")).toBeVisible();
-    expect(screen.queryByTestId("device-intent-executor")).not.toBeInTheDocument();
-    expect(screen.queryByText(VERIFY_HINT_COPY)).not.toBeInTheDocument();
-  });
-
-  describe("receive verify hint", () => {
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
-    async function openRequestReceiveNow(user: { click: (element: HTMLElement) => Promise<void> }) {
-      await user.click(screen.getByRole("button", { name: "Request" }));
-      expect(screen.getByTestId("pay-request-receive")).toBeVisible();
-    }
-
-    function useHintFakeTimers() {
-      // React 19 act() waits on queueMicrotask. Faking it hangs the test.
-      jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
-    }
-
-    function flushHintTimers() {
-      act(() => {
-        jest.runOnlyPendingTimers();
-      });
-    }
-
-    function renderHintPayTab() {
-      return renderWithMockedCounterValuesProvider(<PayTab />, {
-        initialState: fundedState,
-        userEventOptions: { advanceTimers: jest.advanceTimersByTime },
-      });
-    }
-
-    it("should show the receive verify hint on first visit and hide it after Got it", async () => {
-      mockFundedPayStablecoins();
-      const { user } = renderHintPayTab();
-
-      expect(await screen.findByRole("button", { name: "Request" })).toBeVisible();
-      useHintFakeTimers();
-      await openRequestReceiveNow(user);
-      expect(mockedTrack).not.toHaveBeenCalledWith("hint_impression", expect.anything());
-      flushHintTimers();
-
-      expect(screen.getByText(VERIFY_HINT_COPY)).toBeInTheDocument();
-      expect(mockedTrack).toHaveBeenCalledWith(
-        "hint_impression",
-        expect.objectContaining({
-          hint: "verify",
-          buttonLocation: "request",
-          flow: "request",
-          page: "Request complete",
-        }),
-      );
-
-      await user.click(screen.getByRole("button", { name: "Got it" }));
-
-      expect(screen.queryByText(VERIFY_HINT_COPY)).not.toBeInTheDocument();
-      expect(mockedTrack).toHaveBeenCalledWith(
-        "button_clicked",
-        expect.objectContaining({
-          button: "got it",
-          hint: "verify",
-          buttonLocation: "request",
-          flow: "request",
-          page: "Request complete",
-        }),
-      );
-
-      await user.click(screen.getByRole("button", { name: /close/i }));
-      await openRequestReceiveNow(user);
-      flushHintTimers();
-
-      expect(screen.queryByText(VERIFY_HINT_COPY)).not.toBeInTheDocument();
-    });
-
-    it("should keep the receive dialog open until Got it or Verify", async () => {
-      mockFundedPayStablecoins();
-      const { user } = renderHintPayTab();
-
-      expect(await screen.findByRole("button", { name: "Request" })).toBeVisible();
-      useHintFakeTimers();
-      await openRequestReceiveNow(user);
-      flushHintTimers();
-      expect(screen.getByText(VERIFY_HINT_COPY)).toBeInTheDocument();
-
-      await user.click(screen.getByRole("button", { name: /close/i }));
-      expect(screen.getByTestId("pay-request-receive")).toBeVisible();
-      expect(screen.getByText(VERIFY_HINT_COPY)).toBeInTheDocument();
-    });
-
-    it("should not track hint_impression if Verify is pressed before the hint shows", async () => {
-      mockFundedPayStablecoins();
-      const { user } = renderHintPayTab();
-
-      expect(await screen.findByRole("button", { name: "Request" })).toBeVisible();
-      useHintFakeTimers();
-      await openRequestReceiveNow(user);
-      await user.click(screen.getByTestId("pay-request-receive-verify"));
-      flushHintTimers();
-
-      expect(mockedTrack).not.toHaveBeenCalledWith("hint_impression", expect.anything());
-    });
   });
 
   it("should show the CL Card disclaimer and open and track the CL Card webview when card_disclaimer is on", async () => {

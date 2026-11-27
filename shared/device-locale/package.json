@@ -1,0 +1,43 @@
+{
+  "name": "@shared/device-locale",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Device language, region and time zone for React Native, with expo-localization",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "lint": "oxlint ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "peerDependencies": {
+    "expo-localization": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "expo-localization": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
+    "expo-localization": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "react-native": "catalog:",
+    "typescript": "catalog:"
+  }
+}

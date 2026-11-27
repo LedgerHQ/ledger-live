@@ -6,12 +6,14 @@
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*",
+        "{workspaceRoot}/libs/ledger-live-common/src/families/**/*",
+        "{workspaceRoot}/domain/entity/currency-crypto/src/currencies/*.ts",
         "{projectRoot}/restricted-imports.mts",
         "{projectRoot}/restricted-imports/**/*"
       ],
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "node --test support/lint/src/suffix-imports.test.js support/lint/src/redux-slices.test.js support/lint/src/derivation-mirror.test.js support/lint/src/restricted-imports-fragments.test.js"
+        "command": "node --test support/lint/src/suffix-imports.test.js support/lint/src/redux-slices.test.js support/lint/src/derivation-mirror.test.js support/lint/src/restricted-imports-fragments.test.js support/lint/src/coin-families.test.js support/lint/src/branch-rules.test.js support/lint/src/check-coin-families-disables.test.js support/lint/src/check-coin-families-exceptions.test.js"
       }
     }
   }

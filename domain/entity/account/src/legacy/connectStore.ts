@@ -1,7 +1,8 @@
-import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { LegacyAccountEntry } from "../schema";
 import { legacyAccountsSynced } from "../slice";
 import { AccountIdSchema } from "./schema";
+import { computeAccountUUID } from "../descriptor/computeAccountUUID";
 
 export type AccountsReduxStore<S> = {
   getState: () => S;

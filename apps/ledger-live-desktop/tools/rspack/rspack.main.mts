@@ -1,4 +1,5 @@
 import path from "path";
+import { createRequire } from "module";
 import { rspack, type RspackOptions } from "@rspack/core";
 import { commonConfig, rootFolder, outputFolder } from "./rspack.common.mts";
 import {
@@ -36,6 +37,15 @@ export function createMainConfig(
     devtool: isRsdoctorEnabled() ? false : "source-map",
     resolve: {
       ...commonConfig.resolve,
+      // Before "~": the shared Datadog modules read their bootstrap from Electron in main.
+      alias: {
+        "~/renderer/bridge$": path.resolve(rootFolder, "src", "main", "rendererBridge.ts"),
+        // The SDK's CommonJS build: its ESM one makes rspack chase a WASM file it inlines anyway.
+        "@datadog/electron-sdk$": createRequire(import.meta.url).resolve("@datadog/electron-sdk"),
+        // The SDK runs without its tracer, which main turns off anyway (no trace headers).
+        "dd-trace": false,
+        ...commonConfig.resolve?.alias,
+      },
       mainFields: ["main", "module"],
     },
     plugins: [

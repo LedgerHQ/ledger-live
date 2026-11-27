@@ -26,11 +26,6 @@ jest.mock("../AccountSyncStatusIndicator", () => ({
   default: () => <div data-testid="sync-status" />,
 }));
 
-jest.mock("~/renderer/components/Stars/Star", () => ({
-  __esModule: true,
-  default: () => <div data-testid="star" />,
-}));
-
 jest.mock("~/renderer/components/TokenRow", () => ({
   __esModule: true,
   default: () => <div data-testid="token-row" />,

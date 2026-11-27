@@ -4,7 +4,7 @@ import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import { track } from "@shared/analytics";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import React from "react";
-import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
+import { StakeAccountBannerParams } from "./types";
 import {
   useSolanaStakesWithMeta,
   useValidators,

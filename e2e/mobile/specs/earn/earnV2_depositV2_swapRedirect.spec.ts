@@ -8,9 +8,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
-runSwapRedirectTest(
-  testConfig.earnAccount,
-  testConfig.fundingAccount,
-  testConfig.tmsLinks,
-  testConfig.tags,
-);
+runSwapRedirectTest(testConfig);

@@ -20,6 +20,7 @@ import EditAccountName from "./screens/EditAccountName";
 import FundAccount from "./screens/FundAccount";
 import ScanAccounts from "./screens/ScanAccounts";
 import { useAddAccountFlowNavigation } from "./useAddAccountFlowNavigation";
+import { useScanAttempt } from "./hooks/useScanAttempt";
 import { useDispatch } from "LLD/hooks/redux";
 import { setFlowValue } from "~/renderer/reducers/modularDialog";
 import { useLLDCoinFamily } from "~/renderer/families";
@@ -78,6 +79,8 @@ const ModularDrawerAddAccountFlowManager = ({
     originalCurrency: currency,
   });
 
+  const { scanAttempt, retryScan } = useScanAttempt(navigateToConnectDevice);
+
   const isAccountSelectionFlow = !!onAccountSelected;
   const cryptoCurrency =
     currency.type === "CryptoCurrency"
@@ -126,8 +129,11 @@ const ModularDrawerAddAccountFlowManager = ({
           <StepContainer paddingX="8px" data-test-id="content">
             <ScanAccounts
               currency={cryptoCurrency}
-              deviceId={connectAppResult.device.deviceId}
-              onRetry={navigateToConnectDevice}
+              device={connectAppResult.device}
+              attempt={scanAttempt}
+              isToken={currency.type === "TokenCurrency"}
+              inline={isAccountSelectionFlow}
+              onRetry={retryScan}
               onComplete={accounts => {
                 setSelectedAccounts(accounts);
                 navigateToAccountsAdded();

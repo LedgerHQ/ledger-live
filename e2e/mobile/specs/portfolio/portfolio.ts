@@ -1,6 +1,7 @@
 import { ApplicationOptions } from "@e2e/page/index";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
@@ -12,7 +13,8 @@ async function beforeAllFunction(options: ApplicationOptions) {
   await app.mainNavigation.waitForWallet40Ready();
 }
 
-export function runPortfolioChartsAndAssetsTest(tmsLinks: string[], tags: string[]) {
+export function runPortfolioChartsAndAssetsTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   describe("Portfolio", () => {
     beforeAll(async () => {
       await beforeAllFunction({

@@ -19,9 +19,4 @@ const userRefusesTransactionSwapTestConfig = {
   ],
 };
 
-runUserRefusesTransactionTest(
-  userRefusesTransactionSwapTestConfig.fromAccount,
-  userRefusesTransactionSwapTestConfig.toAccount,
-  userRefusesTransactionSwapTestConfig.tmsLinks,
-  userRefusesTransactionSwapTestConfig.tags,
-);
+runUserRefusesTransactionTest(userRefusesTransactionSwapTestConfig);

@@ -6,10 +6,22 @@ import { getCoinFrameworkAccountBridge } from "@ledgerhq/live-common/bridge/gene
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
 import { coinModuleLoaders } from "@ledgerhq/live-common/coin-modules/loaders";
+import type { BitcoinTxData } from "@ledgerhq/coin-bitcoin/logic/intent";
+import type { UtxoStrategy } from "@ledgerhq/coin-bitcoin/types";
 import type { GenericBitcoinSigner } from "./signer";
 
 // Registers the loaders, so the generic framework resolves coin-bitcoin's local createApi.
 registerCoinModules(coinModuleLoaders);
+
+/**
+ * A generic transaction with what the bitcoin bridge api (`buildIntentData`) passes to coin-bitcoin:
+ * the coin control, in coin-bitcoin's shape or in the legacy one Ledger Live's coin control screen
+ * builds, and the OP_RETURN data.
+ */
+export type BitcoinGenericTransaction = GenericTransaction & {
+  utxoStrategy?: BitcoinTxData["utxoStrategy"] | UtxoStrategy;
+  opReturnData?: Buffer;
+};
 
 /**
  * Generic coin framework bridges of the bitcoin family, backed by the software
@@ -18,7 +30,7 @@ registerCoinModules(coinModuleLoaders);
  */
 export async function getBitcoinGenericBridges(signer: GenericBitcoinSigner): Promise<{
   currencyBridge: CurrencyBridge;
-  accountBridge: AccountBridge<GenericTransaction>;
+  accountBridge: AccountBridge<BitcoinGenericTransaction>;
   getAddress: GetAddressFn;
 }> {
   const signerContext: SignerContext<GenericBitcoinSigner> = (_deviceId, fn) => fn(signer);
@@ -31,10 +43,10 @@ export async function getBitcoinGenericBridges(signer: GenericBitcoinSigner): Pr
       context: signerContext,
       getAddress,
     }),
-    accountBridge: await getCoinFrameworkAccountBridge("bitcoin", "local", {
+    accountBridge: (await getCoinFrameworkAccountBridge("bitcoin", "local", {
       context: signerContext,
       getAddress,
-    }),
+    })) as AccountBridge<BitcoinGenericTransaction>,
     getAddress,
   };
 }

@@ -9,6 +9,7 @@ const family: AlgorandFamily = {
   operationDetails,
   tokenList,
   addAssetAction,
+  receiveGateAction: addAssetAction,
   accountHeaderManageActions,
   AccountBodyHeader,
   modalsToPreload: [

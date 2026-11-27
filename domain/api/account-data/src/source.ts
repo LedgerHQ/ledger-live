@@ -4,11 +4,8 @@ import type {
   AccountDataResult,
   AccountDataSourceId,
 } from "@domain/entity-account-data";
-import type {
-  AccountDescriptor,
-  AccountPurpose,
-  AccountUUID,
-} from "@domain/entity-account-descriptor";
+import type { AccountDescriptor, AccountPurpose } from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account";
 
 export type AccountTarget = {
   readonly accountUUID: AccountUUID;

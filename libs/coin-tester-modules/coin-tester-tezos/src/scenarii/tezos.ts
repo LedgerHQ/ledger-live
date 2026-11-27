@@ -1,46 +1,42 @@
 import BigNumber from "bignumber.js";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import type { Account } from "@ledgerhq/types-live";
-import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { makeAccount, ALICE_BAKER_ADDRESS, RECIPIENT, TEZOS, TZKT_MOCK_URL } from "../fixtures";
+import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
+import { makeAccount, TEZOS } from "../fixtures";
 import { buildTz1Signer, buildTz2Signer } from "../signer";
 import { getBridges } from "../helpers";
 import {
-  fundAccount,
-  spawnFlextesa,
-  killFlextesa,
-  waitForOperationInclusion,
-  TEZOS_RPC,
-} from "../flextesa";
-import { indexBlocks, initMswHandlers, resetIndexer } from "../indexer";
-
-global.console = require("console");
-jest.setTimeout(600_000);
-
-let closeMswtz1: (() => void) | null = null;
-let startLeveltz1 = 1;
-let watchedAddresstz1 = "";
-
-let closeMswtz2: (() => void) | null = null;
-let startLeveltz2 = 1;
-let watchedAddresstz2 = "";
+  BAKERS_URL,
+  bakerAddresses,
+  endpointOf,
+  startTezosSandbox,
+  waitForIndexedOperation,
+} from "../sandbox";
+import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
+import type { Account, OperationType } from "@ledgerhq/types-live";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
+import type { TezosTestSigner } from "../signer";
 
 type TezosScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
-function makeScenarioTransactions(addressType: "tz1" | "tz2"): TezosScenarioTransaction[] {
+const AIRDROP_XTZ = 20;
+
+function makeScenarioTransactions(
+  addressType: "tz1" | "tz2",
+  { baker, recipient }: { baker: string; recipient: string },
+): TezosScenarioTransaction[] {
   const sendOneTez: TezosScenarioTransaction = {
     name: `Send 1 XTZ from unrevealed account (${addressType})`,
     amount: new BigNumber(1e6),
-    recipient: RECIPIENT,
+    recipient,
     expect: (previousAccount, currentAccount) => {
       expect(currentAccount.operations.length).toBeGreaterThanOrEqual(2);
       expect(currentAccount.operations.length).toBeGreaterThan(previousAccount.operations.length);
       const [latestOperation, revealOperation] = currentAccount.operations;
       expect(latestOperation.type).toBe("OUT");
       expect(revealOperation.type).toBe("REVEAL");
-      expect(latestOperation.recipients).toContain(RECIPIENT);
+      expect(latestOperation.recipients).toContain(recipient);
       expect(currentAccount.balance).toStrictEqual(
         previousAccount.balance.minus(latestOperation.value.plus(revealOperation.fee)),
       );
@@ -50,12 +46,12 @@ function makeScenarioTransactions(addressType: "tz1" | "tz2"): TezosScenarioTran
   const sendFiveTez: TezosScenarioTransaction = {
     name: `Send 5 XTZ from revealed account (${addressType})`,
     amount: new BigNumber(5e6),
-    recipient: RECIPIENT,
+    recipient,
     expect: (previousAccount, currentAccount) => {
       expect(currentAccount.operations.length).toBeGreaterThan(previousAccount.operations.length);
       const [latestOperation] = currentAccount.operations;
       expect(latestOperation.type).toBe("OUT");
-      expect(latestOperation.recipients).toContain(RECIPIENT);
+      expect(latestOperation.recipients).toContain(recipient);
       expect(currentAccount.balance).toStrictEqual(
         previousAccount.balance.minus(latestOperation.value),
       );
@@ -63,14 +59,14 @@ function makeScenarioTransactions(addressType: "tz1" | "tz2"): TezosScenarioTran
   };
 
   const delegate: TezosScenarioTransaction = {
-    name: "Delegate to Alice baker",
+    name: "Delegate to a sandbox baker",
     mode: "delegate",
-    recipient: ALICE_BAKER_ADDRESS,
+    recipient: baker,
     expect: (previousAccount, currentAccount) => {
       expect(currentAccount.operations.length).toBeGreaterThan(previousAccount.operations.length);
       const [latestOperation] = currentAccount.operations;
       expect(latestOperation.type).toBe("DELEGATE");
-      expect(latestOperation.recipients).toContain(ALICE_BAKER_ADDRESS);
+      expect(latestOperation.recipients).toContain(baker);
       expect(currentAccount.balance).toStrictEqual(
         previousAccount.balance.minus(latestOperation.value),
       );
@@ -85,7 +81,7 @@ function makeScenarioTransactions(addressType: "tz1" | "tz2"): TezosScenarioTran
       expect(currentAccount.operations.length).toBeGreaterThan(previousAccount.operations.length);
       const [latestOperation] = currentAccount.operations;
       expect(latestOperation.type).toBe("UNDELEGATE");
-      expect(latestOperation.recipients).toContain(ALICE_BAKER_ADDRESS);
+      expect(latestOperation.recipients).toContain(baker);
       expect(currentAccount.balance).toStrictEqual(
         previousAccount.balance.minus(latestOperation.value),
       );
@@ -95,12 +91,12 @@ function makeScenarioTransactions(addressType: "tz1" | "tz2"): TezosScenarioTran
   const sendMax: TezosScenarioTransaction = {
     name: "Send max XTZ",
     useAllAmount: true,
-    recipient: RECIPIENT,
+    recipient,
     expect: (previousAccount, currentAccount) => {
       expect(currentAccount.operations.length).toBeGreaterThan(previousAccount.operations.length);
       const [latestOperation] = currentAccount.operations;
       expect(latestOperation.type).toBe("OUT");
-      expect(latestOperation.recipients).toContain(RECIPIENT);
+      expect(latestOperation.recipients).toContain(recipient);
       expect(currentAccount.balance).toStrictEqual(
         previousAccount.balance.minus(latestOperation.value),
       );
@@ -110,191 +106,125 @@ function makeScenarioTransactions(addressType: "tz1" | "tz2"): TezosScenarioTran
   return [sendOneTez, sendFiveTez, delegate, undelegate, sendMax];
 }
 
-export const scenarioTezosTz1: Scenario<GenericTransaction, Account> = {
-  name: "Ledger Live Tezos — Full scenario (tz1 / ed25519)",
-
-  setup: async () => {
-    setCryptoAssetsStore({
-      findTokenById: async () => undefined,
-      findTokenByAddressInCurrency: async () => undefined,
-      getTokensSyncHash: async () => "",
-    });
-
-    await spawnFlextesa();
-
-    const signer = await buildTz1Signer();
-    const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
-
-    const { address } = await getAddress("", {
-      path: "44'/1729'/0'/0'",
-      currency: TEZOS,
-      derivationMode: "",
-    });
-    watchedAddresstz1 = address;
-
-    // Fund the test account with enough XTZ for all transactions
-    await fundAccount(address, 20);
-
-    // Record the current block level so we only index ops from here on
-    const headRes = await fetch(`${TEZOS_RPC}/chains/main/blocks/head/header`);
-    const head = await headRes.json();
-    startLeveltz1 = (head as { level: number }).level + 1;
-
-    // Configure the coin module to talk to our local node and mock TzKT.
-    const localConfig = {
-      status: { type: "active" as const },
-      name: "Tezos",
-      unit: { name: "XTZ", code: "XTZ", magnitude: 6 },
-      baker: { url: "https://tezos-bakers.api.live.ledger.com" },
-      explorer: { url: TZKT_MOCK_URL, maxTxQuery: 100 },
-      node: { url: TEZOS_RPC },
-      fees: {
-        minGasLimit: 600,
-        minRevealGasLimit: 300,
-        minStorageLimit: 0,
-        minFees: 300,
-        minEstimatedFees: 300,
-      },
-    };
-
-    LiveConfig.setConfig({
-      config_currency_tezos: {
-        type: "object",
-        default: localConfig,
-      },
-    });
-
-    closeMswtz1 = initMswHandlers();
-
-    const account = makeAccount(address);
-    return { currencyBridge, accountBridge, account };
-  },
-
-  getTransactions: () => makeScenarioTransactions("tz1"),
-  beforeSync: async () => {
-    await indexBlocks(watchedAddresstz1, startLeveltz1);
-  },
-  mockIndexer: async (_, optimisticOperation) => {
-    await waitForOperationInclusion(optimisticOperation.hash);
-  },
-  beforeAll: account => {
-    expect(account.balance).toStrictEqual(new BigNumber(20000000));
-    expect(account.operations.length).toBe(0);
-  },
-  afterAll: account => {
-    const outOps = account.operations.filter(op => op.type === "OUT");
-    expect(outOps.length).toBe(3);
-
-    const revealOps = account.operations.filter(op => op.type === "REVEAL");
-    expect(revealOps.length).toBe(1);
-
-    const delegateOps = account.operations.filter(op => op.type === "DELEGATE");
-    expect(delegateOps.length).toBe(1);
-
-    const undelegateOps = account.operations.filter(op => op.type === "UNDELEGATE");
-    expect(undelegateOps.length).toBeGreaterThanOrEqual(1);
-
-    // Send-max leaves the dust margin behind (DUST_MARGIN_MUTEZ, less the fee-per-gas/op-size
-    // increment), independently of how the `minFees` floor compares to the suggested fee.
-    expect(account.balance.toNumber()).toBeLessThanOrEqual(500);
-  },
-
-  teardown: async () => {
-    closeMswtz1?.();
-    closeMswtz1 = null;
-    resetIndexer();
-    await killFlextesa();
-  },
+type AddressKind = {
+  addressType: "tz1" | "tz2";
+  curve: "ed25519" | "secp256k1";
+  path: string;
+  derivationMode: "" | "tezosSecp256k1";
+  buildSigner: () => Promise<TezosTestSigner>;
 };
 
-export const scenarioTezosTz2: Scenario<GenericTransaction, Account> = {
-  name: "Ledger Live Tezos — Full scenario (tz2 / secp256k1)",
+function makeTezosScenario({
+  addressType,
+  curve,
+  path,
+  derivationMode,
+  buildSigner,
+}: AddressKind): Scenario<GenericTransaction, Account> {
+  let sandbox: Sandbox | undefined;
+  let closeGuard: (() => void) | null = null;
+  let indexer = "";
+  let baker = "";
+  let recipient = "";
 
-  setup: async () => {
-    setCryptoAssetsStore({
-      findTokenById: async () => undefined,
-      findTokenByAddressInCurrency: async () => undefined,
-      getTokensSyncHash: async () => "",
-    });
+  return {
+    name: `Ledger Live Tezos — Full scenario (${addressType} / ${curve})`,
 
-    await spawnFlextesa();
-    const signer = await buildTz2Signer();
-    const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
-    const { address } = await getAddress("", {
-      path: "44'/1729'/0'",
-      currency: TEZOS,
-      derivationMode: "tezosSecp256k1",
-    });
-    watchedAddresstz2 = address;
+    setup: async () => {
+      setCryptoAssetsStore({
+        findTokenById: async () => undefined,
+        findTokenByAddressInCurrency: async () => undefined,
+        getTokensSyncHash: async () => "",
+      });
 
-    await fundAccount(address, 20);
+      sandbox = await startTezosSandbox();
+      const node = endpointOf(sandbox, "node");
+      indexer = endpointOf(sandbox, "indexer");
+      const bakers = await bakerAddresses();
+      if (bakers.length < 2) {
+        throw new Error(`the scenario needs 2 sandbox bakers, got ${bakers.length}`);
+      }
+      const [firstBaker, existingAccount] = bakers;
+      baker = firstBaker;
+      recipient = existingAccount;
 
-    const headRes = await fetch(`${TEZOS_RPC}/chains/main/blocks/head/header`);
-    const head = await headRes.json();
-    startLeveltz2 = (head as { level: number }).level + 1;
+      const signer = await buildSigner();
+      const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
+      const { address } = await getAddress("", { path, currency: TEZOS, derivationMode });
 
-    const localConfig = {
-      status: { type: "active" as const },
-      name: "Tezos",
-      unit: { name: "XTZ", code: "XTZ", magnitude: 6 },
-      baker: { url: "https://tezos-bakers.api.live.ledger.com" },
-      explorer: { url: TZKT_MOCK_URL, maxTxQuery: 100 },
-      node: { url: TEZOS_RPC },
-      fees: {
-        minGasLimit: 600,
-        minRevealGasLimit: 300,
-        minStorageLimit: 0,
-        minFees: 300,
-        minEstimatedFees: 300,
-      },
-    };
+      const airdropHash = await sandbox.airdrop(address, AIRDROP_XTZ);
+      await waitForIndexedOperation(indexer, airdropHash);
 
-    LiveConfig.setConfig({
-      config_currency_tezos: {
-        type: "object",
-        default: localConfig,
-      },
-    });
+      LiveConfig.setConfig({
+        config_currency_tezos: {
+          type: "object",
+          default: {
+            status: { type: "active" as const },
+            name: "Tezos",
+            unit: { name: "XTZ", code: "XTZ", magnitude: 6 },
+            baker: { url: BAKERS_URL },
+            explorer: { url: indexer, maxTxQuery: 100 },
+            node: { url: node },
+            fees: {
+              minGasLimit: 600,
+              minRevealGasLimit: 300,
+              minStorageLimit: 0,
+              minFees: 300,
+              minEstimatedFees: 300,
+            },
+          },
+        },
+      });
 
-    closeMswtz2 = initMswHandlers();
+      closeGuard = forbidRemoteRequests();
 
-    const account = makeAccount(address, "tezosSecp256k1");
-    return { currencyBridge: currencyBridge, accountBridge: accountBridge, account };
-  },
+      return { currencyBridge, accountBridge, account: makeAccount(address, derivationMode) };
+    },
 
-  getTransactions: () => makeScenarioTransactions("tz2"),
-  beforeSync: async () => {
-    await indexBlocks(watchedAddresstz2, startLeveltz2);
-  },
-  mockIndexer: async (_, optimisticOperation) => {
-    await waitForOperationInclusion(optimisticOperation.hash);
-  },
-  beforeAll: account => {
-    expect(account.balance).toStrictEqual(new BigNumber(20000000));
-    expect(account.operations.length).toBe(0);
-  },
-  afterAll: account => {
-    const outOps = account.operations.filter(op => op.type === "OUT");
-    expect(outOps.length).toBe(3);
+    getTransactions: () => makeScenarioTransactions(addressType, { baker, recipient }),
+    mockIndexer: async (_, optimisticOperation) => {
+      await waitForIndexedOperation(indexer, optimisticOperation.hash);
+    },
+    beforeAll: account => {
+      expect(account.balance).toStrictEqual(new BigNumber(AIRDROP_XTZ * 1e6));
+      expect(account.operations.map(op => op.type)).toStrictEqual(["IN"]);
+    },
+    afterAll: account => {
+      const count = (type: OperationType) =>
+        account.operations.filter(op => op.type === type).length;
+      expect(count("IN")).toBe(1);
+      expect(count("OUT")).toBe(3);
+      expect(count("REVEAL")).toBe(1);
+      expect(count("DELEGATE")).toBe(1);
+      expect(count("UNDELEGATE")).toBe(1);
 
-    const revealOps = account.operations.filter(op => op.type === "REVEAL");
-    expect(revealOps.length).toBe(1);
+      // Send-max leaves the dust margin behind (DUST_MARGIN_MUTEZ, less the fee-per-gas/op-size
+      // increment), independently of how the `minFees` floor compares to the suggested fee.
+      expect(account.balance.toNumber()).toBeLessThanOrEqual(500);
+    },
 
-    const delegateOps = account.operations.filter(op => op.type === "DELEGATE");
-    expect(delegateOps.length).toBe(1);
+    teardown: async () => {
+      closeGuard?.();
+      closeGuard = null;
+      const running = sandbox;
+      sandbox = undefined;
+      await running?.down();
+    },
+  };
+}
 
-    const undelegateOps = account.operations.filter(op => op.type === "UNDELEGATE");
-    expect(undelegateOps.length).toBe(1);
+export const scenarioTezosTz1 = makeTezosScenario({
+  addressType: "tz1",
+  curve: "ed25519",
+  path: "44'/1729'/0'/0'",
+  derivationMode: "",
+  buildSigner: buildTz1Signer,
+});
 
-    // Send-max leaves the dust margin behind (DUST_MARGIN_MUTEZ, less the fee-per-gas/op-size
-    // increment), independently of how the `minFees` floor compares to the suggested fee.
-    expect(account.balance.toNumber()).toBeLessThanOrEqual(500);
-  },
-
-  teardown: async () => {
-    closeMswtz2?.();
-    closeMswtz2 = null;
-    resetIndexer();
-    await killFlextesa();
-  },
-};
+export const scenarioTezosTz2 = makeTezosScenario({
+  addressType: "tz2",
+  curve: "secp256k1",
+  path: "44'/1729'/0'",
+  derivationMode: "tezosSecp256k1",
+  buildSigner: buildTz2Signer,
+});

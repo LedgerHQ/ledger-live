@@ -1,5 +1,8 @@
-import { getSpendableUtxos } from "../getSpendableUtxos";
+import { fetchMempoolView, getSpendableUtxos } from "../getSpendableUtxos";
+import { http } from "msw";
 import {
+  explorerUrl,
+  notFound,
   pendingUtxosHandler,
   server,
   testContext,
@@ -52,6 +55,28 @@ describe("getSpendableUtxos", () => {
       txHandler("c".repeat(64), [`${"a".repeat(64)}:0`]),
     );
     expect(outpoints(await getSpendableUtxos(await config(), ME))).toEqual(["b:0", "c:1"]);
+  });
+
+  it("does not spend the change of a transaction replaced since, which the explorer still lists", async () => {
+    // c was replaced: the explorer still lists it as pending and describes it, but no longer serves
+    // its raw transaction.
+    server.use(
+      utxosHandler(ME, [{ data: [output("a", "100"), output("b", "200")], token: null }]),
+      pendingUtxosHandler(ME, { spent: [output("a", "100")], created: [output("c", "50", 1)] }),
+      txHandler("c".repeat(64), [`${"a".repeat(64)}:0`]),
+      http.get(`${explorerUrl()}/tx/${"c".repeat(64)}/hex`, () => notFound("c".repeat(64))),
+    );
+    expect(outpoints(await getSpendableUtxos(await config(), ME))).toEqual(["b:0"]);
+  });
+
+  it("does not spend the change of a transaction the explorer no longer knows", async () => {
+    server.use(
+      utxosHandler(ME, [{ data: [output("a", "100"), output("b", "200")], token: null }]),
+      pendingUtxosHandler(ME, { spent: [output("a", "100")], created: [output("c", "50", 1)] }),
+      http.get(`${explorerUrl()}/tx/${"c".repeat(64)}`, () => notFound("c".repeat(64))),
+      http.get(`${explorerUrl()}/tx/${"c".repeat(64)}/hex`, () => notFound("c".repeat(64))),
+    );
+    expect(outpoints(await getSpendableUtxos(await config(), ME))).toEqual(["b:0"]);
   });
 
   it("does not spend an unconfirmed payment from someone else, which its sender can replace", async () => {
@@ -123,6 +148,24 @@ describe("getSpendableUtxos", () => {
       ["a".repeat(64), 1, "100"],
       ["c".repeat(64), 0, "50"],
     ]);
+  });
+
+  it("tells which own pending transaction spends and creates what", async () => {
+    server.use(
+      pendingUtxosHandler(ME, {
+        spent: [output("a", "100"), output("b", "200")],
+        created: [output("c", "50", 1), output("c", "20", 2), output("d", "70")],
+      }),
+      txHandler("c".repeat(64), [`${"a".repeat(64)}:0`]),
+      txHandler("d".repeat(64), [`${"e".repeat(64)}:0`]),
+    );
+    const view = await fetchMempoolView(await config(), ME);
+    expect(outpoints(view.spentUtxos)).toEqual(["a:0", "b:0"]);
+    expect(view.spentUtxos.map(utxo => utxo.value)).toEqual(["100", "200"]);
+    expect([...view.spentBy]).toEqual([[`${"a".repeat(64)}:0`, "c".repeat(64)]]);
+    expect([...view.createdBy.keys()]).toEqual(["c".repeat(64)]);
+    expect(outpoints(view.createdBy.get("c".repeat(64)) ?? [])).toEqual(["c:1", "c:2"]);
+    expect(outpoints(view.ownChange)).toEqual(["c:1", "c:2"]);
   });
 
   it("stops when the explorer repeats a page cursor", async () => {

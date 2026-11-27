@@ -7,7 +7,11 @@ const solMinAmount = "0.07";
 const swapId = "1172570f-5a02-43b9-83fc-cad47bfd12f3";
 
 const swapHistoryERC20TestConfig = {
-  swap: new Swap(Account.SOL_1, TokenAccount.ETH_USDT_1, solMinAmount),
+  swap: new Swap({
+    accountToDebit: Account.SOL_1,
+    accountToCredit: TokenAccount.ETH_USDT_1,
+    amount: solMinAmount,
+  }),
   provider: SwapProvider.NEAR_INTENTS,
   swapId,
   addressFrom: Addresses.SWAP_HISTORY_ERC20_SOL_FROM,
@@ -27,12 +31,4 @@ const swapHistoryERC20TestConfig = {
   ],
 };
 
-runExportSwapHistoryOperationsTest(
-  swapHistoryERC20TestConfig.swap,
-  swapHistoryERC20TestConfig.provider,
-  swapHistoryERC20TestConfig.swapId,
-  swapHistoryERC20TestConfig.addressFrom,
-  swapHistoryERC20TestConfig.addressTo,
-  swapHistoryERC20TestConfig.tmsLinks,
-  swapHistoryERC20TestConfig.tags,
-);
+runExportSwapHistoryOperationsTest(swapHistoryERC20TestConfig);

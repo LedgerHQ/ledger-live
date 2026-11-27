@@ -71,7 +71,11 @@ test.describe("Swap - token reapproval", { lock: reapprovalLock.names }, () => {
       ],
     },
     async ({ app }) => {
-      const provider = await pickRotatingProvider(eligibleProviders, fromAccount, toAccount);
+      const provider = await pickRotatingProvider({
+        eligibleProviders,
+        accountFrom: fromAccount,
+        accountTo: toAccount,
+      });
       test.setTimeout(REAPPROVAL_TEST_TIMEOUT_MS);
       await app.swap.logSelectedProvider(provider.uiName);
       await app.speculos.enableBlindSigningOnNanoS();
@@ -79,7 +83,12 @@ test.describe("Swap - token reapproval", { lock: reapprovalLock.names }, () => {
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const smallAmount = new BigNumber(minAmount).div(4).toFixed(6, BigNumber.ROUND_DOWN);
       await ensureTokenApproval(fromAccount, provider, smallAmount);
-      const swap = new Swap(fromAccount, toAccount, minAmount, provider);
+      const swap = new Swap({
+        accountToDebit: fromAccount,
+        accountToCredit: toAccount,
+        amount: minAmount,
+        provider,
+      });
       await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
       await app.swap.selectSpecificProvider(provider);
       await app.swap.checkQuoteCardCtaPresence(provider.uiName);

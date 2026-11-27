@@ -5,8 +5,7 @@ import { getDevnetValidatorParty, UNKNOWN_PARTY } from "../test/devnet";
 import { createMockContext } from "../test/fixtures";
 import { createApi } from ".";
 
-const config = cantonDefaults.canton_network_devnet;
-const context = createMockContext(config);
+const context = createMockContext(cantonDefaults.canton_network_devnet);
 const api = createApi();
 
 const assetKey = (asset: AssetInfo) =>
@@ -21,7 +20,7 @@ describe("getBalance (devnet)", () => {
   });
 
   it("returns a native balance and at most one balance per asset for the validator party", async () => {
-    const balances = await api.getBalance(context, await getDevnetValidatorParty(config));
+    const balances = await api.getBalance(context, await getDevnetValidatorParty(context));
     const keys = balances.map(balance => assetKey(balance.asset));
     const tokens = balances.filter(balance => balance.asset.type !== "native");
 

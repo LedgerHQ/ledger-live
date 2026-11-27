@@ -72,7 +72,9 @@ export class PayTabPage extends AppPage {
 
   @step("Expect the filter pill to read $0")
   async expectFilterPill(label: string) {
-    await expect(this.filterPill).toHaveText(label);
+    await this.softExpect(async soft => {
+      await soft(this.filterPill).toHaveText(label);
+    });
   }
 
   @step("Filter the balance on $0")
@@ -80,6 +82,7 @@ export class PayTabPage extends AppPage {
     await this.filterPill.click();
     await this.filterOption(rowKey).click();
     await this.filterConfirm.click();
+    await expect(this.filterConfirm).toBeHidden();
   }
 
   @step("Open deposit options")
@@ -90,9 +93,11 @@ export class PayTabPage extends AppPage {
 
   @step("Expect the four deposit options")
   async expectDepositOptions() {
-    for (const optionId of DEPOSIT_OPTION_IDS) {
-      await expect(this.depositOption(optionId)).toBeVisible();
-    }
+    await this.softExpect(async soft => {
+      await Promise.all(
+        DEPOSIT_OPTION_IDS.map(optionId => soft(this.depositOption(optionId)).toBeVisible()),
+      );
+    });
   }
 
   @step("Select deposit option $0")
@@ -119,32 +124,41 @@ export class PayTabPage extends AppPage {
   @step("Expect the request screen titled $0")
   async expectRequestTitle(title: string) {
     await expect(this.requestScreen).toBeVisible();
-    await expect(this.requestScreen).toContainText(title);
+    await this.softExpect(async soft => {
+      await soft(this.requestScreen).toContainText(title);
+    });
   }
 
   @step("Expect the request address")
   async expectRequestAddress() {
-    await expect(this.requestAddress).toBeVisible();
+    await this.expectRequestElementVisible(this.requestAddress);
   }
 
   @step("Expect the request QR code")
   async expectRequestQrCode() {
-    await expect(this.requestQr).toBeVisible();
+    await this.expectRequestElementVisible(this.requestQr);
   }
 
   @step("Expect the request Save action")
   async expectRequestSave() {
-    await expect(this.requestSave).toBeVisible();
+    await this.expectRequestElementVisible(this.requestSave);
   }
 
   @step("Expect the request Copy action")
   async expectRequestCopy() {
-    await expect(this.requestCopy).toBeVisible();
+    await this.expectRequestElementVisible(this.requestCopy);
   }
 
   @step("Expect the request Verify action")
   async expectRequestVerify() {
-    await expect(this.requestVerify).toBeVisible();
+    await this.expectRequestElementVisible(this.requestVerify);
+  }
+
+  private async expectRequestElementVisible(element: Locator) {
+    await expect(this.requestScreen).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(element).toBeVisible();
+    });
   }
 
   @step("Dismiss the verify address hint when it is shown")
@@ -166,7 +180,9 @@ export class PayTabPage extends AppPage {
   @step("Expect the Pay success screen")
   async expectYouPaid() {
     await expect(this.successStep).toBeVisible();
-    await expect(this.successStep).toContainText("You paid");
+    await this.softExpect(async soft => {
+      await soft(this.successStep).toContainText("You paid");
+    });
   }
 
   @step("Select contact $0")
@@ -182,8 +198,12 @@ export class PayTabPage extends AppPage {
   @step("Expect the Pay success screen to mention $0")
   async expectPaySuccess(recipient: string) {
     await expect(this.successStep).toBeVisible();
-    await expect(this.successStep).toContainText("You paid");
-    await expect(this.successStep).toContainText(recipient);
+    await this.softExpect(async soft => {
+      await Promise.all([
+        soft(this.successStep).toContainText("You paid"),
+        soft(this.successStep).toContainText(recipient),
+      ]);
+    });
   }
 
   @step("Close the Pay success screen")
@@ -199,7 +219,13 @@ export class PayTabPage extends AppPage {
 
   @step("Expect the cashback row")
   async expectCashbackRow() {
-    await expect(this.reward).toBeVisible();
+    await expect(this.cardContainer).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(this.reward).toBeVisible();
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Expect the freeze tile to read $0")

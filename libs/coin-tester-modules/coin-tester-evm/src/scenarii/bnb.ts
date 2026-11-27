@@ -111,6 +111,7 @@ export const scenarioBnb: Scenario<GenericTransaction, Account> = {
       unit: { name: "BNB", code: "BNB", magnitude: 18 },
       gasTracker: {
         type: "ledger",
+        compatibility: { eip1559: true },
         explorerId: "bnb",
       },
       node: {

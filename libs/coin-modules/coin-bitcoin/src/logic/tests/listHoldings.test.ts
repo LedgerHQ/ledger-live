@@ -4,6 +4,7 @@ import { getSpendableUtxos } from "../getSpendableUtxos";
 import { listHoldings } from "../listHoldings";
 import {
   explorerUrl,
+  notFound,
   pendingUtxosHandler,
   server,
   testContext,
@@ -83,6 +84,18 @@ describe("listHoldings", () => {
       value: 50n,
       height: null,
     });
+  });
+
+  it("does not list the change of an own transaction replaced since, which the explorer still lists", async () => {
+    // After a replace-by-fee, the explorer keeps the original as pending for minutes, without its
+    // raw transaction: its change will never exist.
+    server.use(
+      utxosHandler(ME, [{ data: [output("b", "200")], token: null }]),
+      pendingUtxosHandler(ME, { spent: [output("a", "100")], created: [output("c", "50", 1)] }),
+      txHandler("c".repeat(64), [`${"a".repeat(64)}:0`]),
+      http.get(`${explorerUrl()}/tx/${"c".repeat(64)}/hex`, () => notFound("c".repeat(64))),
+    );
+    expect(ids(await list())).toEqual(["b:0"]);
   });
 
   it("keeps the height of a confirmed output and gives own change a null one", async () => {

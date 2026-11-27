@@ -5,7 +5,8 @@ import {
   type AccountDataResult,
   type AccountDataSourceId,
 } from "@domain/entity-account-data";
-import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account/descriptor";
 import { NoAccountDataSourceError } from "../errors";
 import type {
   AccountDataAnswer,

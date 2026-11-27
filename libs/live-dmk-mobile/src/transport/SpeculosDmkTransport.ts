@@ -19,6 +19,7 @@ import {
   speculosTransportFactory,
 } from "@ledgerhq/device-transport-kit-speculos";
 import { SpeculosTransportSession } from "@ledgerhq/live-dmk-shared";
+import { withSpeculosOsVersionNormalized } from "@ledgerhq/live-dmk-speculos";
 
 export type SpeculosTarget = Readonly<{
   url: string;
@@ -98,7 +99,9 @@ export class SpeculosDmkTransport implements DmkTransport {
   }
 }
 
-export const speculosDmkTransportFactory =
-  (targetSubject: BehaviorSubject<SpeculosTarget | null>): TransportFactory =>
-  (args: TransportArgs) =>
-    new SpeculosDmkTransport(args, targetSubject);
+export const speculosDmkTransportFactory = (
+  targetSubject: BehaviorSubject<SpeculosTarget | null>,
+): TransportFactory =>
+  withSpeculosOsVersionNormalized(
+    (args: TransportArgs) => new SpeculosDmkTransport(args, targetSubject),
+  );

@@ -3,6 +3,7 @@ import {
   fireEvent,
   render as renderWithoutI18n,
   screen,
+  userEvent,
   waitFor,
 } from "@testing-library/react-native";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -121,6 +122,45 @@ describe("ContactAddressDetailDialog", () => {
         "contacts.addressDetail.copyAddress",
       );
     });
+  });
+
+  it("should run the address actions the host allows", async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    const onSend = jest.fn();
+    const onEdit = jest.fn();
+    const onDelete = jest.fn();
+    render(
+      <ContactAddressDetailDialog
+        {...createProps({
+          onSend,
+          onEdit,
+          onDelete,
+          canSend: true,
+          canEdit: true,
+          canDelete: true,
+        })}
+      />,
+    );
+
+    await user.press(screen.getByTestId("contacts-address-detail-send"));
+    await user.press(screen.getByTestId("contacts-address-detail-edit"));
+    await user.press(screen.getByTestId("contacts-address-detail-delete"));
+
+    expect(onSend).toHaveBeenCalledTimes(1);
+    expect(onEdit).toHaveBeenCalledTimes(1);
+    expect(onDelete).toHaveBeenCalledTimes(1);
+  });
+
+  it("should disable the address actions the host does not allow", () => {
+    render(
+      <ContactAddressDetailDialog
+        {...createProps({ onSend: jest.fn(), onEdit: jest.fn(), onDelete: jest.fn() })}
+      />,
+    );
+
+    expect(screen.getByTestId("contacts-address-detail-send")).toHaveProp("disabled", true);
+    expect(screen.getByTestId("contacts-address-detail-edit")).toHaveProp("disabled", true);
+    expect(screen.getByTestId("contacts-address-detail-delete")).toHaveProp("disabled", true);
   });
 
   it("should share the selected address when sharing is available", () => {

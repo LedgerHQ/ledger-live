@@ -1,3 +1,4 @@
+import { asChecksState, isFirmwareCheckFailed } from "@features/platform-device-onboarding";
 import type { ChecksScreenState, GenuineErrorKind } from "LLM/features/DeviceOnboarding/types";
 
 const genuineErrorKinds = {
@@ -13,10 +14,11 @@ export function toGenuineError(kind: string | null): { kind: GenuineErrorKind } 
 }
 
 export function toChecksError(
-  machineState: string | null,
+  rawMachineState: string | null,
   genuineFailureKind: string | null,
 ): { kind: GenuineErrorKind } | null {
-  if (machineState === "checks.firmwareCheckFailed") return { kind: "unknown" };
+  const machineState = asChecksState(rawMachineState);
+  if (isFirmwareCheckFailed(machineState)) return { kind: "unknown" };
   if (machineState === "checks.genuineFailed" || machineState === "checks.notGenuineSupport") {
     return toGenuineError(genuineFailureKind);
   }
@@ -26,10 +28,11 @@ export function toChecksError(
 const successExitStates = new Set(["syncOffer", "done"]);
 
 export function toChecksScreenState(
-  machineState: string | null,
+  rawMachineState: string | null,
   checksPaused: boolean,
   onboardedOnEntry: boolean | null = null,
 ): ChecksScreenState | null {
+  const machineState = asChecksState(rawMachineState);
   if (machineState === "awaitingStart") return "idle";
   if (machineState === "done" && onboardedOnEntry === false) return "succeeded";
   if (onboardedOnEntry === true && machineState !== null && successExitStates.has(machineState)) {

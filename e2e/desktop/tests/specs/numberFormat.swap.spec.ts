@@ -52,7 +52,11 @@ test.describe("Swap - amount formatting by language", () => {
       annotation: { type: "TMS", description: "B2CQA-4014" },
     },
     async ({ app }) => {
-      const swap = new Swap(fromAccount, toAccount, TEST_AMOUNT);
+      const swap = new Swap({
+        accountToDebit: fromAccount,
+        accountToCredit: toAccount,
+        amount: TEST_AMOUNT,
+      });
       for (const { languageId, label } of languageCases) {
         // The userdata fixture already boots in English; only switch away from it.
         if (languageId !== "en") {

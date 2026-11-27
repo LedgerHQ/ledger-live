@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { InvalidAddress, RecipientRequired } from "@ledgerhq/ledger-wallet-framework/errors";
-import type { BitcoinOutput, ZcashAccount, Transaction } from "../types/bridge";
+import type { BitcoinOutput, BtcOperationExtra, ZcashAccount, Transaction } from "../types/bridge";
 import { ZcashSaplingRecipientNotSupported, ZcashShieldedKeyMissing } from "../types/errors";
 import { classifyZcashRecipient } from "../logic/address";
 import { zcashNetworkOf } from "../logic/network";
@@ -40,6 +40,51 @@ export function boundTransparentUtxos(utxos: BitcoinOutput[]): BitcoinOutput[] {
   return [...utxos]
     .sort((a, b) => b.value.comparedTo(a.value))
     .slice(0, ZCASH_MAX_TRANSPARENT_INPUTS);
+}
+
+/**
+ * Outpoints, as `hash-outputIndex`, that the account's pending operations already spend. Reads
+ * `extra.inputRefs`, else the `hash-outputIndex` strings of `extra.inputs`.
+ */
+export function pendingSpentOutpoints(account: ZcashAccount): Set<string> {
+  const spent = new Set<string>();
+  for (const op of account.pendingOperations ?? []) {
+    const extra = op.extra as BtcOperationExtra | null | undefined;
+    if (extra === null || typeof extra !== "object") continue;
+    if (Array.isArray(extra.inputRefs) && extra.inputRefs.length > 0) {
+      for (const { hash, outputIndex } of extra.inputRefs) spent.add(`${hash}-${outputIndex}`);
+    } else if (Array.isArray(extra.inputs)) {
+      for (const outpoint of extra.inputs) spent.add(outpoint);
+    }
+  }
+  return spent;
+}
+
+/** The outputs the account's pending operations already spend, as `{ hash, outputIndex }`. */
+export function pendingSpentInputs(
+  account: ZcashAccount,
+): Array<{ hash: string; outputIndex: number }> {
+  return [...pendingSpentOutpoints(account)].flatMap(outpoint => {
+    const separator = outpoint.lastIndexOf("-");
+    const outputIndex = Number(outpoint.slice(separator + 1));
+    return separator > 0 && Number.isInteger(outputIndex)
+      ? [{ hash: outpoint.slice(0, separator), outputIndex }]
+      : [];
+  });
+}
+
+/**
+ * Drops the UTXOs a pending operation of the account already spends. A just-broadcast spend may
+ * not be reflected in the synced UTXO set yet, so those outputs are not available to a new
+ * transaction.
+ */
+export function excludePendingInputs(
+  account: ZcashAccount,
+  utxos: BitcoinOutput[],
+): BitcoinOutput[] {
+  const spent = pendingSpentOutpoints(account);
+  if (spent.size === 0) return utxos;
+  return utxos.filter(utxo => !spent.has(`${utxo.hash}-${utxo.outputIndex}`));
 }
 
 /**

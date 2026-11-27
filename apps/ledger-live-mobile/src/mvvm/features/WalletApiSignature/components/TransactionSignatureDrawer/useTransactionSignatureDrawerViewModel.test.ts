@@ -138,4 +138,101 @@ describe("useTransactionSignatureDrawerViewModel", () => {
     await waitFor(() => expect(onError).toHaveBeenCalledWith(failure));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it("rejects with the signing error when the user closes the error screen", async () => {
+    const { result, onError, onClose } = setup();
+    await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+    const signingError = new Error("Not enough gas");
+
+    act(() => {
+      result.current.onIntentJobError(signingError);
+    });
+    expect(onError).not.toHaveBeenCalled();
+
+    act(() => {
+      result.current.onUserCancel();
+    });
+
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(onError).toHaveBeenCalledWith(signingError);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("forgets the signing error once a retried attempt runs", async () => {
+    const { result, onError } = setup();
+    await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+
+    act(() => {
+      result.current.onIntentJobError(new Error("Not enough gas"));
+    });
+    act(() => {
+      result.current.onIntentJobStateChanged({
+        type: "pending",
+        deviceModelId: "stax",
+      } as unknown as Parameters<typeof result.current.onIntentJobStateChanged>[0]);
+    });
+    act(() => {
+      result.current.onUserCancel();
+    });
+
+    expect(onError.mock.calls[0][0]).toBeInstanceOf(UserRefusedOnDevice);
+  });
+
+  it("settles the request only once", async () => {
+    const { result, onSuccess, onError, onClose } = setup();
+    await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+
+    act(() => {
+      result.current.onIntentJobStateChanged({ type: "signed", signedOperation });
+      result.current.onIntentJobStateChanged({ type: "signed", signedOperation });
+      result.current.onUserCancel();
+    });
+
+    expect(onSuccess).toHaveBeenCalledTimes(1);
+    expect(onError).not.toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(["connectingDevice", "initializingDeviceContext"] as const)(
+    "rejects with UserRefusedOnDevice when closed on %s after a failed attempt, before the next job state",
+    async executorStateType => {
+      const { result, onError } = setup();
+      await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+
+      act(() => {
+        result.current.onIntentJobError(new Error("Device disconnected"));
+      });
+      act(() => {
+        result.current.onExecutorStateChanged({
+          type: executorStateType,
+        } as Parameters<typeof result.current.onExecutorStateChanged>[0]);
+      });
+      act(() => {
+        result.current.onUserCancel();
+      });
+
+      expect(onError).toHaveBeenCalledTimes(1);
+      expect(onError.mock.calls[0][0]).toBeInstanceOf(UserRefusedOnDevice);
+    },
+  );
+
+  it("keeps the signing error while the executor shows its error screens", async () => {
+    const { result, onError } = setup();
+    await waitFor(() => expect(result.current.deviceInitializationInput).not.toBeNull());
+    const signingError = new Error("Device disconnected");
+
+    act(() => {
+      result.current.onIntentJobError(signingError);
+    });
+    act(() => {
+      result.current.onExecutorStateChanged({
+        type: "executingIntentError",
+      } as Parameters<typeof result.current.onExecutorStateChanged>[0]);
+    });
+    act(() => {
+      result.current.onUserCancel();
+    });
+
+    expect(onError).toHaveBeenCalledWith(signingError);
+  });
 });
