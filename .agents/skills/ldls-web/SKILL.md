@@ -22,7 +22,7 @@ All new UI uses Lumen, in `src/mvvm/` and everywhere else. These take no new usa
 - the desktop V2 kit: `~/renderer/components/Box`, `~/renderer/components/Text`
 - `styled-components`, also banned in `shared/`, `domain/`, `features/` and `support/` (`@features/platform-style` excepted)
 
-The `legacy-ui` oxlint rules (`no-legacy-import`, `no-legacy-element`, `no-styled-definition`, `no-banned-component`) count existing usages against a baseline in `apps/ledger-live-desktop/oxlint-suppressions.json`. The baseline only shrinks: never add an entry. After you remove a usage, run `oxlint --prune-suppressions` from the app folder (commands in the [Desktop lint doc](../../../apps/ledger-live-desktop/docs/lint.md)). Changes to that file need a Coin Integration review.
+The `legacy-ui` oxlint rules (`no-legacy-import`, `no-legacy-element`, `no-styled-definition`, `no-banned-component`) count existing usages against a baseline in `apps/ledger-live-desktop/oxlint-suppressions.json`. The baseline only shrinks: never add an entry. After you remove a usage, run `oxlint --prune-suppressions` from the app folder (plugin and pruning in the [lint README](../../../support/lint/README.md)). Changes to that file need a Coin Integration review.
 
 ## Map the contract onto Lumen
 
