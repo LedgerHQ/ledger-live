@@ -62,11 +62,14 @@ export function getCachedAddress(account: Account | TokenAccount): string | null
   return address ?? null;
 }
 
-export function setCachedAddressEntry(
-  cache: AddressCacheFile,
-  currencyId: string,
-  entry: AddressEntry,
-): AddressCacheFile {
+type CachedAddressEntryOptions = {
+  cache: AddressCacheFile;
+  currencyId: string;
+  entry: AddressEntry;
+};
+
+export function setCachedAddressEntry(options: CachedAddressEntryOptions): AddressCacheFile {
+  const { cache, currencyId, entry } = options;
   const list = (cache.addresses[currencyId] ??= []);
   const existing = list.findIndex(
     e => e.index === entry.index && (e.derivationMode ?? "") === (entry.derivationMode ?? ""),

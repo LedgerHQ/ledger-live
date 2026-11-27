@@ -1,5 +1,11 @@
 # @features/flow-contacts-introduction
 
+## 1.7.0-next.0
+
+### Minor Changes
+
+- [#25448](https://github.com/LedgerHQ/ledger-live/pull/25448) [`2477ff0`](https://github.com/LedgerHQ/ledger-live/commit/2477ff061ff3c13393d4fec2f609602b08813a71) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Build fear-and-greed and contacts introduction wording keys from their literal unions
+
 ## 1.6.0
 
 ### Minor Changes

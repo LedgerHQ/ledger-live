@@ -9,12 +9,15 @@ import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
 import { getBlock } from "../logic/getBlock";
 import { getBlockInfo } from "../logic/getBlockInfo";
+import { getPendingTransaction } from "../logic/getPendingTransaction";
 import type { BitcoinTxData } from "../logic/intent";
 import { lastBlock } from "../logic/lastBlock";
 import { listHoldings } from "../logic/listHoldings";
 import { listOperations } from "../logic/listOperations";
+import { listPendingOperations } from "../logic/listPendingOperations";
 import { validateIntent } from "../logic/validateIntent";
 
+export type { BitcoinPendingTransactionDetails } from "../logic/getPendingTransaction";
 export type { BitcoinTxData } from "../logic/intent";
 export type { PaymentTransactionParameters, SigningRequest } from "../logic/signingRequest";
 export { paymentTransactionParameters } from "../logic/signingRequest";
@@ -25,7 +28,8 @@ export { paymentTransactionParameters } from "../logic/signingRequest";
  * The configuration is read on every call through `context.config(currencyId)`. Capabilities the
  * module does not have (staking, validators, raw crafting, …) are omitted: the consumer's
  * `withDefaults` answers them as not supported. Bitcoin-specific fields (OP_RETURN data) travel in
- * the intent's `data` ({@link BitcoinTxData}).
+ * the intent's `data` ({@link BitcoinTxData}). A pending transaction's `details` are
+ * {@link BitcoinPendingTransactionDetails}.
  */
 export function createApi(currencyId: string) {
   return {
@@ -38,6 +42,10 @@ export function createApi(currencyId: string) {
       listOperations(context, currencyId, address, options),
     listHoldings: (context: BitcoinContext, address, options?) =>
       listHoldings(context, currencyId, address, options),
+    listPendingOperations: (context: BitcoinContext, address) =>
+      listPendingOperations(context, currencyId, address),
+    getPendingTransaction: (context: BitcoinContext, hash) =>
+      getPendingTransaction(context, currencyId, hash),
     estimateFees: (context: BitcoinContext, intent, options?) =>
       estimateFees(context, currencyId, intent, options?.customFeesParameters),
     craftTransaction: (context: BitcoinContext, intent, options?) =>

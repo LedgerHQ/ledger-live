@@ -1,9 +1,12 @@
 import React from "react";
+import { track } from "@shared/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   ConnectKnownOrNewDeviceUIStateTypes,
   ConnectNewDeviceUIStateTypes,
+  ConnectionErrorTypes,
   DeviceListItemStatuses,
   rnBleTransportIdentifier,
   rnHidTransportIdentifier,
@@ -11,6 +14,7 @@ import {
   type DeviceListItem,
   type SelectableDeviceListItem,
 } from "@ledgerhq/live-dmk-mobile";
+import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
 import { ConnectKnownOrNewDeviceView } from "./ConnectKnownOrNewDeviceView";
 import type { ConnectKnownOrNewDeviceViewProps } from "./types";
 
@@ -103,10 +107,26 @@ function renderView(state: ConnectKnownOrNewDeviceUIState, devices: Array<Device
     },
     platform: "android",
     onCloseErrorSheet: jest.fn(),
+    onCloseDeviceStateSheet: jest.fn(),
     onCloseAddModeErrorSheet: jest.fn(),
+    checkIsNewDevice: () => true,
   };
-  return render(<ConnectKnownOrNewDeviceView {...props} />);
+
+  return {
+    ...render(
+      <DeviceIntentTrackingProvider value={{ sourceFlow: "my_wallet" }}>
+        <ConnectKnownOrNewDeviceView {...props} />
+      </DeviceIntentTrackingProvider>,
+    ),
+    props,
+  };
 }
+
+const trackedEvents = (eventName: string) =>
+  jest
+    .mocked(track)
+    .mock.calls.filter(([name]) => name === eventName)
+    .map(([, properties]) => properties);
 
 describe("ConnectKnownOrNewDeviceView", () => {
   describe("Rows", () => {
@@ -138,7 +158,7 @@ describe("ConnectKnownOrNewDeviceView", () => {
       const { user } = renderView(discovering([unavailableBleRow()], addNewDevice));
 
       // WHEN
-      await user.press(screen.getByText("Add"));
+      await user.press(screen.getByText("Add new"));
 
       // THEN
       expect(addNewDevice).toHaveBeenCalledTimes(1);
@@ -158,7 +178,7 @@ describe("ConnectKnownOrNewDeviceView", () => {
 
       // THEN
       expect(screen.queryByTestId("connect-known-or-new-device-menu-Flex 329")).toBeNull();
-      expect(screen.queryByText("Add")).toBeNull();
+      expect(screen.queryByText("Add new")).toBeNull();
     });
   });
 
@@ -236,7 +256,7 @@ describe("ConnectKnownOrNewDeviceView", () => {
 
       // THEN
       expect(screen.getByTestId(`connect-known-or-new-device-row-${row.key}`)).toBeDisabled();
-      expect(screen.getByText("Add")).toBeVisible();
+      expect(screen.getByText("Add new")).toBeVisible();
     });
 
     it("GIVEN a paused flow and no device, WHEN the list renders, THEN it should show the Add a Ledger device row disabled", () => {
@@ -271,7 +291,7 @@ describe("ConnectKnownOrNewDeviceView", () => {
       // GIVEN
       const addNewDevice = jest.fn();
       const { user } = renderView(discovering([], addNewDevice));
-      expect(screen.queryByText("Add")).toBeNull();
+      expect(screen.queryByText("Add new")).toBeNull();
 
       // WHEN
       await user.press(screen.getByText("Add a Ledger device"));
@@ -385,6 +405,135 @@ describe("ConnectKnownOrNewDeviceView", () => {
 
       // THEN
       expect(screen.getByText("Connecting to your Ledger device")).toBeVisible();
+    });
+  });
+
+  describe("Tracking", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("GIVEN a connected device, WHEN its row is pressed, THEN it should send device_selected with its status", async () => {
+      // GIVEN
+      const row = connectedBleRow();
+      const { user } = renderView(discovering([row]));
+
+      // WHEN
+      await user.press(screen.getByTestId(`connect-known-or-new-device-row-${row.key}`));
+
+      // THEN
+      expect(trackedEvents("device_selected")).toEqual([
+        {
+          sourceFlow: "my_wallet",
+          deviceUxV2: true,
+          modelId: DeviceModelId.stax,
+          transport: "ble",
+          isNewDevice: true,
+          deviceStatus: DeviceListItemStatuses.Connected,
+        },
+      ]);
+    });
+
+    it("GIVEN more than 3 devices, WHEN Add new and Show all are pressed, THEN it should send their button_clicked", async () => {
+      // GIVEN
+      const { user } = renderView(discovering(fiveRows()));
+
+      // WHEN
+      await user.press(screen.getByText("Add new"));
+      await user.press(screen.getByText("Show all 5 devices"));
+
+      // THEN
+      expect(trackedEvents("button_clicked")).toEqual([
+        { sourceFlow: "my_wallet", deviceUxV2: true, button: "Add" },
+        { sourceFlow: "my_wallet", deviceUxV2: true, button: "Show all devices" },
+      ]);
+    });
+
+    it("GIVEN the open menu of a connected device, WHEN Disconnect is pressed, THEN it should send the menu page and Disconnect with the device status", async () => {
+      // GIVEN
+      const row = connectedBleRow();
+      const { user } = renderView(discovering([row]));
+      await user.press(screen.getByTestId(`connect-known-or-new-device-menu-${row.key}`));
+
+      // WHEN
+      await user.press(screen.getByText("Disconnect"));
+
+      // THEN
+      expect(jest.mocked(TrackScreen)).toHaveBeenCalledWith(
+        expect.objectContaining({
+          category: "Drawer - Device Menu",
+          modelId: DeviceModelId.stax,
+          deviceStatus: DeviceListItemStatuses.Connected,
+        }),
+        undefined,
+      );
+      expect(trackedEvents("button_clicked")).toEqual([
+        {
+          sourceFlow: "my_wallet",
+          deviceUxV2: true,
+          button: "Disconnect",
+          modelId: DeviceModelId.stax,
+          deviceStatus: DeviceListItemStatuses.Connected,
+        },
+      ]);
+    });
+
+    it("GIVEN a connection error over the list, WHEN the user closes it, THEN it should send Close and close the error sheet", async () => {
+      // GIVEN
+      const row = makeRow("Flex 329");
+      const { user, props } = renderView(
+        {
+          type: ConnectKnownOrNewDeviceUIStateTypes.ConnectionError,
+          devices: [row],
+          error: { type: ConnectionErrorTypes.BlePairingRefused },
+          device: row.device,
+          retry: jest.fn(),
+          ignore: jest.fn(),
+          close: jest.fn(),
+        },
+        [row],
+      );
+
+      // WHEN
+      // The error sheet renders after the menu and device sheets: its Close button comes last.
+      const closeButton = screen.getAllByRole("button", { name: "Close" }).at(-1);
+      if (!closeButton) throw new Error("Missing Close button");
+      await user.press(closeButton);
+
+      // THEN
+      expect(trackedEvents("button_clicked")).toEqual([
+        {
+          sourceFlow: "my_wallet",
+          deviceUxV2: true,
+          button: "Close",
+          subError: ConnectionErrorTypes.BlePairingRefused,
+        },
+      ]);
+      expect(props.onCloseErrorSheet).toHaveBeenCalledTimes(1);
+    });
+
+    it("GIVEN the Add mode, WHEN its close bar is pressed, THEN it should send Close and close the Add mode", async () => {
+      // GIVEN
+      const close = jest.fn();
+      const { user } = renderView({
+        type: ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice,
+        connectNewDeviceUIState: {
+          type: ConnectNewDeviceUIStateTypes.Discovering,
+          devices: [],
+          scanningTransports: [rnBleTransportIdentifier],
+          showDeviceNotFound: false,
+        },
+        close,
+      });
+
+      // WHEN
+      await user.press(screen.getByTestId("connect-known-or-new-device-add-mode-close"));
+
+      // THEN
+      expect(trackedEvents("button_clicked")).toEqual([
+        { sourceFlow: "my_wallet", deviceUxV2: true, button: "Close" },
+      ]);
+      expect(close).toHaveBeenCalledTimes(1);
     });
   });
 });

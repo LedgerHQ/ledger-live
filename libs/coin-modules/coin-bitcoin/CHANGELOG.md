@@ -1,5 +1,26 @@
 # @ledgerhq/coin-bitcoin
 
+## 1.5.0-next.0
+
+### Minor Changes
+
+- [#25419](https://github.com/LedgerHQ/ledger-live/pull/25419) [`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1) Thanks [@qperrot](https://github.com/qperrot)! - Remove the discontinued Horizen (zencash) currency and its bitcoin-family support
+
+- [#24754](https://github.com/LedgerHQ/ledger-live/pull/24754) [`282a032`](https://github.com/LedgerHQ/ledger-live/commit/282a032d2a85ad89cbe2bb782f45d4dd31c398eb) Thanks [@qperrot](https://github.com/qperrot)! - Sign the caller's custom fee over a forwarded fee rate
+
+- [#25328](https://github.com/LedgerHQ/ledger-live/pull/25328) [`62afcbf`](https://github.com/LedgerHQ/ledger-live/commit/62afcbf91ddf5c622d670140ce21cd1f34b2992f) Thanks [@qperrot](https://github.com/qperrot)! - Price a fee estimate with the absolute fee the caller passes, and validate that fee as crafting imposes it
+
+- [#25327](https://github.com/LedgerHQ/ledger-live/pull/25327) [`25ecb6d`](https://github.com/LedgerHQ/ledger-live/commit/25ecb6db88a4a6566cdc4e6259d42369a5335e2f) Thanks [@qperrot](https://github.com/qperrot)! - Add listPendingOperations and getPendingTransaction, with a pending transaction's inputs and size for replacing it
+
+- [#24754](https://github.com/LedgerHQ/ledger-live/pull/24754) [`282a032`](https://github.com/LedgerHQ/ledger-live/commit/282a032d2a85ad89cbe2bb782f45d4dd31c398eb) Thanks [@qperrot](https://github.com/qperrot)! - Do not offer the change of an own transaction replaced or dropped since as spendable
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7), [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`866ed62`](https://github.com/LedgerHQ/ledger-live/commit/866ed62f04647abce7efeff0ebefe79c8e5bafde), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252), [`fcd1d97`](https://github.com/LedgerHQ/ledger-live/commit/fcd1d979dcce6f25d9e4dfcf7dd6b68d79b8b03c)]:
+  - @ledgerhq/wallet-btc@2.0.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.14.0-next.0
+  - @ledgerhq/types-live@6.134.0-next.0
+
 ## 1.4.0
 
 ### Minor Changes
@@ -462,31 +483,6 @@
   - @ledgerhq/types-live@6.124.0
   - @ledgerhq/wallet-btc@0.5.0
   - @ledgerhq/ledger-wallet-framework@3.4.0
-  - @ledgerhq/live-signer-zcash@0.10.0
-
-## 0.52.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`30828c2`](https://github.com/LedgerHQ/ledger-live/commit/30828c22cc44c9929d7eda782e9d559a9e0145c3), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
-  - @ledgerhq/types-live@6.124.0-next.0
-  - @ledgerhq/wallet-btc@0.5.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.4.0-next.0
-  - @ledgerhq/live-signer-zcash@0.10.0
-
-## 0.52.0
-
-### Minor Changes
-
-- [#21420](https://github.com/LedgerHQ/ledger-live/pull/21420) [`0152cad`](https://github.com/LedgerHQ/ledger-live/commit/0152cade87e061bb2b56fd71f8a404c3dfed21e0) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Fix an undecodable/corrupted xpub crashing the whole Bitcoin address-scan block. `getPubkeyAt` now throws a typed `InvalidXpub` error; `checkAddressesBlock` uses `Promise.allSettled` so a bad xpub no longer aborts the block scan.
-
-### Patch Changes
-
-- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225), [`0152cad`](https://github.com/LedgerHQ/ledger-live/commit/0152cade87e061bb2b56fd71f8a404c3dfed21e0), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783), [`6656f90`](https://github.com/LedgerHQ/ledger-live/commit/6656f90769c3419e1f121c0c2368eab4566e48ba)]:
-  - @ledgerhq/types-live@6.123.0
-  - @ledgerhq/ledger-wallet-framework@3.3.0
-  - @ledgerhq/live-env@4.0.0
-  - @ledgerhq/wallet-btc@0.4.0
   - @ledgerhq/live-signer-zcash@0.10.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

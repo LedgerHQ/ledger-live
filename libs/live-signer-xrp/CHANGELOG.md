@@ -1,5 +1,11 @@
 # @ledgerhq/live-signer-xrp
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#25426](https://github.com/LedgerHQ/ledger-live/pull/25426) [`d970833`](https://github.com/LedgerHQ/ledger-live/commit/d9708335f502891ce4c678d629fbd313819c4eff) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - Load MPT descriptors from CAL in the DMK XRP signer, so XRP app 2.9.0+ can clear-sign MPT payments
+
 ## 0.2.2
 
 ### Patch Changes

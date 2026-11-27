@@ -19,16 +19,17 @@ Every answer mirrors what the app decides today, so a screen moved to these kind
 - `accountStatus`, no query, `AccountStatus`:
   - `used`: ever used, a transaction or a balance of any asset: the legacy scan's `Account.used`, what account discovery stops on.
   - `gate`, null when none:
-    - `{ type: "onboarding" }`: Canton and Concordium while `isOnboarded` is false, as their add-account and onboard flows decide. It can neither receive nor send.
+    - `{ type: "onboarding" }`: Canton and Concordium while the account is not activated on the network, as their add-account and onboard flows decide. It can neither receive nor send.
     - Not a gate: `Account.readiness` (Tezos `unrevealed`, Sei `activationRequired`). A send reveals a Tezos account; only Perps `getReadinessError` blocks on it.
 - `assetStatus`, query `{ assetId }` (a token of the account's network or its native coin), result `{ assetId, status }`, `AssetStatus`:
   - `gate`, null when there is no gate, always for the native coin and for a family without activation:
-    - `{ type: "activation", method }`:
-      - `association`: Hedera's `isTokenAssociationRequired`, the receive-with-association condition.
-      - `optIn` (Algorand) and `trustline` (Stellar): no token account for it, as the opt-in and add-asset selectors decide.
-      - `trustline` (XRP IOU) or `authorize` (XRP MPT): no token account with `xrpResources`, as the add-token `filterTokenOptions` decides. A token of a standard the sync does not read has no gate, as the app offers no activation for it.
+    - `{ type: "activation" }`, how to activate is the family's (a trustline, an opt-in, an association, an MPT authorization), as coin-modules ADR-079 leaves it:
+      - Hedera: `isTokenAssociationRequired`, the receive-with-association condition.
+      - Algorand and Stellar: no token account for it, as the opt-in and add-asset selectors decide.
+      - XRP: no token account with `xrpResources`, as the add-token `filterTokenOptions` decides. A token of a standard the sync does not read has no gate, as the app offers no activation for it.
   - Known gaps, kept for compatibility until the coin module `getAssetStatus`: a hidden token has no token account, so it answers activation; a generic sync keeps a removed Stellar trustline as a token account, so it answers none; Hedera counts only unlimited automatic association.
   - A token of another network is an error, not a gate.
+- Activation can be lost: an account or an asset can go back to a gate, so no answer is final.
 - The slice keys each `AccountUUID` to `{ account?, assets }`, each entry with its own revision, the older answer never replacing the newer. `assets` fills one asset read at a time.
 - `receiveGate(account, asset?)` stops on onboarding, then on the asset gate. `sendGate(account)` stops on the account gate.
 - `selectAccountStatus(state, accountUUID)` and `selectAssetStatus(state, accountUUID, assetId)`. Apps mount the slice at `accountStatus`.

@@ -1,4 +1,4 @@
-import type { IcpCurrencyConfig } from "../config";
+import type { IcpContext, IcpCurrencyConfig } from "../config";
 import { createBridges } from "./index";
 
 jest.mock("../network/api");
@@ -12,6 +12,11 @@ const configFor = (url: string): IcpCurrencyConfig => ({
   name: "Internet Computer",
   unit: { name: "ICP", code: "ICP", magnitude: 8 },
   node: { url },
+});
+
+const contextWith = (config: () => IcpCurrencyConfig): IcpContext => ({
+  config: async () => config(),
+  logger: () => {},
 });
 
 const signed = (rawData: Record<string, string>) =>
@@ -54,7 +59,10 @@ describe("account bridge broadcast node", () => {
   });
 
   it("submits and claims a stake transfer on the configured node", async () => {
-    const { accountBridge } = createBridges(jest.fn(), () => configFor("http://127.0.0.1:4943"));
+    const { accountBridge } = createBridges(
+      jest.fn(),
+      contextWith(() => configFor("http://127.0.0.1:4943")),
+    );
 
     await accountBridge.broadcast(stakeTransfer);
 
@@ -63,7 +71,10 @@ describe("account bridge broadcast node", () => {
   });
 
   it("sends a neuron command, read_state poll included, to the configured node", async () => {
-    const { accountBridge } = createBridges(jest.fn(), () => configFor("http://127.0.0.1:4943"));
+    const { accountBridge } = createBridges(
+      jest.fn(),
+      contextWith(() => configFor("http://127.0.0.1:4943")),
+    );
 
     await accountBridge.broadcast(neuronCommand);
 
@@ -81,7 +92,10 @@ describe("account bridge broadcast node", () => {
   it("reads the config once per broadcast", async () => {
     const urls = ["http://127.0.0.1:1111", "http://127.0.0.1:2222"];
     let reads = 0;
-    const { accountBridge } = createBridges(jest.fn(), () => configFor(urls[reads++]));
+    const { accountBridge } = createBridges(
+      jest.fn(),
+      contextWith(() => configFor(urls[reads++])),
+    );
 
     await accountBridge.broadcast(stakeTransfer);
     expect(reads).toBe(1);
@@ -91,5 +105,21 @@ describe("account bridge broadcast node", () => {
     await accountBridge.broadcast(stakeTransfer);
     expect(reads).toBe(2);
     expect(new Set(hostsCalled())).toEqual(new Set([urls[1]]));
+  });
+
+  it.each([
+    ["a stake transfer", stakeTransfer],
+    ["a neuron command", neuronCommand],
+  ])("fails %s before any call when the config cannot be read", async (_, transaction) => {
+    const noConfig = new Error("no coin config");
+    const { accountBridge } = createBridges(
+      jest.fn(),
+      contextWith(() => {
+        throw noConfig;
+      }),
+    );
+
+    await expect(accountBridge.broadcast(transaction)).rejects.toBe(noConfig);
+    expect(hostsCalled()).toEqual([]);
   });
 });

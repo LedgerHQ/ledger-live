@@ -1,9 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
-import type {
-  AccountStatus,
-  AssetActivationMethod,
-  AssetStatus,
-} from "@domain/entity-account-status";
+import type { AccountStatus, AssetStatus } from "@domain/entity-account-status";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 
 /** Scan's `Account.used`, with no gate: `Account.readiness` does not block a send (a Tezos send reveals the account). */
@@ -12,11 +8,7 @@ export function defaultAccountStatus(account: Account): AccountStatus {
 }
 
 /** Activated once the account holds the token, as the Stellar and Algorand add-asset selectors decide from `subAccounts`. */
-export function heldTokenAssetStatus(
-  account: Account,
-  token: TokenCurrency,
-  method: AssetActivationMethod,
-): AssetStatus {
+export function heldTokenAssetStatus(account: Account, token: TokenCurrency): AssetStatus {
   const isHeld = account.subAccounts?.some(sub => sub.token.id === token.id);
-  return { gate: isHeld ? null : { type: "activation", method } };
+  return { gate: isHeld ? null : { type: "activation" } };
 }

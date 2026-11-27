@@ -1,5 +1,28 @@
 # @features/flow-contacts-detail
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#25369](https://github.com/LedgerHQ/ledger-live/pull/25369) [`5c7f0ef`](https://github.com/LedgerHQ/ledger-live/commit/5c7f0ef8aaebce9ac0dcf1eb509dd0756f389b10) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Upgrade Lumen to latest
+
+  - Updated `@ledgerhq/lumen-design-core` to `0.1.37`
+  - Updated `@ledgerhq/lumen-ui-react` to `0.1.75`
+  - Updated `@ledgerhq/lumen-ui-rnative` to `0.1.76`
+
+- [#25399](https://github.com/LedgerHQ/ledger-live/pull/25399) [`56af9ec`](https://github.com/LedgerHQ/ledger-live/commit/56af9ec64a0dcd29974c02102b2eb75a604940c0) Thanks [@deepyjr](https://github.com/deepyjr)! - Show the contact address actions as a two-column card grid so long translations no longer crop their labels
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1)]:
+  - @domain/entity-currency-crypto@0.21.0-next.0
+  - @features/platform-contacts@0.13.2-next.0
+  - @features/flow-contacts-delete-address@0.4.4-next.0
+  - @features/flow-contacts-delete-contact@0.5.4-next.0
+  - @features/flow-contacts-edit-address@0.8.2-next.0
+  - @features/flow-contacts-edit-contact@0.9.4-next.0
+  - @domain/entity-contact@0.13.2-next.0
+
 ## 0.5.1
 
 ### Patch Changes

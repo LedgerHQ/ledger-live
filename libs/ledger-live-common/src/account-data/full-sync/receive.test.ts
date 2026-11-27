@@ -85,6 +85,15 @@ describe("defaultAccountReceive", () => {
       ReceiveAddressUnknownError,
     );
   });
+  it("names the account without its custom data when it fails", () => {
+    const id = "js:2:aleo:aleo1address:aleo:AViewKey1secret";
+    expect(() => defaultAccountReceive(accountOf("aleo", { id, freshAddress: "" }))).toThrow(
+      "js:2:aleo:aleo1address:aleo:[redacted] has no address",
+    );
+    expect(() => defaultAccountReceive(accountOf("aleo", { id, freshAddressPath: "" }))).toThrow(
+      "js:2:aleo:aleo1address:aleo:[redacted] has no device path to verify it at",
+    );
+  });
 });
 
 describe("toAccountReceive", () => {

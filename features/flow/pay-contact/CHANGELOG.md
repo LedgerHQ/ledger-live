@@ -1,5 +1,23 @@
 # @features/flow-pay-contact
 
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#25369](https://github.com/LedgerHQ/ledger-live/pull/25369) [`5c7f0ef`](https://github.com/LedgerHQ/ledger-live/commit/5c7f0ef8aaebce9ac0dcf1eb509dd0756f389b10) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Upgrade Lumen to latest
+
+  - Updated `@ledgerhq/lumen-design-core` to `0.1.37`
+  - Updated `@ledgerhq/lumen-ui-react` to `0.1.75`
+  - Updated `@ledgerhq/lumen-ui-rnative` to `0.1.76`
+
+### Patch Changes
+
+- Updated dependencies [[`5c7f0ef`](https://github.com/LedgerHQ/ledger-live/commit/5c7f0ef8aaebce9ac0dcf1eb509dd0756f389b10), [`56af9ec`](https://github.com/LedgerHQ/ledger-live/commit/56af9ec64a0dcd29974c02102b2eb75a604940c0)]:
+  - @features/flow-contacts-detail@0.6.0-next.0
+  - @features/platform-contacts@0.13.2-next.0
+  - @features/flow-contacts-add-contact@0.10.4-next.0
+  - @domain/entity-contact@0.13.2-next.0
+
 ## 0.10.0
 
 ### Minor Changes
@@ -287,26 +305,5 @@
   - @features/platform-contacts@0.9.0-next.0
   - @features/flow-contacts-add-contact@0.7.1-next.0
   - @domain/entity-contact@0.10.1-next.0
-
-## 0.4.1
-
-### Patch Changes
-
-- Updated dependencies [[`871e485`](https://github.com/LedgerHQ/ledger-live/commit/871e4854284a0b21e31b53ff0ac312010093d914), [`6996290`](https://github.com/LedgerHQ/ledger-live/commit/6996290580691788820aabd70367655f2283ac20), [`c52af21`](https://github.com/LedgerHQ/ledger-live/commit/c52af21b622efa62774657e190abb9762cffac1c), [`33e92e8`](https://github.com/LedgerHQ/ledger-live/commit/33e92e8f074ff73a6a3e338c8313ba8bc9066ccf), [`0651158`](https://github.com/LedgerHQ/ledger-live/commit/0651158a2f03f819c2e2770ef4179901768c3c6c), [`48af604`](https://github.com/LedgerHQ/ledger-live/commit/48af6040c2835f067a2dfe38fb8fadde72e0787b), [`bc43337`](https://github.com/LedgerHQ/ledger-live/commit/bc433372ebed1990d81a87b109eeb4d928271315)]:
-  - @shared/ui-queued-bottom-sheet@0.5.0
-  - @features/platform-contacts@0.8.0
-  - @features/flow-contacts-add-contact@0.7.0
-  - @features/flow-contacts@0.12.0
-  - @domain/entity-contact@0.10.0
-
-## 0.4.1-next.1
-
-### Patch Changes
-
-- Updated dependencies [[`48af604`](https://github.com/LedgerHQ/ledger-live/commit/48af6040c2835f067a2dfe38fb8fadde72e0787b)]:
-  - @shared/ui-queued-bottom-sheet@0.5.0-next.1
-  - @features/platform-contacts@0.8.0-next.1
-  - @features/flow-contacts@0.12.0-next.1
-  - @features/flow-contacts-add-contact@0.7.0-next.1
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

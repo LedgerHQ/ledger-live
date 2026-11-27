@@ -147,6 +147,78 @@ describe("listOperations", () => {
     });
   });
 
+  it("flags a phase-2 invalid transaction as failed", async () => {
+    mockResponse([
+      makeTx({
+        status: false,
+        fees: "4133700",
+        inputs: [
+          {
+            txId: "collateral",
+            index: 0,
+            address: ADDRESS,
+            value: "4133700",
+            paymentKey: PAYMENT_HASH,
+            tokens: [],
+          },
+        ],
+        outputs: [],
+      }),
+    ]);
+
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
+
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({ type: "FEES", value: 0n });
+    expect(items[0].tx).toMatchObject({ fees: 4133700n, failed: true });
+  });
+
+  it("flags the token operations of a phase-2 invalid transaction as failed", async () => {
+    mockResponse([
+      makeTx({
+        status: false,
+        fees: "2000000",
+        inputs: [
+          {
+            txId: "collateral",
+            index: 0,
+            address: ADDRESS,
+            value: "5000000",
+            paymentKey: PAYMENT_HASH,
+            tokens: [{ policyId: POLICY_ID, assetName: "", value: "10" }],
+          },
+        ],
+        outputs: [
+          {
+            address: COUNTERPARTY_ADDRESS,
+            value: "3000000",
+            paymentKey: OTHER_PAYMENT_HASH,
+            tokens: [{ policyId: POLICY_ID, assetName: "", value: "10" }],
+          },
+        ],
+      }),
+    ]);
+
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
+
+    const tokenOp = items.find(op => op.asset.type === "token");
+    expect(tokenOp).toMatchObject({ type: "OUT", value: 10n });
+    expect(tokenOp?.tx.failed).toBe(true);
+  });
+
+  it.each([true, undefined])("keeps a transaction with status %s successful", async status => {
+    mockResponse([
+      makeTx({
+        status,
+        outputs: [{ address: ADDRESS, value: "5000000", paymentKey: PAYMENT_HASH, tokens: [] }],
+      }),
+    ]);
+
+    const { items } = await listOperations(config, "cardano", ADDRESS, options);
+
+    expect(items[0].tx.failed).toBe(false);
+  });
+
   it("maps an outgoing transfer to a native OUT operation with the spent value", async () => {
     mockResponse([
       makeTx({

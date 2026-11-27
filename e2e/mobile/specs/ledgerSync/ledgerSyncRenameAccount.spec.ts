@@ -1,6 +1,6 @@
 import { runLedgerSyncRenameAccountTest } from "@e2e/specs/ledgerSync/ledgerSync";
 
-runLedgerSyncRenameAccountTest(
-  ["B2CQA-2302"],
-  ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
-);
+runLedgerSyncRenameAccountTest({
+  tmsLinks: ["B2CQA-2302"],
+  tags: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+});

@@ -1,11 +1,17 @@
 import React from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { InfoState } from "@shared/ui-info-state";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
+import { AddressActions } from "./components/AddressActions";
 import { AddressOptionList } from "./components/AddressOptionList";
 import { AddressSummary } from "./components/AddressSummary";
 import { AddressSummarySkeleton } from "./components/AddressSummarySkeleton";
-import { ZonePlaceholder } from "./components/ZonePlaceholder";
+import { HelpPanel } from "./components/HelpPanel";
+import { MemoPanel } from "./components/MemoPanel";
+import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
+import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
+import { ReceiveAddressUnavailable } from "./components/ReceiveAddressUnavailable";
+import { SanctionedAddress } from "./components/SanctionedAddress";
+import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
 export function ReceiveAddressView({
@@ -13,77 +19,127 @@ export function ReceiveAddressView({
   networkLabel,
   isLoading,
   error,
+  gate,
+  sanctioned,
   addressSelection,
   address,
+  actions,
+  isVerifying,
+  notices,
+  serviceStatus,
+  helpCard,
+  helpPanel,
+  memoCard,
+  memoPanel,
   onBack,
   onClose,
 }: ReceiveAddressViewProps) {
-  // The close button, Escape and a click outside all leave through here.
+  const isHintOpen = !!actions.verifyHint;
+  const isUnavailable = !!error || !!gate || !!sanctioned;
+  const sanctionedContent = sanctioned && <SanctionedAddress sanctioned={sanctioned} />;
+  // The close button, Escape and a click outside all leave through here, once the hint is answered.
   const handleOpenChange = (open: boolean) => {
-    if (!open) onClose();
+    if (!open && !isHintOpen) onClose();
+  };
+  const keepOpenWhileHint = (event: Event) => {
+    if (isHintOpen) event.preventDefault();
   };
   const closeDialog = () => handleOpenChange(false);
+  const incidentContent = serviceStatus && (
+    <>
+      <DialogHeader density="compact" onClose={closeDialog} />
+      <DialogBody>
+        <ServiceStatusPanel serviceStatus={serviceStatus} />
+      </DialogBody>
+    </>
+  );
+  const memoContent = memoPanel && (
+    <>
+      <DialogHeader density="compact" onBack={memoPanel.onClose} onClose={closeDialog} />
+      <DialogBody>
+        <MemoPanel memoPanel={memoPanel} />
+      </DialogBody>
+    </>
+  );
+  const helpContent = helpPanel && (
+    <>
+      <DialogHeader
+        density="expanded"
+        title={helpPanel.title}
+        onBack={helpPanel.onClose}
+        onClose={closeDialog}
+      />
+      <DialogBody>
+        <HelpPanel helpPanel={helpPanel} />
+      </DialogBody>
+    </>
+  );
 
   return (
-    <Dialog open onOpenChange={handleOpenChange} height="fit">
+    <Dialog open={!isVerifying} onOpenChange={handleOpenChange} height="fit">
       <DialogContent
         // The network label describes the dialog once known; until then there is no description.
         {...(!networkLabel && { "aria-describedby": undefined })}
+        {...(serviceStatus && { "aria-label": serviceStatus.title })}
         data-testid="receive-address"
+        onPointerDownOutside={keepOpenWhileHint}
+        onInteractOutside={keepOpenWhileHint}
       >
+        {isHintOpen ? (
+          // Everything but the hint and the tiles steps back while the hint is open.
+          <div aria-hidden className="absolute inset-0 z-table-header bg-canvas-overlay" />
+        ) : null}
         <DialogBackgroundToneProvider>
-          {addressSelection ? (
-            <>
-              <DialogHeader
-                density="expanded"
-                title={addressSelection.title}
-                onClose={closeDialog}
-              />
-              <DialogBody>
-                <AddressOptionList
-                  options={addressSelection.options}
-                  onSelect={addressSelection.onSelect}
+          {incidentContent ??
+            memoContent ??
+            helpContent ??
+            (addressSelection ? (
+              <>
+                <DialogHeader
+                  density="expanded"
+                  title={addressSelection.title}
+                  onClose={closeDialog}
                 />
-              </DialogBody>
-            </>
-          ) : (
-            <>
-              <DialogHeader
-                density="compact"
-                title={title}
-                description={networkLabel}
-                onBack={onBack}
-                onClose={closeDialog}
-              />
-              <DialogBody className="flex flex-col gap-24">
-                {error ? (
-                  <InfoState
-                    preset="error"
-                    size="hug"
-                    title={error.title}
-                    description={error.description}
-                    primaryCta={{
-                      label: error.retryLabel,
-                      onPress: error.onRetry,
-                      testID: "receive-address-retry",
-                    }}
-                    testID="receive-address-error"
+                <DialogBody>
+                  <AddressOptionList
+                    options={addressSelection.options}
+                    onSelect={addressSelection.onSelect}
                   />
-                ) : (
-                  <>
-                    {isLoading || !address ? (
-                      <AddressSummarySkeleton />
-                    ) : (
-                      <AddressSummary address={address} />
-                    )}
-                    <ZonePlaceholder zone="actions" />
-                    <ZonePlaceholder zone="notices" />
-                  </>
-                )}
-                <ZonePlaceholder zone="extras" />
-              </DialogBody>
-            </>
-          )}
+                </DialogBody>
+              </>
+            ) : (
+              <>
+                <DialogHeader
+                  density="compact"
+                  title={title}
+                  description={networkLabel}
+                  onBack={onBack}
+                  onClose={closeDialog}
+                />
+                <DialogBody
+                  className={`flex flex-col gap-24 ${isHintOpen ? "overflow-visible" : "overflow-y-auto"}`}
+                >
+                  {sanctionedContent ?? <ReceiveAddressUnavailable error={error} gate={gate} />}
+                  {isUnavailable ? null : (
+                    <>
+                      {isLoading || !address ? (
+                        <AddressSummarySkeleton />
+                      ) : (
+                        <AddressSummary
+                          address={address}
+                          onCopy={actions.copy?.onPressCode}
+                          copyLabel={actions.copy?.label}
+                          copyKey={actions.copy?.buttonPresses}
+                        />
+                      )}
+                      <AddressActions actions={actions} />
+                      <ReceiveAddressNotices notices={notices} />
+                    </>
+                  )}
+                  <ReceiveAddressExtras memoCard={memoCard} helpCard={helpCard} />
+                </DialogBody>
+              </>
+            ))}
         </DialogBackgroundToneProvider>
       </DialogContent>
     </Dialog>

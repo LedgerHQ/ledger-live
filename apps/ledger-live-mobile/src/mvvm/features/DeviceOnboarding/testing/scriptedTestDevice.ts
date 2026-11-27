@@ -95,8 +95,18 @@ export type ScriptedTestDevice = {
   showsEarlyCheckScreen(): boolean;
 };
 
-/** A Bluetooth Stax whose commands and checks answer only what the test queues. */
-export function createScriptedTestDevice(): ScriptedTestDevice {
+export type ScriptedTestDeviceOptions = {
+  modelId?: DeviceModelId;
+  ledgerModelId?: LedgerDeviceModelId;
+  name?: string;
+};
+
+/** A Bluetooth device whose commands and checks answer only what the test queues. */
+export function createScriptedTestDevice({
+  modelId = DeviceModelId.STAX,
+  ledgerModelId = LedgerDeviceModelId.stax,
+  name = staxName,
+}: ScriptedTestDeviceOptions = {}): ScriptedTestDevice {
   const foundDevices = createTestStream<DiscoveredDevice[]>({ current: [] });
   const sessions = new Map<string, SessionStream>();
   const commandReplies = createReplyQueue<unknown>();
@@ -137,10 +147,10 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
     disconnect,
     getConnectedDevice: ({ sessionId: id }) => ({
       id: deviceId,
-      name: staxName,
+      name,
       type: "BLE",
       sessionId: id,
-      modelId: DeviceModelId.STAX,
+      modelId,
       transport: rnBleTransportIdentifier,
     }),
     getDeviceSessionState: ({ sessionId: id }) => getSession(id).events,
@@ -161,9 +171,9 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
       foundDevices.push([
         {
           id: deviceId,
-          name: staxName,
+          name,
           transport: rnBleTransportIdentifier,
-          deviceModel: { id: LedgerDeviceModelId.stax, model: DeviceModelId.STAX, name: staxName },
+          deviceModel: { id: ledgerModelId, model: modelId, name },
         } as DiscoveredDevice,
       ]);
     },

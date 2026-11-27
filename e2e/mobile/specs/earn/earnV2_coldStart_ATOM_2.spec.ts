@@ -7,4 +7,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@cosmos", "@family-cosmos"],
 };
 
-runColdStartTest(testConfig.account, testConfig.tmsLinks, testConfig.tags);
+runColdStartTest(testConfig);

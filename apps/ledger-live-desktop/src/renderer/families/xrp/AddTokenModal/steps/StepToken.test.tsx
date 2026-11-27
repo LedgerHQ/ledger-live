@@ -1,13 +1,13 @@
 import React from "react";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import { useTokenOptions } from "@ledgerhq/live-common/families/xrp/react";
 import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { fireEvent, render, screen } from "tests/testSetup";
 import StepToken, { StepTokenFooter } from "./StepToken";
-import { useTokenOptions } from "../useTokenOptions";
 import { xrpIouToken } from "../../__mocks__/currency.mock";
 import { makeStepProps } from "../../__mocks__/stepProps.mock";
 
-jest.mock("../useTokenOptions");
+jest.mock("@ledgerhq/live-common/families/xrp/react");
 const mockUseTokenOptions = jest.mocked(useTokenOptions);
 
 type SelectProps = {

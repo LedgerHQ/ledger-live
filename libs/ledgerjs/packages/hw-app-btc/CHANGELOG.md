@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-btc
 
+## 13.0.0-next.0
+
+### Major Changes
+
+- [#25419](https://github.com/LedgerHQ/ledger-live/pull/25419) [`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1) Thanks [@qperrot](https://github.com/qperrot)! - Remove the discontinued Horizen (zencash) currency and its bitcoin-family support
+
 ## 12.4.0
 
 ### Minor Changes
@@ -227,19 +233,5 @@
 ### Minor Changes
 
 - [#19550](https://github.com/LedgerHQ/ledger-live/pull/19550) [`d7edc6e`](https://github.com/LedgerHQ/ledger-live/commit/d7edc6ee38776dcbc6da341f734b42d78dc05836) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Add the NU6.3 Zcash consensus branch id (0x37a5165b, mainnet activation height 3,428,143) to the transparent height→branch-id table, so transactions signed through the legacy (non-DMK) Btc path after NU6.3 activation are accepted by the network. Unknown block heights now default to the NU6.3 branch id.
-
-## 11.2.2
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.6
-
-## 11.2.2-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.6-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

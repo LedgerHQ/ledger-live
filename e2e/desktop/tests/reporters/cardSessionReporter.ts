@@ -14,7 +14,11 @@ class CardSessionReporter implements Reporter {
     if (
       suite
         .allTests()
-        .some(test => test.location.file.replaceAll("\\", "/").includes(`/${PAYTAB_SPECS_DIR}/`))
+        .some(
+          test =>
+            test.expectedStatus !== "skipped" &&
+            test.location.file.replaceAll("\\", "/").includes(`/${PAYTAB_SPECS_DIR}/`),
+        )
     ) {
       console.info("[CardSessionReporter] Creating a card session for the run...");
       const result = spawnSync(

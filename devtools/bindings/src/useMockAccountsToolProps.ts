@@ -8,12 +8,10 @@ import {
   remoteAccountsAdded,
   remoteAccountsRemoved,
   type AccountsState,
-} from "@domain/entity-account";
-import {
   AccountUUIDSchema,
-  computeAccountUUID,
-  type AccountDescriptor,
-} from "@domain/entity-account-descriptor";
+} from "@domain/entity-account";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account/descriptor";
 import type { AccountDataRecorder } from "./accountDataRecorder";
 
 type MockAccountsToolProps = Extract<DevToolsConfig[number], { id: "mock-accounts" }>["config"];

@@ -1,5 +1,16 @@
 # @ledgerhq/live-signer-aleo
 
+## 0.20.0-next.0
+
+### Minor Changes
+
+- [#25378](https://github.com/LedgerHQ/ledger-live/pull/25378) [`5f05425`](https://github.com/LedgerHQ/ledger-live/commit/5f0542591bcc57c068913f6123a61bc6977db35b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Keep the device action error as the cause of the Aleo signer's generic errors
+
+### Patch Changes
+
+- Updated dependencies [[`fa1161f`](https://github.com/LedgerHQ/ledger-live/commit/fa1161f005a5409dc3d53f9bc2ec475465190a16), [`b4e886d`](https://github.com/LedgerHQ/ledger-live/commit/b4e886db64a3c223fd67850e51dcfd685d5ef1cf)]:
+  - @ledgerhq/coin-aleo@2.12.0-next.0
+
 ## 0.19.20
 
 ### Patch Changes
@@ -139,19 +150,5 @@
 
 - Updated dependencies [[`269d6d4`](https://github.com/LedgerHQ/ledger-live/commit/269d6d404779439d0e98beb2ed3cef82805612ae), [`4c64bdc`](https://github.com/LedgerHQ/ledger-live/commit/4c64bdc31d29b21c9ea31732ade8f6ba277b9107), [`452041f`](https://github.com/LedgerHQ/ledger-live/commit/452041f8123bc887534048ed94167c81ca54c2b6), [`81456c8`](https://github.com/LedgerHQ/ledger-live/commit/81456c8a3c1e4359f4697cced7c89e9be744f3f6), [`95b4e92`](https://github.com/LedgerHQ/ledger-live/commit/95b4e92bd6ba76987e0f1b540d21312a37c015b0), [`f6dc62f`](https://github.com/LedgerHQ/ledger-live/commit/f6dc62f7f23be9f46812fc13f00ddc373e5ca1af)]:
   - @ledgerhq/coin-aleo@2.4.0
-
-## 0.19.11-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`269d6d4`](https://github.com/LedgerHQ/ledger-live/commit/269d6d404779439d0e98beb2ed3cef82805612ae), [`4c64bdc`](https://github.com/LedgerHQ/ledger-live/commit/4c64bdc31d29b21c9ea31732ade8f6ba277b9107), [`452041f`](https://github.com/LedgerHQ/ledger-live/commit/452041f8123bc887534048ed94167c81ca54c2b6), [`81456c8`](https://github.com/LedgerHQ/ledger-live/commit/81456c8a3c1e4359f4697cced7c89e9be744f3f6), [`95b4e92`](https://github.com/LedgerHQ/ledger-live/commit/95b4e92bd6ba76987e0f1b540d21312a37c015b0), [`f6dc62f`](https://github.com/LedgerHQ/ledger-live/commit/f6dc62f7f23be9f46812fc13f00ddc373e5ca1af)]:
-  - @ledgerhq/coin-aleo@2.4.0-next.0
-
-## 0.19.10
-
-### Patch Changes
-
-- Updated dependencies [[`96661b4`](https://github.com/LedgerHQ/ledger-live/commit/96661b459f66f511de75c62b87b3bcd2519a1814), [`3a3d2fa`](https://github.com/LedgerHQ/ledger-live/commit/3a3d2fa06b8dbdcc6ad964bb737898a6e35c934d)]:
-  - @ledgerhq/coin-aleo@2.3.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -6,37 +6,20 @@ import { registerTransportModule, type TransportModule } from "@ledgerhq/live-co
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import getBLETransport from "~/transport/bleTransport";
 import {
+  DeviceManagementKitBLETransport,
   DeviceManagementKitHIDTransport,
   DeviceManagementKitHTTPProxyTransport,
   getDeviceManagementKit,
+  isSpeculosLegacyDeviceId,
   isUsbCompatDeviceId,
 } from "@ledgerhq/live-dmk-mobile";
-import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
+import { AppDmkSpeculosTransport } from "@ledgerhq/live-dmk-speculos";
 import {
   DeviceManagementKitMockServerTransport,
   isMockServerCompatDeviceId,
-  ledgerToDmkDeviceIdMap,
 } from "@ledgerhq/live-dmk-shared";
 import { retry } from "@ledgerhq/live-common/promise";
-
-const SPECULOS_PREFIX = "speculos|";
-
-// Speculos cannot tell the DMK transport which device it emulates (it defaults
-// to Stax). The e2e bridge sends the real model via `setSpeculosDeviceModel`,
-// which we then forward when opening the transport so the app behaves like it.
-let speculosDeviceModel: DeviceModelId | undefined;
-// Token of a protected Speculinho session, also sent by the e2e bridge.
-let speculosSessionToken: string | undefined;
-
-export function setSpeculosDeviceModel(model?: DeviceModelId) {
-  speculosDeviceModel = model;
-}
-
-export function setSpeculosSessionToken(token?: string) {
-  speculosSessionToken = token;
-}
 
 /**
  * Registers transport modules for different connection types (BLE, HID, HTTP Debug, Speculos, mock server).
@@ -48,7 +31,7 @@ export const registerTransports = ({
   isMockServerEnabled: () => boolean;
 }) => {
   if (Config.BLE_LOG_LEVEL) {
-    getBLETransport().setLogLevel(Config.BLE_LOG_LEVEL);
+    DeviceManagementKitBLETransport.setLogLevel(Config.BLE_LOG_LEVEL);
   }
 
   registerTransportModule({
@@ -64,19 +47,11 @@ export const registerTransports = ({
   if (Config.DETOX) {
     registerTransportModule({
       id: "speculos",
-      open: id => {
-        if (!id.startsWith(SPECULOS_PREFIX)) return null;
-        const baseURL = id.slice(SPECULOS_PREFIX.length);
-        const model = speculosDeviceModel ? ledgerToDmkDeviceIdMap[speculosDeviceModel] : undefined;
-        return retry(() =>
-          DeviceManagementKitTransportSpeculos.open({
-            baseURL,
-            model,
-            bearerToken: speculosSessionToken,
-          }),
-        );
-      },
-      disconnect: id => (id.startsWith(SPECULOS_PREFIX) ? Promise.resolve() : null),
+      open: (id, timeoutMs) =>
+        isSpeculosLegacyDeviceId(id)
+          ? retry(() => AppDmkSpeculosTransport.open(getDeviceManagementKit(), timeoutMs))
+          : null,
+      disconnect: id => (isSpeculosLegacyDeviceId(id) ? Promise.resolve() : null),
     });
   }
 
@@ -128,7 +103,7 @@ export const registerTransports = ({
   registerTransportModule({
     id: "ble",
     open: (id, timeoutMs, traceContext, matchDeviceByName) =>
-      getBLETransport().open(id, timeoutMs, traceContext, { matchDeviceByName }),
-    disconnect: id => getBLETransport().disconnectDevice(id),
+      DeviceManagementKitBLETransport.open(id, timeoutMs, traceContext, { matchDeviceByName }),
+    disconnect: id => DeviceManagementKitBLETransport.disconnectDevice(id),
   });
 };

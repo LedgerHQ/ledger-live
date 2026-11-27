@@ -60,6 +60,8 @@ export type OnboardingNavigatorParamList = {
     showSeedWarning?: boolean;
     isProtectFlow?: boolean;
     fromAccessExistingWallet?: boolean;
+    /** A read-only user still goes to post-onboarding after pairing an existing wallet. */
+    resetPostOnboardingRedirect?: boolean;
     isRestoreSeed?: boolean;
   };
   [ScreenName.OnboardingSecureYourCrypto]: {

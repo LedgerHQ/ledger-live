@@ -1,5 +1,10 @@
 import type { BitcoinCoinConfig } from "../config";
-import { fetchPendingUtxos, fetchTx, fetchUtxos } from "../network/explorer";
+import {
+  fetchPendingTx,
+  fetchPendingTxHex,
+  fetchPendingUtxos,
+  fetchUtxos,
+} from "../network/explorer";
 import type { ExplorerPendingUtxos, ExplorerTx, ExplorerUtxo } from "../network/types";
 import { txidOf } from "../network/types";
 import { explorerAddress } from "./cashaddr";
@@ -10,15 +15,46 @@ export const outpoint = (hash: string, outputIndex: number) =>
   `${hash.toLowerCase()}:${outputIndex}`;
 
 /** Unconfirmed transactions fetched at once, so many pending transactions do not flood the explorer. */
-const PENDING_TX_CONCURRENCY = 8;
+export const PENDING_TX_CONCURRENCY = 8;
 
-async function fetchTxs(config: BitcoinCoinConfig, txids: string[]): Promise<ExplorerTx[]> {
-  const txs: ExplorerTx[] = [];
+/**
+ * The transaction while the explorer still holds it unmined, else `undefined`. The explorer keeps
+ * listing a replaced or dropped transaction as pending for minutes, and keeps describing it at
+ * `tx/{hash}`, but no longer serves its raw transaction: its outputs must not be offered as change.
+ */
+async function fetchLivePendingTx(
+  config: BitcoinCoinConfig,
+  txid: string,
+): Promise<ExplorerTx | undefined> {
+  const [tx, hex] = await Promise.all([
+    fetchPendingTx(config, txid),
+    fetchPendingTxHex(config, txid),
+  ]);
+  return tx && !tx.block && hex !== undefined ? tx : undefined;
+}
+
+/** Looks up each unconfirmed transaction, `PENDING_TX_CONCURRENCY` at a time, in order. */
+export function lookUpPendingTxs<T>(
+  txids: string[],
+  lookUp: (txid: string) => Promise<T>,
+): Promise<T[]> {
+  const batches: string[][] = [];
   for (let start = 0; start < txids.length; start += PENDING_TX_CONCURRENCY) {
-    const batch = txids.slice(start, start + PENDING_TX_CONCURRENCY);
-    txs.push(...(await Promise.all(batch.map(txid => fetchTx(config, txid)))));
+    batches.push(txids.slice(start, start + PENDING_TX_CONCURRENCY));
   }
-  return txs;
+  // One batch after the other.
+  return batches.reduce<Promise<T[]>>(
+    async (previous, batch) => [...(await previous), ...(await Promise.all(batch.map(lookUp)))],
+    Promise.resolve([]),
+  );
+}
+
+async function fetchLivePendingTxs(
+  config: BitcoinCoinConfig,
+  txids: string[],
+): Promise<ExplorerTx[]> {
+  const txs = await lookUpPendingTxs(txids, txid => fetchLivePendingTx(config, txid));
+  return txs.filter((tx): tx is ExplorerTx => tx !== undefined);
 }
 
 /** The outpoints an unconfirmed transaction spends. */
@@ -53,7 +89,9 @@ export async function fetchMempoolView(
   const spent = mempoolSpent(pending);
 
   const pendingTxids = [...new Set(pending.created.map(utxo => utxo.hash))];
-  const pendingTxs = spent.size === 0 ? [] : await fetchTxs(config, pendingTxids);
+  // A transaction replaced or dropped since stays listed for minutes: its change is left out, so it
+  // is neither held nor spent. What it spent stays out of the spendable outputs, which is safe.
+  const pendingTxs = spent.size === 0 ? [] : await fetchLivePendingTxs(config, pendingTxids);
   const spentBy = new Map<string, string>();
   for (const tx of pendingTxs) {
     for (const input of tx.inputs) {

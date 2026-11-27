@@ -10,6 +10,7 @@ import {
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
 import { BottomSheetFlatList, BottomSheetHeader, Box } from "@ledgerhq/lumen-ui-rnative";
+import { NetworkHelpDescription } from "@features/flow-receive";
 import { useTranslation } from "~/context/Locale";
 import { useNetworkConfiguration } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { accountsCount } from "../../components/AccountCount";
@@ -25,6 +26,7 @@ import { useAvailabilityRows } from "@ledgerhq/live-common/modularDrawer/hooks/u
 import type { AvailabilityRow } from "@ledgerhq/live-common/modularDrawer/utils/buildAvailabilityRows";
 import type { DisabledItemExplanation, DisabledItemsExplanation } from "../../types";
 import { UnavailableSectionHeader } from "../../components/UnavailableSectionHeader";
+import type { NetworkHelp } from "../../hooks/useNetworkHelp";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
@@ -34,6 +36,9 @@ export type NetworkSelectionStepProps = {
   disabledNetworkExplanation?: DisabledItemsExplanation["network"];
   onDisabledNetworkPress?: (explanation: DisabledItemExplanation) => void;
   selectedAssetName?: string;
+  selectedAssetTicker?: string;
+  /** The receive flow's "How to select the network?". */
+  networkHelp?: NetworkHelp;
 };
 
 type NetworkListRow = AvailabilityRow<NetworkRowData>;
@@ -49,6 +54,8 @@ const NetworkSelection = ({
   disabledNetworkExplanation,
   onDisabledNetworkPress,
   selectedAssetName,
+  selectedAssetTicker,
+  networkHelp,
 }: Readonly<NetworkSelectionStepProps>) => {
   const { t } = useTranslation();
   const flow = useSelector(modularDrawerFlowSelector);
@@ -126,6 +133,38 @@ const NetworkSelection = ({
     [],
   );
 
+  const renderNetworkRow = useCallback(
+    ({ item: row }: { item: NetworkListRow }) => {
+      if (row.kind === "unavailableSectionHeader") {
+        return <UnavailableSectionHeader testID="modular-drawer-unavailable-networks-header" />;
+      }
+
+      const network = row.item;
+      const isSelectable = isSelectableNetwork(network.id);
+
+      return (
+        <NetworkRow
+          {...network}
+          disabled={isSelectable ? undefined : true}
+          onClick={() => handleNetworkClick(network.id)}
+          disabledExplanation={
+            !isSelectable && selectedAssetName
+              ? disabledNetworkExplanation?.(network.name, selectedAssetName)
+              : undefined
+          }
+          onDisabledPress={onDisabledNetworkPress}
+        />
+      );
+    },
+    [
+      isSelectableNetwork,
+      handleNetworkClick,
+      selectedAssetName,
+      disabledNetworkExplanation,
+      onDisabledNetworkPress,
+    ],
+  );
+
   return (
     <Box lx={{ flexGrow: 1 }}>
       <TrackDrawerScreen
@@ -136,33 +175,20 @@ const NetworkSelection = ({
         formatNetworkConfig
       />
       <BottomSheetHeader spacing title={t("modularDrawer.selectNetwork")} density="expanded" />
+      {networkHelp ? (
+        <Box lx={{ paddingHorizontal: "s16", paddingBottom: "s16" }}>
+          <NetworkHelpDescription
+            assetTicker={selectedAssetTicker ?? ""}
+            onLearnMore={networkHelp.open}
+          />
+        </Box>
+      ) : null}
       <BottomSheetFlatList
         scrollEnabled={true}
         showsVerticalScrollIndicator={false}
         data={networkRows}
         keyExtractor={keyExtractor}
-        renderItem={({ item: row }: { item: NetworkListRow }) => {
-          if (row.kind === "unavailableSectionHeader") {
-            return <UnavailableSectionHeader testID="modular-drawer-unavailable-networks-header" />;
-          }
-
-          const network = row.item;
-          const isSelectable = isSelectableNetwork(network.id);
-
-          return (
-            <NetworkRow
-              {...network}
-              disabled={isSelectable ? undefined : true}
-              onClick={() => handleNetworkClick(network.id)}
-              disabledExplanation={
-                !isSelectable && selectedAssetName
-                  ? disabledNetworkExplanation?.(network.name, selectedAssetName)
-                  : undefined
-              }
-              onDisabledPress={onDisabledNetworkPress}
-            />
-          );
-        }}
+        renderItem={renderNetworkRow}
         contentContainerStyle={{
           paddingBottom: SAFE_MARGIN_BOTTOM,
         }}

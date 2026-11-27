@@ -3,8 +3,8 @@ import BigNumber from "bignumber.js";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { broadcast as broadcastLogic } from "../logic";
 import { createTestAccount } from "../test/testHelpers";
-import { setupTestnetCoinConfig } from "../test/fixtures";
-import { broadcast } from "./broadcast";
+import { createFixtureContext } from "../test/fixtures";
+import { buildBroadcast } from "./broadcast";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../logic");
@@ -34,10 +34,11 @@ const createBroadcastArg = (
 });
 
 describe("broadcast", () => {
+  const context = createFixtureContext();
+  const broadcast = buildBroadcast(context);
   let patchOperationSpy: jest.SpyInstance;
   let broadcastSpy: jest.SpyInstance;
   beforeEach(() => {
-    setupTestnetCoinConfig();
     patchOperationSpy = jest.spyOn({ patchOperationWithHash }, "patchOperationWithHash");
     broadcastSpy = jest.spyOn({ broadcastLogic }, "broadcastLogic");
     broadcastSpy.mockResolvedValue("hash");

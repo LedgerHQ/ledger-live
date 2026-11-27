@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tester
 
+## 0.22.0-next.0
+
+### Minor Changes
+
+- [#25293](https://github.com/LedgerHQ/ledger-live/pull/25293) [`a8fa5ed`](https://github.com/LedgerHQ/ledger-live/commit/a8fa5ed0c6cc91f08c0b2f3cb7638de82ed66c3e) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Accept the preparing status of a coin-sandbox instance (images being pulled or built) and keep waiting for it.
+
+- [#25305](https://github.com/LedgerHQ/ledger-live/pull/25305) [`6f99261`](https://github.com/LedgerHQ/ledger-live/commit/6f992617634a052d86bb1ff059779009cc5c4da6) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - accept the `stopping` status of a coin-sandbox instance and fail startSandbox with "is being stopped" instead of an unexpected answer
+
+- [#25302](https://github.com/LedgerHQ/ledger-live/pull/25302) [`fad072f`](https://github.com/LedgerHQ/ledger-live/commit/fad072fe09bf0f17548890472f1f123749d71351) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency @types/node to v24.12.4
+
+  - Updated `@types/node` to `24.12.4`
+
 ## 0.21.0
 
 ### Minor Changes

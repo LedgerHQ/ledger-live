@@ -1,5 +1,20 @@
 # @domain/api-aggregated-assets
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#25430](https://github.com/LedgerHQ/ledger-live/pull/25430) [`59a49df`](https://github.com/LedgerHQ/ledger-live/commit/59a49dfd0974de3bd3ff379ce843a54910ba5a97) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove the unused sparkline data from market items: drop `sparklineIn7d`, `SparklineSvgData` and the raw `sparkline` field
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`baf40c7`](https://github.com/LedgerHQ/ledger-live/commit/baf40c7721ae8525c7d99d48667a749d8de4e59a)]:
+  - @domain/entity-currency-crypto@0.21.0-next.0
+  - @shared/api-services@0.14.0-next.0
+  - @domain/api-currency-token@0.9.1-next.0
+  - @domain/entity-currency@0.5.2-next.0
+  - @domain/entity-currency-token@0.6.1-next.0
+
 ## 0.7.2
 
 ### Patch Changes
@@ -247,37 +262,5 @@
 - Updated dependencies [[`da3d09d`](https://github.com/LedgerHQ/ledger-live/commit/da3d09d75d7dcae659611cd371c48d75c03f7ae4)]:
   - @shared/env@0.7.0-next.0
   - @shared/api-services@0.7.0
-
-## 0.5.0
-
-### Minor Changes
-
-- [#21487](https://github.com/LedgerHQ/ledger-live/pull/21487) [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop `disableCountervalue` from `CryptoCurrency`. Nothing read it on a crypto currency; it stays on `TokenCurrency`, where the assets API drives it, and on `FiatCurrency`.
-
-### Patch Changes
-
-- Updated dependencies [[`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44), [`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`a9e389f`](https://github.com/LedgerHQ/ledger-live/commit/a9e389fc59ca30abf53d0ba8decc6290752ba1db), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6), [`d60ce38`](https://github.com/LedgerHQ/ledger-live/commit/d60ce38581fe06b7f4fa72ba40259af2eabfe11f), [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a)]:
-  - @shared/env@0.6.0
-  - @shared/api-services@0.7.0
-  - @domain/entity-currency-crypto@0.12.0
-  - @domain/api-currency-token@0.6.1
-  - @domain/entity-currency@0.4.3
-  - @domain/entity-currency-token@0.5.2
-
-## 0.5.0-next.0
-
-### Minor Changes
-
-- [#21487](https://github.com/LedgerHQ/ledger-live/pull/21487) [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop `disableCountervalue` from `CryptoCurrency`. Nothing read it on a crypto currency; it stays on `TokenCurrency`, where the assets API drives it, and on `FiatCurrency`.
-
-### Patch Changes
-
-- Updated dependencies [[`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44), [`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`a9e389f`](https://github.com/LedgerHQ/ledger-live/commit/a9e389fc59ca30abf53d0ba8decc6290752ba1db), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6), [`d60ce38`](https://github.com/LedgerHQ/ledger-live/commit/d60ce38581fe06b7f4fa72ba40259af2eabfe11f), [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a)]:
-  - @shared/env@0.6.0-next.0
-  - @shared/api-services@0.7.0-next.0
-  - @domain/entity-currency-crypto@0.12.0-next.0
-  - @domain/api-currency-token@0.6.1-next.0
-  - @domain/entity-currency@0.4.3-next.0
-  - @domain/entity-currency-token@0.5.2-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

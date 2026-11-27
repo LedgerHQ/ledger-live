@@ -40,7 +40,7 @@ export function UnsupportedFeatureErrorComponent() {
             </Button>
             <ExportLogsButton
               title={t("settings.exportLogs.title")}
-              customComponent={exportLogsHandler => (
+              renderCustomComponent={exportLogsHandler => (
                 <Link
                   Icon={() => <Icons.Download size="S" />}
                   onClick={exportLogsHandler}

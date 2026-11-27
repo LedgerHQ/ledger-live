@@ -9,12 +9,9 @@ describe("listOperations", () => {
 
   describe("Account with no transactions", () => {
     it("should return empty array for pristine account", async () => {
-      const { items: operations, next: cursor } = await listOperations(
-        config,
-        ADDRESS_PRISTINE,
-        { minHeight: 0 },
-        "concordium_testnet",
-      );
+      const { items: operations, next: cursor } = await listOperations(config, ADDRESS_PRISTINE, {
+        minHeight: 0,
+      });
 
       expect(Array.isArray(operations)).toBe(true);
       expect(operations.length).toBe(0);
@@ -27,12 +24,7 @@ describe("listOperations", () => {
     let cursor: string | undefined;
 
     beforeAll(async () => {
-      const page = await listOperations(
-        config,
-        ADDRESS_WITH_BALANCE,
-        { minHeight: 0 },
-        "concordium_testnet",
-      );
+      const page = await listOperations(config, ADDRESS_WITH_BALANCE, { minHeight: 0 });
       operations = page.items;
       cursor = page.next;
     });
@@ -52,7 +44,7 @@ describe("listOperations", () => {
           expect(operation).toHaveProperty("amount");
           expect(operation).toHaveProperty("fee");
 
-          expect(["IN", "OUT"]).toContain(operation.type);
+          expect(["IN", "OUT", "FEES"]).toContain(operation.type);
           expect(typeof operation.value).toBe("string");
           expect(typeof operation.amount).toBe("string");
           expect(typeof operation.fee).toBe("string");
@@ -86,7 +78,7 @@ describe("listOperations", () => {
       if (operations.length > 0) {
         const hashes = operations.map(op => op.hash);
         const uniqueHashes = new Set(hashes);
-        expect(uniqueHashes.size).toBeLessThanOrEqual(operations.length);
+        expect(uniqueHashes.size).toBe(operations.length);
       }
     });
 
@@ -99,21 +91,17 @@ describe("listOperations", () => {
     let operations: RawOperation[];
 
     beforeAll(async () => {
-      const page = await listOperations(
-        config,
-        ADDRESS_WITH_BALANCE,
-        { minHeight: 0 },
-        "concordium_testnet",
-      );
+      const page = await listOperations(config, ADDRESS_WITH_BALANCE, { minHeight: 0 });
       operations = page.items;
     });
 
-    it("should categorize operations as IN or OUT", async () => {
+    it("should categorize operations as IN, OUT or FEES", async () => {
       if (operations.length > 0) {
         const inOps = operations.filter(op => op.type === "IN");
         const outOps = operations.filter(op => op.type === "OUT");
+        const feesOps = operations.filter(op => op.type === "FEES");
 
-        expect(inOps.length + outOps.length).toBe(operations.length);
+        expect(inOps.length + outOps.length + feesOps.length).toBe(operations.length);
       }
     });
 

@@ -1,5 +1,12 @@
 # @devtools/cloud-sync
 
+## 0.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`71d36df`](https://github.com/LedgerHQ/ledger-live/commit/71d36dffa7755351d345333b50530392b194dd7b)]:
+  - @shared/cloud-sync@0.4.0-next.0
+
 ## 0.4.0
 
 ### Minor Changes

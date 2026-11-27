@@ -107,10 +107,10 @@ export const urls = {
     "https://www.ledger.com/staking-tron?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=tron",
   TronStakingDisable: "https://support.ledger.com/article/9949980566173-zd",
   supportLinkByTokenType: {
-    erc20: "https://support.ledger.com/article/9949980566173-zd",
+    erc20: "https://support.ledger.com/article/4404389645329-zd",
     trc10: "https://support.ledger.com/article/360013062159-zd",
     trc20: "https://support.ledger.com/article/360013062159-zd",
-    asa: "https://support.ledger.com/article/360013062159-zd",
+    asa: "https://support.ledger.com/article/360015896040-zd",
     bep20: "https://support.ledger.com/article/4412962166289-zd",
     vip180: "https://support.ledger.com/article/9807278350365-zd",
   },
@@ -151,6 +151,10 @@ export const urls = {
       lifi: {
         main: "https://li.fi/",
         tos: "https://li.fi/legal/terms-and-conditions/",
+      },
+      lifi_intents: {
+        main: "https://li.fi/",
+        tos: "https://li.fi/legal/terms-and-conditions",
       },
       uniswap: {
         main: "https://uniswap.org/",

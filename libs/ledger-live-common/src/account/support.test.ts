@@ -9,6 +9,7 @@ import {
   isNonTransferableToken,
   isReceiveDisabledForFamily,
   isSendDisabledForFamily,
+  isSwapDisabledForFamily,
 } from "./support";
 
 jest.mock("../bridge");
@@ -30,6 +31,11 @@ describe("family transfer capability", () => {
     expect(isReceiveDisabledForFamily("hypercore")).toBe(true);
     expect(isSendDisabledForFamily("ethereum")).toBe(false);
     expect(isReceiveDisabledForFamily("ethereum")).toBe(false);
+  });
+
+  it("disables swap for hypercore, allows it for other families", () => {
+    expect(isSwapDisabledForFamily("hypercore")).toBe(true);
+    expect(isSwapDisabledForFamily("ethereum")).toBe(false);
   });
 
   it("canReceive follows the family capability", () => {

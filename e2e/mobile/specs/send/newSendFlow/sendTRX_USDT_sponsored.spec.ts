@@ -5,7 +5,11 @@ import { runNewSendFlowSponsoredTest } from "@e2e/specs/send/newSendFlowSponsore
 // No @LNS: its Tron app has no Tronify service page.
 allure.issue("LIVE-32799");
 runNewSendFlowSponsoredTest({
-  transaction: new Transaction(TokenAccount.TRX_USDT, TokenAccount.TRX_USDT_2, "1"),
+  transaction: new Transaction({
+    accountToDebit: TokenAccount.TRX_USDT,
+    accountToCredit: TokenAccount.TRX_USDT_2,
+    amount: "1",
+  }),
   tmsLinks: ["B2CQA-6705"],
   tags: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@tron", "@family-tron"],
 });

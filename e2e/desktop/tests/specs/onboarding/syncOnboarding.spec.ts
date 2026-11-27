@@ -29,7 +29,7 @@ test.describe(`Onboarding (mock server)`, () => {
       await app.syncOnboarding.startOnboardingFromFreshInstall(mockDevice.modelId);
 
       await app.syncOnboarding.setUpAsNewDevice(mockServer);
-      await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true);
+      await mockServer.pinOnboardingStep({ step: ONBOARDING_STEP.ready, onboarded: true });
 
       await app.syncOnboarding.skipWalletSync();
       await app.syncOnboarding.expectSetupComplete();
@@ -96,7 +96,7 @@ test.describe(`Restore a seed from a configured Ledger Live`, () => {
       await app.syncOnboarding.passGenuineCheck();
 
       await app.syncOnboarding.restoreFromSeed(mockServer);
-      await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true);
+      await mockServer.pinOnboardingStep({ step: ONBOARDING_STEP.ready, onboarded: true });
 
       await app.syncOnboarding.skipWalletSync();
       await app.syncOnboarding.expectSetupComplete();
@@ -155,17 +155,25 @@ test.describe(`Restore a seed from a Ledger Recovery Key`, () => {
       await app.syncOnboarding.startOnboardingFromFreshInstall(mockDevice.modelId);
       await app.syncOnboarding.continueToSetup();
 
-      await mockServer.pinOnboardingStep(
-        ONBOARDING_STEP.setupChoiceRestore,
-        false,
-        CHARON_STATUS.ready,
-      );
+      await mockServer.pinOnboardingStep({
+        step: ONBOARDING_STEP.setupChoiceRestore,
+        onboarded: false,
+        charonStatus: CHARON_STATUS.ready,
+      });
       await app.syncOnboarding.expectRestoreChoices();
 
-      await mockServer.pinOnboardingStep(ONBOARDING_STEP.restoreCharon, false, CHARON_STATUS.ready);
+      await mockServer.pinOnboardingStep({
+        step: ONBOARDING_STEP.restoreCharon,
+        onboarded: false,
+        charonStatus: CHARON_STATUS.ready,
+      });
       await app.syncOnboarding.expectRestoreFromRecoveryKey();
 
-      await mockServer.pinOnboardingStep(ONBOARDING_STEP.ready, true, CHARON_STATUS.ready);
+      await mockServer.pinOnboardingStep({
+        step: ONBOARDING_STEP.ready,
+        onboarded: true,
+        charonStatus: CHARON_STATUS.ready,
+      });
 
       await app.syncOnboarding.skipWalletSync();
       await app.syncOnboarding.expectSetupComplete();

@@ -1,5 +1,15 @@
 # @features/flow-account-analytics
 
+## 0.3.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`59a49df`](https://github.com/LedgerHQ/ledger-live/commit/59a49dfd0974de3bd3ff379ce843a54910ba5a97)]:
+  - @domain/api-aggregated-assets@0.8.0-next.0
+  - @domain/entity-currency@0.5.2-next.0
+  - @domain/entity-market-countervalues@0.6.1-next.0
+  - @features/platform-aggregated-assets@0.7.3-next.0
+
 ## 0.3.1
 
 ### Patch Changes

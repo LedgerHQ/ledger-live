@@ -1,5 +1,11 @@
 # @domain/entity-client-identity
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#25372](https://github.com/LedgerHQ/ledger-live/pull/25372) [`1b1d171`](https://github.com/LedgerHQ/ledger-live/commit/1b1d171a6e5fa3be798eeee2ba90d462d3f23dad) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Integrate @datadog/electron-sdk v1 for main-process observability (uncaughtException, unhandledRejection, non-clean render-process-gone)
+
 ## 0.6.0
 
 ### Minor Changes

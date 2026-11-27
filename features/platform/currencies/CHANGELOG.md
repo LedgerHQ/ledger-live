@@ -1,5 +1,20 @@
 # @features/platform-currencies
 
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#25043](https://github.com/LedgerHQ/ledger-live/pull/25043) [`baf40c7`](https://github.com/LedgerHQ/ledger-live/commit/baf40c7721ae8525c7d99d48667a749d8de4e59a) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - Stop retrying a CAL request answered with 403 or 407, as a proxy that denies the host answers the same way every time, and keep the HTTP status on LedgerAPI4xx and LedgerAPI5xx, which a CAL 4xx or 5xx page that is not JSON now raises with an empty message instead of an Error with the parse text
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`baf40c7`](https://github.com/LedgerHQ/ledger-live/commit/baf40c7721ae8525c7d99d48667a749d8de4e59a)]:
+  - @domain/entity-currency-crypto@0.21.0-next.0
+  - @shared/api-services@0.14.0-next.0
+  - @features/platform-feature-flags@0.13.2-next.0
+  - @domain/api-currency-token@0.9.1-next.0
+  - @domain/entity-currency-token@0.6.1-next.0
+
 ## 0.14.1
 
 ### Patch Changes
@@ -288,28 +303,5 @@
 - Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`600d432`](https://github.com/LedgerHQ/ledger-live/commit/600d432657f1c9adf80af6730dd28f2177e05c5a), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb)]:
   - @features/platform-feature-flags@0.7.0
   - @shared/api-services@0.7.0
-
-## 0.8.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`600d432`](https://github.com/LedgerHQ/ledger-live/commit/600d432657f1c9adf80af6730dd28f2177e05c5a), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb)]:
-  - @features/platform-feature-flags@0.7.0-next.0
-  - @shared/api-services@0.7.0
-
-## 0.8.0
-
-### Minor Changes
-
-- [#21396](https://github.com/LedgerHQ/ledger-live/pull/21396) [`ebb1371`](https://github.com/LedgerHQ/ledger-live/commit/ebb13714a6de9c39f290b2ccd51ca78370824f6f) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - Add the Gonka (GNK) currency feature flag, disabled by default
-
-### Patch Changes
-
-- Updated dependencies [[`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44), [`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`a9e389f`](https://github.com/LedgerHQ/ledger-live/commit/a9e389fc59ca30abf53d0ba8decc6290752ba1db), [`d60ce38`](https://github.com/LedgerHQ/ledger-live/commit/d60ce38581fe06b7f4fa72ba40259af2eabfe11f), [`2bd6a1c`](https://github.com/LedgerHQ/ledger-live/commit/2bd6a1c4b9d0cd229a8c9207108672b1a580968a)]:
-  - @shared/api-services@0.7.0
-  - @domain/entity-currency-crypto@0.12.0
-  - @domain/api-currency-token@0.6.1
-  - @features/platform-feature-flags@0.6.9
-  - @domain/entity-currency-token@0.5.2
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

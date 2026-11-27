@@ -52,7 +52,6 @@ export type Market = ReturnType<typeof marketStoreSelector>;
 export type MarketBanner = ReturnType<typeof marketBannerStoreSelector>;
 export type KnownDevices = ReturnType<typeof knownDevicesStoreSelector>;
 export type PayCard = PayCardFeatureTourState &
-  ReceiveVerifyHintState &
   PayCardBalanceState &
   PayCardLoginIntroState &
   PayCardOnboardingWidgetPersistedState;
@@ -76,6 +75,7 @@ type DatabaseValues = {
   featureFlags: Pick<FeatureFlagsState, "overrides" | "bannerVisible">;
   coinConfigOverrides: { overrides: Record<string, unknown> };
   identities: PersistedIdentities;
+  lldDatadog: { enabled: boolean; sessionSampleRate: number };
   history: { lastSeenOperationDate: string | null };
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
@@ -88,6 +88,7 @@ type DatabaseValues = {
   };
   largeScreenUpsellModal: RestorableLargeScreenUpsellModalState;
   payCard: PayCard;
+  receiveVerifyHint: ReceiveVerifyHintState;
   accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
 };
 

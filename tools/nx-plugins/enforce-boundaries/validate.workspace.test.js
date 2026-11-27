@@ -11,17 +11,21 @@ const {
   assertSkipDirsExcluded,
 } = require("./test-helpers");
 
-/** @type {Promise<Array<{ root: string, tags: string[] }>> | undefined} */
+/** @type {Promise<Array<{ name: string, root: string, tags: string[] }>> | undefined} */
 let workspaceNodes;
 
 /**
- * Root and tags of every node of the workspace project graph `lint:boundaries` checks.
+ * Name, root and tags of every node of the workspace project graph `lint:boundaries` checks.
  *
- * @returns {Promise<Array<{ root: string, tags: string[] }>>}
+ * @returns {Promise<Array<{ name: string, root: string, tags: string[] }>>}
  */
 function workspaceProjectNodes() {
   workspaceNodes ??= createProjectGraphAsync({ exitOnError: false }).then(graph =>
-    Object.values(graph.nodes).map(node => ({ root: node.data.root, tags: node.data.tags ?? [] })),
+    Object.entries(graph.nodes).map(([name, node]) => ({
+      name,
+      root: node.data.root,
+      tags: node.data.tags ?? [],
+    })),
   );
   return workspaceNodes;
 }
@@ -65,4 +69,15 @@ test("lint:boundaries inputs cover the manifest and project file of every graph 
     files.filter(file => !isLintBoundariesInput(file)),
     [],
   );
+});
+
+test("every BANNED_EXTERNALS_BY_TAG exception names a graph node carrying the rule's tag", async () => {
+  const nodes = await workspaceProjectNodes();
+  for (const { sourceTag, exceptProjects = [] } of BANNED_EXTERNALS_BY_TAG) {
+    for (const name of exceptProjects) {
+      const node = nodes.find(n => n.name === name);
+      assert.ok(node, `${name} is not a graph node`);
+      assert.ok(node.tags.includes(sourceTag), `${name} does not carry ${sourceTag}`);
+    }
+  }
 });

@@ -1,5 +1,14 @@
 # @ledgerhq/live-signer-evm
 
+## 0.24.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`5feaf06`](https://github.com/LedgerHQ/ledger-live/commit/5feaf06e713cfd096eeede46a624fd8991be6070), [`ea642dd`](https://github.com/LedgerHQ/ledger-live/commit/ea642ddb50ee3418f5d80cb3ec0d682ac7bf8d3b), [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653), [`7627a66`](https://github.com/LedgerHQ/ledger-live/commit/7627a66e667eb4b00ca417603c39d0adf5e2a094), [`866ed62`](https://github.com/LedgerHQ/ledger-live/commit/866ed62f04647abce7efeff0ebefe79c8e5bafde), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252), [`fcd1d97`](https://github.com/LedgerHQ/ledger-live/commit/fcd1d979dcce6f25d9e4dfcf7dd6b68d79b8b03c)]:
+  - @ledgerhq/ledger-wallet-framework@3.14.0-next.0
+  - @ledgerhq/live-dmk-shared@0.42.0-next.0
+  - @ledgerhq/hw-app-eth@7.14.1-next.0
+
 ## 0.24.7
 
 ### Patch Changes
@@ -194,22 +203,5 @@
 - Updated dependencies [[`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
   - @ledgerhq/ledger-wallet-framework@3.4.0
   - @ledgerhq/hw-app-eth@7.8.19
-
-## 0.23.2-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
-  - @ledgerhq/ledger-wallet-framework@3.4.0-next.0
-  - @ledgerhq/hw-app-eth@7.8.19-next.0
-
-## 0.23.1
-
-### Patch Changes
-
-- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225)]:
-  - @ledgerhq/ledger-wallet-framework@3.3.0
-  - @ledgerhq/live-env@4.0.0
-  - @ledgerhq/hw-app-eth@7.8.18
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

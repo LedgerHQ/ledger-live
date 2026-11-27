@@ -309,6 +309,7 @@
     "title": "Account settings",
     "menu": {
       "changeName": "Change name",
+      "manageAssets": "Manage assets",
       "viewAdvancedLogs": "View advanced logs",
       "viewExplorer": "View in explorer",
       "removeAccount": "Remove account from portfolio"
@@ -350,9 +351,6 @@
       "title": "Manage your agents",
       "description": "Let AI agents manage your assets."
     }
-  },
-  "stars": {
-    "tooltip": "Star account"
   },
   "bridge": {
     "modalTitle": "Device Bridge",
@@ -1246,43 +1244,6 @@
           "description": "Every transfer approved with your Ledger signer."
         }
       }
-    },
-    "request": {
-      "title": "Request {{asset}}",
-      "networkLabel": "{{network}} network",
-      "saveDialogTitle": "Save request card",
-      "actions": {
-        "share": "Share",
-        "copy": "Copy",
-        "copied": "Copied",
-        "save": "Save",
-        "verify": "Verify"
-      },
-      "verifyHint": {
-        "message": "Verify your address on\nyour Ledger device\nbefore sharing",
-        "gotIt": "Got it"
-      },
-      "verifyAddress": {
-        "introTitle": "Verify your address",
-        "introDescription": "To protect against address replacement attacks, verify your address on your Ledger device's Secure Screen.",
-        "verifyCta": "Verify address",
-        "successTitle": "Address displayed on the device's Secure Screen",
-        "nextStepsLabel": "Next steps",
-        "nextStepKeepDisplayed": "Keep your address displayed on your Ledger device. Don’t confirm it yet.",
-        "nextStepPaste": "Click “Got it,” then paste your address into the app you’re sharing it with.",
-        "nextStepCheckMatch": "Before sending, check that it matches the one on your Ledger device.",
-        "gotItCta": "Got it",
-        "device": {
-          "cancelledTitle": "Address verification cancelled",
-          "cancelledDescription": "You declined the address on your device. You can display it again to verify it.",
-          "mismatchTitle": "Addresses don't match",
-          "mismatchDescription": "The address shown on your device is different from the requested one. Do not share this address.",
-          "unsupportedTitle": "Verification not available",
-          "unsupportedDescription": "This device app can't display the address for on-device verification.",
-          "retryCta": "Show address again",
-          "closeCta": "Close"
-        }
-      }
     }
   },
   "lend": {
@@ -1544,7 +1505,6 @@
       "ledgerSync": "Sync accounts"
     },
     "contextMenu": {
-      "star": "Star",
       "receive": "Receive",
       "send": "Send",
       "swap": "Swap",
@@ -2140,7 +2100,7 @@
     },
     "xrp": {
       "title": "Tokens",
-      "cta": "Add token",
+      "cta": "Add",
       "placeholder": "You can add tokens to your {{currencyName}} account.",
       "link": "Learn more about XRP Ledger tokens",
       "seeTokens": "Show tokens ({{tokenCount}})",
@@ -2775,15 +2735,18 @@
   },
   "receiveAddress": {
     "title": "Receive {{asset}}",
+    "networkHelp": {
+      "description": "Select the same network you're using to send your {{asset}}. <0>Learn more</0>",
+      "title": "How to select the network?",
+      "choose": "When sending crypto from another wallet or exchange, you'll be asked to choose a network. In most cases, the main factor to consider is the coverage and the network fee. It's critical to select the same network as the one used to send. Choosing the wrong network may result in a permanent loss of funds.",
+      "testAmount": "If you're unsure, consider sending a small test amount first to confirm everything works correctly.",
+      "faq": "For more details, please <0>visit our FAQ page</0>."
+    },
     "networkLabel": "{{network}} network",
     "addressDisplayed": {
       "title": "Address securely displayed",
-      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device."
-    },
-    "addressVerified": {
-      "title": "Address verified",
-      "description": "The address in Ledger Wallet matches the one on your Ledger device.",
-      "doneCta": "Done"
+      "description": "Verify that the address once pasted or shared matches the one on your Ledger Device.",
+      "gotItCta": "Got it"
     },
     "addressMismatch": {
       "title": "This address doesn't match your Ledger",
@@ -2804,6 +2767,56 @@
       "title": "We couldn't load this address",
       "description": "Check your internet connection, then try again.",
       "retry": "Retry"
+    },
+    "actions": {
+      "copy": "Copy",
+      "copied": "Copied",
+      "share": "Share",
+      "verify": "Verify"
+    },
+    "verifyHint": {
+      "message": "Verify your address on\nyour Ledger device\nbefore sharing",
+      "gotIt": "Got it"
+    },
+    "notices": {
+      "utxo": "For privacy reasons, a new address is generated after each transaction. The previous ones remain valid.",
+      "taproot": "Make sure the sender supports Taproot addresses before sending.",
+      "dashStaking": "Don't use this address to receive staking rewards.",
+      "tronInactiveAccount": "Send at least 0.1 TRX to this address first to activate it.",
+      "tezosDelegation": "Funds received on a delegated account are added to the staked amount. Choose another account if you want to avoid this.",
+      "zcashPrivateNotEnabled": "Private (shielded) receiving isn't enabled on this account yet. Enable it from the account page to get a private address.",
+      "unverifiableAddress": "Your Ledger device can't display this address. Check it on the explorer before sharing it.",
+      "learnMore": "Learn more"
+    },
+    "serviceStatus": {
+      "continue": "Continue"
+    },
+    "gates": {
+      "onboarding": {
+        "title": "Set up your account first",
+        "description": "Your account must be onboarded on the {{network}} network before it can receive funds.",
+        "action": "Onboard account"
+      },
+      "activation": {
+        "title": "Add {{asset}} to your account first",
+        "description": "Your account must enable {{asset}} on the {{network}} network before it can receive it. This may cost a small network fee.",
+        "action": "Add {{asset}}"
+      }
+    },
+    "help": {
+      "cardTitle": "Need support? Get help",
+      "title": "Get help",
+      "receiveFromExchange": "How to receive from exchanges?",
+      "receiveSecurely": "How to receive securely?"
+    },
+    "memoTag": {
+      "title": "Need a Tag/Memo?",
+      "description": "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
+      "gotIt": "Got it"
+    },
+    "sanctioned": {
+      "title": "Keeping you safe",
+      "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n{{address}}"
     }
   },
   "send": {
@@ -4349,11 +4362,32 @@
   "xrp": {
     "addToken": {
       "title": "Add token",
+      "selectAsset": "Select asset",
+      "noAssets": "No assets available",
+      "review": {
+        "title": "Review asset details",
+        "account": "Account",
+        "asset": "Asset",
+        "viewIssuer": "View issuer in explorer",
+        "issuerFeeValue": "{{fee}} per transaction",
+        "networkFee": "Network fee",
+        "lockedAmountTooltip": "XRP amount added to your account's reserve to hold this asset.",
+        "notEnoughBalance": {
+          "title": "Not enough balance",
+          "description": "You need at least {{amount}} to add this asset.",
+          "swap": "Get XRP"
+        }
+      },
+      "result": {
+        "successTitle": "Asset added",
+        "successDescription": "You can now receive and use this asset.",
+        "errorTitle": "Failed to add asset"
+      },
       "steps": {
         "token": {
           "title": "Token",
           "selectLabel": "Choose a token",
-          "empty": "No token is available to add to this account.",
+          "empty": "You've already added all assets available on XRPL for this account.",
           "loadError": "The token list couldn't load.",
           "info": "Adding a token sends a transaction that pays a network fee and reserves XRP while you hold the token. It appears in your transaction history."
         },
@@ -4369,7 +4403,7 @@
           "token": "Token",
           "issuer": "Issuer",
           "issuerFee": "Issuer fee",
-          "issuerFeeTooltip": "The share of each transfer between holders that the issuer takes.",
+          "issuerFeeTooltip": "A percentage fee set by the asset's issuer, charged in this asset each time it's transferred.",
           "issuerFeeError": "Couldn't fetch issuer fee details.",
           "notEnoughReserve": "You need at least {{minimumAmount}} available to add this token.",
           "receive": "Receive"
@@ -4404,17 +4438,47 @@
       "cta": "Manage",
       "title": "Manage assets",
       "tokenType": "Token type",
-      "tokenTypeTooltip": "A trust line (IOU) has a balance limit and a rippling setting. A Multi Purpose Token (MPT) has no settings.",
-      "iou": "Trust Line (IOU)",
-      "mpt": "Multi Purpose Token",
-      "transferFee": "Transfer fee",
+      "tokenTypeTooltip": "The standard used to issue this asset on XRPL.",
+      "iou": "Trust Line",
+      "mpt": "Multi-Purpose Token (MPT)",
+      "issuerFee": "Issuer fee",
+      "transferFeeUnavailable": "Couldn't load",
       "lockedAmount": "Locked amount",
+      "lockedAmountUnavailable": "Couldn't load",
       "balanceLimit": "Balance limit",
-      "ripplingTooltip": "Rippling lets other users' payments move your balance between tokens with the same currency code.",
+      "balanceLimitTooltip": "The maximum amount of this asset your account can hold.",
+      "ripplingTooltip": "If activated, your balance can be used to route other users' payments, which may exchange it for the same asset from a different issuer.",
       "activated": "Activated",
       "deactivated": "Deactivated",
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "editAsset": {
+        "title": "Edit details",
+        "limitDescription": "Select the maximum amount of this asset your account can hold.",
+        "setMax": "Set to maximum",
+        "success": "Token settings updated",
+        "gotIt": "Got it"
+      },
+      "deleteBlocked": {
+        "title": "Empty your {{ticker}} balance to remove it",
+        "description": "Send your remaining {{ticker}} balance to remove this asset."
+      },
+      "deleteConfirm": {
+        "title": "Are you sure you want to delete {{ticker}}?",
+        "description": "This asset will be removed from your portfolio, and you won't be able to receive anymore. The locked amount will be released to your {{accountName}} account."
+      },
+      "deleteSuccess": {
+        "title": "{{ticker}} was successfully removed from your account",
+        "description": "You can add this asset again anytime."
+      },
+      "deleteError": {
+        "title": "Failed to remove asset"
+      },
+      "deleteFeeError": {
+        "title": "Not enough balance",
+        "description": "You need at least {{minimumAmount}} to cover for the network fee.",
+        "swap": "Go to swap"
+      }
     },
     "manageToken": {
       "title": "Manage token",
@@ -5644,6 +5708,114 @@
   },
   "settings": {
     "title": "Settings",
+    "sections": {
+      "general": "General",
+      "assetManagement": "Asset management",
+      "security": "Security",
+      "notifications": "Notifications",
+      "privacy": "Privacy",
+      "about": "About"
+    },
+    "security": {
+      "hideBalance": {
+        "title": "Hide balance",
+        "description": "Hide amounts for all balances. You can also access it from your top main navigation."
+      },
+      "appLock": {
+        "title": "App lock",
+        "description": "Set a password to open the app."
+      },
+      "changePassword": {
+        "title": "Change password",
+        "description": "Replace the password that opens the app.",
+        "action": "Change"
+      },
+      "autoLock": {
+        "title": "Auto-lock",
+        "description": "Automatically lock Ledger Wallet when inactive.",
+        "options": {
+          "oneMinute": "1 minute",
+          "tenMinutes": "10 minutes",
+          "thirtyMinutes": "30 minutes",
+          "oneHour": "1 hour",
+          "never": "Never"
+        }
+      },
+      "biometrics": {
+        "description": "Use {{biometric}} to open the app.",
+        "disabledDescription": "To enable {{biometric}}, turn on \"App lock\".",
+        "kind": {
+          "faceId": "Face ID",
+          "touchId": "Touch ID",
+          "biometrics": "Biometrics"
+        }
+      },
+      "mevProtection": {
+        "title": "MEV protection",
+        "description": "Enable for more reliable transactions on Ethereum.",
+        "learnMore": "Learn more"
+      }
+    },
+    "privacy": {
+      "bugReports": {
+        "title": "Bug reports",
+        "description": "Automatically send reports to help Ledger improve its products."
+      },
+      "appPerformance": {
+        "title": "App performance",
+        "description": "Enable Ledger to collect app usage to enhance the experience"
+      },
+      "personalizedExperience": {
+        "title": "Personalized experience",
+        "description": "Enable Ledger to collect app usage to provide personalized recommendations"
+      },
+      "analytics": {
+        "title": "Analytics",
+        "description": "Enable analytics to help Ledger improve user experience. This includes clicks, page visits, redirections, actions (send, receive, lock, etc), end of page scrolls, (un)installing and app version, number of accounts, crypto assets and operations, session durations, the Ledger device type and firmware."
+      },
+      "privacyPolicy": {
+        "title": "Privacy policy",
+        "description": "See what personal data are collected, why and how they are used"
+      }
+    },
+    "general": {
+      "ledgerSync": {
+        "title": "Ledger Sync",
+        "description": "Keep your wallet up to date on all your devices",
+        "manage": "Manage",
+        "activate": "Sync"
+      },
+      "theme": {
+        "title": "Theme",
+        "description": "Select your app theme",
+        "sheetTitle": "Select theme",
+        "options": {
+          "system": "System",
+          "light": "Light",
+          "dark": "Dark"
+        }
+      },
+      "language": {
+        "title": "Language",
+        "description": "Select the app language",
+        "sheetTitle": "Select language"
+      },
+      "region": {
+        "title": "Region",
+        "description": "Select the format of dates, times and numbers",
+        "dialogTitle": "Select your region",
+        "dialogDescription": "Choose region to update formats of dates, time and currencies"
+      },
+      "currency": {
+        "title": "Currency",
+        "description": "Select the currency displayed in the app",
+        "sheetTitle": "Select currency"
+      },
+      "search": {
+        "placeholder": "Search",
+        "emptyLabel": "No results"
+      }
+    },
     "discreet": "Toggle discreet mode",
     "tabs": {
       "display": "General",
@@ -6113,6 +6285,32 @@
       "launchOnboarding": "Device setup",
       "launchOnboardingDesc": "Set up a new device or restore an existing device. Accounts and settings are kept."
     },
+    "helpPage": {
+      "title": "Help",
+      "groups": {
+        "supportAndLearning": "Support and learning",
+        "more": "More"
+      },
+      "support": {
+        "title": "Ledger support",
+        "description": "Get help with our FAQs or chat"
+      },
+      "saveLogs": {
+        "description": "Saving logs may be needed for troubleshooting purposes."
+      },
+      "status": {
+        "title": "Ledger status"
+      },
+      "clearCache": {
+        "description": "Your network transactions will be scanned and your accounts will be recalculated."
+      },
+      "viewUserData": {
+        "description": "View the local data stored on this computer, including account settings and cached info."
+      },
+      "resetApp": {
+        "description": "Erase all local data from this computer. Your funds remain safe on the blockchain, but you will need to re-import your accounts."
+      }
+    },
     "help": {
       "version": "Version",
       "releaseNotesBtn": "Details",
@@ -6124,6 +6322,27 @@
       "termsDesc": "By using Ledger Wallet you are deemed to have accepted our Terms of Use.",
       "privacy": "Privacy Policy",
       "privacyDesc": "Refer to our Privacy Policy to learn what personal data we collect, why and how we use them."
+    },
+    "about": {
+      "version": {
+        "title": "Version"
+      },
+      "terms": {
+        "title": "Terms and conditions",
+        "description": "By using Ledger Wallet you are deemed to have accepted our terms and conditions"
+      },
+      "feedback": {
+        "title": "Give us feedback on the app"
+      },
+      "rate": {
+        "title": "Rate us on {{storeName}}"
+      },
+      "connect": {
+        "title": "Connect with us",
+        "x": "Follow us on X",
+        "instagram": "Follow us on Instagram",
+        "github": "Review our Github"
+      }
     },
     "experimental": {
       "disclaimer": "These are experimental features we provide on an \"as is\" basis for our tech savvy community to test. They may change, break or be removed at any time. By enabling them, you agree to use them at your own risk.",
@@ -8455,6 +8674,12 @@
     "SolanaRecipientMemoIsRequired": {
       "title": "Memo is required for recipient address"
     },
+    "SolanaNotEnoughSolForRecipientTokenAccount": {
+      "title": "Add {{missingAmount}} {{ticker}} to send: {{accountDeposit}} {{ticker}} to open the recipient's token account + {{networkFee}} {{ticker}} fee, with {{lockedReserve}} {{ticker}} kept in reserve."
+    },
+    "SolanaNotEnoughSolForTokenTransfer": {
+      "title": "Add {{missingAmount}} {{ticker}} to pay the {{networkFee}} {{ticker}} fee, with {{lockedReserve}} {{ticker}} kept in reserve."
+    },
     "SolanaTokenNonTransferable": {
       "title": "Token is non-transferable",
       "description": "Such tokens are \"soul-bound\" and cannot be transferred"
@@ -9991,6 +10216,72 @@
         "timeout": "The setup is taking too long.",
         "unavailable": "MoonPay couldn't be reached.",
         "unknown": "Something went wrong while setting it up."
+      }
+    },
+    "order": {
+      "preparing": "Preparing the signature",
+      "title": "Continue on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "mismatch": {
+        "title": "This signature doesn't match the account",
+        "description": "Connect the Ledger that holds this account, with the same passphrase if you use one, then try again."
+      },
+      "placing": "Placing your order",
+      "filled": {
+        "title": "Order complete",
+        "fill_one": "You bought {{shares}} share for {{amount}}",
+        "fill_other": "You bought {{shares}} shares for {{amount}}",
+        "paid": "You paid {{amount}}"
+      },
+      "notFilled": {
+        "title": "Order not filled",
+        "description": "The price moved. No funds left your balance."
+      },
+      "rejected": {
+        "title": "Order not placed",
+        "expired-signature": "The order's authorization expired before it was sent.",
+        "insufficient-balance": "Your trading balance is too low for this order.",
+        "invalid-tick-size": "The market's price increments changed.",
+        "market-closed": "This market is closed.",
+        "not-accepted": "MoonPay couldn't place the order."
+      },
+      "unconfirmed": {
+        "title": "We couldn't confirm your order",
+        "description": "Check your positions before trying again."
+      },
+      "tryAgain": "Try again"
+    },
+    "sale": {
+      "preparing": "Preparing the signature",
+      "title": "Continue on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "mismatch": {
+        "title": "This signature doesn't match the account",
+        "description": "Connect the Ledger that holds this account, with the same passphrase if you use one, then try again."
+      },
+      "placing": "Selling your shares",
+      "filled": {
+        "title": "Sale complete",
+        "fill_one": "You sold {{shares}} share for {{amount}}",
+        "fill_other": "You sold {{shares}} shares for {{amount}}",
+        "sold_one": "You sold {{shares}} share",
+        "sold_other": "You sold {{shares}} shares"
+      },
+      "notFilled": {
+        "title": "Sale not filled",
+        "description": "Nothing was sold. Try again with a fresh quote."
+      },
+      "rejected": {
+        "title": "Sale not placed",
+        "expired-signature": "The sale's authorization expired before it was sent.",
+        "insufficient-balance": "You don't hold enough shares for this sale.",
+        "invalid-tick-size": "The market's price increments changed.",
+        "market-closed": "This market is closed.",
+        "not-accepted": "MoonPay couldn't place the sale."
+      },
+      "unconfirmed": {
+        "title": "We couldn't confirm your sale",
+        "description": "Check your positions before trying again."
       }
     },
     "onboarding": {

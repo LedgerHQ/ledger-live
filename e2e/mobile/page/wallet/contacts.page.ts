@@ -3,6 +3,16 @@ import { byId, byIdAndText } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 import ContactDetailPage from "@e2e/page/wallet/contactDetail.page";
 
+type SavedContactAddressCountOptions = {
+  name: string;
+  expectedLabel: string;
+};
+
+type SavedContactRowNameOptions = {
+  rowId: string;
+  name: string;
+};
+
 const ME_CONTACT_DISPLAY_NAME = "My addresses (Me)";
 
 export default class ContactsPage {
@@ -101,8 +111,9 @@ export default class ContactsPage {
     await this.searchInput.clearText();
   }
 
-  @Step("Expect contact {{0}} address count to show {{1}}")
-  async expectSavedContactAddressCount(name: string, expectedLabel: string) {
+  @Step("Expect contact {{0.name}} address count to show {{0.expectedLabel}}")
+  async expectSavedContactAddressCount(options: SavedContactAddressCountOptions) {
+    const { name, expectedLabel } = options;
     const rowId = await this.getSavedContactRowId(name);
 
     await this.savedContactAddressCount(rowId).expectText(expectedLabel);
@@ -120,8 +131,9 @@ export default class ContactsPage {
     await this.detail.deleteContact();
   }
 
-  @Step("Expect contact row {{0}} to be named {{1}}")
-  async expectSavedContactRowName(rowId: string, name: string) {
+  @Step("Expect contact row {{0.rowId}} to be named {{0.name}}")
+  async expectSavedContactRowName(options: SavedContactRowNameOptions) {
+    const { rowId, name } = options;
     await this.savedContactRowName(rowId).expectText(name);
   }
 

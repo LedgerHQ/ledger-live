@@ -1,5 +1,33 @@
 # @shared/feature-flags
 
+## 0.33.0-next.0
+
+### Minor Changes
+
+- [#24686](https://github.com/LedgerHQ/ledger-live/pull/24686) [`faeace9`](https://github.com/LedgerHQ/ledger-live/commit/faeace97ae3de8c6e403e66732bdc16d57d78296) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Report Borrow transaction attempts left pending when the Borrow screen is torn down to the Borrow lifecycle sink on path `borrow`, behind the new `borrowTxLifecycleMonitoring` flag on Desktop and Mobile. Each attempt stays with the product that opened it, so Borrow never closes or reroutes an attempt Earn owns.
+
+- [#25646](https://github.com/LedgerHQ/ledger-live/pull/25646) [`9e67809`](https://github.com/LedgerHQ/ledger-live/commit/9e678098ea38d509fc4f19ffe05a2f06003a41c5) Thanks [@KVNLS](https://github.com/KVNLS)! - Update the Datadog browser SDK to v7, with trace baggage behind the lldDatadog flag
+
+- [#25500](https://github.com/LedgerHQ/ledger-live/pull/25500) [`0568a9d`](https://github.com/LedgerHQ/ledger-live/commit/0568a9d51bcc7244bad8ae415c7775697fc93811) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Move the Nano S deprecated currencies into the llmNanoSDeprecation params and remove the VTHO graph, token support link and EVM gas prefill leaks from generic Mobile code
+
+- [#25205](https://github.com/LedgerHQ/ledger-live/pull/25205) [`7627a66`](https://github.com/LedgerHQ/ledger-live/commit/7627a66e667eb4b00ca417603c39d0adf5e2a094) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add the lwmMyWalletDeviceList flag, off by default, to show the new device list in My Wallet on mobile
+
+- [#25199](https://github.com/LedgerHQ/ledger-live/pull/25199) [`5ea4203`](https://github.com/LedgerHQ/ledger-live/commit/5ea4203bdc7b89f7ef0ffe12ae9036b679320a97) Thanks [@deepyjr](https://github.com/deepyjr)! - Add the newSettings flag and the settings flow package for the new Settings, and report the flag in analytics
+
+- [#25699](https://github.com/LedgerHQ/ledger-live/pull/25699) [`089284b`](https://github.com/LedgerHQ/ledger-live/commit/089284b16bfee3dd5f6255799c58f5c8dbe108c8) Thanks [@shazzzam](https://github.com/shazzzam)! - Add the LI.FI Intents swap provider terms of use, name and scan.li.fi explorer link
+
+- [#25352](https://github.com/LedgerHQ/ledger-live/pull/25352) [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove the unused lldNetworkBasedAddAccount feature flag and its desktop analytics attribute
+
+- [#25021](https://github.com/LedgerHQ/ledger-live/pull/25021) [`4779bbd`](https://github.com/LedgerHQ/ledger-live/commit/4779bbd567b2f36cf01751c022a978b2d93cf288) Thanks [@CremaFR](https://github.com/CremaFR)! - Sign Perps trading actions with the Device Intent Executor behind the ptxPerpsDeviceIntentSign and ptxPerpsDeviceIntentSignMobile flags
+
+- [#25503](https://github.com/LedgerHQ/ledger-live/pull/25503) [`31cc80c`](https://github.com/LedgerHQ/ledger-live/commit/31cc80c18f3eeed000ce3ee3d97e8e1bdcd1bb37) Thanks [@dgreen-ledger](https://github.com/dgreen-ledger)! - Add a recover param to the deviceOnboarding feature flag, on by default. Turning it off hides the Ledger Recover steps of the unseeded device flow
+
+- [#25487](https://github.com/LedgerHQ/ledger-live/pull/25487) [`513bdba`](https://github.com/LedgerHQ/ledger-live/commit/513bdba4eee8332446903bb853ec5bc608cb46b9) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Add the borrowMarkets flag, off by default, mapping each Borrow stablecoin to its enabled collateral currency ids
+
+- [#25509](https://github.com/LedgerHQ/ledger-live/pull/25509) [`62493e1`](https://github.com/LedgerHQ/ledger-live/commit/62493e1d65a96ef1998f1ff8fd0e1880ae6190b9) Thanks [@deepyjr](https://github.com/deepyjr)! - Let the newSettings params choose which rows Apollo hides in the new Settings
+
+- [#25398](https://github.com/LedgerHQ/ledger-live/pull/25398) [`78d27e7`](https://github.com/LedgerHQ/ledger-live/commit/78d27e7045c452d503ad88e1ffb4e2621ef00074) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(wc): Enable device intent signing for the Wallet Connect live app and track it as the wallet_connect flow
+
 ## 0.32.0
 
 ### Minor Changes
@@ -439,55 +467,5 @@
   manifest of the live app owns its origin. The `lwdPayTab` flag carries `baanx_login_manifest_id`
   and `baanx_hosted_manifest_id`, which default to the staging manifests. A redirect that echoes no
   attempt id now passes the callback guards, so the app's own deep link completes the login.
-
-## 0.23.0-next.0
-
-### Minor Changes
-
-- [#21706](https://github.com/LedgerHQ/ledger-live/pull/21706) [`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add excludedCurrencyIds param to lwdContacts and lwmContacts feature flags to exclude specific currencies from Contacts
-
-- [#21656](https://github.com/LedgerHQ/ledger-live/pull/21656) [`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36) Thanks [@sarneijim](https://github.com/sarneijim)! - Add the Q3 Wallet V4 Tour feature flag, persisted seen state, mobile debug setup, and Segment wallet40Attributes.q3Tour
-
-- [#21802](https://github.com/LedgerHQ/ledger-live/pull/21802) [`7e44af4`](https://github.com/LedgerHQ/ledger-live/commit/7e44af495eccab1fac4b0808d6729a595b610c69) Thanks [@ysitbon](https://github.com/ysitbon)! - fix(feature-flags): let the middleware prime from a device-local flag cache
-
-  `createFeatureFlagsMiddleware` accepts two new optional callbacks:
-
-  - `readCachedFlags`, read before the first `fetchRemoteFlags` and without any network, so boot
-    resolves on the last values the backend actually sent rather than on compiled defaults. The
-    prime changes which values boot resolves on, not when readiness is announced: that stays
-    with the first fetch settling, so the boot gates keep the meaning they already had. The one
-    exception is a middleware given a cache reader and no fetcher, where nothing else would ever
-    settle: there the prime re-resolves once and arms the gate itself.
-  - `onRemoteFlagsError`, invoked once per failed read with its stage, attempt number and whether
-    any values are held yet. Purely observational: the return value is ignored and a throwing
-    handler cannot stop the poll loop. Failed fetches used to be swallowed silently.
-
-  Both are opt-in. A middleware configured without `readCachedFlags` behaves exactly as before.
-
-- [#21802](https://github.com/LedgerHQ/ledger-live/pull/21802) [`7050652`](https://github.com/LedgerHQ/ledger-live/commit/70506520dafbccca4e014ac30d75647a5b7fe7d0) Thanks [@ysitbon](https://github.com/ysitbon)! - refactor(feature-flags): split the middleware body into named helpers
-
-  `createFeatureFlagsMiddleware` now assembles a handful of small module-private helpers instead of
-  inlining them, so its body reads as: build the collaborators, pick one of the two start-ups,
-  return the middleware. `pollRemoteFlags` takes a deps object rather than seven positional
-  arguments. Behaviour and public API are unchanged.
-
-- [#21751](https://github.com/LedgerHQ/ledger-live/pull/21751) [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb) Thanks [@sarneijim](https://github.com/sarneijim)! - Add releaseTour and gate Q2/Q3 tours with it, dropping q2Tour/q3Tour from Wallet 4.0
-
-- [#21628](https://github.com/LedgerHQ/ledger-live/pull/21628) [`903c180`](https://github.com/LedgerHQ/ledger-live/commit/903c1802ea5d4cc3fe1bfe5609b8cf3871152cf0) Thanks [@ishaba](https://github.com/ishaba)! - feat(tron): add gasSponsorship feature flag
-
-- [#21791](https://github.com/LedgerHQ/ledger-live/pull/21791) [`a6a7a94`](https://github.com/LedgerHQ/ledger-live/commit/a6a7a946b1c1dbdda1cfa2c049f536f7235ddde2) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Complete the Card login on desktop. The provider's page opens in the Discover webview, and the
-  manifest of the live app owns its origin. The `lwdPayTab` flag carries `baanx_login_manifest_id`
-  and `baanx_hosted_manifest_id`, which default to the staging manifests. A redirect that echoes no
-  attempt id now passes the callback guards, so the app's own deep link completes the login.
-
-## 0.22.0
-
-### Minor Changes
-
-- [#21833](https://github.com/LedgerHQ/ledger-live/pull/21833) [`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Fix walletsync feature flags (lldWalletSync, llmWalletSync) to default to the PROD environment instead of STAGING.
-
-- [#21396](https://github.com/LedgerHQ/ledger-live/pull/21396) [`ebb1371`](https://github.com/LedgerHQ/ledger-live/commit/ebb13714a6de9c39f290b2ccd51ca78370824f6f) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - Add the Gonka (GNK) currency feature flag, disabled by default
-
-- [#21283](https://github.com/LedgerHQ/ledger-live/pull/21283) [`761cf3e`](https://github.com/LedgerHQ/ledger-live/commit/761cf3e359fa197d07f6086d8522fd1785ba575d) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add earn banner to success transation modal
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -1,5 +1,16 @@
 # @features/flow-fear-and-greed
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#25448](https://github.com/LedgerHQ/ledger-live/pull/25448) [`2477ff0`](https://github.com/LedgerHQ/ledger-live/commit/2477ff061ff3c13393d4fec2f609602b08813a71) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Build fear-and-greed and contacts introduction wording keys from their literal unions
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-market-index-fear-and-greed@0.5.1-next.0
+
 ## 0.6.1
 
 ### Patch Changes

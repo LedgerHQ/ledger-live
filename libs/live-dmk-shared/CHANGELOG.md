@@ -1,5 +1,20 @@
 # @ledgerhq/live-dmk
 
+## 0.42.0-next.0
+
+### Minor Changes
+
+- [#25367](https://github.com/LedgerHQ/ledger-live/pull/25367) [`5feaf06`](https://github.com/LedgerHQ/ledger-live/commit/5feaf06e713cfd096eeede46a624fd8991be6070) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Send the Device UX V2 analytics events of the connectivity screen, alone and in the Add mode of the device list
+
+- [#25368](https://github.com/LedgerHQ/ledger-live/pull/25368) [`ea642dd`](https://github.com/LedgerHQ/ledger-live/commit/ea642ddb50ee3418f5d80cb3ec0d682ac7bf8d3b) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Send the Device UX V2 analytics events of the My Wallet device list
+
+- [#25205](https://github.com/LedgerHQ/ledger-live/pull/25205) [`7627a66`](https://github.com/LedgerHQ/ledger-live/commit/7627a66e667eb4b00ca417603c39d0adf5e2a094) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - `connectKnownOrNewDevice` takes an optional `onAddNewDevice`: Add calls it instead of opening the Add mode
+
+### Patch Changes
+
+- Updated dependencies [[`1b1d171`](https://github.com/LedgerHQ/ledger-live/commit/1b1d171a6e5fa3be798eeee2ba90d462d3f23dad)]:
+  - @domain/entity-client-identity@0.7.0-next.0
+
 ## 0.41.0
 
 ### Minor Changes
@@ -347,27 +362,5 @@
 - [#21284](https://github.com/LedgerHQ/ledger-live/pull/21284) [`6cef6b5`](https://github.com/LedgerHQ/ledger-live/commit/6cef6b5341c30850aa74159bdbdea0a18f89de4c) Thanks [@benruseau](https://github.com/benruseau)! - Add the OS update orchestrator and its pre-checks, taking a connected device and recovering from device lock and disconnection
 
 - [#21270](https://github.com/LedgerHQ/ledger-live/pull/21270) [`5b9df59`](https://github.com/LedgerHQ/ledger-live/commit/5b9df5970cb628dbfe592227231b66ff498f480c) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Map the DMK invalid firmware metadata error to a dedicated InvalidProvider blocking state, so the Device Intent Executor shows a clear "Invalid Provider" screen with a "Go to settings" action instead of a raw error
-
-## 0.31.0
-
-### Minor Changes
-
-- [#20616](https://github.com/LedgerHQ/ledger-live/pull/20616) [`1a2df41`](https://github.com/LedgerHQ/ledger-live/commit/1a2df41eed302864ec2e0b58dc9eef75e8b90eec) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Export shared Device Intent Executor header override helpers.
-
-### Patch Changes
-
-- Updated dependencies [[`a7b0bae`](https://github.com/LedgerHQ/ledger-live/commit/a7b0baeaa4e7b2fb180e7ab28ce92a6287b46a68)]:
-  - @ledgerhq/types-devices@7.0.0
-
-## 0.31.0-next.0
-
-### Minor Changes
-
-- [#20616](https://github.com/LedgerHQ/ledger-live/pull/20616) [`1a2df41`](https://github.com/LedgerHQ/ledger-live/commit/1a2df41eed302864ec2e0b58dc9eef75e8b90eec) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Export shared Device Intent Executor header override helpers.
-
-### Patch Changes
-
-- Updated dependencies [[`a7b0bae`](https://github.com/LedgerHQ/ledger-live/commit/a7b0baeaa4e7b2fb180e7ab28ce92a6287b46a68)]:
-  - @ledgerhq/types-devices@7.0.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

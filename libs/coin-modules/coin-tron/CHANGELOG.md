@@ -1,5 +1,21 @@
 # @ledgerhq/coin-tron
 
+## 10.6.0-next.0
+
+### Minor Changes
+
+- [#25582](https://github.com/LedgerHQ/ledger-live/pull/25582) [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653) Thanks [@qperrot](https://github.com/qperrot)! - Show a failed token transfer as a failed send of its attempted amount, without moving the token balance history
+
+- [#25316](https://github.com/LedgerHQ/ledger-live/pull/25316) [`b5dfc59`](https://github.com/LedgerHQ/ledger-live/commit/b5dfc59ec046e0daca132e41002413a9fc0415d4) Thanks [@ishaba](https://github.com/ishaba)! - Sum TRC20 transfers of one token in one direction within a transaction so none is lost
+
+- [#25313](https://github.com/LedgerHQ/ledger-live/pull/25313) [`d735125`](https://github.com/LedgerHQ/ledger-live/commit/d73512533b0b2e31337953877db54b735e725de5) Thanks [@ishaba](https://github.com/ishaba)! - Time out and retry TronGrid POSTs except broadcasts, and fail the history listing when the minHeight block lookup fails instead of restarting from zero
+
+- [#25284](https://github.com/LedgerHQ/ledger-live/pull/25284) [`a376ffb`](https://github.com/LedgerHQ/ledger-live/commit/a376ffb073b8cebd8d59da988e21361f17d73a70) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - fix(deps): update dependency tronweb to v6.5.2
+
+  - Updated `tronweb` to `6.5.2`
+
+- [#25294](https://github.com/LedgerHQ/ledger-live/pull/25294) [`5f2a864`](https://github.com/LedgerHQ/ledger-live/commit/5f2a8649a328cc929e823586b124d5a96d0cae42) Thanks [@ishaba](https://github.com/ishaba)! - Fix the operation history walk stopping early and dropping older operations
+
 ## 10.5.0
 
 ### Minor Changes
@@ -285,49 +301,5 @@
 ### Minor Changes
 
 - [#21536](https://github.com/LedgerHQ/ledger-live/pull/21536) [`dab00b6`](https://github.com/LedgerHQ/ledger-live/commit/dab00b64ef4bff300010e258465db60b3c696b9e) Thanks [@ishaba](https://github.com/ishaba)! - fix(coin-tron): restore the TRC20 fee_limit default
-
-## 7.2.0-next.0
-
-### Minor Changes
-
-- [#21168](https://github.com/LedgerHQ/ledger-live/pull/21168) [`7574368`](https://github.com/LedgerHQ/ledger-live/commit/75743686eb07431fd1e4101198ef727a5376f745) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Adopt the coin-module authoring type, dropping the hand-written "not supported" stubs.
-
-  `createApi` now returns its object with `satisfies CoinModuleImpl<TronCoinConfig, TronMemo, TronTxData>` — which keeps the precise shape, so a caller sees exactly which methods exist — and omits the four capabilities Tron has none of instead of giving each a `throw new Error("… is not supported")`.
-
-  Why each is absent is recorded above the factory rather than lost with the stub it used to sit on: contract reads (`triggerconstantcontract`) are not supported yet, withdrawals already appear in `listOperations`, the chain accepts no externally-built transaction, and there is no enrollment step.
-
-  Consumers see no change. They reach the module through a resolver that applies the framework's `withDefaults`, which supplies every omitted capability, so the same call still raises the same `"<method> is not supported"` error — and `supports(method)` now reports which capabilities are real.
-
-  The authored type also keeps the contract's trailing optional parameters, or a caller reaching the module through it could no longer pass them: `broadcast`, `combine`, `estimateFees` accept and ignore theirs. TypeScript does not hold a function's shorter parameter list against a target declaring more, so the `satisfies` passed either way and nothing flagged the narrowing.
-
-- [#21143](https://github.com/LedgerHQ/ledger-live/pull/21143) [`9b4214f`](https://github.com/LedgerHQ/ledger-live/commit/9b4214fea8a3d8d8da30cd0b5ba6f9032610527e) Thanks [@ishaba](https://github.com/ishaba)! - Stop the generic coin framework silently dropping typed memos (LIVE-35735). Shared `transactionToIntent` emitted a memo shape that predated the framework's memo union — `{ type: memoType, value }` with no `kind`, and `{ type: "NO_MEMO" }` — so a family declaring a typed memo received one its `type === "string" && kind === "…"` guard rejected: the memo resolved to `undefined` and never reached the chain, with no error, which is why it survived the type checker and the migration's unit tests. It now emits the framework's own `StringMemo` (with `memoType` as the `kind`) and `MemoNotSupported` (`{ type: "none" }`), so the note survives for Tron today and for the Cardano, Concordium, Casper and Algorand migrations that read the same shape. The external, pre-union coin-stellar reads `memo.type` as its own Stellar memo kind with a `NO_MEMO` sentinel; its family adapter (`families/stellar/coinModuleApi.ts`) translates the union onto that flat shape at the call boundary, so the shared layer needs no family-specific memo branch.
-
-  For Tron this also prices and surfaces the memo now that it reaches the chain: `estimateFees` reads the `getMemoFee` chain parameter (TIP-387) and adds it — along with the memo's bytes to the bandwidth size — for a memo-bearing native or TRC-10 send, falling back to 1 TRX only when chain parameters are unreachable; and sync decodes the memo back out of `raw_data.data` onto the operation's `extra.memo` so it appears in history.
-
-### Patch Changes
-
-- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682)]:
-  - @ledgerhq/types-live@6.122.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.2.0-next.0
-
-## 7.1.0
-
-### Minor Changes
-
-- [#21062](https://github.com/LedgerHQ/ledger-live/pull/21062) [`952af1c`](https://github.com/LedgerHQ/ledger-live/commit/952af1c44b4f7403293d3ec24c53b030c7f05781) Thanks [@ishaba](https://github.com/ishaba)! - Respect a custom fee limit passed to a TRC-20 `craftTransaction` instead of flooring it to `DEFAULT_TRC20_FEES_LIMIT` (LIVE-36391).
-
-  The generic coin framework migration started raising any override below 50M sun (and `0`) to the default, so a caller-chosen `fee_limit` was silently ignored. The value now passes straight through; the default applies only when no custom fee is provided.
-
-- [#20799](https://github.com/LedgerHQ/ledger-live/pull/20799) [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0) Thanks [@ishaba](https://github.com/ishaba)! - Migrate Tron to the generic coin framework (LIVE-34994).
-
-  Adds a per-family pending-operation `extra` to the generic framework: `OptimisticOperationDescriptor` gains an optional `extra` bag and `describeOptimisticOperation` receives the transaction it describes, with framework-reserved keys stripped so a family cannot shadow them.
-
-- [#20866](https://github.com/LedgerHQ/ledger-live/pull/20866) [`963eafc`](https://github.com/LedgerHQ/ledger-live/commit/963eafce0c9acd89f4fcfccba39f64dcde39e32f) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Fix getBalance returning a zero balance instead of surfacing upstream API errors
-
-### Patch Changes
-
-- Updated dependencies [[`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`6c425e0`](https://github.com/LedgerHQ/ledger-live/commit/6c425e0e869c6feed4bd4c87ee0fef5443617708), [`585d8d7`](https://github.com/LedgerHQ/ledger-live/commit/585d8d78d5e153186c39ee2abfcdb7dc4a5d06e0), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e)]:
-  - @ledgerhq/types-live@6.121.0
-  - @ledgerhq/ledger-wallet-framework@3.1.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

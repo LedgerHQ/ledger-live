@@ -1,6 +1,6 @@
 {
   "name": "@shared/cloud-sync",
-  "version": "0.3.0",
+  "version": "0.4.0-next.0",
   "private": true,
   "description": "Cloud sync transport layer: CloudSyncSDK with native fetch and WebSocket transport",
   "main": "src/index.ts",
@@ -21,10 +21,8 @@
   },
   "dependencies": {
     "base64-js": "1",
-    "isomorphic-ws": "catalog:",
     "pako": "^2.0.4",
     "rxjs": "catalog:",
-    "ws": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -42,6 +40,7 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:",
-    "@support/jest": "workspace:*"
+    "@support/jest": "workspace:*",
+    "ws": "catalog:"
   }
 }

@@ -131,6 +131,10 @@ describe("generic-coin-framework NEAR bridge api", () => {
       expect(bridgeApi.usesStakingPositions).toBe(true);
     });
 
+    it("sums the native balance partitions, as coin-near reports the staking positions apart", () => {
+      expect(bridgeApi.partitionsNativeBalance).toBe(true);
+    });
+
     it("wires computeIntentType so the framework picks it up over its own whitelist", () => {
       expect(bridgeApi.computeIntentType).toBe(computeIntentType);
       expect(bridgeApi.computeIntentType?.({ mode: "withdraw" })).toBe("finalize_unstake");

@@ -1,5 +1,13 @@
 # @ledgerhq/coin-hedera
 
+## 3.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7), [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`866ed62`](https://github.com/LedgerHQ/ledger-live/commit/866ed62f04647abce7efeff0ebefe79c8e5bafde), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252), [`fcd1d97`](https://github.com/LedgerHQ/ledger-live/commit/fcd1d979dcce6f25d9e4dfcf7dd6b68d79b8b03c)]:
+  - @ledgerhq/ledger-wallet-framework@3.14.0-next.0
+  - @ledgerhq/types-live@6.134.0-next.0
+
 ## 3.5.0
 
 ### Minor Changes
@@ -355,50 +363,5 @@
 - Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
   - @ledgerhq/types-live@6.124.0
   - @ledgerhq/ledger-wallet-framework@3.4.0
-
-## 2.4.0-next.0
-
-### Minor Changes
-
-- [#21703](https://github.com/LedgerHQ/ledger-live/pull/21703) [`2706dda`](https://github.com/LedgerHQ/ledger-live/commit/2706ddad88ea10d117093bba8775b6aef655fbda) Thanks [@ysitbon](https://github.com/ysitbon)! - Restore lazy runtime read of the countervalues API endpoint.
-
-  PR #21659 dropped the live-countervalues dependency and inlined the CVS spot-price call.
-  In doing so it replaced the per-call `getEnv("LEDGER_COUNTERVALUES_API")` with a
-  module-level `process.env` constant evaluated once at import time. The default URL was
-  always correct, but the mobile debug staging toggle (`CountervaluesStagingRow`) calls
-  `setEnv("LEDGER_COUNTERVALUES_API", ...)` at runtime; with a const that write is silently
-  ignored and Hedera fee estimation stays on production rates while every other CVS caller
-  follows the toggle.
-
-  Fix: read `getEnv("LEDGER_COUNTERVALUES_API")` inline at request time and re-add
-  `@ledgerhq/live-env` as a runtime dependency.
-
-- [#21659](https://github.com/LedgerHQ/ledger-live/pull/21659) [`c6df5b6`](https://github.com/LedgerHQ/ledger-live/commit/c6df5b65aa66f44d8dff124e4e1d089d53e1d1a6) Thanks [@ysitbon](https://github.com/ysitbon)! - Fetch the HBAR/USD spot rate directly from the countervalues service instead of through `@ledgerhq/live-countervalues`, removing that runtime dependency. Rate values, caching, and the fallback to the default fee estimate are unchanged.
-
-### Patch Changes
-
-- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
-  - @ledgerhq/types-live@6.124.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.4.0-next.0
-
-## 2.3.0
-
-### Minor Changes
-
-- [#21302](https://github.com/LedgerHQ/ledger-live/pull/21302) [`1e883b3`](https://github.com/LedgerHQ/ledger-live/commit/1e883b36260cb3d78c34251de87a2da1ec353d9f) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: read Hedera staking validators through an on-demand query on desktop, with loading and fetch-error states
-
-- [#21305](https://github.com/LedgerHQ/ledger-live/pull/21305) [`7aca4c8`](https://github.com/LedgerHQ/ledger-live/commit/7aca4c8a806ab270cd990d63b1c651e443b7e149) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - refactor: drop the Hedera preload layer now that no consumer reads it, and fold useHederaEnrichedDelegationV2 back into useHederaEnrichedDelegation
-
-- [#21383](https://github.com/LedgerHQ/ledger-live/pull/21383) [`6f39b04`](https://github.com/LedgerHQ/ledger-live/commit/6f39b0411286ed5c82362c9ffafb953abe8b53b7) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: implement `validateIntent` in coin-hedera's logic layer, replacing the "not supported" throw
-
-- [#21301](https://github.com/LedgerHQ/ledger-live/pull/21301) [`6dfa950`](https://github.com/LedgerHQ/ledger-live/commit/6dfa9501d8125f88d986105882f3f3fc72b8b371) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - refactor: fetch validators on demand in coin-hedera module
-
-### Patch Changes
-
-- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`e42c12a`](https://github.com/LedgerHQ/ledger-live/commit/e42c12a392ba60ee839c9a71f4f0d409ad9430fa), [`eb62268`](https://github.com/LedgerHQ/ledger-live/commit/eb622688cb7561882cd02b52c2eed569d5dc68f3), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`53dcdc9`](https://github.com/LedgerHQ/ledger-live/commit/53dcdc9bbef2324b48fac7469c2c1d0e66f7361f), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`54124e4`](https://github.com/LedgerHQ/ledger-live/commit/54124e435c7adc3a2c3a9ed6cd1865fc68fa2584), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225), [`a19ffef`](https://github.com/LedgerHQ/ledger-live/commit/a19ffeff9dd4e173890d75d8634a33e53cc5a5d0), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783)]:
-  - @ledgerhq/types-live@6.123.0
-  - @ledgerhq/ledger-wallet-framework@3.3.0
-  - @ledgerhq/live-countervalues@0.25.0
-  - @ledgerhq/live-env@4.0.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

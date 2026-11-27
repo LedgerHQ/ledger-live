@@ -1,6 +1,6 @@
 {
   "name": "@devtools/bindings",
-  "version": "0.17.0",
+  "version": "0.18.0-next.0",
   "private": true,
   "description": "App-specific builders that adapt Ledger Live state into @devtools tool props (one builder per tool)",
   "main": "src/index.ts",
@@ -30,6 +30,7 @@
     "@domain/api-currency-token": "workspace:*",
     "@domain/entity-account": "workspace:*",
     "@domain/entity-account-balance": "workspace:*",
+    "@domain/entity-account-context": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-account-name": "workspace:*",
@@ -44,6 +45,7 @@
     "@domain/entity-currency-fiat": "workspace:*",
     "@domain/entity-derivation": "workspace:*",
     "@domain/entity-currency-unit": "workspace:*",
+    "@domain/entity-network": "workspace:*",
     "@domain/entity-predictions": "workspace:*",
     "@features/flow-account-detail-analytics-notice": "workspace:*",
     "@features/flow-pay-card-auth": "workspace:*",
@@ -96,6 +98,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-redux": "catalog:",
+    "rxjs": "catalog:",
     "typescript": "catalog:"
   }
 }

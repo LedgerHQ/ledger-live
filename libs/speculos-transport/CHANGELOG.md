@@ -1,5 +1,12 @@
 # @ledgerhq/speculos-transport
 
+## 0.13.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`da43922`](https://github.com/LedgerHQ/ledger-live/commit/da43922929ef693a87382dcfe83b34fce96ddec1)]:
+  - @ledgerhq/live-dmk-speculos@0.14.0-next.0
+
 ## 0.13.1
 
 ### Patch Changes

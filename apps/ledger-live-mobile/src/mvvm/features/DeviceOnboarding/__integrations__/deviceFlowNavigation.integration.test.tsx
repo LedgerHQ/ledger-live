@@ -15,6 +15,7 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import { activeDeviceSessionSubject, type DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
+import { track, trackPage } from "@shared/analytics";
 import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import { NavigatorName, ScreenName } from "~/const";
@@ -136,13 +137,17 @@ function BaseOnboardingNavigator() {
   );
 }
 
-type AppOptions = { firstLaunch?: boolean; offerLedgerSync?: boolean; hostsSeedSetup?: boolean };
+type AppOptions = {
+  firstLaunch?: boolean;
+  offerLedgerSync?: boolean;
+  connectUnseededDevice?: boolean;
+};
 
 /** Read-only users start on the portfolio; on first launch onboarding is the only screen. */
 function renderApp({
   firstLaunch = false,
   offerLedgerSync = false,
-  hostsSeedSetup = true,
+  connectUnseededDevice = true,
 }: AppOptions = {}) {
   const flow = (
     <Root.Screen
@@ -172,7 +177,7 @@ function renderApp({
           deviceOnboarding: {
             enabled: true,
             params: {
-              connectUnseededDevice: hostsSeedSetup,
+              connectUnseededDevice,
               connectSeededDevice: true,
               offerLedgerSync,
             },
@@ -193,17 +198,22 @@ function renderApp({
 
 let emitScan: ((state: ConnectNewDeviceUIState) => void) | undefined;
 
-function connectionResult(dmk: DeviceManagementKit, sessionId: string): DeviceConnectionResult {
+function connectionResult(
+  dmk: DeviceManagementKit,
+  sessionId: string,
+  modelId: DeviceModelId = DeviceModelId.STAX,
+  name = "Ledger Stax",
+): DeviceConnectionResult {
   return {
     dmk,
     sessionId,
     compatDeviceId: "device-id",
-    compatDeviceName: "Ledger Stax",
+    compatDeviceName: name,
     compatDeviceWired: false,
     connectedDevice: {
       id: "device-id",
-      name: "Ledger Stax",
-      modelId: DeviceModelId.STAX,
+      name,
+      modelId,
       sessionId,
       type: "BLE",
       transport: rnBleTransportIdentifier,
@@ -211,8 +221,19 @@ function connectionResult(dmk: DeviceManagementKit, sessionId: string): DeviceCo
   };
 }
 
-/** The scan finds the Stax; pressing Connect pairs it on the scripted device. */
-function showStax(device: ReturnType<typeof createScriptedTestDevice>) {
+/** The scan finds the device; pressing Connect pairs it on the scripted device. */
+function showTouchscreenDevice(
+  device: ReturnType<typeof createScriptedTestDevice>,
+  {
+    dmkModelId = DeviceModelId.STAX,
+    ledgerModelId = LedgerDeviceModelId.stax,
+    name = "Ledger Stax",
+  }: {
+    dmkModelId?: DeviceModelId;
+    ledgerModelId?: LedgerDeviceModelId;
+    name?: string;
+  } = {},
+) {
   const onConnected = jest.mocked(connectNewDevice).mock.calls.at(-1)?.[0].onConnected;
   act(() =>
     emitScan?.({
@@ -222,18 +243,23 @@ function showStax(device: ReturnType<typeof createScriptedTestDevice>) {
           key: "device-id",
           device: {
             id: "device-id",
-            name: "Ledger Stax",
-            deviceModelId: LedgerDeviceModelId.stax,
+            name,
+            deviceModelId: ledgerModelId,
             transport: rnBleTransportIdentifier,
           },
           isAvailable: true,
-          onSelect: () => onConnected?.(connectionResult(device.dmk, device.sessionId)),
+          onSelect: () =>
+            onConnected?.(connectionResult(device.dmk, device.sessionId, dmkModelId, name)),
         },
       ],
       scanningTransports: [rnBleTransportIdentifier],
       showDeviceNotFound: false,
     }),
   );
+}
+
+function showStax(device: ReturnType<typeof createScriptedTestDevice>) {
+  showTouchscreenDevice(device);
 }
 
 async function openFlow(user: ReturnType<typeof render>["user"]) {
@@ -364,6 +390,7 @@ describe("device onboarding flow navigation", () => {
   it("should end a restore on the success karaoke and complete onboarding on its last tap", async () => {
     answerWelcome(device);
     const { user, store } = renderApp({ firstLaunch: true });
+    jest.mocked(track).mockClear();
 
     await user.press(await screen.findByTestId("onboarding-setupLedger"));
     showStax(device);
@@ -385,12 +412,14 @@ describe("device onboarding flow navigation", () => {
     ).toBeVisible();
     expect(screen.queryByRole("button", { name: "Close" })).toBeNull();
     expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+    expect(seededEvents()).not.toContain("onboarding_done");
 
     await user.press(screen.getByTestId(karaokeTestIds.advance));
-    await user.press(await screen.findByRole("button", { name: "Explore now" }));
+    await user.press(await screen.findByRole("button", { name: "Start exploring" }));
 
     expect(await screen.findByText("portfolio")).toBeVisible();
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+    expect(seededEvents().filter(event => event === "onboarding_done")).toHaveLength(1);
   });
 
   it("should open Ledger Sync from the sync offer after the checks", async () => {
@@ -404,9 +433,40 @@ describe("device onboarding flow navigation", () => {
     expect(await screen.findByText("Choose a Ledger device")).toBeVisible();
   });
 
+  it("should send the seeded funnel events in order, from the checks to a skipped Ledger Sync", async () => {
+    answerSeeded(device);
+    const { user } = renderApp({ offerLedgerSync: true });
+    jest.mocked(track).mockClear();
+    jest.mocked(trackPage).mockClear();
+
+    await openFlow(user);
+    await pairAndPassChecks(user, device);
+    await user.press(await screen.findByTestId(syncOfferTestIds.skip));
+    await user.press(await screen.findByTestId("sync-onboarding-drawer-skipCTA"));
+
+    await waitFor(() => expect(seededEvents()).toContain("onboarding_done"));
+    // The bottom sheet mock renders a closed sheet, so its page is sent early in tests only.
+    const skipDrawerPage = "Page Drawer : Skip Ledger sync confirmation";
+    expect(seededEvents()).toContain(skipDrawerPage);
+    expect(seededEvents().filter(event => event !== skipDrawerPage)).toEqual([
+      "Page Genuine Check",
+      "onboarding_started",
+      "button_clicked: Initiate Genuine Check",
+      "Page Genuine Check started",
+      "Page Check OS version",
+      "Page Genuine Check & OS success",
+      "button_clicked: Continue",
+      "Page Ledger Sync",
+      "button_clicked: Skip",
+      "button_clicked: Yes, skip",
+      "Page Ledger Sync Refused",
+      "onboarding_done",
+    ]);
+  });
+
   it("should leave the flow for the old setup when this flow cannot set up the device", async () => {
     answerWelcome(device);
-    const { user } = renderApp({ hostsSeedSetup: false });
+    const { user } = renderApp({ connectUnseededDevice: false });
 
     await user.press(await screen.findByLabelText("portfolio connect"));
     await user.press(await screen.findByTestId("onboarding-accessWallet"));
@@ -436,7 +496,72 @@ describe("device onboarding flow navigation", () => {
 
     expect(await screen.findByText("firmware update screen")).toBeVisible();
   });
+
+  it.each([
+    {
+      label: "Flex",
+      dmkModelId: DeviceModelId.FLEX,
+      ledgerModelId: LedgerDeviceModelId.europa,
+      name: "Ledger Flex",
+    },
+    {
+      label: "Stax",
+      dmkModelId: DeviceModelId.STAX,
+      ledgerModelId: LedgerDeviceModelId.stax,
+      name: "Ledger Stax",
+    },
+    {
+      label: "Gen5",
+      dmkModelId: DeviceModelId.APEX,
+      ledgerModelId: LedgerDeviceModelId.apex,
+      name: "Ledger Gen5",
+    },
+  ])(
+    "should continue into the new unseeded onboarding flow for $label instead of legacy onboarding",
+    async ({ dmkModelId, ledgerModelId, name }) => {
+      const touchscreenDevice = createScriptedTestDevice({
+        modelId: dmkModelId,
+        ledgerModelId,
+        name,
+      });
+      jest.mocked(useDeviceManagementKit).mockReturnValue(touchscreenDevice.dmk);
+      answerWelcome(touchscreenDevice);
+      const { user } = renderApp({ firstLaunch: true });
+
+      await user.press(await screen.findByTestId("onboarding-setupLedger"));
+      expect(await screen.findByText("Looking for your Ledger devices")).toBeVisible();
+      showTouchscreenDevice(touchscreenDevice, { dmkModelId, ledgerModelId, name });
+      await user.press(screen.getByLabelText(`Connect ${name}`));
+
+      expect(await screen.findByTestId(unseededIntroKaraokeTestIds.screen)).toBeVisible();
+      expect(screen.queryByText("old touchscreen setup")).toBeNull();
+    },
+  );
 });
+
+/** The seeded funnel's pages, clicks and events, in the order the app sent them. */
+function seededEvents(): string[] {
+  const isSeeded = (props: unknown) =>
+    typeof props === "object" && props !== null && "onboarding type" in props;
+  const pages = jest.mocked(trackPage).mock.calls.flatMap(([page], index) =>
+    isSeeded(page.props)
+      ? [
+          {
+            order: jest.mocked(trackPage).mock.invocationCallOrder[index],
+            name: `Page ${page.category}`,
+          },
+        ]
+      : [],
+  );
+  const events = jest.mocked(track).mock.calls.flatMap(([event, props], index) => {
+    if (!isSeeded(props)) return [];
+    const button = props && "button" in props ? `: ${String(props.button)}` : "";
+    return [
+      { order: jest.mocked(track).mock.invocationCallOrder[index], name: `${event}${button}` },
+    ];
+  });
+  return [...pages, ...events].sort((a, b) => a.order - b.order).map(({ name }) => name);
+}
 
 /** Hidden screens stay mounted, so a flow left below the next screen would still be found here. */
 function expectFlowClosed() {

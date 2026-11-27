@@ -1,5 +1,19 @@
 # @features/flow-account-detail-hero
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#25369](https://github.com/LedgerHQ/ledger-live/pull/25369) [`5c7f0ef`](https://github.com/LedgerHQ/ledger-live/commit/5c7f0ef8aaebce9ac0dcf1eb509dd0756f389b10) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Upgrade Lumen to latest
+
+  - Updated `@ledgerhq/lumen-design-core` to `0.1.37`
+  - Updated `@ledgerhq/lumen-ui-react` to `0.1.75`
+  - Updated `@ledgerhq/lumen-ui-rnative` to `0.1.76`
+
+- [#25257](https://github.com/LedgerHQ/ledger-live/pull/25257) [`6b74045`](https://github.com/LedgerHQ/ledger-live/commit/6b740451bc0a1c698164821d74fc210a4b451dd5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add a content test id to the account detail More sheet
+
+- [#25330](https://github.com/LedgerHQ/ledger-live/pull/25330) [`ef25edc`](https://github.com/LedgerHQ/ledger-live/commit/ef25edc7e5a2845fdc1cb9d2c4490f0096038004) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(hypercore): Hide Swap on HyperCore account pages and tighten the spacing above the Perps banner on desktop
+
 ## 0.5.0
 
 ### Minor Changes

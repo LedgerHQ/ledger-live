@@ -1,6 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { accountDataQueryKey } from "@domain/entity-account-data";
-import type { AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account";
 import type {
   AccountOperation,
   AccountOperationsQuery,

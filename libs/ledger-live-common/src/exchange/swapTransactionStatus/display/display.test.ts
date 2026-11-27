@@ -251,6 +251,7 @@ describe("getSwapTransactionStatusDetailsViewModel", () => {
 describe("getSwapTransactionStatusExplorerUrl", () => {
   it.each([
     ["lifi", "https://scan.li.fi/tx/hash-1"],
+    ["lifi_intents", "https://scan.li.fi/tx/hash-1"],
     ["thorswap", "https://runescan.io/tx/hash-1"],
     ["nearintents", "https://track.swapkit.dev/tx/hash-1"],
   ])("should return the provider operation explorer URL for %s", (provider, expectedUrl) => {

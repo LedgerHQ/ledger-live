@@ -11,6 +11,7 @@ import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 import invariant from "invariant";
 import { FF_DISABLE_NEW_SEND_FLOW } from "@e2e/utils/featureFlagUtils";
 import { describeIfNanoSSupports } from "@e2e/helpers/commonHelpers";
+import type { RunSendTestBaseOptions } from "@e2e/specs/send/send";
 
 const beforeAllFunction = async (transaction: TransactionType, setAccountToCredit: boolean) => {
   await app.init({
@@ -40,7 +41,10 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
   await app.mainNavigation.waitForWallet40Ready();
 };
 
-export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
+type RunSendSPLOptions = RunSendTestBaseOptions;
+
+export function runSendSPL(options: RunSendSPLOptions) {
+  const { transaction, tmsLinks, tags } = options;
   declareBroadcastAccounts(transaction.accountToDebit);
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: TestFolder.LEGACY_TESTS,
@@ -55,7 +59,10 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
     it(`[${transaction.accountToDebit.currency.testLabel}] - Send`, async () => {
       const addressToCredit = transaction.accountToCredit.address;
       await app.account.openSubAccountSend(transaction.accountToDebit);
-      await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
+      await app.send.setRecipientAndContinue({
+        address: addressToCredit,
+        memoTag: transaction.memoTag,
+      });
       await app.send.setAmountAndContinue(transaction.amount);
 
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
@@ -71,7 +78,11 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
       await app.speculos.signSendTransaction(transaction);
       await app.common.successViewDetails();
 
-      await app.operationDetails.checkOperationInfos(transaction, true, "OUT");
+      await app.operationDetails.checkOperationInfos({
+        transaction,
+        isSentTransaction: true,
+        operationType: "OUT",
+      });
 
       if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
         const subAccountId = await app.account.navigateToSubAccount(transaction.accountToCredit);
@@ -80,18 +91,18 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
           TransactionStatus.RECEIVED,
           { amount: transaction.amount, ticker: transaction.accountToCredit.currency.ticker },
         );
-        await app.operationDetails.checkOperationInfos(transaction, false);
+        await app.operationDetails.checkOperationInfos({ transaction, isSentTransaction: false });
       }
     });
   });
 }
 
-export function runSendSPLAddressValid(
-  transaction: TransactionType,
-  expectedWarningMessage: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+type RunSendSPLAddressValidOptions = RunSendSPLOptions & {
+  expectedWarningMessage: string;
+};
+
+export function runSendSPLAddressValid(options: RunSendSPLAddressValidOptions) {
+  const { transaction, expectedWarningMessage, tmsLinks, tags } = options;
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: TestFolder.LEGACY_TESTS,
   });
@@ -107,20 +118,21 @@ export function runSendSPLAddressValid(
       await app.common.performSearch(transaction.accountToDebit.currency.ticker);
       await app.common.selectAccount(transaction.accountToDebit);
       const addressToCredit = Addresses.SOL_GIGA_2_ATA_ADDRESS;
-      await app.send.setRecipient(addressToCredit, transaction.memoTag);
+      await app.send.setRecipient({ address: addressToCredit, memoTag: transaction.memoTag });
       await app.send.expectSendRecipientWarning(expectedWarningMessage);
     });
   });
 }
 
-export function runSendSPLAddressInvalid(
-  transaction: TransactionType,
-  recipientContractAddress: string | undefined,
-  expectedErrorMessage: string,
-  scenario: string,
-  tmsLinks: string[],
-  tags: string[],
-) {
+type RunSendSPLAddressInvalidOptions = RunSendSPLOptions & {
+  recipientContractAddress: string | undefined;
+  expectedErrorMessage: string;
+  scenario: string;
+};
+
+export function runSendSPLAddressInvalid(options: RunSendSPLAddressInvalidOptions) {
+  const { transaction, recipientContractAddress, expectedErrorMessage, scenario, tmsLinks, tags } =
+    options;
   setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
     folder: TestFolder.LEGACY_TESTS,
   });
@@ -136,7 +148,10 @@ export function runSendSPLAddressInvalid(
       await app.common.performSearch(transaction.accountToDebit.currency.ticker);
       await app.common.selectAccount(transaction.accountToDebit);
       invariant(recipientContractAddress, "Recipient address is not defined");
-      await app.send.setRecipient(recipientContractAddress, transaction.memoTag);
+      await app.send.setRecipient({
+        address: recipientContractAddress,
+        memoTag: transaction.memoTag,
+      });
       await app.send.expectSendRecipientError(expectedErrorMessage);
     });
   });
@@ -168,7 +183,7 @@ export function runAddSubAccountTest(testConfig: {
     it(`[${asset.currency.testLabel}] - Add sub-account - without parent`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();
-      await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
+      await app.modularDrawer.selectCurrency(asset.currency);
       if (networks) {
         await app.modularDrawer.validateNetworksScreen(networks);
         await app.modularDrawer.selectNetwork(asset.parentAccount!.currency.name);
@@ -176,18 +191,20 @@ export function runAddSubAccountTest(testConfig: {
         await app.modularDrawer.selectNetworkIfAsked(asset.parentAccount!.currency.name);
       }
 
-      const accountId = await app.addAccount.addAccountAtIndex(
-        asset?.parentAccount === undefined ? asset.accountName : asset.parentAccount.accountName,
-        asset?.parentAccount === undefined
-          ? `${asset.currency.id}:${asset.address}`
-          : asset.parentAccount.currency.id,
-        asset.index,
-      );
+      const accountId = await app.addAccount.addAccountAtIndex({
+        currencyName:
+          asset?.parentAccount === undefined ? asset.accountName : asset.parentAccount.accountName,
+        currencyId:
+          asset?.parentAccount === undefined
+            ? `${asset.currency.id}:${asset.address}`
+            : asset.parentAccount.currency.id,
+        index: asset.index,
+      });
 
-      await app.common.goToAccount(
+      await app.common.goToAccount({
         accountId,
-        asset.parentAccount?.currency.id ?? asset.currency.id,
-      );
+        currencyId: asset.parentAccount?.currency.id ?? asset.currency.id,
+      });
       await app.account.expectAccountBalanceVisible(accountId);
       await app.account.expectOperationHistoryVisible(accountId);
       await app.account.expectAddressIndex(0);

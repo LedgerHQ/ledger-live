@@ -1,4 +1,4 @@
-import type { DerivationPath } from "@domain/entity-account-descriptor";
+import type { DerivationPath } from "@domain/entity-derivation";
 import { NoAccountDataSourceError } from "../errors";
 import type { AccountDataSource, AccountTarget } from "../source";
 import { descriptorOf, indexOf, sourceIdOf } from "../testing";

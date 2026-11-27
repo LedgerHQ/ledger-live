@@ -22,6 +22,7 @@ export const ptxSwapEstimatedReceivedAmount = flagWith(
         swapsxyz: false,
         moonpay_trade: true,
         lifi: false,
+        lifi_intents: false,
         velora: false,
         okx: false,
       },

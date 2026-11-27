@@ -160,7 +160,10 @@ export type DeviceOnboardingInput = {
   deviceId: string;
   deviceModelId: DeviceModelId;
   offerSync: boolean;
-  hostsSeedSetup?: boolean;
+  /** The host runs the new flow for unseeded devices. Without it, they go to legacy. */
+  connectUnseededDevice?: boolean;
+  /** The host runs the new flow for seeded devices. Without it, they go to legacy. */
+  connectSeededDevice?: boolean;
 };
 
 export type AvailableFirmwareUpdate = NonNullable<FirmwareUpdateContext["availableUpdate"]>;
@@ -169,10 +172,16 @@ export type FirmwareCheck =
   | { kind: "upToDate" }
   | { kind: "declined" }
   | { kind: "skipped" }
+  /** Held back until the device is seeded: its firmware cannot update before. */
+  | { kind: "deferred" }
   | { kind: "offered"; update: AvailableFirmwareUpdate };
 
-export type DeviceOnboardingContext = Omit<DeviceOnboardingInput, "hostsSeedSetup"> & {
-  hostsSeedSetup: boolean;
+export type DeviceOnboardingContext = Omit<
+  DeviceOnboardingInput,
+  "connectUnseededDevice" | "connectSeededDevice"
+> & {
+  connectUnseededDevice: boolean;
+  connectSeededDevice: boolean;
   lastDeviceState: DeviceOnboardingState | null;
   firmwareVersion: string | null;
   hasStarted: boolean;
@@ -188,6 +197,8 @@ export type DeviceOnboardingContext = Omit<DeviceOnboardingInput, "hostsSeedSetu
   successAcknowledgedOnSession: DeviceSessionId | null;
   firmware: FirmwareCheck | null;
   returningFromFirmwareUpdate: boolean;
+  /** Survives a new session, unlike `firmware`: the update still runs once the device is set up. */
+  updateAfterSetup: boolean;
   currentSetupStep: OnboardingStep | null;
   seedPath: SeedPath | null;
   recoveryKeyBackupOpen: boolean;

@@ -197,7 +197,7 @@ export type BridgeApi = {
   usesStakingPositions?: boolean;
   /**
    * When true, the account balance and locked amount sum all native `getBalance` entries (Tezos,
-   * Solana). The entries are disjoint parts of the account, so each unit of funds sits in exactly
+   * Solana, NEAR). The entries are disjoint parts of the account, so each unit of funds sits in exactly
    * one of them; their order and what each carries (stake metadata, `locked`) is the family's.
    * Opt-in: EVM's stakes are extra and carry no `locked`, so summing them would inflate the balance.
    */
@@ -243,6 +243,18 @@ export type BridgeApi = {
    * `syncsHistoryOnStateChange`.
    */
   needsValidatorListing?: (operation: LiveOperation) => boolean;
+  /**
+   * True when a rise of the spendable balance, with no new operation to explain it, is the refund
+   * of the account's own recent transactions (a chain that refunds unused gas in a later block). The
+   * sync then takes the new state as explained instead of reading the history again for an hour,
+   * and lists no pools for it. Read only with `syncsHistoryOnStateChange`.
+   */
+  isGasRefund?: (
+    increase: bigint,
+    operations: readonly LiveOperation[],
+    address: string,
+    now: number,
+  ) => boolean;
   /**
    * Optional hook called after operations are merged, allowing a chain bridge to
    * enrich the staking resources built from `getBalance` data (e.g. by fetching

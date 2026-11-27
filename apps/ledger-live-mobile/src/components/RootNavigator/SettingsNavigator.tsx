@@ -1,7 +1,10 @@
 import React, { useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useIsSettingsHomeEnabled } from "@features/flow-settings/native";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
+import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import { getStackNavigationConfigV4 } from "LLM/components/Navigation/getStackNavigationConfigV4";
 import { ScreenName } from "~/const";
 import DebugBenchmarkQRStream from "~/screens/Settings/Debug/Broken/BenchmarkQRStream";
 import DebugConfiguration from "~/screens/Settings/Debug/Configuration";
@@ -63,7 +66,6 @@ import DebugDeviceIntentExecutorContactsValidation from "~/screens/Settings/Debu
 import DebugDeviceIntentExecutorInitialization from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializationScreen";
 import DebugInitializerStatesScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializerStatesScreen";
 import DebugDeviceIntentExecutorOrchestration from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/OrchestrationScreen";
-import Settings from "~/screens/Settings";
 import AccountsSettings from "~/screens/Settings/Accounts";
 import AboutSettings from "~/screens/Settings/About";
 import Resources from "~/screens/Settings/Resources";
@@ -105,6 +107,8 @@ import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
 import ProductTourScreenDebug from "LLM/features/ProductTour/Debug";
 import Q2WalletV4TourScreenDebug from "LLM/features/Q2WalletV4Tour/Debug";
 import Q3WalletV4TourScreenDebug from "LLM/features/Q3WalletV4Tour/Debug";
+import { SettingsHomeScreen } from "LLM/features/Settings/screens/SettingsHomeScreen";
+import { SettingsSectionScreen } from "LLM/features/Settings/screens/SettingsSectionScreen";
 import { UnmountOnBlur } from "./utils/UnmountOnBlur";
 
 const Stack = createNativeStackNavigator<SettingsNavigatorStackParamList>();
@@ -113,21 +117,38 @@ const unmountOnBlur = ({ children }: { children: React.ReactNode }) => (
   <UnmountOnBlur>{children}</UnmountOnBlur>
 );
 
+const renderHelpButton = () => <HelpButton />;
+
 export default function SettingsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
+  const isSettingsHomeEnabled = useIsSettingsHomeEnabled();
+  const { theme: lumenTheme } = useLumenTheme();
+  const settingsNavConfig = useMemo(
+    () => ({ ...getStackNavigationConfigV4(lumenTheme), headerLeft: undefined }),
+    [lumenTheme],
+  );
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
         name={ScreenName.SettingsScreen}
-        component={Settings}
-        options={{
-          title: t("settings.header"),
-          headerRight: () => <HelpButton />,
-        }}
+        component={SettingsHomeScreen}
+        options={
+          isSettingsHomeEnabled
+            ? { ...settingsNavConfig, title: t("settings.title") }
+            : { title: t("settings.header"), headerRight: renderHelpButton }
+        }
+      />
+      <Stack.Screen
+        name={ScreenName.SettingsSection}
+        component={SettingsSectionScreen}
+        options={({ route }) => ({
+          ...settingsNavConfig,
+          title: t(`settings.sections.${route.params.section}`),
+        })}
       />
       <Stack.Screen
         name={ScreenName.CountervalueSettings}

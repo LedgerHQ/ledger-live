@@ -30,3 +30,10 @@ export interface DelegationType {
   userUndelegatedList: Array<UnbondingType>;
   validator?: MultiversXProvider;
 }
+
+export type StakeAccountBannerParams = {
+  multiversx?: {
+    redelegate: boolean;
+    delegate: boolean;
+  };
+};

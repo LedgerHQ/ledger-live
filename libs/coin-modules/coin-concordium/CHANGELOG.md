@@ -1,5 +1,25 @@
 # @ledgerhq/coin-concordium
 
+## 2.0.0-next.0
+
+### Major Changes
+
+- [#25583](https://github.com/LedgerHQ/ledger-live/pull/25583) [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Make coin-concordium stateless: `createBridges` takes a `Context`, and the proxy tuning, fee fallbacks, cache TTLs and WalletConnect relay come from `config_currency_concordium*`. `assignFromAccountRaw` may return a promise, which deserialization awaits.
+
+### Minor Changes
+
+- [#25428](https://github.com/LedgerHQ/ledger-live/pull/25428) [`452b4ed`](https://github.com/LedgerHQ/ledger-live/commit/452b4ed3cc44a6c9dc9726dfe0aa840b0cd3babd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Follow coin-modules ADR-079: the coin module account status answers `activated` instead of `isOnboarded`, each field optional, and the asset activation gate no longer names its method
+
+- [#25255](https://github.com/LedgerHQ/ledger-live/pull/25255) [`6bb12b6`](https://github.com/LedgerHQ/ledger-live/commit/6bb12b62cf964b8bb137701c5f7d1b5cdc43e6e6) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Answer the Concordium account status from its coin module: onboarded and used once the public key has an account on chain
+
+- [#25546](https://github.com/LedgerHQ/ledger-live/pull/25546) [`42d1fd6`](https://github.com/LedgerHQ/ledger-live/commit/42d1fd68d14197b3d490118403cd001305f5860d) Thanks [@amaslakov](https://github.com/amaslakov)! - Keep the fee of every transaction type in Concordium history, sponsored ones included, and the CCD that contracts, scheduled transfers and shielding move, in getBlock too. Stored histories are rebuilt after the upgrade.
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7), [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`866ed62`](https://github.com/LedgerHQ/ledger-live/commit/866ed62f04647abce7efeff0ebefe79c8e5bafde), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252), [`fcd1d97`](https://github.com/LedgerHQ/ledger-live/commit/fcd1d979dcce6f25d9e4dfcf7dd6b68d79b8b03c)]:
+  - @ledgerhq/ledger-wallet-framework@3.14.0-next.0
+  - @ledgerhq/types-live@6.134.0-next.0
+
 ## 1.9.0
 
 ### Minor Changes
@@ -430,113 +450,5 @@
   - @ledgerhq/types-live@6.124.0
   - @ledgerhq/concordium-core@0.7.0
   - @ledgerhq/ledger-wallet-framework@3.4.0
-
-## 1.3.0-next.0
-
-### Minor Changes
-
-- [#21630](https://github.com/LedgerHQ/ledger-live/pull/21630) [`738c0d8`](https://github.com/LedgerHQ/ledger-live/commit/738c0d8a1357e96713bfc0d7a40ca403b5290c35) Thanks [@amaslakov](https://github.com/amaslakov)! - Report PLT transfers in the history of the token sub-account they moved
-
-  `tokenUpdate` transactions were parsed away, so a PLT transfer showed nowhere.
-  They now become operations on the token sub-account, valued in the token rather
-  than in the CCD a native transfer folds its fee into. The fee stays on the
-  parent account as a separate operation, typed from whether the account actually
-  paid one, so that an outgoing transfer is charged for it exactly once and an
-  incoming one is charged nothing. A `tokenUpdate` that is not a transfer, such as
-  a mint or a pause, still records the CCD it cost the account that paid. The
-  `api/` surface describes these operations as the token they moved instead of as
-  the native asset. Accounts now carry a `syncHash` covering the CAL and the token
-  flag, so enabling tokens re-reads the history rather than leaving earlier
-  transfers behind the sync watermark.
-
-  Reading that history now follows the proxy's cursor to the end instead of
-  stopping at the first page, so an account with more transactions than one page
-  holds no longer loses the rest of them, and a failed page reports the failure
-  rather than passing for the end of the history. Pages are read at the size the
-  proxy actually allows, and rewards are excluded from the request, having only
-  ever been fetched and discarded. The account keeps what a re-read returns rather
-  than merging it over what was already stored, which is what lets a correction
-  reach an operation recorded by an earlier version.
-
-  A rejected transfer is recorded rather than dropped. The proxy reports one
-  without any of its transfer fields, so it used to parse to nothing and the CCD
-  it cost the sender went unaccounted for; it now appears as a failed operation
-  worth its fee, matching what a rejected token transfer already did. Neither
-  reports an empty address as a counterparty any more.
-
-- [#21720](https://github.com/LedgerHQ/ledger-live/pull/21720) [`05cb97c`](https://github.com/LedgerHQ/ledger-live/commit/05cb97c6986755d87d4c0b3df3d8b4daf9ba77df) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Craft and sign PLT transfers
-
-  `craftPltTransaction` builds a `TokenUpdate` payload from the CAL-resolved token id, the
-  CAL unit magnitude as the amount's exponent, and the energy persisted at estimation time,
-  and `signOperation` routes a transaction carrying a token sub-account to it. The signer
-  interface widens to `AnyTransaction`; its body already serialized both kinds. A PLT send
-  now reports the CCD fee on the parent account and the token amount on the sub-account,
-  matching the pair sync builds once the transfer is indexed. `updateTransaction` drops the
-  persisted energy alongside the fee, so a re-selected token cannot inherit the previous
-  token's energy limit. Adds the English error strings for the two signer failures this path
-  can surface.
-
-  Signing on a device needs the PLT-capable Concordium app; until it ships, an attempt
-  surfaces as a translated "update your Concordium app" error. PLT sub-accounts remain behind
-  the `enableTokens` config switch.
-
-- [#21679](https://github.com/LedgerHQ/ledger-live/pull/21679) [`251af57`](https://github.com/LedgerHQ/ledger-live/commit/251af57e7412e493deaecddf627e3967ba044c09) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Report Concordium fee errors under a key the send flow renders
-
-  `getTransactionStatus` filed fee errors under `errors.fee`, which no file in the
-  desktop `modals/Send/` tree reads, so an unpriced transfer greyed out Continue with
-  no message. They are now reported under `amount`, after the checks for the states
-  that leave a PLT fee unset, so the specific cause still wins.
-
-- [#21634](https://github.com/LedgerHQ/ledger-live/pull/21634) [`b30f903`](https://github.com/LedgerHQ/ledger-live/commit/b30f903f592c0bafba74a1784d98b9d605c18ccb) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Validate PLT transfers and fix estimateMaxSpendable for tokens
-
-  `getTransactionStatus` checks a PLT amount against the token sub-account and its fee
-  against the CCD at the parent's disposal, and blocks on token state and device limits.
-  `estimateMaxSpendable` returns the full token balance instead of subtracting µCCD fees.
-  A PLT fee is priced from the buffered energy, so it covers the deposit the chain
-  requires. `concordium-core` lowers the PLT decimals ceiling to 18. Adds the English
-  error strings.
-
-- [#21869](https://github.com/LedgerHQ/ledger-live/pull/21869) [`4c314f4`](https://github.com/LedgerHQ/ledger-live/commit/4c314f4035581de1affaba8419cd062359251c2f) Thanks [@amaslakov](https://github.com/amaslakov)! - Check a PLT recipient against the token's allow and deny lists before signing
-
-  A transfer the lists refuse is rejected on chain after the user has signed and paid the
-  fee, so `getTransactionStatus` now resolves the recipient's standing and reports it under
-  the recipient field. The token's own state is read first, and a token declaring neither
-  list never looks the recipient up. An undecodable state or a failed lookup blocks as
-  unverifiable rather than passing as allowed. Adds the English error strings.
-
-### Patch Changes
-
-- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`b30f903`](https://github.com/LedgerHQ/ledger-live/commit/b30f903f592c0bafba74a1784d98b9d605c18ccb), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
-  - @ledgerhq/types-live@6.124.0-next.0
-  - @ledgerhq/concordium-core@0.7.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.4.0-next.0
-
-## 1.2.0
-
-### Minor Changes
-
-- [#21475](https://github.com/LedgerHQ/ledger-live/pull/21475) [`47a1cd0`](https://github.com/LedgerHQ/ledger-live/commit/47a1cd082cc30cd7cc539a8eb0e0fe5466128533) Thanks [@amaslakov](https://github.com/amaslakov)! - Extend the transaction and account types with the PLT token id, the persisted fee-estimation energy, and per-token state
-
-- [#21204](https://github.com/LedgerHQ/ledger-live/pull/21204) [`3a78322`](https://github.com/LedgerHQ/ledger-live/commit/3a783224b6016fce08fa8cb3254057b75882e2c5) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Adopt the PLT-capable Concordium signer and map the PLT status words to typed errors
-
-- [#21591](https://github.com/LedgerHQ/ledger-live/pull/21591) [`2b8a4e4`](https://github.com/LedgerHQ/ledger-live/commit/2b8a4e4240a414cbb1bda31b97b70837cb6ac3fe) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Estimate PLT transfer fees through the wallet-proxy `tokenUpdate` cost endpoint
-
-  `getTransactionCost` is parameterized on transaction type instead of hardcoding
-  `simpleTransfer`. PLT preparation encodes the CBOR operations blob first, since
-  its byte length is a required cost parameter, then applies a 20% energy buffer
-  and persists the result. Signing reads that persisted pair rather than
-  re-estimating, so the fee shown in the wallet and the energy in the signed
-  header cannot disagree. Native CCD estimation is unchanged.
-
-- [#21504](https://github.com/LedgerHQ/ledger-live/pull/21504) [`92b90a6`](https://github.com/LedgerHQ/ledger-live/commit/92b90a6eebca959abe0b04aa83c5799d34f9f10a) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Build PLT token sub-accounts during Concordium account sync, behind the new `enableTokens` coin config flag (off by default). Tokens are resolved from the CAL by on-chain address, per-token pause and allow/deny state is cached on the account, and PLT balances are reported on the `api/` surface.
-
-- [#21429](https://github.com/LedgerHQ/ledger-live/pull/21429) [`30619aa`](https://github.com/LedgerHQ/ledger-live/commit/30619aaa2af784fd917214bb0e4bbd092f883e11) Thanks [@amaslakov](https://github.com/amaslakov)! - Add PLT error classes and map chain reject reasons onto them
-
-### Patch Changes
-
-- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783)]:
-  - @ledgerhq/types-live@6.123.0
-  - @ledgerhq/ledger-wallet-framework@3.3.0
-  - @ledgerhq/live-env@4.0.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

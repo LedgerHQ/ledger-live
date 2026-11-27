@@ -1,6 +1,6 @@
 import React, { act, type ReactNode } from "react";
 import ReactDOM from "react-dom/client";
-import { LinkingProvider, useOpenLink, useLocalizedUrl } from "./LinkingProvider";
+import { LinkingProvider, useOpenLink, useLocalizedUrl, useUrlLocalizer } from "./LinkingProvider";
 import type { LinkingConfig } from "./types";
 
 function TestHarness<T>({ hook, onResult }: { hook: () => T; onResult: (value: T) => void }): null {
@@ -138,6 +138,22 @@ describe("useOpenLink", () => {
     expect(() => openLink("javascript:void(0)")).toThrow();
     expect(onLinkOpened).not.toHaveBeenCalled();
     expect(openExternal).not.toHaveBeenCalled();
+  });
+});
+
+describe("useUrlLocalizer", () => {
+  it("localizes each URL it is given", () => {
+    const localize = renderHookWithProvider(() => useUrlLocalizer(), {
+      openExternal: jest.fn(),
+      localization: {
+        currentLanguage: "fr",
+        defaultLanguage: "en",
+        languages: { en: "", fr: "fr" },
+      },
+    });
+
+    expect(localize("https://www.ledger.com/academy")).toBe("https://www.ledger.com/fr/academy");
+    expect(localize("https://github.com/LedgerHQ")).toBe("https://github.com/LedgerHQ");
   });
 });
 

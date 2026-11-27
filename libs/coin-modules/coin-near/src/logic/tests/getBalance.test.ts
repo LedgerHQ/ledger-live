@@ -48,7 +48,7 @@ describe("getBalance (MSW)", () => {
   afterEach(() => mockServer.resetHandlers());
   afterAll(() => mockServer.close());
 
-  it("reports the account total as value, and the storage reserve as locked", async () => {
+  it("reports the liquid funds as value, and the storage reserve as locked", async () => {
     mockAccount("1000000000000000000000000");
 
     const [native] = await getBalance(mockNearContext, ADDRESS);

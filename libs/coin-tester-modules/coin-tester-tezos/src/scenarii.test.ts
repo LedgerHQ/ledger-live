@@ -1,22 +1,15 @@
 import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { scenarioTezosTz1, scenarioTezosTz2 } from "./scenarii/tezos";
-import { killFlextesa } from "./flextesa";
 
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
-  process.on(e, () => {
-    killFlextesa().catch(() => {});
-  }),
-);
+global.console = require("console");
+jest.setTimeout(600_000);
 
 describe("Tezos Deterministic Tester", () => {
   it("scenario Tezos (tz1 / ed25519)", async () => {
     try {
       await executeScenario(scenarioTezosTz1);
     } catch (e) {
-      if (e !== "done") {
-        await killFlextesa();
-        throw e;
-      }
+      if (e !== "done") throw e;
     }
   });
 
@@ -24,10 +17,7 @@ describe("Tezos Deterministic Tester", () => {
     try {
       await executeScenario(scenarioTezosTz2);
     } catch (e) {
-      if (e !== "done") {
-        await killFlextesa();
-        throw e;
-      }
+      if (e !== "done") throw e;
     }
   });
 });

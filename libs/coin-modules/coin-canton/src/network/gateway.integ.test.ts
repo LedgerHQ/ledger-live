@@ -1,6 +1,7 @@
-import { cantonDefaults, type CantonCoinConfig } from "../config";
+import { cantonDefaults, type CantonContext } from "../config";
 import { signTransaction } from "../bridge/sign";
 import { createMockSigner, generateMockKeyPair, verifySignature } from "../test/cantonTestUtils";
+import { createMockContext } from "../test/fixtures";
 import type { OnboardingPrepareResponse, Party } from "../types/gateway";
 import type { CantonSignature } from "../types/signer";
 import {
@@ -18,7 +19,7 @@ import {
   submitTapRequest,
 } from "./gateway";
 
-const mockConfig = cantonDefaults.canton_network_devnet;
+const mockContext = createMockContext(cantonDefaults.canton_network_devnet);
 
 /**
  * Party lookup can lag behind a successful onboarding submit on the gateway (CI / replication).
@@ -64,7 +65,7 @@ function isPartyNotYetVisibleError(error: unknown): boolean {
 }
 
 async function getPartyByIdWhenVisible(
-  config: CantonCoinConfig,
+  context: CantonContext,
   partyId: string,
   opts?: { timeoutMs?: number; pollMs?: number },
 ): Promise<Party> {
@@ -74,7 +75,7 @@ async function getPartyByIdWhenVisible(
   let lastError: unknown;
   while (Date.now() < deadline) {
     try {
-      return await getPartyById(config, partyId);
+      return await getPartyById(context, partyId);
     } catch (e) {
       lastError = e;
       if (!isPartyNotYetVisibleError(e)) throw e;
@@ -87,7 +88,7 @@ async function getPartyByIdWhenVisible(
 }
 
 async function getPartyByPubKeyWhenVisible(
-  config: CantonCoinConfig,
+  context: CantonContext,
   publicKeyHex: string,
   opts?: { timeoutMs?: number; pollMs?: number },
 ): Promise<Party> {
@@ -97,7 +98,7 @@ async function getPartyByPubKeyWhenVisible(
   let lastError: unknown;
   while (Date.now() < deadline) {
     try {
-      return await getPartyByPubKey(config, publicKeyHex);
+      return await getPartyByPubKey(context, publicKeyHex);
     } catch (e) {
       lastError = e;
       if (!isPartyNotYetVisibleError(e)) throw e;
@@ -135,9 +136,9 @@ describe("gateway (devnet)", () => {
 
   beforeAll(async () => {
     const keyPair = generateMockKeyPair();
-    const pr = await prepareOnboarding(mockConfig, keyPair.publicKeyHex);
+    const pr = await prepareOnboarding(mockContext, keyPair.publicKeyHex);
     const cantonSignature = await signOnboarding(keyPair, pr);
-    const response = await submitOnboarding(mockConfig, keyPair.publicKeyHex, pr, cantonSignature);
+    const response = await submitOnboarding(mockContext, keyPair.publicKeyHex, pr, cantonSignature);
     prepareResponse = pr;
     onboardedAccount = { keyPair, partyId: response.party.party_id };
   }, 120_000);
@@ -155,7 +156,7 @@ describe("gateway (devnet)", () => {
       const keyPair = generateMockKeyPair();
 
       // WHEN
-      const response = await prepareOnboarding(mockConfig, keyPair.publicKeyHex);
+      const response = await prepareOnboarding(mockContext, keyPair.publicKeyHex);
 
       // THEN
       expect(response).toHaveProperty("party_id");
@@ -187,7 +188,7 @@ describe("gateway (devnet)", () => {
 
         // WHEN
         const response = await submitOnboarding(
-          mockConfig,
+          mockContext,
           keyPair.publicKeyHex,
           prepareResponse!,
           cantonSignature,
@@ -209,7 +210,7 @@ describe("gateway (devnet)", () => {
 
       // WHEN
       const response = await submitOnboarding(
-        mockConfig,
+        mockContext,
         keyPair.publicKeyHex,
         prepareResponse!,
         cantonSignature,
@@ -226,19 +227,19 @@ describe("gateway (devnet)", () => {
     it("should reject onboarding without the device challenge signature", async () => {
       // GIVEN
       const keyPair = generateMockKeyPair();
-      const pr = await prepareOnboarding(mockConfig, keyPair.publicKeyHex);
+      const pr = await prepareOnboarding(mockContext, keyPair.publicKeyHex);
       const { signature } = await signOnboarding(keyPair, pr);
 
       // WHEN / THEN
       await expect(
-        submitOnboarding(mockConfig, keyPair.publicKeyHex, pr, { signature }),
+        submitOnboarding(mockContext, keyPair.publicKeyHex, pr, { signature }),
       ).rejects.toThrow(/application signature is missing/);
     }, 30000);
   });
 
   describe("getLedgerEnd", () => {
     it("should return ledger end", async () => {
-      const end = await getLedgerEnd(mockConfig);
+      const end = await getLedgerEnd(mockContext);
       expect(end).toBeGreaterThanOrEqual(0);
     });
   });
@@ -246,7 +247,7 @@ describe("gateway (devnet)", () => {
   describe("getBalance", () => {
     it("should return user balance", async () => {
       const { partyId } = getOnboardedAccount();
-      const balance = await getBalance(mockConfig, partyId);
+      const balance = await getBalance(mockContext, partyId);
       expect(balance.length).toBeGreaterThanOrEqual(0);
       if (balance.length > 0) {
         expect(balance[0].amount).toBeGreaterThanOrEqual(0);
@@ -260,13 +261,13 @@ describe("gateway (devnet)", () => {
       const { partyId, keyPair } = getOnboardedAccount();
       let party: Party;
       try {
-        party = await getPartyByIdWhenVisible(mockConfig, partyId);
+        party = await getPartyByIdWhenVisible(mockContext, partyId);
       } catch (e) {
         const exhaustedIdLookup =
           isPartyNotYetVisibleError(e) ||
           (e instanceof Error && /timed out waiting for party/i.test(e.message));
         if (!exhaustedIdLookup) throw e;
-        party = await getPartyByPubKeyWhenVisible(mockConfig, keyPair.publicKeyHex);
+        party = await getPartyByPubKeyWhenVisible(mockContext, keyPair.publicKeyHex);
       }
 
       expect(party).not.toBeUndefined();
@@ -277,7 +278,7 @@ describe("gateway (devnet)", () => {
   describe("getPartyByPubKey", () => {
     it("should return party info", async () => {
       const party = await getPartyByPubKey(
-        mockConfig,
+        mockContext,
         "c5cdb19624833f9a929a0125978c886ec4297320c14cea6bf667dc1d23a8e650",
       );
       expect(party).not.toBeUndefined();
@@ -287,7 +288,7 @@ describe("gateway (devnet)", () => {
   describe("getOperations", () => {
     it("should return user transactions", async () => {
       const { operations } = await getOperations(
-        mockConfig,
+        mockContext,
         "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
         {},
       );
@@ -302,7 +303,7 @@ describe("gateway (devnet)", () => {
       const amount = "1000";
 
       // WHEN
-      const response = await prepareTapRequest(mockConfig, { partyId, amount });
+      const response = await prepareTapRequest(mockContext, { partyId, amount });
 
       // THEN
       expect(response).toHaveProperty("serialized");
@@ -316,7 +317,7 @@ describe("gateway (devnet)", () => {
     it.skip("should submit tap request with proper signature", async () => {
       // GIVEN
       const { keyPair, partyId } = getOnboardedAccount();
-      const { hash, serialized } = await prepareTapRequest(mockConfig, {
+      const { hash, serialized } = await prepareTapRequest(mockContext, {
         partyId,
         amount: "1000",
       });
@@ -326,7 +327,7 @@ describe("gateway (devnet)", () => {
       expect(verification.isValid).toBe(true);
 
       // WHEN
-      const response = await submitTapRequest(mockConfig, { partyId, serialized, signature });
+      const response = await submitTapRequest(mockContext, { partyId, serialized, signature });
 
       // THEN
       expect(response).toHaveProperty("submission_id");
@@ -342,7 +343,7 @@ describe("gateway (devnet)", () => {
       const { partyId } = getOnboardedAccount();
 
       // WHEN
-      const response = await preparePreApprovalTransaction(mockConfig, partyId);
+      const response = await preparePreApprovalTransaction(mockContext, partyId);
 
       // THEN
       expect(response).toHaveProperty("serialized");
@@ -356,7 +357,7 @@ describe("gateway (devnet)", () => {
     it("should submit pre-approval transaction with proper signature", async () => {
       // GIVEN
       const { keyPair, partyId } = getOnboardedAccount();
-      const preparedTransaction = await preparePreApprovalTransaction(mockConfig, partyId);
+      const preparedTransaction = await preparePreApprovalTransaction(mockContext, partyId);
       const preApprovalSignature = keyPair.sign(preparedTransaction.hash);
 
       const verification = verifySignature(
@@ -368,7 +369,7 @@ describe("gateway (devnet)", () => {
 
       // WHEN
       const response = await submitPreApprovalTransaction(
-        mockConfig,
+        mockContext,
         partyId,
         preparedTransaction,
         preApprovalSignature,
@@ -387,7 +388,7 @@ describe("gateway (devnet)", () => {
   describe("submit", () => {
     it("throws when submitting with a non-existent party", async () => {
       await expect(
-        submit(mockConfig, "fake-party-id", "garbage-serialized", "garbage-signature"),
+        submit(mockContext, "fake-party-id", "garbage-serialized", "garbage-signature"),
       ).rejects.toThrow(/Invalid value for: path parameter party_id/);
     });
   });

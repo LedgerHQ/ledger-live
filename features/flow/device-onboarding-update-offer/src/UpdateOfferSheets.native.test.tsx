@@ -25,12 +25,14 @@ const offered = { current: "2.1.0", available: "5.4.3" };
 function renderSheets(props: Partial<UpdateOfferSheetsProps> = {}) {
   const onUpdate = jest.fn();
   const onSkip = jest.fn();
+  const onTrack = jest.fn();
   const allProps: UpdateOfferSheetsProps = {
     update: offered,
     confirmSkip: false,
     suspendSheets: false,
     onUpdate,
     onSkip,
+    onTrack,
     ...props,
   };
   const view = render(
@@ -45,7 +47,7 @@ function renderSheets(props: Partial<UpdateOfferSheetsProps> = {}) {
       </I18nTestProvider>,
     );
 
-  return { onUpdate, onSkip, rerender, user: userEvent.setup() };
+  return { onUpdate, onSkip, onTrack, rerender, user: userEvent.setup() };
 }
 
 function expanded(testID: string) {
@@ -158,5 +160,52 @@ describe("UpdateOfferSheets", () => {
 
     expect(expanded(updateOfferTestIds.offerSheet)).toBe(false);
     expect(expanded(updateOfferTestIds.skipSheet)).toBe(false);
+  });
+
+  it("should report each sheet it shows and each answer, for the consumer's analytics", async () => {
+    const { onTrack, user } = renderSheets();
+
+    await user.press(screen.getByTestId(closeOffer));
+    await user.press(screen.getByTestId(updateOfferTestIds.skipConfirm));
+
+    expect(onTrack.mock.calls.map(([event]) => event)).toEqual([
+      { type: "shown", sheet: "offer" },
+      { type: "pressed", sheet: "offer", button: "close" },
+      { type: "shown", sheet: "confirmSkip" },
+      { type: "pressed", sheet: "confirmSkip", button: "skip" },
+    ]);
+  });
+
+  it("should not report the sheet again when it comes back from under another sheet", () => {
+    const { onTrack, rerender } = renderSheets();
+
+    rerender({ suspendSheets: true });
+    rerender({ suspendSheets: false });
+
+    expect(onTrack.mock.calls).toEqual([[{ type: "shown", sheet: "offer" }]]);
+  });
+
+  it("should report the sheet again for a new offer", () => {
+    const { onTrack, rerender } = renderSheets();
+
+    rerender({ update: null });
+    rerender({ update: offered });
+
+    expect(onTrack.mock.calls).toEqual([
+      [{ type: "shown", sheet: "offer" }],
+      [{ type: "shown", sheet: "offer" }],
+    ]);
+  });
+
+  it("should report the update pressed on the skip confirmation", async () => {
+    const { onTrack, user } = renderSheets({ confirmSkip: true });
+
+    await user.press(screen.getByTestId(updateOfferTestIds.skipUpdate));
+
+    expect(onTrack).toHaveBeenCalledWith({
+      type: "pressed",
+      sheet: "confirmSkip",
+      button: "update",
+    });
   });
 });

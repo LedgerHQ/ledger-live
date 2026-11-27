@@ -238,10 +238,27 @@ export class NetworkError extends Error {
   }
 }
 
+/** @deprecated Use `SolanaNotEnoughSolForTokenTransfer` or `SolanaNotEnoughSolForRecipientTokenAccount`. */
 export class NotEnoughGas extends Error {
   override name = "NotEnoughGas";
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message || "NotEnoughGas");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class SolanaNotEnoughSolForTokenTransfer extends Error {
+  override name = "SolanaNotEnoughSolForTokenTransfer";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "SolanaNotEnoughSolForTokenTransfer");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class SolanaNotEnoughSolForRecipientTokenAccount extends Error {
+  override name = "SolanaNotEnoughSolForRecipientTokenAccount";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "SolanaNotEnoughSolForRecipientTokenAccount");
     if (fields) Object.assign(this, fields);
   }
 }

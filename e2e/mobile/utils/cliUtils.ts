@@ -23,6 +23,11 @@ import {
   type TokenApprovalOpts,
 } from "@ledgerhq/live-e2e-shared/runCli";
 
+type RegisterSpeculosTransportOptions = {
+  apiPort: string;
+  speculosAddress?: string;
+};
+
 export const CLI = {
   ledgerKeyRingProtocol,
   ledgerSync,
@@ -31,7 +36,8 @@ export const CLI = {
     return runCliLiveData(opts);
   },
   // Mobile keeps exactly one active transport, so the registry is wiped and the id is constant.
-  registerSpeculosTransport: function (apiPort: string, speculosAddress = "http://localhost") {
+  registerSpeculosTransport: function (options: RegisterSpeculosTransportOptions) {
+    const { apiPort, speculosAddress = "http://localhost" } = options;
     unregisterAllTransportModules();
     const req: SpeculosHttpTransportOpts = {
       apiPort: apiPort,

@@ -1,5 +1,11 @@
 # @domain/entity-currency-crypto
 
+## 0.21.0-next.0
+
+### Minor Changes
+
+- [#25419](https://github.com/LedgerHQ/ledger-live/pull/25419) [`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1) Thanks [@qperrot](https://github.com/qperrot)! - Remove the discontinued Horizen (zencash) currency and its bitcoin-family support
+
 ## 0.20.0
 
 ### Minor Changes
@@ -241,37 +247,5 @@
 ### Minor Changes
 
 - [#21224](https://github.com/LedgerHQ/ledger-live/pull/21224) [`e6d6ed6`](https://github.com/LedgerHQ/ledger-live/commit/e6d6ed6eda460eb614680b31a42ba8067cc28d2a) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - add Gonka (GNK) as a new Cosmos-family currency with coin type 1200
-
-## 0.10.0
-
-### Minor Changes
-
-- [#20582](https://github.com/LedgerHQ/ledger-live/pull/20582) [`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the currency id schemas to the packages that own them.
-
-  `CryptoCurrencyIdSchema`, `TokenCurrencyIdSchema` and `FiatCurrencyIdSchema` (and their inferred
-  types) now live in `@domain/entity-currency-crypto`, `@domain/entity-currency-token` and
-  `@domain/entity-currency-fiat` respectively, instead of `@shared/schema-primitives`. A primitives
-  package has no business knowing about crypto, tokens or fiat.
-
-  The crypto and token packages used to re-export these symbols from primitives, which made them
-  proxies: two import paths for the same thing, and no obvious original provider. Consumers already
-  importing from `@domain/entity-currency-*` are unaffected, since the symbols genuinely moved there.
-  Anything importing them from `@shared/schema-primitives` must now import the owning domain package.
-
-## 0.10.0-next.0
-
-### Minor Changes
-
-- [#20582](https://github.com/LedgerHQ/ledger-live/pull/20582) [`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the currency id schemas to the packages that own them.
-
-  `CryptoCurrencyIdSchema`, `TokenCurrencyIdSchema` and `FiatCurrencyIdSchema` (and their inferred
-  types) now live in `@domain/entity-currency-crypto`, `@domain/entity-currency-token` and
-  `@domain/entity-currency-fiat` respectively, instead of `@shared/schema-primitives`. A primitives
-  package has no business knowing about crypto, tokens or fiat.
-
-  The crypto and token packages used to re-export these symbols from primitives, which made them
-  proxies: two import paths for the same thing, and no obvious original provider. Consumers already
-  importing from `@domain/entity-currency-*` are unaffected, since the symbols genuinely moved there.
-  Anything importing them from `@shared/schema-primitives` must now import the owning domain package.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

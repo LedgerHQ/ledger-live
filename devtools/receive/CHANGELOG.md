@@ -1,5 +1,11 @@
 # @devtools/receive
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#25577](https://github.com/LedgerHQ/ledger-live/pull/25577) [`152fccc`](https://github.com/LedgerHQ/ledger-live/commit/152fccc90360e9a937dc39b7d9af985d269c42fa) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive DevTools: the deeplink comes before the receive list, and a Verify hint toggle shows the hint again or marks it as seen
+
 ## 0.3.0
 
 ### Minor Changes

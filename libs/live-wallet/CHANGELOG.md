@@ -1,5 +1,20 @@
 # @ledgerhq/live-wallet
 
+## 1.4.0-next.0
+
+### Minor Changes
+
+- [#25362](https://github.com/LedgerHQ/ledger-live/pull/25362) [`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove the legacy starred accounts feature: drop `starredIds` from `AccountUserData` and `starred` from `AccountRaw` and `TokenAccountRaw`
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7), [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`866ed62`](https://github.com/LedgerHQ/ledger-live/commit/866ed62f04647abce7efeff0ebefe79c8e5bafde), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252), [`fcd1d97`](https://github.com/LedgerHQ/ledger-live/commit/fcd1d979dcce6f25d9e4dfcf7dd6b68d79b8b03c)]:
+  - @domain/entity-currency-crypto@0.21.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.14.0-next.0
+  - @ledgerhq/types-live@6.134.0-next.0
+  - @domain/entity-account-name@0.5.1-next.0
+  - @domain/entity-contact@0.13.2-next.0
+
 ## 1.3.0
 
 ### Minor Changes
@@ -231,25 +246,5 @@
   - @domain/entity-contact@0.10.0-next.0
   - @ledgerhq/ledger-wallet-framework@3.5.0-next.0
   - @ledgerhq/types-live@6.125.0-next.0
-
-## 1.1.3
-
-### Patch Changes
-
-- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`5b60a96`](https://github.com/LedgerHQ/ledger-live/commit/5b60a968d3292b3897380f2c74c472a51b81e35d), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
-  - @ledgerhq/types-live@6.124.0
-  - @domain/entity-contact@0.9.0
-  - @ledgerhq/ledger-wallet-framework@3.4.0
-  - @shared/cloud-sync-module@0.4.0
-
-## 1.1.3-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`5b60a96`](https://github.com/LedgerHQ/ledger-live/commit/5b60a968d3292b3897380f2c74c472a51b81e35d), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
-  - @ledgerhq/types-live@6.124.0-next.0
-  - @domain/entity-contact@0.9.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.4.0-next.0
-  - @shared/cloud-sync-module@0.4.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

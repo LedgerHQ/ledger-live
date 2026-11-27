@@ -144,6 +144,35 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     expect(await db.getKey("app", "accountAnalyticsIntroduction", undefined)).toEqual(dismissal);
   });
 
+  it("should preserve the receive verify hint after saving and reloading the database", async () => {
+    readFileMock.mockResolvedValueOnce(appJson({}));
+    const hint = { hasSeenReceiveVerifyHint: true };
+
+    await db.setKey("app", "receiveVerifyHint", hint);
+    await db.flush();
+
+    const persisted = getWrittenData();
+    expect(persisted.receiveVerifyHint).toEqual(hint);
+    readFileMock.mockResolvedValueOnce(appJson(persisted));
+    db.init(testDir);
+
+    expect(await db.getKey("app", "receiveVerifyHint", undefined)).toEqual(hint);
+  });
+
+  it("should preserve lldDatadog after saving and reloading the database", async () => {
+    readFileMock.mockResolvedValueOnce(appJson({}));
+
+    await db.setKey("app", "lldDatadog", { enabled: true });
+    await db.flush();
+
+    const persisted = getWrittenData();
+    expect(persisted.lldDatadog).toEqual({ enabled: true });
+    readFileMock.mockResolvedValueOnce(appJson(persisted));
+    db.init(testDir);
+
+    expect(await db.getKey("app", "lldDatadog", undefined)).toEqual({ enabled: true });
+  });
+
   it("preserves allowed and keepLegacy keys on load", async () => {
     readFileMock.mockResolvedValueOnce(
       appJson({

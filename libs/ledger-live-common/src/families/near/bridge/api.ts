@@ -1,5 +1,6 @@
 import { DEFAULT_SYNC_STATE_DRIVEN, isStateDrivenSync } from "@ledgerhq/coin-near/config";
 import type { NearConfig } from "@ledgerhq/coin-near/config";
+import { isGasRefund } from "@ledgerhq/coin-near/gasRefund";
 import type { NearAccount } from "@ledgerhq/coin-near/types";
 import type {
   BridgeApi,
@@ -94,11 +95,13 @@ export default function nearBridge(): BridgeApi {
   return {
     stakingSupported: true,
     usesStakingPositions: true,
+    partitionsNativeBalance: true,
     syncsHistoryOnStateChange: syncsHistoryOnStateChange(),
     getKnownValidatorIds,
     getStakingCallValidatorId,
     isOperationSettled,
     needsValidatorListing,
+    isGasRefund,
     computeIntentType,
     describeOptimisticOperation,
   };

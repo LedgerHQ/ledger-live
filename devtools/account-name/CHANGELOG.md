@@ -1,5 +1,11 @@
 # @devtools/account-name
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#25381](https://github.com/LedgerHQ/ledger-live/pull/25381) [`26bc734`](https://github.com/LedgerHQ/ledger-live/commit/26bc7347d5d2c4bfa09bc09ccbaf3c617e33cf8f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Hide the custom data of account ids (Aleo: the view key) in DevTools
+
 ## 0.2.0
 
 ### Minor Changes

@@ -4,7 +4,7 @@ import type {
   ConnectKnownOrNewDeviceUIStateTypes,
   DeviceListItem,
 } from "@ledgerhq/live-dmk-mobile";
-import type { DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
+import type { Device, DeviceConnectionResult, SourceFlow } from "@ledgerhq/live-dmk-shared";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import type {
   ConnectNewDeviceDelays,
@@ -19,6 +19,11 @@ export type ConnectKnownOrNewDeviceDelays = {
 };
 
 export type ConnectKnownOrNewDeviceProps = {
+  /**
+   * The flow that shows the component. The component adds it to all its analytics events, also to
+   * the events of the Add mode.
+   */
+  sourceFlow: SourceFlow;
   /** Called each time the user connects a device, also a device that was already connected. */
   onConnected: (result: DeviceConnectionResult) => void;
   /** Called when the Add mode starts and stops. The caller hides the rest of its screen. */
@@ -27,8 +32,12 @@ export type ConnectKnownOrNewDeviceProps = {
   isPaused: boolean;
   /** Called by the "I don't see my device" button of the Add mode, which shows only with it. */
   onDeviceNotFound?: () => void;
+  /** Replaces the Add mode: the Add buttons call it instead. `hasDevices` is `false` with an empty list. */
+  onAddDevice?: (hasDevices: boolean) => void;
   /** Read on mount only. */
   delays?: ConnectKnownOrNewDeviceDelays;
+  /** Shown right under the device list, only when the list has devices. */
+  listFooter?: ReactNode;
   /** Shown under the device list. */
   children?: ReactNode;
 };
@@ -53,7 +62,12 @@ export type ConnectKnownOrNewDeviceViewProps = {
   onDeviceNotFound?: () => void;
   /** Called on every close of the error sheet, also when `state` leaves an error. */
   onCloseErrorSheet: () => void;
+  /** Called on every close of the waiting and connecting sheet, also when `state` leaves it. */
+  onCloseDeviceStateSheet: () => void;
   /** Called on every close of the error sheet of the Add mode. */
   onCloseAddModeErrorSheet: () => void;
+  /** Whether a device is not in the known devices, for the events about that device. */
+  checkIsNewDevice: (device: Device) => boolean;
+  listFooter?: ReactNode;
   children?: ReactNode;
 };

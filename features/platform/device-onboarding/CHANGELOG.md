@@ -1,5 +1,15 @@
 # @features/platform-device-onboarding
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#24871](https://github.com/LedgerHQ/ledger-live/pull/24871) [`5befcc7`](https://github.com/LedgerHQ/ledger-live/commit/5befcc7d3a56005bd5aedda561005541d723e956) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Apply the Nano firmware rules to device onboarding. Every Nano S, an unseeded Nano X below 2.2.0 and an unseeded Nano S Plus below 1.1.0 go to the legacy flow. An unseeded Nano X from 2.2.0 to 2.7.0 or Nano S Plus from 1.1.0 to 1.6.0 runs the genuine check, then gets its firmware update once it is seeded, in the new `postSetupFirmware` state.
+
+- [#25394](https://github.com/LedgerHQ/ledger-live/pull/25394) [`fd07a09`](https://github.com/LedgerHQ/ledger-live/commit/fd07a09d0173d98646695b640080212a94bc9a5a) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Route the sync onboarding link to the new device flow, then pick seeded or unseeded by its own flag
+
+- [#25405](https://github.com/LedgerHQ/ledger-live/pull/25405) [`e1effae`](https://github.com/LedgerHQ/ledger-live/commit/e1effae27267fcbb14150d17fe2086459d34f8f5) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Track the unseeded device onboarding funnel. Seeded and unseeded events share the same props
+
 ## 0.7.0
 
 ### Minor Changes

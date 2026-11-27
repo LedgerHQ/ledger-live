@@ -1,7 +1,9 @@
 import { setCoinModuleCallObserver } from "@features/platform-coin-observability";
 import { log } from "@ledgerhq/logs";
 import { setTransactionObserver } from "@ledgerhq/transaction-observability";
+import { setOperationSink } from "@shared/observability-operations";
 import { coinModuleCallLogger, transactionBroadcastLogger } from "./logs";
+import { datadogOperationSink } from "./operationSink";
 
 /**
  * Forwards coin-module calls and bridge-seam broadcast outcomes to Datadog logs.
@@ -13,6 +15,7 @@ import { coinModuleCallLogger, transactionBroadcastLogger } from "./logs";
  */
 setCoinModuleCallObserver(coinModuleCallLogger);
 setTransactionObserver(transactionBroadcastLogger);
+setOperationSink(datadogOperationSink);
 
 // Every call, unsampled, in the local logs: printed with `VERBOSE=1` or `VERBOSE=coin-module-call`,
 // and part of the logs a user exports. Nothing here leaves the device.

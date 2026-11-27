@@ -3,6 +3,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import {
   MAX_TRUST_LIMIT as MAX_TRUST_LIMIT_BIGINT,
   getIssuerFee,
+  getNetworkReserves,
 } from "@ledgerhq/coin-xrp/logic-public";
 import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 
@@ -25,6 +26,13 @@ export function getIssuerFeeForToken(token: TokenCurrency): Promise<string> {
     assetReference: token.tokenIdentifier,
     assetOwner: token.contractAddress,
   });
+}
+
+/** In drops: an account holds `base`, plus `increment` per object it owns */
+export function getNetworkReservesForCurrency(
+  currencyId: string,
+): Promise<{ base: string; increment: string }> {
+  return getNetworkReserves(buildContext(currencyId));
 }
 
 /**

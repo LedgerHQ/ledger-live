@@ -5,6 +5,8 @@ import type { AssetToPick } from "@e2e/page/drawer/transfer.drawer";
 
 const OPERATION_ROW_ID = "operations-list-item";
 
+type MoreSheetAction = "buy" | "earn";
+
 /** The account screen shown when the `accountDetail` flag is on. */
 export default class AccountDetailPage {
   private readonly scrollView = byId("account-detail-scroll-view");
@@ -22,6 +24,9 @@ export default class AccountDetailPage {
   private readonly editNameScreen = byId("account-detail-edit-name-screen");
   private readonly heroBalance = byId("account-detail-hero-balance");
   private readonly heroAction = (action: string) => byId(`account-detail-hero-actions-${action}`);
+  private readonly moreSheet = byId("account-detail-hero-more-sheet-content");
+  private readonly moreSheetAction = (action: MoreSheetAction) =>
+    byId(`account-detail-hero-more-sheet-${action}`);
   private readonly sendRecipientInput = byId("recipient-input");
   private readonly transactions = byId("account-detail-transactions");
   private readonly anyOperationRow = byId(OPERATION_ROW_ID);
@@ -104,6 +109,29 @@ export default class AccountDetailPage {
   private async openTransferDrawer() {
     await this.heroAction("transfer").tap();
     await app.transferDrawer.waitSettled();
+  }
+
+  // Anchor on the sheet: its rows are matchable while it still slides.
+  private async tapMoreSheetAction(action: MoreSheetAction) {
+    await this.heroAction("more").tap();
+    await this.moreSheet.waitFullyVisible();
+    await this.moreSheetAction(action).tap();
+  }
+
+  @Step("Tap on swap")
+  async tapSwap() {
+    await this.heroAction("swap").tap();
+  }
+
+  /** Buy is a row of the More sheet, which the account screen shows while the currency supports swap. */
+  @Step("Tap on buy")
+  async tapBuy() {
+    await this.tapMoreSheetAction("buy");
+  }
+
+  @Step("Tap on earn")
+  async tapEarn() {
+    await this.tapMoreSheetAction("earn");
   }
 
   @Step("Expect operation history to be visible")

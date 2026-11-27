@@ -17,6 +17,7 @@ import { OsUpdateButton, OsUpdatePage } from "../../analytics/analyticsTypes";
 import { useOsUpdatePorts } from "../../hooks/OsUpdatePortsProvider";
 
 type WhatsNewScreenProps = Readonly<{
+  name: string;
   version: string;
   notes: string | null;
   onOpenReleaseNotes: () => void;
@@ -25,6 +26,7 @@ type WhatsNewScreenProps = Readonly<{
 }>;
 
 export function WhatsNewScreen({
+  name,
   version,
   notes,
   onOpenReleaseNotes,
@@ -66,7 +68,7 @@ export function WhatsNewScreen({
               <Trans i18nKey="osUpdates.whatsNew.productName" />
             </Text>
             <Text typography="heading4SemiBold" lx={{ color: "base" }}>
-              <Trans i18nKey="osUpdates.whatsNew.version" values={{ version }} />
+              <Trans i18nKey="osUpdates.whatsNew.version" values={{ version: name }} />
             </Text>
           </Box>
         </Box>

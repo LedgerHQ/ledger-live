@@ -1,5 +1,18 @@
 # @devtools/account-discovery
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#25657](https://github.com/LedgerHQ/ledger-live/pull/25657) [`632ad25`](https://github.com/LedgerHQ/ledger-live/commit/632ad25e76668e3b2e682e47231a9e40781c02b4) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Select, complete and add discovered accounts from the account discovery devtool.
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`452b4ed`](https://github.com/LedgerHQ/ledger-live/commit/452b4ed3cc44a6c9dc9726dfe0aa840b0cd3babd), [`8030207`](https://github.com/LedgerHQ/ledger-live/commit/803020759f7f1b66ddeede81a2cd88c4fc36708a)]:
+  - @domain/entity-currency-crypto@0.21.0-next.0
+  - @domain/entity-account-status@0.2.0-next.0
+  - @domain/entity-derivation@0.3.0-next.0
+
 ## 0.2.0
 
 ### Minor Changes

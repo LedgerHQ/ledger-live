@@ -1,4 +1,5 @@
 import { createBridges } from "@ledgerhq/coin-internet_computer/bridge/index";
+import type { IcpContext } from "@ledgerhq/coin-internet_computer/config";
 import type {
   ICPAccount,
   ICPSigner,
@@ -17,11 +18,13 @@ type Bridges = {
   lastBroadcast: () => InternetComputerOperation | undefined;
 };
 
+const context: IcpContext = { config: async () => localConfig, logger: () => {} };
+
 /** coin-internet_computer's legacy bridges against the local network, with a software signer. */
 export function getLegacyBridges(): Bridges {
   const signer = buildSigner();
   const signerContext: SignerContext<ICPSigner> = (_deviceId, fn) => fn(signer);
-  const { currencyBridge, accountBridge } = createBridges(signerContext, () => localConfig);
+  const { currencyBridge, accountBridge } = createBridges(signerContext, context);
 
   let last: InternetComputerOperation | undefined;
   const broadcast: typeof accountBridge.broadcast = async args => {

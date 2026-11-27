@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk-speculos
 
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#25490](https://github.com/LedgerHQ/ledger-live/pull/25490) [`da43922`](https://github.com/LedgerHQ/ledger-live/commit/da43922929ef693a87382dcfe83b34fce96ddec1) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - `AppDmkSpeculosTransport` reaches Speculos through the DMK of the app for `withDevice` and reuses the session a Device Intent opened, instead of connecting a second DMK session in the middle of the flow. Mobile e2e uses it, and the mobile app DMK normalizes the Speculos OS version
+
 ## 0.13.0
 
 ### Minor Changes

@@ -75,14 +75,16 @@ const connectionResult: DeviceConnectionResult = {
   } as DeviceConnectionResult["connectedDevice"],
 };
 
-function renderComponent() {
+function renderComponent(onAddDevice?: (hasDevices: boolean) => void) {
   const onConnected = jest.fn();
   const onAddModeChange = jest.fn();
   const view = render(
     <ConnectKnownOrNewDevice
+      sourceFlow="my_wallet"
       onConnected={onConnected}
       onAddModeChange={onAddModeChange}
       isPaused={false}
+      onAddDevice={onAddDevice}
     >
       <Text>Explore all Ledger devices</Text>
     </ConnectKnownOrNewDevice>,
@@ -181,6 +183,61 @@ describe("ConnectKnownOrNewDevice", () => {
 
     // THEN
     expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  it("GIVEN a caller Add handler, WHEN the flow replaces the Add mode, THEN it should call the handler", () => {
+    // GIVEN
+    const onAddDevice = jest.fn();
+    renderComponent(onAddDevice);
+
+    // WHEN
+    act(() => useCaseInput().onAddNewDevice?.(false));
+
+    // THEN
+    expect(onAddDevice).toHaveBeenCalledWith(false);
+  });
+
+  it("GIVEN no caller Add handler, WHEN the flow starts, THEN it should keep the Add mode", () => {
+    // GIVEN / WHEN
+    renderComponent();
+
+    // THEN
+    expect(useCaseInput().onAddNewDevice).toBeUndefined();
+  });
+
+  it("GIVEN a list footer, WHEN the list is empty and then has a device, THEN it should show the footer only with the device", () => {
+    // GIVEN
+    render(
+      <ConnectKnownOrNewDevice
+        sourceFlow="my_wallet"
+        onConnected={jest.fn()}
+        onAddModeChange={jest.fn()}
+        isPaused={false}
+        listFooter={<Text>List footer</Text>}
+      />,
+    );
+
+    // WHEN
+    emit({
+      type: ConnectKnownOrNewDeviceUIStateTypes.Discovering,
+      isPaused: false,
+      devices: [],
+      addNewDevice: jest.fn(),
+    });
+
+    // THEN
+    expect(screen.queryByText("List footer")).toBeNull();
+
+    // WHEN
+    emit({
+      type: ConnectKnownOrNewDeviceUIStateTypes.Discovering,
+      isPaused: false,
+      devices: [{ ...nanoXRow, connect: jest.fn() }],
+      addNewDevice: jest.fn(),
+    });
+
+    // THEN
+    expect(screen.getByText("List footer")).toBeVisible();
   });
 
   it("GIVEN a discovery error shown over the list, WHEN its retry button is pressed, THEN it should retry", async () => {

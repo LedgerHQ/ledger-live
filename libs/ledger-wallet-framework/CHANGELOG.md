@@ -1,5 +1,24 @@
 # @ledgerhq/ledger-wallet-framework
 
+## 3.14.0-next.0
+
+### Minor Changes
+
+- [#25419](https://github.com/LedgerHQ/ledger-live/pull/25419) [`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1) Thanks [@qperrot](https://github.com/qperrot)! - Remove the discontinued Horizen (zencash) currency and its bitcoin-family support
+
+- [#25582](https://github.com/LedgerHQ/ledger-live/pull/25582) [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653) Thanks [@qperrot](https://github.com/qperrot)! - Show a failed token transfer as a failed send of its attempted amount, without moving the token balance history
+
+- [#25488](https://github.com/LedgerHQ/ledger-live/pull/25488) [`866ed62`](https://github.com/LedgerHQ/ledger-live/commit/866ed62f04647abce7efeff0ebefe79c8e5bafde) Thanks [@semeano](https://github.com/semeano)! - fix(coin-near): partition the native balance between the liquid funds and the staking positions, summed by the generic adapter through `partitionsNativeBalance`, so staked NEAR is counted once
+
+- [#25583](https://github.com/LedgerHQ/ledger-live/pull/25583) [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Make coin-concordium stateless: `createBridges` takes a `Context`, and the proxy tuning, fee fallbacks, cache TTLs and WalletConnect relay come from `config_currency_concordium*`. `assignFromAccountRaw` may return a promise, which deserialization awaits.
+
+- [#25502](https://github.com/LedgerHQ/ledger-live/pull/25502) [`fcd1d97`](https://github.com/LedgerHQ/ledger-live/commit/fcd1d979dcce6f25d9e4dfcf7dd6b68d79b8b03c) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Take a NEAR gas refund landing after the account's own transaction as explained, instead of reading the history again for an hour
+
+### Patch Changes
+
+- Updated dependencies [[`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252)]:
+  - @ledgerhq/types-live@6.134.0-next.0
+
 ## 3.13.0
 
 ### Minor Changes
@@ -495,44 +514,5 @@
 
 - Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb)]:
   - @ledgerhq/types-live@6.124.0
-
-## 3.4.0-next.0
-
-### Minor Changes
-
-- [#21596](https://github.com/LedgerHQ/ledger-live/pull/21596) [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Carry a chain's staking positions through the generic coin framework, and keep sub-accounts
-  aligned with what the chain reports:
-
-  - an unbonding position with no validator is no longer dropped from the account's list
-  - `extractBalances` rebuilds staking positions, so a family validating a staking intent finds them
-  - a position reads as withdrawable only when the chain offers a withdraw on it
-  - `mergeSubAccounts` keeps only the sub-accounts the chain still reports, instead of letting a pruned one survive with a stale balance
-  - a pending operation shows the user's memo only on a plain transfer
-
-### Patch Changes
-
-- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb)]:
-  - @ledgerhq/types-live@6.124.0-next.0
-
-## 3.3.0
-
-### Minor Changes
-
-- [#21488](https://github.com/LedgerHQ/ledger-live/pull/21488) [`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop `delisted` from `CryptoCurrency`. No registry entry ever set it, so the `listCryptoCurrencies()` production filter was testing a dead branch. It stays on `TokenCurrency`, where CAL drives it.
-
-- [#21486](https://github.com/LedgerHQ/ledger-live/pull/21486) [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop `deviceTicker` from `CryptoCurrency`. The field was declared in three places and set by 17 testnet/L2 registry entries, but nothing ever read it.
-
-- [#21487](https://github.com/LedgerHQ/ledger-live/pull/21487) [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop `disableCountervalue` from `CryptoCurrency`. Nothing read it on a crypto currency; it stays on `TokenCurrency`, where the assets API drives it, and on `FiatCurrency`.
-
-- [#21485](https://github.com/LedgerHQ/ledger-live/pull/21485) [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(framework): align Solana testnet / devnet derivation with mainnet
-
-- [#21616](https://github.com/LedgerHQ/ledger-live/pull/21616) [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate `BIG_NUMBER_DECIMAL_PLACES` off `@ledgerhq/live-env`: every call site now inlines the constant and the definition is removed. `@ledgerhq/live-currency-format` drops its `@ledgerhq/live-env` dependency altogether.
-
-### Patch Changes
-
-- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783)]:
-  - @ledgerhq/types-live@6.123.0
-  - @ledgerhq/live-currency-format@0.15.0
-  - @ledgerhq/live-env@4.0.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

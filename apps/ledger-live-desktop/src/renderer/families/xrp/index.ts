@@ -4,6 +4,8 @@ import AccountDialogs from "./AccountDialogs";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import StepReceiveAccountCustomAlert from "./StepReceiveAccountCustomAlert";
 import addAssetAction from "./addAssetAction";
+import receiveGateAction from "./receiveGateAction";
+import manageAssetsAction from "./manageAssetsAction";
 import sendAmountFields from "./SendAmountFields";
 import SendAmountFooterRow from "./SendAmountFooterRow";
 import sendRecipientFields from "./SendRecipientFields";
@@ -21,6 +23,8 @@ const family: XrpFamily = {
   SendAmountFooterRow,
   tokenList,
   addAssetAction,
+  receiveGateAction,
+  manageAssetsAction,
   getTokenTypes: currency => getXrpEnabledTokenStandards(currency.id),
   AccountBalanceSummaryFooter,
   accountHeaderManageActions,

@@ -1,6 +1,5 @@
 import type { AccountDataSource, AccountTarget } from "@domain/api-account-data";
 import { descriptorOf, sourceIdOf } from "@domain/api-account-data/testing";
-import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
 import type { AccountOperationsPage } from "@domain/entity-account-operation";
 import { mockAccountOperation } from "@domain/entity-account-operation/schema.mock";
 import type { CryptoOrTokenCurrencyId, Currency } from "@domain/entity-currency";
@@ -8,6 +7,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { importCountervalues } from "@domain/entity-market-countervalues";
+import { AccountUUIDSchema } from "@domain/entity-account";
 import { valueOperations, withOperationCountervalues } from "./withOperationCountervalues";
 
 const usd = FiatCurrencyTickerSchema.parse("USD");

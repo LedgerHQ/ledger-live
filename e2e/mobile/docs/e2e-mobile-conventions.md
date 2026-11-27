@@ -22,7 +22,7 @@ A spec MUST declare only test metadata and invoke the sibling test function. The
 
 ### State MUST be arranged in fixtures and flags
 
-See [E2E conventions](../../docs/e2e-conventions.md#setup-must-be-deterministic). Entry-point flags MUST belong in the test function file, combined with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports `data.settings`, `data.accounts`, `data.trustchain`, `data.postOnboarding`, and `data.payCard` when present. Other domain entities cannot be seeded this way.
+See [E2E conventions](../../docs/e2e-conventions.md#setup-must-be-deterministic). Entry-point flags MUST belong in the test function file, combined with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports `data.settings`, `data.accounts`, `data.trustchain`, `data.postOnboarding`, `data.payCard`, and `data.receiveVerifyHint` when present. Other domain entities cannot be seeded this way.
 
 ### State MUST NOT be arranged in UI steps
 
@@ -85,7 +85,7 @@ private readonly contactCompactRow = (contactId: string) => byId(`contacts-compa
 
 ### Every public method MUST use @Step
 
-Parameters MUST be Handlebars placeholders: `{{0}}`, `{{1}}` by index, or named `@Step("Rename to {{name}}", ["name"])`. `$0` renders literally. Values are HTML-escaped, so use `{{{0}}}` for one containing `&`, `<`, or `'`. Arguments appear as Allure parameters even without a placeholder.
+Parameters MUST be Handlebars placeholders: `{{0}}`, `{{1}}` by index, `{{{0.address}}}` for a field of an options object, or named `@Step("Rename to {{name}}", ["name"])`. `$0` renders literally. Values are HTML-escaped, so use `{{{0}}}` for one containing `&`, `<`, or `'`. Arguments appear as Allure parameters even without a placeholder.
 
 ### The test function MUST call $TmsLink
 
@@ -97,7 +97,7 @@ The spec MUST pass the `B2CQA-XXXX` id and the test function MUST call `$TmsLink
 
 ```ts
 // spec
-runBrowseAndSearchContactsTest(["B2CQA-6240"], tags);
+runBrowseAndSearchContactsTest({ tmsLinks: ["B2CQA-6240"], tags });
 
 // test function
 setTeamOwner(Team.WALLET_XP);
@@ -162,7 +162,8 @@ iOS smart punctuation turns a typed `'` into `’`, so a straight apostrophe in 
 The test function calls `declareBroadcastAccounts`, `declareCliBroadcastAccounts` or `declareSharedResources` ([`helpers/exclusiveLock.ts`](../helpers/exclusiveLock.ts)) before its `describe`:
 
 ```ts
-export function runDelegateTest(delegation: DelegateType /* … */) {
+export function runDelegateTest(options: RunDelegateTestOptions) {
+  const { delegation /* … */ } = options;
   declareBroadcastAccounts(delegation.account);
   describe("Delegate", () => {
 ```
@@ -178,7 +179,7 @@ import { $KnownFailure } from "@e2e/helpers/knownFailure";
 
 // Whole spec: right before the test function call, like $TmsLink / $Tag.
 $KnownFailure("LIVE-12345");
-runSendTest(transaction, ["B2CQA-4225"], ["@NanoX", "@family-evm"]);
+runSendTest({ transaction, tmsLinks: ["B2CQA-4225"], tags: ["@NanoX", "@family-evm"] });
 
 // One test: right before its it(), inside the describe.
 $KnownFailure("LIVE-12345");

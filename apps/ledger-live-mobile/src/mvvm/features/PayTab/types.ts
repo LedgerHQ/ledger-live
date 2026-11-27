@@ -1,4 +1,3 @@
-import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { ScreenName } from "~/const";
 
 export type PayTabNavigatorParamList = {
@@ -8,10 +7,5 @@ export type PayTabNavigatorParamList = {
    * over the provider's own spelling, so the app id arrives as `app_id`.
    */
   [ScreenName.PayTab]: { code?: string; app_id?: string } | undefined;
-  [ScreenName.PayTabRequestReceive]: {
-    accountId: string;
-    parentId?: string;
-    currency: CryptoOrTokenCurrency;
-  };
   [ScreenName.PayTabPayContact]: undefined;
 };

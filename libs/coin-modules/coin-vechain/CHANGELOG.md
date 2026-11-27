@@ -1,5 +1,12 @@
 # @ledgerhq/coin-evm
 
+## 4.7.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653), [`866ed62`](https://github.com/LedgerHQ/ledger-live/commit/866ed62f04647abce7efeff0ebefe79c8e5bafde), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252), [`fcd1d97`](https://github.com/LedgerHQ/ledger-live/commit/fcd1d979dcce6f25d9e4dfcf7dd6b68d79b8b03c)]:
+  - @ledgerhq/ledger-wallet-framework@3.14.0-next.0
+
 ## 4.7.0
 
 ### Minor Changes
@@ -266,30 +273,5 @@
 
 - Updated dependencies [[`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
   - @ledgerhq/ledger-wallet-framework@3.4.0
-
-## 4.2.0-next.0
-
-### Minor Changes
-
-- [#21818](https://github.com/LedgerHQ/ledger-live/pull/21818) [`92c97cf`](https://github.com/LedgerHQ/ledger-live/commit/92c97cf5ee26cbac54f0db25fcdc19336c2318a2) Thanks [@may01](https://github.com/may01)! - listOperations no longer advertises a next cursor, and honours the requested order
-
-  A page already covers every operation up to the current head, so the cursor it returned (the head
-  block, and the caller's own cursor on an empty page) never led to more results — a client paging
-  until `next` is falsy looped forever. The page is now returned without `next`.
-
-  `order` was accepted and ignored: `asc` and `desc` both returned newest-first. Operations are now
-  sorted in the requested order, `desc` remaining the default.
-
-### Patch Changes
-
-- Updated dependencies [[`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
-  - @ledgerhq/ledger-wallet-framework@3.4.0-next.0
-
-## 4.1.1
-
-### Patch Changes
-
-- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215)]:
-  - @ledgerhq/ledger-wallet-framework@3.3.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

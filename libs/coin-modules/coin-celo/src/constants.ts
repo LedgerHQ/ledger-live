@@ -180,6 +180,9 @@ export const FEE_CURRENCY_BY_ADAPTER: Map<string, (typeof FEE_CURRENCY_OPTIONS)[
  *  subsequent syncs can skip the per-hash RPC for already-inspected native ops. */
 export const NATIVE_FEE_CURRENCY_MARKER = "native";
 
+/** GoldToken, the ERC-20 interface of native CELO: its transfers move the native balance. */
+export const CELO_ERC20_ADDRESS = "0x471EcE3750Da237f93B8E339c536989b8978a438";
+
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 export const CELO_DUMMY_ADDRESS = "0xE70E8AfeF87CC8F0D7a61F58535F6EC99cd860cA";

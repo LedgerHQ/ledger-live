@@ -57,6 +57,8 @@ export function withCharonState(getVersionReply: string, status: number): string
   return Buffer.concat([body.subarray(0, headLength), ...tlvs, statusWord]).toString("hex");
 }
 
+type OnboardingFlagsOptions = { getVersionReply: string; step: number; onboarded: boolean };
+
 /**
  * Rewrites the onboarding flags inside a real GET_VERSION reply.
  *
@@ -67,11 +69,8 @@ export function withCharonState(getVersionReply: string, status: number): string
  * `onboarded` has to agree with the step: reporting `ready` without it leaves the
  * companion stuck, with no error to explain why.
  */
-export function withOnboardingFlags(
-  getVersionReply: string,
-  step: number,
-  onboarded: boolean,
-): string {
+export function withOnboardingFlags(options: OnboardingFlagsOptions): string {
+  const { getVersionReply, step, onboarded } = options;
   const reply = Buffer.from(getVersionReply, "hex");
 
   const seVersionLength = reply[4]; // after the 4-byte targetId

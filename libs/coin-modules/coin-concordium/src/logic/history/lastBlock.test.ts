@@ -24,10 +24,10 @@ describe("lastBlock", () => {
     });
 
     // WHEN
-    const result = await lastBlock(config, "concordium_testnet");
+    const result = await lastBlock(config);
 
     // THEN
-    expect(getConsensusInfoMock).toHaveBeenCalledWith(config, "concordium_testnet");
+    expect(getConsensusInfoMock).toHaveBeenCalledWith(config);
     expect(result).toEqual({
       height: 12345,
       hash: "abc123hash",

@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-canton
 
+## 0.18.0-next.0
+
+### Minor Changes
+
+- [#25347](https://github.com/LedgerHQ/ledger-live/pull/25347) [`24ce1e8`](https://github.com/LedgerHQ/ledger-live/commit/24ce1e804772ca1f3bbdf74143effce4e021821d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Align protobufjs on 8.6.6 through the pnpm catalog
+
 ## 0.17.0
 
 ### Minor Changes
@@ -201,21 +207,5 @@
 
 - Updated dependencies []:
   - @ledgerhq/hw-transport@6.35.3-next.0
-
-## 0.12.1
-
-### Patch Changes
-
-- Updated dependencies [[`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
-  - @ledgerhq/errors@6.35.0
-  - @ledgerhq/hw-transport@6.35.2
-
-## 0.12.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
-  - @ledgerhq/errors@6.35.0-next.0
-  - @ledgerhq/hw-transport@6.35.2-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

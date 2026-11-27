@@ -13,7 +13,8 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import {
-  NotEnoughGas,
+  SolanaNotEnoughSolForRecipientTokenAccount,
+  SolanaNotEnoughSolForTokenTransfer,
   SolanaAccountNotFunded,
   SolanaMemoIsTooLong,
   SolanaMintAccountNotAllowed,
@@ -1284,7 +1285,7 @@ describe("validateIntent", () => {
         mockedGetMaybeTokenMint.mockReset();
       });
 
-      it("packs NotEnoughGas when spendable cannot cover the fee the estimation reported", async () => {
+      it("packs the recipient token account error when spendable cannot cover the fee the estimation reported", async () => {
         mockedGetMaybeTokenMint.mockResolvedValueOnce(
           makeMint("spl-token-2022", ["transferFeeConfig"]),
         );
@@ -1300,7 +1301,7 @@ describe("validateIntent", () => {
           api,
         );
 
-        expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+        expect(result.errors.gasPrice).toBeInstanceOf(SolanaNotEnoughSolForRecipientTokenAccount);
         expect(result.errors.gasPrice as Error & Record<string, unknown>).toMatchObject({
           fee: "5000",
           deposit: "2157600",
@@ -1324,13 +1325,17 @@ describe("validateIntent", () => {
           api,
         );
 
-        expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+        expect(result.errors.gasPrice).toBeInstanceOf(SolanaNotEnoughSolForRecipientTokenAccount);
         expect(result.errors.gasPrice as Error & Record<string, unknown>).toMatchObject({
           fee: "5000",
           deposit: "2039280",
           locked: "890880",
           missing: "245160",
           recipientHasNoTokenAccount: true,
+          networkFee: "0.000005",
+          accountDeposit: "0.00203928",
+          lockedReserve: "0.00089088",
+          missingAmount: "0.00024516",
         });
       });
 
@@ -1351,7 +1356,7 @@ describe("validateIntent", () => {
         expect(result.errors.gasPrice).toMatchObject({ fee: "5000", deposit: "2039280" });
       });
 
-      it("does not pack NotEnoughGas when spendable covers that fee", async () => {
+      it("does not pack an insufficient SOL error when spendable covers that fee", async () => {
         mockedGetMaybeTokenMint.mockResolvedValueOnce(
           makeMint("spl-token-2022", ["transferFeeConfig"]),
         );
@@ -1367,9 +1372,12 @@ describe("validateIntent", () => {
         expect(result.errors.gasPrice).toBeUndefined();
       });
 
-      it("packs NotEnoughGas when a classic SPL ATA has to be created and funds fall one short", async () => {
+      it("packs the recipient token account error when a classic SPL ATA has to be created and funds fall one short", async () => {
         mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
-        const api = makeFakeApi({ ataExists: false, rentByDataLength: {} });
+        const api = makeFakeApi({
+          ataExists: false,
+          rentByDataLength: { 165: Number(CLASSIC_ATA_RENT) },
+        });
 
         const result = await validateIntent(
           makeTokenIntent({ amount: 1n }),
@@ -1378,7 +1386,85 @@ describe("validateIntent", () => {
           api,
         );
 
-        expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+        expect(result.errors.gasPrice).toBeInstanceOf(SolanaNotEnoughSolForRecipientTokenAccount);
+      });
+
+      it("resolves the token account deposit from the mint when the estimation does not report it", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
+        const api = makeFakeApi({
+          ataExists: false,
+          rentByDataLength: { 165: Number(CLASSIC_ATA_RENT) },
+        });
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(2_690_000n),
+          { value: CLASSIC_ATA_RENT + FEE },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toMatchObject({
+          fee: "5000",
+          deposit: "2039280",
+          networkFee: "0.000005",
+          accountDeposit: "0.00203928",
+        });
+      });
+
+      it.each([
+        { case: "empty", nativeValue: 0n, missing: "895880" },
+        { case: "below the rent-exempt minimum", nativeValue: 100_000n, missing: "795880" },
+      ])(
+        "asks for the rent-exempt reserve plus the fee when the SOL account is $case",
+        async ({ nativeValue, missing }) => {
+          mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
+          const api = makeFakeApi({ ataExists: true, rentByDataLength: { 0: 890_880 } });
+
+          const result = await validateIntent(
+            makeTokenIntent({ amount: 1n }),
+            balancesWithNative(nativeValue, nativeValue),
+            { value: FEE },
+            api,
+          );
+
+          expect(result.errors.gasPrice).toBeInstanceOf(SolanaNotEnoughSolForTokenTransfer);
+          expect(result.errors.gasPrice).toMatchObject({ locked: "890880", missing });
+        },
+      );
+
+      it("adds the unstake reserve of an active stake when the SOL account is below its reserve", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
+        const api = makeFakeApi({ ataExists: true, rentByDataLength: { 0: 890_880 } });
+        const activeStake = {
+          value: 2_000_000n,
+          asset: { type: "native" },
+          locked: 2_000_000n,
+          stake: { state: "active" },
+        } as Balance;
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          [...balancesWithNative(0n, 0n), activeStake],
+          { value: FEE },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toMatchObject({ locked: "900880", missing: "905880" });
+      });
+
+      it("still returns the not-enough-SOL error when the rent RPC lookups fail", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
+        const api = makeFakeApi({ ataExists: false, rentByDataLength: {} });
+        (api.getMinimumBalanceForRentExemption as jest.Mock).mockRejectedValue(new Error("429"));
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(0n, 0n),
+          { value: FEE },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toBeInstanceOf(SolanaNotEnoughSolForRecipientTokenAccount);
       });
 
       it("does not require ATA rent when the recipient's ATA already exists", async () => {
@@ -1399,11 +1485,11 @@ describe("validateIntent", () => {
         expect(api.getMinimumBalanceForRentExemption).not.toHaveBeenCalled();
       });
 
-      it("packs NotEnoughGas when spendable is zero, regardless of fee value", async () => {
+      it("packs the token transfer error when spendable is zero and the recipient token account exists", async () => {
         mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
         const api = makeFakeApi({
           ataExists: true,
-          rentByDataLength: {},
+          rentByDataLength: { 0: 890_880 },
         });
 
         const result = await validateIntent(
@@ -1413,7 +1499,7 @@ describe("validateIntent", () => {
           api,
         );
 
-        expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+        expect(result.errors.gasPrice).toBeInstanceOf(SolanaNotEnoughSolForTokenTransfer);
         expect(result.errors.gasPrice).toMatchObject({
           deposit: "0",
           recipientHasNoTokenAccount: false,

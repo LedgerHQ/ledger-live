@@ -1,5 +1,13 @@
 # @features/flow-contacts-delete-contact
 
+## 0.5.4-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-contacts@0.13.2-next.0
+  - @domain/entity-contact@0.13.2-next.0
+
 ## 0.5.3
 
 ### Patch Changes
@@ -181,21 +189,5 @@
 
 - Updated dependencies []:
   - @features/platform-contacts@0.8.0-next.1
-
-## 0.2.3-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`871e485`](https://github.com/LedgerHQ/ledger-live/commit/871e4854284a0b21e31b53ff0ac312010093d914), [`33e92e8`](https://github.com/LedgerHQ/ledger-live/commit/33e92e8f074ff73a6a3e338c8313ba8bc9066ccf), [`0651158`](https://github.com/LedgerHQ/ledger-live/commit/0651158a2f03f819c2e2770ef4179901768c3c6c)]:
-  - @features/platform-contacts@0.8.0-next.0
-  - @domain/entity-contact@0.10.0-next.0
-
-## 0.2.2
-
-### Patch Changes
-
-- Updated dependencies [[`16a454f`](https://github.com/LedgerHQ/ledger-live/commit/16a454fa79be46df6aec3c50ad40407f36dfdea9), [`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d), [`632dd93`](https://github.com/LedgerHQ/ledger-live/commit/632dd9368616a97581d037f1503b2b16f567c02a), [`5b60a96`](https://github.com/LedgerHQ/ledger-live/commit/5b60a968d3292b3897380f2c74c472a51b81e35d)]:
-  - @features/platform-contacts@0.7.0
-  - @domain/entity-contact@0.9.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

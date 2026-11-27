@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.33.0-next.0
+
+### Minor Changes
+
+- [#25347](https://github.com/LedgerHQ/ledger-live/pull/25347) [`24ce1e8`](https://github.com/LedgerHQ/ledger-live/commit/24ce1e804772ca1f3bbdf74143effce4e021821d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Align protobufjs on 8.6.6 through the pnpm catalog
+
 ## 0.32.0
 
 ### Minor Changes

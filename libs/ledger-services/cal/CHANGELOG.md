@@ -1,5 +1,11 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.20.0-next.0
+
+### Minor Changes
+
+- [#25699](https://github.com/LedgerHQ/ledger-live/pull/25699) [`089284b`](https://github.com/LedgerHQ/ledger-live/commit/089284b16bfee3dd5f6255799c58f5c8dbe108c8) Thanks [@shazzzam](https://github.com/shazzzam)! - Add the LI.FI Intents swap provider terms of use, name and scan.li.fi explorer link
+
 ## 1.19.13
 
 ### Patch Changes

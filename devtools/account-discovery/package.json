@@ -1,6 +1,6 @@
 {
   "name": "@devtools/account-discovery",
-  "version": "0.2.0",
+  "version": "0.3.0-next.0",
   "private": true,
   "description": "DevTools page scanning a currency on the device for accounts, as the discovery stream finds them",
   "main": "src/index.ts",

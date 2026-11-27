@@ -1,5 +1,16 @@
 # @ledgerhq/coin-zcash
 
+## 1.3.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7), [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`866ed62`](https://github.com/LedgerHQ/ledger-live/commit/866ed62f04647abce7efeff0ebefe79c8e5bafde), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252), [`fcd1d97`](https://github.com/LedgerHQ/ledger-live/commit/fcd1d979dcce6f25d9e4dfcf7dd6b68d79b8b03c)]:
+  - @ledgerhq/wallet-btc@2.0.0-next.0
+  - @ledgerhq/hw-app-btc@13.0.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.14.0-next.0
+  - @ledgerhq/types-live@6.134.0-next.0
+  - @ledgerhq/live-signer-zcash@0.13.0
+
 ## 1.3.0
 
 ### Minor Changes
@@ -395,64 +406,6 @@
   - @ledgerhq/types-live@6.125.0-next.0
   - @ledgerhq/live-env@4.1.0-next.0
   - @ledgerhq/wallet-btc@0.6.0-next.0
-  - @ledgerhq/live-signer-zcash@0.10.0
-
-## 0.8.0
-
-### Minor Changes
-
-- [#21962](https://github.com/LedgerHQ/ledger-live/pull/21962) [`f5d0da5`](https://github.com/LedgerHQ/ledger-live/commit/f5d0da5d43ff492175433453b08533cee324c6e2) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Report both legs of a Zcash self-transfer in the account history
-
-  A send from the private balance to the account's own transparent address — the send flow's "Self transfer" — appeared only as `Received`, never as `Sent`. One such transaction is recorded by both sync legs: the transparent leg credits the address it paid (`IN`), the shielded leg debits the pool it drained (`SHIELDED_TX_*_OUT`). `reconcileLegOperations` collapsed the two records by transaction hash alone, on the premise that a hash both legs see is one event seen twice, and kept the transparent one — dropping the send.
-
-  Two records of one transaction are now collapsed only when they report the same direction, which is the case the rule exists for: a shield paying someone else, where the transparent leg debits the UTXOs and the shielded leg sees, through the outgoing viewing key, the note it created. Opposite directions are the two legs of a movement between the account's own pools and both are kept, the way a self-send is reported elsewhere. A superseded record's memo is still copied onto the transparent operation that replaces it; a record that survives keeps its own memo, so it is not printed on both rows.
-
-  The same collapse hid the `Received` leg of the mirror flow, shielding to the account's own shielded address.
-
-- [#22037](https://github.com/LedgerHQ/ledger-live/pull/22037) [`fecfcf7`](https://github.com/LedgerHQ/ledger-live/commit/fecfcf7570ed70213a9c0e32c2822b4eb057eb03) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix an incorrect fee on shielded and shielding sends when the leftover change was small enough to
-  be folded into the fee instead of kept as a change note.
-
-  The native Ironwood (V6) builder requires the fee to equal the exact ZIP-317 fee for the resulting
-  spend/output layout; a fee larger than that by even a few zatoshis is rejected at build time. Coin
-  selection no longer absorbs a small residual into the fee for any flow that builds through that
-  builder ("shielded", "shielded-to-transparent", "transparent-to-shielded") -- the residual now
-  always stays as change.
-
-### Patch Changes
-
-- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`30828c2`](https://github.com/LedgerHQ/ledger-live/commit/30828c22cc44c9929d7eda782e9d559a9e0145c3), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
-  - @ledgerhq/types-live@6.124.0
-  - @ledgerhq/wallet-btc@0.5.0
-  - @ledgerhq/ledger-wallet-framework@3.4.0
-  - @ledgerhq/live-signer-zcash@0.10.0
-
-## 0.8.0-next.0
-
-### Minor Changes
-
-- [#21962](https://github.com/LedgerHQ/ledger-live/pull/21962) [`f5d0da5`](https://github.com/LedgerHQ/ledger-live/commit/f5d0da5d43ff492175433453b08533cee324c6e2) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Report both legs of a Zcash self-transfer in the account history
-
-  A send from the private balance to the account's own transparent address — the send flow's "Self transfer" — appeared only as `Received`, never as `Sent`. One such transaction is recorded by both sync legs: the transparent leg credits the address it paid (`IN`), the shielded leg debits the pool it drained (`SHIELDED_TX_*_OUT`). `reconcileLegOperations` collapsed the two records by transaction hash alone, on the premise that a hash both legs see is one event seen twice, and kept the transparent one — dropping the send.
-
-  Two records of one transaction are now collapsed only when they report the same direction, which is the case the rule exists for: a shield paying someone else, where the transparent leg debits the UTXOs and the shielded leg sees, through the outgoing viewing key, the note it created. Opposite directions are the two legs of a movement between the account's own pools and both are kept, the way a self-send is reported elsewhere. A superseded record's memo is still copied onto the transparent operation that replaces it; a record that survives keeps its own memo, so it is not printed on both rows.
-
-  The same collapse hid the `Received` leg of the mirror flow, shielding to the account's own shielded address.
-
-- [#22037](https://github.com/LedgerHQ/ledger-live/pull/22037) [`fecfcf7`](https://github.com/LedgerHQ/ledger-live/commit/fecfcf7570ed70213a9c0e32c2822b4eb057eb03) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix an incorrect fee on shielded and shielding sends when the leftover change was small enough to
-  be folded into the fee instead of kept as a change note.
-
-  The native Ironwood (V6) builder requires the fee to equal the exact ZIP-317 fee for the resulting
-  spend/output layout; a fee larger than that by even a few zatoshis is rejected at build time. Coin
-  selection no longer absorbs a small residual into the fee for any flow that builds through that
-  builder ("shielded", "shielded-to-transparent", "transparent-to-shielded") -- the residual now
-  always stays as change.
-
-### Patch Changes
-
-- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`30828c2`](https://github.com/LedgerHQ/ledger-live/commit/30828c22cc44c9929d7eda782e9d559a9e0145c3), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
-  - @ledgerhq/types-live@6.124.0-next.0
-  - @ledgerhq/wallet-btc@0.5.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.4.0-next.0
   - @ledgerhq/live-signer-zcash@0.10.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

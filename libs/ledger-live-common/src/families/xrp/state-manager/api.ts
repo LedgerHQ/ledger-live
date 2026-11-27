@@ -1,6 +1,6 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { getIssuerFeeForToken } from "../logicPublic";
+import { getIssuerFeeForToken, getNetworkReservesForCurrency } from "../logicPublic";
 
 export const xrpApi = createApi({
   reducerPath: "xrpApi",
@@ -19,8 +19,19 @@ export const xrpApi = createApi({
           }
         },
       }),
+      getNetworkReserves: build.query<{ base: string; increment: string }, string>({
+        queryFn: async currencyId => {
+          try {
+            const reserves = await getNetworkReservesForCurrency(currencyId);
+
+            return { data: reserves };
+          } catch (error) {
+            return { error: error instanceof Error ? error : new Error(String(error)) };
+          }
+        },
+      }),
     };
   },
 });
 
-export const { useGetIssuerFeeQuery } = xrpApi;
+export const { useGetIssuerFeeQuery, useGetNetworkReservesQuery } = xrpApi;

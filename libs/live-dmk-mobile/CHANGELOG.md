@@ -1,5 +1,21 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.37.0-next.0
+
+### Minor Changes
+
+- [#25205](https://github.com/LedgerHQ/ledger-live/pull/25205) [`7627a66`](https://github.com/LedgerHQ/ledger-live/commit/7627a66e667eb4b00ca417603c39d0adf5e2a094) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - `connectKnownOrNewDevice` takes an optional `onAddNewDevice`: Add calls it instead of opening the Add mode
+
+- [#25010](https://github.com/LedgerHQ/ledger-live/pull/25010) [`035c34e`](https://github.com/LedgerHQ/ledger-live/commit/035c34ee6c2ccb3259cba746a2b53a3f98cf9096) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - The BLE and USB transports reuse the session of a connected device before they scan, so that a legacy flow uses the session that a DMK flow opened
+
+- [#25490](https://github.com/LedgerHQ/ledger-live/pull/25490) [`da43922`](https://github.com/LedgerHQ/ledger-live/commit/da43922929ef693a87382dcfe83b34fce96ddec1) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - `AppDmkSpeculosTransport` reaches Speculos through the DMK of the app for `withDevice` and reuses the session a Device Intent opened, instead of connecting a second DMK session in the middle of the flow. Mobile e2e uses it, and the mobile app DMK normalizes the Speculos OS version
+
+### Patch Changes
+
+- Updated dependencies [[`5feaf06`](https://github.com/LedgerHQ/ledger-live/commit/5feaf06e713cfd096eeede46a624fd8991be6070), [`ea642dd`](https://github.com/LedgerHQ/ledger-live/commit/ea642ddb50ee3418f5d80cb3ec0d682ac7bf8d3b), [`7627a66`](https://github.com/LedgerHQ/ledger-live/commit/7627a66e667eb4b00ca417603c39d0adf5e2a094), [`da43922`](https://github.com/LedgerHQ/ledger-live/commit/da43922929ef693a87382dcfe83b34fce96ddec1)]:
+  - @ledgerhq/live-dmk-shared@0.42.0-next.0
+  - @ledgerhq/live-dmk-speculos@0.14.0-next.0
+
 ## 0.36.0
 
 ### Minor Changes
@@ -277,19 +293,5 @@
 
 - Updated dependencies [[`da3d09d`](https://github.com/LedgerHQ/ledger-live/commit/da3d09d75d7dcae659611cd371c48d75c03f7ae4)]:
   - @shared/env@0.7.0-next.0
-
-## 0.29.7
-
-### Patch Changes
-
-- Updated dependencies [[`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6)]:
-  - @shared/env@0.6.0
-
-## 0.29.7-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`60ee73c`](https://github.com/LedgerHQ/ledger-live/commit/60ee73c7b89b101dde708a04ded260341ef86d44), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`c3de11c`](https://github.com/LedgerHQ/ledger-live/commit/c3de11cdf58c4feac701435548bbb96819ae09f6)]:
-  - @shared/env@0.6.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

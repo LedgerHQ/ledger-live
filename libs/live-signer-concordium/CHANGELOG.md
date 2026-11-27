@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-concordium
 
+## 0.9.9-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`452b4ed`](https://github.com/LedgerHQ/ledger-live/commit/452b4ed3cc44a6c9dc9726dfe0aa840b0cd3babd), [`6bb12b6`](https://github.com/LedgerHQ/ledger-live/commit/6bb12b62cf964b8bb137701c5f7d1b5cdc43e6e6), [`42d1fd6`](https://github.com/LedgerHQ/ledger-live/commit/42d1fd68d14197b3d490118403cd001305f5860d), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252)]:
+  - @ledgerhq/coin-concordium@2.0.0-next.0
+
 ## 0.9.8
 
 ### Patch Changes
@@ -174,42 +181,5 @@
 - Updated dependencies [[`738c0d8`](https://github.com/LedgerHQ/ledger-live/commit/738c0d8a1357e96713bfc0d7a40ca403b5290c35), [`05cb97c`](https://github.com/LedgerHQ/ledger-live/commit/05cb97c6986755d87d4c0b3df3d8b4daf9ba77df), [`251af57`](https://github.com/LedgerHQ/ledger-live/commit/251af57e7412e493deaecddf627e3967ba044c09), [`b30f903`](https://github.com/LedgerHQ/ledger-live/commit/b30f903f592c0bafba74a1784d98b9d605c18ccb), [`4c314f4`](https://github.com/LedgerHQ/ledger-live/commit/4c314f4035581de1affaba8419cd062359251c2f)]:
   - @ledgerhq/coin-concordium@1.3.0
   - @ledgerhq/concordium-core@0.7.0
-
-## 0.8.0-next.0
-
-### Minor Changes
-
-- [#21720](https://github.com/LedgerHQ/ledger-live/pull/21720) [`05cb97c`](https://github.com/LedgerHQ/ledger-live/commit/05cb97c6986755d87d4c0b3df3d8b4daf9ba77df) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Craft and sign PLT transfers
-
-  `craftPltTransaction` builds a `TokenUpdate` payload from the CAL-resolved token id, the
-  CAL unit magnitude as the amount's exponent, and the energy persisted at estimation time,
-  and `signOperation` routes a transaction carrying a token sub-account to it. The signer
-  interface widens to `AnyTransaction`; its body already serialized both kinds. A PLT send
-  now reports the CCD fee on the parent account and the token amount on the sub-account,
-  matching the pair sync builds once the transfer is indexed. `updateTransaction` drops the
-  persisted energy alongside the fee, so a re-selected token cannot inherit the previous
-  token's energy limit. Adds the English error strings for the two signer failures this path
-  can surface.
-
-  Signing on a device needs the PLT-capable Concordium app; until it ships, an attempt
-  surfaces as a translated "update your Concordium app" error. PLT sub-accounts remain behind
-  the `enableTokens` config switch.
-
-### Patch Changes
-
-- Updated dependencies [[`738c0d8`](https://github.com/LedgerHQ/ledger-live/commit/738c0d8a1357e96713bfc0d7a40ca403b5290c35), [`05cb97c`](https://github.com/LedgerHQ/ledger-live/commit/05cb97c6986755d87d4c0b3df3d8b4daf9ba77df), [`251af57`](https://github.com/LedgerHQ/ledger-live/commit/251af57e7412e493deaecddf627e3967ba044c09), [`b30f903`](https://github.com/LedgerHQ/ledger-live/commit/b30f903f592c0bafba74a1784d98b9d605c18ccb), [`4c314f4`](https://github.com/LedgerHQ/ledger-live/commit/4c314f4035581de1affaba8419cd062359251c2f)]:
-  - @ledgerhq/coin-concordium@1.3.0-next.0
-  - @ledgerhq/concordium-core@0.7.0-next.0
-
-## 0.7.0
-
-### Minor Changes
-
-- [#21204](https://github.com/LedgerHQ/ledger-live/pull/21204) [`3a78322`](https://github.com/LedgerHQ/ledger-live/commit/3a783224b6016fce08fa8cb3254057b75882e2c5) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Adopt the PLT-capable Concordium signer and map the PLT status words to typed errors
-
-### Patch Changes
-
-- Updated dependencies [[`47a1cd0`](https://github.com/LedgerHQ/ledger-live/commit/47a1cd082cc30cd7cc539a8eb0e0fe5466128533), [`3a78322`](https://github.com/LedgerHQ/ledger-live/commit/3a783224b6016fce08fa8cb3254057b75882e2c5), [`2b8a4e4`](https://github.com/LedgerHQ/ledger-live/commit/2b8a4e4240a414cbb1bda31b97b70837cb6ac3fe), [`92b90a6`](https://github.com/LedgerHQ/ledger-live/commit/92b90a6eebca959abe0b04aa83c5799d34f9f10a), [`30619aa`](https://github.com/LedgerHQ/ledger-live/commit/30619aaa2af784fd917214bb0e4bbd092f883e11)]:
-  - @ledgerhq/coin-concordium@1.2.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

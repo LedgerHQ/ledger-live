@@ -52,7 +52,11 @@ export function StateLayout({
           </Text>
         ) : null}
       </Box>
-      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={styles.contentContainer}
+        alwaysBounceVertical={false}
+      >
         {children}
       </ScrollView>
       {footer ? <Box lx={{ paddingBottom: "s24" }}>{footer}</Box> : null}

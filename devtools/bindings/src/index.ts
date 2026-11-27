@@ -43,10 +43,14 @@ export type {
   IntentWalletSyncToolStateParams,
 } from "./useIntentWalletSyncToolState";
 export {
+  accountCompletionIntentDefinition,
   accountDiscoveryIntentDefinition,
   useAccountDiscoveryToolState,
 } from "./useAccountDiscoveryToolState";
 export type {
+  AccountCompletionIntent,
+  AccountCompletionIntentPlatformDefinition,
+  AccountCompletionJobState,
   AccountDiscoveryInputs,
   AccountDiscoveryIntent,
   AccountDiscoveryIntentPlatformDefinition,
@@ -54,3 +58,5 @@ export type {
   AccountDiscoveryRun,
   AccountDiscoveryToolState,
 } from "./useAccountDiscoveryToolState";
+export { AccountRedactionProvider, useAccountRedaction } from "./accountRedaction";
+export type { AccountRedaction } from "./accountRedaction";

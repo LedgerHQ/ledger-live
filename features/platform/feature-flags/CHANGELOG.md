@@ -1,5 +1,12 @@
 # @features/platform-feature-flags
 
+## 0.13.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`faeace9`](https://github.com/LedgerHQ/ledger-live/commit/faeace97ae3de8c6e403e66732bdc16d57d78296), [`9e67809`](https://github.com/LedgerHQ/ledger-live/commit/9e678098ea38d509fc4f19ffe05a2f06003a41c5), [`0568a9d`](https://github.com/LedgerHQ/ledger-live/commit/0568a9d51bcc7244bad8ae415c7775697fc93811), [`7627a66`](https://github.com/LedgerHQ/ledger-live/commit/7627a66e667eb4b00ca417603c39d0adf5e2a094), [`5ea4203`](https://github.com/LedgerHQ/ledger-live/commit/5ea4203bdc7b89f7ef0ffe12ae9036b679320a97), [`089284b`](https://github.com/LedgerHQ/ledger-live/commit/089284b16bfee3dd5f6255799c58f5c8dbe108c8), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`4779bbd`](https://github.com/LedgerHQ/ledger-live/commit/4779bbd567b2f36cf01751c022a978b2d93cf288), [`31cc80c`](https://github.com/LedgerHQ/ledger-live/commit/31cc80c18f3eeed000ce3ee3d97e8e1bdcd1bb37), [`513bdba`](https://github.com/LedgerHQ/ledger-live/commit/513bdba4eee8332446903bb853ec5bc608cb46b9), [`62493e1`](https://github.com/LedgerHQ/ledger-live/commit/62493e1d65a96ef1998f1ff8fd0e1880ae6190b9), [`78d27e7`](https://github.com/LedgerHQ/ledger-live/commit/78d27e7045c452d503ad88e1ffb4e2621ef00074)]:
+  - @shared/feature-flags@0.33.0-next.0
+
 ## 0.13.1
 
 ### Patch Changes
@@ -232,36 +239,5 @@
 
 - Updated dependencies [[`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d), [`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`7e44af4`](https://github.com/LedgerHQ/ledger-live/commit/7e44af495eccab1fac4b0808d6729a595b610c69), [`7050652`](https://github.com/LedgerHQ/ledger-live/commit/70506520dafbccca4e014ac30d75647a5b7fe7d0), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`903c180`](https://github.com/LedgerHQ/ledger-live/commit/903c1802ea5d4cc3fe1bfe5609b8cf3871152cf0), [`a6a7a94`](https://github.com/LedgerHQ/ledger-live/commit/a6a7a946b1c1dbdda1cfa2c049f536f7235ddde2)]:
   - @shared/feature-flags@0.23.0
-
-## 0.7.0-next.0
-
-### Minor Changes
-
-- [#21656](https://github.com/LedgerHQ/ledger-live/pull/21656) [`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36) Thanks [@sarneijim](https://github.com/sarneijim)! - Add the Q3 Wallet V4 Tour feature flag, persisted seen state, mobile debug setup, and Segment wallet40Attributes.q3Tour
-
-- [#21802](https://github.com/LedgerHQ/ledger-live/pull/21802) [`600d432`](https://github.com/LedgerHQ/ledger-live/commit/600d432657f1c9adf80af6730dd28f2177e05c5a) Thanks [@ysitbon](https://github.com/ysitbon)! - refactor(feature-flags): share the Firebase Remote Config parser between apps
-
-  Both apps carried their own copy of the Firebase-key-to-FeatureId map and the loop that filters
-  and JSON-parses a `getAll()` payload. `parseFirebaseFeatures` now lives in
-  `@features/platform-feature-flags/firebase`, next to `formatToFirebaseFeatureId`, of which its
-  key map is the exact inverse.
-
-  It takes a structural `RemoteConfigValue` (`getSource()` + `asString()`), satisfied by both the
-  Firebase JS SDK and `@react-native-firebase`, so the package gains no SDK dependency. Reading the
-  SDK stays per-app, where the two platforms are deliberately asymmetric.
-
-- [#21751](https://github.com/LedgerHQ/ledger-live/pull/21751) [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb) Thanks [@sarneijim](https://github.com/sarneijim)! - Add releaseTour and gate Q2/Q3 tours with it, dropping q2Tour/q3Tour from Wallet 4.0
-
-### Patch Changes
-
-- Updated dependencies [[`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d), [`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`7e44af4`](https://github.com/LedgerHQ/ledger-live/commit/7e44af495eccab1fac4b0808d6729a595b610c69), [`7050652`](https://github.com/LedgerHQ/ledger-live/commit/70506520dafbccca4e014ac30d75647a5b7fe7d0), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`903c180`](https://github.com/LedgerHQ/ledger-live/commit/903c1802ea5d4cc3fe1bfe5609b8cf3871152cf0), [`a6a7a94`](https://github.com/LedgerHQ/ledger-live/commit/a6a7a946b1c1dbdda1cfa2c049f536f7235ddde2)]:
-  - @shared/feature-flags@0.23.0-next.0
-
-## 0.6.9
-
-### Patch Changes
-
-- Updated dependencies [[`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914), [`ebb1371`](https://github.com/LedgerHQ/ledger-live/commit/ebb13714a6de9c39f290b2ccd51ca78370824f6f), [`761cf3e`](https://github.com/LedgerHQ/ledger-live/commit/761cf3e359fa197d07f6086d8522fd1785ba575d)]:
-  - @shared/feature-flags@0.22.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

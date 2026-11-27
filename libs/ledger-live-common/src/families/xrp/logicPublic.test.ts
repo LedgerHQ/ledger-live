@@ -1,10 +1,11 @@
 import BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { getIssuerFee } from "@ledgerhq/coin-xrp/logic-public";
+import { getIssuerFee, getNetworkReserves } from "@ledgerhq/coin-xrp/logic-public";
 import {
   MAX_TRUST_LIMIT,
   getIssuerFeeAmount,
   getIssuerFeeForToken,
+  getNetworkReservesForCurrency,
   isMaxTrustLimit,
 } from "./logicPublic";
 
@@ -12,6 +13,7 @@ jest.mock("@ledgerhq/coin-xrp/logic-public", () => {
   return {
     ...jest.requireActual("@ledgerhq/coin-xrp/logic-public"),
     getIssuerFee: jest.fn(),
+    getNetworkReserves: jest.fn(),
   };
 });
 jest.mock("../../bridge/generic-coin-framework/api/context", () => {
@@ -19,6 +21,7 @@ jest.mock("../../bridge/generic-coin-framework/api/context", () => {
 });
 
 const getIssuerFeeMock = jest.mocked(getIssuerFee);
+const getNetworkReservesMock = jest.mocked(getNetworkReserves);
 const PROTOCOL_MAX = new BigNumber("9999999999999999e80").shiftedBy(38);
 
 describe("MAX_TRUST_LIMIT", () => {
@@ -61,6 +64,17 @@ describe("getIssuerFeeForToken", () => {
         assetOwner: token.contractAddress,
       },
     );
+  });
+});
+
+describe("getNetworkReservesForCurrency", () => {
+  it("asks coin-xrp for the reserves of the currency's network", async () => {
+    const reserves = { base: "1000000", increment: "200000" };
+    getNetworkReservesMock.mockResolvedValue(reserves);
+
+    await expect(getNetworkReservesForCurrency("ripple_testnet")).resolves.toEqual(reserves);
+    expect(getNetworkReservesMock).toHaveBeenCalledTimes(1);
+    expect(getNetworkReservesMock).toHaveBeenCalledWith({ currencyId: "ripple_testnet" });
   });
 });
 

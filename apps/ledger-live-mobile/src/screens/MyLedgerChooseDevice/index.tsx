@@ -31,9 +31,13 @@ type ChooseDeviceProps = Props & {
   isFocused: boolean;
 };
 
+const DEVICE_LIST_EDGES = ["left", "right"] as const;
+const PAIRING_FLOW_EDGES = ["left", "right", "bottom"] as const;
+
 const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   const action = useManagerDeviceAction({ resolveOsUpdates: true });
   const [device, setDevice] = useState<Device | null>();
+  const [isPairingFlowShown, setIsPairingFlowShown] = useState(false);
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const onAddDevice = useUnifiedAddDevice();
@@ -106,15 +110,23 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           headerRight: request.options.headerRight,
           title: "",
         });
+        setIsPairingFlowShown(true);
       } else {
         navigation.setOptions({ ...wallet40HeaderOptions, headerRight: () => null });
+        setIsPairingFlowShown(false);
       }
     },
     [navigation],
   );
 
   const Container = SafeAreaView;
-  const containerProps = useMemo(() => ({ isFlex: true, edges: ["left", "right"] as const }), []);
+  const containerProps = useMemo(
+    () => ({
+      isFlex: true,
+      edges: isPairingFlowShown ? PAIRING_FLOW_EDGES : DEVICE_LIST_EDGES,
+    }),
+    [isPairingFlowShown],
+  );
 
   if (!isFocused) return null;
 

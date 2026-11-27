@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DerivationPathSchema } from "@domain/entity-account-descriptor";
+import { DerivationPathSchema } from "./derivationPath";
 
 /** Account-level path, e.g. `m/84h/0h/2h`: a `DerivationPath`, the path of a utxo descriptor. */
 export const AccountPathSchema = DerivationPathSchema.brand<"AccountPath">();

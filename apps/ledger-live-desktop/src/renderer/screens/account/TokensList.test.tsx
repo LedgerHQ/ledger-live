@@ -26,7 +26,6 @@ const mockSubAccount: TokenAccount = {
   operationsCount: 0,
   operations: [],
   pendingOperations: [],
-  starred: false,
   creationDate: new Date(),
   swapHistory: [],
 } as unknown as TokenAccount;

@@ -1,5 +1,16 @@
 # @features/flow-contacts-add-address
 
+## 0.11.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`5ac8385`](https://github.com/LedgerHQ/ledger-live/commit/5ac8385c5dcd43b8bc0686e6c0c98d14358c0e00)]:
+  - @domain/entity-currency-crypto@0.21.0-next.0
+  - @shared/linking@0.5.0-next.0
+  - @features/platform-contacts@0.13.2-next.0
+  - @domain/entity-currency-token@0.6.1-next.0
+  - @domain/entity-contact@0.13.2-next.0
+
 ## 0.11.0
 
 ### Minor Changes
@@ -240,35 +251,5 @@
 
 - Updated dependencies []:
   - @features/platform-contacts@0.8.0-next.1
-
-## 0.6.0-next.0
-
-### Minor Changes
-
-- [#21747](https://github.com/LedgerHQ/ledger-live/pull/21747) [`871e485`](https://github.com/LedgerHQ/ledger-live/commit/871e4854284a0b21e31b53ff0ac312010093d914) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Fix keyboard handling in the mobile Contacts add, edit, and send flows. Input sheets now open at full height with the keyboard, primary actions remain visible in a keyboard-aware `QueuedBottomSheet` footer, and name fields focus immediately and capitalize each word.
-
-### Patch Changes
-
-- Updated dependencies [[`871e485`](https://github.com/LedgerHQ/ledger-live/commit/871e4854284a0b21e31b53ff0ac312010093d914), [`98e3038`](https://github.com/LedgerHQ/ledger-live/commit/98e303872684da47feca343c0db7d83fcce857b2), [`33e92e8`](https://github.com/LedgerHQ/ledger-live/commit/33e92e8f074ff73a6a3e338c8313ba8bc9066ccf), [`0651158`](https://github.com/LedgerHQ/ledger-live/commit/0651158a2f03f819c2e2770ef4179901768c3c6c), [`cb866e1`](https://github.com/LedgerHQ/ledger-live/commit/cb866e1c07252a07fa991abd3dc2d8df68960256)]:
-  - @features/platform-contacts@0.8.0-next.0
-  - @domain/entity-currency-crypto@0.13.0-next.0
-  - @domain/entity-contact@0.10.0-next.0
-  - @shared/linking@0.3.0-next.0
-  - @domain/entity-currency-token@0.5.3-next.0
-
-## 0.5.0
-
-### Minor Changes
-
-- [#21706](https://github.com/LedgerHQ/ledger-live/pull/21706) [`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add excludedCurrencyIds param to lwdContacts and lwmContacts feature flags to exclude specific currencies from Contacts
-
-- [#21931](https://github.com/LedgerHQ/ledger-live/pull/21931) [`e8fa868`](https://github.com/LedgerHQ/ledger-live/commit/e8fa86874942249a54884353c6c1b070af80d4b1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add privacy policy disclaimer link to contacts add address flow on desktop and mobile
-
-### Patch Changes
-
-- Updated dependencies [[`16a454f`](https://github.com/LedgerHQ/ledger-live/commit/16a454fa79be46df6aec3c50ad40407f36dfdea9), [`96a1ca9`](https://github.com/LedgerHQ/ledger-live/commit/96a1ca9fef1b0acc8113708c148890054dea143d), [`632dd93`](https://github.com/LedgerHQ/ledger-live/commit/632dd9368616a97581d037f1503b2b16f567c02a), [`5b60a96`](https://github.com/LedgerHQ/ledger-live/commit/5b60a968d3292b3897380f2c74c472a51b81e35d), [`e31a99e`](https://github.com/LedgerHQ/ledger-live/commit/e31a99e0c1a5449aa1ab8729130e1d123b1ffdad)]:
-  - @features/platform-contacts@0.7.0
-  - @domain/entity-contact@0.9.0
-  - @shared/platform-linking@0.2.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

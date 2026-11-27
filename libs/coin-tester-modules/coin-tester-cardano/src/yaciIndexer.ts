@@ -12,7 +12,7 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { MOCK_API } from "./fixtures";
 import { EPOCH_PARAMS, POOL_DETAIL, POOL_LIST_PAGE } from "./fixtures/ledgerPools";
-import { YACI_STORE_API } from "./yaci";
+import { sleep, storeGet, YACI_STORE_API } from "./yaci";
 import {
   toApiDelegation,
   toApiTransaction,
@@ -70,6 +70,22 @@ async function yaciGet<T>(path: string): Promise<T | null> {
   return (await res.json()) as T;
 }
 
+const PARAMS_ATTEMPTS = 5;
+const PARAMS_RETRY_DELAY_MS = 1_000;
+
+// The store can briefly fail to serve the epoch parameters while a fresh devnet settles. A 502 from
+// /v1/network/info reaches coin-cardano as LedgerAPI5xx (CI saw it fail prepareTransaction), so retry
+// before giving up. storeGet bounds each read with a wall-clock deadline, body included: MSW's
+// passthrough drops the AbortSignal that yaciGet relies on.
+export async function latestParams(): Promise<YaciParams | null> {
+  for (let attempt = 1; ; attempt++) {
+    const params = await storeGet<YaciParams>("/epochs/latest/parameters");
+    if (params) return params;
+    if (attempt >= PARAMS_ATTEMPTS) return null;
+    await sleep(PARAMS_RETRY_DELAY_MS);
+  }
+}
+
 // A Yaci tx (Blockfrost-compatible /txs/{hash}) carries inputs/outputs + fees + block info in one call.
 type YaciTx = YaciTxUtxos & { fees?: string; block_height: number; block_time?: number };
 
@@ -97,7 +113,7 @@ export function initYaciIndexer(): () => void {
     }),
 
     http.get(`${MOCK_API}/v1/network/info`, async () => {
-      const params = await yaciGet<YaciParams>("/epochs/latest/parameters");
+      const params = await latestParams();
       if (!params) return HttpResponse.json({ error: "no params" }, { status: 502 });
       return HttpResponse.json({ protocolParams: toProtocolParams(params) });
     }),
@@ -162,6 +178,21 @@ export function initYaciIndexer(): () => void {
       if (hostname === "localhost" && (port === "8080" || port === "10000")) return;
       throw new Error(`Unhandled request: ${request.method} ${request.url}`);
     },
+  });
+  // coin-cardano reports any 5xx as a bare LedgerAPI5xx; name the endpoint and cause here. A handler
+  // that throws reaches the client as a 500. Jest prints console output when the suite ends, so each
+  // line carries its own time.
+  server.events.on("unhandledException", ({ request, error }) =>
+    console.warn(
+      `${new Date().toISOString()} Yaci indexer ${request.method} ${request.url} threw: ${error.stack ?? error}`,
+    ),
+  );
+  server.events.on("response:mocked", ({ request, response }) => {
+    if (response.status >= 500) {
+      console.warn(
+        `${new Date().toISOString()} Yaci indexer ${request.method} ${request.url} answered ${response.status}`,
+      );
+    }
   });
   return () => server.close();
 }

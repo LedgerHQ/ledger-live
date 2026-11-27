@@ -193,7 +193,6 @@ export const addEmptyAccountCommand = (account: Account, options?: LiveDataComma
       id,
       seedIdentifier,
       name: account.accountName,
-      starred: false,
       used: false,
       derivationMode,
       index: account.index,
@@ -291,37 +290,6 @@ export const liveDataWithAddressCommand = (
   return named("liveDataWithAddressCommand", cmd);
 };
 
-export const liveDataWithParentAddressCommand = (
-  liveDataAccount: Account | TokenAccount,
-  accountToAssign: TokenAccount,
-) => {
-  const cmd = async (userdataPath?: string) => {
-    if (!applyGeneratedUserdata(liveDataAccount, userdataPath)) {
-      await runCliLiveData({
-        currency: liveDataAccount.currency.speculosApp.name,
-        index: liveDataAccount.index,
-        add: true,
-        appjson: userdataPath,
-      });
-    }
-
-    if (!accountToAssign.parentAccount) {
-      throw new Error("Parent account is required");
-    }
-
-    const address = await getAccountAddress(accountToAssign.parentAccount);
-
-    accountToAssign.address = address;
-    return address;
-  };
-  cmd.canUseGeneratedUserdata = () =>
-    hasGeneratedUserdata(liveDataAccount) &&
-    !!accountToAssign.parentAccount &&
-    hasGeneratedUserdata(accountToAssign.parentAccount) &&
-    !isUtxoBasedCurrency(accountToAssign.parentAccount.currency.id);
-  return named("liveDataWithParentAddressCommand", cmd);
-};
-
 export const liveDataWithRecipientAddressCommand = (
   tx: Transaction,
   options?: LiveDataCommandOptions,
@@ -385,15 +353,18 @@ export function parseTokenAllowanceCliOutput(output: string): {
   return { allowanceStr, unitMagnitude: magnitudeField };
 }
 
+type TokenAllowanceCheckOptions = {
+  account: TokenAccount;
+  spenderAddress: string;
+  minAmount: string;
+};
+
 /**
- * Returns current allowance as a decimal string if {@link minAmount}
+ * Returns current allowance as a decimal string if `minAmount`
  * is covered, otherwise `0`.
  */
-export const isTokenAllowanceSufficientCommand = async (
-  account: TokenAccount,
-  spenderAddress: string,
-  minAmount: string,
-) => {
+export const isTokenAllowanceSufficientCommand = async (options: TokenAllowanceCheckOptions) => {
+  const { account, spenderAddress, minAmount } = options;
   const ownerAddress = account.parentAccount?.address ?? account.address;
   if (!ownerAddress) throw new Error("Token allowance check requires the main account address");
 
@@ -516,14 +487,23 @@ async function broadcastTokenApproval(
   // Before the CLI starts: once its approve reaches the device, the setting can no longer change.
   await enableBlindSigningOnNanoS();
   return runWithExclusiveLock(
-    [account],
-    `token ${opts.mode}`,
+    {
+      targets: [account],
+      label: `token ${opts.mode}`,
+      waitsForConfirmation: opts.waitConfirmation === true,
+    },
     () => runTokenApprovalWithRetry(opts),
-    { waitsForConfirmation: opts.waitConfirmation === true },
   );
 }
 
-export function approveTokenCommand(account: TokenAccount, spender: string, approveAmount: string) {
+type TokenApproveOptions = {
+  account: TokenAccount;
+  spender: string;
+  approveAmount: string;
+};
+
+export function approveTokenCommand(options: TokenApproveOptions) {
+  const { account, spender, approveAmount } = options;
   return broadcastTokenApproval(account, {
     currency: account.currency.speculosApp.name,
     index: account.index,

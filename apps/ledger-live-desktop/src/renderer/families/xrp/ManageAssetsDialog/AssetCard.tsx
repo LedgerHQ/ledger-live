@@ -1,4 +1,5 @@
 import React from "react";
+import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import {
   Button,
@@ -14,24 +15,39 @@ import {
   DescriptionItemLeading,
   DescriptionItemTrailing,
   DescriptionItemValue,
+  Skeleton,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@ledgerhq/lumen-ui-react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
-import { useGetIssuerFeeQuery } from "@ledgerhq/live-common/families/xrp/state-manager/api";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import {
+  useGetIssuerFeeQuery,
+  useGetNetworkReservesQuery,
+} from "@ledgerhq/live-common/families/xrp/state-manager/api";
+import { formatIssuerFee, formatTrustLimit } from "@ledgerhq/live-common/families/xrp/tokens";
 import type { XrpTokenAccount } from "@ledgerhq/live-common/families/xrp/types";
-import { formatFeesValue } from "@ledgerhq/live-common/flows/send/utils/networkFeesDisplay";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import type { Account } from "@ledgerhq/types-live";
-import { useCalculateCountervalueCallback } from "@features/platform-market-countervalues";
 import { useSelector } from "LLD/hooks/redux";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
-import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
+import { localeSelector } from "~/renderer/reducers/settings";
 import { LabelWithInfo } from "../components/LabelWithInfo";
-import { OWNER_RESERVE, formatIssuerFee, formatTrustLimit } from "../utils";
+import { XrpAmount } from "../components/XrpAmount";
+import { getRemoveAvailability } from "../utils";
 
 type Props = Readonly<{
   account: Account;
   tokenAccount: XrpTokenAccount;
 }>;
+
+type AssetCardProps = Props &
+  Readonly<{
+    onEdit: (tokenAccount: XrpTokenAccount) => void;
+    onDelete: (tokenAccount: XrpTokenAccount) => void;
+  }>;
 
 function Row({ label, value }: Readonly<{ label: React.ReactNode; value: React.ReactNode }>) {
   return (
@@ -46,49 +62,83 @@ function Row({ label, value }: Readonly<{ label: React.ReactNode; value: React.R
   );
 }
 
-function TokenIcon({ account, tokenAccount }: Props) {
-  const { token } = tokenAccount;
+function TransferFee({ token }: Readonly<{ token: TokenCurrency }>) {
+  const { t } = useTranslation();
+  const locale = useSelector(localeSelector);
+  const issuerFee = useGetIssuerFeeQuery(token);
+
+  if (issuerFee.isError) {
+    return t("xrp.manageAssets.transferFeeUnavailable");
+  }
+
+  if (typeof issuerFee.data === "string") {
+    return formatIssuerFee(issuerFee.data, locale);
+  }
 
   return (
-    <div className="relative">
-      <CryptoIcon ledgerId={token.id} ticker={token.ticker} size={48} />
-      <div className="absolute -bottom-[3px] -right-[3px] z-10 box-content size-20 overflow-hidden rounded-[6px] border border-base-inverted bg-muted">
-        <CryptoIcon
-          ledgerId={account.currency.isTestnetFor ?? account.currency.id}
-          ticker={account.currency.ticker}
-          size={20}
-          shape="square"
-        />
-      </div>
-    </div>
+    <Skeleton
+      className="h-16 w-80 rounded-full"
+      data-testid="xrp-manage-assets-transfer-fee-loading"
+      aria-hidden
+    />
   );
 }
 
-export function AssetCard({ account, tokenAccount }: Props) {
+function LockedAmount({ currency }: Readonly<{ currency: CryptoCurrency }>) {
   const { t } = useTranslation();
+  const reserves = useGetNetworkReservesQuery(currency.id);
+
+  if (reserves.isError) {
+    return t("xrp.manageAssets.lockedAmountUnavailable");
+  }
+
+  if (reserves.data) {
+    return (
+      <XrpAmount currency={currency} value={new BigNumber(reserves.data.increment)} size="sm" />
+    );
+  }
+
+  return (
+    <Skeleton
+      className="h-16 w-80 rounded-full"
+      data-testid="xrp-manage-assets-locked-amount-loading"
+      aria-hidden
+    />
+  );
+}
+
+export function AssetCard({ account, tokenAccount, onEdit, onDelete }: AssetCardProps) {
+  const { t } = useTranslation();
+  const removeAvailability = getRemoveAvailability(tokenAccount, account, t);
   const locale = useSelector(localeSelector);
   const discreet = useDiscreetMode();
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const calculateCountervalue = useCalculateCountervalueCallback({ to: counterValueCurrency });
   const { token, xrpResources } = tokenAccount;
-  const issuerFee = useGetIssuerFeeQuery(token);
   const isIou = token.tokenType === "iou";
   const limit = xrpResources?.limit;
 
-  const lockedAmount = formatFeesValue({
-    locale,
-    estimatedFees: OWNER_RESERVE,
-    estimatedFeesCountervalue: calculateCountervalue(account.currency, OWNER_RESERVE),
-    fiatUnit: counterValueCurrency.units[0],
-    displayUnit: account.currency.units[0],
-    mode: "both",
-  });
+  const deleteButton = (
+    <Button
+      appearance="base"
+      size="md"
+      isFull
+      disabled={removeAvailability.disabled}
+      onClick={() => onDelete(tokenAccount)}
+      data-testid="xrp-manage-assets-delete"
+    >
+      {t("xrp.manageAssets.delete")}
+    </Button>
+  );
 
   return (
     <Card type="info" data-testid={`xrp-manage-assets-card-${token.id}`}>
       <CardHeader>
         <CardLeading>
-          <TokenIcon account={account} tokenAccount={tokenAccount} />
+          <CryptoIcon
+            ledgerId={token.id}
+            ticker={token.ticker}
+            network={account.currency.isTestnetFor ?? account.currency.id}
+            size={48}
+          />
           <CardContent>
             <CardContentTitle>{token.name}</CardContentTitle>
             <CardContentDescription>{formatAddress(account.freshAddress)}</CardContentDescription>
@@ -105,31 +155,18 @@ export function AssetCard({ account, tokenAccount }: Props) {
           }
           value={isIou ? t("xrp.manageAssets.iou") : t("xrp.manageAssets.mpt")}
         />
-        {issuerFee.isLoading ? null : (
-          <Row
-            label={
-              <LabelWithInfo
-                label={t("xrp.manageAssets.transferFee")}
-                info={t("xrp.addToken.steps.review.issuerFeeTooltip")}
-              />
-            }
-            value={
-              typeof issuerFee.data === "string"
-                ? formatIssuerFee(issuerFee.data, locale)
-                : t("xrp.addToken.steps.review.issuerFeeError")
-            }
-          />
-        )}
+        <Row
+          label={
+            <LabelWithInfo
+              label={t("xrp.manageAssets.issuerFee")}
+              info={t("xrp.addToken.steps.review.issuerFeeTooltip")}
+            />
+          }
+          value={<TransferFee token={token} />}
+        />
         <Row
           label={t("xrp.manageAssets.lockedAmount")}
-          value={
-            <span className="flex items-center gap-4">
-              {lockedAmount.displayFeesValue}
-              {lockedAmount.secondaryFeesValue ? (
-                <span className="body-3 text-muted">{lockedAmount.secondaryFeesValue}</span>
-              ) : null}
-            </span>
-          }
+          value={<LockedAmount currency={account.currency} />}
         />
         {isIou && limit ? (
           <Row
@@ -168,21 +205,22 @@ export function AssetCard({ account, tokenAccount }: Props) {
               appearance="transparent"
               size="md"
               isFull
-              disabled
+              onClick={() => onEdit(tokenAccount)}
               data-testid="xrp-manage-assets-edit"
             >
               {t("xrp.manageAssets.edit")}
             </Button>
           ) : null}
-          <Button
-            appearance="base"
-            size="md"
-            isFull
-            disabled
-            data-testid="xrp-manage-assets-delete"
-          >
-            {t("xrp.manageAssets.delete")}
-          </Button>
+          {removeAvailability.tooltip ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="flex flex-1">{deleteButton}</span>
+              </TooltipTrigger>
+              <TooltipContent>{removeAvailability.tooltip}</TooltipContent>
+            </Tooltip>
+          ) : (
+            deleteButton
+          )}
         </div>
       </CardFooter>
     </Card>

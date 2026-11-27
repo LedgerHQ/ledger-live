@@ -16,7 +16,6 @@ export const ESTIMATION_RECIPIENTS: Record<string, string> = {
   qtum: "QPvRe2C17qk24K6v5gTg7CPghZ8b4WMxZP",
   zclassic: "t1Qmwyih5F7Mw6Vts4tSnXuA2o3NgJPYNgP",
   zcoin: "a1bW3sVVUsLqgKuTMXtSaAHGvpxKwugxPH",
-  zencash: "zngWJRgpBa45KUeRuCmdMsqti4ohhe9sVwC",
 };
 
 export const getBitcoinEstimationRecipient = (currencyId: string): string => {

@@ -35,6 +35,7 @@ import { navigateToPayTab } from "LLM/features/PayTab/utils/navigateToPayTab";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useIntentWalletSyncTool } from "../../IntentWalletSync/useIntentWalletSyncTool";
+import { useAppTogglesTool } from "../../AppToggles/useAppTogglesTool";
 import { useOfferSync } from "../../../DeviceOnboarding/hooks/useOfferSync";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useReceiveDevToolTrigger } from "./useReceiveDevToolTrigger";
@@ -141,6 +142,7 @@ export function useDevToolsScreenViewModel() {
     navigateOnExit: false,
   });
   const intentWalletSync = useIntentWalletSyncTool();
+  const appTogglesToolProps = useAppTogglesTool();
   const { theme } = useTheme();
   const { bottom } = useSafeAreaInsets();
   const { wire, wireState } = useDevToolsRelay();
@@ -157,6 +159,7 @@ export function useDevToolsScreenViewModel() {
       { id: "receive", config: receiveToolProps },
       { id: "predictions", config: predictionsToolProps },
       { id: "intent-wallet-sync", config: intentWalletSync.toolProps },
+      { id: "app-toggles", config: appTogglesToolProps },
     ],
     [
       featureFlagsProps,
@@ -169,6 +172,7 @@ export function useDevToolsScreenViewModel() {
       receiveToolProps,
       predictionsToolProps,
       intentWalletSync.toolProps,
+      appTogglesToolProps,
     ],
   );
 

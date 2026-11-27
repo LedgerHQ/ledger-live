@@ -1,5 +1,21 @@
 # @ledgerhq/coin-internet_computer
 
+## 4.0.0-next.0
+
+### Major Changes
+
+- [#25452](https://github.com/LedgerHQ/ledger-live/pull/25452) [`df87327`](https://github.com/LedgerHQ/ledger-live/commit/df87327cc5a200a198fac23ee926ffff764f89de) Thanks [@amaslakov](https://github.com/amaslakov)! - Read the Internet Computer node URL from the coin config. Breaking: `createBridges` takes a `Context` instead of an optional config getter.
+
+### Minor Changes
+
+- [#25484](https://github.com/LedgerHQ/ledger-live/pull/25484) [`da0570f`](https://github.com/LedgerHQ/ledger-live/commit/da0570ffe3f734d6d1e5432a501699f01f043e71) Thanks [@amaslakov](https://github.com/amaslakov)! - Fix an account sync missing a transaction the index lists after the sync reached its height
+
+### Patch Changes
+
+- Updated dependencies [[`afe8aea`](https://github.com/LedgerHQ/ledger-live/commit/afe8aea94052e7475b17e203028ca7e02e2848e1), [`c1f5e3f`](https://github.com/LedgerHQ/ledger-live/commit/c1f5e3f808ab22c42bd0cbc1125106ff84a6e4c7), [`44c63d1`](https://github.com/LedgerHQ/ledger-live/commit/44c63d1ed48ea109d1d7328553f29cef9cd52653), [`35e9ca8`](https://github.com/LedgerHQ/ledger-live/commit/35e9ca85552282ddc37c47bc4212c81b06a2ee2c), [`866ed62`](https://github.com/LedgerHQ/ledger-live/commit/866ed62f04647abce7efeff0ebefe79c8e5bafde), [`52ba745`](https://github.com/LedgerHQ/ledger-live/commit/52ba7459509dbdaeb551bb24b8bd7965e2f0f252), [`fcd1d97`](https://github.com/LedgerHQ/ledger-live/commit/fcd1d979dcce6f25d9e4dfcf7dd6b68d79b8b03c)]:
+  - @ledgerhq/ledger-wallet-framework@3.14.0-next.0
+  - @ledgerhq/types-live@6.134.0-next.0
+
 ## 3.1.2
 
 ### Patch Changes
@@ -282,33 +298,5 @@
 - Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
   - @ledgerhq/types-live@6.124.0
   - @ledgerhq/ledger-wallet-framework@3.4.0
-
-## 1.30.0-next.0
-
-### Minor Changes
-
-- [#20774](https://github.com/LedgerHQ/ledger-live/pull/20774) [`0c413f3`](https://github.com/LedgerHQ/ledger-live/commit/0c413f3dcf65071bf963933f446fc24c9711a996) Thanks [@amaslakov](https://github.com/amaslakov)! - Fix seven defects in the Internet Computer neuron implementation.
-
-  Operation history: governance calls were typed `FEES` and filed as a fee that was never charged, with an explorer link that always 404s, and now stay out of history entirely; a settled stake read as a plain send until a device-signed `list_neurons` arrived; retyping a transfer left the stale copy beside the new one; and the stored operation count climbed without bound instead of tracking the account.
-
-  Both rejection paths threw a bare `Error`, so the apps said "Something went wrong" about a request the network had answered — `ICPGovernanceRejected` and `ICPCallRejected` are now distinct and quote the network's own wording, and a `list_neurons` read that came back empty raises `ICPNeuronsNotRead` rather than reporting success. Voting power subtracts a neuron's accrued rejection fees, matching the canister's `stake_e8s`. And the operation extra is converted when an account is serialized, so a neuron snapshot riding on an operation cannot break persistence.
-
-- [#20774](https://github.com/LedgerHQ/ledger-live/pull/20774) [`c6a569d`](https://github.com/LedgerHQ/ledger-live/commit/c6a569d5848e6c0fd7973cb5ab7241b39d47f77b) Thanks [@amaslakov](https://github.com/amaslakov)! - Add the ICP neuron management and voting-power confirmation flows on Desktop, with the periodic-confirmation decode and neuron helpers they run on.
-
-  An accepted command is reflected as soon as the network accepts it, without waiting for a device-signed refresh, and the account re-syncs after a stake. A command the device has already signed is offered for retry only when the network says nothing ran. Actions a neuron cannot take are not offered — Increase stake without a recoverable stake nonce, Increase dissolve delay with under a day of room, a followee list that changes nothing. Staked maturity counts toward the account's Total Maturity, and a rejected input names the bound it broke rather than an error class name.
-
-### Patch Changes
-
-- Updated dependencies [[`85e01c4`](https://github.com/LedgerHQ/ledger-live/commit/85e01c449dab75d75851631a56d292f2cb0c5b36), [`dc204a7`](https://github.com/LedgerHQ/ledger-live/commit/dc204a7633e6f7c9acb66fbb18a6aeaa2e75c4bb), [`5ddb9ab`](https://github.com/LedgerHQ/ledger-live/commit/5ddb9ab2874a6715d706042701e8b2242b1c14b9)]:
-  - @ledgerhq/types-live@6.124.0-next.0
-  - @ledgerhq/ledger-wallet-framework@3.4.0-next.0
-
-## 1.29.4
-
-### Patch Changes
-
-- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783)]:
-  - @ledgerhq/types-live@6.123.0
-  - @ledgerhq/ledger-wallet-framework@3.3.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

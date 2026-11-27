@@ -46,6 +46,23 @@ describe("account serialization — readiness", () => {
   });
 });
 
+describe("account serialization — assignFromAccountRaw", () => {
+  it("waits for an async family hook before returning the account", async () => {
+    const account = genAccount("async-hook-acc", { currency: ethereum });
+    account.subAccounts = [];
+    const raw = toAccountRaw(account);
+
+    const back = await fromAccountRaw(raw, {
+      assignFromAccountRaw: async (_raw, acc) => {
+        await new Promise(resolve => setTimeout(resolve, 0));
+        delete acc.subAccounts;
+      },
+    });
+
+    expect(back.subAccounts).toBeUndefined();
+  });
+});
+
 describe("account serialization — sequence", () => {
   it("round-trips a sequence of zero", async () => {
     const account = genAccount("sequence-acc", { currency: ethereum });

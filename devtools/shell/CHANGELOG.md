@@ -1,5 +1,12 @@
 # @devtools/shell
 
+## 0.16.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`3c87df2`](https://github.com/LedgerHQ/ledger-live/commit/3c87df2aae7e25b46bc58cf55ade07233181b83b)]:
+  - @devtools/registry@0.11.0-next.0
+
 ## 0.16.0
 
 ### Minor Changes
@@ -223,19 +230,5 @@
 
 - Updated dependencies []:
   - @devtools/registry@0.4.3
-
-## 0.9.3-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/registry@0.4.3-next.0
-
-## 0.9.2
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/registry@0.4.2
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

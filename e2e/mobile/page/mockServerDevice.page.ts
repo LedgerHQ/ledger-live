@@ -13,10 +13,10 @@ export class MockServerDevicePage extends MockServerSessionHandle {
 
   @Step("Mock the dashboard contact rename")
   async mockDashboardRename() {
-    await this.pinApduResponse(
-      DASHBOARD_RENAME_APDU_PREFIX,
-      `${EDIT_CONTACT_NAME_STRUCT}${HMAC_NAME_HEX}${SUCCESS_STATUS_WORD}`,
-    );
+    await this.pinApduResponse({
+      prefix: DASHBOARD_RENAME_APDU_PREFIX,
+      response: `${EDIT_CONTACT_NAME_STRUCT}${HMAC_NAME_HEX}${SUCCESS_STATUS_WORD}`,
+    });
   }
 
   @Step("Confirm the open device prompt")

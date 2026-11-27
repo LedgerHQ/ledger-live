@@ -1,5 +1,11 @@
 # @shared/cloud-sync
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#25321](https://github.com/LedgerHQ/ledger-live/pull/25321) [`71d36df`](https://github.com/LedgerHQ/ledger-live/commit/71d36dffa7755351d345333b50530392b194dd7b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Replace isomorphic-ws with the native global WebSocket
+
 ## 0.3.0
 
 ### Minor Changes

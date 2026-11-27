@@ -1,5 +1,12 @@
 # @features/flow-app-password-removal
 
+## 0.3.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5c7f0ef`](https://github.com/LedgerHQ/ledger-live/commit/5c7f0ef8aaebce9ac0dcf1eb509dd0756f389b10)]:
+  - @shared/ui-info-state@0.9.0-next.0
+
 ## 0.3.0
 
 ### Minor Changes

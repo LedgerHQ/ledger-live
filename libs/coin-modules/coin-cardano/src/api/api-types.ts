@@ -86,6 +86,8 @@ export type APITransaction = {
     stakeHex: string;
     amount: string;
   }>;
+  // false when the tx failed phase-2 (script) validation
+  status?: boolean;
 };
 
 export type APINetworkInfo = {
