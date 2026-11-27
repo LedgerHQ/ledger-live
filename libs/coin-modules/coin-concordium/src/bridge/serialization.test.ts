@@ -477,12 +477,13 @@ describe("assignFromAccountRaw and the token flag", () => {
     ],
   ])("fails closed and strips tokens when %s", async (_case, impl) => {
     // An unreadable flag must not expose token UI for a feature that is off by
-    // default. Sub-accounts are rebuilt from chain on the next sync.
-    const target = account();
+    // default. The off hash makes the first tokens-on sync re-read the history.
+    const target = { ...account(), syncHash: "0xabc:tokens=on:history=3" } as Account;
 
     await expect(
       makeAssignFromAccountRaw(contextWith(impl))(raw(), target),
     ).resolves.toBeUndefined();
     expect(target.subAccounts).toBeUndefined();
+    expect(target.syncHash).toBe("tokens=off:history=3");
   });
 });

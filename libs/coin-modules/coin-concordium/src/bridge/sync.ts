@@ -19,6 +19,7 @@ import type {
 } from "../types";
 import { attachSubOperations, splitPaidFee } from "./operations";
 import { mapRawOperationToBridgeOperation } from "./serialization";
+import { HISTORY_VERSION, TOKENS_OFF_SYNC_HASH } from "./syncHash";
 import {
   applyTokensToResources,
   buildParentOperation,
@@ -77,12 +78,10 @@ export async function getBalance(
     });
 
   const balance = valueToBigNumber(accountAmount);
-  const config = await context.config();
-  const minReserve = nonNegativeInt("minReserve", config.minReserve);
 
   let spendableBalance = accountAtDisposal
     ? valueToBigNumber(accountAtDisposal)
-    : balance.minus(minReserve);
+    : balance.minus(nonNegativeInt("minReserve", (await context.config()).minReserve));
   spendableBalance = spendableBalance.isNegative() ? new BigNumber(0) : spendableBalance;
 
   // Normalised rather than passed through, so the declared type holds.
@@ -92,18 +91,6 @@ export async function getBalance(
     accountTokens: Array.isArray(accountTokens) ? accountTokens : undefined,
   };
 }
-
-/**
- * Bumped when the parser starts keeping or revaluing rows it read differently,
- * so every stored history is re-read once. 2: aliases of the account matched.
- * 3: every row that cost or moved CCD kept.
- *
- * A token whose CAL unit, decimals or balance cannot be trusted during that
- * re-read keeps its stored rows, and nothing re-reads them later: LIVE-41804.
- */
-const HISTORY_VERSION = "history=3";
-
-const TOKENS_OFF_SYNC_HASH = `tokens=off:${HISTORY_VERSION}`;
 
 /**
  * Stored by a sync that fetched PLT transfers it could not attribute, so the
@@ -283,11 +270,7 @@ export const makeGetAccountShape =
 
       const resolvedTokens = await resolveTokenSubAccounts(context, {
         enableTokens,
-        // A batch of zero would look up nothing and drop every stored token.
-        calLookupConcurrency: positiveInt(
-          "tokens.calLookupConcurrency",
-          config.tokens?.calLookupConcurrency,
-        ),
+        calLookupConcurrency: config.tokens?.calLookupConcurrency,
         currencyId: currency.id,
         accountId,
         accountTokens,

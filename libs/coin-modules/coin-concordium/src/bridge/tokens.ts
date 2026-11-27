@@ -6,6 +6,7 @@ import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type { Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getAccountListVerdict, isDecodedPltState } from "../network/plt";
+import { positiveInt } from "../tuning";
 import { baseOperation, paidFeeOf, toOperation } from "./operations";
 import type {
   ConcordiumAccount,
@@ -525,7 +526,8 @@ export async function resolveTokenSubAccounts(
     pltOperations?: RawOperation[];
     blacklistedTokenIds?: string[];
     refetchAll?: boolean;
-    calLookupConcurrency: number;
+    /** Validated here, so a bad value fails only the syncs that look tokens up. */
+    calLookupConcurrency: unknown;
   },
 ): Promise<ResolvedTokens> {
   if (!enableTokens) {
@@ -545,7 +547,8 @@ export async function resolveTokenSubAccounts(
     currencyId,
     accountId,
     blacklistedTokenIds,
-    calLookupConcurrency,
+    // A batch of zero would look up nothing and drop every stored token.
+    calLookupConcurrency: positiveInt("tokens.calLookupConcurrency", calLookupConcurrency),
   });
 
   // A CAL query error rejects rather than returning undefined, and one rejection

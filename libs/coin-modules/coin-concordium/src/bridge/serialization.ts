@@ -8,6 +8,7 @@ import type {
 } from "../types";
 import { boolean } from "../tuning";
 import { toOperation } from "./operations";
+import { TOKENS_OFF_SYNC_HASH } from "./syncHash";
 import { applyTokensToResources } from "./tokens";
 
 export function isConcordiumAccount(account: Account): account is ConcordiumAccount {
@@ -87,6 +88,10 @@ export const makeAssignFromAccountRaw =
         kind: "cleared",
       });
       delete account.subAccounts;
+      // A strip under a malformed flag fails every sync, so none records the off
+      // state; without it, a stored tokens-on hash would block the re-read that
+      // restores the stripped history once the flag is fixed.
+      account.syncHash = TOKENS_OFF_SYNC_HASH;
       return;
     }
 

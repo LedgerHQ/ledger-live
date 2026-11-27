@@ -159,6 +159,24 @@ describe("getBalances", () => {
     expect(result.spendableBalance).toEqual(new BigNumber(9900000));
   });
 
+  it("ignores an invalid minReserve when the proxy reports accountAtDisposal", async () => {
+    getAccountBalance.mockResolvedValue({
+      finalizedBalance: { accountAmount: "10000000", accountAtDisposal: "9900000" },
+    });
+
+    const result = await getBalance(createFixtureContext({ minReserve: -1 }), VALID_ADDRESS);
+
+    expect(result.spendableBalance).toEqual(new BigNumber(9900000));
+  });
+
+  it("rejects an invalid minReserve when it is read", async () => {
+    getAccountBalance.mockResolvedValue({ finalizedBalance: { accountAmount: "10000000" } });
+
+    await expect(
+      getBalance(createFixtureContext({ minReserve: -1 }), VALID_ADDRESS),
+    ).rejects.toThrow(ConcordiumInvalidConfigError);
+  });
+
   it("should clamp negative spendableBalance to 0", async () => {
     getAccountBalance.mockResolvedValue({
       finalizedBalance: { accountAmount: "50000" },
@@ -786,6 +804,23 @@ describe("getAccountShape with tokens disabled", () => {
 
   it("records a syncHash that names the off state", async () => {
     const result = await shape();
+
+    expect(result.syncHash).toBe("tokens=off:history=3");
+  });
+
+  it("ignores an invalid CAL concurrency, which only a token lookup reads", async () => {
+    const result = await makeGetAccountShape(
+      createFixtureContext({ minReserve: 100000, tokens: { calLookupConcurrency: 0 } }),
+    )(
+      {
+        currency: createFixtureCurrency(),
+        derivationMode: "",
+        derivationPath: "44'/1'/0'/0'/0'/0'",
+        index: 0,
+        rest: { publicKey: PUBLIC_KEY },
+      } as any,
+      undefined as any,
+    );
 
     expect(result.syncHash).toBe("tokens=off:history=3");
   });
