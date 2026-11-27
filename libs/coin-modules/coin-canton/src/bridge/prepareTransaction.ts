@@ -19,7 +19,7 @@ export const prepareTransaction = async (
   account: Account,
   transaction: Transaction,
 ): Promise<Transaction> => {
-  const currencyContext = getCurrencyContext(context, account.currency);
+  const currencyContext = await getCurrencyContext(context, account.currency);
   const isTokenTransaction = !!transaction.subAccountId;
   const subAccount = isTokenTransaction
     ? account.subAccounts?.find(
@@ -43,14 +43,14 @@ export const prepareTransaction = async (
   let tokenId = transaction.tokenId;
   let instrumentAdmin: string | undefined;
   if (subAccount) {
-    const calTokens = await getCalTokensCached(account.currency.id);
+    const calTokens = await getCalTokensCached(currencyContext, account.currency.id);
     tokenId = calTokens.get(subAccount.token.id) || subAccount.token.name;
     instrumentAdmin = subAccount.token.contractAddress;
   }
 
   // Native when no token is chosen. A token account that is gone sets no asset: the status and the signing block the send.
   if (!tokenId && !transaction.subAccountId) {
-    tokenId = (await context.config(account.currency.id)).nativeInstrumentId;
+    tokenId = (await currencyContext.config()).nativeInstrumentId;
   }
 
   return updateTransaction(transaction, {

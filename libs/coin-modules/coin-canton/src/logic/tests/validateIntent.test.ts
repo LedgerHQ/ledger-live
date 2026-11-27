@@ -23,11 +23,18 @@ import {
   isTopologyChangeRequiredCached,
 } from "../../network/gateway";
 import {
+  configOfCall,
   createMockCoinConfigValue,
   createMockContext,
   createMockInstrumentBalances,
+  createSwitchingContext,
 } from "../../test/fixtures";
-import { TooManyUtxosCritical, TooManyUtxosWarning, TopologyChangeError } from "../../types/errors";
+import {
+  CantonInvalidConfigError,
+  TooManyUtxosCritical,
+  TooManyUtxosWarning,
+  TopologyChangeError,
+} from "../../types/errors";
 import type { CantonMemo } from "../../types/transaction";
 import { estimateFees, estimateSendMax } from "../estimateFees";
 import { validateIntent } from "../validateIntent";
@@ -497,7 +504,7 @@ describe("validateIntent", () => {
       const { warnings } = await validate();
 
       expect(warnings.tooManyUtxos).toBeInstanceOf(TooManyUtxosCritical);
-      expect(mockedGetBalance).toHaveBeenCalledWith(config, SENDER);
+      expect(mockedGetBalance).toHaveBeenCalledWith(expect.anything(), SENDER);
     });
 
     it.each([TO_MANY_UTXOS_WARNING_COUNT + 1, TO_MANY_UTXOS_CRITICAL_COUNT])(
@@ -598,8 +605,11 @@ describe("validateIntent", () => {
       const { errors } = await validate();
 
       expect(errors.topologyChange).toBeInstanceOf(TopologyChangeError);
-      expect(mockedGetParty).toHaveBeenCalledWith(config, SENDER);
-      expect(mockedIsTopologyChangeRequired).toHaveBeenCalledWith(config, "test-public-key");
+      expect(mockedGetParty).toHaveBeenCalledWith(expect.anything(), SENDER);
+      expect(mockedIsTopologyChangeRequired).toHaveBeenCalledWith(
+        expect.anything(),
+        "test-public-key",
+      );
     });
 
     it("should not return a topology error when no change is required", async () => {
@@ -646,6 +656,70 @@ describe("validateIntent", () => {
 
       expect(errors.topologyChange).toBeUndefined();
       expect(mockedIsTopologyChangeRequired).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("config errors", () => {
+    const invalid = () => new CantonInvalidConfigError("canton: coin config bad");
+
+    it("should reject when the party lookup finds an invalid config", async () => {
+      mockedGetParty.mockRejectedValue(invalid());
+
+      await expect(validate()).rejects.toThrow(CantonInvalidConfigError);
+    });
+
+    it("should reject when the topology check finds an invalid config", async () => {
+      mockedIsTopologyChangeRequired.mockRejectedValue(invalid());
+
+      await expect(validate()).rejects.toThrow(CantonInvalidConfigError);
+    });
+
+    it("should skip the topology check when it fails with a network error", async () => {
+      mockedIsTopologyChangeRequired.mockRejectedValue(new Error("Network error"));
+
+      const { errors } = await validate();
+
+      expect(errors.topologyChange).toBeUndefined();
+    });
+
+    it("should reject when the balance read finds an invalid config", async () => {
+      mockedGetBalance.mockRejectedValue(invalid());
+
+      await expect(validate()).rejects.toThrow(CantonInvalidConfigError);
+    });
+
+    it("should reject when the DSO read finds an invalid config", async () => {
+      mockedGetNativeInstrument.mockRejectedValue(invalid());
+
+      await expect(validate()).rejects.toThrow(CantonInvalidConfigError);
+    });
+
+    it("should not warn when the DSO read fails with a network error", async () => {
+      mockedGetNativeInstrument.mockRejectedValue(new Error("Network error"));
+
+      const { warnings } = await validate();
+
+      expect(warnings.tooManyUtxos).toBeUndefined();
+    });
+  });
+
+  describe("one config snapshot", () => {
+    it("should hand every lower layer the config it resolved first", async () => {
+      const first = createMockCoinConfigValue({ gatewayUrl: "https://a.example", nodeId: "a" });
+      const later = createMockCoinConfigValue({ gatewayUrl: "https://b.example", nodeId: "b" });
+      const switching = createSwitchingContext(first, later);
+
+      await validateIntent(switching, intent(), [native(1000n, 0n)], { value: 10n });
+
+      expect(switching.config).toHaveBeenCalledTimes(1);
+      const calls = [
+        ...mockedGetBalance.mock.calls,
+        ...mockedGetNativeInstrument.mock.calls,
+        ...mockedGetParty.mock.calls,
+        ...mockedIsTopologyChangeRequired.mock.calls,
+      ];
+      expect(calls.length).toBeGreaterThan(0);
+      for (const call of calls) expect(await configOfCall(call)).toBe(first);
     });
   });
 });

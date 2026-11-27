@@ -7,9 +7,10 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { Operation, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import type { CantonCoinConfig, CantonContext } from "../config";
+import { pinConfig, type CantonContext } from "../config";
 import { isCantonAccountEmpty } from "../helpers";
 import { resumeOffset } from "../logic/listOperations";
+import { getMaxTxQuery } from "../tuning";
 import type { CantonOperationType } from "../logic/operationType";
 import {
   CHARGED_TYPES,
@@ -31,7 +32,6 @@ import {
 import resolver from "../signer";
 import { CantonAccount, CantonResources, CantonSigner, type ScanCheckpoint } from "../types";
 import { buildSubAccounts, mergeOperations } from "./buildSubAccounts";
-import { getCurrencyContext } from "./context";
 import { isAccountOnboarded } from "./onboard";
 
 /**
@@ -41,8 +41,6 @@ import { isAccountOnboarded } from "./onboard";
  * main account charges.
  */
 export const SYNC_HASH = "1";
-
-const GATEWAY_PAGE_SIZE = 1_000;
 
 type Instrument = { instrumentId: string; instrumentAdmin: string };
 
@@ -246,20 +244,21 @@ function toOperations(
 
 /** Every row from `start` to `end`, the ledger end read before the walk so it does not chase new activity. */
 async function readOperations(
-  config: CantonCoinConfig,
+  context: CantonContext,
   partyId: string,
   start: number,
   end: number,
 ): Promise<OperationInfo[]> {
   const rows: OperationInfo[] = [];
   if (start > end) return rows;
+  const limit = getMaxTxQuery(await context.config());
   let cursor: number | undefined;
   for (;;) {
-    const { operations, next } = await getOperations(config, partyId, {
+    const { operations, next } = await getOperations(context, partyId, {
       minOffset: start,
       maxOffset: end,
       cursor,
-      limit: GATEWAY_PAGE_SIZE,
+      limit,
     });
     rows.push(...operations);
     if (next === undefined || next < 0) return rows;
@@ -275,20 +274,20 @@ async function readOperations(
  * not where it was read, or without a checkpoint, the rows from offset 0.
  */
 async function readHistory(
-  config: CantonCoinConfig,
+  context: CantonContext,
   partyId: string,
   checkpoint: ScanCheckpoint | undefined,
   end: number,
 ): Promise<{ rows: OperationInfo[]; isFullRead: boolean }> {
   if (checkpoint) {
-    const rows = await readOperations(config, partyId, checkpoint.height, end);
+    const rows = await readOperations(context, partyId, checkpoint.height, end);
     const isCheckpointRead = rows.some(
       ({ transaction_hash, block }) =>
         transaction_hash === checkpoint.hash && block.height === checkpoint.height,
     );
     if (isCheckpointRead) return { rows, isFullRead: false };
   }
-  return { rows: await readOperations(config, partyId, 0, end), isFullRead: true };
+  return { rows: await readOperations(context, partyId, 0, end), isFullRead: true };
 }
 
 /** The fees of the operations, by instrument. */
@@ -336,6 +335,7 @@ export function makeGetAccountShape(
   return async info => {
     const { address, currency, derivationMode, derivationPath, initialAccount } = info;
     const config = await context.config(currency.id);
+    const currencyContext = pinConfig(context, config);
 
     let isOnboarded = initialAccount?.cantonResources?.isOnboarded ?? false;
     let xpubOrAddress = (initialAccount?.xpub || initialAccount?.cantonResources?.xpub) ?? "";
@@ -351,7 +351,7 @@ export function makeGetAccountShape(
       });
       publicKey = addressResult.publicKey;
 
-      const result = await isAccountOnboarded(config, publicKey);
+      const result = await isAccountOnboarded(currencyContext, publicKey);
       isOnboarded = result.isOnboarded;
 
       if (isOnboarded && result.partyId) {
@@ -364,7 +364,7 @@ export function makeGetAccountShape(
     // gateway party lookup returns it. Without publicKey, validateTopology can't
     // run and the topology-change prompt never shows. LIVE-34585
     if (xpubOrAddress && !publicKey) {
-      const { public_key } = await getPartyById(config, xpubOrAddress);
+      const { public_key } = await getPartyById(currencyContext, xpubOrAddress);
       if (public_key) publicKey = public_key;
     }
 
@@ -386,7 +386,7 @@ export function makeGetAccountShape(
       calTokens,
       tokenBalances,
     } = await readPartyBalances(
-      getCurrencyContext(context, currency),
+      currencyContext,
       currency.id,
       xpubOrAddress,
       initialAccount?.cantonResources?.nativeInstrumentAdmin,
@@ -395,7 +395,9 @@ export function makeGetAccountShape(
 
     // One snapshot, so that the rebuild check and the sub-accounts agree on the enabled tokens.
     const enabledInstruments =
-      tokenBalances.length > 0 ? await getEnabledInstrumentsCached(config) : new Set<string>();
+      tokenBalances.length > 0
+        ? await getEnabledInstrumentsCached(currencyContext)
+        : new Set<string>();
     const storedSubAccountIds = new Set(initialAccount?.subAccounts?.map(({ id }) => id));
     // Rows of a token without a sub-account produced no operation, and later syncs read past them.
     const hasNewTokenAccount = tokenBalances.some(
@@ -433,9 +435,9 @@ export function makeGetAccountShape(
     const isMainAccountOperation = (op: Operation) =>
       (op.extra as { instrumentId?: string })?.instrumentId === nativeInstrumentId;
 
-    const blockHeight = await getLedgerEnd(config);
+    const blockHeight = await getLedgerEnd(currencyContext);
     const { rows, isFullRead } = xpubOrAddress
-      ? await readHistory(config, xpubOrAddress, checkpoint, blockHeight)
+      ? await readHistory(currencyContext, xpubOrAddress, checkpoint, blockHeight)
       : { rows: [], isFullRead: false };
     const validRows = rows.filter(isValidOperation);
     const validHashes = new Set(validRows.map(row => row.transaction_hash));

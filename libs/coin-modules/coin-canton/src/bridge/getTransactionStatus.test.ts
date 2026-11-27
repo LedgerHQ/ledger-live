@@ -10,11 +10,11 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
-import type { CantonCoinConfig, CantonContext } from "../config";
+import { cantonDefaults, type CantonCoinConfig, type CantonContext } from "../config";
 import * as gateway from "../network/gateway";
-import { createMockCantonAccount } from "../test/fixtures";
+import { configOfCall, createMockCantonAccount } from "../test/fixtures";
 import { CantonAccount, TooManyUtxosCritical, TooManyUtxosWarning, Transaction } from "../types";
-import { TopologyChangeError } from "../types/errors";
+import { CantonInvalidConfigError, TopologyChangeError } from "../types/errors";
 import {
   getTransactionStatus as getTransactionStatusWithContext,
   TO_MANY_UTXOS_CRITICAL_COUNT,
@@ -28,13 +28,13 @@ jest.mock("../network/gateway", () => ({
 }));
 const mockedGateway = gateway as jest.Mocked<typeof gateway>;
 
+// Without the shipped `fee: 0`, so fees follow the tier schedule.
+const { fee: _fixedFee, ...tieredDefaults } = cantonDefaults.canton_network;
 const defaultConfig: CantonCoinConfig = {
+  ...tieredDefaults,
+  gatewayUrl: "https://canton-gateway.example.com",
+  nodeId: "test-node",
   minReserve: 100,
-  networkType: "mainnet",
-  status: { type: "active" },
-  name: "Canton Network",
-  unit: { name: "cc", code: "CC", magnitude: 38 },
-  nativeInstrumentId: "Amulet",
 };
 let mockConfig: CantonCoinConfig = defaultConfig;
 const mockContext: CantonContext = { config: async () => mockConfig, logger: () => {} };
@@ -578,6 +578,24 @@ describe("getTransactionStatus", () => {
   });
 
   describe("topology validation", () => {
+    it("should reject when the topology check finds an invalid config", async () => {
+      const accountWithPartyId: CantonAccount = { ...mockAccount, xpub: "test-party-id" };
+      mockedGateway.isTopologyChangeRequiredCached.mockRejectedValue(
+        new CantonInvalidConfigError("canton: coin config gateway.topologyCacheTtlMs"),
+      );
+      const transaction: Transaction = {
+        family: "canton",
+        amount: new BigNumber(100),
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
+        fee: new BigNumber(10),
+        tokenId: "",
+      };
+
+      await expect(getTransactionStatus(accountWithPartyId, transaction)).rejects.toThrow(
+        CantonInvalidConfigError,
+      );
+    });
+
     it("should return TopologyChangeError when isTopologyChangeRequiredCached returns true", async () => {
       // GIVEN
       const accountWithPartyId: CantonAccount = {
@@ -600,9 +618,12 @@ describe("getTransactionStatus", () => {
       // THEN
       expect(result.errors.topologyChange).toBeInstanceOf(TopologyChangeError);
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        mockConfig,
+        expect.anything(),
         "test-public-key",
       );
+      await expect(
+        configOfCall(mockedGateway.isTopologyChangeRequiredCached.mock.calls[0]),
+      ).resolves.toBe(mockConfig);
     });
 
     it("should not return topology error when isTopologyChangeRequiredCached returns false", async () => {
@@ -627,9 +648,12 @@ describe("getTransactionStatus", () => {
       // THEN
       expect(result.errors.topologyChange).toBeUndefined();
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        mockConfig,
+        expect.anything(),
         "test-public-key",
       );
+      await expect(
+        configOfCall(mockedGateway.isTopologyChangeRequiredCached.mock.calls[0]),
+      ).resolves.toBe(mockConfig);
     });
 
     it("should not return topology error when isTopologyChangeRequiredCached throws an error", async () => {
@@ -654,9 +678,12 @@ describe("getTransactionStatus", () => {
       // THEN
       expect(result.errors.topologyChange).toBeUndefined();
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        mockConfig,
+        expect.anything(),
         "test-public-key",
       );
+      await expect(
+        configOfCall(mockedGateway.isTopologyChangeRequiredCached.mock.calls[0]),
+      ).resolves.toBe(mockConfig);
     });
   });
 });

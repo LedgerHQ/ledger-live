@@ -19,6 +19,8 @@ import {
   TO_MANY_UTXOS_WARNING_COUNT,
 } from "../constants";
 import { isRecipientValid } from "../logic/utils";
+import { getMinReserve } from "../tuning";
+import { getCurrencyContext } from "./context";
 import { getKey, isTopologyChangeRequiredCached } from "../network/gateway";
 import {
   Transaction,
@@ -27,7 +29,7 @@ import {
   TooManyUtxosCritical,
   TooManyUtxosWarning,
 } from "../types";
-import { TopologyChangeError } from "../types/errors";
+import { CantonInvalidConfigError, TopologyChangeError } from "../types/errors";
 
 export { TO_MANY_UTXOS_CRITICAL_COUNT, TO_MANY_UTXOS_WARNING_COUNT };
 
@@ -40,7 +42,7 @@ export const getTransactionStatus = async (
   const warnings: Record<string, Error> = {};
 
   // reserveAmount is the minimum amount of currency that an account must hold in order to stay activated
-  const reserveAmount = new BigNumber((await context.config(account.currency.id)).minReserve || 0);
+  const reserveAmount = getMinReserve(await context.config(account.currency.id));
   const estimatedFees = new BigNumber(transaction.fee || 0);
   const amount = new BigNumber(transaction.amount);
 
@@ -181,7 +183,7 @@ export async function validateTopology(
 
   try {
     const isTopologyChangeRequired = await isTopologyChangeRequiredCached(
-      await context.config(account.currency.id),
+      await getCurrencyContext(context, account.currency),
       publicKey,
     );
 
@@ -190,7 +192,8 @@ export async function validateTopology(
     }
 
     return new TopologyChangeError("Topology change detected. Re-onboarding required.");
-  } catch {
+  } catch (error) {
+    if (error instanceof CantonInvalidConfigError) throw error;
     // If topology check fails, don't block the transaction
     return null;
   }

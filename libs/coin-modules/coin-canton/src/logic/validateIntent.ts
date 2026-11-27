@@ -17,7 +17,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
-import type { CantonCoinConfig, CantonContext } from "../config";
+import { pinConfig, type CantonCoinConfig, type CantonContext } from "../config";
 import {
   CANTON_UNSET_RECIPIENT,
   TO_MANY_UTXOS_CRITICAL_COUNT,
@@ -29,7 +29,13 @@ import {
   getPartyByIdCached,
   isTopologyChangeRequiredCached,
 } from "../network/gateway";
-import { TooManyUtxosCritical, TooManyUtxosWarning, TopologyChangeError } from "../types/errors";
+import {
+  CantonInvalidConfigError,
+  TooManyUtxosCritical,
+  TooManyUtxosWarning,
+  TopologyChangeError,
+} from "../types/errors";
+import type { InstrumentBalance } from "../types/gateway";
 import type { CantonMemo } from "../types/transaction";
 import { assetInstrument, type Instrument, instrumentOf, isInstrument } from "./asset";
 import { estimateFees, estimateSendMax } from "./estimateFees";
@@ -101,19 +107,20 @@ async function sendMaxOf(
   return { amount: max.amount, fees: max.fee };
 }
 
-function amountError(
-  config: CantonCoinConfig,
+async function amountError(
+  context: CantonContext,
   recipient: string,
   { amount, fees, totalSpent, isToken, isSendMax }: Spend,
   native: Holding,
   available: bigint,
-): Error | undefined {
+): Promise<Error | undefined> {
   if (isToken && fees > native.spendable) return new NotEnoughBalanceInParentAccount();
   if (amount <= 0n) return isSendMax ? new NotEnoughBalance() : new AmountRequired();
   if (totalSpent > available) return new NotEnoughBalance();
   if (isToken) return undefined;
 
-  const reserve = minReserveOf(config);
+  const config = await context.config();
+  const reserve = await minReserveOf(context);
   if (totalSpent > native.total - reserve) {
     return new NotEnoughSpendableBalance("", { minimumAmount: formatReserve(config, reserve) });
   }
@@ -125,6 +132,14 @@ function amountError(
   return undefined;
 }
 
+// A network failure degrades to the fallback; an invalid config must surface.
+const bestEffort =
+  <T>(fallback: T) =>
+  (error: unknown): T => {
+    if (error instanceof CantonInvalidConfigError) throw error;
+    return fallback;
+  };
+
 const countsUtxos = ({ recipient, sender }: CantonIntent): boolean =>
   !!recipient &&
   isRecipientValid(recipient) &&
@@ -133,14 +148,16 @@ const countsUtxos = ({ recipient, sender }: CantonIntent): boolean =>
 
 // The counts sync stores on the account don't reach validateIntent, so the gateway is read instead; a failed read gives no warning.
 async function utxoWarning(
-  config: CantonCoinConfig,
+  context: CantonContext,
   intent: CantonIntent,
   target: Instrument,
 ): Promise<Error | undefined> {
   if (!countsUtxos(intent)) return undefined;
   const [rows, counted] = await Promise.all([
-    getBalance(config, intent.sender).catch(() => []),
-    intent.asset.type === "native" ? getNativeInstrument(config).catch(() => undefined) : target,
+    getBalance(context, intent.sender).catch(bestEffort<InstrumentBalance[]>([])),
+    intent.asset.type === "native"
+      ? getNativeInstrument(context).catch(bestEffort(undefined))
+      : target,
   ]);
   if (!counted) return undefined;
   const count = rows
@@ -156,15 +173,18 @@ async function utxoWarning(
 
 // The public key the bridge stores on the account doesn't reach validateIntent, so a party lookup supplies it.
 // Best effort, as in the bridge: a failed lookup skips the check, unless the gateway no longer knows the party.
-async function topologyError(config: CantonCoinConfig, party: string): Promise<Error | undefined> {
+async function topologyError(context: CantonContext, party: string): Promise<Error | undefined> {
   let publicKey: string | undefined;
   try {
-    ({ public_key: publicKey } = await getPartyByIdCached(config, party));
+    ({ public_key: publicKey } = await getPartyByIdCached(context, party));
   } catch (error) {
+    if (error instanceof CantonInvalidConfigError) throw error;
     return error instanceof TopologyChangeError ? error : undefined;
   }
   if (!publicKey) return undefined;
-  const required = await isTopologyChangeRequiredCached(config, publicKey).catch(() => false);
+  const required = await isTopologyChangeRequiredCached(context, publicKey).catch(
+    bestEffort(false),
+  );
   return required
     ? new TopologyChangeError("Topology change detected. Re-onboarding required.")
     : undefined;
@@ -177,13 +197,14 @@ export async function validateIntent(
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
   const config = await context.config();
+  const pinned = pinConfig(context, config);
   const target = instrumentOf(intent.asset, config.nativeInstrumentId);
   const isToken = intent.asset.type !== "native";
   const isSendMax = !!intent.useAllAmount;
   const native = holdingOf(balances.filter(({ asset }) => asset.type === "native"));
   const sent = isToken ? tokenHolding(balances, target, config.nativeInstrumentId) : native;
   const { amount, fees } = isSendMax
-    ? await sendMaxOf(context, intent, sent, customFees, isToken)
+    ? await sendMaxOf(pinned, intent, sent, customFees, isToken)
     : { amount: intent.amount, fees: customFees?.value ?? 0n };
   const spend: Spend = {
     amount,
@@ -202,12 +223,12 @@ export async function validateIntent(
 
   const recipient = recipientError(intent.recipient, config.name);
   if (recipient) errors.recipient = recipient;
-  const amountProblem = amountError(config, intent.recipient, spend, native, sent.spendable);
+  const amountProblem = await amountError(pinned, intent.recipient, spend, native, sent.spendable);
   if (amountProblem) errors.amount = amountProblem;
 
   const [tooManyUtxos, topologyChange] = await Promise.all([
-    utxoWarning(config, intent, target),
-    topologyError(config, intent.sender),
+    utxoWarning(pinned, intent, target),
+    topologyError(pinned, intent.sender),
   ]);
   if (tooManyUtxos) warnings.tooManyUtxos = tooManyUtxos;
   if (topologyChange) errors.topologyChange = topologyChange;

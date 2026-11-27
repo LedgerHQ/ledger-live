@@ -7,7 +7,7 @@ import { notSupportedApi } from "@ledgerhq/coin-module-framework/api/index";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { validateAddress } from "../bridge/validateAddress";
-import { type CantonCoinConfig, type CantonContext } from "../config";
+import { pinConfig, type CantonCoinConfig, type CantonContext } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
@@ -33,15 +33,16 @@ async function estimateIntentFees(
   context: CantonContext,
   intent: TransactionIntent<CantonMemo>,
 ): Promise<FeeEstimation> {
-  const { fee: fixedFee } = await context.config();
-  if (!intent.useAllAmount || intent.asset.type !== "native" || fixedFee !== undefined) {
-    return { value: await estimateFees(context, intent.amount) };
+  const config = await context.config();
+  const pinned = pinConfig(context, config);
+  if (!intent.useAllAmount || intent.asset.type !== "native" || config.fee !== undefined) {
+    return { value: await estimateFees(pinned, intent.amount) };
   }
-  const native = (await getBalance(context, intent.sender)).find(
+  const native = (await getBalance(pinned, intent.sender)).find(
     ({ asset }) => asset.type === "native",
   );
   const spendable = native ? native.value - (native.locked ?? 0n) : 0n;
-  const { amount, fee } = await estimateSendMax(context, spendable);
+  const { amount, fee } = await estimateSendMax(pinned, spendable);
   return { value: fee, parameters: { amount } };
 }
 
