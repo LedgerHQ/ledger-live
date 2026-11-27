@@ -1,9 +1,10 @@
 import BigNumber from "bignumber.js";
-import { act, renderHook } from "tests/testSetup";
+import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { listSolanaStakingPositions } from "@ledgerhq/live-common/families/solana/logic";
 import type { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 import type { StakingDelegation, StakingResources, StakingUnbonding } from "@ledgerhq/types-live";
+import { abandonStakePosition, useShownStakePosition } from "@features/flow-stake-position";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
 import { openURL } from "~/renderer/linking";
@@ -51,11 +52,12 @@ const unbonding = (overrides: Partial<StakingUnbonding> = {}): StakingUnbonding 
 const accountWith = (
   stakes: { delegations?: StakingDelegation[]; unbondings?: StakingUnbonding[] },
   spendableBalance = new BigNumber(0),
+  currencyId = "solana",
 ): SolanaAccount =>
   ({
     type: "Account",
     id: "solana-account",
-    currency: getCryptoCurrencyById("solana"),
+    currency: getCryptoCurrencyById(currencyId),
     spendableBalance,
     stakingResources: {
       delegations: stakes.delegations ?? [],
@@ -75,13 +77,20 @@ const metaFor = (
       })),
   );
 
-const render = (account: SolanaAccount) => renderHook(() => useSolanaDelegationsViewModel(account));
+type Flags = ReturnType<typeof withFlagOverrides>;
 
-const getProps = (account: SolanaAccount) => {
-  const { result } = render(account);
+const render = (account: SolanaAccount, initialState?: Flags) =>
+  renderHook(() => useSolanaDelegationsViewModel(account), { initialState });
+
+const getProps = (account: SolanaAccount, initialState?: Flags) => {
+  const { result } = render(account, initialState);
   if (!result.current) throw new Error("expected the view model to expose delegations");
   return { props: result.current, dispatch: mockDispatch };
 };
+
+const ACCOUNT_PAGE_ON = withFlagOverrides({
+  earnNativeStakePosition: { enabled: true, params: { accountPage: true } },
+});
 
 describe("useSolanaDelegationsViewModel", () => {
   beforeEach(() => {
@@ -286,6 +295,73 @@ describe("useSolanaDelegationsViewModel", () => {
       act(() => props.onSelectRowAction("unknown", "MODAL_SOLANA_DELEGATION_WITHDRAW"));
 
       expect(dispatch).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("View details", () => {
+    afterEach(() => {
+      const { result, unmount } = renderHook(() => useShownStakePosition());
+      const { request } = result.current;
+      if (request) act(() => abandonStakePosition(request.id));
+      unmount();
+    });
+
+    it("comes first in the row actions once the flag opens the account page entry", () => {
+      const { props } = getProps(
+        accountWith({ delegations: [delegation()], unbondings: [unbonding()] }),
+        ACCOUNT_PAGE_ON,
+      );
+
+      expect(props.rows.map(row => row.actions.map(action => action.label))).toEqual([
+        ["View details", "Deactivate"],
+        ["View details", "Withdraw", "Activate"],
+      ]);
+    });
+
+    it("opens the stake position dialog for the row, and no legacy modal", () => {
+      const account = accountWith({ delegations: [delegation()] });
+      const { props, dispatch } = getProps(account, ACCOUNT_PAGE_ON);
+      const shown = renderHook(() => useShownStakePosition());
+      const [viewDetails] = props.rows[0]?.actions ?? [];
+
+      act(() => props.onSelectRowAction("stake-bonded", viewDetails?.id ?? ""));
+
+      expect(shown.result.current.request).toMatchObject({
+        origin: "account",
+        accountId: account.id,
+        positionId: "stake-bonded",
+      });
+      expect(dispatch).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ["the flag is off", withFlagOverrides({ earnNativeStakePosition: { enabled: false } })],
+      [
+        "the flag opens Earn only, as its existing values do",
+        withFlagOverrides({ earnNativeStakePosition: { enabled: true } }),
+      ],
+    ])("is not offered when %s", (_case, flags) => {
+      const { props } = getProps(accountWith({ delegations: [delegation()] }), flags);
+
+      expect(props.rows[0]?.actions.map(action => action.label)).toEqual(["Deactivate"]);
+    });
+
+    it("is not offered on a test network", () => {
+      const { props } = getProps(
+        accountWith({ delegations: [delegation()] }, new BigNumber(0), "solana_devnet"),
+        ACCOUNT_PAGE_ON,
+      );
+
+      expect(props.rows[0]?.actions.map(action => action.label)).toEqual(["Deactivate"]);
+    });
+
+    it("is not offered for a stake without its stake account address", () => {
+      const { props } = getProps(
+        accountWith({ delegations: [delegation({ positionId: undefined })] }),
+        ACCOUNT_PAGE_ON,
+      );
+
+      expect(props.rows[0]?.actions).toEqual([]);
     });
   });
 

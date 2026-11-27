@@ -11992,6 +11992,9 @@
     "returnToPerps": "Return to Perps"
   },
   "stakePosition": {
+    "entry": {
+      "viewDetails": "View details"
+    },
     "details": {
       "title": "Earning {{currencyName}}",
       "totalRewards": "Total rewards",

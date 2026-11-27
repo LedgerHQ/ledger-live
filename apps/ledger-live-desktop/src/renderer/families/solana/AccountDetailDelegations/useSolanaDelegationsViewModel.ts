@@ -24,6 +24,10 @@ import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
+import {
+  useViewStakePositionDetails,
+  VIEW_STAKE_POSITION_DETAILS,
+} from "../useViewStakePositionDetails";
 
 type DelegateModalName =
   | "MODAL_SOLANA_DELEGATION_ACTIVATE"
@@ -61,14 +65,20 @@ export const useSolanaDelegationsViewModel = (
   const stakesWithMeta = useSolanaStakesWithMeta(account.currency, account.stakingResources);
   const explorerView = getDefaultExplorerView(account.currency);
   const ledgerValidatorUrl = useLocalizedUrl(urls.ledgerValidator);
+  const viewDetails = useViewStakePositionDetails(account);
 
   const onSelectRowAction = useCallback(
     (rowId: string, actionId: string) => {
       const stakeWithMeta = stakesWithMeta.find((item, index) => rowIdOf(item, index) === rowId);
-      if (stakeWithMeta)
-        dispatch(openModal(actionId as DelegateModalName, { account, stakeWithMeta }));
+      if (!stakeWithMeta) return;
+      if (actionId === VIEW_STAKE_POSITION_DETAILS) {
+        const { positionId } = stakeWithMeta.stake;
+        if (positionId) viewDetails?.(positionId);
+        return;
+      }
+      dispatch(openModal(actionId as DelegateModalName, { account, stakeWithMeta }));
     },
-    [account, dispatch, stakesWithMeta],
+    [account, dispatch, stakesWithMeta, viewDetails],
   );
 
   const onOpenValidator = useCallback(
@@ -120,11 +130,16 @@ export const useSolanaDelegationsViewModel = (
         delegated: delegationAmountCell(unit, stake.amount),
         available: delegationAmountCell(unit, stake.withdrawableAmount ?? new BigNumber(0)),
       },
-      actions: solanaStakeActions(stake).map(action => {
-        const modal = ACTION_MODALS[action];
-        if (!modal) throw new Error(`unsupported stake action: ${action}`);
-        return { id: modal, label: t(`solana.delegation.${action}.flow.title`) };
-      }),
+      actions: [
+        ...(viewDetails && stake.positionId
+          ? [{ id: VIEW_STAKE_POSITION_DETAILS, label: t("stakePosition.entry.viewDetails") }]
+          : []),
+        ...solanaStakeActions(stake).map(action => {
+          const modal = ACTION_MODALS[action];
+          if (!modal) throw new Error(`unsupported stake action: ${action}`);
+          return { id: modal, label: t(`solana.delegation.${action}.flow.title`) };
+        }),
+      ],
     };
   });
 
