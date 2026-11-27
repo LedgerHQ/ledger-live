@@ -737,6 +737,60 @@ describe("getOperations", () => {
       expect(transfers.map(t => t.transactionHash)).toEqual(["new"]);
     });
 
+    it("with a floor, reads past a late receipt of a stored transaction down to the floor", async () => {
+      const { cursors } = respondWithReceiptPages([
+        [receipt({ transaction_hash: "stored", block: { block_height: "250" } })],
+        [receipt({ transaction_hash: "unseen", block: { block_height: "220" } })],
+        [receipt({ transaction_hash: "below", block: { block_height: "90" } })],
+      ]);
+
+      const { transfers } = await read({
+        floorHeight: 100,
+        knownHashes: new Set(["stored"]),
+        stopAtHashes: new Set(["stored"]),
+      });
+
+      expect(cursors).toEqual(["", "page-1", "page-2"]);
+      expect(transfers.map(t => t.transactionHash)).toEqual(["unseen"]);
+    });
+
+    it("rejects when the indexer serves a cursor it already served", async () => {
+      mockServer.use(
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/accounts/:address/receipts`, () =>
+          HttpResponse.json({ data: [receipt()], meta: { next_page: "same" } }),
+        ),
+      );
+
+      await expect(read({ floorHeight: 0 })).rejects.toThrow("cursor does not advance");
+    });
+
+    it("looks up at most ten transaction trees at a time", async () => {
+      respondWithReceipts(
+        Array.from({ length: 25 }, (_, index) => receipt({ transaction_hash: `p${index}` })),
+      );
+      let inFlight = 0;
+      let peak = 0;
+      mockServer.use(
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/txns/:hash/receipts`, async () => {
+          inFlight++;
+          peak = Math.max(peak, inFlight);
+          await new Promise(resolve => setTimeout(resolve, 5));
+          inFlight--;
+          return HttpResponse.json({
+            data: {
+              predecessor_account_id: INTENTS,
+              receiver_account_id: INTENTS,
+              actions: [],
+              outcome: { status: true },
+            },
+          });
+        }),
+      );
+
+      await read();
+      expect(peak).toBe(10);
+    });
+
     it("values a payout from its whole transaction, including a receipt outside the window", async () => {
       respondWithReceipts([receipt({ block: { block_height: "260" } })]);
       respondWithParties({}, undefined, {

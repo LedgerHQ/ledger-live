@@ -1,3 +1,4 @@
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { Operation, OperationType } from "@ledgerhq/types-live";
@@ -80,6 +81,8 @@ export const fetchReceiptsPage = async (
   };
 };
 
+const TRANSACTION_TREE_LOOKUP_BATCH = 10;
+
 const receiptHeight = (receipt: NearAccountReceipt): number =>
   receipt.block?.block_height !== undefined ? Number(receipt.block.block_height) : NaN;
 
@@ -155,6 +158,7 @@ export const readReceiptTransfers = async (
 }> => {
   const { floorHeight, upperHeight, knownHashes, stopAtHashes } = options;
   const candidateHashes = new Set<string>();
+  const seenCursors = new Set<string>();
   let requestCursor = options.cursor;
   let resumeCursor: string | undefined;
   let truncatedAtHeight: number | undefined;
@@ -188,9 +192,10 @@ export const readReceiptTransfers = async (
       resumeCursor = requestCursor;
       break;
     }
-    const reachedStored = receipts.some(receipt => stopAtHashes?.has(receipt.transaction_hash));
-    if (next === undefined || reachedStored) break;
     const unboundedWindow = floorHeight === undefined;
+    const reachedStored =
+      unboundedWindow && receipts.some(receipt => stopAtHashes?.has(receipt.transaction_hash));
+    if (next === undefined || reachedStored) break;
     if (unboundedWindow && page >= RECEIPTS_MAX_PAGES) {
       const lowestBlockMayContinueOnNextPage = Math.min(
         ...receipts.map(receiptHeight).filter(h => !Number.isNaN(h)),
@@ -199,13 +204,17 @@ export const readReceiptTransfers = async (
       log("Near", `receipts of ${address}: read stopped after ${page} pages`);
       break;
     }
+    if (seenCursors.has(next)) {
+      throw new Error(`Near: the indexer cursor does not advance for receipts of ${address}`);
+    }
+    seenCursors.add(next);
     requestCursor = next;
   }
 
-  const transfers = await Promise.all(
-    [...candidateHashes].map(async hash =>
-      receiptOnlyTransfer(await fetchTransactionReceipts(config, hash), hash, address),
-    ),
+  const transfers = await promiseAllBatched(
+    TRANSACTION_TREE_LOOKUP_BATCH,
+    [...candidateHashes],
+    async hash => receiptOnlyTransfer(await fetchTransactionReceipts(config, hash), hash, address),
   );
 
   return {
