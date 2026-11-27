@@ -11,11 +11,11 @@ const FAILURE_REASONS = {
 export const datadogOperationSink: OperationSink = {
   isRecording: () => isDatadogRecording(),
   start: (name, operationKey, attributes) =>
-    datadogRum.startFeatureOperation(name, { operationKey, context: attributes }),
+    datadogRum.startOperation(name, { operationKey, context: attributes }),
   succeed: (name, operationKey, attributes) =>
-    datadogRum.succeedFeatureOperation(name, { operationKey, context: attributes }),
+    datadogRum.succeedOperation(name, { operationKey, context: attributes }),
   fail: (name, operationKey, reason, attributes) =>
-    datadogRum.failFeatureOperation(name, FAILURE_REASONS[reason], {
+    datadogRum.failOperation(name, FAILURE_REASONS[reason], {
       operationKey,
       context: attributes,
     }),

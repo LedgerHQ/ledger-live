@@ -248,17 +248,12 @@ describe("datadog renderer", () => {
           service: "ledger-live-desktop",
           trackViewsManually: true,
           enablePrivacyForActionName: true,
+          propagateTraceBaggage: false,
         }),
       );
       expect(datadogRum.startView).toHaveBeenCalledWith({ name: "portfolio" });
       expect(datadogRum.setGlobalContext).toHaveBeenCalled();
       expect(datadogRum.setUser).toHaveBeenCalledWith({ id: "test-dd-id" });
-    });
-
-    it("should enable the RUM feature operations", () => {
-      expect(datadogRum.init).toHaveBeenCalledWith(
-        expect.objectContaining({ enableExperimentalFeatures: ["feature_operation_vital"] }),
-      );
     });
 
     it("isDatadogRecording should follow the user consent and the lldDatadog flag", async () => {
@@ -273,6 +268,15 @@ describe("datadog renderer", () => {
       consent = true;
       setDatadogActionsEnabled(false);
       expect(isDatadogRecording()).toBe(false);
+    });
+
+    it("should propagate trace baggage only when the flag param turns it on", async () => {
+      __resetDatadogForTesting();
+      datadogRum.init.mockClear();
+      await initDatadog(() => true, { propagateTraceBaggage: true }, createMockStore());
+      expect(datadogRum.init).toHaveBeenCalledWith(
+        expect.objectContaining({ propagateTraceBaggage: true }),
+      );
     });
 
     it("when already initialized should return true without calling init again", async () => {

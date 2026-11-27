@@ -217,6 +217,52 @@ describe("datadog config", () => {
         referrer: `${page}#/cryptos`,
       });
     });
+
+    it("scrubs a view while the user opted out, as the SDK still sends the views it cannot drop", () => {
+      const anonymizer = jest.requireMock("~/datadog/anonymizer").default;
+      const beforeSend = buildBeforeSend(() => false);
+      const page = "https://app.asar/.webpack/index.html";
+      const event = {
+        type: "view",
+        view: {
+          url: `${page}?appDirname=%2Fopt%2Fexample#/settings`,
+          referrer: `${page}?appDirname=%2Fopt%2Fexample#/account/js:2:bitcoin:xpubExample1:segwit`,
+        },
+      };
+      expect(beforeSend(event, undefined)).toBe(false);
+      expect(anonymizer.filepathRecursiveReplacer).toHaveBeenCalledWith(event);
+      expect(event.view).toEqual({
+        url: `${page}#/settings`,
+        referrer: `${page}#/account/[redacted]`,
+      });
+    });
+
+    it("blanks the strings of a view it cannot scrub, keeping its schema fields", () => {
+      const anonymizer = jest.requireMock("~/datadog/anonymizer").default;
+      jest.mocked(anonymizer.filepathRecursiveReplacer).mockImplementationOnce(() => {
+        throw new Error("anonymizer failed");
+      });
+      const beforeSend = buildBeforeSend(() => true);
+      const event = {
+        type: "view",
+        view: { id: "view-id", url: "file:///home/someone/app/index.html#/settings" },
+        context: { route: "settings" },
+      };
+      expect(beforeSend(event, undefined)).toBe(false);
+      expect(event).toEqual({
+        type: "view",
+        view: { id: "view-id", url: "" },
+        context: { route: "" },
+      });
+    });
+
+    it("still drops an event whose error message is on the ignore list, once scrubbed", () => {
+      const anonymizer = jest.requireMock("~/datadog/anonymizer").default;
+      const beforeSend = buildBeforeSend(() => true);
+      const event = { error: { message: "IGNORE_ME please" } };
+      expect(beforeSend(event, undefined)).toBe(false);
+      expect(anonymizer.filepathRecursiveReplacer).toHaveBeenCalledWith(event);
+    });
   });
 
   describe("rewriteAsarUrls", () => {

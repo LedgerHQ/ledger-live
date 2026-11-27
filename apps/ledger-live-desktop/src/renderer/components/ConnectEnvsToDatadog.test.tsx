@@ -95,6 +95,25 @@ describe("ConnectEnvsToDatadog", () => {
     );
   });
 
+  it("should pass the propagateTraceBaggage flag param to initDatadog", async () => {
+    render(<ConnectEnvsToDatadog />, {
+      initialState: {
+        ...withFlagOverrides({
+          lldDatadog: { enabled: true, params: { propagateTraceBaggage: true } },
+        }),
+        settings: {
+          crashReporting: true,
+        },
+      },
+    });
+    await new Promise(r => setImmediate(r));
+    expect(initDatadog).toHaveBeenCalledWith(
+      expect.any(Function),
+      expect.objectContaining({ propagateTraceBaggage: true }),
+      expect.anything(),
+    );
+  });
+
   it("should call initDatadogLogs with a shouldSend callback under the same gating", async () => {
     render(<ConnectEnvsToDatadog />, {
       initialState: {
