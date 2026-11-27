@@ -93,7 +93,7 @@ jobs:
       snapshot_ref: ${{ steps.plan.outputs.snapshot_ref }}
     steps:
       # This workflow's scripts only.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           sparse-checkout: /e2e/tooling/startup-perf/ci/
           sparse-checkout-cone-mode: false
@@ -154,7 +154,7 @@ jobs:
     steps:
       # The files of the keys, this folder's restore action and sides.mts, and what the cache
       # profile's script reads.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           sparse-checkout: |
             /.github/workflows/test-mobile-startup-perf.yml
@@ -321,14 +321,14 @@ jobs:
       # Pods report the host CPU count; cap Gradle workers to the runner size.
       GRADLE_OPTS: -Dorg.gradle.workers.max=8
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ matrix.ref }}
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
       # This workflow's ci/, its build composite included: the commit being built may predate it.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: .startup-perf
           # Only ci/: the package.json beside it would clash in Nx with the ref's own copy.
@@ -368,14 +368,14 @@ jobs:
       # Pods report the host CPU count; cap Gradle workers to the runner size.
       GRADLE_OPTS: -Dorg.gradle.workers.max=8
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.plan.outputs.snapshot_ref }}
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
       # This workflow's ci/, its build composite included: the commit being built may predate it.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: .startup-perf
           # Only ci/: the package.json beside it would clash in Nx with the ref's own copy.
@@ -417,14 +417,14 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ matrix.ref }}
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
       # This workflow's ci/, its build composite included: the commit being built may predate it.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: .startup-perf
           # Only ci/: the package.json beside it would clash in Nx with the ref's own copy.
@@ -465,14 +465,14 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.plan.outputs.snapshot_ref }}
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
       # This workflow's ci/, its build composite included: the commit being built may predate it.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: .startup-perf
           # Only ci/: the package.json beside it would clash in Nx with the ref's own copy.
@@ -513,7 +513,7 @@ jobs:
     timeout-minutes: 45
     steps:
       # This folder's save action, and what the cache profile's script reads.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           sparse-checkout: |
             /e2e/tooling/startup-perf/ci/actions/
@@ -602,7 +602,7 @@ jobs:
       SNAPSHOT_DIR: snapshot/android
       SNAPSHOT_DEBUG_DIR: startup-perf-snapshot-debug/android
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -710,7 +710,7 @@ jobs:
       SNAPSHOT_DIR: snapshot/ios
       SNAPSHOT_DEBUG_DIR: startup-perf-snapshot-debug/ios
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -846,7 +846,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       # staging.kstr is the keystore that secrets.ANDROID_KEYSTORE_PATH points to.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           sparse-checkout-cone-mode: false
@@ -965,7 +965,7 @@ jobs:
     runs-on: ["qaa", macOS, ARM64, "performance-pool"]
     timeout-minutes: 300
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           sparse-checkout: |
@@ -1066,7 +1066,7 @@ jobs:
     if: ${{ !cancelled() && needs.plan.result != 'skipped' }}
     runs-on: ledger-wallet-1cpu-aws-public-cached
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           sparse-checkout: /e2e/tooling/startup-perf/ci/
           sparse-checkout-cone-mode: false

@@ -341,7 +341,7 @@ jobs:
           repositories: |
             ledger-live
           permission-contents: read
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -528,7 +528,7 @@ jobs:
     # A native build validates the lockfile itself (pod install --deployment)
     if: ${{ !cancelled() && !failure() && inputs.check_pod_lockfile && inputs.tests_type != 'Android Only' && fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).test_files_for_sharding != '' && fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).ios_native_exists == 'true' && fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).pod_lockfile_validated != 'true' }}
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -616,7 +616,7 @@ jobs:
       matrix:
         include: ${{ fromJSON(fromJSON(inputs.build_plan || needs.determine-builds.outputs.plan).matrix_ios) }}
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -875,7 +875,7 @@ jobs:
             echo "read $(du -sh "${HOME}/.android/avd" | cut -f1) in $(( $(date +%s) - start ))s, done $(date -u +%T)"
           ' >> "$log" 2>&1 &
 
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -1357,7 +1357,7 @@ jobs:
         with:
           results-path: ios-test-artifacts
           runner: detox
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: ${{ !cancelled() && (env.NIGHTLY_RUN == 'true' || inputs.generate_ai_artifacts == true) }}
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -1479,7 +1479,7 @@ jobs:
         with:
           results-path: android-test-artifacts
           runner: detox
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: ${{ !cancelled() && (env.NIGHTLY_RUN == 'true' || inputs.generate_ai_artifacts == true) }}
         with:
           ref: ${{ inputs.ref || github.sha }}

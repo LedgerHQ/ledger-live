@@ -272,7 +272,7 @@ jobs:
       # Everything e2e/tooling/filter reads: the specs and their imports, the generic coin framework
       # families (resolve.mjs) and the currency definitions (generatedTags.mjs, silent when missing).
       - name: Checkout E2E specs and filter tooling
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -429,7 +429,7 @@ jobs:
           permission-contents: read
 
       - name: Checkout ledger-live monorepo (shallow clone)
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -678,7 +678,7 @@ jobs:
           git config --global core.eol lf
 
       - name: Checkout ledger-live monorepo (shallow clone)
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live

@@ -52,7 +52,7 @@ jobs:
           permission-contents: read
 
       - name: Checkout ledger-live develop
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: develop
           persist-credentials: false
@@ -62,7 +62,7 @@ jobs:
 
       # `main` of coin-modules, never code of the PR branch.
       - name: Checkout coin-modules
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: LedgerHQ/coin-modules
           ref: main
@@ -178,7 +178,7 @@ jobs:
           path: ${{ runner.temp }}/out
 
       # The files that are committed go on top of the `develop` the lockfile was computed on.
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: needs.generate.outputs.state == 'regenerate'
         with:
           ref: ${{ needs.generate.outputs.develop_sha }}
