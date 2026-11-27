@@ -228,6 +228,47 @@ describe("buildSubAccounts", () => {
     expect(subAccounts[0].spendableBalance).toEqual(new BigNumber(42));
   });
 
+  it.each([
+    [false, true],
+    [undefined, false],
+  ])("sets hasFailed on token operations from status %s", async (status, hasFailed) => {
+    const tokenEntry = { policyId: POLICY_ID, assetName: ASSET_NAME, value: "10" };
+    const collateralReturnedToAnotherOwner: APITransaction = {
+      status,
+      hash: "tx1",
+      fees: "2000000",
+      blockHeight: 1,
+      timestamp: "2024-01-01T00:00:00.000Z",
+      certificate: { stakeRegistrations: [], stakeDeRegistrations: [], stakeDelegations: [] },
+      inputs: [
+        {
+          index: 0,
+          txId: "collateral",
+          address: "addr",
+          value: "5000000",
+          tokens: [tokenEntry],
+          paymentKey: PAYMENT_KEY,
+        },
+      ],
+      outputs: [
+        { address: "other-addr", value: "3000000", tokens: [tokenEntry], paymentKey: "other-key" },
+      ],
+    };
+
+    const subAccounts = await buildSubAccounts({
+      initialAccount: undefined,
+      parentAccountId: "parent-account-id",
+      parentCurrency,
+      newTransactions: [collateralReturnedToAnotherOwner],
+      tokens: [],
+      accountCredentialsMap,
+    });
+
+    expect(subAccounts[0].operations).toEqual([
+      expect.objectContaining({ hash: "tx1", type: "OUT", value: new BigNumber(10), hasFailed }),
+    ]);
+  });
+
   it("falls back to zero balance when no matching token balance is provided", async () => {
     const tx = makeTxWithToken({ hash: "tx1", amount: "10", direction: "IN" });
 

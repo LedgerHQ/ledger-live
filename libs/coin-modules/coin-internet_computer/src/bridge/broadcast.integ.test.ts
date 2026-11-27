@@ -9,7 +9,7 @@ import { deriveAddressFromPubkey, pubkeyToDer } from "../logic/crypto";
 import { buildBroadcast } from "./broadcast";
 
 const NODE_URL = nodeUrl(internet_computerDefaults.internet_computer);
-const broadcast = buildBroadcast(() => NODE_URL);
+const broadcast = buildBroadcast(async () => NODE_URL);
 
 describe("Broadcast", () => {
   it("throws on insufficient funds", async () => {

@@ -7,8 +7,12 @@ import { NotificationsPromptWrapper } from "LLM/features/NotificationsPrompt";
 import { SwapTransactionStatusDrawerWrapper } from "LLM/features/SwapTransactionStatus";
 import { RegionRestrictedDrawer } from "LLM/features/Accounts/components/RegionRestrictedDrawer";
 import { AppProtectionPromptWrapper } from "LLM/features/AppLock/AppProtectionPrompt";
-import { PredictionsSetupSheet, PredictionsSheet } from "@features/flow-predictions";
-import PredictionsBindingRoot from "LLM/features/Predictions/bindingIntent/PredictionsBindingRoot";
+import {
+  PredictionsOrderSheet,
+  PredictionsSetupSheet,
+  PredictionsSheet,
+} from "@features/flow-predictions";
+import PredictionsSigningRoot from "LLM/features/Predictions/signingIntent/PredictionsSigningRoot";
 
 /**
  * Registry of all global drawers in the application.
@@ -50,11 +54,14 @@ export const DRAWER_REGISTRY = {
   predictions: {
     component: PredictionsSheet,
   },
-  predictionsBinding: {
-    component: PredictionsBindingRoot,
+  predictionsSigning: {
+    component: PredictionsSigningRoot,
   },
   predictionsSetup: {
     component: PredictionsSetupSheet,
+  },
+  predictionsOrder: {
+    component: PredictionsOrderSheet,
   },
 } as const satisfies Record<string, DrawerRegistryEntry>;
 

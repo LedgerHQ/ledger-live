@@ -75,7 +75,12 @@ test.describe("Swap - token approval", { lock: approvalLock.names }, () => {
       await app.speculos.enableBlindSigningOnNanoS();
       await revokeTokenApproval(fromAccount, provider);
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
-      const swap = new Swap(fromAccount, toAccount, minAmount, provider);
+      const swap = new Swap({
+        accountToDebit: fromAccount,
+        accountToCredit: toAccount,
+        amount: minAmount,
+        provider,
+      });
       await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
       await app.swap.selectSpecificProvider(provider);
       await app.swap.checkQuoteCardCtaPresence(provider.uiName);

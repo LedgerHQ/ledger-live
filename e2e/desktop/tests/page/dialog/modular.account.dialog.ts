@@ -1,5 +1,6 @@
+import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
-import { AccountType, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Account, AccountType, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Dialog } from "tests/component/dialog.component";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
@@ -33,6 +34,12 @@ export class ModularAccountDialog extends Dialog {
     if (isAccountDialogVisible) {
       await this.accountRowByName(getParentAccountName(account)).first().click();
     }
+  }
+
+  @step("Select account by its row test id")
+  async selectAccountRow(account: Account) {
+    await expect(this.dialogContent).toBeVisible();
+    await this.page.getByTestId(`account-row-${getParentAccountName(account)}`).click();
   }
 
   @step("Click on add and existing account button")

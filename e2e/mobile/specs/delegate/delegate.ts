@@ -25,6 +25,7 @@ import { getCurrencyManagerApp } from "@e2e/models/currencies";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNanoSSupports, describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
 import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 const DELEGATE_FEATURE_FLAGS = new Map<string, PartialFeatures>([
   [Currency.BABY.id, FF_BABYLON_STAKING_ENABLED],
@@ -40,17 +41,17 @@ const beforeAllFunction = async (delegation: DelegateType, featureFlags?: Partia
   await app.mainNavigation.waitForWallet40Ready();
 };
 
-export function runDelegateTest(
-  delegation: DelegateType,
-  tmsLinks: string[],
-  tags: string[],
-  options?: { skipLNS?: boolean },
-) {
+type DelegateTestOptions = TestMetaOptions & { delegation: DelegateType };
+
+type RunDelegateTestOptions = DelegateTestOptions & { skipLNS?: boolean };
+
+export function runDelegateTest(options: RunDelegateTestOptions) {
+  const { delegation, tmsLinks, tags, skipLNS } = options;
   declareBroadcastAccounts(delegation.account);
   setTeamOwner(coinTeamOwner(delegation.account.currency.id), { folder: TestFolder.DELEGATE });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
-  const describeOnDevice = options?.skipLNS
+  const describeOnDevice = skipLNS
     ? describeIfNotNanoS
     : describeIfNanoSSupports(delegation.account.currency.id);
   describeOnDevice("Delegate", () => {
@@ -83,18 +84,18 @@ export function runDelegateTest(
         delegation.account.currency.name === Currency.OSMO.name ||
         delegation.account.currency.name === Currency.BABY.name
       ) {
-        await app.stake.setAmount(currencyId, delegation.amount);
+        await app.stake.setAmount({ currencyId, amount: delegation.amount });
         await app.stake.validateAmount(currencyId);
-        await app.stake.selectValidator(currencyId, delegation.provider);
+        await app.stake.selectValidator({ currencyId, provider: delegation.provider });
       } else if (delegation.account.currency.name !== Currency.ADA.name) {
-        await app.stake.setAmount(currencyId, delegation.amount);
+        await app.stake.setAmount({ currencyId, amount: delegation.amount });
         await app.stake.validateAmount(currencyId);
       } else {
-        await app.stake.selectValidator(currencyId, delegation.provider);
+        await app.stake.selectValidator({ currencyId, provider: delegation.provider });
         await app.stake.verifyFeesVisible(currencyId);
         fees = await app.stake.getDisplayedFees(currencyId);
       }
-      await app.stake.expectProvider(currencyId, delegation.provider);
+      await app.stake.expectProvider({ currencyId, provider: delegation.provider });
       await app.stake.summaryContinue(currencyId);
 
       await verifyAppValidationStakeInfo({ delegation, amountWithCode, fees });
@@ -106,7 +107,8 @@ export function runDelegateTest(
   });
 }
 
-export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+export function runSuiDelegateTest(options: DelegateTestOptions) {
+  const { delegation, tmsLinks, tags } = options;
   declareBroadcastAccounts(delegation.account);
   setTeamOwner(coinTeamOwner(delegation.account.currency.id), { folder: TestFolder.DELEGATE });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
@@ -125,7 +127,7 @@ export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[],
       await app.account.tapEarn();
 
       await app.stake.dismissDelegationStart(currencyId);
-      await app.stake.setAmount(currencyId, delegation.amount);
+      await app.stake.setAmount({ currencyId, amount: delegation.amount });
       await app.stake.validateAmount(currencyId);
       await app.stake.summaryContinue(currencyId);
 
@@ -138,7 +140,8 @@ export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[],
   });
 }
 
-export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+export function runSuiUndelegateTest(options: DelegateTestOptions) {
+  const { delegation, tmsLinks, tags } = options;
   declareBroadcastAccounts(delegation.account);
   setTeamOwner(coinTeamOwner(delegation.account.currency.id), { folder: TestFolder.DELEGATE });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
@@ -156,7 +159,7 @@ export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[
 
       await app.undelegate.tapStakingRow(currencyId, 0);
       await app.undelegate.tapUnstakeAction(currencyId);
-      await app.undelegate.enterAmount(currencyId, delegation.amount);
+      await app.undelegate.enterAmount({ currencyId, amount: delegation.amount });
       await app.undelegate.continueFromAmount(currencyId);
 
       await app.speculos.signDelegationTransaction(delegation);
@@ -187,12 +190,15 @@ const minaBeforeAll = (accounts: AccountType[]) => async () => {
   await app.mainNavigation.waitForWallet40Ready();
 };
 
+type StartMinaSpecOptions = TestMetaOptions & { flow: BroadcastFlow };
+
 /**
  * The three mina flows share their accounts with the other mobile platform, so when both broadcast
  * in the same run each flow only runs on the platform that owns it, which keeps the two jobs from
  * building transactions on the same account and colliding on its nonce.
  */
-function startMinaSpec(_flow: BroadcastFlow, tmsLinks: string[], tags: string[]) {
+function startMinaSpec(options: StartMinaSpecOptions) {
+  const { tmsLinks, tags } = options;
   setTeamOwner(coinTeamOwner(Currency.MINA.id), { folder: TestFolder.DELEGATE });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -200,8 +206,9 @@ function startMinaSpec(_flow: BroadcastFlow, tmsLinks: string[], tags: string[])
   return describe.skip;
 }
 
-export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
-  const describeFlow = startMinaSpec(BroadcastFlow.MINA_DELEGATE, tmsLinks, tags);
+export function runMinaDelegateTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
+  const describeFlow = startMinaSpec({ flow: BroadcastFlow.MINA_DELEGATE, tmsLinks, tags });
   describeFlow("Delegate", () => {
     // Either account of the pair can be the free one, so both are seeded.
     beforeAll(minaBeforeAll(MINA_DELEGATION_PAIR));
@@ -222,7 +229,7 @@ export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
         // Mina delegates the whole balance, so the flow opens on the validator list and has no
         // amount step.
         await app.stake.selectValidatorFromList(delegation.provider);
-        await app.stake.expectProvider(currencyId, delegation.provider);
+        await app.stake.expectProvider({ currencyId, provider: delegation.provider });
         await app.stake.summaryContinue(currencyId);
 
         await verifyAppValidationStakeInfo({ delegation, amountWithCode });
@@ -236,8 +243,9 @@ export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
   });
 }
 
-export function runMinaRedelegateTest(tmsLinks: string[], tags: string[]) {
-  const describeFlow = startMinaSpec(BroadcastFlow.MINA_REDELEGATE, tmsLinks, tags);
+export function runMinaRedelegateTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
+  const describeFlow = startMinaSpec({ flow: BroadcastFlow.MINA_REDELEGATE, tmsLinks, tags });
   describeFlow("Redelegate", () => {
     beforeAll(minaBeforeAll([MINA_REDELEGATION_ACCOUNT]));
 
@@ -256,7 +264,7 @@ export function runMinaRedelegateTest(tmsLinks: string[], tags: string[]) {
         await app.undelegate.tapStakingRow(currencyId);
         await app.undelegate.tapRedelegateAction(currencyId);
         await app.stake.selectValidatorFromList(delegation.provider);
-        await app.stake.expectProvider(currencyId, delegation.provider);
+        await app.stake.expectProvider({ currencyId, provider: delegation.provider });
         await app.stake.summaryContinue(currencyId);
 
         await app.speculos.signDelegationTransaction(delegation);
@@ -271,8 +279,9 @@ export function runMinaRedelegateTest(tmsLinks: string[], tags: string[]) {
   });
 }
 
-export function runMinaUndelegateTest(tmsLinks: string[], tags: string[]) {
-  const describeFlow = startMinaSpec(BroadcastFlow.MINA_UNDELEGATE, tmsLinks, tags);
+export function runMinaUndelegateTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
+  const describeFlow = startMinaSpec({ flow: BroadcastFlow.MINA_UNDELEGATE, tmsLinks, tags });
   describeFlow("Undelegate", () => {
     // Either account of the pair can be the delegated one, so both are seeded.
     beforeAll(minaBeforeAll(MINA_DELEGATION_PAIR));
@@ -305,7 +314,8 @@ export function runMinaUndelegateTest(tmsLinks: string[], tags: string[]) {
   });
 }
 
-export function runLockCelo(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+export function runLockCelo(options: DelegateTestOptions) {
+  const { delegation, tmsLinks, tags } = options;
   declareBroadcastAccounts(delegation.account);
   setTeamOwner(coinTeamOwner(delegation.account.currency.id), { folder: TestFolder.DELEGATE });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
@@ -338,7 +348,8 @@ export function runLockCelo(delegation: DelegateType, tmsLinks: string[], tags: 
   });
 }
 
-export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+export function runVoteCelo(options: DelegateTestOptions) {
+  const { delegation, tmsLinks, tags } = options;
   declareBroadcastAccounts(delegation.account);
   setTeamOwner(coinTeamOwner(delegation.account.currency.id), { folder: TestFolder.DELEGATE });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
@@ -380,7 +391,8 @@ export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: 
   });
 }
 
-export function runDelegateTezos(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+export function runDelegateTezos(options: DelegateTestOptions) {
+  const { delegation, tmsLinks, tags } = options;
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
   setTeamOwner(coinTeamOwner(delegation.account.currency.id), { folder: TestFolder.DELEGATE });
   tags.forEach(tag => $Tag(tag));

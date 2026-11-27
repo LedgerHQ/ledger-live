@@ -5,7 +5,6 @@ import { getKey } from "~/renderer/storage";
 import { PasswordIncorrectError } from "@ledgerhq/live-common/errors";
 import { getDefaultAccountName, initFromUserData } from "@domain/entity-account-name";
 import { checkAccountSupported } from "@ledgerhq/live-common/account/index";
-import { initStarredFromIds } from "@domain/entity-starred-account";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { importWalletState, type ExportedWalletState } from "~/renderer/reducers/wallet";
 import logger from "~/renderer/logger";
@@ -31,7 +30,6 @@ export const initAccounts =
       .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
       .map(([, userData]) => userData);
     dispatch(initFromUserData(accountsUserData.map(({ id, name }) => ({ id, name }))));
-    dispatch(initStarredFromIds(supported.flatMap(([, userData]) => userData.starredIds)));
     if (walletState?.walletSyncState) {
       dispatch(importWalletState(walletState));
     }

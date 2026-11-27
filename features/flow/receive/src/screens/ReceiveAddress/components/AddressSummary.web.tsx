@@ -6,7 +6,7 @@ import type { AddressSummaryProps } from "./AddressSummary.types";
 const QR_SIZE = 208;
 const QR_CENTER_ICON_SIZE = 48;
 
-export function AddressSummary({ address }: AddressSummaryProps) {
+export function AddressSummary({ address, onCopy, copyLabel, copyKey }: AddressSummaryProps) {
   const { start, middle, end } = address.parts;
   const { assetIcon } = address;
 
@@ -18,16 +18,22 @@ export function AddressSummary({ address }: AddressSummaryProps) {
           value={address.value}
           size={QR_SIZE}
           animation="ripple"
+          onPress={onCopy}
+          accessibilityLabel={copyLabel}
+          triggerKey={copyKey}
           testID="receive-address-qr-code"
           centerContent={
             assetIcon ? (
-              <CryptoIcon
-                ledgerId={assetIcon.ledgerId}
-                ticker={assetIcon.ticker}
-                network={assetIcon.network}
-                size={QR_CENTER_ICON_SIZE}
-                shape="circle"
-              />
+              // The card is white in both themes: the network badge border stays light too.
+              <div className="flex [--border-base-inverted:var(--color-light-grey-050)]">
+                <CryptoIcon
+                  ledgerId={assetIcon.ledgerId}
+                  ticker={assetIcon.ticker}
+                  network={assetIcon.network}
+                  size={QR_CENTER_ICON_SIZE}
+                  shape="circle"
+                />
+              </div>
             ) : undefined
           }
         />

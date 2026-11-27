@@ -37,7 +37,7 @@ function toRow(
 }
 
 /** Local UI state of the tool: the excluded families and deeplink drafts, applied on demand. */
-export function useReceiveToolViewModel({ flag, trigger }: ReceiveToolProps) {
+export function useReceiveToolViewModel({ flag, trigger, verifyHint }: ReceiveToolProps) {
   const [excludedDraft, setExcludedDraft] = useState(flag.excludedFamilies.join(", "));
   const [deeplinkDraft, setDeeplinkDraft] = useState(DEFAULT_RECEIVE_DEEPLINK);
   const deeplinkUrl = deeplinkDraft.trim();
@@ -69,5 +69,9 @@ export function useReceiveToolViewModel({ flag, trigger }: ReceiveToolProps) {
     },
     rows,
     pickAsset: trigger.onPickAsset,
+    verifyHint: {
+      isShown: !verifyHint.hasSeen,
+      setShown: (isShown: boolean) => verifyHint.setHasSeen(!isShown),
+    },
   };
 }

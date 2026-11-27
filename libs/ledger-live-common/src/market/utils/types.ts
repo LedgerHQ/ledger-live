@@ -52,12 +52,6 @@ export type MarketAssetChartDataRequestParams = MarketCounterValueParams & {
   range?: string;
 };
 
-export type SparklineSvgData = {
-  path: string;
-  viewBox: string;
-  isPositive: boolean;
-};
-
 export enum KeysPriceChange {
   hour = "1h",
   day = "24h",
@@ -88,7 +82,6 @@ export type MarketCurrencyData = {
   athDate: Date;
   atl: number;
   atlDate: Date;
-  sparklineIn7d?: SparklineSvgData;
   chartData: MarketCoinDataChart;
 };
 
@@ -134,7 +127,6 @@ export type MarketItemResponse = {
   priceChangePercentage7d: number;
   priceChangePercentage6m?: number;
   priceChangePercentage1y: number;
-  sparkline: number[];
   ticker: string;
   totalSupply: number;
   totalVolume: number;

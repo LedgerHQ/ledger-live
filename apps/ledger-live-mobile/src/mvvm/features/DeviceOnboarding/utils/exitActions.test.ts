@@ -36,6 +36,13 @@ const stax: Device = {
   wired: false,
 };
 
+const nanoS: Device = {
+  deviceId: "nano-s-id",
+  deviceName: "Nano S",
+  modelId: DeviceModelId.nanoS,
+  wired: true,
+};
+
 const portfolio = [NavigatorName.Base, NavigatorName.Main];
 
 describe("exitActions", () => {
@@ -213,6 +220,11 @@ describe("exitActions", () => {
     ["legacyFallback", { genuine: true }, "done"],
     ["legacyFallback", { genuine: false }, "aborted"],
     ["legacyFallback", { genuine: false, firmwareVersion: null }, "legacy"],
+    [
+      "legacyFallback",
+      { genuine: true, onboardedOnEntry: true, connectSeededDevice: false },
+      "legacy",
+    ],
   ] as const)("should end the funnel on %s %o as %s", (reason, overrides, outcome) => {
     expect(exitOutcome(reason, exitContext(overrides))).toBe(outcome);
   });
@@ -223,6 +235,61 @@ describe("exitActions", () => {
     expect(wentBack).toBe(false);
     expect(dispatched).toEqual([]);
     expect(rootNavigated).toBe(NavigatorName.BaseOnboarding);
+  });
+
+  it("should open the nano pairing step when a seeded nano s cannot be checked here", () => {
+    const { wentBack, reset } = leave("legacyFallback", {
+      device: nanoS,
+      deviceWasSeeded: true,
+      outcome: "legacy",
+    });
+
+    expect(wentBack).toBe(false);
+    expect(reset).toEqual({
+      index: 0,
+      routes: [
+        {
+          name: NavigatorName.BaseOnboarding,
+          state: {
+            index: 0,
+            routes: [
+              {
+                name: NavigatorName.Onboarding,
+                state: {
+                  index: 1,
+                  routes: [
+                    { name: ScreenName.OnboardingWelcome },
+                    {
+                      name: ScreenName.OnboardingPairNew,
+                      params: {
+                        deviceModelId: DeviceModelId.nanoS,
+                        fromAccessExistingWallet: true,
+                        resetPostOnboardingRedirect: false,
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      ],
+    });
+  });
+
+  it("should ask the nano pairing step to bring a read-only user to post-onboarding", () => {
+    const { opened } = leave("legacyFallback", {
+      device: nanoS,
+      deviceWasSeeded: true,
+      outcome: "legacy",
+      wasReadOnlyAtEntry: true,
+    });
+
+    expect(opened?.params).toEqual({
+      deviceModelId: DeviceModelId.nanoS,
+      fromAccessExistingWallet: true,
+      resetPostOnboardingRedirect: true,
+    });
   });
 
   it("should finish a seeded fallback only after a current genuine verdict", () => {
@@ -302,10 +369,14 @@ function exitContext({
   genuine = false,
   seeded = true,
   firmwareVersion = "2.4.0",
+  onboardedOnEntry,
+  connectSeededDevice,
 }: {
   genuine?: boolean;
   seeded?: boolean;
   firmwareVersion?: string | null;
+  onboardedOnEntry?: boolean;
+  connectSeededDevice?: boolean;
 }): DeviceOnboardingContext {
   return {
     sessionId: "session-1",
@@ -313,5 +384,7 @@ function exitContext({
     firmwareVersion,
     deviceModelId: DmkDeviceModelId.STAX,
     genuineVerdict: { sessionId: "session-1", isGenuine: genuine },
+    onboardedOnEntry,
+    connectSeededDevice,
   } as DeviceOnboardingContext;
 }

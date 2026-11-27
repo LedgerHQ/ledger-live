@@ -28,7 +28,12 @@ import "~/renderer/styles/global";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { bootstrapMockServerTransport } from "~/renderer/mockServerTransport";
 import { seedMockServerKnownDevice } from "~/renderer/reducers/knownDevices";
-import { getMockServerSessionToken, setFirmwareDistributionSalt } from "@ledgerhq/live-dmk-desktop";
+import {
+  getDeviceManagementKit,
+  getMockServerSessionToken,
+  setFirmwareDistributionSalt,
+} from "@ledgerhq/live-dmk-desktop";
+import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/analytics/registerTransactionObserver";
 import "~/datadog/registerObservers";
@@ -97,7 +102,10 @@ import { installLiveConfigProvider } from "~/firebase/remoteConfig";
 import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import { initHistory } from "~/renderer/reducers/history";
-import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
+import {
+  installBorrowLifecycleHost,
+  installEarnLifecycleHost,
+} from "@ledgerhq/transaction-observability";
 import {
   coinObservabilityConfigFor,
   setCoinObservabilityConfigReader,
@@ -203,7 +211,24 @@ async function init() {
       readStakePrograms: () => selectFeature(store.getState(), "stakePrograms"),
       resolveVersionedRedirects: getVersionedRedirects,
       readAppVersion: () => LiveConfig.instance.appVersion || "0.0.0",
+      readManifestId: () => {
+        const earnFlag = selectFeature(store.getState(), "ptxEarnLiveApp");
+        return earnFlag?.enabled
+          ? earnFlag.params?.manifest_id
+          : process.env.DEFAULT_EARN_MANIFEST_ID;
+      },
       apiBaseUrl: process.env.EARN_API_BASE_URL,
+    }),
+  );
+  store.subscribe(
+    installBorrowLifecycleHost({
+      platform: "desktop",
+      readEnabled: () =>
+        selectFeature(store.getState(), "borrowTxLifecycleMonitoring")?.enabled ?? false,
+      readManifestId: () =>
+        selectFeature(store.getState(), "ptxBorrowLiveApp")?.params?.manifest_id ||
+        process.env.DEFAULT_BORROW_MANIFEST_ID,
+      apiBaseUrl: process.env.BORROW_API_BASE_URL,
     }),
   );
   setCoinObservabilityConfigReader(() => {
@@ -408,10 +433,14 @@ async function init() {
     store.dispatch,
     hasOnboardedWithDeviceSelector(store.getState()),
   );
+  const receiveVerifyHintState = await getKey("app", "receiveVerifyHint");
+  if (receiveVerifyHintState !== undefined) {
+    store.dispatch(restoreReceiveVerifyHint(receiveVerifyHintState));
+  }
+
   const payCardState = await getKey("app", "payCard");
   if (payCardState !== undefined) {
     store.dispatch(restorePayCardFeatureTour(payCardState));
-    store.dispatch(restoreReceiveVerifyHint(payCardState));
     store.dispatch(restorePayCardBalanceFilter(payCardState));
     store.dispatch(restorePayCardLoginIntro(payCardState));
     store.dispatch(restorePayCardOnboardingWidget(payCardState));
@@ -511,14 +540,22 @@ async function init() {
       store.dispatch(resetDevices());
     },
     getMockServerSessionToken,
-    // E2E: a relaunched remote Speculos comes back on a new URL with a new session token.
-    setSpeculosTarget: (address: string, sessionToken?: string) => {
+    // E2E: a relaunched remote Speculos comes back on a new URL with a new session token, so the
+    // sessions to the previous one are closed.
+    setSpeculosTarget: async (address: string, sessionToken?: string) => {
       process.env.SPECULOS_ADDRESS = address;
       if (sessionToken) {
         process.env.SPECULOS_SESSION_TOKEN = sessionToken;
       } else {
         delete process.env.SPECULOS_SESSION_TOKEN;
       }
+      const dmk = getDeviceManagementKit();
+      await Promise.all(
+        dmk
+          .listConnectedDevices()
+          .filter(device => device.transport === speculosIdentifier)
+          .map(({ sessionId }) => dmk.disconnect({ sessionId }).catch(() => {})),
+      );
     },
   };
 }

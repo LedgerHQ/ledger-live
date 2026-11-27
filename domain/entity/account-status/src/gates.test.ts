@@ -2,7 +2,7 @@ import { receiveGate, sendGate } from "./gates";
 import { mockAccountStatus, mockAssetStatus } from "./schema.mock";
 
 const onboarding = { type: "onboarding" } as const;
-const trustline = mockAssetStatus({ gate: { type: "activation", method: "trustline" } });
+const toActivate = mockAssetStatus({ gate: { type: "activation" } });
 
 describe("receiveGate", () => {
   it("should let a ready account receive its native coin", () => {
@@ -14,11 +14,11 @@ describe("receiveGate", () => {
   });
 
   it("should stop an account before its onboarding, whatever the asset", () => {
-    expect(receiveGate(mockAccountStatus({ gate: onboarding }), trustline)).toEqual(onboarding);
+    expect(receiveGate(mockAccountStatus({ gate: onboarding }), toActivate)).toEqual(onboarding);
   });
 
   it("should stop an account before the activation of the asset", () => {
-    expect(receiveGate(mockAccountStatus(), trustline)).toEqual(trustline.gate);
+    expect(receiveGate(mockAccountStatus(), toActivate)).toEqual(toActivate.gate);
   });
 });
 

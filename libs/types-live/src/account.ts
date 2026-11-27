@@ -263,7 +263,6 @@ export type AccountLikeArray = AccountLike[] | TokenAccount[] | Account[];
 export type TokenAccountRaw = {
   type: "TokenAccountRaw";
   id: string;
-  starred?: boolean;
   parentId: string;
   tokenId: string;
   creationDate?: string;
@@ -288,7 +287,6 @@ export type AccountRaw = {
   freshAddress: string;
   freshAddressPath: string;
   name?: string;
-  starred?: boolean;
   used?: boolean;
   readiness?: AccountReadiness;
   sequence?: number;
@@ -338,8 +336,6 @@ export type AccountUserData = {
   id: string;
   // user's name for this account
   name: string;
-  // user's starred account ids: it can be more than the account.id because token accounts can also be starred
-  starredIds: string[];
 };
 
 export function getCurrencyForAccount(account: AccountLike): CryptoOrTokenCurrency {

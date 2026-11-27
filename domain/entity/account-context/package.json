@@ -1,0 +1,40 @@
+{
+  "name": "@domain/entity-account-context",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Account context entity: the data an account needs beside its descriptor, such as the Aleo view key",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema.mock": "./src/schema.mock.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "lint": "oxlint ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@domain/entity-account": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@domain/entity-account-descriptor": "workspace:*",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

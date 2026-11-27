@@ -1,7 +1,11 @@
 import { DeviceModelId as DmkDeviceModelId } from "@ledgerhq/device-management-kit";
 import { track, trackPage } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
-import { seededPages } from "@features/platform-device-onboarding-analytics";
+import {
+  onboardingPages,
+  seededProps,
+  type FunnelProps,
+} from "@features/platform-device-onboarding-analytics";
 import {
   useSyncOfferScreenViewModel,
   type SyncOfferPhase,
@@ -23,8 +27,9 @@ const shared = {
 };
 
 function renderScreen(
-  seededDeviceType: DmkDeviceModelId | null = DmkDeviceModelId.STAX,
+  funnelProps: FunnelProps | null = seededProps(DmkDeviceModelId.STAX),
   phase: SyncOfferPhase = "offer",
+  showGlow?: boolean,
 ) {
   const actions = {
     onActivate: jest.fn(),
@@ -34,7 +39,7 @@ function renderScreen(
     onContinue: jest.fn(),
   };
   const view = renderHook(() =>
-    useSyncOfferScreenViewModel({ ...actions, phase, seededDeviceType }),
+    useSyncOfferScreenViewModel({ ...actions, phase, showGlow, funnelProps }),
   );
   return { ...view, ...actions };
 }
@@ -100,7 +105,10 @@ describe("useSyncOfferScreenViewModel", () => {
   });
 
   it("should track continue and close on the success screen", () => {
-    const { result, onContinue, onQuit } = renderScreen(DmkDeviceModelId.STAX, "success");
+    const { result, onContinue, onQuit } = renderScreen(
+      seededProps(DmkDeviceModelId.STAX),
+      "success",
+    );
     if (result.current.phase !== "success") throw new Error(result.current.phase);
 
     expect(result.current.screenTracking).toEqual({ category: "Ledger Sync Success", ...shared });
@@ -131,11 +139,19 @@ describe("useSyncOfferScreenViewModel", () => {
   });
 
   it("should track close while the first sync runs", () => {
-    const { result, onQuit } = renderScreen(DmkDeviceModelId.STAX, "synchronizing");
+    const { result, onQuit } = renderScreen(seededProps(DmkDeviceModelId.STAX), "synchronizing");
 
     act(() => result.current.onQuit());
 
     expect(onQuit).toHaveBeenCalledTimes(1);
     expect(clicks()).toEqual([expect.objectContaining({ button: "close", ...shared })]);
   });
+
+  it.each<SyncOfferPhase>(["offer", "synchronizing", "success"])(
+    "should forward showGlow and default it to false on %s",
+    phase => {
+      expect(renderScreen(null, phase).result.current.showGlow).toBe(false);
+      expect(renderScreen(null, phase, true).result.current.showGlow).toBe(true);
+    },
+  );
 });

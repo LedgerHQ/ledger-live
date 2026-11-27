@@ -1,4 +1,3 @@
-import { fromDescriptorPath } from "@domain/entity-account-descriptor";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
@@ -7,6 +6,7 @@ import {
   emptyHistoryCache,
   encodeAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { fromDescriptorPath } from "@domain/entity-derivation";
 import { addressFromKey, toLegacyAccount } from "../../account/accountDescriptor";
 import { usesMockBridges } from "../../bridge/mockMode";
 

@@ -1,21 +1,101 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
+import { useOpenLink, useUrlLocalizer } from "@shared/linking";
+import type { UseVerifyAddressExecutorViewModelParams } from "../../hooks/useVerifyAddressExecutorViewModel";
 import { splitAddress } from "../../logic/splitAddress";
 import type { ReceiveAddressProps } from "./ReceiveAddress.types";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
+import type { ReceiveGateType } from "../../types";
+import { useReceiveAddressActions } from "./useReceiveAddressActions";
+import { useReceiveAddressGate } from "./useReceiveAddressGate";
 import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
+import { useReceiveAddressHelp } from "./useReceiveAddressHelp";
+import { useReceiveAddressMemo } from "./useReceiveAddressMemo";
+import { useReceiveAddressNotices } from "./useReceiveAddressNotices";
 import { useReceiveAddressSelection } from "./useReceiveAddressSelection";
-import { useReceiveScreenData } from "./useReceiveScreenData";
+import { useReceiveAddressServiceStatus } from "./useReceiveAddressServiceStatus";
+import { useReceiveFamilyConfig } from "./useReceiveFamilyConfig";
+import { useReceiveScreenData, type ReceiveScreenData } from "./useReceiveScreenData";
+
+export type ReceiveAddressViewModel = ReceiveAddressViewProps &
+  Readonly<{
+    /** The device verification to mount, while one runs. */
+    verification: UseVerifyAddressExecutorViewModelParams | undefined;
+  }>;
+
+const GATE_OF_STATE: Partial<Record<ReceiveScreenData["type"], ReceiveGateType>> = {
+  onboardingRequired: "onboarding",
+  activationRequired: "activation",
+};
 
 export function useReceiveAddressViewModel({
   accountUUID,
   assetId,
   onClose,
-}: ReceiveAddressProps): ReceiveAddressViewProps {
-  const { descriptor, data } = useReceiveScreenData(accountUUID, assetId);
-  const header = useReceiveAddressHeader(descriptor, assetId);
-  const selection = useReceiveAddressSelection(data.type === "ready" ? data.receive : undefined);
+  onCopyAddress,
+  onShareAddress,
+  VerifyAddressExecutor,
+  getFamilyConfig,
+  serviceIncidents,
+  onResolveGate,
+}: ReceiveAddressProps): ReceiveAddressViewModel {
+  const { data, accountStatus, refreshGate } = useReceiveScreenData(accountUUID, assetId);
+  const header = useReceiveAddressHeader(assetId);
+  const receive = data.type === "ready" ? data.receive : undefined;
+  const selection = useReceiveAddressSelection(receive);
+  const familyConfig = useReceiveFamilyConfig({
+    getFamilyConfig,
+    asset: header.asset,
+    receive,
+    accountStatus,
+  });
   const { copy } = header;
   const { selected } = selection;
+  const { actions, verification } = useReceiveAddressActions({
+    accountUUID,
+    assetId,
+    selected,
+    familyConfig,
+    copy,
+    hasVerifyExecutor: !!VerifyAddressExecutor,
+    onCopyAddress,
+    onShareAddress,
+  });
+
+  const openLink = useOpenLink();
+  const localizeUrl = useUrlLocalizer();
+  const openSupportUrl = useCallback(
+    (url: string) => openLink(localizeUrl(url)),
+    [openLink, localizeUrl],
+  );
+  const serviceStatus = useReceiveAddressServiceStatus({
+    serviceIncidents,
+    continueLabel: copy.continueLabel,
+    onOpenUrl: openLink,
+  });
+  const notices = useReceiveAddressNotices({
+    familyConfig,
+    selected,
+    copy,
+    onOpenUrl: openSupportUrl,
+  });
+  const { helpCard, helpPanel } = useReceiveAddressHelp({ copy, onOpenUrl: openSupportUrl });
+  const gate = useReceiveAddressGate({
+    gateType: GATE_OF_STATE[data.type],
+    isVisible: !serviceStatus && !helpPanel,
+    copy,
+    onResolveGate,
+    refreshGate,
+  });
+  const { memoCard, memoPanel } = useReceiveAddressMemo({
+    selected,
+    copy,
+    onOpenUrl: openSupportUrl,
+  });
+  // The hint waits for the incident: it would lock a dialog that no longer shows the tiles.
+  const shownActions = useMemo(
+    () => (serviceStatus && actions.verifyHint ? { ...actions, verifyHint: undefined } : actions),
+    [serviceStatus, actions],
+  );
 
   const address = useMemo(
     () =>
@@ -30,25 +110,38 @@ export function useReceiveAddressViewModel({
     [selected, header.data, selection.options.length, copy.addressOptionLabels],
   );
 
+  const error =
+    data.type === "error"
+      ? {
+          title: copy.errorTitle,
+          description: copy.errorDescription,
+          retryLabel: copy.retryLabel,
+          onRetry: data.retry,
+        }
+      : undefined;
+  const addressSelection = selection.isSelecting
+    ? {
+        title: copy.selectAddressTitle,
+        options: selection.options.map(({ id }) => ({ id, label: copy.addressOptionLabels[id] })),
+        onSelect: selection.select,
+      }
+    : undefined;
+
   return {
     isLoading: data.type === "loading",
-    error:
-      data.type === "error"
-        ? {
-            title: copy.errorTitle,
-            description: copy.errorDescription,
-            retryLabel: copy.retryLabel,
-            onRetry: data.retry,
-          }
-        : undefined,
-    addressSelection: selection.isSelecting
-      ? {
-          title: copy.selectAddressTitle,
-          options: selection.options.map(({ id }) => ({ id, label: copy.addressOptionLabels[id] })),
-          onSelect: selection.select,
-        }
-      : undefined,
+    error,
+    gate,
+    addressSelection,
     address,
+    actions: shownActions,
+    isVerifying: verification !== undefined,
+    notices,
+    serviceStatus,
+    helpCard,
+    helpPanel,
+    memoCard,
+    memoPanel,
+    verification,
     title: header.title,
     networkLabel: header.networkLabel,
     networkIcon: header.data?.networkIcon,

@@ -103,7 +103,6 @@ export const openReceiveFlow =
       const { isSupported } = resolveReceiveFamilyConfig({
         family,
         familyConfig: coinFamily.receiveAddressConfig?.({
-          descriptor: target.descriptor,
           asset,
           featureFlags: getState().featureFlags.resolved,
           legacyAccount: mainAccount,

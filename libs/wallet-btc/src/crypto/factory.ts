@@ -68,11 +68,6 @@ export default function cryptoFactory(currency: Currency): ICrypto {
       res = new crypto.Komodo({ network });
       break;
     }
-    case "zencash": {
-      const network = coininfo.zcash.main.toBitcoinJS();
-      res = new crypto.Zen({ network });
-      break;
-    }
     case "bitcoin_testnet":
     case "bitcoin_signet": {
       const network = coininfo.bitcoin.test.toBitcoinJS();

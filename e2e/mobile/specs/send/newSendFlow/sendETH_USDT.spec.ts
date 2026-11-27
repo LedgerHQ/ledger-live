@@ -2,10 +2,14 @@ import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runNewSendFlowTokenTest } from "@e2e/specs/send/newSendFlow";
 import { FF_NEW_SEND_FLOW_ENABLED } from "@e2e/utils/featureFlagUtils";
 
-runNewSendFlowTokenTest(
-  new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "0.01"),
-  ["B2CQA-6111"],
-  [
+runNewSendFlowTokenTest({
+  transaction: new Transaction({
+    accountToDebit: TokenAccount.ETH_USDT_1,
+    accountToCredit: TokenAccount.ETH_USDT_3,
+    amount: "0.01",
+  }),
+  tmsLinks: ["B2CQA-6111"],
+  tags: [
     "@NanoSP",
     "@LNS",
     "@NanoX",
@@ -16,5 +20,5 @@ runNewSendFlowTokenTest(
     "@ethereum",
     "@family-evm",
   ],
-  { featureFlags: { ...FF_NEW_SEND_FLOW_ENABLED } },
-);
+  featureFlags: { ...FF_NEW_SEND_FLOW_ENABLED },
+});

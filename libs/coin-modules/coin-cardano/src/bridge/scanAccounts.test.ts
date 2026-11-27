@@ -1,7 +1,7 @@
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import type { ScanAccountEvent } from "@ledgerhq/types-live";
+import type { Operation, ScanAccountEvent } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { lastValueFrom, reduce, toArray } from "rxjs";
 import type { APITransaction } from "../api/api-types";
@@ -116,6 +116,34 @@ const SEND_TX: APITransaction = {
   certificate: { stakeRegistrations: [], stakeDeRegistrations: [], stakeDelegations: [] },
 };
 
+// SEND_TX's change, posted as collateral and returned to another owner by a phase-2 failure
+const collateralTx = (status?: boolean): APITransaction => ({
+  status,
+  hash: "hash-collateral",
+  fees: "2000000",
+  timestamp: "2023-11-14T22:18:20.000Z",
+  blockHeight: 250,
+  inputs: [
+    {
+      txId: "hash-send",
+      index: 1,
+      address: "addr_test1change",
+      value: "29800000",
+      paymentKey: FUNDED_INTERNAL.key,
+      tokens: [token("400")],
+    },
+  ],
+  outputs: [
+    {
+      address: OUTSIDE_ADDRESS,
+      value: "27800000",
+      paymentKey: OUTSIDE_KEY,
+      tokens: [token("400")],
+    },
+  ],
+  certificate: { stakeRegistrations: [], stakeDeRegistrations: [], stakeDelegations: [] },
+});
+
 const signer: CardanoSigner = {
   getAddress: jest.fn(async ({ path }) => {
     const index = Number(/^1852'\/1815'\/(\d+)'/.exec(path)?.[1]);
@@ -137,11 +165,11 @@ const signerContext = ((_deviceId: string, fn: (signer: CardanoSigner) => unknow
 
 const bridges = () => createBridges(signerContext, () => cardanoTestnetCoinConfig);
 
-const serveChain = () => {
+const serveChain = (fundedTransactions: APITransaction[] = [SEND_TX, RECEIVE_TX]) => {
   mockGetTransactions.mockImplementation(async (_config, xpub, _accountIndex, _initial, from) =>
     xpub.startsWith(ACCOUNT_KEYS[0].publicKeyHex)
       ? {
-          transactions: [SEND_TX, RECEIVE_TX].filter(tx => tx.blockHeight >= from),
+          transactions: fundedTransactions.filter(tx => tx.blockHeight >= from),
           blockHeight: 300,
           externalCredentials: [FUNDED_EXTERNAL, FUNDED_NEXT_EXTERNAL],
           internalCredentials: [FUNDED_INTERNAL],
@@ -181,6 +209,9 @@ const resync = (account: CardanoAccount): Promise<CardanoAccount> =>
       .accountBridge.sync(account, { paginationConfig: {}, blacklistedTokenIds: [] })
       .pipe(reduce((current, updater) => updater(current), account)),
   );
+
+const failedRows = (operations: Operation[]) =>
+  operations.filter(op => op.hasFailed).map(op => op.hash);
 
 describe("currencyBridge.scanAccounts", () => {
   beforeAll(() => {
@@ -404,6 +435,28 @@ describe("currencyBridge.scanAccounts", () => {
       const synced = await resync({ ...funded, pendingOperations: [pending] });
 
       expect(synced.pendingOperations.map(op => op.hash)).toEqual(["pending-hash"]);
+    });
+
+    it("replaces stored rows of a transaction the explorer now reports as phase-2 invalid", async () => {
+      serveChain([collateralTx(), SEND_TX, RECEIVE_TX]);
+      const [stored] = await scan();
+      serveChain([collateralTx(false), SEND_TX, RECEIVE_TX]);
+
+      const synced = await resync(stored);
+
+      expect({
+        operationIds: synced.operations.map(op => op.id),
+        tokenOperationIds: synced.subAccounts?.[0].operations.map(op => op.id),
+        failed: failedRows(synced.operations),
+        failedTokenRows: failedRows(synced.subAccounts?.[0].operations ?? []),
+        failedNestedRows: failedRows(synced.operations[0].subOperations ?? []),
+      }).toEqual({
+        operationIds: stored.operations.map(op => op.id),
+        tokenOperationIds: stored.subAccounts?.[0].operations.map(op => op.id),
+        failed: ["hash-collateral"],
+        failedTokenRows: ["hash-collateral"],
+        failedNestedRows: ["hash-collateral"],
+      });
     });
 
     it("keeps an old pending operation until its transaction appears because there is no mempool", async () => {

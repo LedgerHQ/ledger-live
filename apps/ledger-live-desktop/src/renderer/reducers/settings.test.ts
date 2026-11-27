@@ -149,7 +149,7 @@ describe("lastSeenDeviceSelector", () => {
     expect(localeSelector(state)).toEqual("en-US");
   });
 
-  it("should fall back to the language when the locale is unknown to regions.json", () => {
+  it("should fall back to the language when the region locale is unknown", () => {
     const state = {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       ...({} as State),

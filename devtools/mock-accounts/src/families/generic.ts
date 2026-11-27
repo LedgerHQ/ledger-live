@@ -1,5 +1,5 @@
-import { DerivationPathSchema } from "@domain/entity-account-descriptor";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { DerivationPathSchema } from "@domain/entity-derivation";
 import { base58 } from "../encoding";
 import { randomBytes, type Random } from "../random";
 import type { MockFamily } from "./types";

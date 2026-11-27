@@ -1,6 +1,5 @@
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { toArray } from "rxjs/operators";
-import WS from "isomorphic-ws";
 import scenarios from "./scenarios.mock";
 import { createDeviceSocket } from ".";
 import { firstValueFrom } from "rxjs";
@@ -9,11 +8,19 @@ import { firstValueFrom } from "rxjs";
  * Both ends of the exchange are mocked in this test file and we are merely testing
  * the logic that happens in-between.
  */
-jest.mock("isomorphic-ws", () => ({
-  ...jest.requireActual("isomorphic-ws"),
-  __esModule: true,
-  default: jest.fn(),
-}));
+const originalWebSocket = globalThis.WebSocket;
+const mockWebSocket = jest.fn();
+
+beforeEach(() => {
+  globalThis.WebSocket = Object.assign(mockWebSocket, {
+    OPEN: 1,
+  }) as unknown as typeof WebSocket;
+});
+
+afterEach(() => {
+  mockWebSocket.mockReset();
+  globalThis.WebSocket = originalWebSocket;
+});
 
 describe("Scriptrunner logic", () => {
   scenarios.forEach(({ describe, device, events }) => {
@@ -21,7 +28,7 @@ describe("Scriptrunner logic", () => {
       // Generate a transport replayer with the data from the test
       const transport = await openTransportReplayer(RecordStore.fromString(device));
 
-      (WS as unknown as jest.Mock).mockImplementation(() => {
+      mockWebSocket.mockImplementation(() => {
         let msgIndex = 0;
 
         // Exposed WebSocket callbacks:

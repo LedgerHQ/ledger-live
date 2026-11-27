@@ -8,6 +8,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
 import { useGetIssuerFeeQuery } from "@ledgerhq/live-common/families/xrp/state-manager/api";
+import { formatIssuerFee, formatLongTrustLimit } from "@ledgerhq/live-common/families/xrp/tokens";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { setTrackingSource } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
@@ -21,7 +22,6 @@ import Text from "~/renderer/components/Text";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { formatIssuerFee, formatLongTrustLimit } from "../../utils";
 import type { StepProps, TokenAction } from "../types";
 
 import { openReceiveFlow } from "LLD/features/Receive";

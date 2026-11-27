@@ -64,7 +64,7 @@ const device: OsUpdateDevice = {
   wired: false,
 };
 const osUpdate = {
-  finalFirmware: { version: "1.8.0" },
+  finalFirmware: { name: "1.8.0-il3", version: "1.8.0" },
   osuFirmware: { notes: "Release notes" },
 } as OsUpdate;
 
@@ -182,6 +182,18 @@ describe("OsUpdateFlow tracking", () => {
         expect.objectContaining({ button: OsUpdateButton.FINISH, page: OsUpdatePage.SUCCESS }),
       ],
     ]);
+  });
+
+  it("shows the suffixed name on What's New but tracks the canonical version", () => {
+    renderFlow([osUpdate]);
+
+    expect(screen.getByText("Version 1.8.0-il3")).toBeVisible();
+    expect(jest.mocked(trackPage)).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: OsUpdatePage.WHATS_NEW,
+        props: expect.objectContaining({ osVersionTo: "1.8.0" }),
+      }),
+    );
   });
 
   it("fails when the update is closed from the confirmation opened on an error", async () => {

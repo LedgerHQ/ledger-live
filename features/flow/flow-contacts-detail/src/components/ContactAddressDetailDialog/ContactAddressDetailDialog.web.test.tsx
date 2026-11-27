@@ -2,6 +2,7 @@ import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { copyToClipboard } from "@shared/clipboard";
 import { I18nTestProvider } from "@shared/i18n/testing";
+import userEvent from "@testing-library/user-event";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { createContactDetailAddressRowIntent } from "../../model/viewModel";
@@ -116,6 +117,57 @@ describe("ContactAddressDetailDialog", () => {
       "title",
       "contacts.addressDetail.delete",
     );
+  });
+
+  it("should run the address actions the host allows", async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    const onSend = jest.fn();
+    const onEdit = jest.fn();
+    const onDelete = jest.fn();
+    render(
+      <ContactAddressDetailDialog
+        {...createProps({
+          onSend,
+          onEdit,
+          onDelete,
+          canSend: true,
+          canEdit: true,
+          canDelete: true,
+        })}
+      />,
+      { wrapper: I18nTestProvider },
+    );
+
+    await user.click(screen.getByTestId("contacts-address-detail-send"));
+    await user.click(screen.getByTestId("contacts-address-detail-edit"));
+    await user.click(screen.getByTestId("contacts-address-detail-delete"));
+
+    expect(onSend).toHaveBeenCalledTimes(1);
+    expect(onEdit).toHaveBeenCalledTimes(1);
+    expect(onDelete).toHaveBeenCalledTimes(1);
+  });
+
+  it("should disable the address actions the host does not allow", async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    const onSend = jest.fn();
+    const onEdit = jest.fn();
+    const onDelete = jest.fn();
+    render(<ContactAddressDetailDialog {...createProps({ onSend, onEdit, onDelete })} />, {
+      wrapper: I18nTestProvider,
+    });
+
+    for (const testId of [
+      "contacts-address-detail-send",
+      "contacts-address-detail-edit",
+      "contacts-address-detail-delete",
+    ]) {
+      expect(screen.getByTestId(testId)).toBeDisabled();
+      await user.click(screen.getByTestId(testId));
+    }
+
+    expect(onSend).not.toHaveBeenCalled();
+    expect(onEdit).not.toHaveBeenCalled();
+    expect(onDelete).not.toHaveBeenCalled();
   });
 
   it("should hide the share action when the host cannot share", () => {

@@ -3,7 +3,7 @@ import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { AccountOperationsQuery } from "@domain/entity-account-operation";
 import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import {
   ETH,
   depsOf,

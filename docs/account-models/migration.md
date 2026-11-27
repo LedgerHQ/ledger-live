@@ -26,7 +26,7 @@ The Wallet API exposes accounts to live apps, so it moves to the entities as wel
 | `operationsCount` | nothing yet: a loaded window of `operations` is partial, its length is not the total | to decide |
 | `Operation.extra` (memo, validator, votes…) | dropped for now; to revisit as part of `AccountOperation` | dropped |
 | `balanceHistoryCache` | `balanceHistory` | merged |
-| name, alias, star, order | `account-name`, `account-alias`, `starred-account`, the `accounts` slice | merged |
+| name, alias, order | `account-name`, `account-alias`, the `accounts` slice | merged |
 | `used` | `accountStatus`: `used` (ever used), `gate`; token activation in `assetStatus`; discovery reads `used` | entity merged |
 | `freshAddress`, `freshAddressPath` | `receive` | discovery |
 | `pendingOperations`, `sequence` | `send` capability, pending rows in `operations` | discovery |

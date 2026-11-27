@@ -8,7 +8,6 @@ import type { Props } from "./useSelectTokenViewModel";
 import {
   XRP_ACCOUNT,
   XRP_ACCOUNT_WITH_TOKEN,
-  XRP_IOU_TOKEN_ACCOUNT,
   overrideWithAccounts,
 } from "../__mocks__/account.mock";
 import { xrpIouToken, xrpMptToken } from "../__mocks__/currency.mock";
@@ -68,21 +67,11 @@ describe("XRP add token - select token", () => {
     });
   });
 
-  it("marks a held token and opens its token page from the warning", async () => {
-    const { user } = renderScreen(XRP_ACCOUNT_WITH_TOKEN);
+  it("leaves out a token the account holds", () => {
+    renderScreen(XRP_ACCOUNT_WITH_TOKEN);
 
-    expect(screen.getByText("Already added")).toBeVisible();
-    await user.press(screen.getByTestId(`xrp-token-row-${xrpIouToken.id}`));
-
-    expect(mockNavigate).not.toHaveBeenCalled();
-    expect(screen.getByTestId("xrp-token-already-added")).toBeVisible();
-
-    await user.press(screen.getByText("Open token page"));
-
-    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.Account, {
-      accountId: XRP_IOU_TOKEN_ACCOUNT.id,
-      parentId: XRP_ACCOUNT.id,
-    });
+    expect(screen.queryByTestId(`xrp-token-row-${xrpIouToken.id}`)).toBeNull();
+    expect(screen.getByTestId(`xrp-token-row-${xrpMptToken.id}`)).toBeVisible();
   });
 
   it("finds a token by its issuer", async () => {

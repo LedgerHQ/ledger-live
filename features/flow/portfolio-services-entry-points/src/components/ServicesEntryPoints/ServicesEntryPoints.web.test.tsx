@@ -38,6 +38,13 @@ describe("ServicesEntryPoints (Web)", () => {
     expect(screen.getByText("servicesEntryPoints.borrow.description")).toBeVisible();
   });
 
+  it("should give each service card its own test id", () => {
+    renderEntryPoints();
+
+    expect(screen.getByTestId("portfolio-services-entry-point-perps")).toBeVisible();
+    expect(screen.getByTestId("portfolio-services-entry-point-borrow")).toBeVisible();
+  });
+
   it("should render nothing when no service is available", () => {
     renderEntryPoints({ entryPointsServices: ENABLED_SERVICES.entryPointsServices });
 

@@ -16,6 +16,7 @@ description: |
   - `if (currency.family === "evm")` / `if (transaction.family === "solana")` to render or behave differently.
   - Coin-specific hooks or logic in shared ViewModels / screens (e.g. Canton onboarding branch inside a generic Scan Device VM).
   - Importing a specific coin module (e.g. `@ledgerhq/coin-canton`) in generic UI to branch on that coin.
+  - Importing a live-signer, a device signer kit or wallet-btc (`@ledgerhq/live-signer-*`, `@ledgerhq/device-signer-kit-*`, `@ledgerhq/wallet-btc`) in generic UI. The `coin-families/no-coin-specific-import` lint rule reports them like a coin module.
 - **Exception:** Type-narrowing inside a **family folder** (e.g. `invariant(transaction.family === "bitcoin", "...")` in `families/bitcoin/`) is acceptable; the rule applies to **generic** (shared) code only.
 
 ## Do (correct pattern)

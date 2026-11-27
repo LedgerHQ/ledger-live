@@ -1,0 +1,64 @@
+{
+  "name": "@ledgerhq/coin-tester-filecoin",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Ledger Filecoin Coin Tester",
+  "main": "src/scenarii.test.ts",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "Filecoin",
+    "Testing"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-modules/coin-tester-filecoin",
+  "exports": {
+    "./package.json": "./package.json"
+  },
+  "license": "Apache-2.0",
+  "scripts": {
+    "lint": "oxlint src",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit --customConditions node",
+    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
+  },
+  "dependencies": {
+    "@ledgerhq/coin-filecoin": "workspace:^",
+    "@ledgerhq/coin-tester": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-config": "catalog:",
+    "@ledgerhq/live-env": "catalog:",
+    "@ledgerhq/types-live": "workspace:^",
+    "bignumber.js": "^9",
+    "iso-filecoin": "^7.4.7"
+  },
+  "devDependencies": {
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "rimraf": "5.0.10",
+    "typescript": "catalog:"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "nx:noop"
+      }
+    }
+  }
+}

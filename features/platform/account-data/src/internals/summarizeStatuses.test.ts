@@ -1,5 +1,5 @@
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { descriptorOf } from "@domain/api-account-data/testing";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { summarizeStatuses } from "./summarizeStatuses";
 
 const uuids = [0, 1, 2].map(i => computeAccountUUID(descriptorOf(i)));

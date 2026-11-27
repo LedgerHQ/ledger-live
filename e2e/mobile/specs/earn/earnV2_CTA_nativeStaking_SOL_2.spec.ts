@@ -7,4 +7,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@solana", "@family-solana"],
 };
 
-runNativeStakingCTATest(testConfig.account, testConfig.tmsLinks, testConfig.tags);
+runNativeStakingCTATest(testConfig);

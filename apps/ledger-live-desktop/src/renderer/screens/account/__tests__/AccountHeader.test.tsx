@@ -21,7 +21,6 @@ describe("AccountHeader", () => {
 
   const walletState: WalletState = {
     accountNames: new Map([[parseAnyAccountId(mockAccount.id), accountName]]),
-    starredAccountIds: new Set(),
     walletSync: {
       walletSyncState: { data: null, version: 0 },
     },

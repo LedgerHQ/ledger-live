@@ -13,9 +13,19 @@ import {
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Platform, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ConnectingState, WaitingForSelectedDeviceState } from "LLM/components/DeviceConnection";
+import {
+  TrackedConnectingState,
+  TrackedWaitingForSelectedDeviceState,
+} from "LLM/components/DeviceConnection";
+import {
+  DeviceIntentTrackingProvider,
+  useDeviceIntentTracking,
+} from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
+import { trackConnectDeviceButtonClicked } from "LLM/components/DeviceIntentExecutor/utils/trackDeviceIntent";
 import { useTranslation } from "~/context/Locale";
 import { assertNever } from "../utils/assertNever";
+import type { ConnectKnownOrNewDeviceViewProps } from "../types";
+import { DEVICE_LIST_BUTTON } from "../utils/tracking";
 
 export type DeviceStateSheetState = Extract<
   ConnectKnownOrNewDeviceUIState,
@@ -29,10 +39,25 @@ export type DeviceStateSheetState = Extract<
 type DeviceStateSheetProps = {
   /** The waiting or connecting state, or `null` when the sheet is closed. */
   state: DeviceStateSheetState | null;
+  checkIsNewDevice: ConnectKnownOrNewDeviceViewProps["checkIsNewDevice"];
+  /** Called on every close, also when `state` leaves the sheet. */
+  onClose: () => void;
 };
 
 function WaitingHint({ onAddNewDevice }: Readonly<{ onAddNewDevice?: () => void }>) {
   const { t } = useTranslation();
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
+
+  const onPress = onAddNewDevice
+    ? () => {
+        trackConnectDeviceButtonClicked({
+          sourceFlow,
+          button: DEVICE_LIST_BUTTON.AddDevice,
+          extraProperties: analyticsProperties,
+        });
+        onAddNewDevice();
+      }
+    : undefined;
 
   return (
     <Banner
@@ -42,8 +67,8 @@ function WaitingHint({ onAddNewDevice }: Readonly<{ onAddNewDevice?: () => void 
         <Button
           appearance="gray"
           size="sm"
-          disabled={!onAddNewDevice}
-          onPress={onAddNewDevice}
+          disabled={!onPress}
+          onPress={onPress}
           lx={{ flexShrink: 1 }}
         >
           {t("connectKnownOrNewDevice.addDevice")}
@@ -55,23 +80,37 @@ function WaitingHint({ onAddNewDevice }: Readonly<{ onAddNewDevice?: () => void 
 
 function DeviceStateContent({
   state,
-}: Readonly<{ state: DeviceStateSheetState }>): React.ReactNode {
+  checkIsNewDevice,
+}: Readonly<{
+  state: DeviceStateSheetState;
+  checkIsNewDevice: ConnectKnownOrNewDeviceViewProps["checkIsNewDevice"];
+}>): React.ReactNode {
   switch (state.type) {
     case ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice:
       return (
         <>
-          <WaitingForSelectedDeviceState device={state.device} />
+          <TrackedWaitingForSelectedDeviceState device={state.device} />
           {state.showDeviceNotFound && <WaitingHint onAddNewDevice={state.addNewDevice} />}
         </>
       );
     case ConnectKnownOrNewDeviceUIStateTypes.Connecting:
-      return <ConnectingState />;
+      return (
+        <TrackedConnectingState
+          device={state.device}
+          isNewDevice={checkIsNewDevice(state.device)}
+        />
+      );
     default:
       return assertNever(state);
   }
 }
 
-export function DeviceStateSheet({ state }: Readonly<DeviceStateSheetProps>): React.JSX.Element {
+export function DeviceStateSheet({
+  state,
+  checkIsNewDevice,
+  onClose,
+}: Readonly<DeviceStateSheetProps>): React.JSX.Element {
+  const trackingContext = useDeviceIntentTracking();
   const { height: windowHeight } = useWindowDimensions();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
   // Lumen's static preset can force Android dynamic sheets full height, so use the live window cap.
@@ -80,7 +119,7 @@ export function DeviceStateSheet({ state }: Readonly<DeviceStateSheetProps>): Re
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={state !== null}
-      onClose={() => state?.close()}
+      onClose={onClose}
       enableDynamicSizing
       maxDynamicContentSize={maxDynamicContentSize}
       contentHasBottomSpace
@@ -92,7 +131,12 @@ export function DeviceStateSheet({ state }: Readonly<DeviceStateSheetProps>): Re
         showsVerticalScrollIndicator={false}
       >
         <BottomSheetHeader />
-        <Box lx={{ gap: "s16" }}>{state && <DeviceStateContent state={state} />}</Box>
+        {/* The sheet renders its content through a portal, outside the provider of the component. */}
+        <DeviceIntentTrackingProvider value={trackingContext}>
+          <Box lx={{ gap: "s16" }}>
+            {state && <DeviceStateContent state={state} checkIsNewDevice={checkIsNewDevice} />}
+          </Box>
+        </DeviceIntentTrackingProvider>
       </BottomSheetScrollView>
     </QueuedBottomSheet>
   );

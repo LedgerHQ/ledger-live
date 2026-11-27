@@ -56,7 +56,6 @@ const bitcoinMarket = (overrides: Record<string, unknown> = {}) => [
     allTimeLow: 50,
     allTimeHighDate: "2024-03-14T07:10:36.635Z",
     allTimeLowDate: "2013-07-06T00:00:00Z",
-    sparkline: [],
     updatedAt: "2024-05-15T14:48:15Z",
     ...overrides,
   },
@@ -238,7 +237,6 @@ describe("LargeMoverLandingPage Integration Tests", () => {
             allTimeLow: 50,
             allTimeHighDate: "2024-03-14T07:10:36.635Z",
             allTimeLowDate: "2013-07-06T00:00:00Z",
-            sparkline: [],
             updatedAt: "2024-05-15T14:48:15Z",
           },
         ]);

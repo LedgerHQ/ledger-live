@@ -13,7 +13,7 @@ How Ledger Wallet represents an account in the new architecture, and how we get 
 
 ## The paradigms
 
-**1. One universal identity.** An account is an [`AccountDescriptor`](../../domain/entity/account-descriptor): its type (`utxo` with an xpub, or `address`), CAL network, key (xpub, address or public key), and derivation path. That is all any source needs to read it. Its `AccountUUID`, a uuid v5 of the canonical key, keys the `accounts` list and every account data kind: the same on every device, and it holds no account key, unlike the legacy `account.id` (`js:2:ethereum:0x…`).
+**1. One universal identity.** An account is an [`AccountDescriptor`](../../domain/entity/account-descriptor): its type (`utxo` with an xpub, or `address`), CAL network, key (xpub, address or public key), and derivation path. That is all any source needs to read it. Its key is sensitive (an xpub reveals the whole history, an address is personal data), so code holds the `AccountUUID` of [`@domain/entity-account`](../../domain/entity/account) and the descriptor package serves the edges only: the account data router and sources, discovery, the legacy bridge, wallet-cli and devtools. The `AccountUUID`, a uuid v5 of the canonical key, keys the `accounts` list and every account data kind: the same on every device, and it holds no account key, unlike the legacy `account.id` (`js:2:ethereum:0x…`).
 
 ```text
 account:2:utxo:bitcoin:xpub6Bosf…NzH:m/84h/0h/0h
@@ -22,7 +22,7 @@ account:2:address:ethereum:0x71C7…976F:m/44h/60h/0h/0/0
 
 **2. One entity per UI concept.** The monolithic `Account` is split into small entities, each a `domain/entity/account-<kind>` package: a Zod schema, one `AccountDataRegistry` line, a slice keyed by `AccountUUID`, selectors and a mock. An entity exists only for a concept a screen shows. Tokens are rows of each entity (one balance row, one operation row per asset), not sub-accounts. Sync state (`blockHeight`, `lastSyncDate`, `syncHash`) is not a UI concept and is not carried over.
 
-**3. Read on demand, not synced ahead.** A screen asks for the kind it shows, when it shows it, with `useAccountData(kind, descriptor, { query })`, or `useAccountDataBatch(kind, descriptors, { query })` for a figure over many accounts. Nothing refreshes every account in the background to fill a monolith. A read younger than 30 s is not repeated, a read in flight is joined, and the latest one wins.
+**3. Read on demand, not synced ahead.** A screen asks for the kind it shows, when it shows it, with `useAccountData(kind, accountUUID, { query })`, or `useAccountDataBatch(kind, accountUUIDs, { query })` for a figure over many accounts. Nothing refreshes every account in the background to fill a monolith. A read younger than 30 s is not repeated, a read in flight is joined, and the latest one wins.
 
 **4. Layers that decouple the UI from the implementations.**
 
@@ -43,7 +43,7 @@ Layers 1 to 3 are the UI model and layers 5 and 6 the implementations. The route
 
 **7. Writes are not reads.** Preparing, signing and broadcasting go through a `send` capability on the same sources, never through a kind. The only store write is the pending operation. This is still being explored (see [migration.md](./migration.md)).
 
-**8. Network data is not account data.** Validators, fee currency and network parameters are keyed by network, not by `AccountUUID`. Data only one coin family shows becomes a kind declared by that family's package, not a generic "resources" kind.
+**8. Network data is not account data.** Validators, fee currency and network parameters are keyed by network, not by `AccountUUID`. Data only one coin family shows becomes a kind declared by that family's package, not a generic "resources" kind. A `NetworkId` is not a currency: do not call `currencyIdFromNetwork` for product logic — see [`@domain/entity-network`](../../domain/entity/network).
 
 **9. Aggregates are selectors, not kinds.** Portfolio total, asset details and allocation combine the entities of every account with selectors. They are not stored per account.
 
@@ -61,4 +61,4 @@ This list is not complete: more entities are needed before no screen reads `Acco
 | `send` capability, not a kind | none yet | discovery [LIVE-40836](https://ledgerhq.atlassian.net/browse/LIVE-40836) |
 | staking, locked balances, family kinds | none yet | to explore |
 
-Names, aliases and stars are their own entities ([`account-name`](../../domain/entity/account-name), [`account-alias`](../../domain/entity/account-alias), [`starred-account`](../../domain/entity/starred-account)), still keyed by the legacy account id, never by an `AccountUUID`. Only names have a UUID selector, `selectAccountNameByUUID`. For a star, pass the entry's `legacyId` (`selectAccountEntry(state, accountUUID)?.legacyId`) to `isStarredAccountSelector`; an alias resolves to an `AnyAccountId`, which `selectAccountUUIDByLegacyId` turns into an `AccountUUID` once it is a top-level `AccountId`. A token account id (`TokenAccountIdSchema.safeParse`) first goes to its parent with `getParentId`, and the screen keeps its token as the asset to show. The list of accounts is the `accounts` slice of [`@domain/entity-account`](../../domain/entity/account).
+Names and aliases are their own entities ([`account-name`](../../domain/entity/account-name), [`account-alias`](../../domain/entity/account-alias)), still keyed by the legacy account id, never by an `AccountUUID`. Only names have a UUID selector, `selectAccountNameByUUID`. An alias resolves to an `AnyAccountId`, which `selectAccountUUIDByLegacyId` turns into an `AccountUUID` once it is a top-level `AccountId`. A token account id (`TokenAccountIdSchema.safeParse`) first goes to its parent with `getParentId`, and the screen keeps its token as the asset to show. The list of accounts is the `accounts` slice of [`@domain/entity-account`](../../domain/entity/account).

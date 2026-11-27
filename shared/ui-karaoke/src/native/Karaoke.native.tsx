@@ -41,7 +41,7 @@ function useKaraoke(): KaraokeState {
   return karaoke;
 }
 
-function Root({ phrases, tapLabel, action, testID, children }: KaraokeRootProps) {
+function Root({ phrases, tapLabel, action, onAdvance, testID, children }: KaraokeRootProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDone, setIsDone] = useState(false);
   const isLastPhrase = activeIndex >= phrases.length - 1;
@@ -64,14 +64,16 @@ function Root({ phrases, tapLabel, action, testID, children }: KaraokeRootProps)
       advance: () => {
         if (isLastPhrase) {
           setIsDone(true);
+          onAdvance?.(phrases.length);
           return;
         }
         setActiveIndex(activeIndex + 1);
+        onAdvance?.(activeIndex + 1);
         // The tap area is one big button, so screen readers would not read the new line.
         AccessibilityInfo.announceForAccessibility(phrases[activeIndex + 1]);
       },
     }),
-    [phrases, activeIndex, isLastPhrase, isDone, tapLabel, action, hasAction],
+    [phrases, activeIndex, isLastPhrase, isDone, tapLabel, action, hasAction, onAdvance],
   );
 
   return (

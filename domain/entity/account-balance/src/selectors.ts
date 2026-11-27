@@ -1,5 +1,5 @@
-import type { AccountUUID } from "@domain/entity-account-descriptor";
 import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
+import type { AccountUUID } from "@domain/entity-account";
 import type { AccountAssetBalance, AccountBalancesState } from "./schema";
 
 export type WithAccountBalances = { accountBalances: AccountBalancesState };

@@ -1,10 +1,12 @@
 import "./live-common-setup";
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { AddressSchema } from "@domain/entity-network";
 import { installOutputCapture } from "./shared/ui";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { USDT_TOKEN_INFO, USDT_TOKEN_JSON } from "./testing/cal-fixtures";
 import { SwapBackendError } from "./commands/swap/swap-backend-error";
-import { AddressSchema } from "@domain/entity-account-descriptor";
+import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
+import { EarnApiHttpError } from "./wallet/earn/api";
 import { DerivationPathSchema, NetworkIdSchema } from "./shared/accountDescriptor";
 
 const XPUB = "xpub6BosfCnifzxcA";
@@ -735,6 +737,80 @@ describe("JsonCommandOutput", () => {
           http_status: 401,
         },
       });
+    });
+
+    it("adds http_status and the host for Earn API failures", () => {
+      const earnError = new EarnApiHttpError(
+        "Earn API GET /v0/grow failed: 503 Service Unavailable",
+        "https://earn.api.live.ledger.com/v0/grow",
+        503,
+      );
+
+      expect(failWith(earnError)).toEqual({
+        ok: false,
+        error: {
+          command: "swap execute",
+          code: "EarnApiHttpError",
+          message: "Earn API GET /v0/grow failed: 503 Service Unavailable",
+          http_status: 503,
+          host: "earn.api.live.ledger.com",
+          hint: "Request to earn.api.live.ledger.com failed with HTTP 503.",
+        },
+      });
+    });
+
+    it("names the host of a failed request and how to allow it in a sandbox", () => {
+      const socketClosed = Object.assign(new Error("Socket is closed"), {
+        config: { url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/block/current" },
+      });
+
+      expect(failWith(new Error("UnexpectedGetBalanceError", { cause: socketClosed }))).toEqual({
+        ok: false,
+        error: {
+          command: "swap execute",
+          message: "UnexpectedGetBalanceError",
+          host: "explorers.api.live.ledger.com",
+          hint: "Could not reach explorers.api.live.ledger.com. If wallet-cli runs in a sandbox, allow explorers.api.live.ledger.com in its network allowlist.",
+        },
+      });
+    });
+
+    it("names the host of a failed request behind a device error", () => {
+      const socketClosed = Object.assign(new Error("Socket is closed"), {
+        config: { url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/block/current" },
+      });
+      const deviceError = WalletCliDeviceError.fromUnknown(
+        new Error("UnexpectedGetBalanceError", { cause: socketClosed }),
+      );
+
+      expect(failWith(deviceError)).toMatchObject({
+        ok: false,
+        error: {
+          host: "explorers.api.live.ledger.com",
+          hint: "Could not reach explorers.api.live.ledger.com. If wallet-cli runs in a sandbox, allow explorers.api.live.ledger.com in its network allowlist.",
+        },
+      });
+    });
+
+    it("keeps the USB hint over a failed request on a failed USB open", () => {
+      const socketClosed = Object.assign(new Error("Socket is closed"), {
+        config: { url: "https://explorers.api.live.ledger.com/blockchain/v4/eth/block/current" },
+      });
+      const usbAccess = { error: "LIBUSB_ERROR_ACCESS", kind: "access_denied" } as const;
+      const deviceError = new WalletCliDeviceError(
+        { code: "unknown", cause: socketClosed, usbAccess },
+        { cause: socketClosed },
+      );
+
+      const envelope = failWith(deviceError);
+
+      expect(envelope).toMatchObject({
+        error: {
+          usb_access_error: "LIBUSB_ERROR_ACCESS",
+          hint: expect.stringMatching(/^The host refused USB access/),
+        },
+      });
+      expect(envelope).not.toMatchObject({ error: { host: expect.anything() } });
     });
 
     it.each([

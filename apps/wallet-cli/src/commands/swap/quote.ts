@@ -1,8 +1,8 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
-import type { Address } from "@domain/entity-account-descriptor";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getQuotes, type QuotesError } from "@ledgerhq/live-common/wallet-api/Exchange/index";
+import type { Address } from "@domain/entity-network";
 import {
   isWalletCliSupportedCurrencyId,
   listWalletCliSupportedCurrencyIds,

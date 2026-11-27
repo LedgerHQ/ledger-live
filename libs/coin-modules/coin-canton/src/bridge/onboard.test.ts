@@ -150,7 +150,11 @@ describe("onboard", () => {
       const existingPartyId = "existing-party-id";
       const account = createMockCantonAccount(
         { xpub: existingPartyId },
-        { nativeInstrumentAdmin: "DSO::before-reset" },
+        {
+          nativeInstrumentAdmin: "DSO::before-reset",
+          scanCheckpoint: { hash: "before-reset", height: 12 },
+          replayTransactions: [{ hash: "other-party", height: 13 }],
+        },
       );
       const newPartyId = "new-party-id";
 
@@ -211,6 +215,12 @@ describe("onboard", () => {
       expect((result?.account as CantonAccount | undefined)?.cantonResources).not.toHaveProperty(
         "nativeInstrumentAdmin",
       );
+      expect((result?.account as CantonAccount | undefined)?.cantonResources).not.toHaveProperty(
+        "scanCheckpoint",
+      );
+      expect((result?.account as CantonAccount | undefined)?.cantonResources).not.toHaveProperty(
+        "replayTransactions",
+      );
     });
 
     it("links the existing party (no submit) when prepareOnboarding reports it already exists", async () => {
@@ -248,5 +258,34 @@ describe("onboard", () => {
         }),
       });
     });
+
+    it.each([
+      ["the account", { xpub: "same-party" }, {}],
+      ["the Canton resources only", {}, { xpub: "same-party" }],
+    ])(
+      "keeps the transactions to read again of the same party, known from %s",
+      async (_, overrides, resources) => {
+        const replayTransactions = [{ hash: "offer", height: 13 }];
+        const account = createMockCantonAccount(overrides, { ...resources, replayTransactions });
+        mockedGateway.getPartyByPubKey.mockRejectedValue(new Error("not found"));
+        mockedGateway.prepareOnboarding.mockRejectedValue(
+          new Error('Party with id "same-party" already exists and its topology is up to date'),
+        );
+        mockedGateway.isPartyAlreadyExists.mockReturnValue(true);
+
+        const values = await firstValueFrom(
+          buildOnboardAccount(mockSignerContext, mockContext)(
+            mockCurrency,
+            mockDeviceId,
+            account,
+          ).pipe(toArray()),
+        );
+
+        const result = values.find((v): v is CantonOnboardResult => "partyId" in v);
+        expect((result?.account as CantonAccount | undefined)?.cantonResources).toMatchObject({
+          replayTransactions,
+        });
+      },
+    );
   });
 });

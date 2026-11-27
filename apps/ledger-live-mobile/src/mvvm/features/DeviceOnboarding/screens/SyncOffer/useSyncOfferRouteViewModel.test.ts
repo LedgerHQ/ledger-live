@@ -338,7 +338,10 @@ describe("useSyncOfferRouteViewModel", () => {
   it("should track the offer as the seeded device", () => {
     const { result } = renderOffer(false);
 
-    expect(result.current.seededDeviceType).toBe("stax");
+    expect(result.current.funnelProps).toMatchObject({
+      "onboarding type": "seeded device",
+      deviceType: "stax",
+    });
   });
 
   it("should not complete when activation starts without a trustchain", () => {
@@ -379,6 +382,16 @@ describe("useSyncOfferRouteViewModel", () => {
       "onboarding_done",
       expect.objectContaining({ ledger_sync_done: "yes" }),
     );
+  });
+
+  it("should hide the glow for a seeded device and show it for an unseeded device", () => {
+    const seeded = renderOffer(false);
+    expect(seeded.result.current.showGlow).toBe(false);
+
+    mockOfferParams.unseeded = true;
+    mockOfferParams.seededResult = null;
+    const unseeded = renderOffer(false);
+    expect(unseeded.result.current.showGlow).toBe(true);
   });
 
   it("should complete without sync when the offer is skipped", () => {

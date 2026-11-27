@@ -22,6 +22,7 @@ function toDomainFinalFirmware(firmware: DmkFinalFirmware): FinalFirmware {
     id: firmware.id,
     perso: firmware.perso,
     hash: firmware.hash,
+    name: firmware.name,
     version: firmware.version,
     bytes: firmware.bytes,
     firmware: firmware.firmware,

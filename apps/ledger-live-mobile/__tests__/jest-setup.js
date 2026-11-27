@@ -48,7 +48,6 @@ import {
 } from "@shared/network-status";
 import mockGorhomBottomSheet from "@gorhom/bottom-sheet/mock";
 import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
-import mockLocalize from "react-native-localize/mock";
 import { EventEmitter } from "events";
 
 function mockBottomSheetFooter({ children }) {
@@ -266,9 +265,6 @@ jest.mock("@shared/analytics-react", () => {
     TrackScreen: jest.fn(props => actual.TrackScreen(props)),
   };
 });
-
-// Mock of Native Modules
-jest.mock("react-native-localize", () => mockLocalize);
 
 jest.mock("react-redux", () => {
   const actual = jest.requireActual("react-redux");

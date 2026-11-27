@@ -1988,6 +1988,27 @@ describe("coin-framework utils", () => {
 
         expect(result.extra).toMatchObject({ assetAmount: "500" });
       });
+
+      it("gives a failed token transaction paid in the native coin its attempted amount", () => {
+        const result = adaptCoreOperationToLiveOperation(accountId, {
+          ...baseOp,
+          asset: { type: "erc20", assetReference: "0xDai", assetOwner: "sender1" },
+          value: BigInt(500),
+          tx: { ...baseOp.tx, failed: true },
+        });
+
+        expect(result.value).toEqual(new BigNumber(10));
+        expect(result.extra).toMatchObject({ assetAmount: "500" });
+      });
+
+      it("gives a failed native transaction no token amount", () => {
+        const result = adaptCoreOperationToLiveOperation(accountId, {
+          ...baseOp,
+          tx: { ...baseOp.tx, failed: true },
+        });
+
+        expect(result.extra).not.toHaveProperty("assetAmount");
+      });
     });
 
     it("handles non-FEES/OUT operation where value = value only", () => {

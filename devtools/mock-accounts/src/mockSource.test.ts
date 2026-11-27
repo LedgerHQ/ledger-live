@@ -1,8 +1,9 @@
-import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { BalanceHistoryRange } from "@domain/entity-account-balance-history";
 import type { AccountOperation, AccountOperationsPage } from "@domain/entity-account-operation";
 import { FiatCurrencyTickerSchema, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { MockAssetStatusQueryError, MockCursorError } from "./errors";
 import { mockDescriptors } from "./generate";
 import { mockSource } from "./mockSource";

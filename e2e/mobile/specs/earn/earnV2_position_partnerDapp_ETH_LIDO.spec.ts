@@ -10,9 +10,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
-runPartnerDappPositionTest(
-  testConfig.account,
-  testConfig.dappUrlSubstring,
-  testConfig.tmsLinks,
-  testConfig.tags,
-);
+runPartnerDappPositionTest(testConfig);

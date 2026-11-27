@@ -8,8 +8,8 @@ jobs check out `ci/` alone, so the measured ref's Nx never sees a second copy of
 measure jobs check out this folder, `e2e/mobile/userdata` and, on Android, `tools/scripts` and the
 signing keystore.
 
-`ci/` holds what the plan, build and Slack jobs run, from a checkout of `ci/` alone and, in the
-build jobs, with the measured ref's Node (24.14 or later from `live-mobile@4.26.0` on): it never
+`ci/` holds what the plan, cache, build and Slack jobs run, from a checkout of `ci/` alone and, in
+the build jobs, with the measured ref's Node (24.14 or later from `live-mobile@4.26.0` on): it never
 imports from `src/` (`src/` may import from `ci/`), and its scripts are `.mts` so Node runs them as
 ES modules without the `package.json`. `devices/` holds the shell the measure jobs run to get the
 emulators or simulators and Maestro ready, `src/` the two programs (`measure/` writes
@@ -23,6 +23,10 @@ module.
 | `ci/verify-build.mts`               | Checks the built binary: no `MOCK`/`DETOX`, `FORCE_DEBUG_VISIBLE=1`, real blur              |
 | `ci/slack-report.mts`               | The Slack job: the run's result from the jobs and each `summary.json`                       |
 | `ci/step.mts`                       | What those share: workspace paths, error annotations, job summary, failing verdicts         |
+| `ci/toolchain.sh`                   | Records a build's toolchain beside its `sha.txt`; warns when A's and B's differ             |
+| `ci/sides.mts`                      | The restore job's last step: the sides each build matrix still builds                       |
+| `ci/actions/restore/`               | The restore job's composite: looks an entry up, checks it, publishes it as the artifact     |
+| `ci/actions/save/`                  | The save job's composite: caches an artifact the run made                                   |
 | `devices/boot-emulators.sh`         | Boots the two Android emulators: 4 cores, animations on, cellular, idle                     |
 | `devices/boot-simulators.sh`        | Creates and boots the two simulators, then waits for an idle host                           |
 | `devices/install-maestro.sh`        | Installs the pinned Maestro, checked against its SHA-256                                    |
@@ -73,8 +77,9 @@ another line is ❌; the run still fails on "Probably slower", as the gate is on
 Slack rejects fails the Slack job; a run cancelled by hand posts nothing.
 
 Refs are branches or tags only: a raw SHA could be a fork's commit, run with the workflow's secrets.
-They start at `live-mobile@4.26.0`: `prepare-build.mts` rejects older ones, which still count the
-Debug value with react-native-startup-time.
+A name that is both a branch and a tag is refused: the release tags are lightweight, so git would
+take the branch. Refs start at `live-mobile@4.26.0`: `prepare-build.mts` rejects older ones, which
+still count the Debug value with react-native-startup-time.
 Pairs are even and at least 6, half before and half after the device swap; fewer give no 95%
 interval.
 
@@ -99,12 +104,58 @@ write no remote Nx, pnpm, Gradle or AVD cache: they run with develop's role whil
 Gradle downloads its dependencies through JFrog (`jfrog-maven-auth`), like develop's Android builds:
 straight from Maven Central, the shared runner IP can get a 429 (run 42829119387).
 
+### The cache
+
+The mobile E2E builds' S3 cache (`ll-nx-cache`) keeps what a run would otherwise make again: build
+A of a `live-mobile@X.Y.Z` tag, which only changes on a release. Two jobs read and write it, through
+this folder's composites, referenced by path so a branch runs its own: `restore-cache` looks each
+entry up (`ci/actions/restore`) and publishes a whole one as the artifact its job would have
+uploaded, then `ci/sides.mts` leaves that side out of the build matrices; `save-cache` caches what
+the run made (`ci/actions/save`). The plan says whether to look the cache up (`restore`) and whether
+this run may write it (`save`).
+
+- **Build A's key:** `develop/startup-perf-<platform>-<commit A>-<hash>-<ISO week>-<version>`. The
+  hash covers the workflow, `prepare-build.mts`, `verify-build.mts`, `step.mts` and `toolchain.sh`.
+  Bump the version by hand when something else the build depends on changes.
+- **Toolchain:** B is built on the day's runners, whose Xcode, JDK or `@develop` composites can
+  change without changing the key. The week in the key rebuilds A at least weekly, and each build
+  writes `toolchain.txt` beside `sha.txt` (`ci/toolchain.sh`): the measure jobs warn when A's and
+  B's differ, as a startup difference may then come from the toolchain. Node is left out: each ref
+  pins its own in `mise.toml`, so a different Node is part of the code compared.
+- **Restore (`restore-cache`):** every run reads `develop/`, which only develop's role writes, so
+  no run restores a build a branch run made. An entry counts once its download succeeded and its
+  check holds (build A: its commit and binary match): the job publishes it as the run's artifact,
+  and the build matrices leave that side out.
+- **Save (`save-cache`):** only in a run from develop, and only when B is develop, release or main
+  (the branches only a pull request changes), or in a single-commit preset (`aa-noise`,
+  `known-regression`), whose B is built from A's commit, when that commit is reviewed: the run's
+  own branch, a release tag's, or develop, release or main. A `custom` run with the same tag on
+  both sides is not saved. B's build job runs B's code, which could replace another job's artifact
+  before it is cached. Build A is saved only when it is a release tag's.
+- **Isolation:** neither cache job runs the measured code, and the build jobs are given no cache
+  credentials. They keep `id-token: write` for JFrog's OIDC login, though, so the code they build
+  could request an OIDC token for the run's ref. Whether that token can assume the develop cache
+  role depends on that role's trust policy.
+- **Best-effort:** both jobs continue on error and time out. A cache that cannot be read or written
+  only means building A as before.
+
 ## A launch
 
 - **Inject once per install.** `inject.ts` launches with `wsPort`, sends the settings, accounts and
   post-onboarding state of `e2e/mobile/userdata` through `bridge.ts`, sends the settings again
   10 s later (the store's save effect may not be mounted yet), and fails when the app reports `MOCK`
   or `DETOX`. Feature flags are not imported: they come from production Firebase.
+- **Warm up 6 times on Android** before the rounds. In the first launches after an install (2–6,
+  ~20–230 s), Braze's content-card refresh put ~110 ms of JS before App started in about half of
+  them, never later: with 6 warm-ups the slow early rounds fell from 35–49% to 10–15% (runs
+  43996795129, 43996836527). iOS keeps 1, as it was not measured. A warm-up costs one launch: ~11 s
+  read from the log, ~40 s on the screen. Both builds are installed first, then warmed up in turn
+  like the rounds, on iOS too (not measured there). When each build warmed up right after its
+  install, the first one idled ~2 min through the other's install and warm-ups, and its round 0 was
+  ~60 ms slower than its later rounds, the second's no slower beyond noise (median of 30 Android A/A
+  runs, e.g. 44243454200). Warmed up in turn, it is ~15 ms faster than its later rounds, against
+  ~60 ms slower for the old order in the same wave (10 runs against 6, e.g. 44281313344 against
+  44281225038), with about the same A/A spread.
 - **Launch** with a plain `am start -W` / `simctl launch`, no test tool attached, wait 5 s, then
   read the `[startup]` lines of the launched process in the device log (logcat's `ReactNativeJS`,
   the simulator's `log show`), which the app writes as soon as the startup is over: a line per
@@ -154,8 +205,9 @@ straight from Maven Central, the shared runner IP can get a 429 (run 42829119387
 - **Android**: the E2E AVD (develop's `avd.env`), two emulators with 4 cores each on the 8-CPU
   runner (faster and tighter A/A margins than 2 or 3: runs 39989878998, 39966762708, 39970514979),
   cold-booted (the snapshot has 2 cores), animations on, screen kept on, cellular network (the
-  emulated Wi-Fi added ~240–500 ms: runs 39941337433, 39966755704), and idle (load average below 1)
-  before the first launch.
+  emulated Wi-Fi added ~240–500 ms: runs 39941337433, 39966755704), the Messages and Google apps
+  disabled (their background jobs, a few minutes after boot, took the CPUs in ~4% of launches,
+  +20–100 ms), and idle (load average below 1) before the first launch.
 - **iOS**: two new simulators of the newest "iPhone N Pro", on the iOS E2E pool, one run at a time,
   measured once the host's 1-minute load is below its CPU count (at most 10 min after boot): 60 s
   after `bootstatus` it was still rising (74 → 128 and 83 → 106, runs 42260331032, 42261755814).

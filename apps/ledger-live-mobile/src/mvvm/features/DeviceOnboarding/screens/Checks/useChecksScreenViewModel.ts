@@ -111,6 +111,7 @@ export function useChecksScreenViewModel({
   firmwareUpToDate,
   onStart,
   onRetry,
+  onSkipFirmwareCheck,
   onCloseSheet,
   onContinue,
   onQuit,
@@ -121,8 +122,9 @@ export function useChecksScreenViewModel({
   onInstallUpdate,
   onUpdateSheetClosed,
   screensFor,
-  seededDeviceType,
+  funnelProps,
   suspendSheets = false,
+  updateAfterSetup = false,
 }: ChecksScreenProps): ChecksViewProps {
   const { t } = useTranslation();
   const quit = () => onQuit?.();
@@ -138,13 +140,15 @@ export function useChecksScreenViewModel({
     onRetry,
     onCloseSheet,
     onErrorCancel: quit,
+    onSkipFirmwareCheck,
     onAcceptUpdate,
     onAllowDismiss: closeAndQuit,
     onNotGenuineClose: quit,
     onUpdatePressed,
     onUpdateSheetClosed,
-    seededDeviceType,
+    funnelProps,
     suspendSheets,
+    updateAfterSetup,
   });
   const installUpdate = () => {
     onInstallUpdate?.();

@@ -38,6 +38,7 @@ import {
   getMarketListConfig,
   getMarketBannerState,
   getPayCardState,
+  getReceiveVerifyHintState,
   getTrustchainState,
   getWalletExportState,
   getLargeMoverState,
@@ -152,6 +153,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         marketListConfigState,
         marketBannerState,
         payCardState,
+        receiveVerifyHintState,
         trustchainStore,
         walletStore,
         protect,
@@ -175,6 +177,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         readKey("marketListConfig", getMarketListConfig, unreadableKeys),
         readKey("marketBanner", getMarketBannerState, unreadableKeys),
         readKey("payCard", getPayCardState, unreadableKeys),
+        readKey("receiveVerifyHint", getReceiveVerifyHintState, unreadableKeys),
         readKey("trustchain", getTrustchainState, unreadableKeys),
         readKey("wallet", getWalletExportState, unreadableKeys),
         readKey("protect", getProtect, unreadableKeys),
@@ -281,10 +284,13 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       if (payCardState) {
         store.dispatch(restorePayCardFeatureTour(payCardState));
-        store.dispatch(restoreReceiveVerifyHint(payCardState));
         store.dispatch(restorePayCardBalanceFilter(payCardState));
         store.dispatch(restorePayCardLoginIntro(payCardState));
         store.dispatch(restorePayCardOnboardingWidget(payCardState));
+      }
+
+      if (receiveVerifyHintState) {
+        store.dispatch(restoreReceiveVerifyHint(receiveVerifyHintState));
       }
 
       store.dispatch(importTrustchainStoreState(trustchainStore));

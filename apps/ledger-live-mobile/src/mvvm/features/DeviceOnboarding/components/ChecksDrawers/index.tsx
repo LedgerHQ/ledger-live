@@ -202,10 +202,17 @@ export function ChecksDrawers({
             label: <Trans i18nKey="earlySecurityCheck.genuineCheckErrorDrawer.retryCta" />,
             onPress: errorDrawer.onRetry,
           }}
-          secondaryCta={{
-            label: <Trans i18nKey="earlySecurityCheck.genuineCheckErrorDrawer.cancelCta" />,
-            onPress: errorDrawer.onCancel,
-          }}
+          secondaryCta={
+            errorDrawer.onSkip
+              ? {
+                  label: <Trans i18nKey="deviceOnboarding.checks.updating.skipCta" />,
+                  onPress: errorDrawer.onSkip,
+                }
+              : {
+                  label: <Trans i18nKey="earlySecurityCheck.genuineCheckErrorDrawer.cancelCta" />,
+                  onPress: errorDrawer.onCancel,
+                }
+          }
         />
       ) : null}
       {errorDrawer.kind === "provider" ? (

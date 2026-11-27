@@ -5,7 +5,7 @@ import Config from "react-native-config";
 import { AppState, Linking, Platform, type NativeEventSubscription } from "react-native";
 import { createClient, SegmentClient, UserTraits } from "@segment/analytics-react-native";
 import { appVersion as nativeAppVersion, buildVersion } from "LLM/utils/appVersion";
-import RNLocalize from "react-native-localize";
+import { getDeviceLanguageTag } from "@shared/device-locale";
 import {
   getFocusedRouteNameFromRoute,
   ParamListBase,
@@ -165,6 +165,7 @@ const getFeatureFlagProperties = () => {
       "lwmAnalyticsConsentOnboarding",
     );
     const lwmNotificationsOptInFlag = analyticsFeatureFlagMethod("lwmNotificationsOptIn");
+    const lwmMyWalletDeviceListFlag = analyticsFeatureFlagMethod("lwmMyWalletDeviceList");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -182,6 +183,7 @@ const getFeatureFlagProperties = () => {
     const ptxEarnCtaOnMobile = Boolean(ptxEarnCtaOnMobileFlag?.enabled);
     const lwmAnalyticsConsentOnboarding = Boolean(lwmAnalyticsConsentOnboardingFlag?.enabled);
     const lwmNotificationsOptIn = Boolean(lwmNotificationsOptInFlag?.enabled);
+    const lwmMyWalletDeviceList = Boolean(lwmMyWalletDeviceListFlag?.enabled);
 
     // Apply versioned redirects logic to the stakePrograms feature flag
     const appVersion = LiveConfig.instance.appVersion || "0.0.0";
@@ -220,6 +222,7 @@ const getFeatureFlagProperties = () => {
       ptxEarnCtaOnMobile,
       lwmAnalyticsConsentOnboarding,
       lwmNotificationsOptIn,
+      lwmMyWalletDeviceList,
     });
   })();
 };
@@ -394,7 +397,7 @@ const extraProperties = async (store: AppStore) => {
   const madAttributes = getMADAttributes();
   const mandatoryProperties = getMandatoryProperties(store);
   const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
-  const systemLanguage = sensitiveAnalytics ? null : RNLocalize.getLocales()[0]?.languageTag;
+  const systemLanguage = sensitiveAnalytics ? null : getDeviceLanguageTag();
   const knownDeviceModelIds = knownDeviceModelIdsSelector(state);
   const customImageType = customImageTypeSelector(state);
   const language = sensitiveAnalytics ? null : languageSelector(state);
@@ -513,6 +516,7 @@ const extraProperties = async (store: AppStore) => {
   const accountDetailFeature = analyticsFeatureFlagMethod?.("accountDetail");
   const accountDetail = accountDetailFeature?.enabled ?? false;
   const accountDetailAnalyticsBanner = isAccountDetailAnalyticsBannerEnabled(accountDetailFeature);
+  const newSettings = analyticsFeatureFlagMethod?.("newSettings")?.enabled ?? false;
   const recoverV2 = getRecoverV2Attribute(analyticsFeatureFlagMethod);
 
   return {
@@ -576,6 +580,7 @@ const extraProperties = async (store: AppStore) => {
     agentIntent,
     accountDetail,
     accountDetailAnalyticsBanner,
+    newSettings,
     recoverV2,
     ...remoteABTestingAttributes,
     ...deviceOnboardingTraits(analyticsFeatureFlagMethod?.("deviceOnboarding")),

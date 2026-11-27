@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import {
-  seededButtons,
-  seededPages,
-  seededProps,
-  trackSeededClick,
-  trackSeededPage,
-  type DeviceModelId,
+  onboardingButtons,
+  onboardingPages,
+  trackOnboardingClick,
+  trackOnboardingPage,
+  type FunnelProps,
   type ScreenTracking,
-  type SeededButton,
-  type SeededPage,
+  type OnboardingButton,
+  type OnboardingPage,
   type TrackingProps,
 } from "@features/platform-device-onboarding-analytics";
 
@@ -26,6 +25,7 @@ export type SyncOfferPhase = "offer" | "synchronizing" | "success";
 
 type SyncOfferSuccessViewProps = Readonly<{
   phase: "success";
+  showGlow: boolean;
   screenTracking: ScreenTracking | null;
   title: string;
   continueLabel: string;
@@ -36,6 +36,7 @@ type SyncOfferSuccessViewProps = Readonly<{
 
 type SyncOfferSynchronizingViewProps = Readonly<{
   phase: "synchronizing";
+  showGlow: boolean;
   title: string;
   closeLabel: string;
   onQuit: () => void;
@@ -43,6 +44,7 @@ type SyncOfferSynchronizingViewProps = Readonly<{
 
 type SyncOfferPromptViewProps = Readonly<{
   phase: "offer";
+  showGlow: boolean;
   screenTracking: ScreenTracking | null;
   title: string;
   description: string;
@@ -69,7 +71,9 @@ export type SyncOfferScreenProps = Readonly<{
   onQuit: () => void;
   onContinue: () => void;
   phase: SyncOfferPhase;
-  seededDeviceType?: DeviceModelId | null;
+  showGlow?: boolean;
+  /** Set in a tracked funnel, seeded or unseeded. */
+  funnelProps?: FunnelProps | null;
 }>;
 
 export function useSyncOfferScreenViewModel({
@@ -79,31 +83,33 @@ export function useSyncOfferScreenViewModel({
   onQuit,
   onContinue,
   phase,
-  seededDeviceType,
+  showGlow = false,
+  funnelProps,
 }: SyncOfferScreenProps): SyncOfferViewProps {
   const { t } = useTranslation();
   const [isSkipDrawerOpen, setIsSkipDrawerOpen] = useState(false);
   const closeSkipDrawer = () => setIsSkipDrawerOpen(false);
-  const trackingProps = seededDeviceType ? seededProps(seededDeviceType) : undefined;
-  const screenTracking = (category: SeededPage): ScreenTracking | null =>
+  const trackingProps = funnelProps ?? undefined;
+  const screenTracking = (category: OnboardingPage): ScreenTracking | null =>
     trackingProps ? { category, ...trackingProps } : null;
-  const trackClick = (button: SeededButton) => {
-    if (seededDeviceType) trackSeededClick(button, seededDeviceType);
+  const trackClick = (button: OnboardingButton) => {
+    if (funnelProps) trackOnboardingClick(button, funnelProps);
   };
   const quit = () => {
-    trackClick(seededButtons.close);
+    trackClick(onboardingButtons.close);
     onQuit();
   };
 
   if (phase === "success") {
     return {
       phase,
-      screenTracking: screenTracking(seededPages.ledgerSyncSuccess),
+      showGlow,
+      screenTracking: screenTracking(onboardingPages.ledgerSyncSuccess),
       title: t("deviceOnboarding.syncOffer.success.title"),
       continueLabel: t("deviceOnboarding.syncOffer.success.cta"),
       closeLabel: t("deviceOnboarding.checks.close"),
       onContinue: () => {
-        trackClick(seededButtons.continue);
+        trackClick(onboardingButtons.continue);
         onContinue();
       },
       onQuit: quit,
@@ -113,6 +119,7 @@ export function useSyncOfferScreenViewModel({
   if (phase === "synchronizing") {
     return {
       phase,
+      showGlow,
       title: t("deviceOnboarding.checks.synchronizing.title"),
       closeLabel: t("deviceOnboarding.checks.close"),
       onQuit: quit,
@@ -121,7 +128,8 @@ export function useSyncOfferScreenViewModel({
 
   return {
     phase,
-    screenTracking: screenTracking(seededPages.ledgerSync),
+    showGlow,
+    screenTracking: screenTracking(onboardingPages.ledgerSync),
     title: t("deviceOnboarding.syncOffer.title"),
     description: t("deviceOnboarding.syncOffer.description"),
     learnMoreLabel: t("deviceOnboarding.syncOffer.learnMore"),
@@ -129,15 +137,15 @@ export function useSyncOfferScreenViewModel({
     skipLabel: t("deviceOnboarding.syncOffer.skip"),
     closeLabel: t("deviceOnboarding.checks.close"),
     onActivate: () => {
-      trackClick(seededButtons.activateSync);
+      trackClick(onboardingButtons.activateSync);
       onActivate();
     },
     onOpenSkip: () => {
-      trackClick(seededButtons.skip);
+      trackClick(onboardingButtons.skip);
       setIsSkipDrawerOpen(true);
     },
     onLearnMore: () => {
-      trackClick(seededButtons.learnMore);
+      trackClick(onboardingButtons.learnMore);
       onLearnMore();
     },
     onQuit: quit,
@@ -145,15 +153,15 @@ export function useSyncOfferScreenViewModel({
       trackingProps,
       isOpen: isSkipDrawerOpen,
       onClose: closeSkipDrawer,
-      onClosePressed: () => trackClick(seededButtons.close),
+      onClosePressed: () => trackClick(onboardingButtons.close),
       onSkip: () => {
-        trackClick(seededButtons.yesSkip);
-        if (seededDeviceType) trackSeededPage(seededPages.ledgerSyncRefused, seededDeviceType);
+        trackClick(onboardingButtons.yesSkip);
+        if (funnelProps) trackOnboardingPage(onboardingPages.ledgerSyncRefused, funnelProps);
         closeSkipDrawer();
         onSkip();
       },
       onActivate: () => {
-        trackClick(seededButtons.enableSync);
+        trackClick(onboardingButtons.enableSync);
         closeSkipDrawer();
         onActivate();
       },

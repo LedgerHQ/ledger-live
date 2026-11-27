@@ -1,10 +1,10 @@
 import { runSwapTest } from "@e2e/specs/swap/swap";
 
-runSwapTest(
-  Account.ETH_1,
-  Account.DOT_1,
-  ["B2CQA-3017"],
-  [
+runSwapTest({
+  accountToDebit: Account.ETH_1,
+  accountToCredit: Account.DOT_1,
+  tmsLinks: ["B2CQA-3017"],
+  tags: [
     "@NanoSP",
     "@LNS",
     "@NanoX",
@@ -16,4 +16,4 @@ runSwapTest(
     "@polkadot",
     "@family-polkadot",
   ],
-);
+});

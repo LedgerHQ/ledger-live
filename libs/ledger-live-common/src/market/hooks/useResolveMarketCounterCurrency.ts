@@ -1,4 +1,4 @@
-import { useGetSupportedChartCounterCurrenciesQuery } from "../state-manager/api";
+import { useGetSupportedChartCounterCurrenciesQuery } from "@domain/api-market-chart";
 import { ONE_DAY } from "../utils/timers";
 
 export type MarketCounterCurrencyResolution = {

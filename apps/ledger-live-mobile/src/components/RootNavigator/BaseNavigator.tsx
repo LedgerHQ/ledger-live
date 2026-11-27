@@ -73,6 +73,7 @@ import PerpsSign from "LLM/features/Perps/screens/PerpsSign/PerpsSignScreen";
 import PerpsDeposit from "LLM/features/Perps/screens/PerpsDeposit/PerpsDepositScreen";
 import PerpsWithdraw from "LLM/features/Perps/screens/PerpsWithdraw/PerpsWithdrawScreen";
 import PerpsTransactionSigned from "LLM/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedScreen";
+import PredictionsOrderResult from "LLM/features/Predictions/screens/PredictionsOrderResult/PredictionsOrderResultScreen";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
 import { RecoverPlayer } from "~/screens/Protect/Player";
@@ -626,6 +627,14 @@ export default function BaseNavigator() {
           options={{
             headerShown: false,
             contentStyle: { backgroundColor: lumenBaseColor },
+          }}
+        />
+        <Stack.Screen
+          name={ScreenName.PredictionsOrderResult}
+          component={PredictionsOrderResult}
+          options={{
+            headerShown: false,
+            contentStyle: { backgroundColor: lumenTheme.colors.bg.canvasSheet },
           }}
         />
         <Stack.Screen

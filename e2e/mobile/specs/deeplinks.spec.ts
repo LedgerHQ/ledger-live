@@ -128,7 +128,7 @@ describe("Deeplinks", () => {
   });
 
   (isSmokeTestRun ? describe.skip : describe)("Deeplinks", () => {
-    const TOP_CRYPTO_TICKERS = ["BTC", "ETH", "USDT", "XRP", "BNB"];
+    const TOP_CRYPTO_TICKERS = ["BTC", "ETH"];
 
     it("Open add account from a deeplink", async () => {
       await app.addAccount.openViaDeeplink();

@@ -116,6 +116,7 @@ type SetupTestOptions = {
   readonly disconnect?: jest.Mock;
   readonly mapConnectionError?: jest.Mock;
   readonly onConnected?: jest.Mock;
+  readonly onAddNewDevice?: jest.Mock;
   readonly isPaused?: boolean;
   readonly delays?: ConnectKnownOrNewDeviceDelays;
 };
@@ -128,6 +129,7 @@ const setupTest = ({
   disconnect = jest.fn().mockResolvedValue(undefined),
   mapConnectionError = jest.fn(error => ({ type: BaseConnectionErrorTypes.Unknown, error })),
   onConnected = jest.fn(),
+  onAddNewDevice,
   isPaused,
   delays,
 }: SetupTestOptions = {}) => {
@@ -172,6 +174,7 @@ const setupTest = ({
     removeKnownDevice,
     mapConnectionError,
     onConnected,
+    ...(onAddNewDevice === undefined ? {} : { onAddNewDevice }),
     getDiscoveredDeviceKey: ({ transport, id }) => `${transport}:${id}`,
     ...(isPaused === undefined ? {} : { isPaused }),
     delays: { connectNewDevice: { successDelay: 0 }, ...delays },
@@ -675,6 +678,21 @@ describe("ConnectKnownOrNewDeviceStateMachine", () => {
       expect(setup.lastState(ConnectKnownOrNewDeviceUIStateTypes.ConnectNewDevice)).toBeDefined();
     });
 
+    it("GIVEN a caller Add handler and the hint is shown, WHEN the hint is tapped, THEN it should call the handler with devices and go back to the list", () => {
+      // GIVEN
+      const onAddNewDevice = jest.fn();
+      const setup = setupTest({ onAddNewDevice });
+      waitForNanoX(setup);
+      jest.advanceTimersByTime(DEFAULT_DEVICE_NOT_FOUND_DELAY);
+
+      // WHEN
+      setup.lastState(ConnectKnownOrNewDeviceUIStateTypes.WaitingForDevice).addNewDevice!();
+
+      // THEN
+      expect(onAddNewDevice).toHaveBeenCalledWith(true);
+      expect(setup.lastState(ConnectKnownOrNewDeviceUIStateTypes.Discovering)).toBeDefined();
+    });
+
     it("GIVEN the machine waits for a device, WHEN WaitingForDevice is closed, THEN it should go back to the list with discovery still running", () => {
       // GIVEN
       const setup = setupTest();
@@ -1122,6 +1140,20 @@ describe("ConnectKnownOrNewDeviceStateMachine", () => {
   });
 
   describe("Add mode", () => {
+    it("GIVEN a caller Add handler and no device, WHEN Add is tapped, THEN it should call the handler without devices and stay on the list", () => {
+      // GIVEN
+      const onAddNewDevice = jest.fn();
+      const setup = setupTest({ knownDevices: [], onAddNewDevice });
+      setup.machine.start();
+
+      // WHEN
+      setup.activeList().addNewDevice();
+
+      // THEN
+      expect(onAddNewDevice).toHaveBeenCalledWith(false);
+      expect(setup.lastState(ConnectKnownOrNewDeviceUIStateTypes.Discovering)).toBeDefined();
+    });
+
     it("GIVEN the device list, WHEN the Add mode opens, THEN it should emit ConnectNewDevice with the Discovering state of the embedded flow", () => {
       // GIVEN
       const setup = setupTest();

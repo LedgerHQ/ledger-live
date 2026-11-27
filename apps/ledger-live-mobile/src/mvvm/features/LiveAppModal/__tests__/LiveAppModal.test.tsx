@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from "@tests/test-renderer";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { LiveAppModalParams } from "~/reducers/liveAppModal";
 import type { State } from "~/reducers/types";
+import { useEarnAppLifecycleMonitoring } from "~/analytics/useEarnAppLifecycleMonitoring";
 import LiveAppModalScreen from "../index";
 
 const STUB_MANIFEST: LiveAppManifest = {
@@ -46,6 +47,10 @@ jest.mock("@ledgerhq/live-common/wallet-api/useLiveAppManifest", () => ({
 
 jest.mock("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index", () => ({
   useRemoteLiveAppContext: () => ({ state: { isLoading: false } }),
+}));
+
+jest.mock("~/analytics/useEarnAppLifecycleMonitoring", () => ({
+  useEarnAppLifecycleMonitoring: jest.fn(),
 }));
 
 jest.mock("@ledgerhq/live-common/wallet-api/LiveAppModal/server", () => ({
@@ -156,5 +161,15 @@ describe("LiveAppModalScreen", () => {
     );
 
     expect(mockRegisterCloseHandler).toHaveBeenCalledWith(PARAMS.requestId, expect.any(Function));
+  });
+
+  it("monitors the lifecycle of the manifest the modal renders", () => {
+    render(
+      // @ts-expect-error -- partial navigation mock is sufficient for this test
+      <LiveAppModalScreen navigation={mockNavigation} route={mockRoute} />,
+      { overrideInitialState: withParams(PARAMS) },
+    );
+
+    expect(jest.mocked(useEarnAppLifecycleMonitoring)).toHaveBeenLastCalledWith("test-app");
   });
 });

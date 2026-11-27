@@ -297,12 +297,6 @@ export class Account {
     accountPath: "44'/60'/1'/0/0",
     ensName: "speculos-qaa.eth",
   });
-  static readonly ETH_2_LOWER_CASE = new Account({
-    currency: Currency.ETH,
-    accountName: "Ethereum 2",
-    index: 1,
-    accountPath: "44'/60'/1'/0/0",
-  });
   static readonly ETH_3 = new Account({
     currency: Currency.ETH,
     accountName: "Ethereum 3",
@@ -646,13 +640,6 @@ export class Account {
     index: 1,
     accountPath: "44'/60'/1'/0/0",
   });
-
-  static readonly EMPTY = new Account({
-    currency: Currency.BTC,
-    accountName: "Empty",
-    index: 0,
-    accountPath: "",
-  });
 }
 
 export class TokenAccount extends Account {
@@ -895,14 +882,6 @@ export class TokenAccount extends Account {
   static readonly POL_DAI_1 = new TokenAccount({
     currency: Currency.POL_DAI,
     accountName: "Dai 1",
-    index: 0,
-    accountPath: "44'/60'/0'/0/0",
-    tokenType: TokenType.ERC20,
-    parentAccount: Account.POL_1,
-  });
-  static readonly POL_UNI = new TokenAccount({
-    currency: Currency.POL_UNI,
-    accountName: "Uniswap 1",
     index: 0,
     accountPath: "44'/60'/0'/0/0",
     tokenType: TokenType.ERC20,

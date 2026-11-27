@@ -76,3 +76,4 @@ The ring's keys derive from an encryption key that rotates whenever a member is 
 | `--output json requires --out <file>` | JSON format without an output file | add `-o <file>` or drop `--output json` |
 | `No input: provide --input FILE or pipe data to stdin` | no `-i` and nothing piped | pass `-i` or pipe the data |
 | `Remote teardown failed (network/backend). No local changes made` | destroy could not reach the backend | retry later |
+| `No confirmation received: stdin ended before "destroy" was typed` | `ring destroy` ran with no terminal to answer the prompt | hand the human the command to run in their own terminal |

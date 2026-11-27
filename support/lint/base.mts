@@ -4,8 +4,23 @@ import {
   REDUX_SLICES_PLUGIN,
   SUFFIX_IMPORTS_PLUGIN,
 } from "./plugins.mts";
-import { BIGNUMBER_NAMED_IMPORT } from "./restricted-imports.mts";
+import {
+  ACCOUNT_DESCRIPTOR,
+  ACCOUNT_DESCRIPTOR_EDGES,
+  BIGNUMBER_NAMED_IMPORT,
+} from "./restricted-imports.mts";
 import { sliceSelectorsWaivers } from "./src/redux-slices.js";
+
+const LAYER_ROOT = /^(?:domain|features\/platform|shared)\//;
+
+// Globs below the layer root, as overrides anchor there. features-flow sets its own restricted
+// list, so it writes the override of its edges itself.
+const DESCRIPTOR_EDGES = ACCOUNT_DESCRIPTOR_EDGES.flatMap(pkg => {
+  if (pkg.startsWith("features/flow/")) return [];
+  const below = pkg.replace(LAYER_ROOT, "");
+  if (below === pkg) throw new Error(`${pkg} is not in a layer restricted by base`);
+  return [`${below}/**`];
+});
 
 // The other presets inherit this override, where its globs (entity/..., api/...) match no package.
 const SLICE_SELECTORS_WAIVERS: string[] = [
@@ -41,7 +56,10 @@ export default defineConfig({
     "eslint/no-console": ["error", { allow: ["warn", "error"] }],
     "eslint/no-empty-pattern": "warn",
     "eslint/no-unused-vars": "warn",
-    "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }],
+    "eslint/no-restricted-imports": [
+      "error",
+      { paths: [BIGNUMBER_NAMED_IMPORT, ...ACCOUNT_DESCRIPTOR] },
+    ],
     "import/no-duplicates": "error",
     "import/no-named-as-default": "off",
     "typescript/no-deprecated": "error",
@@ -115,6 +133,11 @@ export default defineConfig({
   },
   overrides: [
     sliceSelectorsWaivers(SLICE_SELECTORS_WAIVERS),
+    {
+      // Inherited by every preset: the glob of an edge also matches a same-named package elsewhere.
+      files: DESCRIPTOR_EDGES,
+      rules: { "eslint/no-restricted-imports": ["error", { paths: [BIGNUMBER_NAMED_IMPORT] }] },
+    },
     {
       files: ["**/*.test.{ts,tsx}", "**/__tests__/**"],
       env: { jest: true },

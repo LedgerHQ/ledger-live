@@ -1,0 +1,160 @@
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { Linking } from "react-native";
+import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
+import type { CompositeNavigationProp, RouteProp } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { track } from "@shared/analytics";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Result } from "@ledgerhq/live-common/hw/actions/manager";
+import { type DeviceConnectionResult, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { NavigatorName, ScreenName } from "~/const";
+import { MANAGER_TABS } from "~/const/manager";
+import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
+import { useManagerDeviceAction } from "~/hooks/deviceActions";
+import { useUnifiedAddDevice } from "LLM/features/DeviceOnboarding/hooks/useUnifiedAddDevice";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { urls } from "~/utils/urls";
+import type { MyWalletNavigatorStackParamList } from "../../types";
+import type { MyWalletDeviceListProps, MyWalletDeviceListViewProps } from "./types";
+
+type MyWalletNavigation = CompositeNavigationProp<
+  NativeStackNavigationProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWallet>,
+  BaseNavigation
+>;
+
+function toLegacyDevice(result: DeviceConnectionResult): Device {
+  return {
+    deviceId: result.compatDeviceId,
+    deviceName: result.compatDeviceName,
+    modelId: dmkToLedgerDeviceIdMap[result.connectedDevice.modelId],
+    wired: result.compatDeviceWired,
+  };
+}
+
+/**
+ * Bridges the device list to the legacy My Ledger device action until the "open My Ledger"
+ * device intent replaces it: the lock check, then the device action modal.
+ */
+export function useMyWalletDeviceListViewModel({
+  onAddModeChange,
+}: MyWalletDeviceListProps): MyWalletDeviceListViewProps {
+  const navigation = useNavigation<MyWalletNavigation>();
+  const { params } =
+    useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWallet>>();
+  const isFocused = useIsFocused();
+  const { top: topInset } = useSafeAreaInsets();
+  const action = useManagerDeviceAction({ resolveOsUpdates: true });
+  const onAddDevice = useUnifiedAddDevice();
+  const exploreDevicesUrl = useLocalizedUrl(urls.exploreLedgerDevices);
+  const onExploreDevices = useCallback(() => {
+    Linking.openURL(exploreDevicesUrl);
+  }, [exploreDevicesUrl]);
+
+  // A redirect, for example from the "not enough space" error of a flow, opens My Ledger at once.
+  const redirectedDevice = params?.device;
+  const [lastRedirectedDevice, setLastRedirectedDevice] = useState(redirectedDevice);
+  const [device, setDevice] = useState<Device | undefined>(redirectedDevice);
+  if (redirectedDevice !== lastRedirectedDevice) {
+    setLastRedirectedDevice(redirectedDevice);
+    setDevice(redirectedDevice);
+  }
+
+  const [isAdding, setIsAdding] = useState(false);
+  const [deviceToCheck, setDeviceToCheck] = useState<Device | null>(null);
+
+  // Before paint, so that the header goes in the same frame as the other sections.
+  useLayoutEffect(() => {
+    if (!isAdding || !isFocused) return;
+    navigation.setOptions({ headerShown: false });
+    return () => navigation.setOptions({ headerShown: true });
+  }, [isAdding, isFocused, navigation]);
+
+  const handleAddModeChange = useCallback(
+    (adding: boolean) => {
+      setIsAdding(adding);
+      onAddModeChange?.(adding);
+    },
+    [onAddModeChange],
+  );
+
+  const onConnected = useCallback((result: DeviceConnectionResult) => {
+    const connectedDevice = toLegacyDevice(result);
+    track("ManagerDeviceEntered", { modelId: connectedDevice.modelId });
+    setDeviceToCheck(connectedDevice);
+  }, []);
+
+  const onDeviceUnlocked = useCallback(() => {
+    if (deviceToCheck) setDevice(deviceToCheck);
+    setDeviceToCheck(null);
+  }, [deviceToCheck]);
+
+  const onCloseLockedCheck = useCallback(() => setDeviceToCheck(null), []);
+
+  const onDeviceNotFound = useCallback(() => {
+    navigation.navigate(NavigatorName.BaseOnboarding, {
+      screen: NavigatorName.Onboarding,
+      params: { screen: ScreenName.OnboardingDeviceSelection, params: { missingDevice: true } },
+    });
+  }, [navigation]);
+
+  // The modal stays closed while it holds the result of its last device action: clear it on hide.
+  const clearModalResultRef = useRef<(() => void) | undefined>(undefined);
+  const registerDeviceSelection = useCallback((clearResult: () => void) => {
+    clearModalResultRef.current = clearResult;
+  }, []);
+
+  const hasRedirectParams = redirectedDevice !== undefined || params?.firmwareUpdate !== undefined;
+  const resetDevice = useCallback(() => {
+    setDevice(undefined);
+    clearModalResultRef.current?.();
+    // One-shot redirect params: consumed when the drawer closes.
+    if (hasRedirectParams) navigation.setParams({ device: undefined, firmwareUpdate: undefined });
+  }, [navigation, hasRedirectParams]);
+
+  const onResult = useCallback(
+    ({ device: resultDevice, deviceInfo, result: appsResult }: Result) => {
+      if (!appsResult) return;
+      navigation.navigate(NavigatorName.MyLedger, {
+        screen: ScreenName.MyLedgerDevice,
+        params: {
+          device: resultDevice,
+          deviceInfo,
+          result: appsResult,
+          firmwareUpdate: params?.firmwareUpdate,
+          searchQuery: params?.searchQuery || params?.installApp,
+          tab: params?.tab ?? MANAGER_TABS.CATALOG,
+          updateModalOpened: params?.updateModalOpened,
+        },
+      });
+    },
+    [
+      navigation,
+      params?.firmwareUpdate,
+      params?.installApp,
+      params?.searchQuery,
+      params?.tab,
+      params?.updateModalOpened,
+    ],
+  );
+
+  return {
+    isAdding,
+    topInset,
+    isPaused: deviceToCheck !== null || device !== undefined,
+    onConnected,
+    onAddModeChange: handleAddModeChange,
+    onDeviceNotFound,
+    onAddDevice,
+    onExploreDevices,
+    deviceToCheck,
+    onDeviceUnlocked,
+    onCloseLockedCheck,
+    device,
+    action,
+    onResult,
+    onCloseModal: resetDevice,
+    onModalHide: resetDevice,
+    registerDeviceSelection,
+  };
+}

@@ -1,11 +1,12 @@
 {
   "name": "@support/lint",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "The repository's oxlint presets, one per layer that differs, and its custom rules",
   "exports": {
     "./base": "./base.mts",
+    "./coin-families": "./coin-families.mts",
     "./devtools": "./devtools.mts",
     "./features-flow": "./features-flow.mts",
     "./features-platform": "./features-platform.mts",

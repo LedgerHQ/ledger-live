@@ -15,6 +15,21 @@ import { getNextSequence } from "../account/getNextSequence";
 const METHOD_TRANSFER = 0;
 const METHOD_INVOKE_EVM = 3844450837;
 
+// The generic signing path always passes fee parameters, usually without any Filecoin gas value.
+// They are used only as a complete set; otherwise the gas is estimated.
+function customGas(customFees?: FeeEstimation) {
+  const p = customFees?.parameters;
+  const [gasFeeCap, gasLimit, gasPremium] = [p?.["gasFeeCap"], p?.["gasLimit"], p?.["gasPremium"]];
+  if ([gasFeeCap, gasLimit, gasPremium].some(value => value === undefined || value === null)) {
+    return undefined;
+  }
+  return {
+    gasFeeCap: String(gasFeeCap),
+    gasLimit: Number(gasLimit),
+    gasPremium: String(gasPremium),
+  };
+}
+
 // Serialisation format (symmetric with combine.ts):
 //   Output `transaction` field = JSON.stringify({ cbor, message }) where
 //   - cbor: base64-encoded CBOR of the Filecoin Message (what the signer signs)
@@ -80,10 +95,9 @@ export async function craftTransaction(
   let gasLimit: number;
   let gasPremium: string;
 
-  if (customFees?.parameters) {
-    gasFeeCap = String(customFees.parameters["gasFeeCap"] ?? "0");
-    gasLimit = Number(customFees.parameters["gasLimit"] ?? 0);
-    gasPremium = String(customFees.parameters["gasPremium"] ?? "0");
+  const custom = customGas(customFees);
+  if (custom) {
+    ({ gasFeeCap, gasLimit, gasPremium } = custom);
   } else {
     const fees = await fetchEstimatedFees({
       from,

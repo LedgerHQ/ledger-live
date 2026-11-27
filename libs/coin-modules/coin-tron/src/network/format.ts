@@ -4,11 +4,15 @@ import bs58check from "bs58check";
 import get from "lodash/get";
 import { TrongridExtraTxInfo, TrongridTxInfo, TrongridTxType } from "../types";
 import { TransactionTronAPI, Trc20API } from "./types";
+import { abiDecodeTrc20Transfer } from "./utils";
 
 export const decode58Check = (base58: string): string =>
   Buffer.from(bs58check.decode(base58)).toString("hex");
 
 export const encode58Check = (hex: string): string => bs58check.encode(Buffer.from(hex, "hex"));
+
+const hasExecutionFailed = (tx: Pick<TransactionTronAPI<unknown>, "ret">): boolean =>
+  get(tx, "ret[0].contractRet", "SUCCESS") !== "SUCCESS";
 
 export const formatTrongridTrc20TxResponse = (
   logger: Logger,
@@ -58,7 +62,7 @@ export const formatTrongridTrc20TxResponse = (
       blockHeight,
       value: formattedValue,
       fee: bnFee,
-      hasFailed: false, // trc20 txs are succeeded if returned by trongrid,
+      hasFailed: hasExecutionFailed(detail),
       feesPayer,
     };
   } catch (e) {
@@ -82,6 +86,7 @@ export const formatTrongridTxResponse = async (
       owner_address,
       to_address,
       contract_address,
+      data,
       quant,
       frozen_balance,
       votes,
@@ -89,7 +94,7 @@ export const formatTrongridTxResponse = async (
       balance,
       receiver_address,
     } = tx.raw_data.contract[0].parameter.value;
-    const hasFailed = get(tx, "ret[0].contractRet", "SUCCESS") !== "SUCCESS";
+    const hasFailed = hasExecutionFailed(tx);
     const tokenId =
       type === "TransferAssetContract"
         ? asset_name
@@ -97,7 +102,10 @@ export const formatTrongridTxResponse = async (
           ? encode58Check(contract_address)
           : undefined;
     const from = encode58Check(owner_address);
-    const to = to_address ? encode58Check(to_address) : undefined;
+    const isTrc20 = type === "TriggerSmartContract" && contract_address;
+    const trc20Transfer = isTrc20 && data ? abiDecodeTrc20Transfer(data) : null;
+    const recipientHex = trc20Transfer ? trc20Transfer.to : to_address;
+    const to = recipientHex ? encode58Check(recipientHex) : undefined;
 
     const getValue = (): BigNumber => {
       switch (type) {
@@ -108,6 +116,7 @@ export const formatTrongridTxResponse = async (
           return new BigNumber(quant || 0);
 
         default:
+          if (trc20Transfer) return trc20Transfer.amount;
           return amount ? new BigNumber(amount) : new BigNumber(0);
       }
     };
@@ -115,7 +124,6 @@ export const formatTrongridTxResponse = async (
     const value = getValue();
     const fee = get(tx, "ret[0].fee", undefined);
     const blockHeight = blockNumber;
-    const isTrc20 = type === "TriggerSmartContract" && contract_address;
     const isTrc10 = type === "TransferAssetContract";
     const tokenType = isTrc10 ? "trc10" : isTrc20 ? "trc20" : undefined;
     // The memo the sender attached rides hex-encoded in `raw_data.data`; decode it back to UTF-8 so

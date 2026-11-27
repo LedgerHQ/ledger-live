@@ -5,12 +5,14 @@ export type AccountSettingsMenuProps = Readonly<{
   onEvent?: AccountSettingsEventHandler;
   explorerUrl?: string;
   onChangeName: () => void;
+  onManageAssets?: () => void;
   onViewAdvancedLogs: () => void;
   onRemoveAccount: () => void;
 }>;
 
 export type AccountSettingsMenuLabels = Readonly<{
   changeName: string;
+  manageAssets: string;
   viewAdvancedLogs: string;
   viewExplorer: string;
   removeAccount: string;

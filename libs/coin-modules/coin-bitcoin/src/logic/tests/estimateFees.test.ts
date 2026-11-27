@@ -207,6 +207,63 @@ describe("estimateFees", () => {
     expect(estimation.parameters?.sweepValue).toBe(100_000n);
   });
 
+  it.each(["custom", "medium"])(
+    "prices a send-max with the caller's absolute fee under %s, as crafting signs it",
+    async feesStrategy => {
+      server.use(
+        utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 80_000)], token: null }]),
+        noRates(),
+      );
+      const estimation = await estimateFees(
+        testContext(),
+        "bitcoin",
+        intent({ useAllAmount: true, amount: 0n }),
+        { feesStrategy, fees: 5_000n },
+      );
+      expect(estimation.value).toBe(5_000n);
+      expect(estimation.parameters?.amount).toBe(75_000n);
+      expect(estimation.parameters?.fees).toBe(5_000n);
+      expect(estimation.parameters?.fixedFee).toBe(5_000n);
+      expect(estimation.parameters).not.toHaveProperty("feePerByte");
+      expect(estimation.parameters?.vsize).toBe(vsize(1, false));
+    },
+  );
+
+  it("ignores a rate given with the caller's fee, as crafting does, so a sweep keeps small outputs", async () => {
+    // At 50 sat/vB, the 2,000-sat output is not worth spending; crafting, under the fee, prices at
+    // the relay rate and spends it.
+    server.use(
+      utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 80_000), utxo("b", 2_000)], token: null }]),
+      noRates(),
+    );
+    const estimation = await estimateFees(
+      testContext(),
+      "bitcoin",
+      intent({ useAllAmount: true, amount: 0n }),
+      { fees: 5_000n, feePerByte: 50n },
+    );
+    expect(estimation.parameters?.inputCount).toBe(2);
+    expect(estimation.parameters?.amount).toBe(77_000n);
+  });
+
+  it("returns the fee crafting pays under the caller's fee, change below the dust threshold included", async () => {
+    server.use(utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 15_100)], token: null }]));
+    const estimation = await estimateFees(testContext(), "bitcoin", intent({ amount: 10_000n }), {
+      fees: 5_000n,
+    });
+    expect(estimation.value).toBe(5_100n);
+    expect(estimation.parameters?.change).toBe(0n);
+    expect(estimation.parameters?.fixedFee).toBe(5_000n);
+  });
+
+  it("reports a send the caller's absolute fee leaves uncovered", async () => {
+    server.use(utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 10_000)], token: null }]));
+    const estimation = await estimateFees(testContext(), "bitcoin", intent({ amount: 9_000n }), {
+      fees: 5_000n,
+    });
+    expect(estimation.parameters?.sufficient).toBe(false);
+  });
+
   it("returns the value of the selected outputs a send-max spends under an absolute fee", async () => {
     server.use(
       utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 70_000), utxo("b", 30_000)], token: null }]),

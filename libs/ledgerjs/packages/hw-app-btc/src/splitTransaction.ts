@@ -35,7 +35,6 @@ export function splitTransaction(
   let extraData = Buffer.alloc(0);
   let witnessScript, locktime;
   const isDecred = additionals.includes("decred");
-  const isZencash = additionals.includes("zencash");
   const isZcash = additionals.includes("zcash");
   const transaction = Buffer.from(transactionHex, "hex");
   const version = transaction.slice(offset, offset + 4);
@@ -55,12 +54,7 @@ export function splitTransaction(
   // the same way. Their shielded sections differ, and only a v5 one is parsed below.
   const isZcashv5Plus = isZcashv5 || isZcashv6;
   offset += 4;
-  if (
-    isSegwitSupported &&
-    transaction[offset] === 0 &&
-    transaction[offset + 1] !== 0 &&
-    !isZencash
-  ) {
+  if (isSegwitSupported && transaction[offset] === 0 && transaction[offset + 1] !== 0) {
     offset += 2;
     witness = true;
   }

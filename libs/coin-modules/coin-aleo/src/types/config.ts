@@ -29,4 +29,5 @@ export type AleoCoinConfig = CurrencyConfig & AleoConfig;
 export type AleoContext = Context<AleoCoinConfig> & {
   provableId?: string;
   viewKey?: string;
+  signal?: AbortSignal;
 };

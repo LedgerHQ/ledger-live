@@ -14,7 +14,11 @@ import type {
   GenuineErrorKind,
   UpdateStep,
 } from "LLM/features/DeviceOnboarding/types";
-import { seededPages, seededScreen } from "@features/platform-device-onboarding-analytics";
+import {
+  onboardingPages,
+  onboardingScreen,
+  seededProps,
+} from "@features/platform-device-onboarding-analytics";
 import { ChecksScreen } from "./index";
 
 const mockNavigate = jest.fn();
@@ -147,7 +151,10 @@ function updateScreensFor(step: UpdateStep | null) {
     return [
       {
         key: "update:sheet",
-        tracking: seededScreen(seededPages.osUpdateRequired, DmkDeviceModelId.STAX),
+        tracking: onboardingScreen(
+          onboardingPages.osUpdateRequired,
+          seededProps(DmkDeviceModelId.STAX),
+        ),
       },
     ];
   }
@@ -155,7 +162,10 @@ function updateScreensFor(step: UpdateStep | null) {
     return [
       {
         key: "update:refusal",
-        tracking: seededScreen(seededPages.osUpdateRefusal, DmkDeviceModelId.STAX),
+        tracking: onboardingScreen(
+          onboardingPages.osUpdateRefusal,
+          seededProps(DmkDeviceModelId.STAX),
+        ),
       },
     ];
   }
@@ -506,6 +516,38 @@ describe("ChecksView", () => {
     }
   });
 
+  it("should say the update is not possible, without a USB cable, for that Nano X after setup on Android", async () => {
+    const platform = jest.replaceProperty(Platform, "OS", "android");
+
+    try {
+      const { user, onAcceptUpdate } = renderChecks("updating", {
+        device: nanoX,
+        update: { current: "2.3.0", available: "2.5.0" },
+        updateAfterSetup: true,
+      });
+
+      await user.press(screen.getByText("Update now"));
+
+      expect(screen.getByText("Firmware Update")).toBeVisible();
+      expect(screen.queryByText("USB cable needed")).toBeNull();
+      expect(onAcceptUpdate).not.toHaveBeenCalled();
+    } finally {
+      platform.restore();
+    }
+  });
+
+  it("should run the update of that Nano X after setup over USB", async () => {
+    const { user, onAcceptUpdate } = renderChecks("updating", {
+      device: { ...nanoX, wired: true },
+      update: { current: "2.3.0", available: "2.5.0" },
+      updateAfterSetup: true,
+    });
+
+    await user.press(screen.getByText("Update now"));
+
+    expect(onAcceptUpdate).toHaveBeenCalledTimes(1);
+  });
+
   it("should accept the update from the primary action on a Nano X at 2.4.0", async () => {
     const { user, onAcceptUpdate, onDeclineUpdate, rerender } = renderChecks("updating", {
       device: nanoX,
@@ -698,6 +740,26 @@ describe("ChecksView", () => {
     });
   });
 
+  it("should skip the failed firmware check from the unknown sheet after setup", async () => {
+    jest.mocked(track).mockClear();
+    const onSkipFirmwareCheck = jest.fn();
+    const { user, onQuit } = renderChecks("checking", {
+      error: { kind: "unknown" },
+      onSkipFirmwareCheck,
+    });
+    const sheet = within(screen.getByTestId(checksTestIds.unknownSheet));
+
+    expect(sheet.queryByRole("button", { name: "Cancel set up" })).toBeNull();
+    await user.press(sheet.getByRole("button", { name: "Skip Ledger OS update" }));
+
+    expect(onSkipFirmwareCheck).toHaveBeenCalledTimes(1);
+    expect(onQuit).not.toHaveBeenCalled();
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Skip Ledger OS update",
+      page: "Error: unknown error",
+    });
+  });
+
   it("should retry the genuine check from the unknown sheet", async () => {
     const { user, onRetry, onQuit } = renderChecks("checking", { error: { kind: "unknown" } });
 
@@ -858,7 +920,7 @@ describe("ChecksView", () => {
   });
 
   describe("with the seeded funnel page names", () => {
-    const seededDeviceType = DmkDeviceModelId.STAX;
+    const funnelProps = seededProps(DmkDeviceModelId.STAX);
     const seeded = {
       sourceFlow: "onboarding",
       "onboarding type": "seeded device",
@@ -871,7 +933,7 @@ describe("ChecksView", () => {
       jest.mocked(TrackScreen).mockClear();
       const { user, onRetry } = renderChecks("checking", {
         error: { kind: "declined" },
-        seededDeviceType,
+        funnelProps,
       });
 
       expect(jest.mocked(TrackScreen)).toHaveBeenCalledWith(
@@ -903,7 +965,7 @@ describe("ChecksView", () => {
 
     it("should name the error page in the drawer clicks when the device check fails", async () => {
       jest.mocked(track).mockClear();
-      const { user } = renderChecks("checking", { error: { kind: "unknown" }, seededDeviceType });
+      const { user } = renderChecks("checking", { error: { kind: "unknown" }, funnelProps });
 
       await user.press(
         within(screen.getByTestId(checksTestIds.unknownSheet)).getByRole("button", {
@@ -922,7 +984,7 @@ describe("ChecksView", () => {
       jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
       const { user } = renderChecks("checking", {
         error: { kind: "notGenuine" },
-        seededDeviceType,
+        funnelProps,
       });
 
       await user.press(
@@ -942,7 +1004,7 @@ describe("ChecksView", () => {
       jest.mocked(track).mockClear();
       const { user, onQuit } = renderChecks("checking", {
         error: { kind: "notGenuine" },
-        seededDeviceType,
+        funnelProps,
       });
 
       await user.press(screen.getByTestId(`${checksTestIds.notGenuineSheet}-header-close`));
@@ -962,7 +1024,7 @@ describe("ChecksView", () => {
         device: nanoX,
         update: { current: "2.3.0", available: "2.5.0" },
         onUpdateSheetClosed,
-        seededDeviceType,
+        funnelProps,
       });
 
       await user.press(screen.getByText("Update now"));
@@ -974,7 +1036,7 @@ describe("ChecksView", () => {
     it("should send the previous page as source with the drawer clicks", async () => {
       jest.mocked(track).mockClear();
       jest.mocked(getPreviousTrackingPage).mockReturnValueOnce("Page Check OS version");
-      const { user } = renderChecks("checking", { error: { kind: "unknown" }, seededDeviceType });
+      const { user } = renderChecks("checking", { error: { kind: "unknown" }, funnelProps });
 
       await user.press(
         within(screen.getByTestId(checksTestIds.unknownSheet)).getByRole("button", {
@@ -992,7 +1054,7 @@ describe("ChecksView", () => {
       const onClosePressed = jest.fn();
       const { user, onQuit } = renderChecks("checking", {
         error: { kind: "unknown" },
-        seededDeviceType,
+        funnelProps,
         onClosePressed,
       });
 

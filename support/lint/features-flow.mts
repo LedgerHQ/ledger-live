@@ -3,6 +3,8 @@ import lumen from "@ledgerhq/lumen-lint-plugin/oxlint";
 import { defineConfig } from "oxlint";
 import base from "./base.mts";
 import {
+  ACCOUNT_DESCRIPTOR,
+  ACCOUNT_DESCRIPTOR_EDGES,
   BIGNUMBER_NAMED_IMPORT,
   EXPO_CLIPBOARD,
   LIVE_COMMON_LIB,
@@ -39,6 +41,13 @@ const SLICE_SELECTORS_WAIVERS: string[] = [
   "features/flow/receive",
 ];
 
+const RESTRICTED_PATHS = [LODASH, EXPO_CLIPBOARD, BIGNUMBER_NAMED_IMPORT];
+
+// Globs anchor to features/flow/, like the names above.
+const DESCRIPTOR_EDGES = ACCOUNT_DESCRIPTOR_EDGES.flatMap(pkg =>
+  pkg.startsWith("features/flow/") ? [`${pkg.slice("features/flow/".length)}/**`] : [],
+);
+
 const PLATFORM_STYLE = new URL("../../features/platform/style/", import.meta.url);
 
 export default defineConfig({
@@ -59,7 +68,7 @@ export default defineConfig({
     "eslint/no-restricted-imports": [
       "error",
       {
-        paths: [LODASH, EXPO_CLIPBOARD, BIGNUMBER_NAMED_IMPORT],
+        paths: [...RESTRICTED_PATHS, ...ACCOUNT_DESCRIPTOR],
         patterns: [LIVE_COMMON_LIB],
       },
     ],
@@ -103,14 +112,28 @@ export default defineConfig({
     },
     sliceSelectorsWaivers(SLICE_SELECTORS_WAIVERS),
     {
+      files: DESCRIPTOR_EDGES,
+      rules: {
+        "eslint/no-restricted-imports": [
+          "error",
+          { paths: RESTRICTED_PATHS, patterns: [LIVE_COMMON_LIB] },
+        ],
+      },
+    },
+    {
       // Tailwind only runs on web; native styles go through Lumen's RN components.
       files: ["**/*.web.{ts,tsx}"],
-      jsPlugins: lumen.configs.recommended.jsPlugins,
+      jsPlugins: lumen.configs.react.recommended.jsPlugins,
       rules: {
-        ...lumen.configs.recommended.rules,
+        ...lumen.configs.react.recommended.rules,
         // `dark` is the Lumen color-scheme class toggled on <html> by ThemeProvider, not a utility.
         "better-tailwindcss/no-unknown-classes": ["error", { ignore: ["^dark$"] }],
       },
+    },
+    {
+      files: ["**/*.native.{ts,tsx}"],
+      jsPlugins: lumen.configs.reactnative.recommended.jsPlugins,
+      rules: lumen.configs.reactnative.recommended.rules,
     },
   ],
 });

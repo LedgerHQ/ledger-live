@@ -42,6 +42,7 @@ import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
 import { delegateOsmosis, sendOsmosis } from "./families/osmosis";
 import { AppInfos } from "./enum/AppInfos";
+import type { PerpsProvider } from "./enum/Provider";
 import { DEVICE_LABELS_CONFIG } from "./data/deviceLabelsData";
 import { sendSui, delegateSui } from "./families/sui";
 import { sendConcordium } from "./families/concordium";
@@ -66,6 +67,7 @@ import { sendInternetComputer } from "./families/internet_computer";
 import { sleep } from "./index";
 import { delegateMina, sendMina } from "./families/mina";
 import { sendAleo } from "./families/aleo";
+import { expectDeviceAmount, type DeviceAmount } from "./deviceAmount";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 const SCREEN_POLL_INTERVAL_MS = 500;
@@ -1467,6 +1469,37 @@ export const verifyAmountsAndAcceptSwap = withDeviceController(
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
       } else {
         await buttons.both();
+      }
+    },
+);
+
+export type PerpsDepositReview = {
+  send: DeviceAmount;
+  receiveTicker: string;
+  provider: PerpsProvider;
+};
+
+export const acceptPerpsDeposit = withDeviceController(
+  ({ getButtonsController }) =>
+    async ({ send, receiveTicker, provider }: PerpsDepositReview) => {
+      await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
+      const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+      const swapPair = `swap ${send.ticker} to ${receiveTicker}`;
+      expectSpeculosEventsContainExactly(
+        swapPair,
+        events,
+        `Swap pair "${swapPair}" not found on the device screen`,
+      );
+      expectSpeculosEventsContainExactly(
+        provider.uiName,
+        events,
+        `Provider ${provider.uiName} not found on the device screen`,
+      );
+      expectDeviceAmount({ events, label: "Send", expected: send });
+      if (isTouchDevice()) {
+        await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+      } else {
+        await getButtonsController().both();
       }
     },
 );

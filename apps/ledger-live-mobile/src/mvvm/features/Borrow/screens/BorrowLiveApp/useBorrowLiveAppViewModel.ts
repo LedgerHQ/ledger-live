@@ -15,6 +15,7 @@ import {
   useLiveAppWebviewInputs,
   type LiveAppWebviewInputs,
 } from "LLM/hooks/useLiveAppWebviewInputs";
+import { useBorrowLifecycleMonitoring } from "~/analytics/useBorrowLifecycleMonitoring";
 import type { RefObject } from "react";
 
 type BorrowLiveAppViewModel = {
@@ -71,6 +72,9 @@ export function useBorrowLiveAppViewModel(): BorrowLiveAppViewModel {
 
     return null;
   }, [manifest, isConnected, t]);
+
+  // The view only renders the webview without an error, so monitoring follows its lifetime.
+  useBorrowLifecycleMonitoring(manifest && !error ? borrowManifestId : undefined);
 
   return {
     manifest,

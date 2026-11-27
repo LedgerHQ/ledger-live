@@ -1,14 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import {
-  currencyIdFromNetwork,
-  fromDescriptorPath,
-  AccountDescriptorSchema,
-  AddressSchema,
-  type Address,
-  networkFromCurrencyId,
-  toDescriptorPath,
-  type AccountDescriptor,
-} from "@domain/entity-account-descriptor";
+import { AccountDescriptorSchema, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import {
@@ -21,6 +12,13 @@ import {
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import {
+  currencyIdFromNetwork,
+  AddressSchema,
+  type Address,
+  networkFromCurrencyId,
+} from "@domain/entity-network";
+import { fromDescriptorPath, toDescriptorPath } from "@domain/entity-derivation";
 import { getAccountDescriptorType, loadAddressFromKeyForFamily } from "../coin-modules/registry";
 
 /** Families keyed on their public key: their address cannot give back what reading the account needs. */
@@ -221,4 +219,17 @@ export function toLegacyAccount(input: AccountDescriptor): LegacyAccountFields {
   throw new UnsupportedDescriptorPathError(
     `No derivation mode of ${currencyId} matches path "${descriptor.path}"`,
   );
+}
+
+const REDACTED = "[redacted]";
+
+/** Fields of a legacy account id before its custom data: type, version, currency, address, derivation mode. */
+const LEGACY_ID_FIELDS = 5;
+
+/** The legacy account id with its custom data hidden (Aleo: the view key), for display only. */
+export function redactAccountId(accountId: string): string {
+  const fields = accountId.split(":");
+  if (fields.length <= LEGACY_ID_FIELDS) return accountId;
+  // Custom data may hold an unescaped "+": a token suffix after it cannot be told apart, so it goes too.
+  return [...fields.slice(0, LEGACY_ID_FIELDS), REDACTED].join(":");
 }

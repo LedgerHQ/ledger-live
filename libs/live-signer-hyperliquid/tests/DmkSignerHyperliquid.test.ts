@@ -1,8 +1,8 @@
-import { of, throwError } from "rxjs";
+import { NEVER, of, throwError } from "rxjs";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { SignerHyperliquidBuilder } from "@ledgerhq/device-signer-kit-hyperliquid";
 import { UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
-import { DmkSignerHyperliquid, Action } from "../src/DmkSignerHyperliquid";
+import { DmkSignerHyperliquid, SignActionsAbortedError, Action } from "../src/DmkSignerHyperliquid";
 
 jest.mock("@ledgerhq/device-signer-kit-hyperliquid");
 
@@ -57,18 +57,38 @@ describe("DmkSignerHyperliquid", () => {
       });
     });
 
-    it("should reject with a generic Error when the device action fails", async () => {
+    it.each([true, false])(
+      "should forward skipOpenApp=%s to the underlying signer",
+      async skipOpenApp => {
+        // GIVEN
+        mockSignActions.mockReturnValue({
+          observable: of({ status: DeviceActionStatus.Completed, output: [] }),
+        });
+
+        // WHEN
+        await signer.signActions(path, certificate, signedMetadata, actions, { skipOpenApp });
+
+        // THEN
+        expect(mockSignActions).toHaveBeenCalledWith(expect.objectContaining({ skipOpenApp }));
+      },
+    );
+
+    it("should reject with an Error carrying the DAError as cause when the device action fails", async () => {
       // GIVEN
+      const daError = { _tag: "DeviceDisconnectedWhileSendingError", originalError: null };
       mockSignActions.mockReturnValue({
         observable: of({
           status: DeviceActionStatus.Error,
-          error: { _tag: "SomeDAError", originalError: null },
+          error: daError,
         }),
       });
 
       // WHEN & THEN
-      await expect(signer.signActions(path, certificate, signedMetadata, actions)).rejects.toThrow(
-        "SomeDAError",
+      await expect(signer.signActions(path, certificate, signedMetadata, actions)).rejects.toEqual(
+        expect.objectContaining({
+          message: "DeviceDisconnectedWhileSendingError",
+          cause: daError,
+        }),
       );
     });
 
@@ -79,9 +99,11 @@ describe("DmkSignerHyperliquid", () => {
         expectedError: UserRefusedOnDevice,
       },
       {
-        description: "unknown errorCode → generic Error with _tag",
+        description: "unknown errorCode → generic Error with _tag and cause",
         error: { _tag: "UnknownError", originalError: { errorCode: "9999" } },
-        expectedError: new Error("UnknownError"),
+        expectedError: new Error("UnknownError", {
+          cause: { _tag: "UnknownError", originalError: { errorCode: "9999" } },
+        }),
       },
     ])(
       "should reject with the correct error when the device action fails ($description)",
@@ -100,6 +122,68 @@ describe("DmkSignerHyperliquid", () => {
         ).rejects.toThrow(expectedError);
       },
     );
+
+    it("should not start the device action when the signal is already aborted", async () => {
+      // GIVEN
+      const controller = new AbortController();
+      controller.abort();
+
+      // WHEN & THEN
+      await expect(
+        signer.signActions(path, certificate, signedMetadata, actions, {
+          signal: controller.signal,
+        }),
+      ).rejects.toBeInstanceOf(SignActionsAbortedError);
+      expect(mockSignActions).not.toHaveBeenCalled();
+    });
+
+    it("should cancel the device action and reject with SignActionsAbortedError when the signal aborts", async () => {
+      // GIVEN
+      const controller = new AbortController();
+      const cancel = jest.fn();
+      mockSignActions.mockReturnValue({ observable: NEVER, cancel });
+      const promise = signer.signActions(path, certificate, signedMetadata, actions, {
+        signal: controller.signal,
+      });
+
+      // WHEN
+      controller.abort();
+
+      // THEN
+      await expect(promise).rejects.toBeInstanceOf(SignActionsAbortedError);
+      expect(cancel).toHaveBeenCalledTimes(1);
+    });
+
+    it("should reject with SignActionsAbortedError when the device action stops", async () => {
+      // GIVEN
+      mockSignActions.mockReturnValue({
+        observable: of({ status: DeviceActionStatus.Stopped }),
+      });
+
+      // WHEN & THEN
+      await expect(
+        signer.signActions(path, certificate, signedMetadata, actions),
+      ).rejects.toBeInstanceOf(SignActionsAbortedError);
+    });
+
+    it("should not cancel the device action when the signal aborts after completion", async () => {
+      // GIVEN
+      const controller = new AbortController();
+      const cancel = jest.fn();
+      mockSignActions.mockReturnValue({
+        observable: of({ status: DeviceActionStatus.Completed, output: [] }),
+        cancel,
+      });
+      await signer.signActions(path, certificate, signedMetadata, actions, {
+        signal: controller.signal,
+      });
+
+      // WHEN
+      controller.abort();
+
+      // THEN
+      expect(cancel).not.toHaveBeenCalled();
+    });
 
     it("should reject when the observable itself errors", async () => {
       // GIVEN

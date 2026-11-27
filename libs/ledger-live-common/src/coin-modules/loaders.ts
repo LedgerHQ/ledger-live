@@ -47,7 +47,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "qtum",
       "bitcoin_gold",
       "komodo",
-      "zencash",
       "bitcoin_testnet",
       "bitcoin_regtest",
       "bitcoin_signet",
@@ -63,6 +62,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadPlatformAdapter: () => import("../families/bitcoin/platformAdapter").then(m => m.default),
     loadAccount: () => import("@ledgerhq/coin-bitcoin/account").then(m => m.default),
     loadMockBridge: () => import("../families/bitcoin/bridge/mock").then(m => m.default),
+    loadBridgeApi: () => import("../families/bitcoin/bridge/api").then(m => m.default),
     loadBridgeExtensions: () => import("../families/bitcoin/bridgeExtensions").then(m => m.default),
   },
   {
@@ -126,6 +126,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadSetup: () => import("../families/concordium/setup"),
     loadAccountReceive: () => import("../families/concordium/accountReceive").then(m => m.default),
     loadAccountStatus: () => import("../families/concordium/accountStatus").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/concordium/coinModuleApi").then(m => m.createLocalConcordiumApi),
     loadTransaction: () => import("@ledgerhq/coin-concordium/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-concordium/deviceTransactionConfig").then(m => m.default),

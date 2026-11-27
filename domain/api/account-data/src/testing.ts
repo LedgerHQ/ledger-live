@@ -5,13 +5,11 @@ import {
   accountDataSlice,
   isAccountDataReceived,
 } from "@domain/entity-account-data";
-import {
-  DerivationPathSchema,
-  NetworkIdSchema,
-  computeAccountUUID,
-  type AccountDescriptor,
-  type AccountUUID,
-} from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { DerivationPathSchema } from "@domain/entity-derivation";
+import { NetworkIdSchema } from "@domain/entity-network";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
+import type { AccountUUID } from "@domain/entity-account";
 import { accountDataExtra } from "./extra";
 import type { AccountDataSource } from "./source";
 
@@ -87,7 +85,8 @@ export const descriptor = descriptorOf(0);
 
 export const accountUUID: AccountUUID = computeAccountUUID(descriptor);
 
-const toyReducer = {
+/** The reducers of `makeStore`, for a test store that mounts more slices. */
+export const toyReducer = {
   accountData: accountDataSlice.reducer,
   counter: counterSlice.reducer,
   feed: feedSlice.reducer,

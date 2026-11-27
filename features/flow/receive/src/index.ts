@@ -1,3 +1,4 @@
+export * from "./hooks/useReceiveNetwork";
 export * from "./hooks/useVerifyAddressExecutorViewModel";
 export * from "./hooks/useVerifyAddressFlow";
 export * from "./logic/canVerifyOnDevice";
@@ -7,7 +8,6 @@ export * from "./logic/showsReceiveOptions";
 export * from "./logic/toReceiveTarget";
 export * from "./screens/AddressDisplayed";
 export * from "./screens/AddressMismatch";
-export * from "./screens/AddressVerified";
 export * from "./screens/ReceiveAddress";
 export * from "./state";
 export * from "./types";

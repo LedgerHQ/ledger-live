@@ -1,7 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
 import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import type { FiatCurrencyTicker } from "@domain/entity-currency-fiat";
-import type { AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account";
 import type {
   AccountBalanceHistoriesState,
   AssetBalanceHistory,

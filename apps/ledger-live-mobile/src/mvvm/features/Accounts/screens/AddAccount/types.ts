@@ -21,6 +21,7 @@ export type NetworkBasedAddAccountNavigator = {
   [ScreenName.ScanDeviceAccounts]: CommonParams & {
     device: Device;
     inline?: boolean;
+    openedFromRouteKey?: string;
     returnToSwap?: boolean;
     onSuccess?: (res: { scannedAccounts: Account[]; selected: Account[] }) => void;
   };

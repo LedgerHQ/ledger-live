@@ -1,5 +1,21 @@
 # @features/flow-app-longer-password
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/analytics-react@0.5.1
+  - @features/flow-app-password-setup@0.2.2
+
+## 0.1.5-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/analytics-react@0.5.1-next.0
+  - @features/flow-app-password-setup@0.2.2-next.0
+
 ## 0.1.4
 
 ### Patch Changes

@@ -6,6 +6,7 @@ import {
   formatTrongridTrc20TxResponse,
   formatTrongridTxResponse,
 } from "./format";
+import { fromTrongridTxInfoToOperation } from "./trongrid/trongrid-adapters";
 import { Trc20API, TransactionTronAPI } from "./types";
 
 const mockLogger: Logger = jest.fn();
@@ -102,6 +103,23 @@ describe("formatTrongridTrc20TxResponse", () => {
       tokenAddress: "tokenId",
       feesPayer: "from",
     });
+  });
+
+  it("should set hasFailed when the contract execution did not succeed", () => {
+    const tx = {
+      from: "from",
+      to: "to",
+      block_timestamp: 1,
+      detail: {
+        ret: [{ contractRet: "REVERT", fee: 1 }],
+      },
+      value: 1,
+      transaction_id: "txId",
+      token_info: { address: "tokenId" },
+      type: "Transfer",
+    };
+    const result = formatTrongridTrc20TxResponse(mockLogger, tx as unknown as Trc20API);
+    expect(result?.hasFailed).toBe(true);
   });
 
   it("should fall back to contract_address when token_info.address is missing (unindexed LP contract)", () => {
@@ -347,6 +365,100 @@ describe("formatTrongridTxResponse", () => {
       blockHeight: 42,
       hasFailed: false,
       feesPayer: encode58Check(ownerHex),
+    });
+  });
+
+  describe("failed TRC20 transfer", () => {
+    const usdtContractHex = "41a614f803b6fd780986a42c78ec9c7f77e6ded13c";
+    const usdtContract = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
+    const failedTransfer = (contractRet: string, ownerAddress: string, data: string) =>
+      baseTransactionTronApi(
+        {
+          type: "TriggerSmartContract",
+          parameter: {
+            type_url: "",
+            value: { owner_address: ownerAddress, contract_address: usdtContractHex, data },
+          },
+        },
+        { ret: [{ contractRet, fee: 1000 }] },
+      );
+
+    // https://tronscan.org/#/transaction/ad6f1b78e499f56036f5c041d70a51b82a5fba938b2ca2c38a8b1097b2626cbe
+    const reverted = failedTransfer(
+      "REVERT",
+      "416889a9a908a221d2f161f2348b3eab35e3bcd109",
+      "a9059cbb000000000000000000000000132227a4f5d526f2a2494c632ecaa4530673f99e0000000000000000000000000000000000000000000000000000000091e98400",
+    );
+    // https://tronscan.org/#/transaction/43a380c68306cfd6d0d86900f54fda9614770f0e6343733316a8abbe30937b3c
+    const outOfEnergy = failedTransfer(
+      "OUT_OF_ENERGY",
+      "41b30a3bc2175ec6bd2873d801c88f8f8c55ba1092",
+      "a9059cbb0000000000000000000000007f910ecefff12405d32aa9e330ef997da43ed8000000000000000000000000000000000000000000000000000000004045071900",
+    );
+
+    it.each([
+      {
+        contractRet: "REVERT",
+        tx: reverted,
+        from: "TKVxBz28UQJeS5hZvHufxvCiMzvQ4bUYpa",
+        to: "TBiNkpovzraTunRNcuqJXsocVXVg548XfZ",
+        value: new BigNumber("2448000000"),
+      },
+      {
+        contractRet: "OUT_OF_ENERGY",
+        tx: outOfEnergy,
+        from: "TSHtDRmYPbU5BZnpdCWVXG9VCY4uYS4Djh",
+        to: "TMbibDZFbciWCD9heNteGLQgFdMzBR4dbT",
+        value: new BigNumber("276036000000"),
+      },
+    ])(
+      "should decode the recipient and amount of a $contractRet transfer",
+      async ({ tx, from, to, value }) => {
+        const result = await formatTrongridTxResponse(mockLogger, tx, () => Promise.resolve(null));
+        expect(result).toMatchObject({
+          type: "TriggerSmartContract",
+          tokenType: "trc20",
+          tokenAddress: usdtContract,
+          from,
+          to,
+          value,
+          fee: new BigNumber(1000),
+          hasFailed: true,
+        });
+      },
+    );
+
+    it("should become a failed OUT operation on the token account", async () => {
+      const txInfo = await formatTrongridTxResponse(mockLogger, reverted, () =>
+        Promise.resolve(null),
+      );
+      const sender = "TKVxBz28UQJeS5hZvHufxvCiMzvQ4bUYpa";
+      const block = { height: 42, hash: "blockHash", time: new Date(1) };
+
+      const operation = fromTrongridTxInfoToOperation(txInfo!, block, sender);
+
+      expect(operation).toMatchObject({
+        type: "OUT",
+        value: 2_448_000_000n,
+        senders: [sender],
+        recipients: ["TBiNkpovzraTunRNcuqJXsocVXVg548XfZ"],
+        asset: { type: "trc20", assetReference: usdtContract },
+        tx: expect.objectContaining({ failed: true, fees: 1000n }),
+      });
+    });
+
+    it("should leave the recipient and amount empty for a failed call other than transfer", async () => {
+      const approveData =
+        "095ea7b3000000000000000000000000132227a4f5d526f2a2494c632ecaa4530673f99e0000000000000000000000000000000000000000000000000000000091e98400";
+      const tx = failedTransfer(
+        "REVERT",
+        "416889a9a908a221d2f161f2348b3eab35e3bcd109",
+        approveData,
+      );
+
+      const result = await formatTrongridTxResponse(mockLogger, tx, () => Promise.resolve(null));
+
+      expect(result).toMatchObject({ to: undefined, value: new BigNumber(0), hasFailed: true });
     });
   });
 

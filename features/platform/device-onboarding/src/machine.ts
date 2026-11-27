@@ -1,4 +1,4 @@
-import { sendTo, setup } from "xstate";
+import { and, sendTo, setup } from "xstate";
 import { firmwareCheck } from "./actors/firmwareCheck";
 import { genuineCheck } from "./actors/genuineCheck";
 import { readDeviceState } from "./actors/readDeviceState";
@@ -11,19 +11,18 @@ import {
   exitContract,
   initialContext,
   type ExitOutput,
-} from "./context";
+} from "./internals/contextActions";
 import { isDeviceDisconnected } from "./device/errors";
 import { EarlyCheckToggle } from "./device/toggleEarlyCheckCommand";
-import { firmwareSettled, isTouchscreen, requiresLegacyFlow } from "./rules";
-import {
-  isOnRecoveryKeyScreen,
-  isRecoveryKeyBackupFinished,
-  isWelcomeStep,
-} from "./types.internals";
+import { isTouchscreen } from "./internals/deviceModel";
+import { firmwareSettled } from "./internals/firmwareCheckState";
+import { requiresLegacyFlow, updateWaitsForSeed } from "./firmwareRules";
+import { reportsSetupDone } from "./deviceReady";
+import { finishesSetupOnQuit } from "./postSetupFirmware";
+import { isOnRecoveryKeyScreen, isWelcomeStep } from "./types.internals";
 import {
   isRecoveryKeyBackupInProgress,
   OnboardingStep,
-  RecoveryKeyStatus,
   type DeviceOnboardingContext,
   type DeviceOnboardingInput,
   type DeviceOnboardingOutput,
@@ -38,6 +37,37 @@ function stepIs(...steps: OnboardingStep[]) {
 }
 
 const stopsHere = {};
+
+const firmwareUpdateDelegated = {
+  on: {
+    LOCKED: stopsHere,
+    TRANSPORT_LOST: stopsHere,
+    QUIT: stopsHere,
+    SESSION_CHANGED: stopsHere,
+    FIRMWARE_UPDATE_RECONNECT_REQUIRED: {
+      target: "#deviceOnboarding.awaitingSessionAfterFirmwareUpdate",
+      actions: ["forgetFirmwareCheck", "clearGenuineVerdict", "startReturningFromFirmwareUpdate"],
+    },
+    FIRMWARE_UPDATE_FLOW_CLOSED: {
+      target: "#deviceOnboarding.readingState",
+      actions: [
+        "forgetFirmwareCheck",
+        "forgetAttestationAfterUpdate",
+        "startReturningFromFirmwareUpdate",
+      ],
+    },
+  },
+} as const;
+
+/**
+ * Once the device is seeded and attested on this session, leaving skips only the held-back update,
+ * and the success screen shows.
+ */
+const quitEndsSetup = {
+  guard: "finishesSetupOnQuit",
+  target: "#deviceOnboarding.setupExit",
+  actions: "rememberFirmwareSkipped",
+} as const;
 
 /** A final state. The host's `leaveOnboarding` runs once, when the machine enters it. */
 function exitWith(reason: ExitOutput["reason"]) {
@@ -80,8 +110,12 @@ export const deviceOnboardingMachine = setup({
       requiresLegacyFlow({
         currentVersion: context.firmwareVersion,
         deviceModelId: context.deviceModelId,
+        isOnboarded: context.isOnboarded,
       }),
-    seedSetupNotHosted: ({ context }) => !context.isOnboarded && !context.hostsSeedSetup,
+    unseededNotConnected: ({ context }) => !context.isOnboarded && !context.connectUnseededDevice,
+    // On entry only: a device seeded during this flow must not fall back in the middle of it.
+    seededNotConnected: ({ context }) =>
+      context.onboardedOnEntry === true && !context.connectSeededDevice,
     deviceNotGenuine: ({ context }) => currentVerdict(context)?.isGenuine === false,
     awaitsStart: ({ context }) => !context.hasStarted,
     canShowEarlyCheck: ({ context }) =>
@@ -95,6 +129,22 @@ export const deviceOnboardingMachine = setup({
       !context.checksPaused &&
       currentVerdict(context)?.isGenuine === true &&
       !firmwareSettled(context.firmware),
+    updateWaitsForSeed: ({ context }) =>
+      !context.checksPaused &&
+      currentVerdict(context)?.isGenuine === true &&
+      context.firmware === null &&
+      context.firmwareVersion !== null &&
+      updateWaitsForSeed({
+        currentVersion: context.firmwareVersion,
+        deviceModelId: context.deviceModelId,
+        isOnboarded: context.isOnboarded,
+      }),
+    sessionAttested: ({ context }) => currentVerdict(context)?.isGenuine === true,
+    // A firmware check already run on the seeded device, after a reconnection, answered it.
+    finishesSetupOnQuit: ({ context }) => finishesSetupOnQuit(context),
+    updateDeferred: ({ context }) =>
+      context.updateAfterSetup &&
+      (context.firmware === null || context.firmware.kind === "deferred"),
     updateAwaitingAnswer: ({ context }) =>
       !context.checksPaused && context.firmware?.kind === "offered",
     checksAlreadyPassed: ({ context }) =>
@@ -123,14 +173,7 @@ export const deviceOnboardingMachine = setup({
       isOnRecoveryKeyScreen(event.state) &&
       isRecoveryKeyBackupInProgress(event.state.recoveryKeyStatus),
     deviceIsReady: ({ context, event }) =>
-      event.type === "STEP_CHANGED" &&
-      !(
-        event.state.recoveryKeyStatus === RecoveryKeyStatus.Unknown && context.recoveryKeyBackupOpen
-      ) &&
-      !isRecoveryKeyBackupInProgress(event.state.recoveryKeyStatus) &&
-      (event.state.currentOnboardingStep === OnboardingStep.Ready ||
-        (isOnRecoveryKeyScreen(event.state) &&
-          isRecoveryKeyBackupFinished(event.state.recoveryKeyStatus))),
+      event.type === "STEP_CHANGED" && reportsSetupDone(event.state, context.recoveryKeyBackupOpen),
     stepNaming: stepIs(OnboardingStep.ChooseName),
     stepPin: stepIs(OnboardingStep.Pin),
     stepSetupChoice: stepIs(OnboardingStep.SetupChoice),
@@ -147,7 +190,7 @@ export const deviceOnboardingMachine = setup({
   on: {
     LOCKED: ".deviceLocked",
     TRANSPORT_LOST: ".awaitingSession",
-    QUIT: ".quitting",
+    QUIT: [quitEndsSetup, { target: ".quitting" }],
     // Also here, not only in awaitingSession: the device can lock before SESSION_READY.
     SESSION_CHANGED: { actions: "startNewSession" },
     // Outside deviceSetup there is no seed polling to resume, but the pause must still clear.
@@ -173,7 +216,8 @@ export const deviceOnboardingMachine = setup({
       always: [
         { guard: "deviceNotGenuine", target: "checks.notGenuineSupport" },
         { guard: "requiresLegacyFlow", target: "legacyFallback" },
-        { guard: "seedSetupNotHosted", target: "legacyFallback" },
+        { guard: "unseededNotConnected", target: "legacyFallback" },
+        { guard: "seededNotConnected", target: "legacyFallback" },
         { guard: "awaitsStart", target: "awaitingStart" },
         { guard: "canShowEarlyCheck", target: "checks.enteringEarlyCheckScreen" },
         { target: "checks.checksIdle" },
@@ -210,6 +254,7 @@ export const deviceOnboardingMachine = setup({
           always: [
             { guard: "shouldRunGenuineCheck", target: "genuineCheck" },
             { guard: "updateAwaitingAnswer", target: "firmwareUpdateOffered" },
+            { guard: "updateWaitsForSeed", target: "checksDone", actions: "deferUpdate" },
             { guard: "shouldRunFirmwareCheck", target: "firmwareCheck" },
             { guard: "checksAlreadyPassed", target: "checksDone" },
           ],
@@ -312,30 +357,7 @@ export const deviceOnboardingMachine = setup({
           },
         },
 
-        firmwareUpdateDelegated: {
-          on: {
-            LOCKED: stopsHere,
-            TRANSPORT_LOST: stopsHere,
-            QUIT: stopsHere,
-            SESSION_CHANGED: stopsHere,
-            FIRMWARE_UPDATE_RECONNECT_REQUIRED: {
-              target: "#deviceOnboarding.awaitingSessionAfterFirmwareUpdate",
-              actions: [
-                "forgetFirmwareCheck",
-                "clearGenuineVerdict",
-                "startReturningFromFirmwareUpdate",
-              ],
-            },
-            FIRMWARE_UPDATE_FLOW_CLOSED: {
-              target: "#deviceOnboarding.readingState",
-              actions: [
-                "forgetFirmwareCheck",
-                "forgetAttestationAfterUpdate",
-                "startReturningFromFirmwareUpdate",
-              ],
-            },
-          },
-        },
+        firmwareUpdateDelegated,
 
         checksDone: {
           always: [
@@ -419,6 +441,18 @@ export const deviceOnboardingMachine = setup({
             actions: ["rememberSetupStep", "forgetSetupProgress"],
           },
           {
+            guard: and(["deviceIsReady", "updateDeferred", "sessionAttested"]),
+            target: "#deviceOnboarding.postSetupFirmware",
+            actions: ["rememberSetupStep", "rememberOnboarded"],
+          },
+          // The session changed during setup: its genuine check runs first, then the seeded checks
+          // offer the update.
+          {
+            guard: and(["deviceIsReady", "updateDeferred"]),
+            target: "#deviceOnboarding.readingState",
+            actions: ["rememberSetupStep", "rememberOnboarded"],
+          },
+          {
             guard: "deviceIsReady",
             target: "#deviceOnboarding.setupExit",
             actions: "rememberSetupStep",
@@ -451,6 +485,65 @@ export const deviceOnboardingMachine = setup({
         restoreRecoveryKey: {},
       },
     },
+
+    // The update an unseeded Nano held back until it was seeded.
+    postSetupFirmware: {
+      initial: "firmwareCheck",
+      // A check on the old session would answer for the new one: attest the new one first.
+      on: {
+        SESSION_CHANGED: { target: "#deviceOnboarding.readingState", actions: "startNewSession" },
+      },
+      states: {
+        firmwareCheck: {
+          invoke: {
+            src: "firmwareCheck",
+            input: ({ context }) => ({
+              dmk: context.dmk,
+              sessionId: context.sessionId,
+            }),
+          },
+          on: {
+            FIRMWARE_UP_TO_DATE: {
+              target: "#deviceOnboarding.setupExit",
+              actions: "rememberFirmwareUpToDate",
+            },
+            FIRMWARE_UPDATE_AVAILABLE: {
+              target: "firmwareUpdateOffered",
+              actions: "rememberAvailableUpdate",
+            },
+            FIRMWARE_CHECK_FAILED: "firmwareCheckFailed",
+          },
+        },
+
+        firmwareCheckFailed: {
+          on: {
+            RETRY: "firmwareCheck",
+            SKIP: {
+              target: "#deviceOnboarding.setupExit",
+              actions: "rememberFirmwareSkipped",
+            },
+            CLOSE: {
+              target: "#deviceOnboarding.setupExit",
+              actions: "rememberFirmwareSkipped",
+            },
+          },
+        },
+
+        firmwareUpdateOffered: {
+          on: {
+            // The flag stays until the update is answered: the user may come back without updating.
+            USER_ACCEPT: "firmwareUpdateDelegated",
+            USER_DECLINE: {
+              target: "#deviceOnboarding.setupExit",
+              actions: "rememberFirmwareDeclined",
+            },
+          },
+        },
+
+        firmwareUpdateDelegated,
+      },
+    },
+
     syncOffer: exitWith("offerLedgerSync"),
     done: exitWith("completed"),
 
@@ -464,7 +557,7 @@ export const deviceOnboardingMachine = setup({
     awaitingSession: {
       on: {
         SESSION_READY: { target: "readingState", actions: "startNewSession" },
-        QUIT: "#deviceOnboarding.exitOnboarding",
+        QUIT: [quitEndsSetup, { target: "#deviceOnboarding.exitOnboarding" }],
       },
     },
     awaitingSessionAfterFirmwareUpdate: {

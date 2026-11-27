@@ -9,7 +9,10 @@ import { setupInfoTestIds } from "./internals";
 const COPY = {
   en: {
     translation: {
-      "deviceOnboarding.setup.info.cards.setupChoice": "Which setup method?",
+      "deviceOnboarding.setup.info.cards.setupChoice": "Set up or restore?",
+      "deviceOnboarding.setup.info.cards.pin": "Your PIN Code: Explained",
+      "deviceOnboarding.setup.info.pin.description": "PIN is the first layer.",
+      "deviceOnboarding.setup.info.pin.lostSigner": "Three wrong attempts reset it.",
       "deviceOnboarding.setup.info.cards.recoveryPhrase": "What’s a Secret Recovery Phrase?",
       "deviceOnboarding.setup.info.cards.restoreRecoveryKey": "What’s a Secret Recovery Key?",
       "deviceOnboarding.setup.info.faq": "View complete FAQ",
@@ -64,13 +67,25 @@ describe("SetupInfo", () => {
   it("should open the stage's sheet from its card", async () => {
     const { user } = renderSetupInfo();
 
-    expect(screen.getByText("Which setup method?")).toBeTruthy();
+    expect(screen.getByText("Set up or restore?")).toBeTruthy();
     expect(sheet()).toHaveProp("accessibilityState", { expanded: false });
 
     await user.press(screen.getByTestId(setupInfoTestIds.card));
 
     expect(sheet()).toHaveProp("accessibilityState", { expanded: true });
     expect(screen.getByText("Set up as a new Ledger device")).toBeTruthy();
+  });
+
+  it("should explain the PIN from the PIN card", async () => {
+    const { user } = renderSetupInfo({ card: "pin" });
+
+    expect(screen.getByText("Your PIN Code: Explained")).toBeTruthy();
+    await user.press(screen.getByTestId(setupInfoTestIds.card));
+
+    expect(sheet()).toHaveProp("accessibilityState", { expanded: true });
+    expect(
+      screen.getByText(/PIN is the first layer\.\s+Three wrong attempts reset it\./),
+    ).toBeTruthy();
   });
 
   it("should open the Recovery Key sheet from the restore card", async () => {

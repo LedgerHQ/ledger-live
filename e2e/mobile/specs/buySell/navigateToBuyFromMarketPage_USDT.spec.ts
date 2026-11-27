@@ -21,4 +21,9 @@ const tags = [
   "@family-evm",
 ];
 
-runNavigateToBuyFromMarketPageTest(usdtBuySell, paymentMethod, ["B2CQA-3414"], tags);
+runNavigateToBuyFromMarketPageTest({
+  buySell: usdtBuySell,
+  paymentMethod,
+  tmsLinks: ["B2CQA-3414"],
+  tags,
+});
