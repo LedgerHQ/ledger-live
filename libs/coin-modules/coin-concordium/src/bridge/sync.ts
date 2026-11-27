@@ -19,7 +19,7 @@ import type {
 } from "../types";
 import { attachSubOperations, splitPaidFee } from "./operations";
 import { mapRawOperationToBridgeOperation } from "./serialization";
-import { HISTORY_VERSION, TOKENS_OFF_SYNC_HASH } from "./syncHash";
+import { HISTORY_VERSION, REFETCH_SYNC_HASH, TOKENS_OFF_SYNC_HASH } from "./syncHash";
 import {
   applyTokensToResources,
   buildParentOperation,
@@ -91,17 +91,6 @@ export async function getBalance(
     accountTokens: Array.isArray(accountTokens) ? accountTokens : undefined,
   };
 }
-
-/**
- * Stored by a sync that fetched PLT transfers it could not attribute, so the
- * next one mismatches and re-reads from height zero.
- *
- * It stays set for as long as the cause lasts. The causes are transient by
- * construction — a balance response without its token list, a CAL that will not
- * answer — so the re-read repeats while the fault does and stops when it lifts.
- * Anything permanent is kept out of this marker at the `tokens.ts` end.
- */
-const REFETCH_SYNC_HASH = "refetch-pending";
 
 /**
  * Names the assumptions the stored history was built under. Both flag states

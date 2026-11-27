@@ -825,8 +825,8 @@ describe("getAccountShape with tokens disabled", () => {
     expect(result.syncHash).toBe("tokens=off:history=3");
   });
 
-  it.each(["tokens=off", "tokens=off:history=2"])(
-    "should re-read from zero a history stored under the older version %s",
+  it.each(["tokens=off", "tokens=off:history=2", "refetch-pending"])(
+    "should re-read from zero a history stored as %s",
     async syncHash => {
       const result = await getAccountShape({
         currency: createFixtureCurrency(),

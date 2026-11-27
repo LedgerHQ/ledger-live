@@ -46,7 +46,10 @@ describe("api/estimateFees", () => {
 
     const result = await api.estimateFees(context, transactionIntent);
 
-    expect(estimateFeesMock).toHaveBeenCalledWith(context, "fee test");
+    expect(estimateFeesMock).toHaveBeenCalledWith(
+      expect.objectContaining({ logger: context.logger }),
+      "fee test",
+    );
     expect(result).toEqual({ value: BigInt(1500) });
   });
 

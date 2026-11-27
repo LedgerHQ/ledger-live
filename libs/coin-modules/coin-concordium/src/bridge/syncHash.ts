@@ -9,3 +9,17 @@
 export const HISTORY_VERSION = "history=3";
 
 export const TOKENS_OFF_SYNC_HASH = `tokens=off:${HISTORY_VERSION}`;
+
+/**
+ * Matches no computed hash, so the next sync re-reads from height zero.
+ *
+ * A sync stores it when it fetched PLT transfers it could not attribute. It
+ * stays set for as long as the cause lasts. The causes are transient by
+ * construction — a balance response without its token list, a CAL that will not
+ * answer — so the re-read repeats while the fault does and stops when it lifts.
+ * Anything permanent is kept out of this marker at the `tokens.ts` end.
+ *
+ * The load strip stores it when the stored history does not match the tokens-off
+ * state it leaves.
+ */
+export const REFETCH_SYNC_HASH = "refetch-pending";

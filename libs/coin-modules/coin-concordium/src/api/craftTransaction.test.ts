@@ -45,7 +45,10 @@ describe("api/craftTransaction", () => {
 
     const result = await api.craftTransaction(context, transactionIntent);
 
-    expect(getNextValidSequenceMock).toHaveBeenCalledWith(context, transactionIntent.sender);
+    expect(getNextValidSequenceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ logger: context.logger }),
+      transactionIntent.sender,
+    );
     expect(craftTransactionMock).toHaveBeenCalledWith(
       { address: transactionIntent.sender, nextSequenceNumber: 5 },
       expect.objectContaining({

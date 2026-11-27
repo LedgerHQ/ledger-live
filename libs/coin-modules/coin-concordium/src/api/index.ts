@@ -36,8 +36,17 @@ import {
   listOperations as listOperationsLogic,
 } from "../logic";
 import { getAccountStatus, type ConcordiumAccountStatus } from "../logic/account/getAccountStatus";
-import type { ConcordiumCoinConfig, ConcordiumContext, ConcordiumMemo } from "../types";
+import {
+  withConfig,
+  type ConcordiumCoinConfig,
+  type ConcordiumContext,
+  type ConcordiumMemo,
+} from "../types";
 import { mapRawOperationToApiOperation } from "./utils";
+
+/** Resolves the config once per call, so every request of the call reaches the same proxy. */
+const pin = async (context: ConcordiumContext): Promise<ConcordiumContext> =>
+  withConfig(context, await context.config());
 
 // Not in `CoinModuleApi` yet.
 type AccountStatusCapability<C> = {
@@ -45,10 +54,10 @@ type AccountStatusCapability<C> = {
 };
 
 /**
- * In the {@link Context}-based API (ADR-019) the coin configuration is resolved per call from
- * `context.config()` inside the concordium network/logic layers, which take the `Context` as their
- * first argument; the config alone selects the chain. The classic bridge threads the `Context` it
- * receives the same way, pinned to the config of the account's currency.
+ * In the {@link Context}-based API (ADR-019) each method resolves the coin configuration once and
+ * hands the concordium network/logic layers, which take the `Context` as their first argument, a
+ * context pinned to it; the config alone selects the chain. The classic bridge threads the
+ * `Context` it receives the same way, pinned to the config of the account's currency.
  *
  * Checked against {@link CoinModuleImpl} with `satisfies` rather than annotated as it, so the
  * precise shape survives and a caller sees exactly which methods exist.
@@ -63,25 +72,26 @@ type AccountStatusCapability<C> = {
  */
 export function createApi() {
   return {
-    broadcast: (context, tx, _options?) => broadcast(context, tx),
+    broadcast: async (context, tx, _options?) => broadcast(await pin(context), tx),
     combine: (_context, tx, signature, _options?) => combine(tx, signature),
-    craftTransaction: (context, transactionIntent, _options?) =>
-      craftTransaction(context, transactionIntent),
-    craftRawTransaction: (context, transaction, sender, publicKey, sequence) =>
-      craftRawTransaction(context, transaction, sender, publicKey, sequence),
-    estimateFees: (context, transactionIntent, _options?) =>
-      estimateFees(context, transactionIntent),
-    getAccountStatus: (context: ConcordiumContext, publicKey: string) => {
+    craftTransaction: async (context, transactionIntent, _options?) =>
+      craftTransaction(await pin(context), transactionIntent),
+    craftRawTransaction: async (context, transaction, sender, publicKey, sequence) =>
+      craftRawTransaction(await pin(context), transaction, sender, publicKey, sequence),
+    estimateFees: async (context, transactionIntent, _options?) =>
+      estimateFees(await pin(context), transactionIntent),
+    getAccountStatus: async (context: ConcordiumContext, publicKey: string) => {
       const signal = context.signal instanceof AbortSignal ? context.signal : undefined;
-      return getAccountStatus(context, publicKey, signal);
+      return getAccountStatus(await pin(context), publicKey, signal);
     },
     getBalance: (context, address: string, options?: BalanceOptions): Promise<Balance[]> =>
-      rejectBalanceOptions(() => getBalance(context, address), options),
-    lastBlock: (context): Promise<BlockInfo> => lastBlock(context),
-    listOperations: (context, address, options): Promise<Page<Operation>> =>
-      listOperations(context, address, options),
-    getBlock: (context, height): Promise<Block> => getBlock(context, height),
-    getBlockInfo: (context, height): Promise<BlockInfo> => getBlockInfo(context, height),
+      rejectBalanceOptions(async () => getBalance(await pin(context), address), options),
+    lastBlock: async (context): Promise<BlockInfo> => lastBlock(await pin(context)),
+    listOperations: async (context, address, options): Promise<Page<Operation>> =>
+      listOperations(await pin(context), address, options),
+    getBlock: async (context, height): Promise<Block> => getBlock(await pin(context), height),
+    getBlockInfo: async (context, height): Promise<BlockInfo> =>
+      getBlockInfo(await pin(context), height),
     validateAddress: async (
       _context: ConcordiumContext,
       address: string,

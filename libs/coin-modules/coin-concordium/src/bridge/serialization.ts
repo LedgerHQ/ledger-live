@@ -8,7 +8,7 @@ import type {
 } from "../types";
 import { boolean } from "../tuning";
 import { toOperation } from "./operations";
-import { TOKENS_OFF_SYNC_HASH } from "./syncHash";
+import { REFETCH_SYNC_HASH, TOKENS_OFF_SYNC_HASH } from "./syncHash";
 import { applyTokensToResources } from "./tokens";
 
 export function isConcordiumAccount(account: Account): account is ConcordiumAccount {
@@ -88,10 +88,11 @@ export const makeAssignFromAccountRaw =
         kind: "cleared",
       });
       delete account.subAccounts;
-      // A strip under a malformed flag fails every sync, so none records the off
-      // state; without it, a stored tokens-on hash would block the re-read that
-      // restores the stripped history once the flag is fixed.
-      account.syncHash = TOKENS_OFF_SYNC_HASH;
+      // Only a current tokens-off hash describes the history kept here. Any other
+      // one (tokens-on, an older history version) must force the next sync to
+      // re-read, including the one that follows a malformed flag being fixed,
+      // since a sync under that flag fails and records nothing.
+      if (account.syncHash !== TOKENS_OFF_SYNC_HASH) account.syncHash = REFETCH_SYNC_HASH;
       return;
     }
 
