@@ -29,33 +29,33 @@ export function isEarnApiAction(action: Action): boolean {
  */
 export function redactEarnApiAction<A extends Action>(action: A): A {
   if (!isEarnApiAction(action)) return action;
+  return { ...action, ...redactedFieldsOf(action) };
+}
 
-  const actionWithoutAddresses: Record<string, unknown> = { ...action };
-  if ("payload" in actionWithoutAddresses && actionWithoutAddresses.payload !== undefined) {
-    actionWithoutAddresses.payload = payloadWithoutBody(actionWithoutAddresses.payload);
-  }
-  if ("error" in actionWithoutAddresses && actionWithoutAddresses.error !== undefined) {
-    actionWithoutAddresses.error = REDACTED;
-  }
-  if (isRecord(actionWithoutAddresses.meta)) {
-    const meta = { ...actionWithoutAddresses.meta };
+type ActionFields = Action & Readonly<{ payload?: unknown; error?: unknown; meta?: unknown }>;
+
+/** The fields of an Earn action that name a wallet address or a stake account, redacted. */
+function redactedFieldsOf(action: ActionFields): Record<string, unknown> {
+  const fields: Record<string, unknown> = {};
+  if (action.payload !== undefined) fields.payload = payloadWithoutBody(action.payload);
+  if (action.error !== undefined) fields.error = REDACTED;
+  if (isRecord(action.meta)) {
+    const meta = { ...action.meta };
     if (isRecord(meta.arg)) {
       meta.arg = { ...meta.arg, originalArgs: REDACTED, queryCacheKey: REDACTED };
     }
     if (isRecord(meta.baseQueryMeta)) {
       meta.baseQueryMeta = metaWithoutRequestAndResponse(meta.baseQueryMeta);
     }
-    actionWithoutAddresses.meta = meta;
+    fields.meta = meta;
   }
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  return actionWithoutAddresses as A;
+  return fields;
 }
 
 /** A copy of the store safe to export: the Earn slice is replaced, keys included. */
 export function redactEarnApiState<S>(state: S): S {
   if (!isRecord(state) || !isRecord(state[EARN_REDUCER_PATH])) return state;
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  return { ...state, [EARN_REDUCER_PATH]: REDACTED } as S;
+  return { ...state, [EARN_REDUCER_PATH]: REDACTED };
 }
 
 function metaWithoutRequestAndResponse(meta: Record<string, unknown>): Record<string, unknown> {
