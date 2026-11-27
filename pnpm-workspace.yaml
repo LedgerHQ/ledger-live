@@ -269,15 +269,6 @@ catalog:
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
-  - "@appium/base-driver@11.0.1"
-  - "@appium/base-plugin@4.0.1"
-  - "@appium/docutils@4.0.1"
-  - "@appium/http-server@1.0.1"
-  - "@appium/support@8.0.1"
-  - allure-commandline@2.46.2
-  - appium-uiautomator2-driver@10.1.0
-  - appium-xcuitest-driver@13.7.0
-  - appium@4.0.1
 
 autoInstallPeers: false
 enablePrePostScripts: true
