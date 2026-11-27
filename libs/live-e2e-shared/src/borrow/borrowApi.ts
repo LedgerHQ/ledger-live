@@ -14,6 +14,8 @@ const POLL_INTERVAL_MS = 3_000;
 const POLL_MAX_ATTEMPTS = 60;
 const THROTTLE_RETRY_ATTEMPTS = 6;
 const THROTTLE_RETRY_BASE_DELAY_MS = 4_000;
+const LOOKUP_FLAP_RETRY_ATTEMPTS = 30;
+const LOOKUP_FLAP_RETRY_DELAY_MS = 2_000;
 
 /** This driver targets Ethereum mainnet only. */
 export const ETHEREUM_NETWORK = "ethereum";
@@ -48,6 +50,14 @@ function isEdgeRejection(status: number): boolean {
 
 function isTransientRead(status: number): boolean {
   return status >= 500 || status === 429;
+}
+
+/**
+ * Staging answers a lookup of an action or transaction it has just created with a 404 more often
+ * than not, alternating with 200 for the same id. Only for ids the partner itself handed out.
+ */
+function isLookupFlap(status: number): boolean {
+  return status === 404;
 }
 
 type PostOptions = { pathname: string; body: unknown; retryOn5xx?: boolean };
@@ -220,36 +230,64 @@ export async function resolveRepaySpender(options: RepaySpenderOptions): Promise
 
 type SubmitTransactionOptions = { transactionId: string; txHash: string };
 
-/** Best-effort notify; the state we act on is the on-chain confirmation, not this. */
+/**
+ * The partner leaves an action at `created` until it is given each step's hash. Resending the same
+ * hash for the same transaction cannot leave anything behind, so 5xx and 404 are retried. Not
+ * thrown: the step is already confirmed on chain, and `pollAction` names an action left unsettled.
+ */
 export async function submitTransaction(options: SubmitTransactionOptions): Promise<void> {
   const { transactionId, txHash } = options;
-  await post({ pathname: `/v1/transactions/${transactionId}/submit`, body: { txHash } }).catch(
-    () => {},
-  );
+  const pathname = `/v1/transactions/${transactionId}/submit`;
+  try {
+    for (let attempt = 1; ; attempt++) {
+      const res = await post({ pathname, body: { txHash }, retryOn5xx: true });
+      if (res.ok) return;
+      if (!isLookupFlap(res.status) || attempt >= LOOKUP_FLAP_RETRY_ATTEMPTS) {
+        console.warn(`    api: ${(await failedRequest(`POST ${pathname}`, res)).message}`);
+        return;
+      }
+      await new Promise(resolve => setTimeout(resolve, LOOKUP_FLAP_RETRY_DELAY_MS));
+    }
+  } catch (error) {
+    console.warn(`    api: POST ${pathname} failed:`, error);
+  }
 }
 
-/** One poll: the lowercased status, or `undefined` on a transient error (5xx / network) worth retrying. */
-async function pollActionStatus(actionId: string): Promise<string | undefined> {
+type ActionPoll = { status: string } | { retryReason: string };
+
+async function pollActionStatus(actionId: string): Promise<ActionPoll> {
+  const request = `GET /v1/actions/${actionId}`;
   let res: Response;
   try {
     res = await fetch(`${BASE_URL}/v1/actions/${actionId}`, { headers: JSON_HEADERS });
-  } catch {
-    return undefined;
+  } catch (error) {
+    return { retryReason: `${request} failed: ${String(error)}` };
   }
-  if (res.ok) return getString(await res.json(), "status")?.toLowerCase();
-  if (isTransientRead(res.status)) return undefined;
-  throw await failedRequest(`GET /v1/actions/${actionId}`, res);
+  if (res.ok) {
+    return { status: getString(await res.json(), "status")?.toLowerCase() ?? "missing" };
+  }
+  const failure = await failedRequest(request, res);
+  if (isTransientRead(res.status) || isLookupFlap(res.status)) {
+    return { retryReason: failure.message };
+  }
+  throw failure;
 }
 
-/** Polls the action to `success` (throws on `failed` or timeout); transient 5xx/network errors retry. */
+/** Polls the action to `success` (throws on `failed` or timeout), polling through transient errors. */
 export async function pollAction(actionId: string): Promise<void> {
+  let lastPoll = "none";
   for (let attempt = 0; attempt < POLL_MAX_ATTEMPTS; attempt++) {
-    const status = await pollActionStatus(actionId);
-    if (status === "success") return;
-    if (status === "failed") throw new Error(`Action ${actionId} failed on-chain`);
+    const poll = await pollActionStatus(actionId);
+    if ("status" in poll) {
+      if (poll.status === "success") return;
+      if (poll.status === "failed") throw new Error(`Action ${actionId} failed on-chain`);
+      lastPoll = `status ${poll.status}`;
+    } else {
+      lastPoll = poll.retryReason;
+    }
     await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL_MS));
   }
-  throw new Error(`Action ${actionId} timed out`);
+  throw new Error(`Action ${actionId} timed out (last poll: ${lastPoll})`);
 }
 
 /**
