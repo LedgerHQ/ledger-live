@@ -1,16 +1,16 @@
 import { Left, Right } from "purify-ts";
 import {
-  type BlindSigningReporter,
-  type BlindSigningReportParams,
+  type SignReporter,
+  type SignReportParams,
   ContextModuleChainID,
 } from "@ledgerhq/context-module";
 import {
   LiveBlindSigningReporter,
-  buildDefaultHttpBlindSigningReporter,
+  buildDefaultHttpSignReporter,
   liveBlindSigningReporter,
 } from "./LiveBlindSigningReporter";
 
-const makeParams = (overrides: Partial<BlindSigningReportParams> = {}): BlindSigningReportParams =>
+const makeParams = (overrides: Partial<SignReportParams> = {}): SignReportParams =>
   ({
     signatureId: "sig-1",
     signingMethod: "eth_signTransaction",
@@ -21,13 +21,13 @@ const makeParams = (overrides: Partial<BlindSigningReportParams> = {}): BlindSig
     modelId: "nanoX",
     signerAppVersion: "1.0.0",
     deviceVersion: "2.0.0",
-    ethContext: null,
+    chain: "ETH",
     ...overrides,
-  }) as unknown as BlindSigningReportParams;
+  }) as unknown as SignReportParams;
 
 const makeFakeInner = (
-  result: Awaited<ReturnType<BlindSigningReporter["report"]>> = Right<void, Error>(undefined),
-): BlindSigningReporter & { report: jest.Mock } => ({
+  result: Awaited<ReturnType<SignReporter["report"]>> = Right<void, Error>(undefined),
+): SignReporter & { report: jest.Mock } => ({
   report: jest.fn().mockResolvedValue(result),
 });
 
@@ -38,7 +38,7 @@ describe("LiveBlindSigningReporter", () => {
     reporter.clearContext();
     reporter.setConsent(false);
     // Reset inner: no public clear method exists; cast to satisfy the setter.
-    reporter.setInner(undefined as unknown as BlindSigningReporter);
+    reporter.setInner(undefined as unknown as SignReporter);
   });
 
   describe("singleton", () => {
@@ -175,23 +175,16 @@ describe("LiveBlindSigningReporter", () => {
   });
 });
 
-describe("buildDefaultHttpBlindSigningReporter", () => {
-  it("returns an object implementing BlindSigningReporter", () => {
-    const built = buildDefaultHttpBlindSigningReporter(
-      "origin-token",
-      ContextModuleChainID.Ethereum,
-    );
+describe("buildDefaultHttpSignReporter", () => {
+  it("returns an object implementing SignReporter", () => {
+    const built = buildDefaultHttpSignReporter("origin-token", ContextModuleChainID.Ethereum);
     expect(built).toBeTruthy();
     expect(typeof built.report).toBe("function");
   });
 
   it("accepts a custom appSource without throwing", () => {
     expect(() =>
-      buildDefaultHttpBlindSigningReporter(
-        "origin-token",
-        ContextModuleChainID.Ethereum,
-        "custom-source",
-      ),
+      buildDefaultHttpSignReporter("origin-token", ContextModuleChainID.Ethereum, "custom-source"),
     ).not.toThrow();
   });
 });

@@ -1,17 +1,16 @@
 import { type Either, Right } from "purify-ts";
 import { noopLoggerFactory } from "@ledgerhq/device-management-kit";
 import {
-  type BlindSigningPlatform,
-  type BlindSigningReporter,
-  type BlindSigningReportParams,
   type ContextModuleChainID,
+  type SignReporter,
+  type SignReportParams,
   DEFAULT_CONFIG,
-  DefaultBlindSigningReporter,
-  HttpBlindSigningReporterDatasource,
+  DefaultSignReporter,
+  HttpSignReporterDatasource,
 } from "@ledgerhq/context-module";
 
 export type LiveBlindSigningContext = {
-  platform?: BlindSigningPlatform;
+  platform?: SignReportParams["platform"];
   appVersion?: string;
   platformOS?: string;
   platformVersion?: string;
@@ -19,11 +18,11 @@ export type LiveBlindSigningContext = {
   sessionId?: string | null;
 };
 
-export class LiveBlindSigningReporter implements BlindSigningReporter {
+export class LiveBlindSigningReporter implements SignReporter {
   private static _instance: LiveBlindSigningReporter | null = null;
 
   private context: LiveBlindSigningContext = {};
-  private inner: BlindSigningReporter | null = null;
+  private inner: SignReporter | null = null;
   private consentGetter: () => boolean = () => false;
 
   private constructor() {}
@@ -35,7 +34,7 @@ export class LiveBlindSigningReporter implements BlindSigningReporter {
     return LiveBlindSigningReporter._instance;
   }
 
-  setInner(inner: BlindSigningReporter) {
+  setInner(inner: SignReporter) {
     this.inner = inner;
   }
 
@@ -63,7 +62,7 @@ export class LiveBlindSigningReporter implements BlindSigningReporter {
     return this.consentGetter();
   }
 
-  async report(params: BlindSigningReportParams): Promise<Either<Error, void>> {
+  async report(params: SignReportParams): Promise<Either<Error, void>> {
     if (!this.inner) return Right<void, Error>(undefined);
     if (!this.consentGetter()) {
       return this.inner.report(params);
@@ -71,24 +70,27 @@ export class LiveBlindSigningReporter implements BlindSigningReporter {
     return this.inner.report({
       ...params,
       ...this.context,
-    } as BlindSigningReportParams);
+    });
   }
 }
 
 export const liveBlindSigningReporter = LiveBlindSigningReporter.getInstance();
 
-export function buildDefaultHttpBlindSigningReporter(
+export function buildDefaultHttpSignReporter(
   originToken: string,
   chain: ContextModuleChainID,
   appSource = "ledger-wallet",
-): BlindSigningReporter {
-  return new DefaultBlindSigningReporter(
-    new HttpBlindSigningReporterDatasource({
-      ...DEFAULT_CONFIG,
-      appSource,
-      originToken,
-      loggerFactory: noopLoggerFactory,
-      chain,
-    }),
+): SignReporter {
+  return new DefaultSignReporter(
+    new HttpSignReporterDatasource(
+      {
+        ...DEFAULT_CONFIG,
+        appSource,
+        originToken,
+        loggerFactory: noopLoggerFactory,
+        chain,
+      },
+      noopLoggerFactory,
+    ),
   );
 }

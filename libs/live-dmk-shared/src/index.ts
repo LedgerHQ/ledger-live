@@ -116,7 +116,7 @@ export { syncFirmwareDistributionSalt } from "./services/syncFirmwareDistributio
 export {
   LiveBlindSigningReporter,
   liveBlindSigningReporter,
-  buildDefaultHttpBlindSigningReporter,
+  buildDefaultHttpSignReporter,
 } from "./services/LiveBlindSigningReporter";
 export type { LiveBlindSigningContext } from "./services/LiveBlindSigningReporter";
 export { DmkCompatTransport } from "./transport/DmkCompatTransport";
