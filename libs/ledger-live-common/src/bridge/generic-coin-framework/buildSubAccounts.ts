@@ -10,7 +10,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/types";
 import type { FamilyAccountShape } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { mergeOps } from "../jsHelpers";
-import { cleanedOperation } from "./utils";
+import { cleanedOperation, withDistinctOperationIds } from "./utils";
 import { OperationCommon } from "./types";
 
 function buildTokenAccount({
@@ -33,17 +33,19 @@ function buildTokenAccount({
     new BigNumber(assetBalance.locked?.toString() || "0"),
   );
 
-  const tokenOperations = operations.map(op =>
-    cleanedOperation({
-      ...op,
-      id: encodeOperationId(id, op.hash, op.extra?.ledgerOpType),
-      accountId: id,
-      type: op.extra?.ledgerOpType,
-      contract: token.contractAddress,
-      value: op.extra?.assetAmount ? new BigNumber(op.extra?.assetAmount) : op.value,
-      senders: op.extra?.assetSenders ?? op.senders,
-      recipients: op.extra?.assetRecipients ?? op.recipients,
-    }),
+  const tokenOperations = withDistinctOperationIds(
+    operations.map(op =>
+      cleanedOperation({
+        ...op,
+        id: encodeOperationId(id, op.hash, op.extra?.ledgerOpType),
+        accountId: id,
+        type: op.extra?.ledgerOpType,
+        contract: token.contractAddress,
+        value: op.extra?.assetAmount ? new BigNumber(op.extra?.assetAmount) : op.value,
+        senders: op.extra?.assetSenders ?? op.senders,
+        recipients: op.extra?.assetRecipients ?? op.recipients,
+      }),
+    ),
   );
 
   return {

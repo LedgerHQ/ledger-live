@@ -37,6 +37,7 @@ import {
   optionalNumeric,
   sumBalance,
   toAccountPoolRows,
+  withDistinctOperationIds,
 } from "./utils";
 import {
   buildSubOperationIndex,
@@ -1589,12 +1590,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       ...tokenFeeOperations.map(({ operation }) => operation),
     ];
 
-    const newInternalOperations: OperationCommon[] = [];
+    const internalOperations: OperationCommon[] = [];
     const newNonInternalOperations: OperationCommon[] = [];
     for (const op of newOps) {
-      if (isInternalLiveOp(op)) newInternalOperations.push(op);
+      if (isInternalLiveOp(op)) internalOperations.push(op);
       else newNonInternalOperations.push(op);
     }
+    // A transaction can move value to the account several times (two internal transfers in).
+    const newInternalOperations = withDistinctOperationIds(internalOperations);
 
     // The balance read ran before the walk, so it only looked for tokens up to that moment. A
     // token first received in between reaches `newAssetOperations` with no balance entry:

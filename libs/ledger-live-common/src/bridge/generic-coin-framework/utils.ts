@@ -1,5 +1,6 @@
 import {
   encodeOperationId,
+  encodeSubOperationId,
   OPERATION_TYPE_OUT_FAMILY,
   OPERATION_TYPE_STAKE_FAMILY,
 } from "@ledgerhq/ledger-wallet-framework/operation";
@@ -690,6 +691,28 @@ function getDelegationIntentFields(
       ? { dstValAddress: transaction.dstValAddress }
       : {}),
   };
+}
+
+/**
+ * The wallet names an operation after its account, transaction and type only
+ * (`encodeOperationId`), so two operations of one transaction with the same type -- two internal
+ * transfers to the account, two transfers of one token -- would share an id, and opening either
+ * would show the first. The first keeps its id; each repeat is numbered (`encodeSubOperationId`),
+ * as the A4 client numbers the operations it builds from one transaction.
+ */
+export function withDistinctOperationIds<T extends OperationCommon>(operations: T[]): T[] {
+  const occurrences = new Map<string, number>();
+  return operations.map(operation => {
+    if (!operation.id) return operation;
+    const repeat = occurrences.get(operation.id) ?? 0;
+    occurrences.set(operation.id, repeat + 1);
+    return repeat === 0
+      ? operation
+      : {
+          ...operation,
+          id: encodeSubOperationId(operation.accountId, operation.hash, operation.type, repeat),
+        };
+  });
 }
 
 export function cleanedOperation(operation: OperationCommon): OperationCommon {
