@@ -1,8 +1,7 @@
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
-import coinConfig from "../config";
-import type { ConcordiumAccount, ConcordiumSigner, Transaction } from "../types";
+import type { ConcordiumAccount, ConcordiumContext, ConcordiumSigner, Transaction } from "../types";
 
 /**
  * Custom receive implementation for Concordium.
@@ -14,12 +13,13 @@ import type { ConcordiumAccount, ConcordiumSigner, Transaction } from "../types"
 export const buildReceive =
   (
     signerContext: SignerContext<ConcordiumSigner>,
+    context: ConcordiumContext,
   ): AccountBridge<Transaction, ConcordiumAccount>["receive"] =>
   (account, { deviceId, verify }) => {
     return new Observable(o => {
       async function main() {
         if (verify) {
-          const network = coinConfig.getCoinConfig(account.currency.id).networkType;
+          const network = (await context.config(account.currency.id)).networkType;
           await signerContext(deviceId, signer =>
             signer.verifyAddress(account.freshAddressPath, account.freshAddress, network),
           );

@@ -5,13 +5,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import { accountDataExtra } from "@domain/api-account-data";
 import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
 import { AccountDataSourceIdSchema, accountDataSlice } from "@domain/entity-account-data";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import {
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
 } from "@domain/entity-account-descriptor/schema.mock";
 import { accountReceivesSlice, type AccountReceive } from "@domain/entity-account-receive";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { useAccountReceiveToolProps } from "./useAccountReceiveToolProps";
 
 const ethereum = mockAddressAccountDescriptor();

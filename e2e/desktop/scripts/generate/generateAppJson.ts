@@ -59,7 +59,7 @@ async function generateCoin(
 
     for (const { index, scheme } of group.accounts) {
       await runCliLiveData({
-        currency: group.currency.speculosApp.name,
+        currency: group.currency.cliKeyword,
         index,
         ...(scheme !== undefined ? { scheme } : {}),
         add: true,

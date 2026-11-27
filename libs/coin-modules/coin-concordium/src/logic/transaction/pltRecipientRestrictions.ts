@@ -11,7 +11,6 @@ import type { ConcordiumCoinConfig } from "../../types";
 
 type RecipientCheck = {
   config: ConcordiumCoinConfig;
-  currencyId: string;
   recipient: string;
   tokenId: string;
   /** Interpolated into every message this returns, so the user is told which token refused. */
@@ -65,18 +64,17 @@ export async function checkRecipientRestrictions(
  */
 async function resolveRestrictions({
   config,
-  currencyId,
   recipient,
   tokenId,
   ticker,
 }: RecipientCheck): Promise<Error | undefined> {
-  const moduleState = await fetchPltModuleState({ config, currencyId, tokenId });
+  const moduleState = await fetchPltModuleState({ config, tokenId });
   if (!moduleState) return new ConcordiumRecipientRestrictionsUnverified("", { ticker });
 
   // Neither list declared: no recipient can be refused, so no recipient read.
   if (moduleState.allowList !== true && moduleState.denyList !== true) return undefined;
 
-  const account = await fetchAccountTokens({ config, currencyId, address: recipient });
+  const account = await fetchAccountTokens({ config, address: recipient });
   if (account.status === "unreadable") {
     return new ConcordiumRecipientRestrictionsUnverified("", { ticker });
   }

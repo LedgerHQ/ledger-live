@@ -5,4 +5,4 @@ const testConfig = {
   tags: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
-runBrowseAndSearchContactsTest(testConfig.tmsLinks, testConfig.tags);
+runBrowseAndSearchContactsTest(testConfig);

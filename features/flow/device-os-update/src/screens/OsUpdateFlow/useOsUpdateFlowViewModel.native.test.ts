@@ -18,7 +18,7 @@ const device: OsUpdateDevice = {
 };
 const connectedDevice = { sessionId: "session", type: "BLE" } as ConnectedDevice;
 const osUpdate = {
-  finalFirmware: { version: "1.8.0" },
+  finalFirmware: { name: "1.8.0-il3", version: "1.8.0" },
   osuFirmware: { notes: "notes" },
 } as OsUpdate;
 
@@ -50,7 +50,11 @@ describe("useOsUpdateFlowViewModel", () => {
   it("shows the What's new of the last update, then starts the orchestrator on confirmation", () => {
     const { result, ports, onReconnect } = setup();
 
-    expect(result.current.whatsNew).toEqual({ version: "1.8.0", notes: "notes" });
+    expect(result.current.whatsNew).toEqual({
+      name: "1.8.0-il3",
+      version: "1.8.0",
+      notes: "notes",
+    });
     expect(result.current.orchestratorRun).toBeNull();
 
     act(() => result.current.onConfirmStart());

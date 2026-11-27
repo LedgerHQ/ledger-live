@@ -1,11 +1,30 @@
+import { setBorrowManifestIdReader } from "./borrowApps";
+import {
+  setBorrowTxLifecycleBaseUrl,
+  setBorrowTxLifecycleFlagReader,
+  startBorrowLifecycleMonitoring,
+} from "./borrowLifecycleHost";
+import { isEarnApp, setEarnManifestIdReader } from "./earnApps";
 import {
   installEarnLifecycleHost,
   isEarnTxLifecycleMonitoringEnabled,
   setEarnTxLifecycleFlagReader,
+  setTxLifecycleBaseUrl,
   startDappLifecycleMonitoring,
+  startEarnAppLifecycleMonitoring,
 } from "./earnLifecycleHost";
+import { ErrorCategory } from "./errorCategory";
+import {
+  TransactionDataSource,
+  TransactionPathway,
+  TransactionStage,
+  type LogEvent,
+} from "./logEvent";
+import { emitTransactionEvent, resetTransactionObservers } from "./observer";
 import { setStakeProgramAppsReader } from "./stakingApps";
-import { clearPendingTxLifecycle, setTxLifecycleBaseUrl } from "./txLifecycle";
+import { clearPendingTxLifecycle } from "./txLifecycle";
+import { listenToTxLifecycle } from "./txLifecycleEndpoint.mock";
+import { registerTxLifecycleObserver } from "./txLifecycleProducts";
 
 describe("earn lifecycle host wiring", () => {
   let fetchSpy: jest.SpiedFunction<typeof fetch>;
@@ -80,6 +99,7 @@ describe("earn lifecycle host wiring", () => {
         params: { redirects: { ethereum: { platform: "future-stake-app" } } },
       }),
       readAppVersion: () => "2.0.0",
+      readManifestId: () => undefined,
       apiBaseUrl: "https://staging.example.test/earn/",
     });
 
@@ -95,5 +115,309 @@ describe("earn lifecycle host wiring", () => {
     close?.();
 
     expect(fetchSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe("earn live app lifecycle", () => {
+  const lifecycle = listenToTxLifecycle();
+
+  const common = {
+    appVersion: "lld/2.0.0",
+    pathway: TransactionPathway.WalletApiSignAndBroadcast,
+    manifestId: "earn",
+    currencyId: "ethereum",
+    family: "evm",
+    currencyTicker: "ETH",
+    isTestnet: false,
+    isSendMax: false,
+    dataSource: TransactionDataSource.Sign,
+    rawTransactionType: "contract",
+  };
+
+  const intent: LogEvent = { status: "intent", stage: TransactionStage.Sign, ...common };
+  const success: LogEvent = { status: "success", stage: TransactionStage.Broadcast, ...common };
+  const teardownAbandon = (network = "ethereum") => ({
+    url: "https://earn.example.test/v1/tx/lifecycle",
+    body: expect.objectContaining({
+      event: "tx_terminal",
+      outcome: "failure",
+      failure_class: "abandoned",
+      path: "earn",
+      network,
+    }),
+  });
+
+  const opened: Array<() => void> = [];
+  const startEarnApp = (manifestId = "earn", enabled = true) => {
+    const close = startEarnAppLifecycleMonitoring("desktop", manifestId, enabled);
+    if (close) opened.push(close);
+    return close;
+  };
+
+  beforeEach(() => {
+    setTxLifecycleBaseUrl("https://earn.example.test");
+    setBorrowTxLifecycleBaseUrl("https://borrow.example.test");
+    setEarnTxLifecycleFlagReader(() => true);
+    setBorrowTxLifecycleFlagReader(() => true);
+    registerTxLifecycleObserver("desktop");
+  });
+
+  afterEach(() => {
+    resetTransactionObservers();
+    clearPendingTxLifecycle("desktop");
+    opened.splice(0).forEach(close => close());
+    setEarnTxLifecycleFlagReader(null);
+    setBorrowTxLifecycleFlagReader(null);
+    setEarnManifestIdReader(null);
+    setBorrowManifestIdReader(null);
+    setStakeProgramAppsReader(null);
+    setTxLifecycleBaseUrl(undefined);
+    setBorrowTxLifecycleBaseUrl(undefined);
+  });
+
+  it("recognises the known manifests and the one the flag configures", () => {
+    expect(["earn", "earn-stg", "earn-prd-eks"].every(id => isEarnApp(id))).toBe(true);
+    expect(isEarnApp("earn-canary")).toBe(false);
+    setEarnManifestIdReader(() => "earn-canary");
+    expect(isEarnApp("earn-canary")).toBe(true);
+    expect(isEarnApp(undefined)).toBe(false);
+    expect(isEarnApp("stakekit")).toBe(false);
+    setEarnManifestIdReader(() => {
+      throw new Error("store not ready");
+    });
+    expect(isEarnApp("earn-canary")).toBe(false);
+  });
+
+  it("leaves intent and success to the live app", async () => {
+    const close = startEarnApp();
+    emitTransactionEvent(intent);
+    emitTransactionEvent(success);
+    close?.();
+
+    expect(await lifecycle.received()).toEqual([]);
+  });
+
+  it("posts an attempt still pending when the Earn webview goes away to the Earn sink, once", async () => {
+    const close = startEarnApp();
+    emitTransactionEvent(intent);
+    close?.();
+    close?.();
+
+    expect(await lifecycle.received()).toEqual([teardownAbandon()]);
+  });
+
+  it("monitors the manifest the flag configures", async () => {
+    setEarnManifestIdReader(() => "earn-canary");
+    const close = startEarnApp("earn-canary");
+    emitTransactionEvent({ ...intent, manifestId: "earn-canary" });
+    close?.();
+
+    expect(await lifecycle.received()).toEqual([teardownAbandon()]);
+  });
+
+  it("leaves a device refusal to the live app and closes the attempt", async () => {
+    const close = startEarnApp();
+    emitTransactionEvent(intent);
+    emitTransactionEvent({
+      status: "failure",
+      stage: TransactionStage.Sign,
+      error: new Error("refused"),
+      errorCategory: ErrorCategory.UserDeviceRefused,
+      ...common,
+    });
+    close?.();
+
+    expect(await lifecycle.received()).toEqual([]);
+  });
+
+  it("leaves a closed sign modal to the live app, which reports it as a cancel", async () => {
+    const close = startEarnApp();
+    emitTransactionEvent(intent);
+    emitTransactionEvent({
+      status: "failure",
+      stage: TransactionStage.Sign,
+      error: new Error("dismissed"),
+      errorCategory: ErrorCategory.UserModalDismissed,
+      abandoned: true,
+      ...common,
+    });
+    close?.();
+
+    expect(await lifecycle.received()).toEqual([]);
+  });
+
+  it("does not post a superseded attempt, then posts the new one at teardown", async () => {
+    const close = startEarnApp();
+    emitTransactionEvent(intent);
+    emitTransactionEvent({ ...intent, currencyId: "polygon" });
+    expect(await lifecycle.received()).toEqual([]);
+
+    close?.();
+    expect(await lifecycle.received()).toEqual([teardownAbandon("polygon")]);
+  });
+
+  it("posts one abandon for a repeated identical intent", async () => {
+    const close = startEarnApp();
+    emitTransactionEvent(intent);
+    emitTransactionEvent(intent);
+    close?.();
+
+    expect(await lifecycle.received()).toEqual([teardownAbandon()]);
+  });
+
+  it("drops a success that arrives after the webview went away", async () => {
+    const close = startEarnApp();
+    emitTransactionEvent(intent);
+    close?.();
+    emitTransactionEvent(success);
+
+    expect(await lifecycle.received()).toEqual([teardownAbandon()]);
+  });
+
+  it("does not report an attempt left pending before the webview mounted", async () => {
+    emitTransactionEvent(intent);
+    startEarnApp()?.();
+
+    expect(await lifecycle.received()).toEqual([]);
+  });
+
+  it("drops the pending attempt and never posts when the flag is off at mount", async () => {
+    emitTransactionEvent(intent);
+    expect(startEarnApp("earn", false)).toBeUndefined();
+    startEarnApp()?.();
+
+    expect(await lifecycle.received()).toEqual([]);
+  });
+
+  it("does not post when the flag turns off before the webview goes away", async () => {
+    const close = startEarnApp();
+    emitTransactionEvent(intent);
+    setEarnTxLifecycleFlagReader(() => false);
+    close?.();
+
+    expect(await lifecycle.received()).toEqual([]);
+  });
+
+  it("does not open an attempt while the flag is off", async () => {
+    setEarnTxLifecycleFlagReader(() => false);
+    emitTransactionEvent(intent);
+    setEarnTxLifecycleFlagReader(() => true);
+    const close = startEarnApp();
+    close?.();
+
+    expect(await lifecycle.received()).toEqual([]);
+  });
+
+  it("clears Earn live app attempts when the kill-switch turns off at runtime", async () => {
+    let enabled = true;
+    const listener = installEarnLifecycleHost({
+      platform: "desktop",
+      readEnabled: () => enabled,
+      readStakePrograms: () => null,
+      resolveVersionedRedirects: feature => feature,
+      readAppVersion: () => "2.0.0",
+      readManifestId: () => undefined,
+      apiBaseUrl: "https://earn.example.test",
+    });
+    const close = startEarnApp();
+    emitTransactionEvent(intent);
+
+    enabled = false;
+    listener();
+    enabled = true;
+    close?.();
+
+    expect(await lifecycle.received()).toEqual([]);
+  });
+
+  it("ignores a manifest that is not the Earn live app and leaves its attempt alone", async () => {
+    const closeDapp = startDappLifecycleMonitoring("desktop", "stakekit", true, true);
+    await lifecycle.forget();
+
+    expect(startEarnApp("stakekit")).toBeUndefined();
+    closeDapp?.();
+
+    expect(await lifecycle.received()).toEqual([
+      {
+        url: "https://earn.example.test/v1/tx/lifecycle",
+        body: expect.objectContaining({ failure_class: "abandoned", path: "dapp" }),
+      },
+    ]);
+  });
+
+  it("keeps a stake redirect into the Earn live app from closing another webview's attempt", async () => {
+    const closeEarn = startEarnApp();
+    emitTransactionEvent(intent);
+
+    expect(startDappLifecycleMonitoring("desktop", "earn", true, true)).toBeUndefined();
+    expect(await lifecycle.received()).toEqual([]);
+
+    closeEarn?.();
+    expect(await lifecycle.received()).toEqual([teardownAbandon()]);
+  });
+
+  describe("with two webviews on the Earn manifest (the tab and a stacked screen)", () => {
+    it("does not let the older webview abandon the newer one's attempt", async () => {
+      const closeTab = startEarnApp();
+      const closeStacked = startEarnApp();
+      emitTransactionEvent(intent);
+
+      closeTab?.();
+      expect(await lifecycle.received()).toEqual([]);
+
+      closeStacked?.();
+      expect(await lifecycle.received()).toEqual([teardownAbandon()]);
+    });
+
+    it("abandons each webview's own attempt when it goes away", async () => {
+      const closeTab = startEarnApp();
+      const closeStacked = startEarnApp();
+      emitTransactionEvent(intent);
+
+      closeStacked?.();
+      expect(await lifecycle.received()).toEqual([teardownAbandon()]);
+
+      await lifecycle.forget();
+      emitTransactionEvent({ ...intent, currencyId: "polygon" });
+      closeTab?.();
+      expect(await lifecycle.received()).toEqual([teardownAbandon("polygon")]);
+    });
+
+    it("does not drop the tab's attempt when a stacked screen mounts and closes", async () => {
+      const closeTab = startEarnApp();
+      emitTransactionEvent(intent);
+
+      startEarnApp()?.();
+      expect(await lifecycle.received()).toEqual([]);
+
+      closeTab?.();
+      expect(await lifecycle.received()).toEqual([teardownAbandon()]);
+    });
+  });
+
+  it("keeps an Earn manifest Borrow is also configured for with Earn", async () => {
+    setBorrowManifestIdReader(() => "earn");
+    const closeEarn = startEarnApp();
+    emitTransactionEvent(intent);
+    startBorrowLifecycleMonitoring("desktop", "earn", true)?.();
+    expect(await lifecycle.received()).toEqual([]);
+
+    closeEarn?.();
+    expect(await lifecycle.received()).toEqual([teardownAbandon()]);
+  });
+
+  it("lets Borrow claim an Earn manifest it is configured for when Earn monitoring is off", async () => {
+    setEarnTxLifecycleFlagReader(() => false);
+    setBorrowManifestIdReader(() => "earn");
+    const close = startBorrowLifecycleMonitoring("desktop", "earn", true);
+    emitTransactionEvent(intent);
+    close?.();
+
+    expect(await lifecycle.received()).toEqual([
+      {
+        url: "https://borrow.example.test/v1/tx/lifecycle",
+        body: expect.objectContaining({ failure_class: "abandoned", path: "borrow" }),
+      },
+    ]);
   });
 });

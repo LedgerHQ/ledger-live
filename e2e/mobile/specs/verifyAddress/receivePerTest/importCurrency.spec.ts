@@ -18,9 +18,16 @@ describe("Receive - import a currency", () => {
     await app.modularDrawer.selectNetwork(Currency.POL.name);
     await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
 
-    await app.addAccount.addAccountAtIndex(Account.POL_1.accountName, Currency.POL.id, 0);
+    await app.addAccount.addAccountAtIndex({
+      currencyName: Account.POL_1.accountName,
+      currencyId: Currency.POL.id,
+      index: 0,
+    });
 
     await app.receive.doNotVerifyAddress();
-    await app.receive.expectReceivePageIsDisplayed(Currency.POL.ticker, Account.POL_1.accountName);
+    await app.receive.expectReceivePageIsDisplayed({
+      tickerName: Currency.POL.ticker,
+      accountName: Account.POL_1.accountName,
+    });
   });
 });

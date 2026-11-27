@@ -1,6 +1,7 @@
-import { Account } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById, findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { openModal } from "~/renderer/actions/modals";
+import { openReceiveFlow } from "LLD/features/Receive/openReceiveFlow";
 import { sendHandler, receiveHandler, delegateHandler } from "../transactionFlow.handler";
 import { createMockContext } from "./test-utils";
 
@@ -27,6 +28,7 @@ jest.mock("~/renderer/actions/modals", () => ({
 jest.mock("LLD/features/Receive/openReceiveFlow", () => ({
   openModalWithReceiveFlow: (...args: Parameters<typeof openModal>) =>
     jest.requireMock("~/renderer/actions/modals").openModal(...args),
+  openReceiveFlow: jest.fn(data => ({ type: "OPEN_RECEIVE_FLOW", data })),
 }));
 
 jest.mock("../../utils", () => ({
@@ -143,7 +145,7 @@ describe("transactionFlow.handler", () => {
       );
     });
 
-    it("opens receive modal with pre-selected account", async () => {
+    it("opens the receive flow on the currency, with its first account for the legacy modal", async () => {
       const mockCurrency = getCryptoCurrencyById("bitcoin");
       const mockAccount = createMockAccount("bitcoin");
       mockFindCryptoCurrencyByKeyword.mockReturnValue(mockCurrency);
@@ -153,20 +155,55 @@ describe("transactionFlow.handler", () => {
       await receiveHandler({ type: "receive", currency: "bitcoin" }, context);
 
       expect(context.dispatch).toHaveBeenCalledWith(
-        mockOpenModal("MODAL_RECEIVE", {
+        jest.mocked(openReceiveFlow)({
           shouldUseReceiveOptions: false,
-          recipient: undefined,
-          account: mockAccount,
-          parentAccount: undefined,
-          amount: undefined,
+          sourcePage: "deeplink",
+          currencyIds: ["bitcoin"],
+          legacyAccount: { account: mockAccount, parentAccount: undefined },
+        }),
+      );
+      expect(mockOpenModal).not.toHaveBeenCalled();
+    });
+
+    it("gives a token account's parent along with it", async () => {
+      const mockCurrency = getCryptoCurrencyById("ethereum");
+      const parentAccount = createMockAccount("ethereum");
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const tokenAccount = {
+        type: "TokenAccount",
+        id: "ethereum-token-account",
+        parentId: parentAccount.id,
+      } as unknown as TokenAccount;
+      mockFindCryptoCurrencyByKeyword.mockReturnValue(mockCurrency);
+      mockGetAccountsOrSubAccountsByCurrency.mockReturnValue([tokenAccount]);
+      const context = createMockContext({ accounts: [parentAccount] });
+
+      await receiveHandler({ type: "receive", currency: "ethereum" }, context);
+
+      expect(jest.mocked(openReceiveFlow)).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          currencyIds: ["ethereum"],
+          legacyAccount: { account: tokenAccount, parentAccount },
         }),
       );
     });
   });
 
   describe("delegateHandler", () => {
-    it("does nothing when currency is not tezos", async () => {
+    it("does nothing when the currency is unknown", async () => {
+      mockFindCryptoCurrencyByKeyword.mockReturnValue(undefined);
       const context = createMockContext();
+
+      await delegateHandler({ type: "delegate", currency: "unknown" }, context);
+
+      expect(context.dispatch).not.toHaveBeenCalled();
+    });
+
+    it("does nothing when the family of the currency has no delegate deeplink modal", async () => {
+      const mockAccount = createMockAccount("ethereum");
+      mockFindCryptoCurrencyByKeyword.mockReturnValue(getCryptoCurrencyById("ethereum"));
+      mockGetAccountsOrSubAccountsByCurrency.mockReturnValue([mockAccount]);
+      const context = createMockContext({ accounts: [mockAccount] });
 
       await delegateHandler({ type: "delegate", currency: "ethereum" }, context);
 

@@ -3,12 +3,15 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import {
+  getMinimumAmount,
+  makeChangeTrustTransaction,
+} from "@ledgerhq/live-common/families/xrp/tokens";
 import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
-import { makeChangeTrustTransaction } from "../utils";
 import type { XrpAddTokenFlowParamList } from "./types";
 import { useReceiveRoute } from "LLM/features/Receive/hooks/useReceiveRoute";
 
@@ -39,13 +42,11 @@ export function useReviewViewModel({ navigation, route }: Props) {
     updateTransaction,
   } = useBridgeTransaction<Transaction>(bridge, () => ({
     account,
-    transaction: makeChangeTrustTransaction(
-      bridge,
-      account,
+    transaction: makeChangeTrustTransaction(bridge, account, {
       token,
-      settings?.limit ?? new BigNumber(0),
-      !settings?.isRippling,
-    ),
+      limit: settings?.limit ?? new BigNumber(0),
+      noRipple: !settings?.isRippling,
+    }),
   }));
 
   useEffect(() => {
@@ -100,7 +101,7 @@ export function useReviewViewModel({ navigation, route }: Props) {
     isContinueDisabled: bridgePending || statusErrors.length > 0 || !!bridgeError,
     isContinueLoading: bridgePending,
     notEnoughXrp: notEnoughXrp && {
-      minimumAmount: readField(notEnoughXrp, "minimumAmount"),
+      minimumAmount: getMinimumAmount(notEnoughXrp),
       lockedAmount: readField(status.warnings.reserve, "amount"),
     },
   };

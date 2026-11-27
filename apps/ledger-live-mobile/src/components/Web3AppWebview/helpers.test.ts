@@ -1,4 +1,7 @@
-import type { AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import type { AccountLike, Operation } from "@ledgerhq/types-live";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useWebviewState, useUiHook } from "./helpers";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
@@ -831,5 +834,59 @@ describe("useWebviewState - main frame committed outside manifest.domains", () =
 
     expect(stopLoading).not.toHaveBeenCalled();
     expect(result.current.isBlockedByDomainCheck).toBe(false);
+  });
+});
+
+describe("useUiHook - transaction.broadcast", () => {
+  it("adds the broadcast operation to the account's pending operations", () => {
+    const ethereumAccount = genAccount("swap-broadcast", {
+      currency: getCryptoCurrencyById("ethereum"),
+      operationsSize: 0,
+    });
+    const onTransactionBroadcast = jest.fn();
+    const { result, store } = renderHook(
+      () =>
+        useUiHook({
+          manifest: mockManifest,
+          requestDeviceIntentSign: jest.fn(),
+          requestDeviceIntentSignMessage: jest.fn(),
+          onTransactionBroadcast,
+        }),
+      {
+        overrideInitialState: state => ({
+          ...state,
+          accounts: { ...state.accounts, active: [ethereumAccount] },
+        }),
+      },
+    );
+    const optimisticOperation: Operation = {
+      id: `${ethereumAccount.id}-0xswaphash-OUT`,
+      hash: "0xswaphash",
+      type: "OUT",
+      value: new BigNumber(1),
+      fee: new BigNumber(1),
+      senders: [],
+      recipients: [],
+      blockHash: null,
+      blockHeight: null,
+      accountId: ethereumAccount.id,
+      date: new Date(),
+      extra: {},
+    };
+
+    act(() => {
+      result.current["transaction.broadcast"]!(
+        ethereumAccount,
+        undefined,
+        ethereumAccount,
+        optimisticOperation,
+      );
+    });
+
+    const pendingHashes = store
+      .getState()
+      .accounts.active[0].pendingOperations.map(operation => operation.hash);
+    expect(pendingHashes).toEqual(["0xswaphash"]);
+    expect(onTransactionBroadcast).toHaveBeenCalledTimes(1);
   });
 });

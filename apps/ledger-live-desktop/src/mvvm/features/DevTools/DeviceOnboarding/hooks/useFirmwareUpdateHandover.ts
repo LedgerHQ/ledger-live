@@ -2,13 +2,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { HostOnboardingEvent } from "@features/platform-device-onboarding";
+import {
+  isFirmwareUpdateDelegated,
+  type HostOnboardingEvent,
+} from "@features/platform-device-onboarding";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 import UpdateFirmwareModal from "~/renderer/modals/UpdateFirmwareModal";
 import { initialStepId } from "~/renderer/screens/manager/FirmwareUpdate";
-
-export const firmwareUpdateDelegatedState = "checks.firmwareUpdateDelegated";
 
 type UseFirmwareUpdateHandoverInput = {
   device: Device | null;
@@ -21,7 +22,7 @@ export function useFirmwareUpdateHandover({
   machineState,
   send,
 }: UseFirmwareUpdateHandoverInput) {
-  const delegated = machineState === firmwareUpdateDelegatedState;
+  const delegated = isFirmwareUpdateDelegated(machineState);
   const closedRef = useRef(false);
   const freshResultRef = useRef(false);
   const ownsDrawerRef = useRef(false);

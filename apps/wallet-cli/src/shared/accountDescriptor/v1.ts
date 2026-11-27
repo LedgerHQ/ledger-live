@@ -15,6 +15,7 @@ export {
   UtxoAccountDescriptorSchema as UtxoAccountDescriptorV1Schema,
   serializeAccountDescriptor as serializeV1,
 } from "@domain/entity-account-descriptor";
+export { DerivationPathSchema } from "@domain/entity-derivation";
 export type {
   AddressAccountDescriptor as AccountBasedDescriptorV1,
   UtxoAccountDescriptor as UtxoAccountDescriptorV1,

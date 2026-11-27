@@ -12,9 +12,11 @@ import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
 import { getBlock } from "../logic/getBlock";
 import { getBlockInfo } from "../logic/getBlockInfo";
+import { getPendingTransaction } from "../logic/getPendingTransaction";
 import { lastBlock } from "../logic/lastBlock";
 import { listHoldings } from "../logic/listHoldings";
 import { listOperations } from "../logic/listOperations";
+import { listPendingOperations } from "../logic/listPendingOperations";
 import { validateIntent } from "../logic/validateIntent";
 import { testContext } from "../logic/tests/helpers/msw";
 import { createApi } from "./index";
@@ -26,12 +28,21 @@ jest.mock("../logic/estimateFees");
 jest.mock("../logic/getBalance");
 jest.mock("../logic/getBlock");
 jest.mock("../logic/getBlockInfo");
+jest.mock("../logic/getPendingTransaction");
 jest.mock("../logic/lastBlock");
 jest.mock("../logic/listHoldings");
 jest.mock("../logic/listOperations");
+jest.mock("../logic/listPendingOperations");
 jest.mock("../logic/validateIntent");
 
-const SUPPORTED = ["getBlock", "getBlockInfo", "listHoldings", "validateIntent"];
+const SUPPORTED = [
+  "getBlock",
+  "getBlockInfo",
+  "getPendingTransaction",
+  "listHoldings",
+  "listPendingOperations",
+  "validateIntent",
+];
 
 const intent: TransactionIntent<MemoNotSupported, BitcoinTxData> = {
   intentType: "transaction",
@@ -40,7 +51,7 @@ const intent: TransactionIntent<MemoNotSupported, BitcoinTxData> = {
   recipient: "b",
   amount: 1n,
   asset: { type: "native" },
-  data: { type: "string" },
+  data: { type: "unknown" },
 };
 
 describe("createApi", () => {
@@ -97,6 +108,18 @@ describe("createApi", () => {
     const options = { asset: { type: "native" as const }, cursor: "2" };
     await createApi("litecoin").listHoldings(context, "addr", options);
     expect(listHoldings).toHaveBeenCalledWith(context, "litecoin", "addr", options);
+  });
+
+  it("delegates listPendingOperations with the instance's currency", async () => {
+    jest.mocked(listPendingOperations).mockImplementation(async () => []);
+    await createApi("litecoin").listPendingOperations(context, "addr");
+    expect(listPendingOperations).toHaveBeenCalledWith(context, "litecoin", "addr");
+  });
+
+  it("delegates getPendingTransaction with the instance's currency", async () => {
+    jest.mocked(getPendingTransaction).mockImplementation(async () => undefined);
+    await createApi("litecoin").getPendingTransaction(context, "hash");
+    expect(getPendingTransaction).toHaveBeenCalledWith(context, "litecoin", "hash");
   });
 
   it("delegates craftTransaction with the custom fees", async () => {
@@ -159,12 +182,35 @@ describe("createApi", () => {
 
   it("returns the intent's bitcoin data, OP_RETURN data included", () => {
     const api = createApi("bitcoin");
-    expect(api.craftTransactionData(context, intent)).toEqual({ type: "string" });
+    expect(api.craftTransactionData(context, intent)).toEqual({ type: "unknown" });
     expect(
       api.craftTransactionData(context, {
         ...intent,
-        data: { type: "string", opReturnData: "abcd" },
+        data: { type: "unknown", opReturnData: "abcd" },
       }),
-    ).toEqual({ type: "string", opReturnData: "abcd" });
+    ).toEqual({ type: "unknown", opReturnData: "abcd" });
   });
+
+  it("keeps the intent's coin control, so the data round-trips into estimation and crafting", () => {
+    const utxoStrategy = {
+      strategy: "merge-outputs" as const,
+      excludedUtxos: [`${"ab".repeat(32)}:0`],
+    };
+    expect(
+      createApi("bitcoin").craftTransactionData(context, {
+        ...intent,
+        data: { type: "unknown", utxoStrategy },
+      }),
+    ).toEqual({ type: "unknown", utxoStrategy });
+  });
+
+  it.each([null, false, ""])(
+    "keeps a malformed coin control (%p), for estimation and crafting to refuse",
+    utxoStrategy => {
+      const data = { ...intent.data, utxoStrategy } as unknown as BitcoinTxData;
+      expect(
+        createApi("bitcoin").craftTransactionData(context, { ...intent, data }),
+      ).toHaveProperty("utxoStrategy", utxoStrategy);
+    },
+  );
 });

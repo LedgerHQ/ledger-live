@@ -1,5 +1,6 @@
 import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { OsUpdateNavBar } from "../NavBar/OsUpdateNavBar";
 import { OsUpdateStateSheet } from "../sheets/OsUpdateStateSheet/OsUpdateStateSheet";
 
@@ -29,9 +30,11 @@ export function OsUpdateStepLayout({
   onUserClose,
   isCloseConfirmationOpen,
 }: OsUpdateStepLayoutProps) {
+  const { top: topInset } = useSafeAreaInsets();
+
   return (
     <>
-      <Box lx={{ flex: 1 }}>
+      <Box lx={{ flex: 1 }} style={{ paddingTop: topInset }} testID="os-update-step-layout">
         <OsUpdateNavBar onClose={onUserClose} />
         <Box lx={{ flex: 1 }}>{screen}</Box>
       </Box>

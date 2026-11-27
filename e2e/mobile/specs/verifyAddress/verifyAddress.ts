@@ -4,10 +4,14 @@ import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNanoS, describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
 import { isReceiveBlockedOnLNS } from "@ledgerhq/live-e2e-shared/nanoSSupport";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 const LNS_DEPRECATION_ERROR_TITLE = "Ledger Nano S™ does not support this feature";
 
-export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], tags: string[]) {
+type VerifyAddressTestOptions = TestMetaOptions & { account: AccountType };
+
+export function runVerifyAddressTest(options: VerifyAddressTestOptions) {
+  const { account, tmsLinks, tags } = options;
   const describeOnDevice = isReceiveBlockedOnLNS(account.currency.id)
     ? describeIfNotNanoS
     : describe;
@@ -30,7 +34,10 @@ export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], t
       await app.receive.selectVerifyAddress();
       const displayedAddress = await app.receive.getFreshAddressDisplayed();
       await app.speculos.expectValidAddressDevice(account, displayedAddress);
-      await app.receive.expectReceivePageIsDisplayed(account.currency.ticker, account.accountName);
+      await app.receive.expectReceivePageIsDisplayed({
+        tickerName: account.currency.ticker,
+        accountName: account.accountName,
+      });
       await app.receive.expectAddressIsCorrect(displayedAddress);
     });
   });

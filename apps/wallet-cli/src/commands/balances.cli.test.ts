@@ -9,6 +9,21 @@ import { ETH_DESCRIPTOR, ETH_ADDRESS } from "../testing/constants";
 // 1.5 ETH in wei
 const ETH_BALANCE_WEI = "1500000000000000000";
 
+const SANDBOX_HINT =
+  "Could not reach explorers.api.live.ledger.com. If wallet-cli runs in a sandbox, allow explorers.api.live.ledger.com in its network allowlist.";
+
+function rejectBalancesLikeADeniedProxy() {
+  const socketClosed = Object.assign(new Error("Socket is closed"), {
+    code: "ERR_SOCKET_CLOSED",
+    config: {
+      url: `https://explorers.api.live.ledger.com/blockchain/v4/eth/address/${ETH_ADDRESS}/balance`,
+    },
+  });
+  return spyOn(WalletAdapter.prototype, "getAccountBalances").mockRejectedValue(
+    new Error("UnexpectedGetBalanceError", { cause: socketClosed }),
+  );
+}
+
 describe("balances command", () => {
   const server = new MockServer([
     {
@@ -120,5 +135,44 @@ describe("balances command", () => {
     expect(err.ok).toBe(false);
     expect(err.error.command).toBe("balances");
     expect(err.error.message).toStartWith("No account labeled");
+  });
+
+  describe("when a sandbox proxy denies the explorer", () => {
+    it("human output: names the host and how to allow it on stderr", async () => {
+      const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
+      sessionCleanup = fixture.cleanup;
+      const getBalances = rejectBalancesLikeADeniedProxy();
+
+      try {
+        const { exitCode, stderr } = await runCli(["balances", "--account", "ethereum-1"], {
+          WALLET_CLI_MOCK_PORT: String(server.port),
+          ...fixture.env,
+        });
+        expect(exitCode).toBe(1);
+        expect(stderr).toContain(SANDBOX_HINT);
+      } finally {
+        getBalances.mockRestore();
+      }
+    });
+
+    it("json output: adds host and hint to the error envelope", async () => {
+      const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
+      sessionCleanup = fixture.cleanup;
+      const getBalances = rejectBalancesLikeADeniedProxy();
+
+      try {
+        const { stdout, exitCode } = await runCli(
+          ["balances", "--account", "ethereum-1", "--output", "json"],
+          { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+        );
+        expect(exitCode).toBe(1);
+        expect(JSON.parse(stdout).error).toMatchObject({
+          host: "explorers.api.live.ledger.com",
+          hint: SANDBOX_HINT,
+        });
+      } finally {
+        getBalances.mockRestore();
+      }
+    });
   });
 });

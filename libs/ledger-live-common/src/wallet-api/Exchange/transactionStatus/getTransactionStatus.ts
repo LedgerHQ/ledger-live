@@ -3,6 +3,7 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { flattenAccounts, getAccountCurrency } from "../../../account";
 import getCompleteSwapHistory from "../../../exchange/swap/getCompleteSwapHistory";
 import { swapProviderRequiresOperationId } from "../../../exchange/swap/providersRequiringOperationId";
+import { getSwapStatusNetwork } from "../../../exchange/swap/getSwapStatuses";
 import {
   fetchTransactionSwapStatus,
   getSwapTransactionLegStatusesFromAccounts,
@@ -49,6 +50,7 @@ export async function getTransactionStatus(
       swapId: args.swapId,
       swapOperation,
     }),
+    getSwapNetwork(accounts, args.swapId, swapOperation),
   );
   const status =
     remoteStatus?.status ??
@@ -101,6 +103,20 @@ function getTransactionStatusValue(status: string | undefined): TransactionStatu
   return status;
 }
 
+// The swap is missing from the history until its operation is synced: use the entry's account then
+function getSwapNetwork(
+  accounts: AccountLike[],
+  swapId: string,
+  swapOperation: MappedSwapOperation | undefined,
+): string | undefined {
+  if (swapOperation) return getSwapStatusNetwork(swapOperation.fromAccount);
+  const entryAccount = accounts.find(account =>
+    account.swapHistory?.some(entry => entry.swapId === swapId),
+  );
+  if (!entryAccount) return undefined;
+  return getSwapStatusNetwork(entryAccount);
+}
+
 async function findSwapOperation(
   accounts: AccountLike[],
   swapId: string,
@@ -129,9 +145,10 @@ function buildSwapStatusRequest({
 
 async function fetchTransactionStatusSafely(
   request: SwapStatusRequest,
+  network: string | undefined,
 ): Promise<SwapStatus | undefined> {
   try {
-    return await fetchTransactionSwapStatus(request);
+    return await fetchTransactionSwapStatus(request, network);
   } catch {
     return undefined;
   }

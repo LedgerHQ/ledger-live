@@ -2,7 +2,7 @@ export type UsbAccessFailureKind = "access_denied" | "device_unreachable" | "bus
 
 /** The failed USB open behind a failed connection, reported as `usb_access_error` plus a hint. */
 export type UsbAccessEvidence = {
-  /** The libusb or OS error name, e.g. `LIBUSB_ERROR_ACCESS`. */
+  /** The libusb or OS error, e.g. `LIBUSB_ERROR_ACCESS` or nusb's `errno 13`. */
   error: string;
   kind: UsbAccessFailureKind;
 };
@@ -11,22 +11,25 @@ export type UsbAccessEvidence = {
 const USB_ERROR_NAMES_BY_KIND: ReadonlyArray<readonly [UsbAccessFailureKind, RegExp]> = [
   [
     "access_denied",
-    /\b(LIBUSB_ERROR_ACCESS|EACCES|EPERM|ERROR_ACCESS_DENIED|NotAllowedError|SecurityError)\b/,
+    /\b(?:LIBUSB_ERROR_ACCESS|EACCES|EPERM|ERROR_ACCESS_DENIED|NotAllowedError|SecurityError|errno (?:1|13)|error (?:5|0xe00002c1))\b/,
   ],
-  ["busy", /\b(LIBUSB_ERROR_BUSY|EBUSY)\b/],
+  [
+    "busy",
+    /\b(?:LIBUSB_ERROR_BUSY|EBUSY|errno 16|error 0xe00002c5|interface is busy|interface is already claimed)\b/,
+  ],
   [
     "device_unreachable",
-    /\b(LIBUSB_ERROR_NO_DEVICE|LIBUSB_ERROR_NOT_FOUND|ENOENT|ENODEV|NotFoundError)\b/,
+    /\b(?:LIBUSB_ERROR_NO_DEVICE|LIBUSB_ERROR_NOT_FOUND|ENOENT|ENODEV|NotFoundError|errno (?:2|19)|error (?:2|31|1167|0xe00002c0)|device disconnected|device not found)\b/,
   ],
-  ["other", /\b(LIBUSB_ERROR_[A-Z_]+)\b/],
+  ["other", /\b(?:LIBUSB_ERROR_[A-Z_]+|errno \d+|error (?:0x[0-9a-f]{8}|\d+))\b/],
 ];
 const ERROR_CHAIN_MAX_DEPTH = 4;
 
-/** The libusb or OS error a failed USB open carries, if the error chain names one. */
+/** The libusb, nusb or OS error a failed USB open carries, if the error chain names one. */
 export function usbAccessEvidence(error: unknown): UsbAccessEvidence | undefined {
   const text = errorChainStrings(error, 0).join(" ");
   for (const [kind, pattern] of USB_ERROR_NAMES_BY_KIND) {
-    const name = pattern.exec(text)?.[1];
+    const name = pattern.exec(text)?.[0];
     if (name) return { error: name, kind };
   }
   return undefined;

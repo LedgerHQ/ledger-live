@@ -9,7 +9,11 @@ import {
 
 const sendViaContactTransactions: ContactsEntry[] = [
   {
-    transaction: new Transaction(Account.TRX_1, Account.TRX_2, "0.01"),
+    transaction: new Transaction({
+      accountToDebit: Account.TRX_1,
+      accountToCredit: Account.TRX_2,
+      amount: "0.01",
+    }),
     spareAddress: Addresses.TRON_SPARE,
     xrayTicket: "B2CQA-6548",
   },
@@ -18,12 +22,20 @@ const sendViaContactTransactions: ContactsEntry[] = [
 /** These also assert Add contact availability on an unknown recipient (the spare address). */
 const contactRetrievalTransactions: ContactsEntry[] = [
   {
-    transaction: new Transaction(Account.ETH_1, Account.ETH_2_WITH_ENS, "0.0001"),
+    transaction: new Transaction({
+      accountToDebit: Account.ETH_1,
+      accountToCredit: Account.ETH_2_WITH_ENS,
+      amount: "0.0001",
+    }),
     spareAddress: Addresses.EVM_SPARE,
     xrayTicket: "B2CQA-6549, B2CQA-6550",
   },
   {
-    transaction: new Transaction(Account.TRX_1, Account.TRX_2, "0.01"),
+    transaction: new Transaction({
+      accountToDebit: Account.TRX_1,
+      accountToCredit: Account.TRX_2,
+      amount: "0.01",
+    }),
     spareAddress: Addresses.TRON_SPARE,
     xrayTicket: "B2CQA-6549, B2CQA-6550",
   },

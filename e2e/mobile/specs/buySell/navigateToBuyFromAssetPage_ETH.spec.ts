@@ -22,4 +22,9 @@ const tags = [
   "@family-evm",
 ];
 
-runNavigateToBuyFromAssetPageTest(ethBuySell, paymentMethod, ["B2CQA-3392"], tags);
+runNavigateToBuyFromAssetPageTest({
+  buySell: ethBuySell,
+  paymentMethod,
+  tmsLinks: ["B2CQA-3392"],
+  tags,
+});

@@ -4,7 +4,6 @@ import {
   getFearAndGreedColorKey,
   isMoodIndexAvailable,
   FEAR_AND_GREED_COLORS,
-  FEAR_AND_GREED_TRANSLATION_KEYS,
   type FearAndGreedLevel,
 } from "./fearAndGreed";
 
@@ -68,18 +67,6 @@ describe("Fear and Greed utils", () => {
         { level: "greedPlus", color: "success" },
       ])("should have correct color for $level", ({ level, color }) => {
         expect(FEAR_AND_GREED_COLORS[level as FearAndGreedLevel]).toBe(color);
-      });
-    });
-
-    describe("FEAR_AND_GREED_TRANSLATION_KEYS", () => {
-      it.each([
-        { level: "fearPlus", key: "fearAndGreed.levels.fearPlus" },
-        { level: "fear", key: "fearAndGreed.levels.fear" },
-        { level: "neutral", key: "fearAndGreed.levels.neutral" },
-        { level: "greed", key: "fearAndGreed.levels.greed" },
-        { level: "greedPlus", key: "fearAndGreed.levels.greedPlus" },
-      ])("should have correct key for $level", ({ level, key }) => {
-        expect(FEAR_AND_GREED_TRANSLATION_KEYS[level as FearAndGreedLevel]).toBe(key);
       });
     });
   });

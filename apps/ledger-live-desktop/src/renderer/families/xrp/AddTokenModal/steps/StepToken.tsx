@@ -4,6 +4,7 @@ import { Trans } from "react-i18next";
 import type { CSSObjectWithLabel, StylesConfig } from "react-select";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useTokenOptions } from "@ledgerhq/live-common/families/xrp/react";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { TrackScreen } from "@shared/analytics-react";
 import Alert from "~/renderer/components/Alert";
@@ -15,7 +16,6 @@ import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import type { StepProps } from "../types";
-import { useTokenOptions } from "../useTokenOptions";
 
 function renderToken({ data: token }: { data: TokenCurrency }) {
   return (

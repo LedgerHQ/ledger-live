@@ -1,11 +1,20 @@
+import { track, trackPage } from "@shared/analytics";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useIsFocused } from "@react-navigation/native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { SeedPath } from "@features/platform-device-onboarding";
+import { DeviceModelId as DmkDeviceModelId } from "@ledgerhq/device-management-kit";
+import {
+  deviceOnboardingMachine,
+  SeedPath,
+  type AvailableFirmwareUpdate,
+  type DeviceOnboardingContext,
+  type FirmwareCheck,
+} from "@features/platform-device-onboarding";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { State } from "~/reducers/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type { DeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/useDeviceOnboarding";
+import type { ChecksScreenProps, UpdateStep } from "LLM/features/DeviceOnboarding/types";
 import type { DeviceOnboardingHost } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import { useDeviceOnboardingSession } from "LLM/features/DeviceOnboarding/hooks/DeviceOnboardingProvider";
 import {
@@ -13,6 +22,26 @@ import {
   powerOnAfterUpdateDelayMs,
 } from "LLM/features/DeviceOnboarding/utils/deviceOff";
 import { useDeviceOnboardingFunnelViewModel } from "./useDeviceOnboardingFunnelViewModel";
+
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+  trackPage: jest.fn(),
+  getPreviousTrackingPage: jest.fn(() => "Page Pairing"),
+}));
+
+const events = () => jest.mocked(track).mock.calls.map(([event]) => event);
+const pages = () => jest.mocked(trackPage).mock.calls.map(([page]) => page.category);
+const clicks = () =>
+  jest
+    .mocked(track)
+    .mock.calls.filter(([event]) => event === "button_clicked")
+    .map(([, props]) => (props && "button" in props ? props.button : undefined));
+
+const screensOf = (checks: Pick<ChecksScreenProps, "screensFor">, step: UpdateStep | null = null) =>
+  checks.screensFor?.(step).map(({ tracking }) => tracking.category) ?? [];
+
+const unseededExit = { onboardedOnEntry: false } as DeviceOnboardingContext;
 
 const goBack = jest.fn();
 const resetNavigation = jest.fn();
@@ -64,11 +93,12 @@ jest.mock("../../hooks/useFirmwareUpdateHandover", () => {
     ...actual,
     useFirmwareUpdateHandover: (input: unknown) => {
       firmwareUpdateHandover(input);
-      return { close: closeFirmwareHandover };
+      return { close: closeFirmwareHandover, returnsWithoutUpdate: mockReturnsWithoutUpdate };
     },
   };
 });
 
+let mockReturnsWithoutUpdate = 0;
 const closeFirmwareHandover = jest.fn();
 const firmwareUpdateHandover = jest.fn();
 const useSession = jest.mocked(useDeviceOnboardingSession);
@@ -130,9 +160,27 @@ function setupOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
   return model.setup;
 }
 
+const nanoX = { ...device, deviceName: "Ledger Nano X", modelId: DeviceModelId.nanoX };
+
+/** The OS check after setup shows on the setup screen; any other check on the checks screen. */
+function skipFirmwareCheckOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
+  if (model.status === "setup") return model.setup.checks?.onSkipFirmwareCheck;
+  return checksOf(model).onSkipFirmwareCheck;
+}
+
+function quitOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
+  if (model.status === "setup") return model.setup.onQuit;
+  return checksOf(model).onQuit;
+}
+
 function recoverOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
   if (model.status !== "recoverNewSeed") throw new Error(model.status);
   return model.recoverNewSeed;
+}
+
+function restoreOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
+  if (model.status !== "recoverRestore") throw new Error(model.status);
+  return model.recoverRestore;
 }
 
 function successOf(model: ReturnType<typeof useDeviceOnboardingFunnelViewModel>) {
@@ -157,7 +205,7 @@ function renderFunnelWithSyncOffer(flags: Parameters<typeof withFlagOverrides>[0
   });
 }
 
-const syncOfferParams = { device, wasReadOnlyAtEntry: true, unseeded: true };
+const syncOfferParams = { device, wasReadOnlyAtEntry: true, unseeded: true, seededResult: null };
 
 function useFunnelViewModel(props: void) {
   void props;
@@ -178,6 +226,77 @@ function unseededContext(
   } as DeviceOnboardingSession["context"];
 }
 
+function seededContext(
+  overrides: Partial<NonNullable<DeviceOnboardingSession["context"]>> = {},
+): DeviceOnboardingSession["context"] {
+  return {
+    onboardedOnEntry: true,
+    deviceModelId: "stax",
+    checksPaused: false,
+    ...overrides,
+  } as DeviceOnboardingSession["context"];
+}
+
+function seededMachineContext(
+  overrides: Partial<DeviceOnboardingContext> = {},
+): DeviceOnboardingContext {
+  return {
+    sessionId: "s1",
+    onboardedOnEntry: true,
+    connectSeededDevice: true,
+    isOnboarded: true,
+    deviceModelId: "stax",
+    firmwareVersion: "2.4.0",
+    offerSync: false,
+    checksPaused: false,
+    firmware: null,
+    genuineVerdict: null,
+    lastGenuineFailure: null,
+    ...overrides,
+  } as DeviceOnboardingContext;
+}
+
+/** A snapshot the machine can really publish: an active actor holding this context. */
+function activeSnapshot(context: DeviceOnboardingContext): DeviceOnboardingSession["snapshot"] {
+  return deviceOnboardingMachine.resolveState({ value: "readingState", context });
+}
+
+/** A seeded session: the flat context drives the screens, the machine context the tracking. */
+function seededSession(
+  state: string,
+  machine: Partial<DeviceOnboardingContext> = {},
+  flat: Partial<NonNullable<DeviceOnboardingSession["context"]>> = {},
+): DeviceOnboardingSession {
+  return session({
+    state,
+    context: seededContext(flat),
+    snapshot: activeSnapshot(seededMachineContext(machine)),
+  });
+}
+
+const upToDate: FirmwareCheck = { kind: "upToDate" };
+const declined: FirmwareCheck = { kind: "declined" };
+const skipped: FirmwareCheck = { kind: "skipped" };
+const availableUpdate = { finalFirmware: { version: "1.1.0" } } as AvailableFirmwareUpdate;
+
+function offered(update: AvailableFirmwareUpdate): FirmwareCheck {
+  return { kind: "offered", update };
+}
+
+function renderUpdateOffer() {
+  useSession.mockReturnValue(
+    seededSession(
+      "checks.firmwareUpdateOffered",
+      { firmware: offered(availableUpdate) },
+      {
+        firmwareVersion: "1.0.0",
+        availableFirmwareVersion: "1.1.0",
+      },
+    ),
+  );
+  return checksOf(renderFunnel().result.current);
+}
+
 function dropDuringPin(afterDrop: Partial<DeviceOnboardingSession> = {}) {
   const connect = jest.fn();
   const unseeded = unseededContext({ currentOnboardingStep: "pin" });
@@ -191,11 +310,6 @@ function dropDuringPin(afterDrop: Partial<DeviceOnboardingSession> = {}) {
 
   return { ...hook, connect, update };
 }
-
-const seededContext = {
-  onboardedOnEntry: true,
-  checksPaused: false,
-} as DeviceOnboardingSession["context"];
 
 const returningContext = {
   onboardedOnEntry: true,
@@ -217,6 +331,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     listeners.clear();
     mockRouteParams = { wasReadOnlyAtEntry: true };
     recorded.host = null;
+    mockReturnsWithoutUpdate = 0;
   });
 
   it.each([
@@ -259,6 +374,206 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
     expect(checksOf(result.current).error).toEqual(error);
+  });
+
+  function snapshotOf(updateAfterSetup: boolean, isGenuine = true) {
+    return {
+      context: {
+        updateAfterSetup,
+        isOnboarded: true,
+        firmware: null,
+        sessionId: "session",
+        genuineVerdict: { sessionId: "session", isGenuine },
+      },
+    } as DeviceOnboardingSession["snapshot"];
+  }
+
+  /** An unseeded Nano set up in this run; without a held-back update, a seeded device. */
+  function heldBackUpdateSession(state: string, updateAfterSetup: boolean) {
+    return session({
+      state,
+      ...(updateAfterSetup ? { liveDevice: nanoX } : {}),
+      context: {
+        checksPaused: false,
+        onboardedOnEntry: !updateAfterSetup,
+        isOnboarded: true,
+      } as DeviceOnboardingSession["context"],
+      snapshot: snapshotOf(updateAfterSetup),
+    });
+  }
+
+  it.each(["postSetupFirmware.firmwareUpdateOffered", "checks.firmwareUpdateOffered"])(
+    "should offer the held-back update as the last setup stage in %s",
+    state => {
+      useSession.mockReturnValue(heldBackUpdateSession(state, true));
+
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+      const setup = setupOf(result.current);
+      expect(setup.stage).toMatchObject({ kind: "osCheck", index: 4, total: 5 });
+      expect(setup.checks?.state).toBe("updating");
+    },
+  );
+
+  it.each(["postSetupFirmware.firmwareCheckFailed", "checks.firmwareCheckFailed"])(
+    "should let the user skip the failed firmware check after setup in %s",
+    state => {
+      send.mockClear();
+      useSession.mockReturnValue(heldBackUpdateSession(state, true));
+
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+      skipFirmwareCheckOf(result.current)?.();
+
+      expect(send).toHaveBeenCalledWith({ type: "SKIP" });
+    },
+  );
+
+  it.each([
+    ["checks.firmwareCheckFailed", false],
+    ["checks.genuineFailed", true],
+  ])("should not offer to skip in %s when the update after setup is %s", (state, flag) => {
+    useSession.mockReturnValue(heldBackUpdateSession(state, flag));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(skipFirmwareCheckOf(result.current)).toBeUndefined();
+  });
+
+  function seededDuringSetupSession(updateAfterSetup: boolean, isGenuine = true) {
+    return session({
+      state: "postSetupFirmware.firmwareUpdateOffered",
+      ...(updateAfterSetup ? { liveDevice: nanoX } : {}),
+      context: {
+        checksPaused: false,
+        onboardedOnEntry: false,
+        isOnboarded: true,
+      } as DeviceOnboardingSession["context"],
+      snapshot: snapshotOf(updateAfterSetup, isGenuine),
+    });
+  }
+
+  it("should end the setup from the close button once only the held-back update is left", () => {
+    send.mockClear();
+    useSession.mockReturnValue(seededDuringSetupSession(true));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => quitOf(result.current)?.());
+
+    expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+    expect(result.current.quitConfirmation?.isOpen).not.toBe(true);
+  });
+
+  it("should end the setup from Android back once only the held-back update is left", () => {
+    send.mockClear();
+    useSession.mockReturnValue(seededDuringSetupSession(true));
+    renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const preventDefault = jest.fn();
+
+    listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledWith({ type: "QUIT" });
+  });
+
+  it("should still ask before leaving once the new session is not genuine", () => {
+    send.mockClear();
+    useSession.mockReturnValue(seededDuringSetupSession(true, false));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => quitOf(result.current)?.());
+
+    expect(send).not.toHaveBeenCalledWith({ type: "QUIT" });
+    expect(result.current.quitConfirmation?.isOpen).toBe(true);
+  });
+
+  it("should close the update handover from Setup once only the held-back update is left", () => {
+    send.mockClear();
+    closeFirmwareHandover.mockClear();
+    useSession.mockReturnValue({
+      ...seededDuringSetupSession(true),
+      state: "postSetupFirmware.firmwareUpdateDelegated",
+    });
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => quitOf(result.current)?.());
+
+    expect(closeFirmwareHandover).toHaveBeenCalledTimes(1);
+    expect(send).not.toHaveBeenCalledWith({ type: "QUIT" });
+  });
+
+  it("should ask to power on over the last setup step, then offer a retry, when the device switches off", () => {
+    const connect = jest.fn();
+    useSession.mockReturnValue(heldBackUpdateSession("postSetupFirmware.firmwareCheck", true));
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    useSession.mockReturnValue({
+      ...heldBackUpdateSession("awaitingSession", true),
+      status: "connecting",
+      connect,
+    });
+    rerender(undefined);
+
+    const poweredOff = result.current;
+    if (poweredOff.status !== "setup") throw new Error(poweredOff.status);
+    expect(poweredOff.setup.stage).toMatchObject({ kind: "osCheck", index: 4, total: 5 });
+    expect(connect).toHaveBeenCalledTimes(1);
+    expect(poweredOff.setup.connection).toBeNull();
+    expect(poweredOff.setup.suspendSheets).toBe(true);
+    expect(poweredOff.powerOnSheet).toMatchObject({ deviceModelId: DeviceModelId.nanoX });
+
+    act(() => jest.advanceTimersByTime(giveUpAfterPowerOnMs));
+
+    const gaveUp = result.current;
+    if (gaveUp.status !== "setup") throw new Error(gaveUp.status);
+    expect(gaveUp.powerOnSheet).toBeNull();
+    expect(gaveUp.reconnectSheet?.connection?.state).toBe("failed");
+
+    connect.mockClear();
+    act(() => gaveUp.reconnectSheet?.connection?.retry());
+    expect(connect).toHaveBeenCalledWith("device-id");
+  });
+
+  it("should stop waiting for the updated Nano from Setup's close button without asking", () => {
+    const abortFirmwareReconnect = jest.fn();
+    send.mockClear();
+    useSession.mockReturnValue({
+      ...seededDuringSetupSession(true),
+      state: "postSetupFirmware.firmwareUpdateDelegated",
+    });
+    const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    // The update reboots the device: the machine forgets this session's genuine verdict.
+    useSession.mockReturnValue({
+      ...seededDuringSetupSession(true),
+      state: "awaitingSessionAfterFirmwareUpdate",
+      abortFirmwareReconnect,
+      snapshot: {
+        context: {
+          updateAfterSetup: true,
+          isOnboarded: true,
+          firmware: null,
+          sessionId: "session",
+          genuineVerdict: null,
+          returningFromFirmwareUpdate: true,
+        },
+      } as DeviceOnboardingSession["snapshot"],
+    });
+    rerender(undefined);
+
+    expect(setupOf(result.current).stage).toMatchObject({ kind: "osCheck", index: 4 });
+    act(() => quitOf(result.current)?.());
+
+    expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
+    expect(result.current.quitConfirmation?.isOpen).not.toBe(true);
+  });
+
+  it("should still ask before leaving an unseeded device without a held-back update", () => {
+    send.mockClear();
+    useSession.mockReturnValue(seededDuringSetupSession(false));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    act(() => checksOf(result.current).onQuit?.());
+
+    expect(send).not.toHaveBeenCalledWith({ type: "QUIT" });
+    expect(checksModel(result.current).quitConfirmation?.isOpen).toBe(true);
   });
 
   it.each([
@@ -336,7 +651,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).toHaveBeenCalledWith({ type: "QUIT" });
     expect(goBack).not.toHaveBeenCalled();
 
-    recorded.host?.onLeave?.();
+    recorded.host?.onLeave?.("userQuit", unseededExit);
     back();
     expect(preventDefault).toHaveBeenCalledTimes(1);
   });
@@ -356,7 +671,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).not.toHaveBeenCalled();
     expect(goBack).not.toHaveBeenCalled();
 
-    recorded.host?.onLeave?.();
+    recorded.host?.onLeave?.("userQuit", unseededExit);
     back();
     expect(preventDefault).toHaveBeenCalledTimes(2);
   });
@@ -372,7 +687,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     back();
     expect(preventDefault).toHaveBeenCalledTimes(2);
 
-    recorded.host?.onLeave?.();
+    recorded.host?.onLeave?.("userQuit", unseededExit);
     back();
     expect(preventDefault).toHaveBeenCalledTimes(2);
   });
@@ -460,7 +775,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
   it("should keep the checks screen up while returning from an OS update", () => {
     useSession.mockReturnValue(
-      session({ state: "checks.firmwareUpdateDelegated", context: seededContext }),
+      session({ state: "checks.firmwareUpdateDelegated", context: seededContext() }),
     );
 
     const { result, rerender } = renderHook(() => useDeviceOnboardingFunnelViewModel());
@@ -475,7 +790,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     }
 
     useSession.mockReturnValue(
-      session({ state: "checks.checksSucceeded", context: seededContext }),
+      session({ state: "checks.checksSucceeded", context: seededContext() }),
     );
     rerender(undefined);
 
@@ -950,6 +1265,14 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       expect(send).toHaveBeenCalledWith({ type: "QUIT" });
     });
 
+    it("should send close from the power on sheet of a seeded device", () => {
+      const { result } = switchOff({ snapshot: activeSnapshot(seededMachineContext()) });
+
+      act(() => checksModel(result.current).powerOnSheet?.onQuit());
+
+      expect(clicks()).toEqual(["close"]);
+    });
+
     it("should ask to confirm from the power on sheet close action when leaving needs confirmation", () => {
       const { result } = switchOff({ context: confirmingContext });
 
@@ -1314,6 +1637,37 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
       expect(result.current.status).toBe("recoverNewSeed");
     });
+
+    it.each(["upToDate", "declined", "skipped"] as const)(
+      "should leave a new seed to the Recover pitch once the held-back update is %s",
+      kind => {
+        useSession.mockReturnValue(
+          session({
+            state: "done",
+            status: "exited",
+            context: {
+              onboardedOnEntry: false,
+              isOnboarded: true,
+              checksPaused: false,
+            } as DeviceOnboardingSession["context"],
+            snapshot: {
+              context: {
+                seedPath: SeedPath.NewSeed,
+                updateAfterSetup: true,
+                isOnboarded: true,
+                firmware: { kind },
+                sessionId: "session",
+                genuineVerdict: { sessionId: "session", isGenuine: true },
+              },
+            } as DeviceOnboardingSession["snapshot"],
+          }),
+        );
+
+        const { result } = renderRecoverFunnel();
+
+        expect(result.current.status).toBe("recoverNewSeed");
+      },
+    );
 
     it("should keep a seeded device on the shipped success screen", () => {
       useSession.mockReturnValue(doneSession(true, SeedPath.RestorePhrase));
@@ -1935,6 +2289,31 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(store.getState().postOnboarding.actionsToComplete).not.toContain("recover");
   });
 
+  it("should skip the Recover pitch when the deviceOnboarding flag hides Recover", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel(), {
+      overrideInitialState: withFlagOverrides({
+        ...recoverEnabled,
+        deviceOnboarding: { enabled: true, params: { offerLedgerSync: false, recover: false } },
+      }),
+    });
+
+    expect(result.current.status).toBe("success");
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it("should show the Recover pitch when a saved deviceOnboarding value predates the recover param", () => {
+    useSession.mockReturnValue(doneWithSeed("newSeed"));
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel(), {
+      overrideInitialState: withFlagOverrides({
+        ...recoverEnabled,
+        deviceOnboarding: { enabled: true, params: { offerLedgerSync: false } },
+      }),
+    });
+
+    expect(result.current.status).toBe("recoverNewSeed");
+  });
+
   it("should move to the success karaoke when Recover is skipped", () => {
     useSession.mockReturnValue(doneWithSeed("newSeed"));
     const { result } = renderRecoverFunnel();
@@ -1987,6 +2366,61 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
     expect(store.getState().settings.hasBeenUpsoldProtect).toBe(true);
     expect(resetNavigation).toHaveBeenCalled();
+  });
+
+  describe("onboarding_done of a new seed", () => {
+    const doneEvents = () => events().filter(event => event === "onboarding_done");
+
+    beforeEach(() => {
+      useSession.mockReturnValue(
+        session({
+          state: "done",
+          context: {
+            onboardedOnEntry: false,
+            checksPaused: false,
+          } as DeviceOnboardingSession["context"],
+          snapshot: {
+            context: {
+              onboardedOnEntry: false,
+              deviceModelId: DmkDeviceModelId.STAX,
+              offerSync: false,
+              firmware: null,
+              seedPath: SeedPath.NewSeed,
+            },
+          } as unknown as DeviceOnboardingSession["snapshot"],
+        }),
+      );
+    });
+
+    it("should send it when the user opens Recover, and not again on the success tap", () => {
+      const { result, rerender } = renderRecoverFunnel();
+
+      act(() => recoverOf(result.current).onOpenLiveApp());
+      expect(doneEvents()).toHaveLength(1);
+      expect(track).toHaveBeenCalledWith(
+        "onboarding_done",
+        expect.objectContaining({ seedConfiguration: "new_seed", ledger_sync_done: "no" }),
+      );
+
+      jest.mocked(useIsFocused).mockReturnValue(false);
+      rerender(undefined);
+      jest.mocked(useIsFocused).mockReturnValue(true);
+      rerender(undefined);
+      act(() => successOf(result.current).onFinish());
+
+      expect(doneEvents()).toHaveLength(1);
+    });
+
+    it("should send it once on the success tap when the user skips Recover", () => {
+      const { result } = renderRecoverFunnel();
+
+      act(() => recoverOf(result.current).onSkip());
+      expect(doneEvents()).toHaveLength(0);
+
+      act(() => successOf(result.current).onFinish());
+
+      expect(doneEvents()).toHaveLength(1);
+    });
   });
 
   it("should show the success karaoke when an unseeded restore reaches done", () => {
@@ -2145,6 +2579,137 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
+  it("should ask to confirm the skip when the OS update comes back after the release notes closed", () => {
+    const unseeded = unseededContext({
+      availableFirmwareVersion: "5.4.3",
+      firmwareVersion: "2.1.0",
+    });
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: unseeded }),
+    );
+    const { result, rerender } = renderFunnel();
+    const moveTo = (state: string) => {
+      useSession.mockReturnValue(session({ state, context: unseeded }));
+      rerender(undefined);
+    };
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
+
+    moveTo("checks.firmwareUpdateDelegated");
+    mockReturnsWithoutUpdate = 1;
+    moveTo("readingState");
+    moveTo("checks.genuineCheck.running");
+    moveTo("checks.firmwareUpdateOffered");
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(true);
+
+    moveTo("checks.firmwareUpdateDelegated");
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
+  });
+
+  it.each([
+    ["the device locks", "deviceLocked"],
+    ["the session drops", "awaitingSession"],
+  ])(
+    "should still ask to confirm the skip when %s before the update is offered again",
+    (_, interruption) => {
+      const unseeded = unseededContext({
+        availableFirmwareVersion: "5.4.3",
+        firmwareVersion: "2.1.0",
+      });
+      useSession.mockReturnValue(
+        session({ state: "checks.firmwareUpdateOffered", context: unseeded }),
+      );
+      const { result, rerender } = renderFunnel();
+      const moveTo = (state: string) => {
+        useSession.mockReturnValue(session({ state, context: unseeded }));
+        rerender(undefined);
+      };
+
+      moveTo("checks.firmwareUpdateDelegated");
+      mockReturnsWithoutUpdate = 1;
+      moveTo("readingState");
+      moveTo(interruption);
+      moveTo("readingState");
+      moveTo("checks.firmwareUpdateOffered");
+
+      expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(true);
+    },
+  );
+
+  it("should still ask to confirm the skip when the release notes close after a disconnect", () => {
+    const unseeded = unseededContext({
+      availableFirmwareVersion: "5.4.3",
+      firmwareVersion: "2.1.0",
+    });
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: unseeded }),
+    );
+    const { result, rerender } = renderFunnel();
+    const moveTo = (state: string) => {
+      useSession.mockReturnValue(session({ state, context: unseeded }));
+      rerender(undefined);
+    };
+
+    moveTo("checks.firmwareUpdateDelegated");
+    mockReturnsWithoutUpdate = 1;
+    moveTo("awaitingSessionAfterFirmwareUpdate");
+    moveTo("readingState");
+    moveTo("checks.firmwareUpdateOffered");
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(true);
+  });
+
+  it("should not ask to confirm the skip when the release notes never opened", () => {
+    const unseeded = unseededContext({
+      availableFirmwareVersion: "5.4.3",
+      firmwareVersion: "2.1.0",
+    });
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: unseeded }),
+    );
+    const { result, rerender } = renderFunnel();
+    const moveTo = (state: string) => {
+      useSession.mockReturnValue(session({ state, context: unseeded }));
+      rerender(undefined);
+    };
+
+    moveTo("checks.firmwareUpdateDelegated");
+    moveTo("readingState");
+    moveTo("checks.firmwareUpdateOffered");
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
+  });
+
+  it("should not ask to confirm the skip when the OS update is first offered", () => {
+    useSession.mockReturnValue(
+      session({ state: "checks.firmwareUpdateOffered", context: unseededContext() }),
+    );
+
+    const { result } = renderFunnel();
+
+    expect(setupOf(result.current).checks?.confirmSkipUpdate).toBe(false);
+  });
+
+  it.each<[FirmwareCheck["kind"], boolean]>([
+    ["declined", true],
+    ["upToDate", false],
+    ["skipped", false],
+  ])("should report a firmware answer of %s as declined: %s", (kind, declined) => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.firmwareCheck",
+        context: unseededContext(),
+        snapshot: { context: { firmware: { kind } } } as DeviceOnboardingSession["snapshot"],
+      }),
+    );
+
+    const { result } = renderFunnel();
+
+    expect(setupOf(result.current).firmwareDeclined).toBe(declined);
+  });
+
   it("should continue once each time an unseeded device reaches the end of the checks", () => {
     const unseeded = unseededContext();
     useSession.mockReturnValue(session({ state: "checks.checksSucceeded", context: unseeded }));
@@ -2188,7 +2753,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).toHaveBeenLastCalledWith({ type: "CONTINUE" });
   });
 
-  it("should count one fewer stage on a Nano, which has no device name", () => {
+  it("should count one fewer stage on a Nano, which asks the setup choice before the PIN", () => {
     useSession.mockReturnValue(
       session({
         state: "deviceSetup.pin",
@@ -2200,10 +2765,41 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     const { result } = renderFunnel();
 
     expect(setupOf(result.current).stage).toEqual({
-      index: 1,
+      index: 2,
       total: 4,
       kind: "pin",
       indicator: "none",
+      infoCard: "pin",
+    });
+  });
+
+  it("should show five stages on a Nano whose OS can only update after setup", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "checks.genuineCheck.running",
+        liveDevice: { ...device, modelId: DeviceModelId.nanoX },
+        context: unseededContext(),
+        snapshot: {
+          context: {
+            updateAfterSetup: false,
+            isOnboarded: false,
+            onboardedOnEntry: false,
+            firmwareVersion: "2.4.0",
+            deviceModelId: DmkDeviceModelId.NANO_X,
+            lastDeviceState: null,
+            recoveryKeyBackupOpen: false,
+          },
+        } as DeviceOnboardingSession["snapshot"],
+      }),
+    );
+
+    const { result } = renderFunnel();
+
+    expect(setupOf(result.current).stage).toEqual({
+      index: 0,
+      total: 5,
+      kind: "genuine",
+      indicator: "loading",
     });
   });
 
@@ -2385,7 +2981,25 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).toHaveBeenCalledWith({ type: "QUIT" });
   });
 
-  it("should show the restore stage while Recover restore is on the device", () => {
+  it("should show the restore step on Setup when the deviceOnboarding flag hides Recover", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreRecover",
+        context: unseededContext({ currentOnboardingStep: "restore-recover-backup" }),
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel(), {
+      overrideInitialState: withFlagOverrides({
+        deviceOnboarding: { enabled: true, params: { offerLedgerSync: false, recover: false } },
+      }),
+    });
+
+    expect(result.current.status).toBe("setup");
+    expect(send).not.toHaveBeenCalledWith({ type: "PAUSE_POLLING" });
+  });
+
+  it("should show Recover restore while that step is on the device", () => {
     useSession.mockReturnValue(
       session({
         state: "deviceSetup.restoreRecover",
@@ -2395,14 +3009,156 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     const { result } = renderFunnel();
 
-    expect(result.current.status).toBe("setup");
-    expect(setupOf(result.current).stage).toEqual({
-      index: 4,
-      total: 5,
-      kind: "restore",
-      indicator: "none",
-    });
+    expect(result.current.status).toBe("recoverRestore");
     expect(result.current.quitConfirmation?.isOpen).toBe(false);
+    expect(send).not.toHaveBeenCalledWith({ type: "PAUSE_POLLING" });
+    expect(send).not.toHaveBeenCalledWith({ type: "RESUME_POLLING" });
+  });
+
+  it("should return to the restore choice on close and on Android back", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreRecover",
+        context: unseededContext({ currentOnboardingStep: "restore-recover-backup" }),
+      }),
+    );
+    const { result } = renderFunnel();
+    const preventDefault = jest.fn();
+
+    act(() => restoreOf(result.current).onClose());
+
+    expect(result.current.status).toBe("setup");
+    expect(setupOf(result.current).stage.infoCard).toBe("restoreChoice");
+    expect(send).not.toHaveBeenCalledWith({ type: "QUIT" });
+
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreWords",
+        context: unseededContext({ currentOnboardingStep: "restore-recovery-phrase" }),
+      }),
+    );
+    const again = renderFunnel();
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreRecover",
+        context: unseededContext({ currentOnboardingStep: "restore-recover-backup" }),
+      }),
+    );
+    again.rerender(undefined);
+    expect(again.result.current.status).toBe("recoverRestore");
+
+    act(() => {
+      listeners.get("beforeRemove")?.({ preventDefault, data: { action: { type: "GO_BACK" } } });
+    });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(again.result.current.status).toBe("setup");
+    expect(send).not.toHaveBeenCalledWith({ type: "QUIT" });
+  });
+
+  it("should open Recover only after polling has paused, then resume once", () => {
+    navigate.mockClear();
+    send.mockClear();
+    jest.mocked(useIsFocused).mockReturnValue(true);
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreRecover",
+        context: unseededContext({
+          currentOnboardingStep: "restore-recover-backup",
+          firmwareVersion: "1.8.0",
+          pollingPaused: false,
+        }),
+      }),
+    );
+
+    const { result, rerender } = renderFunnel();
+
+    act(() => restoreOf(result.current).onContinue());
+
+    expect(send).toHaveBeenCalledWith({ type: "PAUSE_POLLING" });
+    expect(navigate).not.toHaveBeenCalled();
+
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreRecover",
+        context: unseededContext({ pollingPaused: true, firmwareVersion: "1.8.0" }),
+      }),
+    );
+    rerender(undefined);
+
+    expect(navigate).toHaveBeenCalledWith(NavigatorName.Base, {
+      screen: ScreenName.DeviceOnboardingRecover,
+      params: {
+        platform: "protect-simu",
+        device,
+        redirectTo: "restore",
+      },
+    });
+
+    jest.mocked(useIsFocused).mockReturnValue(false);
+    rerender(undefined);
+    jest.mocked(useIsFocused).mockReturnValue(true);
+    rerender(undefined);
+
+    expect(send).toHaveBeenCalledWith({ type: "RESUME_POLLING" });
+    expect(send.mock.calls.filter(([event]) => event.type === "RESUME_POLLING")).toHaveLength(1);
+
+    jest.mocked(useIsFocused).mockReturnValue(false);
+    rerender(undefined);
+    jest.mocked(useIsFocused).mockReturnValue(true);
+    rerender(undefined);
+
+    expect(send.mock.calls.filter(([event]) => event.type === "RESUME_POLLING")).toHaveLength(1);
+  });
+
+  it("should resume instead of opening Recover when Close lands before the pause is acknowledged", () => {
+    navigate.mockClear();
+    send.mockClear();
+    jest.mocked(useIsFocused).mockReturnValue(true);
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreRecover",
+        context: unseededContext({
+          currentOnboardingStep: "restore-recover-backup",
+          firmwareVersion: "1.8.0",
+          pollingPaused: false,
+        }),
+      }),
+    );
+
+    const { result, rerender } = renderFunnel();
+    const restore = restoreOf(result.current);
+
+    act(() => restore.onContinue());
+    act(() => restore.onClose());
+
+    expect(result.current.status).toBe("setup");
+
+    useSession.mockReturnValue(
+      session({
+        state: "deviceSetup.restoreRecover",
+        context: unseededContext({ pollingPaused: true, firmwareVersion: "1.8.0" }),
+      }),
+    );
+    rerender(undefined);
+
+    expect(navigate).not.toHaveBeenCalled();
+    expect(send).toHaveBeenCalledWith({ type: "RESUME_POLLING" });
+  });
+
+  it("should not pause polling for a seeded device", () => {
+    send.mockClear();
+    useSession.mockReturnValue(
+      session({
+        state: "checks.firmwareCheck",
+        context: seededContext(),
+      }),
+    );
+
+    renderFunnel();
+
+    expect(send).not.toHaveBeenCalledWith({ type: "PAUSE_POLLING" });
+    expect(send).not.toHaveBeenCalledWith({ type: "RESUME_POLLING" });
   });
 
   it("should restore the genuine check after reconnecting during the safety warning", () => {
@@ -2507,6 +3263,221 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       const { result } = dropDuringPin({ state: "awaitingSessionAfterFirmwareUpdate" });
 
       expect(result.current.status).toBe("connecting");
+    });
+  });
+
+  describe("seeded funnel tracking", () => {
+    it("should leave the refusal page and the retry click to the drawer when the device refuses", () => {
+      useSession.mockReturnValue(
+        seededSession(
+          "checks.genuineFailed",
+          {
+            lastGenuineFailure: { kind: "GENUINE_CHECK_REFUSED" },
+          } as Partial<DeviceOnboardingContext>,
+          { genuineFailureKind: "GENUINE_CHECK_REFUSED" },
+        ),
+      );
+
+      const { result } = renderFunnel();
+      const checks = checksOf(result.current);
+      checks.onRetry();
+
+      expect(screensOf(checks)).toEqual([]);
+      expect(checks.funnelProps).toMatchObject({ deviceType: "stax" });
+      expect(clicks()).toEqual([]);
+      expect(send).toHaveBeenCalledWith({ type: "RETRY" });
+    });
+
+    it.each([
+      [null, ["Genuine Check success"]],
+      ["offerSheet", ["Genuine Check success", "OS update required"]],
+      ["decisionScreen", ["Genuine Check success", "OS update required refusal screen"]],
+      ["unsupportedUsbDrawer", ["Genuine Check success", "Drawer : OS update unsupported"]],
+    ] as const)("should show the genuine success page then the %s page", (step, expected) => {
+      expect(screensOf(renderUpdateOffer(), step)).toEqual(expected);
+    });
+
+    it("should send the unsupported reason when the device needs USB", () => {
+      const checks = renderUpdateOffer();
+
+      expect(checks.screensFor?.("unsupportedUsbDrawer").at(-1)?.tracking).toEqual(
+        expect.objectContaining({ reason: "usb_required", deviceType: "stax" }),
+      );
+    });
+
+    it("should send the update availability on the genuine success page", () => {
+      expect(renderUpdateOffer().screensFor?.("offerSheet")[0]?.tracking).toEqual(
+        expect.objectContaining({
+          category: "Genuine Check success",
+          firmware_update_availability: "yes",
+        }),
+      );
+    });
+
+    it("should send close when the user closes the offer sheet", () => {
+      renderUpdateOffer().onUpdateSheetClosed?.();
+
+      expect(clicks()).toEqual(["close"]);
+    });
+
+    it.each([
+      ["Install Ledger OS update", "onInstallUpdate"],
+      ["Continue", "onUpdatePressed"],
+      ["Skip Ledger OS update", "onDeclineUpdate"],
+      ["close", "onClosePressed"],
+    ] as const)("should send %s when the user presses it", (button, press) => {
+      const checks = renderUpdateOffer();
+      checks[press]?.();
+
+      expect(clicks()).toEqual([button]);
+    });
+
+    it("should mark the firmware update as started on the Continue tap, before the eligibility check", () => {
+      useSession.mockReturnValue(
+        seededSession(
+          "checks.firmwareUpdateOffered",
+          { firmware: offered(availableUpdate) },
+          {
+            firmwareVersion: "1.0.0",
+            availableFirmwareVersion: "1.1.0",
+          },
+        ),
+      );
+
+      const { result } = renderFunnel();
+      act(() => checksOf(result.current).onUpdatePressed?.());
+      const exit = recorded.host?.onLeave?.("offerLedgerSync", seededMachineContext());
+
+      expect(send).not.toHaveBeenCalled();
+      expect(exit).toEqual(expect.objectContaining({ firmwareUpdateStarted: true }));
+    });
+
+    it("should leave from the checks without a click: the close button sends it", () => {
+      useSession.mockReturnValue(seededSession("checks.firmwareCheck"));
+
+      const { result } = renderFunnel();
+      act(() => checksOf(result.current).onQuit?.());
+
+      expect(clicks()).toEqual([]);
+      expect(result.current.quitConfirmation?.isOpen).toBe(true);
+      expect(events()).not.toContain("onboarding_aborted");
+    });
+
+    it("should send the genuine success page again, as a new screen, after a skipped OS update", () => {
+      const before = renderUpdateOffer().screensFor?.("offerSheet")[0];
+      useSession.mockReturnValue(
+        seededSession(
+          "checks.checksSucceeded",
+          { firmware: declined },
+          {
+            firmwareUpToDate: false,
+            firmwareChecked: true,
+          },
+        ),
+      );
+
+      const [after] = checksOf(renderFunnel().result.current).screensFor?.(null) ?? [];
+
+      expect(after?.tracking).toEqual(
+        expect.objectContaining({
+          category: "Genuine Check success",
+          firmware_update_availability: "yes",
+        }),
+      );
+      expect(after?.key).not.toBe(before?.key);
+    });
+
+    it.each([
+      [upToDate, "no"],
+      [skipped, "unknown"],
+    ] as const)("should send availability %o → %s on the result page", (check, availability) => {
+      useSession.mockReturnValue(
+        seededSession(
+          "checks.checksSucceeded",
+          { firmware: check },
+          {
+            firmwareUpToDate: check === upToDate,
+            firmwareChecked: true,
+          },
+        ),
+      );
+
+      expect(checksOf(renderFunnel().result.current).screensFor?.(null)[0]?.tracking).toEqual(
+        expect.objectContaining({ firmware_update_availability: availability }),
+      );
+    });
+
+    it("should keep the checks page while the device is locked, so unlock sends it once", () => {
+      useSession.mockReturnValue(seededSession("checks.firmwareCheck"));
+      const { result, rerender } = renderFunnel();
+      const before = checksOf(result.current).screensFor?.(null);
+
+      useSession.mockReturnValue(seededSession("deviceLocked"));
+      rerender(undefined);
+
+      expect(checksOf(result.current).screensFor?.(null)).toEqual(before);
+    });
+
+    it.each([
+      ["an unseeded device", "checks.checksSucceeded", { onboardedOnEntry: false }],
+      ["a leave before the device read", null, null],
+    ])("should send nothing for %s", (_case, state, context) => {
+      useSession.mockReturnValue(
+        session({
+          status: state ? "running" : "connecting",
+          state,
+          liveDevice: state ? device : null,
+          context: context as DeviceOnboardingSession["context"],
+        }),
+      );
+
+      const { result } = renderFunnel();
+      if (result.current.status === "connecting") result.current.onQuit();
+
+      expect(pages()).toEqual([]);
+      expect(events()).toEqual([]);
+    });
+
+    it("should send close from the connecting screen's close", () => {
+      useSession.mockReturnValue({
+        ...seededSession("checks.firmwareCheck"),
+        status: "connecting",
+        liveDevice: null,
+      });
+
+      const { result } = renderFunnel();
+      if (result.current.status !== "connecting") throw new Error(result.current.status);
+      act(() => {
+        if (result.current.status === "connecting") result.current.onQuit();
+      });
+
+      expect(clicks()).toEqual(["close"]);
+    });
+
+    it.each([
+      ["completed", true, ["onboarding_started", "onboarding_done"]],
+      ["userQuit", true, ["onboarding_started", "onboarding_done"]],
+      ["userQuit", false, ["onboarding_started", "onboarding_aborted"]],
+      ["resumeFirmwareUpdate", true, ["onboarding_started", "onboarding_aborted"]],
+      ["offerLedgerSync", true, ["onboarding_started"]],
+      ["legacyFallback", true, ["onboarding_started", "onboarding_done"]],
+      ["legacyFallback", false, []],
+    ] as const)("should end a %s exit (genuine: %s) with %j", (reason, genuine, sent) => {
+      useSession.mockReturnValue(seededSession("readingState"));
+      renderFunnel();
+
+      const exit = recorded.host?.onLeave?.(
+        reason,
+        seededMachineContext({
+          firmwareVersion: null,
+          genuineVerdict: { sessionId: "s1", isGenuine: genuine },
+        }),
+      );
+
+      expect(events()).toEqual(sent);
+      expect(exit ?? null).toEqual(
+        sent.length ? expect.objectContaining({ deviceType: "stax" }) : null,
+      );
     });
   });
 });

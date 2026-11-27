@@ -5,12 +5,12 @@ import type {
   AccountBalanceHistoryQuery,
 } from "@domain/entity-account-balance-history";
 import { mockAssetBalanceHistory } from "@domain/entity-account-balance-history/schema.mock";
-import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
 import type { CryptoOrTokenCurrencyId, Currency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { importCountervalues } from "@domain/entity-market-countervalues";
+import { AccountUUIDSchema } from "@domain/entity-account";
 import {
   valueBalanceHistory,
   withBalanceHistoryCountervalues,

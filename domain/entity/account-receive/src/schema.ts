@@ -1,9 +1,7 @@
 import { z } from "zod";
-import {
-  AccountUUIDSchema,
-  AddressSchema,
-  DerivationPathSchema,
-} from "@domain/entity-account-descriptor";
+import { AccountUUIDSchema } from "@domain/entity-account";
+import { AddressSchema } from "@domain/entity-network";
+import { DerivationPathSchema } from "@domain/entity-derivation";
 
 const addressVerification = <T extends string>(type: T) =>
   z.object({ type: z.literal(type), path: DerivationPathSchema, address: AddressSchema });

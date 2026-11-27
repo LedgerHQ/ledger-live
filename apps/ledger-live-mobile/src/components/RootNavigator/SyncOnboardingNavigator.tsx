@@ -8,6 +8,7 @@ import { SyncOnboardingStackParamList } from "./types/SyncOnboardingNavigator";
 import { SyncOnboarding } from "~/screens/SyncOnboarding";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
+import OnboardingOsUpdateScreen from "LLM/features/OsUpdate/screens/OnboardingOsUpdate";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 
 const Stack = createNativeStackNavigator<SyncOnboardingStackParamList>();
@@ -28,6 +29,11 @@ export const SyncOnboardingNavigator = () => {
     >
       <Stack.Screen name={ScreenName.SyncOnboardingCompanion} component={SyncOnboarding} />
       <Stack.Screen name={ScreenName.SyncOnboardingCompletion} component={CompletionScreen} />
+      <Stack.Screen
+        name={ScreenName.SyncOnboardingOsUpdate}
+        component={OnboardingOsUpdateScreen}
+        options={{ headerShown: false, gestureEnabled: false }}
+      />
       <Stack.Screen
         name={ScreenName.FirmwareUpdate}
         component={FirmwareUpdateScreen}

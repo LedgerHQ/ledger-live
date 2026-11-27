@@ -1,4 +1,4 @@
-import { useGetAssetChartDataQuery } from "../state-manager/api";
+import { useGetAssetChartDataQuery, toMarketChartRange } from "@domain/api-market-chart";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
 import type { MarketAssetChartDataRequestParams } from "../utils/types";
 
@@ -14,7 +14,12 @@ export const useAssetChartData = (
   options?: UseAssetChartDataOptions,
 ) =>
   useGetAssetChartDataQuery(
-    { id, counterCurrency, range },
+    // An unknown range falls back to the endpoint default and a missing counter currency is omitted from the query.
+    {
+      id,
+      counterCurrency: counterCurrency ?? "",
+      range: toMarketChartRange(range),
+    },
     {
       pollingInterval: options?.pollingInterval ?? DEFAULT_CHART_POLLING_INTERVAL,
       skip: options?.skip,

@@ -18,7 +18,7 @@ import { toNeuronsData } from "../common-logic/neuron";
 
 const LOCAL_NODE = "http://127.0.0.1:4943";
 
-const broadcast = buildBroadcast(() => LOCAL_NODE);
+const broadcast = buildBroadcast(async () => LOCAL_NODE);
 const account = { xpub: "04abcd" } as any;
 const signed = (rawData: any) => ({
   account,

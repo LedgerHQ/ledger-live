@@ -13,6 +13,8 @@ jest.mock("@features/platform-app-lock", () => ({
   clearBiometricsMarker: jest.fn(async () => undefined),
   checkPassword: jest.fn(async () => ({ status: "incorrect" })),
   promptBiometrics: jest.fn(async () => ({ status: "failed" })),
+  isLegacyMigrationComplete: jest.fn(async () => false),
+  storeBiometricsMarker: jest.fn(async () => true),
 }));
 
 const {
@@ -21,6 +23,8 @@ const {
   needsLongerStoredPassword,
   clearStoredPassword,
   checkPassword,
+  promptBiometrics,
+  isLegacyMigrationComplete,
 } = jest.requireMock("@features/platform-app-lock");
 
 const dismissAll = jest.fn();
@@ -64,7 +68,7 @@ let appStateSpy: jest.SpyInstance | undefined;
 const APP_CONTENT = "portfolio";
 const UNLOCK_SCREEN = "app-lock-unlock-screen";
 
-const renderGate = () => {
+const renderGate = (options?: Parameters<typeof render>[1]) => {
   const listeners: ((state: AppStateStatus) => void)[] = [];
 
   appStateSpy = jest.spyOn(AppState, "addEventListener").mockImplementation(((
@@ -79,6 +83,7 @@ const renderGate = () => {
     <AppLockGate>
       <Text>{APP_CONTENT}</Text>
     </AppLockGate>,
+    options,
   );
 
   const pause = () => {
@@ -112,6 +117,8 @@ beforeEach(() => {
   hasPasswordVerifier.mockResolvedValue(false);
   hasBiometricsMarker.mockResolvedValue(false);
   needsLongerStoredPassword.mockResolvedValue(false);
+  promptBiometrics.mockResolvedValue({ status: "failed" });
+  isLegacyMigrationComplete.mockResolvedValue(false);
   hasKnownInstall.mockResolvedValue(true);
   Object.assign(AppState, { currentState: "active" });
   mockIsInBackground = false;
@@ -372,5 +379,26 @@ describe("the app lock gate", () => {
     pause();
 
     expect(store.getState().appLock.isLocked).toBe(false);
+  });
+});
+
+describe("a legacy migration an earlier launch left half recorded", () => {
+  it("asks for the biometrics it carries over, though the unlock screen is already up", async () => {
+    hasPasswordVerifier.mockResolvedValue(true);
+    isLegacyMigrationComplete.mockResolvedValue(true);
+    promptBiometrics.mockResolvedValue({ status: "succeeded" });
+
+    const { store } = renderGate({
+      overrideInitialState: state => ({
+        ...state,
+        settings: { ...state.settings, privacy: { hasPassword: true, biometricsEnabled: true } },
+      }),
+    });
+
+    await waitFor(() => expect(store.getState().appLock.biometricsEnabled).toBe(true));
+    await waitFor(() => expect(store.getState().appLock.isLocked).toBe(false));
+
+    expect(promptBiometrics).toHaveBeenCalledTimes(1);
+    expect(await screen.findByText(APP_CONTENT)).toBeVisible();
   });
 });

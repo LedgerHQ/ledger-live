@@ -13,6 +13,8 @@ import {
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { useAssets } from "./hooks/useAssets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
+import { useNetworkHelp } from "./hooks/useNetworkHelp";
+import { NetworkHelpSheet } from "./components/NetworkHelpSheet";
 import { shouldRequestModularDrawer } from "./shouldRequestModularDrawer";
 import type { DisabledItemsExplanation } from "./types";
 
@@ -69,6 +71,8 @@ export type ModularDrawerFlowProps = Readonly<{
   children: (props: ModularDrawerFlowRenderProps) => React.ReactNode;
 }>;
 
+const ignoreClose = () => {};
+
 export function ModularDrawerFlow({
   isOpen,
   onClose,
@@ -117,6 +121,7 @@ export function ModularDrawerFlow({
   const {
     accountCurrency,
     selectedAssetName,
+    selectedAssetTicker,
     handleAsset,
     handleNetwork,
     handleBackButton,
@@ -138,6 +143,8 @@ export function ModularDrawerFlow({
     selectableNetworkIds,
     isCurrentCatalogReady: isCurrentResultReady,
   });
+
+  const networkHelp = useNetworkHelp();
 
   const [hasPresentedSheet, setHasPresentedSheet] = useState(false);
   if (!isOpen && hasPresentedSheet) setHasPresentedSheet(false);
@@ -179,6 +186,8 @@ export function ModularDrawerFlow({
         disabledNetworkExplanation: disabledItemsExplanation?.network,
         onDisabledNetworkPress: disabledItemsExplanation?.onPress,
         selectedAssetName,
+        selectedAssetTicker,
+        networkHelp,
       }}
       accountsViewModel={{
         onAddNewAccount,
@@ -194,10 +203,12 @@ export function ModularDrawerFlow({
       {children({
         content,
         hasBackButton: shouldShowBackButton,
-        isRequestingToBeOpened,
+        // The help takes the drawer's place: the drawer comes back once it closes.
+        isRequestingToBeOpened: isRequestingToBeOpened && !networkHelp?.isOpen,
         onBack: handleBackButton,
-        onClose: handleCloseButton,
+        onClose: networkHelp?.isOpen ? ignoreClose : handleCloseButton,
       })}
+      {networkHelp ? <NetworkHelpSheet networkHelp={networkHelp} /> : null}
     </>
   );
 }

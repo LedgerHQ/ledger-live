@@ -2,10 +2,11 @@ import type { Account, AccountRaw, Operation } from "@ledgerhq/types-live";
 import type {
   ConcordiumAccount,
   ConcordiumAccountRaw,
+  ConcordiumContext,
   ConcordiumResources,
   RawOperation,
 } from "../types";
-import coinConfig from "../config";
+import { DEFAULT_ENABLE_TOKENS } from "../constants";
 import { toOperation } from "./operations";
 import { applyTokensToResources } from "./tokens";
 
@@ -56,43 +57,41 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): vo
 }
 
 /**
- * Reads the token flag, treating an unreadable config as off.
- *
- * `getCoinConfig` throws when unset, but that does not mean "too early":
- * `fromAccountRaw` awaits `getAccountBridgeByFamily`, which loads the family
- * setup, and concordium's setup seeds the config at module initialization. A
- * throw therefore signals abnormal config resolution, where failing closed is
- * right — exposing token UI for a feature that is off by default is worse than
- * rebuilding sub-accounts from chain on the next sync.
+ * Reads the token flag, treating an unreadable config as off: exposing token UI
+ * for a feature that is off by default is worse than rebuilding sub-accounts
+ * from chain on the next sync.
  */
-function tokensEnabled(currencyId: string): boolean {
+async function tokensEnabled(context: ConcordiumContext, currencyId: string): Promise<boolean> {
   try {
-    return coinConfig.getCoinConfig(currencyId).enableTokens === true;
+    return ((await context.config(currencyId)).enableTokens ?? DEFAULT_ENABLE_TOKENS) === true;
   } catch {
     return false;
   }
 }
 
-export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
-  if (!isConcordiumAccountRaw(accountRaw) || !accountRaw.concordiumResources) {
-    return;
-  }
+export const makeAssignFromAccountRaw =
+  (context: ConcordiumContext) =>
+  async (accountRaw: AccountRaw, account: Account): Promise<void> => {
+    if (!isConcordiumAccountRaw(accountRaw) || !accountRaw.concordiumResources) {
+      return;
+    }
 
-  const resources = copyResources(accountRaw.concordiumResources);
+    const resources = copyResources(accountRaw.concordiumResources);
 
-  // The only account-producing path no `postSync` covers: the framework assigns
-  // the raw token sub-accounts just before calling this hook, so without a strip
-  // here disabling the flag would hold only until the next app start.
-  if (!tokensEnabled(account.currency.id)) {
-    (account as ConcordiumAccount).concordiumResources = applyTokensToResources(resources, {
-      kind: "cleared",
-    });
-    delete account.subAccounts;
-    return;
-  }
+    // The only account-producing path no `postSync` covers: the framework assigns
+    // the raw token sub-accounts just before calling this hook, so without a strip
+    // here restored token sub-accounts would stay preparable and signable until
+    // the next sync.
+    if (!(await tokensEnabled(context, account.currency.id))) {
+      (account as ConcordiumAccount).concordiumResources = applyTokensToResources(resources, {
+        kind: "cleared",
+      });
+      delete account.subAccounts;
+      return;
+    }
 
-  (account as ConcordiumAccount).concordiumResources = resources;
-}
+    (account as ConcordiumAccount).concordiumResources = resources;
+  };
 
 export function mapRawOperationToBridgeOperation(op: RawOperation, accountId: string): Operation {
   return toOperation(op, accountId);

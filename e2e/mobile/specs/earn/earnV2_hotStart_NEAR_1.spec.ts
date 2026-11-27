@@ -7,4 +7,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@near", "@family-near"],
 };
 
-runHotStartTest(testConfig.account, testConfig.tmsLinks, testConfig.tags);
+runHotStartTest(testConfig);

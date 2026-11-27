@@ -7,6 +7,7 @@ import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
 import { isCurrencyUnsupportedOnLNS } from "@ledgerhq/live-e2e-shared/nanoSSupport";
 import { readFile } from "fs/promises";
 import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
+import { INTERVAL } from "@e2e/utils/timeouts";
 import { isPaytabSpec, paytabCardSession } from "@e2e/utils/paytab";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
@@ -57,6 +58,11 @@ export function isAndroid(): boolean {
 
 export function isIos(): boolean {
   return device.getPlatform() === "ios";
+}
+
+/** With iOS synchronization off, a tap during a screen or sheet transition is lost or half handled. */
+export async function waitForIosTransitionEnd() {
+  if (isIos()) await delay(INTERVAL.long);
 }
 
 export function isSpeculosRemote(): boolean {
@@ -219,7 +225,13 @@ export const normalizeText = (text: string) =>
     .replace(/\u202F/g, " ")
     .trim();
 
-export const parseTickerAmount = (text: string, ticker: string) => {
+type TickerAmountOptions = {
+  text: string;
+  ticker: string;
+};
+
+export const parseTickerAmount = (options: TickerAmountOptions) => {
+  const { text, ticker } = options;
   const normalized = normalizeText(text).replace(/,/g, "");
   const tickerAmountRegex = new RegExp(String.raw`(-?\d+(?:\.\d+)?)\s*${escapeRegExp(ticker)}`);
   const match = tickerAmountRegex.exec(normalized);

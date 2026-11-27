@@ -1,4 +1,4 @@
-import { BitcoinInfrastructureError } from "../../errors";
+import { BitcoinInfrastructureError, InvalidUtxoId, UnknownUtxo } from "../../errors";
 import { http, HttpResponse } from "msw";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { estimateFees } from "../estimateFees";
@@ -60,6 +60,12 @@ const FEES = { "2": 12_100, "4": 11_740, "6": 11_030 };
 const noRates = () =>
   http.get(`${explorerUrl()}/fees`, () => HttpResponse.json({}, { status: 500 }));
 
+const coinControl = (utxoStrategy: Record<string, unknown>, overrides = {}) =>
+  intent({
+    data: { type: "unknown", utxoStrategy },
+    ...overrides,
+  } as Partial<TransactionIntent>);
+
 describe("estimateFees", () => {
   beforeEach(() =>
     server.use(feesHandler(FEES), networkHandler(), pendingUtxosHandler(FUNDED_P2WPKH)),
@@ -97,12 +103,71 @@ describe("estimateFees", () => {
       parameters: {
         feePerByte: 13n,
         relayFeePerByte: 1n,
+        incrementalRelayFeePerByte: 1n,
         vsize: vsize(1, true),
         inputCount: 1,
         change: 100_000n - 10_000n - vsize(1, true) * 13n,
         sufficient: true,
       },
     });
+  });
+
+  it("returns the network's incremental relay rate, in sat/vB", async () => {
+    server.use(
+      utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 100_000)], token: null }]),
+      networkHandler("0.00001", undefined, "0.00003"),
+    );
+    const estimation = await estimateFees(testContext(), "bitcoin", intent());
+    expect(estimation.parameters).toEqual(
+      expect.objectContaining({ relayFeePerByte: 1n, incrementalRelayFeePerByte: 3n }),
+    );
+  });
+
+  it("prices a replacement of a pending transaction on its own inputs", async () => {
+    server.use(
+      utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("b", 50_000)], token: null }]),
+      pendingUtxosHandler(FUNDED_P2WPKH, { spent: [utxo("a", 100_000)] }),
+    );
+    const estimation = await estimateFees(
+      testContext(),
+      "bitcoin",
+      coinControl({ selectedUtxos: [`${"a".repeat(64)}:0`] }),
+    );
+    expect(estimation.parameters).toEqual(
+      expect.objectContaining({ inputCount: 1, sufficient: true }),
+    );
+  });
+
+  it("leaves an excluded output out and reports a selection that does not cover the send", async () => {
+    server.use(
+      utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 100_000), utxo("b", 50_000)], token: null }]),
+    );
+    const swept = await estimateFees(
+      testContext(),
+      "bitcoin",
+      coinControl({ excludedUtxos: [`${"a".repeat(64)}:0`] }, { useAllAmount: true, amount: 0n }),
+    );
+    expect(swept.parameters?.inputCount).toBe(1);
+
+    const short = await estimateFees(
+      testContext(),
+      "bitcoin",
+      coinControl({ selectedUtxos: [`${"b".repeat(64)}:0`] }, { amount: 60_000n }),
+    );
+    expect(short.parameters?.sufficient).toBe(false);
+
+    await expect(
+      estimateFees(
+        testContext(),
+        "bitcoin",
+        coinControl({ selectedUtxos: [`${"9".repeat(64)}:0`] }),
+      ),
+    ).rejects.toBeInstanceOf(UnknownUtxo);
+
+    const twice = `${"b".repeat(64)}:0`;
+    await expect(
+      estimateFees(testContext(), "bitcoin", coinControl({ selectedUtxos: [twice, twice] })),
+    ).rejects.toBeInstanceOf(InvalidUtxoId);
   });
 
   it("follows the UTXO pagination", async () => {
@@ -139,6 +204,114 @@ describe("estimateFees", () => {
     expect(estimation.parameters?.relayFeePerByte).toBe(1n);
     expect(estimation.parameters).not.toHaveProperty("feePerByte");
     expect(estimation.parameters).not.toHaveProperty("amount");
+    expect(estimation.parameters?.sweepValue).toBe(100_000n);
+  });
+
+  it.each(["custom", "medium"])(
+    "prices a send-max with the caller's absolute fee under %s, as crafting signs it",
+    async feesStrategy => {
+      server.use(
+        utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 80_000)], token: null }]),
+        noRates(),
+      );
+      const estimation = await estimateFees(
+        testContext(),
+        "bitcoin",
+        intent({ useAllAmount: true, amount: 0n }),
+        { feesStrategy, fees: 5_000n },
+      );
+      expect(estimation.value).toBe(5_000n);
+      expect(estimation.parameters?.amount).toBe(75_000n);
+      expect(estimation.parameters?.fees).toBe(5_000n);
+      expect(estimation.parameters?.fixedFee).toBe(5_000n);
+      expect(estimation.parameters).not.toHaveProperty("feePerByte");
+      expect(estimation.parameters?.vsize).toBe(vsize(1, false));
+    },
+  );
+
+  it("ignores a rate given with the caller's fee, as crafting does, so a sweep keeps small outputs", async () => {
+    // At 50 sat/vB, the 2,000-sat output is not worth spending; crafting, under the fee, prices at
+    // the relay rate and spends it.
+    server.use(
+      utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 80_000), utxo("b", 2_000)], token: null }]),
+      noRates(),
+    );
+    const estimation = await estimateFees(
+      testContext(),
+      "bitcoin",
+      intent({ useAllAmount: true, amount: 0n }),
+      { fees: 5_000n, feePerByte: 50n },
+    );
+    expect(estimation.parameters?.inputCount).toBe(2);
+    expect(estimation.parameters?.amount).toBe(77_000n);
+  });
+
+  it("returns the fee crafting pays under the caller's fee, change below the dust threshold included", async () => {
+    server.use(utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 15_100)], token: null }]));
+    const estimation = await estimateFees(testContext(), "bitcoin", intent({ amount: 10_000n }), {
+      fees: 5_000n,
+    });
+    expect(estimation.value).toBe(5_100n);
+    expect(estimation.parameters?.change).toBe(0n);
+    expect(estimation.parameters?.fixedFee).toBe(5_000n);
+  });
+
+  it("reports a send the caller's absolute fee leaves uncovered", async () => {
+    server.use(utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 10_000)], token: null }]));
+    const estimation = await estimateFees(testContext(), "bitcoin", intent({ amount: 9_000n }), {
+      fees: 5_000n,
+    });
+    expect(estimation.parameters?.sufficient).toBe(false);
+  });
+
+  it("returns the value of the selected outputs a send-max spends under an absolute fee", async () => {
+    server.use(
+      utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 70_000), utxo("b", 30_000)], token: null }]),
+      noRates(),
+    );
+    const estimation = await estimateFees(
+      testContext(),
+      "bitcoin",
+      coinControl({ selectedUtxos: [`${"b".repeat(64)}:0`] }, { useAllAmount: true, amount: 0n }),
+      { feesStrategy: "custom" },
+    );
+    expect(estimation.parameters?.sweepValue).toBe(30_000n);
+  });
+
+  it("returns the value of a selection under an absolute fee, for validation to check the fee", async () => {
+    server.use(
+      utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 70_000), utxo("b", 30_000)], token: null }]),
+    );
+    const selecting = coinControl({ selectedUtxos: [`${"b".repeat(64)}:0`] }, { amount: 29_000n });
+    const absolute = await estimateFees(testContext(), "bitcoin", selecting, {
+      feesStrategy: "custom",
+    });
+    expect(absolute.parameters?.selectedValue).toBe(30_000n);
+    // At a rate, the estimate prices the caller's fee itself: no value is needed.
+    const atRate = await estimateFees(testContext(), "bitcoin", selecting);
+    expect(atRate.parameters).not.toHaveProperty("selectedValue");
+  });
+
+  it("compares an explorer hash whatever its case, for an exclusion as for a selection", async () => {
+    server.use(
+      utxosHandler(FUNDED_P2WPKH, [{ data: [utxo("a", 70_000), utxo("B", 30_000)], token: null }]),
+      noRates(),
+    );
+    const id = `${"b".repeat(64)}:0`;
+    const swept = await estimateFees(
+      testContext(),
+      "bitcoin",
+      coinControl({ excludedUtxos: [id] }, { useAllAmount: true, amount: 0n }),
+      { feesStrategy: "custom" },
+    );
+    expect(swept.parameters?.sweepValue).toBe(70_000n);
+    const selected = await estimateFees(
+      testContext(),
+      "bitcoin",
+      coinControl({ selectedUtxos: [id] }, { amount: 10_000n }),
+      { feesStrategy: "custom" },
+    );
+    expect(selected.parameters?.selectedValue).toBe(30_000n);
   });
 
   it("uses a custom rate as given, below the relay rate included, and prices its send-max", async () => {

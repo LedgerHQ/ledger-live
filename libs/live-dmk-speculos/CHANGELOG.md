@@ -210,20 +210,4 @@
 - Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
   - @ledgerhq/live-env@2.42.0-next.0
 
-## 0.10.1
-
-### Patch Changes
-
-- Updated dependencies [[`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11)]:
-  - @ledgerhq/live-env@2.41.0
-  - @ledgerhq/hw-transport@6.35.6
-
-## 0.10.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11)]:
-  - @ledgerhq/live-env@2.41.0-next.0
-  - @ledgerhq/hw-transport@6.35.6-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

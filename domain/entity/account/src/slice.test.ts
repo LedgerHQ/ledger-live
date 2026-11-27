@@ -13,6 +13,7 @@ const { reducer } = accountsSlice;
 const {
   selectAccountEntries,
   selectAccountEntry,
+  selectAccountLegacyId,
   selectAccountUUIDByLegacyId,
   selectAccountUUIDs,
 } = accountsSlice.getSelectors();
@@ -66,6 +67,12 @@ describe("accountsSlice", () => {
     const state = reducer(withRemote, legacyAccountsSynced([local]));
     expect(selectAccountEntries(state)).toEqual([local]);
     expect(selectAccountUUIDByLegacyId(state, btcId)).toBe(remote.accountUUID);
+  });
+
+  it("selects the legacy id behind an account, none for a remote-only one", () => {
+    const state = reducer(withRemote, legacyAccountsSynced([eth]));
+    expect(selectAccountLegacyId(state, eth.accountUUID)).toBe(ethId);
+    expect(selectAccountLegacyId(state, remote.accountUUID)).toBeUndefined();
   });
 
   it("adds remote-only accounts after the others, once each", () => {

@@ -1,5 +1,103 @@
 # @ledgerhq/ledger-wallet-framework
 
+## 3.13.0
+
+### Minor Changes
+
+- [#25237](https://github.com/LedgerHQ/ledger-live/pull/25237) [`081c422`](https://github.com/LedgerHQ/ledger-live/commit/081c422494180f04d0fbaf9de4d59370d7927863) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Expose account balances and honour pool filters in the Wallet API max spendable
+
+- [#25069](https://github.com/LedgerHQ/ledger-live/pull/25069) [`a869e8b`](https://github.com/LedgerHQ/ledger-live/commit/a869e8b37d098ba06c01d36516ad7a6abb9aa0a5) Thanks [@cted-ledger](https://github.com/cted-ledger)! - `@ledgerhq/types-live`: add the optional `Account.historyRecheck`, the history read and pool lookups the generic sync still owes.
+  `@ledgerhq/ledger-wallet-framework`: add `BridgeApi.syncsHistoryOnStateChange`, `getKnownValidatorIds`, `getStakingCallValidatorId`, `isOperationSettled` and `needsValidatorListing`, serialize `historyRecheck`, and add `mergeOpsKeepingOlder`.
+  `@ledgerhq/live-common`: the generic sync of NEAR reads the history only when the account balance changed, and an account is saved again when an operation is replaced or re-read with a new fee or outcome.
+  `@ledgerhq/coin-near`: the sync reads the account state from the node; a node error is no longer read as an unknown account, and `getBalance` accepts `knownValidatorIds` and `listValidators`.
+
+- [#24742](https://github.com/LedgerHQ/ledger-live/pull/24742) [`8fbb9be`](https://github.com/LedgerHQ/ledger-live/commit/8fbb9beb39ff3ed1d1051d7df0b3e31a809f21f7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/live-network` 3.4.0, `@ledgerhq/ledger-key-ring-protocol` 1.2.1, `@ledgerhq/live-currency-format` 0.17.1).
+
+- [#25179](https://github.com/LedgerHQ/ledger-live/pull/25179) [`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/live-network` 3.4.1, `@ledgerhq/ledger-key-ring-protocol` 1.2.2, `@ledgerhq/domain-service` 1.10.1, `@ledgerhq/evm-tools` 2.1.1), `axios` to 1.21.1 and `ws` to 8.23.0.
+
+- [#24781](https://github.com/LedgerHQ/ledger-live/pull/24781) [`dc0e3ad`](https://github.com/LedgerHQ/ledger-live/commit/dc0e3ad24843961f7f71772b288c2dba473e93b0) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add parseFiniteBigNumber, a non-throwing parser for external numeric input, used for raw operation sequences and payment URI amounts
+
+- [#25012](https://github.com/LedgerHQ/ledger-live/pull/25012) [`c80f5de`](https://github.com/LedgerHQ/ledger-live/commit/c80f5de17b263d8e111ddd3b3247b04f7b9a687a) Thanks [@dilaouid](https://github.com/dilaouid)! - Add Bitcoin Signet currency (bitcoin_signet)
+
+- [#24799](https://github.com/LedgerHQ/ledger-live/pull/24799) [`90db489`](https://github.com/LedgerHQ/ledger-live/commit/90db48910c3525f69fcef5a3644b666febd6a434) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update @ledgerhq/coin-evm, handle EVM operations with no nonce, and stop including in a native send's amount a fee another account paid, such as a zkSync paymaster
+
+- [#25072](https://github.com/LedgerHQ/ledger-live/pull/25072) [`4ea6c56`](https://github.com/LedgerHQ/ledger-live/commit/4ea6c566069a55a0345df95add6dc62e37a30b01) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Add a per-pool balance breakdown to accounts (`balances`), filled at every sync, with Zcash transparent and Ironwood rows and Aleo public and private rows; Aleo `getBalance` no longer counts staked credits twice
+
+- [#24254](https://github.com/LedgerHQ/ledger-live/pull/24254) [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b) Thanks [@qperrot](https://github.com/qperrot)! - Disable speed up and cancel (RBF) on transactions broadcast by a sell flow
+
+- [#24862](https://github.com/LedgerHQ/ledger-live/pull/24862) [`14ab34d`](https://github.com/LedgerHQ/ledger-live/commit/14ab34dbbf4c1768fcdc8928f6db43d9ec58f10b) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP tokens: opt-out mode for removing a token, its pending row and device fields, a token missing from the balance drops its account, and the opt-out error messages
+
+- [#24987](https://github.com/LedgerHQ/ledger-live/pull/24987) [`2959603`](https://github.com/LedgerHQ/ledger-live/commit/29596039c7129ac7a5dd216e1f1c172936bed43b) Thanks [@KVNLS](https://github.com/KVNLS)! - Restore account balance history from its saved cache and compute only the periods since it was saved, also when the history is shown before the account syncs
+
+- [#25028](https://github.com/LedgerHQ/ledger-live/pull/25028) [`2cdf737`](https://github.com/LedgerHQ/ledger-live/commit/2cdf737ce9d268e248253d1f98bd614c0e30da3f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Read the scan rules `KEYCHAIN_OBSERVABLE_RANGE` and `SHOW_LEGACY_NEW_ACCOUNT` through `scanRules`, so a scan outside the legacy one applies the same
+
+- [#24967](https://github.com/LedgerHQ/ledger-live/pull/24967) [`b004476`](https://github.com/LedgerHQ/ledger-live/commit/b0044764e765d48ff2edabb567a6e71dbd820276) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - Fix XRPL token issues found in manual testing:
+
+  - XRPL history skips operations newer than the synced ledger, which narrows the gap with the balance
+  - Add token: missing XRP shows on the review with a Receive action, instead of as a trust limit error
+  - Add token: the review waits for the issuer fee, and says when it can't be fetched with a Try again action
+  - Add token: trust limit errors show their description, such as "Use Max to set the highest limit."
+  - Add, edit and remove token: the success screen says the request was sent and applies once the network confirms it
+  - Send: the issuer fee row shows a placeholder while the fee is computed
+  - Send: token refusals have short titles, such as "Token is frozen"
+  - Send: a frozen or unauthorized token blocks the recipient step instead of asking the recipient to add the token
+  - Receive and empty token accounts name the account's token types (IOU, MPT)
+  - Token add, edit and remove rows in history show the token issuer instead of the token code
+
+### Patch Changes
+
+- Updated dependencies [[`081c422`](https://github.com/LedgerHQ/ledger-live/commit/081c422494180f04d0fbaf9de4d59370d7927863), [`a869e8b`](https://github.com/LedgerHQ/ledger-live/commit/a869e8b37d098ba06c01d36516ad7a6abb9aa0a5), [`4ea6c56`](https://github.com/LedgerHQ/ledger-live/commit/4ea6c566069a55a0345df95add6dc62e37a30b01), [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b), [`e516034`](https://github.com/LedgerHQ/ledger-live/commit/e5160345b50c0dc9e7c490da72d641c631d2ef7f)]:
+  - @ledgerhq/types-live@6.133.0
+
+## 3.13.0-next.0
+
+### Minor Changes
+
+- [#25237](https://github.com/LedgerHQ/ledger-live/pull/25237) [`081c422`](https://github.com/LedgerHQ/ledger-live/commit/081c422494180f04d0fbaf9de4d59370d7927863) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Expose account balances and honour pool filters in the Wallet API max spendable
+
+- [#25069](https://github.com/LedgerHQ/ledger-live/pull/25069) [`a869e8b`](https://github.com/LedgerHQ/ledger-live/commit/a869e8b37d098ba06c01d36516ad7a6abb9aa0a5) Thanks [@cted-ledger](https://github.com/cted-ledger)! - `@ledgerhq/types-live`: add the optional `Account.historyRecheck`, the history read and pool lookups the generic sync still owes.
+  `@ledgerhq/ledger-wallet-framework`: add `BridgeApi.syncsHistoryOnStateChange`, `getKnownValidatorIds`, `getStakingCallValidatorId`, `isOperationSettled` and `needsValidatorListing`, serialize `historyRecheck`, and add `mergeOpsKeepingOlder`.
+  `@ledgerhq/live-common`: the generic sync of NEAR reads the history only when the account balance changed, and an account is saved again when an operation is replaced or re-read with a new fee or outcome.
+  `@ledgerhq/coin-near`: the sync reads the account state from the node; a node error is no longer read as an unknown account, and `getBalance` accepts `knownValidatorIds` and `listValidators`.
+
+- [#24742](https://github.com/LedgerHQ/ledger-live/pull/24742) [`8fbb9be`](https://github.com/LedgerHQ/ledger-live/commit/8fbb9beb39ff3ed1d1051d7df0b3e31a809f21f7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/live-network` 3.4.0, `@ledgerhq/ledger-key-ring-protocol` 1.2.1, `@ledgerhq/live-currency-format` 0.17.1).
+
+- [#25179](https://github.com/LedgerHQ/ledger-live/pull/25179) [`347dbb6`](https://github.com/LedgerHQ/ledger-live/commit/347dbb6c160a61827cfe69b7568426399ee56ae0) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/live-network` 3.4.1, `@ledgerhq/ledger-key-ring-protocol` 1.2.2, `@ledgerhq/domain-service` 1.10.1, `@ledgerhq/evm-tools` 2.1.1), `axios` to 1.21.1 and `ws` to 8.23.0.
+
+- [#24781](https://github.com/LedgerHQ/ledger-live/pull/24781) [`dc0e3ad`](https://github.com/LedgerHQ/ledger-live/commit/dc0e3ad24843961f7f71772b288c2dba473e93b0) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add parseFiniteBigNumber, a non-throwing parser for external numeric input, used for raw operation sequences and payment URI amounts
+
+- [#25012](https://github.com/LedgerHQ/ledger-live/pull/25012) [`c80f5de`](https://github.com/LedgerHQ/ledger-live/commit/c80f5de17b263d8e111ddd3b3247b04f7b9a687a) Thanks [@dilaouid](https://github.com/dilaouid)! - Add Bitcoin Signet currency (bitcoin_signet)
+
+- [#24799](https://github.com/LedgerHQ/ledger-live/pull/24799) [`90db489`](https://github.com/LedgerHQ/ledger-live/commit/90db48910c3525f69fcef5a3644b666febd6a434) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update @ledgerhq/coin-evm, handle EVM operations with no nonce, and stop including in a native send's amount a fee another account paid, such as a zkSync paymaster
+
+- [#25072](https://github.com/LedgerHQ/ledger-live/pull/25072) [`4ea6c56`](https://github.com/LedgerHQ/ledger-live/commit/4ea6c566069a55a0345df95add6dc62e37a30b01) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Add a per-pool balance breakdown to accounts (`balances`), filled at every sync, with Zcash transparent and Ironwood rows and Aleo public and private rows; Aleo `getBalance` no longer counts staked credits twice
+
+- [#24254](https://github.com/LedgerHQ/ledger-live/pull/24254) [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b) Thanks [@qperrot](https://github.com/qperrot)! - Disable speed up and cancel (RBF) on transactions broadcast by a sell flow
+
+- [#24862](https://github.com/LedgerHQ/ledger-live/pull/24862) [`14ab34d`](https://github.com/LedgerHQ/ledger-live/commit/14ab34dbbf4c1768fcdc8928f6db43d9ec58f10b) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - XRP tokens: opt-out mode for removing a token, its pending row and device fields, a token missing from the balance drops its account, and the opt-out error messages
+
+- [#24987](https://github.com/LedgerHQ/ledger-live/pull/24987) [`2959603`](https://github.com/LedgerHQ/ledger-live/commit/29596039c7129ac7a5dd216e1f1c172936bed43b) Thanks [@KVNLS](https://github.com/KVNLS)! - Restore account balance history from its saved cache and compute only the periods since it was saved, also when the history is shown before the account syncs
+
+- [#25028](https://github.com/LedgerHQ/ledger-live/pull/25028) [`2cdf737`](https://github.com/LedgerHQ/ledger-live/commit/2cdf737ce9d268e248253d1f98bd614c0e30da3f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Read the scan rules `KEYCHAIN_OBSERVABLE_RANGE` and `SHOW_LEGACY_NEW_ACCOUNT` through `scanRules`, so a scan outside the legacy one applies the same
+
+- [#24967](https://github.com/LedgerHQ/ledger-live/pull/24967) [`b004476`](https://github.com/LedgerHQ/ledger-live/commit/b0044764e765d48ff2edabb567a6e71dbd820276) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - Fix XRPL token issues found in manual testing:
+
+  - XRPL history skips operations newer than the synced ledger, which narrows the gap with the balance
+  - Add token: missing XRP shows on the review with a Receive action, instead of as a trust limit error
+  - Add token: the review waits for the issuer fee, and says when it can't be fetched with a Try again action
+  - Add token: trust limit errors show their description, such as "Use Max to set the highest limit."
+  - Add, edit and remove token: the success screen says the request was sent and applies once the network confirms it
+  - Send: the issuer fee row shows a placeholder while the fee is computed
+  - Send: token refusals have short titles, such as "Token is frozen"
+  - Send: a frozen or unauthorized token blocks the recipient step instead of asking the recipient to add the token
+  - Receive and empty token accounts name the account's token types (IOU, MPT)
+  - Token add, edit and remove rows in history show the token issuer instead of the token code
+
+### Patch Changes
+
+- Updated dependencies [[`081c422`](https://github.com/LedgerHQ/ledger-live/commit/081c422494180f04d0fbaf9de4d59370d7927863), [`a869e8b`](https://github.com/LedgerHQ/ledger-live/commit/a869e8b37d098ba06c01d36516ad7a6abb9aa0a5), [`4ea6c56`](https://github.com/LedgerHQ/ledger-live/commit/4ea6c566069a55a0345df95add6dc62e37a30b01), [`90af53f`](https://github.com/LedgerHQ/ledger-live/commit/90af53fdcab2448e07ced5f4cc8d37efad261c6b), [`e516034`](https://github.com/LedgerHQ/ledger-live/commit/e5160345b50c0dc9e7c490da72d641c631d2ef7f)]:
+  - @ledgerhq/types-live@6.133.0-next.0
+
 ## 3.12.0
 
 ### Minor Changes
@@ -436,47 +534,5 @@
   - @ledgerhq/types-live@6.123.0
   - @ledgerhq/live-currency-format@0.15.0
   - @ledgerhq/live-env@4.0.0
-
-## 3.3.0-next.0
-
-### Minor Changes
-
-- [#21488](https://github.com/LedgerHQ/ledger-live/pull/21488) [`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop `delisted` from `CryptoCurrency`. No registry entry ever set it, so the `listCryptoCurrencies()` production filter was testing a dead branch. It stays on `TokenCurrency`, where CAL drives it.
-
-- [#21486](https://github.com/LedgerHQ/ledger-live/pull/21486) [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop `deviceTicker` from `CryptoCurrency`. The field was declared in three places and set by 17 testnet/L2 registry entries, but nothing ever read it.
-
-- [#21487](https://github.com/LedgerHQ/ledger-live/pull/21487) [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop `disableCountervalue` from `CryptoCurrency`. Nothing read it on a crypto currency; it stays on `TokenCurrency`, where the assets API drives it, and on `FiatCurrency`.
-
-- [#21485](https://github.com/LedgerHQ/ledger-live/pull/21485) [`5b7d11d`](https://github.com/LedgerHQ/ledger-live/commit/5b7d11dd9a988f0034b4b5b6168f02429ba5a406) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(framework): align Solana testnet / devnet derivation with mainnet
-
-- [#21616](https://github.com/LedgerHQ/ledger-live/pull/21616) [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate `BIG_NUMBER_DECIMAL_PLACES` off `@ledgerhq/live-env`: every call site now inlines the constant and the definition is removed. `@ledgerhq/live-currency-format` drops its `@ledgerhq/live-env` dependency altogether.
-
-### Patch Changes
-
-- Updated dependencies [[`52f573c`](https://github.com/LedgerHQ/ledger-live/commit/52f573c045c52805d250079dd300870c4468493d), [`2d42e64`](https://github.com/LedgerHQ/ledger-live/commit/2d42e647d55f79cf2eb821ec30a232cc07891219), [`b7d0367`](https://github.com/LedgerHQ/ledger-live/commit/b7d03671db1aa022d3ff375465c7d8470bf2b215), [`5e971b5`](https://github.com/LedgerHQ/ledger-live/commit/5e971b55429cdcab0f69825ce2056fef24d30215), [`b7a8906`](https://github.com/LedgerHQ/ledger-live/commit/b7a89064587bbcd1f758f7b6205a616225ac2317), [`b9e15ac`](https://github.com/LedgerHQ/ledger-live/commit/b9e15ac78e2b89919c605511f333282610e57225), [`9fb98ab`](https://github.com/LedgerHQ/ledger-live/commit/9fb98ab74e3ca680e686a302b9beaa460a087783)]:
-  - @ledgerhq/types-live@6.123.0-next.0
-  - @ledgerhq/live-currency-format@0.15.0-next.0
-  - @ledgerhq/live-env@4.0.0-next.0
-
-## 3.2.0
-
-### Minor Changes
-
-- [#20935](https://github.com/LedgerHQ/ledger-live/pull/20935) [`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682) Thanks [@dilaouid](https://github.com/dilaouid)! - Move Solana staking onto the generic `StakingResources` account attribute.
-
-  **Breaking for `@ledgerhq/coin-solana`.** `SolanaResources`, `SolanaResourcesRaw`, `toSolanaResourcesRaw` and `fromSolanaResourcesRaw` are gone. `SolanaAccount` is now an alias of `StakingAccount`, so read staking data from `account.stakingResources` instead of `account.solanaResources`. A stake is a `StakingDelegation` or a `StakingUnbonding` (`SolanaStakingPosition`) rather than a `SolanaStake`: its stake account address is `positionId`, its validator is `validatorAddress`, and the former `activation.active` / `activation.inactive` / `withdrawable` fields are `activeAmount` / `inactiveAmount` / `withdrawableAmount`. `listSolanaStakingPositions`, `solanaActivationState` and `stakeActions` from `@ledgerhq/coin-solana/logic` cover the common access patterns. Accounts already persisted with a `solanaResources` blob are migrated on hydration, so no resync is needed.
-
-  `@ledgerhq/types-live` gains `StakingPositionDetails`, mixed into `StakingDelegation` and `StakingUnbonding` for chains that materialize each position as its own on-chain account, plus `actionFeeReserve` on `StakingResources`. Both are optional, so other chains are unaffected.
-
-  `@ledgerhq/wallet-cli`'s `earn positions` output changes shape: on `EarnSolanaStake`, `stakeBalance` and `withdrawable` go from `number` to an integer decimal string, so lamport amounts above `Number.MAX_SAFE_INTEGER` stay exact. Anything reading those two fields numerically needs updating.
-
-  `@ledgerhq/ledger-wallet-framework` now exports the generic `StakingResources` serializer (`toStakingResourcesRaw`, `fromStakingResourcesRaw`, `assignStakingResourcesToAccountRaw`, `assignStakingResourcesFromAccountRaw`), moved out of the EVM family in `live-common` so every coin module can use it.
-
-### Patch Changes
-
-- Updated dependencies [[`27388a8`](https://github.com/LedgerHQ/ledger-live/commit/27388a894eaac67b8e162a60f6d3368aad0a8682), [`e21305a`](https://github.com/LedgerHQ/ledger-live/commit/e21305abce18f0a9408bf6c0e2bb47d5c992e06a)]:
-  - @ledgerhq/types-live@6.122.0
-  - @ledgerhq/live-env@3.2.0
-  - @ledgerhq/live-currency-format@0.14.3
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -7,6 +7,7 @@ import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 import { verifyTezosStakingOperationDetails } from "@e2e/models/stake";
 import { FF_TEZOS_STAKING_ENABLED } from "@e2e/utils/featureFlagUtils";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 const TEZOS_STAKING_TAGS = [
   "@NanoSP",
@@ -33,19 +34,22 @@ async function goToTezosAccount(delegation: DelegateType) {
   await app.common.goToAccountByName(delegation.account.accountName);
 }
 
-function tagSuite(tmsLinks: string[], tags: string[]) {
+type TezosStakeTestOptions = Omit<TestMetaOptions, "tags"> & {
+  delegation: DelegateType;
+  tags?: string[];
+};
+
+function tagSuite(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   setTeamOwner(coinTeamOwner(Currency.XTZ.id), { folder: TestFolder.DELEGATE });
   tags.forEach(tag => $Tag(tag));
   tmsLinks.forEach(tms => $TmsLink(tms));
 }
 
-export function runEarningChoiceTezos(
-  delegation: DelegateType,
-  tmsLinks: string[],
-  tags: string[] = TEZOS_STAKING_TAGS,
-) {
+export function runEarningChoiceTezos(options: TezosStakeTestOptions) {
+  const { delegation, tmsLinks, tags = TEZOS_STAKING_TAGS } = options;
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-  tagSuite(tmsLinks, tags);
+  tagSuite({ tmsLinks, tags });
   describe("Staking - Tezos", () => {
     beforeAll(async () => {
       await initStakingAccount(delegation);
@@ -67,13 +71,10 @@ export function runEarningChoiceTezos(
   });
 }
 
-export function runStakeTezos(
-  delegation: DelegateType,
-  tmsLinks: string[],
-  tags: string[] = TEZOS_STAKING_TAGS,
-) {
+export function runStakeTezos(options: TezosStakeTestOptions) {
+  const { delegation, tmsLinks, tags = TEZOS_STAKING_TAGS } = options;
   declareBroadcastAccounts(delegation.account);
-  tagSuite(tmsLinks, tags);
+  tagSuite({ tmsLinks, tags });
   describe("Staking - Tezos", () => {
     beforeAll(async () => {
       await initStakingAccount(delegation);
@@ -94,13 +95,10 @@ export function runStakeTezos(
   });
 }
 
-export function runUnstakeTezos(
-  delegation: DelegateType,
-  tmsLinks: string[],
-  tags: string[] = TEZOS_STAKING_TAGS,
-) {
+export function runUnstakeTezos(options: TezosStakeTestOptions) {
+  const { delegation, tmsLinks, tags = TEZOS_STAKING_TAGS } = options;
   declareBroadcastAccounts(delegation.account);
-  tagSuite(tmsLinks, tags);
+  tagSuite({ tmsLinks, tags });
   describe("Staking - Tezos", () => {
     beforeAll(async () => {
       await initStakingAccount(delegation);
@@ -122,13 +120,13 @@ export function runUnstakeTezos(
   });
 }
 
-export function runUnstakeRequiredTezos(
-  delegation: DelegateType,
-  action: "changeValidator" | "stopDelegation",
-  tmsLinks: string[],
-  tags: string[] = TEZOS_STAKING_TAGS,
-) {
-  tagSuite(tmsLinks, tags);
+type RunUnstakeRequiredTezosOptions = TezosStakeTestOptions & {
+  action: "changeValidator" | "stopDelegation";
+};
+
+export function runUnstakeRequiredTezos(options: RunUnstakeRequiredTezosOptions) {
+  const { delegation, action, tmsLinks, tags = TEZOS_STAKING_TAGS } = options;
+  tagSuite({ tmsLinks, tags });
   const title =
     action === "changeValidator"
       ? `[${delegation.account.currency.testLabel}] - Change validator is blocked while staked`

@@ -3,6 +3,7 @@ import {
   canSend,
   getAccountCurrency,
   getMainAccount,
+  isSwapDisabledForFamily,
 } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
@@ -240,7 +241,8 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
 
   // don't show buttons until we know whether or not we can show swap button, otherwise possible click jacking
   const showButtons = !!getAvailableProviders();
-  const availableOnSwap = currenciesAll.includes(currency.id);
+  const availableOnSwap =
+    !isSwapDisabledForFamily(mainAccount.currency.family) && currenciesAll.includes(currency.id);
 
   const buttonSharedTrackingFields = useMemo(
     () => ({

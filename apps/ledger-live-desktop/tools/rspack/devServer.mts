@@ -44,6 +44,7 @@ export async function createDevServer(options: DevServerOptions): Promise<Rspack
     },
     headers: {
       "Access-Control-Allow-Origin": "*",
+      "Document-Policy": "js-profiling",
     },
     historyApiFallback: true,
     devMiddleware: {

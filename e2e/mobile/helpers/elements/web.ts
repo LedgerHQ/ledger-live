@@ -32,7 +32,10 @@ export class WebHandle implements ElementHandle {
   /** Waits until the element exists in the webview and its text can be read (webviews have no visibility check). */
   async waitVisible(timeout = TIMEOUT.xxlarge): Promise<void> {
     await withHardTimeout(
-      retryUntilTimeout(() => this.raw.runScript(el => el.innerText), timeout, INTERVAL.long, {
+      retryUntilTimeout({
+        fn: () => this.raw.runScript(el => el.innerText),
+        timeout,
+        interval: INTERVAL.long,
         messageOnError: `${this.description} not found after ${timeout}ms`,
       }),
       waitHardTimeout(timeout),
@@ -42,7 +45,10 @@ export class WebHandle implements ElementHandle {
   /** Waits until the element no longer exists in the webview (webviews have no visibility check). */
   async waitNotVisible(timeout = TIMEOUT.xxlarge): Promise<void> {
     await withHardTimeout(
-      retryUntilTimeout(() => detoxExpect(this.raw).not.toExist(), timeout, INTERVAL.long, {
+      retryUntilTimeout({
+        fn: () => detoxExpect(this.raw).not.toExist(),
+        timeout,
+        interval: INTERVAL.long,
         messageOnError: `${this.description} still exists after ${timeout}ms`,
       }),
       waitHardTimeout(timeout),
@@ -53,14 +59,14 @@ export class WebHandle implements ElementHandle {
   async waitEnabled(timeout = TIMEOUT.xxlarge): Promise<void> {
     await this.waitVisible(timeout);
     await withHardTimeout(
-      retryUntilTimeout(
-        async () => {
+      retryUntilTimeout({
+        fn: async () => {
           if (!(await this.isEnabled())) throw new Error(`${this.description} is disabled`);
         },
         timeout,
-        INTERVAL.long,
-        { messageOnError: `${this.description} did not become enabled within ${timeout}ms` },
-      ),
+        interval: INTERVAL.long,
+        messageOnError: `${this.description} did not become enabled within ${timeout}ms`,
+      }),
       waitHardTimeout(timeout),
     );
   }
@@ -68,8 +74,8 @@ export class WebHandle implements ElementHandle {
   /** Waits until the element's text matches `pattern`, e.g. an amount that fills in once quotes load. */
   async waitTextMatching(pattern: RegExp, timeout = TIMEOUT.xxlarge): Promise<void> {
     await withHardTimeout(
-      retryUntilTimeout(
-        async () => {
+      retryUntilTimeout({
+        fn: async () => {
           const text = scriptText(
             await this.raw.runScript(el => (el.innerText || el.textContent || "").trim()),
           );
@@ -78,9 +84,9 @@ export class WebHandle implements ElementHandle {
           }
         },
         timeout,
-        INTERVAL.long,
-        { messageOnError: `${this.description} text did not match ${pattern} within ${timeout}ms` },
-      ),
+        interval: INTERVAL.long,
+        messageOnError: `${this.description} text did not match ${pattern} within ${timeout}ms`,
+      }),
       waitHardTimeout(timeout),
     );
   }
@@ -88,16 +94,16 @@ export class WebHandle implements ElementHandle {
   /** Scrolls the webview until the element is in view. */
   async scrollTo(timeout = TIMEOUT.xxlarge): Promise<void> {
     await withHardTimeout(
-      retryUntilTimeout(
-        () =>
+      retryUntilTimeout({
+        fn: () =>
           this.raw.runScript((el: HTMLElement | null) => {
             if (!el?.isConnected) throw new Error("element not ready");
             el.scrollIntoView({ behavior: "smooth" });
           }),
         timeout,
-        INTERVAL.long,
-        { messageOnError: `Failed to scroll to ${this.description}` },
-      ),
+        interval: INTERVAL.long,
+        messageOnError: `Failed to scroll to ${this.description}`,
+      }),
       waitHardTimeout(timeout),
     );
   }
@@ -187,7 +193,7 @@ export class WebHandle implements ElementHandle {
   /** Waits for the element, reads its text, then compares it as the options say: equal by default. */
   async expectText(text: string, options: ExpectTextOptions = {}): Promise<void> {
     const actualText = await this.getText();
-    compareText(actualText, text, options);
+    compareText({ actual: actualText, expected: text, ...options });
   }
 
   /** Waits for the element, reads its text, then asserts it matches `pattern`. */
@@ -198,7 +204,7 @@ export class WebHandle implements ElementHandle {
   /** Waits for the input, reads its `value`, then compares it as the options say: equal by default. */
   async expectValue(text: string, options: ExpectTextOptions = {}): Promise<void> {
     const actualValue = await this.getValue();
-    compareText(actualValue, text, options);
+    compareText({ actual: actualValue, expected: text, ...options });
   }
 
   /** Waits for the input, reads its `value`, then asserts it matches `pattern`. */
@@ -256,8 +262,8 @@ export async function waitForWebviewUrl(
   timeout = TIMEOUT.medium,
 ): Promise<string> {
   return withHardTimeout(
-    retryUntilTimeout(
-      async () => {
+    retryUntilTimeout({
+      fn: async () => {
         const url = scriptText(await readUrl("body").catch(() => readUrl("html")));
         if (!url.toLowerCase().includes(fragment.toLowerCase())) {
           throw new Error(`Webview URL ${url} does not contain "${fragment}"`);
@@ -265,8 +271,8 @@ export async function waitForWebviewUrl(
         return url;
       },
       timeout,
-      INTERVAL.long,
-    ),
+      interval: INTERVAL.long,
+    }),
     waitHardTimeout(timeout),
   );
 }
@@ -289,8 +295,8 @@ type WebviewContent = { height: number; textLength: number; contentElements: num
  */
 export async function waitForWebviewContent(timeout = TIMEOUT.xxlarge): Promise<WebviewContent> {
   return withHardTimeout(
-    retryUntilTimeout(
-      async () => {
+    retryUntilTimeout({
+      fn: async () => {
         const raw = await web.element(by.web.tag("body")).runScript(() => {
           const body = document.body;
           if (!body) return JSON.stringify({ height: 0, textLength: 0, contentElements: 0 });
@@ -316,9 +322,9 @@ export async function waitForWebviewContent(timeout = TIMEOUT.xxlarge): Promise<
         return content;
       },
       timeout,
-      INTERVAL.long,
-      { messageOnError: `Webview content did not render within ${timeout}ms` },
-    ),
+      interval: INTERVAL.long,
+      messageOnError: `Webview content did not render within ${timeout}ms`,
+    }),
     waitHardTimeout(timeout),
   );
 }

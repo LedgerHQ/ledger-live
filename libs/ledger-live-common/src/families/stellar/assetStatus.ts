@@ -5,5 +5,5 @@ import { heldTokenAssetStatus } from "../../account/accountStatus";
 
 /** A Stellar asset the account does not hold needs a trustline, as the add-asset flows offer it. */
 export default function stellarAssetStatus(account: Account, token: TokenCurrency): AssetStatus {
-  return heldTokenAssetStatus(account, token, "trustline");
+  return heldTokenAssetStatus(account, token);
 }

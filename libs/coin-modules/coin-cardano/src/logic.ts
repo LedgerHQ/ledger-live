@@ -312,6 +312,10 @@ export function getAccountStakeCredential(xpub: string, index: number): StakeCre
   };
 }
 
+export function isFailedTransaction(tx: APITransaction): boolean {
+  return tx.status === false;
+}
+
 export function getOperationType({
   valueChange,
   fees,

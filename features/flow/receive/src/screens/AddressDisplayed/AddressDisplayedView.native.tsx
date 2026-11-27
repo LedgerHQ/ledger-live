@@ -3,7 +3,12 @@ import { ShieldLock } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { InfoState } from "@shared/ui-info-state";
 import type { AddressDisplayedViewProps } from "./AddressDisplayedView.types";
 
-export function AddressDisplayedView({ title, description }: AddressDisplayedViewProps) {
+export function AddressDisplayedView({
+  title,
+  description,
+  gotItLabel,
+  onGotIt,
+}: AddressDisplayedViewProps) {
   return (
     <InfoState
       preset="spot"
@@ -12,6 +17,11 @@ export function AddressDisplayedView({ title, description }: AddressDisplayedVie
       size="hug"
       title={title}
       description={description}
+      primaryCta={{
+        label: gotItLabel,
+        onPress: onGotIt,
+        testID: "receive-address-displayed-got-it",
+      }}
       testID="receive-address-displayed"
     />
   );

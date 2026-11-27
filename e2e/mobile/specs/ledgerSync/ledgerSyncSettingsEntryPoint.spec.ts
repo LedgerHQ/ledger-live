@@ -1,6 +1,6 @@
 import { runLedgerSyncSettingsEntryPointTest } from "@e2e/specs/ledgerSync/ledgerSync";
 
-runLedgerSyncSettingsEntryPointTest(
-  ["B2CQA-2292"],
-  ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
-);
+runLedgerSyncSettingsEntryPointTest({
+  tmsLinks: ["B2CQA-2292"],
+  tags: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+});

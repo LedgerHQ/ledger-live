@@ -3,6 +3,7 @@ import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import type { AccountNamesState } from "@domain/entity-account-name";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { UnsupportedMaxSpendableFilter } from "@ledgerhq/ledger-wallet-framework/errors";
 import { serializeAccount } from "@ledgerhq/wallet-api-core";
 import aleoExtensions from "../families/aleo/bridgeExtensions";
 import zcashExtensions from "../families/zcash/bridgeExtensions";
@@ -341,6 +342,108 @@ describe("resolveWalletApiMaxSpendable", () => {
     );
   });
 
+  describe("filters", () => {
+    const rows = [
+      { value: new BigNumber(100), locked: new BigNumber(40), pool: "transparent" },
+      { value: new BigNumber(500), pool: "ironwood", private: true },
+    ];
+    const filteredAccount = { spendableBalance: new BigNumber(600), balances: rows } as AccountLike;
+
+    const bridgeWith = (maxSpendable: BigNumber) => {
+      const estimateMaxSpendable = jest.fn().mockResolvedValue(maxSpendable);
+      mockGetAccountBridge.mockResolvedValue({
+        estimateMaxSpendable,
+        getWalletApiSpendableBalance: () => new BigNumber(600),
+      } as never);
+      return estimateMaxSpendable;
+    };
+
+    it("forwards the filters to the bridge", async () => {
+      const estimateMaxSpendable = bridgeWith(new BigNumber(42));
+      const filters = { pools: ["transparent"] };
+
+      const result = await resolveWalletApiMaxSpendable(filteredAccount, undefined, filters);
+
+      expect(result).toEqual(new BigNumber(42));
+      expect(estimateMaxSpendable).toHaveBeenCalledWith({
+        account: filteredAccount,
+        parentAccount: undefined,
+        filters,
+      });
+    });
+
+    it("calls the bridge without a filters key when there is none", async () => {
+      const estimateMaxSpendable = bridgeWith(new BigNumber(42));
+
+      await resolveWalletApiMaxSpendable(filteredAccount);
+
+      expect(estimateMaxSpendable.mock.calls[0][0]).not.toHaveProperty("filters");
+    });
+
+    it("keeps a zero estimate on rows split into pools, where the bridge honours the filters", async () => {
+      bridgeWith(new BigNumber(0));
+
+      const result = await resolveWalletApiMaxSpendable(filteredAccount, undefined, {
+        pools: ["transparent"],
+      });
+
+      // The 60 left in the row cannot pay for a send: zero is the answer, not a failure.
+      expect(result).toEqual(new BigNumber(0));
+    });
+
+    it("omits an ambiguous zero on the single row of a family without pools", async () => {
+      bridgeWith(new BigNumber(0));
+      const account = {
+        spendableBalance: new BigNumber(60),
+        balances: [{ value: new BigNumber(60) }],
+      } as AccountLike;
+
+      const result = await resolveWalletApiMaxSpendable(account, undefined, { private: false });
+
+      expect(result).toBeUndefined();
+      expect(mockLog).toHaveBeenCalledWith(
+        "wallet-api/converters",
+        expect.stringContaining("omitting ambiguous zero maxSpendable"),
+        { walletApiSpendableBalance: "60", pendingSpent: "0" },
+      );
+    });
+
+    it("keeps a zero estimate when the selected rows are fully locked", async () => {
+      bridgeWith(new BigNumber(0));
+      const account = {
+        spendableBalance: new BigNumber(600),
+        balances: [{ value: new BigNumber(100), locked: new BigNumber(100), pool: "transparent" }],
+      } as AccountLike;
+
+      const result = await resolveWalletApiMaxSpendable(account, undefined, {
+        pools: ["transparent"],
+      });
+
+      expect(result).toEqual(new BigNumber(0));
+    });
+
+    it("rejects when no row matches the filters", async () => {
+      bridgeWith(new BigNumber(10));
+
+      await expect(
+        resolveWalletApiMaxSpendable(filteredAccount, undefined, { pools: ["sapling"] }),
+      ).rejects.toBeInstanceOf(UnsupportedMaxSpendableFilter);
+    });
+
+    it("rejects with the bridge's error when the bridge cannot honour a filter", async () => {
+      mockGetAccountBridge.mockResolvedValue({
+        estimateMaxSpendable: jest
+          .fn()
+          .mockRejectedValue(new UnsupportedMaxSpendableFilter("not split into pools")),
+        getWalletApiSpendableBalance: () => new BigNumber(600),
+      } as never);
+
+      await expect(
+        resolveWalletApiMaxSpendable(filteredAccount, undefined, { private: true }),
+      ).rejects.toThrow("not split into pools");
+    });
+  });
+
   describe("pending operations", () => {
     beforeEach(() => {
       mockEstimateBridge(new BigNumber(0));
@@ -457,6 +560,46 @@ describe("accountToWalletAPIAccount", () => {
     const walletApiAccount = accountToWalletAPIAccount(walletState, account);
 
     expect(walletApiAccount.readiness).toBeUndefined();
+  });
+
+  describe("balances", () => {
+    const balances = [
+      { value: new BigNumber(30), locked: new BigNumber(5), pool: "transparent" },
+      { value: new BigNumber(70), pool: "ironwood", private: true },
+    ];
+
+    it("carries the per-pool balances of an account", () => {
+      const account = { ...makeMainAccount("balances-main"), balances };
+
+      expect(accountToWalletAPIAccount(walletState, account).balances).toEqual(balances);
+    });
+
+    it("carries the per-pool balances of a token account", () => {
+      const parentAccount = makeMainAccount("balances-parent");
+      const tokenAccount = { ...makeTokenAccount(parentAccount), balances };
+
+      expect(accountToWalletAPIAccount(walletState, tokenAccount, parentAccount).balances).toEqual(
+        balances,
+      );
+    });
+
+    it("leaves balances out when the account has none", () => {
+      const parentAccount = makeMainAccount("balances-none");
+      const tokenAccount = makeTokenAccount(parentAccount);
+
+      expect(accountToWalletAPIAccount(walletState, parentAccount)).not.toHaveProperty("balances");
+      expect(
+        accountToWalletAPIAccount(walletState, tokenAccount, parentAccount),
+      ).not.toHaveProperty("balances");
+    });
+
+    it("keeps the spendable balance of the account", () => {
+      const account = { ...makeMainAccount("balances-spendable"), balances };
+
+      expect(accountToWalletAPIAccount(walletState, account).spendableBalance).toEqual(
+        account.spendableBalance,
+      );
+    });
   });
 
   it("derives a token account's readiness from its parent", () => {

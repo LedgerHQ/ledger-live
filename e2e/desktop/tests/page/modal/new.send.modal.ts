@@ -41,7 +41,6 @@ export class NewSendModal extends Modal {
   readonly recipientStep = this.dialog.getByTestId("send-recipient-step");
   readonly validationStatusMessage = this.dialog.getByTestId("address-validation-status");
   readonly recipientErrorBanner = this.dialog.getByTestId("recipient-error-banner");
-  readonly recipientWarningBanner = this.dialog.getByTestId("recipient-warning-banner");
   private readonly recentHistoryWarning = this.dialog.getByTestId("send-recent-history-warning");
   readonly memoInput = this.dialog.getByTestId("send-memo-input");
   private readonly memoTypeSelect = this.dialog.getByTestId("send-memo-options-select");
@@ -212,8 +211,16 @@ export class NewSendModal extends Modal {
 
   @step("Verify the matched recipient is contact: $0")
   async expectMatchedContact(contactName: string) {
-    await expect(this.recipientCard).toContainText(contactName);
-    await expect(this.recipientCard.getByTestId("send-recipient-card-avatar")).toBeVisible();
+    await expect(this.recipientCard).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await Promise.all([
+          soft(this.recipientCard).toContainText(contactName),
+          soft(this.recipientCard.getByTestId("send-recipient-card-avatar")).toBeVisible(),
+        ]);
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Verify the Add contact action is enabled")
@@ -257,33 +264,9 @@ export class NewSendModal extends Modal {
     await expect(this.recipientErrorBanner).toBeHidden();
   }
 
-  @step("Verify recipient validation warning: $0")
-  async expectRecipientWarning(message: string | RegExp) {
-    await expect(this.recipientWarningBanner).toBeVisible();
-    await this.softExpect(
-      async soft => {
-        await soft(this.recipientWarningBanner).toContainText(message);
-      },
-      { timeout: TIMEOUT.large },
-    );
-  }
-
-  @step("Verify recipient validation warning is hidden")
-  async expectRecipientWarningHidden() {
-    // The matched row can render from a local match while the bridge is still in flight.
-    // The warning banner is mounted only once that request settles.
-    await expect(this.recipientStep).toHaveAttribute("data-recipient-validation", "settled");
-    await expect(this.recipientWarningBanner).toBeHidden();
-  }
-
   @step("Verify invalid address feedback")
   async expectInvalidAddress() {
     await expect(this.validationStatusMessage).toBeVisible();
-    await expect(this.matchedAddressButtons).toHaveCount(0);
-  }
-
-  @step("Verify that no recipient is accepted")
-  async expectNoAddressMatched() {
     await expect(this.matchedAddressButtons).toHaveCount(0);
   }
 
@@ -292,12 +275,6 @@ export class NewSendModal extends Modal {
     await this.memoInput.waitFor({ state: "visible" });
     await this.memoInput.fill(memo);
     await expect(this.memoInput).toHaveValue(memo);
-  }
-
-  @step("Verify the memo field is empty")
-  async expectMemoEmpty() {
-    await expect(this.memoInput).toBeVisible();
-    await expect(this.memoInput).toHaveValue("");
   }
 
   @step("Confirm sending without memo")
@@ -330,9 +307,13 @@ export class NewSendModal extends Modal {
 
   @step("Verify the memo type selector lists $0")
   async expectMemoTypeOptions(memoTypes: StellarMemoType[]) {
-    for (const memoType of memoTypes) {
-      await expect(this.memoTypeOption(memoType)).toBeVisible();
-    }
+    const [firstMemoType, ...otherMemoTypes] = memoTypes;
+    await expect(this.memoTypeOption(firstMemoType)).toBeVisible();
+    await this.softExpect(async soft => {
+      await Promise.all(
+        otherMemoTypes.map(memoType => soft(this.memoTypeOption(memoType)).toBeVisible()),
+      );
+    });
   }
 
   @step("Select memo type $0")
@@ -502,16 +483,22 @@ export class NewSendModal extends Modal {
 
   @step("Verify the fees menu offers the Slow, Medium and Fast presets and custom fees")
   async expectEvmFeesMenuOptions() {
-    await expect(this.getFeePreset(Fee.SLOW)).toBeVisible();
-    await expect(this.getFeePreset(Fee.MEDIUM)).toBeVisible();
-    await expect(this.getFeePreset(Fee.FAST)).toBeVisible();
     await expect(this.customFeesMenuItem).toBeVisible();
+    await this.softExpect(async soft => {
+      await Promise.all(
+        [Fee.SLOW, Fee.MEDIUM, Fee.FAST].map(preset =>
+          soft(this.getFeePreset(preset)).toBeVisible(),
+        ),
+      );
+    });
   }
 
   @step("Verify the fees menu offers custom fees and coin control")
   async expectBitcoinFeesMenuOptions() {
-    await expect(this.customFeesMenuItem).toBeVisible();
     await expect(this.coinControlMenuItem).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.customFeesMenuItem).toBeVisible();
+    });
   }
 
   @step("Open custom fees from the fees menu")
@@ -582,10 +569,16 @@ export class NewSendModal extends Modal {
   @step("Verify the coin control screen")
   async expectCoinControlScreen() {
     await expect(this.coinControlStrategySelect).toBeVisible();
-    await expect(this.coinControlAmountInput).toBeVisible();
-    await expect(this.coinControlChangeToReturn).toBeVisible();
-    await expect(this.coinControlReviewButton).toBeVisible();
-    await expect(this.coinControlFeesMenuTrigger).toBeVisible();
+    await this.softExpect(async soft => {
+      await Promise.all(
+        [
+          this.coinControlAmountInput,
+          this.coinControlChangeToReturn,
+          this.coinControlReviewButton,
+          this.coinControlFeesMenuTrigger,
+        ].map(locator => soft(locator).toBeVisible()),
+      );
+    });
   }
 
   @step("Go back to the previous step")
@@ -628,7 +621,13 @@ export class NewSendModal extends Modal {
 
   @step("Verify sponsored fee error: $0")
   async expectSponsoredFeeError(message: string | RegExp) {
-    await expect(this.sponsoredFeeError).toContainText(message);
+    await expect(this.sponsoredFeeError).toBeVisible();
+    await this.softExpect(
+      async soft => {
+        await soft(this.sponsoredFeeError).toContainText(message);
+      },
+      { timeout: TIMEOUT.large },
+    );
   }
 
   @step("Verify a paid rent is still arriving")
@@ -680,12 +679,17 @@ export class NewSendModal extends Modal {
   @step("Verify Retry is offered as: $0")
   async expectRetryOffered(label: string | RegExp) {
     await expect(this.sponsoredFailureRetry).toBeEnabled();
-    await expect(this.sponsoredFailureRetry).toHaveText(label);
+    await this.softExpect(async soft => {
+      await soft(this.sponsoredFailureRetry).toHaveText(label);
+    });
   }
 
   @step("Verify no message says $0 is short")
   async expectNoFeeTokenShortfall(ticker: string) {
-    await expect(this.notEnoughFeeTokenCopy(ticker)).toHaveCount(0);
+    await expect(this.sponsoredFailure).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.notEnoughFeeTokenCopy(ticker)).toHaveCount(0);
+    });
   }
 
   @step("Cancel the failed sponsored send")

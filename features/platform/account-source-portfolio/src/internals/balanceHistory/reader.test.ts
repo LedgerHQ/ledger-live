@@ -1,7 +1,7 @@
 import type { AccountTarget } from "@domain/api-account-data";
 import type { AccountBalanceHistoryQuery } from "@domain/entity-account-balance-history";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import {
   ETH,
   depsOf,

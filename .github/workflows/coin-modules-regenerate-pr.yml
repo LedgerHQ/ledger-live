@@ -1,0 +1,260 @@
+name: "[Coin Modules] - Regenerate upgrade PR"
+
+# The coin-modules release opens one draft PR per published version (chore/coin-<id>-v<version>-update).
+# Its description has a "Regenerate this PR" box: ticking it rebuilds the PR on the current `develop`
+# (catalog, lockfile, description with refreshed warnings), with the scripts of LedgerHQ/coin-modules.
+on:
+  # pull_request_target, not pull_request: GitHub does not run a pull_request workflow on a PR that has
+  # merge conflicts, and the PRs that need to be regenerated are the ones that conflict. Nothing of the
+  # PR branch is checked out or run: the checkouts are `develop` and coin-modules `main`.
+  pull_request_target: # zizmor: ignore[dangerous-triggers]
+    types: [edited]
+
+permissions: {}
+
+# One run per PR; a run is never cancelled midway: it would leave a temporary branch behind.
+concurrency:
+  group: coin-modules-regenerate-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  # Runs scripts and installs packages, so it gets no write token. Package resolution goes through
+  # JFrog, so the runner and the login are one change (docs/contributing/ci-jfrog.md).
+  generate:
+    name: Regenerate the catalog, lockfile and description
+    # Every edit of a description fires this event: only the PRs of the release, ticked by a person.
+    # Our own description rewrite is made by the app and must not start a new run.
+    if: >-
+      !github.event.pull_request.head.repo.fork &&
+      github.event.pull_request.user.login == 'live-github-bot[bot]' &&
+      startsWith(github.event.pull_request.head.ref, 'chore/coin-') &&
+      endsWith(github.event.pull_request.head.ref, '-update') &&
+      github.event.sender.type != 'Bot' &&
+      contains(github.event.pull_request.body, '- [x] Regenerate this PR')
+    runs-on: ledger-wallet-2cpu-aws-public
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write # required for the JFrog OIDC login
+    outputs:
+      state: ${{ steps.regenerate.outputs.state }}
+      # The develop the lockfile was computed on: the commit is made on top of this one, not of a
+      # develop that moved since.
+      develop_sha: ${{ steps.develop.outputs.sha }}
+    steps:
+      - id: coin-modules-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          owner: LedgerHQ
+          repositories: coin-modules
+          permission-contents: read
+
+      - name: Checkout ledger-live develop
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: develop
+          persist-credentials: false
+
+      - id: develop
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      # `main` of coin-modules, never code of the PR branch.
+      - name: Checkout coin-modules
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: LedgerHQ/coin-modules
+          ref: main
+          path: coin-modules
+          token: ${{ steps.coin-modules-token.outputs.token }}
+          persist-credentials: false
+
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - id: regenerate
+        name: Rebuild the PR on develop
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_COMMITS: ${{ github.event.pull_request.commits }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          out="$RUNNER_TEMP/out"
+          mkdir -p "$out"
+
+          # `state` is one of regenerate, obsolete, refused or error. The details go in message.txt.
+          finish() {
+            echo "state=$1" >> "$GITHUB_OUTPUT"
+            echo "$1" > "$out/state.txt"
+            [ -z "${2:-}" ] || echo "$2" > "$out/message.txt"
+            exit 0
+          }
+
+          # The box is read by the script of coin-modules, which only looks at its status block.
+          if ! node --input-type=module -e '
+            const { isRegenerateRequested } = await import("./coin-modules/scripts/ci-upgrade-prs/body.mjs");
+            process.exit(isRegenerateRequested(process.env.PR_BODY) ? 0 : 1);
+          '; then
+            echo "The box is not ticked in the status block: nothing to do."
+            echo "state=skip" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Regenerating rebuilds the branch from the catalog: a commit added by hand would be lost.
+          if [ "$PR_COMMITS" != "1" ]; then
+            finish refused "The branch has $PR_COMMITS commits instead of the one the release creates, so it was not regenerated: that would drop the other commits."
+          fi
+
+          if ! state=$(node coin-modules/scripts/ci-upgrade-prs.mjs --regenerate . "$out/body.md" "$out/expected.txt" 2> "$RUNNER_TEMP/error.txt"); then
+            finish error "$(head -n 1 "$RUNNER_TEMP/error.txt" | cut -c1-300)"
+          fi
+          if [ "$state" = "obsolete" ]; then
+            finish obsolete
+          fi
+          [ "$state" = "regenerate" ] || finish error "Unexpected output of the script: $(echo "$state" | head -n 1 | cut -c1-100)"
+          echo "state=regenerate" >> "$GITHUB_OUTPUT"
+          echo "regenerate" > "$out/state.txt"
+
+      - name: Update lockfile
+        if: steps.regenerate.outputs.state == 'regenerate'
+        run: |
+          # Retry to handle registry propagation delay after publish (observed > 2 min on npm)
+          max_attempts=20
+          for attempt in $(seq 1 "$max_attempts"); do
+            if pnpm install --lockfile-only; then
+              break
+            fi
+            if [[ $attempt -eq $max_attempts ]]; then
+              echo "::error::Failed to update the lockfile after $max_attempts attempts"
+              exit 1
+            fi
+            echo "Attempt $attempt failed, retrying in 30s (registry propagation delay)..."
+            sleep 30
+          done
+          cp pnpm-workspace.yaml pnpm-lock.yaml "$RUNNER_TEMP/out/"
+
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: steps.regenerate.outputs.state != 'skip'
+        with:
+          name: coin-modules-regenerate
+          path: ${{ runner.temp }}/out
+          retention-days: 1
+
+  # Holds the write token and runs no code from the branch. It only calls the GitHub API and git.
+  push:
+    name: Update the PR
+    needs: generate
+    # Not when generate failed (the lockfile for instance): there is no artifact to push.
+    if: ${{ contains(fromJSON('["regenerate","obsolete","refused","error"]'), needs.generate.outputs.state) }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    env:
+      BRANCH: ${{ github.event.pull_request.head.ref }}
+      # A temporary branch for the new commit, so that the PR branch is never reset to `develop`
+      # (a PR with no commit ahead of its base is closed by GitHub).
+      TEMP_BRANCH: regenerate/pr-${{ github.event.pull_request.number }}-${{ github.run_id }}
+    steps:
+      - id: token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: coin-modules-regenerate
+          path: ${{ runner.temp }}/out
+
+      # The files that are committed go on top of the `develop` the lockfile was computed on.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        if: needs.generate.outputs.state == 'regenerate'
+        with:
+          ref: ${{ needs.generate.outputs.develop_sha }}
+          persist-credentials: false
+          sparse-checkout: |
+            pnpm-workspace.yaml
+            pnpm-lock.yaml
+          sparse-checkout-cone-mode: false
+
+      - name: Create the temporary branch
+        if: needs.generate.outputs.state == 'regenerate'
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+          DEVELOP_SHA: ${{ needs.generate.outputs.develop_sha }}
+        run: |
+          gh api -X POST "repos/$GITHUB_REPOSITORY/git/refs" \
+            -f ref="refs/heads/$TEMP_BRANCH" -f sha="$DEVELOP_SHA" > /dev/null
+          cp "$RUNNER_TEMP/out/pnpm-workspace.yaml" "$RUNNER_TEMP/out/pnpm-lock.yaml" .
+
+      # Committed through the GraphQL API so GitHub signs it (the branch ruleset requires signed
+      # commits), on the temporary branch.
+      - name: Commit on the temporary branch
+        if: needs.generate.outputs.state == 'regenerate'
+        uses: planetscale/ghcommit-action@c6125dee9e9c0daebc4adea9f68ead8293414174 # v0.2.9
+        with:
+          commit_message: ${{ github.event.pull_request.title }}
+          repo: ${{ github.repository }}
+          branch: ${{ env.TEMP_BRANCH }}
+          file_pattern: pnpm-workspace.yaml pnpm-lock.yaml
+        env:
+          GITHUB_TOKEN: ${{ steps.token.outputs.token }}
+
+      # One conditional update: it fails if the PR branch is not at the commit that was regenerated
+      # (someone pushed since), so a commit added by hand is never overwritten. The push is made by
+      # the app, so it starts the CI of the PR again.
+      - name: Move the PR branch to the new commit
+        if: needs.generate.outputs.state == 'regenerate'
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          echo "::add-mask::$auth"
+          authed_git() { git -c "http.extraheader=Authorization: basic $auth" "$@"; }
+          authed_git fetch --depth=1 origin "refs/heads/$TEMP_BRANCH"
+          new=$(git rev-parse FETCH_HEAD)
+          authed_git push --force-with-lease="refs/heads/$BRANCH:$PR_HEAD_SHA" origin "$new:refs/heads/$BRANCH"
+
+      - name: Write the new description
+        if: needs.generate.outputs.state == 'regenerate'
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: gh pr edit "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/out/body.md"
+
+      # Nothing is pushed: tick off the box so that the PR does not look pending, and say why.
+      - name: Untick the box and comment
+        if: needs.generate.outputs.state != 'regenerate'
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          STATE: ${{ needs.generate.outputs.state }}
+        run: |
+          case "$STATE" in
+            obsolete) text="\`develop\` already has this version or a newer one: nothing to regenerate. Close this PR." ;;
+            refused) text="Not regenerated. $(cat "$RUNNER_TEMP/out/message.txt")" ;;
+            *) text="Could not regenerate this PR: \`$(cat "$RUNNER_TEMP/out/message.txt")\`" ;;
+          esac
+          body=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json body --jq .body)
+          printf '%s\n' "$body" \
+            | sed -E 's/^- \[[xX]\] Regenerate this PR/- [ ] Regenerate this PR/' \
+            | gh pr edit "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file -
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$text"
+
+      - name: Delete the temporary branch
+        if: always() && needs.generate.outputs.state == 'regenerate'
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+        run: gh api -X DELETE "repos/$GITHUB_REPOSITORY/git/refs/heads/$TEMP_BRANCH" || true

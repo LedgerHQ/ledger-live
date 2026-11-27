@@ -9,63 +9,54 @@ const failed: ReceiveKindRead<never> = { data: undefined, failed: true };
 const receive = mockAccountReceive();
 const used = mockAccountStatus();
 const onboarding = mockAccountStatus({ used: false, gate: { type: "onboarding" } });
-const optIn = mockAssetStatus({ gate: { type: "activation", method: "optIn" } });
+const toActivate = mockAssetStatus({ gate: { type: "activation" } });
+const noGate = loaded(mockAssetStatus());
 
 describe("toReceiveScreenState", () => {
-  it("should be ready once the native coin's receive and account status are read", () => {
-    expect(toReceiveScreenState({ receive: loaded(receive), accountStatus: loaded(used) })).toEqual(
-      { type: "ready", receive },
-    );
-  });
-
-  it("should load while a kind has no answer yet", () => {
-    expect(toReceiveScreenState({ receive: pending, accountStatus: loaded(used) })).toEqual({
-      type: "loading",
-    });
-    expect(toReceiveScreenState({ receive: loaded(receive), accountStatus: pending })).toEqual({
-      type: "loading",
-    });
-  });
-
-  it("should wait for a token's asset status before telling it has no gate", () => {
+  it("should be ready once every kind is read and the asset has no gate", () => {
     expect(
       toReceiveScreenState({
         receive: loaded(receive),
         accountStatus: loaded(used),
-        assetStatus: pending,
-      }),
-    ).toEqual({ type: "loading" });
-  });
-
-  it("should be ready for a token without gate", () => {
-    expect(
-      toReceiveScreenState({
-        receive: loaded(receive),
-        accountStatus: loaded(used),
-        assetStatus: loaded(mockAssetStatus()),
+        assetStatus: noGate,
       }),
     ).toEqual({ type: "ready", receive });
   });
 
-  it("should ask to onboard the account, even when its receive read failed", () => {
-    expect(toReceiveScreenState({ receive: failed, accountStatus: loaded(onboarding) })).toEqual({
-      type: "onboardingRequired",
-    });
+  it.each([
+    ["receive", { receive: pending, accountStatus: loaded(used), assetStatus: noGate }],
+    ["accountStatus", { receive: loaded(receive), accountStatus: pending, assetStatus: noGate }],
+    [
+      "assetStatus",
+      { receive: loaded(receive), accountStatus: loaded(used), assetStatus: pending },
+    ],
+  ])("should load while %s has no answer yet", (_kind, reads) => {
+    expect(toReceiveScreenState(reads)).toEqual({ type: "loading" });
   });
 
-  it("should ask to activate the token with the method of its gate", () => {
+  it("should ask to onboard the account, even when its receive read failed", () => {
+    expect(
+      toReceiveScreenState({
+        receive: failed,
+        accountStatus: loaded(onboarding),
+        assetStatus: noGate,
+      }),
+    ).toEqual({ type: "onboardingRequired" });
+  });
+
+  it("should ask to activate the token behind an activation gate", () => {
     expect(
       toReceiveScreenState({
         receive: loaded(receive),
         accountStatus: loaded(used),
-        assetStatus: loaded(optIn),
+        assetStatus: loaded(toActivate),
       }),
-    ).toEqual({ type: "activationRequired", method: "optIn" });
+    ).toEqual({ type: "activationRequired" });
   });
 
   it.each([
-    ["receive", { receive: failed, accountStatus: loaded(used) }],
-    ["accountStatus", { receive: loaded(receive), accountStatus: failed }],
+    ["receive", { receive: failed, accountStatus: loaded(used), assetStatus: noGate }],
+    ["accountStatus", { receive: loaded(receive), accountStatus: failed, assetStatus: noGate }],
     ["assetStatus", { receive: loaded(receive), accountStatus: loaded(used), assetStatus: failed }],
   ])("fails when the %s read failed with nothing stored", (_kind, reads) => {
     expect(toReceiveScreenState(reads)).toEqual({ type: "error" });

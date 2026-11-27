@@ -24,7 +24,6 @@ function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
 }
 
 const testPathIgnorePatterns = [
-  "benchmark/",
   "tools/(?!rspack/)",
   "mobile-test-app/",
   "lib/",

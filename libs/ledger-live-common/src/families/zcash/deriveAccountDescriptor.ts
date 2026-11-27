@@ -4,9 +4,9 @@ import { AccountDescriptorSchema } from "@domain/entity-account-descriptor";
 import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { deriveAccountXpub } from "@ledgerhq/coin-zcash/signer";
 import type { BitcoinSigner as ZcashSigner } from "@ledgerhq/coin-zcash/types/signer";
+import { fromDescriptorPath } from "@domain/entity-derivation";
 import type { Resolver } from "../../hw/getAddress/types";
 import type { DeriveAccountDescriptor } from "../../coin-modules/types";
-import { toLegacyPath } from "../../account/accountDescriptor";
 
 /** The xpub the legacy sync composes at the account path, after the address its scan derives first. */
 export const createDeriveAccountDescriptor =
@@ -19,14 +19,18 @@ export const createDeriveAccountDescriptor =
       from(
         resolver(transport, {
           currency,
-          path: toLegacyPath(candidate.addressPath),
+          path: fromDescriptorPath(candidate.addressPath),
           derivationMode: asDerivationMode(candidate.derivationMode),
         }),
       ).pipe(
         switchMap(() => {
           signal.throwIfAborted();
           return from(
-            deriveAccountXpub(createSigner(transport), toLegacyPath(candidate.accountPath), signal),
+            deriveAccountXpub(
+              createSigner(transport),
+              fromDescriptorPath(candidate.accountPath),
+              signal,
+            ),
           );
         }),
       ),

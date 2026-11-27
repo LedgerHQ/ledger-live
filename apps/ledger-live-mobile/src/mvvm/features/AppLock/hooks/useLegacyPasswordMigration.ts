@@ -2,8 +2,10 @@ import {
   APP_LOCK_SALT_LENGTH,
   isLegacyMigrationComplete,
   migrateLegacyPassword,
+  setBiometricsEnabled,
   setHasPassword,
   setNeedsLongerPassword,
+  storeBiometricsMarker,
 } from "@features/platform-app-lock";
 import { track } from "@shared/analytics";
 import { getRandomBytesAsync } from "expo-crypto";
@@ -15,6 +17,16 @@ import { isLockedSelector } from "~/reducers/auth";
 import { privacySelector } from "~/reducers/settings";
 import { useAppLockScheme } from "./useAppLockScheme";
 
+// Carried over, or the next unlock asks for a password someone who always used biometrics may have
+// forgotten. A marker that will not store leaves the password, which still opens the app.
+async function carryLegacyBiometrics(): Promise<boolean> {
+  try {
+    return await storeBiometricsMarker();
+  } catch {
+    return false;
+  }
+}
+
 export function useLegacyPasswordMigration(): void {
   const dispatch = useDispatch();
   const scheme = useAppLockScheme();
@@ -23,6 +35,7 @@ export function useLegacyPasswordMigration(): void {
   const hasRun = useRef(false);
 
   const hasLegacyPassword = Boolean(legacyPrivacy?.hasPassword);
+  const hasLegacyBiometrics = Boolean(legacyPrivacy?.biometricsEnabled);
 
   // A run that deleted the entry but died before the dispatch below leaves this flag demanding a
   // password nothing can check, and the guard in the next effect would never let it run again.
@@ -35,17 +48,28 @@ export function useLegacyPasswordMigration(): void {
 
     isLegacyMigrationComplete()
       .catch(() => false)
-      .then(isComplete => {
-        if (isComplete && !cancelled) {
-          dispatch(disablePrivacy());
-          dispatch(setHasPassword(true));
+      .then(async isComplete => {
+        if (!isComplete || cancelled) {
+          return;
         }
+
+        const hasBiometrics = hasLegacyBiometrics && (await carryLegacyBiometrics());
+
+        if (cancelled) {
+          return;
+        }
+
+        if (hasBiometrics) {
+          dispatch(setBiometricsEnabled(true));
+        }
+        dispatch(disablePrivacy());
+        dispatch(setHasPassword(true));
       });
 
     return () => {
       cancelled = true;
     };
-  }, [dispatch, hasLegacyPassword, scheme]);
+  }, [dispatch, hasLegacyBiometrics, hasLegacyPassword, scheme]);
 
   // After the legacy unlock, not at boot: that is the one moment the password is in hand.
   useEffect(() => {
@@ -57,12 +81,17 @@ export function useLegacyPasswordMigration(): void {
 
     getRandomBytesAsync(APP_LOCK_SALT_LENGTH)
       .then(salt => migrateLegacyPassword(salt, Platform.OS))
-      .then(result => {
+      .then(async result => {
         if (result.status !== "migrated") {
           hasRun.current = false;
           return;
         }
 
+        const hasBiometrics = hasLegacyBiometrics && (await carryLegacyBiometrics());
+
+        if (hasBiometrics) {
+          dispatch(setBiometricsEnabled(true));
+        }
         dispatch(disablePrivacy());
         dispatch(setHasPassword(true));
         dispatch(setNeedsLongerPassword(result.needsLongerPassword));
@@ -75,5 +104,5 @@ export function useLegacyPasswordMigration(): void {
       .catch(() => {
         hasRun.current = false;
       });
-  }, [dispatch, hasLegacyPassword, isLegacyLocked, scheme]);
+  }, [dispatch, hasLegacyBiometrics, hasLegacyPassword, isLegacyLocked, scheme]);
 }

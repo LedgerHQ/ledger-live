@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-history-export",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Export the operations history as CSV: account selection and export, for Desktop and Mobile",
   "main": "src/index.ts",

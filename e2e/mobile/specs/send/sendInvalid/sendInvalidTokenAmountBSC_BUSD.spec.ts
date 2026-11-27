@@ -1,16 +1,16 @@
 import { runSendInvalidTokenAmountTest } from "@e2e/specs/send/send";
 
-const transaction = new Transaction(
-  TokenAccount.BSC_BUSD_1,
-  TokenAccount.BSC_BUSD_2,
-  "1",
-  Fee.FAST,
-);
-runSendInvalidTokenAmountTest(
+const transaction = new Transaction({
+  accountToDebit: TokenAccount.BSC_BUSD_1,
+  accountToCredit: TokenAccount.BSC_BUSD_2,
+  amount: "1",
+  speed: Fee.FAST,
+});
+runSendInvalidTokenAmountTest({
   transaction,
-  new RegExp(
+  expectedErrorMessage: new RegExp(
     /You need \d+\.\d+ BNB in your account to pay for transaction fees on the BNB Smart Chain network\. .*/,
   ),
-  ["B2CQA-2700"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@bsc", "@family-evm"],
-);
+  tmsLinks: ["B2CQA-2700"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@bsc", "@family-evm"],
+});

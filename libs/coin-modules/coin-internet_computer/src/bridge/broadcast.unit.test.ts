@@ -11,7 +11,7 @@ jest.mock("../network/api", () => ({
   throwIfLedgerTransferRefused: jest.requireActual("../network/api").throwIfLedgerTransferRefused,
 }));
 
-const broadcast = buildBroadcast(() => LOCAL_NODE);
+const broadcast = buildBroadcast(async () => LOCAL_NODE);
 
 describe("broadcast", () => {
   beforeEach(() => {

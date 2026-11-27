@@ -10,14 +10,27 @@ The account aggregate root: the list of the app's accounts, keyed by `AccountUUI
 The `accounts` slice is meant to become the source of truth of the account list. It is an entity adapter keyed by `AccountUUID`, described by zod schemas in `schema.ts`:
 
 - `ids` — the accounts, in the user's order; it will replace the order of the legacy store.
-- `entities` — one `{ accountUUID, descriptor, legacyId? }` per account (`AccountUUID` and `AccountDescriptor` from [`@domain/entity-account-descriptor`](../account-descriptor)); `legacyId` is absent for an account that only exists remotely.
+- `entities` — one `{ accountUUID, descriptor, legacyId? }` per account (`AccountDescriptor` from [`@domain/entity-account-descriptor`](../account-descriptor)); `legacyId` is absent for an account that only exists remotely.
 - `byLegacyId` — the reverse index `legacyId → AccountUUID`, kept by the same reducer.
 
+- `AccountUUIDSchema` / `AccountUUID` — the identity code holds: a uuid v5 of the descriptor's canonical key, the same on every device, carrying no account key.
+- `computeAccountUUID` (`./descriptor`) — the `AccountUUID` of a descriptor; only the edges call it, tests take the wrapper of `./schema.mock`.
 - `accountsSlice` — its reducer, `legacyAccountsSynced`, and its selectors.
 - its selectors: `selectAccountEntries` / `selectAccountUUIDs` / `selectAccountEntry` — every account in order, their ids, or one by `AccountUUID`; `selectAccountUUIDByLegacyId` — the `AccountUUID` behind a legacy account id, from `byLegacyId`.
 - `mockAccountEntry` (`./schema.mock`) — a valid entry, with overrides.
 
 While the legacy store holds `accounts`, each app mounts the slice under another key and binds its selectors there with `accountsSlice.getSelectors`.
+
+## Discovered accounts
+
+The `discoveredAccounts` slice registers the accounts discovery found and the user has not added: `AccountUUID → AccountDescriptor`, nothing else. It lets `@features/platform-account-data` read their data (a balance on the scan screen) while the flow holds only `AccountUUID`s.
+
+- `discoveredAccountsRegistered` — dispatched at the edge by `registerDiscoveredAccounts` (`@features/platform-account-discovery/descriptor`) for UUIDs not already in the accounts slice.
+- `discoveredAccountsCleared` — dispatched by the flow when it ends or its scan restarts.
+- `selectDiscoveredAccountDescriptor` — the descriptor of a discovered account, for the edges.
+- An account added to the `accounts` slice (`legacyAccountsSynced`, `remoteAccountsAdded`) leaves the register: its data, keyed by the same `AccountUUID`, stays where it is.
+
+Each app mounts it at `discoveredAccounts`, its name.
 
 ## Legacy (`src/legacy/`)
 
@@ -34,11 +47,12 @@ What an account *has* — a name, a balance, a history, a star — lives in its 
 ```ts
 import { AccountIdSchema, accountsSlice } from "@domain/entity-account";
 
-const { selectAccountEntry, selectAccountUUIDByLegacyId } = accountsSlice.getSelectors(
-  (state: State) => state.accountEntries,
-);
+const { selectAccountEntry, selectAccountLegacyId, selectAccountUUIDByLegacyId } =
+  accountsSlice.getSelectors((state: State) => state.accountEntries);
 
 const entry = selectAccountEntry(state, accountUUID); // { accountUUID, descriptor, legacyId? }
+// The legacy account behind it, for the app code that still reads one:
+const legacyId = selectAccountLegacyId(state, accountUUID);
 // Only at the boundary with a legacy screen:
 const uuid = selectAccountUUIDByLegacyId(state, AccountIdSchema.parse(legacyAccount.id));
 ```

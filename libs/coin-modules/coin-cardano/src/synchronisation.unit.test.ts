@@ -242,6 +242,52 @@ describe("mapTxToAccountOperation", () => {
     jest.resetAllMocks();
   });
 
+  const collateralTx = (status: boolean | undefined): APITransaction => ({
+    status,
+    fees: "4133700",
+    hash: "txHash",
+    inputs: [
+      {
+        index: 0,
+        txId: "collateral",
+        address: accountAddress.getHex(),
+        value: "4133700",
+        tokens: [],
+        paymentKey: paymentCredKey,
+      },
+    ],
+    outputs: [],
+    timestamp: "2024-01-01T00:00:00.000Z",
+    blockHeight: 0,
+    certificate: { stakeRegistrations: [], stakeDeRegistrations: [], stakeDelegations: [] },
+  });
+
+  const mapTx = (tx: APITransaction) =>
+    mapTxToAccountOperation(
+      tx,
+      "accountId",
+      accountCredentialMap,
+      { key: stakeCredKey } as any,
+      [],
+      accountShapeInfo,
+      { stakeKeyDeposit: "1" } as any,
+    );
+
+  describe("phase-2 validity", () => {
+    it("flags a phase-2 invalid transaction as failed", () => {
+      expect(mapTx(collateralTx(false))).toMatchObject({
+        type: "FEES",
+        value: new BigNumber(4133700),
+        fee: new BigNumber(4133700),
+        hasFailed: true,
+      });
+    });
+
+    it.each([true, undefined])("keeps a transaction with status %s successful", status => {
+      expect(mapTx(collateralTx(status)).hasFailed).toBe(false);
+    });
+  });
+
   describe("Conway era certificates operation identification", () => {
     it("should correctly map stake registration transaction", async () => {
       const mockTxResult: APITransaction = {

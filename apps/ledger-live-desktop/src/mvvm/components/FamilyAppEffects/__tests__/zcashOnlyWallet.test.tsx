@@ -6,7 +6,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { FamilyAppEffects } from "../index";
 
 // The real family registry, with only the observer itself replaced.
-jest.mock("~/renderer/families/bitcoin/zcashActivationTracking", () => ({
+jest.mock("~/renderer/families/zcash/zcashActivationTracking", () => ({
   ZcashFirstSyncTracking: () => <div data-testid="zcash-first-sync-tracking" />,
 }));
 

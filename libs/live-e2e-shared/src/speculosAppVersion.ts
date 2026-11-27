@@ -8,6 +8,7 @@ import * as path from "path";
 
 const liveCommonVersion = "34.64.0"; // live-common version isn't really necessary here, so we can hardcode it
 const nanoAppProviderId = 1;
+const defaultManagerApiBase = "https://manager.api.live.ledger.com/api";
 const BASELINE_CATALOG_APP = "Bitcoin";
 
 export type CatalogApp = { versionDisplayName: string; version: string; provider?: number };
@@ -60,11 +61,16 @@ function getDeviceTargetId(device: DeviceModelId): number {
   return modelToTargetIdMap[device];
 }
 
+type NanoAppCatalogOptions = {
+  device: DeviceModelId;
+  deviceFirmware: string;
+  provider?: number;
+};
+
 export async function getNanoAppCatalog(
-  device: DeviceModelId,
-  deviceFirmware: string,
-  provider = nanoAppProviderId,
+  options: NanoAppCatalogOptions,
 ): Promise<ApplicationV2Entity[]> {
+  const { device, deviceFirmware, provider = nanoAppProviderId } = options;
   const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), liveCommonVersion);
   const targetId = getDeviceTargetId(device);
   return await repository.catalogForDevice({
@@ -98,6 +104,16 @@ export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<s
   process.env.SPECULOS_FIRMWARE_VERSION = firmware;
 
   return firmware;
+}
+
+/** The newest provider OS, so one the Manager API offers no update from, whatever its app catalog. */
+export async function getLatestFirmwareVersion(device: DeviceModelId): Promise<string> {
+  const repository = new HttpManagerApiRepository(
+    process.env.MANAGER_API_BASE ?? defaultManagerApiBase,
+    liveCommonVersion,
+  );
+  const { firmwares } = await newestProviderFirmwares(repository, device);
+  return firmwares[0].version;
 }
 
 /**
@@ -170,7 +186,7 @@ async function latestFirmwareWithBaselineApp(
   newestFirst: readonly { id: number; version: string }[],
 ): Promise<string> {
   for (const firmware of newestFirst) {
-    const catalog = await getNanoAppCatalog(device, firmware.version);
+    const catalog = await getNanoAppCatalog({ device, deviceFirmware: firmware.version });
     const publishesBaseline = catalog.some(app => app.versionDisplayName === BASELINE_CATALOG_APP);
     if (publishesBaseline) return firmware.version;
 
@@ -189,14 +205,14 @@ async function getProviderAppCatalog(
   device: DeviceModelId,
   firmware: string,
 ): Promise<(ApplicationV2Entity & { provider: number })[]> {
-  const baseline = await getNanoAppCatalog(device, firmware);
+  const baseline = await getNanoAppCatalog({ device, deviceFirmware: firmware });
   const byName = new Map(
     baseline.map(app => [app.versionDisplayName, { ...app, provider: nanoAppProviderId }]),
   );
 
   const provider = getNanoAppProvider();
   if (provider !== nanoAppProviderId) {
-    for (const app of await getNanoAppCatalog(device, firmware, provider)) {
+    for (const app of await getNanoAppCatalog({ device, deviceFirmware: firmware, provider })) {
       byName.set(app.versionDisplayName, { ...app, provider });
     }
   }

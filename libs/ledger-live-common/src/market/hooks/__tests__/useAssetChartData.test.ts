@@ -2,11 +2,12 @@
  * @jest-environment jsdom
  */
 import { renderHook } from "@testing-library/react";
-import { useGetAssetChartDataQuery } from "../../state-manager/api";
+import { useGetAssetChartDataQuery } from "@domain/api-market-chart";
 import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "../../utils/timers";
 import { useAssetChartData } from "../useAssetChartData";
 
-jest.mock("../../state-manager/api", () => ({
+jest.mock("@domain/api-market-chart", () => ({
+  ...jest.requireActual("@domain/api-market-chart"),
   useGetAssetChartDataQuery: jest.fn(),
 }));
 
@@ -33,6 +34,15 @@ describe("useAssetChartData", () => {
     expect(mockUseGetAssetChartDataQuery).toHaveBeenCalledWith(
       { id: "bitcoin", counterCurrency: "usd", range: "24h" },
       { pollingInterval: 1_000, skip: undefined },
+    );
+  });
+
+  it("omits an unknown range so the endpoint uses its default", () => {
+    renderHook(() => useAssetChartData({ id: "bitcoin", counterCurrency: "usd", range: "2y" }));
+
+    expect(mockUseGetAssetChartDataQuery).toHaveBeenCalledWith(
+      { id: "bitcoin", counterCurrency: "usd", range: undefined },
+      expect.anything(),
     );
   });
 });

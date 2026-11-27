@@ -31,7 +31,11 @@ describeIfNanoSSupports(Currency.ALEO.id)("Add account", () => {
 
     await app.addAccount.allowAleoViewKey();
 
-    await app.addAccount.addAccountAtIndex(`${Currency.ALEO.name} 1`, Currency.ALEO.id, 0);
+    await app.addAccount.addAccountAtIndex({
+      currencyName: `${Currency.ALEO.name} 1`,
+      currencyId: Currency.ALEO.id,
+      index: 0,
+    });
 
     await app.addAccount.waitForAleoViewKeyApproveScreen();
 
@@ -39,6 +43,9 @@ describeIfNanoSSupports(Currency.ALEO.id)("Add account", () => {
     await app.addAccount.tapCloseAddAccountCta();
 
     await app.portfolio.goToAccounts(Currency.ALEO.id);
-    await app.assetAccountsPage.waitForAccountPageToLoad(Currency.ALEO.name, undefined, true);
+    await app.assetAccountsPage.waitForAccountPageToLoad({
+      assetName: Currency.ALEO.name,
+      inCryptoAddressesList: true,
+    });
   });
 });

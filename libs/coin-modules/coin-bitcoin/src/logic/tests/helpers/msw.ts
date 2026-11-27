@@ -9,7 +9,15 @@ import { CURRENCY_FORMATS } from "./fixtures";
 /** Host every MSW handler answers on; the context below points the explorer at it. */
 export const TEST_EXPLORER = "https://explorer.test";
 
-export const server = setupServer();
+// The transactions `txHandler` describes as pending: the explorer still holds them, so it serves
+// their raw transaction too, which is how coin-bitcoin tells them from replaced or dropped ones.
+const heldTxids = new Set<string>();
+
+export const server = setupServer(
+  http.get(`${TEST_EXPLORER}/blockchain/v4/:explorerId/tx/:txid/hex`, ({ params }) =>
+    heldTxids.has(String(params.txid)) ? HttpResponse.json({ hex: "00" }) : undefined,
+  ),
+);
 
 /**
  * Starts the shared server for the calling suite. Any request without a handler fails the test,
@@ -21,7 +29,10 @@ export function useMswServer(): void {
     setNetworkState({ getCallsRetry: 0 });
     server.listen({ onUnhandledRequest: "error" });
   });
-  afterEach(() => server.resetHandlers());
+  afterEach(() => {
+    server.resetHandlers();
+    heldTxids.clear();
+  });
   afterAll(() => server.close());
 }
 
@@ -47,7 +58,7 @@ export function testConfig(
  */
 export function testContext(overrides: Partial<BitcoinCoinConfig> = {}): BitcoinContext {
   return {
-    config: async currencyId => testConfig(currencyId ?? "bitcoin", overrides),
+    config: currencyId => Promise.resolve(testConfig(currencyId ?? "bitcoin", overrides)),
     logger: () => {},
   };
 }
@@ -124,9 +135,13 @@ export const feesHandler = (fees: Record<string, number>, explorerId?: string) =
     HttpResponse.json({ ...fees, last_updated: 1790949312 }),
   );
 
-export const networkHandler = (relayFee: string | null = "0.00001", explorerId?: string) =>
+export const networkHandler = (
+  relayFee: string | null = "0.00001",
+  explorerId?: string,
+  incrementalFee: string | null = "0.00001",
+) =>
   http.get(`${explorerUrl(explorerId)}/network`, () =>
-    HttpResponse.json({ relay_fee: relayFee, incremental_fee: "0.00001" }),
+    HttpResponse.json({ relay_fee: relayFee, incremental_fee: incrementalFee }),
   );
 
 export const pendingUtxosHandler = (
@@ -138,9 +153,13 @@ export const pendingUtxosHandler = (
     HttpResponse.json({ spent: pending.spent ?? [], created: pending.created ?? [] }),
   );
 
-/** A transaction as `tx/{hash}` returns it: one spending `spends` (outpoints `txid:vout`). */
-export const txHandler = (txid: string, spends: string[], explorerId?: string) =>
-  http.get(`${explorerUrl(explorerId)}/tx/${txid}`, () =>
+/**
+ * A transaction as `tx/{hash}` returns it: one spending `spends` (outpoints `txid:vout`), still in
+ * the mempool (its raw transaction is served too, unless a test answers `tx/{hash}/hex` itself).
+ */
+export const txHandler = (txid: string, spends: string[], explorerId?: string) => {
+  heldTxids.add(txid);
+  return http.get(`${explorerUrl(explorerId)}/tx/${txid}`, () =>
     HttpResponse.json({
       id: txid,
       hash: txid,
@@ -158,3 +177,14 @@ export const txHandler = (txid: string, spends: string[], explorerId?: string) =
       outputs: [],
     }),
   );
+};
+
+/** `address/{address}/txs/pending`: the unconfirmed transactions of an address, unpaginated. */
+export const pendingTxsHandler = (address: string, txs: ExplorerTx[], explorerId?: string) =>
+  http.get(`${explorerUrl(explorerId)}/address/${address}/txs/pending`, () =>
+    HttpResponse.json(txs),
+  );
+
+/** `tx/{txid}/hex`: the serialized transaction. */
+export const txHexHandler = (txid: string, hex: string, explorerId?: string) =>
+  http.get(`${explorerUrl(explorerId)}/tx/${txid}/hex`, () => HttpResponse.json({ hex }));

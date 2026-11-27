@@ -79,7 +79,6 @@ export const loadWindow = async () => {
      * - appLocale, cf. https://www.electronjs.org/fr/docs/latest/api/app#appgetlocale
      * */
     const fullUrl = new URL(url);
-    fullUrl.searchParams.append("appDirname", app.dirname || "");
     fullUrl.searchParams.append("theme", theme || "");
     fullUrl.searchParams.append("appLocale", app.getLocale());
     fullUrl.searchParams.append("systemLocale", app.getSystemLocale());

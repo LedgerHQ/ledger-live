@@ -4,17 +4,28 @@ import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Ac
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { delay, isIos, openDeeplink } from "@e2e/helpers/commonHelpers";
 import { byId, byText } from "@e2e/helpers/elements/native";
-import { device, log } from "detox";
 import { isAccountDetailEnabled } from "@e2e/utils/featureFlagUtils";
+import { device, log } from "detox";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import { GENERIC_ERROR_MODAL_ID } from "@e2e/page/error.page";
 
 const SYNC_TOGGLE_MAX_ATTEMPTS = 3;
 
+type RetryDetoxSyncOptions = {
+  action: () => Promise<void>;
+  label: string;
+  attempt?: number;
+};
+
 type AccountItemOptions = {
   /** What follows the "account-item-" prefix, as a regex source. */
   idPattern?: string;
   index?: number;
+};
+
+type GoToAccountOptions = {
+  accountId: string;
+  currencyId: string;
 };
 
 export default class CommonPage {
@@ -39,6 +50,8 @@ export default class CommonPage {
       `test-id-account-${getParentAccountName(account)}${account.tokenType === undefined ? "" : ` (${account.currency.ticker})`}`,
     );
   private readonly accountGraph = (accountId: string) => byId(`account-graph-${accountId}`);
+  private readonly accountDetail = (accountId: string) =>
+    byId(`account-detail-account-${accountId}`);
   private readonly assetDetailScrollView = (currencyId: string) =>
     byId(`asset-detail-scroll-view-${currencyId}`);
   private readonly assetDetailAddressItem = (accountId: string) =>
@@ -104,12 +117,13 @@ export default class CommonPage {
     await this.walletApiWebview.expectVisible();
   }
 
-  @Step("Go to the account {{{0}}}")
-  async goToAccount(accountId: string, currencyId: string) {
-    if (await this.accountGraph(accountId).isVisible()) {
-      return;
-    }
-    if (isAccountDetailEnabled() && (await app.account.isAccountDetailVisible())) {
+  @Step("Go to the account {{{0.accountId}}}")
+  async goToAccount(options: GoToAccountOptions) {
+    const { accountId, currencyId } = options;
+    const accountScreen = isAccountDetailEnabled()
+      ? this.accountDetail(accountId)
+      : this.accountGraph(accountId);
+    if (await accountScreen.isVisible()) {
       return;
     }
     await openDeeplink(`asset/${currencyId}`);
@@ -161,11 +175,8 @@ export default class CommonPage {
    * Retries a Detox sync toggle: a just-abandoned withTimeout action can leave the bridge with a
    * phantom in-flight request that this call collides with.
    */
-  private async retryDetoxSync(
-    action: () => Promise<void>,
-    label: string,
-    attempt = 1,
-  ): Promise<void> {
+  private async retryDetoxSync(options: RetryDetoxSyncOptions): Promise<void> {
+    const { action, label, attempt = 1 } = options;
     try {
       await action();
     } catch (error) {
@@ -180,7 +191,7 @@ export default class CommonPage {
         `${label} failed (attempt ${attempt}/${SYNC_TOGGLE_MAX_ATTEMPTS}), retrying: ${message}`,
       );
       await delay(INTERVAL.medium);
-      await this.retryDetoxSync(action, label, attempt + 1);
+      await this.retryDetoxSync({ action, label, attempt: attempt + 1 });
     }
   }
 
@@ -189,10 +200,16 @@ export default class CommonPage {
   }
 
   async disableSynchronization() {
-    await this.retryDetoxSync(() => device.disableSynchronization(), "disableSynchronization");
+    await this.retryDetoxSync({
+      action: () => device.disableSynchronization(),
+      label: "disableSynchronization",
+    });
   }
 
   async enableSynchronization() {
-    await this.retryDetoxSync(() => device.enableSynchronization(), "enableSynchronization");
+    await this.retryDetoxSync({
+      action: () => device.enableSynchronization(),
+      label: "enableSynchronization",
+    });
   }
 }

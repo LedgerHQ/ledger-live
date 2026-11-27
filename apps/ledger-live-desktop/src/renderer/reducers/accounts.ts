@@ -10,8 +10,6 @@ import {
 import isEqual from "lodash/isEqual";
 import { State } from ".";
 import { Handlers } from "./types";
-import { walletSelector } from "./wallet";
-import { isStarredAccountSelector } from "~/renderer/reducers/wallet";
 import { nestedSortAccounts, AccountComparator } from "@ledgerhq/live-common/account/ordering";
 import { AddAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
 
@@ -118,13 +116,6 @@ export const accountSelector = createSelector(
     },
   ) => accountId,
   (accounts, accountId) => accounts.find(a => a.id === accountId),
-);
-
-export const starredAccountsSelector = createSelector(
-  shallowAccountsSelector,
-  walletSelector,
-  (accounts, wallet) =>
-    flattenAccounts(accounts).filter(a => isStarredAccountSelector(wallet, { accountId: a.id })),
 );
 
 export const isUpToDateAccountSelector = createSelector(accountSelector, isUpToDateAccount);

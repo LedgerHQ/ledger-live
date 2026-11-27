@@ -17,7 +17,18 @@ jobs:
       contents: read
       id-token: write
     if: ${{!github.event.pull_request.head.repo.fork}}
-    uses: ./.github/workflows/renovate-sync-reusable.yml
+    uses: LedgerHQ/ledger-wallet-actions/.github/workflows/renovate-sync-reusable.yml@main
+    with:
+      runs-on: ledger-wallet-2cpu-aws-public
+      minor-packages: |
+        ledger-live-desktop
+        live-mobile
+      bundled-paths: apps/
+      registry: ${{ vars.ARTIFACTORY_URL }}
+      install-command: pnpm i --frozen-lockfile --filter="@ledgerhq/ledger-live" --filter="live-mobile..." --unsafe-perm --ignore-scripts
+      command: tools/scripts/renovate-pod-lockfile.sh
+      files: apps/ledger-live-mobile/ios/Podfile.lock
+      commit-message: "chore(deps): sync Podfile.lock and changeset"
     secrets:
       GH_BOT_APP_ID: ${{ secrets.GH_BOT_APP_ID }}
       GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
@@ -33,6 +44,20 @@ jobs:
     with:
       head_branch: ${{ github.event.pull_request.head.ref }}
       base_branch: ${{ github.event.pull_request.base.ref }}
+      # Keep in sync with build-test-mobile's inputs.
+      mobile_e2e_plan: true
+      mobile_e2e_speculos_device: nanoX
+      mobile_e2e_smoke_tests: true
+      mobile_e2e_max_shards: 1
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
   # LLD
   build-desktop:
@@ -154,6 +179,7 @@ jobs:
       js_bundle_hash_android: ${{ needs.determine-affected.outputs.mobile_js_hash_android }}
       native_fingerprint_ios: ${{ needs.determine-affected.outputs.mobile_native_fingerprint_ios }}
       native_fingerprint_android: ${{ needs.determine-affected.outputs.mobile_native_fingerprint_android }}
+      build_plan: ${{ needs.determine-affected.outputs.mobile_e2e_plan }}
 
   # Tests
   test-libraries:
@@ -339,14 +365,6 @@ jobs:
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
-
-  test-wallet-cli-windows:
-    name: "Test Wallet CLI (Windows)"
-    permissions:
-      contents: read
-    needs: determine-affected
-    if: ${{contains(fromJSON(needs.determine-affected.outputs.path_prefixes), 'apps/wallet-cli') && !github.event.pull_request.head.repo.fork}}
-    uses: ./.github/workflows/test-wallet-cli-windows-reusable.yml
 
   test-additional:
     name: "Test Additional"

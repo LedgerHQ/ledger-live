@@ -9,12 +9,8 @@ import { decodeVip180Transfer, isVip180Transfer } from "../../common-logic/vip18
 import type { VechainContext } from "../../config";
 import { getBlock as getBlockFromNetwork } from "../../network";
 import type { ApiResponseBlockOutput, ApiResponseBlockTransaction } from "../../types";
-import { NATIVE_ASSET } from "../account/getBalance";
+import { NATIVE_ASSET, VTHO_ASSET } from "../account/getBalance";
 import { toBlockInfo } from "./getBlockInfo";
-
-// `assetOwner` is deliberately omitted: it identifies the account holding the token sub-account and
-// is only meaningful when listing operations for one address, which a block is not scoped to.
-const VTHO_ASSET: AssetInfo = { type: "token", assetReference: VTHO_ADDRESS };
 
 // Full expanded block; block info is derived from it (no separate fetch). Both native VET transfers
 // (`output.transfers`) and VTHO (VIP-180) movements (`output.events`) map to operations.
@@ -42,6 +38,7 @@ function toBlockTransaction(tx: ApiResponseBlockTransaction): BlockTransaction {
     failed: tx.reverted,
     operations,
     fees: BigInt(tx.paid || "0"),
+    feesAsset: { ...VTHO_ASSET },
     feesPayer: tx.gasPayer ?? tx.origin,
   };
 }

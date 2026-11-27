@@ -11,7 +11,12 @@ import {
   resetLoanState,
   waitForLoanOutcome,
 } from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
-import { FF_BORROW_DESKTOP, FF_ANALYTICS_OPTIN_DISABLED } from "tests/utils/featureFlagUtils";
+import {
+  FF_BORROW_DESKTOP,
+  FF_ANALYTICS_OPTIN_DISABLED,
+  FF_ENTRY_POINTS_SERVICES_BORROW,
+  FF_ENTRY_POINTS_SERVICES_DISABLED,
+} from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 import { EXCLUSIVE_LOCK_FIXTURE_TIMEOUT, exclusiveLockFor } from "tests/utils/exclusiveLock";
 
@@ -74,6 +79,7 @@ const borrowOnChainFixture = {
   featureFlags: {
     ...FF_ANALYTICS_OPTIN_DISABLED,
     ...FF_BORROW_DESKTOP,
+    ...FF_ENTRY_POINTS_SERVICES_BORROW,
   },
 };
 
@@ -107,29 +113,63 @@ test.describe("Borrow", () => {
     teamOwner: Team.EARN,
     // Isolated seed with a single ETH account — never used for borrow, so cold start is stable in CI.
     userdata: "speculos-x-other-account",
-    featureFlags: {
-      ...FF_ANALYTICS_OPTIN_DISABLED,
-      ...FF_BORROW_DESKTOP,
-    },
   });
 
-  test(
-    `[${coldStartAccount.currency.testLabel}] - Borrow entry point from portfolio shows the crypto loan modal`,
-    {
-      tag: coldStartTags,
-      annotation: { type: "TMS", description: "B2CQA-6062" },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("home");
-      await app.portfolio.expectBorrowEntryPointVisible();
+  test.describe("Services entry points disabled", () => {
+    test.use({
+      featureFlags: {
+        ...FF_ANALYTICS_OPTIN_DISABLED,
+        ...FF_BORROW_DESKTOP,
+        ...FF_ENTRY_POINTS_SERVICES_DISABLED,
+      },
+    });
 
-      await app.borrow.goAndWaitForBorrowColdStart(async () =>
-        app.portfolio.clickBorrowEntryPoint(),
-      );
+    test(
+      `[${coldStartAccount.currency.testLabel}] - Borrow entry point from portfolio shows the crypto loan modal`,
+      {
+        tag: coldStartTags,
+        annotation: { type: "TMS", description: "B2CQA-6062" },
+      },
+      async ({ app }) => {
+        await app.mainNavigation.openTargetFromMainNavigation("home");
+        await app.portfolio.expectBorrowEntryPointVisible();
 
-      await app.borrow.verifyIntroModalVisible();
-    },
-  );
+        await app.borrow.goAndWaitForBorrowColdStart(async () =>
+          app.portfolio.clickBorrowEntryPoint(),
+        );
+
+        await app.borrow.verifyIntroModalVisible();
+      },
+    );
+  });
+
+  test.describe("Services entry points enabled", () => {
+    test.use({
+      featureFlags: {
+        ...FF_ANALYTICS_OPTIN_DISABLED,
+        ...FF_BORROW_DESKTOP,
+        ...FF_ENTRY_POINTS_SERVICES_BORROW,
+      },
+    });
+
+    test(
+      `[${coldStartAccount.currency.testLabel}] - Borrow services entry point from portfolio shows the crypto loan modal`,
+      {
+        tag: coldStartTags,
+        annotation: { type: "TMS", description: "B2CQA-6062" },
+      },
+      async ({ app }) => {
+        await app.mainNavigation.openTargetFromMainNavigation("home");
+        await app.portfolio.expectServicesEntryPointVisible("borrow");
+
+        await app.borrow.goAndWaitForBorrowColdStart(async () =>
+          app.portfolio.clickServicesEntryPoint("borrow"),
+        );
+
+        await app.borrow.verifyIntroModalVisible();
+      },
+    );
+  });
 });
 
 test.describe("Borrow", { lock: loanLock.names }, () => {
@@ -146,10 +186,10 @@ test.describe("Borrow", { lock: loanLock.names }, () => {
       test.setTimeout(BORROW_TEST_TIMEOUT_MS);
 
       await app.mainNavigation.openTargetFromMainNavigation("home");
-      await app.portfolio.expectBorrowEntryPointVisible();
+      await app.portfolio.expectServicesEntryPointVisible("borrow");
 
       await app.borrow.goAndWaitForBorrowToBeReady(async () =>
-        app.portfolio.clickBorrowEntryPoint(),
+        app.portfolio.clickServicesEntryPoint("borrow"),
       );
 
       await app.borrow.dismissIntroModalIfVisible();
@@ -204,10 +244,10 @@ test.describe("Borrow", { lock: loanLock.names }, () => {
       test.setTimeout(BORROW_TEST_TIMEOUT_MS);
 
       await app.mainNavigation.openTargetFromMainNavigation("home");
-      await app.portfolio.expectBorrowEntryPointVisible();
+      await app.portfolio.expectServicesEntryPointVisible("borrow");
 
       await app.borrow.goAndWaitForBorrowHotStart(async () =>
-        app.portfolio.clickBorrowEntryPoint(),
+        app.portfolio.clickServicesEntryPoint("borrow"),
       );
 
       await app.borrow.clickActiveLoanDashboardRow();
@@ -259,10 +299,10 @@ test.describe("Borrow", { lock: loanLock.names }, () => {
       test.setTimeout(BORROW_TEST_TIMEOUT_MS);
 
       await app.mainNavigation.openTargetFromMainNavigation("home");
-      await app.portfolio.expectBorrowEntryPointVisible();
+      await app.portfolio.expectServicesEntryPointVisible("borrow");
 
       await app.borrow.goAndWaitForBorrowHotStart(async () =>
-        app.portfolio.clickBorrowEntryPoint(),
+        app.portfolio.clickServicesEntryPoint("borrow"),
       );
 
       await app.borrow.clickRepaidLoanDashboardRow();

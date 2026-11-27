@@ -1,5 +1,12 @@
 import { swapSetup } from "@e2e/bridge/server";
 import { ApplicationOptions } from "@e2e/page/index";
+import type { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
+
+export type SwapAccountsTestOptions = TestMetaOptions & {
+  fromAccount: Account;
+  toAccount: Account;
+};
 
 export async function beforeAllFunctionSwap(options: ApplicationOptions) {
   await app.init({

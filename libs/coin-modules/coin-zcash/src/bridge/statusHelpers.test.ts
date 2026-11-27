@@ -1,5 +1,10 @@
 import BigNumber from "bignumber.js";
-import { hasBoundedTransparentShortfall, resolveTransparentUtxos } from "./statusHelpers";
+import {
+  excludePendingInputs,
+  hasBoundedTransparentShortfall,
+  pendingSpentInputs,
+  resolveTransparentUtxos,
+} from "./statusHelpers";
 import { ZCASH_MAX_TRANSPARENT_INPUTS } from "../constants";
 import type { BitcoinOutput, Transaction, ZcashAccount, ZcashTransferType } from "../types/bridge";
 
@@ -179,5 +184,65 @@ describe("hasBoundedTransparentShortfall", () => {
         new BigNumber(fullBalance),
       ),
     ).toBe(false);
+  });
+});
+
+describe("excludePendingInputs", () => {
+  const HASH = "aa".repeat(32);
+  const utxos = [utxo(1_000, 0), utxo(2_000, 1), utxo(3_000, 2)];
+  const withPending = (extras: unknown[]): ZcashAccount =>
+    ({
+      ...account(utxos),
+      pendingOperations: extras.map(extra => ({ extra })),
+    }) as unknown as ZcashAccount;
+
+  it("lists the spent outputs as hash and index, skipping malformed legacy inputs", () => {
+    const acc = withPending([{ inputs: [`${HASH}-2`, "no-index-x", "-3"] }]);
+
+    expect(pendingSpentInputs(acc)).toEqual([{ hash: HASH, outputIndex: 2 }]);
+  });
+
+  it("drops the outputs named by inputRefs", () => {
+    const acc = withPending([{ inputRefs: [{ hash: HASH, outputIndex: 1, address: T_ADDRESS }] }]);
+
+    expect(excludePendingInputs(acc, utxos).map(u => u.outputIndex)).toEqual([0, 2]);
+  });
+
+  it("drops the outputs named by legacy inputs when there are no inputRefs", () => {
+    const acc = withPending([{ inputs: [`${HASH}-0`, `${HASH}-2`] }]);
+
+    expect(excludePendingInputs(acc, utxos).map(u => u.outputIndex)).toEqual([1]);
+  });
+
+  it("prefers inputRefs over inputs of the same operation", () => {
+    const acc = withPending([
+      { inputs: [`${HASH}-0`], inputRefs: [{ hash: HASH, outputIndex: 2, address: T_ADDRESS }] },
+    ]);
+
+    expect(excludePendingInputs(acc, utxos).map(u => u.outputIndex)).toEqual([0, 1]);
+  });
+
+  it("accumulates the inputs of every pending operation", () => {
+    const acc = withPending([{ inputs: [`${HASH}-0`] }, { inputs: [`${HASH}-1`] }]);
+
+    expect(excludePendingInputs(acc, utxos).map(u => u.outputIndex)).toEqual([2]);
+  });
+
+  it("keeps an output of another transaction with the same index", () => {
+    const acc = withPending([{ inputs: [`${"bb".repeat(32)}-0`] }]);
+
+    expect(excludePendingInputs(acc, utxos)).toEqual(utxos);
+  });
+
+  it.each([
+    ["no pending operation", withPending([])],
+    ["a pending operation without extra", withPending([undefined])],
+    ["a pending operation that spends no UTXO", withPending([{ shieldedNullifiers: ["ab"] }])],
+  ])("keeps every output with %s", (_label, acc) => {
+    expect(excludePendingInputs(acc, utxos)).toEqual(utxos);
+  });
+
+  it("copes with an account that has no pendingOperations", () => {
+    expect(excludePendingInputs(account(utxos), utxos)).toEqual(utxos);
   });
 });

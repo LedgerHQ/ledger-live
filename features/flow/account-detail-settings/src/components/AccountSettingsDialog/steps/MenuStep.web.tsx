@@ -8,6 +8,7 @@ type Props = Readonly<{
   accountName: string;
   onClose: () => void;
   onShowChangeName: () => void;
+  onManageAssets?: () => void;
   onShowAdvancedLogs: () => void;
   explorerUrl?: string;
   onShowRemove: () => void;
@@ -19,6 +20,7 @@ export function MenuStep({
   accountName,
   onClose,
   onShowChangeName,
+  onManageAssets,
   onShowAdvancedLogs,
   explorerUrl,
   onShowRemove,
@@ -31,6 +33,7 @@ export function MenuStep({
         <AccountSettingsMenu
           accountName={accountName}
           onChangeName={onShowChangeName}
+          onManageAssets={onManageAssets}
           onViewAdvancedLogs={onShowAdvancedLogs}
           explorerUrl={explorerUrl}
           onRemoveAccount={onShowRemove}

@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-derivation",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Derivation modes of a currency as data: the paths an account scan derives and when it stops",
   "main": "src/index.ts",
@@ -20,8 +20,8 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
-    "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-network": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {

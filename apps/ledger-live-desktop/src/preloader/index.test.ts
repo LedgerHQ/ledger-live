@@ -5,7 +5,9 @@ jest.mock("electron", () => ({
   ipcRenderer: { send: jest.fn(), invoke: jest.fn() },
   contextBridge: { exposeInMainWorld: jest.fn() },
 }));
-jest.mock("./bridge", () => ({ installBridge: jest.fn() }));
+jest.mock("./bridge", () => ({
+  installBridge: jest.fn(() => ({ appDirname: "/app/.webpack" })),
+}));
 jest.mock("@ledgerhq/react-ui/styles/index", () => ({
   palettes: {
     dark: { background: { default: "#000" } },
@@ -43,6 +45,12 @@ describe("preload", () => {
 
     expect(ipcRenderer.send).toHaveBeenCalledWith(CHANNELS.readyToShow, {});
     jest.useRealTimers();
+  });
+
+  it("should expose the app folder from the main process bootstrap, not from the page url", () => {
+    window.history.replaceState(null, "", "/index.html?appDirname=%2Ffrom%2Furl");
+
+    expect(loadExposedApi().appDirname).toBe("/app/.webpack");
   });
 
   it("should expose the renderer reload hook through contextBridge", async () => {

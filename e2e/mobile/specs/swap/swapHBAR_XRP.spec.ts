@@ -1,11 +1,11 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runSwapTest } from "@e2e/specs/swap/swap";
 
-runSwapTest(
-  Account.HEDERA_1,
-  Account.XRP_1,
-  ["B2CQA-3753"],
-  [
+runSwapTest({
+  accountToDebit: Account.HEDERA_1,
+  accountToCredit: Account.XRP_1,
+  tmsLinks: ["B2CQA-3753"],
+  tags: [
     "@NanoSP",
     "@NanoX",
     "@Stax",
@@ -16,4 +16,4 @@ runSwapTest(
     "@ripple",
     "@family-xrp",
   ],
-);
+});
