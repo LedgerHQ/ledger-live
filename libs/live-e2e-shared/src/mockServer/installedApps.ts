@@ -7,11 +7,10 @@ const catalogCache = new Map<string, Promise<Map<string, MockServerApp>>>();
 
 const DEFAULT_CATALOG_PROVIDER = 1;
 
-async function appsByName(
-  model: DeviceModelId,
-  firmware: string,
-  provider: number,
-): Promise<Map<string, MockServerApp>> {
+type AppsByNameOptions = { model: DeviceModelId; firmware: string; provider: number };
+
+async function appsByName(options: AppsByNameOptions): Promise<Map<string, MockServerApp>> {
+  const { model, firmware, provider } = options;
   const key = `${model}@${firmware}@${provider}`;
 
   const cached = catalogCache.get(key);
@@ -48,7 +47,11 @@ export async function withInstallHashes(
 ): Promise<MockServerApp[]> {
   if (apps.every(app => app.hash)) return apps;
   const firmware = options?.firmware || (await getDeviceFirmwareVersion(model));
-  const catalog = await appsByName(model, firmware, options?.provider ?? DEFAULT_CATALOG_PROVIDER);
+  const catalog = await appsByName({
+    model,
+    firmware,
+    provider: options?.provider ?? DEFAULT_CATALOG_PROVIDER,
+  });
 
   return apps.map(app => {
     if (app.hash) return app;

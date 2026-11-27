@@ -63,11 +63,15 @@ const timeoutAfter =
   (input: string | URL | Request, init?: RequestInit) =>
     fetch(input, { ...init, signal: init?.signal ?? AbortSignal.timeout(timeoutMs) });
 
-const mockServerClient = (baseUrl: string, token?: string) =>
-  new MockClient(baseUrl, {
+type MockServerClientOptions = { baseUrl: string; token?: string };
+
+const mockServerClient = (options: MockServerClientOptions) => {
+  const { baseUrl, token } = options;
+  return new MockClient(baseUrl, {
     token,
     httpClient: new DmkNetworkClient({ baseUrl, fetch: timeoutAfter(REQUEST_TIMEOUT_MS) }),
   });
+};
 
 type MockServerSessionOptions = { baseUrl: string; token: string };
 
@@ -77,7 +81,7 @@ export async function provisionMockServerSession(
 ): Promise<{ baseUrl: string; token: string }> {
   await assertMockServerReachable();
   const baseUrl = mockServerBaseUrl();
-  const client = mockServerClient(baseUrl);
+  const client = mockServerClient({ baseUrl });
   const token = await client.authenticate();
   try {
     await client.importSession({ devices });
@@ -90,7 +94,7 @@ export async function provisionMockServerSession(
 
 export async function disposeMockServerSession(options: MockServerSessionOptions): Promise<void> {
   const { baseUrl, token } = options;
-  await mockServerClient(baseUrl, token).disposeSession();
+  await mockServerClient({ baseUrl, token }).disposeSession();
 }
 
 export async function assertMockServerReachable(): Promise<void> {
@@ -121,7 +125,7 @@ export class MockServerSessionHandle {
     const { baseUrl, token } = options;
     this.baseUrl = baseUrl;
     this.token = token;
-    this.client = mockServerClient(baseUrl, token);
+    this.client = mockServerClient({ baseUrl, token });
   }
 
   /** Apps the device reports as installed, which is not what the install UI shows. */
@@ -149,7 +153,7 @@ export class MockServerSessionHandle {
     const { id } = await this.firstDevice();
     const { response } = await this.client.sendApdu(id, GET_VERSION_APDU);
 
-    const flagged = withOnboardingFlags(response, step, onboarded);
+    const flagged = withOnboardingFlags({ getVersionReply: response, step, onboarded });
 
     await this.pinApdu(id, {
       prefix: GET_VERSION_PREFIX,

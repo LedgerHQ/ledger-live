@@ -360,7 +360,7 @@ type TokenAllowanceCheckOptions = {
 };
 
 /**
- * Returns current allowance as a decimal string if {@link minAmount}
+ * Returns current allowance as a decimal string if `minAmount`
  * is covered, otherwise `0`.
  */
 export const isTokenAllowanceSufficientCommand = async (options: TokenAllowanceCheckOptions) => {
@@ -487,10 +487,12 @@ async function broadcastTokenApproval(
   // Before the CLI starts: once its approve reaches the device, the setting can no longer change.
   await enableBlindSigningOnNanoS();
   return runWithExclusiveLock(
-    [account],
-    `token ${opts.mode}`,
+    {
+      targets: [account],
+      label: `token ${opts.mode}`,
+      waitsForConfirmation: opts.waitConfirmation === true,
+    },
     () => runTokenApprovalWithRetry(opts),
-    { waitsForConfirmation: opts.waitConfirmation === true },
   );
 }
 

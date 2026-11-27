@@ -68,7 +68,10 @@ export const RENT_ORDER_PATH = "/api/tronRent/addTronRentRecord";
 export const RENT_PAYMENT_UPLOAD_PATH = "/api/tronRent/uploadHash";
 const FAKE_POLL_MS = 250;
 
-async function pollUntil(done: () => boolean, timeoutMs: number, failure: string): Promise<void> {
+type PollUntilOptions = { done: () => boolean; timeoutMs: number; failure: string };
+
+async function pollUntil(options: PollUntilOptions): Promise<void> {
+  const { done, timeoutMs, failure } = options;
   const deadline = Date.now() + timeoutMs;
   const poll = async (): Promise<void> => {
     if (done()) return;
@@ -90,11 +93,11 @@ export async function expectRentOrderedFromFake(
   timeoutMs = 30_000,
 ): Promise<void> {
   const reached = (prefix: string) => fake.log().some(({ path }) => path.startsWith(prefix));
-  await pollUntil(
-    () => reached(RENT_ORDER_PATH) && reached("/trongrid/"),
+  await pollUntil({
+    done: () => reached(RENT_ORDER_PATH) && reached("/trongrid/"),
     timeoutMs,
-    `fake Tronify got no rent order and TronGrid call in ${timeoutMs} ms: refusing to sign a TX-A for the real services`,
-  );
+    failure: `fake Tronify got no rent order and TronGrid call in ${timeoutMs} ms: refusing to sign a TX-A for the real services`,
+  });
 }
 
 type UsdtTransferOptions = {
@@ -111,11 +114,11 @@ export async function expectUsdtTransferBroadcastToFake(
   options: UsdtTransferWaitOptions,
 ): Promise<void> {
   const { fake, recipient, amount, timeoutMs = 30_000 } = options;
-  await pollUntil(
-    () => hasUsdtTransferBroadcast({ fake, recipient, amount }),
+  await pollUntil({
+    done: () => hasUsdtTransferBroadcast({ fake, recipient, amount }),
     timeoutMs,
-    `fake TronGrid got no broadcast of ${amount} USDT to ${recipient} in ${timeoutMs} ms`,
-  );
+    failure: `fake TronGrid got no broadcast of ${amount} USDT to ${recipient} in ${timeoutMs} ms`,
+  });
 }
 
 /** Whether the app broadcast a USDT `transfer(recipient, amount)`. `amount` is in USDT. */
@@ -124,7 +127,9 @@ export function hasUsdtTransferBroadcast(options: UsdtTransferOptions): boolean 
   if (!recipient) throw new Error("The transaction has no recipient address to look for");
   const toHex = base58ToHex(recipient);
   const baseUnits = parseUsdt(amount);
-  return fake.broadcasts().some(({ rawDataHex }) => isUsdtTransfer(rawDataHex, toHex, baseUnits));
+  return fake
+    .broadcasts()
+    .some(({ rawDataHex }) => isUsdtTransfer({ rawDataHex, toHex, amountBaseUnits: baseUnits }));
 }
 
 const SCENARIOS = [
@@ -241,7 +246,10 @@ const failure = (message: string) => ({
   data: {},
 });
 
-const trimEnd = (text: string, char: string): string => {
+type TrimEndOptions = { text: string; char: string };
+
+const trimEnd = (options: TrimEndOptions): string => {
+  const { text, char } = options;
   let end = text.length;
   while (end > 0 && text[end - 1] === char) end--;
   return text.slice(0, end);
@@ -253,7 +261,7 @@ const parseUsdt = (amount: string): bigint => {
 };
 
 const formatUsdt = (baseUnits: bigint): string => {
-  const fraction = trimEnd((baseUnits % ONE_USDT).toString().padStart(6, "0"), "0");
+  const fraction = trimEnd({ text: (baseUnits % ONE_USDT).toString().padStart(6, "0"), char: "0" });
   return fraction ? `${baseUnits / ONE_USDT}.${fraction}` : `${baseUnits / ONE_USDT}`;
 };
 
@@ -285,7 +293,10 @@ const UNFORWARDED_HEADERS = new Set([
   "expect",
 ]);
 
-function send(res: http.ServerResponse, status: number, payload: unknown): void {
+type SendOptions = { res: http.ServerResponse; status: number; payload: unknown };
+
+function send(options: SendOptions): void {
+  const { res, status, payload } = options;
   // Before the headers, so a payload that won't serialize still gets the 500 fallback.
   const json = JSON.stringify(payload);
   res.writeHead(status, { ...CORS_HEADERS, "content-type": "application/json" });
@@ -340,8 +351,18 @@ function parseBody(raw: Buffer): unknown {
  * A fake Tronify, plus a TronGrid proxy that feeds coin-tron what each scenario needs: the payer's
  * balances, its energy before and after the rent, and a USDT transfer simulation.
  */
+type ProxyOptions = { req: http.IncomingMessage; pathAndQuery: string; raw: Buffer };
+
+type TronGridOptions = {
+  req: http.IncomingMessage;
+  res: http.ServerResponse;
+  url: URL;
+  raw: Buffer;
+  body: Json | undefined;
+};
+
 export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTronify> {
-  const upstreamTronGrid = trimEnd(opts.upstreamTronGrid, "/");
+  const upstreamTronGrid = trimEnd({ text: opts.upstreamTronGrid, char: "/" });
   const requests: FakeRequest[] = [];
   const broadcasts: FakeBroadcast[] = [];
   let scenario: FakeTronifyScenario = "happy";
@@ -562,7 +583,8 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
     return { ...upstream, ...freeNet, EnergyLimit: rented, EnergyUsed: 0 };
   }
 
-  async function proxy(req: http.IncomingMessage, pathAndQuery: string, raw: Buffer) {
+  async function proxy(options: ProxyOptions) {
+    const { req, pathAndQuery, raw } = options;
     const headers = new Headers();
     for (const [name, value] of Object.entries(req.headers)) {
       if (value !== undefined && !UNFORWARDED_HEADERS.has(name)) {
@@ -581,18 +603,14 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
     };
   }
 
-  async function tronGrid(
-    req: http.IncomingMessage,
-    res: http.ServerResponse,
-    url: URL,
-    raw: Buffer,
-    body: Json | undefined,
-  ) {
+  async function tronGrid(options: TronGridOptions) {
+    const { req, res, url, raw, body } = options;
     const rawPath = url.pathname.slice("/trongrid".length);
     const path = decodePath(rawPath);
     // SAFETY: a broadcast is answered here and never forwarded — the specs sign with funded seeds.
     // A path that won't decode can't be ruled out as one, so it is refused.
-    if (path === undefined) return send(res, 400, { error: `fake Tronify: bad path ${rawPath}` });
+    if (path === undefined)
+      return send({ res, status: 400, payload: { error: `fake Tronify: bad path ${rawPath}` } });
     if (/broadcast/i.test(path)) {
       const viaHex = path.endsWith("/broadcasthex");
       const rawDataHex = viaHex
@@ -600,7 +618,7 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
         : stringField(body, "raw_data_hex");
       const txid = viaHex ? tronTxId(rawDataHex) : String(body?.txID);
       broadcasts.push({ txid, rawDataHex });
-      return send(res, 200, { result: true, code: "SUCCESS", txid });
+      return send({ res, status: 200, payload: { result: true, code: "SUCCESS", txid } });
     }
     // TronGrid would revert the simulation for the empty test account.
     if (
@@ -608,24 +626,36 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
       isUsdt(body?.contract_address) &&
       body?.function_selector === "transfer(address,uint256)"
     ) {
-      return send(res, 200, {
-        result: { result: true },
-        energy_used: USDT_TRANSFER_ENERGY,
-        constant_result: ["1".padStart(64, "0")],
+      return send({
+        res,
+        status: 200,
+        payload: {
+          result: { result: true },
+          energy_used: USDT_TRANSFER_ENERGY,
+          constant_result: ["1".padStart(64, "0")],
+        },
       });
     }
 
-    const upstream = await proxy(req, rawPath + url.search, raw);
+    const upstream = await proxy({ req, pathAndQuery: rawPath + url.search, raw });
     const account = /^\/v1\/accounts\/([^/]+)$/.exec(path)?.[1];
     const resourceOwner =
       path === "/wallet/getaccountresource"
         ? (url.searchParams.get("address") ?? String(body?.address))
         : undefined;
     if (upstream.status === 200 && account) {
-      return send(res, 200, patchAccount(account, JSON.parse(upstream.body.toString("utf8"))));
+      return send({
+        res,
+        status: 200,
+        payload: patchAccount(account, JSON.parse(upstream.body.toString("utf8"))),
+      });
     }
     if (upstream.status === 200 && resourceOwner) {
-      return send(res, 200, patchEnergy(resourceOwner, JSON.parse(upstream.body.toString("utf8"))));
+      return send({
+        res,
+        status: 200,
+        payload: patchEnergy(resourceOwner, JSON.parse(upstream.body.toString("utf8"))),
+      });
     }
     res.writeHead(upstream.status, { ...CORS_HEADERS, "content-type": upstream.contentType });
     res.end(upstream.body);
@@ -645,14 +675,14 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
     const raw = await readBody(req);
     const body = parseBody(raw);
 
-    if (url.pathname === "/__log") return send(res, 200, requests);
+    if (url.pathname === "/__log") return send({ res, status: 200, payload: requests });
     if (url.pathname === "/__scenario") {
       const { scenario: next, params: nextParams } = body as {
         scenario: FakeTronifyScenario;
         params?: Record<string, unknown>;
       };
       setScenario(next, nextParams);
-      return send(res, 200, { scenario });
+      return send({ res, status: 200, payload: { scenario } });
     }
 
     requests.push({
@@ -663,12 +693,20 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
     });
     if (url.pathname.startsWith("/api/tronRent/")) {
       const response = tronify(url.pathname.slice("/api/tronRent/".length), body);
-      return send(res, response ? 200 : 404, response ?? failure("unknown endpoint"));
+      return send({
+        res,
+        status: response ? 200 : 404,
+        payload: response ?? failure("unknown endpoint"),
+      });
     }
     if (url.pathname.startsWith("/trongrid/")) {
-      return tronGrid(req, res, url, raw, body as Json | undefined);
+      return tronGrid({ req, res, url, raw, body: body as Json | undefined });
     }
-    send(res, 404, { error: `fake Tronify has no route for ${req.method} ${url.pathname}` });
+    send({
+      res,
+      status: 404,
+      payload: { error: `fake Tronify has no route for ${req.method} ${url.pathname}` },
+    });
   }
 
   const server = http.createServer((req, res) => {
@@ -678,7 +716,11 @@ export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTr
         res.destroy();
         return;
       }
-      send(res, 500, { error: error instanceof Error ? error.message : String(error) });
+      send({
+        res,
+        status: 500,
+        payload: { error: error instanceof Error ? error.message : String(error) },
+      });
     });
   });
   await new Promise<void>((resolve, reject) => {
