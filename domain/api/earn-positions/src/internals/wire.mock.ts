@@ -1,6 +1,6 @@
-// Payloads shaped like the answers of the Earn backend (Earn OpenAPI `StakesV3Response` and
-// `FigmentValidatorAPY`). The wallet and stake account addresses are made up; the two vote accounts
-// are the public ones of the Ledger by Figment and Ledger by Bitwise validators.
+// Payloads shaped like the answers of the Earn backend (Earn OpenAPI `StakesV3Response`). The wallet
+// and stake account addresses are made up; the two vote accounts are the public ones of the Ledger by
+// Figment and Ledger by Bitwise validators.
 
 export const OWNER_ADDRESS = "Wa11etTestAddress1111111111111111111111111111";
 export const OTHER_OWNER_ADDRESS = "Wa11etTestAddress2222222222222222222222222222";
@@ -98,12 +98,4 @@ export function stakeFailure(): WireObject {
 
 export function stakesV3Response(data: unknown[], meta: WireObject = {}): WireObject {
   return { data, meta: { is_stale: false, responded_at: "2026-11-18T12:00:01Z", ...meta } };
-}
-
-/** `delegator_apy` is a fraction: 0.078107 is 7.81%. */
-export function validatorsSummary(): WireObject[] {
-  return [
-    { address: LEDGER_BY_FIGMENT_VOTE_ACCOUNT, delegator_apy: 0.078107, name: "Ledger by Figment" },
-    { address: LEDGER_BY_BITWISE_VOTE_ACCOUNT, delegator_apy: 0.076512, name: "Ledger by Bitwise" },
-  ];
 }

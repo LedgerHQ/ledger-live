@@ -1,5 +1,5 @@
 import type { GetEarnPositionsArgs } from "../types";
-import { StakesV3WireSchema, toEarnPositions } from "./stakes";
+import { StakesV3WireSchema, UNREADABLE_ROW_FAILURE, toEarnPositions } from "./stakes";
 import {
   LEDGER_BY_BITWISE_VOTE_ACCOUNT,
   LEDGER_BY_FIGMENT_VOTE_ACCOUNT,
@@ -29,9 +29,13 @@ function readStake(stake: unknown) {
   return read(stakesV3Response([batchStakeView(stake)])).positions[0];
 }
 
-function apyOf(value: unknown) {
-  return readStake(solanaStake({ interest: { type: "APY", value, currency: "solana" } }))
-    .positionApy;
+/** Reads one malformed stake next to a valid one, of the same address. */
+function readNextToValidRow(stake: unknown) {
+  return read(stakesV3Response([batchStakeView(stake), batchStakeView(bitwiseSolanaStake())]));
+}
+
+function interestOf(interest: unknown) {
+  return readStake(solanaStake({ interest })).interest;
 }
 
 function rejects(payload: unknown) {
@@ -61,7 +65,7 @@ describe("toEarnPositions", () => {
       balance: "10000000000",
       deposited: "9750000000",
       totalRewards: "250000000",
-      positionApy: 0.0712,
+      interest: { type: "APY", value: 0.0712 },
       updatedAt: "2026-11-18T11:58:00Z",
     });
   });
@@ -169,20 +173,41 @@ describe("toEarnPositions", () => {
     expect(readStake(solanaStake({ logo: undefined })).validatorLogoUrl).toBeUndefined();
   });
 
-  it("reads the position APY as a fraction, sent as a decimal string or a number", () => {
-    expect(apyOf("0.072")).toBe(0.072);
-    expect(apyOf(0.072)).toBe(0.072);
-  });
-
-  it.each(["7.2", 7.2, "NaN", "", "7.2%", "-0.01", null])(
-    "drops a position APY of %p, which is not a fraction from 0 to 1",
-    value => {
-      expect(apyOf(value)).toBeUndefined();
+  it.each(["APY", "APR", "NRR", "GRR"])(
+    "reads the rate of the position with its kind %s, sent as a decimal string or a number",
+    type => {
+      expect(interestOf({ type, value: "0.068", currency: "solana" })).toEqual({
+        type,
+        value: 0.068,
+      });
+      expect(interestOf({ type, value: 0.068, currency: "solana" })).toEqual({
+        type,
+        value: 0.068,
+      });
     },
   );
 
-  it("drops the position APY when the interest is missing", () => {
-    expect(readStake(solanaStake({ interest: undefined })).positionApy).toBeUndefined();
+  it("reads a zero rate, which the details decide to hide", () => {
+    expect(interestOf({ type: "APY", value: "0", currency: "solana" })).toEqual({
+      type: "APY",
+      value: 0,
+    });
+  });
+
+  it.each(["7.2", 7.2, "NaN", "", "7.2%", "-0.01", null])(
+    "drops a rate of %p, which is not a fraction from 0 to 1",
+    value => {
+      expect(interestOf({ type: "APY", value, currency: "solana" })).toBeUndefined();
+    },
+  );
+
+  it("drops a rate whose kind it does not know, or that names none", () => {
+    expect(interestOf({ type: "Yield", value: "0.068" })).toBeUndefined();
+    expect(interestOf({ value: "0.068" })).toBeUndefined();
+  });
+
+  it("has no rate when the interest is missing", () => {
+    expect(readStake(solanaStake({ interest: undefined })).interest).toBeUndefined();
   });
 
   it("reads an empty or missing validator address as an empty string", () => {
@@ -224,14 +249,15 @@ describe("toEarnPositions", () => {
     expect(read({ meta: { is_stale: false, responded_at: "2026-11-18T12:00:01Z" } })).toMatchObject(
       none,
     );
-    expect(read({ data: null, meta: { is_stale: false } })).toMatchObject(none);
   });
 
-  it("leaves out the rows of another address", () => {
+  it("leaves out the rows of another address, malformed or not", () => {
     const result = read(
       stakesV3Response([
         batchStakeView(solanaStake(), OTHER_OWNER_ADDRESS),
         batchedErrorView(OTHER_OWNER_ADDRESS),
+        batchStakeView({}, OTHER_OWNER_ADDRESS),
+        { ...batchStakeView(solanaStake()), id: { network: "ethereum", address: OWNER_ADDRESS } },
       ]),
     );
 
@@ -255,6 +281,51 @@ describe("toEarnPositions", () => {
     expect(read(stakesV3Response([], { responded_at: "soon" })).respondedAt).toBeUndefined();
     expect(read({ data: [], meta: { is_stale: false } }).respondedAt).toBeUndefined();
   });
+
+  describe("a row of the address that breaks the contract", () => {
+    it.each([
+      ["without its stake account", solanaStake({}, { stake_account: undefined })],
+      ["with a blank stake account", solanaStake({}, { stake_account: "" })],
+      ["whose status is not a string", solanaStake({ status: 1 })],
+      ["without its currency", solanaStake({ currency: undefined })],
+      ["without its details", solanaStake({ details: undefined })],
+      ["that is empty", {}],
+      ["that is a failure without a code", { error: { reason: "Provider unavailable" } }],
+    ])("should read a SOL row %s as a failure, and keep the valid rows", (_case, stake) => {
+      const result = readNextToValidRow(stake);
+
+      expect(result.positions.map(position => position.id)).toEqual([STAKE_ACCOUNT_B]);
+      expect(result.failures).toEqual([UNREADABLE_ROW_FAILURE]);
+    });
+
+    it("should read a SOL row in another currency as a failure, never in the unit of SOL", () => {
+      const result = read(
+        stakesV3Response([batchStakeView(solanaStake({ currency: "ethereum" }))]),
+      );
+
+      expect(result).toMatchObject({ positions: [], failures: [UNREADABLE_ROW_FAILURE] });
+    });
+
+    it("should read a row of a type the contract does not have as a failure", () => {
+      const result = read(
+        stakesV3Response([
+          {
+            type: "BatchStakeViewV2",
+            id: { network: "solana", address: OWNER_ADDRESS },
+            stake: {},
+          },
+        ]),
+      );
+
+      expect(result).toMatchObject({ positions: [], failures: [UNREADABLE_ROW_FAILURE] });
+    });
+
+    it("should read a row whose owner cannot be read as a failure: it may be the address's", () => {
+      const result = read(stakesV3Response([{ type: "BatchStakeViewV1", stake: solanaStake() }]));
+
+      expect(result).toMatchObject({ positions: [], failures: [UNREADABLE_ROW_FAILURE] });
+    });
+  });
 });
 
 describe("StakesV3WireSchema", () => {
@@ -263,33 +334,15 @@ describe("StakesV3WireSchema", () => {
     expect(rejects({ data: [] })).toBe(true);
   });
 
-  it("rejects a SOL row without its stake account", () => {
-    expect(
-      rejects(stakesV3Response([batchStakeView(solanaStake({}, { stake_account: undefined }))])),
-    ).toBe(true);
-    expect(
-      rejects(stakesV3Response([batchStakeView(solanaStake({}, { stake_account: "" }))])),
-    ).toBe(true);
+  it("rejects a null data, which the contract does not allow", () => {
+    expect(rejects({ data: null, meta: { is_stale: false } })).toBe(true);
   });
 
-  it("rejects a SOL row whose status or currency is not a string", () => {
-    expect(rejects(stakesV3Response([batchStakeView(solanaStake({ status: 1 }))]))).toBe(true);
-    expect(rejects(stakesV3Response([batchStakeView(solanaStake({ currency: undefined }))]))).toBe(
-      true,
-    );
+  it("rejects data that is not a list", () => {
+    expect(rejects({ data: {}, meta: { is_stale: false } })).toBe(true);
   });
 
-  it("rejects a row of a type the contract does not have", () => {
-    expect(rejects(stakesV3Response([{ type: "BatchStakeViewV2", id: {}, stake: {} }]))).toBe(true);
-  });
-
-  it("rejects a provider failure that carries no code", () => {
-    expect(
-      rejects(stakesV3Response([batchStakeView({ error: { reason: "Provider unavailable" } })])),
-    ).toBe(true);
-  });
-
-  it("accepts the stakes of another kind, whatever fields they carry", () => {
-    expect(rejects(stakesV3Response([batchStakeView(ethereumNativeStake)]))).toBe(false);
+  it("accepts any row, each one read on its own", () => {
+    expect(rejects(stakesV3Response([batchStakeView(ethereumNativeStake), {}, null]))).toBe(false);
   });
 });
