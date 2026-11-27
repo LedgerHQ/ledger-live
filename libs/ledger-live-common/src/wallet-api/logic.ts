@@ -222,10 +222,12 @@ export async function broadcastTransactionLogic(
   return uiNavigation(signerAccount, parentAccount, signedOperation);
 }
 
+const stripMasterPrefix = (path: string) => (path.startsWith("m/") ? path.slice(2) : path);
+
 function getMessageSignPath(account: Account, path: string): string | undefined {
-  const addressPath = path.startsWith("m/") ? path.slice(2) : path;
+  const addressPath = stripMasterPrefix(path);
   if (account.currency.family !== "bitcoin") {
-    if (addressPath !== account.freshAddressPath) {
+    if (addressPath !== stripMasterPrefix(account.freshAddressPath)) {
       throw new Error("path must be the account's own path for non-bitcoin accounts");
     }
     // Same address as without a path, so sign as before.

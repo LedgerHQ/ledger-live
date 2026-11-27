@@ -887,6 +887,34 @@ describe("signMessageLogic with a path", () => {
     },
   );
 
+  it.each(["m/44'/60'/0'/0/0", "44'/60'/0'/0/0"])(
+    "accepts %s when the non-bitcoin account's own path is stored with m/",
+    async path => {
+      // Given
+      const ethereumAccount = context.accounts.find(a => a.id === "js:2:ethereum:0x011:");
+      if (ethereumAccount?.type !== "Account") throw new Error("missing ethereum account");
+      const storedPath = ethereumAccount.freshAddressPath;
+      ethereumAccount.freshAddressPath = "m/44'/60'/0'/0/0";
+      mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce("js:2:ethereum:0x011:");
+      mockedPrepareMessageToSign.mockResolvedValueOnce(createMessageData());
+
+      try {
+        // When
+        await signMessageLogic(context, walletAccountId, messageToSign, uiNavigation, path);
+      } finally {
+        ethereumAccount.freshAddressPath = storedPath;
+      }
+
+      // Then
+      expect(mockedPrepareMessageToSign).toHaveBeenCalledWith(
+        expect.objectContaining({ id: "js:2:ethereum:0x011:" }),
+        messageToSign,
+        undefined,
+      );
+      expect(uiNavigation).toHaveBeenCalledTimes(1);
+    },
+  );
+
   it.each(["m/44'/60'/0'/0/1", "m/84'/0'/0'/0/5"])(
     "rejects %s on a non-bitcoin account",
     async path => {
