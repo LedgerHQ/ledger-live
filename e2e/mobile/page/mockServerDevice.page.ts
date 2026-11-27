@@ -11,6 +11,11 @@ const SUCCESS_STATUS_WORD = "9000";
 export class MockServerDevicePage extends MockServerSessionHandle {
   private readonly prompt = (testId: string) => byId(testId);
 
+  @Step("Move the device to the onboarding step {{{0}}}")
+  async moveToOnboardingStep(step: number, onboarded = false) {
+    await this.pinOnboardingStep(step, onboarded);
+  }
+
   @Step("Mock the dashboard contact rename")
   async mockDashboardRename() {
     await this.pinApduResponse(

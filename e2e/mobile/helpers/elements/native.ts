@@ -143,6 +143,13 @@ export class NativeHandle implements ElementHandle {
     await withHardTimeout(this.raw.tap());
   }
 
+  /** Waits for visibility, then taps `point` in iOS points from the top-left corner, the centre on Android. */
+  async tapAt(point: { x: number; y: number }, timeout = TIMEOUT.xxlarge): Promise<void> {
+    await this.waitVisible(timeout);
+    const isIos = device.getPlatform() === "ios";
+    await withHardTimeout(isIos ? this.raw.tap(point) : this.raw.tap());
+  }
+
   /**
    * Waits until the element exists, then taps, leaving the visibility check to Detox's tap. Only for a
    * control `waitVisible` never accepts although it is on screen (e.g. its parent's layout box clips it
