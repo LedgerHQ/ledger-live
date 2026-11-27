@@ -74,8 +74,11 @@ runs:
         emulator-options: ${{ env.AVD_OPTIONS }}
         heap-size: ${{ env.AVD_HEAP_SIZE }}
         emulator-build: ${{ env.AVD_EMULATOR_BUILD }}
-        pre-emulator-launch-script: bash "${{ github.action_path }}/../../../scripts/patch-avd-config.sh" "${{ env.AVD_NAME }}"
-        script: bash "${{ github.action_path }}/../../../scripts/wait_emulator_idle.sh"
+        pre-emulator-launch-script: bash "${{ github.action_path }}/patch-avd-config.sh" "${{ env.AVD_NAME }}"
+        # Each line runs on its own. Whatever runs here is saved in the quick-boot snapshot.
+        script: |
+          bash "${{ github.action_path }}/slim-guest.sh"
+          bash "${{ github.action_path }}/wait-emulator-idle.sh"
 
     - name: Stamp the AVD with its cache key
       if: inputs.config_only != 'true'

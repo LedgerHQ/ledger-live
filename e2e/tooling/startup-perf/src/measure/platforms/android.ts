@@ -158,7 +158,7 @@ export function createAndroid({ appId }: { appId: string }): Platform {
       return { ...(await read()), wokenFrom: before };
     },
     blockingDialog,
-    // Like tools/scripts/wait_emulator_idle.sh for the E2E emulators.
+    // Like tools/actions/composites/setup-android-avd/wait-emulator-idle.sh for the E2E emulators.
     async clearDialogs(device) {
       const cleared: string[] = [];
       let pkg = await blockingDialog(device);
