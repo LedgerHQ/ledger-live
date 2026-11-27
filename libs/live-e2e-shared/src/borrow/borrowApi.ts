@@ -289,17 +289,17 @@ type ActionPoll = { status: string } | { retryReason: string };
 async function pollActionStatus(actionId: string): Promise<ActionPoll> {
   const request = `GET /v1/actions/${actionId}`;
   let res: Response;
+  let body: unknown;
   try {
     res = await fetch(`${BASE_URL}/v1/actions/${actionId}`, {
       headers: JSON_HEADERS,
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
+    if (res.ok) body = await res.json();
   } catch (error) {
     return { retryReason: `${request} failed: ${String(error)}` };
   }
-  if (res.ok) {
-    return { status: getString(await res.json(), "status")?.toLowerCase() ?? "missing" };
-  }
+  if (res.ok) return { status: getString(body, "status")?.toLowerCase() ?? "missing" };
   const failure = await failedRequest(request, res);
   if (isTransientRead(res.status) || isLookupFlap(res.status)) {
     return { retryReason: failure.message };
