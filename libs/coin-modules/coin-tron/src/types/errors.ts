@@ -142,6 +142,18 @@ export class TronPageServedTwice extends Error {
   }
 }
 
+/**
+ * The node knows no receipt for a contract call TronGrid listed — it lags behind. The receipt holds
+ * the TRX the call's contracts moved, so the page cannot be served without it: retry it.
+ */
+export class TronMissingReceipt extends Error {
+  override name = "TronMissingReceipt";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "TronMissingReceipt");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 export class TronEmptyAccount extends Error {
   override name = "TronEmptyAccount";
   constructor(message?: string, fields?: Record<string, unknown>) {

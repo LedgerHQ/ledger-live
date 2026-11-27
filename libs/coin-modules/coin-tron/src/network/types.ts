@@ -135,6 +135,28 @@ export type TransactionLogAPI = {
   data?: string;
 };
 
+/**
+ * A value transfer or call made by a contract while executing a transaction (CALL, CREATE,
+ * SELFDESTRUCT). The transaction's own `call_value` is not listed here: only what the contracts
+ * moved on their own.
+ */
+export type InternalTransactionAPI = {
+  hash: string;
+  /** `41`-prefixed hex address of the contract that made the call. */
+  caller_address: string;
+  /** `41`-prefixed hex address that received the call and its value. */
+  transferTo_address: string;
+  /**
+   * The values moved by the call: TRX in sun when `tokenId` is absent, otherwise an amount of the
+   * TRC10 token `tokenId`. An empty `{}` entry is a call that moved nothing.
+   */
+  callValueInfo?: { callValue?: number; tokenId?: string }[];
+  /** Hex-encoded kind of the call: "call", "create", "suicide"… */
+  note?: string;
+  /** Set when the call was reverted: nothing it moved is effective. */
+  rejected?: boolean;
+};
+
 export type TransactionInfoTronAPI = {
   id: string;
   fee?: number;
@@ -144,6 +166,7 @@ export type TransactionInfoTronAPI = {
   /** `41`-prefixed hex address of the contract created by, or called by, the transaction. */
   contract_address?: string;
   log?: TransactionLogAPI[];
+  internal_transactions?: InternalTransactionAPI[];
   receipt?: {
     net_usage?: number;
     net_fee?: number;
