@@ -16,6 +16,7 @@ import {
   setTags,
   isDatadogAvailable,
   setDatadogActionsEnabled,
+  setDatadogTrackingConsent,
 } from "~/datadog/renderer";
 import { initDatadogLogs } from "~/datadog/logs";
 import { readCachedFlags, subscribeToRemoteFlags } from "~/firebase/remoteConfig";
@@ -58,6 +59,10 @@ export const ConnectEnvsToDatadog = () => {
   }, [lldDatadog?.enabled]);
 
   useEffect(() => {
+    if (datadogInitialized) setDatadogTrackingConsent(!!crashReporting);
+  }, [crashReporting, datadogInitialized]);
+
+  useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
     // A flag cached from an earlier fetch is a real value too, for when the fetch keeps failing.
@@ -77,14 +82,15 @@ export const ConnectEnvsToDatadog = () => {
 
   const enabled = !!lldDatadog?.enabled;
   const sessionSampleRate = lldDatadog?.params?.sessionSamplingRate ?? 100;
+  const profilingSampleRate = lldDatadog?.params?.profilingSampleRate ?? 0;
   useEffect(() => {
     // Not on the compiled default, which would turn main's reporting off.
     if (!remoteFlagsKnown) return;
     // Main inits before the renderer, so it boots on the last flag; written past storage.ts's debounce.
-    db.setKey("app", "lldDatadog", { enabled, sessionSampleRate }).catch(e =>
+    db.setKey("app", "lldDatadog", { enabled, sessionSampleRate, profilingSampleRate }).catch(e =>
       console.warn("Datadog: could not persist lldDatadog for main", e),
     );
-  }, [remoteFlagsKnown, enabled, sessionSampleRate]);
+  }, [remoteFlagsKnown, enabled, sessionSampleRate, profilingSampleRate]);
 
   useEffect(() => {
     // Past storage.ts's 1s debounce, so main applies an opt-out at once.
