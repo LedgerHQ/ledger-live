@@ -127,6 +127,7 @@ export async function initDatadog(
       trackResources: params?.trackResources ?? true,
       beforeSend: buildBeforeSend(shouldSend),
       sessionPersistence: "local-storage",
+      enableExperimentalFeatures: ["feature_operation_vital"],
     });
 
     currentViewName = toDatadogViewName(hashRoutePath());
@@ -194,13 +195,17 @@ export function addBreadcrumb(breadcrumb: Breadcrumb): void {
   }
 }
 
+export function isDatadogRecording(): boolean {
+  return initialized && actionsEnabled && !!shouldSendNow?.();
+}
+
 /**
  * A custom RUM action whose attributes are queried as `@context.<key>`.
  * Returns false when nothing was sent: RUM is not initialized, the `lldDatadog` flag is off, the
  * user opted out (the action would be discarded) or the SDK threw.
  */
 export function addAction(name: string, context: Record<string, unknown>): boolean {
-  if (!initialized || !actionsEnabled || !shouldSendNow?.()) return false;
+  if (!isDatadogRecording()) return false;
   try {
     datadogRum.addAction(name, context);
     return true;
