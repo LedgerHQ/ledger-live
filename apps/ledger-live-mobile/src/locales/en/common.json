@@ -2487,6 +2487,10 @@
       "title": "Need a Tag/Memo?",
       "description": "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
       "gotIt": "Got it"
+    },
+    "sanctioned": {
+      "title": "Keeping you safe",
+      "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n{{address}}"
     }
   },
   "ratings": {

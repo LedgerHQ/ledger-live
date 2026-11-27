@@ -14,6 +14,7 @@ import {
   type HtmlLinkSegment,
 } from "@ledgerhq/live-common/hooks/useHtmlLinkSegments";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import type { Account } from "@ledgerhq/types-live";
 import { copyToClipboard } from "@shared/clipboard";
 import { openShareSheet } from "@shared/share-sheet";
@@ -73,6 +74,12 @@ export function useReceiveAddressScreenViewModel({
     [incidents],
   );
 
+  const accountCurrency = legacyAccount?.currency;
+  const checkAddressSanctioned = useMemo(
+    () => accountCurrency && ((address: string) => isAddressSanctioned(accountCurrency, address)),
+    [accountCurrency],
+  );
+
   const getFamilyConfig = useMemo<ReceiveFamilyConfigPort | undefined>(
     () => familyConfig && (input => familyConfig({ ...input, featureFlags, legacyAccount })),
     [familyConfig, featureFlags, legacyAccount],
@@ -116,5 +123,6 @@ export function useReceiveAddressScreenViewModel({
     getFamilyConfig,
     serviceIncidents,
     onResolveGate,
+    checkAddressSanctioned,
   };
 }
