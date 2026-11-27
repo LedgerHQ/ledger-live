@@ -1,5 +1,5 @@
 import { track } from "@shared/analytics";
-import { getPrivacyStateEvents, trackPrivacyToggle } from "./tracking";
+import { getPrivacyStateEvents, trackPrivacyPolicyOpen, trackPrivacyToggle } from "./tracking";
 import type { PrivacySettingsValues } from "./types";
 
 jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
@@ -60,6 +60,22 @@ describe("trackPrivacyToggle", () => {
       expect(track).not.toHaveBeenCalled();
     },
   );
+});
+
+describe("trackPrivacyPolicyOpen", () => {
+  beforeEach(() => jest.mocked(track).mockClear());
+
+  it("sends the legacy row event on mobile", () => {
+    trackPrivacyPolicyOpen("mobile");
+
+    expect(jest.mocked(track).mock.calls).toEqual([["PrivacyPolicyRow"]]);
+  });
+
+  it("sends nothing on desktop, where the linking provider tracks the link", () => {
+    trackPrivacyPolicyOpen("desktop");
+
+    expect(track).not.toHaveBeenCalled();
+  });
 });
 
 describe("getPrivacyStateEvents", () => {

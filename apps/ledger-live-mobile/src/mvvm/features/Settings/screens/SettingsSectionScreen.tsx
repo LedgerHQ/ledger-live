@@ -8,6 +8,7 @@ import {
 import { SettingsScrollView } from "@features/flow-settings/native";
 import { General } from "@features/flow-settings-general/native";
 import { NotificationsSettings } from "@features/flow-settings-notifications";
+import { Privacy } from "@features/flow-settings-privacy";
 import { Security } from "@features/flow-settings-security";
 import type { ScreenName } from "~/const";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -16,6 +17,7 @@ import { LedgerSyncActivationDrawer } from "../components/LedgerSyncActivationDr
 import { useSectionRowsToHide } from "../hooks/useSectionRowsToHide";
 import { MobileSettingsPortProvider } from "../MobileSettingsPortProvider";
 import { useNotificationsSettingsAdapter } from "../sections/notifications";
+import { usePrivacySettingsAdapter } from "../sections/privacy";
 
 type SettingsSectionScreenProps = StackNavigatorProps<
   SettingsNavigatorStackParamList,
@@ -28,6 +30,17 @@ function NotificationsSection() {
     <SettingsPortProvider value={port}>
       <NotificationsSettings testID="settings-notifications" />
     </SettingsPortProvider>
+  );
+}
+
+function PrivacySection() {
+  const port = usePrivacySettingsAdapter();
+  return (
+    <Box lx={{ paddingHorizontal: "s8" }}>
+      <SettingsPortProvider value={port}>
+        <Privacy testID="settings-privacy" />
+      </SettingsPortProvider>
+    </Box>
   );
 }
 
@@ -52,6 +65,8 @@ function SectionContent({ section }: Readonly<{ section: SettingsHomeSectionId }
       );
     case "notifications":
       return <NotificationsSection />;
+    case "privacy":
+      return <PrivacySection />;
     default:
       return null;
   }

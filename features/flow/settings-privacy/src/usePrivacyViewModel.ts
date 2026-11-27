@@ -5,7 +5,7 @@ import { getPrivacyRowIds } from "./logic/privacyRows";
 import { PRIVACY_PLATFORM } from "./platform";
 import type { PrivacyProps, PrivacyViewProps } from "./Privacy.types";
 import { toPrivacyRowViewProps } from "./privacyRowViewProps";
-import { getPrivacyStateEvents } from "./tracking";
+import { getPrivacyStateEvents, trackPrivacyPolicyOpen } from "./tracking";
 import { PRIVACY_URLS } from "./urls";
 import { usePrivacySettingsPort } from "./usePrivacySettingsPort";
 
@@ -15,10 +15,10 @@ export function usePrivacyViewModel({ testID }: PrivacyProps): PrivacyViewProps 
   const labels = usePrivacySettingsLabels();
   const openLink = useOpenLink();
   const privacyPolicyUrl = useLocalizedUrl(PRIVACY_URLS.privacyPolicy[PRIVACY_PLATFORM]);
-  const openPrivacyPolicy = useCallback(
-    () => openLink(privacyPolicyUrl),
-    [openLink, privacyPolicyUrl],
-  );
+  const openPrivacyPolicy = useCallback(() => {
+    trackPrivacyPolicyOpen(PRIVACY_PLATFORM);
+    openLink(privacyPolicyUrl);
+  }, [openLink, privacyPolicyUrl]);
 
   const rows = useMemo(
     () =>
