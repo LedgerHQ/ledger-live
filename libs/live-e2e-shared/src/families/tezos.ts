@@ -21,7 +21,7 @@ export const delegateTezos = withDeviceController(
       // Stake/unstake reviews show the amount on-device; a pure delegation (amount "N/A") shows the
       // baker address + fee but no amount, so only assert when an amount is expected.
       if (delegatingAccount.amount !== "N/A") {
-        expectSpeculosEventsContain(delegatingAccount.amount, events);
+        expectSpeculosEventsContain({ substring: delegatingAccount.amount, events });
       }
 
       if (isTouchDevice()) {
@@ -48,12 +48,12 @@ export const sendTezos = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getSendEvents(tx);
-      expectSpeculosEventsContain(tx.amount, events);
+      expectSpeculosEventsContain({ substring: tx.amount, events });
 
       if (!tx.accountToCredit.address) {
         throw new Error("Recipient address is not set");
       }
-      expectSpeculosEventsContain(tx.accountToCredit.address, events);
+      expectSpeculosEventsContain({ substring: tx.accountToCredit.address, events });
 
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);

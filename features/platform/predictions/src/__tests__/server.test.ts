@@ -2,6 +2,7 @@ import {
   PLACE_ORDER_SIGNED_AT_MS,
   PLACE_ORDER_TYPED_DATA,
 } from "../__fixtures__/placeOrderTypedData";
+import { SELL_POSITION_TYPED_DATA } from "../__fixtures__/sellPositionTypedData";
 import type { PredictionsBindingAnswer } from "../binding";
 import type {
   PredictionsOrderAction,
@@ -292,6 +293,21 @@ describe("Predictions Wallet API handlers", () => {
       );
     });
 
+    it("signs a sale, with its market to show", async () => {
+      const { signOrder, uiHooks } = setup();
+
+      await signOrder({ ...params, typedData: JSON.stringify(SELL_POSITION_TYPED_DATA) });
+
+      expect(uiHooks["order.sign"]).toHaveBeenCalledWith(
+        "wallet-account-id",
+        {
+          ...SELL_POSITION_TYPED_DATA,
+          domain: { ...SELL_POSITION_TYPED_DATA.domain, chainId: 137 },
+        },
+        display,
+      );
+    });
+
     it("keeps the event of a market that is one of several", async () => {
       const { signOrder, uiHooks } = setup();
       const marketOfEvent = {
@@ -396,6 +412,21 @@ describe("Predictions Wallet API handlers", () => {
       { ...params, display: { ...display, eventTitle: "Fed\rdecision" } },
       { ...params, display: { ...display, marketTitle: "\u202EFed decision" } },
       { ...params, display: { ...display, outcomeLabel: "Y\u200Bes" } },
+      {
+        ...params,
+        typedData: JSON.stringify(SELL_POSITION_TYPED_DATA),
+        display: { ...display, estimatedProceeds: 4.35 },
+      },
+      {
+        ...params,
+        typedData: JSON.stringify({
+          ...SELL_POSITION_TYPED_DATA,
+          message: {
+            ...SELL_POSITION_TYPED_DATA.message,
+            dstWalletAddress: `0x${"22".repeat(20)}`,
+          },
+        }),
+      },
     ])("rejects invalid params without showing the prompt (%p)", async invalidParams => {
       const { signOrder, uiHooks } = setup();
 
@@ -407,6 +438,7 @@ describe("Predictions Wallet API handlers", () => {
   describe("custom.predictions.reportOrder", () => {
     it.each([
       { status: "filled", shares: 3.7, price: 0.54 },
+      { status: "filled", shares: 16.12, received: 4.3 },
       { status: "filled" },
       { status: "not-filled" },
       { status: "rejected", reason: "expired-signature" },
@@ -427,6 +459,8 @@ describe("Predictions Wallet API handlers", () => {
       { walletOrderId: "7" },
       { walletOrderId: "7", status: "filled", shares: 3.7 },
       { walletOrderId: "7", status: "filled", shares: 0, price: 0.54 },
+      { walletOrderId: "7", status: "filled", shares: 16.12, received: 0 },
+      { walletOrderId: "7", status: "filled", shares: 16.12, price: 0.27, received: 4.3 },
       { walletOrderId: "7", status: "rejected" },
       { walletOrderId: "7", status: "rejected", reason: "lost" },
       { walletOrderId: "7", status: "not-filled", reason: "market-closed" },

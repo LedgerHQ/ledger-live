@@ -215,7 +215,7 @@ describe("XRP Manage assets", () => {
   it("lists an MPT token with Delete only, without limit, rippling or Edit", async () => {
     renderManageToken({ ...XRP_ACCOUNT, subAccounts: [XRP_MPT_TOKEN_ACCOUNT] });
 
-    const tokenType = await screen.findByText("Multi Purpose Token");
+    const tokenType = await screen.findByText("Multi-Purpose Token (MPT)");
 
     expect(tokenType).toBeVisible();
     expect(screen.queryByText("Rippling")).toBeNull();

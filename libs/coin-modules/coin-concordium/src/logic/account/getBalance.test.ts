@@ -19,7 +19,7 @@ describe("api getBalance", () => {
   it("reports the native balance", async () => {
     getAccountBalance.mockResolvedValue({ finalizedBalance: { accountAmount: "10000000" } });
 
-    await expect(getBalance(CONFIG, ADDRESS, "concordium")).resolves.toEqual([
+    await expect(getBalance(CONFIG, ADDRESS)).resolves.toEqual([
       { asset: { type: "native" }, value: 10000000n },
     ]);
   });
@@ -27,7 +27,7 @@ describe("api getBalance", () => {
   it("reports a zero balance for an address that does not exist on chain", async () => {
     getAccountBalance.mockResolvedValue({});
 
-    await expect(getBalance(CONFIG, ADDRESS, "concordium")).resolves.toEqual([
+    await expect(getBalance(CONFIG, ADDRESS)).resolves.toEqual([
       { asset: { type: "native" }, value: 0n },
     ]);
   });
@@ -35,7 +35,7 @@ describe("api getBalance", () => {
   it("rejects a balance that is present but carries no amount", async () => {
     getAccountBalance.mockResolvedValue({ finalizedBalance: { accountTokens: [] } });
 
-    await expect(getBalance(CONFIG, ADDRESS, "concordium")).rejects.toThrow(TypeError);
+    await expect(getBalance(CONFIG, ADDRESS)).rejects.toThrow(TypeError);
   });
 
   it("reports one entry per PLT, keyed by the on-chain token id and the holder", async () => {
@@ -46,7 +46,7 @@ describe("api getBalance", () => {
       },
     });
 
-    const result = await getBalance(CONFIG, ADDRESS, "concordium");
+    const result = await getBalance(CONFIG, ADDRESS);
 
     expect(result).toEqual([
       { asset: { type: "native" }, value: 1n },
@@ -60,7 +60,7 @@ describe("api getBalance", () => {
       finalizedBalance: { accountAmount: "0", accountTokens: [entry("t-USDT", "1")] },
     });
 
-    const [, plt] = await getBalance(CONFIG, ADDRESS, "concordium");
+    const [, plt] = await getBalance(CONFIG, ADDRESS);
 
     expect(plt.asset).toMatchObject({ assetReference: "t-USDT" });
   });
@@ -79,7 +79,7 @@ describe("api getBalance", () => {
     });
 
     // One bad entry must not discard the native balance with it.
-    await expect(getBalance(CONFIG, ADDRESS, "concordium")).resolves.toEqual([
+    await expect(getBalance(CONFIG, ADDRESS)).resolves.toEqual([
       { asset: { type: "native" }, value: 1n },
       { asset: { type: "plt", assetReference: "USDR", assetOwner: ADDRESS }, value: 9n },
     ]);
@@ -88,7 +88,7 @@ describe("api getBalance", () => {
   it("reports no token balances, rather than throwing, when the response omits the list", async () => {
     getAccountBalance.mockResolvedValue({ finalizedBalance: { accountAmount: "1" } });
 
-    await expect(getBalance(CONFIG, ADDRESS, "concordium")).resolves.toHaveLength(1);
+    await expect(getBalance(CONFIG, ADDRESS)).resolves.toHaveLength(1);
   });
 
   it("does not report a PLT this account holds no entry for", async () => {
@@ -96,7 +96,7 @@ describe("api getBalance", () => {
       finalizedBalance: { accountAmount: "1", accountTokens: [] },
     });
 
-    await expect(getBalance(CONFIG, ADDRESS, "concordium")).resolves.toEqual([
+    await expect(getBalance(CONFIG, ADDRESS)).resolves.toEqual([
       { asset: { type: "native" }, value: 1n },
     ]);
   });

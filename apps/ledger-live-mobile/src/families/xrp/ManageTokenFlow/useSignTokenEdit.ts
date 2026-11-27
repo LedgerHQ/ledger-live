@@ -39,9 +39,9 @@ export function useSignTokenEdit(props: Props) {
   );
 
   const signAndBroadcast = useSignAndBroadcast({
-    tokenAccount,
     transaction,
     onExit,
+    token: tokenAccount.token,
     action: "edit",
     account: parentAccount,
   });

@@ -13,5 +13,6 @@ export function deviceOnboardingTraits(
     connectUnseededDevice: isOn("connectUnseededDevice"),
     offerLedgerSync: isOn("offerLedgerSync"),
     unifiedEntryPoints: isOn("unifiedEntryPoints"),
+    recover: Boolean(flag?.enabled && (flag.params?.recover ?? true)),
   };
 }

@@ -1,6 +1,6 @@
 import { isGatewayEnabled } from "../../network/gateway";
 import { getLedgerEnd } from "../../network/gateway";
-import { createMockCoinConfigValue, createMockContext } from "../../test/fixtures";
+import { configOfCall, createMockCoinConfigValue, createMockContext } from "../../test/fixtures";
 import { lastBlock } from "../lastBlock";
 
 jest.mock("../../network/gateway", () => ({
@@ -30,7 +30,7 @@ describe("lastBlock", () => {
       time: expect.any(Date),
     });
     expect(mockedGetLedgerEnd).toHaveBeenCalledTimes(1);
-    expect(mockedGetLedgerEnd).toHaveBeenCalledWith(mockConfig);
+    expect(await configOfCall(mockedGetLedgerEnd.mock.calls[0])).toBe(mockConfig);
   });
 
   it("should throw when gateway is disabled in config", async () => {

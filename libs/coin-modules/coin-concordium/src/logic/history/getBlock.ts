@@ -29,13 +29,9 @@ interface Movement {
  * `info` reuses the getBlockInfo logic (height → hash → info); transactions come
  * from the per-block events endpoint and are mapped tag-by-tag.
  */
-export async function getBlock(
-  config: ConcordiumCoinConfig,
-  height: number,
-  currencyId: string,
-): Promise<Block> {
-  const info = await getBlockInfo(config, height, currencyId);
-  const summaries = await getBlockTransactionEvents(config, currencyId, info.hash);
+export async function getBlock(config: ConcordiumCoinConfig, height: number): Promise<Block> {
+  const info = await getBlockInfo(config, height);
+  const summaries = await getBlockTransactionEvents(config, info.hash);
 
   return {
     info,

@@ -46,7 +46,11 @@ test.describe("Swap - cross account warning", () => {
       ],
     },
     async ({ app }) => {
-      const healthyProviders = await keepRunningProviders(dexProviders, fromAccount, toAccount);
+      const healthyProviders = await keepRunningProviders({
+        eligibleProviders: dexProviders,
+        accountFrom: fromAccount,
+        accountTo: toAccount,
+      });
       test.skip(
         healthyProviders.length === 0,
         "All DEX providers are currently down — skipping cross-account warning check",

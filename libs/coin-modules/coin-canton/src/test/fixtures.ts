@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import type { CantonCoinConfig, CantonContext } from "../config";
+import { cantonDefaults, type CantonCoinConfig, type CantonContext } from "../config";
 import type { CantonAccount, Transaction } from "../types";
 import type {
   InstrumentBalance,
@@ -40,6 +40,7 @@ const DEFAULT_VALUES = {
   CONFIG: {
     GATEWAY_URL: "https://canton-gateway-devnet.api.live.ledger-test.com",
     NETWORK_TYPE: "devnet",
+    NODE_ID: "ledger-live-devnet",
   },
 } as const;
 
@@ -274,8 +275,13 @@ export const createMockInstrumentBalances = (
   );
 };
 
-export const createMockCoinConfigValue = createFactory({
+const { gateway, calTokensCacheTtlMs } = cantonDefaults.canton_network_devnet;
+
+export const createMockCoinConfigValue = createFactory<CantonCoinConfig>({
+  gateway,
+  calTokensCacheTtlMs,
   gatewayUrl: DEFAULT_VALUES.CONFIG.GATEWAY_URL,
+  nodeId: DEFAULT_VALUES.CONFIG.NODE_ID,
   useGateway: true,
   networkType: DEFAULT_VALUES.CONFIG.NETWORK_TYPE,
   nativeInstrumentId: DEFAULT_VALUES.INSTRUMENT.ID,
@@ -292,6 +298,19 @@ export const createMockContext = (
   config: () => Promise.resolve(config),
   logger: () => {},
 });
+
+/** A context that resolves `first` once, then `later`: any layer that resolves twice sees the swap. */
+export const createSwitchingContext = (
+  first: CantonCoinConfig,
+  later: CantonCoinConfig,
+): CantonContext & { config: jest.Mock } => ({
+  config: jest.fn().mockResolvedValueOnce(first).mockResolvedValue(later),
+  logger: () => {},
+});
+
+/** The config the context argument of a mocked call resolves, whether pinned or not. */
+export const configOfCall = (call: readonly unknown[]): Promise<CantonCoinConfig> =>
+  (call[0] as CantonContext).config();
 
 export const createMockPendingTransferProposal = createFactory<TransferProposal>({
   contract_id: "test-contract-id",

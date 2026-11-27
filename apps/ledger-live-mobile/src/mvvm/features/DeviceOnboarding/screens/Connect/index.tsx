@@ -2,14 +2,22 @@ import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { ConnectNewDevice } from "LLM/components/ConnectNewDevice";
+import { LanguagePrompt } from "~/screens/SyncOnboarding/LanguagePrompt";
 import { DeviceOnboardingCloseBar } from "../../components/CloseBar";
 import { DeviceUnlockSheet } from "../../components/DeviceUnlockSheet";
 import { useDeviceOnboardingConnectViewModel } from "./useDeviceOnboardingConnectViewModel";
 
 export function DeviceOnboardingConnect() {
   const { bottom } = useSafeAreaInsets();
-  const { closeLabel, showDeviceList, unlockSheet, onConnected, onClose, onDeviceNotFound } =
-    useDeviceOnboardingConnectViewModel();
+  const {
+    closeLabel,
+    showDeviceList,
+    unlockSheet,
+    languagePrompt,
+    onConnected,
+    onClose,
+    onDeviceNotFound,
+  } = useDeviceOnboardingConnectViewModel();
 
   return (
     <Box lx={{ flex: 1, backgroundColor: "canvas" }} style={{ paddingBottom: bottom }}>
@@ -29,6 +37,7 @@ export function DeviceOnboardingConnect() {
         ) : null}
       </Box>
       {unlockSheet ? <DeviceUnlockSheet {...unlockSheet} /> : null}
+      {languagePrompt ? <LanguagePrompt {...languagePrompt} /> : null}
     </Box>
   );
 }

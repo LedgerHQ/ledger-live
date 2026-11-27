@@ -18,6 +18,7 @@ import { shouldAwaitAccountAutoSkip } from "./hooks/shouldAwaitAccountAutoSkip";
 import { useHasAccountsForAsset } from "./hooks/useHasAccountsForAsset";
 import { useModularDialogNavigation } from "./hooks/useModularDialogNavigation";
 import { useModularDialogRemoteData } from "./hooks/useModularDialogRemoteData";
+import { useNetworkHelp } from "./hooks/useNetworkHelp";
 import { MODULAR_DIALOG_STEP } from "./types";
 
 type UseModularDialogFlowViewModelParams = Readonly<{
@@ -97,6 +98,8 @@ export function useModularDialogFlowViewModel({ onClose }: UseModularDialogFlowV
         })
       : undefined;
 
+  const networkHelp = useNetworkHelp(flow, displayStep);
+
   const { titleKey, descriptionKey } = getModularDialogStepHeading(
     displayStep,
     uiUseCase,
@@ -122,6 +125,7 @@ export function useModularDialogFlowViewModel({ onClose }: UseModularDialogFlowV
     loadingStatus,
     navigationDirection,
     networkConfiguration,
+    networkHelp,
     networksToDisplay,
     onAccountSelected,
     refetch,

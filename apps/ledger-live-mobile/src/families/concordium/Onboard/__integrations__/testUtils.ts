@@ -13,16 +13,17 @@ export const TEST_SIGNATURE = "bb".repeat(64);
 export const WC_RAW_URI = "wc:test-pairing-uri";
 export const WC_FORMATTED_URI = `concordiumidapp://wallet-connect?encodedUri=${WC_RAW_URI}`;
 
-export const COIN_CONFIG = () => ({
-  status: { type: "active" } as const,
-  name: "Concordium",
-  unit: { name: "ccd", code: "CCD", magnitude: 6 },
-  networkType: "mainnet" as const,
-  grpcUrl: "https://ccd-node-mainnet.coin.ledger.com",
-  grpcPort: 443,
-  proxyUrl: PROXY_URL,
-  minReserve: 0,
-});
+export const COIN_CONTEXT = {
+  config: async () => ({
+    status: { type: "active" } as const,
+    name: "Concordium",
+    unit: { name: "ccd", code: "CCD", magnitude: 6 },
+    networkType: "mainnet" as const,
+    proxyUrl: PROXY_URL,
+    walletConnect: { relayUrl: "wss://relay.walletconnect.com" },
+  }),
+  logger: () => {},
+};
 
 export const TEST_SERIALIZED_CDT = {
   expiry: Math.floor(Date.now() / 1000) + 60 * 60,

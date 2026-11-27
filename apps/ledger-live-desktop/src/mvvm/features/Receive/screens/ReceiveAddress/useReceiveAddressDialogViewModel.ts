@@ -13,6 +13,7 @@ import {
   useReceiveNetwork,
 } from "@features/flow-receive";
 import { useFeatureFlags } from "@features/platform-feature-flags";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useCopyToClipboard } from "LLD/hooks/useCopyToClipboard";
 import { useLLDCoinFamily } from "~/renderer/families";
@@ -43,8 +44,9 @@ export function useReceiveAddressDialogViewModel({
   const legacyAccount = useSelector(state =>
     legacyId ? accountSelector(state, { accountId: legacyId }) : undefined,
   );
-  const { network } = useReceiveNetwork(assetId);
-  const { receiveAddressConfig } = useLLDCoinFamily(network?.family);
+  const { asset, network } = useReceiveNetwork(assetId);
+  const token = asset?.type === "TokenCurrency" ? asset : undefined;
+  const { receiveAddressConfig, receiveGateAction } = useLLDCoinFamily(network?.family);
   const { incidents } = useFilteredServiceStatus({
     tickers: network ? [network.ticker] : [],
     entryPoint: "flow",
@@ -57,6 +59,11 @@ export function useReceiveAddressDialogViewModel({
       })),
     [incidents],
   );
+  const accountCurrency = legacyAccount?.currency;
+  const checkAddressSanctioned = useMemo(
+    () => accountCurrency && ((address: string) => isAddressSanctioned(accountCurrency, address)),
+    [accountCurrency],
+  );
   const featureFlags = useFeatureFlags();
 
   const getFamilyConfig = useMemo<ReceiveFamilyConfigPort | undefined>(
@@ -64,6 +71,17 @@ export function useReceiveAddressDialogViewModel({
       receiveAddressConfig &&
       (input => receiveAddressConfig({ ...input, featureFlags, legacyAccount })),
     [receiveAddressConfig, featureFlags, legacyAccount],
+  );
+
+  const onResolveGate = useMemo(
+    () =>
+      receiveGateAction && legacyAccount
+        ? () => {
+            onClose();
+            receiveGateAction({ account: legacyAccount, token, dispatch });
+          }
+        : undefined,
+    [receiveGateAction, legacyAccount, onClose, token, dispatch],
   );
 
   return {
@@ -74,5 +92,7 @@ export function useReceiveAddressDialogViewModel({
     VerifyAddressExecutor: VerifyAddressExecutorLWD,
     getFamilyConfig,
     serviceIncidents,
+    onResolveGate,
+    checkAddressSanctioned,
   };
 }

@@ -58,6 +58,7 @@ import {
   useUnseededFunnelTracking,
   type UnseededFunnel,
 } from "LLM/features/DeviceOnboarding/analytics/useUnseededFunnelTracking";
+import { useUnseededDoneTracking } from "LLM/features/DeviceOnboarding/analytics/useUnseededDoneTracking";
 import type { UnseededIntroKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededIntroKaraoke";
 import type { UnseededSuccessKaraokeScreenProps } from "LLM/features/DeviceOnboarding/screens/UnseededSuccessKaraoke";
 import type { RecoverNewSeedScreenProps } from "LLM/features/DeviceOnboarding/screens/Recover/NewSeed";
@@ -256,6 +257,7 @@ type ScreenActions = {
   genuineFailureKind: string | null;
   tracking: ChecksTracking;
   unseededFunnel: UnseededFunnel | null;
+  trackUnseededDone: () => void;
   markUpdateAccepted: () => void;
   /** Wraps a close button's action so it also sends the `close` click. */
   withCloseClick: (quit: () => void) => () => void;
@@ -299,7 +301,10 @@ function successScreen(actions: ScreenActions): DeviceOnboardingFunnelModel | nu
   }
   return {
     status: "unseededSuccessKaraoke",
-    unseededSuccessKaraoke: { wasReadOnlyAtEntry: actions.wasReadOnlyAtEntry },
+    unseededSuccessKaraoke: {
+      wasReadOnlyAtEntry: actions.wasReadOnlyAtEntry,
+      onDone: actions.trackUnseededDone,
+    },
     quitConfirmation: null,
   };
 }
@@ -694,11 +699,16 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   });
   const { trackClick, trackAbort, trackExit } = seededTracking;
   const focused = useIsFocused();
-  const restoreDismissal = useRestoreDismissal(shownState);
+  const recoverInOnboarding = useFeature("deviceOnboarding")?.params?.recover ?? true;
+  const restoreDismissal = useRestoreDismissal(shownState, recoverInOnboarding);
   const unseededFunnel = useUnseededFunnelTracking({
     focused,
     machineState: restoreDismissal.visibleState,
     machineContext: onboarding.snapshot?.context ?? null,
+  });
+  const trackUnseededDone = useUnseededDoneTracking({
+    funnel: unseededFunnel,
+    firmwareKind: onboarding.snapshot?.context.firmware?.kind ?? null,
   });
   const checksTracking = useMemo<ChecksTracking>(
     () =>
@@ -940,7 +950,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const recoverFeature = useFeature("protectServicesMobile");
-  const recoverAvailable = recoverFeature?.enabled === true;
+  const recoverAvailable = recoverInOnboarding && recoverFeature?.enabled === true;
   const protectId = recoverFeature?.params?.protectId ?? defaultProtectId;
   const [pastRecover, setPastRecover] = useState(false);
   const awaitingRecoverReturn = useRef(false);
@@ -953,12 +963,13 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
 
   const finishUnseeded = useCallback(
     (sawRecoverPitch: boolean) => {
+      trackUnseededDone();
       completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
       if (sawRecoverPitch) dispatch(setHasBeenUpsoldProtect(true));
       allowLeave.current = true;
       resetToPortfolio(navigation);
     },
-    [dispatch, hasCompletedOnboarding, navigation, wasReadOnlyAtEntry],
+    [dispatch, hasCompletedOnboarding, navigation, trackUnseededDone, wasReadOnlyAtEntry],
   );
 
   const syncOfferDecided = useRef(false);
@@ -1000,6 +1011,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
 
   const openRecover = useCallback(() => {
     if (!recoverAvailable) return;
+    trackUnseededDone();
     awaitingRecoverReturn.current = true;
     navigation.navigate(NavigatorName.Base, {
       screen: ScreenName.DeviceOnboardingRecover,
@@ -1008,7 +1020,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         device: onboarding.liveDevice ?? undefined,
       },
     });
-  }, [navigation, onboarding.liveDevice, protectId, recoverAvailable]);
+  }, [navigation, onboarding.liveDevice, protectId, recoverAvailable, trackUnseededDone]);
 
   const remindRecoverLater = useCallback(() => {
     dispatch(addPostOnboardingAction({ actionId: PostOnboardingActionId.recover }));
@@ -1092,6 +1104,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     genuineFailureKind: readString(onboarding.context?.genuineFailureKind),
     tracking: checksTracking,
     unseededFunnel,
+    trackUnseededDone,
     markUpdateAccepted: () => setFirmwareUpdateStarted(true),
     withCloseClick: (quit: () => void) => () => {
       checksTracking.trackClick(onboardingButtons.close);

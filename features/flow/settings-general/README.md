@@ -5,12 +5,23 @@
 
 The General section of the new Settings of Ledger Wallet mobile and desktop: Ledger Sync, theme, language, currency, plus Region on desktop. It reads and changes its settings through the port the app gives to `@features/flow-settings` (`SettingsPortProvider`), and never imports the apps' stores.
 
+## Screens
+
+| Entry      | Export    | Purpose                                                                                     |
+| ---------- | --------- | ------------------------------------------------------------------------------------------- |
+| `/web`     | `General` | Desktop tab: Ledger Sync button, theme, language and currency selects, region dialog        |
+| `/native`  | `General` | Mobile screen: rows showing their value (with Date format), each opening a sheet; Ledger Sync opens its flow    |
+
+The app renders `General` for the `general` section (`renderSection` on desktop, the section screen
+on mobile), inside the `SettingsPortProvider` that carries the General port.
+
 ## Port
 
 | Export                                          | Purpose                                                                                     |
 | ----------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | `GeneralSettingsPort` / `useGeneralSettingsPort` | `theme`, `language`, `currency`, and what only the app knows: `languages`, `currencies`, `ledgerSync` |
 | `RegionSettingsPort` / `useRegionSettingsPort`   | `region`, the locale of the formats (e.g. `"fr-FR"`). Desktop only                          |
+| `DateFormatSettingsPort` / `useDateFormatSettingsPort` | `dateFormat`: `"default"`, `"DD/MM/YYYY"` or `"MM/DD/YYYY"`. Mobile only |
 
 | Key        | Value                             | Side effects of a change                                                    |
 | ---------- | --------------------------------- | --------------------------------------------------------------------------- |

@@ -1,32 +1,26 @@
-import React from "react";
-import {
-  InteractiveIcon,
-  Text,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@ledgerhq/lumen-ui-rnative";
+import React, { useState } from "react";
+import { InteractiveIcon } from "@ledgerhq/lumen-ui-rnative";
 import { Information } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { InfoSheet } from "./InfoSheet";
 
 export function InfoTooltip(props: Readonly<{ title: string; info: string }>) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <InteractiveIcon
-          icon={Information}
-          size={16}
-          iconType="stroked"
-          accessibilityLabel={props.title}
-        />
-      </TooltipTrigger>
-      <TooltipContent
-        title={props.title}
-        content={
-          <Text typography="body1" lx={{ color: "base" }}>
-            {props.info}
-          </Text>
-        }
+    <>
+      <InteractiveIcon
+        icon={Information}
+        size={16}
+        iconType="stroked"
+        accessibilityLabel={props.title}
+        onPress={() => setIsOpen(true)}
       />
-    </Tooltip>
+      <InfoSheet
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title={props.title}
+        info={props.info}
+      />
+    </>
   );
 }

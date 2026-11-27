@@ -10,10 +10,11 @@ export function useSettingsRowViewModel({
   const isHidden = useIsSettingHidden(settingId);
   if (isHidden) return null;
 
-  const { trailing, disabled, testID } = row;
+  const { trailing, disabled, testID, onSelect } = row;
+  const press = isPressableTrailing(trailing) ? trailing.onSelect : onSelect;
   return {
     ...row,
-    onPress: isPressableTrailing(trailing) && !disabled ? trailing.onSelect : undefined,
+    onPress: press && !disabled ? press : undefined,
     toggleTestID: testID && `${testID}-toggle`,
   };
 }

@@ -185,7 +185,7 @@ export async function fromAccountRaw(
   applyOptionalFromRaw(rawAccount, res);
 
   if (fromRaw?.assignFromAccountRaw) {
-    fromRaw.assignFromAccountRaw(rawAccount, res);
+    await fromRaw.assignFromAccountRaw(rawAccount, res);
   }
 
   applyAssignFromTokenAccountRaw(fromRaw, res, subAccountsRaw);

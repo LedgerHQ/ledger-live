@@ -4,7 +4,7 @@ export type TypedDataField = { name: string; type: string };
 
 /** An EIP-712 message, in the JSON form the Ethereum app signs. */
 export type PredictionsTypedData = {
-  domain: { name: string; version: string; chainId: number };
+  domain: { name: string; version: string; chainId: number; verifyingContract?: string };
   types: { EIP712Domain: TypedDataField[]; [type: string]: TypedDataField[] };
   primaryType: string;
   message: Record<string, unknown>;

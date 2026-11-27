@@ -22,10 +22,10 @@ import {
   mockStablecoinMadCatalog,
   mockFullAssetCatalog,
   renderPayTab,
-  renderRequestReceive,
   seedContacts,
   selectUsdcOnEthereum,
   setDada,
+  payTabEthAccountUUID,
   usdc,
 } from "./shared";
 
@@ -348,7 +348,7 @@ describe("PayTab integration", () => {
       });
     });
 
-    it("opens the request flow when the crypto address option is selected", async () => {
+    it("opens the receive flow when the crypto address option is selected", async () => {
       const { user, store } = renderPayTab({ holdsUsdc: true });
 
       await user.press(await screen.findByTestId("action-tile-deposit"));
@@ -357,7 +357,7 @@ describe("PayTab integration", () => {
       await waitFor(() => {
         expect(store.getState().modularDrawer).toMatchObject({
           isOpen: true,
-          flow: "request",
+          flow: "receive_flow",
           source: "pay",
           categories: [AssetCategory.Stablecoins],
           enableAccountSelection: true,
@@ -448,7 +448,7 @@ describe("PayTab integration", () => {
   });
 
   describe("request", () => {
-    it("opens the modular asset drawer for the request flow when the request tile is pressed", async () => {
+    it("opens the modular asset drawer in the receive flow when the request tile is pressed", async () => {
       const { user, store } = renderPayTab({ holdsUsdc: true });
 
       await user.press(await screen.findByTestId("action-tile-request"));
@@ -456,7 +456,7 @@ describe("PayTab integration", () => {
       await waitFor(() => {
         expect(store.getState().modularDrawer).toMatchObject({
           isOpen: true,
-          flow: "request",
+          flow: "receive_flow",
           source: "pay",
           categories: [AssetCategory.Stablecoins],
           enableAccountSelection: true,
@@ -464,44 +464,26 @@ describe("PayTab integration", () => {
       });
     });
 
-    it("should open the request screen after selecting USDC on Ethereum", async () => {
+    it("should open the receive address screen after selecting USDC on Ethereum", async () => {
       mockFullAssetCatalog();
       const { user } = renderPayTab({ holdsUsdc: true });
 
       await selectUsdcOnEthereum(user);
 
-      expect(await screen.findByText("Request USD Coin")).toBeVisible();
-      expect(screen.getByTestId("pay-request-receive")).toBeVisible();
-      expect(screen.getByTestId("pay-request-receive-qr-code")).toBeVisible();
+      expect(await screen.findByTestId("receive-address-screen")).toHaveTextContent(
+        `${payTabEthAccountUUID}:${usdc.id}`,
+      );
     });
 
-    it("should render the request receive card for the selected account", async () => {
-      renderRequestReceive();
-
-      expect(await screen.findByText("Request USD Coin")).toBeVisible();
-      expect(screen.getByTestId("pay-request-receive")).toBeVisible();
-      expect(screen.getByTestId("pay-request-receive-summary")).toBeVisible();
-      expect(screen.getByText("Share")).toBeVisible();
-    });
-
-    it("should render an error when the account is missing", () => {
-      renderRequestReceive({
-        accountId: "missing-account",
-        currency: usdc,
-      });
-
-      expect(screen.getByTestId("generic-error-modal")).toBeVisible();
-      expect(screen.queryByTestId("pay-request-receive-qr-code")).toBeNull();
-    });
-
-    it("should show the parent address when the selected token is not yet a sub-account", async () => {
+    it("should open the receive address screen on the parent account when the selected token is not yet a sub-account", async () => {
       mockFullAssetCatalog();
       const { user } = renderPayTab({ cryptoOnly: true });
 
       await selectUsdcOnEthereum(user);
 
-      expect(await screen.findByText("Request USD Coin")).toBeVisible();
-      expect(screen.getByTestId("pay-request-receive-qr-code")).toBeVisible();
+      expect(await screen.findByTestId("receive-address-screen")).toHaveTextContent(
+        `${payTabEthAccountUUID}:${usdc.id}`,
+      );
     });
   });
 

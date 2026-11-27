@@ -42,6 +42,13 @@ describe("useSettingsRowViewModel", () => {
     expect(viewModel?.onPress).toBe(onSelect);
   });
 
+  it("presses the row itself when its trailing has no action", () => {
+    const onSelect = jest.fn();
+    const viewModel = renderViewModel({ title: "Version", onSelect });
+
+    expect(viewModel?.onPress).toBe(onSelect);
+  });
+
   it("does not press a disabled row", () => {
     const viewModel = renderViewModel({
       title: "Language",

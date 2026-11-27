@@ -1464,6 +1464,14 @@
     "SolanaRecipientMemoIsRequired": {
       "title": "Memo is required for recipient address"
     },
+    "SolanaNotEnoughSolForRecipientTokenAccount": {
+      "title": "Add {{missingAmount}} {{ticker}} to send: {{accountDeposit}} {{ticker}} to open the recipient's token account + {{networkFee}} {{ticker}} fee, with {{lockedReserve}} {{ticker}} kept in reserve.",
+      "description": "Please send some SOL to your account to pay for token transactions."
+    },
+    "SolanaNotEnoughSolForTokenTransfer": {
+      "title": "Add {{missingAmount}} {{ticker}} to pay the {{networkFee}} {{ticker}} fee, with {{lockedReserve}} {{ticker}} kept in reserve.",
+      "description": "Please send some SOL to your account to pay for token transactions."
+    },
     "SolanaTokenNonTransferable": {
       "title": "Token is non-transferable",
       "description": "Such tokens are \"soul-bound\" and cannot be transferred"
@@ -2416,6 +2424,13 @@
   },
   "receiveAddress": {
     "title": "Receive {{asset}}",
+    "networkHelp": {
+      "description": "Select the same network you're using to send your {{asset}}. <0>Learn more</0>",
+      "title": "How to select the network?",
+      "choose": "When sending crypto from another wallet or exchange, you'll be asked to choose a network. In most cases, the main factor to consider is the coverage and the network fee. It's critical to select the same network as the one used to send. Choosing the wrong network may result in a permanent loss of funds.",
+      "testAmount": "If you're unsure, consider sending a small test amount first to confirm everything works correctly.",
+      "faq": "For more details, please <0>visit our FAQ page</0>."
+    },
     "networkLabel": "{{network}} network",
     "close": "Close",
     "back": "Back",
@@ -2487,6 +2502,10 @@
       "title": "Need a Tag/Memo?",
       "description": "You might need a Tag/Memo for receiving this asset from an exchange. You can use any combination of numbers like 1234.",
       "gotIt": "Got it"
+    },
+    "sanctioned": {
+      "title": "Keeping you safe",
+      "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n{{address}}"
     }
   },
   "ratings": {
@@ -2777,12 +2796,12 @@
       },
       "recover": {
         "tooManyBackups": "There’s no such thing as too many backups.",
-        "encryptedBackup": "Especially an encrypted digital backup.",
-        "thereWhenYouNeedIt": "A digital backup that’s there when you need it.",
-        "title": "Protect access to your wallet with Ledger Recover.",
+        "encryptedBackup": "Especially an encrypted backup.",
+        "thereWhenYouNeedIt": "A backup that’s there when you need it.",
+        "title": "Restore access to your wallet with Ledger Recover",
         "description": "Physical recovery sheets get lost or damaged. Ledger Recover keeps an encrypted backup linked to your identity.",
-        "price": "First month free then start at $9.99/month. Cancel anytime. T&Cs apply",
-        "protect": "Protect my wallet",
+        "price": "Service provided by Coincover. First month free then $9.99/month. Cancel anytime. T&Cs apply.",
+        "protect": "Start your free trial",
         "skip": "Skip for now",
         "sheet": {
           "title": "How does Ledger Recover work?",
@@ -2792,20 +2811,20 @@
           },
           "security": {
             "title": "Enhanced digital security",
-            "description": "Encrypted, fragmented and never stored in one place."
+            "description": "Keys encrypted and split into three pieces securely stored."
           },
           "legacy": {
-            "title": "Futureproof your digital legacy",
-            "description": "Add someone you trust to help secure your backup."
+            "title": "Recover anytime, anywhere",
+            "description": "Restore your entire wallet with your ID and a Ledger device."
           },
           "start": "Get started now (~10min)",
           "remindLater": "Remind me later"
         }
       },
       "success": {
-        "allSet": "You’re all set",
-        "timeToExplore": "Time to explore",
-        "cta": "Explore now",
+        "allSet": "You’re in control.",
+        "timeToExplore": "Time to explore your portfolio.",
+        "cta": "Start exploring",
         "ready": "You’re all set.",
         "walletReady": "Your wallet is ready."
       }
@@ -2814,7 +2833,7 @@
       "restore": {
         "title": "Continuing with Ledger Recover",
         "description": "You’ll sign in with your Ledger Recover credentials to complete your restore.",
-        "identity": "Ledger Recover will verify your identity to unlock your recovery",
+        "identity": "Ledger Recover will verify your identity to unlock your restore",
         "phrase": "Once verified, your Secret Recovery Phrase will be securely restored to your device",
         "cta": "Continue to Ledger Recover"
       }
@@ -2921,7 +2940,7 @@
           "recoveryPhrase": "What’s a Secret Recovery Phrase?",
           "restoreChoice": "Choose a backup to restore from",
           "recoveryKey": "What’s a Recovery Key?",
-          "restoreRecoveryKey": "What’s a Secret Recovery Key?"
+          "restoreRecoveryKey": "What’s a Ledger Recovery Key?"
         },
         "faq": "View complete FAQ",
         "pin": {
@@ -2943,7 +2962,7 @@
         },
         "recoveryPhrase": {
           "title": "Secret Recovery Phrase",
-          "description": "Your Secret Recovery Phrase is a unique list of 12, 18 or 24 words. It is the master backup of your wallet and can restore access to your accounts if your device is lost, damaged, or replaced."
+          "description": "Your Secret Recovery Phrase is a unique list of 24 words generated securely by your Ledger device. It is a backup of your wallet and can restore access to your accounts if your device is lost, damaged, or replaced."
         },
         "restoreChoice": {
           "recoveryPhrase": {
@@ -2960,8 +2979,8 @@
           }
         },
         "recoveryKey": {
-          "title": "Recovery Key",
-          "description": "Keep a private spare key to your wallet. Your Secret Recovery Phrase is encrypted and backed up completely offline on a PIN-protected card, so you can restore access with a tap if your Ledger device is lost or replaced.",
+          "title": "Ledger Recovery Key",
+          "description": "Keep a private spare key to your wallet. Your Secret Recovery Phrase is encrypted and backed up completely offline on a PIN-protected card, so you can restore access with a tap if your Ledger device is lost, damaged or replaced.",
           "inTheBox": "A Recovery Key is included in the box of your device.",
           "learnHowToUse": "Learn how to use"
         }
@@ -4592,6 +4611,7 @@
       "privacy": "Privacy",
       "about": "About"
     },
+    "switchToLegacy": "Back to previous Settings",
     "security": {
       "hideBalance": {
         "title": "Hide balance",
@@ -4630,6 +4650,70 @@
         "title": "MEV protection",
         "description": "Enable for more reliable transactions on Ethereum.",
         "learnMore": "Learn more"
+      }
+    },
+    "privacy": {
+      "bugReports": {
+        "title": "Bug reports",
+        "description": "Automatically send reports to help Ledger improve its products."
+      },
+      "appPerformance": {
+        "title": "App performance",
+        "description": "Enable Ledger to collect app usage to enhance the experience"
+      },
+      "personalizedExperience": {
+        "title": "Personalized experience",
+        "description": "Enable Ledger to collect app usage to provide personalized recommendations"
+      },
+      "analytics": {
+        "title": "Analytics",
+        "description": "Enable analytics to help Ledger improve user experience. This includes clicks, page visits, redirections, actions (send, receive, lock, etc), end of page scrolls, (un)installing and app version, number of accounts, crypto assets and operations, session durations, the Ledger device type and firmware."
+      },
+      "privacyPolicy": {
+        "title": "Privacy policy",
+        "description": "See what personal data are collected, why and how they are used"
+      }
+    },
+    "general": {
+      "ledgerSync": {
+        "title": "Ledger Sync",
+        "description": "Keep your wallet up to date on all your devices",
+        "manage": "Manage",
+        "activate": "Sync"
+      },
+      "theme": {
+        "title": "Theme",
+        "description": "Select your app theme",
+        "sheetTitle": "Select theme",
+        "options": {
+          "system": "System",
+          "light": "Light",
+          "dark": "Dark"
+        }
+      },
+      "language": {
+        "title": "Language",
+        "description": "Select the app language",
+        "sheetTitle": "Select language"
+      },
+      "dateFormat": {
+        "title": "Date format",
+        "description": "Set the date format for Ledger Wallet",
+        "sheetTitle": "Select date format",
+        "options": {
+          "default": "Default",
+          "dayFirst": "DD/MM/YYYY",
+          "monthFirst": "MM/DD/YYYY"
+        }
+      },
+      "currency": {
+        "title": "Currency",
+        "description": "Select the currency displayed in the app",
+        "sheetTitle": "Select currency"
+      },
+      "search": {
+        "placeholder": "Search",
+        "emptyLabel": "No results"
       }
     },
     "header": "Settings",
@@ -4748,6 +4832,25 @@
         "desc": "Give us your feedback on the app",
         "ios": "Review in the App Store",
         "android": "Review in the Google Play store"
+      },
+      "version": {
+        "title": "Version"
+      },
+      "terms": {
+        "title": "Terms and conditions",
+        "description": "By using Ledger Wallet you are deemed to have accepted our terms and conditions"
+      },
+      "feedback": {
+        "title": "Give us feedback on the app"
+      },
+      "rate": {
+        "title": "Rate us on {{storeName}}"
+      },
+      "connect": {
+        "title": "Connect with us",
+        "x": "Follow us on X",
+        "instagram": "Follow us on Instagram",
+        "github": "Review our Github"
       }
     },
     "notifications": {
@@ -8748,8 +8851,11 @@
       "receive": "Receive",
       "steps": {
         "token": {
-          "title": "Choose a token",
-          "empty": "No token is available for this account.",
+          "title": "Select asset",
+          "noResults": "No asset found",
+          "noAssetsTitle": "No assets available",
+          "noAssetsText": "There are no assets currently available to add to this account.",
+          "gotIt": "Got it",
           "loadError": "The token list couldn't load."
         },
         "settings": {
@@ -8788,16 +8894,16 @@
       "title": "Manage assets",
       "empty": "This account has no tokens yet.",
       "tokenType": "Token type",
-      "tokenTypeInfo": "A trust line (IOU) has a balance limit and a rippling setting. A Multi Purpose Token (MPT) has no settings.",
+      "tokenTypeInfo": "The standard used to issue this asset on XRPL.",
       "iou": "Trust Line",
-      "mpt": "Multi Purpose Token",
+      "mpt": "Multi-Purpose Token (MPT)",
       "issuer": "Issuer",
-      "transferFee": "Transfer fee",
-      "transferFeeInfo": "The share of each transfer between holders that the issuer takes.",
+      "transferFee": "Issuer fee",
+      "transferFeeInfo": "A percentage fee set by the asset's issuer, charged in this asset each time it's transferred.",
       "transferFeeUnavailable": "Couldn't load",
       "lockedAmount": "Locked amount",
       "lockedAmountUnavailable": "Couldn't load",
-      "ripplingInfo": "Rippling lets other users' payments move your balance between tokens with the same currency code.",
+      "ripplingInfo": "If activated, your balance can be used to route other users' payments, which may exchange it for the same asset from a different issuer.",
       "edit": "Edit",
       "delete": "Delete",
       "removalPending": "Removal pending",
@@ -8827,7 +8933,8 @@
       "maxLimitInfo": "The trust limit is the most {{token}} your account accepts to hold. The maximum permitted trust limit is <amount/>.",
       "maximum": "Maximum",
       "editTitle": "Edit details",
-      "balanceLimitDescription": "Select the maximum balance you can hold for this asset.",
+      "balanceLimitDescription": "Select the maximum amount of this asset your account can hold.",
+      "balanceLimitInfo": "The maximum amount of this asset your account can hold.",
       "setToMaximum": "Set to maximum",
       "currentLimitZero": "Your limit is 0: you can't receive this token.",
       "limitBelowBalance": "Your balance ({{balance}}) is above this limit. You won't be able to receive this token.",
@@ -12113,42 +12220,6 @@
       "deposit": "Add stablecoin",
       "request": "Request"
     },
-    "request": {
-      "title": "Request {{asset}}",
-      "networkLabel": "{{network}} network",
-      "actions": {
-        "share": "Share",
-        "copy": "Copy",
-        "copied": "Copied",
-        "save": "Save",
-        "verify": "Verify"
-      },
-      "verifyHint": {
-        "message": "Verify your address on\nyour Ledger device\nbefore sharing",
-        "gotIt": "Got it"
-      },
-      "verifyAddress": {
-        "introTitle": "Verify your address",
-        "introDescription": "To protect against address replacement attacks, verify your address on your Ledger device's Secure Screen.",
-        "verifyCta": "Verify address",
-        "successTitle": "Address displayed on the device's Secure Screen",
-        "nextStepsLabel": "Next steps",
-        "nextStepKeepDisplayed": "Keep your address displayed on your Ledger device. Don’t confirm it yet.",
-        "nextStepPaste": "Tap “Got it,” then paste your address into the app you’re sharing it with.",
-        "nextStepCheckMatch": "Before sending, check that it matches the one on your Ledger device.",
-        "gotItCta": "Got it",
-        "device": {
-          "cancelledTitle": "Address verification cancelled",
-          "cancelledDescription": "You declined the address on your device. You can display it again to verify it.",
-          "mismatchTitle": "Addresses don't match",
-          "mismatchDescription": "The address shown on your device is different from the requested one. Do not share this address.",
-          "unsupportedTitle": "Verification not available",
-          "unsupportedDescription": "This device app can't display the address for on-device verification.",
-          "retryCta": "Show address again",
-          "closeCta": "Close"
-        }
-      }
-    },
     "deposit": {
       "title": "Add stablecoins",
       "options": {
@@ -12945,6 +13016,39 @@
         "description": "Check your positions before trying again."
       },
       "tryAgain": "Try again"
+    },
+    "sale": {
+      "preparing": "Preparing the signature",
+      "title": "Continue on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "mismatch": {
+        "title": "This signature doesn't match the account",
+        "description": "Connect the Ledger that holds this account, with the same passphrase if you use one, then try again."
+      },
+      "placing": "Selling your shares",
+      "filled": {
+        "title": "Sale complete",
+        "fill_one": "You sold {{shares}} share for {{amount}}",
+        "fill_other": "You sold {{shares}} shares for {{amount}}",
+        "sold_one": "You sold {{shares}} share",
+        "sold_other": "You sold {{shares}} shares"
+      },
+      "notFilled": {
+        "title": "Sale not filled",
+        "description": "Nothing was sold. Try again with a fresh quote."
+      },
+      "rejected": {
+        "title": "Sale not placed",
+        "expired-signature": "The sale's authorization expired before it was sent.",
+        "insufficient-balance": "You don't hold enough shares for this sale.",
+        "invalid-tick-size": "The market's price increments changed.",
+        "market-closed": "This market is closed.",
+        "not-accepted": "MoonPay couldn't place the sale."
+      },
+      "unconfirmed": {
+        "title": "We couldn't confirm your sale",
+        "description": "Check your positions before trying again."
+      }
     },
     "onboarding": {
       "intro": {

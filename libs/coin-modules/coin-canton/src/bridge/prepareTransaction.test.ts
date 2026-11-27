@@ -1,5 +1,6 @@
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { estimateSendMax } from "../logic/estimateFees";
 import { getCalTokensCached } from "../network/gateway";
 import {
   createMockCantonAccount,
@@ -8,6 +9,7 @@ import {
   createMockTokenAccount,
   createMockTransaction,
 } from "../test/fixtures";
+import type { CantonContext } from "../config";
 import { Transaction } from "../types";
 import { prepareTransaction } from "./prepareTransaction";
 
@@ -76,6 +78,37 @@ describe("prepareTransaction", () => {
       expect(newTx.amount).toEqual(CC.times(8));
     });
 
+    it.each([1.01, 100])(
+      "should send with the tiered fee the largest amount that fits in %s CC, with its fee",
+      async balance => {
+        const context = createMockContext(createMockCoinConfigValue());
+        const spendable = CC.times(balance);
+        const max = await estimateSendMax(context, BigInt(spendable.toFixed()));
+
+        const newTx = await prepareTransaction(context, ccAccount(spendable), sendMax());
+
+        expect(newTx).toMatchObject({
+          amount: new BigNumber(max.amount.toString()),
+          fee: new BigNumber(max.fee.toString()),
+        });
+      },
+    );
+
+    it("should take the Send max amount and its fee from a single fee config read", async () => {
+      const config = jest
+        .fn()
+        .mockResolvedValueOnce({ ...createMockCoinConfigValue(), fee: 1 })
+        .mockResolvedValue({ ...createMockCoinConfigValue(), fee: 5 });
+
+      const newTx = await prepareTransaction(
+        { ...createMockContext(), config },
+        ccAccount(CC.times(9)),
+        sendMax({ tokenId: createMockCoinConfigValue().nativeInstrumentId }),
+      );
+
+      expect(newTx).toMatchObject({ amount: CC.times(8), fee: CC });
+    });
+
     it("should send nothing when the CC spendable balance does not cover the fee", async () => {
       const newTx = await prepareTransaction(contextWithFee(1), ccAccount(CC.div(2)), sendMax());
 
@@ -135,5 +168,30 @@ describe("prepareTransaction", () => {
     it("is not CC when the chosen token account is gone", async () => {
       expect((await prepare({ subAccountId: "gone" })).tokenId).toBe("");
     });
+  });
+
+  it("should read the CAL tokens through a context pinned to the config of the account's currency", async () => {
+    const currencyConfig = createMockCoinConfigValue({
+      fee: 0,
+      gatewayUrl: "https://currency.test",
+    });
+    const subAccount = createMockTokenAccount();
+    const account = ccAccount(CC.times(10), [subAccount]);
+    const context: CantonContext = {
+      config: async currencyId =>
+        currencyId === account.currency.id ? currencyConfig : createMockCoinConfigValue(),
+      logger: () => {},
+    };
+
+    await prepareTransaction(
+      context,
+      account,
+      createMockTransaction({ subAccountId: subAccount.id, fee: null }),
+    );
+
+    const [calContext, currencyId] = jest.mocked(getCalTokensCached).mock.lastCall ?? [];
+    if (!calContext) throw new Error("getCalTokensCached was not called");
+    expect(currencyId).toBe(account.currency.id);
+    await expect(calContext.config("other")).resolves.toBe(currencyConfig);
   });
 });

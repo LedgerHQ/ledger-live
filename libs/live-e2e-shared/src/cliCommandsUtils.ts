@@ -353,15 +353,18 @@ export function parseTokenAllowanceCliOutput(output: string): {
   return { allowanceStr, unitMagnitude: magnitudeField };
 }
 
+type TokenAllowanceCheckOptions = {
+  account: TokenAccount;
+  spenderAddress: string;
+  minAmount: string;
+};
+
 /**
- * Returns current allowance as a decimal string if {@link minAmount}
+ * Returns current allowance as a decimal string if `minAmount`
  * is covered, otherwise `0`.
  */
-export const isTokenAllowanceSufficientCommand = async (
-  account: TokenAccount,
-  spenderAddress: string,
-  minAmount: string,
-) => {
+export const isTokenAllowanceSufficientCommand = async (options: TokenAllowanceCheckOptions) => {
+  const { account, spenderAddress, minAmount } = options;
   const ownerAddress = account.parentAccount?.address ?? account.address;
   if (!ownerAddress) throw new Error("Token allowance check requires the main account address");
 
@@ -484,14 +487,23 @@ async function broadcastTokenApproval(
   // Before the CLI starts: once its approve reaches the device, the setting can no longer change.
   await enableBlindSigningOnNanoS();
   return runWithExclusiveLock(
-    [account],
-    `token ${opts.mode}`,
+    {
+      targets: [account],
+      label: `token ${opts.mode}`,
+      waitsForConfirmation: opts.waitConfirmation === true,
+    },
     () => runTokenApprovalWithRetry(opts),
-    { waitsForConfirmation: opts.waitConfirmation === true },
   );
 }
 
-export function approveTokenCommand(account: TokenAccount, spender: string, approveAmount: string) {
+type TokenApproveOptions = {
+  account: TokenAccount;
+  spender: string;
+  approveAmount: string;
+};
+
+export function approveTokenCommand(options: TokenApproveOptions) {
+  const { account, spender, approveAmount } = options;
   return broadcastTokenApproval(account, {
     currency: account.currency.speculosApp.name,
     index: account.index,

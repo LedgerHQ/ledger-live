@@ -94,8 +94,8 @@ describe("listOperations and getBlock report a transaction alike", () => {
     },
   ] as const)("$kind", async ({ account, height, type, hash }) => {
     const [page, block] = await Promise.all([
-      listOperations(config, account, { minHeight: height, order: "asc", limit: 20 }, MAINNET),
-      getBlock(config, height, MAINNET),
+      listOperations(config, account, { minHeight: height, order: "asc", limit: 20 }),
+      getBlock(config, height),
     ]);
 
     const listed = page.items.find(op => op.hash === hash);

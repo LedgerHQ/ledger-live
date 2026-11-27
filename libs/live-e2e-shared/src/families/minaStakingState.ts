@@ -99,17 +99,16 @@ type GraphqlResponse<T> = { data?: T | null; errors?: { message?: string }[] };
  */
 class MinaFinalError extends Error {}
 
+type QueryNodeOptions = { query: string; variables: Record<string, unknown>; subject: string };
+
 /**
  * The node answers 200 with `{ data: null, errors: [...] }` on a rejected query, and
  * `{ account: null }` for an address it does not know. Reading either as an answer would report an
  * account whose state could not be determined as "not delegated", so both raise — one as final,
  * the other for the caller's retry budget to outwait.
  */
-async function queryNode<T>(
-  query: string,
-  variables: Record<string, unknown>,
-  subject: string,
-): Promise<T> {
+async function queryNode<T>(options: QueryNodeOptions): Promise<T> {
+  const { query, variables, subject } = options;
   const { data } = await axios.post<GraphqlResponse<T>>(
     API_MINA_GRAPHQL_NODE,
     { query, variables },
@@ -151,18 +150,18 @@ function seededAddress(account: Account): string {
 async function fetchDelegationState(account: Account): Promise<DelegationState> {
   const address = seededAddress(account);
 
-  const { account: onChain } = await queryNode<DelegateAccountData>(
-    DELEGATE_ACCOUNT_QUERY,
-    { publicKey: address },
-    "delegation",
-  );
+  const { account: onChain } = await queryNode<DelegateAccountData>({
+    query: DELEGATE_ACCOUNT_QUERY,
+    variables: { publicKey: address },
+    subject: "delegation",
+  });
   invariant(onChain, `mina node knows no account at ${address} (${account.accountName})`);
 
-  const { pooledUserCommands } = await queryNode<{ pooledUserCommands: unknown[] }>(
-    PENDING_COMMANDS_QUERY,
-    { publicKey: address },
-    "pending commands",
-  );
+  const { pooledUserCommands } = await queryNode<{ pooledUserCommands: unknown[] }>({
+    query: PENDING_COMMANDS_QUERY,
+    variables: { publicKey: address },
+    subject: "pending commands",
+  });
 
   const delegate = onChain.delegateAccount?.publicKey;
   return {

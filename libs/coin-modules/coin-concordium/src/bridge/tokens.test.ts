@@ -83,6 +83,7 @@ const resolve = (over: Partial<Parameters<typeof resolveTokenSubAccounts>[0]> = 
     accountId: ACCOUNT_ID,
     accountTokens: [makeEntry()],
     initialAccount: undefined,
+    calLookupConcurrency: 4,
     ...over,
   });
 

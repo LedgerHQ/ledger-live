@@ -9,16 +9,16 @@ const config = {} as ConcordiumCoinConfig;
 describe("getAccountStatus", () => {
   it("is activated and used once the public key has an account on chain", async () => {
     getAccountsByPublicKey.mockResolvedValue([{ address: "3abc" }]);
-    await expect(getAccountStatus(config, "concordium", "ab")).resolves.toEqual({
+    await expect(getAccountStatus(config, "ab")).resolves.toEqual({
       activated: true,
       used: true,
     });
-    expect(getAccountsByPublicKey).toHaveBeenCalledWith(config, "concordium", "ab", undefined);
+    expect(getAccountsByPublicKey).toHaveBeenCalledWith(config, "ab", undefined);
   });
 
   it("is neither without an account on chain", async () => {
     getAccountsByPublicKey.mockResolvedValue([]);
-    await expect(getAccountStatus(config, "concordium", "ab")).resolves.toEqual({
+    await expect(getAccountStatus(config, "ab")).resolves.toEqual({
       activated: false,
       used: false,
     });
@@ -26,6 +26,6 @@ describe("getAccountStatus", () => {
 
   it("fails when the lookup fails, rather than calling the key unused", async () => {
     getAccountsByPublicKey.mockRejectedValue(new Error("down"));
-    await expect(getAccountStatus(config, "concordium", "ab")).rejects.toThrow("down");
+    await expect(getAccountStatus(config, "ab")).rejects.toThrow("down");
   });
 });

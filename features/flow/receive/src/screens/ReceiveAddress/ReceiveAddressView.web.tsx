@@ -10,6 +10,7 @@ import { MemoPanel } from "./components/MemoPanel";
 import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
 import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
 import { ReceiveAddressUnavailable } from "./components/ReceiveAddressUnavailable";
+import { SanctionedAddress } from "./components/SanctionedAddress";
 import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
@@ -19,6 +20,7 @@ export function ReceiveAddressView({
   isLoading,
   error,
   gate,
+  sanctioned,
   addressSelection,
   address,
   actions,
@@ -33,7 +35,8 @@ export function ReceiveAddressView({
   onClose,
 }: ReceiveAddressViewProps) {
   const isHintOpen = !!actions.verifyHint;
-  const isUnavailable = !!error || !!gate;
+  const isUnavailable = !!error || !!gate || !!sanctioned;
+  const sanctionedContent = sanctioned && <SanctionedAddress sanctioned={sanctioned} />;
   // The close button, Escape and a click outside all leave through here, once the hint is answered.
   const handleOpenChange = (open: boolean) => {
     if (!open && !isHintOpen) onClose();
@@ -116,7 +119,7 @@ export function ReceiveAddressView({
                 <DialogBody
                   className={`flex flex-col gap-24 ${isHintOpen ? "overflow-visible" : "overflow-y-auto"}`}
                 >
-                  <ReceiveAddressUnavailable error={error} gate={gate} />
+                  {sanctionedContent ?? <ReceiveAddressUnavailable error={error} gate={gate} />}
                   {isUnavailable ? null : (
                     <>
                       {isLoading || !address ? (

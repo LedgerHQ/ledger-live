@@ -40,6 +40,27 @@ export function trackUnseededSetupFinished(props: FunnelProps, status: UnseededS
   trackUnseededMilestone("onboarding_device_setup_finished", props, status);
 }
 
+export type UnseededResult = Readonly<{
+  ledgerSyncDone: boolean;
+  firmwareUpdateDone: boolean;
+}>;
+
+export function trackUnseededDone(
+  props: FunnelProps,
+  status: UnseededStatus,
+  result: UnseededResult,
+): void {
+  track(
+    "onboarding_done",
+    withSource({
+      ...props,
+      ...statusProps(status),
+      ledger_sync_done: yesNo(result.ledgerSyncDone),
+      firmware_update_done: yesNo(result.firmwareUpdateDone),
+    }),
+  );
+}
+
 export function trackRecoverOffered(props: FunnelProps, status: UnseededStatus): void {
   trackUnseededMilestone("onboarding_Ledger_Recover", props, status);
 }

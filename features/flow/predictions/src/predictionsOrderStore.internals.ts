@@ -6,11 +6,20 @@ import type {
 } from "@features/platform-predictions";
 import { createPendingResultStore, type ShownResult } from "./pendingResultStore.internals";
 
-export type PredictionsOrderDetails = Readonly<{
-  display: PredictionsOrderDisplay;
-  /** In USD, from the signed order. */
-  amountPaid: number;
-}>;
+export type PredictionsOrderDetails = Readonly<
+  | {
+      side: "buy";
+      display: PredictionsOrderDisplay;
+      /** In USD, from the signed order. */
+      amountPaid: number;
+    }
+  | {
+      side: "sale";
+      display: PredictionsOrderDisplay;
+      /** From the signed sale, which fills completely or not at all. */
+      shares: number;
+    }
+>;
 
 export type ShownOrder = ShownResult<PredictionsOrderReport, PredictionsOrderDetails>;
 

@@ -2,7 +2,13 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { ExclusiveLockStoreFatalError } from "../errors";
 import { acquireDistributedLock, type DistributedLockOptions } from "./distributedLock";
-import type { AbandonableLease, LockRecord, LockStore, StoredLock } from "./types";
+import type {
+  AbandonableLease,
+  LockRecord,
+  LockReplaceOptions,
+  LockStore,
+  StoredLock,
+} from "./types";
 
 type Clock = { now: number };
 
@@ -28,7 +34,8 @@ class MemoryLockStore implements LockStore {
     return this.write(key, record);
   }
 
-  async replace(key: string, record: LockRecord, etag: string) {
+  async replace(options: LockReplaceOptions) {
+    const { key, record, etag } = options;
     this.failIfScheduled();
     if (this.objects.get(key)?.etag !== etag) return undefined;
     return this.write(key, record);
@@ -75,8 +82,9 @@ class MemoryLockStore implements LockStore {
 class ContestedLockStore extends MemoryLockStore {
   rivalWinsLeft = 0;
 
-  override async replace(key: string, record: LockRecord, etag: string) {
-    if (this.rivalWinsLeft === 0) return super.replace(key, record, etag);
+  override async replace(options: LockReplaceOptions) {
+    const { key } = options;
+    if (this.rivalWinsLeft === 0) return super.replace(options);
     this.rivalWinsLeft--;
     this.releaseAsAnotherHolder(key);
     return undefined;

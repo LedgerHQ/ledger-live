@@ -19,9 +19,8 @@ jest.mock("../../network/proxyClient", () => ({
 const { getAccountBalance, getPltTokenInfo } = jest.requireMock("../../network/proxyClient");
 
 const config = {} as ConcordiumCoinConfig;
-const currencyId = "concordium_testnet";
 
-// The readers cache on `${currencyId}:${token}` and `${currencyId}:${address}`,
+// The readers cache on `${proxyUrl}:${token}` and `${proxyUrl}:${address}`,
 // so each case needs its own pair rather than a cache reset it cannot reach.
 let unique = 0;
 const nextIds = () => {
@@ -30,7 +29,7 @@ const nextIds = () => {
 };
 
 const check = (over: { tokenId: string; recipient: string }) =>
-  checkRecipientRestrictions({ config, currencyId, ticker: "TOK", ...over });
+  checkRecipientRestrictions({ config, ticker: "TOK", ...over });
 
 /** Shapes the proxy responses the way testnet actually returns them. */
 const givenChain = ({

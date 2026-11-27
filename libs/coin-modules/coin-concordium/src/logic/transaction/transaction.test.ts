@@ -205,10 +205,10 @@ describe("logic/transaction", () => {
         signature: "11223344",
       });
 
-      const result = await broadcast(config, signedTx, "concordium_testnet");
+      const result = await broadcast(config, signedTx);
 
       expect(result).toBe("test-submission-id");
-      expect(submitTransfer).toHaveBeenCalledWith(config, "concordium_testnet", {
+      expect(submitTransfer).toHaveBeenCalledWith(config, {
         transaction: "aabbccdd",
         signatures: { "0": { "0": "11223344" } },
       });
@@ -221,16 +221,16 @@ describe("logic/transaction", () => {
         signature: "cafebabe",
       });
 
-      await broadcast(config, signedTx, "concordium_testnet");
+      await broadcast(config, signedTx);
 
-      expect(submitTransfer).toHaveBeenCalledWith(config, "concordium_testnet", {
+      expect(submitTransfer).toHaveBeenCalledWith(config, {
         transaction: "deadbeef",
         signatures: { "0": { "0": "cafebabe" } },
       });
     });
 
     it("should throw on invalid JSON", async () => {
-      await expect(broadcast(config, "not-json", "concordium_testnet")).rejects.toThrow();
+      await expect(broadcast(config, "not-json")).rejects.toThrow();
     });
 
     it("should propagate network errors", async () => {
@@ -242,9 +242,7 @@ describe("logic/transaction", () => {
         signature: "11223344",
       });
 
-      await expect(broadcast(config, signedTx, "concordium_testnet")).rejects.toThrow(
-        "Network error",
-      );
+      await expect(broadcast(config, signedTx)).rejects.toThrow("Network error");
     });
   });
 });

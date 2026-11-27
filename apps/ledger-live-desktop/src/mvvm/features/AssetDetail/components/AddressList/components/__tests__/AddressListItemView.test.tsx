@@ -33,4 +33,10 @@ describe("AddressListItemView", () => {
 
     expect(screen.queryByTestId("tag")).toBeNull();
   });
+
+  it("gives the row a fixed Datadog action name", () => {
+    render(<AddressListItemView vm={viewModel()} />);
+
+    expect(screen.getByTestId("row")).toHaveAttribute("data-dd-action-name", "Address row");
+  });
 });

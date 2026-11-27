@@ -1,0 +1,61 @@
+[
+  {
+    "file": "src/main/index.ts",
+    "kind": "accepted",
+    "owner": "@ledgerhq/platform",
+    "rules": ["no-coin-specific-import"],
+    "reason": "Electron process plumbing: the main process starts and stops the coin-zcash utility process host. It lives outside src/renderer/families/, so the families contract cannot apply."
+  },
+  {
+    "file": "src/preloader/bridge/zcash.ts",
+    "kind": "accepted",
+    "owner": "@ledgerhq/platform",
+    "rules": ["no-coin-specific-import"],
+    "reason": "The preload only forwards the IPC channels listed in ZCASH_IPC, which comes from the coin-zcash contract. It imports constants only."
+  },
+  {
+    "file": "src/renderer/zcash.ts",
+    "kind": "accepted",
+    "owner": "@ledgerhq/wallet-xp",
+    "rules": ["no-coin-specific-import"],
+    "reason": "The renderer wraps the coin-zcash IPC client over the zcash bridge. It is reached only through the rspack alias from the lazy zcash chunk, so it costs nothing at startup."
+  },
+  {
+    "file": "src/bridge/contract.ts",
+    "kind": "accepted",
+    "owner": "@ledgerhq/wallet-xp",
+    "reason": "Declares the ZcashBridge type of the same IPC channel. No rule reports it, since it imports no coin package."
+  },
+  {
+    "file": "tools/rspack/rspack.renderer.mts",
+    "kind": "accepted",
+    "owner": "@ledgerhq/platform",
+    "reason": "Aliases the coin-zcash network entry to src/renderer/zcash.ts so the renderer reaches the utility process over IPC. Build tooling, not generic UI."
+  },
+  {
+    "file": "src/helpers/accountModel.ts",
+    "kind": "accepted",
+    "owner": "@ledgerhq/wallet-xp",
+    "rules": ["no-currency-id-branch"],
+    "reason": "Legacy account-data migrations (evm, xrp, aptos, cosmos), versioned by array index: moving them risks the order. New coin migrations go to family code."
+  },
+  {
+    "file": "src/config/urls.ts",
+    "kind": "accepted",
+    "owner": "@ledgerhq/wallet-xp",
+    "reason": "URL constants keyed by coin, accepted as data (decided 2026-11-23): no family branch and no coin import. A caller that picks an entry by testing a family or a currency id is a leak of that caller."
+  },
+  {
+    "file": "src/renderer/screens/settings/sections/Developer/DeviceIntentExecutorDevTool/intents/getEthAddressDMKSignerDemoIntent/job.ts",
+    "kind": "accepted",
+    "owner": "@ledgerhq/live-devices",
+    "rules": ["no-coin-specific-import"],
+    "reason": "Developer demo of a DMK signer kit device action (SignerEthBuilder from device-signer-kit-ethereum), reached only from Settings > Developer."
+  },
+  {
+    "file": "src/renderer/analytics/segment.ts",
+    "kind": "temporary",
+    "owner": "@ledgerhq/engagement",
+    "reason": "The ldmkSolanaSigner, ldmkCosmosSigner, ldmkPolkadotSigner and ldmkTronSigner flags are sent as user properties. Their names are kept, and they go away with the flags."
+  }
+]

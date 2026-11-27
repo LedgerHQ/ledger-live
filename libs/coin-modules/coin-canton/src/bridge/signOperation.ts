@@ -1,3 +1,4 @@
+import { CantonInvalidConfigError } from "../types/errors";
 import { FeeNotLoaded, InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
@@ -9,9 +10,8 @@ import { Observable } from "rxjs";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
 import { createFrameworkSigner } from "../signer/frameworkSigner";
-import type { CantonContext } from "../config";
+import { pinConfig, type CantonContext } from "../config";
 import { CantonMemo, CantonSigner, Transaction } from "../types";
-import { pinConfig } from "./context";
 
 // A native transfer carrying an admin stays token-shaped, so the gateway still receives that admin.
 function toTransferIntent(
@@ -174,7 +174,7 @@ export const buildSignOperation =
             },
           });
         } catch (e) {
-          if (e instanceof Error) {
+          if (e instanceof Error && !(e instanceof CantonInvalidConfigError)) {
             const errorMessage =
               (e as Error & { data?: { resultMessage?: string } })?.data?.resultMessage ||
               e.message;

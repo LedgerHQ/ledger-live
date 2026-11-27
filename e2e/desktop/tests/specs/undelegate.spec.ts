@@ -19,7 +19,11 @@ import { buildTags } from "tests/utils/tagsUtils";
 import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
 import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 
-const suiAccount = new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG");
+const suiAccount = new Delegate({
+  account: Account.SUI_1,
+  amount: "1",
+  provider: "Ledger by P2P.ORG",
+});
 const suiLock = exclusiveLockFor({ broadcastAccounts: [suiAccount.account] });
 
 test.describe("Undelegate", { lock: suiLock.names }, () => {
@@ -94,7 +98,12 @@ test.describe.skip("Undelegate - MINA", minaDetails, () => {
       // Undelegating is a delegation to the account itself, so the account's own address is the
       // target the device renders and the speculos helper asserts against.
       const { account, address } = await pickMinaAccountToUndelegate();
-      const delegation = new Delegate(account, "N/A", "N/A", address);
+      const delegation = new Delegate({
+        account,
+        amount: "N/A",
+        provider: "N/A",
+        validatorAddress: address,
+      });
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.accountName);

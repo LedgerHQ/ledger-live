@@ -4,16 +4,21 @@ import { track } from "@shared/analytics";
 import { useOpenLink } from "@shared/linking";
 import { useHelpLabels } from "./copy/useHelpLabels";
 import {
-  HELP_CONFIRMATION_SCREENS,
-  HELP_GROUPS,
-  HELP_ITEM_ACTIONS,
-  HELP_ITEM_EVENTS,
+  getHelpConfirmationTone,
+  getHelpGroups,
+  getHelpItemAction,
   isConfirmedHelpItem,
   type HelpGroupId,
   type HelpItemAction,
   type HelpItemId,
   type HelpConfirmedItemId,
 } from "./logic/helpItems";
+import {
+  getHelpConfirmationScreen,
+  getHelpItemEvent,
+  HELP_SCREENS,
+  type HelpScreen,
+} from "./logic/helpTracking";
 import type { HelpPort } from "./ports";
 
 export type HelpRowViewModel = Readonly<{
@@ -37,8 +42,31 @@ export type HelpViewModel = Readonly<{
   title: string;
   groups: readonly HelpGroupViewModel[];
   confirmation: SettingsConfirmSheetProps;
+  screen: HelpScreen;
   confirmationScreenName: string | null;
 }>;
+
+function getItemActions(
+  port: HelpPort,
+  openLink: (url: string) => void,
+): Partial<Record<HelpItemId, () => void>> {
+  const linkActions = {
+    support: () => openLink(port.links.support),
+    academy: () => openLink(port.links.academy),
+    status: () => openLink(port.links.status),
+  };
+  if (port.platform === "mobile") return { ...linkActions, saveLogs: () => port.saveLogs() };
+  return {
+    ...linkActions,
+    viewUserData: () => port.viewUserData(),
+    launchOnboarding: () => port.launchOnboarding(),
+  };
+}
+
+function runConfirmedItem(port: HelpPort, id: HelpConfirmedItemId): Promise<void> {
+  if (id === "clearCache") return port.clearCache();
+  return port.platform === "desktop" ? port.resetApp() : Promise.resolve();
+}
 
 export function useHelpViewModel(port: HelpPort): HelpViewModel {
   const labels = useHelpLabels();
@@ -57,7 +85,7 @@ export function useHelpViewModel(port: HelpPort): HelpViewModel {
     async (id: HelpConfirmedItemId) => {
       setIsConfirming(true);
       try {
-        await (id === "clearCache" ? port.clearCache() : port.resetApp());
+        await runConfirmedItem(port, id);
       } finally {
         setIsConfirming(false);
         closeConfirmation();
@@ -66,41 +94,44 @@ export function useHelpViewModel(port: HelpPort): HelpViewModel {
     [port, closeConfirmation],
   );
 
-  const onPressByItem: Partial<Record<HelpItemId, () => void>> = {
-    support: () => openLink(port.links.support),
-    academy: () => openLink(port.links.academy),
-    status: () => openLink(port.links.status),
-    viewUserData: () => port.viewUserData(),
-    launchOnboarding: () => port.launchOnboarding(),
-  };
+  const actionsByItem = getItemActions(port, openLink);
+  const supportOpensChatbot = port.platform === "mobile" && port.supportOpensChatbot;
 
-  const toRow = (id: HelpItemId): HelpRowViewModel => {
+  const toRows = (id: HelpItemId): HelpRowViewModel[] => {
     const itemLabels = labels.items[id];
+    if (!itemLabels) return [];
     const action = isConfirmedHelpItem(id)
       ? () => setConfirmation({ id, isOpen: true })
-      : onPressByItem[id];
-    const event = HELP_ITEM_EVENTS[id];
+      : actionsByItem[id];
+    const event = getHelpItemEvent(id, port.platform);
     const onPress = action
       ? () => {
-          if (event) void track(event);
+          if (event?.properties) void track(event.event, event.properties);
+          else if (event) void track(event.event);
           action();
         }
       : undefined;
-    return {
-      id,
-      title: itemLabels.title,
-      description: itemLabels.description,
-      action: HELP_ITEM_ACTIONS[id],
-      actionLabel: itemLabels.action,
-      onPress,
-      destructive: id === "resetApp",
-    };
+    const title =
+      id === "support" && supportOpensChatbot
+        ? (labels.chatbotSupportTitle ?? itemLabels.title)
+        : itemLabels.title;
+    return [
+      {
+        id,
+        title,
+        description: itemLabels.description,
+        action: getHelpItemAction(id, port.platform),
+        actionLabel: itemLabels.action,
+        onPress,
+        destructive: id === "resetApp",
+      },
+    ];
   };
 
-  const groups = HELP_GROUPS.map(group => ({
+  const groups = getHelpGroups(port.platform).map(group => ({
     id: group.id,
     title: labels.groups[group.id],
-    rows: group.items.map(toRow),
+    rows: group.items.flatMap(toRows),
   }));
 
   return {
@@ -108,8 +139,8 @@ export function useHelpViewModel(port: HelpPort): HelpViewModel {
     groups,
     confirmation: {
       isOpen: confirmation.isOpen,
-      tone: "destructive",
-      labels: labels.confirmations[confirmation.id],
+      tone: getHelpConfirmationTone(confirmation.id, port.platform),
+      labels: labels.confirmations[confirmation.id] ?? labels.confirmations.clearCache,
       isConfirming,
       onConfirm: () => {
         if (confirmation.isOpen) void confirm(confirmation.id);
@@ -119,6 +150,9 @@ export function useHelpViewModel(port: HelpPort): HelpViewModel {
       confirmTestID: "settings-help-confirm-button",
       cancelTestID: "settings-help-cancel-button",
     },
-    confirmationScreenName: confirmation.isOpen ? HELP_CONFIRMATION_SCREENS[confirmation.id] : null,
+    screen: HELP_SCREENS[port.platform],
+    confirmationScreenName: confirmation.isOpen
+      ? getHelpConfirmationScreen(confirmation.id, port.platform)
+      : null,
   };
 }

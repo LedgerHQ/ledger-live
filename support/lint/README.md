@@ -316,4 +316,21 @@ The `familiesDir` option and the exemption of the families folder are the ones o
 The blind spots of `no-family-branch` apply, and one more: a currency compared without `.id`
 (`route.currency !== "tezos"`) is not a currency id expression, so it is not reported.
 
+### `coin-families-exceptions`
+
+A baseline entry is debt, owned by the burn-down. A file that stays on purpose is an exception, and its reason
+lives in the app's `coin-families-exceptions.json` (`apps/ledger-live-desktop`, `apps/ledger-live-mobile`), because
+`oxlint-suppressions.json` cannot hold one and oxlint rewrites it when it prunes. An entry is
+`{ file, kind, owner, reason, ticket?, rules? }`:
+
+- **`accepted`**: stays for good; `owner` and `reason` are required.
+- **`temporary`**: goes away with a flag or a ticket; `reason` or `ticket` is required.
+- **`rules`**: the `coin-families/*` rules that report the file, absent when none does (URL data, a local list).
+
+[`src/check-coin-families-exceptions.js`](src/check-coin-families-exceptions.js), run by
+`pnpm lint:coin-families-exceptions` and part of `pnpm lint:arch`, fails on a file that no longer exists, on a rule
+the baseline no longer holds for the file (remove it from the entry when the leak is fixed), on a missing field and
+on a file listed twice. It does not ask a reason for each baseline entry: the rest of the baseline is debt, tracked
+by its tickets.
+
 Run the rules' tests with `nx run @support/lint:test`.

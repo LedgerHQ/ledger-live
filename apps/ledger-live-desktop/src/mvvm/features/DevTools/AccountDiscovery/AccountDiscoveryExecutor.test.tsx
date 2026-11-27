@@ -4,12 +4,13 @@ import { EMPTY } from "rxjs";
 import { render, waitFor } from "tests/testSetup";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { createIntent } from "@features/platform-device-intent";
-import type { AccountDiscoveryIntent } from "@devtools/bindings";
+import type { AccountCompletionIntent, AccountDiscoveryIntent } from "@devtools/bindings";
 import type { InitializationInput } from "LLD/components/DeviceIntentExecutor";
 import {
   buildDeviceInitializationInput,
   DeviceIntentExecutor,
 } from "LLD/components/DeviceIntentExecutor";
+import { accountCompletionIntentLWDDefinition } from "./accountCompletionIntentLWDDefinition";
 import { accountDiscoveryIntentLWDDefinition } from "./accountDiscoveryIntentLWDDefinition";
 import { AccountDiscoveryExecutor } from "./AccountDiscoveryExecutor";
 
@@ -22,7 +23,10 @@ const INITIALIZATION_INPUT = { appName: "Bitcoin" } as unknown as Initialization
 
 const input: AccountDiscoveryIntent["input"] = { startScan: () => EMPTY };
 
+const completionInput: AccountCompletionIntent["input"] = { startScan: () => EMPTY };
+
 const run = {
+  kind: "scan" as const,
   currencyId: CryptoCurrencyIdSchema.parse("bitcoin"),
   intent: createIntent(accountDiscoveryIntentLWDDefinition, input),
 };
@@ -53,6 +57,21 @@ describe("AccountDiscoveryExecutor", () => {
       deviceInitializationInput: INITIALIZATION_INPUT,
       intent: run.intent,
       onUserCancel,
+    });
+  });
+
+  it("runs a completion on the same currency's app", async () => {
+    const completion = {
+      kind: "complete" as const,
+      currencyId: run.currencyId,
+      intent: createIntent(accountCompletionIntentLWDDefinition, completionInput),
+    };
+    render(
+      <AccountDiscoveryExecutor run={completion} onUserCancel={jest.fn()} onError={jest.fn()} />,
+    );
+    await waitFor(() => expect(DeviceIntentExecutor).toHaveBeenCalled());
+    expect(jest.mocked(DeviceIntentExecutor).mock.calls.at(-1)?.[0]).toMatchObject({
+      intent: completion.intent,
     });
   });
 

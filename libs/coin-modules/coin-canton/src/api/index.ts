@@ -1,13 +1,17 @@
-import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
+import type {
+  CoinModuleApi,
+  FeeEstimation,
+  TransactionIntent,
+} from "@ledgerhq/coin-module-framework/api/index";
 import { notSupportedApi } from "@ledgerhq/coin-module-framework/api/index";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { validateAddress } from "../bridge/validateAddress";
-import { type CantonCoinConfig, type CantonContext } from "../config";
+import { pinConfig, type CantonCoinConfig, type CantonContext } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
-import { estimateFees } from "../logic/estimateFees";
+import { estimateFees, estimateSendMax } from "../logic/estimateFees";
 import { getAccountStatus, type CantonAccountStatus } from "../logic/getAccountStatus";
 import { getBalance } from "../logic/getBalance";
 import { lastBlock } from "../logic/lastBlock";
@@ -19,6 +23,28 @@ import type { CantonMemo } from "../types/transaction";
 type AccountStatusCapability<C> = {
   getAccountStatus: (context: C, key: string) => Promise<CantonAccountStatus>;
 };
+
+/**
+ * A tiered native Send max fee depends on the amount the balance allows, so the balance is read.
+ * The caller must put the returned `parameters.amount` in the intent: `validateIntent` checks that amount.
+ * A fixed fee needs no read: the caller fills its own spendable balance minus the fee.
+ */
+async function estimateIntentFees(
+  context: CantonContext,
+  intent: TransactionIntent<CantonMemo>,
+): Promise<FeeEstimation> {
+  const config = await context.config();
+  const pinned = pinConfig(context, config);
+  if (!intent.useAllAmount || intent.asset.type !== "native" || config.fee !== undefined) {
+    return { value: await estimateFees(pinned, intent.amount) };
+  }
+  const native = (await getBalance(pinned, intent.sender)).find(
+    ({ asset }) => asset.type === "native",
+  );
+  const spendable = native ? native.value - (native.locked ?? 0n) : 0n;
+  const { amount, fee } = await estimateSendMax(pinned, spendable);
+  return { value: fee, parameters: { amount } };
+}
 
 // The caller builds the {@link CantonContext} (config + logger) and passes it to each method (ADR-019).
 //
@@ -39,9 +65,7 @@ export function createApi(
       rejectBalanceOptions(() => getBalance(context, address), options),
     listOperations,
     craftTransaction: (context, intent, _options?) => craftTransaction(context, intent),
-    estimateFees: async (context, intent, _options?) => ({
-      value: await estimateFees(context, intent.amount),
-    }),
+    estimateFees: (context, intent, _options?) => estimateIntentFees(context, intent),
     combine: (_context, tx, signature, _options?) => combine(tx, signature),
     broadcast: (context, tx, _options?) => broadcast(context, tx),
     validateIntent: (context, intent, balances, options?) =>

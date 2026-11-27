@@ -60,6 +60,7 @@ export const AccountRow = ({ account, onClick, trailing, checked, onEdit }: Acco
       onClick={onClick}
       active={trailing === "checkbox" ? Boolean(checked) : undefined}
       data-testid={`account-row-${name}`}
+      data-dd-action-name="Account row"
     >
       <ListItemLeading>
         <ListItemContent>

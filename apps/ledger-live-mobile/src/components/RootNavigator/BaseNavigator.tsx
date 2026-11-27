@@ -199,7 +199,6 @@ export default function BaseNavigator() {
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
   const web3hub = useFeature("web3hub");
-  const newReceiveFlow = useFeature("newReceiveFlow");
   const swapToEarnFlag = useFeature("swapToEarn");
   const isSwapToEarnEnabled = swapToEarnFlag?.enabled ?? false;
 
@@ -387,13 +386,11 @@ export default function BaseNavigator() {
           component={PerpsNavigator}
           options={{ headerShown: false }}
         />
-        {newReceiveFlow?.enabled && (
-          <Stack.Screen
-            name={NavigatorName.Receive}
-            component={ReceiveNavigator}
-            options={{ headerShown: false }}
-          />
-        )}
+        <Stack.Screen
+          name={NavigatorName.Receive}
+          component={ReceiveNavigator}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name={NavigatorName.GlobalSearch}
           component={GlobalSearchNavigator}

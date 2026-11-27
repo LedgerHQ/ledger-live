@@ -27,12 +27,19 @@ The sections come with the next tickets of the
 | `useIsSettingsHomeEnabled` | `/native` | Whether the new home is on, for the header the app's navigator sets                            |
 | `SettingsScrollView`       | `/native` | Scroll view of a Settings screen, its content padded off the bottom safe area                  |
 
+On mobile, `onSwitchToLegacySettings` adds a last row to the home, "Back to previous Settings",
+for users without the Debug menu. The app turns `newSettings` off on that device with a local
+override, so the legacy home shows right away and stays after a restart.
+
 Help is a standalone page, not a section: with `newSettings` on, `getSettingsRoute` returns
 `standalonePage: "help"` for `/settings/help`, and `SettingsGate` renders what the app's
 `renderStandalonePage` gives, without the section tabs. It is the page of
-`@features/flow-settings-help`.
+`@features/flow-settings-help`, which mobile also renders as its My Wallet Help screen.
 
-A row's trailing element is a chevron, an external link, a toggle, a value, a select or a button.
+A row's trailing element is a chevron, an external link, a toggle, a value, a select, a button or
+a picker (a value that opens the section's own picker, e.g. the desktop region dialog). A select can
+carry a search field (`search`, matching the label, description or value with
+`matchesSettingsOption`), and each option a `description` and a `shortLabel` for the closed select.
 On mobile, the select opens its options in a bottom sheet (Lumen `SelectList`), like the web
 select opens its list: render the Settings under `QueuedBottomSheetsProvider`.
 
@@ -43,7 +50,7 @@ A sheet opens on top of the Settings: a bottom sheet on mobile, a dialog on desk
 | Export                 | Entry | Purpose                                                                 |
 | ---------------------- | ----- | ----------------------------------------------------------------------- |
 | `SettingsSheet`        | `.`   | Title, optional description, close button and any content               |
-| `SettingsConfirmSheet` | `.`   | Confirm or cancel an action, `destructive` or `neutral`, disabled while it runs; an `InfoState` dialog on desktop |
+| `SettingsConfirmSheet` | `.`   | Confirm or cancel an action, `destructive` or `neutral`, disabled while it runs. Both apps render an `InfoState` with the error or info spot: in a dialog on desktop, in a bottom sheet on mobile |
 
 On mobile, `SettingsSheet` goes through `QueuedBottomSheet`, so the app must render it under
 `QueuedBottomSheetsProvider` like any queued sheet.

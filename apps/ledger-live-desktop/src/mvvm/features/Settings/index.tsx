@@ -6,15 +6,30 @@ import {
   type SettingsStandalonePage,
 } from "@features/flow-settings";
 import { SettingsGate } from "@features/flow-settings/web";
+import { General } from "@features/flow-settings-general/web";
+import { Privacy } from "@features/flow-settings-privacy";
 import { Security } from "@features/flow-settings-security";
 import { DesktopSettingsPortProvider } from "./DesktopSettingsPortProvider";
+import { DesktopAboutSection } from "./sections/about";
 import { DesktopHelpPage } from "./sections/help";
 
 /** Apollo is an Android device: desktop only hides the rows the flag params turn on. */
 const IS_APOLLO_DEVICE = false;
 
-const renderSection = (section: SettingsSectionId) =>
-  section === "security" ? <Security testID="settings-security" /> : null;
+function renderSection(section: SettingsSectionId) {
+  switch (section) {
+    case "general":
+      return <General testID="settings-general" />;
+    case "security":
+      return <Security testID="settings-security" />;
+    case "privacy":
+      return <Privacy testID="settings-privacy" />;
+    case "about":
+      return <DesktopAboutSection />;
+    default:
+      return null;
+  }
+}
 
 const renderStandalonePage = (page: SettingsStandalonePage) =>
   page === "help" ? <DesktopHelpPage /> : null;

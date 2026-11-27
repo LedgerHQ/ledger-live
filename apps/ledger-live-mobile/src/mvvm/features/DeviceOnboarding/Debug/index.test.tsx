@@ -92,10 +92,10 @@ describe("DeviceOnboardingDebug", () => {
     await user.press(screen.getByRole("button", { name: "Close" }));
     await user.press(screen.getByRole("button", { name: "unseededOutro" }));
 
-    expect(screen.getByText("You’re all set")).toBeOnTheScreen();
+    expect(screen.getByText("You’re in control.")).toBeOnTheScreen();
 
     await user.press(screen.getByRole("button", { name: "Tap to continue" }));
-    await user.press(screen.getByRole("button", { name: "Explore now" }));
+    await user.press(screen.getByRole("button", { name: "Start exploring" }));
 
     expect(screen.getByText("Karaoke")).toBeVisible();
     expect(store.getState().settings.hasCompletedOnboarding).toBe(false);

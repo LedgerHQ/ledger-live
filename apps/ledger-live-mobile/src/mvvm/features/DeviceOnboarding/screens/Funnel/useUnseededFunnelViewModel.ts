@@ -67,12 +67,19 @@ export type RestoreDismissal = Readonly<{
   visibleState: string | null;
 }>;
 
-/** Closing the Recover restore screen shows the restore choice while the machine stays on Recover. */
-export function useRestoreDismissal(machineState: string | null): RestoreDismissal {
+/**
+ * Closing the Recover restore screen, or a deviceOnboarding flag that hides Recover, shows the
+ * restore choice while the machine stays on Recover.
+ */
+export function useRestoreDismissal(
+  machineState: string | null,
+  recoverRestoreAvailable = true,
+): RestoreDismissal {
   const [dismissed, setDismissed] = useState(false);
   const dismiss = useCallback(() => setDismissed(true), []);
   if (dismissed && machineState !== restoreRecoverState) setDismissed(false);
-  const showsChoice = dismissed && machineState === restoreRecoverState;
+  const showsChoice =
+    (dismissed || !recoverRestoreAvailable) && machineState === restoreRecoverState;
   return { dismissed, dismiss, visibleState: showsChoice ? restoreChoiceState : machineState };
 }
 
@@ -119,11 +126,7 @@ export type UnseededFunnelModel =
 
 export function useUnseededFunnelViewModel(input: UnseededFunnelInput): UnseededFunnelModel | null {
   const { device, machineState, liveMachineState, send } = input;
-  const {
-    dismissed: restoreDismissed,
-    dismiss: dismissRestore,
-    visibleState,
-  } = input.restoreDismissal;
+  const { dismiss: dismissRestore, visibleState } = input.restoreDismissal;
 
   const unseeded = input.onboardedOnEntry === false && device !== null && machineState !== null;
   const updateAfterSetup = useLatched(unseeded && input.updateAfterSetup === true);
@@ -154,7 +157,7 @@ export function useUnseededFunnelViewModel(input: UnseededFunnelInput): Unseeded
   });
 
   if (unseeded && machineState === doneState) return toDoneModel(input);
-  if (unseeded && machineState === restoreRecoverState && !restoreDismissed) {
+  if (unseeded && visibleState === restoreRecoverState) {
     return { status: "recoverRestore", dismiss: dismissRestore };
   }
   if (!unseeded || !visibleStage || !device || !machineState) return null;

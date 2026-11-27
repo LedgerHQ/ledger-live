@@ -2,7 +2,6 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { GlobalTooltipBottomSheet } from "@ledgerhq/lumen-ui-rnative";
 import { track, trackPage } from "@shared/analytics";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { Account, Operation } from "@ledgerhq/types-live";
@@ -119,7 +118,6 @@ function renderManageAssets(account: Account) {
         <OuterStack.Screen name={ScreenName.Account} component={AccountScreen} />
         <OuterStack.Screen name={NavigatorName.XrpManageTokenFlow} component={component} />
       </OuterStack.Navigator>
-      <GlobalTooltipBottomSheet />
     </BridgeSyncContext.Provider>,
     {
       navigationInitialState: {

@@ -18,6 +18,12 @@ import { useToState } from "./useToState";
 import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
 import { useProviderRates } from "./v5/useProviderRates";
 
+const NOT_ENOUGH_GAS_NAMES = new Set([
+  "NotEnoughGas",
+  "SolanaNotEnoughSolForTokenTransfer",
+  "SolanaNotEnoughSolForRecipientTokenAccount",
+]);
+
 export const selectorStateDefaultValues = {
   currency: undefined,
   account: undefined,
@@ -60,7 +66,8 @@ export const useFromAmountStatusMessage = (
       .filter(maybeError => maybeError instanceof Error)
       .find(errorOrWarning => (errorOrWarning as { name?: string })?.name !== "AmountRequired");
     const relevantStatusName = (relevantStatus as { name?: string })?.name;
-    const isRelevantStatus = relevantStatusName === "NotEnoughGas";
+    const isRelevantStatus =
+      relevantStatusName !== undefined && NOT_ENOUGH_GAS_NAMES.has(relevantStatusName);
 
     // Skip gas validation for sponsored transactions since gas fees are covered by sponsor
 

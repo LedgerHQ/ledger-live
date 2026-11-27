@@ -1,10 +1,11 @@
 import { TypedDataEncoder, Wallet } from "ethers";
-import { from, lastValueFrom, throwError, toArray, type Observable } from "rxjs";
+import { from, lastValueFrom, Observable, throwError, toArray } from "rxjs";
 import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import {
   PLACE_ORDER_SIGNED_AT_MS,
   PLACE_ORDER_TYPED_DATA,
 } from "../__fixtures__/placeOrderTypedData";
+import { SELL_POSITION_TYPED_DATA } from "../__fixtures__/sellPositionTypedData";
 import { getBindingTypedData } from "../binding";
 import {
   predictionsSigningJob,
@@ -35,6 +36,10 @@ function signatureBy(signer: Wallet, { domain, types, message }: PredictionsType
 const ORDER_TYPED_DATA: PredictionsTypedData = {
   ...PLACE_ORDER_TYPED_DATA,
   domain: { ...PLACE_ORDER_TYPED_DATA.domain, chainId: 137 },
+};
+const SALE_TYPED_DATA: PredictionsTypedData = {
+  ...SELL_POSITION_TYPED_DATA,
+  domain: { ...SELL_POSITION_TYPED_DATA.domain, chainId: 137 },
 };
 
 function run(
@@ -146,33 +151,64 @@ describe("predictionsSigningJob", () => {
     expect(onResult).toHaveBeenCalledWith(expect.objectContaining({ type: "signed" }));
   });
 
-  it("ends without asking the device when the order expired before a retry", async () => {
-    const now = jest.spyOn(Date, "now").mockReturnValue(PLACE_ORDER_SIGNED_AT_MS);
-    const signTypedData = jest
-      .fn<Observable<PredictionsSigningEvent>, [PredictionsTypedData]>()
-      .mockReturnValue(throwError(() => new Error("Bluetooth lost")));
-    const { job, onResult } = run(signTypedData, {
-      purpose: "order",
-      typedData: ORDER_TYPED_DATA,
-    });
-    const states: PredictionsSigningJobState[] = [];
-    const done = new Promise<void>(resolve => {
-      job.subscribe({ next: state => states.push(state), complete: resolve });
-    });
-    const error = states.at(-1);
-    if (error?.type !== "error") throw new Error("Expected an error state");
+  it.each([
+    ["order", ORDER_TYPED_DATA, "The order expired before it was signed"],
+    ["sale", SALE_TYPED_DATA, "The sale expired before it was signed"],
+  ] as const)(
+    "ends without asking the device when the %s expired before a retry",
+    async (purpose, typedData, message) => {
+      const now = jest.spyOn(Date, "now").mockReturnValue(PLACE_ORDER_SIGNED_AT_MS);
+      const signTypedData = jest
+        .fn<Observable<PredictionsSigningEvent>, [PredictionsTypedData]>()
+        .mockReturnValue(throwError(() => new Error("Bluetooth lost")));
+      const { job, onResult } = run(signTypedData, { purpose, typedData });
+      const states: PredictionsSigningJobState[] = [];
+      const done = new Promise<void>(resolve => {
+        job.subscribe({ next: state => states.push(state), complete: resolve });
+      });
+      const error = states.at(-1);
+      if (error?.type !== "error") throw new Error("Expected an error state");
 
-    now.mockReturnValue(PLACE_ORDER_SIGNED_AT_MS + 2 * 60 * 1000);
-    error.retry();
-    await done;
+      now.mockReturnValue(PLACE_ORDER_SIGNED_AT_MS + 2 * 60 * 1000);
+      error.retry();
+      await done;
 
-    expect(signTypedData).toHaveBeenCalledTimes(1);
-    expect(onResult).toHaveBeenCalledWith({
-      type: "expired",
-      error: expect.any(PredictionsOrderExpired),
-    });
-    now.mockRestore();
-  });
+      expect(signTypedData).toHaveBeenCalledTimes(1);
+      expect(onResult).toHaveBeenCalledWith({
+        type: "expired",
+        error: expect.any(PredictionsOrderExpired),
+      });
+      expect(onResult.mock.calls[0][0].error.message).toBe(message);
+      now.mockRestore();
+    },
+  );
+
+  it.each([
+    ["order", ORDER_TYPED_DATA],
+    ["sale", SALE_TYPED_DATA],
+  ] as const)(
+    "answers that the %s expired, not its signature, when the user confirms too late",
+    async (purpose, typedData) => {
+      const now = jest.spyOn(Date, "now").mockReturnValue(PLACE_ORDER_SIGNED_AT_MS);
+      const confirmingTooLate = () =>
+        new Observable<PredictionsSigningEvent>(device => {
+          device.next({ type: "awaiting-confirmation" });
+          now.mockReturnValue(PLACE_ORDER_SIGNED_AT_MS + 2 * 60 * 1000);
+          device.next({ type: "signed", signature: signatureBy(wallet, typedData) });
+          device.complete();
+        });
+      const { job, onResult } = run(confirmingTooLate, { purpose, typedData });
+
+      await lastValueFrom(job.pipe(toArray()));
+
+      expect(onResult).toHaveBeenCalledTimes(1);
+      expect(onResult).toHaveBeenCalledWith({
+        type: "expired",
+        error: expect.any(PredictionsOrderExpired),
+      });
+      now.mockRestore();
+    },
+  );
 
   it("leaves a lost connection to the executor", async () => {
     const disconnected = { _tag: "DeviceDisconnectedWhileSendingError" };

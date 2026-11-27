@@ -56,7 +56,11 @@ export function runSwapTokenApprovalFlow(options: RunSwapTokenApprovalFlowOption
     it(
       `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token approval flow`,
       async () => {
-        const provider = await pickRotatingProvider(swapProviders, fromAccount, toAccount);
+        const provider = await pickRotatingProvider({
+          eligibleProviders: swapProviders,
+          accountFrom: fromAccount,
+          accountTo: toAccount,
+        });
         await app.swap.logSelectedProvider(provider.uiName);
         await app.speculos.enableBlindSigningOnNanoS();
         await revokeTokenApproval(fromAccount, provider);

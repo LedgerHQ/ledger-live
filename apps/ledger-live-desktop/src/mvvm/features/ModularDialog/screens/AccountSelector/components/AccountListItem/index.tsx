@@ -47,7 +47,12 @@ export const AccountListItem = ({ onClick, account }: AccountListItemProps) => {
   const networkId = parentId ?? cryptoId;
 
   return (
-    <ListItem className="-outline-offset-2" onClick={onClick} data-testid={`account-row-${name}`}>
+    <ListItem
+      className="-outline-offset-2"
+      onClick={onClick}
+      data-testid={`account-row-${name}`}
+      data-dd-action-name="Account row"
+    >
       <ListItemLeading>
         <ListItemContent>
           <ListItemTitle>{name}</ListItemTitle>

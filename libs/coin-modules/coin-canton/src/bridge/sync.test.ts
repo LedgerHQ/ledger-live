@@ -11,16 +11,22 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/serialization/index";
 import type { Account, AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import type { CantonContext } from "../config";
+import type { CantonCoinConfig, CantonContext } from "../config";
 import * as instrumentBalances from "../logic/instrumentBalances";
 import * as gateway from "../network/gateway";
 import { OperationInfo } from "../network/gateway";
 import resolver from "../signer";
 import { lastValueFrom } from "rxjs";
-import { createMockCantonAccount, createMockCantonCurrency } from "../test/fixtures";
+import {
+  createMockCantonAccount,
+  createMockCantonCurrency,
+  configOfCall,
+  createMockCoinConfigValue,
+} from "../test/fixtures";
 import { createBridges } from "./index";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { CantonAccount, CantonSigner } from "../types";
+import { CantonInvalidConfigError } from "../types/errors";
 import * as onboard from "./onboard";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { makeGetAccountShape, filterDisabledTokenAccounts, SYNC_HASH } from "./sync";
@@ -62,7 +68,11 @@ const mockedIsOnboarded = onboard.isAccountOnboarded as jest.Mock;
 const mockedIsAuthorized = onboard.isCantonCoinPreapproved as jest.Mock;
 
 const sampleCurrency = createMockCantonCurrency();
-const sampleConfig = { nativeInstrumentId: "Amulet", minReserve: "0", useGateway: true };
+const sampleConfig = {
+  ...createMockCoinConfigValue(),
+  nativeInstrumentId: "Amulet",
+  minReserve: "0" as unknown as number,
+} satisfies CantonCoinConfig;
 const fakeContext = {
   config: async () => sampleConfig,
   logger: () => {},
@@ -271,8 +281,8 @@ const pendingOperation = (hash: string, sequence: number) =>
 
 const readFrom = () => mockedGetOperations.mock.calls.map(([, , options]) => options);
 
-const syncFrom = (initialAccount: Partial<CantonAccount>) =>
-  makeGetAccountShape({} as SignerContext<CantonSigner>, fakeContext)(
+const syncFrom = (initialAccount: Partial<CantonAccount>, context: CantonContext = fakeContext) =>
+  makeGetAccountShape({} as SignerContext<CantonSigner>, context)(
     createMockCantonAccountShapeInfo({
       initialAccount: {
         xpub: "party123",
@@ -842,7 +852,8 @@ describe("makeGetAccountShape", () => {
 
     // Deviceless backfill: publicKey now resolves, so validateTopology can run.
     expect(mockedResolver).not.toHaveBeenCalled();
-    expect(mockedGetPartyById).toHaveBeenCalledWith(sampleConfig, "test-party-id");
+    expect(mockedGetPartyById).toHaveBeenCalledWith(expect.anything(), "test-party-id");
+    await expect(configOfCall(mockedGetPartyById.mock.calls[0])).resolves.toBe(sampleConfig);
     expect(shape.cantonResources?.publicKey).toBe("backfilled-public-key");
   });
 
@@ -1799,6 +1810,32 @@ describe("makeGetAccountShape", () => {
         expect(checkpointOf(shape)).toEqual({ hash: "later", height: 12 });
       });
 
+      it("reads every page by the configured page size", async () => {
+        rows = [first, later];
+        mockedGetOperations.mockImplementation(async (_config, _party, options) => {
+          const start = options?.cursor ?? options?.minOffset ?? 0;
+          const limit = options?.limit ?? Infinity;
+          const pending = rows.filter(({ block }) => block.height >= start);
+          const page = pending.slice(0, limit);
+          const unserved = pending[page.length];
+          return { operations: page, next: unserved ? unserved.block.height + 1 : -1 };
+        });
+        const pagedConfig = {
+          ...sampleConfig,
+          gateway: { ...sampleConfig.gateway, maxTxQuery: 1 },
+        };
+        const shape = await syncFrom(
+          { syncHash: SYNC_HASH, operations: [], cantonResources: {} as never },
+          { ...fakeContext, config: async () => pagedConfig } as unknown as CantonContext,
+        );
+
+        expect(readFrom()).toEqual([
+          { minOffset: 0, maxOffset: 12345, cursor: undefined, limit: 1 },
+          { minOffset: 0, maxOffset: 12345, cursor: 6, limit: 1 },
+        ]);
+        expect(hashesOf(shape)).toEqual(["later", "first"]);
+      });
+
       it("reads the whole history again after the account is cleared", async () => {
         rows = [first, later];
         const synced = await syncFirst();
@@ -2480,6 +2517,28 @@ describe("makeGetAccountShape", () => {
       mockedGetNativeInstrument.mockRejectedValue(new Error("gateway down"));
 
       await expect(sync()).rejects.toThrow("gateway down");
+    });
+
+    it("fails on an invalid config rather than use the saved DSO party", async () => {
+      mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+      mockedGetNativeInstrument.mockRejectedValue(
+        new CantonInvalidConfigError("canton: coin config gateway.dsoPartyCacheTtlMs"),
+      );
+      const info = createMockCantonAccountShapeInfo({
+        initialAccount: {
+          xpub: "party123",
+          cantonResources: {
+            isOnboarded: true,
+            instrumentUtxoCounts: {},
+            pendingTransferProposals: [],
+            nativeInstrumentAdmin: "native-admin",
+          },
+        } as unknown as CantonAccount,
+      });
+
+      await expect(
+        makeGetAccountShape(fakeSignerContext, fakeContext)(info, { paginationConfig: {} }),
+      ).rejects.toThrow(CantonInvalidConfigError);
     });
 
     it("uses the DSO party saved by an earlier sync when it can't be read", async () => {

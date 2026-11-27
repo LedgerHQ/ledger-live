@@ -1,16 +1,14 @@
-// Fake launches for the analysis tests: A and B pairs, with the Debug value's start and the
-// native start chosen per build.
+// Fake launches for the analysis tests: A and B pairs, with the Debug value's start chosen per
+// build.
 import type { Sample, Side } from "../types.ts";
 
-const PROCESS_START = 1_700_000_000_000;
-
-export type LaunchOptions = Partial<Sample> & { jsStartOffset?: number; nativeStartMs?: number };
+/** `jsStartOffset`: when the first JS import comes after the start the Debug value counts from. */
+export type LaunchOptions = Partial<Sample> & { jsStartOffset?: number };
 
 export function launch({
   side,
   appStartupTime,
-  jsStartOffset = 5,
-  nativeStartMs = 400,
+  jsStartOffset = 400,
   ...rest
 }: LaunchOptions & { side: Side; appStartupTime: number }): Sample {
   return {
@@ -24,11 +22,7 @@ export function launch({
     startedAt: "2026-11-06T00:00:00.000Z",
     ok: true,
     appStartupTime,
-    processStartAppClockAt: PROCESS_START,
-    events: {
-      "Before js imports": { count: 1, time: jsStartOffset },
-      [`JS start epoch ${PROCESS_START + nativeStartMs}`]: { count: 1, time: jsStartOffset + 1 },
-    },
+    events: { "Before js imports": { count: 1, time: jsStartOffset } },
     ...rest,
   };
 }
@@ -62,19 +56,12 @@ export function comparison({
   );
 }
 
-/**
- * A counts from the first JS import, B from the process start, 800 ms earlier, and one B launch
- * fell back to the first JS import (the app found no process start). Both builds are as fast.
- */
-export function startsDifferWithFallback(): Sample[] {
-  const samples = comparison({
-    deltaMs: 0,
-    a: { jsStartOffset: 0, nativeStartMs: 800 },
-    b: { jsStartOffset: 800, nativeStartMs: 800, appStartupTime: 1800 },
-  });
+/** Both builds count from the process start, but one B launch fell back to the first JS import. */
+export function withFallback(): Sample[] {
+  const samples = comparison({ deltaMs: 0 });
   const fallback = samples.find(s => s.side === "B");
   if (!fallback?.events) throw new Error("no B launch");
-  fallback.appStartupTime = 1000;
+  fallback.appStartupTime = 600;
   fallback.events["Before js imports"].time = 0;
   return samples;
 }

@@ -82,11 +82,43 @@ export const ORDER_COPY = {
   tryAgain: "Try again",
 } as const;
 
+export const SALE_COPY = {
+  placing: "Selling your shares",
+  filled: {
+    title: "Sale complete",
+    fill_one: "You sold {{shares}} share for {{amount}}",
+    fill_other: "You sold {{shares}} shares for {{amount}}",
+    sold_one: "You sold {{shares}} share",
+    sold_other: "You sold {{shares}} shares",
+  },
+  notFilled: {
+    title: "Sale not filled",
+    description: "Nothing was sold. Try again with a fresh quote.",
+  },
+  rejected: {
+    title: "Sale not placed",
+    "expired-signature": "The sale's authorization expired before it was sent.",
+    "insufficient-balance": "You don't hold enough shares for this sale.",
+    "invalid-tick-size": "The market's price increments changed.",
+    "market-closed": "This market is closed.",
+    "not-accepted": "MoonPay couldn't place the sale.",
+  },
+  unconfirmed: {
+    title: "We couldn't confirm your sale",
+    description: "Check your positions before trying again.",
+  },
+} as const;
+
 const RESOURCES = {
   en: {
     translation: {
       common: { close: "Close" },
-      predictions: { onboarding: PREDICTIONS_COPY, binding: SETUP_COPY, order: ORDER_COPY },
+      predictions: {
+        onboarding: PREDICTIONS_COPY,
+        binding: SETUP_COPY,
+        order: ORDER_COPY,
+        sale: SALE_COPY,
+      },
     },
   },
 };
