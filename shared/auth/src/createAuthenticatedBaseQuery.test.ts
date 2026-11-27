@@ -302,4 +302,76 @@ describe("createAuthenticatedBaseQuery", () => {
       }),
     );
   });
+
+  describe("with an auth provider key", () => {
+    const keyedApi = createApi({
+      reducerPath: "keyedAuthenticatedBaseQueryTestApi",
+      baseQuery: createAuthenticatedBaseQuery(
+        { baseUrl: API_BASE_URL },
+        { authProviderKey: "agent-intent" },
+      ),
+      endpoints: build => ({
+        gatedQuery: build.query<{ ok: boolean }, void>({ query: () => "/private" }),
+      }),
+    });
+    const agentWithToken = jest.fn(({ queryFn }) =>
+      queryFn({ tokenType: "Bearer", accessToken: "agent-token" }),
+    );
+
+    function createKeyedStore(withAgentMiddleware: boolean) {
+      return configureStore({
+        reducer: { [keyedApi.reducerPath]: keyedApi.reducer },
+        middleware: getDefaultMiddleware =>
+          getDefaultMiddleware()
+            .concat(
+              createAuthMiddleware({
+                createAuthProvider: () => authProvider,
+                isFeatureEnabled: () => true,
+              }),
+              ...(withAgentMiddleware
+                ? [
+                    createAuthMiddleware({
+                      key: "agent-intent",
+                      createAuthProvider: () => ({ withToken: agentWithToken }),
+                      isFeatureEnabled: () => true,
+                    }),
+                  ]
+                : []),
+            )
+            .concat(keyedApi.middleware),
+      });
+    }
+
+    it("should authenticate with the provider of its key, not the default one", async () => {
+      const keyedStore = createKeyedStore(true);
+
+      const { status } = await keyedStore.dispatch(
+        keyedApi.endpoints.gatedQuery.initiate(undefined, { subscribe: false }),
+      );
+
+      expect(status).toBe("fulfilled");
+      expect(agentWithToken).toHaveBeenCalledTimes(1);
+      expect(authProvider.withToken).not.toHaveBeenCalled();
+      expect(endpoints.private).toHaveBeenCalledTimes(1);
+      expect(endpoints.private.mock.calls[0][0].request.headers.get("authorization")).toBe(
+        "Bearer agent-token",
+      );
+    });
+
+    it("should fall back to an unauthenticated request when no middleware holds its key", async () => {
+      const keyedStore = createKeyedStore(false);
+
+      const { status } = await keyedStore.dispatch(
+        keyedApi.endpoints.gatedQuery.initiate(undefined, { subscribe: false }),
+      );
+
+      expect(status).toBe("fulfilled");
+      expect(authProvider.withToken).not.toHaveBeenCalled();
+      expect(endpoints.private.mock.calls[0][0].request.headers.get("authorization")).toBeNull();
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        "AuthenticatedBaseQuery failed to authenticate:",
+        expect.objectContaining({ name: "AuthProviderMissingError" }),
+      );
+    });
+  });
 });

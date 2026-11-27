@@ -17,11 +17,14 @@ type FetchBaseQuery = BaseQueryFn<
 
 const UNAUTHORIZED_STATUSES = new Set([401]); // Only re-authenticate on 401
 
-export function createAuthenticatedBaseQuery(baseQueryArgs: FetchBaseQueryArgs): FetchBaseQuery {
+export function createAuthenticatedBaseQuery(
+  baseQueryArgs: FetchBaseQueryArgs,
+  { authProviderKey }: { authProviderKey?: string } = {},
+): FetchBaseQuery {
   return async (args, api, extraOptions) => {
     if (extraOptions?.authenticated !== false) {
       try {
-        return await getAuthProvider(api.dispatch).withToken({
+        return await getAuthProvider(api.dispatch, authProviderKey).withToken({
           async queryFn(token) {
             if (!token) {
               return fetchBaseQuery(baseQueryArgs)(args, api, extraOptions);
