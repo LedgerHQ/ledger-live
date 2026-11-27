@@ -24,3 +24,11 @@ export function describeSchemaFailure(error: NamedSchemaError): FetchBaseQueryEr
     data: { schemaName: error.schemaName },
   };
 }
+
+export function unreadableResponse(issues: readonly Issue[]): FetchBaseQueryError {
+  return {
+    status: "CUSTOM_ERROR",
+    error: describeIssues(issues),
+    data: { schemaName: "rawResponseSchema" },
+  };
+}

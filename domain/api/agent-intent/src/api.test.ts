@@ -438,6 +438,34 @@ describe("getAgentProfile", () => {
 
     expect(readAgentIntentFailure(result.error)).toMatchObject({ kind: "http", status: 404 });
   });
+
+  it("should report an unreadable response when a 200 carries the missing-profile message", async () => {
+    routes.getProfile.mockImplementation(() =>
+      HttpResponse.json({ message: "Agent profile not found." }),
+    );
+
+    const result = await makeStore().dispatch(endpoints.getAgentProfile.initiate(agentPubkey));
+
+    expect(result.data).toBeUndefined();
+    expect(readAgentIntentFailure(result.error)).toEqual({ kind: "unreadable-response" });
+  });
+
+  it("should report an unreadable response when a 200 has no body", async () => {
+    routes.getProfile.mockImplementation(() => new HttpResponse(null, { status: 200 }));
+
+    const result = await makeStore().dispatch(endpoints.getAgentProfile.initiate(agentPubkey));
+
+    expect(readAgentIntentFailure(result.error)).toEqual({ kind: "unreadable-response" });
+  });
+
+  it("should refuse a key that isn't one without a request", async () => {
+    const result = await makeStore().dispatch(
+      endpoints.getAgentProfile.initiate(".." as typeof agentPubkey),
+    );
+
+    expect(readAgentIntentFailure(result.error)).toMatchObject({ kind: "invalid-request" });
+    expect(routes.getProfile).not.toHaveBeenCalled();
+  });
 });
 
 describe("agent profile writes", () => {

@@ -18,7 +18,7 @@ import { z } from "zod";
 import { AGENT_INTENT_TAGS } from "./constants";
 import { readAgentIntentFailure } from "./failure";
 import { parseEach } from "./internals/parseEach";
-import { describeSchemaFailure } from "./internals/schemaFailure";
+import { describeSchemaFailure, unreadableResponse } from "./internals/schemaFailure";
 import {
   AgentIntentIdArgSchema,
   AgentIntentListPageRequestSchema,
@@ -39,11 +39,6 @@ import type {
 } from "./types";
 
 const ListBodySchema = z.array(z.unknown());
-
-const AgentProfileOrMissingSchema = z.union([
-  AgentProfileRecordSchema,
-  MissingAgentProfileBodySchema,
-]);
 
 const INTENT_LIST = { type: "AgentIntent", id: "LIST" } as const;
 const PROFILE_LIST = { type: "AgentProfile", id: "LIST" } as const;
@@ -89,8 +84,8 @@ function nextIntentCursor(
   return nextCursor && !alreadyFollowed ? nextCursor : undefined;
 }
 
-function isMissingProfile(response: Response, body: unknown): boolean {
-  return response.status === 404 && MissingAgentProfileBodySchema.safeParse(body).success;
+function isMissingProfile(error: FetchBaseQueryError): boolean {
+  return error.status === 404 && MissingAgentProfileBodySchema.safeParse(error.data).success;
 }
 
 /** RTK Query runs `invalidatesTags` with the raw argument even when `argSchema` refused it. */
@@ -202,14 +197,17 @@ export const agentIntentReviewerApi = agentIntentApi
       }),
 
       getAgentProfile: build.query<AgentProfileRecord | null, AgentPubkey>({
-        query: agentPubkey => ({
-          url: profilePath(agentPubkey),
-          validateStatus: (response, body) => response.ok || isMissingProfile(response, body),
-        }),
+        queryFn: async (agentPubkey, _api, _extraOptions, baseQuery) => {
+          const result = await baseQuery(profilePath(agentPubkey));
+          if (result.error) {
+            return isMissingProfile(result.error) ? { data: null } : { error: result.error };
+          }
+          const profile = AgentProfileRecordSchema.safeParse(result.data);
+          return profile.success
+            ? { data: profile.data }
+            : { error: unreadableResponse(profile.error.issues) };
+        },
         argSchema: AgentPubkeyArgSchema,
-        rawResponseSchema: AgentProfileOrMissingSchema,
-        transformResponse: (body: z.output<typeof AgentProfileOrMissingSchema>) =>
-          "agentPubkey" in body ? body : null,
         catchSchemaFailure: describeSchemaFailure,
         providesTags: (_result, _error, agentPubkey) => [{ type: "AgentProfile", id: agentPubkey }],
       }),
