@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { maticEth, usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { render, screen, within, withFlagOverrides } from "@tests/test-renderer";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -48,6 +49,14 @@ const stellarAccount = withBalance(
   "5000000",
 );
 
+const xrpAccount = withBalance(
+  genAccount("account-detail-assets-xrp", {
+    currency: getCryptoCurrencyById("ripple_testnet"),
+    operationsSize: 2,
+  }),
+  "5000000",
+);
+
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList, typeof BASE_NAVIGATOR_ID>();
 
 type AssetDetailTarget = { screen?: string; params?: { currencyId?: string; source?: string } };
@@ -84,7 +93,7 @@ function renderAccount(
           ...withFlag,
           accounts: {
             ...withFlag.accounts,
-            active: [ethAccount, emptyBtcAccount, algorandAccount, stellarAccount],
+            active: [ethAccount, emptyBtcAccount, algorandAccount, stellarAccount, xrpAccount],
           },
           settings: { ...withFlag.settings, blacklistedTokenIds, hideEmptyTokenAccounts },
         };
@@ -93,7 +102,24 @@ function renderAccount(
   );
 }
 
+function enableXrpTokenStandards(enabledTokenStandards: string[]) {
+  LiveConfig.setProvider({
+    getValueByKey: (key: string) =>
+      key === "config_currency_ripple_testnet" ? { enabledTokenStandards } : undefined,
+  });
+}
+
 describe("AccountDetail assets", () => {
+  let savedProvider: typeof LiveConfig.instance.provider;
+
+  beforeEach(() => {
+    savedProvider = LiveConfig.instance.provider;
+  });
+
+  afterEach(() => {
+    LiveConfig.instance.provider = savedProvider;
+  });
+
   it("lists the coin and its tokens with their balances", async () => {
     renderAccount(ethAccount);
 
@@ -157,6 +183,22 @@ describe("AccountDetail assets", () => {
     const section = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.assets);
     expect(within(section).getByTestId(ACCOUNT_DETAIL_TEST_IDS.addAsset)).toBeVisible();
     expect(within(section).getByText("Add")).toBeVisible();
+  });
+
+  it("offers to add an asset on an XRP account when a token standard is enabled", () => {
+    enableXrpTokenStandards(["iou"]);
+    renderAccount(xrpAccount);
+
+    const section = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.assets);
+    expect(within(section).getByTestId(ACCOUNT_DETAIL_TEST_IDS.addAsset)).toBeVisible();
+  });
+
+  it("does not offer to add an asset on an XRP account when every token standard is off", () => {
+    enableXrpTokenStandards([]);
+    renderAccount(xrpAccount);
+
+    const section = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.assets);
+    expect(within(section).queryByTestId(ACCOUNT_DETAIL_TEST_IDS.addAsset)).toBeNull();
   });
 
   it("does not offer to add an asset where nothing needs to be added, even with tokens", () => {

@@ -23,10 +23,10 @@ import type { Asset } from "~/types/asset";
 import { getAccountTrackingFacts } from "../../../../utils/accountTracking";
 import { buildAccountAssets } from "../../../../utils/buildAccountAssets";
 
-type AddAssetAction = (
+type AddAssetAction = ((
   navigation: NativeStackNavigationProp<ParamListBase>,
   accountId: string,
-) => void;
+) => void) & { isAvailable?: (account: Account) => boolean };
 
 export type AssetsSectionViewModel = Readonly<{
   assets: Asset[];
@@ -56,6 +56,7 @@ export function useAssetsSectionViewModel(account: Account): AssetsSectionViewMo
   const addAssetAction = (perFamilyAddAssetAction as Record<string, AddAssetAction | undefined>)[
     account.currency.family
   ];
+  const isAddAssetAvailable = addAssetAction?.isAvailable?.(account) ?? true;
   const onAddAsset = useCallback(() => {
     addAssetAction?.(navigation, account.id);
   }, [account.id, addAssetAction, navigation]);
@@ -74,7 +75,7 @@ export function useAssetsSectionViewModel(account: Account): AssetsSectionViewMo
   return {
     assets,
     precomputed: usePrecomputedAssetListData(assets),
-    onAddAsset: addAssetAction ? onAddAsset : undefined,
+    onAddAsset: addAssetAction && isAddAssetAvailable ? onAddAsset : undefined,
     onAssetPress,
   };
 }

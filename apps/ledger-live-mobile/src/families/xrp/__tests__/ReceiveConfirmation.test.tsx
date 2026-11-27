@@ -62,14 +62,14 @@ describe("XRP ReceiveConfirmation", () => {
     jest.mocked(getXrpEnabledTokenStandards).mockReturnValue(["iou"]);
   });
 
-  it("asks to add a token the account doesn't hold and opens its settings", async () => {
+  it("asks to add a token the account doesn't hold and opens its review", async () => {
     const { user } = renderReceiveConfirmation();
 
     expect(await screen.findByTestId(ALERT)).toBeVisible();
     await user.press(screen.getByTestId("xrp-receive-add-token"));
 
     expect(mockNavigate).toHaveBeenCalledWith("XrpAddTokenFlow", {
-      screen: ScreenName.XrpAddTokenSettings,
+      screen: ScreenName.XrpAddTokenReview,
       params: { accountId: XRP_ACCOUNT.id, token: xrpIouToken },
     });
   });

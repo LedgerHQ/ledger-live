@@ -25,11 +25,7 @@ export function navigateToAddToken(
   }
 
   navigation.navigate(NavigatorName.XrpAddTokenFlow, {
-    screen: getTokenFirstScreen(token),
+    screen: ScreenName.XrpAddTokenReview,
     params: { accountId, token },
   });
-}
-
-export function getTokenFirstScreen(token: TokenCurrency) {
-  return token.tokenType === "iou" ? ScreenName.XrpAddTokenSettings : ScreenName.XrpAddTokenReview;
 }
