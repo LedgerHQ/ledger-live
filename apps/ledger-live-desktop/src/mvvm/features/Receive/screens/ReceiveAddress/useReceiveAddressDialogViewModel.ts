@@ -13,6 +13,7 @@ import {
   useReceiveNetwork,
 } from "@features/flow-receive";
 import { useFeatureFlags } from "@features/platform-feature-flags";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useCopyToClipboard } from "LLD/hooks/useCopyToClipboard";
 import { useLLDCoinFamily } from "~/renderer/families";
@@ -58,6 +59,11 @@ export function useReceiveAddressDialogViewModel({
       })),
     [incidents],
   );
+  const accountCurrency = legacyAccount?.currency;
+  const checkAddressSanctioned = useMemo(
+    () => accountCurrency && ((address: string) => isAddressSanctioned(accountCurrency, address)),
+    [accountCurrency],
+  );
   const featureFlags = useFeatureFlags();
 
   const getFamilyConfig = useMemo<ReceiveFamilyConfigPort | undefined>(
@@ -87,5 +93,6 @@ export function useReceiveAddressDialogViewModel({
     getFamilyConfig,
     serviceIncidents,
     onResolveGate,
+    checkAddressSanctioned,
   };
 }

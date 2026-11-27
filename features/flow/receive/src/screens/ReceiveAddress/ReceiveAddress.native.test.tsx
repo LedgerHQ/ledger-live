@@ -301,4 +301,18 @@ describe("ReceiveAddress (Native)", () => {
     await userEvent.setup().press(screen.getByText("Onboard account"));
     expect(onResolveGate).toHaveBeenCalledTimes(1);
   });
+
+  it("never shows an address on the sanctions list", async () => {
+    const onClose = jest.fn();
+    renderScreen(onClose, makeReceiveTestStore(), {
+      checkAddressSanctioned: async () => true,
+      onCopyAddress: jest.fn(async () => true),
+    });
+
+    expect(await screen.findByTestId("receive-address-sanctioned")).toBeTruthy();
+    expect(screen.queryByTestId("receive-address-summary")).toBeNull();
+
+    await userEvent.setup().press(screen.getByTestId("receive-address-sanctioned-close"));
+    expect(onClose).toHaveBeenCalled();
+  });
 });

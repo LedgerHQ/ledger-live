@@ -168,4 +168,11 @@ describe("useReceiveAddressDialogViewModel", () => {
       dispatch: store.dispatch,
     });
   });
+
+  it("should check the address against the account's currency while the token still loads", () => {
+    jest.mocked(useLLDCoinFamily).mockReturnValue({});
+    const { result } = renderViewModel(USDC_ID);
+
+    expect(result.current.checkAddressSanctioned).toEqual(expect.any(Function));
+  });
 });

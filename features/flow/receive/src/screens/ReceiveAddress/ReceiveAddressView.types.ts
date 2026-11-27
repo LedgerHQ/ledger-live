@@ -95,11 +95,21 @@ export type ReceiveGateView = Readonly<{
   action?: ReceiveAddressAction;
 }>;
 
+/** The address is on the sanctions list: the screen tells so instead of showing it. */
+export type ReceiveSanctionedView = Readonly<{
+  title: string;
+  description: string;
+  closeLabel: string;
+  onClose: () => void;
+  learnMore: ReceiveAddressAction;
+}>;
+
 export type ReceiveAddressViewProps = Readonly<{
   /** The address is not known yet: skeletons hold the place of the QR card and the address. */
   isLoading: boolean;
   error?: ReceiveAddressError;
   gate?: ReceiveGateView;
+  sanctioned?: ReceiveSanctionedView;
   addressSelection?: ReceiveAddressSelectionView;
   /** Absent until the address is read, and while the user picks one. */
   address?: ReceiveAddressShown;

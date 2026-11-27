@@ -124,6 +124,11 @@ const receiveTestResources = {
             action: "Add {{asset}}",
           },
         },
+        sanctioned: {
+          title: "Keeping you safe",
+          description:
+            "This transaction involves a sanctioned wallet address and cannot be processed.\n{{address}}",
+        },
         help: {
           cardTitle: "Need support? Get help",
           title: "Get help",
