@@ -13,7 +13,13 @@ const getUserdata = async (userdataFile: string) => {
 export type SavedBalance = { amount: BigNumber; magnitude: number };
 
 type SavedAccount = {
-  data?: { id?: string; currencyId?: string; index?: number; spendableBalance?: string };
+  data?: {
+    id?: string;
+    currencyId?: string;
+    index?: number;
+    spendableBalance?: string;
+    freshAddress?: string;
+  };
 };
 
 function findSavedAccount(userdata: { data?: { accounts?: unknown } }, account: Account) {
@@ -28,6 +34,15 @@ export async function getSavedAccountId(userdataFile: string, account: Account):
   const id = findSavedAccount(await getUserdata(userdataFile), account)?.data?.id;
   if (!id) throw new Error(`No ${account.accountName} saved in ${userdataFile}`);
   return id;
+}
+
+export async function getSavedAccountAddress(
+  userdataFile: string,
+  account: Account,
+): Promise<string> {
+  const address = findSavedAccount(await getUserdata(userdataFile), account)?.data?.freshAddress;
+  if (!address) throw new Error(`No address saved for ${account.accountName} in ${userdataFile}`);
+  return address;
 }
 
 export async function getSavedSpendableBalance(

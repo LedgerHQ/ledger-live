@@ -38,9 +38,9 @@ export type LockDeclaration = {
 };
 
 /** The test's `env` fixture, which overrides the runner's environment for the app. */
-type TestEnv = Readonly<Record<string, string>> | undefined;
+export type TestEnv = Readonly<Record<string, string>> | undefined;
 
-const isAppBroadcastEnabled = (env: TestEnv) =>
+export const isAppBroadcastEnabled = (env: TestEnv) =>
   (env?.DISABLE_TRANSACTION_BROADCAST ?? process.env.DISABLE_TRANSACTION_BROADCAST ?? "1") === "0";
 
 const lockedBroadcastAccounts = ({ broadcastAccounts = [] }: LockDeclaration, env: TestEnv) =>
@@ -57,12 +57,13 @@ const targetsToLock = (declaration: LockDeclaration, env: TestEnv): LockTarget[]
  * detail of their `test.describe` or `test`, so Playwright never runs two of them on the same
  * target at once in this run, and `fixtures` to `test.use`, so the exclusive lock fixture keeps
  * other CI machines off them. The fixture takes the whole declaration: Playwright reads an array
- * whose second item is an object, e.g. two accounts, as a `[value, options]` fixture. `names` only
- * see the runner's environment, while the fixture locks on the broadcast setting the app gets.
+ * whose second item is an object, e.g. two accounts, as a `[value, options]` fixture.
+ *
+ * @param env The test's `env` fixture, when it overrides broadcasting.
  */
-export function exclusiveLockFor(declaration: LockDeclaration) {
+export function exclusiveLockFor(declaration: LockDeclaration, env?: TestEnv) {
   return {
-    names: lockKeys(targetsToLock(declaration, undefined)),
+    names: lockKeys(targetsToLock(declaration, env)),
     fixtures: { lockDeclaration: declaration },
   };
 }

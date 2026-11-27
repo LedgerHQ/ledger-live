@@ -18,6 +18,7 @@ import {
   shareViewKey,
   approveToken,
   signTypedMessage as signTypedMessageDevice,
+  signHyperliquidMessage as signHyperliquidMessageDevice,
   acceptEnableTransactionCheck as acceptEnableTransactionCheckDevice,
   confirmContactAction,
   waitForAppReady,
@@ -171,6 +172,11 @@ export class SpeculosPage extends AppPage {
   @step("Sign typed message on device")
   async signTypedMessage() {
     await signTypedMessageDevice();
+  }
+
+  @step("Sign the Hyperliquid message on device")
+  async signHyperliquidMessage() {
+    await signHyperliquidMessageDevice();
   }
 
   @step("Check and accept if available enable transaction check")

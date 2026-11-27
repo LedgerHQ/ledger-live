@@ -46,6 +46,7 @@ export enum DeviceLabels {
   REJECT = "Reject",
   REMOVE = "Remove",
   REMOVE_FROM_LEDGER_SYNC = "Remove from",
+  REVIEW_MESSAGE = "Review message",
   REVIEW_OPERATION = "Review",
   REVIEW_TRANSACTION = "Review transaction",
   REVIEW_TRANSACTION_TO = "Review transaction to",

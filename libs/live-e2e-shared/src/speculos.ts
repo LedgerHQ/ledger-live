@@ -203,6 +203,13 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
+  Hyperliquid: {
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Hyperliquid",
+    },
+    dependencies: [{ name: "Ethereum" }],
+  },
   Ethereum_Classic: {
     currency: getCryptoCurrencyById("ethereum_classic"),
     appQuery: {
@@ -1697,4 +1704,9 @@ export const acceptBlindSigningWarning = withDeviceController(
     },
 );
 
-export { approveToken, approveContractTransaction, signTypedMessage } from "./families/evm";
+export {
+  approveToken,
+  approveContractTransaction,
+  signTypedMessage,
+  signHyperliquidMessage,
+} from "./families/evm";

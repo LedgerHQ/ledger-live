@@ -8,6 +8,7 @@ import {
   waitFor,
   waitUntilScreenLeavesIdle,
   SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS,
+  type GiveUpCheck,
 } from "../speculos";
 import { getSpeculosModel, isTouchDevice } from "../speculosAppVersion";
 import {
@@ -210,20 +211,43 @@ export async function approveContractTransaction() {
   return approveContractTransactionButtonDevice();
 }
 
-export async function signTypedMessageTouchDevices() {
-  await waitFor(DeviceLabels.REVIEW_TYPED_MESSAGE);
+function throwIfGivenUp(giveUpWhen?: GiveUpCheck) {
+  const reason = giveUpWhen?.();
+  if (reason) throw new Error(`Stopped signing before confirming: ${reason}`);
+}
+
+async function signMessageTouchDevices(reviewLabel: DeviceLabels, giveUpWhen?: GiveUpCheck) {
+  await waitFor(reviewLabel, { giveUpWhen });
   await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
+  throwIfGivenUp(giveUpWhen);
   await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
 }
 
-export const signTypedMessageButtonDevice = withDeviceController(
+const signMessageButtonDevice = withDeviceController(
   ({ getButtonsController }) =>
-    async () => {
-      await waitFor(DeviceLabels.REVIEW_TYPED_MESSAGE);
+    async (reviewLabel: DeviceLabels, giveUpWhen?: GiveUpCheck) => {
+      await waitFor(reviewLabel, { giveUpWhen });
       await pressUntilTextFound(DeviceLabels.SIGN_TYPED_MESSAGE);
+      throwIfGivenUp(giveUpWhen);
       await getButtonsController().both();
     },
 );
+
+/** Signs a message whose review opens on `reviewLabel`. */
+async function signMessage(reviewLabel: DeviceLabels, giveUpWhen?: GiveUpCheck) {
+  if (isTouchDevice()) {
+    return signMessageTouchDevices(reviewLabel, giveUpWhen);
+  }
+  return signMessageButtonDevice(reviewLabel, giveUpWhen);
+}
+
+export async function signTypedMessageTouchDevices() {
+  await signMessageTouchDevices(DeviceLabels.REVIEW_TYPED_MESSAGE);
+}
+
+export async function signTypedMessageButtonDevice() {
+  await signMessageButtonDevice(DeviceLabels.REVIEW_TYPED_MESSAGE);
+}
 
 /**
  * The nanos app (1.16.2) shows typed data as domain and message hashes only, behind a "Blind
@@ -237,6 +261,11 @@ export const signTypedMessageNanoS = withDeviceController(
       await getButtonsController().both();
     },
 );
+
+/** Hyperliquid reviews orders as messages, e.g. "Review message". */
+export async function signHyperliquidMessage(giveUpWhen?: GiveUpCheck) {
+  await signMessage(DeviceLabels.REVIEW_MESSAGE, giveUpWhen);
+}
 
 export async function signTypedMessage() {
   if (isTouchDevice()) {

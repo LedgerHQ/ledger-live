@@ -7,6 +7,7 @@ import { AssetDetailPage } from "tests/page/assetDetail.page";
 import { AssetPage } from "tests/page/asset.page";
 import { BorrowPage } from "tests/page/borrow.page";
 import { PerpsPage } from "tests/page/perps.page";
+import { PerpsOrderPage } from "tests/page/perps.order.page";
 import { PerpsDepositDialog } from "tests/page/dialog/perps.deposit.dialog";
 import { PerpsWithdrawDialog } from "tests/page/dialog/perps.withdraw.dialog";
 import { PerpsTransactionSignedDialog } from "tests/page/dialog/perps.transaction.signed.dialog";
@@ -105,6 +106,7 @@ export class Application extends PageHolder {
   public password = new PasswordlockModal(this.page);
   public myLedger = new MyLedgerPage(this.page);
   public perps = new PerpsPage(this.page, this.electronApp);
+  public perpsOrder = new PerpsOrderPage(this.page, this.electronApp);
   public perpsDepositDialog = new PerpsDepositDialog(this.page);
   public perpsWithdrawDialog = new PerpsWithdrawDialog(this.page);
   public perpsTransactionSignedDialog = new PerpsTransactionSignedDialog(this.page);

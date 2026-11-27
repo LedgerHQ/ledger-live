@@ -1,0 +1,109 @@
+import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { FF_PERPS_DESKTOP, IS_PERPS_LIVE_APP_STAGING } from "tests/utils/featureFlagUtils";
+import { buildTags } from "tests/utils/tagsUtils";
+import { getPerpsLiveAppStorage } from "tests/utils/perpsLiveAppStorage";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
+import { HIP3_MARKETS, type PerpsOrderSide, type ProviderPosition } from "tests/utils/perpsMarkets";
+import {
+  closePerpsLeftovers,
+  closePerpsPositionsOpenedByTest,
+  openPerpsFromPortfolio,
+  readPerpsMarketsInUse,
+  ORDER_LEVERAGE,
+  ORDER_MARGIN_USD,
+  PERPS_REAL_BROADCAST_ENV,
+} from "tests/utils/perpsPositionFlows";
+import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
+
+const account = Account.HYPERCORE_1;
+const market = HIP3_MARKETS;
+const lock = exclusiveLockFor({ broadcastAccounts: [account] }, PERPS_REAL_BROADCAST_ENV);
+
+const orders = [
+  { side: "long", xrayTicket: "B2CQA-4699" },
+  { side: "short", xrayTicket: "B2CQA-4700" },
+] satisfies { side: PerpsOrderSide; xrayTicket: string }[];
+
+test.describe("Perps open position", { lock: lock.names }, () => {
+  // Remove once the Perps feature flags are on PRD.
+  test.skip(!IS_PERPS_LIVE_APP_STAGING, "Perps feature flags are not on PRD yet");
+  skipSharedAccountOnSecondaryLeg("Perps open", PERPS_REAL_BROADCAST_ENV);
+
+  // One shard for both sides; the lock serializes them anyway.
+  test.describe.configure({ mode: "default" });
+  test.use(lock.fixtures);
+  test.use({
+    teamOwner: Team.PERPS,
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: AppInfos.ETHEREUM,
+    cliCommands: [liveDataCommand(account)],
+    webviewLocalStorage: {
+      hostnamePrefix: "perps.",
+      entries: getPerpsLiveAppStorage(account, { featureFlags: market.liveAppFlags }),
+    },
+    featureFlags: FF_PERPS_DESKTOP,
+    env: PERPS_REAL_BROADCAST_ENV,
+  });
+
+  // Unset until read, so cleanup never closes foreign positions.
+  let marketsAtStart: ProviderPosition[] | undefined;
+
+  test.beforeEach(async ({ app, speculos, userdataFile }) => {
+    marketsAtStart = undefined;
+    await closePerpsLeftovers({
+      account,
+      userdataFile,
+      market,
+      restoreApp: AppInfos.ETHEREUM.name,
+      relaunchSpeculos: speculos.relaunch,
+    });
+    await openPerpsFromPortfolio(app);
+    marketsAtStart = await readPerpsMarketsInUse({ account, userdataFile });
+  });
+
+  // Closes the real position even when the test fails.
+  test.afterEach(async ({ speculos, userdataFile }) => {
+    if (!marketsAtStart) return;
+    await closePerpsPositionsOpenedByTest({
+      account,
+      userdataFile,
+      marketsAtStart,
+      relaunchSpeculos: speculos.relaunch,
+    });
+  });
+
+  for (const { side, xrayTicket } of orders) {
+    test(
+      `Open position - ${market.label} ${side} with margin, take profit and stop loss`,
+      {
+        // The Hyperliquid app has no Nano S build.
+        tag: buildTags({ currencyId: account.currency.id, skipLNS: true }),
+        annotation: { type: "TMS", description: xrayTicket },
+      },
+      async ({ app, speculos }) => {
+        await app.perpsOrder.openFirstMarketWithoutPosition(market, marketsAtStart ?? []);
+        // The order form opens on Long.
+        if (side === "short") await app.perpsOrder.selectSide(side);
+        await app.perpsOrder.setLeverage(ORDER_LEVERAGE);
+        await app.perpsOrder.expectLeverage(ORDER_LEVERAGE);
+        await app.perpsOrder.enterMargin(ORDER_MARGIN_USD);
+        await app.perpsOrder.setAutoClose(side);
+        await app.perpsOrder.expectAutoCloseSet();
+        await speculos.relaunch(AppInfos.HYPERLIQUID.name);
+        await app.perpsOrder.clickOpenPosition();
+        await app.speculos.signHyperliquidMessage();
+        await app.perpsOrder.expectOrderPlaced();
+        await app.perpsOrder.clickContinueAfterOrderPlaced();
+        await app.perpsOrder.expectOpenedPosition({
+          side,
+          leverage: ORDER_LEVERAGE,
+          marginUsd: ORDER_MARGIN_USD,
+        });
+      },
+    );
+  }
+});
