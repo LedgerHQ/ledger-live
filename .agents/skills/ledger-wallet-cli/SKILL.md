@@ -143,6 +143,6 @@ The paths are relative to this skill's folder. If you read this skill through `s
 | [`references/ring.md`](references/ring.md) | before any `pnpm --silent wallet-cli start ring` command |
 | [`references/swap.md`](references/swap.md) | before any `pnpm --silent wallet-cli start swap` command |
 | [`references/earn.md`](references/earn.md) | before any `pnpm --silent wallet-cli start earn` command |
-| [`references/network.md`](references/network.md) | you run wallet-cli in a sandbox that allows only listed hosts, or a command fails with `Could not reach <host>`, `The request to <host> was refused`, `<host> did not answer in time`, `The TLS certificate of <host> is not trusted` or `host` in its JSON error |
+| [`references/network.md`](references/network.md) | you run wallet-cli in a sandbox that allows only listed hosts, or a failed command names a host (on stderr, or `host` in its JSON error) |
 | [`references/errors.md`](references/errors.md) | a command outside agent-intent exits non-zero or prints `[✖]`, before you retry it |
 | [`references/business-logic.md`](references/business-logic.md) | the human asks why something works the way it does, or you need to justify a safety rule |
