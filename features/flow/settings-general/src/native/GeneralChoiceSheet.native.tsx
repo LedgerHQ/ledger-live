@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import type { TextInput } from "react-native";
 import {
   BottomSheetHeader,
@@ -12,6 +12,7 @@ import {
   SelectListItemText,
   SelectListSearch,
 } from "@ledgerhq/lumen-ui-rnative";
+import { matchesSettingsOption } from "@features/flow-settings";
 import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { useBottomSheetKeyboardAwareInput } from "@shared/ui-queued-bottom-sheet/keyboard";
 import type { GeneralSectionLabels } from "../copy/useGeneralSectionLabels";
@@ -48,6 +49,7 @@ function GeneralChoiceSheetContent({
           onClose();
           if (selected !== null && selected !== sheet.value) sheet.onSelect(selected);
         }}
+        filter={matchesSettingsOption}
       >
         {sheet.hasSearch ? (
           <SelectListSearch
@@ -76,15 +78,25 @@ function GeneralChoiceSheetContent({
 
 /** The sheet of the General row being edited: its options, searchable when the list is long. */
 export function GeneralChoiceSheet({ sheet, search, onClose }: GeneralChoiceSheetProps) {
+  // The sheet reports its close when the closing animation starts: keep the content until hidden.
+  const [shownSheet, setShownSheet] = useState(sheet);
+  if (sheet !== null && sheet !== shownSheet) setShownSheet(sheet);
+  const onModalHide = useCallback(() => {
+    if (sheet === null) setShownSheet(null);
+  }, [sheet]);
+
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={sheet !== null}
       onClose={onClose}
+      onModalHide={onModalHide}
       enableDynamicSizing
       contentHasBottomSpace
       testID="settings-general-sheet"
     >
-      {sheet ? <GeneralChoiceSheetContent sheet={sheet} search={search} onClose={onClose} /> : null}
+      {shownSheet ? (
+        <GeneralChoiceSheetContent sheet={shownSheet} search={search} onClose={onClose} />
+      ) : null}
     </QueuedBottomSheet>
   );
 }

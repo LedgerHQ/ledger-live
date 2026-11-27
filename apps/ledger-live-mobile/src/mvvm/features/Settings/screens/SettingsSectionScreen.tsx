@@ -13,7 +13,7 @@ import type { ScreenName } from "~/const";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { LedgerSyncActivationDrawer } from "../components/LedgerSyncActivationDrawer";
-import { useSettingsRowsToHide } from "../hooks/useSettingsRowsToHide";
+import { useSectionRowsToHide } from "../hooks/useSectionRowsToHide";
 import { MobileSettingsPortProvider } from "../MobileSettingsPortProvider";
 import { useNotificationsSettingsAdapter } from "../sections/notifications";
 
@@ -60,7 +60,7 @@ function SectionContent({ section }: Readonly<{ section: SettingsHomeSectionId }
 /** Shows the content of each section that has landed; the others stay empty. */
 export function SettingsSectionScreen({ route }: SettingsSectionScreenProps) {
   const { section } = route.params;
-  const rowsToHide = useSettingsRowsToHide();
+  const rowsToHide = useSectionRowsToHide();
 
   return (
     <HiddenSettingsProvider rowsToHide={rowsToHide}>

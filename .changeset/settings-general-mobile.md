@@ -1,4 +1,5 @@
 ---
+"@features/flow-settings": minor
 "@features/flow-settings-general": minor
 "live-mobile": minor
 "ledger-live-desktop": minor

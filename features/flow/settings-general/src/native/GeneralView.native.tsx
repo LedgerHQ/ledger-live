@@ -34,6 +34,7 @@ export function GeneralView({
         description={labels.ledgerSync.description}
         icon={<Refresh size={24} color="base" />}
         trailing={{ type: "chevron", onSelect: ledgerSync.onOpen }}
+        settingId="ledgerSync"
         testID="settings-general-ledgerSync"
       />
       {PICKER_ROWS.map(id => {
