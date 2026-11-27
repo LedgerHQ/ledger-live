@@ -54,6 +54,8 @@ which the presets and the `.mts` configs import and which writes the JSON fragme
 `derivation-mirror` JS plugins. `base` puts them in
 `jsPlugins`; a config that does not extend a preset,
 such as an app config, imports it by package name, as it imports `@support/lint/restricted-imports`.
+It also exports `COIN_FAMILIES_PLUGIN` and `LEGACY_UI_PLUGIN`, which the apps reach through
+`coinFamiliesLint` and `legacyUiLint`.
 
 ## Conformance
 
@@ -332,5 +334,57 @@ lives in the app's `coin-families-exceptions.json` (`apps/ledger-live-desktop`, 
 the baseline no longer holds for the file (remove it from the entry when the leak is fixed), on a missing field and
 on a file listed twice. It does not ask a reason for each baseline entry: the rest of the baseline is debt, tracked
 by its tickets.
+
+### `legacy-ui`
+
+[`src/legacy-ui.js`](src/legacy-ui.js) stops the growth of the legacy UI stack in the apps: the
+pre-Lumen design systems (`@ledgerhq/native-ui`, `@ledgerhq/react-ui`), `styled-components` and the
+Desktop `Box` and `Text` components. It has two rules:
+
+- **`legacy-ui/no-legacy-import`**: reports [`MESSAGES.legacyImport`](src/legacy-ui.js) once per
+  `import` or `export ... from` declaration of a legacy module, `import type` included, and once per
+  `require()`, `import()`, `import("...")` type, `import x = require()` and jest mocking call
+  ([`specifier-calls.js`](src/specifier-calls.js)) that names one. It skips the waived files. Outside them it catches every use: a component or a `styled` definition needs its
+  import first.
+- **`legacy-ui/no-banned-component`**: reports [`MESSAGES.bannedComponent`](src/legacy-ui.js) on
+  each import and JSX element of a component listed in `bannedComponents`, imported from a legacy
+  module. It checks the files of `FILE_WAIVERS` too. `bannedComponents` ships empty.
+
+An app turns them on with `legacyUiLint` from `@support/lint/legacy-ui` and spreads each key into
+its config, next to `coinFamilies`. The app config is the one place that lists its legacy modules:
+
+```ts
+const legacyUi = legacyUiLint({ modules: ["@ledgerhq/native-ui", "styled-components"] });
+// jsPlugins: [..., ...legacyUi.jsPlugins],
+// rules: { ..., ...legacyUi.rules },
+```
+
+Both rules read the same options:
+
+- **`modules`**: a specifier matches an entry or a subpath of it (`styled-components` covers
+  `styled-components/native`). An entry starting with `~/` also matches any specifier that the app's
+  `tsconfig.json` resolves to the same file or folder (a relative path, `src/...` through `paths`); the
+  files of that entry may import each other.
+- **`bannedComponents`**: component names, the imported name of a named import or the local name
+  of a default import.
+
+**Waivers.** [`src/legacy-ui-waivers.js`](src/legacy-ui-waivers.js) lists, by posix path from the repo
+root, the files allowed to keep their legacy imports:
+
+- **`FILE_WAIVERS`**: one sorted line per file that imported a legacy module when the plugin landed,
+  each with a `TEMPORARY` reason and its exit condition. `no-legacy-import` skips these files;
+  `no-banned-component` still checks them.
+- **`FOLDER_WAIVERS`**: globs of Mobile folders deleted whole by a feature flag cleanup, the reason
+  naming the flag, and of dev-only screens. Neither rule checks them.
+
+The list only shrinks: new code never gets an entry. Delete an entry in the PR that migrates or
+deletes its file.
+
+[`src/check-legacy-ui-waivers.js`](src/check-legacy-ui-waivers.js), run by `pnpm lint:legacy-ui-waivers`,
+`pnpm lint:arch` and CI, reads each app's modules from its `oxlint.config.mts` and fails on each problem
+its [`PROBLEMS`](src/check-legacy-ui-waivers.js) table lists. A stale entry fails so the list keeps shrinking. A `legacy-ui/*` rule in an
+app's `oxlint-suppressions.json` fails because the waivers replace oxlint's baseline for this plugin:
+`oxlint --suppress-all` must not hide a new import. An inline `oxlint-disable` or `eslint-disable` of a
+`legacy-ui/*` rule fails for the same reason.
 
 Run the rules' tests with `nx run @support/lint:test`.

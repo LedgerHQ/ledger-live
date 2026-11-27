@@ -14,8 +14,13 @@ import {
 } from "@support/lint/restricted-imports";
 import { SUFFIX_IMPORTS_PLUGIN } from "@support/lint/plugins";
 import { coinFamiliesLint } from "@support/lint/coin-families";
+import { legacyUiLint } from "@support/lint/legacy-ui";
 
 const coinFamilies = coinFamiliesLint({ familiesDir: "src/families", barrel: "forbidden" });
+
+const legacyUi = legacyUiLint({
+  modules: ["@ledgerhq/native-ui", "styled-components"],
+});
 
 const MVVM_ALIAS = {
   group: ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
@@ -71,7 +76,7 @@ export default defineConfig({
   globals: { __DEV__: "readonly", __REDUX_DEVTOOLS_EXTENSION__: "readonly" },
   categories: { correctness: "error", suspicious: "warn", pedantic: "off" },
   plugins: ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest", "jsx-a11y"],
-  jsPlugins: [SUFFIX_IMPORTS_PLUGIN, ...coinFamilies.jsPlugins],
+  jsPlugins: [SUFFIX_IMPORTS_PLUGIN, ...coinFamilies.jsPlugins, ...legacyUi.jsPlugins],
   ignorePatterns: [
     "*.min.js",
     "node_modules",
@@ -108,6 +113,7 @@ export default defineConfig({
     "import/no-duplicates": "error",
     "suffix-imports/no-platform-suffix": "error",
     ...coinFamilies.rules,
+    ...legacyUi.rules,
     "import/no-named-as-default": "off",
     "typescript/no-explicit-any": "error",
     "typescript/no-non-null-assertion": "off",

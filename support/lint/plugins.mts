@@ -17,3 +17,6 @@ export const COIN_FAMILIES_PLUGIN = fileURLToPath(
 export const DERIVATION_MIRROR_PLUGIN = fileURLToPath(
   new URL("./src/derivation-mirror.js", import.meta.url),
 );
+
+/** Absolute path of the `legacy-ui` oxlint JS plugin, for a config's `jsPlugins`. */
+export const LEGACY_UI_PLUGIN = fileURLToPath(new URL("./src/legacy-ui.js", import.meta.url));
