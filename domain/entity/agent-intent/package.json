@@ -1,0 +1,38 @@
+{
+  "name": "@domain/entity-agent-intent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent Intent entities: intent records, crafted transactions, signatures, agent profiles and intent counts as Zod schemas, with mocks",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema.mock": "./src/schema.mock.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "lint": "oxlint ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@shared/schema-primitives": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}
