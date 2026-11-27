@@ -45,15 +45,19 @@ const connection = {
   connectedDevice: { modelId: DmkDeviceModelId.STAX },
 } as DeviceConnectionResult;
 
-const unseededAwaitingStart = {
-  state: "awaitingStart",
-  context: { onboardedOnEntry: false },
-} as Partial<DeviceOnboardingSession>;
+function sessionAt(state: string, onboardedOnEntry: boolean) {
+  return { state, context: { onboardedOnEntry } } as Partial<DeviceOnboardingSession>;
+}
+
+const unseededAwaitingStart = sessionAt("awaitingStart", false);
 
 function pair(modelId: DmkDeviceModelId, next: Partial<DeviceOnboardingSession>) {
   const hook = renderHook(() => useDeviceOnboardingConnectViewModel());
   act(() => {
-    hook.result.current.onConnected({ ...connection, connectedDevice: { modelId } } as never);
+    hook.result.current.onConnected({
+      ...connection,
+      connectedDevice: { ...connection.connectedDevice, modelId },
+    });
   });
   useSession.mockReturnValue(session(next));
   hook.rerender(undefined);
@@ -143,15 +147,11 @@ describe("useDeviceOnboardingConnectViewModel", () => {
     });
 
     it.each<[string, DmkDeviceModelId, Partial<DeviceOnboardingSession>]>([
-      [
-        "a seeded Stax",
-        DmkDeviceModelId.STAX,
-        { state: "awaitingStart", context: { onboardedOnEntry: true } } as never,
-      ],
+      ["a seeded Stax", DmkDeviceModelId.STAX, sessionAt("awaitingStart", true)],
       [
         "an unseeded Stax going straight to the checks",
         DmkDeviceModelId.STAX,
-        { state: "checks.checksIdle", context: { onboardedOnEntry: false } } as never,
+        sessionAt("checks.checksIdle", false),
       ],
       ["an unseeded Nano X", DmkDeviceModelId.NANO_X, unseededAwaitingStart],
       ["an unseeded Nano S Plus", DmkDeviceModelId.NANO_SP, unseededAwaitingStart],
