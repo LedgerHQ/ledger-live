@@ -71,6 +71,28 @@ test("reports a rule the baseline no longer holds for the file", () => {
   ]);
 });
 
+test("reports a baselined rule missing from an entry with no rules", () => {
+  const root = app([ACCEPTED], BASELINE);
+
+  assert.deepEqual(messages(root, findProblems(root)), [
+    "src/a.ts: no-coin-specific-import reports it in oxlint-suppressions.json, add the rule to its entry",
+  ]);
+});
+
+test("reports a baselined rule missing from an entry with partial rules", () => {
+  const baseline = {
+    "src/a.ts": {
+      "coin-families/no-coin-specific-import": { count: 1 },
+      "coin-families/no-currency-id-branch": { count: 1 },
+    },
+  };
+  const root = app([{ ...ACCEPTED, rules: ["no-coin-specific-import"] }], baseline);
+
+  assert.deepEqual(messages(root, findProblems(root)), [
+    "src/a.ts: no-currency-id-branch reports it in oxlint-suppressions.json, add the rule to its entry",
+  ]);
+});
+
 test("reports an accepted entry without owner or reason", () => {
   const root = app([{ file: "src/a.ts", kind: "accepted" }]);
 

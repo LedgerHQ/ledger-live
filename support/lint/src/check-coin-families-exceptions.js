@@ -75,11 +75,19 @@ export function findProblems(appDir) {
     if (!fs.existsSync(path.join(appDir, entry.file))) {
       problems.push(`${label}: the file does not exist, remove its entry`);
     }
-    for (const rule of Array.isArray(entry.rules) ? entry.rules : []) {
+    const listed = Array.isArray(entry.rules) ? entry.rules : [];
+    for (const rule of listed) {
       if (!RULES.has(rule)) continue;
       if (baseline[entry.file]?.[`${RULE_PREFIX}${rule}`] === undefined) {
         problems.push(
           `${label}: ${rule} no longer reports it in ${BASELINE_FILE}, remove the rule from its entry`,
+        );
+      }
+    }
+    for (const rule of RULES) {
+      if (baseline[entry.file]?.[`${RULE_PREFIX}${rule}`] !== undefined && !listed.includes(rule)) {
+        problems.push(
+          `${label}: ${rule} reports it in ${BASELINE_FILE}, add the rule to its entry`,
         );
       }
     }
