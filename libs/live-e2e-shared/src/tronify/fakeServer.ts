@@ -347,10 +347,6 @@ function parseBody(raw: Buffer): unknown {
   }
 }
 
-/**
- * A fake Tronify, plus a TronGrid proxy that feeds coin-tron what each scenario needs: the payer's
- * balances, its energy before and after the rent, and a USDT transfer simulation.
- */
 type ProxyOptions = { req: http.IncomingMessage; pathAndQuery: string; raw: Buffer };
 
 type TronGridOptions = {
@@ -361,6 +357,10 @@ type TronGridOptions = {
   body: Json | undefined;
 };
 
+/**
+ * A fake Tronify, plus a TronGrid proxy that feeds coin-tron what each scenario needs: the payer's
+ * balances, its energy before and after the rent, and a USDT transfer simulation.
+ */
 export async function startFakeTronify(opts: FakeTronifyOptions): Promise<FakeTronify> {
   const upstreamTronGrid = trimEnd({ text: opts.upstreamTronGrid, char: "/" });
   const requests: FakeRequest[] = [];

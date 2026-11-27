@@ -86,9 +86,9 @@ async function removeStaleLock(lockDir: string, staleMs: number): Promise<void> 
   }
 }
 
-/** Removes the lock at `lockDir` if stale, else gives its holder `backoffMs` to release it. */
 type LockWaitOptions = { lockDir: string; staleMs: number; backoffMs: number };
 
+/** Removes the lock at `lockDir` if stale, else gives its holder `backoffMs` to release it. */
 async function waitForLockDir(options: LockWaitOptions): Promise<void> {
   const { lockDir, staleMs, backoffMs } = options;
   const { mtimeMs } = await fs.promises.stat(lockDir);

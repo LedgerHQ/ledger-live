@@ -420,13 +420,13 @@ export async function tryAcquireExclusiveLock(
   }
 }
 
-/** One at a time, in the same order everywhere, so two holders of several keys never deadlock. */
 type AcquireInOrderOptions = KeyLockOptions & {
   keys: readonly string[];
   label: string;
   leases: AbandonableLease[];
 };
 
+/** One at a time, in the same order everywhere, so two holders of several keys never deadlock. */
 async function acquireInOrder(options: AcquireInOrderOptions): Promise<void> {
   const { keys, label, leases, ...lockOptions } = options;
   const [key, ...rest] = keys;
@@ -482,16 +482,16 @@ export function refuseExclusiveLocks(targets: readonly LockTarget[], reason: str
   };
 }
 
-/**
- * Runs `fn` under the lock of `targets`. With `waitsForConfirmation`, `fn` only returns once its
- * transactions are confirmed, so on success the targets are handed back without the settle window.
- */
 type ExclusiveLockRunOptions = {
   readonly targets: readonly LockTarget[];
   readonly label: string;
   readonly waitsForConfirmation?: boolean;
 };
 
+/**
+ * Runs `fn` under the lock of `targets`. With `waitsForConfirmation`, `fn` only returns once its
+ * transactions are confirmed, so on success the targets are handed back without the settle window.
+ */
 export async function runWithExclusiveLock<T>(
   options: ExclusiveLockRunOptions,
   fn: () => Promise<T>,

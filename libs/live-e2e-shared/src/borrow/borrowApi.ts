@@ -218,9 +218,9 @@ export async function resolveRepaySpender(options: RepaySpenderOptions): Promise
   return requireAllowanceSpender({ steps, action: "repay", marketId });
 }
 
-/** Best-effort notify; the state we act on is the on-chain confirmation, not this. */
 type SubmitTransactionOptions = { transactionId: string; txHash: string };
 
+/** Best-effort notify; the state we act on is the on-chain confirmation, not this. */
 export async function submitTransaction(options: SubmitTransactionOptions): Promise<void> {
   const { transactionId, txHash } = options;
   await post({ pathname: `/v1/transactions/${transactionId}/submit`, body: { txHash } }).catch(

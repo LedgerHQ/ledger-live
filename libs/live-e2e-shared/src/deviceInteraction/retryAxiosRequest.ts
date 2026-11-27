@@ -9,17 +9,17 @@ const RETRYABLE_NODE_CODES = new Set([
   "EPIPE",
 ]);
 
-/**
- * Retries any Axios-based async call on transient failures: retryable HTTP statuses,
- * no-response network errors, common Node socket codes, or "socket hang up"
- * (speculos-device-controller / remote Speculos).
- */
 type RetryAxiosOptions = {
   maxRetries?: number;
   baseDelay?: number;
   retryableStatusCodes?: number[];
 };
 
+/**
+ * Retries any Axios-based async call on transient failures: retryable HTTP statuses,
+ * no-response network errors, common Node socket codes, or "socket hang up"
+ * (speculos-device-controller / remote Speculos).
+ */
 export async function retryAxiosRequest<T>(
   requestFn: () => Promise<T>,
   options: RetryAxiosOptions = {},

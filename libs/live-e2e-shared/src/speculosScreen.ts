@@ -159,6 +159,8 @@ function signInPage(key: string): string {
 `;
 }
 
+type WebProxyOptions = { target: string; token: string };
+
 /**
  * Serves the Speculos web page of `target` on a local port, adding the session token that a
  * browser cannot send itself. Responses are streamed as they come, which keeps the page's screen
@@ -169,8 +171,6 @@ function signInPage(key: string): string {
  * installs a service worker that adds it to each request the Speculos page makes. Only that page
  * (`GET /`), static HTML, loads without the key. The session token never leaves the proxy.
  */
-type WebProxyOptions = { target: string; token: string };
-
 export async function startSpeculosWebProxy(options: WebProxyOptions): Promise<SpeculosWebProxy> {
   const { target, token } = options;
   const upstream = new URL(target);
@@ -280,13 +280,13 @@ export async function startSpeculosWebProxy(options: WebProxyOptions): Promise<S
   };
 }
 
+type VncBridgeOptions = { url: string; token?: string };
+
 /**
  * Relays each VNC connection made to a local port over its own websocket to `url`. The session
  * token goes in the `Authorization` header, as Speculinho documents for VNC apps: noVNC's
  * `speculinho.token.<token>` subprotocol cannot carry a token with `/` or `=`.
  */
-type VncBridgeOptions = { url: string; token?: string };
-
 export async function startSpeculosVncBridge(options: VncBridgeOptions): Promise<LocalServer> {
   const { url, token } = options;
   const { WebSocket } = await import("undici");

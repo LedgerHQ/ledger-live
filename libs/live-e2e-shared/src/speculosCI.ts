@@ -303,9 +303,9 @@ function capacityRetryDelayMs(retryAfter: unknown): number {
   return CAPACITY_RETRY_MIN_MS + Math.random() * (CAPACITY_RETRY_MAX_MS - CAPACITY_RETRY_MIN_MS);
 }
 
-/** POSTs /acquire, waiting out HTTP 429 until `capacityDeadline`. A 429 creates no instance. */
 type PostAcquireOptions = { speculinhoUrl: string; payload: object; capacityDeadline: number };
 
+/** POSTs /acquire, waiting out HTTP 429 until `capacityDeadline`. A 429 creates no instance. */
 async function postAcquire(options: PostAcquireOptions) {
   const { speculinhoUrl, payload, capacityDeadline } = options;
   const res = await axios.post<SpeculinhoAcquireResponse>(`${speculinhoUrl}/acquire`, payload, {
@@ -328,12 +328,12 @@ function formatAcquireFailure(status: number, data: unknown): string {
   return `Speculinho POST /acquire failed with HTTP ${status}${body ? `: ${body}` : ""}`;
 }
 
+type SpeculinhoAcquireErrorOptions = { message: string; runId: string };
+
 /**
  * Error thrown when Speculinho `/acquire` fails.
  * Carries the `run_id` so we can still fetch `/status` and `/logs`.
  */
-type SpeculinhoAcquireErrorOptions = { message: string; runId: string };
-
 export class SpeculinhoAcquireError extends Error {
   readonly runId: string;
   constructor(options: SpeculinhoAcquireErrorOptions) {
