@@ -7,5 +7,17 @@
   },
   "homepage": "https://github.com/LedgerHQ/agent-skills",
   "repository": "https://github.com/LedgerHQ/agent-skills",
-  "keywords": ["ledger", "wallet-cli", "hardware-wallet", "agent-intent", "ledger-sync", "ethereum"]
+  "license": "MIT",
+  "keywords": ["ledger", "wallet-cli", "hardware-wallet", "agent-intent", "ledger-sync", "ethereum"],
+  "extensions": {
+    "com.openai": {
+      "requires_local_executor": true,
+      "interface": {
+        "displayName": "Ledger",
+        "shortDescription": "Pay and swap with your Ledger",
+        "developerName": "Ledger",
+        "category": "Finance"
+      }
+    }
+  }
 }

@@ -11,9 +11,10 @@
         "url": "https://github.com/LedgerHQ/agent-skills.git"
       },
       "policy": {
-        "installation": "AVAILABLE"
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Finance"
     }
   ]
 }
