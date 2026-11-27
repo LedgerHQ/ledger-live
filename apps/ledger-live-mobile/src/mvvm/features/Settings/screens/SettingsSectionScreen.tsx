@@ -6,6 +6,7 @@ import {
   type SettingsHomeSectionId,
 } from "@features/flow-settings";
 import { SettingsScrollView } from "@features/flow-settings/native";
+import { AssetManagement } from "@features/flow-settings-asset-management";
 import { General } from "@features/flow-settings-general/native";
 import { NotificationsSettings } from "@features/flow-settings-notifications";
 import { Security } from "@features/flow-settings-security";
@@ -39,6 +40,14 @@ function SectionContent({ section }: Readonly<{ section: SettingsHomeSectionId }
           <MobileSettingsPortProvider>
             <General testID="settings-general" />
             <LedgerSyncActivationDrawer />
+          </MobileSettingsPortProvider>
+        </Box>
+      );
+    case "assetManagement":
+      return (
+        <Box lx={{ paddingHorizontal: "s8" }}>
+          <MobileSettingsPortProvider>
+            <AssetManagement testID="settings-asset-management" />
           </MobileSettingsPortProvider>
         </Box>
       );

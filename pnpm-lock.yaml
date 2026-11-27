@@ -2335,6 +2335,9 @@ importers:
       '@features/flow-settings':
         specifier: workspace:^
         version: link:../../features/flow/settings
+      '@features/flow-settings-asset-management':
+        specifier: workspace:^
+        version: link:../../features/flow/settings-asset-management
       '@features/flow-settings-general':
         specifier: workspace:^
         version: link:../../features/flow/settings-general
