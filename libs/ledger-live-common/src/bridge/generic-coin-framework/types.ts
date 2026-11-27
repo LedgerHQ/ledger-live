@@ -124,6 +124,8 @@ export type GenericTransaction = TransactionCommon & {
   valId?: string;
   withdrawId?: string;
   dstValAddress?: string;
+  /** The pool of the account balance that funds the transaction, copied to the intent's `pool`. */
+  pool?: string;
   /**
    * Chain-specific transaction fields with no generic equivalent; the owning family maps them onto
    * the intent's `TxData` via `BridgeApi.buildIntentData` (ADR-047). `JsonSafe` is load-bearing: the

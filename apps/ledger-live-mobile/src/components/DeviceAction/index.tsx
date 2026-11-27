@@ -398,7 +398,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   if (llmNanoSDeprecation?.enabled) {
     const flowName = getFlowName(location, request);
     const isToDeprecate = [FlowName.send, FlowName.receive, FlowName.staking].includes(flowName);
-    if (currencyName == "Aptos" || currencyName == "Hedera") {
+    if (llmNanoSDeprecation.params?.currencies?.includes(currencyName)) {
       if (device?.modelId === DeviceModelId.nanoS && isToDeprecate) {
         return (
           <DeviceDeprecationScreen

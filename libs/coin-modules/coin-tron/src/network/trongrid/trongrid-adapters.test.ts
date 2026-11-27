@@ -71,6 +71,17 @@ describe("fromTrongridTxInfoToOperation", () => {
     expect(result.details).toMatchObject({ memo: "ledger-e2e" });
   });
 
+  it("uses every sender and recipient of summed TRC20 transfers", () => {
+    const result = fromTrongridTxInfoToOperation(
+      { ...mockTrongridTxInfo, senders: ["from", "other"], recipients: ["to", "to2"] },
+      mockBlock,
+      mockUserAddress,
+    );
+
+    expect(result.senders).toEqual(["from", "other"]);
+    expect(result.recipients).toEqual(["to", "to2"]);
+  });
+
   it("should return IN operation type when the user address is the recipient", () => {
     const txInfo = {
       ...mockTrongridTxInfo,

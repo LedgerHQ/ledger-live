@@ -63,11 +63,17 @@ const timeoutAfter =
   (input: string | URL | Request, init?: RequestInit) =>
     fetch(input, { ...init, signal: init?.signal ?? AbortSignal.timeout(timeoutMs) });
 
-const mockServerClient = (baseUrl: string, token?: string) =>
-  new MockClient(baseUrl, {
+type MockServerClientOptions = { baseUrl: string; token?: string };
+
+const mockServerClient = (options: MockServerClientOptions) => {
+  const { baseUrl, token } = options;
+  return new MockClient(baseUrl, {
     token,
     httpClient: new DmkNetworkClient({ baseUrl, fetch: timeoutAfter(REQUEST_TIMEOUT_MS) }),
   });
+};
+
+type MockServerSessionOptions = { baseUrl: string; token: string };
 
 /** Creates a session and imports `devices`. The caller owns the token and passes it to the app. */
 export async function provisionMockServerSession(
@@ -75,19 +81,20 @@ export async function provisionMockServerSession(
 ): Promise<{ baseUrl: string; token: string }> {
   await assertMockServerReachable();
   const baseUrl = mockServerBaseUrl();
-  const client = mockServerClient(baseUrl);
+  const client = mockServerClient({ baseUrl });
   const token = await client.authenticate();
   try {
     await client.importSession({ devices });
   } catch (error) {
-    await disposeMockServerSession(baseUrl, token).catch(() => undefined);
+    await disposeMockServerSession({ baseUrl, token }).catch(() => undefined);
     throw error;
   }
   return { baseUrl, token };
 }
 
-export async function disposeMockServerSession(baseUrl: string, token: string): Promise<void> {
-  await mockServerClient(baseUrl, token).disposeSession();
+export async function disposeMockServerSession(options: MockServerSessionOptions): Promise<void> {
+  const { baseUrl, token } = options;
+  await mockServerClient({ baseUrl, token }).disposeSession();
 }
 
 export async function assertMockServerReachable(): Promise<void> {
@@ -100,6 +107,10 @@ export async function assertMockServerReachable(): Promise<void> {
   }
 }
 
+type PinOnboardingStepOptions = { step: number; onboarded?: boolean; charonStatus?: number };
+
+type ApduResponseOptions = { prefix: string; response: string };
+
 /**
  * A handle on the mock server session the app provisioned at boot, so a test can keep
  * editing the device — swapping APDU mocks mid-flow to drive it where it needs to go.
@@ -110,10 +121,11 @@ export class MockServerSessionHandle {
   private readonly baseUrl: string;
   private readonly token: string;
 
-  constructor(baseUrl: string, token: string) {
+  constructor(options: MockServerSessionOptions) {
+    const { baseUrl, token } = options;
     this.baseUrl = baseUrl;
     this.token = token;
-    this.client = mockServerClient(baseUrl, token);
+    this.client = mockServerClient({ baseUrl, token });
   }
 
   /** Apps the device reports as installed, which is not what the install UI shows. */
@@ -136,11 +148,12 @@ export class MockServerSessionHandle {
    * Drive it onwards with another step rather than releasing the mock: released, the
    * device resumes from where it was and has to re-traverse the steps.
    */
-  async pinOnboardingStep(step: number, onboarded = false, charonStatus?: number): Promise<void> {
+  async pinOnboardingStep(options: PinOnboardingStepOptions): Promise<void> {
+    const { step, onboarded = false, charonStatus } = options;
     const { id } = await this.firstDevice();
     const { response } = await this.client.sendApdu(id, GET_VERSION_APDU);
 
-    const flagged = withOnboardingFlags(response, step, onboarded);
+    const flagged = withOnboardingFlags({ getVersionReply: response, step, onboarded });
 
     await this.pinApdu(id, {
       prefix: GET_VERSION_PREFIX,
@@ -244,7 +257,8 @@ export class MockServerSessionHandle {
    * the response the server would synthesize, including `6d00` for an instruction it
    * does not implement.
    */
-  async pinApduResponse(prefix: string, response: string): Promise<void> {
+  async pinApduResponse(options: ApduResponseOptions): Promise<void> {
+    const { prefix, response } = options;
     const { id } = await this.firstDevice();
     await this.pinApdu(id, { prefix, response });
   }

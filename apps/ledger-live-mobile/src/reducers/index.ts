@@ -64,7 +64,7 @@ import { accountStatusSlice } from "@domain/entity-account-status";
 import { accountBalancesSlice } from "@domain/entity-account-balance";
 import { accountOperationsSlice } from "@domain/entity-account-operation";
 import { accountBalanceHistoriesSlice } from "@domain/entity-account-balance-history";
-import { accountsSlice } from "@domain/entity-account";
+import { accountsSlice, discoveredAccountsSlice } from "@domain/entity-account";
 import { appLockSlice } from "@features/platform-app-lock";
 import type { UnknownAction } from "@reduxjs/toolkit";
 
@@ -137,6 +137,7 @@ const appReducer = combineReducers({
   accountOperations: accountOperationsSlice.reducer,
   accountBalanceHistories: accountBalanceHistoriesSlice.reducer,
   accountEntries: accountsSlice.reducer,
+  discoveredAccounts: discoveredAccountsSlice.reducer,
   appLock: appLockSlice.reducer,
   ...llmRTKApiReducers,
 });

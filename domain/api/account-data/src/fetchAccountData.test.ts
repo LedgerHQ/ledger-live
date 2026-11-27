@@ -1,5 +1,5 @@
 import { selectAccountDataStatus } from "@domain/entity-account-data";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { fetchAccountData, fetchMoreAccountData } from "./fetchAccountData";
 import type { AccountDataSource, AccountTarget } from "./source";
 import {

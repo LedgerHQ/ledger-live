@@ -25,7 +25,11 @@ const owner = ownedBy(coinTeamOwner(Account.XTZ_1.currency.id), { folder: TestFo
 // DELEGATED + STAKED for the stake flow; XTZ_3 (index 2) same, dedicated to unstake to avoid a settlement
 // race. (idx0/XTZ_1 stays with the legacy Tezos delegation spec, which relies on it being undelegated.)
 test.describe("Staking - Tezos", owner, () => {
-  const account = new Delegate(Account.XTZ_4, "N/A", "Ledger by Kiln");
+  const account = new Delegate({
+    account: Account.XTZ_4,
+    amount: "N/A",
+    provider: "Ledger by Kiln",
+  });
 
   // Force no broadcast: signing here would otherwise delegate XTZ_4 (idx3) on-chain.
   test.use({ ...tezosStakeUse(account), env: { DISABLE_TRANSACTION_BROADCAST: "1" } });
@@ -62,7 +66,11 @@ test.describe("Staking - Tezos", owner, () => {
 const stakeLock = exclusiveLockFor({ broadcastAccounts: [Account.XTZ_2] });
 
 test.describe("Staking - Tezos", { lock: stakeLock.names, ...owner }, () => {
-  const account = new Delegate(Account.XTZ_2, "0.005", "Ledger by Kiln");
+  const account = new Delegate({
+    account: Account.XTZ_2,
+    amount: "0.005",
+    provider: "Ledger by Kiln",
+  });
 
   test.use({ ...tezosStakeUse(account), ...stakeLock.fixtures });
 
@@ -92,7 +100,11 @@ test.describe("Staking - Tezos", { lock: stakeLock.names, ...owner }, () => {
 const unstakeLock = exclusiveLockFor({ broadcastAccounts: [Account.XTZ_3] });
 
 test.describe("Staking - Tezos", { lock: unstakeLock.names, ...owner }, () => {
-  const account = new Delegate(Account.XTZ_3, "0.005", "Ledger by Kiln");
+  const account = new Delegate({
+    account: Account.XTZ_3,
+    amount: "0.005",
+    provider: "Ledger by Kiln",
+  });
 
   test.use({ ...tezosStakeUse(account), ...unstakeLock.fixtures });
 
@@ -117,7 +129,11 @@ test.describe("Staking - Tezos", { lock: unstakeLock.names, ...owner }, () => {
 });
 
 test.describe("Staking - Tezos", owner, () => {
-  const account = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
+  const account = new Delegate({
+    account: Account.XTZ_2,
+    amount: "N/A",
+    provider: "Ledger by Kiln",
+  });
 
   // Assertion-only (never signs).
   test.use(tezosStakeUse(account));

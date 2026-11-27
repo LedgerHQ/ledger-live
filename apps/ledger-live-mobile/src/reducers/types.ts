@@ -42,7 +42,10 @@ import type { AccountStatusState } from "@domain/entity-account-status";
 import type { AccountBalancesState } from "@domain/entity-account-balance";
 import type { AccountOperationsState } from "@domain/entity-account-operation";
 import type { AccountBalanceHistoriesState } from "@domain/entity-account-balance-history";
-import type { AccountsState as AccountEntriesState } from "@domain/entity-account";
+import type {
+  AccountsState as AccountEntriesState,
+  DiscoveredAccountsState,
+} from "@domain/entity-account";
 import type { AppLockState } from "@features/platform-app-lock";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
 import type { TransferDrawerState } from "./transferDrawer";
@@ -284,6 +287,8 @@ export type SettingsState = {
   countervalueFirst: boolean;
   graphCountervalueFirst: boolean;
   hideEmptyTokenAccounts: boolean;
+  /** Developer toggle: the app acts as if it ran on an Apollo device, until Device XP tells. */
+  simulateApolloDevice: boolean;
   filterTokenOperationsZeroAmount: boolean;
   hideSmallValueTokenOperations: boolean;
   blacklistedTokenIds: string[];
@@ -532,5 +537,6 @@ export type State = LLMRTKApiState & {
   accountOperations: AccountOperationsState;
   accountBalanceHistories: AccountBalanceHistoriesState;
   accountEntries: AccountEntriesState;
+  discoveredAccounts: DiscoveredAccountsState;
   appLock: AppLockState;
 };

@@ -24,6 +24,7 @@ import {
 import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import type { LiveAppModalParams } from "~/renderer/reducers/liveAppModal";
+import { useEarnAppLifecycleMonitoring } from "~/renderer/analytics/useEarnAppLifecycleMonitoring";
 
 export type ExtraInputs = Record<string, string | undefined> | null;
 
@@ -44,6 +45,7 @@ const useLiveAppModalContentViewModel = (
   const remoteManifest = useRemoteLiveAppManifest(manifestId);
   const manifest = localManifest || remoteManifest;
   const { updateManifests } = useRemoteLiveAppContext();
+  useEarnAppLifecycleMonitoring(manifest?.id);
 
   const themeType = useTheme().theme;
   const language = useSelector(languageSelector);

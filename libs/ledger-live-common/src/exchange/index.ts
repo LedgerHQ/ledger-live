@@ -22,7 +22,6 @@ const exchangeSupportAppVersions: Record<string, string> = {
   tezos: "2.2.13",
   tron: "0.4.100",
   zcash: "1.5.0",
-  zencash: "1.5.0",
   sui: "1.2.0",
 };
 

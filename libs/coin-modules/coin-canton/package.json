@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-canton",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Canton coin integration",
   "keywords": [
     "Ledger",
@@ -108,7 +108,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/devices": "catalog:",
     "@ledgerhq/hw-app-canton": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "catalog:",
@@ -128,13 +127,10 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
-    "dotenv": "16.4.7",
-    "expect": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "protobufjs-cli": "2.4.1",
     "rimraf": "catalog:",
     "typescript": "catalog:"
   },
@@ -154,7 +150,7 @@
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
-    "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
+    "test-integ": "jest --config=jest.integ.config.js --passWithNoTests",
     "typecheck": "tsc --noEmit --customConditions node",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"

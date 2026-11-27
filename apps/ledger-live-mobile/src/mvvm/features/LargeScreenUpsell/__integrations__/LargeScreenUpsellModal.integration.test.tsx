@@ -479,4 +479,54 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
       expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeVisible();
     });
   });
+
+  describe("right after a device setup, before post onboarding starts", () => {
+    const withJustSetUpDevice = (deviceModelId: DeviceModelId) =>
+      withFlagOverrides(
+        {
+          largeScreenUpsell: {
+            enabled: true,
+            params: {
+              cooldownDays: { default: 30, nanoS: 1 },
+              opted_out: {
+                enabled: true,
+                link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+              },
+            },
+          },
+          lwmProductTour: { enabled: false },
+          lwmGenericAwarenessModal: { enabled: false },
+          analyticsOptIn: { enabled: false },
+        },
+        (state: State): State => {
+          const withDevice = withKnownDeviceModels([deviceModelId], {
+            hasCompletedOnboarding: true,
+            onboardingCompletionDate: NOW.toISOString(),
+          })(state);
+          return {
+            ...withDevice,
+            postOnboarding: { ...withDevice.postOnboarding, onboardingDate: null },
+          };
+        },
+      );
+
+    it.each([DeviceModelId.nanoS, DeviceModelId.nanoX])(
+      "should not auto-open the upsell modal for %s",
+      async deviceModelId => {
+        const { store } = render(<IntegrationNavigator />, {
+          overrideInitialState: withJustSetUpDevice(deviceModelId),
+        });
+
+        expect(
+          await screen.findByTestId("large-screen-upsell-integration-portfolio"),
+        ).toBeVisible();
+        act(() => {
+          jest.runOnlyPendingTimers();
+        });
+
+        expect(screen.queryByTestId("large-screen-upsell-modal-drawer")).not.toBeVisible();
+        expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
+      },
+    );
+  });
 });

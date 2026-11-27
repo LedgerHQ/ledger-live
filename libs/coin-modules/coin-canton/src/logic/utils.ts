@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
-import type { CantonCoinConfig } from "../config";
+import type { CantonContext } from "../config";
+import { getMinReserve } from "../tuning";
 
 export const UINT32_MAX = new BigNumber(2).pow(32).minus(1);
 
@@ -16,5 +17,5 @@ export function isRecipientValid(recipient: string): boolean {
 }
 
 // Through BigNumber, as the bridge reads it: `BigInt(1e38)` is not 10^38.
-export const minReserveOf = (config: CantonCoinConfig): bigint =>
-  BigInt(new BigNumber(config.minReserve ?? 0).toFixed(0));
+export const minReserveOf = async (context: CantonContext): Promise<bigint> =>
+  BigInt(getMinReserve(await context.config()).toFixed(0));

@@ -1,5 +1,5 @@
 import type { AccountDataKind, AccountDataSourceId } from "@domain/entity-account-data";
-import type { AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account";
 
 export class NoAccountDataSourceError extends Error {
   override name = "NoAccountDataSourceError";

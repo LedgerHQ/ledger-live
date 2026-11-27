@@ -16,4 +16,4 @@ const swapFeedbackTestConfig = {
   ],
 };
 
-runSwapHistoryFeedbackTest(swapFeedbackTestConfig.tmsLinks, swapFeedbackTestConfig.tags);
+runSwapHistoryFeedbackTest(swapFeedbackTestConfig);

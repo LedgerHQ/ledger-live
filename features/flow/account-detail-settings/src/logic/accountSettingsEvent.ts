@@ -2,6 +2,7 @@
 export type AccountSettingsEvent =
   | "changeName"
   | "validateChangeName"
+  | "manageAssets"
   | "viewLogs"
   | "copyLogs"
   | "viewExplorer"

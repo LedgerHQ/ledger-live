@@ -1,44 +1,17 @@
-import { track } from "@shared/analytics";
 import { Switch } from "@ledgerhq/native-ui";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AppLockBiometricsRow } from "LLM/features/AppLock/components/BiometricsRow";
 import { AppLockPasswordRow } from "LLM/features/AppLock/components/PasswordRow";
 import { useAppLockScheme } from "LLM/features/AppLock/hooks/useAppLockScheme";
-import React, { useCallback, useState } from "react";
+import { useLegacyPasswordToggle } from "LLM/features/AppLock/hooks/useLegacyPasswordToggle";
+import React from "react";
 import SettingsRow from "~/components/SettingsRow";
-import { NavigatorName, ScreenName } from "~/const";
-import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
-import { privacySelector } from "~/reducers/settings";
 import BiometricsRow from "./BiometricsRow";
 
 function LegacyAuthSecurityToggle() {
   const { t } = useTranslation();
 
-  const privacy = useSelector(privacySelector);
-  const { navigate } = useNavigation();
-
-  const [isToggleOn, setIsToggleOn] = useState(!!privacy?.hasPassword);
-
-  useFocusEffect(
-    useCallback(() => {
-      setIsToggleOn(!!privacy?.hasPassword);
-    }, [privacy?.hasPassword]),
-  );
-
-  const onValueChange = (authSecurityEnabled: boolean): void => {
-    track("toggle_clicked", {
-      toggle: "Password Lock",
-      page: ScreenName.GeneralSettings,
-      enabled: !privacy?.hasPassword,
-    });
-
-    setIsToggleOn(authSecurityEnabled);
-
-    navigate(
-      authSecurityEnabled ? NavigatorName.PasswordAddFlow : NavigatorName.PasswordModifyFlow,
-    );
-  };
+  const { privacy, isOn, onValueChange } = useLegacyPasswordToggle();
 
   const getPasswordDesc = () =>
     privacy?.biometricsType
@@ -51,7 +24,7 @@ function LegacyAuthSecurityToggle() {
       title={t("settings.display.password")}
       desc={getPasswordDesc()}
     >
-      <Switch checked={isToggleOn} onChange={onValueChange} testID="password-settings-switch" />
+      <Switch checked={isOn} onChange={onValueChange} testID="password-settings-switch" />
     </SettingsRow>
   );
 }

@@ -4,6 +4,12 @@ import { byId, NativeHandle } from "@e2e/helpers/elements/native";
 
 type QuickAction = "send" | "receive" | "buy" | "sell" | "swap";
 
+type WaitForAccountPageToLoadOptions = {
+  assetName: string;
+  currencyId?: string;
+  inCryptoAddressesList?: boolean;
+};
+
 export default class AssetAccountsPage {
   private readonly baseLink = "account";
   private readonly title = (assetName: string) => byId(`accounts-title-${assetName}`);
@@ -18,12 +24,9 @@ export default class AssetAccountsPage {
     receive: byId("asset-detail-footer-receive-button"),
   };
 
-  @Step("Wait for asset page to load {{{0}}}")
-  async waitForAccountPageToLoad(
-    assetName: string,
-    currencyId?: string,
-    inCryptoAddressesList = false,
-  ) {
+  @Step("Wait for asset page to load {{{0.assetName}}}")
+  async waitForAccountPageToLoad(options: WaitForAccountPageToLoadOptions) {
+    const { assetName, currencyId, inCryptoAddressesList = false } = options;
     if (inCryptoAddressesList) {
       return;
     }

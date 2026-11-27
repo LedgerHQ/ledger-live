@@ -1,12 +1,14 @@
-import buildCoinConfig from "@ledgerhq/coin-module-framework/config";
-import type { ConcordiumCoinConfig } from "./types/config";
+import type { ConcordiumBridgeConfig } from "./types/config";
 
-export type { ConcordiumCoinConfig } from "./types/config";
+export type {
+  ConcordiumBridgeConfig,
+  ConcordiumBridgeContext,
+  ConcordiumCoinConfig,
+  ConcordiumConfig,
+  ConcordiumContext,
+} from "./types/config";
 
-const { setCoinConfig, getCoinConfig } = buildCoinConfig<ConcordiumCoinConfig>();
-
-export default { setCoinConfig, getCoinConfig };
-
+// `enableTokens` repeats its default so the developer coin-config screen shows the toggle.
 export const concordiumDefaults = {
   concordium: {
     status: { type: "active" },
@@ -14,8 +16,8 @@ export const concordiumDefaults = {
     unit: { name: "ccd", code: "CCD", magnitude: 6 },
     networkType: "mainnet",
     proxyUrl: "https://ccd-wallet-proxy-mainnet.coin.ledger.com",
-    minReserve: 0,
     enableTokens: false,
+    walletConnect: { relayUrl: "wss://relay.walletconnect.com" },
   },
   concordium_testnet: {
     status: { type: "active" },
@@ -23,7 +25,7 @@ export const concordiumDefaults = {
     unit: { name: "ccd", code: "CCD", magnitude: 6 },
     networkType: "testnet",
     proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
-    minReserve: 0,
     enableTokens: false,
+    walletConnect: { relayUrl: "wss://relay.walletconnect.com" },
   },
-} satisfies Record<string, ConcordiumCoinConfig>;
+} satisfies Record<string, ConcordiumBridgeConfig>;

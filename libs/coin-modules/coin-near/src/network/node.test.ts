@@ -3,9 +3,12 @@ import { http, HttpResponse } from "msw";
 import BigNumber from "bignumber.js";
 import * as nearAPI from "near-api-js";
 import { setCoinConfig } from "../config";
+import { VALIDATORS_FAILURE_TTL_MS } from "../constants";
 import { mockNearConfig } from "../test/context";
 import {
   broadcastTransaction,
+  fetchAccountDetails,
+  getAccessKey,
   getAccount,
   getAccountStateFingerprint,
   getGasPrice,
@@ -487,6 +490,7 @@ describe("node api (indexer-backed calls)", () => {
     const mockPools = (
       broken: string[] = [],
       notPools: string[] = [],
+      viewErrors: Record<string, string> = {},
     ): { pools: () => Set<string> } => {
       const pools = new Set<string>();
       mockServer.use(
@@ -501,13 +505,15 @@ describe("node api (indexer-backed calls)", () => {
           if (broken.includes(body.params.account_id as string)) {
             return HttpResponse.json({ jsonrpc: "2.0", id: "id", error: { code: -32000 } });
           }
-          if (notPools.includes(body.params.account_id as string)) {
+          const viewError = notPools.includes(body.params.account_id as string)
+            ? "wasm execution failed with error: FunctionCallError(MethodResolveError(MethodNotFound))"
+            : viewErrors[body.params.account_id as string];
+          if (viewError !== undefined) {
             return HttpResponse.json({
               jsonrpc: "2.0",
               id: "id",
               result: {
-                error:
-                  "wasm execution failed with error: FunctionCallError(MethodResolveError(MethodNotFound))",
+                error: viewError,
                 logs: [],
                 block_height: 1,
                 block_hash: "DsWyc6swGSDezgvweB561FLbL1nsBsU3QJtZFLHq79Ru",
@@ -564,6 +570,20 @@ describe("node api (indexer-backed calls)", () => {
       expect(listing.calls()).toBe(1);
     });
 
+    it("reads no pool when the listing fails and the known list is empty", async () => {
+      mockListing(() => new HttpResponse(null, { status: 429 }));
+      mockPools();
+
+      const { stakingPositions, poolListingFailed } = await getStakingPositions(
+        mockNearConfig,
+        ADDRESS,
+        { knownValidatorIds: [] },
+      );
+
+      expect(stakingPositions).toEqual([]);
+      expect(poolListingFailed).toBe(true);
+    });
+
     it("rejects when the listing fails and no pool is known", async () => {
       mockListing(() => new HttpResponse(null, { status: 429 }));
       mockPools();
@@ -598,6 +618,95 @@ describe("node api (indexer-backed calls)", () => {
           listValidators: false,
         }),
       ).rejects.toBeInstanceOf(Error);
+    });
+
+    it("drops a known pool the node shows is no pool any more, and reads the others", async () => {
+      mockListing(() => HttpResponse.json([]));
+      mockPools([], [VALIDATOR_ID]);
+
+      const { stakingPositions, totalStaked } = await getStakingPositions(mockNearConfig, ADDRESS, {
+        knownValidatorIds: [OTHER_POOL, VALIDATOR_ID],
+        listValidators: false,
+      });
+
+      expect(stakingPositions.map(p => p.validatorId)).toEqual([OTHER_POOL]);
+      expect(totalStaked.toFixed()).toBe(STAKED);
+    });
+
+    describe.each([
+      ["an account that does not exist", "account pool.near does not exist while viewing"],
+      [
+        "a contract without code",
+        'wasm execution failed with error: CompilationError(CodeDoesNotExist { account_id: "pool.near" })',
+      ],
+      [
+        "a contract without code, wrapped",
+        'wasm execution failed with error: FunctionCallError(CompilationError(CodeDoesNotExist { account_id: "pool.near" }))',
+      ],
+      [
+        "a contract without the view method",
+        "wasm execution failed with error: MethodResolveError(MethodNotFound)",
+      ],
+      [
+        "a contract without the view method, wrapped",
+        "wasm execution failed with error: FunctionCallError(MethodResolveError(MethodNotFound))",
+      ],
+    ])("a pool answered as %s", (_name, answer) => {
+      it("is dropped from the known pools", async () => {
+        mockListing(() => HttpResponse.json([]));
+        mockPools([], [], { [VALIDATOR_ID]: answer });
+
+        const { stakingPositions } = await getStakingPositions(mockNearConfig, ADDRESS, {
+          knownValidatorIds: [OTHER_POOL, VALIDATOR_ID],
+          listValidators: false,
+        });
+
+        expect(stakingPositions.map(p => p.validatorId)).toEqual([OTHER_POOL]);
+      });
+    });
+
+    describe.each([
+      [
+        "a contract panic",
+        'wasm execution failed with error: HostError(GuestPanic { panic_msg: "panicked" })',
+      ],
+      ["a gas limit failure", "wasm execution failed with error: HostError(GasLimitExceeded)"],
+      ["a trap", "wasm execution failed with error: WasmTrap(Unreachable)"],
+    ])("a pool failing on %s", (_name, answer) => {
+      it("fails the read of a known pool instead of dropping it", async () => {
+        mockListing(() => HttpResponse.json([]));
+        mockPools([], [], { [VALIDATOR_ID]: answer });
+
+        await expect(
+          getStakingPositions(mockNearConfig, ADDRESS, {
+            knownValidatorIds: [OTHER_POOL, VALIDATOR_ID],
+            listValidators: false,
+          }),
+        ).rejects.toBeInstanceOf(Error);
+      });
+
+      it("reports a candidate pool as failed instead of dropping it", async () => {
+        mockListing(() => HttpResponse.json([]));
+        mockPools([], [], { [VALIDATOR_ID]: answer });
+
+        const { failedCandidates } = await getStakingPositions(mockNearConfig, ADDRESS, {
+          knownValidatorIds: [OTHER_POOL],
+          candidateValidatorIds: [VALIDATOR_ID],
+        });
+
+        expect(failedCandidates).toEqual([VALIDATOR_ID]);
+      });
+    });
+
+    it("drops a listed pool whose contract is no pool, so the listing does not fail every sync", async () => {
+      mockListing(() => HttpResponse.json([{ deposit: STAKED, validator_id: VALIDATOR_ID }]));
+      mockPools([], [VALIDATOR_ID]);
+
+      const { stakingPositions } = await getStakingPositions(mockNearConfig, ADDRESS, {
+        knownValidatorIds: [OTHER_POOL],
+      });
+
+      expect(stakingPositions.map(p => p.validatorId)).toEqual([OTHER_POOL]);
     });
 
     it("still rejects on a failing pool when no known pools are given", async () => {
@@ -745,6 +854,120 @@ describe("node api (indexer-backed calls)", () => {
     });
   });
 
+  describe("reading the account and its key from the node", () => {
+    const rpcError = (cause: string) => ({
+      jsonrpc: "2.0",
+      id: "id",
+      error: {
+        name: "HANDLER_ERROR",
+        cause: { name: cause },
+        code: -32000,
+        message: "Server error",
+      },
+    });
+    const mockView = (requestType: string, body: unknown): { calls: () => number } => {
+      let calls = 0;
+      mockServer.use(
+        http.post(NEAR_BASE_URL_MOCKED, async ({ request }) => {
+          const json = (await request.json()) as {
+            method: string;
+            params: { request_type?: string };
+          };
+          if (json.method === "EXPERIMENTAL_protocol_config") {
+            return HttpResponse.json({ result: { runtime_config: runtimeConfig("1") } });
+          }
+          if (json.params?.request_type === requestType) {
+            calls += 1;
+            return HttpResponse.json(body as Record<string, unknown>);
+          }
+          return HttpResponse.json({ jsonrpc: "2.0", id: "id", result: {} });
+        }),
+      );
+      return { calls: () => calls };
+    };
+
+    it("reads an UNKNOWN_ACCOUNT answer as an account the node does not know", async () => {
+      mockView("view_account", rpcError("UNKNOWN_ACCOUNT"));
+
+      await expect(fetchAccountDetails(mockNearConfig, ADDRESS)).resolves.toBeUndefined();
+    });
+
+    it("reads the node's 'does not exist' result as an account the node does not know", async () => {
+      mockView("view_account", {
+        result: { error: "account delegator.near does not exist while viewing", logs: [] },
+      });
+
+      await expect(fetchAccountDetails(mockNearConfig, ADDRESS)).resolves.toBeUndefined();
+    });
+
+    it.each([["UNKNOWN_BLOCK"], ["NO_SYNCED_BLOCKS"], ["UNAVAILABLE_SHARD"]])(
+      "throws on a %s answer instead of reading a zero account",
+      async cause => {
+        mockView("view_account", rpcError(cause));
+
+        await expect(fetchAccountDetails(mockNearConfig, ADDRESS)).rejects.toThrow(cause);
+      },
+    );
+
+    it("throws on an error string in the result that is not an unknown account", async () => {
+      mockView("view_account", { result: { error: "the node is busy", logs: [] } });
+
+      await expect(fetchAccountDetails(mockNearConfig, ADDRESS)).rejects.toThrow(
+        "the node is busy",
+      );
+    });
+
+    it("rejects getAccount, rather than showing a zero balance, when the node errors", async () => {
+      mockView("view_account", rpcError("UNKNOWN_BLOCK"));
+
+      await expect(
+        getAccount(mockNearConfig, ADDRESS, { knownValidatorIds: [], listValidators: false }),
+      ).rejects.toThrow("UNKNOWN_BLOCK");
+    });
+
+    it("returns a zero account for an unknown account, with a single account read", async () => {
+      const view = mockView("view_account", rpcError("UNKNOWN_ACCOUNT"));
+
+      const account = await getAccount(mockNearConfig, ADDRESS, {
+        knownValidatorIds: [],
+        listValidators: false,
+      });
+
+      expect(account.balance.toFixed()).toBe("0");
+      expect(account.spendableBalance.toFixed()).toBe("0");
+      expect(view.calls()).toBe(1);
+    });
+
+    it("does not read the account again when the caller already found it unknown", async () => {
+      const view = mockView("view_account", rpcError("UNKNOWN_ACCOUNT"));
+
+      const account = await getAccount(mockNearConfig, ADDRESS, {
+        accountDetails: undefined,
+        knownValidatorIds: [],
+        listValidators: false,
+      });
+
+      expect(account.balance.toFixed()).toBe("0");
+      expect(view.calls()).toBe(0);
+    });
+
+    it("reads an UNKNOWN_ACCESS_KEY answer as no key", async () => {
+      mockView("view_access_key", rpcError("UNKNOWN_ACCESS_KEY"));
+
+      await expect(
+        getAccessKey(mockNearConfig, { address: ADDRESS, publicKey: "ed25519:key" }),
+      ).resolves.toEqual({});
+    });
+
+    it("throws on any other access key error", async () => {
+      mockView("view_access_key", rpcError("UNKNOWN_BLOCK"));
+
+      await expect(
+        getAccessKey(mockNearConfig, { address: ADDRESS, publicKey: "ed25519:key" }),
+      ).rejects.toThrow("UNKNOWN_BLOCK");
+    });
+  });
+
   describe("getAccountStateFingerprint", () => {
     const IMPLICIT = "00".repeat(31) + "01";
     const details = {
@@ -755,19 +978,19 @@ describe("node api (indexer-backed calls)", () => {
       block_height: 1,
     };
 
-    const mockKey = (
+    const mockKeys = (
       respond: () => Response,
-    ): { requests: () => { account_id: string; public_key: string }[] } => {
-      const requests: { account_id: string; public_key: string }[] = [];
+    ): { requests: () => { account_id: string; request_type: string }[] } => {
+      const requests: { account_id: string; request_type: string }[] = [];
       mockServer.use(
         http.post(NEAR_BASE_URL_MOCKED, async ({ request }) => {
           const body = (await request.json()) as {
-            params: { request_type?: string; account_id: string; public_key: string };
+            params: { request_type?: string; account_id: string };
           };
-          if (body.params?.request_type === "view_access_key") {
+          if (body.params?.request_type === "view_access_key_list") {
             requests.push({
               account_id: body.params.account_id,
-              public_key: body.params.public_key,
+              request_type: body.params.request_type,
             });
             return respond();
           }
@@ -776,44 +999,79 @@ describe("node api (indexer-backed calls)", () => {
       );
       return { requests: () => requests };
     };
+    const keyList = (...keys: [string, number][]) =>
+      HttpResponse.json({
+        result: {
+          keys: keys.map(([public_key, nonce]) => ({ public_key, access_key: { nonce } })),
+          block_hash: "hash",
+        },
+      });
 
     it("includes the nonce of the implicit account's own key", async () => {
-      const key = mockKey(() => HttpResponse.json({ result: { nonce: 42, block_hash: "hash" } }));
+      const key = mockKeys(() => keyList(["ed25519:a", 42]));
 
       const fingerprint = await getAccountStateFingerprint(mockNearConfig, IMPLICIT, details);
 
       expect(fingerprint).toBe(`10|2|182|${details.code_hash}|42`);
       expect(key.requests()).toEqual([
-        {
-          account_id: IMPLICIT,
-          public_key: `ed25519:${nearAPI.baseEncode(Buffer.from(IMPLICIT, "hex"))}`,
-        },
+        { account_id: IMPLICIT, request_type: "view_access_key_list" },
       ]);
     });
 
-    it("does not read a key for a named account", async () => {
-      const key = mockKey(() => HttpResponse.json({ result: { nonce: 1 } }));
+    it("includes the nonce of every key of a named account, whichever the order", async () => {
+      mockKeys(() => keyList(["ed25519:b", 7], ["ed25519:a", 42]));
 
       const fingerprint = await getAccountStateFingerprint(mockNearConfig, ADDRESS, details);
 
-      expect(fingerprint).toBe(`10|2|182|${details.code_hash}|`);
+      expect(fingerprint).toBe(`10|2|182|${details.code_hash}|42,7`);
+    });
+
+    it("changes when the nonce of a key other than the first moves", async () => {
+      mockKeys(() => keyList(["ed25519:a", 42], ["ed25519:b", 7]));
+      const before = await getAccountStateFingerprint(mockNearConfig, ADDRESS, details);
+      mockKeys(() => keyList(["ed25519:a", 42], ["ed25519:b", 8]));
+      const after = await getAccountStateFingerprint(mockNearConfig, ADDRESS, details);
+
+      expect(after).not.toBe(before);
+    });
+
+    it("keeps the stored nonces when the key read fails", async () => {
+      mockKeys(() => HttpResponse.json({ error: { message: "unavailable" } }, { status: 500 }));
+
+      await expect(
+        getAccountStateFingerprint(
+          mockNearConfig,
+          IMPLICIT,
+          details,
+          `10|2|182|${details.code_hash}|42`,
+        ),
+      ).resolves.toBe(`10|2|182|${details.code_hash}|42`);
+    });
+
+    it("leaves the nonce empty when the key read fails and none is stored", async () => {
+      mockKeys(() => HttpResponse.json({ error: { message: "unavailable" } }, { status: 500 }));
+
+      await expect(getAccountStateFingerprint(mockNearConfig, IMPLICIT, details)).resolves.toBe(
+        `10|2|182|${details.code_hash}|`,
+      );
+    });
+
+    it("leaves the nonce empty when the node answers an unknown account", async () => {
+      mockKeys(() =>
+        HttpResponse.json({ error: { name: "HANDLER_ERROR", cause: { name: "UNKNOWN_ACCOUNT" } } }),
+      );
+
+      await expect(getAccountStateFingerprint(mockNearConfig, IMPLICIT, details)).resolves.toBe(
+        `10|2|182|${details.code_hash}|`,
+      );
+    });
+
+    it("reads no key for an account the node does not know", async () => {
+      const key = mockKeys(() => keyList(["ed25519:a", 1]));
+
+      await getAccountStateFingerprint(mockNearConfig, IMPLICIT, undefined);
+
       expect(key.requests()).toEqual([]);
-    });
-
-    it("leaves the nonce empty when the key read fails", async () => {
-      mockKey(() => HttpResponse.json({ error: { message: "unknown key" } }, { status: 400 }));
-
-      await expect(getAccountStateFingerprint(mockNearConfig, IMPLICIT, details)).resolves.toBe(
-        `10|2|182|${details.code_hash}|`,
-      );
-    });
-
-    it("leaves the nonce empty when the key is unknown", async () => {
-      mockKey(() => HttpResponse.json({ result: {} }));
-
-      await expect(getAccountStateFingerprint(mockNearConfig, IMPLICIT, details)).resolves.toBe(
-        `10|2|182|${details.code_hash}|`,
-      );
     });
 
     it("changes with the amount, and tolerates a missing account", async () => {
@@ -1452,25 +1710,61 @@ describe("node api (indexer-backed calls)", () => {
       expect(validators).toHaveLength(20);
     });
 
-    it("fetches again after a failure, which is not cached", async () => {
-      let requests = 0;
-      mockServer.use(
-        http.get(`${NEAR_BASE_URL_MOCKED}/v3/validators`, () => {
-          requests += 1;
-          if (requests === 1) {
-            return HttpResponse.json({ message: "Bad Request" }, { status: 400 });
-          }
-          return HttpResponse.json({ data: [validator()] });
-        }),
-      );
+    describe("after a failure", () => {
+      const startedAt = Date.now();
+      let now = startedAt;
+      let requests: number;
 
-      await expect(getValidators({ total: 20, config: mockNearConfig })).rejects.toThrow(
-        "Bad Request",
-      );
-      const validators = await getValidators({ total: 20, config: mockNearConfig });
+      beforeEach(() => {
+        now = startedAt;
+        requests = 0;
+        jest.spyOn(Date, "now").mockImplementation(() => now);
+        mockServer.use(
+          http.get(`${NEAR_BASE_URL_MOCKED}/v3/validators`, () => {
+            requests += 1;
+            if (requests === 1) {
+              return HttpResponse.json({ message: "Too Many Requests" }, { status: 429 });
+            }
+            return HttpResponse.json({ data: [validator()] });
+          }),
+        );
+      });
 
-      expect(requests).toBe(2);
-      expect(validators).toHaveLength(1);
+      afterEach(() => {
+        jest.restoreAllMocks();
+      });
+
+      it("does not ask the indexer again within the failure delay", async () => {
+        await expect(getValidators({ total: 20, config: mockNearConfig })).rejects.toThrow(
+          "Too Many Requests",
+        );
+        now += VALIDATORS_FAILURE_TTL_MS - 1;
+        await expect(getValidators({ total: 20, config: mockNearConfig })).rejects.toThrow(
+          "Too Many Requests",
+        );
+
+        expect(requests).toBe(1);
+      });
+
+      it("fetches again once the failure delay has passed", async () => {
+        await expect(getValidators({ total: 20, config: mockNearConfig })).rejects.toThrow(
+          "Too Many Requests",
+        );
+        now += VALIDATORS_FAILURE_TTL_MS;
+        const validators = await getValidators({ total: 20, config: mockNearConfig });
+
+        expect(requests).toBe(2);
+        expect(validators).toHaveLength(1);
+      });
+
+      it("keeps the failure of one total from blocking another", async () => {
+        await expect(getValidators({ total: 20, config: mockNearConfig })).rejects.toThrow(
+          "Too Many Requests",
+        );
+        const validators = await getValidators({ total: 30, config: mockNearConfig });
+
+        expect(validators).toHaveLength(1);
+      });
     });
 
     it("serves two calls inside the TTL from a single fetch", async () => {

@@ -9,7 +9,7 @@ import {
 import type { TFunction } from "i18next";
 import type { UseTranslationOptions, UseTranslationResponse } from "react-i18next";
 import i18next from "~/i18n/instance";
-import { getTimeZone } from "react-native-localize";
+import { getDeviceTimeZone } from "@shared/device-locale";
 import storage from "LLM/storage";
 import { I18nManager } from "react-native";
 import RNRestart from "react-native-restart";
@@ -21,14 +21,15 @@ import { useSettings } from "~/hooks";
 import { loadLocaleData } from "~/utils/localeLoader";
 
 try {
-  if ("__setDefaultTimeZone" in Intl.DateTimeFormat) {
+  const deviceTimeZone = getDeviceTimeZone();
+  if (deviceTimeZone && "__setDefaultTimeZone" in Intl.DateTimeFormat) {
     /** https://formatjs.io/docs/polyfills/intl-datetimeformat/#default-timezone */
     // eslint-disable-next-line no-underscore-dangle
     (
       Intl.DateTimeFormat as typeof Intl.DateTimeFormat & {
         __setDefaultTimeZone(_: string): void;
       }
-    ).__setDefaultTimeZone(getTimeZone());
+    ).__setDefaultTimeZone(deviceTimeZone);
   }
 } catch (error) {
   // eslint-disable-next-line no-console

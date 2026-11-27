@@ -1,6 +1,4 @@
 import type { Contact } from "@domain/entity-contact";
-import type { DescriptorEventType } from "@ledgerhq/hw-transport";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Event as AppEvent } from "@ledgerhq/live-common/hw/actions/app";
 import type { ConnectAppEvent } from "@ledgerhq/live-common/hw/connectApp";
 import type { ConnectManagerEvent } from "@ledgerhq/live-common/hw/connectManager";
@@ -18,17 +16,11 @@ import type { Feature, FeatureId, PartialFeatures } from "@shared/feature-flags"
 
 export type BridgePayloads = {
   settings: unknown;
-  ble: unknown;
   payCard: unknown;
+  receiveVerifyHint: unknown;
 };
 
 export type OverrideFeatureFlagPayload = { id: FeatureId; value: Feature | undefined };
-
-export interface DeviceUSB extends Device {
-  deviceName: string;
-  productId: number;
-  vendorId: number;
-}
 
 export type ServerData =
   | {
@@ -67,15 +59,8 @@ export type ServerData =
   | { type: "earnLiveAppReady" };
 
 export type MessageData<P extends BridgePayloads = BridgePayloads> =
-  | {
-      type: DescriptorEventType;
-      id: string;
-      payload: { id: string; name: string; serviceUUID: string };
-    }
-  | { type: "open"; id: string }
   | { type: "mockDeviceEvent"; id: string; payload: MockDeviceEvent[] }
   | { type: "acceptTerms"; id: string }
-  | { type: "addUSB"; id: string; payload: DeviceUSB }
   | { type: "addKnownSpeculos"; id: string; payload: string }
   | { type: "removeKnownSpeculos"; id: string; payload: string }
   | { type: "getLogs"; id: string }
@@ -95,9 +80,10 @@ export type MessageData<P extends BridgePayloads = BridgePayloads> =
   | { type: "importTrustchain"; id: string; payload: TrustchainStore }
   | { type: "importContacts"; id: string; payload: Contact[] }
   | { type: "importLocalManifests"; id: string; payload: LiveAppManifest[] }
-  | { type: "importBle"; id: string; payload: P["ble"] }
   | { type: "importPostOnboarding"; id: string; payload: Partial<PostOnboardingState> }
   | { type: "importPayCard"; id: string; payload: P["payCard"] }
+  | { type: "importReceiveVerifyHint"; id: string; payload: P["receiveVerifyHint"] }
+  | { type: "overrideUserId"; id: string; payload: string }
   | { type: "overrideFeatureFlags"; id: string; payload: PartialFeatures }
   | { type: "overrideFeatureFlag"; id: string; payload: OverrideFeatureFlagPayload }
   | { type: "overrideLiveConfig"; id: string; payload: Record<string, unknown> }

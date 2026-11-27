@@ -12,6 +12,7 @@ import {
   hasStakeRedirectParams,
   useDappLifecycleMonitoring,
 } from "~/renderer/analytics/useDappLifecycleMonitoring";
+import { useEarnAppLifecycleMonitoring } from "~/renderer/analytics/useEarnAppLifecycleMonitoring";
 import { useGetSwapTrackingProperties } from "../exchange/Swap2/utils";
 
 export type LiveAppProps = {
@@ -56,6 +57,7 @@ export function LiveApp({ appId: propsAppId }: LiveAppProps) {
   const manifest = useLiveAppManifest(appId, _customDappUrl, {
     enforceManifestDomains: manifestDomainCheckEnabled,
   });
+  useEarnAppLifecycleMonitoring(manifest?.id);
 
   const handleClose = useCallback(() => {
     if (returnTo?.startsWith("/swap")) {

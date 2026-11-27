@@ -6,6 +6,7 @@ import { useOpenAssetFlow } from "../useOpenAssetFlow";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { setOperationSink, startOperation } from "@shared/observability-operations";
 
 type OnAccountSelected = (account: AccountLike, parentAccount?: Account) => void;
 
@@ -176,5 +177,25 @@ describe("useOpenAssetFlow", () => {
         parentAccount: undefined,
       },
     });
+  });
+
+  it("should abandon the add_account operation when the user closes the add account drawer", () => {
+    const sink = { isRecording: () => true, start: jest.fn(), succeed: jest.fn(), fail: jest.fn() };
+    setOperationSink(sink);
+    const { result } = renderHook(
+      () => useOpenAssetFlow({ location: ModularDrawerLocation.ADD_ACCOUNT }, "Accounts"),
+      { initialState: MODULAR_DRAWER_ENABLED },
+    );
+    result.current.openAddAccountFlow(getCryptoCurrencyById("bitcoin"));
+    startOperation("add_account", { attributes: { currency_id: "bitcoin" } });
+
+    const drawerOptions = jest.mocked(setDrawer).mock.calls.at(-1)?.[2];
+    drawerOptions?.onRequestClose?.(new KeyboardEvent("keydown", { key: "Escape" }));
+
+    expect(sink.fail).toHaveBeenCalledWith("add_account", undefined, "ABANDONED", {
+      currency_id: "bitcoin",
+      trigger: "close",
+    });
+    setOperationSink(null);
   });
 });

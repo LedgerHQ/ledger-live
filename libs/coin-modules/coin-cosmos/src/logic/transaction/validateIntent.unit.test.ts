@@ -60,7 +60,7 @@ describe("logic/transaction/validateIntent", () => {
 
   it("flags a missing recipient", async () => {
     const res = await validateIntent("cosmos", withOverrides({ recipient: "" }), balances, fees);
-    expect(res.errors.recipient).toBeInstanceOf(Error);
+    expect(res.errors.recipient?.name).toBe("RecipientRequired");
   });
 
   it("flags recipient equal to sender", async () => {
@@ -76,12 +76,12 @@ describe("logic/transaction/validateIntent", () => {
   it("flags an invalid recipient address", async () => {
     mockedValidateAddress.mockResolvedValue(false);
     const res = await validateIntent("cosmos", base, balances, fees);
-    expect(res.errors.recipient).toBeInstanceOf(Error);
+    expect(res.errors.recipient?.name).toBe("InvalidAddress");
   });
 
   it("flags a zero amount", async () => {
     const res = await validateIntent("cosmos", withOverrides({ amount: 0n }), balances, fees);
-    expect(res.errors.amount).toBeInstanceOf(Error);
+    expect(res.errors.amount?.name).toBe("AmountRequired");
   });
 
   it("flags insufficient balance", async () => {
@@ -91,7 +91,7 @@ describe("logic/transaction/validateIntent", () => {
       balances,
       fees,
     );
-    expect(res.errors.amount).toBeInstanceOf(Error);
+    expect(res.errors.amount?.name).toBe("NotEnoughBalance");
   });
 
   describe("send-max undelegation recommendation", () => {
@@ -137,6 +137,16 @@ describe("logic/transaction/validateIntent", () => {
       );
       expect(res.warnings.amount).toBeUndefined();
     });
+  });
+
+  it("warns that the fees are too high when they exceed a tenth of the amount", async () => {
+    const res = await validateIntent("cosmos", withOverrides({ amount: 1_000n }), balances, fees);
+    expect(res.warnings.feeTooHigh?.name).toBe("FeeTooHigh");
+  });
+
+  it("does not warn about the fees when they stay under a tenth of the amount", async () => {
+    const res = await validateIntent("cosmos", withOverrides({ amount: 100_000n }), balances, fees);
+    expect(res.warnings.feeTooHigh).toBeUndefined();
   });
 
   it("flags fees that have not been loaded", async () => {
@@ -330,7 +340,7 @@ describe("logic/transaction/validateIntent", () => {
     } as unknown as TransactionIntent;
 
     const res = await validateIntent("cosmos", intent, balances, fees);
-    expect(res.errors.valAddress).toBeInstanceOf(Error);
+    expect(res.errors.valAddress?.name).toBe("ValAddressRequired");
   });
 
   it("flags a redelegate staking intent missing the destination validator", async () => {
@@ -347,7 +357,7 @@ describe("logic/transaction/validateIntent", () => {
     } as unknown as TransactionIntent;
 
     const res = await validateIntent("cosmos", intent, balances, fees);
-    expect(res.errors.dstValAddress).toBeInstanceOf(Error);
+    expect(res.errors.dstValAddress?.name).toBe("RedelegateDstValAddressRequired");
   });
 
   it("flags a staking intent whose validator address lacks the valoper prefix", async () => {

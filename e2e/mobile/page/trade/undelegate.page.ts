@@ -1,6 +1,12 @@
 import { Step } from "jest-allure2-reporter/api";
 import invariant from "invariant";
 import { byId } from "@e2e/helpers/elements/native";
+import { isAccountDetailEnabled } from "@e2e/utils/featureFlagUtils";
+
+type UnstakeAmountOptions = {
+  currencyId: string;
+  amount: string;
+};
 
 // The delegation drawer's action ids are not namespaced per currency: sui exposes
 // `StakingActionUnstake`, while `DelegationActionUndelegate` is shared by cosmos, cardano, EVM,
@@ -11,7 +17,8 @@ const DELEGATION_ACTION_IDS: Record<string, { unstake: string; redelegate?: stri
 };
 
 export default class UndelegatePage {
-  private readonly accountScrollView = byId("account-screen-scrollView");
+  private readonly accountScrollView = () =>
+    byId(isAccountDetailEnabled() ? "account-detail-scroll-view" : "account-screen-scrollView");
   // Families that hold several positions index their rows; those that delegate once do not.
   private readonly stakingRow = (currencyId: string, rowIndex?: number) =>
     byId(
@@ -28,8 +35,9 @@ export default class UndelegatePage {
   @Step("Tap staking position row to open delegation drawer {{{0}}}")
   async tapStakingRow(currencyId: string, rowIndex?: number) {
     const stakingRow = this.stakingRow(currencyId, rowIndex);
-    await this.accountScrollView.waitVisible();
-    await stakingRow.scrollTo(this.accountScrollView);
+    const scrollView = this.accountScrollView();
+    await scrollView.waitVisible();
+    await stakingRow.scrollTo(scrollView);
     await stakingRow.tap();
   }
 
@@ -49,8 +57,9 @@ export default class UndelegatePage {
     await this.delegationAction(actionId).tap();
   }
 
-  @Step("Enter unstake amount {{{1}}}")
-  async enterAmount(currencyId: string, amount: string) {
+  @Step("Enter unstake amount {{{0.amount}}}")
+  async enterAmount(options: UnstakeAmountOptions) {
+    const { currencyId, amount } = options;
     await this.amountInput(currencyId).replaceText(amount);
     await this.amountContinue(currencyId).waitVisible();
   }

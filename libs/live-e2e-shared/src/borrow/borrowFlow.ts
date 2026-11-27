@@ -70,12 +70,11 @@ function resolveAccount(name: string): { path: string; specKey: string } {
   };
 }
 
+type RunActionOptions = { executor: EvmSpeculosExecutor; body: ActionRequest; dryRun: boolean };
+
 /** Posts an action and signs+broadcasts each returned step on Speculos. */
-async function runAction(
-  executor: EvmSpeculosExecutor,
-  body: ActionRequest,
-  dryRun: boolean,
-): Promise<void> {
+async function runAction(options: RunActionOptions): Promise<void> {
+  const { executor, body, dryRun } = options;
   console.log(`→ ${body.action} action (${JSON.stringify(body.args)})`);
   const action = await postAction(body);
   for (let i = 0; i < action.steps.length; i++) {
@@ -89,7 +88,7 @@ async function runAction(
     }
     if (!hash) throw new Error("Broadcast returned no hash");
     console.log(`    broadcast: ${hash}`);
-    await submitTransaction(step.transactionId, hash);
+    await submitTransaction({ transactionId: step.transactionId, txHash: hash });
   }
   if (!dryRun) await pollAction(action.actionId);
 }
@@ -119,16 +118,16 @@ async function open(
   }
   const dryRun = opts.dryRun ?? false;
   console.log(`Opening loan on market=${marketId}`);
-  await runAction(
+  await runAction({
     executor,
-    { address, action: "supply", args: { marketId, amount: opts.collateralAmount } },
+    body: { address, action: "supply", args: { marketId, amount: opts.collateralAmount } },
     dryRun,
-  );
-  await runAction(
+  });
+  await runAction({
     executor,
-    { address, action: "borrow", args: { marketId, amount: opts.loanAmount } },
+    body: { address, action: "borrow", args: { marketId, amount: opts.loanAmount } },
     dryRun,
-  );
+  });
   console.log("✔ open complete");
 }
 
@@ -145,12 +144,15 @@ function nothingToDoMessage(flow: Flow): string {
   return "Nothing to close — no open position for this account.";
 }
 
-async function closeOne(
-  executor: EvmSpeculosExecutor,
-  address: string,
-  loan: OpenLoan,
-  opts: BorrowFlowOptions,
-): Promise<void> {
+type CloseOneOptions = {
+  executor: EvmSpeculosExecutor;
+  address: string;
+  loan: OpenLoan;
+  opts: BorrowFlowOptions;
+};
+
+async function closeOne(options: CloseOneOptions): Promise<void> {
+  const { executor, address, loan, opts } = options;
   const dryRun = opts.dryRun ?? false;
   // An explicit `--market-id` carries no balances, so trust the flow flag.
   const explicit = loan.debtBalance === undefined && loan.collateralBalance === undefined;
@@ -162,7 +164,7 @@ async function closeOne(
     const args = opts.repayAmount
       ? { marketId: loan.marketId, amount: opts.repayAmount }
       : { marketId: loan.marketId, repayAll: true };
-    await runAction(executor, { address, action: "repay", args }, dryRun);
+    await runAction({ executor, body: { address, action: "repay", args }, dryRun });
   }
   if (
     (opts.flow === "close" || opts.flow === "withdraw") &&
@@ -173,11 +175,11 @@ async function closeOne(
     const amount = opts.withdrawAmount ?? loan.collateralBalance;
     if (!amount)
       throw new Error("withdraw requires --withdraw-amount (collateral balance unavailable)");
-    await runAction(
+    await runAction({
       executor,
-      { address, action: "withdraw", args: { marketId: loan.marketId, amount } },
+      body: { address, action: "withdraw", args: { marketId: loan.marketId, amount } },
       dryRun,
-    );
+    });
   }
 }
 
@@ -209,7 +211,7 @@ async function close(
 
   for (const loan of loans) {
     console.log(`— ${opts.flow} market=${loan.marketId}`);
-    await closeOne(executor, address, loan, opts);
+    await closeOne({ executor, address, loan, opts });
   }
   console.log(`✔ ${opts.flow} complete (${loans.length} position(s))`);
 }

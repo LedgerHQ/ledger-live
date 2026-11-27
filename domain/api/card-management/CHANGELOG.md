@@ -1,5 +1,17 @@
 # @domain/api-card-management
 
+## 0.10.0
+
+### Minor Changes
+
+- [#24815](https://github.com/LedgerHQ/ledger-live/pull/24815) [`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the card transaction wording keys verifiable by the i18n key check
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#24815](https://github.com/LedgerHQ/ledger-live/pull/24815) [`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the card transaction wording keys verifiable by the i18n key check
+
 ## 0.9.0
 
 ### Minor Changes

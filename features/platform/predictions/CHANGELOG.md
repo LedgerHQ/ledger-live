@@ -1,5 +1,19 @@
 # @features/platform-predictions
 
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies [[`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906)]:
+  - @features/platform-device-intent@5.6.0
+
+## 0.4.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`74c967e`](https://github.com/LedgerHQ/ledger-live/commit/74c967eb7dda848648df0db683910140b5d6e906)]:
+  - @features/platform-device-intent@5.6.0-next.0
+
 ## 0.4.1
 
 ### Patch Changes

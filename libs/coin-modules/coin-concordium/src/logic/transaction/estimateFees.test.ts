@@ -1,5 +1,5 @@
 import { createFixtureConfig } from "../../test/fixtures";
-import { CONCORDIUM_ENERGY } from "../../constants";
+import { CONCORDIUM_ENERGY, DEFAULT_FEES_DEFAULT_COST } from "../../constants";
 import { applyEnergyBuffer, estimateFees, estimateTokenFees } from "./estimateFees";
 
 jest.mock("../../network/proxyClient", () => ({
@@ -9,23 +9,22 @@ jest.mock("../../network/proxyClient", () => ({
 const { getTransactionCost } = jest.requireMock("../../network/proxyClient");
 
 const config = createFixtureConfig();
-const CURRENCY_ID = "concordium_testnet";
 
 describe("applyEnergyBuffer", () => {
   it("adds 20 percent", () => {
-    expect(applyEnergyBuffer(BigInt(100))).toBe(BigInt(120));
-    expect(applyEnergyBuffer(BigInt(1000))).toBe(BigInt(1200));
+    expect(applyEnergyBuffer(BigInt(100), 20)).toBe(BigInt(120));
+    expect(applyEnergyBuffer(BigInt(1000), 20)).toBe(BigInt(1200));
   });
 
   // Truncating would hand back the input unchanged for a small enough estimate,
   // which is a buffer in name only.
   it("rounds up rather than truncating", () => {
-    expect(applyEnergyBuffer(BigInt(1))).toBe(BigInt(2));
-    expect(applyEnergyBuffer(BigInt(501))).toBe(BigInt(602));
+    expect(applyEnergyBuffer(BigInt(1), 20)).toBe(BigInt(2));
+    expect(applyEnergyBuffer(BigInt(501), 20)).toBe(BigInt(602));
   });
 
   it("leaves zero at zero", () => {
-    expect(applyEnergyBuffer(BigInt(0))).toBe(BigInt(0));
+    expect(applyEnergyBuffer(BigInt(0), 20)).toBe(BigInt(0));
   });
 });
 
@@ -35,9 +34,9 @@ describe("estimateFees", () => {
   it("prices a simpleTransfer and does not buffer it", async () => {
     getTransactionCost.mockResolvedValue({ cost: "1000", energy: 501 });
 
-    const result = await estimateFees(config, CURRENCY_ID);
+    const result = await estimateFees(config);
 
-    expect(getTransactionCost).toHaveBeenCalledWith(config, CURRENCY_ID, {
+    expect(getTransactionCost).toHaveBeenCalledWith(config, {
       type: "simpleTransfer",
       numSignatures: 1,
     });
@@ -49,9 +48,9 @@ describe("estimateFees", () => {
   it("passes the encoded memo size", async () => {
     getTransactionCost.mockResolvedValue({ cost: "1200", energy: 520 });
 
-    await estimateFees(config, CURRENCY_ID, "test");
+    await estimateFees(config, "test");
 
-    expect(getTransactionCost).toHaveBeenCalledWith(config, CURRENCY_ID, {
+    expect(getTransactionCost).toHaveBeenCalledWith(config, {
       type: "simpleTransfer",
       numSignatures: 1,
       memoSize: 5,
@@ -61,7 +60,7 @@ describe("estimateFees", () => {
   it("pins a simple transfer to the documented fixed energy", async () => {
     getTransactionCost.mockResolvedValue({ cost: "1000000", energy: "501" });
 
-    const result = await estimateFees(config, CURRENCY_ID);
+    const result = await estimateFees(config);
 
     expect(result.energy).toBe(CONCORDIUM_ENERGY.SIMPLE_TRANSFER);
   });
@@ -69,8 +68,20 @@ describe("estimateFees", () => {
   it("falls back to the fixed energy when the proxy fails", async () => {
     getTransactionCost.mockRejectedValue(new Error("proxy down"));
 
-    await expect(estimateFees(config, CURRENCY_ID)).resolves.toEqual({
-      cost: CONCORDIUM_ENERGY.DEFAULT_COST,
+    await expect(estimateFees(config)).resolves.toEqual({
+      cost: BigInt(DEFAULT_FEES_DEFAULT_COST),
+      energy: CONCORDIUM_ENERGY.DEFAULT,
+    });
+  });
+
+  it("falls back to the cost the coin config sets", async () => {
+    getTransactionCost.mockRejectedValue(new Error("proxy down"));
+
+    await expect(
+      estimateFees(createFixtureConfig({ fees: { defaultCost: 2_000_000 } })),
+    ).resolves.toEqual({ cost: BigInt(2_000_000), energy: CONCORDIUM_ENERGY.DEFAULT });
+    await expect(estimateFees(createFixtureConfig({ fees: { defaultCost: 0 } }))).resolves.toEqual({
+      cost: BigInt(DEFAULT_FEES_DEFAULT_COST),
       energy: CONCORDIUM_ENERGY.DEFAULT,
     });
   });
@@ -78,8 +89,8 @@ describe("estimateFees", () => {
   it("falls back to the memo ceiling when the proxy fails on a memo transfer", async () => {
     getTransactionCost.mockRejectedValue(new Error("proxy down"));
 
-    await expect(estimateFees(config, CURRENCY_ID, "hello")).resolves.toEqual({
-      cost: CONCORDIUM_ENERGY.DEFAULT_COST,
+    await expect(estimateFees(config, "hello")).resolves.toEqual({
+      cost: BigInt(DEFAULT_FEES_DEFAULT_COST),
       energy: CONCORDIUM_ENERGY.TRANSFER_WITH_MEMO_MAX,
     });
   });
@@ -91,9 +102,9 @@ describe("estimateTokenFees", () => {
   it("prices a tokenUpdate for a single transfer", async () => {
     getTransactionCost.mockResolvedValue({ cost: "3000", energy: 900 });
 
-    await estimateTokenFees(config, CURRENCY_ID, { tokenId: "t-USDT", listOperationsSize: 42 });
+    await estimateTokenFees(config, { tokenId: "t-USDT", listOperationsSize: 42 });
 
-    expect(getTransactionCost).toHaveBeenCalledWith(config, CURRENCY_ID, {
+    expect(getTransactionCost).toHaveBeenCalledWith(config, {
       type: "tokenUpdate",
       numSignatures: 1,
       tokenId: "t-USDT",
@@ -107,14 +118,14 @@ describe("estimateTokenFees", () => {
   it("prices the buffered energy rather than buffering the cost", async () => {
     getTransactionCost.mockResolvedValue({ cost: "2002", energy: 1001 });
 
-    const result = await estimateTokenFees(config, CURRENCY_ID, {
+    const result = await estimateTokenFees(config, {
       tokenId: "t-USDT",
       listOperationsSize: 42,
     });
 
     expect(result.energy).toBe(BigInt(1202));
     expect(result.cost).toBe(BigInt(2404));
-    expect(result.cost).toBeGreaterThan(applyEnergyBuffer(BigInt(2002)));
+    expect(result.cost).toBeGreaterThan(applyEnergyBuffer(BigInt(2002), 20));
   });
 
   // Both halves carry the buffer, or the fee shown and the energy signed drift
@@ -122,12 +133,24 @@ describe("estimateTokenFees", () => {
   it("buffers cost and energy alike", async () => {
     getTransactionCost.mockResolvedValue({ cost: "3000", energy: 900 });
 
-    const result = await estimateTokenFees(config, CURRENCY_ID, {
+    const result = await estimateTokenFees(config, {
       tokenId: "t-USDT",
       listOperationsSize: 42,
     });
 
     expect(result).toEqual({ cost: BigInt(3600), energy: BigInt(1080) });
+  });
+
+  it("applies the buffer the coin config sets, and the default for an unusable one", async () => {
+    getTransactionCost.mockResolvedValue({ cost: "3000", energy: 900 });
+    const params = { tokenId: "t-USDT", listOperationsSize: 42 };
+
+    await expect(
+      estimateTokenFees(createFixtureConfig({ fees: { pltEnergyBufferPercent: 50 } }), params),
+    ).resolves.toEqual({ cost: BigInt(4500), energy: BigInt(1350) });
+    await expect(
+      estimateTokenFees(createFixtureConfig({ fees: { pltEnergyBufferPercent: 12.5 } }), params),
+    ).resolves.toEqual({ cost: BigInt(3600), energy: BigInt(1080) });
   });
 
   // There is no constant to substitute: the fee depends on the id's length and
@@ -136,16 +159,16 @@ describe("estimateTokenFees", () => {
     getTransactionCost.mockRejectedValue(new Error("proxy down"));
 
     await expect(
-      estimateTokenFees(config, CURRENCY_ID, { tokenId: "t-USDT", listOperationsSize: 42 }),
+      estimateTokenFees(config, { tokenId: "t-USDT", listOperationsSize: 42 }),
     ).rejects.toThrow("proxy down");
   });
 
   it("never asks the proxy to price an operation it cannot price", async () => {
     getTransactionCost.mockResolvedValue({ cost: "3000", energy: 900 });
 
-    await estimateTokenFees(config, CURRENCY_ID, { tokenId: "t-USDT", listOperationsSize: 42 });
+    await estimateTokenFees(config, { tokenId: "t-USDT", listOperationsSize: 42 });
 
-    const [, , params] = getTransactionCost.mock.calls[0];
+    const [, params] = getTransactionCost.mock.calls[0];
     expect(Object.keys(params.tokenOperationTypeCount)).toEqual(["transfer"]);
   });
 });

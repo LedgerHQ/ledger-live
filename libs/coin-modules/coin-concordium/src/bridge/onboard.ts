@@ -6,7 +6,6 @@ import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { CONCORDIUM_CHAIN_IDS, CONCORDIUM_ID_APP_MOBILE_HOST } from "../constants";
-import coinConfig from "../config";
 import {
   buildSubmitCredentialData,
   deserializeCredentialDeploymentTransaction,
@@ -15,6 +14,7 @@ import { getWalletConnect } from "../network/walletConnect";
 import { getPublicKey, signCredentialDeployment } from "../signer";
 import {
   type ConcordiumAccount,
+  type ConcordiumBridgeContext,
   type ConcordiumSigner,
   type ConcordiumOnboardProgress,
   type ConcordiumOnboardResult,
@@ -44,7 +44,7 @@ const withTimeout = <T>(promise: Promise<T>, error: Error): Promise<T> => {
 };
 
 export const buildOnboardAccount =
-  (signerContext: SignerContext<ConcordiumSigner>) =>
+  (signerContext: SignerContext<ConcordiumSigner>, context: ConcordiumBridgeContext) =>
   (
     currencyId: string,
     deviceId: string,
@@ -66,7 +66,8 @@ export const buildOnboardAccount =
 
           o.next({ status: AccountOnboardStatus.PREPARE });
 
-          const network = coinConfig.getCoinConfig(currencyId).networkType;
+          const config = await context.config(currencyId);
+          const network = config.networkType;
           const chainId = CONCORDIUM_CHAIN_IDS[network];
 
           const session = await walletConnect.getSession(network);
@@ -126,7 +127,7 @@ export const buildOnboardAccount =
 
           const data = buildSubmitCredentialData(credentialDeploymentTransaction, signature);
 
-          await submitCredential(coinConfig.getCoinConfig(currencyId), currencyId, data);
+          await submitCredential(config, data);
 
           const onboardResult: ConcordiumOnboardResult = {
             account: {
@@ -177,7 +178,7 @@ export const buildOnboardAccount =
     });
 
 export const buildPairWalletConnect =
-  () =>
+  (context: ConcordiumBridgeContext) =>
   (currencyId: string, _deviceId: string): Observable<ConcordiumPairingProgress> =>
     new Observable(o => {
       async function main() {
@@ -189,12 +190,20 @@ export const buildPairWalletConnect =
             throw new Error("WalletConnect context is not available");
           }
 
-          const network = coinConfig.getCoinConfig(currencyId).networkType;
+          const config = await context.config(currencyId);
+          const relayUrl = config.walletConnect?.relayUrl;
+          if (!relayUrl) {
+            throw new Error(
+              `concordium: no walletConnect.relayUrl in the coin config of ${currencyId}`,
+            );
+          }
+          const network = config.networkType;
           const chainId = CONCORDIUM_CHAIN_IDS[network];
 
           const { uri: encodedUri, approval } = await walletConnect.initiatePairing(
             network,
             chainId,
+            relayUrl,
           );
 
           if (!encodedUri) {

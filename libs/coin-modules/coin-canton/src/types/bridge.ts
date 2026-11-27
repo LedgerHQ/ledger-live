@@ -85,6 +85,12 @@ export enum DurationEnum {
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
+/** A transaction whose stored operations, if any, are provisional, at its block height. */
+export type ReplayTransaction = { hash: string; height: number };
+
+/** A transaction at its block height, which is local to the gateway's node. */
+export type ScanCheckpoint = { hash: string; height: number };
+
 export type CantonResources = {
   isOnboarded: boolean;
   instrumentUtxoCounts: Record<string, number>;
@@ -93,6 +99,10 @@ export type CantonResources = {
   xpub?: string;
   /** The DSO party issuing native CC; absent until a sync reads it. */
   nativeInstrumentAdmin?: string;
+  /** Transactions the next sync reads again, in full, to replace what they stored. */
+  replayTransactions?: ReplayTransaction[];
+  /** The newest transaction the sync read below `replayTransactions`, where the next one starts. */
+  scanCheckpoint?: ScanCheckpoint;
 };
 export type CantonResourcesRaw = {
   isOnboarded: boolean;
@@ -101,6 +111,8 @@ export type CantonResourcesRaw = {
   publicKey?: string;
   xpub?: string;
   nativeInstrumentAdmin?: string;
+  replayTransactions?: ReplayTransaction[];
+  scanCheckpoint?: ScanCheckpoint;
 };
 
 export type CantonAccount = Account & {

@@ -1,0 +1,4 @@
+{
+  "extends": "@support/tsconfig/dual",
+  "references": [{ "path": "./tsconfig.web.json" }]
+}

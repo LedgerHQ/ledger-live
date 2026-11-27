@@ -9,24 +9,6 @@ import type { Account } from "@ledgerhq/types-live";
 
 export const TEZOS = getCryptoCurrencyById("tezos");
 
-/**
- * TzKT mock URL — intercepted by MSW so no real network call reaches this host.
- */
-export const TZKT_MOCK_URL = "https://rpc.shadownet.teztnets.com";
-
-/**
- * Bob is the second Flextesa bootstrap account used as a fund recipient in tests.
- * Address from: `docker exec tezos-sandbox oxfordbox info`
- */
-export const RECIPIENT = "tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK6";
-
-/**
- * Alice is the first Flextesa bootstrap account and an active baker.
- * Used as the delegation target in the delegate scenario.
- * Address from: `docker exec tezos-sandbox oxfordbox info`
- */
-export const ALICE_BAKER_ADDRESS = "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb";
-
 export function makeAccount(address: string, derivationMode = ""): Account {
   const id = `js:2:tezos:${address}:${derivationMode}`;
   const { derivationMode: parsedDerivationMode, xpubOrAddress } = decodeAccountId(id);

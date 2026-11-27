@@ -54,7 +54,7 @@ export class DmkSignerAleo implements AleoSigner {
 
   private _mapError<E extends DAError>(error: E): Error {
     if (!("errorCode" in error)) {
-      return new Error(this._getGenericErrorMessage(error));
+      return new Error(this._getGenericErrorMessage(error), { cause: error });
     }
 
     switch (error.errorCode) {
@@ -63,7 +63,7 @@ export class DmkSignerAleo implements AleoSigner {
       case "69f0":
         return new UserRefusedOnDevice();
       default:
-        return new Error(this._getGenericErrorMessage(error));
+        return new Error(this._getGenericErrorMessage(error), { cause: error });
     }
   }
 

@@ -1,12 +1,12 @@
 import { act, renderHook } from "tests/testSetup";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
-import { useGetTrendingCategoriesQuery } from "@ledgerhq/live-common/market/state-manager/api";
+import { useGetTrendingCategoriesQuery } from "@domain/api-market-trending-categories";
 import type { MarketListCategory, MarketState } from "~/renderer/reducers/market";
 import { track } from "@shared/analytics";
 import { useMarketCategories } from "../useMarketCategories";
 
-jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/market/state-manager/api"),
+jest.mock("@domain/api-market-trending-categories", () => ({
+  ...jest.requireActual("@domain/api-market-trending-categories"),
   useGetTrendingCategoriesQuery: jest.fn(),
 }));
 

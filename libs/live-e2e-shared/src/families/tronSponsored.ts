@@ -35,13 +35,13 @@ export const signTronRentPayment = withDeviceController(
       const buttons = getButtonsController();
       const { sendVerifyLabel, sendConfirmLabel } = getDeviceLabels(AppInfos.TRON);
 
-      await waitFor(sendVerifyLabel, SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS);
+      await waitFor(sendVerifyLabel, { maxAttempts: SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS });
       const events = await pressUntilTextFound(sendConfirmLabel);
       // Exact: the loose matcher would find a short amount's digits scattered across any review,
       // and the label or payee in any screen holding their letters in order.
-      expectSpeculosEventsContainExactly(amount, events);
-      expectSpeculosEventsContainExactly(DeviceLabels.ENERGY_RENTAL_TRONIFY, events);
-      expectSpeculosEventsContainExactly(payee, events);
+      expectSpeculosEventsContainExactly({ substring: amount, events });
+      expectSpeculosEventsContainExactly({ substring: DeviceLabels.ENERGY_RENTAL_TRONIFY, events });
+      expectSpeculosEventsContainExactly({ substring: payee, events });
 
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);

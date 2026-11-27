@@ -3,6 +3,8 @@ import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import type {
   ConcordiumAccount,
   ConcordiumAccountRaw,
+  ConcordiumCoinConfig,
+  ConcordiumContext,
   ConcordiumResources,
   RawOperation,
 } from "../types";
@@ -12,25 +14,22 @@ import {
   createTestAccountRaw,
   createTestConcordiumAccountRaw,
 } from "../test/testHelpers";
+import { createFixtureContext } from "../test/fixtures";
 import {
   mapRawOperationToBridgeOperation,
   isConcordiumAccount,
   assignToAccountRaw,
-  assignFromAccountRaw,
+  makeAssignFromAccountRaw,
 } from "./serialization";
 
-jest.mock("../config", () => ({
-  __esModule: true,
-  default: { getCoinConfig: jest.fn() },
-}));
-
-const coinConfig = jest.requireMock("../config").default;
+const contextWith = (config: () => Promise<ConcordiumCoinConfig>): ConcordiumContext => ({
+  config,
+  logger: () => {},
+});
 
 // Token state only survives deserialization while the feature is on. The suites
 // below assume it is; "assignFromAccountRaw and the token flag" varies it.
-beforeEach(() => {
-  coinConfig.getCoinConfig.mockReturnValue({ enableTokens: true });
-});
+const assignFromAccountRaw = makeAssignFromAccountRaw(createFixtureContext({ enableTokens: true }));
 
 const ACCOUNT_ID = "js:2:concordium_testnet:someaddr:";
 
@@ -163,7 +162,7 @@ describe("assignToAccountRaw", () => {
 });
 
 describe("assignFromAccountRaw", () => {
-  it("should copy concordiumResources from accountRaw to account", () => {
+  it("should copy concordiumResources from accountRaw to account", async () => {
     const accountRaw = createTestConcordiumAccountRaw({
       concordiumResources: {
         isOnboarded: true,
@@ -176,7 +175,7 @@ describe("assignFromAccountRaw", () => {
     });
     const account = createTestAccount();
 
-    assignFromAccountRaw(accountRaw, account);
+    await assignFromAccountRaw(accountRaw, account);
 
     expect("concordiumResources" in account).toBe(true);
     if ("concordiumResources" in account) {
@@ -191,18 +190,18 @@ describe("assignFromAccountRaw", () => {
     }
   });
 
-  it("should not modify account when concordiumResources is missing in raw", () => {
+  it("should not modify account when concordiumResources is missing in raw", async () => {
     const accountRaw = createTestAccountRaw();
     const account = createTestAccount();
 
-    assignFromAccountRaw(accountRaw, account);
+    await assignFromAccountRaw(accountRaw, account);
 
     expect("concordiumResources" in account).toBe(false);
   });
 });
 
 describe("roundtrip serialization", () => {
-  it("should preserve all fields through toRaw and fromRaw", () => {
+  it("should preserve all fields through toRaw and fromRaw", async () => {
     const originalResources: ConcordiumResources = {
       isOnboarded: true,
       credId: "roundtrip-cred",
@@ -216,7 +215,7 @@ describe("roundtrip serialization", () => {
     const accountRaw = createTestAccountRaw();
     assignToAccountRaw(account, accountRaw);
     const restoredAccount = createTestAccount();
-    assignFromAccountRaw(accountRaw, restoredAccount);
+    await assignFromAccountRaw(accountRaw, restoredAccount);
 
     expect("concordiumResources" in restoredAccount).toBe(true);
     if ("concordiumResources" in restoredAccount) {
@@ -224,7 +223,7 @@ describe("roundtrip serialization", () => {
     }
   });
 
-  it("should preserve the per-token map, including through JSON storage", () => {
+  it("should preserve the per-token map, including through JSON storage", async () => {
     const originalResources: ConcordiumResources = {
       isOnboarded: true,
       credId: "roundtrip-cred",
@@ -247,7 +246,7 @@ describe("roundtrip serialization", () => {
 
     const stored = JSON.parse(JSON.stringify(accountRaw));
     const restoredAccount = createTestAccount();
-    assignFromAccountRaw(stored, restoredAccount);
+    await assignFromAccountRaw(stored, restoredAccount);
 
     expect("concordiumResources" in restoredAccount).toBe(true);
     if ("concordiumResources" in restoredAccount) {
@@ -273,7 +272,7 @@ describe("roundtrip serialization", () => {
     expect("tokens" in (accountRaw as ConcordiumAccountRaw).concordiumResources).toBe(false);
   });
 
-  it("should drop keys it does not know about in both directions", () => {
+  it("should drop keys it does not know about in both directions", async () => {
     // Storage can hold a key written by a newer app version. Carrying it back
     // out would make it self-propagating, so the converter is an allowlist.
     const withStrayKey = {
@@ -294,7 +293,7 @@ describe("roundtrip serialization", () => {
     expect((accountRaw as ConcordiumAccountRaw).concordiumResources).not.toHaveProperty("stray");
 
     const account = createTestAccount();
-    assignFromAccountRaw(
+    await assignFromAccountRaw(
       createTestConcordiumAccountRaw({ concordiumResources: withStrayKey }),
       account,
     );
@@ -401,6 +400,12 @@ describe("mapRawOperationToBridgeOperation", () => {
     expect(mapRawOperationToBridgeOperation(raw, ACCOUNT_ID).hasFailed).toBe(true);
   });
 
+  it("lists no sender for an amount that came from a contract", () => {
+    const raw = createRawOperation({ type: "IN", sender: "", fee: "0" });
+
+    expect(mapRawOperationToBridgeOperation(raw, ACCOUNT_ID).senders).toEqual([]);
+  });
+
   it("lists no recipient for a transaction that never named one", () => {
     const raw = createRawOperation({ recipient: "" });
 
@@ -436,11 +441,10 @@ describe("assignFromAccountRaw and the token flag", () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  it("drops sub-accounts and stored token state when the flag is off", () => {
-    coinConfig.getCoinConfig.mockReturnValue({ enableTokens: false });
+  it("drops sub-accounts and stored token state when the flag is off", async () => {
     const target = account();
 
-    assignFromAccountRaw(raw(), target);
+    await makeAssignFromAccountRaw(createFixtureContext({ enableTokens: false }))(raw(), target);
 
     expect(target.subAccounts).toBeUndefined();
     expect(
@@ -448,11 +452,10 @@ describe("assignFromAccountRaw and the token flag", () => {
     ).toBe(false);
   });
 
-  it("keeps both when the flag is on", () => {
-    coinConfig.getCoinConfig.mockReturnValue({ enableTokens: true });
+  it("keeps both when the flag is on", async () => {
     const target = account();
 
-    assignFromAccountRaw(raw(), target);
+    await makeAssignFromAccountRaw(createFixtureContext({ enableTokens: true }))(raw(), target);
 
     expect(target.subAccounts).toHaveLength(1);
     expect(
@@ -463,18 +466,19 @@ describe("assignFromAccountRaw and the token flag", () => {
   it.each([
     [
       "the config cannot be resolved",
-      () => {
+      async () => {
         throw new Error("MissingCoinConfig");
       },
     ],
-    ["the flag is absent from the config", () => ({})],
-  ])("fails closed and strips tokens when %s", (_case, impl) => {
+    ["the flag is absent from the config", async () => ({}) as unknown as ConcordiumCoinConfig],
+  ])("fails closed and strips tokens when %s", async (_case, impl) => {
     // An unreadable flag must not expose token UI for a feature that is off by
     // default. Sub-accounts are rebuilt from chain on the next sync.
-    coinConfig.getCoinConfig.mockImplementation(impl);
     const target = account();
 
-    expect(() => assignFromAccountRaw(raw(), target)).not.toThrow();
+    await expect(
+      makeAssignFromAccountRaw(contextWith(impl))(raw(), target),
+    ).resolves.toBeUndefined();
     expect(target.subAccounts).toBeUndefined();
   });
 });

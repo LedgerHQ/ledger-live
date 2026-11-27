@@ -251,6 +251,19 @@ describe("DmkSignerAleo", () => {
       // WHEN / THEN
       await expect(signer.getViewKey(mockPath)).rejects.toThrow(UserRefusedOnDevice);
     });
+
+    it("keeps the device action error as the cause, so a disconnect is still told apart", async () => {
+      const disconnect = { _tag: "DeviceDisconnectedWhileSendingError" };
+      const getViewKeyMock: jest.Mock = mockSignerAleo.getViewKey;
+      getViewKeyMock.mockReturnValue({
+        observable: of({ status: DeviceActionStatus.Error, error: disconnect }),
+      });
+
+      await expect(signer.getViewKey(mockPath)).rejects.toMatchObject({
+        message: "DeviceDisconnectedWhileSendingError",
+        cause: disconnect,
+      });
+    });
   });
 
   describe("getTvk", () => {

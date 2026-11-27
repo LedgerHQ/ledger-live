@@ -26,9 +26,9 @@ const swapDiscreetModeTestConfig = {
   ],
 };
 
-runSwapDiscreetModeTest(
-  swapDiscreetModeTestConfig.fundedAssetsAccounts,
-  swapDiscreetModeTestConfig.balanceCheckAccount,
-  swapDiscreetModeTestConfig.tmsLinks,
-  swapDiscreetModeTestConfig.tags,
-);
+runSwapDiscreetModeTest({
+  accounts: swapDiscreetModeTestConfig.fundedAssetsAccounts,
+  balanceCheckAccount: swapDiscreetModeTestConfig.balanceCheckAccount,
+  tmsLinks: swapDiscreetModeTestConfig.tmsLinks,
+  tags: swapDiscreetModeTestConfig.tags,
+});

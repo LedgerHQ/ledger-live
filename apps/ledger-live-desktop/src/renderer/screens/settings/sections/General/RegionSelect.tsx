@@ -5,8 +5,12 @@ import { setLocale } from "~/renderer/actions/settings";
 import { languageSelector, localeSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
 import { Track } from "@shared/analytics-react";
-import regionsByKey from "./regions.json";
-import { DEFAULT_LANGUAGE, OFAC_LOCALES } from "~/config/languages";
+import {
+  REGION_LOCALES,
+  SANCTIONED_REGION_LOCALES,
+  toAllowedRegionLocale,
+} from "@features/flow-settings-general";
+import { DEFAULT_LANGUAGE } from "~/config/languages";
 
 type RegionSelectOption = {
   value: string;
@@ -16,7 +20,7 @@ type RegionSelectOption = {
   label: string;
 };
 const getRegionOption = (regionLocale: string, languageLocale: string | Intl.Locale) => {
-  const regionLocaleWithoutOFAC = OFAC_LOCALES.includes(regionLocale) ? "en-US" : regionLocale;
+  const regionLocaleWithoutOFAC = toAllowedRegionLocale(regionLocale);
   const [language, region = ""] = regionLocaleWithoutOFAC.split("-");
   const languageDisplayName = new window.Intl.DisplayNames([languageLocale], {
     type: "language",
@@ -36,8 +40,7 @@ const getRegionOption = (regionLocale: string, languageLocale: string | Intl.Loc
   };
 };
 const getRegionsOptions = (languageLocale: string) =>
-  Object.keys(regionsByKey)
-    .filter(regionLocale => !OFAC_LOCALES.includes(regionLocale))
+  REGION_LOCALES.filter(regionLocale => !SANCTIONED_REGION_LOCALES.has(regionLocale))
     .map(regionLocale => getRegionOption(regionLocale, languageLocale))
     .sort((a, b) => a.label.localeCompare(b.label));
 

@@ -544,6 +544,22 @@ export type LLDCoinFamily<
    */
   addAssetAction?: (args: { account: A; dispatch: AppDispatch }) => void;
 
+  /**
+   * Opens what the new receive screen asks for when the account cannot receive yet, such as the
+   * token to add. Without it, the screen shows no button.
+   */
+  receiveGateAction?: (args: { account: A; token?: TokenCurrency; dispatch: AppDispatch }) => void;
+
+  /**
+   * Opens the family's token management. The account settings of the new Account Detail and
+   * Crypto addresses pages show "Manage assets" only for a family that defines it, when
+   * `canManage` is true.
+   */
+  manageAssetsAction?: {
+    canManage: (account: A) => boolean;
+    open: (args: { account: A; dispatch: AppDispatch }) => void;
+  };
+
   /** Overrides `currency.tokenTypes`. Read it through `useTokenTypes` */
   getTokenTypes?: (currency: CryptoCurrency) => string[];
 
@@ -606,6 +622,11 @@ export type LLDCoinFamily<
    * Replace Network fees row on Summary Step
    */
   StepSummaryNetworkFeesRow?: React.ComponentType<SummaryNetworkFeesRowProps<T>>;
+
+  /**
+   * Hide the amount and the total spent rows on Summary Step
+   */
+  hidesSummaryAmount?: (transaction: T) => boolean;
 
   /**
    * Allow to override the sender (From) address display on Summary Step
@@ -694,6 +715,11 @@ export type LLDCoinFamily<
    * Component allowing to fully customize the add account flow in the drawer
    */
   ModularDrawerAddAccountFlowManager?: React.ComponentType<ModularDrawerAddAccountFlowManagerProps>;
+
+  /**
+   * Modal opened by the `delegate` deeplink. A family without it ignores that deeplink.
+   */
+  delegateDeeplinkModal?: "MODAL_DELEGATE";
 
   /** Modal chunks to warm when this family loads, so the first open is instant. */
   modalsToPreload?: CoinModalKey[];

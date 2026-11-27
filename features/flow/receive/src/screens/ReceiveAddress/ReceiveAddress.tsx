@@ -5,5 +5,13 @@ import { useReceiveAddressViewModel } from "./useReceiveAddressViewModel";
 
 /** The receive address screen: a dialog on desktop, a screen on mobile. */
 export function ReceiveAddress(props: ReceiveAddressProps) {
-  return <ReceiveAddressView {...useReceiveAddressViewModel(props)} />;
+  const { verification, ...viewProps } = useReceiveAddressViewModel(props);
+  const { VerifyAddressExecutor } = props;
+
+  return (
+    <>
+      <ReceiveAddressView {...viewProps} />
+      {VerifyAddressExecutor && verification ? <VerifyAddressExecutor {...verification} /> : null}
+    </>
+  );
 }

@@ -1,18 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { isInconclusiveVerdict } from "../../ci/step.mts";
-import {
-  debugBase,
-  failedRows,
-  fromJsStart,
-  fromProcessStart,
-  pairUp,
-  runInfoOf,
-  summarise,
-  type Row,
-} from "./analyze.ts";
-import { comparison, launch, startsDifferWithFallback } from "./fake-samples.ts";
-import type { Sample } from "../types.ts";
+import { debugBase, failedRows, pairUp, runInfoOf, summarise, type Row } from "./analyze.ts";
+import { comparison, launch } from "./fake-samples.ts";
 
 const GATE = { preset: "custom", thresholdMs: 100 };
 function rowOf(rows: Row[], measure: (name: string) => boolean): Row {
@@ -20,8 +10,7 @@ function rowOf(rows: Row[], measure: (name: string) => boolean): Row {
   assert.ok(row, "no such row");
   return row;
 }
-const debugRow = (rows: Row[]) => rowOf(rows, name => name.startsWith("Debug screen"));
-const nativeRow = (rows: Row[]) => rowOf(rows, name => name === "With native start");
+const debugRow = (rows: Row[]) => rowOf(rows, name => name === "Debug screen");
 
 describe("pairUp", () => {
   it("pairs A and B of the same round and drops warm-ups, failures and unpaired launches", () => {
@@ -36,24 +25,6 @@ describe("pairUp", () => {
     assert.deepEqual(
       pairUp(samples, s => s.appStartupTime),
       [{ platform: "android", scenario: "accounts", phase: 0, A: 1000, B: 1100 }],
-    );
-  });
-
-  it("drops a round where only one launch followed a read of the Debug screen", () => {
-    const samples = [
-      launch({ side: "A", round: 0, afterScreenRead: true, appStartupTime: 1300 }),
-      launch({ side: "B", round: 0, appStartupTime: 1000 }),
-      launch({ side: "A", round: 1, afterScreenRead: true, appStartupTime: 1300 }),
-      launch({ side: "B", round: 1, afterScreenRead: true, appStartupTime: 1300 }),
-      launch({ side: "A", round: 2, afterScreenRead: false, appStartupTime: 1000 }),
-      launch({ side: "B", round: 2, appStartupTime: 1000 }),
-    ];
-    assert.deepEqual(
-      pairUp(samples, s => s.appStartupTime).map(p => [p.A, p.B]),
-      [
-        [1300, 1300],
-        [1000, 1000],
-      ],
     );
   });
 });
@@ -93,8 +64,8 @@ describe("debugBase", () => {
   it("is js when the Debug value starts at the first JS import", () => {
     assert.equal(debugBase(launch({ side: "A", appStartupTime: 700, jsStartOffset: 5 })), "js");
   });
-  it("is process when it starts where the harness reads the process start", () => {
-    const s = launch({ side: "A", appStartupTime: 1500, jsStartOffset: 800, nativeStartMs: 760 });
+  it("is process when the first JS import comes well after its start", () => {
+    const s = launch({ side: "A", appStartupTime: 1500, jsStartOffset: 800 });
     assert.equal(debugBase(s), "process");
   });
   it("is null without startup events", () => {
@@ -104,29 +75,12 @@ describe("debugBase", () => {
   });
 });
 
-describe("fromJsStart and fromProcessStart", () => {
-  it("give the same times for builds that count from different starts", () => {
-    const jsBased = launch({
-      side: "A",
-      appStartupTime: 700,
-      jsStartOffset: 0,
-      nativeStartMs: 800,
-    });
-    const processBased = launch({ side: "B", appStartupTime: 1500, jsStartOffset: 800 });
-    assert.equal(fromJsStart(jsBased), fromJsStart(processBased));
-    assert.equal(fromProcessStart(jsBased), 1500);
-  });
-});
-
 describe("summarise", () => {
   it("passes when B is as fast as A", () => {
     const rows = summarise(comparison({ deltaMs: 0 }), GATE);
     assert.deepEqual(
       rows.map(r => [r.measure, r.verdict]),
-      [
-        ["Debug screen", "PASS"],
-        ["With native start", "PASS"],
-      ],
+      [["Debug screen", "PASS"]],
     );
   });
 
@@ -221,49 +175,40 @@ describe("summarise", () => {
     assert.match(row.verdict, /^PASS/);
   });
 
-  it("compares from the first JS import when A and B count from different starts", () => {
-    const samples = comparison({
-      deltaMs: 0,
-      a: { jsStartOffset: 0, nativeStartMs: 800 },
-      b: { jsStartOffset: 800, nativeStartMs: 800 },
-    }).map(s => (s.side === "B" ? { ...s, appStartupTime: (s.appStartupTime ?? 0) + 800 } : s));
-    const rows = summarise(samples, GATE);
-    const row = debugRow(rows);
-    assert.equal(row.measure, "Debug screen, from JS start");
-    assert.deepEqual(row.bases, { A: "js", B: "process" });
-    assert.equal(row.verdict, "PASS");
-    assert.equal(nativeRow(rows).verdict, "PASS");
-  });
-
-  it("keeps a launch that fell back to the first JS import when comparing from there", () => {
-    const row = debugRow(summarise(startsDifferWithFallback(), GATE));
-    assert.equal(row.measure, "Debug screen, from JS start");
-    assert.equal(row.pairs, 6);
-    assert.deepEqual(row.hl, { estimate: 0, low: 0, high: 0 });
-    assert.deepEqual(row.offBaseLaunches, { A: 0, B: 1 });
-  });
-
-  it("leaves out of the Debug screen row a launch that counted from another start", () => {
-    const samples = comparison({
-      pairs: 8,
-      deltaMs: 0,
-      a: { jsStartOffset: 800, nativeStartMs: 800 },
-      b: { jsStartOffset: 800, nativeStartMs: 800 },
-    });
+  it("leaves out a launch that counted from the first JS import", () => {
+    const samples = comparison({ pairs: 8, deltaMs: 0 });
     const firstA = samples.find(s => s.side === "A");
     assert.ok(firstA?.events);
     firstA.events["Before js imports"].time = 0;
     const row = debugRow(summarise(samples, GATE));
-    assert.deepEqual(row.offBaseLaunches, { A: 1, B: 0 });
+    assert.deepEqual(row.jsStartLaunches, { A: 1, B: 0 });
     assert.equal(row.pairs, 7);
   });
 
-  it("fails the native start row of a build without the JS start epoch event", () => {
-    const samples = comparison({ deltaMs: 0 }).map(s =>
-      s.side === "B" ? { ...s, events: { "Before js imports": { count: 1, time: 5 } } } : s,
-    );
-    const row = nativeRow(summarise(samples, GATE));
-    assert.equal(row.verdict, "Not enough pairs");
+  it("fails as not enough pairs when a build counts every launch from the first JS import", () => {
+    for (const both of [false, true]) {
+      const js = { jsStartOffset: 0 };
+      const row = debugRow(
+        summarise(comparison({ deltaMs: 0, a: js, ...(both ? { b: js } : {}) }), GATE),
+      );
+      assert.deepEqual(row.bases, { A: "js", B: both ? "js" : "process" });
+      assert.deepEqual(row.jsStartLaunches, { A: 6, B: both ? 6 : 0 });
+      assert.equal(row.pairs, 0);
+      assert.equal(row.verdict, "Not enough pairs");
+      assert.equal(failedRows([row]), true);
+    }
+  });
+
+  it("fails as not enough pairs when both builds count most launches from the first JS import", () => {
+    const samples = comparison({ pairs: 12, deltaMs: 0 });
+    for (const s of samples) {
+      if (s.round < 4 && s.events) s.events["Before js imports"].time = 0;
+    }
+    const row = debugRow(summarise(samples, GATE));
+    assert.deepEqual(row.bases, { A: "js", B: "js" });
+    assert.deepEqual(row.jsStartLaunches, { A: 8, B: 8 });
+    assert.deepEqual(row.pairsPerPhase, [2, 2]);
+    assert.match(row.verdict, /^Not enough pairs: 2 before the device swap, 2 after/);
     assert.equal(failedRows([row]), true);
   });
 
@@ -298,139 +243,5 @@ describe("summarise", () => {
       summarise(comparison({ deltaMs: 0 }), { preset: "aa-noise", thresholdMs: 100 }),
     );
     assert.equal(row.verdict, "OK: resolves about ±0 ms");
-  });
-
-  it("counts the fallbacks of each build and leaves out the pairs they make uneven", () => {
-    // B's log line never comes, so each A launch follows a read of the screen.
-    const samples = comparison({
-      deltaMs: 0,
-      a: { readFrom: "log", afterScreenRead: true },
-      b: { readFrom: "screen-fallback" },
-    });
-    const row = debugRow(summarise(samples, GATE));
-    assert.deepEqual(row.reads.fallbacks, { A: 0, B: 6 });
-    assert.deepEqual(row.reads.unreadable, { A: 0, B: 0 });
-    assert.equal(row.reads.unevenPairs, 6);
-    assert.equal(row.pairs, 0);
-    assert.match(row.verdict, /^Not enough pairs/);
-    assert.equal(failedRows([row]), true);
-  });
-
-  it("counts the fallbacks whose device log lines came unreadable", () => {
-    const samples = comparison({
-      deltaMs: 0,
-      a: { readFrom: "log", afterScreenRead: true },
-      b: { readFrom: "screen-fallback", unreadableLogLines: "2 startup event lines before ..." },
-    });
-    const { reads } = debugRow(summarise(samples, GATE));
-    assert.deepEqual(reads.fallbacks, { A: 0, B: 6 });
-    assert.deepEqual(reads.unreadable, { A: 0, B: 6 });
-  });
-
-  it("fails every preset and measure when the Debug screen and the device log disagree", () => {
-    const samples = comparison({ deltaMs: 0, a: { readFrom: "log", screenAppStartupTime: 1000 } });
-    const differs = samples.find(s => s.side === "A");
-    if (!differs) throw new Error("no A launch");
-    differs.screenAppStartupTime = 1040;
-    for (const preset of ["custom", "aa-noise", "known-regression"]) {
-      const rows = summarise(samples, { preset, thresholdMs: 100 });
-      assert.deepEqual(
-        rows.map(r => r.verdict),
-        Array(2).fill(
-          "FAIL: the Debug screen showed another App startup time than the device log on 1 of the 6 launches read both ways",
-        ),
-      );
-      assert.equal(failedRows(rows), true);
-    }
-  });
-
-  describe("builds whose missing lines switched both builds to the screen", () => {
-    const missed = (side: "A" | "B", overrides: Partial<Sample>) =>
-      launch({
-        side,
-        readFrom: "screen-fallback",
-        noLogLines: true,
-        appStartupTime: 1000,
-        ...overrides,
-      });
-    const samples = comparison({
-      deltaMs: 0,
-      a: { readFrom: "screen" },
-      b: { readFrom: "screen" },
-    });
-    const readsWith = (...launches: Sample[]) =>
-      debugRow(summarise([...launches, ...samples], GATE)).reads;
-
-    it("names the build whose warm-up switched", () => {
-      const switchedWarmup = missed("B", { round: -1, warmup: true, switchedToScreen: true });
-      assert.deepEqual(readsWith(switchedWarmup).noLogLine, ["B"]);
-    });
-
-    it("names the build whose first measured launch switched, without counting it as a fallback", () => {
-      const switchedOnRoundZero = missed("A", { round: 0, switchedToScreen: true });
-      const reads = readsWith(switchedOnRoundZero);
-      assert.deepEqual(reads.noLogLine, ["A"]);
-      assert.deepEqual(reads.fallbacks, { A: 0, B: 0 });
-    });
-
-    it("does not name a build already read from the log that falls back once", () => {
-      const warmupFallback = missed("A", { phase: 1, round: -1, warmup: true });
-      const roundFallback = missed("A", { round: 3 });
-      assert.deepEqual(readsWith(warmupFallback).noLogLine, []);
-      assert.deepEqual(readsWith(roundFallback).noLogLine, []);
-    });
-  });
-
-  it("names a build that switched both builds to the screen even when its screen read failed", () => {
-    const failedWarmup = launch({
-      side: "A",
-      round: -1,
-      warmup: true,
-      ok: false,
-      noLogLines: true,
-      switchedToScreen: true,
-      appStartupTime: Number.NaN,
-    });
-    const samples = comparison({
-      deltaMs: 0,
-      a: { readFrom: "screen" },
-      b: { readFrom: "screen" },
-    });
-    assert.deepEqual(debugRow(summarise([failedWarmup, ...samples], GATE)).reads.noLogLine, ["A"]);
-  });
-
-  it("counts the check after the rounds as a screen check, not as a launch or a failure", () => {
-    const samples = comparison({ deltaMs: 0, a: { readFrom: "log" }, b: { readFrom: "log" } });
-    const check = (overrides: Partial<Sample>) =>
-      launch({
-        side: "A",
-        round: 6,
-        check: true,
-        readFrom: "log",
-        appStartupTime: 9000,
-        ...overrides,
-      });
-    const without = debugRow(summarise(samples, GATE));
-    const row = debugRow(
-      summarise([...samples, check({ screenAppStartupTime: 9000 }), check({ ok: false })], GATE),
-    );
-    assert.equal(row.launches, without.launches);
-    assert.equal(row.reads.fromLog, without.reads.fromLog);
-    assert.equal(row.failed, 0);
-    assert.equal(row.reads.screenChecks, 1);
-  });
-
-  it("names a build read from the log that no launch checked on the screen", () => {
-    const check = (side: "A" | "B", overrides: Partial<Sample>) =>
-      launch({ side, round: 6, check: true, readFrom: "log", appStartupTime: 1000, ...overrides });
-    const checked = (side: "A" | "B") => check(side, { screenAppStartupTime: 1000 });
-    const checkWithUnreadableScreenA = check("A", { screenCheckError: "App started not logged" });
-    const samples = comparison({ deltaMs: 0, a: { readFrom: "log" }, b: { readFrom: "log" } });
-    const reads = (...checks: Sample[]) => debugRow(summarise([...checks, ...samples], GATE)).reads;
-
-    const oneChecked = reads(checkWithUnreadableScreenA, checked("B"));
-    assert.equal(oneChecked.screenChecks, 1);
-    assert.deepEqual(oneChecked.uncheckedBuilds, ["A"]);
-    assert.deepEqual(reads(checked("A"), checked("B")).uncheckedBuilds, []);
   });
 });

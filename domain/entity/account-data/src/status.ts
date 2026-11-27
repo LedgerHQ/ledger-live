@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction, type UnknownAction } from "@reduxjs/toolkit";
-import type { AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account";
 import { accountDataQueryKey } from "./queryKey";
 import type { AccountDataKind, AccountDataQuery, AccountDataResult } from "./registry";
 import type { AccountDataSourceId } from "./sourceId";

@@ -52,7 +52,8 @@ function loadTimingData(platform, testRootDir) {
   return {};
 }
 
-function distributeFilesByTiming(files, timingData, shardIndex, shardTotal) {
+function distributeFilesByTiming(options) {
+  const { files, timingData, shardIndex, shardTotal } = options;
   if (!timingData.testResults || Object.keys(timingData.testResults).length === 0) {
     if (shardTotal <= 0) return [];
     // Spread tests across shards when timing is unavailable.
@@ -128,12 +129,12 @@ export function main() {
 
     const timingData = loadTimingData(platform, testRootDir);
 
-    const shardFiles = distributeFilesByTiming(
+    const shardFiles = distributeFilesByTiming({
       files,
       timingData,
-      parseInt(shardIndex),
-      parseInt(shardTotal),
-    );
+      shardIndex: parseInt(shardIndex),
+      shardTotal: parseInt(shardTotal),
+    });
 
     console.log(shardFiles.join(" "));
   } else if (args.length <= 2) {

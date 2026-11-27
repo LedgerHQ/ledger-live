@@ -7,4 +7,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
-runScyStakingCTATest(testConfig.account, testConfig.tmsLinks, testConfig.tags);
+runScyStakingCTATest(testConfig);

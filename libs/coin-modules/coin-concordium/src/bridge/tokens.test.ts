@@ -83,6 +83,7 @@ const resolve = (over: Partial<Parameters<typeof resolveTokenSubAccounts>[0]> = 
     accountId: ACCOUNT_ID,
     accountTokens: [makeEntry()],
     initialAccount: undefined,
+    calLookupConcurrency: 4,
     ...over,
   });
 
@@ -568,6 +569,8 @@ describe("buildParentOperation", () => {
     expect(op.type).toBe("FEES");
     expect(op.value).toEqual(new BigNumber("595400"));
     expect(op.fee).toEqual(new BigNumber("595400"));
+    expect(op.senders).toEqual([makeRawOp().sender]);
+    expect(op.recipients).toEqual([makeRawOp().recipient]);
   });
 
   it("leaves an incoming transfer worth nothing on the CCD account", () => {
@@ -575,6 +578,18 @@ describe("buildParentOperation", () => {
 
     expect(op.type).toBe("NONE");
     expect(op.value).toEqual(new BigNumber(0));
+  });
+
+  it("names the account that sponsored a transfer it received, not the parties of the transfer", () => {
+    const op = buildParentOperation(
+      makeRawOp({ type: "IN", fee: "595400", feesPayer: "sponsor-address" }),
+      ACCOUNT_ID,
+    );
+
+    expect(op.type).toBe("FEES");
+    expect(op.value).toEqual(new BigNumber("595400"));
+    expect(op.senders).toEqual(["sponsor-address"]);
+    expect(op.recipients).toEqual([]);
   });
 
   it("does not raise a FEES row for a fee of zero", () => {

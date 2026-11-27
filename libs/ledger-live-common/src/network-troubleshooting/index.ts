@@ -1,6 +1,5 @@
 import { WebsocketConnectionError } from "../errors";
 import axios from "axios";
-import WS from "isomorphic-ws";
 import { Observable } from "rxjs";
 import { getEnv } from "@shared/env";
 import serviceStatusApi from "../notifications/ServiceStatusProvider/api/api";
@@ -67,7 +66,7 @@ function httpGet(url: string) {
 
 function websocketConnects(url: string) {
   const job = new Promise((resolve, reject) => {
-    const ws = new WS(url);
+    const ws = new WebSocket(url);
     const timeout = setTimeout(() => {
       ws.close();
       reject(new Error("timeout"));

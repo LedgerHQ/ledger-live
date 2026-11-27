@@ -1,0 +1,217 @@
+{
+  "src/components/DelegationDrawer.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/components/DeviceAction/rendering.tsx": {
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/components/EvmAddressBookSetup.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/components/RootDrawer/RootDrawer.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/components/RootNavigator/BaseNavigator.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 3
+    }
+  },
+  "src/components/RootNavigator/types/BaseNavigator.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 46
+    }
+  },
+  "src/components/RootNavigator/types/FeesNavigator.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/components/RootNavigator/types/SendFundsNavigator.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 17
+    }
+  },
+  "src/components/RootNavigator/types/SignTransactionNavigator.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 16
+    }
+  },
+  "src/components/RootNavigator/types/SwapNavigator.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 16
+    }
+  },
+  "src/components/TronAddressBookSetup.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/context/rtkQueryApi.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 3
+    }
+  },
+  "src/index.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 6
+    }
+  },
+  "src/live-common-setup.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/logic/accountModel.ts": {
+    "coin-families/no-currency-id-branch": {
+      "count": 2
+    }
+  },
+  "src/logic/screenTransactionHooks.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 2
+    }
+  },
+  "src/mvvm/features/Accounts/Navigator.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 2
+    }
+  },
+  "src/mvvm/features/Accounts/components/PerpsAccountBanner/usePerpsAccountBannerViewModel.ts": {
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/mvvm/features/Accounts/screens/AddAccount/types.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 2
+    }
+  },
+  "src/mvvm/features/Accounts/screens/ScanDeviceAccounts/components/AddressTypeTooltip/useAddressTypeTooltipViewModel.ts": {
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/mvvm/features/Accounts/screens/ScanDeviceAccounts/useScanDeviceAccountsViewModel.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 2
+    },
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/mvvm/features/Predictions/signingIntent/signingRequests.ts": {
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/mvvm/features/WalletApiExchange/utils/isSponsoredExchange.ts": {
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/screens/Account/ListHeaderComponent.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 7
+    },
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/screens/ConnectDevice.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 51
+    }
+  },
+  "src/screens/Fees/FeeContainer.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/screens/Fees/StrategyIcon.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/screens/Fees/index.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 4
+    }
+  },
+  "src/screens/FreezeFunds/02-Amount.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 2
+    }
+  },
+  "src/screens/FreezeFunds/04-ValidationSuccess.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 2
+    }
+  },
+  "src/screens/SendFunds/02-SelectRecipient.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    },
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/screens/SendFunds/04-Summary.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/screens/SendFunds/AmountInput.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/screens/Settings/Debug/Features/DeviceIntentExecutor/intents/getEthAddressDMKSignerDemoIntent/job.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/screens/SignMessage/01-Summary.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  },
+  "src/screens/Swap/LiveApp/customHandlers/getFee.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    },
+    "coin-families/no-currency-id-branch": {
+      "count": 2
+    },
+    "coin-families/no-family-branch": {
+      "count": 1
+    }
+  },
+  "src/screens/Swap/LiveApp/customHandlers/getTransactionByHash.ts": {
+    "coin-families/no-coin-specific-import": {
+      "count": 2
+    }
+  },
+  "src/screens/Swap/LiveApp/utils/index.ts": {
+    "coin-families/no-family-branch": {
+      "count": 2
+    }
+  },
+  "src/screens/UnfreezeFunds/01-Amount.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 3
+    }
+  },
+  "src/screens/UnfreezeFunds/03-ValidationSuccess.tsx": {
+    "coin-families/no-coin-specific-import": {
+      "count": 1
+    }
+  }
+}

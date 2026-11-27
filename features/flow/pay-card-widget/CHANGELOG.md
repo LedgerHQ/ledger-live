@@ -1,5 +1,37 @@
 # @features/flow-pay-card-widget
 
+## 0.8.0
+
+### Minor Changes
+
+- [#24789](https://github.com/LedgerHQ/ledger-live/pull/24789) [`d27f68a`](https://github.com/LedgerHQ/ledger-live/commit/d27f68ac780099cbd47e533709ebef83f9345d89) Thanks [@ysitbon](https://github.com/ysitbon)! - Import platform files without their `.native` suffix so module resolution picks the platform twin.
+
+- [#24817](https://github.com/LedgerHQ/ledger-live/pull/24817) [`7fffee2`](https://github.com/LedgerHQ/ledger-live/commit/7fffee2e21d1a9b056d026bd2ff50431a1b2793a) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the Pay onboarding, feature tour and bank transfer key tables verifiable by the i18n key check
+
+### Patch Changes
+
+- Updated dependencies [[`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced)]:
+  - @domain/api-card-management@0.10.0
+  - @domain/entity-currency@0.5.1
+  - @features/flow-pay-card-wallets@0.6.5
+  - @features/platform-pay-analytics@0.4.1
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#24789](https://github.com/LedgerHQ/ledger-live/pull/24789) [`d27f68a`](https://github.com/LedgerHQ/ledger-live/commit/d27f68ac780099cbd47e533709ebef83f9345d89) Thanks [@ysitbon](https://github.com/ysitbon)! - Import platform files without their `.native` suffix so module resolution picks the platform twin.
+
+- [#24817](https://github.com/LedgerHQ/ledger-live/pull/24817) [`7fffee2`](https://github.com/LedgerHQ/ledger-live/commit/7fffee2e21d1a9b056d026bd2ff50431a1b2793a) Thanks [@deepyjr](https://github.com/deepyjr)! - Make the Pay onboarding, feature tour and bank transfer key tables verifiable by the i18n key check
+
+### Patch Changes
+
+- Updated dependencies [[`5af6447`](https://github.com/LedgerHQ/ledger-live/commit/5af6447acb234632ed35feec4735b415d1993ced)]:
+  - @domain/api-card-management@0.10.0-next.0
+  - @domain/entity-currency@0.5.1-next.0
+  - @features/flow-pay-card-wallets@0.6.5-next.0
+  - @features/platform-pay-analytics@0.4.1-next.0
+
 ## 0.7.0
 
 ### Minor Changes

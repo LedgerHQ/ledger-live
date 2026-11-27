@@ -100,6 +100,32 @@ describe("generateHistoryFromOperations", () => {
       fullOperations.length - boundedOperations.length,
     );
   });
+
+  describe("failed operations", () => {
+    const failed = (operation: Operation): Operation => ({ ...operation, hasFailed: true });
+    const feesOp = (daysAgo: number, value: number): Operation => ({
+      ...outOp(daysAgo, value),
+      type: "FEES",
+    });
+    const dayBalances = (type: AccountLike["type"], operations: Operation[]) =>
+      generateHistoryFromOperations({
+        type,
+        balance: new BigNumber(100),
+        operations,
+      } as unknown as AccountLike).DAY.balances;
+
+    it("should not move a token account's balance on a failed transfer", () => {
+      expect(dayBalances("TokenAccount", [failed(outOp(1, 40))])).toEqual([100, 100]);
+    });
+
+    it("should move a token account's balance on a failed transaction's fee charged in the token", () => {
+      expect(dayBalances("TokenAccount", [failed(feesOp(1, 3))])).toEqual([103, 100]);
+    });
+
+    it("should move an account's balance on a failed operation, whose value is its fee", () => {
+      expect(dayBalances("Account", [failed(outOp(1, 3))])).toEqual([103, 100]);
+    });
+  });
 });
 
 describe("history from a saved cache", () => {

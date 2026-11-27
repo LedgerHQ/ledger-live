@@ -89,6 +89,10 @@ describe("bootstrap", () => {
     expect(await takeCardSession()).toBe(TOKEN);
   });
 
+  it("should hand the app folder to the preload", () => {
+    expect(loadBootstrapWithToken().buildBootstrap().appDirname).toBe("/tmp/app");
+  });
+
   it("should persist a renderer store write", () => {
     const { invoke, lldStore } = loadBootstrapWithToken();
 

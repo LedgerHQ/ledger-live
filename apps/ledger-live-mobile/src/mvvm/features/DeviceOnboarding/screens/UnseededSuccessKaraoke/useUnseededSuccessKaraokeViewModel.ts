@@ -5,6 +5,7 @@ import { resetToPortfolio } from "LLM/features/DeviceOnboarding/utils/exitAction
 
 export type UnseededSuccessKaraokeScreenProps = Readonly<{
   wasReadOnlyAtEntry: boolean;
+  onDone?: () => void;
 }>;
 
 export type UnseededSuccessKaraokeViewProps = Readonly<{
@@ -16,6 +17,7 @@ export type UnseededSuccessKaraokeViewProps = Readonly<{
 
 export function useUnseededSuccessKaraokeViewModel({
   wasReadOnlyAtEntry,
+  onDone,
 }: UnseededSuccessKaraokeScreenProps): UnseededSuccessKaraokeViewProps {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
@@ -29,6 +31,7 @@ export function useUnseededSuccessKaraokeViewModel({
     tapLabel: t("deviceOnboarding.karaoke.tapToContinue"),
     actionLabel: t("deviceOnboarding.karaoke.success.cta"),
     onAction: () => {
+      onDone?.();
       completeOnboarding();
       resetToPortfolio(navigation);
     },

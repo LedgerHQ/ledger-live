@@ -87,14 +87,14 @@ export function DeviceOnboardingDebugView({
     return <RecoverKaraokePreview variant="copy2" onClose={onClosePreview} />;
   }
 
+  if (isScreenOpen && preview === "offer") {
+    return <SyncOfferScreen {...syncOfferProps} />;
+  }
+
   if (isScreenOpen) {
     return (
       <SafeAreaView style={styles.screen}>
-        {preview === "offer" ? (
-          <SyncOfferScreen {...syncOfferProps} />
-        ) : (
-          <ChecksScreen {...screenProps} />
-        )}
+        <ChecksScreen {...screenProps} />
       </SafeAreaView>
     );
   }

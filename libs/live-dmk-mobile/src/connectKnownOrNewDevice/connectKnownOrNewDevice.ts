@@ -23,6 +23,8 @@ export type ConnectKnownOrNewDeviceInput = {
   knownDevices$: Observable<Array<KnownDevice>>;
   removeKnownDevice: (knownDevice: KnownDevice) => void;
   onConnected: ConnectKnownOrNewDeviceOnConnected;
+  /** Replaces the Add mode: Add calls it, and the waiting state goes back to the list. */
+  onAddNewDevice?: (hasDevices: boolean) => void;
   isMockServerEnabled: boolean;
   /** The devices of the mock server, which give the connectivity of the discovered mock devices. */
   getMockServerDevices?: GetMockServerDevices;

@@ -17,6 +17,6 @@ describe("Broadcast", () => {
       signature: "00".repeat(64),
     });
 
-    await expect(broadcast(config, signedTx, "concordium")).rejects.toThrow(/^1$/);
+    await expect(broadcast(config, signedTx)).rejects.toThrow(/^1$/);
   });
 });

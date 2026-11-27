@@ -173,7 +173,6 @@ export * from "./zcash_regtest";
 export * from "./zcash_testnet";
 export * from "./zclassic";
 export * from "./zcoin";
-export * from "./zencash";
 export * from "./zero_gravity";
 export * from "./zilliqa";
 export * from "./zksync";

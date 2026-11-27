@@ -7,6 +7,11 @@ export type ExpectTextOptions = {
   ignoreCase?: boolean;
 };
 
+type CompareTextOptions = ExpectTextOptions & {
+  actual: string;
+  expected: string;
+};
+
 /** Applies the options that change the text itself, to the actual and the expected text alike. */
 const prepareText = (value: string, { normaliseWhitespace, ignoreCase }: ExpectTextOptions) => {
   const preppedValue = normaliseWhitespace
@@ -16,10 +21,11 @@ const prepareText = (value: string, { normaliseWhitespace, ignoreCase }: ExpectT
 };
 
 /** Compares an element's text as the options say: equal by default, or containing. */
-export const compareText = (actual: string, expected: string, options: ExpectTextOptions) => {
-  const preparedActual = prepareText(actual, options);
-  const preparedExpected = prepareText(expected, options);
-  if (options.containing) {
+export const compareText = (options: CompareTextOptions) => {
+  const { actual, expected, ...textOptions } = options;
+  const preparedActual = prepareText(actual, textOptions);
+  const preparedExpected = prepareText(expected, textOptions);
+  if (textOptions.containing) {
     jestExpect(preparedActual).toContain(preparedExpected);
   } else {
     jestExpect(preparedActual).toBe(preparedExpected);

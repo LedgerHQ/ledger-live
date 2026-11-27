@@ -1,10 +1,9 @@
+import type { Account } from "@ledgerhq/types-live";
 import type { GetReceiveFamilyConfig, ReceiveNoticeId } from "@features/flow-receive";
 
-const TAPROOT_PATH_PREFIX = "m/86h/";
-
-const receiveAddressConfig: GetReceiveFamilyConfig = ({ descriptor, asset }) => {
+const receiveAddressConfig: GetReceiveFamilyConfig<Account> = ({ asset, legacyAccount }) => {
   const notices: ReceiveNoticeId[] = ["utxo"];
-  if (descriptor.path.startsWith(TAPROOT_PATH_PREFIX)) notices.push("taproot");
+  if (legacyAccount?.derivationMode === "taproot") notices.push("taproot");
   if (asset.id === "dash") notices.push("dashStaking");
   return { notices };
 };

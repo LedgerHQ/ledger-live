@@ -283,6 +283,45 @@ describe("extractKeys: type-enumerated dynamic keys", () => {
     });
   });
 
+  describe("zod enums", () => {
+    const zod = path.dirname(
+      require.resolve("zod/package.json", {
+        paths: [path.resolve(__dirname, "../../../domain/api/card-management")],
+      }),
+    );
+    fs.mkdirSync(path.join(tmp, "zod-pkg/node_modules"), { recursive: true });
+    fs.symlinkSync(zod, path.join(tmp, "zod-pkg/node_modules/zod"), "dir");
+
+    function zodSites(usage) {
+      return sitesOf(
+        `import { z } from "zod"; const Stage = z.enum(["pin", "seed"]); type Stage = z.infer<typeof Stage>; ${usage}`,
+        "zod-pkg/view.tsx",
+      );
+    }
+
+    it("enumerates a z.infer type", () => {
+      const sites = zodSites("declare const s: Stage; t(`setup.${s}.title`);");
+      assert.deepStrictEqual(
+        sites.map(s => s.kind),
+        ["enumerated"],
+      );
+      assert.deepStrictEqual(
+        sites[0].keys.map(k => k.key),
+        ["setup.pin.title", "setup.seed.title"],
+      );
+    });
+
+    it("enumerates .enum members and .options", () => {
+      const sites = zodSites(
+        "t(`setup.${Stage.enum.pin}`); Stage.options.map(o => t(`setup.${o}`));",
+      );
+      assert.deepStrictEqual(
+        sites.map(s => s.keys.map(k => k.key)),
+        [["setup.pin"], ["setup.pin", "setup.seed"]],
+      );
+    });
+  });
+
   it("gives up on combinations above the cap", () => {
     const members = Array.from({ length: 30 }, (_, i) => `"v${i}"`).join(" | ");
     const source = `type V = ${members}; declare const a: V; declare const b: V; t(\`\${a}.\${b}\`);`;

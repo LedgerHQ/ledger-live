@@ -32,6 +32,7 @@ describe("useDeviceOnboardingFeatureFlag", () => {
         connectSeededDevice: false,
         connectUnseededDevice: false,
         unifiedEntryPoints: false,
+        recover: true,
       },
     });
 
@@ -97,6 +98,7 @@ describe("useDeviceOnboardingFeatureFlag", () => {
       connectSeededDevice: false,
       connectUnseededDevice: false,
       unifiedEntryPoints: false,
+      recover: true,
     });
   });
 });

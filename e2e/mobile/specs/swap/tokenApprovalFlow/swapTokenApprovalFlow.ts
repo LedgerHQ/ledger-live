@@ -1,8 +1,8 @@
-import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { performSwapUntilQuoteSelectionStep, revokeTokenApproval } from "@e2e/utils/swapUtils";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
+import { beforeAllFunctionSwap, SwapAccountsTestOptions } from "@e2e/specs/swap/swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-e2e-shared/currencyUtils";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
@@ -12,13 +12,13 @@ import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 /** CLI revoke, then an on-device approval (plus a permit for Uniswap): beyond the default budget. */
 const TOKEN_APPROVAL_TEST_TIMEOUT = 480_000;
 
-export function runSwapTokenApprovalFlow(
-  fromAccount: TokenAccount,
-  toAccount: Account,
-  swapProviders: SwapProvider[],
-  tmsLinks: string[],
-  tags: string[],
-) {
+type RunSwapTokenApprovalFlowOptions = SwapAccountsTestOptions & {
+  fromAccount: TokenAccount;
+  swapProviders: SwapProvider[];
+};
+
+export function runSwapTokenApprovalFlow(options: RunSwapTokenApprovalFlowOptions) {
+  const { fromAccount, toAccount, swapProviders, tmsLinks, tags } = options;
   declareBroadcastAccounts(fromAccount);
   const runHere = shouldRunBroadcastFlow(BroadcastFlow.APPROVAL);
   if (!runHere) {
@@ -56,7 +56,11 @@ export function runSwapTokenApprovalFlow(
     it(
       `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token approval flow`,
       async () => {
-        const provider = await pickRotatingProvider(swapProviders, fromAccount, toAccount);
+        const provider = await pickRotatingProvider({
+          eligibleProviders: swapProviders,
+          accountFrom: fromAccount,
+          accountTo: toAccount,
+        });
         await app.swap.logSelectedProvider(provider.uiName);
         await app.speculos.enableBlindSigningOnNanoS();
         await revokeTokenApproval(fromAccount, provider);
@@ -64,13 +68,18 @@ export function runSwapTokenApprovalFlow(
         if (amountToSwap === null) {
           throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
         }
-        const swap = new Swap(fromAccount, toAccount, amountToSwap.toString(), provider);
-        await performSwapUntilQuoteSelectionStep(
-          swap.accountToDebit,
-          swap.accountToCredit,
-          amountToSwap.toString(),
-          true,
-        );
+        const swap = new Swap({
+          accountToDebit: fromAccount,
+          accountToCredit: toAccount,
+          amount: amountToSwap.toString(),
+          provider,
+        });
+        await performSwapUntilQuoteSelectionStep({
+          accountToDebit: swap.accountToDebit,
+          accountToCredit: swap.accountToCredit,
+          amount: amountToSwap.toString(),
+          continueToQuotes: true,
+        });
         await app.swapLiveApp.selectSpecificProvider(provider.uiName);
         await app.swapLiveApp.checkQuoteCardCtaPresence(provider.uiName);
         await app.swapLiveApp.tapExecuteSwap(provider.uiName);

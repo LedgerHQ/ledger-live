@@ -1,5 +1,17 @@
 # @shared/live-config-overrides
 
+## 0.3.0
+
+### Minor Changes
+
+- [#24958](https://github.com/LedgerHQ/ledger-live/pull/24958) [`d5ff357`](https://github.com/LedgerHQ/ledger-live/commit/d5ff357b5df4d890cd22574d1cabd96168d0aa84) Thanks [@ysitbon](https://github.com/ysitbon)! - Nest `liveConfigOverridesSelector` and `hasLiveConfigOverridesSelector` in the `liveConfigOverrides` slice
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24958](https://github.com/LedgerHQ/ledger-live/pull/24958) [`d5ff357`](https://github.com/LedgerHQ/ledger-live/commit/d5ff357b5df4d890cd22574d1cabd96168d0aa84) Thanks [@ysitbon](https://github.com/ysitbon)! - Nest `liveConfigOverridesSelector` and `hasLiveConfigOverridesSelector` in the `liveConfigOverrides` slice
+
 ## 0.2.0
 
 ### Minor Changes

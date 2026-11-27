@@ -5,7 +5,8 @@ import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { MAX_TRUST_LIMIT, isMaxTrustLimit } from "@ledgerhq/live-common/families/xrp/logicPublic";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/xrp/types";
+import { getLimitError, isLimitBelowBalance } from "@ledgerhq/live-common/families/xrp/tokens";
+import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { TrackScreen } from "@shared/analytics-react";
 import { useSelector } from "LLD/hooks/redux";
 import Alert from "~/renderer/components/Alert";
@@ -22,19 +23,6 @@ import TranslatedError from "~/renderer/components/TranslatedError";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { getXrpResources } from "../../utils";
 import type { StepProps } from "../types";
-
-const LIMIT_ERRORS = new Set([
-  "XrpTrustLimitZero",
-  "XrpTrustLimitTooHigh",
-  "XrpAmountPrecisionExceeded",
-]);
-
-// Other amount errors, like missing XRP, show on the review step with its Receive and Buy actions
-function getLimitError(status: TransactionStatus): Error | undefined {
-  const amountError = status.errors.amount;
-
-  return amountError && LIMIT_ERRORS.has(amountError.name) ? amountError : undefined;
-}
 
 export default function StepSettings({
   t,
@@ -62,7 +50,7 @@ export default function StepSettings({
   const isLimitStillZero = isCurrentLimitZero && transaction.amount.isZero();
 
   const balance = tokenAccount?.balance;
-  const isLimitBelowBalance = transaction.amount.gt(0) && transaction.amount.lt(balance ?? 0);
+  const isBelowBalance = !!balance && isLimitBelowBalance(transaction.amount, balance);
   const formattedBalance =
     balance && formatCurrencyUnit(unit, balance, { discreet, locale, showCode: true });
 
@@ -151,7 +139,7 @@ export default function StepSettings({
           <Trans i18nKey="xrp.tokenSettings.currentLimitZero" />
         </Alert>
       ) : null}
-      {isLimitBelowBalance ? (
+      {isBelowBalance ? (
         <Alert type="warning" mt={2}>
           <Trans
             i18nKey="xrp.tokenSettings.limitBelowBalance"

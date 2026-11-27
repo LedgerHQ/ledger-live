@@ -17,8 +17,8 @@ function validateTransactionData(tx: Transaction, events: string[]) {
   if (!tx.accountToCredit.address) {
     throw new Error("Recipient address is not set");
   }
-  expectSpeculosEventsContain(tx.accountToCredit.address, events);
-  expectSpeculosEventsContain(tx.amount, events);
+  expectSpeculosEventsContain({ substring: tx.accountToCredit.address, events });
+  expectSpeculosEventsContain({ substring: tx.amount, events });
 }
 
 async function sendCardanoTouchDevices(tx: Transaction) {

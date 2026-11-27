@@ -21,7 +21,7 @@ const deepFreeze = <T>(value: T): T => {
   return value;
 };
 
-export function installBridge(): void {
+export function installBridge(): Bootstrap {
   const bootstrap = ipcRenderer.sendSync(CHANNELS.bootstrap) as Bootstrap;
 
   let cardSessionTaken = false;
@@ -52,4 +52,5 @@ export function installBridge(): void {
 
   // Not `ledger`: the E2E suites already use `window.ledger`.
   expose("lld", bridge);
+  return bridge.bootstrap;
 }

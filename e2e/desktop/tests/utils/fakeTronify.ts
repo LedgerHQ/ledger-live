@@ -68,7 +68,7 @@ export class FakeTronifyChecks {
   @step("Expect a $1 USDT transfer to $0 broadcast to the fake TronGrid")
   async expectUsdtTransferBroadcast(recipient: string | undefined, amount: string) {
     await expect
-      .poll(() => hasUsdtTransferBroadcast(this.fake, recipient, amount), {
+      .poll(() => hasUsdtTransferBroadcast({ fake: this.fake, recipient, amount }), {
         timeout: FAKE_TIMEOUT_MS,
       })
       .toBe(true);

@@ -5,10 +5,10 @@ import { createApi } from ".";
 
 describe("lastBlock (devnet)", () => {
   it("returns the ledger end as the block height", async () => {
-    const config = cantonDefaults.canton_network_devnet;
-    const before = await getLedgerEnd(config);
-    const block = await createApi().lastBlock(createMockContext(config));
-    const after = await getLedgerEnd(config);
+    const context = createMockContext(cantonDefaults.canton_network_devnet);
+    const before = await getLedgerEnd(context);
+    const block = await createApi().lastBlock(context);
+    const after = await getLedgerEnd(context);
 
     expect(block.height).toBeGreaterThanOrEqual(before);
     expect(block.height).toBeLessThanOrEqual(after);

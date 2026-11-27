@@ -4,7 +4,7 @@ import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { runExportSwapHistoryOperationsTest } from "@e2e/specs/swap/otherTestCases/swap.other";
 
 const swapHistoryTestConfig = {
-  swap: new Swap(Account.SOL_1, Account.ETH_1, "0.07"),
+  swap: new Swap({ accountToDebit: Account.SOL_1, accountToCredit: Account.ETH_1, amount: "0.07" }),
   provider: SwapProvider.EXODUS,
   swapId: "wQ90NrWdvJz5dA4",
   addressFrom: Addresses.SWAP_HISTORY_SOL_FROM,
@@ -24,12 +24,4 @@ const swapHistoryTestConfig = {
   ],
 };
 
-runExportSwapHistoryOperationsTest(
-  swapHistoryTestConfig.swap,
-  swapHistoryTestConfig.provider,
-  swapHistoryTestConfig.swapId,
-  swapHistoryTestConfig.addressFrom,
-  swapHistoryTestConfig.addressTo,
-  swapHistoryTestConfig.tmsLinks,
-  swapHistoryTestConfig.tags,
-);
+runExportSwapHistoryOperationsTest(swapHistoryTestConfig);

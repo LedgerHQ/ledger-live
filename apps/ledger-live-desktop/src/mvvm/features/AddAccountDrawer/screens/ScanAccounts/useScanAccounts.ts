@@ -1,7 +1,10 @@
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { addAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
+import { toErrorAttributes } from "@shared/observability-operations";
+import { useOperation } from "@shared/observability-operations-react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { concat, from, Subscription } from "rxjs";
@@ -13,13 +16,14 @@ import { useLLDCoinFamily } from "~/renderer/families";
 import { openCurrencyRegionRestrictedDialog } from "LLD/features/CurrencyRegionRestrictedDialog/currencyRegionRestrictedDialog";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
+import { modularDialogSourceSelector } from "~/renderer/reducers/modularDialog";
 import {
   ADD_ACCOUNT_EVENTS_NAME,
   ADD_ACCOUNT_FLOW_NAME,
   ADD_ACCOUNT_PAGE_NAME,
 } from "../../analytics/addAccount.types";
 import useAddAccountAnalytics from "../../analytics/useAddAccountAnalytics";
-import { WARNING_REASON, WarningReason } from "../../domain";
+import { ADD_ACCOUNT_OPERATION, WARNING_REASON, WarningReason } from "../../domain";
 import { computeSelectedIdsFromScan, getGroupedAccounts } from "./utils/processAccounts";
 import { normalizeScanError } from "./utils/normalizeScanError";
 import { useConcordiumCreatableAccounts } from "./hooks/concordium/useConcordiumCreatableAccounts";
@@ -34,9 +38,17 @@ const deselectImportable = (importable: Account[]) => (selected: string[]) => {
   return selected.filter(id => !importableIds.has(id));
 };
 
+const toTransport = (wired: unknown) => {
+  if (typeof wired !== "boolean") return undefined;
+  return wired ? "usb" : "ble";
+};
+
 export interface UseScanAccountsProps {
   currency: CryptoCurrency;
-  deviceId: string;
+  device: Device;
+  attempt?: number;
+  isToken?: boolean;
+  inline?: boolean;
   deferAccountAddition?: boolean;
   onComplete: (accounts: Account[]) => void;
   navigateToWarningScreen: (reason: WarningReason, account?: Account) => void;
@@ -44,14 +56,21 @@ export interface UseScanAccountsProps {
 
 export function useScanAccounts({
   currency,
-  deviceId,
+  device,
+  attempt = 1,
+  isToken = false,
+  inline = false,
   deferAccountAddition = false,
   onComplete,
   navigateToWarningScreen,
 }: UseScanAccountsProps) {
+  const { deviceId, modelId, wired } = device;
   const { trackAddAccountEvent } = useAddAccountAnalytics();
   const existingAccounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const source = useSelector(modularDialogSourceSelector);
+  const addAccountOperation = useOperation(ADD_ACCOUNT_OPERATION);
+  const operationStartedOnMount = useRef(false);
   const familyImpl = useLLDCoinFamily(currency.family);
   const [error, setError] = useState<Error | null>(null);
   const dispatch = useDispatch();
@@ -85,25 +104,59 @@ export function useScanAccounts({
     return [...new Set(accountSchemes)];
   }, [existingAccounts, scannedAccounts]);
 
-  const stopSubscription = useCallback((syncUI = true) => {
-    if (scanSubscriptionRef.current) {
-      scanSubscriptionRef.current.unsubscribe();
-      scanSubscriptionRef.current = null;
+  const stopSubscription = useCallback(
+    (syncUI = true) => {
+      if (scanSubscriptionRef.current) {
+        scanSubscriptionRef.current.unsubscribe();
+        scanSubscriptionRef.current = null;
 
-      if (syncUI) {
-        setScanning(false);
+        if (syncUI) {
+          setScanning(false);
+          addAccountOperation.annotate({ step: "selecting", scan_stopped_by_user: true });
+        }
       }
-    }
-  }, []);
+    },
+    [addAccountOperation],
+  );
+
+  useEffect(() => {
+    if (operationStartedOnMount.current) return;
+    operationStartedOnMount.current = true;
+    addAccountOperation.start({
+      currency_id: currency.id,
+      currency_family: currency.family,
+      is_token: isToken,
+      device_model_id: modelId,
+      transport: toTransport(wired),
+      inline,
+      source: source || undefined,
+      attempt,
+    });
+  }, [
+    addAccountOperation,
+    currency.id,
+    currency.family,
+    isToken,
+    modelId,
+    wired,
+    inline,
+    source,
+    attempt,
+  ]);
 
   useEffect(() => {
     let cancelled = false;
     emptyByIdRef.current = new Map();
+    const discoveredAccountIds = new Set<string>();
+    addAccountOperation.annotate({ step: "preparing", accounts_scanned: 0 });
     (async () => {
       const bridge = await getCurrencyBridge(currency);
       if (cancelled) return;
       scanSubscriptionRef.current = concat(
-        from(prepareCurrency(currency)).pipe(RX.ignoreElements()),
+        from(prepareCurrency(currency)).pipe(
+          RX.ignoreElements(),
+          RX.tap({ complete: () => addAccountOperation.annotate({ step: "scanning" }) }),
+        ),
         bridge.scanAccounts({
           currency,
           deviceId,
@@ -116,6 +169,10 @@ export function useScanAccounts({
         }),
       )
         .pipe(
+          RX.tap(({ account }) => {
+            discoveredAccountIds.add(account.id);
+            addAccountOperation.annotate({ accounts_scanned: discoveredAccountIds.size });
+          }),
           RX.concatMap(async ({ account }) => {
             const accountBridge = await getAccountBridge(account);
             emptyByIdRef.current.set(account.id, accountBridge.isAccountEmpty(account));
@@ -137,9 +194,18 @@ export function useScanAccounts({
             setScanning(true);
           },
           error: e => {
-            setError(normalizeScanError(e));
+            const scanError = normalizeScanError(e);
+            setError(scanError);
+            if (scanError.name === "CurrencyRegionRestrictedError") {
+              addAccountOperation.succeed({ outcome: "region_restricted" });
+            } else {
+              addAccountOperation.fail("ERROR", toErrorAttributes(e));
+            }
           },
-          complete: () => setScanning(false),
+          complete: () => {
+            setScanning(false);
+            addAccountOperation.annotate({ step: "selecting" });
+          },
         });
     })();
 
@@ -147,7 +213,14 @@ export function useScanAccounts({
       cancelled = true;
       stopSubscription(false);
     };
-  }, [blacklistedTokenIds, currency, deviceId, isAccountEmpty, stopSubscription]);
+  }, [
+    blacklistedTokenIds,
+    currency,
+    deviceId,
+    isAccountEmpty,
+    stopSubscription,
+    addAccountOperation,
+  ]);
 
   useLayoutEffect(() => {
     const resolved = scannedAccountsRef.current.filter(a => emptyByIdRef.current.has(a.id));
@@ -204,6 +277,10 @@ export function useScanAccounts({
     });
 
     if (hasConcordiumCreatableAccounts) {
+      addAccountOperation.succeed({
+        handoff: "concordium_onboarding",
+        accounts_selected: selectedConcordiumAccounts.length,
+      });
       setDrawer();
 
       dispatch(
@@ -221,7 +298,12 @@ export function useScanAccounts({
       setHasImportedAccounts(true);
     }
 
-    if (!deferAccountAddition) {
+    if (deferAccountAddition) {
+      addAccountOperation.succeed({
+        handoff: "custom_flow",
+        accounts_selected: accountsToImport.length,
+      });
+    } else {
       dispatch(
         addAccountsAction({
           existingAccounts,
@@ -230,10 +312,12 @@ export function useScanAccounts({
           renamings: {},
         }),
       );
+      addAccountOperation.succeed({ accounts_added: accountsToImport.length });
     }
 
     onComplete(accountsToImport);
   }, [
+    addAccountOperation,
     trackAddAccountEvent,
     accountsToImport,
     dispatch,
@@ -278,17 +362,19 @@ export function useScanAccounts({
 
     // TODO: by moving this logic to handleConfirm, we can remove the trigger state and calculate it via memoization to avoid this useEffect
     if (!scanning && !hasImportedAccounts) {
-      if (alreadyEmptyAccount && !importableAccounts.length && !creatableAccounts.length) {
+      const nothingToAdd = !importableAccounts.length && !creatableAccounts.length;
+      if (alreadyEmptyAccount && nothingToAdd) {
+        addAccountOperation.succeed({ outcome: "already_empty_account" });
         navigateToWarningScreen(WARNING_REASON.ALREADY_EMPTY_ACCOUNT, alreadyEmptyAccount);
-      } else if (
-        !importableAccounts.length &&
-        !creatableAccounts.length &&
-        CustomNoAssociatedAccounts
-      ) {
+      } else if (nothingToAdd && CustomNoAssociatedAccounts) {
+        addAccountOperation.succeed({ outcome: "no_associated_accounts" });
         navigateToWarningScreen(WARNING_REASON.NO_ASSOCIATED_ACCOUNTS);
+      } else if (nothingToAdd) {
+        addAccountOperation.succeed({ outcome: "nothing_to_add" });
       }
     }
   }, [
+    addAccountOperation,
     alreadyEmptyAccount,
     creatableAccounts.length,
     currency,

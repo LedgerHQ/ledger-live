@@ -1,16 +1,16 @@
 import { runSendInvalidTokenAmountTest } from "@e2e/specs/send/send";
 
-const transaction = new Transaction(
-  TokenAccount.ETH_USDT_2,
-  TokenAccount.ETH_USDT_1,
-  "1",
-  Fee.FAST,
-);
-runSendInvalidTokenAmountTest(
+const transaction = new Transaction({
+  accountToDebit: TokenAccount.ETH_USDT_2,
+  accountToCredit: TokenAccount.ETH_USDT_1,
+  amount: "1",
+  speed: Fee.FAST,
+});
+runSendInvalidTokenAmountTest({
   transaction,
-  new RegExp(
+  expectedErrorMessage: new RegExp(
     /You need \d+\.\d+ ETH in your account to pay for transaction fees on the Ethereum network\. .*/,
   ),
-  ["B2CQA-2701"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
-);
+  tmsLinks: ["B2CQA-2701"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+});

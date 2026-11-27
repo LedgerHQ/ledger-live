@@ -1,5 +1,21 @@
 # @ledgerhq/native-ui
 
+## 0.70.0
+
+### Minor Changes
+
+- [#24972](https://github.com/LedgerHQ/ledger-live/pull/24972) [`f3de33e`](https://github.com/LedgerHQ/ledger-live/commit/f3de33e5a7f9ea0865863b40170a7165449e479c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump color to v5, which ships its own types, and drop @types/color
+
+- [#24976](https://github.com/LedgerHQ/ledger-live/pull/24976) [`e516034`](https://github.com/LedgerHQ/ledger-live/commit/e5160345b50c0dc9e7c490da72d641c631d2ef7f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove unused lodash, invariant, prop-types and @types dependencies, and stop relying on the global React namespace in types-live
+
+## 0.70.0-next.0
+
+### Minor Changes
+
+- [#24972](https://github.com/LedgerHQ/ledger-live/pull/24972) [`f3de33e`](https://github.com/LedgerHQ/ledger-live/commit/f3de33e5a7f9ea0865863b40170a7165449e479c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump color to v5, which ships its own types, and drop @types/color
+
+- [#24976](https://github.com/LedgerHQ/ledger-live/pull/24976) [`e516034`](https://github.com/LedgerHQ/ledger-live/commit/e5160345b50c0dc9e7c490da72d641c631d2ef7f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove unused lodash, invariant, prop-types and @types dependencies, and stop relying on the global React namespace in types-live
+
 ## 0.69.0
 
 ### Minor Changes

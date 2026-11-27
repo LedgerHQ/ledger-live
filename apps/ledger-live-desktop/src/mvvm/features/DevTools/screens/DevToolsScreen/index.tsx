@@ -1,14 +1,25 @@
 import React from "react";
 import { DevTools } from "@devtools/shell";
+import { AccountRedactionProvider } from "@devtools/bindings";
 import { TransportPanel } from "@devtools/transport-panel";
 import { IntentWalletSyncExecutor } from "../../IntentWalletSync/IntentWalletSyncExecutor";
+import { AccountDiscoveryExecutor } from "../../AccountDiscovery/AccountDiscoveryExecutor";
 import { useDevToolsScreenViewModel } from "./useDevToolsScreenViewModel";
+import { accountRedaction } from "./accountRedaction";
 
-type Props = {
+type Props = Readonly<{
   onClose?: () => void;
-};
+}>;
 
-export default function DevToolsScreen({ onClose: onCloseOverride }: Props) {
+export default function DevToolsScreen(props: Props) {
+  return (
+    <AccountRedactionProvider value={accountRedaction}>
+      <DevToolsScreenContent {...props} />
+    </AccountRedactionProvider>
+  );
+}
+
+function DevToolsScreenContent({ onClose: onCloseOverride }: Props) {
   const {
     config,
     onClose,
@@ -18,6 +29,9 @@ export default function DevToolsScreen({ onClose: onCloseOverride }: Props) {
     role,
     intentWalletSyncRun,
     onIntentWalletSyncRunCancelled,
+    accountDiscoveryRun,
+    onAccountDiscoveryRunCancelled,
+    onAccountDiscoveryRunFailed,
   } = useDevToolsScreenViewModel(onCloseOverride);
 
   return (
@@ -35,6 +49,11 @@ export default function DevToolsScreen({ onClose: onCloseOverride }: Props) {
       <IntentWalletSyncExecutor
         run={intentWalletSyncRun}
         onUserCancel={onIntentWalletSyncRunCancelled}
+      />
+      <AccountDiscoveryExecutor
+        run={accountDiscoveryRun}
+        onUserCancel={onAccountDiscoveryRunCancelled}
+        onError={onAccountDiscoveryRunFailed}
       />
     </div>
   );

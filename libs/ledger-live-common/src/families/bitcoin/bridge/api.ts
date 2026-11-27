@@ -1,12 +1,15 @@
 import { FeeEstimationFailed } from "../../../errors";
 import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { BitcoinTxData } from "@ledgerhq/coin-bitcoin/logic/intent";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { blockchainBaseURL } from "@ledgerhq/coin-bitcoin/explorer";
 import { makeLRUCacheWithTtlOf } from "@ledgerhq/coin-bitcoin/cache";
 import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
 import { DEFAULT_FEE_RATES_CACHE_TTL_MS } from "@ledgerhq/coin-bitcoin/constants";
+import { bitcoinPickingStrategy } from "@ledgerhq/coin-bitcoin/types";
 import { getBitcoinCoinConfig } from "../coinConfig";
 import type { FeeItems } from "../types";
 
@@ -86,3 +89,110 @@ export const getFeeItems = async (currency: CryptoCurrency): Promise<FeeItems> =
     defaultFeePerByte,
   };
 };
+
+const isStringList = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every(item => typeof item === "string");
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+type CoinControl = NonNullable<BitcoinTxData["utxoStrategy"]>;
+type UtxoStrategyName = NonNullable<CoinControl["strategy"]>;
+
+// The legacy bridge's picking strategies. `CUSTOM` is what the coin-control screen sets once the
+// user unticks a UTXO: wallet-btc's `Custom` picks deepest first.
+const LEGACY_STRATEGIES: Record<number, UtxoStrategyName> = {
+  [bitcoinPickingStrategy.DEEP_OUTPUTS_FIRST]: "deep-outputs-first",
+  [bitcoinPickingStrategy.OPTIMIZE_SIZE]: "optimize-size",
+  [bitcoinPickingStrategy.MERGE_OUTPUTS]: "merge-outputs",
+  [bitcoinPickingStrategy.CUSTOM]: "deep-outputs-first",
+};
+
+// A strategy name is passed on as is: the coin module refuses one it does not know.
+const isStrategyName = (value: unknown): value is UtxoStrategyName => typeof value === "string";
+
+function strategyOf(strategy: unknown): UtxoStrategyName | undefined {
+  if (isStrategyName(strategy)) return strategy;
+  if (typeof strategy === "number") return LEGACY_STRATEGIES[strategy];
+  return undefined;
+}
+
+// A legacy exclusion `{ hash, outputIndex }` as the `txid:vout` id the coin module reads.
+function legacyUtxoId(entry: unknown): string | undefined {
+  if (!isRecord(entry)) return undefined;
+  const { hash, outputIndex } = entry;
+  if (typeof hash !== "string" || typeof outputIndex !== "number") return undefined;
+  if (!Number.isInteger(outputIndex) || outputIndex < 0) return undefined;
+  return `${hash}:${outputIndex}`;
+}
+
+// Both shapes reach the bridge: the coin module's (a strategy name, `selectedUtxos`,
+// `excludedUtxos`) and the legacy transaction's (a strategy number, `excludeUTXOs`). A ticked UTXO
+// stays a candidate the strategy picks from: the legacy screen never maps to `selectedUtxos`, which
+// spends every listed UTXO.
+function coinControlOf(utxoStrategy: unknown): CoinControl | undefined {
+  if (!isRecord(utxoStrategy)) return undefined;
+  const { strategy, selectedUtxos, excludedUtxos, excludeUTXOs } = utxoStrategy;
+
+  const control: CoinControl = {};
+  const name = strategyOf(strategy);
+  if (name) control.strategy = name;
+  // Passed on as given, malformed included, for the module to refuse (`InvalidUtxoId`): dropping a
+  // list would lift the restriction the caller asked for.
+  if (selectedUtxos !== undefined) control.selectedUtxos = selectedUtxos as string[];
+  const excluded = exclusionsOf(excludedUtxos, excludeUTXOs);
+  if (excluded !== undefined) control.excludedUtxos = excluded;
+
+  return Object.keys(control).length > 0 ? control : undefined;
+}
+
+// Both shapes' exclusions, merged without duplicates: the module refuses an id listed twice, and
+// compares hashes lowercased, so they are lowercased here too. A malformed `excludedUtxos` is passed
+// on as given, for the module to refuse; a malformed legacy entry is dropped, as the legacy bridge
+// ignores one.
+function exclusionsOf(excludedUtxos: unknown, excludeUTXOs: unknown): string[] | undefined {
+  if (excludedUtxos !== undefined && !isStringList(excludedUtxos)) {
+    return excludedUtxos as string[];
+  }
+  const ids = isStringList(excludedUtxos) ? excludedUtxos : [];
+  const excluded = new Set(ids.map(id => id.toLowerCase()));
+  if (Array.isArray(excludeUTXOs)) {
+    for (const entry of excludeUTXOs) {
+      const id = legacyUtxoId(entry);
+      if (id) excluded.add(id.toLowerCase());
+    }
+  }
+  return excluded.size > 0 ? [...excluded] : undefined;
+}
+
+// The generic bridge calls this instead of the coin module's `craftTransactionData`, so it carries
+// everything that one carried (the OP_RETURN data) plus the coin control the module reads from
+// `intent.data`. OP_RETURN data or a strategy of the wrong type is dropped; a malformed UTXO id list
+// is passed on, for the module to refuse.
+export function buildIntentData(transaction: Record<string, unknown>): BitcoinTxData {
+  const data: BitcoinTxData = { type: "unknown" };
+
+  // The legacy transaction holds the OP_RETURN data as a Buffer, the intent as hex.
+  const { opReturnData, utxoStrategy } = transaction;
+  if (Buffer.isBuffer(opReturnData)) {
+    if (opReturnData.length > 0) data.opReturnData = opReturnData.toString("hex");
+  } else if (typeof opReturnData === "string" && opReturnData !== "") {
+    data.opReturnData = opReturnData;
+  }
+
+  const control = coinControlOf(utxoStrategy);
+  if (control) data.utxoStrategy = control;
+
+  return data;
+}
+
+export default function bitcoinBridge(_currency: CryptoCurrency): BridgeApi {
+  return {
+    buildIntentData,
+    // Crafting reprices at the estimate's `feePerByte`, so it picks the inputs the estimate priced
+    // and validated: given only `FeeEstimation.value`, coin-bitcoin takes it as an absolute fee and
+    // selects at the relay floor, where `optimize-size` can choose others. Under an absolute fee the
+    // estimate returns no rate, so the caller's fee is still the one imposed.
+    forwardsFeeParametersToCraft: true,
+  };
+}

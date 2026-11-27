@@ -26,7 +26,10 @@ interface Props extends UseScanAccountsProps {
 
 const ScanAccounts = ({
   currency,
-  deviceId,
+  device,
+  attempt,
+  isToken,
+  inline,
   deferAccountAddition,
   onComplete,
   navigateToWarningScreen,
@@ -54,7 +57,10 @@ const ScanAccounts = ({
     toggleShowAllCreatedAccounts,
   } = useScanAccounts({
     currency,
-    deviceId,
+    device,
+    attempt,
+    isToken,
+    inline,
     deferAccountAddition,
     navigateToWarningScreen,
     onComplete,
