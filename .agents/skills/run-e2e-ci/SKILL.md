@@ -83,14 +83,29 @@ Fill the **Scope** column with the actual filter used (never a hardcoded "full s
 
 Manually dispatched on `<branch>` (commit <short-sha>, `git rev-parse --short HEAD`), scoped to <scope>:
 
-| Workflow | Scope | Run |
-|---|---|---|
-| [Desktop] E2E Only | `<@tag>` filter + `team=<slug>`, Speculos nanoSP | [run <id>](https://github.com/LedgerHQ/ledger-live/actions/runs/<id>) |
-| [Mobile] E2E Only | `<@tag>` filter + `team=<slug>`, <tests_type>, nanoX | [run <id>](https://github.com/LedgerHQ/ledger-live/actions/runs/<id>) |
-| [Coin] Test Coin modules | `chain=<...>` (or affected coins) | [run <id>](https://github.com/LedgerHQ/ledger-live/actions/runs/<id>) |
+| Workflow | Scope | Run | Result |
+|---|---|---|---|
+| [Desktop] E2E Only | `<@tag>` filter + `team=<slug>`, Speculos nanoSP | [run <id>](https://github.com/LedgerHQ/ledger-live/actions/runs/<id>) | ⏳ |
+| [Mobile] E2E Only | `<@tag>` filter + `team=<slug>`, <tests_type>, nanoX | [run <id>](https://github.com/LedgerHQ/ledger-live/actions/runs/<id>) | ⏳ |
+| [Coin] Test Coin modules | `chain=<...>` (or affected coins) | [run <id>](https://github.com/LedgerHQ/ledger-live/actions/runs/<id>) | ⏳ |
 
 Scope rationale: <which surfaces changed, what you filtered to, and why the rest were skipped>.
 ```
 
 Only write "full suite" when you deliberately ran everything, and keep the rationale line explaining why the change is cross-cutting enough to need it.
+
+Keep every `@tag` in backticks: a bare `@tron` mentions the GitHub user of that name.
+
+When the runs finish, edit the same comment with `gh pr comment <pr> --edit-last --body-file <file>` and set each **Result** to ✅ or ❌, instead of posting a new comment.
+
+### Slack variant
+
+Slack renders neither Markdown tables nor `[text](url)` links, so post one line per run there, and never paste this Slack text into GitHub:
+
+```text
+🧪 *Triggered test workflows* on `<branch>`, scoped to `<scope>`
+✅ *[Desktop] E2E Only*: `<@tag>`, Speculos nanoSP, <https://github.com/LedgerHQ/ledger-live/actions/runs/<id>|run <id>>
+✅ *[Mobile] E2E Only*: `<@tag>`, <tests_type>, nanoX, <https://github.com/LedgerHQ/ledger-live/actions/runs/<id>|run <id>>
+✅ *[Coin] Test Coin modules*: `chain=<...>`, <https://github.com/LedgerHQ/ledger-live/actions/runs/<id>|run <id>>
+```
 
