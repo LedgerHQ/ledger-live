@@ -125,6 +125,18 @@ describe("getBlockInfo", () => {
       await expect(getBlockInfo(context, 6573823)).rejects.toBeInstanceOf(BlockNotFoundError);
     });
 
+    it("throws BlockNotFoundError when the height lookup fails once but the next block's parent is at that height", async () => {
+      indexerHolds(
+        indexedBlock(6573822, 6573821),
+        indexedBlock(6573823, 6573822),
+        indexedBlock(6573824, 6573823),
+      );
+      mockedFetch.mockRejectedValueOnce(new BlockNotFoundError());
+
+      await expect(getBlockInfo(context, 6573823)).rejects.toBeInstanceOf(BlockNotFoundError);
+      expect(mockedFetch).toHaveBeenCalledWith(INDEXER_URL, "0x6573823");
+    });
+
     it("throws BlockNotFoundError when Blockscout holds no block above the missing height", async () => {
       indexerHolds(indexedBlock(6573822, 6573821));
 

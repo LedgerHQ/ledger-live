@@ -6,7 +6,7 @@ import { fetchBlockscoutBlock, fetchBlockscoutHeadHeight } from "../../network/b
 
 /**
  * Depth below the head at which a null round cannot change: the Expected Consensus finality, 900
- * epochs (about 7.5 h). It holds without F3, which has certified no tipset since March 2026.
+ * epochs (about 7.5 h). It holds when F3 does not certify tipsets.
  *
  * A null round has no transaction, so the delay does not reach the end user. Until a null round is
  * this deep, A4 retries it about once a minute and logs each retry as a failure: about 10,000 retries
