@@ -10,6 +10,10 @@ const EDIT_CONTACT_NAME_STRUCT = "2e";
 const HMAC_NAME_HEX = "11".repeat(32);
 const SUCCESS_STATUS_WORD = "9000";
 
+const CUSTOM_IMAGE_SIZE_APDU_PREFIX = "e064";
+const CUSTOM_IMAGE_REMOVE_APDU_PREFIX = "e063";
+const CUSTOM_IMAGE_SIZE_HEX = "0000d50b";
+
 export class MockServerDevicePage extends MockServerSessionHandle {
   @step("Expect the device to report the language $0")
   async expectDeviceLanguage(language: string, timeout = TIMEOUT.medium) {
@@ -34,6 +38,16 @@ export class MockServerDevicePage extends MockServerSessionHandle {
       prefix: DASHBOARD_RENAME_APDU_PREFIX,
       response: `${EDIT_CONTACT_NAME_STRUCT}${HMAC_NAME_HEX}${SUCCESS_STATUS_WORD}`,
     });
+  }
+
+  /** The mock server does not store a loaded lock screen, so its presence is pinned. */
+  @step("Mock a custom lock screen on the device")
+  async mockCustomLockScreenPresent() {
+    await this.pinApduResponse(
+      CUSTOM_IMAGE_SIZE_APDU_PREFIX,
+      `${CUSTOM_IMAGE_SIZE_HEX}${SUCCESS_STATUS_WORD}`,
+    );
+    await this.pinApduResponse(CUSTOM_IMAGE_REMOVE_APDU_PREFIX, SUCCESS_STATUS_WORD);
   }
 
   @step("Confirm the open device prompt")
