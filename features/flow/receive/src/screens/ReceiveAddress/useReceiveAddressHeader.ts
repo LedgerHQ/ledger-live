@@ -10,6 +10,7 @@ export type ReceiveAddressHeader = Readonly<{
   data: ReceiveAddressData | undefined;
   /** The asset received, once known: what the family config reads of it. */
   asset: Pick<CryptoOrTokenCurrency, "id" | "type"> | undefined;
+  network: Pick<CryptoOrTokenCurrency, "id"> | undefined;
   copy: ReceiveAddressCopy;
 }>;
 
@@ -30,6 +31,7 @@ export function useReceiveAddressHeader(assetId: CryptoOrTokenCurrencyId): Recei
     networkLabel: data ? copy.networkLabel : "",
     data,
     asset,
+    network,
     copy,
   };
 }

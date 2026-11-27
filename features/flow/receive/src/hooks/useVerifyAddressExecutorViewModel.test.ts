@@ -73,7 +73,7 @@ function runIntentJobLikeTheExecutor<InitInput>(
         input: intent.input,
         onResult: result => intent.onResult?.(result),
       })
-      .subscribe({ next: state => states.push(state), error: () => onIntentJobError() });
+      .subscribe({ next: state => states.push(state), error: error => onIntentJobError(error) });
   };
   const retryRefusal = () => {
     const lastState = states.at(-1);

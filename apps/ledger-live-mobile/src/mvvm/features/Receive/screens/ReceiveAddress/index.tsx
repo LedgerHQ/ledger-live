@@ -12,6 +12,7 @@ export default function ReceiveAddressScreen({ navigation, route }: Props) {
   const receiveAddress = useReceiveAddressScreenViewModel({
     accountUUID: route.params.accountUUID,
     assetId: route.params.assetId,
+    source: route.params.source,
     onClose,
   });
 

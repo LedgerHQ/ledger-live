@@ -44,11 +44,12 @@ const { selectAccountLegacyId } = accountsSlice.getSelectors(
   (state: State) => state.accountEntries,
 );
 
-type Params = Pick<ReceiveAddressProps, "accountUUID" | "assetId" | "onClose">;
+type Params = Pick<ReceiveAddressProps, "accountUUID" | "assetId" | "source" | "onClose">;
 
 export function useReceiveAddressScreenViewModel({
   accountUUID,
   assetId,
+  source,
   onClose,
 }: Params): ReceiveAddressProps {
   const legacyId = useSelector(state => selectAccountLegacyId(state, accountUUID));
@@ -116,6 +117,7 @@ export function useReceiveAddressScreenViewModel({
   return {
     accountUUID,
     assetId,
+    source,
     onClose,
     onCopyAddress,
     onShareAddress,

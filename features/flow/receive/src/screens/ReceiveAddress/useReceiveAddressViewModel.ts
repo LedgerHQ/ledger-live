@@ -13,6 +13,7 @@ import { useReceiveAddressHeader } from "./useReceiveAddressHeader";
 import { useReceiveAddressHelp } from "./useReceiveAddressHelp";
 import { useReceiveAddressMemo } from "./useReceiveAddressMemo";
 import { useReceiveAddressNotices } from "./useReceiveAddressNotices";
+import { useReceiveAddressOperation } from "./useReceiveAddressOperation";
 import { useReceiveAddressSelection } from "./useReceiveAddressSelection";
 import { useReceiveAddressServiceStatus } from "./useReceiveAddressServiceStatus";
 import { useReceiveFamilyConfig } from "./useReceiveFamilyConfig";
@@ -32,13 +33,14 @@ const GATE_OF_STATE: Partial<Record<ReceiveScreenData["type"], ReceiveGateType>>
 export function useReceiveAddressViewModel({
   accountUUID,
   assetId,
-  onClose,
+  source,
+  onClose: closeScreen,
   onCopyAddress,
   onShareAddress,
   VerifyAddressExecutor,
   getFamilyConfig,
   serviceIncidents,
-  onResolveGate,
+  onResolveGate: resolveGate,
   checkAddressSanctioned,
 }: ReceiveAddressProps): ReceiveAddressViewModel {
   const { data, accountStatus, refreshGate } = useReceiveScreenData(accountUUID, assetId);
@@ -56,6 +58,18 @@ export function useReceiveAddressViewModel({
   const sanctionStatus = useAddressSanctionCheck(picked?.address, checkAddressSanctioned);
   // A listed address is never shown, copied or verified.
   const selected = sanctionStatus === "clear" ? picked : undefined;
+  const { onClose, onResolveGate, onRetry } = useReceiveAddressOperation({
+    assetId,
+    source,
+    serviceIncidents,
+    onClose: closeScreen,
+    onResolveGate: resolveGate,
+    asset: header.asset,
+    network: header.network,
+    data,
+    selection,
+    sanctionStatus,
+  });
   const { actions, verification } = useReceiveAddressActions({
     accountUUID,
     assetId,
@@ -122,7 +136,7 @@ export function useReceiveAddressViewModel({
           title: copy.errorTitle,
           description: copy.errorDescription,
           retryLabel: copy.retryLabel,
-          onRetry: data.retry,
+          onRetry,
         }
       : undefined;
   const addressSelection = selection.isSelecting

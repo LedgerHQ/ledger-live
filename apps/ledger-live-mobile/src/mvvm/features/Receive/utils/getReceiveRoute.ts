@@ -29,7 +29,11 @@ export type ReceiveRoute =
  * - otherwise, or when the entry asks to create the token account: `ReceiveFunds` >
  *   `ReceiveConfirmation`, unchanged.
  */
-export function getReceiveRoute(params: ReceiveConfirmationParams, state: State): ReceiveRoute {
+export function getReceiveRoute(
+  params: ReceiveConfirmationParams,
+  state: State,
+  source?: string,
+): ReceiveRoute {
   const legacy: ReceiveRoute = [
     NavigatorName.ReceiveFunds,
     { screen: ScreenName.ReceiveConfirmation, params },
@@ -67,7 +71,7 @@ export function getReceiveRoute(params: ReceiveConfirmationParams, state: State)
     NavigatorName.Receive,
     {
       screen: ScreenName.ReceiveAddress,
-      params: { accountUUID: target.accountUUID, assetId: target.assetId },
+      params: { accountUUID: target.accountUUID, assetId: target.assetId, source },
     },
   ];
 }

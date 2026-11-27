@@ -1,3 +1,10 @@
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import {
+  LegacyAccountEntrySchema,
+  accountsSlice,
+  legacyAccountsSynced,
+} from "@domain/entity-account";
+import { mockAccountEntry } from "@domain/entity-account/schema.mock";
 import { handleModularDrawerDeeplink } from "../handleModularDrawerDeeplink";
 import { openModularDrawer } from "~/reducers/modularDrawer";
 import { findCryptoCurrencyByKeyword, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -35,6 +42,8 @@ jest.mock("LLM/features/ModularDrawer/hooks/useCallbackRegistry/registries", () 
 jest.mock("LLM/features/ModularDrawer/utils/callbackIdGenerator", () => ({
   generateCallbackId: jest.fn(() => "test-callback-id"),
 }));
+
+jest.mock("~/generated/ReceiveAddressConfig", () => ({ __esModule: true, default: {} }));
 
 jest.mock("~/rootnavigation", () => ({
   navigationRef: {
@@ -106,6 +115,36 @@ describe("handleModularDrawerDeeplink", () => {
       expect(navigationRef.current?.navigate).toHaveBeenCalledWith(NavigatorName.ReceiveFunds, {
         screen: ScreenName.ReceiveConfirmation,
         params: { accountId: "btc-account", currency: mockBitcoin, hideBackButton: true },
+      });
+    });
+
+    it("should open the new receive screen with the deeplink as its entry point", () => {
+      const entry = LegacyAccountEntrySchema.parse(mockAccountEntry());
+      const ethAccount = { ...genAccount("eth", { currency: mockEthereum }), id: entry.legacyId };
+      const newReceiveFlowState = () =>
+        ({
+          featureFlags: {
+            resolved: { newReceiveFlow: { enabled: true, params: { excludedFamilies: [] } } },
+          },
+          accountEntries: accountsSlice.reducer(undefined, legacyAccountsSynced([entry])),
+          accounts: { active: [ethAccount] },
+        }) as unknown as State;
+      handleModularDrawerDeeplink(
+        "receive",
+        new URLSearchParams(),
+        mockDispatch,
+        mockConfig,
+        newReceiveFlowState,
+      );
+      const onAccountSelected = mockCallbackRegistry.register.mock.calls[0][1] as (
+        account: unknown,
+      ) => void;
+
+      onAccountSelected(ethAccount);
+
+      expect(navigationRef.current?.navigate).toHaveBeenCalledWith(NavigatorName.Receive, {
+        screen: ScreenName.ReceiveAddress,
+        params: { accountUUID: entry.accountUUID, assetId: "ethereum", source: "deeplink" },
       });
     });
 

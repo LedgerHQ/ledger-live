@@ -5,9 +5,13 @@ import {
   type ReceiveConfirmationParams,
   type ReceiveRoute,
 } from "../utils/getReceiveRoute";
+import { getReceiveSource } from "../utils/getReceiveSource";
 
 /** `getReceiveRoute` on the store's state at the time of the navigation. */
 export function useReceiveRoute(): (params: ReceiveConfirmationParams) => ReceiveRoute {
   const store = useStore();
-  return useCallback(params => getReceiveRoute(params, store.getState()), [store]);
+  return useCallback(
+    params => getReceiveRoute(params, store.getState(), getReceiveSource()),
+    [store],
+  );
 }

@@ -1,4 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { VerifyAddressIntentResult } from "@features/platform-intent-verify-address";
 import { track } from "@shared/analytics";
 import { useVerifyAddressSession } from "./useVerifyAddressSession";
@@ -7,6 +8,7 @@ jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
 
 const mockTrack = jest.mocked(track);
 
+const ETH = CryptoOrTokenCurrencyIdSchema.parse("ethereum");
 const TRACKING = { asset: "ETH", network: "ethereum" };
 const EVENT_PROPERTIES = {
   page: "Receive Address Verification",
@@ -26,11 +28,14 @@ const RESULTS = {
 
 const WRONG_DEVICE = { failureType: "WrongDeviceForAccount", countsAsFailure: true };
 const BLOCKING_FAILURE = { failureType: "DeviceNotOnboarded", countsAsFailure: true };
+const JOB_ERROR = new Error("device unplugged");
 const RETRYABLE_FAILURE = { failureType: "DeviceLocked", countsAsFailure: false };
 
 function renderSession() {
   const onExit = jest.fn();
-  const { result } = renderHook(() => useVerifyAddressSession({ tracking: TRACKING, onExit }));
+  const { result } = renderHook(() =>
+    useVerifyAddressSession({ assetId: ETH, tracking: TRACKING, onExit }),
+  );
   return { onExit, result };
 }
 
@@ -101,7 +106,7 @@ describe("useVerifyAddressSession", () => {
 
   it("should exit as dismissed when the user leaves a retry after a job error", () => {
     const { onExit, result } = renderSession();
-    act(() => result.current.onJobError());
+    act(() => result.current.onJobError(JOB_ERROR));
     act(() => result.current.onAttemptStart());
 
     act(() => result.current.onUserCancel(null));
@@ -127,7 +132,7 @@ describe("useVerifyAddressSession", () => {
     "should exit as $outcome when the retry after a job error reports $result.type",
     ({ result: jobResult, outcome }) => {
       const { onExit, result } = renderSession();
-      act(() => result.current.onJobError());
+      act(() => result.current.onJobError(JOB_ERROR));
       act(() => result.current.onAttemptStart());
       act(() => result.current.onResult(jobResult));
 
@@ -202,7 +207,7 @@ describe("useVerifyAddressSession", () => {
 
   it("should exit as failed without any event when the job errored", () => {
     const { onExit, result } = renderSession();
-    act(() => result.current.onJobError());
+    act(() => result.current.onJobError(JOB_ERROR));
 
     act(() => result.current.onUserCancel(null));
 
@@ -214,7 +219,7 @@ describe("useVerifyAddressSession", () => {
     const { onExit, result } = renderSession();
     act(() => result.current.onResult(RESULTS.refused));
     act(() => result.current.onAttemptStart());
-    act(() => result.current.onJobError());
+    act(() => result.current.onJobError(JOB_ERROR));
 
     act(() => result.current.onUserCancel(null));
 
@@ -294,7 +299,9 @@ describe("useVerifyAddressSession", () => {
 
   it("should send the unsupported event with the given tracking when the device cannot show the address", () => {
     const onExit = jest.fn();
-    const { result } = renderHook(() => useVerifyAddressSession({ tracking: undefined, onExit }));
+    const { result } = renderHook(() =>
+      useVerifyAddressSession({ assetId: ETH, tracking: undefined, onExit }),
+    );
 
     act(() => result.current.exitEarly("unsupported", TRACKING));
 

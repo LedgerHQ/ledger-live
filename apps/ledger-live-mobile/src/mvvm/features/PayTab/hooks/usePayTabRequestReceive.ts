@@ -6,6 +6,7 @@ import { toReceiveTarget } from "@features/flow-receive";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
+import { getReceiveSource } from "LLM/features/Receive/utils/getReceiveSource";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
@@ -49,7 +50,10 @@ export function usePayTabRequestReceive(): UsePayTabRequestReceive {
           });
           return;
         }
-        navigate(NavigatorName.Receive, { screen: ScreenName.ReceiveAddress, params: target });
+        navigate(NavigatorName.Receive, {
+          screen: ScreenName.ReceiveAddress,
+          params: { ...target, source: getReceiveSource() },
+        });
       },
     });
   }, [openDrawer, navigate, store]);

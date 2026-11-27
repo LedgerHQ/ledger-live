@@ -30,7 +30,7 @@ export type VerifyAddressExecutorViewModel<InitInput> = Readonly<{
   intent: VerifyAddressIntent<undefined, VerifyAddressIntentResult>;
   intentComponentExtraProps: undefined;
   analyticsProperties: VerifyAddressTracking;
-  onIntentJobError: () => void;
+  onIntentJobError: (error: unknown) => void;
   onUserCancel: (failure: VerifyAddressDeviceFlowFailure | null) => void;
 }>;
 
@@ -52,6 +52,7 @@ export function useVerifyAddressExecutorViewModel<
   const portsRef = useRef(ports);
   const { exitEarly, onAttemptStart, onAddressDisplayed, onResult, onJobError, onUserCancel } =
     useVerifyAddressSession({
+      assetId: selection.assetId,
       tracking: prepared?.tracking,
       onExit,
     });
@@ -81,8 +82,8 @@ export function useVerifyAddressExecutorViewModel<
         if (preparation.type === "exit") exitEarly(preparation.outcome, preparation.tracking);
         else setPrepared(preparation.prepared);
       },
-      () => {
-        if (!unmounted) exitEarly("failed");
+      error => {
+        if (!unmounted) exitEarly("failed", undefined, error);
       },
     );
     return () => {

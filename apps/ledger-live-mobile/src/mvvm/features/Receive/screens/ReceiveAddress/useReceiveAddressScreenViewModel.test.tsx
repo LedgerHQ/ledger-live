@@ -114,6 +114,27 @@ describe("useReceiveAddressScreenViewModel", () => {
     );
   });
 
+  it("gives the screen the entry point the user opened it from", () => {
+    const { result } = renderHook(
+      () =>
+        useReceiveAddressScreenViewModel({
+          accountUUID: tronEntry.accountUUID,
+          assetId: CryptoOrTokenCurrencyIdSchema.parse("tron"),
+          source: "Portfolio",
+          onClose: jest.fn(),
+        }),
+      {
+        overrideInitialState: state => ({
+          ...state,
+          accountEntries: accountsSlice.reducer(undefined, legacyAccountsSynced([tronEntry])),
+          accounts: { ...state.accounts, active: [tronAccount] },
+        }),
+      },
+    );
+
+    expect(result.current.source).toBe("Portfolio");
+  });
+
   it("shares the address with the image of its card", () => {
     const { result } = renderViewModel();
 
