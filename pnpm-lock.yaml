@@ -222,8 +222,8 @@ catalogs:
       specifier: 13.3.0
       version: 13.3.0
     '@ledgerhq/coin-stellar':
-      specifier: 12.3.2
-      version: 12.3.2
+      specifier: 12.3.4
+      version: 12.3.4
     '@ledgerhq/coin-tezos':
       specifier: 14.3.1
       version: 14.3.1
@@ -22024,7 +22024,7 @@ importers:
         version: link:../coin-modules/coin-stacks
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 12.3.2(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(debug@4.4.3)
+        version: 12.3.4(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(debug@4.4.3)
       '@ledgerhq/coin-sui':
         specifier: workspace:^
         version: link:../coin-modules/coin-sui
@@ -31244,8 +31244,11 @@ packages:
   '@ledgerhq/coin-module-framework@13.3.0':
     resolution: {integrity: sha512-f4anD8B0rtZmlb+XcVhhNrqPgQ9ici9nVA2iy/bg/O5980l0UuMRF7Y5N1Goi+rOfQfNAPiBur/wMpoqIx5qwg==}
 
-  '@ledgerhq/coin-stellar@12.3.2':
-    resolution: {integrity: sha512-GQIvzGnYllC8AAoccAi3nPexiVXq5qPmHd7jWlzbWhdQZXop7jk34cWxGXB/HY4n8skurSblebXuSezChNAuRg==}
+  '@ledgerhq/coin-module-framework@13.4.0':
+    resolution: {integrity: sha512-foxPqklQGj4fvJB+H5dow5zw40cOW0D4rrug4Qw8toAclpRRBaBuLTXymgq5H4xSt53I//N02MBmW7pD5lVPtQ==}
+
+  '@ledgerhq/coin-stellar@12.3.4':
+    resolution: {integrity: sha512-vFQgqn4x91mnRLe8HcJq+7dNh6LA4zRLZCCcKyKMX8laUdB28+nAzaALofMy1EvgoeDi2Fmq5MFBRJUbkRJjIQ==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
@@ -50139,10 +50142,14 @@ snapshots:
     dependencies:
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-stellar@12.3.2(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(debug@4.4.3)':
+  '@ledgerhq/coin-module-framework@13.4.0':
+    dependencies:
+      bignumber.js: 9.1.2
+
+  '@ledgerhq/coin-stellar@12.3.4(@ledgerhq/live-network@3.4.1(axios@1.21.1(debug@4.4.3)))(debug@4.4.3)':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
-      '@ledgerhq/coin-module-framework': 13.3.0
+      '@ledgerhq/coin-module-framework': 13.4.0
       '@ledgerhq/live-network': 3.4.1(axios@1.21.1(debug@4.4.3))
       '@stellar/stellar-sdk': 14.0.0(debug@4.4.3)
       bignumber.js: 9.1.2
