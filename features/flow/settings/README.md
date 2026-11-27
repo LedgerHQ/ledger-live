@@ -32,7 +32,10 @@ Help is a standalone page, not a section: with `newSettings` on, `getSettingsRou
 `renderStandalonePage` gives, without the section tabs. It is the page of
 `@features/flow-settings-help`, which mobile also renders as its My Wallet Help screen.
 
-A row's trailing element is a chevron, an external link, a toggle, a value, a select or a button.
+A row's trailing element is a chevron, an external link, a toggle, a value, a select, a button or
+a picker (a value that opens the section's own picker, e.g. the desktop region dialog). A select can
+carry a search field (`search`, matching the label, description or value with
+`matchesSettingsOption`), and each option a `description` and a `shortLabel` for the closed select.
 On mobile, the select opens its options in a bottom sheet (Lumen `SelectList`), like the web
 select opens its list: render the Settings under `QueuedBottomSheetsProvider`.
 

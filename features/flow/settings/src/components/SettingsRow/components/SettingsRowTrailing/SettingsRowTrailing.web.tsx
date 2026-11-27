@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Switch } from "@ledgerhq/lumen-ui-react";
+import { Button, MediaButton, Switch } from "@ledgerhq/lumen-ui-react";
 import { ChevronRight, ExternalLink } from "@ledgerhq/lumen-ui-react/symbols";
 import { SettingsRowSelect } from "../SettingsRowSelect/SettingsRowSelect";
 import type { SettingsRowTrailingProps } from "./SettingsRowTrailing.types";
@@ -34,6 +34,18 @@ export function SettingsRowTrailing({
         <Button appearance="gray" size="sm" onClick={trailing.onSelect} disabled={disabled}>
           {trailing.label}
         </Button>
+      );
+    case "picker":
+      return (
+        <MediaButton
+          appearance="gray"
+          size="sm"
+          onClick={trailing.onSelect}
+          disabled={disabled}
+          aria-label={`${rowTitle}, ${trailing.label}`}
+        >
+          {trailing.label}
+        </MediaButton>
       );
   }
 }
