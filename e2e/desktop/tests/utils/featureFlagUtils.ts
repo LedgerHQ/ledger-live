@@ -223,6 +223,16 @@ export const FF_ACCOUNT_DETAIL_ENABLED = {
   accountDetail: { enabled: true, params: { excludedCurrencyIds: [] } },
 } satisfies PartialFeatures;
 
+// Pins the legacy account page, which the `account-detail` preset would otherwise replace.
+export const FF_ACCOUNT_DETAIL_DISABLED = {
+  accountDetail: { enabled: false },
+} satisfies PartialFeatures;
+
+// The account page opens a delegation in the stake position dialog only with `accountPage: true`.
+export const FF_STAKE_POSITION_ACCOUNT_PAGE = {
+  earnNativeStakePosition: { enabled: true, params: { accountPage: true } },
+} satisfies PartialFeatures;
+
 export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
 } satisfies PartialFeatures;

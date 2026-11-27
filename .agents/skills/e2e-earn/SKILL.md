@@ -88,7 +88,7 @@ On any failure, classify using the Troubleshooting taxonomy below and tell the u
 
 ## Current source of truth
 
-- **Desktop specs**: `e2e/desktop/tests/specs/earn.v2.spec.ts`, `e2e/desktop/tests/specs/delegate.spec.ts` (delegate is owned by the Earn team). The legacy Earn v1 suite (`earn.spec.ts`) has been removed.
+- **Desktop specs**: `e2e/desktop/tests/specs/earn.v2.spec.ts`, `e2e/desktop/tests/specs/delegate.spec.ts` (delegate is owned by the Earn team), `e2e/desktop/tests/specs/stakePosition.spec.ts` (the stake position dialog, see below). The legacy Earn v1 suite (`earn.spec.ts`) has been removed.
 - **Desktop page objects**:
   - `e2e/desktop/tests/page/earn.base.page.ts` — abstract `EarnBasePage extends WebViewAppPage` (`webviewIdentifier = "earn"`, `goAndWaitForEarnToBeReady`).
   - `e2e/desktop/tests/page/earn.v2.dashboard.page.ts` — `EarnV2Page` (dashboard states + deposit/withdrawal + provider selection). Assertion methods use `verify*`.
@@ -117,6 +117,14 @@ Earn behaviour is feature-flag driven. Get this wrong and the app routes to the 
 - Dashboard state: `verifyIceColdStartPage()`, `verifyColdStartPage()`, `verifyHotStartPage()`, `verifyAssetReadyToEarn(ticker)`, `verifyRewardsSummaryBoxes()`.
 - Deposit, withdrawal, and provider: `clickAssetEarnCta(ticker)`, `verifyDepositFlowVisible()` (URL `/deposit`, excluding `/v2/`), `verifyWithdrawalFlowVisible()` (URL `/redeem` or `intent=withdraw`), `selectEthProvider(providerId)` (clicks `eth-provider-card-<cardId>`), `selectAssetInModularSelector(app, currency)`, `addExistingAccountViaModularSelector(app)`.
 - Native ETH "select validator" flows through the Earn deposit screen (`delegate.spec.ts` uses `verifyDepositFlowVisible()` + `selectEthProvider(...)` for ETH), not the old `stake-provider-container-lido` modal. Do not reintroduce removed Lido-modal helpers.
+
+## Stake position dialog (desktop)
+
+`stakePosition.spec.ts` opens a Solana delegation in the stake position dialog from the account page, legacy and Account Detail (`FF_STAKE_POSITION_ACCOUNT_PAGE`, with `accountDetail` pinned off or on). Run it with `pnpm e2e:desktop test:playwright stakePosition`.
+
+- **Seed prerequisite**: `Solana 2` must hold an activated, not deactivating, stake on mainnet that it can deactivate. The spec reads it from the app state (`openAccountWithActiveSolanaStake`) and fails with a `Blocked:` message without one.
+- **Earn backend**: mocked with `route.fulfill` (`tests/utils/earnPositionsMock.ts`) on `POST **/v3/stakes`, whose row carries the rate of the position in `interest` (the dialog shows it), and on `GET **/figment/solana/validators_summary`, which only feeds the validator list of the Solana coin module (its rate differs from the position's on purpose); the expected figures derive from the chain amount of the position.
+- **Device**: broadcast is always disabled and the tests stop on the device step (`stake-position-signature-continue`), as no device labels exist yet for the Solana deactivate and withdraw screens.
 
 ## Troubleshooting / failure taxonomy
 

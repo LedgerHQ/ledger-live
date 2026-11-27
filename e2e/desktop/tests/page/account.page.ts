@@ -38,6 +38,11 @@ export class AccountPage extends AppPage {
   private showAllTokensButton = this.page.getByTestId("account-tokens-show-all-button");
   private addTokenButton = this.page.getByRole("button", { name: "Add token" });
   private viewDetailsButton = this.page.getByText("View details");
+  // The legacy delegation rows have no test id: one `Manage` menu per row, in the order of the list.
+  private readonly delegationManageMenus = this.page.getByText("Manage", { exact: true });
+  private readonly viewStakePositionDetailsItem = this.page
+    .getByText("View details", { exact: true })
+    .filter({ visible: true });
   private editName = this.page.locator("#input-edit-name");
   private applyButton = this.page.getByTestId("account-settings-apply-button");
   private accountChart = this.page.getByTestId("chart-container");
@@ -152,6 +157,16 @@ export class AccountPage extends AppPage {
   @step("Click on View Details button")
   async navigateToViewDetails() {
     await this.viewDetailsButton.click();
+  }
+
+  @step("Open the details of a stake position")
+  async openStakePositionDetails(position: { positionId: string; rowIndex: number }) {
+    if (await isAccountDetailEnabled(this.page)) {
+      await this.accountDetail.openStakePositionDetails(position.positionId);
+      return;
+    }
+    await this.delegationManageMenus.nth(position.rowIndex).click();
+    await this.viewStakePositionDetailsItem.click();
   }
 
   @step("Click on last operation and return status")

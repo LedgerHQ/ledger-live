@@ -54,6 +54,10 @@ export class AccountDetailPage extends AppPage {
   private readonly changeNameButton = this.page.getByRole("button", { name: "Change name" });
   private readonly advancedLogsJson = this.page.getByTestId("account-settings-advanced-logs-json");
   private readonly removeConfirmButton = this.page.getByTestId("account-settings-remove-confirm");
+  private readonly delegationRowActions = (positionId: string) =>
+    this.page.getByTestId(`delegation-row-${positionId}-actions`);
+  private readonly viewStakePositionDetailsAction = (positionId: string) =>
+    this.page.getByTestId(`delegation-row-${positionId}-action-VIEW_STAKE_POSITION_DETAILS`);
 
   private tokenInFocus?: Currency;
 
@@ -192,6 +196,12 @@ export class AccountDetailPage extends AppPage {
     await this.settingsButton.click();
     await this.settingsEntry("remove-account").click();
     await this.removeConfirmButton.click();
+  }
+
+  @step("Open the details of the stake position $0")
+  async openStakePositionDetails(positionId: string) {
+    await this.delegationRowActions(positionId).click();
+    await this.viewStakePositionDetailsAction(positionId).click();
   }
 
   @step("Expect `derivate address index to be $0` to be visible")
