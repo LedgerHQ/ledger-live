@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
-import { ThemeContext } from "styled-components/native";
+import { StyleProvider } from "@features/platform-style/native";
 import * as animationModule from "./getDeviceActionAnimation";
 import { DeviceActionContent } from "./DeviceActionContent";
 
@@ -91,13 +91,13 @@ describe("DeviceActionContent (native)", () => {
 
   it("resolves the animation from the mounted provider when no theme prop is given", () => {
     render(
-      <ThemeContext.Provider value={{ theme: "dark" } as never}>
+      <StyleProvider theme={{ theme: "dark" } as never} selectedPalette="dark" locale="en">
         <DeviceActionContent
           deviceName="Ledger Flex CDA1"
           deviceModelId="europa"
           action="continue"
         />
-      </ThemeContext.Provider>,
+      </StyleProvider>,
     );
 
     expect(animationModule.getDeviceActionAnimation).toHaveBeenLastCalledWith({
