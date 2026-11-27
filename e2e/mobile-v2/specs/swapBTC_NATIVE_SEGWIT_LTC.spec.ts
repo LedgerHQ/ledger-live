@@ -1,0 +1,20 @@
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { runSwapTest } from "@e2e-mobile/specs/swap.test";
+
+runSwapTest(
+  Account.BTC_NATIVE_SEGWIT_1,
+  Account.LTC_1,
+  ["B2CQA-3078"],
+  [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    "@bitcoin",
+    "@family-bitcoin",
+    "@litecoin",
+    "@family-litecoin",
+  ],
+);

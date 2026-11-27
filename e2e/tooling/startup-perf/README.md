@@ -223,7 +223,7 @@ The accounts scenario starts from accounts added through the app's UI, as a user
   with its balance one unit higher, which its sync puts back (the app ignores `lastSyncDate`, so a
   sync with nothing new on chain would save none). Feature flags are not written: they come from
   production Firebase. `prepare-build.mts` checks that each measured ref starts the E2E bridge only
-  with `DETOX`, and `verify-build.mts` that the binary has no `MOCK` or `DETOX`. `prepare-build.mts`
+  with `DETOX` (or `E2E`), and that the env file sets no `E2E`, and `verify-build.mts` that the binary has no `MOCK` or `DETOX`. `prepare-build.mts`
   also removes `FORCE_DEBUG_VISIBLE`, which only shows Settings > Debug: nothing opens it.
 - **Warm up 6 times on Android** before the rounds. In the first launches after an install (2–6,
   ~20–230 s), Braze's content-card refresh put ~110 ms of JS before App started in about half of
@@ -312,7 +312,7 @@ pnpm --filter @ledgerhq/mobile-startup-perf test        # also: typecheck, lint,
 
 They run in the "E2E Tooling Checks" PR job when this folder changes. `app-contract.test.ts` checks
 the mobile app of the checkout against what the measurement needs: `prepare-build.mts` still applies
-(LIVE-36190 included), the E2E bridge still starts only with `DETOX`, the app still reads the
+(LIVE-36190 included), the E2E bridge still starts only with `E2E` or `DETOX`, the app still reads the
 storage `storage.ts` writes (instance, keys, migration status, terms version) and saves its client
 ids at every start, and it still writes its startup to the device log as `startup-log.ts` reads it.
 The package does not depend on `live-mobile`, so a mobile PR does not run it: an app change that

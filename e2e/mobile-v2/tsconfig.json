@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "noEmit": true,
+  "compilerOptions": {
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "types": [
+      "node",
+      "@wdio/globals/types",
+      "expect-webdriverio",
+      "@wdio/mocha-framework",
+      "@wdio/appium-service"
+    ],
+    "paths": {
+      "@e2e-mobile/*": ["./*"]
+    },
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "allure-*", "logs"]
+}

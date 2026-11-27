@@ -44,7 +44,7 @@ export const registerTransports = ({
     disconnect: () => Promise.resolve(),
   });
 
-  if (Config.DETOX) {
+  if (Config.E2E || Config.DETOX) {
     registerTransportModule({
       id: "speculos",
       open: (id, timeoutMs) =>

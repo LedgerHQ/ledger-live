@@ -1,0 +1,20 @@
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { runSwapTest } from "@e2e-mobile/specs/swap.test";
+
+runSwapTest(
+  Account.XRP_1,
+  TokenAccount.ETH_USDC_1,
+  ["B2CQA-3075"],
+  [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    "@ripple",
+    "@family-xrp",
+    "@ethereum",
+    "@family-evm",
+  ],
+);

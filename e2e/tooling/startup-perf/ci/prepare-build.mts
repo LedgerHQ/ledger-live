@@ -79,15 +79,17 @@ export function readdLive36190(dbSave: string): string {
 }
 
 export const BRIDGE_IMPORT = 'import { init } from "~/e2e/bridge/client";';
-// The E2E bridge's only start: the prod-like env file has no DETOX, so measured launches run none
-// of it. Each measured ref is checked, as the checkout's app-contract test covers only its own.
-export const DETOX_BRIDGE_BLOCK = [
+// The E2E bridge's only start: the prod-like env file has neither E2E nor DETOX, so measured launches
+// run none of it. Each measured ref is checked, as the checkout's app-contract test covers only its own.
+export const BRIDGE_CONDITIONS = ["Config.DETOX", "Config.E2E || Config.DETOX"];
+export const bridgeBlock = (condition: string) => [
   "  onInitFinished = () => {",
-  "    if (Config.DETOX) {",
+  `    if (${condition}) {`,
   "      init();",
   "    }",
   "  };",
 ];
+export const DETOX_BRIDGE_BLOCK = bridgeBlock(BRIDGE_CONDITIONS[0]);
 // A bare init() call: not Sentry.init() or another object's.
 const callsBridgeInit = (line: string) => /(^|[^.\w])init\(\)/.test(line);
 
@@ -95,7 +97,9 @@ const callsBridgeInit = (line: string) => /(^|[^.\w])init\(\)/.test(line);
 export function startsBridgeOnlyWithDetox(index: string): boolean {
   const lines = linesOf(index);
   const blocks = indexesOf(lines, i =>
-    DETOX_BRIDGE_BLOCK.every((line, k) => lines[i + k] === line),
+    BRIDGE_CONDITIONS.some(condition =>
+      bridgeBlock(condition).every((line, k) => lines[i + k] === line),
+    ),
   );
   return (
     countLines(lines, line => line === BRIDGE_IMPORT) === 1 &&
@@ -158,7 +162,7 @@ function checkApp(files: AppFiles, regression: string): void {
   requireOne(files.jsStart, JS_START_LINE, "JS start");
   if (!startsBridgeOnlyWithDetox(read(files.index))) {
     throw new StepFailure(
-      `${files.index} must start the E2E bridge (init()) only in onInitFinished's Config.DETOX block, or measured launches may run it`,
+      `${files.index} must start the E2E bridge (init()) only in onInitFinished's Config.DETOX (or Config.E2E || Config.DETOX) block, or measured launches may run it`,
     );
   }
   if (regression) checkLive36190(files.dbSave);
@@ -166,6 +170,9 @@ function checkApp(files: AppFiles, regression: string): void {
     if (exactly(files.env, line) !== 1) {
       throw new StepFailure(`expected one '${line}' line in ${files.env}`);
     }
+  }
+  if (exactly(files.env, "E2E=1") !== 0) {
+    throw new StepFailure(`${files.env} sets E2E=1, which starts the E2E bridge`);
   }
   if (countLines(linesOf(read(files.packageJson)), isE2eBuildWithDetox) > 1) {
     throw new StepFailure(`more than one e2e:build line sets DETOX=1 in ${files.packageJson}`);

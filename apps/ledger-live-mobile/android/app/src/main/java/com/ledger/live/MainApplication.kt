@@ -2,6 +2,7 @@ package com.ledger.live
 
 import android.app.Application
 import android.content.res.Configuration
+import android.webkit.WebView
 import com.braze.BrazeActivityLifecycleCallbackListener
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
@@ -60,6 +61,11 @@ class MainApplication : Application(), ReactApplication, ShareApplication {
     super.onCreate()
 
     loadReactNative(this)
+
+    // Appium/WDIO hybrid tests need devtools sockets on E2E builds.
+    if (BuildConfig.BUILD_TYPE.startsWith("e2e")) {
+      WebView.setWebContentsDebuggingEnabled(true)
+    }
 
     registerActivityLifecycleCallbacks(BrazeActivityLifecycleCallbackListener())
 

@@ -370,6 +370,7 @@ allowBuilds:
   "@datadog/native-appsec": false
   "@datadog/native-iast-taint-tracking": false
   "@datadog/native-metrics": false
+  '@ffmpeg-installer/darwin-arm64': true
   "@firebase/util": false
   "@parcel/watcher": false
   "@swc/core": true
@@ -380,8 +381,10 @@ allowBuilds:
   "core-js-pure": true
   "detox": true
   "dtrace-provider": true
+  edgedriver: false
   "electron": true
   "esbuild": true
+  geckodriver: false
   "keccak": true
   "msw": true
   "nx": true

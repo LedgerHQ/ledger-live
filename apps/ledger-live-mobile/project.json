@@ -86,6 +86,38 @@
         }
       }
     },
+    "e2e-v2:build:android": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build", "build"],
+      "cache": true,
+      "outputs": ["{projectRoot}/android/app/build/outputs/apk/e2e/**"],
+      "inputs": ["default", "^default", "mobileEnv", "sharedEnv", { "env": "RUNNER_OS" }, { "env": "E2E_ANDROID_ABI" }],
+      "options": { "cwd": "{projectRoot}", "command": "pnpm android:e2e" }
+    },
+    "e2e-v2:build:android:prerelease": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build", "build"],
+      "cache": true,
+      "outputs": ["{projectRoot}/android/app/build/outputs/apk/e2ePreRelease/**"],
+      "inputs": ["default", "^default", "mobileEnv", "sharedEnv", { "env": "RUNNER_OS" }, { "env": "E2E_ANDROID_ABI" }],
+      "options": { "cwd": "{projectRoot}", "command": "pnpm android:e2e:prerelease" }
+    },
+    "e2e-v2:build:ios": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build", "build"],
+      "cache": true,
+      "outputs": ["{projectRoot}/ios/build/e2e/Build/Products/**"],
+      "inputs": ["default", "^default", "mobileEnv", "sharedEnv", { "env": "RUNNER_OS" }],
+      "options": { "cwd": "{projectRoot}", "command": "pnpm ios:e2e" }
+    },
+    "e2e-v2:build:ios:prerelease": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build", "build"],
+      "cache": true,
+      "outputs": ["{projectRoot}/ios/build/e2e-prerelease/Build/Products/**"],
+      "inputs": ["default", "^default", "mobileEnv", "sharedEnv", { "env": "RUNNER_OS" }],
+      "options": { "cwd": "{projectRoot}", "command": "pnpm ios:e2e:prerelease" }
+    },
     "rsdoctor": {
       "executor": "nx:run-commands",
       "dependsOn": ["^build"],
