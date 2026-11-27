@@ -157,6 +157,14 @@ export const getSubAccounts = async (
   return Promise.all(subAccountsPromises);
 };
 
+const withSubOperations = (operation: Operation, subOperations: Operation[]): Operation => {
+  const current = operation.subOperations;
+  const unchanged =
+    current?.length === subOperations.length &&
+    current.every((subOperation, index) => subOperation === subOperations[index]);
+  return unchanged ? operation : { ...operation, subOperations };
+};
+
 export const getAccountShape: GetAccountShape<AptosAccount> = async (
   info: AccountShapeInfo<AptosAccount>,
 ) => {
@@ -189,7 +197,7 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
     Operation[],
     Operation[],
   ] = await txsToOps(info, accountId, transactions);
-  const operations = mergeOps(oldOperations, newOperations);
+  const mergedOperations = mergeOps(oldOperations, newOperations);
 
   const newSubAccounts = await getSubAccounts(info, address, accountId, tokenOperations);
   const shouldSyncFromScratch = initialAccount === undefined;
@@ -197,10 +205,12 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
     ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts);
 
-  operations?.forEach(op => {
+  const operations = mergedOperations.map(op => {
     const subOperations = inferSubOperations(op.hash, subAccounts);
-    op.subOperations =
-      subOperations.length === 1 ? subOperations : subOperations.filter(op => !!op.blockHash);
+    return withSubOperations(
+      op,
+      subOperations.length === 1 ? subOperations : subOperations.filter(op => !!op.blockHash),
+    );
   });
 
   const stakingPositions: AptosStakingPosition[] = [];

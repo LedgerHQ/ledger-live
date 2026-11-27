@@ -1037,6 +1037,86 @@ describe("getAccountShape", () => {
     expect(mockedAptosAPI).toHaveBeenCalledTimes(2);
     expect(mockGetAccountSpy).toHaveBeenCalledWith("0xa0d8");
   });
+
+  describe("with operations kept from the previous sync", () => {
+    const parentId = "js:2:aptos:474d:aptos";
+    const tokenAccountId = `${parentId}+aptos%2Fcoin%2Fdstapt`;
+    const token = {
+      type: "TokenCurrency",
+      id: TokenCurrencyIdSchema.parse("aptos/coin/dstapt_0xd111::staked_coin::stakedaptos"),
+      contractAddress: "0xd111::staked_coin::StakedAptos",
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("aptos"),
+      name: "dstAPT",
+      tokenType: "coin",
+      ticker: "dstAPT",
+      disableCountervalue: false,
+      delisted: false,
+      units: [{ name: "dstAPT", code: "dstAPT", magnitude: 8 }],
+    } as TokenCurrency;
+    const baseOperation = {
+      id: `${parentId}-0xabc-OUT`,
+      hash: "0xabc",
+      type: "OUT",
+      value: BigNumber(1000),
+      fee: BigNumber(12),
+      blockHash: "0xblock",
+      blockHeight: 311942427,
+      senders: ["0xa0d8"],
+      recipients: ["0x4e5e"],
+      accountId: parentId,
+      date: new Date("2025-03-28T15:56:00.481Z"),
+      extra: {},
+    } as Operation;
+    const tokenOperation = {
+      ...baseOperation,
+      id: `${tokenAccountId}-0xabc-OUT`,
+      accountId: tokenAccountId,
+    } as Operation;
+
+    const syncWith = (keptOperation: Operation) => {
+      mockedAptosAPI.mockImplementation(() => ({
+        getAccountInfo: jest
+          .fn()
+          .mockResolvedValue({ balance: BigNumber(1), transactions: [], blockHeight: 1 }),
+        getBalances: jest
+          .fn()
+          .mockResolvedValue([{ contractAddress: token.contractAddress, amount: BigNumber(5) }]),
+      }));
+      mockedDecodeTokenAccountId.mockResolvedValue({ token, accountId: parentId });
+      jest.mocked(mergeOps).mockReturnValue([keptOperation]);
+      jest.mocked(txsToOps).mockResolvedValue([[], [tokenOperation], []]);
+
+      return getAccountShape(
+        {
+          currency: getCryptoCurrencyById("aptos"),
+          address: "0xa0d8",
+          index: 0,
+          derivationPath: "44'/637'/0'",
+          derivationMode: "aptos",
+          rest: { publicKey: "474d" },
+          initialAccount: createFixtureAccount({ id: parentId, operations: [keptOperation] }),
+        } as unknown as AccountShapeInfo<AptosAccount>,
+        {} as SyncConfig,
+      );
+    };
+
+    it("infers sub operations when the kept operation is frozen", async () => {
+      const frozenOperation = Object.freeze({ ...baseOperation });
+
+      const result = await syncWith(frozenOperation);
+
+      expect(result.operations?.[0]?.subOperations).toEqual([tokenOperation]);
+      expect(frozenOperation.subOperations).toBeUndefined();
+    });
+
+    it("keeps the operation reference when its sub operations are unchanged", async () => {
+      const keptOperation = { ...baseOperation, subOperations: [tokenOperation] };
+
+      const result = await syncWith(keptOperation);
+
+      expect(result.operations?.[0]).toBe(keptOperation);
+    });
+  });
 });
 
 describe("mergeSubAccounts", () => {
