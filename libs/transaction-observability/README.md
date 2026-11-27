@@ -141,8 +141,8 @@ host module and add it to that list.
 
 ### Earn live app
 
-The Earn live app (manifests `earn`, `earn-stg`, `earn-prd-eks`, or the id `ptxEarnLiveApp`
-configures, read through `installEarnLifecycleHost`'s `readManifestId`) reports its own intents
+The Earn live app (manifests `earn`, `earn-stg`, `earn-stg-eks`, `earn-prd-eks`, or the id
+`ptxEarnLiveApp` configures, read through `installEarnLifecycleHost`'s `readManifestId`) reports its own intents
 and terminals on `earn_native`. Like Borrow, the host tracks its attempts on path `earn` behind
 `earnTxLifecycleMonitoring`, posts to the Earn sink, and only reports a `failure/abandoned`
 terminal when the webview showing the app is torn down with a sign still pending. Success,

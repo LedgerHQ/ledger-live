@@ -1,5 +1,5 @@
 /** Manifest ids the Earn live app ships under; the `ptxEarnLiveApp` flag can add another. */
-const DEFAULT_EARN_MANIFEST_IDS = new Set(["earn", "earn-stg", "earn-prd-eks"]);
+const DEFAULT_EARN_MANIFEST_IDS = new Set(["earn", "earn-stg", "earn-stg-eks", "earn-prd-eks"]);
 
 type EarnManifestIdReader = () => string | undefined;
 

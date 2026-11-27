@@ -1,3 +1,4 @@
+import { setEarnManifestIdReader } from "./earnApps";
 import { toSegmentTrackEvent } from "./segmentEvent";
 import {
   TransactionDataSource,
@@ -28,6 +29,10 @@ const refused = Object.assign(new Error("declined for 0xSENSITIVE_ADDR"), {
 });
 
 describe("toSegmentTrackEvent", () => {
+  afterEach(() => {
+    setEarnManifestIdReader(null);
+  });
+
   it("does not forward lifecycle intents to Segment", () => {
     expect(
       toSegmentTrackEvent({
@@ -167,7 +172,7 @@ describe("toSegmentTrackEvent", () => {
       expect(result).toBeNull();
     });
 
-    it.each(["earn", "earn-stg", "earn-prd-eks"])(
+    it.each(["earn", "earn-stg", "earn-stg-eks", "earn-prd-eks"])(
       "for the %s live-app, which emits earn_transaction_* itself",
       manifestId => {
         const result = toSegmentTrackEvent({
@@ -177,6 +182,36 @@ describe("toSegmentTrackEvent", () => {
           manifestId,
         } as LogEvent);
         expect(result).toBeNull();
+      },
+    );
+
+    it("for the manifest id that the ptxEarnLiveApp flag configures", () => {
+      const event = {
+        status: "success",
+        stage: TransactionStage.Broadcast,
+        ...common,
+        manifestId: "earn-canary",
+      } as LogEvent;
+      expect(toSegmentTrackEvent(event)).not.toBeNull();
+
+      setEarnManifestIdReader(() => "earn-canary");
+
+      expect(toSegmentTrackEvent(event)).toBeNull();
+    });
+  });
+
+  describe("still emits", () => {
+    it.each(["lido", "stakekit", "kiln-staking", "earn-stg-eks-clone"])(
+      "for the %s staking app, which is not the Earn live-app",
+      manifestId => {
+        const result = toSegmentTrackEvent({
+          status: "success",
+          stage: TransactionStage.Broadcast,
+          ...common,
+          manifestId,
+        } as LogEvent);
+
+        expect(result).toMatchObject({ event: "earn_transaction_completed" });
       },
     );
   });

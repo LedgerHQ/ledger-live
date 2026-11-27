@@ -1,3 +1,4 @@
+import { isEarnApp } from "./earnApps";
 import type { LogEvent } from "./logEvent";
 import { isStakingApp } from "./stakingApps";
 
@@ -10,10 +11,6 @@ export type SegmentTrackEvent = {
 // Mixpanel. `stage` carries where in the lifecycle the outcome happened.
 const EARN_TRANSACTION_COMPLETED = "earn_transaction_completed";
 const EARN_TRANSACTION_FAILED = "earn_transaction_failed";
-
-// The Earn live-app emits earn_transaction_* for its own wallet-api flows with richer
-// context (protocol, receipt token). Emitting here too would double-count.
-const APP_OWNED_MANIFEST_IDS = new Set(["earn", "earn-stg", "earn-prd-eks"]);
 
 // Reported instead of an action when a staking app calls an unmapped function.
 const UNMAPPED_ACTION = "unknown";
@@ -35,7 +32,9 @@ export function toSegmentTrackEvent(event: LogEvent): SegmentTrackEvent | null {
   // whole purpose is staking. The second arm is what admits dApp contract calls, whose action
   // is only as good as the selector map — see `transaction_type` below.
   if (!event.earnTransactionType && !isStakingApp(event.manifestId)) return null;
-  if (event.manifestId && APP_OWNED_MANIFEST_IDS.has(event.manifestId)) return null;
+  // The Earn live app emits earn_transaction_* for its own wallet-api flows with richer context
+  // (protocol, receipt token). Emitting here too would double-count.
+  if (isEarnApp(event.manifestId)) return null;
 
   const isSuccess = event.status === "success";
   const properties: Record<string, unknown> = {

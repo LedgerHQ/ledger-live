@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import type { FeatureMap } from "@shared/feature-flags";
 import {
   formatDefaultFeatures,
@@ -87,5 +88,43 @@ describe("parseFirebaseFeatures", () => {
         feature_lwd_wallet_40: value("not json"),
       }),
     ).toEqual({ counterValue: { enabled: true } });
+  });
+});
+
+const remote = (raw: string) => ({ asString: () => raw, getSource: () => "remote" });
+
+describe("earnSolanaHighlightedValidators", () => {
+  const FIREBASE_KEY = "feature_earn_solana_highlighted_validators";
+  const flagValue = {
+    enabled: true,
+    params: {
+      validators: [
+        { voteAccount: "ExampleVoteAccountA11111111111111111111111", provider: "Provider A" },
+      ],
+    },
+  };
+
+  it("is stored under the key that the Firebase owner edits", () => {
+    expect(formatToFirebaseFeatureId("earnSolanaHighlightedValidators")).toBe(FIREBASE_KEY);
+  });
+
+  it("maps that key back to the flag id with its validators", () => {
+    expect(parseFirebaseFeatures({ [FIREBASE_KEY]: remote(JSON.stringify(flagValue)) })).toEqual({
+      earnSolanaHighlightedValidators: flagValue,
+    });
+  });
+
+  it.each([
+    "feature_earn_solana_highlighted_validator",
+    "feature_solana_highlighted_validators",
+    "feature_earn_highlighted_validators",
+  ])("does not read the near-miss key %s", key => {
+    expect(parseFirebaseFeatures({ [key]: remote(JSON.stringify(flagValue)) })).toEqual({});
+  });
+
+  it("is seeded disabled with no validator in the Firebase defaults", () => {
+    expect(formatDefaultFeatures(FEATURE_FLAGS_DEFAULTS)[FIREBASE_KEY]).toBe(
+      JSON.stringify({ enabled: false, params: { validators: [] } }),
+    );
   });
 });

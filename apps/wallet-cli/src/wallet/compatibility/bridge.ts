@@ -7,7 +7,6 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { getPendingNativeSpent } from "@ledgerhq/live-common/bridge/generic-coin-framework/utils";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { descriptorToAccount } from "@ledgerhq/live-wallet/accounts";
 import type {
@@ -18,13 +17,12 @@ import type {
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import type { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
-import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { listSolanaStakingPositions, solanaActivationState } from "@ledgerhq/coin-solana/logic";
-import { getChainAPI as getSolanaChainAPI } from "@ledgerhq/coin-solana/network/index";
-import { getStakeAccountMinimumBalanceForRentExemption } from "@ledgerhq/coin-solana/network/chain/web3";
 import type { SolanaAccount } from "@ledgerhq/coin-solana/types";
-import { chainConfigFrom } from "@ledgerhq/coin-solana/utils";
+import {
+  computeSolanaStakeAmounts,
+  readSolanaStakeLimitInputs,
+} from "@ledgerhq/live-common/families/solana/stakeLimits";
 import {
   createStakeAccountTransaction,
   delegateTransaction,
@@ -72,13 +70,6 @@ export function buildSolanaTransactionPatch(
   }
 }
 
-/**
- * `maxSpendable` is the generic bridge's send-max for a new stake account: spendable balance minus
- * pending debits, network fee and unstake reserve. coin-solana's validateIntent also requires the
- * stake account rent on top of an explicit amount, so the largest amount it accepts is that minus
- * the rent. Subtracting the rent here relies on `genericEstimateMaxSpendable` (#21839) leaving it in;
- * coin-solana's legacy estimateMaxSpendable took it off, but Solana no longer goes through it.
- */
 export function toSolanaStakeLimits(values: {
   minimumDelegation: BigNumber;
   rent: BigNumber;
@@ -86,12 +77,8 @@ export function toSolanaStakeLimits(values: {
   pendingDebits: BigNumber;
   maxSpendable: BigNumber;
 }): SolanaStakeLimits {
-  const { minimumDelegation, rent, spendableBalance, pendingDebits, maxSpendable } = values;
-  const maxStakeable = BigNumber.max(maxSpendable.minus(rent), 0);
-  const feeReserve = BigNumber.max(
-    spendableBalance.minus(pendingDebits).minus(rent).minus(maxStakeable),
-    0,
-  );
+  const { minimumDelegation, rent, spendableBalance, pendingDebits } = values;
+  const { maxStakeable, feeReserve } = computeSolanaStakeAmounts(values);
   return {
     minimumDelegation: BigNumberStrSchema.parse(minimumDelegation.toFixed()),
     rent: BigNumberStrSchema.parse(rent.toFixed()),
@@ -388,21 +375,7 @@ export class BridgeAdapter {
     bridge: AccountBridge<TransactionCommon>,
     tx: TransactionCommon,
   ): Promise<SolanaStakeLimits> {
-    const currencyId = account.currency.id;
-    const config = getCurrencyConfiguration<SolanaCoinConfig>(currencyId);
-    const api = getSolanaChainAPI(chainConfigFrom(config));
-    const [minimumDelegation, rent, maxSpendable] = await Promise.all([
-      api.getStakeMinimumDelegation(),
-      getStakeAccountMinimumBalanceForRentExemption(api),
-      bridge.estimateMaxSpendable({ account, transaction: tx }),
-    ]);
-    return toSolanaStakeLimits({
-      minimumDelegation: new BigNumber(minimumDelegation),
-      rent: new BigNumber(rent),
-      spendableBalance: account.spendableBalance,
-      pendingDebits: getPendingNativeSpent(account.pendingOperations ?? []),
-      maxSpendable,
-    });
+    return toSolanaStakeLimits(await readSolanaStakeLimitInputs(account, bridge, tx));
   }
 
   private async sync(descriptor: AccountDescriptor): Promise<Account> {

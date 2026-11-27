@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { getAccountSpendableBalance } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { useStakingDrawer } from "./useStakingDrawer";
@@ -171,6 +172,77 @@ describe("useStakingDrawer", () => {
       );
     },
   );
+
+  describe("a Solana account and the Earn redirect", () => {
+    const solanaAccount = {
+      type: "Account" as const,
+      id: "js:2:solana:HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM:solanaMain",
+      currency: { family: "solana", id: "solana" },
+    };
+    const earnDeposit = {
+      screen: NavigatorName.Earn,
+      params: {
+        screen: "Earn",
+        platform: "earn",
+        params: { intent: "deposit", cryptoAssetId: "solana" },
+      },
+    };
+
+    it("opens the No Funds flow, before any redirect, when nothing is spendable", async () => {
+      jest.mocked(getAccountSpendableBalance).mockReturnValueOnce(new BigNumber(0));
+      mockGetRouteParamsForPlatformApp.mockReturnValue(earnDeposit);
+      const { result } = renderHook(() =>
+        useStakingDrawer({ navigation, parentRoute, alwaysShowNoFunds: false }),
+      );
+
+      await result.current(solanaAccount as never, undefined, "solana");
+
+      expect(navigation.navigate).toHaveBeenCalledTimes(1);
+      expect(navigation.navigate).toHaveBeenCalledWith(NavigatorName.Base, {
+        screen: NavigatorName.NoFundsFlow,
+        drawer: undefined,
+        params: {
+          screen: ScreenName.NoFunds,
+          params: { account: solanaAccount, parentAccount: undefined, entryPoint: undefined },
+        },
+      });
+      expect(mockGetRouteParamsForPlatformApp).not.toHaveBeenCalled();
+    });
+
+    it("opens the Earn deposit when funds are spendable", async () => {
+      mockGetRouteParamsForPlatformApp.mockReturnValue(earnDeposit);
+      const { result } = renderHook(() =>
+        useStakingDrawer({ navigation, parentRoute, alwaysShowNoFunds: false }),
+      );
+
+      await result.current(solanaAccount as never, undefined, "solana");
+
+      expect(navigation.navigate).toHaveBeenCalledWith(NavigatorName.Base, earnDeposit);
+    });
+
+    it("opens the No Funds flow with the entry point of the Get funds button", async () => {
+      jest.mocked(getAccountSpendableBalance).mockReturnValueOnce(new BigNumber(0));
+      const { result } = renderHook(() =>
+        useStakingDrawer({
+          navigation,
+          parentRoute,
+          alwaysShowNoFunds: false,
+          entryPoint: "get-funds",
+        }),
+      );
+
+      await result.current(solanaAccount as never, undefined, "solana");
+
+      expect(navigation.navigate).toHaveBeenCalledWith(
+        NavigatorName.Base,
+        expect.objectContaining({
+          params: expect.objectContaining({
+            params: expect.objectContaining({ entryPoint: "get-funds" }),
+          }),
+        }),
+      );
+    });
+  });
 
   it("navigates SEI EVM accounts to the validator selection when evmNativeStaking is enabled", async () => {
     const { result } = renderHook(

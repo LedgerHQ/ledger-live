@@ -44,6 +44,22 @@ const rawTron: AccountRaw = {
   balance: "100000000000000",
 };
 
+const rawSolana: AccountRaw = {
+  id: "js:2:solana:HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM:solanaMain",
+  seedIdentifier: "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM",
+  name: "Solana 1",
+  derivationMode: "solanaMain",
+  index: 0,
+  freshAddress: "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM",
+  freshAddressPath: "44'/501'/0'",
+  blockHeight: 8168983,
+  operations: [],
+  pendingOperations: [],
+  currencyId: "solana",
+  lastSyncDate: "2026-11-17T15:13:30.318Z",
+  balance: "5000000000",
+};
+
 setCryptoAssetsStore({
   findTokenById: async () => undefined,
   findTokenByAddressInCurrency: async () => undefined,
@@ -51,10 +67,14 @@ setCryptoAssetsStore({
 });
 let mockEthereumAccount: Awaited<ReturnType<typeof fromAccountRaw>>;
 let mockTronAccount: Awaited<ReturnType<typeof fromAccountRaw>>;
+let mockSolanaAccount: Awaited<ReturnType<typeof fromAccountRaw>>;
+let mockEmptySolanaAccount: Awaited<ReturnType<typeof fromAccountRaw>>;
 
 beforeAll(async () => {
   mockEthereumAccount = await fromAccountRaw(raw);
   mockTronAccount = await fromAccountRaw(rawTron);
+  mockSolanaAccount = await fromAccountRaw(rawSolana);
+  mockEmptySolanaAccount = await fromAccountRaw({ ...rawSolana, balance: "0" });
 });
 
 const mockUSDTTokenAccount: TokenAccount = {
@@ -397,6 +417,71 @@ describe("useStake()", () => {
         }),
       }),
     );
+  });
+
+  describe("a Solana account with the Earn redirect", () => {
+    const withSolanaRedirect = withFlagOverrides({
+      stakePrograms: {
+        ...feature_stake_programs_json,
+        params: {
+          ...feature_stake_programs_params,
+          redirects: {
+            ...feature_stake_programs_params.redirects,
+            solana: {
+              platform: "earn",
+              name: "Earn",
+              queryParams: { intent: "deposit", cryptoAssetId: "solana" },
+            },
+          },
+        },
+      } as unknown as Parameters<typeof withFlagOverrides>[0]["stakePrograms"],
+    });
+
+    it("answers the Earn deposit of that account, with the account in the route", () => {
+      const { result } = renderHook(() => useStake(), { overrideInitialState: withSolanaRedirect });
+
+      const route = result.current.getRouteParamsForPlatformApp(mockSolanaAccount, walletState);
+
+      expect(route).toEqual(
+        expect.objectContaining({
+          screen: "EarnNavigator",
+          params: expect.objectContaining({
+            screen: "Earn",
+            platform: "earn",
+            params: expect.objectContaining({
+              platform: "earn",
+              intent: "deposit",
+              cryptoAssetId: "solana",
+              ledgerAccountId: mockSolanaAccount.id,
+              accountId: expect.any(String),
+              walletAccountId: expect.any(String),
+            }),
+          }),
+        }),
+      );
+    });
+
+    it("answers the No Funds flow, never the Earn deposit, when nothing is spendable", () => {
+      const { result } = renderHook(() => useStake(), { overrideInitialState: withSolanaRedirect });
+
+      const route = result.current.getRouteParamsForPlatformApp(
+        mockEmptySolanaAccount,
+        walletState,
+      );
+
+      expect(route).toEqual({
+        navigator: "NoFundsFlow",
+        screen: "NoFunds",
+        params: { account: mockEmptySolanaAccount, parentAccount: undefined },
+      });
+    });
+
+    it("sees the redirect as a way to stake, next to the native flow", () => {
+      const { result } = renderHook(() => useStake(), { overrideInitialState: withSolanaRedirect });
+
+      expect(result.current.getCanStakeUsingPlatformApp("solana")).toBe(true);
+      expect(result.current.getCanStakeUsingLedgerLive("solana")).toBe(true);
+    });
   });
 
   it("explicit cryptoAssetId argument overrides the one from partner queryParams", async () => {
