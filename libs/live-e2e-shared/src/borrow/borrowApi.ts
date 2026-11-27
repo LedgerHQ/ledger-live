@@ -238,18 +238,20 @@ type SubmitTransactionOptions = { transactionId: string; txHash: string };
 export async function submitTransaction(options: SubmitTransactionOptions): Promise<void> {
   const { transactionId, txHash } = options;
   const pathname = `/v1/transactions/${transactionId}/submit`;
+  const request = `POST ${pathname}`;
   try {
     for (let attempt = 1; ; attempt++) {
       const res = await post({ pathname, body: { txHash }, retryOn5xx: true });
       if (res.ok) return;
       if (!isLookupFlap(res.status) || attempt >= LOOKUP_FLAP_RETRY_ATTEMPTS) {
-        console.warn(`    api: ${(await failedRequest(`POST ${pathname}`, res)).message}`);
+        const failure = await failedRequest(request, res);
+        console.warn(`    api: ${failure.message}`);
         return;
       }
       await new Promise(resolve => setTimeout(resolve, LOOKUP_FLAP_RETRY_DELAY_MS));
     }
   } catch (error) {
-    console.warn(`    api: POST ${pathname} failed:`, error);
+    console.warn(`    api: ${request} failed:`, error);
   }
 }
 
