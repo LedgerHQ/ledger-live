@@ -14,7 +14,7 @@ import {
   resultsIn,
   type RunReport,
 } from "./slack-report.mts";
-import { ANCHOR_CRON } from "./resolve-refs.mts";
+import { ANCHOR_CRON, NIGHTLY_CRON } from "./resolve-refs.mts";
 
 const row = (
   platform: string,
@@ -33,7 +33,7 @@ const ROWS: ResultRow[] = [
 
 const GREEN: RunReport = {
   event: "schedule",
-  schedule: "17 3 * * 1-5",
+  schedule: NIGHTLY_CRON,
   preset: "prod-vs-develop",
   thresholdMs: "100",
   pairs: "20",
@@ -176,6 +176,14 @@ describe("messageOf", () => {
     assert.match(header, /^:ledger-logo: Ledger Live Mobile startup performance results on /);
     assert.equal(lines.length, 2);
     assert.ok(lines.every(line => line.includes("iOS")));
+  });
+
+  it("calls a scheduled run of an unknown cron, whose plan fails, neither nightly nor anchor", () => {
+    const unknown = { ...GREEN, schedule: "48 3 * * 1-5", preset: "" };
+    assert.equal(
+      messageOf({ ...unknown, jobs: { ...GREEN.jobs, plan: "failure" } }).header,
+      ":ledger-logo: Ledger Live Mobile startup performance scheduled results",
+    );
   });
 
   it("calls a scheduled anchor run the anchor, not the nightly, in its header", () => {

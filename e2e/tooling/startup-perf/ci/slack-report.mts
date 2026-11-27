@@ -5,7 +5,7 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { ANCHOR_CRON } from "./resolve-refs.mts";
+import { ANCHOR_CRON, NIGHTLY_CRON } from "./resolve-refs.mts";
 import {
   insideWorkingDir,
   isFailingVerdict,
@@ -40,7 +40,7 @@ interface PlatformJobs {
 
 export interface RunReport {
   event: string;
-  /** A scheduled run's cron: the anchor's or the nightly's. */
+  /** A scheduled run's cron: the nightly's or the anchor's; the plan fails on any other. */
   schedule: string;
   preset: string;
   thresholdMs: string;
@@ -222,11 +222,15 @@ function gateOf(preset: string, thresholdMs: string): string {
 // Slack cuts a plain_text header at this length.
 const HEADER_MAX = 150;
 
+// A scheduled run is named by its cron, which a failed plan, writing no preset, does not lose: the
+// nightly, the anchor against a fixed older release, or a schedule the plan refused.
+const SCHEDULED: Partial<Record<string, string>> = {
+  [NIGHTLY_CRON]: " nightly",
+  [ANCHOR_CRON]: " anchor",
+};
+
 function headerOf(report: RunReport): string {
-  // A scheduled run is the nightly, or the anchor's against a fixed older release: named by its
-  // cron, which a failed plan, writing no preset, does not lose.
-  const scheduled = report.schedule === ANCHOR_CRON ? " anchor" : " nightly";
-  const kind = report.event === "schedule" ? scheduled : "";
+  const kind = report.event === "schedule" ? (SCHEDULED[report.schedule] ?? " scheduled") : "";
   const run = `:ledger-logo: Ledger Live Mobile startup performance${kind}`;
   if (report.jobs.plan !== "success") return `${run} results`;
   const pairs = report.pairs ? ` · ${report.pairs} pairs` : "";

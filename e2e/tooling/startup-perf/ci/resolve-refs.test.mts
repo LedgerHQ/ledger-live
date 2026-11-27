@@ -12,6 +12,7 @@ import {
   latestProdTag,
   type LsRemote,
   NIGHTLY,
+  NIGHTLY_CRON,
   outputsOf,
   planBuilds,
   type PlanInputs,
@@ -575,9 +576,10 @@ describe("inputsOf", () => {
     GITHUB_REF_NAME: "ci/branch",
   };
 
-  it("runs the nightly's settings on a scheduled run, which has no inputs", () => {
+  it("runs the nightly's settings on the nightly's schedule, as a scheduled run has no inputs", () => {
     const scheduled = {
       GITHUB_EVENT_NAME: "schedule",
+      SCHEDULE: NIGHTLY_CRON,
       BRANCH_SHA: SHA(1),
       GITHUB_REF_NAME: "develop",
     };
@@ -587,7 +589,7 @@ describe("inputsOf", () => {
     assert.deepEqual(plan.scenarios, ["no-accounts", "accounts"]);
   });
 
-  it("runs the anchor's settings on the anchor's schedule, the nightly's on the other", () => {
+  it("runs the anchor's settings on the anchor's schedule, the nightly's on the nightly's", () => {
     const scheduled = (cron: string) =>
       inputsOf({
         GITHUB_EVENT_NAME: "schedule",
@@ -600,7 +602,7 @@ describe("inputsOf", () => {
       branchSha: SHA(1),
       branchName: "develop",
     });
-    assert.deepEqual(scheduled("17 3 * * 1-5"), {
+    assert.deepEqual(scheduled(NIGHTLY_CRON), {
       ...NIGHTLY,
       branchSha: SHA(1),
       branchName: "develop",
@@ -609,12 +611,24 @@ describe("inputsOf", () => {
     assert.deepEqual([plan.shaA, plan.shaB, plan.save], [SHA(8), SHA(1), true]);
   });
 
-  it("schedules the anchor in the workflow, whose run name tells the dashboard it apart", () => {
+  it("fails a scheduled run on any other cron, rather than run the nightly's settings", () => {
+    for (const cron of ["48 3 * * 1-5", ""]) {
+      const env = { GITHUB_EVENT_NAME: "schedule", SCHEDULE: cron, GITHUB_REF_NAME: "develop" };
+      assert.throws(
+        () => inputsOf(env),
+        (error: unknown) =>
+          error instanceof StepFailure && error.message.startsWith("no settings for the schedule"),
+      );
+    }
+  });
+
+  it("schedules only the nightly and the anchor, whose run name tells the dashboard them apart", () => {
     const workflow = readFileSync(
       new URL("../../../../.github/workflows/test-mobile-startup-perf.yml", import.meta.url),
       "utf8",
     );
-    assert.ok(workflow.includes(`- cron: "${ANCHOR_CRON}"`));
+    const crons = [...workflow.matchAll(/- cron: "([^"]+)"/g)].map(match => match[1]);
+    assert.deepEqual(crons, [NIGHTLY_CRON, ANCHOR_CRON]);
     assert.ok(workflow.includes(`github.event.schedule == '${ANCHOR_CRON}' && 'Anchor'`));
     // The plan job's and the Slack job's, which names the run even when the plan failed.
     assert.equal(workflow.split("SCHEDULE: ${{ github.event.schedule }}").length - 1, 2);

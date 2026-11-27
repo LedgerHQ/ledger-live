@@ -19,7 +19,8 @@
         "{workspaceRoot}/apps/ledger-live-mobile/src/db.ts",
         "{workspaceRoot}/apps/ledger-live-mobile/src/logic/terms.tsx",
         "{workspaceRoot}/apps/ledger-live-mobile/src/mvvm/storage/mmkvStorageWrapper/constants.ts",
-        "{workspaceRoot}/apps/ledger-live-mobile/src/mvvm/storage/utils/migrations/constants.ts"
+        "{workspaceRoot}/apps/ledger-live-mobile/src/mvvm/storage/utils/migrations/constants.ts",
+        "{workspaceRoot}/.github/workflows/test-mobile-startup-perf.yml"
       ]
     }
   }

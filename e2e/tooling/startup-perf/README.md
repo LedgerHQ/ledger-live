@@ -76,9 +76,11 @@ develop against `ANCHOR_TAG`, a fixed older release (`live-mobile@4.29.0`, the o
 builds). The nightly compares develop with the newest release, so a slowdown spread over several
 releases can pass each of them; the anchor run measures the whole drift since that release, against
 the same threshold. Move `ANCHOR_TAG` on by pull request, to a release whose startup time is
-understood. The plan job tells the two schedules apart by their cron (`ANCHOR_CRON`, in
-`SCHEDULE`), and the run's name says `Anchor` instead of `Nightly`, which the QAA KPI dashboard
-reads to keep its own series. Its iOS jobs wait behind the nightly's in the performance pool's
+understood. The plan job tells the two schedules apart by their cron (`NIGHTLY_CRON` or
+`ANCHOR_CRON`, in `SCHEDULE`) and fails on any other, and the run's name says `Anchor` instead of
+`Nightly`, which the QAA KPI dashboard reads to keep its own series. A test checks the workflow's
+crons and run name against them; the workflow is one of its inputs, so a change to it alone runs
+the test. Its iOS jobs wait behind the nightly's in the performance pool's
 queue.
 
 As for the mobile E2E runs, every run posts its result to their Slack results channel, passed or

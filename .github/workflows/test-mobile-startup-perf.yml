@@ -6,7 +6,8 @@ run-name: >
 
 on:
   schedule:
-    # Weekdays, after the mobile E2E nightly: develop against production (ci/resolve-refs.mts).
+    # Weekdays, after the mobile E2E nightly: develop against production (NIGHTLY_CRON and NIGHTLY
+    # in ci/resolve-refs.mts, whose plan fails on any cron it does not know).
     - cron: "17 3 * * 1-5"
     # Then the anchor: develop against a fixed older release (ANCHOR_CRON and ANCHOR_TAG there).
     # The run name says Anchor for this cron, which is how the dashboard tells the two apart.

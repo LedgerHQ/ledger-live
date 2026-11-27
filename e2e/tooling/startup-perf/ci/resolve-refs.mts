@@ -20,7 +20,10 @@ export interface PlanInputs {
   branchName: string;
 }
 
-/** What a scheduled run measures, as it has no inputs: develop against production. */
+/** The nightly's schedule, as in the workflow: a scheduled run on another cron than this and
+ * ANCHOR_CRON fails (inputsOf). */
+export const NIGHTLY_CRON = "17 3 * * 1-5";
+/** What the nightly's scheduled run measures, as it has no inputs: develop against production. */
 export const NIGHTLY: Omit<PlanInputs, "branchSha" | "branchName"> = {
   preset: "prod-vs-develop",
   refA: "",
@@ -444,13 +447,26 @@ export function summaryOf(plan: Plan, inputs: PlanInputs, avdCores: string): str
 }
 
 /**
- * The workflow's inputs; on a scheduled run, which has none, the anchor's settings on its schedule
- * (the cron, in `SCHEDULE`), else the nightly's.
+ * A schedule's settings, from its cron. Another cron fails rather than run the nightly's settings
+ * under a run name the workflow may give another run: the name and the dashboard tell the anchor
+ * from the nightly by it.
+ */
+function scheduledSettings(cron: string): typeof NIGHTLY {
+  if (cron === NIGHTLY_CRON) return NIGHTLY;
+  if (cron === ANCHOR_CRON) return ANCHOR;
+  throw new StepFailure(
+    `no settings for the schedule '${cron}': the workflow's crons must be NIGHTLY_CRON (${NIGHTLY_CRON}) or ANCHOR_CRON (${ANCHOR_CRON}) of ci/resolve-refs.mts`,
+  );
+}
+
+/**
+ * The workflow's inputs; on a scheduled run, which has none, its schedule's settings (the cron, in
+ * `SCHEDULE`): the nightly's or the anchor's.
  */
 export function inputsOf(env: NodeJS.ProcessEnv): PlanInputs {
   const branch = { branchSha: env.BRANCH_SHA ?? "", branchName: env.GITHUB_REF_NAME ?? "" };
   if (env.GITHUB_EVENT_NAME === "schedule") {
-    return { ...(env.SCHEDULE === ANCHOR_CRON ? ANCHOR : NIGHTLY), ...branch };
+    return { ...scheduledSettings(env.SCHEDULE ?? ""), ...branch };
   }
   return {
     preset: env.PRESET ?? "",
