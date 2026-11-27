@@ -14,6 +14,7 @@ object, so one reducer, one middleware and one cache serve every use case on a g
 
 | Service                  | Reducer path       | Injectors                                                                            |
 | ------------------------ | ------------------ | ------------------------------------------------------------------------------------ |
+| `services/agent-intent`  | `agentIntentApi`   | `@domain/api-agent-intent`                                                           |
 | `services/cal`           | `calApi`           | `@domain/api-currency-token`                                                         |
 | `services/card`          | `cardApi`          | `@domain/api-card-management`                                                        |
 | `services/coinmarketcap` | `coinMarketCapApi` | `@domain/api-market-index-altcoin-season`, `@domain/api-market-index-fear-and-greed` |
@@ -89,8 +90,8 @@ configureStore({
 ```
 
 **Or list several services once with `defineApiServices`.** Each service has a descriptor factory
-(`calService`, `cardService`, `coinMarketCapService`, `cvsService`, `dadaService`, `portfolioService`,
-`pushDevicesService`, `swapService`) that takes the service's own config as a thunk. No thunk runs at
+(`agentIntentService`, `calService`, `cardService`, `coinMarketCapService`, `cvsService`, `dadaService`,
+`portfolioService`, `pushDevicesService`, `swapService`) that takes the service's own config as a thunk. No thunk runs at
 import or at `defineApiServices`: `createExtra` reads and validates every config once, at store
 creation, and merges the results. `ledgerClientVersion` is passed once, as `CommonConfig`, and trimmed
 before it reaches every service that sends it. Two services giving different values for one `extraArgument` key throw.

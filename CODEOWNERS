@@ -430,6 +430,8 @@ apps/wallet-cli/src/commands/swap/                                            @l
 
 # Agent Intent
 domain/entity/agent-intent/                                                   @ledgerhq/agentic-core
+domain/api/agent-intent/                                                      @ledgerhq/agentic-core
+/shared/api-services/src/services/agent-intent/                               @ledgerhq/agentic-core
 
 # Wallet API team > coin-integration
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration
