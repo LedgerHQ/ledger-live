@@ -1,4 +1,9 @@
-import { buildBeforeSend, getDatadogBuildConfig, rewriteAsarUrls } from "./config";
+import {
+  buildBeforeSend,
+  getDatadogBuildConfig,
+  rewriteAsarUrls,
+  toDatadogStackFrames,
+} from "./config";
 
 jest.mock("~/datadog/anonymizer", () => ({
   __esModule: true,
@@ -150,7 +155,7 @@ describe("datadog config", () => {
       const url = (event.resource as Record<string, unknown>).url as string;
       expect(url).not.toContain(address);
       expect(url).toContain("/accounts/[redacted]/addresses");
-      expect(url).toContain("account=%5Bredacted%5D");
+      expect(url).toContain("account=[redacted]");
       expect(url).toContain("currency=usd");
     });
 
@@ -158,33 +163,115 @@ describe("datadog config", () => {
       const beforeSend = buildBeforeSend(() => true);
       const event = {
         action: {
+          type: "click",
           target: {
-            name: 'click on { "xpub": "xpub6C8aARQ2jRGKeZsDxLWMZfS8oVnrFGw1b61Pzeiub4H98DRSXdBJ65ctCYoJ1vUjLvFzcFvt2znVZvASmxm9M", "index": 0 }',
+            name: 'click on { "xpub": "xpub6ExampleExampleExample1", "index": 0 }',
           },
         },
       };
       beforeSend(event, undefined);
       expect(
         ((event.action as Record<string, unknown>).target as Record<string, unknown>).name,
-      ).toBe('click on { "xpub": "[redacted]", "index": 0 }');
+      ).toBe('click on { "xpub": "[redacted]", "index": [redacted] }');
     });
 
-    it("scrubs account ID from view.url_hash", () => {
+    it("removes the query string from the resource url of the app page", () => {
       const beforeSend = buildBeforeSend(() => true);
       const event = {
-        view: {
-          url_hash:
-            "/account/js:2:bitcoin:xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy:segwit",
+        resource: {
+          url: "https://app.asar/.webpack/index.html?theme=dark&appDirname=%2Fopt%2Fexample",
         },
       };
       beforeSend(event, undefined);
-      expect((event.view as Record<string, unknown>).url_hash).toBe(
-        "/account/js:2:bitcoin:[redacted]:segwit",
-      );
+      expect(event.resource.url).toBe("https://app.asar/.webpack/index.html");
+    });
+
+    it("redacts the words holding a digit or a shortened value from the name of a click", () => {
+      const beforeSend = buildBeforeSend(() => true);
+      const event = {
+        action: { type: "click", target: { name: "Bitcoin 2 Legacy 1abCd...wXyZ9 $1,234.56" } },
+      };
+      beforeSend(event, undefined);
+      expect(event.action.target.name).toBe("Bitcoin [redacted] Legacy [redacted]");
+    });
+
+    it("keeps the name of a custom action", () => {
+      const beforeSend = buildBeforeSend(() => true);
+      const event = { action: { type: "custom", target: { name: "WalletAPI SignTransaction 2" } } };
+      beforeSend(event, undefined);
+      expect(event.action.target.name).toBe("WalletAPI SignTransaction 2");
+    });
+
+    it("keeps only the page and the route of view.url and view.referrer", () => {
+      const beforeSend = buildBeforeSend(() => true);
+      const page = "https://app.asar/.webpack/index.html";
+      const event = {
+        view: {
+          url: `${page}?theme=dark&appDirname=%2Fopt%2Fexample#/account/js:2:bitcoin:xpubExample1:segwit`,
+          referrer: `${page}?theme=dark#/cryptos`,
+        },
+      };
+      beforeSend(event, undefined);
+      expect(event.view).toEqual({
+        url: `${page}#/account/[redacted]`,
+        referrer: `${page}#/cryptos`,
+      });
+    });
+
+    it("scrubs a view while the user opted out, as the SDK still sends the views it cannot drop", () => {
+      const anonymizer = jest.requireMock("~/datadog/anonymizer").default;
+      const beforeSend = buildBeforeSend(() => false);
+      const page = "https://app.asar/.webpack/index.html";
+      const event = {
+        type: "view",
+        view: {
+          url: `${page}?appDirname=%2Fopt%2Fexample#/settings`,
+          referrer: `${page}?appDirname=%2Fopt%2Fexample#/account/js:2:bitcoin:xpubExample1:segwit`,
+        },
+      };
+      expect(beforeSend(event, undefined)).toBe(false);
+      expect(anonymizer.filepathRecursiveReplacer).toHaveBeenCalledWith(event);
+      expect(event.view).toEqual({
+        url: `${page}#/settings`,
+        referrer: `${page}#/account/[redacted]`,
+      });
+    });
+
+    it("blanks the strings of a view it cannot scrub, keeping its schema fields", () => {
+      const anonymizer = jest.requireMock("~/datadog/anonymizer").default;
+      jest.mocked(anonymizer.filepathRecursiveReplacer).mockImplementationOnce(() => {
+        throw new Error("anonymizer failed");
+      });
+      const beforeSend = buildBeforeSend(() => true);
+      const event = {
+        type: "view",
+        view: { id: "view-id", url: "file:///home/someone/app/index.html#/settings" },
+        context: { route: "settings" },
+      };
+      expect(beforeSend(event, undefined)).toBe(false);
+      expect(event).toEqual({
+        type: "view",
+        view: { id: "view-id", url: "" },
+        context: { route: "" },
+      });
+    });
+
+    it("still drops an event whose error message is on the ignore list, once scrubbed", () => {
+      const anonymizer = jest.requireMock("~/datadog/anonymizer").default;
+      const beforeSend = buildBeforeSend(() => true);
+      const event = { error: { message: "IGNORE_ME please" } };
+      expect(beforeSend(event, undefined)).toBe(false);
+      expect(anonymizer.filepathRecursiveReplacer).toHaveBeenCalledWith(event);
     });
   });
 
   describe("rewriteAsarUrls", () => {
+    it("rewrites a raw Windows main-process asar frame, normalizing its separators", () => {
+      const input =
+        "at f (C:\\Users\\a\\AppData\\Local\\Programs\\ledger-live-desktop\\resources\\app.asar\\.webpack\\main.bundle.js:1:2)";
+      expect(rewriteAsarUrls(input)).toBe("at f (https://app.asar/.webpack/main.bundle.js:1:2)");
+    });
+
     it("rewrites a parenthesized file:// asar frame into https://app.asar/", () => {
       const input =
         "at E0 (file:///Applications/Ledger%20Wallet%20Beta.app/Contents/Resources/app.asar/.webpack/renderer.bundle.js:8166:265)";
@@ -248,6 +335,66 @@ describe("datadog config", () => {
       const input =
         "    at IpcMainImpl.emit (/Applications/Ledger Wallet.app/Contents/Resources/app.asar/.webpack/main.bundle.js:1:2)";
       expect(rewriteAsarUrls(input)).toContain("at IpcMainImpl.emit (https://app.asar/");
+    });
+  });
+
+  describe("toDatadogStackFrames", () => {
+    it("leaves message lines starting with 'at' alone, as they carry no location", () => {
+      const stack = "Error: Failed:\n  at least 2 inputs (required)\n    at run (/app/main.js:1:2)";
+      expect(toDatadogStackFrames(stack)).toBe(
+        "Error: Failed:\n  at least 2 inputs (required)\n    at run @ /app/main.js:1:2",
+      );
+    });
+
+    it("converts a named parenthesized frame to the @ shape", () => {
+      const input =
+        "    at IpcMainImpl.<anonymous> (https://app.asar/.webpack/main.bundle.js:82:104341)";
+      expect(toDatadogStackFrames(input)).toBe(
+        "    at IpcMainImpl.<anonymous> @ https://app.asar/.webpack/main.bundle.js:82:104341",
+      );
+    });
+
+    it("converts a bare anonymous frame to the @ shape with <anonymous>", () => {
+      const input = "    at node:diagnostics_channel:374:23";
+      expect(toDatadogStackFrames(input)).toBe(
+        "    at <anonymous> @ node:diagnostics_channel:374:23",
+      );
+    });
+
+    it("keeps the error header and other non-frame lines untouched", () => {
+      const input = "Error: CrashTestMain\n    at run (node:diagnostics_channel:168:14)";
+      expect(toDatadogStackFrames(input)).toBe(
+        "Error: CrashTestMain\n    at run @ node:diagnostics_channel:168:14",
+      );
+    });
+
+    it("is idempotent: leaves frames already in @ shape alone", () => {
+      const input = "    at E0 @ https://app.asar/.webpack/renderer.bundle.js:8166:265";
+      expect(toDatadogStackFrames(input)).toBe(input);
+    });
+
+    it("uses the outer parens on a nested eval frame, not the first nested one", () => {
+      const input = "    at eval (eval at <anonymous> (file:///app.js:1:1), <anonymous>:1:1)";
+      expect(toDatadogStackFrames(input)).toBe(
+        "    at eval @ eval at <anonymous> (file:///app.js:1:1), <anonymous>:1:1",
+      );
+    });
+
+    it("handles a full main-process stack", () => {
+      const input = [
+        "Error: CrashTestMain",
+        "    at IpcMainImpl.<anonymous> (https://app.asar/.webpack/main.bundle.js:82:104341)",
+        "    at run (node:diagnostics_channel:168:14)",
+        "    at node:diagnostics_channel:374:23",
+      ].join("\n");
+      expect(toDatadogStackFrames(input)).toBe(
+        [
+          "Error: CrashTestMain",
+          "    at IpcMainImpl.<anonymous> @ https://app.asar/.webpack/main.bundle.js:82:104341",
+          "    at run @ node:diagnostics_channel:168:14",
+          "    at <anonymous> @ node:diagnostics_channel:374:23",
+        ].join("\n"),
+      );
     });
   });
 });

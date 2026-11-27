@@ -26,6 +26,8 @@ export const TEAM_SLUGS = Object.freeze([
   "earn",
   "engagement",
   "my-ledger-onboarding",
+  "perps",
+  "predictions",
   "swap",
   "wallet-xp",
 ]);

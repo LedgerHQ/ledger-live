@@ -42,7 +42,10 @@ export interface AccountNonces {
   pending: number;
 }
 
-export async function readAccountNonces(address: string, rpcUrl?: string): Promise<AccountNonces> {
+type AccountNoncesOptions = { address: string; rpcUrl?: string };
+
+export async function readAccountNonces(options: AccountNoncesOptions): Promise<AccountNonces> {
+  const { address, rpcUrl } = options;
   const provider = new JsonRpcProvider(resolveRpc(rpcUrl));
   try {
     const [latest, pending] = await Promise.all([
@@ -60,7 +63,7 @@ export async function waitForChainNonceSettled(options: BorrowSetupOptions = {})
 
   const address = await resolveBorrowAddress(options);
   const deadline = Date.now() + NONCE_SETTLE_TIMEOUT_MS;
-  let nonces = await readAccountNonces(address, options.rpcUrl);
+  let nonces = await readAccountNonces({ address, rpcUrl: options.rpcUrl });
 
   while (Date.now() < deadline) {
     if (nonces.latest === nonces.pending) {
@@ -68,7 +71,7 @@ export async function waitForChainNonceSettled(options: BorrowSetupOptions = {})
       return;
     }
     await new Promise(resolve => setTimeout(resolve, NONCE_SETTLE_POLL_MS));
-    nonces = await readAccountNonces(address, options.rpcUrl);
+    nonces = await readAccountNonces({ address, rpcUrl: options.rpcUrl });
   }
 
   throw new Error(
@@ -101,11 +104,14 @@ async function resolveBorrowAddress(options: BorrowSetupOptions): Promise<string
   return address;
 }
 
-async function waitForPartnerState(
-  address: string,
-  isReady: (loans: OpenLoan[]) => boolean,
-  expectedState: string,
-): Promise<void> {
+type PartnerStateOptions = {
+  address: string;
+  isReady: (loans: OpenLoan[]) => boolean;
+  expectedState: string;
+};
+
+async function waitForPartnerState(options: PartnerStateOptions): Promise<void> {
+  const { address, isReady, expectedState } = options;
   const deadline = Date.now() + PARTNER_INDEX_TIMEOUT_MS;
   let loans = findPositions(await getPositions(address));
 
@@ -122,21 +128,25 @@ async function waitForPartnerState(
 }
 
 const waitForPartnerWithdrawReady = (address: string): Promise<void> =>
-  waitForPartnerState(address, loans => loans.some(isWithdrawReady), "withdraw-ready state");
+  waitForPartnerState({
+    address,
+    isReady: loans => loans.some(isWithdrawReady),
+    expectedState: "withdraw-ready state",
+  });
 
 const waitForPartnerLoanDebt = (address: string): Promise<void> =>
-  waitForPartnerState(
+  waitForPartnerState({
     address,
-    loans => loans.some(loan => positive(loan.debtBalance)),
-    "loan debt",
-  );
+    isReady: loans => loans.some(loan => positive(loan.debtBalance)),
+    expectedState: "loan debt",
+  });
 
 const waitForPartnerCollateralWithdrawn = (address: string): Promise<void> =>
-  waitForPartnerState(
+  waitForPartnerState({
     address,
-    loans => !loans.some(loan => positive(loan.collateralBalance)),
-    "collateral withdrawn",
-  );
+    isReady: loans => !loans.some(loan => positive(loan.collateralBalance)),
+    expectedState: "collateral withdrawn",
+  });
 
 export type LoanOutcome = "opened" | "repaid" | "withdrawn";
 

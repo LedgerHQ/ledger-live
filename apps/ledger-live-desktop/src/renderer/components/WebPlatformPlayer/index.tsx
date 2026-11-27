@@ -66,7 +66,7 @@ export default function WebPlatformPlayer({
   const customLiveAppModalHandlers = useLiveAppModalCustomHandlers(manifest);
   const { mobileView, setMobileView } = useMobileView();
 
-  const customPerpsHandlers = usePerpsHandlers(accounts);
+  const customPerpsHandlers = usePerpsHandlers(accounts, manifest);
   const customPredictionsHandlers = usePredictionsHandlers(onClose);
   const customStakePositionHandlers = useStakePositionHandlers(accounts);
 

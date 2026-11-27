@@ -31,6 +31,7 @@ import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakeP
 import { EarnV2Webview } from "./EarnV2Webview";
 import { shouldDisplayEarnBackgroundCanvas } from "~/components/RootNavigator/getEarnScreenOptions";
 import { buildEarnGoToURL } from "./buildEarnGoToURL";
+import { useEarnAppLifecycleMonitoring } from "~/analytics/useEarnAppLifecycleMonitoring";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -72,6 +73,8 @@ function Earn({ route }: Props) {
   if (manifest) {
     lastKnownManifest = manifest;
   }
+  const webviewManifest = isLwm40Enabled ? (manifest ?? lastKnownManifest) : manifest;
+  useEarnAppLifecycleMonitoring(webviewManifest?.id);
 
   const countryLocale = getCountryLocale();
 
@@ -166,13 +169,12 @@ function Earn({ route }: Props) {
 
   /** V2: single shell (background + content). Use lastKnownManifest whenever manifest is missing so remount (e.g. dev Strict Mode) keeps showing webview instead of loader. */
   if (isLwm40Enabled) {
-    const displayManifest = manifest ?? lastKnownManifest;
-    if (!displayManifest && !remoteLiveAppState.isLoading && remoteLiveAppState.error) {
+    if (!webviewManifest && !remoteLiveAppState.isLoading && remoteLiveAppState.error) {
       lastKnownManifest = undefined;
     }
     return (
       <EarnV2Webview
-        manifest={displayManifest}
+        manifest={webviewManifest}
         inputs={webviewInputs}
         isLwm40Enabled={isLwm40Enabled}
         hideMainNavigator={hideMainNavigator}

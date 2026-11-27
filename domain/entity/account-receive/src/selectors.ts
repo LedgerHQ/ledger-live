@@ -1,4 +1,4 @@
-import type { AccountUUID } from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account";
 import type { AccountReceive, AccountReceivesState } from "./schema";
 
 export type WithAccountReceives = { accountReceives: AccountReceivesState };

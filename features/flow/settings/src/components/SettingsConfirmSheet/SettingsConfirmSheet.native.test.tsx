@@ -1,0 +1,87 @@
+import React from "react";
+import { render, screen, userEvent } from "@testing-library/react-native";
+import { Spot } from "@ledgerhq/lumen-ui-rnative";
+import { SettingsConfirmSheet } from "./SettingsConfirmSheet";
+
+const labels = {
+  title: "Reset Ledger Wallet?",
+  description: "This deletes the app data on this phone.",
+  confirm: "Reset",
+  cancel: "Cancel",
+};
+
+describe("SettingsConfirmSheet", () => {
+  it("shows the question and reports the confirmation", async () => {
+    const user = userEvent.setup();
+    const onConfirm = jest.fn();
+    render(
+      <SettingsConfirmSheet
+        isOpen
+        tone="destructive"
+        labels={labels}
+        onConfirm={onConfirm}
+        onCancel={jest.fn()}
+        confirmTestID="confirm"
+        testID="reset-sheet"
+      />,
+    );
+
+    expect(screen.getByText("Reset Ledger Wallet?")).toBeVisible();
+    expect(screen.getByText("This deletes the app data on this phone.")).toBeVisible();
+    await user.press(screen.getByTestId("confirm"));
+
+    expect(onConfirm).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ["destructive", "error"],
+    ["neutral", "muted"],
+  ] as const)("shows the spot of a %s confirmation", (tone, appearance) => {
+    render(
+      <SettingsConfirmSheet
+        isOpen
+        tone={tone}
+        labels={labels}
+        onConfirm={jest.fn()}
+        onCancel={jest.fn()}
+      />,
+    );
+
+    expect(screen.UNSAFE_getByType(Spot).props.appearance).toBe(appearance);
+  });
+
+  it("reports the cancel", async () => {
+    const user = userEvent.setup();
+    const onCancel = jest.fn();
+    render(
+      <SettingsConfirmSheet
+        isOpen
+        tone="neutral"
+        labels={labels}
+        onConfirm={jest.fn()}
+        onCancel={onCancel}
+        cancelTestID="cancel"
+      />,
+    );
+
+    await user.press(screen.getByTestId("cancel"));
+
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it("offers no way to dismiss it while confirming", () => {
+    render(
+      <SettingsConfirmSheet
+        isOpen
+        tone="destructive"
+        labels={labels}
+        isConfirming
+        onConfirm={jest.fn()}
+        onCancel={jest.fn()}
+        testID="reset-sheet"
+      />,
+    );
+
+    expect(screen.queryByTestId("reset-sheet-dismiss")).toBeNull();
+  });
+});

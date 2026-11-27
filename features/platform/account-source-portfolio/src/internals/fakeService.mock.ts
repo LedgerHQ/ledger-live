@@ -10,7 +10,7 @@ import type {
   UpdateView,
 } from "@domain/api-account-portfolio";
 import type { AccountTarget } from "@domain/api-account-data";
-import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import {
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
@@ -18,6 +18,7 @@ import {
 import { PortfolioId } from "@domain/entity-client-identity";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import type { PortfolioClient } from "../client";
 import { portfolioAccountOf } from "../registration";
 import { createPortfolioContext, type PortfolioDeps } from "./portfolio";

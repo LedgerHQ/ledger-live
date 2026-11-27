@@ -6,7 +6,6 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import ParentCryptoCurrencyIcon from "~/renderer/components/ParentCryptoCurrencyIcon";
-import Star from "~/renderer/components/Stars/Star";
 import Tooltip from "~/renderer/components/Tooltip";
 import AccountSyncStatusIndicator from "../AccountSyncStatusIndicator";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
@@ -76,7 +75,6 @@ const Header = ({
           accountId={(parentAccount && parentAccount.id) || account.id}
           account={account}
         />
-        <Star accountId={account.id} />
       </Box>
       <Divider />
       <Box justifyContent="center">

@@ -1,5 +1,5 @@
 import type { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/index";
-import type { CantonCoinConfig, CantonContext } from "../config";
+import { pinConfig, type CantonContext } from "../config";
 import {
   getBalance as gatewayGetBalance,
   getKey,
@@ -38,12 +38,11 @@ function withReserve(native: InstrumentTotal, minReserve: bigint): InstrumentTot
 }
 
 function toBalances(
-  config: CantonCoinConfig,
   native: NativeInstrument,
   rows: InstrumentBalance[],
+  minReserve: bigint,
 ): Balance[] {
   const totals = sumByInstrument(native, rows);
-  const minReserve = minReserveOf(config);
   return [...totals].map(([key, total]) =>
     key === NATIVE_KEY ? withReserve(total, minReserve) : total,
   );
@@ -52,9 +51,10 @@ function toBalances(
 export async function getBalance(context: CantonContext, partyId: string): Promise<Balance[]> {
   const config = await context.config();
   if (!isGatewayEnabled(config)) throw new Error("Not implemented");
+  const pinned = pinConfig(context, config);
   const [rows, native] = await Promise.all([
-    gatewayGetBalance(config, partyId),
-    getNativeInstrument(config),
+    gatewayGetBalance(pinned, partyId),
+    getNativeInstrument(pinned),
   ]);
-  return toBalances(config, native, rows);
+  return toBalances(native, rows, await minReserveOf(pinned));
 }

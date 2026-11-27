@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { useGetTrendingCategoriesQuery } from "@ledgerhq/live-common/market/state-manager/api";
+import { useGetTrendingCategoriesQuery } from "@domain/api-market-trending-categories";
 import { isBuiltInMarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { track } from "@shared/analytics";
 import { useDispatch, useSelector } from "LLD/hooks/redux";

@@ -1,0 +1,115 @@
+import React from "react";
+import type { InfoStateProps } from "@shared/ui-info-state";
+import TranslatedError from "~/components/TranslatedError";
+import { useTranslation } from "~/context/Locale";
+import {
+  makeBroadcastingInfoState,
+  SignAndBroadcastSheet,
+} from "../components/SignAndBroadcast/SignAndBroadcastSheet";
+import { type Props, useDeleteTokenViewModel } from "./useDeleteTokenViewModel";
+
+type ViewModel = ReturnType<typeof useDeleteTokenViewModel>;
+
+const TRACK_NAMES: Record<ViewModel["infoStep"], string> = {
+  blocked: "DeleteBlocked",
+  confirm: "DeleteConfirm",
+  broadcasting: "DeleteBroadcasting",
+  success: "DeleteSuccess",
+  error: "DeleteError",
+};
+
+function useInfoState(viewModel: ViewModel): InfoStateProps {
+  const { t, i18n } = useTranslation();
+
+  const ticker = viewModel.token.ticker;
+
+  switch (viewModel.infoStep) {
+    case "blocked":
+      return {
+        preset: "error",
+        title: t("xrp.manageAssets.deleteBlocked.title", { ticker }),
+        description: t("xrp.manageAssets.deleteBlocked.description", { ticker }),
+        primaryCta: { label: t("common.gotit"), onPress: viewModel.onClose },
+        testID: "xrp-delete-token-blocked",
+      };
+    case "confirm": {
+      const confirmKey =
+        viewModel.token.tokenType === "iou"
+          ? "xrp.manageAssets.deleteConfirm.descriptionIou"
+          : "xrp.manageAssets.deleteConfirm.description";
+      const statusError = viewModel.statusError;
+      const values = statusError && { ...statusError, message: statusError.message };
+      const titleKey = `errors.${statusError?.name}.title`;
+      const descriptionKey = `errors.${statusError?.name}.description`;
+
+      return {
+        preset: "info",
+        testID: "xrp-delete-token-confirm",
+        title: t("xrp.manageAssets.deleteConfirm.title", { ticker }),
+        description: t(confirmKey, { accountName: viewModel.accountName }),
+        banner: statusError && {
+          appearance: "error",
+          title: t(i18n.exists(titleKey) ? titleKey : "errors.generic.title", values),
+          description: i18n.exists(descriptionKey) ? t(descriptionKey, values) : undefined,
+          testID: "xrp-delete-token-refusal",
+        },
+        primaryCta: {
+          label: t("common.continue"),
+          onPress: viewModel.onContinue,
+          disabled: viewModel.isContinueDisabled,
+          loading: viewModel.isContinueLoading,
+          testID: "xrp-delete-token-continue",
+        },
+      };
+    }
+    case "broadcasting":
+      return makeBroadcastingInfoState(
+        t("send.newSendFlow.processingTransaction"),
+        "xrp-delete-token-broadcasting",
+      );
+    case "success":
+      return {
+        preset: "success",
+        title: t("xrp.manageAssets.deleteSuccess.title", { ticker }),
+        description: t("xrp.manageAssets.deleteSuccess.description"),
+        primaryCta: { label: t("common.gotit"), onPress: viewModel.onSuccess },
+        testID: "xrp-delete-token-success",
+      };
+    case "error":
+      return {
+        preset: "error",
+        testID: "xrp-delete-token-error",
+        title: t("xrp.manageAssets.deleteError.title"),
+        description: <TranslatedError error={viewModel.signError} />,
+        secondaryCta: { label: t("common.close"), onPress: viewModel.onClose },
+        banner: viewModel.isSigned
+          ? {
+              appearance: "warning",
+              description: t("xrp.manageAssets.deleteError.broadcastError"),
+              testID: "xrp-delete-token-broadcast-error",
+            }
+          : undefined,
+        primaryCta: {
+          label: t("common.tryAgain"),
+          onPress: viewModel.onRetry,
+          testID: "xrp-delete-token-retry",
+        },
+      };
+  }
+}
+
+export default function DeleteTokenSheets(props: Props) {
+  const viewModel = useDeleteTokenViewModel(props);
+  const infoState = useInfoState(viewModel);
+
+  return (
+    <SignAndBroadcastSheet
+      flow={viewModel}
+      infoState={infoState}
+      trackCategory="XrpManageTokenFlow"
+      trackName={TRACK_NAMES[viewModel.infoStep]}
+      testID="xrp-delete-token-sheet"
+      accountId={props.account.id}
+    />
+  );
+}

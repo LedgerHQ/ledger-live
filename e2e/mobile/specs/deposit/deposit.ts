@@ -3,8 +3,16 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@shared/env";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { ApplicationOptions } from "@e2e/page/index";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
+
+type DepositTestOptions = TestMetaOptions & { account: Account };
+
+type SelectCryptoNetworkTestOptions = DepositTestOptions & {
+  networks: string[];
+  withAccount: boolean;
+};
 
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
@@ -16,13 +24,8 @@ async function beforeAllFunction(options: ApplicationOptions) {
   await app.mainNavigation.waitForWallet40Ready();
 }
 
-export function runSelectCryptoNetworkTest(
-  account: Account,
-  networks: string[],
-  withAccount: boolean,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runSelectCryptoNetworkTest(options: SelectCryptoNetworkTestOptions) {
+  const { account, networks, withAccount, tmsLinks, tags } = options;
   describe("Deposit", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -39,7 +42,7 @@ export function runSelectCryptoNetworkTest(
       await app.portfolio.pressQuickActionTransferButton();
       await app.portfolio.pressTransferBottomSheetReceiveButton();
 
-      await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
+      await app.modularDrawer.selectCurrency(account.currency);
       await app.modularDrawer.validateNetworksScreen(networks);
       await app.modularDrawer.selectNetwork(account.currency.networks[0]);
       const accountName = account.parentAccount?.accountName ?? account.accountName;
@@ -48,11 +51,8 @@ export function runSelectCryptoNetworkTest(
   });
 }
 
-export function runSelectCryptoWithoutNetworkAndAccountTest(
-  account: Account,
-  tmsLinks: string[],
-  tags: string[],
-) {
+export function runSelectCryptoWithoutNetworkAndAccountTest(options: DepositTestOptions) {
+  const { account, tmsLinks, tags } = options;
   describe("Deposit", () => {
     beforeAll(async () => {
       await beforeAllFunction({
@@ -68,7 +68,7 @@ export function runSelectCryptoWithoutNetworkAndAccountTest(
       await app.portfolio.pressTransferBottomSheetReceiveButton();
 
       await app.modularDrawer.validateAssetsScreen([account.currency.ticker]);
-      await app.modularDrawer.selectCurrencyByTicker(account.currency.ticker);
+      await app.modularDrawer.selectCurrency(account.currency);
       await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
       await app.receive.expectDeviceConnectionScreen();
     });

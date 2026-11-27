@@ -83,7 +83,9 @@ describe("ConnectNewDevice", () => {
       const onConnected = jest.fn();
       const device = makeDevice(transport);
       const connectionResult = makeConnectionResult(transport);
-      render(<ConnectNewDevice onConnected={onConnected} onClose={jest.fn()} />);
+      render(
+        <ConnectNewDevice sourceFlow="onboarding" onConnected={onConnected} onClose={jest.fn()} />,
+      );
 
       // WHEN
       emit({ type: ConnectNewDeviceUIStateTypes.Connected, device });

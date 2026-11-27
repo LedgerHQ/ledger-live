@@ -171,4 +171,63 @@ describe("craftTransaction", () => {
 
     await expect(craftTransaction(intent)).rejects.toThrow(/Invalid sender address/);
   });
+
+  describe("gas fee parameters", () => {
+    const intent = {
+      intentType: "transaction" as const,
+      type: "send" as const,
+      sender: "f1sender",
+      recipient: "f1recipient",
+      amount: 1_000n,
+      asset: { type: "native" as const },
+      useAllAmount: false,
+    };
+
+    it("estimates the gas when the parameters hold only generic keys", async () => {
+      const crafted = await craftTransaction(intent, {
+        value: 0n,
+        parameters: { fees: undefined, feesStrategy: undefined, gasLimit: undefined },
+      });
+      const parsed = JSON.parse(crafted.transaction);
+      expect(parsed.message.gasFeeCap).toBe("150000");
+      expect(parsed.message.gasLimit).toBe(1_000_000);
+      expect(parsed.message.gasPremium).toBe("125000");
+      expect(mockedFetch).toHaveBeenCalledTimes(2);
+    });
+
+    it("estimates the gas when the parameters are empty", async () => {
+      const crafted = await craftTransaction(intent, { value: 0n, parameters: {} });
+      expect(JSON.parse(crafted.transaction).message.gasFeeCap).toBe("150000");
+      expect(mockedFetch).toHaveBeenCalledTimes(2);
+    });
+
+    it("estimates the gas for a partial set instead of crafting with a zero fee cap", async () => {
+      const crafted = await craftTransaction(intent, {
+        value: 0n,
+        parameters: { gasLimit: 700_000n },
+      });
+      const parsed = JSON.parse(crafted.transaction);
+      expect(parsed.message.gasFeeCap).toBe("150000");
+      expect(parsed.message.gasLimit).toBe(1_000_000);
+      expect(mockedFetch).toHaveBeenCalledTimes(2);
+    });
+
+    it("uses a complete set of bigint values without estimating the gas", async () => {
+      const crafted = await craftTransaction(intent, {
+        value: 0n,
+        parameters: { gasFeeCap: 200n, gasLimit: 500_000n, gasPremium: 100n },
+      });
+      const parsed = JSON.parse(crafted.transaction);
+      expect(parsed.message.gasFeeCap).toBe("200");
+      expect(parsed.message.gasLimit).toBe(500_000);
+      expect(parsed.message.gasPremium).toBe("100");
+      expect(mockedFetch).toHaveBeenCalledTimes(1);
+    });
+
+    it("estimates the gas when customFees is absent", async () => {
+      const crafted = await craftTransaction(intent);
+      expect(JSON.parse(crafted.transaction).message.gasPremium).toBe("125000");
+      expect(mockedFetch).toHaveBeenCalledTimes(2);
+    });
+  });
 });

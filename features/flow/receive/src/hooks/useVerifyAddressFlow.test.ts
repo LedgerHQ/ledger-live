@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
-import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
 import { mockAccountReceive } from "@domain/entity-account-receive/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
+import { AccountUUIDSchema } from "@domain/entity-account";
 import type { VerifyAddressOutcome, VerifyAddressSelection } from "../types";
 import { useVerifyAddressFlow } from "./useVerifyAddressFlow";
 
@@ -14,9 +14,8 @@ const SELECTION: VerifyAddressSelection = {
 };
 
 function renderFlow() {
-  const onCloseFlow = jest.fn();
-  const { result } = renderHook(() => useVerifyAddressFlow({ onCloseFlow }));
-  return { onCloseFlow, result };
+  const { result } = renderHook(() => useVerifyAddressFlow());
+  return { result };
 }
 
 describe("useVerifyAddressFlow", () => {
@@ -47,7 +46,7 @@ describe("useVerifyAddressFlow", () => {
   it("should start a new verification once the previous one exited", () => {
     const { result } = renderFlow();
     act(() => result.current.start(SELECTION));
-    act(() => result.current.onExit("verified"));
+    act(() => result.current.onExit("displayed"));
     const other = { ...SELECTION, assetId: CryptoOrTokenCurrencyIdSchema.parse("bitcoin") };
 
     act(() => result.current.start(other));
@@ -55,26 +54,20 @@ describe("useVerifyAddressFlow", () => {
     expect(result.current.selection).toBe(other);
   });
 
-  it.each<VerifyAddressOutcome>(["verified", "cancelled", "unsupported", "dismissed", "failed"])(
-    "should return to the address screen when the verification ends as %s",
-    outcome => {
-      const { onCloseFlow, result } = renderFlow();
-      act(() => result.current.start(SELECTION));
-
-      act(() => result.current.onExit(outcome));
-
-      expect(result.current).toMatchObject({ active: false, selection: null });
-      expect(onCloseFlow).not.toHaveBeenCalled();
-    },
-  );
-
-  it("should close the receive flow when the device shows another address", () => {
-    const { onCloseFlow, result } = renderFlow();
+  it.each<VerifyAddressOutcome>([
+    "displayed",
+    "verified",
+    "cancelled",
+    "mismatch",
+    "unsupported",
+    "dismissed",
+    "failed",
+  ])("should return to the address screen when the verification ends as %s", outcome => {
+    const { result } = renderFlow();
     act(() => result.current.start(SELECTION));
 
-    act(() => result.current.onExit("mismatch"));
+    act(() => result.current.onExit(outcome));
 
     expect(result.current).toMatchObject({ active: false, selection: null });
-    expect(onCloseFlow).toHaveBeenCalledTimes(1);
   });
 });

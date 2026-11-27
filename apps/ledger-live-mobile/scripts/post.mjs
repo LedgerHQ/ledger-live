@@ -173,6 +173,19 @@ BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
 
       await $`exit 1`;
     }
+
+    const projectDrift = (await $`git status --porcelain -- ledgerlivemobile.xcodeproj`).stdout;
+    if (projectDrift) {
+      echo(
+        chalk.red(
+          `pod install changed the Xcode project. Run \`pnpm mobile pod\` and commit it:\n${projectDrift}`,
+        ),
+      );
+      if (process.env.CI) {
+        await $`git --no-pager diff -- ledgerlivemobile.xcodeproj`;
+        await $`exit 1`;
+      }
+    }
   }
 };
 

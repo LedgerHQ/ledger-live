@@ -423,6 +423,19 @@ describe("useAccountHeroPort actions", () => {
     );
   });
 
+  it("hides swap for a family that can't swap, even when its currency is swappable", () => {
+    const hypercoreAccount: Account = {
+      ...fundedAccount,
+      currency: { ...fundedAccount.currency, family: "hypercore" },
+    };
+    setAvailability({ swap: [hypercoreAccount.currency.id] });
+
+    expect(renderPort(fundedAccount).result.current.port.availability.isSwapAvailable).toBe(true);
+    expect(renderPort(hypercoreAccount).result.current.port.availability.isSwapAvailable).toBe(
+      false,
+    );
+  });
+
   it("asks which asset to sell among the account's assets with a balance", () => {
     const { result } = renderPort(accountWithToken);
 

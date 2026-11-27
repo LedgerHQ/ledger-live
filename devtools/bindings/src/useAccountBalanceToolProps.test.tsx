@@ -7,11 +7,11 @@ import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/en
 import { accountBalancesSlice, type AccountAssetBalance } from "@domain/entity-account-balance";
 import { mockAccountAssetBalance } from "@domain/entity-account-balance/schema.mock";
 import { AccountDataSourceIdSchema, accountDataSlice } from "@domain/entity-account-data";
-import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import {
   mockAddressAccountDescriptor,
   mockUtxoAccountDescriptor,
 } from "@domain/entity-account-descriptor/schema.mock";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
 import { useAccountBalanceToolProps } from "./useAccountBalanceToolProps";
 
 const ethereum = mockAddressAccountDescriptor();

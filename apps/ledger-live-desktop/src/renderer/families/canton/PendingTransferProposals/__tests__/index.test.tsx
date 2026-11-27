@@ -40,7 +40,7 @@ const buildViewModel = (
 });
 
 describe("PendingTransferProposals", () => {
-  it("renders nothing when there are no proposals", () => {
+  it("renders nothing inline when there are no proposals and the dialog is closed", () => {
     const { container } = render(<View {...buildViewModel()} />);
     expect(container).toBeEmptyDOMElement();
   });

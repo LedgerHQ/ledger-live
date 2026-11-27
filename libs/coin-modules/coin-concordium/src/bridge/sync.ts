@@ -3,7 +3,13 @@ import { encodeAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/
 import { type GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Operation } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
-import coinConfig from "../config";
+import {
+  DEFAULT_CAL_LOOKUP_CONCURRENCY,
+  DEFAULT_ENABLE_TOKENS,
+  DEFAULT_MAX_TX_QUERY,
+  DEFAULT_MIN_RESERVE,
+} from "../constants";
+import { tuning } from "../tuning";
 import {
   getAccountBalance,
   getAccountsByPublicKey,
@@ -13,11 +19,12 @@ import { listOperations } from "../logic/history/listOperations";
 import { paginateOperations } from "../logic/history/paginate";
 import type {
   ConcordiumAccount,
+  ConcordiumCoinConfig,
   ConcordiumResources,
   PltAccountToken,
   RawOperation,
 } from "../types";
-import { attachSubOperations } from "./operations";
+import { attachSubOperations, splitPaidFee } from "./operations";
 import { mapRawOperationToBridgeOperation } from "./serialization";
 import {
   applyTokensToResources,
@@ -57,16 +64,15 @@ const valueToBigNumber = (value?: string | number): BigNumber => {
  * sub-accounts on a single bad response.
  */
 export async function getBalance(
-  currencyId: string,
+  config: ConcordiumCoinConfig,
   address: string,
 ): Promise<{
   balance: BigNumber;
   spendableBalance: BigNumber;
   accountTokens: PltAccountToken[] | undefined;
 }> {
-  const config = coinConfig.getCoinConfig(currencyId);
   const { finalizedBalance: { accountAmount, accountAtDisposal, accountTokens } = {} } =
-    await getAccountBalance(config, currencyId, address).catch(error => {
+    await getAccountBalance(config, address).catch(error => {
       log("concordium-sync", `Error fetching balance for account with address ${address}`, {
         error,
       });
@@ -74,7 +80,7 @@ export async function getBalance(
     });
 
   const balance = valueToBigNumber(accountAmount);
-  const minReserve = config.minReserve;
+  const minReserve = config.minReserve ?? DEFAULT_MIN_RESERVE;
 
   let spendableBalance = accountAtDisposal
     ? valueToBigNumber(accountAtDisposal)
@@ -89,17 +95,15 @@ export async function getBalance(
   };
 }
 
-/** The proxy's documented ceiling; anything larger is silently clamped to it. */
-const PAGE_SIZE = 1000;
-
 /**
  * Bumped when the parser starts keeping or revaluing rows it read differently,
  * so every stored history is re-read once. 2: aliases of the account matched.
+ * 3: every row that cost or moved CCD kept.
  *
  * A token whose CAL unit, decimals or balance cannot be trusted during that
  * re-read keeps its stored rows, and nothing re-reads them later: LIVE-41804.
  */
-const HISTORY_VERSION = "history=2";
+const HISTORY_VERSION = "history=3";
 
 const TOKENS_OFF_SYNC_HASH = `tokens=off:${HISTORY_VERSION}`;
 
@@ -151,7 +155,7 @@ async function computeSyncHash(
  * their fee; `syncHash` covers the flag, so turning it on re-reads from zero.
  */
 export async function syncOperations(
-  currencyId: string,
+  config: ConcordiumCoinConfig,
   address: string,
   accountId: string,
   oldOperations: Operation[],
@@ -163,14 +167,14 @@ export async function syncOperations(
   const fromScratch = refetchAll || lastBlockHeight === 0;
   const minHeight = fromScratch ? 0 : lastBlockHeight + 1;
 
-  const config = coinConfig.getCoinConfig(currencyId);
+  const limit = tuning(config.gateway?.maxTxQuery, DEFAULT_MAX_TX_QUERY, 1);
   const items = await paginateOperations(cursor =>
-    listOperations(
-      config,
-      address,
-      { minHeight, limit: PAGE_SIZE, order: "desc", ...(cursor ? { cursor } : {}) },
-      currencyId,
-    ),
+    listOperations(config, address, {
+      minHeight,
+      limit,
+      order: "desc",
+      ...(cursor ? { cursor } : {}),
+    }),
   );
 
   const nativeItems: RawOperation[] = [];
@@ -185,136 +189,145 @@ export async function syncOperations(
   }
 
   const newOperations = [
-    ...nativeItems.map(op => mapRawOperationToBridgeOperation(op, accountId)),
+    ...nativeItems.flatMap(splitPaidFee).map(op => mapRawOperationToBridgeOperation(op, accountId)),
     ...pltOperations.map(op => buildParentOperation(op, accountId)),
   ];
 
   // Keeping the old copies would resurrect operations this parser no longer
-  // produces, and `sameOp` ignores `hasFailed`, so a stale one would win.
+  // produces: an id embeds the type, so a retyped row does not replace its old copy.
   return { operations: mergeOps(fromScratch ? [] : oldOperations, newOperations), pltOperations };
 }
 
-export const getAccountShape: GetAccountShape<ConcordiumAccount> = async (info, syncConfig) => {
-  const { currency, derivationMode, derivationPath, index, initialAccount, rest = {} } = info;
+/** Takes the config resolved once for this sync, shared with `postSync`. */
+export const makeGetAccountShape =
+  (config: ConcordiumCoinConfig): GetAccountShape<ConcordiumAccount> =>
+  async (info, syncConfig) => {
+    const { currency, derivationMode, derivationPath, index, initialAccount, rest = {} } = info;
 
-  const publicKey = rest.publicKey || initialAccount?.concordiumResources?.publicKey;
+    const publicKey = rest.publicKey || initialAccount?.concordiumResources?.publicKey;
 
-  const accountId = encodeAccountId({
-    type: "js",
-    version: "2",
-    currencyId: currency.id,
-    xpubOrAddress: publicKey,
-    derivationMode,
-  });
+    const accountId = encodeAccountId({
+      type: "js",
+      version: "2",
+      currencyId: currency.id,
+      xpubOrAddress: publicKey,
+      derivationMode,
+    });
 
-  const config = coinConfig.getCoinConfig(currency.id);
+    const enableTokens = (config.enableTokens ?? DEFAULT_ENABLE_TOKENS) === true;
 
-  try {
-    const accountsResponse = await getAccountsByPublicKey(config, currency.id, publicKey);
+    try {
+      const accountsResponse = await getAccountsByPublicKey(config, publicKey);
 
-    if (!accountsResponse?.length) {
-      // An account that does not exist on chain holds no tokens, so this is
-      // authoritative: clear rather than preserve.
-      //
-      // Its operations are not: nothing removes a transaction from the chain, so
-      // an empty list here is a fault rather than news, and `shouldMergeOps` is
-      // off, meaning whatever this returns is what the account keeps.
-      const storedOperations = initialAccount?.operations ?? [];
+      if (!accountsResponse?.length) {
+        // An account that does not exist on chain holds no tokens, so this is
+        // authoritative: clear rather than preserve.
+        //
+        // Its operations are not: nothing removes a transaction from the chain, so
+        // an empty list here is a fault rather than news, and `shouldMergeOps` is
+        // off, meaning whatever this returns is what the account keeps.
+        const storedOperations = initialAccount?.operations ?? [];
+
+        return {
+          balance: new BigNumber(0),
+          blockHeight: 0,
+          subAccounts: [],
+          concordiumResources: applyTokensToResources(
+            fillConcordiumResources(initialAccount?.concordiumResources, {
+              publicKey,
+              isOnboarded: false,
+            }),
+            { kind: "cleared" },
+          ),
+          derivationMode,
+          derivationPath,
+          id: accountId,
+          index,
+          operations: storedOperations,
+          operationsCount: storedOperations.length,
+          spendableBalance: new BigNumber(0),
+          used: false,
+          xpub: publicKey,
+        };
+      }
+
+      const account = accountsResponse[0];
+
+      const syncHash = await computeSyncHash(
+        currency.id,
+        enableTokens,
+        syncConfig?.blacklistedTokenIds,
+        initialAccount?.syncHash,
+      );
+
+      const refetchAll = initialAccount !== undefined && initialAccount.syncHash !== syncHash;
+
+      const [
+        { balance, spendableBalance, accountTokens },
+        { operations, pltOperations },
+        blockHeight,
+      ] = await Promise.all([
+        getBalance(config, account.address),
+        syncOperations(config, account.address, accountId, initialAccount?.operations ?? [], {
+          enableTokens,
+          refetchAll,
+        }),
+        getConsensusInfo(config)
+          .then(consensus => consensus.lastFinalizedBlockHeight)
+          .catch(() => 0),
+      ]);
+
+      const resolvedTokens = await resolveTokenSubAccounts({
+        enableTokens,
+        // A batch of zero would look up nothing and drop every stored token.
+        calLookupConcurrency: tuning(
+          config.tokens?.calLookupConcurrency,
+          DEFAULT_CAL_LOOKUP_CONCURRENCY,
+          1,
+        ),
+        currencyId: currency.id,
+        accountId,
+        accountTokens,
+        initialAccount,
+        pltOperations,
+        refetchAll,
+        ...(syncConfig?.blacklistedTokenIds
+          ? { blacklistedTokenIds: syncConfig.blacklistedTokenIds }
+          : {}),
+      });
+
+      const unattributed =
+        resolvedTokens.kind !== "cleared" && resolvedTokens.unattributedOperations === true;
+
+      const subAccounts = effectiveSubAccounts(resolvedTokens, initialAccount?.subAccounts);
 
       return {
-        balance: new BigNumber(0),
-        blockHeight: 0,
-        subAccounts: [],
+        balance,
+        blockHeight,
+        ...subAccountsPatch(resolvedTokens),
         concordiumResources: applyTokensToResources(
           fillConcordiumResources(initialAccount?.concordiumResources, {
+            isOnboarded: true,
             publicKey,
-            isOnboarded: false,
           }),
-          { kind: "cleared" },
+          resolvedTokens,
         ),
+        freshAddress: account.address,
+        seedIdentifier: publicKey,
         derivationMode,
         derivationPath,
         id: accountId,
         index,
-        operations: storedOperations,
-        operationsCount: storedOperations.length,
-        spendableBalance: new BigNumber(0),
-        used: false,
+        operations: attachSubOperations(operations, subAccounts),
+        operationsCount: operations.length,
+        spendableBalance,
+        syncHash: unattributed ? REFETCH_SYNC_HASH : syncHash,
+        used: true,
         xpub: publicKey,
       };
+    } catch (error) {
+      log("concordium-sync", `Error fetching account shape for public key ${publicKey}`, { error });
+
+      throw error;
     }
-
-    const account = accountsResponse[0];
-
-    const syncHash = await computeSyncHash(
-      currency.id,
-      config.enableTokens,
-      syncConfig?.blacklistedTokenIds,
-      initialAccount?.syncHash,
-    );
-
-    const refetchAll = initialAccount !== undefined && initialAccount.syncHash !== syncHash;
-
-    const [
-      { balance, spendableBalance, accountTokens },
-      { operations, pltOperations },
-      blockHeight,
-    ] = await Promise.all([
-      getBalance(currency.id, account.address),
-      syncOperations(currency.id, account.address, accountId, initialAccount?.operations ?? [], {
-        enableTokens: config.enableTokens,
-        refetchAll,
-      }),
-      getConsensusInfo(config, currency.id)
-        .then(info => info.lastFinalizedBlockHeight)
-        .catch(() => 0),
-    ]);
-
-    const resolvedTokens = await resolveTokenSubAccounts({
-      enableTokens: config.enableTokens,
-      currencyId: currency.id,
-      accountId,
-      accountTokens,
-      initialAccount,
-      pltOperations,
-      refetchAll,
-      ...(syncConfig?.blacklistedTokenIds
-        ? { blacklistedTokenIds: syncConfig.blacklistedTokenIds }
-        : {}),
-    });
-
-    const unattributed =
-      resolvedTokens.kind !== "cleared" && resolvedTokens.unattributedOperations === true;
-
-    const subAccounts = effectiveSubAccounts(resolvedTokens, initialAccount?.subAccounts);
-
-    return {
-      balance,
-      blockHeight,
-      ...subAccountsPatch(resolvedTokens),
-      concordiumResources: applyTokensToResources(
-        fillConcordiumResources(initialAccount?.concordiumResources, {
-          isOnboarded: true,
-          publicKey,
-        }),
-        resolvedTokens,
-      ),
-      freshAddress: account.address,
-      seedIdentifier: publicKey,
-      derivationMode,
-      derivationPath,
-      id: accountId,
-      index,
-      operations: attachSubOperations(operations, subAccounts),
-      operationsCount: operations.length,
-      spendableBalance,
-      syncHash: unattributed ? REFETCH_SYNC_HASH : syncHash,
-      used: true,
-      xpub: publicKey,
-    };
-  } catch (error) {
-    log("concordium-sync", `Error fetching account shape for public key ${publicKey}`, { error });
-
-    throw error;
-  }
-};
+  };

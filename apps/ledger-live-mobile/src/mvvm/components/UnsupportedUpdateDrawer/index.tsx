@@ -8,6 +8,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 type UnsupportedUpdateDrawerProps = {
   isOpen: boolean;
   onClose: () => void;
+  /** The user closed it (header, backdrop or Close button), not code. */
+  onClosePressed?: () => void;
   isUsbRequired: boolean;
   productName: string | undefined;
   noCloseButton?: boolean;
@@ -16,6 +18,7 @@ type UnsupportedUpdateDrawerProps = {
 function UnsupportedUpdateDrawer({
   isOpen,
   onClose,
+  onClosePressed,
   isUsbRequired,
   productName,
   noCloseButton,
@@ -37,6 +40,8 @@ function UnsupportedUpdateDrawer({
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
+      onHeaderClosePressed={onClosePressed}
+      onBackdropPress={onClosePressed}
       noCloseButton={noCloseButton}
       enableDynamicSizing
     >
@@ -55,7 +60,10 @@ function UnsupportedUpdateDrawer({
           <Button
             appearance="base"
             size="lg"
-            onPress={onClose}
+            onPress={() => {
+              onClosePressed?.();
+              onClose();
+            }}
             testID="fw-update-drawer-unsupported-close-btn"
           >
             {t("common.close")}

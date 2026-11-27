@@ -9,11 +9,19 @@ import React, {
 import { useIsFocused, type NavigationProp, type ParamListBase } from "@react-navigation/native";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
+import type {
+  DeviceOnboardingContext,
+  DeviceOnboardingExitReason,
+} from "@features/platform-device-onboarding";
+import type { SeededResult } from "@features/platform-device-onboarding-analytics";
 import { useDeviceOnboarding, type DeviceOnboardingSession } from "./useDeviceOnboarding";
 
 export type DeviceOnboardingHost = {
   navigation: NavigationProp<ParamListBase>;
-  onLeave?: () => void;
+  onLeave?: (
+    reason: DeviceOnboardingExitReason,
+    context: DeviceOnboardingContext,
+  ) => SeededResult | null | void;
   dmk: DeviceManagementKit | null;
   knownDevices: KnownDevice[];
   offerSync: boolean;
@@ -86,7 +94,7 @@ export function DeviceOnboardingProvider({ children }: { children: ReactNode }) 
     knownDevices: host?.knownDevices ?? noDevices,
     offerSync: host?.offerSync ?? false,
     wasReadOnlyAtEntry: host?.wasReadOnlyAtEntry ?? false,
-    onLeave: () => current.getSnapshot()?.onLeave?.(),
+    onLeave: (reason, context) => current.getSnapshot()?.onLeave?.(reason, context),
     getNavigation: () => current.getSnapshot()?.navigation ?? null,
   });
 

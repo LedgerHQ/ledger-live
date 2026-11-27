@@ -33,7 +33,7 @@ export const delegateAptos = withDeviceController(
 
       await waitFor(DeviceLabels.REVIEW_OPERATION);
       const events = await pressUntilTextFound(DeviceLabels.APPROVE);
-      expectSpeculosEventsContain(delegatingAccount.amount, events);
+      expectSpeculosEventsContain({ substring: delegatingAccount.amount, events });
 
       await buttons.both();
     },

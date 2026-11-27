@@ -3,6 +3,7 @@ import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
 import type { ApplicationOptions } from "@e2e/page/index";
 import type { PartialFeatures } from "@shared/feature-flags";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
 /** Must stay in sync with `postOnboarding.actionsToComplete` in userdata/post-onboarding-hub-flow.json. */
 export const MOCK_ACTIONS = [
@@ -35,7 +36,8 @@ async function initApp(options: ApplicationOptions = {}) {
  * B2CQA-6545. Mock post-onboarding hub flow — no Speculos; each step completes via
  * PostOnboardingMockActionScreen.
  */
-export function runPostOnboardingHubFlowTest(tmsLinks: string[], tags: string[]) {
+export function runPostOnboardingHubFlowTest(options: TestMetaOptions) {
+  const { tmsLinks, tags } = options;
   describe("Post-onboarding hub", () => {
     beforeAll(async () => {
       await initApp();
@@ -53,7 +55,10 @@ export function runPostOnboardingHubFlowTest(tmsLinks: string[], tags: string[])
         await app.postOnboardingHub.expectActionPending(actionId);
         await app.postOnboardingHub.tapAction(actionId);
         await app.postOnboardingHub.completeMockActionAndReturnToHub();
-        await app.postOnboardingHub.expectActionCompleted(actionId, ACTION_COMPLETED_LABEL);
+        await app.postOnboardingHub.expectActionCompleted({
+          actionId,
+          completedLabel: ACTION_COMPLETED_LABEL,
+        });
       }
 
       await app.postOnboardingHub.expectAllActionsCompleted();

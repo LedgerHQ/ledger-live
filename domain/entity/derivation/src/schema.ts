@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { NetworkIdSchema } from "@domain/entity-account-descriptor";
+import { NetworkIdSchema } from "@domain/entity-network";
 import { DERIVATION_MODES } from "./modes.internals";
 import { AccountPathSchema, AddressPathSchema } from "./paths";
 

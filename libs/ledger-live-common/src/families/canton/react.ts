@@ -3,12 +3,14 @@ import { getCurrencyBridge } from "../../bridge";
 import { CantonCurrencyBridge, CantonAccount } from "@ledgerhq/coin-canton/types";
 import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { getCalTokensCached } from "@ledgerhq/coin-canton/network/gateway";
+import type { CantonCoinConfig } from "@ledgerhq/coin-canton/config";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import BigNumber from "bignumber.js";
+import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import { instrumentKey, nativeInstrumentMatcher, type InstrumentTokens } from "./proposalSorting";
 
 export type UseCantonAcceptOrRejectOfferOptions = {
@@ -149,7 +151,10 @@ async function findOfferTokens(
   instrumentIds: readonly string[],
 ): Promise<InstrumentTokens> {
   const wanted = new Set(instrumentIds);
-  const calTokens = await getCalTokensCached(currencyId);
+  const calTokens = await getCalTokensCached(
+    buildContext<CantonCoinConfig>(currencyId),
+    currencyId,
+  );
   const matches = [...calTokens].filter(([, tokenIdentifier]) => wanted.has(tokenIdentifier));
   const found = await Promise.all(
     matches.map(async ([tokenId, tokenIdentifier]) => ({

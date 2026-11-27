@@ -22,14 +22,36 @@ function swapHistoryChanged(
   });
 }
 
-/** Canton: the DSO party that tells native CC offers apart. */
-const cantonNativeInstrumentAdmin = (account: Account): unknown =>
-  "cantonResources" in account &&
-  typeof account.cantonResources === "object" &&
-  account.cantonResources !== null &&
-  "nativeInstrumentAdmin" in account.cantonResources
-    ? account.cantonResources.nativeInstrumentAdmin
+const CANTON_PERSISTED_KEYS = [
+  "nativeInstrumentAdmin",
+  "scanCheckpoint",
+  "replayTransactions",
+  "hash",
+  "height",
+];
+
+/** Canton: the DSO party that tells native CC offers apart, and where the history is read from. */
+const cantonPersistedResources = (account: Account): string | undefined =>
+  "cantonResources" in account
+    ? JSON.stringify(account.cantonResources, CANTON_PERSISTED_KEYS)
     : undefined;
+
+/**
+ * As many operations, one replaced or re-read with a new fee or outcome: the counts do not tell, so
+ * the id and the two fields a re-read can change are compared by index. The same list, unchanged,
+ * is not walked.
+ */
+function operationsChanged(prev: Account, next: Account): boolean {
+  if (prev.operations === next.operations) return false;
+  return prev.operations.some((op, index) => {
+    const other = next.operations[index];
+    return (
+      op.id !== other?.id ||
+      op.hasFailed !== other.hasFailed ||
+      (op.fee !== other.fee && !op.fee?.eq(other.fee))
+    );
+  });
+}
 
 /**
  * Returns true when something that is persisted and user-visible (or structurally
@@ -54,6 +76,8 @@ export function accountPersistedStateChanged(prev: Account, next: Account): bool
   ) {
     return true;
   }
+
+  if (operationsChanged(prev, next)) return true;
 
   // swap history
   if (swapHistoryChanged(prev.swapHistory, next.swapHistory)) return true;
@@ -88,7 +112,7 @@ export function accountPersistedStateChanged(prev: Account, next: Account): bool
       return true;
   }
 
-  if (cantonNativeInstrumentAdmin(prev) !== cantonNativeInstrumentAdmin(next)) return true;
+  if (cantonPersistedResources(prev) !== cantonPersistedResources(next)) return true;
 
   // sub accounts
   if ((prev.subAccounts?.length ?? 0) !== (next.subAccounts?.length ?? 0)) return true;

@@ -1,4 +1,5 @@
 import React from "react";
+import { Image, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   BottomSheetHeader,
@@ -12,14 +13,15 @@ import {
   ListItemTitle,
   Spot,
   Text,
+  useTheme,
 } from "@ledgerhq/lumen-ui-rnative";
 import { IdCard, ShieldCheck, Wallet } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { Lottie } from "@shared/lottie/native";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Karaoke } from "@shared/ui-karaoke/native";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { recoverNewSeedTestIds } from "LLM/features/DeviceOnboarding/testIds";
-import securityAnimation from "../../../../ProductTour/Drawer/animations/security.lottie";
+import recoverShieldDark from "LLM/features/DeviceOnboarding/Debug/assets/recoverShieldDark.webp";
+import recoverShieldLight from "LLM/features/DeviceOnboarding/Debug/assets/recoverShieldLight.webp";
 import type { RecoverNewSeedViewProps, RecoverSheetPoint } from "./useRecoverNewSeedViewModel";
 
 const pointIcons = {
@@ -37,13 +39,19 @@ export function RecoverNewSeedView({
   price,
   protectLabel,
   skipLabel,
+  onAdvance,
   onProtect,
   onSkip,
   onClose,
   sheet,
 }: RecoverNewSeedViewProps) {
   return (
-    <Karaoke.Root phrases={phrases} tapLabel={tapLabel} testID={recoverNewSeedTestIds.screen}>
+    <Karaoke.Root
+      phrases={phrases}
+      tapLabel={tapLabel}
+      onAdvance={onAdvance}
+      testID={recoverNewSeedTestIds.screen}
+    >
       <Karaoke.Sequence />
       <Karaoke.Final>
         <Explanation
@@ -85,12 +93,7 @@ function Explanation({
   return (
     <Box lx={{ flex: 1, paddingHorizontal: "s16" }} style={{ paddingBottom: bottom + 16 }}>
       <Box lx={{ flex: 1, alignItems: "center", justifyContent: "center", gap: "s16" }}>
-        <Lottie
-          autoPlay
-          loop={false}
-          style={{ width: 240, height: 240 }}
-          source={securityAnimation as unknown as string}
-        />
+        <RecoverIllustration />
         <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
           {title}
         </Text>
@@ -125,6 +128,16 @@ function Explanation({
   );
 }
 
+function RecoverIllustration() {
+  const { colorScheme } = useTheme();
+  const source = colorScheme === "light" ? recoverShieldLight : recoverShieldDark;
+  return <Image source={source} resizeMode="contain" style={styles.illustration} />;
+}
+
+const styles = StyleSheet.create({
+  illustration: { width: "100%", height: 200 },
+});
+
 function DetailSheet({
   title,
   points,
@@ -133,6 +146,7 @@ function DetailSheet({
   onStart,
   onRemind,
   onClose,
+  onOpened,
 }: NonNullable<RecoverNewSeedViewProps["sheet"]>) {
   const { bottom } = useSafeAreaInsets();
 
@@ -140,6 +154,7 @@ function DetailSheet({
     <QueuedBottomSheet
       isRequestingToBeOpened
       onClose={onClose}
+      onOpened={onOpened}
       enableDynamicSizing
       contentHasBottomSpace
       testID={recoverNewSeedTestIds.sheet}

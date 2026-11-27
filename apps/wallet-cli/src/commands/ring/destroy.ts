@@ -18,6 +18,8 @@ import {
 import { createLkrpSdk } from "../../key-ring/lkrp-sdk";
 import { deriveWrappingKey } from "../../key-ring/crypto";
 import { promptHidden } from "../../key-ring/prompt";
+import { canAskToConfirm } from "../../agent-intent/confirm-prompt";
+import { CliProcessExitError } from "../../cli-process-exit-error";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { createCommandOutput, type CommandOutput } from "../../output";
 import {
@@ -28,13 +30,29 @@ import {
 
 async function confirmDestroy(): Promise<boolean> {
   const rl = createInterface({ input: process.stdin, output: process.stderr });
-  const answer = await new Promise<string>(resolve => {
-    rl.question('Type "destroy" to confirm: ', ans => {
+  const answer = await new Promise<string | null>((resolve, reject) => {
+    rl.once("close", () => resolve(null));
+    rl.once("SIGINT", () => {
+      process.stderr.write("\n");
+      reject(new CliProcessExitError(130));
       rl.close();
-      resolve(ans.trim());
     });
+    rl.once("line", line => {
+      resolve(line.trim());
+      rl.close();
+    });
+    rl.setPrompt('Type "destroy" to confirm: ');
+    rl.prompt();
   });
-  return answer === "destroy";
+  if (answer !== null) return answer === "destroy";
+
+  process.stderr.write("\n");
+  const declinedAtTerminal = canAskToConfirm();
+  if (declinedAtTerminal) return false;
+  throw new Error(
+    'No confirmation received: stdin ended before "destroy" was typed. Nothing was changed. ' +
+      'Run `wallet-cli ring destroy` in a terminal and type "destroy" at the prompt.',
+  );
 }
 
 const errMessage = (e: unknown): string => (e instanceof Error ? e.message : String(e));

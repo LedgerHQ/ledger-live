@@ -1,3 +1,9 @@
+export const recoverRestoreTestIds = {
+  screen: "device-onboarding-recover-restore",
+  close: "device-onboarding-recover-restore-close",
+  continue: "device-onboarding-recover-restore-continue",
+} as const;
+
 export const recoverNewSeedTestIds = {
   screen: "device-onboarding-recover",
   close: "device-onboarding-recover-close",
@@ -54,8 +60,6 @@ export const setupTestIds = {
   close: "device-onboarding-setup-close",
   start: "device-onboarding-setup-start",
   contactSupport: "device-onboarding-setup-contact-support",
-  reopenUpdate: "device-onboarding-setup-reopen-update",
-  skipUpdate: "device-onboarding-setup-skip-update",
   stepper: "device-onboarding-setup-stepper",
   glow: "device-onboarding-setup-glow",
   stageLoading: "device-onboarding-setup-stage-loading",
@@ -70,6 +74,7 @@ export const setupTestIds = {
 
 export const syncOfferTestIds = {
   screen: "device-onboarding-sync-offer",
+  glow: "device-onboarding-sync-offer-glow",
   activate: "device-onboarding-sync-offer-activate",
   skip: "device-onboarding-sync-offer-skip",
   learnMore: "device-onboarding-sync-offer-learn-more",

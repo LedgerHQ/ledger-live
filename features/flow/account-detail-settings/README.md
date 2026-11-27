@@ -11,12 +11,12 @@ a platform entry (`./web`, `./native`), while Redux and navigation stay in the a
 
 | Entry | Export | Description |
 | --- | --- | --- |
-| `.` | `AccountSettingsMenu` | Change name (current name on the right) · View advanced logs · Remove account from portfolio (destructive) |
+| `.` | `AccountSettingsMenu` | Change name (current name on the right) · Manage assets (with `onManageAssets`) · View advanced logs · Remove account from portfolio (destructive) |
 | `.` | `AdvancedLogsContent` | Takes the app's formatting `locale` (not the translation language) for the sync date · derivation tip banner (when `derivationTag` is passed) · sync date · logs JSON · "Copy logs" (`@shared/clipboard`, result through `onCopied`) |
 | `.` | `RemoveAccountContent` | Error spot · "Remove account?" · "Yes, remove" / "Keep" |
 | `.` | `buildAdvancedLogs(input, locale)` | Pure: picks `{ xpub, index, freshAddressPath, id, blockHeight }` as pretty JSON and formats the sync date |
-| `./web` | `AccountSettings` | LWD settings `Dialog` for one account: menu, change name, advanced logs and remove steps, driven by an `AccountSettingsAdapter` |
-| `./native` | `AccountSettingsSheet` | LWM settings bottom sheet: menu and remove steps; change name and advanced logs are app screens opened through `onChangeName` / `onViewAdvancedLogs` |
+| `./web` | `AccountSettings` | LWD settings `Dialog` for one account: menu, change name, advanced logs and remove steps, driven by an `AccountSettingsAdapter`. With `onManageAssets`, Manage assets closes the dialog, then calls it |
+| `./native` | `AccountSettingsSheet` | LWM settings bottom sheet: menu and remove steps; change name and advanced logs are app screens opened through `onChangeName` / `onViewAdvancedLogs`. With `onManageAssets`, the menu shows Manage assets |
 
 `.` works on both platforms. Import `./web` only from web code and `./native` only from native code.
 
@@ -51,7 +51,7 @@ what to do with it (analytics). The package knows nothing about tracking.
 `AccountSettings` (web) and `AccountSettingsSheet` (native) take `onEvent`, and so do the contents
 they are made of (`AccountSettingsMenu`, `RemoveAccountContent`, `AdvancedLogsContent`, and
 `ChangeNameContent` on web). The events (`AccountSettingsEvent`) are `changeName`,
-`validateChangeName`, `viewLogs`, `copyLogs`, `viewExplorer`, `removeFromPortfolio`,
+`validateChangeName`, `manageAssets`, `viewLogs`, `copyLogs`, `viewExplorer`, `removeFromPortfolio`,
 `validateRemove` and `cancelRemove`. The settings being opened is not an event: the app that opens
 them knows it.
 

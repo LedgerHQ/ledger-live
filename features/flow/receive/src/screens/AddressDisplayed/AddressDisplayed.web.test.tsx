@@ -1,15 +1,21 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { AddressDisplayed } from "./AddressDisplayed";
 
-describe("AddressDisplayed (Web)", () => {
-  it("should render the title and the description, with no action until the user acts on the device", () => {
-    render(<AddressDisplayed />, { wrapper: I18nTestProvider });
+jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
 
-    expect(screen.getByTestId("receive-address-displayed")).toBeVisible();
+describe("AddressDisplayed (Web)", () => {
+  it("should ask to compare the pasted address with the device, then go back on Got it", async () => {
+    const onGotIt = jest.fn();
+    render(<AddressDisplayed onGotIt={onGotIt} />, { wrapper: I18nTestProvider });
+
     expect(screen.getByText("receiveAddress.addressDisplayed.title")).toBeVisible();
     expect(screen.getByText("receiveAddress.addressDisplayed.description")).toBeVisible();
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    await userEvent
+      .setup()
+      .click(screen.getByRole("button", { name: "receiveAddress.addressDisplayed.gotItCta" }));
+    expect(onGotIt).toHaveBeenCalledTimes(1);
   });
 });

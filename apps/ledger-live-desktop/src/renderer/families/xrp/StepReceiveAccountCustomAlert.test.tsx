@@ -1,9 +1,11 @@
 import React from "react";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import { AccountIdSchema } from "@domain/entity-account";
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
 import { fireEvent, render, screen } from "tests/testSetup";
 import type { StepProps } from "~/renderer/modals/Receive/Body";
 import StepReceiveAccountCustomAlert from "./StepReceiveAccountCustomAlert";
+import { openXrpDialog } from "./xrpDialog";
 import {
   XRP_ACCOUNT,
   XRP_IOU_TOKEN_ACCOUNT,
@@ -26,6 +28,7 @@ const mainAccount = XRP_ACCOUNT;
 const removedTokenAccount = XRP_REMOVED_TOKEN_ACCOUNT;
 const token = removedTokenAccount.token;
 const heldTokenAccount = XRP_IOU_TOKEN_ACCOUNT;
+const mainAccountId = AccountIdSchema.parse(mainAccount.id);
 
 function renderAlert(account: Account | TokenAccount, parentAccount?: Account) {
   const closeModal = jest.fn();
@@ -51,11 +54,7 @@ describe("xrp StepReceiveAccountCustomAlert", () => {
 
     expect(closeModal).toHaveBeenCalledTimes(1);
     expect(mockDispatch).toHaveBeenCalledTimes(1);
-    expect(mockDispatch).toHaveBeenCalledWith(
-      expect.objectContaining({
-        payload: { name: "MODAL_XRP_ADD_TOKEN", data: { account: mainAccount } },
-      }),
-    );
+    expect(mockDispatch).toHaveBeenCalledWith(openXrpDialog(mainAccountId, { screen: "addAsset" }));
   });
 
   it("asks to add a removed token again, preselected", () => {
@@ -66,9 +65,7 @@ describe("xrp StepReceiveAccountCustomAlert", () => {
 
     expect(mockDispatch).toHaveBeenCalledTimes(1);
     expect(mockDispatch).toHaveBeenCalledWith(
-      expect.objectContaining({
-        payload: { name: "MODAL_XRP_ADD_TOKEN", data: { account: mainAccount, token } },
-      }),
+      openXrpDialog(mainAccountId, { screen: "addAsset", token }),
     );
   });
 

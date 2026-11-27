@@ -7,8 +7,4 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@bitcoin", "@family-bitcoin"],
 };
 
-runSelectCryptoWithoutNetworkAndAccountTest(
-  testConfig.account,
-  testConfig.tmsLinks,
-  testConfig.tags,
-);
+runSelectCryptoWithoutNetworkAndAccountTest(testConfig);

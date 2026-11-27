@@ -1,8 +1,12 @@
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
+import type { TestMetaOptions } from "@e2e/models/testOptions";
 
-export function runDeleteAccountTest(account: AccountType, tmsLinks: string[], tags: string[]) {
+type DeleteAccountTestOptions = TestMetaOptions & { account: AccountType };
+
+export function runDeleteAccountTest(options: DeleteAccountTestOptions) {
+  const { account, tmsLinks, tags } = options;
   describe("Delete account", () => {
     beforeAll(async () => {
       await app.init({

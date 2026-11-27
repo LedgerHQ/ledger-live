@@ -28,14 +28,14 @@ export const sendSolana = withDeviceController(
       const buttons = getButtonsController();
 
       const events = await getSendEvents(tx);
-      expectSpeculosEventsContain(tx.amount, events);
+      expectSpeculosEventsContain({ substring: tx.amount, events });
 
       const isSplToken = !!tx.accountToCredit.currency.contractAddress;
       if (!isSplToken && process.env.SPECULOS_DEVICE !== Device.LNS.name) {
         if (!tx.accountToCredit.address) {
           throw new Error("Recipient address is not set");
         }
-        expectSpeculosEventsContain(tx.accountToCredit.address, events);
+        expectSpeculosEventsContain({ substring: tx.accountToCredit.address, events });
       }
 
       if (isTouchDevice()) {

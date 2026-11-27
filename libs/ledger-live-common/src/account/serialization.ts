@@ -98,10 +98,6 @@ export async function toAccountRaw(
   // extend with user data fields
   if (userData) {
     commonAccountRaw.name = userData.name;
-    commonAccountRaw.starred = userData.starredIds.includes(commonAccountRaw.id);
-    for (const tokenAccount of commonAccountRaw.subAccounts || []) {
-      tokenAccount.starred = userData.starredIds.includes(tokenAccount.id);
-    }
   }
 
   return commonAccountRaw;
@@ -115,16 +111,7 @@ export const accountRawToAccountUserData = (raw: AccountRaw): AccountUserData =>
       currency: getCryptoCurrencyById(raw.currencyId),
       index: raw.index,
     });
-  const starredIds: string[] = [];
-  if (raw.starred) {
-    starredIds.push(raw.id);
-  }
-  for (const t of raw.subAccounts || []) {
-    if (t.starred) {
-      starredIds.push(t.id);
-    }
-  }
-  return { id, name, starredIds };
+  return { id, name };
 };
 
 const inferFamilyFromAccountId: (accountId: string) => string | null | undefined = memoize(

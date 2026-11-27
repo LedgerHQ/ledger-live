@@ -3,6 +3,7 @@ import { datadogIdSelector, isDummyDatadogId } from "@domain/entity-client-ident
 import { getOperatingSystemSupportStatus } from "~/support/os";
 import { getDistributionChannel } from "~/helpers/distributionChannel";
 import { getDatadogBuildConfig, buildBeforeSend } from "./config";
+import { toDatadogViewName } from "./viewName";
 import type { Store } from "redux";
 import type { State } from "~/renderer/reducers";
 
@@ -51,17 +52,31 @@ let initialized = false;
 let shouldSendNow: (() => boolean) | undefined;
 /** The `lldDatadog` kill switch: RUM stays initialized once started, custom actions stop. */
 let actionsEnabled = true;
+let currentViewName: string | undefined;
 
 /** Reset module state for tests so suites are order-independent. Do not use in production. */
 export function __resetDatadogForTesting(): void {
   initialized = false;
   shouldSendNow = undefined;
   actionsEnabled = true;
+  currentViewName = undefined;
 }
+
+const hashRoutePath = () => globalThis.location?.hash.replace(/^#/, "") ?? "";
 
 /** Follows the `lldDatadog` feature flag (see `addAction`). */
 export function setDatadogActionsEnabled(enabled: boolean): void {
   actionsEnabled = enabled;
+}
+
+/** Follows the user opt-in after init: profiles skip beforeSend, so only the SDK can stop them. */
+export function setDatadogTrackingConsent(granted: boolean): void {
+  if (!initialized) return;
+  try {
+    datadogRum.setTrackingConsent(granted ? "granted" : "not-granted");
+  } catch {
+    // no-op
+  }
 }
 
 export function isDatadogAvailable(): boolean {
@@ -85,6 +100,7 @@ export async function initDatadog(
         profilingSampleRate?: number;
         trackUserInteractions?: boolean;
         trackResources?: boolean;
+        propagateTraceBaggage?: boolean;
       }
     | undefined,
   store: Store<State>,
@@ -113,8 +129,10 @@ export async function initDatadog(
       sessionSampleRate: params?.sessionSampleRate ?? 100,
       sessionReplaySampleRate: params?.sessionReplaySampleRate ?? 0,
       defaultPrivacyLevel: normalizeDefaultPrivacyLevel(params?.defaultPrivacyLevel),
+      enablePrivacyForActionName: true,
       traceSampleRate: params?.traceSampleRate ?? 100,
       allowedTracingUrls,
+      propagateTraceBaggage: params?.propagateTraceBaggage ?? false,
       ...(profilingSampleRate !== undefined && { profilingSampleRate }),
       trackViewsManually: true,
       trackUserInteractions: params?.trackUserInteractions ?? true,
@@ -123,7 +141,8 @@ export async function initDatadog(
       sessionPersistence: "local-storage",
     });
 
-    datadogRum.startView("main");
+    currentViewName = toDatadogViewName(hashRoutePath());
+    datadogRum.startView({ name: currentViewName });
 
     const datadogId = datadogIdSelector(store.getState());
     if (!isDummyDatadogId(datadogId)) {
@@ -142,6 +161,17 @@ export async function initDatadog(
   } catch (e) {
     console.error("Datadog RUM init failed", e);
     return false;
+  }
+}
+
+export function startDatadogRouteView(routePath: string): void {
+  const name = toDatadogViewName(routePath);
+  if (!initialized || name === currentViewName) return;
+  currentViewName = name;
+  try {
+    datadogRum.startView({ name });
+  } catch {
+    // no-op
   }
 }
 
@@ -176,13 +206,17 @@ export function addBreadcrumb(breadcrumb: Breadcrumb): void {
   }
 }
 
+export function isDatadogRecording(): boolean {
+  return initialized && actionsEnabled && !!shouldSendNow?.();
+}
+
 /**
  * A custom RUM action whose attributes are queried as `@context.<key>`.
  * Returns false when nothing was sent: RUM is not initialized, the `lldDatadog` flag is off, the
  * user opted out (the action would be discarded) or the SDK threw.
  */
 export function addAction(name: string, context: Record<string, unknown>): boolean {
-  if (!initialized || !actionsEnabled || !shouldSendNow?.()) return false;
+  if (!isDatadogRecording()) return false;
   try {
     datadogRum.addAction(name, context);
     return true;

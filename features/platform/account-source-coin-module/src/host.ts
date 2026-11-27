@@ -50,6 +50,18 @@ export type CoinModuleOperationsApi = CoinModuleTokenResolver & {
   ): Promise<CoinModuleOperationsPage>;
 };
 
+/** Coin-modules ADR-079: a missing field is unknown. */
+export type CoinModuleAccountStatus = {
+  /** Activated on its network, so it can receive and send; only on chains that need it, and it can be lost. */
+  activated?: boolean;
+  /** Ever used: a transaction, or a balance of any asset. */
+  used?: boolean;
+};
+
+export type CoinModuleAccountStatusApi = {
+  getAccountStatus(key: string, signal?: AbortSignal): Promise<CoinModuleAccountStatus>;
+};
+
 /** What the source takes from the coin modules, implemented by the app on top of its registry. */
 export type CoinModuleHost = {
   /** Synchronous: whether a coin module is registered for the currency, loaded or not. */
@@ -64,5 +76,6 @@ export type CoinModuleHost = {
   paginatesOperations?(currencyId: string): boolean;
   /** The coin module of the currency, loaded on first use; `undefined` when it does not implement the operations read. */
   getOperationsApi?(currencyId: string): Promise<CoinModuleOperationsApi | undefined>;
+  getAccountStatusApi?(currencyId: string): Promise<CoinModuleAccountStatusApi | undefined>;
   blacklistedTokenIds?(): readonly string[];
 };

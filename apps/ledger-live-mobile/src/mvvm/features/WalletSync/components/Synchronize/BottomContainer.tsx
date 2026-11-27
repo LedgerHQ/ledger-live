@@ -3,10 +3,14 @@ import { ScrollContainer, Text, Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import styled, { useTheme } from "styled-components/native";
 
+/** Max height of the instructions box on the scan tab. */
+export const INSTRUCTIONS_MAX_HEIGHT = 220;
+
 type Props = {
   steps: {
     description: React.JSX.Element;
   }[];
+  maxHeight?: number;
 };
 
 const BulletPoint = styled(Flex)`
@@ -26,7 +30,7 @@ const FlexContainer = styled(Flex)`
   gap: 12px;
 `;
 
-const BottomContainer = ({ steps }: Props) => {
+const BottomContainer = ({ steps, maxHeight = INSTRUCTIONS_MAX_HEIGHT }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -34,10 +38,12 @@ const BottomContainer = ({ steps }: Props) => {
     <ScrollContainer
       px={16}
       py={24}
-      maxHeight={220}
+      maxHeight={maxHeight}
       background={colors.opacityDefault.c05}
       borderRadius={24}
       showsVerticalScrollIndicator={false}
+      nestedScrollEnabled
+      testID="ws-qr-instructions"
     >
       <Text variant="h4" fontSize={18} color={colors.neutral.c100} mb={24}>
         {t("walletSync.synchronize.qrCode.scan.explanation.title")}

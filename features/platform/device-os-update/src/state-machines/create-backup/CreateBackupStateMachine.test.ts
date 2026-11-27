@@ -39,6 +39,9 @@ const CONNECTED_DEVICE: ConnectedDevice = {
 
 const NOW = new Date("2026-09-15T12:00:00.000Z");
 
+/** An error the device has no part in, eg: the secure channel websocket closing. */
+const BACKEND_ERROR = new Error("WebSocket closed");
+
 const backupCreatedAt = (createdAt: Date): Backup => ({
   languageId: undefined,
   installedApps: [],
@@ -376,6 +379,46 @@ describe("CreateBackupStateMachine", () => {
       expect(actor.getSnapshot().value).toBe("CreateBackup");
       expect(lastSentStateType()).toBe(CreateBackupStateType.LOADING);
       expect(deviceActionRuns).toHaveLength(2);
+    });
+
+    it("should create the backup again after an unexplained recovery", async () => {
+      await start();
+
+      await failDeviceAction(BACKEND_ERROR);
+      await jest.advanceTimersByTimeAsync(SESSION_SETTLE_TIMEOUT_MS);
+      await settle();
+
+      expect(actor.getSnapshot().value).toBe("CreateBackup");
+      expect(deviceActionRuns).toHaveLength(2);
+    });
+
+    it("should emit UNEXPECTED_ERROR when the backup creation fails again with no explanation", async () => {
+      await start();
+      await failDeviceAction(BACKEND_ERROR);
+      await jest.advanceTimersByTimeAsync(SESSION_SETTLE_TIMEOUT_MS);
+      await settle();
+
+      await failDeviceAction(BACKEND_ERROR);
+      await jest.advanceTimersByTimeAsync(SESSION_SETTLE_TIMEOUT_MS);
+      await settle();
+
+      expect(actor.getSnapshot().value).toBe("UnrecoverableError");
+      expect(deviceActionRuns).toHaveLength(2);
+      expect(sentStatesOfType(CreateBackupStateType.UNEXPECTED_ERROR)[0].error).toBe(BACKEND_ERROR);
+    });
+
+    it("should still create the backup again once unlocked after an unexplained recovery", async () => {
+      await start();
+      await failDeviceAction(BACKEND_ERROR);
+      await jest.advanceTimersByTimeAsync(SESSION_SETTLE_TIMEOUT_MS);
+      await settle();
+
+      await failDeviceAction(new DeviceLockedError());
+      await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
+      await settle();
+
+      expect(actor.getSnapshot().value).toBe("CreateBackup");
+      expect(deviceActionRuns).toHaveLength(3);
     });
 
     it("should send STOP to the parent when cancel is called on the UNEXPECTED_ERROR state", async () => {

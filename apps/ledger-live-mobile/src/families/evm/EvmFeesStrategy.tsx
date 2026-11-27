@@ -43,7 +43,6 @@ export default function EvmFeesStrategy({
   setTransaction,
   navigation,
   route,
-  shouldPrefillEvmGasOptions = true,
   status,
   ...props
 }: Props<Transaction>) {
@@ -66,14 +65,12 @@ export default function EvmFeesStrategy({
   }
 
   useEffect(() => {
-    if (shouldPrefillEvmGasOptions) {
-      const updatedTransaction = bridge.updateTransaction(transaction, {
-        ...transaction,
-        gasOptions,
-      });
-      setTransaction(updatedTransaction);
-    }
-  }, [bridge, setTransaction, gasOptions, transaction, shouldPrefillEvmGasOptions]);
+    const updatedTransaction = bridge.updateTransaction(transaction, {
+      ...transaction,
+      gasOptions,
+    });
+    setTransaction(updatedTransaction);
+  }, [bridge, setTransaction, gasOptions, transaction]);
 
   /**
    * When the user edits the custom fees, we save the related transaction patch

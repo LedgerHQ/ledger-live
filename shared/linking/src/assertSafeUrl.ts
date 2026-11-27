@@ -11,3 +11,12 @@ export function assertSafeUrl(url: string): void {
     throw new Error(`Blocked unsafe protocol "${parsed.protocol}" in URL: ${url}`);
   }
 }
+
+export function isSafeUrl(url: string): boolean {
+  try {
+    assertSafeUrl(url);
+    return true;
+  } catch {
+    return false;
+  }
+}

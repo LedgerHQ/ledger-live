@@ -24,18 +24,21 @@ export function isPltRejectCode(value: unknown): value is PltRejectCode {
  * `tokenId` marks a PLT operation; it, `decimals` and `rejectCode` are absent on
  * CCD ones.
  *
- * `type` stays the movement: the `NONE`/`FEES` parent stand-in is built in
- * `bridge/`, and widening this would leak it into the `api/` surface.
+ * `FEES` is a CCD operation that moved nothing but the fee the account paid. The
+ * `NONE`/`FEES` parent of a PLT transfer is another thing, built in `bridge/`.
  */
 export interface RawOperation {
   hash: string;
-  type: "OUT" | "IN";
+  type: "OUT" | "IN" | "FEES";
   sender: string;
   recipient: string;
   amount: string;
   /** The microCCD this account paid: 0 when another account paid. */
   fee: string;
-  /** The microCCD the transaction cost, the same in every account's view. */
+  /**
+   * The microCCD the transaction cost, the same in every account's view. A proxy
+   * older than 0.51.0 shows an unsponsored cost to the sender alone: others get 0.
+   */
   transactionFee: string;
   value: string;
   memo: string | undefined;

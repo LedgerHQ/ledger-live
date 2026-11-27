@@ -2,7 +2,7 @@ import { CurrencyNotSupported } from "../errors";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { CoinModuleLoader, MockAccountModule } from "./types";
+import type { CoinModuleLoader, LegacyAccountContext, MockAccountModule } from "./types";
 import type { AccountBridgeExtensions } from "@ledgerhq/types-live";
 
 const loaders = new Map<string, CoinModuleLoader>();
@@ -76,8 +76,16 @@ export function isCoinModuleRegistered(family: string): boolean {
   return loaders.has(family);
 }
 
+export function getAccountCompletion(family: string): CoinModuleLoader["accountCompletion"] {
+  return loaders.get(family)?.accountCompletion;
+}
+
 export function getAccountDescriptorType(family: string): AccountDescriptor["type"] {
   return getLoader(family).accountDescriptorType;
+}
+
+export function getLegacyAccountContext(family: string): LegacyAccountContext | undefined {
+  return loaders.get(family)?.legacyAccountContext;
 }
 
 export function isCurrencySupported(currency: CryptoCurrency): boolean {

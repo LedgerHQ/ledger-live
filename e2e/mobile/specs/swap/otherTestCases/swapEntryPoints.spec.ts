@@ -7,8 +7,4 @@ const swapEntryPointsConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@bitcoin", "@family-bitcoin"],
 };
 
-runSwapEntryPoints(
-  swapEntryPointsConfig.account,
-  swapEntryPointsConfig.tmsLinks,
-  swapEntryPointsConfig.tags,
-);
+runSwapEntryPoints(swapEntryPointsConfig);

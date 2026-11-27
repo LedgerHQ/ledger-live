@@ -23,6 +23,10 @@ const SETTINGS_CLICKS: Readonly<Record<AccountSettingsEvent, SettingsClick>> = {
     button: ACCOUNT_DETAIL_BUTTONS.validateEditAccountName,
     page: ACCOUNT_DETAIL_PAGES.settings,
   },
+  manageAssets: {
+    button: ACCOUNT_DETAIL_BUTTONS.manageAssets,
+    page: ACCOUNT_DETAIL_PAGES.settings,
+  },
   viewLogs: { button: ACCOUNT_DETAIL_BUTTONS.viewLogs, page: ACCOUNT_DETAIL_PAGES.settings },
   copyLogs: { button: ACCOUNT_DETAIL_BUTTONS.copyLogs, page: ACCOUNT_DETAIL_PAGES.settings },
   viewExplorer: {

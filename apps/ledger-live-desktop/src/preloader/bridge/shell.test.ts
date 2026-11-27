@@ -30,12 +30,6 @@ describe("preload shell bridge", () => {
       [{ options: { defaultPath: "ops.csv" } }, "csv"],
     ],
     [
-      "files.savePng",
-      () => files.savePng({ defaultPath: "qr.png" }, "aGVsbG8="),
-      CHANNELS.savePng,
-      [{ defaultPath: "qr.png" }, "aGVsbG8="],
-    ],
-    [
       "files.openUserDataDirectory",
       () => files.openUserDataDirectory(),
       CHANNELS.openUserDataDirectory,

@@ -1,12 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import {
-  currencyIdFromNetwork,
-  AccountDescriptorSchema,
-  AddressSchema,
-  type Address,
-  networkFromCurrencyId,
-  type AccountDescriptor,
-} from "@domain/entity-account-descriptor";
+import { AccountDescriptorSchema, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountContext } from "@domain/entity-account-context";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import {
@@ -19,7 +13,18 @@ import {
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
-import { getAccountDescriptorType, loadAddressFromKeyForFamily } from "../coin-modules/registry";
+import {
+  currencyIdFromNetwork,
+  AddressSchema,
+  type Address,
+  networkFromCurrencyId,
+} from "@domain/entity-network";
+import { fromDescriptorPath, toDescriptorPath } from "@domain/entity-derivation";
+import {
+  getAccountDescriptorType,
+  getLegacyAccountContext,
+  loadAddressFromKeyForFamily,
+} from "../coin-modules/registry";
 
 /** Families keyed on their public key: their address cannot give back what reading the account needs. */
 const PUBLIC_KEY_FAMILIES = new Set([
@@ -45,6 +50,8 @@ export type LegacyAccountFields = {
   index: number;
   xpub?: string;
   freshAddress?: string;
+  /** The last field of the legacy id: the account context a family keeps there (Aleo: the view key). */
+  customData?: string;
   /** The key of a family keyed on its public key, in place of `freshAddress`: see `addressFromKey`. */
   publicKey?: string;
 };
@@ -116,15 +123,7 @@ export function keyOfDerivedAccount(
   return publicKey.toLowerCase();
 }
 
-/** `m/44h/60h/0h/0/0` -> `44'/60'/0'/0/0`, the spelling of the legacy resolvers. */
-export const toLegacyPath = (path: string) => path.replace(/^m\//, "").replaceAll("h", "'");
-
-/** A legacy derivation path ("44'/60'/0'/0/0", with or without "m/") as a descriptor path. */
-export const toDescriptorPath = (path: string) =>
-  `m/${path.replace(/^m\//, "").replaceAll("'", "h")}`;
-const fromDescriptorPath = (path: string) => (path.startsWith("m/") ? path.slice(2) : path);
-
-const stripHardened = (segment: string) => (segment.endsWith("h") ? segment.slice(0, -1) : segment);
+const stripHardened = (segment: string) => (segment.endsWith("'") ? segment.slice(0, -1) : segment);
 
 /** Account index of `path` if it follows `scheme` (only a utxo path may stop before `<node>/<address>`), else null. */
 function matchSchemeToPath(
@@ -133,7 +132,7 @@ function matchSchemeToPath(
   path: string,
   allowTruncated: boolean,
 ): number | null {
-  const schemeSegments = scheme.split("/").map(s => s.replaceAll("'", "h"));
+  const schemeSegments = scheme.split("/");
   const pathSegments = path.split("/");
   if (pathSegments.length > schemeSegments.length) return null;
 
@@ -145,7 +144,7 @@ function matchSchemeToPath(
       if (!allowTruncated || (base !== "<node>" && base !== "<address>")) return null;
       continue;
     }
-    if (s.endsWith("h") !== p.endsWith("h")) return null;
+    if (s.endsWith("'") !== p.endsWith("'")) return null;
     if (base === "<coin_type>") {
       if (Number.parseInt(stripHardened(p), 10) !== coinType) return null;
     } else if (base === "<account>") {
@@ -198,7 +197,10 @@ function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
 }
 
 /** Lossy for address descriptors: the path is account-level, so `freshAddressPath` is not restored until the next sync. A public-key family gets its key, not its address. */
-export function toLegacyAccount(input: AccountDescriptor): LegacyAccountFields {
+export function toLegacyAccount(
+  input: AccountDescriptor,
+  context?: AccountContext,
+): LegacyAccountFields {
   const descriptor = AccountDescriptorSchema.parse(input);
   const currencyId = currencyIdFromNetwork(descriptor.network);
   const currency = getCryptoCurrencyById(currencyId);
@@ -209,6 +211,7 @@ export function toLegacyAccount(input: AccountDescriptor): LegacyAccountFields {
       `${currencyId} accounts use ${expectedType} descriptors, got ${descriptor.type}`,
     );
   }
+  const customData = context && getLegacyAccountContext(family)?.toCustomData(context);
   const keyedOnPublicKey = PUBLIC_KEY_FAMILIES.has(family);
   if (keyedOnPublicKey) assertPublicKey(descriptor.key, currencyId);
   const path = fromDescriptorPath(descriptor.path);
@@ -220,11 +223,37 @@ export function toLegacyAccount(input: AccountDescriptor): LegacyAccountFields {
     if (index < getDerivationModeStartsAt(derivationMode)) continue;
     if (descriptor.type === "utxo")
       return { currencyId, derivationMode, index, xpub: descriptor.key };
-    return keyedOnPublicKey
+    const fields = keyedOnPublicKey
       ? { currencyId, derivationMode, index, publicKey: descriptor.key }
       : { currencyId, derivationMode, index, freshAddress: descriptor.key };
+    return customData ? { ...fields, customData } : fields;
   }
   throw new UnsupportedDescriptorPathError(
     `No derivation mode of ${currencyId} matches path "${descriptor.path}"`,
   );
+}
+
+const REDACTED = "[redacted]";
+
+/** Fields of a legacy account id before its custom data: type, version, currency, address, derivation mode. */
+const LEGACY_ID_FIELDS = 5;
+
+/** The legacy account id with its custom data hidden (Aleo: the view key), for display only. */
+export function redactAccountId(accountId: string): string {
+  const fields = accountId.split(":");
+  if (fields.length <= LEGACY_ID_FIELDS) return accountId;
+  // Custom data may hold an unescaped "+": a token suffix after it cannot be told apart, so it goes too.
+  return [...fields.slice(0, LEGACY_ID_FIELDS), REDACTED].join(":");
+}
+
+/** The context a legacy account keeps in its id (Aleo: the view key), for its family to read back. */
+export function accountContextOf(
+  account: Pick<LegacyAccountIdentity, "id" | "currency">,
+): AccountContext | undefined {
+  const legacyAccountContext = getLegacyAccountContext(
+    getCryptoCurrencyById(account.currency.id).family,
+  );
+  if (!legacyAccountContext) return undefined;
+  const { customData } = decodeAccountId(account.id);
+  return customData ? legacyAccountContext.fromCustomData(customData) : undefined;
 }

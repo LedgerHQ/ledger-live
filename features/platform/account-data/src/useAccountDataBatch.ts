@@ -8,19 +8,16 @@ import {
   type AccountDataKind,
   type AccountDataRootState,
 } from "@domain/entity-account-data";
-import {
-  computeAccountUUID,
-  type AccountDescriptor,
-  type AccountUUID,
-} from "@domain/entity-account-descriptor";
+import type { AccountUUID } from "@domain/entity-account";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { selectAccountDescriptor, type WithAccountEntries } from "./internals/accountEntries";
 import { accountsToRead, type ReadRecord } from "./internals/accountsToRead";
 import { summarizeStatuses } from "./internals/summarizeStatuses";
-import { uniqueByKey } from "./internals/uniqueByKey";
 import { useHeldByKey } from "./internals/useHeldByKey";
 import type { UseAccountDataOptions } from "./useAccountData";
 
 export type UseAccountDataBatchResult = {
-  /** What the entity slices key each account by, once each, in the order of the descriptors. */
+  /** The accounts a slice holds the descriptor of, once each, in the order given. */
   accountUUIDs: AccountUUID[];
   /** A head read of at least one account is in flight; next pages loaded elsewhere do not count. */
   pending: boolean;
@@ -33,18 +30,27 @@ export type UseAccountDataBatchResult = {
 /** Keeps one kind of data of many accounts read while mounted, in one tick so the router batches them per source. */
 export function useAccountDataBatch<K extends AccountDataKind>(
   kind: K,
-  descriptors: readonly AccountDescriptor[],
+  accountUUIDs: readonly AccountUUID[],
   { maxAge, query }: UseAccountDataOptions<K> = {},
 ): UseAccountDataBatchResult {
   const dispatch = useDispatch<ThunkDispatch<AccountDataRootState, unknown, UnknownAction>>();
-  const byKey = uniqueByKey(descriptors);
+  const unique = [...new Set(accountUUIDs)];
+  const descriptors = useSelector(
+    (state: WithAccountEntries) => unique.map(uuid => selectAccountDescriptor(state, uuid)),
+    shallowEqual,
+  );
+  const byUUID = new Map<AccountUUID, AccountDescriptor>();
+  unique.forEach((uuid, i) => {
+    const descriptor = descriptors[i];
+    if (descriptor) byUUID.set(uuid, descriptor);
+  });
   // By value: a new array of the same accounts, or an inline query, must not read again.
-  const held = useHeldByKey(byKey, [...byKey.keys()].join("\n"));
+  const held = useHeldByKey(byUUID, [...byUUID.keys()].join("\n"));
   const queryKey = accountDataQueryKey(query);
   const accountQuery = useHeldByKey(query, queryKey);
 
   const accounts = useMemo(() => [...held.values()], [held]);
-  const accountUUIDs = useMemo(() => accounts.map(computeAccountUUID), [accounts]);
+  const heldUUIDs = useMemo(() => [...held.keys()], [held]);
 
   const read = useRef<ReadRecord | undefined>(undefined);
   useEffect(() => {
@@ -63,7 +69,7 @@ export function useAccountDataBatch<K extends AccountDataKind>(
 
   const statuses = useSelector(
     (state: AccountDataRootState) =>
-      accountUUIDs.map(uuid => state.accountData[kind]?.[uuid]?.[queryKey]),
+      heldUUIDs.map(uuid => state.accountData[kind]?.[uuid]?.[queryKey]),
     shallowEqual,
   );
 
@@ -76,7 +82,7 @@ export function useAccountDataBatch<K extends AccountDataKind>(
   }, [dispatch, kind, accounts, accountQuery]);
 
   return useMemo(
-    () => ({ accountUUIDs, ...summarizeStatuses(accountUUIDs, statuses), refresh }),
-    [statuses, accountUUIDs, refresh],
+    () => ({ accountUUIDs: heldUUIDs, ...summarizeStatuses(heldUUIDs, statuses), refresh }),
+    [statuses, heldUUIDs, refresh],
   );
 }

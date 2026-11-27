@@ -1,219 +1,76 @@
-import BigNumber from "bignumber.js";
+import type { TxEndpointPage } from "../network";
 import { TrongridTxInfo } from "../types";
-import {
-  compareTxsByTimestamp,
-  dropTxsAfterNextCursor,
-  dropTxsBeforeCursor,
-  parseCursor,
-  serializeCursor,
-} from "./cursor";
+import { compareTxsByTimestamp, pageBoundary, parseCursor, stepPast, walksBefore } from "./cursor";
 
-describe("cursor utilities", () => {
-  describe("serializeCursor", () => {
-    it("should serialize cursor correctly", () => {
-      const cursor = { txHash: "abc123", timestamp: 1234567890 };
-      expect(serializeCursor(cursor)).toBe("1234567890:abc123");
+const page = (rawTimestamps: number[], next?: string): TxEndpointPage => ({
+  rawTimestamps,
+  txs: [],
+  next,
+});
+
+describe("cursor", () => {
+  describe("parseCursor", () => {
+    it("round-trips a timestamp", () => {
+      expect(parseCursor(String(1717419792000))).toBe(1717419792000);
+    });
+
+    it("reads no cursor as null", () => {
+      expect(parseCursor(undefined)).toBeNull();
+      expect(parseCursor("")).toBeNull();
+    });
+
+    it.each(["invalid", "12:abc", "-5", "1.5", "99999999999999999999"])("rejects %s", cursor => {
+      expect(() => parseCursor(cursor)).toThrow("Invalid cursor format");
     });
   });
 
-  describe("parseCursor", () => {
-    it("should return null for undefined cursor", () => {
-      expect(parseCursor(undefined)).toBeNull();
+  describe("walksBefore / stepPast", () => {
+    it("walks forward in time in asc order", () => {
+      expect(walksBefore("asc", 1, 2)).toBe(true);
+      expect(walksBefore("asc", 2, 2)).toBe(false);
+      expect(stepPast("asc", 2)).toBe(3);
     });
 
-    it("should parse valid cursor", () => {
-      const result = parseCursor("1234567890:abc123");
-      expect(result).toEqual({ txHash: "abc123", timestamp: 1234567890 });
-    });
-
-    it("should throw for cursor without separator", () => {
-      expect(() => parseCursor("invalid")).toThrow("Invalid cursor format");
-    });
-
-    it("should throw for cursor with empty timestamp", () => {
-      expect(() => parseCursor(":abc123")).toThrow("Invalid cursor format");
-    });
-
-    it("should throw for cursor with empty txHash", () => {
-      expect(() => parseCursor("1234567890:")).toThrow("Invalid cursor format");
-    });
-
-    it("should throw for cursor with invalid timestamp", () => {
-      expect(() => parseCursor("notanumber:abc123")).toThrow("Invalid cursor format");
+    it("walks backward in time in desc order", () => {
+      expect(walksBefore("desc", 2, 1)).toBe(true);
+      expect(walksBefore("desc", 2, 2)).toBe(false);
+      expect(stepPast("desc", 2)).toBe(1);
     });
   });
 
   describe("compareTxsByTimestamp", () => {
-    const makeTx = (txID: string, timestamp: number): TrongridTxInfo =>
-      ({
-        txID,
-        date: new Date(timestamp),
-        value: new BigNumber(0),
-      }) as TrongridTxInfo;
+    const txs = [3, 1, 2].map(ts => ({ txID: `tx${ts}`, date: new Date(ts) }) as TrongridTxInfo);
 
-    it("should sort ascending by timestamp", () => {
-      const txs = [makeTx("b", 2000), makeTx("a", 1000), makeTx("c", 3000)];
-      const sorted = [...txs].sort(compareTxsByTimestamp("asc"));
-      expect(sorted.map(t => t.txID)).toEqual(["a", "b", "c"]);
-    });
-
-    it("should sort descending by timestamp", () => {
-      const txs = [makeTx("b", 2000), makeTx("a", 1000), makeTx("c", 3000)];
-      const sorted = [...txs].sort(compareTxsByTimestamp("desc"));
-      expect(sorted.map(t => t.txID)).toEqual(["c", "b", "a"]);
+    it("sorts in walk order", () => {
+      expect([...txs].sort(compareTxsByTimestamp("asc")).map(t => t.txID)).toEqual([
+        "tx1",
+        "tx2",
+        "tx3",
+      ]);
+      expect([...txs].sort(compareTxsByTimestamp("desc")).map(t => t.txID)).toEqual([
+        "tx3",
+        "tx2",
+        "tx1",
+      ]);
     });
   });
 
-  describe("dropTxsBeforeCursor", () => {
-    const makeTx = (txID: string, timestamp: number): TrongridTxInfo =>
-      ({
-        txID,
-        date: new Date(timestamp),
-        value: new BigNumber(0),
-      }) as TrongridTxInfo;
-
-    it("should return all txs when cursor is null", () => {
-      const txs = [makeTx("a", 1000), makeTx("b", 2000)];
-      const result = dropTxsBeforeCursor({ txs, order: "asc", cursor: null });
-      expect(result).toHaveLength(2);
+  describe("pageBoundary", () => {
+    it("is undefined when no endpoint has a next page", () => {
+      expect(pageBoundary("desc", [page([9, 7]), page([8])])).toBeUndefined();
     });
 
-    it("should drop txs at and before cursor position when txHash found (asc)", () => {
-      const txs = [makeTx("a", 1000), makeTx("b", 1000), makeTx("c", 1000), makeTx("d", 2000)];
-      const result = dropTxsBeforeCursor({
-        txs,
-        order: "asc",
-        cursor: { txHash: "b", timestamp: 1000 },
-      });
-      expect(result.map(t => t.txID)).toEqual(["c", "d"]);
+    it("ignores an endpoint that has no next page", () => {
+      expect(pageBoundary("desc", [page([9, 7, 5], "next"), page([8, 6])])).toBe(5);
     });
 
-    it("should filter by timestamp when txHash not found (asc)", () => {
-      const txs = [makeTx("a", 1000), makeTx("b", 2000), makeTx("c", 3000)];
-      const result = dropTxsBeforeCursor({
-        txs,
-        order: "asc",
-        cursor: { txHash: "notfound", timestamp: 1500 },
-      });
-      expect(result.map(t => t.txID)).toEqual(["b", "c"]);
+    it("takes the earliest open end in walk order", () => {
+      expect(pageBoundary("desc", [page([9, 7, 5], "next"), page([8, 6], "next")])).toBe(6);
+      expect(pageBoundary("asc", [page([1, 3, 5], "next"), page([2, 4], "next")])).toBe(4);
     });
 
-    it("should filter by timestamp when txHash not found (desc)", () => {
-      const txs = [makeTx("c", 3000), makeTx("b", 2000), makeTx("a", 1000)];
-      const result = dropTxsBeforeCursor({
-        txs,
-        order: "desc",
-        cursor: { txHash: "notfound", timestamp: 2500 },
-      });
-      expect(result.map(t => t.txID)).toEqual(["b", "a"]);
-    });
-  });
-
-  describe("dropTxsAfterNextCursor", () => {
-    const makeTx = (txID: string, timestamp: number): TrongridTxInfo =>
-      ({
-        txID,
-        date: new Date(timestamp),
-        value: new BigNumber(0),
-      }) as TrongridTxInfo;
-
-    it("should use earliest boundary for asc order", () => {
-      const nativeTxs = [makeTx("n1", 1000), makeTx("n2", 2000), makeTx("n3", 3000)];
-      const trc20Txs = [makeTx("t1", 1500), makeTx("t2", 2500)];
-      const pageTxs = [...nativeTxs, ...trc20Txs].sort(compareTxsByTimestamp("asc"));
-
-      const result = dropTxsAfterNextCursor({
-        order: "asc",
-        cursor: undefined,
-        pageTxs,
-        nativeResult: { txs: nativeTxs, hasNextPage: true },
-        trc20Result: { txs: trc20Txs, hasNextPage: true },
-      });
-
-      expect(result.txs.map(t => t.txID)).toEqual(["n1", "t1", "n2", "t2"]);
-      expect(result.nextCursor).toContain("t2");
-    });
-
-    it("should use latest boundary for desc order", () => {
-      const nativeTxs = [makeTx("n3", 3000), makeTx("n2", 2000), makeTx("n1", 1000)];
-      const trc20Txs = [makeTx("t2", 2500), makeTx("t1", 1500)];
-      const pageTxs = [...nativeTxs, ...trc20Txs].sort(compareTxsByTimestamp("desc"));
-
-      const result = dropTxsAfterNextCursor({
-        order: "desc",
-        cursor: undefined,
-        pageTxs,
-        nativeResult: { txs: nativeTxs, hasNextPage: true },
-        trc20Result: { txs: trc20Txs, hasNextPage: true },
-      });
-
-      expect(result.txs.map(t => t.txID)).toEqual(["n3", "t2", "n2", "t1"]);
-      expect(result.nextCursor).toContain("t1");
-    });
-
-    it("should slice by boundary txID position when boundary is mid-block (asc)", () => {
-      const nativeTxs = [makeTx("n1", 1000), makeTx("n2", 2000), makeTx("n3", 2000)];
-      const trc20Txs = [makeTx("t1", 2000), makeTx("t2", 2000), makeTx("t3", 2000)];
-      const pageTxs = [
-        makeTx("n1", 1000),
-        makeTx("n2", 2000),
-        makeTx("t1", 2000),
-        makeTx("n3", 2000),
-        makeTx("t2", 2000),
-        makeTx("t3", 2000),
-      ];
-
-      const result = dropTxsAfterNextCursor({
-        order: "asc",
-        cursor: undefined,
-        pageTxs,
-        nativeResult: { txs: nativeTxs, hasNextPage: true },
-        trc20Result: { txs: trc20Txs, hasNextPage: true },
-      });
-
-      expect(result.nextCursor).toContain("n3");
-      expect(result.txs.map(t => t.txID)).toEqual(["n1", "n2", "t1", "n3"]);
-    });
-
-    it("should slice by boundary txID position when boundary is mid-block (desc)", () => {
-      const nativeTxs = [makeTx("n3", 2000), makeTx("n2", 2000), makeTx("n1", 1000)];
-      const trc20Txs = [makeTx("t3", 2000), makeTx("t2", 2000), makeTx("t1", 2000)];
-      const pageTxs = [
-        makeTx("t3", 2000),
-        makeTx("t2", 2000),
-        makeTx("n3", 2000),
-        makeTx("t1", 2000),
-        makeTx("n2", 2000),
-        makeTx("n1", 1000),
-      ];
-
-      const result = dropTxsAfterNextCursor({
-        order: "desc",
-        cursor: undefined,
-        pageTxs,
-        nativeResult: { txs: nativeTxs, hasNextPage: true },
-        trc20Result: { txs: trc20Txs, hasNextPage: true },
-      });
-
-      expect(result.nextCursor).toContain("t1");
-      expect(result.txs.map(t => t.txID)).toEqual(["t3", "t2", "n3", "t1"]);
-    });
-
-    it("should return all txs when no next page", () => {
-      const nativeTxs = [makeTx("n1", 1000), makeTx("n2", 2000)];
-      const trc20Txs = [makeTx("t1", 1500)];
-      const pageTxs = [...nativeTxs, ...trc20Txs].sort(compareTxsByTimestamp("asc"));
-
-      const result = dropTxsAfterNextCursor({
-        order: "asc",
-        cursor: undefined,
-        pageTxs,
-        nativeResult: { txs: nativeTxs, hasNextPage: false },
-        trc20Result: { txs: trc20Txs, hasNextPage: false },
-      });
-
-      expect(result.txs.map(t => t.txID)).toEqual(["n1", "t1", "n2"]);
-      expect(result.nextCursor).toBeUndefined();
+    it("ignores an endpoint whose page is empty", () => {
+      expect(pageBoundary("desc", [page([], "next"), page([8, 6], "next")])).toBe(6);
     });
   });
 });

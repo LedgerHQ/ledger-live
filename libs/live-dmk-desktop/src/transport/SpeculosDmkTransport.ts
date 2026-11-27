@@ -18,6 +18,7 @@ import {
   readSpeculosTarget,
   speculosTargetTransportFactory,
 } from "@ledgerhq/live-dmk-shared/transport/speculosTarget";
+import { withSpeculosOsVersionNormalized } from "@ledgerhq/live-dmk-speculos";
 
 function ignoreCompletion<T>(source: Observable<T>): Observable<T> {
   return new Observable(subscriber => {
@@ -83,5 +84,6 @@ export class SpeculosDmkTransport implements DmkTransport {
   }
 }
 
-export const speculosDmkTransportFactory: TransportFactory = (args: TransportArgs) =>
-  new SpeculosDmkTransport(args);
+export const speculosDmkTransportFactory: TransportFactory = withSpeculosOsVersionNormalized(
+  (args: TransportArgs) => new SpeculosDmkTransport(args),
+);

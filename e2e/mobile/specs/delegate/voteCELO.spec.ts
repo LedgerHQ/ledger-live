@@ -1,9 +1,13 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runVoteCelo } from "@e2e/specs/delegate/delegate";
 
-const delegation = new Delegate(Account.CELO_1, "0.001", "first-available");
-runVoteCelo(
+const delegation = new Delegate({
+  account: Account.CELO_1,
+  amount: "0.001",
+  provider: "first-available",
+});
+runVoteCelo({
   delegation,
-  ["B2CQA-201"],
-  ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@celo`, `@family-celo`],
-);
+  tmsLinks: ["B2CQA-201"],
+  tags: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@celo`, `@family-celo`],
+});

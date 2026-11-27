@@ -58,9 +58,11 @@ const payment = ({
   recipientRewards?: string;
 }): AlgoTransaction => ({
   id,
+  rootId: id,
   timestamp: String(1700000000 + round),
   round,
   senderAddress: from,
+  feesPayer: from,
   senderRewards: new BigNumber(0),
   recipientRewards: new BigNumber(recipientRewards),
   closeRewards: undefined,
@@ -90,9 +92,11 @@ const assetTransfer = ({
   amount: string;
 }): AlgoTransaction => ({
   id,
+  rootId: id,
   timestamp: String(1700000000 + round),
   round,
   senderAddress: from,
+  feesPayer: from,
   senderRewards: new BigNumber(0),
   recipientRewards: new BigNumber(0),
   closeRewards: undefined,

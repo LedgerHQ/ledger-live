@@ -23,7 +23,7 @@ describe("api/craftTransaction", () => {
   });
 
   it("should craft transaction with memo", async () => {
-    const api = createApi("concordium_testnet");
+    const api = createApi();
     getNextValidSequenceMock.mockResolvedValue(5);
     craftTransactionMock.mockResolvedValue({
       type: 22, // TransferWithMemo
@@ -51,11 +51,7 @@ describe("api/craftTransaction", () => {
 
     const result = await api.craftTransaction(context, transactionIntent);
 
-    expect(getNextValidSequenceMock).toHaveBeenCalledWith(
-      config,
-      transactionIntent.sender,
-      "concordium_testnet",
-    );
+    expect(getNextValidSequenceMock).toHaveBeenCalledWith(config, transactionIntent.sender);
     expect(craftTransactionMock).toHaveBeenCalledWith(
       { address: transactionIntent.sender, nextSequenceNumber: 5 },
       expect.objectContaining({
@@ -68,7 +64,7 @@ describe("api/craftTransaction", () => {
   });
 
   it("should craft transaction without memo", async () => {
-    const api = createApi("concordium_testnet");
+    const api = createApi();
     getNextValidSequenceMock.mockResolvedValue(10);
     craftTransactionMock.mockResolvedValue({
       type: 3, // Transfer
@@ -103,7 +99,7 @@ describe("api/craftTransaction", () => {
   });
 
   it("should reject a non-native asset instead of crafting a CCD transfer", async () => {
-    const api = createApi("concordium_testnet");
+    const api = createApi();
     const transactionIntent = {
       intentType: "transaction" as const,
       type: "send",

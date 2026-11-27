@@ -3,9 +3,9 @@
  */
 import { renderHook } from "@testing-library/react";
 import { useResolveMarketCounterCurrency } from "../useResolveMarketCounterCurrency";
-import { useGetSupportedChartCounterCurrenciesQuery } from "../../state-manager/api";
+import { useGetSupportedChartCounterCurrenciesQuery } from "@domain/api-market-chart";
 
-jest.mock("../../state-manager/api", () => ({
+jest.mock("@domain/api-market-chart", () => ({
   useGetSupportedChartCounterCurrenciesQuery: jest.fn(),
 }));
 

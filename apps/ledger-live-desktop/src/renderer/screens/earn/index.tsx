@@ -26,6 +26,7 @@ import {
   localeSelector,
 } from "~/renderer/reducers/settings";
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
+import { useEarnAppLifecycleMonitoring } from "~/renderer/analytics/useEarnAppLifecycleMonitoring";
 import { useLocation } from "react-router";
 import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
@@ -60,6 +61,7 @@ const Earn = () => {
   const localManifest = useLocalLiveAppManifest(earnManifestId);
   const remoteManifest = useRemoteLiveAppManifest(earnManifestId);
   const manifest = localManifest || remoteManifest;
+  useEarnAppLifecycleMonitoring(manifest?.id);
   const themeType = useTheme().theme;
   const discreetMode = useDiscreetMode();
   const countryLocale = getParsedSystemDeviceLocale().region;

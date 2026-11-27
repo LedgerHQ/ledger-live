@@ -278,6 +278,10 @@ describe("evm bridge", () => {
       expect(evmBridge(ethereum).validateTransaction).toEqual(expect.any(Function));
     });
 
+    it("lets validateIntent report a refused fee estimation", () => {
+      expect(evmBridge(ethereum).validatesRefusedEstimation).toBe(true);
+    });
+
     it("exposes stakingSupported only for staking-configured currencies", () => {
       // The staking registry is keyed on the chain id, read from the currency config.
       LiveConfig.setConfig({

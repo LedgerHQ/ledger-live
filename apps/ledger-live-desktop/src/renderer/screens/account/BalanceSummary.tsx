@@ -19,7 +19,7 @@ import { useLLDCoinFamily } from "~/renderer/families";
 import PlaceholderChart from "~/renderer/components/PlaceholderChart";
 import Alert from "~/renderer/components/Alert";
 import { useTranslation } from "react-i18next";
-import { tokensWithUnsupportedGraph } from "~/helpers/tokensWithUnsupportedGraph";
+import { hasUnsupportedGraph } from "@ledgerhq/live-common/currencies/hasUnsupportedGraph";
 import { hourFormat, dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
@@ -132,8 +132,7 @@ export default function AccountBalanceSummary({
       </Box>
 
       <Box px={5} ff="Inter" fontSize={4} color="neutral.c80" pt={5}>
-        {account.type === "TokenAccount" &&
-        tokensWithUnsupportedGraph.includes(account.token.id) ? (
+        {account.type === "TokenAccount" && hasUnsupportedGraph(account.token.id) ? (
           <>
             <Alert type="secondary" noIcon={false}>
               <span>{t("graph.noGraphWarning")}</span>

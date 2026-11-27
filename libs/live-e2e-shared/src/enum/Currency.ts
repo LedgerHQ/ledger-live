@@ -3,17 +3,39 @@ import { Network } from "./Network";
 
 export type CurrencyType = Currency;
 
+type CurrencyMarket = { readonly id: string; readonly name: string };
+
+type CurrencyOptions = {
+  name: string;
+  ticker: string;
+  id: string;
+  speculosApp: AppInfos;
+  networks: Network[];
+  contractAddress?: string;
+  aggregatedName?: string;
+  market?: CurrencyMarket;
+};
+
 export class Currency {
-  constructor(
-    public readonly name: string,
-    public readonly ticker: string,
-    public readonly id: string,
-    public readonly speculosApp: AppInfos,
-    public readonly networks: Network[],
-    public readonly contractAddress?: string,
-    public readonly aggregatedName?: string,
-    public readonly market?: { readonly id: string; readonly name: string },
-  ) {}
+  public readonly name: string;
+  public readonly ticker: string;
+  public readonly id: string;
+  public readonly speculosApp: AppInfos;
+  public readonly networks: Network[];
+  public readonly contractAddress?: string;
+  public readonly aggregatedName?: string;
+  public readonly market?: CurrencyMarket;
+
+  constructor(options: CurrencyOptions) {
+    this.name = options.name;
+    this.ticker = options.ticker;
+    this.id = options.id;
+    this.speculosApp = options.speculosApp;
+    this.networks = options.networks;
+    this.contractAddress = options.contractAddress;
+    this.aggregatedName = options.aggregatedName;
+    this.market = options.market;
+  }
 
   toString(): string {
     return this.ticker;
@@ -28,87 +50,202 @@ export class Currency {
     return CURRENCY_TEST_LABELS.get(this) ?? this.ticker;
   }
 
-  static readonly CELO = new Currency("Celo", "CELO", "celo", AppInfos.CELO, [Network.CELO]);
+  /** Name the CLI resolves to this currency; the Speculos app name when it has no entry. */
+  get cliKeyword(): string {
+    return CLI_CURRENCY_KEYWORDS.get(this) ?? this.speculosApp.name;
+  }
 
-  static readonly INJ = new Currency("Injective", "INJ", "injective", AppInfos.INJECTIVE, [
-    Network.INJECTIVE,
-  ]);
+  static readonly CELO = new Currency({
+    name: "Celo",
+    ticker: "CELO",
+    id: "celo",
+    speculosApp: AppInfos.CELO,
+    networks: [Network.CELO],
+  });
 
-  static readonly BTC = new Currency("Bitcoin", "BTC", "bitcoin", AppInfos.BITCOIN, [
-    Network.BITCOIN,
-  ]);
+  static readonly INJ = new Currency({
+    name: "Injective",
+    ticker: "INJ",
+    id: "injective",
+    speculosApp: AppInfos.INJECTIVE,
+    networks: [Network.INJECTIVE],
+  });
 
-  static readonly APT = new Currency("Aptos", "APT", "aptos", AppInfos.APTOS, [Network.APTOS]);
+  static readonly BTC = new Currency({
+    name: "Bitcoin",
+    ticker: "BTC",
+    id: "bitcoin",
+    speculosApp: AppInfos.BITCOIN,
+    networks: [Network.BITCOIN],
+  });
 
-  static readonly ZEC = new Currency("Zcash", "ZEC", "zcash", AppInfos.ZCASH, [Network.ZCASH]);
+  static readonly APT = new Currency({
+    name: "Aptos",
+    ticker: "APT",
+    id: "aptos",
+    speculosApp: AppInfos.APTOS,
+    networks: [Network.APTOS],
+  });
 
-  static readonly KAS = new Currency("Kaspa", "KAS", "kaspa", AppInfos.KASPA, [Network.KASPA]);
+  static readonly ZEC = new Currency({
+    name: "Zcash",
+    ticker: "ZEC",
+    id: "zcash",
+    speculosApp: AppInfos.ZCASH,
+    networks: [Network.ZCASH],
+  });
 
-  static readonly HBAR = new Currency("Hedera", "HBAR", "hedera", AppInfos.HEDERA, [
-    Network.HEDERA,
-  ]);
+  static readonly KAS = new Currency({
+    name: "Kaspa",
+    ticker: "KAS",
+    id: "kaspa",
+    speculosApp: AppInfos.KASPA,
+    networks: [Network.KASPA],
+  });
 
-  static readonly tBTC = new Currency(
-    "Bitcoin Testnet",
-    "𝚝BTC",
-    "bitcoin_testnet",
-    AppInfos.BITCOIN_TESTNET,
-    [Network.BITCOIN_TESTNET],
-  );
-  static readonly DOGE = new Currency("Dogecoin", "DOGE", "dogecoin", AppInfos.DOGECOIN, [
-    Network.DOGECOIN,
-  ]);
-  static readonly ETH = new Currency(
-    "Ethereum",
-    "ETH",
-    "ethereum",
-    AppInfos.ETHEREUM,
-    [Network.ETHEREUM],
-    "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-  );
-  static readonly ETC = new Currency(
-    "Ethereum Classic",
-    "ETC",
-    "ethereum_classic",
-    AppInfos.ETHEREUM_CLASSIC,
-    [Network.ETHEREUM_CLASSIC],
-  );
-  static readonly SOL = new Currency("Solana", "SOL", "solana", AppInfos.SOLANA, [Network.SOLANA]);
+  // Addresses derive through the Ethereum app.
+  static readonly HYPERCORE = new Currency({
+    name: "Hyperliquid",
+    ticker: "USDC",
+    id: "hypercore",
+    speculosApp: AppInfos.ETHEREUM,
+    networks: [],
+  });
+  static readonly HBAR = new Currency({
+    name: "Hedera",
+    ticker: "HBAR",
+    id: "hedera",
+    speculosApp: AppInfos.HEDERA,
+    networks: [Network.HEDERA],
+  });
 
-  static readonly DOT = new Currency("Polkadot", "DOT", "assethub_polkadot", AppInfos.POLKADOT, [
-    Network.POLKADOT,
-  ]);
-  static readonly TRX = new Currency("Tron", "TRX", "tron", AppInfos.TRON, [Network.TRON]);
-  static readonly XRP = new Currency("XRPL", "XRP", "ripple", AppInfos.RIPPLE, [Network.XRP]);
-  static readonly ADA = new Currency("Cardano", "ADA", "cardano", AppInfos.CARDANO, [
-    Network.CARDANO,
-  ]);
-  static readonly XLM = new Currency("Stellar", "XLM", "stellar", AppInfos.STELLAR, [
-    Network.STELLAR,
-  ]);
-  static readonly BCH = new Currency("Bitcoin Cash", "BCH", "bitcoin_cash", AppInfos.BITCOIN_CASH, [
-    Network.BITCOIN_CASH,
-  ]);
-  static readonly ALGO = new Currency("Algorand", "ALGO", "algorand", AppInfos.ALGORAND, [
-    Network.ALGORAND,
-  ]);
-  static readonly ATOM = new Currency("Cosmos", "ATOM", "cosmos", AppInfos.COSMOS, [
-    Network.COSMOS,
-  ]);
-  static readonly XTZ = new Currency("Tezos", "XTZ", "tezos", AppInfos.TEZOS, [Network.TEZOS]);
-  static readonly POL = new Currency("Polygon", "POL", "polygon", AppInfos.POLYGON, [
-    Network.POLYGON,
-  ]);
-  static readonly BSC = new Currency("BNB Smart Chain", "BNB", "bsc", AppInfos.BNB_SMART_CHAIN, [
-    Network.BNB_SMART_CHAIN,
-  ]);
-  static readonly GRAM = new Currency("Gram", "GRAM", "ton", AppInfos.TON, [Network.TON]);
-  static readonly ETH_USDT = new Currency(
-    "Tether USD",
-    "USDT",
-    "ethereum/erc20/usd_tether__erc20_",
-    AppInfos.ETHEREUM,
-    [
+  static readonly tBTC = new Currency({
+    name: "Bitcoin Testnet",
+    ticker: "𝚝BTC",
+    id: "bitcoin_testnet",
+    speculosApp: AppInfos.BITCOIN_TESTNET,
+    networks: [Network.BITCOIN_TESTNET],
+  });
+  static readonly DOGE = new Currency({
+    name: "Dogecoin",
+    ticker: "DOGE",
+    id: "dogecoin",
+    speculosApp: AppInfos.DOGECOIN,
+    networks: [Network.DOGECOIN],
+  });
+  static readonly ETH = new Currency({
+    name: "Ethereum",
+    ticker: "ETH",
+    id: "ethereum",
+    speculosApp: AppInfos.ETHEREUM,
+    networks: [Network.ETHEREUM],
+    contractAddress: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  });
+  static readonly ETC = new Currency({
+    name: "Ethereum Classic",
+    ticker: "ETC",
+    id: "ethereum_classic",
+    speculosApp: AppInfos.ETHEREUM_CLASSIC,
+    networks: [Network.ETHEREUM_CLASSIC],
+  });
+  static readonly SOL = new Currency({
+    name: "Solana",
+    ticker: "SOL",
+    id: "solana",
+    speculosApp: AppInfos.SOLANA,
+    networks: [Network.SOLANA],
+  });
+
+  static readonly DOT = new Currency({
+    name: "Polkadot",
+    ticker: "DOT",
+    id: "assethub_polkadot",
+    speculosApp: AppInfos.POLKADOT,
+    networks: [Network.POLKADOT],
+  });
+  static readonly TRX = new Currency({
+    name: "Tron",
+    ticker: "TRX",
+    id: "tron",
+    speculosApp: AppInfos.TRON,
+    networks: [Network.TRON],
+  });
+  static readonly XRP = new Currency({
+    name: "XRPL",
+    ticker: "XRP",
+    id: "ripple",
+    speculosApp: AppInfos.RIPPLE,
+    networks: [Network.XRP],
+  });
+  static readonly ADA = new Currency({
+    name: "Cardano",
+    ticker: "ADA",
+    id: "cardano",
+    speculosApp: AppInfos.CARDANO,
+    networks: [Network.CARDANO],
+  });
+  static readonly XLM = new Currency({
+    name: "Stellar",
+    ticker: "XLM",
+    id: "stellar",
+    speculosApp: AppInfos.STELLAR,
+    networks: [Network.STELLAR],
+  });
+  static readonly BCH = new Currency({
+    name: "Bitcoin Cash",
+    ticker: "BCH",
+    id: "bitcoin_cash",
+    speculosApp: AppInfos.BITCOIN_CASH,
+    networks: [Network.BITCOIN_CASH],
+  });
+  static readonly ALGO = new Currency({
+    name: "Algorand",
+    ticker: "ALGO",
+    id: "algorand",
+    speculosApp: AppInfos.ALGORAND,
+    networks: [Network.ALGORAND],
+  });
+  static readonly ATOM = new Currency({
+    name: "Cosmos",
+    ticker: "ATOM",
+    id: "cosmos",
+    speculosApp: AppInfos.COSMOS,
+    networks: [Network.COSMOS],
+  });
+  static readonly XTZ = new Currency({
+    name: "Tezos",
+    ticker: "XTZ",
+    id: "tezos",
+    speculosApp: AppInfos.TEZOS,
+    networks: [Network.TEZOS],
+  });
+  static readonly POL = new Currency({
+    name: "Polygon",
+    ticker: "POL",
+    id: "polygon",
+    speculosApp: AppInfos.POLYGON,
+    networks: [Network.POLYGON],
+  });
+  static readonly BSC = new Currency({
+    name: "BNB Smart Chain",
+    ticker: "BNB",
+    id: "bsc",
+    speculosApp: AppInfos.BNB_SMART_CHAIN,
+    networks: [Network.BNB_SMART_CHAIN],
+  });
+  static readonly GRAM = new Currency({
+    name: "Gram",
+    ticker: "GRAM",
+    id: "ton",
+    speculosApp: AppInfos.TON,
+    networks: [Network.TON],
+  });
+  static readonly ETH_USDT = new Currency({
+    name: "Tether USD",
+    ticker: "USDT",
+    id: "ethereum/erc20/usd_tether__erc20_",
+    speculosApp: AppInfos.ETHEREUM,
+    networks: [
       Network.ETHEREUM,
       Network.ARBITRUM,
       Network.POLYGON,
@@ -116,16 +253,15 @@ export class Currency {
       Network.BASE,
       Network.SCROLL,
     ],
-    "0xdac17f958d2ee523a2206206994597c13d831ec7",
-    undefined,
-    { id: "tether", name: "Tether" },
-  );
-  static readonly ETH_USDC = new Currency(
-    "USD Coin",
-    "USDC",
-    "ethereum/erc20/usd__coin",
-    AppInfos.ETHEREUM,
-    [
+    contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    market: { id: "tether", name: "Tether" },
+  });
+  static readonly ETH_USDC = new Currency({
+    name: "USD Coin",
+    ticker: "USDC",
+    id: "ethereum/erc20/usd__coin",
+    speculosApp: AppInfos.ETHEREUM,
+    networks: [
       Network.ETHEREUM,
       Network.ARBITRUM,
       Network.POLYGON,
@@ -133,146 +269,229 @@ export class Currency {
       Network.BASE,
       Network.SCROLL,
     ],
-    "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  );
-  static readonly ETH_WBTC = new Currency(
-    "Wrapped Bitcoin",
-    "WBTC",
-    "ethereum/erc20/wrapped_bitcoin",
-    AppInfos.ETHEREUM,
-    [Network.ETHEREUM],
-    "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-  );
-  static readonly ETH_LIDO = new Currency(
-    "LIDO Staked ETH",
-    "STETH",
-    "ethereum/erc20/steth",
-    AppInfos.ETHEREUM,
-    [Network.ETHEREUM],
-  );
-  static readonly ETH_WGNK = new Currency(
-    "Wrapped Gonka",
-    "WGNK",
-    "ethereum/erc20/wrapped_gonka_0x972a7a92d92796a98801a8818bcf91f1648f2f68",
-    AppInfos.ETHEREUM,
-    [Network.ETHEREUM],
-    "0x972a7A92D92796a98801A8818bcF91f1648f2F68",
-  );
-  static readonly XLM_USDC = new Currency("USDC", "USDC", "stellar", AppInfos.STELLAR, [
-    Network.STELLAR,
-  ]);
-  static readonly ALGO_USDT = new Currency("Tether USDt", "USDT", "algorand", AppInfos.ALGORAND, [
-    Network.ALGORAND,
-  ]);
-  static readonly TRX_USDT = new Currency("Tether USD", "USDT", "tron", AppInfos.TRON, [
-    Network.TRON,
-  ]);
-  static readonly TRX_BTT = new Currency("BitTorrent", "BTT", "tron", AppInfos.TRON, [
-    Network.TRON,
-  ]);
-  static readonly BSC_BUSD = new Currency(
-    "Binance-Peg BUSD Token",
-    "BUSD",
-    "bsc",
-    AppInfos.BNB_SMART_CHAIN,
-    [Network.BNB_SMART_CHAIN, Network.POLYGON],
-  );
-  static readonly POL_DAI = new Currency(
-    "(PoS) Dai Stablecoin",
-    "DAI",
-    "polygon",
-    AppInfos.POLYGON,
-    [Network.POLYGON],
-    undefined,
-    "Dai Stablecoin v2.0",
-  );
-  static readonly POL_UNI = new Currency("Uniswap (PoS)", "UNI", "polygon", AppInfos.POLYGON, [
-    Network.POLYGON,
-  ]);
-  static readonly NEAR = new Currency("NEAR", "NEAR", "near", AppInfos.NEAR, [Network.NEAR]);
-  static readonly OSMO = new Currency("Osmosis", "OSMO", "osmo", AppInfos.OSMOSIS, [
-    Network.OSMOSIS,
-  ]);
-  static readonly BABY = new Currency("Babylon", "BABY", "babylon", AppInfos.BABYLON, [
-    Network.BABYLON,
-  ]);
-  static readonly MULTIVERS_X = new Currency("MultiversX", "EGLD", "elrond", AppInfos.MULTIVERS_X, [
-    Network.MULTIVERS_X,
-  ]);
-  static readonly LTC = new Currency("Litecoin", "LTC", "litecoin", AppInfos.LTC, [
-    Network.LITECOIN,
-  ]);
-  static readonly SOL_GIGA = new Currency(
-    "GIGACHAD",
-    "GIGA",
-    "solana",
-    AppInfos.SOLANA,
-    [Network.SOLANA],
-    "63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9",
-  );
-  static readonly SOL_WIF = new Currency(
-    "DOGWIFHAT",
-    "WIF",
-    "solana",
-    AppInfos.SOLANA,
-    [Network.SOLANA],
-    "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
-  );
+    contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    aggregatedName: "USD Coin",
+  });
+  static readonly ETH_WBTC = new Currency({
+    name: "Wrapped Bitcoin",
+    ticker: "WBTC",
+    id: "ethereum/erc20/wrapped_bitcoin",
+    speculosApp: AppInfos.ETHEREUM,
+    networks: [Network.ETHEREUM],
+    contractAddress: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+  });
+  static readonly ETH_LIDO = new Currency({
+    name: "LIDO Staked ETH",
+    ticker: "STETH",
+    id: "ethereum/erc20/steth",
+    speculosApp: AppInfos.ETHEREUM,
+    networks: [Network.ETHEREUM],
+  });
+  static readonly ETH_WGNK = new Currency({
+    name: "Wrapped Gonka",
+    ticker: "WGNK",
+    id: "ethereum/erc20/wrapped_gonka_0x972a7a92d92796a98801a8818bcf91f1648f2f68",
+    speculosApp: AppInfos.ETHEREUM,
+    networks: [Network.ETHEREUM],
+    contractAddress: "0x972a7A92D92796a98801A8818bcF91f1648f2F68",
+  });
+  static readonly XLM_USDC = new Currency({
+    name: "USDC",
+    ticker: "USDC",
+    id: "stellar",
+    speculosApp: AppInfos.STELLAR,
+    networks: [Network.STELLAR],
+    aggregatedName: "USD Coin",
+  });
+  static readonly ALGO_USDT = new Currency({
+    name: "Tether USDt",
+    ticker: "USDT",
+    id: "algorand",
+    speculosApp: AppInfos.ALGORAND,
+    networks: [Network.ALGORAND],
+  });
+  static readonly TRX_USDT = new Currency({
+    name: "Tether USD",
+    ticker: "USDT",
+    id: "tron",
+    speculosApp: AppInfos.TRON,
+    networks: [Network.TRON],
+  });
+  static readonly TRX_BTT = new Currency({
+    name: "BitTorrent",
+    ticker: "BTT",
+    id: "tron",
+    speculosApp: AppInfos.TRON,
+    networks: [Network.TRON],
+  });
+  static readonly BSC_BUSD = new Currency({
+    name: "Binance-Peg BUSD Token",
+    ticker: "BUSD",
+    id: "bsc",
+    speculosApp: AppInfos.BNB_SMART_CHAIN,
+    networks: [Network.BNB_SMART_CHAIN, Network.POLYGON],
+  });
+  static readonly POL_DAI = new Currency({
+    name: "(PoS) Dai Stablecoin",
+    ticker: "DAI",
+    id: "polygon",
+    speculosApp: AppInfos.POLYGON,
+    networks: [Network.POLYGON],
+    aggregatedName: "Dai Stablecoin v2.0",
+  });
+  static readonly POL_UNI = new Currency({
+    name: "Uniswap (PoS)",
+    ticker: "UNI",
+    id: "polygon",
+    speculosApp: AppInfos.POLYGON,
+    networks: [Network.POLYGON],
+  });
+  static readonly NEAR = new Currency({
+    name: "NEAR",
+    ticker: "NEAR",
+    id: "near",
+    speculosApp: AppInfos.NEAR,
+    networks: [Network.NEAR],
+  });
+  static readonly OSMO = new Currency({
+    name: "Osmosis",
+    ticker: "OSMO",
+    id: "osmo",
+    speculosApp: AppInfos.OSMOSIS,
+    networks: [Network.OSMOSIS],
+  });
+  static readonly BABY = new Currency({
+    name: "Babylon",
+    ticker: "BABY",
+    id: "babylon",
+    speculosApp: AppInfos.BABYLON,
+    networks: [Network.BABYLON],
+  });
+  static readonly MULTIVERS_X = new Currency({
+    name: "MultiversX",
+    ticker: "EGLD",
+    id: "elrond",
+    speculosApp: AppInfos.MULTIVERS_X,
+    networks: [Network.MULTIVERS_X],
+  });
+  static readonly LTC = new Currency({
+    name: "Litecoin",
+    ticker: "LTC",
+    id: "litecoin",
+    speculosApp: AppInfos.LTC,
+    networks: [Network.LITECOIN],
+  });
+  static readonly SOL_GIGA = new Currency({
+    name: "GIGACHAD",
+    ticker: "GIGA",
+    id: "solana",
+    speculosApp: AppInfos.SOLANA,
+    networks: [Network.SOLANA],
+    contractAddress: "63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9",
+  });
+  static readonly SOL_WIF = new Currency({
+    name: "DOGWIFHAT",
+    ticker: "WIF",
+    id: "solana",
+    speculosApp: AppInfos.SOLANA,
+    networks: [Network.SOLANA],
+    contractAddress: "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
+  });
 
-  static readonly OP = new Currency("OP Mainnet", "OP", "optimism", AppInfos.ETHEREUM, [
-    Network.OPTIMISM,
-  ]);
+  static readonly OP = new Currency({
+    name: "OP Mainnet",
+    ticker: "OP",
+    id: "optimism",
+    speculosApp: AppInfos.ETHEREUM,
+    networks: [Network.OPTIMISM],
+  });
 
-  static readonly SUI = new Currency("Sui", "SUI", "sui", AppInfos.SUI, [Network.SUI]);
+  static readonly SUI = new Currency({
+    name: "Sui",
+    ticker: "SUI",
+    id: "sui",
+    speculosApp: AppInfos.SUI,
+    networks: [Network.SUI],
+  });
 
-  static readonly BASE = new Currency("Base", "ETH", "base", AppInfos.BASE, [Network.BASE]);
+  static readonly BASE = new Currency({
+    name: "Base",
+    ticker: "ETH",
+    id: "base",
+    speculosApp: AppInfos.BASE,
+    networks: [Network.BASE],
+  });
 
-  static readonly BASE_AERODROME = new Currency(
-    "Aerodrome",
-    "AERO",
-    "base/erc20/aerodrome",
-    AppInfos.BASE,
-    [Network.BASE],
-    "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
-  );
+  static readonly BASE_AERODROME = new Currency({
+    name: "Aerodrome",
+    ticker: "AERO",
+    id: "base/erc20/aerodrome",
+    speculosApp: AppInfos.BASE,
+    networks: [Network.BASE],
+    contractAddress: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+  });
 
-  static readonly VET = new Currency("Vechain", "VET", "vechain", AppInfos.VECHAIN, [
-    Network.VECHAIN,
-  ]);
+  static readonly VET = new Currency({
+    name: "Vechain",
+    ticker: "VET",
+    id: "vechain",
+    speculosApp: AppInfos.VECHAIN,
+    networks: [Network.VECHAIN],
+  });
 
-  static readonly MINA = new Currency("Mina", "MINA", "mina", AppInfos.MINA, [Network.MINA]);
+  static readonly MINA = new Currency({
+    name: "Mina",
+    ticker: "MINA",
+    id: "mina",
+    speculosApp: AppInfos.MINA,
+    networks: [Network.MINA],
+  });
 
-  static readonly SUI_USDC = new Currency(
-    "USD Coin",
-    "USDC",
-    "sui/coin/usdc_0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::usdc",
-    AppInfos.SUI,
-    [Network.SUI],
-    "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7",
-  );
+  static readonly SUI_USDC = new Currency({
+    name: "USD Coin",
+    ticker: "USDC",
+    id: "sui/coin/usdc_0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::usdc",
+    speculosApp: AppInfos.SUI,
+    networks: [Network.SUI],
+    contractAddress: "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7",
+    aggregatedName: "USD Coin",
+  });
 
-  static readonly ALEO = new Currency("Aleo", "ALEO", "aleo", AppInfos.ALEO, [Network.ALEO]);
+  static readonly ALEO = new Currency({
+    name: "Aleo",
+    ticker: "ALEO",
+    id: "aleo",
+    speculosApp: AppInfos.ALEO,
+    networks: [Network.ALEO],
+  });
 
-  static readonly ICP = new Currency(
-    "Internet Computer",
-    "ICP",
-    "internet_computer",
-    AppInfos.INTERNET_COMPUTER,
-    [Network.INTERNET_COMPUTER],
-  );
+  static readonly ICP = new Currency({
+    name: "Internet Computer",
+    ticker: "ICP",
+    id: "internet_computer",
+    speculosApp: AppInfos.INTERNET_COMPUTER,
+    networks: [Network.INTERNET_COMPUTER],
+  });
 
-  static readonly CCD_TESTNET = new Currency(
-    "Concordium (Testnet)",
-    "CCD",
-    "concordium_testnet",
-    AppInfos.CONCORDIUM_TESTNET,
-    [Network.CONCORDIUM],
-  );
+  static readonly CCD_TESTNET = new Currency({
+    name: "Concordium (Testnet)",
+    ticker: "CCD",
+    id: "concordium_testnet",
+    speculosApp: AppInfos.CONCORDIUM_TESTNET,
+    networks: [Network.CONCORDIUM],
+  });
 
-  static readonly SEI_EVM = new Currency("SEI Network (EVM)", "SEI", "sei_evm", AppInfos.SEI, [
-    Network.SEI,
-  ]);
+  static readonly SEI_EVM = new Currency({
+    name: "SEI Network (EVM)",
+    ticker: "SEI",
+    id: "sei_evm",
+    speculosApp: AppInfos.SEI,
+    networks: [Network.SEI],
+  });
 }
+
+// Currencies that derive through another coin's app, so the app name is not their CLI name.
+const CLI_CURRENCY_KEYWORDS = new Map<Currency, string>([[Currency.HYPERCORE, "hypercore"]]);
 
 const CURRENCY_TEST_LABELS = new Map<Currency, string>([
   [Currency.BASE, "ETH (Base)"],

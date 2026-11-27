@@ -16,8 +16,8 @@ export const sendMina = withDeviceController(
       if (!tx.accountToCredit.address) {
         throw new Error("Recipient address is not set");
       }
-      expectSpeculosEventsContain(tx.accountToCredit.address, events);
-      expectSpeculosEventsContain(tx.amount, events);
+      expectSpeculosEventsContain({ substring: tx.accountToCredit.address, events });
+      expectSpeculosEventsContain({ substring: tx.amount, events });
 
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
@@ -45,9 +45,9 @@ export const delegateMina = withDeviceController(
               "which the mina staking pickers return alongside the account.",
           );
         }
-        expectSpeculosEventsContain(expectedAddress, events);
+        expectSpeculosEventsContain({ substring: expectedAddress, events });
       } else {
-        expectSpeculosEventsContain(delegatingAccount.provider, events);
+        expectSpeculosEventsContain({ substring: delegatingAccount.provider, events });
       }
 
       if (isTouchDevice()) {

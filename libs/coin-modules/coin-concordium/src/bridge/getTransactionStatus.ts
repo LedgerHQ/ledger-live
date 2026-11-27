@@ -18,13 +18,14 @@ import {
   PLT_TOKEN_ID_MAX_LENGTH,
   PLT_TOKEN_ID_MIN_LENGTH,
 } from "@ledgerhq/concordium-core";
-import coinConfig from "../config";
+import { DEFAULT_MIN_RESERVE } from "../constants";
 import { resolveSendAmount } from "./amount";
 import { effectivePltAmount } from "./tokens";
 import { checkRecipientRestrictions } from "../logic/transaction/pltRecipientRestrictions";
 import type {
   ConcordiumAccount,
   ConcordiumCoinConfig,
+  ConcordiumContext,
   ConcordiumTokenResources,
   Transaction,
   TransactionStatus,
@@ -266,7 +267,6 @@ async function getTokenTransactionStatus(
     ? undefined
     : await checkRecipientRestrictions({
         config,
-        currencyId: account.currency.id,
         recipient: transaction.recipient,
         tokenId,
         ticker: subAccount.token.ticker,
@@ -358,75 +358,75 @@ function validateCcdForFee(
   }
 }
 
-export const getTransactionStatus: AccountBridge<
-  Transaction,
-  Account,
-  TransactionStatus
->["getTransactionStatus"] = async (account, transaction) => {
-  const errors: Record<string, Error> = {};
-  const warnings: Record<string, Error> = {};
+export const buildGetTransactionStatus =
+  (
+    context: ConcordiumContext,
+  ): AccountBridge<Transaction, Account, TransactionStatus>["getTransactionStatus"] =>
+  async (account, transaction) => {
+    const errors: Record<string, Error> = {};
+    const warnings: Record<string, Error> = {};
 
-  const config = coinConfig.getCoinConfig(account.currency.id);
-  // reserveAmount is the minimum amount of currency that an account must hold in order to stay activated
-  const reserveAmount = new BigNumber(config.minReserve);
-  const estimatedFees = new BigNumber(transaction.fee || 0);
+    const config = await context.config(account.currency.id);
+    // reserveAmount is the minimum amount of currency that an account must hold in order to stay activated
+    const reserveAmount = new BigNumber(config.minReserve ?? DEFAULT_MIN_RESERVE);
+    const estimatedFees = new BigNumber(transaction.fee || 0);
 
-  const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
-  if (subAccount?.type === "TokenAccount") {
-    return getTokenTransactionStatus(
-      config,
+    const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+    if (subAccount?.type === "TokenAccount") {
+      return getTokenTransactionStatus(
+        config,
+        account,
+        transaction,
+        subAccount,
+        estimatedFees,
+        reserveAmount,
+      );
+    }
+
+    // Blocks rather than falling through to native validation — see
+    // {@link ConcordiumTokenAccountUnavailable}.
+    if (transaction.subAccountId) {
+      const amount = new BigNumber(transaction.amount);
+      return {
+        errors: { amount: new ConcordiumTokenAccountUnavailable() },
+        warnings: {},
+        estimatedFees,
+        amount,
+        totalSpent: amount,
+      };
+    }
+
+    // Calculate amount based on useAllAmount flag
+    const amount = resolveSendAmount({
       account,
       transaction,
-      subAccount,
+      tokenAccount: undefined,
       estimatedFees,
-      reserveAmount,
-    );
-  }
+    });
 
-  // Blocks rather than falling through to native validation — see
-  // {@link ConcordiumTokenAccountUnavailable}.
-  if (transaction.subAccountId) {
-    const amount = new BigNumber(transaction.amount);
+    const totalSpent = amount.plus(estimatedFees);
+
+    if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
+      // if the fee is more than 10 times the amount, we warn the user that fee is high compared to what he is sending
+      warnings.feeTooHigh = new FeeTooHigh();
+    }
+
+    Object.assign(errors, {
+      amount:
+        validateAmount(transaction, account, amount, totalSpent, reserveAmount) ??
+        validateFee(estimatedFees),
+      recipient: validateRecipient(transaction, account),
+    });
+
+    if (transaction.memo) {
+      Object.assign(errors, { memo: validateMemo(transaction.memo) });
+    }
+
     return {
-      errors: { amount: new ConcordiumTokenAccountUnavailable() },
-      warnings: {},
+      errors: Object.fromEntries(Object.entries(errors).filter(([, v]) => !!v)),
+      warnings,
       estimatedFees,
       amount,
-      totalSpent: amount,
+      totalSpent,
     };
-  }
-
-  // Calculate amount based on useAllAmount flag
-  const amount = resolveSendAmount({
-    account,
-    transaction,
-    tokenAccount: undefined,
-    estimatedFees,
-  });
-
-  const totalSpent = amount.plus(estimatedFees);
-
-  if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
-    // if the fee is more than 10 times the amount, we warn the user that fee is high compared to what he is sending
-    warnings.feeTooHigh = new FeeTooHigh();
-  }
-
-  Object.assign(errors, {
-    amount:
-      validateAmount(transaction, account, amount, totalSpent, reserveAmount) ??
-      validateFee(estimatedFees),
-    recipient: validateRecipient(transaction, account),
-  });
-
-  if (transaction.memo) {
-    Object.assign(errors, { memo: validateMemo(transaction.memo) });
-  }
-
-  return {
-    errors: Object.fromEntries(Object.entries(errors).filter(([, v]) => !!v)),
-    warnings,
-    estimatedFees,
-    amount,
-    totalSpent,
   };
-};

@@ -18,3 +18,5 @@ export const WARNING_REASON = {
 } as const;
 
 export type WarningReason = (typeof WARNING_REASON)[keyof typeof WARNING_REASON];
+
+export const ADD_ACCOUNT_OPERATION = "add_account";

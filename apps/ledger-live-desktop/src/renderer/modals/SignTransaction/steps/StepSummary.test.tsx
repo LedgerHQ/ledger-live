@@ -71,3 +71,27 @@ describe("SignTransaction/StepSummary memo", () => {
     expect(screen.queryByText("Memo")).not.toBeInTheDocument();
   });
 });
+
+describe("SignTransaction/StepSummary amount rows", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("shows the amount row when the family has no hidesSummaryAmount slot", () => {
+    mockUseLLDCoinFamily.mockReturnValue({} as never);
+
+    render(<StepSummary {...makeProps("solana", { family: "solana" })} />);
+
+    expect(screen.getByText("Amount")).toBeVisible();
+    expect(screen.getByText("Total to debit")).toBeVisible();
+  });
+
+  it("hides the amount and total spent rows when the slot returns true", () => {
+    mockUseLLDCoinFamily.mockReturnValue({ hidesSummaryAmount: () => true } as never);
+
+    render(<StepSummary {...makeProps("solana", { family: "solana", raw: "base64-tx" })} />);
+
+    expect(screen.queryByText("Amount")).not.toBeInTheDocument();
+    expect(screen.queryByText("Total to debit")).not.toBeInTheDocument();
+  });
+});

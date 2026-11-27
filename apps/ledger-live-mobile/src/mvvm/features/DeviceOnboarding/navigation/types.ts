@@ -4,6 +4,7 @@ import type { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
 import type { NavigatorScreenParams } from "@react-navigation/native";
 import type { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { NavigatorName, ScreenName } from "~/const";
+import type { FunnelProps, SeededResult } from "@features/platform-device-onboarding-analytics";
 
 export type DeviceOnboardingNavigatorParamList = {
   [ScreenName.DeviceOnboardingConnect]: undefined;
@@ -15,6 +16,9 @@ export type DeviceOnboardingNavigatorParamList = {
     device: Device;
     wasReadOnlyAtEntry: boolean;
     unseeded?: boolean;
+    seededResult: SeededResult | null;
+    /** The funnel props of an unseeded device, so the offer sends its events. */
+    unseededProps?: FunnelProps | null;
   };
   [ScreenName.FirmwareUpdate]: {
     deviceInfo?: DeviceInfo | null;

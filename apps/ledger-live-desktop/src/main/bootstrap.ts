@@ -42,6 +42,7 @@ export function buildBootstrap(): Bootstrap {
       userData: app.getPath("userData"),
       home: app.getPath("home"),
     },
+    appDirname: app.dirname ?? "",
     distributionChannel: getDistributionChannel(),
     store: getStore().store as Record<string, unknown>,
   };

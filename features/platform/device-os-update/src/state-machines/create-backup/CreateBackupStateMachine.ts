@@ -14,6 +14,10 @@ import { toDomainDeviceBackup } from "../../utils/dmk/toDomainDeviceBackup";
 import { OsUpdatesOrchestratorStateMachineEventType } from "../orchestrator/types";
 import { checkErrorCauseStateMachine } from "../shared/checkErrorCauseStateMachine";
 import { DeviceSituationEventType, isRecovered } from "../shared/types";
+import {
+  hasUnexplainedRecoveryAfter,
+  isRepeatedUnexplainedRecovery,
+} from "../shared/utils/unexplainedRecovery";
 import { isAllowSecureConnectionRefusedError } from "../shared/utils/isPromptRefusedError";
 import { BACKUP_MAX_AGE_MS } from "./constants";
 import {
@@ -96,6 +100,7 @@ export const createBackupStateMachine = setup({
     ...input,
     lastSentState: null,
     lastAction: null,
+    hasUnexplainedRecovery: false,
     existingBackup: undefined,
     backup: null,
     error: null,
@@ -217,7 +222,10 @@ export const createBackupStateMachine = setup({
             target: "CheckErrorCause",
           },
           {
-            actions: assign({ backup: ({ event }) => event.output.toMaybe().extractNullable() }),
+            actions: assign({
+              backup: ({ event }) => event.output.toMaybe().extractNullable(),
+              hasUnexplainedRecovery: false,
+            }),
             target: "SaveBackup",
           },
         ],
@@ -276,10 +284,17 @@ export const createBackupStateMachine = setup({
         }),
         onDone: [
           {
+            guard: ({ context, event }) =>
+              isRepeatedUnexplainedRecovery(context.hasUnexplainedRecovery, event.output),
+            target: "UnrecoverableError",
+          },
+          {
             guard: ({ event }) => isRecovered(event.output),
             actions: assign({
               connectedDevice: ({ context, event }) =>
                 isRecovered(event.output) ? event.output.connectedDevice : context.connectedDevice,
+              hasUnexplainedRecovery: ({ context, event }) =>
+                hasUnexplainedRecoveryAfter(context.hasUnexplainedRecovery, event.output),
             }),
             target: "ResumeLastAction",
           },

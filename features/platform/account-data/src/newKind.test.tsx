@@ -9,10 +9,13 @@ import {
   isAccountDataReceived,
 } from "@domain/entity-account-data";
 import {
-  NetworkIdSchema,
-  type AccountDescriptor,
+  accountsSlice,
+  discoveredAccountsSlice,
+  remoteAccountsAdded,
   type AccountUUID,
-} from "@domain/entity-account-descriptor";
+} from "@domain/entity-account";
+import { computeAccountUUID } from "@domain/entity-account/schema.mock";
+import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { useAccountData } from "./useAccountData";
 
 // Everything a new `@domain/entity-account-*` package adds; no framework file changes for it.
@@ -45,16 +48,25 @@ const selectAccountStaking = (state: WithStaking, accountUUID: AccountUUID | und
 
 describe("a kind added from outside the framework packages", () => {
   it("is routed, read into its slice and driven by the generic hook", async () => {
-    const descriptor: AccountDescriptor = {
-      purpose: "account",
-      version: "2",
-      type: "address",
-      network: NetworkIdSchema.parse("cosmos"),
+    const descriptor = mockAddressAccountDescriptor({
+      network: "cosmos",
       key: "cosmos1abc",
       path: "m/44h/118h/0h/0/0",
-    };
+    });
+    const uuid = computeAccountUUID(descriptor);
     const store = configureStore({
-      reducer: { accountData: accountDataSlice.reducer, accountStaking: stakingSlice.reducer },
+      reducer: {
+        accountData: accountDataSlice.reducer,
+        accountStaking: stakingSlice.reducer,
+        accountEntries: accountsSlice.reducer,
+        discoveredAccounts: discoveredAccountsSlice.reducer,
+      },
+      preloadedState: {
+        accountEntries: accountsSlice.reducer(
+          undefined,
+          remoteAccountsAdded([{ accountUUID: uuid, descriptor }]),
+        ),
+      },
       middleware: getDefault =>
         getDefault({
           thunk: {
@@ -75,7 +87,7 @@ describe("a kind added from outside the framework packages", () => {
 
     const { result } = renderHook(
       () => {
-        const { accountUUID, pending, hasMore } = useAccountData("staking", descriptor);
+        const { accountUUID, pending, hasMore } = useAccountData("staking", uuid);
         const staking = useSelector((state: WithStaking) =>
           selectAccountStaking(state, accountUUID),
         );

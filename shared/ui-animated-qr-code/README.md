@@ -3,8 +3,8 @@
 > [!CAUTION]
 > **Status: UNSTABLE**. New package, in active development.
 
-A QR code drawn and animated natively, for Ledger Wallet Mobile: a skeleton shimmer while the
-value loads, and a ripple when the user copies it. A
+A QR code with a skeleton shimmer while the value loads, and a ripple when the user copies it:
+drawn natively on Ledger Wallet Mobile, on a canvas on Ledger Wallet Desktop. A
 [benchmark](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7724990565) chose native views
 over one Reanimated view per dot, which drops frames on dense codes.
 
@@ -13,6 +13,7 @@ over one Reanimated view per dot, which drops frames on dense codes.
 | Entry      | Exports                                      |
 | ---------- | -------------------------------------------- |
 | `./native` | `AnimatedQrCode`, `AnimatedQrCodeProps`, `QrAnimation` |
+| `./web`    | `AnimatedQrCode`, `AnimatedQrCodeProps`, `QrAnimation` |
 
 ```tsx
 import { AnimatedQrCode } from "@shared/ui-animated-qr-code/native";
@@ -75,3 +76,15 @@ Architecture interop layer; it does not use codegen.
 component. Local stubs in `jest/mocks/` replace React Native and Reanimated: animations never
 advance, `runningAnimation` reads the one a shared value runs, and `setReducedMotion` sets the OS
 setting. The Swift and Kotlin views are not covered by these tests.
+
+## Web
+
+The same `AnimatedQrCode` contract, from `./web`:
+
+- `src/qrCanvas.web.ts` draws one frame on a `<canvas>`, with the native geometry (round dots,
+  ringed finders) and the colors and scales of `animationTimeline.ts`.
+- `AnimatedQrCode.web.tsx` runs a `requestAnimationFrame` loop only while something moves: the
+  shimmer while loading, about a second after each press. The center content is a React node,
+  animated in the same loop.
+- With `prefers-reduced-motion`, the code is drawn still.
+- With `onPress`, the code is a `<button>` named by `accessibilityLabel`.

@@ -124,10 +124,16 @@ async function fetchCalTokens(
     signal: AbortSignal.timeout(CAL_TIMEOUT_MS),
   }).catch((error: unknown) => {
     const reason = error instanceof Error ? error.message : String(error);
-    throw new Error(`CAL didn't answer the ${ticker} ticker lookup: ${reason}`, { cause: error });
+    throw Object.assign(
+      new Error(`CAL didn't answer the ${ticker} ticker lookup: ${reason}`, { cause: error }),
+      { url: url.toString() },
+    );
   });
   if (!response.ok) {
-    throw new Error(`CAL answered ${response.status} when looking up the ${ticker} ticker.`);
+    throw Object.assign(
+      new Error(`CAL answered ${response.status} when looking up the ${ticker} ticker.`),
+      { url: url.toString(), status: response.status },
+    );
   }
   const tokens = CalTokensSchema.safeParse(await response.json().catch(() => undefined));
   if (!tokens.success) {

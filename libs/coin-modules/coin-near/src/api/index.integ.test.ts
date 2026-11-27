@@ -174,6 +174,7 @@ describe("CoinModuleApi (integration)", () => {
       expect(stakes.length).toBeGreaterThan(0);
       stakes.forEach(balance => {
         expect(balance.value).toBe(balance.stake!.amount);
+        expect(balance.locked).toBe(balance.stake!.amount);
         expect(VALID_STAKE_STATES).toContain(balance.stake!.state);
         expect(balance.stake!.delegate).toMatch(/\S/);
       });
@@ -192,7 +193,7 @@ describe("CoinModuleApi (integration)", () => {
     it("rejects balance options it does not implement", async () => {
       await expect(
         api.getBalance(context, ACCOUNT_WITH_HISTORY, { includeAssets: async () => true }),
-      ).rejects.toThrow("getBalance does not support the options parameter");
+      ).rejects.toThrow("getBalance does not support the asset options");
     });
   });
 

@@ -3,6 +3,11 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { byId } from "@e2e/helpers/elements/native";
 import { waitForWebviewUrl, webById, webByXPath } from "@e2e/helpers/elements/web";
 
+type SwapToEarnDescriptionOptions = {
+  fromTicker: string;
+  toTicker: string;
+};
+
 export default class EarnV2DashboardPage {
   // Webview locators (shared earn web app v2)
   private readonly footerDisclaimer = webById("footer-disclaimer");
@@ -215,8 +220,9 @@ export default class EarnV2DashboardPage {
     await app.modularDrawer.selectAssetAndAccount(account);
   }
 
-  @Step("Verify swap-to-earn copy from {{{0}}} to {{{1}}}")
-  async verifySwapToEarnDescription(fromTicker: string, toTicker: string) {
+  @Step("Verify swap-to-earn copy from {{{0.fromTicker}}} to {{{0.toTicker}}}")
+  async verifySwapToEarnDescription(options: SwapToEarnDescriptionOptions) {
+    const { fromTicker, toTicker } = options;
     await this.swapDescription.expectText(fromTicker, { containing: true });
     await this.swapDescription.expectText(toTicker, { containing: true });
   }

@@ -1,4 +1,3 @@
-import { mockUtxoAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { CryptoOrTokenCurrencyIdSchema, type CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { ReceiveFamilyConfigInput } from "./types";
 
@@ -13,7 +12,6 @@ export function mockReceiveFamilyConfigInput<A = unknown>({
   ...overrides
 }: MockReceiveFamilyConfigInputOverrides<A> = {}): ReceiveFamilyConfigInput<A> {
   return {
-    descriptor: mockUtxoAccountDescriptor(),
     featureFlags: {},
     ...overrides,
     asset: {

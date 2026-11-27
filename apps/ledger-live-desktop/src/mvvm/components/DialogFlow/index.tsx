@@ -28,7 +28,7 @@ export function DialogFlow<Step extends string>({
     if (isOpen) {
       closeRequestedRef.current = false;
     }
-  }, [isOpen]);
+  }, [isOpen, currentStep]);
   const handleClose = useCallback(() => {
     if (closeRequestedRef.current) {
       return;

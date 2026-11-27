@@ -248,7 +248,10 @@ export default {
     config: PolkadotCoinConfig,
     extrinsic: string,
     currencyId?: string,
-  ) => sidecarSubmitExtrinsicDryRun(config, extrinsic, currencyId),
+  ) => {
+    const { registry } = await getRegistry(config, currencyId);
+    return sidecarSubmitExtrinsicDryRun(config, registry, extrinsic, currencyId);
+  },
 };
 
 /**

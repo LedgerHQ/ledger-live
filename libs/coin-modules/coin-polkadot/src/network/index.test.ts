@@ -1,3 +1,5 @@
+import { TypeRegistry } from "@polkadot/types";
+import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import BigNumber from "bignumber.js";
 import { polkadotMainnetConfigValue } from "../test/config.fixture";
 import * as sidecar from "./sidecar";
@@ -153,5 +155,34 @@ describe("isNewAccount", () => {
     expect(isNewAccount).toEqual(false);
     expect(mockedSidecar.isNewAccount).toHaveBeenCalledTimes(1);
     expect(mockedSidecar.getMinimumBondBalance).toHaveBeenCalledTimes(0);
+  });
+});
+
+describe("submitExtrinsicDryRun", () => {
+  const dryRunCurrencyId = "dry_run_registry_reuse";
+
+  afterEach(() => {
+    mockedSidecar.getRegistry.mockReset();
+    mockedSidecar.submitExtrinsicDryRun.mockReset();
+  });
+
+  it("reuses the registry cached when the transaction was crafted", async () => {
+    const registry = new TypeRegistry();
+    mockedSidecar.getRegistry.mockResolvedValueOnce({ registry, extrinsics: {} as Extrinsics });
+    mockedSidecar.submitExtrinsicDryRun.mockResolvedValueOnce({
+      resultType: "DispatchOutcome",
+      result: {},
+    });
+
+    await network.getRegistry(config, dryRunCurrencyId);
+    await network.submitExtrinsicDryRun(config, "0xsignedextrinsic", dryRunCurrencyId);
+
+    expect(mockedSidecar.getRegistry).toHaveBeenCalledTimes(1);
+    expect(mockedSidecar.submitExtrinsicDryRun).toHaveBeenCalledWith(
+      config,
+      registry,
+      "0xsignedextrinsic",
+      dryRunCurrencyId,
+    );
   });
 });

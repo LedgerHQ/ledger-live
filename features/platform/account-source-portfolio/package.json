@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-account-source-portfolio",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "The Portfolio service as an account data source for the balances, balance histories and operations of EVM, Bitcoin, Cardano, Tron, Tezos, Sui, Stellar and Canton accounts, reconciling its registrations with the local accounts",
   "main": "src/index.ts",
@@ -23,6 +23,7 @@
     "@domain/api-account-data": "workspace:*",
     "@domain/api-account-portfolio": "workspace:*",
     "@domain/api-currency-token": "workspace:*",
+    "@domain/entity-account": "workspace:*",
     "@domain/entity-account-balance": "workspace:*",
     "@domain/entity-account-balance-history": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
@@ -33,6 +34,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
+    "@domain/entity-network": "workspace:*",
     "@noble/hashes": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "bignumber.js": "catalog:"

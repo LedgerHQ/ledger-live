@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { isAccountDataReceived } from "@domain/entity-account-data";
-import type { AccountUUID } from "@domain/entity-account-descriptor";
 import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
+import type { AccountUUID } from "@domain/entity-account";
 import {
   initialAccountStatusState,
   type AccountStatus,
