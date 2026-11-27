@@ -19329,16 +19329,16 @@ importers:
         version: link:../../types-live
       '@ton-community/ton-ledger':
         specifier: ^7.3.0
-        version: 7.3.0(@ton/core@0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))
+        version: 7.3.0(@ton/core@0.62.1(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))
       '@ton/core':
         specifier: ^0.62.0
-        version: 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
+        version: 0.62.1(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
       '@ton/crypto':
         specifier: ^3.3.0
         version: 3.3.0
       '@ton/ton':
         specifier: ^15.4.0
-        version: 15.4.0(@ton/core@0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(debug@4.4.3)
+        version: 15.4.0(@ton/core@0.62.1(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(debug@4.4.3)
       axios:
         specifier: 'catalog:'
         version: 1.21.1(debug@4.4.3)
@@ -20889,13 +20889,13 @@ importers:
         version: link:../../types-live
       '@ton/core':
         specifier: ^0.62.0
-        version: 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
+        version: 0.62.1(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
       '@ton/crypto':
         specifier: ^3.3.0
         version: 3.3.0
       '@ton/ton':
         specifier: ^15.4.0
-        version: 15.4.0(@ton/core@0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(debug@4.4.3)
+        version: 15.4.0(@ton/core@0.62.1(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(debug@4.4.3)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -22069,10 +22069,10 @@ importers:
         version: 3.0.0
       '@ton-community/ton-ledger':
         specifier: ^7.3.0
-        version: 7.3.0(@ton/core@0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))
+        version: 7.3.0(@ton/core@0.62.1(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))
       '@ton/core':
         specifier: ^0.62.0
-        version: 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
+        version: 0.62.1(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
       '@ton/crypto':
         specifier: ^3.3.0
         version: 3.3.0
@@ -35944,8 +35944,8 @@ packages:
     peerDependencies:
       '@ton/core': '>=0.52.2'
 
-  '@ton/core@0.62.0':
-    resolution: {integrity: sha512-GCYlzzx11rSESKkiHvNy9tL8zWth+ZtUbvV29WH478FvBp8xTw24AyoigwXWNV+OLCAcnwlGhZpTpxjD3wzCwA==}
+  '@ton/core@0.62.1':
+    resolution: {integrity: sha512-RaEGBo9gCf6ZHyS8SKq1K53pswvYW9E5A6vwUuzFBTRX14g4qMDlB9F+fq4aBE5kN7XyVr8ScQtOJfQj41usCw==}
     peerDependencies:
       '@ton/crypto': '>=3.2.0'
 
@@ -50462,7 +50462,7 @@ snapshots:
   '@ledgerhq/wallet-api-core@2.4.0(@ton/crypto@3.3.0)(encoding@0.1.13)':
     dependencies:
       '@stacks/transactions': 6.17.0(encoding@0.1.13)
-      '@ton/core': 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
+      '@ton/core': 0.62.1(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
       bignumber.js: 9.1.2
       zod: 4.6.7
     transitivePeerDependencies:
@@ -55526,17 +55526,16 @@ snapshots:
       react-dom: 19.1.4(react@19.1.4)
       tippy.js: 6.3.7
 
-  '@ton-community/ton-ledger@7.3.0(@ton/core@0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))':
+  '@ton-community/ton-ledger@7.3.0(@ton/core@0.62.1(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))':
     dependencies:
       '@ledgerhq/hw-transport': 6.37.0
-      '@ton/core': 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
+      '@ton/core': 0.62.1(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
       teslabot: 1.5.0
 
-  '@ton/core@0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)':
+  '@ton/core@0.62.1(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)':
     dependencies:
       '@ton/crypto': 3.3.0
-      symbol.inspect: 1.0.1
 
   '@ton/crypto-primitives@2.1.0':
     dependencies:
@@ -55548,9 +55547,9 @@ snapshots:
       jssha: 3.2.0
       tweetnacl: 1.0.3
 
-  '@ton/ton@15.4.0(@ton/core@0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(debug@4.4.3)':
+  '@ton/ton@15.4.0(@ton/core@0.62.1(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)(debug@4.4.3)':
     dependencies:
-      '@ton/core': 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
+      '@ton/core': 0.62.1(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
       axios: 1.21.1(debug@4.4.3)
       dataloader: 2.2.2
