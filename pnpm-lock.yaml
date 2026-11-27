@@ -1346,6 +1346,9 @@ importers:
       '@features/flow-settings':
         specifier: workspace:^
         version: link:../../features/flow/settings
+      '@features/flow-settings-about':
+        specifier: workspace:^
+        version: link:../../features/flow/settings-about
       '@features/flow-settings-general':
         specifier: workspace:^
         version: link:../../features/flow/settings-general
@@ -14387,6 +14390,12 @@ importers:
       '@features/flow-settings':
         specifier: workspace:*
         version: link:../settings
+      '@shared/i18n':
+        specifier: workspace:*
+        version: link:../../../shared/i18n
+      '@shared/linking':
+        specifier: workspace:*
+        version: link:../../../shared/linking
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'

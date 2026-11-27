@@ -10,6 +10,7 @@ import { General } from "@features/flow-settings-general/web";
 import { Privacy } from "@features/flow-settings-privacy";
 import { Security } from "@features/flow-settings-security";
 import { DesktopSettingsPortProvider } from "./DesktopSettingsPortProvider";
+import { DesktopAboutSection } from "./sections/about";
 import { DesktopHelpPage } from "./sections/help";
 
 /** Apollo is an Android device: desktop only hides the rows the flag params turn on. */
@@ -23,6 +24,8 @@ function renderSection(section: SettingsSectionId) {
       return <Security testID="settings-security" />;
     case "privacy":
       return <Privacy testID="settings-privacy" />;
+    case "about":
+      return <DesktopAboutSection />;
     default:
       return null;
   }

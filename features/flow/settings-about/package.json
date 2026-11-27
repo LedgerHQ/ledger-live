@@ -50,7 +50,9 @@
     "typescript": "catalog:"
   },
   "dependencies": {
-    "@features/flow-settings": "workspace:*"
+    "@features/flow-settings": "workspace:*",
+    "@shared/i18n": "workspace:*",
+    "@shared/linking": "workspace:*"
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",

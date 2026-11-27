@@ -8,14 +8,40 @@ behind the `newSettings` feature flag. Both apps share the same rows, rules and 
 rendering differs. The legacy Settings stay in the apps, untouched, until the flag reaches 100%.
 
 Part of the [Settings 4.0 epic](https://ledgerhq.atlassian.net/browse/LIVE-41813), built on the
-shell package `@features/flow-settings`. This is a skeleton: the section renders no row yet.
+shell package `@features/flow-settings`. Desktop renders it; mobile does not render it yet.
+
+## Rows
+
+| Section         | Row                    | What it does                                           |
+| --------------- | ---------------------- | ------------------------------------------------------ |
+| (none)          | Version                | Shows the app version; 5 taps unlock Developer tools   |
+| (none)          | Terms and conditions   | Opens the localized terms page                         |
+| Connect with us | X, Instagram, GitHub   | Opens the link                                         |
+
+There is no release notes button, no Privacy policy row and no feedback row on desktop.
+
+## Port
+
+The app provides a `SettingsAboutPort`: `version`, `termsUrl` (the localized terms page) and
+`unlockDeveloperTools()`. The package never imports the app store. Its social links (X, Instagram,
+GitHub) live in the package's own `src/urls.ts`, an internal file like the other flows' `urls.ts`,
+so the app does not carry them.
+
+The unlock is called once, on the fifth tap of the Version row. Desktop sets `developerMode`, as
+the legacy About does, and shows its toast. The setting is saved to disk, so it survives a restart.
 
 ## Exports
 
-| Export              | Purpose                                         |
-| ------------------- | ----------------------------------------------- |
-| `SettingsAbout` | The section, to render in the Settings page     |
+| Export               | Purpose                                      |
+| -------------------- | -------------------------------------------- |
+| `SettingsAbout`      | The section: `port` and `testID`             |
+| `SettingsAboutPort`  | What the app provides (type)                 |
+
+## Tracking
+
+The app tracks the screen: desktop sends `Settings` / `About`.
 
 ## Consumers
 
-Ledger Wallet Desktop and Ledger Wallet Mobile, once the section is wired in.
+Ledger Wallet Desktop, in `apps/ledger-live-desktop/src/mvvm/features/Settings/sections/about.tsx`.
+Ledger Wallet Mobile, once its About screen lands.
