@@ -36,6 +36,8 @@ export type ReceiveAddressCopy = Readonly<{
   gates: Readonly<
     Record<ReceiveGateType, Readonly<{ title: string; description: string; actionLabel: string }>>
   >;
+  sanctionedTitle: string;
+  sanctionedDescription: (address: string) => string;
 }>;
 
 /** The labels of the address screen, under the `receiveAddress` namespace. */
@@ -100,6 +102,8 @@ export function useReceiveAddressCopy({
           actionLabel: t("receiveAddress.gates.activation.action", { asset: assetTicker }),
         },
       },
+      sanctionedTitle: t("receiveAddress.sanctioned.title"),
+      sanctionedDescription: address => t("receiveAddress.sanctioned.description", { address }),
     }),
     [t, assetTicker, networkName],
   );

@@ -63,6 +63,19 @@ describe("useReceiveAddressCopy", () => {
           actionLabel: "Add USDC",
         },
       },
+      sanctionedTitle: "Keeping you safe",
+      sanctionedDescription: expect.any(Function),
     });
+  });
+
+  it("should name the sanctioned address in its description", () => {
+    const { result } = renderHook(
+      () => useReceiveAddressCopy({ assetTicker: "USDC", networkName: "Ethereum" }),
+      { wrapper: receiveTestWrapper() },
+    );
+
+    expect(result.current.sanctionedDescription("0xabc")).toBe(
+      "This transaction involves a sanctioned wallet address and cannot be processed.\n0xabc",
+    );
   });
 });

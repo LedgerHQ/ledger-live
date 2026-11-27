@@ -9,6 +9,7 @@ import {
   addAction,
   isDatadogRecording,
   setDatadogActionsEnabled,
+  setDatadogTrackingConsent,
   setTags,
   setUser,
   startDatadogRouteView,
@@ -32,6 +33,7 @@ jest.mock("@datadog/browser-rum", () => ({
     setGlobalContext: jest.fn(),
     setGlobalContextProperty: jest.fn(),
     setUser: jest.fn(),
+    setTrackingConsent: jest.fn(),
   },
 }));
 
@@ -118,6 +120,13 @@ describe("datadog renderer", () => {
     it("should not call datadogRum.addError when not initialized", () => {
       captureException(new Error("test"));
       expect(datadogRum.addError).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("setDatadogTrackingConsent", () => {
+    it("should not touch the SDK consent when not initialized", () => {
+      setDatadogTrackingConsent(false);
+      expect(datadogRum.setTrackingConsent).not.toHaveBeenCalled();
     });
   });
 
@@ -239,17 +248,12 @@ describe("datadog renderer", () => {
           service: "ledger-live-desktop",
           trackViewsManually: true,
           enablePrivacyForActionName: true,
+          propagateTraceBaggage: false,
         }),
       );
       expect(datadogRum.startView).toHaveBeenCalledWith({ name: "portfolio" });
       expect(datadogRum.setGlobalContext).toHaveBeenCalled();
       expect(datadogRum.setUser).toHaveBeenCalledWith({ id: "test-dd-id" });
-    });
-
-    it("should enable the RUM feature operations", () => {
-      expect(datadogRum.init).toHaveBeenCalledWith(
-        expect.objectContaining({ enableExperimentalFeatures: ["feature_operation_vital"] }),
-      );
     });
 
     it("isDatadogRecording should follow the user consent and the lldDatadog flag", async () => {
@@ -264,6 +268,15 @@ describe("datadog renderer", () => {
       consent = true;
       setDatadogActionsEnabled(false);
       expect(isDatadogRecording()).toBe(false);
+    });
+
+    it("should propagate trace baggage only when the flag param turns it on", async () => {
+      __resetDatadogForTesting();
+      datadogRum.init.mockClear();
+      await initDatadog(() => true, { propagateTraceBaggage: true }, createMockStore());
+      expect(datadogRum.init).toHaveBeenCalledWith(
+        expect.objectContaining({ propagateTraceBaggage: true }),
+      );
     });
 
     it("when already initialized should return true without calling init again", async () => {
@@ -321,6 +334,12 @@ describe("datadog renderer", () => {
       consent = true;
       expect(addAction("live_app_domain_check_violation", {})).toBe(true);
       expect(datadogRum.addAction).toHaveBeenCalledTimes(1);
+    });
+
+    it("should hand an opt-out and a new opt-in to the SDK tracking consent", () => {
+      setDatadogTrackingConsent(false);
+      setDatadogTrackingConsent(true);
+      expect(datadogRum.setTrackingConsent.mock.calls).toEqual([["not-granted"], ["granted"]]);
     });
 
     it("addAction should send nothing, and say so, while the lldDatadog flag is off", () => {

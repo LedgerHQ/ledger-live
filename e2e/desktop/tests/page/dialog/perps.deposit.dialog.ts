@@ -89,7 +89,10 @@ export class PerpsDepositDialog extends Dialog {
   @step("Read the Perps deposit review send amount")
   async getReviewSendAmount(fundingAccount: Account) {
     const ticker = fundingAccount.currency.ticker;
-    return { ticker, amount: extractAmountText(await this.amountSent.innerText(), ticker) };
+    return {
+      ticker,
+      amount: extractAmountText({ text: await this.amountSent.innerText(), ticker }),
+    };
   }
 
   @step("Confirm the Perps deposit")

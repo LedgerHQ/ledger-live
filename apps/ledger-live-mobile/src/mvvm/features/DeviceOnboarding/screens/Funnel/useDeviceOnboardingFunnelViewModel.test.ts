@@ -2368,6 +2368,61 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(resetNavigation).toHaveBeenCalled();
   });
 
+  describe("onboarding_done of a new seed", () => {
+    const doneEvents = () => events().filter(event => event === "onboarding_done");
+
+    beforeEach(() => {
+      useSession.mockReturnValue(
+        session({
+          state: "done",
+          context: {
+            onboardedOnEntry: false,
+            checksPaused: false,
+          } as DeviceOnboardingSession["context"],
+          snapshot: {
+            context: {
+              onboardedOnEntry: false,
+              deviceModelId: DmkDeviceModelId.STAX,
+              offerSync: false,
+              firmware: null,
+              seedPath: SeedPath.NewSeed,
+            },
+          } as unknown as DeviceOnboardingSession["snapshot"],
+        }),
+      );
+    });
+
+    it("should send it when the user opens Recover, and not again on the success tap", () => {
+      const { result, rerender } = renderRecoverFunnel();
+
+      act(() => recoverOf(result.current).onOpenLiveApp());
+      expect(doneEvents()).toHaveLength(1);
+      expect(track).toHaveBeenCalledWith(
+        "onboarding_done",
+        expect.objectContaining({ seedConfiguration: "new_seed", ledger_sync_done: "no" }),
+      );
+
+      jest.mocked(useIsFocused).mockReturnValue(false);
+      rerender(undefined);
+      jest.mocked(useIsFocused).mockReturnValue(true);
+      rerender(undefined);
+      act(() => successOf(result.current).onFinish());
+
+      expect(doneEvents()).toHaveLength(1);
+    });
+
+    it("should send it once on the success tap when the user skips Recover", () => {
+      const { result } = renderRecoverFunnel();
+
+      act(() => recoverOf(result.current).onSkip());
+      expect(doneEvents()).toHaveLength(0);
+
+      act(() => successOf(result.current).onFinish());
+
+      expect(doneEvents()).toHaveLength(1);
+    });
+  });
+
   it("should show the success karaoke when an unseeded restore reaches done", () => {
     useSession.mockReturnValue(doneWithSeed("restorePhrase"));
     const { result, store } = renderHook(() => useDeviceOnboardingFunnelViewModel());

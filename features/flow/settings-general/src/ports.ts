@@ -48,3 +48,13 @@ export type RegionUpdate = UpdateOf<RegionSettingsValues>;
 export type RegionSideEffects = Readonly<{ setRegion(locale: string): void }>;
 
 export type RegionSettingsPort = SettingsPort<RegionSettingsValues, RegionUpdate>;
+
+/** The date formats a user can pick on mobile. */
+export type SettingsDateFormat = "default" | "DD/MM/YYYY" | "MM/DD/YYYY";
+
+/** The Date format setting, on mobile only. */
+export type DateFormatSettingsValues = Readonly<{ dateFormat: SettingsDateFormat }>;
+
+export type DateFormatUpdate = UpdateOf<DateFormatSettingsValues>;
+
+export type DateFormatSettingsPort = SettingsPort<DateFormatSettingsValues, DateFormatUpdate>;

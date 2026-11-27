@@ -47,7 +47,13 @@ static readonly NEWCOIN = new AppInfos("NewCoin");
 **Ask user for:** name, ticker, currency_id
 
 ```typescript
-static readonly NEWCOIN = new Currency("NewCoin", "TICKER", "currency_id", AppInfos.NEWCOIN, [Network.NEWCOIN]);
+static readonly NEWCOIN = new Currency({
+  name: "NewCoin",
+  ticker: "TICKER",
+  id: "currency_id",
+  speculosApp: AppInfos.NEWCOIN,
+  networks: [Network.NEWCOIN],
+});
 ```
 
 ### Step 4: Set the owning team

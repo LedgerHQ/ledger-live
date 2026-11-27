@@ -8,6 +8,7 @@ jest.mock("~/datadog/renderer", () => ({
   setTags: jest.fn(),
   isDatadogAvailable: jest.fn().mockReturnValue(true),
   setDatadogActionsEnabled: jest.fn(),
+  setDatadogTrackingConsent: jest.fn(),
 }));
 
 jest.mock("~/datadog/logs", () => ({
@@ -20,6 +21,9 @@ const setDatadogActionsEnabled = jest.mocked(
   jest.requireMock("~/datadog/renderer").setDatadogActionsEnabled,
 );
 const initDatadogLogs = jest.mocked(jest.requireMock("~/datadog/logs").initDatadogLogs);
+const setDatadogTrackingConsent = jest.mocked(
+  jest.requireMock("~/datadog/renderer").setDatadogTrackingConsent,
+);
 
 let remoteFlagsFetched = true;
 let cachedFlags: Record<string, unknown> = {};
@@ -91,6 +95,25 @@ describe("ConnectEnvsToDatadog", () => {
     );
   });
 
+  it("should pass the propagateTraceBaggage flag param to initDatadog", async () => {
+    render(<ConnectEnvsToDatadog />, {
+      initialState: {
+        ...withFlagOverrides({
+          lldDatadog: { enabled: true, params: { propagateTraceBaggage: true } },
+        }),
+        settings: {
+          crashReporting: true,
+        },
+      },
+    });
+    await new Promise(r => setImmediate(r));
+    expect(initDatadog).toHaveBeenCalledWith(
+      expect.any(Function),
+      expect.objectContaining({ propagateTraceBaggage: true }),
+      expect.anything(),
+    );
+  });
+
   it("should call initDatadogLogs with a shouldSend callback under the same gating", async () => {
     render(<ConnectEnvsToDatadog />, {
       initialState: {
@@ -145,13 +168,13 @@ describe("ConnectEnvsToDatadog", () => {
     );
   });
 
-  it("persists the resolved lldDatadog flag and session sampling (bypassing the debounce) for main's next boot", async () => {
+  it("persists the resolved lldDatadog flag and sampling rates (bypassing the debounce) for main's next boot", async () => {
     render(<ConnectEnvsToDatadog />, {
       initialState: {
         ...withFlagOverrides({
           lldDatadog: {
             enabled: true,
-            params: { sessionSamplingRate: 10 },
+            params: { sessionSamplingRate: 10, profilingSampleRate: 5 },
           },
         }),
         settings: { crashReporting: false },
@@ -167,7 +190,24 @@ describe("ConnectEnvsToDatadog", () => {
     expect(db.setKey).toHaveBeenCalledWith("app", "lldDatadog", {
       enabled: true,
       sessionSampleRate: 10,
+      profilingSampleRate: 5,
     });
+  });
+
+  it("hands crashReporting changes after init to the SDK consent, as profiles bypass beforeSend", async () => {
+    const { store } = render(<ConnectEnvsToDatadog />, {
+      initialState: {
+        ...withFlagOverrides({ lldDatadog: { enabled: true, params: {} } }),
+        settings: { crashReporting: true },
+      },
+    });
+    await waitFor(() => expect(setDatadogTrackingConsent).toHaveBeenLastCalledWith(true));
+
+    store.dispatch({ type: "SAVE_SETTINGS", payload: { crashReporting: false } });
+    await waitFor(() => expect(setDatadogTrackingConsent).toHaveBeenLastCalledWith(false));
+
+    store.dispatch({ type: "SAVE_SETTINGS", payload: { crashReporting: true } });
+    await waitFor(() => expect(setDatadogTrackingConsent).toHaveBeenLastCalledWith(true));
   });
 
   it("mirrors crashReporting to main immediately, bypassing the settings persistence debounce", async () => {

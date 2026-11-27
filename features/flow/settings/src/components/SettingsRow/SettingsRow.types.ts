@@ -36,6 +36,8 @@ export type SettingsRowProps = Readonly<{
   descriptionLink?: SettingsRowLink;
   icon?: ReactNode;
   trailing?: SettingsRowTrailing;
+  /** Selects the whole row when its trailing does not handle the selection itself. */
+  onSelect?: () => void;
   /** Lets the app hide the row through HiddenSettingsProvider. */
   settingId?: SettingId;
   disabled?: boolean;

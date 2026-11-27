@@ -6,6 +6,7 @@ import path from "node:path";
 import { scrubResourceUrl } from "@features/platform-observability-redaction";
 import { log as ledgerLog } from "@ledgerhq/logs";
 import { shouldIgnoreErrorMessage } from "./ignoreErrors";
+import { blankStrings } from "./blankStrings";
 
 const log = (message: string, data?: unknown) => ledgerLog("datadog-main", message, data);
 
@@ -23,9 +24,11 @@ const isRate = (value: unknown): value is number =>
 export function parseMainDatadogSettings(value: unknown) {
   const enabled = field(value, "enabled");
   const sessionSampleRate = field(value, "sessionSampleRate");
+  const profilingSampleRate = field(value, "profilingSampleRate");
   return {
     enabled: typeof enabled === "boolean" ? enabled : undefined,
     sessionSampleRate: isRate(sessionSampleRate) ? sessionSampleRate : undefined,
+    profilingSampleRate: isRate(profilingSampleRate) ? profilingSampleRate : undefined,
   };
 }
 export type MainDatadogSettings = ReturnType<typeof parseMainDatadogSettings>;
@@ -82,20 +85,6 @@ function scrubEvent(event: RumEvent, source: string): void {
   // Named after the webContents URL, Live App <webview> guests included.
   if (event.execution_context?.name) {
     event.execution_context.name = scrubResourceUrl(event.execution_context.name);
-  }
-}
-
-const SCHEMA_FIELDS = new Set(["id", "type", "source", "service", "version", "_dd"]);
-
-// Schema fields of the event and its sections (view.id, error.source…) stay: the SDK still sends it.
-function blankStrings(value: unknown, depth = 0, seen = new Set<unknown>()): void {
-  if (value === null || typeof value !== "object" || seen.has(value)) return;
-  seen.add(value);
-  for (const key of Object.keys(value)) {
-    if (depth <= 1 && SCHEMA_FIELDS.has(key)) continue;
-    const child: unknown = Reflect.get(value, key);
-    if (typeof child === "string") Reflect.set(value, key, "");
-    else blankStrings(child, key === "context" ? 2 : depth + 1, seen);
   }
 }
 
@@ -297,10 +286,13 @@ export function createDatadogMainState(userDataDirectory: string) {
     datadogId = readDatadogId(identities);
     setUserIdMain(datadogId);
   };
+  const consent = (): TrackingConsent =>
+    crashReporting && lldDatadog.enabled === true ? "granted" : "not-granted";
   return {
     settings: datadogSettings,
-    consent: (): TrackingConsent =>
-      crashReporting && lldDatadog.enabled === true ? "granted" : "not-granted",
+    consent,
+    profilesRenderer: () =>
+      consent() === "granted" && (datadogSettings.profilingSampleRate ?? 0) > 0,
     user: () => datadogId,
     setIdentities,
     onAppKeyWritten(keyPath: string, value: unknown) {

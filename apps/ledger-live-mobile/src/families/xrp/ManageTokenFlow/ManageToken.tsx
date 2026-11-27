@@ -1,5 +1,5 @@
-import React from "react";
-import { ScrollView } from "react-native";
+import React, { useState } from "react";
+import { Pressable, ScrollView } from "react-native";
 import {
   Box,
   Button,
@@ -18,9 +18,6 @@ import {
   DescriptionItemValue,
   Skeleton,
   Text,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
 } from "@ledgerhq/lumen-ui-rnative";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
@@ -36,6 +33,7 @@ import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
+import { InfoSheet } from "../components/InfoSheet";
 import { InfoTooltip } from "../components/InfoTooltip";
 import DeleteTokenSheets from "./DeleteTokenSheets";
 import {
@@ -139,6 +137,7 @@ function DeleteButton(
   }>,
 ) {
   const { t } = useTranslation();
+  const [isReasonOpen, setIsReasonOpen] = useState(false);
 
   const testID = `xrp-manage-asset-delete-${props.tokenId}`;
   const label = t("xrp.manageAssets.delete");
@@ -152,20 +151,22 @@ function DeleteButton(
   }
 
   return (
-    <Tooltip>
-      <TooltipTrigger style={{ flex: 1 }} testID={`${testID}-reason`}>
+    <>
+      <Pressable
+        style={{ flex: 1 }}
+        onPress={() => setIsReasonOpen(true)}
+        testID={`${testID}-reason`}
+      >
         <Button appearance="base" size="sm" isFull disabled testID={testID}>
           {label}
         </Button>
-      </TooltipTrigger>
-      <TooltipContent
-        content={
-          <Text typography="body1" lx={{ color: "base" }}>
-            {t(BLOCKER_KEYS[props.blocker])}
-          </Text>
-        }
+      </Pressable>
+      <InfoSheet
+        isOpen={isReasonOpen}
+        onClose={() => setIsReasonOpen(false)}
+        info={t(BLOCKER_KEYS[props.blocker])}
       />
-    </Tooltip>
+    </>
   );
 }
 

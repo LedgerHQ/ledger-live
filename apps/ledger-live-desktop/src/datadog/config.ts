@@ -2,6 +2,7 @@ import { scrubResourceUrl } from "@features/platform-observability-redaction";
 import anonymizer from "~/datadog/anonymizer";
 import { scrubActionTargetName, scrubAutoActionName, scrubViewUrl } from "./scrubRum";
 import { shouldIgnoreErrorMessage } from "./ignoreErrors";
+import { blankStrings } from "./blankStrings";
 
 export type ShouldSendCallback = () => boolean;
 
@@ -82,59 +83,56 @@ function rewriteAsarUrlsRecursive(value: unknown, seen: Set<object>): void {
   }
 }
 
-/**
- * Builds the beforeSend callback for Datadog RUM / Log.
- * Drops events when opt-in is off or error message matches ignore list;
- * applies anonymization to the payload (parity with Sentry).
- * If anonymization throws, the event is dropped (return false) to avoid
- * sending potentially non-anonymized data.
- */
+function scrubEvent(ev: Record<string, unknown>): void {
+  if ("server_name" in ev) delete ev.server_name;
+
+  anonymizer.filepathRecursiveReplacer(ev);
+
+  try {
+    rewriteAsarUrlsRecursive(ev, new Set());
+  } catch (e) {
+    console.warn("Datadog: asar URL rewrite failed (best-effort):", e);
+  }
+
+  const resource = ev.resource as Record<string, unknown> | undefined;
+  if (resource && typeof resource.url === "string") {
+    resource.url = LOCAL_APP_URL.test(resource.url)
+      ? scrubViewUrl(resource.url)
+      : scrubResourceUrl(resource.url);
+  }
+
+  const action = ev.action as Record<string, unknown> | undefined;
+  const target = action?.target as Record<string, unknown> | undefined;
+  if (target && typeof target.name === "string") {
+    const isCustomAction = action?.type === "custom";
+    target.name = isCustomAction
+      ? scrubActionTargetName(target.name)
+      : scrubAutoActionName(target.name);
+  }
+
+  const view = ev.view as Record<string, unknown> | undefined;
+  for (const key of VIEW_URL_KEYS) {
+    const viewUrl = view?.[key];
+    if (view && typeof viewUrl === "string") view[key] = scrubViewUrl(viewUrl);
+  }
+}
+
 export function buildBeforeSend(shouldSend: ShouldSendCallback) {
   return (event: unknown, _context?: unknown): boolean => {
-    if (!shouldSend()) return false;
-    if (typeof event !== "object" || event === null) return true;
+    if (typeof event !== "object" || event === null) return shouldSend();
 
     const ev = event as Record<string, unknown>;
     const message = getEventMessage(ev);
-    if (message && shouldIgnoreErrorMessage(message)) return false;
-
-    if ("server_name" in ev) delete ev.server_name;
 
     try {
-      anonymizer.filepathRecursiveReplacer(ev);
+      scrubEvent(ev);
     } catch {
+      blankStrings(ev);
       return false;
     }
 
-    try {
-      rewriteAsarUrlsRecursive(ev, new Set());
-    } catch (e) {
-      console.warn("Datadog: asar URL rewrite failed (best-effort):", e);
-    }
-
-    const resource = ev.resource as Record<string, unknown> | undefined;
-    if (resource && typeof resource.url === "string") {
-      resource.url = LOCAL_APP_URL.test(resource.url)
-        ? scrubViewUrl(resource.url)
-        : scrubResourceUrl(resource.url);
-    }
-
-    const action = ev.action as Record<string, unknown> | undefined;
-    const target = action?.target as Record<string, unknown> | undefined;
-    if (target && typeof target.name === "string") {
-      const isCustomAction = action?.type === "custom";
-      target.name = isCustomAction
-        ? scrubActionTargetName(target.name)
-        : scrubAutoActionName(target.name);
-    }
-
-    const view = ev.view as Record<string, unknown> | undefined;
-    for (const key of VIEW_URL_KEYS) {
-      const viewUrl = view?.[key];
-      if (view && typeof viewUrl === "string") view[key] = scrubViewUrl(viewUrl);
-    }
-
-    return true;
+    if (!shouldSend()) return false;
+    return !(message && shouldIgnoreErrorMessage(message));
   };
 }
 

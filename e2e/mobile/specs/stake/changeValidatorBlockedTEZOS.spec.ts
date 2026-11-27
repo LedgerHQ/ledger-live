@@ -2,5 +2,9 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runUnstakeRequiredTezos } from "@e2e/specs/stake/stake";
 
 // XTZ_2 (index 1) is DELEGATED + STAKED: changing validator is blocked until the user unstakes first.
-const delegation = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
+const delegation = new Delegate({
+  account: Account.XTZ_2,
+  amount: "N/A",
+  provider: "Ledger by Kiln",
+});
 runUnstakeRequiredTezos({ delegation, action: "changeValidator", tmsLinks: ["B2CQA-5919"] });

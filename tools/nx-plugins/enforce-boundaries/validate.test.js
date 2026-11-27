@@ -973,6 +973,107 @@ test("domain/entity: react after a string reading import is flagged, a commented
   );
 });
 
+test("a new-layer manifest declaring styled-components fails, whatever the dependency field", t => {
+  const fields = ["dependencies", "devDependencies", "peerDependencies", "optionalDependencies"];
+  const scopes = ["shared", "domain", "features", "support"];
+  const root = makeTmpWorkspace(
+    Object.fromEntries(
+      scopes.flatMap(scope =>
+        fields.map(field => [
+          `${scope}/${field}/package.json`,
+          JSON.stringify({ name: `@${scope}/${field}`, [field]: { "styled-components": "*" } }),
+        ]),
+      ),
+    ),
+  );
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const graph = taggedGraph(
+    Object.fromEntries(
+      scopes.flatMap(scope => fields.map(field => [`${scope}/${field}`, [`scope:${scope}`]])),
+    ),
+  );
+  const violations = findBannedExternalViolations(graph, root, BANNED_EXTERNALS_BY_TAG);
+  assert.deepEqual(
+    violations.map(v => `${v.sourceTag} ${v.field}`).sort(),
+    scopes.flatMap(scope => fields.map(field => `scope:${scope} ${field}`)).sort(),
+  );
+  assert.ok(violations.every(v => v.specifier === "styled-components"));
+});
+
+test("a new-layer source importing styled-components or styled-components/native fails", t => {
+  const root = makeTmpWorkspace({
+    "shared/foo/package.json": JSON.stringify({ name: "@shared/foo" }),
+    "shared/foo/src/a.web.ts": 'import styled from "styled-components";',
+    "support/foo/package.json": JSON.stringify({ name: "@support/foo" }),
+    "support/foo/src/a.native.ts": 'import styled from "styled-components/native";',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const graph = taggedGraph({ "shared/foo": ["scope:shared"], "support/foo": ["scope:support"] });
+  const violations = findBannedExternalViolations(graph, root, BANNED_EXTERNALS_BY_TAG);
+  assert.deepEqual(violations.map(v => `${v.sourceTag} ${v.specifier}`).sort(), [
+    "scope:shared styled-components",
+    "scope:support styled-components/native",
+  ]);
+});
+
+test("@features/platform-style may use styled-components, another features project may not", t => {
+  const files = {
+    "package.json": JSON.stringify({ dependencies: { "styled-components": "*" } }),
+    "src/a.native.ts": 'import styled from "styled-components/native";',
+  };
+  const root = makeTmpWorkspace(
+    Object.fromEntries(
+      ["features/platform/style", "features/other"].flatMap(project =>
+        Object.entries(files).map(([file, content]) => [`${project}/${file}`, content]),
+      ),
+    ),
+  );
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const graph = {
+    nodes: {
+      "@features/platform-style": {
+        data: { root: "features/platform/style", tags: ["scope:features"] },
+      },
+      "@features/other": { data: { root: "features/other", tags: ["scope:features"] } },
+    },
+    dependencies: {},
+  };
+  const violations = findBannedExternalViolations(graph, root, BANNED_EXTERNALS_BY_TAG);
+  assert.deepEqual(violations.map(v => v.specifier).sort(), [
+    "styled-components",
+    "styled-components/native",
+  ]);
+  assert.ok(violations.every(v => v.file.startsWith(path.join("features", "other"))));
+});
+
+test("exceptProjects skips a project for its own rule only", t => {
+  const root = makeTmpWorkspace({
+    "shared/foo/package.json": JSON.stringify({ name: "@shared/foo" }),
+    "shared/foo/src/a.ts": 'import styled from "styled-components";\nimport "lodash";',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const graph = taggedGraph({ "shared/foo": ["scope:shared"] });
+  const rules = [
+    { sourceTag: "scope:shared", packages: ["styled-components"], exceptProjects: ["shared/foo"] },
+    { sourceTag: "scope:shared", packages: ["lodash"] },
+  ];
+  assert.deepEqual(
+    findBannedExternalViolations(graph, root, rules).map(v => v.specifier),
+    ["lodash"],
+  );
+});
+
+test("a project with another tag may use styled-components", t => {
+  const root = makeTmpWorkspace({
+    "apps/foo/package.json": JSON.stringify({ dependencies: { "styled-components": "*" } }),
+    "apps/foo/src/a.ts": 'import styled from "styled-components";',
+    "libs/foo/package.json": JSON.stringify({ dependencies: { "styled-components": "*" } }),
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const graph = taggedGraph({ "apps/foo": ["scope:apps"], "libs/foo": ["scope:libs"] });
+  assert.deepEqual(findBannedExternalViolations(graph, root, BANNED_EXTERNALS_BY_TAG), []);
+});
+
 /**
  * A graph whose node names are project roots, with a manifest written for each.
  *

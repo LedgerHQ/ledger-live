@@ -45,6 +45,9 @@ store, and sends each change to `applyPrivacyUpdate`, so the package decides wha
 the app only dispatches. The analytics side effects also refresh the analytics identity, as the
 legacy toggles do. The package never imports the app store.
 
+Desktop: `apps/ledger-live-desktop/src/mvvm/features/Settings/sections/privacy.ts`, composed in
+`useDesktopSettingsPort`.
+
 ## Tracking
 
 The events of the legacy screens are kept, per platform:
@@ -62,5 +65,5 @@ for the privacy policy, through its linking provider.
 
 ## Consumers
 
-None yet: the desktop screen comes next, Ledger Wallet Mobile with
+Ledger Wallet Desktop. Ledger Wallet Mobile comes with
 [LIVE-41839](https://ledgerhq.atlassian.net/browse/LIVE-41839).

@@ -11,7 +11,11 @@ import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 const DELEGATION_AMOUNT = "2";
-const delegation = new Delegate(Account.SEI_EVM_1, DELEGATION_AMOUNT, "first-available");
+const delegation = new Delegate({
+  account: Account.SEI_EVM_1,
+  amount: DELEGATION_AMOUNT,
+  provider: "first-available",
+});
 
 const tmsLinks: string[] = ["B2CQA-5740"];
 const tags = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@sei_evm", "@family-evm"];

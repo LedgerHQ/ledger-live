@@ -30,7 +30,7 @@ export function RegionPicker({ region }: RegionPickerProps) {
           value={region.query}
           onChange={event => region.onQueryChange(event.target.value)}
         />
-        <div className="max-h-[360px] overflow-y-auto">
+        <div className="max-h-[360px] overflow-y-auto scrollbar-custom">
           {region.options.length === 0 ? (
             <span className="body-2 text-muted">{labels.search.emptyLabel}</span>
           ) : (

@@ -6,7 +6,7 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { InvalidAddress, NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
-import { NotEnoughGas } from "../../errors";
+import { SolanaNotEnoughSolForRecipientTokenAccount } from "../../errors";
 import { getChainAPI } from "../../network";
 import { chainConfigFrom } from "../../utils";
 import type { ChainAPI } from "../../network";
@@ -74,7 +74,7 @@ describe("validateIntent (integration)", () => {
   jest.setTimeout(30_000);
 
   describe("SPL Token-2022 transfer to recipient without ATA", () => {
-    it("packs NotEnoughGas when spendable balance equals classic ATA rent + fee (the regression scenario)", async () => {
+    it("packs the recipient token account error when spendable balance equals classic ATA rent + fee (the regression scenario)", async () => {
       const intent = makeTokenIntent(VIBECODOOR_MINT);
       const estimation = await estimateFees(api, solanaDefaults.solana, intent);
       const classicAtaRent = BigInt(await api.getMinimumBalanceForRentExemption(CLASSIC_ATA_SIZE));
@@ -86,12 +86,12 @@ describe("validateIntent (integration)", () => {
         api,
       );
 
-      expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+      expect(result.errors.gasPrice).toBeInstanceOf(SolanaNotEnoughSolForRecipientTokenAccount);
       const fees = (result.errors.gasPrice as Error & { fees?: string }).fees;
       expect(Number(fees)).toBeGreaterThan(Number(classicAtaRent) / 1e9);
     });
 
-    it("does not pack NotEnoughGas when spendable balance comfortably covers mint-aware ATA rent + fee", async () => {
+    it("does not pack an insufficient SOL error when spendable balance comfortably covers mint-aware ATA rent + fee", async () => {
       const intent = makeTokenIntent(VIBECODOOR_MINT);
       const estimation = await estimateFees(api, solanaDefaults.solana, intent);
 
@@ -105,7 +105,7 @@ describe("validateIntent (integration)", () => {
       expect(result.errors.gasPrice).toBeUndefined();
     });
 
-    it("packs NotEnoughGas when spendable is zero, regardless of fee value", async () => {
+    it("packs the recipient token account error when spendable is zero, regardless of fee value", async () => {
       const result = await validateIntent(
         makeTokenIntent(VIBECODOOR_MINT),
         [makeNativeBalance(MAIN_ACCOUNT_RENT_EXEMPT), makeTokenBalance(VIBECODOOR_MINT)],
@@ -113,7 +113,7 @@ describe("validateIntent (integration)", () => {
         api,
       );
 
-      expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+      expect(result.errors.gasPrice).toBeInstanceOf(SolanaNotEnoughSolForRecipientTokenAccount);
     });
   });
 

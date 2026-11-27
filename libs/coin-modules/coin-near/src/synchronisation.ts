@@ -12,6 +12,7 @@ import {
 import type { LegacyHistory } from "./network/indexer";
 import { getCoinConfig, isStateDrivenSync } from "./config";
 import { HISTORY_RECHECK_WINDOW_MS } from "./constants";
+import { isGasRefund } from "./gasRefund";
 import { NearAccount, NearResources } from "./types";
 
 type HistoryRead = { history?: LegacyHistory; failed: boolean };
@@ -381,6 +382,69 @@ const legacyShapeClears = (initialAccount: NearAccount | undefined): Partial<Nea
   } as Partial<NearAccount>;
 };
 
+/**
+ * The state change is only a rise of the amount that {@link isGasRefund} takes for the gas refund
+ * of the account's own recent transactions: the other fingerprint segments (locked, storage, code,
+ * key nonces) are unchanged.
+ */
+const refundOnly = (
+  stored: string | undefined,
+  current: string,
+  operations: Operation[],
+  address: string,
+  now: number,
+): boolean => {
+  if (stored === undefined) return false;
+  const [storedAmount, ...storedRest] = stored.split("|");
+  const [amount, ...rest] = current.split("|");
+  const digits = /^\d+$/;
+  if (!digits.test(storedAmount ?? "") || !digits.test(amount ?? "")) return false;
+  if (storedRest.join("|") !== rest.join("|")) return false;
+  return isGasRefund(BigInt(amount) - BigInt(storedAmount), operations, address, now);
+};
+
+/**
+ * The state change is the gas refund of the account's own recent transactions ({@link refundOnly}),
+ * with no earlier change waiting: a recheck window already open, or a failed read that kept the
+ * stored state, waits for an earlier change, and a refund does not close it. After a generic sync,
+ * the stored state dates from before it, and its own mark may wait for a change: the rise is not
+ * taken for a refund.
+ */
+const refundClosesChange = ({
+  afterGenericSync,
+  recheckSince,
+  storedFailedSince,
+  storedFingerprint,
+  fingerprint,
+  operations,
+  address,
+  now,
+}: {
+  afterGenericSync: boolean;
+  recheckSince: number | undefined;
+  storedFailedSince: number | undefined;
+  storedFingerprint: string | undefined;
+  fingerprint: string;
+  operations: Operation[];
+  address: string;
+  now: number;
+}): boolean =>
+  !afterGenericSync &&
+  recheckSince === undefined &&
+  storedFailedSince === undefined &&
+  refundOnly(storedFingerprint, fingerprint, operations, address, now);
+
+/**
+ * The stored operations, less those whose transaction was read again under another id: the generic
+ * sync types a call with no deposit `FEES` where this one types it `OUT`, and the id carries the
+ * type. This sync makes one operation per transaction, so the one read again replaces it.
+ */
+const withoutRereadTransactions = (stored: Operation[], read: Operation[]): Operation[] => {
+  const readIds = new Set(read.map(({ id }) => id));
+  const readHashes = new Set(read.map(({ hash }) => hash));
+  return stored.filter(({ id, hash }) => !readHashes.has(hash) || readIds.has(id));
+};
+
 export const getAccountShape: GetAccountShape<NearAccount> = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
@@ -517,7 +581,20 @@ export const getAccountShape: GetAccountShape<NearAccount> = async info => {
     recheckSince,
     recheckFingerprint,
     historyFailed,
-    unexplainedChange: stateDriven && fingerprintChanged && !hasUnseenOperation,
+    unexplainedChange:
+      stateDriven &&
+      fingerprintChanged &&
+      !hasUnseenOperation &&
+      !refundClosesChange({
+        afterGenericSync: Boolean(initialAccount?.syncHash),
+        recheckSince,
+        storedFailedSince,
+        storedFingerprint,
+        fingerprint,
+        operations: oldOperations,
+        address,
+        now,
+      }),
     now,
   });
   const candidateMarks = nextCandidateMarks({
@@ -566,7 +643,7 @@ export const getAccountShape: GetAccountShape<NearAccount> = async info => {
 
   // The confirmation read may list a transaction indexed late below every stored one.
   const operations = mergeOpsKeepingOlder(
-    history?.gap ? [] : oldOperations,
+    history?.gap ? [] : withoutRereadTransactions(oldOperations, history?.operations ?? []),
     history?.operations ?? [],
   );
   if (operations.length === 0) {

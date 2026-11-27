@@ -72,7 +72,11 @@ async function generateCoin(
         path: accountPath,
         ...(derivationMode ? { derivationMode } : {}),
       });
-      setCachedAddressEntry(cache, coinId, { index, derivationMode, address });
+      setCachedAddressEntry({
+        cache,
+        currencyId: coinId,
+        entry: { index, derivationMode, address },
+      });
     }
 
     return `${coinId}: ${group.accounts.length} address(es)`;

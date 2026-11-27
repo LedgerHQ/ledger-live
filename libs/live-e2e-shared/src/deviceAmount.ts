@@ -3,8 +3,11 @@ import { escapeRegExp } from "./amountText";
 
 export type DeviceAmount = { ticker: string; amount: string };
 
+type ReadDeviceAmountOptions = { events: string[]; label: string; ticker: string };
+
 /** Reads the number printed after `label` and before `ticker` on the device screens. */
-function readDeviceAmount(events: string[], label: string, ticker: string): string {
+function readDeviceAmount(options: ReadDeviceAmountOptions): string {
+  const { events, label, ticker } = options;
   const text = events.join("");
   const pattern = String.raw`${escapeRegExp(label)}([\d.]+)\s*${escapeRegExp(ticker)}`;
   const match = new RegExp(pattern).exec(text);
@@ -14,12 +17,15 @@ function readDeviceAmount(events: string[], label: string, ticker: string): stri
   return match[1];
 }
 
+type FormatLikeReviewOptions = { deviceAmount: string; ticker: string };
+
 /**
  * Formats the device amount as the review dialog does: truncated to a few significant
  * digits, without trailing zeros. The device prints the amount in full, so its own
  * decimals are enough as the unit magnitude.
  */
-function formatLikeReview(deviceAmount: string, ticker: string): string {
+function formatLikeReview(options: FormatLikeReviewOptions): string {
+  const { deviceAmount, ticker } = options;
   const magnitude = deviceAmount.split(".")[1]?.length ?? 0;
   const unit = { name: ticker, code: ticker, magnitude };
   return formatCurrencyUnit(unit, parseCurrencyUnit(unit, deviceAmount), {
@@ -38,8 +44,8 @@ export function expectDeviceAmount({
   label: string;
   expected: DeviceAmount;
 }) {
-  const deviceAmount = readDeviceAmount(events, label, ticker);
-  const shown = formatLikeReview(deviceAmount, ticker);
+  const deviceAmount = readDeviceAmount({ events, label, ticker });
+  const shown = formatLikeReview({ deviceAmount, ticker });
   if (shown !== amount) {
     throw new Error(
       `${label} amount on the device (${deviceAmount} ${ticker}) reads ${shown} in the app format, but the app shows ${amount}`,

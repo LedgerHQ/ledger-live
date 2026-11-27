@@ -17,7 +17,11 @@ import { revokeAllowance } from "@e2e/utils/allowanceUtils";
  */
 export async function resetCollateralAllowance(collateralAccount: TokenAccount) {
   const ownerAddress = await borrowAccountAddress(collateralAccount);
-  const spender = await resolveCollateralSpender(ownerAddress, DEFAULT_COLLATERAL, DEFAULT_LOAN);
+  const spender = await resolveCollateralSpender({
+    address: ownerAddress,
+    collateralAmount: DEFAULT_COLLATERAL,
+    loanAmount: DEFAULT_LOAN,
+  });
   await revokeAllowance({
     account: collateralAccount,
     spender,
@@ -29,7 +33,7 @@ export async function resetCollateralAllowance(collateralAccount: TokenAccount) 
 export async function resetDebtAllowance(debtAccount: TokenAccount) {
   const ownerAddress = await borrowAccountAddress(debtAccount);
   const marketId = await openDebtMarketId(ownerAddress);
-  const spender = await resolveRepaySpender(ownerAddress, marketId);
+  const spender = await resolveRepaySpender({ address: ownerAddress, marketId });
   await revokeAllowance({ account: debtAccount, spender, label: `borrow debt → ${spender}` });
 }
 

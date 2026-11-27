@@ -29,6 +29,12 @@ const resources = {
             dialogTitle: "Select your region",
             dialogDescription: "Choose region to update formats of dates, time and currencies",
           },
+          dateFormat: {
+            title: "Date format",
+            description: "Set the date format for Ledger Wallet",
+            sheetTitle: "Select date format",
+            options: { default: "Default", dayFirst: "DD/MM/YYYY", monthFirst: "MM/DD/YYYY" },
+          },
           currency: {
             title: "Currency",
             description: "Select the currency displayed in the app",

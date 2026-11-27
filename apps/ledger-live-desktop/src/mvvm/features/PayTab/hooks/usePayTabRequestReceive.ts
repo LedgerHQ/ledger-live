@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { toReceiveTarget } from "@features/flow-receive";
@@ -47,7 +48,7 @@ export function usePayTabRequestReceive(): UsePayTabRequestReceive {
   const { openAssetAndAccount } = useOpenAssetAndAccount();
 
   const open = useCallback(() => {
-    dispatch(setFlowValue("request"));
+    dispatch(setFlowValue(ModularDrawerLocation.RECEIVE_FLOW));
     dispatch(setSourceValue(REQUEST_SOURCE));
     openAssetAndAccount({
       categories: REQUEST_CATEGORIES,

@@ -52,13 +52,12 @@ export function trc20TransferCallHex(payeeHex: string, amountBaseUnits: bigint):
   );
 }
 
+type UsdtTransferMatchOptions = { rawDataHex: string; toHex: string; amountBaseUnits: bigint };
+
 /** Whether raw_data hex holds a USDT `transfer(to, amount)`, whichever way its address word is
  * padded. */
-export function isUsdtTransfer(
-  rawDataHex: string,
-  toHex: string,
-  amountBaseUnits: bigint,
-): boolean {
+export function isUsdtTransfer(options: UsdtTransferMatchOptions): boolean {
+  const { rawDataHex, toHex, amountBaseUnits } = options;
   const hex = rawDataHex.toLowerCase();
   const call = hex.indexOf(TRC20_TRANSFER_SELECTOR);
   if (!hex.includes(USDT_CONTRACT_HEX) || call < 0) return false;

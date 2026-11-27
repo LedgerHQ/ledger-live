@@ -348,7 +348,7 @@ describe("PayTab integration", () => {
       });
     });
 
-    it("opens the request flow when the crypto address option is selected", async () => {
+    it("opens the receive flow when the crypto address option is selected", async () => {
       const { user, store } = renderPayTab({ holdsUsdc: true });
 
       await user.press(await screen.findByTestId("action-tile-deposit"));
@@ -357,7 +357,7 @@ describe("PayTab integration", () => {
       await waitFor(() => {
         expect(store.getState().modularDrawer).toMatchObject({
           isOpen: true,
-          flow: "request",
+          flow: "receive_flow",
           source: "pay",
           categories: [AssetCategory.Stablecoins],
           enableAccountSelection: true,
@@ -448,7 +448,7 @@ describe("PayTab integration", () => {
   });
 
   describe("request", () => {
-    it("opens the modular asset drawer for the request flow when the request tile is pressed", async () => {
+    it("opens the modular asset drawer in the receive flow when the request tile is pressed", async () => {
       const { user, store } = renderPayTab({ holdsUsdc: true });
 
       await user.press(await screen.findByTestId("action-tile-request"));
@@ -456,7 +456,7 @@ describe("PayTab integration", () => {
       await waitFor(() => {
         expect(store.getState().modularDrawer).toMatchObject({
           isOpen: true,
-          flow: "request",
+          flow: "receive_flow",
           source: "pay",
           categories: [AssetCategory.Stablecoins],
           enableAccountSelection: true,

@@ -15,6 +15,7 @@ import { Dimmed } from "./components/Dimmed";
 import { ReceiveAddressExtras } from "./components/ReceiveAddressExtras";
 import { ReceiveAddressNotices } from "./components/ReceiveAddressNotices";
 import { ReceiveAddressUnavailable } from "./components/ReceiveAddressUnavailable";
+import { SanctionedAddress } from "./components/SanctionedAddress";
 import { ServiceStatusPanel } from "./components/ServiceStatusPanel";
 import type { ReceiveAddressViewProps } from "./ReceiveAddressView.types";
 
@@ -25,6 +26,7 @@ export function ReceiveAddressView({
   isLoading,
   error,
   gate,
+  sanctioned,
   addressSelection,
   address,
   closeLabel,
@@ -41,7 +43,8 @@ export function ReceiveAddressView({
 }: ReceiveAddressViewProps) {
   const { top, bottom } = useSafeAreaInsets();
   const isHintOpen = !!actions.verifyHint;
-  const isUnavailable = !!error || !!gate;
+  const isUnavailable = !!error || !!gate || !!sanctioned;
+  const sanctionedContent = sanctioned && <SanctionedAddress sanctioned={sanctioned} />;
   const cardRef = useRef<View>(null);
   const { share } = actions;
   // Only this view holds the card: it captures it for Share.
@@ -120,7 +123,7 @@ export function ReceiveAddressView({
                 </Dimmed>
               )}
             </Box>
-            <ReceiveAddressUnavailable error={error} gate={gate} />
+            {sanctionedContent ?? <ReceiveAddressUnavailable error={error} gate={gate} />}
             {isUnavailable ? null : (
               <>
                 <AddressActions actions={actionsWithCard} />
@@ -129,9 +132,11 @@ export function ReceiveAddressView({
                 </Dimmed>
               </>
             )}
-            <Dimmed isDimmed={isHintOpen}>
-              <ReceiveAddressExtras memoCard={memoCard} helpCard={helpCard} />
-            </Dimmed>
+            <Box style={{ marginTop: "auto" }}>
+              <Dimmed isDimmed={isHintOpen}>
+                <ReceiveAddressExtras memoCard={memoCard} helpCard={helpCard} />
+              </Dimmed>
+            </Box>
           </Box>
         </ScrollView>
       )}

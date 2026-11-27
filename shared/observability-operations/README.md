@@ -69,8 +69,7 @@ setOperationSink({
 
 The sink handles its vendor's promises and errors. Mobile registers its Datadog sink in
 `apps/ledger-live-mobile/src/datadogObservers.ts`, desktop in
-`apps/ledger-live-desktop/src/datadog/registerObservers.ts`. The desktop browser SDK needs the
-experimental `feature_operation_vital` flag, set in `apps/ledger-live-desktop/src/datadog/renderer.ts`.
+`apps/ledger-live-desktop/src/datadog/registerObservers.ts`.
 
 ## Tests
 

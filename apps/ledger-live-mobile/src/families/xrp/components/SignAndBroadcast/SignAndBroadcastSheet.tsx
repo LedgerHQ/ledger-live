@@ -1,6 +1,7 @@
 import React from "react";
 import { Platform, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { BottomSheetHeader, BottomSheetScrollView, Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "@shared/analytics-react";
 import { InfoState, type InfoStateProps } from "@shared/ui-info-state";
@@ -12,9 +13,10 @@ import type { SignAndBroadcast } from "./useSignAndBroadcast";
 type Props = Readonly<{
   flow: Omit<SignAndBroadcast, "showStep">;
   infoState: InfoStateProps;
+  trackCategory: string;
   trackName: string;
   testID: string;
-  children?: React.ReactNode;
+  accountId: string;
 }>;
 
 const DEVICE_CONNECTION_PARAMS = { acceptedDeviceModelIds: [] };
@@ -34,7 +36,9 @@ export function makeBroadcastingInfoState(title: string, testID: string): InfoSt
   };
 }
 
-export function SignAndBroadcastSheet({ flow, infoState, trackName, testID, children }: Props) {
+export function SignAndBroadcastSheet(props: Props) {
+  const { flow, infoState, trackCategory, trackName, testID, accountId } = props;
+
   const { height: windowHeight } = useWindowDimensions();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
 
@@ -62,13 +66,19 @@ export function SignAndBroadcastSheet({ flow, infoState, trackName, testID, chil
           {flow.isInfoSheetOpen ? (
             <TrackScreen
               key={trackName}
-              category="XrpManageTokenFlow"
+              category={trackCategory}
               name={trackName}
               type="drawer"
               refreshSource={false}
             />
           ) : null}
-          {children}
+          {flow.infoStep === "success" ? (
+            <SyncOneAccountOnMount
+              reason="transaction-flow-confirmation"
+              priority={10}
+              accountId={accountId}
+            />
+          ) : null}
           <Box lx={{ paddingHorizontal: "s16" }}>
             <InfoState size="hug" {...infoState} />
           </Box>

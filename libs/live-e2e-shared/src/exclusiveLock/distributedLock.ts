@@ -57,12 +57,15 @@ const isLockFree = ({ record, ageMs }: StoredLock, settleClaimDelayMs: number) =
 
 const settleLeftMs = ({ record, ageMs }: StoredLock) => record.settleMs - ageMs;
 
-async function claim(
-  store: LockStore,
-  key: string,
-  record: LockRecord,
-  settleClaimDelayMs: number,
-): Promise<ClaimResult> {
+type ClaimOptions = {
+  store: LockStore;
+  key: string;
+  record: LockRecord;
+  settleClaimDelayMs: number;
+};
+
+async function claim(options: ClaimOptions): Promise<ClaimResult> {
+  const { store, key, record, settleClaimDelayMs } = options;
   const created = await store.create(key, record);
   if (created) return { status: "claimed", etag: created };
 
@@ -73,7 +76,7 @@ async function claim(
     return { status: "held", current };
   }
 
-  const replaced = await store.replace(key, record, current.etag);
+  const replaced = await store.replace({ key, record, etag: current.etag });
   if (!replaced) return { status: "raced", rejectedEtag: current.etag };
   return {
     status: "claimed",
@@ -82,17 +85,22 @@ async function claim(
   };
 }
 
-function hold(
-  store: LockStore,
-  key: string,
-  record: LockRecord,
-  initialEtag: string,
-  claimSentAt: number,
-  options: DistributedLockOptions,
-): AbandonableLease {
-  const { log, heartbeatMs, leaseMs } = options;
-  const now = options.now ?? Date.now;
-  const sleep = options.sleep ?? defaultSleep;
+type HoldOptions = {
+  store: LockStore;
+  key: string;
+  record: LockRecord;
+  initialEtag: string;
+  claimSentAt: number;
+  lockOptions: DistributedLockOptions;
+};
+
+type ReleaseRecordOptions = { settleMs: number; attempt?: number };
+
+function hold(options: HoldOptions): AbandonableLease {
+  const { store, key, record, initialEtag, claimSentAt, lockOptions } = options;
+  const { log, heartbeatMs, leaseMs } = lockOptions;
+  const now = lockOptions.now ?? Date.now;
+  const sleep = lockOptions.sleep ?? defaultSleep;
   let etag = initialEtag;
   let renewedAt = claimSentAt;
   let lost: ExclusiveLockLostError | undefined;
@@ -105,7 +113,7 @@ function hold(
     lost = new ExclusiveLockLostError(
       `[exclusiveLock] lost "${key}"${newHolder} while holding it: its lease expired, so broadcasts from it may have overlapped`,
     );
-    options.onLost?.();
+    lockOptions.onLost?.();
     log.warn(lost.message);
   };
 
@@ -118,7 +126,7 @@ function hold(
     releaseMayHaveLanded = false,
   ): Promise<boolean> => {
     const sentAt = now();
-    const written = await store.replace(key, next, etag);
+    const written = await store.replace({ key, record: next, etag });
     if (written) {
       etag = written;
       renewedAt = sentAt;
@@ -130,7 +138,9 @@ function hold(
       etag = ourLastWrite.etag;
       return true;
     }
-    const rewritten = ourLastWrite ? await store.replace(key, next, ourLastWrite.etag) : undefined;
+    const rewritten = ourLastWrite
+      ? await store.replace({ key, record: next, etag: ourLastWrite.etag })
+      : undefined;
     if (rewritten) {
       etag = rewritten;
       renewedAt = sentAt;
@@ -164,7 +174,8 @@ function hold(
   };
   scheduleBeat();
 
-  const writeReleasedRecord = async (settleMs: number, attempt = 1): Promise<void> => {
+  const writeReleasedRecord = async (releaseOptions: ReleaseRecordOptions): Promise<void> => {
+    const { settleMs, attempt = 1 } = releaseOptions;
     try {
       if (await writeOwnRecord({ ...record, released: true, settleMs }, attempt > 1)) {
         log.info(`[exclusiveLock] released "${key}" (${record.label}) [ETag ${etag}]`);
@@ -172,7 +183,7 @@ function hold(
     } catch (error) {
       if (attempt < RELEASE_ATTEMPTS && !isFatalStoreError(error)) {
         await sleep(RELEASE_RETRY_DELAY_MS);
-        return writeReleasedRecord(settleMs, attempt + 1);
+        return writeReleasedRecord({ settleMs, attempt: attempt + 1 });
       }
       markLostIfLeaseLapsesWithin(0);
       if (!lost) {
@@ -188,7 +199,7 @@ function hold(
     stopped = true;
     clearTimeout(timer);
     await pendingBeat;
-    if (!lost) await writeReleasedRecord(settleMs);
+    if (!lost) await writeReleasedRecord({ settleMs });
     if (lost) throw lost;
   };
 
@@ -245,7 +256,12 @@ class Acquisition {
   /** Resolves to undefined when the store failed in a way a later claim may get past. */
   private async tryClaim(): Promise<ClaimResult | undefined> {
     try {
-      const result = await claim(this.store, this.key, this.record, this.ownSettleClaimDelayMs());
+      const result = await claim({
+        store: this.store,
+        key: this.key,
+        record: this.record,
+        settleClaimDelayMs: this.ownSettleClaimDelayMs(),
+      });
       this.trackRejectedEtag(result);
       if (result.status === "held") this.lastHeld = result.current;
       this.lastError = undefined;
@@ -286,7 +302,14 @@ class Acquisition {
     log.info(
       `[exclusiveLock] acquired "${this.key}" after ${this.now() - this.startedAt}ms (${this.options.label})`,
     );
-    return hold(this.store, this.key, this.record, etag, claimSentAt, this.options);
+    return hold({
+      store: this.store,
+      key: this.key,
+      record: this.record,
+      initialEtag: etag,
+      claimSentAt,
+      lockOptions: this.options,
+    });
   }
 
   /** Throws instead when the acquisition has to stop: given up, store down, timed out. */

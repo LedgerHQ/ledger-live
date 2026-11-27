@@ -13,11 +13,13 @@ function renderSection(...args: Parameters<typeof createFakeGeneralPort>) {
 
 describe("General (native)", () => {
   it("shows each row with its current value", () => {
-    renderSection({ theme: "dark", language: "fr", currency: "EUR" });
+    renderSection({ theme: "dark", language: "fr", currency: "EUR", dateFormat: "MM/DD/YYYY" });
 
     expect(screen.getByText("Ledger Sync")).toBeVisible();
     expect(screen.getByText("Dark")).toBeVisible();
     expect(screen.getByText("Français")).toBeVisible();
+    expect(screen.getByText("Date format")).toBeVisible();
+    expect(screen.getByText("MM/DD/YYYY")).toBeVisible();
     expect(screen.getByText("EUR")).toBeVisible();
   });
 

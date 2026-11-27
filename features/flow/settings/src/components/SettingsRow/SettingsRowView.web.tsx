@@ -22,7 +22,12 @@ export function SettingsRowView({
   toggleTestID,
 }: SettingsRowViewProps) {
   return (
-    <ListItem disabled={disabled} onClick={onPress} className="h-auto py-12" data-testid={testID}>
+    <ListItem
+      disabled={disabled}
+      onClick={onPress}
+      className="h-auto min-h-64 py-12"
+      data-testid={testID}
+    >
       <ListItemLeading>
         {icon}
         <ListItemContent>
