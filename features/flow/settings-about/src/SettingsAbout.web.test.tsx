@@ -2,9 +2,10 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createFakeLinking } from "./__tests__/fakeLinking";
-import { createFakeSettingsAboutPort, FAKE_ABOUT_LINKS } from "./__tests__/fakeSettingsAboutPort";
+import { createFakeSettingsAboutPort, FAKE_TERMS_URL } from "./__tests__/fakeSettingsAboutPort";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
 import { SettingsAbout } from "./SettingsAbout";
+import { socialUrls } from "./urls";
 
 const { openExternal, LinkingWrapper } = createFakeLinking();
 
@@ -45,10 +46,10 @@ describe("SettingsAbout on desktop", () => {
     await user.click(screen.getByTestId("settings-about-terms"));
 
     expect(openExternal.mock.calls).toEqual([
-      [FAKE_ABOUT_LINKS.x],
-      [FAKE_ABOUT_LINKS.instagram],
-      [FAKE_ABOUT_LINKS.github],
-      [FAKE_ABOUT_LINKS.terms],
+      [socialUrls.twitter],
+      [socialUrls.instagram],
+      [socialUrls.github],
+      [FAKE_TERMS_URL],
     ]);
   });
 

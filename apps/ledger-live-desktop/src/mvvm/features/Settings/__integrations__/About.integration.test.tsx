@@ -64,9 +64,9 @@ describe("About section with newSettings on", () => {
 
     expect(openExternal.mock.calls).toEqual([
       [urls.terms],
-      [urls.social.twitter],
-      [urls.social.instagram],
-      [urls.social.github],
+      ["https://twitter.com/Ledger"],
+      ["https://www.instagram.com/ledger/"],
+      ["https://github.com/LedgerHQ/ledger-live"],
     ]);
   });
 

@@ -22,8 +22,10 @@ There is no release notes button, no Privacy policy row and no feedback row on d
 
 ## Port
 
-The app provides a `SettingsAboutPort`: `version`, `links` (terms, X, Instagram, GitHub) and
-`unlockDeveloperTools()`. The package never imports the app store.
+The app provides a `SettingsAboutPort`: `version`, `termsUrl` (the localized terms page) and
+`unlockDeveloperTools()`. The package never imports the app store. Its social links (X, Instagram,
+GitHub) live in the package's own `src/urls.ts`, an internal file like the other flows' `urls.ts`,
+so the app does not carry them.
 
 The unlock is called once, on the fifth tap of the Version row. Desktop sets `developerMode`, as
 the legacy About does, and shows its toast. The setting is saved to disk, so it survives a restart.

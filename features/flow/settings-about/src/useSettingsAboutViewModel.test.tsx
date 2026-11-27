@@ -1,8 +1,9 @@
 import React from "react";
 import { act, renderHook } from "@testing-library/react";
 import { createFakeLinking } from "./__tests__/fakeLinking";
-import { createFakeSettingsAboutPort, FAKE_ABOUT_LINKS } from "./__tests__/fakeSettingsAboutPort";
+import { createFakeSettingsAboutPort, FAKE_TERMS_URL } from "./__tests__/fakeSettingsAboutPort";
 import { I18nWrapper } from "./__tests__/i18nWrapper";
+import { socialUrls } from "./urls";
 import { useSettingsAboutViewModel } from "./useSettingsAboutViewModel";
 
 const { openExternal, LinkingWrapper } = createFakeLinking();
@@ -59,10 +60,10 @@ describe("useSettingsAboutViewModel", () => {
   });
 
   it.each([
-    ["terms", FAKE_ABOUT_LINKS.terms],
-    ["x", FAKE_ABOUT_LINKS.x],
-    ["instagram", FAKE_ABOUT_LINKS.instagram],
-    ["github", FAKE_ABOUT_LINKS.github],
+    ["terms", FAKE_TERMS_URL],
+    ["x", socialUrls.twitter],
+    ["instagram", socialUrls.instagram],
+    ["github", socialUrls.github],
   ])("opens the %s link externally", (id, url) => {
     const { result } = renderViewModel();
     const row = findRow(result, id);

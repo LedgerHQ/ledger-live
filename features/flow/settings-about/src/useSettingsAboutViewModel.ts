@@ -3,6 +3,7 @@ import { useOpenLink } from "@shared/linking";
 import { useSettingsAboutLabels } from "./copy/useSettingsAboutLabels";
 import { nextVersionTapState } from "./logic/versionTaps";
 import type { SettingsAboutProps, SettingsAboutViewProps } from "./SettingsAbout.types";
+import { socialUrls } from "./urls";
 
 export function useSettingsAboutViewModel({
   port,
@@ -40,7 +41,7 @@ export function useSettingsAboutViewModel({
             id: "terms",
             title: labels.terms.title,
             description: labels.terms.description,
-            trailing: externalLink(port.links.terms),
+            trailing: externalLink(port.termsUrl),
             testID: "settings-about-terms",
           },
         ],
@@ -52,19 +53,19 @@ export function useSettingsAboutViewModel({
           {
             id: "x",
             title: labels.connect.x,
-            trailing: externalLink(port.links.x),
+            trailing: externalLink(socialUrls.twitter),
             testID: "settings-about-x",
           },
           {
             id: "instagram",
             title: labels.connect.instagram,
-            trailing: externalLink(port.links.instagram),
+            trailing: externalLink(socialUrls.instagram),
             testID: "settings-about-instagram",
           },
           {
             id: "github",
             title: labels.connect.github,
-            trailing: externalLink(port.links.github),
+            trailing: externalLink(socialUrls.github),
             testID: "settings-about-github",
           },
         ],

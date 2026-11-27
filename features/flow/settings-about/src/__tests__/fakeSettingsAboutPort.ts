@@ -1,18 +1,13 @@
 import type { SettingsAboutPort } from "../ports";
 
-export const FAKE_ABOUT_LINKS = {
-  terms: "https://terms.example",
-  x: "https://x.example",
-  instagram: "https://instagram.example",
-  github: "https://github.example",
-};
+export const FAKE_TERMS_URL = "https://terms.example";
 
 export function createFakeSettingsAboutPort(): SettingsAboutPort & {
   unlockDeveloperTools: jest.Mock;
 } {
   return {
     version: "1.2.3",
-    links: FAKE_ABOUT_LINKS,
+    termsUrl: FAKE_TERMS_URL,
     unlockDeveloperTools: jest.fn(),
   };
 }

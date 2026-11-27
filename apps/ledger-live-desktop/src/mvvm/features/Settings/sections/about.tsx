@@ -33,12 +33,7 @@ function useDesktopAboutPort(): SettingsAboutPort {
   return useMemo(
     () => ({
       version: getEnv("PLAYWRIGHT_RUN") ? "0.0.0" : __APP_VERSION__,
-      links: {
-        terms: termsUrl,
-        x: urls.social.twitter,
-        instagram: urls.social.instagram,
-        github: urls.social.github,
-      },
+      termsUrl,
       unlockDeveloperTools,
     }),
     [termsUrl, unlockDeveloperTools],
