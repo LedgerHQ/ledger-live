@@ -4592,6 +4592,7 @@
       "privacy": "Privacy",
       "about": "About"
     },
+    "switchToLegacy": "Back to previous Settings",
     "security": {
       "hideBalance": {
         "title": "Hide balance",

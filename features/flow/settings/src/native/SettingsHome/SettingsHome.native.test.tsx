@@ -63,4 +63,33 @@ describe("SettingsHome", () => {
     await user.press(screen.getByTestId("settings-home-debug"));
     expect(onOpenDebug).toHaveBeenCalledTimes(1);
   });
+
+  it("shows no row back to the legacy Settings when the app gives no callback", () => {
+    render(<SettingsHome onSelectSection={jest.fn()} />, { wrapper: I18nWrapper });
+
+    expect(screen.queryByTestId("settings-home-switch-to-legacy")).toBeNull();
+  });
+
+  it("shows the row back to the legacy Settings last, and switches when pressed", async () => {
+    const user = userEvent.setup();
+    const onSwitchToLegacySettings = jest.fn();
+    render(
+      <SettingsHome
+        onSelectSection={jest.fn()}
+        devTools={{ onOpenDeveloper: jest.fn(), onOpenDebug: jest.fn() }}
+        onSwitchToLegacySettings={onSwitchToLegacySettings}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    expect(
+      screen
+        .getAllByText(/^(About|Developer|Debug|Back to previous Settings)$/)
+        .map(node => node.props.children),
+    ).toEqual(["About", "Developer", "Debug", "Back to previous Settings"]);
+
+    await user.press(screen.getByTestId("settings-home-switch-to-legacy"));
+
+    expect(onSwitchToLegacySettings).toHaveBeenCalledTimes(1);
+  });
 });

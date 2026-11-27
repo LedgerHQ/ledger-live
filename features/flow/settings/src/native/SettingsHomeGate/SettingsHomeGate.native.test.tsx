@@ -83,4 +83,23 @@ describe("SettingsHomeGate", () => {
 
     expect(onOpenDebug).toHaveBeenCalledTimes(1);
   });
+
+  it("switches back to the legacy Settings from the new home", async () => {
+    mockUseFeature.mockReturnValue({ enabled: true });
+    const user = userEvent.setup();
+    const onSwitchToLegacySettings = jest.fn();
+    render(
+      <SettingsHomeGate
+        onSelectSection={jest.fn()}
+        legacySettings={<Text>Legacy settings</Text>}
+        rowsToHide={[]}
+        onSwitchToLegacySettings={onSwitchToLegacySettings}
+      />,
+      { wrapper: I18nWrapper },
+    );
+
+    await user.press(screen.getByTestId("settings-home-switch-to-legacy"));
+
+    expect(onSwitchToLegacySettings).toHaveBeenCalledTimes(1);
+  });
 });

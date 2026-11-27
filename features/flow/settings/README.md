@@ -27,6 +27,10 @@ The sections come with the next tickets of the
 | `useIsSettingsHomeEnabled` | `/native` | Whether the new home is on, for the header the app's navigator sets                            |
 | `SettingsScrollView`       | `/native` | Scroll view of a Settings screen, its content padded off the bottom safe area                  |
 
+On mobile, `onSwitchToLegacySettings` adds a last row to the home, "Back to previous Settings",
+for users without the Debug menu. The app turns `newSettings` off on that device with a local
+override, so the legacy home shows right away and stays after a restart.
+
 Help is a standalone page, not a section: with `newSettings` on, `getSettingsRoute` returns
 `standalonePage: "help"` for `/settings/help`, and `SettingsGate` renders what the app's
 `renderStandalonePage` gives, without the section tabs. It is the page of

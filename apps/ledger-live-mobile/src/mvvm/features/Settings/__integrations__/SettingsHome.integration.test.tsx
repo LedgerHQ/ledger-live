@@ -91,6 +91,18 @@ describe("Settings home", () => {
     expect(screen.getByTestId("settings-home")).toBeVisible();
     expect(getNavBarTitle()).toHaveTextContent("Settings");
   });
+
+  it("switches back to the legacy home without the Debug menu", async () => {
+    const { user, store } = renderSettings(true);
+
+    await user.press(await screen.findByTestId("settings-home-switch-to-legacy"));
+
+    expect(await screen.findByText(LEGACY_GENERAL_CARD)).toBeVisible();
+    expect(screen.queryByTestId("settings-home")).toBeNull();
+    expect(store.getState().featureFlags.overrides.newSettings).toEqual(
+      expect.objectContaining({ enabled: false }),
+    );
+  });
 });
 
 describe("Settings home developer tools", () => {
