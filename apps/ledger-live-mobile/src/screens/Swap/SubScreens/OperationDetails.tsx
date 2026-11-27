@@ -75,6 +75,8 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
       case "swapsxyz":
       case "moonpay_trade":
         return `https://scan.swaps.xyz/transactions/${swapId}`;
+      case "lifi_intents":
+        return `https://scan.li.fi/tx/${operation.hash}`;
       case "okx":
         if (fromCurrency?.id) {
           return `https://web3.okx.com/fi/explorer/${fromCurrency.id}/tx/${operation.hash}`;
