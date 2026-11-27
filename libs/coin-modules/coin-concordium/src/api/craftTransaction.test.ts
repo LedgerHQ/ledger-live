@@ -1,4 +1,9 @@
-import { createFixtureContext, VALID_ADDRESS, VALID_ADDRESS_2 } from "../test/fixtures";
+import {
+  createFixtureConfig,
+  createFixtureContext,
+  VALID_ADDRESS,
+  VALID_ADDRESS_2,
+} from "../test/fixtures";
 import { createApi } from ".";
 
 const context = createFixtureContext();
@@ -45,9 +50,13 @@ describe("api/craftTransaction", () => {
 
     const result = await api.craftTransaction(context, transactionIntent);
 
+    // A copy pinned to the resolved config, not `context` itself.
     expect(getNextValidSequenceMock).toHaveBeenCalledWith(
       expect.objectContaining({ logger: context.logger }),
       transactionIntent.sender,
+    );
+    await expect(getNextValidSequenceMock.mock.lastCall[0].config()).resolves.toEqual(
+      createFixtureConfig(),
     );
     expect(craftTransactionMock).toHaveBeenCalledWith(
       { address: transactionIntent.sender, nextSequenceNumber: 5 },

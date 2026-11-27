@@ -8,14 +8,14 @@ import type { State } from "~/reducers/types";
 // ── Constants ──
 
 export const SESSION_TOPIC = "ABCDsession-topic-rest";
-export const PROXY_URL = "https://ccd-wallet-proxy-mainnet.coin.ledger.com";
+export const PROXY_URL = concordiumDefaults.concordium.proxyUrl;
 export const TEST_PUBLIC_KEY = "aa".repeat(32);
 export const TEST_SIGNATURE = "bb".repeat(64);
 export const WC_RAW_URI = "wc:test-pairing-uri";
 export const WC_FORMATTED_URI = `concordiumidapp://wallet-connect?encodedUri=${WC_RAW_URI}`;
 
 export const COIN_CONTEXT = {
-  config: async () => ({ ...concordiumDefaults.concordium, proxyUrl: PROXY_URL }),
+  config: async () => concordiumDefaults.concordium,
   logger: () => {},
 };
 

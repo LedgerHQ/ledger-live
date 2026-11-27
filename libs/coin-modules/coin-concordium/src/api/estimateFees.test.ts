@@ -1,8 +1,12 @@
-import { createFixtureContext, VALID_ADDRESS, VALID_ADDRESS_2 } from "../test/fixtures";
+import {
+  createFixtureConfig,
+  createFixtureContext,
+  VALID_ADDRESS,
+  VALID_ADDRESS_2,
+} from "../test/fixtures";
 import { createApi } from ".";
 
-const logger = jest.fn();
-const context = { ...createFixtureContext(), logger };
+const context = createFixtureContext();
 
 jest.mock("../logic", () => ({
   craftTransaction: jest.fn(),
@@ -46,9 +50,13 @@ describe("api/estimateFees", () => {
 
     const result = await api.estimateFees(context, transactionIntent);
 
+    // A copy pinned to the resolved config, not `context` itself.
     expect(estimateFeesMock).toHaveBeenCalledWith(
       expect.objectContaining({ logger: context.logger }),
       "fee test",
+    );
+    await expect(estimateFeesMock.mock.lastCall[0].config()).resolves.toEqual(
+      createFixtureConfig(),
     );
     expect(result).toEqual({ value: BigInt(1500) });
   });
