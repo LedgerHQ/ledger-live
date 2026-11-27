@@ -1,6 +1,6 @@
 import React from "react";
-import Config from "react-native-config";
 import { InfiniteLoader as BaseInfiniteLoader } from "@ledgerhq/native-ui";
+import Config from "react-native-config";
 
 export type InfiniteLoaderProps = React.ComponentProps<typeof BaseInfiniteLoader>;
 
