@@ -2,10 +2,16 @@ import { act, renderHook } from "@tests/test-renderer";
 import {
   setCountervalue,
   setDiscreetMode,
+  setFilterTokenOperationsZeroAmount,
+  setHideEmptyTokenAccounts,
   setLanguage,
   setMevProtection,
   setTheme,
 } from "~/actions/settings";
+import {
+  filterTokenOperationsZeroAmountEnabledSelector,
+  hideEmptyTokenAccountsEnabledSelector,
+} from "~/reducers/settings";
 import { activateDrawerSelector } from "~/reducers/walletSync";
 import type { AppLockAdapter } from "./sections/security/types";
 import { useMobileSettingsPort } from "./useMobileSettingsPort";
@@ -154,5 +160,38 @@ describe("useMobileSettingsPort", () => {
     });
 
     expect(activateDrawerSelector(store.getState())).toBe(true);
+  });
+
+  it("reads the Asset management toggles from the legacy store", () => {
+    const { result, store } = renderHook(() => useMobileSettingsPort(appLock()));
+
+    act(() => {
+      store.dispatch(setHideEmptyTokenAccounts(true));
+      store.dispatch(setFilterTokenOperationsZeroAmount(false));
+    });
+
+    expect(result.current.values).toMatchObject({
+      hideEmptyTokenAccounts: true,
+      filterTokenOperationsZeroAmount: false,
+    });
+  });
+
+  it("stores each Asset management toggle and nothing else", () => {
+    const { result, store } = renderHook(() => useMobileSettingsPort(appLock()));
+    act(() => {
+      store.dispatch(setTheme("dark"));
+      store.dispatch(setFilterTokenOperationsZeroAmount(false));
+    });
+
+    act(() => {
+      result.current.setValue({ key: "hideEmptyTokenAccounts", value: true });
+    });
+    act(() => {
+      result.current.setValue({ key: "filterTokenOperationsZeroAmount", value: true });
+    });
+
+    expect(hideEmptyTokenAccountsEnabledSelector(store.getState())).toBe(true);
+    expect(filterTokenOperationsZeroAmountEnabledSelector(store.getState())).toBe(true);
+    expect(store.getState().settings.theme).toBe("dark");
   });
 });
