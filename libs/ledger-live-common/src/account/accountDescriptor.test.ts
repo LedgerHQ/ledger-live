@@ -1,7 +1,7 @@
 import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import type { DerivationMode } from "@ledgerhq/types-live";
+import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { DerivationPathSchema, toDescriptorPath } from "@domain/entity-derivation";
 import { NetworkIdSchema, networkFromCurrencyId } from "@domain/entity-network";
@@ -543,7 +543,7 @@ describe("an Aleo account, keyed on its address, its view key kept as its contex
   // The coin-aleo testnet fixture account.
   const address = "aleo1uhf67fhy46jvv5hadf586pkdarax6ppuzq8xtpk7jdk9hhujku8sfa39ml";
   const viewKey = "AViewKey1jyaKC65RhaGN3b6h79hLdwTBk3YAMbRL1MMeCArLDJ6E";
-  const legacy: LegacyAccountIdentity = {
+  const legacy: LegacyAccountIdentity & Pick<Account, "seedIdentifier"> = {
     id: encodeAccountId({
       type: "js",
       version: "2",
@@ -556,6 +556,7 @@ describe("an Aleo account, keyed on its address, its view key kept as its contex
     derivationMode: "aleo",
     index: 2,
     freshAddress: address,
+    seedIdentifier: address,
   };
 
   it("keys the account on its address alone", () => {
@@ -586,14 +587,67 @@ describe("an Aleo account, keyed on its address, its view key kept as its contex
 
   it("has no context for a family that keeps none in its legacy id", () => {
     expect(
-      accountContextOf({ id: "js:2:ethereum:0x01::extra", currency: { id: "ethereum" } }),
+      accountContextOf({
+        id: "js:2:ethereum:0x01::extra",
+        currency: { id: "ethereum" },
+        seedIdentifier: "0x01",
+      }),
     ).toBeUndefined();
   });
 
   it("never decodes the id of a family that keeps no context", () => {
     expect(
-      accountContextOf({ id: "not a legacy id", currency: { id: "ethereum" } }),
+      accountContextOf({
+        id: "not a legacy id",
+        currency: { id: "ethereum" },
+        seedIdentifier: "0x01",
+      }),
     ).toBeUndefined();
+  });
+});
+
+describe("a Hedera account, keyed on its account id, its device public key kept as its context", () => {
+  const accountId = "0.0.10096335";
+  const publicKey = "f381f94b116a99518739e1bb394d1c8de281055d48b01dbc1625eebb06021ce5";
+  const legacy: LegacyAccountIdentity & Pick<Account, "seedIdentifier"> = {
+    id: encodeAccountId({
+      type: "js",
+      version: "2",
+      currencyId: "hedera",
+      xpubOrAddress: accountId,
+      derivationMode: "hederaBip44",
+    }),
+    currency: { id: "hedera" },
+    derivationMode: "hederaBip44",
+    index: 0,
+    freshAddress: accountId,
+    seedIdentifier: publicKey,
+  };
+
+  it("keys the account on its account id, never on its public key", () => {
+    expect(fromLegacyAccount(legacy)).toMatchObject({ type: "address", key: accountId });
+  });
+
+  it("reads the seed identifier of the legacy account as the account context", () => {
+    expect(accountContextOf(legacy)).toEqual({ publicKey });
+  });
+
+  it("has no context for a seed identifier that is the account id", () => {
+    expect(accountContextOf({ ...legacy, seedIdentifier: accountId })).toBeUndefined();
+  });
+
+  it("gives the context's public key back as the legacy account's seed identifier, not in its id", () => {
+    expect(toLegacyAccount(fromLegacyAccount(legacy), { publicKey })).toEqual({
+      currencyId: "hedera",
+      derivationMode: "hederaBip44",
+      index: 0,
+      freshAddress: accountId,
+      seedIdentifier: publicKey,
+    });
+  });
+
+  it("has no seed identifier without a context", () => {
+    expect(toLegacyAccount(fromLegacyAccount(legacy))).not.toHaveProperty("seedIdentifier");
   });
 });
 

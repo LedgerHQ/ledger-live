@@ -39,6 +39,20 @@ describe("placeholderAccount", () => {
     });
   });
 
+  it("starts a Hedera account on the public key of its context, its id staying the account id", async () => {
+    const publicKey = "f381f94b116a99518739e1bb394d1c8de281055d48b01dbc1625eebb06021ce5";
+    const account = await placeholderAccount(address("hedera", "0.0.10096335", "m/44/3030"), {
+      publicKey,
+    });
+    expect(account.seedIdentifier).toBe(publicKey);
+    expect(account.id).toBe("js:2:hedera:0.0.10096335:hederaBip44");
+  });
+
+  it("starts an account with no context on its key", async () => {
+    const account = await placeholderAccount(address("hedera", "0.0.10096335", "m/44/3030"));
+    expect(account.seedIdentifier).toBe("0.0.10096335");
+  });
+
   it("is an empty account of the descriptor's currency, mode and index", async () => {
     const account = await placeholderAccount(
       address("ethereum", "0x0000000000000000000000000000000000000001", "m/44h/60h/1h/0/0"),

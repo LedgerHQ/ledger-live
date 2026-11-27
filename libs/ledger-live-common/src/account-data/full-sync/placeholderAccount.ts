@@ -16,8 +16,16 @@ export async function placeholderAccount(
   descriptor: AccountDescriptor,
   context?: AccountContext,
 ): Promise<Account> {
-  const { currencyId, derivationMode, index, xpub, freshAddress, publicKey, customData } =
-    toLegacyAccount(descriptor, context);
+  const {
+    currencyId,
+    derivationMode,
+    index,
+    xpub,
+    freshAddress,
+    publicKey,
+    customData,
+    seedIdentifier,
+  } = toLegacyAccount(descriptor, context);
   const currency = getCryptoCurrencyById(currencyId);
   // A public-key family's sync reads its key from the account id (TON, ICP, Aptos, Stacks).
   const xpubOrAddress = xpub ?? publicKey ?? freshAddress ?? "";
@@ -38,7 +46,7 @@ export async function placeholderAccount(
       derivationMode,
       customData,
     }),
-    seedIdentifier: xpubOrAddress,
+    seedIdentifier: seedIdentifier ?? xpubOrAddress,
     derivationMode,
     index,
     xpub,

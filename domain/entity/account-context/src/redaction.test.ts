@@ -18,6 +18,13 @@ describe("redactAccountContextAction", () => {
     });
   });
 
+  it("replaces every field the context holds, the public key included", () => {
+    const action = accountContextReceived({ accountUUID, context: { publicKey: "f381" } });
+    expect(redactAccountContextAction(action).payload.context).toEqual({
+      publicKey: REDACTED_ACCOUNT_CONTEXT,
+    });
+  });
+
   it("replaces each view key of legacyAccountContextsSynced", () => {
     const action = legacyAccountContextsSynced({
       contexts: [{ accountUUID, context: { viewKey } }],

@@ -9,10 +9,8 @@ import { isDeviceDisconnectedError } from "@features/platform-device-intent";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { RunOnTransport } from "../../coin-modules/types";
 import { aleoCurrency } from "./__mocks__/currency.mock";
-import {
-  CompletionAccountMismatchError,
-  createCompleteAccountDescriptors,
-} from "./completeAccountDescriptors";
+import { CompletionAccountMismatchError } from "../../account-data/discovery/errors";
+import { createCompleteAccountDescriptors } from "./completeAccountDescriptors";
 import { createViewKeyResolver } from "./hw/getViewKey/resolver";
 
 const first = "aleo1uhf67fhy46jvv5hadf586pkdarax6ppuzq8xtpk7jdk9hhujku8sfa39ml";
