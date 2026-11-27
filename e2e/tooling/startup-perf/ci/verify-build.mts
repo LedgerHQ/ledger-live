@@ -22,7 +22,7 @@ import {
 export interface BuildCounts {
   mock: number;
   detox: number;
-  /** FORCE_DEBUG_VISIBLE=1, without which Maestro cannot open Debug. */
+  /** FORCE_DEBUG_VISIBLE=1, which shows Settings > Debug: prepare-build.mts removes it. */
   debug: number;
   blurMock: number;
   blurReal: number;
@@ -67,14 +67,11 @@ export function countMarkers(config: string, markers: ConfigMarkers, bundle: str
 
 /** The first problem of the build, or the warning to give when there is none. */
 export function judge(counts: BuildCounts): { error: string | null; warning: string | null } {
-  if (counts.debug < 1) {
+  if (counts.mock !== 0 || counts.detox !== 0 || counts.debug !== 0) {
     return {
-      error: "FORCE_DEBUG_VISIBLE=1 is not in the generated config: Maestro cannot open Debug",
+      error: "MOCK, DETOX or FORCE_DEBUG_VISIBLE is still in the generated config",
       warning: null,
     };
-  }
-  if (counts.mock !== 0 || counts.detox !== 0) {
-    return { error: "MOCK or DETOX is still in the generated config", warning: null };
   }
   if (counts.blurMock !== 0) {
     return { error: "the JS bundle still has the E2E blur mock", warning: null };

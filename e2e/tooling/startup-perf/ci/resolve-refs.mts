@@ -15,8 +15,6 @@ export interface PlanInputs {
   pairs: string;
   thresholdMs: string;
   scenarios: string;
-  /** Where run.ts reads each launch: log, both or screen. */
-  read: string;
   /** The commit and the branch the workflow runs from. */
   branchSha: string;
   branchName: string;
@@ -31,7 +29,6 @@ export const NIGHTLY: Omit<PlanInputs, "branchSha" | "branchName"> = {
   pairs: "20",
   thresholdMs: "100",
   scenarios: "no-accounts,accounts",
-  read: "log",
 };
 
 interface Builds {
@@ -82,7 +79,7 @@ export interface Plan extends Builds {
   /** The release tags `checkReleaseTags` vets: the snapshot's in every run, A's and B's from develop. */
   tagsToCheck: Array<{ ref: string; sha: string }>;
   /** The run's settings, which the build and measure jobs read from the plan's outputs. */
-  settings: Pick<PlanInputs, "preset" | "platforms" | "pairs" | "thresholdMs" | "read">;
+  settings: Pick<PlanInputs, "preset" | "platforms" | "pairs" | "thresholdMs">;
 }
 
 /** `git ls-remote <options> <this repository> <patterns>`. */
@@ -313,7 +310,6 @@ export function planBuilds(inputs: PlanInputs, lsRemote: LsRemote): Plan {
       platforms: inputs.platforms,
       pairs: inputs.pairs,
       thresholdMs: inputs.thresholdMs,
-      read: inputs.read,
     },
   };
 }
@@ -394,7 +390,6 @@ export function outputsOf(plan: Plan): string {
     platforms: plan.settings.platforms,
     pairs: plan.settings.pairs,
     threshold_ms: plan.settings.thresholdMs,
-    read: plan.settings.read,
     snapshot_release: plan.snapshotRelease,
     snapshot_ref: plan.snapshotSha,
   };
@@ -441,7 +436,6 @@ export function inputsOf(env: NodeJS.ProcessEnv): PlanInputs {
     pairs: env.PAIRS ?? "",
     thresholdMs: env.THRESHOLD ?? "",
     scenarios: env.SCENARIOS ?? "",
-    read: env.READ ?? "",
     ...branch,
   };
 }

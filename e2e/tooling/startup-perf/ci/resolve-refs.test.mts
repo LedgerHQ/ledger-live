@@ -54,7 +54,6 @@ const INPUTS: PlanInputs = {
   pairs: "20",
   thresholdMs: "100",
   scenarios: "no-accounts,accounts",
-  read: "log",
   branchSha: SHA(9),
   branchName: "ci/branch",
 };
@@ -533,7 +532,6 @@ describe("inputsOf", () => {
     PAIRS: "",
     THRESHOLD: "100",
     SCENARIOS: "accounts",
-    READ: "both",
     BRANCH_SHA: SHA(9),
     GITHUB_REF_NAME: "ci/branch",
   };
@@ -553,17 +551,16 @@ describe("inputsOf", () => {
   it("keeps a dispatch's inputs as they are, so a blank one is still refused", () => {
     const inputs = inputsOf({ GITHUB_EVENT_NAME: "workflow_dispatch", ...DISPATCH });
     assert.equal(inputs.platforms, "iOS Only");
-    assert.equal(inputs.read, "both");
     assert.equal(inputs.pairs, "");
     assert.throws(() => planBuilds(inputs, fakeLsRemote()), /even number ≥ 6/);
   });
 });
 
 describe("outputsOf and summaryOf", () => {
-  for (const read of [`log\nref_a=${SHA(7)}`, "log\r"]) {
-    it(`refuses an output that spans lines: ${JSON.stringify(read)}`, () => {
-      const plan = planBuilds({ ...INPUTS, read }, fakeLsRemote());
-      assert.throws(() => outputsOf(plan), /read must be on one line/);
+  for (const platforms of [`Android & iOS\nref_a=${SHA(7)}`, "Android & iOS\r"]) {
+    it(`refuses an output that spans lines: ${JSON.stringify(platforms)}`, () => {
+      const plan = planBuilds({ ...INPUTS, platforms }, fakeLsRemote());
+      assert.throws(() => outputsOf(plan), /platforms must be on one line/);
     });
   }
 
@@ -589,7 +586,6 @@ describe("outputsOf and summaryOf", () => {
         "platforms=Android & iOS",
         "pairs=20",
         "threshold_ms=100",
-        "read=log",
         "snapshot_release=live-mobile@4.27.1",
         `snapshot_ref=${SHA(5)}`,
         "",

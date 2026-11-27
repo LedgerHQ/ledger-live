@@ -4,8 +4,6 @@ import {
   BRIDGE_IMPORT,
   bundleWithoutDetox,
   DETOX_BRIDGE_BLOCK,
-  JS_START_LINE,
-  logJsStartEpoch,
   prodLikeEnv,
   readdLive36190,
   realBlur,
@@ -56,27 +54,14 @@ describe("prodLikeEnv", () => {
     const result = prodLikeEnv(env);
     assert.equal(
       result.text,
-      textOf([
-        "FORCE_DEBUG_VISIBLE=1",
-        'SWAP_API_BASE="https://swap.ledger.com/v5"',
-        "API_KEY=secret",
-      ]),
+      textOf(['SWAP_API_BASE="https://swap.ledger.com/v5"', "API_KEY=secret"]),
     );
-    assert.deepEqual(result.removed, ["MOCK", "DETOX", "SIMCTL_CHILD_FOO"]);
+    assert.deepEqual(result.removed, ["MOCK", "DETOX", "FORCE_DEBUG_VISIBLE", "SIMCTL_CHILD_FOO"]);
     assert.equal(result.swap, true);
   });
 
   it("fails when a test mode is still set another way", () => {
     assert.throws(() => prodLikeEnv("export MOCK = 1\n"), /still sets MOCK, DETOX/);
-  });
-});
-
-describe("logJsStartEpoch", () => {
-  it("logs the wall clock of the JS start", () => {
-    assert.deepEqual(linesOf(logJsStartEpoch(`${JS_START_LINE}\n`)), [
-      'const startupPerfJsStart = logStartupEvent("Before js imports");',
-      "logStartupEvent(`JS start epoch ${startupPerfJsStart.time}`); // startup-perf: JS start wall clock",
-    ]);
   });
 });
 

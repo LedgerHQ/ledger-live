@@ -17,7 +17,7 @@ on:
         options: [prod-vs-release, prod-vs-develop, custom, aa-noise, known-regression]
         default: prod-vs-release
       ref_a:
-        description: "Build A, a branch or tag of this repository (live-mobile@4.26.0 or later). Blank: the latest live-mobile@X.Y.Z tag (prod-vs-release, prod-vs-develop) or this branch (aa-noise, known-regression)"
+        description: "Build A, a branch or tag of this repository (live-mobile@4.29.0 or later). Blank: the latest live-mobile@X.Y.Z tag (prod-vs-release, prod-vs-develop) or this branch (aa-noise, known-regression)"
         required: false
         type: string
       ref_b:
@@ -42,16 +42,10 @@ on:
         type: string
         default: "20"
       threshold_ms:
-        description: "B fails (prod-vs-release, prod-vs-develop, custom) or counts as detected (known-regression) when it is slower than A by more than this, on the Debug screen value (from the first JS import when A and B count from different points) or with the native start"
+        description: "B fails (prod-vs-release, prod-vs-develop, custom) or counts as detected (known-regression) when it is slower than A by more than this, on the Debug screen value"
         required: true
         type: string
         default: "100"
-      read:
-        description: "Where each launch's startup is read: the device log (log), also the Debug screen to check they match (both, slower), or the Debug screen only (screen)"
-        required: true
-        type: choice
-        options: [log, both, screen]
-        default: log
       slack_notif:
         description: "Post the result to Slack #live-repo-health"
         required: false
@@ -95,7 +89,6 @@ jobs:
       platforms: ${{ steps.plan.outputs.platforms }}
       pairs: ${{ steps.plan.outputs.pairs }}
       threshold_ms: ${{ steps.plan.outputs.threshold_ms }}
-      read: ${{ steps.plan.outputs.read }}
       snapshot_release: ${{ steps.plan.outputs.snapshot_release }}
       snapshot_ref: ${{ steps.plan.outputs.snapshot_ref }}
     steps:
@@ -120,7 +113,6 @@ jobs:
           PAIRS: ${{ inputs.pairs }}
           THRESHOLD: ${{ inputs.threshold_ms }}
           SCENARIOS: ${{ inputs.scenarios }}
-          READ: ${{ inputs.read }}
           BRANCH_SHA: ${{ github.sha }}
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
           # Reads a release tag's commit, which a run from develop, release or main checks.
@@ -897,9 +889,6 @@ jobs:
       - name: Compare the build toolchains
         run: bash e2e/tooling/startup-perf/ci/toolchain.sh compare builds/a builds/b
 
-      - name: Install Maestro ${{ env.MAESTRO_VERSION }}
-        run: bash e2e/tooling/startup-perf/devices/install-maestro.sh
-
       - name: Report the AVD read-ahead
         run: cat "${RUNNER_TEMP}/avd-read-ahead.log" 2>/dev/null || echo "No preinstalled AVD to read ahead."
 
@@ -918,7 +907,6 @@ jobs:
         env:
           SCENARIO: ${{ matrix.scenario }}
           PAIRS: ${{ needs.plan.outputs.pairs }}
-          READ: ${{ needs.plan.outputs.read }}
         run: |
           set -euo pipefail
           APP_A=builds/a/signed.apk
@@ -929,7 +917,6 @@ jobs:
             --devices emulator-5554,emulator-5556 \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
             --scenarios "$SCENARIO" --pairs "$PAIRS" --warmups 6 \
-            --read "$READ" \
             --accounts-snapshot snapshot/android \
             --out-dir "$RESULTS_DIR/android"
 
@@ -989,12 +976,6 @@ jobs:
         with:
           node-version: 24
 
-      # Maestro needs a JDK.
-      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
-        with:
-          distribution: "zulu"
-          java-version: "17"
-
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: startup-perf-ios-a
@@ -1025,9 +1006,6 @@ jobs:
       - name: Compare the build toolchains
         run: bash e2e/tooling/startup-perf/ci/toolchain.sh compare builds/a builds/b
 
-      - name: Install Maestro ${{ env.MAESTRO_VERSION }}
-        run: bash e2e/tooling/startup-perf/devices/install-maestro.sh
-
       - name: Create and boot two simulators
         # Two boots and bootstatus waits of up to 5 min each, then up to 10 min of idle wait.
         timeout-minutes: 35
@@ -1038,7 +1016,6 @@ jobs:
         env:
           SCENARIOS: ${{ join(fromJSON(needs.plan.outputs.scenarios), ',') }}
           PAIRS: ${{ needs.plan.outputs.pairs }}
-          READ: ${{ needs.plan.outputs.read }}
         run: |
           set -euo pipefail
           APP_A=builds/a/ledgerlivemobile.app
@@ -1049,7 +1026,6 @@ jobs:
             --devices "$SIM_1,$SIM_2" \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
             --scenarios "$SCENARIOS" --pairs "$PAIRS" \
-            --read "$READ" \
             --accounts-snapshot snapshot/ios \
             --out-dir "$RESULTS_DIR/ios"
 
