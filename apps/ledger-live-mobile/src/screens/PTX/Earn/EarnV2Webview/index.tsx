@@ -13,6 +13,7 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { EarnWebview } from "../EarnWebview";
 import { Wallet40Background } from "LLM/components/Wallet40Background";
+import { useTabBarDensityScrollHandler } from "LLM/components/MainTabBar/useTabBarDensityScrollHandler";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { computeEarnUiVersion } from "@ledgerhq/live-common/domain/computeEarnUiVersion";
 import type { WebviewState } from "~/components/Web3AppWebview/types";
@@ -20,6 +21,8 @@ import { useEarnIntentFlowPresentation } from "../useEarnIntentFlowPresentation"
 import { shouldDisplayEarnBackgroundCanvas } from "~/components/RootNavigator/getEarnScreenOptions";
 
 const BACKGROUND_FADE_DISTANCE = 150;
+
+type WebViewScrollHandler = NonNullable<ComponentProps<typeof WebView>["onScroll"]>;
 
 type Props = {
   manifest?: LiveAppManifest;
@@ -64,12 +67,13 @@ export const EarnV2Webview = ({
   const isPtxUiMinV2 = isMinEarnUiVersion(computedUiVersion, "v2");
 
   const scrollY = useSharedValue(0);
-  const handleScroll = useCallback<NonNullable<ComponentProps<typeof WebView>["onScroll"]>>(
+  const updateBackgroundScroll = useCallback<WebViewScrollHandler>(
     event => {
       scrollY.value = event.nativeEvent.contentOffset.y;
     },
     [scrollY],
   );
+  const updateTabBarDensity = useTabBarDensityScrollHandler();
 
   const [webviewUrl, setWebviewUrl] = useState<string | undefined>(undefined);
   const webviewUrlRef = useRef<string | undefined>(undefined);
@@ -88,6 +92,14 @@ export const EarnV2Webview = ({
 
   const inIntentFlow = !!hideMainNavigator && intentFlowState !== false;
   const showsBackground = isPtxUiMinV2 && !inIntentFlow;
+
+  const handleScroll = useCallback<WebViewScrollHandler>(
+    event => {
+      if (showsBackground) updateBackgroundScroll(event);
+      if (!hideMainNavigator) updateTabBarDensity(event);
+    },
+    [showsBackground, hideMainNavigator, updateBackgroundScroll, updateTabBarDensity],
+  );
 
   const displayBackgroundCanvas =
     shouldDisplayBackgroundCanvas ??
@@ -121,7 +133,7 @@ export const EarnV2Webview = ({
               manifest={manifest}
               inputs={webviewInputs}
               isLwm40Enabled={isLwm40Enabled}
-              onScroll={showsBackground ? handleScroll : undefined}
+              onScroll={handleScroll}
               onWebviewStateChange={handleWebviewStateChange}
             />
           </Fragment>

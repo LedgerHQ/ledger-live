@@ -1,10 +1,17 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { render, screen } from "@tests/test-renderer";
+import { act, render, screen } from "@tests/test-renderer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigatorName } from "~/const";
 import * as stakeLabelHelpers from "~/helpers/getStakeLabelLocaleBased";
+import { makeMutable } from "react-native-reanimated";
+import {
+  INITIAL_SCROLL_COMPACTION_TRACKING,
+  SCROLL_COMPACTION_DIRECTION_THRESHOLD,
+} from "@shared/scroll-compaction";
 import { MainTabBar } from "../index";
+import { resetTabBarDensity } from "../tabBarDensityStore";
+import { updateTabBarDensityOnUI } from "../updateTabBarDensityOnUI";
 import type { MainTabBarProps } from "../types";
 
 jest.mock("~/helpers/getStakeLabelLocaleBased", () => ({
@@ -30,10 +37,47 @@ const EarnScreen = () => <StubScreen label="Earn Content" />;
 const CardScreen = () => <StubScreen label="Card Content" />;
 const AgentsScreen = () => <StubScreen label="Agents Content" />;
 
-function TestNavigator({ withAgentsTab = false }: { readonly withAgentsTab?: boolean }) {
+function getTabLabelContainer(label: string) {
+  let node = screen.getByText(label).parent;
+  while (node && !("jestAnimatedStyle" in node.props)) {
+    node = node.parent;
+  }
+  if (!node) throw new Error(`No animated container for the "${label}" tab label`);
+  return node;
+}
+
+const MID_OFFSET = 500;
+
+/** Feeds scroll events to the tab bar the way a tab root's UI-thread scroll handler does. */
+function createTabRootScroll() {
+  const tracking = makeMutable(INITIAL_SCROLL_COMPACTION_TRACKING);
+  return (offsets: readonly number[]) => {
+    act(() => {
+      offsets.forEach(y =>
+        updateTabBarDensityOnUI(tracking, {
+          contentOffset: { x: 0, y },
+          contentSize: { width: 400, height: 3000 },
+          layoutMeasurement: { width: 400, height: 800 },
+        }),
+      );
+      jest.runAllTimers();
+    });
+    act(() => jest.runAllTimers());
+  };
+}
+
+const SCROLL_DOWN = [MID_OFFSET, MID_OFFSET + SCROLL_COMPACTION_DIRECTION_THRESHOLD];
+
+function TestNavigator({
+  withAgentsTab = false,
+  hideTabBar = false,
+}: {
+  readonly withAgentsTab?: boolean;
+  readonly hideTabBar?: boolean;
+}) {
   return (
     <Tab.Navigator
-      tabBar={props => <MainTabBar {...(props as MainTabBarProps)} />}
+      tabBar={props => <MainTabBar {...(props as MainTabBarProps)} hideTabBar={hideTabBar} />}
       screenOptions={{ headerShown: false }}
     >
       <Tab.Screen name={NavigatorName.Portfolio} component={PortfolioScreen} />
@@ -48,6 +92,10 @@ function TestNavigator({ withAgentsTab = false }: { readonly withAgentsTab?: boo
 }
 
 describe("MainTabBar Integration", () => {
+  afterEach(() => {
+    resetTabBarDensity();
+  });
+
   it("should render all tab labels", () => {
     render(<TestNavigator />);
 
@@ -115,5 +163,69 @@ describe("MainTabBar Integration", () => {
     await user.press(screen.getByRole("tab", { name: "Agents" }));
 
     expect(screen.getByText("Agents Content")).toBeVisible();
+  });
+
+  describe("scroll density", () => {
+    it("should hide the tab labels when the tab root scrolls down", () => {
+      render(<TestNavigator />);
+      const scrollTo = createTabRootScroll();
+
+      scrollTo(SCROLL_DOWN);
+
+      expect(getTabLabelContainer("Home")).toHaveAnimatedStyle({ opacity: 0 });
+      expect(screen.getByRole("tab", { name: "Home" })).toBeVisible();
+    });
+
+    it("should show the tab labels again when the tab root scrolls back up", () => {
+      render(<TestNavigator />);
+      const scrollTo = createTabRootScroll();
+      scrollTo(SCROLL_DOWN);
+
+      scrollTo([MID_OFFSET - 1]);
+
+      expect(getTabLabelContainer("Home")).toHaveAnimatedStyle({ opacity: 1 });
+    });
+
+    it("should navigate and expand when a tab is pressed while compact", async () => {
+      const { user } = render(<TestNavigator />);
+      createTabRootScroll()(SCROLL_DOWN);
+
+      await user.press(screen.getByRole("tab", { name: "Earn" }));
+      act(() => jest.runAllTimers());
+
+      expect(screen.getByText("Earn Content")).toBeVisible();
+      expect(getTabLabelContainer("Home")).toHaveAnimatedStyle({ opacity: 1 });
+    });
+
+    it("should expand when the active tab is pressed again", async () => {
+      const { user } = render(<TestNavigator />);
+      createTabRootScroll()(SCROLL_DOWN);
+
+      await user.press(screen.getByRole("tab", { name: "Home" }));
+      act(() => jest.runAllTimers());
+
+      expect(getTabLabelContainer("Home")).toHaveAnimatedStyle({ opacity: 1 });
+    });
+
+    it("should not compact again on the next small scroll after a re-press", async () => {
+      const { user } = render(<TestNavigator />);
+      const scrollTo = createTabRootScroll();
+      scrollTo([0, 32, 48, MID_OFFSET]);
+      await user.press(screen.getByRole("tab", { name: "Home" }));
+
+      scrollTo([MID_OFFSET + 1]);
+
+      expect(getTabLabelContainer("Home")).toHaveAnimatedStyle({ opacity: 1 });
+    });
+
+    it("should show the tab bar expanded when a screen that hid it scrolled down", () => {
+      const { rerender } = render(<TestNavigator hideTabBar />);
+      createTabRootScroll()(SCROLL_DOWN);
+
+      rerender(<TestNavigator />);
+      act(() => jest.runAllTimers());
+
+      expect(getTabLabelContainer("Home")).toHaveAnimatedStyle({ opacity: 1 });
+    });
   });
 });

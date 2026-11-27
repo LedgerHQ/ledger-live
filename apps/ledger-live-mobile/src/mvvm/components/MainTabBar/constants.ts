@@ -18,7 +18,7 @@ export const getLabelKey = (routeName: string): string =>
     ? `mainNavigation.${getEarnOrYieldSuffix()}`
     : (LABELKEY_MAP[routeName] ?? routeName);
 
-export const COMPACT_TAB_COUNT = 5;
+export const MANY_TABS_COUNT = 5;
 
 export const TRACKING_MENUENTRY_EVENT = "menuentry_clicked";
 
