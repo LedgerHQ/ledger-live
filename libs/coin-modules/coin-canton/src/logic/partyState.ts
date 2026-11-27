@@ -2,7 +2,7 @@ import { throwIfAborted } from "@ledgerhq/coin-module-framework/promises";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import type { CantonCoinConfig, CantonContext } from "../config";
+import type { CantonContext } from "../config";
 import {
   getCalTokensCached,
   getKey,
@@ -13,6 +13,7 @@ import {
   type OperationInfo,
   type TransferProposal,
 } from "../network/gateway";
+import { CantonInvalidConfigError } from "../types/errors";
 import type { AssetView } from "../types/gateway";
 import { isInstrument, type NativeInstrument } from "./asset";
 import { getInstrumentBalances, type CantonBalance } from "./instrumentBalances";
@@ -84,15 +85,15 @@ export const isTokenEnabled = (
 // So a node info outage doesn't fail every sync of an account an earlier sync classified.
 async function getNativeInstrumentOrSaved(
   context: CantonContext,
-  config: CantonCoinConfig,
+  nativeInstrumentId: string,
   savedAdmin: string | undefined,
 ): Promise<NativeInstrument> {
   try {
-    return await getNativeInstrument(config);
+    return await getNativeInstrument(context);
   } catch (error) {
-    if (!savedAdmin) throw error;
+    if (!savedAdmin || error instanceof CantonInvalidConfigError) throw error;
     context.logger("canton/sync", "DSO party read failed, using the saved one", { error });
-    return { instrumentId: config.nativeInstrumentId, instrumentAdmin: savedAdmin };
+    return { instrumentId: nativeInstrumentId, instrumentAdmin: savedAdmin };
   }
 }
 
@@ -179,7 +180,7 @@ export async function readPartyBalances(
   const { nativeInstrumentId } = config;
   // Without a party there is nothing to classify, so a fresh account scans without it.
   const nativeInstrument = partyId
-    ? await getNativeInstrumentOrSaved(context, config, savedNativeInstrumentAdmin)
+    ? await getNativeInstrumentOrSaved(context, nativeInstrumentId, savedNativeInstrumentAdmin)
     : undefined;
   throwIfAborted(signal);
   const balances = nativeInstrument
@@ -187,7 +188,7 @@ export async function readPartyBalances(
     : [];
   throwIfAborted(signal);
   const pendingTransferProposals = partyId
-    ? await getPendingTransferProposals(config, partyId)
+    ? await getPendingTransferProposals(context, partyId)
     : [];
 
   const proposalInstrumentKeys = new Set(
@@ -209,7 +210,7 @@ export async function readPartyBalances(
   }
 
   throwIfAborted(signal);
-  const calTokens = await getCalTokensCached(config, currencyId);
+  const calTokens = await getCalTokensCached(context, currencyId);
   const tokensByKey = await heldTokensByKey(calTokens, balances, signal);
   const aggregatedBalances = aggregateBalances(
     balances,
@@ -257,11 +258,12 @@ export async function readPartyBalances(
 
 /** Whether the sync would give the party an operation on its main account. */
 export async function hasNativeOperation(
-  config: CantonCoinConfig,
+  context: CantonContext,
   partyId: string,
   pendingTransferProposals: TransferProposal[],
   signal: AbortSignal | undefined,
 ): Promise<boolean> {
+  const config = await context.config();
   const pendingUpdateIds = new Set(pendingTransferProposals.map(p => p.update_id));
   const isNativeInstrument = (asset: AssetView | undefined) =>
     !!asset && "instrumentId" in asset && asset.instrumentId === config.nativeInstrumentId;
@@ -273,7 +275,7 @@ export async function hasNativeOperation(
   let cursor: number | undefined;
   for (;;) {
     throwIfAborted(signal);
-    const { operations, next } = await getOperations(config, partyId, {
+    const { operations, next } = await getOperations(context, partyId, {
       minOffset: 0,
       cursor,
       limit: getMaxTxQuery(config),

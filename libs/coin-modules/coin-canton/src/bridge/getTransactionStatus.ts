@@ -20,6 +20,7 @@ import {
 } from "../constants";
 import { isRecipientValid } from "../logic/utils";
 import { getMinReserve } from "../tuning";
+import { getCurrencyContext } from "./context";
 import { getKey, isTopologyChangeRequiredCached } from "../network/gateway";
 import {
   Transaction,
@@ -28,7 +29,7 @@ import {
   TooManyUtxosCritical,
   TooManyUtxosWarning,
 } from "../types";
-import { TopologyChangeError } from "../types/errors";
+import { CantonInvalidConfigError, TopologyChangeError } from "../types/errors";
 
 export { TO_MANY_UTXOS_CRITICAL_COUNT, TO_MANY_UTXOS_WARNING_COUNT };
 
@@ -182,7 +183,7 @@ export async function validateTopology(
 
   try {
     const isTopologyChangeRequired = await isTopologyChangeRequiredCached(
-      await context.config(account.currency.id),
+      await getCurrencyContext(context, account.currency),
       publicKey,
     );
 
@@ -191,7 +192,8 @@ export async function validateTopology(
     }
 
     return new TopologyChangeError("Topology change detected. Re-onboarding required.");
-  } catch {
+  } catch (error) {
+    if (error instanceof CantonInvalidConfigError) throw error;
     // If topology check fails, don't block the transaction
     return null;
   }

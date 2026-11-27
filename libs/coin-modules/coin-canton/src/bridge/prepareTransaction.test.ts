@@ -9,6 +9,7 @@ import {
   createMockTokenAccount,
   createMockTransaction,
 } from "../test/fixtures";
+import type { CantonContext } from "../config";
 import { Transaction } from "../types";
 import { prepareTransaction } from "./prepareTransaction";
 
@@ -167,5 +168,30 @@ describe("prepareTransaction", () => {
     it("is not CC when the chosen token account is gone", async () => {
       expect((await prepare({ subAccountId: "gone" })).tokenId).toBe("");
     });
+  });
+
+  it("should read the CAL tokens through a context pinned to the config of the account's currency", async () => {
+    const currencyConfig = createMockCoinConfigValue({
+      fee: 0,
+      gatewayUrl: "https://currency.test",
+    });
+    const subAccount = createMockTokenAccount();
+    const account = ccAccount(CC.times(10), [subAccount]);
+    const context: CantonContext = {
+      config: async currencyId =>
+        currencyId === account.currency.id ? currencyConfig : createMockCoinConfigValue(),
+      logger: () => {},
+    };
+
+    await prepareTransaction(
+      context,
+      account,
+      createMockTransaction({ subAccountId: subAccount.id, fee: null }),
+    );
+
+    const [calContext, currencyId] = jest.mocked(getCalTokensCached).mock.lastCall ?? [];
+    if (!calContext) throw new Error("getCalTokensCached was not called");
+    expect(currencyId).toBe(account.currency.id);
+    await expect(calContext.config("other")).resolves.toBe(currencyConfig);
   });
 });

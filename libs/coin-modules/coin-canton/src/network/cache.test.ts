@@ -1,16 +1,16 @@
-import type { CantonCoinConfig } from "../config";
-import { createMockCoinConfigValue } from "../test/fixtures";
+import type { CantonCoinConfig, CantonContext } from "../config";
+import { createMockCoinConfigValue, createMockContext } from "../test/fixtures";
 import { makeConfigurableLRUCache } from "./cache";
 
-const configWithTtl = (ttl: number): CantonCoinConfig =>
-  createMockCoinConfigValue({ calTokensCacheTtlMs: ttl });
+const configWithTtl = (ttl: number): CantonContext =>
+  createMockContext(createMockCoinConfigValue({ calTokensCacheTtlMs: ttl }));
 
 const makeCache = () => {
-  const fetch = jest.fn(async (_config: CantonCoinConfig, key: string) => `${key}-value`);
+  const fetch = jest.fn(async (_context: CantonContext, key: string) => `${key}-value`);
   const cached = makeConfigurableLRUCache(
     fetch,
     (_config: CantonCoinConfig, key: string) => key,
-    config => config.calTokensCacheTtlMs ?? 60_000,
+    config => config.calTokensCacheTtlMs,
   );
   return { fetch, cached };
 };
@@ -102,5 +102,21 @@ describe("makeConfigurableLRUCache", () => {
     await cached(configWithTtl(60_000), "a");
 
     expect(fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("keys on the resolved config and fetches with a context pinned to it", async () => {
+    const { fetch, cached } = makeCache();
+    const config = createMockCoinConfigValue({ calTokensCacheTtlMs: 60_000 });
+    const other = createMockCoinConfigValue({ calTokensCacheTtlMs: 120_000 });
+    const context: CantonContext = {
+      config: async currencyId => (currencyId === "other" ? other : config),
+      logger: jest.fn(),
+    };
+
+    await cached(context, "a");
+
+    const [pinned] = fetch.mock.calls[0];
+    await expect(pinned.config("other")).resolves.toBe(config);
+    expect(pinned.logger).toBe(context.logger);
   });
 });

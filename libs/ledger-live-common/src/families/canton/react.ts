@@ -10,7 +10,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import BigNumber from "bignumber.js";
-import { getCurrencyConfiguration } from "../../config";
+import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import { instrumentKey, nativeInstrumentMatcher, type InstrumentTokens } from "./proposalSorting";
 
 export type UseCantonAcceptOrRejectOfferOptions = {
@@ -152,7 +152,7 @@ async function findOfferTokens(
 ): Promise<InstrumentTokens> {
   const wanted = new Set(instrumentIds);
   const calTokens = await getCalTokensCached(
-    getCurrencyConfiguration<CantonCoinConfig>(currencyId),
+    buildContext<CantonCoinConfig>(currencyId),
     currencyId,
   );
   const matches = [...calTokens].filter(([, tokenIdentifier]) => wanted.has(tokenIdentifier));

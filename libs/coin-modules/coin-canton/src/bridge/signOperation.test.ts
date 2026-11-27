@@ -6,6 +6,7 @@ import BigNumber from "bignumber.js";
 import type { CantonCoinConfig, CantonContext } from "../config";
 import { getCalTokensCached, prepareTransferRequest, submit } from "../network/gateway";
 import {
+  configOfCall,
   createMockCantonAccount,
   createMockCantonSigner,
   createMockCoinConfigValue,
@@ -16,6 +17,7 @@ import {
   createMockTransaction,
 } from "../test/fixtures";
 import type { CantonSigner, Transaction } from "../types";
+import { CantonInvalidConfigError } from "../types/errors";
 import { broadcast } from "./broadcast";
 import { prepareTransaction } from "./prepareTransaction";
 import { buildSignOperation } from "./signOperation";
@@ -67,7 +69,7 @@ describe("buildSignOperation", () => {
   it("should prepare a native transfer expiring in one day when no expiry is set", async () => {
     await sign(nativeTransaction);
 
-    expect(mockedPrepare).toHaveBeenCalledWith(config, XPUB_PARTY, {
+    expect(mockedPrepare).toHaveBeenCalledWith(expect.anything(), XPUB_PARTY, {
       type: "token-transfer-request",
       recipient: nativeTransaction.recipient,
       amount: "100",
@@ -151,7 +153,10 @@ describe("buildSignOperation", () => {
 
     await sign(nativeTransaction, { context });
 
-    expect(mockedPrepare.mock.calls[0][0]).toBe(accountCurrencyConfig);
+    await expect(configOfCall(mockedPrepare.mock.calls[0])).resolves.toBe(accountCurrencyConfig);
+    await expect(mockedPrepare.mock.calls[0][0].config("other")).resolves.toBe(
+      accountCurrencyConfig,
+    );
   });
 
   it("should hand the device the split transaction, never a string", async () => {
@@ -193,7 +198,7 @@ describe("buildSignOperation", () => {
     });
     const { signature } = JSON.parse(signedOperation.signature);
     expect(mockedSubmit).toHaveBeenCalledWith(
-      config,
+      expect.anything(),
       XPUB_PARTY,
       createMockPrepareTransferResponse().serialized,
       signature,
@@ -328,5 +333,19 @@ describe("buildSignOperation", () => {
     await sign(nativeTransaction, { context });
 
     expect(preparedRequest().instrument_id).toBe(config.nativeInstrumentId);
+  });
+
+  it("should keep the class of an invalid config error", async () => {
+    mockedPrepare.mockRejectedValue(new CantonInvalidConfigError("canton: coin config gatewayUrl"));
+
+    await expect(sign(nativeTransaction)).rejects.toThrow(CantonInvalidConfigError);
+  });
+
+  it("should still wrap a device error by its result message", async () => {
+    mockedPrepare.mockRejectedValue(
+      Object.assign(new Error("generic"), { data: { resultMessage: "device message" } }),
+    );
+
+    await expect(sign(nativeTransaction)).rejects.toThrow("device message");
   });
 });

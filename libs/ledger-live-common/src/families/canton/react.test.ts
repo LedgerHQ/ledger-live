@@ -319,9 +319,11 @@ describe("useCantonOfferTokens", () => {
     expect(result.current.size).toBe(1);
     expect(findTokenById).toHaveBeenCalledTimes(1);
     expect(mockedGetCalTokens).toHaveBeenCalledWith(
-      { nativeInstrumentId: "Amulet" },
+      expect.objectContaining({ config: expect.any(Function) }),
       "canton_network",
     );
+    const [context] = mockedGetCalTokens.mock.calls[0];
+    await expect(context.config()).resolves.toEqual({ nativeInstrumentId: "Amulet" });
   });
 
   test("reads nothing from CAL when the account has no offers", () => {

@@ -4,9 +4,11 @@ import {
   isGatewayEnabled,
 } from "../../network/gateway";
 import {
+  configOfCall,
   createMockCoinConfigValue,
   createMockContext,
   createMockInstrumentBalances,
+  createSwitchingContext,
 } from "../../test/fixtures";
 import { getBalance } from "../getBalance";
 
@@ -146,9 +148,11 @@ describe("getBalance", () => {
     const config = createMockCoinConfigValue();
     mockedGetBalanceFromNetwork.mockResolvedValue([]);
 
-    await getBalance(createMockContext(config), "party");
+    const context = createMockContext(config);
+    await getBalance(context, "party");
 
-    expect(mockedGetBalanceFromNetwork).toHaveBeenCalledWith(config, "party");
+    expect(mockedGetBalanceFromNetwork).toHaveBeenCalledWith(expect.anything(), "party");
+    expect(await configOfCall(mockedGetBalanceFromNetwork.mock.calls[0])).toBe(config);
   });
 
   it("throws when the gateway is disabled, the only implemented transport", async () => {
@@ -156,5 +160,23 @@ describe("getBalance", () => {
 
     await expect(getBalance(createMockContext(), "party")).rejects.toThrow("Not implemented");
     expect(mockedGetBalanceFromNetwork).not.toHaveBeenCalled();
+  });
+
+  it("reads the rows, the DSO and the reserve under one config", async () => {
+    const first = createMockCoinConfigValue({ gatewayUrl: "https://a.example", minReserve: 100 });
+    const later = createMockCoinConfigValue({ gatewayUrl: "https://b.example", minReserve: 999 });
+    const switching = createSwitchingContext(first, later);
+    mockedGetBalanceFromNetwork.mockResolvedValue(
+      createMockInstrumentBalances(1, [
+        { instrument_id: "Amulet", admin_id: DSO, amount: "1000", locked: false },
+      ]),
+    );
+
+    const [native] = await getBalance(switching, "party");
+
+    expect(switching.config).toHaveBeenCalledTimes(1);
+    expect(native).toEqual({ asset: { type: "native" }, value: 1000n, locked: 100n });
+    expect(await configOfCall(mockedGetBalanceFromNetwork.mock.calls[0])).toBe(first);
+    expect(await configOfCall(mockedGetNativeInstrument.mock.calls[0])).toBe(first);
   });
 });

@@ -37,6 +37,7 @@ const mockedBalance = jest.mocked(balance);
 
 const config = createMockCoinConfigValue({ minReserve: 0 });
 const context = createMockContext(config);
+const pinned = expect.objectContaining({ logger: context.logger });
 const currency = createMockCantonCurrency();
 
 const TOKEN_ID = "canton_network/cip56/cbtc";
@@ -151,7 +152,7 @@ describe("getAccountStatus", () => {
       used: false,
       activated: false,
     });
-    expect(mockedGateway.getPartyByPubKey).toHaveBeenCalledWith(config, "ab");
+    expect(mockedGateway.getPartyByPubKey).toHaveBeenCalledWith(pinned, "ab");
     expect(mockedBalance.getInstrumentBalances).not.toHaveBeenCalled();
   });
 
@@ -187,7 +188,7 @@ describe("getAccountStatus", () => {
   it("reads the operations from the first ledger offset", async () => {
     chain({});
     await getAccountStatus(context, currency.id, "ab");
-    expect(mockedGateway.getOperations).toHaveBeenCalledWith(config, "party", {
+    expect(mockedGateway.getOperations).toHaveBeenCalledWith(pinned, "party", {
       minOffset: 0,
       cursor: undefined,
       limit: 1000,
@@ -199,11 +200,11 @@ describe("getAccountStatus", () => {
     mockedGateway.getOperations
       .mockResolvedValueOnce({ next: 3, operations: [operation(TOKEN_INSTRUMENT, TOKEN_ADMIN)] })
       .mockResolvedValueOnce({ next: 6, operations: [operation()] });
-    const paged = { ...config, gateway: { maxTxQuery: 1 } };
-    await getAccountStatus(createMockContext(paged), currency.id, "ab");
+    const paged = createMockContext({ ...config, gateway: { ...config.gateway, maxTxQuery: 1 } });
+    await getAccountStatus(paged, currency.id, "ab");
     expect(mockedGateway.getOperations.mock.calls).toEqual([
-      [paged, "party", { minOffset: 0, cursor: undefined, limit: 1 }],
-      [paged, "party", { minOffset: 0, cursor: 2, limit: 1 }],
+      [expect.anything(), "party", { minOffset: 0, cursor: undefined, limit: 1 }],
+      [expect.anything(), "party", { minOffset: 0, cursor: 2, limit: 1 }],
     ]);
   });
 
@@ -217,7 +218,7 @@ describe("getAccountStatus", () => {
       activated: true,
     });
     expect(mockedGateway.getOperations).toHaveBeenCalledTimes(2);
-    expect(mockedGateway.getOperations).toHaveBeenLastCalledWith(config, "party", {
+    expect(mockedGateway.getOperations).toHaveBeenLastCalledWith(pinned, "party", {
       minOffset: 0,
       cursor: 2,
       limit: 1000,

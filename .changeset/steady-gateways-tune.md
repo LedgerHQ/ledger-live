@@ -3,4 +3,4 @@
 "@ledgerhq/live-common": minor
 ---
 
-Read the coin-canton gateway page size and cache TTLs from `config_currency_canton_network*`. `gatewayUrl` and `nodeId` are required, `nodeUrl` is dropped, and the gateway caches take the config.
+Read the coin-canton gateway page size, cache TTLs, reserve and gateway switch from `config_currency_canton_network*`, where they are required with their values in `cantonDefaults`; an invalid or missing value throws `CantonInvalidConfigError`. `gatewayUrl` and `nodeId` are required, `nodeUrl` is dropped, and the network functions and caches take the `CantonContext` first.
