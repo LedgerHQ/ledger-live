@@ -14,6 +14,11 @@ const POLL_INTERVAL_MS = 3_000;
 const POLL_MAX_ATTEMPTS = 60;
 const THROTTLE_RETRY_ATTEMPTS = 6;
 const THROTTLE_RETRY_BASE_DELAY_MS = 4_000;
+const SUBMIT_RETRY_ATTEMPTS = 30;
+const SUBMIT_RETRY_DELAY_MS = 2_000;
+const SUBMIT_EDGE_REJECTION_DELAY_MS = 4_000;
+/** Below undici's 300 s `headersTimeout`, so a hung connection costs one attempt, not the budget. */
+const REQUEST_TIMEOUT_MS = 15_000;
 
 /** This driver targets Ethereum mainnet only. */
 export const ETHEREUM_NETWORK = "ethereum";
@@ -50,17 +55,38 @@ function isTransientRead(status: number): boolean {
   return status >= 500 || status === 429;
 }
 
+/**
+ * Staging answers a lookup of an action or transaction it has just created with a 404 more often
+ * than not, alternating with 200 for the same id. Only for ids the partner itself handed out.
+ */
+function isLookupFlap(status: number): boolean {
+  return status === 404;
+}
+
+/** A repeat sends the same hash for the same transaction, so it cannot leave anything behind. */
+function isRetriableSubmit(status: number): boolean {
+  return isEdgeRejection(status) || isLookupFlap(status) || status >= 500;
+}
+
 type PostOptions = { pathname: string; body: unknown; retryOn5xx?: boolean };
+
+type PostOnceOptions = Omit<PostOptions, "retryOn5xx"> & { signal?: AbortSignal };
+
+function postOnce(options: PostOnceOptions): Promise<Response> {
+  const { pathname, body, signal } = options;
+  return fetch(`${BASE_URL}${pathname}`, {
+    method: "POST",
+    headers: JSON_HEADERS,
+    body: JSON.stringify(body),
+    signal,
+  });
+}
 
 /** `retryOn5xx` is for the endpoints that only read, where a repeat cannot create anything. */
 async function post(options: PostOptions): Promise<Response> {
   const { pathname, body, retryOn5xx = false } = options;
   for (let attempt = 1; ; attempt++) {
-    const res = await fetch(`${BASE_URL}${pathname}`, {
-      method: "POST",
-      headers: JSON_HEADERS,
-      body: JSON.stringify(body),
-    });
+    const res = await postOnce({ pathname, body });
     const retriable = isEdgeRejection(res.status) || (retryOn5xx && res.status >= 500);
     if (!retriable || attempt >= THROTTLE_RETRY_ATTEMPTS) return res;
     console.log(
@@ -220,36 +246,82 @@ export async function resolveRepaySpender(options: RepaySpenderOptions): Promise
 
 type SubmitTransactionOptions = { transactionId: string; txHash: string };
 
-/** Best-effort notify; the state we act on is the on-chain confirmation, not this. */
+/**
+ * The partner leaves an action at `created` until it is given each step's hash, so every transient
+ * failure, network errors and timeouts included, is retried under one budget of
+ * `SUBMIT_RETRY_ATTEMPTS`, each logged so CI shows how close a submission came to it. Not thrown:
+ * the step is already confirmed on chain, and `pollAction` names an action left unsettled.
+ */
 export async function submitTransaction(options: SubmitTransactionOptions): Promise<void> {
   const { transactionId, txHash } = options;
-  await post({ pathname: `/v1/transactions/${transactionId}/submit`, body: { txHash } }).catch(
-    () => {},
-  );
-}
-
-/** One poll: the lowercased status, or `undefined` on a transient error (5xx / network) worth retrying. */
-async function pollActionStatus(actionId: string): Promise<string | undefined> {
-  let res: Response;
-  try {
-    res = await fetch(`${BASE_URL}/v1/actions/${actionId}`, { headers: JSON_HEADERS });
-  } catch {
-    return undefined;
+  const pathname = `/v1/transactions/${transactionId}/submit`;
+  const request = `POST ${pathname}`;
+  let lastFailure = "";
+  for (let attempt = 1; attempt <= SUBMIT_RETRY_ATTEMPTS; attempt++) {
+    let outcome = "";
+    let delayMs = SUBMIT_RETRY_DELAY_MS;
+    try {
+      const res = await postOnce({
+        pathname,
+        body: { txHash },
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      });
+      if (res.ok) return;
+      lastFailure = (await failedRequest(request, res)).message;
+      if (!isRetriableSubmit(res.status)) break;
+      outcome = String(res.status);
+      if (isEdgeRejection(res.status)) delayMs = SUBMIT_EDGE_REJECTION_DELAY_MS;
+    } catch (error) {
+      lastFailure = `${request} failed: ${String(error)}`;
+      outcome = String(error);
+    }
+    if (attempt === SUBMIT_RETRY_ATTEMPTS) break;
+    console.warn(
+      `    api: ${outcome} on ${pathname}, retrying (${attempt}/${SUBMIT_RETRY_ATTEMPTS - 1})`,
+    );
+    await new Promise(resolve => setTimeout(resolve, delayMs));
   }
-  if (res.ok) return getString(await res.json(), "status")?.toLowerCase();
-  if (isTransientRead(res.status)) return undefined;
-  throw await failedRequest(`GET /v1/actions/${actionId}`, res);
+  console.warn(`    api: ${lastFailure}`);
 }
 
-/** Polls the action to `success` (throws on `failed` or timeout); transient 5xx/network errors retry. */
+type ActionPoll = { status: string } | { retryReason: string };
+
+async function pollActionStatus(actionId: string): Promise<ActionPoll> {
+  const request = `GET /v1/actions/${actionId}`;
+  let res: Response;
+  let body: unknown;
+  try {
+    res = await fetch(`${BASE_URL}/v1/actions/${actionId}`, {
+      headers: JSON_HEADERS,
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+    if (res.ok) body = await res.json();
+  } catch (error) {
+    return { retryReason: `${request} failed: ${String(error)}` };
+  }
+  if (res.ok) return { status: getString(body, "status")?.toLowerCase() ?? "missing" };
+  const failure = await failedRequest(request, res);
+  if (isTransientRead(res.status) || isLookupFlap(res.status)) {
+    return { retryReason: failure.message };
+  }
+  throw failure;
+}
+
+/** Polls the action to `success` (throws on `failed` or timeout), polling through transient errors. */
 export async function pollAction(actionId: string): Promise<void> {
+  let lastPoll = "none";
   for (let attempt = 0; attempt < POLL_MAX_ATTEMPTS; attempt++) {
-    const status = await pollActionStatus(actionId);
-    if (status === "success") return;
-    if (status === "failed") throw new Error(`Action ${actionId} failed on-chain`);
+    const poll = await pollActionStatus(actionId);
+    if ("status" in poll) {
+      if (poll.status === "success") return;
+      if (poll.status === "failed") throw new Error(`Action ${actionId} failed on-chain`);
+      lastPoll = `status ${poll.status}`;
+    } else {
+      lastPoll = poll.retryReason;
+    }
     await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL_MS));
   }
-  throw new Error(`Action ${actionId} timed out`);
+  throw new Error(`Action ${actionId} timed out (last poll: ${lastPoll})`);
 }
 
 /**
