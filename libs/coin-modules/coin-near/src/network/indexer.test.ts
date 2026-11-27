@@ -754,6 +754,41 @@ describe("getOperations", () => {
       expect(transfers.map(t => t.transactionHash)).toEqual(["unseen"]);
     });
 
+    it("with a floor and a page budget, stops at the budget and resumes from the page it stopped on", async () => {
+      const pages = Array.from({ length: 12 }, (_, index) => [
+        receipt({ transaction_hash: `x${index}`, block: { block_height: String(500 - index) } }),
+      ]);
+      const { cursors } = respondWithReceiptPages(pages);
+
+      const { transfers, resumeCursor, truncatedAtHeight } = await read({
+        floorHeight: 0,
+        pageBudget: 10,
+      });
+
+      expect(cursors).toHaveLength(10);
+      expect(truncatedAtHeight).toBe(492);
+      expect(resumeCursor).toBe("page-9");
+      expect(transfers.map(t => t.blockHeight)).toEqual([
+        500, 499, 498, 497, 496, 495, 494, 493, 492,
+      ]);
+    });
+
+    it("reads past the page budget when stopping would return nothing new", async () => {
+      const pages = Array.from({ length: 12 }, (_, index) => [
+        receipt({ transaction_hash: `x${index}`, block: { block_height: "400" } }),
+      ]);
+      const { cursors } = respondWithReceiptPages(pages);
+
+      const { truncatedAtHeight } = await read({
+        floorHeight: 0,
+        upperHeight: 401,
+        pageBudget: 10,
+      });
+
+      expect(cursors).toHaveLength(12);
+      expect(truncatedAtHeight).toBeUndefined();
+    });
+
     it("rejects when the indexer serves a cursor it already served", async () => {
       mockServer.use(
         http.get(`${NEAR_BASE_URL_MOCKED}/v3/accounts/:address/receipts`, () =>

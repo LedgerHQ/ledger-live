@@ -366,6 +366,77 @@ describe("listOperations receipt transfers", () => {
     );
   });
 
+  it("bounds each receipts read to a page budget, the last transaction page included", async () => {
+    mockPage([transaction({ block: { block_height: "300" } })]);
+
+    await listOperations(mockNearContext, ADDRESS, { minHeight: 0 });
+
+    expect(readReceiptTransfers).toHaveBeenCalledWith(
+      expect.anything(),
+      ADDRESS,
+      expect.objectContaining({ floorHeight: 0, pageBudget: 10 }),
+    );
+  });
+
+  it("when the budget stops the receipts read, returns only what lies above it and reads the same page on", async () => {
+    mockPage(
+      [
+        transaction({ transaction_hash: "above", block: { block_height: "300" } }),
+        transaction({ transaction_hash: "below", block: { block_height: "120" } }),
+      ],
+      "txns-2",
+    );
+    (readReceiptTransfers as jest.Mock).mockResolvedValue({
+      transfers: [transfer({ blockHeight: 250 })],
+      resumeCursor: "receipts-9",
+      truncatedAtHeight: 200,
+    });
+
+    const page = await listOperations(mockNearContext, ADDRESS, {
+      minHeight: 0,
+      cursor: encode({ t: "txns-1" }),
+    });
+
+    expect(page.items.map(item => item.tx.block.height)).toEqual([300, 250]);
+    expect(decode(page.next)).toEqual({ t: "txns-1", r: "receipts-9", u: 200, h: 200 });
+  });
+
+  it("re-reading a page, skips the transactions it already returned", async () => {
+    mockPage(
+      [
+        transaction({ transaction_hash: "above", block: { block_height: "300" } }),
+        transaction({ transaction_hash: "below", block: { block_height: "120" } }),
+      ],
+      "txns-2",
+    );
+
+    const page = await listOperations(mockNearContext, ADDRESS, {
+      minHeight: 0,
+      cursor: encode({ t: "txns-1", r: "receipts-9", u: 200, h: 200 }),
+    });
+
+    expect(page.items.map(item => item.id)).toEqual(["below"]);
+    expect(readReceiptTransfers).toHaveBeenCalledWith(
+      expect.anything(),
+      ADDRESS,
+      expect.objectContaining({ cursor: "receipts-9", upperHeight: 200 }),
+    );
+    expect(decode(page.next)).toEqual({ t: "txns-2", u: 120 });
+  });
+
+  it("re-reads the first page with no transactions cursor when the budget stops its receipts read", async () => {
+    mockPage([transaction({ block: { block_height: "300" } })]);
+    (readReceiptTransfers as jest.Mock).mockResolvedValue({
+      transfers: [],
+      resumeCursor: "receipts-9",
+      truncatedAtHeight: 200,
+    });
+
+    const page = await listOperations(mockNearContext, ADDRESS, { minHeight: 0 });
+
+    expect(decode(page.next)).toEqual({ r: "receipts-9", u: 200, h: 200 });
+  });
+
   it("omits the receipts cursor when the receipts read has none to resume", async () => {
     mockPage([transaction({ block: { block_height: "300" } })], "txns-2");
 

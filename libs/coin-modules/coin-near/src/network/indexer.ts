@@ -150,13 +150,15 @@ export const readReceiptTransfers = async (
     cursor?: string;
     knownHashes: ReadonlySet<string>;
     stopAtHashes?: ReadonlySet<string>;
+    /** Pages a floored read may take before it reports a part of its window to resume. */
+    pageBudget?: number;
   },
 ): Promise<{
   transfers: NearReceiptTransfer[];
   resumeCursor?: string;
   truncatedAtHeight?: number;
 }> => {
-  const { floorHeight, upperHeight, knownHashes, stopAtHashes } = options;
+  const { floorHeight, upperHeight, knownHashes, stopAtHashes, pageBudget } = options;
   const candidateHashes = new Set<string>();
   const seenCursors = new Set<string>();
   let requestCursor = options.cursor;
@@ -196,13 +198,19 @@ export const readReceiptTransfers = async (
     const reachedStored =
       unboundedWindow && receipts.some(receipt => stopAtHashes?.has(receipt.transaction_hash));
     if (next === undefined || reachedStored) break;
-    if (unboundedWindow && page >= RECEIPTS_MAX_PAGES) {
+    const pageCap = unboundedWindow ? RECEIPTS_MAX_PAGES : pageBudget;
+    if (pageCap !== undefined && page >= pageCap) {
       const lowestBlockMayContinueOnNextPage = Math.min(
         ...receipts.map(receiptHeight).filter(h => !Number.isNaN(h)),
       );
-      truncatedAtHeight = lowestBlockMayContinueOnNextPage + 1;
-      log("Near", `receipts of ${address}: read stopped after ${page} pages`);
-      break;
+      const readWholeAbove = lowestBlockMayContinueOnNextPage + 1;
+      const makesProgress = upperHeight === undefined || readWholeAbove < upperHeight;
+      if (unboundedWindow || makesProgress) {
+        truncatedAtHeight = readWholeAbove;
+        if (!unboundedWindow) resumeCursor = requestCursor;
+        log("Near", `receipts of ${address}: read stopped after ${page} pages`);
+        break;
+      }
     }
     if (seenCursors.has(next)) {
       throw new Error(`Near: the indexer cursor does not advance for receipts of ${address}`);

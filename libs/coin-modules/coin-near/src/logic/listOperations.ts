@@ -5,6 +5,7 @@ import type {
   Page,
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { NearContext } from "../config";
+import { RECEIPTS_MAX_PAGES } from "../constants";
 import { fetchTransactionsPage, readReceiptTransfers } from "../network";
 import {
   getOperationType,
@@ -64,8 +65,11 @@ export function toOperation(transaction: NearTransaction, address: string): Oper
   };
 }
 
-/** `t`: transactions cursor, `r`: receipts cursor to resume from, `u`: upper height of the next receipts window. */
-type Cursor = { t?: string; r?: string; u?: number };
+/**
+ * `t`: transactions cursor, `r`: receipts cursor to resume from, `u`: upper height of the next
+ * receipts window, `h`: height from which the transactions of page `t` were already returned.
+ */
+type Cursor = { t?: string; r?: string; u?: number; h?: number };
 
 const encodeCursor = (cursor: Cursor): string =>
   Buffer.from(JSON.stringify(cursor)).toString("base64url");
@@ -74,16 +78,18 @@ function decodeCursor(token: string): Cursor {
   try {
     const parsed: unknown = JSON.parse(Buffer.from(token, "base64url").toString("utf8"));
     if (typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)) {
-      const { t, r, u } = parsed as Record<string, unknown>;
+      const { t, r, u, h } = parsed as Record<string, unknown>;
       if (
         (t === undefined || typeof t === "string") &&
         (r === undefined || typeof r === "string") &&
-        (u === undefined || typeof u === "number")
+        (u === undefined || typeof u === "number") &&
+        (h === undefined || typeof h === "number")
       ) {
         return {
           ...(t !== undefined && { t }),
           ...(r !== undefined && { r }),
           ...(u !== undefined && { u }),
+          ...(h !== undefined && { h }),
         };
       }
     }
@@ -145,21 +151,43 @@ export async function listOperations(
   const windowFloor =
     hasNext && transactions.length > 0 ? Math.min(...transactions.map(blockHeight)) : minHeight;
 
-  const { transfers, resumeCursor } = await readReceiptTransfers(config, address, {
-    floorHeight: windowFloor,
-    ...(cursor.u !== undefined && { upperHeight: cursor.u }),
-    ...(cursor.r !== undefined && { cursor: cursor.r }),
-    knownHashes: new Set(transactions.map(transaction => transaction.transaction_hash)),
-  });
+  const { transfers, resumeCursor, truncatedAtHeight } = await readReceiptTransfers(
+    config,
+    address,
+    {
+      floorHeight: windowFloor,
+      ...(cursor.u !== undefined && { upperHeight: cursor.u }),
+      ...(cursor.r !== undefined && { cursor: cursor.r }),
+      knownHashes: new Set(transactions.map(transaction => transaction.transaction_hash)),
+      pageBudget: RECEIPTS_MAX_PAGES,
+    },
+  );
+
+  const isUnreturned = (height: number): boolean =>
+    height >= minHeight &&
+    (cursor.h === undefined || height < cursor.h) &&
+    (truncatedAtHeight === undefined || height >= truncatedAtHeight);
 
   const items = [
     ...transactions
-      .filter(transaction => blockHeight(transaction) >= minHeight)
+      .filter(transaction => isUnreturned(blockHeight(transaction)))
       .map(transaction => toOperation(transaction, address)),
     ...transfers
       .filter(transfer => transfer.blockHeight >= minHeight)
       .map(transfer => toReceiptOperation(transfer, address)),
   ].sort((a, b) => b.tx.block.height - a.tx.block.height);
+
+  if (truncatedAtHeight !== undefined) {
+    return {
+      items,
+      next: encodeCursor({
+        ...(cursor.t !== undefined && { t: cursor.t }),
+        ...(resumeCursor !== undefined && { r: resumeCursor }),
+        u: truncatedAtHeight,
+        h: truncatedAtHeight,
+      }),
+    };
+  }
 
   return {
     items,
