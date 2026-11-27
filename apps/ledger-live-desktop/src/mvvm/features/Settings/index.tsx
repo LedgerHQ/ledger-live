@@ -7,6 +7,7 @@ import {
 } from "@features/flow-settings";
 import { SettingsGate } from "@features/flow-settings/web";
 import { General } from "@features/flow-settings-general/web";
+import { Privacy } from "@features/flow-settings-privacy";
 import { Security } from "@features/flow-settings-security";
 import { DesktopSettingsPortProvider } from "./DesktopSettingsPortProvider";
 import { DesktopHelpPage } from "./sections/help";
@@ -20,6 +21,8 @@ function renderSection(section: SettingsSectionId) {
       return <General testID="settings-general" />;
     case "security":
       return <Security testID="settings-security" />;
+    case "privacy":
+      return <Privacy testID="settings-privacy" />;
     default:
       return null;
   }
