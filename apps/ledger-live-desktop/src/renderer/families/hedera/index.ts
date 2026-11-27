@@ -19,6 +19,7 @@ const family: HederaFamily = {
   sendRecipientFields,
   tokenList,
   addAssetAction,
+  receiveGateAction: addAssetAction,
   operationDetails,
   AccountBodyHeader,
   AccountBalanceSummaryFooter,

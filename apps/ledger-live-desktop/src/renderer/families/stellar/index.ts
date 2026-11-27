@@ -13,6 +13,7 @@ const family: StellarFamily = {
   sendRecipientFields,
   tokenList,
   addAssetAction,
+  receiveGateAction: addAssetAction,
   modalsToPreload: ["MODAL_STELLAR_ADD_ASSET"],
 };
 

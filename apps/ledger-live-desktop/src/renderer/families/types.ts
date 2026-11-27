@@ -545,6 +545,12 @@ export type LLDCoinFamily<
   addAssetAction?: (args: { account: A; dispatch: AppDispatch }) => void;
 
   /**
+   * Opens what the new receive screen asks for when the account cannot receive yet, such as the
+   * token to add. Without it, the screen shows no button.
+   */
+  receiveGateAction?: (args: { account: A; token?: TokenCurrency; dispatch: AppDispatch }) => void;
+
+  /**
    * Opens the family's token management. The account settings of the new Account Detail and
    * Crypto addresses pages show "Manage assets" only for a family that defines it, when
    * `canManage` is true.
