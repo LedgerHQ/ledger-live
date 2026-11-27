@@ -48,6 +48,8 @@ export interface HederaMirrorAccount {
   pending_reward: number;
   evm_address: string;
   created_timestamp?: string | null;
+  /** The raw public key in hex, except for a key list or threshold key, which is `ProtobufEncoded`. */
+  key?: { _type: "ED25519" | "ECDSA_SECP256K1" | "ProtobufEncoded"; key: string } | null;
   balance: {
     balance: number;
     timestamp: string;

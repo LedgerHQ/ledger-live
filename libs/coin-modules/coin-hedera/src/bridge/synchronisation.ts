@@ -16,7 +16,7 @@ import { listOperationsV2 } from "../logic";
 import { resolveConfig } from "../logic/utils";
 import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2, toEVMAddress } from "../network/utils";
-import type { HederaAccount } from "../types";
+import type { HederaAccount, HederaMirrorAccount } from "../types";
 import {
   buildCalTokenMap,
   resolveBridgeOperations,
@@ -25,6 +25,12 @@ import {
   applyPendingExtras,
   mergeSubAccounts,
 } from "./utils";
+
+const publicKeyOf = ({ key }: HederaMirrorAccount) => {
+  if (!key) return undefined;
+  const { _type: type, key: publicKey } = key;
+  return type === "ProtobufEncoded" ? undefined : publicKey;
+};
 
 export const getAccountShape: GetAccountShape<HederaAccount> = async (
   info,
@@ -126,8 +132,13 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts);
 
+  // Receive and sign need the device public key; an account built from its id alone holds the id instead.
+  const seedIdentifier =
+    initialAccount?.seedIdentifier === address ? publicKeyOf(mirrorAccount) : undefined;
+
   return {
     id: liveAccountId,
+    ...(seedIdentifier && { seedIdentifier }),
     freshAddress: address,
     syncHash,
     lastSyncDate: new Date(),

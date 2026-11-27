@@ -8,7 +8,7 @@ import * as networkUtils from "../network/utils";
 import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { getMockedCurrency, getMockedERC20TokenCurrency } from "../test/fixtures/currency.fixture";
 import { getMockedMirrorAccount } from "../test/fixtures/mirror.fixture";
-import type { HederaAccount } from "../types";
+import type { HederaAccount, HederaMirrorAccount } from "../types";
 import { getAccountShape, buildIterateResult } from "./synchronisation";
 import * as bridgeUtils from "./utils";
 
@@ -52,6 +52,18 @@ const mockInfo: AccountShapeInfo<HederaAccount> = {
 };
 
 const mockBuildCalTokenMap = jest.mocked(bridgeUtils.buildCalTokenMap);
+
+/** Syncs an account holding `seedIdentifier` whose mirror node account has `key`. */
+function syncFrom(seedIdentifier: string, key: NonNullable<HederaMirrorAccount["key"]>) {
+  mockGetAccount.mockResolvedValue(getMockedMirrorAccount({ key }));
+  const initialAccount = {
+    seedIdentifier,
+    syncHash: mockSyncHash,
+    operations: [],
+    pendingOperations: [],
+  } as unknown as Account;
+  return getAccountShape({ ...mockInfo, initialAccount }, { paginationConfig: {} });
+}
 
 describe("getAccountShape", () => {
   beforeEach(() => {
@@ -184,6 +196,28 @@ describe("getAccountShape", () => {
       mockConfig,
       expect.not.objectContaining({ cursor: expect.any(String) }),
     );
+  });
+
+  describe("seedIdentifier", () => {
+    const devicePublicKey = "8452784793a36c947e4ae74eacdced2c07de6b0c4a3947dd0075632ef8f4d6d1";
+
+    it("takes the account key from the mirror node when the account holds only its id", async () => {
+      const result = await syncFrom(mockAddress, { _type: "ED25519", key: devicePublicKey });
+
+      expect(result.seedIdentifier).toBe(devicePublicKey);
+    });
+
+    it("keeps the public key the account holds", async () => {
+      const result = await syncFrom(devicePublicKey, { _type: "ED25519", key: "rotated" });
+
+      expect(result).not.toHaveProperty("seedIdentifier");
+    });
+
+    it("keeps the id when the account key is a key list", async () => {
+      const result = await syncFrom(mockAddress, { _type: "ProtobufEncoded", key: "0a22" });
+
+      expect(result).not.toHaveProperty("seedIdentifier");
+    });
   });
 
   it("drops the stored operations of an account synced under another syncHash", async () => {
