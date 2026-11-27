@@ -100,6 +100,7 @@ export async function initDatadog(
         profilingSampleRate?: number;
         trackUserInteractions?: boolean;
         trackResources?: boolean;
+        propagateTraceBaggage?: boolean;
       }
     | undefined,
   store: Store<State>,
@@ -131,13 +132,13 @@ export async function initDatadog(
       enablePrivacyForActionName: true,
       traceSampleRate: params?.traceSampleRate ?? 100,
       allowedTracingUrls,
+      propagateTraceBaggage: params?.propagateTraceBaggage ?? false,
       ...(profilingSampleRate !== undefined && { profilingSampleRate }),
       trackViewsManually: true,
       trackUserInteractions: params?.trackUserInteractions ?? true,
       trackResources: params?.trackResources ?? true,
       beforeSend: buildBeforeSend(shouldSend),
       sessionPersistence: "local-storage",
-      enableExperimentalFeatures: ["feature_operation_vital"],
     });
 
     currentViewName = toDatadogViewName(hashRoutePath());
