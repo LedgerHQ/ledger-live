@@ -121,7 +121,7 @@
   },
   "devDependencies": {
     "@rspack/core": "catalog:",
-    "@types/hoist-non-react-statics": "3.3.5",
+    "@types/hoist-non-react-statics": "3.3.7",
     "@types/lodash": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
