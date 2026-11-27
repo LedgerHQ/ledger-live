@@ -706,6 +706,38 @@ describe("signing flow of a closed bridge session", () => {
   });
 });
 
+describe("sign request group", () => {
+  afterEach(() => {
+    cleanup();
+    liveBlindSigningReporter.setContext({ liveAppContext: null });
+  });
+
+  it.each([
+    [{ requestGroupId: "wc-topic" }, "wc-topic"],
+    [undefined, undefined],
+  ])("hands the requestGroupId of meta %p to the message.sign UI flow", async (meta, expected) => {
+    const account = createFixtureAccount("01");
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+    const uiMessageSign = jest.fn();
+    const options = createDefaultOptions({
+      accounts: [account],
+      uiHook: { "message.sign": uiMessageSign },
+    });
+    renderHook(() => useWalletAPIServer(options));
+
+    void Promise.resolve(
+      getRegisteredHandler("message.sign")({
+        accountId: "wallet-account-id",
+        message: Buffer.from("hello"),
+        meta,
+      }),
+    ).catch(() => {});
+
+    await waitFor(() => expect(uiMessageSign).toHaveBeenCalled());
+    expect(uiMessageSign.mock.calls[0][0].requestGroupId).toBe(expected);
+  });
+});
+
 describe("broadcast of a closed bridge session", () => {
   afterEach(() => {
     cleanup();

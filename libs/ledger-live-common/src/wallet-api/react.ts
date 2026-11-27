@@ -59,6 +59,7 @@ import {
   protectStorageLogic,
 } from "./logic";
 import { handlers as featureFlagsHandlers } from "./FeatureFlags";
+import { getSignatureRequestGroupId } from "@features/platform-wallet-api-signature-cancel";
 import { getAccountBridge } from "../bridge";
 
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
@@ -127,6 +128,8 @@ export interface UiHook {
     account: AccountLike;
     message: AnyMessage;
     options: Parameters<WalletHandlers["message.sign"]>[0]["options"];
+    /** Lets the Live App cancel the request through `custom.signature.cancel`. */
+    requestGroupId?: string;
     onSuccess: (signature: string) => void;
     onError: (error: Error) => void;
     onCancel: () => void;
@@ -151,6 +154,8 @@ export interface UiHook {
       liveTx: Partial<Transaction>;
     };
     options: Parameters<WalletHandlers["transaction.sign"]>[0]["options"];
+    /** Lets the Live App cancel the request through `custom.signature.cancel`. */
+    requestGroupId?: string;
     onSuccess: (signedOperation: SignedOperation) => void;
     onError: (error: Error) => void;
   }) => void | Promise<void>;
@@ -767,7 +772,7 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiMessageSign) return;
 
-    server.setHandler("message.sign", ({ accountId, message, options }) =>
+    server.setHandler("message.sign", ({ accountId, message, options, meta }) =>
       signMessageLogic(
         { manifest, accounts, tracking },
         accountId,
@@ -779,6 +784,7 @@ export function useWalletAPIServer({
               account,
               message,
               options,
+              requestGroupId: getSignatureRequestGroupId(meta),
               onSuccess: signature => {
                 if (done) return;
                 done = true;
@@ -934,7 +940,7 @@ export function useWalletAPIServer({
 
     server.setHandler(
       "transaction.sign",
-      async ({ accountId, tokenCurrency, transaction, options }) => {
+      async ({ accountId, tokenCurrency, transaction, options, meta }) => {
         let family: string | undefined;
         const signedOperation = await signTransactionLogic(
           { manifest, accounts, tracking },
@@ -949,6 +955,7 @@ export function useWalletAPIServer({
                 parentAccount,
                 signFlowInfos,
                 options,
+                requestGroupId: getSignatureRequestGroupId(meta),
                 onSuccess: signedOperation => {
                   if (done) return;
                   done = true;
@@ -1106,6 +1113,7 @@ export function useWalletAPIServer({
                 parentAccount,
                 signFlowInfos,
                 options,
+                requestGroupId: getSignatureRequestGroupId(meta),
                 onSuccess: signedOperation => {
                   if (done) return;
                   done = true;

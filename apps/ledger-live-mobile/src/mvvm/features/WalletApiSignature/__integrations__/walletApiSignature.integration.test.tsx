@@ -5,6 +5,7 @@ import MessageSignatureDrawer from "../components/MessageSignatureDrawer";
 import type { WalletApiDeviceIntentSignRequest } from "../components/TransactionSignatureDrawer";
 import type { WalletApiDeviceIntentSignMessageRequest } from "../components/MessageSignatureDrawer";
 import { useWalletApiSignatureQueue } from "../hooks/useWalletApiSignatureQueue";
+import { handlers as signatureCancelHandlers } from "@features/platform-wallet-api-signature-cancel";
 
 // The Device Intent Executor drives a real device connection + bottom sheet, which cannot
 // run in jest. We mock it to a marker view and capture its props, so this test focuses on
@@ -68,10 +69,11 @@ jest.mock("../components/MessageSignatureDrawer/intentDefinition", () => ({
 
 const account = { id: "js:2:ethereum:0xabc:", type: "Account", currency: { name: "Ethereum" } };
 
-function buildTransactionRequest(recipient: string) {
+function buildTransactionRequest(recipient: string, requestGroupId?: string) {
   const onSuccess = jest.fn();
   const onError = jest.fn();
   const request = {
+    requestGroupId,
     account,
     parentAccount: undefined,
     transaction: { family: "ethereum", recipient },
@@ -85,7 +87,37 @@ function buildTransactionRequest(recipient: string) {
   return { request, onSuccess, onError };
 }
 
+function buildMessageRequest(requestGroupId?: string) {
+  const onError = jest.fn();
+  const request = {
+    account,
+    parentAccount: undefined,
+    message: { message: "hello" },
+    appName: undefined,
+    dependencies: undefined,
+    manifestId: "ledger-wallet-connect",
+    manifestName: "WalletConnect",
+    requestGroupId,
+    onSuccess: jest.fn(),
+    onError,
+    onCancel: jest.fn(),
+  } as unknown as WalletApiDeviceIntentSignMessageRequest;
+  return { request, onError };
+}
+
 type SignatureQueue = ReturnType<typeof useWalletApiSignatureQueue>;
+
+/** Calls `custom.signature.cancel` the way the Wallet API server does once it is registered. */
+function callSignatureCancel(queue: SignatureQueue, params: unknown) {
+  const handler = signatureCancelHandlers({ cancelSignatures: queue.cancelSignatures })[
+    "custom.signature.cancel"
+  ];
+  // The handler only reads the request params, not the wallet context nor the other handlers.
+  const [request, context, walletHandlers] = [{ params }, {}, {}] as unknown as Parameters<
+    typeof handler
+  >;
+  return handler(request, context, walletHandlers);
+}
 
 /** Renders the queued drawers the way the Wallet API webview does. */
 function SignatureQueueHost({ onQueue }: { onQueue: (queue: SignatureQueue) => void }) {
@@ -277,5 +309,71 @@ describe("WalletApiSignature feature", () => {
     expect(second.onSuccess).not.toHaveBeenCalled();
     expect(first.onError).not.toHaveBeenCalled();
     expect(queue!.currentSignature).toBeNull();
+  });
+
+  describe("custom.signature.cancel", () => {
+    it("closes the shown drawer and drops the queued request of the group, keeping the others", async () => {
+      const shown = buildTransactionRequest("0xshown", "topic-a");
+      const queued = buildMessageRequest("topic-a");
+      const otherDapp = buildTransactionRequest("0xother", "topic-b");
+      let queue: SignatureQueue | undefined;
+      const { getByTestId } = render(
+        <SignatureQueueHost
+          onQueue={latest => {
+            queue = latest;
+          }}
+        />,
+      );
+      act(() => {
+        queue!.enqueueTransactionSignature(shown.request);
+        queue!.enqueueMessageSignature(queued.request);
+        queue!.enqueueTransactionSignature(otherDapp.request);
+      });
+      await waitFor(() =>
+        expect(mockExecutorProps?.intentComponentExtraProps?.recipient).toBe("0xshown"),
+      );
+
+      let answer: unknown;
+      act(() => {
+        answer = callSignatureCancel(queue!, { requestGroupId: "topic-a" });
+      });
+
+      expect(answer).toEqual({ cancelled: 2 });
+      const cancelled = expect.objectContaining({ name: "SignatureRequestCancelled" });
+      expect(shown.onError).toHaveBeenCalledWith(cancelled);
+      expect(queued.onError).toHaveBeenCalledWith(cancelled);
+      expect(shown.onSuccess).not.toHaveBeenCalled();
+      expect(otherDapp.onError).not.toHaveBeenCalled();
+      await waitFor(() =>
+        expect(mockExecutorProps?.intentComponentExtraProps?.recipient).toBe("0xother"),
+      );
+      expect(getByTestId("device-intent-executor")).toBeTruthy();
+      expect(queue!.currentSignature?.request).toBe(otherDapp.request);
+    });
+
+    it("never opens a request of the group that arrives once cancelled, e.g. still preparing", async () => {
+      const late = buildTransactionRequest("0xlate", "topic-a");
+      let queue: SignatureQueue | undefined;
+      const { queryByTestId } = render(
+        <SignatureQueueHost
+          onQueue={latest => {
+            queue = latest;
+          }}
+        />,
+      );
+
+      let answer: unknown;
+      act(() => {
+        answer = callSignatureCancel(queue!, { requestGroupId: "topic-a" });
+      });
+      act(() => queue!.enqueueTransactionSignature(late.request));
+
+      expect(answer).toEqual({ cancelled: 0 });
+      expect(late.onError).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "SignatureRequestCancelled" }),
+      );
+      expect(queue!.currentSignature).toBeNull();
+      expect(queryByTestId("device-intent-executor")).toBeNull();
+    });
   });
 });

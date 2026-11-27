@@ -16,6 +16,8 @@ export type WalletApiDeviceIntentSignRequest = {
   manifestId: string;
   /** Calling live-app manifest name, forwarded to deviceUxV2 analytics. */
   manifestName: string;
+  /** Set by the live app so it can cancel the request (`custom.signature.cancel`). */
+  requestGroupId?: string;
   onSuccess: (signedOperation: SignedOperation) => void;
   onError: (error: Error) => void;
 };
