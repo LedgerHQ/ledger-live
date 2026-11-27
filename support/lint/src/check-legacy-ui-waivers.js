@@ -31,8 +31,6 @@ export const PROBLEMS = {
 };
 
 const SOURCE = /\.[cm]?[jt]sx?$/;
-// Comment-shaped spans of the raw text, not parsed comments: a string spelling one is rare enough.
-const COMMENT = /\/\/[^\n]*|\/\*[\s\S]*?\*\//g;
 const DISABLE_DIRECTIVE = /^(?:\/\/|\/\*)\s*(?:eslint|oxlint)-disable(?:-next-line|-line)?\b/;
 
 const require = createRequire(import.meta.url);
@@ -183,6 +181,38 @@ function* sourceFiles(dir) {
 }
 
 /**
+ * Every comment of a parsed file, so a comment marker inside a string, a template or JSX text is none.
+ * A comment sits in the trivia before some token: TypeScript splits that trivia into the trailing
+ * comments of the line and the leading comments after it, so both halves are read.
+ *
+ * @param {import("typescript").SourceFile} sourceFile
+ * @returns {import("typescript").CommentRange[]}
+ */
+function commentRanges(sourceFile) {
+  const { text } = sourceFile;
+  /** @type {Map<number, import("typescript").CommentRange>} */
+  const ranges = new Map();
+  /** @param {import("typescript").Node} node */
+  function visit(node) {
+    const children = node.getChildren(sourceFile);
+    if (children.length > 0) {
+      for (const child of children) visit(child);
+      return;
+    }
+    if (node.kind === ts.SyntaxKind.JsxText) return;
+    const start = node.getFullStart();
+    for (const range of [
+      ...(ts.getTrailingCommentRanges(text, start) ?? []),
+      ...(ts.getLeadingCommentRanges(text, start) ?? []),
+    ]) {
+      ranges.set(range.pos, range);
+    }
+  }
+  visit(sourceFile);
+  return [...ranges.values()];
+}
+
+/**
  * An inline disable would let a file outside the waivers import a legacy module.
  *
  * @param {string} repoRoot
@@ -196,10 +226,12 @@ function inlineDisables(repoRoot, appDirs) {
     if (!fs.existsSync(root)) continue;
     for (const file of sourceFiles(root)) {
       const text = fs.readFileSync(file, "utf8");
-      if (!text.includes("legacy-ui/")) continue;
-      for (const match of text.matchAll(COMMENT)) {
-        if (!DISABLE_DIRECTIVE.test(match[0]) || !match[0].includes("legacy-ui/")) continue;
-        const line = text.slice(0, match.index).split("\n").length;
+      if (!text.includes("legacy-ui/") || !text.includes("-disable")) continue;
+      const sourceFile = ts.createSourceFile(file, text, ts.ScriptTarget.Latest);
+      for (const { pos, end } of commentRanges(sourceFile)) {
+        const comment = text.slice(pos, end);
+        if (!DISABLE_DIRECTIVE.test(comment) || !comment.includes("legacy-ui/")) continue;
+        const line = sourceFile.getLineAndCharacterOfPosition(pos).line + 1;
         problems.push(`${repoPath(repoRoot, file)}:${line}: ${PROBLEMS.inlineDisable()}`);
       }
     }

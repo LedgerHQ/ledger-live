@@ -119,7 +119,7 @@ test("a file under a folder waiver, outside the checked apps or out of order is 
   );
 });
 
-test("an inline disable of a legacy-ui rule is reported, multiline included, one of another rule is not", () => {
+test("an inline disable of a legacy-ui rule is reported, multiline or after a string included, not a string or one of another rule", () => {
   const repoRoot = fixture({
     "apps/mobile/src/New.tsx": [
       "// oxlint-disable-next-line legacy-ui/no-legacy-import",
@@ -129,6 +129,9 @@ test("an inline disable of a legacy-ui rule is reported, multiline included, one
       "/* eslint-disable",
       "   legacy-ui/no-legacy-import */",
       "// a legacy-ui/no-legacy-import mention that is not a directive",
+      'const url = "https://example.com"; /* eslint-disable legacy-ui/no-legacy-import */',
+      'const fake = "// oxlint-disable-next-line legacy-ui/no-legacy-import";',
+      "const view = () => <p>// oxlint-disable-next-line legacy-ui/no-legacy-import</p>;",
       "",
     ].join("\n"),
     "apps/mobile/node_modules/pkg/index.js": "// oxlint-disable legacy-ui/no-legacy-import\n",
@@ -137,6 +140,7 @@ test("an inline disable of a legacy-ui rule is reported, multiline included, one
     "apps/mobile/src/New.tsx:1: an inline disable silences a legacy-ui rule, remove it and use Lumen",
     "apps/mobile/src/New.tsx:3: an inline disable silences a legacy-ui rule, remove it and use Lumen",
     "apps/mobile/src/New.tsx:5: an inline disable silences a legacy-ui rule, remove it and use Lumen",
+    "apps/mobile/src/New.tsx:8: an inline disable silences a legacy-ui rule, remove it and use Lumen",
   ]);
 });
 
