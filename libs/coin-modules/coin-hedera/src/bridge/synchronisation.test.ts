@@ -98,6 +98,18 @@ describe("getAccountShape", () => {
     });
   });
 
+  it("leaves the seed identifier out of the shape, so a sync keeps the key the account started on", async () => {
+    const initialAccount = {
+      seedIdentifier: "f381f94b116a99518739e1bb394d1c8de281055d48b01dbc1625eebb06021ce5",
+      operations: [],
+      pendingOperations: [],
+    } as unknown as Account;
+
+    const result = await getAccountShape({ ...mockInfo, initialAccount }, { paginationConfig: {} });
+
+    expect(result).not.toHaveProperty("seedIdentifier");
+  });
+
   it("should pass cursor when initial account has existing operations (incremental sync)", async () => {
     const existingOp = { date: new Date("2024-01-01T00:00:00Z") };
     // @ts-expect-error - no other fields are needed for this test

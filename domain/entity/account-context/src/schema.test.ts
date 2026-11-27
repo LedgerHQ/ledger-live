@@ -22,7 +22,7 @@ describe("AccountContextSchema", () => {
     });
   });
 
-  it.each(["", "0.0.10096335", "0xf381"])("should reject the public key %p", publicKey => {
+  it.each(["", "0.0.10096335", "0xf381", "f38"])("should reject the public key %p", publicKey => {
     expect(AccountContextSchema.safeParse({ publicKey }).success).toBe(false);
   });
 });

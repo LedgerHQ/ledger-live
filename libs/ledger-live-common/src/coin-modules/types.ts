@@ -133,7 +133,7 @@ export type FamilySetup<
   messageSigner?: MessageSignerModule;
   /** The descriptor of a discovery candidate, when the family is not known by the address `resolver` gives (UTXO, Hedera). */
   deriveAccountDescriptor?: DeriveAccountDescriptor;
-  /** The device step after selection that makes a discovered descriptor addable (Aleo: its view key); the loader's `accountCompletion` announces it. */
+  /** The device step after selection that makes a discovered descriptor addable (Aleo: its view key, Hedera: its device public key); the loader's `accountCompletion` announces it. */
   completeAccountDescriptors?: CompleteAccountDescriptors;
 };
 
@@ -146,7 +146,7 @@ export type CompleteAccountDescriptors = (
 
 /** Synchronous, so a flow knows a family has a completion step without loading its setup. */
 export type AccountCompletionMeta = {
-  /** Picks the generic copy of the step; a closed union, grown per need. */
+  /** Names what the step reads from the device; a closed union, grown per need. */
   readonly kind: "viewKey" | "publicKey";
 };
 

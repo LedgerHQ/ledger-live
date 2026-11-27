@@ -21,18 +21,19 @@ LiveConfig.setConfig(hederaConfig);
 const hedera = getCryptoCurrencyById("hedera");
 const PUBLIC_KEY = "f381f94b116a99518739e1bb394d1c8de281055d48b01dbc1625eebb06021ce5";
 
-const discovered = (key: string) =>
+const discovered = (key: string, path = "m/44/3030") =>
   AccountDescriptorSchema.parse({
     purpose: "account",
     version: "2",
     type: "address",
     network: "hedera",
     key,
-    path: "m/44/3030",
+    path,
   });
 
 const first = discovered("0.0.11");
 const second = discovered("0.0.22");
+const otherPath = discovered("0.0.33", "m/44/3031");
 
 const anyTransport: Transport = Object.create(Transport.prototype);
 const runOnTransport: RunOnTransport = job => job(anyTransport, new AbortController().signal);
@@ -64,29 +65,33 @@ describe("Hedera completeAccountDescriptors", () => {
     expect(getPublicKey).toHaveBeenCalledWith("44/3030");
   });
 
-  it("fails an account the key of this device does not control, so another seed cannot give its key", async () => {
-    getAccountsForPublicKey.mockResolvedValueOnce([{ account: "0.0.99" }]);
+  it("fails an account the key of this device does not control, and completes the others", async () => {
+    getAccountsForPublicKey.mockResolvedValue([{ account: "0.0.11" }]);
     const events = await run(completeAccountDescriptors(runOnTransport, hedera, [first, second]));
     expect(summary(events).slice(2)).toEqual([
-      ["0.0.11", "failed"],
-      ["0.0.22", "completed"],
+      ["0.0.11", "completed"],
+      ["0.0.22", "failed"],
     ]);
-    expect(events[2].state).toMatchObject({ error: expect.any(CompletionAccountMismatchError) });
+    expect(events[3].state).toMatchObject({ error: expect.any(CompletionAccountMismatchError) });
   });
 
   it("never looks the accounts up once cancelled during the key read", async () => {
     const controller = new AbortController();
-    let resolveKey: ((value: string) => void) | undefined;
-    getPublicKey.mockReturnValueOnce(new Promise(resolve => (resolveKey = resolve)));
+    getPublicKey.mockImplementationOnce(async () => {
+      controller.abort(new Error("stopped"));
+      return PUBLIC_KEY;
+    });
     const cancellable: RunOnTransport = job => job(anyTransport, controller.signal);
-    const failure = new Promise<unknown>(resolve =>
-      completeAccountDescriptors(cancellable, hedera, [first]).subscribe({ error: resolve }),
+    await expect(run(completeAccountDescriptors(cancellable, hedera, [first]))).rejects.toThrow(
+      "stopped",
     );
-    await new Promise(resolve => setTimeout(resolve, 0));
-    controller.abort();
-    resolveKey?.(PUBLIC_KEY);
-    expect(await failure).toBeDefined();
     expect(getAccountsForPublicKey).not.toHaveBeenCalled();
+  });
+
+  it("reads the key and looks its accounts up once for accounts on one path", async () => {
+    await run(completeAccountDescriptors(runOnTransport, hedera, [first, second]));
+    expect(getPublicKey).toHaveBeenCalledTimes(1);
+    expect(getAccountsForPublicKey).toHaveBeenCalledTimes(1);
   });
 
   it("stops on a disconnect with the device's error, for the Device Intent to retry", async () => {
@@ -96,7 +101,7 @@ describe("Hedera completeAccountDescriptors", () => {
     getPublicKey.mockResolvedValueOnce(PUBLIC_KEY).mockRejectedValueOnce(disconnected);
     const seen: AccountCompletionEvent[] = [];
     const failure = await new Promise<unknown>(resolve =>
-      completeAccountDescriptors(runOnTransport, hedera, [first, second]).subscribe({
+      completeAccountDescriptors(runOnTransport, hedera, [first, otherPath]).subscribe({
         next: event => seen.push(event),
         error: resolve,
       }),

@@ -5,10 +5,10 @@ import { AccountUUIDSchema } from "@domain/entity-account";
 export const AccountContextSchema = z.object({
   /** Aleo: reads the account's private records; the device gives it once the user approves. */
   viewKey: z.string().min(1).optional(),
-  /** Hedera: the device's public key (hex) at the account's path, which its descriptor, keyed on the account id, cannot give back; a device operation checks the device against it. */
+  /** Hedera: the device public key (hex) the descriptor, keyed on the account id, cannot give back. */
   publicKey: z
     .string()
-    .regex(/^[0-9a-f]+$/i)
+    .regex(/^(?:[0-9a-f]{2})+$/i)
     .optional(),
 });
 

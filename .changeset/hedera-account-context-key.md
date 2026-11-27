@@ -3,4 +3,4 @@
 "@ledgerhq/live-common": minor
 ---
 
-Keep the Hedera device public key of a discovered account as its account context, read by a completion step, so a receive or a send checks the device against it
+Fix Hedera receive and send for accounts added through account discovery, by keeping the device public key as the account context
