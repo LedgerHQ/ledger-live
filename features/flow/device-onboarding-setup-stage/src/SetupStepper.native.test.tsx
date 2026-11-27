@@ -3,7 +3,7 @@ import { I18nTestProvider } from "@shared/i18n/testing";
 import { render, renderHook, screen, within } from "@testing-library/react-native";
 import { SetupStepper } from "./SetupStepper";
 import type { SetupStepperProps } from "./SetupStepper.types";
-import { setupStepperTestIds } from "./internals";
+import { setupStepperTestIds, stageTitleTestId } from "./internals";
 import type { SetupStage } from "./toSetupStage";
 import { useSetupStepperViewModel } from "./useSetupStepperViewModel";
 
@@ -71,6 +71,12 @@ describe("SetupStepper", () => {
       totalSteps: 4,
       title: "PIN creation",
     });
+  });
+
+  it("should tag the stage title with the stage kind", () => {
+    renderStepper({ stage: stage({ index: 2, kind: "pin" }) });
+
+    expect(screen.getByTestId(stageTitleTestId("pin"))).toHaveTextContent("PIN creation");
   });
 
   it("should show the genuine check alone with its progress", () => {

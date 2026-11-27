@@ -6,11 +6,13 @@ const ONBOARDING_STEP_FLAG_INDEX = 3;
 
 /** Onboarding steps, as encoded in the fourth flag byte of a GET_VERSION reply. */
 export const ONBOARDING_STEP = {
+  setupChoice: 0x05,
   pin: 0x06,
   newDevice: 0x07,
   newDeviceConfirming: 0x08,
   restoreSeed: 0x09,
   ready: 0x0b,
+  recoverRestore: 0x0d,
   setupChoiceRestore: 0x0e,
   restoreCharon: 0x10,
 } as const;
