@@ -189,8 +189,6 @@ function realpath(file) {
  */
 function isAliasEntryImport(specifier, filename, entry) {
   const direct = specifier === entry || specifier.startsWith(`${entry}/`);
-  // A specifier that reaches the entry from outside it names the entry's last segment, so others skip resolution.
-  if (!direct && !specifier.includes(path.posix.basename(entry))) return false;
   const root = appRoot(path.dirname(filename));
   const resolver = root && appResolver(root);
   const target = root && resolver ? aliasTarget(resolver, root, entry) : null;

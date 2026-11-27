@@ -37,7 +37,11 @@ const TSCONFIG = JSON.stringify({
     module: "esnext",
     moduleResolution: "bundler",
     allowImportingTsExtensions: true,
-    paths: { "*": ["./*"], "~/*": ["./src/*"] },
+    paths: {
+      "*": ["./*"],
+      "~/*": ["./src/*"],
+      "legacy-layout": ["./src/renderer/components/Box/index.ts"],
+    },
   },
 });
 
@@ -79,6 +83,7 @@ test("a ~/ entry matches any specifier the app's tsconfig resolves to it", () =>
     "../components/Box/index.ts",
     "../components/Text",
     "../components/Text.ts",
+    "legacy-layout",
   ]) {
     assert.equal(isLegacyModule(specifier, file, DESKTOP.modules), true, specifier);
   }
