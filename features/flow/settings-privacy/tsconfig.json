@@ -1,16 +1,7 @@
 {
   "extends": "@support/tsconfig/dual",
   "compilerOptions": {
-    "types": [
-      "jest"
-    ]
+    "types": ["jest", "@testing-library/jest-dom"]
   },
-  "references": [
-    {
-      "path": "./tsconfig.web.json"
-    },
-    {
-      "path": "./tsconfig.native.json"
-    }
-  ]
+  "references": [{ "path": "./tsconfig.web.json" }, { "path": "./tsconfig.native.json" }]
 }
