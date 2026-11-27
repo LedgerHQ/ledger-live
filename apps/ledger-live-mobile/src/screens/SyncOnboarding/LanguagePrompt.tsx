@@ -13,22 +13,27 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import ChangeDeviceLanguageAction from "~/components/ChangeDeviceLanguageAction";
 import ChangeDeviceLanguagePrompt from "~/components/ChangeDeviceLanguagePrompt";
 
+export const LANGUAGE_CHECK_TIMEOUT_MS = 10_000;
+
 export type LanguagePromptProps = {
   /**
    * A `Device` object
    */
   device: Device;
+  /**
+   * Called when the prompt will not show, or once the user closed it.
+   */
+  onDone?: () => void;
 };
 
-export const LanguagePrompt: React.FC<LanguagePromptProps> = ({ device }) => {
-  const { deviceInfo } = useGetDeviceInfo({
+export const LanguagePrompt: React.FC<LanguagePromptProps> = ({ device, onDone }) => {
+  const { deviceInfo, error: deviceInfoError } = useGetDeviceInfo({
     deviceId: device.deviceId,
     deviceName: device.deviceName ?? null,
   });
   const { availableLanguages, loaded: availableLanguagesLoaded } =
     useAvailableLanguagesForDevice(deviceInfo);
 
-  const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] = useState<boolean>(false);
   const [deviceLanguagePromptDismissed, setDeviceLanguagePromptDismissed] =
     useState<boolean>(false);
   const [preventPromptBackdropClick, setPreventPromptBackdropClick] = useState<boolean>(false);
@@ -38,37 +43,29 @@ export const LanguagePrompt: React.FC<LanguagePromptProps> = ({ device }) => {
 
   const { locale: currentLocale } = useLocale();
 
-  useEffect(() => {
-    if (
-      deviceInfo &&
-      availableLanguages &&
-      availableLanguagesLoaded &&
-      !deviceLanguagePromptDismissed
-    ) {
-      const potentialDeviceLanguage = localeIdToDeviceLanguage[currentLocale];
-      const deviceLanguageId = deviceInfo.languageId;
-      const langAvailableOnDevice =
-        potentialDeviceLanguage !== undefined &&
-        availableLanguages.includes(potentialDeviceLanguage);
+  const potentialDeviceLanguage = localeIdToDeviceLanguage[currentLocale];
+  const deviceLanguageId = deviceInfo?.languageId;
+  const languagesDiffer =
+    potentialDeviceLanguage !== undefined &&
+    availableLanguages.includes(potentialDeviceLanguage) &&
+    deviceLanguageId !== undefined &&
+    idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage;
 
-      if (
-        langAvailableOnDevice &&
-        deviceLanguageId !== undefined &&
-        idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage
-      ) {
-        setIsDeviceLanguagePromptOpen(true);
-      }
-    }
-  }, [
-    availableLanguages,
-    availableLanguagesLoaded,
-    deviceInfo,
-    currentLocale,
-    deviceLanguagePromptDismissed,
-  ]);
+  const checkDone = deviceInfoError !== null || (deviceInfo !== null && availableLanguagesLoaded);
+  const isDeviceLanguagePromptOpen = checkDone && languagesDiffer && !deviceLanguagePromptDismissed;
+  const done = checkDone && !isDeviceLanguagePromptOpen;
+
+  useEffect(() => {
+    if (done) onDone?.();
+  }, [done, onDone]);
+
+  useEffect(() => {
+    if (!onDone || checkDone) return;
+    const timeout = setTimeout(onDone, LANGUAGE_CHECK_TIMEOUT_MS);
+    return () => clearTimeout(timeout);
+  }, [onDone, checkDone]);
 
   const closeDeviceLanguagePrompt = useCallback(() => {
-    setIsDeviceLanguagePromptOpen(false);
     setDeviceLanguagePromptDismissed(true);
   }, []);
 

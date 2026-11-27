@@ -45,6 +45,21 @@ const connection = {
   connectedDevice: { modelId: DmkDeviceModelId.STAX },
 } as DeviceConnectionResult;
 
+const unseededAwaitingStart = {
+  state: "awaitingStart",
+  context: { onboardedOnEntry: false },
+} as Partial<DeviceOnboardingSession>;
+
+function pair(modelId: DmkDeviceModelId, next: Partial<DeviceOnboardingSession>) {
+  const hook = renderHook(() => useDeviceOnboardingConnectViewModel());
+  act(() => {
+    hook.result.current.onConnected({ ...connection, connectedDevice: { modelId } } as never);
+  });
+  useSession.mockReturnValue(session(next));
+  hook.rerender(undefined);
+  return hook;
+}
+
 describe("useDeviceOnboardingConnectViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -94,5 +109,57 @@ describe("useDeviceOnboardingConnectViewModel", () => {
 
     expect(result.current.unlockSheet).toBeNull();
     expect(replace).toHaveBeenCalledTimes(1);
+  });
+
+  describe("language prompt", () => {
+    it.each([
+      [DmkDeviceModelId.STAX, DeviceModelId.stax],
+      [DmkDeviceModelId.FLEX, DeviceModelId.europa],
+      [DmkDeviceModelId.APEX, DeviceModelId.apex],
+    ])("should offer the language for an unseeded %s at awaitingStart", (dmkId, modelId) => {
+      const { result } = pair(dmkId, unseededAwaitingStart);
+
+      expect(result.current.languagePrompt).toEqual({
+        device: expect.objectContaining({ deviceId: "device-id", modelId }),
+        onDone: expect.any(Function),
+      });
+      expect(replace).not.toHaveBeenCalled();
+    });
+
+    it("should open the funnel only once the language prompt is done", () => {
+      const { result, rerender } = pair(DmkDeviceModelId.STAX, unseededAwaitingStart);
+      expect(replace).not.toHaveBeenCalled();
+
+      act(() => {
+        result.current.languagePrompt?.onDone?.();
+      });
+      rerender(undefined);
+
+      expect(replace).toHaveBeenCalledTimes(1);
+      expect(replace).toHaveBeenCalledWith(ScreenName.DeviceOnboardingFunnel, {
+        pairedDeviceId: "device-id",
+        wasReadOnlyAtEntry: true,
+      });
+    });
+
+    it.each<[string, DmkDeviceModelId, Partial<DeviceOnboardingSession>]>([
+      [
+        "a seeded Stax",
+        DmkDeviceModelId.STAX,
+        { state: "awaitingStart", context: { onboardedOnEntry: true } } as never,
+      ],
+      [
+        "an unseeded Stax going straight to the checks",
+        DmkDeviceModelId.STAX,
+        { state: "checks.checksIdle", context: { onboardedOnEntry: false } } as never,
+      ],
+      ["an unseeded Nano X", DmkDeviceModelId.NANO_X, unseededAwaitingStart],
+      ["an unseeded Nano S Plus", DmkDeviceModelId.NANO_SP, unseededAwaitingStart],
+    ])("should not offer the language for %s and open the funnel", (_, dmkId, next) => {
+      const { result } = pair(dmkId, next);
+
+      expect(result.current.languagePrompt).toBeNull();
+      expect(replace).toHaveBeenCalledTimes(1);
+    });
   });
 });
