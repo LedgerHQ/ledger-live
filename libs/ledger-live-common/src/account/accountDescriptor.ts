@@ -52,6 +52,8 @@ export type LegacyAccountFields = {
   freshAddress?: string;
   /** The last field of the legacy id: the account context a family keeps there (Aleo: the view key). */
   customData?: string;
+  /** The account context a family keeps as the legacy account's seed identifier (Hedera: the device public key). */
+  seedIdentifier?: string;
   /** The key of a family keyed on its public key, in place of `freshAddress`: see `addressFromKey`. */
   publicKey?: string;
 };
@@ -211,7 +213,8 @@ export function toLegacyAccount(
       `${currencyId} accounts use ${expectedType} descriptors, got ${descriptor.type}`,
     );
   }
-  const customData = context && getLegacyAccountContext(family)?.toCustomData(context);
+  const { customData, seedIdentifier } =
+    (context && getLegacyAccountContext(family)?.toLegacyFields(context)) ?? {};
   const keyedOnPublicKey = PUBLIC_KEY_FAMILIES.has(family);
   if (keyedOnPublicKey) assertPublicKey(descriptor.key, currencyId);
   const path = fromDescriptorPath(descriptor.path);
@@ -226,7 +229,11 @@ export function toLegacyAccount(
     const fields = keyedOnPublicKey
       ? { currencyId, derivationMode, index, publicKey: descriptor.key }
       : { currencyId, derivationMode, index, freshAddress: descriptor.key };
-    return customData ? { ...fields, customData } : fields;
+    return {
+      ...fields,
+      ...(customData && { customData }),
+      ...(seedIdentifier && { seedIdentifier }),
+    };
   }
   throw new UnsupportedDescriptorPathError(
     `No derivation mode of ${currencyId} matches path "${descriptor.path}"`,
@@ -246,14 +253,17 @@ export function redactAccountId(accountId: string): string {
   return [...fields.slice(0, LEGACY_ID_FIELDS), REDACTED].join(":");
 }
 
-/** The context a legacy account keeps in its id (Aleo: the view key), for its family to read back. */
+/** The context a legacy account keeps (Aleo: the view key in its id, Hedera: the public key as its seed identifier), for its family to read back. */
 export function accountContextOf(
-  account: Pick<LegacyAccountIdentity, "id" | "currency">,
+  account: Pick<LegacyAccountIdentity, "id" | "currency"> & Pick<Account, "seedIdentifier">,
 ): AccountContext | undefined {
   const legacyAccountContext = getLegacyAccountContext(
     getCryptoCurrencyById(account.currency.id).family,
   );
   if (!legacyAccountContext) return undefined;
   const { customData } = decodeAccountId(account.id);
-  return customData ? legacyAccountContext.fromCustomData(customData) : undefined;
+  return legacyAccountContext.fromLegacyFields({
+    customData,
+    seedIdentifier: account.seedIdentifier,
+  });
 }

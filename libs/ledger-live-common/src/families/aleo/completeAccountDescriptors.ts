@@ -5,13 +5,10 @@ import { fromDescriptorPath } from "@domain/entity-derivation";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { AccountCompletionEvent } from "@features/platform-account-discovery/descriptor";
 import { toLegacyAccount } from "../../account/accountDescriptor";
+import { CompletionAccountMismatchError } from "../../account-data/discovery/errors";
 import type { CompleteAccountDescriptors } from "../../coin-modules/types";
 import type { Resolver as AddressResolver } from "../../hw/getAddress/types";
 import type { Resolver as ViewKeyResolver } from "./hw/getViewKey/types";
-
-export class CompletionAccountMismatchError extends Error {
-  override name = "CompletionAccountMismatchError";
-}
 
 // By name, as the legacy getViewKeyExec: an error crossing a process boundary loses its prototype.
 const isRefusal = (error: unknown) =>

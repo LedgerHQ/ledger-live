@@ -5,3 +5,7 @@ export class LegacyDeriveUnsupportedError extends Error {
 export class MissingAccountCompletionError extends Error {
   override name = "MissingAccountCompletionError";
 }
+
+export class CompletionAccountMismatchError extends Error {
+  override name = "CompletionAccountMismatchError";
+}

@@ -133,7 +133,7 @@ export type FamilySetup<
   messageSigner?: MessageSignerModule;
   /** The descriptor of a discovery candidate, when the family is not known by the address `resolver` gives (UTXO, Hedera). */
   deriveAccountDescriptor?: DeriveAccountDescriptor;
-  /** The device step after selection that makes a discovered descriptor addable (Aleo: its view key); the loader's `accountCompletion` announces it. */
+  /** The device step after selection that makes a discovered descriptor addable (Aleo: its view key, Hedera: its device public key); the loader's `accountCompletion` announces it. */
   completeAccountDescriptors?: CompleteAccountDescriptors;
 };
 
@@ -146,8 +146,8 @@ export type CompleteAccountDescriptors = (
 
 /** Synchronous, so a flow knows a family has a completion step without loading its setup. */
 export type AccountCompletionMeta = {
-  /** Picks the generic copy of the step; a closed union, grown per need. */
-  readonly kind: "viewKey";
+  /** Names what the step reads from the device; a closed union, grown per need. */
+  readonly kind: "viewKey" | "publicKey";
 };
 
 /** Runs a device job on a transport, with the derivation's abort signal for the job to check between its device reads. */
@@ -173,10 +173,19 @@ export type ValidateAddressFn = (
   parameters: Partial<AddressValidationCurrencyParameters>,
 ) => Promise<boolean>;
 
-/** How a family keeps its account context in the legacy id's custom data (Aleo: the view key). */
+/** The fields of a legacy account where a family keeps its account context. */
+export type LegacyContextFields = {
+  /** The last field of the legacy id (Aleo: the view key). */
+  customData?: string | undefined;
+  /** The legacy account's seed identifier (Hedera: the device public key). */
+  seedIdentifier?: string | undefined;
+};
+
+/** How a family keeps its account context in its legacy account. */
 export type LegacyAccountContext = {
-  toCustomData(context: AccountContext): string | undefined;
-  fromCustomData(customData: string): AccountContext;
+  toLegacyFields(context: AccountContext): LegacyContextFields;
+  /** `undefined` for fields that hold no context, such as a seed identifier that is not a public key. */
+  fromLegacyFields(fields: LegacyContextFields): AccountContext | undefined;
 };
 
 export type CoinModuleLoader<
@@ -194,7 +203,7 @@ export type CoinModuleLoader<
   supportedCoins: string[]; // TO BE REPLACED soon by branded id
   /** How an account of this family is identified as an AccountDescriptor. */
   accountDescriptorType: AccountDescriptor["type"];
-  /** Synchronous: for a family whose legacy id keeps its account context as custom data. */
+  /** Synchronous: for a family whose legacy account keeps its account context. */
   legacyAccountContext?: LegacyAccountContext;
   loadSetup: () => Promise<FamilySetup<T, A, U, O, R>>;
   /** Set when the family's setup has `completeAccountDescriptors`. */
