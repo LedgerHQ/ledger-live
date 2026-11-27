@@ -7,7 +7,7 @@ import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { FrozenTokensBanner } from "../components/FrozenTokensBanner";
 import { StepScreen } from "../components/StepScreen";
-import { isFrozenToken } from "../utils";
+import { getFrozenTokens } from "../utils";
 import { AssetCard } from "./AssetCard";
 import { DeleteAsset } from "./DeleteAsset";
 import { EditAsset } from "./EditAsset";
@@ -24,9 +24,7 @@ export default function ManageAssetsDialog({ account, tokenAccounts, onClose }: 
   const editedTokenAccount = tokenAccounts.find(tokenAccount => tokenAccount.id === editedTokenId);
   const [deletedTokenAccount, setDeletedTokenAccount] = useState<XrpTokenAccount>();
   const isDeviceBlocked = useDeviceBlocked();
-  const frozenTokens = tokenAccounts
-    .filter(tokenAccount => isFrozenToken(tokenAccount, account))
-    .map(tokenAccount => tokenAccount.token);
+  const frozenTokens = getFrozenTokens(tokenAccounts, account);
 
   const close = () => {
     if (!isDeviceBlocked) onClose();

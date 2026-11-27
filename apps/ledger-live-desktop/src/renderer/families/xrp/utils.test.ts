@@ -1,5 +1,5 @@
 import { getXrpEnabledTokenStandards } from "@ledgerhq/live-common/families/xrp/config";
-import { getXrpResources, isFrozenToken } from "./utils";
+import { getFrozenTokens, getXrpResources, isFrozenToken } from "./utils";
 import {
   XRP_ACCOUNT,
   XRP_IOU_TOKEN_ACCOUNT,
@@ -32,6 +32,14 @@ describe("isFrozenToken", () => {
     jest.mocked(getXrpEnabledTokenStandards).mockReturnValueOnce([]);
 
     expect(isFrozenToken(frozenAccount, XRP_ACCOUNT)).toBe(false);
+  });
+});
+
+describe("getFrozenTokens", () => {
+  it("returns the tokens of frozen token accounts only", () => {
+    expect(getFrozenTokens([XRP_IOU_TOKEN_ACCOUNT, frozenAccount], XRP_ACCOUNT)).toEqual([
+      frozenAccount.token,
+    ]);
   });
 });
 

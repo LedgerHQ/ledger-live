@@ -30,6 +30,14 @@ export const isFrozenToken = (
   return !!getXrpResources(account)?.isLocked;
 };
 
+export const getFrozenTokens = (
+  tokenAccounts: readonly TokenAccount[],
+  parentAccount: Account | null | undefined,
+) =>
+  tokenAccounts
+    .filter(tokenAccount => isFrozenToken(tokenAccount, parentAccount))
+    .map(tokenAccount => tokenAccount.token);
+
 export function getRemoveAvailability(account: TokenAccount, parentAccount: Account, t: TFunction) {
   const blocker = getRemoveBlocker(parentAccount, account);
   if (blocker) {
