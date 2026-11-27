@@ -8,6 +8,8 @@ export const TRANSACTED_WINDOW_MS = 10 * 60_000;
 export const POLL_INTERVAL_MS = 3_000;
 /** One open stops waiting after this long; a later open within the window waits again. */
 export const POLL_TIMEOUT_MS = 60_000;
+/** A stale snapshot is read once more after this delay: the backend refreshes it after answering. */
+export const STALE_REREAD_DELAY_MS = 5_000;
 
 export type StakePositionKey = Pick<StakePositionTransaction, "ownerAddress" | "positionId">;
 
@@ -29,10 +31,21 @@ export function subscribeToStakePositionTransactions(listener: () => void) {
   };
 }
 
+export function isWithinTransactedWindow({ at }: TransactedPosition, now: number): boolean {
+  return now - at <= TRANSACTED_WINDOW_MS;
+}
+
+function evictExpiredTransactions(now: number) {
+  for (const [key, transaction] of transactions) {
+    if (!isWithinTransactedWindow(transaction, now)) transactions.delete(key);
+  }
+}
+
 export function recordStakePositionTransaction(
   { action, ...position }: StakePositionTransaction,
   at: number,
 ) {
+  evictExpiredTransactions(at);
   transactions.set(positionKeyOf(position), { action, at });
   listeners.forEach(listener => listener());
 }
@@ -41,14 +54,10 @@ export function clearStakePositionTransaction(position: StakePositionKey) {
   if (transactions.delete(positionKeyOf(position))) listeners.forEach(listener => listener());
 }
 
-export function isWithinTransactedWindow({ at }: TransactedPosition, now: number): boolean {
-  return now - at <= TRANSACTED_WINDOW_MS;
-}
-
 /**
  * Whether the backend shows the transaction: a deactivation once the row is deactivating or
  * deactivated, a withdrawal once the row is gone, closed or empty. A row missing behind a provider
- * failure shows nothing yet.
+ * failure, or from a stale snapshot, shows nothing yet.
  */
 export function showsStakePositionTransaction(
   action: StakePositionExitAction,
@@ -63,7 +72,7 @@ export function showsStakePositionTransaction(
       (row.position.status === "deactivating" || row.position.status === "deactivated")
     );
   }
-  if (row.kind === "none") return positions.failures.length === 0;
+  if (row.kind === "none") return positions.failures.length === 0 && !positions.isStale;
   const { status, balance } = row.position;
   return status === "archived" || (balance !== undefined && BigInt(balance) === 0n);
 }

@@ -6,6 +6,7 @@ export type StakePositionSurfaceViewProps = Readonly<{
   /** The details show their title in the header; the other steps show it themselves. */
   isTitleInHeader: boolean;
   onDismiss: () => void;
+  onHidden?: () => void;
   isDismissible: boolean;
   children: ReactNode;
   testID?: string;

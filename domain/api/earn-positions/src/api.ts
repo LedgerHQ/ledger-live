@@ -2,18 +2,12 @@ import type { EarnPositions } from "@domain/entity-earn-position";
 import { earnApi } from "@shared/api-services";
 import { describeSchemaFailure } from "./internals/describeSchemaFailure";
 import { StakesV3WireSchema, toEarnPositions, type StakesV3Wire } from "./internals/stakes";
-import {
-  ValidatorsSummaryWireSchema,
-  toSolanaValidatorApyByVoteAccount,
-  type ValidatorsSummaryWire,
-} from "./internals/validatorsSummary";
-import type { GetEarnPositionsArgs, SolanaValidatorApyByVoteAccount } from "./types";
+import type { GetEarnPositionsArgs } from "./types";
 
 /** Cache tag of the positions of an address, with that address as its id. */
 export const EARN_POSITIONS_TAG = "EarnPositions";
 
 const FIVE_MINUTES = 5 * 60;
-const ONE_HOUR = 60 * 60;
 
 /** A fresh read gets more time than the 10 s default of the Earn service. */
 const FRESH_READ_TIMEOUT_MS = 20_000;
@@ -48,15 +42,7 @@ export const earnPositionsApi = earnApi
         providesTags: (_result, _error, { address }) => [{ type: EARN_POSITIONS_TAG, id: address }],
         keepUnusedDataFor: FIVE_MINUTES,
       }),
-
-      getSolanaValidatorApy: build.query<SolanaValidatorApyByVoteAccount, void>({
-        query: () => "/figment/solana/validators_summary",
-        rawResponseSchema: ValidatorsSummaryWireSchema,
-        transformResponse: (wire: ValidatorsSummaryWire) => toSolanaValidatorApyByVoteAccount(wire),
-        catchSchemaFailure: describeSchemaFailure,
-        keepUnusedDataFor: ONE_HOUR,
-      }),
     }),
   });
 
-export const { useGetEarnPositionsQuery, useGetSolanaValidatorApyQuery } = earnPositionsApi;
+export const { useGetEarnPositionsQuery } = earnPositionsApi;

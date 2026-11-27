@@ -12,6 +12,11 @@ export type StakePositionSurfaceProps = Readonly<{
   /** The currency's name, which the details title uses ("Earning Solana"). Defaults to the ticker. */
   currencyName?: string;
   onDismiss: () => void;
+  /**
+   * The surface has finished hiding: the app calls `releaseStakePosition` then, so the content it
+   * kept for the animation unmounts.
+   */
+  onHidden?: () => void;
   /** Off once the transaction is signed: no close button, Escape, backdrop or Android back. */
   isDismissible: boolean;
   /** The step's body and actions: a view of this package, or on web the host's dialog sections. */

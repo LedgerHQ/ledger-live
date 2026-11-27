@@ -53,6 +53,36 @@ describe("markStakePositionTransacted", () => {
 
     expect(listener).toHaveBeenCalledTimes(2);
   });
+
+  it("should forget the transactions of other positions once their window is over", () => {
+    const otherPosition = { ...POSITION, positionId: "OtherStakeAccount" };
+    jest.useFakeTimers({ now: 1_000_000 });
+    markStakePositionTransacted({ ...otherPosition, action: "deactivate" });
+
+    jest.setSystemTime(1_000_000 + TRANSACTED_WINDOW_MS + 1);
+    markStakePositionTransacted({ ...POSITION, action: "withdraw" });
+
+    expect(getStakePositionTransaction(positionKeyOf(otherPosition))).toBeUndefined();
+    expect(getStakePositionTransaction(KEY)).toEqual({
+      action: "withdraw",
+      at: 1_000_000 + TRANSACTED_WINDOW_MS + 1,
+    });
+  });
+
+  it("should keep the transactions of other positions within their window", () => {
+    const otherPosition = { ...POSITION, positionId: "OtherStakeAccount" };
+    jest.useFakeTimers({ now: 1_000_000 });
+    markStakePositionTransacted({ ...otherPosition, action: "deactivate" });
+
+    jest.setSystemTime(1_000_000 + TRANSACTED_WINDOW_MS);
+    markStakePositionTransacted({ ...POSITION, action: "withdraw" });
+
+    expect(getStakePositionTransaction(positionKeyOf(otherPosition))).toEqual({
+      action: "deactivate",
+      at: 1_000_000,
+    });
+    clearStakePositionTransaction(otherPosition);
+  });
 });
 
 describe("isWithinTransactedWindow", () => {
@@ -108,6 +138,12 @@ describe("showsStakePositionTransaction", () => {
         positions: [],
         failures: [{ code: 503, reason: "Provider unavailable" }],
       });
+
+      expect(showsStakePositionTransaction("withdraw", positions, POSITION_ID)).toBe(false);
+    });
+
+    it("should not be shown by a row missing from a stale snapshot", () => {
+      const positions = mockEarnPositions({ positions: [], isStale: true });
 
       expect(showsStakePositionTransaction("withdraw", positions, POSITION_ID)).toBe(false);
     });

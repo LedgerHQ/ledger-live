@@ -20,13 +20,16 @@ export const EXIT_ACTION_BY_STATE = {
 /** The chain states whose details offer Earn more. */
 export const EARN_MORE_STATES: ReadonlySet<StakePositionState> = new Set(["active", "activating"]);
 
-/** The displayed statuses whose details show the Current APY row, when the APY is known. */
+/** The displayed statuses whose details show the Current APY row, when the backend sends a rate. */
 export const APY_ROW_STATES: ReadonlySet<StakePositionState> = new Set([
   "active",
   "activating",
   "deactivating",
   "inactive",
 ]);
+
+/** A zero rate hides the Current APY row, as on the Earn dashboard. */
+export const SHOWS_ZERO_RATE = false;
 
 /** The web details show the Initial deposit row when the backend sends the amount. */
 export const SHOWS_INITIAL_DEPOSIT = true;

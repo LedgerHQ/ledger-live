@@ -13,8 +13,10 @@ const PROPS: DataProps = {
   status: "active",
   totalRewards: { crypto: "0.42 SOL", fiat: "$63.00" },
   currentBalance: { crypto: "12.5 SOL", fiat: "$1,875.00" },
-  initialDeposit: { crypto: "12.08 SOL", fiat: "$1,812.00" },
-  apy: "7.81%",
+  initialDepositCrypto: "12.08 SOL",
+  initialDepositFiat: "$1,812.00",
+  apy: { value: "7.12%", type: "APY" },
+  apyAppearance: "success",
   validator: { name: "Ledger by Figment", imageUrl: "https://validators.example/ledger.png" },
   accountName: "Solana 1",
   exitAction: "deactivate",
@@ -64,7 +66,7 @@ describe("StakePositionDetails (web)", () => {
     expect(screen.getByText(STAKE_POSITION_COPY.details.initialDeposit)).toBeVisible();
     expect(screen.getByText("12.08 SOL")).toBeVisible();
     expect(screen.getByText("$1,812.00")).toBeVisible();
-    expect(screen.getByText("7.81% APY")).toBeVisible();
+    expect(screen.getByText("7.12% APY")).toBeVisible();
     expect(screen.getByText("Solana 1")).toBeVisible();
     expect(screen.getByText("Ledger by Figment")).toBeVisible();
   });
@@ -77,23 +79,47 @@ describe("StakePositionDetails (web)", () => {
   });
 
   it("should hide the initial deposit row when the backend sends no deposited amount", () => {
-    renderDetails({ initialDeposit: undefined });
+    renderDetails({ initialDepositCrypto: undefined, initialDepositFiat: undefined });
 
     expect(screen.queryByText(STAKE_POSITION_COPY.details.initialDeposit)).not.toBeInTheDocument();
   });
 
   it("should show the initial deposit in crypto alone without a counter value", () => {
-    renderDetails({ initialDeposit: { crypto: "12.08 SOL" } });
+    renderDetails({ initialDepositFiat: undefined });
 
     expect(screen.getByText("12.08 SOL")).toBeVisible();
+    expect(screen.queryByText("$1,812.00")).not.toBeInTheDocument();
   });
 
-  it("should hide the APY row while the validator APY is unknown", () => {
+  it("should hide the initial deposit row with a counter value but no crypto amount", () => {
+    renderDetails({ initialDepositCrypto: undefined });
+
+    expect(screen.queryByText(STAKE_POSITION_COPY.details.initialDeposit)).not.toBeInTheDocument();
+    expect(screen.queryByText("$1,812.00")).not.toBeInTheDocument();
+  });
+
+  it("should hide the APY row when the position has no rate", () => {
     renderDetails({ apy: undefined });
 
     expect(screen.queryByText(STAKE_POSITION_COPY.details.apy)).not.toBeInTheDocument();
     expect(screen.queryByText(/\sAPY$/)).not.toBeInTheDocument();
   });
+
+  it("should name the type of the rate the backend sends", () => {
+    renderDetails({ apy: { value: "5.45%", type: "APR" } });
+
+    expect(screen.getByText("5.45% APR")).toBeVisible();
+    expect(screen.queryByText("5.45% APY")).not.toBeInTheDocument();
+  });
+
+  it.each(["success", "gray"] as const)(
+    "should show the rate in the %s appearance",
+    apyAppearance => {
+      renderDetails({ apyAppearance });
+
+      expect(screen.getByText("7.12% APY")).toHaveAttribute("appearance", apyAppearance);
+    },
+  );
 
   it("should hide the rewards when they are unknown", () => {
     renderDetails({ totalRewards: undefined });
