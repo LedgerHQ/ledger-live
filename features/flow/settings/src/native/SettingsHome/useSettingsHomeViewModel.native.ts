@@ -15,20 +15,25 @@ export type SettingsHomeDevToolRow = Readonly<{
   onSelect: () => void;
 }>;
 
+export type SettingsHomeSwitchToLegacyRow = Readonly<{ label: string; onSelect: () => void }>;
+
 export type SettingsHomeViewModel = Readonly<{
   rows: readonly SettingsHomeRow[];
   devToolRows: readonly SettingsHomeDevToolRow[];
+  switchToLegacyRow: SettingsHomeSwitchToLegacyRow | null;
   onSelectSection: (section: SettingsHomeSectionId) => void;
 }>;
 
 type SettingsHomeViewModelInput = Readonly<{
   onSelectSection: (section: SettingsHomeSectionId) => void;
   devTools?: SettingsHomeDevTools;
+  onSwitchToLegacySettings?: () => void;
 }>;
 
 export function useSettingsHomeViewModel({
   onSelectSection,
   devTools,
+  onSwitchToLegacySettings,
 }: SettingsHomeViewModelInput): SettingsHomeViewModel {
   const { t } = useTranslation();
   const labels = useSettingsLabels();
@@ -52,6 +57,13 @@ export function useSettingsHomeViewModel({
     }
     return devToolRows;
   }, [onOpenDeveloper, onOpenDebug, t]);
+  const switchToLegacyRow = useMemo(
+    () =>
+      onSwitchToLegacySettings
+        ? { label: t("settings.switchToLegacy"), onSelect: onSwitchToLegacySettings }
+        : null,
+    [onSwitchToLegacySettings, t],
+  );
 
-  return { rows, devToolRows, onSelectSection };
+  return { rows, devToolRows, switchToLegacyRow, onSelectSection };
 }
