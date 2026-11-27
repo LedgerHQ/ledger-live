@@ -1,7 +1,13 @@
 import React from "react";
 import { resetLazyOnboardingBannerSession } from "@features/flow-lazy-onboarding-banner/testing";
 import { renderWithReactQuery, screen, withFlagOverrides } from "@tests/test-renderer";
-import { ReadOnlyPortfolioTest } from "./shared";
+import storage from "LLM/storage";
+import {
+  overrideInitialStateWithNoAccounts,
+  overrideInitialStateWithReadOnly,
+  PortfolioRootTest,
+  ReadOnlyPortfolioTest,
+} from "./shared";
 import { withConsentDrawerState } from "LLM/features/AnalyticsConsentDrawer/__tests__/helpers";
 
 describe("ReadOnly Portfolio Screen", () => {
@@ -66,5 +72,27 @@ describe("ReadOnly Portfolio Screen", () => {
     });
 
     expect(await screen.findByText("Why millions choose Ledger?")).toBeVisible();
+  });
+
+  describe("Storage migration", () => {
+    let handleMigration: jest.SpyInstance;
+
+    beforeEach(() => {
+      handleMigration = jest.spyOn(storage, "handleMigration");
+    });
+
+    afterEach(() => {
+      handleMigration.mockRestore();
+    });
+
+    it("should run the storage migration when a read-only user with no accounts opens the portfolio", async () => {
+      renderWithReactQuery(<PortfolioRootTest />, {
+        overrideInitialState: state =>
+          overrideInitialStateWithNoAccounts(overrideInitialStateWithReadOnly(state)),
+      });
+
+      expect(await screen.findByTestId("PortfolioReadOnlyItems")).toBeVisible();
+      expect(handleMigration).toHaveBeenCalledTimes(1);
+    });
   });
 });

@@ -5,6 +5,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { PortfolioScreen as Portfolio } from "../screens/Portfolio";
 import ReadOnlyPortfolio from "../screens/ReadOnly";
+import PortfolioRootScreen from "~/components/RootNavigator/PortfolioRootScreen";
 import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
 import { withFlagOverrides } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
@@ -25,6 +26,12 @@ export const PortfolioTest = () => (
 export const ReadOnlyPortfolioTest = () => (
   <Stack.Navigator initialRouteName={ScreenName.Portfolio}>
     <Stack.Screen name={ScreenName.Portfolio} component={ReadOnlyPortfolio} />
+  </Stack.Navigator>
+);
+
+export const PortfolioRootTest = () => (
+  <Stack.Navigator initialRouteName={ScreenName.Portfolio}>
+    <Stack.Screen name={ScreenName.Portfolio} component={PortfolioRootScreen} />
   </Stack.Navigator>
 );
 
