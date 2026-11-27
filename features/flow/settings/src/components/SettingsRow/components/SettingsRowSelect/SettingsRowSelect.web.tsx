@@ -46,6 +46,7 @@ export function SettingsRowSelect({ trailing, rowTitle, disabled }: SettingsRowS
         {search && <SelectSearch placeholder={search.placeholder} />}
         {search && <SelectEmptyState title={search.emptyLabel} />}
         <SelectList
+          className="scrollbar-custom"
           renderItem={item => (
             <SelectItem key={item.value} value={item.value}>
               <SelectItemText>{item.label}</SelectItemText>
