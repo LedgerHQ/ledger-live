@@ -24,6 +24,10 @@ import {
   SendApduTimeoutError,
 } from "@ledgerhq/device-management-kit";
 import { PeerRemovedPairingError } from "@ledgerhq/device-transport-kit-react-native-ble";
+import { HidTransportSendApduUnknownError } from "@ledgerhq/device-transport-kit-react-native-hid";
+
+const isUsbApduStillInFlightError = (error: unknown): boolean =>
+  error instanceof HidTransportSendApduUnknownError && error.err === "DeviceBusy";
 
 export const isDmkError = (error: unknown): error is DmkError =>
   !!error && typeof error === "object" && error !== null && "_tag" in error;
@@ -55,6 +59,7 @@ export const isAllowedOnboardingStatePollingErrorDmk = (error: unknown): boolean
     return (
       error instanceof SendApduTimeoutError ||
       error instanceof DeviceBusyError ||
+      isUsbApduStillInFlightError(error) ||
       error instanceof DeviceDisconnectedWhileSendingError ||
       error instanceof SendApduEmptyResponseError ||
       error._tag === "DeviceSessionNotFound"
