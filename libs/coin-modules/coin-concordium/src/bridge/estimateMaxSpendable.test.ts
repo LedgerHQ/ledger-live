@@ -4,21 +4,19 @@ import {
   createFixtureTokenAccount,
   createFixtureTransaction,
 } from "../test/fixtures";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { buildEstimateMaxSpendable } from "./estimateMaxSpendable";
 
-jest.mock("./prepareTransaction", () => ({
-  prepareTransaction: jest.fn().mockResolvedValue({
-    fee: new BigNumber(1000),
-  }),
-}));
+const prepareTransaction = jest.fn().mockResolvedValue({
+  fee: new BigNumber(1000),
+});
 
-jest.mock("./getTransactionStatus", () => ({
-  getTransactionStatus: jest.fn().mockResolvedValue({
-    estimatedFees: new BigNumber(1000),
-    errors: {},
-    warnings: {},
-  }),
-}));
+const getTransactionStatus = jest.fn().mockResolvedValue({
+  estimatedFees: new BigNumber(1000),
+  errors: {},
+  warnings: {},
+});
+
+const estimateMaxSpendable = buildEstimateMaxSpendable(prepareTransaction, getTransactionStatus);
 
 jest.mock("./createTransaction", () => ({
   createTransaction: jest.fn().mockReturnValue({
@@ -46,7 +44,6 @@ describe("estimateMaxSpendable", () => {
 
   it("should return 0 when fees exceed spendable balance", async () => {
     // GIVEN
-    const { getTransactionStatus } = jest.requireMock("./getTransactionStatus");
     getTransactionStatus.mockResolvedValueOnce({
       estimatedFees: new BigNumber(20000000),
       errors: {},
@@ -63,7 +60,6 @@ describe("estimateMaxSpendable", () => {
 
   it("should return 0 when spendable balance equals fees", async () => {
     // GIVEN
-    const { getTransactionStatus } = jest.requireMock("./getTransactionStatus");
     getTransactionStatus.mockResolvedValueOnce({
       estimatedFees: new BigNumber(10000000),
       errors: {},
@@ -80,7 +76,6 @@ describe("estimateMaxSpendable", () => {
 
   it("should use transaction recipient if provided", async () => {
     // GIVEN
-    const { prepareTransaction } = jest.requireMock("./prepareTransaction");
     const account = createFixtureAccount();
     const customRecipient = "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G";
 
@@ -99,7 +94,6 @@ describe("estimateMaxSpendable", () => {
 
   it("should use abandon seed address when no recipient provided", async () => {
     // GIVEN
-    const { prepareTransaction } = jest.requireMock("./prepareTransaction");
     const account = createFixtureAccount();
 
     // WHEN
@@ -116,7 +110,6 @@ describe("estimateMaxSpendable", () => {
 
   it("should set amount to 0 for fee estimation", async () => {
     // GIVEN
-    const { prepareTransaction } = jest.requireMock("./prepareTransaction");
     const account = createFixtureAccount();
 
     // WHEN
@@ -143,7 +136,6 @@ describe("estimateMaxSpendable", () => {
 
   it("should merge transaction properties with created transaction", async () => {
     // GIVEN
-    const { prepareTransaction } = jest.requireMock("./prepareTransaction");
     const account = createFixtureAccount();
 
     // WHEN
@@ -185,7 +177,6 @@ describe("estimateMaxSpendable", () => {
   describe("a PLT sub-account", () => {
     // No estimate is needed at all, which is what the second assertion pins.
     it("returns the whole token balance, unreduced by CCD fees", async () => {
-      const { prepareTransaction } = jest.requireMock("./prepareTransaction");
       const parent = createFixtureAccount();
       const subAccount = createFixtureTokenAccount({ parentId: parent.id });
 
@@ -221,7 +212,6 @@ describe("estimateMaxSpendable", () => {
     // A rejection reaches the consumers as an unhandled one, so resolving is the
     // contract, not a convenience.
     it("resolves to zero rather than rejecting", async () => {
-      const { prepareTransaction } = jest.requireMock("./prepareTransaction");
       prepareTransaction.mockRejectedValueOnce(new Error("proxy down"));
 
       const result = await estimateMaxSpendable({
@@ -233,7 +223,6 @@ describe("estimateMaxSpendable", () => {
     });
 
     it("resolves to zero when the status lookup fails", async () => {
-      const { getTransactionStatus } = jest.requireMock("./getTransactionStatus");
       getTransactionStatus.mockRejectedValueOnce(new Error("proxy down"));
 
       const result = await estimateMaxSpendable({

@@ -1,9 +1,10 @@
-import coinConfig, { concordiumDefaults } from "../config";
-import { broadcast } from "./broadcast";
+import { concordiumDefaults } from "../config";
+import { buildBroadcast } from "./broadcast";
 
 describe("Broadcast", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => concordiumDefaults.concordium_testnet);
+  const broadcast = buildBroadcast({
+    config: async () => concordiumDefaults.concordium_testnet,
+    logger: () => {},
   });
 
   it("throws when broadcasting a valid tx with an invalid signature", async () => {

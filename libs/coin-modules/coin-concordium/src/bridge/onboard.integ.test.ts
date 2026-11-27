@@ -1,9 +1,13 @@
 import { ConcordiumSessionExpiredError } from "../types";
 import { firstValueFrom, toArray } from "rxjs";
-import coinConfig, { concordiumDefaults } from "../config";
+import { concordiumDefaults } from "../config";
 import { submitCredential } from "../network/proxyClient";
 import { ConcordiumWalletConnect } from "../network/walletConnect";
-import { AccountOnboardStatus, ConcordiumPairingStatus } from "../types";
+import {
+  AccountOnboardStatus,
+  ConcordiumPairingStatus,
+  type ConcordiumBridgeContext,
+} from "../types";
 import { CRED_ID, createFixtureAccount, createFixtureCurrency, PUBLIC_KEY } from "../test/fixtures";
 import { buildOnboardAccount, buildPairWalletConnect } from "./onboard";
 import {
@@ -66,9 +70,10 @@ jest.mock("../network/proxyClient", () => ({
  * - Real signer context
  */
 describe("onboard (testnet integration)", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => concordiumDefaults.concordium_testnet);
-  });
+  const context: ConcordiumBridgeContext = {
+    config: async () => concordiumDefaults.concordium_testnet,
+    logger: () => {},
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -82,7 +87,7 @@ describe("onboard (testnet integration)", () => {
 
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
@@ -108,7 +113,7 @@ describe("onboard (testnet integration)", () => {
 
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
@@ -128,7 +133,7 @@ describe("onboard (testnet integration)", () => {
 
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
@@ -148,7 +153,7 @@ describe("onboard (testnet integration)", () => {
 
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
-      const onboardAccount = buildOnboardAccount(signerContext);
+      const onboardAccount = buildOnboardAccount(signerContext, context);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
@@ -168,7 +173,7 @@ describe("onboard (testnet integration)", () => {
         approval: jest.fn().mockResolvedValue({ topic: "session-topic-123" }),
       });
 
-      const pairWalletConnect = buildPairWalletConnect();
+      const pairWalletConnect = buildPairWalletConnect(context);
       const currency = createFixtureCurrency();
 
       const observable = pairWalletConnect(currency.id, "test-device");
@@ -196,7 +201,7 @@ describe("onboard (testnet integration)", () => {
         approval: jest.fn(),
       });
 
-      const pairWalletConnect = buildPairWalletConnect();
+      const pairWalletConnect = buildPairWalletConnect(context);
       const currency = createFixtureCurrency();
 
       const observable = pairWalletConnect(currency.id, "test-device");
@@ -217,7 +222,7 @@ describe("onboard (testnet integration)", () => {
         ),
       });
 
-      const pairWalletConnect = buildPairWalletConnect();
+      const pairWalletConnect = buildPairWalletConnect(context);
       const currency = createFixtureCurrency();
 
       const observable = pairWalletConnect(currency.id, "test-device");
@@ -259,20 +264,22 @@ describe("onboard (testnet integration)", () => {
 
       const currency = createFixtureCurrency();
       const mockData = { v: 0, value: {} } as never;
-      const config = coinConfig.getCoinConfig(currency.id);
+      const config = await context.config(currency.id);
 
-      const result = await submitCredential(config, currency.id, mockData);
+      const result = await submitCredential(config, mockData);
 
       expect(result).toEqual({ submissionId: "test-submission-123" });
-      expect(mockSubmitCredential).toHaveBeenCalledWith(config, currency.id, mockData);
+      expect(mockSubmitCredential).toHaveBeenCalledWith(config, mockData);
     }, 15000);
 
-    it("should use correct testnet configuration", () => {
-      const config = coinConfig.getCoinConfig();
+    it("should use correct testnet configuration", async () => {
+      const config = await context.config("concordium_testnet");
 
       expect(config.networkType).toBe(concordiumDefaults.concordium_testnet.networkType);
       expect(config.proxyUrl).toBe(concordiumDefaults.concordium_testnet.proxyUrl);
-      expect(config.minReserve).toBe(concordiumDefaults.concordium_testnet.minReserve);
+      expect(config.walletConnect.relayUrl).toBe(
+        concordiumDefaults.concordium_testnet.walletConnect.relayUrl,
+      );
     });
   });
 });
