@@ -7,6 +7,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["aleo", "aleo_testnet"],
     accountDescriptorType: "address",
     loadSetup: () => import("../families/aleo/setup"),
+    loadLocalApi: () => import("../families/aleo/coinModuleApi").then(m => m.createLocalAleoApi),
     loadTransaction: () => import("@ledgerhq/coin-aleo/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-aleo/deviceTransactionConfig").then(m => m.default),
