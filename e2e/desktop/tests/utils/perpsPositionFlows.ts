@@ -85,27 +85,62 @@ export async function readPerpsPositions({
   );
 }
 
+const CLEANUP_ATTEMPTS = 2;
+
+type CleanupOptions = PerpsAccount & { relaunchSpeculos: RelaunchSpeculos };
+
+// Retries with a fresh Speculos, then checks the API independently.
+async function closePerpsMarketsMatching(
+  { account, userdataFile, relaunchSpeculos }: CleanupOptions,
+  isTarget: (marketId: string) => boolean,
+): Promise<boolean> {
+  const api = new PerpsApi();
+  const address = await getSavedAccountAddress(userdataFile, account);
+  const targets = async () =>
+    (await api.getPositions(address)).map(({ marketId }) => marketId).filter(isTarget);
+  let closed = false;
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= CLEANUP_ATTEMPTS; attempt++) {
+    const marketIds = await targets();
+    if (marketIds.length === 0) break;
+    closed = true;
+    try {
+      const device = await relaunchSpeculos(AppInfos.HYPERLIQUID.name);
+      await closePerpsMarkets({
+        address,
+        marketIds,
+        speculosApiPort: device.port,
+        derivationPath: account.accountPath,
+      });
+    } catch (error) {
+      lastError = error;
+      console.warn(`Perps cleanup attempt ${attempt} failed: ${String(error)}`);
+    }
+  }
+  const left = await targets();
+  if (left.length > 0) {
+    throw new Error(`Perps positions still open on ${left.join(", ")}`, { cause: lastError });
+  }
+  return closed;
+}
+
+// Under the account lock, any group position is a leftover.
+export async function closePerpsLeftovers({
+  market,
+  restoreApp,
+  ...options
+}: CleanupOptions & { market: PerpsMarketGroup; restoreApp: string }) {
+  const closed = await closePerpsMarketsMatching(options, marketId =>
+    market.marketId.test(marketId),
+  );
+  if (closed) await options.relaunchSpeculos(restoreApp);
+}
+
 // Closes markets the test opened, through the API and Speculos.
 export async function closePerpsPositionsOpenedByTest({
-  account,
-  userdataFile,
   positionsAtStart,
-  relaunchSpeculos,
-}: PerpsAccount & {
-  positionsAtStart: ProviderPosition[];
-  relaunchSpeculos: RelaunchSpeculos;
-}) {
+  ...options
+}: CleanupOptions & { positionsAtStart: ProviderPosition[] }) {
   const known = new Set(positionsAtStart.map(({ marketId }) => marketId));
-  const address = await getSavedAccountAddress(userdataFile, account);
-  const opened = (await new PerpsApi().getPositions(address))
-    .map(({ marketId }) => marketId)
-    .filter(marketId => !known.has(marketId));
-  if (opened.length === 0) return;
-  const device = await relaunchSpeculos(AppInfos.HYPERLIQUID.name);
-  await closePerpsMarkets({
-    address,
-    marketIds: opened,
-    speculosApiPort: device.port,
-    derivationPath: account.accountPath,
-  });
+  await closePerpsMarketsMatching(options, marketId => !known.has(marketId));
 }

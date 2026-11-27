@@ -9,6 +9,7 @@ import { getPerpsLiveAppStorage } from "tests/utils/perpsLiveAppStorage";
 import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 import { HIP3_MARKETS, type PerpsOrderSide, type ProviderPosition } from "tests/utils/perpsMarkets";
 import {
+  closePerpsLeftovers,
   closePerpsPositionsOpenedByTest,
   openPerpsFromPortfolio,
   readPerpsPositions,
@@ -49,8 +50,15 @@ test.describe("Perps open position", { lock: lock.names }, () => {
   // Unset until read, so cleanup never closes foreign positions.
   let positionsAtStart: ProviderPosition[] | undefined;
 
-  test.beforeEach(async ({ app, userdataFile }) => {
+  test.beforeEach(async ({ app, speculos, userdataFile }) => {
     positionsAtStart = undefined;
+    await closePerpsLeftovers({
+      account,
+      userdataFile,
+      market,
+      restoreApp: AppInfos.ETHEREUM.name,
+      relaunchSpeculos: speculos.relaunch,
+    });
     await openPerpsFromPortfolio(app);
     positionsAtStart = await readPerpsPositions({ account, userdataFile });
   });

@@ -10,6 +10,7 @@ import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 import { HIP3_MARKETS, type ProviderPosition } from "tests/utils/perpsMarkets";
 import {
   closePerpsPosition,
+  closePerpsLeftovers,
   closePerpsPositionsOpenedByTest,
   openPerpsPosition,
   openPerpsFromPortfolio,
@@ -48,6 +49,13 @@ test.describe("Perps close position", { lock: lock.names }, () => {
 
   test.beforeEach(async ({ app, speculos, userdataFile }) => {
     positionsAtStart = undefined;
+    await closePerpsLeftovers({
+      account,
+      userdataFile,
+      market,
+      restoreApp: AppInfos.ETHEREUM.name,
+      relaunchSpeculos: speculos.relaunch,
+    });
     await openPerpsFromPortfolio(app);
     positionsAtStart = await readPerpsPositions({ account, userdataFile });
     await openPerpsPosition(app, {
