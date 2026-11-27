@@ -2,6 +2,7 @@ import { http, HttpResponse } from "msw";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { concordiumDefaults } from "@ledgerhq/coin-concordium/config";
 import type { State } from "~/reducers/types";
 
 // ── Constants ──
@@ -14,14 +15,7 @@ export const WC_RAW_URI = "wc:test-pairing-uri";
 export const WC_FORMATTED_URI = `concordiumidapp://wallet-connect?encodedUri=${WC_RAW_URI}`;
 
 export const COIN_CONTEXT = {
-  config: async () => ({
-    status: { type: "active" } as const,
-    name: "Concordium",
-    unit: { name: "ccd", code: "CCD", magnitude: 6 },
-    networkType: "mainnet" as const,
-    proxyUrl: PROXY_URL,
-    walletConnect: { relayUrl: "wss://relay.walletconnect.com" },
-  }),
+  config: async () => ({ ...concordiumDefaults.concordium, proxyUrl: PROXY_URL }),
   logger: () => {},
 };
 
