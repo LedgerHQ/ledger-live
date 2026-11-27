@@ -53,6 +53,7 @@ const targets = [
   "PendingTransferProposals",
   "customAddAccountFlow",
   "customSendFlow",
+  "manageAssetsAction",
 ];
 
 async function genTarget(target) {
