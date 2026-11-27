@@ -57,7 +57,7 @@ export const fetchTransactionsPage = async (
 export const fetchReceiptsPage = async (
   config: NearConfig,
   address: string,
-  options: { cursor?: string | undefined; limit?: number } = {},
+  options: { cursor?: string; limit?: number } = {},
 ): Promise<{ receipts: NearAccountReceipt[]; next?: string }> => {
   const params = new URLSearchParams();
   if (options.limit !== undefined) {
@@ -241,7 +241,7 @@ export const readReceiptTransfers = async (
   for (let page = 1; ; page++) {
     const { receipts, next } = await fetchReceiptsPage(config, address, {
       limit: RECEIPTS_PAGE_SIZE,
-      cursor: requestCursor,
+      ...(requestCursor !== undefined && { cursor: requestCursor }),
     });
     candidateHashes.push(...transferCandidateHashes(receipts, address, window, knownHashes));
 

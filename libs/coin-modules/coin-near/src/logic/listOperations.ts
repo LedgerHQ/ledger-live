@@ -72,15 +72,22 @@ export function toOperation(transaction: NearTransaction, address: string): Oper
 type Cursor = { t?: string; r?: string; u?: number; h?: number };
 
 // URL-safe base64 by hand: the `buffer` polyfill mobile installs as `Buffer` has no "base64url".
+const withoutPadding = (base64: string): string => {
+  let end = base64.length;
+  while (end > 0 && base64[end - 1] === "=") end--;
+  return base64.slice(0, end);
+};
+
 const encodeCursor = (cursor: Cursor): string =>
-  Buffer.from(JSON.stringify(cursor))
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+  withoutPadding(
+    Buffer.from(JSON.stringify(cursor))
+      .toString("base64")
+      .replaceAll("+", "-")
+      .replaceAll("/", "_"),
+  );
 
 const fromUrlSafeBase64 = (token: string): Buffer =>
-  Buffer.from(token.replace(/-/g, "+").replace(/_/g, "/"), "base64");
+  Buffer.from(token.replaceAll("-", "+").replaceAll("_", "/"), "base64");
 
 function decodeCursor(token: string): Cursor {
   try {
