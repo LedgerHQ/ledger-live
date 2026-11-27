@@ -232,7 +232,7 @@ describe("PayTab integration", () => {
     expect(openAssetAndAccount).toHaveBeenCalledWith(
       expect.objectContaining({ categories: [AssetCategory.Stablecoins] }),
     );
-    expect(store.getState().modularDialog.flow).toBe("request");
+    expect(store.getState().modularDialog.flow).toBe("receive_flow");
     expect(store.getState().receiveAddressDialog.target).toEqual(
       expect.objectContaining({ assetId: USDC_TOKEN.token.id, source: "pay" }),
     );

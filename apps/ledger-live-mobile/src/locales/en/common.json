@@ -2424,6 +2424,13 @@
   },
   "receiveAddress": {
     "title": "Receive {{asset}}",
+    "networkHelp": {
+      "description": "Select the same network you're using to send your {{asset}}. <0>Learn more</0>",
+      "title": "How to select the network?",
+      "choose": "When sending crypto from another wallet or exchange, you'll be asked to choose a network. In most cases, the main factor to consider is the coverage and the network fee. It's critical to select the same network as the one used to send. Choosing the wrong network may result in a permanent loss of funds.",
+      "testAmount": "If you're unsure, consider sending a small test amount first to confirm everything works correctly.",
+      "faq": "For more details, please <0>visit our FAQ page</0>."
+    },
     "networkLabel": "{{network}} network",
     "close": "Close",
     "back": "Back",

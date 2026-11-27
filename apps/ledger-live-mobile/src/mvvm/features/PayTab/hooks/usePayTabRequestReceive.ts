@@ -4,6 +4,7 @@ import { AssetCategory } from "@domain/api-aggregated-assets";
 import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
 import { toReceiveTarget } from "@features/flow-receive";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
@@ -29,7 +30,7 @@ export function usePayTabRequestReceive(): UsePayTabRequestReceive {
   const open = useCallback(() => {
     openDrawer({
       categories: REQUEST_CATEGORIES,
-      flow: "request",
+      flow: ModularDrawerLocation.RECEIVE_FLOW,
       source: REQUEST_SOURCE,
       enableAccountSelection: true,
       onAccountSelected: (account, parentAccount) => {

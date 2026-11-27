@@ -4,6 +4,7 @@ import AssetSelector from "./screens/AssetSelector";
 import { NetworkSelector } from "./screens/NetworkSelector";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import SkeletonList from "./components/SkeletonList";
+import { NetworkHelpLink } from "./components/NetworkHelp/NetworkHelpLink";
 import { useModularDialogFlowViewModel } from "./useModularDialogFlowViewModel";
 import { MODULAR_DIALOG_STEP, type ModularDialogFlowProps, type ModularDialogStep } from "./types";
 
@@ -29,6 +30,7 @@ export function ModularDialogFlow({
     isOpen,
     loadNext,
     loadingStatus,
+    networkHelp,
     navigationDirection,
     networkConfiguration,
     networksToDisplay,
@@ -60,14 +62,22 @@ export function ModularDialogFlow({
         );
       case MODULAR_DIALOG_STEP.NETWORK_SELECTION:
         return (
-          <NetworkSelector
-            networks={networksToDisplay}
-            networksConfiguration={networkConfiguration}
-            onNetworkSelected={handleNetworkSelected}
-            selectedAssetId={selectedAsset?.id}
-            selectedAssetName={selectedAsset?.name}
-            selectableNetworkIds={selectableNetworkIds}
-          />
+          <>
+            {networkHelp ? (
+              <NetworkHelpLink
+                assetTicker={selectedAsset?.ticker ?? ""}
+                networkHelp={networkHelp}
+              />
+            ) : null}
+            <NetworkSelector
+              networks={networksToDisplay}
+              networksConfiguration={networkConfiguration}
+              onNetworkSelected={handleNetworkSelected}
+              selectedAssetId={selectedAsset?.id}
+              selectedAssetName={selectedAsset?.name}
+              selectableNetworkIds={selectableNetworkIds}
+            />
+          </>
         );
       case MODULAR_DIALOG_STEP.ACCOUNT_SELECTION:
         if (selectedAsset && selectedNetwork && onAccountSelected) {
@@ -106,6 +116,7 @@ export function ModularDialogFlow({
         hasBackButton: Boolean(handleBack),
         isOpen,
         navigationDirection,
+        networkHelp,
         onBack: handleBack,
         onClose: handleClose,
       })}

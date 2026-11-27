@@ -23,7 +23,7 @@ beforeEach(() => {
 });
 
 describe("usePayTabRequestReceive", () => {
-  it("should pick a stablecoin account for the Pay request flow", () => {
+  it("should pick a stablecoin account in the receive flow, from Pay", () => {
     const { result, store } = renderHook(() => usePayTabRequestReceive(), {
       initialState: fundedState,
     });
@@ -34,7 +34,7 @@ describe("usePayTabRequestReceive", () => {
       expect.objectContaining({ categories: [AssetCategory.Stablecoins] }),
     );
     expect(store.getState().modularDialog).toEqual(
-      expect.objectContaining({ flow: "request", source: "pay" }),
+      expect.objectContaining({ flow: "receive_flow", source: "pay" }),
     );
   });
 
