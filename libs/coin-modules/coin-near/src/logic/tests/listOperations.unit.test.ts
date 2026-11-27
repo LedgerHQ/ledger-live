@@ -366,6 +366,48 @@ describe("listOperations receipt transfers", () => {
     );
   });
 
+  it("reads and writes cursors with a Buffer that has no base64url encoding, as on mobile", async () => {
+    const rejectBase64Url = (encoding: unknown) => {
+      if (encoding === "base64url") throw new TypeError("Unknown encoding: base64url");
+    };
+    const nodeToString = Buffer.prototype.toString;
+    const nodeFrom = Buffer.from.bind(Buffer) as (
+      value: string,
+      encoding?: BufferEncoding,
+    ) => Buffer;
+    const toStringSpy = jest.spyOn(Buffer.prototype, "toString").mockImplementation(function (
+      this: Buffer,
+      encoding?: BufferEncoding,
+      ...rest: number[]
+    ) {
+      rejectBase64Url(encoding);
+      return nodeToString.call(this, encoding, ...rest);
+    });
+    const fromSpy = jest.spyOn(Buffer, "from").mockImplementation(((
+      value: string,
+      encoding?: BufferEncoding,
+    ) => {
+      rejectBase64Url(encoding);
+      return nodeFrom(value, encoding);
+    }) as typeof Buffer.from);
+    mockPage([transaction({ block: { block_height: "250" } })], "txns-2");
+    mockReceipts([], "receipts-2");
+
+    try {
+      const first = await listOperations(mockNearContext, ADDRESS, { minHeight: 0 });
+      await listOperations(mockNearContext, ADDRESS, { minHeight: 0, cursor: first.next });
+    } finally {
+      toStringSpy.mockRestore();
+      fromSpy.mockRestore();
+    }
+
+    expect(readReceiptTransfers).toHaveBeenLastCalledWith(
+      expect.anything(),
+      ADDRESS,
+      expect.objectContaining({ cursor: "receipts-2", upperHeight: 250 }),
+    );
+  });
+
   it("bounds each receipts read to a page budget, the last transaction page included", async () => {
     mockPage([transaction({ block: { block_height: "300" } })]);
 
