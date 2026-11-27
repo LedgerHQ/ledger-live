@@ -852,7 +852,7 @@ describe("getOperations", () => {
       expect((await read({ upperHeight: 250 })).transfers).toEqual([]);
     });
 
-    it("skips a payout while one of its transfers has no outcome yet", async () => {
+    it("rejects the read while a transfer of a payout has no outcome yet, so it is read again", async () => {
       respondWithReceipts([receipt()]);
       respondWithParties({}, undefined, {
         "payout-hash": [
@@ -860,10 +860,10 @@ describe("getOperations", () => {
         ],
       });
 
-      expect((await read()).transfers).toEqual([]);
+      await expect(read()).rejects.toThrow("payout-hash");
     });
 
-    it("skips a payout while another of its receipts has no outcome yet, as it may still send one", async () => {
+    it("rejects the read while another receipt of a payout has no outcome yet, as it may still send one", async () => {
       respondWithReceipts([receipt()]);
       respondWithParties({}, undefined, {
         "payout-hash": [
@@ -876,7 +876,7 @@ describe("getOperations", () => {
         ],
       });
 
-      expect((await read()).transfers).toEqual([]);
+      await expect(read()).rejects.toThrow("payout-hash");
     });
 
     it("ignores gas refunds and failed transfers in the transaction's receipts", async () => {
