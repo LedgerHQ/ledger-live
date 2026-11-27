@@ -8,6 +8,7 @@ import {
   addBreadcrumb,
   addAction,
   setDatadogActionsEnabled,
+  setDatadogTrackingConsent,
   setTags,
   setUser,
   startDatadogRouteView,
@@ -31,6 +32,7 @@ jest.mock("@datadog/browser-rum", () => ({
     setGlobalContext: jest.fn(),
     setGlobalContextProperty: jest.fn(),
     setUser: jest.fn(),
+    setTrackingConsent: jest.fn(),
   },
 }));
 
@@ -117,6 +119,13 @@ describe("datadog renderer", () => {
     it("should not call datadogRum.addError when not initialized", () => {
       captureException(new Error("test"));
       expect(datadogRum.addError).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("setDatadogTrackingConsent", () => {
+    it("should not touch the SDK consent when not initialized", () => {
+      setDatadogTrackingConsent(false);
+      expect(datadogRum.setTrackingConsent).not.toHaveBeenCalled();
     });
   });
 
@@ -294,6 +303,12 @@ describe("datadog renderer", () => {
       consent = true;
       expect(addAction("live_app_domain_check_violation", {})).toBe(true);
       expect(datadogRum.addAction).toHaveBeenCalledTimes(1);
+    });
+
+    it("should hand an opt-out and a new opt-in to the SDK tracking consent", () => {
+      setDatadogTrackingConsent(false);
+      setDatadogTrackingConsent(true);
+      expect(datadogRum.setTrackingConsent.mock.calls).toEqual([["not-granted"], ["granted"]]);
     });
 
     it("addAction should send nothing, and say so, while the lldDatadog flag is off", () => {

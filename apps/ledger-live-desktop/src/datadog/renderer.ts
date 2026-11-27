@@ -69,6 +69,16 @@ export function setDatadogActionsEnabled(enabled: boolean): void {
   actionsEnabled = enabled;
 }
 
+/** Follows the user opt-in after init: profiles skip beforeSend, so only the SDK can stop them. */
+export function setDatadogTrackingConsent(granted: boolean): void {
+  if (!initialized) return;
+  try {
+    datadogRum.setTrackingConsent(granted ? "granted" : "not-granted");
+  } catch {
+    // no-op
+  }
+}
+
 export function isDatadogAvailable(): boolean {
   const { applicationId, clientToken } = getDatadogBuildConfig();
   return getOperatingSystemSupportStatus().supported && !!applicationId && !!clientToken;

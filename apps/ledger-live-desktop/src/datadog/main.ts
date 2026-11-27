@@ -23,9 +23,11 @@ const isRate = (value: unknown): value is number =>
 export function parseMainDatadogSettings(value: unknown) {
   const enabled = field(value, "enabled");
   const sessionSampleRate = field(value, "sessionSampleRate");
+  const profilingSampleRate = field(value, "profilingSampleRate");
   return {
     enabled: typeof enabled === "boolean" ? enabled : undefined,
     sessionSampleRate: isRate(sessionSampleRate) ? sessionSampleRate : undefined,
+    profilingSampleRate: isRate(profilingSampleRate) ? profilingSampleRate : undefined,
   };
 }
 export type MainDatadogSettings = ReturnType<typeof parseMainDatadogSettings>;
@@ -297,10 +299,13 @@ export function createDatadogMainState(userDataDirectory: string) {
     datadogId = readDatadogId(identities);
     setUserIdMain(datadogId);
   };
+  const consent = (): TrackingConsent =>
+    crashReporting && lldDatadog.enabled === true ? "granted" : "not-granted";
   return {
     settings: datadogSettings,
-    consent: (): TrackingConsent =>
-      crashReporting && lldDatadog.enabled === true ? "granted" : "not-granted",
+    consent,
+    profilesRenderer: () =>
+      consent() === "granted" && (datadogSettings.profilingSampleRate ?? 0) > 0,
     user: () => datadogId,
     setIdentities,
     onAppKeyWritten(keyPath: string, value: unknown) {
