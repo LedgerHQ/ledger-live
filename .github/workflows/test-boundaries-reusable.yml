@@ -115,6 +115,11 @@ jobs:
         if: hashFiles('support/lint/src/check-coin-families-exceptions.js') != ''
         run: pnpm lint:coin-families-exceptions
 
+      - name: Check legacy-ui waivers
+        # Guard until release and hotfix have support/lint/src/check-legacy-ui-waivers.js.
+        if: hashFiles('support/lint/src/check-legacy-ui-waivers.js') != ''
+        run: pnpm lint:legacy-ui-waivers
+
       # The knip steps skip older branches (e.g. release), which call this workflow from develop without the monorepo knip configs.
       - name: Knip (packages without platform configs)
         if: ${{ !cancelled() && steps.install.outcome == 'success' && hashFiles('support/knip/web.config.mjs') != '' }}

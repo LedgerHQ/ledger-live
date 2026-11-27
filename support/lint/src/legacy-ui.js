@@ -3,13 +3,15 @@
 import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { appRoot } from "./families-folder.js";
+import { FILE_WAIVERS, FOLDER_WAIVERS } from "./legacy-ui-waivers.js";
 
 const LUMEN =
   "Use Lumen instead: .agents/skills/ldls-native/SKILL.md (Mobile), .agents/skills/ldls-web/SKILL.md (Desktop).";
 
-const STYLED_COMPONENTS = new Set(["styled-components", "styled-components/native"]);
+const REPO_ROOT = fileURLToPath(new URL("../../..", import.meta.url));
 const ALIAS_PREFIX = "~/";
 
 // Loaded on the first `~/` entry only, so an app without one never parses a tsconfig.
@@ -21,9 +23,14 @@ let ts;
  * @typedef {object} LegacyUiOptions
  * @property {string[]} modules the legacy modules: a specifier matches an entry or a subpath of it. An entry
  *   starting with `~/` also matches any specifier the app's tsconfig resolves to the same file or folder.
- * @property {{ glob: string, reason: string }[]} [exemptPaths] files, relative to the app root, that no rule
- *   checks
  * @property {string[]} [bannedComponents] components that reached zero
+ */
+
+/**
+ * @typedef {object} Waivers
+ * @property {string} repoRoot the folder the waiver keys are relative to
+ * @property {Record<string, string>} fileWaivers files `no-legacy-import` skips
+ * @property {Record<string, string>} folderWaivers globs of files no rule checks
  */
 
 const SCHEMA = [
@@ -31,15 +38,6 @@ const SCHEMA = [
     type: "object",
     properties: {
       modules: { type: "array", items: { type: "string" } },
-      exemptPaths: {
-        type: "array",
-        items: {
-          type: "object",
-          properties: { glob: { type: "string" }, reason: { type: "string" } },
-          required: ["glob", "reason"],
-          additionalProperties: false,
-        },
-      },
       bannedComponents: { type: "array", items: { type: "string" } },
     },
     required: ["modules"],
@@ -72,16 +70,21 @@ function globToRegExp(glob) {
 }
 
 /**
- * @param {string | undefined} filename
- * @param {LegacyUiOptions["exemptPaths"]} exemptPaths
- * @returns {boolean} whether the file matches one of the globs, relative to its app root
+ * @param {string} repoRoot
+ * @param {string} filename an absolute path
+ * @returns {string} the posix path of the file from the repo root, the key of a waiver
  */
-function isExempt(filename, exemptPaths = []) {
-  if (typeof filename !== "string" || exemptPaths.length === 0) return false;
-  const root = appRoot(path.dirname(filename));
-  if (!root) return false;
-  const relative = path.relative(root, filename).split(path.sep).join("/");
-  return exemptPaths.some(({ glob }) => globToRegExp(glob).test(relative));
+function repoPath(repoRoot, filename) {
+  return path.relative(repoRoot, filename).split(path.sep).join("/");
+}
+
+/**
+ * @param {string} file a posix path from the repo root
+ * @param {Record<string, string>} folderWaivers
+ * @returns {boolean} whether one of the folder waiver globs matches the file
+ */
+function isInFolderWaiver(file, folderWaivers) {
+  return Object.keys(folderWaivers).some(glob => globToRegExp(glob).test(file));
 }
 
 /**
@@ -292,22 +295,28 @@ function splitJsxName(name) {
 }
 
 /**
- * @param {{ createOnce(context: any, state: { options: LegacyUiOptions }): Record<string, Function> }} rule
- * @returns {{ meta: object, createOnce(context: any): Record<string, Function> }} the rule, reading the shared
- *   options in `before()` and skipping an exempt file
+ * @param {Waivers} waivers
+ * @param {boolean} honoursFileWaivers whether a file waiver silences the rule too, not only a folder waiver
+ * @param {(context: any, state: { options: LegacyUiOptions }) => Record<string, Function>} createOnce
+ * @returns {{ meta: object, createOnce(context: any): Record<string, Function> }} the rule, reading its
+ *   options in `before()` and skipping a waived file
  */
-function legacyUiRule(rule) {
+function legacyUiRule(waivers, honoursFileWaivers, createOnce) {
   return {
     meta: { schema: SCHEMA },
     /** @param {any} context */
     createOnce(context) {
       const state = { options: /** @type {LegacyUiOptions} */ ({ modules: [] }) };
-      const visitors = rule.createOnce(context, state);
+      const visitors = createOnce(context, state);
       return {
         ...visitors,
         before() {
           state.options = context.options?.[0] ?? { modules: [] };
-          if (isExempt(context.filename, state.options.exemptPaths)) return false;
+          if (typeof context.filename === "string") {
+            const file = repoPath(waivers.repoRoot, realpath(context.filename));
+            if (isInFolderWaiver(file, waivers.folderWaivers)) return false;
+            if (honoursFileWaivers && Object.hasOwn(waivers.fileWaivers, file)) return false;
+          }
           return visitors.before?.();
         },
       };
@@ -315,14 +324,20 @@ function legacyUiRule(rule) {
   };
 }
 
-const noLegacyImport = legacyUiRule({
-  createOnce(context, state) {
+/**
+ * @param {Waivers} waivers
+ * @returns {object} the `legacy-ui` plugin, skipping the files and folders the waivers name, compared by real
+ *   path
+ */
+function createLegacyUiPlugin(waivers) {
+  const realWaivers = { ...waivers, repoRoot: realpath(waivers.repoRoot) };
+  const noLegacyImport = legacyUiRule(realWaivers, true, (context, state) => {
     /** @param {{ source?: { value?: unknown } | null }} node */
     function check(node) {
       const specifier = node.source?.value;
       if (isLegacyModule(specifier, context.filename, state.options.modules)) {
         context.report({
-          message: `Legacy UI module "${String(specifier)}": do not add imports of it. ${LUMEN}`,
+          message: `Legacy UI module "${String(specifier)}": do not import it. ${LUMEN}`,
           node,
         });
       }
@@ -332,82 +347,9 @@ const noLegacyImport = legacyUiRule({
       ExportNamedDeclaration: check,
       ExportAllDeclaration: check,
     };
-  },
-});
+  });
 
-const noLegacyElement = legacyUiRule({
-  createOnce(context, state) {
-    /** @type {Map<string, LegacyBinding>} */
-    let bindings = new Map();
-    return {
-      /** @param {{ body?: any[] }} program */
-      Program(program) {
-        bindings = legacyBindings(program, context.filename, state.options.modules);
-      },
-      /** @param {{ name: any }} node */
-      JSXOpeningElement(node) {
-        const name = splitJsxName(node.name);
-        if (!name || !bindings.has(name.root)) return;
-        if (!refersToImport(context, node, name.root)) return;
-        const component = [name.root, ...name.rest].join(".");
-        context.report({
-          message: `Legacy UI component <${component} />: do not add uses of it. ${LUMEN}`,
-          node,
-        });
-      },
-    };
-  },
-});
-
-const noStyledDefinition = legacyUiRule({
-  createOnce(context) {
-    /** @type {string | null} */
-    let styled = null;
-
-    /**
-     * @param {{ type?: string, name?: string } | undefined} node
-     * @returns {boolean} whether the node is the `styled` import, not a local that shadows it
-     */
-    function isStyled(node) {
-      if (styled === null || node?.type !== "Identifier" || node.name !== styled) return false;
-      return refersToImport(context, node, styled);
-    }
-
-    /** @param {object} node */
-    function report(node) {
-      context.report({
-        message: `styled-components definition: do not add styled components. ${LUMEN}`,
-        node,
-      });
-    }
-
-    return {
-      /** @param {{ body?: any[] }} program */
-      Program(program) {
-        styled = null;
-        for (const statement of program.body ?? []) {
-          if (statement.type !== "ImportDeclaration") continue;
-          if (!STYLED_COMPONENTS.has(statement.source?.value)) continue;
-          const defaultImport = statement.specifiers?.find(
-            s => s.type === "ImportDefaultSpecifier",
-          );
-          if (defaultImport) styled = defaultImport.local.name;
-        }
-      },
-      /** @param {{ object: any }} node */
-      MemberExpression(node) {
-        if (isStyled(node.object)) report(node);
-      },
-      /** @param {{ callee: any }} node */
-      CallExpression(node) {
-        if (isStyled(node.callee)) report(node);
-      },
-    };
-  },
-});
-
-const noBannedComponent = legacyUiRule({
-  createOnce(context, state) {
+  const noBannedComponent = legacyUiRule(realWaivers, false, (context, state) => {
     /** @type {Map<string, LegacyBinding>} */
     let bindings = new Map();
     /** @type {Set<string>} */
@@ -450,19 +392,21 @@ const noBannedComponent = legacyUiRule({
         else if (banned.has(full)) report(full, node);
       },
     };
-  },
+  });
+
+  return {
+    meta: { name: "legacy-ui" },
+    rules: {
+      "no-legacy-import": noLegacyImport,
+      "no-banned-component": noBannedComponent,
+    },
+  };
+}
+
+export { createLegacyUiPlugin, globToRegExp, isLegacyModule, repoPath };
+
+export default createLegacyUiPlugin({
+  repoRoot: REPO_ROOT,
+  fileWaivers: FILE_WAIVERS,
+  folderWaivers: FOLDER_WAIVERS,
 });
-
-export { globToRegExp, isExempt, isLegacyModule };
-
-export default {
-  meta: {
-    name: "legacy-ui",
-  },
-  rules: {
-    "no-legacy-import": noLegacyImport,
-    "no-legacy-element": noLegacyElement,
-    "no-styled-definition": noStyledDefinition,
-    "no-banned-component": noBannedComponent,
-  },
-};

@@ -20,25 +20,6 @@ const coinFamilies = coinFamiliesLint({ familiesDir: "src/families", barrel: "fo
 
 const legacyUi = legacyUiLint({
   modules: ["@ledgerhq/native-ui", "styled-components"],
-  exemptPaths: [
-    { glob: "src/screens/Settings/Debug/**", reason: "dev-only" },
-    { glob: "src/screens/Settings/Developer/**", reason: "dev-only" },
-    { glob: "src/screens/Settings/**", reason: "newSettings" },
-    { glob: "src/screens/ReceiveFunds/**", reason: "newReceiveFlow" },
-    { glob: "src/components/RootNavigator/ReceiveFundsNavigator.tsx", reason: "newReceiveFlow" },
-    { glob: "src/screens/SendFunds/**", reason: "newSendFlow" },
-    { glob: "src/families/celo/SendSelectRecipient.tsx", reason: "newSendFlow" },
-    { glob: "src/families/hedera/SendSelectRecipient.tsx", reason: "newSendFlow" },
-    { glob: "src/families/solana/SendRowsCustom.tsx", reason: "newSendFlow" },
-    { glob: "src/families/solana/SendRowsFee.tsx", reason: "newSendFlow" },
-    { glob: "src/families/vechain/SendRowsFee.tsx", reason: "newSendFlow" },
-    { glob: "src/families/aleo/Send/QuickAmountSelector.tsx", reason: "newSendFlow" },
-    { glob: "src/screens/Account/**", reason: "accountDetail" },
-    { glob: "src/screens/Discover/**", reason: "web3hub" },
-    { glob: "src/screens/Platform/v2/Catalog/**", reason: "web3hub" },
-    { glob: "src/screens/Platform/Catalog/**", reason: "web3hub" },
-    { glob: "src/context/AuthPass/**", reason: "lwmPasswordRevamp" },
-  ],
 });
 
 const MVVM_ALIAS = {

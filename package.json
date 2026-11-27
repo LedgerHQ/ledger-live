@@ -23,6 +23,7 @@
     "skills:check": "node tools/skills-check/check.ts",
     "lint:coin-families-disables": "node support/lint/src/check-coin-families-disables.js apps/ledger-live-desktop/src apps/ledger-live-desktop/static apps/ledger-live-desktop/tools apps/ledger-live-desktop/tests apps/ledger-live-mobile/src",
     "lint:coin-families-exceptions": "node support/lint/src/check-coin-families-exceptions.js apps/ledger-live-desktop apps/ledger-live-mobile",
+    "lint:legacy-ui-waivers": "node support/lint/src/check-legacy-ui-waivers.js apps/ledger-live-desktop apps/ledger-live-mobile",
     "lint:arch": "pnpm run lint:boundaries && pnpm run lint:structure && pnpm run lint:tool-config && pnpm run lint:i18n-keys && pnpm run skills:check && pnpm run lint:coin-families-disables && pnpm run lint:coin-families-exceptions",
     "bump": "changeset version",
     "clean": "git clean -fdX && node tools/nx/write-nx-cache-config.mjs --force",

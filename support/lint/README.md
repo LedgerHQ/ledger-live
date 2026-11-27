@@ -339,50 +339,50 @@ by its tickets.
 
 [`src/legacy-ui.js`](src/legacy-ui.js) stops the growth of the legacy UI stack in the apps: the
 pre-Lumen design systems (`@ledgerhq/native-ui`, `@ledgerhq/react-ui`), `styled-components` and the
-Desktop `Box` and `Text` components. Each app starts from a baseline of today's usage, so a count can
-only shrink. It has four rules:
+Desktop `Box` and `Text` components. A file that is not waived may not import them. It has two rules:
 
 - **`legacy-ui/no-legacy-import`**: one report per `import` or `export ... from` declaration of a
-  legacy module, `import type` included.
-- **`legacy-ui/no-legacy-element`**: one report per JSX element whose name, or the root object of a
-  member name (`<Icons.Close />`), is a binding imported from a legacy module. The message names the
-  component.
-- **`legacy-ui/no-styled-definition`**: one report per `styled.tag`, `styled(X)` or chained
-  `.attrs(...)` definition, counted once, where `styled` is the default import of
-  `styled-components` or `styled-components/native`.
+  legacy module, `import type` included, in a file that is not waived. Outside the waived files it
+  catches every use: a component or a `styled` definition needs its import first.
 - **`legacy-ui/no-banned-component`**: reports each import and JSX element of a component listed in
-  `bannedComponents`, imported from a legacy module. A component goes on the list once its count
-  reaches zero, so the rule never enters a baseline.
+  `bannedComponents`, imported from a legacy module, waived files included, so a component that
+  reached zero cannot come back anywhere. It ships empty.
 
 An app turns them on with `legacyUiLint` from `@support/lint/legacy-ui` and spreads each key into
-its config, next to `coinFamilies`:
+its config, next to `coinFamilies`. The app config is the one place that lists its legacy modules:
 
 ```ts
-const legacyUi = legacyUiLint({
-  modules: ["@ledgerhq/native-ui", "styled-components"],
-  exemptPaths: [{ glob: "src/screens/Settings/**", reason: "newSettings" }],
-});
+const legacyUi = legacyUiLint({ modules: ["@ledgerhq/native-ui", "styled-components"] });
 // jsPlugins: [..., ...legacyUi.jsPlugins],
 // rules: { ..., ...legacyUi.rules },
 ```
 
-Every rule reads the same options:
+Both rules read the same options:
 
 - **`modules`**: a specifier matches an entry or a subpath of it (`styled-components` covers
   `styled-components/native`). An entry starting with `~/` also matches any specifier that the app's
   `tsconfig.json` resolves to the same file or folder (a relative path, `src/...` through `paths`); the
   files of that entry may import each other.
-- **`exemptPaths`**: `{ glob, reason }` entries, globs relative to the app root (the nearest folder
-  with a `package.json`). No rule checks a matching file. `reason` names the feature flag whose
-  cleanup deletes the folder, or `dev-only`.
 - **`bannedComponents`**: component names, the imported name of a named import or the local name
-  of a default import. It ships empty.
+  of a default import.
 
-**Baseline.** Each app's `oxlint-suppressions.json` holds the `legacy-ui/*` counts next to the
-`coin-families/*` ones, written by `oxlint --suppress-all` from the app folder with the paths of
-`lint:ci`. The suppression behaviours described for `no-coin-specific-import` apply. A PR that
-removes legacy usage runs `oxlint --prune-suppressions` from the app folder, with the same paths, to
-lower the counts. The suppressions files hold the `coin-families/*` baseline too, so a change to
-them needs a review by Coin Integration.
+**Waivers.** [`src/legacy-ui-waivers.js`](src/legacy-ui-waivers.js) lists, by posix path from the repo
+root, the files allowed to keep their legacy imports:
+
+- **`FILE_WAIVERS`**: one sorted line per file that imported a legacy module when the plugin landed,
+  each with a `TEMPORARY` reason and its exit condition. `no-legacy-import` skips these files;
+  `no-banned-component` still checks them.
+- **`FOLDER_WAIVERS`**: globs of Mobile folders deleted whole by a feature flag cleanup, the reason
+  naming the flag, and of dev-only screens. Neither rule checks them.
+
+The list only shrinks. New code never gets an entry: write it with Lumen. To clear an entry, migrate
+the file until it no longer imports a legacy module, then delete its line in the same PR. A file you
+delete loses its line too.
+
+[`src/check-legacy-ui-waivers.js`](src/check-legacy-ui-waivers.js), run by `pnpm lint:legacy-ui-waivers`
+and in CI, reads each app's modules from its `oxlint.config.mts` and fails on a file entry whose file is
+gone, no longer imports a legacy module (same matching code as the rule) or sits under a folder waiver,
+on unsorted file entries, on a folder glob that matches no file, and on a `legacy-ui/*` rule in an
+app's `oxlint-suppressions.json`: `oxlint --suppress-all` must not hide a new import.
 
 Run the rules' tests with `nx run @support/lint:test`.

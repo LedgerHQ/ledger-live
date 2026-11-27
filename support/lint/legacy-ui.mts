@@ -6,18 +6,14 @@ export interface LegacyUiOptions {
    * matches any specifier the app's tsconfig resolves to the same file or folder.
    */
   modules: string[];
-  /**
-   * Files no rule checks, as globs relative to the app root. `reason` names the feature flag whose cleanup
-   * deletes them, or `dev-only`.
-   */
-  exemptPaths?: { glob: string; reason: string }[];
   /** Components that reached zero: `no-banned-component` reports any import or JSX element of them. */
   bannedComponents?: string[];
 }
 
 /**
- * The `jsPlugins` and `rules` entries that turn the four legacy-ui rules on for an app, all with the same
- * options. An app config spreads each key into its own, as it does for `coinFamiliesLint`.
+ * The `jsPlugins` and `rules` entries that turn the two legacy-ui rules on for an app, with the same options.
+ * An app config spreads each key into its own, as it does for `coinFamiliesLint`. The files allowed to keep
+ * their legacy imports are listed in `src/legacy-ui-waivers.js`.
  */
 export function legacyUiLint(options: LegacyUiOptions) {
   const rule = ["error", options] as ["error", LegacyUiOptions];
@@ -25,8 +21,6 @@ export function legacyUiLint(options: LegacyUiOptions) {
     jsPlugins: [LEGACY_UI_PLUGIN],
     rules: {
       "legacy-ui/no-legacy-import": rule,
-      "legacy-ui/no-legacy-element": rule,
-      "legacy-ui/no-styled-definition": rule,
       "legacy-ui/no-banned-component": rule,
     },
   };

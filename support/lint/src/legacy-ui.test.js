@@ -6,7 +6,7 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-import plugin, { globToRegExp, isExempt, isLegacyModule } from "./legacy-ui.js";
+import plugin, { globToRegExp, isLegacyModule } from "./legacy-ui.js";
 
 /**
  * @param {Record<string, string>} files paths relative to the returned root
@@ -112,60 +112,51 @@ test("a glob spans folders with ** and stays within one with *", () => {
   assert.equal(globToRegExp("src/a.tsx").test("src/aXtsx"), false);
 });
 
-test("an exempt path is matched relative to the app root", () => {
-  const exemptPaths = [{ glob: "src/screens/Settings/**", reason: "newSettings" }];
-  assert.equal(isExempt(mobile("screens/Settings/General/index.tsx"), exemptPaths), true);
-  assert.equal(isExempt(mobile("screens/Portfolio/index.tsx"), exemptPaths), false);
-  assert.equal(isExempt(mobile("screens/Portfolio/index.tsx"), undefined), false);
+test("the default plugin has the two rules", () => {
+  assert.deepEqual(Object.keys(plugin.rules).sort(), ["no-banned-component", "no-legacy-import"]);
 });
 
-/**
- * @param {string} rule
- * @param {object} options
- * @param {string} filename
- */
-function setup(rule, options, filename) {
-  const descriptors = [];
-  const visitors = plugin.rules[rule].createOnce({
-    filename,
-    options: [options],
-    report: descriptor => descriptors.push(descriptor),
-  });
-  return { visitors, descriptors, skipped: visitors.before() === false };
-}
-
-test("every rule skips an exempt file", () => {
-  const options = { ...MOBILE, exemptPaths: [{ glob: "src/screens/Account/**", reason: "x" }] };
-  for (const rule of Object.keys(plugin.rules)) {
-    assert.equal(setup(rule, options, mobile("screens/Account/index.tsx")).skipped, true, rule);
-    assert.equal(setup(rule, options, mobile("screens/Home.tsx")).skipped, false, rule);
-  }
-});
-
-// The end-to-end tests spawn the oxlint binary on a temporary app.
+// The end-to-end tests spawn the oxlint binary on a temporary repo, whose plugin file builds the rules
+// with the test's waivers.
 const OXLINT = fileURLToPath(new URL("../node_modules/.bin/oxlint", import.meta.url));
-const PLUGIN = fileURLToPath(new URL("./legacy-ui.js", import.meta.url));
+const PLUGIN_URL = new URL("./legacy-ui.js", import.meta.url).href;
 
 /**
  * @param {Record<string, string>} files paths below `app/`
  * @param {object} options
+ * @param {{ fileWaivers?: Record<string, string>, folderWaivers?: Record<string, string> }} [waivers] keyed by
+ *   path from the temporary repo root, `app/src/...`
  * @returns {string[]} `rule file:line` of each legacy-ui report, sorted
  */
-function lint(files, options) {
+function lint(files, options, waivers = {}) {
   const rules = Object.fromEntries(
     Object.keys(plugin.rules).map(rule => [`legacy-ui/${rule}`, ["error", options]]),
   );
   const app = Object.fromEntries(Object.entries(files).map(([f, c]) => [`app/${f}`, c]));
   const root = fixture({
-    ".oxlintrc.json": JSON.stringify({ plugins: [], jsPlugins: [PLUGIN], rules }),
+    ".oxlintrc.json": JSON.stringify({ plugins: [], jsPlugins: ["./plugin.js"], rules }),
     "app/package.json": "{}",
     "app/tsconfig.json": TSCONFIG,
     ...app,
   });
-  const { stdout } = spawnSync(OXLINT, ["--format", "unix", "app"], {
+  const pluginSource = [
+    `import { createLegacyUiPlugin } from ${JSON.stringify(PLUGIN_URL)};`,
+    "export default createLegacyUiPlugin(",
+    JSON.stringify({
+      repoRoot: root,
+      fileWaivers: {},
+      folderWaivers: {},
+      ...waivers,
+    }),
+    ");",
+    "",
+  ].join("\n");
+  fs.writeFileSync(path.join(root, "plugin.js"), pluginSource);
+  const { stdout, stderr } = spawnSync(OXLINT, ["--format", "unix", "app"], {
     cwd: root,
     encoding: "utf8",
   });
+  assert.doesNotMatch(stdout + stderr, /Failed to load JS plugin/);
   return stdout
     .split("\n")
     .filter(line => line.includes("legacy-ui("))
@@ -190,7 +181,7 @@ test("no-legacy-import reports each import and re-export declaration, import typ
       ].join("\n"),
     },
     MOBILE,
-  ).filter(line => line.startsWith("no-legacy-import"));
+  );
 
   assert.deepEqual(reports, [
     "no-legacy-import app/src/A.tsx:1",
@@ -212,97 +203,26 @@ test("no-legacy-import reports a relative import of the desktop Box", () => {
   assert.deepEqual(reports, ["no-legacy-import app/src/renderer/screens/Home.tsx:1"]);
 });
 
-test("no-legacy-element reports a JSX element of a legacy binding, member names included", () => {
-  const reports = lint(
-    {
-      "src/A.tsx": [
-        'import { Flex, Icons } from "@ledgerhq/native-ui";',
-        'import { Button } from "@ledgerhq/lumen-ui-rnative";',
-        "export const A = () => (",
-        "  <Flex>",
-        "    <Icons.Close />",
-        "    <Button />",
-        "    <Flex />",
-        "  </Flex>",
-        ");",
-        "",
-      ].join("\n"),
-    },
-    MOBILE,
-  ).filter(line => line.startsWith("no-legacy-element"));
+const LEGACY_FILE = [
+  'import styled from "styled-components/native";',
+  'import { Flex } from "@ledgerhq/native-ui";',
+  "export const A = styled.View``;",
+  "export const B = () => <Flex />;",
+  "",
+].join("\n");
+
+test("no-legacy-import skips a waived file and reports one that is not", () => {
+  const reports = lint({ "src/Waived.tsx": LEGACY_FILE, "src/New.tsx": LEGACY_FILE }, MOBILE, {
+    fileWaivers: { "app/src/Waived.tsx": "TEMPORARY." },
+  });
 
   assert.deepEqual(reports, [
-    "no-legacy-element app/src/A.tsx:4",
-    "no-legacy-element app/src/A.tsx:5",
-    "no-legacy-element app/src/A.tsx:7",
+    "no-legacy-import app/src/New.tsx:1",
+    "no-legacy-import app/src/New.tsx:2",
   ]);
 });
 
-test("no-legacy-element skips a JSX name that a local binding shadows", () => {
-  const reports = lint(
-    {
-      "src/A.tsx": [
-        'import { Text } from "@ledgerhq/native-ui";',
-        "export function Render(Text) {",
-        "  return <Text />;",
-        "}",
-        "export const B = () => {",
-        "  const Text = () => null;",
-        "  return <Text />;",
-        "};",
-        "export const C = () => <Text />;",
-        "",
-      ].join("\n"),
-    },
-    MOBILE,
-  ).filter(line => line.startsWith("no-legacy-element"));
-
-  assert.deepEqual(reports, ["no-legacy-element app/src/A.tsx:9"]);
-});
-
-test("no-styled-definition counts each definition once, attrs chains included", () => {
-  const reports = lint(
-    {
-      "src/A.tsx": [
-        'import styled from "styled-components/native";',
-        'import { View } from "react-native";',
-        "export const A = styled.View`flex: 1;`;",
-        "export const B = styled(View)`flex: 1;`;",
-        "export const C = styled.Text.attrs({ numberOfLines: 1 })`flex: 1;`;",
-        "export const D = styled(View).attrs(() => ({}))`flex: 1;`;",
-        "const other = { View: 1 };",
-        "export const E = other.View;",
-        "",
-      ].join("\n"),
-      "src/B.tsx": [
-        'import s from "styled-components";',
-        "export const A = s.div`color: red;`;",
-        "",
-      ].join("\n"),
-      "src/C.tsx": "const styled = { div: 1 };\nexport const A = styled.div;\n",
-      "src/D.tsx": [
-        'import styled from "styled-components";',
-        "export function render(styled) {",
-        "  return [styled.div, styled(Object)];",
-        "}",
-        "export const A = styled.div`color: red;`;",
-        "",
-      ].join("\n"),
-    },
-    MOBILE,
-  ).filter(line => line.startsWith("no-styled-definition"));
-
-  assert.deepEqual(reports, [
-    "no-styled-definition app/src/A.tsx:3",
-    "no-styled-definition app/src/A.tsx:4",
-    "no-styled-definition app/src/A.tsx:5",
-    "no-styled-definition app/src/A.tsx:6",
-    "no-styled-definition app/src/B.tsx:2",
-    "no-styled-definition app/src/D.tsx:5",
-  ]);
-});
-
-test("no-banned-component reports the import and the JSX of a banned component only", () => {
+test("no-banned-component reports the import and the JSX of a banned component, in a waived file too", () => {
   const reports = lint(
     {
       "src/A.tsx": [
@@ -316,7 +236,8 @@ test("no-banned-component reports the import and the JSX of a banned component o
       ].join("\n"),
     },
     { ...MOBILE, bannedComponents: ["Flex"] },
-  ).filter(line => line.startsWith("no-banned-component"));
+    { fileWaivers: { "app/src/A.tsx": "TEMPORARY." } },
+  );
 
   assert.deepEqual(reports, [
     "no-banned-component app/src/A.tsx:1",
@@ -350,21 +271,11 @@ test("no-banned-component reports a member of a namespace import, not a shadowed
   ]);
 });
 
-test("no rule reports an exempt file", () => {
-  const source = [
-    'import styled from "styled-components/native";',
-    'import { Flex } from "@ledgerhq/native-ui";',
-    "export const A = styled.View``;",
-    "export const B = () => <Flex />;",
-    "",
-  ].join("\n");
+test("no rule reports a file under a folder waiver", () => {
   const reports = lint(
-    { "src/screens/Settings/A.tsx": source, "src/screens/Home/A.tsx": source },
-    {
-      ...MOBILE,
-      exemptPaths: [{ glob: "src/screens/Settings/**", reason: "newSettings" }],
-      bannedComponents: ["Flex"],
-    },
+    { "src/screens/Settings/A.tsx": LEGACY_FILE, "src/screens/Home/A.tsx": LEGACY_FILE },
+    { ...MOBILE, bannedComponents: ["Flex"] },
+    { folderWaivers: { "app/src/screens/Settings/**": "TEMPORARY." } },
   );
 
   assert.ok(reports.length > 0);
@@ -378,9 +289,5 @@ test("declares a schema that requires modules and refuses an unknown option", ()
   const [schema] = plugin.rules["no-legacy-import"].meta.schema;
   assert.deepEqual(schema.required, ["modules"]);
   assert.equal(schema.additionalProperties, false);
-  assert.deepEqual(Object.keys(schema.properties).sort(), [
-    "bannedComponents",
-    "exemptPaths",
-    "modules",
-  ]);
+  assert.deepEqual(Object.keys(schema.properties).sort(), ["bannedComponents", "modules"]);
 });
